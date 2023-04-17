@@ -1,3 +1,4 @@
+# LXP
 ### Les objectifs du projet
 
 - Améliorer l'efficacité de l'apprentissage : En offrant un contenu de qualité et en permettant aux utilisateurs de personnaliser leur expérience d'apprentissage.
