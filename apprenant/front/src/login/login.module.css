@@ -1,0 +1,18 @@
+.bgapprenant {
+  background: linear-gradient(180deg, #76284e 0%, #202237 100%);
+}
+
+.input {
+  background: rgba(118, 40, 78, 0.06);
+  border: 15px solid rgba(118, 40, 78, 0.06);
+  border-radius: 15px;
+}
+
+.font {
+  font-family: "Inter";
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../../public/inter.ttf");
+}
