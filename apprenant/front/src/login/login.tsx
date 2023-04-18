@@ -33,7 +33,7 @@ const Login = () => {
             <button
               className={`${styles.inputRight}
                 ${isPasswordHidden ? styles.bgEyeClosed : styles.bgEyeOpen}
-              p2`}
+              `}
               onClick={() => setPasswordHideState(!isPasswordHidden)}
             />
           </span>
