@@ -68,4 +68,11 @@ describe("AUTH API", () => {
       });
     });
   });
+
+  //  déconnexion d'un utilisateur
+  describe("Test GET /auth/user/logout", () => {
+    test("it should respond with 200 success", async () => {
+      await request(app).get("/v1/auth/user/logout").expect(200);
+    });
+  });
 });
