@@ -2,7 +2,7 @@ import Login from "./login/login";
 
 function App() {
   return (
-    <div className="h-screen">
+    <div className="h-screen w-full fixed">
       <Login />
     </div>
   );
