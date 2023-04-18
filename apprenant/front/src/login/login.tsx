@@ -8,10 +8,19 @@ const Login = () => (
       </div>
       <div className="w-[70%] flex flex-col gap-y-4">
         <p className="text-[14pt] font-bold">Se connecter</p>
-        <input type="text" placeholder="Identifiant" />
-        <input type="text" placeholder="Mot de passe" />
+        <input className={styles.input} type="text" placeholder="Identifiant" />
+
+        <span className="flex">
+          <input
+            className={styles.inputleft}
+            type="text"
+            placeholder="Mot de passe"
+          />
+          <button className={styles.inputright} />
+        </span>
+
         <div className="flex flex-row justify-between mt-3">
-          <button className="text-[8pt]">Mot de passe oublié?</button>
+          <button className="ml-2 text-[8pt]">Mot de passe oublié?</button>
           <button className="bg-pink-900 p-3 rounded-md pr-6 pl-6 text-white text-[8pt]">
             Je me connecte
           </button>
@@ -22,7 +31,7 @@ const Login = () => (
         <button className="text-[10pt]">Besoin d'aide?</button>
       </div>
     </div>
-    <div className="absolute bottom-0 right-0 max-w-[47%] max-md:max-w-[80%] max-md:-right-[20%] max-sm:-right-[19%] max-sm:max-w-[80%]">
+    <div className="absolute bottom-0 right-0 max-w-[47%] max-md:max-w-[80%] max-md:-right-[20%] max-sm:-right-[19%] max-sm:max-w-[80%] pointer-events-none">
       <img src="connexion/BG-side.png" alt="" />
     </div>
   </div>
