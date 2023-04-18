@@ -7,13 +7,22 @@ import {
 import userLogin from "../../models/auth/user-login";
 import { setTokens } from "../../utils/services/auth/setTokens";
 import { tokensMaxAge } from "../../config/config";
+import { validationResult } from "express-validator";
 
 async function httpUserLogin(req: Request, res: Response) {
   try {
+    //  récupération du test de validation
+    const result = validationResult(req);
+
     const { email, password } = req.body;
-    if (!password || !regexPassword.test(password)) {
+
+    //  on vérifie que l'email et le password sont valides
+    if (!result.isEmpty() || !password || !regexPassword.test(password)) {
       return res.status(401).json({ message: credentialsError });
     }
+
+    //  on récupére les informations de l'utilisateur si les identifiants sont corrects
+    //  et on créé des tokens qu'on retourne sous forme de cookies
     const user = await userLogin(email, password);
     if (user) {
       const accessToken = setTokens(user.id, user.roles);
