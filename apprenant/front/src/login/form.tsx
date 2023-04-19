@@ -35,7 +35,7 @@ const Form = () => {
 
       <div className="flex flex-row justify-between mt-3">
         <button className="ml-2 text-[8pt]">Mot de passe oublié?</button>
-        <button className="bg-pink p-3 rounded-md pr-6 pl-6 text-white text-[8pt]">
+        <button className="btn normal-case bg-pink p-3 rounded-md pr-6 pl-6 text-white text-[8pt]">
           Je me connecte
         </button>
       </div>
