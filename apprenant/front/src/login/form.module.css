@@ -1,0 +1,9 @@
+.bgEyeOpen {
+  background-image: url("../../public/connexion/eye-open.svg");
+  background-size: 25px;
+}
+
+.bgEyeClosed {
+  background-image: url("../../public/connexion/eye-closed.svg");
+  background-size: 25px;
+}
