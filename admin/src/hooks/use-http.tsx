@@ -8,6 +8,17 @@ const useHttp = () => {
   const [error, setError] = useState("");
   const { logout } = useContext(Context);
 
+  const axiosInstance = axios.create({ withCredentials: true });
+
+  axiosInstance.interceptors.request.use(
+    (config) => {
+      return config;
+    },
+    (error) => {
+      Promise.reject(error);
+    }
+  );
+
   const sendRequest = useCallback(
     async (req: any, applyData: (data: any) => void) => {
       setIsLoading(true);
@@ -48,10 +59,6 @@ const useHttp = () => {
     },
     [logout]
   );
-
-  /*   const refreshTokens = async (req: any, applyData: any) => {
-    const response = await axios.get();
-  }; */
 
   return { isLoading, error, sendRequest };
 };
