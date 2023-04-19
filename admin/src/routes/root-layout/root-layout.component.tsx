@@ -23,7 +23,9 @@ const RootLayout = () => {
           <Outlet />
         </div>
       ) : (
-        <Login />
+        <div className="h-screen w-full fixed">
+          <Login />
+        </div>
       )}
     </>
   );
