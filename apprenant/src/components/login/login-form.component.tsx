@@ -12,9 +12,11 @@ const LoginForm: FC<{
 }> = (props) => {
   const [inputType, setInputType] = useState("password");
 
-  const { value: email } = useInput((value: string) => regexMail.test(value));
-  const { value: password } = useInput((value: string) =>
-    regexPassword.test(value.trim())
+  const { value: email } = useInput(
+    (value: string) => value.length < 1 || regexMail.test(value)
+  );
+  const { value: password } = useInput(
+    (value: string) => value.length < 1 || regexPassword.test(value.trim())
   );
 
   let formIsValid = false;
@@ -22,7 +24,11 @@ const LoginForm: FC<{
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
-    if (formIsValid) {
+    if (
+      formIsValid &&
+      email.value.trim().length > 0 &&
+      password.value.trim().length > 0
+    ) {
       props.onSubmit(email.value.trim(), password.value.trim());
       console.log("bonjour form");
     }
