@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import useInput from "../../hooks/use-input";
-//import { regexMail, regexPassword } from "../../utils/constantes";
+import { regexMail, regexPassword } from "../../utils/constantes";
 import PasswordVisible from "../UI/password-visible/password-visible";
 import { setLoginFormClasses } from "../../utils/setLoginFormClasses";
 import { Link } from "react-router-dom";
@@ -12,8 +12,10 @@ const LoginForm: FC<{
 }> = (props) => {
   const [inputType, setInputType] = useState("password");
 
-  const { value: email } = useInput((value: string) => true);
-  const { value: password } = useInput((value: string) => true);
+  const { value: email } = useInput((value: string) => regexMail.test(value));
+  const { value: password } = useInput((value: string) =>
+    regexPassword.test(value.trim())
+  );
 
   let formIsValid = false;
   formIsValid = email.isValid && password.isValid;
