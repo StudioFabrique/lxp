@@ -9,8 +9,8 @@ const Login = () => {
     login(email, password);
   };
   return (
-    <div className="w-screen h-screen flex justify-center md:justify-between bg-gradient-to-b from-primary to-secondary">
-      <div className="w-5/6 md:w-3/6 h-full flex flex-col justify-around items-center md:items-start bg-base-100 font-extrabold text-gradient-start md:pl-16">
+    <div className="w-screen h-screen flex justify-center lg:justify-between bg-gradient-to-b from-primary to-secondary">
+      <div className="w-5/6 lg:w-3/6 h-full flex flex-col justify-around items-center md:items-start bg-base-100 font-extrabold text-primary md:pl-16">
         <div>
           <h1 className="tracking-widest text-9xl">LXP</h1>
           <h2 className="text-sm md:text-xl font-normal">
