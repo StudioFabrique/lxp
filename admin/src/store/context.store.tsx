@@ -36,6 +36,44 @@ const ContextProvider: FC<Props> = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const axiosInstance = axios.create({ withCredentials: true });
+
+  axiosInstance.interceptors.request.use(
+    (config) => {
+      return config;
+    },
+    (error) => {
+      Promise.reject(error);
+    }
+  );
+
+  axiosInstance.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    async function (error) {
+      const originalRequest = error.config;
+
+      if (
+        error.response.status === 403 &&
+        originalRequest.url === `${BASE_URL}/refresh`
+      ) {
+        logout();
+        return Promise.reject(error);
+      }
+
+      if (error.response.status === 403 && !originalRequest._retry) {
+        originalRequest._retry = true;
+
+        const res = await axiosInstance.get(`${BASE_URL}/refresh`);
+        if (res.status === 200) {
+          return axiosInstance(originalRequest);
+        }
+      }
+      return Promise.reject(error);
+    }
+  );
+
   useEffect(() => {
     document
       .querySelector("html")!
@@ -77,9 +115,11 @@ const ContextProvider: FC<Props> = (props) => {
 
   const handshake = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/auth/user/handshake`, {
+      const response = await axiosInstance.get(
+        `${BASE_URL}/auth/user/handshake` /* {
         withCredentials: true,
-      });
+      } */
+      );
       setIsLoggedIn(true);
       //setUser(response.data);
     } catch (err) {
