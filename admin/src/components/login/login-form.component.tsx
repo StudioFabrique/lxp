@@ -37,12 +37,15 @@ const LoginForm: FC<{
 
   return (
     <>
-      <form className="w-full" onSubmit={submitHandler}>
-        <h3 className="mb-4 text-xl text-base-content font-bold tracking-widest">
+      <form
+        className="w-full flex flex-col items-center lg:items-start"
+        onSubmit={submitHandler}
+      >
+        <h3 className="mb-4 text-xl text-primary tracking-widest">
           Se Connecter
         </h3>
-        <div className="flex flex-col  gap-y-12">
-          <div className="w-4/6 flex flex-col gap-y-1">
+        <div className="w-full flex flex-col item-center lg:items-start gap-y-12">
+          <div className="w-5/6 lg:w-4/6 flex flex-col gap-y-1">
             <input
               className={setClasses(email.hasError)}
               type="text"
@@ -56,8 +59,8 @@ const LoginForm: FC<{
               <p className="pl-4 text-xs text-error">Adresse email invalide</p>
             )}
           </div>
-          <div className="flex flex-col gap-y-1">
-            <span className="w-4/6 flex items-center gap-x-2 relative">
+          <div className="w-5/6 lg:w-4/6 flex flex-col items-center lg:items-start gap-y-1">
+            <span className="w-full flex items-center gap-x-2 relative">
               <input
                 className={setClasses(password.hasError)}
                 type={inputType}
