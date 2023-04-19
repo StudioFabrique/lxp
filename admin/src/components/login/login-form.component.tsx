@@ -2,7 +2,8 @@ import { FC, useState } from "react";
 import useInput from "../../hooks/use-input";
 import { regexMail, regexPassword } from "../../utils/constantes";
 import PasswordVisible from "../UI/password-visible/password-visible";
-import { setClasses } from "../../utils/formClasses";
+import { setLoginFormClasses } from "../../utils/setLoginFormClasses";
+import { Link } from "react-router-dom";
 
 const LoginForm: FC<{
   onSubmit: (email: string, password: string) => void;
@@ -37,65 +38,41 @@ const LoginForm: FC<{
 
   return (
     <>
-      <form
-        className="w-full flex flex-col items-center lg:items-start"
-        onSubmit={submitHandler}
-      >
-        <h3 className="mb-4 text-xl text-primary tracking-widest">
-          Se Connecter
-        </h3>
-        <div className="w-full flex flex-col item-center lg:items-start gap-y-12">
-          <div className="w-5/6 lg:w-4/6 flex flex-col gap-y-1">
+      <form className="w-[70%] flex flex-col gap-y-4" onSubmit={submitHandler}>
+        <p className="text-[14pt] font-bold">Se connecter</p>
+        {/* input 1 */}
+        <input
+          className={setLoginFormClasses(email.hasError)}
+          type="text"
+          value={email.value}
+          onChange={email.valueChangeHandler}
+          onBlur={email.valueBlurHandler}
+          placeholder="Identifiant"
+        />
+        <span className="flex">
+          {/* input 2 */}
+          <span className=" w-full relative">
             <input
-              className={setClasses(email.hasError)}
-              type="text"
-              id="email"
-              value={email.value}
-              onBlur={email.valueBlurHandler}
-              onChange={email.valueChangeHandler}
-              placeholder="Identifiant"
+              className={setLoginFormClasses(password.hasError)}
+              type={inputType}
+              placeholder="Mot de passe"
+              onBlur={password.valueBlurHandler}
+              onChange={password.valueChangeHandler}
             />
-            {email.hasError && (
-              <p className="pl-4 text-xs text-error">Adresse email invalide</p>
-            )}
-          </div>
-          <div className="w-5/6 lg:w-4/6 flex flex-col items-center lg:items-start gap-y-1">
-            <span className="w-full flex items-center gap-x-2 relative">
-              <input
-                className={setClasses(password.hasError)}
-                type={inputType}
-                id="password"
-                value={password.value}
-                onBlur={password.valueBlurHandler}
-                onChange={password.valueChangeHandler}
-                placeholder="Mot de passe"
-              />
-              <PasswordVisible
-                inputType={inputType}
-                onPasswordVisibility={handlePasswordVisibility}
-              />
-            </span>
-            {password.hasError && (
-              <p className="pl-4 text-xs text-error">Mot de passe invalide</p>
-            )}
-          </div>
-        </div>
-        {props.error && (
-          <p className="font-bold pl-4 text-error text-sm mt-4">
-            {props.error}
-          </p>
-        )}
-        <div className="w-4/6 flex justify-between items-center mt-12">
-          <p className="font-normal text-xs">Mot de passe oublié ?</p>
-          {!props.isLoading ? (
-            <button className="btn btn-primary text-xs" type="submit">
-              Je me connecte
-            </button>
-          ) : (
-            <button className="btn btn-primary text-xs loading" type="submit">
-              Connexion
-            </button>
-          )}
+            <PasswordVisible
+              inputType={inputType}
+              onPasswordVisibility={handlePasswordVisibility}
+            />
+          </span>
+        </span>
+
+        <div className="flex flex-row justify-between mt-3">
+          <Link to="#" className="ml-2 text-[8pt]">
+            Mot de passe oublié?
+          </Link>
+          <button className="btn normal-case bg-pink p-3 rounded-md pr-6 pl-6 text-white text-[8pt]">
+            Je me connecte
+          </button>
         </div>
       </form>
     </>
