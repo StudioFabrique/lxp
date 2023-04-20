@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 
-import styles from "./FadeWrapper.module.css";
+import styles from "./fade-wrapper.module.scss";
 
 type Props = { children: React.ReactNode };
 

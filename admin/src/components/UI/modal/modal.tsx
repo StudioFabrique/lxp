@@ -1,5 +1,5 @@
 import { FC } from "react";
-import Portal from "../Portal/portal";
+import Portal from "../portal/portal";
 
 const Modal: FC<{
   onLeftClick?: () => void;

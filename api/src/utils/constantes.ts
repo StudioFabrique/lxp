@@ -1,5 +1,5 @@
 export const serverIssue = `Problème serveur, réessayez plus tard.`;
-export const credentialsError = "Identifiants incorrects.";
+export const credentialsError = "Identifiant ou mot de passe incorrect.";
 export const noData = "Ressource inexistante.";
 export const badQuery = "Paramètres de requête non conformes.";
 export const noAccess = "Accès réservé.";
