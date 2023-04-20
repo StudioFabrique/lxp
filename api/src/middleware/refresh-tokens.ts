@@ -2,10 +2,10 @@ import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import CustomRequest from "../utils/interfaces/express/custom-request";
 import { noAccess } from "../utils/constantes";
-import { setTokens } from "../utils/services/auth/setTokens";
+import { setTokens } from "../utils/services/auth/set-tokens";
 import { tokensMaxAge } from "../config/config";
 
-function refreshToken(req: CustomRequest, res: Response, next: NextFunction) {
+function refreshTokens(req: CustomRequest, res: Response, next: NextFunction) {
   const authCookie = req.cookies.refreshToken;
   console.log(authCookie);
 
@@ -35,4 +35,4 @@ function refreshToken(req: CustomRequest, res: Response, next: NextFunction) {
   });
 }
 
-export default refreshToken;
+export default refreshTokens;

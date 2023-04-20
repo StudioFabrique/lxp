@@ -1,7 +1,7 @@
 import http from "http";
 import https from "https";
 
-import mongoConnect from "./utils/services/db/mongoConnect";
+import mongoConnect from "./utils/services/db/mongo-connect";
 import app from "./app";
 
 const PORT = 5000;
