@@ -2,6 +2,7 @@ import { useContext, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { Context } from "../../store/context.store";
 import Login from "../../components/login/login.component";
+import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 
 let initialState = true;
 
@@ -19,13 +20,17 @@ const RootLayout = () => {
   return (
     <>
       {isLoggedIn ? (
-        <div className="flex flex-1 h-screen">
-          <Outlet />
-        </div>
+        <FadeWrapper>
+          <div className="flex flex-1 h-screen">
+            <Outlet />
+          </div>
+        </FadeWrapper>
       ) : (
-        <div className="h-screen w-full fixed">
-          <Login />
-        </div>
+        <FadeWrapper>
+          <div className="h-screen w-full fixed">
+            <Login />
+          </div>
+        </FadeWrapper>
       )}
     </>
   );

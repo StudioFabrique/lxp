@@ -68,7 +68,7 @@ const ContextProvider: FC<Props> = (props) => {
       setIsLoading(false);
     } catch (err: any) {
       if (err.response?.status === 401 || err.response?.status === 403) {
-        setError("Identifiants incorrects");
+        setError("Identifiant ou mot de passe incorrect");
         setIsLoading(false);
         if (err.response?.status === 403) {
           logout();
