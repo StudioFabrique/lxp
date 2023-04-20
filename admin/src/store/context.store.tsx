@@ -3,6 +3,7 @@ import React, { FC, useEffect, useState } from "react";
 
 import { themes } from "../config/themes";
 import { BASE_URL } from "../config/urls";
+import useHttp from "../hooks/use-http";
 
 type ContextType = {
   theme: string;
@@ -35,6 +36,7 @@ const ContextProvider: FC<Props> = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const { axiosInstance } = useHttp();
 
   useEffect(() => {
     document
@@ -77,9 +79,11 @@ const ContextProvider: FC<Props> = (props) => {
 
   const handshake = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/auth/user/handshake`, {
+      const response = await axiosInstance.get(
+        `${BASE_URL}/auth/user/handshake` /* {
         withCredentials: true,
-      });
+      } */
+      );
       setIsLoggedIn(true);
       //setUser(response.data);
     } catch (err) {
