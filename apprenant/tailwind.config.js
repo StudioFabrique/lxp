@@ -39,6 +39,8 @@ module.exports = {
       colors: {
         "gradient-start": "#0B1150",
         "gradient-stop": "#A70020",
+        "purple-light": "rgba(118, 40, 78, 0.06)",
+        "purple-discrete": "rgba(118, 40, 78, 0.4)",
       },
       borderRadius: {
         xs: "15px",
