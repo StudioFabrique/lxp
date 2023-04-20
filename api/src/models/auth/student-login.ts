@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 
 import Student from "../../utils/interfaces/db/student/student.model";
 
-async function loginStudent(email: string, password: string) {
+async function studentLogin(email: string, password: string) {
   const student = await Student.findOne({ email: email });
 
   // on vérifie les identifiants et on retourne les informations de l'utilisateur
@@ -20,4 +20,4 @@ async function loginStudent(email: string, password: string) {
   return false;
 }
 
-export default loginStudent;
+export default studentLogin;
