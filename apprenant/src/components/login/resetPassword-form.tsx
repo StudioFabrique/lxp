@@ -2,6 +2,7 @@ import { Dispatch, FC, SetStateAction } from "react";
 import useInput from "../../hooks/use-input";
 import { regexMail } from "../../utils/constantes";
 import FadeWrapper from "../UI/FadeWrapper/FadeWrapper";
+import { setLoginFormClasses } from "../../utils/setLoginFormClasses";
 
 const ResetPasswordForm: FC<{
   setResetPasswordState: Dispatch<SetStateAction<boolean>>;
@@ -28,12 +29,23 @@ const ResetPasswordForm: FC<{
 
   return (
     <FadeWrapper>
-      <form className="w-[70%] flex flex-col gap-y-4" onSubmit={submitHandler}>
+      <form
+        className="w-[70%] flex flex-col items-start gap-y-14"
+        onSubmit={submitHandler}
+      >
         <button onClick={handleClickFormChange}>Retour</button>
-        <input type="text" value={email.value} />
-        <div className="flex flex-row justify-center mt-3">
+        <input
+          type="text"
+          className={setLoginFormClasses(email.hasError)}
+          value={email.value}
+          onChange={email.valueChangeHandler}
+          onBlur={email.valueBlurHandler}
+          placeholder="Votre email associé au compte"
+        />
+        <div className="flex flex-row w-full justify-between mt-3">
+          <span className="flex flex-1" />
           <button className="btn normal-case bg-pink-900 p-3 rounded-md pr-6 pl-6 text-white text-[8pt]">
-            Réinitialiser
+            Confirmer
           </button>
         </div>
       </form>
