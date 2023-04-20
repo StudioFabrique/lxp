@@ -3,6 +3,7 @@ import React, { FC, useEffect, useState } from "react";
 
 import { themes } from "../config/themes";
 import { BASE_URL } from "../config/urls";
+import useHttp from "../hooks/use-http";
 
 type ContextType = {
   theme: string;
@@ -35,44 +36,7 @@ const ContextProvider: FC<Props> = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-
-  const axiosInstance = axios.create({ withCredentials: true });
-
-  axiosInstance.interceptors.request.use(
-    (config) => {
-      return config;
-    },
-    (error) => {
-      Promise.reject(error);
-    }
-  );
-
-  axiosInstance.interceptors.response.use(
-    (response) => {
-      return response;
-    },
-    async function (error) {
-      const originalRequest = error.config;
-
-      if (
-        error.response.status === 403 &&
-        originalRequest.url === `${BASE_URL}/refresh`
-      ) {
-        logout();
-        return Promise.reject(error);
-      }
-
-      if (error.response.status === 403 && !originalRequest._retry) {
-        originalRequest._retry = true;
-
-        const res = await axiosInstance.get(`${BASE_URL}/refresh`);
-        if (res.status === 200) {
-          return axiosInstance(originalRequest);
-        }
-      }
-      return Promise.reject(error);
-    }
-  );
+  const { axiosInstance } = useHttp();
 
   useEffect(() => {
     document

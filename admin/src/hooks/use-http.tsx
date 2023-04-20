@@ -19,6 +19,33 @@ const useHttp = () => {
     }
   );
 
+  axiosInstance.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    async function (error) {
+      const originalRequest = error.config;
+
+      if (
+        error.response.status === 403 &&
+        originalRequest.url === `${BASE_URL}/refresh`
+      ) {
+        logout();
+        return Promise.reject(error);
+      }
+
+      if (error.response.status === 403 && !originalRequest._retry) {
+        originalRequest._retry = true;
+
+        const res = await axiosInstance.get(`${BASE_URL}/refresh`);
+        if (res.status === 200) {
+          return axiosInstance(originalRequest);
+        }
+      }
+      return Promise.reject(error);
+    }
+  );
+
   const sendRequest = useCallback(
     async (req: any, applyData: (data: any) => void) => {
       setIsLoading(true);
@@ -27,25 +54,26 @@ const useHttp = () => {
       try {
         switch (req.method) {
           case "post":
-            response = await axios.post(`${BASE_URL}${req.path}`, req.body, {
-              headers: req.headers,
-              withCredentials: true,
-            });
+            response = await axiosInstance.post(
+              `${BASE_URL}${req.path}`,
+              req.body,
+              {
+                headers: req.headers,
+              }
+            );
             break;
           case "put":
-            response = await axios.put(`${BASE_URL}${req.path}`, req.body, {
-              withCredentials: true,
-            });
+            response = await axiosInstance.put(
+              `${BASE_URL}${req.path}`,
+              req.body,
+              {}
+            );
             break;
           case "delete":
-            response = await axios.delete(`${BASE_URL}${req.path}`, {
-              withCredentials: true,
-            });
+            response = await axiosInstance.delete(`${BASE_URL}${req.path}`, {});
             break;
           default:
-            response = await axios.get(`${BASE_URL}${req.path}`, {
-              withCredentials: true,
-            });
+            response = await axiosInstance.get(`${BASE_URL}${req.path}`, {});
             break;
         }
         applyData(response.data);
@@ -57,10 +85,10 @@ const useHttp = () => {
       }
       setIsLoading(false);
     },
-    [logout]
+    [logout, axiosInstance]
   );
 
-  return { isLoading, error, sendRequest };
+  return { isLoading, error, sendRequest, axiosInstance };
 };
 
 export default useHttp;
