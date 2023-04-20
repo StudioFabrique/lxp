@@ -39,9 +39,8 @@ module.exports = {
       backgroundImage: {
         bgLoginPage: "url('assets/images/BG-side.png')",
       },
-      colors: {
-        "gradient-start": "#0B1150",
-        "gradient-stop": "#A70020",
+      borderRadius: {
+        xs: "15px",
       },
     },
   },
