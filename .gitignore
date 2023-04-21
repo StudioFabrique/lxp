@@ -1,1 +1,4 @@
 api/.env
+api/node_modules
+apprenant/node_modules
+admin/node_modules
