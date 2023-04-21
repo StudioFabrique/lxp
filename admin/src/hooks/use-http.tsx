@@ -28,7 +28,7 @@ const useHttp = () => {
 
       if (
         error.response.status === 403 &&
-        originalRequest.url === `${BASE_URL}/refresh`
+        originalRequest.url === `${BASE_URL}/auth/refresh`
       ) {
         logout();
         return Promise.reject(error);
@@ -37,7 +37,7 @@ const useHttp = () => {
       if (error.response.status === 403 && !originalRequest._retry) {
         originalRequest._retry = true;
 
-        const res = await axiosInstance.get(`${BASE_URL}/refresh`);
+        const res = await axiosInstance.get(`${BASE_URL}/auth/refresh`);
         if (res.status === 200) {
           return axiosInstance(originalRequest);
         }

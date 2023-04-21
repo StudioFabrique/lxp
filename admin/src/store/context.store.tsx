@@ -54,7 +54,7 @@ const ContextProvider: FC<Props> = (props) => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        `${BASE_URL}/auth/user/login`,
+        `${BASE_URL}/auth/login/user`,
         {
           email,
           password,
@@ -73,14 +73,14 @@ const ContextProvider: FC<Props> = (props) => {
         if (err.response?.status === 403) {
           logout();
         }
-      }
+      } else setError("Problème serveur, réessayez plus tard svp");
     }
   };
 
   const handshake = async () => {
     try {
       const response = await axiosInstance.get(
-        `${BASE_URL}/auth/user/handshake` /* {
+        `${BASE_URL}/auth/handshake` /* {
         withCredentials: true,
       } */
       );
@@ -93,7 +93,7 @@ const ContextProvider: FC<Props> = (props) => {
 
   const logout = async () => {
     try {
-      await axios.get(`${BASE_URL}/auth/user/logout`, {
+      await axios.get(`${BASE_URL}/auth/logout`, {
         withCredentials: true,
       });
       setIsLoggedIn(false);
