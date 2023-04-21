@@ -13,11 +13,9 @@ const LoginForm: FC<{
 }> = (props) => {
   const [inputType, setInputType] = useState("password");
 
-  const { value: email } = useInput(
-    (value: string) => value.length < 1 || regexMail.test(value)
-  );
-  const { value: password } = useInput(
-    (value: string) => value.length < 1 || regexPassword.test(value.trim())
+  const { value: email } = useInput((value: string) => regexMail.test(value));
+  const { value: password } = useInput((value: string) =>
+    regexPassword.test(value.trim())
   );
 
   let formIsValid = false;
@@ -25,11 +23,7 @@ const LoginForm: FC<{
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
-    if (
-      formIsValid &&
-      email.value.trim().length > 0 &&
-      password.value.trim().length > 0
-    ) {
+    if (formIsValid) {
       props.onSubmit(email.value.trim(), password.value.trim());
       console.log("bonjour form");
     }
@@ -49,7 +43,9 @@ const LoginForm: FC<{
   };
 
   const isLoadingButtonComponent = props.isLoading ? (
-    <button className="btn loading normal-case bg-pink-900 p-3 rounded-md pr-6 pl-6 text-white text-[8pt]" />
+    <button className="btn loading normal-case bg-pink-900 p-3 rounded-md pr-6 pl-6 text-white text-[8pt]">
+      Connexion
+    </button>
   ) : (
     <button className="btn normal-case bg-pink-900 p-3 rounded-md pr-6 pl-6 text-white text-[8pt]">
       Je me connecte
@@ -62,7 +58,7 @@ const LoginForm: FC<{
         <p className="text-[14pt] font-bold">Se connecter</p>
         {/* input 1 */}
         <input
-          className={setLoginFormClasses(email.hasError)}
+          className="rounded-xs bg-pink-900/10 outline-pink-900/20 p-[20px] pl-[30px] w-full placeholder:text-purple-discrete"
           type="text"
           value={email.value}
           onChange={email.valueChangeHandler}
@@ -73,7 +69,7 @@ const LoginForm: FC<{
           {/* input 2 */}
           <span className="w-full relative">
             <input
-              className={setLoginFormClasses(password.hasError)}
+              className="rounded-xs bg-pink-900/10 outline-pink-900/20 p-[20px] pl-[30px] w-full placeholder:text-purple-discrete"
               type={inputType}
               placeholder="Mot de passe"
               onBlur={password.valueBlurHandler}

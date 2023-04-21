@@ -54,7 +54,7 @@ const ContextProvider: FC<Props> = (props) => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        `${BASE_URL}/auth/student/login`,
+        `${BASE_URL}/auth/login/student`,
         {
           email,
           password,
@@ -80,7 +80,7 @@ const ContextProvider: FC<Props> = (props) => {
   const handshake = async () => {
     try {
       const response = await axiosInstance.get(
-        `${BASE_URL}/auth/student/handshake` /* {
+        `${BASE_URL}/auth/handshake` /* {
         withCredentials: true,
       } */
       );
@@ -93,7 +93,7 @@ const ContextProvider: FC<Props> = (props) => {
 
   const logout = async () => {
     try {
-      await axios.get(`${BASE_URL}/auth/student/logout`, {
+      await axios.get(`${BASE_URL}/auth/logout`, {
         withCredentials: true,
       });
       setIsLoggedIn(false);
