@@ -5,9 +5,11 @@ const Home = () => {
   const { logout } = useContext(Context);
 
   return (
-    <div className="bg-red h-screen w-screen">
+    <div className="home bg-red h-screen w-screen">
       Home <br />
-      <button onClick={logout}>logout</button>
+      <button className="logout" onClick={logout}>
+        logout
+      </button>
     </div>
   );
 };

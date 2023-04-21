@@ -35,6 +35,7 @@ const ResetPasswordForm: FC<{
       >
         <button onClick={handleClickFormChange}>Retour</button>
         <input
+          name="reset"
           type="text"
           className={setLoginFormClasses(email.hasError)}
           value={email.value}

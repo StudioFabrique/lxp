@@ -2,7 +2,6 @@ import { Dispatch, FC, SetStateAction, useState } from "react";
 import useInput from "../../hooks/use-input";
 import { regexMail, regexPassword } from "../../utils/constantes";
 import PasswordVisible from "../UI/password-visible/password-visible";
-import { setLoginFormClasses } from "../../utils/setLoginFormClasses";
 import FadeWrapper from "../UI/FadeWrapper/FadeWrapper";
 
 const LoginForm: FC<{
@@ -25,7 +24,6 @@ const LoginForm: FC<{
     event.preventDefault();
     if (formIsValid) {
       props.onSubmit(email.value.trim(), password.value.trim());
-      console.log("bonjour form");
     }
   };
 
@@ -43,21 +41,31 @@ const LoginForm: FC<{
   };
 
   const isLoadingButtonComponent = props.isLoading ? (
-    <button className="btn loading normal-case bg-pink-900 p-3 rounded-md pr-6 pl-6 text-white text-[8pt]">
+    <button
+      type="submit"
+      className="submit btn loading normal-case bg-pink-900 p-3 rounded-md pr-6 pl-6 text-white text-[8pt]"
+    >
       Connexion
     </button>
   ) : (
-    <button className="btn normal-case bg-pink-900 p-3 rounded-md pr-6 pl-6 text-white text-[8pt]">
+    <button
+      type="submit"
+      className="submit btn normal-case bg-pink-900 p-3 rounded-md pr-6 pl-6 text-white text-[8pt]"
+    >
       Je me connecte
     </button>
   );
 
   return (
     <FadeWrapper>
-      <form className="w-[70%] flex flex-col gap-y-4" onSubmit={submitHandler}>
-        <p className="text-[14pt] font-bold">Se connecter</p>
+      <form
+        className="loginForm w-[70%] flex flex-col gap-y-4"
+        onSubmit={submitHandler}
+      >
+        <label className="text-[14pt] font-bold">Se connecter</label>
         {/* input 1 */}
         <input
+          name="username"
           className="rounded-xs bg-pink-900/10 outline-pink-900/20 p-[20px] pl-[30px] w-full placeholder:text-purple-discrete"
           type="text"
           value={email.value}
@@ -69,6 +77,7 @@ const LoginForm: FC<{
           {/* input 2 */}
           <span className="w-full relative">
             <input
+              name="password"
               className="rounded-xs bg-pink-900/10 outline-pink-900/20 p-[20px] pl-[30px] w-full placeholder:text-purple-discrete"
               type={inputType}
               placeholder="Mot de passe"
@@ -83,7 +92,11 @@ const LoginForm: FC<{
         </span>
 
         <div className="flex flex-row justify-between mt-3">
-          <button onClick={handleClickFormChange} className="ml-2 text-[8pt]">
+          <button
+            type="button"
+            onClick={handleClickFormChange}
+            className="ml-2 text-[8pt]"
+          >
             Mot de passe oublié?
           </button>
           {isLoadingButtonComponent}
