@@ -4,8 +4,7 @@ const formInput = [
   { label: "Prénom", type: "text" },
   { label: "Nom", type: "text" },
   { label: "Adresse", type: "text" },
-  { label: "Code Postal", type: "text" },
+  { label: "Code Postal", type: "number" },
   { label: "Ville", type: "text" },
-  { label: "createdAt", type: "text" },
 ];
 export default formInput;
