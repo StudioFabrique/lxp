@@ -9,12 +9,14 @@ async function getAllUsers(page: number, limit: number, role: string) {
     const users = await User.find({ roles: role })
       .skip(getPagination(page, limit))
       .limit(limit);
-    return users;
+    const total = await User.count({ roles: role });
+    return { total, users };
   } else if (role === "student") {
     const users = await Student.find({ roles: role })
       .skip(getPagination(page, limit))
       .limit(limit);
-    return users;
+    const total = await Student.count();
+    return { total, users };
   }
 }
 
