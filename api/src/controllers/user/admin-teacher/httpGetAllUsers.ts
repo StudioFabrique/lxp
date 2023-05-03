@@ -15,8 +15,10 @@ async function httpGetAllUsers(req: Request, res: Response) {
   }
 
   try {
-    const users = await getAllUsers(+page!, +limit!, role);
-    return res.status(200).json(users);
+    const result = await getAllUsers(+page!, +limit!, role);
+    console.log(result!.users.length);
+
+    return res.status(200).json({ total: result!.total, users: result!.users });
   } catch (err) {
     return res.status(500).json({ message: serverIssue + err });
   }
