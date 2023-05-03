@@ -8,23 +8,29 @@ const User: FC = () => {
   ] = useState("");
 
   const handleClickAddUser = (e: MouseEvent<HTMLButtonElement>) => {
-    console.log(e.currentTarget.className);
+    console.log(e.currentTarget.className.split(" "));
 
-    if (e.currentTarget.className === "add-user") setFormAction("add");
+    if (e.currentTarget.className.split(" ").includes("add-user"))
+      setFormAction("add");
     // if (e.currentTarget.className === "edit-user") setFormAction("edit");
+    console.log(formAction);
   };
 
   return (
-    <div>
-      <div>
+    <div className="h-screen w-full flex flex-col justify-between items-center">
+      <div className="h-full">
         <button onClick={handleClickAddUser} className="add-user btn">
           ajouter un utilisateur
         </button>
         {/* réservé pour une autre task : <button className="edit-user btn">modifier un utilisateur</button> */}
       </div>
       {/* form below */}
-      <div>
-        {formAction.length > 0 ? <UserForm action={formAction} /> : undefined}
+      <div className="h-full">
+        {formAction.length > 0 ? (
+          <UserForm action={formAction} />
+        ) : (
+          "aucun formulaire"
+        )}
       </div>
     </div>
   );
