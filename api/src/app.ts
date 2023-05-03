@@ -7,10 +7,12 @@ import morgan from "morgan";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
 
 const app = express();
 
 app
+  .use(bodyParser.json())
   .use(helmet())
   .use(
     cors({
