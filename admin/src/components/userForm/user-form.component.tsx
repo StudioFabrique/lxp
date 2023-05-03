@@ -22,10 +22,13 @@ const UserForm: FC<{
   };
 
   return (
-    <form
-      {...formInput.map((input) => <label>{input.label}</label>)}
-      onSubmit={handleSubmit}
-    >
+    <form className="flex flex-col gap-y-6 pb" onSubmit={handleSubmit}>
+      {formInput.map((input, i) => (
+        <div className="flex justify-between gap-x-5" key={i}>
+          <label>{input.label}</label>
+          <input type={input.type}></input>
+        </div>
+      ))}
       {setButtonComponent()}
     </form>
   );
