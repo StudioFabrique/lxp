@@ -12,8 +12,7 @@ const User: FC = () => {
   ] = useState("");
 
   const handleSubmit = (user: HTMLFormControlsCollection) => {
-    if (formAction === "add")
-      sendRequest({ method: "post", path: "", body: user }, (data: any) => "");
+    sendRequest({ method: "post", path: "", body: user }, (data: any) => "");
   };
 
   const handleClickAddUser = (e: MouseEvent<HTMLButtonElement>) => {
