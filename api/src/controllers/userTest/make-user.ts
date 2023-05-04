@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { IUser } from "../../utils/interfaces/db/teacher-admin/teacher.model";
-import { badQuery } from "../../utils/constantes";
+import { alreadyExist, badQuery } from "../../utils/constantes";
+import make from "../../models/userTest/make";
 
 export default async function MakeUser(req: Request, res: Response) {
   const checkValues = validationResult(req);
@@ -10,13 +11,11 @@ export default async function MakeUser(req: Request, res: Response) {
     return res.status(400).json({ message: badQuery });
   }
 
-  const {
-    email,
-    password,
-    firstname,
-    lastname,
-    address,
-    postCode,
-    city,
-  }: IUser = req.body;
+  const user: IUser = req.body;
+
+  make(user).then((response) =>
+    response != null
+      ? res.status(201).json(user) /* or .send(SuccessConstante) */
+      : res.status(409).send(alreadyExist)
+  );
 }
