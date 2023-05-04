@@ -2,10 +2,12 @@
 import { FC } from "react";
 import { Column, useTable } from "react-table";
 
-const ReactTable: FC<{
-  columns: Column[];
+interface ReactTableProps {
+  columns: readonly Column<any>[];
   data: any[];
-}> = ({ data, columns }) => {
+}
+
+const ReactTable: FC<ReactTableProps> = ({ data, columns }) => {
   const {
     getTableProps, // table props from react-table
     getTableBodyProps, // table body props from react-table
@@ -13,8 +15,8 @@ const ReactTable: FC<{
     rows, // rows for the table based on the data passed
     prepareRow, // Prepare the row (this function needs to be called for each row before getting the row props)
   } = useTable({
-    columns,
     data,
+    columns,
   });
 
   return (

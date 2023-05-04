@@ -1,8 +1,9 @@
 import { useCallback, useReducer } from "react";
+import { perPage } from "../config/pagination";
 
 const initialState = {
   page: 1,
-  perPage: 15,
+  perPage: perPage,
   total: null,
   totalPages: null,
 };
