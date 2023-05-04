@@ -29,7 +29,7 @@ const UserForm: FC<{
       {formInput.map((input, i) => (
         <div className="flex justify-between gap-x-5" key={i}>
           <label>{input.label}</label>
-          <input name="Ville" type={input.type}></input>
+          <input name={input.name} type={input.type}></input>
         </div>
       ))}
       {setButtonComponent()}
