@@ -6,7 +6,7 @@ export default interface User {
   password: string;
   firstname: string;
   lastname: string;
-  address: string;
+  address?: string;
   postCode: string;
   city: string;
   roles: Array<string>;
