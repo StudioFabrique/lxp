@@ -1,10 +1,15 @@
 import { useCallback, useReducer } from "react";
+import { perPage } from "../config/pagination";
 
 const initialState = {
   page: 1,
-  perPage: 10,
+  perPage: perPage,
   total: null,
   totalPages: null,
+};
+
+const setTotalPages = (total: number, perPage: number) => {
+  return Math.ceil(total / perPage);
 };
 
 const pageReducer = (state: any, action: any) => {
@@ -18,7 +23,8 @@ const pageReducer = (state: any, action: any) => {
     case "SET_TOTAL_PAGES":
       return {
         ...state,
-        totalPages: action.value,
+        total: action.value,
+        totalPages: setTotalPages(action.value, state.perPage),
       };
 
     case "INIT":
@@ -34,9 +40,9 @@ const pageReducer = (state: any, action: any) => {
 const usePagination = () => {
   const [state, dispatch] = useReducer(pageReducer, initialState);
 
-  const initPagination = () => {
+  const initPagination = useCallback(() => {
     dispatch({ type: "INIT" });
-  };
+  }, []);
 
   const setPage = useCallback((value: number) => {
     console.log("page changée");
