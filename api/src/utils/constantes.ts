@@ -6,6 +6,9 @@ export const alreadyExist = "Ressource déjà existante";
 export const badQuery = "Paramètres de requête non conformes.";
 export const noAccess = "Accès réservé.";
 
+// success
+export const creationSuccessfull = "Ressource créée avec succès";
+
 // regex
 export const regexMail =
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
