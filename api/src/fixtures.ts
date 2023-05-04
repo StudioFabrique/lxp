@@ -11,6 +11,7 @@ import {
   firstnames,
   lastnames,
 } from "./utils/fixtures/data/data";
+import Role from "./utils/interfaces/db/role";
 dotenv.config();
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/lxp";
@@ -133,6 +134,14 @@ async function createManStudents() {
     userList.push(user);
   }
   await Student.bulkSave(userList);
+}
+
+async function createRoles() {
+  const roles = new [
+    { role: "admin", label: "admin" },
+    { role: "teacher", label: "teacher" },
+    { role: "student", label: "student" },
+  ]();
 }
 
 async function main() {
