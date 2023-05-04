@@ -3,6 +3,7 @@ import RootLayout from "./routes/root-layout/root-layout.component";
 import Home from "./routes/home/home.component";
 import ContextProvider from "./store/context.store";
 import User from "./routes/test/user/user.component";
+import UserAdd from "./routes/test/user/user-add.component";
 
 const router = createBrowserRouter([
   {
@@ -11,8 +12,11 @@ const router = createBrowserRouter([
     children: [{ index: true, element: <Home /> }],
   },
   {
-    path: "user",
-    element: <User />,
+    path: "/userTest",
+    children: [
+      { index: true, element: <User /> },
+      { path: "créer", element: <UserAdd /> },
+    ],
   },
 ]);
 
