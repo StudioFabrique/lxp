@@ -5,7 +5,7 @@ import { validationResult } from "express-validator";
 import { roles } from "../../../utils/services/roles";
 
 async function httpGetAllUsers(req: Request, res: Response) {
-  const role = req.params.role;
+  const { role, stype, sdir } = req.params;
   const { page, limit } = req.query;
 
   const result = validationResult(req);
@@ -15,8 +15,7 @@ async function httpGetAllUsers(req: Request, res: Response) {
   }
 
   try {
-    const result = await getAllUsers(+page!, +limit!, role);
-    console.log(result!.users.length);
+    const result = await getAllUsers(+page!, +limit!, role, stype, sdir);
 
     return res.status(200).json({ total: result!.total, users: result!.users });
   } catch (err) {
