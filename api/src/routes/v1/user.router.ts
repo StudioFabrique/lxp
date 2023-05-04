@@ -4,9 +4,12 @@ import { param, query } from "express-validator";
 
 const userRouter = express.Router();
 
+//  récupération de la liste des utilisateurs
 userRouter.get(
-  "/:role",
+  "/:role/:stype/:sdir",
   param("role").trim().escape(),
+  param("stype").trim().escape(),
+  param("sdir").trim().escape(),
   query("page").trim().escape().isInt(),
   query("limit").trim().escape().isInt(),
   httpGetAllUsers

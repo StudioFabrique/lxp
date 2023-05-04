@@ -1,13 +1,26 @@
 /* eslint-disable react/jsx-key */
 import { FC } from "react";
 import { Column, useTable } from "react-table";
+import Pagination from "../UI/pagination/pagination";
 
 interface ReactTableProps {
   columns: readonly Column<any>[];
   data: any[];
+  page: number;
+  perPage: number;
+  totalPages: number;
+  setPage: (page: number) => void;
+  onSort: (column: number) => void;
 }
 
-const ReactTable: FC<ReactTableProps> = ({ data, columns }) => {
+const ReactTable: FC<ReactTableProps> = ({
+  data,
+  columns,
+  page,
+  totalPages,
+  setPage,
+  onSort,
+}) => {
   const {
     getTableProps, // table props from react-table
     getTableBodyProps, // table body props from react-table
@@ -18,6 +31,10 @@ const ReactTable: FC<ReactTableProps> = ({ data, columns }) => {
     data,
     columns,
   });
+
+  const handlePageChange = (page: number) => {
+    setPage(page);
+  };
 
   return (
     <>
@@ -31,7 +48,7 @@ const ReactTable: FC<ReactTableProps> = ({ data, columns }) => {
                   className="text-primary"
                   {...column.getHeaderProps()}
                   onClick={() => {
-                    //onSort(i);
+                    onSort(i);
                   }}
                 >
                   {column.render("Header")}
@@ -57,6 +74,11 @@ const ReactTable: FC<ReactTableProps> = ({ data, columns }) => {
           })}
         </tbody>
       </table>
+      <Pagination
+        page={page}
+        setPage={handlePageChange}
+        totalPages={totalPages}
+      />
     </>
   );
 };
