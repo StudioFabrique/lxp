@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useContext, useMemo, useState } from "react";
 import axios from "axios";
 import { Context } from "../store/context.store";
 import { BASE_URL } from "../config/urls";
@@ -8,7 +8,9 @@ const useHttp = () => {
   const [error, setError] = useState("");
   const { logout } = useContext(Context);
 
-  const axiosInstance = axios.create({ withCredentials: true });
+  const axiosInstance = useMemo(() => {
+    return axios.create({ withCredentials: true });
+  }, []);
 
   axiosInstance.interceptors.request.use(
     (config) => {
