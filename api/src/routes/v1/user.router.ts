@@ -5,6 +5,8 @@ import { param, query } from "express-validator";
 import ac from "../../utils/services/permissions/accessControl";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import isUser from "../../middleware/is-user";
+import hasPermission from "../../middleware/hasPermission";
+import { noAccess } from "../../utils/constantes";
 
 const userRouter = express.Router();
 
@@ -16,12 +18,11 @@ userRouter.get(
   isUser,
 
   //  vérification des permissions
-  (req: CustomRequest, res: Response, next) => {
-    const permission = ac.can(req.auth!.userRoles[0]).readAny("user");
-    if (permission.granted) {
+  async (req: CustomRequest, res: Response, next) => {
+    if (await hasPermission(req.auth!.userRoles[0], "read", "user")) {
       next();
     } else {
-      return res.status(403).json({ message: "dans le cul lulu" });
+      return res.status(400).json({ message: noAccess });
     }
   },
 

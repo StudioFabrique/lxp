@@ -12,6 +12,7 @@ import {
   lastnames,
 } from "./utils/fixtures/data/data";
 import Role from "./utils/interfaces/db/role";
+import Permission from "./utils/interfaces/db/permission";
 dotenv.config();
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/lxp";
@@ -137,11 +138,37 @@ async function createManStudents() {
 }
 
 async function createRoles() {
-  const roles = new [
+  const roles = [
     { role: "admin", label: "admin" },
     { role: "teacher", label: "teacher" },
     { role: "student", label: "student" },
-  ]();
+  ];
+  const dbRoles = Array<any>();
+  roles.forEach((role) => {
+    dbRoles.push(new Role(role));
+  });
+  await Role.bulkSave(dbRoles);
+}
+
+async function createPermissions() {
+  const dbPermissions = Array<any>();
+  dbPermissions.push(
+    new Permission({
+      role: "admin",
+      resource: "user",
+      action: "read:any",
+      attributes: ["*"],
+    })
+  );
+  dbPermissions.push(
+    new Permission({
+      role: "teacher",
+      resource: "user",
+      action: "read:any",
+      attributes: ["*"],
+    })
+  );
+  await Permission.bulkSave(dbPermissions);
 }
 
 async function main() {
@@ -150,6 +177,8 @@ async function main() {
   await createManyAdmins();
   await createManyTeachers();
   await createManStudents();
+  await createRoles();
+  await createPermissions();
 }
 
 main();
