@@ -6,4 +6,8 @@ export default async function make(user: IUser) {
   if (userToFind) {
     return null;
   }
+
+  const createdUser = await User.create(user);
+
+  return { user };
 }
