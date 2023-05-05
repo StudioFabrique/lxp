@@ -7,8 +7,11 @@ import {
   creationSuccessfull,
 } from "../../utils/constantes";
 import make from "../../models/userTest/make";
+import { serverIssue } from "../../utils/constantes";
 
-export default async function MakeUser(req: Request, res: Response) {
+export default async function makeUser(req: Request, res: Response) {
+  console.log("la verification s'est passé sans problème");
+
   const checkValues = validationResult(req);
 
   if (!checkValues.isEmpty()) {
@@ -17,9 +20,15 @@ export default async function MakeUser(req: Request, res: Response) {
 
   const user: IUser = req.body;
 
-  make(user).then((response) =>
-    response != null
-      ? res.status(201).json({ message: creationSuccessfull })
-      : res.status(409).json({ message: alreadyExist })
-  );
+  try {
+    const response = await make(user);
+    if (response) {
+      return res.status(201).json({ message: creationSuccessfull });
+    }
+
+    res.status(409).json({ message: alreadyExist });
+    return;
+  } catch (e) {
+    res.status(500).json({ message: serverIssue + e });
+  }
 }

@@ -4,37 +4,35 @@ import useInput from "../../../hooks/use-input";
 import { regexMail, regexPassword } from "../../../utils/constantes";
 
 const UserAddForm: FC<{
-  onSubmit: (user: any) => void;
+  onSubmitForm: (user: any) => void;
   error: string;
   isLoading: boolean;
   /* user?: any */
 }> = (props) => {
-  const { value: email } = useInput((value: string) =>
-    regexMail.test(value.trim())
-  );
+  const { value: email } = useInput((value: string) => regexMail.test(value));
 
   const { value: password } = useInput((value: string) =>
-    regexPassword.test(value.trim())
+    regexPassword.test(value)
   );
 
   const { value: firstname } = useInput((value: string) =>
-    regexPassword.test(value.trim())
+    regexPassword.test(value)
   );
 
   const { value: lastname } = useInput((value: string) =>
-    regexPassword.test(value.trim())
+    regexPassword.test(value)
   );
 
   const { value: address } = useInput((value: string) =>
-    regexPassword.test(value.trim())
+    regexPassword.test(value)
   );
 
   const { value: postCode } = useInput((value: string) =>
-    regexPassword.test(value.trim())
+    regexPassword.test(value)
   );
 
   const { value: city } = useInput((value: string) =>
-    regexPassword.test(value.trim())
+    regexPassword.test(value)
   );
 
   //  test la validité du form via le custom hook useInput
@@ -44,7 +42,7 @@ const UserAddForm: FC<{
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (formIsValid) {
-      props.onSubmit({
+      props.onSubmitForm({
         email: email.value.trim(),
         password: password.value.trim(),
         firstname: firstname.value.trim(),
