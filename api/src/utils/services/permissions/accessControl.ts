@@ -1,9 +1,19 @@
 import { AccessControl } from "accesscontrol";
+import Permission from "../../interfaces/db/permission";
 
-let grantArray = [
-  { role: "admin", resource: "user", action: "read:any", attributes: ["*"] },
-];
+async function getPermissions() {
+  const grantArray = Array<any>();
+  const permissions = await Permission.find({});
+  for (let perm of permissions) {
+    grantArray.push({
+      role: perm.role,
+      action: perm.action,
+      resource: perm.resource,
+      attributes: perm.attributes,
+    });
+  }
 
-const ac = new AccessControl(grantArray);
+  return new AccessControl(grantArray);
+}
 
-export default ac;
+export default getPermissions;
