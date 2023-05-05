@@ -3,6 +3,7 @@ import useInput from "../../hooks/use-input";
 import { regexMail, regexPassword } from "../../utils/constantes";
 import PasswordVisible from "../UI/password-visible/password-visible";
 import { Link } from "react-router-dom";
+import { LoadingButton } from "../UI/loading-button/loading-button.component";
 
 const LoginForm: FC<{
   onSubmit: (email: string, password: string) => void;
@@ -45,18 +46,6 @@ const LoginForm: FC<{
   const loginErrorClass =
     props.error.length > 0 ? "visible text-xs text-error" : "invisible text-xs";
 
-  //  définit le bouton à afficher en fonction du statut de la requête de connexion
-  const isLoadingButtonComponent =
-    props.isLoading && props.error.length === 0 ? (
-      <button className="btn loading normal-case bg-pink-900 p-3 rounded-md pr-6 pl-6 text-white text-[8pt]">
-        Connexion en cours
-      </button>
-    ) : (
-      <button className="btn normal-case bg-pink-900 p-3 rounded-md pr-6 pl-6 text-white text-[8pt]">
-        Je me connecte
-      </button>
-    );
-
   return (
     <form className="w-[70%] flex flex-col gap-y-4" onSubmit={submitHandler}>
       <p className="text-[14pt] font-bold">Se connecter</p>
@@ -94,7 +83,12 @@ const LoginForm: FC<{
         <Link to="#" className="ml-2 text-[8pt]">
           Mot de passe oublié?
         </Link>
-        {isLoadingButtonComponent}
+        <LoadingButton
+          isLoading={props.isLoading}
+          error={props.error}
+          label="Connexion"
+          loadingLabel="Connexion en cours..."
+        />
       </div>
     </form>
   );

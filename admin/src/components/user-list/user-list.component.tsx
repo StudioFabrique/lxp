@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import ReactTable from "../react-table/react-table";
+import ReactTable from "../react-table/react-table.component";
 import toTitleCase from "../../utils/toTitleCase";
 import User from "../../utils/interfaces/user";
 import { Link } from "react-router-dom";
