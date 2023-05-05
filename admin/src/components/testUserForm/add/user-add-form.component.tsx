@@ -1,38 +1,47 @@
 import { FC, FormEvent } from "react";
-import { Add } from "./buttons";
+import { LoadingButton } from "../../UI/loading-button/loading-button.component";
 import useInput from "../../../hooks/use-input";
 import { regexMail, regexPassword } from "../../../utils/constantes";
 
 const UserAddForm: FC<{
+  user?: any;
   onSubmitForm: (user: any) => void;
   error: string;
   isLoading: boolean;
-  /* user?: any */
 }> = (props) => {
-  const { value: email } = useInput((value: string) => regexMail.test(value));
-
-  const { value: password } = useInput((value: string) =>
-    regexPassword.test(value)
+  const { value: email } = useInput(
+    (value: string) => regexMail.test(value),
+    props.user?.email ?? ""
   );
 
-  const { value: firstname } = useInput((value: string) =>
-    regexPassword.test(value)
+  const { value: password } = useInput(
+    (value: string) => regexPassword.test(value),
+    props.user?.password ?? ""
   );
 
-  const { value: lastname } = useInput((value: string) =>
-    regexPassword.test(value)
+  const { value: firstname } = useInput(
+    (value: string) => regexPassword.test(value),
+    props.user?.firstname ?? ""
   );
 
-  const { value: address } = useInput((value: string) =>
-    regexPassword.test(value)
+  const { value: lastname } = useInput(
+    (value: string) => regexPassword.test(value),
+    props.user?.lastname ?? ""
   );
 
-  const { value: postCode } = useInput((value: string) =>
-    regexPassword.test(value)
+  const { value: address } = useInput(
+    (value: string) => regexPassword.test(value),
+    props.user?.address ?? ""
   );
 
-  const { value: city } = useInput((value: string) =>
-    regexPassword.test(value)
+  const { value: postCode } = useInput(
+    (value: string) => regexPassword.test(value),
+    props.user?.postCode ?? ""
+  );
+
+  const { value: city } = useInput(
+    (value: string) => regexPassword.test(value),
+    props.user?.city ?? ""
   );
 
   //  test la validité du form via le custom hook useInput
@@ -58,22 +67,23 @@ const UserAddForm: FC<{
     <form
       className="flex flex-col items-center gap-y-6"
       onSubmit={handleSubmit}
+      autoComplete="off"
     >
       <label>Email :</label>
       <input
-        name="email"
         type="text"
         onChange={email.valueChangeHandler}
         onBlur={email.valueBlurHandler}
-        value={email.value}
+        defaultValue={email.value}
+        autoComplete="off"
       />
       <label>Mot de passe :</label>
       <input
-        name="password"
         type="password"
         onChange={password.valueChangeHandler}
         onBlur={email.valueBlurHandler}
-        value={password.value}
+        defaultValue={password.value}
+        autoComplete="off"
       />
       <label>Prénom :</label>
       <input
@@ -81,7 +91,7 @@ const UserAddForm: FC<{
         type="text"
         onChange={firstname.valueChangeHandler}
         onBlur={email.valueBlurHandler}
-        value={firstname.value}
+        defaultValue={firstname.value}
       />
       <label>Nom :</label>
       <input
@@ -89,7 +99,7 @@ const UserAddForm: FC<{
         type="text"
         onChange={lastname.valueChangeHandler}
         onBlur={email.valueBlurHandler}
-        value={lastname.value}
+        defaultValue={lastname.value}
       />
       <label>Adresse :</label>
       <input
@@ -97,7 +107,7 @@ const UserAddForm: FC<{
         type="text"
         onChange={address.valueChangeHandler}
         onBlur={email.valueBlurHandler}
-        value={address.value}
+        defaultValue={address.value}
       />
       <label>Code Postal :</label>
       <input
@@ -105,7 +115,7 @@ const UserAddForm: FC<{
         type="text"
         onChange={postCode.valueChangeHandler}
         onBlur={email.valueBlurHandler}
-        value={postCode.value}
+        defaultValue={postCode.value}
       />
       <label>Ville</label>
       <input
@@ -113,10 +123,15 @@ const UserAddForm: FC<{
         type="text"
         onChange={city.valueChangeHandler}
         onBlur={email.valueBlurHandler}
-        value={city.value}
+        defaultValue={city.value}
       />
       <p>{props.error}</p>
-      <Add isLoading={props.isLoading} />
+      <LoadingButton
+        isLoading={props.isLoading}
+        error={props.error}
+        label="Enregistrer"
+        loadingLabel="Enregistrement en cours"
+      />
     </form>
   );
 };

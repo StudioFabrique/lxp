@@ -5,11 +5,6 @@ type Action = {
   type: string;
 };
 
-const initialInputState = {
-  value: "",
-  isTouched: false,
-};
-
 const inputStateReducer = (state: any, action: Action) => {
   switch (action.type) {
     case "INPUT":
@@ -23,11 +18,14 @@ const inputStateReducer = (state: any, action: Action) => {
   }
 };
 
-const useInput = (validateValue: (value: string) => boolean) => {
-  const [inputState, dispatch] = useReducer(
-    inputStateReducer,
-    initialInputState
-  );
+const useInput = (
+  validateValue: (value: string) => boolean,
+  initialValue: string = ""
+) => {
+  const [inputState, dispatch] = useReducer(inputStateReducer, {
+    value: initialValue,
+    isTouched: false,
+  });
 
   const valueIsValid = validateValue(inputState!.value);
   const hasError = !valueIsValid && inputState!.isTouched;
@@ -50,10 +48,6 @@ const useInput = (validateValue: (value: string) => boolean) => {
     dispatch({ type: "RESET", value: inputState!.value });
   };
 
-  const setValue = (data: string) => {
-    dispatch({ type: "INPUT", value: data });
-  };
-
   return {
     value: {
       value: inputState!.value,
@@ -63,7 +57,6 @@ const useInput = (validateValue: (value: string) => boolean) => {
       valueBlurHandler,
       reset,
       textAreaChangeHandler,
-      setValue,
     },
   };
 };
