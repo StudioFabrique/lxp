@@ -2,7 +2,6 @@ import express, { Response } from "express";
 
 import httpGetAllUsers from "../../controllers/user/admin-teacher/httpGetAllUsers";
 import { param, query } from "express-validator";
-import ac from "../../utils/services/permissions/accessControl";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import isUser from "../../middleware/is-user";
 import hasPermission from "../../middleware/hasPermission";
