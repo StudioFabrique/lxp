@@ -8,17 +8,17 @@ import {
 } from "../../utils/constantes";
 import make from "../../models/userTest/make";
 import { serverIssue } from "../../utils/constantes";
+import bcrypt from "bcrypt";
 
 export default async function makeUser(req: Request, res: Response) {
-  console.log("la verification s'est passé sans problème");
+  const user: IUser = req.body;
 
-  const checkValues = validationResult(req);
-
-  if (!checkValues.isEmpty()) {
+  if (!user.password) {
     return res.status(400).json({ message: badQuery });
   }
-
-  const user: IUser = req.body;
+  const psw = await bcrypt.hash(user.password, 10);
+  user.password = psw;
+  user.roles = ["admin"];
 
   try {
     const response = await make(user);
