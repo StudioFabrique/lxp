@@ -15,7 +15,6 @@ function isUser(req: CustomRequest, res: Response, next: NextFunction) {
       data.userRoles.includes("admin")
     ) {
       req.auth = { userId: data.userId, userRoles: data.userRoles };
-      console.log("coucou je check le token:", req.auth);
       next();
     } else {
       return res

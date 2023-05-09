@@ -108,8 +108,6 @@ const ContextProvider: FC<Props> = (props) => {
   };
 
   const initTheme = () => {
-    console.log("coucou theme");
-
     const lightTheme = localStorage.getItem("lightTheme");
     const darkTheme = localStorage.getItem("darkTheme");
 

@@ -7,7 +7,6 @@ import { useLocation } from "react-router-dom";
 const Login = () => {
   const { isLoading, error, login } = useContext(Context);
   const location = useLocation();
-  console.log({ location });
 
   const handleSubmit = (email: string, password: string) => {
     login(

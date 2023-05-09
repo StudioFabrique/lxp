@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 import usePagination from "../../hooks/use-pagination";
-import toTitleCase from "../../utils/toTitleCase";
 import Pagination from "../UI/pagination/pagination";
 import Tabs from "../UI/tabs/tabs";
-import { Link } from "react-router-dom";
+import UserItem from "./user-item.component";
+import RoleSelect from "./roles-select";
+import { Context } from "../../store/context.store";
 
 const roles = ["admin", "teacher", "student"];
 
@@ -17,6 +18,7 @@ const UserList = () => {
   const { sendRequest } = useHttp();
   const { page, perPage, totalPages, setTotalPages, initPagination, setPage } =
     usePagination();
+  const { user } = useContext(Context);
 
   const handleSorting = (column: string) => {
     if (column !== stype) {
@@ -55,8 +57,6 @@ const UserList = () => {
     );
   }, [sendRequest, page, perPage, setTotalPages, role, stype, sdir]);
 
-  console.log("allchecked", allChecked);
-
   const handleCheckRow = (id: string) => {
     setUserList((prevUserList: any) =>
       prevUserList.map((item: any) =>
@@ -66,8 +66,6 @@ const UserList = () => {
   };
 
   const handleAllChecked = () => {
-    console.log(allChecked);
-
     setAllChecked((prevAllChecked) => {
       return !prevAllChecked;
     });
@@ -79,11 +77,41 @@ const UserList = () => {
     );
   };
 
+  const handleRolesChange = (newRoles: Array<string>, userId: string) => {
+    console.log("updating roles");
+
+    const updatedUserList = userList.map((item: any) =>
+      item._id === userId
+        ? {
+            ...item,
+            roles: newRoles,
+          }
+        : item
+    );
+    setUserList(updatedUserList);
+  };
+
   const handleRoleSwitch = (role: string) => {
     setRole(role);
     initPagination();
     setAllChecked(false);
   };
+
+  const handleGroupRolesChange = (updatedRoles: Array<string>) => {
+    const updatedUserList = userList.map((item: any) => {
+      if (item.isSelected && !item.roles.includes(user!.roles[0])) {
+        return {
+          ...item,
+          roles: updatedRoles,
+        };
+      }
+      return item;
+    });
+
+    setUserList(updatedUserList);
+  };
+
+  console.log(userList);
 
   let content = (
     <table className="table w-full">
@@ -117,14 +145,6 @@ const UserList = () => {
           <th
             className="cursor-pointer"
             onClick={() => {
-              handleSorting("roles");
-            }}
-          >
-            Rôles
-          </th>
-          <th
-            className="cursor-pointer"
-            onClick={() => {
               handleSorting("createdAt");
             }}
           >
@@ -133,10 +153,10 @@ const UserList = () => {
           <th
             className="cursor-pointer"
             onClick={() => {
-              handleSorting("updatedAt");
+              handleSorting("roles");
             }}
           >
-            Mis à jour le
+            Rôles
           </th>
           <th>Actions</th>
         </tr>
@@ -144,29 +164,13 @@ const UserList = () => {
       <tbody>
         {userList.map((item: any) => (
           <tr className="hover:bg-primary/20" key={item._id}>
-            <td className="bg-transparent">
-              <input
-                className="my-auto checkbox"
-                type="checkbox"
-                checked={item.isSelected}
-                onChange={() => handleCheckRow(item._id)}
+            {
+              <UserItem
+                userItem={item}
+                onRowCheck={handleCheckRow}
+                onRolesChange={handleRolesChange}
               />
-            </td>
-            <td className="font-bold bg-transparent">{item.index}</td>
-            <td className="bg-transparent">{`${toTitleCase(
-              item.lastname
-            )} ${toTitleCase(item.firstname)}`}</td>
-            <td className="bg-transparent">{item.email}</td>
-            <td className="bg-transparent">{item.roles[0]}</td>
-            <td className="bg-transparent">{item.createdAt}</td>
-            <td className="bg-transparent">{item.updatedAt}</td>
-            <td className="bg-transparent font-bold text-xs">
-              <div className="flex gap-x-2">
-                <Link to="#">Détails</Link>
-                <Link to="#">Editer</Link>
-                <Link to="#">Supprimer</Link>
-              </div>
-            </td>
+            }
           </tr>
         ))}
       </tbody>
@@ -176,6 +180,9 @@ const UserList = () => {
   return (
     <div>
       <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />
+      <div>
+        <RoleSelect onGroupRolesChange={handleGroupRolesChange} />
+      </div>
       {content}
       <Pagination page={page} totalPages={totalPages} setPage={setPage} />
     </div>
