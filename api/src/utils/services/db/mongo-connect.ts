@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
+dotenv.config({ path: ".env.local", override: true });
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
 
