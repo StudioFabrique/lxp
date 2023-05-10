@@ -3,12 +3,13 @@ import toTitleCase from "../../utils/toTitleCase";
 import { Link } from "react-router-dom";
 import { Context } from "../../store/context.store";
 import RolesDropdown from "./roles-dropdown.component";
+import Role from "../../utils/interfaces/role";
 //import RolesDropdown from "./roles-dropdown.component";
 
 const UserItem: FC<{
   userItem: any;
   onRowCheck: (id: string) => void;
-  onRolesChange: (newRoles: Array<string>, userId: string) => void;
+  onRolesChange: (newRoles: Array<Role>, userId: string) => void;
 }> = ({ userItem, onRowCheck, onRolesChange }) => {
   const { user } = useContext(Context);
 
@@ -29,9 +30,7 @@ const UserItem: FC<{
       <td className="bg-transparent">{userItem.email}</td>
       <td className="bg-transparent">{userItem.createdAt}</td>
       <td className="bg-transparent">
-        {user &&
-        user.roles[0] === "admin" &&
-        !userItem.roles.includes("admin") ? (
+        {user && user.roles[0].rank < userItem.roles[0].rank ? (
           <RolesDropdown
             userId={userItem._id}
             userRoles={userItem.roles}
@@ -39,8 +38,8 @@ const UserItem: FC<{
           />
         ) : (
           <ul className="flex gap-x-2">
-            {userItem.roles.map((role: string) => (
-              <li key={role}>{role}</li>
+            {userItem.roles.map((role: Role) => (
+              <li key={role._id}>{role.label}</li>
             ))}
           </ul>
         )}

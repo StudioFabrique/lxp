@@ -1,27 +1,27 @@
 import { FC, useContext, useState } from "react";
 import { Context } from "../../store/context.store";
-
-let roles = ["admin", "teacher", "student"];
+import Role from "../../utils/interfaces/role";
+import { hasRole } from "../../utils/hasRole";
 
 const RolesDropdown: FC<{
   userId: string;
-  userRoles: Array<string>;
-  onRolesChange: (newRoles: Array<string>, userId: string) => void;
+  userRoles: Array<Role>;
+  onRolesChange: (newRoles: Array<Role>, userId: string) => void;
 }> = ({ userRoles, userId, onRolesChange }) => {
   const [showDropdown, setShowDropdown] = useState(false);
-  const [newRoles, setNewRoles] = useState<Array<string>>(userRoles);
-  const { user } = useContext(Context);
+  const [newRoles, setNewRoles] = useState<Array<Role>>(userRoles);
+  const { user, roles } = useContext(Context);
 
   const handleShowDropDown = () => {
-    if (!showDropdown) {
-      setNewRoles(userRoles);
-    }
+    setNewRoles(userRoles);
     setShowDropdown(true);
   };
 
-  const handleSetNewRoles = (newRole: string) => {
-    if (newRoles.includes(newRole)) {
-      const updatedNewRoles = newRoles.filter((role) => role !== newRole);
+  const handleSetNewRoles = (newRole: Role) => {
+    if (newRoles.find((role) => role._id === newRole._id)) {
+      const updatedNewRoles = newRoles.filter(
+        (role) => role._id !== newRole._id
+      );
       setNewRoles(updatedNewRoles);
     } else {
       setNewRoles((prevNewRoles) => [...prevNewRoles, newRole]);
@@ -29,33 +29,36 @@ const RolesDropdown: FC<{
   };
 
   const handleSubmitChange = () => {
-    console.log("hello");
     onRolesChange(newRoles, userId);
     setShowDropdown(false);
   };
 
   return (
-    <div className="dropdown dropdown-end">
-      <button className="flex gap-x-2" onClick={handleShowDropDown}>
+    <div className="dropdown dropdown-end flex gap-x-2 items-center">
+      <div className="flex gap-x-2">
         {userRoles.map((role) => (
-          <span key={role}>{role}</span>
+          <span key={role._id}>{role.label}</span>
         ))}
-      </button>
+      </div>
+      <button
+        className="bg-primary rounded-full w-4 h-4"
+        onMouseDown={handleShowDropDown}
+      ></button>
       {showDropdown ? (
         <ul
           tabIndex={0}
           className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
         >
           {roles.map((role) => (
-            <li className="bg-primary/20" key={role}>
+            <li className="bg-primary/20" key={role._id}>
               <div className="flex gap-x-4">
                 <input
                   className="checkbox checkbox-secondary"
                   type="checkbox"
-                  checked={newRoles.includes(role)}
+                  checked={hasRole(role.rank, newRoles)}
                   onChange={() => handleSetNewRoles(role)}
                 />
-                <p className="font-bold">{role}</p>
+                <p className="font-bold">{role.label}</p>
               </div>
             </li>
           ))}

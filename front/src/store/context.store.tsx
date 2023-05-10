@@ -1,10 +1,11 @@
 import axios from "axios";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 
 import { themes } from "../config/themes";
 import { BASE_URL } from "../config/urls";
 import useHttp from "../hooks/use-http";
 import User from "../utils/interfaces/user";
+import Role from "../utils/interfaces/role";
 
 type ContextType = {
   theme: string;
@@ -17,6 +18,8 @@ type ContextType = {
   isLoading: boolean;
   handshake: () => void;
   user: User | null;
+  roles: Array<Role>;
+  fetchRoles: () => void;
 };
 
 type Props = { children: React.ReactNode };
@@ -32,6 +35,8 @@ export const Context = React.createContext<ContextType>({
   isLoading: false,
   handshake: () => {},
   user: null,
+  roles: Array<Role>(),
+  fetchRoles: () => {},
 });
 
 const ContextProvider: FC<Props> = (props) => {
@@ -40,7 +45,8 @@ const ContextProvider: FC<Props> = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const { axiosInstance } = useHttp();
+  const { axiosInstance, sendRequest } = useHttp();
+  const [roles, setRoles] = useState<Array<Role>>([]);
 
   useEffect(() => {
     document
@@ -138,6 +144,18 @@ const ContextProvider: FC<Props> = (props) => {
     }
   };
 
+  const fetchRoles = useCallback(() => {
+    const applyData = (data: Array<Role>) => {
+      setRoles(data);
+    };
+    sendRequest(
+      {
+        path: "/auth/roles",
+      },
+      applyData
+    );
+  }, [sendRequest]);
+
   const contextValue = {
     theme,
     initTheme,
@@ -149,6 +167,8 @@ const ContextProvider: FC<Props> = (props) => {
     isLoading,
     handshake,
     user,
+    roles,
+    fetchRoles,
   };
 
   return (
