@@ -1,4 +1,4 @@
-import UserAddForm from "../../components/testUserForm/add/user-add-form.component";
+import UserAddForm from "../../components/UserForm/add/user-add-form.component";
 import useHttp from "../../hooks/use-http";
 import User from "../../utils/interfaces/user";
 
