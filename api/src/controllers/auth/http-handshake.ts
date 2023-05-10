@@ -5,6 +5,8 @@ import CustomRequest from "../../utils/interfaces/express/custom-request";
 import { noAccess, serverIssue } from "../../utils/constantes";
 import Student from "../../utils/interfaces/db/student/student.model";
 import { validationResult } from "express-validator";
+import { IRole } from "../../utils/interfaces/db/role";
+import { hasRole } from "../../utils/services/permissions/hasRole";
 
 async function httpHandshake(req: CustomRequest, res: Response) {
   console.log("coucou");
@@ -47,10 +49,10 @@ async function httpHandshake(req: CustomRequest, res: Response) {
 }
 
 /** on récupère les infos de l'utilisateur en fonction de son rôle */
-async function _getUser(userId: Object, roles: Array<string>) {
-  if (roles.includes("admin") || roles.includes("teacher")) {
+async function _getUser(userId: Object, roles: Array<IRole>) {
+  if (hasRole(1, roles) || hasRole(2, roles)) {
     return await User.findOne({ _id: userId });
-  } else if (roles.includes("student")) {
+  } else if (hasRole(3, roles)) {
     return await Student.findOne({ _id: userId });
   }
   return false;

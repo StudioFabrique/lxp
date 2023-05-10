@@ -11,7 +11,7 @@ const userRouter = express.Router();
 
 //  récupération de la liste des utilisateurs
 userRouter.get(
-  "/:role/:stype/:sdir",
+  "/:role/:roleId/:stype/:sdir",
 
   //  vérification du token et récupération du rôle de l'utilisateur
   isUser,
@@ -27,6 +27,7 @@ userRouter.get(
 
   //  assainissement des données entrantes
   param("role").trim().escape(),
+  param("roleId").trim().escape(),
   param("stype").trim().escape(),
   param("sdir").trim().escape(),
   query("page").trim().escape().isInt(),
