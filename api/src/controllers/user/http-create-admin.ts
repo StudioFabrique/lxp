@@ -1,16 +1,15 @@
 import { Request, Response } from "express";
-import { validationResult } from "express-validator";
 import { IUser } from "../../utils/interfaces/db/teacher-admin/teacher.model";
 import {
   alreadyExist,
   badQuery,
   creationSuccessfull,
 } from "../../utils/constantes";
-import make from "../../models/userTest/make";
+import createUser from "../../models/user/create-user";
 import { serverIssue } from "../../utils/constantes";
 import bcrypt from "bcrypt";
 
-export default async function makeUser(req: Request, res: Response) {
+export default async function httpCreateAdmin(req: Request, res: Response) {
   const user: IUser = req.body;
 
   if (!user.password) {
@@ -18,10 +17,10 @@ export default async function makeUser(req: Request, res: Response) {
   }
   const psw = await bcrypt.hash(user.password, 10);
   user.password = psw;
-  user.roles = ["admin"];
+  user.roles = { role: "admin", label: "admin", rank: 1 };
 
   try {
-    const response = await make(user);
+    const response = await createUser(user);
     if (response) {
       return res.status(201).json({ message: creationSuccessfull });
     }
