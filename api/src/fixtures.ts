@@ -38,6 +38,7 @@ function createMail(firstname: string, lastname: string, i: number) {
 }
 
 async function createUser() {
+  let role = await Role.findOne({ role: "admin" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const newUser = new User({
     firstname: "jacques",
@@ -47,10 +48,11 @@ async function createUser() {
     city: "pau",
     email: "toto@toto.fr",
     password: hash,
-    roles: ["teacher"],
+    roles: [new Object(role!._id)],
   });
   await newUser.save();
 
+  role = await Role.findOne({ role: "student" });
   const newStudent = new Student({
     firstname: "jacqueline",
     lastname: "dupond",
@@ -59,12 +61,13 @@ async function createUser() {
     city: "pau",
     email: "test@toto.fr",
     password: hash,
-    roles: ["student"],
+    roles: [new Object(role!._id)],
   });
   await newStudent.save();
 }
 
 async function createManyAdmins() {
+  const role = await Role.findOne({ role: "admin" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
   for (let i = 0; i < 5; i++) {
@@ -80,7 +83,7 @@ async function createManyAdmins() {
       address: addresses[i],
       postCode,
       city: cityName,
-      roles: ["admin"],
+      roles: [new Object(role!._id)],
     });
     userList.push(user);
   }
@@ -88,6 +91,7 @@ async function createManyAdmins() {
 }
 
 async function createManyTeachers() {
+  const role = await Role.findOne({ role: "teacher" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
   for (let i = 5; i < 15; i++) {
@@ -105,7 +109,7 @@ async function createManyTeachers() {
       address: addresses[i],
       postCode,
       city: cityName,
-      roles: ["teacher"],
+      roles: [new Object(role!._id)],
     });
     userList.push(user);
   }
@@ -113,6 +117,7 @@ async function createManyTeachers() {
 }
 
 async function createManStudents() {
+  const role = await Role.findOne({ role: "student" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
   for (let i = 0; i < 100; i++) {
@@ -130,7 +135,7 @@ async function createManStudents() {
       address: addresses[i] || addresses[i - 50],
       postCode,
       city: cityName,
-      roles: ["student"],
+      roles: [new Object(role!._id)],
     });
     userList.push(user);
   }
@@ -139,9 +144,9 @@ async function createManStudents() {
 
 async function createRoles() {
   const roles = [
-    { role: "admin", label: "admin" },
-    { role: "teacher", label: "teacher" },
-    { role: "student", label: "student" },
+    { role: "admin", label: "admin", rank: 1 },
+    { role: "teacher", label: "teacher", rank: 2 },
+    { role: "student", label: "student", rank: 3 },
   ];
   const dbRoles = Array<any>();
   roles.forEach((role) => {
@@ -173,12 +178,12 @@ async function createPermissions() {
 
 async function main() {
   await mongoConnect();
+  await createRoles();
+  await createPermissions();
   await createUser();
   await createManyAdmins();
   await createManyTeachers();
   await createManStudents();
-  await createRoles();
-  await createPermissions();
 }
 
 main();

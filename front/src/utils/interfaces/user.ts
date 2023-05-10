@@ -1,5 +1,7 @@
 //  admin and teacher
 
+import Role from "./role";
+
 export default interface User {
   _id: string;
   email: string;
@@ -9,7 +11,7 @@ export default interface User {
   address?: string;
   postCode?: string;
   city?: string;
-  roles: Array<string>;
+  roles: Array<Role>;
   avatar?: string;
   createdAt: Date;
   updatedAt: Date;
