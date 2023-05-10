@@ -14,8 +14,6 @@ function refreshTokens(req: CustomRequest, res: Response, next: NextFunction) {
       console.log("token expiré!");
       return res.status(403).json({ message: noAccess });
     } else {
-      console.log("hello refresh", data);
-
       const accessToken = setTokens(data.userId, data.userRoles);
       const refreshToken = setTokens(data.userId, data.userRoles);
       return res
