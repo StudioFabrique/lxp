@@ -1,6 +1,6 @@
-import Student from "../../../utils/interfaces/db/student/student.model";
-import User from "../../../utils/interfaces/db/teacher-admin/teacher.model";
-import { getPagination } from "../../../utils/services/getPagination";
+import Student from "../../utils/interfaces/db/student/student.model";
+import User from "../../utils/interfaces/db/teacher-admin/teacher.model";
+import { getPagination } from "../../utils/services/getPagination";
 
 async function getAllUsers(
   page: number,

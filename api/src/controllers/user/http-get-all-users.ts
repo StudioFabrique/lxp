@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { badQuery, serverIssue } from "../../../utils/constantes";
-import getAllUsers from "../../../models/user/admin-teacher/getAllUsers";
+import { badQuery, serverIssue } from "../../utils/constantes";
+import getAllUsers from "../../models/user/get-all-users";
 import { validationResult } from "express-validator";
-import { roles } from "../../../utils/services/roles";
+import { roles } from "../../utils/services/roles";
 
 async function httpGetAllUsers(req: Request, res: Response) {
   const { role, roleId, stype, sdir } = req.params;

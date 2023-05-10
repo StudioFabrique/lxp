@@ -6,7 +6,7 @@ import refreshTokens from "../../middleware/refresh-tokens";
 import httpLogin from "../../controllers/auth/http-login";
 import httpHandshake from "../../controllers/auth/http-handshake";
 import checkToken from "../../middleware/check-token";
-import httpGetRoles from "../../controllers/auth/httpGetRoles";
+import httpGetRoles from "../../controllers/auth/http-get-roles";
 
 const authRouter = express.Router();
 
