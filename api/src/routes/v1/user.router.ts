@@ -1,11 +1,12 @@
 import express, { Response } from "express";
 
-import httpGetAllUsers from "../../controllers/user/admin-teacher/httpGetAllUsers";
+import httpGetAllUsers from "../../controllers/user/http-get-all-users";
 import { param, query } from "express-validator";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import isUser from "../../middleware/is-user";
 import hasPermission from "../../middleware/hasPermission";
 import { noAccess } from "../../utils/constantes";
+import httpUpdateStudentRoles from "../../controllers/user/http--update-student-roles";
 
 const userRouter = express.Router();
 
@@ -35,5 +36,7 @@ userRouter.get(
 
   httpGetAllUsers
 );
+
+userRouter.put("/student-roles", httpUpdateStudentRoles);
 
 export default userRouter;

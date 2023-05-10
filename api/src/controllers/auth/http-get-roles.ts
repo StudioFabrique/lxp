@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { serverIssue } from "../../utils/constantes";
-import getRoles from "../../models/auth/getRoles";
+import getRoles from "../../models/auth/get-roles";
 
 async function httpGetRoles(req: Request, res: Response) {
   try {

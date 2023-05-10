@@ -108,9 +108,9 @@ const UserList = () => {
   };
 
   const handleGroupRolesChange = (updatedRoles: Array<Role>) => {
+    let rank = true;
     const updatedUserList = userList.map((item: any) => {
       if (item.isSelected && !hasRole(user!.roles[0].rank, item.roles)) {
-        let rank = true;
         updatedRoles.forEach((updatedRole: Role) => {
           if (updatedRole.rank <= user!.roles[0].rank) {
             rank = false;
@@ -127,6 +127,18 @@ const UserList = () => {
     });
 
     setUserList(updatedUserList);
+
+    const applyData = (data: any) => {
+      console.log(data);
+    };
+    sendRequest(
+      {
+        path: "/user/student-roles",
+        method: "put",
+        body: userList,
+      },
+      applyData
+    );
   };
 
   let content = (
