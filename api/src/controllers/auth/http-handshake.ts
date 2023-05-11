@@ -8,8 +8,6 @@ import { IRole } from "../../utils/interfaces/db/role";
 import { hasRole } from "../../utils/services/permissions/hasRole";
 
 async function httpHandshake(req: CustomRequest, res: Response) {
-  console.log("coucou");
-
   if (req.auth && req.auth.userId !== null) {
     try {
       const user = await _getUser(
@@ -17,11 +15,7 @@ async function httpHandshake(req: CustomRequest, res: Response) {
         req.auth.userRoles
       );
 
-      console.log("bonjour user", user);
-
       if (user && (hasRole(1, user.roles) || hasRole(2, user.roles))) {
-        console.log("role ok");
-
         return res.status(200).json({
           id: user._id.toString(),
           email: user.email,
