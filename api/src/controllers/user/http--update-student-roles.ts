@@ -3,9 +3,10 @@ import { serverIssue } from "../../utils/constantes";
 import updateStudentRoles from "../../models/user/update-student-roles";
 
 async function httpUpdateStudentRoles(req: Request, res: Response) {
-  const users = req.body;
+  const newRoles = req.body;
+  const studentId = req.params.studentId;
   try {
-    const updatedStudents = await updateStudentRoles(users);
+    const updatedStudents = await updateStudentRoles(studentId, newRoles);
     console.log(updatedStudents);
 
     return res

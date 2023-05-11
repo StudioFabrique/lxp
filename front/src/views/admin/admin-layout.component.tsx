@@ -12,8 +12,10 @@ const AdminLayout = () => {
     useContext(Context);
 
   useEffect(() => {
-    fetchRoles();
-  }, [fetchRoles]);
+    if (isLoggedIn) {
+      fetchRoles();
+    }
+  }, [fetchRoles, isLoggedIn]);
 
   useEffect(() => {
     initTheme();

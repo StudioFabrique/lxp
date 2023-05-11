@@ -9,7 +9,7 @@ const RoleSelect: FC<{
   const [newRoles, setNewRoles] = useState<Array<Role>>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const { user, roles } = useContext(Context);
+  const { roles } = useContext(Context);
 
   const handleSetNewRoles = (newRole: Role) => {
     if (newRoles.find((role) => role._id === newRole._id)) {
@@ -37,7 +37,9 @@ const RoleSelect: FC<{
 
   return (
     <div className="flex gap-x-4">
-      <p>Changer les rôles des éléments sélectionnés</p>
+      <p className="text-xs flex items-center">
+        Changer les rôles des éléments sélectionnés
+      </p>
       <div className="dropdown dropdown-end">
         <button
           className="btn btn-xs flex gap-x-2"

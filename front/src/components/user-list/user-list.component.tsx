@@ -1,8 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 import usePagination from "../../hooks/use-pagination";
 import Pagination from "../UI/pagination/pagination";
-import Tabs from "../UI/tabs/tabs.component";
 import UserItem from "./user-item.component";
 import RoleSelect from "./roles-select";
 import { Context } from "../../store/context.store";
@@ -10,23 +9,15 @@ import Role from "../../utils/interfaces/role";
 import { sortArray } from "../../utils/sortArray";
 import { hasRole } from "../../utils/hasRole";
 
-const UserList = () => {
-  const { user, roles } = useContext(Context);
+const UserList: FC<{ role: Role }> = ({ role }) => {
+  const { user } = useContext(Context);
   const [userList, setUserList] = useState<any>([]);
   const [stype, setStype] = useState("lastname");
   const [sdir, setSdir] = useState(false);
-  const [role, setRole] = useState<Role | null>(null);
   const [allChecked, setAllChecked] = useState(false);
   const { sendRequest } = useHttp();
   const { page, perPage, totalPages, setTotalPages, initPagination, setPage } =
     usePagination();
-
-  useEffect(() => {
-    const firstRole = roles.find((role) => role.rank > user!.roles[0].rank);
-    if (firstRole) {
-      setRole(firstRole);
-    }
-  }, [roles, user]);
 
   const handleSorting = (column: string) => {
     if (column !== stype) {
@@ -88,8 +79,6 @@ const UserList = () => {
   };
 
   const handleRolesChange = (newRoles: Array<Role>, userId: string) => {
-    console.log(newRoles);
-
     const updatedUserList = userList.map((item: any) =>
       item._id === userId
         ? {
@@ -99,13 +88,24 @@ const UserList = () => {
         : item
     );
     setUserList(updatedUserList);
+
+    const applyData = (data: any) => {
+      console.log(data);
+    };
+    sendRequest(
+      {
+        path: `/user/${role.role === "admin" ? "user" : "student"}/${userId}`,
+        method: "put",
+        body: newRoles,
+      },
+      applyData
+    );
   };
 
-  const handleRoleSwitch = (role: Role) => {
-    setRole(role);
+  useEffect(() => {
     initPagination();
     setAllChecked(false);
-  };
+  }, [role, initPagination]);
 
   const handleGroupRolesChange = (updatedRoles: Array<Role>) => {
     let rank = true;
@@ -206,10 +206,7 @@ const UserList = () => {
   );
 
   return (
-    <div>
-      {role ? (
-        <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />
-      ) : null}
+    <div className="flex flex-col gap-y-4">
       <div>
         <RoleSelect onGroupRolesChange={handleGroupRolesChange} />
       </div>
