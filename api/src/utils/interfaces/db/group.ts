@@ -4,21 +4,26 @@ import { IUser } from "./teacher-admin/teacher.model";
 
 export interface IGroup {
   name: string;
-  teachers?: IUser;
+  teachers?: IUser[];
   users?: IStudent[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const groupShema: Schema = new Schema({
-  name: { type: String, required: true },
-  teachers: {
-    type: [Schema.Types.ObjectId],
-    ref: "User",
+const groupShema: Schema = new Schema(
+  {
+    name: { type: String, required: true },
+    teachers: {
+      type: [Schema.Types.ObjectId],
+      ref: "User",
+    },
+    users: {
+      type: [Schema.Types.ObjectId],
+      ref: "Student",
+    },
   },
-  users: {
-    type: [Schema.Types.ObjectId],
-    ref: "Student",
-  },
-});
+  { timestamps: true }
+);
 
 const Group = model<IGroup>("Group", groupShema);
 
