@@ -15,8 +15,10 @@ export default async function httpCreateUser(req: Request, res: Response) {
   if (!user.password) {
     return res.status(400).json({ message: badQuery });
   }
-  const psw = await bcrypt.hash(user.password, 10);
-  user.password = psw;
+
+  const salt = await bcrypt.genSalt(10);
+  const pswHash = await bcrypt.hash(user.password, salt);
+  user.password = pswHash;
   user.roles = { role: "user", label: "user", rank: 3 };
 
   try {
