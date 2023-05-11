@@ -38,6 +38,8 @@ function createMail(firstname: string, lastname: string, i: number) {
   return `${firstname}.${lastname}${i}@${domains[getRandomNumber(0, 9)]}`;
 }
 
+let robotIndex = 1;
+
 async function createUser() {
   let role = await Role.findOne({ role: "admin" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
@@ -50,8 +52,11 @@ async function createUser() {
     email: "toto@toto.fr",
     password: hash,
     roles: [new Object(role!._id)],
+    isActive: true,
+    avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
   await newUser.save();
+  robotIndex++;
 
   let role2 = await Role.findOne({ role: "teacher" });
   const newTeacher = new User({
@@ -62,9 +67,12 @@ async function createUser() {
     city: "pau",
     email: "titi@toto.fr",
     password: hash,
-    roles: [new Object(role!._id), new Object(role2!._id)],
+    roles: [/* new Object(role!._id) */ new Object(role2!._id)],
+    isActive: true,
+    avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
   await newTeacher.save();
+  robotIndex++;
 
   role = await Role.findOne({ role: "student" });
   const newStudent = new Student({
@@ -76,8 +84,11 @@ async function createUser() {
     email: "test@toto.fr",
     password: hash,
     roles: [new Object(role!._id)],
+    isActive: true,
+    avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
   await newStudent.save();
+  robotIndex++;
 }
 
 async function createManyAdmins() {
@@ -90,16 +101,19 @@ async function createManyAdmins() {
     const postCode = city.postcode;
     const cityName = city.name;
     const user = new User({
-      firstname,
-      lastname: lastnames[i],
+      firstname: firstname.toLowerCase(),
+      lastname: lastnames[i].toLowerCase(),
       email: createMail(firstname, lastnames[i], i),
       password: hash,
       address: addresses[i],
       postCode,
       city: cityName,
       roles: [new Object(role!._id)],
+      isActive: true,
+      avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });
     userList.push(user);
+    robotIndex++;
   }
   await User.bulkSave(userList);
 }
@@ -111,21 +125,22 @@ async function createManyTeachers() {
   for (let i = 5; i < 15; i++) {
     const firstname = firstnames[getRandomNumber(0, 14)];
     const city = cities[getRandomNumber(0, 9)];
-    console.log(city);
-
     const postCode = city.postcode;
     const cityName = city.name;
     const user = new User({
-      firstname,
-      lastname: lastnames[i],
+      firstname: firstname.toLowerCase(),
+      lastname: lastnames[i].toLowerCase(),
       email: createMail(firstname, lastnames[i], i),
       password: hash,
       address: addresses[i],
       postCode,
       city: cityName,
       roles: [new Object(role!._id)],
+      isActive: true,
+      avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });
     userList.push(user);
+    robotIndex++;
   }
   await User.bulkSave(userList);
 }
@@ -135,23 +150,24 @@ async function createManStudents() {
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
   for (let i = 0; i < 100; i++) {
-    console.log(lastnames[i]);
-
     const firstname = firstnames[getRandomNumber(0, 14)];
     const city = cities[getRandomNumber(0, 9)];
     const postCode = city.postcode;
     const cityName = city.name;
     const user = new User({
-      firstname,
-      lastname: lastnames[i],
+      firstname: firstname.toLowerCase(),
+      lastname: lastnames[i].toLowerCase(),
       email: createMail(firstname, lastnames[i], i),
       password: hash,
       address: addresses[i] || addresses[i - 50],
       postCode,
       city: cityName,
       roles: [new Object(role!._id)],
+      isActive: true,
+      avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });
     userList.push(user);
+    robotIndex++;
   }
   await Student.bulkSave(userList);
 }
@@ -208,3 +224,18 @@ async function main() {
 }
 
 main();
+
+/* async function createPermissions() {
+  const permissions = Array<any>();
+  const dbPermissions = Array<any>();
+
+  for (const [key, value] of Object.entries(permDefs)) {
+    for (const [itemKey, itemValue] of Object.entries(value)) {
+      permissions.push({ role: key, action: itemKey, subject: itemValue });
+    }
+  }
+  permissions.forEach((permissions) =>
+    dbPermissions.push(new Permission(permissions))
+  );
+  await Permission.bulkSave(dbPermissions);
+} */

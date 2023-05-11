@@ -154,6 +154,7 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
             />
           </th>
           <th></th>
+          <th>Avatar</th>
           <th
             className="cursor-pointer"
             onClick={() => {
@@ -161,6 +162,14 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
             }}
           >
             Nom
+          </th>
+          <th
+            className="cursor-pointer"
+            onClick={() => {
+              handleSorting("firstname");
+            }}
+          >
+            Prénom
           </th>
           <th
             className="cursor-pointer"
@@ -173,18 +182,18 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
           <th
             className="cursor-pointer"
             onClick={() => {
-              handleSorting("createdAt");
+              handleSorting("formation");
             }}
           >
-            Créé le
+            Formation
           </th>
           <th
             className="cursor-pointer"
             onClick={() => {
-              handleSorting("roles");
+              handleSorting("isActive");
             }}
           >
-            Rôles
+            Status
           </th>
           <th>Actions</th>
         </tr>

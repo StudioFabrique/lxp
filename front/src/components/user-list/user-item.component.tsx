@@ -1,17 +1,26 @@
-import { FC, useContext } from "react";
+import { FC, useEffect, useState } from "react";
 import toTitleCase from "../../utils/toTitleCase";
 import { Link } from "react-router-dom";
-import { Context } from "../../store/context.store";
-import RolesDropdown from "./roles-dropdown.component";
 import Role from "../../utils/interfaces/role";
-//import RolesDropdown from "./roles-dropdown.component";
+import { hasPermission } from "../../utils/hasPermission";
 
 const UserItem: FC<{
   userItem: any;
   onRowCheck: (id: string) => void;
   onRolesChange: (newRoles: Array<Role>, userId: string) => void;
 }> = ({ userItem, onRowCheck, onRolesChange }) => {
-  const { user } = useContext(Context);
+  const [canSeeDetails, setCanSeeDetails] = useState(false);
+  const [canEdit, setCanEdit] = useState(false);
+  const [canDelete, setCanDelete] = useState(false);
+
+  useEffect(() => {
+    const setActions = async () => {
+      setCanSeeDetails(await hasPermission("read", userItem.roles[0].role));
+      setCanEdit(await hasPermission("write", userItem.roles[0].role));
+      setCanDelete(await hasPermission("delete", userItem.roles[0].role));
+    };
+    setActions();
+  }, [userItem.roles]);
 
   return (
     <>
@@ -24,31 +33,50 @@ const UserItem: FC<{
         />
       </td>
       <td className="font-bold bg-transparent">{userItem.index}</td>
-      <td className="bg-transparent">{`${toTitleCase(
-        userItem.lastname
-      )} ${toTitleCase(userItem.firstname)}`}</td>
+      <td>
+        <div className="avatar">
+          <div className="w-6 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+            <img
+              src={userItem.avatar}
+              alt={`avatar de ${userItem.firstname} ${userItem.lastname}`}
+            />
+          </div>
+        </div>
+      </td>
+      <td className="bg-transparent">{toTitleCase(userItem.lastname)}</td>
+      <td className="bg-transparent">{toTitleCase(userItem.firstname)}</td>
       <td className="bg-transparent">{userItem.email}</td>
-      <td className="bg-transparent">{userItem.createdAt}</td>
+      <td
+        className={`bg-transparent ${userItem.formation ? "" : "text-center"}`}
+      >
+        {userItem.formation || "-"}
+      </td>
       <td className="bg-transparent">
-        {user && user.roles[0].rank < userItem.roles[0].rank ? (
-          <RolesDropdown
-            userId={userItem._id}
-            userRoles={userItem.roles}
-            onRolesChange={onRolesChange}
-          />
-        ) : (
-          <ul className="flex gap-x-2">
-            {userItem.roles.map((role: Role) => (
-              <li key={role._id}>{role.label}</li>
-            ))}
-          </ul>
-        )}
+        <div
+          className={
+            userItem.isActive ? "badge badge-success" : "badge badge-error"
+          }
+        >
+          {userItem.isActive ? "Actif" : "Inactif"}
+        </div>
       </td>
       <td className="bg-transparent font-bold text-xs">
         <div className="flex gap-x-2">
-          <Link to="#">Détails</Link>
-          <Link to="#">Editer</Link>
-          <Link to="#">Supprimer</Link>
+          {canSeeDetails ? (
+            <Link to="#">Détails</Link>
+          ) : (
+            <p className="text-black/50">Détails</p>
+          )}
+          {canEdit ? (
+            <Link to="#">Editer</Link>
+          ) : (
+            <p className="text-black/50">Editer</p>
+          )}{" "}
+          {canDelete ? (
+            <Link to="#">Supprimer</Link>
+          ) : (
+            <p className="text-black/50">Supprimer</p>
+          )}
         </div>
       </td>
     </>

@@ -23,7 +23,7 @@ app
   .use(cookieParser())
   .use(morgan("combined"))
   .use(express.json())
-  .use(express.static(path.join(__dirname, "..", "public")))
+  .use(express.static(path.join(__dirname, "public")))
 
   .use("/v1", api)
   .use(({ res }: { res: Response }) => {

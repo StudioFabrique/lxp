@@ -13,6 +13,7 @@ export interface IStudent extends Document {
   avatar?: string;
   createdAt: Date;
   updatedAt: Date;
+  isActive: boolean;
 }
 
 const studentSchema: Schema = new Schema(
@@ -30,6 +31,7 @@ const studentSchema: Schema = new Schema(
       required: true,
     },
     avatar: { type: String, required: false },
+    isActive: { type: Boolean, required: true },
   },
   { timestamps: true }
 );
