@@ -1,11 +1,13 @@
-import express, { Response } from "express";
+import express, { NextFunction, Response } from "express";
 
-import httpGetAllUsers from "../../controllers/user/admin-teacher/httpGetAllUsers";
+import httpGetAllUsers from "../../controllers/user/http-get-all-users";
 import { param, query } from "express-validator";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import isUser from "../../middleware/is-user";
 import hasPermission from "../../middleware/hasPermission";
 import { noAccess } from "../../utils/constantes";
+import { userValidator } from "../../middleware/validators";
+import httpCreateUser from "../../controllers/user/http-create-user";
 
 const userRouter = express.Router();
 
@@ -17,7 +19,7 @@ userRouter.get(
   isUser,
 
   //  vérification des permissions
-  async (req: CustomRequest, res: Response, next) => {
+  async (req: CustomRequest, res: Response, next: NextFunction) => {
     if (await hasPermission(req.auth!.userRoles[0], "read", "user")) {
       next();
     } else {
@@ -32,8 +34,10 @@ userRouter.get(
   param("sdir").trim().escape(),
   query("page").trim().escape().isInt(),
   query("limit").trim().escape().isInt(),
-
+  // userValidator,
   httpGetAllUsers
 );
+
+userRouter.post("/", isUser, userValidator, httpCreateUser);
 
 export default userRouter;
