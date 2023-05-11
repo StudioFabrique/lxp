@@ -53,6 +53,19 @@ async function createUser() {
   });
   await newUser.save();
 
+  let role2 = await Role.findOne({ role: "teacher" });
+  const newTeacher = new User({
+    firstname: "bob",
+    lastname: "dupont",
+    address: "12 place royale",
+    postCode: "64000",
+    city: "pau",
+    email: "titi@toto.fr",
+    password: hash,
+    roles: [new Object(role!._id), new Object(role2!._id)],
+  });
+  await newTeacher.save();
+
   role = await Role.findOne({ role: "student" });
   const newStudent = new Student({
     firstname: "jacqueline",
@@ -146,8 +159,9 @@ async function createManStudents() {
 async function createRoles() {
   const roles = [
     { role: "admin", label: "admin", rank: 1 },
-    { role: "teacher", label: "teacher", rank: 2 },
-    { role: "student", label: "student", rank: 3 },
+    { role: "teacher", label: "formateur", rank: 2 },
+    { role: "student", label: "apprenant", rank: 3 },
+    { role: "coach", label: "mentor", rank: 3 },
   ];
   const dbRoles = Array<any>();
   roles.forEach((role) => {
@@ -177,8 +191,14 @@ async function createPermissions() {
   await Permission.bulkSave(dbPermissions);
 }
 
+async function dropDatabase() {
+  await mongoose.connection.dropDatabase();
+  console.log("Database dropped!");
+}
+
 async function main() {
   await mongoConnect();
+  await dropDatabase();
   await createRoles();
   await createPermissions();
   await createUser();
