@@ -4,6 +4,7 @@ import { IUser } from "./teacher-admin/teacher.model";
 
 export interface IGroup {
   name: string;
+  desc: string;
   teachers?: IUser[];
   users?: IStudent[];
   createdAt: Date;
