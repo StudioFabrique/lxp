@@ -28,7 +28,6 @@ async function getAllUsers(
       .limit(limit);
     const total = await Student.count({ roles: roleId });
 
-    const total = await Student.count();
     return { total, users };
   }
 }
