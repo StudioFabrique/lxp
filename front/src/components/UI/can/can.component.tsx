@@ -10,12 +10,9 @@ type Props = {
 const Can: React.FC<Props> = ({ children, action, subject }) => {
   const [render, setRender] = React.useState(false);
 
-  console.log({ action, subject });
-
   React.useEffect(() => {
     (async function () {
       const shouldRender = await casbinAuthorizer.can(action, subject);
-      console.log("should render", shouldRender);
       setRender(shouldRender);
     })();
   }, [action, subject]);

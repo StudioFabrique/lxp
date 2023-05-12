@@ -1,16 +1,16 @@
 import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
+import { badQuery, serverIssue } from "../../utils/constantes";
 import updateStudentRoles from "../../models/user/update-student-roles";
 
 async function httpUpdateStudentRoles(req: Request, res: Response) {
-  const newRoles = req.body;
-  const studentId = req.params.studentId;
   try {
-    const updatedStudents = await updateStudentRoles(studentId, newRoles);
-    console.log(updatedStudents);
-
+    const studentsToUpdate = req.body;
+    const updatedStudents = await updateStudentRoles(studentsToUpdate);
+    if (!updatedStudents) {
+      return res.status(400).json({ message: badQuery });
+    }
     return res
-      .status(200)
+      .status(201)
       .json({ message: "Roles des utilisateurs mis à jour avec succès." });
   } catch (err) {
     return res.status(500).json({ message: serverIssue + err });

@@ -34,7 +34,8 @@ const AdminLayout = () => {
 
   return (
     <>
-      {user && (hasRole(1, user!.roles) || hasRole(2, user!.roles)) ? (
+      {user &&
+      (hasRole("admin", user!.roles) || hasRole("teacher", user!.roles)) ? (
         <FadeWrapper>
           <div className="flex flex-1 h-screen">
             <Outlet />

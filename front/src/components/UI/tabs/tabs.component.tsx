@@ -1,7 +1,6 @@
-import { FC, useContext } from "react";
+import { FC } from "react";
 import toTitleCase from "../../../utils/toTitleCase";
 import Role from "../../../utils/interfaces/role";
-import { Context } from "../../../store/context.store";
 import Can from "../can/can.component";
 
 const Tabs: FC<{
@@ -9,10 +8,6 @@ const Tabs: FC<{
   roles: Array<Role>;
   onRoleSwitch: (role: Role) => void;
 }> = ({ role, roles, onRoleSwitch }) => {
-  const { user } = useContext(Context);
-
-  console.log(user!.roles);
-
   const handleTabClick = (newRole: Role) => {
     onRoleSwitch(newRole);
   };
@@ -21,7 +16,7 @@ const Tabs: FC<{
     return (
       <p
         className={
-          role.rank === item.rank
+          role.role === item.role
             ? "tab tab-lifted tab-active text-green-500 font-bold"
             : "tab tab-lifted text-blue-500 font-bold"
         }

@@ -67,7 +67,7 @@ async function createUser() {
     city: "pau",
     email: "titi@toto.fr",
     password: hash,
-    roles: [/* new Object(role!._id) */ new Object(role2!._id)],
+    roles: [new Object(role!._id), new Object(role2!._id)],
     isActive: true,
     avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
@@ -186,7 +186,7 @@ async function createRoles() {
   await Role.bulkSave(dbRoles);
 }
 
-async function createPermissions() {
+/* async function createPermissions() {
   const dbPermissions = Array<any>();
   dbPermissions.push(
     new Permission({
@@ -203,6 +203,36 @@ async function createPermissions() {
       action: "read:any",
       attributes: ["*"],
     })
+  );
+  await Permission.bulkSave(dbPermissions);
+} */
+
+const permDefs = {
+  admin: {
+    read: ["admin", "teacher", "student"],
+    write: ["teacher", "student"],
+    update: ["teacher", "student"],
+    delete: ["teacher", "student"],
+  },
+  teacher: {
+    read: ["teacher", "student"],
+    update: ["student"],
+    write: ["student"],
+    delete: ["student"],
+  },
+};
+
+async function createPermissions() {
+  const permissions = Array<any>();
+  const dbPermissions = Array<any>();
+
+  for (const [key, value] of Object.entries(permDefs)) {
+    for (const [itemKey, itemValue] of Object.entries(value)) {
+      permissions.push({ role: key, action: itemKey, subject: itemValue });
+    }
+  }
+  permissions.forEach((permissions) =>
+    dbPermissions.push(new Permission(permissions))
   );
   await Permission.bulkSave(dbPermissions);
 }
@@ -224,18 +254,3 @@ async function main() {
 }
 
 main();
-
-/* async function createPermissions() {
-  const permissions = Array<any>();
-  const dbPermissions = Array<any>();
-
-  for (const [key, value] of Object.entries(permDefs)) {
-    for (const [itemKey, itemValue] of Object.entries(value)) {
-      permissions.push({ role: key, action: itemKey, subject: itemValue });
-    }
-  }
-  permissions.forEach((permissions) =>
-    dbPermissions.push(new Permission(permissions))
-  );
-  await Permission.bulkSave(dbPermissions);
-} */

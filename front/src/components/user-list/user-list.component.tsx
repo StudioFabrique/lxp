@@ -1,16 +1,17 @@
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useCallback, useContext, useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 import usePagination from "../../hooks/use-pagination";
 import Pagination from "../UI/pagination/pagination";
 import UserItem from "./user-item.component";
 import RoleSelect from "./roles-select";
-import { Context } from "../../store/context.store";
 import Role from "../../utils/interfaces/role";
 import { sortArray } from "../../utils/sortArray";
-import { hasRole } from "../../utils/hasRole";
+import { hasPermission } from "../../utils/hasPermission";
+import { Context } from "../../store/context.store";
+import Can from "../UI/can/can.component";
+import Modal from "../UI/modal/modal";
 
 const UserList: FC<{ role: Role }> = ({ role }) => {
-  const { user } = useContext(Context);
   const [userList, setUserList] = useState<any>([]);
   const [stype, setStype] = useState("lastname");
   const [sdir, setSdir] = useState(false);
@@ -18,6 +19,10 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
   const { sendRequest } = useHttp();
   const { page, perPage, totalPages, setTotalPages, initPagination, setPage } =
     usePagination();
+  const { user } = useContext(Context);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
+  console.log(userList);
 
   const handleSorting = (column: string) => {
     if (column !== stype) {
@@ -31,7 +36,9 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
     initPagination();
   };
 
-  useEffect(() => {
+  const getUserList = useCallback(() => {
+    console.log("fetching users list");
+
     const applyData = (data: any) => {
       let index = (page - 1) * perPage + 1;
       data.users.forEach((item: any) => {
@@ -47,16 +54,22 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
       setAllChecked(false);
     };
     if (role) {
+      console.log("role", role.role);
+
       sendRequest(
         {
-          path: `/user/${role.role}/${role._id}/${stype}/${
-            sdir ? "desc" : "asc"
-          }?page=${page}&limit=${perPage}`,
+          path: `/user/${role.rank < 3 ? role.role : "student"}/${
+            role._id
+          }/${stype}/${sdir ? "desc" : "asc"}?page=${page}&limit=${perPage}`,
         },
         applyData
       );
     }
   }, [sendRequest, page, perPage, setTotalPages, role, stype, sdir]);
+
+  useEffect(() => {
+    getUserList();
+  }, [getUserList]);
 
   const handleCheckRow = (id: string) => {
     setUserList((prevUserList: any) =>
@@ -107,38 +120,51 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
     setAllChecked(false);
   }, [role, initPagination]);
 
+  const setErrorModal = () => {
+    setShowErrorModal((prevState) => !prevState);
+  };
+
   const handleGroupRolesChange = (updatedRoles: Array<Role>) => {
-    let rank = true;
-    const updatedUserList = userList.map((item: any) => {
-      if (item.isSelected && !hasRole(user!.roles[0].rank, item.roles)) {
-        updatedRoles.forEach((updatedRole: Role) => {
-          if (updatedRole.rank <= user!.roles[0].rank) {
-            rank = false;
-          }
-        });
-        if (rank) {
-          return {
-            ...item,
-            roles: sortArray(updatedRoles, "rank"),
-          };
+    updatedRoles.map((role: Role) => role._id);
+    const selectedUserList = userList.filter(
+      (user: any) => user.isSelected === true
+    );
+    const updatedUserList = selectedUserList.filter(
+      async (selectedUser: any) => {
+        if (
+          (await hasPermission("update", updatedRoles[0].role)) &&
+          updatedRoles[0].rank >= user!.roles[0].rank &&
+          updatedRoles.length > 0
+        ) {
+          selectedUser.roles = updatedRoles;
         }
       }
-      return item;
-    });
+    );
+    console.table(updatedRoles);
+    console.table(updatedUserList);
 
-    setUserList(updatedUserList);
+    if (
+      selectedUserList.length > updatedUserList.length ||
+      updatedRoles.length < 1
+    ) {
+      setShowErrorModal(true);
+      return;
+    }
 
     const applyData = (data: any) => {
       console.log(data);
+      getUserList();
     };
-    sendRequest(
-      {
-        path: "/user/student-roles",
-        method: "put",
-        body: userList,
-      },
-      applyData
-    );
+    if (updatedUserList.length > 0) {
+      sendRequest(
+        {
+          path: "/user/student-roles",
+          method: "put",
+          body: updatedUserList,
+        },
+        applyData
+      );
+    }
   };
 
   let content = (
@@ -216,11 +242,34 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
 
   return (
     <div className="flex flex-col gap-y-4">
+      {showErrorModal ? (
+        <Modal
+          title="Mettre à jour les rôles des utilisateurs sélectionnés"
+          message="Un ou plusieurs utilisateurs ne peuvent pas être mis à jour."
+          rightLabel="Fermer"
+          onRightClick={setErrorModal}
+        />
+      ) : null}
       <div>
-        <RoleSelect onGroupRolesChange={handleGroupRolesChange} />
+        {role && userList.length > 0 ? (
+          <Can action={"update"} subject={role.role}>
+            <RoleSelect
+              roleTab={role}
+              onGroupRolesChange={handleGroupRolesChange}
+            />
+          </Can>
+        ) : null}
       </div>
-      {content}
-      <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+      <>
+        {userList.length > 0 ? (
+          <>
+            {content}
+            <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+          </>
+        ) : (
+          <p>Rien à afficher</p>
+        )}
+      </>
     </div>
   );
 };

@@ -3,13 +3,15 @@ import User from "../utils/interfaces/user";
 
 const permDefs = {
   admin: {
-    read: ["admin", "teacher", "student"],
-    write: ["teacher", "student"],
-    delete: ["teacher", "student"],
+    read: ["admin", "teacher", "student", "coach"],
+    write: ["teacher", "student", "coach"],
+    update: ["teacher", "student", "coach"],
+    delete: ["teacher", "student", "coach"],
   },
   teacher: {
-    read: ["teacher", "student"],
-    write: ["student"],
+    read: ["teacher", "student", "coach"],
+    update: ["student", "coach"],
+    write: ["student", "coach"],
     delete: ["student"],
   },
 };
@@ -23,8 +25,6 @@ export default function defineRulesFor(user: User) {
   // perms should be of format
   // { 'read': ['Contact', 'Database']}
   user.roles.forEach((role) => {
-    console.log({ role });
-
     const permissions = permDefs[role.role as keyof typeof permDefs];
     Object.entries(permissions).forEach(([key, value]) => {
       builtPerms[key] = [...(builtPerms[key] || []), ...value];

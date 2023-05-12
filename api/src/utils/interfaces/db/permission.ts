@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+/* import mongoose, { Schema, Document } from "mongoose";
 
 export interface IPermission {
   role: string;
@@ -16,9 +16,8 @@ const permissionSchema: Schema = new Schema({
 
 const Permission = mongoose.model<IPermission>("Permission", permissionSchema);
 
-export default Permission;
+export default Permission; */
 
-/* 
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IPermission {
@@ -39,4 +38,3 @@ const permissionSchema: Schema = new Schema(
 const Permission = mongoose.model<IPermission>("Permission", permissionSchema);
 
 export default Permission;
- */
