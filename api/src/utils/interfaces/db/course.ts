@@ -1,21 +1,21 @@
-import { Schema, model } from "mongoose";
+import { Document, Schema, model } from "mongoose";
 import { IGroup } from "./group";
 
-export interface ICourse {
+export interface ICourse extends Document {
   name: string;
-  groups: IGroup[];
+  groups: IGroup["_id"];
   createdAt: Date;
   updatedAt: Date;
 }
 
 const courseSchema: Schema = new Schema(
   {
-    name: { type: String, required: true },
+    name: { type: String, required: true, unique: true },
     groups: { type: [Schema.Types.ObjectId], ref: "Group" },
   },
   { timestamps: true }
 );
 
-const Course = model("Course", courseSchema);
+const Course = model<ICourse>("Course", courseSchema);
 
 export default Course;
