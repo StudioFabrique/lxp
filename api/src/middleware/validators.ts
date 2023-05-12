@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { body, validationResult } from "express-validator";
+import { body, param, query, validationResult } from "express-validator";
 import { badQuery } from "../utils/constantes";
 
 const checkValidatorResult = (
@@ -28,11 +28,13 @@ export const userValidator = [
   checkValidatorResult,
 ];
 
+export const promotionValidator = [checkValidatorResult];
+
 /* add here more validator such as :
     export const classroomValidator = [
-        body(...),
+        body(...).isSomething(),
         ...,
-        body(...),
+        body(...).isSomething().isSomethingElse(),
         checkValidatorResult
     ] 
 */
