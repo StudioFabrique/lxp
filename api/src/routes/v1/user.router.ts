@@ -2,11 +2,7 @@ import express, { NextFunction, Response } from "express";
 
 import httpGetAllUsers from "../../controllers/user/http-get-all-users";
 import { body, param, query } from "express-validator";
-import { param, query } from "express-validator";
-import CustomRequest from "../../utils/interfaces/express/custom-request";
 import isUser from "../../middleware/is-user";
-import hasPermission from "../../middleware/hasPermission";
-import { noAccess } from "../../utils/constantes";
 import httpUpdateStudentRoles from "../../controllers/user/http--update-student-roles";
 import { userValidator } from "../../middleware/validators";
 import httpCreateUser from "../../controllers/user/http-create-user";
