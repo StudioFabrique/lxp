@@ -13,6 +13,7 @@ export interface IUser extends Document {
   avatar?: string;
   createdAt: Date;
   updatedAt: Date;
+  isActive: boolean;
 }
 
 const userSchema: Schema = new Schema(
@@ -30,6 +31,7 @@ const userSchema: Schema = new Schema(
       required: true,
     },
     avatar: { type: String, required: false },
+    isActive: { type: Boolean, required: true },
   },
   { timestamps: true }
 );

@@ -2,6 +2,8 @@ import { FC, useContext, useState } from "react";
 import { Context } from "../../store/context.store";
 import Role from "../../utils/interfaces/role";
 import { hasRole } from "../../utils/hasRole";
+import { Link } from "react-router-dom";
+import { sortArray } from "../../utils/sortArray";
 
 const RolesDropdown: FC<{
   userId: string;
@@ -10,7 +12,7 @@ const RolesDropdown: FC<{
 }> = ({ userRoles, userId, onRolesChange }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [newRoles, setNewRoles] = useState<Array<Role>>(userRoles);
-  const { user, roles } = useContext(Context);
+  const { roles } = useContext(Context);
 
   const handleShowDropDown = () => {
     setNewRoles(userRoles);
@@ -29,17 +31,13 @@ const RolesDropdown: FC<{
   };
 
   const handleSubmitChange = () => {
-    onRolesChange(newRoles, userId);
+    onRolesChange(sortArray(newRoles, "rank"), userId);
     setShowDropdown(false);
   };
 
   return (
     <div className="dropdown dropdown-end flex gap-x-2 items-center">
-      <div className="flex gap-x-2">
-        {userRoles.map((role) => (
-          <span key={role._id}>{role.label}</span>
-        ))}
-      </div>
+      <p className="flex gap-x-2">{userRoles[0].label}</p>
       <button
         className="bg-primary rounded-full w-4 h-4"
         onMouseDown={handleShowDropDown}
@@ -50,18 +48,27 @@ const RolesDropdown: FC<{
           className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
         >
           {roles.map((role) => (
-            <li className="bg-primary/20" key={role._id}>
-              <div className="flex gap-x-4">
-                <input
-                  className="checkbox checkbox-secondary"
-                  type="checkbox"
-                  checked={hasRole(role.rank, newRoles)}
-                  onChange={() => handleSetNewRoles(role)}
-                />
-                <p className="font-bold">{role.label}</p>
-              </div>
-            </li>
+            <>
+              {role.rank >= userRoles[0].rank ? (
+                <li className="bg-primary/20" key={role._id}>
+                  <div className="flex gap-x-4">
+                    <input
+                      className="checkbox checkbox-secondary"
+                      type="checkbox"
+                      checked={hasRole(role.role, newRoles)}
+                      onChange={() => handleSetNewRoles(role)}
+                    />
+                    <p className="font-bold">{role.label}</p>
+                  </div>
+                </li>
+              ) : null}
+            </>
           ))}
+          <li>
+            <Link className="text-sm" to="#">
+              Créer un nouveau rôle
+            </Link>
+          </li>
           <li>
             <button
               className="btn btn-secondary mt-2"
