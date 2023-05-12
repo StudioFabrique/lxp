@@ -1,43 +1,40 @@
-import { FC, useContext } from "react";
+import { FC } from "react";
 import toTitleCase from "../../../utils/toTitleCase";
 import Role from "../../../utils/interfaces/role";
-import { Context } from "../../../store/context.store";
+import Can from "../can/can.component";
 
 const Tabs: FC<{
   role: Role;
   roles: Array<Role>;
   onRoleSwitch: (role: Role) => void;
 }> = ({ role, roles, onRoleSwitch }) => {
-  const { user } = useContext(Context);
-  console.log("user", user);
-  console.log("roles", roles);
-
   const handleTabClick = (newRole: Role) => {
     onRoleSwitch(newRole);
   };
 
-  let content = (
+  const setContent = (item: Role) => {
+    return (
+      <p
+        className={
+          role.role === item.role
+            ? "tab tab-lifted tab-active text-green-500 font-bold"
+            : "tab tab-lifted text-blue-500 font-bold"
+        }
+        onClick={() => handleTabClick(item)}
+      >
+        {`${toTitleCase(item.label)}s`}
+      </p>
+    );
+  };
+
+  return (
     <ul className="flex">
-      {roles.map((item) => (
-        <li key={item._id}>
-          {item.rank > user!.roles[0].rank ? (
-            <p
-              className={
-                role.rank === item.rank
-                  ? "tab tab-lifted tab-active"
-                  : "tab tab-lifted"
-              }
-              onClick={() => handleTabClick(item)}
-            >
-              {`${toTitleCase(item.label)}s`}
-            </p>
-          ) : null}
-        </li>
+      {roles.map((role) => (
+        <Can key={role._id} action="read" subject={role.role}>
+          {setContent(role)}
+        </Can>
       ))}
     </ul>
   );
-
-  return <>{content}</>;
 };
-
 export default Tabs;

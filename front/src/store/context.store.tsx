@@ -6,6 +6,7 @@ import { BASE_URL } from "../config/urls";
 import useHttp from "../hooks/use-http";
 import User from "../utils/interfaces/user";
 import Role from "../utils/interfaces/role";
+import defineRulesFor from "../config/rbac";
 
 type ContextType = {
   theme: string;

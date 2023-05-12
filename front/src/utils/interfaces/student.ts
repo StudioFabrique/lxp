@@ -11,4 +11,5 @@ export default interface Student {
   avatar?: string;
   createdAt: Date;
   updatedAt: Date;
+  isActive: boolean;
 }

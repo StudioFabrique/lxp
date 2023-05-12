@@ -26,6 +26,8 @@ async function getAllUsers(
       .sort({ [stype]: dir })
       .skip(getPagination(page, limit))
       .limit(limit);
+    const total = await Student.count({ roles: roleId });
+
     const total = await Student.count();
     return { total, users };
   }

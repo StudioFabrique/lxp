@@ -1,7 +1,7 @@
 import Role from "./interfaces/role";
 
-export const hasRole = (rank: number, userRoles: Array<Role>) => {
-  const roleFound = userRoles.find((role) => role.rank === rank);
+export const hasRole = (role: string, userRoles: Array<Role>) => {
+  const roleFound = userRoles.find((item) => item.role === role);
   if (roleFound) {
     return true;
   } else {
