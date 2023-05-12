@@ -1,7 +1,7 @@
 import express, { Response } from "express";
 
 import httpGetAllUsers from "../../controllers/user/http-get-all-users";
-import { param, query } from "express-validator";
+import { body, param, query } from "express-validator";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import isUser from "../../middleware/is-user";
 import hasPermission from "../../middleware/hasPermission";
@@ -16,7 +16,7 @@ userRouter.get(
 
   //  vérification du token et récupération du rôle de l'utilisateur
   isUser,
-
+  /* 
   //  vérification des permissions
   async (req: CustomRequest, res: Response, next) => {
     if (await hasPermission(req.auth!.userRoles[0], "read", "user")) {
@@ -24,7 +24,7 @@ userRouter.get(
     } else {
       return res.status(400).json({ message: noAccess });
     }
-  },
+  }, */
 
   //  assainissement des données entrantes
   param("role").trim().escape(),
@@ -37,6 +37,16 @@ userRouter.get(
   httpGetAllUsers
 );
 
-userRouter.put("/student-roles", httpUpdateStudentRoles);
+userRouter.put(
+  "/student-roles",
+  body().isArray(),
+  body("*._id").isString().trim().escape(),
+  body("*._roles").isArray(),
+  body("*.roles._id").isString().trim().escape(),
+  body("*.roles.role").isString().trim().escape(),
+  body("*.roles.label").isString().trim().escape(),
+  body("*.roles.rank").isInt().trim().escape(),
+  httpUpdateStudentRoles
+);
 
 export default userRouter;

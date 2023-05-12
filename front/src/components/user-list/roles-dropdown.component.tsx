@@ -3,6 +3,7 @@ import { Context } from "../../store/context.store";
 import Role from "../../utils/interfaces/role";
 import { hasRole } from "../../utils/hasRole";
 import { Link } from "react-router-dom";
+import { sortArray } from "../../utils/sortArray";
 
 const RolesDropdown: FC<{
   userId: string;
@@ -30,7 +31,7 @@ const RolesDropdown: FC<{
   };
 
   const handleSubmitChange = () => {
-    onRolesChange(newRoles, userId);
+    onRolesChange(sortArray(newRoles, "rank"), userId);
     setShowDropdown(false);
   };
 
@@ -54,7 +55,7 @@ const RolesDropdown: FC<{
                     <input
                       className="checkbox checkbox-secondary"
                       type="checkbox"
-                      checked={hasRole(role.rank, newRoles)}
+                      checked={hasRole(role.role, newRoles)}
                       onChange={() => handleSetNewRoles(role)}
                     />
                     <p className="font-bold">{role.label}</p>

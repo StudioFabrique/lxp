@@ -15,8 +15,6 @@ const UserHome = () => {
     }
   }, [user, roles]);
 
-  console.log("user", user);
-
   const handleRoleSwitch = (role: Role) => {
     setRole(role);
   };
