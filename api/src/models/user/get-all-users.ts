@@ -12,8 +12,6 @@ async function getAllUsers(
 ) {
   const dir = sdir === "asc" ? 1 : -1;
 
-  console.log({ role, roleId });
-
   if (role === "admin" || role === "teacher") {
     const users = await User.find({ roles: roleId }, { password: 0 })
       .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
@@ -29,6 +27,8 @@ async function getAllUsers(
       .skip(getPagination(page, limit))
       .limit(limit);
     const total = await Student.count({ roles: roleId });
+
+    const total = await Student.count();
     return { total, users };
   }
 }
