@@ -15,8 +15,11 @@ export default async function httpCreateAdmin(req: Request, res: Response) {
   if (!user.password) {
     return res.status(400).json({ message: badQuery });
   }
-  const psw = await bcrypt.hash(user.password, 10);
-  user.password = psw;
+
+  const salt = await bcrypt.genSalt(10);
+  const pswHash = await bcrypt.hash(user.password, salt);
+
+  user.password = pswHash;
   user.roles = { role: "admin", label: "admin", rank: 1 };
 
   try {
