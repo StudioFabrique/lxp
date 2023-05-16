@@ -11,7 +11,7 @@ import { Context } from "../../../store/context.store";
 import Can from "../../UI/can/can.component";
 import Modal from "../../UI/modal/modal";
 
-const UserList: FC<{ role: Role }> = ({ role }) => {
+const GroupList: FC<{ role: Role }> = ({ role }) => {
   const [userList, setUserList] = useState<any>([]);
   const [stype, setStype] = useState("lastname");
   const [sdir, setSdir] = useState(false);
@@ -276,4 +276,4 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
   );
 };
 
-export default UserList;
+export default GroupList;
