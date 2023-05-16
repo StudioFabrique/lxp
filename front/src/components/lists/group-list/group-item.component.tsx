@@ -1,8 +1,8 @@
 import { FC } from "react";
-import toTitleCase from "../../utils/toTitleCase";
+import toTitleCase from "../../../utils/toTitleCase";
 import { Link } from "react-router-dom";
-import Role from "../../utils/interfaces/role";
-import Can from "../UI/can/can.component";
+import Role from "../../../utils/interfaces/role";
+import Can from "../../UI/can/can.component";
 
 const UserItem: FC<{
   userItem: any;

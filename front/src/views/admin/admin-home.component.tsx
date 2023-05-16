@@ -9,7 +9,8 @@ const AdminHome = () => {
     <div className="home bg-red h-screen w-screen flex flex-col items-center">
       <p>Hey je suis la page Home</p>
       <button onClick={logout}>logout</button>
-      <Link to="/admin/user">Interface utilisateurs</Link>
+      <Link to="user">Interface utilisateurs</Link>
+      <Link to="group">Interface Groupes</Link>
     </div>
   );
 };

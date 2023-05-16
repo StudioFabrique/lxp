@@ -8,7 +8,7 @@ export interface IGroup extends Document {
   desc: string;
   teachers?: IUser["_id"];
   users?: IStudent["_id"];
-  role: IRole["_id"];
+  roles: IRole["_id"];
   createdAt: Date;
   updatedAt: Date;
 }
