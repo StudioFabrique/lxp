@@ -7,6 +7,7 @@ import httpUpdateStudentRoles from "../../controllers/user/http--update-student-
 import { userValidator } from "../../middleware/validators";
 import httpCreateUser from "../../controllers/user/http-create-user";
 import httpUpdateUserRoles from "../../controllers/user/http-update-user-roles";
+import httpSearchUser from "../../controllers/user/http-search-user";
 
 const userRouter = express.Router();
 
@@ -93,5 +94,7 @@ userRouter.put(
 );
 
 userRouter.post("/", isUser, userValidator, httpCreateUser);
+
+userRouter.get("/search/:entity/:value/:userType/:sdir", httpSearchUser);
 
 export default userRouter;
