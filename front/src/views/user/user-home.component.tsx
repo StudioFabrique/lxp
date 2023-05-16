@@ -4,7 +4,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { Context } from "../../store/context.store";
 import Role from "../../utils/interfaces/role";
 import Tabs from "../../components/UI/tabs/tabs.component";
-import SearchUser from "../../components/user-list/search-user";
+import SearchUser from "../../components/user-list/search-component";
 import { userSeachOptions } from "../../config/user-search-options";
 import Pagination from "../../components/UI/pagination/pagination";
 import usePagination from "../../hooks/use-pagination";
@@ -61,7 +61,7 @@ const UserHome = () => {
   const getUserList = useCallback(() => {
     console.log("hey");
 
-    const applyData = (data: any) => {
+    const applyData = (data: { users: Array<any>; total: number }) => {
       let index = (page - 1) * perPage + 1;
       data.users.forEach((item: any) => {
         item.index = index++ + ".";

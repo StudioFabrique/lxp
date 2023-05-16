@@ -1,11 +1,17 @@
 import { useState, ChangeEvent, FC, useEffect } from "react";
+import useHttp from "../../hooks/use-http";
 
-const SearchUser: FC<{
-  options: Array<{ index: number; value: string; option: string }>;
+const Search: FC<{
+  options: Array<{
+    index: number;
+    value: string;
+    option: string;
+  }>;
 }> = (props) => {
   const [searchType, setSearchType] = useState<string>("search");
   const [entityToSearch, setEntityToSearch] = useState<string>("lastname");
   const [searchValue, setSearchValue] = useState("");
+  const { sendRequest } = useHttp();
 
   const handleTypeToSearchChange = (
     event: ChangeEvent<HTMLSelectElement>
@@ -14,7 +20,7 @@ const SearchUser: FC<{
       setEntityToSearch(event.target.value);
       setSearchValue("");
     }
-    if (event.target.value === "date") {
+    if (event.target.value === "createdAt") {
       setSearchType("date");
     } else {
       setSearchType("search");
@@ -41,19 +47,31 @@ const SearchUser: FC<{
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      console.log("Searching...");
+      console.log(`Searching... ${searchValue}`);
+
+      const applyData = (data: any) => {
+        console.log(data);
+      };
+      if (searchValue.length > 0) {
+        sendRequest(
+          {
+            path: `/user/search/${entityToSearch}/${searchValue.toLowerCase()}/3/asc?page=1&limit=15`,
+          },
+          applyData
+        );
+      }
     }, 1000);
 
     return () => {
       console.log("CLEANUP");
       clearTimeout(timer);
     };
-  }, [searchValue]);
+  }, [searchValue, sendRequest, entityToSearch]);
 
   return (
     <div className="flex justify-end items-center gap-x-4">
       <select
-        className="select select-ghost font-normal text-xs w-full max-w-xs"
+        className="select select-ghost font-normal text-xs w-fit"
         onChange={handleTypeToSearchChange}
       >
         <option disabled defaultValue="">
@@ -62,7 +80,7 @@ const SearchUser: FC<{
         {optionsList}
       </select>
       <input
-        className="input input-bordered input-sm w-full max-w-xs"
+        className="input input-bordered input-sm w-full max-w-sm"
         type={searchType}
         placeholder="Recherche..."
         value={searchValue}
@@ -72,4 +90,4 @@ const SearchUser: FC<{
   );
 };
 
-export default SearchUser;
+export default Search;
