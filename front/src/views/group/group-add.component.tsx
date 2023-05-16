@@ -1,22 +1,25 @@
 import { useNavigate } from "react-router-dom";
-import UserAddForm from "../../components/UserForm/add/user-add-form.component";
 import useHttp from "../../hooks/use-http";
-import User from "../../utils/interfaces/user";
+import Group from "../../utils/interfaces/group";
+import GroupAddForm from "../../components/forms/Group/group-add-form";
 
-const UserAdd = () => {
+const GroupAdd = () => {
   const { error, isLoading, sendRequest } = useHttp();
   const navigate = useNavigate();
 
-  const handleSubmit = (user: User) => {
+  const handleSubmit = (group: Group) => {
     console.log("event emit (form)");
-    sendRequest({ method: "post", path: "/user", body: user }, (data: any) => {
-      if (data) return navigate(-1);
-    });
+    sendRequest(
+      { method: "post", path: "/group", body: group },
+      (data: any) => {
+        if (data) return navigate(-1);
+      }
+    );
   };
 
   return (
     <div className="min-h-screen w-screen flex justify-center">
-      <UserAddForm
+      <GroupAddForm
         onSubmitForm={handleSubmit}
         error={error}
         isLoading={isLoading}
@@ -25,4 +28,4 @@ const UserAdd = () => {
   );
 };
 
-export default UserAdd;
+export default GroupAdd;
