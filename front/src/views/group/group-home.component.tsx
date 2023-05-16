@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import UserList from "../../components/user-list/user-list.component";
+import UserList from "../../components/lists/user-list/user-list.component";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../store/context.store";
 import Role from "../../utils/interfaces/role";

@@ -1,9 +1,9 @@
 import { FC, useContext, useState } from "react";
-import { Context } from "../../store/context.store";
-import Role from "../../utils/interfaces/role";
-import { hasRole } from "../../utils/hasRole";
+import { Context } from "../../../store/context.store";
+import Role from "../../../utils/interfaces/role";
+import { hasRole } from "../../../utils/hasRole";
 import { Link } from "react-router-dom";
-import { sortArray } from "../../utils/sortArray";
+import { sortArray } from "../../../utils/sortArray";
 
 const RolesDropdown: FC<{
   userId: string;

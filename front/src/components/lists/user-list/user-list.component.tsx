@@ -1,15 +1,15 @@
 import { FC, useCallback, useContext, useEffect, useState } from "react";
-import useHttp from "../../hooks/use-http";
-import usePagination from "../../hooks/use-pagination";
-import Pagination from "../UI/pagination/pagination";
+import useHttp from "../../../hooks/use-http";
+import usePagination from "../../../hooks/use-pagination";
+import Pagination from "../../UI/pagination/pagination";
 import UserItem from "./user-item.component";
 import RoleSelect from "./roles-select";
-import Role from "../../utils/interfaces/role";
-import { sortArray } from "../../utils/sortArray";
-import { hasPermission } from "../../utils/hasPermission";
-import { Context } from "../../store/context.store";
-import Can from "../UI/can/can.component";
-import Modal from "../UI/modal/modal";
+import Role from "../../../utils/interfaces/role";
+import { sortArray } from "../../../utils/sortArray";
+import { hasPermission } from "../../../utils/hasPermission";
+import { Context } from "../../../store/context.store";
+import Can from "../../UI/can/can.component";
+import Modal from "../../UI/modal/modal";
 
 const UserList: FC<{ role: Role }> = ({ role }) => {
   const [userList, setUserList] = useState<any>([]);

@@ -1,8 +1,15 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const UserLayout = () => {
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(-1);
+  };
   return (
     <div>
+      <button onClick={handleClick} className="btn">
+        Retour
+      </button>
       <Outlet />
     </div>
   );
