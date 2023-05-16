@@ -58,9 +58,9 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
 
       sendRequest(
         {
-          path: `/user/${role.rank < 3 ? role.role : "student"}/${
-            role._id
-          }/${stype}/${sdir ? "desc" : "asc"}?page=${page}&limit=${perPage}`,
+          path: `/user/${role.role}/${stype}/${
+            sdir ? "desc" : "asc"
+          }?page=${page}&limit=${perPage}`,
         },
         applyData
       );
@@ -124,22 +124,21 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
     setShowErrorModal((prevState) => !prevState);
   };
 
-  const handleGroupRolesChange = (updatedRoles: Array<Role>) => {
-    updatedRoles.map((role: Role) => role._id);
+  const handleGroupRolesChange = async (updatedRoles: Array<Role>) => {
     const selectedUserList = userList.filter(
       (user: any) => user.isSelected === true
     );
-    const updatedUserList = selectedUserList.filter(
-      async (selectedUser: any) => {
-        if (
-          (await hasPermission("update", updatedRoles[0].role)) &&
-          updatedRoles[0].rank >= user!.roles[0].rank &&
-          updatedRoles.length > 0
-        ) {
-          selectedUser.roles = updatedRoles;
-        }
+    const updatedUserList = Array<string>();
+
+    for (const selectedUser of selectedUserList) {
+      if (
+        (await hasPermission("update", updatedRoles[0].role)) &&
+        updatedRoles[0].rank >= user!.roles[0].rank &&
+        updatedRoles.length > 0
+      ) {
+        updatedUserList.push(selectedUser._id);
       }
-    );
+    }
     console.table(updatedRoles);
     console.table(updatedUserList);
 
@@ -151,8 +150,11 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
       return;
     }
 
+    const updatedRolesIds = updatedRoles.map((role: Role) => role._id);
+
     const applyData = (data: any) => {
       console.log(data);
+      initPagination();
       getUserList();
     };
     if (updatedUserList.length > 0) {
@@ -160,7 +162,7 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
         {
           path: "/user/student-roles",
           method: "put",
-          body: updatedUserList,
+          body: { studentsToUpdate: updatedUserList, rolesId: updatedRolesIds },
         },
         applyData
       );
@@ -171,7 +173,7 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
     <table className="table w-full">
       <thead>
         <tr>
-          <th>
+          <th className="z-0">
             <input
               className="my-auto checkbox"
               type="checkbox"

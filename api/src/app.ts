@@ -12,7 +12,6 @@ import bodyParser from "body-parser";
 const app = express();
 
 app
-  .use(bodyParser.json())
   .use(helmet())
   .use(
     cors({
@@ -20,6 +19,7 @@ app
       credentials: true,
     })
   )
+  .use(bodyParser.json())
   .use(cookieParser())
   .use(morgan("combined"))
   .use(express.json())

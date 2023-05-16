@@ -2,27 +2,25 @@ import { Request, Response } from "express";
 import { badQuery, serverIssue } from "../../utils/constantes";
 import getAllUsers from "../../models/user/get-all-users";
 import { validationResult } from "express-validator";
-import { roles } from "../../utils/services/roles";
 
 async function httpGetAllUsers(req: Request, res: Response) {
-  const { role, roleId, stype, sdir } = req.params;
-  const { page, limit } = req.query;
-
   const result = validationResult(req);
 
-  if (!result.isEmpty() || !roles.includes(role)) {
+  const { role, stype, sdir } = req.params;
+  const { page, limit } = req.query;
+
+  if (!result.isEmpty()) {
+    console.log({ result });
+
     return res.status(400).json({ message: badQuery });
   }
 
   try {
-    const result = await getAllUsers(
-      +page!,
-      +limit!,
-      role,
-      roleId,
-      stype,
-      sdir
-    );
+    const result = await getAllUsers(+page!, +limit!, role, stype, sdir);
+
+    if (!result) {
+      return res.status(400).json({ message: badQuery });
+    }
 
     return res.status(200).json({ total: result!.total, users: result!.users });
   } catch (err) {
