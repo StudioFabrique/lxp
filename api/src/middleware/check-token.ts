@@ -17,7 +17,6 @@ function checkToken(req: CustomRequest, res: Response, next: NextFunction) {
         hasRole(3, data.userRoles))
     ) {
       req.auth = { userId: data.userId, userRoles: data.userRoles };
-      console.log("coucou je check le token:", req.auth);
       next();
     } else {
       return res.status(403).json({ message: "you're not a student" });

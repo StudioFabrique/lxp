@@ -41,7 +41,9 @@ const UserItem: FC<{
       <td className="bg-transparent">
         <div
           className={
-            userItem.isActive ? "badge badge-success" : "badge badge-error"
+            userItem.isActive
+              ? "badge badge-success text-base-100"
+              : "badge badge-error"
           }
         >
           {userItem.isActive ? "Actif" : "Inactif"}

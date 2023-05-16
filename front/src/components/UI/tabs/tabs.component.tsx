@@ -17,8 +17,8 @@ const Tabs: FC<{
       <p
         className={
           role.role === item.role
-            ? "tab tab-lifted tab-active text-green-500 font-bold"
-            : "tab tab-lifted text-blue-500 font-bold"
+            ? "tab tab-lifted tab-active text-accent font-bold"
+            : "tab tab-lifted text-secondary font-bold"
         }
         onClick={() => handleTabClick(item)}
       >
