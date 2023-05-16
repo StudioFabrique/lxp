@@ -176,6 +176,7 @@ async function createRoles() {
   const roles = [
     { role: "admin", label: "admin", rank: 1 },
     { role: "teacher", label: "formateur", rank: 2 },
+    { role: "boss_teacher", label: "Formateur en Chef", rank: 2 },
     { role: "student", label: "apprenant", rank: 3 },
     { role: "coach", label: "mentor", rank: 3 },
   ];
@@ -185,27 +186,6 @@ async function createRoles() {
   });
   await Role.bulkSave(dbRoles);
 }
-
-/* async function createPermissions() {
-  const dbPermissions = Array<any>();
-  dbPermissions.push(
-    new Permission({
-      role: "admin",
-      resource: "user",
-      action: "read:any",
-      attributes: ["*"],
-    })
-  );
-  dbPermissions.push(
-    new Permission({
-      role: "teacher",
-      resource: "user",
-      action: "read:any",
-      attributes: ["*"],
-    })
-  );
-  await Permission.bulkSave(dbPermissions);
-} */
 
 const permDefs = {
   admin: {
