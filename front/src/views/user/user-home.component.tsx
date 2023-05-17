@@ -1,40 +1,38 @@
 import { Link } from "react-router-dom";
-import UserList from "../../components/user-list/user-list.component";
 import { useCallback, useContext, useEffect, useState } from "react";
+
 import { Context } from "../../store/context.store";
 import Role from "../../utils/interfaces/role";
 import Tabs from "../../components/UI/tabs/tabs.component";
-import SearchUser from "../../components/user-list/search-component";
+import SearchUser from "../../components/UI/search/search.component";
 import { userSeachOptions } from "../../config/user-search-options";
 import Pagination from "../../components/UI/pagination/pagination";
 import usePagination from "../../hooks/use-pagination";
 import useHttp from "../../hooks/use-http";
 import Can from "../../components/UI/can/can.component";
-import RoleSelect from "../../components/user-list/roles-select";
+import RoleSelect from "../../components/user-list/roles-select.component";
 import { hasPermission } from "../../utils/hasPermission";
 import Modal from "../../components/UI/modal/modal";
+import UserList from "../../components/user-list/user-list.component";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
-  const [userList, setUserList] = useState<any>([]);
-  const [stype, setStype] = useState("lastname");
-  const [sdir, setSdir] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
-  const { page, perPage, totalPages, setTotalPages, initPagination, setPage } =
-    usePagination();
+  const {
+    page,
+    totalPages,
+    dataList,
+    getList,
+    sortData,
+    initPagination,
+    setPage,
+    setDataList,
+  } = usePagination("lastname");
   const { sendRequest } = useHttp();
   const [role, setRole] = useState<Role>(roles[0]);
 
   const handleSorting = (column: string) => {
-    if (column !== stype) {
-      setSdir(false);
-    } else {
-      setSdir((prevSdir) => {
-        return !prevSdir;
-      });
-    }
-    setStype(column);
-    initPagination();
+    sortData(column);
   };
 
   const handleRoleSwitch = (role: Role) => {
@@ -42,68 +40,43 @@ const UserHome = () => {
   };
 
   const handleRowCheck = (id: string) => {
-    setUserList((prevUserList: any) =>
-      prevUserList.map((item: any) =>
+    setDataList((prevDataList: any) =>
+      prevDataList.map((item: any) =>
         item._id === id ? { ...item, isSelected: !item.isSelected } : item
       )
     );
   };
 
-  const handleAllChecked = useCallback((value: boolean) => {
-    setUserList((prevUserList: any) =>
-      prevUserList.map((item: any) => ({
-        ...item,
-        isSelected: !value,
-      }))
-    );
-  }, []);
-
-  const getUserList = useCallback(() => {
-    console.log("hey");
-
-    const applyData = (data: { users: Array<any>; total: number }) => {
-      let index = (page - 1) * perPage + 1;
-      data.users.forEach((item: any) => {
-        item.index = index++ + ".";
-        item.createdAt =
-          item?.createdAt && new Date(item.createdAt).toLocaleDateString();
-        item.updatedAt =
-          item?.updatedAt && new Date(item.updatedAt).toLocaleDateString();
-        item.isSelected = false;
-      });
-      setTotalPages(data.total);
-      setUserList(data.users);
-    };
-    if (role) {
-      sendRequest(
-        {
-          path: `/user/${role.role}/${stype}/${
-            sdir ? "desc" : "asc"
-          }?page=${page}&limit=${perPage}`,
-        },
-        applyData
+  const handleAllChecked = useCallback(
+    (value: boolean) => {
+      setDataList((prevDataList: any) =>
+        prevDataList.map((item: any) => ({
+          ...item,
+          isSelected: !value,
+        }))
       );
-    }
-  }, [sendRequest, page, perPage, setTotalPages, role, stype, sdir]);
+    },
+    [setDataList]
+  );
 
   const handleGroupRolesChange = async (updatedRoles: Array<Role>) => {
-    const selectedUserList = userList.filter(
+    const selectedDataList = dataList.filter(
       (user: any) => user.isSelected === true
     );
-    const updatedUserList = Array<string>();
+    const updatedDataList = Array<string>();
 
-    for (const selectedUser of selectedUserList) {
+    for (const selectedUser of selectedDataList) {
       if (
         (await hasPermission("update", updatedRoles[0].role)) &&
         updatedRoles[0].rank >= user!.roles[0].rank &&
         updatedRoles[0].rank === selectedUser!.roles[0].rank &&
         updatedRoles.length > 0
       ) {
-        updatedUserList.push(selectedUser._id);
+        updatedDataList.push(selectedUser._id);
       }
     }
     if (
-      selectedUserList.length > updatedUserList.length ||
+      selectedDataList.length > updatedDataList.length ||
       updatedRoles.length < 1
     ) {
       setShowErrorModal(true);
@@ -114,14 +87,14 @@ const UserHome = () => {
 
     const applyData = (data: any) => {
       initPagination();
-      getUserList();
+      getList(role.role);
     };
-    if (updatedUserList.length > 0) {
+    if (updatedDataList.length > 0) {
       sendRequest(
         {
           path: `/user/${role.rank < 3 ? "user-roles" : "student-roles"}`,
           method: "put",
-          body: { usersToUpdate: updatedUserList, rolesId: updatedRolesIds },
+          body: { usersToUpdate: updatedDataList, rolesId: updatedRolesIds },
         },
         applyData
       );
@@ -137,9 +110,10 @@ const UserHome = () => {
   }, [roles]);
 
   useEffect(() => {
-    console.log("hello re render");
-    getUserList();
-  }, [page, getUserList]);
+    if (role) {
+      getList(role.role);
+    }
+  }, [page, getList, role]);
 
   return (
     <>
@@ -150,7 +124,7 @@ const UserHome = () => {
           ) : null}
           <div className="flex justify-between items-center">
             <div>
-              {role && userList.length > 0 ? (
+              {role && dataList.length > 0 ? (
                 <Can action={"update"} subject={role.role}>
                   <RoleSelect
                     roleTab={role}
@@ -163,12 +137,12 @@ const UserHome = () => {
           </div>
           <UserList
             role={role}
-            userList={userList}
+            userList={dataList}
             onRowCheck={handleRowCheck}
             onAllChecked={handleAllChecked}
             onSorting={handleSorting}
           />
-          {userList.length > 0 ? (
+          {dataList.length > 0 ? (
             <Pagination page={page} totalPages={totalPages} setPage={setPage} />
           ) : null}
           <Link className="btn" to="/admin/user/add">
