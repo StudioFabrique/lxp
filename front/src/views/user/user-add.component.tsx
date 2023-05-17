@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import useHttp from "../../hooks/use-http";
 import User from "../../utils/interfaces/user";
-import UserAddForm from "../../components/forms/User/user-add-form.component";
+import UserAddForm from "../../components/forms/user-form/user-add-form.component";
 
 const UserAdd = () => {
   const { error, isLoading, sendRequest } = useHttp();

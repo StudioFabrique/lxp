@@ -8,5 +8,5 @@ export default async function createGroup(group: IGroup) {
 
   const createdGroup = await Group.create(group);
 
-  return { createGroup };
+  return createdGroup;
 }

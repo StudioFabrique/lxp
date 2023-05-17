@@ -8,7 +8,9 @@ import {
 } from "../../utils/constantes";
 
 export default async function httpCreateGroup(req: Request, res: Response) {
-  const group: IGroup = req.body.group;
+  console.log(req.body);
+
+  const group: IGroup = req.body;
   try {
     group.roles = { role: "user", label: "user", rank: 3 };
     const response = await createGroup(group);

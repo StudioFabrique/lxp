@@ -9,5 +9,5 @@ export default async function createUser(user: IUser) {
 
   const createdUser = await User.create(user);
 
-  return { createdUser };
+  return createdUser;
 }

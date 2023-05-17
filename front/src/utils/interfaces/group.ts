@@ -2,7 +2,7 @@ import Role from "./role";
 import Student from "./student";
 import User from "./user";
 
-export default interface IGroup extends Document {
+export default interface Group extends Document {
   name: string;
   desc: string;
   teachers?: User["_id"];
