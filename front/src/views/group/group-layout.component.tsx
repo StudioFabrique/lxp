@@ -1,6 +1,6 @@
 import { Outlet, useNavigate } from "react-router-dom";
 
-const UserLayout = () => {
+const GroupLayout = () => {
   const navigate = useNavigate();
   const handleClick = () => {
     navigate(-1);
@@ -15,4 +15,4 @@ const UserLayout = () => {
   );
 };
 
-export default UserLayout;
+export default GroupLayout;

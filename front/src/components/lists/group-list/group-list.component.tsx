@@ -1,19 +1,19 @@
 import { FC, useCallback, useContext, useEffect, useState } from "react";
-import useHttp from "../../hooks/use-http";
-import usePagination from "../../hooks/use-pagination";
-import Pagination from "../UI/pagination/pagination";
-import UserItem from "./user-item.component";
+import useHttp from "../../../hooks/use-http";
+import usePagination from "../../../hooks/use-pagination";
+import Pagination from "../../UI/pagination/pagination";
+import UserItem from "./group-item.component";
 import RoleSelect from "./roles-select";
-import Role from "../../utils/interfaces/role";
-import { sortArray } from "../../utils/sortArray";
-import { hasPermission } from "../../utils/hasPermission";
-import { Context } from "../../store/context.store";
-import Can from "../UI/can/can.component";
-import Modal from "../UI/modal/modal";
+import Role from "../../../utils/interfaces/role";
+import { sortArray } from "../../../utils/sortArray";
+import { hasPermission } from "../../../utils/hasPermission";
+import { Context } from "../../../store/context.store";
+import Can from "../../UI/can/can.component";
+import Modal from "../../UI/modal/modal";
 
-const UserList: FC<{ role: Role }> = ({ role }) => {
-  const [userList, setUserList] = useState<any>([]);
-  const [stype, setStype] = useState("lastname");
+const GroupList: FC<{ role: Role }> = ({ role }) => {
+  const [groupList, setGroupList] = useState<any>([]);
+  const [stype, setStype] = useState("lastname"); // to correct
   const [sdir, setSdir] = useState(false);
   const [allChecked, setAllChecked] = useState(false);
   const { sendRequest } = useHttp();
@@ -22,7 +22,7 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
   const { user } = useContext(Context);
   const [showErrorModal, setShowErrorModal] = useState(false);
 
-  console.log(userList);
+  console.log(groupList);
 
   const handleSorting = (column: string) => {
     if (column !== stype) {
@@ -36,8 +36,8 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
     initPagination();
   };
 
-  const getUserList = useCallback(() => {
-    console.log("fetching users list");
+  const getGroupList = useCallback(() => {
+    console.log("fetching groups list");
 
     const applyData = (data: any) => {
       let index = (page - 1) * perPage + 1;
@@ -50,7 +50,7 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
         item.isSelected = false;
       });
       setTotalPages(data.total);
-      setUserList(data.users);
+      setGroupList(data.groups);
       setAllChecked(false);
     };
     if (role) {
@@ -58,9 +58,9 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
 
       sendRequest(
         {
-          path: `/user/${role.rank < 3 ? role.role : "student"}/${
-            role._id
-          }/${stype}/${sdir ? "desc" : "asc"}?page=${page}&limit=${perPage}`,
+          path: `/group/${role.role}/${stype}/${
+            sdir ? "desc" : "asc"
+          }?page=${page}&limit=${perPage}`,
         },
         applyData
       );
@@ -68,12 +68,12 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
   }, [sendRequest, page, perPage, setTotalPages, role, stype, sdir]);
 
   useEffect(() => {
-    getUserList();
-  }, [getUserList]);
+    getGroupList();
+  }, [getGroupList]);
 
   const handleCheckRow = (id: string) => {
-    setUserList((prevUserList: any) =>
-      prevUserList.map((item: any) =>
+    setGroupList((prevGroupList: any) =>
+      prevGroupList.map((item: any) =>
         item._id === id ? { ...item, isSelected: !item.isSelected } : item
       )
     );
@@ -83,31 +83,31 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
     setAllChecked((prevAllChecked) => {
       return !prevAllChecked;
     });
-    setUserList((prevUserList: any) =>
-      prevUserList.map((item: any) => ({
+    setGroupList((prevGroupList: any) =>
+      prevGroupList.map((item: any) => ({
         ...item,
         isSelected: !allChecked,
       }))
     );
   };
 
-  const handleRolesChange = (newRoles: Array<Role>, userId: string) => {
-    const updatedUserList = userList.map((item: any) =>
-      item._id === userId
+  const handleRolesChange = (newRoles: Array<Role>, groupId: string) => {
+    const updatedGroupList = groupList.map((item: any) =>
+      item._id === groupId
         ? {
             ...item,
             roles: sortArray(newRoles, "rank"),
           }
         : item
     );
-    setUserList(updatedUserList);
+    setGroupList(updatedGroupList);
 
     const applyData = (data: any) => {
       console.log(data);
     };
     sendRequest(
       {
-        path: `/user/${role.role === "admin" ? "user" : "student"}/${userId}`,
+        path: `/group/${role.role === "admin" ? "user" : "student"}/${groupId}`,
         method: "put",
         body: newRoles,
       },
@@ -124,43 +124,48 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
     setShowErrorModal((prevState) => !prevState);
   };
 
-  const handleGroupRolesChange = (updatedRoles: Array<Role>) => {
-    updatedRoles.map((role: Role) => role._id);
-    const selectedUserList = userList.filter(
-      (user: any) => user.isSelected === true
+  const handleGroupRolesChange = async (updatedRoles: Array<Role>) => {
+    const selectedGroupList = groupList.filter(
+      (group: any) => group.isSelected === true
     );
-    const updatedUserList = selectedUserList.filter(
-      async (selectedUser: any) => {
-        if (
-          (await hasPermission("update", updatedRoles[0].role)) &&
-          updatedRoles[0].rank >= user!.roles[0].rank &&
-          updatedRoles.length > 0
-        ) {
-          selectedUser.roles = updatedRoles;
-        }
+    const updatedGroupList = Array<string>();
+
+    for (const selectedUser of selectedGroupList) {
+      if (
+        (await hasPermission("update", updatedRoles[0].role)) &&
+        updatedRoles[0].rank >= user!.roles[0].rank &&
+        updatedRoles.length > 0
+      ) {
+        updatedGroupList.push(selectedUser._id);
       }
-    );
+    }
     console.table(updatedRoles);
-    console.table(updatedUserList);
+    console.table(updatedGroupList);
 
     if (
-      selectedUserList.length > updatedUserList.length ||
+      selectedGroupList.length > updatedGroupList.length ||
       updatedRoles.length < 1
     ) {
       setShowErrorModal(true);
       return;
     }
 
+    const updatedRolesIds = updatedRoles.map((role: Role) => role._id);
+
     const applyData = (data: any) => {
       console.log(data);
-      getUserList();
+      initPagination();
+      getGroupList();
     };
-    if (updatedUserList.length > 0) {
+    if (updatedGroupList.length > 0) {
       sendRequest(
         {
-          path: "/user/student-roles",
+          path: "/group/",
           method: "put",
-          body: updatedUserList,
+          body: {
+            studentsToUpdate: updatedGroupList,
+            rolesId: updatedRolesIds,
+          },
         },
         applyData
       );
@@ -171,7 +176,7 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
     <table className="table w-full">
       <thead>
         <tr>
-          <th>
+          <th className="z-0">
             <input
               className="my-auto checkbox"
               type="checkbox"
@@ -179,31 +184,21 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
               onChange={handleAllChecked}
             />
           </th>
-          <th></th>
-          <th>Avatar</th>
           <th
             className="cursor-pointer"
             onClick={() => {
-              handleSorting("lastname");
+              handleSorting("name");
             }}
           >
-            Nom
+            Nom du groupe
           </th>
           <th
             className="cursor-pointer"
             onClick={() => {
-              handleSorting("firstname");
+              handleSorting("desc");
             }}
           >
-            Prénom
-          </th>
-          <th
-            className="cursor-pointer"
-            onClick={() => {
-              handleSorting("email");
-            }}
-          >
-            Email
+            Description
           </th>
           <th
             className="cursor-pointer"
@@ -225,7 +220,7 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
         </tr>
       </thead>
       <tbody>
-        {userList.map((item: any) => (
+        {groupList.map((item: any) => (
           <tr className="hover:bg-primary/20" key={item._id}>
             {
               <UserItem
@@ -251,7 +246,7 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
         />
       ) : null}
       <div>
-        {role && userList.length > 0 ? (
+        {role && groupList.length > 0 ? (
           <Can action={"update"} subject={role.role}>
             <RoleSelect
               roleTab={role}
@@ -261,7 +256,7 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
         ) : null}
       </div>
       <>
-        {userList.length > 0 ? (
+        {groupList.length > 0 ? (
           <>
             {content}
             <Pagination page={page} totalPages={totalPages} setPage={setPage} />
@@ -274,4 +269,4 @@ const UserList: FC<{ role: Role }> = ({ role }) => {
   );
 };
 
-export default UserList;
+export default GroupList;

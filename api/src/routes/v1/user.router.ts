@@ -1,4 +1,4 @@
-import express, { NextFunction, Response } from "express";
+import express from "express";
 
 import httpGetAllUsers from "../../controllers/user/http-get-all-users";
 import { body, param, query } from "express-validator";
@@ -9,9 +9,9 @@ import httpCreateUser from "../../controllers/user/http-create-user";
 
 const userRouter = express.Router();
 
-//  récupération de la liste des utilisateurs
+//  récupération de la liste des utilisateurs en fonction de leur rôle principal
 userRouter.get(
-  "/:role/:roleId/:stype/:sdir",
+  "/:role/:stype/:sdir",
 
   //  vérification du token et récupération du rôle de l'utilisateur
   isUser,
@@ -25,26 +25,41 @@ userRouter.get(
     }
   }, */
 
-  //  assainissement des données entrantes
-  param("role").trim().escape(),
-  param("roleId").trim().escape(),
-  param("stype").trim().escape(),
-  param("sdir").trim().escape(),
+  //  validators
+  param("role").isString().trim().escape(),
+  param("stype").isString().trim().escape(),
+  param("sdir").isString().trim().escape(),
   query("page").trim().escape().isInt(),
   query("limit").trim().escape().isInt(),
-  // userValidator,
   httpGetAllUsers
 );
 
+// mise à jour des rôles d'une liste d'apprenants
 userRouter.put(
   "/student-roles",
-  body().isArray(),
-  body("*._id").isString().trim().escape(),
-  body("*._roles").isArray(),
-  body("*.roles._id").isString().trim().escape(),
-  body("*.roles.role").isString().trim().escape(),
-  body("*.roles.label").isString().trim().escape(),
-  body("*.roles.rank").isInt().trim().escape(),
+  // validators
+  body("studentsToUpdate")
+    .isArray()
+    .notEmpty()
+    .withMessage("Le tableau studentsToUpdate ne peut pas être vide."),
+  body("studentsToUpdate.*")
+    .isString()
+    .withMessage(
+      "Chaque élément de studentsToUpdate doit être une chaîne de caractères."
+    )
+    .trim()
+    .escape(),
+  body("rolesId")
+    .isArray()
+    .notEmpty()
+    .withMessage("Le tableau rolesId ne peut pas être vide."),
+  body("rolesId.*")
+    .isString()
+    .withMessage(
+      "Chaque élément de rolesId doit être une chaîne de caractères."
+    )
+    .trim()
+    .escape(),
   httpUpdateStudentRoles
 );
 userRouter.post("/", isUser, userValidator, httpCreateUser);

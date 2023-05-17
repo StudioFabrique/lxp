@@ -19,16 +19,16 @@ const checkValidatorResult = (
 export const userValidator = [
   body("email").isEmail().trim().escape(),
   body("password").isString().trim().escape(),
-  body("firstname").isString().trim().escape(),
-  body("lastname").isString().trim().escape(),
-  body("address").isString().trim().escape(),
+  body(["firstname", "lastname", "address", "city"]).isString().trim().escape(),
   body("postCode").isPostalCode("FR").trim().escape(),
-  body("city").isString().trim().escape(),
   //   body("roles").isArray(),
   checkValidatorResult,
 ];
 
-export const promotionValidator = [checkValidatorResult];
+export const groupValidator = [
+  body("name", "desc").isString().trim().escape(),
+  checkValidatorResult,
+];
 
 /* add here more validator such as :
     export const classroomValidator = [

@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
-import UserList from "../../components/lists/user-list/user-list.component";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../store/context.store";
 import Role from "../../utils/interfaces/role";
 import Tabs from "../../components/UI/tabs/tabs.component";
+import GroupList from "../../components/lists/group-list/group-list.component";
 
-const UserHome = () => {
+const GroupHome = () => {
   const { user, roles } = useContext(Context);
   const [role, setRole] = useState<Role>(roles[0]);
 
@@ -25,13 +25,13 @@ const UserHome = () => {
         {user && role ? (
           <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />
         ) : null}
-        <UserList role={role} />
-        <Link className="btn" to="/admin/user/add">
-          Créer un utilisateur
+        <GroupList role={role} />
+        <Link className="btn" to="/admin/group/add">
+          Créer un groupe
         </Link>
       </div>
     </div>
   );
 };
 
-export default UserHome;
+export default GroupHome;

@@ -1,8 +1,8 @@
 import { FC } from "react";
-import toTitleCase from "../../utils/toTitleCase";
+import toTitleCase from "../../../utils/toTitleCase";
 import { Link } from "react-router-dom";
-import Role from "../../utils/interfaces/role";
-import Can from "../UI/can/can.component";
+import Role from "../../../utils/interfaces/role";
+import Can from "../../UI/can/can.component";
 
 const UserItem: FC<{
   userItem: any;
@@ -41,7 +41,9 @@ const UserItem: FC<{
       <td className="bg-transparent">
         <div
           className={
-            userItem.isActive ? "badge badge-success" : "badge badge-error"
+            userItem.isActive
+              ? "badge badge-success text-base-100"
+              : "badge badge-error"
           }
         >
           {userItem.isActive ? "Actif" : "Inactif"}

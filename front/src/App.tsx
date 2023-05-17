@@ -7,6 +7,9 @@ import AdminHome from "./views/admin/admin-home.component";
 import UserLayout from "./views/user/user-layout.component";
 import UserHome from "./views/user/user-home.component";
 import UserAdd from "./views/user/user-add.component";
+import GroupLayout from "./views/group/group-layout.component";
+import GroupHome from "./views/group/group-home.component";
+import GroupAdd from "./views/group/group-add.component";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +28,14 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <UserHome /> },
           { path: "add", element: <UserAdd /> },
+        ],
+      },
+      {
+        path: "group",
+        element: <GroupLayout />,
+        children: [
+          { index: true, element: <GroupHome /> },
+          { path: "add", element: <GroupAdd /> },
         ],
       },
     ],

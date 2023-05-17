@@ -1,8 +1,8 @@
-import { FC, useContext, useState } from "react";
-import { Context } from "../../store/context.store";
-import Role from "../../utils/interfaces/role";
-import { hasRole } from "../../utils/hasRole";
-import Can from "../UI/can/can.component";
+import React, { FC, useContext, useState } from "react";
+import { Context } from "../../../store/context.store";
+import Role from "../../../utils/interfaces/role";
+import { hasRole } from "../../../utils/hasRole";
+import Can from "../../UI/can/can.component";
 
 const RoleSelect: FC<{
   roleTab: Role;
@@ -12,6 +12,8 @@ const RoleSelect: FC<{
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const { roles } = useContext(Context);
+
+  console.log("new roles", newRoles);
 
   const handleSetNewRoles = (newRole: Role) => {
     if (newRoles.find((role) => role._id === newRole._id)) {
@@ -25,8 +27,11 @@ const RoleSelect: FC<{
   };
 
   const handleToggleDropdown = () => {
-    setNewRoles([]);
-
+    if (props.roleTab) {
+      const tab = Array<Role>();
+      tab.push(props.roleTab);
+      setNewRoles(tab);
+    }
     setDropdownOpen(true);
   };
 
@@ -53,10 +58,10 @@ const RoleSelect: FC<{
             className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
           >
             {roles.map((role) => (
-              <>
+              <React.Fragment key={role._id}>
                 {props.roleTab.rank === role.rank ? (
                   <Can action={"update"} subject={role.role}>
-                    <li className="bg-primary/20" key={role._id}>
+                    <li className="bg-primary/20">
                       <div className="flex gap-x-4">
                         <input
                           className="checkbox checkbox-secondary"
@@ -69,7 +74,7 @@ const RoleSelect: FC<{
                     </li>
                   </Can>
                 ) : null}
-              </>
+              </React.Fragment>
             ))}
             <li>
               <button

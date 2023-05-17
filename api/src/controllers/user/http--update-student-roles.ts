@@ -1,11 +1,18 @@
 import { Request, Response } from "express";
 import { badQuery, serverIssue } from "../../utils/constantes";
 import updateStudentRoles from "../../models/user/update-student-roles";
+import { validationResult } from "express-validator";
 
 async function httpUpdateStudentRoles(req: Request, res: Response) {
   try {
-    const studentsToUpdate = req.body;
-    const updatedStudents = await updateStudentRoles(studentsToUpdate);
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      return res.status(400).json({ message: badQuery });
+    }
+
+    const { studentsToUpdate, rolesId } = req.body;
+    const updatedStudents = await updateStudentRoles(studentsToUpdate, rolesId);
     if (!updatedStudents) {
       return res.status(400).json({ message: badQuery });
     }
