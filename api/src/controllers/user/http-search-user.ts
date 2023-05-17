@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import searchUser from "../../models/user/serch-user";
+import searchUser from "../../models/user/search-user";
 import { badQuery, serverIssue } from "../../utils/constantes";
 
 async function httpSearchUser(req: Request, res: Response) {

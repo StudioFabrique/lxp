@@ -15,7 +15,14 @@ async function searchUser(
   let field: any;
 
   if (entity === "createdAt") {
-    field = new Date(value);
+    const startDate = new Date(value);
+    const endDate = new Date(value);
+    endDate.setDate(endDate.getDate() + 1); // Ajouter 1 jour pour obtenir la fin de la plage
+
+    field = {
+      $gte: startDate,
+      $lt: endDate,
+    };
   } else {
     field = new RegExp(value, "i");
   }
