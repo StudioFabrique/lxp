@@ -47,7 +47,7 @@ const RoleSelect: FC<{
       </p>
       <div className="dropdown dropdown-end">
         <button
-          className="btn btn-accent btn-xs flex gap-x-2"
+          className="btn btn-xs flex gap-x-2"
           onClick={handleToggleDropdown}
         >
           rôles
