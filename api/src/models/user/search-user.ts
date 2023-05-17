@@ -1,3 +1,4 @@
+import Role from "../../utils/interfaces/db/role";
 import Student from "../../utils/interfaces/db/student/student.model";
 import User from "../../utils/interfaces/db/teacher-admin/teacher.model";
 import { getPagination } from "../../utils/services/getPagination";
@@ -5,12 +6,18 @@ import { getPagination } from "../../utils/services/getPagination";
 async function searchUser(
   entity: string,
   value: string,
-  userType: number,
+  role: string,
   page: number,
   limit: number,
   sdir: string
 ) {
   const dir = sdir === "asc" ? 1 : -1;
+
+  const fetchedRole = await Role.findOne({ role: role });
+
+  if (!fetchedRole) {
+    return false;
+  }
 
   let field: any;
 
@@ -29,7 +36,7 @@ async function searchUser(
 
   console.log({ field });
 
-  if (userType < 3) {
+  if (fetchedRole.rank < 3) {
     const users = await User.find({ [entity]: field }, { password: 0 })
       .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
       .sort({ [entity]: dir })
@@ -37,7 +44,7 @@ async function searchUser(
       .limit(limit);
     const total = await User.count({ [entity]: field });
     return { total, users };
-  } else if (userType > 2) {
+  } else if (fetchedRole.rank > 2) {
     const users = await Student.find({ [entity]: field }, { password: 0 })
       .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
       .sort({ [entity]: dir })

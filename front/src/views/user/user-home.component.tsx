@@ -25,9 +25,9 @@ const UserHome = () => {
     getList,
     sortData,
     initPagination,
-    setPage,
+    handlePageNumber,
     setDataList,
-  } = usePagination("lastname");
+  } = usePagination("lastname", "/user");
   const { sendRequest } = useHttp();
   const [role, setRole] = useState<Role>(roles[0]);
 
@@ -45,6 +45,11 @@ const UserHome = () => {
         item._id === id ? { ...item, isSelected: !item.isSelected } : item
       )
     );
+  };
+
+  const handleSearchResult = (entityToSearch: string, searchValue: string) => {
+    initPagination();
+    getList(role.role);
   };
 
   const handleAllChecked = useCallback(
@@ -143,7 +148,11 @@ const UserHome = () => {
             onSorting={handleSorting}
           />
           {dataList.length > 0 ? (
-            <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              setPage={handlePageNumber}
+            />
           ) : null}
           <Link className="btn" to="/admin/user/add">
             Créer un utilisateur

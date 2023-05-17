@@ -6,32 +6,32 @@ import useHttp from "./use-http";
 const initialState = {
   page: 1,
   perPage: perPage,
-  total: null,
   totalPages: null,
 };
 
-const usePagination = (value: string) => {
+const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
   const [sdir, setSdir] = useState(false);
-  const [stype, setStype] = useState(value);
-  const [page, handlePage] = useState(initialState.page);
+  const [stype, setStype] = useState(defaultSortValue);
+  const [page, setPage] = useState(initialState.page);
   const [perPage] = useState(initialState.perPage);
-  const [totalPages, handleTotalPages] = useState<number | null>(
+  const [totalPages, setTotalPages] = useState<number | null>(
     initialState.totalPages
   );
   const [dataList, setDataList] = useState<Array<any>>([]);
+  const [searchPath, setSearchPath] = useState("");
   const { sendRequest } = useHttp();
 
-  const setPage = useCallback((value: number) => {
-    handlePage(value);
+  const handlePageNumber = useCallback((value: number) => {
+    setPage(value);
   }, []);
 
   const initPagination = useCallback(() => {
     setPage(1);
   }, [setPage]);
 
-  const setTotalPages = useCallback(
+  const handleTotalPages = useCallback(
     (total: number) => {
-      handleTotalPages(Math.ceil(total! / perPage));
+      setTotalPages(Math.ceil(total! / perPage));
     },
     [perPage]
   );
@@ -60,19 +60,20 @@ const usePagination = (value: string) => {
             item?.updatedAt && new Date(item.updatedAt).toLocaleDateString();
           item.isSelected = false;
         });
-        setTotalPages(data.total);
+        handleTotalPages(data.total);
         setDataList(data.list);
       };
+
       sendRequest(
         {
-          path: `/user/${roleName}/${stype}/${
+          path: `${path}/${roleName}/${stype}/${
             sdir ? "desc" : "asc"
           }?page=${page}&limit=${perPage}`,
         },
         applyData
       );
     },
-    [sendRequest, page, perPage, setTotalPages, stype, sdir]
+    [sendRequest, page, perPage, handleTotalPages, defaultUrlPath, stype, sdir]
   );
 
   return {
@@ -82,9 +83,9 @@ const usePagination = (value: string) => {
     sdir,
     stype,
     dataList,
-    setPage,
+    handlePageNumber,
     initPagination,
-    setTotalPages,
+    handleTotalPages,
     reset: initPagination,
     sortData,
     setStype,

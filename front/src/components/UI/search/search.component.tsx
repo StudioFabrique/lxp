@@ -1,5 +1,5 @@
-import { useState, ChangeEvent, FC, useEffect } from "react";
-import useHttp from "../../../hooks/use-http";
+import { useState, ChangeEvent, FC } from "react";
+import { regexGeneric } from "../../../utils/constantes";
 
 const Search: FC<{
   options: Array<{
@@ -11,7 +11,6 @@ const Search: FC<{
   const [searchType, setSearchType] = useState<string>("search");
   const [entityToSearch, setEntityToSearch] = useState<string>("lastname");
   const [searchValue, setSearchValue] = useState("");
-  const { sendRequest } = useHttp();
 
   const handleTypeToSearchChange = (
     event: ChangeEvent<HTMLSelectElement>
@@ -45,31 +44,15 @@ const Search: FC<{
     </>
   );
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      console.log(`Searching... ${searchValue}`);
-
-      const applyData = (data: any) => {
-        console.log(data);
-      };
-      if (searchValue.length > 0) {
-        sendRequest(
-          {
-            path: `/user/search/${entityToSearch}/${searchValue.toLowerCase()}/3/asc?page=1&limit=15`,
-          },
-          applyData
-        );
-      }
-    }, 1000);
-
-    return () => {
-      console.log("CLEANUP");
-      clearTimeout(timer);
-    };
-  }, [searchValue, sendRequest, entityToSearch]);
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (regexGeneric.test(searchValue)) {
+      console.log(`Searching ${searchValue} as ${entityToSearch}`);
+    }
+  };
 
   return (
-    <div className="flex justify-end items-center gap-x-4">
+    <div className="flex justify-end items-center gap-x-2">
       <select
         className="select select-ghost font-normal text-xs w-fit"
         onChange={handleTypeToSearchChange}
@@ -79,15 +62,20 @@ const Search: FC<{
         </option>
         {optionsList}
       </select>
-      <input
-        className="input input-bordered input-sm w-full max-w-sm"
-        type={searchType}
-        placeholder="Recherche..."
-        value={searchValue}
-        onChange={handleSearchValueChange}
-      />
+      <form className="flex gap-x-2 items-center" onSubmit={handleSubmit}>
+        <input
+          className="input input-bordered input-sm w-full max-w-sm"
+          type={searchType}
+          placeholder="Recherche..."
+          value={searchValue}
+          onChange={handleSearchValueChange}
+        />
+        <button className="btn btn-sm">Rechercher</button>
+      </form>
     </div>
   );
 };
 
 export default Search;
+
+//path: `/user/search/${entityToSearch}/${searchValue.toLowerCase()}/3/asc?page=1&limit=15`,
