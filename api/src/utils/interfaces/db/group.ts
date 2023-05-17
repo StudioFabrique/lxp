@@ -25,7 +25,7 @@ const groupSchema: Schema = new Schema(
       type: [Schema.Types.ObjectId],
       ref: "Student",
     },
-    role: {
+    roles: {
       type: [Schema.Types.ObjectId],
       ref: "Role",
     },
