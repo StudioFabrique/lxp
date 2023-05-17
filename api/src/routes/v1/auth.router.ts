@@ -16,7 +16,7 @@ authRouter.post(
   param("role").trim().escape(),
   httpLogin
 );
-authRouter.get("/handshake/", checkToken, httpHandshake);
+authRouter.get("/handshake", checkToken, httpHandshake);
 authRouter.get("/logout", httpLogout);
 authRouter.get("/refresh", refreshTokens);
 authRouter.get("/roles", checkToken, httpGetRoles);

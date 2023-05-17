@@ -41,8 +41,6 @@ async function httpHandshake(req: CustomRequest, res: Response) {
 
 /** on récupère les infos de l'utilisateur en fonction de son rôle */
 async function _getUser(userId: Object, roles: Array<IRole>) {
-  console.log("roles", roles);
-
   if (hasRole(1, roles) || hasRole(2, roles)) {
     return await User.findOne({ _id: userId }).populate("roles", {
       _id: 1,

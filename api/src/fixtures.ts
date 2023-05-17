@@ -186,27 +186,6 @@ async function createRoles() {
   await Role.bulkSave(dbRoles);
 }
 
-/* async function createPermissions() {
-  const dbPermissions = Array<any>();
-  dbPermissions.push(
-    new Permission({
-      role: "admin",
-      resource: "user",
-      action: "read:any",
-      attributes: ["*"],
-    })
-  );
-  dbPermissions.push(
-    new Permission({
-      role: "teacher",
-      resource: "user",
-      action: "read:any",
-      attributes: ["*"],
-    })
-  );
-  await Permission.bulkSave(dbPermissions);
-} */
-
 const permDefs = {
   admin: {
     read: ["admin", "teacher", "student"],
