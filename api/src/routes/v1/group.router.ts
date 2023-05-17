@@ -4,7 +4,7 @@ import isUser from "../../middleware/is-user";
 
 const groupRouter = Router();
 
-groupRouter.get("/"); // all
+groupRouter.get("/:role/:stype/:sdir"); // all
 groupRouter.get("/:id"); // only one specific
 groupRouter.post("/", isUser, httpCreateGroup); // create
 
