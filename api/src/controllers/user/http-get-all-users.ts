@@ -22,7 +22,7 @@ async function httpGetAllUsers(req: Request, res: Response) {
       return res.status(400).json({ message: badQuery });
     }
 
-    return res.status(200).json({ total: result!.total, users: result!.users });
+    return res.status(200).json({ total: result!.total, list: result!.users });
   } catch (err) {
     return res.status(500).json({ message: serverIssue + err });
   }

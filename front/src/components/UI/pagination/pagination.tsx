@@ -2,7 +2,7 @@ import React, { FC } from "react";
 
 const Pagination: FC<{
   page: number;
-  totalPages: number;
+  totalPages: number | null;
   setPage: (newPage: number) => void;
   setPerPages?: (perPage: number) => void;
 }> = ({ page, totalPages, setPage, setPerPages }) => {
