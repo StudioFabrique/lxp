@@ -1,4 +1,4 @@
-import express, { NextFunction, Response } from "express";
+import express from "express";
 
 import httpGetAllUsers from "../../controllers/user/http-get-all-users";
 import { body, param, query } from "express-validator";
