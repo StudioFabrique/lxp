@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import useHttp from "../../hooks/use-http";
 import Group from "../../utils/interfaces/group";
-import GroupAddForm from "../../components/forms/Group/group-add-form";
+import GroupAddForm from "../../components/forms/group-form/group-add-form";
 
 const GroupAdd = () => {
   const { error, isLoading, sendRequest } = useHttp();
   const navigate = useNavigate();
 
   const handleSubmit = (group: Group) => {
-    console.log("event emit (form)");
+    console.log(group);
     sendRequest(
       { method: "post", path: "/group", body: group },
       (data: any) => {
