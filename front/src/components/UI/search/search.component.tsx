@@ -10,7 +10,9 @@ const Search: FC<{
   onSearch: (entityToSearch: string, searchValue: string) => void;
 }> = (props) => {
   const [searchType, setSearchType] = useState<string>("search");
-  const [entityToSearch, setEntityToSearch] = useState<string>("lastname");
+  const [entityToSearch, setEntityToSearch] = useState<string>(
+    props.options[0].value
+  );
   const [searchValue, setSearchValue] = useState("");
   const [switchValue, setSwitchValue] = useState(true);
 

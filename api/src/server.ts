@@ -4,7 +4,7 @@ import https from "https";
 import mongoConnect from "./utils/services/db/mongo-connect";
 import app from "./app";
 
-const PORT = 5000;
+const PORT = 5001;
 
 let server!: any;
 

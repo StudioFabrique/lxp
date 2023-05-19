@@ -16,10 +16,10 @@ export interface IGroup extends Document {
 const groupSchema: Schema = new Schema(
   {
     name: { type: String, required: true },
+    desc: { type: String, required: true },
     teachers: {
       type: [Schema.Types.ObjectId],
       ref: "User",
-      unique: true,
     },
     users: {
       type: [Schema.Types.ObjectId],
@@ -28,6 +28,7 @@ const groupSchema: Schema = new Schema(
     roles: {
       type: [Schema.Types.ObjectId],
       ref: "Role",
+      required: true,
     },
   },
   { timestamps: true }

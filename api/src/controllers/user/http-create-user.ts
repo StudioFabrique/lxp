@@ -8,6 +8,7 @@ import createUser from "../../models/user/create-user";
 import { serverIssue } from "../../utils/constantes";
 import bcrypt from "bcrypt";
 import { IStudent } from "../../utils/interfaces/db/student/student.model";
+import Role from "../../utils/interfaces/db/role";
 
 export default async function httpCreateUser(req: Request, res: Response) {
   const user: IStudent = req.body;
@@ -19,7 +20,8 @@ export default async function httpCreateUser(req: Request, res: Response) {
   const salt = await bcrypt.genSalt(10);
   const pswHash = await bcrypt.hash(user.password, salt);
   user.password = pswHash;
-  user.roles = { role: "user", label: "user", rank: 3 };
+  user.isActive = true;
+  user.roles = [new Object((await Role.findOne({ role: "student" }))!._id)];
 
   try {
     const response = await createUser(user);

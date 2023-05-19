@@ -3,6 +3,7 @@ import { Context } from "../../store/context.store";
 import Role from "../../utils/interfaces/role";
 import Tabs from "../../components/UI/tabs/tabs.component";
 import SearchUser from "../../components/UI/search/search.component";
+import { userSearchOptions } from "../../config/search-options";
 import Pagination from "../../components/UI/pagination/pagination";
 import usePagination from "../../hooks/use-pagination";
 import useHttp from "../../hooks/use-http";
@@ -153,7 +154,7 @@ const UserHome = () => {
             </div>
             <div className="flex flex-col">
               <SearchUser
-                options={userSeachOptions}
+                options={userSearchOptions}
                 onSearch={handleSearchResult}
               />
               {isSeachActive ? (
