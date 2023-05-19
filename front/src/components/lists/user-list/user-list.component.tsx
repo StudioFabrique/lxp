@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
+import Role from "../../../utils/interfaces/role";
 import UserItem from "./user-item.component";
-import Role from "../../utils/interfaces/role";
 
 const UserList: FC<{
   role: Role;

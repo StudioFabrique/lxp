@@ -1,6 +1,4 @@
 import { Link } from "react-router-dom";
-import { useCallback, useContext, useEffect, useState } from "react";
-
 import { Context } from "../../store/context.store";
 import Role from "../../utils/interfaces/role";
 import Tabs from "../../components/UI/tabs/tabs.component";
@@ -10,10 +8,11 @@ import Pagination from "../../components/UI/pagination/pagination";
 import usePagination from "../../hooks/use-pagination";
 import useHttp from "../../hooks/use-http";
 import Can from "../../components/UI/can/can.component";
-import RoleSelect from "../../components/user-list/roles-select.component";
+import RoleSelect from "../../components/lists/user-list/roles-select.component";
 import { hasPermission } from "../../utils/hasPermission";
 import Modal from "../../components/UI/modal/modal";
-import UserList from "../../components/user-list/user-list.component";
+import { useCallback, useContext, useEffect, useState } from "react";
+import UserList from "../../components/lists/user-list/user-list.component";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
