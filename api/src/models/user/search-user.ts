@@ -34,6 +34,10 @@ async function searchUser(
     field = new RegExp(value, "i");
   }
 
+  if (entity === "isActive") {
+    field = value;
+  }
+
   console.log({ field });
 
   if (fetchedRole.rank < 3) {

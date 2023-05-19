@@ -12,6 +12,7 @@ const Search: FC<{
   const [searchType, setSearchType] = useState<string>("search");
   const [entityToSearch, setEntityToSearch] = useState<string>("lastname");
   const [searchValue, setSearchValue] = useState("");
+  const [switchValue, setSwitchValue] = useState(true);
 
   const handleTypeToSearchChange = (
     event: ChangeEvent<HTMLSelectElement>
@@ -25,6 +26,10 @@ const Search: FC<{
     } else {
       setSearchType("search");
     }
+  };
+
+  const handleSwitchValueChange = () => {
+    setSwitchValue((prevSwitchValue) => !prevSwitchValue);
   };
 
   const handleSearchValueChange = (
@@ -47,11 +52,18 @@ const Search: FC<{
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (entityToSearch === "isActive") {
+      props.onSearch(entityToSearch, switchValue ? "true" : "false");
+    }
+
     if (regexGeneric.test(searchValue)) {
       console.log(`Searching ${searchValue} as ${entityToSearch}`);
       props.onSearch(entityToSearch, searchValue);
     }
   };
+
+  console.log({ entityToSearch });
 
   return (
     <div className="flex justify-end items-center gap-x-2">
@@ -65,13 +77,29 @@ const Search: FC<{
         {optionsList}
       </select>
       <form className="flex gap-x-2 items-center" onSubmit={handleSubmit}>
-        <input
-          className="input input-bordered input-sm w-full max-w-sm"
-          type={searchType}
-          placeholder="Recherche..."
-          value={searchValue}
-          onChange={handleSearchValueChange}
-        />
+        {entityToSearch !== "isActive" ? (
+          <input
+            className="input input-bordered input-sm w-full max-w-sm"
+            type={searchType}
+            placeholder="Recherche..."
+            value={searchValue}
+            onChange={handleSearchValueChange}
+          />
+        ) : (
+          <div>
+            <label className="label cursor-pointer flex gap-x-2">
+              <span className="label-text">
+                {switchValue ? "actif" : "inactif"}
+              </span>
+              <input
+                type="checkbox"
+                className="toggle"
+                checked={switchValue}
+                onChange={handleSwitchValueChange}
+              />
+            </label>
+          </div>
+        )}
         <button className="btn btn-sm">Rechercher</button>
       </form>
     </div>
