@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { perPage } from "../config/pagination";
 import useHttp from "./use-http";
@@ -72,6 +72,10 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
       applyData
     );
   }, [sendRequest, page, perPage, handleTotalPages, stype, sdir, path]);
+
+  useEffect(() => {
+    getList();
+  }, [path, getList]);
 
   return {
     page: page,
