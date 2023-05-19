@@ -3,7 +3,6 @@ import { Context } from "../../store/context.store";
 import Role from "../../utils/interfaces/role";
 import Tabs from "../../components/UI/tabs/tabs.component";
 import SearchUser from "../../components/UI/search/search.component";
-import { userSeachOptions } from "../../config/search-options";
 import Pagination from "../../components/UI/pagination/pagination";
 import usePagination from "../../hooks/use-pagination";
 import useHttp from "../../hooks/use-http";
@@ -13,6 +12,7 @@ import { hasPermission } from "../../utils/hasPermission";
 import Modal from "../../components/UI/modal/modal";
 import { useCallback, useContext, useEffect, useState } from "react";
 import UserList from "../../components/lists/user-list/user-list.component";
+import { userSeachOptions } from "../../config/search-options";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
