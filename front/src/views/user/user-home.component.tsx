@@ -168,23 +168,25 @@ const UserHome = () => {
               ) : null}
             </div>
           </div>
-          <UserList
-            role={role}
-            userList={dataList}
-            onRowCheck={handleRowCheck}
-            onAllChecked={handleAllChecked}
-            onSorting={handleSorting}
-          />
-          {dataList.length > 0 ? (
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              setPage={handlePageNumber}
+          <div className="w-5/6">
+            <UserList
+              role={role}
+              userList={dataList}
+              onRowCheck={handleRowCheck}
+              onAllChecked={handleAllChecked}
+              onSorting={handleSorting}
             />
-          ) : null}
-          <Link className="btn" to="/admin/user/add">
-            Créer un utilisateur
-          </Link>
+            {dataList.length > 0 ? (
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                setPage={handlePageNumber}
+              />
+            ) : null}
+            <Link className="btn" to="/admin/user/add">
+              Créer un utilisateur
+            </Link>
+          </div>
         </div>
       </div>
       <>
