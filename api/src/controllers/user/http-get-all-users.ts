@@ -10,8 +10,6 @@ async function httpGetAllUsers(req: Request, res: Response) {
   const { page, limit } = req.query;
 
   if (!result.isEmpty()) {
-    console.log({ result });
-
     return res.status(400).json({ message: badQuery });
   }
 
