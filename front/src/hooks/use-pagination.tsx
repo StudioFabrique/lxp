@@ -18,7 +18,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     initialState.totalPages
   );
   const [dataList, setDataList] = useState<Array<any>>([]);
-  const [searchPath, setSearchPath] = useState("");
+  const [path, setPath] = useState(defaultUrlPath);
   const { sendRequest } = useHttp();
 
   const handlePageNumber = useCallback((value: number) => {
@@ -48,33 +48,30 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     initPagination();
   };
 
-  const getList = useCallback(
-    (roleName: string) => {
-      const applyData = (data: { list: Array<any>; total: number }) => {
-        let index = (page - 1) * perPage + 1;
-        data.list.forEach((item: any) => {
-          item.index = index++ + ".";
-          item.createdAt =
-            item?.createdAt && new Date(item.createdAt).toLocaleDateString();
-          item.updatedAt =
-            item?.updatedAt && new Date(item.updatedAt).toLocaleDateString();
-          item.isSelected = false;
-        });
-        handleTotalPages(data.total);
-        setDataList(data.list);
-      };
+  const getList = useCallback(() => {
+    const applyData = (data: { list: Array<any>; total: number }) => {
+      let index = (page - 1) * perPage + 1;
+      data.list.forEach((item: any) => {
+        item.index = index++ + ".";
+        item.createdAt =
+          item?.createdAt && new Date(item.createdAt).toLocaleDateString();
+        item.updatedAt =
+          item?.updatedAt && new Date(item.updatedAt).toLocaleDateString();
+        item.isSelected = false;
+      });
+      handleTotalPages(data.total);
+      setDataList(data.list);
+    };
 
-      sendRequest(
-        {
-          path: `${path}/${roleName}/${stype}/${
-            sdir ? "desc" : "asc"
-          }?page=${page}&limit=${perPage}`,
-        },
-        applyData
-      );
-    },
-    [sendRequest, page, perPage, handleTotalPages, defaultUrlPath, stype, sdir]
-  );
+    sendRequest(
+      {
+        path: `${path}/${stype}/${
+          sdir ? "desc" : "asc"
+        }?page=${page}&limit=${perPage}`,
+      },
+      applyData
+    );
+  }, [sendRequest, page, perPage, handleTotalPages, stype, sdir, path]);
 
   return {
     page: page,
@@ -91,6 +88,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     setStype,
     getList,
     setDataList,
+    setPath,
   };
 };
 

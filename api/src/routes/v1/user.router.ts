@@ -95,6 +95,6 @@ userRouter.put(
 
 userRouter.post("/", isUser, userValidator, httpCreateUser);
 
-userRouter.get("/search/:entity/:value/:userType/:sdir", httpSearchUser);
+userRouter.get("/search/:role/:entity/:value/:userType/:sdir", httpSearchUser);
 
 export default userRouter;

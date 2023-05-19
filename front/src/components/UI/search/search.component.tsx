@@ -7,6 +7,7 @@ const Search: FC<{
     value: string;
     option: string;
   }>;
+  onSearch: (entityToSearch: string, searchValue: string) => void;
 }> = (props) => {
   const [searchType, setSearchType] = useState<string>("search");
   const [entityToSearch, setEntityToSearch] = useState<string>("lastname");
@@ -48,6 +49,7 @@ const Search: FC<{
     event.preventDefault();
     if (regexGeneric.test(searchValue)) {
       console.log(`Searching ${searchValue} as ${entityToSearch}`);
+      props.onSearch(entityToSearch, searchValue);
     }
   };
 

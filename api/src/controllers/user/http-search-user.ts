@@ -6,6 +6,8 @@ async function httpSearchUser(req: Request, res: Response) {
   const { entity, role, value, sdir } = req.params;
   const { page, limit } = req.query;
 
+  console.log({ role });
+
   try {
     const result = await searchUser(entity, value, role, +page!, +limit!, sdir);
 
