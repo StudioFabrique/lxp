@@ -3,7 +3,6 @@ import { useContext, useEffect, useState } from "react";
 import { Context } from "../../store/context.store";
 import Role from "../../utils/interfaces/role";
 import Tabs from "../../components/UI/tabs/tabs.component";
-import GroupList from "../../components/lists/group-list/group-list.component";
 
 const GroupHome = () => {
   const { user, roles } = useContext(Context);
@@ -25,7 +24,7 @@ const GroupHome = () => {
         {user && role ? (
           <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />
         ) : null}
-        <GroupList role={role} />
+        {/* <GroupList role={role} /> */}
         <Link className="btn" to="/admin/group/add">
           Créer un groupe
         </Link>
