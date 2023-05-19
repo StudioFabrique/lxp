@@ -36,7 +36,8 @@ const UserItem: FC<{
       >
         {userItem.formation || "-"}
       </td>
-      <td className="bg-transparent">
+      <td className="bg-transparent">{userItem.createdAt}</td>
+      <td className="bg-transparent flex justify-center">
         <div
           className={
             userItem.isActive

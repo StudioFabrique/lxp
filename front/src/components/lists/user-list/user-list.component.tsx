@@ -96,6 +96,14 @@ const UserList: FC<{
           <th
             className="cursor-pointer"
             onClick={() => {
+              onSorting("createdAt");
+            }}
+          >
+            Date
+          </th>
+          <th
+            className="cursor-pointer"
+            onClick={() => {
               onSorting("isActive");
             }}
           >
