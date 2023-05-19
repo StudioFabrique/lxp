@@ -1,7 +1,7 @@
 import { FC } from "react";
-import toTitleCase from "../../utils/toTitleCase";
+import toTitleCase from "../../../utils/toTitleCase";
 import { Link } from "react-router-dom";
-import Can from "../UI/can/can.component";
+import Can from "../../UI/can/can.component";
 
 const UserItem: FC<{
   userItem: any;
