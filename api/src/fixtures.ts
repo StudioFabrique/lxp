@@ -172,10 +172,38 @@ async function createManStudents() {
   await Student.bulkSave(userList);
 }
 
+async function createManyCoach() {
+  const role = await Role.findOne({ role: "coach" });
+  const hash = await bcrypt.hash("Abcdef@123456", 10);
+  const userList = Array<any>();
+  for (let i = 0; i < 100; i++) {
+    const firstname = firstnames[getRandomNumber(0, 14)];
+    const city = cities[getRandomNumber(0, 9)];
+    const postCode = city.postcode;
+    const cityName = city.name;
+    const user = new User({
+      firstname: firstname.toLowerCase(),
+      lastname: "dupont",
+      email: createMail(firstname, lastnames[i], i),
+      password: hash,
+      address: addresses[i] || addresses[i - 50],
+      postCode,
+      city: cityName,
+      roles: [new Object(role!._id)],
+      isActive: true,
+      avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
+    });
+    userList.push(user);
+    robotIndex++;
+  }
+  await Student.bulkSave(userList);
+}
+
 async function createRoles() {
   const roles = [
     { role: "admin", label: "admin", rank: 1 },
     { role: "teacher", label: "formateur", rank: 2 },
+    { role: "boss_teacher", label: "Formateur en Chef", rank: 2 },
     { role: "student", label: "apprenant", rank: 3 },
     { role: "coach", label: "mentor", rank: 3 },
   ];
@@ -230,6 +258,7 @@ async function main() {
   await createManyAdmins();
   await createManyTeachers();
   await createManStudents();
+  await createManyCoach();
 }
 
 main();

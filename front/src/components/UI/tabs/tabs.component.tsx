@@ -8,10 +8,6 @@ const Tabs: FC<{
   roles: Array<Role>;
   onRoleSwitch: (role: Role) => void;
 }> = ({ role, roles, onRoleSwitch }) => {
-  const handleTabClick = (newRole: Role) => {
-    onRoleSwitch(newRole);
-  };
-
   const setContent = (item: Role) => {
     return (
       <p
@@ -20,7 +16,7 @@ const Tabs: FC<{
             ? "tab tab-lifted tab-active text-accent font-bold"
             : "tab tab-lifted text-secondary font-bold"
         }
-        onClick={() => handleTabClick(item)}
+        onClick={() => onRoleSwitch(item)}
       >
         {`${toTitleCase(item.label)}s`}
       </p>
