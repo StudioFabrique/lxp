@@ -3,7 +3,7 @@ import express from "express";
 import httpGetAllUsers from "../../controllers/user/http-get-all-users";
 import { body, param, query } from "express-validator";
 import isUser from "../../middleware/is-user";
-import httpUpdateStudentRoles from "../../controllers/user/http--update-student-roles";
+import httpUpdateStudentRoles from "../../controllers/user/http-update-student-roles";
 import { userValidator } from "../../middleware/validators";
 import httpCreateUser from "../../controllers/user/http-create-user";
 import httpUpdateUserRoles from "../../controllers/user/http-update-user-roles";

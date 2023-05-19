@@ -3,7 +3,7 @@ import { Context } from "../../store/context.store";
 import Role from "../../utils/interfaces/role";
 import Tabs from "../../components/UI/tabs/tabs.component";
 import SearchUser from "../../components/UI/search/search.component";
-import { userSeachOptions } from "../../config/user-search-options";
+import { userSeachOptions } from "../../config/search-options";
 import Pagination from "../../components/UI/pagination/pagination";
 import usePagination from "../../hooks/use-pagination";
 import useHttp from "../../hooks/use-http";
@@ -39,6 +39,7 @@ const UserHome = () => {
   const handleRoleSwitch = (role: Role) => {
     initPagination();
     setRole(role);
+    setIsSeachActive(false);
     setPath(`/user/${role.role}`);
   };
 
@@ -167,23 +168,25 @@ const UserHome = () => {
               ) : null}
             </div>
           </div>
-          <UserList
-            role={role}
-            userList={dataList}
-            onRowCheck={handleRowCheck}
-            onAllChecked={handleAllChecked}
-            onSorting={handleSorting}
-          />
-          {dataList.length > 0 ? (
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              setPage={handlePageNumber}
+          <div className="w-5/6">
+            <UserList
+              role={role}
+              userList={dataList}
+              onRowCheck={handleRowCheck}
+              onAllChecked={handleAllChecked}
+              onSorting={handleSorting}
             />
-          ) : null}
-          <Link className="btn" to="/admin/user/add">
-            Créer un utilisateur
-          </Link>
+            {dataList.length > 0 ? (
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                setPage={handlePageNumber}
+              />
+            ) : null}
+            <Link className="btn" to="/admin/user/add">
+              Créer un utilisateur
+            </Link>
+          </div>
         </div>
       </div>
       <>
