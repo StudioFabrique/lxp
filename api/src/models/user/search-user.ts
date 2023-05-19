@@ -9,6 +9,7 @@ async function searchUser(
   role: string,
   page: number,
   limit: number,
+  stype: string,
   sdir: string
 ) {
   const dir = sdir === "asc" ? 1 : -1;
@@ -46,7 +47,7 @@ async function searchUser(
       { password: 0 }
     )
       .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
-      .sort({ [entity]: dir })
+      .sort({ [stype]: dir })
       .skip(getPagination(page, limit))
       .limit(limit);
     const total = await User.count({ [entity]: field, roles: fetchedRole._id });
@@ -57,7 +58,7 @@ async function searchUser(
       { password: 0 }
     )
       .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
-      .sort({ [entity]: dir })
+      .sort({ [stype]: dir })
       .skip(getPagination(page, limit))
       .limit(limit);
     const total = await Student.count({
