@@ -13,7 +13,6 @@ import { hasPermission } from "../../utils/hasPermission";
 import Modal from "../../components/UI/modal/modal";
 import { useCallback, useContext, useEffect, useState } from "react";
 import UserList from "../../components/lists/user-list/user-list.component";
-import { userSeachOptions } from "../../config/search-options";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
