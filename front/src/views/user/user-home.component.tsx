@@ -3,7 +3,7 @@ import { Context } from "../../store/context.store";
 import Role from "../../utils/interfaces/role";
 import Tabs from "../../components/UI/tabs/tabs.component";
 import SearchUser from "../../components/UI/search/search.component";
-import { userSeachOptions } from "../../config/user-search-options";
+import { userSeachOptions } from "../../config/search-options";
 import Pagination from "../../components/UI/pagination/pagination";
 import usePagination from "../../hooks/use-pagination";
 import useHttp from "../../hooks/use-http";
@@ -39,6 +39,7 @@ const UserHome = () => {
   const handleRoleSwitch = (role: Role) => {
     initPagination();
     setRole(role);
+    setIsSeachActive(false);
     setPath(`/user/${role.role}`);
   };
 

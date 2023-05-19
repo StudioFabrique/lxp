@@ -3,4 +3,5 @@ export const userSeachOptions = [
   { index: 2, value: "group", option: "Groupe" },
   { index: 3, value: "formation", option: "Formation" },
   { index: 4, value: "createdAt", option: "Date" },
+  { index: 5, value: "isActive", option: "Status" },
 ];
