@@ -55,7 +55,7 @@ const GroupAddForm: FC<{
           <label>Description</label>
           <input
             className="ml-2 rounded-xs bg-pink-900/10 outline-pink-900/20 p-[20px] pl-[30px] placeholder:text-purple-discrete"
-            type="password"
+            type="text"
             onChange={desc.valueChangeHandler}
             onBlur={desc.valueBlurHandler}
             defaultValue={desc.value}

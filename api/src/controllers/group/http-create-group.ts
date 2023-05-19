@@ -6,13 +6,17 @@ import {
   creationSuccessfull,
   serverIssue,
 } from "../../utils/constantes";
+import Role from "../../utils/interfaces/db/role";
 
 export default async function httpCreateGroup(req: Request, res: Response) {
   console.log(req.body);
 
   const group: IGroup = req.body;
   try {
-    group.roles = { role: "user", label: "user", rank: 3 };
+    group.roles = [new Object((await Role.findOne({ role: "admin" }))!._id)];
+    /* group.teachers = [];
+    group.users = []; */
+    console.log("roles " + group.roles);
     const response = await createGroup(group);
     if (response) {
       return res.status(201).json({ message: creationSuccessfull });
