@@ -190,7 +190,7 @@ async function createManyCoach() {
       postCode,
       city: cityName,
       roles: [new Object(role!._id)],
-      isActive: true,
+      isActive: getRandomNumber(0, 1) === 0,
       avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });
     userList.push(user);
