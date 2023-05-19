@@ -1,14 +1,12 @@
 import { FC } from "react";
 import toTitleCase from "../../../utils/toTitleCase";
 import { Link } from "react-router-dom";
-import Role from "../../../utils/interfaces/role";
 import Can from "../../UI/can/can.component";
 
 const UserItem: FC<{
   userItem: any;
   onRowCheck: (id: string) => void;
-  onRolesChange: (newRoles: Array<Role>, userId: string) => void;
-}> = ({ userItem, onRowCheck, onRolesChange }) => {
+}> = ({ userItem, onRowCheck }) => {
   return (
     <>
       <td className="bg-transparent">

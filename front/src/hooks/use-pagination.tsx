@@ -1,68 +1,94 @@
-import { useCallback, useReducer } from "react";
+import { useCallback, useState } from "react";
+
 import { perPage } from "../config/pagination";
+import useHttp from "./use-http";
 
 const initialState = {
   page: 1,
   perPage: perPage,
-  total: null,
   totalPages: null,
 };
 
-const setTotalPages = (total: number, perPage: number) => {
-  return Math.ceil(total / perPage);
-};
+const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
+  const [sdir, setSdir] = useState(false);
+  const [stype, setStype] = useState(defaultSortValue);
+  const [page, setPage] = useState(initialState.page);
+  const [perPage] = useState(initialState.perPage);
+  const [totalPages, setTotalPages] = useState<number | null>(
+    initialState.totalPages
+  );
+  const [dataList, setDataList] = useState<Array<any>>([]);
+  const [path, setPath] = useState(defaultUrlPath);
+  const { sendRequest } = useHttp();
 
-const pageReducer = (state: any, action: any) => {
-  switch (action.type) {
-    case "SET_PAGE":
-      return {
-        ...state,
-        page: action.value,
-      };
-
-    case "SET_TOTAL_PAGES":
-      return {
-        ...state,
-        total: action.value,
-        totalPages: setTotalPages(action.value, state.perPage),
-      };
-
-    case "INIT":
-      return {
-        ...state,
-        page: 1,
-      };
-    default:
-      return state;
-  }
-};
-
-const usePagination = () => {
-  const [state, dispatch] = useReducer(pageReducer, initialState);
+  const handlePageNumber = useCallback((value: number) => {
+    setPage(value);
+  }, []);
 
   const initPagination = useCallback(() => {
-    dispatch({ type: "INIT" });
-  }, []);
+    setPage(1);
+  }, [setPage]);
 
-  const setPage = useCallback((value: number) => {
-    console.log("page changée");
+  const handleTotalPages = useCallback(
+    (total: number) => {
+      setTotalPages(Math.ceil(total! / perPage));
+    },
+    [perPage]
+  );
 
-    dispatch({ type: "SET_PAGE", value });
-  }, []);
+  const sortData = (column: string) => {
+    if (column !== stype) {
+      setSdir(false);
+    } else {
+      setSdir((prevSdir) => {
+        return !prevSdir;
+      });
+    }
+    setStype(column);
+    initPagination();
+  };
 
-  const setTotalPages = useCallback((value: number) => {
-    dispatch({ type: "SET_TOTAL_PAGES", value });
-  }, []);
+  const getList = useCallback(() => {
+    const applyData = (data: { list: Array<any>; total: number }) => {
+      let index = (page - 1) * perPage + 1;
+      data.list.forEach((item: any) => {
+        item.index = index++ + ".";
+        item.createdAt =
+          item?.createdAt && new Date(item.createdAt).toLocaleDateString();
+        item.updatedAt =
+          item?.updatedAt && new Date(item.updatedAt).toLocaleDateString();
+        item.isSelected = false;
+      });
+      handleTotalPages(data.total);
+      setDataList(data.list);
+    };
+
+    sendRequest(
+      {
+        path: `${path}/${stype}/${
+          sdir ? "desc" : "asc"
+        }?page=${page}&limit=${perPage}`,
+      },
+      applyData
+    );
+  }, [sendRequest, page, perPage, handleTotalPages, stype, sdir, path]);
 
   return {
-    page: state.page,
-    perPage: state.perPage,
-    total: state.total,
-    totalPages: state.totalPages,
-    setPage,
+    page: page,
+    perPage: perPage,
+    totalPages: totalPages,
+    sdir,
+    stype,
+    dataList,
+    handlePageNumber,
     initPagination,
-    setTotalPages,
+    handleTotalPages,
     reset: initPagination,
+    sortData,
+    setStype,
+    getList,
+    setDataList,
+    setPath,
   };
 };
 

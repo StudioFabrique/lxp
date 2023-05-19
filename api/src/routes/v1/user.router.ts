@@ -6,6 +6,8 @@ import isUser from "../../middleware/is-user";
 import httpUpdateStudentRoles from "../../controllers/user/http--update-student-roles";
 import { userValidator } from "../../middleware/validators";
 import httpCreateUser from "../../controllers/user/http-create-user";
+import httpUpdateUserRoles from "../../controllers/user/http-update-user-roles";
+import httpSearchUser from "../../controllers/user/http-search-user";
 
 const userRouter = express.Router();
 
@@ -38,11 +40,11 @@ userRouter.get(
 userRouter.put(
   "/student-roles",
   // validators
-  body("studentsToUpdate")
+  body("usersToUpdate")
     .isArray()
     .notEmpty()
     .withMessage("Le tableau studentsToUpdate ne peut pas être vide."),
-  body("studentsToUpdate.*")
+  body("usersToUpdate.*")
     .isString()
     .withMessage(
       "Chaque élément de studentsToUpdate doit être une chaîne de caractères."
@@ -62,6 +64,37 @@ userRouter.put(
     .escape(),
   httpUpdateStudentRoles
 );
+
+userRouter.put(
+  "/user-roles",
+  // validators
+  body("usersToUpdate")
+    .isArray()
+    .notEmpty()
+    .withMessage("Le tableau studentsToUpdate ne peut pas être vide."),
+  body("usersToUpdate.*")
+    .isString()
+    .withMessage(
+      "Chaque élément de studentsToUpdate doit être une chaîne de caractères."
+    )
+    .trim()
+    .escape(),
+  body("rolesId")
+    .isArray()
+    .notEmpty()
+    .withMessage("Le tableau rolesId ne peut pas être vide."),
+  body("rolesId.*")
+    .isString()
+    .withMessage(
+      "Chaque élément de rolesId doit être une chaîne de caractères."
+    )
+    .trim()
+    .escape(),
+  httpUpdateUserRoles
+);
+
 userRouter.post("/", isUser, userValidator, httpCreateUser);
+
+userRouter.get("/search/:role/:entity/:value/:userType/:sdir", httpSearchUser);
 
 export default userRouter;

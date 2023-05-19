@@ -1,8 +1,8 @@
 import React, { FC, useContext, useState } from "react";
-import { Context } from "../../../store/context.store";
 import Role from "../../../utils/interfaces/role";
-import { hasRole } from "../../../utils/hasRole";
+import { Context } from "../../../store/context.store";
 import Can from "../../UI/can/can.component";
+import { hasRole } from "../../../utils/hasRole";
 
 const RoleSelect: FC<{
   roleTab: Role;
@@ -47,7 +47,7 @@ const RoleSelect: FC<{
       </p>
       <div className="dropdown dropdown-end">
         <button
-          className="btn btn-accent btn-xs flex gap-x-2"
+          className="btn btn-xs flex gap-x-2"
           onClick={handleToggleDropdown}
         >
           rôles
