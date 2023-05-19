@@ -95,6 +95,20 @@ userRouter.put(
 
 userRouter.post("/", isUser, userValidator, httpCreateUser);
 
-userRouter.get("/search/:role/:entity/:value/:stype/:sdir", httpSearchUser);
+userRouter.get(
+  "/search/:role/:entity/:value/:stype/:sdir",
+
+  //  validators
+  param("search").isString().trim().escape(),
+  param("role").isString().trim().escape(),
+  param("entity").isString().trim().escape(),
+  param("value").isString().trim().escape(),
+  param("stype").isString().trim().escape(),
+  param("sdir").isString().trim().escape(),
+  query("page").trim().escape().isInt(),
+  query("limit").trim().escape().isInt(),
+
+  httpSearchUser
+);
 
 export default userRouter;
