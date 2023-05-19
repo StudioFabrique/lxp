@@ -18,6 +18,8 @@ import UserList from "../../components/user-list/user-list.component";
 const UserHome = () => {
   const { user, roles } = useContext(Context);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [role, setRole] = useState<Role>(roles[0]);
+  const [isSeachActive, setIsSeachActive] = useState(false);
   const {
     page,
     totalPages,
@@ -27,16 +29,18 @@ const UserHome = () => {
     initPagination,
     handlePageNumber,
     setDataList,
-  } = usePagination("lastname", "/user");
+    setPath,
+  } = usePagination("lastname", `/user/${user!.roles[0].role}`);
   const { sendRequest } = useHttp();
-  const [role, setRole] = useState<Role>(roles[0]);
 
   const handleSorting = (column: string) => {
     sortData(column);
   };
 
   const handleRoleSwitch = (role: Role) => {
+    initPagination();
     setRole(role);
+    setPath(`/user/${role.role}`);
   };
 
   const handleRowCheck = (id: string) => {
@@ -49,7 +53,16 @@ const UserHome = () => {
 
   const handleSearchResult = (entityToSearch: string, searchValue: string) => {
     initPagination();
-    getList(role.role);
+    setPath(`/user/search/${role.role}/${entityToSearch}/${searchValue}`);
+    getList();
+    setIsSeachActive(true);
+  };
+
+  const handleCloseSearch = () => {
+    setIsSeachActive(false);
+    initPagination();
+    setPath(`/user/${role.role}`);
+    getList();
   };
 
   const handleAllChecked = useCallback(
@@ -92,7 +105,7 @@ const UserHome = () => {
 
     const applyData = (data: any) => {
       initPagination();
-      getList(role.role);
+      getList();
     };
     if (updatedDataList.length > 0) {
       sendRequest(
@@ -116,7 +129,7 @@ const UserHome = () => {
 
   useEffect(() => {
     if (role) {
-      getList(role.role);
+      getList();
     }
   }, [page, getList, role]);
 
@@ -138,7 +151,22 @@ const UserHome = () => {
                 </Can>
               ) : null}
             </div>
-            <SearchUser options={userSeachOptions} />
+            <div className="flex flex-col">
+              <SearchUser
+                options={userSeachOptions}
+                onSearch={handleSearchResult}
+              />
+              {isSeachActive ? (
+                <div className="flex justify-end">
+                  <button
+                    className="btn btn-info btn-sm"
+                    onClick={handleCloseSearch}
+                  >
+                    Fermer la recherche
+                  </button>
+                </div>
+              ) : null}
+            </div>
           </div>
           <UserList
             role={role}

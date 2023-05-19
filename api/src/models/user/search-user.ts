@@ -37,20 +37,29 @@ async function searchUser(
   console.log({ field });
 
   if (fetchedRole.rank < 3) {
-    const users = await User.find({ [entity]: field }, { password: 0 })
+    const users = await User.find(
+      { [entity]: field, roles: fetchedRole._id },
+      { password: 0 }
+    )
       .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
       .sort({ [entity]: dir })
       .skip(getPagination(page, limit))
       .limit(limit);
-    const total = await User.count({ [entity]: field });
+    const total = await User.count({ [entity]: field, roles: fetchedRole._id });
     return { total, users };
   } else if (fetchedRole.rank > 2) {
-    const users = await Student.find({ [entity]: field }, { password: 0 })
+    const users = await Student.find(
+      { [entity]: field, roles: fetchedRole._id },
+      { password: 0 }
+    )
       .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
       .sort({ [entity]: dir })
       .skip(getPagination(page, limit))
       .limit(limit);
-    const total = await Student.count({ [entity]: field });
+    const total = await Student.count({
+      [entity]: field,
+      roles: fetchedRole._id,
+    });
     return { total, users };
   }
 }
