@@ -13,6 +13,7 @@ import { hasPermission } from "../../utils/hasPermission";
 import Modal from "../../components/UI/modal/modal";
 import { useCallback, useContext, useEffect, useState } from "react";
 import UserList from "../../components/lists/user-list/user-list.component";
+import { userSeachOptions } from "../../config/search-options";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
@@ -39,6 +40,7 @@ const UserHome = () => {
   const handleRoleSwitch = (role: Role) => {
     initPagination();
     setRole(role);
+    setIsSeachActive(false);
     setPath(`/user/${role.role}`);
   };
 
@@ -167,23 +169,25 @@ const UserHome = () => {
               ) : null}
             </div>
           </div>
-          <UserList
-            role={role}
-            userList={dataList}
-            onRowCheck={handleRowCheck}
-            onAllChecked={handleAllChecked}
-            onSorting={handleSorting}
-          />
-          {dataList.length > 0 ? (
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              setPage={handlePageNumber}
+          <div className="w-5/6">
+            <UserList
+              role={role}
+              userList={dataList}
+              onRowCheck={handleRowCheck}
+              onAllChecked={handleAllChecked}
+              onSorting={handleSorting}
             />
-          ) : null}
-          <Link className="btn" to="/admin/user/add">
-            Créer un utilisateur
-          </Link>
+            {dataList.length > 0 ? (
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                setPage={handlePageNumber}
+              />
+            ) : null}
+            <Link className="btn" to="/admin/user/add">
+              Créer un utilisateur
+            </Link>
+          </div>
         </div>
       </div>
       <>
