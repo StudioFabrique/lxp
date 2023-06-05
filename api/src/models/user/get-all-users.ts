@@ -1,6 +1,6 @@
 import Role from "../../utils/interfaces/db/role";
 import Student from "../../utils/interfaces/db/student/student.model";
-import User from "../../utils/interfaces/db/teacher-admin/teacher.model";
+import User from "../../utils/interfaces/db/user/user.model";
 import { getPagination } from "../../utils/services/getPagination";
 
 async function getAllUsers(

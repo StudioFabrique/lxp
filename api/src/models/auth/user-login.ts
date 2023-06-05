@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 
-import User from "../../utils/interfaces/db/teacher-admin/teacher.model";
+import User from "../../utils/interfaces/db/user/user.model";
 import { hasRole } from "../../utils/services/permissions/hasRole";
 
 async function userLogin(email: string, password: string) {

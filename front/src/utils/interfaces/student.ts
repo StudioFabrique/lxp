@@ -1,3 +1,5 @@
+import Group from "./group";
+
 export default interface Student {
   _id: string;
   email: string;
@@ -12,4 +14,5 @@ export default interface Student {
   createdAt: Date;
   updatedAt: Date;
   isActive: boolean;
+  group?: Group;
 }

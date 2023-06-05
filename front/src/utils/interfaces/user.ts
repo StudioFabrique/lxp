@@ -1,5 +1,6 @@
 //  admin and teacher
 
+import Group from "./group";
 import Role from "./role";
 
 export default interface User {
@@ -16,4 +17,5 @@ export default interface User {
   createdAt: Date;
   updatedAt: Date;
   isActive: boolean;
+  group?: Group;
 }

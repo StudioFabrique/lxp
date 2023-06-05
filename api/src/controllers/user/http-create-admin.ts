@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IUser } from "../../utils/interfaces/db/teacher-admin/teacher.model";
+import { IUser } from "../../utils/interfaces/db/user/user.model";
 import {
   alreadyExist,
   badQuery,

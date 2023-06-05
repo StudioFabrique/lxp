@@ -1,6 +1,6 @@
 import { Document, Schema, model } from "mongoose";
 import { IStudent } from "./student/student.model";
-import { IUser } from "./teacher-admin/teacher.model";
+import { IUser } from "./user/user.model";
 import { IRole } from "./role";
 
 export interface IGroup extends Document {
