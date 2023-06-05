@@ -9,10 +9,12 @@ import {
   cities,
   domains,
   firstnames,
+  groupes,
   lastnames,
 } from "./utils/fixtures/data/data";
 import Role from "./utils/interfaces/db/role";
 import Permission from "./utils/interfaces/db/permission";
+import Group, { IGroup } from "./utils/interfaces/db/group";
 dotenv.config();
 dotenv.config({ path: ".env.local", override: true });
 
@@ -116,6 +118,20 @@ async function createManyAdmins() {
     robotIndex++;
   }
   await User.bulkSave(userList);
+}
+
+async function createManyGroups() {
+  const role = await Role.findOne({ role: "student" });
+  const newGroups = Array<any>();
+  groupes.forEach((groupe) => {
+    const newGroup = new Group({
+      name: groupe,
+      desc: "Lorem Ipsum bla bla bla",
+      roles: [new Object(role!._id)],
+    });
+    newGroups.push(newGroup);
+  });
+  await Group.bulkSave(newGroups);
 }
 
 async function createManyTeachers() {
@@ -259,6 +275,7 @@ async function main() {
   await createManyTeachers();
   await createManStudents();
   await createManyCoach();
+  await createManyGroups();
 }
 
 main();
