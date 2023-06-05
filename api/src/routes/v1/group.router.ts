@@ -2,7 +2,12 @@ import { Router } from "express";
 import httpCreateGroup from "../../controllers/group/http-create-group";
 import isUser from "../../middleware/is-user";
 import httpGetAllGroups from "../../controllers/group/http-get-all-groups";
-import { searchValidator } from "../../middleware/validators";
+import {
+  getAllValidator,
+  groupValidator,
+  searchValidator,
+} from "../../middleware/validators";
+import httpSearchGroup from "../../controllers/group/http-search-group";
 
 const groupRouter = Router();
 
@@ -20,10 +25,16 @@ groupRouter.get(
         return res.status(400).json({ message: noAccess });
       }
     }, */
-  searchValidator,
+  getAllValidator,
   httpGetAllGroups
 );
 
-groupRouter.post("/", isUser, httpCreateGroup);
+groupRouter.get(
+  "/search/:role/:entity/:value/:stype/:sdir",
+  searchValidator,
+  httpSearchGroup
+);
+
+groupRouter.post("/", isUser, groupValidator, httpCreateGroup);
 
 export default groupRouter;
