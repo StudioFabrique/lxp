@@ -1,6 +1,6 @@
 import { Response } from "express";
 
-import User from "../../utils/interfaces/db/teacher-admin/teacher.model";
+import User from "../../utils/interfaces/db/user/user.model";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import { noAccess, serverIssue } from "../../utils/constantes";
 import Student from "../../utils/interfaces/db/student/student.model";
