@@ -1,11 +1,19 @@
 import { FC } from "react";
 import User from "../../../utils/interfaces/user";
 
-const UserGroupList: FC<{
+const GroupUserList: FC<{
   users: User[];
   AddSelectedUser: (userId: number) => void;
 }> = (props) => {
-  return <></>;
+  return (
+    <>
+      {props.users.map((user, i) => (
+        <div key={i} className="flex flex-row justify-between">
+          <div>{user.firstname}</div>
+          <div></div>
+        </div>
+      ))}
+    </>
+  );
 };
-
-export default UserGroupList;
+export default GroupUserList;
