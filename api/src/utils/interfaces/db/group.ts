@@ -17,11 +17,11 @@ const groupSchema: Schema = new Schema(
   {
     name: { type: String, required: true },
     desc: { type: String, required: true },
-    teachers: {
+    users: {
       type: [Schema.Types.ObjectId],
       ref: "User",
     },
-    users: {
+    students: {
       type: [Schema.Types.ObjectId],
       ref: "Student",
     },
