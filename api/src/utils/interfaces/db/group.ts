@@ -6,8 +6,8 @@ import { IRole } from "./role";
 export interface IGroup extends Document {
   name: string;
   desc: string;
-  teachers?: IUser["_id"];
-  users?: IStudent["_id"];
+  users?: IUser["_id"];
+  students?: IStudent["_id"];
   roles: IRole["_id"];
   createdAt: Date;
   updatedAt: Date;
