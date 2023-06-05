@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { IRole } from "../role";
+import { IGroup } from "../group";
 
 export interface IStudent extends Document {
   email: string;
@@ -14,6 +15,7 @@ export interface IStudent extends Document {
   createdAt: Date;
   updatedAt: Date;
   isActive: boolean;
+  group?: IGroup;
 }
 
 const studentSchema: Schema = new Schema(
@@ -32,6 +34,7 @@ const studentSchema: Schema = new Schema(
     },
     avatar: { type: String, required: false },
     isActive: { type: Boolean, required: true },
+    group: { type: [mongoose.Schema.Types.ObjectId], ref: "Group" },
   },
   { timestamps: true }
 );

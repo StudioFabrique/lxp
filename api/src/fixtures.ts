@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import User from "./utils/interfaces/db/teacher-admin/teacher.model";
+import User from "./utils/interfaces/db/user/user.model";
 
 import mongoose from "mongoose";
 import dotenv from "dotenv";

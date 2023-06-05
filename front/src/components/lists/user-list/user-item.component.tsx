@@ -32,6 +32,11 @@ const UserItem: FC<{
       <td className="bg-transparent">{toTitleCase(userItem.firstname)}</td>
       <td className="bg-transparent">{userItem.email}</td>
       <td
+        className={`bg-transparent ${userItem.group.name ? "" : "text-center"}`}
+      >
+        {userItem.group.name || "-"}
+      </td>
+      <td
         className={`bg-transparent ${userItem.formation ? "" : "text-center"}`}
       >
         {userItem.formation || "-"}

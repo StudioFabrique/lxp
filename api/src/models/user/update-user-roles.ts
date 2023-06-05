@@ -1,5 +1,5 @@
 import Role from "../../utils/interfaces/db/role";
-import User from "../../utils/interfaces/db/teacher-admin/teacher.model";
+import User from "../../utils/interfaces/db/user/user.model";
 
 async function updateUserRoles(
   usersToUpdate: Array<string>,
