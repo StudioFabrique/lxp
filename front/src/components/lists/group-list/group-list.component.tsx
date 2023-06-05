@@ -49,7 +49,7 @@ const GroupList: FC<{
 
   let content = (
     <table className="table w-full">
-      <thead>
+      <thead className="bg-none">
         <tr>
           <th className="z-0">
             <input
