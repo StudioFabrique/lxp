@@ -20,6 +20,10 @@ const GroupHome = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [role, setRole] = useState<Role>(roles[0]);
   const [isSeachActive, setIsSeachActive] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState<string | undefined>(
+    undefined
+  );
+
   const {
     page,
     totalPages,
@@ -33,7 +37,12 @@ const GroupHome = () => {
   } = usePagination("lastname", `/group/${user!.roles[0].role}`);
   const { sendRequest } = useHttp();
 
+  const handleSelectGroup = (groupId: string) => {
+    setSelectedGroup(groupId);
+  };
+
   const handleAddUsersToGroup = (usersId: string[]) => {
+    console.log(usersId);
     console.log("envoi des données...");
   };
 
@@ -178,6 +187,7 @@ const GroupHome = () => {
             onRowCheck={handleRowCheck}
             onAllChecked={handleAllChecked}
             onSorting={handleSorting}
+            onSelectGroup={handleSelectGroup}
           />
           {dataList.length > 0 ? (
             <Pagination
@@ -190,21 +200,33 @@ const GroupHome = () => {
             Créer un groupe
           </Link>
         </div>
-        <GroupAddUserList
-          users={[
-            {
-              _id: "csdd542a",
-              email: "test",
-              firstname: "test",
-              lastname: "test1",
-              createdAt: new Date(),
-              isActive: true,
-              roles: [],
-              updatedAt: new Date(),
-            },
-          ]}
-          addUsersToGroup={handleAddUsersToGroup}
-        />
+        {selectedGroup ? (
+          <GroupAddUserList
+            users={[
+              {
+                _id: "csdd542a",
+                email: "test",
+                firstname: "test",
+                lastname: "test1",
+                createdAt: new Date(),
+                isActive: true,
+                roles: [],
+                updatedAt: new Date(),
+              },
+              {
+                _id: "fsdkaj3s",
+                email: "test32",
+                firstname: "test7",
+                lastname: "test1",
+                createdAt: new Date(),
+                isActive: true,
+                roles: [],
+                updatedAt: new Date(),
+              },
+            ]}
+            addUsersToGroup={handleAddUsersToGroup}
+          />
+        ) : undefined}
       </div>
       <>
         {showErrorModal ? (

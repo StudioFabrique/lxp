@@ -8,7 +8,15 @@ const GroupList: FC<{
   onRowCheck: (id: string) => void;
   onAllChecked: (value: boolean) => void;
   onSorting: (column: string) => void;
-}> = ({ role, groupList, onRowCheck, onAllChecked, onSorting }) => {
+  onSelectGroup: (groupId: string) => void;
+}> = ({
+  role,
+  groupList,
+  onRowCheck,
+  onAllChecked,
+  onSorting,
+  onSelectGroup,
+}) => {
   const [allChecked, setAllChecked] = useState(false);
 
   const handleAllChecked = () => {
@@ -18,29 +26,9 @@ const GroupList: FC<{
     onAllChecked(allChecked);
   };
 
-  // fonction pour changer les rôles d'un unique utilisateur, elle a été déplacé ailleurs
-
-  /*   const handleRolesChange = (newRoles: Array<Role>, groupId: string) => {
-    const updatedGroupList = groupList.map((item: any) =>
-      item._id === groupId
-        ? {
-            ...item,
-            roles: sortArray(newRoles, "rank"),
-          }
-        : item
-    );
-    setGroupList(updatedGroupList);
-
-    const applyData = (data: any) => {};
-    sendRequest(
-      {
-        path: `/group/${role.role === "admin" ? "user" : "student"}/${groupId}`,
-        method: "put",
-        body: newRoles,
-      },
-      applyData
-    );
-  }; */
+  const handleSelectGroup = (groupId: string) => {
+    onSelectGroup(groupId);
+  };
 
   useEffect(() => {
     setAllChecked(false);
@@ -83,7 +71,13 @@ const GroupList: FC<{
       <tbody>
         {groupList.map((item: any) => (
           <tr className="hover:bg-primary/20" key={item._id}>
-            {<GroupItem groupItem={item} onRowCheck={onRowCheck} />}
+            {
+              <GroupItem
+                onSelectGroup={handleSelectGroup}
+                groupItem={item}
+                onRowCheck={onRowCheck}
+              />
+            }
           </tr>
         ))}
       </tbody>
