@@ -2,14 +2,18 @@ import { FC, FormEventHandler, useState } from "react";
 import UserListGroup from "./user-group-list.component";
 import User from "../../../utils/interfaces/user";
 
-const groupAddUserList: FC<{
+const GroupAddUserList: FC<{
   users: User[];
-  AddUsersToGroup: (usersId: number[]) => void;
+  AddUsersToGroup: (usersId: string[]) => void;
 }> = (props) => {
-  const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
-  const handleAddSelectedUser = (userId: number) => {
-    setSelectedUsers((users) => [...users, userId]);
+  const handleManageSelectedUser = (userId: string) => {
+    if (selectedUsers.includes(userId)) {
+      setSelectedUsers((users) => users.filter((value) => value !== userId));
+    } else {
+      setSelectedUsers((users) => [...users, userId]);
+    }
   };
 
   const handleClick: FormEventHandler = () => {
@@ -20,7 +24,8 @@ const groupAddUserList: FC<{
     <div>
       <UserListGroup
         users={props.users}
-        AddSelectedUser={handleAddSelectedUser}
+        selectedUsers={selectedUsers}
+        ManageSelectedUser={handleManageSelectedUser}
       />
       <button onClick={handleClick}>
         ajouter les utilisateurs selectionnés
@@ -29,4 +34,4 @@ const groupAddUserList: FC<{
   );
 };
 
-export default groupAddUserList;
+export default GroupAddUserList;
