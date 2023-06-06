@@ -4,7 +4,7 @@ import User from "../../../utils/interfaces/user";
 
 const GroupAddUserList: FC<{
   users: User[];
-  AddUsersToGroup: (usersId: string[]) => void;
+  addUsersToGroup: (usersId: string[]) => void;
 }> = (props) => {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
@@ -17,7 +17,7 @@ const GroupAddUserList: FC<{
   };
 
   const handleClick: FormEventHandler = () => {
-    if (selectedUsers.length > 0) props.AddUsersToGroup(selectedUsers);
+    if (selectedUsers.length > 0) props.addUsersToGroup(selectedUsers);
   };
 
   return (
