@@ -10,7 +10,7 @@ const ParcoursForm = () => {
       <div>
         <ParcoursInfos />
       </div>
-      <div>
+      <div className="flex flex-col gap-y-4">
         <DatesSelecter />
         <Tags />
       </div>
