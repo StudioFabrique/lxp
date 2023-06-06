@@ -77,6 +77,7 @@ const GroupList: FC<{
             Description
           </th>
           <th>Actions</th>
+          <th>Gestion Utilisateurs</th>
         </tr>
       </thead>
       <tbody>

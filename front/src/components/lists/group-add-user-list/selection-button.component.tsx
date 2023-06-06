@@ -16,13 +16,13 @@ const SelectionButton: FC<{
 
     props.selectedUsers.includes(props.currentUser)
       ? setComponent(
-          <button onClick={handleClick} className="bg-green-500">
-            Sélectionner
+          <button onClick={handleClick} className="bg-red-500">
+            Déselectionner
           </button>
         )
       : setComponent(
-          <button onClick={handleClick} className="bg-red-500">
-            Déselectionner
+          <button onClick={handleClick} className="bg-green-500">
+            Sélectionner
           </button>
         );
   }, [props]);

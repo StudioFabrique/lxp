@@ -13,6 +13,7 @@ import Search from "../../components/UI/search/search.component";
 import GroupList from "../../components/lists/group-list/group-list.component";
 import Pagination from "../../components/UI/pagination/pagination";
 import Modal from "../../components/UI/modal/modal";
+import GroupAddUserList from "../../components/lists/group-add-user-list/group-add-user-list.component";
 
 const GroupHome = () => {
   const { user, roles } = useContext(Context);
@@ -31,6 +32,10 @@ const GroupHome = () => {
     setPath,
   } = usePagination("lastname", `/group/${user!.roles[0].role}`);
   const { sendRequest } = useHttp();
+
+  const handleAddUsersToGroup = (usersId: string[]) => {
+    console.log("envoi des données...");
+  };
 
   const handleSorting = (column: string) => {
     sortData(column);
@@ -185,6 +190,21 @@ const GroupHome = () => {
             Créer un groupe
           </Link>
         </div>
+        <GroupAddUserList
+          users={[
+            {
+              _id: "csdd542a",
+              email: "test",
+              firstname: "test",
+              lastname: "test1",
+              createdAt: new Date(),
+              isActive: true,
+              roles: [],
+              updatedAt: new Date(),
+            },
+          ]}
+          addUsersToGroup={handleAddUsersToGroup}
+        />
       </div>
       <>
         {showErrorModal ? (
