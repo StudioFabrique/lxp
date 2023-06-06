@@ -8,6 +8,7 @@ import {
   searchValidator,
 } from "../../middleware/validators";
 import httpSearchGroup from "../../controllers/group/http-search-group";
+import httpAddUser from "../../controllers/group/http-add-users-group";
 
 const groupRouter = Router();
 
@@ -36,5 +37,9 @@ groupRouter.get(
 );
 
 groupRouter.post("/", isUser, groupValidator, httpCreateGroup);
+
+groupRouter.get("/users", isUser);
+
+groupRouter.post("/users", isUser, httpAddUser);
 
 export default groupRouter;
