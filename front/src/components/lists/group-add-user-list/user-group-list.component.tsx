@@ -1,24 +1,27 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import User from "../../../utils/interfaces/user";
+import SelectionButton from "./selection-button.component";
 
 const GroupUserList: FC<{
   users: User[];
-  AddSelectedUser: (userId: number) => void;
+  ManageSelectedUser: (userId: string) => void;
+  selectedUsers: string[];
 }> = (props) => {
-  /* const [selectButton, setSelectButton] = useState<React.ReactElement>(
-    <button onClick={}></button>
-  ); */
-
   return (
     // map dans un autre composant
-    <>
+    <div>
       {props.users.map((user, i) => (
         <div key={i} className="flex flex-row justify-between">
           <div>{user.firstname}</div>
-          <div>{/* {selectButton} */}</div>
+          <SelectionButton
+            key={i}
+            selectedUsers={props.selectedUsers}
+            currentUser={user._id}
+            ManageSelectedUser={props.ManageSelectedUser}
+          />
         </div>
       ))}
-    </>
+    </div>
   );
 };
 export default GroupUserList;
