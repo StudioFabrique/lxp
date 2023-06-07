@@ -2,8 +2,8 @@ import { FC } from "react";
 
 const Details: FC<{ promotion: any; desc: any }> = ({ promotion, desc }) => {
   return (
-    <div className="p-4 bg-slate-100/80 rounded-2xl">
-      <h2 className="font-bold text-lg">Details</h2>
+    <div className="p-4 bg-slate-100/80 rounded-2xl gap-y-5 flex flex-col">
+      <h2 className="font-bold text-xl">Details</h2>
       <span>
         <label>Promotion</label>
         <input

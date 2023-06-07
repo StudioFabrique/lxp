@@ -7,7 +7,7 @@ const Informations: FC<{ name: any; diplome: any; rncp: any }> = ({
 }) => {
   return (
     <div className="p-4 bg-slate-100/80 rounded-2xl flex flex-col gap-y-5">
-      <h2 className="font-bold text-lg">Informations</h2>
+      <h2 className="font-bold text-xl">Informations</h2>
       <span>
         <label>Titre du groupe</label>
         <input
