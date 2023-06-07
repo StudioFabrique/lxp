@@ -13,7 +13,6 @@ const GroupUserList: FC<{
   };
 
   return (
-    // map dans un autre composant
     <div>
       <button
         onClick={handleClick}
