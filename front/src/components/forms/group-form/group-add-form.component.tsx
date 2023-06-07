@@ -11,6 +11,7 @@ import Informations from "./components/informations.components";
 import Tags from "./components/tags.component";
 import Details from "./components/details.component";
 import Date from "./components/date.component";
+import GroupUserList from "../../lists/group-user-list/group-user-list.component";
 
 const GroupAddForm: FC<{
   group?: any;
@@ -47,7 +48,8 @@ const GroupAddForm: FC<{
   let formIsValid = false;
   formIsValid = name.isValid && desc.isValid;
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (formIsValid) {
       props.onSubmitForm({
         name: name.value.trim(),
@@ -57,16 +59,11 @@ const GroupAddForm: FC<{
   };
 
   return (
-    <form autoComplete="off">
+    <form onSubmit={handleSubmit} autoComplete="off">
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold">Créer un groupe de formation</h1>
         <span className="flex gap-x-4">
-          <button
-            onClick={handleSubmit}
-            className="btn btn-sm bg-blue-800 text-white"
-          >
-            Publier
-          </button>
+          <button className="btn btn-sm bg-blue-800 text-white">Publier</button>
           <button className="btn btn-sm bg-white">...</button>
         </span>
       </div>
@@ -82,6 +79,8 @@ const GroupAddForm: FC<{
         </div>
         <Details promotion={promotion} desc={desc} />
       </div>
+      <div className="my-10" />
+      <GroupUserList />
     </form>
   );
 };
