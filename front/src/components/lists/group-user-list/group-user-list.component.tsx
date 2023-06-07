@@ -27,7 +27,14 @@ const GroupUserList = () => {
       updatedAt: new Date(),
     },
   ]);
+
+  const [isModalOpen, setModalOpenState] = useState<boolean>(false);
+
   const handleAddUsersToGroup = (users: String[]) => {};
+
+  const handleClick = () => {
+    setModalOpenState(!isModalOpen);
+  };
 
   return (
     <div>
@@ -35,9 +42,7 @@ const GroupUserList = () => {
       <div className="p-4 bg-slate-100/80 rounded-2xl flex flex-col gap-y-5">
         <h2 className="font-bold text-lg">Etudiants</h2>
         <div className="flex justify-between">
-          <div className="btn btn-sm bg-indigo-500 text-white flex justify-between">
-            <ButtonAdd /> <p>Ajouter un étudiant</p>
-          </div>
+          <ButtonAdd onClick={handleClick} />
         </div>
 
         {/* Afficher ici la liste des utilisateurs du groupe */}
@@ -66,31 +71,34 @@ const GroupUserList = () => {
           "Aucun utilisateurs dans ce groupe"
         )}
       </div>
-      <GroupManageUserList
-        users={[
-          {
-            _id: "csdd542a",
-            email: "test",
-            firstname: "test",
-            lastname: "test1",
-            createdAt: new Date(),
-            isActive: true,
-            roles: [],
-            updatedAt: new Date(),
-          },
-          {
-            _id: "fsdkaj3s",
-            email: "test32",
-            firstname: "test7",
-            lastname: "test1",
-            createdAt: new Date(),
-            isActive: true,
-            roles: [],
-            updatedAt: new Date(),
-          },
-        ]}
-        addUsersToGroup={handleAddUsersToGroup}
-      />
+      {isModalOpen ? (
+        <GroupManageUserList
+          users={[
+            {
+              _id: "csdd542a",
+              email: "test",
+              firstname: "test",
+              lastname: "test1",
+              createdAt: new Date(),
+              isActive: true,
+              roles: [],
+              updatedAt: new Date(),
+            },
+            {
+              _id: "fsdkaj3s",
+              email: "test32",
+              firstname: "test7",
+              lastname: "test1",
+              createdAt: new Date(),
+              isActive: true,
+              roles: [],
+              updatedAt: new Date(),
+            },
+          ]}
+          addUsersToGroup={handleAddUsersToGroup}
+          onClick={handleClick}
+        />
+      ) : undefined}
     </div>
   );
 };
