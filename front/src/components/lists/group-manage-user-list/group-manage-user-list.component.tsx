@@ -2,7 +2,7 @@ import { FC, FormEventHandler, useState } from "react";
 import UserListGroup from "./user-group-list.component";
 import User from "../../../utils/interfaces/user";
 
-const GroupAddUserList: FC<{
+const GroupManageUserList: FC<{
   users: User[];
   addUsersToGroup: (usersId: string[]) => void;
 }> = (props) => {
@@ -21,7 +21,7 @@ const GroupAddUserList: FC<{
   };
 
   return (
-    <div>
+    <div className="m-4">
       <UserListGroup
         users={props.users}
         selectedUsers={selectedUsers}
@@ -34,4 +34,4 @@ const GroupAddUserList: FC<{
   );
 };
 
-export default GroupAddUserList;
+export default GroupManageUserList;

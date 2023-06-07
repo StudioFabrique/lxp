@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import useHttp from "../../hooks/use-http";
 import Group from "../../utils/interfaces/group";
-import GroupAddForm from "../../components/forms/group-form/group-add-form";
+import GroupAddForm from "../../components/forms/group-form/group-add-form.component";
+import GroupUserList from "../../components/lists/group-user-list/group-user-list.component";
 
 const GroupAdd = () => {
   const { error, isLoading, sendRequest } = useHttp();
@@ -18,12 +19,13 @@ const GroupAdd = () => {
   };
 
   return (
-    <div className="min-h-screen w-screen flex justify-center">
+    <div className="m-4">
       <GroupAddForm
         onSubmitForm={handleSubmit}
         error={error}
         isLoading={isLoading}
       />
+      {/* <GroupUserList /> */}
     </div>
   );
 };

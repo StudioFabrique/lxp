@@ -13,16 +13,12 @@ import Search from "../../components/UI/search/search.component";
 import GroupList from "../../components/lists/group-list/group-list.component";
 import Pagination from "../../components/UI/pagination/pagination";
 import Modal from "../../components/UI/modal/modal";
-import GroupAddUserList from "../../components/lists/group-add-user-list/group-add-user-list.component";
 
 const GroupHome = () => {
   const { user, roles } = useContext(Context);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [role, setRole] = useState<Role>(roles[0]);
   const [isSeachActive, setIsSeachActive] = useState(false);
-  const [selectedGroup, setSelectedGroup] = useState<string | undefined>(
-    undefined
-  );
 
   const {
     page,
@@ -37,14 +33,10 @@ const GroupHome = () => {
   } = usePagination("lastname", `/group/${user!.roles[0].role}`);
   const { sendRequest } = useHttp();
 
-  const handleSelectGroup = (groupId: string) => {
-    setSelectedGroup(groupId);
-  };
-
-  const handleAddUsersToGroup = (usersId: string[]) => {
-    console.log(usersId);
-    console.log("envoi des données...");
-  };
+  // const handleAddUsersToGroup = (usersId: string[]) => {
+  //   console.log(usersId);
+  //   console.log("envoi des données...");
+  // };
 
   const handleSorting = (column: string) => {
     sortData(column);
@@ -187,7 +179,6 @@ const GroupHome = () => {
             onRowCheck={handleRowCheck}
             onAllChecked={handleAllChecked}
             onSorting={handleSorting}
-            onSelectGroup={handleSelectGroup}
           />
           {dataList.length > 0 ? (
             <Pagination
@@ -200,7 +191,7 @@ const GroupHome = () => {
             Créer un groupe
           </Link>
         </div>
-        {selectedGroup ? (
+        {/* {selectedGroup ? (
           <GroupAddUserList
             users={[
               {
@@ -226,7 +217,7 @@ const GroupHome = () => {
             ]}
             addUsersToGroup={handleAddUsersToGroup}
           />
-        ) : undefined}
+        ) : undefined} */}
       </div>
       <>
         {showErrorModal ? (

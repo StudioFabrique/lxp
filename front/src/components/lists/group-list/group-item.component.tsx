@@ -5,14 +5,9 @@ import Can from "../../UI/can/can.component";
 import Group from "../../../utils/interfaces/group";
 
 const GroupItem: FC<{
-  onSelectGroup: (groupId: any) => void;
   groupItem: Group;
   onRowCheck: (id: string) => void;
-}> = ({ groupItem, onRowCheck, onSelectGroup }) => {
-  const handleSelectGroup = () => {
-    onSelectGroup(groupItem);
-  };
-
+}> = ({ groupItem, onRowCheck }) => {
   return (
     <>
       <td className="bg-transparent">
@@ -36,9 +31,6 @@ const GroupItem: FC<{
             <Link to="#">Supprimer</Link>
           </Can>
         </div>
-      </td>
-      <td>
-        <button onClick={handleSelectGroup}>manage users</button>
       </td>
     </>
   );

@@ -8,15 +8,7 @@ const GroupList: FC<{
   onRowCheck: (id: string) => void;
   onAllChecked: (value: boolean) => void;
   onSorting: (column: string) => void;
-  onSelectGroup: (groupId: string) => void;
-}> = ({
-  role,
-  groupList,
-  onRowCheck,
-  onAllChecked,
-  onSorting,
-  onSelectGroup,
-}) => {
+}> = ({ role, groupList, onRowCheck, onAllChecked, onSorting }) => {
   const [allChecked, setAllChecked] = useState(false);
 
   const handleAllChecked = () => {
@@ -24,10 +16,6 @@ const GroupList: FC<{
       return !prevAllChecked;
     });
     onAllChecked(allChecked);
-  };
-
-  const handleSelectGroup = (groupId: string) => {
-    onSelectGroup(groupId);
   };
 
   useEffect(() => {
@@ -65,19 +53,12 @@ const GroupList: FC<{
             Description
           </th>
           <th>Actions</th>
-          <th>Gestion Utilisateurs</th>
         </tr>
       </thead>
       <tbody>
         {groupList.map((item: any) => (
           <tr className="hover:bg-primary/20" key={item._id}>
-            {
-              <GroupItem
-                onSelectGroup={handleSelectGroup}
-                groupItem={item}
-                onRowCheck={onRowCheck}
-              />
-            }
+            {<GroupItem groupItem={item} onRowCheck={onRowCheck} />}
           </tr>
         ))}
       </tbody>
