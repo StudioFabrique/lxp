@@ -2,7 +2,7 @@ const ParcoursHeader = () => {
   return (
     <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-y-8">
       <div>
-        <h2 className="text-4xl text-neutral font-bold">
+        <h2 className="text-4xl text-base-content font-bold">
           Créer un parcours de formation
         </h2>
         <p className="mt-2">

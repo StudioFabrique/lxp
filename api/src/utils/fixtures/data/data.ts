@@ -17,6 +17,31 @@ export const firstnames = [
   "Mason",
 ];
 
+// 20
+
+export const groupes = [
+  "Développement Web",
+  "Intelligence Artificielle",
+  "Sécurité informatique",
+  "Design graphique",
+  "Marketing numérique",
+  "Gestion de projet",
+  "Analyse de données",
+  "Réseaux informatiques",
+  "Blockchain",
+  "Développement mobile",
+  "Commerce électronique",
+  "Cloud computing",
+  "Internet des objets",
+  "Big Data",
+  "Ingénierie logicielle",
+  "UX/UI Design",
+  "Cybersécurité",
+  "Business intelligence",
+  "Management stratégique",
+  "Analyse financière",
+];
+
 // 50
 export const lastnames = [
   "Martin",
@@ -223,4 +248,53 @@ export const fakePhoneNumbers: string[] = [
   "(218) 555-0101",
   "(219) 555-0189",
   "(220) 555-0150",
+];
+
+export const tags: string[] = [
+  "HTML",
+  "CSS",
+  "JavaScript",
+  "TypeScript",
+  "React",
+  "Angular",
+  "Vue.js",
+  "Node.js",
+  "Express",
+  "Django",
+  "Ruby on Rails",
+  "PHP",
+  "Laravel",
+  "Symfony",
+  "ASP.NET",
+  "Java",
+  "Spring",
+  "C#",
+  "Python",
+  "Flask",
+  "FastAPI",
+  "GraphQL",
+  "REST API",
+  "MongoDB",
+  "MySQL",
+  "PostgreSQL",
+  "Firebase",
+  "AWS",
+  "Docker",
+  "Kubernetes",
+];
+
+export const colors = [
+  "red",
+  "orange",
+  "amber",
+  "yellow",
+  "lime",
+  "emerald",
+  "teal",
+  "cyan",
+  "blue",
+  "indigo",
+  "violet",
+  "purple",
+  "rose",
 ];
