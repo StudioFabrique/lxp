@@ -21,15 +21,11 @@ const RootLayout = () => {
     <>
       {isLoggedIn ? (
         <FadeWrapper>
-          <div className="flex flex-1 h-screen">
-            <Outlet />
-          </div>
+          <Outlet />
         </FadeWrapper>
       ) : (
         <FadeWrapper>
-          <div className="h-screen w-full fixed">
-            <Login />
-          </div>
+          <Login />
         </FadeWrapper>
       )}
     </>
