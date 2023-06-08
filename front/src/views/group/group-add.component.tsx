@@ -24,7 +24,6 @@ const GroupAdd = () => {
         error={error}
         isLoading={isLoading}
       />
-      {/* <GroupUserList /> */}
     </div>
   );
 };
