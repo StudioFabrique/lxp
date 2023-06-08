@@ -1,5 +1,6 @@
 import { FC } from "react";
 import User from "../../../utils/interfaces/user";
+import { AvatarSmall } from "../../UI/avatar/avatar.component";
 
 const GroupUserItem: FC<{ user: User }> = ({ user }) => {
   return (
@@ -8,14 +9,7 @@ const GroupUserItem: FC<{ user: User }> = ({ user }) => {
         <input type="checkbox" className="checkbox checkbox-primary" />
       </td>
       <td className="bg-slate-200">
-        <div className="avatar">
-          <div className="w-10 rounded-full">
-            <img
-              src="https://www.leparisien.fr/resizer/fGXimQvLycC2XjTOb9nran3rDcU=/1248x782/filters:focal(1184x745:1194x755)/cloudfront-eu-central-1.images.arcpublishing.com/leparisien/NJE5TPKX7NDY3AL7MWIJJEXZOA.jpg"
-              alt="image de chat"
-            />
-          </div>
-        </div>
+        <AvatarSmall url="https://www.leparisien.fr/resizer/fGXimQvLycC2XjTOb9nran3rDcU=/1248x782/filters:focal(1184x745:1194x755)/cloudfront-eu-central-1.images.arcpublishing.com/leparisien/NJE5TPKX7NDY3AL7MWIJJEXZOA.jpg" />
       </td>
       <td className="bg-slate-200">{user.firstname}</td>
       <td className="bg-slate-200">{user.lastname}</td>

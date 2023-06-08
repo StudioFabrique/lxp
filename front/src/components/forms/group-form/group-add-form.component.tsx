@@ -1,10 +1,4 @@
-import {
-  EventHandler,
-  FC,
-  FormEvent,
-  MouseEvent,
-  MouseEventHandler,
-} from "react";
+import { FC, FormEvent, useState } from "react";
 import { regexGeneric } from "../../../utils/constantes";
 import useInput from "../../../hooks/use-input";
 import Informations from "./components/informations.components";
@@ -12,6 +6,7 @@ import Tags from "./components/tags.component";
 import Details from "./components/details.component";
 import Date from "./components/date.component";
 import GroupUserList from "../../lists/group-user-list/group-user-list.component";
+import User from "../../../utils/interfaces/user";
 
 const GroupAddForm: FC<{
   group?: any;
@@ -19,6 +14,27 @@ const GroupAddForm: FC<{
   error: string;
   isLoading: boolean;
 }> = (props) => {
+  const [users, setUsers] = useState<User[]>([
+    {
+      _id: "csdd542a",
+      email: "test",
+      firstname: "test",
+      lastname: "test1",
+      isActive: true,
+      roles: [],
+    },
+    {
+      _id: "fsdkaj3s",
+      email: "test32",
+      firstname: "test7",
+      lastname: "test1",
+      isActive: true,
+      roles: [],
+    },
+  ]);
+
+  const [usersToAdd, setUsersToAdd] = useState<String[]>([]);
+
   const { value: name } = useInput(
     (value: string) => regexGeneric.test(value),
     props.group?.name ?? ""
@@ -50,10 +66,11 @@ const GroupAddForm: FC<{
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (formIsValid) {
+    if (!formIsValid) {
       props.onSubmitForm({
         name: name.value.trim(),
         desc: desc.value.trim(),
+        users: usersToAdd,
       });
     }
   };
@@ -63,8 +80,12 @@ const GroupAddForm: FC<{
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold">Créer un groupe de formation</h1>
         <span className="flex gap-x-4">
-          <button className="btn btn-sm bg-blue-800 text-white">Publier</button>
-          <button className="btn btn-sm bg-white">...</button>
+          <button type="submit" className="btn btn-sm bg-blue-800 text-white">
+            Publier
+          </button>
+          <button type="button" className="btn btn-sm bg-white">
+            ...
+          </button>
         </span>
       </div>
       <p className="mb-5">
@@ -80,7 +101,7 @@ const GroupAddForm: FC<{
         <Details promotion={promotion} desc={desc} />
       </div>
       <div className="my-10" />
-      <GroupUserList />
+      <GroupUserList users={users} onSetUsersToAdd={setUsersToAdd} />
     </form>
   );
 };

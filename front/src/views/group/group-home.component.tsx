@@ -191,33 +191,6 @@ const GroupHome = () => {
             Créer un groupe
           </Link>
         </div>
-        {/* {selectedGroup ? (
-          <GroupAddUserList
-            users={[
-              {
-                _id: "csdd542a",
-                email: "test",
-                firstname: "test",
-                lastname: "test1",
-                createdAt: new Date(),
-                isActive: true,
-                roles: [],
-                updatedAt: new Date(),
-              },
-              {
-                _id: "fsdkaj3s",
-                email: "test32",
-                firstname: "test7",
-                lastname: "test1",
-                createdAt: new Date(),
-                isActive: true,
-                roles: [],
-                updatedAt: new Date(),
-              },
-            ]}
-            addUsersToGroup={handleAddUsersToGroup}
-          />
-        ) : undefined} */}
       </div>
       <>
         {showErrorModal ? (
