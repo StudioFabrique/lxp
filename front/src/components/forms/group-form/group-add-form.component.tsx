@@ -70,6 +70,9 @@ const GroupAddForm: FC<{
       props.onSubmitForm({
         name: name.value.trim(),
         desc: desc.value.trim(),
+        diplome: diplome.value.trim(),
+        rncp: rncp.value.trim(),
+        promotion: promotion.value.trim(),
         users: usersToAdd,
       });
     }
