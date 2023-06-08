@@ -10,29 +10,29 @@ import { Toaster, toast } from "react-hot-toast";
 const ParcoursForm = () => {
   const { formInfos, updateInfos, updateDates, updateTags, updateContacts } =
     useParcours();
-  const [infos] = useState(
+  /*   const [infos] = useState(
     useMemo(() => {
       return {
         data: formInfos,
       };
     }, [formInfos])
-  );
+  ); */
 
   console.log("rendering");
 
   console.log({ formInfos });
 
   useEffect(() => {
+    console.log("coucou useEffect");
+
     setTimeout(() => {
       toast.success("Mise à jour des données réussie!");
     }, 3000);
-  }, [infos.data]);
+  }, [formInfos]);
 
   return (
     <>
-      <Portal>
-        <Toaster />
-      </Portal>
+      <Toaster />
       <div className="w-full grid auto-cols-max grid-cols-1 lg:grid-cols-3 gap-y-8 gap-x-4">
         <div>
           <MemoizedParcoursInfo onSubmitInformations={updateInfos} />
