@@ -4,15 +4,12 @@ import MemoizedParcoursInfo from "../parcours-infos/parcours-infos.component";
 import MemoizedDatesSelecter from "../UI/dates-selecter/dates-selecter.component";
 import MemoizedParcoursRessourcesContacts from "../parcours-ressources-contacts/parcours-ressources-contacts.component";
 import MemoizedTagsComponent from "../UI/tags/tags.component";
-import Toast from "../UI/toast/toast.component";
-
-let message: string;
-let type: string;
+import Portal from "../UI/portal/portal";
+import { Toaster, toast } from "react-hot-toast";
 
 const ParcoursForm = () => {
   const { formInfos, updateInfos, updateDates, updateTags, updateContacts } =
     useParcours();
-  const [loading, setIsLoading] = useState(false);
   const [infos] = useState(
     useMemo(() => {
       return {
@@ -20,27 +17,22 @@ const ParcoursForm = () => {
       };
     }, [formInfos])
   );
-  const [toast, setToast] = useState(false);
 
   console.log("rendering");
 
   console.log({ formInfos });
 
   useEffect(() => {
-    setIsLoading(true);
-    type = "info";
-    message = "mise à jour des modifications en cours...";
     setTimeout(() => {
-      setIsLoading(false);
-      setToast(true);
-      setTimeout(() => {
-        setToast(false);
-      }, 2000);
+      toast.success("Mise à jour des données réussie!");
     }, 3000);
   }, [infos.data]);
 
   return (
     <>
+      <Portal>
+        <Toaster />
+      </Portal>
       <div className="w-full grid auto-cols-max grid-cols-1 lg:grid-cols-3 gap-y-8 gap-x-4">
         <div>
           <MemoizedParcoursInfo onSubmitInformations={updateInfos} />
@@ -55,13 +47,6 @@ const ParcoursForm = () => {
           />
         </div>
       </div>
-      {loading ? <Toast message={message} type={type} /> : null}
-      {toast ? (
-        <Toast
-          message="Mise à jour des modifications réussie!"
-          type="success"
-        />
-      ) : null}
     </>
   );
 };

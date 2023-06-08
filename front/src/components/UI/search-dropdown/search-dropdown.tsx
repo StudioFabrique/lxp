@@ -83,7 +83,7 @@ const SearchDropdown: FC<Props> = ({
           >
             {filteredItems.map((item: any) => (
               <li
-                className="text-xs py-1"
+                className="text-xs py-1 cursor-pointer"
                 key={item[property]}
                 onClick={() => handleSelectItem(item[property])}
               >
