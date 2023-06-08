@@ -63,6 +63,7 @@ const Tags: FC<{ onSubmitTags: (tags: Array<Tag>) => void }> = ({
         resetFilterItems={resetFilterItems}
         filteredItems={filteredItems}
         property="name"
+        placeHolder="Ajouter un nouveau tag..."
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
