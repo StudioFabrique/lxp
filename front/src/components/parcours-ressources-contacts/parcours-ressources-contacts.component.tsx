@@ -34,7 +34,7 @@ const ParcoursRessourcesContacts: FC<{
   useEffect(() => {
     const applyData = (data: any) => {
       const userItems = Array<UserItem>();
-      data.list.forEach((user: User) => {
+      data.forEach((user: User) => {
         userItems.push({
           _id: user._id,
           name: `${user.firstname} ${user.lastname}`,
@@ -45,7 +45,7 @@ const ParcoursRessourcesContacts: FC<{
     };
     sendRequest(
       {
-        path: "/user/teacher/lastname/asc?page=1&limit=100",
+        path: "/parcours/contacts",
       },
       applyData
     );
