@@ -1,39 +1,22 @@
-import { useState } from "react";
+import { FC, useState } from "react";
 import GroupManageUserList from "../group-manage-user-list/group-manage-user-list.component";
-import User from "../../../utils/interfaces/user";
 import GroupUserItem from "./group-user-item.component";
 import { ButtonAdd } from "./buttons.component";
+import User from "../../../utils/interfaces/user";
 
-const GroupUserList = () => {
-  const [users, setUsers] = useState<User[]>([
-    {
-      _id: "csdd542a",
-      email: "test",
-      firstname: "test",
-      lastname: "test1",
-      createdAt: new Date(),
-      isActive: true,
-      roles: [],
-      updatedAt: new Date(),
-    },
-    {
-      _id: "fsdkaj3s",
-      email: "test32",
-      firstname: "test7",
-      lastname: "test1",
-      createdAt: new Date(),
-      isActive: true,
-      roles: [],
-      updatedAt: new Date(),
-    },
-  ]);
-
+const GroupUserList: FC<{
+  users: User[];
+  onSetUsersToAdd: (Users: string[]) => void;
+}> = ({ users, onSetUsersToAdd }) => {
   const [isModalOpen, setModalOpenState] = useState<boolean>(false);
 
-  const handleAddUsersToGroup = (users: String[]) => {};
-
-  const handleClick = () => {
+  const handleModalOpenState = () => {
     setModalOpenState(!isModalOpen);
+  };
+
+  const handleSetUsersToAdd = (users: string[]) => {
+    onSetUsersToAdd(users);
+    handleModalOpenState();
   };
 
   return (
@@ -42,7 +25,7 @@ const GroupUserList = () => {
       <div className="p-4 bg-slate-100/80 rounded-2xl flex flex-col gap-y-5">
         <h2 className="font-bold text-lg">Etudiants</h2>
         <div className="flex justify-between">
-          <ButtonAdd onClick={handleClick} />
+          <ButtonAdd onClick={handleModalOpenState} />
         </div>
 
         {/* Afficher ici la liste des utilisateurs du groupe */}
@@ -95,8 +78,8 @@ const GroupUserList = () => {
               updatedAt: new Date(),
             },
           ]}
-          addUsersToGroup={handleAddUsersToGroup}
-          onClick={handleClick}
+          onSetUsersToAdd={handleSetUsersToAdd}
+          onClose={handleModalOpenState}
         />
       ) : undefined}
     </div>

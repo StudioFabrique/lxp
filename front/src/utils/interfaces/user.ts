@@ -14,8 +14,8 @@ export default interface User {
   city?: string;
   roles: Array<Role>;
   avatar?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   isActive: boolean;
   group?: Group;
 }

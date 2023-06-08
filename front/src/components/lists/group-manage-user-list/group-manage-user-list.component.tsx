@@ -1,11 +1,12 @@
-import { FC, FormEventHandler, useState } from "react";
-import UserListGroup from "./user-group-list.component";
+import { FC, useState } from "react";
 import User from "../../../utils/interfaces/user";
+import { AddUsersButton } from "./buttons.component";
+import GroupUserList from "./group-user-list.component";
 
 const GroupManageUserList: FC<{
   users: User[];
-  addUsersToGroup: (usersId: string[]) => void;
-  onClick: () => void;
+  onSetUsersToAdd: (usersId: string[]) => void;
+  onClose: () => void;
 }> = (props) => {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
@@ -17,25 +18,25 @@ const GroupManageUserList: FC<{
     }
   };
 
-  const handleClick: FormEventHandler = () => {
-    if (selectedUsers.length > 0) props.addUsersToGroup(selectedUsers);
+  const handleCleanup = () => {
+    setSelectedUsers([]);
+    props.onSetUsersToAdd([]);
+    props.onClose();
   };
 
   return (
     <div className="fixed h-screen w-full top-0 right-0 flex justify-center items-center backdrop-blur-sm">
-      <div className="w-[60%] h-[60%] bg-white p-10">
-        <UserListGroup
-          onClick={props.onClick}
+      <div className="w-[60%] h-[80%] bg-white p-10">
+        <GroupUserList
+          onCleanup={handleCleanup}
           users={props.users}
           selectedUsers={selectedUsers}
           ManageSelectedUser={handleManageSelectedUser}
         />
-        <button
-          className="btn btn-sm bg-blue-500 text-white"
-          onClick={handleClick}
-        >
-          ajouter les utilisateurs selectionnés
-        </button>
+        <AddUsersButton
+          onSetUsersToAdd={props.onSetUsersToAdd}
+          selectedUsers={selectedUsers}
+        />
       </div>
     </div>
   );
