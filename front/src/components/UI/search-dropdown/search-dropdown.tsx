@@ -1,4 +1,5 @@
-import { FC, ReactNode, useEffect, useRef, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
+import toTitleCase from "../../../utils/toTitleCase";
 
 type Props = {
   children: ReactNode;
@@ -7,6 +8,7 @@ type Props = {
   resetFilterItems: () => void;
   filteredItems: Array<any>;
   property: string;
+  placeHolder: string;
 };
 
 const SearchDropdown: FC<Props> = ({
@@ -16,10 +18,11 @@ const SearchDropdown: FC<Props> = ({
   resetFilterItems,
   filteredItems,
   property,
+  placeHolder,
 }) => {
   const [enteredValue, setEnteredValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const btnRef = useRef<any>();
+  //const btnRef = useRef<any>();
 
   const handleEnteredValue = (event: React.FormEvent<HTMLInputElement>) => {
     setEnteredValue(event.currentTarget.value);
@@ -27,19 +30,19 @@ const SearchDropdown: FC<Props> = ({
 
   useEffect(() => {
     if (filteredItems.length > 0) {
-      btnRef.current.focus({
+      /*      btnRef.current.focus({
         preventScroll: true,
-      });
+      }); */
       setIsOpen(true);
     }
   }, [filteredItems]);
 
-  const submitSearch = (event: React.FormEvent<HTMLFormElement>) => {
+  /*   const submitSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (enteredValue.length > 0) {
       filterItems(enteredValue, property);
     }
-  };
+  }; */
 
   const handleSelectItem = (value: string) => {
     addItem(value, property);
@@ -59,27 +62,28 @@ const SearchDropdown: FC<Props> = ({
   }, [enteredValue, filterItems, property]);
 
   return (
-    <form className="flex items-center gap-x-2" onSubmit={submitSearch}>
-      <input
-        type="search"
-        name="enteredTagValue"
-        placeholder="Ajouter un nouveau tag"
-        className="input input-bordered input-sm w-full"
-        onChange={handleEnteredValue}
-        defaultValue={enteredValue}
-      />
-      <div className="dropdown dropdown-bottom dropdown-end">
+    <div className="flex items-center gap-x-2">
+      <div className="dropdown dropdown-bottom dropdown-end flex gap-y-4 w-full">
+        {/* 
         <button
           ref={btnRef}
           className="btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary"
           type="submit"
         >
           {children}
-        </button>
+        </button> */}
+        <input
+          type="search"
+          name="enteredTagValue"
+          placeholder={placeHolder}
+          className="input input-bordered input-sm w-full"
+          onChange={handleEnteredValue}
+          defaultValue={enteredValue}
+        />
         {isOpen ? (
           <ul
             tabIndex={0}
-            className="dropdown-content menu p-2 w-32 shadow bg-base-100"
+            className="dropdown-content menu p-1 shadow bg-base-100 rounded-box w-full mt-4   "
           >
             {filteredItems.map((item: any) => (
               <li
@@ -87,13 +91,13 @@ const SearchDropdown: FC<Props> = ({
                 key={item[property]}
                 onClick={() => handleSelectItem(item[property])}
               >
-                {item[property]}
+                <p className="font-bold">{toTitleCase(item[property])}</p>
               </li>
             ))}
           </ul>
         ) : null}
       </div>
-    </form>
+    </div>
   );
 };
 

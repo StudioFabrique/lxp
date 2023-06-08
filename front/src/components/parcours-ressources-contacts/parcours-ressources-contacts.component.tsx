@@ -79,6 +79,7 @@ const ParcoursRessourcesContacts: FC<{
         resetFilterItems={resetFilterItems}
         filteredItems={filteredItems}
         property="name"
+        placeHolder="Ajouter un nouveau contact..."
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
