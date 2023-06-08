@@ -1,17 +1,12 @@
-import { ChangeEvent, FC, useEffect, useState } from "react";
+import React, { ChangeEvent, FC, useEffect, useMemo, useState } from "react";
 import useInput from "../../hooks/use-input";
 import { regexGeneric } from "../../utils/constantes";
-
-type Infos = {
-  title: string | null;
-  description: string | null;
-  degree: string | null;
-  file?: File;
-};
+import { autoSubmitTimer } from "../../config/auto-submit-timer";
 
 const ParcoursInfos: FC<{
-  onSubmitInformations: (infos: Infos) => void;
+  onSubmitInformations: (infos: any) => void;
 }> = ({ onSubmitInformations }) => {
+  console.log("infos is rendering");
   const { value: title } = useInput((value) => regexGeneric.test(value.trim()));
   const { value: description } = useInput((value) =>
     regexGeneric.test(value.trim())
@@ -19,25 +14,26 @@ const ParcoursInfos: FC<{
   const { value: degree } = useInput((value) =>
     regexGeneric.test(value.trim())
   );
-  const [file, setFile] = useState<File>();
+  const [file, setFile] = useState<File | null>(null);
+
+  const infos = useMemo(() => {
+    return {
+      title: title.value,
+      description: description.value,
+      degree: degree.value,
+      file,
+    };
+  }, [title.value, description.value, degree.value, file]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (title.isValid && description.isValid && degree.isValid) {
-        const infos: Infos = {
-          title: title.value,
-          description: description.value,
-          degree: degree.value,
-          file,
-        };
-        onSubmitInformations(infos);
-      }
-    }, 2000);
+      onSubmitInformations(infos);
+    }, autoSubmitTimer);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [title, description, degree, file, onSubmitInformations]);
+  }, [infos, onSubmitInformations]);
 
   const validateImageFile = (file: File) => {
     const allowedExtensions = /(\.jpeg|\.jpg|\.png|\.gif|\.webp)$/i;
@@ -107,7 +103,7 @@ const ParcoursInfos: FC<{
           <label htmlFor="fileToUpload">Téléverser une image</label>
           <input
             type="file"
-            className="file-input file-input-sm file-input-neutral w-full bg-secondary/10 rounded-lg"
+            className="file-input file-input-sm file-input-primary w-full bg-secondary/10 rounded-lg"
             onChange={handleFileChange}
           />
         </div>
@@ -116,4 +112,6 @@ const ParcoursInfos: FC<{
   );
 };
 
-export default ParcoursInfos;
+const MemoizedParcoursInfo = React.memo(ParcoursInfos);
+
+export default MemoizedParcoursInfo;

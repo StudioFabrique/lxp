@@ -1,12 +1,22 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, ReactNode, useEffect, useRef, useState } from "react";
 
-const SearchDropdown: FC<{
+type Props = {
+  children: ReactNode;
   addItem: (name: string, property: string) => void;
   filterItems: (name: string, property: string) => void;
   resetFilterItems: () => void;
   filteredItems: Array<any>;
   property: string;
-}> = ({ addItem, filterItems, resetFilterItems, filteredItems, property }) => {
+};
+
+const SearchDropdown: FC<Props> = ({
+  children,
+  addItem,
+  filterItems,
+  resetFilterItems,
+  filteredItems,
+  property,
+}) => {
   const [enteredValue, setEnteredValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const btnRef = useRef<any>();
@@ -61,21 +71,10 @@ const SearchDropdown: FC<{
       <div className="dropdown dropdown-bottom dropdown-end">
         <button
           ref={btnRef}
-          className="btn btn-square btn-sm bg-primary border-none text-base-100"
+          className="btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary"
           type="submit"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              fillRule="evenodd"
-              d="M5.25 2.25a3 3 0 00-3 3v4.318a3 3 0 00.879 2.121l9.58 9.581c.92.92 2.39 1.186 3.548.428a18.849 18.849 0 005.441-5.44c.758-1.16.492-2.629-.428-3.548l-9.58-9.581a3 3 0 00-2.122-.879H5.25zM6.375 7.5a1.125 1.125 0 100-2.25 1.125 1.125 0 000 2.25z"
-              clipRule="evenodd"
-            />
-          </svg>
+          {children}
         </button>
         {isOpen ? (
           <ul
