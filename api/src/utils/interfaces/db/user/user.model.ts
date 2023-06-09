@@ -15,7 +15,7 @@ export interface IUser extends Document {
   createdAt: Date;
   updatedAt: Date;
   isActive: boolean;
-  group?: IGroup;
+  group?: IGroup["_id"];
 }
 
 const userSchema: Schema = new Schema(

@@ -1,4 +1,5 @@
 api/.env
+api/.env.local
 api/node_modules
 apprenant/node_modules
 admin/node_modules
