@@ -88,6 +88,14 @@ const UserList: FC<{
           <th
             className="cursor-pointer"
             onClick={() => {
+              onSorting("group");
+            }}
+          >
+            Groupe
+          </th>
+          <th
+            className="cursor-pointer"
+            onClick={() => {
               onSorting("formation");
             }}
           >
