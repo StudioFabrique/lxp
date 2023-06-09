@@ -1,7 +1,10 @@
 import { FC } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
+import ImageFileUpload from "../../../UI/image-file-upload/image-file-upload";
 
 const Details: FC<{ promotion: any; desc: any }> = ({ promotion, desc }) => {
+  const handleSetFile = (file: File) => {};
+
   return (
     <Wrapper>
       <h2 className="font-bold text-xl">Details</h2>
@@ -26,14 +29,7 @@ const Details: FC<{ promotion: any; desc: any }> = ({ promotion, desc }) => {
           autoComplete="off"
         />
       </span>
-      <span>
-        <label>Téléverser une image de groupe</label>
-        <input
-          className="w-full file-input file-input-secondary"
-          type="file"
-          placeholder="test"
-        />
-      </span>
+      <ImageFileUpload maxSize={5} onSetFile={handleSetFile} />
     </Wrapper>
   );
 };
