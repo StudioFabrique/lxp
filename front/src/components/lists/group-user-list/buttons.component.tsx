@@ -8,7 +8,7 @@ export const ButtonAdd: FC<{ onClick: () => void }> = ({ onClick }) => {
   return (
     <div
       onClick={handleClick}
-      className="btn btn-sm bg-indigo-500 text-white flex justify-between"
+      className="btn btn-sm border-none bg-indigo-500 text-white flex justify-between"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
