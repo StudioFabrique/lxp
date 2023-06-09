@@ -4,7 +4,7 @@ import { AvatarSmall } from "../../UI/avatar/avatar.component";
 
 const GroupUserItem: FC<{ user: User }> = ({ user }) => {
   return (
-    <tr className="bg-slate-200 hover:bg-blue-800 hover:text-white">
+    <tr className="bg-secondary/10 hover:bg-blue-800 hover:text-white">
       <td className="bg-transparent rounded-l-xl">
         <input type="checkbox" className="checkbox checkbox-primary" />
       </td>
