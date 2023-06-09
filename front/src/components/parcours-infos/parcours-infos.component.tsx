@@ -1,7 +1,9 @@
-import React, { ChangeEvent, FC, useEffect, useMemo, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import useInput from "../../hooks/use-input";
 import { regexGeneric } from "../../utils/constantes";
 import { autoSubmitTimer } from "../../config/auto-submit-timer";
+import ImageFileUpload from "../UI/image-file-upload/image-file-upload";
+import Wrapper from "../UI/wrapper/wrapper";
 
 const ParcoursInfos: FC<{
   onSubmitInformations: (infos: any) => void;
@@ -25,45 +27,22 @@ const ParcoursInfos: FC<{
     };
   }, [title.value, description.value, degree.value, file]);
 
+  let formIsValid = title.isValid && description.isValid && degree.isValid;
+
   useEffect(() => {
     const timer = setTimeout(() => {
-      onSubmitInformations(infos);
+      if (formIsValid) {
+        onSubmitInformations(infos);
+      }
     }, autoSubmitTimer);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [infos, onSubmitInformations]);
-
-  const validateImageFile = (file: File) => {
-    const allowedExtensions = /(\.jpeg|\.jpg|\.png|\.gif|\.webp)$/i;
-    const maxSizeInBytes = 2 * 1024 * 1024; // 2 Mo
-
-    if (!allowedExtensions.test(file.name)) {
-      return false; // Extension de fichier non autorisée
-    }
-
-    if (file.size > maxSizeInBytes) {
-      return false; // Fichier trop volumineux
-    }
-
-    return true; // Fichier valide
-  };
-
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      const selectedFile = event.target.files[0];
-
-      if (validateImageFile(selectedFile)) {
-        setFile(selectedFile);
-      } else {
-        console.log("Fichier non autorisé pour une raison ou une autre.");
-      }
-    }
-  };
+  }, [infos, onSubmitInformations, formIsValid, file]);
 
   return (
-    <div className="flex flex-col gap-y-4 p-4 rounded-lg bg-secondary/10">
+    <Wrapper>
       <h3 className="font-bold text-xl">Informations</h3>
       <form className="flex flex-col gap-y-4">
         <div className="flex flex-col gap-y-1">
@@ -100,15 +79,10 @@ const ParcoursInfos: FC<{
           />
         </div>
         <div className="flex flex-col gap-y-1">
-          <label htmlFor="fileToUpload">Téléverser une image</label>
-          <input
-            type="file"
-            className="file-input file-input-sm file-input-primary w-full bg-secondary/10 rounded-lg"
-            onChange={handleFileChange}
-          />
+          <ImageFileUpload maxSize={2 * 1024 * 1024} onSetFile={setFile} />
         </div>
       </form>
-    </div>
+    </Wrapper>
   );
 };
 

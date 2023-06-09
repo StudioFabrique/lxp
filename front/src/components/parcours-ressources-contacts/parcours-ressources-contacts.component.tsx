@@ -7,6 +7,7 @@ import SearchDropdown from "../UI/search-dropdown/search-dropdown";
 import ParcoursUserItem from "../parcours-user-item/parcours-user-item.component";
 import Role from "../../utils/interfaces/role";
 import { autoSubmitTimer } from "../../config/auto-submit-timer";
+import Wrapper from "../UI/wrapper/wrapper";
 
 type UserItem = {
   _id: string;
@@ -71,7 +72,7 @@ const ParcoursRessourcesContacts: FC<{
   }, [contactsToSubmit.contacts, onSubmitContacts]);
 
   return (
-    <div className="flex flex-col gap-y-4 p-4 rounded-lg bg-secondary/10">
+    <Wrapper>
       <h3 className="font-bold text-xl">Ressources et Contacts</h3>
       <SearchDropdown
         addItem={addItem}
@@ -99,7 +100,7 @@ const ParcoursRessourcesContacts: FC<{
             ))
           : null}
       </ul>
-    </div>
+    </Wrapper>
   );
 };
 

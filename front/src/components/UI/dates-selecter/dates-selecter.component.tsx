@@ -2,6 +2,7 @@ import React, { FC, useEffect, useMemo } from "react";
 import useInput from "../../../hooks/use-input";
 import { regexGeneric } from "../../../utils/constantes";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
+import Wrapper from "../wrapper/wrapper";
 
 const DatesSelecter: FC<{
   onSubmitDates: (dates: { startDate: string; endDate: string }) => void;
@@ -31,23 +32,23 @@ const DatesSelecter: FC<{
   }, [dates, startDate.isValid, endDate.isValid, onSubmitDates]);
 
   return (
-    <div className="w-full flex flex-col gap-y-4 p-4 rounded-lg bg-secondary/10">
+    <Wrapper>
       <h3 className="font-bold text-xl">Date</h3>
       <form className="flex flex-col gap-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+        <div className="flex justify-between items-center">
           <p>Début</p>
           <input
-            className="input input-sm max-w-sm"
+            className="input input-sm w-5/6"
             name="startingDate"
             type="date"
             defaultValue={startDate.value}
             onChange={startDate.valueChangeHandler}
           />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+        <div className="flex justify-between items-center">
           <p>Fin</p>
           <input
-            className="input input-sm max-w-sm"
+            className="input input-sm w-5/6"
             name="endingDate"
             type="date"
             defaultValue={endDate.value}
@@ -55,7 +56,7 @@ const DatesSelecter: FC<{
           />
         </div>
       </form>
-    </div>
+    </Wrapper>
   );
 };
 
