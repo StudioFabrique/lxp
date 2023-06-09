@@ -27,6 +27,11 @@ const GroupUserList: FC<{
         <h2 className="font-bold text-lg">Etudiants</h2>
         <div className="flex justify-between">
           <ButtonAdd onClick={handleModalOpenState} />
+          <input
+            type="text"
+            className="input input-sm"
+            placeholder="Rechercher un étudiant par nom ou prénom"
+          />
         </div>
 
         {/* Afficher ici la liste des utilisateurs du groupe */}
