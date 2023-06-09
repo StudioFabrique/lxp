@@ -61,28 +61,6 @@ const GroupUserList: FC<{
       </Wrapper>
       {isModalOpen ? (
         <GroupManageUserList
-          users={[
-            {
-              _id: "csdd542a",
-              email: "test",
-              firstname: "test",
-              lastname: "test1",
-              createdAt: new Date(),
-              isActive: true,
-              roles: [],
-              updatedAt: new Date(),
-            },
-            {
-              _id: "fsdkaj3s",
-              email: "test32",
-              firstname: "test7",
-              lastname: "test1",
-              createdAt: new Date(),
-              isActive: true,
-              roles: [],
-              updatedAt: new Date(),
-            },
-          ]}
           onSetUsersToAdd={handleSetUsersToAdd}
           onClose={handleModalOpenState}
         />
