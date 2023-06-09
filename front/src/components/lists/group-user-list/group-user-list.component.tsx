@@ -3,6 +3,7 @@ import GroupManageUserList from "../group-manage-user-list/group-manage-user-lis
 import GroupUserItem from "./group-user-item.component";
 import { ButtonAdd } from "./buttons.component";
 import User from "../../../utils/interfaces/user";
+import Wrapper from "../../UI/wrapper/wrapper.component";
 
 const GroupUserList: FC<{
   users: User[];
@@ -22,7 +23,7 @@ const GroupUserList: FC<{
   return (
     <div>
       {/* Afficher ici la liste des utilisateurs du groupe */}
-      <div className="p-4 bg-slate-100/80 rounded-2xl flex flex-col gap-y-5">
+      <Wrapper>
         <h2 className="font-bold text-lg">Etudiants</h2>
         <div className="flex justify-between">
           <ButtonAdd onClick={handleModalOpenState} />
@@ -30,18 +31,18 @@ const GroupUserList: FC<{
 
         {/* Afficher ici la liste des utilisateurs du groupe */}
         {users.length > 0 ? (
-          <table className="table tab-sm ">
+          <table className="table tab-sm">
             <thead>
               <tr>
-                <th></th>
-                <th></th>
-                <th>Prénom</th>
-                <th>Nom</th>
-                <th>Email</th>
-                <th>Formation</th>
-                <th>Status</th>
-                <th></th>
-                <th></th>
+                <th className="bg-transparent"></th>
+                <th className="bg-transparent"></th>
+                <th className="bg-transparent">Prénom</th>
+                <th className="bg-transparent">Nom</th>
+                <th className="bg-transparent">Email</th>
+                <th className="bg-transparent">Formation</th>
+                <th className="bg-transparent">Status</th>
+                <th className="bg-transparent"></th>
+                <th className="bg-transparent"></th>
               </tr>
             </thead>
             <tbody>
@@ -53,7 +54,7 @@ const GroupUserList: FC<{
         ) : (
           "Aucun utilisateurs dans ce groupe"
         )}
-      </div>
+      </Wrapper>
       {isModalOpen ? (
         <GroupManageUserList
           users={[

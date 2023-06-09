@@ -1,4 +1,5 @@
 import { FC } from "react";
+import Wrapper from "../../../UI/wrapper/wrapper.component";
 
 const Informations: FC<{ name: any; diplome: any; rncp: any }> = ({
   name,
@@ -6,12 +7,12 @@ const Informations: FC<{ name: any; diplome: any; rncp: any }> = ({
   rncp,
 }) => {
   return (
-    <div className="p-4 bg-secondary/5 rounded-2xl flex flex-col gap-y-5">
+    <Wrapper>
       <h2 className="font-bold text-xl">Informations</h2>
       <span>
         <label>Titre du groupe</label>
         <input
-          className="input input-sm w-full bg-indigo-100/60 p-[20px] pl-[30px]"
+          className="input input-sm w-full p-[20px] pl-[30px]"
           type="text"
           onChange={name.valueChangeHandler}
           onBlur={name.valueBlurHandler}
@@ -22,7 +23,7 @@ const Informations: FC<{ name: any; diplome: any; rncp: any }> = ({
       <span>
         <label>Diplome visé</label>
         <input
-          className="input input-sm w-full bg-indigo-100/60 p-[20px] pl-[30px]"
+          className="input input-sm w-full p-[20px] pl-[30px]"
           type="text"
           onChange={diplome.valueChangeHandler}
           onBlur={diplome.valueBlurHandler}
@@ -33,7 +34,7 @@ const Informations: FC<{ name: any; diplome: any; rncp: any }> = ({
       <span>
         <label>Code RNCP (optionnel)</label>
         <input
-          className="input input-sm w-full bg-indigo-100/60 p-[20px] pl-[30px]"
+          className="input input-sm w-full p-[20px] pl-[30px]"
           type="text"
           onChange={rncp.valueChangeHandler}
           onBlur={rncp.valueBlurHandler}
@@ -53,7 +54,7 @@ const Informations: FC<{ name: any; diplome: any; rncp: any }> = ({
         />
         <label>Actif</label>
       </span>
-    </div>
+    </Wrapper>
   );
 };
 

@@ -1,13 +1,14 @@
 import { FC } from "react";
+import Wrapper from "../../../UI/wrapper/wrapper.component";
 
 const Details: FC<{ promotion: any; desc: any }> = ({ promotion, desc }) => {
   return (
-    <div className="p-4 bg-secondary/5 rounded-2xl gap-y-5 flex flex-col">
+    <Wrapper>
       <h2 className="font-bold text-xl">Details</h2>
       <span>
         <label>Promotion</label>
         <input
-          className="input w-full bg-indigo-100/60 p-[20px] pl-[30px] placeholder:text-purple-discrete"
+          className="input w-full p-[20px] pl-[30px] placeholder:text-purple-discrete"
           type="text"
           onChange={promotion.valueChangeHandler}
           onBlur={promotion.valueBlurHandler}
@@ -18,7 +19,7 @@ const Details: FC<{ promotion: any; desc: any }> = ({ promotion, desc }) => {
       <span>
         <label>Description du groupe</label>
         <textarea
-          className="textarea w-full bg-indigo-100/60 p-[20px] pl-[30px] placeholder:text-purple-discrete"
+          className="textarea w-full p-[20px] pl-[30px] placeholder:text-purple-discrete"
           onChange={desc.valueChangeHandler}
           onBlur={desc.valueBlurHandler}
           defaultValue={desc.value}
@@ -33,7 +34,7 @@ const Details: FC<{ promotion: any; desc: any }> = ({ promotion, desc }) => {
           placeholder="test"
         />
       </span>
-    </div>
+    </Wrapper>
   );
 };
 export default Details;

@@ -7,6 +7,7 @@ import { sortArray } from "../../../utils/sortArray";
 import useItems from "../../../hooks/use-items";
 import SearchDropdown from "../search-dropdown/search-dropdown";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
+import Wrapper from "../wrapper/wrapper.component";
 
 const tags = createTag();
 
@@ -55,7 +56,7 @@ const Tags: FC<{ onSubmitTags: (tags: Array<Tag>) => void }> = ({
   }, [selectedTags.tags, onSubmitTags]);
 
   return (
-    <div className="flex flex-col p-4 rounded-lg bg-secondary/5 gap-y-4">
+    <Wrapper>
       <h2 className="text-xl font-bold">Tags</h2>
       <SearchDropdown
         addItem={addItem}
@@ -87,7 +88,7 @@ const Tags: FC<{ onSubmitTags: (tags: Array<Tag>) => void }> = ({
             ))
           : null}
       </ul>
-    </div>
+    </Wrapper>
   );
 };
 

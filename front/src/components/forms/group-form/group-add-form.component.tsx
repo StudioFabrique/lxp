@@ -101,8 +101,8 @@ const GroupAddForm: FC<{
       <div className="grid grid-cols-3 max-md:grid-cols-1 gap-x-5">
         <Informations name={name} diplome={diplome} rncp={rncp} />
         <div className="grid grid-row-2 max-md:mb-2 max-md:mt-2 gap-y-2">
-          <Tags onSubmitTags={handleSubmitTags} />
           <Date />
+          <Tags onSubmitTags={handleSubmitTags} />
         </div>
         <Details promotion={promotion} desc={desc} />
       </div>
