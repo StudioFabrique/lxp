@@ -30,7 +30,7 @@ const GroupUserList: FC<{
 
         {/* Afficher ici la liste des utilisateurs du groupe */}
         {users.length > 0 ? (
-          <table className="table">
+          <table className="table tab-sm ">
             <thead>
               <tr>
                 <th></th>
