@@ -103,8 +103,4 @@ const ParcoursRessourcesContacts: FC<{
   );
 };
 
-const MemoizedParcoursRessourcesContacts = React.memo(
-  ParcoursRessourcesContacts
-);
-
-export default MemoizedParcoursRessourcesContacts;
+export default ParcoursRessourcesContacts;
