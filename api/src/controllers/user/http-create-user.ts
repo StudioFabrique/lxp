@@ -20,7 +20,6 @@ export default async function httpCreateUser(req: Request, res: Response) {
   const salt = await bcrypt.genSalt(10);
   const pswHash = await bcrypt.hash(user.password, salt);
   user.password = pswHash;
-  user.isActive = true;
   user.roles = [new Object((await Role.findOne({ role: "student" }))!._id)];
 
   try {
