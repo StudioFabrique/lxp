@@ -111,7 +111,7 @@ const GroupAddForm: FC<{
         <Details promotion={promotion} desc={desc} />
       </div>
       <div className="my-10" />
-      <GroupUserList users={users} onSetUsersToAdd={setUsersToAdd} />
+      <GroupUserList users={users} onSubmitSetUsersToAdd={setUsersToAdd} />
     </form>
   );
 };

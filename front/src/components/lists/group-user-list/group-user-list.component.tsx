@@ -7,8 +7,8 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 
 const GroupUserList: FC<{
   users: User[];
-  onSetUsersToAdd: (Users: string[]) => void;
-}> = ({ users, onSetUsersToAdd }) => {
+  onSubmitSetUsersToAdd: (Users: string[]) => void;
+}> = ({ users, onSubmitSetUsersToAdd }) => {
   const [isModalOpen, setModalOpenState] = useState<boolean>(false);
 
   const handleModalOpenState = () => {
@@ -16,7 +16,7 @@ const GroupUserList: FC<{
   };
 
   const handleSetUsersToAdd = (users: string[]) => {
-    onSetUsersToAdd(users);
+    onSubmitSetUsersToAdd(users);
     handleModalOpenState();
   };
 
