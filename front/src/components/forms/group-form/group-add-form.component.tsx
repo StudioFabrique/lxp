@@ -2,11 +2,12 @@ import { FC, FormEvent, useState } from "react";
 import { regexGeneric } from "../../../utils/constantes";
 import useInput from "../../../hooks/use-input";
 import Informations from "./components/informations.components";
-import Tags from "./components/tags.component";
 import Details from "./components/details.component";
 import Date from "./components/date.component";
 import GroupUserList from "../../lists/group-user-list/group-user-list.component";
 import User from "../../../utils/interfaces/user";
+import Tags from "../../UI/tags/tags.component";
+import Tag from "../../../utils/interfaces/tag";
 
 const GroupAddForm: FC<{
   group?: any;
@@ -32,6 +33,8 @@ const GroupAddForm: FC<{
       roles: [],
     },
   ]);
+
+  const handleSubmitTags = (tags: Tag[]) => {};
 
   const [usersToAdd, setUsersToAdd] = useState<String[]>([]);
 
@@ -98,7 +101,7 @@ const GroupAddForm: FC<{
       <div className="grid grid-cols-3 max-md:grid-cols-1 gap-x-5">
         <Informations name={name} diplome={diplome} rncp={rncp} />
         <div className="grid grid-row-2 max-md:mb-2 max-md:mt-2 gap-y-2">
-          <Tags />
+          <Tags onSubmitTags={handleSubmitTags} />
           <Date />
         </div>
         <Details promotion={promotion} desc={desc} />

@@ -1,6 +1,6 @@
 const Date = () => {
   return (
-    <div className="p-4 bg-slate-100/80 rounded-2xl gap-y-5 flex flex-col">
+    <div className="p-4 bg-secondary/5 rounded-2xl gap-y-5 flex flex-col">
       <h2 className="font-bold text-xl">Date</h2>
       <span className="flex justify-between items-center">
         <label>Début</label>

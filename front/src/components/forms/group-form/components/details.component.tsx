@@ -2,7 +2,7 @@ import { FC } from "react";
 
 const Details: FC<{ promotion: any; desc: any }> = ({ promotion, desc }) => {
   return (
-    <div className="p-4 bg-slate-100/80 rounded-2xl gap-y-5 flex flex-col">
+    <div className="p-4 bg-secondary/5 rounded-2xl gap-y-5 flex flex-col">
       <h2 className="font-bold text-xl">Details</h2>
       <span>
         <label>Promotion</label>
@@ -28,7 +28,7 @@ const Details: FC<{ promotion: any; desc: any }> = ({ promotion, desc }) => {
       <span>
         <label>Téléverser une image de groupe</label>
         <input
-          className="file-input file-input-secondary"
+          className="w-full file-input file-input-secondary"
           type="file"
           placeholder="test"
         />
