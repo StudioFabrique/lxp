@@ -22,7 +22,6 @@ const GroupUserList: FC<{
 
   return (
     <div>
-      {/* Afficher ici la liste des utilisateurs du groupe */}
       <Wrapper>
         <h2 className="font-bold text-lg">Etudiants</h2>
         <div className="flex justify-between">
@@ -34,7 +33,7 @@ const GroupUserList: FC<{
           />
         </div>
 
-        {/* Afficher ici la liste des utilisateurs du groupe */}
+        {/* liste des utilisateurs du groupe */}
         {users.length > 0 ? (
           <table className="table tab-sm">
             <thead>

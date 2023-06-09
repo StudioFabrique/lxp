@@ -64,14 +64,6 @@ const SearchDropdown: FC<Props> = ({
   return (
     <div className="flex items-center gap-x-2">
       <div className="dropdown dropdown-bottom dropdown-end flex gap-y-4 w-full">
-        {/* 
-        <button
-          ref={btnRef}
-          className="btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary"
-          type="submit"
-        >
-          {children}
-        </button> */}
         <input
           type="search"
           name="enteredTagValue"
