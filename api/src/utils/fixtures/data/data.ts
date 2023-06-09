@@ -17,6 +17,31 @@ export const firstnames = [
   "Mason",
 ];
 
+// 20
+
+export const groupes = [
+  "Développement Web",
+  "Intelligence Artificielle",
+  "Sécurité informatique",
+  "Design graphique",
+  "Marketing numérique",
+  "Gestion de projet",
+  "Analyse de données",
+  "Réseaux informatiques",
+  "Blockchain",
+  "Développement mobile",
+  "Commerce électronique",
+  "Cloud computing",
+  "Internet des objets",
+  "Big Data",
+  "Ingénierie logicielle",
+  "UX/UI Design",
+  "Cybersécurité",
+  "Business intelligence",
+  "Management stratégique",
+  "Analyse financière",
+];
+
 // 50
 export const lastnames = [
   "Martin",

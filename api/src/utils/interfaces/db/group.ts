@@ -6,8 +6,8 @@ import { IRole } from "./role";
 export interface IGroup extends Document {
   name: string;
   desc: string;
-  teachers?: IUser["_id"];
-  users?: IStudent["_id"];
+  users?: IUser["_id"];
+  students?: IStudent["_id"];
   roles: IRole["_id"];
   createdAt: Date;
   updatedAt: Date;
@@ -17,11 +17,11 @@ const groupSchema: Schema = new Schema(
   {
     name: { type: String, required: true },
     desc: { type: String, required: true },
-    teachers: {
+    users: {
       type: [Schema.Types.ObjectId],
       ref: "User",
     },
-    users: {
+    students: {
       type: [Schema.Types.ObjectId],
       ref: "Student",
     },

@@ -16,7 +16,7 @@ const Login = () => {
     );
   };
   return (
-    <div className="h-full flex flex-row justify-between items font-inter text-pink bg-gradient-to-b from-[#76284e] to-[#202237]">
+    <div className="h-screen flex flex-row justify-between items font-inter text-pink bg-gradient-to-b from-[#76284e] to-[#202237]">
       <div className="w-[73.5%] flex flex-col text-pink-900 justify-between bg-white rounded-r-[50px] p-20 pl-15 max-sm:p-2">
         <div className="text-[14pt] font-bold flex flex-col">
           <h1 className="text-[80pt] -mb-8 -m-2">LXP</h1>
