@@ -91,6 +91,4 @@ const Tags: FC<{ onSubmitTags: (tags: Array<Tag>) => void }> = ({
   );
 };
 
-const MemoizedTagsComponent = React.memo(Tags);
-
-export default MemoizedTagsComponent;
+export default Tags;

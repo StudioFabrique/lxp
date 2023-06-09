@@ -59,6 +59,4 @@ const DatesSelecter: FC<{
   );
 };
 
-const MemoizedDatesSelecter = React.memo(DatesSelecter);
-
-export default MemoizedDatesSelecter;
+export default DatesSelecter;

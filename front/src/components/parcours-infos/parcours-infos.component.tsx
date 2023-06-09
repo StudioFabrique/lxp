@@ -112,6 +112,4 @@ const ParcoursInfos: FC<{
   );
 };
 
-const MemoizedParcoursInfo = React.memo(ParcoursInfos);
-
-export default MemoizedParcoursInfo;
+export default ParcoursInfos;

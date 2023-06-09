@@ -1,11 +1,10 @@
 import useParcours from "../../hooks/use-parcours";
-import { useEffect, useMemo, useState } from "react";
-import MemoizedParcoursInfo from "../parcours-infos/parcours-infos.component";
-import MemoizedDatesSelecter from "../UI/dates-selecter/dates-selecter.component";
-import MemoizedParcoursRessourcesContacts from "../parcours-ressources-contacts/parcours-ressources-contacts.component";
-import MemoizedTagsComponent from "../UI/tags/tags.component";
-import Portal from "../UI/portal/portal";
+import { useEffect } from "react";
 import { Toaster, toast } from "react-hot-toast";
+import ParcoursInfos from "../parcours-infos/parcours-infos.component";
+import DatesSelecter from "../UI/dates-selecter/dates-selecter.component";
+import Tags from "../UI/tags/tags.component";
+import ParcoursRessourcesContacts from "../parcours-ressources-contacts/parcours-ressources-contacts.component";
 
 const ParcoursForm = () => {
   const { formInfos, updateInfos, updateDates, updateTags, updateContacts } =
@@ -35,16 +34,14 @@ const ParcoursForm = () => {
       <Toaster />
       <div className="w-full grid auto-cols-max grid-cols-1 lg:grid-cols-3 gap-y-8 gap-x-4">
         <div>
-          <MemoizedParcoursInfo onSubmitInformations={updateInfos} />
+          <ParcoursInfos onSubmitInformations={updateInfos} />
         </div>
         <div className="flex flex-col gap-y-4">
-          <MemoizedDatesSelecter onSubmitDates={updateDates} />
-          <MemoizedTagsComponent onSubmitTags={updateTags} />
+          <DatesSelecter onSubmitDates={updateDates} />
+          <Tags onSubmitTags={updateTags} />
         </div>
         <div>
-          <MemoizedParcoursRessourcesContacts
-            onSubmitContacts={updateContacts}
-          />
+          <ParcoursRessourcesContacts onSubmitContacts={updateContacts} />
         </div>
       </div>
     </>
