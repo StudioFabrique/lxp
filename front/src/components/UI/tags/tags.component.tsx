@@ -64,8 +64,8 @@ const Tags: FC<{ onSubmitTags: (tags: Array<Tag>) => void }> = ({
         filteredItems={filteredItems}
         property="name"
         placeHolder="Ajouter un nouveau tag..."
-      >
-        {/* <svg
+      />
+      {/* <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="currentColor"
@@ -77,7 +77,6 @@ const Tags: FC<{ onSubmitTags: (tags: Array<Tag>) => void }> = ({
           clipRule="evenodd"
         />
       </svg> */}
-      </SearchDropdown>
       <ul className="flex flex-wrap gap-2">
         {selectedItems && selectedItems.length > 0
           ? selectedItems.map((tag: Tag) => (
