@@ -93,7 +93,7 @@ const useParcours = () => {
       title: infosState.title,
       description: infosState.description,
       degree: infosState.degree,
-      //file: infosState.file,
+      file: infosState.file,
       startDate: infosState.startDate,
       endDate: infosState.endDate,
       tags: infosState.tags,

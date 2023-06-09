@@ -22,8 +22,6 @@ const ParcoursForm = () => {
   console.log({ formInfos });
 
   useEffect(() => {
-    console.log("coucou useEffect");
-
     setTimeout(() => {
       toast.success("Mise à jour des données réussie!");
     }, 3000);
