@@ -2,7 +2,7 @@ import React, { FC, useEffect, useMemo } from "react";
 import useInput from "../../../hooks/use-input";
 import { regexGeneric } from "../../../utils/constantes";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
-import Wrapper from "../wrapper/wrapper";
+import Wrapper from "../wrapper/wrapper.component";
 
 const DatesSelecter: FC<{
   onSubmitDates: (dates: { startDate: string; endDate: string }) => void;
