@@ -18,30 +18,6 @@ const GroupList: FC<{
     onAllChecked(allChecked);
   };
 
-  // fonction pour changer les rôles d'un unique utilisateur, elle a été déplacé ailleurs
-
-  /*   const handleRolesChange = (newRoles: Array<Role>, groupId: string) => {
-    const updatedGroupList = groupList.map((item: any) =>
-      item._id === groupId
-        ? {
-            ...item,
-            roles: sortArray(newRoles, "rank"),
-          }
-        : item
-    );
-    setGroupList(updatedGroupList);
-
-    const applyData = (data: any) => {};
-    sendRequest(
-      {
-        path: `/group/${role.role === "admin" ? "user" : "student"}/${groupId}`,
-        method: "put",
-        body: newRoles,
-      },
-      applyData
-    );
-  }; */
-
   useEffect(() => {
     setAllChecked(false);
     onAllChecked(false);
@@ -49,7 +25,7 @@ const GroupList: FC<{
 
   let content = (
     <table className="table w-full">
-      <thead>
+      <thead className="bg-none">
         <tr>
           <th className="z-0">
             <input

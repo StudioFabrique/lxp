@@ -19,6 +19,7 @@ const GroupHome = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [role, setRole] = useState<Role>(roles[0]);
   const [isSeachActive, setIsSeachActive] = useState(false);
+
   const {
     page,
     totalPages,
@@ -31,6 +32,11 @@ const GroupHome = () => {
     setPath,
   } = usePagination("lastname", `/group/${user!.roles[0].role}`);
   const { sendRequest } = useHttp();
+
+  // const handleAddUsersToGroup = (usersId: string[]) => {
+  //   console.log(usersId);
+  //   console.log("envoi des données...");
+  // };
 
   const handleSorting = (column: string) => {
     sortData(column);

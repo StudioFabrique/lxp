@@ -15,7 +15,7 @@ export interface IStudent extends Document {
   createdAt: Date;
   updatedAt: Date;
   isActive: boolean;
-  group?: IGroup;
+  group?: IGroup["_id"];
 }
 
 const studentSchema: Schema = new Schema(
