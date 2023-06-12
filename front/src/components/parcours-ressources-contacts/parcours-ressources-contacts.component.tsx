@@ -9,6 +9,7 @@ import Role from "../../utils/interfaces/role";
 import { autoSubmitTimer } from "../../config/auto-submit-timer";
 import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
 import UserQuickCreate from "../user-quick-create/user-quick-create";
+import Wrapper from "../UI/wrapper/wrapper.component";
 
 type UserItem = {
   _id: string;
@@ -86,7 +87,7 @@ const ParcoursRessourcesContacts: FC<{
   };
 
   return (
-    <div className="flex flex-col gap-y-4 p-4 rounded-lg bg-secondary/10">
+    <Wrapper>
       <h3 className="font-bold text-xl">Ressources et Contacts</h3>
       <div className="flex gap-x-2 w-full">
         <SearchDropdown
@@ -110,7 +111,7 @@ const ParcoursRessourcesContacts: FC<{
             ))
           : null}
       </ul>
-    </div>
+    </Wrapper>
   );
 };
 
