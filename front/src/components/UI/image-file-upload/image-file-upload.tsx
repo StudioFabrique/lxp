@@ -37,7 +37,7 @@ const ImageFileUpload: FC<{
       <label htmlFor="fileToUpload">Téléverser une image</label>
       <input
         type="file"
-        className="file-input file-input-sm file-font-normal file-input-primary w-full rounded-lg"
+        className="file-input file-input-sm file-font-normal file-input-primary w-full rounded-lg
         onChange={handleFileChange}
       />
     </>

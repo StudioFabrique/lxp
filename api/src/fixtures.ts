@@ -7,14 +7,17 @@ import Student from "./utils/interfaces/db/student/student.model";
 import {
   addresses,
   cities,
+  colors,
   domains,
   firstnames,
   groupes,
   lastnames,
+  tags,
 } from "./utils/fixtures/data/data";
 import Role from "./utils/interfaces/db/role";
 import Permission from "./utils/interfaces/db/permission";
 import Group, { IGroup } from "./utils/interfaces/db/group";
+import Tag from "./utils/interfaces/db/tag";
 dotenv.config();
 dotenv.config({ path: ".env.local", override: true });
 
@@ -260,6 +263,31 @@ async function createPermissions() {
   await Permission.bulkSave(dbPermissions);
 }
 
+let tagsColors = Array<string>();
+
+function setTagsColors() {
+  let leftColors = colors;
+  for (let i = 0; i < tags.length; i++) {
+    if (leftColors.length === 0) {
+      leftColors = colors;
+    }
+    tagsColors.push(leftColors[getRandomNumber(0, leftColors.length - 1)]);
+    leftColors = leftColors.filter((col) => col !== tagsColors[i]);
+  }
+}
+
+async function createTag() {
+  setTagsColors();
+  let index = 0;
+  const tab = Array<any>();
+  tags.forEach((tag) => {
+    const newTag = new Tag({ name: tag, color: tagsColors[index] });
+    tab.push(newTag);
+    index++;
+  });
+  await Tag.bulkSave(tab);
+}
+
 async function dropDatabase() {
   await mongoose.connection.dropDatabase();
   console.log("Database dropped!");
@@ -276,6 +304,7 @@ async function main() {
   await createManStudents();
   await createManyCoach();
   await createManyGroups();
+  await createTag();
 }
 
 main();
