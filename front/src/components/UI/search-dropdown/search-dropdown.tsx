@@ -60,7 +60,7 @@ const SearchDropdown: FC<Props> = ({
   }, [enteredValue, filterItems, property]);
 
   return (
-    <div className="flex items-center gap-x-2">
+    <div className="flex items-center gap-x-2 w-full">
       <div className="dropdown dropdown-bottom dropdown-end flex gap-y-4 w-full">
         {/* 
         <button
