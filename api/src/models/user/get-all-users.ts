@@ -1,6 +1,5 @@
 import Role from "../../utils/interfaces/db/role";
-import Student from "../../utils/interfaces/db/student/student.model";
-import User from "../../utils/interfaces/db/user/user.model";
+import User from "../../utils/interfaces/db/user.model";
 import { getPagination } from "../../utils/services/getPagination";
 
 async function getAllUsers(
@@ -22,27 +21,12 @@ async function getAllUsers(
 
   console.log({ fetchedRole });
 
-  if (fetchedRole.rank < 3) {
-    const users = await User.find({ roles: fetchedRole._id }, { password: 0 })
-      .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
-      .sort({ [stype]: dir })
-      .skip(getPagination(page, limit))
-      .limit(limit);
-    const total = await User.count({ roles: fetchedRole._id });
-    return { total, users };
-  } else if (fetchedRole.rank > 2) {
-    const users = await Student.find(
-      { roles: fetchedRole._id },
-      { password: 0 }
-    )
-      .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
-      .sort({ [stype]: dir })
-      .skip(getPagination(page, limit))
-      .limit(limit);
-    const total = await Student.count({ roles: fetchedRole._id });
-
-    return { total, users };
-  }
+  const users = await User.find({ roles: fetchedRole._id }, { password: 0 })
+    .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
+    .sort({ [stype]: dir })
+    .skip(getPagination(page, limit))
+    .limit(limit);
+  const total = await User.count({ roles: fetchedRole._id });
+  return { total, users };
 }
-
 export default getAllUsers;

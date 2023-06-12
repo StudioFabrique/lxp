@@ -11,7 +11,7 @@ import httpGetRoles from "../../controllers/auth/http-get-roles";
 const authRouter = express.Router();
 
 authRouter.post(
-  "/login/:role",
+  "/login",
   body("email").isEmail().trim().escape(),
   param("role").trim().escape(),
   httpLogin

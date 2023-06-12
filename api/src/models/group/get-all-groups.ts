@@ -1,6 +1,5 @@
 import Group from "../../utils/interfaces/db/group";
 import Role from "../../utils/interfaces/db/role";
-import Student from "../../utils/interfaces/db/student/student.model";
 import { getPagination } from "../../utils/services/getPagination";
 
 async function getAllGroups(
@@ -20,26 +19,13 @@ async function getAllGroups(
     return false;
   }
 
-  console.log({ fetchedRole });
-
-  if (fetchedRole.rank < 3) {
-    const groups = await Group.find({ roles: fetchedRole._id })
-      .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
-      .sort({ [stype]: dir })
-      .skip(getPagination(page, limit))
-      .limit(limit);
-    const total = await Group.count({ roles: fetchedRole._id });
-    return { total, groups };
-  } else if (fetchedRole.rank > 2) {
-    const groups = await Group.find({ roles: fetchedRole._id })
-      .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
-      .sort({ [stype]: dir })
-      .skip(getPagination(page, limit))
-      .limit(limit);
-    const total = await Group.count({ roles: fetchedRole._id });
-
-    return { total, groups };
-  }
+  const groups = await Group.find({ roles: fetchedRole._id })
+    .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
+    .sort({ [stype]: dir })
+    .skip(getPagination(page, limit))
+    .limit(limit);
+  const total = await Group.count({ roles: fetchedRole._id });
+  return { total, groups };
 }
 
 export default getAllGroups;

@@ -31,35 +31,6 @@ userRouter.get(
   httpGetAllUsers
 );
 
-// mise à jour des rôles d'une liste d'apprenants
-userRouter.put(
-  "/student-roles",
-  // validators
-  body("usersToUpdate")
-    .isArray()
-    .notEmpty()
-    .withMessage("Le tableau studentsToUpdate ne peut pas être vide."),
-  body("usersToUpdate.*")
-    .isString()
-    .withMessage(
-      "Chaque élément de studentsToUpdate doit être une chaîne de caractères."
-    )
-    .trim()
-    .escape(),
-  body("rolesId")
-    .isArray()
-    .notEmpty()
-    .withMessage("Le tableau rolesId ne peut pas être vide."),
-  body("rolesId.*")
-    .isString()
-    .withMessage(
-      "Chaque élément de rolesId doit être une chaîne de caractères."
-    )
-    .trim()
-    .escape(),
-  httpUpdateStudentRoles
-);
-
 userRouter.put(
   "/user-roles",
   // validators
@@ -85,6 +56,7 @@ userRouter.put(
     )
     .trim()
     .escape(),
+  isUser,
   httpUpdateUserRoles
 );
 

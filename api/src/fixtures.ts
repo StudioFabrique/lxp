@@ -1,9 +1,7 @@
 import bcrypt from "bcrypt";
-import User from "./utils/interfaces/db/user/user.model";
 
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import Student from "./utils/interfaces/db/student/student.model";
 import {
   addresses,
   cities,
@@ -18,6 +16,7 @@ import Role from "./utils/interfaces/db/role";
 import Permission from "./utils/interfaces/db/permission";
 import Group, { IGroup } from "./utils/interfaces/db/group";
 import Tag from "./utils/interfaces/db/tag";
+import User from "./utils/interfaces/db/user.model";
 dotenv.config();
 dotenv.config({ path: ".env.local", override: true });
 
@@ -80,7 +79,7 @@ async function createUser() {
   robotIndex++;
 
   role = await Role.findOne({ role: "student" });
-  const newStudent = new Student({
+  const newStudent = new User({
     firstname: "jacqueline",
     lastname: "dupond",
     address: "14 bvd olga ducresnes",
@@ -164,7 +163,7 @@ async function createManyTeachers() {
   await User.bulkSave(userList);
 }
 
-async function createManStudents() {
+async function createManyStudents() {
   const role = await Role.findOne({ role: "student" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
@@ -188,7 +187,7 @@ async function createManStudents() {
     userList.push(user);
     robotIndex++;
   }
-  await Student.bulkSave(userList);
+  await User.bulkSave(userList);
 }
 
 async function createManyCoach() {
@@ -215,7 +214,7 @@ async function createManyCoach() {
     userList.push(user);
     robotIndex++;
   }
-  await Student.bulkSave(userList);
+  await User.bulkSave(userList);
 }
 
 async function createRoles() {
@@ -301,7 +300,7 @@ async function main() {
   await createUser();
   await createManyAdmins();
   await createManyTeachers();
-  await createManStudents();
+  await createManyStudents();
   await createManyCoach();
   await createManyGroups();
   await createTag();

@@ -1,8 +1,8 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { IRole } from "../role";
-import { IGroup } from "../group";
+import { IRole } from "./role";
+import { IGroup } from "./group";
 
-export interface IStudent extends Document {
+export interface IUser extends Document {
   email: string;
   password: string;
   firstname: string;
@@ -18,7 +18,7 @@ export interface IStudent extends Document {
   group?: IGroup["_id"];
 }
 
-const studentSchema: Schema = new Schema(
+const userSchema: Schema = new Schema(
   {
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -39,6 +39,6 @@ const studentSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-const Student = mongoose.model<IStudent>("Student", studentSchema);
+const User = mongoose.model<IUser>("User", userSchema);
 
-export default Student;
+export default User;
