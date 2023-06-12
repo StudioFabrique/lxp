@@ -43,11 +43,11 @@ const GroupManageUserList: FC<{
 
   return (
     <div className="fixed h-full flex top-0 right-0">
-      <div className="bg-white p-10 flex flex-col h-full gap-y-5 justify-between">
+      <div className="bg-white flex flex-col gap-y-5 justify-between">
         <CancelButton onCleanup={handleCleanup} />
         {dataList.length > 0 ? (
           <>
-            <div className="h-full flex flex-col justify-between">
+            <div className="h-full gap-y-2 flex flex-col justify-between">
               <UserToAddList
                 userList={dataList}
                 ManageSelectedUser={handleManageSelectedUser}
