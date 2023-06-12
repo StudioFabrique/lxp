@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo } from "react";
+import React, { FC, useCallback, useEffect, useMemo } from "react";
 import useItems from "../../hooks/use-items";
 import { sortArray } from "../../utils/sortArray";
 import User from "../../utils/interfaces/user";
@@ -33,7 +33,7 @@ const ParcoursRessourcesContacts: FC<{
     initItems,
   } = useItems();
 
-  useEffect(() => {
+  const fetchTeachers = useCallback(() => {
     const applyData = (data: any) => {
       const userItems = Array<UserItem>();
       data.forEach((user: User) => {
@@ -52,6 +52,10 @@ const ParcoursRessourcesContacts: FC<{
       applyData
     );
   }, [initItems, sendRequest]);
+
+  useEffect(() => {
+    fetchTeachers();
+  }, [fetchTeachers]);
 
   const handleRemoveUser = (user: UserItem) => {
     removeItem(user, "_id");
@@ -76,12 +80,15 @@ const ParcoursRessourcesContacts: FC<{
     email: string;
     firstname: string;
     lastname: string;
-  }) => {};
+  }) => {
+    console.log(newUser);
+    fetchTeachers();
+  };
 
   return (
     <div className="flex flex-col gap-y-4 p-4 rounded-lg bg-secondary/10">
       <h3 className="font-bold text-xl">Ressources et Contacts</h3>
-      <div className="flex gap-x-2">
+      <div className="flex gap-x-2 w-full">
         <SearchDropdown
           addItem={addItem}
           filterItems={filterItems}

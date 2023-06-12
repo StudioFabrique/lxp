@@ -1,6 +1,10 @@
 import { FC, FormEvent, useState } from "react";
 import useInput from "../../hooks/use-input";
-import { regexGeneric, regexMail } from "../../utils/constantes";
+import {
+  regexGeneric,
+  regexMail,
+  regexOptionalGeneric,
+} from "../../utils/constantes";
 import Wrapper from "../UI/wrapper/wrapper";
 
 type Props = {
@@ -21,12 +25,32 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
   const { value: email } = useInput((value) => regexMail.test(value));
   const { value: firstname } = useInput((value) => regexGeneric.test(value));
   const { value: lastname } = useInput((value) => regexGeneric.test(value));
-  const { value: nickname } = useInput((value) => regexGeneric.test(value));
-  const { value: address } = useInput((value) => regexGeneric.test(value));
-  const { value: postCode } = useInput((value) => regexGeneric.test(value));
-  const { value: city } = useInput((value) => regexGeneric.test(value));
-  const { value: phoneNumber } = useInput((value) => regexGeneric.test(value));
-  const [isActive, setIsActive] = useState(false);
+  const { value: nickname } = useInput((value) =>
+    regexOptionalGeneric.test(value)
+  );
+  const { value: address } = useInput((value) =>
+    regexOptionalGeneric.test(value)
+  );
+  const { value: postCode } = useInput((value) =>
+    regexOptionalGeneric.test(value)
+  );
+  const { value: city } = useInput((value) => regexOptionalGeneric.test(value));
+  const { value: phoneNumber } = useInput((value) =>
+    regexOptionalGeneric.test(value)
+  );
+  const [isActive, setIsActive] = useState(true);
+  const [isFormValid, setIsFormValid] = useState(true);
+
+  const fields = [
+    email,
+    firstname,
+    lastname,
+    nickname,
+    address,
+    postCode,
+    city,
+    phoneNumber,
+  ];
 
   let formIsValid =
     email.isValid &&
@@ -36,13 +60,12 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
     address.isValid &&
     postCode.isValid &&
     city.isValid &&
-    phoneNumber.isValid &&
-    lastname.value.length > 0 &&
-    firstname.value.length > 0;
+    phoneNumber.isValid;
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (formIsValid) {
+      setIsFormValid(true);
       onSubmitUser({
         email: email.value,
         firstname: firstname.value,
@@ -54,6 +77,10 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
         phoneNumber: phoneNumber.value,
         isActive: isActive,
       });
+      handleCloseDrawer();
+    } else {
+      setIsFormValid(false);
+      fields.forEach((field: any) => field.isSubmitted());
     }
   };
 
@@ -62,20 +89,37 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
   };
 
   const handleCloseDrawer = () => {
-    console.log(document.getElementById("my-drawer-4"));
-
+    handleResetForm();
     document.getElementById("my-drawer-4")?.click();
   };
 
+  const setInputStyle = (hasError: boolean) => {
+    return hasError
+      ? "input input-error text-error input-sm input-bordered w-full"
+      : "input input-sm input-bordered w-full";
+  };
+
+  const handleResetForm = () => {
+    setIsFormValid(true);
+    setIsActive(true);
+    fields.forEach((field: any) => field.reset());
+  };
+
+  const setErrorMessage = () => {
+    return isFormValid
+      ? "text-xs font-bold text-error flex pr-2 invisible"
+      : "text-xs font-bold text-error flex pr-2 visible";
+  };
+
   return (
-    <>
+    <div className="flex flex-col">
       <div className="flex items-center gap-x-4">
         <div onClick={handleCloseDrawer}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
-            className="w-6 h-6"
+            className="w-6 h-6 cursor-pointer"
           >
             <path
               fillRule="evenodd"
@@ -88,7 +132,7 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
       </div>
       <div className="divider" />
 
-      <form className="flex flex-col gap-y-8 px-4" onSubmit={handleSubmit}>
+      <form className="flex flex-col gap-y-4 px-4" onSubmit={handleSubmit}>
         <div>
           <label className="flex gap-x-4 items-center cursor-pointer">
             <span className="text-base-content/50">Status</span>
@@ -108,19 +152,20 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
           </label>
         </div>
 
-        <div className="grid grid-cols-2 gap-x-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Wrapper>
             <div className="flex flex-col gap-y-2 w-full">
               <label className="text-base-content/50" htmlFor="lastname">
                 Nom *
               </label>
               <input
-                className="input input-sm input-bordered w-4/6"
+                className={setInputStyle(lastname.hasError)}
                 type="text"
-                defaultValue={lastname.value}
+                value={lastname.value}
                 onBlur={lastname.valueBlurHandler}
                 onChange={lastname.valueChangeHandler}
                 placeholder="Dupont"
+                name="lastname"
               />
             </div>
             <div className="flex flex-col gap-y-2 w-full">
@@ -128,12 +173,13 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
                 Prénom *
               </label>
               <input
-                className="input input-sm input-bordered w-4/6"
+                className={setInputStyle(firstname.hasError)}
                 type="text"
-                defaultValue={firstname.value}
+                value={firstname.value}
                 onBlur={firstname.valueBlurHandler}
                 onChange={firstname.valueChangeHandler}
                 placeholder="Jean"
+                name="firstname"
               />
             </div>
             <div className="flex flex-col gap-y-2 w-full">
@@ -141,12 +187,12 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
                 Pseudo
               </label>
               <input
-                className="input input-sm input-bordered w-4/6"
+                className={setInputStyle(nickname.hasError)}
                 type="text"
-                defaultValue={nickname.value}
+                value={nickname.value}
                 onBlur={nickname.valueBlurHandler}
                 onChange={nickname.valueChangeHandler}
-                placeholder="jeannot"
+                name="nickname"
               />
             </div>
             <div className="flex flex-col gap-y-2 w-full">
@@ -154,12 +200,13 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
                 Adresse Email *
               </label>
               <input
-                className="input input-sm input-bordered w-4/6"
+                className={setInputStyle(email.hasError)}
                 type="email"
-                defaultValue={email.value}
+                value={email.value}
                 onBlur={email.valueBlurHandler}
                 onChange={email.valueChangeHandler}
                 placeholder="email@exemple.com"
+                name="email"
               />
             </div>
           </Wrapper>
@@ -169,12 +216,13 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
                 Adresse
               </label>
               <input
-                className="input input-sm input-bordered w-4/6"
+                className={setInputStyle(address.hasError)}
                 type="text"
-                defaultValue={address.value}
+                value={address.value}
                 onBlur={address.valueBlurHandler}
                 onChange={address.valueChangeHandler}
                 placeholder="12 place Royale"
+                name="address"
               />
             </div>
             <div className="flex flex-col gap-y-2 w-full">
@@ -182,12 +230,13 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
                 Ville
               </label>
               <input
-                className="input input-sm input-bordered w-4/6"
+                className={setInputStyle(city.hasError)}
                 type="text"
-                defaultValue={city.value}
+                value={city.value}
                 onBlur={city.valueBlurHandler}
                 onChange={city.valueChangeHandler}
                 placeholder="Paris"
+                name="city"
               />
             </div>
             <div className="flex flex-col gap-y-2 w-full">
@@ -195,12 +244,13 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
                 Code Postal
               </label>
               <input
-                className="input input-sm input-bordered w-4/6"
+                className={setInputStyle(postCode.hasError)}
                 type="text"
-                defaultValue={postCode.value}
+                value={postCode.value}
                 onBlur={postCode.valueBlurHandler}
                 onChange={postCode.valueChangeHandler}
                 placeholder="75000"
+                name="postCode"
               />
             </div>
             <div className="flex flex-col gap-y-2 w-full">
@@ -208,25 +258,40 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
                 Téléphone
               </label>
               <input
-                className="input input-sm input-bordered w-4/6"
+                className={setInputStyle(phoneNumber.hasError)}
                 type="text"
-                defaultValue={phoneNumber.value}
+                value={phoneNumber.value}
                 onBlur={phoneNumber.valueBlurHandler}
                 onChange={phoneNumber.valueChangeHandler}
                 placeholder="06 07 08 09 10"
+                name="phoneNumber"
               />
             </div>
           </Wrapper>
         </div>
-
-        <div className="w-full flex justify-end gap-x-2 pr-4 mt-8">
-          <button className="btn btn-outline btn-primary font-normal w-32">
-            Annuler
-          </button>
-          <button className="btn btn-primary w-32">Valider</button>
+        <div className="w-full flex flex-col gap-y-4">
+          <p className="text-xs px-2">
+            Note : Les identifiants de l'utilisateur lui seront envoyés par mail
+            à la validation du formulaire
+          </p>
+          <div className="w-full flex justify-between items-center gap-x-2 pr-2 mt-4">
+            <p className={setErrorMessage()}>
+              Un ou plusieurs champs sont mal remplis
+            </p>
+            <div className="flex gap-x-4">
+              <button
+                className="btn btn-outline btn-sm btn-primary font-normal w-32"
+                type="reset"
+                onClick={handleCloseDrawer}
+              >
+                Annuler
+              </button>
+              <button className="btn btn-primary btn-sm w-32">Valider</button>
+            </div>
+          </div>
         </div>
       </form>
-    </>
+    </div>
   );
 };
 
