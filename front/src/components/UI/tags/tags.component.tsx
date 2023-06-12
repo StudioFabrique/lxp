@@ -1,4 +1,3 @@
-
 import { FC, useEffect, useMemo } from "react";
 import Tag from "../../../utils/interfaces/tag";
 //import useHttp from "../../../hooks/use-http";
@@ -65,7 +64,7 @@ const Tags: FC<{ onSubmitTags: (tags: Array<Tag>) => void }> = ({
         filteredItems={filteredItems}
         property="name"
         placeHolder="Ajouter un nouveau tag..."
-      >
+      />
       <ul className="flex flex-wrap gap-2">
         {selectedItems && selectedItems.length > 0
           ? selectedItems.map((tag: Tag) => (
