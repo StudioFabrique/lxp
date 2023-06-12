@@ -1,9 +1,11 @@
 import { FC, useState } from "react";
-import GroupManageUserList from "../group-manage-user-list/group-manage-user-list.component";
+import GroupManageUserList from "./group-manage-user-list/group-manage-user-list.component";
 import GroupUserItem from "./group-user-item.component";
 import { ButtonAdd } from "./buttons.component";
 import User from "../../../utils/interfaces/user";
 import Wrapper from "../../UI/wrapper/wrapper.component";
+import Pagination from "../../UI/pagination/pagination";
+import usePagination from "../../../hooks/use-pagination";
 
 const GroupUserList: FC<{
   users: User[];
@@ -11,6 +13,8 @@ const GroupUserList: FC<{
 }> = ({ users, onSubmitSetUsersToAdd }) => {
   const [isModalOpen, setModalOpenState] = useState<boolean>(false);
 
+  const { page, perPage, dataList, totalPages, handlePageNumber } =
+    usePagination("", "");
   const handleModalOpenState = () => {
     setModalOpenState(!isModalOpen);
   };
@@ -21,21 +25,21 @@ const GroupUserList: FC<{
   };
 
   return (
-    <div>
-      <Wrapper>
-        <h2 className="font-bold text-lg">Etudiants</h2>
-        <div className="flex justify-between">
-          <ButtonAdd onClick={handleModalOpenState} />
-          <input
-            type="text"
-            className="input input-sm"
-            placeholder="Rechercher un étudiant par nom ou prénom"
-          />
-        </div>
+    <Wrapper>
+      <h2 className="font-bold text-lg">Etudiants</h2>
+      <div className="flex justify-between">
+        <ButtonAdd onClick={handleModalOpenState} />
+        <input
+          type="text"
+          className="input input-sm"
+          placeholder="Rechercher un étudiant par nom ou prénom"
+        />
+      </div>
 
-        {/* liste des utilisateurs du groupe */}
-        {users.length > 0 ? (
-          <table className="table tab-sm">
+      {/* liste des utilisateurs du groupe */}
+      {users.length > 0 ? (
+        <>
+          <table className="table-auto tab-sm border-separate border-spacing-y-4 text-center">
             <thead>
               <tr>
                 <th className="bg-transparent"></th>
@@ -55,17 +59,23 @@ const GroupUserList: FC<{
               ))}
             </tbody>
           </table>
-        ) : (
-          "Aucun utilisateurs dans ce groupe"
-        )}
-      </Wrapper>
+          <Pagination
+            page={page}
+            setPage={handlePageNumber}
+            totalPages={totalPages}
+            perPage={perPage}
+          />
+        </>
+      ) : (
+        "Aucun utilisateurs dans ce groupe"
+      )}
       {isModalOpen ? (
         <GroupManageUserList
           onSetUsersToAdd={handleSetUsersToAdd}
           onClose={handleModalOpenState}
         />
       ) : undefined}
-    </div>
+    </Wrapper>
   );
 };
 export default GroupUserList;

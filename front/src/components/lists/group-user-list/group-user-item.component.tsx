@@ -5,7 +5,7 @@ import { AvatarSmall } from "../../UI/avatar/avatar.component";
 const GroupUserItem: FC<{ user: User }> = ({ user }) => {
   return (
     <tr className="bg-secondary/10 hover:bg-blue-800 hover:text-white">
-      <td className="bg-transparent rounded-l-xl">
+      <td className="bg-transparent rounded-l-xl py-5">
         <input type="checkbox" className="checkbox checkbox-primary" />
       </td>
       <td className="bg-transparent">
@@ -16,8 +16,10 @@ const GroupUserItem: FC<{ user: User }> = ({ user }) => {
       <td className="bg-transparent">{user.email}</td>
       <td className="bg-transparent">CDA</td>
       <td className="bg-transparent">{user.isActive}</td>
-      <td className="bg-transparent"></td>
-      <td className="bg-transparent rounded-r-xl"></td>
+      <td className="bg-transparent">
+        <input type="checkbox" className="toggle" />
+      </td>
+      <td className="bg-transparent rounded-r-xl">act1 act2</td>
     </tr>
   );
 };
