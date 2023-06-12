@@ -15,9 +15,7 @@ const Modal: FC<{
         <div className="relative left-0 top-0 w-screen h-screen bg-black/20 z-20">
           <div className="absolute modal-open z-50 top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] min-w-[30rem]">
             <div className="modal-box  border border-primary">
-              <h3 className="font-bold text-primary text-xs border-b border-black/50 pb-4">
-                {props.title}
-              </h3>
+              <h3 className="font-bold text-xs pb-4">{props.title}</h3>
               <p className="py-4">{props.message}</p>
               <div className="modal-action">
                 {props.leftLabel && (
@@ -29,7 +27,7 @@ const Modal: FC<{
                   </button>
                 )}
                 <button
-                  className="btn btn-primary"
+                  className="btn btn-primary btn-sm"
                   onClick={props.onRightClick}
                 >
                   {props.rightLabel}

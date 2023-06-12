@@ -1,9 +1,11 @@
-const ParcoursHeader = () => {
+import React from "react";
+
+const UserHeader = () => {
   return (
     <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-y-8">
       <div>
         <h2 className="text-4xl text-base-content font-bold">
-          Créer un parcours de formation
+          Liste d'utilisateurs
         </h2>
         <p className="mt-2">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in urna
@@ -11,8 +13,6 @@ const ParcoursHeader = () => {
         </p>
       </div>
       <div className="flex items-center gap-x-2 justify-center md:justify-end">
-        <button className="btn btn-primary btn-sm md:w-32">Aperçu</button>
-        <button className="btn btn-primary btn-sm md:w-32">Publier</button>
         <button className="btn btn-outline btn-sm btn-primary">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -34,4 +34,4 @@ const ParcoursHeader = () => {
   );
 };
 
-export default ParcoursHeader;
+export default UserHeader;
