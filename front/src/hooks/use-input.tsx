@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useCallback, useReducer } from "react";
 
 type Action = {
   value: string;
@@ -12,7 +12,9 @@ const inputStateReducer = (state: any, action: Action) => {
     case "BLUR":
       return { value: action.value, isTouched: true };
     case "RESET":
-      return { value: "", isTouched: false };
+      return { value: action.value, isTouched: false };
+    case "IS_SUBMITTED":
+      return { ...state, isTouched: true };
     default:
       return;
   }
@@ -44,9 +46,13 @@ const useInput = (
     dispatch({ type: "INPUT", value: event.currentTarget.value });
   };
 
-  const reset = () => {
-    dispatch({ type: "RESET", value: inputState!.value });
-  };
+  const reset = useCallback(() => {
+    dispatch({ type: "RESET", value: "" });
+  }, []);
+
+  const isSubmitted = useCallback(() => {
+    dispatch({ type: "IS_SUBMITTED", value: "" });
+  }, []);
 
   return {
     value: {
@@ -57,6 +63,7 @@ const useInput = (
       valueBlurHandler,
       reset,
       textAreaChangeHandler,
+      isSubmitted,
     },
   };
 };

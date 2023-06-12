@@ -11,6 +11,7 @@ const AdminHome = () => {
       <button onClick={logout}>logout</button>
       <Link to="user">Interface utilisateurs</Link>
       <Link to="group">Interface Groupes</Link>
+      <Link to="parcours">Interface Parcours</Link>
     </div>
   );
 };
