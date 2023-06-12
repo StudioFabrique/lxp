@@ -12,7 +12,7 @@ export const AddUsersButton: FC<{
   return (
     <button
       type="button"
-      className="btn btn-sm bg-blue-500 text-white"
+      className="btn btn-sm bg-blue-500 text-white w-[70%] self-center"
       onClick={handleClick}
     >
       ajouter les utilisateurs selectionnés
@@ -21,7 +21,6 @@ export const AddUsersButton: FC<{
 };
 
 export const SelectionButton: FC<{
-  selectedUsers: string[];
   currentUser: string;
   ManageSelectedUser: (userId: string) => void;
 }> = (props) => {
@@ -41,7 +40,7 @@ export const CancelButton: FC<{ onCleanup: () => void }> = ({ onCleanup }) => {
     <button
       type="submit"
       onClick={handleClick}
-      className="btn btn-xs bg-red-600 text-white"
+      className="btn btn-xs w-20 bg-red-600 text-white"
     >
       Annuler
     </button>

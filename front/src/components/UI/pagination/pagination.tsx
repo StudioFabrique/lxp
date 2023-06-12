@@ -5,7 +5,8 @@ const Pagination: FC<{
   totalPages: number | null;
   setPage: (newPage: number) => void;
   setPerPages?: (perPage: number) => void;
-}> = ({ page, totalPages, setPage, setPerPages }) => {
+  perPage?: number;
+}> = ({ page, totalPages, setPage, setPerPages, perPage }) => {
   const decrementPage = () => {
     setPage(page - 1);
   };
@@ -16,25 +17,35 @@ const Pagination: FC<{
     setPage(page + 1);
   };
 
+  // handlePerPages = (event: ) => {
+  //   setPerPages
+  // }
+
   return (
-    <div className="w-full flex justify-center mt-4">
-      <div className="btn-group">
+    <div className="w-full flex justify-end mt-4 items-center gap-x-5 bg-secondary rounded-lg p-2 text-secondary-content text-sm">
+      <p>row per pages :</p>
+      <select className="select select-sm bg-secondary">
+        <option>5</option>
+        <option>10</option>
+        <option>15</option>
+      </select>
+      <p>
+        {page} of {totalPages}
+      </p>
+      <div className="btn-group gap-x-4">
         <button
-          className="text-primary border-none bg-secondary btn"
+          className="border-none bg-secondary btn btn-sm"
           disabled={page === 1}
           onClick={decrementPage}
         >
-          «
+          {"<"}
         </button>
-        <div className="bg-base-100 border-none text-primary btn">
-          {page} / {totalPages}
-        </div>
         <button
-          className="text-primary border-none bg-secondary btn"
+          className="border-none bg-secondary btn btn-sm"
           disabled={page === totalPages}
           onClick={incrementPage}
         >
-          »
+          {">"}
         </button>
       </div>
     </div>

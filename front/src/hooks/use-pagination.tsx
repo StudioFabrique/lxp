@@ -13,7 +13,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
   const [sdir, setSdir] = useState(false);
   const [stype, setStype] = useState(defaultSortValue);
   const [page, setPage] = useState(initialState.page);
-  const [perPage] = useState(initialState.perPage);
+  const [perPage, setPerPages] = useState(initialState.perPage);
   const [totalPages, setTotalPages] = useState<number | null>(
     initialState.totalPages
   );
@@ -93,6 +93,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     getList,
     setDataList,
     setPath,
+    setPerPages,
   };
 };
 

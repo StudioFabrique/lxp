@@ -1,19 +1,16 @@
 import { FC } from "react";
-import User from "../../../utils/interfaces/user";
-import { CancelButton, SelectionButton } from "./buttons.component";
-import { AvatarSmall } from "../../UI/avatar/avatar.component";
+import User from "../../../../utils/interfaces/user";
+import { SelectionButton } from "./buttons.component";
+import { AvatarSmall } from "../../../UI/avatar/avatar.component";
+import Wrapper from "../../../UI/wrapper/wrapper.component";
 
-const GroupUserList: FC<{
-  users: User[];
+const UserToAddList: FC<{
+  userList: Array<any>;
   ManageSelectedUser: (userId: string) => void;
-  selectedUsers: string[];
-  onCleanup: () => void;
 }> = (props) => {
   return (
-    <div>
-      <CancelButton onCleanup={props.onCleanup} />
-      <div className="my-10" />
-      <table className="table tab-sm w-full">
+    <Wrapper>
+      <table className="table-auto tab-sm border-separate border-spacing-y-4 text-center">
         <thead>
           <tr>
             <th className="bg-transparent"></th>
@@ -26,15 +23,14 @@ const GroupUserList: FC<{
           </tr>
         </thead>
         <tbody>
-          {props.users.map((user, i) => (
+          {props.userList.map((user: User, i) => (
             <tr
               key={i}
-              className="bg-slate-200 hover:bg-blue-800 hover:text-white"
+              className="bg-secondary/10 hover:bg-blue-800 hover:text-white"
             >
-              <td className="bg-transparent">
+              <td className="bg-transparent rounded-l-xl p-5">
                 <SelectionButton
                   key={i}
-                  selectedUsers={props.selectedUsers}
                   currentUser={user._id}
                   ManageSelectedUser={props.ManageSelectedUser}
                 />
@@ -46,12 +42,12 @@ const GroupUserList: FC<{
               <td className="bg-transparent">{user.lastname}</td>
               <td className="bg-transparent">{user.email}</td>
               <td className="bg-transparent">CDA</td>
-              <td className="bg-transparent">{user.isActive}</td>
+              <td className="bg-transparent rounded-r-xl">{user.isActive}</td>
             </tr>
           ))}
         </tbody>
       </table>
-    </div>
+    </Wrapper>
   );
 };
-export default GroupUserList;
+export default UserToAddList;
