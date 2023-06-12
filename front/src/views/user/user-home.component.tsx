@@ -13,6 +13,7 @@ import { hasPermission } from "../../utils/hasPermission";
 import Modal from "../../components/UI/modal/modal";
 import { useCallback, useContext, useEffect, useState } from "react";
 import UserList from "../../components/lists/user-list/user-list.component";
+import UserHeader from "../../components/user-header/user-header;component";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
@@ -135,7 +136,8 @@ const UserHome = () => {
 
   return (
     <>
-      <div className="w-screen flex justify-center my-8">
+      <div className="w-full flex flex-col items-center px-4 py-8 gap-8">
+        <UserHeader />
         <div className="flex flex-col gap-y-4">
           {user && role ? (
             <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />
@@ -187,6 +189,7 @@ const UserHome = () => {
               Créer un utilisateur
             </Link>
           </div>
+          U
         </div>
       </div>
       <>

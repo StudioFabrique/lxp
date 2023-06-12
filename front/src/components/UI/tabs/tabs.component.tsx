@@ -10,7 +10,7 @@ const Tabs: FC<{
 }> = ({ role, roles, onRoleSwitch }) => {
   const setContent = (item: Role) => {
     return (
-      <p
+      <li
         className={
           role.role === item.role
             ? "tab tab-lifted tab-active text-accent font-bold"
@@ -19,12 +19,13 @@ const Tabs: FC<{
         onClick={() => onRoleSwitch(item)}
       >
         {`${toTitleCase(item.label)}s`}
-      </p>
+      </li>
     );
   };
 
   return (
     <ul className="flex">
+      <li className="tab tab-lifted text-secondary font-bold">Tous</li>
       {roles.map((role) => (
         <Can key={role._id} action="read" subject={role.role}>
           {setContent(role)}
