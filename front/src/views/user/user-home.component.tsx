@@ -8,12 +8,15 @@ import Pagination from "../../components/UI/pagination/pagination";
 import usePagination from "../../hooks/use-pagination";
 import useHttp from "../../hooks/use-http";
 import Can from "../../components/UI/can/can.component";
-import RoleSelect from "../../components/lists/user-list/roles-select.component";
+import RoleSelect from "../../components/lists/user-list/dropdown-roles.component";
 import { hasPermission } from "../../utils/hasPermission";
 import Modal from "../../components/UI/modal/modal";
 import { useCallback, useContext, useEffect, useState } from "react";
 import UserList from "../../components/lists/user-list/user-list.component";
 import UserHeader from "../../components/user-header/user-header;component";
+import ButtonAdd from "../../components/UI/button-add/button-add";
+import ButtonRefresh from "../../components/UI/button-refresh/button-refresh";
+import ButtonList from "../../components/UI/button-list/button-list";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
@@ -30,7 +33,7 @@ const UserHome = () => {
     handlePageNumber,
     setDataList,
     setPath,
-  } = usePagination("lastname", `/user/${user!.roles[0].role}`);
+  } = usePagination("lastname", "/user/everything");
   const { sendRequest } = useHttp();
 
   const handleSorting = (column: string) => {
@@ -39,6 +42,9 @@ const UserHome = () => {
 
   const handleRoleSwitch = (role: Role) => {
     initPagination();
+    if (isSeachActive) {
+      handleCloseSearch();
+    }
     setRole(role);
     setIsSeachActive(false);
     setPath(`/user/${role.role}`);
@@ -61,7 +67,6 @@ const UserHome = () => {
 
   const handleCloseSearch = () => {
     setIsSeachActive(false);
-    initPagination();
     setPath(`/user/${role.role}`);
     getList();
   };
@@ -111,7 +116,7 @@ const UserHome = () => {
     if (updatedDataList.length > 0) {
       sendRequest(
         {
-          path: `/user/${role.rank < 3 ? "user-roles" : "student-roles"}`,
+          path: "/user/user-roles",
           method: "put",
           body: { usersToUpdate: updatedDataList, rolesId: updatedRolesIds },
         },
@@ -123,6 +128,8 @@ const UserHome = () => {
   const setErrorModal = () => {
     setShowErrorModal((prevState) => !prevState);
   };
+
+  const handleRefreshDataList = () => {};
 
   useEffect(() => {
     setRole(roles[0]);
@@ -138,12 +145,12 @@ const UserHome = () => {
     <>
       <div className="w-full flex flex-col items-center px-4 py-8 gap-8">
         <UserHeader />
-        <div className="flex flex-col gap-y-4">
+        <div className="flex flex-col gap-y-8">
           {user && role ? (
             <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />
           ) : null}
           <div className="flex justify-between items-center">
-            <div>
+            {/* <div>
               {role && dataList.length > 0 ? (
                 <Can action={"update"} subject={role.role}>
                   <RoleSelect
@@ -152,25 +159,25 @@ const UserHome = () => {
                   />
                 </Can>
               ) : null}
-            </div>
-            <div className="flex flex-col">
+            </div> */}
+            <Link to="/admin/user/add">
+              <ButtonAdd label=" Ajouter un utilisateur" />
+            </Link>
+            <div className="flex gap-x-2">
               <SearchUser
                 options={userSearchOptions}
                 onSearch={handleSearchResult}
               />
-              {isSeachActive ? (
-                <div className="flex justify-end">
-                  <button
-                    className="btn btn-info btn-sm"
-                    onClick={handleCloseSearch}
-                  >
-                    Fermer la recherche
-                  </button>
-                </div>
-              ) : null}
+              <ButtonRefresh onRefresh={handleRefreshDataList} />
+              <ButtonList
+                itemsList={dataList}
+                roleTab={role}
+                onGroupRolesChange={handleGroupRolesChange}
+              />
             </div>
           </div>
-          <div className="w-5/6">
+
+          <div className="w-full">
             <UserList
               role={role}
               userList={dataList}
@@ -185,11 +192,7 @@ const UserHome = () => {
                 setPage={handlePageNumber}
               />
             ) : null}
-            <Link className="btn" to="/admin/user/add">
-              Créer un utilisateur
-            </Link>
           </div>
-          U
         </div>
       </div>
       <>

@@ -51,15 +51,14 @@ const UserList: FC<{
     <table className="table w-full">
       <thead>
         <tr>
-          <th className="z-0">
+          <th>
             <input
-              className="my-auto checkbox"
+              className="my-auto checkbox checkbox-primary"
               type="checkbox"
               checked={allChecked}
               onChange={handleAllChecked}
             />
           </th>
-          <th></th>
           <th>Avatar</th>
           <th
             className="cursor-pointer"

@@ -1,4 +1,4 @@
-import Role from "../../utils/interfaces/db/role";
+import Role, { IRole } from "../../utils/interfaces/db/role";
 import User from "../../utils/interfaces/db/user.model";
 import { getPagination } from "../../utils/services/getPagination";
 
@@ -10,23 +10,28 @@ async function getUsersByRole(
   sdir: string
 ) {
   const dir = sdir === "asc" ? 1 : -1;
-
+  let fetchedRoles;
   console.log({ role });
 
-  const fetchedRole = await Role.findOne({ role: role });
+  if (role === "everything") {
+    fetchedRoles = await Role.find({}, { _id: 1 });
+  } else {
+    fetchedRoles = await Role.find({ role: role }, { _id: 1 });
+  }
 
-  if (!fetchedRole) {
+  if (!fetchedRoles) {
     return false;
   }
 
-  console.log({ fetchedRole });
-
-  const users = await User.find({ roles: fetchedRole._id }, { password: 0 })
+  const users = await User.find(
+    { roles: { $in: fetchedRoles } },
+    { password: 0 }
+  )
     .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
     .sort({ [stype]: dir })
     .skip(getPagination(page, limit))
     .limit(limit);
-  const total = await User.count({ roles: fetchedRole._id });
+  const total = await User.count({ roles: { $in: fetchedRoles } });
   return { total, users };
 }
 export default getUsersByRole;

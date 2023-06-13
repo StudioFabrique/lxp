@@ -113,25 +113,6 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
 
   return (
     <div className="flex flex-col">
-      <div className="flex items-center gap-x-4">
-        <div onClick={handleCloseDrawer}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="w-6 h-6 cursor-pointer"
-          >
-            <path
-              fillRule="evenodd"
-              d="M11.03 3.97a.75.75 0 010 1.06l-6.22 6.22H21a.75.75 0 010 1.5H4.81l6.22 6.22a.75.75 0 11-1.06 1.06l-7.5-7.5a.75.75 0 010-1.06l7.5-7.5a.75.75 0 011.06 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
-        <h2 className="text-xl font-bold">Ajouter un nouveau Formateur</h2>
-      </div>
-      <div className="divider" />
-
       <form className="flex flex-col gap-y-4 px-4" onSubmit={handleSubmit}>
         <div>
           <label className="flex gap-x-4 items-center cursor-pointer">

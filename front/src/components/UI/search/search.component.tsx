@@ -30,8 +30,8 @@ const Search: FC<{
     }
   };
 
-  const handleSwitchValueChange = () => {
-    setSwitchValue((prevSwitchValue) => !prevSwitchValue);
+  const handleSwitchValueChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setSwitchValue(event.target.value === "actif" ? true : false);
   };
 
   const handleSearchValueChange = (
@@ -65,49 +65,56 @@ const Search: FC<{
     }
   };
 
-  console.log({ entityToSearch });
-
   return (
-    <div className="flex justify-end items-center gap-x-2">
+    <form className="join" onSubmit={handleSubmit}>
+      <div>
+        <div>
+          {entityToSearch !== "isActive" ? (
+            <input
+              className="input input-bordered join-item"
+              type={searchType}
+              placeholder="Recherche..."
+              value={searchValue}
+              onChange={handleSearchValueChange}
+            />
+          ) : (
+            <div>
+              <select
+                className="select select-bordered join-item"
+                onChange={handleSwitchValueChange}
+              >
+                <option value="actif">Actif</option>
+                <option value="inactif">Inactif</option>
+              </select>
+            </div>
+          )}
+        </div>
+      </div>
       <select
-        className="select select-ghost font-normal text-xs w-fit"
+        className="select select-bordered join-item font-normal"
         onChange={handleTypeToSearchChange}
       >
         <option disabled defaultValue="">
-          Choisissez un type de recherche
+          Catégorie
         </option>
         {optionsList}
       </select>
-      <form className="flex gap-x-2 items-center" onSubmit={handleSubmit}>
-        {entityToSearch !== "isActive" ? (
-          <input
-            className="input input-bordered input-sm w-full max-w-sm"
-            type={searchType}
-            placeholder="Recherche..."
-            value={searchValue}
-            onChange={handleSearchValueChange}
+      <button className="btn btn-primary join-item" type="submit">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="w-6 h-6"
+        >
+          <path
+            fillRule="evenodd"
+            d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z"
+            clipRule="evenodd"
           />
-        ) : (
-          <div>
-            <label className="label cursor-pointer flex gap-x-2">
-              <span className="label-text">
-                {switchValue ? "actif" : "inactif"}
-              </span>
-              <input
-                type="checkbox"
-                className="toggle"
-                checked={switchValue}
-                onChange={handleSwitchValueChange}
-              />
-            </label>
-          </div>
-        )}
-        <button className="btn btn-sm">Rechercher</button>
-      </form>
-    </div>
+        </svg>
+      </button>
+    </form>
   );
 };
 
 export default Search;
-
-//path: `/user/search/${entityToSearch}/${searchValue.toLowerCase()}/3/asc?page=1&limit=15`,

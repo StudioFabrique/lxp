@@ -1,8 +1,6 @@
-import React from "react";
-
 const UserHeader = () => {
   return (
-    <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-y-8">
+    <div className="w-full xl:w-4/6 grid grid-cols-1 md:grid-cols-2 gap-y-8">
       <div>
         <h2 className="text-4xl text-base-content font-bold">
           Liste d'utilisateurs
