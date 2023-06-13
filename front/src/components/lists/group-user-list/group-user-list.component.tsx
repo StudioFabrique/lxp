@@ -13,16 +13,12 @@ const GroupUserList: FC<{
   const { page, perPage, dataList, totalPages, handlePageNumber } =
     usePagination("", "");
 
-  const handleSetUsersToAdd = (users: string[]) => {
-    onSubmitSetUsersToAdd(users);
-  };
-
   return (
     <Wrapper>
       <h2 className="font-bold text-lg">Etudiants</h2>
 
       <div className="flex justify-between">
-        <GroupManageUserList onSetUsersToAdd={handleSetUsersToAdd} />
+        <GroupManageUserList onSetUsersToAdd={onSubmitSetUsersToAdd} />
         <input
           type="text"
           className="input input-sm"

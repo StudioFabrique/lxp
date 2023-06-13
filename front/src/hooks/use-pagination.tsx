@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { perPage } from "../config/pagination";
 import useHttp from "./use-http";
 
 const initialState = {
   page: 1,
-  perPage: perPage,
+  perPage: 5,
   totalPages: null,
 };
 

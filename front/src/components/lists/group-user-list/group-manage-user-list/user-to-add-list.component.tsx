@@ -6,7 +6,9 @@ import Wrapper from "../../../UI/wrapper/wrapper.component";
 
 const UserToAddList: FC<{
   userList: Array<any>;
-  ManageSelectedUser: (userId: string) => void;
+  selectedUsers: string[];
+  ManageSelectedUsers: (userId: string) => void;
+  setUserSettedState: (value: boolean) => void;
 }> = (props) => {
   return (
     <Wrapper>
@@ -23,16 +25,17 @@ const UserToAddList: FC<{
           </tr>
         </thead>
         <tbody>
-          {props.userList.map((user: User, i) => (
+          {props.userList.map((user: User) => (
             <tr
-              key={i}
+              key={user._id}
               className="bg-secondary/10 hover:bg-blue-800 hover:text-white"
             >
               <td className="bg-transparent rounded-l-xl p-5">
                 <SelectionButton
-                  key={i}
                   currentUser={user._id}
-                  ManageSelectedUser={props.ManageSelectedUser}
+                  users={props.selectedUsers}
+                  ManageSelectedUsers={props.ManageSelectedUsers}
+                  setUserSettedState={props.setUserSettedState}
                 />
               </td>
               <td className="bg-transparent">
