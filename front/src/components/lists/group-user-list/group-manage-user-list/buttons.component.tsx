@@ -30,19 +30,3 @@ export const SelectionButton: FC<{
 
   return <input type="checkbox" onChange={handleChange} className="checkbox" />;
 };
-
-export const CancelButton: FC<{ onCleanup: () => void }> = ({ onCleanup }) => {
-  const handleClick = () => {
-    onCleanup();
-  };
-
-  return (
-    <button
-      type="submit"
-      onClick={handleClick}
-      className="btn btn-xs w-20 bg-red-600 text-white"
-    >
-      Annuler
-    </button>
-  );
-};

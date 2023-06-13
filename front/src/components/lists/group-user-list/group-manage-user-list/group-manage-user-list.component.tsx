@@ -1,15 +1,15 @@
 import { FC, useContext, useEffect, useState } from "react";
 import User from "../../../../utils/interfaces/user";
-import { AddUsersButton, CancelButton } from "./buttons.component";
+import { AddUsersButton } from "./buttons.component";
 import UserToAddList from "./user-to-add-list.component";
 import useHttp from "../../../../hooks/use-http";
 import usePagination from "../../../../hooks/use-pagination";
 import { Context } from "../../../../store/context.store";
 import Pagination from "../../../UI/pagination/pagination";
+import RightSideDrawer from "../../../UI/right-side-drawer/right-side-drawer";
 
 const GroupManageUserList: FC<{
   onSetUsersToAdd: (usersId: string[]) => void;
-  onClose: () => void;
 }> = (props) => {
   const { user, roles } = useContext(Context);
   const { sendRequest, isLoading, error } = useHttp();
@@ -35,16 +35,9 @@ const GroupManageUserList: FC<{
     }
   };
 
-  const handleCleanup = () => {
-    setSelectedUsers([]);
-    props.onSetUsersToAdd([]);
-    props.onClose();
-  };
-
   return (
-    <div className="fixed h-full flex top-0 right-0">
-      <div className="bg-white flex flex-col gap-y-5 justify-between">
-        <CancelButton onCleanup={handleCleanup} />
+    <RightSideDrawer>
+      <div className="flex flex-col h-full gap-y-10 justify-between">
         {dataList.length > 0 ? (
           <>
             <div className="h-full gap-y-2 flex flex-col justify-between">
@@ -71,7 +64,7 @@ const GroupManageUserList: FC<{
           </p>
         )}
       </div>
-    </div>
+    </RightSideDrawer>
   );
 };
 

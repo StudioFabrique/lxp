@@ -1,7 +1,6 @@
 import { FC, useState } from "react";
 import GroupManageUserList from "./group-manage-user-list/group-manage-user-list.component";
 import GroupUserItem from "./group-user-item.component";
-import { ButtonAdd } from "./buttons.component";
 import User from "../../../utils/interfaces/user";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import Pagination from "../../UI/pagination/pagination";
@@ -11,24 +10,19 @@ const GroupUserList: FC<{
   users: User[];
   onSubmitSetUsersToAdd: (Users: string[]) => void;
 }> = ({ users, onSubmitSetUsersToAdd }) => {
-  const [isModalOpen, setModalOpenState] = useState<boolean>(false);
-
   const { page, perPage, dataList, totalPages, handlePageNumber } =
     usePagination("", "");
-  const handleModalOpenState = () => {
-    setModalOpenState(!isModalOpen);
-  };
 
   const handleSetUsersToAdd = (users: string[]) => {
     onSubmitSetUsersToAdd(users);
-    handleModalOpenState();
   };
 
   return (
     <Wrapper>
       <h2 className="font-bold text-lg">Etudiants</h2>
+
       <div className="flex justify-between">
-        <ButtonAdd onClick={handleModalOpenState} />
+        <GroupManageUserList onSetUsersToAdd={handleSetUsersToAdd} />
         <input
           type="text"
           className="input input-sm"
@@ -69,12 +63,6 @@ const GroupUserList: FC<{
       ) : (
         "Aucun utilisateurs dans ce groupe"
       )}
-      {isModalOpen ? (
-        <GroupManageUserList
-          onSetUsersToAdd={handleSetUsersToAdd}
-          onClose={handleModalOpenState}
-        />
-      ) : undefined}
     </Wrapper>
   );
 };
