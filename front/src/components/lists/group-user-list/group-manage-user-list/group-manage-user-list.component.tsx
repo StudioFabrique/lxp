@@ -38,20 +38,18 @@ const GroupManageUserList: FC<{
   return (
     <RightSideDrawer>
       {dataList.length > 0 ? (
-        <div className="flex flex-col gap-y-10 h-full justify-between">
-          <div className="h-full flex flex-col justify-between">
-            <UserToAddList
-              userList={dataList}
-              ManageSelectedUser={handleManageSelectedUser}
-            />
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              perPage={perPage}
-              setPage={handlePageNumber}
-              setPerPages={setPerPages}
-            />
-          </div>
+        <div className="h-full flex flex-col justify-between">
+          <UserToAddList
+            userList={dataList}
+            ManageSelectedUser={handleManageSelectedUser}
+          />
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            perPage={perPage}
+            setPage={handlePageNumber}
+            setPerPages={setPerPages}
+          />
           <AddUsersButton
             onSetUsersToAdd={props.onSetUsersToAdd}
             selectedUsers={selectedUsers}
