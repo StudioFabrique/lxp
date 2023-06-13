@@ -249,3 +249,26 @@ export const fakePhoneNumbers: string[] = [
   "(219) 555-0189",
   "(220) 555-0150",
 ];
+
+export const nicknames: string[] = [
+  "Strategic Summit",
+  "Executive Encounter",
+  "Corporate Confrontation",
+  "Leadership Showdown",
+  "Professional Clash",
+  "Business Battle",
+  "Marketplace Struggle",
+  "Enterprise Rivalry",
+  "Industry Competition",
+  "Innovation Challenge",
+  "Efficiency Faceoff",
+  "Teamwork Rally",
+  "Product Launch Duel",
+  "Market Expansion Showdown",
+  "Negotiation Strife",
+  "Decision-making Clash",
+  "Project Management Melee",
+  "Client Engagement Tussle",
+  "Problem-solving War",
+  "Technology Innovation Battle",
+];
