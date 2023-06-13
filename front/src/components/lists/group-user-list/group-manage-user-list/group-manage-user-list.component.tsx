@@ -37,33 +37,31 @@ const GroupManageUserList: FC<{
 
   return (
     <RightSideDrawer>
-      <div className="flex flex-col h-full gap-y-10 justify-between">
-        {dataList.length > 0 ? (
-          <>
-            <div className="h-full gap-y-2 flex flex-col justify-between">
-              <UserToAddList
-                userList={dataList}
-                ManageSelectedUser={handleManageSelectedUser}
-              />
-              <Pagination
-                page={page}
-                totalPages={totalPages}
-                perPage={perPage}
-                setPage={handlePageNumber}
-                setPerPages={setPerPages}
-              />
-            </div>
-            <AddUsersButton
-              onSetUsersToAdd={props.onSetUsersToAdd}
-              selectedUsers={selectedUsers}
+      {dataList.length > 0 ? (
+        <div className="flex flex-col gap-y-10 h-full justify-between">
+          <div className="h-full flex flex-col justify-between">
+            <UserToAddList
+              userList={dataList}
+              ManageSelectedUser={handleManageSelectedUser}
             />
-          </>
-        ) : (
-          <p className="text-center">
-            Aucun utilisateurs éligibles à être ajouté
-          </p>
-        )}
-      </div>
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              perPage={perPage}
+              setPage={handlePageNumber}
+              setPerPages={setPerPages}
+            />
+          </div>
+          <AddUsersButton
+            onSetUsersToAdd={props.onSetUsersToAdd}
+            selectedUsers={selectedUsers}
+          />
+        </div>
+      ) : (
+        <p className="text-center">
+          Aucun utilisateurs éligibles à être ajouté
+        </p>
+      )}
     </RightSideDrawer>
   );
 };
