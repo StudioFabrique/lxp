@@ -33,7 +33,7 @@ const userSchema: Schema = new Schema(
     address: { type: String, required: true },
     postCode: { type: String, required: true },
     city: { type: String, required: true },
-    phonenumber: { type: String, required: true },
+    phoneNumber: { type: String, required: true },
     group: { type: [mongoose.Schema.Types.ObjectId], ref: "Group" },
   },
   { timestamps: true }
