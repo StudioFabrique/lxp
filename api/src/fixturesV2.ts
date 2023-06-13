@@ -99,9 +99,9 @@ async function createManyAdmins() {
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
   for (let i = 0; i < 5; i++) {
-    const firstname = firstnames[getRandomNumber(0, firstnames.length + 1)];
-    const nickname = nicknames[getRandomNumber(0, nicknames.length + 1)];
-    const city = cities[getRandomNumber(0, cities.length + 1)];
+    const firstname = firstnames[getRandomNumber(0, firstnames.length - 1)];
+    const nickname = nicknames[getRandomNumber(0, nicknames.length - 1)];
+    const city = cities[getRandomNumber(0, cities.length - 1)];
     const postCode = city.postcode;
     const cityName = city.name;
     const user = new User({
@@ -109,7 +109,7 @@ async function createManyAdmins() {
       email: createMail(firstname, lastnames[i], i),
       password: hash,
       address: addresses[i],
-      postCode,
+      postCode: postCode,
       city: cityName,
       phoneNumber: "0707070707",
       roles: [new Object(role!._id)],
@@ -141,9 +141,9 @@ async function createManyTeachers() {
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
   for (let i = 5; i < 15; i++) {
-    const firstname = firstnames[getRandomNumber(0, firstnames.length + 1)];
-    const nickname = nicknames[getRandomNumber(0, nicknames.length + 1)];
-    const city = cities[getRandomNumber(0, cities.length + 1)];
+    const firstname = firstnames[getRandomNumber(0, firstnames.length - 1)];
+    const nickname = nicknames[getRandomNumber(0, nicknames.length - 1)];
+    const city = cities[getRandomNumber(0, cities.length - 1)];
     const postCode = city.postcode;
     const cityName = city.name;
     const user = new User({
@@ -169,9 +169,9 @@ async function createManStudents() {
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
   for (let i = 0; i < 100; i++) {
-    const firstname = firstnames[getRandomNumber(0, firstnames.length + 1)];
-    const nickname = nicknames[getRandomNumber(0, nicknames.length + 1)];
-    const city = cities[getRandomNumber(0, cities.length + 1)];
+    const firstname = firstnames[getRandomNumber(0, firstnames.length - 1)];
+    const nickname = nicknames[getRandomNumber(0, nicknames.length - 1)];
+    const city = cities[getRandomNumber(0, cities.length - 1)];
     const postCode = city.postcode;
     const cityName = city.name;
     const user = new User({
@@ -197,9 +197,9 @@ async function createManyCoach() {
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
   for (let i = 0; i < 100; i++) {
-    const firstname = firstnames[getRandomNumber(0, firstnames.length + 1)];
-    const nickname = nicknames[getRandomNumber(0, nicknames.length + 1)];
-    const city = cities[getRandomNumber(0, cities.length + 1)];
+    const firstname = firstnames[getRandomNumber(0, firstnames.length - 1)];
+    const nickname = nicknames[getRandomNumber(0, nicknames.length - 1)];
+    const city = cities[getRandomNumber(0, cities.length - 1)];
     const postCode = city.postcode;
     const cityName = city.name;
     const user = new User({
