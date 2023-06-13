@@ -14,7 +14,7 @@ const AdminLayout = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      fetchRoles();
+      fetchRoles(user!.roles[0]);
     }
   }, [fetchRoles, isLoggedIn]);
 
@@ -34,8 +34,7 @@ const AdminLayout = () => {
 
   return (
     <>
-      {user &&
-      (hasRole("admin", user!.roles) || hasRole("teacher", user!.roles)) ? (
+      {user && user.roles[0].rank < 3 ? (
         <FadeWrapper>
           <div className="flex flex-col h-screen">
             <Outlet />

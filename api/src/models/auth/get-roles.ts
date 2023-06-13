@@ -1,7 +1,7 @@
-import Role from "../../utils/interfaces/db/role";
+import Role, { IRole } from "../../utils/interfaces/db/role";
 
-async function getRoles() {
-  return await Role.find({});
+async function getRoles(userRole: IRole) {
+  return await Role.find({ rank: { $gt: userRole.rank - 1 } });
 }
 
 export default getRoles;

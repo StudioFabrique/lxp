@@ -11,13 +11,12 @@ const UserItem: FC<{
     <>
       <td className="bg-transparent">
         <input
-          className="my-auto checkbox"
+          className="my-auto checkbox checkbox-primary"
           type="checkbox"
           checked={userItem.isSelected}
           onChange={() => onRowCheck(userItem._id)}
         />
       </td>
-      <td className="font-bold bg-transparent">{userItem.index}</td>
       <td className="bg-transparent flex justify-center items-center">
         <div className="avatar">
           <div className="w-6 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">

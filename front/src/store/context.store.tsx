@@ -19,7 +19,7 @@ type ContextType = {
   handshake: () => void;
   user: User | null;
   roles: Array<Role>;
-  fetchRoles: () => void;
+  fetchRoles: (role: Role) => void;
 };
 
 type Props = { children: React.ReactNode };
@@ -61,7 +61,6 @@ const ContextProvider: FC<Props> = (props) => {
     if (user) {
       setIsLoggedIn(true);
       setIsLoading(false);
-      console.log(user);
     }
   }, [user]);
 
@@ -143,17 +142,29 @@ const ContextProvider: FC<Props> = (props) => {
     }
   };
 
-  const fetchRoles = useCallback(() => {
-    const applyData = (data: Array<Role>) => {
-      setRoles(data);
-    };
-    sendRequest(
-      {
-        path: "/auth/roles",
-      },
-      applyData
-    );
-  }, [sendRequest]);
+  const fetchRoles = useCallback(
+    (role: Role) => {
+      const applyData = (data: Array<Role>) => {
+        const newRole = {
+          _id: "0",
+          role: "everything",
+          label: "Tou",
+          rank: role.rank,
+        };
+        let updatedRoles = Array<Role>();
+        updatedRoles = [...updatedRoles, newRole];
+        data.forEach((item) => updatedRoles.push(item));
+        setRoles(updatedRoles);
+      };
+      sendRequest(
+        {
+          path: "/auth/roles",
+        },
+        applyData
+      );
+    },
+    [sendRequest]
+  );
 
   const contextValue = {
     theme,

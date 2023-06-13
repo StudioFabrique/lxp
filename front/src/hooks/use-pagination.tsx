@@ -50,9 +50,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
 
   const getList = useCallback(() => {
     const applyData = (data: { list: Array<any>; total: number }) => {
-      let index = (page - 1) * perPage + 1;
       data.list.forEach((item: any) => {
-        item.index = index++ + ".";
         item.createdAt =
           item?.createdAt && new Date(item.createdAt).toLocaleDateString();
         item.updatedAt =

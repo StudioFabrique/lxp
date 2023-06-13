@@ -3,19 +3,35 @@ import User from "../utils/interfaces/user";
 
 const permDefs = {
   admin: {
-    read: ["admin", "teacher", "student", "coach", "boss_teacher"],
-    write: ["teacher", "student", "coach", "boss_teacher"],
-    update: ["teacher", "student", "coach", "boss_teacher"],
-    delete: ["teacher", "student", "coach", "boss_teacher"],
+    read: [
+      "admin",
+      "mini-admin",
+      "teacher",
+      "student",
+      "coach",
+      "boss_teacher",
+      "stagiaire",
+      "everything",
+    ],
+    write: ["teacher", "student", "coach", "boss_teacher", "stagiaire"],
+    update: ["teacher", "student", "coach", "boss_teacher", "stagiaire"],
+    delete: ["teacher", "student", "coach", "boss_teacher", "stagiaire"],
   },
   teacher: {
-    read: ["teacher", "student", "coach"],
-    update: ["student", "coach"],
+    read: [
+      "teacher",
+      "boss_teacher",
+      "student",
+      "coach",
+      "stagiaire",
+      "everything",
+    ],
+    update: ["student", "coach", "stagiaire"],
     write: ["student", "coach"],
   },
   boss_teacher: {
-    read: ["teacher", "student", "coach"],
-    update: ["student", "coach"],
+    read: ["teacher", "student", "coach", "stagiaire", "everything"],
+    update: ["student", "coach", "stagiaire"],
     write: ["student", "coach"],
     delete: ["student"],
   },

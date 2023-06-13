@@ -71,7 +71,7 @@ async function createUser() {
     city: "pau",
     email: "titi@toto.fr",
     password: hash,
-    roles: [new Object(role!._id), new Object(role2!._id)],
+    roles: [new Object(role2!._id)],
     isActive: true,
     avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
@@ -220,10 +220,12 @@ async function createManyCoach() {
 async function createRoles() {
   const roles = [
     { role: "admin", label: "admin", rank: 1 },
+    { role: "mini-admin", label: "mini-admin", rank: 1 },
     { role: "teacher", label: "formateur", rank: 2 },
     { role: "boss_teacher", label: "Formateur en Chef", rank: 2 },
     { role: "student", label: "apprenant", rank: 3 },
     { role: "coach", label: "mentor", rank: 3 },
+    { role: "stagiaire", label: "gestion cafetière", rank: 3 },
   ];
   const dbRoles = Array<any>();
   roles.forEach((role) => {
