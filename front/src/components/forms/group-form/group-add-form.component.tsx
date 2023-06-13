@@ -35,13 +35,13 @@ const GroupAddForm: FC<{
     },
   ]);
 
+  const [usersToAdd, setUsersToAdd] = useState<String[]>([]);
+
   const handleSubmitTags = (tags: Tag[]) => {};
   const handleSubmitDates = (dates: {
     startDate: string;
     endDate: string;
   }) => {};
-
-  const [usersToAdd, setUsersToAdd] = useState<String[]>([]);
 
   const { value: name } = useInput(
     (value: string) => regexGeneric.test(value),

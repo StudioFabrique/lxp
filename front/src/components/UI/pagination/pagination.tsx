@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { ChangeEvent, FC } from "react";
 
 const Pagination: FC<{
   page: number;
@@ -17,14 +17,17 @@ const Pagination: FC<{
     setPage(page + 1);
   };
 
-  // handlePerPages = (event: ) => {
-  //   setPerPages
-  // }
+  const handleSetPerPages = (event: ChangeEvent<HTMLSelectElement>) => {
+    setPerPages!(parseInt(event.currentTarget.value) ?? 5);
+  };
 
   return (
     <div className="w-full flex justify-end mt-4 items-center gap-x-10 bg-secondary rounded-lg p-2 text-secondary-content text-sm">
       <p>row per pages :</p>
-      <select className="select select-sm bg-secondary">
+      <select
+        onChange={handleSetPerPages}
+        className="select select-sm bg-secondary"
+      >
         <option>5</option>
         <option>10</option>
         <option>15</option>

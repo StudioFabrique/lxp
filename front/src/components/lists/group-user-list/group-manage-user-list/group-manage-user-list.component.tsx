@@ -15,6 +15,7 @@ const GroupManageUserList: FC<{
   const { sendRequest, isLoading, error } = useHttp();
 
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [isUserSettedUp, setUserSettedState] = useState(false);
 
   const {
     page,
@@ -33,6 +34,7 @@ const GroupManageUserList: FC<{
     } else {
       setSelectedUsers((users) => [...users, userId]);
     }
+    console.log(...selectedUsers);
   };
 
   return (
@@ -40,8 +42,10 @@ const GroupManageUserList: FC<{
       {dataList.length > 0 ? (
         <div className="h-full flex flex-col justify-between">
           <UserToAddList
+            selectedUsers={selectedUsers}
             userList={dataList}
-            ManageSelectedUser={handleManageSelectedUser}
+            ManageSelectedUsers={handleManageSelectedUser}
+            setUserSettedState={setUserSettedState}
           />
           <Pagination
             page={page}
@@ -53,6 +57,8 @@ const GroupManageUserList: FC<{
           <AddUsersButton
             onSetUsersToAdd={props.onSetUsersToAdd}
             selectedUsers={selectedUsers}
+            setUserSettedState={setUserSettedState}
+            isUserSettedUp={isUserSettedUp}
           />
         </div>
       ) : (

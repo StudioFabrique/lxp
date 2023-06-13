@@ -10,8 +10,12 @@ const ParcoursHeader = () => (
       </p>
     </div>
     <div className="flex items-center gap-x-2 justify-center md:justify-end">
-      <button className="btn btn-primary btn-sm md:w-32">Aperçu</button>
-      <button className="btn btn-primary btn-sm md:w-32">Publier</button>
+      <button type="button" className="btn btn-primary btn-sm md:w-32">
+        Aperçu
+      </button>
+      <button type="submit" className="btn btn-primary btn-sm md:w-32">
+        Publier
+      </button>
       <button className="btn btn-outline btn-sm btn-primary">
         <svg
           xmlns="http://www.w3.org/2000/svg"
