@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Context } from "../../store/context.store";
 import Role from "../../utils/interfaces/role";
 import Tabs from "../../components/UI/tabs/tabs.component";
@@ -7,22 +6,21 @@ import { userSearchOptions } from "../../config/search-options";
 import Pagination from "../../components/UI/pagination/pagination";
 import usePagination from "../../hooks/use-pagination";
 import useHttp from "../../hooks/use-http";
-import Can from "../../components/UI/can/can.component";
-import RoleSelect from "../../components/lists/user-list/dropdown-roles.component";
 import { hasPermission } from "../../utils/hasPermission";
 import Modal from "../../components/UI/modal/modal";
 import { useCallback, useContext, useEffect, useState } from "react";
 import UserList from "../../components/lists/user-list/user-list.component";
 import UserHeader from "../../components/user-header/user-header;component";
-import ButtonAdd from "../../components/UI/button-add/button-add";
 import ButtonRefresh from "../../components/UI/button-refresh/button-refresh";
-import ButtonList from "../../components/UI/button-list/button-list";
+import DropdownActionsUser from "../../components/dropdown-actions-user/dropdown-actions-user";
+import { casbinAuthorizer } from "../../config/rbac";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [role, setRole] = useState<Role>(roles[0]);
-  const [isSeachActive, setIsSeachActive] = useState(false);
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  const [isActionButtonDisabled, setIsActionButtonDisabled] = useState(true);
   const {
     page,
     totalPages,
@@ -42,11 +40,11 @@ const UserHome = () => {
 
   const handleRoleSwitch = (role: Role) => {
     initPagination();
-    if (isSeachActive) {
+    if (isSearchActive) {
       handleCloseSearch();
     }
     setRole(role);
-    setIsSeachActive(false);
+    setIsSearchActive(false);
     setPath(`/user/${role.role}`);
   };
 
@@ -62,14 +60,10 @@ const UserHome = () => {
     initPagination();
     setPath(`/user/search/${role.role}/${entityToSearch}/${searchValue}`);
     getList();
-    setIsSeachActive(true);
+    setIsSearchActive(true);
   };
 
-  const handleCloseSearch = () => {
-    setIsSeachActive(false);
-    setPath(`/user/${role.role}`);
-    getList();
-  };
+  const handleCloseSearch = () => {};
 
   const handleAllChecked = useCallback(
     (value: boolean) => {
@@ -129,7 +123,11 @@ const UserHome = () => {
     setShowErrorModal((prevState) => !prevState);
   };
 
-  const handleRefreshDataList = () => {};
+  const handleRefreshDataList = () => {
+    setIsSearchActive(false);
+    setPath(`/user/${role.role}`);
+    getList();
+  };
 
   useEffect(() => {
     setRole(roles[0]);
@@ -141,6 +139,14 @@ const UserHome = () => {
     }
   }, [page, getList, role]);
 
+  useEffect(() => {
+    (async function () {
+      const canUpdate = await casbinAuthorizer.can("update", role.role);
+      const canDelete = await casbinAuthorizer.can("delete", role.role);
+      setIsActionButtonDisabled(canUpdate && canDelete);
+    })();
+  }, [role]);
+
   return (
     <>
       <div className="w-full flex flex-col items-center px-4 py-8 gap-8">
@@ -149,7 +155,7 @@ const UserHome = () => {
           {user && role ? (
             <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />
           ) : null}
-          <div className="flex justify-between items-center">
+          <div className="flex justify-end items-center">
             {/* <div>
               {role && dataList.length > 0 ? (
                 <Can action={"update"} subject={role.role}>
@@ -160,20 +166,19 @@ const UserHome = () => {
                 </Can>
               ) : null}
             </div> */}
-            <Link to="/admin/user/add">
-              <ButtonAdd label=" Ajouter un utilisateur" />
-            </Link>
             <div className="flex gap-x-2">
               <SearchUser
                 options={userSearchOptions}
                 onSearch={handleSearchResult}
               />
-              <ButtonRefresh onRefresh={handleRefreshDataList} />
-              <ButtonList
-                itemsList={dataList}
-                roleTab={role}
-                onGroupRolesChange={handleGroupRolesChange}
-              />
+              <ButtonRefresh size="btn-sm" onRefresh={handleRefreshDataList} />
+              {isActionButtonDisabled ? (
+                <DropdownActionsUser
+                  itemsList={dataList}
+                  roleTab={role}
+                  onGroupRolesChange={handleGroupRolesChange}
+                />
+              ) : null}
             </div>
           </div>
 

@@ -13,8 +13,8 @@ const Tabs: FC<{
       <li
         className={
           role.role === item.role
-            ? "tab tab-lifted bg-primary text-base-content font-bold"
-            : "tab tab-lifted bg-secondary text-base-content/40 font-bold"
+            ? "tab tab-lifted tab-active font-bold"
+            : "tab tab-lifted"
         }
         onClick={() => onRoleSwitch(item)}
       >

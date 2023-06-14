@@ -43,6 +43,12 @@ const UserList: FC<{
   }; */
 
   useEffect(() => {
+    if (userList.some((item) => !item.isSelected)) {
+      setAllChecked(false);
+    }
+  }, [userList]);
+
+  useEffect(() => {
     setAllChecked(false);
     onAllChecked(false);
   }, [role, onAllChecked]);
@@ -53,7 +59,7 @@ const UserList: FC<{
         <tr>
           <th>
             <input
-              className="my-auto checkbox checkbox-primary"
+              className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
               type="checkbox"
               checked={allChecked}
               onChange={handleAllChecked}

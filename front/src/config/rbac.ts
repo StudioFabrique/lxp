@@ -27,13 +27,10 @@ const permDefs = {
       "everything",
     ],
     update: ["student", "coach", "stagiaire"],
-    write: ["student", "coach"],
   },
   boss_teacher: {
     read: ["teacher", "student", "coach", "stagiaire", "everything"],
     update: ["student", "coach", "stagiaire"],
-    write: ["student", "coach"],
-    delete: ["student"],
   },
 };
 
