@@ -27,7 +27,6 @@ const GroupManageUserList: FC<{
 
   const handleSetUsersToAdd = () => {
     console.log("users");
-
     console.log(selectedUsers);
     props.onSetUsersToAdd(selectedUsers);
   };

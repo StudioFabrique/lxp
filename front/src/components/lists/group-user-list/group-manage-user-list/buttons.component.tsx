@@ -7,6 +7,7 @@ export const AddUsersButton: FC<{
 }> = (props) => {
   const handleClick: FormEventHandler = () => {
     props.setUserSettedState(true);
+    props.onSetUsersToAdd();
   };
 
   if (!props.isUserSettedUp) {

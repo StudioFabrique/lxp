@@ -7,9 +7,6 @@ const UserLayout = () => {
   };
   return (
     <div>
-      <button onClick={handleClick} className="btn">
-        Retour
-      </button>
       <Outlet />
     </div>
   );

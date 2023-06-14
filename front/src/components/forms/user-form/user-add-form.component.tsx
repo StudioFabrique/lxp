@@ -1,7 +1,13 @@
 import { FC, FormEvent } from "react";
-import { LoadingButton } from "../../UI/loading-button/loading-button.component";
 import useInput from "../../../hooks/use-input";
 import { regexMail, regexPassword } from "../../../utils/constantes";
+import UsersHeader from "../../users-header/users-header.component";
+import Contact from "./components/contact.component";
+import TypeUtilisateur from "./components/type-utilisateur.component";
+import CentreInterets from "./components/centre-interets.component";
+import Certifications from "./components/certifications.component";
+import Presentation from "./components/presentation.component";
+import Informations from "./components/informations.component";
 
 const UserAddForm: FC<{
   user?: any;
@@ -27,6 +33,11 @@ const UserAddForm: FC<{
   const { value: lastname } = useInput(
     (value: string) => regexPassword.test(value),
     props.user?.lastname ?? ""
+  );
+
+  const { value: pseudo } = useInput(
+    (value: string) => regexPassword.test(value),
+    props.user?.pseudo ?? ""
   );
 
   const { value: address } = useInput(
@@ -56,6 +67,7 @@ const UserAddForm: FC<{
         password: password.value.trim(),
         firstname: firstname.value.trim(),
         lastname: lastname.value.trim(),
+        pseudo: pseudo.value.trim(),
         address: address.value.trim(),
         postCode: postCode.value.trim(),
         city: city.value.trim(),
@@ -64,104 +76,26 @@ const UserAddForm: FC<{
   };
 
   return (
-    <form
-      className="flex flex-col items-center gap-y-6"
-      onSubmit={handleSubmit}
-      autoComplete="off"
-    >
-      <div className="h-full flex flex-col justify-center gap-y-4">
-        <span className="flex flex-col justify-between">
-          <label>Email</label>
-          <input
-            className="ml-2 rounded-xs bg-pink-900/10 outline-pink-900/20 p-[20px] pl-[30px] placeholder:text-purple-discrete"
-            type="text"
-            onChange={email.valueChangeHandler}
-            onBlur={email.valueBlurHandler}
-            defaultValue={email.value}
-            autoComplete="off"
+    <form onSubmit={handleSubmit} autoComplete="off">
+      <UsersHeader />
+      <div className="grid grid-rows-2 gap-y-5">
+        <div className="grid grid-cols-3 gap-x-5">
+          <Informations
+            lastname={lastname}
+            firstname={firstname}
+            email={email}
+            pseudo={pseudo}
           />
-        </span>
-        <span className="flex flex-col justify-between">
-          <label>Mot de passe</label>
-          <input
-            className="ml-2 rounded-xs bg-pink-900/10 outline-pink-900/20 p-[20px] pl-[30px] placeholder:text-purple-discrete"
-            type="password"
-            onChange={password.valueChangeHandler}
-            onBlur={email.valueBlurHandler}
-            defaultValue={password.value}
-            autoComplete="off"
-          />
-        </span>
-      </div>
-      <div className="flex gap-x-14">
-        <div className="h-full flex flex-col gap-y-4">
-          <span className="flex flex-col justify-between">
-            <label>Prénom</label>
-            <input
-              className="ml-2 rounded-xs bg-pink-900/10 outline-pink-900/20 p-[20px] pl-[30px] placeholder:text-purple-discrete"
-              name="firstname"
-              type="text"
-              onChange={firstname.valueChangeHandler}
-              onBlur={email.valueBlurHandler}
-              defaultValue={firstname.value}
-            />
-          </span>
-          <span className="flex flex-col justify-between">
-            <label>Nom</label>
-            <input
-              className="ml-2 rounded-xs bg-pink-900/10 outline-pink-900/20 p-[20px] pl-[30px] placeholder:text-purple-discrete"
-              name="lastname"
-              type="text"
-              onChange={lastname.valueChangeHandler}
-              onBlur={email.valueBlurHandler}
-              defaultValue={lastname.value}
-            />
-          </span>
+          <Contact />
+          <div className="grid grid-rows-2 gap-y-5">
+            <TypeUtilisateur />
+            <CentreInterets />
+          </div>
         </div>
-        <div className="h-full flex flex-col gap-y-4">
-          <span className="flex flex-col justify-between">
-            <label>Adresse</label>
-            <input
-              className="ml-2 rounded-xs bg-pink-900/10 outline-pink-900/20 p-[20px] pl-[30px] placeholder:text-purple-discrete"
-              name="address"
-              type="text"
-              onChange={address.valueChangeHandler}
-              onBlur={email.valueBlurHandler}
-              defaultValue={address.value}
-            />
-          </span>
-          <span className="flex flex-col justify-between">
-            <label>Code Postal</label>
-            <input
-              className="ml-2 rounded-xs bg-pink-900/10 outline-pink-900/20 p-[20px] pl-[30px] placeholder:text-purple-discrete"
-              name="postCode"
-              type="text"
-              onChange={postCode.valueChangeHandler}
-              onBlur={email.valueBlurHandler}
-              defaultValue={postCode.value}
-            />
-          </span>
-          <span className="flex flex-col justify-between">
-            <label>Ville</label>
-            <input
-              className="ml-2 rounded-xs bg-pink-900/10 outline-pink-900/20 p-[20px] pl-[30px] placeholder:text-purple-discrete"
-              name="city"
-              type="text"
-              onChange={city.valueChangeHandler}
-              onBlur={email.valueBlurHandler}
-              defaultValue={city.value}
-            />
-          </span>
+        <div className="grid grid-cols-2 gap-x-5">
+          <Certifications />
+          <Presentation />
         </div>
-      </div>
-      <div className="h-full flex flex-col justify-center">
-        <p>{props.error}</p>
-        <LoadingButton
-          isLoading={props.isLoading}
-          error={props.error}
-          label="Enregistrer"
-          loadingLabel="Enregistrement en cours"
-        />
       </div>
     </form>
   );

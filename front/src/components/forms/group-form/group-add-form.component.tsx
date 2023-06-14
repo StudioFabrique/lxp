@@ -55,7 +55,9 @@ const GroupAddForm: FC<{
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!formIsValid) {
+    console.log(usersToAdd);
+
+    if (formIsValid) {
       props.onSubmitForm({
         name: name.value.trim(),
         desc: desc.value.trim(),
