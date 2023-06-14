@@ -15,7 +15,9 @@ const GroupUserItem: FC<{ user: User }> = ({ user }) => {
       <td className="bg-transparent">{user.lastname}</td>
       <td className="bg-transparent">{user.email}</td>
       <td className="bg-transparent">CDA</td>
-      <td className="bg-transparent">{user.isActive}</td>
+      <td className="bg-transparent text-primary">
+        {user.isActive ? "Actif" : "Inactif"}
+      </td>
       <td className="bg-transparent">
         <input type="checkbox" className="toggle" />
       </td>

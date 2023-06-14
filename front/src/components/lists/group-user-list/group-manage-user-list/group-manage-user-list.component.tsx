@@ -40,7 +40,7 @@ const GroupManageUserList: FC<{
   return (
     <RightSideDrawer>
       {dataList.length > 0 ? (
-        <div className="h-full flex flex-col justify-between">
+        <div className="h-full flex flex-col gap-y-5 justify-between">
           <UserToAddList
             selectedUsers={selectedUsers}
             userList={dataList}

@@ -53,7 +53,6 @@ const GroupUserList: FC<{
             page={page}
             setPage={handlePageNumber}
             totalPages={totalPages}
-            perPage={perPage}
           />
         </>
       ) : (

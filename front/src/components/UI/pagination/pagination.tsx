@@ -1,4 +1,5 @@
 import React, { ChangeEvent, FC } from "react";
+import PaginationSelect from "./pagination-select.component";
 
 const Pagination: FC<{
   page: number;
@@ -22,16 +23,12 @@ const Pagination: FC<{
   };
 
   return (
-    <div className="w-full flex justify-end mt-4 items-center gap-x-10 bg-secondary rounded-lg p-2 text-secondary-content text-sm">
-      <p>row per pages :</p>
-      <select
-        onChange={handleSetPerPages}
-        className="select select-sm bg-secondary"
-      >
-        <option>5</option>
-        <option>10</option>
-        <option>15</option>
-      </select>
+    <div className="w-full flex justify-end mt-4 items-center gap-x-20 bg-secondary rounded-lg p-2 text-secondary-content text-sm">
+      <PaginationSelect
+        handleSetPerPages={handleSetPerPages}
+        perPage={perPage}
+      />
+
       <p>
         {page} of {totalPages}
       </p>
