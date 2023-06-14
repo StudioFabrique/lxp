@@ -28,7 +28,6 @@ const Pagination: FC<{
         handleSetPerPages={handleSetPerPages}
         perPage={perPage}
       />
-
       <p>
         {page} of {totalPages}
       </p>
