@@ -2,7 +2,6 @@ import { FC } from "react";
 import User from "../../../../utils/interfaces/user";
 import { SelectionButton } from "./buttons.component";
 import { AvatarSmall } from "../../../UI/avatar/avatar.component";
-import Wrapper from "../../../UI/wrapper/wrapper.component";
 
 const UserToAddList: FC<{
   userList: Array<any>;
@@ -11,7 +10,7 @@ const UserToAddList: FC<{
   setUserSettedState: (value: boolean) => void;
 }> = (props) => {
   return (
-    <Wrapper>
+    <div className="h-full overflow-y-auto overflow-x-auto">
       <table className="table-auto tab-sm border-separate border-spacing-y-4 text-center">
         <thead>
           <tr>
@@ -45,12 +44,14 @@ const UserToAddList: FC<{
               <td className="bg-transparent">{user.lastname}</td>
               <td className="bg-transparent">{user.email}</td>
               <td className="bg-transparent">CDA</td>
-              <td className="bg-transparent rounded-r-xl">{user.isActive}</td>
+              <td className="bg-transparent rounded-r-xl">
+                {user.isActive ? "Actif" : "Inactif"}
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
-    </Wrapper>
+    </div>
   );
 };
 export default UserToAddList;
