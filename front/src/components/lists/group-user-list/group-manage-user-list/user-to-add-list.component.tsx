@@ -24,9 +24,9 @@ const UserToAddList: FC<{
           {props.userList.map((user: User) => (
             <tr
               key={user._id}
-              className="bg-secondary/10 hover:bg-blue-800 hover:text-white"
+              className="bg-secondary/10 hover:bg-blue-800 hover:text-white "
             >
-              <td className="bg-transparent rounded-l-xl">
+              <td className="bg-transparent rounded-l-xl p-5">
                 <SelectionButton
                   currentUser={user._id}
                   users={props.selectedUsers}
@@ -38,7 +38,7 @@ const UserToAddList: FC<{
                 <AvatarSmall url="https://www.leparisien.fr/resizer/fGXimQvLycC2XjTOb9nran3rDcU=/1248x782/filters:focal(1184x745:1194x755)/cloudfront-eu-central-1.images.arcpublishing.com/leparisien/NJE5TPKX7NDY3AL7MWIJJEXZOA.jpg" />
               </td>
               <td className="bg-transparent w-full">{user.firstname}</td>
-              <td className="bg-transparent rounded-r-xl w-full">
+              <td className="bg-transparent rounded-r-xl w-full p-5">
                 {user.lastname}
               </td>
             </tr>
