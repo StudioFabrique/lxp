@@ -10,6 +10,8 @@ import UserAdd from "./views/user/user-add.component";
 import GroupLayout from "./views/group/group-layout.component";
 import GroupHome from "./views/group/group-home.component";
 import GroupAdd from "./views/group/group-add.component";
+import ParcoursLayout from "./views/parcours/parcours-layout.component";
+import ParcoursHome from "./views/parcours/parcours-home.component";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +39,11 @@ const router = createBrowserRouter([
           { index: true, element: <GroupHome /> },
           { path: "add", element: <GroupAdd /> },
         ],
+      },
+      {
+        path: "parcours",
+        element: <ParcoursLayout />,
+        children: [{ index: true, element: <ParcoursHome /> }],
       },
     ],
   },

@@ -9,9 +9,11 @@ export default interface User {
   password?: string;
   firstname: string;
   lastname: string;
+  nickname?: string;
   address?: string;
   postCode?: string;
   city?: string;
+  phoneNumber?: string;
   roles: Array<Role>;
   avatar?: string;
   createdAt?: Date;
