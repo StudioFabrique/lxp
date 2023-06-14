@@ -1,8 +1,6 @@
 import { FC, useContext, useEffect, useState } from "react";
-import User from "../../../../utils/interfaces/user";
 import { AddUsersButton } from "./buttons.component";
 import UserToAddList from "./user-to-add-list.component";
-import useHttp from "../../../../hooks/use-http";
 import usePagination from "../../../../hooks/use-pagination";
 import { Context } from "../../../../store/context.store";
 import Pagination from "../../../UI/pagination/pagination";
@@ -12,10 +10,13 @@ const GroupManageUserList: FC<{
   onSetUsersToAdd: (usersId: string[]) => void;
 }> = (props) => {
   const { user, roles } = useContext(Context);
-  const { sendRequest, isLoading, error } = useHttp();
 
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [isUserSettedUp, setUserSettedState] = useState(false);
+
+  const handleSetUsersToAdd = () => {
+    props.onSetUsersToAdd(selectedUsers);
+  };
 
   const {
     page,
@@ -28,13 +29,16 @@ const GroupManageUserList: FC<{
     setPerPages,
   } = usePagination("lastname", `/user/${user!.roles[0].role}`);
 
-  const handleManageSelectedUser = (userId: string) => {
-    if (selectedUsers.includes(userId)) {
-      setSelectedUsers((users) => users.filter((value) => value !== userId));
-    } else {
-      setSelectedUsers((users) => [...users, userId]);
-    }
-    console.log(...selectedUsers);
+  const handleDeleteSelectedUser = (userId: string) => {
+    setSelectedUsers((users) => users.filter((value) => value !== userId));
+    setUserSettedState(false);
+    console.log("id deleting : " + userId);
+  };
+
+  const handleAddSelectedUser = (userId: string) => {
+    setSelectedUsers((users) => [...users, userId]);
+    setUserSettedState(false);
+    console.log("id adding : " + userId);
   };
 
   return (
@@ -44,8 +48,8 @@ const GroupManageUserList: FC<{
           <UserToAddList
             selectedUsers={selectedUsers}
             userList={dataList}
-            ManageSelectedUsers={handleManageSelectedUser}
-            setUserSettedState={setUserSettedState}
+            onAddSelectedUser={handleAddSelectedUser}
+            onDeleteSelectedUser={handleDeleteSelectedUser}
           />
           <Pagination
             page={page}
@@ -55,8 +59,7 @@ const GroupManageUserList: FC<{
             setPerPages={setPerPages}
           />
           <AddUsersButton
-            onSetUsersToAdd={props.onSetUsersToAdd}
-            selectedUsers={selectedUsers}
+            onSetUsersToAdd={handleSetUsersToAdd}
             setUserSettedState={setUserSettedState}
             isUserSettedUp={isUserSettedUp}
           />

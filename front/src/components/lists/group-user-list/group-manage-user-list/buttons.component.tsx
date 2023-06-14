@@ -1,16 +1,13 @@
-import { FC, FormEventHandler, useEffect, useState } from "react";
+import { ChangeEvent, FC, FormEventHandler } from "react";
 
 export const AddUsersButton: FC<{
-  onSetUsersToAdd: (usersId: string[]) => void;
+  onSetUsersToAdd: () => void;
   setUserSettedState: (value: boolean) => void;
-  selectedUsers: string[];
   isUserSettedUp: boolean;
 }> = (props) => {
   const handleClick: FormEventHandler = () => {
-    if (props.selectedUsers.length > 0) {
-      props.onSetUsersToAdd(props.selectedUsers);
-      props.setUserSettedState(true);
-    }
+    props.onSetUsersToAdd;
+    props.setUserSettedState(true);
   };
 
   return props.isUserSettedUp ? (
@@ -35,30 +32,14 @@ export const AddUsersButton: FC<{
 export const SelectionButton: FC<{
   currentUser: string;
   users: any[];
-  ManageSelectedUsers: (userId: string) => void;
-  setUserSettedState: (value: boolean) => void;
+  onAddSelectedUser: (userId: string) => void;
+  onDeleteSelectedUser: (userId: string) => void;
 }> = (props) => {
-  const [isChecked, setCheck] = useState(false);
-
-  const handleChange = () => {
-    props.ManageSelectedUsers(props.currentUser);
-    props.setUserSettedState(false);
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    event.currentTarget.checked
+      ? props.onAddSelectedUser(props.currentUser)
+      : props.onDeleteSelectedUser(props.currentUser);
   };
 
-  useEffect(() => {
-    if (props.users.some((user) => user._id !== props.currentUser)) {
-      setCheck(true);
-    } else {
-      setCheck(false);
-    }
-  }, [props.currentUser, props.users]);
-
-  return (
-    <input
-      type="checkbox"
-      onChange={handleChange}
-      className="checkbox"
-      defaultChecked={isChecked}
-    />
-  );
+  return <input type="checkbox" onChange={handleChange} className="checkbox" />;
 };
