@@ -2,6 +2,7 @@ import { FC, useState } from "react";
 import Role from "../../utils/interfaces/role";
 import Can from "../UI/can/can.component";
 import AddRoleDrawer from "../add-role-drawer/add-role-drawer.component";
+import AddUserToGroupDrawer from "../add-user-to-group-drawer/add-user-to-group-drawer.component";
 
 const DropdownActionsUser: FC<{
   itemsList: Array<any>;
@@ -17,10 +18,17 @@ const DropdownActionsUser: FC<{
     }
   };
 
+  const handleAddUserToGroup = () => {
+    if (!setDropDownStyle()) {
+      setShowDropDown(false);
+      document.getElementById("add-user-to-group")?.click();
+    }
+  };
+
   const setDropDownStyle = () => {
-    return itemsList.some((item) => !item.isSelected)
-      ? "text-base-content/50"
-      : "";
+    return itemsList.some((item) => item.isSelected)
+      ? ""
+      : "text-base-content/50";
   };
 
   return (
@@ -49,11 +57,7 @@ const DropdownActionsUser: FC<{
             className="dropdown-content menu p-1 shadow bg-base-100 rounded-box w-fit mt-4"
           >
             <Can action="update" subject={roleTab.role}>
-              <li
-                onClick={() => {
-                  /*TODO : endpoint update active status for user */
-                }}
-              >
+              <li onClick={handleAddUserToGroup}>
                 <p className={setDropDownStyle()}>Ajouter à un groupe</p>
               </li>
             </Can>
@@ -79,10 +83,13 @@ const DropdownActionsUser: FC<{
         ) : null}
       </div>
       {roleTab ? (
-        <AddRoleDrawer
-          roleTab={roleTab}
-          onGroupRolesChange={onGroupRolesChange}
-        />
+        <>
+          <AddRoleDrawer
+            roleTab={roleTab}
+            onGroupRolesChange={onGroupRolesChange}
+          />
+          <AddUserToGroupDrawer selectedUsers={itemsList} />
+        </>
       ) : null}
     </>
   );
