@@ -6,8 +6,8 @@ import { AvatarSmall } from "../../../UI/avatar/avatar.component";
 const UserToAddList: FC<{
   userList: Array<any>;
   selectedUsers: string[];
-  ManageSelectedUsers: (userId: string) => void;
-  setUserSettedState: (value: boolean) => void;
+  onAddSelectedUser: (userId: string) => void;
+  onDeleteSelectedUser: (userId: string) => void;
 }> = (props) => {
   return (
     <div className="h-full overflow-y-auto overflow-x-auto">
@@ -33,8 +33,8 @@ const UserToAddList: FC<{
                 <SelectionButton
                   currentUser={user._id}
                   users={props.selectedUsers}
-                  ManageSelectedUsers={props.ManageSelectedUsers}
-                  setUserSettedState={props.setUserSettedState}
+                  onAddSelectedUser={props.onAddSelectedUser}
+                  onDeleteSelectedUser={props.onDeleteSelectedUser}
                 />
               </td>
               <td className="bg-transparent">

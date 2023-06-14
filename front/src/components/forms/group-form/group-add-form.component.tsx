@@ -16,8 +16,6 @@ const GroupAddForm: FC<{
   error: string;
   isLoading: boolean;
 }> = (props) => {
-  const [users, setUsers] = useState<User[]>([]);
-
   const [usersToAdd, setUsersToAdd] = useState<String[]>([]);
 
   const handleSubmitTags = (tags: Tag[]) => {};
@@ -84,7 +82,7 @@ const GroupAddForm: FC<{
         </div>
         <Details promotion={promotion} desc={desc} />
       </div>
-      <GroupUserList users={users} onSubmitSetUsersToAdd={setUsersToAdd} />
+      <GroupUserList users={[]} onSubmitSetUsersToAdd={setUsersToAdd} />
     </form>
   );
 };
