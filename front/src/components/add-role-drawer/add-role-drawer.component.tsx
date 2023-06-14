@@ -8,7 +8,11 @@ const AddRoleDrawer: FC<{
   onGroupRolesChange: (updatedRoles: Array<Role>) => void;
 }> = ({ roleTab, onGroupRolesChange }) => {
   return (
-    <RightSideDrawer id="add-role" visible={false} title="Ajouter un Rôle">
+    <RightSideDrawer
+      id="add-role"
+      visible={false}
+      title="Ajouter un Rôle à un Utilisateur"
+    >
       <DropDownRoles
         roleTab={roleTab}
         onGroupRolesChange={onGroupRolesChange}
