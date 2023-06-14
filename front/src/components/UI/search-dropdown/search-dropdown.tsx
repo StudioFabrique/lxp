@@ -1,8 +1,7 @@
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import toTitleCase from "../../../utils/toTitleCase";
 
 type Props = {
-  children: ReactNode;
   addItem: (name: string, property: string) => void;
   filterItems: (name: string, property: string) => void;
   resetFilterItems: () => void;
@@ -12,7 +11,6 @@ type Props = {
 };
 
 const SearchDropdown: FC<Props> = ({
-  children,
   addItem,
   filterItems,
   resetFilterItems,
@@ -62,7 +60,7 @@ const SearchDropdown: FC<Props> = ({
   }, [enteredValue, filterItems, property]);
 
   return (
-    <div className="flex items-center gap-x-2">
+    <div className="flex items-center gap-x-2 w-full">
       <div className="dropdown dropdown-bottom dropdown-end flex gap-y-4 w-full">
         <input
           type="search"
