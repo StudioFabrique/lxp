@@ -6,27 +6,22 @@ export const AddUsersButton: FC<{
   isUserSettedUp: boolean;
 }> = (props) => {
   const handleClick: FormEventHandler = () => {
-    props.onSetUsersToAdd;
     props.setUserSettedState(true);
   };
 
-  return props.isUserSettedUp ? (
-    <button
-      type="button"
-      className="btn btn-disabled btn-sm bg-blue-500 text-white w-[70%] self-center"
-      onClick={handleClick}
-    >
-      utilisateurs ajoutés
-    </button>
-  ) : (
-    <button
-      type="button"
-      className="btn btn-sm bg-blue-500 text-white w-[70%] self-center"
-      onClick={handleClick}
-    >
-      confirmer modifications
-    </button>
-  );
+  if (!props.isUserSettedUp) {
+    return (
+      <button
+        type="button"
+        className="btn btn-sm bg-blue-500 text-white w-[70%] self-center"
+        onClick={handleClick}
+      >
+        ajouter les utilisateurs
+      </button>
+    );
+  } else {
+    return <></>;
+  }
 };
 
 export const SelectionButton: FC<{
