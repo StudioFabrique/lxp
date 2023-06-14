@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { perPage } from "../config/pagination";
 import useHttp from "./use-http";
 
 const initialState = {
   page: 1,
-  perPage: perPage,
+  perPage: 5,
   totalPages: null,
 };
 
@@ -13,7 +12,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
   const [sdir, setSdir] = useState(false);
   const [stype, setStype] = useState(defaultSortValue);
   const [page, setPage] = useState(initialState.page);
-  const [perPage] = useState(initialState.perPage);
+  const [perPage, setPerPages] = useState(initialState.perPage);
   const [totalPages, setTotalPages] = useState<number | null>(
     initialState.totalPages
   );
@@ -93,6 +92,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     getList,
     setDataList,
     setPath,
+    setPerPages,
   };
 };
 
