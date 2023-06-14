@@ -22,7 +22,7 @@ export default async function httpCreateAdmin(req: Request, res: Response) {
 
   user.password = pswHash;
   user.isActive = false;
-  user.roles = [new Object((await Role.findOne({ role: "student" }))!._id)];
+  user.roles = [new Object((await Role.findOne({ role: "admin" }))!._id)];
 
   try {
     const response = await createUser(user);
