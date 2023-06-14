@@ -16,24 +16,7 @@ const GroupAddForm: FC<{
   error: string;
   isLoading: boolean;
 }> = (props) => {
-  const [users, setUsers] = useState<User[]>([
-    {
-      _id: "csdd542a",
-      email: "test",
-      firstname: "test",
-      lastname: "test1",
-      isActive: true,
-      roles: [],
-    },
-    {
-      _id: "fsdkaj3s",
-      email: "test32",
-      firstname: "test7",
-      lastname: "test1",
-      isActive: true,
-      roles: [],
-    },
-  ]);
+  const [users, setUsers] = useState<User[]>([]);
 
   const [usersToAdd, setUsersToAdd] = useState<String[]>([]);
 
