@@ -18,9 +18,6 @@ const UserToAddList: FC<{
             <th className="bg-transparent"></th>
             <th className="bg-transparent">Prénom</th>
             <th className="bg-transparent">Nom</th>
-            <th className="bg-transparent">Email</th>
-            <th className="bg-transparent">Formation</th>
-            <th className="bg-transparent">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -29,7 +26,7 @@ const UserToAddList: FC<{
               key={user._id}
               className="bg-secondary/10 hover:bg-blue-800 hover:text-white"
             >
-              <td className="bg-transparent rounded-l-xl p-5">
+              <td className="bg-transparent rounded-l-xl">
                 <SelectionButton
                   currentUser={user._id}
                   users={props.selectedUsers}
@@ -40,12 +37,9 @@ const UserToAddList: FC<{
               <td className="bg-transparent">
                 <AvatarSmall url="https://www.leparisien.fr/resizer/fGXimQvLycC2XjTOb9nran3rDcU=/1248x782/filters:focal(1184x745:1194x755)/cloudfront-eu-central-1.images.arcpublishing.com/leparisien/NJE5TPKX7NDY3AL7MWIJJEXZOA.jpg" />
               </td>
-              <td className="bg-transparent">{user.firstname}</td>
-              <td className="bg-transparent">{user.lastname}</td>
-              <td className="bg-transparent">{user.email}</td>
-              <td className="bg-transparent">CDA</td>
-              <td className="bg-transparent rounded-r-xl">
-                {user.isActive ? "Actif" : "Inactif"}
+              <td className="bg-transparent w-full">{user.firstname}</td>
+              <td className="bg-transparent rounded-r-xl w-full">
+                {user.lastname}
               </td>
             </tr>
           ))}
