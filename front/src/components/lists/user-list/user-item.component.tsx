@@ -11,7 +11,7 @@ const UserItem: FC<{
     <>
       <td className="bg-transparent">
         <input
-          className="my-auto checkbox checkbox-primary"
+          className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
           type="checkbox"
           checked={userItem.isSelected}
           onChange={() => onRowCheck(userItem._id)}

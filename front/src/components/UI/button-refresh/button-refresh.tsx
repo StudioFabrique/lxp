@@ -1,9 +1,12 @@
 import { FC } from "react";
 
-const ButtonRefresh: FC<{ onRefresh: () => void }> = ({ onRefresh }) => {
+const ButtonRefresh: FC<{ size?: string; onRefresh: () => void }> = ({
+  size = "",
+  onRefresh,
+}) => {
   return (
     <button
-      className="btn btn-outline border-none text-primary"
+      className={`btn btn-outline border-none text-primary ${size}`}
       onClick={onRefresh}
     >
       <svg

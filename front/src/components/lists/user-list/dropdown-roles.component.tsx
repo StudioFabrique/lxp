@@ -1,10 +1,10 @@
-import React, { FC, useContext, useState } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
 import Role from "../../../utils/interfaces/role";
 import { Context } from "../../../store/context.store";
 import Can from "../../UI/can/can.component";
 import { hasRole } from "../../../utils/hasRole";
 
-const RoleSelect: FC<{
+const DropDownRoles: FC<{
   roleTab: Role;
   onGroupRolesChange: (updatedRoles: Array<Role>) => void;
 }> = (props) => {
@@ -28,6 +28,10 @@ const RoleSelect: FC<{
     setNewRoles([]);
     document.getElementById("my-drawer-4")?.click();
   };
+
+  useEffect(() => {
+    setNewRoles([props.roleTab]);
+  }, [props.roleTab]);
 
   return (
     <ul className="flex flex-col">
@@ -60,4 +64,4 @@ const RoleSelect: FC<{
   );
 };
 
-export default RoleSelect;
+export default DropDownRoles;

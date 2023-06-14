@@ -71,7 +71,7 @@ const Search: FC<{
         <div>
           {entityToSearch !== "isActive" ? (
             <input
-              className="input input-bordered join-item"
+              className="input input-bordered input-sm join-item"
               type={searchType}
               placeholder="Recherche..."
               value={searchValue}
@@ -80,7 +80,7 @@ const Search: FC<{
           ) : (
             <div>
               <select
-                className="select select-bordered join-item"
+                className="select select-bordered select-sm join-item"
                 onChange={handleSwitchValueChange}
               >
                 <option value="actif">Actif</option>
@@ -91,7 +91,7 @@ const Search: FC<{
         </div>
       </div>
       <select
-        className="select select-bordered join-item font-normal"
+        className="select select-bordered select-sm join-item font-normal"
         onChange={handleTypeToSearchChange}
       >
         <option disabled defaultValue="">
@@ -99,7 +99,7 @@ const Search: FC<{
         </option>
         {optionsList}
       </select>
-      <button className="btn btn-primary join-item" type="submit">
+      <button className="btn btn-primary btn-sm join-item" type="submit">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"

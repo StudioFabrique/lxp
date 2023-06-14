@@ -4,18 +4,29 @@ type Props = {
   children: ReactNode;
   visible?: boolean;
   title: string;
+  id?: string;
 };
 
-const RightSideDrawer: FC<Props> = ({ children, visible = true, title }) => {
+const RightSideDrawer: FC<Props> = ({
+  children,
+  visible = true,
+  title,
+  id = "my-drawer-4",
+}) => {
   const drawerRef = useRef<any>(null);
+
+  const handleCloseDrawer = () => {
+    drawerRef.current.click();
+  };
+
   return (
-    <div className="h-full drawer drawer-end">
-      <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
+    <div className="h-full drawer drawer-end z-50">
+      <input id={id} type="checkbox" className="drawer-toggle" />
       <div className="drawer-content">
         {/* Page content here */}
         {visible ? (
           <label
-            htmlFor="my-drawer-4"
+            htmlFor={id}
             className="drawer-button btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary"
           >
             <svg
@@ -32,17 +43,13 @@ const RightSideDrawer: FC<Props> = ({ children, visible = true, title }) => {
       <div className="drawer-side">
         <label
           ref={drawerRef}
-          htmlFor="my-drawer-4"
+          htmlFor={id}
           className="drawer-overlay fixed top-0 left-0 w-screen h-full"
         ></label>
         <ul className="menu p-4 w-6/6 fixed top-0 right-0 h-screen bg-base-200 text-base-content">
           {/* Sidebar content here */}
           <div className="flex items-center gap-x-4">
-            <div
-              onClick={() => {
-                drawerRef.current.click();
-              }}
-            >
+            <div onClick={handleCloseDrawer}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
