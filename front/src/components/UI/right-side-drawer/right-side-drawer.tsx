@@ -1,4 +1,5 @@
-import { FC, ReactNode, useRef } from "react";
+import React, { FC, ReactNode, useContext, useEffect, useRef } from "react";
+import { DrawerContext } from "../../../store/drawer.store";
 
 type Props = {
   children: ReactNode;
@@ -13,15 +14,32 @@ const RightSideDrawer: FC<Props> = ({
   title,
   id = "my-drawer-4",
 }) => {
-  const drawerRef = useRef<any>(null);
+  const checkboxRef = useRef<HTMLInputElement | null>(null);
+  const { handleShowDrawer } = useContext(DrawerContext);
 
   const handleCloseDrawer = () => {
-    drawerRef.current.click();
+    if (checkboxRef.current) {
+      checkboxRef.current.checked = false;
+    }
   };
+
+  useEffect(() => {
+    console.log(checkboxRef.current?.checked);
+    if (checkboxRef.current!.checked) {
+      handleShowDrawer(true);
+    } else {
+      handleShowDrawer(false);
+    }
+  }, [checkboxRef.current?.checked, handleShowDrawer]);
 
   return (
     <div className="h-full drawer drawer-end z-50">
-      <input id={id} type="checkbox" className="drawer-toggle" />
+      <input
+        id={id}
+        type="checkbox"
+        className="drawer-toggle"
+        ref={checkboxRef}
+      />
       <div className="drawer-content">
         {/* Page content here */}
         {visible ? (
@@ -42,7 +60,6 @@ const RightSideDrawer: FC<Props> = ({
       </div>
       <div className="drawer-side">
         <label
-          ref={drawerRef}
           htmlFor={id}
           className="drawer-overlay fixed top-0 left-0 w-screen h-full"
         ></label>

@@ -7,24 +7,18 @@ import httpCreateUser from "../../controllers/user/http-create-user";
 import httpUpdateUserRoles from "../../controllers/user/http-update-user-roles";
 import httpSearchUser from "../../controllers/user/http-search-user";
 import httpGetUsersByRole from "../../controllers/user/http-get-users-by-role";
+import httpGetUsersStats from "../../controllers/user/http-get-users-stats";
 
 const userRouter = express.Router();
+
+userRouter.get("/stats", isUser, httpGetUsersStats);
 
 //  récupération de la liste des utilisateurs en fonction de leur rôle principal
 userRouter.get(
   "/:role/:stype/:sdir",
-
+  // TODO: VALIDATORS
   //  vérification du token et récupération du rôle de l'utilisateur
   isUser,
-  /* 
-  //  vérification des permissions
-  async (req: CustomRequest, res: Response, next: NextFunction) => {
-    if (await hasPermission(req.auth!.userRoles[0], "read", "user")) {
-      next();
-    } else {
-      return res.status(400).json({ message: noAccess });
-    }
-  }, */
 
   getAllValidator,
   httpGetUsersByRole
