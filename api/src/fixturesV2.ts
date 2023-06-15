@@ -65,6 +65,8 @@ async function createUser() {
 
   let role2 = await Role.findOne({ role: "teacher" });
   const newTeacher = new User({
+    firstname: "perfect",
+    lastname: "teacher",
     nickname: "perfect teacher",
     address: "12 place royale",
     postCode: "64000",
@@ -110,8 +112,8 @@ async function createManyAdmins() {
     const postCode = city.postcode;
     const cityName = city.name;
     const user = new User({
-      firstname: firstname,
-      lastname: lastname,
+      firstname: firstname.toLowerCase(),
+      lastname: lastname.toLowerCase(),
       nickname: nickname.toLowerCase(),
       email: createMail(firstname, lastnames[i], i),
       password: hash,
@@ -155,8 +157,8 @@ async function createManyTeachers() {
     const postCode = city.postcode;
     const cityName = city.name;
     const user = new User({
-      firstname: firstname,
-      lastname: lastname,
+      firstname: firstname.toLowerCase(),
+      lastname: lastname.toLowerCase(),
       nickname: nickname.toLowerCase(),
       email: createMail(firstname, lastnames[i], i),
       password: hash,
@@ -186,8 +188,8 @@ async function createManyStudents() {
     const postCode = city.postcode;
     const cityName = city.name;
     const user = new User({
-      firstname: firstname,
-      lastname: lastname,
+      firstname: firstname.toLowerCase(),
+      lastname: lastname.toLowerCase(),
       nickname: nickname.toLowerCase(),
       email: createMail(firstname, lastnames[i], i),
       password: hash,
@@ -217,8 +219,8 @@ async function createManyCoach() {
     const postCode = city.postcode;
     const cityName = city.name;
     const user = new User({
-      firstname: firstname,
-      lastname: lastname,
+      firstname: firstname.toLowerCase(),
+      lastname: lastname.toLowerCase(),
       nickname: nickname.toLowerCase(),
       email: createMail(firstname, lastnames[i], i),
       password: hash,
