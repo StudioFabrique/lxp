@@ -4,6 +4,8 @@ import { IGroup } from "../group";
 
 export interface IStudent extends Document {
   email: string;
+  firstname: string;
+  lastname: string;
   password: string;
   roles: IRole["_id"];
   avatar?: string;

@@ -4,6 +4,8 @@ import { IGroup } from "../group";
 
 export interface IUser extends Document {
   email: string;
+  firstname: string;
+  lastname: string;
   password: string;
   roles: IRole["_id"];
   avatar?: string;
@@ -21,6 +23,8 @@ export interface IUser extends Document {
 const userSchema: Schema = new Schema(
   {
     email: { type: String, required: true, unique: true },
+    firstname: { type: String, required: true },
+    lastname: { type: String, required: true },
     password: { type: String, required: true },
     roles: {
       type: [mongoose.Schema.Types.ObjectId],

@@ -47,6 +47,8 @@ async function createUser() {
   let role = await Role.findOne({ role: "admin" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const newUser = new User({
+    firstname: "perfect",
+    lastname: "user",
     nickname: "perfect user",
     address: "12 place royale",
     postCode: "64000",
@@ -79,6 +81,8 @@ async function createUser() {
 
   role = await Role.findOne({ role: "student" });
   const newStudent = new Student({
+    firstname: "perfect",
+    lastname: "user",
     nickname: "perfect student",
     address: "14 bvd olga ducresnes",
     postCode: "64000",
@@ -100,11 +104,14 @@ async function createManyAdmins() {
   const userList = Array<any>();
   for (let i = 0; i < 5; i++) {
     const firstname = firstnames[getRandomNumber(0, firstnames.length - 1)];
+    const lastname = lastnames[getRandomNumber(0, lastnames.length - 1)];
     const nickname = nicknames[getRandomNumber(0, nicknames.length - 1)];
     const city = cities[getRandomNumber(0, cities.length - 1)];
     const postCode = city.postcode;
     const cityName = city.name;
     const user = new User({
+      firstname: firstname,
+      lastname: lastname,
       nickname: nickname.toLowerCase(),
       email: createMail(firstname, lastnames[i], i),
       password: hash,
@@ -142,11 +149,14 @@ async function createManyTeachers() {
   const userList = Array<any>();
   for (let i = 5; i < 15; i++) {
     const firstname = firstnames[getRandomNumber(0, firstnames.length - 1)];
+    const lastname = lastnames[getRandomNumber(0, lastnames.length - 1)];
     const nickname = nicknames[getRandomNumber(0, nicknames.length - 1)];
     const city = cities[getRandomNumber(0, cities.length - 1)];
     const postCode = city.postcode;
     const cityName = city.name;
     const user = new User({
+      firstname: firstname,
+      lastname: lastname,
       nickname: nickname.toLowerCase(),
       email: createMail(firstname, lastnames[i], i),
       password: hash,
@@ -164,17 +174,20 @@ async function createManyTeachers() {
   await User.bulkSave(userList);
 }
 
-async function createManStudents() {
+async function createManyStudents() {
   const role = await Role.findOne({ role: "student" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
   for (let i = 0; i < 100; i++) {
     const firstname = firstnames[getRandomNumber(0, firstnames.length - 1)];
+    const lastname = lastnames[getRandomNumber(0, lastnames.length - 1)];
     const nickname = nicknames[getRandomNumber(0, nicknames.length - 1)];
     const city = cities[getRandomNumber(0, cities.length - 1)];
     const postCode = city.postcode;
     const cityName = city.name;
     const user = new User({
+      firstname: firstname,
+      lastname: lastname,
       nickname: nickname.toLowerCase(),
       email: createMail(firstname, lastnames[i], i),
       password: hash,
@@ -198,11 +211,14 @@ async function createManyCoach() {
   const userList = Array<any>();
   for (let i = 0; i < 100; i++) {
     const firstname = firstnames[getRandomNumber(0, firstnames.length - 1)];
+    const lastname = lastnames[getRandomNumber(0, lastnames.length - 1)];
     const nickname = nicknames[getRandomNumber(0, nicknames.length - 1)];
     const city = cities[getRandomNumber(0, cities.length - 1)];
     const postCode = city.postcode;
     const cityName = city.name;
     const user = new User({
+      firstname: firstname,
+      lastname: lastname,
       nickname: nickname.toLowerCase(),
       email: createMail(firstname, lastnames[i], i),
       password: hash,
@@ -278,7 +294,7 @@ async function main() {
   await createUser();
   await createManyAdmins();
   await createManyTeachers();
-  await createManStudents();
+  await createManyStudents();
   await createManyCoach();
   await createManyGroups();
 }
