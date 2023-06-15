@@ -3,14 +3,15 @@ import Role from "../../../utils/interfaces/role";
 import { Context } from "../../../store/context.store";
 import Can from "../../UI/can/can.component";
 import { hasRole } from "../../../utils/hasRole";
+import { DrawerContext } from "../../../store/drawer.store";
 
 const DropDownRoles: FC<{
   roleTab: Role;
   onGroupRolesChange: (updatedRoles: Array<Role>) => void;
 }> = (props) => {
   const [newRoles, setNewRoles] = useState<Array<Role>>([]);
-
   const { roles } = useContext(Context);
+  const { isDrawerOpen } = useContext(DrawerContext);
 
   const handleSetNewRoles = (newRole: Role) => {
     if (newRoles.find((role) => role._id === newRole._id)) {
@@ -28,6 +29,15 @@ const DropDownRoles: FC<{
     setNewRoles([]);
     document.getElementById("my-drawer-4")?.click();
   };
+
+  console.log("add role rendering");
+  console.log("drawer open", isDrawerOpen);
+
+  useEffect(() => {
+    if (isDrawerOpen) {
+      setNewRoles([props.roleTab]);
+    }
+  }, [isDrawerOpen, props.roleTab]);
 
   useEffect(() => {
     setNewRoles([props.roleTab]);

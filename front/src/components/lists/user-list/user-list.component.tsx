@@ -3,19 +3,24 @@ import Role from "../../../utils/interfaces/role";
 import UserItem from "./user-item.component";
 
 const UserList: FC<{
+  allChecked: boolean;
   role: Role;
   userList: Array<any>;
   onRowCheck: (id: string) => void;
-  onAllChecked: (value: boolean) => void;
+  onAllChecked: () => void;
   onSorting: (column: string) => void;
-}> = ({ role, userList, onRowCheck, onAllChecked, onSorting }) => {
-  const [allChecked, setAllChecked] = useState(false);
-
+  onUncheckAll: () => void;
+}> = ({
+  allChecked,
+  role,
+  userList,
+  onRowCheck,
+  onAllChecked,
+  onSorting,
+  onUncheckAll,
+}) => {
   const handleAllChecked = () => {
-    setAllChecked((prevAllChecked) => {
-      return !prevAllChecked;
-    });
-    onAllChecked(allChecked);
+    onAllChecked();
   };
 
   // fonction pour changer les rôles d'un unique utilisateur, elle a été déplacé ailleurs
@@ -44,14 +49,13 @@ const UserList: FC<{
 
   useEffect(() => {
     if (userList.some((item) => !item.isSelected)) {
-      setAllChecked(false);
+      onUncheckAll();
     }
-  }, [userList]);
+  }, [userList, onUncheckAll]);
 
   useEffect(() => {
-    setAllChecked(false);
-    onAllChecked(false);
-  }, [role, onAllChecked]);
+    onUncheckAll();
+  }, [role, onUncheckAll]);
 
   let content = (
     <table className="table w-full">

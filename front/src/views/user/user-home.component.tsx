@@ -22,6 +22,7 @@ const UserHome = () => {
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [isActionButtonDisabled, setIsActionButtonDisabled] = useState(true);
   const {
+    allChecked,
     page,
     totalPages,
     dataList,
@@ -29,14 +30,11 @@ const UserHome = () => {
     sortData,
     initPagination,
     handlePageNumber,
-    setDataList,
     setPath,
+    handleRowCheck,
+    setAllChecked,
   } = usePagination("lastname", "/user/everything");
   const { sendRequest } = useHttp();
-
-  const handleSorting = (column: string) => {
-    sortData(column);
-  };
 
   const handleRoleSwitch = (role: Role) => {
     initPagination();
@@ -48,13 +46,13 @@ const UserHome = () => {
     setPath(`/user/${role.role}`);
   };
 
-  const handleRowCheck = (id: string) => {
-    setDataList((prevDataList: any) =>
-      prevDataList.map((item: any) =>
-        item._id === id ? { ...item, isSelected: !item.isSelected } : item
-      )
-    );
+  const handleAllChecked = () => {
+    setAllChecked((prevAllchecked) => !prevAllchecked);
   };
+
+  const handleUncheckALL = useCallback(() => {
+    setAllChecked(false);
+  }, [setAllChecked]);
 
   const handleSearchResult = (entityToSearch: string, searchValue: string) => {
     initPagination();
@@ -64,18 +62,6 @@ const UserHome = () => {
   };
 
   const handleCloseSearch = () => {};
-
-  const handleAllChecked = useCallback(
-    (value: boolean) => {
-      setDataList((prevDataList: any) =>
-        prevDataList.map((item: any) => ({
-          ...item,
-          isSelected: !value,
-        }))
-      );
-    },
-    [setDataList]
-  );
 
   const handleGroupRolesChange = async (updatedRoles: Array<Role>) => {
     const selectedDataList = dataList.filter(
@@ -141,9 +127,11 @@ const UserHome = () => {
 
   useEffect(() => {
     (async function () {
-      const canUpdate = await casbinAuthorizer.can("update", role.role);
-      const canDelete = await casbinAuthorizer.can("delete", role.role);
-      setIsActionButtonDisabled(canUpdate && canDelete);
+      if (role) {
+        const canUpdate = await casbinAuthorizer.can("update", role.role);
+        const canDelete = await casbinAuthorizer.can("delete", role.role);
+        setIsActionButtonDisabled(canUpdate && canDelete);
+      }
     })();
   }, [role]);
 
@@ -184,11 +172,13 @@ const UserHome = () => {
 
           <div className="w-full">
             <UserList
+              allChecked={allChecked}
               role={role}
               userList={dataList}
               onRowCheck={handleRowCheck}
               onAllChecked={handleAllChecked}
-              onSorting={handleSorting}
+              onSorting={sortData}
+              onUncheckAll={handleUncheckALL}
             />
             {dataList.length > 0 ? (
               <Pagination
