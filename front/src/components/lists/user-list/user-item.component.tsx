@@ -1,7 +1,7 @@
 import { FC } from "react";
-import toTitleCase from "../../../utils/toTitleCase";
 import { Link } from "react-router-dom";
 import Can from "../../UI/can/can.component";
+import toTitleCase from "../../../utils/toTitleCase";
 
 const UserItem: FC<{
   userItem: any;
@@ -28,8 +28,8 @@ const UserItem: FC<{
           </div>
         </div>
       </td>
-      <td className="bg-transparent">{toTitleCase(userItem.lastname)}</td>
-      <td className="bg-transparent">{toTitleCase(userItem.firstname)}</td>
+      <td>{toTitleCase(userItem.firstname)}</td>
+      <td>{toTitleCase(userItem.lastname)}</td>
       <td className="bg-transparent">{userItem.email}</td>
       <td
         className={`bg-transparent ${userItem.group.name ? "" : "text-center"}`}

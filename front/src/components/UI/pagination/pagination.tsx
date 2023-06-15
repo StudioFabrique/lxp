@@ -22,6 +22,34 @@ const Pagination: FC<{
     setPerPages!(parseInt(event.currentTarget.value) ?? 5);
   };
 
+  if (perPage)
+    return (
+      <div className="w-full flex justify-end mt-4 items-center gap-x-20 bg-secondary rounded-lg p-2 text-secondary-content text-sm">
+        <PaginationSelect
+          handleSetPerPages={handleSetPerPages}
+          perPage={perPage}
+        />
+        <p>
+          {page} of {totalPages}
+        </p>
+        <div className="btn-group gap-x-4">
+          <button
+            className="border-none bg-secondary btn btn-sm"
+            disabled={page === 1}
+            onClick={decrementPage}
+          >
+            {"<"}
+          </button>
+          <button
+            className="border-none bg-secondary btn btn-sm"
+            disabled={page === totalPages}
+            onClick={incrementPage}
+          >
+            {">"}
+          </button>
+        </div>
+      </div>
+    );
   return (
     <div className="w-full flex justify-end mt-4 items-center gap-x-20 bg-secondary rounded-lg p-2 text-secondary-content text-sm">
       <PaginationSelect

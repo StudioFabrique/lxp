@@ -4,7 +4,7 @@ const PaginationSelect: FC<{
   handleSetPerPages: (event: ChangeEvent<HTMLSelectElement>) => void;
   perPage?: number;
 }> = ({ handleSetPerPages, perPage }) => {
-  if (perPage) {
+  if (perPage)
     return (
       <div className="flex justify-end self-end">
         <p>row per pages :</p>
@@ -18,7 +18,6 @@ const PaginationSelect: FC<{
         </select>
       </div>
     );
-  }
 
   return <></>;
 };
