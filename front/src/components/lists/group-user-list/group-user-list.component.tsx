@@ -1,41 +1,35 @@
-import { FC, useState } from "react";
-import GroupManageUserList from "../group-manage-user-list/group-manage-user-list.component";
+import { FC } from "react";
+import GroupManageUserList from "./group-manage-user-list/group-manage-user-list.component";
 import GroupUserItem from "./group-user-item.component";
-import { ButtonAdd } from "./buttons.component";
 import User from "../../../utils/interfaces/user";
 import Wrapper from "../../UI/wrapper/wrapper.component";
+import Pagination from "../../UI/pagination/pagination";
+import usePagination from "../../../hooks/use-pagination";
 
 const GroupUserList: FC<{
   users: User[];
   onSubmitSetUsersToAdd: (Users: string[]) => void;
 }> = ({ users, onSubmitSetUsersToAdd }) => {
-  const [isModalOpen, setModalOpenState] = useState<boolean>(false);
-
-  const handleModalOpenState = () => {
-    setModalOpenState(!isModalOpen);
-  };
-
-  const handleSetUsersToAdd = (users: string[]) => {
-    onSubmitSetUsersToAdd(users);
-    handleModalOpenState();
-  };
+  const { page, perPage, dataList, totalPages, handlePageNumber } =
+    usePagination("", "");
 
   return (
-    <div>
-      <Wrapper>
-        <h2 className="font-bold text-lg">Etudiants</h2>
-        <div className="flex justify-between">
-          <ButtonAdd onClick={handleModalOpenState} />
-          <input
-            type="text"
-            className="input input-sm"
-            placeholder="Rechercher un étudiant par nom ou prénom"
-          />
-        </div>
+    <Wrapper>
+      <h2 className="font-bold text-lg">Etudiants</h2>
 
-        {/* liste des utilisateurs du groupe */}
-        {users.length > 0 ? (
-          <table className="table tab-sm">
+      <div className="flex justify-between">
+        <GroupManageUserList onSetUsersToAdd={onSubmitSetUsersToAdd} />
+        <input
+          type="text"
+          className="input input-sm"
+          placeholder="Rechercher un étudiant par nom ou prénom"
+        />
+      </div>
+
+      {/* liste des utilisateurs du groupe */}
+      {users.length > 0 ? (
+        <>
+          <table className="table-auto tab-sm border-separate border-spacing-y-4 text-center">
             <thead>
               <tr>
                 <th className="bg-transparent"></th>
@@ -55,39 +49,16 @@ const GroupUserList: FC<{
               ))}
             </tbody>
           </table>
-        ) : (
-          "Aucun utilisateurs dans ce groupe"
-        )}
-      </Wrapper>
-      {isModalOpen ? (
-        <GroupManageUserList
-          users={[
-            {
-              _id: "csdd542a",
-              email: "test",
-              firstname: "test",
-              lastname: "test1",
-              createdAt: new Date(),
-              isActive: true,
-              roles: [],
-              updatedAt: new Date(),
-            },
-            {
-              _id: "fsdkaj3s",
-              email: "test32",
-              firstname: "test7",
-              lastname: "test1",
-              createdAt: new Date(),
-              isActive: true,
-              roles: [],
-              updatedAt: new Date(),
-            },
-          ]}
-          onSetUsersToAdd={handleSetUsersToAdd}
-          onClose={handleModalOpenState}
-        />
-      ) : undefined}
-    </div>
+          <Pagination
+            page={page}
+            setPage={handlePageNumber}
+            totalPages={totalPages}
+          />
+        </>
+      ) : (
+        "Aucun utilisateurs dans ce groupe"
+      )}
+    </Wrapper>
   );
 };
 export default GroupUserList;

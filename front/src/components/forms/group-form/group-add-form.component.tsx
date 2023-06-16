@@ -8,6 +8,7 @@ import User from "../../../utils/interfaces/user";
 import Tags from "../../UI/tags/tags.component";
 import Tag from "../../../utils/interfaces/tag";
 import DatesSelecter from "../../UI/dates-selecter/dates-selecter.component";
+import ParcoursHeader from "../../groups-header/groups-header.component";
 
 const GroupAddForm: FC<{
   group?: any;
@@ -15,32 +16,13 @@ const GroupAddForm: FC<{
   error: string;
   isLoading: boolean;
 }> = (props) => {
-  const [users, setUsers] = useState<User[]>([
-    {
-      _id: "csdd542a",
-      email: "test",
-      firstname: "test",
-      lastname: "test1",
-      isActive: true,
-      roles: [],
-    },
-    {
-      _id: "fsdkaj3s",
-      email: "test32",
-      firstname: "test7",
-      lastname: "test1",
-      isActive: true,
-      roles: [],
-    },
-  ]);
+  const [usersToAdd, setUsersToAdd] = useState<String[]>([]);
 
   const handleSubmitTags = (tags: Tag[]) => {};
   const handleSubmitDates = (dates: {
     startDate: string;
     endDate: string;
   }) => {};
-
-  const [usersToAdd, setUsersToAdd] = useState<String[]>([]);
 
   const { value: name } = useInput(
     (value: string) => regexGeneric.test(value),
@@ -86,22 +68,12 @@ const GroupAddForm: FC<{
   };
 
   return (
-    <form onSubmit={handleSubmit} autoComplete="off">
-      <div className="flex justify-between">
-        <h1 className="text-2xl font-bold">Créer un groupe de formation</h1>
-        <span className="flex gap-x-4">
-          <button type="submit" className="btn btn-sm bg-blue-800 text-white">
-            Publier
-          </button>
-          <button type="button" className="btn btn-sm bg-white">
-            ...
-          </button>
-        </span>
-      </div>
-      <p className="mb-5">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in urna
-        eget pura.
-      </p>
+    <form
+      className="flex flex-col gap-y-10"
+      onSubmit={handleSubmit}
+      autoComplete="off"
+    >
+      <ParcoursHeader />
       <div className="grid grid-cols-3 max-md:grid-cols-1 gap-x-5">
         <Informations name={name} diplome={diplome} rncp={rncp} />
         <div className="grid grid-row-2 max-md:mb-2 max-md:mt-2 gap-y-2">
@@ -110,8 +82,7 @@ const GroupAddForm: FC<{
         </div>
         <Details promotion={promotion} desc={desc} />
       </div>
-      <div className="my-10" />
-      <GroupUserList users={users} onSubmitSetUsersToAdd={setUsersToAdd} />
+      <GroupUserList users={[]} onSubmitSetUsersToAdd={setUsersToAdd} />
     </form>
   );
 };

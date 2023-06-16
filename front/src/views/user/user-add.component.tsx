@@ -15,7 +15,7 @@ const UserAdd = () => {
   };
 
   return (
-    <div className="min-h-screen w-screen flex justify-center">
+    <div>
       <UserAddForm
         onSubmitForm={handleSubmit}
         error={error}
