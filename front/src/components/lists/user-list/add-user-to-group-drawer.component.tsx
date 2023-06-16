@@ -1,7 +1,7 @@
 import { FC } from "react";
-import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
-import AddUserToGroup from "../add-user-to-group/add-user-to-group.component";
-import { DrawerProvider } from "../../store/drawer.store";
+import { DrawerProvider } from "../../../store/drawer.store";
+import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
+import AddUserToGroup from "./add-user-to-group.component";
 
 const AddUserToGroupDrawer: FC<{ selectedUsers: Array<any> }> = ({
   selectedUsers,

@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import Role from "../../../utils/interfaces/role";
 import UserItem from "./user-item.component";
 
@@ -58,7 +58,7 @@ const UserList: FC<{
   }, [role, onUncheckAll]);
 
   let content = (
-    <table className="table w-full">
+    <table className="table w-full border-separate border-spacing-y-2">
       <thead>
         <tr>
           <th>
@@ -73,18 +73,18 @@ const UserList: FC<{
           <th
             className="cursor-pointer"
             onClick={() => {
-              onSorting("lastname");
-            }}
-          >
-            Nom
-          </th>
-          <th
-            className="cursor-pointer"
-            onClick={() => {
               onSorting("firstname");
             }}
           >
             Prénom
+          </th>
+          <th
+            className="cursor-pointer"
+            onClick={() => {
+              onSorting("lastname");
+            }}
+          >
+            Nom
           </th>
           <th
             className="cursor-pointer"
@@ -100,14 +100,6 @@ const UserList: FC<{
               onSorting("group");
             }}
           >
-            Groupe
-          </th>
-          <th
-            className="cursor-pointer"
-            onClick={() => {
-              onSorting("formation");
-            }}
-          >
             Formation
           </th>
           <th
@@ -116,7 +108,7 @@ const UserList: FC<{
               onSorting("createdAt");
             }}
           >
-            Date
+            Ajouté le
           </th>
           <th
             className="cursor-pointer"
@@ -131,7 +123,10 @@ const UserList: FC<{
       </thead>
       <tbody>
         {userList.map((item: any) => (
-          <tr className="hover:bg-primary/20" key={item._id}>
+          <tr
+            className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content rounded-lg"
+            key={item._id}
+          >
             {<UserItem userItem={item} onRowCheck={onRowCheck} />}
           </tr>
         ))}

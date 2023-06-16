@@ -1,8 +1,8 @@
 import { FC, useState } from "react";
-import Role from "../../utils/interfaces/role";
-import Can from "../UI/can/can.component";
-import AddRoleDrawer from "../add-role-drawer/add-role-drawer.component";
-import AddUserToGroupDrawer from "../add-user-to-group-drawer/add-user-to-group-drawer.component";
+import Role from "../../../utils/interfaces/role";
+import Can from "../../UI/can/can.component";
+import AddRoleDrawer from "./add-role-drawer.component";
+import AddUserToGroupDrawer from "./add-user-to-group-drawer.component";
 
 const DropdownActionsUser: FC<{
   itemsList: Array<any>;

@@ -1,6 +1,6 @@
 import { FC } from "react";
-import toTitleCase from "../../utils/toTitleCase";
-import Role from "../../utils/interfaces/role";
+import toTitleCase from "../../../utils/toTitleCase";
+import Role from "../../../utils/interfaces/role";
 
 const AddUserToGroupItem: FC<{
   groupItem: any;

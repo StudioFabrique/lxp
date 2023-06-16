@@ -7,6 +7,7 @@ import { DrawerContext } from "../../../store/drawer.store";
 
 const DropDownRoles: FC<{
   roleTab: Role;
+  drawerId: string;
   onGroupRolesChange: (updatedRoles: Array<Role>) => void;
 }> = (props) => {
   const [newRoles, setNewRoles] = useState<Array<Role>>([]);
@@ -27,11 +28,8 @@ const DropDownRoles: FC<{
   const handleSubmitChange = () => {
     props.onGroupRolesChange(newRoles);
     setNewRoles([]);
-    document.getElementById("my-drawer-4")?.click();
+    document.getElementById(props.drawerId)?.click();
   };
-
-  console.log("add role rendering");
-  console.log("drawer open", isDrawerOpen);
 
   useEffect(() => {
     if (isDrawerOpen) {
@@ -64,10 +62,7 @@ const DropDownRoles: FC<{
           ) : null}
         </React.Fragment>
       ))}
-      <button
-        className="btn btn-secondary mt-4"
-        onMouseDown={handleSubmitChange}
-      >
+      <button className="btn btn-primary mt-4" onMouseDown={handleSubmitChange}>
         Valider
       </button>
     </ul>

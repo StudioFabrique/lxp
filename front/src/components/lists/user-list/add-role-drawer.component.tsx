@@ -1,8 +1,8 @@
 import { FC } from "react";
-import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
-import DropDownRoles from "../lists/user-list/dropdown-roles.component";
-import Role from "../../utils/interfaces/role";
-import { DrawerProvider } from "../../store/drawer.store";
+import Role from "../../../utils/interfaces/role";
+import { DrawerProvider } from "../../../store/drawer.store";
+import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
+import DropDownRoles from "./dropdown-roles.component";
 
 const AddRoleDrawer: FC<{
   roleTab: Role;
@@ -18,6 +18,7 @@ const AddRoleDrawer: FC<{
         <DropDownRoles
           roleTab={roleTab}
           onGroupRolesChange={onGroupRolesChange}
+          drawerId="add-role"
         />
       </RightSideDrawer>
     </DrawerProvider>
