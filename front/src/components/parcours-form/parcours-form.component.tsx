@@ -5,6 +5,7 @@ import ParcoursInfos from "../parcours-infos/parcours-infos.component";
 import DatesSelecter from "../UI/dates-selecter/dates-selecter.component";
 import Tags from "../UI/tags/tags.component";
 import ParcoursRessourcesContacts from "../parcours-ressources-contacts/parcours-ressources-contacts.component";
+import { DrawerProvider } from "../../store/drawer.store";
 
 const ParcoursForm = () => {
   const { formInfos, updateInfos, updateDates, updateTags, updateContacts } =
@@ -39,7 +40,9 @@ const ParcoursForm = () => {
           <Tags onSubmitTags={updateTags} />
         </div>
         <div>
-          <ParcoursRessourcesContacts onSubmitContacts={updateContacts} />
+          <DrawerProvider>
+            <ParcoursRessourcesContacts onSubmitContacts={updateContacts} />
+          </DrawerProvider>
         </div>
       </div>
     </>

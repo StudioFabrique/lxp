@@ -12,13 +12,14 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
   const [sdir, setSdir] = useState(false);
   const [stype, setStype] = useState(defaultSortValue);
   const [page, setPage] = useState(initialState.page);
-  const [perPage, setPerPages] = useState(initialState.perPage);
+  const [perPage, setPerPage] = useState(initialState.perPage);
   const [totalPages, setTotalPages] = useState<number | null>(
     initialState.totalPages
   );
   const [dataList, setDataList] = useState<Array<any>>([]);
   const [path, setPath] = useState(defaultUrlPath);
   const { sendRequest } = useHttp();
+  const [allChecked, setAllChecked] = useState(false);
 
   const handlePageNumber = useCallback((value: number) => {
     setPage(value);
@@ -26,7 +27,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
 
   const initPagination = useCallback(() => {
     setPage(1);
-  }, [setPage]);
+  }, []);
 
   const handleTotalPages = useCallback(
     (total: number) => {
@@ -34,6 +35,14 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     },
     [perPage]
   );
+
+  const handleRowCheck = (id: string) => {
+    setDataList((prevDataList: any) =>
+      prevDataList.map((item: any) =>
+        item._id === id ? { ...item, isSelected: !item.isSelected } : item
+      )
+    );
+  };
 
   const sortData = (column: string) => {
     if (column !== stype) {
@@ -49,9 +58,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
 
   const getList = useCallback(() => {
     const applyData = (data: { list: Array<any>; total: number }) => {
-      let index = (page - 1) * perPage + 1;
       data.list.forEach((item: any) => {
-        item.index = index++ + ".";
         item.createdAt =
           item?.createdAt && new Date(item.createdAt).toLocaleDateString();
         item.updatedAt =
@@ -76,6 +83,18 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     getList();
   }, [path, getList]);
 
+  useEffect(() => {
+    setDataList((prevDataList: any) => {
+      if (prevDataList) {
+        return prevDataList.map((item: any) => {
+          item.isSelected = allChecked;
+          return item;
+        });
+      }
+      return prevDataList;
+    });
+  }, [allChecked]);
+
   return {
     page: page,
     perPage: perPage,
@@ -83,6 +102,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     sdir,
     stype,
     dataList,
+    allChecked,
     handlePageNumber,
     initPagination,
     handleTotalPages,
@@ -92,7 +112,9 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     getList,
     setDataList,
     setPath,
-    setPerPages,
+    setAllChecked,
+    handleRowCheck,
+    setPerPage,
   };
 };
 

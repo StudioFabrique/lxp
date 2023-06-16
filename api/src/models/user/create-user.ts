@@ -1,4 +1,5 @@
-import User, { IUser } from "../../utils/interfaces/db/user/user.model";
+import User, { IUser } from "../../utils/interfaces/db/user.model";
+
 export default async function createUser(user: IUser) {
   const userToFind = await User.findOne({ email: user.email });
   if (userToFind) {

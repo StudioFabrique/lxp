@@ -98,7 +98,7 @@ const ParcoursRessourcesContacts: FC<{
           property="name"
           placeHolder="Ajouter un nouveau contact..."
         />
-        <RightSideDrawer>
+        <RightSideDrawer title="Ajouter un Formateur">
           <UserQuickCreate onSubmitUser={handleSubmitNewUser} />
         </RightSideDrawer>
       </div>

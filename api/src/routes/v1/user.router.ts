@@ -1,63 +1,31 @@
 import express from "express";
-
-import httpGetAllUsers from "../../controllers/user/http-get-all-users";
 import { body, param, query } from "express-validator";
+
 import isUser from "../../middleware/is-user";
-import httpUpdateStudentRoles from "../../controllers/user/http-update-student-roles";
 import { getAllValidator, userValidator } from "../../middleware/validators";
 import httpCreateUser from "../../controllers/user/http-create-user";
 import httpUpdateUserRoles from "../../controllers/user/http-update-user-roles";
 import httpSearchUser from "../../controllers/user/http-search-user";
+import httpGetUsersByRole from "../../controllers/user/http-get-users-by-role";
+import httpGetUsersStats from "../../controllers/user/http-get-users-stats";
+import httpUpdateUser from "../../controllers/user/http-update-user";
 
 const userRouter = express.Router();
+
+// TODO: VALIDATORS
+userRouter.put("/update-user", isUser, httpUpdateUser);
+
+// TODO: VALIDATORS
+userRouter.get("/stats", isUser, httpGetUsersStats);
 
 //  récupération de la liste des utilisateurs en fonction de leur rôle principal
 userRouter.get(
   "/:role/:stype/:sdir",
-
   //  vérification du token et récupération du rôle de l'utilisateur
   isUser,
-  /* 
-  //  vérification des permissions
-  async (req: CustomRequest, res: Response, next: NextFunction) => {
-    if (await hasPermission(req.auth!.userRoles[0], "read", "user")) {
-      next();
-    } else {
-      return res.status(400).json({ message: noAccess });
-    }
-  }, */
 
   getAllValidator,
-  httpGetAllUsers
-);
-
-// mise à jour des rôles d'une liste d'apprenants
-userRouter.put(
-  "/student-roles",
-  // validators
-  body("usersToUpdate")
-    .isArray()
-    .notEmpty()
-    .withMessage("Le tableau studentsToUpdate ne peut pas être vide."),
-  body("usersToUpdate.*")
-    .isString()
-    .withMessage(
-      "Chaque élément de studentsToUpdate doit être une chaîne de caractères."
-    )
-    .trim()
-    .escape(),
-  body("rolesId")
-    .isArray()
-    .notEmpty()
-    .withMessage("Le tableau rolesId ne peut pas être vide."),
-  body("rolesId.*")
-    .isString()
-    .withMessage(
-      "Chaque élément de rolesId doit être une chaîne de caractères."
-    )
-    .trim()
-    .escape(),
-  httpUpdateStudentRoles
+  httpGetUsersByRole
 );
 
 userRouter.put(
@@ -85,6 +53,7 @@ userRouter.put(
     )
     .trim()
     .escape(),
+  isUser,
   httpUpdateUserRoles
 );
 

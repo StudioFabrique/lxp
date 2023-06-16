@@ -1,21 +1,26 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import Role from "../../../utils/interfaces/role";
 import UserItem from "./user-item.component";
 
 const UserList: FC<{
+  allChecked: boolean;
   role: Role;
   userList: Array<any>;
   onRowCheck: (id: string) => void;
-  onAllChecked: (value: boolean) => void;
+  onAllChecked: () => void;
   onSorting: (column: string) => void;
-}> = ({ role, userList, onRowCheck, onAllChecked, onSorting }) => {
-  const [allChecked, setAllChecked] = useState(false);
-
+  onUncheckAll: () => void;
+}> = ({
+  allChecked,
+  role,
+  userList,
+  onRowCheck,
+  onAllChecked,
+  onSorting,
+  onUncheckAll,
+}) => {
   const handleAllChecked = () => {
-    setAllChecked((prevAllChecked) => {
-      return !prevAllChecked;
-    });
-    onAllChecked(allChecked);
+    onAllChecked();
   };
 
   // fonction pour changer les rôles d'un unique utilisateur, elle a été déplacé ailleurs
@@ -43,32 +48,28 @@ const UserList: FC<{
   }; */
 
   useEffect(() => {
-    setAllChecked(false);
-    onAllChecked(false);
-  }, [role, onAllChecked]);
+    if (userList.some((item) => !item.isSelected)) {
+      onUncheckAll();
+    }
+  }, [userList, onUncheckAll]);
+
+  useEffect(() => {
+    onUncheckAll();
+  }, [role, onUncheckAll]);
 
   let content = (
-    <table className="table w-full">
+    <table className="table w-full border-separate border-spacing-y-2">
       <thead>
         <tr>
-          <th className="z-0">
+          <th>
             <input
-              className="my-auto checkbox"
+              className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
               type="checkbox"
               checked={allChecked}
               onChange={handleAllChecked}
             />
           </th>
-          <th></th>
           <th>Avatar</th>
-          <th
-            className="cursor-pointer"
-            onClick={() => {
-              onSorting("lastname");
-            }}
-          >
-            Nom
-          </th>
           <th
             className="cursor-pointer"
             onClick={() => {
@@ -76,6 +77,14 @@ const UserList: FC<{
             }}
           >
             Prénom
+          </th>
+          <th
+            className="cursor-pointer"
+            onClick={() => {
+              onSorting("lastname");
+            }}
+          >
+            Nom
           </th>
           <th
             className="cursor-pointer"
@@ -91,14 +100,6 @@ const UserList: FC<{
               onSorting("group");
             }}
           >
-            Groupe
-          </th>
-          <th
-            className="cursor-pointer"
-            onClick={() => {
-              onSorting("formation");
-            }}
-          >
             Formation
           </th>
           <th
@@ -107,7 +108,7 @@ const UserList: FC<{
               onSorting("createdAt");
             }}
           >
-            Date
+            Ajouté le
           </th>
           <th
             className="cursor-pointer"
@@ -122,7 +123,10 @@ const UserList: FC<{
       </thead>
       <tbody>
         {userList.map((item: any) => (
-          <tr className="hover:bg-primary/20" key={item._id}>
+          <tr
+            className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content rounded-lg"
+            key={item._id}
+          >
             {<UserItem userItem={item} onRowCheck={onRowCheck} />}
           </tr>
         ))}

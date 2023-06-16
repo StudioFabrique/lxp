@@ -7,11 +7,11 @@ import {
 import createUser from "../../models/user/create-user";
 import { serverIssue } from "../../utils/constantes";
 import bcrypt from "bcrypt";
-import { IStudent } from "../../utils/interfaces/db/student/student.model";
 import Role from "../../utils/interfaces/db/role";
+import { IUser } from "../../utils/interfaces/db/user.model";
 
 export default async function httpCreateUser(req: Request, res: Response) {
-  const user: IStudent = req.body;
+  const user: IUser = req.body;
 
   if (!user.password) {
     return res.status(400).json({ message: badQuery });
