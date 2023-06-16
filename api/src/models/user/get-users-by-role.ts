@@ -1,8 +1,8 @@
-import Group from "../../utils/interfaces/db/group";
-import Role from "../../utils/interfaces/db/role";
+import Role, { IRole } from "../../utils/interfaces/db/role";
+import User from "../../utils/interfaces/db/user.model";
 import { getPagination } from "../../utils/services/getPagination";
 
-async function getAllGroups(
+async function getUsersByRole(
   page: number,
   limit: number,
   role: string,
@@ -11,6 +11,7 @@ async function getAllGroups(
 ) {
   const dir = sdir === "asc" ? 1 : -1;
   let fetchedRoles;
+  console.log({ role });
 
   if (role === "everything") {
     fetchedRoles = await Role.find({}, { _id: 1 });
@@ -22,13 +23,15 @@ async function getAllGroups(
     return false;
   }
 
-  const groups = await Group.find({ roles: { $in: fetchedRoles } })
+  const users = await User.find(
+    { roles: { $in: fetchedRoles } },
+    { password: 0 }
+  )
     .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
     .sort({ [stype]: dir })
     .skip(getPagination(page, limit))
     .limit(limit);
-  const total = await Group.count({ roles: { $in: fetchedRoles } });
-  return { total, groups };
+  const total = await User.count({ roles: { $in: fetchedRoles } });
+  return { total, users };
 }
-
-export default getAllGroups;
+export default getUsersByRole;

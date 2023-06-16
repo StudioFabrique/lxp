@@ -19,7 +19,7 @@ type ContextType = {
   handshake: () => void;
   user: User | null;
   roles: Array<Role>;
-  fetchRoles: () => void;
+  fetchRoles: (role: Role) => void;
 };
 
 type Props = { children: React.ReactNode };
@@ -57,25 +57,26 @@ const ContextProvider: FC<Props> = (props) => {
       );
   }, [theme]);
 
-  const login = async (email: string, password: string, path: string) => {
-    console.log("bonjour login");
+  useEffect(() => {
+    if (user) {
+      setIsLoggedIn(true);
+      setIsLoading(false);
+    }
+  }, [user]);
 
+  const login = async (email: string, password: string) => {
     setError("");
     setIsLoading(true);
     try {
       const response = await axios.post(
-        `${BASE_URL}/auth/login/${path}`,
+        `${BASE_URL}/auth/login/`,
         {
           email,
           password,
         },
         { withCredentials: true }
       );
-
       setUser(response.data);
-
-      setIsLoggedIn(true);
-      setIsLoading(false);
     } catch (err: any) {
       if (err.response?.status === 401 || err.response?.status === 403) {
         setError("Identifiant ou mot de passe incorrect");
@@ -89,12 +90,9 @@ const ContextProvider: FC<Props> = (props) => {
 
   const handshake = async () => {
     try {
-      const response = await axiosInstance.get(
-        `${BASE_URL}/auth/handshake` /* {
+      const response = await axiosInstance.get(`${BASE_URL}/auth/handshake`, {
         withCredentials: true,
-      } */
-      );
-      setIsLoggedIn(true);
+      });
       setUser(response.data);
     } catch (err) {
       logout();
@@ -144,17 +142,29 @@ const ContextProvider: FC<Props> = (props) => {
     }
   };
 
-  const fetchRoles = useCallback(() => {
-    const applyData = (data: Array<Role>) => {
-      setRoles(data);
-    };
-    sendRequest(
-      {
-        path: "/auth/roles",
-      },
-      applyData
-    );
-  }, [sendRequest]);
+  const fetchRoles = useCallback(
+    (role: Role) => {
+      const applyData = (data: Array<Role>) => {
+        const newRole = {
+          _id: "0",
+          role: "everything",
+          label: "Tou",
+          rank: role.rank,
+        };
+        let updatedRoles = Array<Role>();
+        updatedRoles = [...updatedRoles, newRole];
+        data.forEach((item) => updatedRoles.push(item));
+        setRoles(updatedRoles);
+      };
+      sendRequest(
+        {
+          path: "/auth/roles",
+        },
+        applyData
+      );
+    },
+    [sendRequest]
+  );
 
   const contextValue = {
     theme,

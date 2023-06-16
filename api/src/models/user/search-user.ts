@@ -1,6 +1,5 @@
 import Role from "../../utils/interfaces/db/role";
-import Student from "../../utils/interfaces/db/student/student.model";
-import User from "../../utils/interfaces/db/user/user.model";
+import User from "../../utils/interfaces/db/user.model";
 import { getPagination } from "../../utils/services/getPagination";
 
 async function searchUser(
@@ -14,9 +13,16 @@ async function searchUser(
 ) {
   const dir = sdir === "asc" ? 1 : -1;
 
-  const fetchedRole = await Role.findOne({ role: role });
+  let fetchedRoles;
+  console.log({ role });
 
-  if (!fetchedRole) {
+  if (role === "everything") {
+    fetchedRoles = await Role.find({}, { _id: 1 });
+  } else {
+    fetchedRoles = await Role.find({ role: role }, { _id: 1 });
+  }
+
+  if (!fetchedRoles) {
     return false;
   }
 
@@ -41,32 +47,19 @@ async function searchUser(
 
   console.log({ field });
 
-  if (fetchedRole.rank < 3) {
-    const users = await User.find(
-      { [entity]: field, roles: fetchedRole._id },
-      { password: 0 }
-    )
-      .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
-      .sort({ [stype]: dir })
-      .skip(getPagination(page, limit))
-      .limit(limit);
-    const total = await User.count({ [entity]: field, roles: fetchedRole._id });
-    return { total, users };
-  } else if (fetchedRole.rank > 2) {
-    const users = await Student.find(
-      { [entity]: field, roles: fetchedRole._id },
-      { password: 0 }
-    )
-      .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
-      .sort({ [stype]: dir })
-      .skip(getPagination(page, limit))
-      .limit(limit);
-    const total = await Student.count({
-      [entity]: field,
-      roles: fetchedRole._id,
-    });
-    return { total, users };
-  }
+  const users = await User.find(
+    { [entity]: field, roles: { $in: fetchedRoles } },
+    { password: 0 }
+  )
+    .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
+    .sort({ [stype]: dir })
+    .skip(getPagination(page, limit))
+    .limit(limit);
+  const total = await User.count({
+    [entity]: field,
+    roles: { $in: fetchedRoles },
+  });
+  return { total, users };
 }
 
 export default searchUser;

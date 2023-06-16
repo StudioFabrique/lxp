@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Context } from "../../store/context.store";
 import Role from "../../utils/interfaces/role";
 import Tabs from "../../components/UI/tabs/tabs.component";
@@ -7,19 +6,24 @@ import { userSearchOptions } from "../../config/search-options";
 import Pagination from "../../components/UI/pagination/pagination";
 import usePagination from "../../hooks/use-pagination";
 import useHttp from "../../hooks/use-http";
-import Can from "../../components/UI/can/can.component";
-import RoleSelect from "../../components/lists/user-list/roles-select.component";
 import { hasPermission } from "../../utils/hasPermission";
 import Modal from "../../components/UI/modal/modal";
 import { useCallback, useContext, useEffect, useState } from "react";
 import UserList from "../../components/lists/user-list/user-list.component";
+import UserHeader from "../../components/user-header/user-header;component";
+import ButtonRefresh from "../../components/UI/button-refresh/button-refresh";
+import { casbinAuthorizer } from "../../config/rbac";
+import DropdownActionsUser from "../../components/lists/user-list/dropdown-actions-user";
+import UsersListStats from "../../components/lists/user-list/users-list-stats";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [role, setRole] = useState<Role>(roles[0]);
-  const [isSeachActive, setIsSeachActive] = useState(false);
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  const [isActionButtonDisabled, setIsActionButtonDisabled] = useState(true);
   const {
+    allChecked,
     page,
     totalPages,
     dataList,
@@ -27,55 +31,38 @@ const UserHome = () => {
     sortData,
     initPagination,
     handlePageNumber,
-    setDataList,
     setPath,
-  } = usePagination("lastname", `/user/${user!.roles[0].role}`);
+    handleRowCheck,
+    setAllChecked,
+  } = usePagination("lastname", "/user/everything");
   const { sendRequest } = useHttp();
-
-  const handleSorting = (column: string) => {
-    sortData(column);
-  };
 
   const handleRoleSwitch = (role: Role) => {
     initPagination();
+    if (isSearchActive) {
+      handleCloseSearch();
+    }
     setRole(role);
-    setIsSeachActive(false);
+    setIsSearchActive(false);
     setPath(`/user/${role.role}`);
   };
 
-  const handleRowCheck = (id: string) => {
-    setDataList((prevDataList: any) =>
-      prevDataList.map((item: any) =>
-        item._id === id ? { ...item, isSelected: !item.isSelected } : item
-      )
-    );
+  const handleAllChecked = () => {
+    setAllChecked((prevAllchecked) => !prevAllchecked);
   };
+
+  const handleUncheckALL = useCallback(() => {
+    setAllChecked(false);
+  }, [setAllChecked]);
 
   const handleSearchResult = (entityToSearch: string, searchValue: string) => {
     initPagination();
     setPath(`/user/search/${role.role}/${entityToSearch}/${searchValue}`);
     getList();
-    setIsSeachActive(true);
+    setIsSearchActive(true);
   };
 
-  const handleCloseSearch = () => {
-    setIsSeachActive(false);
-    initPagination();
-    setPath(`/user/${role.role}`);
-    getList();
-  };
-
-  const handleAllChecked = useCallback(
-    (value: boolean) => {
-      setDataList((prevDataList: any) =>
-        prevDataList.map((item: any) => ({
-          ...item,
-          isSelected: !value,
-        }))
-      );
-    },
-    [setDataList]
-  );
+  const handleCloseSearch = () => {};
 
   const handleGroupRolesChange = async (updatedRoles: Array<Role>) => {
     const selectedDataList = dataList.filter(
@@ -110,7 +97,7 @@ const UserHome = () => {
     if (updatedDataList.length > 0) {
       sendRequest(
         {
-          path: `/user/${role.rank < 3 ? "user-roles" : "student-roles"}`,
+          path: "/user/user-roles",
           method: "put",
           body: { usersToUpdate: updatedDataList, rolesId: updatedRolesIds },
         },
@@ -123,6 +110,12 @@ const UserHome = () => {
     setShowErrorModal((prevState) => !prevState);
   };
 
+  const handleRefreshDataList = () => {
+    setIsSearchActive(false);
+    setPath(`/user/${role.role}`);
+    getList();
+  };
+
   useEffect(() => {
     setRole(roles[0]);
   }, [roles]);
@@ -133,15 +126,27 @@ const UserHome = () => {
     }
   }, [page, getList, role]);
 
+  useEffect(() => {
+    (async function () {
+      if (role) {
+        const canUpdate = await casbinAuthorizer.can("update", role.role);
+        const canDelete = await casbinAuthorizer.can("delete", role.role);
+        setIsActionButtonDisabled(canUpdate && canDelete);
+      }
+    })();
+  }, [role]);
+
   return (
     <>
-      <div className="w-screen flex justify-center my-8">
-        <div className="flex flex-col gap-y-4">
+      <div className="w-full flex flex-col items-center px-4 py-8 gap-8">
+        <UserHeader />
+        <UsersListStats />
+        <div className="flex flex-col gap-y-8">
           {user && role ? (
             <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />
           ) : null}
-          <div className="flex justify-between items-center">
-            <div>
+          <div className="flex justify-end items-center">
+            {/* <div>
               {role && dataList.length > 0 ? (
                 <Can action={"update"} subject={role.role}>
                   <RoleSelect
@@ -150,31 +155,31 @@ const UserHome = () => {
                   />
                 </Can>
               ) : null}
-            </div>
-            <div className="flex flex-col">
+            </div> */}
+            <div className="flex gap-x-2">
               <SearchUser
                 options={userSearchOptions}
                 onSearch={handleSearchResult}
               />
-              {isSeachActive ? (
-                <div className="flex justify-end">
-                  <button
-                    className="btn btn-info btn-sm"
-                    onClick={handleCloseSearch}
-                  >
-                    Fermer la recherche
-                  </button>
-                </div>
+              <ButtonRefresh size="btn-sm" onRefresh={handleRefreshDataList} />
+              {isActionButtonDisabled ? (
+                <DropdownActionsUser
+                  itemsList={dataList}
+                  roleTab={role}
+                  onGroupRolesChange={handleGroupRolesChange}
+                />
               ) : null}
             </div>
           </div>
-          <div className="w-5/6">
+          <div className="w-full">
             <UserList
+              allChecked={allChecked}
               role={role}
               userList={dataList}
               onRowCheck={handleRowCheck}
               onAllChecked={handleAllChecked}
-              onSorting={handleSorting}
+              onSorting={sortData}
+              onUncheckAll={handleUncheckALL}
             />
             {dataList.length > 0 ? (
               <Pagination
@@ -183,9 +188,6 @@ const UserHome = () => {
                 setPage={handlePageNumber}
               />
             ) : null}
-            <Link className="btn" to="/admin/user/add">
-              Créer un utilisateur
-            </Link>
           </div>
         </div>
       </div>

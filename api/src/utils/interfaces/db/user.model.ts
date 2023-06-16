@@ -1,9 +1,11 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { IRole } from "../role";
-import { IGroup } from "../group";
+import { IRole } from "./role";
+import { IGroup } from "./group";
 
-export interface IStudent extends Document {
+export interface IUser extends Document {
   email: string;
+  firstname: string;
+  lastname: string;
   password: string;
   roles: IRole["_id"];
   avatar?: string;
@@ -18,9 +20,11 @@ export interface IStudent extends Document {
   group?: IGroup["_id"];
 }
 
-const studentSchema: Schema = new Schema(
+const userSchema: Schema = new Schema(
   {
     email: { type: String, required: true, unique: true },
+    firstname: { type: String, required: true },
+    lastname: { type: String, required: true },
     password: { type: String, required: true },
     roles: {
       type: [mongoose.Schema.Types.ObjectId],
@@ -39,6 +43,6 @@ const studentSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-const Student = mongoose.model<IStudent>("Student", studentSchema);
+const User = mongoose.model<IUser>("User", userSchema);
 
-export default Student;
+export default User;
