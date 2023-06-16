@@ -45,6 +45,11 @@ const UserAddForm: FC<{
     props.user?.address ?? ""
   );
 
+  const { value: phone } = useInput(
+    (value: string) => regexPassword.test(value),
+    props.user?.phone ?? ""
+  );
+
   const { value: postCode } = useInput(
     (value: string) => regexPassword.test(value),
     props.user?.postCode ?? ""
@@ -54,6 +59,8 @@ const UserAddForm: FC<{
     (value: string) => regexPassword.test(value),
     props.user?.city ?? ""
   );
+
+  const onChangeDate = () => {};
 
   //  test la validité du form via le custom hook useInput
   let formIsValid = false;
@@ -86,7 +93,13 @@ const UserAddForm: FC<{
             email={email}
             pseudo={pseudo}
           />
-          <Contact />
+          <Contact
+            address={address}
+            city={city}
+            onChangeDate={onChangeDate}
+            phone={phone}
+            postCode={postCode}
+          />
           <div className="grid grid-rows-2 gap-y-5">
             <TypeUtilisateur />
             <CentreInterets />
