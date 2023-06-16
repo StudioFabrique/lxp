@@ -3,7 +3,7 @@ import useInput from "../../hooks/use-input";
 import { regexGeneric } from "../../utils/constantes";
 import { autoSubmitTimer } from "../../config/auto-submit-timer";
 import ImageFileUpload from "../UI/image-file-upload/image-file-upload";
-import Wrapper from "../UI/wrapper/wrapper";
+import Wrapper from "../UI/wrapper/wrapper.component";
 
 const ParcoursInfos: FC<{
   onSubmitInformations: (infos: any) => void;

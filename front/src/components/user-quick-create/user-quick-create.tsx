@@ -5,7 +5,7 @@ import {
   regexMail,
   regexOptionalGeneric,
 } from "../../utils/constantes";
-import Wrapper from "../UI/wrapper/wrapper";
+import Wrapper from "../UI/wrapper/wrapper.component";
 
 type Props = {
   onSubmitUser: (newUser: {

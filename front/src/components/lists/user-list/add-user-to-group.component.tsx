@@ -1,7 +1,7 @@
 import { FC, useContext, useEffect } from "react";
-import usePagination from "../../hooks/use-pagination";
-import AddUserToGroupItem from "../add-user-to-group-item/add-user-to-group-item";
-import { DrawerContext } from "../../store/drawer.store";
+import { DrawerContext } from "../../../store/drawer.store";
+import usePagination from "../../../hooks/use-pagination";
+import AddUserToGroupItem from "./add-user-to-group-item";
 
 const AddUserToGroup: FC<{ selectedUsers: Array<any> }> = ({
   selectedUsers,

@@ -12,8 +12,9 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import UserList from "../../components/lists/user-list/user-list.component";
 import UserHeader from "../../components/user-header/user-header;component";
 import ButtonRefresh from "../../components/UI/button-refresh/button-refresh";
-import DropdownActionsUser from "../../components/dropdown-actions-user/dropdown-actions-user";
 import { casbinAuthorizer } from "../../config/rbac";
+import DropdownActionsUser from "../../components/lists/user-list/dropdown-actions-user";
+import UsersListStats from "../../components/lists/user-list/users-list-stats";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
@@ -139,6 +140,7 @@ const UserHome = () => {
     <>
       <div className="w-full flex flex-col items-center px-4 py-8 gap-8">
         <UserHeader />
+        <UsersListStats />
         <div className="flex flex-col gap-y-8">
           {user && role ? (
             <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />
@@ -169,7 +171,6 @@ const UserHome = () => {
               ) : null}
             </div>
           </div>
-
           <div className="w-full">
             <UserList
               allChecked={allChecked}
