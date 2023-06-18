@@ -10,6 +10,7 @@ import Informations from "./components/informations.component";
 import Tags from "../../UI/tags/tags.component";
 import Tag from "../../../utils/interfaces/tag";
 import Graduation from "../../../utils/interfaces/graduation";
+import Liens from "./components/liens.component";
 
 const UserAddForm: FC<{
   user?: any;
@@ -91,7 +92,7 @@ const UserAddForm: FC<{
   return (
     <form onSubmit={handleSubmit} autoComplete="off">
       <UsersHeader />
-      <div className="grid grid-rows-2 gap-y-5">
+      <div className="grid grid-rows-3 gap-y-5">
         <div className="grid grid-cols-3 gap-x-5">
           <Informations
             lastname={lastname}
@@ -111,9 +112,12 @@ const UserAddForm: FC<{
             <Tags onSubmitTags={handleSubmitTags} />
           </div>
         </div>
+        <div>
+          <Presentation />
+        </div>
         <div className="grid grid-cols-2 gap-x-5">
           <Certifications onAddGraduation={handleAddGraduation} />
-          <Presentation />
+          <Liens />
         </div>
       </div>
     </form>
