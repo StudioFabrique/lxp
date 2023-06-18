@@ -1,5 +1,6 @@
 //  admin and teacher
 
+import Graduation from "./graduation";
 import Group from "./group";
 import Role from "./role";
 
@@ -20,4 +21,5 @@ export default interface User {
   updatedAt?: Date;
   isActive: boolean;
   group?: Group;
+  graduation?: Graduation;
 }

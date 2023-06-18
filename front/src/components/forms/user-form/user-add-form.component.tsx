@@ -4,10 +4,12 @@ import { regexMail, regexPassword } from "../../../utils/constantes";
 import UsersHeader from "../../users-header/users-header.component";
 import Contact from "./components/contact.component";
 import TypeUtilisateur from "./components/type-utilisateur.component";
-import CentreInterets from "./components/centre-interets.component";
 import Certifications from "./components/certifications.component";
 import Presentation from "./components/presentation.component";
 import Informations from "./components/informations.component";
+import Tags from "../../UI/tags/tags.component";
+import Tag from "../../../utils/interfaces/tag";
+import Graduation from "../../../utils/interfaces/graduation";
 
 const UserAddForm: FC<{
   user?: any;
@@ -60,6 +62,10 @@ const UserAddForm: FC<{
     props.user?.city ?? ""
   );
 
+  const handleAddGraduation = (graduation: Graduation) => {};
+
+  const handleSubmitTags = (tags: Tag[]) => {};
+
   const onChangeDate = () => {};
 
   //  test la validité du form via le custom hook useInput
@@ -102,11 +108,11 @@ const UserAddForm: FC<{
           />
           <div className="grid grid-rows-2 gap-y-5">
             <TypeUtilisateur />
-            <CentreInterets />
+            <Tags onSubmitTags={handleSubmitTags} />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-x-5">
-          <Certifications />
+          <Certifications onAddGraduation={handleAddGraduation} />
           <Presentation />
         </div>
       </div>
