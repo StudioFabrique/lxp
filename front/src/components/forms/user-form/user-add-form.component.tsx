@@ -63,6 +63,11 @@ const UserAddForm: FC<{
     props.user?.city ?? ""
   );
 
+  const { value: description } = useInput(
+    (value: string) => regexPassword.test(value),
+    props.user?.description ?? ""
+  );
+
   const handleAddGraduation = (graduation: Graduation) => {};
 
   const handleSubmitTags = (tags: Tag[]) => {};
@@ -113,7 +118,7 @@ const UserAddForm: FC<{
           </div>
         </div>
         <div>
-          <Presentation />
+          <Presentation description={description} />
         </div>
         <div className="grid grid-cols-2 gap-x-5">
           <Certifications onAddGraduation={handleAddGraduation} />
