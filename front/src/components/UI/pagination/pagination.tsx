@@ -33,14 +33,14 @@ const Pagination: FC<{
       </p>
       <div className="btn-group gap-x-4">
         <button
-          className="border-none bg-secondary btn btn-sm"
+          className="border-none bg-secondary/50 btn btn-sm"
           disabled={page === 1}
           onClick={decrementPage}
         >
           {"<"}
         </button>
         <button
-          className="border-none bg-secondary btn btn-sm"
+          className="border-none bg-secondary/50 btn btn-sm"
           disabled={page === totalPages}
           onClick={incrementPage}
         >
