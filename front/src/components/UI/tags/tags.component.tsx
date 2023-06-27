@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo } from "react";
+
 import Tag from "../../../utils/interfaces/tag";
-//import useHttp from "../../../hooks/use-http";
 import TagItem from "../tag-item/tag-item";
 import createTag from "../../../utils/tags";
 import { sortArray } from "../../../utils/sortArray";
@@ -55,26 +55,28 @@ const Tags: FC<{ onSubmitTags: (tags: Array<Tag>) => void }> = ({
   }, [selectedTags.tags, onSubmitTags]);
 
   return (
-    <Wrapper>
-      <h2 className="text-xl font-bold">Tags</h2>
-      <SearchDropdown
-        addItem={addItem}
-        filterItems={filterItems}
-        resetFilterItems={resetFilterItems}
-        filteredItems={filteredItems}
-        property="name"
-        placeHolder="Ajouter un nouveau tag..."
-      />
-      <ul className="flex flex-wrap gap-2">
-        {selectedItems && selectedItems.length > 0
-          ? selectedItems.map((tag: Tag) => (
-              <li key={tag.id} onClick={() => handleRemoveTag(tag)}>
-                <TagItem tag={tag} />
-              </li>
-            ))
-          : null}
-      </ul>
-    </Wrapper>
+    <div className="h-fit">
+      <Wrapper>
+        <h2 className="text-xl font-bold">Tags</h2>
+        <SearchDropdown
+          addItem={addItem}
+          filterItems={filterItems}
+          resetFilterItems={resetFilterItems}
+          filteredItems={filteredItems}
+          property="name"
+          placeHolder="Ajouter un nouveau tag..."
+        />
+        <ul className="flex flex-wrap gap-2">
+          {selectedItems && selectedItems.length > 0
+            ? selectedItems.map((tag: Tag) => (
+                <li key={tag.id} onClick={() => handleRemoveTag(tag)}>
+                  <TagItem tag={tag} />
+                </li>
+              ))
+            : null}
+        </ul>
+      </Wrapper>
+    </div>
   );
 };
 
