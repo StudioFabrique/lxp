@@ -16,7 +16,6 @@ const UserItem: FC<{
   const { isLoading, sendRequest } = useHttp();
 
   const handleToggleStatus = () => {
-    setIsActive((prevStatus) => !prevStatus);
     userItem.isActive = !userItem.isActive;
     updateStatus();
   };
@@ -27,7 +26,7 @@ const UserItem: FC<{
     };
     sendRequest(
       {
-        path: "/user/update-user",
+        path: "/user/update-user-status",
         method: "put",
         body: userItem,
       },
@@ -66,7 +65,7 @@ const UserItem: FC<{
         ) : (
           <FadeWrapper>
             <UpdateUserStatus
-              isActive={isActive}
+              isActive={userItem.isActive}
               onToggleStatus={handleToggleStatus}
             />
           </FadeWrapper>

@@ -1,4 +1,5 @@
-import React, { ChangeEvent, FC } from "react";
+import { ChangeEvent, FC } from "react";
+
 import PaginationSelect from "./pagination-select.component";
 
 const Pagination: FC<{
@@ -13,8 +14,6 @@ const Pagination: FC<{
   };
 
   const incrementPage = () => {
-    console.log("click ok");
-
     setPage(page + 1);
   };
 
