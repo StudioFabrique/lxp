@@ -23,7 +23,7 @@ const Pagination: FC<{
   };
 
   return (
-    <div className="w-full flex justify-end mt-4 items-center gap-x-20 bg-secondary rounded-lg p-2 text-secondary-content text-sm">
+    <div className="w-full flex justify-end mt-4 items-center gap-x-20 bg-secondary/20 rounded-lg p-2 text-base-content text-sm">
       <PaginationSelect
         handleSetPerPages={handleSetPerPages}
         perPage={perPage}
