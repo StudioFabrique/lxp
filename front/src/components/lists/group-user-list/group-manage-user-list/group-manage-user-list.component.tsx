@@ -22,7 +22,7 @@ const GroupManageUserList: FC<{
     handlePageNumber,
     setPath,
     perPage,
-    setPerPages,
+    setPerPage,
   } = usePagination("lastname", `/user/${user!.roles[0].role}`);
 
   const handleSetUsersToAdd = () => {
@@ -45,7 +45,7 @@ const GroupManageUserList: FC<{
   };
 
   return (
-    <RightSideDrawer>
+    <RightSideDrawer title="">
       {dataList.length > 0 ? (
         <div className="h-full flex flex-col gap-y-5 justify-between">
           <UserToAddList
@@ -59,7 +59,7 @@ const GroupManageUserList: FC<{
             totalPages={totalPages}
             perPage={perPage}
             setPage={handlePageNumber}
-            setPerPages={setPerPages}
+            setPerPages={setPerPage}
           />
           <AddUsersButton
             onSetUsersToAdd={handleSetUsersToAdd}
