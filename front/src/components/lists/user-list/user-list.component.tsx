@@ -6,12 +6,14 @@ const UserList: FC<{
   allChecked: boolean;
   role: Role;
   userList: Array<any>;
+  page: number;
   onRowCheck: (id: string) => void;
   onAllChecked: () => void;
   onSorting: (column: string) => void;
   onUncheckAll: () => void;
 }> = ({
   allChecked,
+  page,
   role,
   userList,
   onRowCheck,
@@ -47,15 +49,15 @@ const UserList: FC<{
     );
   }; */
 
-  useEffect(() => {
+  /*   useEffect(() => {
     if (userList.some((item) => !item.isSelected)) {
       onUncheckAll();
     }
-  }, [userList, onUncheckAll]);
+  }, [userList, onUncheckAll]); */
 
   useEffect(() => {
     onUncheckAll();
-  }, [role, onUncheckAll]);
+  }, [role, page, onUncheckAll]);
 
   let content = (
     <table className="table w-full border-separate border-spacing-y-2">

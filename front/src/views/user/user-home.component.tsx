@@ -1,4 +1,7 @@
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Context } from "../../store/context.store";
+import { casbinAuthorizer } from "../../config/rbac";
+
 import Role from "../../utils/interfaces/role";
 import Tabs from "../../components/UI/tabs/tabs.component";
 import SearchUser from "../../components/UI/search/search.component";
@@ -8,13 +11,12 @@ import usePagination from "../../hooks/use-pagination";
 import useHttp from "../../hooks/use-http";
 import { hasPermission } from "../../utils/hasPermission";
 import Modal from "../../components/UI/modal/modal";
-import { useCallback, useContext, useEffect, useState } from "react";
 import UserList from "../../components/lists/user-list/user-list.component";
 import UserHeader from "../../components/user-header/user-header;component";
 import ButtonRefresh from "../../components/UI/button-refresh/button-refresh";
-import { casbinAuthorizer } from "../../config/rbac";
 import DropdownActionsUser from "../../components/lists/user-list/dropdown-actions-user";
 import UsersListStats from "../../components/lists/user-list/users-list-stats";
+import UsersStats from "../../utils/interfaces/users-stats";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
@@ -22,6 +24,7 @@ const UserHome = () => {
   const [role, setRole] = useState<Role>(roles[0]);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [isActionButtonDisabled, setIsActionButtonDisabled] = useState(true);
+  const [stats, setStats] = useState<Array<UsersStats> | null>(null);
   const {
     allChecked,
     page,
@@ -35,7 +38,7 @@ const UserHome = () => {
     handleRowCheck,
     setAllChecked,
   } = usePagination("lastname", "/user/everything");
-  const { sendRequest } = useHttp();
+  const { isLoading, sendRequest } = useHttp();
 
   const handleRoleSwitch = (role: Role) => {
     initPagination();
@@ -113,6 +116,8 @@ const UserHome = () => {
   const handleRefreshDataList = () => {
     setIsSearchActive(false);
     setPath(`/user/${role.role}`);
+    handleUncheckALL();
+    handleGetUsersStats();
     getList();
   };
 
@@ -136,26 +141,32 @@ const UserHome = () => {
     })();
   }, [role]);
 
+  const handleGetUsersStats = useCallback(() => {
+    const applyData = (data: Array<UsersStats>) => {
+      setStats(data);
+    };
+    sendRequest(
+      {
+        path: "/user/stats",
+      },
+      applyData
+    );
+  }, [sendRequest]);
+
+  useEffect(() => {
+    handleGetUsersStats();
+  }, [handleGetUsersStats]);
+
   return (
     <>
       <div className="w-full flex flex-col items-center px-4 py-8 gap-8">
         <UserHeader />
-        <UsersListStats />
+        <UsersListStats stats={stats} isLoading={isLoading} />
         <div className="flex flex-col gap-y-8">
           {user && role ? (
             <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />
           ) : null}
           <div className="flex justify-end items-center">
-            {/* <div>
-              {role && dataList.length > 0 ? (
-                <Can action={"update"} subject={role.role}>
-                  <RoleSelect
-                    roleTab={role}
-                    onGroupRolesChange={handleGroupRolesChange}
-                  />
-                </Can>
-              ) : null}
-            </div> */}
             <div className="flex gap-x-2">
               <SearchUser
                 options={userSearchOptions}
@@ -174,6 +185,7 @@ const UserHome = () => {
           <div className="w-full">
             <UserList
               allChecked={allChecked}
+              page={page}
               role={role}
               userList={dataList}
               onRowCheck={handleRowCheck}

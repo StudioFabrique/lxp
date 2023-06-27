@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { badQuery, serverIssue } from "../../utils/constantes";
-import updateUser from "../../models/user/update-user";
+import updateUser from "../../models/user/update-user-status";
 
-async function httpUpdateUser(req: Request, res: Response) {
+async function httpUpdateUserStatus(req: Request, res: Response) {
   try {
     const user = req.body;
     const updatedUser = await updateUser(user);
@@ -17,4 +17,4 @@ async function httpUpdateUser(req: Request, res: Response) {
   }
 }
 
-export default httpUpdateUser;
+export default httpUpdateUserStatus;
