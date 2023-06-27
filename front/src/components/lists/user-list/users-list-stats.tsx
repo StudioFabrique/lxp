@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
-import Wrapper from "../../UI/wrapper/wrapper.component";
 
 type UsersStats = {
   stat: string;

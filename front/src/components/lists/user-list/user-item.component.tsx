@@ -1,6 +1,7 @@
-import { FC, useEffect, useState } from "react";
-import toTitleCase from "../../../utils/toTitleCase";
+import { FC, useState } from "react";
 import { Link } from "react-router-dom";
+
+import toTitleCase from "../../../utils/toTitleCase";
 import Can from "../../UI/can/can.component";
 import { AvatarSmall } from "../../UI/avatar/avatar.component";
 import useHttp from "../../../hooks/use-http";
@@ -50,6 +51,9 @@ const UserItem: FC<{
       <td className="bg-transparent">{toTitleCase(userItem.firstname)}</td>
       <td className="bg-transparent">{toTitleCase(userItem.lastname)}</td>
       <td className="bg-transparent">{toTitleCase(userItem.email)}</td>
+      <td className="bg-transparent text-center">
+        {userItem.group.name ? userItem.group.name : "-"}
+      </td>
       <td className="bg-transparent text-center">
         {userItem.group.name ? userItem.group.name : "-"}
       </td>

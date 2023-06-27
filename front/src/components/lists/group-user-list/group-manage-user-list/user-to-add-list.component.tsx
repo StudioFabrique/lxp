@@ -24,7 +24,7 @@ const UserToAddList: FC<{
           {props.userList.map((user: User) => (
             <tr
               key={user._id}
-              className="bg-secondary/10 hover:bg-blue-800 hover:text-white "
+              className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content"
             >
               <td className="bg-transparent rounded-l-xl p-5">
                 <SelectionButton
