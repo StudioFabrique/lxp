@@ -8,6 +8,8 @@ const ParcoursAdd = () => {
 
   useEffect(() => {
     (async function () {
+      console.log("rerender créer un parcours");
+
       const result = await casbinAuthorizer.can("write", "parcours");
       setHasAccess(result);
     })();
