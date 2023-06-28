@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { casbinAuthorizer } from "../../config/rbac";
-import Can from "../../components/UI/can/can.component";
 
 const ParcoursLayout = () => {
   const [hasAccess, setHasAccess] = useState(false);
