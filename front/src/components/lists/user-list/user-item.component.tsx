@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import { Link } from "react-router-dom";
 
 import toTitleCase from "../../../utils/toTitleCase";
@@ -12,7 +12,7 @@ const UserItem: FC<{
   userItem: any;
   onRowCheck: (id: string) => void;
 }> = ({ userItem, onRowCheck }) => {
-  const [isActive, setIsActive] = useState<boolean>(userItem.isActive);
+  //const [isActive, setIsActive] = useState<boolean>(userItem.isActive);
   const { isLoading, sendRequest } = useHttp();
 
   const handleToggleStatus = () => {

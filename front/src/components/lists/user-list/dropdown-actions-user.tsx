@@ -3,15 +3,21 @@ import Role from "../../../utils/interfaces/role";
 import Can from "../../UI/can/can.component";
 import AddRoleDrawer from "./add-role-drawer.component";
 import AddUserToGroupDrawer from "./add-user-to-group-drawer.component";
-import useHttp from "../../../hooks/use-http";
 
-const DropdownActionsUser: FC<{
+type Props = {
   itemsList: Array<any>;
   roleTab: Role;
   onGroupRolesChange: (updatedRoles: Array<Role>) => void;
-}> = ({ itemsList, roleTab, onGroupRolesChange }) => {
+  onUpdateManyStatus: (value: string) => void;
+};
+
+const DropdownActionsUser: FC<Props> = ({
+  itemsList,
+  roleTab,
+  onGroupRolesChange,
+  onUpdateManyStatus,
+}) => {
   const [showDropDown, setShowDropDown] = useState(false);
-  const { sendRequest } = useHttp();
 
   const handleAddRoleToUser = () => {
     if (!setDropDownStyle()) {
@@ -33,18 +39,9 @@ const DropdownActionsUser: FC<{
       : "text-base-content/50";
   };
 
-  const handleUpdateManyStatus = (value: boolean) => {
-    const applyData = (data: any) => {
-      console.log(data);
-    };
-    sendRequest(
-      {
-        path: "/user/update-many-status",
-        method: "put",
-        body: { usersIds: itemsList, status: value ? "actif" : "inactif" },
-      },
-      applyData
-    );
+  const handleUpdateManyStatus = (value: string) => {
+    onUpdateManyStatus(value);
+    setShowDropDown(false);
   };
 
   return (
@@ -85,14 +82,24 @@ const DropdownActionsUser: FC<{
             </Can>
 
             <Can action="update" subject={roleTab.role}>
-              <li onClick={() => handleUpdateManyStatus(true)}>
-                <p className={setDropDownStyle()}>Activer</p>
+              <li>
+                <p
+                  className={setDropDownStyle()}
+                  onClick={() => handleUpdateManyStatus("actif")}
+                >
+                  Activer
+                </p>
               </li>
             </Can>
 
             <Can action="update" subject={roleTab.role}>
-              <li onClick={() => handleUpdateManyStatus(false)}>
-                <p className={setDropDownStyle()}>Désactiver</p>
+              <li>
+                <p
+                  className={setDropDownStyle()}
+                  onClick={() => handleUpdateManyStatus("inactif")}
+                >
+                  Désactiver
+                </p>
               </li>
             </Can>
 

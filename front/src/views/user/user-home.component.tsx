@@ -117,8 +117,8 @@ const UserHome = () => {
     setIsSearchActive(false);
     setPath(`/user/${role.role}`);
     handleUncheckALL();
-    handleGetUsersStats();
     getList();
+    handleGetUsersStats();
   };
 
   useEffect(() => {
@@ -157,6 +157,23 @@ const UserHome = () => {
     handleGetUsersStats();
   }, [handleGetUsersStats]);
 
+  const handleUpdateManyStatus = (value: string) => {
+    const applyData = (data: any) => {
+      console.log(data);
+    };
+    const usersToUpdate = dataList.filter((item) => item.isSelected);
+    const usersIds = usersToUpdate.map((item) => item._id);
+    sendRequest(
+      {
+        path: "/user/update-many-status",
+        method: "put",
+        body: { usersIds, status: value },
+      },
+      applyData
+    );
+    handleRefreshDataList();
+  };
+
   return (
     <>
       <div className="w-full flex flex-col items-center px-4 py-8 gap-8">
@@ -178,6 +195,7 @@ const UserHome = () => {
                   itemsList={dataList}
                   roleTab={role}
                   onGroupRolesChange={handleGroupRolesChange}
+                  onUpdateManyStatus={handleUpdateManyStatus}
                 />
               ) : null}
             </div>
