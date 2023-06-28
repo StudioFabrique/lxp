@@ -61,7 +61,7 @@ const ParcoursInfos: FC<{
           <textarea
             className="input w-full"
             name="description"
-            rows={5}
+            rows={10}
             value={description.value}
             onChange={description.textAreaChangeHandler}
             onBlur={description.valueBlurHandler}
