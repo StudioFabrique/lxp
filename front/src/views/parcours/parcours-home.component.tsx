@@ -1,11 +1,5 @@
-import { Link } from "react-router-dom";
-
 const ParcoursHome = () => {
-  return (
-    <Link className="p-8" to="/admin/parcours/créer-un-parcours">
-      Créer un parcours
-    </Link>
-  );
+  return <h1 className="fontbold text-xl">Page User Home</h1>;
 };
 
 export default ParcoursHome;
