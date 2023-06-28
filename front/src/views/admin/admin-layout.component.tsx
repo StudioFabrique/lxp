@@ -27,8 +27,6 @@ const AdminLayout = () => {
 
   useEffect(() => {
     if (user) {
-      console.log(user.email);
-
       defineRulesFor(user);
     }
   }, [user]);
