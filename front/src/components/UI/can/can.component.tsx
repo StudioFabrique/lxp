@@ -17,6 +17,8 @@ const Can: React.FC<Props> = ({ children, action, subject }) => {
     })();
   }, [action, subject]);
 
+  console.log({ render });
+
   if (render) return <>{children}</>;
 
   return null;
