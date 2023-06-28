@@ -13,7 +13,14 @@ const permDefs = {
       "stagiaire",
       "everything",
     ],
-    write: ["teacher", "student", "coach", "boss_teacher", "stagiaire"],
+    write: [
+      "teacher",
+      "student",
+      "coach",
+      "boss_teacher",
+      "stagiaire",
+      "parcours",
+    ],
     update: ["teacher", "student", "coach", "boss_teacher", "stagiaire"],
     delete: ["teacher", "student", "coach", "boss_teacher", "stagiaire"],
   },
@@ -43,6 +50,8 @@ export default function defineRulesFor(user: User) {
   // perms should be of format
   // { 'read': ['Contact', 'Database']}
   user.roles.forEach((role) => {
+    console.log(role.role);
+
     const permissions = permDefs[role.role as keyof typeof permDefs];
     Object.entries(permissions).forEach(([key, value]) => {
       builtPerms[key] = [...(builtPerms[key] || []), ...value];
