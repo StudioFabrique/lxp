@@ -159,7 +159,7 @@ const UserHome = () => {
 
   const handleUpdateManyStatus = (value: string) => {
     const applyData = (data: any) => {
-      console.log(data);
+      handleRefreshDataList();
     };
     const usersToUpdate = dataList.filter((item) => item.isSelected);
     const usersIds = usersToUpdate.map((item) => item._id);
@@ -171,7 +171,6 @@ const UserHome = () => {
       },
       applyData
     );
-    handleRefreshDataList();
   };
 
   return (

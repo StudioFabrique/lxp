@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react";
 import { casbinAuthorizer } from "../../../config/rbac";
+import NoAccessPage from "../../../views/errors/403.component";
 
 type Props = {
   children: ReactNode;
@@ -7,7 +8,7 @@ type Props = {
   subject: string;
 };
 
-const Can: React.FC<Props> = ({ children, action, subject }) => {
+const CanAccessPage: React.FC<Props> = ({ children, action, subject }) => {
   const [render, setRender] = React.useState(false);
 
   React.useEffect(() => {
@@ -21,7 +22,7 @@ const Can: React.FC<Props> = ({ children, action, subject }) => {
 
   if (render) return <>{children}</>;
 
-  return null;
+  return <NoAccessPage />;
 };
 
-export default Can;
+export default CanAccessPage;
