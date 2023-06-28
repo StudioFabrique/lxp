@@ -42,7 +42,7 @@ const permDefs = {
   },
 };
 
-export const casbinAuthorizer = new Authorizer("manual");
+export let casbinAuthorizer: Authorizer;
 
 export default function defineRulesFor(user: User) {
   // superUser roles definition
@@ -56,6 +56,6 @@ export default function defineRulesFor(user: User) {
       builtPerms[key] = [...(builtPerms[key] || []), ...value];
     });
   });
-
+  casbinAuthorizer = new Authorizer();
   casbinAuthorizer.setPermission(builtPerms);
 }
