@@ -6,12 +6,14 @@ const UserList: FC<{
   allChecked: boolean;
   role: Role;
   userList: Array<any>;
+  page: number;
   onRowCheck: (id: string) => void;
   onAllChecked: () => void;
   onSorting: (column: string) => void;
   onUncheckAll: () => void;
 }> = ({
   allChecked,
+  page,
   role,
   userList,
   onRowCheck,
@@ -47,15 +49,15 @@ const UserList: FC<{
     );
   }; */
 
-  useEffect(() => {
+  /*   useEffect(() => {
     if (userList.some((item) => !item.isSelected)) {
       onUncheckAll();
     }
-  }, [userList, onUncheckAll]);
+  }, [userList, onUncheckAll]); */
 
   useEffect(() => {
     onUncheckAll();
-  }, [role, onUncheckAll]);
+  }, [role, page, onUncheckAll]);
 
   let content = (
     <table className="table w-full border-separate border-spacing-y-2">
@@ -105,6 +107,14 @@ const UserList: FC<{
           <th
             className="cursor-pointer"
             onClick={() => {
+              onSorting("group");
+            }}
+          >
+            Promotion
+          </th>
+          <th
+            className="cursor-pointer"
+            onClick={() => {
               onSorting("createdAt");
             }}
           >
@@ -124,7 +134,7 @@ const UserList: FC<{
       <tbody>
         {userList.map((item: any) => (
           <tr
-            className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content rounded-lg"
+            className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content"
             key={item._id}
           >
             {<UserItem userItem={item} onRowCheck={onRowCheck} />}

@@ -12,7 +12,7 @@ const GroupItem: FC<{
     <>
       <td className="bg-transparent">
         <input
-          className="my-auto checkbox"
+          className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
           type="checkbox"
           checked={groupItem.isSelected}
           onChange={() => onRowCheck(groupItem._id)}

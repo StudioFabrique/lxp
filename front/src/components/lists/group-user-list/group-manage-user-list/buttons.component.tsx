@@ -13,7 +13,7 @@ export const AddUsersButton: FC<{
     return (
       <button
         type="button"
-        className="btn btn-sm bg-blue-500 text-white w-[70%] self-center"
+        className="btn btn-sm btn-primary self-center"
         onClick={handleClick}
       >
         ajouter les utilisateurs
@@ -36,5 +36,11 @@ export const SelectionButton: FC<{
       : props.onDeleteSelectedUser(props.currentUser);
   };
 
-  return <input type="checkbox" onChange={handleChange} className="checkbox" />;
+  return (
+    <input
+      type="checkbox"
+      onChange={handleChange}
+      className="checkbox checkbox-sm rounded-md checkbox-primary"
+    />
+  );
 };

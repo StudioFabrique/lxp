@@ -11,7 +11,7 @@ const AddUserToGroupDrawer: FC<{ selectedUsers: Array<any> }> = ({
       <RightSideDrawer
         id="add-user-to-group"
         visible={false}
-        title="Ajouter un Utilisateur à un Groupe"
+        title="Ajouter des Utilisateurs à des Groupes"
       >
         <AddUserToGroup selectedUsers={selectedUsers} />
       </RightSideDrawer>

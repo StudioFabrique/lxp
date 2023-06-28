@@ -1,6 +1,7 @@
-import { FC, useEffect, useState } from "react";
-import toTitleCase from "../../../utils/toTitleCase";
+import { FC } from "react";
 import { Link } from "react-router-dom";
+
+import toTitleCase from "../../../utils/toTitleCase";
 import Can from "../../UI/can/can.component";
 import { AvatarSmall } from "../../UI/avatar/avatar.component";
 import useHttp from "../../../hooks/use-http";
@@ -11,11 +12,10 @@ const UserItem: FC<{
   userItem: any;
   onRowCheck: (id: string) => void;
 }> = ({ userItem, onRowCheck }) => {
-  const [isActive, setIsActive] = useState<boolean>(userItem.isActive);
+  //const [isActive, setIsActive] = useState<boolean>(userItem.isActive);
   const { isLoading, sendRequest } = useHttp();
 
   const handleToggleStatus = () => {
-    setIsActive((prevStatus) => !prevStatus);
     userItem.isActive = !userItem.isActive;
     updateStatus();
   };
@@ -26,7 +26,7 @@ const UserItem: FC<{
     };
     sendRequest(
       {
-        path: "/user/update-user",
+        path: "/user/update-user-status",
         method: "put",
         body: userItem,
       },
@@ -53,6 +53,9 @@ const UserItem: FC<{
       <td className="bg-transparent text-center">
         {userItem.group.name ? userItem.group.name : "-"}
       </td>
+      <td className="bg-transparent text-center">
+        {userItem.group.name ? userItem.group.name : "-"}
+      </td>
       <td className="bg-transparent">{userItem.createdAt}</td>
       <td className="bg-transparent">
         {isLoading ? (
@@ -62,7 +65,7 @@ const UserItem: FC<{
         ) : (
           <FadeWrapper>
             <UpdateUserStatus
-              isActive={isActive}
+              isActive={userItem.isActive}
               onToggleStatus={handleToggleStatus}
             />
           </FadeWrapper>

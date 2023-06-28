@@ -91,7 +91,7 @@ const AddUserToGroup: FC<{ selectedUsers: Array<any> }> = ({
           ))}
         </tbody>
       </table>
-      <button className="btn btn-primary mt-4">Valider</button>
+      <button className="btn btn-primary btn-sm mt-4">Valider</button>
     </>
   );
 };

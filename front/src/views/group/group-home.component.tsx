@@ -21,6 +21,7 @@ const GroupHome = () => {
   const [isSeachActive, setIsSeachActive] = useState(false);
 
   const {
+    allChecked,
     page,
     totalPages,
     dataList,
@@ -28,8 +29,9 @@ const GroupHome = () => {
     sortData,
     initPagination,
     handlePageNumber,
-    setDataList,
     setPath,
+    setAllChecked,
+    handleRowCheck,
   } = usePagination("lastname", `/group/${user!.roles[0].role}`);
   const { sendRequest } = useHttp();
 
@@ -47,14 +49,14 @@ const GroupHome = () => {
     setRole(role);
     setPath(`/group/${role.role}`);
   };
-
+  /* 
   const handleRowCheck = (id: string) => {
     setDataList((prevDataList: any) =>
       prevDataList.map((item: any) =>
         item._id === id ? { ...item, isSelected: !item.isSelected } : item
       )
     );
-  };
+  }; */
 
   const handleSearchResult = (entityToSearch: string, searchValue: string) => {
     initPagination();
@@ -70,7 +72,7 @@ const GroupHome = () => {
     getList();
   };
 
-  const handleAllChecked = useCallback(
+  /*   const handleAllChecked = useCallback(
     (value: boolean) => {
       setDataList((prevDataList: any) =>
         prevDataList.map((item: any) => ({
@@ -80,7 +82,11 @@ const GroupHome = () => {
       );
     },
     [setDataList]
-  );
+  ); */
+
+  const handleAllChecked = () => {
+    setAllChecked((prevAllchecked) => !prevAllchecked);
+  };
 
   const handleGroupRolesChange = async (updatedRoles: Array<Role>) => {
     const selectedDataList = dataList.filter(
@@ -123,6 +129,10 @@ const GroupHome = () => {
       );
     }
   };
+
+  const handleUncheckALL = useCallback(() => {
+    setAllChecked(false);
+  }, [setAllChecked]);
 
   const setErrorModal = () => {
     setShowErrorModal((prevState) => !prevState);
@@ -174,11 +184,13 @@ const GroupHome = () => {
             </div>
           </div>
           <GroupList
+            allChecked={allChecked}
             role={role}
             groupList={dataList}
             onRowCheck={handleRowCheck}
             onAllChecked={handleAllChecked}
             onSorting={handleSorting}
+            onUncheckAll={handleUncheckALL}
           />
           {dataList.length > 0 ? (
             <Pagination

@@ -1,4 +1,5 @@
-import React, { ChangeEvent, FC } from "react";
+import { ChangeEvent, FC } from "react";
+
 import PaginationSelect from "./pagination-select.component";
 
 const Pagination: FC<{
@@ -13,8 +14,6 @@ const Pagination: FC<{
   };
 
   const incrementPage = () => {
-    console.log("click ok");
-
     setPage(page + 1);
   };
 
@@ -33,14 +32,14 @@ const Pagination: FC<{
       </p>
       <div className="btn-group gap-x-4">
         <button
-          className="border-none bg-secondary btn btn-sm"
+          className="border-none bg-secondary/50 btn btn-sm"
           disabled={page === 1}
           onClick={decrementPage}
         >
           {"<"}
         </button>
         <button
-          className="border-none bg-secondary btn btn-sm"
+          className="border-none bg-secondary/50 btn btn-sm"
           disabled={page === totalPages}
           onClick={incrementPage}
         >

@@ -1,28 +1,13 @@
-import React, { useEffect, useState } from "react";
-import useHttp from "../../../hooks/use-http";
-import Wrapper from "../../UI/wrapper/wrapper.component";
+import { FC } from "react";
 
-type UsersStats = {
-  stat: string;
-  value: number;
+import UsersStats from "../../../utils/interfaces/users-stats";
+
+type Props = {
+  stats: Array<UsersStats> | null;
+  isLoading: boolean;
 };
 
-const UsersListStats = () => {
-  const { isLoading, sendRequest } = useHttp();
-  const [stats, setStats] = useState<Array<UsersStats> | null>(null);
-
-  useEffect(() => {
-    const applyData = (data: Array<UsersStats>) => {
-      setStats(data);
-    };
-    sendRequest(
-      {
-        path: "/user/stats",
-      },
-      applyData
-    );
-  }, [sendRequest]);
-
+const UsersListStats: FC<Props> = ({ stats, isLoading }) => {
   return (
     <>
       {isLoading ? (
