@@ -18,7 +18,6 @@ import Group, { IGroup } from "./utils/interfaces/db/group";
 import Tag from "./utils/interfaces/db/tag";
 import User from "./utils/interfaces/db/user.model";
 dotenv.config();
-dotenv.config({ path: ".env.local", override: true });
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
 
