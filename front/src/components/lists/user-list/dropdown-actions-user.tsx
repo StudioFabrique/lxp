@@ -4,11 +4,19 @@ import Can from "../../UI/can/can.component";
 import AddRoleDrawer from "./add-role-drawer.component";
 import AddUserToGroupDrawer from "./add-user-to-group-drawer.component";
 
-const DropdownActionsUser: FC<{
+type Props = {
   itemsList: Array<any>;
   roleTab: Role;
   onGroupRolesChange: (updatedRoles: Array<Role>) => void;
-}> = ({ itemsList, roleTab, onGroupRolesChange }) => {
+  onUpdateManyStatus: (value: string) => void;
+};
+
+const DropdownActionsUser: FC<Props> = ({
+  itemsList,
+  roleTab,
+  onGroupRolesChange,
+  onUpdateManyStatus,
+}) => {
   const [showDropDown, setShowDropDown] = useState(false);
 
   const handleAddRoleToUser = () => {
@@ -29,6 +37,11 @@ const DropdownActionsUser: FC<{
     return itemsList.some((item) => item.isSelected)
       ? ""
       : "text-base-content/50";
+  };
+
+  const handleUpdateManyStatus = (value: string) => {
+    onUpdateManyStatus(value);
+    setShowDropDown(false);
   };
 
   return (
@@ -70,7 +83,23 @@ const DropdownActionsUser: FC<{
 
             <Can action="update" subject={roleTab.role}>
               <li>
-                <p className={setDropDownStyle()}>Désactiver</p>
+                <p
+                  className={setDropDownStyle()}
+                  onClick={() => handleUpdateManyStatus("actif")}
+                >
+                  Activer
+                </p>
+              </li>
+            </Can>
+
+            <Can action="update" subject={roleTab.role}>
+              <li>
+                <p
+                  className={setDropDownStyle()}
+                  onClick={() => handleUpdateManyStatus("inactif")}
+                >
+                  Désactiver
+                </p>
               </li>
             </Can>
 

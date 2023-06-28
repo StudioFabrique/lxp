@@ -1,6 +1,6 @@
 import User, { IUser } from "../../utils/interfaces/db/user.model";
 
-async function updateUser(user: IUser) {
+async function updateUserStatus(user: IUser) {
   let userToUpdate = await User.findOne({ _id: user._id });
   if (!userToUpdate) {
     return false;
@@ -11,4 +11,4 @@ async function updateUser(user: IUser) {
   return userToUpdate;
 }
 
-export default updateUser;
+export default updateUserStatus;

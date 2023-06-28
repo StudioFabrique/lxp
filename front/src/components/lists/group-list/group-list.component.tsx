@@ -1,27 +1,31 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import Role from "../../../utils/interfaces/role";
 import GroupItem from "./group-item.component";
 
 const GroupList: FC<{
   role: Role;
+  allChecked: boolean;
   groupList: Array<any>;
   onRowCheck: (id: string) => void;
-  onAllChecked: (value: boolean) => void;
+  onAllChecked: () => void;
   onSorting: (column: string) => void;
-}> = ({ role, groupList, onRowCheck, onAllChecked, onSorting }) => {
-  const [allChecked, setAllChecked] = useState(false);
-
+  onUncheckAll: () => void;
+}> = ({
+  allChecked,
+  role,
+  groupList,
+  onRowCheck,
+  onAllChecked,
+  onUncheckAll,
+  onSorting,
+}) => {
   const handleAllChecked = () => {
-    setAllChecked((prevAllChecked) => {
-      return !prevAllChecked;
-    });
-    onAllChecked(allChecked);
+    onAllChecked();
   };
 
   useEffect(() => {
-    setAllChecked(false);
-    onAllChecked(false);
-  }, [role, onAllChecked]);
+    onUncheckAll();
+  }, [role, onUncheckAll]);
 
   let content = (
     <table className="table w-full">
@@ -29,7 +33,7 @@ const GroupList: FC<{
         <tr>
           <th className="z-0">
             <input
-              className="my-auto checkbox"
+              className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
               type="checkbox"
               checked={allChecked}
               onChange={handleAllChecked}

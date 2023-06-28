@@ -10,8 +10,7 @@ const GroupUserList: FC<{
   users: User[];
   onSubmitSetUsersToAdd: (Users: string[]) => void;
 }> = ({ users, onSubmitSetUsersToAdd }) => {
-  const { page, perPage, dataList, totalPages, handlePageNumber } =
-    usePagination("", "");
+  const { page, totalPages, handlePageNumber } = usePagination("", "");
 
   return (
     <Wrapper>
