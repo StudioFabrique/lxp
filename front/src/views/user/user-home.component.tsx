@@ -1,6 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Context } from "../../store/context.store";
-import { casbinAuthorizer } from "../../config/rbac";
 
 import Role from "../../utils/interfaces/role";
 import Tabs from "../../components/UI/tabs/tabs.component";
@@ -17,13 +16,13 @@ import ButtonRefresh from "../../components/UI/button-refresh/button-refresh";
 import DropdownActionsUser from "../../components/lists/user-list/dropdown-actions-user";
 import UsersListStats from "../../components/lists/user-list/users-list-stats";
 import UsersStats from "../../utils/interfaces/users-stats";
+import Can from "../../components/UI/can/can.component";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [role, setRole] = useState<Role>(roles[0]);
   const [isSearchActive, setIsSearchActive] = useState(false);
-  const [isActionButtonDisabled, setIsActionButtonDisabled] = useState(true);
   const [stats, setStats] = useState<Array<UsersStats> | null>(null);
   const {
     allChecked,
@@ -96,6 +95,7 @@ const UserHome = () => {
     const applyData = (data: any) => {
       initPagination();
       getList();
+      handleUncheckALL();
     };
     if (updatedDataList.length > 0) {
       sendRequest(
@@ -130,16 +130,6 @@ const UserHome = () => {
       getList();
     }
   }, [page, getList, role]);
-
-  useEffect(() => {
-    (async function () {
-      if (role) {
-        const canUpdate = await casbinAuthorizer.can("update", role.role);
-        const canDelete = await casbinAuthorizer.can("delete", role.role);
-        setIsActionButtonDisabled(canUpdate && canDelete);
-      }
-    })();
-  }, [role]);
 
   const handleGetUsersStats = useCallback(() => {
     const applyData = (data: Array<UsersStats>) => {
@@ -189,14 +179,16 @@ const UserHome = () => {
                 onSearch={handleSearchResult}
               />
               <ButtonRefresh size="btn-sm" onRefresh={handleRefreshDataList} />
-              {isActionButtonDisabled ? (
-                <DropdownActionsUser
-                  itemsList={dataList}
-                  roleTab={role}
-                  onGroupRolesChange={handleGroupRolesChange}
-                  onUpdateManyStatus={handleUpdateManyStatus}
-                />
-              ) : null}
+              {!role ? null : (
+                <Can action="update" subject={role.role}>
+                  <DropdownActionsUser
+                    itemsList={dataList}
+                    roleTab={role}
+                    onGroupRolesChange={handleGroupRolesChange}
+                    onUpdateManyStatus={handleUpdateManyStatus}
+                  />
+                </Can>
+              )}
             </div>
           </div>
           <div className="w-full">
