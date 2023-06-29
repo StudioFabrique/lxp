@@ -1,8 +1,16 @@
-import React from "react";
+import { FC } from "react";
 
-const SkillActions = () => {
+type Props = {
+  skillId: number;
+  onDeleteSkill: (skillId: number) => void;
+};
+
+const SkillActions: FC<Props> = ({ skillId, onDeleteSkill }) => {
   return (
-    <button className="btn btn-primary btn-sm">
+    <button
+      className="btn btn-primary btn-sm"
+      onClick={() => onDeleteSkill(skillId)}
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
