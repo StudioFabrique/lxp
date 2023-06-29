@@ -7,11 +7,8 @@ import Wrapper from "../wrapper/wrapper.component";
 const DatesSelecter: FC<{
   onSubmitDates: (dates: { startDate: string; endDate: string }) => void;
 }> = ({ onSubmitDates }) => {
-  console.log("dates is rendering");
   const { value: startDate } = useInput((value) => regexGeneric.test(value));
   const { value: endDate } = useInput((value) => regexGeneric.test(value));
-
-  console.log(startDate.value, endDate.value);
 
   const dates = useMemo(() => {
     return {

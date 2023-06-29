@@ -10,17 +10,6 @@ import { DrawerProvider } from "../../store/drawer.store";
 const ParcoursForm = () => {
   const { formInfos, updateInfos, updateDates, updateTags, updateContacts } =
     useParcours();
-  /*   const [infos] = useState(
-    useMemo(() => {
-      return {
-        data: formInfos,
-      };
-    }, [formInfos])
-  ); */
-
-  console.log("rendering");
-
-  console.log({ formInfos });
 
   useEffect(() => {
     setTimeout(() => {

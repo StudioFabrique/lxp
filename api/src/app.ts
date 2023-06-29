@@ -7,7 +7,6 @@ import morgan from "morgan";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
-import bodyParser from "body-parser";
 
 const app = express();
 
@@ -19,7 +18,6 @@ app
       credentials: true,
     })
   )
-  .use(bodyParser.json())
   .use(cookieParser())
   .use(morgan("combined"))
   .use(express.json())
