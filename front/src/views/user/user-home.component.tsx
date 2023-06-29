@@ -95,6 +95,7 @@ const UserHome = () => {
     const applyData = (data: any) => {
       initPagination();
       getList();
+      handleUncheckALL();
     };
     if (updatedDataList.length > 0) {
       sendRequest(

@@ -1,12 +1,15 @@
-import React from "react";
 import SkillsHeader from "./skills-header";
 import SkillsList from "./skills-list";
+import Wrapper from "../UI/wrapper/wrapper.component";
+import { useState } from "react";
 
 const Skills = () => {
   return (
     <div className="w-full">
-      <SkillsHeader />
-      <SkillsList />
+      <Wrapper>
+        <SkillsHeader />
+        <SkillsList />
+      </Wrapper>
     </div>
   );
 };

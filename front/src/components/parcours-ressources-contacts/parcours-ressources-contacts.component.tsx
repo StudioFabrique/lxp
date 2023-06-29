@@ -22,7 +22,6 @@ const property = "name";
 const ParcoursRessourcesContacts: FC<{
   onSubmitContacts: (contacts: Array<UserItem>) => void;
 }> = ({ onSubmitContacts }) => {
-  console.log("contacts is rendering");
   const { sendRequest } = useHttp();
   const {
     selectedItems,
@@ -82,7 +81,6 @@ const ParcoursRessourcesContacts: FC<{
     firstname: string;
     lastname: string;
   }) => {
-    console.log(newUser);
     fetchTeachers();
   };
 

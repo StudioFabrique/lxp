@@ -8,7 +8,6 @@ import Wrapper from "../UI/wrapper/wrapper.component";
 const ParcoursInfos: FC<{
   onSubmitInformations: (infos: any) => void;
 }> = ({ onSubmitInformations }) => {
-  console.log("infos is rendering");
   const { value: title } = useInput((value) => regexGeneric.test(value.trim()));
   const { value: description } = useInput((value) =>
     regexGeneric.test(value.trim())
