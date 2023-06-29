@@ -1,5 +1,5 @@
-import SkillsHeader from "./skills-header";
-import SkillsList from "./skills-list";
+import SkillsHeader from "./skills-header.component";
+import SkillsList from "./skills-list.component";
 import Wrapper from "../UI/wrapper/wrapper.component";
 
 const Skills = () => {
