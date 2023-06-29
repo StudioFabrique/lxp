@@ -6,10 +6,11 @@ import { FC, useState } from "react";
 
 type Props = {
   skill?: Skill;
+  onDeleteSkill: (skillId: number) => void;
   onSubmitSkill: (skill: Skill) => void;
 };
 
-const SkillItem: FC<Props> = ({ skill, onSubmitSkill }) => {
+const SkillItem: FC<Props> = ({ skill, onDeleteSkill, onSubmitSkill }) => {
   const [newSkill, setNewSkill] = useState<Skill | undefined>(skill);
 
   const handleSumbitSkillTitle = (value: string) => {
@@ -25,7 +26,9 @@ const SkillItem: FC<Props> = ({ skill, onSubmitSkill }) => {
         onSubmiSkill={handleSumbitSkillTitle}
       />
       <SkillBadge badge={skill && skill.badge ? skill.badge : undefined} />
-      <SkillActions />
+      {skill && skill.id ? (
+        <SkillActions skillId={skill.id} onDeleteSkill={onDeleteSkill} />
+      ) : null}
     </div>
   );
 };

@@ -14,12 +14,19 @@ const SkillsList: FC<Props> = () => {
   //  Gère l'affichage de l'input pour ajouter une nouvelle compétence
   const [isEditing, setIsEditing] = useState(false);
 
+  //  Mise à jour d'une compétence
   const handleUpdateSkill = (updatedSkill: Skill) => {
     const updatedSkills = dataList.filter(
       (item) => item.id !== updatedSkill.id
     );
     updatedSkills.push(updatedSkill);
     sortArray(updatedSkills, "id");
+    setDataList(updatedSkills);
+  };
+
+  //  Suppression d'une compétence
+  const handleDeleteSkill = (skillId: number) => {
+    const updatedSkills = dataList.filter((item) => item.id !== skillId);
     setDataList(updatedSkills);
   };
 
@@ -38,7 +45,11 @@ const SkillsList: FC<Props> = () => {
         <ul className="flex flex-col gap-y-4">
           {dataList.map((item: Skill) => (
             <li key={item.id}>
-              <SkillItem skill={item} onSubmitSkill={handleUpdateSkill} />
+              <SkillItem
+                skill={item}
+                onSubmitSkill={handleUpdateSkill}
+                onDeleteSkill={handleDeleteSkill}
+              />
             </li>
           ))}
         </ul>
@@ -64,7 +75,10 @@ const SkillsList: FC<Props> = () => {
       {content}
       <>
         {isEditing ? (
-          <SkillItem onSubmitSkill={handleSubmitNewSkill} />
+          <SkillItem
+            onDeleteSkill={() => {}}
+            onSubmitSkill={handleSubmitNewSkill}
+          />
         ) : (
           <ImportButton
             label="AJOUTER"
