@@ -1,6 +1,6 @@
-import SkillInput from "./skill-input";
-import SkillBadge from "./skill-badge";
-import SkillActions from "./skill-actions";
+import SkillInput from "./skill-input.component";
+import SkillBadge from "./skill-badge.component";
+import SkillActions from "./skill-actions.component";
 import Skill from "../../utils/interfaces/skill";
 import { FC, useState } from "react";
 

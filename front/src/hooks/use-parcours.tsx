@@ -84,7 +84,6 @@ const useParcours = () => {
   }, []);
 
   const updateContacts = useCallback((contacts: Array<UserItem>) => {
-    console.log("contacts");
     dispatch({ type: "UPDATE_CONTACTS", value: contacts });
   }, []);
 
