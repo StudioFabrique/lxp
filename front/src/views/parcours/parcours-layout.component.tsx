@@ -7,7 +7,11 @@ const ParcoursLayout = () => {
       <Can action="write" subject="parcours">
         <Link to="/admin/parcours/créer-un-parcours">Créer un parcours</Link>
       </Can>
-      <Outlet />
+      <div className="flex">
+        <div className="w-[150px]"></div>
+        <Outlet />
+        <div className="w-[50px]"></div>
+      </div>
     </div>
   );
 };

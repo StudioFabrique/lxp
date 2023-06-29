@@ -24,7 +24,6 @@ const RightSideDrawer: FC<Props> = ({
   };
 
   useEffect(() => {
-    console.log(checkboxRef.current?.checked);
     if (checkboxRef.current!.checked) {
       handleShowDrawer(true);
     } else {
