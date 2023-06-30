@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import Skill from "../../utils/interfaces/skill";
-import SkillItem from "./skill-item";
+import SkillItem from "./skill-item.component";
 import ImportButton from "./import-button.component";
 import { sortArray } from "../../utils/sortArray";
 
