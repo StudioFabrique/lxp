@@ -1,3 +1,4 @@
+import ImportBadges from "./import-badges.component";
 import ImportButton from "./import-button.component";
 
 const SkillsHeader = () => {
@@ -6,7 +7,7 @@ const SkillsHeader = () => {
       <h3 className="text-xl font-bold">Compétences</h3>
       <div className="flex items-center gap-x-8">
         <ImportButton label="Importer des compétences" />
-        <ImportButton label="Importer des badges" />
+        <ImportBadges label="Importer des badges" outline={true} />
         <ImportButton label="Sauvergarder" outline={false} />
       </div>
     </div>
