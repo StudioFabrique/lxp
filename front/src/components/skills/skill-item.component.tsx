@@ -1,48 +1,19 @@
-import SkillInput from "./skill-input.component";
-import SkillBadge from "./skill-badge.component";
-import SkillActions from "./skill-actions.component";
+import { FC } from "react";
+
 import Skill from "../../utils/interfaces/skill";
-import { FC, useState } from "react";
+import SkillTitle from "./skill-title.component";
 
 type Props = {
-  skill?: Skill;
-  onBadgeSelect: () => void;
-  onDeleteSkill: (skillId: number) => void;
-  onSubmitSkill: (skill: Skill) => void;
+  skill: Skill;
 };
 
-const SkillItem: FC<Props> = ({
-  skill,
-  onBadgeSelect,
-  onDeleteSkill,
-  onSubmitSkill,
-}) => {
-  const [newSkill, setNewSkill] = useState<Skill | undefined>(skill);
-
-  const handleSumbitSkillTitle = (value: string) => {
-    const updatedSkill: Skill = { ...newSkill, title: value };
-    setNewSkill(updatedSkill);
-    onSubmitSkill(updatedSkill);
-  };
-
+const SkillItem: FC<Props> = ({ skill }) => {
   return (
-    <div className="w-full flex gap-x-4">
-      <SkillInput
-        title={skill && skill.title ? skill.title : ""}
-        onSubmiSkill={handleSumbitSkillTitle}
-      />
-      <SkillBadge
-        badge={skill && skill.badge ? skill.badge : undefined}
-        onBadgeSelect={onBadgeSelect}
-      />
-      {skill && skill.id ? (
-        <SkillActions skillId={skill.id} onDeleteSkill={onDeleteSkill} />
-      ) : (
-        <button className="btn btn-primary btn-sm invisible">
-          <div className="w-4 h-4" />
-        </button>
-      )}
-    </div>
+    <>
+      <div className="w-full flex gap-x-4">
+        <SkillTitle title={skill.title} />
+      </div>
+    </>
   );
 };
 

@@ -62,7 +62,7 @@ const RightSideDrawer: FC<Props> = ({
           htmlFor={id}
           className="drawer-overlay fixed top-0 left-0 w-screen h-full"
         ></label>
-        <ul className="menu p-4 w-6/6 flex flex-col fixed top-0 right-0 h-screen bg-base-200 text-base-content">
+        <ul className="menu p-4 w-6/6 flex flex-col fixed top-0 right-0 h-screen bg-base-200 text-base-content rounded-l-2xl">
           {/* Sidebar content here */}
           <div className="flex items-center gap-x-4">
             <div onClick={handleCloseDrawer}>
