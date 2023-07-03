@@ -37,7 +37,11 @@ const SkillItem: FC<Props> = ({
       />
       {skill && skill.id ? (
         <SkillActions skillId={skill.id} onDeleteSkill={onDeleteSkill} />
-      ) : null}
+      ) : (
+        <button className="btn btn-primary btn-sm invisible">
+          <div className="w-4 h-4" />
+        </button>
+      )}
     </div>
   );
 };
