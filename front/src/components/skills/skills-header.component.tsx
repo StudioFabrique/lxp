@@ -8,7 +8,7 @@ const SkillsHeader = () => {
       <div className="flex items-center gap-x-8">
         <ImportButton label="Importer des compétences" />
         <ImportBadges label="Importer des badges" outline={true} />
-        <ImportButton label="Sauvergarder" outline={false} />
+        <ImportButton label="Sauvegarder" outline={false} />
       </div>
     </div>
   );
