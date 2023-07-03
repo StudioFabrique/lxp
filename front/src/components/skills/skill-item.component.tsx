@@ -6,11 +6,17 @@ import { FC, useState } from "react";
 
 type Props = {
   skill?: Skill;
+  onBadgeSelect: () => void;
   onDeleteSkill: (skillId: number) => void;
   onSubmitSkill: (skill: Skill) => void;
 };
 
-const SkillItem: FC<Props> = ({ skill, onDeleteSkill, onSubmitSkill }) => {
+const SkillItem: FC<Props> = ({
+  skill,
+  onBadgeSelect,
+  onDeleteSkill,
+  onSubmitSkill,
+}) => {
   const [newSkill, setNewSkill] = useState<Skill | undefined>(skill);
 
   const handleSumbitSkillTitle = (value: string) => {
@@ -20,15 +26,22 @@ const SkillItem: FC<Props> = ({ skill, onDeleteSkill, onSubmitSkill }) => {
   };
 
   return (
-    <div className="flex gap-x-4">
+    <div className="w-full flex gap-x-4">
       <SkillInput
         title={skill && skill.title ? skill.title : ""}
         onSubmiSkill={handleSumbitSkillTitle}
       />
-      <SkillBadge badge={skill && skill.badge ? skill.badge : undefined} />
+      <SkillBadge
+        badge={skill && skill.badge ? skill.badge : undefined}
+        onBadgeSelect={onBadgeSelect}
+      />
       {skill && skill.id ? (
         <SkillActions skillId={skill.id} onDeleteSkill={onDeleteSkill} />
-      ) : null}
+      ) : (
+        <button className="btn btn-primary btn-sm invisible">
+          <div className="w-4 h-4" />
+        </button>
+      )}
     </div>
   );
 };
