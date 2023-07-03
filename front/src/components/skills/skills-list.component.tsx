@@ -3,10 +3,12 @@ import Skill from "../../utils/interfaces/skill";
 import SkillItem from "./skill-item.component";
 import ImportButton from "./import-button.component";
 import { sortArray } from "../../utils/sortArray";
+import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
 
 type Props = {};
 
 let index = 0;
+const id = "badge-drawer";
 
 const SkillsList: FC<Props> = () => {
   //  Liste des compétences
@@ -22,6 +24,10 @@ const SkillsList: FC<Props> = () => {
     updatedSkills.push(updatedSkill);
     sortArray(updatedSkills, "id");
     setDataList(updatedSkills);
+  };
+
+  const handleOpenBadgeDrawer = () => {
+    document.getElementById(id)?.click();
   };
 
   //  Suppression d'une compétence
@@ -47,6 +53,7 @@ const SkillsList: FC<Props> = () => {
             <li key={item.id}>
               <SkillItem
                 skill={item}
+                onBadgeSelect={handleOpenBadgeDrawer}
                 onSubmitSkill={handleUpdateSkill}
                 onDeleteSkill={handleDeleteSkill}
               />
@@ -71,23 +78,29 @@ const SkillsList: FC<Props> = () => {
   console.log({ dataList });
 
   return (
-    <div className="flex flex-col gap-y-4">
-      {content}
-      <>
-        {isEditing ? (
-          <SkillItem
-            onDeleteSkill={() => {}}
-            onSubmitSkill={handleSubmitNewSkill}
-          />
-        ) : (
-          <ImportButton
-            label="AJOUTER"
-            outline={false}
-            onClickEvent={handleClickEvent}
-          />
-        )}
-      </>
-    </div>
+    <>
+      <div className="flex flex-col gap-y-4">
+        {content}
+        <>
+          {isEditing ? (
+            <SkillItem
+              onDeleteSkill={() => {}}
+              onSubmitSkill={handleSubmitNewSkill}
+              onBadgeSelect={handleOpenBadgeDrawer}
+            />
+          ) : (
+            <ImportButton
+              label="AJOUTER"
+              outline={false}
+              onClickEvent={handleClickEvent}
+            />
+          )}
+        </>
+      </div>
+      <RightSideDrawer visible={false} title="Choisir un Badge" id={id}>
+        <p>TOTO</p>
+      </RightSideDrawer>
+    </>
   );
 };
 
