@@ -1,9 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 import Skill from "../../utils/interfaces/skill";
+import { sortArray } from "../../utils/sortArray";
+import { getFixturesBadges } from "../../utils/fixtures/badges";
 
 const initialParcoursState = {
   skills: Array<Skill>(),
+  badges: getFixturesBadges(),
 };
 
 const parcoursSlice = createSlice({
@@ -17,7 +20,13 @@ const parcoursSlice = createSlice({
       state.skills = updatedSkills;
     },
     deleteSkill(state, action) {},
-    editSkillBadge(state, action) {},
+    editSkill(state, action) {
+      const newSkill = action.payload;
+      let updatedSkills = state.skills;
+      updatedSkills = updatedSkills.filter((item) => item.id !== newSkill.id);
+      updatedSkills.push(newSkill);
+      state.skills = sortArray(updatedSkills, "id");
+    },
   },
 });
 

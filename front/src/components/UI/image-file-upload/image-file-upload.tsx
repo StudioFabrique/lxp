@@ -33,7 +33,7 @@ const ImageFileUpload: FC<{
   };
 
   return (
-    <span>
+    <span className="flex flex-col gap-y-2">
       <label htmlFor="fileToUpload">Téléverser une image</label>
       <input
         type="file"

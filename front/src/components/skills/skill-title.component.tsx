@@ -9,7 +9,7 @@ const SkillTitle: FC<Props> = ({ title }) => {
     <div>
       <input
         className="w-full input bg-secondary/20 focus:outline-none hover:cursor-default"
-        defaultValue={title}
+        value={title}
         readOnly={true}
         type="text"
       />
