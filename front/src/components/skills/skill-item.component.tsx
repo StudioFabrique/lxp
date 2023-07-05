@@ -8,9 +8,10 @@ import SkillActions from "./skill-actions.component";
 type Props = {
   skill: Skill;
   onUpdateSkill: (id: number) => void;
+  onUpdateBadge: (index: number) => void;
 };
 
-const SkillItem: FC<Props> = ({ skill, onUpdateSkill }) => {
+const SkillItem: FC<Props> = ({ skill, onUpdateSkill, onUpdateBadge }) => {
   return (
     <>
       <div className="w-full flex flex-col md:flex-row items-center gap-x-8">
@@ -25,7 +26,11 @@ const SkillItem: FC<Props> = ({ skill, onUpdateSkill }) => {
                 : { id: 0, title: "Aucun badge choisi", image: "default" }
             }
           />
-          <SkillActions skillId={skill.id!} onUpdateSkill={onUpdateSkill} />
+          <SkillActions
+            skillId={skill.id!}
+            onUpdateSkill={onUpdateSkill}
+            onUpdateBadge={onUpdateBadge}
+          />
         </div>
       </div>
     </>

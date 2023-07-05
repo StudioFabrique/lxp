@@ -3,14 +3,19 @@ import { FC } from "react";
 type Props = {
   skillId: number;
   onUpdateSkill: (id: number) => void;
+  onUpdateBadge: (index: number) => void;
 };
 
-const SkillActions: FC<Props> = ({ skillId, onUpdateSkill }) => {
+const SkillActions: FC<Props> = ({ skillId, onUpdateSkill, onUpdateBadge }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-      <button className="btn btn-outline btn-secondary font-normal">
+      <button
+        className="btn btn-outline btn-secondary font-normal"
+        onClick={() => onUpdateBadge(skillId)}
+      >
         Modifier le badge
       </button>
+
       <div className="grid grid-cols-1 md:grid-cols-2" onClick={() => {}}>
         <div className="flex justify-center items-center">
           <button

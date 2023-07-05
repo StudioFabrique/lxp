@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useRef } from "react";
+import { FC, ReactNode, useRef } from "react";
 
 type Props = {
   children: ReactNode;
@@ -27,6 +27,12 @@ const RightSideDrawer: FC<Props> = ({
     }
   };
 
+  const handleToggle = (event: any) => {
+    if (onCloseDrawer && checkboxRef.current?.checked === false) {
+      onCloseDrawer(id);
+    }
+  };
+
   return (
     <div className="h-full drawer drawer-end z-50">
       <input
@@ -34,6 +40,7 @@ const RightSideDrawer: FC<Props> = ({
         type="checkbox"
         className="drawer-toggle"
         ref={checkboxRef}
+        onChange={handleToggle}
       />
       <div className="drawer-content">
         {/* Page content here */}
