@@ -9,13 +9,12 @@ import Badge from "../../utils/interfaces/badge";
 
 type Props = {
   skill?: Skill;
-  onCloseDrawer: () => void;
   onSubmit: (skill: Skill) => void;
 };
 
 const badges = getFixturesBadges();
 
-const SkillForm: FC<Props> = ({ skill, onCloseDrawer, onSubmit }) => {
+const SkillForm: FC<Props> = ({ skill, onSubmit }) => {
   const [badge, setBadge] = useState<Badge | undefined>(skill?.badge);
 
   const { value: title } = useInput(
@@ -93,7 +92,6 @@ const SkillForm: FC<Props> = ({ skill, onCloseDrawer, onSubmit }) => {
       onSubmit({ title: title.value, badge });
       title.reset();
       setBadge(undefined);
-      onCloseDrawer();
     } else {
       console.log("oops");
     }

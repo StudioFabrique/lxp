@@ -8,12 +8,17 @@ const AddRoleDrawer: FC<{
   roleTab: Role;
   onGroupRolesChange: (updatedRoles: Array<Role>) => void;
 }> = ({ roleTab, onGroupRolesChange }) => {
+  const handleCloseDrawer = (idDrawer: string) => {
+    document.getElementById(idDrawer)?.click();
+  };
+
   return (
     <DrawerProvider>
       <RightSideDrawer
         id="add-role"
         visible={false}
         title="Ajouter un Rôle à un Utilisateur"
+        onCloseDrawer={handleCloseDrawer}
       >
         <DropDownRoles
           roleTab={roleTab}

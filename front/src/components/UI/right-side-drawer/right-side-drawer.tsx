@@ -1,11 +1,11 @@
-import React, { FC, ReactNode, useContext, useEffect, useRef } from "react";
-import { DrawerContext } from "../../../store/drawer.store";
+import React, { FC, ReactNode, useRef } from "react";
 
 type Props = {
   children: ReactNode;
   visible?: boolean;
   title: string;
   id?: string;
+  onCloseDrawer?: (id: string) => void;
 };
 
 const RightSideDrawer: FC<Props> = ({
@@ -13,23 +13,19 @@ const RightSideDrawer: FC<Props> = ({
   visible = true,
   title,
   id = "my-drawer-4",
+  onCloseDrawer,
 }) => {
   const checkboxRef = useRef<HTMLInputElement | null>(null);
-  const { handleShowDrawer } = useContext(DrawerContext);
 
   const handleCloseDrawer = () => {
-    if (checkboxRef.current) {
-      checkboxRef.current.checked = false;
+    if (onCloseDrawer) {
+      onCloseDrawer(id);
+    } else {
+      if (checkboxRef.current) {
+        checkboxRef.current.checked = false;
+      }
     }
   };
-
-  useEffect(() => {
-    if (checkboxRef.current!.checked) {
-      handleShowDrawer(true);
-    } else {
-      handleShowDrawer(false);
-    }
-  }, [checkboxRef.current?.checked, handleShowDrawer]);
 
   return (
     <div className="h-full drawer drawer-end z-50">
