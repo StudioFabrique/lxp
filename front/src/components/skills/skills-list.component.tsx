@@ -9,7 +9,6 @@ import ImportButton from "./import-button.component";
 import SkillForm from "./skill-form";
 import Badge from "../../utils/interfaces/badge";
 import BadgeUPdate from "../badge/badge-update.component";
-import CreateBadge from "../badge/create-badge-drawer";
 
 type Props = {};
 
@@ -123,7 +122,11 @@ const SkillsList: FC<Props> = () => {
         title="Ajouter une nouvelle compétence"
         id={id}
       >
-        {isAddingSkill ? <CreateBadge /> : null}
+        {isAddingSkill ? (
+          /* <CreateBadge onSubmitNewBadge={createBadge} /> */ <SkillForm
+            onSubmit={addNewSkill}
+          />
+        ) : null}
       </RightSideDrawer>
 
       <RightSideDrawer

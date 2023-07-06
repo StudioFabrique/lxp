@@ -27,6 +27,13 @@ const parcoursSlice = createSlice({
       updatedSkills.push(newSkill);
       state.skills = sortArray(updatedSkills, "id");
     },
+    addBadge(state, action) {
+      const newBadge = action.payload;
+      let updatedBadges = state.badges;
+      updatedBadges.push({ ...newBadge, id: updatedBadges.length });
+      state.badges = updatedBadges;
+      console.log(state.badges);
+    },
   },
 });
 

@@ -1,26 +1,10 @@
-/* export function convertPNGToBlob  (file:File)  {
-    return new Promise((resolve, reject) => {
+export function convertPngToBytes(file: File) {
+  const toBase64 = (file: File) =>
+    new Promise((resolve, reject) => {
       const reader = new FileReader();
-
-      reader.onloadend = () => {
-        const base64Data = reader.result!.split(",")[1];
-        const byteCharacters = atob(base64Data);
-        const byteArrays = [];
-
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteArrays.push(byteCharacters.charCodeAt(i));
-        }
-
-        const byteArray = new Uint8Array(byteArrays);
-        const blob = new Blob([byteArray], { type: "image/png" });
-
-        resolve(blob);
-      };
-
-      reader.onerror = () => {
-        reject(new Error("Failed to convert PNG to Blob"));
-      };
-
       reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
     });
-  }; */
+  return toBase64;
+}
