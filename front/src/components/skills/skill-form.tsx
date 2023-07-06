@@ -1,12 +1,12 @@
-import { FC, FormEvent, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { FC, FormEvent, useCallback, useMemo, useState } from "react";
 
 import Skill from "../../utils/interfaces/skill";
 import useInput from "../../hooks/use-input";
 import { regexGeneric } from "../../utils/constantes";
 import Badge from "../../utils/interfaces/badge";
 import BadgeList from "../badge/badge-list.component";
-import CreateBadgeDrawer from "../badge/create-badge-drawer";
+import CreateBadge from "../badge/create-badge-drawer";
+import Wrapper from "../UI/wrapper/wrapper.component";
 
 type Props = {
   skill?: Skill;
@@ -14,8 +14,12 @@ type Props = {
 };
 
 const SkillForm: FC<Props> = ({ skill, onSubmit }) => {
-  const badges = useSelector((state: any) => state.parcours.badges);
+  //const badges = useSelector((state: any) => state.parcours.badges);
   const [badge, setBadge] = useState<Badge | undefined>(skill?.badge);
+
+  const updatedBadge = useMemo(() => {
+    if (badge) return badge;
+  }, [badge]);
 
   const { value: title } = useInput(
     (value) => regexGeneric.test(value),
@@ -26,17 +30,8 @@ const SkillForm: FC<Props> = ({ skill, onSubmit }) => {
     setBadge(newBadge);
   };
 
-  const createBadge = () => {
-    document.getElementById("create-badge")?.click();
-  };
-
   let badgesContent = (
-    <BadgeList
-      badgeList={badges}
-      onSubmitBadge={handleUpdateBadge}
-      selectedBadge={badge}
-      onCreateBadge={createBadge}
-    />
+    <BadgeList onSubmitBadge={handleUpdateBadge} selectedBadge={updatedBadge} />
   );
 
   let formIsValid = title.isValid && badge;
@@ -53,36 +48,41 @@ const SkillForm: FC<Props> = ({ skill, onSubmit }) => {
   };
 
   return (
-    <>
-      <form className="flex flex-col px-4" onSubmit={handleSubmit}>
-        <div className="flex flex-col gap-y-2">
-          <label htmlFor="title">Contenu de compétence *</label>
-          <textarea
-            className="textarea focus:outline-none bg-secondary/20"
-            value={title.value}
-            onChange={title.textAreaChangeHandler}
-            onBlur={title.valueBlurHandler}
-          />
-        </div>
-        <div className="divider" />
-        <div className="flex flex-col gap-y-4">
-          <p>Choisir un badge de compétence</p>
-          <div>{badgesContent}</div>
-        </div>
-        <div className="w-full flex justify-end mt-8">
-          <div className="flex gap-x-4">
-            <button
-              className="btn btn-outline btn-sm btn-primary font-normal w-32"
-              type="reset"
-              onClick={() => {}}
-            >
-              Annuler
-            </button>
-            <button className="btn btn-primary btn-sm w-32">Valider</button>
+    <div className="flesx flex-col gap-y-4">
+      <form className="flex flex-col px-4 gap-y-4" onSubmit={handleSubmit}>
+        <Wrapper>
+          <div className="flex flex-col gap-y-2">
+            <label htmlFor="title">Contenu de Compétence *</label>
+            <textarea
+              className="textarea focus:outline-none bg-secondary/20"
+              value={title.value}
+              onChange={title.textAreaChangeHandler}
+              onBlur={title.valueBlurHandler}
+            />
           </div>
+        </Wrapper>
+
+        <Wrapper>
+          <div className="flex flex-col gap-y-2">
+            <p>Choisir un badge *</p>
+            {badgesContent}
+          </div>
+        </Wrapper>
+
+        <div className="w-full flex justify-between mt-4">
+          <button
+            className="btn btn-outline btn-sm btn-primary font-normal w-32"
+            type="reset"
+            onClick={() => {}}
+          >
+            Annuler
+          </button>
+          <button className="btn btn-primary btn-sm w-32">Valider</button>
         </div>
       </form>
-    </>
+      <div className="divider my-8">Choisir un nouveau badge svp</div>
+      <CreateBadge />
+    </div>
   );
 };
 
