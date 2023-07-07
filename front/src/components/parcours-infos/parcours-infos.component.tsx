@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import useInput from "../../hooks/use-input";
 import { regexGeneric } from "../../utils/constantes";
 import { autoSubmitTimer } from "../../config/auto-submit-timer";
@@ -58,9 +58,8 @@ const ParcoursInfos: FC<{
         <div className="flex flex-col gap-y-1">
           <label htmlFor="description">Description</label>
           <textarea
-            className="input w-full"
+            className="textarea w-full"
             name="description"
-            rows={10}
             value={description.value}
             onChange={description.textAreaChangeHandler}
             onBlur={description.valueBlurHandler}

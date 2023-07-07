@@ -1,49 +1,49 @@
-import SkillInput from "./skill-input.component";
-import SkillBadge from "./skill-badge.component";
-import SkillActions from "./skill-actions.component";
+import { FC } from "react";
+
 import Skill from "../../utils/interfaces/skill";
-import { FC, useState } from "react";
+import SkillTitle from "./skill-title.component";
+import SkillBadge from "./skill-badge";
+import SkillActions from "./skill-actions.component";
 
 type Props = {
-  skill?: Skill;
-  onBadgeSelect: () => void;
-  onDeleteSkill: (skillId: number) => void;
-  onSubmitSkill: (skill: Skill) => void;
+  skill: Skill;
+  onUpdateSkill: (id: number) => void;
+  onUpdateBadge: (index: number) => void;
+  onDeleteSkill: (id: number) => void;
 };
 
 const SkillItem: FC<Props> = ({
   skill,
-  onBadgeSelect,
+  onUpdateSkill,
+  onUpdateBadge,
   onDeleteSkill,
-  onSubmitSkill,
 }) => {
-  const [newSkill, setNewSkill] = useState<Skill | undefined>(skill);
-
-  const handleSumbitSkillTitle = (value: string) => {
-    const updatedSkill: Skill = { ...newSkill, title: value };
-    setNewSkill(updatedSkill);
-    onSubmitSkill(updatedSkill);
-  };
-
   return (
-    <div className="w-full flex gap-x-4">
-      <SkillInput
-        title={skill && skill.title ? skill.title : ""}
-        onSubmiSkill={handleSumbitSkillTitle}
-      />
-      <SkillBadge
-        badge={skill && skill.badge ? skill.badge : undefined}
-        onBadgeSelect={onBadgeSelect}
-      />
-      {skill && skill.id ? (
-        <SkillActions skillId={skill.id} onDeleteSkill={onDeleteSkill} />
-      ) : (
-        <button className="btn btn-primary btn-sm invisible">
-          <div className="w-4 h-4" />
-        </button>
-      )}
-    </div>
+    <>
+      <div className="w-full flex flex-col md:flex-row items-center gap-x-8">
+        <div className="flex-1">
+          <SkillTitle title={skill.title} />
+        </div>
+        <div className="flex gap-x-8 items-center">
+          <SkillBadge
+            badge={
+              skill.badge
+                ? skill.badge!
+                : { id: 0, title: "Aucun badge choisi", image: "default" }
+            }
+          />
+          <SkillActions
+            skillId={skill.id!}
+            onUpdateSkill={onUpdateSkill}
+            onUpdateBadge={onUpdateBadge}
+            onDeleteSkill={onDeleteSkill}
+          />
+        </div>
+      </div>
+    </>
   );
 };
 
 export default SkillItem;
+
+// TODO: inclure l'image par défaut

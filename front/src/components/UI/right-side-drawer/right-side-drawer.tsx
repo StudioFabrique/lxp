@@ -1,11 +1,11 @@
-import React, { FC, ReactNode, useContext, useEffect, useRef } from "react";
-import { DrawerContext } from "../../../store/drawer.store";
+import { FC, ReactNode, useRef } from "react";
 
 type Props = {
   children: ReactNode;
   visible?: boolean;
   title: string;
   id?: string;
+  onCloseDrawer?: (id: string) => void;
 };
 
 const RightSideDrawer: FC<Props> = ({
@@ -13,33 +13,36 @@ const RightSideDrawer: FC<Props> = ({
   visible = true,
   title,
   id = "my-drawer-4",
+  onCloseDrawer,
 }) => {
   const checkboxRef = useRef<HTMLInputElement | null>(null);
-  const { handleShowDrawer } = useContext(DrawerContext);
 
   const handleCloseDrawer = () => {
-    if (checkboxRef.current) {
-      checkboxRef.current.checked = false;
+    if (onCloseDrawer) {
+      onCloseDrawer(id);
+    } else {
+      if (checkboxRef.current) {
+        checkboxRef.current.checked = false;
+      }
     }
   };
 
-  useEffect(() => {
-    if (checkboxRef.current!.checked) {
-      handleShowDrawer(true);
-    } else {
-      handleShowDrawer(false);
+  const handleToggle = (event: any) => {
+    if (onCloseDrawer && checkboxRef.current?.checked === false) {
+      onCloseDrawer(id);
     }
-  }, [checkboxRef.current?.checked, handleShowDrawer]);
+  };
 
   return (
-    <div className="h-full drawer drawer-end z-50">
+    <div className="h-full drawer drawer-end z-50 overflow-y-auto">
       <input
         id={id}
         type="checkbox"
         className="drawer-toggle"
         ref={checkboxRef}
+        onChange={handleToggle}
       />
-      <div className="drawer-content">
+      <div className="drawer-content overflow-y-auto">
         {/* Page content here */}
         {visible ? (
           <label
@@ -57,14 +60,14 @@ const RightSideDrawer: FC<Props> = ({
           </label>
         ) : null}
       </div>
-      <div className="drawer-side">
+      <div className="drawer-side overflow-y-auto">
         <label
           htmlFor={id}
-          className="drawer-overlay fixed top-0 left-0 w-screen h-full"
+          className="drawer-overlay fixed top-0 left-0 w-screen min-h-screen overflow-y-auto"
         ></label>
-        <ul className="menu p-4 w-6/6 flex flex-col fixed top-0 right-0 h-screen bg-base-200 text-base-content">
+        <ul className="block menu p-4 w-6/6 top-0 right-0 min-h-screen bg-base-200 text-base-content rounded-l-2xl">
           {/* Sidebar content here */}
-          <div className="flex items-center gap-x-4">
+          <div className="flex items-center gap-x-4 overflow-y-auto">
             <div onClick={handleCloseDrawer}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
