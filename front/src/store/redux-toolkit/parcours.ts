@@ -2,12 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import Skill from "../../utils/interfaces/skill";
 import { sortArray } from "../../utils/sortArray";
-import { getFixturesBadges } from "../../utils/fixtures/badges";
 
 const initialParcoursState = {
   skills: Array<Skill>(),
-  badges: getFixturesBadges(),
+  badges: Array<any>(),
 };
+
+let i = 0;
 
 const parcoursSlice = createSlice({
   name: "parcours",
@@ -39,11 +40,23 @@ const parcoursSlice = createSlice({
       updatedBadges.push({ ...newBadge, id: updatedBadges.length });
       state.badges = updatedBadges;
     },
+    importBadges(state, action) {
+      const importedBadges = addIdToObject(action.payload);
+      const badges = state.badges;
+      importedBadges.forEach((item) => badges.push(item));
+      state.badges = badges;
+    },
+    validateBadge(state, action) {
+      const updatedBadges = state.badges.filter(
+        (item) => item.id !== action.payload.id
+      );
+      updatedBadges.push(action.payload);
+      state.badges = updatedBadges;
+    },
   },
 });
 
 function addIdToObject(items: Array<any>) {
-  let i = 0;
   return items.map((item: any) => {
     i++;
     return { ...item, id: i };
