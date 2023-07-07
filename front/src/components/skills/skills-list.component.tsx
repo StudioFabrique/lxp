@@ -22,11 +22,25 @@ const SkillsList: FC<Props> = () => {
   const [skillToEdit, setSkillToEdit] = useState<Skill | null>(null);
   const [isUpdatingBadge, setIsUpdatingBadge] = useState(false);
   const [badgeToEdit, setBadgeToEdit] = useState<Skill | null>(null);
+  const [itemToUpdate, setItemToUpdate] = useState<any | null>(null);
+  const [activeDrawer, setActiveDrawer] = useState<string | null>(null);
+  const [title, setTitle] = useState<string | null>(null);
 
   const addNewSkill = (skill: Skill) => {
     dispatch(parcoursAction.addSkill(skill));
     closeAddingSkill();
   };
+
+  const handleAddSkill = () => {
+    setTitle("Ajouter une nouvelle compétence");
+    setActiveDrawer("badge-drawer");
+  };
+
+  useEffect(() => {
+    if (activeDrawer) {
+      document.getElementById(activeDrawer)?.click();
+    }
+  }, [activeDrawer]);
 
   const openAddingSkill = () => {
     document.getElementById(id)?.click();
@@ -114,22 +128,18 @@ const SkillsList: FC<Props> = () => {
       <ImportButton
         label="AJOUTER"
         outline={false}
-        onClickEvent={openAddingSkill}
+        onClickEvent={handleAddSkill}
       />
 
-      <RightSideDrawer
-        visible={false}
-        title="Ajouter une nouvelle compétence"
-        id={id}
-      >
-        {isAddingSkill ? (
-          /* <CreateBadge onSubmitNewBadge={createBadge} /> */ <SkillForm
-            onSubmit={addNewSkill}
-          />
-        ) : null}
-      </RightSideDrawer>
+      {activeDrawer && title ? (
+        <RightSideDrawer visible={false} title={title} id={activeDrawer}>
+          {activeDrawer === "badge-drawer" ? (
+            <SkillForm onSubmit={addNewSkill} />
+          ) : null}
+        </RightSideDrawer>
+      ) : null}
 
-      <RightSideDrawer
+      {/* <RightSideDrawer
         visible={false}
         title="Modifier la compétence"
         id="update-skill"
@@ -152,7 +162,7 @@ const SkillsList: FC<Props> = () => {
             onSubmitNewBadge={submitNewBadge}
           />
         ) : null}
-      </RightSideDrawer>
+        </RightSideDrawer> */}
     </>
   );
 };
