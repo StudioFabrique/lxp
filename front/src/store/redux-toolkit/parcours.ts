@@ -19,7 +19,13 @@ const parcoursSlice = createSlice({
       updatedSkills = addIdToObject(updatedSkills);
       state.skills = updatedSkills;
     },
-    deleteSkill(state, action) {},
+    deleteSkill(state, action) {
+      const skillToDelete = action.payload;
+      const updatedSkills = state.skills.filter(
+        (item) => item.id !== skillToDelete
+      );
+      state.skills = updatedSkills;
+    },
     editSkill(state, action) {
       const newSkill = action.payload;
       let updatedSkills = state.skills;
@@ -32,7 +38,6 @@ const parcoursSlice = createSlice({
       let updatedBadges = state.badges;
       updatedBadges.push({ ...newBadge, id: updatedBadges.length });
       state.badges = updatedBadges;
-      console.log(state.badges);
     },
   },
 });
