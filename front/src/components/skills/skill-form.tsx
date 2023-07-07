@@ -1,4 +1,4 @@
-import React, { FC, FormEvent, useCallback, useMemo, useState } from "react";
+import { FC, FormEvent, useState } from "react";
 
 import Skill from "../../utils/interfaces/skill";
 import useInput from "../../hooks/use-input";
@@ -11,15 +11,11 @@ import Wrapper from "../UI/wrapper/wrapper.component";
 type Props = {
   skill?: Skill;
   onSubmit: (skill: Skill) => void;
+  onCloseDrawer: (id: string) => void;
 };
 
-const SkillForm: FC<Props> = ({ skill, onSubmit }) => {
-  //const badges = useSelector((state: any) => state.parcours.badges);
+const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   const [badge, setBadge] = useState<Badge | undefined>(skill?.badge);
-
-  const updatedBadge = useMemo(() => {
-    if (badge) return badge;
-  }, [badge]);
 
   const { value: title } = useInput(
     (value) => regexGeneric.test(value),
@@ -30,8 +26,16 @@ const SkillForm: FC<Props> = ({ skill, onSubmit }) => {
     setBadge(newBadge);
   };
 
+  const handleCancel = () => {
+    onCloseDrawer(skill ? "update-skill" : "badge-drawer");
+    if (!skill) {
+      setBadge(undefined);
+      title.reset();
+    }
+  };
+
   let badgesContent = (
-    <BadgeList onSubmitBadge={handleUpdateBadge} selectedBadge={updatedBadge} />
+    <BadgeList onSubmitBadge={handleUpdateBadge} selectedBadge={badge} />
   );
 
   let formIsValid = title.isValid && badge;
@@ -73,7 +77,7 @@ const SkillForm: FC<Props> = ({ skill, onSubmit }) => {
           <button
             className="btn btn-outline btn-sm btn-primary font-normal w-32"
             type="reset"
-            onClick={() => {}}
+            onClick={handleCancel}
           >
             Annuler
           </button>

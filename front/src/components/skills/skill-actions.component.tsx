@@ -4,9 +4,15 @@ type Props = {
   skillId: number;
   onUpdateSkill: (id: number) => void;
   onUpdateBadge: (index: number) => void;
+  onDeleteSkill: (id: number) => void;
 };
 
-const SkillActions: FC<Props> = ({ skillId, onUpdateSkill, onUpdateBadge }) => {
+const SkillActions: FC<Props> = ({
+  skillId,
+  onUpdateSkill,
+  onUpdateBadge,
+  onDeleteSkill,
+}) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
       <button
@@ -40,7 +46,10 @@ const SkillActions: FC<Props> = ({ skillId, onUpdateSkill, onUpdateBadge }) => {
         </div>
 
         <div className="flex justify-center items-center">
-          <button className="btn btn-primary" onClick={() => {}}>
+          <button
+            className="btn btn-primary"
+            onClick={() => onDeleteSkill(skillId)}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

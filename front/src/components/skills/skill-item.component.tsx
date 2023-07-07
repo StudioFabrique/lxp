@@ -9,9 +9,15 @@ type Props = {
   skill: Skill;
   onUpdateSkill: (id: number) => void;
   onUpdateBadge: (index: number) => void;
+  onDeleteSkill: (id: number) => void;
 };
 
-const SkillItem: FC<Props> = ({ skill, onUpdateSkill, onUpdateBadge }) => {
+const SkillItem: FC<Props> = ({
+  skill,
+  onUpdateSkill,
+  onUpdateBadge,
+  onDeleteSkill,
+}) => {
   return (
     <>
       <div className="w-full flex flex-col md:flex-row items-center gap-x-8">
@@ -30,6 +36,7 @@ const SkillItem: FC<Props> = ({ skill, onUpdateSkill, onUpdateBadge }) => {
             skillId={skill.id!}
             onUpdateSkill={onUpdateSkill}
             onUpdateBadge={onUpdateBadge}
+            onDeleteSkill={onDeleteSkill}
           />
         </div>
       </div>
