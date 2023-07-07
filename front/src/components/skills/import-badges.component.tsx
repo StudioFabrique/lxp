@@ -4,6 +4,14 @@ import { useDispatch } from "react-redux";
 import { parcoursAction } from "../../store/redux-toolkit/parcours";
 import { Toaster, toast } from "react-hot-toast";
 
+/**
+ * input de type file pour importer des images pour des badges
+ * ce composant à le style d'un bouton
+ * label : texte affiché sur le bouton
+ * outline : par défaut le style du bouton est outline, si on passe la prop outline={false} le bouton à une background-color
+ * une fois les fichiers sélectionnés ils sont ajoutés à la liste des badges stockés dans le store parcours géré par redux-toolkit
+ */
+
 type Props = {
   label: string;
   outline?: boolean;
