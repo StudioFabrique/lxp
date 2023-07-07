@@ -7,6 +7,9 @@ import Badge from "../../utils/interfaces/badge";
 import BadgeList from "../badge/badge-list.component";
 import CreateBadge from "../badge/create-badge-drawer";
 import Wrapper from "../UI/wrapper/wrapper.component";
+import BadgeValidation from "../badge/badge-validation.component";
+import { useDispatch } from "react-redux";
+import { parcoursAction } from "../../store/redux-toolkit/parcours";
 
 type Props = {
   skill?: Skill;
@@ -16,13 +19,16 @@ type Props = {
 
 const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   const [badge, setBadge] = useState<Badge | undefined>(skill?.badge);
+  const dispatch = useDispatch();
+
+  console.log({ badge });
 
   const { value: title } = useInput(
     (value) => regexGeneric.test(value),
     skill?.title || ""
   );
 
-  const handleUpdateBadge = (newBadge: Badge) => {
+  const handleUpdateBadge = (newBadge: any) => {
     setBadge(newBadge);
   };
 
@@ -51,6 +57,11 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
     }
   };
 
+  const validateBadge = (newBadge: Badge) => {
+    dispatch(parcoursAction.validateBadge(newBadge));
+    setBadge(newBadge);
+  };
+
   return (
     <div className="flesx flex-col gap-y-4">
       <form className="flex flex-col px-4 gap-y-4" onSubmit={handleSubmit}>
@@ -73,6 +84,14 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
           </div>
         </Wrapper>
 
+        {badge && !badge.title ? (
+          <>
+            <div className="divider my-4">Veuillez valider le badge svp</div>
+            <BadgeValidation badge={badge} onValidateBadge={validateBadge} />
+            <div className="divider my-4" />
+          </>
+        ) : null}
+
         <div className="w-full flex justify-between mt-4">
           <button
             className="btn btn-outline btn-sm btn-primary font-normal w-32"
@@ -84,7 +103,7 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
           <button className="btn btn-primary btn-sm w-32">Valider</button>
         </div>
       </form>
-      <div className="divider my-8">Choisir un nouveau badge svp</div>
+      <div className="divider my-8">Créer un nouveau badge svp</div>
       <CreateBadge />
     </div>
   );

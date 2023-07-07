@@ -1,4 +1,5 @@
 import { ChangeEvent, FC, useEffect, useState } from "react";
+import { validateImageFile } from "../../../utils/validate-image-file";
 
 const ImageFileUpload: FC<{
   maxSize: number;
@@ -12,26 +13,11 @@ const ImageFileUpload: FC<{
     }
   }, [file, onSetFile]);
 
-  const validateImageFile = (selectedFile: File) => {
-    const allowedExtensions = /(\.jpeg|\.jpg|\.png|\.gif|\.webp)$/i;
-    const maxSizeInBytes = maxSize; // 2 Mo
-
-    if (!allowedExtensions.test(selectedFile.name)) {
-      return false; // Extension de fichier non autorisée
-    }
-
-    if (selectedFile.size > maxSizeInBytes) {
-      return false; // Fichier trop volumineux
-    }
-
-    return true; // Fichier valide
-  };
-
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const selectedFile = event.target.files[0];
       if (selectedFile) {
-        if (validateImageFile(selectedFile)) {
+        if (validateImageFile(selectedFile, maxSize)) {
           setFile(selectedFile);
         }
       } else {

@@ -1,9 +1,9 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 import useInput from "../../hooks/use-input";
 import { regexGeneric } from "../../utils/constantes";
 import ImageFileUpload from "../UI/image-file-upload/image-file-upload";
-import { useDispatch } from "react-redux";
 import { parcoursAction } from "../../store/redux-toolkit/parcours";
 import useHttp from "../../hooks/use-http";
 import HttpDrawerButton from "../UI/http-drawer-button/http-drawer-button.component";
@@ -23,8 +23,6 @@ const CreateBadge = () => {
   const submitNewBadge = (event: FormEvent) => {
     event.preventDefault();
     if (formIsValid) {
-      console.log("coucou");
-
       dispatch(
         parcoursAction.addBadge({
           title: title.value,
