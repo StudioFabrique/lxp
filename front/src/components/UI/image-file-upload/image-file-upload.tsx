@@ -1,18 +1,26 @@
-import React, { ChangeEvent, FC } from "react";
+import { ChangeEvent, FC, useEffect, useState } from "react";
 
 const ImageFileUpload: FC<{
   maxSize: number;
   onSetFile: (file: File) => void;
 }> = ({ maxSize, onSetFile }) => {
-  const validateImageFile = (file: File) => {
+  const [file, setFile] = useState<File | null>(null);
+
+  useEffect(() => {
+    if (file) {
+      onSetFile(file);
+    }
+  }, [file, onSetFile]);
+
+  const validateImageFile = (selectedFile: File) => {
     const allowedExtensions = /(\.jpeg|\.jpg|\.png|\.gif|\.webp)$/i;
     const maxSizeInBytes = maxSize; // 2 Mo
 
-    if (!allowedExtensions.test(file.name)) {
+    if (!allowedExtensions.test(selectedFile.name)) {
       return false; // Extension de fichier non autorisée
     }
 
-    if (file.size > maxSizeInBytes) {
+    if (selectedFile.size > maxSizeInBytes) {
       return false; // Fichier trop volumineux
     }
 
@@ -24,7 +32,7 @@ const ImageFileUpload: FC<{
       const selectedFile = event.target.files[0];
       if (selectedFile) {
         if (validateImageFile(selectedFile)) {
-          onSetFile(selectedFile);
+          setFile(selectedFile);
         }
       } else {
         console.log("Fichier non autorisé pour une raison ou une autre.");
@@ -33,7 +41,7 @@ const ImageFileUpload: FC<{
   };
 
   return (
-    <span>
+    <span className="flex flex-col gap-y-2">
       <label htmlFor="fileToUpload">Téléverser une image</label>
       <input
         type="file"

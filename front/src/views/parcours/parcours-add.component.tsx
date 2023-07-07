@@ -1,4 +1,4 @@
-import ParcoursHeader from "../../components/groups-header/groups-header.component";
+import ParcoursHeader from "../../components/parcours-header/parcours-header.component";
 import ParcoursForm from "../../components/parcours-form/parcours-form.component";
 import Skills from "../../components/skills/skills.component";
 import CanAccessPage from "../../components/UI/can/can-access-page.component";
