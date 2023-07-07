@@ -1,10 +1,10 @@
 import { FC, useState } from "react";
+import { useDispatch } from "react-redux";
 
 import BadgeList from "./badge-list.component";
 import Badge from "../../utils/interfaces/badge";
 import CreateBadge from "./create-badge-drawer";
 import BadgeValidation from "./badge-validation.component";
-import { useDispatch } from "react-redux";
 import { parcoursAction } from "../../store/redux-toolkit/parcours";
 
 type Props = {
