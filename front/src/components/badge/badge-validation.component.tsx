@@ -11,9 +11,13 @@ type Props = {
 };
 
 const BadgeValidation: FC<Props> = ({ badge, onValidateBadge }) => {
-  const { value: title } = useInput((value) => regexGeneric.test(value));
-  const { value: description } = useInput((value) =>
-    regexOptionalGeneric.test(value)
+  const { value: title } = useInput(
+    (value) => regexGeneric.test(value),
+    badge.title
+  );
+  const { value: description } = useInput(
+    (value) => regexOptionalGeneric.test(value),
+    badge.description
   );
 
   let inputStyle = () => {
