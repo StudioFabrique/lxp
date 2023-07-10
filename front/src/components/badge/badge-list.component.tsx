@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import Badge from "../../utils/interfaces/badge";
 import ImportBadges from "../skills/import-badges.component";
 import BadgeItem from "./badge-item.component";
-import UploadIcon from "../UI/upload-icon.component";
 import { validateImageFile } from "../../utils/validate-image-file";
 import { maxSize } from "../../config/badge-image-max-size";
 import { parcoursAction } from "../../store/redux-toolkit/parcours";
+import UploadIcon from "../UI/svg-icons/upload-icon.component";
 
 type Props = {
   selectedBadge?: any;
@@ -74,7 +74,7 @@ const BadgeList: FC<Props> = ({ selectedBadge, onSubmitBadge }) => {
                         className="indicator-item avatar bg-info rounded-full p-1 cursor-pointer"
                         onClick={uploadFile}
                       >
-                        <UploadIcon />
+                        <UploadIcon size={4} color="neutral" />
                       </span>
                       <BadgeItem
                         badge={item}

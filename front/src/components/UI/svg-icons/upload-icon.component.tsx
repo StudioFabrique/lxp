@@ -1,4 +1,13 @@
-const UploadIcon = () => {
+import { FC } from "react";
+
+type Props = {
+  size: number;
+  color: string;
+};
+
+const UploadIcon: FC<Props> = ({ size, color }) => {
+  let style = `w-${size} h-${size} text-${color}`;
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -6,7 +15,7 @@ const UploadIcon = () => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="w-4 h-4 text-neutral"
+      className={style}
     >
       <path
         strokeLinecap="round"
