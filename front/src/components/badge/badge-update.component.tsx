@@ -16,6 +16,8 @@ const BadgeUpdate: FC<Props> = ({ badge, onSubmitNewBadge }) => {
   const [updatedBadge, setUpdatedBadge] = useState<Badge | null>(badge);
   const dispatch = useDispatch();
 
+  console.log("toto", badge);
+
   const submitNewBadge = (newBadge: Badge) => {
     if (newBadge && newBadge.title) {
       onSubmitNewBadge(newBadge);
@@ -25,24 +27,29 @@ const BadgeUpdate: FC<Props> = ({ badge, onSubmitNewBadge }) => {
   };
 
   const validateBadge = (validBadge: Badge) => {
-    dispatch(parcoursAction.validateBadge(validBadge));
-    submitNewBadge(validBadge);
+    let newBadge = {
+      ...updatedBadge!,
+      title: validBadge.title,
+      description: validBadge.description,
+    };
+    dispatch(parcoursAction.validateBadge(newBadge));
+    submitNewBadge(newBadge);
   };
 
   return (
     <div className="flex flex-col gap-y-4">
       <div>Choisir un nouveau badge</div>
-      <BadgeList selectedBadge={updatedBadge} onSubmitBadge={submitNewBadge} />
-      {updatedBadge && !updatedBadge.title ? (
-        <>
-          <div className="divider my-4">
-            Veuillez valider le nouveau badge svp
-          </div>
+      <BadgeList selectedBadge={updatedBadge} onSubmitBadge={setUpdatedBadge} />
+      {updatedBadge ? (
+        <div className="my-4">
+          {!updatedBadge.title ? (
+            <div>Veuillez valider le nouveau badge svp</div>
+          ) : null}
           <BadgeValidation
             badge={updatedBadge}
             onValidateBadge={validateBadge}
           />
-        </>
+        </div>
       ) : null}
       <div className="divider my-8">Créer un nouveau badge</div>
       <CreateBadge />
