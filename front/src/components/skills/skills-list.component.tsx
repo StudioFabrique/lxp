@@ -5,7 +5,6 @@ import { parcoursAction } from "../../store/redux-toolkit/parcours";
 import Skill from "../../utils/interfaces/skill";
 import SkillItem from "./skill-item.component";
 import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
-import ImportButton from "./import-button.component";
 import SkillForm from "./skill-form";
 import Badge from "../../utils/interfaces/badge";
 import BadgeUpdate from "../badge/badge-update.component";
