@@ -1,9 +1,13 @@
-import React, { FC } from "react";
+import React, { ChangeEvent, FC, useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import Badge from "../../utils/interfaces/badge";
-import badgeImg from "../../assets/images/tmp/badge-react.png";
-import { useSelector } from "react-redux";
 import ImportBadges from "../skills/import-badges.component";
+import BadgeItem from "./badge-item.component";
+import UploadIcon from "../UI/upload-icon.component";
+import { validateImageFile } from "../../utils/validate-image-file";
+import { maxSize } from "../../config/badge-image-max-size";
+import { parcoursAction } from "../../store/redux-toolkit/parcours";
 
 type Props = {
   selectedBadge?: any;
@@ -12,71 +16,93 @@ type Props = {
 
 const BadgeList: FC<Props> = ({ selectedBadge, onSubmitBadge }) => {
   const badgeList = useSelector((state: any) => state.parcours.badges);
-
-  console.log({ badgeList });
+  const fileRef = useRef<HTMLInputElement | null>(null);
+  const dispatch = useDispatch();
+  const [updatedFile, setUdpatedFile] = useState(false);
 
   const handleUpdateBadge = (newBadge: Badge) => {
     onSubmitBadge(newBadge);
   };
 
-  let badgeStyle =
-    "w-[75px] h-[75px] bg-secondary/20 p-4 rounded-xl flex justify-center items-center hover:scale-105 hover:bg-secondary/50";
-
-  const setBadgeStyle = (badgeId: number) => {
-    if (selectedBadge) {
-      return badgeId === selectedBadge.id
-        ? badgeStyle + " border border-primary"
-        : badgeStyle;
-    } else {
-      return badgeStyle;
+  const uploadFile = () => {
+    if (fileRef) {
+      fileRef.current?.click();
     }
   };
+
+  console.log("badge list rendering");
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const selectedFile = event.target.files[0];
+      if (selectedFile) {
+        if (validateImageFile(selectedFile, maxSize)) {
+          dispatch(
+            parcoursAction.updateBadgeImage({
+              id: selectedBadge.id,
+              image: URL.createObjectURL(selectedFile),
+            })
+          );
+          setUdpatedFile(true);
+        }
+      } else {
+        console.log("Fichier non autorisé pour une raison ou une autre.");
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (updatedFile) {
+      onSubmitBadge(
+        badgeList.find((item: Badge) => item.id === selectedBadge.id)
+      );
+      setUdpatedFile(false);
+    }
+  }, [updatedFile, badgeList, onSubmitBadge, selectedBadge]);
 
   let content = (
     <>
       {badgeList.length > 0 ? (
         <ul className="grid grid-cols-5 px-4 gap-x-2 gap-y-2 mt-2">
           {badgeList.map((item: Badge) => (
-            <>
+            <React.Fragment key={item.id}>
               {item.title ? (
-                <div
-                  className="tooltip hover:tooltip-open tooltip-bottom"
-                  data-tip={item.title}
-                  key={item.id}
-                >
-                  <li onClick={() => handleUpdateBadge(item)}>
-                    <div className={setBadgeStyle(item.id)}>
-                      <img
-                        className="w-8 h-8"
-                        src={item.image}
-                        alt={item.title}
+                <>
+                  {item.id === selectedBadge?.id ? (
+                    <div className="indicator" key={item.id}>
+                      <span
+                        className="indicator-item avatar bg-info rounded-full p-1 cursor-pointer"
+                        onClick={uploadFile}
+                      >
+                        <UploadIcon />
+                      </span>
+                      <BadgeItem
+                        badge={item}
+                        isSelected={true}
+                        onUpdateBadge={handleUpdateBadge}
                       />
                     </div>
-                  </li>
-                </div>
+                  ) : (
+                    <BadgeItem
+                      badge={item}
+                      isSelected={false}
+                      onUpdateBadge={handleUpdateBadge}
+                    />
+                  )}
+                </>
               ) : (
-                <div className="indicator">
+                <div className="indicator" key={item.id}>
                   <span className="indicator-item badge badge-warning">
                     ...
                   </span>
-                  <div
-                    className="tooltip hover:tooltip-open tooltip-bottom"
-                    data-tip="Nouveau"
-                    key={item.id}
-                  >
-                    <li onClick={() => handleUpdateBadge(item)}>
-                      <div className={setBadgeStyle(item.id)}>
-                        <img
-                          className="w-8 h-8"
-                          src={item.image}
-                          alt="Nouveau Badge"
-                        />
-                      </div>
-                    </li>
-                  </div>
+                  <BadgeItem
+                    badge={item}
+                    isSelected={item.id === selectedBadge?.id}
+                    onUpdateBadge={handleUpdateBadge}
+                  />
                 </div>
               )}
-            </>
+            </React.Fragment>
           ))}
         </ul>
       ) : (
@@ -85,6 +111,12 @@ const BadgeList: FC<Props> = ({ selectedBadge, onSubmitBadge }) => {
           <ImportBadges label="Importer des badges" outline={false} />
         </div>
       )}
+      <input
+        className="hidden"
+        ref={fileRef}
+        type="file"
+        onChange={handleFileChange}
+      />
     </>
   );
 

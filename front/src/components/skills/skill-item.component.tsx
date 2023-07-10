@@ -25,13 +25,7 @@ const SkillItem: FC<Props> = ({
           <SkillTitle title={skill.title} />
         </div>
         <div className="flex gap-x-8 items-center">
-          <SkillBadge
-            badge={
-              skill.badge
-                ? skill.badge!
-                : { id: 0, title: "Aucun badge choisi", image: "default" }
-            }
-          />
+          <SkillBadge badge={skill.badge!} />
           <SkillActions
             skillId={skill.id!}
             onUpdateSkill={onUpdateSkill}

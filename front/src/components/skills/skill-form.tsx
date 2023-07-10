@@ -106,7 +106,7 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
           <button className="btn btn-primary btn-sm w-32">Valider</button>
         </div>
       </form>
-      <div className="divider my-8">Créer un nouveau badge svp</div>
+      <div className="divider my-8">Importer un nouveau badge svp</div>
       <CreateBadge />
     </div>
   );

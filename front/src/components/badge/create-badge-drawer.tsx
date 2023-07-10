@@ -2,7 +2,7 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 import useInput from "../../hooks/use-input";
-import { regexGeneric } from "../../utils/constantes";
+import { regexGeneric, regexOptionalGeneric } from "../../utils/constantes";
 import ImageFileUpload from "../UI/image-file-upload/image-file-upload";
 import { parcoursAction } from "../../store/redux-toolkit/parcours";
 import useHttp from "../../hooks/use-http";
@@ -11,7 +11,9 @@ import Wrapper from "../UI/wrapper/wrapper.component";
 
 const CreateBadge = () => {
   const { value: title } = useInput((value) => regexGeneric.test(value));
-  const { value: description } = useInput((value) => regexGeneric.test(value));
+  const { value: description } = useInput((value) =>
+    regexOptionalGeneric.test(value)
+  );
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const dispatch = useDispatch();
@@ -45,7 +47,7 @@ const CreateBadge = () => {
         parcoursAction.addBadge({
           title: title.value,
           description: description.value,
-          previewUrl,
+          image: previewUrl,
         })
       );
       setResultOk(true);
@@ -82,7 +84,7 @@ const CreateBadge = () => {
 
       <Wrapper>
         <div className="flex flex-col gap-y-2">
-          <label htmlFor="title">Description *</label>
+          <label htmlFor="title">Description</label>
           <textarea
             className={textareaStyle()}
             value={description.value}

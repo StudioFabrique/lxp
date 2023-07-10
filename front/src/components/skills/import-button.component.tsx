@@ -11,7 +11,7 @@ const ImportButton: FC<Props> = ({ label, outline = true, onClickEvent }) => {
   let iconStyle = "w-4 h-4";
 
   const setButtonStyle = () => {
-    return outline ? buttonStyle : buttonStyle + " btn btn-primary btn-sm";
+    return outline ? buttonStyle : buttonStyle + " btn btn-primary";
   };
 
   const setIconStyle = () => {
