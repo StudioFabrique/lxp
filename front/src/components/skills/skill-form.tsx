@@ -21,8 +21,6 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   const [badge, setBadge] = useState<Badge | undefined>(skill?.badge);
   const dispatch = useDispatch();
 
-  console.log({ badge });
-
   const { value: title } = useInput(
     (value) => regexGeneric.test(value),
     skill?.title || ""
@@ -45,6 +43,11 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   );
 
   let formIsValid = title.isValid && badge;
+
+  let textareaStyle = () => {
+    let style = "textarea focus:outline-none bg-secondary/20";
+    return title.hasError ? style + " textarea-error" : style;
+  };
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -69,7 +72,7 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
           <div className="flex flex-col gap-y-2">
             <label htmlFor="title">Contenu de Compétence *</label>
             <textarea
-              className="textarea focus:outline-none bg-secondary/20"
+              className={textareaStyle()}
               value={title.value}
               onChange={title.textAreaChangeHandler}
               onBlur={title.valueBlurHandler}

@@ -18,11 +18,29 @@ const CreateBadge = () => {
   const { isLoading, error } = useHttp();
   const [resultOk, setResultOk] = useState(false);
 
-  let formIsValid = title.isValid && description.isValid && previewUrl;
+  let inputStyle = () => {
+    let style = "input input-group-sm focus:outline-none bg-secondary/20";
+    return title.hasError ? style + " input-error" : style;
+  };
+
+  let textareaStyle = () => {
+    let style = "textarea focus:outline-none bg-secondary/20";
+    return description.hasError ? style + " textarea-error" : style;
+  };
+
+  const formIsValid = () => {
+    if (title.isValid) {
+      if (description && !description.isValid) {
+        return false;
+      }
+      return true;
+    }
+    return false;
+  };
 
   const submitNewBadge = (event: FormEvent) => {
     event.preventDefault();
-    if (formIsValid) {
+    if (formIsValid()) {
       dispatch(
         parcoursAction.addBadge({
           title: title.value,
@@ -54,7 +72,7 @@ const CreateBadge = () => {
         <div className="flex flex-col gap-y-2">
           <label htmlFor="title">Nom du Badge *</label>
           <input
-            className="input input-group-sm focus:outline-none bg-secondary/20"
+            className={inputStyle()}
             value={title.value}
             onChange={title.valueChangeHandler}
             onBlur={title.valueBlurHandler}
@@ -66,7 +84,7 @@ const CreateBadge = () => {
         <div className="flex flex-col gap-y-2">
           <label htmlFor="title">Description *</label>
           <textarea
-            className="textarea focus:outline-none bg-secondary/20"
+            className={textareaStyle()}
             value={description.value}
             onChange={description.textAreaChangeHandler}
             onBlur={description.valueBlurHandler}
