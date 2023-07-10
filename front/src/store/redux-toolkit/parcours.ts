@@ -37,8 +37,8 @@ const parcoursSlice = createSlice({
     addBadge(state, action) {
       const newBadge = action.payload;
       let updatedBadges = state.badges;
-      updatedBadges.push({ ...newBadge, id: updatedBadges.length });
-      state.badges = updatedBadges;
+      updatedBadges.push(newBadge);
+      state.badges = addIdToObject(updatedBadges);
     },
     importBadges(state, action) {
       const importedBadges = addIdToObject(action.payload);
@@ -51,7 +51,22 @@ const parcoursSlice = createSlice({
         (item) => item.id !== action.payload.id
       );
       updatedBadges.push(action.payload);
-      state.badges = updatedBadges;
+      state.badges = addIdToObject(updatedBadges);
+    },
+    updateBadgeImage(state, action) {
+      const badgeToUpdate = state.badges.find(
+        (item) => item.id === action.payload.id
+      );
+      if (badgeToUpdate) {
+        let updatedBadges = state.badges.filter(
+          (item) => item.id !== action.payload.id
+        );
+        updatedBadges.push({
+          ...badgeToUpdate,
+          image: action.payload.image,
+        });
+        state.badges = updatedBadges;
+      }
     },
   },
 });
@@ -59,7 +74,11 @@ const parcoursSlice = createSlice({
 function addIdToObject(items: Array<any>) {
   return items.map((item: any) => {
     i++;
-    return { ...item, id: i };
+    if (!item.id) {
+      return { ...item, id: i };
+    } else {
+      return item;
+    }
   });
 }
 

@@ -9,6 +9,7 @@ import ImportButton from "./import-button.component";
 import SkillForm from "./skill-form";
 import Badge from "../../utils/interfaces/badge";
 import BadgeUpdate from "../badge/badge-update.component";
+import ButtonAdd from "../UI/button-add/button-add";
 
 const SkillsList = () => {
   const skillList = useSelector((state: any) => state.parcours.skills);
@@ -70,6 +71,8 @@ const SkillsList = () => {
     }
   }, [activeDrawer]);
 
+  console.log("list rendering");
+
   let content = (
     <>
       {skillList.length > 0 ? (
@@ -91,14 +94,25 @@ const SkillsList = () => {
     </>
   );
 
+  console.log("rendering");
+  /* 
+  <ImportButton label="AJOUTER" onClickEvent={handleAddSkill} /> */
   return (
     <>
       <div className="flex flex-col gap-y-4 mt-4">{content}</div>
-      <ImportButton
-        label="AJOUTER"
-        outline={false}
-        onClickEvent={handleAddSkill}
-      />
+      <div>
+        {/*         <button
+          className="btn btn-outline btn-primary capitalize"
+          onClick={handleAddSkill}
+        >
+          Ajouter
+        </button> */}
+        <ButtonAdd
+          label="ajouter"
+          outline={true}
+          onClickEvent={handleAddSkill}
+        />
+      </div>
 
       <RightSideDrawer
         visible={false}
