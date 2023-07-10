@@ -7,7 +7,7 @@ type Props = {
 };
 
 const ImportButton: FC<Props> = ({ label, outline = true, onClickEvent }) => {
-  let buttonStyle = "w-fit flex gapx-x-1 items-center";
+  let buttonStyle = "w-fit flex gap-x-1 items-center";
   let iconStyle = "w-4 h-4";
 
   const setButtonStyle = () => {
