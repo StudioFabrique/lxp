@@ -1,12 +1,12 @@
-export const validateImageFile = (file: File) => {
+export const validateImageFile = (selectedFile: File, maxSize: number) => {
   const allowedExtensions = /(\.jpeg|\.jpg|\.png|\.gif|\.webp)$/i;
-  const maxSizeInBytes = 2 * 1024 * 1024; // 2 Mo
+  const maxSizeInBytes = maxSize; // 2 Mo
 
-  if (!allowedExtensions.test(file.name)) {
+  if (!allowedExtensions.test(selectedFile.name)) {
     return false; // Extension de fichier non autorisée
   }
 
-  if (file.size > maxSizeInBytes) {
+  if (selectedFile.size > maxSizeInBytes) {
     return false; // Fichier trop volumineux
   }
 
