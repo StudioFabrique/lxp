@@ -1,25 +1,43 @@
 import { FC, useEffect, useRef, useState } from "react";
+import { validateImageFile } from "../../utils/validate-image-file";
+import { useDispatch } from "react-redux";
+import { parcoursAction } from "../../store/redux-toolkit/parcours";
+import { Toaster, toast } from "react-hot-toast";
+
+/**
+ * input de type file pour importer des images pour des badges
+ * ce composant à le style d'un bouton
+ * label : texte affiché sur le bouton
+ * outline : par défaut le style du bouton est outline, si on passe la prop outline={false} le bouton à une background-color
+ * une fois les fichiers sélectionnés ils sont ajoutés à la liste des badges stockés dans le store parcours géré par redux-toolkit
+ */
 
 type Props = {
   label: string;
   outline?: boolean;
-  onClickEvent?: () => void;
 };
 
-const ImportBadges: FC<Props> = ({ label, outline = true, onClickEvent }) => {
+const maxSize = 2 * 1024 * 1024;
+
+const ImportBadges: FC<Props> = ({ label, outline = true }) => {
   const fileSelectRef = useRef<any>(null);
-  const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<Array<any> | null>(null);
+  const dispatch = useDispatch();
 
   let buttonStyle = "w-fit flex gapx-x-1 items-center";
   let iconStyle = "w-4 h-4";
 
   const setButtonStyle = () => {
-    return outline ? buttonStyle : buttonStyle + " btn btn-primary btn-sm";
+    return outline
+      ? buttonStyle
+      : buttonStyle + " btn btn-primary btn-sm font-normal lowercase";
   };
 
   const setIconStyle = () => {
     return !outline ? iconStyle : iconStyle + " text-primary";
   };
+
+  console.log({ selectedFiles });
 
   const handleLabelClick = () => {
     fileSelectRef.current.click();
@@ -30,8 +48,14 @@ const ImportBadges: FC<Props> = ({ label, outline = true, onClickEvent }) => {
     console.log({ files });
 
     if (files && files.length > 0) {
-      setSelectedFiles(files);
       // Effectuez les actions supplémentaires que vous souhaitez avec les fichiers sélectionnés
+      const badges = Array<any>();
+      for (let i = 0; i < files.length; i++) {
+        if (validateImageFile(files[i], maxSize)) {
+          badges.push({ image: URL.createObjectURL(files[i]) });
+        }
+      }
+      setSelectedFiles(badges);
     } else {
       setSelectedFiles(null);
       console.log("Veuillez sélectionner au moins un fichier.");
@@ -41,11 +65,15 @@ const ImportBadges: FC<Props> = ({ label, outline = true, onClickEvent }) => {
   useEffect(() => {
     if (selectedFiles && selectedFiles.length > 0) {
       console.log({ selectedFiles });
+      dispatch(parcoursAction.importBadges(selectedFiles));
+      toast.success("Images téléversées avec succès!");
+      setSelectedFiles(null);
     }
-  }, [selectedFiles]);
+  }, [selectedFiles, dispatch]);
 
   return (
     <>
+      <Toaster />
       <button className={setButtonStyle()} onClick={handleLabelClick}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
