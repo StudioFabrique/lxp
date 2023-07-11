@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { parcoursAction } from "../../store/redux-toolkit/parcours";
 
+import { parcoursAction } from "../../store/redux-toolkit/parcours";
 import Skill from "../../utils/interfaces/skill";
 import SkillItem from "./skill-item.component";
 import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
@@ -100,12 +100,6 @@ const SkillsList = () => {
     <>
       <div className="flex flex-col gap-y-4 mt-4">{content}</div>
       <div>
-        {/*         <button
-          className="btn btn-outline btn-primary capitalize"
-          onClick={handleAddSkill}
-        >
-          Ajouter
-        </button> */}
         <ButtonAdd
           label="ajouter"
           outline={true}

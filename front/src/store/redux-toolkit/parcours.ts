@@ -4,6 +4,7 @@ import Skill from "../../utils/interfaces/skill";
 import { sortArray } from "../../utils/sortArray";
 
 const initialParcoursState = {
+  importedSkills: Array<any>(),
   skills: Array<Skill>(),
   badges: Array<any>(),
 };
@@ -66,6 +67,9 @@ const parcoursSlice = createSlice({
         });
         state.badges = updatedBadges;
       }
+    },
+    importCsvSkills(state, action) {
+      state.importedSkills = addIdToObject(action.payload);
     },
   },
 });
