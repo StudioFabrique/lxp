@@ -2,7 +2,7 @@ import { FC } from "react";
 
 type Props = {
   size: number;
-  color: string;
+  color?: string;
 };
 
 const UploadIcon: FC<Props> = ({ size, color }) => {

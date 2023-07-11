@@ -5,7 +5,6 @@ import useInput from "../../hooks/use-input";
 import { regexGeneric } from "../../utils/constantes";
 import Badge from "../../utils/interfaces/badge";
 import BadgeList from "../badge/badge-list.component";
-import CreateBadge from "../badge/create-badge-drawer";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import BadgeValidation from "../badge/badge-validation.component";
 import { useDispatch } from "react-redux";
@@ -106,8 +105,6 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
           <button className="btn btn-primary btn-sm w-32">Valider</button>
         </div>
       </form>
-      <div className="divider my-8">Importer un nouveau badge svp</div>
-      <CreateBadge />
     </div>
   );
 };
