@@ -41,7 +41,7 @@ const BadgeUpdate: FC<Props> = ({ badge, onSubmitNewBadge }) => {
       <div>Choisir un nouveau badge</div>
       <BadgeList selectedBadge={updatedBadge} onSubmitBadge={setUpdatedBadge} />
       {updatedBadge ? (
-        <div className="my-4">
+        <div>
           {!updatedBadge.title ? (
             <div>Veuillez valider le nouveau badge svp</div>
           ) : null}

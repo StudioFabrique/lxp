@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 
 import Wrapper from "../UI/wrapper/wrapper.component";
 import useInput from "../../hooks/use-input";
@@ -11,14 +11,23 @@ type Props = {
 };
 
 const BadgeValidation: FC<Props> = ({ badge, onValidateBadge }) => {
-  const { value: title } = useInput(
+  const { value: title, newProps: newTitle } = useInput(
     (value) => regexGeneric.test(value),
     badge.title
   );
-  const { value: description } = useInput(
+  const { value: description, newProps: newDescription } = useInput(
     (value) => regexOptionalGeneric.test(value),
     badge.description
   );
+
+  useEffect(() => {
+    if (badge.title) {
+      newTitle(badge.title);
+    }
+    if (badge.description) {
+      newDescription(badge.description);
+    }
+  }, [badge, newTitle, newDescription]);
 
   let inputStyle = () => {
     let style = "input input-group-sm focus:outline-none bg-secondary/20";
@@ -49,6 +58,8 @@ const BadgeValidation: FC<Props> = ({ badge, onValidateBadge }) => {
       });
     }
   };
+
+  console.log({ badge });
 
   return (
     <div className="flex flex-col gap-y-4 overflow-y-auto">
