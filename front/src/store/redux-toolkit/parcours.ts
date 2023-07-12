@@ -69,7 +69,18 @@ const parcoursSlice = createSlice({
       }
     },
     importCsvSkills(state, action) {
-      state.importedSkills = addIdToObject(action.payload);
+      const importedSkills = sortArray(action.payload, "title");
+      state.importedSkills = addIdToObject(importedSkills);
+    },
+    addImportedSkillsToSkills(state, action) {
+      const skills = state.skills;
+      action.payload.forEach((item: any) => {
+        skills.push({
+          id: item.id,
+          title: item.title,
+        });
+      });
+      state.skills = skills;
     },
   },
 });
