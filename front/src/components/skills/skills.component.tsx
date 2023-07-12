@@ -11,6 +11,10 @@ const Skills = () => {
     (state: any) => state.parcours.importedSkills
   );
 
+  const handleCloseDrawer = (id: string) => {
+    document.getElementById(id)?.click();
+  };
+
   useEffect(() => {
     if (importedSkills.length > 0) {
       document.getElementById("import-skills")?.click();
@@ -22,12 +26,19 @@ const Skills = () => {
       <Wrapper>
         <SkillsHeader />
         <SkillsList />
+        <RightSideDrawer
+          title="Importer des Compétences"
+          id="import-skills"
+          visible={false}
+        >
+          {importedSkills.length > 0 ? (
+            <ImportedSkills
+              data={importedSkills}
+              onCloseDrawer={handleCloseDrawer}
+            />
+          ) : null}
+        </RightSideDrawer>
       </Wrapper>
-      <RightSideDrawer title="Importer des Compétences" id="import-skills">
-        {importedSkills.length > 0 ? (
-          <ImportedSkills data={importedSkills} />
-        ) : null}
-      </RightSideDrawer>
     </div>
   );
 };

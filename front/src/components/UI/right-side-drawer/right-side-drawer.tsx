@@ -34,7 +34,7 @@ const RightSideDrawer: FC<Props> = ({
   };
 
   return (
-    <div className="h-full drawer drawer-end z-50 overflow-y-auto">
+    <div className="h-full drawer drawer-end z-50">
       <input
         id={id}
         type="checkbox"
@@ -42,7 +42,7 @@ const RightSideDrawer: FC<Props> = ({
         ref={checkboxRef}
         onChange={handleToggle}
       />
-      <div className="drawer-content overflow-y-auto">
+      <div className="drawer-content">
         {/* Page content here */}
         {visible ? (
           <label
@@ -60,14 +60,14 @@ const RightSideDrawer: FC<Props> = ({
           </label>
         ) : null}
       </div>
-      <div className="drawer-side overflow-y-auto">
+      <div className="drawer-side">
         <label
           htmlFor={id}
-          className="drawer-overlay fixed top-0 left-0 w-screen min-h-screen overflow-y-auto"
+          className="drawer-overlay fixed top-0 left-0 w-screen min-h-screen"
         ></label>
-        <ul className="block menu p-4 w-6/6 top-0 right-0 min-h-screen bg-base-200 text-base-content rounded-l-2xl">
+        <ul className="block menu p-4 min-w-[30rem] top-0 right-0 min-h-screen bg-base-200 text-base-content rounded-l-2xl overflow-auto">
           {/* Sidebar content here */}
-          <div className="flex items-center gap-x-4 overflow-y-auto">
+          <div className="flex items-center gap-x-4">
             <div onClick={handleCloseDrawer}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

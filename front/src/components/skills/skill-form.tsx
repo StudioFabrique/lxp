@@ -9,6 +9,8 @@ import Wrapper from "../UI/wrapper/wrapper.component";
 import BadgeValidation from "../badge/badge-validation.component";
 import { useDispatch } from "react-redux";
 import { parcoursAction } from "../../store/redux-toolkit/parcours";
+import DrawerFormButtons from "../UI/drawer-form-buttons/drawer-form-buttons.component";
+import CreateBadge from "../badge/create-badge-drawer";
 
 type Props = {
   skill?: Skill;
@@ -36,10 +38,6 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
       title.reset();
     }
   };
-
-  let badgesContent = (
-    <BadgeList onSubmitBadge={handleUpdateBadge} selectedBadge={badge} />
-  );
 
   let formIsValid = title.isValid && badge;
 
@@ -82,7 +80,10 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
         <Wrapper>
           <div className="flex flex-col gap-y-2">
             <p>Choisir un badge *</p>
-            {badgesContent}
+            <BadgeList
+              onSubmitBadge={handleUpdateBadge}
+              selectedBadge={badge}
+            />
           </div>
         </Wrapper>
 
@@ -94,17 +95,10 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
           </>
         ) : null}
 
-        <div className="w-full flex justify-between mt-4">
-          <button
-            className="btn btn-outline btn-sm btn-primary font-normal w-32"
-            type="reset"
-            onClick={handleCancel}
-          >
-            Annuler
-          </button>
-          <button className="btn btn-primary btn-sm w-32">Valider</button>
-        </div>
+        <DrawerFormButtons onCancel={handleCancel} />
       </form>
+      <div className="divider">Créer un nouveau badge</div>
+      <CreateBadge />
     </div>
   );
 };

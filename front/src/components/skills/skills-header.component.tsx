@@ -1,28 +1,19 @@
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
 import ImportButton from "./import-csv-button.component";
 import BadgeIcon from "../UI/svg-icons/badge-icon.component";
-import { useDispatch, useSelector } from "react-redux";
 import { parcoursAction } from "../../store/redux-toolkit/parcours";
-import { useEffect } from "react";
 
 const SkillsHeader = () => {
   const dispatch = useDispatch();
 
+  /**
+   * stockage en mémoire des données fraîchement parsés depuis un fichier .csv
+   */
   const handleCsvSkillsImport = (csvData: Array<any>) => {
-    console.log({ csvData });
-
     dispatch(parcoursAction.importCsvSkills(csvData));
   };
-  /* 
-  useEffect(() => {
-    if (csvSkills.length > 0) {
-      csvSkills.forEach((item: any) => {
-        console.log(item.title);
-
-        dispatch(parcoursAction.addSkill({ title: item.title }));
-      });
-    }
-  }, [csvSkills, dispatch]); */
 
   return (
     <div className="w-full flex justify-between items-center">
