@@ -7,6 +7,7 @@ const initialParcoursState = {
   importedSkills: Array<any>(),
   skills: Array<Skill>(),
   badges: Array<any>(),
+  totalBadges: 0,
 };
 
 let i = 0;
@@ -81,6 +82,9 @@ const parcoursSlice = createSlice({
         });
       });
       state.skills = skills;
+    },
+    getBadgesTotal(state) {
+      state.totalBadges = state.badges.length;
     },
   },
 });
