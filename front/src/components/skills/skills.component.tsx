@@ -2,41 +2,31 @@ import SkillsHeader from "./skills-header.component";
 import SkillsList from "./skills-list.component";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
-import ImportedSkills from "./imported-skills.component";
+import ImportSkills from "./import-skills.component";
 
 const Skills = () => {
-  const importedSkills = useSelector(
-    (state: any) => state.parcours.importedSkills
-  );
-
+  // gère la fermeture du drawer
   const handleCloseDrawer = (id: string) => {
     document.getElementById(id)?.click();
   };
 
-  useEffect(() => {
-    if (importedSkills.length > 0) {
-      document.getElementById("import-skills")?.click();
-    }
-  }, [importedSkills]);
+  // ouverture du drawer
+  const handleOpenImportDrawer = () => {
+    document.getElementById("import-skills")?.click();
+  };
 
   return (
     <div className="w-full">
       <Wrapper>
-        <SkillsHeader />
+        <SkillsHeader onImport={handleOpenImportDrawer} />
         <SkillsList />
         <RightSideDrawer
           title="Importer des Compétences"
           id="import-skills"
           visible={false}
+          onCloseDrawer={handleCloseDrawer}
         >
-          {importedSkills.length > 0 ? (
-            <ImportedSkills
-              data={importedSkills}
-              onCloseDrawer={handleCloseDrawer}
-            />
-          ) : null}
+          <ImportSkills />
         </RightSideDrawer>
       </Wrapper>
     </div>
