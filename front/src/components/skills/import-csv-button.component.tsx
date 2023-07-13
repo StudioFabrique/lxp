@@ -2,6 +2,7 @@ import { ChangeEvent, FC, useRef } from "react";
 import csvtojson from "csvtojson";
 
 import ImportIcon from "../UI/svg-icons/import-icon.component";
+import { Toaster, toast } from "react-hot-toast";
 
 type Props = {
   label: string;
@@ -42,6 +43,7 @@ const ImportButton: FC<Props> = ({ label, outline = true, onClickEvent }) => {
           onClickEvent(csvData);
         } catch (error) {
           console.error(error);
+          toast.error("Fichier tout moisi");
         }
       };
       reader.readAsText(file);
@@ -60,6 +62,7 @@ const ImportButton: FC<Props> = ({ label, outline = true, onClickEvent }) => {
 
   return (
     <>
+      <Toaster />
       <button className={setButtonStyle()} onClick={handleButtonClick}>
         <div className="text-primary">
           <ImportIcon size={4} />

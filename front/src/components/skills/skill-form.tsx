@@ -1,4 +1,4 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, FormEvent, useEffect, useState } from "react";
 
 import Skill from "../../utils/interfaces/skill";
 import useInput from "../../hooks/use-input";
@@ -7,7 +7,7 @@ import Badge from "../../utils/interfaces/badge";
 import BadgeList from "../badge/badge-list.component";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import BadgeValidation from "../badge/badge-validation.component";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { parcoursAction } from "../../store/redux-toolkit/parcours";
 import DrawerFormButtons from "../UI/drawer-form-buttons/drawer-form-buttons.component";
 import CreateBadge from "../badge/create-badge-drawer";
@@ -20,6 +20,7 @@ type Props = {
 
 const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   const [badge, setBadge] = useState<Badge | undefined>(skill?.badge);
+  const totalBadges = useSelector((state: any) => state.parcours.totalBadges);
   const dispatch = useDispatch();
 
   const { value: title } = useInput(
@@ -62,6 +63,10 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
     setBadge(newBadge);
   };
 
+  useEffect(() => {
+    dispatch(parcoursAction.getBadgesTotal());
+  }, [dispatch]);
+
   return (
     <div className="flesx flex-col gap-y-4">
       <form className="flex flex-col px-4 gap-y-4" onSubmit={handleSubmit}>
@@ -97,8 +102,12 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
 
         <DrawerFormButtons onCancel={handleCancel} />
       </form>
-      <div className="divider">Créer un nouveau badge</div>
-      <CreateBadge />
+      {totalBadges === 0 ? null : (
+        <>
+          <div className="divider">Créer un nouveau badge</div>
+          <CreateBadge />
+        </>
+      )}
     </div>
   );
 };
