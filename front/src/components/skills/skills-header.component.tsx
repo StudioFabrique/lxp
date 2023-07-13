@@ -1,28 +1,27 @@
+import { FC } from "react";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
 
-import ImportButton from "./import-csv-button.component";
 import BadgeIcon from "../UI/svg-icons/badge-icon.component";
-import { parcoursAction } from "../../store/redux-toolkit/parcours";
+import ButtonNoDecorationIcon from "../UI/button-no-decoration-icon/button-no-decoration-icon.component";
+import TrophyIcon from "../UI/svg-icons/trophy-icon.component";
 
-const SkillsHeader = () => {
-  const dispatch = useDispatch();
+type Props = {
+  onImport: () => void;
+};
 
-  /**
-   * stockage en mémoire des données fraîchement parsés depuis un fichier .csv
-   */
-  const handleCsvSkillsImport = (csvData: Array<any>) => {
-    dispatch(parcoursAction.importCsvSkills(csvData));
-  };
-
+const SkillsHeader: FC<Props> = ({ onImport }) => {
   return (
     <div className="w-full flex justify-between items-center">
       <h3 className="text-xl font-bold">Compétences</h3>
       <div className="flex items-center gap-x-8">
-        <ImportButton
-          label="Importer des compétences"
-          onClickEvent={handleCsvSkillsImport}
-        />
+        <div className="text-primary">
+          <ButtonNoDecorationIcon
+            label="Importer des compétences"
+            onClickEvent={onImport}
+          >
+            <TrophyIcon size={4} />
+          </ButtonNoDecorationIcon>
+        </div>
         <Link className="flex gap-x-1 text-primary items-center" to="#">
           <BadgeIcon size={4} color="primary" />
           <p>Gestion des badges</p>
