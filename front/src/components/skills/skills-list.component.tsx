@@ -9,6 +9,7 @@ import SkillForm from "./skill-form";
 import Badge from "../../utils/interfaces/badge";
 import BadgeUpdate from "../badge/badge-update.component";
 import ButtonAdd from "../UI/button-add/button-add";
+import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
 
 const SkillsList = () => {
   const skillList = useSelector((state: any) => state.parcours.skills);
@@ -78,12 +79,14 @@ const SkillsList = () => {
         <ul className="flex flex-col gap-y-4">
           {skillList.map((item: Skill) => (
             <li key={item.id}>
-              <SkillItem
-                skill={item}
-                onUpdateSkill={handleUpdateSkill}
-                onUpdateBadge={handleUpdateBadge}
-                onDeleteSkill={handleDeleteSkill}
-              />
+              <FadeWrapper>
+                <SkillItem
+                  skill={item}
+                  onUpdateSkill={handleUpdateSkill}
+                  onUpdateBadge={handleUpdateBadge}
+                  onDeleteSkill={handleDeleteSkill}
+                />
+              </FadeWrapper>
             </li>
           ))}
         </ul>

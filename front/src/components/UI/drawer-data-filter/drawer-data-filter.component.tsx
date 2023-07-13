@@ -103,6 +103,10 @@ const DrawerDataFilter: FC<Props> = ({
     }
   }, [filters, getFilteredList, handleResetFilters]);
 
+  useEffect(() => {
+    handleResetFilters();
+  }, [handleResetFilters]);
+
   return (
     <div className="w-full flex justify-around items-center gap-x-2">
       <div className="flex items-center">

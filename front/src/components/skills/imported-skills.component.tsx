@@ -22,7 +22,7 @@ const ImportedSkills: FC<Props> = ({ data, onCloseDrawer }) => {
     getFilteredList,
     getFieldValues,
     resetFilters,
-  } = useEagerLoadingList(data, "title"); //  custom hook permettang de gérer l'affichage des données
+  } = useEagerLoadingList(data, "title"); //  custom hook permettang de gérer l'affichage des données, qd la liste de compétences apparaît à l'écran elle est triée alphabétiquement par son intitulé
   const dispatch = useDispatch();
 
   /**
@@ -59,12 +59,14 @@ const ImportedSkills: FC<Props> = ({ data, onCloseDrawer }) => {
       {list ? (
         <>
           <div className="my-4">
-            <DrawerDataFilter
-              formations={getFieldValues("formation").sort()}
-              parcours={getFieldValues("parcours").sort()}
-              getFilteredList={getFilteredList}
-              resetFilters={resetFilters}
-            />
+            {list.length === 0 ? null : (
+              <DrawerDataFilter
+                formations={getFieldValues("formation").sort()}
+                parcours={getFieldValues("parcours").sort()}
+                getFilteredList={getFilteredList}
+                resetFilters={resetFilters}
+              />
+            )}
           </div>
           {list.length > 0 ? (
             <form onSubmit={handleSubmit}>
