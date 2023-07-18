@@ -60,7 +60,7 @@ const CsvImportSkills: FC<Props> = ({ onParseCsv }) => {
   return (
     <>
       <div
-        className={`w-[12rem] h-[12rem] flex flex-col text-xs gap-y-4 p-4 justify-center items-center font-bold rounded-xl shadow-xl border-2 ${
+        className={`group w-[13rem] h-[8rem] flex flex-col text-xs gap-y-4 p-4 justify-center items-center font-bold rounded-xl shadow-xl border-2 hover:bg-primary ${
           fileError
             ? "border-error"
             : selectedFile
@@ -69,7 +69,7 @@ const CsvImportSkills: FC<Props> = ({ onParseCsv }) => {
         }`}
         onClick={handleFileSelection}
       >
-        <div className={`flex flex-col justify-center items-center gap-y-4`}>
+        <div className="flex flex-col justify-center items-center gap-y-4 group-hover:text-white">
           <UploadIcon size={10} />
           <p className={`${fileError ? "text-error" : ""}`}>
             {fileError

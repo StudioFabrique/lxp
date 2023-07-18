@@ -107,6 +107,8 @@ const DrawerDataFilter: FC<Props> = ({
     handleResetFilters();
   }, [handleResetFilters]);
 
+  console.log("filter rendering");
+
   return (
     <div className="w-full flex justify-around items-center gap-x-2">
       <div className="flex items-center">

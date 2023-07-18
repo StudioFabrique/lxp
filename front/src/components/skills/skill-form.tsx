@@ -23,9 +23,9 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   const totalBadges = useSelector((state: any) => state.parcours.totalBadges);
   const dispatch = useDispatch();
 
-  const { value: title } = useInput(
+  const { value: description } = useInput(
     (value) => regexGeneric.test(value),
-    skill?.title || ""
+    skill?.description || ""
   );
 
   const handleUpdateBadge = (newBadge: any) => {
@@ -36,22 +36,22 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
     onCloseDrawer(skill ? "update-skill" : "badge-drawer");
     if (!skill) {
       setBadge(undefined);
-      title.reset();
+      description.reset();
     }
   };
 
-  let formIsValid = title.isValid && badge;
+  let formIsValid = description.isValid && badge;
 
   let textareaStyle = () => {
     let style = "textarea focus:outline-none bg-secondary/20";
-    return title.hasError ? style + " textarea-error" : style;
+    return description.hasError ? style + " textarea-error" : style;
   };
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (formIsValid) {
-      onSubmit({ title: title.value, badge, id: skill?.id });
-      title.reset();
+      onSubmit({ description: description.value, badge, id: skill?.id });
+      description.reset();
       setBadge(undefined);
     } else {
       console.log("oops");
@@ -72,12 +72,12 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
       <form className="flex flex-col px-4 gap-y-4" onSubmit={handleSubmit}>
         <Wrapper>
           <div className="flex flex-col gap-y-2">
-            <label htmlFor="title">Contenu de Compétence *</label>
+            <label htmlFor="description">Contenu de Compétence *</label>
             <textarea
               className={textareaStyle()}
-              value={title.value}
-              onChange={title.textAreaChangeHandler}
-              onBlur={title.valueBlurHandler}
+              value={description.value}
+              onChange={description.textAreaChangeHandler}
+              onBlur={description.valueBlurHandler}
             />
           </div>
         </Wrapper>
@@ -92,7 +92,7 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
           </div>
         </Wrapper>
 
-        {badge && !badge.title ? (
+        {badge && !badge.description ? (
           <>
             <div className="divider my-4">Veuillez valider le badge svp</div>
             <BadgeValidation badge={badge} onValidateBadge={validateBadge} />

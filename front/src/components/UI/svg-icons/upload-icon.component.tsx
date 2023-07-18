@@ -2,11 +2,10 @@ import { FC } from "react";
 
 type Props = {
   size: number;
-  color?: string;
 };
 
-const UploadIcon: FC<Props> = ({ size, color }) => {
-  let style = `w-${size} h-${size} text-${color}`;
+const UploadIcon: FC<Props> = ({ size }) => {
+  let style = `w-${size} h-${size}`;
 
   return (
     <svg
