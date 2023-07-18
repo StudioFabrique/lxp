@@ -76,10 +76,15 @@ const parcoursSlice = createSlice({
     addImportedSkillsToSkills(state, action) {
       const skills = state.skills;
       action.payload.forEach((item: any) => {
-        skills.push({
-          id: item.id,
-          description: item.description,
-        });
+        const skillToFind = skills.find(
+          (skill: Skill) => skill.description === item.description
+        );
+        if (!skillToFind) {
+          skills.push({
+            id: item.id,
+            description: item.description,
+          });
+        }
       });
       state.skills = skills;
     },
