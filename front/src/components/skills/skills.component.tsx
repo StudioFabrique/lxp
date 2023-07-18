@@ -26,7 +26,7 @@ const Skills = () => {
           visible={false}
           onCloseDrawer={handleCloseDrawer}
         >
-          <ImportSkills />
+          <ImportSkills onCloseDrawer={handleCloseDrawer} />
         </RightSideDrawer>
       </Wrapper>
     </div>

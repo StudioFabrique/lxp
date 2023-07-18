@@ -55,7 +55,7 @@ const useEagerLoadingList = (initialList: Array<any>, defaultSort: string) => {
   const getFieldValues = useCallback(
     (field: string) => {
       const values = Array<string>();
-      initialList?.forEach((item: any) => {
+      list?.forEach((item: any) => {
         // si la valeur n'est pas déja présente dans le tableau on l'y ajoute
         if (!values.includes(item[field])) {
           values.push(item[field]);
@@ -63,7 +63,7 @@ const useEagerLoadingList = (initialList: Array<any>, defaultSort: string) => {
       });
       return values;
     },
-    [initialList]
+    [list]
   );
 
   /**

@@ -8,10 +8,11 @@ import DrawerDataFilter from "../UI/drawer-data-filter/drawer-data-filter.compon
 
 type Props = {
   data: Array<any>; //  liste des objets importés depuis un fichier CSV et transformés en objets js
+  fromDB: boolean;
   onCloseDrawer: (id: string) => void; //  ferme le drawer
 };
 
-const ImportedSkills: FC<Props> = ({ data, onCloseDrawer }) => {
+const ImportedSkills: FC<Props> = ({ data, fromDB, onCloseDrawer }) => {
   const {
     allChecked,
     list,
@@ -22,11 +23,11 @@ const ImportedSkills: FC<Props> = ({ data, onCloseDrawer }) => {
     getFilteredList,
     getFieldValues,
     resetFilters,
-  } = useEagerLoadingList(data, "title"); //  custom hook permettang de gérer l'affichage des données, qd la liste de compétences apparaît à l'écran elle est triée alphabétiquement par son intitulé
+  } = useEagerLoadingList(data, "title"); //  custom hook permettant de gérer l'affichage des données, quand la liste de compétences apparaît à l'écran elle est triée alphabétiquement par son intitulé
   const dispatch = useDispatch();
 
   /**
-   * gère le coache / décochage de toutes les checkboxes
+   * gère le coche / décochage de toutes les checkboxes
    */
   const handleAllChecked = () => {
     setAllChecked((prevState) => !prevState);
@@ -34,7 +35,7 @@ const ImportedSkills: FC<Props> = ({ data, onCloseDrawer }) => {
 
   /**
    * remplace la liste des compétences par les compétences importées sélectionnées
-   * ces dernières sont converties en onjet de type Skill
+   * ces dernières sont converties en objet de type Skill
    *
    * @param event FormEvent
    */
@@ -42,35 +43,39 @@ const ImportedSkills: FC<Props> = ({ data, onCloseDrawer }) => {
     event.preventDefault();
     //  récupère les compétences sélectionnées
     const selectedSkills = getSelecteditems();
-    //  stock les compétences sélectionnées en mémoire
+    //  stocke les compétences sélectionnées en mémoire
     dispatch(parcoursAction.addImportedSkillsToSkills(selectedSkills));
     onCloseDrawer("import-skills");
   };
 
-  // reset les checkboxes et ferme le drawer
+  // réinitialise les checkboxes et ferme le drawer
   const handleCancelButton = () => {
     setAllChecked(false);
     onCloseDrawer("import-skills");
   };
 
+  console.log({ fromDB });
+
   return (
     <>
-      <p>Choisissez les compétences à importer</p>
+      <p className="mt-4">Choisissez les compétences à importer</p>
       {list ? (
         <>
-          <div className="my-4">
-            {list.length === 0 ? null : (
-              <DrawerDataFilter
-                formations={getFieldValues("formation").sort()}
-                parcours={getFieldValues("parcours").sort()}
-                getFilteredList={getFilteredList}
-                resetFilters={resetFilters}
-              />
-            )}
-          </div>
+          {fromDB ? (
+            <div className="my-4">
+              {list.length === 0 ? null : (
+                <DrawerDataFilter
+                  formations={getFieldValues("formation").sort()}
+                  parcours={getFieldValues("parcours").sort()}
+                  getFilteredList={getFilteredList}
+                  resetFilters={resetFilters}
+                />
+              )}
+            </div>
+          ) : null}
           {list.length > 0 ? (
-            <form onSubmit={handleSubmit}>
-              <table className="table w-full border-separate border-spacing-y-2">
+            <form className="w-full" onSubmit={handleSubmit}>
+              <table className="w-full table border-separate border-spacing-y-2">
                 <thead>
                   <tr>
                     <th>
@@ -87,24 +92,28 @@ const ImportedSkills: FC<Props> = ({ data, onCloseDrawer }) => {
                     >
                       Intitulé
                     </th>
-                    <th
-                      className="cursor-pointer"
-                      onClick={() => sortData("formation")}
-                    >
-                      Formation
-                    </th>
-                    <th
-                      className="cursor-pointer"
-                      onClick={() => sortData("parcours")}
-                    >
-                      Parcours
-                    </th>
+                    {fromDB ? (
+                      <>
+                        <th
+                          className="cursor-pointer"
+                          onClick={() => sortData("formation")}
+                        >
+                          Formation
+                        </th>
+                        <th
+                          className="cursor-pointer"
+                          onClick={() => sortData("parcours")}
+                        >
+                          Parcours
+                        </th>
+                      </>
+                    ) : null}
                   </tr>
                 </thead>
                 <tbody>
                   {list.map((item: any, index: number) => (
                     <tr
-                      className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content"
+                      className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content w-full"
                       key={index}
                     >
                       <td className="bg-transparent rounded-l-xl">
@@ -119,15 +128,19 @@ const ImportedSkills: FC<Props> = ({ data, onCloseDrawer }) => {
                           onChange={() => handleRowCheck(item.id)}
                         />
                       </td>
-                      <td className="bg-transparent capitalize max-w-xs truncate">
-                        {item.title}
+                      <td className="bg-transparent capitalize w-1/4 truncate">
+                        {item.description}
                       </td>
-                      <td className="bg-transparent capitalize max-w-xs truncate">
-                        {item.formation}
-                      </td>
-                      <td className="bg-transparent capitalize max-w-xs truncate">
-                        {item.parcours}
-                      </td>
+                      {fromDB ? (
+                        <>
+                          <td className="bg-transparent capitalize w-xs truncate">
+                            {item.formation}
+                          </td>
+                          <td className="bg-transparent capitalize w-xs truncate">
+                            {item.parcours}
+                          </td>
+                        </>
+                      ) : null}
                     </tr>
                   ))}
                 </tbody>
