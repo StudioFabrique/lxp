@@ -8,11 +8,11 @@ import DrawerDataFilter from "../UI/drawer-data-filter/drawer-data-filter.compon
 
 type Props = {
   data: Array<any>; //  liste des objets importés depuis un fichier CSV et transformés en objets js
-  fromDB: boolean;
+  origin: string;
   onCloseDrawer: (id: string) => void; //  ferme le drawer
 };
 
-const ImportedSkills: FC<Props> = ({ data, fromDB, onCloseDrawer }) => {
+const ImportedSkills: FC<Props> = ({ data, origin, onCloseDrawer }) => {
   const {
     allChecked,
     list,
@@ -45,6 +45,7 @@ const ImportedSkills: FC<Props> = ({ data, fromDB, onCloseDrawer }) => {
     const selectedSkills = getSelecteditems();
     //  stocke les compétences sélectionnées en mémoire
     dispatch(parcoursAction.addImportedSkillsToSkills(selectedSkills));
+    setAllChecked(false);
     onCloseDrawer("import-skills");
   };
 
@@ -54,18 +55,15 @@ const ImportedSkills: FC<Props> = ({ data, fromDB, onCloseDrawer }) => {
     onCloseDrawer("import-skills");
   };
 
-  console.log({ fromDB });
-
   return (
     <>
       <p className="mt-4">Choisissez les compétences à importer</p>
       {list ? (
         <>
-          {fromDB ? (
+          {origin === "db" ? (
             <div className="my-4">
               {list.length === 0 ? null : (
                 <DrawerDataFilter
-                  formations={getFieldValues("formation").sort()}
                   parcours={getFieldValues("parcours").sort()}
                   getFilteredList={getFilteredList}
                   resetFilters={resetFilters}
@@ -88,25 +86,17 @@ const ImportedSkills: FC<Props> = ({ data, fromDB, onCloseDrawer }) => {
                     </th>
                     <th
                       className="cursor-pointer"
-                      onClick={() => sortData("title")}
+                      onClick={() => sortData("description")}
                     >
-                      Intitulé
+                      Compétence
                     </th>
-                    {fromDB ? (
-                      <>
-                        <th
-                          className="cursor-pointer"
-                          onClick={() => sortData("formation")}
-                        >
-                          Formation
-                        </th>
-                        <th
-                          className="cursor-pointer"
-                          onClick={() => sortData("parcours")}
-                        >
-                          Parcours
-                        </th>
-                      </>
+                    {origin === "db" ? (
+                      <th
+                        className="cursor-pointer"
+                        onClick={() => sortData("parcours")}
+                      >
+                        Parcours
+                      </th>
                     ) : null}
                   </tr>
                 </thead>
@@ -131,15 +121,10 @@ const ImportedSkills: FC<Props> = ({ data, fromDB, onCloseDrawer }) => {
                       <td className="bg-transparent capitalize w-1/4 truncate">
                         {item.description}
                       </td>
-                      {fromDB ? (
-                        <>
-                          <td className="bg-transparent capitalize w-xs truncate">
-                            {item.formation}
-                          </td>
-                          <td className="bg-transparent capitalize w-xs truncate">
-                            {item.parcours}
-                          </td>
-                        </>
+                      {origin === "db" ? (
+                        <td className="bg-transparent capitalize w-xs truncate">
+                          {item.parcours}
+                        </td>
                       ) : null}
                     </tr>
                   ))}

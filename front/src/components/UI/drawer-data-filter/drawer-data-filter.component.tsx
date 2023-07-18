@@ -2,7 +2,6 @@ import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
 import RefreshIcon from "../svg-icons/refresh-icon.component";
 
 type Props = {
-  formations: Array<string>;
   parcours: Array<string>;
   getFilteredList: (filters: Array<Filter>) => void;
   resetFilters: () => void;
@@ -21,13 +20,11 @@ type Filter = {
  * @returns JSX
  */
 const DrawerDataFilter: FC<Props> = ({
-  formations,
   parcours,
   getFilteredList,
   resetFilters,
 }) => {
   const [filters, setFilters] = useState<Array<Filter>>([]); //  liste des filtres à appliquer sur la liste des compétences importées depuis un fichier csv
-  const [selectFormation, setSelectFormation] = useState<string>("Toutes");
   const [selectPromotion, setSelectPromotion] = useState<string>("Tous");
 
   /**
@@ -35,35 +32,8 @@ const DrawerDataFilter: FC<Props> = ({
    */
   const handleResetFilters = useCallback(() => {
     resetFilters();
-    setSelectFormation("Toutes");
     setSelectPromotion("Tous");
   }, [resetFilters]);
-
-  /**
-   * Gère la sélection d'une formation dans le menu select
-   * @param event ChangeEvent<HTMLSelectElement>
-   */
-  const handleFormationSelect = (event: ChangeEvent<HTMLSelectElement>) => {
-    //  si l'utilisateur clique sur "Toutes" le filtre formation est retiré de la liste des filtres
-    if (event.currentTarget.value === "all") {
-      setSelectFormation("Toutes");
-      setFilters((prevFilters) =>
-        prevFilters.filter((item) => item.field !== "formation")
-      );
-    } else {
-      setSelectFormation(event.currentTarget.value);
-      //  le filtre actuel est retiré de la liste
-      const updatedFilters = filters.filter(
-        (item) => item.field !== "formation"
-      );
-      // on ajoute le nouveau filtre
-      updatedFilters.push({
-        field: "formation",
-        value: event.currentTarget.value,
-      });
-      setFilters(updatedFilters);
-    }
-  };
 
   /**
    * Gère la sélection d'une formation dans le menu select
@@ -110,27 +80,7 @@ const DrawerDataFilter: FC<Props> = ({
   console.log("filter rendering");
 
   return (
-    <div className="w-full flex justify-around items-center gap-x-2">
-      <div className="flex items-center">
-        <label className="text-xs mr-4" htmlFor="formations">
-          Formation
-        </label>
-        <select
-          className="select select-xs select-bordered font-normal"
-          name="formations"
-          id="formations"
-          onChange={handleFormationSelect}
-          value={selectFormation}
-        >
-          <option value="all">Toutes</option>
-          {formations.map((item: string, index: number) => (
-            <option className="capitalize" key={index} value={item}>
-              {item}
-            </option>
-          ))}
-        </select>
-      </div>
-
+    <div className="w-full flex justify-start items-center gap-x-2">
       <div className="flex items-center">
         <label className="text-xs mr-4" htmlFor="parcours">
           Parcours

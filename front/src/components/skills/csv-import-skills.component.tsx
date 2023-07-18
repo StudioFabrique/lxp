@@ -2,10 +2,12 @@ import { ChangeEvent, FC, useEffect, useMemo, useRef, useState } from "react";
 import Papa from "papaparse";
 
 import UploadIcon from "../UI/svg-icons/upload-icon.component";
+import { checkCSV } from "../../utils/check-csv";
+import { skillsFields } from "../../config/csv/csv-skills-fields";
 
-type Props = { onParseCsv: (data: any) => void };
+type Props = { origin: string; onParseCsv: (data: any) => void };
 
-const CsvImportSkills: FC<Props> = ({ onParseCsv }) => {
+const CsvImportSkills: FC<Props> = ({ origin, onParseCsv }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
@@ -35,10 +37,8 @@ const CsvImportSkills: FC<Props> = ({ onParseCsv }) => {
 
   const handleFileSelection = () => {
     if (selectedFile && fileRef.current) {
-      console.log(fileRef.current.value);
       fileRef.current.value = "";
     }
-
     if (fileRef) {
       fileRef.current?.click();
     }
@@ -50,8 +50,13 @@ const CsvImportSkills: FC<Props> = ({ onParseCsv }) => {
         ...commonConfig,
         header: true,
         complete: (result: any) => {
-          result.data.pop();
-          onParseCsv(result.data);
+          console.log("resultat", result.meta);
+          if (checkCSV(skillsFields, result.meta.fields)) {
+            result.data.pop();
+            onParseCsv(result.data);
+          } else {
+            setFileError("Format des données non conforme");
+          }
         },
       });
     }
@@ -66,10 +71,14 @@ const CsvImportSkills: FC<Props> = ({ onParseCsv }) => {
             : selectedFile
             ? "border-success"
             : "border-primary/50"
-        }`}
+        } ${origin === "csv" ? "bg-primary" : ""}`}
         onClick={handleFileSelection}
       >
-        <div className="flex flex-col justify-center items-center gap-y-4 group-hover:text-white">
+        <div
+          className={`flex flex-col justify-center items-center gap-y-4 group-hover:text-white ${
+            origin === "csv" ? "text-white" : ""
+          }`}
+        >
           <UploadIcon size={10} />
           <p className={`${fileError ? "text-error" : ""}`}>
             {fileError
