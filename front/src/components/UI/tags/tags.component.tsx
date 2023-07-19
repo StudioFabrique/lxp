@@ -11,9 +11,10 @@ import Wrapper from "../wrapper/wrapper.component";
 
 const tags = createTag();
 
-const Tags: FC<{ onSubmitTags: (tags: Array<Tag>) => void }> = ({
-  onSubmitTags,
-}) => {
+const Tags: FC<{
+  onSubmitTags: (tags: Array<Tag>) => void;
+  title?: string;
+}> = ({ onSubmitTags, title }) => {
   //const { sendRequest } = useHttp();
   const {
     selectedItems,
@@ -57,7 +58,7 @@ const Tags: FC<{ onSubmitTags: (tags: Array<Tag>) => void }> = ({
   return (
     <div className="h-fit">
       <Wrapper>
-        <h2 className="text-xl font-bold">Tags</h2>
+        <h2 className="text-xl font-bold">{title ?? "Tags"}</h2>
         <SearchDropdown
           addItem={addItem}
           filterItems={filterItems}
