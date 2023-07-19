@@ -7,11 +7,13 @@ import { AvatarSmall } from "../../UI/avatar/avatar.component";
 import useHttp from "../../../hooks/use-http";
 import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
 import UpdateUserStatus from "../../UI/update-user-status/update-user-status.component";
+import DeleteUserButton from "./buttons/delete-user-button.component";
 
 const UserItem: FC<{
   userItem: any;
   onRowCheck: (id: string) => void;
-}> = ({ userItem, onRowCheck }) => {
+  onDelete: (id: string) => void;
+}> = ({ userItem, onRowCheck, onDelete }) => {
   //const [isActive, setIsActive] = useState<boolean>(userItem.isActive);
   const { isLoading, sendRequest } = useHttp();
 
@@ -77,9 +79,11 @@ const UserItem: FC<{
             <Link to="#">Editer</Link>
           </Can>
 
-          <Can action="delete" subject={userItem.roles[0].role}>
-            <Link to="#">Supprimer</Link>
-          </Can>
+          <DeleteUserButton
+            isLoading={false}
+            userItem={userItem}
+            onDelete={onDelete}
+          />
         </div>
       </td>
     </>

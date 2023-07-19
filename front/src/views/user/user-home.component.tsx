@@ -165,6 +165,8 @@ const UserHome = () => {
     );
   };
 
+  const handleDeleteUser = (id: string) => {};
+
   return (
     <>
       <div className="w-full flex flex-col items-center px-4 py-8 gap-8">
@@ -208,6 +210,7 @@ const UserHome = () => {
               onUncheckAll={handleUncheckALL}
               sdir={sdir}
               stype={stype}
+              onDelete={handleDeleteUser}
             />
             {dataList.length > 0 ? (
               <Pagination
