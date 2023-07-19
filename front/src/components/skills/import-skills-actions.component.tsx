@@ -1,10 +1,9 @@
+import { FC, useCallback } from "react";
 import { useDispatch } from "react-redux";
 
 import CsvImportSkills from "./csv-import-skills.component";
 import { parcoursAction } from "../../store/redux-toolkit/parcours";
-import { FC, useCallback } from "react";
 import DbImportSkills from "./db-import-skills.component";
-import { Link } from "react-router-dom";
 
 type Props = {
   origin: string;

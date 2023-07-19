@@ -117,6 +117,8 @@ const useEagerLoadingList = (initialList: Array<any>, defaultSort: string) => {
 
   return {
     allChecked,
+    direction,
+    fieldSort,
     list,
     page,
     totalPages,
