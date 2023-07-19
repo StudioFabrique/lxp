@@ -31,8 +31,11 @@ const ParcoursRessourcesContacts: FC<{
     resetFilterItems,
     removeItem,
     initItems,
-  } = useItems();
+  } = useItems(); // custom hook qui gère les transferts d'objets entre deux listes
 
+  /**
+   * envoie une requête http pour récup la liste des formateurs et la stock en mémoire dans un custom hook "useList"
+   */
   const fetchTeachers = useCallback(() => {
     const applyData = (data: any) => {
       const userItems = Array<UserItem>();
@@ -53,6 +56,7 @@ const ParcoursRessourcesContacts: FC<{
     );
   }, [initItems, sendRequest]);
 
+  // envoie une requête pour récupérer la liste des formateurs au montage du composant
   useEffect(() => {
     fetchTeachers();
   }, [fetchTeachers]);
@@ -67,6 +71,9 @@ const ParcoursRessourcesContacts: FC<{
     };
   }, [selectedItems]);
 
+  /**
+   * mise à jour automatique de la liste des contacts vers le composant parent
+   */
   useEffect(() => {
     const timer = setTimeout(() => {
       onSubmitContacts(contactsToSubmit.contacts);
@@ -76,12 +83,21 @@ const ParcoursRessourcesContacts: FC<{
     };
   }, [contactsToSubmit.contacts, onSubmitContacts]);
 
+  // TODO: requête pour enregistrer le nouveau formateur
   const handleSubmitNewUser = (newUser: {
     email: string;
     firstname: string;
     lastname: string;
   }) => {
     fetchTeachers();
+  };
+
+  /**
+   * fermeture du drawer
+   * @param id string
+   */
+  const handleCloseDrawer = (id: string) => {
+    document.getElementById(id)?.click();
   };
 
   return (
@@ -96,7 +112,10 @@ const ParcoursRessourcesContacts: FC<{
           property="name"
           placeHolder="Ajouter un nouveau contact..."
         />
-        <RightSideDrawer title="Ajouter un Formateur" onCloseDrawer={() => {}}>
+        <RightSideDrawer
+          title="Ajouter un Formateur"
+          onCloseDrawer={handleCloseDrawer}
+        >
           <UserQuickCreate onSubmitUser={handleSubmitNewUser} />
         </RightSideDrawer>
       </div>

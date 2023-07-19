@@ -1,10 +1,10 @@
 import { FC } from "react";
 
 type Props = {
-  size: number;
+  size?: number;
 };
 
-const UploadIcon: FC<Props> = ({ size }) => {
+const RefreshIcon: FC<Props> = ({ size = 6 }) => {
   let style = `w-${size} h-${size}`;
 
   return (
@@ -19,10 +19,10 @@ const UploadIcon: FC<Props> = ({ size }) => {
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15"
+        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
       />
     </svg>
   );
 };
 
-export default UploadIcon;
+export default RefreshIcon;

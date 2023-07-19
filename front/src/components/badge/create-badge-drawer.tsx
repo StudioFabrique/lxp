@@ -31,7 +31,7 @@ const CreateBadge = () => {
   };
 
   const formIsValid = () => {
-    if (title.isValid) {
+    if (title.isValid && previewUrl) {
       if (description && !description.isValid) {
         return false;
       }

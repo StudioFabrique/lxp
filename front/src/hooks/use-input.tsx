@@ -15,6 +15,8 @@ const inputStateReducer = (state: any, action: Action) => {
       return { value: action.value, isTouched: false };
     case "IS_SUBMITTED":
       return { ...state, isTouched: true };
+    case "NEW_PROPS":
+      return { ...state, value: action.value };
     default:
       return;
   }
@@ -54,6 +56,10 @@ const useInput = (
     dispatch({ type: "IS_SUBMITTED", value: "" });
   }, []);
 
+  const newProps = useCallback((value: string) => {
+    dispatch({ type: "NEW_PROPS", value });
+  }, []);
+
   return {
     value: {
       value: inputState!.value,
@@ -65,6 +71,7 @@ const useInput = (
       textAreaChangeHandler,
       isSubmitted,
     },
+    newProps,
   };
 };
 
