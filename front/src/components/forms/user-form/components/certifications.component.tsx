@@ -23,6 +23,10 @@ const Certifications: FC<{
 
   const [graduations, setGraduations] = useState<Array<Graduation>>([]);
 
+  const handleSubmitgraduation = () => {
+    onSubmitGraduations(graduations);
+  };
+
   const handleAddGraduation: MouseEventHandler<HTMLButtonElement> = (
     event: MouseEvent<HTMLButtonElement>
   ) => {
@@ -117,7 +121,7 @@ const Certifications: FC<{
           </button>
         </div>
         {graduations.length > 0 ? (
-          <div className="bg-secondary-content flex flex-col items-center gap-y-4 h-56 carousel carousel-vertical p-3 rounded-xl">
+          <div className="bg-secondary-content flex flex-col items-center gap-y-4 overflow-y-auto max-h-72 p-3 rounded-xl">
             {/* La liste des certifications */}
             {graduations.map((graduation, i) => (
               <span

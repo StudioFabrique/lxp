@@ -1,7 +1,22 @@
-import { ChangeEvent, ChangeEventHandler, RefObject, useRef } from "react";
+import {
+  ChangeEvent,
+  ChangeEventHandler,
+  FC,
+  RefObject,
+  useRef,
+  useState,
+} from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 
-const TypeUtilisateur = () => {
+const TypeUtilisateur: FC<{
+  onSubmit: (selectedType: number) => void;
+}> = ({ onSubmit }) => {
+  const [selectedType, setSelectedType] = useState(0);
+
+  const handleSubmit = () => {
+    onSubmit(selectedType);
+  };
+
   const handleCheck: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
@@ -10,6 +25,7 @@ const TypeUtilisateur = () => {
       checkboxes[i].checked = false;
     }
     event.target.checked = true;
+    setSelectedType(parseInt(event.target.value) ?? 0);
   };
 
   return (
@@ -26,6 +42,7 @@ const TypeUtilisateur = () => {
             type="checkbox"
             className="checkbox checkbox-primary"
             onChange={handleCheck}
+            value={0}
           />
           <label htmlFor="etudiant">Etudiant</label>
         </span>
@@ -35,6 +52,7 @@ const TypeUtilisateur = () => {
             type="checkbox"
             className="checkbox checkbox-primary"
             onChange={handleCheck}
+            value={1}
           />
           <label htmlFor="formateur">Formateur</label>
         </span>
@@ -44,6 +62,7 @@ const TypeUtilisateur = () => {
             type="checkbox"
             className="checkbox checkbox-primary"
             onChange={handleCheck}
+            value={2}
           />
           <label htmlFor="administrateur">Administrateur</label>
         </span>
@@ -53,6 +72,7 @@ const TypeUtilisateur = () => {
             type="checkbox"
             className="checkbox checkbox-primary"
             onChange={handleCheck}
+            value={3}
           />
           <label htmlFor="visiteur">Visiteur</label>
         </span>
