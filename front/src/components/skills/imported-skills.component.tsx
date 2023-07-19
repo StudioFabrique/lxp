@@ -5,6 +5,8 @@ import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import DrawerFormButtons from "../UI/drawer-form-buttons/drawer-form-buttons.component";
 import { parcoursAction } from "../../store/redux-toolkit/parcours";
 import DrawerDataFilter from "../UI/drawer-data-filter/drawer-data-filter.component";
+import SortUpIcon from "../UI/svg-icons/sort-up-icon.component";
+import SortDownIcon from "../UI/svg-icons/sort-down-icon.component";
 
 type Props = {
   data: Array<any>; //  liste des objets importés depuis un fichier CSV et transformés en objets js
@@ -15,6 +17,8 @@ type Props = {
 const ImportedSkills: FC<Props> = ({ data, origin, onCloseDrawer }) => {
   const {
     allChecked,
+    direction,
+    fieldSort,
     list,
     sortData,
     setAllChecked,
@@ -23,7 +27,7 @@ const ImportedSkills: FC<Props> = ({ data, origin, onCloseDrawer }) => {
     getFilteredList,
     getFieldValues,
     resetFilters,
-  } = useEagerLoadingList(data, "title"); //  custom hook permettant de gérer l'affichage des données, quand la liste de compétences apparaît à l'écran elle est triée alphabétiquement par son intitulé
+  } = useEagerLoadingList(data, "description"); //  custom hook permettant de gérer l'affichage des données, quand la liste de compétences apparaît à l'écran elle est triée alphabétiquement par son intitulé
   const dispatch = useDispatch();
 
   /**
@@ -85,17 +89,33 @@ const ImportedSkills: FC<Props> = ({ data, origin, onCloseDrawer }) => {
                       />
                     </th>
                     <th
-                      className="cursor-pointer"
+                      className="cursor-pointer flex items-center justify-between"
                       onClick={() => sortData("description")}
                     >
-                      Compétence
+                      <p>Compétence</p>
+                      {fieldSort === "description" ? (
+                        direction ? (
+                          <SortUpIcon />
+                        ) : (
+                          <SortDownIcon />
+                        )
+                      ) : null}
                     </th>
                     {origin === "db" ? (
                       <th
-                        className="cursor-pointer"
+                        className="cursor-pointer items-center justify-between"
                         onClick={() => sortData("parcours")}
                       >
-                        Parcours
+                        <div className="flex items-center justify-between">
+                          <p>Parcours</p>
+                          {fieldSort === "parcours" ? (
+                            direction ? (
+                              <SortUpIcon />
+                            ) : (
+                              <SortDownIcon />
+                            )
+                          ) : null}
+                        </div>
                       </th>
                     ) : null}
                   </tr>
