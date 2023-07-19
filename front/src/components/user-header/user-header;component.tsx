@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const UserHeader = () => {
   return (
     <div className="w-full xl:w-4/6 grid grid-cols-1 md:grid-cols-2 gap-y-8">
@@ -11,6 +13,9 @@ const UserHeader = () => {
         </p>
       </div>
       <div className="flex items-center gap-x-2 justify-center md:justify-end">
+        <Link className="btn" to="/admin/user/add">
+          Créer un utilisateur
+        </Link>
         <button className="btn btn-outline btn-sm btn-primary">
           <svg
             xmlns="http://www.w3.org/2000/svg"
