@@ -1,13 +1,13 @@
 import { FC, useState } from "react";
 import Can from "../../../UI/can/can.component";
-import Modal from "../../../UI/modal/modal";
 import DeleteModal from "../../../UI/modal/delete-modal";
 
 const DeleteUserButton: FC<{
   userItem: any;
   onDelete: (id: string) => void;
   isLoading: boolean;
-}> = ({ userItem, isLoading, onDelete }) => {
+  error?: string;
+}> = ({ userItem, isLoading, onDelete, error }) => {
   const [isModalActive, setModalState] = useState<boolean>(false);
 
   const handleModal = () => {
@@ -23,7 +23,12 @@ const DeleteUserButton: FC<{
   return (
     <Can action="delete" subject={userItem.roles[0].role}>
       {isModalActive && (
-        <DeleteModal onConfirm={handleConfirmDelete} onCancel={handleModal} />
+        <DeleteModal
+          isLoading={isLoading}
+          onConfirm={handleConfirmDelete}
+          onCancel={handleModal}
+          error={error}
+        />
       )}
       <button type="button" onClick={handleModal}>
         Supprimer
