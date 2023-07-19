@@ -1,12 +1,15 @@
 import { FC, useEffect } from "react";
 import Role from "../../../utils/interfaces/role";
 import UserItem from "./user-item.component";
+import SortColumnIcon from "../../UI/sort-column-icon.component/sort-column-icon.component";
 
 const UserList: FC<{
   allChecked: boolean;
   role: Role;
   userList: Array<any>;
   page: number;
+  sdir: boolean;
+  stype: string;
   onRowCheck: (id: string) => void;
   onAllChecked: () => void;
   onSorting: (column: string) => void;
@@ -16,6 +19,8 @@ const UserList: FC<{
   page,
   role,
   userList,
+  sdir,
+  stype,
   onRowCheck,
   onAllChecked,
   onSorting,
@@ -78,7 +83,14 @@ const UserList: FC<{
               onSorting("firstname");
             }}
           >
-            Prénom
+            <div className="flex items-center gap-x-2">
+              <p>Prénom</p>
+              <SortColumnIcon
+                fieldSort={stype}
+                column="firstname"
+                direction={sdir}
+              />
+            </div>
           </th>
           <th
             className="cursor-pointer"
@@ -86,7 +98,14 @@ const UserList: FC<{
               onSorting("lastname");
             }}
           >
-            Nom
+            <div className="flex items-center gap-x-2">
+              <p>Nom</p>
+              <SortColumnIcon
+                fieldSort={stype}
+                column="lastname"
+                direction={sdir}
+              />
+            </div>
           </th>
           <th
             className="cursor-pointer"
@@ -94,7 +113,14 @@ const UserList: FC<{
               onSorting("email");
             }}
           >
-            Email
+            <div className="flex items-center gap-x-2">
+              <p>Email</p>
+              <SortColumnIcon
+                fieldSort={stype}
+                column="email"
+                direction={sdir}
+              />
+            </div>
           </th>
           <th
             className="cursor-pointer"
@@ -102,7 +128,14 @@ const UserList: FC<{
               onSorting("group");
             }}
           >
-            Formation
+            <div className="flex items-center gap-x-2">
+              <p>Formation</p>
+              <SortColumnIcon
+                fieldSort={stype}
+                column="group"
+                direction={sdir}
+              />
+            </div>
           </th>
           <th
             className="cursor-pointer"
@@ -110,7 +143,14 @@ const UserList: FC<{
               onSorting("group");
             }}
           >
-            Promotion
+            <div className="flex items-center gap-x-2">
+              <p>Promotion</p>
+              <SortColumnIcon
+                fieldSort={stype}
+                column="group"
+                direction={sdir}
+              />
+            </div>
           </th>
           <th
             className="cursor-pointer"
@@ -118,7 +158,14 @@ const UserList: FC<{
               onSorting("createdAt");
             }}
           >
-            Ajouté le
+            <div className="flex items-center gap-x-2">
+              <p>Ajouté le</p>
+              <SortColumnIcon
+                fieldSort={stype}
+                column="createdAt"
+                direction={sdir}
+              />
+            </div>
           </th>
           <th
             className="cursor-pointer"
@@ -126,7 +173,14 @@ const UserList: FC<{
               onSorting("isActive");
             }}
           >
-            Status
+            <div className="flex items-center gap-x-2">
+              <p>Status</p>
+              <SortColumnIcon
+                fieldSort={stype}
+                column="isActive"
+                direction={sdir}
+              />
+            </div>
           </th>
           <th>Actions</th>
         </tr>

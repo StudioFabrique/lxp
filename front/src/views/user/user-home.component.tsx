@@ -29,6 +29,8 @@ const UserHome = () => {
     page,
     totalPages,
     dataList,
+    stype,
+    sdir,
     getList,
     sortData,
     initPagination,
@@ -203,6 +205,8 @@ const UserHome = () => {
               onAllChecked={handleAllChecked}
               onSorting={sortData}
               onUncheckAll={handleUncheckALL}
+              sdir={sdir}
+              stype={stype}
             />
             {dataList.length > 0 ? (
               <Pagination

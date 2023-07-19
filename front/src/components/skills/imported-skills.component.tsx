@@ -5,8 +5,7 @@ import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import DrawerFormButtons from "../UI/drawer-form-buttons/drawer-form-buttons.component";
 import { parcoursAction } from "../../store/redux-toolkit/parcours";
 import DrawerDataFilter from "../UI/drawer-data-filter/drawer-data-filter.component";
-import SortUpIcon from "../UI/svg-icons/sort-up-icon.component";
-import SortDownIcon from "../UI/svg-icons/sort-down-icon.component";
+import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
 
 type Props = {
   data: Array<any>; //  liste des objets importés depuis un fichier CSV et transformés en objets js
@@ -89,17 +88,17 @@ const ImportedSkills: FC<Props> = ({ data, origin, onCloseDrawer }) => {
                       />
                     </th>
                     <th
-                      className="cursor-pointer flex items-center justify-between"
+                      className="cursor-pointer"
                       onClick={() => sortData("description")}
                     >
-                      <p>Compétence</p>
-                      {fieldSort === "description" ? (
-                        direction ? (
-                          <SortUpIcon />
-                        ) : (
-                          <SortDownIcon />
-                        )
-                      ) : null}
+                      <div className="flex items-center justify-between">
+                        <p>Compétence</p>
+                        <SortColumnIcon
+                          fieldSort={fieldSort}
+                          column="description"
+                          direction={direction}
+                        />
+                      </div>
                     </th>
                     {origin === "db" ? (
                       <th
@@ -108,13 +107,11 @@ const ImportedSkills: FC<Props> = ({ data, origin, onCloseDrawer }) => {
                       >
                         <div className="flex items-center justify-between">
                           <p>Parcours</p>
-                          {fieldSort === "parcours" ? (
-                            direction ? (
-                              <SortUpIcon />
-                            ) : (
-                              <SortDownIcon />
-                            )
-                          ) : null}
+                          <SortColumnIcon
+                            fieldSort={fieldSort}
+                            column="parcours"
+                            direction={direction}
+                          />
                         </div>
                       </th>
                     ) : null}
