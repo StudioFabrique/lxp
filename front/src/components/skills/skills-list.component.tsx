@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { parcoursAction } from "../../store/redux-toolkit/parcours";
 
+import { parcoursAction } from "../../store/redux-toolkit/parcours";
 import Skill from "../../utils/interfaces/skill";
 import SkillItem from "./skill-item.component";
 import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
@@ -9,6 +9,7 @@ import SkillForm from "./skill-form";
 import Badge from "../../utils/interfaces/badge";
 import BadgeUpdate from "../badge/badge-update.component";
 import ButtonAdd from "../UI/button-add/button-add";
+import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
 
 const SkillsList = () => {
   const skillList = useSelector((state: any) => state.parcours.skills);
@@ -78,12 +79,14 @@ const SkillsList = () => {
         <ul className="flex flex-col gap-y-4">
           {skillList.map((item: Skill) => (
             <li key={item.id}>
-              <SkillItem
-                skill={item}
-                onUpdateSkill={handleUpdateSkill}
-                onUpdateBadge={handleUpdateBadge}
-                onDeleteSkill={handleDeleteSkill}
-              />
+              <FadeWrapper>
+                <SkillItem
+                  skill={item}
+                  onUpdateSkill={handleUpdateSkill}
+                  onUpdateBadge={handleUpdateBadge}
+                  onDeleteSkill={handleDeleteSkill}
+                />
+              </FadeWrapper>
             </li>
           ))}
         </ul>
@@ -100,12 +103,6 @@ const SkillsList = () => {
     <>
       <div className="flex flex-col gap-y-4 mt-4">{content}</div>
       <div>
-        {/*         <button
-          className="btn btn-outline btn-primary capitalize"
-          onClick={handleAddSkill}
-        >
-          Ajouter
-        </button> */}
         <ButtonAdd
           label="ajouter"
           outline={true}

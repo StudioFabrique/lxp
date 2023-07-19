@@ -4,8 +4,10 @@ import Skill from "../../utils/interfaces/skill";
 import { sortArray } from "../../utils/sortArray";
 
 const initialParcoursState = {
+  importedSkills: Array<any>(),
   skills: Array<Skill>(),
   badges: Array<any>(),
+  totalBadges: 0,
 };
 
 let i = 0;
@@ -41,10 +43,9 @@ const parcoursSlice = createSlice({
       state.badges = addIdToObject(updatedBadges);
     },
     importBadges(state, action) {
-      const importedBadges = addIdToObject(action.payload);
       const badges = state.badges;
-      importedBadges.forEach((item) => badges.push(item));
-      state.badges = badges;
+      badges.push(action.payload);
+      state.badges = addIdToObject(badges);
     },
     validateBadge(state, action) {
       const updatedBadges = state.badges.filter(
@@ -67,6 +68,28 @@ const parcoursSlice = createSlice({
         });
         state.badges = updatedBadges;
       }
+    },
+    importSkills(state, action) {
+      const importedSkills = sortArray(action.payload, "title");
+      state.importedSkills = addIdToObject(importedSkills);
+    },
+    addImportedSkillsToSkills(state, action) {
+      const skills = state.skills;
+      action.payload.forEach((item: any) => {
+        const skillToFind = skills.find(
+          (skill: Skill) => skill.description === item.description
+        );
+        if (!skillToFind) {
+          skills.push({
+            id: item.id,
+            description: item.description,
+          });
+        }
+      });
+      state.skills = skills;
+    },
+    getBadgesTotal(state) {
+      state.totalBadges = state.badges.length;
     },
   },
 });

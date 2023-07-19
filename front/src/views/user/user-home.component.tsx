@@ -12,11 +12,11 @@ import { hasPermission } from "../../utils/hasPermission";
 import Modal from "../../components/UI/modal/modal";
 import UserList from "../../components/lists/user-list/user-list.component";
 import UserHeader from "../../components/user-header/user-header;component";
-import ButtonRefresh from "../../components/UI/button-refresh/button-refresh";
 import DropdownActionsUser from "../../components/lists/user-list/dropdown-actions-user";
 import UsersListStats from "../../components/lists/user-list/users-list-stats";
 import UsersStats from "../../utils/interfaces/users-stats";
 import Can from "../../components/UI/can/can.component";
+import RefreshIcon from "../../components/UI/svg-icons/refresh-icon.component";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
@@ -29,6 +29,8 @@ const UserHome = () => {
     page,
     totalPages,
     dataList,
+    stype,
+    sdir,
     getList,
     sortData,
     initPagination,
@@ -178,7 +180,9 @@ const UserHome = () => {
                 options={userSearchOptions}
                 onSearch={handleSearchResult}
               />
-              <ButtonRefresh size="btn-sm" onRefresh={handleRefreshDataList} />
+              <div className="text-primary" onClick={handleRefreshDataList}>
+                <RefreshIcon size={6} />
+              </div>
               {!role ? null : (
                 <Can action="update" subject={role.role}>
                   <DropdownActionsUser
@@ -201,6 +205,8 @@ const UserHome = () => {
               onAllChecked={handleAllChecked}
               onSorting={sortData}
               onUncheckAll={handleUncheckALL}
+              sdir={sdir}
+              stype={stype}
             />
             {dataList.length > 0 ? (
               <Pagination
