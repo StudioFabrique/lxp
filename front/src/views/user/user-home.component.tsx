@@ -167,6 +167,7 @@ const UserHome = () => {
     <>
       <div className="w-full flex flex-col items-center px-4 py-8 gap-8">
         <UserHeader />
+
         <UsersListStats stats={stats} isLoading={isLoading} />
         <div className="flex flex-col gap-y-8">
           {user && role ? (

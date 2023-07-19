@@ -4,10 +4,10 @@ import useInput from "../../../hooks/use-input";
 import Informations from "./components/informations.components";
 import Details from "./components/details.component";
 import GroupUserList from "../../lists/group-user-list/group-user-list.component";
-import Tags from "../../UI/tags/tags.component";
 import Tag from "../../../utils/interfaces/tag";
 import DatesSelecter from "../../UI/dates-selecter/dates-selecter.component";
 import ParcoursHeader from "../../groups-header/groups-header.component";
+import Tags from "../../UI/tags/tags.component";
 
 const GroupAddForm: FC<{
   group?: any;
