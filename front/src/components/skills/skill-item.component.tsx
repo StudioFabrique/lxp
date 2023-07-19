@@ -22,10 +22,10 @@ const SkillItem: FC<Props> = ({
     <>
       <div className="w-full flex flex-col md:flex-row items-center gap-x-8">
         <div className="flex-1">
-          <SkillTitle title={skill.title} />
+          <SkillTitle title={skill.description} />
         </div>
         <div className="flex gap-x-8 items-center">
-          <SkillBadge badge={skill.badge!} />
+          <SkillBadge badge={skill.badge} />
           <SkillActions
             skillId={skill.id!}
             onUpdateSkill={onUpdateSkill}

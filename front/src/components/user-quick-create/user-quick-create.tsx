@@ -6,6 +6,7 @@ import {
   regexOptionalGeneric,
 } from "../../utils/constantes";
 import Wrapper from "../UI/wrapper/wrapper.component";
+import DrawerFormButtons from "../UI/drawer-form-buttons/drawer-form-buttons.component";
 
 type Props = {
   onSubmitUser: (newUser: {
@@ -107,8 +108,8 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
 
   const setErrorMessage = () => {
     return isFormValid
-      ? "text-xs font-bold text-error flex pr-2 invisible"
-      : "text-xs font-bold text-error flex pr-2 visible";
+      ? "w-full text-xs font-bold text-error flex pr-2 invisible"
+      : "w-full text-xs font-bold text-error flex pr-2 visible";
   };
 
   return (
@@ -255,11 +256,11 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
             Note : Les identifiants de l'utilisateur lui seront envoyés par mail
             à la validation du formulaire
           </p>
-          <div className="w-full flex justify-between items-center gap-x-2 pr-2 mt-4">
+          <div className="w-full flex flex-col items-center gap-x-2 pr-2 mt-4">
             <p className={setErrorMessage()}>
               Un ou plusieurs champs sont mal remplis
             </p>
-            <div className="flex gap-x-4">
+            {/*             <div className="flex gap-x-4">
               <button
                 className="btn btn-outline btn-sm btn-primary font-normal w-32"
                 type="reset"
@@ -268,7 +269,8 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
                 Annuler
               </button>
               <button className="btn btn-primary btn-sm w-32">Valider</button>
-            </div>
+            </div> */}
+            <DrawerFormButtons onCancel={handleCloseDrawer} />
           </div>
         </div>
       </form>

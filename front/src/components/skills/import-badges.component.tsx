@@ -21,7 +21,7 @@ const maxSize = 2 * 1024 * 1024;
 
 const ImportBadges: FC<Props> = ({ label, outline = true }) => {
   const fileSelectRef = useRef<any>(null);
-  const [selectedFiles, setSelectedFiles] = useState<Array<any> | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<any | null>(null);
   const dispatch = useDispatch();
 
   let buttonStyle = "w-fit flex gapx-x-1 items-center";
@@ -47,23 +47,18 @@ const ImportBadges: FC<Props> = ({ label, outline = true }) => {
     const files = event.target.files;
     console.log({ files });
 
-    if (files && files.length > 0) {
-      // Effectuez les actions supplémentaires que vous souhaitez avec les fichiers sélectionnés
-      const badges = Array<any>();
-      for (let i = 0; i < files.length; i++) {
-        if (validateImageFile(files[i], maxSize)) {
-          badges.push({ image: URL.createObjectURL(files[i]) });
-        }
+    if (files) {
+      if (validateImageFile(files[0], maxSize)) {
+        setSelectedFiles({ image: URL.createObjectURL(files[0]) });
       }
-      setSelectedFiles(badges);
     } else {
       setSelectedFiles(null);
-      console.log("Veuillez sélectionner au moins un fichier.");
+      console.log("Veuillez sélectionner un fichier.");
     }
   };
 
   useEffect(() => {
-    if (selectedFiles && selectedFiles.length > 0) {
+    if (selectedFiles) {
       console.log({ selectedFiles });
       dispatch(parcoursAction.importBadges(selectedFiles));
       toast.success("Images téléversées avec succès!");
@@ -97,7 +92,6 @@ const ImportBadges: FC<Props> = ({ label, outline = true }) => {
         type="file"
         ref={fileSelectRef}
         accept=".png"
-        multiple
         onChange={handleFileChange}
       />
     </>
