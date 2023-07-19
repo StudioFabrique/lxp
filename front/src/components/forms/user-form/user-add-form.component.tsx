@@ -73,6 +73,7 @@ const UserAddForm: FC<{
   const handleSubmitTags = (tags: Tag[]) => {};
 
   const handleSubmitLinks = (links: Array<String>) => {};
+  const handleSubmitTypeUtilisateur = (type: number) => {};
 
   const onChangeDate = () => {};
 
@@ -115,15 +116,18 @@ const UserAddForm: FC<{
             postCode={postCode}
           />
           <div className="grid grid-rows-2 gap-y-5">
-            <TypeUtilisateur />
+            <TypeUtilisateur onSubmit={handleSubmitTypeUtilisateur} />
             <Tags title="Centre d'intérêts" onSubmitTags={handleSubmitTags} />
           </div>
         </div>
         <div>
           <Presentation description={description} />
         </div>
-        <div className="grid grid-cols-2 gap-x-5">
-          <Certifications onSubmitGraduations={handleSubmitGraduations} />
+        <div className="grid grid-cols-3 gap-x-5">
+          <div className="col-span-2">
+            <Certifications onSubmitGraduations={handleSubmitGraduations} />
+          </div>
+
           <Liens onSubmit={handleSubmitLinks} />
         </div>
       </div>
