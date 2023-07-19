@@ -13,7 +13,9 @@ const UserItem: FC<{
   userItem: any;
   onRowCheck: (id: string) => void;
   onDelete: (id: string) => void;
-}> = ({ userItem, onRowCheck, onDelete }) => {
+  isUserDeleteLoading: boolean;
+  error?: string;
+}> = ({ userItem, onRowCheck, onDelete, isUserDeleteLoading, error }) => {
   //const [isActive, setIsActive] = useState<boolean>(userItem.isActive);
   const { isLoading, sendRequest } = useHttp();
 
@@ -80,7 +82,8 @@ const UserItem: FC<{
           </Can>
 
           <DeleteUserButton
-            isLoading={false}
+            error={error}
+            isLoading={isUserDeleteLoading}
             userItem={userItem}
             onDelete={onDelete}
           />

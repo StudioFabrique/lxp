@@ -15,6 +15,8 @@ const UserList: FC<{
   onSorting: (column: string) => void;
   onUncheckAll: () => void;
   onDelete: (id: string) => void;
+  isLoading: boolean;
+  error?: string;
 }> = ({
   allChecked,
   page,
@@ -27,6 +29,8 @@ const UserList: FC<{
   onSorting,
   onUncheckAll,
   onDelete,
+  isLoading,
+  error,
 }) => {
   const handleAllChecked = () => {
     onAllChecked();
@@ -198,6 +202,8 @@ const UserList: FC<{
                 onDelete={onDelete}
                 userItem={item}
                 onRowCheck={onRowCheck}
+                isUserDeleteLoading={isLoading}
+                error={error}
               />
             }
           </tr>

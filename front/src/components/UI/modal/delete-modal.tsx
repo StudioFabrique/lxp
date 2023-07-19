@@ -3,9 +3,11 @@ import Portal from "../portal/portal";
 import DeleteIcon from "../svg-icons/delete-icon.compoenent";
 
 const DeleteModal: FC<{
+  isLoading: boolean;
   onCancel: () => void;
   onConfirm: () => void;
-}> = ({ onCancel, onConfirm }) => {
+  error?: string;
+}> = ({ isLoading, onCancel, onConfirm, error }) => {
   useEffect(() => {
     document.body.addEventListener(
       "keydown",
@@ -44,10 +46,14 @@ const DeleteModal: FC<{
                 >
                   Annuler
                 </button>
-                <button className="btn btn-primary btn-md" onClick={onConfirm}>
+                <button
+                  className={`btn btn-primary btn-md ${isLoading && "loading"}`}
+                  onClick={onConfirm}
+                >
                   Supprimer
                 </button>
               </div>
+              {error && <p>{error}</p>}
             </div>
           </div>
         </div>
