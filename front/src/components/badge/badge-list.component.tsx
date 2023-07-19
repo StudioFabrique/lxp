@@ -30,8 +30,6 @@ const BadgeList: FC<Props> = ({ selectedBadge, onSubmitBadge }) => {
     }
   };
 
-  console.log("badge list rendering");
-
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const selectedFile = event.target.files[0];
@@ -71,10 +69,10 @@ const BadgeList: FC<Props> = ({ selectedBadge, onSubmitBadge }) => {
                   {item.id === selectedBadge?.id ? (
                     <div className="indicator" key={item.id}>
                       <span
-                        className="indicator-item avatar bg-info rounded-full p-1 cursor-pointer"
+                        className="indicator-item avatar bg-info rounded-full p-1 cursor-pointer text-neutral"
                         onClick={uploadFile}
                       >
-                        <UploadIcon size={4} color="neutral" />
+                        <UploadIcon size={4} />
                       </span>
                       <BadgeItem
                         badge={item}
@@ -108,7 +106,7 @@ const BadgeList: FC<Props> = ({ selectedBadge, onSubmitBadge }) => {
       ) : (
         <div className="flex flex-col items-center gap-y-4 my-8">
           <p>Aucun badge dans la liste</p>
-          <ImportBadges label="Importer des badges" outline={false} />
+          <ImportBadges label="Importer un badge" outline={false} />
         </div>
       )}
       <input
