@@ -3,9 +3,11 @@
 import {
   ChangeEvent,
   ChangeEventHandler,
+  Dispatch,
   FC,
   MouseEvent,
   MouseEventHandler,
+  SetStateAction,
   useState,
 } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
@@ -13,19 +15,14 @@ import Graduation from "../../../../utils/interfaces/graduation";
 import { toast } from "react-hot-toast";
 
 const Certifications: FC<{
-  onSubmitGraduations: (graduations: Array<Graduation>) => void;
-}> = ({ onSubmitGraduations }) => {
+  graduations: Array<Graduation>;
+  setGraduations: Dispatch<SetStateAction<Graduation[]>>;
+}> = ({ graduations, setGraduations }) => {
   const [currentGraduation, setCurrentGraduation] = useState<Graduation>({
     title: "",
     date: new Date(),
     degree: "",
   });
-
-  const [graduations, setGraduations] = useState<Array<Graduation>>([]);
-
-  const handleSubmitgraduation = () => {
-    onSubmitGraduations(graduations);
-  };
 
   const handleAddGraduation: MouseEventHandler<HTMLButtonElement> = (
     event: MouseEvent<HTMLButtonElement>
