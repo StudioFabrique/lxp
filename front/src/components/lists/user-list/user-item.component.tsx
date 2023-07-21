@@ -7,7 +7,7 @@ import { AvatarSmall } from "../../UI/avatar/avatar.component";
 import useHttp from "../../../hooks/use-http";
 import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
 import UpdateUserStatus from "../../UI/update-user-status/update-user-status.component";
-import DeleteUserButton from "./buttons/delete-user-button.component";
+import ButtonDelete from "../../UI/button-delete/button-delete.component";
 
 const UserItem: FC<{
   userItem: any;
@@ -80,13 +80,14 @@ const UserItem: FC<{
           <Can action="update" subject={userItem.roles[0].role}>
             <Link to="#">Editer</Link>
           </Can>
-
-          <DeleteUserButton
-            error={error}
-            isLoading={isUserDeleteLoading}
-            userItem={userItem}
-            onDelete={onDelete}
-          />
+          <Can action="delete" subject={userItem.roles[0].role}>
+            <ButtonDelete
+              error={error}
+              isLoading={isUserDeleteLoading}
+              userItem={userItem}
+              onDelete={onDelete}
+            />
+          </Can>
         </div>
       </td>
     </>
