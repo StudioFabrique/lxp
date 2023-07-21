@@ -1,19 +1,20 @@
 import {
   ChangeEvent,
   ChangeEventHandler,
-  EventHandler,
+  Dispatch,
   FC,
   MouseEvent,
   MouseEventHandler,
+  SetStateAction,
   useState,
 } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 
-const Liens: FC<{ onSubmit: (links: Array<String>) => void }> = ({
-  onSubmit,
-}) => {
-  const [links, setLinks] = useState<Array<String>>([]);
-  const [currentLink, setCurrentLink] = useState<String>("");
+const Liens: FC<{
+  links: Array<string>;
+  onSetLinks: Dispatch<SetStateAction<Array<string>>>;
+}> = ({ links, onSetLinks }) => {
+  const [currentLink, setCurrentLink] = useState<string>("");
 
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>
@@ -25,7 +26,7 @@ const Liens: FC<{ onSubmit: (links: Array<String>) => void }> = ({
     event: MouseEvent<HTMLButtonElement>
   ) => {
     if (currentLink.length > 0) {
-      setLinks((links) => [...links, currentLink]);
+      onSetLinks((links) => [...links, currentLink]);
     }
   };
 
