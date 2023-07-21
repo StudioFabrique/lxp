@@ -174,10 +174,12 @@ const UserHome = () => {
         body: { id },
       },
       (data) => {
-        if (data) {
-          const data = dataList.filter((user) => user._id !== id);
-          setDataList(data);
+        if (!data || error) {
+          return;
         }
+
+        const dataToChange = dataList.filter((user) => user._id !== id);
+        setDataList(dataToChange);
       }
     );
   };
