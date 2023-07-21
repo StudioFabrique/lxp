@@ -1,22 +1,16 @@
 import {
   ChangeEvent,
   ChangeEventHandler,
+  Dispatch,
   FC,
-  RefObject,
-  useRef,
-  useState,
+  SetStateAction,
 } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 
 const TypeUtilisateur: FC<{
-  onSubmit: (selectedType: number) => void;
-}> = ({ onSubmit }) => {
-  const [selectedType, setSelectedType] = useState(0);
-
-  const handleSubmit = () => {
-    onSubmit(selectedType);
-  };
-
+  typeUtilisateur: number;
+  onSetTypeUtilisateur: Dispatch<SetStateAction<number>>;
+}> = ({ typeUtilisateur, onSetTypeUtilisateur }) => {
   const handleCheck: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
@@ -25,7 +19,7 @@ const TypeUtilisateur: FC<{
       checkboxes[i].checked = false;
     }
     event.target.checked = true;
-    setSelectedType(parseInt(event.target.value) ?? 0);
+    onSetTypeUtilisateur(parseInt(event.target.value) ?? 0);
   };
 
   return (
@@ -43,6 +37,7 @@ const TypeUtilisateur: FC<{
             className="checkbox checkbox-primary"
             onChange={handleCheck}
             value={0}
+            checked={typeUtilisateur === 0}
           />
           <label htmlFor="etudiant">Etudiant</label>
         </span>
@@ -53,6 +48,7 @@ const TypeUtilisateur: FC<{
             className="checkbox checkbox-primary"
             onChange={handleCheck}
             value={1}
+            checked={typeUtilisateur === 1}
           />
           <label htmlFor="formateur">Formateur</label>
         </span>
@@ -63,6 +59,7 @@ const TypeUtilisateur: FC<{
             className="checkbox checkbox-primary"
             onChange={handleCheck}
             value={2}
+            checked={typeUtilisateur === 2}
           />
           <label htmlFor="administrateur">Administrateur</label>
         </span>
@@ -73,6 +70,7 @@ const TypeUtilisateur: FC<{
             className="checkbox checkbox-primary"
             onChange={handleCheck}
             value={3}
+            checked={typeUtilisateur === 3}
           />
           <label htmlFor="visiteur">Visiteur</label>
         </span>
