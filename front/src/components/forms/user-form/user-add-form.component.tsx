@@ -18,6 +18,18 @@ const UserAddForm: FC<{
   error: string;
   isLoading: boolean;
 }> = (props) => {
+  const [graduations, setGraduations] = useState<Array<Graduation>>([]);
+
+  const [birthDate, setBirthDate] = useState<Date | null>(null);
+
+  const [file, setFile] = useState<File | null>(null);
+
+  const [links, setLinks] = useState<Array<string>>([]);
+
+  const [typeUtilisateur, setTypeUtilisateur] = useState<number>(0);
+
+  const [tags, setTags] = useState<Array<Tag>>([]);
+
   const { value: email } = useInput(
     (value: string) => regexMail.test(value),
     props.user?.email ?? ""
@@ -68,18 +80,13 @@ const UserAddForm: FC<{
     props.user?.description ?? ""
   );
 
-  const handleSubmitGraduations = (graduations: Array<Graduation>) => {};
-
-  const handleSubmitTags = (tags: Tag[]) => {};
-
-  const handleSubmitLinks = (links: Array<String>) => {};
-  const handleSubmitTypeUtilisateur = (type: number) => {};
-
-  const onChangeDate = () => {};
-
   //  test la validité du form via le custom hook useInput
   let formIsValid = false;
   formIsValid = email.isValid && password.isValid;
+
+  const handleSubmitTags = (tags: Array<Tag>) => {
+    setTags(tags);
+  };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -93,6 +100,11 @@ const UserAddForm: FC<{
         address: address.value.trim(),
         postCode: postCode.value.trim(),
         city: city.value.trim(),
+        birthDate: birthDate,
+        graduations: graduations,
+        avatar: file,
+        tags: tags,
+        typeUtilisateur: typeUtilisateur,
       });
     }
   };
@@ -107,16 +119,21 @@ const UserAddForm: FC<{
             firstname={firstname}
             email={email}
             pseudo={pseudo}
+            onSetFile={setFile}
           />
           <Contact
             address={address}
             city={city}
-            onChangeDate={onChangeDate}
+            birthDate={birthDate}
+            onChangeDate={setBirthDate}
             phone={phone}
             postCode={postCode}
           />
           <div className="grid grid-rows-2 gap-y-5">
-            <TypeUtilisateur onSubmit={handleSubmitTypeUtilisateur} />
+            <TypeUtilisateur
+              typeUtilisateur={typeUtilisateur}
+              onSetTypeUtilisateur={setTypeUtilisateur}
+            />
             <Tags title="Centre d'intérêts" onSubmitTags={handleSubmitTags} />
           </div>
         </div>
@@ -125,10 +142,13 @@ const UserAddForm: FC<{
         </div>
         <div className="grid grid-cols-3 gap-x-5">
           <div className="col-span-2">
-            <Certifications onSubmitGraduations={handleSubmitGraduations} />
+            <Certifications
+              graduations={graduations}
+              setGraduations={setGraduations}
+            />
           </div>
 
-          <Liens onSubmit={handleSubmitLinks} />
+          <Liens links={links} onSetLinks={setLinks} />
         </div>
       </div>
     </form>
