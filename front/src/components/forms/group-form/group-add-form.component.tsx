@@ -15,8 +15,6 @@ const GroupAddForm: FC<{
   error: string;
   isLoading: boolean;
 }> = (props) => {
-  const [usersToAdd, setUsersToAdd] = useState<String[]>([]);
-
   const handleSubmitTags = (tags: Tag[]) => {};
   const handleSubmitDates = (dates: {
     startDate: string;
@@ -61,7 +59,6 @@ const GroupAddForm: FC<{
         diplome: diplome.value.trim(),
         rncp: rncp.value.trim(),
         promotion: promotion.value.trim(),
-        users: usersToAdd,
       });
     }
   };
@@ -81,7 +78,6 @@ const GroupAddForm: FC<{
         </div>
         <Details promotion={promotion} desc={desc} />
       </div>
-      <GroupUserList users={[]} onSubmitSetUsersToAdd={setUsersToAdd} />
     </form>
   );
 };
