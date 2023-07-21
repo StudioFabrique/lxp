@@ -7,9 +7,8 @@ const Informations: FC<{
   firstname: any;
   pseudo: any;
   email: any;
-}> = ({ lastname, firstname, pseudo, email }) => {
-  const handleSetFile = () => {};
-
+  onSetFile: (file: File) => void;
+}> = ({ onSetFile, lastname, firstname, pseudo, email }) => {
   return (
     <Wrapper>
       <h2 className="font-bold text-xl">Informations</h2>
@@ -57,7 +56,7 @@ const Informations: FC<{
           autoComplete="off"
         />
       </span>
-      <ImageFileUpload onSetFile={handleSetFile} maxSize={5} />
+      <ImageFileUpload onSetFile={onSetFile} maxSize={5} />
     </Wrapper>
   );
 };

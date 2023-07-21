@@ -38,8 +38,9 @@ const UserHome = () => {
     setPath,
     handleRowCheck,
     setAllChecked,
+    setDataList,
   } = usePagination("lastname", "/user/everything");
-  const { isLoading, sendRequest } = useHttp();
+  const { isLoading, sendRequest, error } = useHttp();
 
   const handleRoleSwitch = (role: Role) => {
     initPagination();
@@ -165,6 +166,24 @@ const UserHome = () => {
     );
   };
 
+  const handleDeleteUser = (id: string) => {
+    sendRequest(
+      {
+        path: "/user",
+        method: "delete",
+        body: { id },
+      },
+      (data) => {
+        if (!data || error) {
+          return;
+        }
+
+        const dataToChange = dataList.filter((user) => user._id !== id);
+        setDataList(dataToChange);
+      }
+    );
+  };
+
   return (
     <>
       <div className="w-full flex flex-col items-center px-4 py-8 gap-8">
@@ -198,6 +217,7 @@ const UserHome = () => {
           </div>
           <div className="w-full">
             <UserList
+              isLoading={isLoading}
               allChecked={allChecked}
               page={page}
               role={role}
@@ -208,6 +228,8 @@ const UserHome = () => {
               onUncheckAll={handleUncheckALL}
               sdir={sdir}
               stype={stype}
+              onDelete={handleDeleteUser}
+              error={error}
             />
             {dataList.length > 0 ? (
               <Pagination

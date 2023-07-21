@@ -14,6 +14,9 @@ const UserList: FC<{
   onAllChecked: () => void;
   onSorting: (column: string) => void;
   onUncheckAll: () => void;
+  onDelete: (id: string) => void;
+  isLoading: boolean;
+  error?: string;
 }> = ({
   allChecked,
   page,
@@ -25,6 +28,9 @@ const UserList: FC<{
   onAllChecked,
   onSorting,
   onUncheckAll,
+  onDelete,
+  isLoading,
+  error,
 }) => {
   const handleAllChecked = () => {
     onAllChecked();
@@ -191,7 +197,15 @@ const UserList: FC<{
             className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content"
             key={item._id}
           >
-            {<UserItem userItem={item} onRowCheck={onRowCheck} />}
+            {
+              <UserItem
+                onDelete={onDelete}
+                userItem={item}
+                onRowCheck={onRowCheck}
+                isUserDeleteLoading={isLoading}
+                error={error}
+              />
+            }
           </tr>
         ))}
       </tbody>
