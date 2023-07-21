@@ -38,7 +38,10 @@ const GroupManageUserList: FC<{
 
   return (
     <RightSideDrawer title="Ajouter des Utilisateurs" id="add-user-to-group">
-      <div>
+      <div className="flex flex-col items-center gap-y-5">
+        <button type="button" className="btn btn-primary">
+          Importer les utilisateur en CSV
+        </button>
         {dataList.length > 0 ? (
           <div className="h-full flex flex-col gap-y-5 justify-between">
             <UserToAddList
