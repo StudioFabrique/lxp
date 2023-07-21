@@ -1,13 +1,20 @@
-import { FC } from "react";
+import { ChangeEvent, ChangeEventHandler, FC } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 
 const Contact: FC<{
-  onChangeDate: () => void;
   address: any;
   city: any;
   postCode: any;
   phone: any;
-}> = ({ onChangeDate, address, city, postCode, phone }) => {
+  birthDate: Date | null;
+  onChangeDate: (date: Date | null) => void;
+}> = ({ address, city, postCode, phone, onChangeDate }) => {
+  const handleChangeDate: ChangeEventHandler<HTMLInputElement> = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    onChangeDate(event.currentTarget.valueAsDate);
+  };
+
   return (
     <Wrapper>
       <h2 className="font-bold text-xl">Contact</h2>
@@ -16,7 +23,7 @@ const Contact: FC<{
         <input
           className="input input-sm w-full p-[20px] pl-[30px]"
           type="date"
-          onChange={onChangeDate}
+          onChange={handleChangeDate}
           autoComplete="off"
         />
       </span>
