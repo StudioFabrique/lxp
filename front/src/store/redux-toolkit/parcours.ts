@@ -2,8 +2,29 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import Skill from "../../utils/interfaces/skill";
 import { sortArray } from "../../utils/sortArray";
+import Role from "../../utils/interfaces/role";
+import Tag from "../../utils/interfaces/tag";
+
+type UserItem = {
+  _id: string;
+  name: string;
+  roles: Array<Role>;
+};
 
 const initialParcoursState = {
+  id: null,
+  infos: {
+    id: null,
+    title: "",
+    description: "",
+    degree: "",
+    startDate: "",
+    endDate: "",
+    tags: Array<Tag>(),
+    image: null,
+    contacts: Array<UserItem>(),
+  },
+  parcoursIsValid: false,
   importedSkills: Array<any>(),
   skills: Array<Skill>(),
   badges: Array<any>(),
@@ -90,6 +111,51 @@ const parcoursSlice = createSlice({
     },
     getBadgesTotal(state) {
       state.totalBadges = state.badges.length;
+    },
+    updateParcoursInfos(state, action) {
+      const infos = action.payload;
+      console.log({ infos });
+
+      state.infos = {
+        ...state.infos,
+        id: state.id,
+        title: infos.title,
+        description: infos.description,
+        degree: infos.degree,
+        image: infos.file,
+      };
+    },
+    updateParcoursDates(state, action) {
+      const dates = action.payload;
+
+      state.infos = {
+        ...state.infos,
+        id: state.id,
+        startDate: dates.startDate,
+        endDate: dates.endDate,
+      };
+    },
+    updateParcoursTags(state, action) {
+      const tags = action.payload.map((item: Tag) => item.id);
+      state.infos = { ...state.infos, id: state.id, tags };
+    },
+    updateParcoursContacts(state, action) {
+      const contacts = action.payload.map((item: UserItem) => item._id);
+      state.infos = { ...state.infos, id: state.id, contacts };
+    },
+    testParcours(state) {
+      const infos = state.infos;
+      state.parcoursIsValid =
+        infos.title.length > 0 &&
+        infos.description.length > 0 &&
+        infos.degree.length > 0 &&
+        infos.startDate.length > 0 &&
+        infos.endDate.length > 0 &&
+        infos.tags.length > 0 &&
+        infos.contacts.length > 0;
+    },
+    setParcoursId(state, action) {
+      state.id = action.payload;
     },
   },
 });
