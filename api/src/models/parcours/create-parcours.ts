@@ -108,13 +108,19 @@ async function createParcours(parcours: any, userId: string) {
           }),
         },
         contacts: {
-          create: contacts.map((teacher: any) => {
+          create: contacts.map((contact: any) => {
             return {
-              teacher: {
-                connect: { id: teacher },
+              contact: {
+                connect: { id: contact },
               },
             };
           }),
+        },
+        admin: {
+          connect: { id: newParcours.admin },
+        },
+        formation: {
+          connect: { id: 1 },
         },
       },
     });
