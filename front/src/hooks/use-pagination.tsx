@@ -11,7 +11,7 @@ const initialState = {
 
 const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
   const [sdir, setSdir] = useState(false);
-  const [stype, setStype] = useState(defaultSortValue);
+  const [stype, setStype] = useState(defaultSortValue ?? "desc");
   const [page, setPage] = useState(initialState.page);
   const [perPage, setPerPage] = useState(initialState.perPage);
   const [totalPages, setTotalPages] = useState<number | null>(

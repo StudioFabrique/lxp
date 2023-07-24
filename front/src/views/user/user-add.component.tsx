@@ -11,8 +11,8 @@ const UserAdd = () => {
     sendRequest({ method: "post", path: "/user", body: user }, (data: any) => {
       if (data)
         return navigate(
-          { pathname: "../../user" },
-          { state: { sucessMessage: "" } }
+          { pathname: "/admin/user" },
+          { state: { sucessToastMessage: "Utilisateur crée avec succès" } }
         );
     });
   };

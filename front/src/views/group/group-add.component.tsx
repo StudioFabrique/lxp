@@ -3,22 +3,27 @@ import useHttp from "../../hooks/use-http";
 import Group from "../../utils/interfaces/group";
 import GroupAddForm from "../../components/forms/group-form/group-add-form.component";
 import GroupUserList from "../../components/lists/group-user-list/group-user-list.component";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import User from "../../utils/interfaces/user";
 
 const GroupAdd = () => {
-  const [usersToAdd, setUsersToAdd] = useState<String[]>([]);
+  const [usersToAdd, setUsersToAdd] = useState<Array<User>>([]);
 
   const { error, isLoading, sendRequest } = useHttp();
-  const navigate = useNavigate();
 
   const handleSubmit = (group: Group) => {
     console.log(group);
+
     /* sendRequest(
       { method: "post", path: "/group", body: group },
       (data: any) => {
         if (data) return navigate(-1);
       }
     ); */
+  };
+
+  const handleAddUsers = (users: Array<User>) => {
+    setUsersToAdd((currentUsers) => [...currentUsers, ...users]);
   };
 
   return (
@@ -28,7 +33,10 @@ const GroupAdd = () => {
         error={error}
         isLoading={isLoading}
       />
-      <GroupUserList users={[]} onSubmitSetUsersToAdd={setUsersToAdd} />
+      <GroupUserList
+        usersToAdd={usersToAdd}
+        onSubmitSetUsersToAdd={handleAddUsers}
+      />
     </div>
   );
 };
