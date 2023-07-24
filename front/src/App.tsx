@@ -13,6 +13,7 @@ import GroupAdd from "./views/group/group-add.component";
 import ParcoursLayout from "./views/parcours/parcours-layout.component";
 import ParcoursHome from "./views/parcours/parcours-home.component";
 import ParcoursAdd from "./views/parcours/parcours-add.component";
+import UserMultipleAdd from "./views/user/user-multiple-add";
 
 const router = createBrowserRouter([
   {

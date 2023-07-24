@@ -1,48 +1,46 @@
-import { FC, useContext, useState } from "react";
+import { Dispatch, FC, SetStateAction, useContext, useState } from "react";
 import { AddUsersButton } from "./buttons.component";
 import UserToAddList from "./user-to-add-list.component";
 import usePagination from "../../../../hooks/use-pagination";
 import { Context } from "../../../../store/context.store";
 import Pagination from "../../../UI/pagination/pagination";
 import RightSideDrawer from "../../../UI/right-side-drawer/right-side-drawer";
-import CsvImport from "./csv-import/csv-import";
+import User from "../../../../utils/interfaces/user";
 
 const GroupManageUserList: FC<{
-  onSetUsersToAdd: (usersId: string[]) => void;
+  onSetUsersToAdd: (users: Array<User>) => void;
 }> = (props) => {
   const { user } = useContext(Context);
 
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [isUserSettedUp, setUserSettedState] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState<Array<User>>([]);
+  const [isUsersSettedUp, setUsersSettedState] = useState(false);
 
   const { page, totalPages, dataList, handlePageNumber, perPage, setPerPage } =
     usePagination("lastname", `/user/${user!.roles[0].role}`);
 
   const handleSetUsersToAdd = () => {
-    console.log("users");
-
     console.log(selectedUsers);
     props.onSetUsersToAdd(selectedUsers);
   };
 
   const handleDeleteSelectedUser = (userId: string) => {
-    setSelectedUsers((users) => users.filter((value) => value !== userId));
-    setUserSettedState(false);
+    setSelectedUsers((users) => users.filter((value) => value._id !== userId));
+    setUsersSettedState(false);
     console.log("id deleting : " + userId);
   };
 
-  const handleAddSelectedUser = (userId: string) => {
-    setSelectedUsers((users) => [...users, userId]);
-    setUserSettedState(false);
-    console.log("id adding : " + userId);
+  const handleAddSelectedUser = (user: User) => {
+    setSelectedUsers((users) => [...users, user]);
+    setUsersSettedState(false);
+    console.log("id adding : " + user);
   };
 
-  const handleImportUser = (users: Array<any>) => {};
-
   return (
-    <RightSideDrawer title="Ajouter des Utilisateurs" id="add-user-to-group">
+    <RightSideDrawer
+      title="Ajouter des étudiants au groupe"
+      id="add-user-to-group"
+    >
       <div className="flex flex-col items-center gap-y-5">
-        <CsvImport onImportUsers={handleImportUser} />
         {dataList.length > 0 ? (
           <div className="h-full flex flex-col gap-y-5 justify-between">
             <UserToAddList
@@ -50,6 +48,7 @@ const GroupManageUserList: FC<{
               userList={dataList}
               onAddSelectedUser={handleAddSelectedUser}
               onDeleteSelectedUser={handleDeleteSelectedUser}
+              isUsersSettedUp={isUsersSettedUp}
             />
             <Pagination
               page={page}
@@ -60,8 +59,8 @@ const GroupManageUserList: FC<{
             />
             <AddUsersButton
               onSetUsersToAdd={handleSetUsersToAdd}
-              setUserSettedState={setUserSettedState}
-              isUserSettedUp={isUserSettedUp}
+              setUsersSettedState={setUsersSettedState}
+              isUserSettedUp={isUsersSettedUp}
             />
           </div>
         ) : (

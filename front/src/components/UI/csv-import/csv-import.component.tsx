@@ -1,13 +1,17 @@
 import { ChangeEvent, FC, useEffect, useMemo, useRef, useState } from "react";
 import Papa from "papaparse";
 
-import UploadIcon from "../UI/svg-icons/upload-icon.component";
-import { checkCSV } from "../../utils/check-csv";
-import { skillsFields } from "../../config/csv/csv-skills-fields";
+import UploadIcon from "../svg-icons/upload-icon.component";
+import { checkCSV } from "../../../utils/check-csv";
 
-type Props = { origin: string; onParseCsv: (data: any) => void };
+type Props = {
+  origin: string;
+  onParseCsv: (data: any) => void;
+  fields: Array<string>;
+  style?: "icon" | "text";
+};
 
-const CsvImportSkills: FC<Props> = ({ origin, onParseCsv }) => {
+const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, style }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
@@ -51,7 +55,7 @@ const CsvImportSkills: FC<Props> = ({ origin, onParseCsv }) => {
         header: true,
         complete: (result: any) => {
           console.log("resultat", result.meta);
-          if (checkCSV(skillsFields, result.meta.fields)) {
+          if (checkCSV(fields, result.meta.fields)) {
             result.data.pop();
             onParseCsv(result.data);
           } else {
@@ -64,31 +68,37 @@ const CsvImportSkills: FC<Props> = ({ origin, onParseCsv }) => {
 
   return (
     <>
-      <div
-        className={`group w-[13rem] h-[8rem] flex flex-col text-xs gap-y-4 p-4 justify-center items-center font-bold rounded-xl shadow-xl border-2 hover:bg-primary ${
-          fileError
-            ? "border-error"
-            : selectedFile
-            ? "border-success"
-            : "border-primary/50"
-        } ${origin === "csv" ? "bg-primary" : ""}`}
-        onClick={handleFileSelection}
-      >
+      {style === undefined || style === "icon" ? (
         <div
-          className={`flex flex-col justify-center items-center gap-y-4 group-hover:text-white ${
-            origin === "csv" ? "text-white" : ""
-          }`}
-        >
-          <UploadIcon size={10} />
-          <p className={`${fileError ? "text-error" : ""}`}>
-            {fileError
-              ? fileError
+          className={`group w-[13rem] h-[8rem] flex flex-col text-xs gap-y-4 p-4 justify-center items-center font-bold rounded-xl shadow-xl border-2 hover:bg-primary cursor-pointer ${
+            fileError
+              ? "border-error"
               : selectedFile
-              ? selectedFile.name
-              : "Sélectionner un fichier"}
-          </p>
+              ? "border-success"
+              : "border-primary/50"
+          } ${origin === "csv" ? "bg-primary" : ""}`}
+          onClick={handleFileSelection}
+        >
+          <div
+            className={`flex flex-col justify-center items-center gap-y-4 group-hover:text-white ${
+              origin === "csv" ? "text-white" : ""
+            }`}
+          >
+            <UploadIcon size={10} />
+            <p className={`${fileError ? "text-error" : ""}`}>
+              {fileError
+                ? fileError
+                : selectedFile
+                ? selectedFile.name
+                : "Sélectionner un fichier"}
+            </p>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div onClick={handleFileSelection} className="cursor-pointer">
+          <p>Importer une liste d'étudiant</p>
+        </div>
+      )}
       <input
         className="hidden"
         ref={fileRef}
@@ -102,4 +112,4 @@ const CsvImportSkills: FC<Props> = ({ origin, onParseCsv }) => {
   );
 };
 
-export default CsvImportSkills;
+export default CsvImport;

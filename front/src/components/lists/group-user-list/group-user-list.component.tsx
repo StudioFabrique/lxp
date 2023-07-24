@@ -1,21 +1,20 @@
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import GroupManageUserList from "./group-manage-user-list/group-manage-user-list.component";
 import GroupUserItem from "./group-user-item.component";
 import User from "../../../utils/interfaces/user";
 import Wrapper from "../../UI/wrapper/wrapper.component";
-import Pagination from "../../UI/pagination/pagination";
-import usePagination from "../../../hooks/use-pagination";
+import CsvImportUserList from "../../UI/csv-import/csv-import-user-list/csv-import-user-list.component";
 
 const GroupUserList: FC<{
-  users: User[];
-  onSubmitSetUsersToAdd: (Users: string[]) => void;
-}> = ({ users, onSubmitSetUsersToAdd }) => {
-  const { page, totalPages, handlePageNumber } = usePagination("", "");
-
+  usersToAdd: User[];
+  onSubmitSetUsersToAdd: (users: Array<User>) => void;
+}> = ({ usersToAdd, onSubmitSetUsersToAdd }) => {
   return (
     <Wrapper>
-      <h2 className="font-bold text-lg">Etudiants</h2>
-
+      <div className="flex justify-between">
+        <h2 className="font-bold text-lg">Etudiants</h2>
+        <CsvImportUserList />
+      </div>
       <div className="flex justify-between">
         <GroupManageUserList onSetUsersToAdd={onSubmitSetUsersToAdd} />
         <input
@@ -26,7 +25,7 @@ const GroupUserList: FC<{
       </div>
 
       {/* liste des utilisateurs du groupe */}
-      {users.length > 0 ? (
+      {usersToAdd.length > 0 ? (
         <>
           <table className="table-auto tab-sm border-separate border-spacing-y-4 text-center">
             <thead>
@@ -43,16 +42,11 @@ const GroupUserList: FC<{
               </tr>
             </thead>
             <tbody>
-              {users.map((user, i) => (
-                <GroupUserItem key={i} user={user} />
+              {usersToAdd.map((user) => (
+                <GroupUserItem key={user._id} user={user} />
               ))}
             </tbody>
           </table>
-          <Pagination
-            page={page}
-            setPage={handlePageNumber}
-            totalPages={totalPages}
-          />
         </>
       ) : (
         "Aucun utilisateurs dans ce groupe"
