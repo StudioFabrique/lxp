@@ -24,8 +24,7 @@ type Props = {
 
 const ParcoursForm: FC<Props> = ({ saveStep }) => {
   const dispatch = useDispatch();
-  const parcoursInfos = useSelector((state: any) => state.parcours.infos);
-  const isValid = useSelector((state: any) => state.parcours.parcoursIsValid);
+  const infos = useSelector((state: any) => state.parcours.infos);
   const { sendRequest } = useHttp();
 
   // Callback pour soumettre les informations du parcours
@@ -64,47 +63,22 @@ const ParcoursForm: FC<Props> = ({ saveStep }) => {
   const submitInformations = () => {
     // Traîtement de la réponse
     const applyData = (data: any) => {
-      dispatch(parcoursAction.setParcoursId(data.id));
       toast.success("Parcours mis à jour");
       saveStep(1);
     };
 
     // Vérifie si le formulaire est valide avant d'envoyer la requête
-    dispatch(parcoursAction.testParcours());
-
-    if (isValid) {
+    if (infos.title.length > 0) {
       sendRequest(
         {
           path: "/parcours",
           method: "post",
-          body: parcoursInfos,
+          body: infos,
         },
         applyData
       );
     }
   };
-
-  /*   useEffect(() => {
-    // Traîtement de la réponse
-    const applyData = (data: any) => {
-      dispatch(parcoursAction.setParcoursId(data.id));
-      toast.success("Parcours mis à jour");
-    };
-
-    // Vérifie si le formulaire est valide avant d'envoyer la requête
-    dispatch(parcoursAction.testParcours());
-
-    if (isValid) {
-      sendRequest(
-        {
-          path: "/parcours",
-          method: "post",
-          body: parcoursInfos,
-        },
-        applyData
-      );
-    }
-  }, [parcoursInfos, isValid, sendRequest, dispatch]); */
 
   return (
     <>

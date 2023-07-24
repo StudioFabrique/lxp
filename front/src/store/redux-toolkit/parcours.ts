@@ -12,19 +12,16 @@ type UserItem = {
 };
 
 const initialParcoursState = {
-  id: null,
+  id: 1,
   infos: {
-    id: null,
     title: "",
     description: "",
     degree: "",
     startDate: "",
     endDate: "",
     tags: Array<Tag>(),
-    image: null,
     contacts: Array<UserItem>(),
   },
-  parcoursIsValid: false,
   importedSkills: Array<any>(),
   skills: Array<Skill>(),
   badges: Array<any>(),
@@ -118,11 +115,9 @@ const parcoursSlice = createSlice({
 
       state.infos = {
         ...state.infos,
-        id: state.id,
         title: infos.title,
         description: infos.description,
         degree: infos.degree,
-        image: infos.file,
       };
     },
     updateParcoursDates(state, action) {
@@ -130,32 +125,17 @@ const parcoursSlice = createSlice({
 
       state.infos = {
         ...state.infos,
-        id: state.id,
         startDate: dates.startDate,
         endDate: dates.endDate,
       };
     },
     updateParcoursTags(state, action) {
       const tags = action.payload.map((item: Tag) => item.id);
-      state.infos = { ...state.infos, id: state.id, tags };
+      state.infos = { ...state.infos, tags };
     },
     updateParcoursContacts(state, action) {
       const contacts = action.payload.map((item: UserItem) => item._id);
-      state.infos = { ...state.infos, id: state.id, contacts };
-    },
-    testParcours(state) {
-      const infos = state.infos;
-      state.parcoursIsValid =
-        infos.title.length > 0 &&
-        infos.description.length > 0 &&
-        infos.degree.length > 0 &&
-        infos.startDate.length > 0 &&
-        infos.endDate.length > 0 &&
-        infos.tags.length > 0 &&
-        infos.contacts.length > 0;
-    },
-    setParcoursId(state, action) {
-      state.id = action.payload;
+      state.infos = { ...state.infos, contacts };
     },
   },
 });
