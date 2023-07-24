@@ -1,6 +1,11 @@
 import { FC, FormEvent, useState } from "react";
 import useInput from "../../../hooks/use-input";
-import { regexMail, regexPassword } from "../../../utils/constantes";
+import {
+  regexGeneric,
+  regexMail,
+  regexNumber,
+  regexPassword,
+} from "../../../utils/constantes";
 import Contact from "./components/contact.component";
 import TypeUtilisateur from "./components/type-utilisateur.component";
 import Certifications from "./components/certifications.component";
@@ -41,42 +46,42 @@ const UserAddForm: FC<{
   );
 
   const { value: firstname } = useInput(
-    (value: string) => regexPassword.test(value),
+    (value: string) => regexGeneric.test(value),
     props.user?.firstname ?? ""
   );
 
   const { value: lastname } = useInput(
-    (value: string) => regexPassword.test(value),
+    (value: string) => regexGeneric.test(value),
     props.user?.lastname ?? ""
   );
 
   const { value: pseudo } = useInput(
-    (value: string) => regexPassword.test(value),
+    (value: string) => regexGeneric.test(value),
     props.user?.pseudo ?? ""
   );
 
   const { value: address } = useInput(
-    (value: string) => regexPassword.test(value),
+    (value: string) => regexGeneric.test(value),
     props.user?.address ?? ""
   );
 
   const { value: phone } = useInput(
-    (value: string) => regexPassword.test(value),
+    (value: string) => regexNumber.test(value),
     props.user?.phone ?? ""
   );
 
   const { value: postCode } = useInput(
-    (value: string) => regexPassword.test(value),
+    (value: string) => regexNumber.test(value),
     props.user?.postCode ?? ""
   );
 
   const { value: city } = useInput(
-    (value: string) => regexPassword.test(value),
+    (value: string) => regexGeneric.test(value),
     props.user?.city ?? ""
   );
 
   const { value: description } = useInput(
-    (value: string) => regexPassword.test(value),
+    (value: string) => regexGeneric.test(value),
     props.user?.description ?? ""
   );
 

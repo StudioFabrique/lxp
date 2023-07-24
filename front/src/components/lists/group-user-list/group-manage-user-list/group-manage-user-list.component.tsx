@@ -5,6 +5,7 @@ import usePagination from "../../../../hooks/use-pagination";
 import { Context } from "../../../../store/context.store";
 import Pagination from "../../../UI/pagination/pagination";
 import RightSideDrawer from "../../../UI/right-side-drawer/right-side-drawer";
+import CsvImport from "./csv-import/csv-import";
 
 const GroupManageUserList: FC<{
   onSetUsersToAdd: (usersId: string[]) => void;
@@ -36,12 +37,12 @@ const GroupManageUserList: FC<{
     console.log("id adding : " + userId);
   };
 
+  const handleImportUser = (users: Array<any>) => {};
+
   return (
     <RightSideDrawer title="Ajouter des Utilisateurs" id="add-user-to-group">
       <div className="flex flex-col items-center gap-y-5">
-        <button type="button" className="btn btn-primary">
-          Importer les utilisateur en CSV
-        </button>
+        <CsvImport onImportUsers={handleImportUser} />
         {dataList.length > 0 ? (
           <div className="h-full flex flex-col gap-y-5 justify-between">
             <UserToAddList
