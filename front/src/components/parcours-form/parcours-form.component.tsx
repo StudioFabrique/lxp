@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { FC, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Toaster, toast } from "react-hot-toast";
 
@@ -18,7 +18,11 @@ type UserItem = {
   roles: Array<Role>;
 };
 
-const ParcoursForm = () => {
+type Props = {
+  saveStep: (id: number) => void;
+};
+
+const ParcoursForm: FC<Props> = ({ saveStep }) => {
   const dispatch = useDispatch();
   const parcoursInfos = useSelector((state: any) => state.parcours.infos);
   const isValid = useSelector((state: any) => state.parcours.parcoursIsValid);
@@ -57,7 +61,30 @@ const ParcoursForm = () => {
   );
 
   // Envoie les informations du parcours au serveur lorsque le formulaire est valide
-  useEffect(() => {
+  const submitInformations = () => {
+    // Traîtement de la réponse
+    const applyData = (data: any) => {
+      dispatch(parcoursAction.setParcoursId(data.id));
+      toast.success("Parcours mis à jour");
+      saveStep(1);
+    };
+
+    // Vérifie si le formulaire est valide avant d'envoyer la requête
+    dispatch(parcoursAction.testParcours());
+
+    if (isValid) {
+      sendRequest(
+        {
+          path: "/parcours",
+          method: "post",
+          body: parcoursInfos,
+        },
+        applyData
+      );
+    }
+  };
+
+  /*   useEffect(() => {
     // Traîtement de la réponse
     const applyData = (data: any) => {
       dispatch(parcoursAction.setParcoursId(data.id));
@@ -77,7 +104,7 @@ const ParcoursForm = () => {
         applyData
       );
     }
-  }, [parcoursInfos, isValid, sendRequest, dispatch]);
+  }, [parcoursInfos, isValid, sendRequest, dispatch]); */
 
   return (
     <>
@@ -95,6 +122,11 @@ const ParcoursForm = () => {
             <ParcoursRessourcesContacts onSubmitContacts={submitContacts} />
           </DrawerProvider>
         </div>
+      </div>
+      <div className="w-full flex justify-end">
+        <button className="btn btn-primary" onClick={submitInformations}>
+          Etape suivante
+        </button>
       </div>
     </>
   );
