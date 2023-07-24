@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import useInput from "../../hooks/use-input";
 import { regexGeneric } from "../../utils/constantes";
 import { autoSubmitTimer } from "../../config/auto-submit-timer";
@@ -17,22 +17,48 @@ const ParcoursInfos: FC<{
   );
   const [file, setFile] = useState<File | null>(null);
 
+  const convertImageToBase64 = useCallback(async () => {
+    if (file) {
+      const response = new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const result = await response;
+      console.log({ result });
+
+      return result;
+    } else {
+      return null;
+    }
+  }, [file]);
+
   const infos = useMemo(() => {
     return {
       title: title.value,
       description: description.value,
       degree: degree.value,
-      file,
+      file: convertImageToBase64(),
     };
-  }, [title.value, description.value, degree.value, file]);
+  }, [title.value, description.value, degree.value, convertImageToBase64]);
 
   let formIsValid = title.isValid && description.isValid && degree.isValid;
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const setInfos = async () => {
+      const imageBase64 = await infos.file;
       if (formIsValid) {
-        onSubmitInformations(infos);
+        onSubmitInformations({
+          title: infos.title,
+          description: infos.description,
+          degree: infos.degree,
+          file: imageBase64,
+        });
       }
+    };
+    const timer = setTimeout(() => {
+      setInfos();
     }, autoSubmitTimer);
 
     return () => {
