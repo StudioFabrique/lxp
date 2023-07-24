@@ -9,7 +9,7 @@ async function getParcours() {
     throw new Error(`Data not found.`);
   }
 
-  const base64Image = response!.image.toString("base64");
+  const base64Image = response!.image!.toString("base64");
   return base64Image;
 }
 

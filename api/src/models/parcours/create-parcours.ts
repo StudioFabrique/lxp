@@ -16,10 +16,13 @@ async function createParcours(parcours: any, userId: string) {
   }
 
   // conversion de l'image en donnée enregistrable sous forme de Blob dans la bdd
-  const imageBuffer = Buffer.from(parcours.image.split(",")[1], "base64");
+  //const imageBuffer = Buffer.from(parcours.image.split(",")[1], "base64");
 
   // mise à jour de l'objet parcours avec le Blob
-  const newParcours = {
+  const newParcours = { ...parcours, admin: admin.id, formation: 1 };
+  //newParcours.image = imageBuffer;
+
+  /* {
     title: parcours.title,
     description: parcours.description,
     degree: parcours.degree,
@@ -28,7 +31,7 @@ async function createParcours(parcours: any, userId: string) {
     image: imageBuffer,
     admin: admin.id,
     formation: 1,
-  };
+  }; */
 
   // test pour savoir si on met le parcours à jour ou si on en créé un nouveau
   let isParcours = null;
@@ -49,48 +52,34 @@ async function createParcours(parcours: any, userId: string) {
     })
   ).map((item) => item.id);
 
-  console.log({ contacts });
-
-  // si le parcours existe pas on le met à jour
-  if (isParcours) {
-    const response = await updateParcours(newParcours, isParcours);
-    return response.id;
-    // sinon on en créé un nouveau
-  } else {
-    const response = await storeParcours(newParcours);
-    return response.id;
-  }
-
-  async function storeParcours(parcoursToStore: any) {
-    const storedParcours = await prisma.parcours.create({
-      data: {
-        ...parcoursToStore,
-        tags: {
-          create: parcours.tags.map((tag: any) => {
-            return { tagId: parseInt(tag) };
-          }),
-        },
-        contacts: {
-          create: contacts.map((contact: any) => {
-            return {
-              contact: {
-                connect: { id: contact },
-              },
-            };
-          }),
-        },
-        admin: {
-          connect: { id: parcoursToStore.admin },
-        },
-        formation: {
-          connect: { id: 1 },
-        },
+  const storedParcours = await prisma.parcours.create({
+    data: {
+      ...newParcours,
+      /* tags: {
+        create: parcours.tags.map((tag: any) => {
+          return { tagId: parseInt(tag) };
+        }),
       },
-    });
-    return storedParcours;
-  }
+      contacts: {
+        create: contacts.map((contact: any) => {
+          return {
+            contact: {
+              connect: { id: contact },
+            },
+          };
+        }),
+      }, */
+      admin: {
+        connect: { id: newParcours.admin },
+      },
+      formation: {
+        connect: { id: newParcours.formation },
+      },
+    },
+  });
+  return storedParcours;
 
-  async function updateParcours(newParcours: any, existingParcours: any) {
+  /* sync function updateParcours(newParcours: any, existingParcours: any) {
     // on supprime les relations avec les tags et les contacts avant de les recréer avec les nouvelles données
     await prisma.tagsOnParcours.deleteMany({
       where: { parcoursId: existingParcours.id },
@@ -125,7 +114,7 @@ async function createParcours(parcours: any, userId: string) {
       },
     });
     return updatedParcours;
-  }
+  } */
 }
 
 export default createParcours;
