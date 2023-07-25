@@ -1,4 +1,11 @@
-import { FC, useContext, useState } from "react";
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { AddUsersButton } from "./buttons.component";
 import UserToAddList from "./user-to-add-list.component";
 import usePagination from "../../../../hooks/use-pagination";
@@ -8,6 +15,8 @@ import RightSideDrawer from "../../../UI/right-side-drawer/right-side-drawer";
 import User from "../../../../utils/interfaces/user";
 
 const GroupManageUserList: FC<{
+  needDataUpdate: boolean;
+  setDataUpdateState: Dispatch<SetStateAction<boolean>>;
   onSetUsersToAdd: (users: Array<User>) => void;
 }> = (props) => {
   const { user } = useContext(Context);
@@ -15,8 +24,15 @@ const GroupManageUserList: FC<{
   const [selectedUsers, setSelectedUsers] = useState<Array<User>>([]);
   const [isUsersSettedUp, setUsersSettedState] = useState(true);
 
-  const { page, totalPages, dataList, handlePageNumber, perPage, setPerPage } =
-    usePagination("lastname", `/user/${user!.roles[0].role}`);
+  const {
+    page,
+    totalPages,
+    dataList,
+    handlePageNumber,
+    perPage,
+    setPerPage,
+    getList,
+  } = usePagination("lastname", `/user/${user!.roles[0].role}`);
 
   const handleSetUsersToAdd = () => {
     console.log(selectedUsers);
@@ -34,6 +50,13 @@ const GroupManageUserList: FC<{
     setUsersSettedState(false);
     console.log("id adding : " + user);
   };
+
+  useEffect(() => {
+    if (props.needDataUpdate) {
+      getList();
+      props.setDataUpdateState(false);
+    }
+  }, [props, getList]);
 
   return (
     <RightSideDrawer

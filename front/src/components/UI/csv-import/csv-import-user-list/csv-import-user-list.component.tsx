@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import { csvUsersFields } from "../../../../config/csv/csv-users-fields";
 import RightSideDrawer from "../../right-side-drawer/right-side-drawer";
 import CsvImport from "../csv-import.component";
@@ -7,7 +7,9 @@ import User from "../../../../utils/interfaces/user";
 import { toast } from "react-hot-toast";
 import useHttp from "../../../../hooks/use-http";
 
-const CsvImportUserList = () => {
+const CsvImportUserList: FC<{
+  setDataUpdateState: Dispatch<SetStateAction<boolean>>;
+}> = ({ setDataUpdateState }) => {
   const [usersToImport, setUsersToImport] = useState<User[]>([]);
   const [isDrawerOpen, setDrawerOpenState] = useState<boolean>(false);
 
@@ -33,6 +35,7 @@ const CsvImportUserList = () => {
       (data) => {
         if (data) {
           setDrawerOpenState(false);
+          setDataUpdateState(true);
           toast.success("étudiants enregistrés");
         }
       }

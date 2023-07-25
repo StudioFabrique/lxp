@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import GroupManageUserList from "./group-manage-user-list/group-manage-user-list.component";
 import GroupUserItem from "./group-user-item.component";
 import User from "../../../utils/interfaces/user";
@@ -9,14 +9,20 @@ const GroupUserList: FC<{
   usersToAdd: User[];
   onSubmitSetUsersToAdd: (users: Array<User>) => void;
 }> = ({ usersToAdd, onSubmitSetUsersToAdd }) => {
+  const [needDataUpdate, setDataUpdateState] = useState<boolean>(false);
+
   return (
     <Wrapper>
       <div className="flex justify-between">
         <h2 className="font-bold text-lg">Etudiants</h2>
-        <CsvImportUserList />
+        <CsvImportUserList setDataUpdateState={setDataUpdateState} />
       </div>
       <div className="flex justify-between">
-        <GroupManageUserList onSetUsersToAdd={onSubmitSetUsersToAdd} />
+        <GroupManageUserList
+          needDataUpdate={needDataUpdate}
+          setDataUpdateState={setDataUpdateState}
+          onSetUsersToAdd={onSubmitSetUsersToAdd}
+        />
         <input
           type="text"
           className="input input-sm"
