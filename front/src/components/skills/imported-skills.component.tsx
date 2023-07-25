@@ -3,9 +3,9 @@ import { useDispatch } from "react-redux";
 
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import DrawerFormButtons from "../UI/drawer-form-buttons/drawer-form-buttons.component";
-import { parcoursAction } from "../../store/redux-toolkit/parcours";
 import DrawerDataFilter from "../UI/drawer-data-filter/drawer-data-filter.component";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
+import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 
 type Props = {
   data: Array<any>; //  liste des objets importés depuis un fichier CSV et transformés en objets js
@@ -47,7 +47,7 @@ const ImportedSkills: FC<Props> = ({ data, origin, onCloseDrawer }) => {
     //  récupère les compétences sélectionnées
     const selectedSkills = getSelecteditems();
     //  stocke les compétences sélectionnées en mémoire
-    dispatch(parcoursAction.addImportedSkillsToSkills(selectedSkills));
+    dispatch(parcoursSkillsAction.addImportedSkillsToSkills(selectedSkills));
     setAllChecked(false);
     onCloseDrawer("import-skills");
   };

@@ -5,6 +5,7 @@ import groupRouter from "./group.router";
 import parcoursRouter from "./parcours/parcours.router";
 import skillsRouter from "./skills.router";
 import badgeRouter from "./badge.router";
+import tagRouter from "./tag.router";
 
 const v1Router = express.Router();
 
@@ -14,5 +15,6 @@ v1Router.use("/group", groupRouter);
 v1Router.use("/parcours", parcoursRouter);
 v1Router.use("/skills", skillsRouter);
 v1Router.use("/badge", badgeRouter);
+v1Router.use("/tag", tagRouter);
 
 export default v1Router;

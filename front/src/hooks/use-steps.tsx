@@ -13,21 +13,34 @@ const useSteps = (steps: Array<Step>) => {
    */
   const updateStep = (id: number) => {
     const step = stepsList.find((item: Step) => item.id === id);
-    if (step && step.saved) {
-      setActualStep(steps[id - 1]);
+    if (id !== 1) {
+      if (step && stepsList[id - 2].saved) {
+        setActualStep(steps[id - 1]);
+      }
+    } else {
+      setActualStep(steps[0]);
     }
   };
 
   /**
-   * actualise la valeur du step avec la valeur saved égale à true
+   * actualise les propriétés saved et isValid de l'étape correspondant à l'id envoyée
    * @param id number
+   * @param value boolean
    */
-  const saveStep = (id: number) => {
+  const validateStep = (id: number, value: boolean) => {
     setStepsList((prevStepsList) => {
       const step = prevStepsList.find((item) => item.id === id);
       let updatedList = prevStepsList.filter((item) => item.id !== id);
       return sortArray(
-        [...updatedList, { id: step!.id, label: step!.label, saved: true }],
+        [
+          ...updatedList,
+          {
+            id: step!.id,
+            label: step!.label,
+            saved: true,
+            isValid: value,
+          },
+        ],
         "id"
       );
     });
@@ -35,7 +48,7 @@ const useSteps = (steps: Array<Step>) => {
     setActualStep(stepsList[id]);
   };
 
-  return { actualStep, stepsList, saveStep, updateStep };
+  return { actualStep, stepsList, updateStep, validateStep };
 };
 
 export default useSteps;

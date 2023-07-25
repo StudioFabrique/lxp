@@ -27,4 +27,5 @@ const steps = [
 export const stepsParcours = addIdToObject(steps).map((item: any) => ({
   ...item,
   saved: false,
+  isValid: false,
 }));
