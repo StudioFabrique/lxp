@@ -3,19 +3,25 @@ import { FC, useEffect, useMemo } from "react";
 import Tag from "../../../utils/interfaces/tag";
 import TagItem from "../tag-item/tag-item";
 import createTag from "../../../utils/tags";
-import { sortArray } from "../../../utils/sortArray";
 import useItems from "../../../hooks/use-items";
 import SearchDropdown from "../search-dropdown/search-dropdown";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import Wrapper from "../wrapper/wrapper.component";
 
-const tags = createTag();
+const tagsFixtures = createTag();
+let initialState = true;
 
 const Tags: FC<{
+  reduxTags?: Array<Tag>;
+  unselectedTags?: Array<Tag>;
   onSubmitTags: (tags: Array<Tag>) => void;
   title?: string;
-}> = ({ onSubmitTags, title }) => {
-  //const { sendRequest } = useHttp();
+}> = ({
+  reduxTags = [],
+  unselectedTags = tagsFixtures,
+  onSubmitTags,
+  title,
+}) => {
   const {
     selectedItems,
     filteredItems,
@@ -24,15 +30,24 @@ const Tags: FC<{
     resetFilterItems,
     removeItem,
     initItems,
+    initSelectedItems,
   } = useItems();
 
+  console.log("tags rendering");
+  console.log({ selectedItems });
+  console.log({ initialState });
+
   useEffect(() => {
-    const applyData = (data: any) => {
-      initItems(sortArray(data, "name"));
-    };
-    //  todo : ajouter la requête pour récupérer les tags de la bdd
-    applyData(tags);
-  }, [initItems]);
+    initialState = true;
+  }, []);
+
+  useEffect(() => {
+    if (initialState) {
+      initItems(unselectedTags);
+      initSelectedItems(reduxTags);
+      initialState = false;
+    }
+  }, [reduxTags, unselectedTags, initItems, initSelectedItems]);
 
   const handleRemoveTag = (tag: Tag) => {
     removeItem(tag, "name");

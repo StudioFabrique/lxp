@@ -1,4 +1,6 @@
 import { FC, useEffect, useMemo } from "react";
+import { useSelector } from "react-redux";
+
 import useInput from "../../hooks/use-input";
 import { regexGeneric } from "../../utils/constantes";
 import { autoSubmitTimer } from "../../config/auto-submit-timer";
@@ -8,12 +10,20 @@ import Wrapper from "../UI/wrapper/wrapper.component";
 const ParcoursInfos: FC<{
   onSubmitInformations: (infos: any) => void;
 }> = ({ onSubmitInformations }) => {
-  const { value: title } = useInput((value) => regexGeneric.test(value.trim()));
-  const { value: description } = useInput((value) =>
-    regexGeneric.test(value.trim())
+  const parcoursInfos = useSelector(
+    (state: any) => state.parcoursInformations.infos
   );
-  const { value: degree } = useInput((value) =>
-    regexGeneric.test(value.trim())
+  const { value: title } = useInput(
+    (value) => regexGeneric.test(value.trim()),
+    parcoursInfos.title
+  );
+  const { value: description } = useInput(
+    (value) => regexGeneric.test(value.trim()),
+    parcoursInfos.description
+  );
+  const { value: degree } = useInput(
+    (value) => regexGeneric.test(value.trim()),
+    parcoursInfos.degree
   );
   //const [file, setFile] = useState<File | null>(null);
 

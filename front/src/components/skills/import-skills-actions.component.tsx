@@ -2,8 +2,8 @@ import { FC, useCallback } from "react";
 import { useDispatch } from "react-redux";
 
 import CsvImportSkills from "./csv-import-skills.component";
-import { parcoursAction } from "../../store/redux-toolkit/parcours";
 import DbImportSkills from "./db-import-skills.component";
+import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 
 type Props = {
   origin: string;
@@ -15,7 +15,7 @@ const ImpoortSkillsActions: FC<Props> = ({ origin, onFromDB }) => {
 
   const storeSkills = useCallback(
     (data: any) => {
-      dispatch(parcoursAction.importSkills(data));
+      dispatch(parcoursSkillsAction.importSkills(data));
     },
     [dispatch]
   );

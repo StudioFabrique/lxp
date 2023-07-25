@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { parcoursAction } from "../../store/redux-toolkit/parcours";
 import Skill from "../../utils/interfaces/skill";
 import SkillItem from "./skill-item.component";
 import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
@@ -10,16 +9,17 @@ import Badge from "../../utils/interfaces/badge";
 import BadgeUpdate from "../badge/badge-update.component";
 import ButtonAdd from "../UI/button-add/button-add";
 import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
+import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 
 const SkillsList = () => {
-  const skillList = useSelector((state: any) => state.parcours.skills);
+  const skillList = useSelector((state: any) => state.parcoursSkills.skills);
   const dispatch = useDispatch();
   const [itemToUpdate, setItemToUpdate] = useState<any | null>(null);
   const [activeDrawer, setActiveDrawer] = useState<string | undefined>("");
   const [title, setTitle] = useState<string | undefined>("");
 
   const handleDeleteSkill = (skillId: number) => {
-    dispatch(parcoursAction.deleteSkill(skillId));
+    dispatch(parcoursSkillsAction.deleteSkill(skillId));
   };
 
   const handleCloseDrawer = (id: string) => {
@@ -48,19 +48,19 @@ const SkillsList = () => {
   };
 
   const submitNewSkill = (skill: Skill) => {
-    dispatch(parcoursAction.addSkill(skill));
+    dispatch(parcoursSkillsAction.addSkill(skill));
     handleCloseDrawer(activeDrawer!);
   };
 
   const submitUpdateSkill = (skill: Skill) => {
-    dispatch(parcoursAction.editSkill(skill));
+    dispatch(parcoursSkillsAction.editSkill(skill));
     handleCloseDrawer("update-skill");
   };
 
   const submitNewBadge = (newBadge: Badge) => {
     if (itemToUpdate) {
       const updatedSkill = { ...itemToUpdate, badge: newBadge };
-      dispatch(parcoursAction.editSkill(updatedSkill));
+      dispatch(parcoursSkillsAction.editSkill(updatedSkill));
       handleCloseDrawer("update-badge");
     }
   };

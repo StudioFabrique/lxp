@@ -9,7 +9,9 @@ type Props = {
 };
 
 const ImportSkills: FC<Props> = ({ onCloseDrawer }) => {
-  const skills = useSelector((state: any) => state.parcours.importedSkills);
+  const skills = useSelector(
+    (state: any) => state.parcoursSkills.importedSkills
+  );
   const [origin, setOrigin] = useState<string>(""); // définit si les compétences ont été importées à partrir de la bdd ou d'un fichier CSV
 
   const handleFromDB = useCallback((value: string) => {

@@ -1,37 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import Skill from "../../utils/interfaces/skill";
-import { sortArray } from "../../utils/sortArray";
-import Role from "../../utils/interfaces/role";
-import Tag from "../../utils/interfaces/tag";
-
-type UserItem = {
-  _id: string;
-  name: string;
-  roles: Array<Role>;
-};
+import Skill from "../../../utils/interfaces/skill";
+import { addIdToObject } from "../../../utils/add-id-to-objects";
+import { sortArray } from "../../../utils/sortArray";
 
 const initialParcoursState = {
-  id: 1,
-  infos: {
-    title: "",
-    description: "",
-    degree: "",
-    startDate: "",
-    endDate: "",
-    tags: Array<Tag>(),
-    contacts: Array<UserItem>(),
-  },
+  informationsAreValid: false,
   importedSkills: Array<any>(),
   skills: Array<Skill>(),
   badges: Array<any>(),
   totalBadges: 0,
 };
 
-let i = 0;
-
-const parcoursSlice = createSlice({
-  name: "parcours",
+const parcoursSkillsSlice = createSlice({
+  name: "parcoursSkills",
   initialState: initialParcoursState,
   reducers: {
     addSkill(state, action) {
@@ -109,48 +91,9 @@ const parcoursSlice = createSlice({
     getBadgesTotal(state) {
       state.totalBadges = state.badges.length;
     },
-    updateParcoursInfos(state, action) {
-      const infos = action.payload;
-      console.log({ infos });
-
-      state.infos = {
-        ...state.infos,
-        title: infos.title,
-        description: infos.description,
-        degree: infos.degree,
-      };
-    },
-    updateParcoursDates(state, action) {
-      const dates = action.payload;
-
-      state.infos = {
-        ...state.infos,
-        startDate: dates.startDate,
-        endDate: dates.endDate,
-      };
-    },
-    updateParcoursTags(state, action) {
-      const tags = action.payload.map((item: Tag) => item.id);
-      state.infos = { ...state.infos, tags };
-    },
-    updateParcoursContacts(state, action) {
-      const contacts = action.payload.map((item: UserItem) => item._id);
-      state.infos = { ...state.infos, contacts };
-    },
   },
 });
 
-function addIdToObject(items: Array<any>) {
-  return items.map((item: any) => {
-    i++;
-    if (!item.id) {
-      return { ...item, id: i };
-    } else {
-      return item;
-    }
-  });
-}
+export const parcoursSkillsAction = parcoursSkillsSlice.actions;
 
-export const parcoursAction = parcoursSlice.actions;
-
-export default parcoursSlice;
+export default parcoursSkillsSlice;

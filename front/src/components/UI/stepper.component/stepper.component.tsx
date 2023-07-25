@@ -12,22 +12,26 @@ type Props = {
 const steps = stepsParcours;
 
 const Stepper: FC<Props> = ({ actualStep, stepsList, updateStep }) => {
-  /**
-   * condition utilisée pour définir les styles du curseur et des différentes étapes
-   * @param id number
-   * @returns boolean
-   */
-  const setIsValid = (id: number) => {
-    return id === 1 || stepsList[id - 1].saved || actualStep.id === id;
-  };
+  console.log("stepper rendering...");
 
   /**
-   * définit le style d'une étape en fonction de son état
+   * définit le style du stepper en fonction de ses propriétés
    * @param id number
    * @returns string
    */
   const setStepColor = (id: number) => {
-    return setIsValid(id) ? "step-primary" : "step-primary/50";
+    const step = stepsList.find((item) => item.id === id);
+    if (step) {
+      if (step.id === actualStep.id) {
+        return "step-accent";
+      }
+      if (step.saved && step.isValid) {
+        return "step-primary";
+      }
+      if (step.saved && !actualStep.isValid) {
+        return "step-warning";
+      }
+    }
   };
 
   /**
@@ -36,7 +40,12 @@ const Stepper: FC<Props> = ({ actualStep, stepsList, updateStep }) => {
    * @returns boolean
    */
   const setCursor = (id: number) => {
-    return setIsValid(id) ? "cursor-pointer" : "cursor-normal";
+    const step = stepsList.find((item) => item.id === id);
+    if (step) {
+      return step.saved /*  || stepsList[id - 2].saved */
+        ? "cursor-pointer"
+        : "cursor-normal";
+    }
   };
 
   /**
@@ -53,7 +62,7 @@ const Stepper: FC<Props> = ({ actualStep, stepsList, updateStep }) => {
         <li
           onClick={() => handleSwitchSteps(item.id)}
           key={item.id}
-          data-content={item.id}
+          data-content="&#9773;"
           className={`step ${setStepColor(item.id)} ${setCursor(item.id)}`}
         >
           {item.label}
@@ -62,7 +71,9 @@ const Stepper: FC<Props> = ({ actualStep, stepsList, updateStep }) => {
     </ul>
   );
 
-  return <>{content}</>;
+  console.log({ stepsList });
+
+  return <>{stepsList && stepsList.length > 0 ? <>{content}</> : null}</>;
 };
 
 export default Stepper;
