@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import useInput from "../../../hooks/use-input";
 import { regexGeneric } from "../../../utils/constantes";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
@@ -9,6 +9,7 @@ const DatesSelecter: FC<{
 }> = ({ onSubmitDates }) => {
   const { value: startDate } = useInput((value) => regexGeneric.test(value));
   const { value: endDate } = useInput((value) => regexGeneric.test(value));
+  const [error, setError] = useState(false);
 
   const dates = useMemo(() => {
     return {
@@ -18,9 +19,17 @@ const DatesSelecter: FC<{
   }, [startDate.value, endDate.value]);
 
   useEffect(() => {
+    setError(false);
     const timer = setTimeout(() => {
+      const date = new Date().getTime();
+      const sDate = new Date(dates.startDate).getTime();
+      const eDate = new Date(dates.endDate).getTime();
       if (startDate.isValid && endDate.isValid) {
-        onSubmitDates(dates);
+        if (sDate > date && sDate < eDate) {
+          onSubmitDates(dates);
+        } else {
+          setError(true);
+        }
       }
     }, autoSubmitTimer);
     return () => {
@@ -53,6 +62,12 @@ const DatesSelecter: FC<{
           />
         </div>
       </div>
+        {error ? (
+          <p className="text-base-content text-xs mt-4 text-center font-bold">
+            La date de début doit être comprise entre aujourd'hui et la date de
+            fin de la formation
+          </p>
+        ) : null}
     </Wrapper>
   );
 };
