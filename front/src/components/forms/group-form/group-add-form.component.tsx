@@ -7,8 +7,6 @@ import Tag from "../../../utils/interfaces/tag";
 import DatesSelecter from "../../UI/dates-selecter/dates-selecter.component";
 import ParcoursHeader from "../../groups-header/groups-header.component";
 import Tags from "../../UI/tags/tags.component";
-import CsvImport from "../../UI/csv-import/csv-import.component";
-import { csvUsersFields } from "../../../config/csv/csv-users-fields";
 
 const GroupAddForm: FC<{
   group?: any;
