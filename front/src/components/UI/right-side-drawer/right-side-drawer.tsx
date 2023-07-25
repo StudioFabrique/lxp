@@ -1,10 +1,14 @@
-import { FC, ReactNode, useRef } from "react";
+import { FC, ReactNode, useEffect, useRef } from "react";
 
 type Props = {
   children: ReactNode;
   visible?: boolean;
   title: string;
   id?: string;
+  /* 
+    Si la valeur isOpen est passée en paramètre, alors le toggle de l'état pourra donc se faire de l'exterieur du composant.
+  */
+  isOpen?: boolean;
   onCloseDrawer?: (id: string) => void;
 };
 
@@ -13,6 +17,7 @@ const RightSideDrawer: FC<Props> = ({
   visible = true,
   title,
   id = "my-drawer-4",
+  isOpen,
   onCloseDrawer,
 }) => {
   const checkboxRef = useRef<HTMLInputElement | null>(null);
@@ -32,6 +37,12 @@ const RightSideDrawer: FC<Props> = ({
       onCloseDrawer(id);
     }
   };
+
+  useEffect(() => {
+    if (isOpen !== undefined) {
+      checkboxRef.current!.checked = isOpen;
+    }
+  }, [isOpen]);
 
   return (
     <div className="h-full drawer drawer-end z-50">

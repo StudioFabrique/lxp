@@ -8,10 +8,10 @@ type Props = {
   origin: string;
   onParseCsv: (data: any) => void;
   fields: Array<string>;
-  style?: "icon" | "text";
+  type?: "icon" | "text";
 };
 
-const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, style }) => {
+const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
@@ -48,6 +48,10 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, style }) => {
     }
   };
 
+  const handleEmptyFile = () => {
+    setSelectedFile(null);
+  };
+
   useEffect(() => {
     if (selectedFile) {
       Papa.parse(selectedFile, {
@@ -58,17 +62,18 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, style }) => {
           if (checkCSV(fields, result.meta.fields)) {
             result.data.pop();
             onParseCsv(result.data);
+            handleEmptyFile();
           } else {
             setFileError("Format des données non conforme");
           }
         },
       });
     }
-  }, [selectedFile, commonConfig, onParseCsv]);
+  }, [selectedFile, commonConfig, fields, onParseCsv]);
 
   return (
     <>
-      {style === undefined || style === "icon" ? (
+      {type === undefined || type === "icon" ? (
         <div
           className={`group w-[13rem] h-[8rem] flex flex-col text-xs gap-y-4 p-4 justify-center items-center font-bold rounded-xl shadow-xl border-2 hover:bg-primary cursor-pointer ${
             fileError
