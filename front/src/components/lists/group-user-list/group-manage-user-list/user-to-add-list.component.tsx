@@ -2,7 +2,6 @@ import { FC, useEffect, useState } from "react";
 import User from "../../../../utils/interfaces/user";
 import { SelectionButton } from "./buttons.component";
 import { AvatarSmall } from "../../../UI/avatar/avatar.component";
-import UserList from "../../user-list/user-list.component";
 
 const UserToAddList: FC<{
   userList: Array<User>;
@@ -16,12 +15,17 @@ const UserToAddList: FC<{
   );
 
   useEffect(() => {
-    if (props.isUsersSettedUp) {
-      setFilteredUserList(
-        filteredUserList.filter((user) => !props.selectedUsers.includes(user))
-      );
-    }
-  }, [filteredUserList, setFilteredUserList]);
+    // if (props.isUsersSettedUp) {
+    //   setFilteredUserList(
+    //     filteredUserList.filter((user) => !props.selectedUsers.includes(user))
+    //   );
+    // }
+  }, [
+    filteredUserList,
+    setFilteredUserList,
+    props.isUsersSettedUp,
+    props.selectedUsers,
+  ]);
 
   return (
     <div className="h-full overflow-y-auto overflow-x-auto">

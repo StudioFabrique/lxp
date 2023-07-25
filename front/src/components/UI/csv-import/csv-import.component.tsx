@@ -1,4 +1,12 @@
-import { ChangeEvent, FC, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Papa from "papaparse";
 
 import UploadIcon from "../svg-icons/upload-icon.component";
@@ -14,6 +22,7 @@ type Props = {
 const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
+  const [isEmptyingReady, setEmptyingReadyState] = useState<boolean>(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   const commonConfig = useMemo(
@@ -26,6 +35,8 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
   const handleSelectedFile = (event: ChangeEvent<HTMLInputElement>) => {
     setFileError(null);
     const files = event.target.files;
+    console.log(files);
+
     if (files && files.length > 0) {
       if (files[0].type !== "text/csv") {
         setFileError("Ceci n'est pas un fichier au format CSV");
@@ -40,6 +51,7 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
   };
 
   const handleFileSelection = () => {
+    console.log(selectedFile);
     if (selectedFile && fileRef.current) {
       fileRef.current.value = "";
     }
@@ -48,9 +60,13 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
     }
   };
 
-  const handleEmptyFile = () => {
-    setSelectedFile(null);
-  };
+  const handleEmptyFile = useCallback(() => {
+    setEmptyingReadyState(true);
+    if (isEmptyingReady) {
+      setSelectedFile(null);
+      setEmptyingReadyState(false);
+    }
+  }, [isEmptyingReady]);
 
   useEffect(() => {
     if (selectedFile) {
@@ -69,7 +85,7 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
         },
       });
     }
-  }, [selectedFile, commonConfig, fields, onParseCsv]);
+  }, [selectedFile, commonConfig, fields, onParseCsv, handleEmptyFile]);
 
   return (
     <>
@@ -111,6 +127,7 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
         id="fileSelect"
         name="fileSelect"
         accept=".csv"
+        key={Date.now()}
         onChange={handleSelectedFile}
       />
     </>
