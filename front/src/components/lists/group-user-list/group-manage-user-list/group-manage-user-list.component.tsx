@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useContext, useState } from "react";
+import { FC, useContext, useState } from "react";
 import { AddUsersButton } from "./buttons.component";
 import UserToAddList from "./user-to-add-list.component";
 import usePagination from "../../../../hooks/use-pagination";
@@ -13,7 +13,7 @@ const GroupManageUserList: FC<{
   const { user } = useContext(Context);
 
   const [selectedUsers, setSelectedUsers] = useState<Array<User>>([]);
-  const [isUsersSettedUp, setUsersSettedState] = useState(false);
+  const [isUsersSettedUp, setUsersSettedState] = useState(true);
 
   const { page, totalPages, dataList, handlePageNumber, perPage, setPerPage } =
     usePagination("lastname", `/user/${user!.roles[0].role}`);
