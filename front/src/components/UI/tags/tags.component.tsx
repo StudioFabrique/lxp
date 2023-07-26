@@ -56,7 +56,7 @@ const Tags: FC<{
   }, [selectedTags.tags, onSubmitTags]);
 
   return (
-    <div className="h-fit">
+    <div className="h-full">
       <Wrapper>
         <h2 className="text-xl font-bold">{title ?? "Tags"}</h2>
         <SearchDropdown
