@@ -3,7 +3,6 @@ import { regexGeneric } from "../../../utils/constantes";
 import useInput from "../../../hooks/use-input";
 import Informations from "./components/informations.components";
 import Details from "./components/details.component";
-import GroupUserList from "../../lists/group-user-list/group-user-list.component";
 import Tag from "../../../utils/interfaces/tag";
 import DatesSelecter from "../../UI/dates-selecter/dates-selecter.component";
 import ParcoursHeader from "../../groups-header/groups-header.component";
@@ -15,8 +14,6 @@ const GroupAddForm: FC<{
   error: string;
   isLoading: boolean;
 }> = (props) => {
-  const [usersToAdd, setUsersToAdd] = useState<String[]>([]);
-
   const handleSubmitTags = (tags: Tag[]) => {};
   const handleSubmitDates = (dates: {
     startDate: string;
@@ -61,7 +58,6 @@ const GroupAddForm: FC<{
         diplome: diplome.value.trim(),
         rncp: rncp.value.trim(),
         promotion: promotion.value.trim(),
-        users: usersToAdd,
       });
     }
   };
@@ -81,7 +77,6 @@ const GroupAddForm: FC<{
         </div>
         <Details promotion={promotion} desc={desc} />
       </div>
-      <GroupUserList users={[]} onSubmitSetUsersToAdd={setUsersToAdd} />
     </form>
   );
 };
