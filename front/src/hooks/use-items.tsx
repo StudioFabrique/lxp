@@ -33,8 +33,6 @@ const filterItems = (
   unselectedItems: Array<any>,
   property: string
 ) => {
-  console.log({ unselectedItems });
-
   return unselectedItems.filter((item: any) =>
     item[property].toLowerCase().includes(name.toLowerCase())
   );

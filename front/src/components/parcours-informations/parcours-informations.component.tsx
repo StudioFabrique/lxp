@@ -22,6 +22,8 @@ type Props = {
   validateStep: (id: number, value: boolean) => void;
 };
 
+let initialState = true;
+
 const ParcoursInformations: FC<Props> = ({ validateStep }) => {
   const dispatch = useDispatch();
   const infos = useSelector((state: any) => state.parcoursInformations.infos);
@@ -30,10 +32,6 @@ const ParcoursInformations: FC<Props> = ({ validateStep }) => {
   );
   const { sendRequest } = useHttp();
   const [tags, setTags] = useState<Array<Tag> | null>(null);
-  const [selectedTags, setSelectedTags] = useState<Array<Tag>>(infos.tags);
-
-  console.log("coucou  rendering");
-  console.log({ selectedTags });
 
   // Callback pour soumettre les informations du parcours
   const submitInfos = useCallback(
@@ -73,15 +71,10 @@ const ParcoursInformations: FC<Props> = ({ validateStep }) => {
     const applyData = (data: any) => {
       toast.success("Parcours mis à jour");
       dispatch(parcoursInformationsAction.testParcours());
-      console.log({ informationsAreValid });
 
       if (informationsAreValid) {
-        console.log("yay");
-
         validateStep(1, true);
       } else {
-        console.log("oops");
-
         validateStep(1, false);
       }
     };
@@ -105,24 +98,6 @@ const ParcoursInformations: FC<Props> = ({ validateStep }) => {
   };
 
   useEffect(() => {
-    console.log("yop les tags");
-
-    if (
-      tags &&
-      tags.length > 0 &&
-      selectedTags !== undefined &&
-      selectedTags.length > 0
-    ) {
-      console.log({ tags });
-      console.log("yo", selectedTags);
-
-      selectedTags.forEach((item) => {
-        tags.filter((subItem) => subItem.id !== item.id);
-      });
-    }
-  }, [selectedTags, tags]);
-
-  useEffect(() => {
     const applyData = (data: Array<Tag>) => {
       setTags(data);
     };
@@ -133,8 +108,6 @@ const ParcoursInformations: FC<Props> = ({ validateStep }) => {
       applyData
     );
   }, [sendRequest]);
-
-  console.log({ infos });
 
   return (
     <>
@@ -151,15 +124,7 @@ const ParcoursInformations: FC<Props> = ({ validateStep }) => {
           />
           {tags && tags.length > 0 ? (
             <>
-              {selectedTags && selectedTags.length > 0 ? (
-                <Tags
-                  reduxTags={selectedTags}
-                  unselectedTags={tags}
-                  onSubmitTags={submitTags}
-                />
-              ) : (
-                <Tags unselectedTags={tags} onSubmitTags={submitTags} />
-              )}
+              <Tags onSubmitTags={submitTags} unselectedTags={tags} />
             </>
           ) : null}
         </div>

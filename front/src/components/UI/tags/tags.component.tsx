@@ -33,12 +33,10 @@ const Tags: FC<{
     initSelectedItems,
   } = useItems();
 
-  console.log("tags rendering");
-  console.log({ selectedItems });
-  console.log({ initialState });
-
   useEffect(() => {
-    initialState = true;
+    return () => {
+      initialState = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -60,6 +58,8 @@ const Tags: FC<{
   }, [selectedItems]);
 
   useEffect(() => {
+    console.log("tags submitted");
+
     const timer = setTimeout(() => {
       if (selectedTags.tags.length > 0) {
         onSubmitTags(selectedTags.tags);
