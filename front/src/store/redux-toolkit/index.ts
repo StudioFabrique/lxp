@@ -1,9 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import parcoursSlice from "./parcours";
+
+import parcoursInformationsSlice from "./parcours/parcours-informations";
+import parcoursSkillsSlice from "./parcours/parcours-skills";
 
 const store = configureStore({
   reducer: {
-    parcours: parcoursSlice.reducer,
+    parcours: parcoursInformationsSlice.reducer,
+    parcoursInformations: parcoursInformationsSlice.reducer,
+    parcoursSkills: parcoursSkillsSlice.reducer,
   },
 });
 

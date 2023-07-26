@@ -8,9 +8,9 @@ import BadgeList from "../badge/badge-list.component";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import BadgeValidation from "../badge/badge-validation.component";
 import { useDispatch, useSelector } from "react-redux";
-import { parcoursAction } from "../../store/redux-toolkit/parcours";
 import DrawerFormButtons from "../UI/drawer-form-buttons/drawer-form-buttons.component";
 import CreateBadge from "../badge/create-badge-drawer";
+import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 
 type Props = {
   skill?: Skill;
@@ -20,7 +20,9 @@ type Props = {
 
 const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   const [badge, setBadge] = useState<Badge | undefined>(skill?.badge);
-  const totalBadges = useSelector((state: any) => state.parcours.totalBadges);
+  const totalBadges = useSelector(
+    (state: any) => state.parcoursSkills.totalBadges
+  );
   const dispatch = useDispatch();
 
   const { value: description } = useInput(
@@ -59,12 +61,12 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   };
 
   const validateBadge = (newBadge: Badge) => {
-    dispatch(parcoursAction.validateBadge(newBadge));
+    dispatch(parcoursSkillsAction.validateBadge(newBadge));
     setBadge(newBadge);
   };
 
   useEffect(() => {
-    dispatch(parcoursAction.getBadgesTotal());
+    dispatch(parcoursSkillsAction.getBadgesTotal());
   }, [dispatch]);
 
   return (
