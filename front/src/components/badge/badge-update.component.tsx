@@ -5,7 +5,7 @@ import BadgeList from "./badge-list.component";
 import Badge from "../../utils/interfaces/badge";
 import CreateBadge from "./create-badge-drawer";
 import BadgeValidation from "./badge-validation.component";
-import { parcoursAction } from "../../store/redux-toolkit/parcours";
+import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 
 type Props = {
   badge: Badge;
@@ -32,7 +32,7 @@ const BadgeUpdate: FC<Props> = ({ badge, onSubmitNewBadge }) => {
       title: validBadge.title,
       description: validBadge.description,
     };
-    dispatch(parcoursAction.validateBadge(newBadge));
+    dispatch(parcoursSkillsAction.validateBadge(newBadge));
     submitNewBadge(newBadge);
   };
 

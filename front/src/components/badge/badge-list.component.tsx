@@ -6,8 +6,8 @@ import ImportBadges from "../skills/import-badges.component";
 import BadgeItem from "./badge-item.component";
 import { validateImageFile } from "../../utils/validate-image-file";
 import { maxSize } from "../../config/badge-image-max-size";
-import { parcoursAction } from "../../store/redux-toolkit/parcours";
 import UploadIcon from "../UI/svg-icons/upload-icon.component";
+import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 
 type Props = {
   selectedBadge?: any;
@@ -15,7 +15,7 @@ type Props = {
 };
 
 const BadgeList: FC<Props> = ({ selectedBadge, onSubmitBadge }) => {
-  const badgeList = useSelector((state: any) => state.parcours.badges);
+  const badgeList = useSelector((state: any) => state.parcoursSkills.badges);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const dispatch = useDispatch();
   const [updatedFile, setUdpatedFile] = useState(false);
@@ -36,7 +36,7 @@ const BadgeList: FC<Props> = ({ selectedBadge, onSubmitBadge }) => {
       if (selectedFile) {
         if (validateImageFile(selectedFile, maxSize)) {
           dispatch(
-            parcoursAction.updateBadgeImage({
+            parcoursSkillsAction.updateBadgeImage({
               id: selectedBadge.id,
               image: URL.createObjectURL(selectedFile),
             })

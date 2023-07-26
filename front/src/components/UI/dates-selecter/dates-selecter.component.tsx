@@ -4,11 +4,25 @@ import { regexGeneric } from "../../../utils/constantes";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import Wrapper from "../wrapper/wrapper.component";
 
-const DatesSelecter: FC<{
+type Props = {
   onSubmitDates: (dates: { startDate: string; endDate: string }) => void;
-}> = ({ onSubmitDates }) => {
-  const { value: startDate } = useInput((value) => regexGeneric.test(value));
-  const { value: endDate } = useInput((value) => regexGeneric.test(value));
+  startDateProp?: string;
+  endDateProp?: string;
+};
+
+const DatesSelecter: FC<Props> = ({
+  startDateProp = "",
+  endDateProp = "",
+  onSubmitDates,
+}) => {
+  const { value: startDate } = useInput(
+    (value) => regexGeneric.test(value),
+    startDateProp
+  );
+  const { value: endDate } = useInput(
+    (value) => regexGeneric.test(value),
+    endDateProp
+  );
   const [error, setError] = useState(false);
 
   const dates = useMemo(() => {

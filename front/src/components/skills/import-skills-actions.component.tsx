@@ -1,8 +1,9 @@
 import { FC, useCallback } from "react";
 import { useDispatch } from "react-redux";
 
+
+import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 import CsvImportSkills from "../UI/csv-import/csv-import.component";
-import { parcoursAction } from "../../store/redux-toolkit/parcours";
 import DbImportSkills from "./db-import-skills.component";
 import { skillsFields } from "../../config/csv/csv-skills-fields";
 
@@ -16,7 +17,7 @@ const ImpoortSkillsActions: FC<Props> = ({ origin, onFromDB }) => {
 
   const storeSkills = useCallback(
     (data: any) => {
-      dispatch(parcoursAction.importSkills(data));
+      dispatch(parcoursSkillsAction.importSkills(data));
     },
     [dispatch]
   );
