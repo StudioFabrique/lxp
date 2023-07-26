@@ -8,6 +8,8 @@ type Props = {
   filteredItems: Array<any>;
   property: string;
   placeHolder: string;
+  propertiesToRender?: Array<string>;
+  getId?: boolean;
 };
 
 const SearchDropdown: FC<Props> = ({
@@ -17,6 +19,8 @@ const SearchDropdown: FC<Props> = ({
   filteredItems,
   property,
   placeHolder,
+  propertiesToRender,
+  getId,
 }) => {
   const [enteredValue, setEnteredValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -79,9 +83,13 @@ const SearchDropdown: FC<Props> = ({
               <li
                 className="text-xs py-1 cursor-pointer"
                 key={item[property]}
-                onClick={() => handleSelectItem(item[property])}
+                onClick={() => handleSelectItem(item[getId ? "_id" : property])}
               >
-                <p className="font-bold">{toTitleCase(item[property])}</p>
+                <p className="font-bold">
+                  {propertiesToRender?.map(
+                    (property) => item[property] + " "
+                  ) ?? toTitleCase(item[property])}
+                </p>
               </li>
             ))}
           </ul>
