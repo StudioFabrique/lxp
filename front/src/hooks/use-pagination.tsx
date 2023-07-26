@@ -11,7 +11,7 @@ const initialState = {
 
 const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
   const [sdir, setSdir] = useState(false);
-  const [stype, setStype] = useState(defaultSortValue);
+  const [stype, setStype] = useState(defaultSortValue ?? "desc");
   const [page, setPage] = useState(initialState.page);
   const [perPage, setPerPage] = useState(initialState.perPage);
   const [totalPages, setTotalPages] = useState<number | null>(
@@ -58,6 +58,8 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
   };
 
   const getList = useCallback(() => {
+    console.log("update des données des users en cours...");
+
     const applyData = (data: { list: Array<any>; total: number }) => {
       data.list.forEach((item: any) => {
         item.createdAt =
@@ -68,6 +70,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
       });
       handleTotalPages(data.total);
       setDataList(data.list);
+      console.log("update des données effectué");
     };
 
     sendRequest(

@@ -1,14 +1,32 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import User from "../../../../utils/interfaces/user";
 import { SelectionButton } from "./buttons.component";
 import { AvatarSmall } from "../../../UI/avatar/avatar.component";
 
 const UserToAddList: FC<{
-  userList: Array<any>;
-  selectedUsers: string[];
-  onAddSelectedUser: (userId: string) => void;
+  userList: Array<User>;
+  selectedUsers: Array<User>;
+  onAddSelectedUser: (user: User) => void;
   onDeleteSelectedUser: (userId: string) => void;
+  isUsersSettedUp: boolean;
 }> = (props) => {
+  const [filteredUserList, setFilteredUserList] = useState<Array<User>>(
+    props.userList
+  );
+
+  useEffect(() => {
+    // if (props.isUsersSettedUp) {
+    //   setFilteredUserList(
+    //     filteredUserList.filter((user) => !props.selectedUsers.includes(user))
+    //   );
+    // }
+  }, [
+    filteredUserList,
+    setFilteredUserList,
+    props.isUsersSettedUp,
+    props.selectedUsers,
+  ]);
+
   return (
     <div className="h-full overflow-y-auto overflow-x-auto">
       <table className="table-auto tab-sm border-separate border-spacing-y-4 text-center">
@@ -28,7 +46,7 @@ const UserToAddList: FC<{
             >
               <td className="bg-transparent rounded-l-xl p-5">
                 <SelectionButton
-                  currentUser={user._id}
+                  currentUser={user}
                   users={props.selectedUsers}
                   onAddSelectedUser={props.onAddSelectedUser}
                   onDeleteSelectedUser={props.onDeleteSelectedUser}
