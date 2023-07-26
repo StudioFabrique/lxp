@@ -49,7 +49,15 @@ const useHttp = () => {
   );
 
   const sendRequest = useCallback(
-    async (req: any, applyData: (data: any) => void) => {
+    async (
+      req: {
+        path: string;
+        body?: any;
+        headers?: any;
+        method?: "get" | "post" | "put" | "delete";
+      },
+      applyData?: (data: any) => void
+    ) => {
       setIsLoading(true);
       setError("");
       let response: any;
@@ -78,7 +86,7 @@ const useHttp = () => {
             response = await axiosInstance.get(`${BASE_URL}${req.path}`, {});
             break;
         }
-        applyData(response.data);
+        applyData!(response.data);
       } catch (err: any) {
         setError(err.response?.data.message ?? "erreur inconnu");
 
