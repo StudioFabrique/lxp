@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { FC, useCallback, useEffect, useState, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Toaster, toast } from "react-hot-toast";
 
@@ -7,10 +7,10 @@ import DatesSelecter from "../UI/dates-selecter/dates-selecter.component";
 import Tags from "../UI/tags/tags.component";
 import ParcoursRessourcesContacts from "../parcours-ressources-contacts/parcours-ressources-contacts.component";
 import { DrawerProvider } from "../../store/drawer.store";
-import { parcoursAction } from "../../store/redux-toolkit/parcours";
 import useHttp from "../../hooks/use-http";
 import Tag from "../../utils/interfaces/tag";
 import Role from "../../utils/interfaces/role";
+import { parcoursInformationsAction } from "../../store/redux-toolkit/parcours/parcours-informations";
 
 type UserItem = {
   _id: string;
@@ -18,16 +18,25 @@ type UserItem = {
   roles: Array<Role>;
 };
 
-const ParcoursForm = () => {
+type Props = {
+  validateStep: (id: number, value: boolean) => void;
+};
+
+let initialState = true;
+
+const ParcoursInformations: FC<Props> = ({ validateStep }) => {
   const dispatch = useDispatch();
-  const parcoursInfos = useSelector((state: any) => state.parcours.infos);
-  const isValid = useSelector((state: any) => state.parcours.parcoursIsValid);
+  const infos = useSelector((state: any) => state.parcoursInformations.infos);
+  const informationsAreValid = useSelector(
+    (state: any) => state.parcoursInformations.informationsAreValid
+  );
   const { sendRequest } = useHttp();
+  const [tags, setTags] = useState<Array<Tag> | null>(null);
 
   // Callback pour soumettre les informations du parcours
   const submitInfos = useCallback(
     (infos: any) => {
-      dispatch(parcoursAction.updateParcoursInfos(infos));
+      dispatch(parcoursInformationsAction.updateParcoursInfos(infos));
     },
     [dispatch]
   );
@@ -35,7 +44,7 @@ const ParcoursForm = () => {
   // Callback pour soumettre les dates du parcours
   const submitDates = useCallback(
     (dates: { startDate: string; endDate: string }) => {
-      dispatch(parcoursAction.updateParcoursDates(dates));
+      dispatch(parcoursInformationsAction.updateParcoursDates(dates));
     },
     [dispatch]
   );
@@ -43,7 +52,7 @@ const ParcoursForm = () => {
   // Callback pour soumettre les tags du parcours
   const submitTags = useCallback(
     (tags: Array<Tag>) => {
-      dispatch(parcoursAction.updateParcoursTags(tags));
+      dispatch(parcoursInformationsAction.updateParcoursTags(tags));
     },
     [dispatch]
   );
@@ -51,33 +60,54 @@ const ParcoursForm = () => {
   // Callback pour soumettre les contacts du parcours
   const submitContacts = useCallback(
     (contacts: Array<UserItem>) => {
-      dispatch(parcoursAction.updateParcoursContacts(contacts));
+      dispatch(parcoursInformationsAction.updateParcoursContacts(contacts));
     },
     [dispatch]
   );
 
   // Envoie les informations du parcours au serveur lorsque le formulaire est valide
-  useEffect(() => {
+  const submitInformations = () => {
     // Traîtement de la réponse
     const applyData = (data: any) => {
-      dispatch(parcoursAction.setParcoursId(data.id));
       toast.success("Parcours mis à jour");
+      dispatch(parcoursInformationsAction.testParcours());
+
+      if (informationsAreValid) {
+        validateStep(1, true);
+      } else {
+        validateStep(1, false);
+      }
     };
 
     // Vérifie si le formulaire est valide avant d'envoyer la requête
-    dispatch(parcoursAction.testParcours());
-
-    if (isValid) {
+    if (infos.title.length > 0) {
+      const parcours = {
+        title: infos.title,
+        description: infos.description,
+        degree: infos.degree,
+      };
       sendRequest(
         {
           path: "/parcours",
           method: "post",
-          body: parcoursInfos,
+          body: parcours,
         },
         applyData
       );
     }
-  }, [parcoursInfos, isValid, sendRequest, dispatch]);
+  };
+
+  useEffect(() => {
+    const applyData = (data: Array<Tag>) => {
+      setTags(data);
+    };
+    sendRequest(
+      {
+        path: "/tag",
+      },
+      applyData
+    );
+  }, [sendRequest]);
 
   return (
     <>
@@ -87,8 +117,16 @@ const ParcoursForm = () => {
           <ParcoursInfos onSubmitInformations={submitInfos} />
         </div>
         <div className="flex flex-col gap-y-4">
-          <DatesSelecter onSubmitDates={submitDates} />
-          <Tags onSubmitTags={submitTags} />
+          <DatesSelecter
+            onSubmitDates={submitDates}
+            startDateProp={infos.startDate}
+            endDateProp={infos.endDate}
+          />
+          {tags && tags.length > 0 ? (
+            <>
+              <Tags onSubmitTags={submitTags} unselectedTags={tags} />
+            </>
+          ) : null}
         </div>
         <div>
           <DrawerProvider>
@@ -96,8 +134,15 @@ const ParcoursForm = () => {
           </DrawerProvider>
         </div>
       </div>
+      <div className="w-full flex justify-end">
+        <button className="btn btn-primary" onClick={submitInformations}>
+          Etape suivante
+        </button>
+      </div>
     </>
   );
 };
 
-export default ParcoursForm;
+const MemoizedParcoursInformations = memo(ParcoursInformations);
+
+export default MemoizedParcoursInformations;

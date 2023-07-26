@@ -1,23 +1,33 @@
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo } from "react";
+import { useSelector } from "react-redux";
+
 import useInput from "../../hooks/use-input";
 import { regexGeneric } from "../../utils/constantes";
 import { autoSubmitTimer } from "../../config/auto-submit-timer";
-import ImageFileUpload from "../UI/image-file-upload/image-file-upload";
+//import ImageFileUpload from "../UI/image-file-upload/image-file-upload";
 import Wrapper from "../UI/wrapper/wrapper.component";
 
 const ParcoursInfos: FC<{
   onSubmitInformations: (infos: any) => void;
 }> = ({ onSubmitInformations }) => {
-  const { value: title } = useInput((value) => regexGeneric.test(value.trim()));
-  const { value: description } = useInput((value) =>
-    regexGeneric.test(value.trim())
+  const parcoursInfos = useSelector(
+    (state: any) => state.parcoursInformations.infos
   );
-  const { value: degree } = useInput((value) =>
-    regexGeneric.test(value.trim())
+  const { value: title } = useInput(
+    (value) => regexGeneric.test(value.trim()),
+    parcoursInfos.title
   );
-  const [file, setFile] = useState<File | null>(null);
+  const { value: description } = useInput(
+    (value) => regexGeneric.test(value.trim()),
+    parcoursInfos.description
+  );
+  const { value: degree } = useInput(
+    (value) => regexGeneric.test(value.trim()),
+    parcoursInfos.degree
+  );
+  //const [file, setFile] = useState<File | null>(null);
 
-  const convertImageToBase64 = useCallback(async () => {
+  /*   const convertImageToBase64 = useCallback(async () => {
     if (file) {
       const response = new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -32,28 +42,27 @@ const ParcoursInfos: FC<{
     } else {
       return null;
     }
-  }, [file]);
+  }, [file]); */
 
   const infos = useMemo(() => {
     return {
       title: title.value,
       description: description.value,
       degree: degree.value,
-      file: convertImageToBase64(),
+      //file: convertImageToBase64(),
     };
-  }, [title.value, description.value, degree.value, convertImageToBase64]);
+  }, [title.value, description.value, degree.value /* convertImageToBase64 */]);
 
-  let formIsValid = title.isValid && description.isValid && degree.isValid;
+  let formIsValid = title.isValid;
 
   useEffect(() => {
     const setInfos = async () => {
-      const imageBase64 = await infos.file;
+      //  const imageBase64 = await infos.file;
       if (formIsValid) {
         onSubmitInformations({
           title: infos.title,
           description: infos.description,
           degree: infos.degree,
-          file: imageBase64,
         });
       }
     };
@@ -64,7 +73,7 @@ const ParcoursInfos: FC<{
     return () => {
       clearTimeout(timer);
     };
-  }, [infos, onSubmitInformations, formIsValid, file]);
+  }, [infos, onSubmitInformations, formIsValid /* file */]);
 
   return (
     <Wrapper>
@@ -102,9 +111,9 @@ const ParcoursInfos: FC<{
             onBlur={degree.valueBlurHandler}
           />
         </div>
-        <div className="flex flex-col gap-y-1">
+        {/*         <div className="flex flex-col gap-y-1">
           <ImageFileUpload maxSize={2 * 1024 * 1024} onSetFile={setFile} />
-        </div>
+        </div> */}
       </form>
     </Wrapper>
   );

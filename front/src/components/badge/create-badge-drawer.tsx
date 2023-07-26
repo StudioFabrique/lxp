@@ -4,10 +4,10 @@ import { useDispatch } from "react-redux";
 import useInput from "../../hooks/use-input";
 import { regexGeneric, regexOptionalGeneric } from "../../utils/constantes";
 import ImageFileUpload from "../UI/image-file-upload/image-file-upload";
-import { parcoursAction } from "../../store/redux-toolkit/parcours";
 import useHttp from "../../hooks/use-http";
 import HttpDrawerButton from "../UI/http-drawer-button/http-drawer-button.component";
 import Wrapper from "../UI/wrapper/wrapper.component";
+import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 
 const CreateBadge = () => {
   const { value: title } = useInput((value) => regexGeneric.test(value));
@@ -44,7 +44,7 @@ const CreateBadge = () => {
     event.preventDefault();
     if (formIsValid()) {
       dispatch(
-        parcoursAction.addBadge({
+        parcoursSkillsAction.addBadge({
           title: title.value,
           description: description.value,
           image: previewUrl,

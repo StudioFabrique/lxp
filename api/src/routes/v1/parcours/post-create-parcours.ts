@@ -7,7 +7,7 @@ const httpCreateParcoursRouter = express.Router();
 
 httpCreateParcoursRouter.post(
   "/",
-  body("contacts")
+  /*   body("contacts")
     .isArray()
     .notEmpty()
     .withMessage("Le tableau contacts ne peut pas être vide."),
@@ -26,7 +26,7 @@ httpCreateParcoursRouter.post(
     .isNumeric()
     .withMessage("Les éléments de tags doivent être des chaînes de caractères.")
     .trim()
-    .escape(),
+    .escape(), */
   body("title")
     .isString()
     .withMessage("Chaîne de caractères attendue.")
@@ -42,7 +42,7 @@ httpCreateParcoursRouter.post(
     .withMessage("Chaîne de caractères attendue.")
     .trim()
     .escape(),
-  body("startDate")
+  /* body("startDate")
     .isString()
     .withMessage("Chaîne de caractères attendue.")
     .trim()
@@ -56,7 +56,7 @@ httpCreateParcoursRouter.post(
     .isString()
     .withMessage("Chaîne de caractères attendue.")
     .trim()
-    .escape(),
+    .escape(), */
   isUser,
   httpCreateParcours
 );
