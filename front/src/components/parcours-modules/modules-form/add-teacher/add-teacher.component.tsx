@@ -18,13 +18,18 @@ const AddTeachers: FC<{
   const handleAddTeacher = (name: string, property: string) => {
     console.log("name : " + name);
     console.log("property : " + property);
-    setTeachersAvailable((currentTeachersAvailable) => [
-      ...currentTeachersAvailable,
+    setTeacher((currentTeachers) => [
+      ...currentTeachers,
       getTeacherFromDb(name),
     ]);
   };
 
-  const handleFilterTeachersAvailables = () => {};
+  const handleFilterTeachersAvailables = (name: string, property: string) => {
+    const filteredTeachersAvailable = teachersAvailables.filter(
+      (teacher) => teacher._id === name
+    );
+    setTeachersAvailable(filteredTeachersAvailable);
+  };
 
   return (
     <div className="flex flex-col">

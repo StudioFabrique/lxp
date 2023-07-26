@@ -55,7 +55,7 @@ const SearchDropdown: FC<Props> = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       if (enteredValue.length > 0) {
-        filterItems(enteredValue, property);
+        filterItems(enteredValue, getId ? "_id" : property);
       }
     }, 1000);
     return () => {

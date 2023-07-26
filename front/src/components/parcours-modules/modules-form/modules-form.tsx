@@ -6,6 +6,7 @@ import { regexGeneric, regexNumber } from "../../../utils/constantes";
 import User from "../../../utils/interfaces/user";
 import Skill from "../../../utils/interfaces/skill";
 import AddTeachers from "./add-teacher/add-teacher.component";
+import AddSkills from "./add-skill/add-skill.component";
 
 const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = () => {
   const { value: title } = useInput((value) => regexGeneric.test(value));
@@ -21,7 +22,9 @@ const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = () => {
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (
     event: FormEvent<HTMLFormElement>
-  ) => {};
+  ) => {
+    event.preventDefault();
+  };
 
   return (
     <form className="flex flex-col gap-y-4 p-4" onSubmit={handleSubmit}>
@@ -52,10 +55,7 @@ const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = () => {
       {/* formateurs compo */}
       <AddTeachers teachers={teachers} setTeacher={setTeachers} />
 
-      <div className="flex flex-col">
-        <label htmlFor="skill">Compétences de module</label>
-        {/* skill compo */}
-      </div>
+      <AddSkills skills={skills} setSkills={setSkills} />
 
       <div className="flex flex-col">
         <label htmlFor="nbHours">Nombre d'heures</label>
