@@ -9,8 +9,8 @@ async function getParcours() {
     throw new Error(`Data not found.`);
   }
 
-  const base64Image = response!.image!.toString("base64");
-  return base64Image;
+  /* const base64Image = response!.image.toString("base64"); */
+  return "toto";
 }
 
 export default getParcours;
