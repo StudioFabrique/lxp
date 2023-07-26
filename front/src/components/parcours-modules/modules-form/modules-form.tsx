@@ -5,7 +5,7 @@ import useInput from "../../../hooks/use-input";
 import { regexGeneric, regexNumber } from "../../../utils/constantes";
 import User from "../../../utils/interfaces/user";
 import Skill from "../../../utils/interfaces/skill";
-import AddTeachers from "./add-teacher.component";
+import AddTeachers from "./add-teacher/add-teacher.component";
 
 const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = () => {
   const { value: title } = useInput((value) => regexGeneric.test(value));
@@ -50,7 +50,7 @@ const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = () => {
       </div>
 
       {/* formateurs compo */}
-      {/* <AddTeachers /> */}
+      <AddTeachers teachers={teachers} setTeacher={setTeachers} />
 
       <div className="flex flex-col">
         <label htmlFor="skill">Compétences de module</label>
