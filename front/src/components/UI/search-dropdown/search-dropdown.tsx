@@ -9,7 +9,7 @@ type Props = {
   property: string;
   placeHolder: string;
   propertiesToRender?: Array<string>;
-  getId?: boolean;
+  getId?: "_id" | "id";
 };
 
 const SearchDropdown: FC<Props> = ({
@@ -55,13 +55,13 @@ const SearchDropdown: FC<Props> = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       if (enteredValue.length > 0) {
-        filterItems(enteredValue, getId ? "_id" : property);
+        filterItems(enteredValue, getId ? getId : property);
       }
     }, 1000);
     return () => {
       clearTimeout(timer);
     };
-  }, [enteredValue, filterItems, property]);
+  }, [enteredValue, filterItems, property, getId]);
 
   return (
     <div className="flex items-center gap-x-2 w-full">
@@ -83,7 +83,7 @@ const SearchDropdown: FC<Props> = ({
               <li
                 className="text-xs py-1 cursor-pointer"
                 key={item[property]}
-                onClick={() => handleSelectItem(item[getId ? "_id" : property])}
+                onClick={() => handleSelectItem(item[getId ? getId : property])}
               >
                 <p className="font-bold">
                   {propertiesToRender?.map(

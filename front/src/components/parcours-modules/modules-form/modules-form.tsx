@@ -1,6 +1,5 @@
 import { FC, FormEvent, FormEventHandler, useState } from "react";
 import ImageFileUpload from "../../UI/image-file-upload/image-file-upload";
-import Module from "../../../utils/interfaces/module";
 import useInput from "../../../hooks/use-input";
 import { regexGeneric, regexNumber } from "../../../utils/constantes";
 import User from "../../../utils/interfaces/user";
@@ -8,7 +7,7 @@ import Skill from "../../../utils/interfaces/skill";
 import AddTeachers from "./add-teacher/add-teacher.component";
 import AddSkills from "./add-skill/add-skill.component";
 
-const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = () => {
+const ModulesForm: FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }) => {
   const { value: title } = useInput((value) => regexGeneric.test(value));
   const { value: description } = useInput((value) => regexGeneric.test(value));
   const { value: nbHours } = useInput((value) => regexNumber.test(value));
@@ -18,12 +17,26 @@ const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = () => {
 
   const handleSetImage = (file: File) => {
     setImageFile(file);
+    console.log(file);
   };
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (
     event: FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
+    if (
+      !title.isValid ||
+      !description.isValid ||
+      !nbHours.isValid ||
+      /* !imageFile || */
+      teachers.length <= 0
+    )
+      return;
+    console.log("request send");
+    const teachersId: string[] = teachers.map((teacher) => teacher._id);
+    const skillsId: number[] = skills.map((skill) => skill.id!);
+    const module = { title: title, description: description };
+    onSubmit(module);
   };
 
   return (
@@ -55,6 +68,7 @@ const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = () => {
       {/* formateurs compo */}
       <AddTeachers teachers={teachers} setTeacher={setTeachers} />
 
+      {/* compétences compo */}
       <AddSkills skills={skills} setSkills={setSkills} />
 
       <div className="flex flex-col">
@@ -69,7 +83,7 @@ const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = () => {
         />
       </div>
 
-      <ImageFileUpload maxSize={5} onSetFile={handleSetImage} />
+      <ImageFileUpload maxSize={10} onSetFile={handleSetImage} />
 
       <button type="submit" className="btn mt-10">
         Ajouter le module
