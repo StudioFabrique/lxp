@@ -31,7 +31,7 @@ httpCreateParcoursRouter.post(
     .isString()
     .withMessage("Chaîne de caractères attendue.")
     .trim()
-    .escape(),
+    .escape() /* 
   body("description")
     .isString()
     .withMessage("Chaîne de caractères attendue.")
@@ -41,7 +41,7 @@ httpCreateParcoursRouter.post(
     .isString()
     .withMessage("Chaîne de caractères attendue.")
     .trim()
-    .escape(),
+    .escape(), */,
   /* body("startDate")
     .isString()
     .withMessage("Chaîne de caractères attendue.")
@@ -57,7 +57,7 @@ httpCreateParcoursRouter.post(
     .withMessage("Chaîne de caractères attendue.")
     .trim()
     .escape(), */
-  isUser,
+  /* isUser, */
   httpCreateParcours
 );
 

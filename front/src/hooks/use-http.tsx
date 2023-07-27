@@ -88,7 +88,7 @@ const useHttp = () => {
         }
         applyData!(response.data);
       } catch (err: any) {
-        setError(err.response?.data.message ?? "erreur inconnu");
+        setError(err.response?.data.message ?? "erreur inconnue");
 
         if (err.response?.status === 403) {
           logout();

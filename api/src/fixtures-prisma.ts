@@ -244,14 +244,23 @@ async function createContacts() {
 
 async function createFormation() {
   try {
-    const newFormation = {
-      title: "Développeur Web",
-      description:
-        "Toutes les compétences pour développer des applications web et web mobile",
-      code: "007",
-      level: "3",
-    };
-    await prisma.formation.create({ data: newFormation });
+    const newFormations = [
+      {
+        title: "Développeur Web",
+        description:
+          "Toutes les compétences pour développer des applications web et web mobile",
+        code: "007",
+        level: "bac + 2",
+      },
+      {
+        title: "Concepteur Développeur d'Application",
+        description:
+          "Toutes les compétences pour concevoir et développer des applications.",
+        code: "014",
+        level: "bac + 3",
+      },
+    ];
+    await prisma.formation.createMany({ data: newFormations });
   } catch (error) {
     console.log(error);
   }
