@@ -22,7 +22,7 @@ app
     })
   )
   .use(cookieParser())
-  .use(upload.array("files"))
+  .use(upload.array("image", 1))
   .use(morgan("combined"))
   .use(express.json())
   .use(express.static(path.join(__dirname, "public")))

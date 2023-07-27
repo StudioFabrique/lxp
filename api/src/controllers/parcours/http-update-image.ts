@@ -9,14 +9,18 @@ async function httpUpdateImage(req: Request, res: Response) {
     if (!result.isEmpty()) {
       return res.status(400).json({ message: badQuery });
     }
-    console.log(req.body);
 
-    const { parcoursId, image } = req.body;
-    const response = await updateImage(parcoursId, image);
-    if (response) {
-      return res.status(201).json({ message: "Mise à jour réussie" });
+    const { parcoursId } = req.body;
+
+    const image: any = req.files;
+
+    if (image !== undefined) {
+      const response = await updateImage(parcoursId, image[0]);
+      if (response) {
+        return res.status(201).json({ message: "Mise à jour réussie" });
+      }
+      return res.status(400).json({ message: badQuery });
     }
-    return res.status(400).json({ message: badQuery });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
