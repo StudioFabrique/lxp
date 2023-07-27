@@ -14,7 +14,7 @@ const AddSkills: FC<{
     return skillsData.filter((skill) => skill.id === id)[0];
   };
 
-  const handleAddTeacher = (name: string, property: string) => {
+  const handleAddSkill = (name: string, property: string) => {
     console.log("name : " + name);
     console.log("property : " + property);
     setSkills((currentSkills) => [
@@ -23,7 +23,7 @@ const AddSkills: FC<{
     ]);
   };
 
-  const handleFilterTeachersAvailables = (name: string, property: string) => {
+  const handleFilterSkillsAvailables = (name: string, property: string) => {
     const filteredTeachersAvailable = skillsAvailables.filter(
       (skill) => skill.id === parseInt(name)
     );
@@ -34,13 +34,13 @@ const AddSkills: FC<{
     <div className="flex flex-col">
       <label htmlFor="formateurs">Formateurs de module</label>
       <SearchDropdown
-        placeHolder="Rechercher un formateur de module"
-        addItem={handleAddTeacher}
-        filterItems={handleFilterTeachersAvailables}
+        placeHolder="Rechercher une compétence de module"
+        addItem={handleAddSkill}
+        filterItems={handleFilterSkillsAvailables}
         filteredItems={skillsAvailables}
         property="description"
         resetFilterItems={() => {}}
-        getId
+        getId="id"
       />
       <SkillsList skills={skills} />
     </div>

@@ -42,7 +42,7 @@ const AddTeachers: FC<{
         property="firstname"
         resetFilterItems={() => {}}
         propertiesToRender={["firstname", "lastname"]}
-        getId
+        getId="_id"
       />
       <TeachersList teachers={teachers} />
     </div>
