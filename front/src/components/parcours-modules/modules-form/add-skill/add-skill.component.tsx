@@ -32,7 +32,7 @@ const AddSkills: FC<{
 
   return (
     <div className="flex flex-col">
-      <label htmlFor="formateurs">Formateurs de module</label>
+      <label htmlFor="formateurs">Compétences de module</label>
       <SearchDropdown
         placeHolder="Rechercher une compétence de module"
         addItem={handleAddSkill}
