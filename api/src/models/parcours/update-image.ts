@@ -1,27 +1,25 @@
 import { PrismaClient } from "@prisma/client";
-import { File } from "buffer";
-import fs from "fs";
 
 const prisma = new PrismaClient();
 
 async function updateImage(parcoursId: number, image: any) {
-  try {
-    /*   console.log("Nom du fichier :", uploadedFile.originalname);
-  console.log("Type MIME :", uploadedFile.mimetype);
-  console.log("Taille du fichier :", uploadedFile.size); */
+  /*  try { */
+  const result = await prisma.parcours.update({
+    where: {
+      id: parcoursId,
+    },
+    data: {
+      image,
+    },
+  });
+  console.log({ result });
 
-    const uploadedFile = image;
+  return result;
+  /*} catch (error) {
+   console.log("oops");
 
-    console.log(uploadedFile);
-
-    console.log("Nom du fichier :", uploadedFile.originalname);
-    console.log("Type MIME :", uploadedFile.mimetype);
-    console.log("Taille du fichier :", uploadedFile.size);
-
-    return "result";
-  } catch (error) {
-    throw new Error("Impossible de mettre le parcours à jour");
-  }
+    //throw new Error("La mise à jour de l'image du parcours n'a pas réussi");
+  } */
 }
 
 export default updateImage;
