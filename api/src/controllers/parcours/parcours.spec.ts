@@ -45,11 +45,6 @@ describe("HTTP Handshake", () => {
     authToken = loginResponse.headers["set-cookie"][0];
   });
 
-  afterAll(async () => {
-    // Perform any cleanup after running the tests, such as logging out or closing database connections
-    // ...
-  });
-
   describe("Test GET /parcours/contacts", () => {
     test("It should respond with 200 success", async () => {
       await request(app)
@@ -70,15 +65,7 @@ describe("HTTP Handshake", () => {
         .post("/v1/parcours")
         .set("Cookie", [`${authToken}`])
         .send({
-          id: 1,
           title: "testToto",
-          description: "testDescription",
-          degree: "testDegree",
-          startDate: new Date(),
-          endDate: new Date(),
-          tags,
-          contacts: [1],
-          image,
         })
         .expect(201);
     });
@@ -92,137 +79,22 @@ describe("HTTP Handshake", () => {
         .post("/v1/parcours")
         .set("Cookie", [`${authToken}`])
         .send({
-          id: 1,
           title: 0,
-          description: "testDescription",
-          degree: "testDegree",
-          startDate: new Date(),
-          endDate: new Date(),
-          tags,
-          contacts: [1],
-          image,
         })
         .expect(400);
     });
   });
 
   describe("Test POST /parcours", () => {
-    test("It should respond with 400 failure", async () => {
+    test("It should respond with 404 failure", async () => {
       await request(app)
         .post("/v1/parcours")
         .set("Cookie", [`${authToken}`])
         .send({
-          id: 1,
-          title: "totoTest",
-          description: 0,
-          degree: "testDegree",
-          startDate: new Date(),
-          endDate: new Date(),
-          tags,
-          contacts: [1],
-          image,
+          title: "testToto",
+          formation: 1,
         })
-        .expect(400);
-    });
-  });
-
-  describe("Test POST /parcours", () => {
-    test("It should respond with 400 failure", async () => {
-      await request(app)
-        .post("/v1/parcours")
-        .set("Cookie", [`${authToken}`])
-        .send({
-          id: 1,
-          title: "totoTest",
-          description: "testDescription",
-          degree: 0,
-          startDate: new Date(),
-          endDate: new Date(),
-          tags,
-          contacts: [1],
-          image,
-        })
-        .expect(400);
-    });
-  });
-
-  describe("Test POST /parcours", () => {
-    test("It should respond with 400 failure", async () => {
-      await request(app)
-        .post("/v1/parcours")
-        .set("Cookie", [`${authToken}`])
-        .send({
-          id: 1,
-          title: "totoTest",
-          description: "testDescription",
-          degree: "testDegree",
-          startDate: 0,
-          endDate: new Date(),
-          tags,
-          contacts: [1],
-          image,
-        })
-        .expect(400);
-    });
-  });
-
-  describe("Test POST /parcours", () => {
-    test("It should respond with 400 failure", async () => {
-      await request(app)
-        .post("/v1/parcours")
-        .set("Cookie", [`${authToken}`])
-        .send({
-          id: 1,
-          title: "totoTest",
-          description: "testDescription",
-          degree: "testDegree",
-          startDate: new Date(),
-          endDate: 0,
-          tags: [0],
-          contacts: [1],
-          image,
-        })
-        .expect(400);
-    });
-  });
-
-  describe("Test POST /parcours", () => {
-    test("It should respond with 400 failure", async () => {
-      await request(app)
-        .post("/v1/parcours")
-        .set("Cookie", [`${authToken}`])
-        .send({
-          id: 1,
-          title: "totoTest",
-          description: "testDescription",
-          degree: "testDegree",
-          startDate: new Date(),
-          endDate: 0,
-          tags,
-          contacts: [0],
-          image,
-        })
-        .expect(400);
-    });
-  });
-
-  describe("Test POST /parcours", () => {
-    test("It should respond with 400 failure", async () => {
-      await request(app)
-        .post("/v1/parcours")
-        .set("Cookie", [`${authToken}`])
-        .send({
-          id: 1,
-          title: "totoTest",
-          description: "testDescription",
-          degree: "testDegree",
-          startDate: new Date(),
-          endDate: 0,
-          tags,
-          contacts: [1],
-          image: 0,
-        })
-        .expect(400);
+        .expect(404);
     });
   });
 
