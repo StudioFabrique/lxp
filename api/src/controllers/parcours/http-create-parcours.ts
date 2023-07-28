@@ -11,6 +11,8 @@ async function httpCreateParcours(req: CustomRequest, res: Response) {
     return res.status(400).json({ message: badQuery });
   }
 
+  console.log(req.body);
+
   try {
     /*     if (
       !req.auth ||
@@ -32,8 +34,6 @@ async function httpCreateParcours(req: CustomRequest, res: Response) {
       });
     }
   } catch (error: any) {
-    console.log(error);
-
     return res.status(500).json({ message: error.message });
   }
 }
