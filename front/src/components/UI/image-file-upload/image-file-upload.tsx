@@ -50,7 +50,3 @@ const ImageFileUpload: FC<{
 };
 
 export default ImageFileUpload;
-
-{
-  "results": "https://unsplash.com/photos/04X1Yp9hNH8"
-}
