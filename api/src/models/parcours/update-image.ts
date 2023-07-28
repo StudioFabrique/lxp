@@ -1,17 +1,24 @@
 import { PrismaClient } from "@prisma/client";
+import { File } from "buffer";
+import fs from "fs";
 
 const prisma = new PrismaClient();
 
-async function updateImage(parcoursId: number, image: Buffer) {
+async function updateImage(parcoursId: number, image: any) {
   try {
-    // conversion de l'image en donnée enregistrable sous forme de Blob dans la bdd
-    //const imageBuffer = Buffer.from(image.split(",")[1], "base64");
+    /*   console.log("Nom du fichier :", uploadedFile.originalname);
+  console.log("Type MIME :", uploadedFile.mimetype);
+  console.log("Taille du fichier :", uploadedFile.size); */
 
-    const result = await prisma.parcours.update({
-      where: { id: parcoursId },
-      data: { image: image },
-    });
-    return result;
+    const uploadedFile = image;
+
+    console.log(uploadedFile);
+
+    console.log("Nom du fichier :", uploadedFile.originalname);
+    console.log("Type MIME :", uploadedFile.mimetype);
+    console.log("Taille du fichier :", uploadedFile.size);
+
+    return "result";
   } catch (error) {
     throw new Error("Impossible de mettre le parcours à jour");
   }
