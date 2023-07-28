@@ -20,6 +20,7 @@ const disconnect = async () => {
 let tags: any;
 let contacts: any;
 const image = blobParcours;
+let title: string;
 
 async function getTags() {
   return await prisma.tag.findMany();
@@ -27,6 +28,24 @@ async function getTags() {
 
 async function getContacts() {
   return await prisma.teacher.findMany();
+}
+
+async function getParcours() {
+  const parcours = await prisma.parcours.findMany();
+  if (parcours && parcours.length === 0) {
+    await prisma.parcours.create({
+      data: {
+        title: "test",
+        formation: {
+          connect: { id: 1 },
+        },
+        admin: {
+          connect: { id: 1 },
+        },
+      },
+    });
+  }
+  return parcours;
 }
 
 describe("HTTP Handshake", () => {
@@ -61,17 +80,41 @@ describe("HTTP Handshake", () => {
   //  jeu de données valides
   describe("Test POST /parcours", () => {
     test("It should respond with 201 success", async () => {
+      const parcours = await getParcours();
+
+      if (parcours && parcours.length > 0) {
+        console.log(`${parcours[0].title}-${parcours.length}`);
+
+        title = `${parcours[0].title}-${parcours.length + 1}`;
+      } else {
+        title = "test-1";
+      }
       await request(app)
         .post("/v1/parcours")
         .set("Cookie", [`${authToken}`])
         .send({
-          title: "testToto",
+          title: title,
+          formation: 1,
         })
         .expect(201);
     });
   });
 
   // jeux de données non valides
+
+  // le titre du parcours existe déjà
+  describe("Test POST /parcours", () => {
+    test("It should respond with 500 failure", async () => {
+      await request(app)
+        .post("/v1/parcours")
+        .set("Cookie", [`${authToken}`])
+        .send({
+          title: title,
+          formation: 1,
+        })
+        .expect(500);
+    });
+  });
 
   describe("Test POST /parcours", () => {
     test("It should respond with 400 failure", async () => {
@@ -80,21 +123,22 @@ describe("HTTP Handshake", () => {
         .set("Cookie", [`${authToken}`])
         .send({
           title: 0,
+          formation: 1,
         })
         .expect(400);
     });
   });
 
   describe("Test POST /parcours", () => {
-    test("It should respond with 404 failure", async () => {
+    test("It should respond with 400 failure", async () => {
       await request(app)
         .post("/v1/parcours")
         .set("Cookie", [`${authToken}`])
         .send({
-          title: "testToto",
-          formation: 1,
+          title: "foo",
+          formation: "<hacked>trolololol</hacked>",
         })
-        .expect(404);
+        .expect(400);
     });
   });
 

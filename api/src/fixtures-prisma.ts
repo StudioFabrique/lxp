@@ -21,6 +21,13 @@ async function mongoConnect() {
 
 const prisma = new PrismaClient();
 
+// Méthode pour fermer la connexion
+const disconnect = async () => {
+  if (mongoose.connection.readyState !== 0) {
+    await mongoose.connection.close();
+  }
+};
+
 const tags: string[] = [
   "HTML",
   "CSS",
@@ -272,6 +279,7 @@ async function loadFixtures() {
   await createTeachers();
   await createContacts();
   await createFormation();
+  await disconnect();
 }
 
 loadFixtures();

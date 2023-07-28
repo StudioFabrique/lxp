@@ -6,8 +6,6 @@ async function createParcours(parcours: any /* userId: string */) {
   //  DEV ONLY
   const admin = 1;
 
-  console.log({ parcours });
-
   // récupération de l'identifiant de l'utilisateur qui effectue la requête
   /*   const admin = await prisma.admin.findFirst({
     where: {
@@ -49,8 +47,6 @@ async function createParcours(parcours: any /* userId: string */) {
     })
   ).map((item) => item.id); */
 
-  console.log({ newParcours });
-
   try {
     const storedParcours = await prisma.parcours.create({
       data: {
@@ -77,10 +73,8 @@ async function createParcours(parcours: any /* userId: string */) {
         },
       },
     });
-    console.log({ storedParcours });
     return storedParcours;
   } catch (error) {
-    console.log("ERROR ERROR ERROR", error);
     throw new Error("Un parcours avec ce titre existe déjà");
   }
 
