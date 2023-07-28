@@ -1,10 +1,14 @@
 import { FC, MouseEvent, MouseEventHandler } from "react";
 
-const ViewButton: FC<{}> = ({}) => {
+const ViewButton: FC<{ background: boolean }> = ({ background }) => {
   const handleView: MouseEventHandler = (event: MouseEvent) => {};
 
   return (
-    <button type="button" onClick={handleView}>
+    <button
+      type="button"
+      onClick={handleView}
+      className={`${background && "bg-primary-content"} p-1 rounded-md`}
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"

@@ -1,8 +1,8 @@
 import { FC, MouseEvent, MouseEventHandler } from "react";
 import Module from "../../../utils/interfaces/module";
-import EditButton from "./buttons/edit-button.component";
-import ViewButton from "./buttons/view-button.component";
-import DeleteButton from "./buttons/delete-button.component";
+import EditButton from "../buttons/edit-button.component";
+import ViewButton from "../buttons/view-button.component";
+import DeleteButton from "../buttons/delete-button.component";
 
 const ModulesItem: FC<{
   module: Module;
@@ -25,10 +25,10 @@ const ModulesItem: FC<{
         </span>
         <p className="ml-5">{module.title}</p>
       </div>
-      <div className="flex flex-col justify-between">
-        <ViewButton />
-        <EditButton />
-        <DeleteButton onDelete={handleDelete} />
+      <div className="flex flex-col gap-y-1 justify-between ml-2">
+        <ViewButton background />
+        <EditButton background />
+        <DeleteButton onDelete={handleDelete} background color="red" />
       </div>
     </div>
   );
