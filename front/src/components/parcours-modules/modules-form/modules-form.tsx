@@ -30,7 +30,7 @@ const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = ({
       !title.isValid ||
       !description.isValid ||
       !nbHours.isValid ||
-      /* !imageFile || */
+      !imageFile ||
       teachers.length <= 0
     )
       return;
@@ -93,7 +93,7 @@ const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = ({
         />
       </div>
 
-      <ImageFileUpload maxSize={2 * 1024 * 1024} onSetFile={handleSetImage} />
+      <ImageFileUpload maxSize={10 * 1024 * 1024} onSetFile={handleSetImage} />
 
       <button type="submit" className="btn mt-10">
         Ajouter le module
