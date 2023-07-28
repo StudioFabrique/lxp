@@ -23,6 +23,12 @@ const AddSkills: FC<{
     ]);
   };
 
+  const handleDeleteSkill = (id: number) => {
+    setSkills((currentSkills) =>
+      currentSkills.filter((skill) => skill.id !== id)
+    );
+  };
+
   const handleFilterSkillsAvailables = (name: string, property: string) => {
     const filteredTeachersAvailable = skillsAvailables.filter(
       (skill) => skill.id === parseInt(name)
@@ -42,7 +48,7 @@ const AddSkills: FC<{
         resetFilterItems={() => {}}
         getId="id"
       />
-      <SkillsList skills={skills} />
+      <SkillsList skills={skills} onDelete={handleDeleteSkill} />
     </div>
   );
 };
