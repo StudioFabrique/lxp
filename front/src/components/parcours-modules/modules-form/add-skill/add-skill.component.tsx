@@ -23,6 +23,12 @@ const AddSkills: FC<{
     ]);
   };
 
+  const handleDeleteSkill = (id: number) => {
+    setSkills((currentSkills) =>
+      currentSkills.filter((skill) => skill.id !== id)
+    );
+  };
+
   const handleFilterSkillsAvailables = (name: string, property: string) => {
     const filteredTeachersAvailable = skillsAvailables.filter(
       (skill) => skill.id === parseInt(name)
@@ -32,7 +38,7 @@ const AddSkills: FC<{
 
   return (
     <div className="flex flex-col">
-      <label htmlFor="formateurs">Formateurs de module</label>
+      <label htmlFor="formateurs">Compétences de module</label>
       <SearchDropdown
         placeHolder="Rechercher une compétence de module"
         addItem={handleAddSkill}
@@ -42,7 +48,7 @@ const AddSkills: FC<{
         resetFilterItems={() => {}}
         getId="id"
       />
-      <SkillsList skills={skills} />
+      <SkillsList skills={skills} onDelete={handleDeleteSkill} />
     </div>
   );
 };
