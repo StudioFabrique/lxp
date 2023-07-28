@@ -6,8 +6,11 @@ import User from "../../../utils/interfaces/user";
 import Skill from "../../../utils/interfaces/skill";
 import AddTeachers from "./add-teacher/add-teacher.component";
 import AddSkills from "./add-skill/add-skill.component";
+import Module from "../../../utils/interfaces/module";
 
-const ModulesForm: FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }) => {
+const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = ({
+  onSubmit,
+}) => {
   const { value: title } = useInput((value) => regexGeneric.test(value));
   const { value: description } = useInput((value) => regexGeneric.test(value));
   const { value: nbHours } = useInput((value) => regexNumber.test(value));
@@ -17,7 +20,6 @@ const ModulesForm: FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }) => {
 
   const handleSetImage = (file: File) => {
     setImageFile(file);
-    console.log(file);
   };
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (
@@ -28,26 +30,34 @@ const ModulesForm: FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }) => {
       !title.isValid ||
       !description.isValid ||
       !nbHours.isValid ||
-      /* !imageFile || */
+      !imageFile ||
       teachers.length <= 0
     )
       return;
     console.log("request send");
     const teachersId: string[] = teachers.map((teacher) => teacher._id);
     const skillsId: number[] = skills.map((skill) => skill.id!);
-    const module = { title: title, description: description };
+    const module: Module = {
+      title: title.value,
+      description: description.value,
+      teachers: teachersId,
+      skills: skillsId,
+      nbHours: nbHours.value,
+      imageTemp: imageFile!,
+      imageUrl: URL.createObjectURL(imageFile!),
+    };
     onSubmit(module);
   };
 
   return (
-    <form className="flex flex-col gap-y-4 p-4" onSubmit={handleSubmit}>
+    <form className="flex flex-col gap-y-5 p-5 w-[90%]" onSubmit={handleSubmit}>
       <div className="flex flex-col">
         <label htmlFor="title">Titre de module</label>
         <input
           className="input input-sm w-full"
           name="title"
           type="text"
-          value={title.value.value}
+          value={title.value}
           onChange={title.valueChangeHandler}
           onBlur={title.valueBlurHandler}
         />
@@ -83,7 +93,7 @@ const ModulesForm: FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }) => {
         />
       </div>
 
-      <ImageFileUpload maxSize={10} onSetFile={handleSetImage} />
+      <ImageFileUpload maxSize={10 * 1024 * 1024} onSetFile={handleSetImage} />
 
       <button type="submit" className="btn mt-10">
         Ajouter le module
