@@ -50,14 +50,14 @@ const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = ({
   };
 
   return (
-    <form className="flex flex-col gap-y-4 p-4" onSubmit={handleSubmit}>
+    <form className="flex flex-col gap-y-5 p-5 w-[90%]" onSubmit={handleSubmit}>
       <div className="flex flex-col">
         <label htmlFor="title">Titre de module</label>
         <input
           className="input input-sm w-full"
           name="title"
           type="text"
-          value={title.value.value}
+          value={title.value}
           onChange={title.valueChangeHandler}
           onBlur={title.valueBlurHandler}
         />

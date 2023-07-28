@@ -2,11 +2,6 @@ import { FC, useEffect } from "react";
 import Skill from "../../../../utils/interfaces/skill";
 
 const SkillsList: FC<{ skills: Skill[] }> = ({ skills }) => {
-  useEffect(() => {
-    if (skills.length > 0) {
-      console.log(skills);
-    }
-  });
   return (
     <div className="flex flex-col gap-y-2 mt-5">
       {skills.map((skill) => (
