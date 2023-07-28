@@ -24,6 +24,12 @@ const AddTeachers: FC<{
     ]);
   };
 
+  const handleDeleteTeacher = (_id: string) => {
+    setTeacher((currentTeachers) =>
+      currentTeachers.filter((teacher) => teacher._id !== _id)
+    );
+  };
+
   const handleFilterTeachersAvailables = (name: string, property: string) => {
     const filteredTeachersAvailable = teachersAvailables.filter(
       (teacher) => teacher._id === name
@@ -44,7 +50,7 @@ const AddTeachers: FC<{
         propertiesToRender={["firstname", "lastname"]}
         getId="_id"
       />
-      <TeachersList teachers={teachers} />
+      <TeachersList teachers={teachers} onDelete={handleDeleteTeacher} />
     </div>
   );
 };
