@@ -48,6 +48,10 @@ async function getParcours() {
   return parcours;
 }
 
+async function getFormation() {
+  return await prisma.formation.findMany();
+}
+
 describe("HTTP Handshake", () => {
   let authToken = {}; // Store the authentication token
 
@@ -138,6 +142,75 @@ describe("HTTP Handshake", () => {
           title: "foo",
           formation: "<hacked>trolololol</hacked>",
         })
+        .expect(400);
+    });
+  });
+
+  /**
+   * GET PARCOURS BY ID
+   */
+
+  describe("Test GET /parcours-by-id/:parcoursId", () => {
+    test("It should respond with 200 success", async () => {
+      await request(app)
+        .get("/v1/parcours/parcours-by-id/1")
+        .set("Cookie", [`${authToken}`])
+        .expect(200);
+    });
+  });
+
+  describe("Test GET /parcours-by-id/:parcoursId", () => {
+    test("It should respond with 500 failure", async () => {
+      const parcours = await getParcours();
+      const id = parcours[parcours.length - 1].id + 1;
+      await request(app)
+        .get(`/v1/parcours/parcours-by-id/${id}`)
+        .set("Cookie", [`${authToken}`])
+        .expect(500);
+    });
+  });
+
+  describe("Test GET /parcours-by-id/:parcoursId", () => {
+    test("It should respond with 400 failure", async () => {
+      await request(app)
+        .get(`/v1/parcours/parcours-by-id/foo`)
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+  });
+
+  /**
+   * GET PARCOURS BY FORMATION
+   */
+
+  describe("Test Get /parcours-by-formation", () => {
+    test("It should respond 200 success", async () => {
+      const parcours = await getParcours();
+      const id = parcours[0].formationId;
+      await request(app)
+        .get(`/v1/parcours/parcours-by-formation/${id}`)
+        .set("Cookie", [`${authToken}`])
+        .expect(200);
+    });
+  });
+
+  describe("Test Get /parcours-by-formation", () => {
+    test("It should respond 404 failure", async () => {
+      const formations = await getFormation();
+      const id = formations[formations.length - 1].id + 1;
+
+      await request(app)
+        .get(`/v1/parcours/parcours-by-formation/${id}`)
+        .set("Cookie", [`${authToken}`])
+        .expect(404);
+    });
+  });
+
+  describe("Test Get /parcours-by-formation", () => {
+    test("It should respond 400 failure", async () => {
+      await request(app)
+        .get(`/v1/parcours/parcours-by-formation/foo`)
+        .set("Cookie", [`${authToken}`])
         .expect(400);
     });
   });
