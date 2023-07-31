@@ -46,7 +46,7 @@ model Module {
   description String
   image       Bytes
   duration    Int
-  rating      Float
+  rating      Float?
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @default(now())
   parcours    ModulesOnParcours[]

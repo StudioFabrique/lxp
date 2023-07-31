@@ -25,39 +25,19 @@ const ParcoursInfos: FC<{
     (value) => regexGeneric.test(value.trim()),
     parcoursInfos.degree
   );
-  //const [file, setFile] = useState<File | null>(null);
-
-  /*   const convertImageToBase64 = useCallback(async () => {
-    if (file) {
-      const response = new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-      const result = await response;
-      console.log({ result });
-
-      return result;
-    } else {
-      return null;
-    }
-  }, [file]); */
 
   const infos = useMemo(() => {
     return {
       title: title.value,
       description: description.value,
       degree: degree.value,
-      //file: convertImageToBase64(),
     };
-  }, [title.value, description.value, degree.value /* convertImageToBase64 */]);
+  }, [title.value, description.value, degree.value]);
 
   let formIsValid = title.isValid;
 
   useEffect(() => {
     const setInfos = async () => {
-      //  const imageBase64 = await infos.file;
       if (formIsValid) {
         onSubmitInformations({
           title: infos.title,
@@ -111,9 +91,6 @@ const ParcoursInfos: FC<{
             onBlur={degree.valueBlurHandler}
           />
         </div>
-        {/*         <div className="flex flex-col gap-y-1">
-          <ImageFileUpload maxSize={2 * 1024 * 1024} onSetFile={setFile} />
-        </div> */}
       </form>
     </Wrapper>
   );
