@@ -47,7 +47,7 @@ const SearchDropdownMultiple: FC<{
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
-    setInputValue(event.currentTarget.value);
+    setInputValue(event.currentTarget.value.toLowerCase());
     if (!(inputValue.length > 1)) {
       setIsOpen(false);
       return;

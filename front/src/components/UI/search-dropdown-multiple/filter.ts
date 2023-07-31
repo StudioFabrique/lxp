@@ -6,7 +6,10 @@ export const searchResult = (
   const inputValueToArray: string[] = inputValue.split(" ");
   console.log(inputValueToArray);
   const result = inputValueToArray.map((inputValue, i) =>
-    data.filter((data) => data[propertiesToSearch[i]] === inputValue)
+    data.filter(
+      (data) =>
+        data[propertiesToSearch[i]].toLowerCase() === inputValue.toLowerCase()
+    )
   );
   console.log(result);
   return result;
