@@ -14,9 +14,9 @@ export const searchResult = (
      il faut les filtrer à faire en sorte de ne pas avoir de doublons */
 };
 
-export const filterResult = (searchResult: any[][]) => {
+export const filterResult = (searchResult: any[][]): any[] => {
   let idList: string[] = [];
   searchResult.map((arrays) => arrays.map((data) => idList.push(data._id)));
   const cleanIdList = idList.filter((id, i) => idList.indexOf(id) === i);
-  console.log(cleanIdList);
+  return cleanIdList;
 };

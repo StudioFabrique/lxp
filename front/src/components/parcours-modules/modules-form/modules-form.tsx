@@ -14,7 +14,7 @@ const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = ({
 }) => {
   const { value: title } = useInput((value) => regexGeneric.test(value));
   const { value: description } = useInput((value) => regexGeneric.test(value));
-  const { value: nbHours } = useInput((value) => regexNumber.test(value));
+  const { value: duration } = useInput((value) => regexNumber.test(value));
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [teachers, setTeachers] = useState<User[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -30,7 +30,7 @@ const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = ({
     if (
       !title.isValid ||
       !description.isValid ||
-      !nbHours.isValid ||
+      !duration.isValid ||
       !validateImageFile(imageFile!, 10 * 1024 * 1024) ||
       teachers.length <= 0
     )
@@ -43,7 +43,7 @@ const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = ({
       description: description.value,
       teachers: teachersId,
       skills: skillsId,
-      nbHours: nbHours.value,
+      duration: duration.value,
       imageTemp: imageFile!,
       imageUrl: URL.createObjectURL(imageFile!),
     };
@@ -88,9 +88,9 @@ const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = ({
           className="input input-sm w-full"
           name="nbHours"
           type="number"
-          value={nbHours.value}
-          onChange={nbHours.valueChangeHandler}
-          onBlur={nbHours.valueBlurHandler}
+          value={duration.value}
+          onChange={duration.valueChangeHandler}
+          onBlur={duration.valueBlurHandler}
         />
       </div>
 
