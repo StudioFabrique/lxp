@@ -14,6 +14,7 @@ const ParcoursModules: FC</* IParcoursModules */ {}> = (props) => {
 
   const handleAddModule = (module: Module) => {
     module._id = (modules.length + 1).toString();
+    console.log(module);
     setModules((currentModules) => [...currentModules, module]);
   };
 
