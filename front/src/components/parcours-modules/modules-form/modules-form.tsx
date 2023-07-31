@@ -77,7 +77,7 @@ const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = ({
       </div>
 
       {/* formateurs compo */}
-      <AddTeachers teachers={teachers} setTeacher={setTeachers} />
+      <AddTeachers teachers={teachers} setTeachers={setTeachers} />
 
       {/* compétences compo */}
       <AddSkills skills={skills} setSkills={setSkills} />

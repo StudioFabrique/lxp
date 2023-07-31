@@ -3,9 +3,11 @@ import {
   ChangeEventHandler,
   FC,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { filterResult, searchResult } from "./filter";
+import Item from "./item.component";
 
 const SearchDropdownMultiple: FC<{
   data: any[];
@@ -17,31 +19,40 @@ const SearchDropdownMultiple: FC<{
   propertiesToSearch: string[];
   propertyToFilter: string;
   placeHolder?: string;
+  onAddItem: (filter: any) => void;
 }> = ({
   data,
   propertiesToSearch,
   propertyToFilter,
   placeHolder = "Rechercher Formateur de module",
+  onAddItem,
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>("");
   const [itemsAvailables, setItemsAvailables] = useState<any[]>([]);
 
   const handleFocus = () => {
-    if (inputValue.length > 0) {
+    if (itemsAvailables.length > 0) {
       setIsOpen(true);
     }
   };
 
   const handleBlur = () => {
-    setIsOpen(false);
+    const interval = setInterval(() => {
+      setIsOpen(false);
+      clearInterval(interval);
+    }, 100);
   };
 
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
-    setIsOpen(true);
     setInputValue(event.currentTarget.value);
+    if (!(inputValue.length > 1)) {
+      setIsOpen(false);
+      return;
+    }
+    setIsOpen(true);
   };
 
   useEffect(() => {
@@ -80,15 +91,13 @@ const SearchDropdownMultiple: FC<{
             className="dropdown-content menu p-1 shadow bg-base-100 rounded-box w-full mt-4"
           >
             {itemsAvailables.map((item: any) => (
-              <li
-                className="text-xs py-1 cursor-pointer"
-                key={item[propertiesToSearch[0]]}
-                /* onClick={() => handleSelectItem(item[getId ? getId : property])} */
-              >
-                <p className="font-bold">
-                  {propertiesToSearch?.map((property) => item[property] + " ")}
-                </p>
-              </li>
+              <Item
+                item={item}
+                propertyToFilter={propertyToFilter}
+                onAddItem={onAddItem}
+                propertiesToSearch={propertiesToSearch}
+                key={item[propertyToFilter]}
+              />
             ))}
           </ul>
         ) : null}
