@@ -21,6 +21,7 @@ const AddTeachers: FC<{
     <div className="flex flex-col">
       <label htmlFor="formateurs">Formateurs de module</label>
       <SearchDropdownMultiple
+        propertyToFilter="_id"
         data={teachersAvailables}
         propertiesToSearch={["firstname", "lastname"]}
       />

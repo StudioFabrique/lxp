@@ -15,10 +15,12 @@ const SearchDropdownMultiple: FC<{
   ex : ["firstname", "lastname"] : donc le champ de recherche pourra contenir Jean Dupont. 
   */
   propertiesToSearch: string[];
+  propertyToFilter: string;
   placeHolder?: string;
 }> = ({
   data,
   propertiesToSearch,
+  propertyToFilter,
   placeHolder = "Rechercher Formateur de module",
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -50,8 +52,12 @@ const SearchDropdownMultiple: FC<{
         data
       );
       console.log(dataSearchResult);
-      const filteredResult = filterResult(dataSearchResult);
-      // setItemsAvailables(searchResult);
+      const filteredResultIdlist = filterResult(dataSearchResult);
+      setItemsAvailables(
+        data.filter((data) =>
+          filteredResultIdlist.includes(data[propertyToFilter])
+        )
+      );
     }
   }, [inputValue.length]);
 

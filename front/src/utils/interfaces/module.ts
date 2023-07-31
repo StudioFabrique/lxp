@@ -7,7 +7,7 @@ export default interface Module {
   description: string;
   teachers: Array<User> | Array<string>;
   skills: Array<Skill> | Array<number>;
-  nbHours: number;
+  duration: number;
   imageUrl: string;
   imageTemp?: File;
 }
