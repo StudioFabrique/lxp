@@ -7,6 +7,7 @@ import Skill from "../../../utils/interfaces/skill";
 import AddTeachers from "./add-teacher/add-teacher.component";
 import AddSkills from "./add-skill/add-skill.component";
 import Module from "../../../utils/interfaces/module";
+import { validateImageFile } from "../../../utils/validate-image-file";
 
 const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = ({
   onSubmit,
@@ -30,7 +31,7 @@ const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = ({
       !title.isValid ||
       !description.isValid ||
       !nbHours.isValid ||
-      !imageFile ||
+      !validateImageFile(imageFile!, 10 * 1024 * 1024) ||
       teachers.length <= 0
     )
       return;

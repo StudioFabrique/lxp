@@ -9,5 +9,5 @@ export default interface Module {
   skills: Array<Skill> | Array<number>;
   nbHours: number;
   imageUrl: string;
-  imageTemp: File;
+  imageTemp?: File;
 }
