@@ -119,7 +119,7 @@ const AddParcours = () => {
   return (
     <>
       <Toaster />
-      <div className="w-4/6 grid grid-cols-1 xl:grid-cols-2 gap-8 px-8 mx-auto my-16">
+      <div className="w-full xl:w-4/6 grid grid-cols-1 lg:grid-cols-2 gap-8 px-8 mx-auto my-16">
         <>
           <div>
             {isLoading ? (

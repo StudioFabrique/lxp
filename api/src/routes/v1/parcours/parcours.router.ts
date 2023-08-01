@@ -7,8 +7,10 @@ import httpCreateParcoursRouter from "./post-create-parcours";
 import httpGetParcoursByFormationRouter from "./get-parcours-by-formation";
 import getParcoursByIdRouter from "./get-parcours-by-id";
 import putUpdateImageRouter from "./put-update-image";
-import httpUpdateParcoursInfos from "../../../controllers/parcours/http-update-parcours-infos";
 import httpUpdateParcoursDates from "../../../controllers/parcours/http-update-parcours-dates";
+import putUpdateInfosRouter from "./put-update-infos";
+import putUpdateDatesRouter from "./put-updates-dates";
+import httpPutParcoursTags from "../../../controllers/tag/http-put-parcours-tags";
 
 const parcoursRouter = express.Router();
 
@@ -18,7 +20,8 @@ parcoursRouter.use("/parcours-by-formation", httpGetParcoursByFormationRouter);
 parcoursRouter.use("/parcours-by-id", getParcoursByIdRouter);
 parcoursRouter.use("/update-image", putUpdateImageRouter);
 parcoursRouter.get("/contacts", isUser, httpGetContacts);
-parcoursRouter.put("/update-infos", httpUpdateParcoursInfos);
-parcoursRouter.put("/update-dates", httpUpdateParcoursDates);
+parcoursRouter.use("/update-infos", putUpdateInfosRouter);
+parcoursRouter.use("/update-dates", putUpdateDatesRouter);
+parcoursRouter.use("/update-tags", httpPutParcoursTags);
 
 export default parcoursRouter;

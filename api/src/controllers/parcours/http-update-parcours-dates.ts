@@ -14,6 +14,8 @@ async function httpUpdateParcoursDates(req: Request, res: Response) {
   try {
     const { parcoursId, startDate, endDate } = req.body;
 
+    console.log(req.body);
+
     const response = await updateParcoursDates(
       parseInt(parcoursId),
       startDate,
