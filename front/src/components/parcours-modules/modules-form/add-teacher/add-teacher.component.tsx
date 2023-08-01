@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import User from "../../../../utils/interfaces/user";
 import TeachersList from "./teachers-list.component";
 import { teachersData } from "./teachers-data";
@@ -44,6 +44,7 @@ const AddTeachers: FC<{
         data={teachersAvailables}
         propertiesToSearch={["firstname", "lastname"]}
         placeHolder="Prénom Nom"
+        transparencyOrder="z-10"
         onAddItem={handleAddTeacher}
       />
       <TeachersList teachers={teachers} onDelete={handleDeleteTeacher} />

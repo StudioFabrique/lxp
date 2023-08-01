@@ -3,7 +3,6 @@ import {
   ChangeEventHandler,
   FC,
   useEffect,
-  useRef,
   useState,
 } from "react";
 import { filterResult, searchResult } from "./filter";
@@ -19,12 +18,14 @@ const SearchDropdownMultiple: FC<{
   propertiesToSearch: string[];
   propertyToFilter: string;
   placeHolder?: string;
+  transparencyOrder: "z-0" | "z-10" | "z-20" | "z-30" | "z-40" | "z-50";
   onAddItem: (filter: any) => void;
 }> = ({
   data,
   propertiesToSearch,
   propertyToFilter,
   placeHolder = "Rechercher Formateur de module",
+  transparencyOrder,
   onAddItem,
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -63,17 +64,26 @@ const SearchDropdownMultiple: FC<{
         data
       );
       console.log(dataSearchResult);
-      const filteredResultIdlist = filterResult(dataSearchResult);
+      const filteredResultIdlist = filterResult(
+        dataSearchResult,
+        propertyToFilter
+      );
       setItemsAvailables(
         data.filter((data) =>
           filteredResultIdlist.includes(data[propertyToFilter])
         )
       );
     }
-  }, [inputValue.length]);
+  }, [
+    inputValue.length,
+    data,
+    inputValue,
+    propertiesToSearch,
+    propertyToFilter,
+  ]);
 
   return (
-    <div className="flex items-center gap-x-2 w-full">
+    <div className={`flex items-center gap-x-2 w-full z ${transparencyOrder}`}>
       <div className="dropdown dropdown-bottom dropdown-end flex gap-y-4 w-full">
         <input
           type="search"
