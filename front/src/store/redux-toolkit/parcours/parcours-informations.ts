@@ -36,17 +36,19 @@ const parcoursInformationsSlice = createSlice({
         ...state.infos,
         title: infos.title,
         description: infos.description,
+        /*         startDate: infos.startDate,
+        endDate: infos.endDate,*/
         degree: infos.degree,
       };
     },
     updateParcoursDates(state, action) {
       const dates = action.payload;
-
       state.infos = {
         ...state.infos,
         startDate: dates.startDate,
         endDate: dates.endDate,
       };
+      console.log("infos", state.infos);
     },
     updateParcoursTags(state, action) {
       const tags = action.payload.map((item: Tag) => item.id);

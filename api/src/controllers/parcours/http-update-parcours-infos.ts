@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
+
 import { badQuery } from "../../utils/constantes";
 import updateParcoursInfos from "../../models/parcours/update-parcours-infos";
 

@@ -6,6 +6,8 @@ export default interface Parcours {
   degree: string;
   description?: string;
   image?: string;
+  startDate?: string;
+  endDate?: string;
   createdAt?: string;
   updatedAt?: string;
   adminId?: number;
