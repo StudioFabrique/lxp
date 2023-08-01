@@ -20,8 +20,8 @@ async function updateParcoursInfos(
       },
     });
     return updatedParcours;
-  } catch (error) {
-    throw new Error("Le parcours n'existe pas");
+  } catch (error: any) {
+    throw new Error(error.message);
   }
 }
 
