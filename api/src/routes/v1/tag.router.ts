@@ -5,6 +5,6 @@ import httpPutParcoursTags from "../../controllers/tag/http-put-parcours-tags";
 
 const tagRouter = express.Router();
 
-tagRouter.get("/", isUser, httpGetAllTags);
+tagRouter.get("/", httpGetAllTags);
 
 export default tagRouter;
