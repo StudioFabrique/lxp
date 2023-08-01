@@ -1,0 +1,23 @@
+import { Prisma, PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+async function getParcoursById(parcoursId: number) {
+  console.log({ parcoursId });
+
+  const parcours = await prisma.parcours.findFirst({
+    where: { id: parcoursId },
+    include: { formation: true },
+  });
+  if (parcours) {
+    if (parcours.image instanceof Buffer) {
+      const base64Image = parcours.image.toString("base64");
+      const result = { ...parcours, image: base64Image };
+      return result;
+    }
+    return parcours;
+  }
+  throw new Error("Aucun parcours trouvé");
+}
+
+export default getParcoursById;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice } from "@reduxjs/toolkit";
 
 import Role from "../../../utils/interfaces/role";
@@ -31,23 +32,23 @@ const parcoursInformationsSlice = createSlice({
   reducers: {
     updateParcoursInfos(state, action) {
       const infos = action.payload;
-      console.log({ infos });
-
       state.infos = {
         ...state.infos,
         title: infos.title,
         description: infos.description,
+        /*         startDate: infos.startDate,
+        endDate: infos.endDate,*/
         degree: infos.degree,
       };
     },
     updateParcoursDates(state, action) {
       const dates = action.payload;
-
       state.infos = {
         ...state.infos,
         startDate: dates.startDate,
         endDate: dates.endDate,
       };
+      console.log("infos", state.infos);
     },
     updateParcoursTags(state, action) {
       const tags = action.payload.map((item: Tag) => item.id);

@@ -5,7 +5,7 @@ dotenv.config();
 import mongoConnect from "../../utils/services/db/mongo-connect";
 
 describe("HTTP Handshake", () => {
-  let authToken = {}; // Store the authentication token
+  /*  let authToken = {}; // Store the authentication token
 
   beforeAll(async () => {
     await mongoConnect();
@@ -186,5 +186,5 @@ describe("HTTP Handshake", () => {
         })
         .expect(400);
     });
-  });
+  }); */
 });
