@@ -1,11 +1,13 @@
-import React, { FC, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
+
 import useInput from "../../../hooks/use-input";
 import { regexGeneric } from "../../../utils/constantes";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
-import Wrapper from "../wrapper/wrapper.component";
+import { formatDateToYYYYMMDD } from "../../../helpers/convert-date";
 
 type Props = {
   onSubmitDates: (dates: { startDate: string; endDate: string }) => void;
+  label?: string; // titre du composant personnalisable
   startDateProp?: string;
   endDateProp?: string;
 };
@@ -13,15 +15,16 @@ type Props = {
 const DatesSelecter: FC<Props> = ({
   startDateProp = "",
   endDateProp = "",
+  label = "Dates",
   onSubmitDates,
 }) => {
   const { value: startDate } = useInput(
     (value) => regexGeneric.test(value),
-    startDateProp
+    formatDateToYYYYMMDD(new Date(startDateProp))
   );
   const { value: endDate } = useInput(
     (value) => regexGeneric.test(value),
-    endDateProp
+    formatDateToYYYYMMDD(new Date(endDateProp))
   );
   const [error, setError] = useState(false);
 
@@ -32,6 +35,13 @@ const DatesSelecter: FC<Props> = ({
     };
   }, [startDate.value, endDate.value]);
 
+  console.log({ startDateProp, endDateProp });
+
+  console.log({ startDate, endDate });
+
+  /**
+   * vérification de la validité des dates et envoie des données au composant parent pour les mettre à jour dans le state global et la bdd
+   */
   useEffect(() => {
     setError(false);
     const timer = setTimeout(() => {
@@ -52,8 +62,8 @@ const DatesSelecter: FC<Props> = ({
   }, [dates, startDate.isValid, endDate.isValid, onSubmitDates]);
 
   return (
-    <Wrapper>
-      <h3 className="font-bold text-xl">Date</h3>
+    <div className="flex flex-col gap-y-4">
+      <h3 className="font-bold">{label}</h3>
       <div className="flex flex-col gap-y-4">
         <div className="flex justify-between items-center">
           <p>Début</p>
@@ -61,7 +71,7 @@ const DatesSelecter: FC<Props> = ({
             className="input input-sm w-5/6"
             name="startingDate"
             type="date"
-            defaultValue={startDate.value}
+            value={startDate.value}
             onChange={startDate.valueChangeHandler}
           />
         </div>
@@ -71,18 +81,18 @@ const DatesSelecter: FC<Props> = ({
             className="input input-sm w-5/6"
             name="endingDate"
             type="date"
-            defaultValue={endDate.value}
+            value={endDate.value}
             onChange={endDate.valueChangeHandler}
           />
         </div>
       </div>
-        {error ? (
-          <p className="text-base-content text-xs mt-4 text-center font-bold">
-            La date de début doit être comprise entre aujourd'hui et la date de
-            fin de la formation
-          </p>
-        ) : null}
-    </Wrapper>
+      {error ? (
+        <p className="text-base-content text-xs mt-4 text-center font-bold">
+          La date de début doit être comprise entre aujourd'hui et la date de
+          fin de la formation
+        </p>
+      ) : null}
+    </div>
   );
 };
 
