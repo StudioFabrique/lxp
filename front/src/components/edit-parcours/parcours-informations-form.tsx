@@ -206,6 +206,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
                   type="level"
                   readOnly={true}
                   value={formation.level}
+                  disabled={true}
                 />
               </div>
             </form>

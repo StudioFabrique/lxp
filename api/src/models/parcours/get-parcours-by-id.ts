@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -7,7 +7,10 @@ async function getParcoursById(parcoursId: number) {
 
   const parcours = await prisma.parcours.findFirst({
     where: { id: parcoursId },
-    include: { formation: true },
+    include: {
+      formation: { include: { tags: { include: { tag: true } } } },
+      tags: { include: { tag: true } },
+    },
   });
   if (parcours) {
     if (parcours.image instanceof Buffer) {
