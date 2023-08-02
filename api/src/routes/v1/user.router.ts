@@ -2,14 +2,19 @@ import express from "express";
 import { body, param, query } from "express-validator";
 
 import isUser from "../../middleware/is-user";
-import { getAllValidator, userValidator } from "../../middleware/validators";
-import httpCreateUser from "../../controllers/user/http-create-user";
+import {
+  getAllValidator,
+  manyUsersValidator,
+  userValidator,
+} from "../../middleware/validators";
 import httpUpdateUserRoles from "../../controllers/user/http-update-user-roles";
 import httpSearchUser from "../../controllers/user/http-search-user";
 import httpGetUsersByRole from "../../controllers/user/http-get-users-by-role";
 import httpGetUsersStats from "../../controllers/user/http-get-users-stats";
 import httpUpdateUserStatus from "../../controllers/user/http-update-user";
 import httpUpdateManyUsersStatus from "../../controllers/user/http-update-many-users-status";
+import httpCreateUser from "../../controllers/user/http-create-user";
+import httpCreateManyUser from "../../controllers/user/http-create-many-users";
 
 const userRouter = express.Router();
 
@@ -62,6 +67,8 @@ userRouter.put(
 );
 
 userRouter.post("/", isUser, userValidator, httpCreateUser);
+
+userRouter.post("/many", isUser, manyUsersValidator, httpCreateManyUser);
 
 userRouter.get(
   "/search/:role/:entity/:value/:stype/:sdir",

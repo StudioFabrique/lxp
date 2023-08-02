@@ -9,7 +9,7 @@ async function userLogin(email: string, password: string) {
   // on vérifie les identifiants et on retourne les informations de l'utilisateur
   if (
     user &&
-    (await bcrypt.compare(password, user.password)) &&
+    (await bcrypt.compare(password, user.password!)) &&
     user.isActive
   ) {
     return {

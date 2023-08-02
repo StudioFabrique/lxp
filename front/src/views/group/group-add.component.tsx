@@ -33,10 +33,7 @@ const GroupAdd = () => {
         error={error}
         isLoading={isLoading}
       />
-      <GroupUserList
-        usersToAdd={usersToAdd}
-        onSubmitSetUsersToAdd={handleAddUsers}
-      />
+      <GroupUserList usersToAdd={usersToAdd} onAddUsers={handleAddUsers} />
     </div>
   );
 };

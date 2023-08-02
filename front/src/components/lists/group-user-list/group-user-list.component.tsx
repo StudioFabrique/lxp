@@ -7,21 +7,24 @@ import CsvImportUserList from "../../UI/csv-import/csv-import-user-list/csv-impo
 
 const GroupUserList: FC<{
   usersToAdd: User[];
-  onSubmitSetUsersToAdd: (users: Array<User>) => void;
-}> = ({ usersToAdd, onSubmitSetUsersToAdd }) => {
+  onAddUsers: (users: Array<User>) => void;
+}> = ({ usersToAdd, onAddUsers }) => {
   const [needDataUpdate, setDataUpdateState] = useState<boolean>(false);
 
   return (
     <Wrapper>
       <div className="flex justify-between">
         <h2 className="font-bold text-lg">Etudiants</h2>
-        <CsvImportUserList setDataUpdateState={setDataUpdateState} />
+        <CsvImportUserList
+          setDataUpdateState={setDataUpdateState}
+          onAddUsers={onAddUsers}
+        />
       </div>
       <div className="flex justify-between">
         <GroupManageUserList
           needDataUpdate={needDataUpdate}
           setDataUpdateState={setDataUpdateState}
-          onSetUsersToAdd={onSubmitSetUsersToAdd}
+          onAddUsers={onAddUsers}
         />
         <input
           type="text"
