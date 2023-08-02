@@ -1,5 +1,6 @@
 import { Dispatch, FC, SetStateAction } from "react";
 import User from "../../../../utils/interfaces/user";
+import toTitleCase from "../../../../utils/toTitleCase";
 
 interface IUserListConfirmation {
   usersFromCsv: Array<User>;
@@ -24,10 +25,10 @@ const UserListConfirmation: FC<IUserListConfirmation> = (props) => {
           {props.usersFromCsv.map((user, i) => (
             <span
               key={i}
-              className="flex gap-x-2 p-2 pl-5 w-full bg-secondary-content"
+              className="flex gap-x-2 p-2 pl-5 w-full bg-secondary-content rounded-lg"
             >
-              <p>{user.firstname}</p>
-              <p>{user.lastname}</p>
+              <p>{toTitleCase(user.firstname)}</p>
+              <p>{toTitleCase(user.lastname)}</p>
             </span>
           ))}
         </div>
