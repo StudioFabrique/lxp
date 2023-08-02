@@ -6,7 +6,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { AddUsersButton } from "./buttons.component";
+import { AddUsersButton } from "./group-manage-user-item/buttons.component";
 import UserToAddList from "./user-to-add-list.component";
 import usePagination from "../../../../hooks/use-pagination";
 import { Context } from "../../../../store/context.store";
