@@ -1,4 +1,10 @@
-import { FC, MouseEvent, MouseEventHandler } from "react";
+import {
+  Dispatch,
+  FC,
+  MouseEvent,
+  MouseEventHandler,
+  SetStateAction,
+} from "react";
 import Module from "../../../utils/interfaces/module";
 import EditButton from "../buttons/edit-button.component";
 import ViewButton from "../buttons/view-button.component";
@@ -8,12 +14,17 @@ import { deleteParcoursModule } from "../../../store/redux-toolkit/parcours/parc
 
 const ModulesItem: FC<{
   module: Module;
+  setCurrentModuleToEdit: Dispatch<SetStateAction<Module | null>>;
   /* onUpdate?: (title: string, description: string, imageFile: File) => void; */
-}> = ({ module }) => {
+}> = ({ module, setCurrentModuleToEdit }) => {
   const dispatch = useDispatch();
 
   const handleDelete = () => {
     dispatch(deleteParcoursModule(module._id!));
+  };
+
+  const handleBeginEdit = () => {
+    setCurrentModuleToEdit(module);
   };
 
   return (
@@ -30,8 +41,8 @@ const ModulesItem: FC<{
       </div>
       <div className="flex flex-col gap-y-1 justify-between ml-2">
         <ViewButton background />
-        <EditButton background />
-        <DeleteButton onDelete={handleDelete} background color="red" />
+        <EditButton background onBeginEdit={handleBeginEdit} />
+        <DeleteButton background color="red" onDelete={handleDelete} />
       </div>
     </div>
   );

@@ -1,4 +1,11 @@
-import { FC, FormEvent, FormEventHandler, useState } from "react";
+import {
+  Dispatch,
+  FC,
+  FormEvent,
+  FormEventHandler,
+  SetStateAction,
+  useState,
+} from "react";
 import ImageFileUpload from "../../UI/image-file-upload/image-file-upload";
 import useInput from "../../../hooks/use-input";
 import { regexGeneric, regexNumber } from "../../../utils/constantes";
@@ -11,7 +18,10 @@ import { validateImageFile } from "../../../utils/validate-image-file";
 import { useDispatch } from "react-redux";
 import { addParcoursModule } from "../../../store/redux-toolkit/parcours/parcours-modules";
 
-const ModulesForm: FC<{}> = ({}) => {
+const ModulesForm: FC<{
+  currentModuleToEdit: Module | null;
+  setCurrentmoduleToEdit: Dispatch<SetStateAction<Module | null>>;
+}> = ({ currentModuleToEdit, setCurrentmoduleToEdit }) => {
   const { value: title } = useInput((value) => regexGeneric.test(value));
   const { value: description } = useInput((value) => regexGeneric.test(value));
   const { value: duration } = useInput((value) => regexNumber.test(value));
@@ -23,6 +33,10 @@ const ModulesForm: FC<{}> = ({}) => {
 
   const handleSetImage = (file: File) => {
     setImageFile(file);
+  };
+
+  const handleResetForm = () => {
+    setCurrentmoduleToEdit(null);
   };
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (

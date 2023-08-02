@@ -1,12 +1,15 @@
 import { FC, MouseEvent, MouseEventHandler } from "react";
 
-export const EditButton: FC<{ background: boolean }> = ({ background }) => {
-  const handleEdit: MouseEventHandler = (event: MouseEvent) => {};
+export const EditButton: FC<{
+  background: boolean;
+  onBeginEdit: () => void;
+}> = ({ background, onBeginEdit }) => {
+  const handleClick: MouseEventHandler = (event: MouseEvent) => {};
 
   return (
     <button
       type="button"
-      onClick={handleEdit}
+      onClick={handleClick}
       className={`${background && "bg-primary-content"} p-1 rounded-md`}
     >
       <svg
