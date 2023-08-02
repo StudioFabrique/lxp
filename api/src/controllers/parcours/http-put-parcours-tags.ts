@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 
 import { badQuery } from "../../utils/constantes";
-import putParcoursTags from "../../models/tag/put-parcours-tags";
+import putParcoursTags from "../../models/parcours/put-parcours-tags";
 
 async function httpPutParcoursTags(req: Request, res: Response) {
   const result = validationResult(req);

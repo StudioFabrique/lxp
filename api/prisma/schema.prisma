@@ -11,12 +11,13 @@ datasource db {
 }
 
 model Formation {
-  id          Int        @id @default(autoincrement())
-  title       String     @unique
+  id          Int               @id @default(autoincrement())
+  title       String            @unique
   description String
   code        String
   level       String
   parcours    Parcours[]
+  tags        TagsOnFormation[]
 }
 
 model Parcours {
@@ -53,12 +54,13 @@ model Module {
 }
 
 model Tag {
-  id        Int              @id @default(autoincrement())
-  name      String           @unique
-  color     String
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @default(now())
-  parcours  TagsOnParcours[]
+  id         Int               @id @default(autoincrement())
+  name       String            @unique
+  color      String
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @default(now())
+  parcours   TagsOnParcours[]
+  formations TagsOnFormation[]
 }
 
 model Skill {
@@ -135,4 +137,13 @@ model ModulesOnParcours {
   parcoursId Int
 
   @@id([moduleId, parcoursId])
+}
+
+model TagsOnFormation {
+  tag         Tag       @relation(fields: [tagId], references: [id])
+  tagId       Int
+  formation   Formation @relation(fields: [formationId], references: [id])
+  formationId Int
+
+  @@id([tagId, formationId])
 }

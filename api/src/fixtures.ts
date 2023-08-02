@@ -306,7 +306,6 @@ async function main() {
   await createManyStudents();
   await createManyCoach();
   await createManyGroups();
-  await createTag();
 }
 
 main();
