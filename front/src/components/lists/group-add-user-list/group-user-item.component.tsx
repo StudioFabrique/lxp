@@ -9,7 +9,7 @@ const GroupUserItem: FC<{ user: User }> = ({ user }) => {
         <input type="checkbox" className="checkbox checkbox-primary" />
       </td>
       <td className="bg-transparent">
-        <AvatarSmall url="https://www.leparisien.fr/resizer/fGXimQvLycC2XjTOb9nran3rDcU=/1248x782/filters:focal(1184x745:1194x755)/cloudfront-eu-central-1.images.arcpublishing.com/leparisien/NJE5TPKX7NDY3AL7MWIJJEXZOA.jpg" />
+        {user.avatar && <AvatarSmall url={user.avatar} />}
       </td>
       <td className="bg-transparent">{user.firstname}</td>
       <td className="bg-transparent">{user.lastname}</td>

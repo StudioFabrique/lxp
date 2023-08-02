@@ -8,16 +8,18 @@ import AddTeachers from "./add-teacher/add-teacher.component";
 import AddSkills from "./add-skill/add-skill.component";
 import Module from "../../../utils/interfaces/module";
 import { validateImageFile } from "../../../utils/validate-image-file";
+import { useDispatch } from "react-redux";
+import { addParcoursModule } from "../../../store/redux-toolkit/parcours/parcours-modules";
 
-const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = ({
-  onSubmit,
-}) => {
+const ModulesForm: FC<{}> = ({}) => {
   const { value: title } = useInput((value) => regexGeneric.test(value));
   const { value: description } = useInput((value) => regexGeneric.test(value));
   const { value: duration } = useInput((value) => regexNumber.test(value));
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [teachers, setTeachers] = useState<User[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
+
+  const dispatch = useDispatch();
 
   const handleSetImage = (file: File) => {
     setImageFile(file);
@@ -47,7 +49,7 @@ const ModulesForm: FC<{ onSubmit: (module: Module) => void }> = ({
       imageTemp: imageFile!,
       imageUrl: URL.createObjectURL(imageFile!),
     };
-    onSubmit(module);
+    dispatch(addParcoursModule(module));
   };
 
   return (
