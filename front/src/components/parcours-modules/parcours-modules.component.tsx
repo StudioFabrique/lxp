@@ -12,13 +12,20 @@ import store from "../../store/redux-toolkit";
 } */
 
 const ParcoursModules: FC</* IParcoursModules */ {}> = (props) => {
+  const [currentModuleToEdit, setCurrentmoduleToEdit] = useState<Module | null>(
+    null
+  );
+
   return (
     <Provider store={store}>
       <div className="p-5 ml-32 mr-32 h-full">
         <Wrapper>
           <div className=" grid grid-cols-3 h-full">
-            <ModulesForm />
-            <ModulesList />
+            <ModulesForm
+              currentModuleToEdit={currentModuleToEdit}
+              setCurrentmoduleToEdit={setCurrentmoduleToEdit}
+            />
+            <ModulesList setCurrentModuleToEdit={setCurrentmoduleToEdit} />
           </div>
         </Wrapper>
       </div>

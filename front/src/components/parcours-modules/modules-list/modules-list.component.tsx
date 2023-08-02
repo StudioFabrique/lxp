@@ -1,9 +1,11 @@
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import ModulesItem from "./modules-item.component";
 import { useDispatch, useSelector } from "react-redux";
 import Module from "../../../utils/interfaces/module";
 
-const ModulesList: FC<{}> = ({}) => {
+const ModulesList: FC<{
+  setCurrentModuleToEdit: Dispatch<SetStateAction<Module | null>>;
+}> = ({ setCurrentModuleToEdit }) => {
   const modules: Module[] = useSelector(
     (state: any) => state.parcoursModule.modules
   );
@@ -13,7 +15,11 @@ const ModulesList: FC<{}> = ({}) => {
       <p className="font-bold text-2xl">Liste des modules</p>
       {modules.length > 0 ? (
         modules.map((module) => (
-          <ModulesItem key={module._id} module={module} />
+          <ModulesItem
+            key={module._id}
+            module={module}
+            setCurrentModuleToEdit={setCurrentModuleToEdit}
+          />
         ))
       ) : (
         <p>Aucun modules créés</p>
