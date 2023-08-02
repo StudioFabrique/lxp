@@ -1,9 +1,9 @@
 import { FC, useState } from "react";
 import GroupManageUserList from "./group-manage-user-list/group-manage-user-list.component";
-import GroupUserItem from "./group-user-item.component";
 import User from "../../../utils/interfaces/user";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import CsvImportUserList from "../../UI/csv-import/csv-import-user-list/csv-import-user-list.component";
+import GroupUserItem from "./group-user-item.component";
 
 const GroupUserList: FC<{
   usersToAdd: User[];

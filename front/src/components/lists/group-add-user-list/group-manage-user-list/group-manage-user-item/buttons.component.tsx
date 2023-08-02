@@ -1,5 +1,5 @@
 import { ChangeEvent, FC, FormEventHandler } from "react";
-import User from "../../../../utils/interfaces/user";
+import User from "../../../../../utils/interfaces/user";
 
 export const AddUsersButton: FC<{
   onSetUsersToAdd: () => void;
@@ -28,9 +28,8 @@ export const AddUsersButton: FC<{
 
 export const SelectionButton: FC<{
   currentUser: User;
-  users: any[];
   onAddSelectedUser: (user: User) => void;
-  onDeleteSelectedUser: (userId: string) => void;
+  onDeleteSelectedUser: (uniqueProperty: string) => void;
 }> = (props) => {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.currentTarget.checked
