@@ -3,7 +3,7 @@ import useHttp from "../../hooks/use-http";
 import Group from "../../utils/interfaces/group";
 import GroupAddForm from "../../components/forms/group-form/group-add-form.component";
 import GroupUserList from "../../components/lists/group-add-user-list/group-user-list.component";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import User from "../../utils/interfaces/user";
 
 const GroupAdd = () => {

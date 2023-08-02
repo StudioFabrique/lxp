@@ -25,6 +25,7 @@ const GroupUserList: FC<{
           needDataUpdate={needDataUpdate}
           setDataUpdateState={setDataUpdateState}
           onAddUsers={onAddUsers}
+          usersToAdd={usersToAdd}
         />
         <input
           type="text"

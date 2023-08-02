@@ -6,11 +6,12 @@ import { SelectionButton } from "./buttons.component";
 
 const GroupManageUserItem: FC<{
   user: User;
+  usersToAdd?: User[];
   onAddSelectedUser: (user: User) => void;
   onDeleteSelectedUser: (uniqueProperty: string) => void;
-}> = ({ user, onAddSelectedUser, onDeleteSelectedUser }) => {
+}> = ({ user, usersToAdd, onAddSelectedUser, onDeleteSelectedUser }) => {
   return (
-    <span className="flex gap-x-2 p-2 pl-5 w-full bg-secondary-content rounded-lg">
+    /* usersToAdd && */ <span className="flex gap-x-2 p-2 pl-5 w-full bg-secondary-content rounded-lg">
       <SelectionButton
         currentUser={user}
         onAddSelectedUser={onAddSelectedUser}

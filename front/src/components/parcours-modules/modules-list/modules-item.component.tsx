@@ -3,14 +3,17 @@ import Module from "../../../utils/interfaces/module";
 import EditButton from "../buttons/edit-button.component";
 import ViewButton from "../buttons/view-button.component";
 import DeleteButton from "../buttons/delete-button.component";
+import { useDispatch } from "react-redux";
+import { deleteParcoursModule } from "../../../store/redux-toolkit/parcours/parcours-modules";
 
 const ModulesItem: FC<{
   module: Module;
-  onUpdate?: (title: string, description: string, imageFile: File) => void;
-  onDelete: (_id: string) => void;
-}> = ({ module, onDelete }) => {
+  /* onUpdate?: (title: string, description: string, imageFile: File) => void; */
+}> = ({ module }) => {
+  const dispatch = useDispatch();
+
   const handleDelete = () => {
-    onDelete(module._id!);
+    dispatch(deleteParcoursModule(module._id!));
   };
 
   return (
