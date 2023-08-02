@@ -17,7 +17,7 @@ import User from "../../../../utils/interfaces/user";
 const GroupManageUserList: FC<{
   needDataUpdate: boolean;
   setDataUpdateState: Dispatch<SetStateAction<boolean>>;
-  onSetUsersToAdd: (users: Array<User>) => void;
+  onAddUsers: (users: Array<User>) => void;
 }> = (props) => {
   const { user } = useContext(Context);
 
@@ -36,7 +36,7 @@ const GroupManageUserList: FC<{
 
   const handleSetUsersToAdd = () => {
     console.log(selectedUsers);
-    props.onSetUsersToAdd(selectedUsers);
+    props.onAddUsers(selectedUsers);
   };
 
   const handleDeleteSelectedUser = (userId: string) => {

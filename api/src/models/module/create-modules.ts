@@ -9,13 +9,14 @@ export default async function createModulesOnParcours(
     image: Buffer;
     duration: number;
     rating: number;
-  }[]
+  }[],
+  parcoursId: number
 ) {
   try {
     const createdModulesOnParcours = await prisma.modulesOnParcours.createMany({
       data: modules.map((module) => ({
         moduleId: 0,
-        parcoursId: 0,
+        parcoursId: parcoursId,
         module: module,
       })),
     });

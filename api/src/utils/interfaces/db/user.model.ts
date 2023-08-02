@@ -6,7 +6,7 @@ export interface IUser extends Document {
   email: string;
   firstname: string;
   lastname: string;
-  password: string;
+  password?: string;
   roles: IRole["_id"];
   avatar?: string;
   createdAt: Date;
@@ -17,6 +17,7 @@ export interface IUser extends Document {
   postCode: string;
   city: string;
   phoneNumber: string;
+  birthDate: Date;
   group?: IGroup["_id"];
 }
 
@@ -25,7 +26,7 @@ const userSchema: Schema = new Schema(
     email: { type: String, required: true, unique: true },
     firstname: { type: String, required: true },
     lastname: { type: String, required: true },
-    password: { type: String, required: true },
+    password: { type: String },
     roles: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Role",
@@ -38,6 +39,7 @@ const userSchema: Schema = new Schema(
     postCode: { type: String, required: true },
     city: { type: String, required: true },
     phoneNumber: { type: String, required: true },
+    birthDate: { type: Date, required: true },
     group: { type: [mongoose.Schema.Types.ObjectId], ref: "Group" },
   },
   { timestamps: true }

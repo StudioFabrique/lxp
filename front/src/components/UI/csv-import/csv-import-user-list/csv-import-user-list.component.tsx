@@ -9,13 +9,14 @@ import useHttp from "../../../../hooks/use-http";
 
 const CsvImportUserList: FC<{
   setDataUpdateState: Dispatch<SetStateAction<boolean>>;
-}> = ({ setDataUpdateState }) => {
+  onAddUsers: (users: Array<User>) => void;
+}> = ({ setDataUpdateState, onAddUsers }) => {
   const [usersToImport, setUsersToImport] = useState<User[]>([]);
   const [isDrawerOpen, setDrawerOpenState] = useState<boolean>(false);
 
   const { isLoading, sendRequest, error } = useHttp();
 
-  const handleImportCsv = (data: any) => {
+  const handleImportCsv = (data: User[]) => {
     if (data) {
       console.log(data);
       setUsersToImport(data);
@@ -28,16 +29,15 @@ const CsvImportUserList: FC<{
   const handleSubmitToDatabase = async () => {
     sendRequest(
       {
-        path: "user",
+        path: "/user/many",
         body: usersToImport,
         method: "post",
       },
       (data) => {
-        if (data) {
-          setDrawerOpenState(false);
-          setDataUpdateState(true);
-          toast.success("étudiants enregistrés");
-        }
+        setDrawerOpenState(false);
+        setDataUpdateState(true);
+        onAddUsers(data.usersCreated);
+        toast.success("étudiants enregistrés");
       }
     );
   };
