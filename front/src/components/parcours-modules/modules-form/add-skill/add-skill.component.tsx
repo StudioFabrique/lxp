@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { skillsData } from "./skills-data";
 import Skill from "../../../../utils/interfaces/skill";
 import SkillsList from "./skills-list.component";
@@ -7,7 +7,9 @@ import SearchDropdownMultiple from "../../../UI/search-dropdown-multiple/search-
 const AddSkills: FC<{
   skills: Skill[];
   setSkills: Dispatch<SetStateAction<Skill[]>>;
-}> = ({ skills, setSkills }) => {
+  resetFilter: boolean;
+  setResetFilter: Dispatch<SetStateAction<boolean>>;
+}> = ({ skills, setSkills, resetFilter, setResetFilter }) => {
   const [skillsAvailables, setSkillsAvailables] = useState<Skill[]>(skillsData);
 
   const handleAddSkill = (id: number) => {
@@ -32,6 +34,13 @@ const AddSkills: FC<{
       ...skills.filter((currentSkills) => currentSkills.id === id),
     ]);
   };
+
+  useEffect(() => {
+    if (resetFilter) {
+      setSkillsAvailables(skillsData); // remplacer par requete get bdd
+      setResetFilter(false);
+    }
+  }, [resetFilter, setResetFilter]);
 
   return (
     <div className="flex flex-col">

@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import User from "../../../../utils/interfaces/user";
 import TeachersList from "./teachers-list.component";
 import { teachersData } from "./teachers-data";
@@ -7,7 +7,9 @@ import SearchDropdownMultiple from "../../../UI/search-dropdown-multiple/search-
 const AddTeachers: FC<{
   teachers: User[];
   setTeachers: Dispatch<SetStateAction<User[]>>;
-}> = ({ teachers, setTeachers }) => {
+  resetFilter: boolean;
+  setResetFilter: Dispatch<SetStateAction<boolean>>;
+}> = ({ teachers, setTeachers, resetFilter, setResetFilter }) => {
   const [teachersAvailables, setTeachersAvailable] =
     useState<User[]>(teachersData);
 
@@ -35,6 +37,13 @@ const AddTeachers: FC<{
       ...teachers.filter((currentTeachers) => currentTeachers._id === _id),
     ]);
   };
+
+  useEffect(() => {
+    if (resetFilter) {
+      setTeachersAvailable(teachersData);
+      setResetFilter(false);
+    }
+  }, [resetFilter, setResetFilter]);
 
   return (
     <div className="flex flex-col">
