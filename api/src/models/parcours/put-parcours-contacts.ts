@@ -12,7 +12,7 @@ async function putParcoursContacts(
 
   for (const newContact of newContacts) {
     const contact = contacts.find(
-      (item: Contact) => (item.idMdb = newContact.idMdb)
+      (item: Contact) => item.idMdb === newContact.idMdb
     );
     if (!contact) {
       contactsToCreate.push(newContact);
@@ -32,7 +32,6 @@ async function putParcoursContacts(
       },
     },
   });
-  console.log({ existingContacts });
 
   const existingParcours = await prisma.parcours.findUnique({
     where: { id: parcoursId },
