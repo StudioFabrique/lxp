@@ -68,10 +68,10 @@ describe("HTTP PARCOURS", () => {
     authToken = loginResponse.headers["set-cookie"][0];
   });
 
-  describe("Test GET /parcours/contacts", () => {
+  describe("Test GET /user/contacts", () => {
     test("It should respond with 200 success", async () => {
       await request(app)
-        .get("/v1/parcours/contacts")
+        .get("/v1/user/contacts")
         .set("Cookie", [`${authToken}`])
         .expect(200);
     });

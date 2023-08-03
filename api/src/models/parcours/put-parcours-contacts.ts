@@ -6,6 +6,13 @@ async function putParcoursContacts(
   parcoursId: number,
   newContacts: Array<any>
 ) {
+  if (newContacts.length === 0) {
+    const updatedParcours = await prisma.contactsOnParcours.deleteMany({
+      where: { parcoursId },
+    });
+    return updatedParcours;
+  }
+
   const contacts = await prisma.contact.findMany();
 
   const contactsToCreate = Array<Contact>();

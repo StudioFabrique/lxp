@@ -1,7 +1,7 @@
 import express from "express";
 
 import authRouter from "./auth.router";
-import userRouter from "./user.router";
+import userRouter from "./user/user.router";
 import groupRouter from "./group.router";
 import parcoursRouter from "./parcours/parcours.router";
 import skillsRouter from "./skills.router";
