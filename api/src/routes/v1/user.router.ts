@@ -10,6 +10,7 @@ import httpGetUsersByRole from "../../controllers/user/http-get-users-by-role";
 import httpGetUsersStats from "../../controllers/user/http-get-users-stats";
 import httpUpdateUserStatus from "../../controllers/user/http-update-user";
 import httpUpdateManyUsersStatus from "../../controllers/user/http-update-many-users-status";
+import httpGetContacts from "../../controllers/user/http-get-contacts";
 
 const userRouter = express.Router();
 
@@ -78,5 +79,7 @@ userRouter.get(
 
   httpSearchUser
 );
+
+userRouter.get("/contacts", httpGetContacts);
 
 export default userRouter;

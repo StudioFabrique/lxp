@@ -10,6 +10,7 @@ async function getParcoursById(parcoursId: number) {
     include: {
       formation: { include: { tags: { include: { tag: true } } } },
       tags: { include: { tag: true } },
+      contacts: { include: { contact: true } },
     },
   });
   if (parcours) {

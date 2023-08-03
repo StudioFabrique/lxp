@@ -219,9 +219,9 @@ async function createAdmins() {
 async function createTeachers() {
   await mongoConnect();
   try {
-    const roleId = await Role.find({ rank: 2 }, { _id: 1 });
+    const roleId = await Role.find({ role: "teacher" }, { _id: 1 });
     const usersId = await User.find({ roles: roleId }, { _id: 1 });
-    console.log({ usersId });
+    console.log("formateurs", usersId);
 
     const newAdmins = Array<any>();
     usersId.forEach((item) => newAdmins.push({ idMdb: item._id.toString() }));
@@ -234,26 +234,10 @@ async function createTeachers() {
   }
 }
 
-async function createContacts() {
-  await mongoConnect();
-  try {
-    const roleId = await Role.find({ rank: 2 }, { _id: 1 });
-    const usersId = await User.find({ roles: roleId }, { _id: 1 });
-    console.log({ usersId });
-
-    const newAdmins = Array<any>();
-    usersId.forEach((item) => newAdmins.push({ idMdb: item._id.toString() }));
-    const storedUsersIds = await prisma.contact.createMany({
-      data: newAdmins,
-      skipDuplicates: true,
-    });
-  } catch (error) {
-    console.error("Error occurred while querying roles:", error);
-  }
-}
-
 async function createFormation() {
   try {
+    const tags1Dw = [1, 2, 3, 4, 5];
+    const tagsCDA = [10, 20, 25, 26, 28];
     const newFormations = [
       {
         title: "Développeur Web",
@@ -270,7 +254,30 @@ async function createFormation() {
         level: "bac + 3",
       },
     ];
-    await prisma.formation.createMany({ data: newFormations });
+    await prisma.formation.create({
+      data: {
+        ...newFormations[0],
+        tags: {
+          create: tags1Dw.map((item: number) => {
+            return {
+              tag: { connect: { id: item } },
+            };
+          }),
+        },
+      },
+    });
+    await prisma.formation.create({
+      data: {
+        ...newFormations[1],
+        tags: {
+          create: tagsCDA.map((item: number) => {
+            return {
+              tag: { connect: { id: item } },
+            };
+          }),
+        },
+      },
+    });
   } catch (error) {
     console.log(error);
   }
@@ -280,7 +287,6 @@ async function loadFixtures() {
   await createTags();
   await createAdmins();
   await createTeachers();
-  await createContacts();
   await createFormation();
   await disconnect();
 }
