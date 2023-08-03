@@ -8,6 +8,10 @@ async function getContacts() {
     { roles: { $in: teacherRoles } },
     { _id: 1, firstname: 1, lastname: 1, email: 1, roles: 1 }
   ).populate("roles", {
+    role: 0,
+    _id: 0,
+    createdAt: 0,
+    updatedAt: 0,
     label: 1,
   });
 

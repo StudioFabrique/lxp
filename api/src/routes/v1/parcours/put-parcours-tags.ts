@@ -1,6 +1,7 @@
 import express from "express";
-import httpPutParcoursTags from "../../../controllers/parcours/http-put-parcours-tags";
 import { body } from "express-validator";
+
+import httpPutParcoursTags from "../../../controllers/parcours/http-put-parcours-tags";
 
 const putParcoursTagsRouter = express.Router();
 

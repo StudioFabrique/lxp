@@ -81,9 +81,13 @@ model Teacher {
 }
 
 model Contact {
-  id       Int                  @id @default(autoincrement())
-  idMdb    String
-  parcours ContactsOnParcours[]
+  id        Int                  @id @default(autoincrement())
+  idMdb     String               @unique
+  name      String
+  role      String
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @default(now())
+  parcours  ContactsOnParcours[]
 }
 
 model Objective {
