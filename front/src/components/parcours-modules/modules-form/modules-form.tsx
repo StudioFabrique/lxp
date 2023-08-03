@@ -1,11 +1,4 @@
-import {
-  Dispatch,
-  FC,
-  FormEvent,
-  FormEventHandler,
-  SetStateAction,
-  useState,
-} from "react";
+import { FC, FormEvent, FormEventHandler, useState } from "react";
 import ImageFileUpload from "../../UI/image-file-upload/image-file-upload";
 import useInput from "../../../hooks/use-input";
 import { regexGeneric, regexNumber } from "../../../utils/constantes";
@@ -15,28 +8,30 @@ import AddTeachers from "./add-teacher/add-teacher.component";
 import AddSkills from "./add-skill/add-skill.component";
 import Module from "../../../utils/interfaces/module";
 import { validateImageFile } from "../../../utils/validate-image-file";
-import { useDispatch } from "react-redux";
-import { addParcoursModule } from "../../../store/redux-toolkit/parcours/parcours-modules";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addParcoursModule,
+  clearCurrentParcoursModule,
+  updateParcoursModule,
+} from "../../../store/redux-toolkit/parcours/parcours-modules";
 
-const ModulesForm: FC<{
-  currentModuleToEdit: Module | null;
-  setCurrentmoduleToEdit: Dispatch<SetStateAction<Module | null>>;
-}> = ({ currentModuleToEdit, setCurrentmoduleToEdit }) => {
+const ModulesForm: FC<{}> = (props) => {
+  const currentModuleToEdit = useSelector(
+    (state: any) => state.parcoursModule.currentModule
+  );
+  const dispatch = useDispatch();
+
   const { value: title } = useInput((value) => regexGeneric.test(value));
   const { value: description } = useInput((value) => regexGeneric.test(value));
   const { value: duration } = useInput((value) => regexNumber.test(value));
   const [imageFile, setImageFile] = useState<File | null>(null);
+
   const [teachers, setTeachers] = useState<User[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
-
-  const dispatch = useDispatch();
+  const [resetFilter, setResetFilter] = useState<boolean>(false);
 
   const handleSetImage = (file: File) => {
     setImageFile(file);
-  };
-
-  const handleResetForm = () => {
-    setCurrentmoduleToEdit(null);
   };
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (
@@ -63,7 +58,22 @@ const ModulesForm: FC<{
       imageTemp: imageFile!,
       imageUrl: URL.createObjectURL(imageFile!),
     };
-    dispatch(addParcoursModule(module));
+    dispatch(
+      currentModuleToEdit
+        ? updateParcoursModule(module)
+        : addParcoursModule(module)
+    );
+  };
+
+  const handleCancelEdit = () => {
+    title.reset();
+    description.reset();
+    duration.reset();
+    setImageFile(null);
+    setTeachers([]);
+    setSkills([]);
+    setResetFilter(true);
+    dispatch(clearCurrentParcoursModule());
   };
 
   return (
@@ -93,10 +103,20 @@ const ModulesForm: FC<{
       </div>
 
       {/* formateurs compo */}
-      <AddTeachers teachers={teachers} setTeachers={setTeachers} />
+      <AddTeachers
+        teachers={teachers}
+        setTeachers={setTeachers}
+        resetFilter={resetFilter}
+        setResetFilter={setResetFilter}
+      />
 
       {/* compétences compo */}
-      <AddSkills skills={skills} setSkills={setSkills} />
+      <AddSkills
+        skills={skills}
+        setSkills={setSkills}
+        resetFilter={resetFilter}
+        setResetFilter={setResetFilter}
+      />
 
       <div className="flex flex-col">
         <label htmlFor="nbHours">Nombre d'heures</label>
@@ -112,9 +132,21 @@ const ModulesForm: FC<{
 
       <ImageFileUpload maxSize={10 * 1024 * 1024} onSetFile={handleSetImage} />
 
-      <button type="submit" className="btn mt-10">
-        Ajouter le module
-      </button>
+      <div className="flex justify-between">
+        {currentModuleToEdit && (
+          <button
+            type="button"
+            className="btn mt-10"
+            onClick={handleCancelEdit}
+          >
+            Annuler
+          </button>
+        )}
+
+        <button type="submit" className="btn mt-10">
+          Ajouter le module
+        </button>
+      </div>
     </form>
   );
 };

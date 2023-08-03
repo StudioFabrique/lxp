@@ -1,30 +1,28 @@
-import {
-  Dispatch,
-  FC,
-  MouseEvent,
-  MouseEventHandler,
-  SetStateAction,
-} from "react";
+import { FC } from "react";
 import Module from "../../../utils/interfaces/module";
 import EditButton from "../buttons/edit-button.component";
 import ViewButton from "../buttons/view-button.component";
 import DeleteButton from "../buttons/delete-button.component";
 import { useDispatch } from "react-redux";
-import { deleteParcoursModule } from "../../../store/redux-toolkit/parcours/parcours-modules";
+import {
+  deleteParcoursModule,
+  updateCurrentParcoursModule,
+} from "../../../store/redux-toolkit/parcours/parcours-modules";
 
 const ModulesItem: FC<{
   module: Module;
-  setCurrentModuleToEdit: Dispatch<SetStateAction<Module | null>>;
   /* onUpdate?: (title: string, description: string, imageFile: File) => void; */
-}> = ({ module, setCurrentModuleToEdit }) => {
+}> = ({ module }) => {
   const dispatch = useDispatch();
 
   const handleDelete = () => {
-    dispatch(deleteParcoursModule(module._id!));
+    dispatch(deleteParcoursModule(module._id));
   };
 
   const handleBeginEdit = () => {
-    setCurrentModuleToEdit(module);
+    console.log("test");
+
+    dispatch(updateCurrentParcoursModule(module._id));
   };
 
   return (

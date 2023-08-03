@@ -4,7 +4,9 @@ export const EditButton: FC<{
   background: boolean;
   onBeginEdit: () => void;
 }> = ({ background, onBeginEdit }) => {
-  const handleClick: MouseEventHandler = (event: MouseEvent) => {};
+  const handleClick: MouseEventHandler = (event: MouseEvent) => {
+    onBeginEdit();
+  };
 
   return (
     <button
