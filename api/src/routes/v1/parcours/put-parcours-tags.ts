@@ -7,9 +7,9 @@ const putParcoursTagsRouter = express.Router();
 
 putParcoursTagsRouter.put(
   "/",
-  body("parcoursId").isNumeric().notEmpty().escape(),
+  body("parcoursId").isNumeric().notEmpty(),
   body("tags").isArray().notEmpty(),
-  body("tags.*").isNumeric().notEmpty().escape(),
+  body("tags.*").isNumeric().notEmpty(),
   httpPutParcoursTags
 );
 

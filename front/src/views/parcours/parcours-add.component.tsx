@@ -9,7 +9,6 @@ import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import Loader from "../../components/UI/loader";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import Selecter from "../../components/UI/selecter/selecter.component";
-import { fixturesParcours } from "../../assets/fixtures/parcours";
 
 // type de données pour les listes
 type Item = {
@@ -108,12 +107,17 @@ const AddParcours = () => {
    */
   useEffect(() => {
     if (formation !== undefined) {
-      const filteredParcours = fixturesParcours.filter(
-        (item) => item.formationId === formation
+      const processData = (data: Array<any>) => {
+        setParcoursList(data);
+      };
+      sendRequest(
+        {
+          path: `/parcours/parcours-by-formation/${formation}`,
+        },
+        processData
       );
-      setParcoursList(filteredParcours);
     }
-  }, [formation]);
+  }, [formation, sendRequest]);
 
   return (
     <>

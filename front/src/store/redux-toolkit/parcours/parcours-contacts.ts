@@ -75,6 +75,9 @@ const parcoursContactsSlice = createSlice({
       state.notSelectedContacts = [];
       state.filteredContacts = [];
     },
+    resetFilter(state) {
+      state.filteredContacts = [];
+    },
   },
 });
 
