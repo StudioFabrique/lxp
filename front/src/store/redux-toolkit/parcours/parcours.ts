@@ -15,6 +15,10 @@ const parcoursSlice = createSlice({
     setParcoursFormation(state, action) {
       state.formation = action.payload;
     },
+    reset(state) {
+      state.id = null;
+      state.formation = null;
+    },
   },
 });
 

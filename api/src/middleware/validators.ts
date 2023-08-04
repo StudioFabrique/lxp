@@ -33,9 +33,9 @@ export const groupValidator = [
 // global validators :
 
 export const getAllValidator = [
-  param("role").isString().trim().escape(),
-  param("stype").isString().trim().escape(),
-  param("sdir").isString().trim().escape(),
+  param("role").isAlpha().trim().escape(),
+  param("stype").isAlpha().trim().escape(),
+  param("sdir").isAlpha().trim().escape(),
   query("page").trim().escape().isInt(),
   query("limit").trim().escape().isInt(),
   checkValidatorResult,

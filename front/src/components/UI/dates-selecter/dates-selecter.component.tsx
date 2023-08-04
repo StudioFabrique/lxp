@@ -20,11 +20,11 @@ const DatesSelecter: FC<Props> = ({
 }) => {
   const { value: startDate } = useInput(
     (value) => regexGeneric.test(value),
-    formatDateToYYYYMMDD(new Date(startDateProp))
+    startDateProp ? formatDateToYYYYMMDD(new Date(startDateProp)) : ""
   );
   const { value: endDate } = useInput(
     (value) => regexGeneric.test(value),
-    formatDateToYYYYMMDD(new Date(endDateProp))
+    endDateProp ? formatDateToYYYYMMDD(new Date(endDateProp)) : ""
   );
   const [error, setError] = useState(false);
 

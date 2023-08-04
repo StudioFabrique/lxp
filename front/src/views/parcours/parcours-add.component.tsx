@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 import bgImage from "../../assets/images/new-parcours-default.jpg";
-import { useNavigate } from "react-router-dom";
+import useHttp from "../../hooks/use-http";
+import NewParcoursForm from "../../components/edit-parcours/new-parcours-form";
+import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
+import Loader from "../../components/UI/loader";
+import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import Selecter from "../../components/UI/selecter/selecter.component";
 import { fixturesParcours } from "../../assets/fixtures/parcours";
-import Wrapper from "../../components/UI/wrapper/wrapper.component";
-import useHttp from "../../hooks/use-http";
-import Loader from "../../components/UI/loader";
-import NewParcoursForm from "../../components/edit-parcours/new-parcours-form";
 
 // type de données pour les listes
 type Item = {
@@ -90,9 +91,7 @@ const AddParcours = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const processData = (data: any) => {
       toast.success("Parcours enregistré avec succès");
-      setTimeout(() => {
-        nav(`/admin/parcours/edit/${data.parcoursId}`);
-      }, 1500);
+      nav(`/admin/parcours/edit/${data.parcoursId}`);
     };
     sendRequest(
       {
@@ -110,7 +109,7 @@ const AddParcours = () => {
   useEffect(() => {
     if (formation !== undefined) {
       const filteredParcours = fixturesParcours.filter(
-        (item: any) => item.formationId === formation
+        (item) => item.formationId === formation
       );
       setParcoursList(filteredParcours);
     }
@@ -119,62 +118,64 @@ const AddParcours = () => {
   return (
     <>
       <Toaster />
-      <div className="w-4/6 grid grid-cols-1 xl:grid-cols-2 gap-8 px-8 mx-auto my-16">
-        <>
-          <div>
-            {isLoading ? (
-              <div className="h-full grid grid-rows-1">
-                <Loader />
-              </div>
-            ) : (
-              <div className="grid grid-rows-2 gap-8">
-                <h1 className="text-2xl font-extrabold">
-                  Création d'un parcours de formation
-                </h1>
+      <FadeWrapper>
+        <div className="w-full xl:w-5/6 grid grid-cols-1 lg:grid-cols-2 gap-32 px-8 mx-auto my-16">
+          <>
+            <div>
+              {isLoading ? (
+                <div className="h-full grid grid-rows-1">
+                  <Loader />
+                </div>
+              ) : (
+                <div className="grid grid-rows-2 gap-8">
+                  <h1 className="text-2xl font-extrabold">
+                    Création d'un parcours de formation
+                  </h1>
 
-                <h3>
-                  Pour commencer, veulliez saisir les informations nécessaires
-                  pour créer le parcours
-                </h3>
+                  <h3>
+                    Pour commencer, veulliez saisir les informations nécessaires
+                    pour créer le parcours
+                  </h3>
 
-                <Wrapper>
-                  <div className="h-full flex flex-col justify-around gap-y-4">
-                    <div className="text-sm font-bold">
-                      Choisissez un modèle de parcours
+                  <Wrapper>
+                    <div className="h-full flex flex-col justify-around gap-y-4">
+                      <div className="text-sm font-bold">
+                        Choisissez un modèle de parcours
+                      </div>
+                      <div className="flex flex-col gap-y-8">
+                        <Selecter
+                          list={formations}
+                          title="Choisissez une formation"
+                          onSelectItem={handleFormation}
+                        />
+                        <Selecter
+                          list={parcoursList}
+                          title="Choisisez un parcours"
+                          onSelectItem={handleParcours}
+                        />
+                      </div>
+                      <div className="w-full flex justify-end mt-4">
+                        <button className="btn btn-primary" type="button">
+                          Commencer
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex flex-col gap-y-8">
-                      <Selecter
-                        list={formations}
-                        title="Choisissez une formation"
-                        onSelectItem={handleFormation}
-                      />
-                      <Selecter
-                        list={parcoursList}
-                        title="Choisisez un parcours"
-                        onSelectItem={handleParcours}
-                      />
-                    </div>
-                    <div className="w-full flex justify-end">
-                      <button className="btn btn-primary" type="button">
-                        Commencer
-                      </button>
-                    </div>
-                  </div>
-                </Wrapper>
+                  </Wrapper>
 
-                <h3>Ou créer un nouveau parcours</h3>
-                <Wrapper>
-                  <NewParcoursForm
-                    formations={formations}
-                    onSubmit={handleSubmit}
-                  />
-                </Wrapper>
-              </div>
-            )}
-          </div>
-          <div style={classImage} />
-        </>
-      </div>
+                  <h3>Ou créer un nouveau parcours</h3>
+                  <Wrapper>
+                    <NewParcoursForm
+                      formations={formations}
+                      onSubmit={handleSubmit}
+                    />
+                  </Wrapper>
+                </div>
+              )}
+            </div>
+            <div style={classImage} />
+          </>
+        </div>
+      </FadeWrapper>
     </>
   );
 };

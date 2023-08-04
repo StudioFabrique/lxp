@@ -1,8 +1,8 @@
 import { FC, FormEvent, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
-import { Link } from "react-router-dom";
 
 import useInput from "../../hooks/use-input";
+import { Link } from "react-router-dom";
 import { regexGeneric } from "../../utils/constantes";
 import Selecter from "../UI/selecter/selecter.component";
 
@@ -23,7 +23,7 @@ type Props = {
 };
 
 const NewParcoursForm: FC<Props> = ({ formations, onSubmit }) => {
-  const { value: title } = useInput((value) => regexGeneric.test(value.trim()));
+  const { value: title } = useInput((value) => regexGeneric.test(value));
   const [formationId, setFormationId] = useState<number | undefined>(undefined);
 
   /**
@@ -100,10 +100,7 @@ const NewParcoursForm: FC<Props> = ({ formations, onSubmit }) => {
             placeholder="Exemple: CDA - Promo 2023"
           />
         </div>
-        <div className="w-full flex justify-between mt-4">
-          <button className="btn btn-primary btn-outline" type="button">
-            Annuler
-          </button>
+        <div className="w-full flex justify-end">
           <button className="btn btn-primary">Commencer</button>
         </div>
       </form>

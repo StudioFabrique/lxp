@@ -1,97 +1,133 @@
-import { FC, useEffect, useMemo } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { FC, useCallback, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
+import useHttp from "../../../hooks/use-http";
+import { tagsAction } from "../../../store/tags";
 import Tag from "../../../utils/interfaces/tag";
-import TagItem from "../tag-item/tag-item";
-import createTag from "../../../utils/tags";
-import useItems from "../../../hooks/use-items";
-import SearchDropdown from "../search-dropdown/search-dropdown";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
-import Wrapper from "../wrapper/wrapper.component";
+import SearchDropdown from "../search-dropdown/search-dropdown";
+import TagItem from "../tag-item/tag-item";
 
-const tagsFixtures = createTag();
-let initialState = true;
-
-const Tags: FC<{
-  reduxTags?: Array<Tag>;
-  unselectedTags?: Array<Tag>;
-  onSubmitTags: (tags: Array<Tag>) => void;
+type Props = {
   title?: string;
-}> = ({
-  reduxTags = [],
-  unselectedTags = tagsFixtures,
-  onSubmitTags,
-  title,
-}) => {
-  const {
-    selectedItems,
-    filteredItems,
-    addItem,
-    filterItems,
-    resetFilterItems,
-    removeItem,
-    initItems,
-    initSelectedItems,
-  } = useItems();
+  onSubmitTags: (tags: Array<Tag>) => void;
+};
 
+const Tags: FC<Props> = ({ title, onSubmitTags }) => {
+  const { sendRequest } = useHttp();
+  const currentTags = useSelector((state: any) => state.tags.currentTags);
+  const notSelectedTags = useSelector(
+    (state: any) => state.tags.notSelectedTags
+  );
+  const filteredItems = useSelector((state: any) => state.tags.filteredItems);
+  const dispatch = useDispatch();
+  const isInitialRender = useRef(true);
+
+  /**
+   * télécharge la liste de tous les tags depuis la bdd
+   */
   useEffect(() => {
-    return () => {
-      initialState = true;
+    const processData = (data: Array<Tag>) => {
+      dispatch(tagsAction.initTags(data));
     };
-  }, []);
-
-  useEffect(() => {
-    if (initialState) {
-      initItems(unselectedTags);
-      initSelectedItems(reduxTags);
-      initialState = false;
+    if (isInitialRender.current) {
+      sendRequest(
+        {
+          path: "/tag",
+        },
+        processData
+      );
     }
-  }, [reduxTags, unselectedTags, initItems, initSelectedItems]);
+  }, [dispatch, sendRequest]);
 
+  /**
+   * retire un tag de la liste des tags
+   * @param tag Tag
+   */
   const handleRemoveTag = (tag: Tag) => {
-    removeItem(tag, "name");
+    dispatch(tagsAction.removeTag(tag.id));
   };
 
-  const selectedTags = useMemo(() => {
-    return {
-      tags: selectedItems,
-    };
-  }, [selectedItems]);
-
+  /**
+   * met à jour lo liste des tags non sélectionnés à partir des tags déjà sélectionnés pour éviter les doublons
+   */
   useEffect(() => {
-    console.log("tags submitted");
+    dispatch(tagsAction.setNotSelectedTags());
+  }, [currentTags, dispatch]);
 
-    const timer = setTimeout(() => {
-      if (selectedTags.tags.length > 0) {
-        onSubmitTags(selectedTags.tags);
+  /**
+   * réinitialise la liste des tags filtrés par la saisie de l'utilisateur dans le champ de recherche
+   */
+  const handleResetFilter = useCallback(() => {
+    dispatch(tagsAction.resetFilteredItems());
+  }, [dispatch]);
+
+  /**
+   * ajoute un tag dans la liste des tags sélectionnés
+   */
+  const handleAddTag = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    (name: string, _property: string) => {
+      const tag = notSelectedTags.find((item: Tag) => item.name === name);
+      if (tag) {
+        dispatch(tagsAction.addTag(tag.id));
+        handleResetFilter();
       }
-    }, autoSubmitTimer);
+    },
+    [notSelectedTags, dispatch, handleResetFilter]
+  );
+
+  /**
+   * filtre la liste des tags sélectionnés en fonction des saisies de l'utilisateur dans le champ de rechercher
+   */
+  const handleFilterItems = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    (value: string, _property: string) => {
+      dispatch(tagsAction.filterItems(value));
+    },
+    [dispatch]
+  );
+
+  /**
+   * initialise l'auto-submit après un court délai sans action de l'utilisateur pour sauvegarder les chabgements dans la bdd
+   */
+  useEffect(() => {
+    let timer: any;
+    if (!isInitialRender.current) {
+      timer = setTimeout(() => {
+        if (currentTags.length > 0) {
+          onSubmitTags(currentTags);
+        }
+      }, autoSubmitTimer);
+    } else {
+      isInitialRender.current = false;
+    }
     return () => {
       clearTimeout(timer);
     };
-  }, [selectedTags.tags, onSubmitTags]);
+  }, [currentTags, onSubmitTags]);
 
   return (
-    <div className="h-full">
-      <Wrapper>
-        <h2 className="text-xl font-bold">{title ?? "Tags"}</h2>
-        <SearchDropdown
-          addItem={addItem}
-          filterItems={filterItems}
-          resetFilterItems={resetFilterItems}
-          filteredItems={filteredItems}
-          property="name"
-          placeHolder="Ajouter un nouveau tag..."
-        />
-        <ul className="flex flex-wrap gap-2">
-          {selectedItems && selectedItems.length > 0
-            ? selectedItems.map((tag: Tag) => (
-                <li key={tag.id} onClick={() => handleRemoveTag(tag)}>
-                  <TagItem tag={tag} />
-                </li>
-              ))
-            : null}
-        </ul>
-      </Wrapper>
+    <div className="h-full flex flex-col gap-y-4">
+      <h2 className="text-xl font-bold">{title ?? "Tags"}</h2>
+      <SearchDropdown
+        addItem={handleAddTag}
+        filterItems={handleFilterItems}
+        resetFilterItems={handleResetFilter}
+        filteredItems={filteredItems}
+        property="name"
+        placeHolder="Ajouter un nouveau tag..."
+      />
+      <ul className="flex flex-wrap gap-2">
+        {currentTags && currentTags.length > 0
+          ? currentTags.map((tag: Tag) => (
+              <li key={tag.id} onClick={() => handleRemoveTag(tag)}>
+                <TagItem tag={tag} />
+              </li>
+            ))
+          : null}
+      </ul>
     </div>
   );
 };
