@@ -1,4 +1,6 @@
+import Contact from "./contact";
 import Formation from "./formation";
+import Tag from "./tag";
 
 export default interface Parcours {
   id?: number;
@@ -12,4 +14,6 @@ export default interface Parcours {
   updatedAt?: string;
   adminId?: number;
   formation: Formation;
+  tags: Array<Tag>;
+  contacts: Array<Contact>;
 }
