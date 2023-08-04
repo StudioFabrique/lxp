@@ -19,7 +19,7 @@ const parcoursModuleSlice = createSlice({
       const modules: Module[] = state.modules;
       module._id = (modules.length + 1).toString();
       state.modules = [...modules, module];
-      toast("Le module a bien été ajouté");
+      toast.success("Le module a bien été ajouté");
     },
     updateParcoursModule(state, action) {
       const module: Module = action.payload;
@@ -30,13 +30,13 @@ const parcoursModuleSlice = createSlice({
           ? { ...moduleToEdit, ...module }
           : moduleToEdit
       );
-      toast("Le module a bien été modifié");
+      toast.success("Le module a bien été modifié");
     },
     deleteParcoursModule(state, action) {
       const _id = action.payload;
       const modules = state.modules;
       state.modules = modules.filter((module) => module._id !== _id);
-      toast("Le module a bien été supprimé");
+      toast.success("Le module a bien été supprimé");
     },
     updateCurrentParcoursModule(state, action) {
       const _id = action.payload;
