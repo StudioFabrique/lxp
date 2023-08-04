@@ -16,15 +16,17 @@ const parcoursModuleSlice = createSlice({
     addParcoursModule(state, action) {
       const module: Module = action.payload;
       const modules: Module[] = state.modules;
+
       module._id = (modules.length + 1).toString();
       state.modules = [...modules, module];
     },
     updateParcoursModule(state, action) {
       const module: Module = action.payload;
       const modules: Module[] = state.modules;
+
       state.modules = modules.map((moduleToEdit) =>
         moduleToEdit._id === module._id
-          ? { ...moduleToEdit, module }
+          ? { ...moduleToEdit, ...module }
           : moduleToEdit
       );
     },

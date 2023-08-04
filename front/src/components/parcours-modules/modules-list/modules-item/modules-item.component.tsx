@@ -1,13 +1,13 @@
 import { FC } from "react";
-import Module from "../../../utils/interfaces/module";
-import EditButton from "../buttons/edit-button.component";
-import ViewButton from "../buttons/view-button.component";
-import DeleteButton from "../buttons/delete-button.component";
+import Module from "../../../../utils/interfaces/module";
+import EditButton from "./buttons/edit-button.component";
+import ViewButton from "./buttons/view-button.component";
+import DeleteButton from "./buttons/delete-button.component";
 import { useDispatch } from "react-redux";
 import {
   deleteParcoursModule,
   updateCurrentParcoursModule,
-} from "../../../store/redux-toolkit/parcours/parcours-modules";
+} from "../../../../store/redux-toolkit/parcours/parcours-modules";
 
 const ModulesItem: FC<{
   module: Module;
@@ -27,15 +27,17 @@ const ModulesItem: FC<{
 
   return (
     <div className="flex justify-between">
-      <div className="flex items-center p-3 bg-primary-content w-full rounded-lg">
-        <span>
+      <div className="pl-4 flex items-center p-3 bg-primary-content w-full rounded-lg">
+        <span className="w-[25%]">
           <img
-            className="object-cover h-14 w-14 rounded-lg"
+            className="object-fill h-20 w-20 rounded-md"
             src={module.imageUrl}
             alt="module preview"
           />
         </span>
-        <p className="ml-5">{module.title}</p>
+        <span className="w-[75%]">
+          <p>{module.title}</p>
+        </span>
       </div>
       <div className="flex flex-col gap-y-1 justify-between ml-2">
         <ViewButton background />

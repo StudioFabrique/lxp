@@ -1,5 +1,5 @@
 import { FC } from "react";
-import DeleteButton from "../../buttons/delete-button.component";
+import DeleteButton from "../../modules-list/modules-item/buttons/delete-button.component";
 import User from "../../../../utils/interfaces/user";
 
 const TeacherItem: FC<{ teacher: User; onDelete: (_id: string) => void }> = ({

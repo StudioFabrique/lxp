@@ -1,6 +1,6 @@
 import { FC } from "react";
 import Skill from "../../../../utils/interfaces/skill";
-import DeleteButton from "../../buttons/delete-button.component";
+import DeleteButton from "../../modules-list/modules-item/buttons/delete-button.component";
 
 const SkillItem: FC<{ skill: Skill; onDelete: (id: number) => void }> = ({
   skill,

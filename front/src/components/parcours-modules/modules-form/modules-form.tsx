@@ -1,4 +1,4 @@
-import { FC, FormEvent, FormEventHandler, useState } from "react";
+import { FC, FormEvent, FormEventHandler, useEffect, useState } from "react";
 import ImageFileUpload from "../../UI/image-file-upload/image-file-upload";
 import useInput from "../../../hooks/use-input";
 import { regexGeneric, regexNumber } from "../../../utils/constantes";
@@ -14,9 +14,11 @@ import {
   clearCurrentParcoursModule,
   updateParcoursModule,
 } from "../../../store/redux-toolkit/parcours/parcours-modules";
+import AddButton from "./buttons/add-button.component";
+import EditButton from "./buttons/edit-button.component";
 
 const ModulesForm: FC<{}> = (props) => {
-  const currentModuleToEdit = useSelector(
+  const currentModuleToEdit: Module | null = useSelector(
     (state: any) => state.parcoursModule.currentModule
   );
   const dispatch = useDispatch();
@@ -34,6 +36,17 @@ const ModulesForm: FC<{}> = (props) => {
     setImageFile(file);
   };
 
+  const handleClearEdit = () => {
+    title.reset();
+    description.reset();
+    duration.reset();
+    setImageFile(null);
+    setTeachers([]);
+    setSkills([]);
+    setResetFilter(true);
+    dispatch(clearCurrentParcoursModule());
+  };
+
   const handleSubmit: FormEventHandler<HTMLFormElement> = (
     event: FormEvent<HTMLFormElement>
   ) => {
@@ -47,13 +60,12 @@ const ModulesForm: FC<{}> = (props) => {
     )
       return;
     console.log("request send");
-    const teachersId: string[] = teachers.map((teacher) => teacher._id);
-    const skillsId: number[] = skills.map((skill) => skill.id!);
     const module: Module = {
+      _id: currentModuleToEdit ? currentModuleToEdit._id : undefined,
       title: title.value,
       description: description.value,
-      teachers: teachersId,
-      skills: skillsId,
+      teachers: teachers,
+      skills: skills,
       duration: duration.value,
       imageTemp: imageFile!,
       imageUrl: URL.createObjectURL(imageFile!),
@@ -63,21 +75,26 @@ const ModulesForm: FC<{}> = (props) => {
         ? updateParcoursModule(module)
         : addParcoursModule(module)
     );
+    handleClearEdit();
   };
 
-  const handleCancelEdit = () => {
-    title.reset();
-    description.reset();
-    duration.reset();
-    setImageFile(null);
-    setTeachers([]);
-    setSkills([]);
-    setResetFilter(true);
-    dispatch(clearCurrentParcoursModule());
-  };
+  useEffect(() => {
+    if (currentModuleToEdit) {
+      title.changeValue(currentModuleToEdit.title);
+      description.changeValue(currentModuleToEdit.description);
+      duration.changeValue(currentModuleToEdit.duration.toString());
+      setImageFile(currentModuleToEdit.imageTemp!);
+      setTeachers(currentModuleToEdit.teachers);
+      setSkills(currentModuleToEdit.skills);
+      setResetFilter(true);
+    }
+  }, [currentModuleToEdit]);
 
   return (
-    <form className="flex flex-col gap-y-5 p-5 w-[90%]" onSubmit={handleSubmit}>
+    <form
+      className="flex flex-col gap-y-5 p-5 pr-2 w-[90%]"
+      onSubmit={handleSubmit}
+    >
       <div className="flex flex-col">
         <label htmlFor="title">Titre de module</label>
         <input
@@ -92,12 +109,11 @@ const ModulesForm: FC<{}> = (props) => {
 
       <div className="flex flex-col">
         <label htmlFor="description">Description de module</label>
-        <input
-          className="input input-sm w-full"
+        <textarea
+          className="input input-sm w-full h-20"
           name="description"
-          type="text"
           value={description.value}
-          onChange={description.valueChangeHandler}
+          onChange={description.textAreaChangeHandler}
           onBlur={description.valueBlurHandler}
         />
       </div>
@@ -134,18 +150,11 @@ const ModulesForm: FC<{}> = (props) => {
 
       <div className="flex justify-between">
         {currentModuleToEdit && (
-          <button
-            type="button"
-            className="btn mt-10"
-            onClick={handleCancelEdit}
-          >
+          <button type="button" className="btn mt-10" onClick={handleClearEdit}>
             Annuler
           </button>
         )}
-
-        <button type="submit" className="btn mt-10">
-          Ajouter le module
-        </button>
+        {currentModuleToEdit ? <EditButton /> : <AddButton />}
       </div>
     </form>
   );

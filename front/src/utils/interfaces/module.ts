@@ -5,8 +5,8 @@ export default interface Module {
   _id?: string;
   title: string;
   description: string;
-  teachers: Array<User> | Array<string>;
-  skills: Array<Skill> | Array<number>;
+  teachers: Array<User>;
+  skills: Array<Skill>;
   duration: number;
   imageUrl: string;
   imageTemp?: File;
