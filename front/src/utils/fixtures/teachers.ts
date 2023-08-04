@@ -1,4 +1,4 @@
-import User from "../../../../utils/interfaces/user";
+import User from "../interfaces/user";
 
 export const teachersData: User[] = [
   {

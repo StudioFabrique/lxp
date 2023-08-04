@@ -7,13 +7,15 @@ const ViewButton: FC<{ background: boolean }> = ({ background }) => {
     <button
       type="button"
       onClick={handleView}
-      className={`${background && "bg-primary-content"} p-1 rounded-md`}
+      className={`${
+        background && "bg-primary-content"
+      } flex justify-center p-2 rounded-md`}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="currentColor"
-        className="w-6 h-6"
+        className="w-5 h-5"
       >
         <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
         <path
