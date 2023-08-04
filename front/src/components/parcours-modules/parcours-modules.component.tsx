@@ -8,9 +8,9 @@ import store from "../../store/redux-toolkit";
 const ParcoursModules: FC<{}> = (props) => {
   return (
     <Provider store={store}>
-      <div className="p-5 mx-32 max-md:mx-0">
+      <div className="p-5 mx-32 max-lg:mx-0">
         <Wrapper>
-          <div className="grid grid-cols-2 max-md:grid-cols-1 max-md:grid-rows-2 ">
+          <div className="grid grid-cols-2 max-lg:grid-cols-1 max-lg:grid-rows-2 ">
             <ModulesForm />
             <ModulesList />
           </div>
