@@ -1,35 +1,21 @@
 import { FC } from "react";
-import toTitleCase from "../../utils/toTitleCase";
-import Role from "../../utils/interfaces/role";
 
-type UserItem = {
-  _id: string;
-  name: string;
-  roles: Array<Role>;
-};
+import Contact from "../../utils/interfaces/contact";
 
-const ParcoursUserItem: FC<{
-  user: UserItem;
-  onRemoveUser: (value: UserItem) => void;
+const ContactItem: FC<{
+  user: Contact;
+  onRemoveUser: (value: Contact) => void;
 }> = ({ user, onRemoveUser }) => {
   const handleRemoveUser = () => {
     onRemoveUser(user);
   };
 
-  let displayRoles = (
-    <ul className="flex gap-x-2">
-      {user.roles.map((role: Role) => (
-        <li key={role._id}>
-          <p>{toTitleCase(role.label)}</p>
-        </li>
-      ))}
-    </ul>
-  );
-
   return (
     <div className="grid grid-cols-3 gap-2 text-xs items-center">
-      <p>{toTitleCase(user.name)}</p>
-      <div>{displayRoles}</div>
+      <p className="capitalize">{user.name}</p>
+      <div className="w-full text-ellipsis whitespace-nowrap capitalize">
+        {user.role}
+      </div>
       <div className="flex justify-end text-error" onClick={handleRemoveUser}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -50,4 +36,4 @@ const ParcoursUserItem: FC<{
   );
 };
 
-export default ParcoursUserItem;
+export default ContactItem;

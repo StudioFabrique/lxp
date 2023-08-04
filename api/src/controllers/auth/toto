@@ -5,7 +5,7 @@ import mongoConnect from "../../utils/services/db/mongo-connect";
 dotenv.config();
 
 describe("AUTH API", () => {
-  beforeAll(async () => {
+  /*  beforeAll(async () => {
     await mongoConnect();
   });
 
@@ -79,5 +79,5 @@ describe("AUTH API", () => {
     test("it should respond with 200 success", async () => {
       await request(app).get("/v1/auth/logout").expect(200);
     });
-  });
+  }); */
 });

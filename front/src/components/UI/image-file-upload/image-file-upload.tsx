@@ -1,11 +1,13 @@
-import { ChangeEvent, FC, useEffect, useState } from "react";
+import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import { validateImageFile } from "../../../utils/validate-image-file";
+import EditIcon from "../svg-icons/edit-icon";
 
 const ImageFileUpload: FC<{
   maxSize: number;
   onSetFile: (file: File) => void;
 }> = ({ maxSize, onSetFile }) => {
   const [file, setFile] = useState<File | null>(null);
+  const fileRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (file) {
@@ -26,14 +28,23 @@ const ImageFileUpload: FC<{
     }
   };
 
+  const handleSetFile = () => {
+    if (fileRef) {
+      fileRef.current?.click();
+    }
+  };
+
   return (
-    <span className="flex flex-col gap-y-2">
-      <label htmlFor="fileToUpload">Téléverser une image</label>
+    <span className="flex gap-x-2 cursor-pointer">
+      <p onClick={handleSetFile}>Changer l'image</p>
       <input
+        ref={fileRef}
         type="file"
-        className="file-input file-input-sm file-font-normal file-input-primary w-full rounded-lg"
+        accept=".jpg, ;jpeg, .png, .webp, .gif"
+        className="hidden file-input file-input-sm file-font-normal file-input-primary w-full rounded-lg"
         onChange={handleFileChange}
       />
+      <EditIcon />
     </span>
   );
 };

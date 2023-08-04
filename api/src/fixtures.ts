@@ -20,6 +20,7 @@ import User from "./utils/interfaces/db/user.model";
 dotenv.config();
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
+console.log({ MONGO_URL });
 
 mongoose.connection.once("open", () => {
   console.log("MongoDB connection ready!");
@@ -53,6 +54,7 @@ async function createUser() {
     postCode: "64000",
     city: "pau",
     email: "toto@toto.fr",
+    nickname: "gandalf",
     password: hash,
     roles: [new Object(role!._id)],
     isActive: true,
@@ -304,7 +306,6 @@ async function main() {
   await createManyStudents();
   await createManyCoach();
   await createManyGroups();
-  await createTag();
 }
 
 main();
