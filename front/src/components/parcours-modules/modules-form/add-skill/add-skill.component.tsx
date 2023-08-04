@@ -1,8 +1,7 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import { skillsData } from "./skills-data";
 import Skill from "../../../../utils/interfaces/skill";
 import SkillsList from "./skills-list.component";
-import SearchDropdownMultiple from "../../../UI/search-dropdown-multiple/search-dropdown-multiple";
+import SearchDropdownMultiple from "../../../UI/data-adder/search-dropdown-multiple/search-dropdown-multiple";
 
 const AddSkills: FC<{
   skills: Skill[];
@@ -10,7 +9,7 @@ const AddSkills: FC<{
   resetFilter: boolean;
   setResetFilter: Dispatch<SetStateAction<boolean>>;
 }> = ({ skills, setSkills, resetFilter, setResetFilter }) => {
-  const [skillsAvailables, setSkillsAvailables] = useState<Skill[]>(skillsData);
+  const [skillsAvailables, setSkillsAvailables] = useState<Skill[]>(skills);
 
   const handleAddSkill = (id: number) => {
     console.log(id);
@@ -37,7 +36,7 @@ const AddSkills: FC<{
 
   useEffect(() => {
     if (resetFilter) {
-      setSkillsAvailables(skillsData); // remplacer par requete get bdd
+      setSkillsAvailables(skills.filter((skill) => !skills.includes(skill)));
       setResetFilter(false);
     }
   }, [resetFilter, setResetFilter]);

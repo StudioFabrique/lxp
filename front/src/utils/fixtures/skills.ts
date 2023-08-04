@@ -1,3 +1,5 @@
+import Skill from "../interfaces/skill";
+
 const data: any = [
   {
     description: "Développement front-end",
@@ -275,11 +277,10 @@ function generateParcours() {
   return `${randomFormation} ${randomYear}`;
 }
 
-export function getDBSkills() {
-  let i = 1;
-  data.forEach((item: any) => {
-    item = { ...item, id: i };
-    i++;
-  });
-  return data;
+export function getDBSkills(): any[] {
+  const skills = data.map((item: any, i: number) => ({ ...item, id: i }));
+
+  console.log(skills);
+
+  return skills;
 }

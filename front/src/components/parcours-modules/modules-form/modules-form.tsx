@@ -4,7 +4,6 @@ import useInput from "../../../hooks/use-input";
 import { regexGeneric, regexNumber } from "../../../utils/constantes";
 import User from "../../../utils/interfaces/user";
 import Skill from "../../../utils/interfaces/skill";
-import AddTeachers from "./add-teacher/add-teacher.component";
 import AddSkills from "./add-skill/add-skill.component";
 import Module from "../../../utils/interfaces/module";
 import { validateImageFile } from "../../../utils/validate-image-file";
@@ -16,11 +15,15 @@ import {
 } from "../../../store/redux-toolkit/parcours/parcours-modules";
 import AddButton from "./buttons/add-button.component";
 import EditButton from "./buttons/edit-button.component";
+import DataAdder from "../../UI/data-adder/data-adder.component";
+import { teachersData } from "../../../utils/fixtures/teachers";
+import { getDBSkills as skillsData } from "../../../utils/fixtures/skills";
 
 const ModulesForm: FC<{}> = (props) => {
   const currentModuleToEdit: Module | null = useSelector(
     (state: any) => state.parcoursModule.currentModule
   );
+  // const skillsFromDb = useSelector((state: any) => state.parcoursSkills.skills);
   const dispatch = useDispatch();
 
   const { value: title } = useInput((value) => regexGeneric.test(value));
@@ -29,7 +32,7 @@ const ModulesForm: FC<{}> = (props) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const [teachers, setTeachers] = useState<User[]>([]);
-  const [skills, setSkills] = useState<Skill[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]); // to replace by redux store data
   const [resetFilter, setResetFilter] = useState<boolean>(false);
 
   const handleSetImage = (file: File) => {
@@ -119,19 +122,31 @@ const ModulesForm: FC<{}> = (props) => {
       </div>
 
       {/* formateurs compo */}
-      <AddTeachers
-        teachers={teachers}
-        setTeachers={setTeachers}
+      <DataAdder
+        data={teachers}
+        dataFromDb={teachersData}
+        propertiesToSearch={["firstname", "lastname"]}
+        propertyToFilter="_id"
         resetFilter={resetFilter}
+        searchInputPlaceholder="Prénom Nom"
+        setData={setTeachers}
         setResetFilter={setResetFilter}
+        title="Formateurs de modules"
+        transparencyOrder="z-0"
       />
 
       {/* compétences compo */}
-      <AddSkills
-        skills={skills}
-        setSkills={setSkills}
+      <DataAdder
+        data={skills}
+        dataFromDb={skillsData()}
+        propertiesToSearch={["description"]}
+        propertyToFilter="id"
         resetFilter={resetFilter}
+        searchInputPlaceholder="description"
+        setData={setTeachers}
         setResetFilter={setResetFilter}
+        title="Compétences"
+        transparencyOrder="z-10"
       />
 
       <div className="flex flex-col">
