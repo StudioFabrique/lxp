@@ -15,6 +15,7 @@ const GroupAddForm: FC<{
   isLoading: boolean;
 }> = (props) => {
   const handleSubmitTags = (tags: Tag[]) => {};
+
   const handleSubmitDates = (dates: {
     startDate: string;
     endDate: string;

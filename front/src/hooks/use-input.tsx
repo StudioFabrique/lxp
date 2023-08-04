@@ -38,6 +38,10 @@ const useInput = (
     dispatch({ type: "INPUT", value: event.currentTarget.value });
   };
 
+  const changeValue = (value: string) => {
+    dispatch({ type: "INPUT", value: value });
+  };
+
   const valueBlurHandler = (_event: React.FormEvent) => {
     dispatch({ type: "BLUR", value: inputState!.value });
   };
@@ -66,6 +70,7 @@ const useInput = (
       hasError,
       isValid: valueIsValid,
       valueChangeHandler,
+      changeValue,
       valueBlurHandler,
       reset,
       textAreaChangeHandler,
