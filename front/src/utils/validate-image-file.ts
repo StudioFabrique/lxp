@@ -5,6 +5,7 @@ export const validateImageFile = (selectedFile: File, maxSize: number) => {
   if (!allowedExtensions.test(selectedFile.name)) {
     return false; // Extension de fichier non autorisée
   }
+
   if (!selectedFile.type.startsWith("image/")) {
     return false;
   }

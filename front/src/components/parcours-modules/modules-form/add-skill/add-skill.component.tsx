@@ -1,52 +1,56 @@
-import { Dispatch, FC, SetStateAction, useState } from "react";
-import SearchDropdown from "../../../UI/search-dropdown/search-dropdown";
-import { skillsData } from "./skills-data";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import Skill from "../../../../utils/interfaces/skill";
 import SkillsList from "./skills-list.component";
+import SearchDropdownMultiple from "../../../UI/data-adder/search-dropdown-multiple/search-dropdown-multiple";
 
 const AddSkills: FC<{
   skills: Skill[];
   setSkills: Dispatch<SetStateAction<Skill[]>>;
-}> = ({ skills, setSkills }) => {
-  const [skillsAvailables, setSkillsAvailables] = useState<Skill[]>(skillsData);
+  resetFilter: boolean;
+  setResetFilter: Dispatch<SetStateAction<boolean>>;
+}> = ({ skills, setSkills, resetFilter, setResetFilter }) => {
+  const [skillsAvailables, setSkillsAvailables] = useState<Skill[]>(skills);
 
-  const getSkillFromDb = (id: number) => {
-    return skillsData.filter((skill) => skill.id === id)[0];
-  };
+  const handleAddSkill = (id: number) => {
+    console.log(id);
 
-  const handleAddSkill = (name: string, property: string) => {
-    console.log("name : " + name);
-    console.log("property : " + property);
-    setSkills((currentSkills) => [
-      ...currentSkills,
-      getSkillFromDb(parseInt(name)),
-    ]);
+    const SkillsToAdd = skillsAvailables.filter((skill) => skill.id === id);
+    setSkills((currentSkills) => [...currentSkills, ...SkillsToAdd]);
+    setSkillsAvailables((currentSkillsAvailable) =>
+      currentSkillsAvailable.filter(
+        (currentSkillAvailable) => currentSkillAvailable.id !== id
+      )
+    );
   };
 
   const handleDeleteSkill = (id: number) => {
     setSkills((currentSkills) =>
       currentSkills.filter((skill) => skill.id !== id)
     );
+
+    setSkillsAvailables((currentSkillsAvailable) => [
+      ...currentSkillsAvailable,
+      ...skills.filter((currentSkills) => currentSkills.id === id),
+    ]);
   };
 
-  const handleFilterSkillsAvailables = (name: string, property: string) => {
-    const filteredTeachersAvailable = skillsAvailables.filter(
-      (skill) => skill.id === parseInt(name)
-    );
-    setSkillsAvailables(filteredTeachersAvailable);
-  };
+  useEffect(() => {
+    if (resetFilter) {
+      setSkillsAvailables(skills.filter((skill) => !skills.includes(skill)));
+      setResetFilter(false);
+    }
+  }, [resetFilter, setResetFilter]);
 
   return (
     <div className="flex flex-col">
       <label htmlFor="formateurs">Compétences de module</label>
-      <SearchDropdown
-        placeHolder="Rechercher une compétence de module"
-        addItem={handleAddSkill}
-        filterItems={handleFilterSkillsAvailables}
-        filteredItems={skillsAvailables}
-        property="description"
-        resetFilterItems={() => {}}
-        getId="id"
+      <SearchDropdownMultiple
+        propertyToFilter="id"
+        data={skillsAvailables}
+        propertiesToSearch={["description"]}
+        placeHolder="Description"
+        transparencyOrder="z-0"
+        onAddItem={handleAddSkill}
       />
       <SkillsList skills={skills} onDelete={handleDeleteSkill} />
     </div>

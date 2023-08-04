@@ -1,27 +1,31 @@
 import { FC, useState } from "react";
 import GroupManageUserList from "./group-manage-user-list/group-manage-user-list.component";
-import GroupUserItem from "./group-user-item.component";
 import User from "../../../utils/interfaces/user";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import CsvImportUserList from "../../UI/csv-import/csv-import-user-list/csv-import-user-list.component";
+import GroupUserItem from "./group-user-item.component";
 
 const GroupUserList: FC<{
   usersToAdd: User[];
-  onSubmitSetUsersToAdd: (users: Array<User>) => void;
-}> = ({ usersToAdd, onSubmitSetUsersToAdd }) => {
+  onAddUsers: (users: Array<User>) => void;
+}> = ({ usersToAdd, onAddUsers }) => {
   const [needDataUpdate, setDataUpdateState] = useState<boolean>(false);
 
   return (
     <Wrapper>
       <div className="flex justify-between">
         <h2 className="font-bold text-lg">Etudiants</h2>
-        <CsvImportUserList setDataUpdateState={setDataUpdateState} />
+        <CsvImportUserList
+          setDataUpdateState={setDataUpdateState}
+          onAddUsers={onAddUsers}
+        />
       </div>
       <div className="flex justify-between">
         <GroupManageUserList
           needDataUpdate={needDataUpdate}
           setDataUpdateState={setDataUpdateState}
-          onSetUsersToAdd={onSubmitSetUsersToAdd}
+          onAddUsers={onAddUsers}
+          usersToAdd={usersToAdd}
         />
         <input
           type="text"

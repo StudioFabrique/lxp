@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import Skill from "../../../../utils/interfaces/skill";
 import SkillItem from "./skill-item.component";
 

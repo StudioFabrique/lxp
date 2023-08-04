@@ -13,13 +13,15 @@ export const DeleteButton: FC<{
     <button
       type="button"
       onClick={handleDelete}
-      className={`${background && "bg-primary-content"} p-1 rounded-md`}
+      className={`${
+        background && "bg-primary-content"
+      } p-2 flex justify-center rounded-md`}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
-        fill="currentColor"
-        className={`w-6 h-6 ${color === "red" && "fill-red-800"}`}
+        fill="darkred"
+        className="w-6 h-6"
       >
         <path d="M3.375 3C2.339 3 1.5 3.84 1.5 4.875v.75c0 1.036.84 1.875 1.875 1.875h17.25c1.035 0 1.875-.84 1.875-1.875v-.75C22.5 3.839 21.66 3 20.625 3H3.375z" />
         <path
