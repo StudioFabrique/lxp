@@ -4,7 +4,6 @@ import useInput from "../../../hooks/use-input";
 import { regexGeneric, regexNumber } from "../../../utils/constantes";
 import User from "../../../utils/interfaces/user";
 import Skill from "../../../utils/interfaces/skill";
-import AddSkills from "./add-skill/add-skill.component";
 import Module from "../../../utils/interfaces/module";
 import { validateImageFile } from "../../../utils/validate-image-file";
 import { useDispatch, useSelector } from "react-redux";
@@ -60,7 +59,7 @@ const ModulesForm: FC<{}> = (props) => {
       !description.isValid ||
       !duration.isValid ||
       teachers.length <= 0 ||
-      imageFile
+      !imageFile
     ) {
       toast.error("les informations saisies sont incorrects");
       return;

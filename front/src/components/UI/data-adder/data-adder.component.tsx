@@ -51,10 +51,17 @@ const DataAdder: FC<{
 
   useEffect(() => {
     if (resetFilter) {
-      setDataAvailables(data.filter((data: any) => !data.includes(data)));
+      const newData = data.filter((data: any) => !dataFromDb.includes(data));
+
+      console.log("liste de toute les données de la bdd :");
+      console.log(dataFromDb);
+      console.log("nouvelle données :");
+      console.log(newData);
+
+      setDataAvailables(newData);
       setResetFilter(false);
     }
-  }, [resetFilter, setResetFilter]);
+  }, [data, setDataAvailables, resetFilter, setResetFilter]);
 
   return (
     <div className="flex flex-col">
