@@ -11,8 +11,10 @@ async function httpCreateParcours(req: CustomRequest, res: Response) {
     return res.status(400).json({ message: badQuery });
   }
 
+  console.log(req.body);
+
   try {
-    if (
+    /*     if (
       !req.auth ||
       req.auth === undefined ||
       !req.auth.userId ||
@@ -21,19 +23,18 @@ async function httpCreateParcours(req: CustomRequest, res: Response) {
       return res.status(403).json({ message: noAccess });
     }
 
-    const userId = req.auth.userId;
+    const userId = req.auth.userId; */
     const parcours = req.body;
 
-    console.log({ userId, parcours });
-
-    const result = await createParcours(parcours, userId);
+    const result = await createParcours(parcours);
     if (result) {
-      return res
-        .status(201)
-        .json({ message: "Parcours enregistré avec succès!", id: result });
+      return res.status(201).json({
+        message: "Parcours enregistré avec succès!",
+        parcoursId: result.id,
+      });
     }
-  } catch (error) {
-    return res.status(500).json({ message: serverIssue + error });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
   }
 }
 

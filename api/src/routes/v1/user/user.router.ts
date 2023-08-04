@@ -1,20 +1,22 @@
 import express from "express";
 import { body, param, query } from "express-validator";
 
-import isUser from "../../middleware/is-user";
+import isUser from "../../../middleware/is-user";
 import {
   getAllValidator,
   manyUsersValidator,
   userValidator,
-} from "../../middleware/validators";
-import httpUpdateUserRoles from "../../controllers/user/http-update-user-roles";
-import httpSearchUser from "../../controllers/user/http-search-user";
-import httpGetUsersByRole from "../../controllers/user/http-get-users-by-role";
-import httpGetUsersStats from "../../controllers/user/http-get-users-stats";
-import httpUpdateUserStatus from "../../controllers/user/http-update-user";
-import httpUpdateManyUsersStatus from "../../controllers/user/http-update-many-users-status";
-import httpCreateUser from "../../controllers/user/http-create-user";
-import httpCreateManyUser from "../../controllers/user/http-create-many-users";
+} from "../../../middleware/validators";
+import httpCreateUser from "../../../controllers/user/http-create-user";
+import httpUpdateUserRoles from "../../../controllers/user/http-update-user-roles";
+import httpSearchUser from "../../../controllers/user/http-search-user";
+import httpGetUsersByRole from "../../../controllers/user/http-get-users-by-role";
+import httpGetUsersStats from "../../../controllers/user/http-get-users-stats";
+import httpUpdateUserStatus from "../../../controllers/user/http-update-user";
+import httpUpdateManyUsersStatus from "../../../controllers/user/http-update-many-users-status";
+import httpGetContacts from "../../../controllers/user/http-get-contacts";
+import postTeacherRouter from "./post-teacher";
+import httpCreateManyUser from "../../../controllers/user/http-create-many-users";
 
 const userRouter = express.Router();
 
@@ -30,9 +32,7 @@ userRouter.get("/stats", isUser, httpGetUsersStats);
 //  récupération de la liste des utilisateurs en fonction de leur rôle principal
 userRouter.get(
   "/:role/:stype/:sdir",
-  //  vérification du token et récupération du rôle de l'utilisateur
   isUser,
-
   getAllValidator,
   httpGetUsersByRole
 );
@@ -74,16 +74,19 @@ userRouter.get(
   "/search/:role/:entity/:value/:stype/:sdir",
 
   //  validators
-  param("search").isString().trim().escape(),
-  param("role").isString().trim().escape(),
-  param("entity").isString().trim().escape(),
-  param("value").isString().trim().escape(),
-  param("stype").isString().trim().escape(),
-  param("sdir").isString().trim().escape(),
-  query("page").trim().escape().isInt(),
-  query("limit").trim().escape().isInt(),
+  param("search").isAlpha().notEmpty().trim().escape(),
+  param("role").isAlpha().notEmpty().trim().escape(),
+  param("entity").isAlpha().notEmpty().trim().escape(),
+  param("value").isAlpha().notEmpty().trim().escape(),
+  param("stype").isAlpha().notEmpty().trim().escape(),
+  param("sdir").isAlpha().notEmpty().trim().escape(),
+  query("page").notEmpty().trim().escape().isInt(),
+  query("limit").notEmpty().trim().escape().isInt(),
 
   httpSearchUser
 );
+userRouter.use("/new-teacher", postTeacherRouter);
+
+userRouter.get("/contacts", httpGetContacts);
 
 export default userRouter;

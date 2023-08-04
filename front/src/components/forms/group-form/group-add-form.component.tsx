@@ -1,12 +1,13 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, FormEvent } from "react";
+
 import { regexGeneric } from "../../../utils/constantes";
 import useInput from "../../../hooks/use-input";
 import Informations from "./components/informations.components";
 import Details from "./components/details.component";
-import Tag from "../../../utils/interfaces/tag";
 import DatesSelecter from "../../UI/dates-selecter/dates-selecter.component";
 import ParcoursHeader from "../../groups-header/groups-header.component";
 import Tags from "../../UI/tags/tags.component";
+import Tag from "../../../utils/interfaces/tag";
 
 const GroupAddForm: FC<{
   group?: any;
@@ -14,8 +15,7 @@ const GroupAddForm: FC<{
   error: string;
   isLoading: boolean;
 }> = (props) => {
-  const handleSubmitTags = (tags: Tag[]) => {};
-
+  const handleSubmitTags = (tags: Array<Tag>) => {};
   const handleSubmitDates = (dates: {
     startDate: string;
     endDate: string;

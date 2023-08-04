@@ -12,12 +12,11 @@ export interface IUser extends Document {
   createdAt: Date;
   updatedAt: Date;
   isActive: boolean;
-  nickname: string;
+  nickname?: string;
   address: string;
   postCode: string;
   city: string;
   phoneNumber: string;
-  birthDate: Date;
   group?: IGroup["_id"];
 }
 
@@ -34,12 +33,11 @@ const userSchema: Schema = new Schema(
     },
     avatar: { type: String, required: false },
     isActive: { type: Boolean, required: true },
-    nickname: { type: String, required: true },
+    nickname: { type: String, required: false },
     address: { type: String, required: true },
     postCode: { type: String, required: true },
     city: { type: String, required: true },
     phoneNumber: { type: String, required: true },
-    birthDate: { type: Date, required: true },
     group: { type: [mongoose.Schema.Types.ObjectId], ref: "Group" },
   },
   { timestamps: true }
