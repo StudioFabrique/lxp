@@ -27,24 +27,25 @@ const DataAdder: FC<{
 }) => {
   const [dataAvailables, setDataAvailables] = useState<any[]>(dataFromDb);
 
-  const handleAddTeacher = (_id: string) => {
-    console.log(_id);
-
-    const DataToAdd = dataAvailables.filter((data) => data._id === _id);
+  const handleAddData = (id: any) => {
+    console.log(id);
+    const DataToAdd = dataAvailables.filter(
+      (data) => data[propertyToFilter] === id
+    );
     setData((data: any) => [...data, ...DataToAdd]);
     setDataAvailables((currentDataAvailable) =>
       currentDataAvailable.filter(
-        (currentDataAvailable) => currentDataAvailable._id !== _id
+        (currentDataAvailable) => currentDataAvailable[propertyToFilter] !== id
       )
     );
   };
 
-  const handleDeleteTeacher = (_id: string) => {
-    setData((data) => data.filter((data) => data._id !== _id));
+  const handleDeleteData = (id: any) => {
+    setData((data) => data.filter((data) => data[propertyToFilter] !== id));
 
     setDataAvailables((currentDataAvailable) => [
       ...currentDataAvailable,
-      ...data.filter((data) => data._id === _id),
+      ...data.filter((data) => data[propertyToFilter] === id),
     ]);
   };
 
@@ -64,13 +65,13 @@ const DataAdder: FC<{
         propertiesToSearch={propertiesToSearch}
         placeHolder={searchInputPlaceholder}
         transparencyOrder={transparencyOrder}
-        onAddItem={handleAddTeacher}
+        onAddItem={handleAddData}
       />
       <DataList
         data={data}
         properties={propertiesToSearch}
         propertyToFilter={propertyToFilter}
-        onDelete={handleDeleteTeacher}
+        onDelete={handleDeleteData}
       />
     </div>
   );
