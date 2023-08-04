@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, FormEvent, useState } from "react";
+
 import useInput from "../../hooks/use-input";
 import {
   regexGeneric,
@@ -53,7 +55,7 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
     phoneNumber,
   ];
 
-  let formIsValid =
+  const formIsValid =
     email.isValid &&
     firstname.isValid &&
     lastname.isValid &&
@@ -91,13 +93,13 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
 
   const handleCloseDrawer = () => {
     handleResetForm();
-    document.getElementById("my-drawer-4")?.click();
+    document.getElementById("new-contact")?.click();
   };
 
   const setInputStyle = (hasError: boolean) => {
     return hasError
-      ? "input input-error text-error input-sm input-bordered w-full"
-      : "input input-sm input-bordered w-full";
+      ? "input input-error text-error input-sm input-bordered w-full focus:outline-none"
+      : "input input-sm input-bordered w-full focus:outline-none";
   };
 
   const handleResetForm = () => {
@@ -117,16 +119,16 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
       <form className="flex flex-col gap-y-4 px-4" onSubmit={handleSubmit}>
         <div>
           <label className="flex gap-x-4 items-center cursor-pointer">
-            <span className="text-base-content/50">Status</span>
+            <span className="text-primary/50">Status</span>
             <input
               type="checkbox"
-              className="toggle"
+              className="toggle toggle-primary"
               checked={isActive}
               onChange={handleToggleIsActive}
             />
             <span
               className={`label-text font-bold ${
-                !isActive ? "text-base-content/50" : ""
+                !isActive ? "text-primary/50" : "text-primary"
               }`}
             >
               {isActive ? "Actif" : "Inactif"}

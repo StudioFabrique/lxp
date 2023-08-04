@@ -1,11 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import ParcoursInformationsForm from "./parcours-informations-form";
-import { useDispatch, useSelector } from "react-redux";
 import useHttp from "../../hooks/use-http";
+import { toast } from "react-hot-toast";
+import Contacts from "./contacts";
+import Contact from "../../utils/interfaces/contact";
+import { Link } from "react-router-dom";
 import { parcoursInformationsAction } from "../../store/redux-toolkit/parcours/parcours-informations";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import DatesSelecter from "../UI/dates-selecter/dates-selecter.component";
+import Tags from "../UI/tags/tags.component";
+import Tag from "../../utils/interfaces/tag";
 
 type Props = {
   parcoursId?: string;
@@ -24,13 +31,34 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
   const updateDates = useCallback(
     (startDate: string, endDate: string) => {
       const processData = (data: { success: boolean; message: string }) => {
-        console.log({ data });
+        if (data.success) {
+          toast.success(data.message);
+        }
       };
       sendRequest(
         {
           path: "/parcours/update-dates",
           method: "put",
           body: { parcoursId, startDate, endDate },
+        },
+        processData
+      );
+    },
+    [parcoursId, sendRequest]
+  );
+
+  const updateTags = useCallback(
+    (tags: Array<Tag>) => {
+      const processData = (data: { success: boolean; message: string }) => {
+        if (data.success) {
+          toast.success(data.message);
+        }
+      };
+      sendRequest(
+        {
+          path: "/parcours/update-tags",
+          method: "put",
+          body: { parcoursId, tags: tags.map((item: Tag) => item.id) },
         },
         processData
       );
@@ -47,7 +75,24 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
     [updateDates, dispatch]
   );
 
-  console.log({ parcoursStartDate, parcoursEndDate });
+  const submitContacts = useCallback(
+    (contacts: Array<Contact>) => {
+      const processData = (data: { success: boolean; message: string }) => {
+        if (data.success) {
+          toast.success(data.message);
+        }
+      };
+      sendRequest(
+        {
+          path: "/parcours/update-contacts",
+          method: "put",
+          body: { parcoursId, contacts },
+        },
+        processData
+      );
+    },
+    [parcoursId, sendRequest]
+  );
 
   return (
     <div className="w-full">
@@ -63,10 +108,18 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
               onSubmitDates={submitDates}
             />
           </div>
+          <Link className="mt-4 mb-8 font-bold hover:underline" to="#">
+            Classe Virtuelle
+          </Link>
         </Wrapper>
-        <Wrapper>
-          <div className="bg-blue-400" />
-        </Wrapper>
+        <div className="grid grid-rows-2 gap-8">
+          <Wrapper>
+            <Contacts onSubmitContacts={submitContacts} />
+          </Wrapper>
+          <Wrapper>
+            <Tags onSubmitTags={updateTags} />
+          </Wrapper>
+        </div>
       </div>
     </div>
   );

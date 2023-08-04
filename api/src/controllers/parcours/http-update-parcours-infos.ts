@@ -10,7 +10,6 @@ async function httpUpdateParcoursInfos(req: Request, res: Response) {
   if (!result.isEmpty()) {
     return res.status(400).json({ message: badQuery });
   }
-  console.log(req.body);
 
   try {
     const { parcoursId, title, description, formation } = req.body;

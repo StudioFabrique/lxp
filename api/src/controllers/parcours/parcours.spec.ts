@@ -52,7 +52,7 @@ async function getFormation() {
   return await prisma.formation.findMany();
 }
 
-describe("HTTP Handshake", () => {
+describe("HTTP PARCOURS", () => {
   let authToken = {}; // Store the authentication token
 
   beforeAll(async () => {
@@ -68,10 +68,10 @@ describe("HTTP Handshake", () => {
     authToken = loginResponse.headers["set-cookie"][0];
   });
 
-  describe("Test GET /parcours/contacts", () => {
+  describe("Test GET /user/contacts", () => {
     test("It should respond with 200 success", async () => {
       await request(app)
-        .get("/v1/parcours/contacts")
+        .get("/v1/user/contacts")
         .set("Cookie", [`${authToken}`])
         .expect(200);
     });
@@ -212,6 +212,171 @@ describe("HTTP Handshake", () => {
         .get(`/v1/parcours/parcours-by-formation/foo`)
         .set("Cookie", [`${authToken}`])
         .expect(400);
+    });
+  });
+
+  /**
+   * PUT UPDATE INFOS
+   */
+
+  describe("Test Put /parcours/update-infos", () => {
+    test("It should respond 201 success", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .set("Cookie", [`${authToken}`])
+        .send({
+          parcoursId: 1,
+          title: "foo",
+          description: "bar",
+          formation: 1,
+        })
+        .expect(201);
+    });
+  });
+
+  describe("Test Put /parcours/update-infos", () => {
+    test("It should respond 400 failure", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .set("Cookie", [`${authToken}`])
+        .send({
+          parcoursId: "toto",
+          title: "<hacker>",
+          description: "bar",
+          formation: 1,
+        })
+        .expect(400);
+    });
+  });
+
+  describe("Test Put /parcours/update-infos", () => {
+    test("It should respond 400 failure", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .set("Cookie", [`${authToken}`])
+        .send({
+          parcoursId: 1,
+          title: 1,
+          description: "bar",
+          formation: 1,
+        })
+        .expect(400);
+    });
+  });
+
+  describe("Test Put /parcours/update-infos", () => {
+    test("It should respond 400 failure", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .set("Cookie", [`${authToken}`])
+        .send({
+          parcoursId: 1,
+          title: "foo",
+          description: 1,
+          formation: 1,
+        })
+        .expect(400);
+    });
+  });
+
+  describe("Test Put /parcours/update-infos", () => {
+    test("It should respond 400 failure", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .set("Cookie", [`${authToken}`])
+        .send({
+          parcoursId: 1,
+          title: "foo",
+          description: "bar",
+          formation: "test",
+        })
+        .expect(400);
+    });
+  });
+
+  describe("Test Put /parcours/update-infos", () => {
+    test("It should respond 400 failure", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .set("Cookie", [`${authToken}`])
+        .send({
+          parcoursId: 1000000000,
+          title: "foo",
+          description: "bar",
+          formation: 1,
+        })
+        .expect(500);
+    });
+  });
+
+  describe("Test Put /parcours/update-infos", () => {
+    test("It should respond 400 failure", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .set("Cookie", [`${authToken}`])
+        .send({
+          parcoursId: 1,
+          title: "foo",
+          description: "bar",
+          formation: 1000000000,
+        })
+        .expect(500);
+    });
+  });
+
+  /**
+   * UPDATE PARCOURS DATES
+   */
+
+  describe("Test Put /parcoours/update-dates", () => {
+    test("It should respond 201 success", async () => {
+      await request(app)
+        .put("/v1/parcours/update-dates")
+        .send({
+          parcoursId: 1,
+          startDate: "1947-10-14",
+          endDate: "2000-01-01",
+        })
+        .expect(201);
+    });
+  });
+
+  describe("Test Put /parcoours/update-dates", () => {
+    test("It should respond 400 failure", async () => {
+      await request(app)
+        .put("/v1/parcours/update-dates")
+        .send({
+          parcoursId: "foo",
+          startDate: "1947-10-14",
+          endDate: "2000-01-01",
+        })
+        .expect(400);
+    });
+  });
+
+  describe("Test Put /parcoours/update-dates", () => {
+    test("It should respond 500 failure", async () => {
+      await request(app)
+        .put("/v1/parcours/update-dates")
+        .send({
+          parcoursId: 1,
+          startDate: "1947-10-14",
+          endDate: "foo",
+        })
+        .expect(400);
+    });
+  });
+
+  describe("Test Put /parcoours/update-dates", () => {
+    test("It should respond 500 failure", async () => {
+      await request(app)
+        .put("/v1/parcours/update-dates")
+        .send({
+          parcoursId: 1000000000,
+          startDate: "1947-10-14",
+          endDate: "2000-01-01",
+        })
+        .expect(500);
     });
   });
 
