@@ -6,13 +6,14 @@ export const searchResult = (
   const inputValueToArray: string[] = inputValue.split(
     propertiesToSearch.length > 1 ? " " : "|"
   );
-  console.log(inputValueToArray);
   const result = inputValueToArray.map((inputValue, i) =>
     data.filter((data) => {
       if (!data[propertiesToSearch[i]]) return null;
-      return (
-        data[propertiesToSearch[i]].toLowerCase() === inputValue.toLowerCase()
-      );
+      return inputValue.charAt(0) !== ""
+        ? data[propertiesToSearch[i]]
+            .substring(0, inputValue.length)
+            .toLowerCase() === inputValue.toLowerCase()
+        : null;
     })
   );
   return result;
@@ -24,8 +25,6 @@ export const filterResult = (
   searchResult: any[][],
   propertyToFilter: string
 ): any[] => {
-  console.log(searchResult);
-
   let idList: any[] = [];
   searchResult.map((arrays) =>
     arrays.map((data) => idList.push(data[propertyToFilter]))

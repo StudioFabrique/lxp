@@ -279,8 +279,5 @@ function generateParcours() {
 
 export function getDBSkills(): any[] {
   const skills = data.map((item: any, i: number) => ({ ...item, id: i }));
-
-  console.log(skills);
-
   return skills;
 }

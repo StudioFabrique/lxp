@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Module from "../../../utils/interfaces/module";
+import { toast } from "react-hot-toast";
 
 const initialModuleState: { modules: Module[]; currentModule: Module | null } =
   {
@@ -16,9 +17,9 @@ const parcoursModuleSlice = createSlice({
     addParcoursModule(state, action) {
       const module: Module = action.payload;
       const modules: Module[] = state.modules;
-
       module._id = (modules.length + 1).toString();
       state.modules = [...modules, module];
+      toast("Le module a bien été ajouté");
     },
     updateParcoursModule(state, action) {
       const module: Module = action.payload;
@@ -29,11 +30,13 @@ const parcoursModuleSlice = createSlice({
           ? { ...moduleToEdit, ...module }
           : moduleToEdit
       );
+      toast("Le module a bien été modifié");
     },
     deleteParcoursModule(state, action) {
       const _id = action.payload;
       const modules = state.modules;
       state.modules = modules.filter((module) => module._id !== _id);
+      toast("Le module a bien été supprimé");
     },
     updateCurrentParcoursModule(state, action) {
       const _id = action.payload;

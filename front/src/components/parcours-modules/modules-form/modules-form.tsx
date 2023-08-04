@@ -18,6 +18,7 @@ import EditButton from "./buttons/edit-button.component";
 import DataAdder from "../../UI/data-adder/data-adder.component";
 import { teachersData } from "../../../utils/fixtures/teachers";
 import { getDBSkills as skillsData } from "../../../utils/fixtures/skills";
+import { Toaster, toast } from "react-hot-toast";
 
 const ModulesForm: FC<{}> = (props) => {
   const currentModuleToEdit: Module | null = useSelector(
@@ -58,10 +59,16 @@ const ModulesForm: FC<{}> = (props) => {
       !title.isValid ||
       !description.isValid ||
       !duration.isValid ||
-      !validateImageFile(imageFile!, 10 * 1024 * 1024) ||
-      teachers.length <= 0
-    )
+      teachers.length <= 0 ||
+      imageFile
+    ) {
+      toast.error("les informations saisies sont incorrects");
       return;
+    }
+    if (!validateImageFile(imageFile!, 10 * 1024 * 1024)) {
+      toast.error("Le fichier de l'image doit être inférieur à 10 mb");
+      return;
+    }
     console.log("request send");
     const module: Module = {
       _id: currentModuleToEdit ? currentModuleToEdit._id : undefined,
@@ -98,6 +105,7 @@ const ModulesForm: FC<{}> = (props) => {
       className="flex flex-col gap-y-5 p-5 pr-2 w-[90%]"
       onSubmit={handleSubmit}
     >
+      <Toaster />
       <div className="flex flex-col">
         <label htmlFor="title">Titre de module</label>
         <input
@@ -132,7 +140,7 @@ const ModulesForm: FC<{}> = (props) => {
         setData={setTeachers}
         setResetFilter={setResetFilter}
         title="Formateurs de modules"
-        transparencyOrder="z-0"
+        transparencyOrder="z-10"
       />
 
       {/* compétences compo */}
@@ -143,10 +151,10 @@ const ModulesForm: FC<{}> = (props) => {
         propertyToFilter="id"
         resetFilter={resetFilter}
         searchInputPlaceholder="description"
-        setData={setTeachers}
+        setData={setSkills}
         setResetFilter={setResetFilter}
         title="Compétences"
-        transparencyOrder="z-10"
+        transparencyOrder="z-0"
       />
 
       <div className="flex flex-col">
