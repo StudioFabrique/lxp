@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import useHttp from "../../hooks/use-http";
+/* import { useEffect, useState } from "react";
+import useHttp from "../../hooks/use-http"; */
 
 const ParcoursHome = () => {
-  const [image, setImage] = useState<any>(null);
-  const { sendRequest } = useHttp();
+  /*   const [setImage] = useState<any>(null);
+  const { sendRequest } = useHttp(); */
 
-  useEffect(() => {
+  /*   useEffect(() => {
     const applyData = (data: any) => {
       console.log({ data });
 
@@ -17,9 +17,9 @@ const ParcoursHome = () => {
       },
       applyData
     );
-  }, [sendRequest]);
+  }, [sendRequest]); */
 
-  return <img src={`data:image/png;base64,${image}`} alt="Parcours" />;
+  return <></>;
 };
 
 export default ParcoursHome;

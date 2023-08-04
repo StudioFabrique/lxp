@@ -32,10 +32,10 @@ const AdminLayout = () => {
   }, [user]);
 
   return (
-    <>
+    <div className="w-full">
       {user && user.roles[0].rank < 3 ? (
         <FadeWrapper>
-          <div className="flex flex-col h-screen">
+          <div className="w-full flex flex-col h-screen">
             <Outlet />
           </div>
         </FadeWrapper>
@@ -46,7 +46,7 @@ const AdminLayout = () => {
           </div>
         </FadeWrapper>
       )}
-    </>
+    </div>
   );
 };
 

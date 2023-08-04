@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import Parcours from "../../utils/interfaces/parcours";
 import { parcoursAction } from "../../store/redux-toolkit/parcours/parcours";
@@ -14,9 +14,11 @@ import { parcoursContactsAction } from "../../store/redux-toolkit/parcours/parco
 import Loader from "../../components/UI/loader";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import ImageHeader from "../../components/image-header/image-header";
-import Stepper from "../../components/UI/stepper.component/stepper.component";
 import ParcoursInformations from "../../components/edit-parcours/parcours-informations";
 import Error404 from "../../components/error404";
+import Stepper from "../../components/UI/stepper.-component/stepper.-component";
+import Skills from "../../components/skills/skills.component";
+import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 
 let initialState = true;
 
@@ -25,10 +27,12 @@ const EditParcours = () => {
   const { sendRequest, error, isLoading } = useHttp();
   const dispatch = useDispatch();
   const [image, setImage] = useState<string | undefined>(undefined);
-  const { actualStep, stepsList, updateStep } = useSteps(stepsParcours);
+  const { actualStep, stepsList, updateStep, validateStep } =
+    useSteps(stepsParcours);
   const nav = useNavigate();
-
-  console.log("Edit rendering");
+  const informationsIsValid = useSelector(
+    (state: any) => state.parcoursInformations.isValid
+  );
 
   /**
    * télécharge les données du parcours depuis la bdd et initialise les différentes propriétés du parcours
@@ -73,7 +77,7 @@ const EditParcours = () => {
         );
       }
     };
-    if (initialState && id) {
+    if (initialState) {
       sendRequest(
         {
           path: `/parcours/parcours-by-id/${id}`,
@@ -87,7 +91,7 @@ const EditParcours = () => {
   /**
    * renvoie l'utilisateur à la page de création du parcours après avoir supprimé de la bdd le parcours qui était en cours d'édition
    */
-  const handleRetour = () => {
+  const handleCancel = () => {
     if (actualStep.id === 1) {
       const processData = (data: any) => {
         console.log("delete parcours", data);
@@ -113,8 +117,31 @@ const EditParcours = () => {
       dispatch(parcoursInformationsAction.reset());
       dispatch(tagsAction.reset());
       dispatch(parcoursContactsAction.reset());
+      dispatch(parcoursSkillsAction.reset());
     };
   }, [dispatch]);
+
+  const handleUpdateStep = (id: number) => {
+    if (id < actualStep.id || id === 1) {
+      updateStep(id);
+    } else if (checkStep(actualStep.id) && checkStep(id - 1)) {
+      console.log("all good");
+
+      validateStep(actualStep.id, checkStep(actualStep.id));
+      updateStep(id);
+    }
+  };
+
+  const checkStep = (id: number) => {
+    switch (id) {
+      case 1:
+        return informationsIsValid;
+      default:
+        return false;
+    }
+  };
+
+  console.log({ stepsList });
 
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
@@ -132,21 +159,29 @@ const EditParcours = () => {
               />
             </div>
           </div>
-          <div className="w-full 2xl:w-4/6">
+          <div className="w-full 2xl:w-4/6 mt-16">
             {actualStep.id === 1 ? (
               <ParcoursInformations parcoursId={id} />
             ) : null}
+            {actualStep.id === 2 ? <Skills /> : null}
           </div>
           <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">
             {actualStep.id === 1 ? (
               <button
                 className="btn btn-primary btn-outline"
-                onClick={handleRetour}
+                onClick={handleCancel}
               >
                 Annuler
               </button>
-            ) : null}
-            <button className="btn btn-primary">Etape suivante</button>
+            ) : (
+              <button className="btn btn-primary btn-outline">Retour</button>
+            )}
+            <button
+              className="btn btn-primary"
+              onClick={() => handleUpdateStep(actualStep.id + 1)}
+            >
+              Etape suivante
+            </button>
           </div>
         </FadeWrapper>
       ) : (

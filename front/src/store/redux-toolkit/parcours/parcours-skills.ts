@@ -38,7 +38,7 @@ const parcoursSkillsSlice = createSlice({
     },
     addBadge(state, action) {
       const newBadge = action.payload;
-      let updatedBadges = state.badges;
+      const updatedBadges = state.badges;
       updatedBadges.push(newBadge);
       state.badges = addIdToObject(updatedBadges);
     },
@@ -59,7 +59,7 @@ const parcoursSkillsSlice = createSlice({
         (item) => item.id === action.payload.id
       );
       if (badgeToUpdate) {
-        let updatedBadges = state.badges.filter(
+        const updatedBadges = state.badges.filter(
           (item) => item.id !== action.payload.id
         );
         updatedBadges.push({
@@ -90,6 +90,13 @@ const parcoursSkillsSlice = createSlice({
     },
     getBadgesTotal(state) {
       state.totalBadges = state.badges.length;
+    },
+    reset(state) {
+      state.informationsAreValid = false;
+      state.badges = [];
+      state.importedSkills = [];
+      state.skills = [];
+      state.totalBadges = 0;
     },
   },
 });

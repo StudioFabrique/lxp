@@ -18,7 +18,7 @@ const RootLayout = () => {
   }, [initTheme, isLoggedIn, handshake]);
 
   return (
-    <>
+    <div className="w-screen min-h-screen flex flex-col justify-start items-center py-4 gap-y-2">
       {isLoggedIn ? (
         <FadeWrapper>
           <Outlet />
@@ -28,7 +28,7 @@ const RootLayout = () => {
           <Login />
         </FadeWrapper>
       )}
-    </>
+    </div>
   );
 };
 
