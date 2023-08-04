@@ -16,7 +16,8 @@ export interface IUser extends Document {
   address: string;
   postCode: string;
   city: string;
-  phoneNumber: string;
+  birthDate?: Date;
+  phoneNumber?: string;
   group?: IGroup["_id"];
 }
 
@@ -37,7 +38,8 @@ const userSchema: Schema = new Schema(
     address: { type: String, required: true },
     postCode: { type: String, required: true },
     city: { type: String, required: true },
-    phoneNumber: { type: String, required: true },
+    birthDate: { type: Date, required: false },
+    phoneNumber: { type: String, required: false },
     group: { type: [mongoose.Schema.Types.ObjectId], ref: "Group" },
   },
   { timestamps: true }
