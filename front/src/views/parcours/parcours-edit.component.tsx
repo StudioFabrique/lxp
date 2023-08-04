@@ -28,6 +28,8 @@ const EditParcours = () => {
   const { actualStep, stepsList, updateStep } = useSteps(stepsParcours);
   const nav = useNavigate();
 
+  console.log("Edit rendering");
+
   /**
    * télécharge les données du parcours depuis la bdd et initialise les différentes propriétés du parcours
    */
@@ -71,7 +73,7 @@ const EditParcours = () => {
         );
       }
     };
-    if (initialState) {
+    if (initialState && id) {
       sendRequest(
         {
           path: `/parcours/parcours-by-id/${id}`,

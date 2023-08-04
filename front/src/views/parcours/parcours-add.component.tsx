@@ -4,11 +4,11 @@ import { useNavigate } from "react-router-dom";
 
 import bgImage from "../../assets/images/new-parcours-default.jpg";
 import useHttp from "../../hooks/use-http";
+import NewParcoursForm from "../../components/edit-parcours/new-parcours-form";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import Loader from "../../components/UI/loader";
-import Selecter from "../../components/UI/selecter/selecter.component";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
-import NewParcoursForm from "../../components/edit-parcours/new-parcours-form";
+import Selecter from "../../components/UI/selecter/selecter.component";
 import { fixturesParcours } from "../../assets/fixtures/parcours";
 
 // type de données pour les listes

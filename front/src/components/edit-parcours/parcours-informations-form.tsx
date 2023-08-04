@@ -1,128 +1,188 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
 
-import ParcoursInformationsForm from "./parcours-informations-form";
-import useHttp from "../../hooks/use-http";
+import { FC, useCallback, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
-import Contact from "../../utils/interfaces/contact";
-import { Link } from "react-router-dom";
+
+import useHttp from "../../hooks/use-http";
+import useInput from "../../hooks/use-input";
+import { autoSubmitTimer } from "../../config/auto-submit-timer";
+import { regexGeneric, regexOptionalGeneric } from "../../utils/constantes";
 import { parcoursInformationsAction } from "../../store/redux-toolkit/parcours/parcours-informations";
-import Wrapper from "../UI/wrapper/wrapper.component";
-import DatesSelecter from "../UI/dates-selecter/dates-selecter.component";
-import Contacts from "./contacts";
-import Tags from "../UI/tags/tags.component";
-import Tag from "../../utils/interfaces/tag";
 
 type Props = {
   parcoursId?: string;
 };
 
-const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
-  const parcoursStartDate = useSelector(
-    (state: any) => state.parcoursInformations.infos.startDate
+const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
+  const formation = useSelector((state: any) => state.parcours.formation);
+  const parcoursInfos = useSelector(
+    (state: any) => state.parcoursInformations.infos
   );
-  const parcoursEndDate = useSelector(
-    (state: any) => state.parcoursInformations.infos.endDate
-  );
-  const dispatch = useDispatch();
   const { sendRequest } = useHttp();
+  const dispatch = useDispatch();
+  const { value: title } = useInput(
+    (value) => regexGeneric.test(value),
+    parcoursInfos.title
+  );
+  const { value: description } = useInput(
+    (value) => regexOptionalGeneric.test(value),
+    parcoursInfos.description
+  );
+  const isInitialRender = useRef(true);
 
-  const updateDates = useCallback(
-    (startDate: string, endDate: string) => {
-      const processData = (data: { success: boolean; message: string }) => {
-        if (data.success) {
-          toast.success(data.message);
-        }
-      };
+  // vérification des champs du formulaire
+  const formIsValid = title.isValid && description.isValid;
+
+  /**
+   * envoi d'une requête http pour mettre à jour les informations du formulaire
+   */
+  const updateInfos = useCallback(() => {
+    const processData = (data: { message: string }) => {
+      toast.success(data.message);
+    };
+    if (formIsValid) {
       sendRequest(
         {
-          path: "/parcours/update-dates",
+          path: "/parcours/update-infos",
           method: "put",
-          body: { parcoursId, startDate, endDate },
+          body: {
+            parcoursId,
+            title: title.value,
+            description: description.value,
+            formation: formation.id,
+          },
         },
         processData
       );
-    },
-    [parcoursId, sendRequest]
-  );
+    }
+  }, [
+    description.value,
+    title.value,
+    formation,
+    formIsValid,
+    sendRequest,
+    parcoursId,
+  ]);
 
-  const updateTags = useCallback(
-    (tags: Array<Tag>) => {
-      const processData = (data: { success: boolean; message: string }) => {
-        if (data.success) {
-          toast.success(data.message);
-        }
-      };
-      sendRequest(
-        {
-          path: "/parcours/update-tags",
-          method: "put",
-          body: { parcoursId, tags: tags.map((item: Tag) => item.id) },
-        },
-        processData
+  /**
+   * déclenchement avec un délai configuré dans le fichier auto-submit-timer.ts de l'envoi d'une requête http pour la mise à jour des informations du parcours
+   */
+  useEffect(() => {
+    const setInfos = async () => {
+      dispatch(
+        parcoursInformationsAction.updateParcoursInfos({
+          title: title.value,
+          description: description.value,
+        })
       );
-    },
-    [parcoursId, sendRequest]
-  );
+      if (!isInitialRender.current) {
+        updateInfos();
+      } else {
+        isInitialRender.current = false;
+      }
+    };
+    const timer = setTimeout(() => {
+      setInfos();
+    }, autoSubmitTimer);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [updateInfos, description.value, title.value, dispatch]);
 
-  // Callback pour soumettre les dates du parcours
-  const submitDates = useCallback(
-    (dates: { startDate: string; endDate: string }) => {
-      dispatch(parcoursInformationsAction.updateParcoursDates(dates));
-      updateDates(dates.startDate, dates.endDate);
-    },
-    [updateDates, dispatch]
-  );
+  /**
+   * définit le style du champ formulaire en fonction de sa validité
+   * @param hasError boolean
+   * @returns string
+   */
+  const setInputStyle = (hasError: boolean) => {
+    return hasError
+      ? "input input-error text-error input-sm input-bordered focus:outline-none w-full"
+      : "input input-sm input-bordered focus:outline-none w-full";
+  };
 
-  const submitContacts = useCallback(
-    (contacts: Array<Contact>) => {
-      const processData = (data: { success: boolean; message: string }) => {
-        if (data.success) {
-          toast.success(data.message);
-        }
-      };
-      sendRequest(
-        {
-          path: "/parcours/update-contacts",
-          method: "put",
-          body: { parcoursId, contacts },
-        },
-        processData
-      );
-    },
-    [parcoursId, sendRequest]
-  );
+  /**
+   * définit le style du champ formulaire en fonction de sa validité
+   * @param hasError boolean
+   * @returns string
+   */
+  const setAreaStyle = (hasError: boolean) => {
+    return hasError
+      ? "textarea textarea-error text-error textarea-sm textarea-bordered focus:outline-none w-full"
+      : "textarea textarea-sm textarea-bordered focus:outline-none w-full";
+  };
 
   return (
-    <div className="w-full">
-      <h2 className="text-xl font-bold mt-16 mb-8">Informations</h2>
-      <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-x-16">
-        <Wrapper>
-          <div className="flex flex-col gap-y-8">
-            <ParcoursInformationsForm parcoursId={parcoursId} />
-            <DatesSelecter
-              startDateProp={parcoursStartDate}
-              endDateProp={parcoursEndDate}
-              label="Dates de parcours"
-              onSubmitDates={submitDates}
-            />
-          </div>
-          <Link className="mt-4 mb-8 font-bold hover:underline" to="#">
-            Classe Virtuelle
-          </Link>
-        </Wrapper>
-        <div className="grid grid-rows-2 gap-8">
-          <Wrapper>
-            <Contacts onSubmitContacts={submitContacts} />
-          </Wrapper>
-          <Wrapper>
-            <Tags onSubmitTags={updateTags} />
-          </Wrapper>
-        </div>
+    <>
+      <div>
+        {formation ? (
+          <>
+            <div className="flex flex-col gap-y-4">
+              <label className="font-bold" htmlFor="formation">
+                Formation
+              </label>
+              <input
+                className="input input-sm input-bordered focus:outline-none w-full"
+                id="formation"
+                name="formation"
+                type="formation"
+                readOnly={true}
+                disabled={true}
+                value={formation.title}
+              />
+            </div>
+            <form className="w-full flex flex-col gap-y-8 mt-8">
+              <div className="flex flex-col gap-y-4">
+                <label className="font-bold" htmlFor="title">
+                  Titre du parcours
+                </label>
+                <input
+                  className={setInputStyle(title.hasError)}
+                  id="title"
+                  name="title"
+                  type="text"
+                  defaultValue={title.value}
+                  onChange={title.valueChangeHandler}
+                  onBlur={title.valueBlurHandler}
+                  placeholder="Exemple: CDA - Promo 2023"
+                />
+              </div>
+
+              <div className="flex flex-col gap-y-4">
+                <label className="font-bold" htmlFor="level">
+                  Description
+                </label>
+                <textarea
+                  className={setAreaStyle(description.hasError)}
+                  id="description"
+                  name="description"
+                  rows={3}
+                  defaultValue={description.value}
+                  onChange={description.textAreaChangeHandler}
+                  onBlur={description.valueBlurHandler}
+                />
+              </div>
+
+              <div className="flex flex-col gap-y-4">
+                <label className="font-bold" htmlFor="level">
+                  Niveau du parcours
+                </label>
+                <input
+                  className="input input-sm input-bordered focus:outline-none w-full"
+                  id="level"
+                  name="level"
+                  type="level"
+                  readOnly={true}
+                  disabled={true}
+                  value={formation.level}
+                />
+              </div>
+            </form>
+          </>
+        ) : null}
       </div>
-    </div>
+    </>
   );
 };
 
-export default ParcoursInformations;
+export default ParcoursInformationsForm;
