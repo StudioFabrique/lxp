@@ -195,7 +195,7 @@ const UserHome = () => {
             <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />
           ) : null}
           <div className="flex justify-end items-center">
-            <div className="flex gap-x-2">
+            <div className="flex items-center gap-x-2">
               <SearchUser
                 options={userSearchOptions}
                 onSearch={handleSearchResult}

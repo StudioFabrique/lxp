@@ -115,7 +115,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
   return (
     <>
       <div>
-        {formation ? (
+        {formation && parcoursInfos.title ? (
           <>
             <div className="flex flex-col gap-y-4">
               <label className="font-bold" htmlFor="formation">

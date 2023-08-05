@@ -1,4 +1,5 @@
 import { useState, ChangeEvent, FC } from "react";
+
 import { regexGeneric } from "../../../utils/constantes";
 
 const Search: FC<{
@@ -40,7 +41,7 @@ const Search: FC<{
     setSearchValue(event.currentTarget.value);
   };
 
-  let optionsList = (
+  const optionsList = (
     <>
       {props.options.map(
         (item: { index: number; value: string; option: string }) => (
