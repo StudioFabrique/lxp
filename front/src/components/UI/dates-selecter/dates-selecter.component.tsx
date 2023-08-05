@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import useInput from "../../../hooks/use-input";
 import { regexGeneric } from "../../../utils/constantes";
@@ -27,6 +27,7 @@ const DatesSelecter: FC<Props> = ({
     endDateProp ? formatDateToYYYYMMDD(new Date(endDateProp)) : ""
   );
   const [error, setError] = useState(false);
+  const isInitialRender = useRef(true);
 
   const dates = useMemo(() => {
     return {
@@ -34,10 +35,6 @@ const DatesSelecter: FC<Props> = ({
       endDate: endDate.value,
     };
   }, [startDate.value, endDate.value]);
-
-  console.log({ startDateProp, endDateProp });
-
-  console.log({ startDate, endDate });
 
   /**
    * vérification de la validité des dates et envoie des données au composant parent pour les mettre à jour dans le state global et la bdd
@@ -50,7 +47,11 @@ const DatesSelecter: FC<Props> = ({
       const eDate = new Date(dates.endDate).getTime();
       if (startDate.isValid && endDate.isValid) {
         if (sDate > date && sDate < eDate) {
-          onSubmitDates(dates);
+          if (!isInitialRender.current) {
+            onSubmitDates(dates);
+          } else {
+            isInitialRender.current = false;
+          }
         } else {
           setError(true);
         }
@@ -60,6 +61,22 @@ const DatesSelecter: FC<Props> = ({
       clearTimeout(timer);
     };
   }, [dates, startDate.isValid, endDate.isValid, onSubmitDates]);
+
+  const handleChangeStartDate = useCallback(
+    (event: React.FormEvent<HTMLInputElement>) => {
+      startDate.datePicking(event.currentTarget.value);
+      isInitialRender.current = false;
+    },
+    [startDate]
+  );
+
+  const handleChangeEndDate = useCallback(
+    (event: React.FormEvent<HTMLInputElement>) => {
+      endDate.datePicking(event.currentTarget.value);
+      isInitialRender.current = false;
+    },
+    [endDate]
+  );
 
   return (
     <div className="flex flex-col gap-y-4">
@@ -72,7 +89,7 @@ const DatesSelecter: FC<Props> = ({
             name="startingDate"
             type="date"
             value={startDate.value}
-            onChange={startDate.valueChangeHandler}
+            onChange={handleChangeStartDate}
           />
         </div>
         <div className="flex justify-between items-center">
@@ -82,7 +99,7 @@ const DatesSelecter: FC<Props> = ({
             name="endingDate"
             type="date"
             value={endDate.value}
-            onChange={endDate.valueChangeHandler}
+            onChange={handleChangeEndDate}
           />
         </div>
       </div>
