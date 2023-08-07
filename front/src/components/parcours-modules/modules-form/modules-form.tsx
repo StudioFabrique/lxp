@@ -4,7 +4,6 @@ import useInput from "../../../hooks/use-input";
 import { regexGeneric, regexNumber } from "../../../utils/constantes";
 import User from "../../../utils/interfaces/user";
 import Skill from "../../../utils/interfaces/skill";
-import AddSkills from "./add-skill/add-skill.component";
 import Module from "../../../utils/interfaces/module";
 import { validateImageFile } from "../../../utils/validate-image-file";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,14 +16,15 @@ import AddButton from "./buttons/add-button.component";
 import EditButton from "./buttons/edit-button.component";
 import DataAdder from "../../UI/data-adder/data-adder.component";
 import { teachersData } from "../../../utils/fixtures/teachers";
-import { getDBSkills as skillsData } from "../../../utils/fixtures/skills";
+// import { getDBSkills as skillsData } from "../../../utils/fixtures/skills";
 import { Toaster, toast } from "react-hot-toast";
 
 const ModulesForm: FC<{}> = (props) => {
   const currentModuleToEdit: Module | null = useSelector(
     (state: any) => state.parcoursModule.currentModule
   );
-  // const skillsFromDb = useSelector((state: any) => state.parcoursSkills.skills);
+
+  const skillsFromDb = useSelector((state: any) => state.parcoursSkills.skills);
   const dispatch = useDispatch();
 
   const { value: title } = useInput((value) => regexGeneric.test(value));
@@ -60,7 +60,7 @@ const ModulesForm: FC<{}> = (props) => {
       !description.isValid ||
       !duration.isValid ||
       teachers.length <= 0 ||
-      imageFile
+      !imageFile
     ) {
       toast.error("les informations saisies sont incorrects");
       return;
@@ -146,7 +146,7 @@ const ModulesForm: FC<{}> = (props) => {
       {/* compétences compo */}
       <DataAdder
         data={skills}
-        dataFromDb={skillsData()}
+        dataFromDb={skillsFromDb}
         propertiesToSearch={["description"]}
         propertyToFilter="id"
         resetFilter={resetFilter}

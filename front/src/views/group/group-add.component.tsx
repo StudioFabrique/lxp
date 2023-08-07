@@ -5,6 +5,7 @@ import GroupAddForm from "../../components/forms/group-form/group-add-form.compo
 import GroupUserList from "../../components/lists/group-add-user-list/group-user-list.component";
 import { useCallback, useEffect, useState } from "react";
 import User from "../../utils/interfaces/user";
+import { Toaster } from "react-hot-toast";
 
 const GroupAdd = () => {
   const [usersToAdd, setUsersToAdd] = useState<Array<User>>([]);
@@ -28,6 +29,7 @@ const GroupAdd = () => {
 
   return (
     <div className="p-5 grid grid-rows-2 gap-y-5">
+      <Toaster />
       <GroupAddForm
         onSubmitForm={handleSubmit}
         error={error}
