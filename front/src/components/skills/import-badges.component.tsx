@@ -3,11 +3,7 @@ import { validateImageFile } from "../../utils/validate-image-file";
 import { useDispatch } from "react-redux";
 
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
-
-/**
- * input de type file pour importer des images pour des badges
- *
- */
+import UploadIcon from "../UI/svg-icons/upload-icon.component";
 
 const maxSize = 100 * 1024;
 
@@ -47,25 +43,17 @@ const ImportBadges = () => {
   return (
     <>
       <div
-        className="w-[75px] h-[75px] flex justify-center items-center border border-primary p-2 rounded-xl"
+        className="w-fit flex flex-col justify-center items-center border border-primary rounded-xl"
         onClick={handleLabelClick}
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-full h-full text-primary"
+        <button
+          className="btn btn-sm btn-primary flex items-center"
+          type="button"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 4.5v15m7.5-7.5h-15"
-          />
-        </svg>
+          <UploadIcon size={6} />
+          <p>Importer un badge</p>
+        </button>
       </div>
-
       <input
         className="hidden"
         name="badges-select"

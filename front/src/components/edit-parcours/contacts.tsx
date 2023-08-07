@@ -18,7 +18,7 @@ type Props = {
 };
 
 const Contacts: FC<Props> = ({ onSubmitContacts }) => {
-  const { sendRequest } = useHttp();
+  const { sendRequest, error } = useHttp();
   const dispatch = useDispatch();
   const contacts = useSelector(
     (state: any) => state.parcoursContacts.currentContacts
@@ -151,6 +151,12 @@ const Contacts: FC<Props> = ({ onSubmitContacts }) => {
       processData
     );
   };
+
+  useEffect(() => {
+    if (error.length > 0) {
+      toast.error(error);
+    }
+  }, [error]);
 
   return (
     <>

@@ -3,12 +3,13 @@ import { createSlice } from "@reduxjs/toolkit";
 import Skill from "../../../utils/interfaces/skill";
 import { addIdToObject } from "../../../utils/add-id-to-objects";
 import { sortArray } from "../../../utils/sortArray";
+import Badge from "../../../utils/interfaces/badge";
 
 const initialParcoursState = {
   informationsAreValid: false,
   importedSkills: Array<any>(),
   skills: Array<Skill>(),
-  badges: Array<any>(),
+  badges: Array<Badge>(),
   totalBadges: 0,
 };
 
@@ -96,6 +97,23 @@ const parcoursSkillsSlice = createSlice({
       state.importedSkills = [];
       state.skills = [];
       state.totalBadges = 0;
+    },
+    setSelectedBadge(state, action) {
+      let updatedBadges = state.badges;
+      updatedBadges.map((item) => (item.isSelected = false));
+      let badge = updatedBadges.find((item) => item.id === action.payload);
+      if (badge) {
+        updatedBadges = updatedBadges.filter(
+          (item) => item.id !== action.payload
+        );
+        state.badges = sortArray(
+          [...updatedBadges, { ...badge, isSelected: true }],
+          "id"
+        );
+      }
+    },
+    setSkillsList(state, action) {
+      state.skills = action.payload;
     },
   },
 });

@@ -1,5 +1,6 @@
 import Contact from "./contact";
 import Formation from "./formation";
+import Skill from "./skill";
 import Tag from "./tag";
 
 export default interface Parcours {
@@ -16,4 +17,5 @@ export default interface Parcours {
   formation: Formation;
   tags: Array<Tag>;
   contacts: Array<Contact>;
+  skills: Array<Skill>;
 }

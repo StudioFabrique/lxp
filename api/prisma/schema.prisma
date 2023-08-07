@@ -80,7 +80,7 @@ model Skill {
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @default(now())
   modules     SkillsOnModule[]
-  image       Bytes?
+  badge       Bytes?
 }
 
 model Admin {
