@@ -51,11 +51,11 @@ const DataAdder: FC<{
 
   useEffect(() => {
     if (resetFilter) {
-      const newData = data.filter((data: any) => !dataFromDb.includes(data));
-
-      console.log("liste de toute les données de la bdd :");
-      console.log(dataFromDb);
-      console.log("nouvelle données :");
+      const newData = data.filter((data) =>
+        dataFromDb.map(
+          (dataDb) => dataDb[propertyToFilter] !== data[propertyToFilter]
+        )
+      );
       console.log(newData);
 
       setDataAvailables(newData);
