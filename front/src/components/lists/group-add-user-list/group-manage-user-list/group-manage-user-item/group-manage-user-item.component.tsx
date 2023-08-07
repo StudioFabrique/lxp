@@ -11,7 +11,7 @@ const GroupManageUserItem: FC<{
   onDeleteSelectedUser: (uniqueProperty: string) => void;
 }> = ({ user, usersToAdd, onAddSelectedUser, onDeleteSelectedUser }) => {
   return (
-    /* usersToAdd && */ <span className="flex gap-x-2 p-2 pl-5 w-full bg-secondary-content rounded-lg">
+    <span className="flex items-center gap-x-4 p-2 pl-5 w-full bg-secondary-content rounded-lg">
       <SelectionButton
         currentUser={user}
         onAddSelectedUser={onAddSelectedUser}

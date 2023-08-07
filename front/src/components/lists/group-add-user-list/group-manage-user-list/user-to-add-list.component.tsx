@@ -3,6 +3,7 @@ import User from "../../../../utils/interfaces/user";
 import { SelectionButton } from "./group-manage-user-item/buttons.component";
 import { AvatarSmall } from "../../../UI/avatar/avatar.component";
 import GroupManageUserItem from "./group-manage-user-item/group-manage-user-item.component";
+import AddButton from "./buttons/add-button.component";
 
 const UserToAddList: FC<{
   userList: Array<User>;
@@ -30,15 +31,17 @@ const UserToAddList: FC<{
   ]);
 
   return (
-    <div className="h-full overflow-y-auto">
+    <div className="flex flex-col gap-y-5 h-full overflow-y-auto">
       {props.userList.map((user: User) => (
-        <GroupManageUserItem
-          key={user._id}
-          user={user}
-          usersToAdd={props.usersToAdd}
-          onAddSelectedUser={props.onAddSelectedUser}
-          onDeleteSelectedUser={props.onDeleteSelectedUser}
-        />
+        <div key={user._id} className="flex items-center gap-x-2">
+          <GroupManageUserItem
+            user={user}
+            usersToAdd={props.usersToAdd}
+            onAddSelectedUser={props.onAddSelectedUser}
+            onDeleteSelectedUser={props.onDeleteSelectedUser}
+          />
+          <AddButton />
+        </div>
       ))}
     </div>
   );
