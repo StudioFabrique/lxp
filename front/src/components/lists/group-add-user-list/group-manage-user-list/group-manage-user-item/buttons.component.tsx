@@ -18,7 +18,7 @@ export const AddUsersButton: FC<{
         className="btn btn-sm btn-primary self-center"
         onClick={handleClick}
       >
-        ajouter les utilisateurs
+        ajouter
       </button>
     );
   } else {
