@@ -95,7 +95,7 @@ const EditParcours = () => {
     if (actualStep.id === 1) {
       const processData = (data: any) => {
         console.log("delete parcours", data);
-        nav("/admin/parcours/add");
+        nav("/admin/parcours/créer-un-parcours");
       };
       sendRequest(
         {
@@ -141,7 +141,9 @@ const EditParcours = () => {
     }
   };
 
-  console.log({ stepsList });
+  const handleRetour = () => {
+    updateStep(actualStep.id - 1);
+  };
 
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
@@ -174,7 +176,12 @@ const EditParcours = () => {
                 Annuler
               </button>
             ) : (
-              <button className="btn btn-primary btn-outline">Retour</button>
+              <button
+                className="btn btn-primary btn-outline"
+                onClick={handleRetour}
+              >
+                Retour
+              </button>
             )}
             <button
               className="btn btn-primary"

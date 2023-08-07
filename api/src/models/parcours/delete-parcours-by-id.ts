@@ -21,6 +21,11 @@ async function deleteParcoursById(parcoursId: number) {
         where: { parcoursId: parcoursId },
       });
 
+      // Supprimer les enregistrements dans la table TagsOnParcours liés au parcours
+      await tx.contactsOnParcours.deleteMany({
+        where: { parcoursId: parcoursId },
+      });
+
       // Supprimer le parcours
       await tx.parcours.delete({
         where: { id: parcoursId },
