@@ -48,6 +48,8 @@ const SearchDropdownMultiple: FC<{
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
+    console.log(data);
+
     setInputValue(event.currentTarget.value.toLowerCase());
     if (!(inputValue.length > 1)) {
       setIsOpen(false);
@@ -68,7 +70,6 @@ const SearchDropdownMultiple: FC<{
         dataSearchResult,
         propertyToFilter
       );
-      console.log(filteredResultIdlist);
 
       setItemsAvailables(
         data.filter((data) =>

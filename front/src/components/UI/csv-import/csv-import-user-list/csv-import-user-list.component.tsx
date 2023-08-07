@@ -24,7 +24,7 @@ const CsvImportUserList: FC<{
       setUsersToImport(data);
       setDrawerOpenState(true);
     } else {
-      toast("problème d'importation des données");
+      toast.error("problème d'importation des données");
     }
   };
 
