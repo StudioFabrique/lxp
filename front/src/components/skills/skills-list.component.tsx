@@ -5,17 +5,21 @@ import Skill from "../../utils/interfaces/skill";
 import SkillItem from "./skill-item.component";
 import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
 import SkillForm from "./skill-form";
-import Badge from "../../utils/interfaces/badge";
 import ButtonAdd from "../UI/button-add/button-add";
 import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
+import useHttp from "../../hooks/use-http";
+import { useParams } from "react-router-dom";
+import { autoSubmitTimer } from "../../config/auto-submit-timer";
 
 const SkillsList = () => {
+  const { id } = useParams();
   const skillList = useSelector((state: any) => state.parcoursSkills.skills);
   const dispatch = useDispatch();
   const [itemToUpdate, setItemToUpdate] = useState<any | null>(null);
   const [activeDrawer, setActiveDrawer] = useState<string | undefined>("");
   const [title, setTitle] = useState<string | undefined>("");
+  const { sendRequest } = useHttp();
 
   const handleDeleteSkill = (skillId: number) => {
     dispatch(parcoursSkillsAction.deleteSkill(skillId));
@@ -46,23 +50,10 @@ const SkillsList = () => {
     setTitle("Modifier le Badge");
   };
 
-  const submitNewSkill = (skill: Skill) => {
-    dispatch(parcoursSkillsAction.addSkill(skill));
-    handleCloseDrawer(activeDrawer!);
-  };
-
   const submitUpdateSkill = (skill: Skill) => {
     dispatch(parcoursSkillsAction.editSkill(skill));
     handleCloseDrawer("update-skill");
   };
-
-  /*   const submitNewBadge = (newBadge: Badge) => {
-    if (itemToUpdate) {
-      const updatedSkill = { ...itemToUpdate, badge: newBadge };
-      dispatch(parcoursSkillsAction.editSkill(updatedSkill));
-      handleCloseDrawer("update-badge");
-    }
-  }; */
 
   useEffect(() => {
     if (activeDrawer !== undefined) {
@@ -70,14 +61,12 @@ const SkillsList = () => {
     }
   }, [activeDrawer]);
 
-  console.log("list rendering");
-
   let content = (
     <>
       {skillList.length > 0 ? (
         <ul className="flex flex-col gap-y-4">
           {skillList.map((item: Skill) => (
-            <li key={item.id}>
+            <li key={item.description}>
               <FadeWrapper>
                 <SkillItem
                   skill={item}
@@ -95,9 +84,27 @@ const SkillsList = () => {
     </>
   );
 
-  console.log("rendering");
-  /* 
-  <ImportButton label="AJOUTER" onClickEvent={handleAddSkill} /> */
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (skillList.length > 0) {
+        const processData = (data: any) => {
+          const skills = data.skills.map((item: any) => item.skill);
+        };
+        sendRequest(
+          {
+            path: "/parcours/update-skills",
+            method: "put",
+            body: { parcoursId: id, skills: skillList },
+          },
+          processData
+        );
+      }
+    }, autoSubmitTimer);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [id, skillList, dispatch, sendRequest]);
+
   return (
     <>
       <div className="flex flex-col gap-y-4 mt-4">{content}</div>
@@ -116,10 +123,7 @@ const SkillsList = () => {
         onCloseDrawer={handleCloseDrawer}
       >
         {activeDrawer === "badge-drawer" && title && title.length > 0 ? (
-          <SkillForm
-            onSubmit={submitNewSkill}
-            onCloseDrawer={handleCloseDrawer}
-          />
+          <SkillForm onCloseDrawer={handleCloseDrawer} />
         ) : null}
 
         {activeDrawer === "update-skill" &&

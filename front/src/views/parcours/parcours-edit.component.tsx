@@ -76,6 +76,13 @@ const EditParcours = () => {
           )
         );
       }
+      if (data.skills.length > 0) {
+        dispatch(
+          parcoursSkillsAction.setSkillsList(
+            data.skills.map((item: any) => item.skill)
+          )
+        );
+      }
     };
     if (initialState) {
       sendRequest(

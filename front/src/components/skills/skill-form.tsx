@@ -8,18 +8,16 @@ import Wrapper from "../UI/wrapper/wrapper.component";
 import { useDispatch } from "react-redux";
 import DrawerFormButtons from "../UI/drawer-form-buttons/drawer-form-buttons.component";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
-import useHttp from "../../hooks/use-http";
 import Badge from "../../utils/interfaces/badge";
 
 type Props = {
   skill?: Skill;
-  onSubmit: (skill: Skill) => void;
+  onSubmit?: (skill: Skill) => void;
   onCloseDrawer: (id: string) => void;
 };
 
 const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   const dispatch = useDispatch();
-  const { sendRequest } = useHttp();
   const [badge, setBadge] = useState<Badge | null>(null);
 
   const { value: description } = useInput(
@@ -48,12 +46,15 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (formIsValid) {
-      onSubmit({
-        description: description.value,
-        id: skill?.id,
-        badge: badge?.image,
-      });
+      dispatch(
+        parcoursSkillsAction.addSkill({
+          description: description.value,
+          id: skill?.id,
+          badge: badge?.image,
+        })
+      );
       description.reset();
+      onCloseDrawer("badge-drawer");
     } else {
       console.log("oops");
     }
@@ -64,7 +65,7 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   }, [dispatch]);
 
   return (
-    <div className="flesx flex-col gap-y-4">
+    <div className="flex flex-col gap-y-4">
       <form className="flex flex-col px-4 gap-y-4" onSubmit={handleSubmit}>
         <Wrapper>
           <div className="flex flex-col gap-y-2">
