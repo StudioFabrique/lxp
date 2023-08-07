@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useCallback } from "react";
+import { FC, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import ParcoursInformationsForm from "./parcours-informations-form";
@@ -27,6 +27,12 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
   );
   const dispatch = useDispatch();
   const { sendRequest } = useHttp();
+  const tagsIsValid = useSelector(
+    (state: any) => state.parcoursInformations.tagsIsValid
+  );
+  const isValid = useSelector(
+    (state: any) => state.parcoursInformations.isValid
+  );
 
   const updateDates = useCallback(
     (startDate: string, endDate: string) => {
@@ -94,11 +100,16 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
     [parcoursId, sendRequest]
   );
 
+  useEffect(() => {
+    dispatch(parcoursInformationsAction.isValid());
+  }, [tagsIsValid, parcoursStartDate, parcoursEndDate, dispatch]);
+  console.log({ isValid });
+
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold mt-16 mb-8">Informations</h2>
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-x-16">
         <Wrapper>
+          <h2 className="text-xl font-bold">Informations</h2>
           <div className="flex flex-col gap-y-8">
             <ParcoursInformationsForm parcoursId={parcoursId} />
             <DatesSelecter

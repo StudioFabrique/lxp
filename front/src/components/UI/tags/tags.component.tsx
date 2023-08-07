@@ -60,7 +60,6 @@ const Tags: FC<Props> = ({ title, onSubmitTags }) => {
       isValid = true;
     }
     dispatch(parcoursInformationsAction.setTagsIsValid(isValid));
-    dispatch(parcoursInformationsAction.isValid());
   }, [currentTags, dispatch]);
 
   /**

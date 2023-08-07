@@ -43,9 +43,8 @@ const parcoursSkillsSlice = createSlice({
       state.badges = addIdToObject(updatedBadges);
     },
     importBadges(state, action) {
-      const badges = state.badges;
-      badges.push(action.payload);
-      state.badges = addIdToObject(badges);
+      state.badges.push(action.payload);
+      state.badges = addIdToObject(state.badges);
     },
     validateBadge(state, action) {
       const updatedBadges = state.badges.filter(

@@ -11,7 +11,7 @@ type Props = {
 
 const SkillsHeader: FC<Props> = ({ onImport }) => {
   return (
-    <div className="w-full flex justify-between items-center">
+    <div className="w-full flex justify-between items-center pr-2">
       <h3 className="text-xl font-bold">Compétences</h3>
       <div className="flex items-center gap-x-8">
         <div className="text-primary">
@@ -26,7 +26,6 @@ const SkillsHeader: FC<Props> = ({ onImport }) => {
           <BadgeIcon size={4} color="primary" />
           <p>Gestion des badges</p>
         </Link>
-        <button className="btn btn-primary capitalize">sauvegarder</button>
       </div>
     </div>
   );

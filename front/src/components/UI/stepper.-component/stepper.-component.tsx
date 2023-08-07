@@ -24,19 +24,13 @@ const Stepper: FC<Props> = ({ actualStep, stepsList, updateStep }) => {
     <>
       <ul className="w-full rounded-lg steps">
         {stepsList.map((item: Step) => (
-          <StepItem stepItem={item} actualStepId={actualStep.id} />
+          <StepItem
+            key={item.id}
+            stepItem={item}
+            actualStepId={actualStep.id}
+          />
         ))}
       </ul>
-      {/*       <ul className="w-full flex justify-center bg-slate-500">
-        {stepsList.map((item: Step) => (
-          <li className="w-full flex items-center bg-yellow-400 ">
-            <div className="w-10 h-10 rounded-full bg-pink-400" />
-            {item.id < stepsList.length ? (
-              <div className="flex-1 h-2 bg-orange-400" />
-            ) : null}
-          </li>
-        ))}
-      </ul> */}
     </>
   );
 

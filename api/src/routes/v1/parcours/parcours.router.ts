@@ -7,10 +7,10 @@ import getParcoursByIdRouter from "./get-parcours-by-id";
 import putUpdateImageRouter from "./put-update-image";
 import putUpdateInfosRouter from "./put-update-infos";
 import putUpdateDatesRouter from "./put-updates-dates";
-import deleteParcoursByIdRouter from "./delete-parcours-bu-id";
 import putParcoursContactsRouter from "./put-parcours-contacts";
 
 import putParcoursTagsRouter from "./put-parcours-tags";
+import deleteParcoursByIdRouter from "./delete-parcours-by-id";
 
 const parcoursRouter = express.Router();
 

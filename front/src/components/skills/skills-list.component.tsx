@@ -6,7 +6,6 @@ import SkillItem from "./skill-item.component";
 import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
 import SkillForm from "./skill-form";
 import Badge from "../../utils/interfaces/badge";
-import BadgeUpdate from "../badge/badge-update.component";
 import ButtonAdd from "../UI/button-add/button-add";
 import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
@@ -57,13 +56,13 @@ const SkillsList = () => {
     handleCloseDrawer("update-skill");
   };
 
-  const submitNewBadge = (newBadge: Badge) => {
+  /*   const submitNewBadge = (newBadge: Badge) => {
     if (itemToUpdate) {
       const updatedSkill = { ...itemToUpdate, badge: newBadge };
       dispatch(parcoursSkillsAction.editSkill(updatedSkill));
       handleCloseDrawer("update-badge");
     }
-  };
+  }; */
 
   useEffect(() => {
     if (activeDrawer !== undefined) {
@@ -131,16 +130,6 @@ const SkillsList = () => {
             onSubmit={submitUpdateSkill}
             skill={itemToUpdate}
             onCloseDrawer={handleCloseDrawer}
-          />
-        ) : null}
-
-        {activeDrawer === "update-badge" &&
-        title &&
-        title.length > 0 &&
-        itemToUpdate ? (
-          <BadgeUpdate
-            badge={itemToUpdate.badge}
-            onSubmitNewBadge={submitNewBadge}
           />
         ) : null}
       </RightSideDrawer>
