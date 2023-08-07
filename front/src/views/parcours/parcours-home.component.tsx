@@ -41,7 +41,7 @@ const ParcoursHome = () => {
         <>
           {parcoursList.map((item: Parcours) => (
             <tr
-              className="cursor-pointer"
+              className="cursor-pointer hover:bg-secondary/20 hover:text-base-content"
               key={item.id}
               onClick={() => handleEditParcours(item.id!)}
             >
