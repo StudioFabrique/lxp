@@ -51,17 +51,24 @@ const DataAdder: FC<{
 
   useEffect(() => {
     if (resetFilter) {
-      const newData = data.filter((data) =>
-        dataFromDb.map(
-          (dataDb) => dataDb[propertyToFilter] !== data[propertyToFilter]
+      const newData = data.map((data) =>
+        dataFromDb.filter(
+          (dataFromDb) =>
+            dataFromDb[propertyToFilter] !== data[propertyToFilter]
         )
       );
       console.log(newData);
-
-      setDataAvailables(newData);
+      setDataAvailables(data.length > 0 ? newData : dataFromDb);
       setResetFilter(false);
     }
-  }, [data, setDataAvailables, resetFilter, setResetFilter]);
+  }, [
+    data,
+    setDataAvailables,
+    resetFilter,
+    setResetFilter,
+    dataFromDb,
+    propertyToFilter,
+  ]);
 
   return (
     <div className="flex flex-col">
