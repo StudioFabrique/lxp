@@ -94,7 +94,6 @@ const EditParcours = () => {
   const handleCancel = () => {
     if (actualStep.id === 1) {
       const processData = (data: any) => {
-        console.log("delete parcours", data);
         nav("/admin/parcours/créer-un-parcours");
       };
       sendRequest(

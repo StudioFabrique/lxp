@@ -37,7 +37,6 @@ const StepItem: FC<Props> = ({ actualStepId, stepItem }) => {
     <li
       className={`step ${setStepColor()} ${setCursor()}`}
       onClick={() => {}}
-      key={stepItem.id}
       data-content="&#9773;"
     >
       {stepItem.label}

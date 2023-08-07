@@ -48,9 +48,6 @@ const parcoursInformationsSlice = createSlice({
         infos.endDate !== null &&
         infos.endDate.length > 0 &&
         state.tagsIsValid;
-      console.log("tags", state.tagsIsValid);
-
-      console.log("valide", state.isValid);
     },
     setTagsIsValid(state, action) {
       state.tagsIsValid = action.payload;
