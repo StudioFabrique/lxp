@@ -68,7 +68,6 @@ const SearchDropdownMultiple: FC<{
         dataSearchResult,
         propertyToFilter
       );
-      console.log(filteredResultIdlist);
 
       setItemsAvailables(
         data.filter((data) =>
