@@ -56,8 +56,7 @@ const DataAdder: FC<{
           (dataFromDb) =>
             dataFromDb[propertyToFilter] !== data[propertyToFilter]
         )
-      );
-      console.log(newData);
+      )[0];
       setDataAvailables(data.length > 0 ? newData : dataFromDb);
       setResetFilter(false);
     }
