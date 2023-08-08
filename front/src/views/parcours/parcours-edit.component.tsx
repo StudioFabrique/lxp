@@ -16,9 +16,10 @@ import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import ImageHeader from "../../components/image-header/image-header";
 import ParcoursInformations from "../../components/edit-parcours/parcours-informations";
 import Error404 from "../../components/error404";
-import Stepper from "../../components/UI/stepper.-component/stepper.-component";
 import Skills from "../../components/skills/skills.component";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
+import ParcoursModules from "../../components/parcours-modules/parcours-modules.component";
+import Stepper from "../../components/UI/stepper.-component/stepper.-component";
 
 let initialState = true;
 
@@ -33,6 +34,7 @@ const EditParcours = () => {
   const informationsIsValid = useSelector(
     (state: any) => state.parcoursInformations.isValid
   );
+  const skills = useSelector((state: any) => state.parcoursSkills.skills);
 
   /**
    * télécharge les données du parcours depuis la bdd et initialise les différentes propriétés du parcours
@@ -142,6 +144,8 @@ const EditParcours = () => {
     switch (id) {
       case 1:
         return informationsIsValid;
+      case 2:
+        return skills.length > 0;
       default:
         return false;
     }
@@ -172,6 +176,7 @@ const EditParcours = () => {
               <ParcoursInformations parcoursId={id} />
             ) : null}
             {actualStep.id === 2 ? <Skills /> : null}
+            {actualStep.id === 3 ? <ParcoursModules /> : null}
           </div>
           <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">
             {actualStep.id === 1 ? (

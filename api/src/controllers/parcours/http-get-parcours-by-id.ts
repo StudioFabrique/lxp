@@ -14,11 +14,6 @@ async function httpGetParcoursById(req: Request, res: Response) {
     const { parcoursId } = req.params;
     const response = await getParcoursById(parseInt(parcoursId));
     if (response) {
-      console.log({ response });
-      const contacts = response.contacts;
-      for (const item of contacts) {
-        console.log(item.contact);
-      }
       return res.status(200).json(response);
     }
   } catch (error: any) {

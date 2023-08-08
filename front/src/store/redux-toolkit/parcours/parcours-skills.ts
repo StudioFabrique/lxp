@@ -20,7 +20,7 @@ const parcoursSkillsSlice = createSlice({
     addSkill(state, action) {
       let updatedSkills = state.skills;
       updatedSkills.push(action.payload);
-      state.skills = updatedSkills;
+      state.skills = sortArray(updatedSkills, "description");
     },
     deleteSkill(state, action) {
       const skillToDelete = action.payload;
@@ -34,7 +34,7 @@ const parcoursSkillsSlice = createSlice({
       let updatedSkills = state.skills;
       updatedSkills = updatedSkills.filter((item) => item.id !== newSkill.id);
       updatedSkills.push(newSkill);
-      state.skills = sortArray(updatedSkills, "id");
+      state.skills = sortArray(updatedSkills, "description");
     },
     addBadge(state, action) {
       const newBadge = action.payload;

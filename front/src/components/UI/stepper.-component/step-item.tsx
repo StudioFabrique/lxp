@@ -37,7 +37,7 @@ const StepItem: FC<Props> = ({ actualStepId, stepItem }) => {
     <li
       className={`step ${setStepColor()} ${setCursor()}`}
       onClick={() => {}}
-      data-content="&#9773;"
+      data-content={stepItem.id}
     >
       {stepItem.label}
     </li>
@@ -45,3 +45,5 @@ const StepItem: FC<Props> = ({ actualStepId, stepItem }) => {
 };
 
 export default StepItem;
+
+/* "&#9773;" */

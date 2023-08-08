@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 
@@ -21,6 +21,7 @@ const SkillsList = () => {
   const [activeDrawer, setActiveDrawer] = useState<string | undefined>("");
   const [title, setTitle] = useState<string | undefined>("");
   const { sendRequest } = useHttp();
+  const isInitialRender = useRef(true);
 
   const handleDeleteSkill = (skillId: number) => {
     dispatch(parcoursSkillsAction.deleteSkill(skillId));
@@ -103,17 +104,22 @@ const SkillsList = () => {
   );
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const processData = (data: any) => {};
-      sendRequest(
-        {
-          path: "/parcours/update-skills",
-          method: "put",
-          body: { parcoursId: id, skills: skillList },
-        },
-        processData
-      );
-    }, autoSubmitTimer);
+    let timer: any;
+    if (!isInitialRender.current) {
+      timer = setTimeout(() => {
+        const processData = (data: any) => {};
+        sendRequest(
+          {
+            path: "/parcours/update-skills",
+            method: "put",
+            body: { parcoursId: id, skills: skillList },
+          },
+          processData
+        );
+      }, autoSubmitTimer);
+    } else {
+      isInitialRender.current = false;
+    }
     return () => {
       clearTimeout(timer);
     };
