@@ -28,12 +28,12 @@ async function putParcoursSkills(parcoursId: number, newSkills: Array<any>) {
         const badge = Buffer.from(item.badge, "base64");
         return { ...item, badge };
       } else {
-        return item; // No need to wrap 'item' in curly braces here, just return it directly
+        return item;
       }
     });
 
     await prisma.skill.createMany({
-      data: updatedSkills, // Use the updatedSkills variable that contains the mapped data
+      data: updatedSkills,
     });
   }
 
@@ -48,6 +48,8 @@ async function putParcoursSkills(parcoursId: number, newSkills: Array<any>) {
       },
     },
   });
+
+  console.log({ skillsToAdd });
 
   const updatedParcours = await prisma.parcours.update({
     where: { id: parcoursId },
