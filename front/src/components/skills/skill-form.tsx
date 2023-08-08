@@ -5,10 +5,11 @@ import useInput from "../../hooks/use-input";
 import { regexGeneric } from "../../utils/constantes";
 import BadgeList from "../badge/badge-list.component";
 import Wrapper from "../UI/wrapper/wrapper.component";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import DrawerFormButtons from "../UI/drawer-form-buttons/drawer-form-buttons.component";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 import Badge from "../../utils/interfaces/badge";
+import { toast } from "react-hot-toast";
 
 type Props = {
   skill?: Skill;
@@ -19,6 +20,7 @@ type Props = {
 const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   const dispatch = useDispatch();
   const [badge, setBadge] = useState<Badge | null>(null);
+  const skills = useSelector((state: any) => state.parcoursSkills.skills);
 
   const { value: description } = useInput(
     (value) => regexGeneric.test(value),
@@ -46,17 +48,19 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (formIsValid) {
-      dispatch(
-        parcoursSkillsAction.addSkill({
-          description: description.value,
-          id: skill?.id,
-          badge: badge?.image,
-        })
-      );
-      description.reset();
-      onCloseDrawer("badge-drawer");
+      if (!skills.find((item: any) => item.description === description.value)) {
+        dispatch(
+          parcoursSkillsAction.addSkill({
+            description: description.value,
+            id: skill?.id,
+            badge: badge?.image,
+          })
+        );
+        description.reset();
+        onCloseDrawer("badge-drawer");
+      }
     } else {
-      console.log("oops");
+      toast.error("Cette compétence est déjà présente dans la liste");
     }
   };
 
