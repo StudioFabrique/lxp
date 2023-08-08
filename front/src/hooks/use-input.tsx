@@ -42,6 +42,7 @@ const useInput = (
     []
   );
 
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const valueBlurHandler = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -50,6 +51,14 @@ const useInput = (
     },
     [inputState]
   );
+
+  const changeValue = (value: string) => {
+    dispatch({ type: "INPUT", value: value });
+  };
+
+  const valueBlurHandler = (_event: React.FormEvent) => {
+    dispatch({ type: "BLUR", value: inputState!.value });
+  };
 
   const textAreaChangeHandler = useCallback(
     (event: React.FormEvent<HTMLTextAreaElement>) => {
@@ -80,6 +89,7 @@ const useInput = (
       hasError,
       isValid: valueIsValid,
       valueChangeHandler,
+      changeValue,
       valueBlurHandler,
       reset,
       textAreaChangeHandler,
