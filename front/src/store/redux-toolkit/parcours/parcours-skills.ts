@@ -20,7 +20,6 @@ const parcoursSkillsSlice = createSlice({
     addSkill(state, action) {
       let updatedSkills = state.skills;
       updatedSkills.push(action.payload);
-      updatedSkills = addIdToObject(updatedSkills);
       state.skills = updatedSkills;
     },
     deleteSkill(state, action) {

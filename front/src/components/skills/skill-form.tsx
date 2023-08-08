@@ -9,11 +9,10 @@ import { useDispatch, useSelector } from "react-redux";
 import DrawerFormButtons from "../UI/drawer-form-buttons/drawer-form-buttons.component";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 import Badge from "../../utils/interfaces/badge";
-import { toast } from "react-hot-toast";
 
 type Props = {
   skill?: Skill;
-  onSubmit?: (skill: Skill) => void;
+  onSubmit: (skill: Skill) => void;
   onCloseDrawer: (id: string) => void;
 };
 
@@ -48,19 +47,12 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (formIsValid) {
-      if (!skills.find((item: any) => item.description === description.value)) {
-        dispatch(
-          parcoursSkillsAction.addSkill({
-            description: description.value,
-            id: skill?.id,
-            badge: badge?.image,
-          })
-        );
-        description.reset();
-        onCloseDrawer("badge-drawer");
-      }
-    } else {
-      toast.error("Cette compétence est déjà présente dans la liste");
+      onSubmit({
+        description: description.value,
+        badge: badge?.image,
+      });
+      description.reset();
+      onCloseDrawer("badge-drawer");
     }
   };
 

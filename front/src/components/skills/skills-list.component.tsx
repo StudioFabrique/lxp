@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
 
 import Skill from "../../utils/interfaces/skill";
 import SkillItem from "./skill-item.component";
@@ -50,7 +51,22 @@ const SkillsList = () => {
     setTitle("Modifier le Badge");
   };
 
-  const submitUpdateSkill = (skill: Skill) => {
+  const handleSubmitAddSkill = (value: any) => {
+    if (
+      !skillList.find((item: any) => item.description === value.description)
+    ) {
+      dispatch(
+        parcoursSkillsAction.addSkill({
+          description: value.description,
+          badge: value.badge,
+        })
+      );
+    } else {
+      toast.error("Cette compétence est déjà présente dans la liste");
+    }
+  };
+
+  const submitUpdateSkill = (skill: any) => {
     dispatch(parcoursSkillsAction.editSkill(skill));
     handleCloseDrawer("update-skill");
   };
@@ -60,6 +76,8 @@ const SkillsList = () => {
       document.getElementById(activeDrawer)?.click();
     }
   }, [activeDrawer]);
+
+  console.log({ skillList });
 
   let content = (
     <>
@@ -86,19 +104,15 @@ const SkillsList = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (skillList.length > 0) {
-        const processData = (data: any) => {
-          const skills = data.skills.map((item: any) => item.skill);
-        };
-        sendRequest(
-          {
-            path: "/parcours/update-skills",
-            method: "put",
-            body: { parcoursId: id, skills: skillList },
-          },
-          processData
-        );
-      }
+      const processData = (data: any) => {};
+      sendRequest(
+        {
+          path: "/parcours/update-skills",
+          method: "put",
+          body: { parcoursId: id, skills: skillList },
+        },
+        processData
+      );
     }, autoSubmitTimer);
     return () => {
       clearTimeout(timer);
@@ -123,7 +137,10 @@ const SkillsList = () => {
         onCloseDrawer={handleCloseDrawer}
       >
         {activeDrawer === "badge-drawer" && title && title.length > 0 ? (
-          <SkillForm onCloseDrawer={handleCloseDrawer} />
+          <SkillForm
+            onCloseDrawer={handleCloseDrawer}
+            onSubmit={handleSubmitAddSkill}
+          />
         ) : null}
 
         {activeDrawer === "update-skill" &&
