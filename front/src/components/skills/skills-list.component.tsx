@@ -1,22 +1,26 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
 
 import Skill from "../../utils/interfaces/skill";
 import SkillItem from "./skill-item.component";
 import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
 import SkillForm from "./skill-form";
-import Badge from "../../utils/interfaces/badge";
-import BadgeUpdate from "../badge/badge-update.component";
 import ButtonAdd from "../UI/button-add/button-add";
 import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
+import useHttp from "../../hooks/use-http";
+import { useParams } from "react-router-dom";
+import { autoSubmitTimer } from "../../config/auto-submit-timer";
 
 const SkillsList = () => {
+  const { id } = useParams();
   const skillList = useSelector((state: any) => state.parcoursSkills.skills);
   const dispatch = useDispatch();
   const [itemToUpdate, setItemToUpdate] = useState<any | null>(null);
   const [activeDrawer, setActiveDrawer] = useState<string | undefined>("");
   const [title, setTitle] = useState<string | undefined>("");
+  const { sendRequest } = useHttp();
 
   const handleDeleteSkill = (skillId: number) => {
     dispatch(parcoursSkillsAction.deleteSkill(skillId));
@@ -47,22 +51,24 @@ const SkillsList = () => {
     setTitle("Modifier le Badge");
   };
 
-  const submitNewSkill = (skill: Skill) => {
-    dispatch(parcoursSkillsAction.addSkill(skill));
-    handleCloseDrawer(activeDrawer!);
+  const handleSubmitAddSkill = (value: any) => {
+    if (
+      !skillList.find((item: any) => item.description === value.description)
+    ) {
+      dispatch(
+        parcoursSkillsAction.addSkill({
+          description: value.description,
+          badge: value.badge,
+        })
+      );
+    } else {
+      toast.error("Cette compétence est déjà présente dans la liste");
+    }
   };
 
-  const submitUpdateSkill = (skill: Skill) => {
+  const submitUpdateSkill = (skill: any) => {
     dispatch(parcoursSkillsAction.editSkill(skill));
     handleCloseDrawer("update-skill");
-  };
-
-  const submitNewBadge = (newBadge: Badge) => {
-    if (itemToUpdate) {
-      const updatedSkill = { ...itemToUpdate, badge: newBadge };
-      dispatch(parcoursSkillsAction.editSkill(updatedSkill));
-      handleCloseDrawer("update-badge");
-    }
   };
 
   useEffect(() => {
@@ -71,14 +77,14 @@ const SkillsList = () => {
     }
   }, [activeDrawer]);
 
-  console.log("list rendering");
+  console.log({ skillList });
 
   let content = (
     <>
       {skillList.length > 0 ? (
         <ul className="flex flex-col gap-y-4">
           {skillList.map((item: Skill) => (
-            <li key={item.id}>
+            <li key={item.description}>
               <FadeWrapper>
                 <SkillItem
                   skill={item}
@@ -96,9 +102,23 @@ const SkillsList = () => {
     </>
   );
 
-  console.log("rendering");
-  /* 
-  <ImportButton label="AJOUTER" onClickEvent={handleAddSkill} /> */
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const processData = (data: any) => {};
+      sendRequest(
+        {
+          path: "/parcours/update-skills",
+          method: "put",
+          body: { parcoursId: id, skills: skillList },
+        },
+        processData
+      );
+    }, autoSubmitTimer);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [id, skillList, dispatch, sendRequest]);
+
   return (
     <>
       <div className="flex flex-col gap-y-4 mt-4">{content}</div>
@@ -118,8 +138,8 @@ const SkillsList = () => {
       >
         {activeDrawer === "badge-drawer" && title && title.length > 0 ? (
           <SkillForm
-            onSubmit={submitNewSkill}
             onCloseDrawer={handleCloseDrawer}
+            onSubmit={handleSubmitAddSkill}
           />
         ) : null}
 
@@ -131,16 +151,6 @@ const SkillsList = () => {
             onSubmit={submitUpdateSkill}
             skill={itemToUpdate}
             onCloseDrawer={handleCloseDrawer}
-          />
-        ) : null}
-
-        {activeDrawer === "update-badge" &&
-        title &&
-        title.length > 0 &&
-        itemToUpdate ? (
-          <BadgeUpdate
-            badge={itemToUpdate.badge}
-            onSubmitNewBadge={submitNewBadge}
           />
         ) : null}
       </RightSideDrawer>

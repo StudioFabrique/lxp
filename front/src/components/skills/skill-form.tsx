@@ -3,14 +3,12 @@ import { FC, FormEvent, useEffect, useState } from "react";
 import Skill from "../../utils/interfaces/skill";
 import useInput from "../../hooks/use-input";
 import { regexGeneric } from "../../utils/constantes";
-import Badge from "../../utils/interfaces/badge";
 import BadgeList from "../badge/badge-list.component";
 import Wrapper from "../UI/wrapper/wrapper.component";
-import BadgeValidation from "../badge/badge-validation.component";
 import { useDispatch, useSelector } from "react-redux";
 import DrawerFormButtons from "../UI/drawer-form-buttons/drawer-form-buttons.component";
-import CreateBadge from "../badge/create-badge-drawer";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
+import Badge from "../../utils/interfaces/badge";
 
 type Props = {
   skill?: Skill;
@@ -19,50 +17,43 @@ type Props = {
 };
 
 const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
-  const [badge, setBadge] = useState<Badge | undefined>(skill?.badge);
-  const totalBadges = useSelector(
-    (state: any) => state.parcoursSkills.totalBadges
-  );
   const dispatch = useDispatch();
+  const [badge, setBadge] = useState<Badge | null>(null);
+  const skills = useSelector((state: any) => state.parcoursSkills.skills);
 
   const { value: description } = useInput(
     (value) => regexGeneric.test(value),
     skill?.description || ""
   );
 
-  const handleUpdateBadge = (newBadge: any) => {
-    setBadge(newBadge);
-  };
-
   const handleCancel = () => {
     onCloseDrawer(skill ? "update-skill" : "badge-drawer");
     if (!skill) {
-      setBadge(undefined);
       description.reset();
     }
   };
 
-  let formIsValid = description.isValid && badge;
+  let formIsValid = description.isValid;
 
   let textareaStyle = () => {
     let style = "textarea focus:outline-none bg-secondary/20";
     return description.hasError ? style + " textarea-error" : style;
   };
 
+  const addBadge = (newBadge: Badge) => {
+    setBadge(newBadge);
+  };
+
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (formIsValid) {
-      onSubmit({ description: description.value, badge, id: skill?.id });
+      onSubmit({
+        description: description.value,
+        badge: badge?.image,
+      });
       description.reset();
-      setBadge(undefined);
-    } else {
-      console.log("oops");
+      onCloseDrawer("badge-drawer");
     }
-  };
-
-  const validateBadge = (newBadge: Badge) => {
-    dispatch(parcoursSkillsAction.validateBadge(newBadge));
-    setBadge(newBadge);
   };
 
   useEffect(() => {
@@ -70,7 +61,7 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   }, [dispatch]);
 
   return (
-    <div className="flesx flex-col gap-y-4">
+    <div className="flex flex-col gap-y-4">
       <form className="flex flex-col px-4 gap-y-4" onSubmit={handleSubmit}>
         <Wrapper>
           <div className="flex flex-col gap-y-2">
@@ -83,33 +74,11 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
             />
           </div>
         </Wrapper>
-
         <Wrapper>
-          <div className="flex flex-col gap-y-2">
-            <p>Choisir un badge *</p>
-            <BadgeList
-              onSubmitBadge={handleUpdateBadge}
-              selectedBadge={badge}
-            />
-          </div>
+          <BadgeList onSubmitBadge={addBadge} />
         </Wrapper>
-
-        {badge && !badge.description ? (
-          <>
-            <div className="divider my-4">Veuillez valider le badge svp</div>
-            <BadgeValidation badge={badge} onValidateBadge={validateBadge} />
-            <div className="divider my-4" />
-          </>
-        ) : null}
-
         <DrawerFormButtons onCancel={handleCancel} />
       </form>
-      {totalBadges === 0 ? null : (
-        <>
-          <div className="divider">Créer un nouveau badge</div>
-          <CreateBadge />
-        </>
-      )}
     </div>
   );
 };

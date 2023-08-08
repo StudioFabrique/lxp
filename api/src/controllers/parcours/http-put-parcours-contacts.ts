@@ -11,10 +11,9 @@ async function httpPutParcoursContacts(req: Request, res: Response) {
     return res.status(400).json({ message: badQuery });
   }
 
-  const { parcoursId, contacts } = req.body;
-
   try {
-    const response = await putParcoursContacts(parseInt(parcoursId), contacts);
+    const { parcoursId, contacts } = req.body;
+    await putParcoursContacts(parseInt(parcoursId), contacts);
     return res
       .status(201)
       .json({ success: true, message: "Contacts mis à jour avec succès" });

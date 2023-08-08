@@ -8,6 +8,8 @@ const initialParcoursState = {
     startDate: "",
     endDate: "",
   },
+  isValid: false,
+  tagsIsValid: false,
 };
 
 const parcoursInformationsSlice = createSlice({
@@ -35,6 +37,20 @@ const parcoursInformationsSlice = createSlice({
       state.infos.description = "";
       state.infos.startDate = "";
       state.infos.endDate = "";
+    },
+    isValid(state) {
+      const infos = state.infos;
+      state.isValid =
+        infos.title !== null &&
+        infos.title.length > 0 &&
+        infos.startDate !== null &&
+        infos.startDate.length > 0 &&
+        infos.endDate !== null &&
+        infos.endDate.length > 0 &&
+        state.tagsIsValid;
+    },
+    setTagsIsValid(state, action) {
+      state.tagsIsValid = action.payload;
     },
   },
 });

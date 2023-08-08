@@ -1,19 +1,28 @@
-import { Link, Outlet } from "react-router-dom";
-import Can from "../../components/UI/can/can.component";
+import { Link, NavLink, Outlet } from "react-router-dom";
 
-const ParcoursLayout = () => {
+const LayoutAdmin = () => {
   return (
-    <div>
-      <Can action="write" subject="parcours">
-        <Link to="/admin/parcours/créer-un-parcours">Créer un parcours</Link>
-      </Can>
-      <div className="flex">
-        <div className="w-[150px]"></div>
+    <div className="w-full flex">
+      <ul className="text-xs text-info font-bold px-4 flex flex-col gap-y-2 py-2">
+        <li>
+          <Link to="/admin/parcours">Parcours</Link>
+        </li>
+        <li>
+          <NavLink
+            className={({ isActive }) =>
+              isActive ? "text-accent" : "hover:underline"
+            }
+            to="/admin/parcours/créer-un-parcours"
+          >
+            Nouveau
+          </NavLink>
+        </li>
+      </ul>
+      <div className="flex-1 min-h-screen">
         <Outlet />
-        <div className="w-[50px]"></div>
       </div>
     </div>
   );
 };
 
-export default ParcoursLayout;
+export default LayoutAdmin;

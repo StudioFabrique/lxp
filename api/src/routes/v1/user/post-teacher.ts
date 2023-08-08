@@ -15,7 +15,7 @@ postTeacherRouter.post(
   body("address").isString().notEmpty().trim().escape(),
   body("postCode").isString().notEmpty().trim().escape(),
   body("city").isString().notEmpty().trim().escape(),
-  body("phoneNumber").isString().notEmpty().trim().escape(),
+  body("phoneNumber").isString().trim().escape(),
   httpPostTeacher
 );
 

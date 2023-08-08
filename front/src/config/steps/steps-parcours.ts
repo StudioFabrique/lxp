@@ -5,10 +5,10 @@ const steps = [
     label: "Informations",
   },
   {
-    label: "Objectifs",
+    label: "Compétences",
   },
   {
-    label: "Compétences",
+    label: "Objectifs",
   },
   {
     label: "Modules",
