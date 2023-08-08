@@ -51,6 +51,16 @@ model Module {
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @default(now())
   parcours    ModulesOnParcours[]
+  skills      SkillsOnModule[]
+}
+
+model OpenBadge {
+  id        Int      @id @default(autoincrement())
+  creator   String
+  image     Bytes
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Tag {
@@ -67,6 +77,10 @@ model Skill {
   id          Int                @id @default(autoincrement())
   description String             @unique
   parcours    SKillsOnParcours[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @default(now())
+  modules     SkillsOnModule[]
+  badge       Bytes?
 }
 
 model Admin {
@@ -150,4 +164,13 @@ model TagsOnFormation {
   formationId Int
 
   @@id([tagId, formationId])
+}
+
+model SkillsOnModule {
+  skill    Skill  @relation(fields: [skillId], references: [id])
+  skillId  Int
+  module   Module @relation(fields: [moduleId], references: [id])
+  moduleId Int
+
+  @@id([skillId, moduleId])
 }

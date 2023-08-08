@@ -3,12 +3,13 @@ import { createSlice } from "@reduxjs/toolkit";
 import Skill from "../../../utils/interfaces/skill";
 import { addIdToObject } from "../../../utils/add-id-to-objects";
 import { sortArray } from "../../../utils/sortArray";
+import Badge from "../../../utils/interfaces/badge";
 
 const initialParcoursState = {
   informationsAreValid: false,
   importedSkills: Array<any>(),
   skills: Array<Skill>(),
-  badges: Array<any>(),
+  badges: Array<Badge>(),
   totalBadges: 0,
 };
 
@@ -19,7 +20,6 @@ const parcoursSkillsSlice = createSlice({
     addSkill(state, action) {
       let updatedSkills = state.skills;
       updatedSkills.push(action.payload);
-      updatedSkills = addIdToObject(updatedSkills);
       state.skills = updatedSkills;
     },
     deleteSkill(state, action) {
@@ -38,14 +38,13 @@ const parcoursSkillsSlice = createSlice({
     },
     addBadge(state, action) {
       const newBadge = action.payload;
-      let updatedBadges = state.badges;
+      const updatedBadges = state.badges;
       updatedBadges.push(newBadge);
       state.badges = addIdToObject(updatedBadges);
     },
     importBadges(state, action) {
-      const badges = state.badges;
-      badges.push(action.payload);
-      state.badges = addIdToObject(badges);
+      state.badges.push(action.payload);
+      state.badges = addIdToObject(state.badges);
     },
     validateBadge(state, action) {
       const updatedBadges = state.badges.filter(
@@ -59,7 +58,7 @@ const parcoursSkillsSlice = createSlice({
         (item) => item.id === action.payload.id
       );
       if (badgeToUpdate) {
-        let updatedBadges = state.badges.filter(
+        const updatedBadges = state.badges.filter(
           (item) => item.id !== action.payload.id
         );
         updatedBadges.push({
@@ -90,6 +89,30 @@ const parcoursSkillsSlice = createSlice({
     },
     getBadgesTotal(state) {
       state.totalBadges = state.badges.length;
+    },
+    reset(state) {
+      state.informationsAreValid = false;
+      state.badges = [];
+      state.importedSkills = [];
+      state.skills = [];
+      state.totalBadges = 0;
+    },
+    setSelectedBadge(state, action) {
+      let updatedBadges = state.badges;
+      updatedBadges.map((item) => (item.isSelected = false));
+      let badge = updatedBadges.find((item) => item.id === action.payload);
+      if (badge) {
+        updatedBadges = updatedBadges.filter(
+          (item) => item.id !== action.payload
+        );
+        state.badges = sortArray(
+          [...updatedBadges, { ...badge, isSelected: true }],
+          "id"
+        );
+      }
+    },
+    setSkillsList(state, action) {
+      state.skills = action.payload;
     },
   },
 });

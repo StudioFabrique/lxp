@@ -46,10 +46,13 @@ const tagsSlice = createSlice({
     },
     filterItems(state, action) {
       if (action.payload.length > 0) {
-        state.filteredItems = state.notSelectedTags.filter((item: Tag) =>
-          item.name
-            .toLocaleLowerCase()
-            .includes(action.payload.toLocaleLowerCase())
+        state.filteredItems = sortArray(
+          state.notSelectedTags.filter((item: Tag) =>
+            item.name
+              .toLocaleLowerCase()
+              .includes(action.payload.toLocaleLowerCase())
+          ),
+          "name"
         );
       }
     },
