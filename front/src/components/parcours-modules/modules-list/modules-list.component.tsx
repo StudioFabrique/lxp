@@ -3,7 +3,7 @@ import ModulesItem from "./modules-item/modules-item.component";
 import { useSelector } from "react-redux";
 import Module from "../../../utils/interfaces/module";
 
-const ModulesList: FC<{}> = ({}) => {
+const ModulesList: FC<{}> = (props) => {
   const modules: Module[] = useSelector(
     (state: any) => state.parcoursModule.modules
   );

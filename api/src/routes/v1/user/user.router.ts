@@ -74,12 +74,12 @@ userRouter.get(
   "/search/:role/:entity/:value/:stype/:sdir",
 
   //  validators
-  param("search").isAlpha().notEmpty().trim().escape(),
-  param("role").isAlpha().notEmpty().trim().escape(),
-  param("entity").isAlpha().notEmpty().trim().escape(),
-  param("value").isAlpha().notEmpty().trim().escape(),
-  param("stype").isAlpha().notEmpty().trim().escape(),
-  param("sdir").isAlpha().notEmpty().trim().escape(),
+  param("search").isString().notEmpty().trim().escape(),
+  param("role").isString().notEmpty().trim().escape(),
+  param("entity").isString().notEmpty().trim().escape(),
+  param("value").isString().notEmpty().trim().escape(),
+  param("stype").isString().notEmpty().trim().escape(),
+  param("sdir").isString().notEmpty().trim().escape(),
   query("page").notEmpty().trim().escape().isInt(),
   query("limit").notEmpty().trim().escape().isInt(),
 

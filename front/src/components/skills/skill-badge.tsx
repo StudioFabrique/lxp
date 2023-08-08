@@ -1,6 +1,5 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 
-import Badge from "../../utils/interfaces/badge";
 import TrophyIcon from "../UI/svg-icons/trophy-icon.component";
 
 type Props = {

@@ -91,7 +91,9 @@ const ImageHeader: FC<Props> = ({ image }) => {
                 <ParcoursHeaderIcon size="lg" />
                 <div>
                   <h1 className="text-xl">{parcours.formation.title}</h1>
-                  <h3>{parcoursInformations.infos.title}</h3>
+                  <h3 className="capitalize">
+                    {parcoursInformations.infos.title}
+                  </h3>
                 </div>
               </span>
               <span className="flex items-end">

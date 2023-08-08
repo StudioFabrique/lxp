@@ -18,13 +18,10 @@ const ImportBadges = () => {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-
-    if (files) {
+    if (files && files[0] !== undefined) {
       if (validateImageFile(files[0], maxSize)) {
         setSelectedFiles(URL.createObjectURL(files[0]));
       }
-    } else {
-      setSelectedFiles(null);
     }
   };
 

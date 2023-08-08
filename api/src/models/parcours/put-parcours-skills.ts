@@ -3,8 +3,6 @@ import { PrismaClient, Skill } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function putParcoursSkills(parcoursId: number, newSkills: Array<any>) {
-  console.log({ newSkills });
-
   const existingParcours = await prisma.parcours.findUnique({
     where: { id: parcoursId },
   });
@@ -48,8 +46,6 @@ async function putParcoursSkills(parcoursId: number, newSkills: Array<any>) {
       },
     },
   });
-
-  console.log({ skillsToAdd });
 
   const updatedParcours = await prisma.parcours.update({
     where: { id: parcoursId },
