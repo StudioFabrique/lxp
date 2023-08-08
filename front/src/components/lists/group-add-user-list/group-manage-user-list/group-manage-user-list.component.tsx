@@ -6,7 +6,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { AddUsersButton } from "./buttons.component";
+import { AddUsersButton } from "./group-manage-user-item/buttons.component";
 import UserToAddList from "./user-to-add-list.component";
 import usePagination from "../../../../hooks/use-pagination";
 import { Context } from "../../../../store/context.store";
@@ -16,8 +16,9 @@ import User from "../../../../utils/interfaces/user";
 
 const GroupManageUserList: FC<{
   needDataUpdate: boolean;
+  usersToAdd: User[];
   setDataUpdateState: Dispatch<SetStateAction<boolean>>;
-  onSetUsersToAdd: (users: Array<User>) => void;
+  onAddUsers: (users: Array<User>) => void;
 }> = (props) => {
   const { user } = useContext(Context);
 
@@ -36,7 +37,7 @@ const GroupManageUserList: FC<{
 
   const handleSetUsersToAdd = () => {
     console.log(selectedUsers);
-    props.onSetUsersToAdd(selectedUsers);
+    props.onAddUsers(selectedUsers);
   };
 
   const handleDeleteSelectedUser = (userId: string) => {
@@ -69,6 +70,7 @@ const GroupManageUserList: FC<{
             <UserToAddList
               selectedUsers={selectedUsers}
               userList={dataList}
+              usersToAdd={props.usersToAdd}
               onAddSelectedUser={handleAddSelectedUser}
               onDeleteSelectedUser={handleDeleteSelectedUser}
               isUsersSettedUp={isUsersSettedUp}

@@ -1,14 +1,17 @@
 import { Dispatch, FC, SetStateAction } from "react";
 import User from "../../../../utils/interfaces/user";
+import GroupUserItem from "../../../lists/group-add-user-list/group-manage-user-list/group-manage-user-item/group-manage-user-item.component";
 
 interface IUserListConfirmation {
   usersFromCsv: Array<User>;
   onConfirmSubmit: () => void;
   setDrawerOpenState: Dispatch<SetStateAction<boolean>>;
+  onAddSelectedUser: (user: User) => void;
+  onDeleteSelectedUser: (uniqueProperty: string) => void;
   isLoading: boolean;
 }
 
-const UserListConfirmation: FC<IUserListConfirmation> = (props) => {
+const CsvUserListConfirmation: FC<IUserListConfirmation> = (props) => {
   const handleConfirm = () => {
     props.onConfirmSubmit();
   };
@@ -21,14 +24,13 @@ const UserListConfirmation: FC<IUserListConfirmation> = (props) => {
     return (
       <div className="flex flex-col justify-between items-center">
         <div className="flex flex-col gap-y-2 w-full ">
-          {props.usersFromCsv.map((user, i) => (
-            <span
-              key={i}
-              className="flex gap-x-2 p-2 pl-5 w-full bg-secondary-content"
-            >
-              <p>{user.firstname}</p>
-              <p>{user.lastname}</p>
-            </span>
+          {props.usersFromCsv.map((user) => (
+            <GroupUserItem
+              key={user.email}
+              user={user}
+              onAddSelectedUser={props.onAddSelectedUser}
+              onDeleteSelectedUser={props.onDeleteSelectedUser}
+            />
           ))}
         </div>
         <div className="flex">
@@ -54,4 +56,4 @@ const UserListConfirmation: FC<IUserListConfirmation> = (props) => {
   }
 };
 
-export default UserListConfirmation;
+export default CsvUserListConfirmation;
