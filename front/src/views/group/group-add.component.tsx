@@ -1,9 +1,8 @@
-import { useNavigate } from "react-router-dom";
 import useHttp from "../../hooks/use-http";
 import Group from "../../utils/interfaces/group";
 import GroupAddForm from "../../components/forms/group-form/group-add-form.component";
 import GroupUserList from "../../components/lists/group-add-user-list/group-user-list.component";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import User from "../../utils/interfaces/user";
 import { Toaster } from "react-hot-toast";
 
@@ -15,12 +14,12 @@ const GroupAdd = () => {
   const handleSubmit = (group: Group) => {
     console.log(group);
 
-    /* sendRequest(
+    sendRequest(
       { method: "post", path: "/group", body: group },
       (data: any) => {
-        if (data) return navigate(-1);
+        if (data) console.log("group created !");
       }
-    ); */
+    );
   };
 
   const handleAddUsers = (users: Array<User>) => {
@@ -28,7 +27,7 @@ const GroupAdd = () => {
   };
 
   return (
-    <div className="p-5 grid grid-rows-2 gap-y-14">
+    <div className="flex flex-col p-10 gap-y-10">
       <Toaster />
       <GroupAddForm
         onSubmitForm={handleSubmit}

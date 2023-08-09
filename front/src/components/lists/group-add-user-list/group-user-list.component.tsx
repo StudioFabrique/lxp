@@ -4,6 +4,7 @@ import User from "../../../utils/interfaces/user";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import CsvImportUserList from "../../UI/csv-import/csv-import-user-list/csv-import-user-list.component";
 import GroupUserItem from "./group-user-item.component";
+import SearchSimple from "../../UI/search-simple/search-simple";
 
 const GroupUserList: FC<{
   usersToAdd: User[];
@@ -20,18 +21,14 @@ const GroupUserList: FC<{
           onAddUsers={onAddUsers}
         />
       </div>
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center">
         <GroupManageUserList
           needDataUpdate={needDataUpdate}
           setDataUpdateState={setDataUpdateState}
           onAddUsers={onAddUsers}
           usersToAdd={usersToAdd}
         />
-        <input
-          type="text"
-          className="input input-sm"
-          placeholder="Rechercher un étudiant par nom ou prénom"
-        />
+        <SearchSimple placeholder="Rechercher un étudiant par nom ou prénom" />
       </div>
 
       {/* liste des utilisateurs du groupe */}

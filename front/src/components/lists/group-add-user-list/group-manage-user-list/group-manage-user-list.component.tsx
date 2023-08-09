@@ -70,6 +70,9 @@ const GroupManageUserList: FC<{
    */
   const handleAddUserInstantly = (user: User) => {
     props.onAddUsers([user]);
+    setSelectedUsers((users) =>
+      users.filter((currentUser) => currentUser._id !== user._id)
+    );
     setDataList((users) => users.filter((value) => value._id !== user._id));
     console.log("id adding : " + user);
   };
