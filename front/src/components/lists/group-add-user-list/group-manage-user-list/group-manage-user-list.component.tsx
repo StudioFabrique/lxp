@@ -37,12 +37,23 @@ const GroupManageUserList: FC<{
   } = usePagination("lastname", `/user/${user!.roles[0].role}`);
 
   const handleSetUsersToAdd = () => {
-    console.log(selectedUsers);
+    props.onAddUsers(selectedUsers);
+    const selectedUsersIds = selectedUsers.map(
+      (selectedUser) => selectedUser._id
+    );
+    setDataList((currentUsers) => {
+      return currentUsers.filter(
+        (currentUser) => !selectedUsersIds.includes(currentUser._id)
+      );
+    });
+    setSelectedUsers((users) =>
+      users.filter((currentUser) => !selectedUsersIds.includes(currentUser._id))
+    );
   };
 
   const handleDeleteSelectedUser = (user: User) => {
     setSelectedUsers((users) =>
-      users.filter((value) => value._id !== user._id)
+      users.filter((currentUser) => currentUser._id !== user._id)
     );
     setUsersSettedState(false);
     console.log("id deleting : " + user);
@@ -54,10 +65,12 @@ const GroupManageUserList: FC<{
     console.log("id adding : " + user);
   };
 
+  /* 
+    Ajoute un utilisateur directement dans la liste sans checklist
+   */
   const handleAddUserInstantly = (user: User) => {
     props.onAddUsers([user]);
     setDataList((users) => users.filter((value) => value._id !== user._id));
-    setUsersSettedState(false);
     console.log("id adding : " + user);
   };
 
