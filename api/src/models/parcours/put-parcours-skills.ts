@@ -21,17 +21,17 @@ async function putParcoursSkills(parcoursId: number, newSkills: Array<any>) {
     }
   }
   if (skillsToCreate.length > 0) {
-    const updatedSkills = skillsToCreate.map((item: any) => {
+    /*  const updatedSkills = skillsToCreate.map((item: any) => {
       if (item.badge) {
         const badge = Buffer.from(item.badge, "base64");
         return { ...item, badge };
       } else {
         return item;
       }
-    });
+    }); */
 
     await prisma.skill.createMany({
-      data: updatedSkills,
+      data: skillsToCreate,
     });
   }
 

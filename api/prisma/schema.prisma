@@ -37,6 +37,7 @@ model Parcours {
   formation   Formation              @relation(fields: [formationId], references: [id])
   formationId Int
   skills      SKillsOnParcours[]
+  bonusSkills BonusSkill[]
   modules     ModulesOnParcours[]
   objectives  ObjectivesOnParcours[]
 }
@@ -81,6 +82,16 @@ model Skill {
   updatedAt   DateTime           @default(now())
   modules     SkillsOnModule[]
   badge       String?
+}
+
+model BonusSkill {
+  id          Int      @id @default(autoincrement())
+  description String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  badge       String?
+  parcours    Parcours @relation(fields: [parcoursId], references: [id])
+  parcoursId  Int
 }
 
 model Admin {

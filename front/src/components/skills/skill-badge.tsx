@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 
 import TrophyIcon from "../UI/svg-icons/trophy-icon.component";
 

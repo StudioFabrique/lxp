@@ -33,6 +33,7 @@ const BadgeList: FC<Props> = ({ selectedBadge, onSubmitBadge }) => {
       <ImportBadges />
     </div>
   );
+  console.log({ badgeList });
 
   return <>{content}</>;
 };
