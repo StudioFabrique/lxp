@@ -18,4 +18,5 @@ export default interface Parcours {
   tags: Array<Tag>;
   contacts: Array<Contact>;
   skills: Array<Skill>;
+  bonusSkills: Array<Skill>;
 }

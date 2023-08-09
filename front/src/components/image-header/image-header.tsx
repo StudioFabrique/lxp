@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import defaultImage from "../../assets/images/parcours-default.jpg";
 import ParcoursHeaderIcon from "../UI/svg-icons/parcours-header-icon";
 import useHttp from "../../hooks/use-http";
+import { compressImage } from "../../helpers/compress-image";
 
 type Props = {
   image?: string;
@@ -42,8 +43,11 @@ const ImageHeader: FC<Props> = ({ image }) => {
   };
 
   // récupération du fichier image choisit par l'utilisateur
-  const setNewFile = (newFile: File) => {
-    setFile(newFile);
+  const setNewFile = async (newFile: File) => {
+    const compressedFile = await compressImage(newFile, 1920);
+    if (compressedFile) {
+      setFile(compressedFile);
+    }
   };
 
   const updateImage = useCallback(
@@ -91,7 +95,7 @@ const ImageHeader: FC<Props> = ({ image }) => {
                 <ParcoursHeaderIcon size="lg" />
                 <div>
                   <h1 className="text-xl">{parcours.formation.title}</h1>
-                  <h3 className="capitalize">
+                  <h3 className="capitalise">
                     {parcoursInformations.infos.title}
                   </h3>
                 </div>

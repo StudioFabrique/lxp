@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
+import { useParams } from "react-router-dom";
 
 import Skill from "../../utils/interfaces/skill";
 import SkillItem from "./skill-item.component";
@@ -10,8 +11,7 @@ import ButtonAdd from "../UI/button-add/button-add";
 import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 import useHttp from "../../hooks/use-http";
-import { useParams } from "react-router-dom";
-import { autoSubmitTimer } from "../../config/auto-submit-timer";
+import Loader from "../UI/loader";
 
 const SkillsList = () => {
   const { id } = useParams();
@@ -21,10 +21,19 @@ const SkillsList = () => {
   const [activeDrawer, setActiveDrawer] = useState<string | undefined>("");
   const [title, setTitle] = useState<string | undefined>("");
   const { sendRequest } = useHttp();
-  const isInitialRender = useRef(true);
 
   const handleDeleteSkill = (skillId: number) => {
-    dispatch(parcoursSkillsAction.deleteSkill(skillId));
+    const processData = (data: any) => {
+      console.log(data);
+      dispatch(parcoursSkillsAction.deleteSkill(skillId));
+    };
+    sendRequest(
+      {
+        path: `/bonus-skill/${skillId}`,
+        method: "delete",
+      },
+      processData
+    );
   };
 
   const handleCloseDrawer = (id: string) => {
@@ -53,15 +62,33 @@ const SkillsList = () => {
   };
 
   const handleSubmitAddSkill = (value: any) => {
-    if (
-      !skillList.find((item: any) => item.description === value.description)
-    ) {
-      dispatch(
-        parcoursSkillsAction.addSkill({
-          description: value.description,
-          badge: value.badge,
-        })
-      );
+    const skill = skillList.find(
+      (item: any) => item.description === value.description
+    );
+    if (!skill) {
+      const processData = (data: any) => {
+        if (data.success) {
+          toast.success("Une nouvelle compétence a été enregistrée");
+          dispatch(parcoursSkillsAction.addSkill(data.skill));
+          dispatch(parcoursSkillsAction.unselectBadge());
+        }
+      };
+      setTimeout(() => {
+        sendRequest(
+          {
+            path: "/bonus-skill",
+            method: "post",
+            body: {
+              parcoursId: id,
+              skill: {
+                description: value.description,
+                badge: value.badge,
+              },
+            },
+          },
+          processData
+        );
+      }, 500);
     } else {
       toast.error("Cette compétence est déjà présente dans la liste");
     }
@@ -103,31 +130,12 @@ const SkillsList = () => {
     </>
   );
 
-  useEffect(() => {
-    let timer: any;
-    if (!isInitialRender.current) {
-      timer = setTimeout(() => {
-        const processData = (data: any) => {};
-        sendRequest(
-          {
-            path: "/parcours/update-skills",
-            method: "put",
-            body: { parcoursId: id, skills: skillList },
-          },
-          processData
-        );
-      }, autoSubmitTimer);
-    } else {
-      isInitialRender.current = false;
-    }
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [id, skillList, dispatch, sendRequest]);
-
   return (
     <>
-      <div className="flex flex-col gap-y-4 mt-4">{content}</div>
+      <FadeWrapper>
+        <div className="w-full flex flex-col gap-y-4 mt-4">{content}</div>
+      </FadeWrapper>
+
       <div>
         <ButtonAdd
           label="ajouter"

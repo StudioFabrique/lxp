@@ -22,7 +22,8 @@ const AddParcours = () => {
   const [formation, setFormation] = useState<number | undefined>(undefined);
   const [parcoursList, setParcoursList] = useState<Array<Item>>([]);
   const [parcours, setParcours] = useState<number | undefined>(undefined);
-  const { sendRequest, error, isLoading } = useHttp();
+  const { sendRequest, error } = useHttp();
+  const [isLoading, setIsLoading] = useState(false);
   const nav = useNavigate();
 
   const classImage: React.CSSProperties = {
@@ -38,8 +39,6 @@ const AddParcours = () => {
 
   useEffect(() => {
     if (error.length > 0) {
-      console.log("toto", error);
-
       toast.error(error);
     }
   }, [error]);
@@ -89,9 +88,10 @@ const AddParcours = () => {
   }) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const processData = (data: any) => {
-      toast.success("Parcours enregistré avec succès");
+      //toast.success("Parcours enregistré avec succès");
       nav(`/admin/parcours/edit/${data.parcoursId}`);
     };
+    setIsLoading(true);
     sendRequest(
       {
         path: "/parcours",
@@ -100,6 +100,7 @@ const AddParcours = () => {
       },
       processData
     );
+    setIsLoading(false);
   };
 
   /**

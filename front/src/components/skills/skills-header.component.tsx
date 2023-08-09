@@ -12,7 +12,7 @@ type Props = {
 const SkillsHeader: FC<Props> = ({ onImport }) => {
   return (
     <div className="w-full flex justify-between items-center pr-2">
-      <h3 className="text-xl font-bold">Compétences</h3>
+      <h3 className="text-xl font-bold">Compétences Complémentaires</h3>
       <div className="flex items-center gap-x-8">
         <div className="text-primary">
           <ButtonNoDecorationIcon

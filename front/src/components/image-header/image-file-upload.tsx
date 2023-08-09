@@ -13,6 +13,7 @@ const ImageFileUpload: FC<{
   useEffect(() => {
     if (file) {
       onSetFile(file);
+      setFile(null);
     }
   }, [file, onSetFile]);
 

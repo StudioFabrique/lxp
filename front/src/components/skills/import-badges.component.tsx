@@ -4,33 +4,48 @@ import { useDispatch } from "react-redux";
 
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 import UploadIcon from "../UI/svg-icons/upload-icon.component";
+import { compressImage } from "../../helpers/compress-image";
 
 const maxSize = 100 * 1024;
 
 const ImportBadges = () => {
   const fileSelectRef = useRef<any>(null);
-  const [selectedFiles, setSelectedFiles] = useState<string | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<any>(null);
   const dispatch = useDispatch();
 
   const handleLabelClick = () => {
     fileSelectRef.current.click();
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const files = event.target.files;
-    if (files && files[0] !== undefined) {
+
+    if (files) {
       if (validateImageFile(files[0], maxSize)) {
-        setSelectedFiles(URL.createObjectURL(files[0]));
+        const file = await compressImage(files[0], 100);
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const imageString = reader.result as string;
+            if (imageString) {
+              setSelectedFiles(imageString);
+            }
+          };
+          reader.readAsDataURL(file);
+        }
       }
+    } else {
+      setSelectedFiles(null);
     }
   };
 
   useEffect(() => {
     if (selectedFiles) {
       dispatch(
-        parcoursSkillsAction.importBadges({
+        parcoursSkillsAction.addBadge({
           image: selectedFiles,
-          isSelected: false,
         })
       );
       setSelectedFiles(null);
