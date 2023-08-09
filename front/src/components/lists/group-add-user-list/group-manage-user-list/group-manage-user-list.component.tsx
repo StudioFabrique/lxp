@@ -33,21 +33,30 @@ const GroupManageUserList: FC<{
     perPage,
     setPerPage,
     getList,
+    setDataList,
   } = usePagination("lastname", `/user/${user!.roles[0].role}`);
 
   const handleSetUsersToAdd = () => {
     console.log(selectedUsers);
-    props.onAddUsers(selectedUsers);
   };
 
-  const handleDeleteSelectedUser = (userId: string) => {
-    setSelectedUsers((users) => users.filter((value) => value._id !== userId));
+  const handleDeleteSelectedUser = (user: User) => {
+    setSelectedUsers((users) =>
+      users.filter((value) => value._id !== user._id)
+    );
     setUsersSettedState(false);
-    console.log("id deleting : " + userId);
+    console.log("id deleting : " + user);
   };
 
   const handleAddSelectedUser = (user: User) => {
     setSelectedUsers((users) => [...users, user]);
+    setUsersSettedState(false);
+    console.log("id adding : " + user);
+  };
+
+  const handleAddUserInstantly = (user: User) => {
+    props.onAddUsers([user]);
+    setDataList((users) => users.filter((value) => value._id !== user._id));
     setUsersSettedState(false);
     console.log("id adding : " + user);
   };
@@ -63,6 +72,7 @@ const GroupManageUserList: FC<{
     <RightSideDrawer
       title="Ajouter des étudiants au groupe"
       id="add-user-to-group"
+      buttonTitle="Ajouter un étudiant"
     >
       <div className="flex flex-col items-center gap-y-5">
         {dataList.length > 0 ? (
@@ -73,6 +83,7 @@ const GroupManageUserList: FC<{
               usersToAdd={props.usersToAdd}
               onAddSelectedUser={handleAddSelectedUser}
               onDeleteSelectedUser={handleDeleteSelectedUser}
+              onAddUserInstantly={handleAddUserInstantly}
               isUsersSettedUp={isUsersSettedUp}
             />
             <Pagination

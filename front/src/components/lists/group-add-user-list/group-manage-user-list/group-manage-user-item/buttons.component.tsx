@@ -29,12 +29,12 @@ export const AddUsersButton: FC<{
 export const SelectionButton: FC<{
   currentUser: User;
   onAddSelectedUser: (user: User) => void;
-  onDeleteSelectedUser: (uniqueProperty: string) => void;
+  onDeleteSelectedUser: (user: User) => void;
 }> = (props) => {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.currentTarget.checked
       ? props.onAddSelectedUser(props.currentUser)
-      : props.onDeleteSelectedUser(props.currentUser._id);
+      : props.onDeleteSelectedUser(props.currentUser);
   };
 
   return (
