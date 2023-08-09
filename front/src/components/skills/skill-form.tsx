@@ -1,4 +1,4 @@
-import { FC, FormEvent, useEffect, useState } from "react";
+import { FC, FormEvent, useCallback, useEffect, useState } from "react";
 
 import Skill from "../../utils/interfaces/skill";
 import useInput from "../../hooks/use-input";
@@ -19,7 +19,6 @@ type Props = {
 const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   const dispatch = useDispatch();
   const [badge, setBadge] = useState<Badge | null>(null);
-  const skills = useSelector((state: any) => state.parcoursSkills.skills);
 
   const { value: description } = useInput(
     (value) => regexGeneric.test(value),
@@ -40,9 +39,9 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
     return description.hasError ? style + " textarea-error" : style;
   };
 
-  const addBadge = (newBadge: Badge) => {
+  const addBadge = useCallback((newBadge: Badge) => {
     setBadge(newBadge);
-  };
+  }, []);
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();

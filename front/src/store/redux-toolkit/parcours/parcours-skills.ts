@@ -11,6 +11,7 @@ const initialParcoursState = {
   skills: Array<Skill>(),
   badges: Array<Badge>(),
   totalBadges: 0,
+  selectedBadge: {},
 };
 
 const parcoursSkillsSlice = createSlice({
@@ -106,6 +107,7 @@ const parcoursSkillsSlice = createSlice({
       updatedBadges.map((item) => (item.isSelected = false));
       let badge = updatedBadges.find((item) => item.id === action.payload);
       if (badge) {
+        state.selectedBadge = badge;
         updatedBadges = updatedBadges.filter(
           (item) => item.id !== action.payload
         );

@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import Badge from "../../utils/interfaces/badge";
@@ -11,9 +11,16 @@ type Props = {
   onSubmitBadge: (badge: any) => void;
 };
 
-const BadgeList: FC<Props> = ({ selectedBadge, onSubmitBadge }) => {
+const BadgeList: FC<Props> = ({ onSubmitBadge }) => {
   const badgeList = useSelector((state: any) => state.parcoursSkills.badges);
+  const selectedBadge = useSelector(
+    (state: any) => state.parcoursSkills.selectedBadge
+  );
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    onSubmitBadge(selectedBadge);
+  }, [selectedBadge, onSubmitBadge]);
 
   let content = (
     <div className="flex flex-col w-full gap-y-8 items-center">
@@ -23,7 +30,6 @@ const BadgeList: FC<Props> = ({ selectedBadge, onSubmitBadge }) => {
             key={item.id}
             onClick={() => {
               dispatch(parcoursSkillsAction.setSelectedBadge(item.id));
-              onSubmitBadge(item);
             }}
           >
             <BadgeItem badge={item} />
