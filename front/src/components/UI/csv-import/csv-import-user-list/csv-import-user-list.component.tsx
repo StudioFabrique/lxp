@@ -55,9 +55,19 @@ const CsvImportUserList: FC<{
     ]);
   };
 
-  const handleDeleteSelectedUser = (email: string) => {
+  const handleDeleteSelectedUser = (user: User) => {
     setSelectedUsersToUpload((selectedUsersToUpload) =>
-      selectedUsersToUpload.filter((user) => user.email !== email)
+      selectedUsersToUpload.filter(
+        (currentUser) => currentUser.email !== user.email
+      )
+    );
+  };
+
+  const handleAddUserInstantly = (user: User) => {
+    setSelectedUsersToUpload((selectedUsersToUpload) =>
+      selectedUsersToUpload.filter(
+        (currentUser) => currentUser.email !== user.email
+      )
     );
   };
 
@@ -82,6 +92,7 @@ const CsvImportUserList: FC<{
           isLoading={isLoading}
           onAddSelectedUser={handleAddSelectedUser}
           onDeleteSelectedUser={handleDeleteSelectedUser}
+          onAddUserInstantly={handleAddUserInstantly}
         />
       </RightSideDrawer>
     </div>

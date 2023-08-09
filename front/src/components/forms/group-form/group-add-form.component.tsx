@@ -8,6 +8,8 @@ import DatesSelecter from "../../UI/dates-selecter/dates-selecter.component";
 import ParcoursHeader from "../../groups-header/groups-header.component";
 import Tags from "../../UI/tags/tags.component";
 import Tag from "../../../utils/interfaces/tag";
+import GroupTags from "./components/group-tags.component";
+import Dates from "./components/dates.component";
 
 const GroupAddForm: FC<{
   group?: any;
@@ -72,9 +74,9 @@ const GroupAddForm: FC<{
       <ParcoursHeader />
       <div className="grid grid-cols-3 max-md:grid-cols-1 gap-x-5">
         <Informations name={name} diplome={diplome} rncp={rncp} />
-        <div className="grid grid-row-2 max-md:mb-2 max-md:mt-2 gap-y-2">
-          <DatesSelecter onSubmitDates={handleSubmitDates} />
-          <Tags onSubmitTags={handleSubmitTags} />
+        <div className="grid grid-row-2 max-md:mb-2 max-md:mt-2 gap-y-8">
+          <GroupTags onSubmitTags={handleSubmitTags} />
+          <Dates onSubmitDates={handleSubmitDates} />
         </div>
         <Details promotion={promotion} desc={desc} />
       </div>

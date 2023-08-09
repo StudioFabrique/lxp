@@ -28,7 +28,7 @@ const GroupAdd = () => {
   };
 
   return (
-    <div className="p-5 grid grid-rows-2 gap-y-5">
+    <div className="p-5 grid grid-rows-2 gap-y-14">
       <Toaster />
       <GroupAddForm
         onSubmitForm={handleSubmit}
