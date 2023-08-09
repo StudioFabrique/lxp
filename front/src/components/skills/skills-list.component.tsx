@@ -11,7 +11,6 @@ import ButtonAdd from "../UI/button-add/button-add";
 import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 import useHttp from "../../hooks/use-http";
-import Loader from "../UI/loader";
 
 const SkillsList = () => {
   const { id } = useParams();

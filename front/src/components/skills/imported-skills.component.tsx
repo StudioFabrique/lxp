@@ -54,6 +54,7 @@ const ImportedSkills: FC<Props> = ({ data, origin, onCloseDrawer }) => {
 
   // réinitialise les checkboxes et ferme le drawer
   const handleCancelButton = () => {
+    dispatch(parcoursSkillsAction.importSkills([]));
     setAllChecked(false);
     onCloseDrawer("import-skills");
   };
@@ -91,7 +92,7 @@ const ImportedSkills: FC<Props> = ({ data, origin, onCloseDrawer }) => {
                       className="cursor-pointer"
                       onClick={() => sortData("description")}
                     >
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-x-2">
                         <p>Compétence</p>
                         <SortColumnIcon
                           fieldSort={fieldSort}
@@ -102,7 +103,7 @@ const ImportedSkills: FC<Props> = ({ data, origin, onCloseDrawer }) => {
                     </th>
                     {origin === "db" ? (
                       <th
-                        className="cursor-pointer items-center justify-between"
+                        className="cursor-pointer items-center flex gap-x-2"
                         onClick={() => sortData("parcours")}
                       >
                         <div className="flex items-center justify-between">
