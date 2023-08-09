@@ -4,7 +4,7 @@ import { regexGeneric } from "../../../utils/constantes";
 import useInput from "../../../hooks/use-input";
 import Informations from "./components/informations.components";
 import Details from "./components/details.component";
-import ParcoursHeader from "../../groups-header/groups-header.component";
+import GroupsHeader from "../../groups-header/groups-header.component";
 import Tag from "../../../utils/interfaces/tag";
 import GroupTags from "./components/group-tags.component";
 import Dates from "./components/dates.component";
@@ -69,7 +69,7 @@ const GroupAddForm: FC<{
       onSubmit={handleSubmit}
       autoComplete="off"
     >
-      <ParcoursHeader />
+      <GroupsHeader />
       <div className="grid grid-cols-3 max-md:grid-cols-1 gap-x-5">
         <Informations name={name} diplome={diplome} rncp={rncp} />
         <div className="grid grid-row-2 max-md:mb-2 max-md:mt-2 gap-y-8">
