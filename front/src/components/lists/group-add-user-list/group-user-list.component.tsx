@@ -9,7 +9,8 @@ import SearchSimple from "../../UI/search-simple/search-simple";
 const GroupUserList: FC<{
   usersToAdd: User[];
   onAddUsers: (users: Array<User>) => void;
-}> = ({ usersToAdd, onAddUsers }) => {
+  onUpdateUser: (user: User) => void;
+}> = ({ usersToAdd, onAddUsers, onUpdateUser }) => {
   const [needDataUpdate, setDataUpdateState] = useState<boolean>(false);
 
   return (
@@ -50,7 +51,11 @@ const GroupUserList: FC<{
             </thead>
             <tbody>
               {usersToAdd.map((user) => (
-                <GroupUserItem key={user._id} user={user} />
+                <GroupUserItem
+                  key={user._id}
+                  user={user}
+                  onUpdateUser={onUpdateUser}
+                />
               ))}
             </tbody>
           </table>

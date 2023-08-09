@@ -13,6 +13,7 @@ const GroupAdd = () => {
 
   const handleSubmit = (group: Group) => {
     console.log(group);
+    console.log(usersToAdd);
 
     sendRequest(
       { method: "post", path: "/group", body: group },
@@ -26,6 +27,22 @@ const GroupAdd = () => {
     setUsersToAdd((currentUsers) => [...currentUsers, ...users]);
   };
 
+  const handleUpdateUser = (user: User) => {
+    setUsersToAdd((usersToAdd) =>
+      usersToAdd.map((userToAdd) =>
+        userToAdd._id === user._id
+          ? { ...userToAdd, isActive: user.isActive }
+          : userToAdd
+      )
+    );
+  };
+
+  const handleDeleteUser = (user: User) => {
+    setUsersToAdd((usersToAdd) =>
+      usersToAdd.filter((userToAdd) => userToAdd._id !== user._id)
+    );
+  };
+
   return (
     <div className="flex flex-col p-10 gap-y-10">
       <Toaster />
@@ -34,7 +51,11 @@ const GroupAdd = () => {
         error={error}
         isLoading={isLoading}
       />
-      <GroupUserList usersToAdd={usersToAdd} onAddUsers={handleAddUsers} />
+      <GroupUserList
+        usersToAdd={usersToAdd}
+        onAddUsers={handleAddUsers}
+        onUpdateUser={handleUpdateUser}
+      />
     </div>
   );
 };
