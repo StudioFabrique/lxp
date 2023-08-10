@@ -1,14 +1,15 @@
 import { FC } from "react";
+import Skill from "../../utils/interfaces/skill";
 
 type Props = {
-  skillId: number;
+  skill: Skill;
   onUpdateSkill: (id: number) => void;
   onUpdateBadge: (index: number) => void;
   onDeleteSkill: (id: number) => void;
 };
 
 const SkillActions: FC<Props> = ({
-  skillId,
+  skill,
   onUpdateSkill,
   onUpdateBadge,
   onDeleteSkill,
@@ -17,7 +18,7 @@ const SkillActions: FC<Props> = ({
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
       <button
         className="btn btn-outline btn-secondary font-normal"
-        onClick={() => onUpdateBadge(skillId)}
+        onClick={() => onUpdateBadge(skill.id!)}
       >
         Modifier le badge
       </button>
@@ -26,7 +27,7 @@ const SkillActions: FC<Props> = ({
         <div className="flex justify-center items-center">
           <button
             className="btn btn-primary"
-            onClick={() => onUpdateSkill(skillId)}
+            onClick={() => onUpdateSkill(skill.id!)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -48,7 +49,8 @@ const SkillActions: FC<Props> = ({
         <div className="flex justify-center items-center">
           <button
             className="btn btn-primary"
-            onClick={() => onDeleteSkill(skillId)}
+            disabled={!skill.isBonus}
+            onClick={() => onDeleteSkill(skill.id!)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

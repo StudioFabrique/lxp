@@ -23,7 +23,6 @@ const SkillsList = () => {
 
   const handleDeleteSkill = (skillId: number) => {
     const processData = (data: any) => {
-      console.log(data);
       dispatch(parcoursSkillsAction.deleteSkill(skillId));
     };
     sendRequest(
@@ -111,7 +110,7 @@ const SkillsList = () => {
       {skillList.length > 0 ? (
         <ul className="flex flex-col gap-y-4">
           {skillList.map((item: Skill) => (
-            <li key={item.description}>
+            <li key={item.id}>
               <FadeWrapper>
                 <SkillItem
                   skill={item}

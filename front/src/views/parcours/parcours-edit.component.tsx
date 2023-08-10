@@ -87,7 +87,7 @@ const EditParcours = () => {
         );
       }
       if (data.bonusSkills.length > 0) {
-        dispatch(parcoursSkillsAction.setBonusSkill(data.bonusSkills));
+        dispatch(parcoursSkillsAction.setSkillsList(data.bonusSkills));
         const badges = data.bonusSkills.map((item: Skill) => item.badge);
         dispatch(parcoursSkillsAction.importBadges(badges));
       }

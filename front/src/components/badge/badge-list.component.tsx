@@ -1,10 +1,9 @@
-import React, { FC, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { FC } from "react";
+import { useSelector } from "react-redux";
 
 import Badge from "../../utils/interfaces/badge";
 import ImportBadges from "../skills/import-badges.component";
 import BadgeItem from "./badge-item.component";
-import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 
 type Props = {
   selectedBadge?: any;
@@ -13,14 +12,6 @@ type Props = {
 
 const BadgeList: FC<Props> = ({ onSubmitBadge }) => {
   const badgeList = useSelector((state: any) => state.parcoursSkills.badges);
-  const selectedBadge = useSelector(
-    (state: any) => state.parcoursSkills.selectedBadge
-  );
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    onSubmitBadge(selectedBadge);
-  }, [selectedBadge, onSubmitBadge]);
 
   let content = (
     <div className="flex flex-col w-full gap-y-8 items-center">
@@ -29,14 +20,14 @@ const BadgeList: FC<Props> = ({ onSubmitBadge }) => {
           <li
             key={item.id}
             onClick={() => {
-              dispatch(parcoursSkillsAction.setSelectedBadge(item.id));
+              onSubmitBadge(item);
             }}
           >
             <BadgeItem badge={item} />
           </li>
         ))}
       </ul>
-      <ImportBadges />
+      <ImportBadges onSubmit={onSubmitBadge} />
     </div>
   );
   console.log({ badgeList });
