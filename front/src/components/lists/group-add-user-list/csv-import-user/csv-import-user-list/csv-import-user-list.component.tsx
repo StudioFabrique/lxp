@@ -1,11 +1,11 @@
 import { Dispatch, FC, SetStateAction, useState } from "react";
-import { csvUsersFields } from "../../../../config/csv/csv-users-fields";
-import RightSideDrawer from "../../right-side-drawer/right-side-drawer";
-import CsvImport from "../csv-import.component";
-import User from "../../../../utils/interfaces/user";
+import { csvUsersFields } from "../../../../../config/csv/csv-users-fields";
+import RightSideDrawer from "../../../../UI/right-side-drawer/right-side-drawer";
+import User from "../../../../../utils/interfaces/user";
 import { toast } from "react-hot-toast";
-import useHttp from "../../../../hooks/use-http";
+import useHttp from "../../../../../hooks/use-http";
 import CsvUserListConfirmation from "./csv-user-list-confirmation.component";
+import CsvImportUser from "../csv-import.component";
 
 const CsvImportUserList: FC<{
   setDataUpdateState: Dispatch<SetStateAction<boolean>>;
@@ -73,7 +73,7 @@ const CsvImportUserList: FC<{
 
   return (
     <div>
-      <CsvImport
+      <CsvImportUser
         type="text"
         origin=""
         onParseCsv={handleImportCsv}
