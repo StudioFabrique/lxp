@@ -10,7 +10,8 @@ const GroupUserList: FC<{
   usersToAdd: User[];
   onAddUsers: (users: Array<User>) => void;
   onUpdateUser: (user: User) => void;
-}> = ({ usersToAdd, onAddUsers, onUpdateUser }) => {
+  onDeleteUser: (user: User) => void;
+}> = ({ usersToAdd, onAddUsers, onUpdateUser, onDeleteUser }) => {
   const [needDataUpdate, setDataUpdateState] = useState<boolean>(false);
 
   return (
@@ -46,7 +47,7 @@ const GroupUserList: FC<{
                 <th className="bg-transparent">Formation</th>
                 <th className="bg-transparent">Status</th>
                 <th className="bg-transparent"></th>
-                <th className="bg-transparent"></th>
+                <th className="bg-transparent">test</th>
               </tr>
             </thead>
             <tbody>
@@ -55,6 +56,7 @@ const GroupUserList: FC<{
                   key={user._id}
                   user={user}
                   onUpdateUser={onUpdateUser}
+                  onDeleteUser={onDeleteUser}
                 />
               ))}
             </tbody>

@@ -1,11 +1,13 @@
 import { ChangeEvent, ChangeEventHandler, FC } from "react";
 import User from "../../../utils/interfaces/user";
 import { AvatarSmall } from "../../UI/avatar/avatar.component";
+import { DeleteButton, EditButton } from "./buttons";
 
 const GroupUserItem: FC<{
   user: User;
   onUpdateUser: (user: User) => void;
-}> = ({ user, onUpdateUser }) => {
+  onDeleteUser: (user: User) => void;
+}> = ({ user, onUpdateUser, onDeleteUser }) => {
   const handleToggleActiveState: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
@@ -37,7 +39,10 @@ const GroupUserItem: FC<{
           defaultChecked={user.isActive}
         />
       </td>
-      <td className="bg-transparent rounded-r-xl">act1 act2</td>
+      <td className="bg-transparent rounded-r-xl">
+        <EditButton user={user} />
+        <DeleteButton user={user} onDeleteUser={onDeleteUser} />
+      </td>
     </tr>
   );
 };

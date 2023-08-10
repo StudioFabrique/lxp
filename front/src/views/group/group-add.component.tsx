@@ -55,6 +55,7 @@ const GroupAdd = () => {
         usersToAdd={usersToAdd}
         onAddUsers={handleAddUsers}
         onUpdateUser={handleUpdateUser}
+        onDeleteUser={handleDeleteUser}
       />
     </div>
   );
