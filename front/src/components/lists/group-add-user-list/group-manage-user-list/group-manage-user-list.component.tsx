@@ -51,18 +51,18 @@ const GroupManageUserList: FC<{
     );
   };
 
+  const handleAddSelectedUser = (user: User) => {
+    setSelectedUsers((users) => [...users, user]);
+    setUsersSettedState(false);
+    console.log("id adding : " + user);
+  };
+
   const handleDeleteSelectedUser = (user: User) => {
     setSelectedUsers((users) =>
       users.filter((currentUser) => currentUser._id !== user._id)
     );
     setUsersSettedState(false);
     console.log("id deleting : " + user);
-  };
-
-  const handleAddSelectedUser = (user: User) => {
-    setSelectedUsers((users) => [...users, user]);
-    setUsersSettedState(false);
-    console.log("id adding : " + user);
   };
 
   /* 

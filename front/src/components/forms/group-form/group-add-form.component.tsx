@@ -1,4 +1,4 @@
-import { FC, FormEvent } from "react";
+import { FC, FormEvent, useState } from "react";
 
 import { regexGeneric } from "../../../utils/constantes";
 import useInput from "../../../hooks/use-input";
@@ -8,18 +8,23 @@ import GroupsHeader from "../../groups-header/groups-header.component";
 import Tag from "../../../utils/interfaces/tag";
 import GroupTags from "./components/group-tags.component";
 import Dates from "./components/dates.component";
+import Group from "../../../utils/interfaces/group";
 
 const GroupAddForm: FC<{
   group?: any;
-  onSubmitForm: (group: any) => void;
+  onSubmitForm: (group: Group) => void;
   error: string;
   isLoading: boolean;
 }> = (props) => {
-  const handleSubmitTags = (tags: Array<Tag>) => {};
-  const handleSubmitDates = (dates: {
-    startDate: string;
-    endDate: string;
-  }) => {};
+  const [dates, setDates] = useState({ startDate: "", endDate: "" });
+  const [tags, setTags] = useState<Tag[]>([]);
+
+  const handleSubmitTags = (tags: Array<Tag>) => {
+    setTags(tags);
+  };
+  const handleSubmitDates = (dates: { startDate: string; endDate: string }) => {
+    setDates(dates);
+  };
 
   const { value: name } = useInput(
     (value: string) => regexGeneric.test(value),
@@ -48,7 +53,13 @@ const GroupAddForm: FC<{
 
   //  test la validité du form via le custom hook useInput
   let formIsValid = false;
-  formIsValid = name.isValid && desc.isValid;
+  formIsValid =
+    name.isValid &&
+    desc.isValid &&
+    dates.startDate.length > 0 &&
+    dates.endDate.length > 0 &&
+    diplome.isValid &&
+    promotion.isValid;
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -56,9 +67,11 @@ const GroupAddForm: FC<{
       props.onSubmitForm({
         name: name.value.trim(),
         desc: desc.value.trim(),
-        diplome: diplome.value.trim(),
         rncp: rncp.value.trim(),
         promotion: promotion.value.trim(),
+        startDate: dates.startDate,
+        endDate: dates.endDate,
+        tags: tags,
       });
     }
   };
