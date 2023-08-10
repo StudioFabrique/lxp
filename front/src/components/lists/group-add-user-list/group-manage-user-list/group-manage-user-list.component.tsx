@@ -105,7 +105,7 @@ const GroupManageUserList: FC<{
       buttonTitle="Ajouter un étudiant"
     >
       {dataList.length > 0 ? (
-        <div className="flex flex-col items-center gap-y-5 justify-between">
+        <div className="flex flex-col items-center gap-y-5 justify-between p-10">
           <Search
             placeholder="Rechercher"
             onSearch={handleSearchUser}
