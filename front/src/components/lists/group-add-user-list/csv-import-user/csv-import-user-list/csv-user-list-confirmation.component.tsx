@@ -1,6 +1,6 @@
 import { Dispatch, FC, SetStateAction } from "react";
-import User from "../../../../utils/interfaces/user";
-import GroupUserItem from "../../../lists/group-add-user-list/group-manage-user-list/group-manage-user-item/group-manage-user-item.component";
+import User from "../../../../../utils/interfaces/user";
+import GroupUserItem from "../../group-manage-user-list/group-manage-user-item/group-manage-user-item.component";
 
 interface IUserListConfirmation {
   usersFromCsv: Array<User>;

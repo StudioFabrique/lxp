@@ -18,7 +18,7 @@ const GroupUserItem: FC<{
 
   return (
     <tr className="bg-secondary/10 hover:bg-blue-800 hover:text-white">
-      <td className="bg-transparent rounded-l-xl py-5">
+      <td className="bg-transparent rounded-l-xl p-5">
         <input type="checkbox" className="checkbox checkbox-primary" />
       </td>
       <td className="bg-transparent">

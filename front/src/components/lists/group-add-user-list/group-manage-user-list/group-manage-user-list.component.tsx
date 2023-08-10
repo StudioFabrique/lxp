@@ -13,6 +13,7 @@ import { Context } from "../../../../store/context.store";
 import Pagination from "../../../UI/pagination/pagination";
 import RightSideDrawer from "../../../UI/right-side-drawer/right-side-drawer";
 import User from "../../../../utils/interfaces/user";
+import Search from "../../../UI/search/search.component";
 
 const GroupManageUserList: FC<{
   needDataUpdate: boolean;
@@ -24,6 +25,7 @@ const GroupManageUserList: FC<{
 
   const [selectedUsers, setSelectedUsers] = useState<Array<User>>([]);
   const [isUsersSettedUp, setUsersSettedState] = useState(true);
+  const [userSearchResult, setUserSearchResult] = useState<User[]>([]);
 
   const {
     page,
@@ -69,12 +71,24 @@ const GroupManageUserList: FC<{
     Ajoute un utilisateur directement dans la liste sans checklist
    */
   const handleAddUserInstantly = (user: User) => {
+    if (userSearchResult.length > 0) {
+      setUserSearchResult([]);
+    }
     props.onAddUsers([user]);
     setSelectedUsers((users) =>
       users.filter((currentUser) => currentUser._id !== user._id)
     );
     setDataList((users) => users.filter((value) => value._id !== user._id));
     console.log("id adding : " + user);
+  };
+
+  const handleSearchUser = (entityToSearch: string, searchValue: string) => {
+    const result = dataList.filter(
+      (user) => user[entityToSearch].toLowerCase() === searchValue.toLowerCase()
+    );
+    console.log(result);
+
+    setUserSearchResult(result);
   };
 
   useEffect(() => {
@@ -90,37 +104,44 @@ const GroupManageUserList: FC<{
       id="add-user-to-group"
       buttonTitle="Ajouter un étudiant"
     >
-      <div className="flex flex-col items-center gap-y-5">
-        {dataList.length > 0 ? (
-          <div className="h-full flex flex-col gap-y-5 justify-between">
-            <UserToAddList
-              selectedUsers={selectedUsers}
-              userList={dataList}
-              usersToAdd={props.usersToAdd}
-              onAddSelectedUser={handleAddSelectedUser}
-              onDeleteSelectedUser={handleDeleteSelectedUser}
-              onAddUserInstantly={handleAddUserInstantly}
-              isUsersSettedUp={isUsersSettedUp}
-            />
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              perPage={perPage}
-              setPage={handlePageNumber}
-              setPerPages={setPerPage}
-            />
-            <AddUsersButton
-              onSetUsersToAdd={handleSetUsersToAdd}
-              setUsersSettedState={setUsersSettedState}
-              isUserSettedUp={isUsersSettedUp}
-            />
-          </div>
-        ) : (
-          <p className="text-center">
-            Aucun utilisateurs éligibles à être ajouté
-          </p>
-        )}
-      </div>
+      {dataList.length > 0 ? (
+        <div className="flex flex-col items-center gap-y-5 justify-between">
+          <Search
+            placeholder="Rechercher"
+            onSearch={handleSearchUser}
+            options={[
+              { index: 0, option: "Prénom", value: "firstname" },
+              { index: 1, option: "Nom", value: "lastname" },
+              { index: 2, option: "Formation", value: "group" },
+            ]}
+          />
+          <UserToAddList
+            selectedUsers={selectedUsers}
+            userList={userSearchResult.length > 0 ? userSearchResult : dataList}
+            usersToAdd={props.usersToAdd}
+            onAddSelectedUser={handleAddSelectedUser}
+            onDeleteSelectedUser={handleDeleteSelectedUser}
+            onAddUserInstantly={handleAddUserInstantly}
+            isUsersSettedUp={isUsersSettedUp}
+          />
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            perPage={perPage}
+            setPage={handlePageNumber}
+            setPerPages={setPerPage}
+          />
+          <AddUsersButton
+            onSetUsersToAdd={handleSetUsersToAdd}
+            setUsersSettedState={setUsersSettedState}
+            isUserSettedUp={isUsersSettedUp}
+          />
+        </div>
+      ) : (
+        <p className="text-center">
+          Aucun utilisateurs éligibles à être ajouté
+        </p>
+      )}
     </RightSideDrawer>
   );
 };

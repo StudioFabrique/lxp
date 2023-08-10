@@ -2,9 +2,9 @@ import { FC, useState } from "react";
 import GroupManageUserList from "./group-manage-user-list/group-manage-user-list.component";
 import User from "../../../utils/interfaces/user";
 import Wrapper from "../../UI/wrapper/wrapper.component";
-import CsvImportUserList from "../../UI/csv-import/csv-import-user-list/csv-import-user-list.component";
 import GroupUserItem from "./group-user-item.component";
 import SearchSimple from "../../UI/search-simple/search-simple";
+import CsvImportUserList from "./csv-import-user/csv-import-user-list/csv-import-user-list.component";
 
 const GroupUserList: FC<{
   usersToAdd: User[];
@@ -36,18 +36,18 @@ const GroupUserList: FC<{
       {/* liste des utilisateurs du groupe */}
       {usersToAdd.length > 0 ? (
         <>
-          <table className="table-auto tab-sm border-separate border-spacing-y-4 text-center">
+          <table className="table-auto border-separate border-spacing-y-4">
             <thead>
-              <tr>
+              <tr className="text-lg">
+                <th className="bg-transparent "></th>
+                <th className="bg-transparent"></th>
+                <th className="bg-transparent text-start">Prénom</th>
+                <th className="bg-transparent text-start">Nom</th>
+                <th className="bg-transparent text-start">Email</th>
+                <th className="bg-transparent text-start">Formation</th>
+                <th className="bg-transparent text-start">Status</th>
                 <th className="bg-transparent"></th>
                 <th className="bg-transparent"></th>
-                <th className="bg-transparent">Prénom</th>
-                <th className="bg-transparent">Nom</th>
-                <th className="bg-transparent">Email</th>
-                <th className="bg-transparent">Formation</th>
-                <th className="bg-transparent">Status</th>
-                <th className="bg-transparent"></th>
-                <th className="bg-transparent">test</th>
               </tr>
             </thead>
             <tbody>
