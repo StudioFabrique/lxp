@@ -86,7 +86,7 @@ model Skill {
 
 model BonusSkill {
   id          Int      @id @default(autoincrement())
-  description String   @unique
+  description String   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
   badge       String?

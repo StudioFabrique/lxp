@@ -5,7 +5,7 @@ import useInput from "../../hooks/use-input";
 import { regexGeneric } from "../../utils/constantes";
 import BadgeList from "../badge/badge-list.component";
 import Wrapper from "../UI/wrapper/wrapper.component";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import DrawerFormButtons from "../UI/drawer-form-buttons/drawer-form-buttons.component";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 import Badge from "../../utils/interfaces/badge";
@@ -25,6 +25,10 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
     skill?.description || ""
   );
 
+  /**
+   * ferme le drawer lorsqu'on click sur le bouton annuler
+   * le drawer est identifié par la présence ou non de la propriété "skill"
+   */
   const handleCancel = () => {
     onCloseDrawer(skill ? "update-skill" : "badge-drawer");
     if (!skill) {
@@ -32,17 +36,26 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
     }
   };
 
+  // test la validité du formulaire
   let formIsValid = description.isValid;
 
+  // définit le style du champ du formulaire en fonction de sa validité
   let textareaStyle = () => {
     let style = "textarea focus:outline-none bg-secondary/20";
     return description.hasError ? style + " textarea-error" : style;
   };
 
+  /**
+   * ajoute le badge sélectionné lors d'une importation d'image ou d'un click sur un badge dans la liste des badges
+   */
   const addBadge = useCallback((newBadge: Badge) => {
     setBadge(newBadge);
   }, []);
 
+  /**
+   * soumet la nouvelle compétence, reset le formulaire et ferme le drawer
+   * @param event FormEvent
+   */
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (formIsValid) {
@@ -55,6 +68,7 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
     }
   };
 
+  // récupération du nombre total de badges
   useEffect(() => {
     dispatch(parcoursSkillsAction.getBadgesTotal());
   }, [dispatch]);

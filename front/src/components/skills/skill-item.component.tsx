@@ -27,7 +27,7 @@ const SkillItem: FC<Props> = ({
         <div className="flex gap-x-8 items-center">
           <SkillBadge badge={skill.badge} />
           <SkillActions
-            skillId={skill.id!}
+            skill={skill}
             onUpdateSkill={onUpdateSkill}
             onUpdateBadge={onUpdateBadge}
             onDeleteSkill={onDeleteSkill}

@@ -9,18 +9,8 @@ type Props = {
 };
 
 const DbImportSkills: FC<Props> = ({ origin, onFetchSkills }) => {
-  const { sendRequest } = useHttp();
-
   const handleFetchSkills = () => {
-    const processData = (data: Array<Skill>) => {
-      onFetchSkills(data);
-    };
-    sendRequest(
-      {
-        path: "/bonus-skill",
-      },
-      processData
-    );
+    onFetchSkills([]);
   };
 
   return (
