@@ -5,6 +5,7 @@ import httpPostBonusSkill from "../../../controllers/bonus-skill/http-post-bonus
 import httpDeleteBonusSkill from "../../../controllers/bonus-skill/http-delete-bonus-skill";
 import httpGetBonusSkillsFromParcours from "../../../controllers/bonus-skill/http-get-bonus-skills-from-parcours";
 import httpPostManySkills from "../../../controllers/bonus-skill/http-post-many-skills";
+import httpPutBonusSkill from "../../../controllers/bonus-skill/http-put-skill";
 
 const bonusSkillRouter = express.Router();
 
@@ -28,6 +29,8 @@ bonusSkillRouter.delete(
   param("id").isNumeric().notEmpty(),
   httpDeleteBonusSkill
 );
+
+bonusSkillRouter.put("/", httpPutBonusSkill);
 
 bonusSkillRouter.get("/", httpGetBonusSkillsFromParcours);
 

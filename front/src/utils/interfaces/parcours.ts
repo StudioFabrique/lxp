@@ -19,4 +19,5 @@ export default interface Parcours {
   contacts: Array<Contact>;
   skills: Array<Skill>;
   bonusSkills: Array<Skill>;
+  virtualClass?: string;
 }

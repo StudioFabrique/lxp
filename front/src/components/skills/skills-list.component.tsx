@@ -53,12 +53,6 @@ const SkillsList = () => {
     setTitle("Modifier la compétence");
   };
 
-  const handleUpdateBadge = (id: number) => {
-    setItemToUpdate(skillList.find((item: Skill) => item.id === id));
-    setActiveDrawer("update-badge");
-    setTitle("Modifier le Badge");
-  };
-
   const handleSubmitAddSkill = (value: any) => {
     const skill = skillList.find(
       (item: any) => item.description === value.description
@@ -68,7 +62,6 @@ const SkillsList = () => {
         if (data.success) {
           toast.success("Une nouvelle compétence a été enregistrée");
           dispatch(parcoursSkillsAction.addSkill(data.skill));
-          dispatch(parcoursSkillsAction.unselectBadge());
         }
       };
       setTimeout(() => {
@@ -93,7 +86,28 @@ const SkillsList = () => {
   };
 
   const submitUpdateSkill = (skill: any) => {
+    console.log({ skill });
+
     dispatch(parcoursSkillsAction.editSkill(skill));
+    const processData = (data: { success: boolean; message: string }) => {
+      if (data.success) {
+        toast.success(data.message);
+      }
+    };
+    sendRequest(
+      {
+        path: "/bonus-skill",
+        method: "put",
+        body: {
+          skill: {
+            id: skill.id,
+            description: skill.description,
+            badge: skill.badge,
+          },
+        },
+      },
+      processData
+    );
     handleCloseDrawer("update-skill");
   };
 
@@ -115,7 +129,6 @@ const SkillsList = () => {
                 <SkillItem
                   skill={item}
                   onUpdateSkill={handleUpdateSkill}
-                  onUpdateBadge={handleUpdateBadge}
                   onDeleteSkill={handleDeleteSkill}
                 />
               </FadeWrapper>
@@ -134,9 +147,9 @@ const SkillsList = () => {
         <div className="w-full flex flex-col gap-y-4 mt-4">{content}</div>
       </FadeWrapper>
 
-      <div>
+      <div className="mt-2">
         <ButtonAdd
-          label="ajouter"
+          label="Ajouter une compétence"
           outline={true}
           onClickEvent={handleAddSkill}
         />

@@ -20,7 +20,6 @@ import Skills from "../../components/skills/skills.component";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 import ParcoursModules from "../../components/parcours-modules/parcours-modules.component";
 import Stepper from "../../components/UI/stepper.-component/stepper.-component";
-import Skill from "../../utils/interfaces/skill";
 
 let initialState = true;
 
@@ -72,6 +71,11 @@ const EditParcours = () => {
           )
         );
       }
+
+      if (data.virtualClass) {
+        dispatch(parcoursInformationsAction.setVirtualClass(data.virtualClass));
+      }
+
       if (data.contacts.length > 0) {
         dispatch(
           parcoursContactsAction.setCurrentContacts(
@@ -88,8 +92,6 @@ const EditParcours = () => {
       }
       if (data.bonusSkills.length > 0) {
         dispatch(parcoursSkillsAction.setSkillsList(data.bonusSkills));
-        const badges = data.bonusSkills.map((item: Skill) => item.badge);
-        dispatch(parcoursSkillsAction.importBadges(badges));
       }
     };
     if (initialState) {

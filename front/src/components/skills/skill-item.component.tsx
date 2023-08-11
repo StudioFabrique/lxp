@@ -8,28 +8,20 @@ import SkillActions from "./skill-actions.component";
 type Props = {
   skill: Skill;
   onUpdateSkill: (id: number) => void;
-  onUpdateBadge: (index: number) => void;
   onDeleteSkill: (id: number) => void;
 };
 
-const SkillItem: FC<Props> = ({
-  skill,
-  onUpdateSkill,
-  onUpdateBadge,
-  onDeleteSkill,
-}) => {
+const SkillItem: FC<Props> = ({ skill, onUpdateSkill, onDeleteSkill }) => {
   return (
     <>
-      <div className="w-full flex flex-col md:flex-row items-center gap-x-8">
-        <div className="flex-1">
-          <SkillTitle title={skill.description} />
-        </div>
-        <div className="flex gap-x-8 items-center">
-          <SkillBadge badge={skill.badge} />
+      <div className="w-full h-full flex items-center gap-x-2 gap-y-2">
+        <SkillBadge badge={skill.badge} />
+        <SkillTitle title={skill.description} />
+
+        <div className="h-full flex gap-x-8 items-center">
           <SkillActions
             skill={skill}
             onUpdateSkill={onUpdateSkill}
-            onUpdateBadge={onUpdateBadge}
             onDeleteSkill={onDeleteSkill}
           />
         </div>

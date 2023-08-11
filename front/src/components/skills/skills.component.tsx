@@ -23,6 +23,7 @@ const Skills = () => {
 
   return (
     <div className="w-full">
+      <h3 className="text-xl font-bold mb-4">Compétences Complémentaires</h3>
       <Wrapper>
         <SkillsHeader onImport={handleOpenImportDrawer} />
         <SkillsList />
