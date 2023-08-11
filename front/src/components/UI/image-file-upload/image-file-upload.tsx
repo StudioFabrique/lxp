@@ -51,14 +51,14 @@ const ImageFileUpload: FC<{
   ) : (
     <div className="flex flex-col gap-y-2">
       <p>Téléverser une image de groupe</p>
-      <span className="flex w-full">
+      <span className="flex w-full  items-center">
         <p
           onClick={handleSetFile}
-          className="cursor-pointer  bg-secondary-focus text-center p-2 text-sm rounded-l-lg"
+          className="cursor-pointer bg-secondary-focus text-center p-2 text-sm rounded-l-lg"
         >
           Choisir un fichier
         </p>
-        <p className=" text-center p-2 text-sm bg-secondary-content rounded-r-lg">
+        <p className="text-center p-2 text-sm bg-secondary-content rounded-r-lg w-[50%] overflow-x-clip h-10">
           {file?.name}
         </p>
       </span>

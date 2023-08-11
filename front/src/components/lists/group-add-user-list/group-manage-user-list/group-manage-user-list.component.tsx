@@ -131,11 +131,13 @@ const GroupManageUserList: FC<{
             setPage={handlePageNumber}
             setPerPages={setPerPage}
           />
-          <AddUsersButton
-            onSetUsersToAdd={handleSetUsersToAdd}
-            setUsersSettedState={setUsersSettedState}
-            isUserSettedUp={isUsersSettedUp}
-          />
+          <div className="w-full flex justify-end">
+            <AddUsersButton
+              onSetUsersToAdd={handleSetUsersToAdd}
+              setUsersSettedState={setUsersSettedState}
+              isUserSettedUp={isUsersSettedUp}
+            />
+          </div>
         </div>
       ) : (
         <p className="text-center">
