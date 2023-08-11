@@ -10,11 +10,11 @@ const GroupsHeader = () => (
       </p>
     </div>
     <div className="flex items-center gap-x-2 justify-center md:justify-end">
-      <button type="button" className="btn btn-primary btn-sm md:w-32">
-        Aperçu
+      <button type="button" className="btn btn-outline btn-sm md:w-32">
+        Annuler
       </button>
       <button type="submit" className="btn btn-primary btn-sm md:w-32">
-        Publier
+        Sauvegarder
       </button>
     </div>
   </div>

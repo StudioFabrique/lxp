@@ -1,11 +1,25 @@
-import { FC } from "react";
+import {
+  ChangeEvent,
+  ChangeEventHandler,
+  Dispatch,
+  FC,
+  SetStateAction,
+} from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
+import ImageFileUpload from "../../../UI/image-file-upload/image-file-upload";
 
-const Informations: FC<{ name: any; diplome: any; rncp: any }> = ({
-  name,
-  diplome,
-  rncp,
-}) => {
+const Informations: FC<{
+  name: any;
+  desc: any;
+  isActive: any;
+  setIsActive: Dispatch<SetStateAction<boolean>>;
+}> = ({ name, desc, isActive, setIsActive }) => {
+  const handleSetFile = (file: File) => {};
+  const handleToggle: ChangeEventHandler<HTMLInputElement> = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setIsActive(event.target.checked);
+  };
   return (
     <Wrapper>
       <h2 className="font-bold text-xl">Informations</h2>
@@ -21,24 +35,12 @@ const Informations: FC<{ name: any; diplome: any; rncp: any }> = ({
         />
       </span>
       <span>
-        <label>Diplome visé</label>
-        <input
-          className="input input-sm w-full p-[20px] pl-[30px]"
-          type="text"
-          onChange={diplome.valueChangeHandler}
-          onBlur={diplome.valueBlurHandler}
-          defaultValue={diplome.value}
-          autoComplete="off"
-        />
-      </span>
-      <span>
-        <label>Code RNCP (optionnel)</label>
-        <input
-          className="input input-sm w-full p-[20px] pl-[30px]"
-          type="text"
-          onChange={rncp.valueChangeHandler}
-          onBlur={rncp.valueBlurHandler}
-          defaultValue={rncp.value}
+        <label>Description du groupe</label>
+        <textarea
+          className="textarea w-full p-[20px] pl-[30px] placeholder:text-purple-discrete"
+          onChange={desc.valueChangeHandler}
+          onBlur={desc.valueBlurHandler}
+          defaultValue={desc.value}
           autoComplete="off"
         />
       </span>
@@ -47,13 +49,17 @@ const Informations: FC<{ name: any; diplome: any; rncp: any }> = ({
         <input
           className="toggle "
           type="checkbox"
-          onChange={rncp.valueChangeHandler}
-          onBlur={rncp.valueBlurHandler}
-          defaultValue={rncp.value}
+          onChange={handleToggle}
+          defaultValue={isActive}
           autoComplete="off"
         />
         <label>Actif</label>
       </span>
+      <ImageFileUpload
+        maxSize={10000000000000000}
+        onSetFile={handleSetFile}
+        type={2}
+      />
     </Wrapper>
   );
 };

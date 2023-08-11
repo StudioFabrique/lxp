@@ -18,6 +18,9 @@ const GroupAddForm: FC<{
 }> = (props) => {
   const [dates, setDates] = useState({ startDate: "", endDate: "" });
   const [tags, setTags] = useState<Tag[]>([]);
+  const [isActive, setIsActive] = useState<boolean>(
+    props.group?.isActive ?? false
+  );
 
   const handleSubmitTags = (tags: Array<Tag>) => {
     setTags(tags);
@@ -41,16 +44,6 @@ const GroupAddForm: FC<{
     props.group?.diplome ?? ""
   );
 
-  const { value: rncp } = useInput(
-    (value: string) => regexGeneric.test(value),
-    props.group?.rncp ?? ""
-  );
-
-  const { value: promotion } = useInput(
-    (value: string) => regexGeneric.test(value),
-    props.group?.promotion ?? ""
-  );
-
   //  test la validité du form via le custom hook useInput
   let formIsValid = false;
   formIsValid =
@@ -58,8 +51,7 @@ const GroupAddForm: FC<{
     desc.isValid &&
     dates.startDate.length > 0 &&
     dates.endDate.length > 0 &&
-    diplome.isValid &&
-    promotion.isValid;
+    diplome.isValid;
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -67,8 +59,6 @@ const GroupAddForm: FC<{
       props.onSubmitForm({
         name: name.value.trim(),
         desc: desc.value.trim(),
-        rncp: rncp.value.trim(),
-        promotion: promotion.value.trim(),
         startDate: dates.startDate,
         endDate: dates.endDate,
         tags: tags,
@@ -84,12 +74,17 @@ const GroupAddForm: FC<{
     >
       <GroupsHeader />
       <div className="grid grid-cols-3 max-md:grid-cols-1 gap-x-5">
-        <Informations name={name} diplome={diplome} rncp={rncp} />
+        <Informations
+          name={name}
+          desc={desc}
+          isActive={isActive}
+          setIsActive={setIsActive}
+        />
+        <Details />
         <div className="grid grid-row-2 max-md:mb-2 max-md:mt-2 gap-y-8">
           <GroupTags onSubmitTags={handleSubmitTags} />
           <Dates onSubmitDates={handleSubmitDates} />
         </div>
-        <Details promotion={promotion} desc={desc} />
       </div>
     </form>
   );
