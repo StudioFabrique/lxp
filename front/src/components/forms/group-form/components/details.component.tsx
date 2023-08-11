@@ -1,26 +1,43 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
-import ImageFileUpload from "../../../UI/image-file-upload/image-file-upload";
+import Selecter from "../../../UI/selecter/selecter.component";
+import useHttp from "../../../../hooks/use-http";
+import { sortArray } from "../../../../utils/sortArray";
+
+// type de données pour les listes
+type Item = {
+  id: number;
+  title: string;
+  formationId?: number;
+};
 
 const Details: FC<{}> = () => {
+  const { sendRequest } = useHttp();
+
+  const [parcoursList, setParcoursList] = useState<Array<Item>>([]);
+
+  useEffect(() => {
+    const applyData = (data: any) => {
+      setParcoursList(sortArray(data, "id"));
+    };
+    sendRequest(
+      {
+        path: "/parcours",
+      },
+      applyData
+    );
+  }, [sendRequest]);
+
   return (
     <Wrapper>
       <h2 className="font-bold text-xl">Details</h2>
       <span>
         <label>Formation visée</label>
-        <input
-          className="input input-sm w-full p-[20px] pl-[30px] placeholder:text-purple-discrete"
-          type="text"
-          autoComplete="off"
-        />
+        <Selecter list={[]} onSelectItem={() => {}} title="" />
       </span>
       <span>
         <label>Parcours visé</label>
-        <input
-          className="input input-sm w-full p-[20px] pl-[30px] placeholder:text-purple-discrete"
-          type="text"
-          autoComplete="off"
-        />
+        <Selecter list={parcoursList} onSelectItem={() => {}} title="" />
       </span>
     </Wrapper>
   );
