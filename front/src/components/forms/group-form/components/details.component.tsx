@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 import ImageFileUpload from "../../../UI/image-file-upload/image-file-upload";
 
