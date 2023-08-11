@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 async function getFormation() {
   const formations = await prisma.formation.findMany({
-    include: { tags: { include: { tag: true } } },
+    select: { id: true, title: true },
   });
 
   if (!formations || formations.length === 0) {

@@ -33,6 +33,8 @@ const parcoursSkillsSlice = createSlice({
     },
     editSkill(state, action) {
       const newSkill = action.payload;
+      console.log("payload", action.payload);
+
       let updatedSkills = state.skills;
       updatedSkills = updatedSkills.filter((item) => item.id !== newSkill.id);
       updatedSkills.push(newSkill);
