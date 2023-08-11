@@ -31,11 +31,11 @@ const Details: FC<{}> = () => {
   return (
     <Wrapper>
       <h2 className="font-bold text-xl">Details</h2>
-      <span>
+      <span className="flex flex-col gap-y-2">
         <label>Formation visée</label>
         <Selecter list={[]} onSelectItem={() => {}} title="" />
       </span>
-      <span>
+      <span className="flex flex-col gap-y-2">
         <label>Parcours visé</label>
         <Selecter list={parcoursList} onSelectItem={() => {}} title="" />
       </span>
