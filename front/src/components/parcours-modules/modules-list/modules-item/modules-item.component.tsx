@@ -21,7 +21,6 @@ const ModulesItem: FC<{
 
   const handleBeginEdit = () => {
     console.log("test");
-
     dispatch(updateCurrentParcoursModule(module._id));
   };
 
