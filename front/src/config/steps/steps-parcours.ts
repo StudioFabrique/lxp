@@ -8,10 +8,10 @@ const steps = [
     label: "Compétences",
   },
   {
-    label: "Objectifs",
+    label: "Modules",
   },
   {
-    label: "Modules",
+    label: "Objectifs",
   },
   {
     label: "Calendrier",

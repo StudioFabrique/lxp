@@ -7,12 +7,12 @@ import useHttp from "../../hooks/use-http";
 import { toast } from "react-hot-toast";
 import Contacts from "./contacts";
 import Contact from "../../utils/interfaces/contact";
-import { Link } from "react-router-dom";
 import { parcoursInformationsAction } from "../../store/redux-toolkit/parcours/parcours-informations";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import DatesSelecter from "../UI/dates-selecter/dates-selecter.component";
 import Tags from "../UI/tags/tags.component";
 import Tag from "../../utils/interfaces/tag";
+import VirtualClass from "./virtual-class";
 
 type Props = {
   parcoursId?: string;
@@ -29,9 +29,6 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
   const { sendRequest } = useHttp();
   const tagsIsValid = useSelector(
     (state: any) => state.parcoursInformations.tagsIsValid
-  );
-  const isValid = useSelector(
-    (state: any) => state.parcoursInformations.isValid
   );
 
   const updateDates = useCallback(
@@ -103,7 +100,6 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
   useEffect(() => {
     dispatch(parcoursInformationsAction.isValid());
   }, [tagsIsValid, parcoursStartDate, parcoursEndDate, dispatch]);
-  console.log({ isValid });
 
   return (
     <div className="w-full">
@@ -119,11 +115,10 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
               onSubmitDates={submitDates}
             />
           </div>
-          <Link className="mt-4 mb-8 font-bold hover:underline" to="#">
-            Classe Virtuelle
-          </Link>
+
+          <VirtualClass />
         </Wrapper>
-        <div className="grid grid-rows-2 gap-8">
+        <div className="flex flex-col gap-y-8">
           <Wrapper>
             <Contacts onSubmitContacts={submitContacts} />
           </Wrapper>

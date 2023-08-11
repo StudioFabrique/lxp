@@ -4,7 +4,7 @@ import { badQuery } from "../utils/constantes";
 
 function isValidBlobString(req: Request, res: Response, next: NextFunction) {
   const regex =
-    /^blob:http:\/\/localhost:3000\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    /^blob:http:\/\/localhost:3000\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{0}$/i;
 
   if (regex.test(req.body.image)) {
     next();

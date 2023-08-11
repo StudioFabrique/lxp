@@ -10,6 +10,7 @@ const initialParcoursState = {
   },
   isValid: false,
   tagsIsValid: false,
+  virtualClass: "",
 };
 
 const parcoursInformationsSlice = createSlice({
@@ -51,6 +52,9 @@ const parcoursInformationsSlice = createSlice({
     },
     setTagsIsValid(state, action) {
       state.tagsIsValid = action.payload;
+    },
+    setVirtualClass(state, action) {
+      state.virtualClass = action.payload;
     },
   },
 });

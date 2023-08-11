@@ -1,5 +1,5 @@
 export default interface Badge {
-  id: number;
+  id?: number;
   image: string;
   isSelected?: boolean;
 }
