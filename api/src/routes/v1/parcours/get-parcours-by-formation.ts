@@ -1,7 +1,7 @@
 import express from "express";
+import { param } from "express-validator";
 
 import httpGetParcoursByFormation from "../../../controllers/parcours/http-get-parcours-by-formation";
-import { param } from "express-validator";
 
 const httpGetParcoursByFormationRouter = express.Router();
 

@@ -1,39 +1,20 @@
-import { FC, useCallback } from "react";
+import { useCallback } from "react";
 import { useDispatch } from "react-redux";
-
 
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 import CsvImportSkills from "../UI/csv-import/csv-import.component";
-import DbImportSkills from "./db-import-skills.component";
 import { skillsFields } from "../../config/csv/csv-skills-fields";
 
-type Props = {
-  origin: string;
-  onFromDB: (value: string) => void;
-};
-
-const ImpoortSkillsActions: FC<Props> = ({ origin, onFromDB }) => {
+const ImpoortSkillsActions = () => {
   const dispatch = useDispatch();
-
-  const storeSkills = useCallback(
-    (data: any) => {
-      dispatch(parcoursSkillsAction.importSkills(data));
-    },
-    [dispatch]
-  );
 
   const handleFromCSV = useCallback(
     (data: any) => {
-      storeSkills(data);
-      onFromDB("csv");
+      dispatch(parcoursSkillsAction.importSkills(data));
     },
-    [onFromDB, storeSkills]
-  );
 
-  const handleFromDB = (data: any) => {
-    storeSkills(data);
-    onFromDB("db");
-  };
+    [dispatch]
+  );
 
   const downloadFile = (url: string, filename: string) => {
     fetch(url)
@@ -63,10 +44,9 @@ const ImpoortSkillsActions: FC<Props> = ({ origin, onFromDB }) => {
           onParseCsv={handleFromCSV}
           fields={skillsFields}
         />
-        <DbImportSkills origin={origin} onFetchSkills={handleFromDB} />
       </div>
       <p
-        className="text-primary text-xs hover:underline pl-2 cursor-pointer"
+        className="text-primary text-xs hover:underline pl-2 cursor-pointer flex justify-center"
         onClick={() =>
           downloadFile(
             "http://localhost:5001/csv-competences-modele.txt",

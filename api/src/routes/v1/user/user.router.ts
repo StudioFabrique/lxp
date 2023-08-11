@@ -2,7 +2,11 @@ import express from "express";
 import { body, param, query } from "express-validator";
 
 import isUser from "../../../middleware/is-user";
-import { getAllValidator, userValidator } from "../../../middleware/validators";
+import {
+  getAllValidator,
+  manyUsersValidator,
+  userValidator,
+} from "../../../middleware/validators";
 import httpCreateUser from "../../../controllers/user/http-create-user";
 import httpUpdateUserRoles from "../../../controllers/user/http-update-user-roles";
 import httpSearchUser from "../../../controllers/user/http-search-user";
@@ -12,6 +16,7 @@ import httpUpdateUserStatus from "../../../controllers/user/http-update-user";
 import httpUpdateManyUsersStatus from "../../../controllers/user/http-update-many-users-status";
 import httpGetContacts from "../../../controllers/user/http-get-contacts";
 import postTeacherRouter from "./post-teacher";
+import httpCreateManyUser from "../../../controllers/user/http-create-many-users";
 
 const userRouter = express.Router();
 
@@ -63,16 +68,18 @@ userRouter.put(
 
 userRouter.post("/", isUser, userValidator, httpCreateUser);
 
+userRouter.post("/many", isUser, manyUsersValidator, httpCreateManyUser);
+
 userRouter.get(
   "/search/:role/:entity/:value/:stype/:sdir",
 
   //  validators
-  param("search").isAlpha().notEmpty().trim().escape(),
-  param("role").isAlpha().notEmpty().trim().escape(),
-  param("entity").isAlpha().notEmpty().trim().escape(),
-  param("value").isAlpha().notEmpty().trim().escape(),
-  param("stype").isAlpha().notEmpty().trim().escape(),
-  param("sdir").isAlpha().notEmpty().trim().escape(),
+  param("search").isString().notEmpty().trim().escape(),
+  param("role").isString().notEmpty().trim().escape(),
+  param("entity").isString().notEmpty().trim().escape(),
+  param("value").isString().notEmpty().trim().escape(),
+  param("stype").isString().notEmpty().trim().escape(),
+  param("sdir").isString().notEmpty().trim().escape(),
   query("page").notEmpty().trim().escape().isInt(),
   query("limit").notEmpty().trim().escape().isInt(),
 

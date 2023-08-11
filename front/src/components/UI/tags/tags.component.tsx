@@ -8,6 +8,7 @@ import Tag from "../../../utils/interfaces/tag";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import SearchDropdown from "../search-dropdown/search-dropdown";
 import TagItem from "../tag-item/tag-item";
+import { parcoursInformationsAction } from "../../../store/redux-toolkit/parcours/parcours-informations";
 
 type Props = {
   title?: string;
@@ -54,6 +55,11 @@ const Tags: FC<Props> = ({ title, onSubmitTags }) => {
    */
   useEffect(() => {
     dispatch(tagsAction.setNotSelectedTags());
+    let isValid = false;
+    if (currentTags.length > 0) {
+      isValid = true;
+    }
+    dispatch(parcoursInformationsAction.setTagsIsValid(isValid));
   }, [currentTags, dispatch]);
 
   /**
@@ -90,7 +96,7 @@ const Tags: FC<Props> = ({ title, onSubmitTags }) => {
   );
 
   /**
-   * initialise l'auto-submit après un court délai sans action de l'utilisateur pour sauvegarder les chabgements dans la bdd
+   * initialise l'auto-submit après un court délai sans action de l'utilisateur pour sauvegarder les changements dans la bdd
    */
   useEffect(() => {
     let timer: any;

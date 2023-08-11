@@ -115,7 +115,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
   return (
     <>
       <div>
-        {formation ? (
+        {formation && parcoursInfos.title ? (
           <>
             <div className="flex flex-col gap-y-4">
               <label className="font-bold" htmlFor="formation">
@@ -134,7 +134,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
             <form className="w-full flex flex-col gap-y-8 mt-8">
               <div className="flex flex-col gap-y-4">
                 <label className="font-bold" htmlFor="title">
-                  Titre du parcours
+                  Titre du parcours *
                 </label>
                 <input
                   className={setInputStyle(title.hasError)}

@@ -1,16 +1,23 @@
 import { FC } from "react";
+import ModulesItem from "./modules-item/modules-item.component";
+import { useSelector } from "react-redux";
 import Module from "../../../utils/interfaces/module";
-import ModulesItem from "./modules-item.component";
 
-const ModulesList: FC<{
-  modules: Module[];
-  onDelete: (_id: string) => void;
-}> = ({ modules, onDelete }) => {
+const ModulesList: FC<{}> = (props) => {
+  const modules: Module[] = useSelector(
+    (state: any) => state.parcoursModule.modules
+  );
+
   return (
-    <div className="flex flex-col gap-y-10 p-5 bg-primary col-span-2 rounded-lg overflow-y-auto">
-      {modules.map((module) => (
-        <ModulesItem key={module._id} module={module} onDelete={onDelete} />
-      ))}
+    <div className="flex flex-col gap-y-10 p-10 bg-secondary rounded-lg overflow-y-auto">
+      <p className="font-bold text-2xl">Liste des modules</p>
+      {modules.length > 0 ? (
+        modules.map((module) => (
+          <ModulesItem key={module._id} module={module} />
+        ))
+      ) : (
+        <p>Aucun modules créés</p>
+      )}
     </div>
   );
 };

@@ -9,7 +9,6 @@ import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import Loader from "../../components/UI/loader";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import Selecter from "../../components/UI/selecter/selecter.component";
-import { fixturesParcours } from "../../assets/fixtures/parcours";
 
 // type de données pour les listes
 type Item = {
@@ -23,7 +22,8 @@ const AddParcours = () => {
   const [formation, setFormation] = useState<number | undefined>(undefined);
   const [parcoursList, setParcoursList] = useState<Array<Item>>([]);
   const [parcours, setParcours] = useState<number | undefined>(undefined);
-  const { sendRequest, error, isLoading } = useHttp();
+  const { sendRequest, error } = useHttp();
+  const [isLoading, setIsLoading] = useState(false);
   const nav = useNavigate();
 
   const classImage: React.CSSProperties = {
@@ -39,8 +39,6 @@ const AddParcours = () => {
 
   useEffect(() => {
     if (error.length > 0) {
-      console.log("toto", error);
-
       toast.error(error);
     }
   }, [error]);
@@ -90,9 +88,10 @@ const AddParcours = () => {
   }) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const processData = (data: any) => {
-      toast.success("Parcours enregistré avec succès");
+      //toast.success("Parcours enregistré avec succès");
       nav(`/admin/parcours/edit/${data.parcoursId}`);
     };
+    setIsLoading(true);
     sendRequest(
       {
         path: "/parcours",
@@ -101,6 +100,7 @@ const AddParcours = () => {
       },
       processData
     );
+    setIsLoading(false);
   };
 
   /**
@@ -108,12 +108,17 @@ const AddParcours = () => {
    */
   useEffect(() => {
     if (formation !== undefined) {
-      const filteredParcours = fixturesParcours.filter(
-        (item) => item.formationId === formation
+      const processData = (data: Array<any>) => {
+        setParcoursList(data);
+      };
+      sendRequest(
+        {
+          path: `/parcours/parcours-by-formation/${formation}`,
+        },
+        processData
       );
-      setParcoursList(filteredParcours);
     }
-  }, [formation]);
+  }, [formation, sendRequest]);
 
   return (
     <>
