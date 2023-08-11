@@ -9,9 +9,7 @@ export default interface Group {
   desc: string;
   users?: Array<User>;
   students?: Array<Student>;
-  rncp: string;
   startDate: string;
-  promotion: string;
   endDate: string;
   createdAt?: Date;
   updatedAt?: Date;

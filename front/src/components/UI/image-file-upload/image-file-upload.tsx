@@ -5,7 +5,8 @@ import EditIcon from "../svg-icons/edit-icon";
 const ImageFileUpload: FC<{
   maxSize: number;
   onSetFile: (file: File) => void;
-}> = ({ maxSize, onSetFile }) => {
+  type?: number;
+}> = ({ maxSize, onSetFile, type = 1 }) => {
   const [file, setFile] = useState<File | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
@@ -19,6 +20,7 @@ const ImageFileUpload: FC<{
     if (event.target.files) {
       const selectedFile = event.target.files[0];
       if (selectedFile) {
+        console.log("selected");
         if (validateImageFile(selectedFile, maxSize)) {
           setFile(selectedFile);
         }
@@ -34,7 +36,7 @@ const ImageFileUpload: FC<{
     }
   };
 
-  return (
+  return type === 1 ? (
     <span className="flex gap-x-2 cursor-pointer">
       <p onClick={handleSetFile}>Changer l'image</p>
       <input
@@ -46,6 +48,28 @@ const ImageFileUpload: FC<{
       />
       <EditIcon />
     </span>
+  ) : (
+    <div className="flex flex-col gap-y-2">
+      <p>Téléverser une image de groupe</p>
+      <span className="flex w-full">
+        <p
+          onClick={handleSetFile}
+          className="cursor-pointer  bg-secondary-focus text-center p-2 text-sm rounded-l-lg"
+        >
+          Choisir un fichier
+        </p>
+        <p className=" text-center p-2 text-sm bg-secondary-content rounded-r-lg">
+          {file?.name}
+        </p>
+      </span>
+      <input
+        ref={fileRef}
+        type="file"
+        accept=".jpg, ;jpeg, .png, .webp, .gif"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+    </div>
   );
 };
 
