@@ -20,7 +20,8 @@ const parcoursSkillsSlice = createSlice({
   reducers: {
     addSkill(state, action) {
       let updatedSkills = state.skills;
-      updatedSkills.push(action.payload);
+      const skill = { ...action.payload, isBonus: true };
+      updatedSkills.push(skill);
       state.skills = sortArray(updatedSkills, "description");
     },
     deleteSkill(state, action) {
@@ -38,31 +39,13 @@ const parcoursSkillsSlice = createSlice({
       state.skills = sortArray(updatedSkills, "description");
     },
     setSkillsList(state, action) {
-      state.skills = action.payload.map((item: any) => ({
-        ...item,
-        isBonus: true,
-      }));
-    },
-    addBadge(state, action) {
-      const badge = { ...action.payload, isSelected: true };
-      state.badges.push(badge);
-      state.badges = addIdToObject(state.badges);
-    },
-    importBadges(state, action) {
-      action.payload.forEach((item: string) => {
-        const badge = state.badges.find((badge) => badge.image === item);
-        if (!badge) {
-          state.badges = [...state.badges, { image: item, isSelected: false }];
-        }
-      });
-      state.badges = addIdToObject(state.badges);
-    },
-    validateBadge(state, action) {
-      const updatedBadges = state.badges.filter(
-        (item) => item.id !== action.payload.id
+      state.skills = sortArray(
+        action.payload.map((item: any) => ({
+          ...item,
+          isBonus: true,
+        })),
+        "description"
       );
-      updatedBadges.push(action.payload);
-      state.badges = addIdToObject(updatedBadges);
     },
     updateBadgeImage(state, action) {
       const badgeToUpdate = state.badges.find(
@@ -80,22 +63,23 @@ const parcoursSkillsSlice = createSlice({
       }
     },
     importSkills(state, action) {
-      state.importedSkills = addIdToObject(sortArray(action.payload, "title"));
+      state.importedSkills = sortArray(
+        addIdToObject(action.payload),
+        "description"
+      );
     },
     addImportedSkillsToSkills(state, action) {
-      const skills = state.skills;
-      action.payload.forEach((item: any) => {
-        const skillToFind = skills.find(
-          (skill: Skill) => skill.description === item.description
+      let skills = state.skills;
+      const newSkills = action.payload;
+      newSkills.forEach((newSkill: any) => {
+        const skill = skills.find(
+          (item: any) => newSkill.description === item.description
         );
-        if (!skillToFind) {
-          skills.push(item);
+        if (!skill) {
+          skills = [...skills, newSkill];
         }
       });
-      state.skills = sortArray([...state.skills, ...skills], "description");
-    },
-    getBadgesTotal(state) {
-      state.totalBadges = state.badges.length;
+      state.skills = sortArray(skills, "description");
     },
     reset(state) {
       state.informationsAreValid = false;
@@ -103,27 +87,6 @@ const parcoursSkillsSlice = createSlice({
       state.importedSkills = [];
       state.skills = [];
       state.totalBadges = 0;
-    },
-    setSelectedBadge(state, action) {
-      let updatedBadges = state.badges;
-      updatedBadges.map((item) => (item.isSelected = false));
-      let badge = updatedBadges.find((item) => item.id === action.payload);
-      if (badge) {
-        state.selectedBadge = badge;
-        updatedBadges = updatedBadges.filter(
-          (item) => item.id !== action.payload
-        );
-        state.badges = sortArray(
-          [...updatedBadges, { ...badge, isSelected: true }],
-          "id"
-        );
-      }
-    },
-    unselectBadge(state) {
-      state.badges = state.badges.map((item) => ({
-        ...item,
-        isSelected: false,
-      }));
     },
   },
 });

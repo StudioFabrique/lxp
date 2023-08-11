@@ -106,7 +106,7 @@ const ImportedSkills: FC<Props> = ({ onCloseDrawer }) => {
         <>
           <p className="mt-4">Choisissez les compétences à importer</p>
           <form className="w-full" onSubmit={handleSubmit}>
-            <table className="w-full table border-separate border-spacing-y-2">
+            <table className="w-full table">
               <thead>
                 <tr>
                   <th>
@@ -130,21 +130,6 @@ const ImportedSkills: FC<Props> = ({ onCloseDrawer }) => {
                       />
                     </div>
                   </th>
-                  {origin === "db" ? (
-                    <th
-                      className="cursor-pointer items-center flex gap-x-2"
-                      onClick={() => sortData("parcours")}
-                    >
-                      <div className="flex items-center justify-between">
-                        <p>Parcours</p>
-                        <SortColumnIcon
-                          fieldSort={fieldSort}
-                          column="parcours"
-                          direction={direction}
-                        />
-                      </div>
-                    </th>
-                  ) : null}
                 </tr>
               </thead>
               <tbody>
@@ -165,14 +150,9 @@ const ImportedSkills: FC<Props> = ({ onCloseDrawer }) => {
                         onChange={() => handleRowCheck(item.id)}
                       />
                     </td>
-                    <td className="bg-transparent capitalize w-1/4 truncate">
+                    <td className="bg-transparent capitalize truncate">
                       {item.description}
                     </td>
-                    {origin === "db" ? (
-                      <td className="bg-transparent capitalize w-xs truncate">
-                        {item.parcours}
-                      </td>
-                    ) : null}
                   </tr>
                 ))}
               </tbody>

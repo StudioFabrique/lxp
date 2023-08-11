@@ -2,7 +2,6 @@ import { FC, useEffect, useRef, useState } from "react";
 import { validateImageFile } from "../../utils/validate-image-file";
 import { useDispatch } from "react-redux";
 
-import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 import UploadIcon from "../UI/svg-icons/upload-icon.component";
 import { compressImage } from "../../helpers/compress-image";
 import Badge from "../../utils/interfaces/badge";
@@ -48,11 +47,6 @@ const ImportBadges: FC<Props> = ({ onSubmit }) => {
 
   useEffect(() => {
     if (selectedFiles) {
-      dispatch(
-        parcoursSkillsAction.addBadge({
-          image: selectedFiles,
-        })
-      );
       onSubmit({ image: selectedFiles });
 
       setSelectedFiles(null);

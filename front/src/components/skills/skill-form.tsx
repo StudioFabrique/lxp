@@ -1,14 +1,12 @@
-import { FC, FormEvent, useCallback, useEffect, useState } from "react";
+import { FC, FormEvent, useCallback, useState } from "react";
 
 import Skill from "../../utils/interfaces/skill";
 import useInput from "../../hooks/use-input";
 import { regexGeneric } from "../../utils/constantes";
-import BadgeList from "../badge/badge-list.component";
 import Wrapper from "../UI/wrapper/wrapper.component";
-import { useDispatch } from "react-redux";
 import DrawerFormButtons from "../UI/drawer-form-buttons/drawer-form-buttons.component";
-import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 import Badge from "../../utils/interfaces/badge";
+import MemoizedBadgeList from "../badge/badge-list.component";
 
 type Props = {
   skill?: Skill;
@@ -17,13 +15,14 @@ type Props = {
 };
 
 const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
-  const dispatch = useDispatch();
   const [badge, setBadge] = useState<Badge | null>(null);
 
   const { value: description } = useInput(
     (value) => regexGeneric.test(value),
     skill?.description || ""
   );
+
+  const [error, setError] = useState(false);
 
   /**
    * ferme le drawer lorsqu'on click sur le bouton annuler
@@ -40,10 +39,9 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   let formIsValid = description.isValid;
 
   // définit le style du champ du formulaire en fonction de sa validité
-  let textareaStyle = () => {
-    let style = "textarea focus:outline-none bg-secondary/20";
-    return description.hasError ? style + " textarea-error" : style;
-  };
+
+  const style = "textarea focus:outline-none bg-secondary/20";
+  const textareaStyle = error ? style + " textarea-error" : style;
 
   /**
    * ajoute le badge sélectionné lors d'une importation d'image ou d'un click sur un badge dans la liste des badges
@@ -57,21 +55,21 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
    * @param event FormEvent
    */
   const handleSubmit = (event: FormEvent) => {
+    setError(false);
     event.preventDefault();
     if (formIsValid) {
       onSubmit({
+        id: skill?.id,
         description: description.value,
         badge: badge?.image,
+        isBonus: skill?.isBonus,
       });
       description.reset();
       onCloseDrawer("badge-drawer");
+    } else {
+      setError(true);
     }
   };
-
-  // récupération du nombre total de badges
-  useEffect(() => {
-    dispatch(parcoursSkillsAction.getBadgesTotal());
-  }, [dispatch]);
 
   return (
     <div className="flex flex-col gap-y-4">
@@ -80,7 +78,7 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
           <div className="flex flex-col gap-y-2">
             <label htmlFor="description">Contenu de Compétence *</label>
             <textarea
-              className={textareaStyle()}
+              className={textareaStyle}
               value={description.value}
               onChange={description.textAreaChangeHandler}
               onBlur={description.valueBlurHandler}
@@ -88,7 +86,7 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
           </div>
         </Wrapper>
         <Wrapper>
-          <BadgeList onSubmitBadge={addBadge} />
+          <MemoizedBadgeList onSubmitBadge={addBadge} />
         </Wrapper>
         <DrawerFormButtons onCancel={handleCancel} />
       </form>

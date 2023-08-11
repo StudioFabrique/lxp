@@ -86,7 +86,7 @@ const SearchDropdownMultiple: FC<{
   ]);
 
   return (
-    <div className={`flex items-center gap-x-2 w-full z ${transparencyOrder}`}>
+    <div className={`flex items-center gap-x-2 w-full ${transparencyOrder}`}>
       <div className="dropdown dropdown-bottom dropdown-end flex gap-y-4 w-full">
         <input
           type="search"
