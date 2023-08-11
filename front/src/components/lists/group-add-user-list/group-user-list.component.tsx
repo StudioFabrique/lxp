@@ -5,6 +5,8 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import GroupUserItem from "./group-user-item.component";
 import SearchSimple from "../../UI/search-simple/search-simple";
 import CsvImportUserList from "./csv-import-user/csv-import-user-list/csv-import-user-list.component";
+import LoadingIcon from "../../UI/svg-icons/loading-icon.component";
+import ThreeDotIcon from "../../UI/svg-icons/three-dot-icon.component";
 
 const GroupUserList: FC<{
   usersToAdd: User[];
@@ -18,10 +20,14 @@ const GroupUserList: FC<{
     <Wrapper>
       <div className="flex justify-between">
         <h2 className="font-bold text-lg">Etudiants</h2>
-        <CsvImportUserList
-          setDataUpdateState={setDataUpdateState}
-          onAddUsers={onAddUsers}
-        />
+        <div className="flex gap-x-5">
+          <CsvImportUserList
+            setDataUpdateState={setDataUpdateState}
+            onAddUsers={onAddUsers}
+          />
+          <LoadingIcon />
+          <ThreeDotIcon />
+        </div>
       </div>
       <div className="flex justify-between items-center">
         <GroupManageUserList

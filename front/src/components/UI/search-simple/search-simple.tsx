@@ -19,7 +19,7 @@ const SearchSimple: FC<{ placeholder: string }> = ({ placeholder }) => {
       </svg>
       <input
         type="text"
-        className="bg-transparent focus:outline-none w-full"
+        className="bg-transparent focus:outline-none w-full text-sm"
         placeholder={placeholder}
       />
     </div>

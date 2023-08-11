@@ -23,7 +23,7 @@ const Informations: FC<{
   return (
     <Wrapper>
       <h2 className="font-bold text-xl">Informations</h2>
-      <span>
+      <span className="flex flex-col gap-y-2">
         <label>Titre du groupe</label>
         <input
           className="input input-sm w-full p-[20px] pl-[30px]"
@@ -34,7 +34,7 @@ const Informations: FC<{
           autoComplete="off"
         />
       </span>
-      <span>
+      <span className="flex flex-col gap-y-2">
         <label>Description du groupe</label>
         <textarea
           className="textarea w-full p-[20px] pl-[30px] placeholder:text-purple-discrete"
