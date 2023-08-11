@@ -7,13 +7,14 @@ import {
   useState,
 } from "react";
 import { AddUsersButton } from "./group-manage-user-item/buttons.component";
-import UserToAddList from "./user-to-add-list.component";
+import UserToAddList from "./user-to-add-list/user-to-add-list.component";
 import usePagination from "../../../../hooks/use-pagination";
 import { Context } from "../../../../store/context.store";
 import Pagination from "../../../UI/pagination/pagination";
 import RightSideDrawer from "../../../UI/right-side-drawer/right-side-drawer";
 import User from "../../../../utils/interfaces/user";
 import Search from "../../../UI/search/search.component";
+import UserToAddListHeader from "./user-to-add-list/user-to-add-list-header.component";
 
 const GroupManageUserList: FC<{
   needDataUpdate: boolean;
@@ -36,6 +37,8 @@ const GroupManageUserList: FC<{
     setPerPage,
     getList,
     setDataList,
+    setStype,
+    stype,
   } = usePagination("lastname", `/user/${user!.roles[0].role}`);
 
   const handleSetUsersToAdd = () => {
@@ -105,7 +108,7 @@ const GroupManageUserList: FC<{
       buttonTitle="Ajouter un étudiant"
     >
       {dataList.length > 0 ? (
-        <div className="flex flex-col items-center gap-y-5 justify-between m-10">
+        <div className="flex flex-col items-center gap-y-10 justify-between m-10">
           <Search
             placeholder="Rechercher"
             onSearch={handleSearchUser}
@@ -115,15 +118,28 @@ const GroupManageUserList: FC<{
               { index: 2, option: "Formation", value: "group" },
             ]}
           />
-          <UserToAddList
-            selectedUsers={selectedUsers}
-            userList={userSearchResult.length > 0 ? userSearchResult : dataList}
-            usersToAdd={props.usersToAdd}
-            onAddSelectedUser={handleAddSelectedUser}
-            onDeleteSelectedUser={handleDeleteSelectedUser}
-            onAddUserInstantly={handleAddUserInstantly}
-            isUsersSettedUp={isUsersSettedUp}
-          />
+          <div className="w-full flex flex-col gap-y-4">
+            <UserToAddListHeader
+              order={stype}
+              setOrder={setStype}
+              filter="Prénom"
+              setFilter={() => {}}
+              setValue={() => {}}
+              value="test"
+            />
+            <UserToAddList
+              selectedUsers={selectedUsers}
+              userList={
+                userSearchResult.length > 0 ? userSearchResult : dataList
+              }
+              usersToAdd={props.usersToAdd}
+              onAddSelectedUser={handleAddSelectedUser}
+              onDeleteSelectedUser={handleDeleteSelectedUser}
+              onAddUserInstantly={handleAddUserInstantly}
+              isUsersSettedUp={isUsersSettedUp}
+            />
+          </div>
+
           <Pagination
             page={page}
             totalPages={totalPages}

@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
-import User from "../../../../utils/interfaces/user";
-import GroupManageUserItem from "./group-manage-user-item/group-manage-user-item.component";
+import User from "../../../../../utils/interfaces/user";
+import GroupManageUserItem from "../group-manage-user-item/group-manage-user-item.component";
 
 const UserToAddList: FC<{
   userList: Array<User>;
