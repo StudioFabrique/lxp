@@ -86,7 +86,7 @@ const SkillsList = () => {
   };
 
   const submitUpdateSkill = (skill: any) => {
-    console.log({ skill });
+    console.log("skill update", skill);
 
     dispatch(parcoursSkillsAction.editSkill(skill));
     const processData = (data: { success: boolean; message: string }) => {

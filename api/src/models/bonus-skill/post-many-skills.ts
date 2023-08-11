@@ -37,6 +37,7 @@ async function postManySkills(parcoursId: number, newSkills: Array<any>) {
 
     const result = await prisma.bonusSkill.findMany({
       where: { parcoursId },
+      select: { id: true, description: true, badge: true },
     });
     return result;
   } catch (error: any) {

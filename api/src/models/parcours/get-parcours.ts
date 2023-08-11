@@ -4,7 +4,13 @@ const prisma = new PrismaClient();
 
 async function getParcours() {
   const response = await prisma.parcours.findMany({
-    include: { formation: true },
+    select: {
+      id: true,
+      title: true,
+      createdAt: true,
+      updatedAt: true,
+      formation: { select: { title: true, level: true } },
+    },
   });
 
   if (!response) {

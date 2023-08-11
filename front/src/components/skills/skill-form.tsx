@@ -86,7 +86,10 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
           </div>
         </Wrapper>
         <Wrapper>
-          <MemoizedBadgeList onSubmitBadge={addBadge} />
+          <MemoizedBadgeList
+            badgeProp={skill?.badge}
+            onSubmitBadge={addBadge}
+          />
         </Wrapper>
         <DrawerFormButtons onCancel={handleCancel} />
       </form>
