@@ -1,4 +1,5 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+
 import Home from "./views/home/home.component";
 import ContextProvider from "./store/context.store";
 import RootLayout from "./views/home/root-layout.component";
@@ -13,7 +14,6 @@ import GroupAdd from "./views/group/group-add.component";
 import ParcoursLayout from "./views/parcours/parcours-layout.component";
 import ParcoursHome from "./views/parcours/parcours-home.component";
 import ParcoursAdd from "./views/parcours/parcours-add.component";
-import UserMultipleAdd from "./views/user/user-multiple-add";
 import EditParcours from "./views/parcours/parcours-edit.component";
 import ParcoursModules from "./components/parcours-modules/parcours-modules.component";
 

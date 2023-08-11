@@ -1,121 +1,27 @@
-import React, { ChangeEvent, FC, useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { FC, useState } from "react";
 
 import Badge from "../../utils/interfaces/badge";
 import ImportBadges from "../skills/import-badges.component";
 import BadgeItem from "./badge-item.component";
-import { validateImageFile } from "../../utils/validate-image-file";
-import { maxSize } from "../../config/badge-image-max-size";
-import UploadIcon from "../UI/svg-icons/upload-icon.component";
-import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 
 type Props = {
   selectedBadge?: any;
   onSubmitBadge: (badge: any) => void;
 };
 
-const BadgeList: FC<Props> = ({ selectedBadge, onSubmitBadge }) => {
-  const badgeList = useSelector((state: any) => state.parcoursSkills.badges);
-  const fileRef = useRef<HTMLInputElement | null>(null);
-  const dispatch = useDispatch();
-  const [updatedFile, setUdpatedFile] = useState(false);
+const BadgeList: FC<Props> = ({ onSubmitBadge }) => {
+  const [badge, setBadge] = useState<Badge | null>(null);
 
-  const handleUpdateBadge = (newBadge: Badge) => {
+  const handleSubmitBadge = (newBadge: Badge) => {
+    setBadge(newBadge);
     onSubmitBadge(newBadge);
   };
 
-  const uploadFile = () => {
-    if (fileRef) {
-      fileRef.current?.click();
-    }
-  };
-
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      const selectedFile = event.target.files[0];
-      if (selectedFile) {
-        if (validateImageFile(selectedFile, maxSize)) {
-          dispatch(
-            parcoursSkillsAction.updateBadgeImage({
-              id: selectedBadge.id,
-              image: URL.createObjectURL(selectedFile),
-            })
-          );
-          setUdpatedFile(true);
-        }
-      } else {
-        console.log("Fichier non autorisé pour une raison ou une autre.");
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (updatedFile) {
-      onSubmitBadge(
-        badgeList.find((item: Badge) => item.id === selectedBadge.id)
-      );
-      setUdpatedFile(false);
-    }
-  }, [updatedFile, badgeList, onSubmitBadge, selectedBadge]);
-
   let content = (
-    <>
-      {badgeList.length > 0 ? (
-        <ul className="grid grid-cols-5 px-4 gap-x-2 gap-y-2 mt-2">
-          {badgeList.map((item: Badge) => (
-            <React.Fragment key={item.id}>
-              {item.title ? (
-                <>
-                  {item.id === selectedBadge?.id ? (
-                    <div className="indicator" key={item.id}>
-                      <span
-                        className="indicator-item avatar bg-info rounded-full p-1 cursor-pointer text-neutral"
-                        onClick={uploadFile}
-                      >
-                        <UploadIcon size={4} />
-                      </span>
-                      <BadgeItem
-                        badge={item}
-                        isSelected={true}
-                        onUpdateBadge={handleUpdateBadge}
-                      />
-                    </div>
-                  ) : (
-                    <BadgeItem
-                      badge={item}
-                      isSelected={false}
-                      onUpdateBadge={handleUpdateBadge}
-                    />
-                  )}
-                </>
-              ) : (
-                <div className="indicator" key={item.id}>
-                  <span className="indicator-item badge badge-warning">
-                    ...
-                  </span>
-                  <BadgeItem
-                    badge={item}
-                    isSelected={item.id === selectedBadge?.id}
-                    onUpdateBadge={handleUpdateBadge}
-                  />
-                </div>
-              )}
-            </React.Fragment>
-          ))}
-        </ul>
-      ) : (
-        <div className="flex flex-col items-center gap-y-4 my-8">
-          <p>Aucun badge dans la liste</p>
-          <ImportBadges label="Importer un badge" outline={false} />
-        </div>
-      )}
-      <input
-        className="hidden"
-        ref={fileRef}
-        type="file"
-        onChange={handleFileChange}
-      />
-    </>
+    <div className="flex flex-col w-full gap-y-8 items-center">
+      {badge ? <BadgeItem badge={badge} /> : null}
+      <ImportBadges onSubmit={handleSubmitBadge} />
+    </div>
   );
 
   return <>{content}</>;

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useCallback } from "react";
+import { FC, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import ParcoursInformationsForm from "./parcours-informations-form";
@@ -7,12 +7,12 @@ import useHttp from "../../hooks/use-http";
 import { toast } from "react-hot-toast";
 import Contacts from "./contacts";
 import Contact from "../../utils/interfaces/contact";
-import { Link } from "react-router-dom";
 import { parcoursInformationsAction } from "../../store/redux-toolkit/parcours/parcours-informations";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import DatesSelecter from "../UI/dates-selecter/dates-selecter.component";
 import Tags from "../UI/tags/tags.component";
 import Tag from "../../utils/interfaces/tag";
+import VirtualClass from "./virtual-class";
 
 type Props = {
   parcoursId?: string;
@@ -27,6 +27,9 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
   );
   const dispatch = useDispatch();
   const { sendRequest } = useHttp();
+  const tagsIsValid = useSelector(
+    (state: any) => state.parcoursInformations.tagsIsValid
+  );
 
   const updateDates = useCallback(
     (startDate: string, endDate: string) => {
@@ -94,11 +97,15 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
     [parcoursId, sendRequest]
   );
 
+  useEffect(() => {
+    dispatch(parcoursInformationsAction.isValid());
+  }, [tagsIsValid, parcoursStartDate, parcoursEndDate, dispatch]);
+
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold mt-16 mb-8">Informations</h2>
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-x-16">
         <Wrapper>
+          <h2 className="text-xl font-bold">Informations</h2>
           <div className="flex flex-col gap-y-8">
             <ParcoursInformationsForm parcoursId={parcoursId} />
             <DatesSelecter
@@ -108,11 +115,10 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
               onSubmitDates={submitDates}
             />
           </div>
-          <Link className="mt-4 mb-8 font-bold hover:underline" to="#">
-            Classe Virtuelle
-          </Link>
+
+          <VirtualClass />
         </Wrapper>
-        <div className="grid grid-rows-2 gap-8">
+        <div className="flex flex-col gap-y-8">
           <Wrapper>
             <Contacts onSubmitContacts={submitContacts} />
           </Wrapper>

@@ -1,6 +1,7 @@
 import { FC } from "react";
 import DBIcon from "../UI/svg-icons/db-icon.component";
-import { getDBSkills } from "../../utils/fixtures/skills";
+import Skill from "../../utils/interfaces/skill";
+import useHttp from "../../hooks/use-http";
 
 type Props = {
   origin: string;
@@ -9,8 +10,7 @@ type Props = {
 
 const DbImportSkills: FC<Props> = ({ origin, onFetchSkills }) => {
   const handleFetchSkills = () => {
-    // TODO: implémenter une requête HTTP pour récupérer les données
-    onFetchSkills(getDBSkills());
+    onFetchSkills([]);
   };
 
   return (

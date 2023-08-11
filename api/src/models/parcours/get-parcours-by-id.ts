@@ -9,6 +9,8 @@ async function getParcoursById(parcoursId: number) {
       formation: { include: { tags: { include: { tag: true } } } },
       tags: { include: { tag: true } },
       contacts: { include: { contact: true } },
+      skills: { include: { skill: true } },
+      bonusSkills: true,
     },
   });
   if (parcours) {

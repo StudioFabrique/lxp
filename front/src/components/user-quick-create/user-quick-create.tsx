@@ -80,7 +80,7 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
         phoneNumber: phoneNumber.value,
         isActive: isActive,
       });
-      handleCloseDrawer();
+      //handleCloseDrawer();
     } else {
       setIsFormValid(false);
       fields.forEach((field: any) => field.isSubmitted());

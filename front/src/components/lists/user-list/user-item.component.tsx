@@ -85,7 +85,7 @@ const UserItem: FC<{
               error={error}
               isLoading={isUserDeleteLoading}
               userItem={userItem}
-              onDelete={onDelete}
+              onDelete={() => {}}
             />
           </Can>
         </div>

@@ -21,24 +21,26 @@ model Formation {
 }
 
 model Parcours {
-  id          Int                    @id @default(autoincrement())
-  title       String                 @unique
-  description String?
-  startDate   DateTime?
-  endDate     DateTime?
-  degree      String?
-  image       Bytes?
-  createdAt   DateTime               @default(now())
-  updatedAt   DateTime               @default(now())
-  tags        TagsOnParcours[]
-  admin       Admin                  @relation(fields: [adminId], references: [id])
-  adminId     Int
-  contacts    ContactsOnParcours[]
-  formation   Formation              @relation(fields: [formationId], references: [id])
-  formationId Int
-  skills      SKillsOnParcours[]
-  modules     ModulesOnParcours[]
-  objectives  ObjectivesOnParcours[]
+  id           Int                    @id @default(autoincrement())
+  title        String                 @unique
+  description  String?
+  startDate    DateTime?
+  endDate      DateTime?
+  degree       String?
+  image        Bytes?
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @default(now())
+  tags         TagsOnParcours[]
+  admin        Admin                  @relation(fields: [adminId], references: [id])
+  adminId      Int
+  contacts     ContactsOnParcours[]
+  formation    Formation              @relation(fields: [formationId], references: [id])
+  formationId  Int
+  skills       SKillsOnParcours[]
+  bonusSkills  BonusSkill[]
+  modules      ModulesOnParcours[]
+  objectives   ObjectivesOnParcours[]
+  virtualClass String?
 }
 
 model Module {
@@ -51,6 +53,16 @@ model Module {
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @default(now())
   parcours    ModulesOnParcours[]
+  skills      SkillsOnModule[]
+}
+
+model OpenBadge {
+  id        Int      @id @default(autoincrement())
+  creator   String
+  image     Bytes
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Tag {
@@ -67,6 +79,20 @@ model Skill {
   id          Int                @id @default(autoincrement())
   description String             @unique
   parcours    SKillsOnParcours[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @default(now())
+  modules     SkillsOnModule[]
+  badge       String?
+}
+
+model BonusSkill {
+  id          Int      @id @default(autoincrement())
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  badge       String?
+  parcours    Parcours @relation(fields: [parcoursId], references: [id])
+  parcoursId  Int
 }
 
 model Admin {
@@ -150,4 +176,13 @@ model TagsOnFormation {
   formationId Int
 
   @@id([tagId, formationId])
+}
+
+model SkillsOnModule {
+  skill    Skill  @relation(fields: [skillId], references: [id])
+  skillId  Int
+  module   Module @relation(fields: [moduleId], references: [id])
+  moduleId Int
+
+  @@id([skillId, moduleId])
 }

@@ -199,7 +199,7 @@ const UserList: FC<{
           >
             {
               <UserItem
-                onDelete={onDelete}
+                onDelete={() => {}}
                 userItem={item}
                 onRowCheck={onRowCheck}
                 isUserDeleteLoading={isLoading}

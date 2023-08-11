@@ -18,10 +18,26 @@ const checkValidatorResult = (
 
 export const userValidator = [
   body("email").isEmail().trim().escape(),
-  body("password").isString().trim().escape(),
-  body(["firstname", "lastname", "address", "city"]).isString().trim().escape(),
+  body(["firstname", "lastname", "address", "city", "password"])
+    .isString()
+    .trim()
+    .escape(),
   body("postCode").isPostalCode("FR").trim().escape(),
   //   body("roles").isArray(),
+  body("birthDate").isDate(),
+  checkValidatorResult,
+];
+
+export const manyUsersValidator = [
+  body().isArray(),
+  body("*.email").isEmail().trim().escape(),
+  body(["*.firstname", "*.lastname", "*.nickname", "*.address", "*.city"])
+    .isString()
+    .trim()
+    .escape(),
+  body("*.postCode").isPostalCode("FR").trim().escape(),
+  body("*.phoneNumber").isNumeric(),
+  /* body("*.birthDate").isDate({ format: "dd/mm/yyyy" }).toDate(), */
   checkValidatorResult,
 ];
 
@@ -33,9 +49,9 @@ export const groupValidator = [
 // global validators :
 
 export const getAllValidator = [
-  param("role").isAlpha().trim().escape(),
-  param("stype").isAlpha().trim().escape(),
-  param("sdir").isAlpha().trim().escape(),
+  param("role").isString().trim().escape(),
+  param("stype").isString().trim().escape(),
+  param("sdir").isString().trim().escape(),
   query("page").trim().escape().isInt(),
   query("limit").trim().escape().isInt(),
   checkValidatorResult,

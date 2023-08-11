@@ -1,10 +1,12 @@
 export const validateImageFile = (selectedFile: File, maxSize: number) => {
   const allowedExtensions = /(\.jpeg|\.jpg|\.png|\.gif|\.webp)$/i;
   const maxSizeInBytes = maxSize;
+  console.log({ selectedFile });
 
   if (!allowedExtensions.test(selectedFile.name)) {
     return false; // Extension de fichier non autorisée
   }
+
   if (!selectedFile.type.startsWith("image/")) {
     return false;
   }
