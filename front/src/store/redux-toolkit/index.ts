@@ -6,6 +6,7 @@ import parcoursModuleSlice from "./parcours/parcours-modules";
 import parcoursSlice from "./parcours/parcours";
 import tagsSlice from "./tags";
 import parcoursContactsSlice from "./parcours/parcours-contacts";
+import parcoursObjectivesSlice from "./parcours/parcours-objectives";
 
 const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ const store = configureStore({
     parcoursModule: parcoursModuleSlice.reducer,
     tags: tagsSlice.reducer,
     parcoursContacts: parcoursContactsSlice.reducer,
+    parcoursObjectives: parcoursObjectivesSlice.reducer,
   },
 });
 

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -22,12 +22,14 @@ import ParcoursInformations from "../../components/edit-parcours/informations/pa
 import ParcoursSection from "../../components/edit-parcours/parcours-section";
 import SkillsList from "../../components/edit-parcours/skills/skills-list.component";
 import ImportSkills from "../../components/edit-parcours/skills/import-skills.component";
+import ImportObjectives from "../../components/edit-parcours/objectives/import-objectives";
 
 let initialState = true;
 
 const EditParcours = () => {
   const { id } = useParams();
-  const { sendRequest, error, isLoading } = useHttp();
+  const { sendRequest, error } = useHttp();
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [image, setImage] = useState<string | undefined>(undefined);
   const { actualStep, stepsList, updateStep, validateStep } =
@@ -95,8 +97,10 @@ const EditParcours = () => {
       if (data.bonusSkills.length > 0) {
         dispatch(parcoursSkillsAction.setSkillsList(data.bonusSkills));
       }
+      setIsLoading(false);
     };
     if (initialState) {
+      setIsLoading(true);
       sendRequest(
         {
           path: `/parcours/parcours-by-id/${id}`,
@@ -150,6 +154,27 @@ const EditParcours = () => {
     }
   };
 
+  /**
+   * enregistrement de l'image du parcours dans la bdd
+   */
+  const updateImage = useCallback(
+    (image: File) => {
+      const formData = new FormData();
+      formData.append("parcoursId", id!);
+      formData.append("image", image);
+      const processData = (_data: any) => {};
+      sendRequest(
+        {
+          path: "/parcours/update-image",
+          method: "put",
+          body: formData,
+        },
+        processData
+      );
+    },
+    [id, sendRequest]
+  );
+
   const checkStep = (id: number) => {
     switch (id) {
       case 1:
@@ -181,6 +206,7 @@ const EditParcours = () => {
             <ImageHeader
               defaultImage="/images/parcours-default.webp"
               image={image}
+              onUpdateImage={updateImage}
             />
             <div className="p-4 rounded-xl w-5/6 bg-secondary/20">
               <Stepper
@@ -200,7 +226,7 @@ const EditParcours = () => {
                 onResetList={handleResetImportedObjectives}
               >
                 <p>toto</p>
-                <p>tata</p>
+                <ImportObjectives onCloseDrawer={() => {}} />
               </ParcoursSection>
             ) : null}
             {actualStep.id === 3 ? (

@@ -1,9 +1,9 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import Badge from "../../../utils/interfaces/badge";
-import { validateImageFile } from "../../../utils/validate-image-file";
-import { compressImage } from "../../../helpers/compress-image";
-import UploadIcon from "../../UI/svg-icons/upload-icon.component";
+import Badge from "../../../../utils/interfaces/badge";
+import { validateImageFile } from "../../../../utils/validate-image-file";
+import { compressImage } from "../../../../helpers/compress-image";
+import UploadIcon from "../../../UI/svg-icons/upload-icon.component";
 
 const maxSize = 1024 * 1024;
 

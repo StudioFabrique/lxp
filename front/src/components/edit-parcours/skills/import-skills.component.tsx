@@ -1,12 +1,14 @@
-import { FC, useEffect } from "react";
+import { FC, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 
-import ImportedSkills from "../../UI/imported-csv-data.component";
 import { parcoursSkillsAction } from "../../../store/redux-toolkit/parcours/parcours-skills";
 import useHttp from "../../../hooks/use-http";
 import Skill from "../../../utils/interfaces/skill";
 import ImportCSVActions from "../../UI/import-csv-actions.component";
+import { DOWNLOAD_URL } from "../../../config/urls";
+import ImportedCSVData from "../../UI/imported-csv-data.component";
+import { skillsFields } from "../../../config/csv/csv-skills-fields";
 
 type Props = {
   onCloseDrawer: (id: string) => void;
@@ -57,6 +59,13 @@ const ImportSkills: FC<Props> = ({ onCloseDrawer }) => {
     );
   };
 
+  const handleFromCSV = useCallback(
+    (data: Array<any>) => {
+      dispatch(parcoursSkillsAction.importSkills(data));
+    },
+    [dispatch]
+  );
+
   useEffect(() => {
     if (error.length > 0) {
       toast.error(error);
@@ -66,11 +75,13 @@ const ImportSkills: FC<Props> = ({ onCloseDrawer }) => {
   return (
     <div className="flex flex-col gap-y-4 px-4">
       <ImportCSVActions
-        modelFileUrl={"http://localhost:5001/csv-competences-modele.txt"}
+        modelFileUrl={`${DOWNLOAD_URL}/csv-competences-modele.txt`}
         modelFileName={"csv-competences-modele.txt"}
+        onHandleFromCSV={handleFromCSV}
+        fields={skillsFields}
       />
       {skills ? (
-        <ImportedSkills
+        <ImportedCSVData
           data={skills}
           label={"compétences"}
           field="description"
