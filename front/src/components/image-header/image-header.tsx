@@ -21,8 +21,6 @@ const ImageHeader: FC<Props> = ({ defaultImage, image }) => {
   );
   const { sendRequest } = useHttp();
 
-  console.log({ defaultImage });
-
   // en l'absence de props affiche une image par défaut
   useEffect(() => {
     console.log({ image });

@@ -1,23 +1,24 @@
-import { FC, FormEvent, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-hot-toast";
+import { FC, FormEvent } from "react";
 
 import useEagerLoadingList from "../../../hooks/use-eager-loading-list";
-import useHttp from "../../../hooks/use-http";
-import { parcoursSkillsAction } from "../../../store/redux-toolkit/parcours/parcours-skills";
 import SortColumnIcon from "../../UI/sort-column-icon.component/sort-column-icon.component";
 import DrawerFormButtons from "../../UI/drawer-form-buttons/drawer-form-buttons.component";
-import Skill from "../../../utils/interfaces/skill";
 
 type Props = {
-  onCloseDrawer: (id: string) => void; //  ferme le drawer
+  data: Array<any>;
+  label: string;
+  field: string;
+  onCloseDrawer: () => void; //  ferme le drawer
+  onPostData: (slectedData: Array<any>) => void;
 };
 
-const ImportedSkills: FC<Props> = ({ onCloseDrawer }) => {
-  const skills = useSelector(
-    (state: any) => state.parcoursSkills.importedSkills
-  );
-  const parcoursId = useSelector((state: any) => state.parcours.id);
+const ImportedCSVData: FC<Props> = ({
+  data,
+  label,
+  field,
+  onCloseDrawer,
+  onPostData,
+}) => {
   const {
     allChecked,
     direction,
@@ -27,9 +28,7 @@ const ImportedSkills: FC<Props> = ({ onCloseDrawer }) => {
     setAllChecked,
     handleRowCheck,
     getSelecteditems,
-  } = useEagerLoadingList(skills, "description"); //  custom hook permettant de gérer l'affichage des données, quand la liste de compétences apparaît à l'écran elle est triée alphabétiquement par son intitulé
-  const dispatch = useDispatch();
-  const { sendRequest, error } = useHttp();
+  } = useEagerLoadingList(data, field); //  custom hook permettant de gérer l'affichage des données, quand la liste de compétences apparaît à l'écran elle est triée alphabétiquement par son intitulé
 
   /**
    * gère le coche / décochage de toutes les checkboxes
@@ -39,72 +38,30 @@ const ImportedSkills: FC<Props> = ({ onCloseDrawer }) => {
   };
 
   /**
-   *
-   * @param skills Array<any>  (Skill)
-   */
-  const postSelectedSkills = (skills: Array<any>) => {
-    const processData = (data: { success: boolean; skills: Array<Skill> }) => {
-      if (data.success) {
-        toast.success("Les compétences du parcours ont été mises à jour");
-        //  stocke les compétences renvoyées par la requête avec l'id générée par la bdd en mémoire
-        dispatch(
-          parcoursSkillsAction.addImportedSkillsToSkills(
-            data.skills.map((item: any) => ({ ...item, isBonus: true }))
-          )
-        );
-      }
-    };
-    sendRequest(
-      {
-        path: "/bonus-skill/skills",
-        method: "post",
-        // on transforme les objets du tableau en un objet qui soit corresponde au modèle de données de la bdd
-        body: {
-          parcoursId,
-          skills: skills.map((item: any) => ({
-            description: item.description,
-          })),
-        },
-      },
-      processData
-    );
-  };
-
-  useEffect(() => {
-    if (error.length > 0) {
-      toast.error(error);
-    }
-  }, [error]);
-
-  /**
-   * remplace la liste des compétences par les compétences importées sélectionnées
-   * ces dernières sont converties en objet de type Skill
-   *
+   * soumet le formulaire après vérification de la validité des données
    * @param event FormEvent
    */
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     //  récupère les compétences sélectionnées
-    const selectedSkills = getSelecteditems();
-    if (selectedSkills && selectedSkills.length > 0) {
-      postSelectedSkills(selectedSkills);
+    const selectedData = getSelecteditems();
+    if (selectedData && selectedData.length > 0) {
+      onPostData(selectedData);
     }
     setAllChecked(false);
-    onCloseDrawer("import-skills");
   };
 
   // réinitialise les checkboxes et ferme le drawer
   const handleCancelButton = () => {
-    dispatch(parcoursSkillsAction.importSkills([]));
     setAllChecked(false);
-    onCloseDrawer("import-skills");
+    onCloseDrawer();
   };
 
   return (
     <>
       {list && list.length > 0 ? (
         <>
-          <p className="mt-4">Choisissez les compétences à importer</p>
+          <p className="mt-4">Choisissez les {label} à importer</p>
           <form className="w-full" onSubmit={handleSubmit}>
             <table className="w-full table">
               <thead>
@@ -122,7 +79,7 @@ const ImportedSkills: FC<Props> = ({ onCloseDrawer }) => {
                     onClick={() => sortData("description")}
                   >
                     <div className="flex items-center gap-x-2">
-                      <p>Compétence</p>
+                      <p className="capitalize">{label}</p>
                       <SortColumnIcon
                         fieldSort={fieldSort}
                         column="description"
@@ -151,7 +108,7 @@ const ImportedSkills: FC<Props> = ({ onCloseDrawer }) => {
                       />
                     </td>
                     <td className="bg-transparent capitalize truncate">
-                      {item.description}
+                      {item[field]}
                     </td>
                   </tr>
                 ))}
@@ -160,11 +117,9 @@ const ImportedSkills: FC<Props> = ({ onCloseDrawer }) => {
             <DrawerFormButtons onCancel={handleCancelButton} />
           </form>
         </>
-      ) : (
-        <p className="px-4 mt-4">Aucune compétence trouvée</p>
-      )}
+      ) : null}
     </>
   );
 };
 
-export default ImportedSkills;
+export default ImportedCSVData;
