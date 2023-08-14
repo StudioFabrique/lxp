@@ -1,8 +1,8 @@
 import { FC, FormEvent } from "react";
 
-import useEagerLoadingList from "../../../hooks/use-eager-loading-list";
-import SortColumnIcon from "../../UI/sort-column-icon.component/sort-column-icon.component";
-import DrawerFormButtons from "../../UI/drawer-form-buttons/drawer-form-buttons.component";
+import useEagerLoadingList from "../../hooks/use-eager-loading-list";
+import SortColumnIcon from "./sort-column-icon.component/sort-column-icon.component";
+import DrawerFormButtons from "./drawer-form-buttons/drawer-form-buttons.component";
 
 type Props = {
   data: Array<any>;
