@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { sortArray } from "../utils/sortArray";
-import Tag from "../utils/interfaces/tag";
+import { sortArray } from "../../utils/sortArray";
+import Tag from "../../utils/interfaces/tag";
 
 const initialTagsState = {
   currentTags: Array<Tag>(),

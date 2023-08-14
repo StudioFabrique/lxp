@@ -3,14 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { useParams } from "react-router-dom";
 
-import Skill from "../../utils/interfaces/skill";
 import SkillItem from "./skill-item.component";
-import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
 import SkillForm from "./skill-form";
-import ButtonAdd from "../UI/button-add/button-add";
-import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
-import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
-import useHttp from "../../hooks/use-http";
+import { parcoursSkillsAction } from "../../../store/redux-toolkit/parcours/parcours-skills";
+import useHttp from "../../../hooks/use-http";
+import Skill from "../../../utils/interfaces/skill";
+import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
+import ButtonAdd from "../../UI/button-add/button-add";
+import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
 
 const SkillsList = () => {
   const { id } = useParams();

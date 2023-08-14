@@ -1,13 +1,13 @@
 import { FC, FormEvent, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-import useEagerLoadingList from "../../hooks/use-eager-loading-list";
-import DrawerFormButtons from "../UI/drawer-form-buttons/drawer-form-buttons.component";
-import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
-import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
-import Skill from "../../utils/interfaces/skill";
 import { toast } from "react-hot-toast";
-import useHttp from "../../hooks/use-http";
+
+import useEagerLoadingList from "../../../hooks/use-eager-loading-list";
+import useHttp from "../../../hooks/use-http";
+import { parcoursSkillsAction } from "../../../store/redux-toolkit/parcours/parcours-skills";
+import SortColumnIcon from "../../UI/sort-column-icon.component/sort-column-icon.component";
+import DrawerFormButtons from "../../UI/drawer-form-buttons/drawer-form-buttons.component";
+import Skill from "../../../utils/interfaces/skill";
 
 type Props = {
   onCloseDrawer: (id: string) => void; //  ferme le drawer

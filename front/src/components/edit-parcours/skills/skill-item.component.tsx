@@ -1,9 +1,9 @@
 import { FC } from "react";
 
-import Skill from "../../utils/interfaces/skill";
 import SkillTitle from "./skill-title.component";
 import SkillBadge from "./skill-badge";
 import SkillActions from "./skill-actions.component";
+import Skill from "../../../utils/interfaces/skill";
 
 type Props = {
   skill: Skill;

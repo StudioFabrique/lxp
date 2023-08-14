@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 
-import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
-import CsvImportSkills from "../UI/csv-import/csv-import.component";
-import { skillsFields } from "../../config/csv/csv-skills-fields";
+import { parcoursSkillsAction } from "../../../store/redux-toolkit/parcours/parcours-skills";
+import { skillsFields } from "../../../config/csv/csv-skills-fields";
+import CsvImport from "../../UI/csv-import/csv-import.component";
 
 const ImpoortSkillsActions = () => {
   const dispatch = useDispatch();
@@ -39,7 +39,7 @@ const ImpoortSkillsActions = () => {
   return (
     <>
       <div className="flex gap-x-4 justify-evenly">
-        <CsvImportSkills
+        <CsvImport
           origin={origin}
           onParseCsv={handleFromCSV}
           fields={skillsFields}
