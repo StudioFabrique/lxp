@@ -1,24 +1,26 @@
 import { FC, useCallback } from "react";
-import { useDispatch } from "react-redux";
 
-import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 import CsvImport from "./csv-import/csv-import.component";
-import { skillsFields } from "../../config/csv/csv-skills-fields";
 
 type Props = {
+  fields: Array<string>;
   modelFileUrl: string;
   modelFileName: string;
+  onHandleFromCSV: (data: Array<any>) => void;
 };
 
-const ImportCSVActions: FC<Props> = ({ modelFileUrl, modelFileName }) => {
-  const dispatch = useDispatch();
-
+const ImportCSVActions: FC<Props> = ({
+  fields,
+  modelFileUrl,
+  modelFileName,
+  onHandleFromCSV,
+}) => {
   const handleFromCSV = useCallback(
     (data: any) => {
-      dispatch(parcoursSkillsAction.importSkills(data));
+      onHandleFromCSV(data);
     },
 
-    [dispatch]
+    [onHandleFromCSV]
   );
 
   const downloadFile = (url: string, filename: string) => {
@@ -44,11 +46,7 @@ const ImportCSVActions: FC<Props> = ({ modelFileUrl, modelFileName }) => {
   return (
     <>
       <div className="flex gap-x-4 justify-evenly">
-        <CsvImport
-          origin={origin}
-          onParseCsv={handleFromCSV}
-          fields={skillsFields}
-        />
+        <CsvImport origin={origin} onParseCsv={handleFromCSV} fields={fields} />
       </div>
       <p
         className="text-primary text-xs hover:underline pl-2 cursor-pointer flex justify-center"

@@ -92,7 +92,7 @@ const ImportedCSVData: FC<Props> = ({
               <tbody>
                 {list.map((item: any, index: number) => (
                   <tr
-                    className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content w-full"
+                    className="hover:bg-secondary/20 hover:text-base-content w-full"
                     key={index}
                   >
                     <td className="bg-transparent rounded-l-xl">
