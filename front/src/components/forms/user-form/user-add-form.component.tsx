@@ -29,7 +29,18 @@ const UserAddForm: FC<{
 
   const [file, setFile] = useState<File | null>(null);
 
-  const [links, setLinks] = useState<Array<string>>([]);
+  const [links, setLinks] = useState<
+    Array<{
+      url: string;
+      type:
+        | "website"
+        | "twitter"
+        | "facebook"
+        | "youtube"
+        | "instagram"
+        | "linkedin";
+    }>
+  >([]);
 
   const [typeUtilisateur, setTypeUtilisateur] = useState<number>(0);
 
@@ -115,9 +126,13 @@ const UserAddForm: FC<{
   };
 
   return (
-    <form onSubmit={handleSubmit} autoComplete="off">
+    <form
+      className="flex flex-col gap-y-10"
+      onSubmit={handleSubmit}
+      autoComplete="off"
+    >
       <CreateUserHeader />
-      <div className="grid grid-rows-2 gap-y-5">
+      <div className="flex flex-col gap-y-5">
         <div className="grid grid-cols-3 gap-x-5">
           <Informations
             lastname={lastname}

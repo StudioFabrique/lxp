@@ -5,7 +5,7 @@ import EditIcon from "../svg-icons/edit-icon";
 const ImageFileUpload: FC<{
   maxSize: number;
   onSetFile: (file: File) => void;
-  type?: number;
+  type?: 1 | 2;
 }> = ({ maxSize, onSetFile, type = 1 }) => {
   const [file, setFile] = useState<File | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
