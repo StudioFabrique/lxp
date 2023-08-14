@@ -11,10 +11,11 @@ import putParcoursContactsRouter from "./put-parcours-contacts";
 import putParcoursTagsRouter from "./put-parcours-tags";
 import deleteParcoursByIdRouter from "./delete-parcours-by-id";
 import putParcoursSkillsRouter from "./put-parcours-skills";
+import { body } from "express-validator";
+import httpPutVirtualClass from "../../../controllers/parcours/http-pu-virtual-class";
 
 const parcoursRouter = express.Router();
 
-parcoursRouter.get("/", httpGetParcours);
 parcoursRouter.use("/", httpCreateParcoursRouter);
 parcoursRouter.use("/parcours-by-formation", httpGetParcoursByFormationRouter);
 parcoursRouter.use("/parcours-by-id", getParcoursByIdRouter);
@@ -25,5 +26,12 @@ parcoursRouter.use("/update-tags", putParcoursTagsRouter);
 parcoursRouter.use("/delete", deleteParcoursByIdRouter);
 parcoursRouter.use("/update-contacts", putParcoursContactsRouter);
 parcoursRouter.use("/update-skills", putParcoursSkillsRouter);
+parcoursRouter.get("/", httpGetParcours);
+parcoursRouter.put(
+  "/update-virtual-class",
+  body("virtualClass").isURL().notEmpty(),
+  body("parcoursId").isNumeric().notEmpty(),
+  httpPutVirtualClass
+);
 
 export default parcoursRouter;

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
+import { useParams } from "react-router-dom";
 
 import Skill from "../../utils/interfaces/skill";
 import SkillItem from "./skill-item.component";
@@ -10,8 +11,6 @@ import ButtonAdd from "../UI/button-add/button-add";
 import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 import useHttp from "../../hooks/use-http";
-import { useParams } from "react-router-dom";
-import { autoSubmitTimer } from "../../config/auto-submit-timer";
 
 const SkillsList = () => {
   const { id } = useParams();
@@ -23,7 +22,16 @@ const SkillsList = () => {
   const { sendRequest } = useHttp();
 
   const handleDeleteSkill = (skillId: number) => {
-    dispatch(parcoursSkillsAction.deleteSkill(skillId));
+    const processData = (data: any) => {
+      dispatch(parcoursSkillsAction.deleteSkill(skillId));
+    };
+    sendRequest(
+      {
+        path: `/bonus-skill/${skillId}`,
+        method: "delete",
+      },
+      processData
+    );
   };
 
   const handleCloseDrawer = (id: string) => {
@@ -45,29 +53,61 @@ const SkillsList = () => {
     setTitle("Modifier la compétence");
   };
 
-  const handleUpdateBadge = (id: number) => {
-    setItemToUpdate(skillList.find((item: Skill) => item.id === id));
-    setActiveDrawer("update-badge");
-    setTitle("Modifier le Badge");
-  };
-
   const handleSubmitAddSkill = (value: any) => {
-    if (
-      !skillList.find((item: any) => item.description === value.description)
-    ) {
-      dispatch(
-        parcoursSkillsAction.addSkill({
-          description: value.description,
-          badge: value.badge,
-        })
-      );
+    const skill = skillList.find(
+      (item: any) => item.description === value.description
+    );
+    if (!skill) {
+      const processData = (data: any) => {
+        if (data.success) {
+          toast.success("Une nouvelle compétence a été enregistrée");
+          dispatch(parcoursSkillsAction.addSkill(data.skill));
+        }
+      };
+      setTimeout(() => {
+        sendRequest(
+          {
+            path: "/bonus-skill",
+            method: "post",
+            body: {
+              parcoursId: id,
+              skill: {
+                description: value.description,
+                badge: value.badge,
+              },
+            },
+          },
+          processData
+        );
+      }, 500);
     } else {
       toast.error("Cette compétence est déjà présente dans la liste");
     }
   };
 
   const submitUpdateSkill = (skill: any) => {
+    console.log({ skill });
+
     dispatch(parcoursSkillsAction.editSkill(skill));
+    const processData = (data: { success: boolean; message: string }) => {
+      if (data.success) {
+        toast.success(data.message);
+      }
+    };
+    sendRequest(
+      {
+        path: "/bonus-skill",
+        method: "put",
+        body: {
+          skill: {
+            id: skill.id,
+            description: skill.description,
+            badge: skill.badge,
+          },
+        },
+      },
+      processData
+    );
     handleCloseDrawer("update-skill");
   };
 
@@ -84,12 +124,11 @@ const SkillsList = () => {
       {skillList.length > 0 ? (
         <ul className="flex flex-col gap-y-4">
           {skillList.map((item: Skill) => (
-            <li key={item.description}>
+            <li key={item.id}>
               <FadeWrapper>
                 <SkillItem
                   skill={item}
                   onUpdateSkill={handleUpdateSkill}
-                  onUpdateBadge={handleUpdateBadge}
                   onDeleteSkill={handleDeleteSkill}
                 />
               </FadeWrapper>
@@ -102,29 +141,15 @@ const SkillsList = () => {
     </>
   );
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const processData = (data: any) => {};
-      sendRequest(
-        {
-          path: "/parcours/update-skills",
-          method: "put",
-          body: { parcoursId: id, skills: skillList },
-        },
-        processData
-      );
-    }, autoSubmitTimer);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [id, skillList, dispatch, sendRequest]);
-
   return (
     <>
-      <div className="flex flex-col gap-y-4 mt-4">{content}</div>
-      <div>
+      <FadeWrapper>
+        <div className="w-full flex flex-col gap-y-4 mt-4">{content}</div>
+      </FadeWrapper>
+
+      <div className="mt-2">
         <ButtonAdd
-          label="ajouter"
+          label="Ajouter une compétence"
           outline={true}
           onClickEvent={handleAddSkill}
         />

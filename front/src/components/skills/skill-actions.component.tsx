@@ -1,32 +1,20 @@
 import { FC } from "react";
+import Skill from "../../utils/interfaces/skill";
 
 type Props = {
-  skillId: number;
+  skill: Skill;
   onUpdateSkill: (id: number) => void;
-  onUpdateBadge: (index: number) => void;
   onDeleteSkill: (id: number) => void;
 };
 
-const SkillActions: FC<Props> = ({
-  skillId,
-  onUpdateSkill,
-  onUpdateBadge,
-  onDeleteSkill,
-}) => {
+const SkillActions: FC<Props> = ({ skill, onUpdateSkill, onDeleteSkill }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-      <button
-        className="btn btn-outline btn-secondary font-normal"
-        onClick={() => onUpdateBadge(skillId)}
-      >
-        Modifier le badge
-      </button>
-
-      <div className="grid grid-cols-1 md:grid-cols-2" onClick={() => {}}>
-        <div className="flex justify-center items-center">
+    <>
+      {skill.isBonus ? (
+        <div className="h-full flex flex-col justify-between items-center gap-y-1">
           <button
-            className="btn btn-primary"
-            onClick={() => onUpdateSkill(skillId)}
+            className="btn btn-sm btn-circle rounded-md btn-primary"
+            onClick={() => onUpdateSkill(skill.id!)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -34,7 +22,7 @@ const SkillActions: FC<Props> = ({
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-6 h-6"
+              className="w-4 h-4"
             >
               <path
                 strokeLinecap="round"
@@ -43,12 +31,10 @@ const SkillActions: FC<Props> = ({
               />
             </svg>
           </button>
-        </div>
 
-        <div className="flex justify-center items-center">
           <button
-            className="btn btn-primary"
-            onClick={() => onDeleteSkill(skillId)}
+            className="btn btn-sm btn-circle rounded-md btn-primary"
+            onClick={() => onDeleteSkill(skill.id!)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -56,7 +42,7 @@ const SkillActions: FC<Props> = ({
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-6 h-6 cursor-pointer font-bold"
+              className="w-4 h-4 cursor-pointer font-bold"
             >
               <path
                 strokeLinecap="round"
@@ -66,8 +52,8 @@ const SkillActions: FC<Props> = ({
             </svg>
           </button>
         </div>
-      </div>
-    </div>
+      ) : null}
+    </>
   );
 };
 
