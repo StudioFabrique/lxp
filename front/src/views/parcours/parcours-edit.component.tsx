@@ -20,6 +20,7 @@ import ParcoursModules from "../../components/parcours-modules/parcours-modules.
 import Stepper from "../../components/UI/stepper.-component/stepper.-component";
 import ParcoursInformations from "../../components/edit-parcours/informations/parcours-informations";
 import Skills from "../../components/edit-parcours/skills/skills.component";
+import Objectives from "../../components/edit-parcours/objectives/objectives.component";
 
 let initialState = true;
 
@@ -170,7 +171,10 @@ const EditParcours = () => {
       ) : error.length === 0 ? (
         <FadeWrapper>
           <div className="w-full flex flex-col items-center gap-y-8">
-            <ImageHeader image={image} />
+            <ImageHeader
+              defaultImage="/images/parcours-default.webp"
+              image={image}
+            />
             <div className="p-4 rounded-xl w-5/6 bg-secondary/20">
               <Stepper
                 actualStep={actualStep}
@@ -183,8 +187,9 @@ const EditParcours = () => {
             {actualStep.id === 1 ? (
               <ParcoursInformations parcoursId={id} />
             ) : null}
-            {actualStep.id === 2 ? <Skills /> : null}
-            {actualStep.id === 3 ? <ParcoursModules /> : null}
+            {actualStep.id === 2 ? <Objectives /> : null}
+            {actualStep.id === 3 ? <Skills /> : null}
+            {actualStep.id === 4 ? <ParcoursModules /> : null}
           </div>
           <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">
             {actualStep.id === 1 ? (

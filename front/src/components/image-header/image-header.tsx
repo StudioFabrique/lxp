@@ -3,16 +3,16 @@ import React, { FC, useCallback, useEffect, useState } from "react";
 
 import ImageFileUpload from "./image-file-upload";
 import { useSelector } from "react-redux";
-import defaultImage from "../../assets/images/parcours-default.jpg";
 import ParcoursHeaderIcon from "../UI/svg-icons/parcours-header-icon";
 import useHttp from "../../hooks/use-http";
 import { compressImage } from "../../helpers/compress-image";
 
 type Props = {
   image?: string;
+  defaultImage: string;
 };
 
-const ImageHeader: FC<Props> = ({ image }) => {
+const ImageHeader: FC<Props> = ({ defaultImage, image }) => {
   const [bgImage, setBgImage] = useState<any | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const parcours = useSelector((state: any) => state.parcours);
@@ -20,6 +20,8 @@ const ImageHeader: FC<Props> = ({ image }) => {
     (state: any) => state.parcoursInformations
   );
   const { sendRequest } = useHttp();
+
+  console.log({ defaultImage });
 
   // en l'absence de props affiche une image par défaut
   useEffect(() => {
@@ -30,7 +32,7 @@ const ImageHeader: FC<Props> = ({ image }) => {
     } else {
       setBgImage(image);
     }
-  }, [image]);
+  }, [defaultImage, image]);
 
   const classImage: React.CSSProperties = {
     backgroundImage: `url('${bgImage}')`,
