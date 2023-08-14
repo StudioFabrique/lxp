@@ -9,18 +9,29 @@ import Tag from "../../../utils/interfaces/tag";
 import GroupTags from "./components/group-tags.component";
 import Dates from "./components/dates.component";
 import Group from "../../../utils/interfaces/group";
+import Parcours from "../../../utils/interfaces/parcours";
 
 const GroupAddForm: FC<{
   group?: any;
-  onSubmitForm: (group: Group) => void;
+  onSubmitForm: (group: any) => void;
   error: string;
   isLoading: boolean;
 }> = (props) => {
+  const [file, setFile] = useState<File | null>(null);
+  const [parcoursId, setParcoursId] = useState<number | null>(null);
   const [dates, setDates] = useState({ startDate: "", endDate: "" });
   const [tags, setTags] = useState<Tag[]>([]);
   const [isActive, setIsActive] = useState<boolean>(
     props.group?.isActive ?? false
   );
+
+  const handleSetFile = (file: File) => {
+    setFile(file);
+  };
+
+  const handleSelectParcours = (newParcoursId: number) => {
+    setParcoursId(newParcoursId);
+  };
 
   const handleSubmitTags = (tags: Array<Tag>) => {
     setTags(tags);
@@ -51,17 +62,22 @@ const GroupAddForm: FC<{
     desc.isValid &&
     dates.startDate.length > 0 &&
     dates.endDate.length > 0 &&
-    diplome.isValid;
+    diplome.isValid &&
+    file !== null &&
+    parcoursId !== null &&
+    isActive != null;
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!formIsValid) {
+    if (formIsValid) {
       props.onSubmitForm({
         name: name.value.trim(),
         desc: desc.value.trim(),
         startDate: dates.startDate,
         endDate: dates.endDate,
         tags: tags,
+        parcoursId: parcoursId,
+        img: file,
       });
     }
   };
@@ -79,8 +95,9 @@ const GroupAddForm: FC<{
           desc={desc}
           isActive={isActive}
           setIsActive={setIsActive}
+          onSetFile={handleSetFile}
         />
-        <Details />
+        <Details onSelectParcours={handleSelectParcours} />
         <div className="grid grid-row-2 max-md:mb-2 max-md:mt-2 gap-y-8">
           <GroupTags onSubmitTags={handleSubmitTags} />
           <Dates onSubmitDates={handleSubmitDates} />

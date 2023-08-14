@@ -11,12 +11,10 @@ import SortDownIcon from "../../../../UI/svg-icons/sort-down-icon.component";
 
 const UserToAddListHeader: FC<{
   filters: { filterValue: string; placeholder: string }[];
-  setFilter: Dispatch<SetStateAction<string>>;
   value: string;
-  setValue: Dispatch<SetStateAction<string>>;
   order: string;
   sortData: (order: string) => void;
-}> = ({ filters, setFilter, value, setValue, order, sortData }) => {
+}> = ({ filters, value, order, sortData }) => {
   const [selectedFilter, setSelectedFilter] = useState<{
     filterValue: string;
     placeholder: string;

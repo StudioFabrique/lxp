@@ -128,8 +128,6 @@ const GroupManageUserList: FC<{
                 { filterValue: "lastname", placeholder: "Nom" },
                 { filterValue: "group", placeholder: "Formation" },
               ]}
-              setFilter={() => {}}
-              setValue={() => {}}
               value="test"
             />
             <UserToAddList
@@ -143,15 +141,15 @@ const GroupManageUserList: FC<{
               onAddUserInstantly={handleAddUserInstantly}
               isUsersSettedUp={isUsersSettedUp}
             />
-          </div>
 
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            perPage={perPage}
-            setPage={handlePageNumber}
-            setPerPages={setPerPage}
-          />
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              perPage={perPage}
+              setPage={handlePageNumber}
+              setPerPages={setPerPage}
+            />
+          </div>
           <div className="w-full flex justify-end">
             <AddUsersButton
               onSetUsersToAdd={handleSetUsersToAdd}

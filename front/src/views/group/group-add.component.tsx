@@ -1,5 +1,4 @@
 import useHttp from "../../hooks/use-http";
-import Group from "../../utils/interfaces/group";
 import GroupAddForm from "../../components/forms/group-form/group-add-form.component";
 import GroupUserList from "../../components/lists/group-add-user-list/group-user-list.component";
 import { useState } from "react";
@@ -11,16 +10,13 @@ const GroupAdd = () => {
 
   const { error, isLoading, sendRequest } = useHttp();
 
-  const handleSubmit = (group: Group) => {
-    console.log(group);
+  const handleSubmit = (data: any) => {
+    console.log(data);
     console.log(usersToAdd);
 
-    sendRequest(
-      { method: "post", path: "/group", body: group },
-      (data: any) => {
-        if (data) console.log("group created !");
-      }
-    );
+    sendRequest({ method: "post", path: "/group", body: data }, (data: any) => {
+      if (data) console.log("group created !");
+    });
   };
 
   const handleAddUsers = (users: Array<User>) => {
