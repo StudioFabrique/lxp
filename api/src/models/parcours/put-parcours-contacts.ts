@@ -1,6 +1,6 @@
-import { Contact, PrismaClient } from "@prisma/client";
+import { Contact } from "@prisma/client";
 
-const prisma = new PrismaClient();
+import { prisma } from "../../utils/db";
 
 async function putParcoursContacts(
   parcoursId: number,

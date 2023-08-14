@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../utils/db";
 
 async function getParcoursById(parcoursId: number) {
   const parcours = await prisma.parcours.findFirst({
