@@ -32,12 +32,14 @@ const GroupUserItem: FC<{
         {user.isActive ? "Actif" : "Inactif"}
       </td>
       <td className="bg-transparent">
-        <input
-          type="checkbox"
-          className="toggle"
-          onChange={handleToggleActiveState}
-          defaultChecked={user.isActive}
-        />
+        <span className="flex items-center">
+          <input
+            type="checkbox"
+            className="toggle"
+            onChange={handleToggleActiveState}
+            defaultChecked={user.isActive}
+          />
+        </span>
       </td>
       <td className="bg-transparent rounded-r-xl">
         <EditButton user={user} />

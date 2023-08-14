@@ -11,7 +11,9 @@ type Item = {
   formationId?: number;
 };
 
-const Details: FC<{}> = () => {
+const Details: FC<{ onSelectParcours: (id: number) => void }> = ({
+  onSelectParcours,
+}) => {
   const { sendRequest } = useHttp();
 
   const [parcoursList, setParcoursList] = useState<Array<Item>>([]);
@@ -37,7 +39,11 @@ const Details: FC<{}> = () => {
       </span>
       <span className="flex flex-col gap-y-2">
         <label>Parcours visé</label>
-        <Selecter list={parcoursList} onSelectItem={() => {}} title="" />
+        <Selecter
+          list={parcoursList}
+          onSelectItem={onSelectParcours}
+          title=""
+        />
       </span>
     </Wrapper>
   );
