@@ -2,11 +2,11 @@ import { FC, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 
-import ImportedSkills from "./imported-skills.component";
-import ImportCSVActions from "./import-skills-actions.component";
+import ImportedSkills from "../../UI/imported-csv-data.component";
 import { parcoursSkillsAction } from "../../../store/redux-toolkit/parcours/parcours-skills";
 import useHttp from "../../../hooks/use-http";
 import Skill from "../../../utils/interfaces/skill";
+import ImportCSVActions from "../../UI/import-csv-actions.component";
 
 type Props = {
   onCloseDrawer: (id: string) => void;

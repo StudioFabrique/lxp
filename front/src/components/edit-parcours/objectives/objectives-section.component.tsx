@@ -1,14 +1,14 @@
 import { useDispatch } from "react-redux";
 
-import SkillsHeader from "./skills-header.component";
-import SkillsList from "./skills-list.component";
-import ImportSkills from "./import-skills.component";
+import Wrapper from "../../UI/wrapper/wrapper.component";
+import ParcoursSectionHeader from "../parcours-section-header.component";
 import { parcoursSkillsAction } from "../../../store/redux-toolkit/parcours/parcours-skills";
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
-import Wrapper from "../../UI/wrapper/wrapper.component";
+import { ReactNode } from "react";
 
-const Skills = () => {
+const ObjectivesSection = ({ children }: { children: ReactNode[] }) => {
   const dispatch = useDispatch();
+  const title = "Importer une liste d'objectifs";
 
   // gère la fermeture du drawer
   const handleCloseDrawer = (id: string) => {
@@ -24,21 +24,24 @@ const Skills = () => {
 
   return (
     <div className="w-full">
-      <h3 className="text-xl font-bold mb-4">Compétences Complémentaires</h3>
+      <h3 className="text-xl font-bold mb-4">Objectifs</h3>
       <Wrapper>
-        <SkillsHeader onImport={handleOpenImportDrawer} />
-        <SkillsList />
+        <ParcoursSectionHeader
+          label={title}
+          onImport={handleOpenImportDrawer}
+        />
+        {children[0]}
         <RightSideDrawer
-          title="Importer des Compétences"
+          title={title}
           id="import-data"
           visible={false}
           onCloseDrawer={handleCloseDrawer}
         >
-          <ImportSkills onCloseDrawer={handleCloseDrawer} />
+          {children[1]}
         </RightSideDrawer>
       </Wrapper>
     </div>
   );
 };
 
-export default Skills;
+export default ObjectivesSection;
