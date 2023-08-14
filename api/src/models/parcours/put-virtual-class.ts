@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../utils/db";
 
 async function putVirtualClass(parcoursId: string, virtualClass: string) {
   const id = parseInt(parcoursId);
