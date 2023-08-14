@@ -57,7 +57,7 @@ const router = createBrowserRouter([
         route temporaire pour du test
       */
       {
-        path: "modules",
+        path: "test",
         element: <ParcoursModules />,
       },
     ],
