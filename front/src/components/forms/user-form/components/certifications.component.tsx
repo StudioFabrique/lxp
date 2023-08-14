@@ -69,14 +69,11 @@ const Certifications: FC<{
     /* attributeChange(event, currentGraduation, setCurrentGraduation); */
   };
 
-  const gridClassName: string =
-    graduations.length > 0 ? "grid-cols-2" : "grid-cols-1";
-
   return (
     <Wrapper>
-      <h2 className="font-bold text-xl">Certification(s)</h2>
-      <div className={`grid ${gridClassName} gap-x-10`}>
+      <div className="grid grid-cols-2 gap-x-10">
         <div className="flex flex-col gap-y-3">
+          <h2 className="font-bold text-xl">Certification(s)</h2>
           <span>
             <label>Titre du diplôme</label>
             <input
@@ -111,26 +108,24 @@ const Certifications: FC<{
           </span>
           <button
             type="button"
-            className="self-start btn btn-primary md:w-32"
+            className="self-start btn btn-primary w-[60%] btn-md"
             onClick={handleAddGraduation}
           >
             Ajouter la certification
           </button>
         </div>
-        {graduations.length > 0 ? (
-          <div className="bg-secondary-content flex flex-col items-center gap-y-4 overflow-y-auto max-h-72 p-3 rounded-xl">
-            {/* La liste des certifications */}
-            {graduations.map((graduation, i) => (
-              <span
-                key={i}
-                className="bg-primary-content rounded-md w-full p-1"
-              >
-                <p>{graduation.date.getFullYear()}</p>
-                <p>{graduation.degree}</p>
-              </span>
-            ))}
-          </div>
-        ) : undefined}
+        <div className="bg-secondary-content flex flex-col items-center gap-y-4 overflow-y-auto p-5 m-2 rounded-xl">
+          {/* La liste des certifications */}
+          {graduations.map((graduation, i) => (
+            <span
+              key={i}
+              className="bg-primary-content rounded-md w-full py-2 pl-5"
+            >
+              <p>{graduation.date.getFullYear()}</p>
+              <p>{graduation.degree}</p>
+            </span>
+          ))}
+        </div>
       </div>
     </Wrapper>
   );

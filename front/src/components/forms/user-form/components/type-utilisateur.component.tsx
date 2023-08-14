@@ -29,8 +29,8 @@ const TypeUtilisateur: FC<{
         <button type="button">Gérer les roles</button>
       </div>
 
-      <div className="flex flex-col">
-        <span>
+      <div className="flex flex-col gap-y-5">
+        <span className="flex gap-x-2">
           <input
             name="etudiant"
             type="checkbox"
@@ -41,7 +41,7 @@ const TypeUtilisateur: FC<{
           />
           <label htmlFor="etudiant">Etudiant</label>
         </span>
-        <span>
+        <span className="flex gap-x-2">
           <input
             name="formateur"
             type="checkbox"
@@ -52,7 +52,7 @@ const TypeUtilisateur: FC<{
           />
           <label htmlFor="formateur">Formateur</label>
         </span>
-        <span>
+        <span className="flex gap-x-2">
           <input
             name="administrateur"
             type="checkbox"
@@ -63,7 +63,7 @@ const TypeUtilisateur: FC<{
           />
           <label htmlFor="administrateur">Administrateur</label>
         </span>
-        <span>
+        <span className="flex gap-x-2">
           <input
             name="visiteur"
             type="checkbox"

@@ -18,7 +18,7 @@ const Contact: FC<{
   return (
     <Wrapper>
       <h2 className="font-bold text-xl">Contact</h2>
-      <span>
+      <span className="flex flex-col gap-y-2">
         <label>Date de naissance</label>
         <input
           className="input input-sm w-full p-[20px] pl-[30px]"
@@ -27,7 +27,7 @@ const Contact: FC<{
           autoComplete="off"
         />
       </span>
-      <span>
+      <span className="flex flex-col gap-y-2">
         <label>Adresse</label>
         <input
           className="input input-sm w-full p-[20px] pl-[30px]"
@@ -38,7 +38,7 @@ const Contact: FC<{
           autoComplete="off"
         />
       </span>
-      <span>
+      <span className="flex flex-col gap-y-2">
         <label>Ville</label>
         <input
           className="input input-sm w-full p-[20px] pl-[30px]"
@@ -49,7 +49,7 @@ const Contact: FC<{
           autoComplete="off"
         />
       </span>
-      <span>
+      <span className="flex flex-col gap-y-2">
         <label>Code Postal</label>
         <input
           className="input input-sm w-full p-[20px] pl-[30px]"
@@ -60,7 +60,7 @@ const Contact: FC<{
           autoComplete="off"
         />
       </span>
-      <span>
+      <span className="flex flex-col gap-y-2">
         <label>Téléphone</label>
         <input
           className="input input-sm w-full p-[20px] pl-[30px]"

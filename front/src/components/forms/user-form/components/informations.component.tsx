@@ -12,7 +12,7 @@ const Informations: FC<{
   return (
     <Wrapper>
       <h2 className="font-bold text-xl">Informations</h2>
-      <span>
+      <span className="flex flex-col gap-y-2">
         <label>Nom *</label>
         <input
           className="input input-sm w-full p-[20px] pl-[30px]"
@@ -23,7 +23,7 @@ const Informations: FC<{
           autoComplete="off"
         />
       </span>
-      <span>
+      <span className="flex flex-col gap-y-2">
         <label>Prénom *</label>
         <input
           className="input input-sm w-full p-[20px] pl-[30px]"
@@ -34,7 +34,7 @@ const Informations: FC<{
           autoComplete="off"
         />
       </span>
-      <span>
+      <span className="flex flex-col gap-y-2">
         <label>Pseudo</label>
         <input
           className="input input-sm w-full p-[20px] pl-[30px]"
@@ -45,7 +45,7 @@ const Informations: FC<{
           autoComplete="off"
         />
       </span>
-      <span>
+      <span className="flex flex-col gap-y-2">
         <label>Adresse Mail *</label>
         <input
           className="input input-sm w-full p-[20px] pl-[30px]"
@@ -56,7 +56,7 @@ const Informations: FC<{
           autoComplete="off"
         />
       </span>
-      <ImageFileUpload onSetFile={onSetFile} maxSize={5} />
+      <ImageFileUpload type={2} onSetFile={onSetFile} maxSize={5} />
     </Wrapper>
   );
 };

@@ -47,25 +47,20 @@ const RightSideDrawer: FC<Props> = ({
 
   return (
     <div className="w-fit h-full drawer drawer-end z-50">
-      <input
-        id={id}
-        type="checkbox"
-        className="drawer-toggle"
-        ref={checkboxRef}
-        onChange={handleToggle}
-      />
-      <div className="drawer-content">
-        {/* Page content here */}
-        {visible ? (
-          <label
-            htmlFor={id}
-            className="drawer-button btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary focus:outline-none"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-4 h-4"
+      <div>
+        <input
+          id={id}
+          type="checkbox"
+          className="drawer-toggle"
+          ref={checkboxRef}
+          onChange={handleToggle}
+        />
+        <div className="drawer-content">
+          {/* Page content here */}
+          {visible ? (
+            <label
+              htmlFor={id}
+              className="drawer-button btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary focus:outline-none"
             >
               {buttonTitle ? (
                 <>
@@ -96,8 +91,8 @@ const RightSideDrawer: FC<Props> = ({
                 </svg>
               )}
             </label>
-          </div>
-        ) : null}
+          ) : null}
+        </div>
       </div>
       <div className="drawer-side">
         <label

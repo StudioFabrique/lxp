@@ -18,7 +18,7 @@ const UserAdd = () => {
   };
 
   return (
-    <div className="p-5">
+    <div className="p-10">
       <UserAddForm
         onSubmitForm={handleSubmit}
         error={error}
