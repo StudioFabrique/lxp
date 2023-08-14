@@ -39,6 +39,7 @@ const GroupManageUserList: FC<{
     setDataList,
     setStype,
     stype,
+    sortData,
   } = usePagination("lastname", `/user/${user!.roles[0].role}`);
 
   const handleSetUsersToAdd = () => {
@@ -121,8 +122,12 @@ const GroupManageUserList: FC<{
           <div className="w-full flex flex-col gap-y-4">
             <UserToAddListHeader
               order={stype}
-              setOrder={setStype}
-              filter="Prénom"
+              sortData={sortData}
+              filters={[
+                { filterValue: "firstname", placeholder: "Prénom" },
+                { filterValue: "lastname", placeholder: "Nom" },
+                { filterValue: "group", placeholder: "Formation" },
+              ]}
               setFilter={() => {}}
               setValue={() => {}}
               value="test"
