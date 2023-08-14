@@ -12,13 +12,14 @@ const Skills = () => {
 
   // gère la fermeture du drawer
   const handleCloseDrawer = (id: string) => {
+    dispatch(parcoursSkillsAction.importSkills([]));
     document.getElementById(id)?.click();
   };
 
   // ouverture du drawer
   const handleOpenImportDrawer = () => {
     dispatch(parcoursSkillsAction.importSkills([]));
-    document.getElementById("import-skills")?.click();
+    document.getElementById("import-data")?.click();
   };
 
   return (
@@ -29,7 +30,7 @@ const Skills = () => {
         <SkillsList />
         <RightSideDrawer
           title="Importer des Compétences"
-          id="import-skills"
+          id="import-data"
           visible={false}
           onCloseDrawer={handleCloseDrawer}
         >

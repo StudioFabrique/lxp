@@ -1,11 +1,16 @@
-import { useCallback } from "react";
+import { FC, useCallback } from "react";
 import { useDispatch } from "react-redux";
 
 import { parcoursSkillsAction } from "../../../store/redux-toolkit/parcours/parcours-skills";
 import { skillsFields } from "../../../config/csv/csv-skills-fields";
 import CsvImport from "../../UI/csv-import/csv-import.component";
 
-const ImpoortSkillsActions = () => {
+type Props = {
+  modelFileUrl: string;
+  modelFileName: string;
+};
+
+const ImportCSVActions: FC<Props> = ({ modelFileUrl, modelFileName }) => {
   const dispatch = useDispatch();
 
   const handleFromCSV = useCallback(
@@ -47,12 +52,7 @@ const ImpoortSkillsActions = () => {
       </div>
       <p
         className="text-primary text-xs hover:underline pl-2 cursor-pointer flex justify-center"
-        onClick={() =>
-          downloadFile(
-            "http://localhost:5001/csv-competences-modele.txt",
-            "csv-competences-modele.txt"
-          )
-        }
+        onClick={() => downloadFile(modelFileUrl, modelFileUrl)}
       >
         Télécharger ici un modèle en CSV
       </p>
@@ -60,4 +60,4 @@ const ImpoortSkillsActions = () => {
   );
 };
 
-export default ImpoortSkillsActions;
+export default ImportCSVActions;
