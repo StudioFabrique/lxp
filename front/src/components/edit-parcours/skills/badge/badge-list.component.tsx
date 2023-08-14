@@ -10,7 +10,7 @@ type Props = {
 };
 
 const BadgeList: FC<Props> = ({ badgeProp, onSubmitBadge }) => {
-  const [badge, setBadge] = useState<Badge | undefined>(badgeProp);
+  const [badge, setBadge] = useState<Badge | undefined>({ image: badgeProp });
 
   const handleSubmitBadge = (newBadge: Badge) => {
     setBadge(newBadge);
@@ -19,7 +19,7 @@ const BadgeList: FC<Props> = ({ badgeProp, onSubmitBadge }) => {
 
   let content = (
     <div className="flex flex-col w-full gap-y-8 items-center">
-      {badge !== undefined ? <BadgeItem badge={badge} /> : null}
+      {badge && badge !== undefined ? <BadgeItem badge={badge} /> : null}
       <ImportBadges onSubmit={handleSubmitBadge} />
     </div>
   );
