@@ -23,6 +23,7 @@ import ParcoursSection from "../../components/edit-parcours/parcours-section";
 import SkillsList from "../../components/edit-parcours/skills/skills-list.component";
 import ImportSkills from "../../components/edit-parcours/skills/import-skills.component";
 import ImportObjectives from "../../components/edit-parcours/objectives/import-objectives";
+import ObjectivesList from "../../components/edit-parcours/objectives/objectives-list";
 
 let initialState = true;
 
@@ -225,7 +226,7 @@ const EditParcours = () => {
                 title="Importer une liste d'objectifs"
                 onResetList={handleResetImportedObjectives}
               >
-                <p>toto</p>
+                <ObjectivesList />
                 <ImportObjectives onCloseDrawer={() => {}} />
               </ParcoursSection>
             ) : null}
