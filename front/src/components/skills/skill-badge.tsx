@@ -1,6 +1,5 @@
 import { FC } from "react";
 
-import Badge from "../../utils/interfaces/badge";
 import TrophyIcon from "../UI/svg-icons/trophy-icon.component";
 
 type Props = {
@@ -9,9 +8,13 @@ type Props = {
 
 const SkillBadge: FC<Props> = ({ badge }) => {
   return (
-    <div className="btn bg-secondary/20 hover:bg-secondary/20 hover:cursor-default border-none no-animation">
+    <div className="btn btn-lg btn-circle rounded-lg bg-secondary/20 hover:bg-secondary/20 hover:cursor-default border-none no-animation">
       {badge ? (
-        <img className="w-6 h-6" src={badge} alt="illustration badge" />
+        <img
+          className="w-full h-full p-2"
+          src={badge}
+          alt="illustration badge"
+        />
       ) : (
         <div className="text-primary">
           <TrophyIcon />

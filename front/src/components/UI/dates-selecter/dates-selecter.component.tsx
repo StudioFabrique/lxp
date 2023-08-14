@@ -83,7 +83,7 @@ const DatesSelecter: FC<Props> = ({
       <h3 className="font-bold">{label}</h3>
       <div className="flex flex-col gap-y-4">
         <div className="flex justify-between items-center">
-          <p>Début</p>
+          <p>Début *</p>
           <input
             className="ml-2 input input-sm w-5/6"
             name="startingDate"
@@ -93,7 +93,7 @@ const DatesSelecter: FC<Props> = ({
           />
         </div>
         <div className="flex justify-between items-center">
-          <p>Fin</p>
+          <p>Fin *</p>
           <input
             className="ml-2 input input-sm w-5/6"
             name="endingDate"

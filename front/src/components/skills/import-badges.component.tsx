@@ -1,27 +1,44 @@
-import { useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { validateImageFile } from "../../utils/validate-image-file";
 import { useDispatch } from "react-redux";
 
-import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 import UploadIcon from "../UI/svg-icons/upload-icon.component";
+import { compressImage } from "../../helpers/compress-image";
+import Badge from "../../utils/interfaces/badge";
 
-const maxSize = 100 * 1024;
+const maxSize = 1024 * 1024;
 
-const ImportBadges = () => {
+type Props = {
+  onSubmit: (badge: Badge) => void;
+};
+
+const ImportBadges: FC<Props> = ({ onSubmit }) => {
   const fileSelectRef = useRef<any>(null);
-  const [selectedFiles, setSelectedFiles] = useState<string | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<any>(null);
   const dispatch = useDispatch();
 
   const handleLabelClick = () => {
     fileSelectRef.current.click();
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const files = event.target.files;
 
     if (files) {
       if (validateImageFile(files[0], maxSize)) {
-        setSelectedFiles(URL.createObjectURL(files[0]));
+        const file = await compressImage(files[0], 100);
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const imageString = reader.result as string;
+            if (imageString) {
+              setSelectedFiles(imageString);
+            }
+          };
+          reader.readAsDataURL(file);
+        }
       }
     } else {
       setSelectedFiles(null);
@@ -30,15 +47,11 @@ const ImportBadges = () => {
 
   useEffect(() => {
     if (selectedFiles) {
-      dispatch(
-        parcoursSkillsAction.importBadges({
-          image: selectedFiles,
-          isSelected: false,
-        })
-      );
+      onSubmit({ image: selectedFiles });
+
       setSelectedFiles(null);
     }
-  }, [selectedFiles, dispatch]);
+  }, [selectedFiles, dispatch, onSubmit]);
 
   return (
     <>

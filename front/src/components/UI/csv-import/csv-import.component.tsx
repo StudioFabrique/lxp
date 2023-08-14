@@ -24,6 +24,7 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
   const [fileError, setFileError] = useState<string | null>(null);
   const [isEmptyingReady, setEmptyingReadyState] = useState<boolean>(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const [filename, setFilename] = useState<string | null>(null);
 
   const commonConfig = useMemo(
     () => ({
@@ -32,10 +33,17 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
     []
   );
 
+  /*   useEffect(() => {
+    if (isOpening) {
+      setFileError(null);
+      setFilename(null);
+      setSelectedFile(null);
+    }
+  }, [isOpening]); */
+
   const handleSelectedFile = (event: ChangeEvent<HTMLInputElement>) => {
     setFileError(null);
     const files = event.target.files;
-    console.log(files);
 
     if (files && files.length > 0) {
       if (files[0].type !== "text/csv") {
@@ -78,6 +86,7 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
           if (checkCSV(fields, result.meta.fields)) {
             result.data.pop();
             onParseCsv(result.data);
+            setFilename(selectedFile.name);
             handleEmptyFile();
           } else {
             setFileError("Format des données non conforme");
@@ -92,11 +101,7 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
       {type === undefined || type === "icon" ? (
         <div
           className={`group w-[13rem] h-[8rem] flex flex-col text-xs gap-y-4 p-4 justify-center items-center font-bold rounded-xl shadow-xl border-2 hover:bg-primary cursor-pointer ${
-            fileError
-              ? "border-error"
-              : selectedFile
-              ? "border-success"
-              : "border-primary/50"
+            fileError ? "border-error" : "border-primary/50"
           } ${origin === "csv" ? "bg-primary" : ""}`}
           onClick={handleFileSelection}
         >
@@ -107,11 +112,7 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
           >
             <UploadIcon size={10} />
             <p className={`${fileError ? "text-error" : ""}`}>
-              {fileError
-                ? fileError
-                : selectedFile
-                ? selectedFile.name
-                : "Sélectionner un fichier"}
+              {filename ? filename : "Sélectionner un fichier"}
             </p>
           </div>
         </div>

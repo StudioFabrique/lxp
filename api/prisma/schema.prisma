@@ -21,24 +21,26 @@ model Formation {
 }
 
 model Parcours {
-  id          Int                    @id @default(autoincrement())
-  title       String                 @unique
-  description String?
-  startDate   DateTime?
-  endDate     DateTime?
-  degree      String?
-  image       Bytes?
-  createdAt   DateTime               @default(now())
-  updatedAt   DateTime               @default(now())
-  tags        TagsOnParcours[]
-  admin       Admin                  @relation(fields: [adminId], references: [id])
-  adminId     Int
-  contacts    ContactsOnParcours[]
-  formation   Formation              @relation(fields: [formationId], references: [id])
-  formationId Int
-  skills      SKillsOnParcours[]
-  modules     ModulesOnParcours[]
-  objectives  ObjectivesOnParcours[]
+  id           Int                    @id @default(autoincrement())
+  title        String                 @unique
+  description  String?
+  startDate    DateTime?
+  endDate      DateTime?
+  degree       String?
+  image        Bytes?
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @default(now())
+  tags         TagsOnParcours[]
+  admin        Admin                  @relation(fields: [adminId], references: [id])
+  adminId      Int
+  contacts     ContactsOnParcours[]
+  formation    Formation              @relation(fields: [formationId], references: [id])
+  formationId  Int
+  skills       SKillsOnParcours[]
+  bonusSkills  BonusSkill[]
+  modules      ModulesOnParcours[]
+  objectives   ObjectivesOnParcours[]
+  virtualClass String?
 }
 
 model Module {
@@ -80,7 +82,17 @@ model Skill {
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @default(now())
   modules     SkillsOnModule[]
-  badge       Bytes?
+  badge       String?
+}
+
+model BonusSkill {
+  id          Int      @id @default(autoincrement())
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  badge       String?
+  parcours    Parcours @relation(fields: [parcoursId], references: [id])
+  parcoursId  Int
 }
 
 model Admin {

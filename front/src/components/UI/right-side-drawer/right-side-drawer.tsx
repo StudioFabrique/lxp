@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, ReactNode, useEffect, useRef } from "react";
 
 type Props = {
@@ -6,9 +7,6 @@ type Props = {
   title: string;
   buttonTitle?: string;
   id?: string;
-  /* 
-    Si la valeur isOpen est passée en paramètre, alors le toggle de l'état pourra donc se faire de l'exterieur du composant.
-  */
   isOpen?: boolean;
   onCloseDrawer?: (id: string) => void;
 };
@@ -34,7 +32,8 @@ const RightSideDrawer: FC<Props> = ({
     }
   };
 
-  const handleToggle = (event: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleToggle = (_event: any) => {
     if (onCloseDrawer && checkboxRef.current?.checked === false) {
       onCloseDrawer(id);
     }
@@ -58,10 +57,15 @@ const RightSideDrawer: FC<Props> = ({
       <div className="drawer-content">
         {/* Page content here */}
         {visible ? (
-          <div>
-            <label
-              htmlFor={id}
-              className="drawer-button btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary flex w-full px-2"
+          <label
+            htmlFor={id}
+            className="drawer-button btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary focus:outline-none"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-4 h-4"
             >
               {buttonTitle ? (
                 <>
@@ -104,7 +108,7 @@ const RightSideDrawer: FC<Props> = ({
           {/* Sidebar content here */}
           <div className="flex items-center gap-x-4">
             {!isOpen && (
-              <div onClick={handleCloseDrawer}>
+              <div className="text-primary" onClick={handleCloseDrawer}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -119,7 +123,7 @@ const RightSideDrawer: FC<Props> = ({
                 </svg>
               </div>
             )}
-            <h2 className="text-xl font-bold">{title}</h2>
+            <h2 className="text-xl font-bold text-primary">{title}</h2>
           </div>
           <div className="divider" />
           {children}
