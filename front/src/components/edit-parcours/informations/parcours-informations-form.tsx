@@ -3,12 +3,11 @@
 import { FC, useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
-
-import useHttp from "../../hooks/use-http";
-import useInput from "../../hooks/use-input";
-import { autoSubmitTimer } from "../../config/auto-submit-timer";
-import { regexGeneric, regexOptionalGeneric } from "../../utils/constantes";
-import { parcoursInformationsAction } from "../../store/redux-toolkit/parcours/parcours-informations";
+import useHttp from "../../../hooks/use-http";
+import useInput from "../../../hooks/use-input";
+import { regexGeneric, regexOptionalGeneric } from "../../../utils/constantes";
+import { parcoursInformationsAction } from "../../../store/redux-toolkit/parcours/parcours-informations";
+import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 
 type Props = {
   parcoursId?: string;

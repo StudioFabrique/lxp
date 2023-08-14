@@ -9,17 +9,17 @@ import { parcoursInformationsAction } from "../../store/redux-toolkit/parcours/p
 import useHttp from "../../hooks/use-http";
 import useSteps from "../../hooks/use-steps";
 import { stepsParcours } from "../../config/steps/steps-parcours";
-import { tagsAction } from "../../store/tags";
+import { tagsAction } from "../../store/redux-toolkit/tags";
 import { parcoursContactsAction } from "../../store/redux-toolkit/parcours/parcours-contacts";
 import Loader from "../../components/UI/loader";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import ImageHeader from "../../components/image-header/image-header";
-import ParcoursInformations from "../../components/edit-parcours/parcours-informations";
 import Error404 from "../../components/error404";
-import Skills from "../../components/skills/skills.component";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 import ParcoursModules from "../../components/parcours-modules/parcours-modules.component";
 import Stepper from "../../components/UI/stepper.-component/stepper.-component";
+import ParcoursInformations from "../../components/edit-parcours/informations/parcours-informations";
+import Skills from "../../components/edit-parcours/skills/skills.component";
 
 let initialState = true;
 

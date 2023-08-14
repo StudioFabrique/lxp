@@ -1,7 +1,6 @@
 import { FC } from "react";
-import DBIcon from "../UI/svg-icons/db-icon.component";
-import Skill from "../../utils/interfaces/skill";
-import useHttp from "../../hooks/use-http";
+
+import DBIcon from "../../UI/svg-icons/db-icon.component";
 
 type Props = {
   origin: string;

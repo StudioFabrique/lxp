@@ -1,12 +1,12 @@
 import { FC, FormEvent, useCallback, useState } from "react";
 
-import Skill from "../../utils/interfaces/skill";
-import useInput from "../../hooks/use-input";
-import { regexGeneric } from "../../utils/constantes";
-import Wrapper from "../UI/wrapper/wrapper.component";
-import DrawerFormButtons from "../UI/drawer-form-buttons/drawer-form-buttons.component";
-import Badge from "../../utils/interfaces/badge";
-import MemoizedBadgeList from "../badge/badge-list.component";
+import MemoizedBadgeList from "./badge/badge-list.component";
+import Skill from "../../../utils/interfaces/skill";
+import Badge from "../../../utils/interfaces/badge";
+import useInput from "../../../hooks/use-input";
+import { regexGeneric } from "../../../utils/constantes";
+import DrawerFormButtons from "../../UI/drawer-form-buttons/drawer-form-buttons.component";
+import Wrapper from "../../UI/wrapper/wrapper.component";
 
 type Props = {
   skill?: Skill;

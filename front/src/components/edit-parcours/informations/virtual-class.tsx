@@ -1,12 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
-
-import useInput from "../../hooks/use-input";
-import { regexUrl } from "../../utils/constantes";
 import { useEffect, useRef } from "react";
-import { autoSubmitTimer } from "../../config/auto-submit-timer";
-import { parcoursInformationsAction } from "../../store/redux-toolkit/parcours/parcours-informations";
-import useHttp from "../../hooks/use-http";
+import { regexUrl } from "../../../utils/constantes";
+import useInput from "../../../hooks/use-input";
+import useHttp from "../../../hooks/use-http";
+import { parcoursInformationsAction } from "../../../store/redux-toolkit/parcours/parcours-informations";
+import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 
 const VirtualClass = () => {
   const parcoursId = useSelector((state: any) => state.parcours.id);

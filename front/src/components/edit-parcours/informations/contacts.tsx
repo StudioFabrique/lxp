@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-import User from "../../utils/interfaces/user";
-import useHttp from "../../hooks/use-http";
-import ContactItem from "./contact-item";
-import Contact from "../../utils/interfaces/contact";
-import { autoSubmitTimer } from "../../config/auto-submit-timer";
 import { toast } from "react-hot-toast";
-import { parcoursContactsAction } from "../../store/redux-toolkit/parcours/parcours-contacts";
-import SearchDropdown from "../UI/search-dropdown/search-dropdown";
-import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
-import UserQuickCreate from "../user-quick-create/user-quick-create";
+
+import ContactItem from "./contact-item";
+import Contact from "../../../utils/interfaces/contact";
+import useHttp from "../../../hooks/use-http";
+import User from "../../../utils/interfaces/user";
+import { parcoursContactsAction } from "../../../store/redux-toolkit/parcours/parcours-contacts";
+import { autoSubmitTimer } from "../../../config/auto-submit-timer";
+import SearchDropdown from "../../UI/search-dropdown/search-dropdown";
+import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
+import UserQuickCreate from "../../user-quick-create/user-quick-create";
 
 type Props = {
   onSubmitContacts: (contactsIds: Array<Contact>) => void;

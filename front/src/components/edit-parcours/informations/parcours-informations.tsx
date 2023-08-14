@@ -3,16 +3,16 @@ import { FC, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import ParcoursInformationsForm from "./parcours-informations-form";
-import useHttp from "../../hooks/use-http";
 import { toast } from "react-hot-toast";
 import Contacts from "./contacts";
-import Contact from "../../utils/interfaces/contact";
-import { parcoursInformationsAction } from "../../store/redux-toolkit/parcours/parcours-informations";
-import Wrapper from "../UI/wrapper/wrapper.component";
-import DatesSelecter from "../UI/dates-selecter/dates-selecter.component";
-import Tags from "../UI/tags/tags.component";
-import Tag from "../../utils/interfaces/tag";
 import VirtualClass from "./virtual-class";
+import useHttp from "../../../hooks/use-http";
+import { parcoursInformationsAction } from "../../../store/redux-toolkit/parcours/parcours-informations";
+import Contact from "../../../utils/interfaces/contact";
+import Wrapper from "../../UI/wrapper/wrapper.component";
+import DatesSelecter from "../../UI/dates-selecter/dates-selecter.component";
+import Tags from "../../UI/tags/tags.component";
+import Tag from "../../../utils/interfaces/tag";
 
 type Props = {
   parcoursId?: string;

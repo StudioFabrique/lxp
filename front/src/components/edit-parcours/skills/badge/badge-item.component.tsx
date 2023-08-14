@@ -1,5 +1,6 @@
 import { FC } from "react";
-import Badge from "../../utils/interfaces/badge";
+
+import Badge from "../../../../utils/interfaces/badge";
 
 type Props = {
   badge: Badge;

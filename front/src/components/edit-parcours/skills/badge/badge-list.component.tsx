@@ -1,8 +1,8 @@
 import React, { FC, useState } from "react";
 
-import Badge from "../../utils/interfaces/badge";
-import ImportBadges from "../skills/import-badges.component";
+import ImportBadges from "../import-badges.component";
 import BadgeItem from "./badge-item.component";
+import Badge from "../../../../utils/interfaces/badge";
 
 type Props = {
   badgeProp?: any;

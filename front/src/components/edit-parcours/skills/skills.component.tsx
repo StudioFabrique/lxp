@@ -2,10 +2,10 @@ import { useDispatch } from "react-redux";
 
 import SkillsHeader from "./skills-header.component";
 import SkillsList from "./skills-list.component";
-import Wrapper from "../UI/wrapper/wrapper.component";
-import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
 import ImportSkills from "./import-skills.component";
-import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
+import { parcoursSkillsAction } from "../../../store/redux-toolkit/parcours/parcours-skills";
+import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
+import Wrapper from "../../UI/wrapper/wrapper.component";
 
 const Skills = () => {
   const dispatch = useDispatch();

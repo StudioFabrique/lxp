@@ -1,5 +1,6 @@
 import { FC } from "react";
-import Skill from "../../utils/interfaces/skill";
+
+import Skill from "../../../utils/interfaces/skill";
 
 type Props = {
   skill: Skill;
