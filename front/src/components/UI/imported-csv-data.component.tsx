@@ -62,8 +62,8 @@ const ImportedCSVData: FC<Props> = ({
       {list && list.length > 0 ? (
         <>
           <p className="mt-4">Choisissez les {label} à importer</p>
-          <form className="w-full" onSubmit={handleSubmit}>
-            <table className="w-full table">
+          <form className="max-w-[40rem]" onSubmit={handleSubmit}>
+            <table className="table">
               <thead>
                 <tr>
                   <th>
@@ -92,7 +92,7 @@ const ImportedCSVData: FC<Props> = ({
               <tbody>
                 {list.map((item: any, index: number) => (
                   <tr
-                    className="hover:bg-secondary/20 hover:text-base-content w-full"
+                    className="hover:bg-secondary/20 hover:text-base-content"
                     key={index}
                   >
                     <td className="bg-transparent rounded-l-xl">
@@ -108,7 +108,9 @@ const ImportedCSVData: FC<Props> = ({
                       />
                     </td>
                     <td className="bg-transparent capitalize truncate">
-                      {item[field]}
+                      <p className="max-w-[30rem] text-ellipsis">
+                        {item[field]}
+                      </p>
                     </td>
                   </tr>
                 ))}
