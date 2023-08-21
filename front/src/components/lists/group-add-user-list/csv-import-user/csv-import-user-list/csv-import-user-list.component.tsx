@@ -33,18 +33,19 @@ const CsvImportUserList: FC<{
       toast.error("aucun utilisateur sélectionné");
       return;
     }
+    const applyData = (data: any) => {
+      setDrawerOpenState(false);
+      setDataUpdateState(true);
+      onAddUsers(data.usersCreated);
+      toast.success("étudiants enregistrés");
+    };
     sendRequest(
       {
         path: "/user/many",
         body: selectedUsersToUpload,
         method: "post",
       },
-      (data) => {
-        setDrawerOpenState(false);
-        setDataUpdateState(true);
-        onAddUsers(data.usersCreated);
-        toast.success("étudiants enregistrés");
-      }
+      applyData
     );
   };
 
