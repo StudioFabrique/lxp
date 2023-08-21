@@ -1,7 +1,7 @@
 import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 
-import EditIcon from "../UI/svg-icons/edit-icon";
+import EditIcon from "../UI/svg/edit-icon";
 
 const ImageFileUpload: FC<{
   maxSize: number;

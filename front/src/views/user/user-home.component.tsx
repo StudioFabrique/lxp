@@ -16,7 +16,7 @@ import DropdownActionsUser from "../../components/lists/user-list/dropdown-actio
 import UsersListStats from "../../components/lists/user-list/users-list-stats";
 import UsersStats from "../../utils/interfaces/users-stats";
 import Can from "../../components/UI/can/can.component";
-import RefreshIcon from "../../components/UI/svg-icons/refresh-icon.component";
+import RefreshIcon from "../../components/UI/svg/refresh-icon.component";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);

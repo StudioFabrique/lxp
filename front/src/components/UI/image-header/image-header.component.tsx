@@ -4,7 +4,7 @@ import React, { FC, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import useHttp from "../../../hooks/use-http";
 import defaultImage from "../../../assets/images/parcours-default.jpg";
-import ParcoursHeaderIcon from "../svg-icons/parcours-header-icon";
+import ParcoursHeaderIcon from "../svg/parcours-header-icon";
 import ImageUpload from "./image-upload";
 
 type Props = {

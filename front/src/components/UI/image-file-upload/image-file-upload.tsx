@@ -1,6 +1,6 @@
 import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import { validateImageFile } from "../../../utils/validate-image-file";
-import EditIcon from "../svg-icons/edit-icon";
+import EditIcon from "../svg/edit-icon";
 
 const ImageFileUpload: FC<{
   maxSize: number;
