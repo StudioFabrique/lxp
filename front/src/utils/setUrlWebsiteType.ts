@@ -1,23 +1,31 @@
 const TwitterRegex =
-  /^(?:https?:\/\/)?(?:www\.)?twitter\.com\/[A-Za-z0-9_]{1,15}\/?$/;
+  /^(https:\/\/twitter.com\/(?![a-zA-Z0-9_]+\/)([a-zA-Z0-9_]+))$/;
 
 const FacebookRegex =
-  /^(?:https?:\/\/)?(?:www\.)?facebook\.com\/(?:[a-zA-Z0-9.]+\/)?(?:profile\.php\?id=[0-9]+|groups\/[A-Za-z0-9_.-]+|[^/]+)\/?$/;
+  /^((http|https):\/\/|)(www\.|)facebook\.com\/[a-zA-Z0-9.]{1,}$/;
 
 const InstagramRegex =
-  /^(?:https?:\/\/)?(?:www\.)?instagram\.com\/[A-Za-z0-9_.]+\/?$/;
+  /^(https?:\/\/)?(www\.)?instagram\.com\/[A-Za-z0-9_.]{1,30}\/?$/;
 
 const LinkedinRegex =
-  /^(?:https?:\/\/)?(?:www\.)?linkedin\.com\/(?:company\/[A-Za-z0-9_.-]+|in\/[A-Za-z0-9_.-]+)\/?$/;
+  /^[(https:\/\/www\.linkedin.com)]{20}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/=]*)+$/;
 
 const YoutubeRegex =
-  /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)[A-Za-z0-9_-]{11}$/;
+  /^(?:https?:\/\/)?(?:(?:(?:www\.?)?youtube\.com(?:\/(?:(?:watch\?.*?(v=[^&\s]+).*)|(?:v(\/.*))|(channel\/.+)|(?:user\/(.+))|(?:results\?(search_query=.+))))?)|(?:youtu\.be(\/.*)?))$/;
 
 export default function setUrlWebsiteType(url: string) {
-  if (TwitterRegex.test(url)) return "twitter";
-  if (FacebookRegex.test(url)) return "facebook";
-  if (InstagramRegex.test(url)) return "instagram";
-  if (LinkedinRegex.test(url)) return "linkedin";
-  if (YoutubeRegex.test(url)) return "youtube";
-  return "website";
+  let websiteType:
+    | "website"
+    | "twitter"
+    | "facebook"
+    | "youtube"
+    | "instagram"
+    | "linkedin"
+    | "reddit" = "website";
+  if (TwitterRegex.test(url)) websiteType = "twitter";
+  if (FacebookRegex.test(url)) websiteType = "facebook";
+  if (InstagramRegex.test(url)) websiteType = "instagram";
+  if (LinkedinRegex.test(url)) websiteType = "linkedin";
+  if (YoutubeRegex.test(url)) websiteType = "youtube";
+  return websiteType;
 }

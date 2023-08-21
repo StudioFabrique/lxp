@@ -3,7 +3,6 @@ import {
   ChangeEventHandler,
   Dispatch,
   FC,
-  MouseEvent,
   MouseEventHandler,
   SetStateAction,
   useState,
