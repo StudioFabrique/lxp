@@ -76,40 +76,42 @@ const Certifications: FC<{
   return (
     <Wrapper>
       <div className="grid grid-cols-2 gap-x-10">
-        <div className="flex flex-col gap-y-3">
-          <h2 className="font-bold text-xl">Certification(s)</h2>
-          <span>
-            <label>Titre du diplôme</label>
-            <input
-              name="title"
-              className="input input-sm input-bordered focus:outline-none w-full"
-              type="text"
-              onChange={handleInputChange}
-              defaultValue={currentGraduation.title}
-              autoComplete="off"
-            />
-          </span>
-          <span>
-            <label>Niveau du diplôme</label>
-            <input
-              name="degree"
-              className="input input-sm input-bordered focus:outline-none w-full"
-              type="text"
-              onChange={handleInputChange}
-              defaultValue={currentGraduation.degree}
-              autoComplete="off"
-            />
-          </span>
-          <span>
-            <label>Date de certification</label>
-            <input
-              name="date"
-              className="input input-sm input-bordered focus:outline-none w-full"
-              type="date"
-              onChange={handleInputChange}
-              autoComplete="off"
-            />
-          </span>
+        <div className="flex flex-col justify-between">
+          <div className="flex flex-col justify-between gap-y-3">
+            <h2 className="font-bold text-xl">Certification(s)</h2>
+            <span className="flex flex-col gap-y-2">
+              <label>Titre du diplôme</label>
+              <input
+                name="title"
+                className="input input-sm input-bordered focus:outline-none w-full"
+                type="text"
+                onChange={handleInputChange}
+                defaultValue={currentGraduation.title}
+                autoComplete="off"
+              />
+            </span>
+            <span className="flex flex-col gap-y-2">
+              <label>Niveau du diplôme</label>
+              <input
+                name="degree"
+                className="input input-sm input-bordered focus:outline-none w-full"
+                type="text"
+                onChange={handleInputChange}
+                defaultValue={currentGraduation.degree}
+                autoComplete="off"
+              />
+            </span>
+            <span className="flex flex-col gap-y-2">
+              <label>Date de certification</label>
+              <input
+                name="date"
+                className="input input-sm input-bordered focus:outline-none w-full"
+                type="date"
+                onChange={handleInputChange}
+                autoComplete="off"
+              />
+            </span>
+          </div>
           <button
             type="button"
             className="mt-2 normal-case self-start btn btn-primary"
@@ -118,12 +120,12 @@ const Certifications: FC<{
             Ajouter la certification
           </button>
         </div>
-        <div className="bg-secondary-content flex flex-col items-center gap-y-4 overflow-y-auto p-5 m-2 rounded-xl">
-          {/* La liste des certifications */}
+        <div className="bg-secondary-content flex flex-col items-center gap-y-4 p-5 m-2 rounded-xl md:h-[300px] lg:h-[400px] overflow-y-auto">
+          {/* List of certifications */}
           {graduations.map((graduation, i) => (
             <span
               key={i}
-              className="bg-primary-content rounded-md w-full py-2 pl-5"
+              className="bg-primary-content rounded-md w-full py-2 pl-5 max-h-[80px]"
             >
               <p className="text-lg font-bold">{graduation.title}</p>
               <p>{graduation.date.getFullYear()}</p>
