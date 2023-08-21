@@ -112,7 +112,7 @@ const Certifications: FC<{
           </span>
           <button
             type="button"
-            className="self-start btn btn-primary w-[60%] btn-md"
+            className="mt-2 normal-case self-start btn btn-primary"
             onClick={handleAddGraduation}
           >
             Ajouter la certification
@@ -125,8 +125,8 @@ const Certifications: FC<{
               key={i}
               className="bg-primary-content rounded-md w-full py-2 pl-5"
             >
+              <p className="text-lg font-bold">{graduation.title}</p>
               <p>{graduation.date.getFullYear()}</p>
-              <p>{graduation.degree}</p>
             </span>
           ))}
         </div>

@@ -3,6 +3,7 @@ import {
   ChangeEventHandler,
   Dispatch,
   FC,
+  MouseEvent,
   MouseEventHandler,
   SetStateAction,
   useState,
@@ -10,6 +11,8 @@ import {
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 import setUrlWebsiteType from "../../../../utils/setUrlWebsiteType";
 import SocialNetworksIconSwitcher from "../../../UI/svg-icons/social-networks/social-networks-icon-switcher";
+import { filter } from "cypress/types/bluebird";
+import { link } from "fs";
 
 const Liens: FC<{
   links: Array<{
@@ -59,6 +62,10 @@ const Liens: FC<{
     }
   };
 
+  const handleDeleteLink = (url: string) => {
+    onSetLinks((links) => links.filter((link) => link.url !== url));
+  };
+
   return (
     <Wrapper>
       <h2>Liens</h2>
@@ -74,17 +81,40 @@ const Liens: FC<{
       </span>
       <ul className="carousel carousel-vertical h-56">
         {links.map((link) => (
-          <li className="flex gap-x-2 items-center" key={link.url}>
-            <div className="flex justify-center items-center bg-secondary h-10 w-14 rounded-lg">
-              <SocialNetworksIconSwitcher iconType={link.type} />
-            </div>
-            <div>
-              <p>{link.url}</p>
-            </div>
-          </li>
+          <Item key={link.url} link={link} onClickDelete={handleDeleteLink} />
         ))}
       </ul>
     </Wrapper>
+  );
+};
+
+const Item: FC<{
+  link: {
+    url: string;
+    type:
+      | "website"
+      | "twitter"
+      | "facebook"
+      | "youtube"
+      | "instagram"
+      | "linkedin";
+  };
+  onClickDelete: (url: string) => void;
+}> = ({ link, onClickDelete }) => {
+  const handleClick = () => {
+    onClickDelete(link.url);
+  };
+
+  return (
+    <li
+      onClick={handleClick}
+      className="flex gap-x-5 items-center cursor-pointer hover:bg-slate-600 p-2"
+    >
+      <div className="flex justify-center items-center bg-secondary h-10 w-10 rounded-lg">
+        <SocialNetworksIconSwitcher iconType={link.type} />
+      </div>
+      <p className="w-full carousel">{link.url}</p>
+    </li>
   );
 };
 
