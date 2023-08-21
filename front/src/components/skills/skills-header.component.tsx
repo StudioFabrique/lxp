@@ -1,7 +1,7 @@
 import { FC } from "react";
 
 import ButtonNoDecorationIcon from "../UI/button-no-decoration-icon/button-no-decoration-icon.component";
-import TrophyIcon from "../UI/svg-icons/trophy-icon.component";
+import TrophyIcon from "../UI/svg/trophy-icon.component";
 
 type Props = {
   onImport: () => void;

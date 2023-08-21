@@ -10,7 +10,7 @@ import {
 } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 import setUrlWebsiteType from "../../../../utils/setUrlWebsiteType";
-import SocialNetworksIconSwitcher from "../../../UI/svg-icons/social-networks/social-networks-icon-switcher";
+import SocialNetworksIconSwitcher from "../../../UI/svg/social-networks/social-networks-icon-switcher";
 import { filter } from "cypress/types/bluebird";
 import { link } from "fs";
 

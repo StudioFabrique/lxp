@@ -1,5 +1,5 @@
 import { FC } from "react";
-import DBIcon from "../UI/svg-icons/db-icon.component";
+import DBIcon from "../UI/svg/db-icon.component";
 import Skill from "../../utils/interfaces/skill";
 import useHttp from "../../hooks/use-http";
 
