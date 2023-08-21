@@ -2,20 +2,20 @@ import { useContext, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 import { Context } from "../../store/context.store";
+//import defineRulesFor from "../../config/rbac";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
-import defineRulesFor from "../../config/rbac";
 
 let initialState = true;
 
-const AdminLayout = () => {
+const StudentLayout = () => {
   const { initTheme, isLoggedIn, user, handshake, fetchRoles } =
     useContext(Context);
   const nav = useNavigate();
 
   useEffect(() => {
-    if (isLoggedIn && user && user.roles[0].rank > 2) {
+    if (isLoggedIn && user && user.roles[0].rank < 3) {
       fetchRoles(user!.roles[0]);
-    } else if (!isLoggedIn || (user && user.roles[0].rank > 2)) {
+    } else if (!isLoggedIn || (user && user.roles[0].rank < 3)) {
       nav("/");
     }
   }, [fetchRoles, nav, user, isLoggedIn]);
@@ -28,15 +28,16 @@ const AdminLayout = () => {
     }
   }, [initTheme, isLoggedIn, handshake]);
 
-  useEffect(() => {
+  // TODO créer des permissions pour les students, en l'absence des-dites permissions le useEffect suivant plante
+  /*   useEffect(() => {
     if (user) {
       defineRulesFor(user);
     }
-  }, [user]);
+  }, [user]); */
 
   return (
     <div className="w-full">
-      {user && user.roles[0].rank < 3 ? (
+      {user && user.roles[0].rank > 2 ? (
         <FadeWrapper>
           <div className="w-full flex flex-col h-screen">
             <Outlet />
@@ -47,4 +48,4 @@ const AdminLayout = () => {
   );
 };
 
-export default AdminLayout;
+export default StudentLayout;

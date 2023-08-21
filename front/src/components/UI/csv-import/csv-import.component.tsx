@@ -100,7 +100,7 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
     <>
       {type === undefined || type === "icon" ? (
         <div
-          className={`group w-[13rem] h-[8rem] flex flex-col text-xs gap-y-4 p-4 justify-center items-center font-bold rounded-xl shadow-xl border-2 hover:bg-primary cursor-pointer ${
+          className={`group w-[13rem] h-[8rem] flex flex-col text-xs gap-y-4 p-4 justify-center items-center font-bold rounded-xl shadow-xl border-2 cursor-pointer ${
             fileError ? "border-error" : "border-primary/50"
           } ${origin === "csv" ? "bg-primary" : ""}`}
           onClick={handleFileSelection}
@@ -110,10 +110,22 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
               origin === "csv" ? "text-white" : ""
             }`}
           >
-            <UploadIcon size={10} />
-            <p className={`${fileError ? "text-error" : ""}`}>
-              {filename ? filename : "Sélectionner un fichier"}
-            </p>
+            {!fileError ? (
+              <>
+                <UploadIcon size={10} />{" "}
+                <p className={`${fileError ? "text-error" : ""}`}>
+                  {filename ? filename : "Sélectionner un fichier"}
+                </p>
+              </>
+            ) : null}
+
+            {fileError && fileError.length > 0 ? (
+              <p className="text-xs font-normal">
+                Le fichier ne correspond pas au modèle de fichier CSV attendu,
+                vous pouvez télécharger un exemple de fichier CSV en cliquant
+                sur le lien ci-dessous.
+              </p>
+            ) : null}
           </div>
         </div>
       ) : (
