@@ -74,8 +74,10 @@ const Liens: FC<{
       </span>
       <ul className="carousel carousel-vertical h-56">
         {links.map((link) => (
-          <li className="flex gap-x-2" key={link.url}>
-            <SocialNetworksIconSwitcher iconType={link.type} />
+          <li className="flex gap-x-2 items-center" key={link.url}>
+            <div className="flex justify-center items-center bg-secondary h-10 w-14 rounded-lg">
+              <SocialNetworksIconSwitcher iconType={link.type} />
+            </div>
             <div>
               <p>{link.url}</p>
             </div>
