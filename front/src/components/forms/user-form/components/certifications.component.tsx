@@ -27,7 +27,11 @@ const Certifications: FC<{
   const handleAddGraduation: MouseEventHandler<HTMLButtonElement> = (
     event: MouseEvent<HTMLButtonElement>
   ) => {
-    if (currentGraduation) {
+    if (
+      currentGraduation.date &&
+      currentGraduation.degree &&
+      currentGraduation.title
+    ) {
       setGraduations((graduations) => [...graduations, currentGraduation]);
     }
   };
