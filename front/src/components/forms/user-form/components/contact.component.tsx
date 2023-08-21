@@ -21,7 +21,7 @@ const Contact: FC<{
       <span className="flex flex-col gap-y-2">
         <label>Date de naissance</label>
         <input
-          className="input input-sm w-full p-[20px] pl-[30px]"
+          className="input input-sm input-bordered focus:outline-none w-full"
           type="date"
           onChange={handleChangeDate}
           autoComplete="off"
@@ -30,7 +30,7 @@ const Contact: FC<{
       <span className="flex flex-col gap-y-2">
         <label>Adresse</label>
         <input
-          className="input input-sm w-full p-[20px] pl-[30px]"
+          className="input input-sm input-bordered focus:outline-none w-full"
           type="text"
           onChange={address.valueChangeHandler}
           onBlur={address.valueBlurHandler}
@@ -41,7 +41,7 @@ const Contact: FC<{
       <span className="flex flex-col gap-y-2">
         <label>Ville</label>
         <input
-          className="input input-sm w-full p-[20px] pl-[30px]"
+          className="input input-sm input-bordered focus:outline-none w-full"
           type="text"
           onChange={city.valueChangeHandler}
           onBlur={city.valueBlurHandler}
@@ -52,7 +52,7 @@ const Contact: FC<{
       <span className="flex flex-col gap-y-2">
         <label>Code Postal</label>
         <input
-          className="input input-sm w-full p-[20px] pl-[30px]"
+          className="input input-sm input-bordered focus:outline-none w-full"
           type="text"
           onChange={postCode.valueChangeHandler}
           onBlur={postCode.valueBlurHandler}
@@ -63,7 +63,7 @@ const Contact: FC<{
       <span className="flex flex-col gap-y-2">
         <label>Téléphone</label>
         <input
-          className="input input-sm w-full p-[20px] pl-[30px]"
+          className="input input-sm input-bordered focus:outline-none w-full"
           type="text"
           onChange={phone.valueChangeHandler}
           onBlur={phone.valueBlurHandler}
