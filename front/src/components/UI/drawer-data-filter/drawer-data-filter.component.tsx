@@ -1,5 +1,5 @@
 import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
-import RefreshIcon from "../svg-icons/refresh-icon.component";
+import RefreshIcon from "../svg/refresh-icon.component";
 
 type Props = {
   parcours: Array<string>;

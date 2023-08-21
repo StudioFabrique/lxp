@@ -10,7 +10,7 @@ import React, { FC, useEffect, useState } from "react";
 
 import ImageFileUpload from "./image-file-upload";
 import { useSelector } from "react-redux";
-import ParcoursHeaderIcon from "../UI/svg-icons/parcours-header-icon";
+import ParcoursHeaderIcon from "../UI/svg/parcours-header-icon";
 import { compressImage } from "../../helpers/compress-image";
 
 type Props = {
