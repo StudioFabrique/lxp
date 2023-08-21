@@ -78,7 +78,7 @@ const Certifications: FC<{
             <label>Titre du diplôme</label>
             <input
               name="title"
-              className="input input-sm w-full p-[20px] pl-[30px]"
+              className="input input-sm input-bordered focus:outline-none w-full"
               type="text"
               onChange={handleInputChange}
               defaultValue={currentGraduation.title}
@@ -89,7 +89,7 @@ const Certifications: FC<{
             <label>Niveau du diplôme</label>
             <input
               name="degree"
-              className="input input-sm w-full p-[20px] pl-[30px]"
+              className="input input-sm input-bordered focus:outline-none w-full"
               type="text"
               onChange={handleInputChange}
               defaultValue={currentGraduation.degree}
@@ -100,7 +100,7 @@ const Certifications: FC<{
             <label>Date de certification</label>
             <input
               name="date"
-              className="input input-sm w-full p-[20px] pl-[30px]"
+              className="input input-sm input-bordered focus:outline-none w-full"
               type="date"
               onChange={handleInputChange}
               autoComplete="off"

@@ -9,13 +9,24 @@ const Informations: FC<{
   email: any;
   onSetFile: (file: File) => void;
 }> = ({ onSetFile, lastname, firstname, pseudo, email }) => {
+  /**
+   * définit le style du champ formulaire en fonction de sa validité
+   * @param hasError boolean
+   * @returns string
+   */
+  const setInputStyle = (hasError: boolean) => {
+    return hasError
+      ? "input input-error text-error input-sm input-bordered focus:outline-none w-full"
+      : "input input-sm input-bordered focus:outline-none w-full";
+  };
+
   return (
     <Wrapper>
       <h2 className="font-bold text-xl">Informations</h2>
       <span className="flex flex-col gap-y-2">
         <label>Nom *</label>
         <input
-          className="input input-sm w-full p-[20px] pl-[30px]"
+          className={setInputStyle(lastname.hasError)}
           type="text"
           onChange={lastname.valueChangeHandler}
           onBlur={lastname.valueBlurHandler}
@@ -26,7 +37,7 @@ const Informations: FC<{
       <span className="flex flex-col gap-y-2">
         <label>Prénom *</label>
         <input
-          className="input input-sm w-full p-[20px] pl-[30px]"
+          className={setInputStyle(firstname.hasError)}
           type="text"
           onChange={firstname.valueChangeHandler}
           onBlur={firstname.valueBlurHandler}
@@ -37,7 +48,7 @@ const Informations: FC<{
       <span className="flex flex-col gap-y-2">
         <label>Pseudo</label>
         <input
-          className="input input-sm w-full p-[20px] pl-[30px]"
+          className="input input-sm input-bordered focus:outline-none w-full"
           type="text"
           onChange={pseudo.valueChangeHandler}
           onBlur={pseudo.valueBlurHandler}
@@ -48,7 +59,7 @@ const Informations: FC<{
       <span className="flex flex-col gap-y-2">
         <label>Adresse Mail *</label>
         <input
-          className="input input-sm w-full p-[20px] pl-[30px]"
+          className={setInputStyle(email.hasError)}
           type="text"
           onChange={email.valueChangeHandler}
           onBlur={email.valueBlurHandler}

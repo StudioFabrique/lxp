@@ -98,7 +98,8 @@ const UserAddForm: FC<{
 
   //  test la validité du form via le custom hook useInput
   let formIsValid = false;
-  formIsValid = email.isValid && password.isValid;
+  formIsValid =
+    email.isValid && password.isValid && firstname.isValid && email.isValid;
 
   const handleSubmitTags = (tags: Array<Tag>) => {
     setTags(tags);
