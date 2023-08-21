@@ -48,6 +48,11 @@ const SkillsList = () => {
   };
 
   const handleUpdateSkill = (id: number) => {
+    console.log(
+      "update",
+      skillList.find((item: Skill) => item.id === id)
+    );
+
     setItemToUpdate(skillList.find((item: Skill) => item.id === id));
     setActiveDrawer("update-skill");
     setTitle("Modifier la compétence");

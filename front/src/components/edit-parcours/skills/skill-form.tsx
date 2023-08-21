@@ -1,12 +1,12 @@
 import { FC, FormEvent, useCallback, useState } from "react";
 
-import MemoizedBadgeList from "./badge/badge-list.component";
 import Skill from "../../../utils/interfaces/skill";
 import Badge from "../../../utils/interfaces/badge";
 import useInput from "../../../hooks/use-input";
 import { regexGeneric } from "../../../utils/constantes";
 import DrawerFormButtons from "../../UI/drawer-form-buttons/drawer-form-buttons.component";
 import Wrapper from "../../UI/wrapper/wrapper.component";
+import BadgeList from "./badge/badge-list.component";
 
 type Props = {
   skill?: Skill;
@@ -71,6 +71,8 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
     }
   };
 
+  console.log({ skill });
+
   return (
     <div className="flex flex-col gap-y-4">
       <form className="flex flex-col px-4 gap-y-4" onSubmit={handleSubmit}>
@@ -86,10 +88,7 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
           </div>
         </Wrapper>
         <Wrapper>
-          <MemoizedBadgeList
-            badgeProp={skill?.badge}
-            onSubmitBadge={addBadge}
-          />
+          <BadgeList badgeProp={skill?.badge} onSubmitBadge={addBadge} />
         </Wrapper>
         <DrawerFormButtons onCancel={handleCancel} />
       </form>

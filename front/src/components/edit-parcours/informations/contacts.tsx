@@ -57,8 +57,6 @@ const Contacts: FC<Props> = ({ onSubmitContacts }) => {
     }
   }, [fetchTeachers]);
 
-  console.log({ contacts });
-
   const handleResetFilter = useCallback(() => {
     dispatch(parcoursContactsAction.reset);
   }, [dispatch]);

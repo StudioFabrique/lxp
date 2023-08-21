@@ -113,8 +113,6 @@ const useEagerLoadingList = (initialList: Array<any>, defaultSort: string) => {
     );
   }, [allChecked]);
 
-  console.log({ list });
-
   return {
     allChecked,
     direction,

@@ -12,6 +12,8 @@ type Props = {
 const BadgeList: FC<Props> = ({ badgeProp, onSubmitBadge }) => {
   const [badge, setBadge] = useState<Badge | undefined>({ image: badgeProp });
 
+  console.log("bl", badgeProp);
+
   const handleSubmitBadge = (newBadge: Badge) => {
     setBadge(newBadge);
     onSubmitBadge(newBadge);
@@ -27,6 +29,4 @@ const BadgeList: FC<Props> = ({ badgeProp, onSubmitBadge }) => {
   return <>{content}</>;
 };
 
-const MemoizedBadgeList = React.memo(BadgeList);
-
-export default MemoizedBadgeList;
+export default BadgeList;

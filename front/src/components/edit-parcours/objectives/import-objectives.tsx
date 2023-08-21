@@ -25,7 +25,6 @@ const ImportObjectives: FC<Props> = ({ onCloseDrawer }) => {
   };
 
   const postSelectedObjectives = (objectives: Array<any>) => {
-    console.log(objectives);
     handleCloseDrawer();
     dispatch(
       parcoursObjectivesAction.addImportedObjectivesToObjectives(objectives)

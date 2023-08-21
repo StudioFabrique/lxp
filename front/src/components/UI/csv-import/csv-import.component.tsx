@@ -9,7 +9,7 @@ import {
 } from "react";
 import Papa from "papaparse";
 
-import UploadIcon from "../svg-icons/upload-icon.component";
+import UploadIcon from "../svg/upload-icon.component";
 import { checkCSV } from "../../../utils/check-csv";
 
 type Props = {
@@ -59,7 +59,6 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
   };
 
   const handleFileSelection = () => {
-    console.log(selectedFile);
     if (selectedFile && fileRef.current) {
       fileRef.current.value = "";
     }
@@ -82,7 +81,6 @@ const CsvImport: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
         ...commonConfig,
         header: true,
         complete: (result: any) => {
-          console.log("resultat", result.meta);
           if (checkCSV(fields, result.meta.fields)) {
             result.data.pop();
             onParseCsv(result.data);

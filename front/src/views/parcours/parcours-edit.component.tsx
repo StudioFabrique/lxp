@@ -40,14 +40,16 @@ const EditParcours = () => {
     (state: any) => state.parcoursInformations.isValid
   );
   const skills = useSelector((state: any) => state.parcoursSkills.skills);
+  const objectives = useSelector(
+    (state: any) => state.parcoursObjectives.objectives
+  );
 
   /**
    * télécharge les données du parcours depuis la bdd et initialise les différentes propriétés du parcours
    */
   useEffect(() => {
     const processData = (data: Parcours) => {
-      console.log("parcours", data);
-
+      // mets en mémoire l'id du parcours pour le rendre disponible aux éléments de la vue
       dispatch(parcoursAction.setParcoursId(data.id));
       dispatch(
         parcoursInformationsAction.updateParcoursInfos({
@@ -148,8 +150,6 @@ const EditParcours = () => {
     if (id < actualStep.id || id === 1) {
       updateStep(id);
     } else if (checkStep(actualStep.id) && checkStep(id - 1)) {
-      console.log("all good");
-
       validateStep(actualStep.id, checkStep(actualStep.id));
       updateStep(id);
     }
@@ -181,6 +181,8 @@ const EditParcours = () => {
       case 1:
         return informationsIsValid;
       case 2:
+        return objectives.length > 0;
+      case 3:
         return skills.length > 0;
       default:
         return false;
