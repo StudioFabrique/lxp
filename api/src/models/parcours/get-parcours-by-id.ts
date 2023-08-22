@@ -33,6 +33,7 @@ async function getParcoursById(parcoursId: number) {
       },
       skills: { include: { skill: true } },
       bonusSkills: { select: { id: true, description: true, badge: true } },
+      objectives: { select: { id: true, description: true } },
     },
   });
 

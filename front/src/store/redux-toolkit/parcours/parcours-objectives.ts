@@ -26,7 +26,9 @@ const parcoursObjectivesSlice = createSlice({
       );
     },
     addImportedObjectivesToObjectives(state, action) {
-      let objectives = state.objectives;
+      console.log("payload", action.payload);
+
+      /*  let objectives = state.objectives;
       const newObjectives = action.payload;
       newObjectives.forEach((newObjective: any) => {
         const objective = objectives.find(
@@ -35,8 +37,8 @@ const parcoursObjectivesSlice = createSlice({
         if (!objective) {
           objectives = [...objectives, newObjective];
         }
-      });
-      state.objectives = sortArray(objectives, "description");
+      }); */
+      state.objectives = sortArray(action.payload, "description");
     },
     setObjectives(state, action) {
       state.objectives = action.payload;

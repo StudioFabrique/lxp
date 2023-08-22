@@ -1,7 +1,7 @@
 import { FC, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-//import useHttp from "../../../hooks/use-http";
+import useHttp from "../../../hooks/use-http";
 import ImportCSVActions from "../../UI/import-csv-actions.component";
 import { DOWNLOAD_URL } from "../../../config/urls";
 import ImportedCSVData from "../../UI/imported-csv-data.component";
@@ -17,6 +17,8 @@ const ImportObjectives: FC<Props> = ({ onCloseDrawer }) => {
   const objectives = useSelector(
     (state: any) => state.parcoursObjectives.importedObjectives
   );
+  const parcoursId = useSelector((state: any) => state.parcours.id);
+  const { sendRequest } = useHttp();
   /*   const parcoursId = useSelector((state: any) => state.parcours.id);
   const { sendRequest, error } = useHttp(); */
 
@@ -26,8 +28,25 @@ const ImportObjectives: FC<Props> = ({ onCloseDrawer }) => {
 
   const postSelectedObjectives = (objectives: Array<any>) => {
     handleCloseDrawer();
-    dispatch(
-      parcoursObjectivesAction.addImportedObjectivesToObjectives(objectives)
+
+    const applyData = (data: any) => {
+      console.log("reponse", data);
+      dispatch(
+        parcoursObjectivesAction.addImportedObjectivesToObjectives(
+          data.data.objectives
+        )
+      );
+    };
+    sendRequest(
+      {
+        path: "/parcours/update-objectives",
+        method: "put",
+        body: {
+          parcoursId,
+          objectives: objectives.map((item: any) => item.description),
+        },
+      },
+      applyData
     );
   };
 
