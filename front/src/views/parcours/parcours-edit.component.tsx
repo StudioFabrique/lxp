@@ -24,6 +24,7 @@ import SkillsList from "../../components/edit-parcours/skills/skills-list.compon
 import ImportSkills from "../../components/edit-parcours/skills/import-skills.component";
 import ImportObjectives from "../../components/edit-parcours/objectives/import-objectives";
 import ObjectivesList from "../../components/edit-parcours/objectives/objectives-list";
+import { parcoursObjectivesAction } from "../../store/redux-toolkit/parcours/parcours-objectives";
 
 let initialState = true;
 
@@ -97,9 +98,19 @@ const EditParcours = () => {
           )
         );
       }
+
       if (data.bonusSkills.length > 0) {
         dispatch(parcoursSkillsAction.setSkillsList(data.bonusSkills));
       }
+
+      if (data.objectives.length > 0) {
+        dispatch(
+          parcoursObjectivesAction.addImportedObjectivesToObjectives(
+            data.objectives
+          )
+        );
+      }
+
       setIsLoading(false);
     };
     if (initialState) {
