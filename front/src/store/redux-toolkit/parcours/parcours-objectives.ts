@@ -26,22 +26,16 @@ const parcoursObjectivesSlice = createSlice({
       );
     },
     addImportedObjectivesToObjectives(state, action) {
-      console.log("payload", action.payload);
-
-      /*  let objectives = state.objectives;
-      const newObjectives = action.payload;
-      newObjectives.forEach((newObjective: any) => {
-        const objective = objectives.find(
-          (item: any) => newObjective.description === item.description
-        );
-        if (!objective) {
-          objectives = [...objectives, newObjective];
-        }
-      }); */
       state.objectives = sortArray(action.payload, "description");
     },
     setObjectives(state, action) {
       state.objectives = action.payload;
+    },
+    deleteObjective(state, action) {
+      const updatedObjectives = state.objectives.filter(
+        (item: any) => action.payload !== item.id
+      );
+      state.objectives = updatedObjectives;
     },
   },
 });
