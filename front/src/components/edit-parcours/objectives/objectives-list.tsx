@@ -52,6 +52,20 @@ const ObjectivesList = () => {
     );
   };
 
+  const handleReorderObjectives = (list: Array<any>) => {
+    const applyData = (data: any) => {
+      console.log(data);
+    };
+    sendRequest(
+      {
+        path: "/parcours/reorder-objectives",
+        method: "put",
+        body: { parcoursId, objectivesId: list.map((item) => item.id) },
+      },
+      applyData
+    );
+  };
+
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
 
@@ -65,48 +79,65 @@ const ObjectivesList = () => {
     console.log(reorderedObjectives);
 
     dispatch(parcoursObjectivesAction.setObjectives(reorderedObjectives));
+    handleReorderObjectives(reorderedObjectives);
     // Dispatch action to update the state with the reordered list
     // You'll need to implement the relevant action in your redux logic
     // dispatch(reorderObjectivesAction(reorderedObjectives));
   };
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <Droppable droppableId="objectives-list" type="OBJECTIVE">
-        {(provided) => (
-          <ul
-            className="flex flex-col gap-y-2"
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-          >
-            {objectivesList && objectivesList.length > 0 ? (
-              objectivesList.map((item: Objective, index: number) => (
-                <Draggable
-                  key={item.id}
-                  draggableId={item.id!.toString()}
-                  index={index}
-                >
-                  {(provided) => (
-                    <li
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <ObjectiveItem
-                        objective={item}
-                        onDelete={handleDeletion}
-                      />
-                    </li>
-                  )}
-                </Draggable>
-              ))
-            ) : (
-              <p>Objectifs non renseignés</p>
-            )}
-            {provided.placeholder}
-          </ul>
-        )}
-      </Droppable>
-    </DragDropContext>
+    <>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable droppableId="objectives-list" type="OBJECTIVE">
+          {(provided) => (
+            <ul
+              className="flex flex-col gap-y-2"
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
+              {objectivesList && objectivesList.length > 0 ? (
+                objectivesList.map((item: Objective, index: number) => (
+                  <Draggable
+                    key={item.id}
+                    draggableId={item.id!.toString()}
+                    index={index}
+                  >
+                    {(provided) => (
+                      <li
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <ObjectiveItem
+                          objective={item}
+                          onDelete={handleDeletion}
+                        />
+                      </li>
+                    )}
+                  </Draggable>
+                ))
+              ) : (
+                <p>Objectifs non renseignés</p>
+              )}
+              {provided.placeholder}
+            </ul>
+          )}
+        </Droppable>
+      </DragDropContext>
+
+      <ButtonAdd
+        label="Ajouter un bojectif"
+        onClickEvent={() => handleDrawer("add-objective")}
+      />
+
+      <RightSideDrawer
+        id="add-objective"
+        title="Ajouter un objectif"
+        onCloseDrawer={handleDrawer}
+        visible={false}
+      >
+        <FormObjective onCloseDrawer={handleDrawer} onSubmit={handleSubmit} />
+      </RightSideDrawer>
+    </>
   );
 };
 export default ObjectivesList;
