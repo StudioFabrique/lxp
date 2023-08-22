@@ -28,12 +28,23 @@ async function putParcoursObjectives(
           }),
         },
       },
-      select: {
-        objectives: { select: { id: true, description: true } },
-      },
     });
 
-    return updatedParcours;
+    const offset =
+      (await prisma.objective.count({ where: { parcoursId: id } })) -
+      objectives.length;
+    const limit = objectives.length;
+
+    console.log({ offset, limit });
+
+    const result = await prisma.objective.findMany({
+      where: { parcoursId: id },
+      skip: offset,
+      take: limit,
+      select: { id: true, description: true },
+    });
+
+    return result;
   } catch (error) {
     throw error; // Rethrow any errors that occur during the process
   }

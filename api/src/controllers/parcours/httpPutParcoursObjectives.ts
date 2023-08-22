@@ -6,7 +6,7 @@ import putParcoursObjectives from "../../models/parcours/put-parcours-objectives
 async function httpPutParcoursObjectives(req: Request, res: Response) {
   const result = validationResult(req);
   if (!result.isEmpty()) {
-    return res.status(403).json({ message: badQuery });
+    return res.status(400).json({ message: badQuery });
   }
 
   try {
@@ -16,13 +16,11 @@ async function httpPutParcoursObjectives(req: Request, res: Response) {
 
     const response = await putParcoursObjectives(parcoursId, objectives);
     console.log(response);
-    return res
-      .status(201)
-      .json({
-        success: true,
-        data: response,
-        message: "La liste des objectifs du parcours a été mise à jour",
-      });
+    return res.status(201).json({
+      success: true,
+      data: response,
+      message: "La liste des objectifs du parcours a été mise à jour",
+    });
   } catch (error: any) {
     return res
       .status(error.status ?? 500)

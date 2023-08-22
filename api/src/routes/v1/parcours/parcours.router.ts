@@ -37,10 +37,10 @@ parcoursRouter.put(
 );
 parcoursRouter.put(
   "/update-objectives",
-  checkToken /* 
-  body("parcoursId").isNumeric().notEmpty(),
-  body("objectives").isArray().notEmpty,
-  body("objectives.description").isString().notEmpty(), */,
+  checkToken,
+  body("parcoursId").isNumeric().notEmpty().escape(),
+  body("objectives").isArray().notEmpty(),
+  body("objectives.*").isString().notEmpty(),
   httpPutParcoursObjectives
 );
 
