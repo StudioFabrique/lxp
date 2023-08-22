@@ -107,7 +107,7 @@ const ModulesForm: FC<{}> = (props) => {
       onSubmit={handleSubmit}
     >
       <Toaster />
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-y-2">
         <label htmlFor="title">Titre de module</label>
         <input
           className="input input-sm w-full"
@@ -119,7 +119,7 @@ const ModulesForm: FC<{}> = (props) => {
         />
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-y-2">
         <label htmlFor="description">Description de module</label>
         <textarea
           className="input input-sm w-full h-20"
@@ -134,8 +134,8 @@ const ModulesForm: FC<{}> = (props) => {
       <DataAdder
         data={contacts}
         dataFromDb={contactsFromDb}
-        propertiesToSearch={["firstname", "lastname"]}
-        propertyToFilter="_id"
+        propertiesToSearch={["name"]}
+        propertyToFilter="idMdb"
         resetFilter={resetFilter}
         searchInputPlaceholder="Prénom Nom"
         setData={setContacts}
@@ -158,7 +158,7 @@ const ModulesForm: FC<{}> = (props) => {
         transparencyOrder="z-0"
       />
 
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-y-2">
         <label htmlFor="nbHours">Nombre d'heures</label>
         <input
           className="input input-sm w-full"
@@ -170,22 +170,28 @@ const ModulesForm: FC<{}> = (props) => {
         />
       </div>
 
-      <ImageFileUpload maxSize={10 * 1024 * 1024} onSetFile={handleSetImage} />
+      <ImageFileUpload
+        type={2}
+        maxSize={10 * 1024 * 1024}
+        onSetFile={handleSetImage}
+      />
 
-      <div className="flex justify-between">
+      <div className="pt-10 flex justify-between">
         {currentModuleToEdit && (
-          <button type="button" className="btn mt-10" onClick={handleClearEdit}>
+          <button type="button" className="btn" onClick={handleClearEdit}>
             Annuler
           </button>
         )}
-        ,
-        <button type="submit">
+        <button
+          className="btn flex gap-x-4 items-center bg-secondary-focus px-5 py-2 rounded-lg"
+          type="submit"
+        >
           {currentModuleToEdit ? (
-            <p className="pl-1">Modifier le module</p>
+            <p>Modifier le module</p>
           ) : (
             <>
               <AddIcon1 />
-              <p className="pl-1">Ajouter le module</p>
+              <p>Ajouter le module</p>
             </>
           )}
         </button>
