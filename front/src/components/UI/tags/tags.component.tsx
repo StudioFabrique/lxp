@@ -11,11 +11,10 @@ import TagItem from "../tag-item/tag-item";
 import { parcoursInformationsAction } from "../../../store/redux-toolkit/parcours/parcours-informations";
 
 type Props = {
-  title?: string;
   onSubmitTags: (tags: Array<Tag>) => void;
 };
 
-const Tags: FC<Props> = ({ title, onSubmitTags }) => {
+const Tags: FC<Props> = ({ onSubmitTags }) => {
   const { sendRequest } = useHttp();
   const currentTags = useSelector((state: any) => state.tags.currentTags);
   const notSelectedTags = useSelector(
@@ -116,7 +115,7 @@ const Tags: FC<Props> = ({ title, onSubmitTags }) => {
 
   return (
     <div className="h-full flex flex-col gap-y-4">
-      <h2 className="text-xl font-bold">{title ?? "Tags"}</h2>
+      <h2 className="text-xl font-bold">"Tags"</h2>
       <SearchDropdown
         addItem={handleAddTag}
         filterItems={handleFilterItems}
