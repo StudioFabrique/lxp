@@ -1,35 +1,50 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
-import ImageFileUpload from "../../../UI/image-file-upload/image-file-upload";
+import Selecter from "../../../UI/selecter/selecter.component";
+import useHttp from "../../../../hooks/use-http";
+import { sortArray } from "../../../../utils/sortArray";
 
-const Details: FC<{ promotion: any; desc: any }> = ({ promotion, desc }) => {
-  const handleSetFile = (file: File) => {};
+// type de données pour les listes
+type Item = {
+  id: number;
+  title: string;
+  formationId?: number;
+};
+
+const Details: FC<{ onSelectParcours: (id: number) => void }> = ({
+  onSelectParcours,
+}) => {
+  const { sendRequest } = useHttp();
+
+  const [parcoursList, setParcoursList] = useState<Array<Item>>([]);
+
+  useEffect(() => {
+    const applyData = (data: any) => {
+      setParcoursList(sortArray(data, "id"));
+    };
+    sendRequest(
+      {
+        path: "/parcours",
+      },
+      applyData
+    );
+  }, [sendRequest]);
 
   return (
     <Wrapper>
       <h2 className="font-bold text-xl">Details</h2>
-      <span>
-        <label>Promotion</label>
-        <input
-          className="input input-sm w-full p-[20px] pl-[30px] placeholder:text-purple-discrete"
-          type="text"
-          onChange={promotion.valueChangeHandler}
-          onBlur={promotion.valueBlurHandler}
-          defaultValue={promotion.value}
-          autoComplete="off"
+      <span className="flex flex-col gap-y-2">
+        <label>Formation visée</label>
+        <Selecter list={[]} onSelectItem={() => {}} title="" />
+      </span>
+      <span className="flex flex-col gap-y-2">
+        <label>Parcours visé</label>
+        <Selecter
+          list={parcoursList}
+          onSelectItem={onSelectParcours}
+          title=""
         />
       </span>
-      <span>
-        <label>Description du groupe</label>
-        <textarea
-          className="textarea w-full p-[20px] pl-[30px] placeholder:text-purple-discrete"
-          onChange={desc.valueChangeHandler}
-          onBlur={desc.valueBlurHandler}
-          defaultValue={desc.value}
-          autoComplete="off"
-        />
-      </span>
-      <ImageFileUpload maxSize={5} onSetFile={handleSetFile} />
     </Wrapper>
   );
 };

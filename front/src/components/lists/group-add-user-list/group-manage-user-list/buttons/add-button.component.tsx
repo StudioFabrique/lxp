@@ -1,8 +1,11 @@
 import { FC } from "react";
 
-const AddButton: FC<{}> = ({}) => {
+const AddButton: FC<{ onClick: () => void }> = ({ onClick }) => {
   return (
-    <span className="btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary">
+    <span
+      onClick={onClick}
+      className="btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
