@@ -1,11 +1,24 @@
-import { FC } from "react";
+import { ChangeEvent, ChangeEventHandler, FC } from "react";
 import User from "../../../utils/interfaces/user";
 import { AvatarSmall } from "../../UI/avatar/avatar.component";
+import { DeleteButton, EditButton } from "./buttons";
 
-const GroupUserItem: FC<{ user: User }> = ({ user }) => {
+const GroupUserItem: FC<{
+  user: User;
+  onUpdateUser: (user: User) => void;
+  onDeleteUser: (user: User) => void;
+}> = ({ user, onUpdateUser, onDeleteUser }) => {
+  const handleToggleActiveState: ChangeEventHandler<HTMLInputElement> = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    const userUpdated = user;
+    userUpdated.isActive = event.target.checked;
+    onUpdateUser(userUpdated);
+  };
+
   return (
     <tr className="bg-secondary/10 hover:bg-blue-800 hover:text-white">
-      <td className="bg-transparent rounded-l-xl py-5">
+      <td className="bg-transparent rounded-l-xl p-5">
         <input type="checkbox" className="checkbox checkbox-primary" />
       </td>
       <td className="bg-transparent">
@@ -19,9 +32,19 @@ const GroupUserItem: FC<{ user: User }> = ({ user }) => {
         {user.isActive ? "Actif" : "Inactif"}
       </td>
       <td className="bg-transparent">
-        <input type="checkbox" className="toggle" />
+        <span className="flex items-center">
+          <input
+            type="checkbox"
+            className="toggle"
+            onChange={handleToggleActiveState}
+            defaultChecked={user.isActive}
+          />
+        </span>
       </td>
-      <td className="bg-transparent rounded-r-xl">act1 act2</td>
+      <td className="bg-transparent rounded-r-xl">
+        <EditButton user={user} />
+        <DeleteButton user={user} onDeleteUser={onDeleteUser} />
+      </td>
     </tr>
   );
 };

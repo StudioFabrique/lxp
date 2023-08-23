@@ -15,7 +15,7 @@ const GroupItem: FC<{
           className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
           type="checkbox"
           checked={groupItem.isSelected}
-          onChange={() => onRowCheck(groupItem._id)}
+          onChange={() => onRowCheck(groupItem._id!)}
         />
       </td>
       <td className="font-bold bg-transparent">{groupItem.index}</td>

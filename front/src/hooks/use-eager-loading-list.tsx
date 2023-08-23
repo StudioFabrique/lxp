@@ -85,6 +85,9 @@ const useEagerLoadingList = (initialList: Array<any>, defaultSort: string) => {
     }
   };
 
+  /**
+   * tri les colonnes du tableau quand l'utilisateur clique sur le nom d'une colonne : perfect future
+   */
   useEffect(() => {
     setList((prevList: any) => {
       if (prevList && prevList.length !== 0) {
