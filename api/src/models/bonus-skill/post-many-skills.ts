@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../utils/db";
 
 async function postManySkills(parcoursId: number, newSkills: Array<any>) {
   try {
@@ -37,6 +35,7 @@ async function postManySkills(parcoursId: number, newSkills: Array<any>) {
 
     const result = await prisma.bonusSkill.findMany({
       where: { parcoursId },
+      select: { id: true, description: true, badge: true },
     });
     return result;
   } catch (error: any) {

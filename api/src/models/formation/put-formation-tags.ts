@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../utils/db";
 
 async function putFormationTags(formationId: number, newTags: Array<number>) {
   const existingFormation = await prisma.formation.findUnique({

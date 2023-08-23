@@ -1,6 +1,6 @@
 import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import { validateImageFile } from "../../../utils/validate-image-file";
-import EditIcon from "../svg-icons/edit-icon";
+import EditIcon from "../svg/edit-icon";
 
 const ImageFileUpload: FC<{
   maxSize: number;
@@ -19,8 +19,7 @@ const ImageFileUpload: FC<{
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const selectedFile = event.target.files[0];
-      if (selectedFile) {
-        console.log("selected");
+    if (selectedFile && selectedFile !== undefined) {
         if (validateImageFile(selectedFile, maxSize)) {
           setFile(selectedFile);
         }

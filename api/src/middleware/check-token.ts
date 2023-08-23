@@ -16,6 +16,7 @@ function checkToken(req: CustomRequest, res: Response, next: NextFunction) {
         hasRole(2, data.userRoles) ||
         hasRole(3, data.userRoles))
     ) {
+      console.log({ data });
       req.auth = { userId: data.userId, userRoles: data.userRoles };
       next();
     } else {
