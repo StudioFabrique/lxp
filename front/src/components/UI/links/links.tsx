@@ -13,6 +13,7 @@ import SocialNetworksIconSwitcher from "../svg/social-networks/social-networks-i
 import { Link } from "./link";
 import DeleteIcon from "../svg/delete-icon.compoenent";
 import {
+  linkIsValid,
   setUrlWebsiteType,
   tranformLinkIntoAlias,
 } from "./link-transform-service";
@@ -32,7 +33,8 @@ const Links: FC<{
   const handleAddLink: MouseEventHandler<HTMLButtonElement> = () => {
     if (
       currentLink.length > 0 &&
-      links.filter((link) => link.url === currentLink).length === 0
+      links.filter((link) => link.url === currentLink).length === 0 &&
+      linkIsValid(currentLink)
     ) {
       const linkType = setUrlWebsiteType(currentLink);
       console.log(`type de liens : ${linkType}`);

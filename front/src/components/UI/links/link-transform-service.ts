@@ -15,14 +15,18 @@ const LinkedinRegex =
 const YoutubeRegex =
   /^(?:(?:https?:)?\/\/)?(?:www\.)?youtube\.com\/(?:@([a-zA-Z0-9_-]+)|watch\?v=([a-zA-Z0-9_-]+))$/;
 
+const genericURLRegex =
+  /^(?:(?:https?:)?\/\/)?(?:www\.)?([a-zA-Z0-9.@-]+?)(\.[a-z]{2,})([a-z.]{2,6})(\/?@[a-zA-Z0-9_-]+)?([\/\w\.-]*)*\/?$/;
+
+export const linkIsValid = (link: string) => link.match(genericURLRegex);
+
 export function setUrlWebsiteType(url: string) {
-  let websiteType: LinkType = "website";
-  if (TwitterRegex.test(url)) websiteType = "twitter";
-  if (FacebookRegex.test(url)) websiteType = "facebook";
-  if (InstagramRegex.test(url)) websiteType = "instagram";
-  if (LinkedinRegex.test(url)) websiteType = "linkedin";
-  if (YoutubeRegex.test(url)) websiteType = "youtube";
-  return websiteType;
+  if (TwitterRegex.test(url)) return "twitter";
+  if (FacebookRegex.test(url)) return "facebook";
+  if (InstagramRegex.test(url)) return "instagram";
+  if (LinkedinRegex.test(url)) return "linkedin";
+  if (YoutubeRegex.test(url)) return "youtube";
+  return "website";
 }
 
 export function tranformLinkIntoAlias(
@@ -46,6 +50,7 @@ export function tranformLinkIntoAlias(
 
 const youtubeAlias = (pathnameParts: string[]) => {
   if (pathnameParts[1].includes("@")) return pathnameParts[1].substring(1);
+
   return null;
 };
 
