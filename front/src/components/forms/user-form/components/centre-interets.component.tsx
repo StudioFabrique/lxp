@@ -32,8 +32,8 @@ const CentreInterets: FC<{
 
   return (
     <Wrapper>
-      <div className="flex flex-col">
-        <p className="text-xl">Centre d'interets</p>
+      <div className="flex flex-col gap-y-2">
+        <p className="text-xl font-bold">Centre d'interets</p>
         <input
           onKeyDown={handleAddInteret}
           onChange={handleChangeInput}
@@ -41,9 +41,9 @@ const CentreInterets: FC<{
           className="input"
         />
       </div>
-      <div className="flex gap-x-5">
+      <div className="flex gap-x-5 gap-y-2 flex-wrap overflow-y-auto h-44">
         {interets.map((interet) => (
-          <p className="bg-slate-800 p-2 rounded-xl">{interet}</p>
+          <p className="bg-slate-800 p-2 rounded-xl h-10">{interet}</p>
         ))}
       </div>
     </Wrapper>
