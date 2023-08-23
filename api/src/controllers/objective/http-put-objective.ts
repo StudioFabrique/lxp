@@ -1,24 +1,23 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { badQuery, serverIssue } from "../../utils/constantes";
-import putReorderObjectives from "../../models/parcours/put-reorder-objectives";
+import putObjective from "../../models/objective/put-objective";
 
-async function httpPutReorderObjectives(req: Request, res: Response) {
+async function httpPutObjective(req: Request, res: Response) {
   const result = validationResult(req);
 
   if (!result.isEmpty()) {
-    return res.status(403).json({ message: badQuery });
+    return res.status(400).json({ message: badQuery });
   }
 
   try {
-    const { parcoursId, objectivesId } = req.body;
-    const response = await putReorderObjectives(parcoursId, objectivesId);
-    console.log({ response });
+    const objective = req.body;
 
+    const response = await putObjective(objective);
     return res.status(201).json({
       success: true,
+      message: "L'objectif de parcours a été mis à jour",
       data: response,
-      message: "Liste des objectifs re-arrangée",
     });
   } catch (error: any) {
     return res
@@ -27,4 +26,4 @@ async function httpPutReorderObjectives(req: Request, res: Response) {
   }
 }
 
-export default httpPutReorderObjectives;
+export default httpPutObjective;
