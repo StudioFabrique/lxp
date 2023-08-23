@@ -16,6 +16,7 @@ import Graduation from "../../../utils/interfaces/graduation";
 import Liens from "./components/liens.component";
 import CreateUserHeader from "../../create-user-header/create-user-header.component";
 import Tags from "../../UI/tags/tags.component";
+import CentreInterets from "./components/centre-interets.component";
 
 const UserAddForm: FC<{
   user?: any;
@@ -44,16 +45,11 @@ const UserAddForm: FC<{
 
   const [typeUtilisateur, setTypeUtilisateur] = useState<number>(0);
 
-  const [tags, setTags] = useState<Array<Tag>>([]);
+  const [interets, setInterets] = useState<Array<string>>([]);
 
   const { value: email } = useInput(
     (value: string) => regexMail.test(value),
     props.user?.email ?? ""
-  );
-
-  const { value: password } = useInput(
-    (value: string) => regexPassword.test(value),
-    props.user?.password ?? ""
   );
 
   const { value: firstname } = useInput(
@@ -99,18 +95,21 @@ const UserAddForm: FC<{
   //  test la validité du form via le custom hook useInput
   let formIsValid = false;
   formIsValid =
-    email.isValid && password.isValid && firstname.isValid && email.isValid;
-
-  const handleSubmitTags = (tags: Array<Tag>) => {
-    setTags(tags);
-  };
+    email.isValid &&
+    firstname.isValid &&
+    email.isValid &&
+    !!birthDate &&
+    address.isValid &&
+    city.isValid &&
+    postCode.isValid &&
+    phone.isValid &&
+    description.isValid;
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (formIsValid) {
       props.onSubmitForm({
         email: email.value.trim(),
-        password: password.value.trim(),
         firstname: firstname.value.trim(),
         lastname: lastname.value.trim(),
         pseudo: pseudo.value.trim(),
@@ -120,7 +119,6 @@ const UserAddForm: FC<{
         birthDate: birthDate,
         graduations: graduations,
         avatar: file,
-        tags: tags,
         typeUtilisateur: typeUtilisateur,
       });
     }
@@ -155,7 +153,7 @@ const UserAddForm: FC<{
               typeUtilisateur={typeUtilisateur}
               onSetTypeUtilisateur={setTypeUtilisateur}
             />
-            <Tags title="Centre d'intérêts" onSubmitTags={handleSubmitTags} />
+            <CentreInterets interets={interets} setInterets={setInterets} />
           </div>
         </div>
         <div>
