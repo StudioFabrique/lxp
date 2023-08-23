@@ -11,12 +11,11 @@ import TypeUtilisateur from "./components/type-utilisateur.component";
 import Certifications from "./components/certifications.component";
 import Presentation from "./components/presentation.component";
 import Informations from "./components/informations.component";
-import Tag from "../../../utils/interfaces/tag";
 import Graduation from "../../../utils/interfaces/graduation";
-import Liens from "./components/liens.component";
 import CreateUserHeader from "../../create-user-header/create-user-header.component";
-import Tags from "../../UI/tags/tags.component";
 import CentreInterets from "./components/centre-interets.component";
+import Links from "../../UI/links/links";
+import { Link } from "../../UI/links/link";
 
 const UserAddForm: FC<{
   user?: any;
@@ -30,18 +29,7 @@ const UserAddForm: FC<{
 
   const [file, setFile] = useState<File | null>(null);
 
-  const [links, setLinks] = useState<
-    Array<{
-      url: string;
-      type:
-        | "website"
-        | "twitter"
-        | "facebook"
-        | "youtube"
-        | "instagram"
-        | "linkedin";
-    }>
-  >([]);
+  const [links, setLinks] = useState<Array<Link>>([]);
 
   const [typeUtilisateur, setTypeUtilisateur] = useState<number>(0);
 
@@ -166,8 +154,7 @@ const UserAddForm: FC<{
               setGraduations={setGraduations}
             />
           </div>
-
-          <Liens links={links} onSetLinks={setLinks} />
+          <Links links={links} onSetLinks={setLinks} />
         </div>
       </div>
     </form>

@@ -8,37 +8,18 @@ import {
   SetStateAction,
   useState,
 } from "react";
-import Wrapper from "../../../UI/wrapper/wrapper.component";
-import setUrlWebsiteType from "../../../../utils/setUrlWebsiteType";
-import SocialNetworksIconSwitcher from "../../../UI/svg/social-networks/social-networks-icon-switcher";
-import { filter } from "cypress/types/bluebird";
-import { link } from "fs";
+import Wrapper from "../wrapper/wrapper.component";
+import SocialNetworksIconSwitcher from "../svg/social-networks/social-networks-icon-switcher";
+import { Link } from "./link";
+import DeleteIcon from "../svg/delete-icon.compoenent";
+import {
+  setUrlWebsiteType,
+  tranformLinkIntoAlias,
+} from "./link-transform-service";
 
-const Liens: FC<{
-  links: Array<{
-    url: string;
-    type:
-      | "website"
-      | "twitter"
-      | "facebook"
-      | "youtube"
-      | "instagram"
-      | "linkedin";
-  }>;
-  onSetLinks: Dispatch<
-    SetStateAction<
-      Array<{
-        url: string;
-        type:
-          | "website"
-          | "twitter"
-          | "facebook"
-          | "youtube"
-          | "instagram"
-          | "linkedin";
-      }>
-    >
-  >;
+const Links: FC<{
+  links: Array<Link>;
+  onSetLinks: Dispatch<SetStateAction<Array<Link>>>;
 }> = ({ links, onSetLinks }) => {
   const [currentLink, setCurrentLink] = useState<string>("");
 
@@ -49,15 +30,16 @@ const Liens: FC<{
   };
 
   const handleAddLink: MouseEventHandler<HTMLButtonElement> = () => {
-    const websiteType = setUrlWebsiteType(currentLink);
-    console.log("type de liens : " + websiteType);
     if (
       currentLink.length > 0 &&
       links.filter((link) => link.url === currentLink).length === 0
     ) {
+      const linkType = setUrlWebsiteType(currentLink);
+      console.log(`type de liens : ${linkType}`);
+      const alias = tranformLinkIntoAlias(currentLink, linkType);
       onSetLinks((links) => [
         ...links,
-        { url: currentLink, type: websiteType },
+        { url: currentLink, type: linkType, alias: alias },
       ]);
     }
   };
@@ -89,16 +71,7 @@ const Liens: FC<{
 };
 
 const Item: FC<{
-  link: {
-    url: string;
-    type:
-      | "website"
-      | "twitter"
-      | "facebook"
-      | "youtube"
-      | "instagram"
-      | "linkedin";
-  };
+  link: Link;
   onClickDelete: (url: string) => void;
 }> = ({ link, onClickDelete }) => {
   const handleClick = () => {
@@ -106,16 +79,18 @@ const Item: FC<{
   };
 
   return (
-    <li
-      onClick={handleClick}
-      className="flex gap-x-5 items-center cursor-pointer hover:bg-slate-600 p-2"
-    >
+    <li className="flex gap-x-5 items-center cursor-pointer hover:bg-slate-600 p-2">
       <div className="flex justify-center items-center bg-secondary h-10 w-10 rounded-lg">
         <SocialNetworksIconSwitcher iconType={link.type} />
       </div>
-      <p className="w-full carousel">{link.url}</p>
+      <a href={link.url} className="w-full carousel">
+        {link.alias ?? link.url}
+      </a>
+      <button onClick={handleClick} type="button">
+        <DeleteIcon />
+      </button>
     </li>
   );
 };
 
-export default Liens;
+export default Links;
