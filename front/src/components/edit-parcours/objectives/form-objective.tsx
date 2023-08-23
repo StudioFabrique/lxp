@@ -1,4 +1,5 @@
 import { FC, FormEvent, useState } from "react";
+
 import useInput from "../../../hooks/use-input";
 import { regexGeneric } from "../../../utils/constantes";
 import Objective from "../../../utils/interfaces/objective";
@@ -14,12 +15,15 @@ type Props = {
 const FormObjective: FC<Props> = ({ objective, onCloseDrawer, onSubmit }) => {
   const { value: description } = useInput(
     (value) => regexGeneric.test(value),
-    objective?.description || ""
+    objective?.description ?? ""
   );
   const [error, setError] = useState(false);
+  //const textAreaRef = useRef<any>(null);
 
   // test la validité du formulaire
   let formIsValid = description.isValid;
+
+  //console.log(objective?.description);
 
   /**
    * ferme le drawer lorsqu'on click sur le bouton annuler
@@ -45,7 +49,7 @@ const FormObjective: FC<Props> = ({ objective, onCloseDrawer, onSubmit }) => {
         description: description.value,
       });
       description.reset();
-      onCloseDrawer("add-objective");
+      handleCancel();
     } else {
       setError(true);
     }
@@ -60,7 +64,7 @@ const FormObjective: FC<Props> = ({ objective, onCloseDrawer, onSubmit }) => {
       <form className="flex flex-col px-4 gap-y-4" onSubmit={handleSubmit}>
         <Wrapper>
           <div className="flex flex-col gap-y-2">
-            <label htmlFor="description">Contenu de Compétence *</label>
+            <label htmlFor="description">Objectif de parcours *</label>
             <textarea
               className={textareaStyle}
               value={description.value}

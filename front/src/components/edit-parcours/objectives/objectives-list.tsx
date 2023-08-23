@@ -1,4 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { useState } from "react";
 
 import Objective from "../../../utils/interfaces/objective";
 import ObjectiveItem from "./objective-item";
@@ -7,7 +9,6 @@ import useHttp from "../../../hooks/use-http";
 import { parcoursObjectivesAction } from "../../../store/redux-toolkit/parcours/parcours-objectives";
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
 import FormObjective from "./form-objective";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 const ObjectivesList = () => {
   const objectivesList = useSelector(
@@ -16,8 +17,14 @@ const ObjectivesList = () => {
   const parcoursId = useSelector((state: any) => state.parcours.id);
   const { sendRequest } = useHttp();
   const dispatch = useDispatch();
+  const [itemToUpdate, setItemToUpdate] = useState<Objective | null>(null);
 
-  const handleDrawer = (id: string) => {
+  const handleCloseDrawer = (id: string) => {
+    document.getElementById(id)?.click();
+    setItemToUpdate(null);
+  };
+
+  const handleOpenDrawer = (id: string) => {
     document.getElementById(id)?.click();
   };
 
@@ -38,6 +45,31 @@ const ObjectivesList = () => {
     );
   };
 
+  const handleUpdateObjective = (id: number) => {
+    const objectiveToUpdate = objectivesList.find(
+      (item: Objective) => item.id === id
+    );
+    if (objectiveToUpdate) {
+      setItemToUpdate(objectiveToUpdate);
+      handleOpenDrawer("update-objective");
+    }
+  };
+
+  const submitUpdateObjective = (objective: Objective) => {
+    setItemToUpdate(null);
+    const applyData = (data: any) => {
+      dispatch(parcoursObjectivesAction.editObjective(data.data));
+    };
+    sendRequest(
+      {
+        path: "/objective",
+        method: "put",
+        body: objective,
+      },
+      applyData
+    );
+  };
+
   const handleSubmit = (objective: Objective) => {
     const applyData = (data: any) => {
       dispatch(parcoursObjectivesAction.addObjective(data.data[0]));
@@ -52,15 +84,15 @@ const ObjectivesList = () => {
     );
   };
 
-  const handleReorderObjectives = (list: Array<any>) => {
+  const handleReorderObjectives = (objectivesId: Array<string>) => {
     const applyData = (data: any) => {
-      console.log(data);
+      dispatch(parcoursObjectivesAction.setObjectives(data.data.objectives));
     };
     sendRequest(
       {
         path: "/parcours/reorder-objectives",
         method: "put",
-        body: { parcoursId, objectivesId: list.map((item) => item.id) },
+        body: { parcoursId, objectivesId },
       },
       applyData
     );
@@ -76,14 +108,10 @@ const ObjectivesList = () => {
       1
     );
     reorderedObjectives.splice(result.destination.index, 0, reorderedObjective);
-    console.log(reorderedObjectives);
 
-    dispatch(parcoursObjectivesAction.setObjectives(reorderedObjectives));
-    handleReorderObjectives(reorderedObjectives);
-    // Dispatch action to update the state with the reordered list
-    // You'll need to implement the relevant action in your redux logic
-    // dispatch(reorderObjectivesAction(reorderedObjectives));
+    handleReorderObjectives(reorderedObjectives.map((item: any) => item.id));
   };
+
   return (
     <>
       <DragDropContext onDragEnd={handleDragEnd}>
@@ -110,6 +138,7 @@ const ObjectivesList = () => {
                         <ObjectiveItem
                           objective={item}
                           onDelete={handleDeletion}
+                          onUpdate={handleUpdateObjective}
                         />
                       </li>
                     )}
@@ -124,18 +153,40 @@ const ObjectivesList = () => {
         </Droppable>
       </DragDropContext>
 
-      <ButtonAdd
-        label="Ajouter un bojectif"
-        onClickEvent={() => handleDrawer("add-objective")}
-      />
+      <div className="w-fit">
+        <ButtonAdd
+          label="Ajouter un objectif"
+          onClickEvent={() => handleOpenDrawer("add-objective")}
+        />
+      </div>
 
+      {/* Ajout d'un objectif */}
       <RightSideDrawer
         id="add-objective"
         title="Ajouter un objectif"
-        onCloseDrawer={handleDrawer}
+        onCloseDrawer={handleCloseDrawer}
         visible={false}
       >
-        <FormObjective onCloseDrawer={handleDrawer} onSubmit={handleSubmit} />
+        <FormObjective
+          onCloseDrawer={handleCloseDrawer}
+          onSubmit={handleSubmit}
+        />
+      </RightSideDrawer>
+
+      {/* Mise à jour d'un objectif */}
+      <RightSideDrawer
+        id="update-objective"
+        title="Modifier un objectif"
+        onCloseDrawer={handleCloseDrawer}
+        visible={false}
+      >
+        {itemToUpdate ? (
+          <FormObjective
+            objective={itemToUpdate}
+            onCloseDrawer={handleCloseDrawer}
+            onSubmit={submitUpdateObjective}
+          />
+        ) : null}
       </RightSideDrawer>
     </>
   );

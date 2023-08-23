@@ -20,13 +20,15 @@ const ImageFileUpload: FC<{
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const selectedFile = event.target.files[0];
-      if (!selectedFile.type.startsWith("image/")) {
-        toast.error("Ce fichier n'est pass un fichier image");
-        return;
-      }
-      if (selectedFile.size > maxSize) {
-        toast.error("La taille du fichier doit être inférieure à 1mo");
-        return;
+      if (selectedFile !== undefined) {
+        if (!selectedFile.type.startsWith("image/")) {
+          toast.error("Ce fichier n'est pass un fichier image");
+          return;
+        }
+        if (selectedFile.size > maxSize) {
+          toast.error("La taille du fichier doit être inférieure à 1mo");
+          return;
+        }
       }
       setFile(selectedFile);
     }
