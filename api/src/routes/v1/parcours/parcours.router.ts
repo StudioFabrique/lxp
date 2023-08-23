@@ -1,4 +1,5 @@
 import express from "express";
+import { body } from "express-validator";
 
 import httpGetParcours from "../../../controllers/parcours/http-get-parcours";
 import httpCreateParcoursRouter from "./post-create-parcours";
@@ -11,8 +12,10 @@ import putParcoursContactsRouter from "./put-parcours-contacts";
 import putParcoursTagsRouter from "./put-parcours-tags";
 import deleteParcoursByIdRouter from "./delete-parcours-by-id";
 import putParcoursSkillsRouter from "./put-parcours-skills";
-import { body } from "express-validator";
 import httpPutVirtualClass from "../../../controllers/parcours/http-pu-virtual-class";
+import checkToken from "../../../middleware/check-token";
+import httpPutParcoursObjectives from "../../../controllers/parcours/http-put-parcours-objectives";
+import httpPutReorderObjectives from "../../../controllers/parcours/http-put-reorder-objectives";
 
 const parcoursRouter = express.Router();
 
@@ -33,5 +36,14 @@ parcoursRouter.put(
   body("parcoursId").isNumeric().notEmpty(),
   httpPutVirtualClass
 );
+parcoursRouter.put(
+  "/update-objectives",
+  checkToken,
+  body("parcoursId").isNumeric().notEmpty().escape(),
+  body("objectives").isArray().notEmpty(),
+  body("objectives.*").isString().notEmpty(),
+  httpPutParcoursObjectives
+);
+parcoursRouter.put("/reorder-objectives", checkToken, httpPutReorderObjectives);
 
 export default parcoursRouter;

@@ -104,7 +104,7 @@ const RightSideDrawer: FC<Props> = ({
           htmlFor={!isOpen ? id : undefined}
           className="drawer-overlay fixed top-0 left-0 w-screen min-h-screen"
         />
-        <ul className="block menu p-4 min-w-[30rem] top-0 right-0 min-h-screen bg-base-200 text-base-content rounded-l-2xl overflow-auto">
+        <ul className="min-w-[30rem] block menu p-4 top-0 right-0 min-h-screen bg-base-200 text-base-content rounded-l-2xl overflow-auto">
           {/* Sidebar content here */}
           <div className="flex items-center gap-x-4">
             {!isOpen && (

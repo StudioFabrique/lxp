@@ -1,10 +1,8 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../utils/db";
 
 async function getFormation() {
   const formations = await prisma.formation.findMany({
-    include: { tags: { include: { tag: true } } },
+    select: { id: true, title: true },
   });
 
   if (!formations || formations.length === 0) {

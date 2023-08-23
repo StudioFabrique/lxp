@@ -21,25 +21,25 @@ model Formation {
 }
 
 model Parcours {
-  id           Int                    @id @default(autoincrement())
-  title        String                 @unique
+  id           Int                  @id @default(autoincrement())
+  title        String               @unique
   description  String?
   startDate    DateTime?
   endDate      DateTime?
   degree       String?
   image        Bytes?
-  createdAt    DateTime               @default(now())
-  updatedAt    DateTime               @default(now())
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @default(now())
   tags         TagsOnParcours[]
-  admin        Admin                  @relation(fields: [adminId], references: [id])
+  admin        Admin                @relation(fields: [adminId], references: [id])
   adminId      Int
   contacts     ContactsOnParcours[]
-  formation    Formation              @relation(fields: [formationId], references: [id])
+  formation    Formation            @relation(fields: [formationId], references: [id])
   formationId  Int
   skills       SKillsOnParcours[]
   bonusSkills  BonusSkill[]
   modules      ModulesOnParcours[]
-  objectives   ObjectivesOnParcours[]
+  objectives   Objective[]
   virtualClass String?
 }
 
@@ -117,20 +117,12 @@ model Contact {
 }
 
 model Objective {
-  id          Int                    @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   description String
-  createdAt   DateTime               @default(now())
-  updatedAt   DateTime               @default(now())
-  parcours    ObjectivesOnParcours[]
-}
-
-model ObjectivesOnParcours {
-  objective   Objective @relation(fields: [objectiveId], references: [id])
-  objectiveId Int
-  parcours    Parcours  @relation(fields: [parcoursId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  parcours    Parcours @relation(fields: [parcoursId], references: [id])
   parcoursId  Int
-
-  @@id([objectiveId, parcoursId])
 }
 
 model SKillsOnParcours {

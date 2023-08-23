@@ -124,7 +124,7 @@ const AddParcours = () => {
     <>
       <Toaster />
       <FadeWrapper>
-        <div className="w-full xl:w-5/6 grid grid-cols-1 lg:grid-cols-2 gap-32 px-8 mx-auto my-16">
+        <div className="w-full xl:w-5/6 grid grid-cols-1 lg:grid-cols-2 gap-16 px-8 mx-auto my-16">
           <>
             <div>
               {isLoading ? (
