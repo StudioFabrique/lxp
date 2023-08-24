@@ -13,13 +13,13 @@ export function transformLink(linkToTransform: string): {
     const url = new URL(linkToTransform);
     const pathnameParts = url.pathname.split("/");
     const hostname = url.hostname.replace("www.", "").split(".")[0];
-    console.log(hostname);
+    console.log(url);
 
     switch (hostname) {
       case "youtube":
         return { type: "youtube", alias: youtubeAlias(pathnameParts) };
       case "twitter":
-        return { type: "twitter" };
+        return { type: "twitter", alias: twitterAlias(pathnameParts) };
       case "facebook":
         return { type: "facebook" };
       case "instagram":
@@ -37,11 +37,15 @@ export function transformLink(linkToTransform: string): {
 
 const youtubeAlias = (pathnameParts: string[]) => {
   if (pathnameParts[1].includes("@")) return pathnameParts[1].substring(1);
-
-  return null;
+  if (pathnameParts[1].includes("watch")) return "Vidéo youtube";
+  return "Contenu youtube";
 };
 
-const twitterAlias = (pathnameParts: string[]) => {};
+const twitterAlias = (pathnameParts: string[]) => {
+  if (!!pathnameParts[2] && pathnameParts[2].includes("status"))
+    return `Thread twitter de ${pathnameParts[1]}`;
+  return pathnameParts[1];
+};
 
 const facebookAlias = (pathnameParts: string[]) => {};
 
