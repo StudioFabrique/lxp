@@ -4,7 +4,6 @@ import {
   regexGeneric,
   regexMail,
   regexNumber,
-  regexPassword,
 } from "../../../utils/constantes";
 import Contact from "./components/contact.component";
 import TypeUtilisateur from "./components/type-utilisateur.component";
@@ -136,7 +135,7 @@ const UserAddForm: FC<{
             phone={phone}
             postCode={postCode}
           />
-          <div className="grid grid-rows-2 gap-y-5">
+          <div className="grid grid-rows-1 gap-y-5">
             <TypeUtilisateur
               typeUtilisateur={typeUtilisateur}
               onSetTypeUtilisateur={setTypeUtilisateur}

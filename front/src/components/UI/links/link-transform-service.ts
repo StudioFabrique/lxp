@@ -1,50 +1,37 @@
 import { LinkType } from "./link";
 
-const TwitterRegex =
-  /^(?:(?:https?:)?\/\/)?(?:www\.)?twitter\.com\/(@\w+|status\/\d+)$/;
-
-const FacebookRegex =
-  /^(?:(?:https?:)?\/\/)?(?:www\.)?facebook\.com\/(pages\/[a-zA-Z0-9_-]+\/\d+|pg\/[a-zA-Z0-9_-]+\/\d+|profile\.php\?id=\d+|[\w.-]+)$/;
-
-const InstagramRegex =
-  /^(?:(?:https?:)?\/\/)?(?:www\.)?instagram\.com\/([a-zA-Z0-9._]+)(\/|\b)$/;
-
-const LinkedinRegex =
-  /^(?:(?:https?:)?\/\/)?(?:www\.)?linkedin\.com\/(in\/[a-zA-Z0-9_-]+|company\/[a-zA-Z0-9_-]+|company\/[a-zA-Z0-9_-]+\/people\/)(\/|\b)$/;
-
-const YoutubeRegex =
-  /^(?:(?:https?:)?\/\/)?(?:www\.)?youtube\.com\/(?:@([a-zA-Z0-9_-]+)|watch\?v=([a-zA-Z0-9_-]+))$/;
-
 const genericURLRegex =
-  /^(?:(?:https?:)?\/\/)?(?:www\.)?([a-zA-Z0-9.@-]+?)(\.[a-z]{2,})([a-z.]{2,6})(\/?@[a-zA-Z0-9_-]+)?([\/\w\.-]*)*\/?$/;
+  /^(?:(?:https?:)?\/\/)?(?:www\.)?([a-zA-Z0-9.-]+?)(\/[@a-zA-Z0-9_-]+)?([/?].*)$/;
 
-export const linkIsValid = (link: string) => link.match(genericURLRegex);
+export const urlIsValid = (url: string) => url.match(genericURLRegex);
 
-export function setUrlWebsiteType(url: string) {
-  if (TwitterRegex.test(url)) return "twitter";
-  if (FacebookRegex.test(url)) return "facebook";
-  if (InstagramRegex.test(url)) return "instagram";
-  if (LinkedinRegex.test(url)) return "linkedin";
-  if (YoutubeRegex.test(url)) return "youtube";
-  return "website";
-}
-
-export function tranformLinkIntoAlias(
-  linkToTransform: string,
-  linkType: LinkType
-) {
+export function transformLink(linkToTransform: string): {
+  type: LinkType;
+  alias?: string | null;
+} {
   try {
     const url = new URL(linkToTransform);
     const pathnameParts = url.pathname.split("/");
-    switch (linkType) {
+    const hostname = url.hostname.replace("www.", "").split(".")[0];
+    console.log(hostname);
+
+    switch (hostname) {
       case "youtube":
-        return youtubeAlias(pathnameParts);
+        return { type: "youtube", alias: youtubeAlias(pathnameParts) };
+      case "twitter":
+        return { type: "twitter" };
+      case "facebook":
+        return { type: "facebook" };
+      case "instagram":
+        return { type: "instagram" };
+      case "linkedin":
+        return { type: "linkedin" };
       default:
-        return null;
+        return { type: "website" };
     }
   } catch (error) {
     console.error("Error parsing the URL:", error);
-    return null;
+    return { type: "website" };
   }
 }
 

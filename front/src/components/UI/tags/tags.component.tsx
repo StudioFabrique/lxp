@@ -115,7 +115,7 @@ const Tags: FC<Props> = ({ onSubmitTags }) => {
 
   return (
     <div className="h-full flex flex-col gap-y-4">
-      <h2 className="text-xl font-bold">"Tags"</h2>
+      <h2 className="text-xl font-bold">Tags</h2>
       <SearchDropdown
         addItem={handleAddTag}
         filterItems={handleFilterItems}
