@@ -43,7 +43,7 @@ const youtubeAlias = (pathnameParts: string[]) => {
 
 const twitterAlias = (pathnameParts: string[]) => {
   if (!!pathnameParts[2] && pathnameParts[2].includes("status"))
-    return `Thread twitter de ${pathnameParts[1]}`;
+    return `Thread de ${pathnameParts[1]}`;
   return pathnameParts[1];
 };
 
