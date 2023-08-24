@@ -3,7 +3,6 @@ import {
   ChangeEventHandler,
   Dispatch,
   FC,
-  MouseEvent,
   MouseEventHandler,
   SetStateAction,
   useState,
@@ -12,11 +11,7 @@ import Wrapper from "../wrapper/wrapper.component";
 import SocialNetworksIconSwitcher from "../svg/social-networks/social-networks-icon-switcher";
 import { Link } from "./link";
 import DeleteIcon from "../svg/delete-icon.compoenent";
-import {
-  linkIsValid,
-  setUrlWebsiteType,
-  tranformLinkIntoAlias,
-} from "./link-transform-service";
+import { urlIsValid, transformLink } from "./link-transform-service";
 
 const Links: FC<{
   links: Array<Link>;
@@ -34,14 +29,15 @@ const Links: FC<{
     if (
       currentLink.length > 0 &&
       links.filter((link) => link.url === currentLink).length === 0 &&
-      linkIsValid(currentLink)
+      urlIsValid(currentLink)
     ) {
-      const linkType = setUrlWebsiteType(currentLink);
-      console.log(`type de liens : ${linkType}`);
-      const alias = tranformLinkIntoAlias(currentLink, linkType);
+      const linkProperties = transformLink(currentLink);
       onSetLinks((links) => [
         ...links,
-        { url: currentLink, type: linkType, alias: alias },
+        {
+          url: currentLink,
+          ...linkProperties,
+        },
       ]);
     }
   };
@@ -63,7 +59,7 @@ const Links: FC<{
           +
         </button>
       </span>
-      <ul className="carousel carousel-vertical h-56">
+      <ul className="carousel carousel-vertical h-80">
         {links.map((link) => (
           <Item key={link.url} link={link} onClickDelete={handleDeleteLink} />
         ))}

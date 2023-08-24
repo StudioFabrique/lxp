@@ -19,8 +19,14 @@ const CentreInterets: FC<{
   const handleAddInteret: KeyboardEventHandler<HTMLInputElement> = (
     event: KeyboardEvent<HTMLInputElement>
   ) => {
-    if (event.code === "Enter")
+    if (
+      event.code === "Enter" &&
+      !interets.includes(currentInteret) &&
+      currentInteret.length > 0
+    ) {
       setInterets((interets) => [...interets, currentInteret]);
+      setCurrentInteret("");
+    }
     return;
   };
 
@@ -39,11 +45,14 @@ const CentreInterets: FC<{
           onChange={handleChangeInput}
           type="text"
           className="input"
+          value={currentInteret}
         />
       </div>
-      <div className="flex gap-x-5 gap-y-2 flex-wrap overflow-y-auto h-44">
+      <div className="flex gap-x-5 gap-y-2 flex-wrap overflow-y-auto">
         {interets.map((interet) => (
-          <p className="bg-slate-800 p-2 rounded-xl h-10">{interet}</p>
+          <p key={interet} className="bg-slate-800 p-2 rounded-xl h-10">
+            {interet}
+          </p>
         ))}
       </div>
     </Wrapper>
