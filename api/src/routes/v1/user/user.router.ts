@@ -17,6 +17,7 @@ import httpUpdateManyUsersStatus from "../../../controllers/user/http-update-man
 import httpGetContacts from "../../../controllers/user/http-get-contacts";
 import postTeacherRouter from "./post-teacher";
 import httpCreateManyUser from "../../../controllers/user/http-create-many-users";
+import checkToken from "../../../middleware/check-token";
 
 const userRouter = express.Router();
 
@@ -87,6 +88,6 @@ userRouter.get(
 );
 userRouter.use("/new-teacher", postTeacherRouter);
 
-userRouter.get("/contacts", httpGetContacts);
+userRouter.get("/contacts", checkToken, httpGetContacts);
 
 export default userRouter;

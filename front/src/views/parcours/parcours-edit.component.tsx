@@ -135,7 +135,7 @@ const EditParcours = () => {
       };
       sendRequest(
         {
-          path: `/parcours/delete/${id}`,
+          path: `/parcours/${id}`,
           method: "delete",
         },
         processData
