@@ -17,14 +17,29 @@ const checkValidatorResult = (
 };
 
 export const userValidator = [
-  body("email").isEmail().trim().escape(),
-  body(["firstname", "lastname", "address", "city", "password"])
+  body("email").exists().isEmail().trim().escape(),
+  body(["firstname", "lastname", "nickname", "description"])
+    .exists()
     .isString()
     .trim()
     .escape(),
+  body([
+    "address",
+    "city",
+    "links.*",
+    "hobbies.*",
+    "graduations.*.title",
+    "graduations.*.degree",
+  ])
+    .isString()
+    .trim()
+    .escape(),
+  body("userType").exists().isNumeric(),
   body("postCode").isPostalCode("FR").trim().escape(),
-  //   body("roles").isArray(),
+  // body("roles").isArray(),
   body("birthDate").isDate(),
+  body("graduations.*.date").exists().isDate(),
+  body(["hobbies", "graduations", "links"]).isArray(),
   checkValidatorResult,
 ];
 
