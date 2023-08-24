@@ -1,11 +1,11 @@
 import express from "express";
 import { body, param } from "express-validator";
 
-import httpPostBonusSkill from "../../../controllers/bonus-skill/http-post-bonus-skill";
-import httpDeleteBonusSkill from "../../../controllers/bonus-skill/http-delete-bonus-skill";
-import httpGetBonusSkillsFromParcours from "../../../controllers/bonus-skill/http-get-bonus-skills-from-parcours";
-import httpPostManySkills from "../../../controllers/bonus-skill/http-post-many-skills";
-import httpPutBonusSkill from "../../../controllers/bonus-skill/http-put-skill";
+import httpPostBonusSkill from "../../controllers/bonus-skill/http-post-bonus-skill";
+import httpDeleteBonusSkill from "../../controllers/bonus-skill/http-delete-bonus-skill";
+import httpGetBonusSkillsFromParcours from "../../controllers/bonus-skill/http-get-bonus-skills-from-parcours";
+import httpPostManySkills from "../../controllers/bonus-skill/http-post-many-skills";
+import httpPutBonusSkill from "../../controllers/bonus-skill/http-put-skill";
 
 const bonusSkillRouter = express.Router();
 

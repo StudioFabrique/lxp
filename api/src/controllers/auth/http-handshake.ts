@@ -22,7 +22,7 @@ async function httpHandshake(req: CustomRequest, res: Response) {
       }
       return res.status(403).json({ message: noAccess });
     } catch (err) {
-      return res.status(500).json({ message: serverIssue + err });
+      return res.status(500).json({ message: serverIssue });
     }
   }
 }

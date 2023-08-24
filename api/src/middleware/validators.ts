@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { body, param, query, validationResult } from "express-validator";
 import { badQuery } from "../utils/constantes";
+import { logger } from "../utils/logs/logger";
 
-const checkValidatorResult = (
+export const checkValidatorResult = (
   req: Request,
   res: Response,
   next: NextFunction
@@ -10,7 +11,12 @@ const checkValidatorResult = (
   const checkValues = validationResult(req);
 
   if (!checkValues.isEmpty()) {
-    console.log(checkValues.array());
+    const error = {
+      message: checkValues.array()[0].msg ?? badQuery,
+      from: req.socket.remoteAddress,
+      status: 400,
+    };
+    logger.error(error);
     return res.status(400).json({ message: badQuery });
   }
   next();
