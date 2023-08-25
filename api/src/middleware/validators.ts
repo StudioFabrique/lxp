@@ -45,8 +45,9 @@ export const userValidator = [
     "description",
     "address",
     "city",
-    "links.*",
-    "hobbies.*",
+    "links.*.url",
+    "links.*.alias",
+    "hobbies.*.title",
     "graduations.*.title",
     "graduations.*.degree",
   ])
