@@ -3,7 +3,7 @@ import { FC, useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import useHttp from "../../../hooks/use-http";
-import { tagsAction } from "../../../store/tags";
+import { tagsAction } from "../../../store/redux-toolkit/tags";
 import Tag from "../../../utils/interfaces/tag";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import SearchDropdown from "../search-dropdown/search-dropdown";

@@ -59,14 +59,34 @@ const RightSideDrawer: FC<Props> = ({
             htmlFor={id}
             className="drawer-button btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary focus:outline-none"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-4 h-4"
-            >
-              <path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z" />
-            </svg>
+            {buttonTitle ? (
+              <>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <p>{buttonTitle}</p>
+              </>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-4 h-4"
+              >
+                <path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z" />
+              </svg>
+            )}
           </label>
         ) : null}
       </div>
@@ -75,7 +95,7 @@ const RightSideDrawer: FC<Props> = ({
           htmlFor={!isOpen ? id : undefined}
           className="drawer-overlay fixed top-0 left-0 w-screen min-h-screen"
         />
-        <ul className="block menu p-4 top-0 right-0 min-h-screen bg-base-200 text-base-content rounded-l-2xl overflow-auto">
+        <ul className="min-w-[30rem] block menu p-4 top-0 right-0 min-h-screen bg-base-200 text-base-content rounded-l-2xl overflow-auto">
           {/* Sidebar content here */}
           <div className="flex items-center gap-x-4">
             {!isOpen && (

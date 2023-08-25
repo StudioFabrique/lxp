@@ -1,8 +1,9 @@
 import { FC, useState } from "react";
+import { Link } from "react-router-dom";
+
 import useInput from "../../hooks/use-input";
 import { regexMail, regexPassword } from "../../utils/constantes";
 import PasswordVisible from "../UI/password-visible/password-visible";
-import { Link } from "react-router-dom";
 
 const LoginForm: FC<{
   onSubmit: (email: string, password: string) => void;
@@ -48,8 +49,9 @@ const LoginForm: FC<{
   //  définit le bouton à afficher en fonction du statut de la requête de connexion
   const isLoadingButtonComponent =
     props.isLoading && props.error.length === 0 ? (
-      <button className="btn loading normal-case bg-pink-900 p-3 rounded-md pr-6 pl-6 text-white text-[8pt]">
-        Connexion en cours
+      <button className="btn normal-case bg-pink-900 p-3 rounded-md pr-6 pl-6 text-white text-[8pt]">
+        <span className="loading loading-spinner loading-xs"></span>
+        Connexion...
       </button>
     ) : (
       <button className="btn normal-case bg-pink-900 p-3 rounded-md pr-6 pl-6 text-white text-[8pt]">

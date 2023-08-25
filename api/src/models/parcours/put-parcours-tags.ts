@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../utils/db";
 
 async function putParcoursTags(parcoursId: number, newTags: Array<number>) {
   const existingParcours = await prisma.parcours.findUnique({
