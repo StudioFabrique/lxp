@@ -10,6 +10,11 @@ export default async function httpCreateUser(req: Request, res: Response) {
   const linksDataRequest = userDataRequest.links;
   const hobbiesDataRequest = userDataRequest.hobbies;
 
+  console.log(userDataRequest);
+  console.log(graduationsDataRequest ?? "no graduations data");
+  console.log(linksDataRequest ?? "no links data");
+  console.log(hobbiesDataRequest ?? "no hobbies data");
+
   try {
     const userResponse = await createUser(userDataRequest); // crée un user + insert une référence mongodb dans prisma
 
@@ -17,7 +22,7 @@ export default async function httpCreateUser(req: Request, res: Response) {
       res.status(409).json({ message: alreadyExist });
     }
 
-    const graduationsResponse = await createGraduations(
+    /* const graduationsResponse = await createGraduations(
       userResponse!._id,
       graduationsDataRequest
     ); // insert graduations in mongodb with user ref _id
@@ -30,7 +35,7 @@ export default async function httpCreateUser(req: Request, res: Response) {
     const hobbiesResponse = await createHobbies(
       userResponse!._id,
       hobbiesDataRequest
-    ); // insert hobbies in mongodb with user ref _id
+    ); // insert hobbies in mongodb with user ref _id */
 
     return res.status(201).json({ message: creationSuccessfull });
   } catch (e) {

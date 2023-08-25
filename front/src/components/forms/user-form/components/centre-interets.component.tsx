@@ -22,13 +22,14 @@ const CentreInterets: FC<{
   ) => {
     if (
       event.code === "Enter" &&
-      !hobbies.filter((hobby) => hobby.title !== currentHobby) &&
+      hobbies.filter((hobby) => hobby.title === currentHobby).length === 0 &&
       currentHobby.length > 0
     ) {
+      console.log("adding");
+
       setHobbies((hobbies) => [...hobbies, { title: currentHobby }]);
       setCurrentHobby("");
     }
-    return;
   };
 
   const handleChangeInput: ChangeEventHandler<HTMLInputElement> = (
