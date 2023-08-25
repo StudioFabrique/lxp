@@ -32,7 +32,7 @@ const UserAddForm: FC<{
 
   const [typeUtilisateur, setTypeUtilisateur] = useState<number>(0);
 
-  const [interets, setInterets] = useState<Array<string>>([]);
+  const [hobbies, setHobbies] = useState<Array<string>>([]);
 
   const { value: email } = useInput(
     (value: string) => regexMail.test(value),
@@ -99,14 +99,17 @@ const UserAddForm: FC<{
         email: email.value.trim(),
         firstname: firstname.value.trim(),
         lastname: lastname.value.trim(),
+        description: description.value.trim(),
         pseudo: nickname.value.trim(),
         address: address.value.trim(),
-        postCode: postCode.value.trim(),
+        postCode: parseInt(postCode.value.trim()),
         city: city.value.trim(),
         birthDate: birthDate,
         graduations: graduations,
         avatar: file,
-        typeUtilisateur: typeUtilisateur,
+        userType: typeUtilisateur,
+        links: links,
+        hobbies: hobbies,
       });
     }
   };
@@ -140,7 +143,7 @@ const UserAddForm: FC<{
               typeUtilisateur={typeUtilisateur}
               onSetTypeUtilisateur={setTypeUtilisateur}
             />
-            <CentreInterets interets={interets} setInterets={setInterets} />
+            <CentreInterets hobbies={hobbies} setHobbies={setHobbies} />
           </div>
         </div>
         <div>

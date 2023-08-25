@@ -11,21 +11,21 @@ import {
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 
 const CentreInterets: FC<{
-  interets: string[];
-  setInterets: Dispatch<SetStateAction<string[]>>;
-}> = ({ interets, setInterets }) => {
-  const [currentInteret, setCurrentInteret] = useState("");
+  hobbies: string[];
+  setHobbies: Dispatch<SetStateAction<string[]>>;
+}> = ({ hobbies, setHobbies }) => {
+  const [currentHobby, setCurrentHobby] = useState("");
 
   const handleAddInteret: KeyboardEventHandler<HTMLInputElement> = (
     event: KeyboardEvent<HTMLInputElement>
   ) => {
     if (
       event.code === "Enter" &&
-      !interets.includes(currentInteret) &&
-      currentInteret.length > 0
+      !hobbies.includes(currentHobby) &&
+      currentHobby.length > 0
     ) {
-      setInterets((interets) => [...interets, currentInteret]);
-      setCurrentInteret("");
+      setHobbies((hobbies) => [...hobbies, currentHobby]);
+      setCurrentHobby("");
     }
     return;
   };
@@ -33,7 +33,7 @@ const CentreInterets: FC<{
   const handleChangeInput: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
-    setCurrentInteret(event.currentTarget.value);
+    setCurrentHobby(event.currentTarget.value);
   };
 
   return (
@@ -45,13 +45,13 @@ const CentreInterets: FC<{
           onChange={handleChangeInput}
           type="text"
           className="input"
-          value={currentInteret}
+          value={currentHobby}
         />
       </div>
       <div className="flex gap-x-5 gap-y-2 flex-wrap overflow-y-auto">
-        {interets.map((interet) => (
-          <p key={interet} className="bg-slate-800 p-2 rounded-xl h-10">
-            {interet}
+        {hobbies.map((hobby) => (
+          <p key={hobby} className="bg-slate-800 p-2 rounded-xl h-10">
+            {hobby}
           </p>
         ))}
       </div>

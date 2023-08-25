@@ -1,5 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { body, param, query, validationResult } from "express-validator";
+import {
+  ValidationChain,
+  body,
+  param,
+  query,
+  validationResult,
+} from "express-validator";
 import { badQuery } from "../utils/constantes";
 
 const checkValidatorResult = (
@@ -17,9 +23,19 @@ const checkValidatorResult = (
   next();
 };
 
+const customEmptyValueValidation = (field: ValidationChain) => {
+  return (value: any, { req }: { req: any }) => {
+    if (value === undefined || value === null || value === "") {
+      return true; // Empty value is allowed
+    }
+
+    return field.run(req); // Run the original validation rules for non-empty value
+  };
+};
+
 export const userValidator = [
   body("email").exists().isEmail().trim().escape(),
-  body(["firstname", "lastname", "description"])
+  body(["firstname", "lastname"])
     .exists()
     .notEmpty()
     .isString()
@@ -27,6 +43,7 @@ export const userValidator = [
     .escape(),
   body([
     "nickname",
+    "description",
     "address",
     "city",
     "links.*",
@@ -34,13 +51,20 @@ export const userValidator = [
     "graduations.*.title",
     "graduations.*.degree",
   ])
-    .isString()
+    .custom(customEmptyValueValidation(body().isString().trim().escape()))
     .trim()
     .escape(),
   body("userType").exists().notEmpty().isNumeric(),
-  body("postCode").isPostalCode("FR").trim().escape(),
+  body("postCode")
+    .custom(
+      customEmptyValueValidation(body().isPostalCode("FR").trim().escape())
+    )
+    .trim()
+    .escape(),
   // body("roles").isArray(),
-  body(["graduations.*.date", "birthDate"]).isDate(),
+  body(["graduations.*.date", "birthDate"]).custom(
+    customEmptyValueValidation(body().isDate().trim().escape())
+  ),
   body(["hobbies", "graduations", "links"]).isArray(),
   checkValidatorResult,
 ];
