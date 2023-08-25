@@ -10,10 +10,7 @@ export interface IUser extends Document {
   firstname: string;
   lastname: string;
   password?: string;
-  roles: IRole["_id"];
   avatar?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
   isActive: boolean;
   nickname?: string;
   address?: string;
@@ -21,10 +18,13 @@ export interface IUser extends Document {
   city?: string;
   birthDate?: Date;
   phoneNumber?: string;
-  group?: IGroup;
-  graduations?: IGraduation[];
-  hobbies?: IHobby[];
-  links: ILink[];
+  graduations?: IGraduation["id"][];
+  hobbies?: IHobby["id"][];
+  links: ILink["id"][];
+  group?: IGroup["id"][];
+  roles: IRole["_id"];
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const userSchema: Schema = new Schema(
@@ -32,21 +32,40 @@ const userSchema: Schema = new Schema(
     email: { type: String, required: true, unique: true },
     firstname: { type: String, required: true },
     lastname: { type: String, required: true },
-    password: { type: String },
+    password: { type: String, require: false },
+    avatar: { type: String, required: false },
+    isActive: { type: Boolean, required: true },
+    nickname: { type: String, required: false },
+    address: { type: String, required: false },
+    postCode: { type: String, required: false },
+    city: { type: String, required: false },
+    birthDate: { type: Date, required: false },
+    phoneNumber: { type: String, required: false },
+    graduations: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Graduations",
+      require: false,
+    },
+    hobbies: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Hobbies",
+      require: false,
+    },
+    links: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Links",
+      require: false,
+    },
+    group: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Group",
+      require: false,
+    },
     roles: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Role",
       required: true,
     },
-    avatar: { type: String, required: false },
-    isActive: { type: Boolean, required: true },
-    nickname: { type: String, required: false },
-    address: { type: String, required: true },
-    postCode: { type: String, required: true },
-    city: { type: String, required: true },
-    birthDate: { type: Date, required: false },
-    phoneNumber: { type: String, required: false },
-    group: { type: [mongoose.Schema.Types.ObjectId], ref: "Group" },
   },
   { timestamps: true }
 );
