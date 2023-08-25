@@ -8,6 +8,7 @@ import { IGraduation } from "../../utils/interfaces/db/graduation";
 import { ILink } from "../../utils/interfaces/db/link";
 import { IHobby } from "../../utils/interfaces/db/hobby";
 import createManyLinks from "../../models/links/create-many-links";
+import createManyHobbies from "../../models/hobby/create-many-hobbies";
 
 export default async function httpCreateUser(req: Request, res: Response) {
   const userDataRequest: IUser = req.body;
