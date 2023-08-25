@@ -154,6 +154,7 @@ const EditParcours = () => {
       dispatch(tagsAction.reset());
       dispatch(parcoursContactsAction.reset());
       dispatch(parcoursSkillsAction.reset());
+      dispatch(parcoursObjectivesAction.reset());
     };
   }, [dispatch]);
 

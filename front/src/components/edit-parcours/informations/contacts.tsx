@@ -32,7 +32,7 @@ const Contacts: FC<Props> = ({ onSubmitContacts }) => {
   const isInitialRender = useRef(true);
 
   /**
-   * envoie une requête http pour récup la liste des formateurs et la stock en mémoire dans un custom hook "useList"
+   * envoie une requête http pour récup la liste des formateurs et la stocke dans un slice redux
    */
   const fetchTeachers = useCallback(() => {
     const applyData = (data: Array<User>) => {
@@ -51,14 +51,16 @@ const Contacts: FC<Props> = ({ onSubmitContacts }) => {
     );
   }, [dispatch, sendRequest]);
 
+  // apple la fonction qui envoie la requete pour récupérer les formateurs
   useEffect(() => {
     if (isInitialRender) {
       fetchTeachers();
     }
   }, [fetchTeachers]);
 
+  // reset le filtre
   const handleResetFilter = useCallback(() => {
-    dispatch(parcoursContactsAction.reset);
+    dispatch(parcoursContactsAction.resetFilter());
   }, [dispatch]);
 
   const handleAddContact = useCallback(
@@ -84,6 +86,7 @@ const Contacts: FC<Props> = ({ onSubmitContacts }) => {
     }
   };
 
+  // créé la liste de contacts à afficher dans le dropdown
   const handleFilterContacts = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (name: string, _poperty: string) => {
@@ -112,7 +115,7 @@ const Contacts: FC<Props> = ({ onSubmitContacts }) => {
     return () => {
       clearTimeout(timer);
     };
-  }, [contacts, onSubmitContacts]);
+  }, [contacts, dispatch, onSubmitContacts]);
 
   /**
    * envoi d'une requête pour enregistrer dans la bdd un formateur créé à la volée
