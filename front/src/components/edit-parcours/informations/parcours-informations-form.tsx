@@ -49,7 +49,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
             parcoursId,
             title: title.value,
             description: description.value,
-            formation: formation.id,
+            formation: formation.id.toString(),
           },
         },
         processData

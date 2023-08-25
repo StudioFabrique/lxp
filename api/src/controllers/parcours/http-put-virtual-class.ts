@@ -1,25 +1,39 @@
-import { Request, Response } from "express";
-import { validationResult } from "express-validator";
-import { badQuery } from "../../utils/constantes";
+import { Response } from "express";
+
+import { noAccess, serverIssue } from "../../utils/constantes";
 import putVirtualClass from "../../models/parcours/put-virtual-class";
+import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { logger } from "../../utils/logs/logger";
+import { customEscape } from "../../helpers/custom-escape";
 
-async function httpPutVirtualClass(req: Request, res: Response) {
+async function httpPutVirtualClass(req: CustomRequest, res: Response) {
   try {
-    const result = validationResult(req);
+    const userId = req.auth?.userId;
 
-    if (!result.isEmpty()) {
-      return res.status(400).json({ message: badQuery });
+    if (!userId) {
+      throw { message: noAccess, status: 403 };
     }
 
     const { parcoursId, virtualClass } = req.body;
 
-    const response = await putVirtualClass(parcoursId, virtualClass);
+    const response = await putVirtualClass(
+      parcoursId,
+      customEscape(virtualClass),
+      userId
+    );
     return res.status(201).json({
       success: true,
       message: "Le lien vers la classe virtuelle a été mis à jour",
     });
   } catch (error: any) {
-    return res.status(500).json({ success: false, message: error.message });
+    let returnedError = error;
+    if (error.status === 403) {
+      returnedError = { ...returnedError, from: req.socket.remoteAddress };
+      logger.error(returnedError);
+    }
+    return res
+      .status(returnedError.status ?? 500)
+      .json({ message: returnedError.message ?? serverIssue });
   }
 }
 

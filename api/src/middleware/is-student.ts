@@ -11,12 +11,16 @@ function isStudent(req: CustomRequest, res: Response, next: NextFunction) {
     if (err) {
       console.log("token expiré!");
       return res.status(403).json({ message: noAccess });
-    } else if (data && hasRole(1, data.userRoles)) {
+    } else if (data.userRoles[0].rank < 3) {
       req.auth = { userId: data.userId, userRoles: data.userRoles };
       console.log("coucou je check le token:", req.auth);
       next();
     } else {
-      return res.status(403).json({ message: "you're not a student" });
+      return res
+        .status(403)
+        .json({
+          message: "Vous n'êtes pas autorisé à accéder à cette ressource",
+        });
     }
   });
 }

@@ -1,10 +1,11 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { body, param, query, validationResult } from "express-validator";
 import { badQuery } from "../utils/constantes";
 import { logger } from "../utils/logs/logger";
+import CustomRequest from "../utils/interfaces/express/custom-request";
 
 export const checkValidatorResult = (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
