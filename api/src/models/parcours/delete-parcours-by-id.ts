@@ -1,6 +1,8 @@
+import { getAdmin } from "../../helpers/get-admin";
 import { prisma } from "../../utils/db";
 
-async function deleteParcoursById(parcoursId: number) {
+async function deleteParcoursById(parcoursId: number, userId: string) {
+  const admin = await getAdmin(userId);
   try {
     const transaction = await prisma.$transaction(async (tx) => {
       const parcours = await tx.parcours.findUnique({
@@ -26,8 +28,8 @@ async function deleteParcoursById(parcoursId: number) {
       });
 
       // Supprimer le parcours
-      await tx.parcours.delete({
-        where: { id: parcoursId },
+      const deletedParcours = await tx.parcours.delete({
+        where: { id: parcoursId, adminId: admin.id },
       });
     });
   } catch (error: any) {

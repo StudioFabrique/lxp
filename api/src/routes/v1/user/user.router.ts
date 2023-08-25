@@ -1,7 +1,7 @@
 import express from "express";
 import { body, param, query } from "express-validator";
 
-import isUser from "../../../middleware/is-user";
+import isUser from "../../../middleware/is-admin";
 import {
   getAllValidator,
   manyUsersValidator,

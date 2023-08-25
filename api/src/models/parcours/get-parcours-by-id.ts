@@ -7,7 +7,7 @@ async function getParcoursById(parcoursId: number, userId: string) {
     const admin = await getAdmin(userId);
 
     const parcours = await prisma.parcours.findFirst({
-      where: { id: parcoursId },
+      where: { id: parcoursId, adminId: admin.id },
       select: {
         id: true,
         title: true,
@@ -41,19 +41,16 @@ async function getParcoursById(parcoursId: number, userId: string) {
         skills: { include: { skill: true } },
         bonusSkills: { select: { id: true, description: true, badge: true } },
         objectives: { select: { id: true, description: true } },
-        admin: {
-          select: {
-            id: true,
-          },
-        },
+        admin: { select: { id: true, idMdb: true } },
       },
     });
-    if (parcours && parcours.admin.id === admin.id) {
-      /*       if (parcours.image instanceof Buffer) {
+
+    if (parcours) {
+      if (parcours.image instanceof Buffer) {
         const base64Image = parcours.image.toString("base64");
         const result = { ...parcours, image: base64Image };
         return result;
-      } */
+      }
 
       return parcours;
     }
