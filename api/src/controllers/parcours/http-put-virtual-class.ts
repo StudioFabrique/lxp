@@ -21,6 +21,12 @@ async function httpPutVirtualClass(req: CustomRequest, res: Response) {
       customEscape(virtualClass),
       userId
     );
+    console.log({ response });
+
+    if (!response) {
+      console.log("oops");
+    }
+
     return res.status(201).json({
       success: true,
       message: "Le lien vers la classe virtuelle a été mis à jour",

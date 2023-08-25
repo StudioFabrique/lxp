@@ -13,10 +13,7 @@ async function putVirtualClass(
     where: { id, adminId: (await admin).id },
     data: { virtualClass },
   });
-  if (response) {
-    return response;
-  }
-  throw { message: "Vous n'avez pas accès à cette ressource", status: 403 };
+  return response;
 }
 
 export default putVirtualClass;
