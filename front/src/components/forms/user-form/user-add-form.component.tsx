@@ -49,9 +49,9 @@ const UserAddForm: FC<{
     props.user?.lastname ?? ""
   );
 
-  const { value: pseudo } = useInput(
+  const { value: nickname } = useInput(
     (value: string) => regexGeneric.test(value),
-    props.user?.pseudo ?? ""
+    props.user?.nickname ?? ""
   );
 
   const { value: address } = useInput(
@@ -84,13 +84,13 @@ const UserAddForm: FC<{
   formIsValid =
     email.isValid &&
     firstname.isValid &&
-    email.isValid &&
-    !!birthDate &&
-    address.isValid &&
-    city.isValid &&
-    postCode.isValid &&
-    phone.isValid &&
-    description.isValid;
+    lastname.isValid &&
+    (nickname.isValid || nickname.value.length <= 0); /* &&
+    (address.isValid || address == null) &&
+    (city.isValid || city == null) &&
+    (postCode.isValid || postCode) &&
+    (phone.isValid || !phone) &&
+    (description.isValid || !description); */
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -99,7 +99,7 @@ const UserAddForm: FC<{
         email: email.value.trim(),
         firstname: firstname.value.trim(),
         lastname: lastname.value.trim(),
-        pseudo: pseudo.value.trim(),
+        pseudo: nickname.value.trim(),
         address: address.value.trim(),
         postCode: postCode.value.trim(),
         city: city.value.trim(),
@@ -124,7 +124,7 @@ const UserAddForm: FC<{
             lastname={lastname}
             firstname={firstname}
             email={email}
-            pseudo={pseudo}
+            nickname={nickname}
             onSetFile={setFile}
           />
           <Contact

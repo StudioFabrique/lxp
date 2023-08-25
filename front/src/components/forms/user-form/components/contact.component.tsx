@@ -14,6 +14,11 @@ const Contact: FC<{
   ) => {
     onChangeDate(event.currentTarget.valueAsDate);
   };
+  const setInputStyle = (hasError: boolean) => {
+    return hasError
+      ? "input input-error text-error input-sm input-bordered focus:outline-none w-full"
+      : "input input-sm input-bordered focus:outline-none w-full";
+  };
 
   return (
     <Wrapper>
@@ -30,7 +35,9 @@ const Contact: FC<{
       <span className="flex flex-col gap-y-2">
         <label>Adresse</label>
         <input
-          className="input input-sm input-bordered focus:outline-none w-full"
+          className={setInputStyle(
+            address.hasError && address.value.length > 0
+          )}
           type="text"
           onChange={address.valueChangeHandler}
           onBlur={address.valueBlurHandler}
@@ -41,7 +48,7 @@ const Contact: FC<{
       <span className="flex flex-col gap-y-2">
         <label>Ville</label>
         <input
-          className="input input-sm input-bordered focus:outline-none w-full"
+          className={setInputStyle(city.hasError && city.value.length > 0)}
           type="text"
           onChange={city.valueChangeHandler}
           onBlur={city.valueBlurHandler}
@@ -52,7 +59,9 @@ const Contact: FC<{
       <span className="flex flex-col gap-y-2">
         <label>Code Postal</label>
         <input
-          className="input input-sm input-bordered focus:outline-none w-full"
+          className={setInputStyle(
+            postCode.hasError && postCode.value.length > 0
+          )}
           type="text"
           onChange={postCode.valueChangeHandler}
           onBlur={postCode.valueBlurHandler}
@@ -63,7 +72,7 @@ const Contact: FC<{
       <span className="flex flex-col gap-y-2">
         <label>Téléphone</label>
         <input
-          className="input input-sm input-bordered focus:outline-none w-full"
+          className={setInputStyle(phone.hasError && phone.value.length > 0)}
           type="text"
           onChange={phone.valueChangeHandler}
           onBlur={phone.valueBlurHandler}

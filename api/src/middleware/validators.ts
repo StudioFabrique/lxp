@@ -13,17 +13,20 @@ const checkValidatorResult = (
     console.log(checkValues.array());
     return res.status(400).json({ message: badQuery });
   }
+  console.log("validations validés");
   next();
 };
 
 export const userValidator = [
   body("email").exists().isEmail().trim().escape(),
-  body(["firstname", "lastname", "nickname", "description"])
+  body(["firstname", "lastname", "description"])
     .exists()
+    .notEmpty()
     .isString()
     .trim()
     .escape(),
   body([
+    "nickname",
     "address",
     "city",
     "links.*",
@@ -34,11 +37,10 @@ export const userValidator = [
     .isString()
     .trim()
     .escape(),
-  body("userType").exists().isNumeric(),
+  body("userType").exists().notEmpty().isNumeric(),
   body("postCode").isPostalCode("FR").trim().escape(),
   // body("roles").isArray(),
-  body("birthDate").isDate(),
-  body("graduations.*.date").exists().isDate(),
+  body(["graduations.*.date", "birthDate"]).isDate(),
   body(["hobbies", "graduations", "links"]).isArray(),
   checkValidatorResult,
 ];
