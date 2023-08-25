@@ -1,6 +1,9 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { IRole } from "./role";
 import { IGroup } from "./group";
+import { IGraduation } from "./graduation";
+import { IHobby } from "./hobby";
+import { ILink } from "./link";
 
 export interface IUser extends Document {
   email: string;
@@ -18,7 +21,10 @@ export interface IUser extends Document {
   city?: string;
   birthDate?: Date;
   phoneNumber?: string;
-  group?: IGroup["_id"];
+  group?: IGroup;
+  graduations?: IGraduation[];
+  hobbies?: IHobby[];
+  links: ILink[];
 }
 
 const userSchema: Schema = new Schema(

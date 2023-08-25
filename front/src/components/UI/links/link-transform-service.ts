@@ -1,4 +1,4 @@
-import { LinkType } from "./link";
+import { LinkType } from "../../../utils/interfaces/link";
 
 const genericURLRegex =
   /^(?:(?:https?:)?\/\/)?(?:www\.)?([a-zA-Z0-9.-]+?)(\/[@a-zA-Z0-9_-]+)?([/?].*)$/;

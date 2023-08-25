@@ -9,10 +9,11 @@ import {
   useState,
 } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
+import Hobby from "../../../../utils/interfaces/hobby";
 
 const CentreInterets: FC<{
-  hobbies: string[];
-  setHobbies: Dispatch<SetStateAction<string[]>>;
+  hobbies: Hobby[];
+  setHobbies: Dispatch<SetStateAction<Hobby[]>>;
 }> = ({ hobbies, setHobbies }) => {
   const [currentHobby, setCurrentHobby] = useState("");
 
@@ -21,10 +22,10 @@ const CentreInterets: FC<{
   ) => {
     if (
       event.code === "Enter" &&
-      !hobbies.includes(currentHobby) &&
+      !hobbies.filter((hobby) => hobby.title !== currentHobby) &&
       currentHobby.length > 0
     ) {
-      setHobbies((hobbies) => [...hobbies, currentHobby]);
+      setHobbies((hobbies) => [...hobbies, { title: currentHobby }]);
       setCurrentHobby("");
     }
     return;
@@ -50,8 +51,8 @@ const CentreInterets: FC<{
       </div>
       <div className="flex gap-x-5 gap-y-2 flex-wrap overflow-y-auto">
         {hobbies.map((hobby) => (
-          <p key={hobby} className="bg-slate-800 p-2 rounded-xl h-10">
-            {hobby}
+          <p key={hobby.title} className="bg-slate-800 p-2 rounded-xl h-10">
+            {hobby.title}
           </p>
         ))}
       </div>
