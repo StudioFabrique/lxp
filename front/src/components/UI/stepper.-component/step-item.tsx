@@ -4,10 +4,11 @@ import Step from "../../../utils/interfaces/step";
 
 type Props = {
   stepItem: Step;
+  finalStep: boolean;
   actualStepId: number;
 };
 
-const StepItem: FC<Props> = ({ actualStepId, stepItem }) => {
+const StepItem: FC<Props> = ({ actualStepId, finalStep, stepItem }) => {
   /**
    * définit le style du stepper en fonction de ses propriétés
    * @param id number
@@ -28,7 +29,7 @@ const StepItem: FC<Props> = ({ actualStepId, stepItem }) => {
    * @returns boolean
    */
   const setCursor = () => {
-    return stepItem.isValid /*  || stepsList[id - 2].saved */
+    return finalStep /*  || stepsList[id - 2].saved */
       ? "cursor-pointer"
       : "cursor-normal";
   };

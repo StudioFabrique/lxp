@@ -34,7 +34,7 @@ const EditParcours = () => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [image, setImage] = useState<string | undefined>(undefined);
-  const { actualStep, stepsList, updateStep, validateStep } =
+  const { actualStep, finalStep, stepsList, updateStep, validateStep } =
     useSteps(stepsParcours);
   const nav = useNavigate();
   const informationsIsValid = useSelector(
@@ -226,6 +226,7 @@ const EditParcours = () => {
             <div className="p-4 rounded-xl w-5/6 bg-secondary/20">
               <Stepper
                 actualStep={actualStep}
+                finalStep={finalStep}
                 stepsList={stepsList}
                 updateStep={updateStep}
               />

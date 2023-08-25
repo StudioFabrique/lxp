@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Step from "../utils/interfaces/step";
 import { sortArray } from "../utils/sortArray";
@@ -6,6 +6,7 @@ import { sortArray } from "../utils/sortArray";
 const useSteps = (steps: Array<Step>) => {
   const [actualStep, setActualStep] = useState<Step>(steps[0]);
   const [stepsList, setStepsList] = useState<Array<Step>>(steps);
+  const [finalStep, setFinalStep] = useState<boolean>(false);
 
   /**
    * définit le step actuel pour afficher le composant correspondant dans la vue
@@ -41,7 +42,14 @@ const useSteps = (steps: Array<Step>) => {
     });
   };
 
-  return { actualStep, stepsList, updateStep, validateStep };
+  // débloque la navigation libre d'une étape à une autre pour que l'utilisateur puisse apporter des corrections
+  useEffect(() => {
+    if (actualStep.id === steps.length) {
+      setFinalStep(true);
+    }
+  }, [actualStep.id, steps]);
+
+  return { actualStep, stepsList, finalStep, updateStep, validateStep };
 };
 
 export default useSteps;
