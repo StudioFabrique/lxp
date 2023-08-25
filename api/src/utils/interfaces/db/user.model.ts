@@ -18,10 +18,10 @@ export interface IUser extends Document {
   city?: string;
   birthDate?: Date;
   phoneNumber?: string;
-  graduations?: IGraduation["id"][];
-  hobbies?: IHobby["id"][];
-  links: ILink["id"][];
-  group?: IGroup["id"][];
+  graduations?: IGraduation["_id"][];
+  hobbies?: IHobby["_id"][];
+  links: ILink["_id"][];
+  group?: IGroup["_id"][];
   roles: IRole["_id"];
   createdAt?: Date;
   updatedAt?: Date;
