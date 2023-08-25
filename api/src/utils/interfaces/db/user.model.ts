@@ -9,13 +9,13 @@ export interface IUser extends Document {
   password?: string;
   roles: IRole["_id"];
   avatar?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   isActive: boolean;
   nickname?: string;
-  address: string;
-  postCode: string;
-  city: string;
+  address?: string;
+  postCode?: string;
+  city?: string;
   birthDate?: Date;
   phoneNumber?: string;
   group?: IGroup["_id"];

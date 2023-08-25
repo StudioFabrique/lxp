@@ -19,7 +19,6 @@ const checkValidatorResult = (
     console.log(checkValues.array());
     return res.status(400).json({ message: badQuery });
   }
-  console.log("validations validés");
   next();
 };
 
