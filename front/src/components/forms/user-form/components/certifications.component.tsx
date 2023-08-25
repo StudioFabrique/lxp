@@ -27,7 +27,11 @@ const Certifications: FC<{
   const handleAddGraduation: MouseEventHandler<HTMLButtonElement> = (
     event: MouseEvent<HTMLButtonElement>
   ) => {
-    if (currentGraduation) {
+    if (
+      currentGraduation.date &&
+      currentGraduation.degree &&
+      currentGraduation.title
+    ) {
       setGraduations((graduations) => [...graduations, currentGraduation]);
     }
   };
@@ -69,68 +73,65 @@ const Certifications: FC<{
     /* attributeChange(event, currentGraduation, setCurrentGraduation); */
   };
 
-  const gridClassName: string =
-    graduations.length > 0 ? "grid-cols-2" : "grid-cols-1";
-
   return (
     <Wrapper>
-      <h2 className="font-bold text-xl">Certification(s)</h2>
-      <div className={`grid ${gridClassName} gap-x-10`}>
-        <div className="flex flex-col gap-y-3">
-          <span>
-            <label>Titre du diplôme</label>
-            <input
-              name="title"
-              className="input input-sm w-full p-[20px] pl-[30px]"
-              type="text"
-              onChange={handleInputChange}
-              defaultValue={currentGraduation.title}
-              autoComplete="off"
-            />
-          </span>
-          <span>
-            <label>Niveau du diplôme</label>
-            <input
-              name="degree"
-              className="input input-sm w-full p-[20px] pl-[30px]"
-              type="text"
-              onChange={handleInputChange}
-              defaultValue={currentGraduation.degree}
-              autoComplete="off"
-            />
-          </span>
-          <span>
-            <label>Date de certification</label>
-            <input
-              name="date"
-              className="input input-sm w-full p-[20px] pl-[30px]"
-              type="date"
-              onChange={handleInputChange}
-              autoComplete="off"
-            />
-          </span>
+      <div className="grid grid-cols-2 gap-x-10">
+        <div className="flex flex-col justify-between">
+          <div className="flex flex-col justify-between gap-y-3">
+            <h2 className="font-bold text-xl">Certification(s)</h2>
+            <span className="flex flex-col gap-y-2">
+              <label>Titre du diplôme</label>
+              <input
+                name="title"
+                className="input input-sm input-bordered focus:outline-none w-full"
+                type="text"
+                onChange={handleInputChange}
+                defaultValue={currentGraduation.title}
+                autoComplete="off"
+              />
+            </span>
+            <span className="flex flex-col gap-y-2">
+              <label>Niveau du diplôme</label>
+              <input
+                name="degree"
+                className="input input-sm input-bordered focus:outline-none w-full"
+                type="text"
+                onChange={handleInputChange}
+                defaultValue={currentGraduation.degree}
+                autoComplete="off"
+              />
+            </span>
+            <span className="flex flex-col gap-y-2">
+              <label>Date de certification</label>
+              <input
+                name="date"
+                className="input input-sm input-bordered focus:outline-none w-full"
+                type="date"
+                onChange={handleInputChange}
+                autoComplete="off"
+              />
+            </span>
+          </div>
           <button
             type="button"
-            className="self-start btn btn-primary md:w-32"
+            className="mt-2 normal-case self-start btn btn-primary"
             onClick={handleAddGraduation}
           >
             Ajouter la certification
           </button>
         </div>
-        {graduations.length > 0 ? (
-          <div className="bg-secondary-content flex flex-col items-center gap-y-4 overflow-y-auto max-h-72 p-3 rounded-xl">
-            {/* La liste des certifications */}
-            {graduations.map((graduation, i) => (
-              <span
-                key={i}
-                className="bg-primary-content rounded-md w-full p-1"
-              >
-                <p>{graduation.date.getFullYear()}</p>
-                <p>{graduation.degree}</p>
-              </span>
-            ))}
-          </div>
-        ) : undefined}
+        <div className="bg-secondary-content flex flex-col items-center gap-y-4 p-5 m-2 rounded-xl md:h-[300px] lg:h-[400px] overflow-y-auto">
+          {/* List of certifications */}
+          {graduations.map((graduation, i) => (
+            <span
+              key={i}
+              className="bg-primary-content rounded-md w-full py-2 pl-5 max-h-[80px]"
+            >
+              <p className="text-lg font-bold">{graduation.title}</p>
+              <p>{graduation.date.getFullYear()}</p>
+            </span>
+          ))}
+        </div>
       </div>
     </Wrapper>
   );

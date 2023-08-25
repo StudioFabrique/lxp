@@ -5,7 +5,6 @@ type Props = {
   children: ReactNode;
   visible?: boolean;
   title: string;
-  buttonTitle?: string;
   id?: string;
   isOpen?: boolean;
   onCloseDrawer?: (id: string) => void;
@@ -18,7 +17,6 @@ const RightSideDrawer: FC<Props> = ({
   id = "my-drawer-4",
   isOpen,
   onCloseDrawer,
-  buttonTitle,
 }) => {
   const checkboxRef = useRef<HTMLInputElement | null>(null);
 

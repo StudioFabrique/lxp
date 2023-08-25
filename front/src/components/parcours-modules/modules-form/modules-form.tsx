@@ -12,12 +12,10 @@ import {
   clearCurrentParcoursModule,
   updateParcoursModule,
 } from "../../../store/redux-toolkit/parcours/parcours-modules";
-import AddButton from "./buttons/add-button.component";
-import EditButton from "./buttons/edit-button.component";
 import DataAdder from "../../UI/data-adder/data-adder.component";
-import { teachersData } from "../../../utils/fixtures/teachers";
 // import { getDBSkills as skillsData } from "../../../utils/fixtures/skills";
 import { Toaster, toast } from "react-hot-toast";
+import { AddIcon1 } from "../../UI/svg/add-icons";
 
 const ModulesForm: FC<{}> = (props) => {
   const currentModuleToEdit: Module | null = useSelector(
@@ -25,6 +23,9 @@ const ModulesForm: FC<{}> = (props) => {
   );
 
   const skillsFromDb = useSelector((state: any) => state.parcoursSkills.skills);
+  const contactsFromDb = useSelector(
+    (state: any) => state.parcoursContacts.initialContacts
+  );
   const dispatch = useDispatch();
 
   const { value: title } = useInput((value) => regexGeneric.test(value));
@@ -32,7 +33,7 @@ const ModulesForm: FC<{}> = (props) => {
   const { value: duration } = useInput((value) => regexNumber.test(value));
   const [imageFile, setImageFile] = useState<File | null>(null);
 
-  const [teachers, setTeachers] = useState<User[]>([]);
+  const [contacts, setContacts] = useState<User[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]); // to replace by redux store data
   const [resetFilter, setResetFilter] = useState<boolean>(false);
 
@@ -45,7 +46,7 @@ const ModulesForm: FC<{}> = (props) => {
     description.reset();
     duration.reset();
     setImageFile(null);
-    setTeachers([]);
+    setContacts([]);
     setSkills([]);
     setResetFilter(true);
     dispatch(clearCurrentParcoursModule());
@@ -59,7 +60,7 @@ const ModulesForm: FC<{}> = (props) => {
       !title.isValid ||
       !description.isValid ||
       !duration.isValid ||
-      teachers.length <= 0 ||
+      contacts.length <= 0 ||
       !imageFile
     ) {
       toast.error("les informations saisies sont incorrects");
@@ -74,7 +75,7 @@ const ModulesForm: FC<{}> = (props) => {
       _id: currentModuleToEdit ? currentModuleToEdit._id : undefined,
       title: title.value,
       description: description.value,
-      teachers: teachers,
+      teachers: contacts,
       skills: skills,
       duration: duration.value,
       imageTemp: imageFile!,
@@ -94,7 +95,7 @@ const ModulesForm: FC<{}> = (props) => {
       description.changeValue(currentModuleToEdit.description);
       duration.changeValue(currentModuleToEdit.duration.toString());
       setImageFile(currentModuleToEdit.imageTemp!);
-      setTeachers(currentModuleToEdit.teachers);
+      setContacts(currentModuleToEdit.teachers);
       setSkills(currentModuleToEdit.skills);
       setResetFilter(true);
     }
@@ -106,7 +107,7 @@ const ModulesForm: FC<{}> = (props) => {
       onSubmit={handleSubmit}
     >
       <Toaster />
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-y-2">
         <label htmlFor="title">Titre de module</label>
         <input
           className="input input-sm w-full"
@@ -118,7 +119,7 @@ const ModulesForm: FC<{}> = (props) => {
         />
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-y-2">
         <label htmlFor="description">Description de module</label>
         <textarea
           className="input input-sm w-full h-20"
@@ -131,13 +132,13 @@ const ModulesForm: FC<{}> = (props) => {
 
       {/* formateurs compo */}
       <DataAdder
-        data={teachers}
-        dataFromDb={teachersData}
-        propertiesToSearch={["firstname", "lastname"]}
-        propertyToFilter="_id"
+        data={contacts}
+        dataFromDb={contactsFromDb}
+        propertiesToSearch={["name"]}
+        propertyToFilter="idMdb"
         resetFilter={resetFilter}
         searchInputPlaceholder="Prénom Nom"
-        setData={setTeachers}
+        setData={setContacts}
         setResetFilter={setResetFilter}
         title="Formateurs de modules"
         transparencyOrder="z-10"
@@ -157,7 +158,7 @@ const ModulesForm: FC<{}> = (props) => {
         transparencyOrder="z-0"
       />
 
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-y-2">
         <label htmlFor="nbHours">Nombre d'heures</label>
         <input
           className="input input-sm w-full"
@@ -169,15 +170,31 @@ const ModulesForm: FC<{}> = (props) => {
         />
       </div>
 
-      <ImageFileUpload maxSize={10 * 1024 * 1024} onSetFile={handleSetImage} />
+      <ImageFileUpload
+        type={2}
+        maxSize={10 * 1024 * 1024}
+        onSetFile={handleSetImage}
+      />
 
-      <div className="flex justify-between">
+      <div className="pt-10 flex justify-between">
         {currentModuleToEdit && (
-          <button type="button" className="btn mt-10" onClick={handleClearEdit}>
+          <button type="button" className="btn" onClick={handleClearEdit}>
             Annuler
           </button>
         )}
-        {currentModuleToEdit ? <EditButton /> : <AddButton />}
+        <button
+          className="btn flex gap-x-4 items-center bg-secondary-focus px-5 py-2 rounded-lg"
+          type="submit"
+        >
+          {currentModuleToEdit ? (
+            <p>Modifier le module</p>
+          ) : (
+            <>
+              <AddIcon1 />
+              <p>Ajouter le module</p>
+            </>
+          )}
+        </button>
       </div>
     </form>
   );

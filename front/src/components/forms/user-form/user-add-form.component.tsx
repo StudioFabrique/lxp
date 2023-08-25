@@ -4,18 +4,18 @@ import {
   regexGeneric,
   regexMail,
   regexNumber,
-  regexPassword,
 } from "../../../utils/constantes";
 import Contact from "./components/contact.component";
 import TypeUtilisateur from "./components/type-utilisateur.component";
 import Certifications from "./components/certifications.component";
 import Presentation from "./components/presentation.component";
 import Informations from "./components/informations.component";
-import Tag from "../../../utils/interfaces/tag";
 import Graduation from "../../../utils/interfaces/graduation";
-import Liens from "./components/liens.component";
 import CreateUserHeader from "../../create-user-header/create-user-header.component";
-import Tags from "../../UI/tags/tags.component";
+import CentreInterets from "./components/centre-interets.component";
+import Links from "../../UI/links/links";
+import { Link } from "../../../utils/interfaces/link";
+import Hobby from "../../../utils/interfaces/hobby";
 
 const UserAddForm: FC<{
   user?: any;
@@ -29,20 +29,15 @@ const UserAddForm: FC<{
 
   const [file, setFile] = useState<File | null>(null);
 
-  const [links, setLinks] = useState<Array<string>>([]);
+  const [links, setLinks] = useState<Array<Link>>([]);
 
   const [typeUtilisateur, setTypeUtilisateur] = useState<number>(0);
 
-  const [tags, setTags] = useState<Array<Tag>>([]);
+  const [hobbies, setHobbies] = useState<Array<Hobby>>([]);
 
   const { value: email } = useInput(
     (value: string) => regexMail.test(value),
     props.user?.email ?? ""
-  );
-
-  const { value: password } = useInput(
-    (value: string) => regexPassword.test(value),
-    props.user?.password ?? ""
   );
 
   const { value: firstname } = useInput(
@@ -55,9 +50,9 @@ const UserAddForm: FC<{
     props.user?.lastname ?? ""
   );
 
-  const { value: pseudo } = useInput(
+  const { value: nickname } = useInput(
     (value: string) => regexGeneric.test(value),
-    props.user?.pseudo ?? ""
+    props.user?.nickname ?? ""
   );
 
   const { value: address } = useInput(
@@ -87,43 +82,53 @@ const UserAddForm: FC<{
 
   //  test la validité du form via le custom hook useInput
   let formIsValid = false;
-  formIsValid = email.isValid && password.isValid;
-
-  const handleSubmitTags = (tags: Array<Tag>) => {
-    setTags(tags);
-  };
+  formIsValid =
+    email.isValid &&
+    firstname.isValid &&
+    lastname.isValid &&
+    (nickname.isValid || nickname.value.length <= 0); /* &&
+    (address.isValid || address == null) &&
+    (city.isValid || city == null) &&
+    (postCode.isValid || postCode) &&
+    (phone.isValid || !phone) &&
+    (description.isValid || !description); */
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (formIsValid) {
       props.onSubmitForm({
         email: email.value.trim(),
-        password: password.value.trim(),
         firstname: firstname.value.trim(),
         lastname: lastname.value.trim(),
-        pseudo: pseudo.value.trim(),
+        description: description.value.trim(),
+        pseudo: nickname.value.trim(),
         address: address.value.trim(),
-        postCode: postCode.value.trim(),
+        postCode: parseInt(postCode.value.trim()),
         city: city.value.trim(),
         birthDate: birthDate,
         graduations: graduations,
         avatar: file,
-        tags: tags,
-        typeUtilisateur: typeUtilisateur,
+        userType: typeUtilisateur,
+        links: links,
+        hobbies: hobbies,
       });
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} autoComplete="off">
+    <form
+      className="flex flex-col gap-y-10"
+      onSubmit={handleSubmit}
+      autoComplete="off"
+    >
       <CreateUserHeader />
-      <div className="grid grid-rows-2 gap-y-5">
+      <div className="flex flex-col gap-y-5">
         <div className="grid grid-cols-3 gap-x-5">
           <Informations
             lastname={lastname}
             firstname={firstname}
             email={email}
-            pseudo={pseudo}
+            nickname={nickname}
             onSetFile={setFile}
           />
           <Contact
@@ -134,12 +139,12 @@ const UserAddForm: FC<{
             phone={phone}
             postCode={postCode}
           />
-          <div className="grid grid-rows-2 gap-y-5">
+          <div className="grid grid-rows-1 gap-y-5">
             <TypeUtilisateur
               typeUtilisateur={typeUtilisateur}
               onSetTypeUtilisateur={setTypeUtilisateur}
             />
-            <Tags title="Centre d'intérêts" onSubmitTags={handleSubmitTags} />
+            <CentreInterets hobbies={hobbies} setHobbies={setHobbies} />
           </div>
         </div>
         <div>
@@ -152,8 +157,7 @@ const UserAddForm: FC<{
               setGraduations={setGraduations}
             />
           </div>
-
-          <Liens links={links} onSetLinks={setLinks} />
+          <Links links={links} onSetLinks={setLinks} />
         </div>
       </div>
     </form>
