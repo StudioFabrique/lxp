@@ -7,6 +7,7 @@ import createManyGraduations from "../../models/graduation/create-many-graduatio
 import { IGraduation } from "../../utils/interfaces/db/graduation";
 import { ILink } from "../../utils/interfaces/db/link";
 import { IHobby } from "../../utils/interfaces/db/hobby";
+import createManyLinks from "../../models/links/create-many-links";
 
 export default async function httpCreateUser(req: Request, res: Response) {
   const userDataRequest: IUser = req.body;
@@ -22,7 +23,7 @@ export default async function httpCreateUser(req: Request, res: Response) {
   console.log(hobbiesDataRequest ?? "no hobbies data");
 
   try {
-    const userResponse = await createUser(userDataRequest, userType); // crée un user + insert une référence mongodb dans prisma
+    const userResponse = await createUser(userDataRequest, userType); // crée un user + insert une référence mongodb dans prisma si le type utilisateur le permet
 
     if (!userResponse) {
       res.status(409).json({ message: alreadyExist });
@@ -36,7 +37,7 @@ export default async function httpCreateUser(req: Request, res: Response) {
     }
 
     if (linksDataRequest) {
-      const linksResponse = await createLinks(
+      const linksResponse = await createManyLinks(
         userResponse!._id,
         linksDataRequest
       ); // insert links in mongodb with user ref _id

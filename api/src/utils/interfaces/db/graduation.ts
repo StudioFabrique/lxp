@@ -12,7 +12,7 @@ const graduationSchema: Schema = new Schema({
   title: { type: String, required: true },
   degree: { type: String, required: true },
   date: { type: Date, required: true },
-  users: { type: mongoose.Types.ObjectId, ref: "User" },
+  users: { type: mongoose.Types.ObjectId, ref: "User", required: true },
 });
 
 const Graduation = mongoose.model<IGraduation>("Graduation", graduationSchema);
