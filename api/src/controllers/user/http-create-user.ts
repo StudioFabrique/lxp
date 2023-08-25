@@ -44,7 +44,7 @@ export default async function httpCreateUser(req: Request, res: Response) {
     }
 
     if (hobbiesDataRequest) {
-      const hobbiesResponse = await createHobbies(
+      const hobbiesResponse = await createManyHobbies(
         userResponse!._id,
         hobbiesDataRequest
       ); // insert hobbies in mongodb with user ref _id

@@ -13,7 +13,7 @@ export interface ILink extends Document {
   url: string;
   type: LinkType;
   alias?: string | null;
-  user?: IUser["id"];
+  user?: IUser["_id"];
 }
 
 const linkSchema = new Schema({
