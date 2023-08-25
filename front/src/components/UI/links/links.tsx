@@ -9,7 +9,7 @@ import {
 } from "react";
 import Wrapper from "../wrapper/wrapper.component";
 import SocialNetworksIconSwitcher from "../svg/social-networks/social-networks-icon-switcher";
-import { Link } from "./link";
+import { Link } from "../../../utils/interfaces/link";
 import DeleteIcon from "../svg/delete-icon.compoenent";
 import { urlIsValid, transformLink } from "./link-transform-service";
 

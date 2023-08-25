@@ -14,7 +14,8 @@ import Graduation from "../../../utils/interfaces/graduation";
 import CreateUserHeader from "../../create-user-header/create-user-header.component";
 import CentreInterets from "./components/centre-interets.component";
 import Links from "../../UI/links/links";
-import { Link } from "../../UI/links/link";
+import { Link } from "../../../utils/interfaces/link";
+import Hobby from "../../../utils/interfaces/hobby";
 
 const UserAddForm: FC<{
   user?: any;
@@ -32,7 +33,7 @@ const UserAddForm: FC<{
 
   const [typeUtilisateur, setTypeUtilisateur] = useState<number>(0);
 
-  const [hobbies, setHobbies] = useState<Array<string>>([]);
+  const [hobbies, setHobbies] = useState<Array<Hobby>>([]);
 
   const { value: email } = useInput(
     (value: string) => regexMail.test(value),

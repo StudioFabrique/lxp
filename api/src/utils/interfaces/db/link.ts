@@ -1,3 +1,6 @@
+import { Document } from "mongoose";
+import { IUser } from "./user.model";
+
 export type LinkType =
   | "website"
   | "twitter"
@@ -6,8 +9,9 @@ export type LinkType =
   | "instagram"
   | "linkedin";
 
-export interface Link {
+export interface ILink extends Document {
   url: string;
   type: LinkType;
   alias?: string | null;
+  user?: IUser;
 }
