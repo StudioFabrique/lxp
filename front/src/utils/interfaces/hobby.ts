@@ -1,9 +1,7 @@
 import User from "./user";
 
-export default interface Graduation {
+export default interface Hobby {
   id?: number;
   title: string;
-  degree: string;
-  date: Date;
   user?: User;
 }

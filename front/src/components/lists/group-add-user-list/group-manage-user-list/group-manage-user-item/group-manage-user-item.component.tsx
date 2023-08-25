@@ -3,7 +3,7 @@ import User from "../../../../../utils/interfaces/user";
 import { AvatarSmall } from "../../../../UI/avatar/avatar.component";
 import toTitleCase from "../../../../../utils/toTitleCase";
 import { SelectionButton } from "./buttons.component";
-import AddButton from "../buttons/add-button.component";
+import { AddIcon2 } from "../../../../UI/svg/add-icons";
 
 const GroupManageUserItem: FC<{
   user: User;
@@ -32,7 +32,13 @@ const GroupManageUserItem: FC<{
         <p>{toTitleCase(user.firstname)}</p>
         <p>{toTitleCase(user.lastname)}</p>
       </span>
-      <AddButton onClick={handleAddUserInstantly} />
+      <button
+        type="button"
+        className="btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary"
+        onClick={handleAddUserInstantly}
+      >
+        <AddIcon2 />
+      </button>
     </div>
   );
 };
