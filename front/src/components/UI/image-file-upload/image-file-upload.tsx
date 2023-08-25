@@ -19,8 +19,7 @@ const ImageFileUpload: FC<{
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const selectedFile = event.target.files[0];
-      if (selectedFile) {
-        console.log("selected");
+    if (selectedFile && selectedFile !== undefined) {
         if (validateImageFile(selectedFile, maxSize)) {
           setFile(selectedFile);
         }

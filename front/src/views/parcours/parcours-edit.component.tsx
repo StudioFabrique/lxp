@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -9,23 +9,29 @@ import { parcoursInformationsAction } from "../../store/redux-toolkit/parcours/p
 import useHttp from "../../hooks/use-http";
 import useSteps from "../../hooks/use-steps";
 import { stepsParcours } from "../../config/steps/steps-parcours";
-import { tagsAction } from "../../store/tags";
+import { tagsAction } from "../../store/redux-toolkit/tags";
 import { parcoursContactsAction } from "../../store/redux-toolkit/parcours/parcours-contacts";
 import Loader from "../../components/UI/loader";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import ImageHeader from "../../components/image-header/image-header";
-import ParcoursInformations from "../../components/edit-parcours/parcours-informations";
 import Error404 from "../../components/error404";
-import Skills from "../../components/skills/skills.component";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 import ParcoursModules from "../../components/parcours-modules/parcours-modules.component";
 import Stepper from "../../components/UI/stepper.-component/stepper.-component";
+import ParcoursInformations from "../../components/edit-parcours/informations/parcours-informations";
+import ParcoursSection from "../../components/edit-parcours/parcours-section";
+import SkillsList from "../../components/edit-parcours/skills/skills-list.component";
+import ImportSkills from "../../components/edit-parcours/skills/import-skills.component";
+import ImportObjectives from "../../components/edit-parcours/objectives/import-objectives";
+import ObjectivesList from "../../components/edit-parcours/objectives/objectives-list";
+import { parcoursObjectivesAction } from "../../store/redux-toolkit/parcours/parcours-objectives";
 
 let initialState = true;
 
 const EditParcours = () => {
   const { id } = useParams();
-  const { sendRequest, error, isLoading } = useHttp();
+  const { sendRequest, error } = useHttp();
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [image, setImage] = useState<string | undefined>(undefined);
   const { actualStep, stepsList, updateStep, validateStep } =
@@ -35,14 +41,16 @@ const EditParcours = () => {
     (state: any) => state.parcoursInformations.isValid
   );
   const skills = useSelector((state: any) => state.parcoursSkills.skills);
+  const objectives = useSelector(
+    (state: any) => state.parcoursObjectives.objectives
+  );
 
   /**
    * télécharge les données du parcours depuis la bdd et initialise les différentes propriétés du parcours
    */
   useEffect(() => {
     const processData = (data: Parcours) => {
-      console.log("parcours", data);
-
+      // mets en mémoire l'id du parcours pour le rendre disponible aux éléments de la vue
       dispatch(parcoursAction.setParcoursId(data.id));
       dispatch(
         parcoursInformationsAction.updateParcoursInfos({
@@ -90,11 +98,23 @@ const EditParcours = () => {
           )
         );
       }
+
       if (data.bonusSkills.length > 0) {
         dispatch(parcoursSkillsAction.setSkillsList(data.bonusSkills));
       }
+
+      if (data.objectives.length > 0) {
+        dispatch(
+          parcoursObjectivesAction.addImportedObjectivesToObjectives(
+            data.objectives
+          )
+        );
+      }
+
+      setIsLoading(false);
     };
     if (initialState) {
+      setIsLoading(true);
       sendRequest(
         {
           path: `/parcours/parcours-by-id/${id}`,
@@ -141,18 +161,39 @@ const EditParcours = () => {
     if (id < actualStep.id || id === 1) {
       updateStep(id);
     } else if (checkStep(actualStep.id) && checkStep(id - 1)) {
-      console.log("all good");
-
       validateStep(actualStep.id, checkStep(actualStep.id));
       updateStep(id);
     }
   };
+
+  /**
+   * enregistrement de l'image du parcours dans la bdd
+   */
+  const updateImage = useCallback(
+    (image: File) => {
+      const formData = new FormData();
+      formData.append("parcoursId", id!);
+      formData.append("image", image);
+      const processData = (_data: any) => {};
+      sendRequest(
+        {
+          path: "/parcours/update-image",
+          method: "put",
+          body: formData,
+        },
+        processData
+      );
+    },
+    [id, sendRequest]
+  );
 
   const checkStep = (id: number) => {
     switch (id) {
       case 1:
         return informationsIsValid;
       case 2:
+        return objectives.length > 0;
+      case 3:
         return skills.length > 0;
       default:
         return false;
@@ -163,6 +204,12 @@ const EditParcours = () => {
     updateStep(actualStep.id - 1);
   };
 
+  const handleResetImportedSkills = () => {
+    dispatch(parcoursSkillsAction.importSkills([]));
+  };
+
+  const handleResetImportedObjectives = () => {};
+
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
       {isLoading ? (
@@ -170,7 +217,11 @@ const EditParcours = () => {
       ) : error.length === 0 ? (
         <FadeWrapper>
           <div className="w-full flex flex-col items-center gap-y-8">
-            <ImageHeader image={image} />
+            <ImageHeader
+              defaultImage="/images/parcours-default.webp"
+              image={image}
+              onUpdateImage={updateImage}
+            />
             <div className="p-4 rounded-xl w-5/6 bg-secondary/20">
               <Stepper
                 actualStep={actualStep}
@@ -183,8 +234,25 @@ const EditParcours = () => {
             {actualStep.id === 1 ? (
               <ParcoursInformations parcoursId={id} />
             ) : null}
-            {actualStep.id === 2 ? <Skills /> : null}
-            {actualStep.id === 3 ? <ParcoursModules /> : null}
+            {actualStep.id === 2 ? (
+              <ParcoursSection
+                title="Importer une liste d'objectifs"
+                onResetList={handleResetImportedObjectives}
+              >
+                <ObjectivesList />
+                <ImportObjectives onCloseDrawer={() => {}} />
+              </ParcoursSection>
+            ) : null}
+            {actualStep.id === 3 ? (
+              <ParcoursSection
+                title="Importer des compétences"
+                onResetList={handleResetImportedSkills}
+              >
+                <SkillsList />
+                <ImportSkills onCloseDrawer={() => {}} />
+              </ParcoursSection>
+            ) : null}
+            {actualStep.id === 4 ? <ParcoursModules /> : null}
           </div>
           <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">
             {actualStep.id === 1 ? (

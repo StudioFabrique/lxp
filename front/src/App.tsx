@@ -1,6 +1,5 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
-import Home from "./views/home/home.component";
 import ContextProvider from "./store/context.store";
 import RootLayout from "./views/home/root-layout.component";
 import AdminLayout from "./views/admin/admin-layout.component";
@@ -15,12 +14,23 @@ import ParcoursLayout from "./views/parcours/parcours-layout.component";
 import ParcoursHome from "./views/parcours/parcours-home.component";
 import ParcoursAdd from "./views/parcours/parcours-add.component";
 import EditParcours from "./views/parcours/parcours-edit.component";
+import StudentLayout from "./views/student/student-layout.component";
+import StudentHome from "./views/student";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
-    children: [{ index: true, element: <Home /> }],
+  },
+  {
+    path: "student",
+    element: <StudentLayout />,
+    children: [
+      {
+        index: true,
+        element: <StudentHome />,
+      },
+    ],
   },
   {
     path: "admin",

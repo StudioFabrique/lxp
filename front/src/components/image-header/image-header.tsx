@@ -1,36 +1,40 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { FC, useCallback, useEffect, useState } from "react";
+
+/**
+ * pour la mise à jour de l'image en bdd, ne pas provoquer de rerender durant la requête,
+ * en utilisant un loader par exemple. Sinon la requête sera bien effectuée (sauf problème coté réseau
+ * ou serveur) mais l'image ne sera pas mise à jour dans la vue
+ */
+
+import React, { FC, useEffect, useState } from "react";
 
 import ImageFileUpload from "./image-file-upload";
 import { useSelector } from "react-redux";
-import defaultImage from "../../assets/images/parcours-default.jpg";
 import ParcoursHeaderIcon from "../UI/svg/parcours-header-icon";
-import useHttp from "../../hooks/use-http";
 import { compressImage } from "../../helpers/compress-image";
 
 type Props = {
   image?: string;
+  defaultImage: string;
+  onUpdateImage: (image: File) => void;
 };
 
-const ImageHeader: FC<Props> = ({ image }) => {
+const ImageHeader: FC<Props> = ({ defaultImage, image, onUpdateImage }) => {
   const [bgImage, setBgImage] = useState<any | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const parcours = useSelector((state: any) => state.parcours);
   const parcoursInformations = useSelector(
     (state: any) => state.parcoursInformations
   );
-  const { sendRequest } = useHttp();
 
   // en l'absence de props affiche une image par défaut
   useEffect(() => {
-    console.log({ image });
-
     if (!image) {
       setBgImage(defaultImage);
     } else {
       setBgImage(image);
     }
-  }, [image]);
+  }, [defaultImage, image]);
 
   const classImage: React.CSSProperties = {
     backgroundImage: `url('${bgImage}')`,
@@ -50,40 +54,18 @@ const ImageHeader: FC<Props> = ({ image }) => {
     }
   };
 
-  const updateImage = useCallback(
-    (image: File) => {
-      const formData = new FormData();
-      formData.append("parcoursId", parcours.id);
-      formData.append("image", image);
-
-      const processData = (data: any) => {
-        console.log(data);
-      };
-
-      sendRequest(
-        {
-          path: "/parcours/update-image",
-          method: "put",
-          body: formData,
-        },
-        processData
-      );
-    },
-    [parcours.id, sendRequest]
-  );
-
   // affichage de la nouvelle image
   useEffect(() => {
     if (file) {
-      updateImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         const imageString = reader.result as string;
         setBgImage(imageString);
       };
       reader.readAsDataURL(file);
+      onUpdateImage(file);
     }
-  }, [file, updateImage]);
+  }, [file, onUpdateImage]);
 
   return (
     <>
