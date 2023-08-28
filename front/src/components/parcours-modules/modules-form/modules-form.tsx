@@ -16,8 +16,14 @@ import DataAdder from "../../UI/data-adder/data-adder.component";
 // import { getDBSkills as skillsData } from "../../../utils/fixtures/skills";
 import { Toaster, toast } from "react-hot-toast";
 import { AddIcon1 } from "../../UI/svg/add-icons";
+import { useParams } from "react-router-dom";
+import useHttp from "../../../hooks/use-http";
 
-const ModulesForm: FC<{}> = (props) => {
+const ModulesForm: FC<{}> = () => {
+  const { id: parcoursId } = useParams();
+
+  const { sendRequest } = useHttp();
+
   const currentModuleToEdit: Module | null = useSelector(
     (state: any) => state.parcoursModule.currentModule
   );
@@ -60,7 +66,7 @@ const ModulesForm: FC<{}> = (props) => {
       !title.isValid ||
       !description.isValid ||
       !duration.isValid ||
-      contacts.length <= 0 ||
+      skills.length <= 0 ||
       !imageFile
     ) {
       toast.error("les informations saisies sont incorrects");
@@ -70,23 +76,37 @@ const ModulesForm: FC<{}> = (props) => {
       toast.error("Le fichier de l'image doit être inférieur à 10 mb");
       return;
     }
-    console.log("request send");
     const module: Module = {
-      _id: currentModuleToEdit ? currentModuleToEdit._id : undefined,
+      id: currentModuleToEdit?.id,
       title: title.value,
       description: description.value,
       teachers: contacts,
       skills: skills,
       duration: duration.value,
-      imageTemp: imageFile!,
-      imageUrl: URL.createObjectURL(imageFile!),
+      /* imageTemp: imageFile!,
+      imageUrl: URL.createObjectURL(imageFile!), */
     };
-    dispatch(
-      currentModuleToEdit
-        ? updateParcoursModule(module)
-        : addParcoursModule(module)
+
+    const applyData = (data: any) => {
+      if (data) {
+        dispatch(
+          currentModuleToEdit
+            ? updateParcoursModule(module)
+            : addParcoursModule(module)
+        );
+        handleClearEdit();
+      }
+    };
+
+    // do the request
+    sendRequest(
+      {
+        path: "",
+        method: currentModuleToEdit ? "put" : "post",
+        body: { module: module, parcoursId: parcoursId },
+      },
+      applyData
     );
-    handleClearEdit();
   };
 
   useEffect(() => {

@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
-import User from "./utils/interfaces/db/user.model";
+import User from "./utils/interfaces/db/user";
 import Role from "./utils/interfaces/db/role";
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;

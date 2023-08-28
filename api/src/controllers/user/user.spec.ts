@@ -3,7 +3,7 @@ import app from "../../app";
 import dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
-import User from "../../utils/interfaces/db/user.model";
+import User from "../../utils/interfaces/db/user";
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/lxp-tests";
 
