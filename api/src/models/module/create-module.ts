@@ -1,15 +1,6 @@
 import { prisma } from "../../utils/db";
 
-export default async function createModule(
-  module: {
-    title: string;
-    description: string;
-    image: Buffer;
-    duration: number;
-    rating: number;
-  },
-  parcoursId: number
-) {
+export default async function createModule(module: any, parcoursId: number) {
   try {
     const createdModule = await prisma.module.create({
       data: module, // Create the module
@@ -25,9 +16,11 @@ export default async function createModule(
         },
       },
     });
-
-    console.log("Module associé au parcours avec succès:", createdModule);
-    return createdModule;
+    if (createdModule && createdModulesOnParcours) {
+      console.log("Module associé au parcours avec succès:", createdModule);
+      return createdModule;
+    }
+    return null;
   } catch (error) {
     console.error("Erreur lors de l'association du module au parcours:", error);
     return null;
