@@ -4,6 +4,7 @@ let prisma: PrismaClient;
 
 declare global {
   var prisma: PrismaClient | undefined;
+}
 
 // This is needed because in development we don't want to restart
 // the server with every change, but we want to make sure we don't

@@ -7,7 +7,7 @@ import {
 } from "../../../utils/constantes";
 import Contact from "./components/contact.component";
 import TypeUtilisateur from "./components/type-utilisateur.component";
-import Certifications from "./components/certifications.component";
+import Certifications from "./components/certifications/certifications";
 import Presentation from "./components/presentation.component";
 import Informations from "./components/informations.component";
 import Graduation from "../../../utils/interfaces/graduation";
