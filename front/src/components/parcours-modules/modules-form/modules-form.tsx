@@ -105,7 +105,7 @@ const ModulesForm: FC<{}> = () => {
         body: {
           module: module,
           parcoursId: parcoursId,
-          imageFile: imageFile,
+          // imageFile: imageFile,
         },
       },
       applyData
