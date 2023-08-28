@@ -5,7 +5,7 @@ export default interface Module {
   id?: number;
   title: string;
   description: string;
-  teachers: Array<User>;
+  contacts: Array<User>;
   skills: Array<Skill>;
   duration: number;
   imageUrl?: string;

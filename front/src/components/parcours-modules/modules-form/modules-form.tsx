@@ -58,7 +58,7 @@ const ModulesForm: FC<{}> = () => {
     dispatch(clearCurrentParcoursModule());
   };
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (
     event: FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
@@ -80,7 +80,7 @@ const ModulesForm: FC<{}> = () => {
       id: currentModuleToEdit?.id,
       title: title.value,
       description: description.value,
-      teachers: contacts,
+      contacts: contacts,
       skills: skills,
       duration: duration.value,
       /* imageTemp: imageFile!,
@@ -88,22 +88,25 @@ const ModulesForm: FC<{}> = () => {
     };
 
     const applyData = (data: any) => {
-      if (data) {
-        dispatch(
-          currentModuleToEdit
-            ? updateParcoursModule(module)
-            : addParcoursModule(module)
-        );
-        handleClearEdit();
-      }
+      console.log(data);
+      dispatch(
+        currentModuleToEdit
+          ? updateParcoursModule(module)
+          : addParcoursModule(module)
+      );
+      handleClearEdit();
     };
 
     // do the request
     sendRequest(
       {
-        path: "",
+        path: "/module",
         method: currentModuleToEdit ? "put" : "post",
-        body: { module: module, parcoursId: parcoursId },
+        body: {
+          module: module,
+          parcoursId: parcoursId,
+          imageFile: await imageFile.arrayBuffer(),
+        },
       },
       applyData
     );
@@ -115,7 +118,7 @@ const ModulesForm: FC<{}> = () => {
       description.changeValue(currentModuleToEdit.description);
       duration.changeValue(currentModuleToEdit.duration.toString());
       setImageFile(currentModuleToEdit.imageTemp!);
-      setContacts(currentModuleToEdit.teachers);
+      setContacts(currentModuleToEdit.contacts);
       setSkills(currentModuleToEdit.skills);
       setResetFilter(true);
     }
