@@ -1,7 +1,7 @@
 import { Document, Schema, model } from "mongoose";
 //import { IStudent } from "./student/student.model";
 import { IRole } from "./role";
-import { IUser } from "./user.model";
+import { IUser } from "./user";
 
 export interface IGroup extends Document {
   name: string;

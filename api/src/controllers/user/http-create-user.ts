@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { alreadyExist, creationSuccessfull } from "../../utils/constantes";
 import createUser from "../../models/user/create-user";
 import { serverIssue } from "../../utils/constantes";
-import { IUser } from "../../utils/interfaces/db/user.model";
+import { IUser } from "../../utils/interfaces/db/user";
 import createManyGraduations from "../../models/graduation/create-many-graduations";
 import { IGraduation } from "../../utils/interfaces/db/graduation";
 import { ILink } from "../../utils/interfaces/db/link";
