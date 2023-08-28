@@ -1,13 +1,24 @@
-import { FC, Ref } from "react";
+import { Dispatch, FC, Ref, RefObject, SetStateAction } from "react";
 
 const Item: FC<{
   item: any;
   propertiesToSearch: string[];
   propertyToFilter: string;
+  inputRef: RefObject<HTMLInputElement>;
+  setInputValue: Dispatch<SetStateAction<string>>;
   onAddItem: (filter: any) => void;
-}> = ({ item, propertiesToSearch, propertyToFilter, onAddItem }) => {
+}> = ({
+  item,
+  propertiesToSearch,
+  propertyToFilter,
+  inputRef,
+  setInputValue,
+  onAddItem,
+}) => {
   const handleAddItem = () => {
     onAddItem(item[propertyToFilter]);
+    setInputValue("");
+    inputRef.current?.focus();
   };
 
   return (
