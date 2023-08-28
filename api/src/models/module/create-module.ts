@@ -3,8 +3,32 @@ import { prisma } from "../../utils/db";
 export default async function createModule(module: any, parcoursId: number) {
   try {
     const createdModule = await prisma.module.create({
-      data: module, // Create the module
+      data: {
+        title: module.title,
+        description: module.title,
+        duration: module.duration,
+        image: module.image,
+      }, // Create the module
     });
+
+    const contacts: any[] = module.contacts;
+    const skills: any[] = module.skills;
+
+    const contactsLink: { contactId: number; moduleId: number }[] =
+      contacts.map((contact) => {
+        return { contactId: contact.id, moduleId: createdModule.id };
+      });
+    const skillsLink: { skillId: number; moduleId: number }[] = skills.map(
+      (skill) => {
+        return { skillId: skill.id, moduleId: createdModule.id };
+      }
+    );
+
+    await prisma.contactsOnModule.createMany({
+      data: contactsLink,
+    });
+
+    await prisma.skillsOnModule.createMany({ data: skillsLink });
 
     const createdModulesOnParcours = await prisma.modulesOnParcours.create({
       data: {
