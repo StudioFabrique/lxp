@@ -10,9 +10,11 @@ import {
   SetStateAction,
   useState,
 } from "react";
-import Wrapper from "../../../UI/wrapper/wrapper.component";
-import Graduation from "../../../../utils/interfaces/graduation";
+import Wrapper from "../../../../UI/wrapper/wrapper.component";
+import Graduation from "../../../../../utils/interfaces/graduation";
 import { toast } from "react-hot-toast";
+import CertificationItem from "./certification-item";
+import { addIdToObject } from "../../../../../utils/add-id-to-objects";
 
 const Certifications: FC<{
   graduations: Array<Graduation>;
@@ -24,16 +26,22 @@ const Certifications: FC<{
     degree: "",
   });
 
-  const handleAddGraduation: MouseEventHandler<HTMLButtonElement> = (
-    event: MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleAddGraduation = () => {
     if (
       currentGraduation.date &&
       currentGraduation.degree &&
       currentGraduation.title
     ) {
-      setGraduations((graduations) => [...graduations, currentGraduation]);
+      setGraduations((graduations) =>
+        addIdToObject([...graduations, currentGraduation])
+      );
     }
+  };
+
+  const handleDeleteGraduation = (id: number) => {
+    setGraduations((graduations) =>
+      graduations.filter((graduation) => graduation.id !== id)
+    );
   };
 
   /* 
@@ -122,14 +130,12 @@ const Certifications: FC<{
         </div>
         <div className="bg-secondary-content flex flex-col items-center gap-y-4 p-5 m-2 rounded-xl md:h-[300px] lg:h-[400px] overflow-y-auto">
           {/* List of certifications */}
-          {graduations.map((graduation, i) => (
-            <span
-              key={i}
-              className="bg-primary-content rounded-md w-full py-2 pl-5 max-h-[80px]"
-            >
-              <p className="text-lg font-bold">{graduation.title}</p>
-              <p>{graduation.date.getFullYear()}</p>
-            </span>
+          {graduations.map((graduation) => (
+            <CertificationItem
+              key={graduation.id}
+              onDelete={handleDeleteGraduation}
+              graduation={graduation}
+            />
           ))}
         </div>
       </div>
