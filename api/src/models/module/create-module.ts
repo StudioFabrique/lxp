@@ -7,8 +7,8 @@ export default async function createModule(module: any, parcoursId: number) {
         title: module.title,
         description: module.title,
         duration: module.duration,
-        image: module.image,
-      }, // Create the module
+        // image: module.image,
+      },
     });
 
     const contacts: any[] = module.contacts;
@@ -18,6 +18,7 @@ export default async function createModule(module: any, parcoursId: number) {
       contacts.map((contact) => {
         return { contactId: contact.id, moduleId: createdModule.id };
       });
+
     const skillsLink: { skillId: number; moduleId: number }[] = skills.map(
       (skill) => {
         return { skillId: skill.id, moduleId: createdModule.id };

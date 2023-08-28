@@ -47,7 +47,7 @@ model Module {
   id          Int                 @id @default(autoincrement())
   title       String              @unique
   description String
-  image       Bytes
+  // image       Bytes
   duration    Int
   rating      Float?
   createdAt   DateTime            @default(now())
