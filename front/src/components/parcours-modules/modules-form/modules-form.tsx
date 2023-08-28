@@ -58,7 +58,7 @@ const ModulesForm: FC<{}> = () => {
     dispatch(clearCurrentParcoursModule());
   };
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (
+  const handleSubmit: FormEventHandler<HTMLFormElement> = (
     event: FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
@@ -82,7 +82,7 @@ const ModulesForm: FC<{}> = () => {
       description: description.value,
       contacts: contacts,
       skills: skills,
-      duration: duration.value,
+      duration: parseInt(duration.value),
       /* imageTemp: imageFile!,
       imageUrl: URL.createObjectURL(imageFile!), */
     };
@@ -105,7 +105,7 @@ const ModulesForm: FC<{}> = () => {
         body: {
           module: module,
           parcoursId: parcoursId,
-          imageFile: await imageFile.arrayBuffer(),
+          imageFile: imageFile,
         },
       },
       applyData
