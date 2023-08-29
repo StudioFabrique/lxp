@@ -27,7 +27,7 @@ export default async function createModule(
 
     const existingBonusSkillsId = module.skills.map((prismaBonusSkills) => {
       return {
-        skillId: prismaBonusSkills.id,
+        bonusSkillId: prismaBonusSkills.id,
       };
     });
 
