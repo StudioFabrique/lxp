@@ -6,7 +6,7 @@ export default async function createModule(
     description: string;
     duration: number;
     contacts: any[];
-    skills: any[];
+    bonusSkills: any[];
   },
   parcoursId: number
 ) {
@@ -25,11 +25,13 @@ export default async function createModule(
       };
     });
 
-    const existingBonusSkillsId = module.skills.map((prismaBonusSkills) => {
-      return {
-        bonusSkillId: prismaBonusSkills.id,
-      };
-    });
+    const existingBonusSkillsId = module.bonusSkills.map(
+      (prismaBonusSkills) => {
+        return {
+          bonusSkillId: prismaBonusSkills.id,
+        };
+      }
+    );
 
     console.log(existingContactsId);
     console.log(existingBonusSkillsId);
