@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { alreadyExist, creationSuccessfull } from "../../utils/constantes";
 import { serverIssue } from "../../utils/constantes";
-import { IUser } from "../../utils/interfaces/db/user.model";
+import { IUser } from "../../utils/interfaces/db/user";
 import createManyUsers from "../../models/user/create-many-users";
 
 export default async function httpCreateManyUser(req: Request, res: Response) {

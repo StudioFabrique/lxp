@@ -1,5 +1,5 @@
 import Role from "../../utils/interfaces/db/role";
-import User, { IUser } from "../../utils/interfaces/db/user.model";
+import User, { IUser } from "../../utils/interfaces/db/user";
 import bcrypt from "bcrypt";
 
 async function postTeacher(teacher: IUser) {

@@ -1,4 +1,4 @@
-import User, { IUser } from "../../utils/interfaces/db/user.model";
+import User, { IUser } from "../../utils/interfaces/db/user";
 
 export default async function createManyUsers(
   users: IUser[]
