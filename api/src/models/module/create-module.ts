@@ -11,7 +11,7 @@ export default async function createModule(module: any, parcoursId: number) {
       },
     });
 
-    const contacts: any[] = module.contacts;
+    /* const contacts: any[] = module.contacts;
     const skills: any[] = module.skills;
 
     const contactsLink: { contactId: number; moduleId: number }[] =
@@ -29,7 +29,7 @@ export default async function createModule(module: any, parcoursId: number) {
       data: contactsLink,
     });
 
-    await prisma.skillsOnModule.createMany({ data: skillsLink });
+    await prisma.skillsOnModule.createMany({ data: skillsLink }); */
 
     const createdModulesOnParcours = await prisma.modulesOnParcours.create({
       data: {

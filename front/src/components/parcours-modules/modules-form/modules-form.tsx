@@ -104,7 +104,7 @@ const ModulesForm: FC<{}> = () => {
         method: currentModuleToEdit ? "put" : "post",
         body: {
           module: module,
-          parcoursId: parcoursId,
+          parcoursId: parseInt(parcoursId!),
           // imageFile: imageFile,
         },
       },
