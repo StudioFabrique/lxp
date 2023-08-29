@@ -6,7 +6,7 @@ export default interface Module {
   title: string;
   description: string;
   contacts: Array<User>;
-  skills: Array<Skill>;
+  bonusSkills: Array<Skill>;
   duration: number;
   imageUrl?: string;
   imageTemp?: File;

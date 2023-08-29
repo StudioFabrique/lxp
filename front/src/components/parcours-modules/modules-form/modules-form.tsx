@@ -81,7 +81,7 @@ const ModulesForm: FC<{}> = () => {
       title: title.value,
       description: description.value,
       contacts: contacts,
-      skills: skills,
+      bonusSkills: skills,
       duration: parseInt(duration.value),
       /* imageTemp: imageFile!,
       imageUrl: URL.createObjectURL(imageFile!), */
@@ -119,7 +119,7 @@ const ModulesForm: FC<{}> = () => {
       duration.changeValue(currentModuleToEdit.duration.toString());
       setImageFile(currentModuleToEdit.imageTemp!);
       setContacts(currentModuleToEdit.contacts);
-      setSkills(currentModuleToEdit.skills);
+      setSkills(currentModuleToEdit.bonusSkills);
       setResetFilter(true);
     }
   }, [currentModuleToEdit]);
