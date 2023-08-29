@@ -1,27 +1,47 @@
 import { prisma } from "../../utils/db";
 
 export default async function createModule(
-  module: { title: string; description: string; duration: number },
+  module: {
+    title: string;
+    description: string;
+    duration: number;
+    contacts: any[];
+    skills: any[];
+  },
   parcoursId: number
 ) {
   try {
-    const createdModule = await prisma.module.create({
-      data: { ...module, parcours: { connect: { id: parcoursId } } },
+    const existingContactsId = (
+      await prisma.contact.findMany({
+        where: {
+          idMdb: {
+            in: module.contacts.map((item: any) => item.idMdb),
+          },
+        },
+      })
+    ).map((prismaContacts) => {
+      return {
+        contactId: prismaContacts.id,
+      };
     });
 
-    /* const contacts: any[] = module.contacts;
-    const skills: any[] = module.skills;
+    const existingBonusSkillsId = module.skills.map((prismaBonusSkills) => {
+      return {
+        skillId: prismaBonusSkills.id,
+      };
+    });
 
-    const contactsLink: { contactId: number; moduleId: number }[] =
-      contacts.map((contact) => {
-        return { contactId: contact.id, moduleId: createdModule.id };
-      });
+    console.log(existingContactsId);
+    console.log(existingBonusSkillsId);
 
-    const skillsLink: { skillId: number; moduleId: number }[] = skills.map(
-      (skill) => {
-        return { skillId: skill.id, moduleId: createdModule.id };
-      }
-    ); */
+    const createdModule = await prisma.module.create({
+      data: {
+        ...module,
+        contacts: { createMany: { data: existingContactsId } },
+        bonusSkills: { createMany: { data: existingBonusSkillsId } },
+        parcours: { connect: { id: parcoursId } },
+      },
+    });
 
     if (createdModule) {
       console.log("Module associé au parcours avec succès:", createdModule);
