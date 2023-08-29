@@ -1,14 +1,12 @@
 import { prisma } from "../../utils/db";
 
-export default async function createModule(module: any, parcoursId: number) {
+export default async function createModule(
+  module: { title: string; description: string; duration: number },
+  parcoursId: number
+) {
   try {
     const createdModule = await prisma.module.create({
-      data: {
-        title: module.title,
-        description: module.title,
-        duration: module.duration,
-        // image: module.image,
-      },
+      data: { ...module, parcours: { connect: { id: parcoursId } } },
     });
 
     /* const contacts: any[] = module.contacts;
@@ -23,25 +21,9 @@ export default async function createModule(module: any, parcoursId: number) {
       (skill) => {
         return { skillId: skill.id, moduleId: createdModule.id };
       }
-    );
+    ); */
 
-    await prisma.contactsOnModule.createMany({
-      data: contactsLink,
-    });
-
-    await prisma.skillsOnModule.createMany({ data: skillsLink }); */
-
-    const createdModulesOnParcours = await prisma.modulesOnParcours.create({
-      data: {
-        module: {
-          connect: { id: createdModule.id }, // Connect the module to the association
-        },
-        parcours: {
-          connect: { id: parcoursId }, // Connect the parcours to the association
-        },
-      },
-    });
-    if (createdModule && createdModulesOnParcours) {
+    if (createdModule) {
       console.log("Module associé au parcours avec succès:", createdModule);
       return createdModule;
     }
