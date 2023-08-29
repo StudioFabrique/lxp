@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { IUser } from "./user.model";
+import { IUser } from "./user";
 
 export type LinkType =
   | "website"

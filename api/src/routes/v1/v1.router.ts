@@ -7,8 +7,9 @@ import parcoursRouter from "./parcours/parcours.router";
 import skillsRouter from "./skills.router";
 import tagRouter from "./tag.router";
 import formationRouter from "./formation.router";
-import bonusSkillRouter from "./bonus-skill.ts/bonus-skill.router";
 import objectiveRouter from "./objective.router";
+import moduleRouter from "./module.router";
+import bonusSkillRouter from "./bonus-skill/bonus-skill.router";
 
 const v1Router = express.Router();
 
@@ -21,5 +22,6 @@ v1Router.use("/tag", tagRouter);
 v1Router.use("/formation", formationRouter);
 v1Router.use("/bonus-skill", bonusSkillRouter);
 v1Router.use("/objective", objectiveRouter);
+v1Router.use("/module", moduleRouter);
 
 export default v1Router;

@@ -1,5 +1,5 @@
 import Group from "../../utils/interfaces/db/group";
-import User from "../../utils/interfaces/db/user.model";
+import User from "../../utils/interfaces/db/user";
 
 async function getUsersStats() {
   const totalUsers = await User.count({});

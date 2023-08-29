@@ -252,7 +252,7 @@ const EditParcours = () => {
                 <ImportSkills onCloseDrawer={() => {}} />
               </ParcoursSection>
             ) : null}
-            {actualStep.id === 4 ? <ParcoursModules /> : null}
+            {actualStep.id === 4 && id ? <ParcoursModules /> : null}
           </div>
           <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">
             {actualStep.id === 1 ? (

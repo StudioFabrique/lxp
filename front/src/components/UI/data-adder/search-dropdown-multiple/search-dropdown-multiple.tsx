@@ -3,6 +3,7 @@ import {
   ChangeEventHandler,
   FC,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { filterResult, searchResult } from "./filter";
@@ -32,8 +33,10 @@ const SearchDropdownMultiple: FC<{
   const [inputValue, setInputValue] = useState<string>("");
   const [itemsAvailables, setItemsAvailables] = useState<any[]>([]);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const handleFocus = () => {
-    if (itemsAvailables.length > 0) {
+    if (itemsAvailables.length > 0 && inputValue.length > 0) {
       setIsOpen(true);
     }
   };
@@ -89,12 +92,14 @@ const SearchDropdownMultiple: FC<{
     <div className={`flex items-center gap-x-2 w-full ${transparencyOrder}`}>
       <div className="dropdown dropdown-bottom dropdown-end flex gap-y-4 w-full">
         <input
+          ref={inputRef}
           type="search"
           name="enteredTagValue"
           placeholder={placeHolder}
           className="input input-bordered input-sm w-full"
           onChange={handleInputChange}
           defaultValue={inputValue}
+          value={inputValue}
           onFocus={handleFocus}
           onBlur={handleBlur}
         />
@@ -109,6 +114,8 @@ const SearchDropdownMultiple: FC<{
                 propertyToFilter={propertyToFilter}
                 onAddItem={onAddItem}
                 propertiesToSearch={propertiesToSearch}
+                inputRef={inputRef}
+                setInputValue={setInputValue}
                 key={item[propertyToFilter]}
               />
             ))}

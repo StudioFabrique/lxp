@@ -5,6 +5,7 @@ type Props = {
   children: ReactNode;
   visible?: boolean;
   title: string;
+  buttonTitle?: string;
   id?: string;
   isOpen?: boolean;
   onCloseDrawer?: (id: string) => void;
@@ -14,6 +15,7 @@ const RightSideDrawer: FC<Props> = ({
   children,
   visible = true,
   title,
+  buttonTitle,
   id = "my-drawer-4",
   isOpen,
   onCloseDrawer,

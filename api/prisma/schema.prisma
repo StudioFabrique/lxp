@@ -45,15 +45,16 @@ model Parcours {
 
 model Module {
   id          Int                 @id @default(autoincrement())
-  title       String              @unique
+  title       String              
   description String
-  image       Bytes
+  // image       Bytes
   duration    Int
   rating      Float?
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @default(now())
   parcours    ModulesOnParcours[]
   skills      SkillsOnModule[]
+  contacts    ContactsOnModule[]
 }
 
 model OpenBadge {
@@ -114,6 +115,7 @@ model Contact {
   createdAt DateTime             @default(now())
   updatedAt DateTime             @default(now())
   parcours  ContactsOnParcours[]
+  modules   ContactsOnModule[]
 }
 
 model Objective {
@@ -177,4 +179,13 @@ model SkillsOnModule {
   moduleId Int
 
   @@id([skillId, moduleId])
+}
+
+model ContactsOnModule {
+  contact    Contact  @relation(fields: [contactId], references: [id])
+  contactId  Int
+  module     Module @relation(fields: [moduleId], references: [id])
+  moduleId   Int
+
+  @@id([contactId, moduleId])
 }

@@ -1,4 +1,4 @@
-import User, { IUser } from "../../utils/interfaces/db/user.model";
+import User, { IUser } from "../../utils/interfaces/db/user";
 import { prisma } from "../../utils/db";
 
 export default async function createUser(user: IUser, userType: number) {

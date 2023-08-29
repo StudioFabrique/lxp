@@ -16,12 +16,12 @@ const ModulesItem: FC<{
   const dispatch = useDispatch();
 
   const handleDelete = () => {
-    dispatch(deleteParcoursModule(module._id));
+    dispatch(deleteParcoursModule(module.id));
   };
 
   const handleBeginEdit = () => {
     console.log("test");
-    dispatch(updateCurrentParcoursModule(module._id));
+    dispatch(updateCurrentParcoursModule(module.id));
   };
 
   return (
