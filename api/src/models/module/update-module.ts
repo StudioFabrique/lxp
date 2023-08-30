@@ -10,6 +10,11 @@ export default async function updateModule(
   },
   moduleId: number
 ) {
+  console.log("module : ");
+  console.log(module);
+
+  console.log("moduleId : " + moduleId);
+
   try {
     const existingContactsId = (
       await prisma.contact.findMany({
@@ -36,7 +41,25 @@ export default async function updateModule(
     console.log(existingContactsId);
     console.log(existingBonusSkillsId);
 
-    const createdModule = await prisma.module.update({
+    await prisma.bonusSkillsOnModule.deleteMany({
+      where: {
+        bonusSkillId: {
+          in: existingBonusSkillsId.map((id) => id.bonusSkillId),
+        },
+        moduleId: moduleId,
+      },
+    });
+
+    await prisma.contactsOnModule.deleteMany({
+      where: {
+        contactId: {
+          in: existingContactsId.map((id) => id.contactId),
+        },
+        moduleId: moduleId,
+      },
+    });
+
+    const updatedModule = await prisma.module.update({
       where: { id: moduleId },
       data: {
         ...module,
@@ -45,9 +68,9 @@ export default async function updateModule(
       },
     });
 
-    if (createdModule) {
-      console.log("Module associé au parcours avec succès:", createdModule);
-      return createdModule.id;
+    if (updatedModule) {
+      console.log("Module associé au parcours avec succès:", updatedModule);
+      return updatedModule.id;
     }
     return null;
   } catch (error) {
