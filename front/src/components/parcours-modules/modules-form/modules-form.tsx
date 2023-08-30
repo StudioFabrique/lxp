@@ -77,7 +77,6 @@ const ModulesForm: FC<{}> = () => {
       return;
     }
     const module: Module = {
-      id: currentModuleToEdit?.id,
       title: title.value,
       description: description.value,
       contacts: contacts,
@@ -89,10 +88,11 @@ const ModulesForm: FC<{}> = () => {
 
     const applyData = (data: any) => {
       console.log(data);
+      const moduleId = data.moduleId;
       dispatch(
         currentModuleToEdit
-          ? updateParcoursModule(module)
-          : addParcoursModule(module)
+          ? updateParcoursModule({ module, moduleId })
+          : addParcoursModule({ module, moduleId })
       );
       handleClearEdit();
     };
@@ -104,7 +104,8 @@ const ModulesForm: FC<{}> = () => {
         method: currentModuleToEdit ? "put" : "post",
         body: {
           module: module,
-          parcoursId: parseInt(parcoursId!),
+          parcoursId: !currentModuleToEdit && parseInt(parcoursId!),
+          moduleId: currentModuleToEdit && currentModuleToEdit.id,
           // imageFile: imageFile,
         },
       },
