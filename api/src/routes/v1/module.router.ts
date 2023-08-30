@@ -5,7 +5,7 @@ import httpUpdateModule from "../../controllers/module/http-update-module";
 
 const moduleRouter = Router();
 
-moduleRouter.get("/", httpGetAllModules);
+moduleRouter.get("/:parcoursId", httpGetAllModules);
 moduleRouter.post("/", httpCreateModule);
 moduleRouter.put("/", httpUpdateModule);
 
