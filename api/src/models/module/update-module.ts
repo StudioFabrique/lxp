@@ -1,6 +1,6 @@
 import { prisma } from "../../utils/db";
 
-export default async function createModule(
+export default async function updateModule(
   module: {
     title: string;
     description: string;
@@ -8,7 +8,7 @@ export default async function createModule(
     contacts: any[];
     bonusSkills: any[];
   },
-  parcoursId: number
+  moduleId: number
 ) {
   try {
     const existingContactsId = (
@@ -36,18 +36,18 @@ export default async function createModule(
     console.log(existingContactsId);
     console.log(existingBonusSkillsId);
 
-    const updatedModule = await prisma.module.create({
+    const createdModule = await prisma.module.update({
+      where: { id: moduleId },
       data: {
         ...module,
         contacts: { createMany: { data: existingContactsId } },
         bonusSkills: { createMany: { data: existingBonusSkillsId } },
-        parcours: { connect: { id: parcoursId } },
       },
     });
 
-    if (updatedModule) {
-      console.log("Module associé au parcours avec succès:", updatedModule);
-      return updatedModule.id;
+    if (createdModule) {
+      console.log("Module associé au parcours avec succès:", createdModule);
+      return createdModule.id;
     }
     return null;
   } catch (error) {

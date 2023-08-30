@@ -1,12 +1,38 @@
-import { FC } from "react";
+import { FC, useCallback, useEffect } from "react";
 import ModulesItem from "./modules-item/modules-item.component";
 import { useSelector } from "react-redux";
 import Module from "../../../utils/interfaces/module";
+import useHttp from "../../../hooks/use-http";
+import { useDispatch } from "react-redux";
+import parcoursModuleSlice, {
+  initParcoursModules,
+} from "../../../store/redux-toolkit/parcours/parcours-modules";
 
 const ModulesList: FC<{}> = () => {
   const modules: Module[] = useSelector(
     (state: any) => state.parcoursModule.modules
   ) as Module[];
+
+  const { sendRequest } = useHttp();
+
+  const dispatch = useDispatch();
+
+  const fetchModules = useCallback(() => {
+    const applyData = (data: any) => {
+      dispatch(initParcoursModules(data.modules));
+    };
+
+    sendRequest(
+      {
+        path: "/module",
+      },
+      applyData
+    );
+  }, [dispatch, sendRequest]);
+
+  useEffect(() => {
+    fetchModules();
+  }, []);
 
   return (
     <div className="flex flex-col gap-y-10 p-10 bg-secondary rounded-lg overflow-y-auto">
