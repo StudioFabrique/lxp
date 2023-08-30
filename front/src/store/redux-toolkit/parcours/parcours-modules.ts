@@ -15,7 +15,10 @@ const parcoursModuleSlice = createSlice({
   name: "parcoursModule",
   initialState: initialModuleState,
   reducers: {
-    initParcoursModules(state, action) {},
+    initParcoursModules(state, action) {
+      const modules: Module[] = action.payload;
+      state.modules = modules;
+    },
     addParcoursModule(state, action) {
       const module: Module = action.payload.module;
       const moduleId: number = action.payload.moduleId;
