@@ -35,7 +35,7 @@ async function putParcoursSkills(parcoursId: number, newSkills: Array<any>) {
     });
   }
 
-  await prisma.sKillsOnParcours.deleteMany({
+  await prisma.skillsOnParcours.deleteMany({
     where: { parcoursId },
   });
 
