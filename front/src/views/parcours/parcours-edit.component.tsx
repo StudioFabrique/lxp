@@ -25,7 +25,8 @@ import ImportSkills from "../../components/edit-parcours/skills/import-skills.co
 import ImportObjectives from "../../components/edit-parcours/objectives/import-objectives";
 import ObjectivesList from "../../components/edit-parcours/objectives/objectives-list";
 import { parcoursObjectivesAction } from "../../store/redux-toolkit/parcours/parcours-objectives";
-import Module from "module";
+import Module from "../../utils/interfaces/module";
+import Calendrier from "../../components/edit-parcours/calendrier/calendrier";
 
 let initialState = true;
 
@@ -41,6 +42,7 @@ const EditParcours = () => {
   const informationsIsValid = useSelector(
     (state: any) => state.parcoursInformations.isValid
   );
+  const infos = useSelector((state: any) => state.parcoursInformations.infos);
   const skills = useSelector((state: any) => state.parcoursSkills.skills);
   const objectives = useSelector(
     (state: any) => state.parcoursObjectives.objectives
@@ -258,7 +260,15 @@ const EditParcours = () => {
                 <ImportSkills onCloseDrawer={() => {}} />
               </ParcoursSection>
             ) : null}
-            {actualStep.id === 4 && id ? <ParcoursModules /> : null}
+            {actualStep.id === 4 ? <ParcoursModules /> : null}
+            {actualStep.id === 5 ? (
+              <Calendrier
+                dates={{
+                  startDate: new Date(infos.startDate).toLocaleDateString(),
+                  endDate: new Date(infos.endDate).toLocaleDateString(),
+                }}
+              />
+            ) : null}
           </div>
           <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">
             {actualStep.id === 1 ? (
