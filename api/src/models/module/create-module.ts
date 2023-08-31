@@ -36,9 +36,16 @@ export default async function createModule(
     console.log(existingContactsId);
     console.log(existingBonusSkillsId);
 
+    const parcoursDate = await prisma.parcours.findUnique({
+      where: { id: parcoursId },
+      select: { startDate: true, endDate: true },
+    });
+
     const updatedModule = await prisma.module.create({
       data: {
         ...module,
+        minDate: parcoursDate?.startDate,
+        maxDate: parcoursDate?.endDate,
         contacts: { createMany: { data: existingContactsId } },
         bonusSkills: { createMany: { data: existingBonusSkillsId } },
         parcours: { connect: { id: parcoursId } },
