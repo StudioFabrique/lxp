@@ -9,6 +9,6 @@ const moduleRouter = Router();
 moduleRouter.get("/:parcoursId", httpGetAllModules);
 moduleRouter.post("/", httpCreateModule);
 moduleRouter.put("/", httpUpdateModule);
-moduleRouter.delete("/", httpDeleteModule);
+moduleRouter.delete("/:id", httpDeleteModule);
 
 export default moduleRouter;
