@@ -16,7 +16,7 @@ import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import ImageHeader from "../../components/image-header/image-header";
 import Error404 from "../../components/error404";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
-import ParcoursModules from "../../components/parcours-modules/parcours-modules.component";
+import ParcoursModules from "../../components/edit-parcours/modules/parcours-modules.component";
 import Stepper from "../../components/UI/stepper.-component/stepper.-component";
 import ParcoursInformations from "../../components/edit-parcours/informations/parcours-informations";
 import ParcoursSection from "../../components/edit-parcours/parcours-section";
@@ -25,6 +25,7 @@ import ImportSkills from "../../components/edit-parcours/skills/import-skills.co
 import ImportObjectives from "../../components/edit-parcours/objectives/import-objectives";
 import ObjectivesList from "../../components/edit-parcours/objectives/objectives-list";
 import { parcoursObjectivesAction } from "../../store/redux-toolkit/parcours/parcours-objectives";
+import Module from "module";
 
 let initialState = true;
 
@@ -44,6 +45,9 @@ const EditParcours = () => {
   const objectives = useSelector(
     (state: any) => state.parcoursObjectives.objectives
   );
+  const modules: Module[] = useSelector(
+    (state: any) => state.parcoursModule.modules
+  ) as Module[];
 
   /**
    * télécharge les données du parcours depuis la bdd et initialise les différentes propriétés du parcours
@@ -195,6 +199,8 @@ const EditParcours = () => {
         return objectives.length > 0;
       case 3:
         return skills.length > 0;
+      case 4:
+        return modules.length > 0;
       default:
         return false;
     }

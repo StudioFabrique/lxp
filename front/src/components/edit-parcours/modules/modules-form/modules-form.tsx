@@ -1,23 +1,23 @@
 import { FC, FormEvent, FormEventHandler, useEffect, useState } from "react";
-import ImageFileUpload from "../../UI/image-file-upload/image-file-upload";
-import useInput from "../../../hooks/use-input";
-import { regexGeneric, regexNumber } from "../../../utils/constantes";
-import User from "../../../utils/interfaces/user";
-import Skill from "../../../utils/interfaces/skill";
-import Module from "../../../utils/interfaces/module";
-import { validateImageFile } from "../../../utils/validate-image-file";
+import ImageFileUpload from "../../../UI/image-file-upload/image-file-upload";
+import useInput from "../../../../hooks/use-input";
+import { regexGeneric, regexNumber } from "../../../../utils/constantes";
+import User from "../../../../utils/interfaces/user";
+import Skill from "../../../../utils/interfaces/skill";
+import Module from "../../../../utils/interfaces/module";
+import { validateImageFile } from "../../../../utils/validate-image-file";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addParcoursModule,
   clearCurrentParcoursModule,
   updateParcoursModule,
-} from "../../../store/redux-toolkit/parcours/parcours-modules";
-import DataAdder from "../../UI/data-adder/data-adder.component";
+} from "../../../../store/redux-toolkit/parcours/parcours-modules";
+import DataAdder from "../../../UI/data-adder/data-adder.component";
 // import { getDBSkills as skillsData } from "../../../utils/fixtures/skills";
 import { Toaster, toast } from "react-hot-toast";
-import { AddIcon1 } from "../../UI/svg/add-icons";
+import { AddIcon1 } from "../../../UI/svg/add-icons";
 import { useParams } from "react-router-dom";
-import useHttp from "../../../hooks/use-http";
+import useHttp from "../../../../hooks/use-http";
 
 const ModulesForm: FC<{}> = () => {
   const { id: parcoursId } = useParams();

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import Module from "../../../../utils/interfaces/module";
+import Module from "../../../../../utils/interfaces/module";
 import EditButton from "./buttons/edit-button.component";
 import ViewButton from "./buttons/view-button.component";
 import DeleteButton from "./buttons/delete-button.component";
@@ -7,9 +7,9 @@ import { useDispatch } from "react-redux";
 import {
   deleteParcoursModule,
   updateCurrentParcoursModule,
-} from "../../../../store/redux-toolkit/parcours/parcours-modules";
+} from "../../../../../store/redux-toolkit/parcours/parcours-modules";
 import { toast } from "react-hot-toast";
-import useHttp from "../../../../hooks/use-http";
+import useHttp from "../../../../../hooks/use-http";
 
 const ModulesItem: FC<{
   module: Module;
