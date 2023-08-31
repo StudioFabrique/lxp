@@ -15,18 +15,25 @@ const parcoursModuleSlice = createSlice({
   name: "parcoursModule",
   initialState: initialModuleState,
   reducers: {
+    initParcoursModules(state, action) {
+      const modules: Module[] = action.payload;
+      state.modules = modules;
+    },
     addParcoursModule(state, action) {
-      const module: Module = action.payload;
+      const module: Module = action.payload.module;
+      const moduleId: number = action.payload.moduleId;
+      module.id = moduleId;
       const modules: Module[] = state.modules;
       state.modules = addIdToObject([...modules, module]);
       toast.success("Le module a bien été ajouté");
     },
     updateParcoursModule(state, action) {
-      const module: Module = action.payload;
+      const module: Module = action.payload.module;
+      const moduleId: number = action.payload.moduleId;
       const modules: Module[] = state.modules;
 
       state.modules = modules.map((moduleToEdit) =>
-        moduleToEdit.id === module.id
+        moduleToEdit.id === moduleId
           ? { ...moduleToEdit, ...module }
           : moduleToEdit
       );
@@ -50,6 +57,7 @@ const parcoursModuleSlice = createSlice({
 });
 
 export const {
+  initParcoursModules,
   addParcoursModule,
   updateCurrentParcoursModule,
   deleteParcoursModule,

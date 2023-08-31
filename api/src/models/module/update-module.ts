@@ -1,6 +1,6 @@
 import { prisma } from "../../utils/db";
 
-export default async function createModule(
+export default async function updateModule(
   module: {
     title: string;
     description: string;
@@ -8,8 +8,13 @@ export default async function createModule(
     contacts: any[];
     bonusSkills: any[];
   },
-  parcoursId: number
+  moduleId: number
 ) {
+  console.log("module : ");
+  console.log(module);
+
+  console.log("moduleId : " + moduleId);
+
   try {
     const existingContactsId = (
       await prisma.contact.findMany({
@@ -36,19 +41,30 @@ export default async function createModule(
     console.log(existingContactsId);
     console.log(existingBonusSkillsId);
 
-    const parcoursDate = await prisma.parcours.findUnique({
-      where: { id: parcoursId },
-      select: { startDate: true, endDate: true },
+    await prisma.bonusSkillsOnModule.deleteMany({
+      where: {
+        bonusSkillId: {
+          in: existingBonusSkillsId.map((id) => id.bonusSkillId),
+        },
+        moduleId: moduleId,
+      },
     });
 
-    const updatedModule = await prisma.module.create({
+    await prisma.contactsOnModule.deleteMany({
+      where: {
+        contactId: {
+          in: existingContactsId.map((id) => id.contactId),
+        },
+        moduleId: moduleId,
+      },
+    });
+
+    const updatedModule = await prisma.module.update({
+      where: { id: moduleId },
       data: {
         ...module,
-        minDate: parcoursDate?.startDate,
-        maxDate: parcoursDate?.endDate,
         contacts: { createMany: { data: existingContactsId } },
         bonusSkills: { createMany: { data: existingBonusSkillsId } },
-        parcours: { connect: { id: parcoursId } },
       },
     });
 

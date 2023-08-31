@@ -36,9 +36,9 @@ model Parcours {
   contacts     ContactsOnParcours[]
   formation    Formation            @relation(fields: [formationId], references: [id])
   formationId  Int
-  skills       SKillsOnParcours[]
+  skills       SkillsOnParcours[]
   bonusSkills  BonusSkill[]
-  modules      ModulesOnParcours[]
+  modules      Module[]
   objectives   Objective[]
   virtualClass String?
 }
@@ -50,11 +50,14 @@ model Module {
   // image       Bytes
   duration    Int
   rating      Float?
+  minDate     DateTime?
+  maxDate     DateTime?
+  parcours    Parcours @relation(fields: [parcoursId], references: [id])
+  parcoursId  Int
+  bonusSkills BonusSkillsOnModule[]
+  contacts    ContactsOnModule[]
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @default(now())
-  parcours    ModulesOnParcours[]
-  skills      SkillsOnModule[]
-  contacts    ContactsOnModule[]
 }
 
 model OpenBadge {
@@ -79,10 +82,9 @@ model Tag {
 model Skill {
   id          Int                @id @default(autoincrement())
   description String             @unique
-  parcours    SKillsOnParcours[]
+  parcours    SkillsOnParcours[]
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @default(now())
-  modules     SkillsOnModule[]
   badge       String?
 }
 
@@ -94,6 +96,7 @@ model BonusSkill {
   badge       String?
   parcours    Parcours @relation(fields: [parcoursId], references: [id])
   parcoursId  Int
+  modules BonusSkillsOnModule[]
 }
 
 model Admin {
@@ -127,7 +130,7 @@ model Objective {
   parcoursId  Int
 }
 
-model SKillsOnParcours {
+model SkillsOnParcours {
   skill      Skill    @relation(fields: [skillId], references: [id])
   skillId    Int
   parcours   Parcours @relation(fields: [parcoursId], references: [id])
@@ -154,15 +157,6 @@ model ContactsOnParcours {
   @@id([parcoursId, contactId])
 }
 
-model ModulesOnParcours {
-  module     Module   @relation(fields: [moduleId], references: [id])
-  moduleId   Int
-  parcours   Parcours @relation(fields: [parcoursId], references: [id])
-  parcoursId Int
-
-  @@id([moduleId, parcoursId])
-}
-
 model TagsOnFormation {
   tag         Tag       @relation(fields: [tagId], references: [id])
   tagId       Int
@@ -172,13 +166,13 @@ model TagsOnFormation {
   @@id([tagId, formationId])
 }
 
-model SkillsOnModule {
-  skill    Skill  @relation(fields: [skillId], references: [id])
-  skillId  Int
+model BonusSkillsOnModule {
+  bonusSkill    BonusSkill  @relation(fields: [bonusSkillId], references: [id])
+  bonusSkillId  Int
   module   Module @relation(fields: [moduleId], references: [id])
   moduleId Int
 
-  @@id([skillId, moduleId])
+  @@id([bonusSkillId, moduleId])
 }
 
 model ContactsOnModule {
