@@ -8,15 +8,30 @@ import {
   deleteParcoursModule,
   updateCurrentParcoursModule,
 } from "../../../../store/redux-toolkit/parcours/parcours-modules";
+import { toast } from "react-hot-toast";
+import useHttp from "../../../../hooks/use-http";
 
 const ModulesItem: FC<{
   module: Module;
   /* onUpdate?: (title: string, description: string, imageFile: File) => void; */
 }> = ({ module }) => {
   const dispatch = useDispatch();
+  const { sendRequest } = useHttp();
 
   const handleDelete = () => {
-    dispatch(deleteParcoursModule(module.id));
+    const applyData = (data: any) => {
+      dispatch(deleteParcoursModule(data.moduleId));
+      toast.success("Module supprimé avec success");
+    };
+    console.log(module);
+
+    sendRequest(
+      {
+        path: `/module/${module.id}`,
+        method: "delete",
+      },
+      applyData
+    );
   };
 
   const handleBeginEdit = () => {

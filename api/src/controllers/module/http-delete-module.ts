@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import deleteModule from "../../models/module/delete-module";
 
 export default async function httpDeleteModule(req: Request, res: Response) {
-  const { module, moduleId } = req.body;
+  const { id } = req.params;
 
-  const response = await deleteModule({ ...module }, moduleId);
+  const response = await deleteModule(parseInt(id));
   if (!response) {
     return res.status(500).send("problème serveur");
   }

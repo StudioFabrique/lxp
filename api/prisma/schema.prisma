@@ -50,12 +50,14 @@ model Module {
   // image       Bytes
   duration    Int
   rating      Float?
+  minDate     DateTime?
+  maxDate     DateTime?
+  parcours    Parcours @relation(fields: [parcoursId], references: [id])
+  parcoursId  Int
+  bonusSkills BonusSkillsOnModule[]
+  contacts    ContactsOnModule[]
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @default(now())
-  parcours   Parcours @relation(fields: [parcoursId], references: [id])
-  parcoursId Int
-  bonusSkills  BonusSkillsOnModule[]
-  contacts    ContactsOnModule[]
 }
 
 model OpenBadge {
