@@ -1,7 +1,15 @@
-import { FC, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  ChangeEventHandler,
+  FC,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import Module from "../../../utils/interfaces/module";
 import { useSelector } from "react-redux";
+import DatePicker from "./date-picker";
 
 const CalendrierForm: FC<{
   datesParcours: { startDate: Date; endDate: Date };
@@ -9,7 +17,6 @@ const CalendrierForm: FC<{
   const currentModule: Module | null = useSelector(
     (state: any) => state.parcoursModule.currentModule
   );
-
   const [datesModule, setDatesModule] = useState<{
     minDate: string;
     maxDate: string;
@@ -20,39 +27,46 @@ const CalendrierForm: FC<{
       minDate: currentModule?.minDate
         ? new Date(currentModule?.minDate).toISOString().split("T")[0]
         : "",
-      maxDate: currentModule?.minDate
+      maxDate: currentModule?.maxDate
         ? new Date(currentModule?.maxDate ?? "").toISOString().split("T")[0]
         : "",
     });
   };
 
-  const handleSubmitDate = () => {};
+  const handleSubmitDate = (id: string, date: string) => {
+    setDatesModule((initialDates) => {
+      return {
+        minDate: id == "date1" ? date : initialDates.minDate,
+        maxDate: id == "date2" ? date : initialDates.maxDate,
+      };
+    });
+  };
 
   useEffect(() => {
     initDate();
-  }, []);
+  }, [currentModule]);
 
   return (
     <Wrapper>
       <p>{`Début du parcours : ${datesParcours.startDate.toLocaleDateString()} Fin du parcours: ${datesParcours.endDate.toLocaleDateString()}`}</p>
-      <p>{datesModule.minDate}</p>
-      {currentModule ? (
+      {currentModule && (
         <form className="flex flex-col gap-y-5">
-          <div className="flex gap-x-5">
-            <span>
-              <label>Début du module : </label>
-              <input
-                type="date"
-                className="input input-sm"
-                value={datesModule.minDate}
+          <h3>Dates de modules : </h3>
+          <div className="flex flex-col gap-y-5">
+            <span className="flex items-center gap-x-5">
+              <label>Début </label>
+              <DatePicker
+                id="date1"
+                date={datesModule.minDate}
+                onSubmitDate={handleSubmitDate}
               />
             </span>
-            <span>
-              <label>Fin du module : </label>
-              <input
-                type="date"
-                className="input input-sm"
-                value={datesModule.maxDate}
+            <span className="flex items-center gap-x-5">
+              <label>Fin </label>
+              <DatePicker
+                id="date2"
+                date={datesModule.maxDate}
+                onSubmitDate={handleSubmitDate}
               />
             </span>
           </div>
@@ -61,8 +75,6 @@ const CalendrierForm: FC<{
             Confirmer les dates
           </button>
         </form>
-      ) : (
-        <p>Veuillez sélectioner un module</p>
       )}
     </Wrapper>
   );
