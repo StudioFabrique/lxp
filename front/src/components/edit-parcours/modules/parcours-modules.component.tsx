@@ -1,5 +1,5 @@
 import { FC } from "react";
-import ModulesForm from "./modules-form/modules-form";
+import ModulesForm from "./modules-form";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import ModulesList from "./modules-list/modules-list.component";
 

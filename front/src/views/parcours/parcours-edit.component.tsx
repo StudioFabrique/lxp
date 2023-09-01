@@ -42,7 +42,7 @@ const EditParcours = () => {
   const informationsIsValid = useSelector(
     (state: any) => state.parcoursInformations.isValid
   );
-  const infos = useSelector((state: any) => state.parcoursInformations.infos);
+
   const skills = useSelector((state: any) => state.parcoursSkills.skills);
   const objectives = useSelector(
     (state: any) => state.parcoursObjectives.objectives
@@ -261,14 +261,7 @@ const EditParcours = () => {
               </ParcoursSection>
             ) : null}
             {actualStep.id === 4 ? <ParcoursModules /> : null}
-            {actualStep.id === 5 ? (
-              <Calendrier
-                dates={{
-                  startDate: new Date(infos.startDate).toLocaleDateString(),
-                  endDate: new Date(infos.endDate).toLocaleDateString(),
-                }}
-              />
-            ) : null}
+            {actualStep.id === 5 ? <Calendrier /> : null}
           </div>
           <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">
             {actualStep.id === 1 ? (
