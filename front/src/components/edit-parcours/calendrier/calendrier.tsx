@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import Module from "../../../utils/interfaces/module";
 import { FC } from "react";
+import ModuleCalendrier from "./module-calendrier";
 
 const Calendrier: FC<{ dates: { startDate: string; endDate: string } }> = ({
   dates,
@@ -13,7 +14,11 @@ const Calendrier: FC<{ dates: { startDate: string; endDate: string } }> = ({
   return (
     <Wrapper>
       <div className="grid grid-cols-2">
-        <div></div>
+        <div>
+          {modules.map((module) => (
+            <ModuleCalendrier module={module} key={module.id} />
+          ))}
+        </div>
         <div className="grid grid-rows-3">
           <div>
             <p>{`Début : ${dates.startDate} Fin : ${dates.endDate}`}</p>
