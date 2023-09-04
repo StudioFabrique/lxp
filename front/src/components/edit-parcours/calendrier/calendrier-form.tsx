@@ -11,16 +11,19 @@ import Module from "../../../utils/interfaces/module";
 import { useSelector } from "react-redux";
 import DatePicker from "./date-picker";
 import { useDispatch } from "react-redux";
-import { clearCurrentParcoursModule } from "../../../store/redux-toolkit/parcours/parcours-modules";
+import { parcoursModulesSliceAction } from "../../../store/redux-toolkit/parcours/parcours-modules";
 
 const CalendrierForm: FC<{
   datesParcours: { startDate: Date; endDate: Date };
 }> = ({ datesParcours }) => {
   const dispatch = useDispatch();
 
-  const currentModule: Module | null = useSelector(
-    (state: any) => state.parcoursModule.currentModule
+  const modules = useSelector((state: any) => state.parcoursModules.modules);
+
+  const currentModule: Module = useSelector(
+    (state: any) => state.parcoursModules.currentModule
   );
+
   const [datesModule, setDatesModule] = useState<{
     minDate: string;
     maxDate: string;
@@ -47,7 +50,17 @@ const CalendrierForm: FC<{
   };
 
   const handleSubmit = () => {
-    dispatch(clearCurrentParcoursModule());
+    dispatch(
+      parcoursModulesSliceAction.updateParcoursModule({
+        module: {
+          minDate: datesModule.minDate,
+          maxDate: datesModule.maxDate,
+        },
+        moduleId: currentModule.id,
+      })
+    );
+    dispatch(parcoursModulesSliceAction.clearCurrentParcoursModule());
+    console.log(modules);
   };
 
   useEffect(() => {

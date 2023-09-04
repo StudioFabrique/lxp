@@ -11,8 +11,8 @@ const initialModuleState: { modules: Module[]; currentModule: Module | null } =
     currentModule: null,
   };
 
-const parcoursModuleSlice = createSlice({
-  name: "parcoursModule",
+const parcoursModulesSlice = createSlice({
+  name: "parcoursModules",
   initialState: initialModuleState,
   reducers: {
     initParcoursModules(state, action) {
@@ -56,13 +56,6 @@ const parcoursModuleSlice = createSlice({
   },
 });
 
-export const {
-  initParcoursModules,
-  addParcoursModule,
-  updateCurrentParcoursModule,
-  deleteParcoursModule,
-  updateParcoursModule,
-  clearCurrentParcoursModule,
-} = parcoursModuleSlice.actions;
+export const parcoursModulesSliceAction = parcoursModulesSlice.actions;
 
-export default parcoursModuleSlice;
+export default parcoursModulesSlice;

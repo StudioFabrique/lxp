@@ -1,19 +1,19 @@
 import { FC, useEffect, useState } from "react";
 import Module from "../../../utils/interfaces/module";
 import { useDispatch } from "react-redux";
-import { updateCurrentParcoursModule } from "../../../store/redux-toolkit/parcours/parcours-modules";
+import { parcoursModulesSliceAction } from "../../../store/redux-toolkit/parcours/parcours-modules";
 import { useSelector } from "react-redux";
 
 const ModuleCalendrier: FC<{ module: Module }> = ({ module }) => {
   const currentModule: Module | null = useSelector(
-    (state: any) => state.parcoursModule.currentModule
+    (state: any) => state.parcoursModules.currentModule
   );
   const dispatch = useDispatch();
 
   const [isSelected, setIsSelected] = useState(false);
 
   const handleClick = () => {
-    dispatch(updateCurrentParcoursModule(module.id));
+    dispatch(parcoursModulesSliceAction.updateCurrentParcoursModule(module.id));
   };
 
   useEffect(() => {

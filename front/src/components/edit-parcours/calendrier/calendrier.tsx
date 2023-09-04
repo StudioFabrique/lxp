@@ -17,7 +17,7 @@ const Calendrier = () => {
     (state: any) => state.parcoursInformations.infos
   );
   const modules: Module[] = useSelector(
-    (state: any) => state.parcoursModule.modules
+    (state: any) => state.parcoursModules.modules
   ) as Module[];
   const datesParcours = {
     startDate: new Date(parcoursInfos.startDate),
