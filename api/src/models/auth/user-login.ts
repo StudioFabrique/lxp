@@ -4,6 +4,7 @@ import { hasRole } from "../../utils/services/permissions/hasRole";
 import User from "../../utils/interfaces/db/user.model";
 import { credentialsError } from "../../utils/constantes";
 
+
 async function userLogin(email: string, password: string) {
   try {
     const user = await User.findOne({ email: email }).populate("roles");

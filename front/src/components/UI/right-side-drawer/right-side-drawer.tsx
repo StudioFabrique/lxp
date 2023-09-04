@@ -15,10 +15,10 @@ const RightSideDrawer: FC<Props> = ({
   children,
   visible = true,
   title,
+  buttonTitle,
   id = "my-drawer-4",
   isOpen,
   onCloseDrawer,
-  buttonTitle,
 }) => {
   const checkboxRef = useRef<HTMLInputElement | null>(null);
 

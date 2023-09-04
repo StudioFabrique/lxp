@@ -5,8 +5,8 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import GroupUserItem from "./group-user-item.component";
 import SearchSimple from "../../UI/search-simple/search-simple";
 import CsvImportUserList from "./csv-import-user/csv-import-user-list/csv-import-user-list.component";
-import LoadingIcon from "../../UI/svg-icons/loading-icon.component";
-import ThreeDotIcon from "../../UI/svg-icons/three-dot-icon.component";
+import LoadingIcon from "../../UI/svg/loading-icon.component";
+import ThreeDotIcon from "../../UI/svg/three-dot-icon.component";
 
 const GroupUserList: FC<{
   usersToAdd: User[];

@@ -106,7 +106,6 @@ const GroupManageUserList: FC<{
     <RightSideDrawer
       title="Ajouter des étudiants au groupe"
       id="add-user-to-group"
-      buttonTitle="Ajouter un étudiant"
     >
       {dataList.length > 0 ? (
         <div className="flex flex-col items-center gap-y-10 justify-between m-10">
