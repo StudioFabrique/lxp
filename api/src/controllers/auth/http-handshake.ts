@@ -4,7 +4,7 @@ import { noAccess, serverIssue } from "../../utils/constantes";
 import { IRole } from "../../utils/interfaces/db/role";
 import { hasRole } from "../../utils/services/permissions/hasRole";
 import getUser from "../../models/user/get-user";
-import { IUser } from "../../utils/interfaces/db/user.model";
+import { IUser } from "../../utils/interfaces/db/user";
 
 async function httpHandshake(req: CustomRequest, res: Response) {
   if (req.auth && req.auth.userId !== null) {

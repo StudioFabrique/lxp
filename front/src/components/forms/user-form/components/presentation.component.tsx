@@ -7,7 +7,7 @@ const Presentation: FC<{ description: any }> = ({ description }) => {
       <h2 className="font-bold text-xl">Présentation</h2>
       <label>Qui suis-je ?</label>
       <textarea
-        className="w-full h-full p-2"
+        className="textarea h-52 w-full p-2"
         onChange={description.valueChangeHandler}
         onBlur={description.valueBlurHandler}
         defaultValue={description.value}

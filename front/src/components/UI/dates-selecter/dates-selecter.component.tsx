@@ -46,15 +46,15 @@ const DatesSelecter: FC<Props> = ({
       const sDate = new Date(dates.startDate).getTime();
       const eDate = new Date(dates.endDate).getTime();
       if (startDate.isValid && endDate.isValid) {
-        if (sDate > date && sDate < eDate) {
-          if (!isInitialRender.current) {
-            onSubmitDates(dates);
-          } else {
-            isInitialRender.current = false;
-          }
+        /* if (sDate > date && sDate < eDate) { */
+        if (!isInitialRender.current) {
+          onSubmitDates(dates);
         } else {
-          setError(true);
+          isInitialRender.current = false;
         }
+        /* } else {
+          setError(true);
+        } */
       }
     }, autoSubmitTimer);
     return () => {

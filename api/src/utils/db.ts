@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 let prisma: PrismaClient;
 
 declare global {
-  var __prisma__: PrismaClient | undefined;
+  var prisma: PrismaClient | undefined;
 }
 
 // This is needed because in development we don't want to restart
@@ -13,10 +13,10 @@ declare global {
 if (process.env.NODE_ENV === "production") {
   prisma = new PrismaClient();
 } else {
-  if (!global.__prisma__) {
-    global.__prisma__ = new PrismaClient();
+  if (!global.prisma) {
+    global.prisma = new PrismaClient();
   }
-  prisma = global.__prisma__;
+  prisma = global.prisma;
   prisma.$connect();
 }
 

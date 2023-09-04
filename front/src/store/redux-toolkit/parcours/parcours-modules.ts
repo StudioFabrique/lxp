@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Module from "../../../utils/interfaces/module";
 import { toast } from "react-hot-toast";
+import { addIdToObject } from "../../../utils/add-id-to-objects";
 
 const initialModuleState: { modules: Module[]; currentModule: Module | null } =
   {
@@ -14,34 +15,40 @@ const parcoursModuleSlice = createSlice({
   name: "parcoursModule",
   initialState: initialModuleState,
   reducers: {
+    initParcoursModules(state, action) {
+      const modules: Module[] = action.payload;
+      state.modules = modules;
+    },
     addParcoursModule(state, action) {
-      const module: Module = action.payload;
+      const module: Module = action.payload.module;
+      const moduleId: number = action.payload.moduleId;
+      module.id = moduleId;
       const modules: Module[] = state.modules;
-      module._id = (modules.length + 1).toString();
-      state.modules = [...modules, module];
+      state.modules = addIdToObject([...modules, module]);
       toast.success("Le module a bien été ajouté");
     },
     updateParcoursModule(state, action) {
-      const module: Module = action.payload;
+      const module: Module = action.payload.module;
+      const moduleId: number = action.payload.moduleId;
       const modules: Module[] = state.modules;
 
       state.modules = modules.map((moduleToEdit) =>
-        moduleToEdit._id === module._id
+        moduleToEdit.id === moduleId
           ? { ...moduleToEdit, ...module }
           : moduleToEdit
       );
       toast.success("Le module a bien été modifié");
     },
     deleteParcoursModule(state, action) {
-      const _id = action.payload;
+      const id = action.payload;
       const modules = state.modules;
-      state.modules = modules.filter((module) => module._id !== _id);
+      state.modules = modules.filter((module) => module.id !== id);
       toast.success("Le module a bien été supprimé");
     },
     updateCurrentParcoursModule(state, action) {
-      const _id = action.payload;
+      const id = action.payload;
       const modules: Module[] = state.modules;
-      state.currentModule = modules.filter((module) => module._id === _id)[0];
+      state.currentModule = modules.filter((module) => module.id === id)[0];
     },
     clearCurrentParcoursModule(state) {
       state.currentModule = null;
@@ -50,6 +57,7 @@ const parcoursModuleSlice = createSlice({
 });
 
 export const {
+  initParcoursModules,
   addParcoursModule,
   updateCurrentParcoursModule,
   deleteParcoursModule,

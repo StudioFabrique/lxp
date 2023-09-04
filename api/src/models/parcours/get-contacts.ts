@@ -1,5 +1,5 @@
 import Role from "../../utils/interfaces/db/role";
-import User from "../../utils/interfaces/db/user.model";
+import User from "../../utils/interfaces/db/user";
 
 async function getContacts() {
   const teacherRoles = await Role.find({ rank: 2 }, { _id: 1 });
