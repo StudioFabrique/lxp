@@ -15,11 +15,10 @@ const StepItem: FC<Props> = ({ actualStepId, finalStep, stepItem }) => {
    * @returns string
    */
   const setStepColor = () => {
-    if (stepItem.id === actualStepId) {
+    if (stepItem.id < actualStepId && stepItem.isValid) {
       return "step-primary";
-    }
-    if (stepItem.isValid) {
-      return "step-primary";
+    } else if (stepItem.id === actualStepId) {
+      return "step-accent";
     }
   };
 
@@ -29,9 +28,7 @@ const StepItem: FC<Props> = ({ actualStepId, finalStep, stepItem }) => {
    * @returns boolean
    */
   const setCursor = () => {
-    return finalStep /*  || stepsList[id - 2].saved */
-      ? "cursor-pointer"
-      : "cursor-normal";
+    return finalStep ? "cursor-pointer" : "cursor-normal";
   };
 
   return (
