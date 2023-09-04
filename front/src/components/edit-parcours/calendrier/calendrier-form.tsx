@@ -10,10 +10,14 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import Module from "../../../utils/interfaces/module";
 import { useSelector } from "react-redux";
 import DatePicker from "./date-picker";
+import { useDispatch } from "react-redux";
+import { clearCurrentParcoursModule } from "../../../store/redux-toolkit/parcours/parcours-modules";
 
 const CalendrierForm: FC<{
   datesParcours: { startDate: Date; endDate: Date };
 }> = ({ datesParcours }) => {
+  const dispatch = useDispatch();
+
   const currentModule: Module | null = useSelector(
     (state: any) => state.parcoursModule.currentModule
   );
@@ -33,13 +37,17 @@ const CalendrierForm: FC<{
     });
   };
 
-  const handleSubmitDate = (id: string, date: string) => {
+  const handleChangeDates = (id: string, date: string) => {
     setDatesModule((initialDates) => {
       return {
         minDate: id == "date1" ? date : initialDates.minDate,
         maxDate: id == "date2" ? date : initialDates.maxDate,
       };
     });
+  };
+
+  const handleSubmit = () => {
+    dispatch(clearCurrentParcoursModule());
   };
 
   useEffect(() => {
@@ -50,7 +58,7 @@ const CalendrierForm: FC<{
     <Wrapper>
       <p>{`Début du parcours : ${datesParcours.startDate.toLocaleDateString()} Fin du parcours: ${datesParcours.endDate.toLocaleDateString()}`}</p>
       {currentModule && (
-        <form className="flex flex-col gap-y-5">
+        <form className="flex flex-col gap-y-5 h-full">
           <h3>Dates de modules : </h3>
           <div className="flex flex-col gap-y-5">
             <span className="flex items-center gap-x-5">
@@ -58,7 +66,7 @@ const CalendrierForm: FC<{
               <DatePicker
                 id="date1"
                 date={datesModule.minDate}
-                onSubmitDate={handleSubmitDate}
+                onSubmitDate={handleChangeDates}
               />
             </span>
             <span className="flex items-center gap-x-5">
@@ -66,12 +74,16 @@ const CalendrierForm: FC<{
               <DatePicker
                 id="date2"
                 date={datesModule.maxDate}
-                onSubmitDate={handleSubmitDate}
+                onSubmitDate={handleChangeDates}
               />
             </span>
           </div>
           <p>{`Nombre d'heures du module : ${currentModule.duration} H`}</p>
-          <button type="button" className="btn btn-sm self-end">
+          <button
+            onClick={handleSubmit}
+            type="button"
+            className="btn btn-sm self-end"
+          >
             Confirmer les dates
           </button>
         </form>
