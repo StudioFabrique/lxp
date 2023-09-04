@@ -13,12 +13,12 @@ const steps = [
   {
     label: "Modules",
   },
-  {
+  /*   {
     label: "Calendrier",
   },
   {
     label: "Etudiants",
-  },
+  }, */
   {
     label: "",
   },
