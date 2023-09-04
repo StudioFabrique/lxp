@@ -125,6 +125,10 @@ const ModulesForm: FC<{}> = () => {
     }
   }, [currentModuleToEdit]);
 
+  useEffect(() => {
+    dispatch(clearCurrentParcoursModule());
+  }, []);
+
   return (
     <form
       className="flex flex-col gap-y-5 p-5 pr-2 w-[90%]"

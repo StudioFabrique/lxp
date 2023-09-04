@@ -1,9 +1,11 @@
 import { useSelector } from "react-redux";
+import "schedulely/dist/index.css";
 import Module from "../../../utils/interfaces/module";
 import ModulesListCalendrier from "./modules-list-calendrier";
 import CalendrierForm from "./calendrier-form";
 import Wrapper from "../../UI/wrapper/wrapper.component";
-import ModuleCalendrierPreview from "./module-calendrier-preview";
+import { Schedulely } from "schedulely";
+import { getRandomHexColor } from "../../../utils/randomColor";
 
 const Calendrier = () => {
   const parcoursInfos = useSelector(
@@ -26,12 +28,17 @@ const Calendrier = () => {
           <CalendrierForm datesParcours={datesParcours} />
           <div className="row-span-2">
             <Wrapper>
-              {modules.map((module) => (
-                <ModuleCalendrierPreview
-                  datesParcours={datesParcours}
-                  module={module}
-                />
-              ))}
+              <Schedulely
+                events={modules.map((module) => {
+                  return {
+                    id: module.id!.toString(),
+                    start: new Date(module.minDate!).toISOString(),
+                    end: new Date(module.maxDate!).toISOString(),
+                    summary: module.title,
+                    color: getRandomHexColor(),
+                  };
+                })}
+              />
             </Wrapper>
           </div>
         </div>
