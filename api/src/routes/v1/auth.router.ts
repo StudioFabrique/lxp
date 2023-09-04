@@ -12,8 +12,7 @@ const authRouter = express.Router();
 
 authRouter.post(
   "/login",
-  body("email").isEmail().trim().escape(),
-  param("role").trim().escape(),
+  body("email").isEmail().withMessage("Email invalide").trim().escape(),
   httpLogin
 );
 authRouter.get("/handshake", checkToken, httpHandshake);

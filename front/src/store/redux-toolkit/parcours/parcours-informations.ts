@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice } from "@reduxjs/toolkit";
+import { regexGeneric } from "../../../utils/constantes";
 
 const initialParcoursState = {
   infos: {
@@ -10,7 +11,9 @@ const initialParcoursState = {
   },
   isValid: false,
   tagsIsValid: false,
+  contactsIsValid: false,
   virtualClass: "",
+  infosIsValid: false,
 };
 
 const parcoursInformationsSlice = createSlice({
@@ -38,6 +41,10 @@ const parcoursInformationsSlice = createSlice({
       state.infos.description = "";
       state.infos.startDate = "";
       state.infos.endDate = "";
+      state.infosIsValid = false;
+      state.isValid = false;
+      state.tagsIsValid = false;
+      state.contactsIsValid = false;
     },
     isValid(state) {
       const infos = state.infos;
@@ -55,6 +62,15 @@ const parcoursInformationsSlice = createSlice({
     },
     setVirtualClass(state, action) {
       state.virtualClass = action.payload;
+    },
+    infosIsValid(state) {
+      state.infosIsValid =
+        state.isValid &&
+        regexGeneric.test(state.infos.description) &&
+        state.contactsIsValid;
+    },
+    setContactsIsValid(state, action) {
+      state.contactsIsValid = action.payload;
     },
   },
 });

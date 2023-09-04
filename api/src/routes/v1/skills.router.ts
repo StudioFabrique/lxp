@@ -1,5 +1,5 @@
 import express from "express";
-import isUser from "../../middleware/is-user";
+import isUser from "../../middleware/is-admin";
 import httpGetAllUsers from "../../controllers/user/http-get-all-users";
 import httpGetAllSkills from "../../controllers/skills/http-get-all-skills";
 
