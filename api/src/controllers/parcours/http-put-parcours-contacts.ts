@@ -7,6 +7,8 @@ import CustomRequest from "../../utils/interfaces/express/custom-request";
 
 async function httpPutParcoursContacts(req: CustomRequest, res: Response) {
   try {
+    console.log(req.body);
+
     const userId = req.auth?.userId;
 
     if (!userId) {

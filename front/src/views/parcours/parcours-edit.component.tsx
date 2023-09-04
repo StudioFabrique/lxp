@@ -25,6 +25,8 @@ import ImportSkills from "../../components/edit-parcours/skills/import-skills.co
 import ImportObjectives from "../../components/edit-parcours/objectives/import-objectives";
 import ObjectivesList from "../../components/edit-parcours/objectives/objectives-list";
 import { parcoursObjectivesAction } from "../../store/redux-toolkit/parcours/parcours-objectives";
+import { toast } from "react-hot-toast";
+import { testStep } from "../../helpers/parcours-steps-validation";
 
 let initialState = true;
 
@@ -37,13 +39,16 @@ const EditParcours = () => {
   const { actualStep, finalStep, stepsList, updateStep, validateStep } =
     useSteps(stepsParcours);
   const nav = useNavigate();
-  const informationsIsValid = useSelector(
-    (state: any) => state.parcoursInformations.isValid
-  );
+  const infos = useSelector((state: any) => state.parcoursInformations.infos);
   const skills = useSelector((state: any) => state.parcoursSkills.skills);
   const objectives = useSelector(
     (state: any) => state.parcoursObjectives.objectives
   );
+  const tags = useSelector((state: any) => state.tags.currentTags);
+  const contacts = useSelector(
+    (state: any) => state.parcoursContacts.currentContacts
+  );
+  const modules = useSelector((state: any) => state.parcoursModule.modules);
 
   /**
    * télécharge les données du parcours depuis la bdd et initialise les différentes propriétés du parcours
@@ -126,21 +131,10 @@ const EditParcours = () => {
   }, [id, dispatch, sendRequest]);
 
   /**
-   * renvoie l'utilisateur à la page de création du parcours après avoir supprimé de la bdd le parcours qui était en cours d'édition
+   * renvoie l'utilisateur à la page de création du parcours
    */
   const handleCancel = () => {
-    if (actualStep.id === 1) {
-      const processData = (data: any) => {
-        nav("/admin/parcours/créer-un-parcours");
-      };
-      sendRequest(
-        {
-          path: `/parcours/${id}`,
-          method: "delete",
-        },
-        processData
-      );
-    }
+    nav("/admin/parcours/créer-un-parcours");
   };
 
   /**
@@ -158,14 +152,14 @@ const EditParcours = () => {
     };
   }, [dispatch]);
 
-  const handleUpdateStep = (id: number) => {
+  /*   const handleUpdateStep = (id: number) => {
     if (id < actualStep.id || id === 1) {
       updateStep(id);
     } else if (checkStep(actualStep.id) && checkStep(id - 1)) {
       validateStep(actualStep.id, checkStep(actualStep.id));
       updateStep(id);
     }
-  };
+  }; /*
 
   /**
    * enregistrement de l'image du parcours dans la bdd
@@ -175,6 +169,7 @@ const EditParcours = () => {
       const formData = new FormData();
       formData.append("parcoursId", id!);
       formData.append("image", image);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const processData = (_data: any) => {};
       sendRequest(
         {
@@ -188,16 +183,58 @@ const EditParcours = () => {
     [id, sendRequest]
   );
 
+  /**
+   * vérifie si une étape est valide pour pouvoir passer à la suivante
+   * si le tableau retourné est vide aucune erreur a été rencontrée
+   * @param id number
+   */
+  const handleUpdateStep = (id: number) => {
+    const errors = checkStep(id);
+
+    if (errors!.length !== 0) {
+      validateStep(id, false);
+      toast.error(Object.values(errors![0]).toString());
+      return;
+    } else {
+      if (id === stepsList[stepsList.length - 1].id - 1) {
+        const finalErrors = checkStep(id + 1);
+        if (finalErrors!.length === 0) {
+          validateStep(id, true);
+        } else {
+          toast.error(Object.values(finalErrors![0]).toString());
+          return;
+        }
+      }
+      validateStep(id, true);
+    }
+
+    validateStep(id, true);
+  };
+
+  /**
+   * retourne divers messages d'erreurs en fonction de la section vérifiée
+   * @param id number
+   * @returns any[]
+   */
   const checkStep = (id: number) => {
     switch (id) {
       case 1:
-        return informationsIsValid;
+        return testStep(id, infos.title);
       case 2:
-        return objectives.length > 0;
+        return testStep(id, objectives);
       case 3:
-        return skills.length > 0;
-      default:
-        return false;
+        return testStep(id, skills);
+      case 4:
+        return testStep(id, modules);
+      case 5:
+        return testStep(id, {
+          infos,
+          tags,
+          contacts,
+          objectives,
+          skills,
+          modules,
+        });
     }
   };
 
@@ -210,6 +247,8 @@ const EditParcours = () => {
   };
 
   const handleResetImportedObjectives = () => {};
+
+  console.log({ stepsList });
 
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
@@ -262,7 +301,7 @@ const EditParcours = () => {
                 className="btn btn-primary btn-outline"
                 onClick={handleCancel}
               >
-                Annuler
+                Retour
               </button>
             ) : (
               <button
@@ -274,7 +313,7 @@ const EditParcours = () => {
             )}
             <button
               className="btn btn-primary"
-              onClick={() => handleUpdateStep(actualStep.id + 1)}
+              onClick={() => handleUpdateStep(actualStep.id)}
             >
               Etape suivante
             </button>

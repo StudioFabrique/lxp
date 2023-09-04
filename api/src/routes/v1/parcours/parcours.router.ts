@@ -69,7 +69,7 @@ parcoursRouter.put(
 parcoursRouter.put(
   "/update-contacts",
   isAdmin,
-  putParcoursContactsValidator,
+  //putParcoursContactsValidator,
   httpPutParcoursContacts
 );
 //parcoursRouter.use("/update-skills", putParcoursSkillsRouter);

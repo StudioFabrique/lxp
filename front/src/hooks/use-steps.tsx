@@ -13,6 +13,8 @@ const useSteps = (steps: Array<Step>) => {
    * @param id number
    */
   const updateStep = (id: number) => {
+    console.log("step updated");
+
     const step = stepsList.find((item: Step) => item.id === id);
     if (step) {
       setActualStep(step);
@@ -25,21 +27,19 @@ const useSteps = (steps: Array<Step>) => {
    * @param value boolean
    */
   const validateStep = (id: number, value: boolean) => {
-    setStepsList((prevStepsList) => {
-      const step = prevStepsList.find((item) => item.id === id);
-      const updatedList = prevStepsList.filter((item) => item.id !== id);
-      return sortArray(
-        [
-          ...updatedList,
-          {
-            id: step!.id,
-            label: step!.label,
-            isValid: value,
-          },
-        ],
+    setStepsList((prevStepsList) =>
+      sortArray(
+        prevStepsList.map((item) => {
+          if (item.id === id) {
+            return { ...item, isValid: value };
+          } else return item;
+        }),
         "id"
-      );
-    });
+      )
+    );
+    if (value) {
+      updateStep(id + 1);
+    }
   };
 
   // débloque la navigation libre d'une étape à une autre pour que l'utilisateur puisse apporter des corrections

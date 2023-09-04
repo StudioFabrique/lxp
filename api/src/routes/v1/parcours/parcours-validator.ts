@@ -115,20 +115,20 @@ export const putParcoursContactsValidator = [
     .withMessage("Identifiant de parcours absent")
     .escape(),
   body("contacts").isArray().notEmpty().withMessage("Contacts absents"),
-  body("contacts.id").isNumeric().withMessage("Id contact invalide").escape(),
-  body("contacts.idMdb")
+  body("contacts.*.id").isNumeric().withMessage("Id contact invalide").escape(),
+  body("contacts.*.idMdb")
     .isString()
     .withMessage("Id nosql invalide")
     .notEmpty()
     .withMessage("Id nosql absent")
     .escape(),
-  body("contact.name")
+  body("contact.*.name")
     .isString()
     .withMessage("Nom invalide")
     .notEmpty()
     .withMessage("Nom absent")
     .escape(),
-  body("contact.role")
+  body("contact.*.role")
     .isString()
     .withMessage("Role invalide")
     .notEmpty()
