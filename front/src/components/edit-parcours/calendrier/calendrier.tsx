@@ -1,11 +1,16 @@
+/* import { Schedulely } from "schedulely";
+import "schedulely/dist/index.css"; */
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useSelector } from "react-redux";
-import "schedulely/dist/index.css";
 import Module from "../../../utils/interfaces/module";
 import ModulesListCalendrier from "./modules-list-calendrier";
 import CalendrierForm from "./calendrier-form";
 import Wrapper from "../../UI/wrapper/wrapper.component";
-import { Schedulely } from "schedulely";
+import moment from "moment";
 import { getRandomHexColor } from "../../../utils/randomColor";
+
+const localizer = momentLocalizer(moment);
 
 const Calendrier = () => {
   const parcoursInfos = useSelector(
@@ -28,13 +33,13 @@ const Calendrier = () => {
           <CalendrierForm datesParcours={datesParcours} />
           <div className="row-span-2">
             <Wrapper>
-              <Schedulely
+              <Calendar
+                localizer={localizer}
                 events={modules.map((module) => {
                   return {
-                    id: module.id!.toString(),
                     start: new Date(module.minDate!).toISOString(),
                     end: new Date(module.maxDate!).toISOString(),
-                    summary: module.title,
+                    title: module.title,
                     color: getRandomHexColor(),
                   };
                 })}
