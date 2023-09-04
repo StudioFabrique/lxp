@@ -4,12 +4,12 @@ import { useSelector } from "react-redux";
 import Module from "../../../../utils/interfaces/module";
 import useHttp from "../../../../hooks/use-http";
 import { useDispatch } from "react-redux";
-import { initParcoursModules } from "../../../../store/redux-toolkit/parcours/parcours-modules";
+import { parcoursModulesSliceAction } from "../../../../store/redux-toolkit/parcours/parcours-modules";
 import { useParams } from "react-router-dom";
 
 const ModulesList: FC<{}> = () => {
   const modules: Module[] = useSelector(
-    (state: any) => state.parcoursModule.modules
+    (state: any) => state.parcoursModules.modules
   ) as Module[];
 
   const { id: parcoursId } = useParams();
@@ -21,8 +21,7 @@ const ModulesList: FC<{}> = () => {
   const fetchModules = useCallback(() => {
     const applyData = (data: any) => {
       console.log(data);
-
-      dispatch(initParcoursModules(data.modules));
+      dispatch(parcoursModulesSliceAction.initParcoursModules(data.modules));
     };
 
     sendRequest(

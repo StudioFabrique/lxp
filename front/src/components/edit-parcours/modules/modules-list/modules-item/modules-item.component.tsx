@@ -4,10 +4,7 @@ import EditButton from "./buttons/edit-button.component";
 import ViewButton from "./buttons/view-button.component";
 import DeleteButton from "./buttons/delete-button.component";
 import { useDispatch } from "react-redux";
-import {
-  deleteParcoursModule,
-  updateCurrentParcoursModule,
-} from "../../../../../store/redux-toolkit/parcours/parcours-modules";
+import { parcoursModulesSliceAction } from "../../../../../store/redux-toolkit/parcours/parcours-modules";
 import { toast } from "react-hot-toast";
 import useHttp from "../../../../../hooks/use-http";
 
@@ -20,7 +17,7 @@ const ModulesItem: FC<{
 
   const handleDelete = () => {
     const applyData = (data: any) => {
-      dispatch(deleteParcoursModule(data.moduleId));
+      dispatch(parcoursModulesSliceAction.deleteParcoursModule(data.moduleId));
       toast.success("Module supprimé avec success");
     };
     console.log(module);
@@ -36,7 +33,7 @@ const ModulesItem: FC<{
 
   const handleBeginEdit = () => {
     console.log("test");
-    dispatch(updateCurrentParcoursModule(module.id));
+    dispatch(parcoursModulesSliceAction.updateCurrentParcoursModule(module.id));
   };
 
   return (
