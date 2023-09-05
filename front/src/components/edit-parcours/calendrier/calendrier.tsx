@@ -8,7 +8,7 @@ import ModulesListCalendrier from "./modules-list-calendrier";
 import CalendrierForm from "./calendrier-form";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import moment from "moment";
-import { getRandomHexColor } from "../../../utils/randomColor";
+// import { getRandomHexColor } from "../../../utils/randomColor";
 
 const localizer = momentLocalizer(moment);
 
@@ -18,7 +18,7 @@ const Calendrier = () => {
   );
   const modules: Module[] = useSelector(
     (state: any) => state.parcoursModules.modules
-  ) as Module[];
+  );
   const datesParcours = {
     startDate: new Date(parcoursInfos.startDate),
     endDate: new Date(parcoursInfos.endDate),
@@ -34,13 +34,14 @@ const Calendrier = () => {
           <div className="row-span-2 h-[60vh]">
             <Wrapper>
               <Calendar
+                style={{ backgroundColor: "white" }}
                 localizer={localizer}
                 events={modules.map((module) => {
                   return {
                     start: new Date(module.minDate!).toISOString(),
                     end: new Date(module.maxDate!).toISOString(),
                     title: module.title,
-                    color: getRandomHexColor(),
+                    // color: getRandomHexColor(),
                   };
                 })}
               />
