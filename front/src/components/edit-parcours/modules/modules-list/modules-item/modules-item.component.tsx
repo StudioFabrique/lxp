@@ -32,7 +32,6 @@ const ModulesItem: FC<{
   };
 
   const handleBeginEdit = () => {
-    console.log("test");
     dispatch(parcoursModulesSliceAction.updateCurrentParcoursModule(module.id));
   };
 

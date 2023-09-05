@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom";
 const ModulesList: FC<{}> = () => {
   const modules: Module[] = useSelector(
     (state: any) => state.parcoursModules.modules
-  ) as Module[];
+  );
 
   const { id: parcoursId } = useParams();
 
