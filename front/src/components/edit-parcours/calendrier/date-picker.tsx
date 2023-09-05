@@ -1,11 +1,4 @@
-import {
-  ChangeEvent,
-  ChangeEventHandler,
-  FC,
-  Ref,
-  useEffect,
-  useRef,
-} from "react";
+import { ChangeEvent, ChangeEventHandler, FC, Ref, useRef } from "react";
 import CalendarIcon from "../../UI/svg/calendar-icon";
 
 const DatePicker: FC<{
@@ -38,6 +31,7 @@ const DatePicker: FC<{
       <input
         id={id}
         onChange={handleChange}
+        value={date}
         ref={dateRef}
         type="date"
         className="invisible"
