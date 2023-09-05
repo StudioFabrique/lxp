@@ -1,5 +1,5 @@
 import { FC } from "react";
-import DeleteButton from "./buttons/delete-button.component";
+import DeleteButton from "./buttons/delete-button";
 
 const DataItem: FC<{
   data: any;
