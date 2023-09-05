@@ -34,7 +34,7 @@ const Calendrier = () => {
           <div className="row-span-2 h-[60vh]">
             <Wrapper>
               <Calendar
-                style={{ backgroundColor: "white" }}
+                className="bg-white p-5"
                 localizer={localizer}
                 events={modules.map((module) => {
                   return {
