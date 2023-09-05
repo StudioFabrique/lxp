@@ -16,7 +16,6 @@ import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import ImageHeader from "../../components/image-header/image-header";
 import Error404 from "../../components/error404";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
-import ParcoursModules from "../../components/edit-parcours/modules/parcours-modules.component";
 import Stepper from "../../components/UI/stepper.-component/stepper.-component";
 import ParcoursInformations from "../../components/edit-parcours/informations/parcours-informations";
 import ParcoursSection from "../../components/edit-parcours/parcours-section";
@@ -28,6 +27,7 @@ import { parcoursObjectivesAction } from "../../store/redux-toolkit/parcours/par
 import Module from "../../utils/interfaces/module";
 import Calendrier from "../../components/edit-parcours/calendrier/calendrier";
 import { parcoursModulesSliceAction } from "../../store/redux-toolkit/parcours/parcours-modules";
+import ParcoursModules from "../../components/edit-parcours/modules/parcours-modules";
 
 let initialState = true;
 

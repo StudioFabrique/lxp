@@ -31,7 +31,7 @@ const Calendrier = () => {
         <ModulesListCalendrier modules={modules} />
         <div className="grid grid-rows-3 gap-y-5 col-span-2">
           <CalendrierForm datesParcours={datesParcours} />
-          <div className="row-span-2">
+          <div className="row-span-2 h-[60vh]">
             <Wrapper>
               <Calendar
                 localizer={localizer}

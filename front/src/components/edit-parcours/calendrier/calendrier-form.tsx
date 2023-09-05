@@ -1,11 +1,4 @@
-import {
-  ChangeEvent,
-  ChangeEventHandler,
-  FC,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { FC, useEffect, useState } from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import Module from "../../../utils/interfaces/module";
 import { useSelector } from "react-redux";
@@ -43,8 +36,8 @@ const CalendrierForm: FC<{
   const handleChangeDates = (id: string, date: string) => {
     setDatesModule((initialDates) => {
       return {
-        minDate: id == "date1" ? date : initialDates.minDate,
-        maxDate: id == "date2" ? date : initialDates.maxDate,
+        minDate: id === "date1" ? date : initialDates.minDate,
+        maxDate: id === "date2" ? date : initialDates.maxDate,
       };
     });
   };
