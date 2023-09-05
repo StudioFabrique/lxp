@@ -4,11 +4,12 @@ import httpGetAllModules from "../../controllers/module/http-get-all-modules";
 import httpUpdateModule from "../../controllers/module/http-update-module";
 import httpDeleteModule from "../../controllers/module/http-delete-module";
 import httpUpdateDatesModule from "../../controllers/module/http-update-dates-module";
+import fileUpload from "../../middleware/fileUpload";
 
 const moduleRouter = Router();
 
 moduleRouter.get("/:parcoursId", httpGetAllModules);
-moduleRouter.post("/", httpCreateModule);
+moduleRouter.post("/", fileUpload.single("image"), httpCreateModule);
 moduleRouter.put("/", httpUpdateModule);
 moduleRouter.put("/dates", httpUpdateDatesModule);
 moduleRouter.delete("/:id", httpDeleteModule);
