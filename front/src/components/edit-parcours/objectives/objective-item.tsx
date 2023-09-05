@@ -39,7 +39,9 @@ const ObjectiveItem: FC<Props> = ({ objective, onDelete, onUpdate }) => {
         onClick={() => onDelete(objective.id!)}
         aria-label="suppression de l'objectif"
       >
-        <DeleteIcon />
+        <div className="w-6 h-6">
+          <DeleteIcon />
+        </div>
       </button>
     </article>
   );

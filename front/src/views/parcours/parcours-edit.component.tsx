@@ -27,6 +27,8 @@ import ObjectivesList from "../../components/edit-parcours/objectives/objectives
 import { parcoursObjectivesAction } from "../../store/redux-toolkit/parcours/parcours-objectives";
 import { toast } from "react-hot-toast";
 import { testStep } from "../../helpers/parcours-steps-validation";
+import ParcoursPreview from "../../components/edit-parcours/preview/parcours-preview.component";
+import ModulesSection from "../../components/edit-parcours/modules-section/modules.component";
 
 let initialState = true;
 
@@ -49,7 +51,6 @@ const EditParcours = () => {
     (state: any) => state.parcoursContacts.currentContacts
   );
   const modules = useSelector((state: any) => state.parcoursModule.modules);
-
 
   /**
    * télécharge les données du parcours depuis la bdd et initialise les différentes propriétés du parcours
@@ -249,7 +250,7 @@ const EditParcours = () => {
 
   const handleResetImportedObjectives = () => {};
 
-  console.log({ stepsList });
+  console.log({ actualStep });
 
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
@@ -263,6 +264,7 @@ const EditParcours = () => {
               image={image}
               onUpdateImage={updateImage}
             />
+            {/* Etapes du parcours */}
             <div className="p-4 rounded-xl w-5/6 bg-secondary/20">
               <Stepper
                 actualStep={actualStep}
@@ -273,9 +275,11 @@ const EditParcours = () => {
             </div>
           </div>
           <div className="w-full 2xl:w-4/6 mt-16">
+            {/* Premiere étap : infos générales du parcours */}
             {actualStep.id === 1 ? (
               <ParcoursInformations parcoursId={id} />
             ) : null}
+            {/* Seconde étape : liste des objectifs */}
             {actualStep.id === 2 ? (
               <ParcoursSection
                 title="Importer une liste d'objectifs"
@@ -285,6 +289,7 @@ const EditParcours = () => {
                 <ImportObjectives onCloseDrawer={() => {}} />
               </ParcoursSection>
             ) : null}
+            {/* Troisème étape : liste des compétences */}
             {actualStep.id === 3 ? (
               <ParcoursSection
                 title="Importer des compétences"
@@ -294,7 +299,12 @@ const EditParcours = () => {
                 <ImportSkills onCloseDrawer={() => {}} />
               </ParcoursSection>
             ) : null}
-            {actualStep.id === 4 && id ? <ParcoursModules /> : null}
+            {/* Quatrième étape : liste des modules */}
+            {actualStep.id === 4 && id ? <ModulesSection /> : null}
+            {/* Cinquième étape : liste des étudiants */}
+            {/* {actualStep.id === 5 ? <ParcoursStudents /> : null} */}
+            {/* Etape finale : aperçu du parcours */}
+            {actualStep.id === 5 ? <ParcoursPreview /> : null}
           </div>
           <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">
             {actualStep.id === 1 ? (

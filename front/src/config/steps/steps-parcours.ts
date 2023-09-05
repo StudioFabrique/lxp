@@ -15,12 +15,12 @@ const steps = [
   },
   /*   {
     label: "Calendrier",
-  },
+  },*/ /*
   {
     label: "Etudiants",
-  }, */
+  },*/
   {
-    label: "",
+    label: "Aperçu",
   },
 ];
 

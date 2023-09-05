@@ -103,7 +103,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
 
   return (
     <div className="w-full">
-      <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-x-16">
+      <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-8">
         <Wrapper>
           <h2 className="text-xl font-bold">Informations</h2>
           <div className="flex flex-col gap-y-8">

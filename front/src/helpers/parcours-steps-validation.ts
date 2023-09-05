@@ -43,7 +43,7 @@ const testSkills = (skills: Array<Skill>) => {
 };
 
 const testModules = (modules: Array<Module>) => {
-  return modules.length === 0;
+  return modules.length > 0;
 };
 
 export function testStep(id: number, data: any) {
