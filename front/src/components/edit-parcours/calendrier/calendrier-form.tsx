@@ -90,16 +90,16 @@ const CalendrierForm: FC<{
         <form className="flex flex-col gap-y-5 h-full">
           <h3>Dates de modules : </h3>
           <div className="flex flex-col gap-y-5">
-            <span className="flex items-center gap-x-5">
-              <label>Début </label>
+            <span className="flex items-center">
+              <label className="w-16">Début </label>
               <DatePicker
                 id="date1"
                 date={datesModule.minDate}
                 onSubmitDate={handleChangeDates}
               />
             </span>
-            <span className="flex items-center gap-x-5">
-              <label>Fin </label>
+            <span className="flex items-center">
+              <label className="w-16">Fin </label>
               <DatePicker
                 id="date2"
                 date={datesModule.maxDate}
