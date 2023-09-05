@@ -10,6 +10,5 @@ export default interface Module {
   duration: number;
   minDate?: string;
   maxDate?: string;
-  imageUrl?: string;
-  imageTemp?: File;
+  image?: any;
 }

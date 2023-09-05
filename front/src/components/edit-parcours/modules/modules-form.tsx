@@ -21,7 +21,7 @@ const ModulesForm: FC<{}> = () => {
   const { sendRequest } = useHttp();
 
   const currentModuleToEdit: Module | null = useSelector(
-    (state: any) => state.parcoursModules.currentModules
+    (state: any) => state.parcoursModules.currentModule
   );
 
   const skillsFromDb = useSelector((state: any) => state.parcoursSkills.skills);
@@ -57,6 +57,8 @@ const ModulesForm: FC<{}> = () => {
   const handleSubmit: FormEventHandler<HTMLFormElement> = (
     event: FormEvent<HTMLFormElement>
   ) => {
+    console.log(imageFile);
+
     event.preventDefault();
     if (
       !title.isValid ||
@@ -78,8 +80,6 @@ const ModulesForm: FC<{}> = () => {
       contacts: contacts,
       bonusSkills: skills,
       duration: parseInt(duration.value),
-      /* imageTemp: imageFile!,
-      imageUrl: URL.createObjectURL(imageFile!), */
     };
 
     const applyData = (data: any) => {
@@ -96,17 +96,19 @@ const ModulesForm: FC<{}> = () => {
       handleClearEdit();
     };
 
+    const formData = new FormData();
+    formData.append("module", JSON.stringify(module));
+    formData.append("image", imageFile);
+    !currentModuleToEdit && formData.append("parcoursId", parcoursId!);
+    currentModuleToEdit &&
+      formData.append("moduleId", currentModuleToEdit.id!.toString());
+
     // do the request
     sendRequest(
       {
         path: "/module",
         method: currentModuleToEdit ? "put" : "post",
-        body: {
-          module: module,
-          parcoursId: !currentModuleToEdit && parseInt(parcoursId!),
-          moduleId: currentModuleToEdit && currentModuleToEdit.id,
-          // imageFile: imageFile,
-        },
+        body: formData,
       },
       applyData
     );
@@ -117,7 +119,7 @@ const ModulesForm: FC<{}> = () => {
       title.changeValue(currentModuleToEdit.title);
       description.changeValue(currentModuleToEdit.description);
       duration.changeValue(currentModuleToEdit.duration.toString());
-      setImageFile(currentModuleToEdit.imageTemp!);
+      setImageFile(null);
       setContacts(currentModuleToEdit.contacts);
       setSkills(currentModuleToEdit.bonusSkills);
       setResetFilter(true);

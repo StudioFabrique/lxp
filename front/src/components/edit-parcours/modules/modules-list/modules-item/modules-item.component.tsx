@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import Module from "../../../../../utils/interfaces/module";
 import EditButton from "./buttons/edit-button.component";
 import ViewButton from "./buttons/view-button.component";
@@ -14,6 +14,12 @@ const ModulesItem: FC<{
 }> = ({ module }) => {
   const dispatch = useDispatch();
   const { sendRequest } = useHttp();
+
+  const image = URL.createObjectURL(
+    new Blob([new Uint8Array(module.image.data)], {
+      type: "application/octet-stream",
+    })
+  );
 
   const handleDelete = () => {
     const applyData = (data: any) => {
@@ -41,7 +47,7 @@ const ModulesItem: FC<{
         <span className="w-[25%]">
           <img
             className="object-fill h-20 w-20 rounded-md"
-            src={module.imageUrl}
+            src={image}
             alt="module preview"
           />
         </span>

@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import fs from "fs";
-
 import { badQuery } from "../../utils/constantes";
 import updateImage from "../../models/parcours/update-image";
 
