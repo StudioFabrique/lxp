@@ -1,9 +1,7 @@
 import bcrypt from "bcrypt";
 
-import { hasRole } from "../../utils/services/permissions/hasRole";
-import User from "../../utils/interfaces/db/user.model";
 import { credentialsError } from "../../utils/constantes";
-
+import User from "../../utils/interfaces/db/user";
 
 async function userLogin(email: string, password: string) {
   try {

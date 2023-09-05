@@ -8,11 +8,11 @@ const initialParcoursState = {
     description: "",
     startDate: "",
     endDate: "",
+    virtualClass: "",
   },
   isValid: false,
   tagsIsValid: false,
   contactsIsValid: false,
-  virtualClass: "",
   infosIsValid: false,
 };
 
@@ -61,7 +61,7 @@ const parcoursInformationsSlice = createSlice({
       state.tagsIsValid = action.payload;
     },
     setVirtualClass(state, action) {
-      state.virtualClass = action.payload;
+      state.infos.virtualClass = action.payload;
     },
     infosIsValid(state) {
       state.infosIsValid =
