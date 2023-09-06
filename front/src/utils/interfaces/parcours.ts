@@ -1,5 +1,6 @@
 import Contact from "./contact";
 import Formation from "./formation";
+import Module from "./module";
 import Objective from "./objective";
 import Skill from "./skill";
 import Tag from "./tag";
@@ -22,4 +23,5 @@ export default interface Parcours {
   bonusSkills: Array<Skill>;
   virtualClass?: string;
   objectives: Array<Objective>;
+  modules: Array<Module>;
 }

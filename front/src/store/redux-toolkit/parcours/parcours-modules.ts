@@ -3,18 +3,28 @@ import Module from "../../../utils/interfaces/module";
 import { toast } from "react-hot-toast";
 import { addIdToObject } from "../../../utils/add-id-to-objects";
 
-const initialModuleState: { modules: Module[]; currentModule: Module | null } =
-  {
-    modules: Array<Module>(),
-    /* currentModule est le module temporaire en cours d'édition et permet d'indiquer au formulaire
+const initialModuleState: {
+  modules: Module[];
+  currentModule: Module | null;
+  cloneModules: string[] | null;
+  initialCloneModulesList: Module[];
+} = {
+  modules: Array<Module>(),
+  /* currentModule est le module temporaire en cours d'édition et permet d'indiquer au formulaire
     si le contenu est en cours d'édition ou si le contenu est nouveau (currentModule sera null) */
-    currentModule: null,
-  };
+  currentModule: null,
+  cloneModules: null,
+  initialCloneModulesList: Array<Module>(),
+};
 
 const parcoursModuleSlice = createSlice({
   name: "parcoursModule",
   initialState: initialModuleState,
   reducers: {
+    setCloneModules(state, action) {
+      state.cloneModules = action.payload;
+    },
+
     initParcoursModules(state, action) {
       const modules: Module[] = action.payload;
       state.modules = modules;
@@ -63,6 +73,7 @@ export const {
   deleteParcoursModule,
   updateParcoursModule,
   clearCurrentParcoursModule,
+  setCloneModules,
 } = parcoursModuleSlice.actions;
 
 export default parcoursModuleSlice;

@@ -11,13 +11,14 @@ datasource db {
 }
 
 model Formation {
-  id          Int               @id @default(autoincrement())
-  title       String            @unique
+  id          Int                  @id @default(autoincrement())
+  title       String               @unique
   description String
   code        String
   level       String
   parcours    Parcours[]
   tags        TagsOnFormation[]
+  modules     ModulesOnFormation[]
 }
 
 model Parcours {
@@ -37,27 +38,28 @@ model Parcours {
   formation    Formation            @relation(fields: [formationId], references: [id])
   formationId  Int
   skills       SkillsOnParcours[]
+  modules      ModulesOnParcours[]
   bonusSkills  BonusSkill[]
-  modules      Module[]
   objectives   Objective[]
+  groups       Group[]
   virtualClass String?
 }
 
 model Module {
-  id          Int                 @id @default(autoincrement())
-  title       String              
-  description String
-  // image       Bytes
-  duration    Int
+  id          Int                   @id @default(autoincrement())
+  title       String
+  description String?
+  image       Bytes
+  duration    Int?
   rating      Float?
   minDate     DateTime?
   maxDate     DateTime?
-  parcours    Parcours @relation(fields: [parcoursId], references: [id])
-  parcoursId  Int
+  formations  ModulesOnFormation[]
+  parcours    ModulesOnParcours[]
   bonusSkills BonusSkillsOnModule[]
   contacts    ContactsOnModule[]
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @default(now())
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @default(now())
 }
 
 model OpenBadge {
@@ -89,14 +91,14 @@ model Skill {
 }
 
 model BonusSkill {
-  id          Int      @id @default(autoincrement())
+  id          Int                   @id @default(autoincrement())
   description String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @default(now())
   badge       String?
-  parcours    Parcours @relation(fields: [parcoursId], references: [id])
+  parcours    Parcours              @relation(fields: [parcoursId], references: [id])
+  modules     BonusSkillsOnModule[]
   parcoursId  Int
-  modules BonusSkillsOnModule[]
 }
 
 model Admin {
@@ -108,6 +110,13 @@ model Admin {
 model Teacher {
   id    Int    @id @default(autoincrement())
   idMdb String
+}
+
+model Group {
+  id         Int      @id @default(autoincrement())
+  idMdb      String
+  parcours   Parcours @relation(fields: [parcoursId], references: [id])
+  parcoursId Int
 }
 
 model Contact {
@@ -130,6 +139,15 @@ model Objective {
   parcoursId  Int
 }
 
+model ContactsOnParcours {
+  parcours   Parcours @relation(fields: [parcoursId], references: [id])
+  parcoursId Int
+  contact    Contact  @relation(fields: [contactId], references: [id])
+  contactId  Int
+
+  @@id([parcoursId, contactId])
+}
+
 model SkillsOnParcours {
   skill      Skill    @relation(fields: [skillId], references: [id])
   skillId    Int
@@ -137,6 +155,15 @@ model SkillsOnParcours {
   parcoursId Int
 
   @@id([skillId, parcoursId])
+}
+
+model BonusSkillsOnModule {
+  bonusSkill   BonusSkill @relation(fields: [bonusSkillId], references: [id])
+  bonusSkillId Int
+  module       Module     @relation(fields: [moduleId], references: [id])
+  moduleId     Int
+
+  @@id([bonusSkillId, moduleId])
 }
 
 model TagsOnParcours {
@@ -148,13 +175,13 @@ model TagsOnParcours {
   @@id([tagId, parcoursId])
 }
 
-model ContactsOnParcours {
-  parcours   Parcours @relation(fields: [parcoursId], references: [id])
-  parcoursId Int
-  contact    Contact  @relation(fields: [contactId], references: [id])
-  contactId  Int
+model ContactsOnModule {
+  contact   Contact @relation(fields: [contactId], references: [id])
+  contactId Int
+  module    Module  @relation(fields: [moduleId], references: [id])
+  moduleId  Int
 
-  @@id([parcoursId, contactId])
+  @@id([contactId, moduleId])
 }
 
 model TagsOnFormation {
@@ -166,20 +193,20 @@ model TagsOnFormation {
   @@id([tagId, formationId])
 }
 
-model BonusSkillsOnModule {
-  bonusSkill    BonusSkill  @relation(fields: [bonusSkillId], references: [id])
-  bonusSkillId  Int
-  module   Module @relation(fields: [moduleId], references: [id])
-  moduleId Int
+model ModulesOnFormation {
+  module      Module    @relation(fields: [moduleId], references: [id])
+  moduleId    Int
+  formation   Formation @relation(fields: [formationId], references: [id])
+  formationId Int
 
-  @@id([bonusSkillId, moduleId])
+  @@id([moduleId, formationId])
 }
 
-model ContactsOnModule {
-  contact    Contact  @relation(fields: [contactId], references: [id])
-  contactId  Int
-  module     Module @relation(fields: [moduleId], references: [id])
+model ModulesOnParcours {
+  module     Module   @relation(fields: [moduleId], references: [id])
   moduleId   Int
+  parcours   Parcours @relation(fields: [parcoursId], references: [id])
+  parcoursId Int
 
-  @@id([contactId, moduleId])
+  @@id([moduleId, parcoursId])
 }
