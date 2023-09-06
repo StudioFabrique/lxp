@@ -2,12 +2,13 @@ import { Document, Schema, model } from "mongoose";
 //import { IStudent } from "./student/student.model";
 import { IRole } from "./role";
 import { IUser } from "./user";
+import { ITag } from "./tag";
 
 export interface IGroup extends Document {
   name: string;
   desc: string;
   users?: IUser["_id"];
-  //students?: IStudent["_id"];
+  tags?: ITag["_id"];
   roles: IRole["_id"];
   createdAt: Date;
   updatedAt: Date;
@@ -21,10 +22,7 @@ const groupSchema: Schema = new Schema(
       type: [Schema.Types.ObjectId],
       ref: "User",
     },
-    /*     students: {
-      type: [Schema.Types.ObjectId],
-      ref: "Student",
-    }, */
+    tags: { type: [Schema.Types.ObjectId], ref: "Role", required: "false" },
     roles: {
       type: [Schema.Types.ObjectId],
       ref: "Role",

@@ -11,12 +11,14 @@ type Item = {
   formationId?: number;
 };
 
-const Details: FC<{ onSelectParcours: (id: number) => void }> = ({
-  onSelectParcours,
-}) => {
+const Details: FC<{
+  onSelectParcours: (id: number) => void;
+  onSelectFormation: (id: number) => void;
+}> = ({ onSelectParcours, onSelectFormation }) => {
   const { sendRequest } = useHttp();
 
   const [parcoursList, setParcoursList] = useState<Array<Item>>([]);
+  const [formationsList, setFormationsList] = useState<Array<Item>>([]);
 
   useEffect(() => {
     const applyData = (data: any) => {
@@ -30,12 +32,28 @@ const Details: FC<{ onSelectParcours: (id: number) => void }> = ({
     );
   }, [sendRequest]);
 
+  useEffect(() => {
+    const applyData = (data: any) => {
+      setFormationsList(sortArray(data, "id"));
+    };
+    sendRequest(
+      {
+        path: "/formation",
+      },
+      applyData
+    );
+  }, [sendRequest]);
+
   return (
     <Wrapper>
       <h2 className="font-bold text-xl">Details</h2>
       <span className="flex flex-col gap-y-2">
         <label>Formation visée</label>
-        <Selecter list={[]} onSelectItem={() => {}} title="" />
+        <Selecter
+          list={formationsList}
+          onSelectItem={onSelectFormation}
+          title=""
+        />
       </span>
       <span className="flex flex-col gap-y-2">
         <label>Parcours visé</label>

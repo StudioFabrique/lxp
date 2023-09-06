@@ -141,7 +141,7 @@ async function createManyTeachers() {
   const role = await Role.findOne({ role: "teacher" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
-  for (let i = 5; i < 15; i++) {
+  for (let i = 0; i < 5; i++) {
     const firstname = firstnames[getRandomNumber(0, 14)];
     const city = cities[getRandomNumber(0, 9)];
     const postCode = city.postcode;
@@ -168,7 +168,7 @@ async function createManyStudents() {
   const role = await Role.findOne({ role: "student" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 10; i++) {
     const firstname = firstnames[getRandomNumber(0, 14)];
     const city = cities[getRandomNumber(0, 9)];
     const postCode = city.postcode;
@@ -195,7 +195,7 @@ async function createManyCoach() {
   const role = await Role.findOne({ role: "coach" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 5; i++) {
     const firstname = firstnames[getRandomNumber(0, 14)];
     const city = cities[getRandomNumber(0, 9)];
     const postCode = city.postcode;
@@ -306,6 +306,7 @@ async function main() {
   await createManyStudents();
   await createManyCoach();
   await createManyGroups();
+  await createTag();
 }
 
 main();
