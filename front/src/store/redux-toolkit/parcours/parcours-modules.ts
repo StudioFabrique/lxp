@@ -21,8 +21,6 @@ const parcoursModulesSlice = createSlice({
     },
     addParcoursModule(state, action) {
       const module: Module = action.payload.module;
-      const moduleId: number = action.payload.moduleId;
-      module.id = moduleId;
       const modules: Module[] = state.modules;
       state.modules = addIdToObject([...modules, module]);
       toast.success("Le module a bien été ajouté");

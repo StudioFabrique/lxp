@@ -50,13 +50,13 @@ export default async function createModule(
         maxDate: parcoursDate?.endDate,
         contacts: { createMany: { data: existingContactsId } },
         bonusSkills: { createMany: { data: existingBonusSkillsId } },
-        parcours: { connect: { id: parcoursId } },
+        parcours: { create: { parcoursId: parcoursId } },
       },
     });
 
     if (updatedModule) {
       console.log("Module associé au parcours avec succès:", updatedModule);
-      return updatedModule.id;
+      return updatedModule;
     }
     return null;
   } catch (error) {

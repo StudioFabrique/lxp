@@ -7,6 +7,7 @@ export default async function updateModule(
     duration: number;
     contacts: any[];
     bonusSkills: any[];
+    imageFile: any;
   },
   moduleId: number
 ) {

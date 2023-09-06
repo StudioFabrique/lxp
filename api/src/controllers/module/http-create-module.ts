@@ -27,5 +27,5 @@ export default async function httpCreateModule(req: Request, res: Response) {
   if (!response) {
     return res.status(500).send("problème serveur");
   }
-  return res.status(201).send("ressource créée");
+  return res.status(201).send({ message: "ressource créée", module: response });
 }

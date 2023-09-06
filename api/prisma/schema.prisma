@@ -38,7 +38,7 @@ model Parcours {
   formationId  Int
   skills       SkillsOnParcours[]
   bonusSkills  BonusSkill[]
-  modules      Module[]
+  modules      ModulesOnParcours[]
   objectives   Objective[]
   virtualClass String?
 }
@@ -52,8 +52,7 @@ model Module {
   rating      Float?
   minDate     DateTime?
   maxDate     DateTime?
-  parcours    Parcours @relation(fields: [parcoursId], references: [id])
-  parcoursId  Int
+  parcours    ModulesOnParcours[]
   bonusSkills BonusSkillsOnModule[]
   contacts    ContactsOnModule[]
   createdAt   DateTime            @default(now())
@@ -182,4 +181,13 @@ model ContactsOnModule {
   moduleId   Int
 
   @@id([contactId, moduleId])
+}
+
+model ModulesOnParcours {
+  module      Module @relation(fields : [moduleId], references: [id])
+  moduleId    Int
+  parcours    Parcours @relation(fields: [parcoursId], references: [id])
+  parcoursId  Int
+
+  @@id([moduleId, parcoursId])
 }
