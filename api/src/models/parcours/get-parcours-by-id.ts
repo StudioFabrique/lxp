@@ -41,6 +41,7 @@ async function getParcoursById(parcoursId: number, userId: string) {
         skills: { include: { skill: true } },
         bonusSkills: { select: { id: true, description: true, badge: true } },
         objectives: { select: { id: true, description: true } },
+        modules: { select: { module: { select: { id: true } } } },
         admin: { select: { id: true, idMdb: true } },
       },
     });

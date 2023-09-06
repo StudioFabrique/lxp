@@ -16,7 +16,6 @@ import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import ImageHeader from "../../components/image-header/image-header";
 import Error404 from "../../components/error404";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
-import ParcoursModules from "../../components/edit-parcours/modules/parcours-modules.component";
 import Stepper from "../../components/UI/stepper.-component/stepper.-component";
 import ParcoursInformations from "../../components/edit-parcours/informations/parcours-informations";
 import ParcoursSection from "../../components/edit-parcours/parcours-section";
@@ -29,6 +28,7 @@ import { toast } from "react-hot-toast";
 import { testStep } from "../../helpers/parcours-steps-validation";
 import ParcoursPreview from "../../components/edit-parcours/preview/parcours-preview.component";
 import ModulesSection from "../../components/edit-parcours/modules-section/modules.component";
+import { setCloneModules } from "../../store/redux-toolkit/parcours/parcours-modules";
 
 let initialState = true;
 
@@ -116,6 +116,16 @@ const EditParcours = () => {
             data.objectives
           )
         );
+      }
+
+      if (data.modules.length > 0) {
+        dispatch(
+          setCloneModules(
+            data.modules.map((item: any) => item.module.id.toString())
+          )
+        );
+      } else {
+        dispatch(setCloneModules([]));
       }
 
       setIsLoading(false);

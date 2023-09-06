@@ -1,10 +1,10 @@
 import { FC, useCallback, useEffect } from "react";
 import ModulesItem from "./modules-item/modules-item.component";
 import { useSelector } from "react-redux";
-import Module from "../../../../utils/interfaces/module";
-import useHttp from "../../../../hooks/use-http";
+import Module from "../../front/src/utils/interfaces/module";
+import useHttp from "../../front/src/hooks/use-http";
 import { useDispatch } from "react-redux";
-import { initParcoursModules } from "../../../../store/redux-toolkit/parcours/parcours-modules";
+import { initParcoursModules } from "../../front/src/store/redux-toolkit/parcours/parcours-modules";
 import { useParams } from "react-router-dom";
 
 const ModulesList: FC<{}> = () => {
