@@ -84,15 +84,14 @@ const ModulesForm: FC<{}> = () => {
 
     const applyData = (data: any) => {
       console.log(data);
-      const moduleId = data.moduleId;
-      dispatch(
-        currentModuleToEdit
-          ? parcoursModulesSliceAction.updateParcoursModule({
-              module,
-              moduleId,
+      const moduleDb = data.module;
+      currentModuleToEdit
+        ? dispatch(
+            parcoursModulesSliceAction.updateParcoursModule({
+              moduleDb,
             })
-          : parcoursModulesSliceAction.addParcoursModule({ module, moduleId })
-      );
+          )
+        : dispatch(parcoursModulesSliceAction.addParcoursModule({ moduleDb }));
       handleClearEdit();
     };
 
