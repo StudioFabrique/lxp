@@ -69,7 +69,7 @@ const Informations: FC<{
           autoComplete="off"
         />
       </span>
-      <ImageFileUpload type={2} onSetFile={onSetFile} maxSize={5} />
+      <ImageFileUpload type={2} onSetFile={onSetFile} maxSize={10000} />
     </Wrapper>
   );
 };
