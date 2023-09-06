@@ -40,6 +40,7 @@ model Parcours {
   bonusSkills  BonusSkill[]
   modules      ModulesOnParcours[]
   objectives   Objective[]
+  groups       Group[]
   virtualClass String?
 }
 
@@ -107,6 +108,13 @@ model Admin {
 model Teacher {
   id    Int    @id @default(autoincrement())
   idMdb String
+}
+
+model Group {
+  id          Int   @id @default(autoincrement())
+  idMdb       String
+  parcours    Parcours @relation(fields: [parcoursId], references: [id])
+  parcoursId  Int
 }
 
 model Contact {

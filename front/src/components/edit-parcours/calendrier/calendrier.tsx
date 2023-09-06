@@ -32,20 +32,18 @@ const Calendrier = () => {
         <div className="grid grid-rows-3 gap-y-5 col-span-2">
           <CalendrierForm datesParcours={datesParcours} />
           <div className="row-span-2 h-[60vh]">
-            <Wrapper>
-              <Calendar
-                className="bg-white p-5"
-                localizer={localizer}
-                events={modules.map((module) => {
-                  return {
-                    start: new Date(module.minDate!).toISOString(),
-                    end: new Date(module.maxDate!).toISOString(),
-                    title: module.title,
-                    // color: getRandomHexColor(),
-                  };
-                })}
-              />
-            </Wrapper>
+            <Calendar
+              className="bg-white rounded-lg p-5"
+              localizer={localizer}
+              events={modules.map((module) => {
+                return {
+                  start: new Date(module.minDate!).toISOString(),
+                  end: new Date(module.maxDate!).toISOString(),
+                  title: module.title,
+                  // color: getRandomHexColor(),
+                };
+              })}
+            />
           </div>
         </div>
       </div>

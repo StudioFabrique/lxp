@@ -14,9 +14,12 @@ const GroupAdd = () => {
     console.log(data);
     console.log(usersToAdd);
 
-    sendRequest({ method: "post", path: "/group", body: data }, (data: any) => {
-      if (data) console.log("group created !");
-    });
+    sendRequest(
+      { method: "post", path: "/group", body: { ...data, users: usersToAdd } },
+      (data: any) => {
+        if (data) console.log("group created !");
+      }
+    );
   };
 
   const handleAddUsers = (users: Array<User>) => {
