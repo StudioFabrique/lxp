@@ -59,18 +59,17 @@ const GroupAddForm: FC<{
 
   //  test la validité du form via le custom hook useInput
   let formIsValid = false;
-  formIsValid = true;
-  /* name.isValid &&
+  formIsValid =
+    name.isValid &&
     desc.isValid &&
     dates.startDate.length > 0 &&
     dates.endDate.length > 0 &&
     diplome.isValid &&
     file !== null &&
     parcoursId !== null &&
-    isActive != null; */
+    isActive != null;
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     if (formIsValid) {
       props.onSubmitForm({
         groupRequest: {
@@ -88,12 +87,8 @@ const GroupAddForm: FC<{
   };
 
   return (
-    <form
-      className="flex flex-col gap-y-10"
-      onSubmit={handleSubmit}
-      autoComplete="off"
-    >
-      <GroupsHeader />
+    <form className="flex flex-col gap-y-10" autoComplete="off">
+      <GroupsHeader onSubmit={handleSubmit} />
       <div className="grid grid-cols-3 max-md:grid-cols-1 gap-x-5">
         <Informations
           name={name}

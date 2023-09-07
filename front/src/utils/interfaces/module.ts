@@ -11,4 +11,5 @@ export default interface Module {
   minDate?: string;
   maxDate?: string;
   image?: any;
+  synchrone?: boolean;
 }

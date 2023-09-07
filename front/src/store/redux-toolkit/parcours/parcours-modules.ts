@@ -54,6 +54,6 @@ const parcoursModulesSlice = createSlice({
   },
 });
 
-export const parcoursModulesSliceAction = parcoursModulesSlice.actions;
+export const parcoursModulesSliceActions = parcoursModulesSlice.actions;
 
 export default parcoursModulesSlice;
