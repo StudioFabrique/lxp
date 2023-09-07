@@ -6,12 +6,14 @@ async function httpParcoursModules(req: Request, res: Response) {
     const parcoursId = +req.params.parcoursId;
     const modulesId = req.body;
 
+    let result;
+
     const transaction = await prisma.$transaction(async (tx) => {
       await tx.modulesOnParcours.deleteMany({
         where: { parcoursId },
       });
 
-      const updatedParcours = await tx.parcours.update({
+      result = await tx.parcours.update({
         where: { id: parcoursId },
         data: {
           modules: {
@@ -24,10 +26,17 @@ async function httpParcoursModules(req: Request, res: Response) {
             }),
           },
         },
+        select: {
+          modules: {
+            select: {
+              module: { select: { id: true } },
+            },
+          },
+        },
       });
     });
 
-    return res.status(201).json(transaction);
+    return res.status(201).json(result);
   } catch (error) {
     console.log(error);
   }

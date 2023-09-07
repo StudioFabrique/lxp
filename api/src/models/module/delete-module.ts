@@ -1,7 +1,7 @@
 import { prisma } from "../../utils/db";
 
 export default async function deleteModule(moduleId: number) {
-  console.log("module : ");
+  /*   console.log("module : ");
   console.log(module);
 
   console.log("moduleId : " + moduleId);
@@ -34,5 +34,5 @@ export default async function deleteModule(moduleId: number) {
   } catch (error) {
     console.error("Erreur de suppression :", error);
     return null;
-  }
+  }*/
 }

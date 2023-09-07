@@ -7,6 +7,8 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import DragNDropArea from "./drag-n-drop-area";
 import Module from "../../../utils/interfaces/module";
 import ModuleForm from "./module-form.component";
+import { setCloneModules } from "../../../store/redux-toolkit/parcours/parcours-modules";
+import { useDispatch } from "react-redux";
 
 const ModulesSection = () => {
   const { isLoading, sendRequest } = useHttp();
@@ -16,6 +18,7 @@ const ModulesSection = () => {
   const updatedModules = useSelector(
     (state: any) => state.parcoursModule.cloneModules
   );
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const applyData = (data: Module[]) => {
@@ -27,7 +30,7 @@ const ModulesSection = () => {
     };
     sendRequest(
       {
-        path: `/module/formation/${1}`,
+        path: `/modules/formation/${1}`,
       },
       applyData
     );
@@ -36,17 +39,20 @@ const ModulesSection = () => {
   // mise à jour de la liste des modules du parcours dans la bdd et mise à jour du state en cas de réussite
   const handleSubmitModules = () => {
     const applyData = (data: any) => {
-      console.log({ data });
+      const ids = data.map((item: any) => item.module.id.toString());
+      dispatch(setCloneModules(ids));
     };
     sendRequest(
       {
-        path: `/module/${parcoursId}`,
+        path: `/modules/${parcoursId}`,
         method: "put",
         body: updatedModules.map((item: string) => +item),
       },
       applyData
     );
   };
+
+  const handleSubmitNewModule = (file: File) => {};
 
   return (
     <div className="flex flex-col gap-y-8">
@@ -75,7 +81,7 @@ const ModulesSection = () => {
         )}
       </div>
       <Wrapper>
-        <ModuleForm />
+        <ModuleForm onSubmitNewModule={handleSubmitNewModule} />
       </Wrapper>
     </div>
   );
