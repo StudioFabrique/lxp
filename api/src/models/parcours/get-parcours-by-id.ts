@@ -1,5 +1,4 @@
 import { getAdmin } from "../../helpers/get-admin";
-import { noAccess } from "../../utils/constantes";
 import { prisma } from "../../utils/db";
 
 async function getParcoursById(parcoursId: number, userId: string) {
