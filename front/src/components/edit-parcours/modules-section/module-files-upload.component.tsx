@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import React, { ChangeEvent } from "react";
 import { validateImageFile } from "../../../utils/validate-image-file";
 
 interface ModuleUploadFileProps {
@@ -33,4 +33,6 @@ const ModuleFilesUpload = (props: ModuleUploadFileProps) => {
   );
 };
 
-export default ModuleFilesUpload;
+const MemoizedModuleFilesUpload = React.memo(ModuleFilesUpload);
+
+export default MemoizedModuleFilesUpload;

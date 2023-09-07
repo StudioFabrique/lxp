@@ -29,7 +29,6 @@ putModuleImageRouter.put(
   "/",
   checkToken,
   upload.single("image"),
-  body("parcoursId").isNumeric().notEmpty().escape(),
   httpPutModuleImage
 );
 

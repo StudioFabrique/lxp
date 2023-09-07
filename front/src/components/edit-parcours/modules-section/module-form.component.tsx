@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 
 import useInput from "../../../hooks/use-input";
 import {
@@ -8,11 +8,12 @@ import {
   regexOptionalGeneric,
 } from "../../../utils/constantes";
 import Contact from "../../../utils/interfaces/contact";
-import ModuleFilesUpload from "./module-files-upload.component";
 import Skill from "../../../utils/interfaces/skill";
 import MemoizedItemsList from "./items-list.component";
 import useHttp from "../../../hooks/use-http";
 import AddIcon from "../../UI/svg/add-icon";
+import { compressImage } from "../../../helpers/compress-image";
+import MemoizedModuleFilesUpload from "./module-files-upload.component";
 
 interface ModuleFormProps {
   onSubmitNewModule: (module: any, file: File) => void;
@@ -25,7 +26,7 @@ const ModuleForm = (props: ModuleFormProps) => {
     regexOptionalGeneric.test(value)
   );
   const [image, setImage] = useState<File | null>(null);
-  const [thumb, setThumb] = useState<File | null>(null);
+  const [thumb, setThumb] = useState<string | null>(null);
   const listeContacts = useSelector(
     (state: any) => state.parcoursContacts.currentContacts
   ) as Contact[];
@@ -66,10 +67,71 @@ const ModuleForm = (props: ModuleFormProps) => {
     setSkills(items);
   };
 
-  const handleUpdateImage = (file: File) => {};
+  // compresse l'image sélectionnée et génère un aperçu de taille réduite et le convertitt en chaîne de caractère pour être stocké sous forme de blob
+  const handleUpdateImage = async (file: File) => {
+    const compressedHeadImage = await compressImage(file, 1920);
+    if (compressedHeadImage) {
+      setImage(compressedHeadImage);
+    } else {
+      setImage(null);
+    }
+    const compressedThumb = await compressImage(file, 20);
+    if (compressedThumb) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const imageString = reader.result as string;
+        if (imageString) {
+          setThumb(imageString);
+        }
+      };
+      reader.readAsDataURL(file);
+    } else setThumb(null);
+  };
+
+  const handleSubmitModule = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formIsValid =
+      title.isValid &&
+      description.isValid &&
+      duration.isValid &&
+      teachers &&
+      teachers?.length > 0 &&
+      skills &&
+      skills.length > 0 &&
+      image &&
+      thumb;
+
+    if (formIsValid) {
+      const module = {
+        title: title.value,
+        description: description.value,
+        duration: duration.value,
+        contacts: teachers,
+        bonusSkills: skills,
+        formations: [1],
+        parcoursId: 1,
+      };
+      const formData = new FormData();
+      formData.append("image", image);
+      formData.append("thumb", thumb);
+      formData.append("module", JSON.stringify(module));
+
+      const applyData = (data: any) => {
+        console.log(data);
+      };
+      sendRequest(
+        {
+          path: "/modules/new-module",
+          method: "put",
+          body: formData,
+        },
+        applyData
+      );
+    } else console.log("oops");
+  };
 
   return (
-    <form className="w-full">
+    <form className="w-full" onSubmit={handleSubmitModule}>
       <section className="w-full  grid grid-cols-2 gap-8">
         <article className="flex flex-col gap-y-4">
           <div className="flex flex-col gap-y-4">
@@ -111,7 +173,7 @@ const ModuleForm = (props: ModuleFormProps) => {
           </div>
           <div className="flex flex-col gap-y-4">
             <label htmlFor="image">Téléverser une image</label>
-            <ModuleFilesUpload setImage={setImage} />
+            <MemoizedModuleFilesUpload setImage={handleUpdateImage} />
           </div>
         </article>
         <article className="flex flex-col gap-y-4">
@@ -145,8 +207,7 @@ const ModuleForm = (props: ModuleFormProps) => {
           <button
             className="btn btn-primary"
             disabled={isLoading}
-            type="button"
-            onClick={() => {}}
+            type="submit"
           >
             <span className="w-6 h-6">
               <AddIcon />

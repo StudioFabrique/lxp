@@ -16,6 +16,20 @@ const LessonItem: FC<LessonItemProps> = ({
   onRemoveLesson,
   index,
 }) => {
+  let classImage: React.CSSProperties;
+  if (lesson.thumb) {
+    classImage = {
+      backgroundImage: `url('${lesson.thumb}')`,
+      width: "50px",
+      height: "50px",
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center",
+      borderRadius: "5px",
+      marginRight: "10px",
+    };
+  }
+
   return (
     <Draggable draggableId={lesson.id!.toString()} index={index!}>
       {(provided) => (
@@ -29,6 +43,7 @@ const LessonItem: FC<LessonItemProps> = ({
             <SubWrapper>
               <div className="w-full flex flex-col gap-y-4 rounded-lg">
                 <span className="flex gap-x-2 items-center">
+                  {lesson.thumb ? <div style={classImage}></div> : null}
                   <p className="text-sm font-bold tracking-tight text-info">
                     {lesson.title}
                   </p>

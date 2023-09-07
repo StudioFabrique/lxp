@@ -10,4 +10,5 @@ export default interface Module {
   duration: number;
   imageUrl?: string;
   imageTemp?: File;
+  thumb?: string;
 }

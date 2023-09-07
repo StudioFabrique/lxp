@@ -50,7 +50,8 @@ model Module {
   title       String
   description String?
   image       Bytes?
-  thumb       Bytes?
+  thumb       String?
+  synchrone   Boolean?
   duration    Int?
   rating      Float?
   minDate     DateTime?
