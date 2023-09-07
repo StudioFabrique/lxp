@@ -1,18 +1,21 @@
-/* import { Schedulely } from "schedulely";
-import "schedulely/dist/index.css"; */
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useSelector } from "react-redux";
 import Module from "../../../utils/interfaces/module";
 import ModulesListCalendrier from "./modules-list-calendrier";
-import CalendrierForm from "./calendrier-form";
-import Wrapper from "../../UI/wrapper/wrapper.component";
+import CalendrierDatesForm from "./forms/calendrier-dates-form";
 import moment from "moment";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
+import CalendrierDurationForm from "./forms/calendrier-duration-form";
 // import { getRandomHexColor } from "../../../utils/randomColor";
 
 const localizer = momentLocalizer(moment);
 
 const Calendrier = () => {
+  const dispatch = useDispatch();
+
   const parcoursInfos = useSelector(
     (state: any) => state.parcoursInformations.infos
   );
@@ -24,28 +27,34 @@ const Calendrier = () => {
     endDate: new Date(parcoursInfos.endDate),
   };
 
+  useEffect(() => {
+    dispatch(
+      parcoursModulesSliceActions.updateCurrentParcoursModule(modules[0].id)
+    );
+  }, [dispatch, modules]);
+
   return (
     <div className="flex flex-col gap-y-5">
       <h1 className="text-2xl">Calendrier</h1>
-      <div className="grid grid-cols-3 gap-x-5">
+      <div className="grid grid-cols-3 gap-x-5 min-h-[60vh]">
         <ModulesListCalendrier modules={modules} />
-        <div className="grid grid-rows-3 gap-y-5 col-span-2">
-          <CalendrierForm datesParcours={datesParcours} />
-          <div className="row-span-2 h-[60vh]">
-            <Calendar
-              className="bg-white rounded-lg p-5"
-              localizer={localizer}
-              events={modules.map((module) => {
-                return {
-                  start: new Date(module.minDate!).toISOString(),
-                  end: new Date(module.maxDate!).toISOString(),
-                  title: module.title,
-                  // color: getRandomHexColor(),
-                };
-              })}
-            />
-          </div>
-        </div>
+        <Calendar
+          className="col-span-2 bg-white rounded-lg p-5"
+          localizer={localizer}
+          events={modules.map((module) => {
+            return {
+              start: new Date(module.minDate!).toISOString(),
+              end: new Date(module.maxDate!).toISOString(),
+              title: module.title,
+              // color: getRandomHexColor(),
+            };
+          })}
+        />
+      </div>
+      <div className="grid grid-cols-3 gap-x-5">
+        <div />
+        <CalendrierDatesForm datesParcours={datesParcours} />
+        <CalendrierDurationForm />
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ import Skill from "../../../utils/interfaces/skill";
 import Module from "../../../utils/interfaces/module";
 import { validateImageFile } from "../../../utils/validate-image-file";
 import { useDispatch, useSelector } from "react-redux";
-import { parcoursModulesSliceAction } from "../../../store/redux-toolkit/parcours/parcours-modules";
+import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
 import DataAdder from "../../UI/data-adder/data-adder";
 // import { getDBSkills as skillsData } from "../../../utils/fixtures/skills";
 import { Toaster, toast } from "react-hot-toast";
@@ -44,14 +44,7 @@ const ModulesForm: FC<{}> = () => {
   };
 
   const handleClearEdit = () => {
-    title.reset();
-    description.reset();
-    duration.reset();
-    setImageFile(null);
-    setContacts([]);
-    setSkills([]);
-    setResetFilter(true);
-    dispatch(parcoursModulesSliceAction.clearCurrentParcoursModule());
+    dispatch(parcoursModulesSliceActions.clearCurrentParcoursModule());
   };
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (
@@ -87,11 +80,11 @@ const ModulesForm: FC<{}> = () => {
       const moduleDb = data.module;
       currentModuleToEdit
         ? dispatch(
-            parcoursModulesSliceAction.updateParcoursModule({
+            parcoursModulesSliceActions.updateParcoursModule({
               moduleDb,
             })
           )
-        : dispatch(parcoursModulesSliceAction.addParcoursModule({ moduleDb }));
+        : dispatch(parcoursModulesSliceActions.addParcoursModule({ moduleDb }));
       handleClearEdit();
     };
 
@@ -114,20 +107,18 @@ const ModulesForm: FC<{}> = () => {
   };
 
   useEffect(() => {
-    if (currentModuleToEdit) {
-      title.changeValue(currentModuleToEdit.title);
-      description.changeValue(currentModuleToEdit.description);
-      duration.changeValue(currentModuleToEdit.duration.toString());
-      setImageFile(null);
-      setContacts(currentModuleToEdit.contacts);
-      setSkills(currentModuleToEdit.bonusSkills);
-      setResetFilter(true);
-    }
+    title.changeValue(currentModuleToEdit?.title ?? "");
+    description.changeValue(currentModuleToEdit?.description ?? "");
+    duration.changeValue(currentModuleToEdit?.duration.toString() ?? "");
+    setImageFile(null);
+    setContacts(currentModuleToEdit?.contacts ?? []);
+    setSkills(currentModuleToEdit?.bonusSkills ?? []);
+    setResetFilter(true);
   }, [currentModuleToEdit]);
 
   useEffect(() => {
-    dispatch(parcoursModulesSliceAction.clearCurrentParcoursModule());
-  }, []);
+    dispatch(parcoursModulesSliceActions.clearCurrentParcoursModule());
+  }, [dispatch]);
 
   return (
     <form

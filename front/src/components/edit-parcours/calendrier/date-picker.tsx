@@ -4,8 +4,9 @@ import CalendarIcon from "../../UI/svg/calendar-icon";
 const DatePicker: FC<{
   id: string;
   date: string;
+  label?: string;
   onSubmitDate: (id: string, date: string) => void;
-}> = ({ id, date, onSubmitDate }) => {
+}> = ({ id, date, label, onSubmitDate }) => {
   const dateRef: Ref<HTMLInputElement> = useRef(null);
 
   const handleClick = () => {
@@ -19,8 +20,14 @@ const DatePicker: FC<{
   };
 
   return (
-    <span className="flex gap-x-2">
-      <input className="input btn-sm" type="text" value={date} />
+    <span className="flex gap-x-2 items-center justify-between">
+      {label && <label className="w-20">{label}</label>}
+      <input
+        className="input btn-sm"
+        type="text"
+        value={date}
+        onChange={handleChange}
+      />
       <button
         onClick={handleClick}
         className="btn btn-sm rounded-md"
@@ -34,7 +41,7 @@ const DatePicker: FC<{
         value={date}
         ref={dateRef}
         type="date"
-        className="invisible"
+        className="invisible -translate-x-2"
       />
     </span>
   );

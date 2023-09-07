@@ -26,7 +26,7 @@ import ObjectivesList from "../../components/edit-parcours/objectives/objectives
 import { parcoursObjectivesAction } from "../../store/redux-toolkit/parcours/parcours-objectives";
 import Module from "../../utils/interfaces/module";
 import Calendrier from "../../components/edit-parcours/calendrier/calendrier";
-import { parcoursModulesSliceAction } from "../../store/redux-toolkit/parcours/parcours-modules";
+import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
 import ParcoursModules from "../../components/edit-parcours/modules/parcours-modules";
 
 let initialState = true;
@@ -203,7 +203,7 @@ const EditParcours = () => {
       case 3:
         return skills.length > 0;
       case 4:
-        dispatch(parcoursModulesSliceAction.clearCurrentParcoursModule());
+        dispatch(parcoursModulesSliceActions.clearCurrentParcoursModule());
         return modules.length > 0;
       default:
         return false;

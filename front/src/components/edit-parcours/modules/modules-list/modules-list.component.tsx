@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import Module from "../../../../utils/interfaces/module";
 import useHttp from "../../../../hooks/use-http";
 import { useDispatch } from "react-redux";
-import { parcoursModulesSliceAction } from "../../../../store/redux-toolkit/parcours/parcours-modules";
+import { parcoursModulesSliceActions } from "../../../../store/redux-toolkit/parcours/parcours-modules";
 import { useParams } from "react-router-dom";
 
 const ModulesList: FC<{}> = () => {
@@ -21,7 +21,7 @@ const ModulesList: FC<{}> = () => {
   const fetchModules = useCallback(() => {
     const applyData = (data: any) => {
       console.log(data);
-      dispatch(parcoursModulesSliceAction.initParcoursModules(data.modules));
+      dispatch(parcoursModulesSliceActions.initParcoursModules(data.modules));
     };
 
     sendRequest(
