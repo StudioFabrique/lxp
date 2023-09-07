@@ -23,6 +23,7 @@ const ModuleFilesUpload = (props: ModuleUploadFileProps) => {
 
   return (
     <input
+      className="file-input file-input-primary border-none focus:outline-none w-full"
       type="file"
       id="image"
       name="image"
