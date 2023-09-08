@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { parcoursModulesSliceActions } from "../../../../store/redux-toolkit/parcours/parcours-modules";
 import useHttp from "../../../../hooks/use-http";
+import { toast } from "react-hot-toast";
 
 const CalendrierDurationForm = () => {
   const dispatch = useDispatch();
@@ -21,56 +22,93 @@ const CalendrierDurationForm = () => {
     (state: any) => state.parcoursModules.currentModule
   );
 
+  const timer = 5 * 1000;
+
   const [duration, setDuration] = useState(0);
 
-  const [synchrone, setSynchrone] = useState(true);
+  const [isReadyToSend, setReadyToSend] = useState(false);
 
-  const [readyToSend, setReadyToSend] = useState(false);
+  const [intervalId, setIntervalId] = useState<NodeJS.Timer | null>();
+
+  const [loader, setLoader] = useState({
+    lastTime: Date.now(),
+    loadingRate: 0,
+  });
 
   const initDuration = useCallback(() => {
     if (currentModule) {
       setDuration(currentModule.duration);
     }
-  }, [currentModule]);
+  }, [currentModule, setDuration]);
+
+  /* const handleChangeSynchrone: ChangeEventHandler<HTMLInputElement> = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setSynchrone(event.currentTarget.id === "radio1" ? true : false);
+  }; */
 
   const handleChangeDuration: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
+    if (intervalId) clearInterval(intervalId);
     setDuration(parseInt(event.currentTarget.value));
-  };
-
-  const handleChangeSynchrone: ChangeEventHandler<HTMLInputElement> = (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
-    setSynchrone(event.currentTarget.id === "radio1" ? true : false);
+    setReadyToSend(true);
   };
 
   const handleSubmit = useCallback(() => {
-    const applyData = (data: any) => {};
+    const applyData = (data: any) => {
+      dispatch(
+        parcoursModulesSliceActions.updateParcoursModule({
+          moduleId: currentModule.id,
+          module: { ...currentModule, duration: duration },
+        })
+      );
+      toast.success("durée du module modifié");
+    };
 
     sendRequest(
       {
-        path: "/module/dates",
+        path: "/module/duration",
         method: "put",
-        body: {},
+        body: { id: currentModule.id, duration: duration },
       },
       applyData
     );
-  }, [sendRequest]);
+
+    setReadyToSend(false);
+  }, [currentModule, dispatch, duration, sendRequest]);
 
   useEffect(() => {
     initDuration();
   }, [initDuration]);
 
   useEffect(() => {
-    if (readyToSend && duration > 0) {
-      setInterval(handleSubmit, 5000);
-      setReadyToSend(false);
+    if (isReadyToSend && duration > 0) {
+      setLoader({
+        lastTime: Date.now(),
+        loadingRate: 0,
+      });
     }
-  }, [readyToSend, duration, handleSubmit]);
+  }, [duration, handleSubmit, isReadyToSend]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isReadyToSend && duration > 0) {
+        handleSubmit();
+      }
+    }, timer);
+    setIntervalId(interval);
+
+    return () => clearInterval(interval);
+  }, [loader.lastTime, timer, isReadyToSend, handleSubmit, duration]);
 
   return (
     <Wrapper>
+      <progress
+        className="h-1 -m-2 progress progress-primary"
+        value={loader.loadingRate}
+        max={100}
+      />
       {currentModule && (
         <form className="flex flex-col gap-y-5">
           <h3>Durée du module</h3>

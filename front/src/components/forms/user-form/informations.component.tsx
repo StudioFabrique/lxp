@@ -1,6 +1,6 @@
 import { FC } from "react";
-import Wrapper from "../../../UI/wrapper/wrapper.component";
-import ImageFileUpload from "../../../UI/image-file-upload/image-file-upload";
+import Wrapper from "../../UI/wrapper/wrapper.component";
+import ImageFileUpload from "../../UI/image-file-upload/image-file-upload";
 
 const Informations: FC<{
   lastname: any;
