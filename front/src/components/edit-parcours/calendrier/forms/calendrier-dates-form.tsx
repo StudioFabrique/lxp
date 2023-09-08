@@ -1,4 +1,11 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  ChangeEventHandler,
+  FC,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 import Module from "../../../../utils/interfaces/module";
 import { useSelector } from "react-redux";
@@ -6,6 +13,7 @@ import DatePicker from "../date-picker";
 import { useDispatch } from "react-redux";
 import { parcoursModulesSliceActions } from "../../../../store/redux-toolkit/parcours/parcours-modules";
 import useHttp from "../../../../hooks/use-http";
+import { toast } from "react-hot-toast";
 
 const CalendrierDatesForm: FC<{
   datesParcours: { startDate: Date; endDate: Date };
@@ -21,29 +29,34 @@ const CalendrierDatesForm: FC<{
   const [datesModule, setDatesModule] = useState({
     minDate: "",
     maxDate: "",
-    initial: true,
   });
 
-  const initDate = useCallback(() => {
-    if (datesModule.initial) {
-      setDatesModule({
-        minDate: currentModule?.minDate
-          ? new Date(currentModule?.minDate).toISOString().split("T")[0]
-          : "",
-        maxDate: currentModule?.maxDate
-          ? new Date(currentModule?.maxDate ?? "").toISOString().split("T")[0]
-          : "",
-        initial: false,
-      });
+  const setDates = useCallback(() => {
+    setDatesModule({
+      minDate: currentModule?.minDate
+        ? new Date(currentModule?.minDate).toISOString().split("T")[0]
+        : "",
+      maxDate: currentModule?.maxDate
+        ? new Date(currentModule?.maxDate ?? "").toISOString().split("T")[0]
+        : "",
+    });
+  }, [currentModule?.minDate, currentModule?.maxDate]);
+
+  const handleSubmitDates = (id: string, date: string) => {
+    const newMinDate = id === "date1" ? date : datesModule.minDate;
+
+    const newMaxDate = id === "date2" ? date : datesModule.maxDate;
+
+    if (
+      new Date(newMinDate) < datesParcours.startDate ||
+      new Date(newMaxDate) > datesParcours.endDate
+    ) {
+      return toast.error(
+        "La date doit être comprise entre le début et la fin du parcours"
+      );
     }
-  }, [currentModule?.minDate, currentModule?.maxDate, datesModule.initial]);
 
-  const handleSubmit = () => {
     const applyData = (data: any) => {
-      const newMinDate = data.data.minDate;
-
-      const newMaxDate = data.data.maxDate;
-
       dispatch(
         parcoursModulesSliceActions.updateParcoursModule({
           module: {
@@ -69,21 +82,9 @@ const CalendrierDatesForm: FC<{
     );
   };
 
-  const handleChangeDates = (id: string, date: string) => {
-    setDatesModule((initialDates) => {
-      return {
-        minDate: id === "date1" ? date : initialDates.minDate,
-        maxDate: id === "date2" ? date : initialDates.maxDate,
-        initial: initialDates.initial,
-      };
-    });
-
-    handleSubmit();
-  };
-
   useEffect(() => {
-    initDate();
-  }, [initDate]);
+    setDates();
+  }, [setDates]);
 
   return (
     <Wrapper>
@@ -96,7 +97,7 @@ const CalendrierDatesForm: FC<{
                 id="date1"
                 label="Début"
                 date={datesModule.minDate}
-                onSubmitDate={handleChangeDates}
+                onSubmitDate={handleSubmitDates}
               />
             </span>
             <span className="flex items-center">
@@ -104,7 +105,7 @@ const CalendrierDatesForm: FC<{
                 id="date2"
                 label="Fin"
                 date={datesModule.maxDate}
-                onSubmitDate={handleChangeDates}
+                onSubmitDate={handleSubmitDates}
               />
             </span>
           </div>

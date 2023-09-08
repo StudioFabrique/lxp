@@ -75,7 +75,8 @@ const CalendrierDurationForm = () => {
         <form className="flex flex-col gap-y-5">
           <h3>Durée du module</h3>
           <div className="flex gap-x-5">
-            <div className="flex flex-col gap-y-2 ">
+            {/* Fields asychrone/sychrone */}
+            {/* <div className="flex flex-col gap-y-2 ">
               <span className="flex gap-x-2">
                 <input
                   id="radio1"
@@ -98,15 +99,16 @@ const CalendrierDurationForm = () => {
                 />
                 <label htmlFor="radio2">Asynchrone</label>
               </span>
-            </div>
-            <span className="flex">
+            </div> */}
+            <span className="flex gap-x-2 items-center">
               <input
                 onChange={handleChangeDuration}
                 value={duration}
                 type="number"
                 placeholder="Nombre d'heures"
-                className="input input-sm appearance-none hover:app"
+                className="input input-sm sm:w-20 md:w-24 lg:w-40"
               />
+              <p>H</p>
             </span>
           </div>
         </form>
