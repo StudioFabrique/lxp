@@ -34,8 +34,21 @@ const CalendrierDurationForm = () => {
   });
 
   const [fetchResultType, setFetchResultType] = useState<
-    "success" | "error" | "none"
+    "success" | "error" | "loading" | "none"
   >("none");
+
+  const componentFetchType = () => {
+    switch (fetchResultType) {
+      case "success":
+        return <span className="h-5 loading loading-spinner loading-xs" />;
+      case "error":
+        return <span className="h-5 loading loading-spinner loading-xs" />;
+      case "loading":
+        return <span className="h-5 loading loading-spinner loading-xs" />;
+      default:
+        return undefined;
+    }
+  };
 
   const initDuration = useCallback(() => {
     if (currentModule) {
@@ -62,6 +75,8 @@ const CalendrierDurationForm = () => {
       );
       setFetchResultType("success");
     };
+
+    setFetchResultType("loading");
 
     sendRequest(
       {
@@ -126,11 +141,14 @@ const CalendrierDurationForm = () => {
 
   return (
     <Wrapper>
-      <progress
-        className="h-1 -m-2 progress progress-primary"
-        value={loader.loadingRate}
-        max={1.2}
-      />
+      <div className="flex h-1 -m-2 justify-between">
+        <progress
+          className="h-1 w-[90%] progress progress-secondary"
+          value={loader.loadingRate}
+          max={1.2}
+        />
+        {componentFetchType()}
+      </div>
       {currentModule && (
         <form className="flex flex-col gap-y-5">
           <h3>Durée du module</h3>
