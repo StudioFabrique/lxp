@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { parcoursModulesSliceActions } from "../../../../store/redux-toolkit/parcours/parcours-modules";
 import useHttp from "../../../../hooks/use-http";
-import { toast } from "react-hot-toast";
+import { autoSubmitTimer } from "../../../../config/auto-submit-timer";
 
 const CalendrierDurationForm = () => {
   const dispatch = useDispatch();
@@ -22,18 +22,20 @@ const CalendrierDurationForm = () => {
     (state: any) => state.parcoursModules.currentModule
   );
 
-  const timer = 5 * 1000;
-
   const [duration, setDuration] = useState(0);
 
   const [isReadyToSend, setReadyToSend] = useState(false);
 
-  const [intervalId, setIntervalId] = useState<NodeJS.Timer | null>();
+  const [intervalId, setIntervalId] = useState<NodeJS.Timer | null>(null);
 
   const [loader, setLoader] = useState({
     lastTime: Date.now(),
     loadingRate: 0,
   });
+
+  const [fetchResultType, setFetchResultType] = useState<
+    "success" | "error" | "none"
+  >("none");
 
   const initDuration = useCallback(() => {
     if (currentModule) {
@@ -41,15 +43,10 @@ const CalendrierDurationForm = () => {
     }
   }, [currentModule, setDuration]);
 
-  /* const handleChangeSynchrone: ChangeEventHandler<HTMLInputElement> = (
+  const handleChangeDurationValue: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
-    setSynchrone(event.currentTarget.id === "radio1" ? true : false);
-  }; */
-
-  const handleChangeDuration: ChangeEventHandler<HTMLInputElement> = (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
+    setFetchResultType("none");
     if (intervalId) clearInterval(intervalId);
     setDuration(parseInt(event.currentTarget.value));
     setReadyToSend(true);
@@ -63,7 +60,7 @@ const CalendrierDurationForm = () => {
           module: { ...currentModule, duration: duration },
         })
       );
-      toast.success("durée du module modifié");
+      setFetchResultType("success");
     };
 
     sendRequest(
@@ -89,25 +86,50 @@ const CalendrierDurationForm = () => {
         loadingRate: 0,
       });
     }
-  }, [duration, handleSubmit, isReadyToSend]);
+
+    /**
+     * On fait passer le pourcentage de "loadingRate" à 1.2 si un fetch de la base de données a été
+     * effectué afin que la progress bar puisse se remplisse instantanément de 1 à 1.2
+     */
+    if (fetchResultType === "success" || fetchResultType === "error") {
+      setLoader((currentLoader) => {
+        return {
+          lastTime: currentLoader.lastTime,
+          loadingRate: 1.2,
+        };
+      });
+    }
+  }, [duration, handleSubmit, isReadyToSend, fetchResultType]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (isReadyToSend && duration > 0) {
+      const timeElapsed = Date.now() - loader.lastTime;
+      const loadingRate = timeElapsed / autoSubmitTimer;
+
+      if (isReadyToSend && duration > 0 && timeElapsed > autoSubmitTimer) {
         handleSubmit();
       }
-    }, timer);
+
+      if (isReadyToSend && duration > 0 && fetchResultType === "none") {
+        setLoader((currentLoader) => {
+          return {
+            lastTime: currentLoader.lastTime,
+            loadingRate: loadingRate > 1 ? 1 : loadingRate,
+          };
+        });
+      }
+    }, 500);
     setIntervalId(interval);
 
     return () => clearInterval(interval);
-  }, [loader.lastTime, timer, isReadyToSend, handleSubmit, duration]);
+  }, [duration, handleSubmit, isReadyToSend, loader.lastTime, fetchResultType]);
 
   return (
     <Wrapper>
       <progress
         className="h-1 -m-2 progress progress-primary"
         value={loader.loadingRate}
-        max={100}
+        max={1.2}
       />
       {currentModule && (
         <form className="flex flex-col gap-y-5">
@@ -140,7 +162,7 @@ const CalendrierDurationForm = () => {
             </div> */}
             <span className="flex gap-x-2 items-center">
               <input
-                onChange={handleChangeDuration}
+                onChange={handleChangeDurationValue}
                 value={duration}
                 type="number"
                 placeholder="Nombre d'heures"
