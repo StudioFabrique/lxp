@@ -23,7 +23,7 @@ const DatePicker: FC<{
     <span className="flex gap-x-2 items-center justify-between">
       {label && <label className="w-20">{label}</label>}
       <input
-        className="input btn-sm"
+        className="input btn-sm sm:w-20 md:w-24 lg:w-40 text-center"
         type="text"
         value={date}
         onChange={handleChange}
