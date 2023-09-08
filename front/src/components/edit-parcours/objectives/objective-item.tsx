@@ -32,7 +32,9 @@ const ObjectiveItem: FC<Props> = ({ objective, onDelete, onUpdate }) => {
         onClick={handleUpdate}
         aria-label="modification de l'objectif"
       >
-        <EditIcon />
+        <div className="w-6 h-6">
+          <EditIcon />
+        </div>
       </button>
       <button
         className="btn btn-primary btn-circle rounded-lg"

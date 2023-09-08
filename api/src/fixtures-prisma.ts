@@ -316,8 +316,8 @@ async function loadFixtures() {
   await createAdmins();
   await createTeachers();
   await createFormation();
-  await createModules();
-  await createModulesOnFormation();
+  //await createModules();
+  //await createModulesOnFormation();
   await disconnect();
 }
 

@@ -17,15 +17,6 @@ const ColumnItem: FC<ColumnItemProps> = ({
 }) => {
   return (
     <div className="flex flex-col order">
-      <div className="divider text-xs font-bold">
-        {column.modulesIds.length > 0 ? (
-          <p>
-            {column.modulesIds.length} {column.title}
-          </p>
-        ) : (
-          <p>Aucune leçon</p>
-        )}
-      </div>
       <div className="h-[50vh] overflow-auto scrollbar scrollbar-thumb-primary/50 scrollbar-track-primary/20">
         <Droppable droppableId={column.id}>
           {(provided) => (

@@ -54,7 +54,9 @@ const ImageFileUpload: FC<{
           className="hidden file-input file-input-sm file-font-normal file-input-primary w-full rounded-lg"
           onChange={handleFileChange}
         />
-        <EditIcon />
+        <div className="w-6 h-6">
+          <EditIcon />
+        </div>
       </span>
     </>
   );

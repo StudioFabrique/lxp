@@ -8,7 +8,6 @@ export default interface Module {
   contacts: Array<User>;
   bonusSkills: Array<Skill>;
   duration: number;
-  imageUrl?: string;
-  imageTemp?: File;
+  image?: string;
   thumb?: string;
 }

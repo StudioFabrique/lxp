@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -7,18 +7,23 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import DragNDropArea from "./drag-n-drop-area";
 import Module from "../../../utils/interfaces/module";
 import ModuleForm from "./module-form.component";
-import { setCloneModules } from "../../../store/redux-toolkit/parcours/parcours-modules";
 import { useDispatch } from "react-redux";
+import { setModules } from "../../../store/redux-toolkit/parcours/parcours-modules";
 
 const ModulesSection = () => {
   const { isLoading, sendRequest } = useHttp();
-  const [formationModules, setFormationModule] = useState<any>([]);
+  const [formationModules, setFormationModules] = useState<any>([]);
   const params = useParams();
   const parcoursId = params.id;
   const updatedModules = useSelector(
-    (state: any) => state.parcoursModule.cloneModules
+    (state: any) => state.parcoursModule.modules
   );
   const dispatch = useDispatch();
+  const currentModule = useSelector(
+    (state: any) => state.parcoursModule.currentModule
+  ) as Module;
+  const [newModule, setNewModule] = useState(false);
+  const formRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const applyData = (data: Module[]) => {
@@ -26,7 +31,7 @@ const ModulesSection = () => {
         ...module,
         id: module.id!.toString(),
       }));
-      setFormationModule(modules);
+      setFormationModules(modules);
     };
     sendRequest(
       {
@@ -39,8 +44,7 @@ const ModulesSection = () => {
   // mise à jour de la liste des modules du parcours dans la bdd et mise à jour du state en cas de réussite
   const handleSubmitModules = () => {
     const applyData = (data: any) => {
-      const ids = data.map((item: any) => item.module.id.toString());
-      dispatch(setCloneModules(ids));
+      dispatch(setModules(data));
     };
     sendRequest(
       {
@@ -52,7 +56,19 @@ const ModulesSection = () => {
     );
   };
 
+  const handleCreateModule = () => {
+    setNewModule(true);
+  };
+
   const handleSubmitNewModule = (file: File) => {};
+  console.log({ formationModules });
+
+  useEffect(() => {
+    if (currentModule && formRef) {
+      formRef.current!.scrollIntoView({ behavior: "smooth" });
+      formRef.current!.focus();
+    }
+  }, [currentModule]);
 
   return (
     <div className="flex flex-col gap-y-8">
@@ -61,9 +77,18 @@ const ModulesSection = () => {
       </section>
       <section></section>
       <Wrapper>
-        <DragNDropArea formationModules={formationModules} />
+        <DragNDropArea
+          formationModules={formationModules}
+          newModule={newModule}
+        />
       </Wrapper>
-      <div className="w-full flex justify-end">
+      <div className="w-full flex justify-between">
+        <button
+          className="btn btn-outline btn-primary"
+          onClick={handleCreateModule}
+        >
+          Créer un module
+        </button>
         {isLoading ? (
           <button className="btn btn-primary" type="button">
             <span className="loading loading-spinner"></span>
@@ -72,7 +97,7 @@ const ModulesSection = () => {
         ) : (
           <button
             className="btn btn-primary"
-            disabled={isLoading}
+            disabled={isLoading || updatedModules.length === 0}
             type="button"
             onClick={handleSubmitModules}
           >
@@ -80,9 +105,11 @@ const ModulesSection = () => {
           </button>
         )}
       </div>
-      <Wrapper>
-        <ModuleForm onSubmitNewModule={handleSubmitNewModule} />
-      </Wrapper>
+      {currentModule ? (
+        <Wrapper>
+          <ModuleForm onSubmitNewModule={handleSubmitNewModule} ref={formRef} />
+        </Wrapper>
+      ) : null}
     </div>
   );
 };
