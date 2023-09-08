@@ -51,7 +51,6 @@ model Module {
   description String?
   image       Bytes?
   thumb       String?
-  synchrone   Boolean?
   duration    Int?
   rating      Float?
   minDate     DateTime?

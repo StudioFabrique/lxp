@@ -7,25 +7,84 @@ import ColumnItem from "./column-item";
 import DndModulesList from "./dnd-modules-list";
 import Column from "./column";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
-import { setCloneModules } from "../../../store/redux-toolkit/parcours/parcours-modules";
 import Module from "../../../utils/interfaces/module";
+import { setModules } from "../../../store/redux-toolkit/parcours/parcours-modules";
 
 interface DragNDropAreaprops {
   formationModules: Module[];
+  newModule: boolean;
 }
 
 const DragNDropArea = (props: DragNDropAreaprops) => {
   const { formationModules } = props;
-  const [modules, setModules] = useState<DndModulesList | null>(null);
-  useState<Module[]>(formationModules);
+  const [dnd, setDnd] = useState<DndModulesList | null>(null);
+  //useState<Module[]>(formationModules);
   const dispatch = useDispatch();
   const parcoursModules = useSelector(
-    (state: any) => state.parcoursModule.cloneModules
+    (state: any) => state.parcoursModule.modules
   );
   const isInitialRender = useRef(true);
   const isInitialEffect = useRef(true);
 
   console.log("rendering...");
+  console.log({ parcoursModules });
+
+  useEffect(() => {
+    setDnd((prevModules) => {
+      if (prevModules) {
+        return {
+          columns: {
+            destColumn: prevModules!.columns["destColumn"],
+            sourceColumn: {
+              ...prevModules!.columns["sourceColumn"],
+              modulesIds: [
+                ...prevModules!.columns["sourceColumn"].modulesIds,
+                "0",
+              ],
+            },
+          },
+          tasks: [
+            ...prevModules!.tasks,
+            {
+              id: "0",
+              title: "Nouveau module",
+              description: "Description",
+              duration: 1,
+              contacts: [],
+              bonusSkills: [],
+            },
+          ],
+        };
+      } else if (props.newModule) {
+        return {
+          tasks: [
+            {
+              id: "0",
+              title: "Nouveau module",
+              description: "Description",
+              duration: 1,
+              contacts: [],
+              bonusSkills: [],
+            },
+          ],
+          columns: {
+            destColumn: {
+              id: "destColumn",
+              title: "Modules ajoutés au parcours",
+              modulesIds: [],
+            },
+            sourceColumn: {
+              id: "sourceColumn",
+              title: "Modules associés à la formation",
+              modulesIds: ["0"],
+            },
+          },
+        };
+      } else {
+        return null;
+      }
+    });
+  }, [props.newModule]);
 
   // on vérifie qu'il s'agit du premier rendu et que les "props" sont initialisées
   if (
@@ -33,32 +92,57 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
     parcoursModules &&
     formationModules.length > 0
   ) {
+    console.log("coucou");
+
     /**
      * on transforme les ids des modules de la liste initiale en string et on retire de cette liste
      * les modules qui sont déjà associés au parcours pour être sûr de ne pas avoir de doublons dans
      * le parcours
      */
-    let updatedModulesIds = formationModules.map((module) => String(module.id));
-    updatedModulesIds = updatedModulesIds.filter(
-      (item) => !parcoursModules.includes(item)
+    const parcoursModulesIds = parcoursModules.map((item: Module) =>
+      item.id?.toString()
     );
+
+    console.log({ formationModules });
+
+    const parcoursModulesTitles = parcoursModules.map(
+      (item: Module) => item.title
+    );
+    const filteredFormationModules = formationModules.filter(
+      (item) => !parcoursModulesTitles.includes(item.title)
+    );
+
+    const formationModulesIds = formationModules.map((item) =>
+      item.id!.toString()
+    );
+
+    const filteredFormationModulesIds = formationModulesIds.filter(
+      (module: string) => !parcoursModulesIds.includes(module)
+    );
+    console.log({ filteredFormationModules });
+
+    const tasks = [...filteredFormationModules, ...parcoursModules];
+    console.log({ tasks });
+
     // on initialise les "colonnes", c'est à dire les emplacements dans lesquels le drag n drop est possible
     const columns = {
-      tasks: formationModules,
+      tasks: tasks ?? [],
       columns: {
         destColumn: {
           id: "destColumn",
           title: "Modules ajoutés au parcours",
-          modulesIds: parcoursModules,
+          modulesIds: parcoursModulesIds ?? [],
         },
         sourceColumn: {
           id: "sourceColumn",
           title: "Modules associés à la formation",
-          modulesIds: updatedModulesIds,
+          modulesIds: filteredFormationModulesIds ?? [],
         },
       },
     };
-    setModules(columns);
+    console.log({ columns });
+
+    setDnd(columns);
 
     // on déclare qi'il ne s'agit plus du premier rendu
     isInitialRender.current = false;
@@ -67,14 +151,18 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
   // utilisation pour éviter les rendus infinis
   // TOTO vérifier s'il y a des rendus infinis sans le useMemo
   const updatedModules = useMemo(() => {
-    return modules?.columns.destColumn.modulesIds || [];
-  }, [modules]);
+    return (
+      dnd?.tasks.filter((item) =>
+        dnd.columns.destColumn.modulesIds.includes(item.id as string)
+      ) || []
+    );
+  }, [dnd]);
 
   // mise à jour de la liste des modules du parcours en mémoire
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!isInitialEffect.current) {
-        dispatch(setCloneModules(updatedModules));
+        dispatch(setModules(updatedModules));
       } else {
         isInitialEffect.current = false;
       }
@@ -95,13 +183,13 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
     }
     const home =
       source.droppableId === "destColumn"
-        ? modules?.columns["destColumn"]
-        : modules?.columns["sourceColumn"];
+        ? dnd?.columns["destColumn"]
+        : dnd?.columns["sourceColumn"];
 
     const foreign =
       destination.droppableId === "destColumn"
-        ? modules?.columns["destColumn"]
-        : modules?.columns["sourceColumn"];
+        ? dnd?.columns["destColumn"]
+        : dnd?.columns["sourceColumn"];
 
     if (home === foreign) {
       const newModulesIds = Array.from(home?.modulesIds!);
@@ -115,13 +203,13 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
       };
 
       const newState = {
-        tasks: modules!.tasks,
+        tasks: dnd!.tasks,
         columns: {
-          ...modules!.columns,
+          ...dnd!.columns,
           [newColumn.id!]: newColumn,
         },
       };
-      setModules(newState);
+      setDnd(newState);
       return;
     }
 
@@ -142,33 +230,38 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
     };
 
     const newState = {
-      tasks: modules!.tasks,
+      tasks: dnd!.tasks,
       columns: {
         [newHome.id!]: newHome!,
         [newForeign.id!]: newForeign!,
       },
     };
-    setModules(newState);
+    setDnd(newState);
   };
 
-  console.log({ modules });
+  console.log({ dnd });
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      {modules ? (
+      {dnd && dnd.tasks.length > 0 ? (
         <section className="grid grid-cols-2 gap-y-8">
           <ColumnItem
             isDisabled={false}
-            column={modules.columns.sourceColumn}
-            modulesList={modules.tasks}
+            column={dnd.columns.sourceColumn}
+            modulesList={dnd.tasks}
           />
           <ColumnItem
             isDisabled={true}
-            column={modules.columns.destColumn}
-            modulesList={modules.tasks}
+            column={dnd.columns.destColumn}
+            modulesList={dnd.tasks}
           />
         </section>
-      ) : null}
+      ) : (
+        <p>
+          Aucun module n'a été trouvé, clickez sur le bouton ci dessous pour
+          créer vore premier module
+        </p>
+      )}
     </DragDropContext>
   );
 };

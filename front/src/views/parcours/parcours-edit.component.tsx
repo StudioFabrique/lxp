@@ -28,7 +28,7 @@ import { toast } from "react-hot-toast";
 import { testStep } from "../../helpers/parcours-steps-validation";
 import ParcoursPreview from "../../components/edit-parcours/preview/parcours-preview.component";
 import ModulesSection from "../../components/edit-parcours/modules-section/modules.component";
-import { setCloneModules } from "../../store/redux-toolkit/parcours/parcours-modules";
+import { setModules } from "../../store/redux-toolkit/parcours/parcours-modules";
 
 let initialState = true;
 
@@ -119,13 +119,9 @@ const EditParcours = () => {
       }
 
       if (data.modules.length > 0) {
-        dispatch(
-          setCloneModules(
-            data.modules.map((item: any) => item.module.id.toString())
-          )
-        );
+        dispatch(setModules(data.modules.map((item: any) => item.module)));
       } else {
-        dispatch(setCloneModules([]));
+        dispatch(setModules([]));
       }
 
       setIsLoading(false);
