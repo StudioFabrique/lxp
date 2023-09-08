@@ -5,17 +5,17 @@ import {
   regexMail,
   regexNumber,
 } from "../../../utils/constantes";
-import Contact from "./components/contact.component";
-import TypeUtilisateur from "./components/type-utilisateur.component";
-import Certifications from "./components/certifications/certifications";
-import Presentation from "./components/presentation.component";
-import Informations from "./components/informations.component";
+import Certifications from "./certifications/certifications";
 import Graduation from "../../../utils/interfaces/graduation";
 import CreateUserHeader from "../../create-user-header/create-user-header.component";
-import CentreInterets from "./components/centre-interets.component";
 import Links from "../../UI/links/links";
 import { Link } from "../../../utils/interfaces/link";
 import Hobby from "../../../utils/interfaces/hobby";
+import Informations from "./informations.component";
+import Contact from "./contact.component";
+import TypeUtilisateur from "./type-utilisateur.component";
+import CentreInterets from "./centre-interets.component";
+import Presentation from "./presentation.component";
 
 const UserAddForm: FC<{
   user?: any;

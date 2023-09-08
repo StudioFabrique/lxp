@@ -5,7 +5,7 @@ import {
   FC,
   SetStateAction,
 } from "react";
-import Wrapper from "../../../UI/wrapper/wrapper.component";
+import Wrapper from "../../UI/wrapper/wrapper.component";
 
 const TypeUtilisateur: FC<{
   typeUtilisateur: number;

@@ -22,9 +22,9 @@ export default async function createGroup(group: IGroup, users: IUser[]) {
     return null;
   }
 
-  prisma.group.create({
-    data: { idMdb: createdGroup._id, parcours: { create: {} } },
-  });
+  // prisma.group.create({
+  //   data: { idMdb: createdGroup._id, parcours: { create: {} } },
+  // });
 
   return createdGroup;
 }
