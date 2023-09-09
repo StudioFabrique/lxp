@@ -21,7 +21,12 @@ export default async function httpCreateGroup(req: Request, res: Response) {
     parcoursId: number;
   } = req.body;
   try {
-    const response = await createGroup(groupRequest, users);
+    const response = await createGroup(
+      groupRequest,
+      users,
+      parcoursId,
+      formationId
+    );
 
     console.log(response);
 
