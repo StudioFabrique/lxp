@@ -139,7 +139,7 @@ const useProgressBar = (formValidation: boolean) => {
           };
         });
       }
-    }, 400);
+    }, 100);
     setIntervalId(interval);
 
     return () => clearInterval(interval);

@@ -93,8 +93,7 @@ const UserAddForm: FC<{
     (phone.isValid || !phone) &&
     (description.isValid || !description); */
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     if (formIsValid) {
       props.onSubmitForm({
         email: email.value.trim(),
@@ -116,12 +115,8 @@ const UserAddForm: FC<{
   };
 
   return (
-    <form
-      className="flex flex-col gap-y-10"
-      onSubmit={handleSubmit}
-      autoComplete="off"
-    >
-      <CreateUserHeader />
+    <form className="flex flex-col gap-y-10" autoComplete="off">
+      <CreateUserHeader onSubmit={handleSubmit} />
       <div className="flex flex-col gap-y-5">
         <div className="grid grid-cols-3 gap-x-5">
           <Informations
