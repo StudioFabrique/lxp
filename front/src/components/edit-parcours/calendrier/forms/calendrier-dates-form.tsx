@@ -1,11 +1,4 @@
-import {
-  ChangeEvent,
-  ChangeEventHandler,
-  FC,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 import Module from "../../../../utils/interfaces/module";
 import { useSelector } from "react-redux";

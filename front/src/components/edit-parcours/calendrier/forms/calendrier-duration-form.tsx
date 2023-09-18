@@ -5,15 +5,21 @@ import {
   useEffect,
   useState,
 } from "react";
-import Wrapper from "../../../UI/wrapper/wrapper.component";
+import useProgressBar from "../../../../hooks/use-progress-bar";
 import Module from "../../../../utils/interfaces/module";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { parcoursModulesSliceActions } from "../../../../store/redux-toolkit/parcours/parcours-modules";
 import useHttp from "../../../../hooks/use-http";
-import { autoSubmitTimer } from "../../../../config/auto-submit-timer";
+import ProgressBarWrapper from "../../../UI/progress-bar-wrapper/progress-bar-wrapper";
 
 const CalendrierDurationForm = () => {
+  const [duration, setDuration] = useState(0);
+
+  const formValidation = duration > 0;
+
+  const progressBarProps = useProgressBar(formValidation);
+
   const dispatch = useDispatch();
 
   const { sendRequest } = useHttp();
@@ -21,44 +27,6 @@ const CalendrierDurationForm = () => {
   const currentModule: Module = useSelector(
     (state: any) => state.parcoursModules.currentModule
   );
-
-  const [duration, setDuration] = useState(0);
-
-  const [isReadyToSend, setReadyToSend] = useState(false);
-
-  const [intervalId, setIntervalId] = useState<NodeJS.Timer | null>(null);
-
-  const [loader, setLoader] = useState({
-    lastTime: Date.now(),
-    loadingRate: 0,
-  });
-
-  const [fetchResultType, setFetchResultType] = useState<
-    "success" | "error" | "loading" | "none"
-  >("none");
-
-  const componentFetchType = () => {
-    switch (fetchResultType) {
-      case "success":
-        return (
-          <span className="pr-2 self-end">
-            <p className="text-green-400">&#10003;</p>
-          </span>
-        );
-      case "error":
-        return (
-          <span className="pr-2">
-            <p>erreur</p>
-          </span>
-        );
-      case "loading":
-        return <span className="loading loading-spinner loading-xs" />;
-      case "none":
-        return <span className="" />;
-      default:
-        return undefined;
-    }
-  };
 
   const initDuration = useCallback(() => {
     if (currentModule) {
@@ -69,14 +37,13 @@ const CalendrierDurationForm = () => {
   const handleChangeDurationValue: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
-    setFetchResultType("none");
-    if (intervalId) clearInterval(intervalId);
-    setDuration(parseInt(event.currentTarget.value));
-    setReadyToSend(true);
+    const value = parseInt(event.currentTarget.value);
+    setDuration(value);
+    progressBarProps.handlePrepareRequest(value);
   };
 
   const handleSubmit = useCallback(() => {
-    setFetchResultType("loading");
+    progressBarProps.setFetchResultType("loading");
 
     const applyData = (data: any) => {
       dispatch(
@@ -85,7 +52,7 @@ const CalendrierDurationForm = () => {
           module: { ...currentModule, duration: duration },
         })
       );
-      setFetchResultType("success");
+      progressBarProps.setFetchResultType("success");
     };
 
     sendRequest(
@@ -97,70 +64,30 @@ const CalendrierDurationForm = () => {
       applyData
     );
 
-    setReadyToSend(false);
-  }, [currentModule, dispatch, duration, sendRequest]);
+    progressBarProps.handleStopRequest();
+  }, [currentModule, dispatch, duration, sendRequest, progressBarProps]);
 
   useEffect(() => {
     initDuration();
   }, [initDuration]);
 
   useEffect(() => {
-    if (isReadyToSend && duration > 0) {
-      setLoader({
-        lastTime: Date.now(),
-        loadingRate: 0,
-      });
+    if (progressBarProps.canSendRequestNow) {
+      handleSubmit();
     }
-
-    /**
-     * On fait passer le pourcentage de "loadingRate" à 1.2 si un fetch de la base de données a été
-     * effectué afin que la progress bar puisse se remplisse instantanément de 1 à 1.2
-     */
-    if (fetchResultType === "success" || fetchResultType === "error") {
-      setLoader((currentLoader) => {
-        return {
-          lastTime: currentLoader.lastTime,
-          loadingRate: 1.2,
-        };
-      });
-    }
-  }, [duration, handleSubmit, isReadyToSend, fetchResultType]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const timeElapsed = Date.now() - loader.lastTime;
-      const loadingRate = timeElapsed / autoSubmitTimer;
-
-      if (isReadyToSend && duration > 0 && timeElapsed > autoSubmitTimer) {
-        handleSubmit();
-      }
-
-      if (isReadyToSend && duration > 0 && fetchResultType === "none") {
-        setLoader((currentLoader) => {
-          return {
-            lastTime: currentLoader.lastTime,
-            loadingRate: loadingRate > 1 ? 1 : loadingRate,
-          };
-        });
-      }
-    }, 400);
-    setIntervalId(interval);
-
-    return () => clearInterval(interval);
-  }, [duration, handleSubmit, isReadyToSend, loader.lastTime, fetchResultType]);
+  }, [progressBarProps.canSendRequestNow, handleSubmit]);
 
   return (
-    <div className="flex flex-col">
-      <Wrapper>
-        {currentModule && (
-          <form className="flex flex-col gap-y-5">
-            <span className="flex gap-x-2">
-              <h3>Durée du module</h3>
-              {componentFetchType()}
-            </span>
-            <div className="flex gap-x-5">
-              {/* Fields asychrone/sychrone */}
-              {/* <div className="flex flex-col gap-y-2 ">
+    <ProgressBarWrapper loader={progressBarProps.loader}>
+      {currentModule && (
+        <form className="flex flex-col gap-y-5">
+          <span className="flex gap-x-2">
+            <h3>Durée du module</h3>
+            {progressBarProps.componentFetchType()}
+          </span>
+          <div className="flex gap-x-5">
+            {/* Fields asychrone/sychrone */}
+            {/* <div className="flex flex-col gap-y-2 ">
               <span className="flex gap-x-2">
                 <input
                   id="radio1"
@@ -184,26 +111,20 @@ const CalendrierDurationForm = () => {
                 <label htmlFor="radio2">Asynchrone</label>
               </span>
             </div> */}
-              <span className="flex gap-x-2 items-center">
-                <input
-                  onChange={handleChangeDurationValue}
-                  value={duration}
-                  type="number"
-                  placeholder="Nombre d'heures"
-                  className="input input-sm sm:w-20 md:w-24 lg:w-40"
-                />
-                <p>H</p>
-              </span>
-            </div>
-          </form>
-        )}
-      </Wrapper>
-      <progress
-        className="h-1 w-full progress progress-secondary -inset-y-1"
-        value={loader.loadingRate}
-        max={1.2}
-      />
-    </div>
+            <span className="flex gap-x-2 items-center">
+              <input
+                onChange={handleChangeDurationValue}
+                value={duration}
+                type="number"
+                placeholder="Nombre d'heures"
+                className="input input-sm sm:w-20 md:w-24 lg:w-40"
+              />
+              <p>H</p>
+            </span>
+          </div>
+        </form>
+      )}
+    </ProgressBarWrapper>
   );
 };
 
