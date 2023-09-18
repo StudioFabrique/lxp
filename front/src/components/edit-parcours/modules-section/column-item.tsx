@@ -15,6 +15,9 @@ const ColumnItem: FC<ColumnItemProps> = ({
   isDisabled,
   modulesList,
 }) => {
+  console.log({ modulesList });
+  console.log("colonne", column);
+
   return (
     <div className="flex flex-col order">
       <div className="h-[50vh] overflow-auto scrollbar scrollbar-thumb-primary/50 scrollbar-track-primary/20">
@@ -32,7 +35,9 @@ const ColumnItem: FC<ColumnItemProps> = ({
                       <LessonItem
                         isDisabled={isDisabled}
                         lesson={
-                          modulesList.find((item: any) => item.id === moduleId)!
+                          modulesList.find(
+                            (item: any) => item.id.toString() === moduleId
+                          )!
                         }
                         index={index}
                       />

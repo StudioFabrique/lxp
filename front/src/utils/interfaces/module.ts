@@ -2,7 +2,7 @@ import Skill from "./skill";
 import User from "./user";
 
 export default interface Module {
-  id?: number | string;
+  id?: number;
   title: string;
   description: string;
   contacts: Array<User>;
@@ -10,4 +10,7 @@ export default interface Module {
   duration: number;
   image?: string;
   thumb?: string;
+  isNewModule?: boolean;
+  isSelected?: boolean;
+  isCopy?: boolean;
 }

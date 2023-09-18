@@ -6,8 +6,12 @@ import EditIcon from "../../UI/svg/edit-icon";
 import EyeIcon from "../../UI/svg/eye-icon";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setCurrentModule } from "../../../store/redux-toolkit/parcours/parcours-modules";
+import {
+  setCurrentModule,
+  toggleEditionMode,
+} from "../../../store/redux-toolkit/parcours/parcours-modules";
 import { defaultModuleThumb } from "../../../lib/defautltModuleThumb";
+import { useSelector } from "react-redux";
 
 interface LessonItemProps {
   lesson: Module;
@@ -17,6 +21,9 @@ interface LessonItemProps {
 
 const LessonItem: FC<LessonItemProps> = ({ lesson, isDisabled, index }) => {
   const dispatch = useDispatch();
+  const editionMode = useSelector(
+    (state: any) => state.parcoursModule.editionMode
+  );
 
   const classImage: React.CSSProperties = {
     backgroundImage: `url('${
@@ -33,10 +40,17 @@ const LessonItem: FC<LessonItemProps> = ({ lesson, isDisabled, index }) => {
 
   const setModuleToEdit = (module: Module) => {
     dispatch(setCurrentModule(module));
+    dispatch(toggleEditionMode());
   };
 
+  console.log({ lesson });
+
   return (
-    <Draggable draggableId={lesson.id!.toString()} index={index!}>
+    <Draggable
+      isDragDisabled={editionMode}
+      draggableId={lesson.id!.toString()}
+      index={index!}
+    >
       {(provided) => (
         <div
           className="w-full flex flex-col items-center"
