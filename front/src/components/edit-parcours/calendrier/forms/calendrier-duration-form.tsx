@@ -150,23 +150,17 @@ const CalendrierDurationForm = () => {
   }, [duration, handleSubmit, isReadyToSend, loader.lastTime, fetchResultType]);
 
   return (
-    <Wrapper>
-      <div className="flex flex-col -m-4 -mb-5 h-5 ">
-        <progress
-          className="h-1 w-full progress progress-secondary"
-          value={loader.loadingRate}
-          max={1.2}
-        />
-      </div>
-      {currentModule && (
-        <form className="flex flex-col gap-y-5">
-          <span className="flex gap-x-2">
-            <h3>Durée du module</h3>
-            {componentFetchType()}
-          </span>
-          <div className="flex gap-x-5">
-            {/* Fields asychrone/sychrone */}
-            {/* <div className="flex flex-col gap-y-2 ">
+    <div className="flex flex-col">
+      <Wrapper>
+        {currentModule && (
+          <form className="flex flex-col gap-y-5">
+            <span className="flex gap-x-2">
+              <h3>Durée du module</h3>
+              {componentFetchType()}
+            </span>
+            <div className="flex gap-x-5">
+              {/* Fields asychrone/sychrone */}
+              {/* <div className="flex flex-col gap-y-2 ">
               <span className="flex gap-x-2">
                 <input
                   id="radio1"
@@ -190,20 +184,26 @@ const CalendrierDurationForm = () => {
                 <label htmlFor="radio2">Asynchrone</label>
               </span>
             </div> */}
-            <span className="flex gap-x-2 items-center">
-              <input
-                onChange={handleChangeDurationValue}
-                value={duration}
-                type="number"
-                placeholder="Nombre d'heures"
-                className="input input-sm sm:w-20 md:w-24 lg:w-40"
-              />
-              <p>H</p>
-            </span>
-          </div>
-        </form>
-      )}
-    </Wrapper>
+              <span className="flex gap-x-2 items-center">
+                <input
+                  onChange={handleChangeDurationValue}
+                  value={duration}
+                  type="number"
+                  placeholder="Nombre d'heures"
+                  className="input input-sm sm:w-20 md:w-24 lg:w-40"
+                />
+                <p>H</p>
+              </span>
+            </div>
+          </form>
+        )}
+      </Wrapper>
+      <progress
+        className="h-1 w-full progress progress-secondary -inset-y-1"
+        value={loader.loadingRate}
+        max={1.2}
+      />
+    </div>
   );
 };
 
