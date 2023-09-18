@@ -40,11 +40,21 @@ const CalendrierDurationForm = () => {
   const componentFetchType = () => {
     switch (fetchResultType) {
       case "success":
-        return <span className="h-5 loading loading-spinner loading-xs" />;
+        return (
+          <span className="pr-2 self-end">
+            <p className="text-green-400">&#10003;</p>
+          </span>
+        );
       case "error":
-        return <span className="h-5 loading loading-spinner loading-xs" />;
+        return (
+          <span className="pr-2">
+            <p>erreur</p>
+          </span>
+        );
       case "loading":
-        return <span className="h-5 loading loading-spinner loading-xs" />;
+        return <span className="loading loading-spinner loading-xs" />;
+      case "none":
+        return <span className="" />;
       default:
         return undefined;
     }
@@ -66,6 +76,8 @@ const CalendrierDurationForm = () => {
   };
 
   const handleSubmit = useCallback(() => {
+    setFetchResultType("loading");
+
     const applyData = (data: any) => {
       dispatch(
         parcoursModulesSliceActions.updateParcoursModule({
@@ -75,8 +87,6 @@ const CalendrierDurationForm = () => {
       );
       setFetchResultType("success");
     };
-
-    setFetchResultType("loading");
 
     sendRequest(
       {
@@ -133,7 +143,7 @@ const CalendrierDurationForm = () => {
           };
         });
       }
-    }, 500);
+    }, 400);
     setIntervalId(interval);
 
     return () => clearInterval(interval);
@@ -141,17 +151,19 @@ const CalendrierDurationForm = () => {
 
   return (
     <Wrapper>
-      <div className="flex h-1 -m-2 justify-between">
+      <div className="flex flex-col -m-4 -mb-5 h-5 ">
         <progress
-          className="h-1 w-[90%] progress progress-secondary"
+          className="h-1 w-full progress progress-secondary"
           value={loader.loadingRate}
           max={1.2}
         />
-        {componentFetchType()}
       </div>
       {currentModule && (
         <form className="flex flex-col gap-y-5">
-          <h3>Durée du module</h3>
+          <span className="flex gap-x-2">
+            <h3>Durée du module</h3>
+            {componentFetchType()}
+          </span>
           <div className="flex gap-x-5">
             {/* Fields asychrone/sychrone */}
             {/* <div className="flex flex-col gap-y-2 ">
