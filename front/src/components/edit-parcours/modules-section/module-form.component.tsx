@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import React, { FormEvent, useRef, useState } from "react";
+import React, { FormEvent, useState } from "react";
 
 import useInput from "../../../hooks/use-input";
 import {
@@ -14,6 +14,8 @@ import useHttp from "../../../hooks/use-http";
 import AddIcon from "../../UI/svg/add-icon";
 import { compressImage } from "../../../helpers/compress-image";
 import MemoizedModuleFilesUpload from "./module-files-upload.component";
+import { useDispatch } from "react-redux";
+import { toggleEditionMode } from "../../../store/redux-toolkit/parcours/parcours-modules";
 
 interface ModuleFormProps {
   onSubmitNewModule: (module: any, file: File) => void;
@@ -21,23 +23,40 @@ interface ModuleFormProps {
 
 const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
   (props, ref) => {
-    const { value: title } = useInput((value) => regexGeneric.test(value));
-    const { value: duration } = useInput((value) => regexNumber.test(value));
-    const { value: description } = useInput((value) =>
-      regexOptionalGeneric.test(value)
+    const dispatch = useDispatch();
+    const currentModule = useSelector(
+      (state: any) => state.parcoursModule.currentModule
+    );
+    const parcours = useSelector((state: any) => state.parcours);
+    const { value: title } = useInput(
+      (value) => regexGeneric.test(value),
+      currentModule.title
+    );
+    const { value: duration } = useInput(
+      (value) => regexNumber.test(value),
+      currentModule.duration
+    );
+    const { value: description } = useInput(
+      (value) => regexOptionalGeneric.test(value),
+      currentModule.description
     );
     const [image, setImage] = useState<File | null>(null);
-    const [thumb, setThumb] = useState<string | null>(null);
+    const [thumb, setThumb] = useState<string | null>(
+      currentModule.thumb ?? null
+    );
     const listeContacts = useSelector(
       (state: any) => state.parcoursContacts.currentContacts
     ) as Contact[];
     const listeSkills = useSelector(
       (state: any) => state.parcoursSkills.skills
     ) as Skill[];
-    const [teachers, setTeachers] = useState<Contact[] | null>(null);
-    const [skills, setSkills] = useState<Skill[] | null>(null);
+    const [teachers, setTeachers] = useState<Contact[] | null>(
+      currentModule.contacts ?? null
+    );
+    const [skills, setSkills] = useState<Skill[] | null>(
+      currentModule.bonusSkills ?? null
+    );
     const { sendRequest, isLoading } = useHttp();
-    const formRef = useRef<HTMLInputElement>(null);
 
     /**
      * définit le style du champ formulaire en fonction de sa validité
@@ -111,7 +130,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
           contacts: teachers,
           bonusSkills: skills,
           formations: [1],
-          parcoursId: 1,
+          parcoursId: parcours.id,
         };
         const formData = new FormData();
         formData.append("image", image);
@@ -132,10 +151,19 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
       } else console.log("oops");
     };
 
+    console.log({ currentModule });
+
     return (
       <form className="w-full" onSubmit={handleSubmitModule}>
+        <h2 className="text-xl font-bold mb-4">
+          {currentModule.isNewModule
+            ? "Création de module"
+            : "Edition du module"}
+        </h2>
         <section className="w-full  grid grid-cols-2 gap-8">
           <article className="flex flex-col gap-y-4">
+            {/* titre */}
+
             <div className="flex flex-col gap-y-4">
               <label htmlFor="title">Titre du module *</label>
               <input
@@ -150,6 +178,9 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
                 placeholder="Exemple: CDA - Promo 2023"
               />
             </div>
+
+            {/* description */}
+
             <div className="flex flex-col gap-y-4">
               <label htmlFor="description">Description</label>
               <textarea
@@ -162,6 +193,9 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
                 onBlur={description.valueBlurHandler}
               />
             </div>
+
+            {/* durée du modules en heures */}
+
             <div className="flex flex-col gap-y-4">
               <label htmlFor="duration">Nombre d'heures</label>
               <input
@@ -174,12 +208,17 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
                 onBlur={duration.valueBlurHandler}
               />
             </div>
+
+            {/* image du module */}
+
             <div className="flex flex-col gap-y-4">
               <label htmlFor="image">Téléverser une image</label>
               <MemoizedModuleFilesUpload setImage={handleUpdateImage} />
             </div>
           </article>
           <article className="flex flex-col gap-y-4">
+            {/* liste des contacts */}
+
             <div className="flex flex-col gap-y-4">
               <label htmlFor="teachers">Formateurs du module</label>
               <MemoizedItemsList
@@ -189,6 +228,9 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
                 onUpdateItems={handleUpdateTeachers}
               />
             </div>
+
+            {/* compétences du module */}
+
             <div className="flex flex-col gap-y-4">
               <label htmlFor="skills">Compétences du module</label>
               <MemoizedItemsList
@@ -200,7 +242,14 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
             </div>
           </article>
         </section>
-        <div className="w-full flex justify-end mt-8">
+        <div className="w-full flex justify-between mt-8">
+          <button
+            className="btn btn-primary btn-outline"
+            type="button"
+            onClick={() => dispatch(toggleEditionMode())}
+          >
+            Annuler
+          </button>
           {isLoading ? (
             <button className="btn btn-primary" type="button">
               <span className="loading loading-spinner"></span>

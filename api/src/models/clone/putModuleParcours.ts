@@ -1,3 +1,4 @@
+import { BonusSkill, Contact } from "@prisma/client";
 import { prisma } from "../../utils/db";
 
 async function putModuleParcours(module: any, thumb: string, image: any) {
@@ -24,23 +25,24 @@ async function putModuleParcours(module: any, thumb: string, image: any) {
     throw newError;
   }
 
-  const addModule = await prisma.module.create({
-    data: {
-      title: newModule.title,
-      description: newModule.description,
-      duration: +newModule.duration,
-      image,
-      thumb,
-      formations: {
-        create: newModule.formations.map((item: any) => {
-          return {
-            formation: {
-              connect: { id: item },
-            },
-          };
-        }),
-      },
-      /*       parcours: {
+  const transaction = await prisma.$transaction(async (tx) => {
+    const addModule = await tx.module.create({
+      data: {
+        title: newModule.title,
+        description: newModule.description,
+        duration: +newModule.duration,
+        image,
+        thumb,
+        formations: {
+          create: newModule.formations.map((item: any) => {
+            return {
+              formation: {
+                connect: { id: item },
+              },
+            };
+          }),
+        },
+        /*       parcours: {
         create: {
           parcours: {
             connect: { id: +newModule.parcoursId },
@@ -65,10 +67,54 @@ async function putModuleParcours(module: any, thumb: string, image: any) {
           };
         }),
       }, */
-    },
+      },
+    });
+
+    const parcoursModule = await tx.module.create({
+      data: {
+        title: newModule.title,
+        description: newModule.description,
+        image,
+        thumb,
+        duration: +newModule.duration,
+        contacts: {
+          create: newModule.contacts.map((item: Contact) => {
+            return {
+              contact: {
+                connect: { id: item.id },
+              },
+            };
+          }),
+        },
+        bonusSkills: {
+          create: newModule.bonusSkills.map((item: BonusSkill) => {
+            return {
+              bonusSkill: {
+                connect: { id: item.id },
+              },
+            };
+          }),
+        },
+      },
+    });
+
+    await tx.parcours.update({
+      where: {
+        id: +newModule.parcoursId,
+      },
+      data: {
+        modules: {
+          create: {
+            module: {
+              connect: { id: parcoursModule.id },
+            },
+          },
+        },
+      },
+    });
   });
 
-  return addModule;
+  return true;
 }
 
 export default putModuleParcours;

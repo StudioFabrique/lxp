@@ -119,7 +119,21 @@ const EditParcours = () => {
       }
 
       if (data.modules.length > 0) {
-        dispatch(setModules(data.modules.map((item: any) => item.module)));
+        dispatch(
+          setModules(
+            data.modules.map((item: any) => {
+              return {
+                ...item.module,
+                contacts: item.module.contacts.map(
+                  (itemContact: any) => itemContact.contact
+                ),
+                bonusSkills: item.module.bonusSkills.map(
+                  (itemBonusSkills: any) => itemBonusSkills.bonusSkill
+                ),
+              };
+            })
+          )
+        );
       } else {
         dispatch(setModules([]));
       }
@@ -256,7 +270,7 @@ const EditParcours = () => {
 
   const handleResetImportedObjectives = () => {};
 
-  console.log({ actualStep });
+  console.log({ modules });
 
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">

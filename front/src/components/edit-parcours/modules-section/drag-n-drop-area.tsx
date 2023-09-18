@@ -27,10 +27,9 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
   const isInitialEffect = useRef(true);
 
   console.log("rendering...");
-  console.log({ parcoursModules });
 
   useEffect(() => {
-    setDnd((prevModules) => {
+    /*  setDnd((prevModules) => {
       if (prevModules) {
         return {
           columns: {
@@ -52,6 +51,7 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
               duration: 1,
               contacts: [],
               bonusSkills: [],
+              isNewModule: true,
             },
           ],
         };
@@ -62,9 +62,10 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
               id: "0",
               title: "Nouveau module",
               description: "Description",
-              duration: 1,
+              duration: 0,
               contacts: [],
               bonusSkills: [],
+              isNewModule: true,
             },
           ],
           columns: {
@@ -83,7 +84,7 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
       } else {
         return null;
       }
-    });
+    }); */
   }, [props.newModule]);
 
   // on vérifie qu'il s'agit du premier rendu et que les "props" sont initialisées
@@ -92,8 +93,6 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
     parcoursModules &&
     formationModules.length > 0
   ) {
-    console.log("coucou");
-
     /**
      * on transforme les ids des modules de la liste initiale en string et on retire de cette liste
      * les modules qui sont déjà associés au parcours pour être sûr de ne pas avoir de doublons dans
@@ -102,8 +101,6 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
     const parcoursModulesIds = parcoursModules.map((item: Module) =>
       item.id?.toString()
     );
-
-    console.log({ formationModules });
 
     const parcoursModulesTitles = parcoursModules.map(
       (item: Module) => item.title
@@ -119,10 +116,8 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
     const filteredFormationModulesIds = formationModulesIds.filter(
       (module: string) => !parcoursModulesIds.includes(module)
     );
-    console.log({ filteredFormationModules });
 
     const tasks = [...filteredFormationModules, ...parcoursModules];
-    console.log({ tasks });
 
     // on initialise les "colonnes", c'est à dire les emplacements dans lesquels le drag n drop est possible
     const columns = {
@@ -140,7 +135,6 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
         },
       },
     };
-    console.log({ columns });
 
     setDnd(columns);
 
@@ -151,11 +145,11 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
   // utilisation pour éviter les rendus infinis
   // TOTO vérifier s'il y a des rendus infinis sans le useMemo
   const updatedModules = useMemo(() => {
-    return (
+    /*     return (
       dnd?.tasks.filter((item) =>
         dnd.columns.destColumn.modulesIds.includes(item.id as string)
       ) || []
-    );
+    ); */
   }, [dnd]);
 
   // mise à jour de la liste des modules du parcours en mémoire
@@ -239,7 +233,7 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
     setDnd(newState);
   };
 
-  console.log({ dnd });
+  console.log("tasks", dnd?.tasks);
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>

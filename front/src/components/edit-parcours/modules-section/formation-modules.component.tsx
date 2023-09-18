@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useHttp from "../../../hooks/use-http";
+import { useSelector } from "react-redux";
 
 const FormationModule = () => {
   const { sendRequest } = useHttp();
-  const [formationModules, setFormationModule] = useState<any>([]);
+  //const [formationModules, setFormationModule] = useState<any>([]);
+  const parcoursId = useSelector((state: any) => state.parcours.id);
 
   useEffect(() => {
     const applyData = (data: any) => {
@@ -11,11 +13,11 @@ const FormationModule = () => {
     };
     sendRequest(
       {
-        path: `/module/formation/${1}`,
+        path: `/module/formation/${parcoursId}`,
       },
       applyData
     );
-  }, [sendRequest]);
+  }, [parcoursId, sendRequest]);
 
   return <div></div>;
 };
