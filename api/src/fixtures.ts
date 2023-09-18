@@ -168,7 +168,7 @@ async function createManyStudents() {
   const role = await Role.findOne({ role: "student" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 5; i++) {
     const firstname = firstnames[getRandomNumber(0, 14)];
     const city = cities[getRandomNumber(0, 9)];
     const postCode = city.postcode;
