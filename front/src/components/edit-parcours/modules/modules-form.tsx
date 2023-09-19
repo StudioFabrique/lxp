@@ -1,23 +1,19 @@
 import { FC, FormEvent, FormEventHandler, useEffect, useState } from "react";
-import ImageFileUpload from "../../../UI/image-file-upload/image-file-upload";
-import useInput from "../../../../hooks/use-input";
-import { regexGeneric, regexNumber } from "../../../../utils/constantes";
-import User from "../../../../utils/interfaces/user";
-import Skill from "../../../../utils/interfaces/skill";
-import Module from "../../../../utils/interfaces/module";
-import { validateImageFile } from "../../../../utils/validate-image-file";
+import ImageFileUpload from "../../UI/image-file-upload/image-file-upload";
+import useInput from "../../../hooks/use-input";
+import { regexGeneric, regexNumber } from "../../../utils/constantes";
+import User from "../../../utils/interfaces/user";
+import Skill from "../../../utils/interfaces/skill";
+import Module from "../../../utils/interfaces/module";
+import { validateImageFile } from "../../../utils/validate-image-file";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addParcoursModule,
-  clearCurrentParcoursModule,
-  updateParcoursModule,
-} from "../../../../store/redux-toolkit/parcours/parcours-modules";
-import DataAdder from "../../../UI/data-adder/data-adder.component";
+import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
+import DataAdder from "../../UI/data-adder/data-adder";
 // import { getDBSkills as skillsData } from "../../../utils/fixtures/skills";
 import { Toaster, toast } from "react-hot-toast";
-import { AddIcon1 } from "../../../UI/svg/add-icons";
+import { AddIcon1 } from "../../UI/svg/add-icons";
 import { useParams } from "react-router-dom";
-import useHttp from "../../../../hooks/use-http";
+import useHttp from "../../../hooks/use-http";
 
 const ModulesForm: FC<{}> = () => {
   const { id: parcoursId } = useParams();
@@ -25,7 +21,7 @@ const ModulesForm: FC<{}> = () => {
   const { sendRequest } = useHttp();
 
   const currentModuleToEdit: Module | null = useSelector(
-    (state: any) => state.parcoursModule.currentModule
+    (state: any) => state.parcoursModules.currentModule
   );
 
   const skillsFromDb = useSelector((state: any) => state.parcoursSkills.skills);
@@ -48,19 +44,14 @@ const ModulesForm: FC<{}> = () => {
   };
 
   const handleClearEdit = () => {
-    title.reset();
-    description.reset();
-    duration.reset();
-    setImageFile(null);
-    setContacts([]);
-    setSkills([]);
-    setResetFilter(true);
-    dispatch(clearCurrentParcoursModule());
+    dispatch(parcoursModulesSliceActions.clearCurrentParcoursModule());
   };
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (
     event: FormEvent<HTMLFormElement>
   ) => {
+    console.log(imageFile);
+
     event.preventDefault();
     if (
       !title.isValid ||
@@ -82,48 +73,52 @@ const ModulesForm: FC<{}> = () => {
       contacts: contacts,
       bonusSkills: skills,
       duration: parseInt(duration.value),
-      /* imageTemp: imageFile!,
-      imageUrl: URL.createObjectURL(imageFile!), */
     };
 
     const applyData = (data: any) => {
       console.log(data);
-      const moduleId = data.moduleId;
-      dispatch(
-        currentModuleToEdit
-          ? updateParcoursModule({ module, moduleId })
-          : addParcoursModule({ module, moduleId })
-      );
+      const moduleDb = data.module;
+      currentModuleToEdit
+        ? dispatch(
+            parcoursModulesSliceActions.updateParcoursModule({
+              moduleDb,
+            })
+          )
+        : dispatch(parcoursModulesSliceActions.addParcoursModule({ moduleDb }));
       handleClearEdit();
     };
+
+    const formData = new FormData();
+    formData.append("module", JSON.stringify(module));
+    formData.append("image", imageFile);
+    !currentModuleToEdit && formData.append("parcoursId", parcoursId!);
+    currentModuleToEdit &&
+      formData.append("moduleId", currentModuleToEdit.id!.toString());
 
     // do the request
     sendRequest(
       {
         path: "/module",
         method: currentModuleToEdit ? "put" : "post",
-        body: {
-          module: module,
-          parcoursId: !currentModuleToEdit && parseInt(parcoursId!),
-          moduleId: currentModuleToEdit && currentModuleToEdit.id,
-          // imageFile: imageFile,
-        },
+        body: formData,
       },
       applyData
     );
   };
 
   useEffect(() => {
-    if (currentModuleToEdit) {
-      title.changeValue(currentModuleToEdit.title);
-      description.changeValue(currentModuleToEdit.description);
-      duration.changeValue(currentModuleToEdit.duration.toString());
-      setImageFile(currentModuleToEdit.imageTemp!);
-      setContacts(currentModuleToEdit.contacts);
-      setSkills(currentModuleToEdit.bonusSkills);
-      setResetFilter(true);
-    }
+    title.changeValue(currentModuleToEdit?.title ?? "");
+    description.changeValue(currentModuleToEdit?.description ?? "");
+    duration.changeValue(currentModuleToEdit?.duration.toString() ?? "");
+    setImageFile(null);
+    setContacts(currentModuleToEdit?.contacts ?? []);
+    setSkills(currentModuleToEdit?.bonusSkills ?? []);
+    setResetFilter(true);
   }, [currentModuleToEdit]);
+
+  useEffect(() => {
+    dispatch(parcoursModulesSliceActions.clearCurrentParcoursModule());
+  }, [dispatch]);
 
   return (
     <form

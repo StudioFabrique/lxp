@@ -1,6 +1,6 @@
 export default async function getManyModules(parcoursId: number) {
   const modules = await prisma?.module.findMany({
-    where: { parcoursId: parcoursId },
+    where: { parcours: { some: { parcoursId: parcoursId } } },
     include: {
       bonusSkills: {
         select: { bonusSkill: { select: { id: true, description: true } } },

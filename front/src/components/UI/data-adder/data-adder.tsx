@@ -1,6 +1,6 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import SearchDropdownMultiple from "./search-dropdown-multiple/search-dropdown-multiple";
-import DataList from "./data-list.component";
+import DataList from "./data-list";
 
 const DataAdder: FC<{
   data: any[];

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import DataItem from "./data-item.component";
+import DataItem from "./data-item";
 
 const DataList: FC<{
   data: any[];

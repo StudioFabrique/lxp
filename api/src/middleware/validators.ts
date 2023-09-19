@@ -34,39 +34,54 @@ const customEmptyValueValidation = (field: ValidationChain) => {
 };
 
 export const userValidator = [
-  body("email").exists().isEmail().trim().escape(),
-  body(["firstname", "lastname"])
-    .exists()
-    .notEmpty()
-    .isString()
-    .trim()
-    .escape(),
-  body([
-    "nickname",
-    "description",
-    "address",
-    "city",
-    "links.*.url",
-    "links.*.alias",
-    "hobbies.*.title",
-    "graduations.*.title",
-    "graduations.*.degree",
-  ])
-    .custom(customEmptyValueValidation(body().isString().trim().escape()))
-    .trim()
-    .escape(),
-  body("userType").exists().notEmpty().isNumeric(),
-  body("postCode")
-    .custom(
-      customEmptyValueValidation(body().isPostalCode("FR").trim().escape())
-    )
-    .trim()
-    .escape(),
-  // body("roles").isArray(),
-  body(["graduations.*.date", "birthDate"]).custom(
-    customEmptyValueValidation(body().isDate().trim().escape())
-  ),
-  body(["hobbies", "graduations", "links"]).isArray(),
+  // body("email")
+  //   .exists()
+  //   .isEmail()
+  //   .trim()
+  //   .escape()
+  //   .withMessage("email non conforme"),
+  // body(["firstname", "lastname"])
+  //   .exists()
+  //   .notEmpty()
+  //   .isString()
+  //   .trim()
+  //   .escape()
+  //   .withMessage("firstname ou lastname non conforme"),
+  // body([
+  //   "nickname",
+  //   "description",
+  //   "address",
+  //   "city",
+  //   "links.*.url",
+  //   "links.*.alias",
+  //   "hobbies.*.title",
+  //   "graduations.*.title",
+  //   "graduations.*.degree",
+  // ])
+  //   .custom(customEmptyValueValidation(body().isString().trim().escape()))
+  //   .trim()
+  //   .escape()
+  //   .withMessage(
+  //     "nickname, description, address, city, links, hobbies ou graduations non conforme"
+  //   ),
+  // body("userType")
+  //   .exists()
+  //   .notEmpty()
+  //   .isNumeric()
+  //   .withMessage("userType non conforme"),
+  // body("postCode")
+  //   .custom(
+  //     customEmptyValueValidation(body().isPostalCode("FR").trim().escape())
+  //   )
+  //   .trim()
+  //   .escape()
+  //   .withMessage("postCode non conforme"),
+  // body(["graduations.*.date", "birthDate"])
+  //   .custom(customEmptyValueValidation(body().isDate().trim().escape()))
+  //   .withMessage("graduations ou birthDate non conforme"),
+  // body(["hobbies", "graduations", "links"])
+  //   .isArray()
+  //   .withMessage("hobbies, graduations ou links non conforme"),
   checkValidatorResult,
 ];
 
@@ -84,7 +99,7 @@ export const manyUsersValidator = [
 ];
 
 export const groupValidator = [
-  body("name", "desc").isString().trim().escape(),
+  body("groupRequest.name").isString().trim().escape(),
   checkValidatorResult,
 ];
 
