@@ -12,7 +12,7 @@ import ItemElement from "./item-element.component";
 
 interface ItemsListProps {
   itemsList: unknown[];
-  selectedProp?: unknown[];
+  selectedProp?: any[];
   propertyToSearch: string;
   placeHolder: string;
   onUpdateItems: (items: unknown[]) => void;
@@ -29,18 +29,25 @@ const ItemsList = (props: ItemsListProps) => {
     selectedItems,
   } = useItems();
 
-  useEffect(() => {
-    if (props.selectedProp !== undefined && props.selectedProp.length > 0) {
-      props.selectedProp.forEach((item: any) =>
-        addItem(item[props.propertyToSearch], props.propertyToSearch)
-      );
-    }
-  }, [addItem, props.propertyToSearch, props.selectedProp]);
-
   // initialise la liste des formateurs inscrits pour le parcours à partirs des props
   useEffect(() => {
     initItems(props.itemsList);
-  }, [props.itemsList, initItems]);
+    if (
+      props.selectedProp !== undefined &&
+      props.selectedProp.length > 0 &&
+      ItemsList.length > 0
+    ) {
+      for (const item of props.selectedProp) {
+        addItem(item[props.propertyToSearch], props.propertyToSearch);
+      }
+    }
+  }, [
+    props.itemsList,
+    initItems,
+    addItem,
+    props.propertyToSearch,
+    props.selectedProp,
+  ]);
 
   // remonte les items de la liste au composant parent
   useEffect(() => {

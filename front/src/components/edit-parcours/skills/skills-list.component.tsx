@@ -122,8 +122,6 @@ const SkillsList = () => {
     }
   }, [activeDrawer]);
 
-  console.log({ skillList });
-
   let content = (
     <>
       {skillList.length > 0 ? (

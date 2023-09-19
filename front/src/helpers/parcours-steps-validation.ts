@@ -33,8 +33,6 @@ const testContacts = (contacts: Array<Contact>) => {
 }; */
 
 const testObjectives = (objectives: Array<Objective>) => {
-  console.log(objectives);
-
   return objectives.length > 0;
 };
 

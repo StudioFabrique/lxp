@@ -13,8 +13,6 @@ const useSteps = (steps: Array<Step>) => {
    * @param id number
    */
   const updateStep = (id: number) => {
-    console.log("step updated");
-
     const step = stepsList.find((item: Step) => item.id === id);
     if (step) {
       setActualStep(step);
