@@ -23,30 +23,25 @@ const parcoursModuleSlice = createSlice({
     setCurrentModule(state, action) {
       state.currentModule = action.payload;
     },
-    toggleEditionMode(state) {
-      state.editionMode = !state.editionMode;
+    toggleEditionMode(state, action) {
+      state.editionMode = action.payload;
     },
     toggleNewModule(state) {
       state.newModule = !state.newModule;
     },
-    removeModule(state, action) {
-      state.modules = state.modules!.filter(
-        (item: Module) => item.id !== action.payload
-      );
-    },
-    addModule(state, action) {
-      state.modules = [...state.modules!, { ...action.payload, isCopy: true }];
+    addNewModule(state, action) {
+      state.modules = state.modules!.filter((item) => item.id === "0");
+      state.modules = [...state.modules, action.payload];
     },
   },
 });
 
 export const {
+  addNewModule,
   toggleNewModule,
   toggleEditionMode,
   setModules,
   setCurrentModule,
-  addModule,
-  removeModule,
 } = parcoursModuleSlice.actions;
 
 export default parcoursModuleSlice;

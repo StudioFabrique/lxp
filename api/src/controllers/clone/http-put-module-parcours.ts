@@ -14,10 +14,14 @@ async function httpPutModuleParcours(req: Request, res: Response) {
         const data = await fs.promises.readFile(uploadedFile.path);
         const base64String = data.toString("base64");
         const response = await putModuleParcours(module, thumb, base64String);
-        if (response) {
+        console.log({ response });
+
+        if (response !== false) {
           await fs.promises.unlink(uploadedFile.path);
           console.log("Fichier supprimé :", uploadedFile.path);
-          return res.status(201).json({ message: "Mise à jour réussie" });
+          return res
+            .status(201)
+            .json({ message: "Mise à jour réussie", data: response });
         }
       }
     } catch (error: any) {

@@ -9,25 +9,19 @@ import Module from "../../../utils/interfaces/module";
 import ModuleForm from "./module-form.component";
 import { useDispatch } from "react-redux";
 import { setModules } from "../../../store/redux-toolkit/parcours/parcours-modules";
-import FormationModules from "./modules-list";
-import ModulesList from "./modules-list";
 
 const ModulesSection = () => {
   const { isLoading, sendRequest } = useHttp();
   const [formationModules, setFormationModules] = useState<any>([]);
   const params = useParams();
   const parcoursId = params.id;
-  const formationId = useSelector((state: any) => state.parcours.formation);
   const updatedModules = useSelector(
     (state: any) => state.parcoursModule.modules
   );
   const dispatch = useDispatch();
-  const parcoursModules = useSelector(
-    (state: any) => state.parcoursModule.modules
-  ) as Module[];
-  const [updatedFormationModules, setUpdatedFormationsModules] = useState<
-    Module[] | null
-  >(null);
+  const currentModule = useSelector(
+    (state: any) => state.parcoursModule.currentModule
+  ) as Module;
   const [newModule, setNewModule] = useState(false);
   const formRef = useRef<HTMLInputElement>(null);
   const editionMode = useSelector(
@@ -44,14 +38,13 @@ const ModulesSection = () => {
     };
     sendRequest(
       {
-        // TODO remplacer la valeur une par l'id de la formation à laquelle est attachée le parcours
-        path: `/modules/formation/${formationId.id}`,
+        path: `/modules/formation/${1}`,
       },
       applyData
     );
-  }, [sendRequest, formationId]);
+  }, [sendRequest]);
 
-  /*  // mise à jour de la liste des modules du parcours dans la bdd et mise à jour du state en cas de réussite
+  // mise à jour de la liste des modules du parcours dans la bdd et mise à jour du state en cas de réussite
   const handleSubmitModules = () => {
     const applyData = (data: any) => {
       dispatch(setModules(data));
@@ -64,44 +57,34 @@ const ModulesSection = () => {
       },
       applyData
     );
-  }; */
+  };
 
   const handleCreateModule = () => {
     setNewModule(true);
   };
 
+  const handleSubmitNewModule = (file: File) => {};
+  console.log({ editionMode });
+
   useEffect(() => {
-    let updatedModules = formationModules;
-    parcoursModules.forEach((parcoursModule: Module) => {
-      let foundItem = updatedModules.find(
-        (item: Module) => item.title === parcoursModule.title
-      );
-      if (foundItem) {
-        updatedModules = updatedModules.filter(
-          (item: Module) => item.id !== foundItem.id
-        );
-        updatedModules = [
-          ...updatedModules,
-          { ...foundItem, isSelected: true },
-        ];
-      }
-    });
-    setFormationModules(updatedModules);
-  }, [formationModules, parcoursModules]);
+    if (currentModule && formRef) {
+      formRef.current!.scrollIntoView({ behavior: "smooth" });
+      formRef.current!.focus();
+    }
+  }, [currentModule]);
 
   return (
     <div className="flex flex-col gap-y-8">
       <section>
         <h1 className="text-3xl font-extrabold">Modules</h1>
       </section>
-      <section className="w-full grid grid-cols-2">
-        <Wrapper>
-          <ModulesList modules={formationModules} />
-        </Wrapper>
-        <Wrapper>
-          <ModulesList modules={parcoursModules} />
-        </Wrapper>
-      </section>
+      <section></section>
+      <Wrapper>
+        <DragNDropArea
+          formationModules={formationModules}
+          newModule={newModule}
+        />
+      </Wrapper>
       <div className="w-full flex justify-between">
         <button
           className="btn btn-outline btn-primary"
@@ -119,15 +102,15 @@ const ModulesSection = () => {
             className="btn btn-primary"
             disabled={isLoading || updatedModules.length === 0}
             type="button"
-            onClick={() => {}}
+            onClick={handleSubmitModules}
           >
             Valider les modules
           </button>
         )}
       </div>
-      {editionMode ? (
+      {currentModule && editionMode ? (
         <Wrapper>
-          <ModuleForm onSubmitNewModule={() => {}} ref={formRef} />
+          <ModuleForm onSubmitNewModule={handleSubmitNewModule} ref={formRef} />
         </Wrapper>
       ) : null}
     </div>

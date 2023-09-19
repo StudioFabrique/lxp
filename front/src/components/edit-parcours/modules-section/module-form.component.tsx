@@ -11,11 +11,14 @@ import Contact from "../../../utils/interfaces/contact";
 import Skill from "../../../utils/interfaces/skill";
 import MemoizedItemsList from "./items-list.component";
 import useHttp from "../../../hooks/use-http";
-import AddIcon from "../../UI/svg/add-icon";
 import { compressImage } from "../../../helpers/compress-image";
 import MemoizedModuleFilesUpload from "./module-files-upload.component";
 import { useDispatch } from "react-redux";
-import { toggleEditionMode } from "../../../store/redux-toolkit/parcours/parcours-modules";
+import {
+  addNewModule,
+  toggleEditionMode,
+} from "../../../store/redux-toolkit/parcours/parcours-modules";
+import { defaultModuleThumb } from "../../../lib/defautltModuleThumb";
 
 interface ModuleFormProps {
   onSubmitNewModule: (module: any, file: File) => void;
@@ -88,6 +91,19 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
       setSkills(items);
     };
 
+    const classImage: React.CSSProperties = {
+      backgroundImage: `url('${
+        currentModule.thumb ? currentModule.thumb : defaultModuleThumb
+      }')`,
+      width: "100px",
+      height: "100%",
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center",
+      borderRadius: "5px",
+      marginRight: "10px",
+    };
+
     // compresse l'image sélectionnée et génère un aperçu de taille réduite et le convertitt en chaîne de caractère pour être stocké sous forme de blob
     const handleUpdateImage = async (file: File) => {
       const compressedHeadImage = await compressImage(file, 1920);
@@ -139,6 +155,19 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
 
         const applyData = (data: any) => {
           console.log(data);
+          const module = {
+            ...data.data,
+            id: data.data.id.toString(),
+            contacts: data.data.contacts.map(
+              (itemContact: any) => itemContact.contact
+            ),
+            bonusSkills: data.datae.bonusSkills.map(
+              (itemBonusSkills: any) => itemBonusSkills.bonusSkill
+            ),
+          };
+          dispatch(toggleEditionMode(false));
+          dispatch(addNewModule(module));
+          console.log("fini");
         };
         sendRequest(
           {
@@ -150,8 +179,6 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
         );
       } else console.log("oops");
     };
-
-    console.log({ currentModule });
 
     return (
       <form className="w-full" onSubmit={handleSubmitModule}>
@@ -211,9 +238,12 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
 
             {/* image du module */}
 
-            <div className="flex flex-col gap-y-4">
-              <label htmlFor="image">Téléverser une image</label>
-              <MemoizedModuleFilesUpload setImage={handleUpdateImage} />
+            <div className="w-full flex gap-x-4 items-center">
+              <span style={classImage}></span>
+              <div className="flex flex-col gap-y-4">
+                <label htmlFor="image">Téléverser une image</label>
+                <MemoizedModuleFilesUpload setImage={handleUpdateImage} />
+              </div>
             </div>
           </article>
           <article className="flex flex-col gap-y-4">
@@ -223,6 +253,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
               <label htmlFor="teachers">Formateurs du module</label>
               <MemoizedItemsList
                 itemsList={listeContacts}
+                selectedProp={currentModule.contacts}
                 propertyToSearch="name"
                 placeHolder="Rechercher un formateur de module"
                 onUpdateItems={handleUpdateTeachers}
@@ -235,6 +266,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
               <label htmlFor="skills">Compétences du module</label>
               <MemoizedItemsList
                 itemsList={listeSkills}
+                selectedProp={currentModule.bonusSkills}
                 propertyToSearch="description"
                 placeHolder="Rechercher une compétence de module"
                 onUpdateItems={handleUpdateSkills}
@@ -246,14 +278,14 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
           <button
             className="btn btn-primary btn-outline"
             type="button"
-            onClick={() => dispatch(toggleEditionMode())}
+            onClick={() => dispatch(toggleEditionMode(false))}
           >
             Annuler
           </button>
           {isLoading ? (
             <button className="btn btn-primary" type="button">
               <span className="loading loading-spinner"></span>
-              Ajout en cours
+              Validation en cours
             </button>
           ) : (
             <button
@@ -261,10 +293,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
               disabled={isLoading}
               type="submit"
             >
-              <span className="w-6 h-6">
-                <AddIcon />
-              </span>
-              Ajouter le module
+              Valider
             </button>
           )}
         </div>

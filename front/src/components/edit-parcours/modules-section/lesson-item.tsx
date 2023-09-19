@@ -39,11 +39,9 @@ const LessonItem: FC<LessonItemProps> = ({ lesson, isDisabled, index }) => {
   };
 
   const setModuleToEdit = (module: Module) => {
+    dispatch(toggleEditionMode(true));
     dispatch(setCurrentModule(module));
-    dispatch(toggleEditionMode());
   };
-
-  console.log({ lesson });
 
   return (
     <Draggable

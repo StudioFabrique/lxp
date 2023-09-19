@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { Droppable } from "react-beautiful-dnd";
 import Column from "./column";
 import Module from "../../../utils/interfaces/module";
@@ -15,8 +15,18 @@ const ColumnItem: FC<ColumnItemProps> = ({
   isDisabled,
   modulesList,
 }) => {
-  console.log({ modulesList });
-  console.log("colonne", column);
+  const [modules, setModules] = useState<Module[] | null>(null);
+
+  useEffect(() => {
+    let updatedModules = Array<Module>();
+    column.modulesIds.forEach((moduleId: string) => {
+      const foundItem = modulesList?.find((item: any) => item.id === moduleId)!;
+      if (foundItem) {
+        updatedModules = [...updatedModules, foundItem];
+      }
+    });
+    setModules(updatedModules);
+  }, [column, modulesList]);
 
   return (
     <div className="flex flex-col order">
@@ -28,17 +38,13 @@ const ColumnItem: FC<ColumnItemProps> = ({
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
-              {modulesList && modulesList.length > 0 ? (
+              {modules && modules.length > 0 ? (
                 <>
-                  {column.modulesIds.map((moduleId, index) => (
-                    <li key={moduleId}>
+                  {modules.map((module, index) => (
+                    <li key={module.id}>
                       <LessonItem
                         isDisabled={isDisabled}
-                        lesson={
-                          modulesList.find(
-                            (item: any) => item.id.toString() === moduleId
-                          )!
-                        }
+                        lesson={module}
                         index={index}
                       />
                     </li>

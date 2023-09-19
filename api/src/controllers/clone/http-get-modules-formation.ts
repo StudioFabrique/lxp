@@ -11,7 +11,7 @@ async function httpGetModuleFormation(req: Request, res: Response) {
         id: { in: modulesIdList.map((item: any) => item.moduleId) },
       },
     });
-    return res.status(201).json(modules);
+    return res.status(200).json(modules);
   } catch (error) {
     console.log(error);
   }
