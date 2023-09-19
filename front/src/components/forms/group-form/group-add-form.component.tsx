@@ -1,4 +1,4 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, useState } from "react";
 import { regexGeneric } from "../../../utils/constantes";
 import useInput from "../../../hooks/use-input";
 import Informations from "./components/informations.components";
@@ -52,11 +52,6 @@ const GroupAddForm: FC<{
     props.group?.desc ?? ""
   );
 
-  const { value: diplome } = useInput(
-    (value: string) => regexGeneric.test(value),
-    props.group?.diplome ?? ""
-  );
-
   //  test la validité du form via le custom hook useInput
   let formIsValid = false;
   formIsValid =
@@ -64,12 +59,16 @@ const GroupAddForm: FC<{
     desc.isValid &&
     dates.startDate.length > 0 &&
     dates.endDate.length > 0 &&
-    diplome.isValid &&
     file !== null &&
     parcoursId !== null &&
     isActive != null;
 
   const handleSubmit = () => {
+    console.log("validitité formulaire : " + formIsValid);
+    console.log(
+      `name : ${name.value}, desc : ${desc.value}, startDate : ${dates.startDate}, endDate : ${dates.endDate}, parcours : ${parcoursId}, isActive : ${isActive}`
+    );
+
     if (formIsValid) {
       props.onSubmitForm({
         groupRequest: {

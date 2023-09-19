@@ -8,7 +8,7 @@ import { parcoursModulesSliceActions } from "../../../../store/redux-toolkit/par
 import useHttp from "../../../../hooks/use-http";
 import { toast } from "react-hot-toast";
 
-const CalendrierDatesForm: FC<{
+const CalendarDatesForm: FC<{
   datesParcours: { startDate: Date; endDate: Date };
 }> = ({ datesParcours }) => {
   const dispatch = useDispatch();
@@ -120,4 +120,4 @@ const CalendrierDatesForm: FC<{
   );
 };
 
-export default CalendrierDatesForm;
+export default CalendarDatesForm;

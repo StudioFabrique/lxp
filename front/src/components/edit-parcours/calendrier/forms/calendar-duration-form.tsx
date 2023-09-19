@@ -13,7 +13,7 @@ import { parcoursModulesSliceActions } from "../../../../store/redux-toolkit/par
 import useHttp from "../../../../hooks/use-http";
 import ProgressBarWrapper from "../../../UI/progress-bar-wrapper/progress-bar-wrapper";
 
-const CalendrierDurationForm = () => {
+const CalendarDurationForm = () => {
   const [duration, setDuration] = useState(0);
 
   const formValidation = duration > 0;
@@ -128,4 +128,4 @@ const CalendrierDurationForm = () => {
   );
 };
 
-export default CalendrierDurationForm;
+export default CalendarDurationForm;

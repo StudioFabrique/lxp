@@ -3,7 +3,7 @@ import GroupAddForm from "../../components/forms/group-form/group-add-form.compo
 import GroupUserList from "../../components/lists/group-add-user-list/group-user-list.component";
 import { useState } from "react";
 import User from "../../utils/interfaces/user";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 const GroupAdd = () => {
   const [usersToAdd, setUsersToAdd] = useState<Array<User>>([]);
@@ -17,7 +17,7 @@ const GroupAdd = () => {
     sendRequest(
       { method: "post", path: "/group", body: { ...data, users: usersToAdd } },
       (data: any) => {
-        if (data) console.log("group created !");
+        if (data) toast.success("Groupe créé avec succès");
       }
     );
   };
