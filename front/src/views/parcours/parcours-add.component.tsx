@@ -108,8 +108,8 @@ const AddParcours = () => {
    */
   useEffect(() => {
     if (formation !== undefined) {
-      const processData = (data: Array<any>) => {
-        setParcoursList(data);
+      const processData = (data: any) => {
+        setParcoursList(data.data);
       };
       sendRequest(
         {

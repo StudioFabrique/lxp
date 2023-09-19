@@ -1,6 +1,6 @@
 import { Router } from "express";
 import httpCreateGroup from "../../controllers/group/http-create-group";
-import isUser from "../../middleware/is-user";
+import isUser from "../../middleware/is-admin";
 import httpGetAllGroups from "../../controllers/group/http-get-all-groups";
 import {
   getAllValidator,
