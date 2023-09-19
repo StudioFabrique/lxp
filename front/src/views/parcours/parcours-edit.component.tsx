@@ -124,6 +124,7 @@ const EditParcours = () => {
             data.modules.map((item: any) => {
               return {
                 ...item.module,
+                id: item.module.id.toString(),
                 contacts: item.module.contacts.map(
                   (itemContact: any) => itemContact.contact
                 ),
@@ -270,7 +271,7 @@ const EditParcours = () => {
 
   const handleResetImportedObjectives = () => {};
 
-  console.log({ modules });
+  console.log({ actualStep });
 
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">

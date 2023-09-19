@@ -12,6 +12,7 @@ import ItemElement from "./item-element.component";
 
 interface ItemsListProps {
   itemsList: unknown[];
+  selectedProp?: unknown[];
   propertyToSearch: string;
   placeHolder: string;
   onUpdateItems: (items: unknown[]) => void;
@@ -27,6 +28,14 @@ const ItemsList = (props: ItemsListProps) => {
     filteredItems,
     selectedItems,
   } = useItems();
+
+  useEffect(() => {
+    if (props.selectedProp !== undefined && props.selectedProp.length > 0) {
+      props.selectedProp.forEach((item: any) =>
+        addItem(item[props.propertyToSearch], props.propertyToSearch)
+      );
+    }
+  }, [addItem, props.propertyToSearch, props.selectedProp]);
 
   // initialise la liste des formateurs inscrits pour le parcours à partirs des props
   useEffect(() => {

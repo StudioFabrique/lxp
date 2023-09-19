@@ -1,5 +1,6 @@
-import { BonusSkill, Contact } from "@prisma/client";
+import { BonusSkill, Contact, Module, Parcours } from "@prisma/client";
 import { prisma } from "../../utils/db";
+import { log } from "console";
 
 async function putModuleParcours(module: any, thumb: string, image: any) {
   const newModule = JSON.parse(module);
@@ -25,6 +26,9 @@ async function putModuleParcours(module: any, thumb: string, image: any) {
     throw newError;
   }
 
+  let parcoursModule: Module | null = null;
+  let updatedParcours: Parcours | null = null;
+
   const transaction = await prisma.$transaction(async (tx) => {
     const addModule = await tx.module.create({
       data: {
@@ -42,35 +46,10 @@ async function putModuleParcours(module: any, thumb: string, image: any) {
             };
           }),
         },
-        /*       parcours: {
-        create: {
-          parcours: {
-            connect: { id: +newModule.parcoursId },
-          },
-        },
-      },
-      contacts: {
-        create: newModule.contacts.map((contact: any) => {
-          return {
-            contact: {
-              connect: { id: contact.id },
-            },
-          };
-        }),
-      },
-      bonusSkills: {
-        create: newModule.bonusSkills.map((item: any) => {
-          return {
-            bonusSkill: {
-              connect: { id: item.id },
-            },
-          };
-        }),
-      }, */
       },
     });
 
-    const parcoursModule = await tx.module.create({
+    parcoursModule = await tx.module.create({
       data: {
         title: newModule.title,
         description: newModule.description,
@@ -96,9 +75,17 @@ async function putModuleParcours(module: any, thumb: string, image: any) {
           }),
         },
       },
+      include: {
+        contacts: { select: { contact: true } },
+        bonusSkills: {
+          select: {
+            bonusSkill: { select: { id: true, description: true } },
+          },
+        },
+      },
     });
 
-    await tx.parcours.update({
+    updatedParcours = await tx.parcours.update({
       where: {
         id: +newModule.parcoursId,
       },
@@ -113,8 +100,7 @@ async function putModuleParcours(module: any, thumb: string, image: any) {
       },
     });
   });
-
-  return true;
+  return updatedParcours ? parcoursModule : false;
 }
 
 export default putModuleParcours;
