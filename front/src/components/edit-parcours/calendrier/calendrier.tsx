@@ -3,12 +3,12 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useSelector } from "react-redux";
 import Module from "../../../utils/interfaces/module";
 import ModulesListCalendrier from "./modules-list-calendrier";
-import CalendrierDatesForm from "./forms/calendrier-dates-form";
 import moment from "moment";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
-import CalendrierDurationForm from "./forms/calendrier-duration-form";
+import CalendarDatesForm from "./forms/calendar-dates-form";
+import CalendarDurationForm from "./forms/calendar-duration-form";
 // import { getRandomHexColor } from "../../../utils/randomColor";
 
 const localizer = momentLocalizer(moment);
@@ -54,8 +54,8 @@ const Calendrier = () => {
       </div>
       <div className="grid grid-cols-3 max-md:grid-cols-1 max-md:gap-y-5 gap-x-5">
         <div />
-        <CalendrierDatesForm datesParcours={datesParcours} />
-        <CalendrierDurationForm />
+        <CalendarDatesForm datesParcours={datesParcours} />
+        <CalendarDurationForm />
       </div>
     </div>
   );
