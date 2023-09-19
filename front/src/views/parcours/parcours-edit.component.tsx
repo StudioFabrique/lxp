@@ -28,6 +28,8 @@ import Module from "../../utils/interfaces/module";
 import Calendrier from "../../components/edit-parcours/calendrier/calendrier";
 import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
 import ParcoursModules from "../../components/edit-parcours/modules/parcours-modules";
+import toast from "react-hot-toast";
+import { testStep } from "../../helpers/parcours-steps-validation";
 
 let initialState = true;
 
@@ -50,7 +52,6 @@ const EditParcours = () => {
     (state: any) => state.parcoursContacts.currentContacts
   );
   const modules = useSelector((state: any) => state.parcoursModule.modules);
-
 
   /**
    * télécharge les données du parcours depuis la bdd et initialise les différentes propriétés du parcours
