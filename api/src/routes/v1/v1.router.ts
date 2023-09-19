@@ -7,10 +7,9 @@ import parcoursRouter from "./parcours/parcours.router";
 import skillsRouter from "./skills.router";
 import tagRouter from "./tag.router";
 import formationRouter from "./formation.router";
-import bonusSkillRouter from "./bonus-skill.router";
 import objectiveRouter from "./objective.router";
 import moduleRouter from "./module.router";
-import bonusSkillRouter from "./bonus-skill/bonus-skill.router";
+import bonusSkillRouter from "./bonus-skill.router";
 
 const v1Router = express.Router();
 
