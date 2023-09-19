@@ -49,6 +49,18 @@ const CalendrierDatesForm: FC<{
       );
     }
 
+    if (new Date(newMinDate) > new Date(datesModule.maxDate)) {
+      return toast.error(
+        "La date minimum ne peut pas être supérieure à la date maximum"
+      );
+    }
+
+    if (new Date(newMaxDate) < new Date(datesModule.minDate)) {
+      return toast.error(
+        "La date maximum ne peut pas être inférieure à la date minimum"
+      );
+    }
+
     const applyData = (data: any) => {
       dispatch(
         parcoursModulesSliceActions.updateParcoursModule({
