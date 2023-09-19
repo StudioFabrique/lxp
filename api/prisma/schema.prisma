@@ -38,8 +38,9 @@ model Parcours {
   formationId  Int
   skills       SkillsOnParcours[]
   bonusSkills  BonusSkill[]
-  modules      Module[]
+  modules      ModulesOnParcours[]
   objectives   Objective[]
+  groups       Group[]
   virtualClass String?
 }
 
@@ -47,13 +48,12 @@ model Module {
   id          Int                 @id @default(autoincrement())
   title       String              
   description String
-  // image       Bytes
+  image       Bytes?
   duration    Int
   rating      Float?
   minDate     DateTime?
   maxDate     DateTime?
-  parcours    Parcours @relation(fields: [parcoursId], references: [id])
-  parcoursId  Int
+  parcours    ModulesOnParcours[]
   bonusSkills BonusSkillsOnModule[]
   contacts    ContactsOnModule[]
   createdAt   DateTime            @default(now())
@@ -108,6 +108,13 @@ model Admin {
 model Teacher {
   id    Int    @id @default(autoincrement())
   idMdb String
+}
+
+model Group {
+  id          Int   @id @default(autoincrement())
+  idMdb       String
+  parcours    Parcours @relation(fields: [parcoursId], references: [id])
+  parcoursId  Int
 }
 
 model Contact {
@@ -182,4 +189,13 @@ model ContactsOnModule {
   moduleId   Int
 
   @@id([contactId, moduleId])
+}
+
+model ModulesOnParcours {
+  module      Module @relation(fields : [moduleId], references: [id])
+  moduleId    Int
+  parcours    Parcours @relation(fields: [parcoursId], references: [id])
+  parcoursId  Int
+
+  @@id([moduleId, parcoursId])
 }

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import Wrapper from "../../../UI/wrapper/wrapper.component";
+import Wrapper from "../../UI/wrapper/wrapper.component";
 
 const Presentation: FC<{ description: any }> = ({ description }) => {
   return (

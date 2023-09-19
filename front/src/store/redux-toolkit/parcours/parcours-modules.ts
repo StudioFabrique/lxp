@@ -11,8 +11,8 @@ const initialModuleState: { modules: Module[]; currentModule: Module | null } =
     currentModule: null,
   };
 
-const parcoursModuleSlice = createSlice({
-  name: "parcoursModule",
+const parcoursModulesSlice = createSlice({
+  name: "parcoursModules",
   initialState: initialModuleState,
   reducers: {
     initParcoursModules(state, action) {
@@ -21,8 +21,6 @@ const parcoursModuleSlice = createSlice({
     },
     addParcoursModule(state, action) {
       const module: Module = action.payload.module;
-      const moduleId: number = action.payload.moduleId;
-      module.id = moduleId;
       const modules: Module[] = state.modules;
       state.modules = addIdToObject([...modules, module]);
       toast.success("Le module a bien été ajouté");
@@ -56,13 +54,6 @@ const parcoursModuleSlice = createSlice({
   },
 });
 
-export const {
-  initParcoursModules,
-  addParcoursModule,
-  updateCurrentParcoursModule,
-  deleteParcoursModule,
-  updateParcoursModule,
-  clearCurrentParcoursModule,
-} = parcoursModuleSlice.actions;
+export const parcoursModulesSliceActions = parcoursModulesSlice.actions;
 
-export default parcoursModuleSlice;
+export default parcoursModulesSlice;

@@ -1,5 +1,5 @@
 import { ChangeEvent, ChangeEventHandler, FC } from "react";
-import Wrapper from "../../../UI/wrapper/wrapper.component";
+import Wrapper from "../../UI/wrapper/wrapper.component";
 
 const Contact: FC<{
   address: any;

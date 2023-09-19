@@ -8,7 +8,8 @@ export default async function createModule(
     contacts: any[];
     bonusSkills: any[];
   },
-  parcoursId: number
+  parcoursId: number,
+  imageFile: any
 ) {
   try {
     const existingContactsId = (
@@ -44,17 +45,18 @@ export default async function createModule(
     const updatedModule = await prisma.module.create({
       data: {
         ...module,
+        image: imageFile,
         minDate: parcoursDate?.startDate,
         maxDate: parcoursDate?.endDate,
         contacts: { createMany: { data: existingContactsId } },
         bonusSkills: { createMany: { data: existingBonusSkillsId } },
-        parcours: { connect: { id: parcoursId } },
+        parcours: { create: { parcoursId: parcoursId } },
       },
     });
 
     if (updatedModule) {
       console.log("Module associé au parcours avec succès:", updatedModule);
-      return updatedModule.id;
+      return updatedModule;
     }
     return null;
   } catch (error) {
