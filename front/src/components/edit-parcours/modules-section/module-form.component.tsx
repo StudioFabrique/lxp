@@ -16,7 +16,10 @@ import MemoizedModuleFilesUpload from "./module-files-upload.component";
 import { useDispatch } from "react-redux";
 import {
   addNewModule,
+  setCurrentModule,
   toggleEditionMode,
+  toggleInitialRender,
+  toggleNewModule,
 } from "../../../store/redux-toolkit/parcours/parcours-modules";
 import { defaultModuleThumb } from "../../../lib/defautltModuleThumb";
 
@@ -60,6 +63,8 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
       currentModule.bonusSkills ?? null
     );
     const { sendRequest, isLoading } = useHttp();
+
+    console.log({ teachers });
 
     /**
      * définit le style du champ formulaire en fonction de sa validité
@@ -161,12 +166,15 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
             contacts: data.data.contacts.map(
               (itemContact: any) => itemContact.contact
             ),
-            bonusSkills: data.datae.bonusSkills.map(
+            bonusSkills: data.data.bonusSkills.map(
               (itemBonusSkills: any) => itemBonusSkills.bonusSkill
             ),
           };
           dispatch(toggleEditionMode(false));
           dispatch(addNewModule(module));
+          dispatch(toggleInitialRender(true));
+          dispatch(setCurrentModule(null));
+          dispatch(toggleNewModule(false));
           console.log("fini");
         };
         sendRequest(
@@ -179,6 +187,15 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
         );
       } else console.log("oops");
     };
+
+    const handleCancel = () => {
+      dispatch(toggleEditionMode(false));
+      dispatch(toggleNewModule(false));
+      dispatch(setCurrentModule(null));
+    };
+
+    console.log(currentModule.contacts);
+    console.log(currentModule.bonusSkills);
 
     return (
       <form className="w-full" onSubmit={handleSubmitModule}>
@@ -278,7 +295,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
           <button
             className="btn btn-primary btn-outline"
             type="button"
-            onClick={() => dispatch(toggleEditionMode(false))}
+            onClick={handleCancel}
           >
             Annuler
           </button>

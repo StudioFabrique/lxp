@@ -6,11 +6,13 @@ const initialModuleState: {
   currentModule: Module | null;
   editionMode: boolean;
   newModule: boolean;
+  initialRender: boolean;
 } = {
   modules: null,
   currentModule: null,
   editionMode: false,
   newModule: false,
+  initialRender: true,
 };
 
 const parcoursModuleSlice = createSlice({
@@ -26,17 +28,23 @@ const parcoursModuleSlice = createSlice({
     toggleEditionMode(state, action) {
       state.editionMode = action.payload;
     },
-    toggleNewModule(state) {
-      state.newModule = !state.newModule;
+    toggleNewModule(state, action) {
+      state.newModule = action.payload;
     },
     addNewModule(state, action) {
-      state.modules = state.modules!.filter((item) => item.id === "0");
-      state.modules = [...state.modules, action.payload];
+      console.log("modules", state.modules);
+
+      state.modules = state.modules!.filter((item) => item.id !== "0");
+      state.modules = [...state.modules, { ...action.payload }];
+    },
+    toggleInitialRender(state, action) {
+      state.initialRender = action.payload;
     },
   },
 });
 
 export const {
+  toggleInitialRender,
   addNewModule,
   toggleNewModule,
   toggleEditionMode,

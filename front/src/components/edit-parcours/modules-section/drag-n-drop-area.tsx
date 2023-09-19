@@ -12,7 +12,6 @@ import { setModules } from "../../../store/redux-toolkit/parcours/parcours-modul
 
 interface DragNDropAreaprops {
   formationModules: Module[];
-  newModule: boolean;
 }
 
 const DragNDropArea = (props: DragNDropAreaprops) => {
@@ -25,66 +24,70 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
   );
   const isInitialRender = useRef(true);
   const isInitialEffect = useRef(true);
+  const newModule = useSelector((state: any) => state.parcoursModule.newModule);
 
   console.log("rendering...");
-  console.log({ parcoursModules });
 
   useEffect(() => {
     setDnd((prevModules) => {
-      if (prevModules) {
-        return {
-          columns: {
-            destColumn: {
-              ...prevModules!.columns["destColumn"],
-              modulesIds: [
-                ...prevModules!.columns["destColumn"].modulesIds,
-                "0",
-              ],
+      if (newModule) {
+        if (prevModules) {
+          return {
+            columns: {
+              destColumn: {
+                ...prevModules!.columns["destColumn"],
+                modulesIds: [
+                  ...prevModules!.columns["destColumn"].modulesIds,
+                  "0",
+                ],
+              },
+              sourceColumn: prevModules!.columns["sourceColumn"],
             },
-            sourceColumn: prevModules!.columns["sourceColumn"],
-          },
-          tasks: [
-            ...prevModules!.tasks,
-            {
-              id: "0",
-              title: "Nouveau module",
-              description: "Description",
-              duration: 1,
-              contacts: [],
-              bonusSkills: [],
+            tasks: [
+              ...prevModules!.tasks,
+              {
+                id: "0",
+                title: "Nouveau module",
+                description: "Description",
+                duration: 1,
+                contacts: [],
+                bonusSkills: [],
+              },
+            ],
+          };
+        } else if (newModule) {
+          return {
+            tasks: [
+              {
+                id: "0",
+                title: "Nouveau module",
+                description: "Description",
+                duration: 1,
+                contacts: [],
+                bonusSkills: [],
+              },
+            ],
+            columns: {
+              destColumn: {
+                id: "destColumn",
+                title: "Modules ajoutés au parcours",
+                modulesIds: ["0"],
+              },
+              sourceColumn: {
+                id: "sourceColumn",
+                title: "Modules associés à la formation",
+                modulesIds: [],
+              },
             },
-          ],
-        };
-      } else if (props.newModule) {
-        return {
-          tasks: [
-            {
-              id: "0",
-              title: "Nouveau module",
-              description: "Description",
-              duration: 1,
-              contacts: [],
-              bonusSkills: [],
-            },
-          ],
-          columns: {
-            destColumn: {
-              id: "destColumn",
-              title: "Modules ajoutés au parcours",
-              modulesIds: ["0"],
-            },
-            sourceColumn: {
-              id: "sourceColumn",
-              title: "Modules associés à la formation",
-              modulesIds: [],
-            },
-          },
-        };
+          };
+        } else {
+          return null;
+        }
       } else {
         return null;
       }
     });
-  }, [props.newModule]);
+  }, [newModule]);
 
   // on vérifie qu'il s'agit du premier rendu et que les "props" sont initialisées
   if (
@@ -92,8 +95,6 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
     parcoursModules &&
     formationModules.length > 0
   ) {
-    console.log("coucou");
-
     /**
      * on transforme les ids des modules de la liste initiale en string et on retire de cette liste
      * les modules qui sont déjà associés au parcours pour être sûr de ne pas avoir de doublons dans
@@ -169,7 +170,6 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
     }, autoSubmitTimer);
     return () => clearTimeout(timer);
   }, [updatedModules, dispatch]);
-
   const onDragEnd = (result: DropResult) => {
     const { destination, source, draggableId } = result;
     if (!destination) {
@@ -239,7 +239,7 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
     setDnd(newState);
   };
 
-  console.log({ dnd });
+  console.log({ parcoursModules });
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
