@@ -8,6 +8,7 @@ async function getParcours() {
       createdAt: true,
       updatedAt: true,
       formation: { select: { title: true, level: true } },
+      admin: { select: { idMdb: true } },
     },
   });
 

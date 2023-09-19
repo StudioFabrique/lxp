@@ -6,9 +6,6 @@ async function getParcoursByFormation(formationId: number) {
       formationId,
     },
   });
-
-  console.log({ parcours });
-
   return parcours;
 }
 

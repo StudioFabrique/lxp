@@ -1,21 +1,35 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 
 import { noAccess, serverIssue } from "../../utils/constantes";
-import deleteParcoursById from "../../models/parcours/delete-parcours-by-id";
+import putVirtualClass from "../../models/parcours/put-virtual-class";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import { logger } from "../../utils/logs/logger";
+import { customEscape } from "../../helpers/custom-escape";
 
-async function httpDeleteParcoursById(req: CustomRequest, res: Response) {
+async function httpPutVirtualClass(req: CustomRequest, res: Response) {
   try {
     const userId = req.auth?.userId;
 
     if (!userId) {
       throw { message: noAccess, status: 403 };
     }
-    const { parcoursId } = req.params;
-    await deleteParcoursById(+parcoursId, userId);
+
+    const { parcoursId, virtualClass } = req.body;
+
+    const response = await putVirtualClass(
+      parcoursId,
+      customEscape(virtualClass),
+      userId
+    );
+    console.log({ response });
+
+    if (!response) {
+      console.log("oops");
+    }
+
     return res.status(201).json({
-      message: `Le parcours identifié par l'id : ${parcoursId} a bien été supprimé`,
+      success: true,
+      message: "Le lien vers la classe virtuelle a été mis à jour",
     });
   } catch (error: any) {
     let returnedError = error;
@@ -29,4 +43,4 @@ async function httpDeleteParcoursById(req: CustomRequest, res: Response) {
   }
 }
 
-export default httpDeleteParcoursById;
+export default httpPutVirtualClass;

@@ -1,22 +1,25 @@
+import { getAdmin } from "../../helpers/get-admin";
 import { prisma } from "../../utils/db";
 
-async function deleteParcoursById(parcoursId: number) {
+async function deleteParcoursById(parcoursId: number, userId: string) {
+  const admin = await getAdmin(userId);
   try {
-    await prisma.$transaction(async (tx) => {
+    const transaction = await prisma.$transaction(async (tx) => {
       const parcours = await tx.parcours.findUnique({
         where: { id: parcoursId },
         include: { tags: true },
       });
 
       if (!parcours) {
-        throw new Error(
-          `Le parcours identifié par l'id : ${parcoursId} n'existe pas`
-        );
+        throw {
+          message: `Le parcours identifié par l'id : ${parcoursId} n'existe pas`,
+          status: 404,
+        };
       }
 
       // Supprimer les enregistrements dans la table TagsOnParcours liés au parcours
       await tx.tagsOnParcours.deleteMany({
-        where: { parcoursId: parcoursId },
+        where: { parcoursId },
       });
 
       // Supprimer les enregistrements dans la table TagsOnParcours liés au parcours
@@ -25,17 +28,12 @@ async function deleteParcoursById(parcoursId: number) {
       });
 
       // Supprimer le parcours
-      await tx.parcours.delete({
-        where: { id: parcoursId },
+      const deletedParcours = await tx.parcours.delete({
+        where: { id: parcoursId, adminId: admin.id },
       });
     });
-
-    return true; // ou une autre valeur pour indiquer que la suppression a réussi
   } catch (error: any) {
-    // Gérer l'erreur si nécessaire
-    throw new Error(
-      "Erreur lors de la suppression du parcours : " + error.message
-    );
+    throw error;
   }
 }
 
