@@ -10,4 +10,6 @@ export default interface Module {
   duration: number;
   image?: string;
   thumb?: string;
+  minDate?: string;
+  maxDate?: string;
 }

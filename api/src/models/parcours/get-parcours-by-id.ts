@@ -48,6 +48,8 @@ async function getParcoursById(parcoursId: number, userId: string) {
                 title: true,
                 description: true,
                 duration: true,
+                minDate: true,
+                maxDate: true,
                 thumb: true,
                 contacts: { select: { contact: true } },
                 bonusSkills: {

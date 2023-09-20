@@ -8,9 +8,8 @@ import DndModulesList from "./dnd-modules-list";
 import Column from "./column";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import Module from "../../../utils/interfaces/module";
-import { setModules } from "../../../store/redux-toolkit/parcours/parcours-modules";
-import Wrapper from "../../UI/wrapper/wrapper.component";
 import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
+import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
 
 interface DragNDropAreaprops {
   formationModules: Module[];
@@ -22,7 +21,7 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
   //useState<Module[]>(formationModules);
   const dispatch = useDispatch();
   const parcoursModules = useSelector(
-    (state: any) => state.parcoursModule.modules
+    (state: any) => state.parcoursModules.modules
   );
   const isInitialRender = useRef(true);
   const isInitialEffect = useRef(true);
@@ -165,7 +164,7 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!isInitialEffect.current) {
-        dispatch(setModules(updatedModules));
+        dispatch(parcoursModulesSliceActions.setModules(updatedModules));
       } else {
         isInitialEffect.current = false;
       }

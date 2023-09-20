@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Module from "../../../utils/interfaces/module";
+import { sortArray } from "../../../utils/sortArray";
 
 const initialModuleState: {
   modules: Module[] | null;
@@ -15,8 +16,8 @@ const initialModuleState: {
   initialRender: true,
 };
 
-const parcoursModuleSlice = createSlice({
-  name: "parcoursModule",
+const parcoursModulesSlice = createSlice({
+  name: "parcoursModules",
   initialState: initialModuleState,
   reducers: {
     setModules(state, action) {
@@ -32,24 +33,38 @@ const parcoursModuleSlice = createSlice({
       state.newModule = action.payload;
     },
     addNewModule(state, action) {
-      console.log("modules", state.modules);
-
       state.modules = state.modules!.filter((item) => item.id !== "0");
       state.modules = [...state.modules, { ...action.payload }];
+    },
+    editModule(state, action) {
+      const module = action.payload;
+      let modules = state.modules;
+      modules = modules!.filter((item) => item.id !== module.id);
+      modules = sortArray([...modules, module], "id");
+      state.modules = modules;
     },
     toggleInitialRender(state, action) {
       state.initialRender = action.payload;
     },
+    updateCurrentParcoursModule(state, action) {
+      const id = action.payload;
+      const modules: Module[] = state.modules!;
+      state.currentModule = modules.filter((module) => module.id === id)[0];
+    },
+    updateParcoursModule(state, action) {
+      const module: Module = action.payload.module;
+      const moduleId: number = action.payload.moduleId;
+      const modules: Module[] = state.modules!;
+
+      state.modules = modules.map((moduleToEdit) =>
+        moduleToEdit.id === moduleId
+          ? { ...moduleToEdit, ...module }
+          : moduleToEdit
+      );
+    },
   },
 });
 
-export const {
-  toggleInitialRender,
-  addNewModule,
-  toggleNewModule,
-  toggleEditionMode,
-  setModules,
-  setCurrentModule,
-} = parcoursModuleSlice.actions;
+export const parcoursModulesSliceActions = parcoursModulesSlice.actions;
 
-export default parcoursModuleSlice;
+export default parcoursModulesSlice;

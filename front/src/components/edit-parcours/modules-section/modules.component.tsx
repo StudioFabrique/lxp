@@ -8,15 +8,8 @@ import DragNDropArea from "./drag-n-drop-area";
 import Module from "../../../utils/interfaces/module";
 import ModuleForm from "./module-form.component";
 import { useDispatch } from "react-redux";
-import {
-  addNewModule,
-  setCurrentModule,
-  setModules,
-  toggleEditionMode,
-  toggleNewModule,
-} from "../../../store/redux-toolkit/parcours/parcours-modules";
 import Loader from "../../UI/loader";
-import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
+import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
 
 const ModulesSection = () => {
   const { isLoading, sendRequest } = useHttp();
@@ -24,18 +17,20 @@ const ModulesSection = () => {
   const params = useParams();
   const parcoursId = params.id;
   const updatedModules = useSelector(
-    (state: any) => state.parcoursModule.modules
+    (state: any) => state.parcoursModules.modules
   );
   const dispatch = useDispatch();
   const currentModule = useSelector(
-    (state: any) => state.parcoursModule.currentModule
+    (state: any) => state.parcoursModules.currentModule
   ) as Module;
   //const [newModule, setNewModule] = useState(false);
   const formRef = useRef<HTMLInputElement>(null);
   const editionMode = useSelector(
-    (state: any) => state.parcoursModule.editionMode
+    (state: any) => state.parcoursModules.editionMode
   );
-  const newModule = useSelector((state: any) => state.parcoursModule.newModule);
+  const newModule = useSelector(
+    (state: any) => state.parcoursModules.newModule
+  );
 
   useEffect(() => {
     const applyData = (data: Module[]) => {
@@ -72,13 +67,13 @@ const ModulesSection = () => {
 
   const handleCreateModule = () => {
     dispatch(
-      setCurrentModule({
+      parcoursModulesSliceActions.setCurrentModule({
         title: "",
         description: "",
         duration: "",
       })
     );
-    dispatch(toggleNewModule(true));
+    dispatch(parcoursModulesSliceActions.toggleNewModule(true));
   };
 
   const handleSubmitModule = (formData: FormData) => {
@@ -94,10 +89,14 @@ const ModulesSection = () => {
           (itemBonusSkills: any) => itemBonusSkills.bonusSkill
         ),
       };
-      dispatch(toggleEditionMode(false));
-      dispatch(addNewModule(module));
-      dispatch(setCurrentModule(null));
-      dispatch(toggleNewModule(false));
+      if (editionMode) {
+        dispatch(parcoursModulesSliceActions.editModule(module));
+      } else {
+        dispatch(parcoursModulesSliceActions.addNewModule(module));
+      }
+      dispatch(parcoursModulesSliceActions.toggleEditionMode(false));
+      dispatch(parcoursModulesSliceActions.setCurrentModule(null));
+      dispatch(parcoursModulesSliceActions.toggleNewModule(false));
       console.log("fini");
     };
     sendRequest(
@@ -111,17 +110,17 @@ const ModulesSection = () => {
   };
 
   useEffect(() => {
-    if (currentModule && formRef) {
+    if (currentModule && formRef && (editionMode || newModule)) {
       formRef.current!.scrollIntoView({ behavior: "smooth" });
       formRef.current!.focus();
     }
-  }, [currentModule]);
+  }, [currentModule, editionMode, newModule]);
 
   useEffect(() => {
     return () => {
-      dispatch(toggleEditionMode(false));
-      dispatch(setCurrentModule(null));
-      dispatch(toggleNewModule(false));
+      dispatch(parcoursModulesSliceActions.toggleEditionMode(false));
+      dispatch(parcoursModulesSliceActions.setCurrentModule(null));
+      dispatch(parcoursModulesSliceActions.toggleNewModule(false));
     };
   }, [dispatch]);
 

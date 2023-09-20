@@ -56,6 +56,8 @@ async function putModuleParcours(module: any, thumb: string, image: any) {
         image,
         thumb,
         duration: +newModule.duration,
+        minDate: new Date(newModule.minDate),
+        maxDate: new Date(newModule.maxDate),
         contacts: {
           create: newModule.contacts.map((item: Contact) => {
             return {

@@ -1,18 +1,14 @@
 import React, { FC } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import Module from "../../../utils/interfaces/module";
-import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
 import EditIcon from "../../UI/svg/edit-icon";
 import EyeIcon from "../../UI/svg/eye-icon";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import {
-  setCurrentModule,
-  toggleEditionMode,
-} from "../../../store/redux-toolkit/parcours/parcours-modules";
 import { defaultModuleThumb } from "../../../lib/defautltModuleThumb";
 import { useSelector } from "react-redux";
 import Wrapper from "../../UI/wrapper/wrapper.component";
+import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
 
 interface ModuleItemProps {
   module: Module;
@@ -23,7 +19,7 @@ interface ModuleItemProps {
 const ModuleItem: FC<ModuleItemProps> = ({ module, isSource, index }) => {
   const dispatch = useDispatch();
   const editionMode = useSelector(
-    (state: any) => state.parcoursModule.editionMode
+    (state: any) => state.parcoursModules.editionMode
   );
 
   const parcoursTitle = useSelector(
@@ -44,8 +40,8 @@ const ModuleItem: FC<ModuleItemProps> = ({ module, isSource, index }) => {
   };
 
   const setModuleToEdit = (module: Module) => {
-    dispatch(toggleEditionMode(true));
-    dispatch(setCurrentModule(module));
+    dispatch(parcoursModulesSliceActions.toggleEditionMode(true));
+    dispatch(parcoursModulesSliceActions.setCurrentModule(module));
   };
 
   return (

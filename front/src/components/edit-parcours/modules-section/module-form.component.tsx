@@ -13,12 +13,8 @@ import MemoizedItemsList from "./items-list.component";
 import { compressImage } from "../../../helpers/compress-image";
 import MemoizedModuleFilesUpload from "./module-files-upload.component";
 import { useDispatch } from "react-redux";
-import {
-  setCurrentModule,
-  toggleEditionMode,
-  toggleNewModule,
-} from "../../../store/redux-toolkit/parcours/parcours-modules";
 import { defaultModuleThumb } from "../../../lib/defautltModuleThumb";
+import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
 
 interface ModuleFormProps {
   isLoading: boolean;
@@ -29,7 +25,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
   (props, ref) => {
     const dispatch = useDispatch();
     const currentModule = useSelector(
-      (state: any) => state.parcoursModule.currentModule
+      (state: any) => state.parcoursModules.currentModule
     );
     const parcours = useSelector((state: any) => state.parcours);
     const { value: title } = useInput(
@@ -59,6 +55,9 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
     );
     const [skills, setSkills] = useState<Skill[] | null>(
       currentModule.bonusSkills ?? null
+    );
+    const parcoursInfos = useSelector(
+      (state: any) => state.parcoursInformations.infos
     );
 
     console.log({ teachers });
@@ -145,6 +144,8 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
           title: title.value,
           description: description.value,
           duration: duration.value,
+          minDate: parcoursInfos.startDate,
+          maxDate: parcoursInfos.endDate,
           contacts: teachers,
           bonusSkills: skills,
           formations: [1],
@@ -160,9 +161,9 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
     };
 
     const handleCancel = () => {
-      dispatch(toggleEditionMode(false));
-      dispatch(toggleNewModule(false));
-      dispatch(setCurrentModule(null));
+      dispatch(parcoursModulesSliceActions.toggleEditionMode(false));
+      dispatch(parcoursModulesSliceActions.toggleNewModule(false));
+      dispatch(parcoursModulesSliceActions.setCurrentModule(null));
     };
 
     return (
