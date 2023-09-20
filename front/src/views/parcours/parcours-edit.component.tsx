@@ -51,7 +51,7 @@ const EditParcours = () => {
   const contacts = useSelector(
     (state: any) => state.parcoursContacts.currentContacts
   );
-  const modules = useSelector((state: any) => state.parcoursModule.modules);
+  const modules = useSelector((state: any) => state.parcoursModules.modules);
 
   /**
    * télécharge les données du parcours depuis la bdd et initialise les différentes propriétés du parcours
@@ -192,6 +192,8 @@ const EditParcours = () => {
    * @param id number
    */
   const handleUpdateStep = (id: number) => {
+    console.log(id);
+
     const errors = checkStep(id);
 
     if (errors!.length !== 0) {

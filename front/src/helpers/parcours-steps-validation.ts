@@ -43,7 +43,7 @@ const testSkills = (skills: Array<Skill>) => {
 };
 
 const testModules = (modules: Array<Module>) => {
-  return modules.length === 0;
+  return modules.length > 0;
 };
 
 export function testStep(id: number, data: any) {
@@ -79,6 +79,8 @@ export function testStep(id: number, data: any) {
       break;
     // TOTO METTRE LES N° DES CASES À JOUR QD LE CALENDRIER ET LA LISTE DES ÉTUDIANTS AURONT ÉTÉ MERGE
     case 5:
+      break;
+    case 6:
       console.log({ id });
 
       if (!testTitle(data.infos.title)) {
