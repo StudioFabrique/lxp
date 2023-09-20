@@ -1,9 +1,8 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ImageHeader from "../../components/image-header/image-header";
 import useHttp from "../../hooks/use-http";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
 import Parcours from "../../utils/interfaces/parcours";
 import { parcoursAction } from "../../store/redux-toolkit/parcours/parcours";
 import { parcoursInformationsAction } from "../../store/redux-toolkit/parcours/parcours-informations";
