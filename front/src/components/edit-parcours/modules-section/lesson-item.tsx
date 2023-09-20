@@ -12,17 +12,22 @@ import {
 } from "../../../store/redux-toolkit/parcours/parcours-modules";
 import { defaultModuleThumb } from "../../../lib/defautltModuleThumb";
 import { useSelector } from "react-redux";
+import Wrapper from "../../UI/wrapper/wrapper.component";
 
 interface LessonItemProps {
   lesson: Module;
-  isDisabled: boolean;
   index?: number;
+  isSource: boolean;
 }
 
-const LessonItem: FC<LessonItemProps> = ({ lesson, isDisabled, index }) => {
+const LessonItem: FC<LessonItemProps> = ({ lesson, isSource, index }) => {
   const dispatch = useDispatch();
   const editionMode = useSelector(
     (state: any) => state.parcoursModule.editionMode
+  );
+
+  const parcoursTitle = useSelector(
+    (state: any) => state.parcoursInformations.infos.title
   );
 
   const classImage: React.CSSProperties = {
@@ -59,19 +64,18 @@ const LessonItem: FC<LessonItemProps> = ({ lesson, isDisabled, index }) => {
           <div className="w-[90%] h-full">
             <div className="w-full flex gap-x-2">
               <div className="w-full flex-1 gap-y-4 rounded-lg">
-                <SubWrapper>
+                <Wrapper>
                   <span className="w-full h-full flex gap-x-2 items-center">
                     <div style={classImage} />
                     <p className="text-sm font-bold tracking-tight text-info">
-                      {lesson.title}
+                      {isSource
+                        ? lesson.title
+                        : `${lesson.title} - ${parcoursTitle}`}
                     </p>
-                    {isDisabled ? (
-                      <p className="text-sm text-primary"> - copie(1)</p>
-                    ) : null}
                   </span>
-                </SubWrapper>
+                </Wrapper>
               </div>
-              {isDisabled ? (
+              {!isSource ? (
                 <span className="h-parent flex flex-col justify-between py-1">
                   {/* TODO : implémenter le lien vers la vue édition du module */}
                   <Link

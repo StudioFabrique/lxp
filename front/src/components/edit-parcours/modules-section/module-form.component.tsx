@@ -10,21 +10,19 @@ import {
 import Contact from "../../../utils/interfaces/contact";
 import Skill from "../../../utils/interfaces/skill";
 import MemoizedItemsList from "./items-list.component";
-import useHttp from "../../../hooks/use-http";
 import { compressImage } from "../../../helpers/compress-image";
 import MemoizedModuleFilesUpload from "./module-files-upload.component";
 import { useDispatch } from "react-redux";
 import {
-  addNewModule,
   setCurrentModule,
   toggleEditionMode,
-  toggleInitialRender,
   toggleNewModule,
 } from "../../../store/redux-toolkit/parcours/parcours-modules";
 import { defaultModuleThumb } from "../../../lib/defautltModuleThumb";
 
 interface ModuleFormProps {
-  onSubmitNewModule: (module: any, file: File) => void;
+  isLoading: boolean;
+  onSubmitModule: (formData: FormData) => void;
 }
 
 const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
@@ -36,15 +34,15 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
     const parcours = useSelector((state: any) => state.parcours);
     const { value: title } = useInput(
       (value) => regexGeneric.test(value),
-      currentModule.title
+      currentModule.title ?? ""
     );
     const { value: duration } = useInput(
       (value) => regexNumber.test(value),
-      currentModule.duration
+      currentModule.duration ?? ""
     );
     const { value: description } = useInput(
       (value) => regexOptionalGeneric.test(value),
-      currentModule.description
+      currentModule.description ?? ""
     );
     const [image, setImage] = useState<File | null>(null);
     const [thumb, setThumb] = useState<string | null>(
@@ -62,7 +60,6 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
     const [skills, setSkills] = useState<Skill[] | null>(
       currentModule.bonusSkills ?? null
     );
-    const { sendRequest, isLoading } = useHttp();
 
     console.log({ teachers });
 
@@ -158,34 +155,8 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
         formData.append("thumb", thumb);
         formData.append("module", JSON.stringify(module));
 
-        const applyData = (data: any) => {
-          console.log(data);
-          const module = {
-            ...data.data,
-            id: data.data.id.toString(),
-            contacts: data.data.contacts.map(
-              (itemContact: any) => itemContact.contact
-            ),
-            bonusSkills: data.data.bonusSkills.map(
-              (itemBonusSkills: any) => itemBonusSkills.bonusSkill
-            ),
-          };
-          dispatch(toggleEditionMode(false));
-          dispatch(addNewModule(module));
-          dispatch(toggleInitialRender(true));
-          dispatch(setCurrentModule(null));
-          dispatch(toggleNewModule(false));
-          console.log("fini");
-        };
-        sendRequest(
-          {
-            path: "/modules/new-module",
-            method: "put",
-            body: formData,
-          },
-          applyData
-        );
-      } else console.log("oops");
+        props.onSubmitModule(formData);
+      }
     };
 
     const handleCancel = () => {
@@ -193,9 +164,6 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
       dispatch(toggleNewModule(false));
       dispatch(setCurrentModule(null));
     };
-
-    console.log(currentModule.contacts);
-    console.log(currentModule.bonusSkills);
 
     return (
       <form className="w-full" onSubmit={handleSubmitModule}>
@@ -299,7 +267,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
           >
             Annuler
           </button>
-          {isLoading ? (
+          {props.isLoading ? (
             <button className="btn btn-primary" type="button">
               <span className="loading loading-spinner"></span>
               Validation en cours
@@ -307,7 +275,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
           ) : (
             <button
               className="btn btn-primary"
-              disabled={isLoading}
+              disabled={props.isLoading}
               type="submit"
             >
               Valider

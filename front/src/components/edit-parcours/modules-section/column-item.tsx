@@ -6,13 +6,13 @@ import LessonItem from "./lesson-item";
 
 interface ColumnItemProps {
   column: Column;
-  isDisabled: boolean;
+  isSource?: boolean;
   modulesList?: Module[];
 }
 
 const ColumnItem: FC<ColumnItemProps> = ({
   column,
-  isDisabled,
+  isSource = false,
   modulesList,
 }) => {
   const [modules, setModules] = useState<Module[] | null>(null);
@@ -43,14 +43,28 @@ const ColumnItem: FC<ColumnItemProps> = ({
                   {modules.map((module, index) => (
                     <li key={module.id}>
                       <LessonItem
-                        isDisabled={isDisabled}
+                        isSource={isSource}
                         lesson={module}
                         index={index}
                       />
                     </li>
                   ))}
                 </>
-              ) : null}
+              ) : (
+                <>
+                  {isSource ? (
+                    <p>
+                      Tous les modules de la formation sont déjà rattachés au
+                      parcours.
+                    </p>
+                  ) : (
+                    <p>
+                      Aucun module de séléctionné, glissez / déposez les modules
+                      de la formation pour les rattacher au parcours.
+                    </p>
+                  )}
+                </>
+              )}
               {provided.placeholder}
             </ul>
           )}
