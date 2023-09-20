@@ -27,6 +27,8 @@ const Calendrier = () => {
     endDate: new Date(parcoursInfos.endDate),
   };
 
+  console.log({ module });
+
   useEffect(() => {
     dispatch(
       parcoursModulesSliceActions.updateCurrentParcoursModule(modules[0].id)
