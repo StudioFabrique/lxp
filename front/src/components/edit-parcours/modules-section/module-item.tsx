@@ -14,13 +14,13 @@ import { defaultModuleThumb } from "../../../lib/defautltModuleThumb";
 import { useSelector } from "react-redux";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 
-interface LessonItemProps {
-  lesson: Module;
+interface ModuleItemProps {
+  module: Module;
   index?: number;
   isSource: boolean;
 }
 
-const LessonItem: FC<LessonItemProps> = ({ lesson, isSource, index }) => {
+const ModuleItem: FC<ModuleItemProps> = ({ module, isSource, index }) => {
   const dispatch = useDispatch();
   const editionMode = useSelector(
     (state: any) => state.parcoursModule.editionMode
@@ -32,7 +32,7 @@ const LessonItem: FC<LessonItemProps> = ({ lesson, isSource, index }) => {
 
   const classImage: React.CSSProperties = {
     backgroundImage: `url('${
-      lesson.thumb ? lesson.thumb : defaultModuleThumb
+      module.thumb ? module.thumb : defaultModuleThumb
     }')`,
     width: "50px",
     height: "50px",
@@ -51,7 +51,7 @@ const LessonItem: FC<LessonItemProps> = ({ lesson, isSource, index }) => {
   return (
     <Draggable
       isDragDisabled={editionMode}
-      draggableId={lesson.id!.toString()}
+      draggableId={module.id!.toString()}
       index={index!}
     >
       {(provided) => (
@@ -69,8 +69,8 @@ const LessonItem: FC<LessonItemProps> = ({ lesson, isSource, index }) => {
                     <div style={classImage} />
                     <p className="text-sm font-bold tracking-tight text-info">
                       {isSource
-                        ? lesson.title
-                        : `${lesson.title} - ${parcoursTitle}`}
+                        ? module.title
+                        : `${module.title} - ${parcoursTitle}`}
                     </p>
                   </span>
                 </Wrapper>
@@ -88,7 +88,7 @@ const LessonItem: FC<LessonItemProps> = ({ lesson, isSource, index }) => {
                   </Link>
                   <button
                     className="btn btn-primary btn-circle rounded-md btn-sm"
-                    onClick={() => setModuleToEdit(lesson)}
+                    onClick={() => setModuleToEdit(module)}
                   >
                     <div className="w-6 h-6">
                       <EditIcon />
@@ -104,4 +104,4 @@ const LessonItem: FC<LessonItemProps> = ({ lesson, isSource, index }) => {
   );
 };
 
-export default LessonItem;
+export default ModuleItem;

@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 import { Droppable } from "react-beautiful-dnd";
 import Column from "./column";
 import Module from "../../../utils/interfaces/module";
-import LessonItem from "./lesson-item";
+import ModuleItem from "./module-item";
 
 interface ColumnItemProps {
   column: Column;
@@ -42,9 +42,9 @@ const ColumnItem: FC<ColumnItemProps> = ({
                 <>
                   {modules.map((module, index) => (
                     <li key={module.id}>
-                      <LessonItem
+                      <ModuleItem
                         isSource={isSource}
-                        lesson={module}
+                        module={module}
                         index={index}
                       />
                     </li>
