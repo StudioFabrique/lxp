@@ -16,6 +16,7 @@ import ParcoursAdd from "./views/parcours/parcours-add.component";
 import EditParcours from "./views/parcours/parcours-edit.component";
 import StudentLayout from "./views/student/student-layout.component";
 import StudentHome from "./views/student";
+import ParcoursView from "./views/parcours/parcours-view";
 
 const router = createBrowserRouter([
   {
@@ -60,6 +61,7 @@ const router = createBrowserRouter([
           { index: true, element: <ParcoursHome /> },
           { path: "créer-un-parcours", element: <ParcoursAdd /> },
           { path: "edit/:id", element: <EditParcours /> },
+          { path: "view/:id", element: <ParcoursView /> },
         ],
       },
     ],
