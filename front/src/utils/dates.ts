@@ -67,3 +67,7 @@ export const monthItems = [
     maxDays: 31,
   },
 ];
+
+export function getMonth(monthNumber: number) {
+  return monthsList[monthNumber - 1];
+}
