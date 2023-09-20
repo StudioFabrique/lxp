@@ -13,7 +13,7 @@ const store = configureStore({
     parcours: parcoursSlice.reducer,
     parcoursInformations: parcoursInformationsSlice.reducer,
     parcoursSkills: parcoursSkillsSlice.reducer,
-    parcoursModule: parcoursModuleSlice.reducer,
+    parcoursModules: parcoursModuleSlice.reducer,
     tags: tagsSlice.reducer,
     parcoursContacts: parcoursContactsSlice.reducer,
     parcoursObjectives: parcoursObjectivesSlice.reducer,

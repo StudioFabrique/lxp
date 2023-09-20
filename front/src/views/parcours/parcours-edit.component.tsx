@@ -28,7 +28,8 @@ import { toast } from "react-hot-toast";
 import { testStep } from "../../helpers/parcours-steps-validation";
 import ParcoursPreview from "../../components/edit-parcours/preview/parcours-preview.component";
 import ModulesSection from "../../components/edit-parcours/modules-section/modules.component";
-import { setModules } from "../../store/redux-toolkit/parcours/parcours-modules";
+import Calendrier from "../../components/edit-parcours/calendrier/calendrier";
+import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
 
 let initialState = true;
 
@@ -50,7 +51,7 @@ const EditParcours = () => {
   const contacts = useSelector(
     (state: any) => state.parcoursContacts.currentContacts
   );
-  const modules = useSelector((state: any) => state.parcoursModule.modules);
+  const modules = useSelector((state: any) => state.parcoursModules.modules);
 
   /**
    * télécharge les données du parcours depuis la bdd et initialise les différentes propriétés du parcours
@@ -120,7 +121,7 @@ const EditParcours = () => {
 
       if (data.modules.length > 0) {
         dispatch(
-          setModules(
+          parcoursModulesSliceActions.setModules(
             data.modules.map((item: any) => {
               return {
                 ...item.module,
@@ -136,7 +137,7 @@ const EditParcours = () => {
           )
         );
       } else {
-        dispatch(setModules([]));
+        dispatch(parcoursModulesSliceActions.setModules([]));
       }
 
       setIsLoading(false);
@@ -320,10 +321,11 @@ const EditParcours = () => {
             ) : null}
             {/* Quatrième étape : liste des modules */}
             {actualStep.id === 4 && id ? <ModulesSection /> : null}
+            {actualStep.id === 5 ? <Calendrier /> : null}
             {/* Cinquième étape : liste des étudiants */}
             {/* {actualStep.id === 5 ? <ParcoursStudents /> : null} */}
             {/* Etape finale : aperçu du parcours */}
-            {actualStep.id === 5 ? <ParcoursPreview /> : null}
+            {actualStep.id === 6 ? <ParcoursPreview /> : null}
           </div>
           <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">
             {actualStep.id === 1 ? (

@@ -5,7 +5,7 @@ import Module from "../../../utils/interfaces/module";
 
 const ParcoursPreviewModules = () => {
   const modules = useSelector(
-    (state: any) => state.parcoursModule.modules
+    (state: any) => state.parcoursModules.modules
   ) as Module[];
 
   const classImage: React.CSSProperties = {
