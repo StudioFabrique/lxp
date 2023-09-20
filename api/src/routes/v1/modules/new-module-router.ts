@@ -7,7 +7,11 @@ import httpParcoursModules from "../../../controllers/clone/http-parcours-module
 const newModuleRouter = Router();
 
 newModuleRouter.use("/new-module/", checkToken, putModuleImageRouter);
-newModuleRouter.get("/formation/:formationId", httpGetModuleFormation);
+newModuleRouter.get(
+  "/formation/:formationId",
+  checkToken,
+  httpGetModuleFormation
+);
 newModuleRouter.put("/:parcoursId", httpParcoursModules);
 
 export default newModuleRouter;

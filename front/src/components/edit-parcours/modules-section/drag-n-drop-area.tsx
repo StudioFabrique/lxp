@@ -9,6 +9,8 @@ import Column from "./column";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import Module from "../../../utils/interfaces/module";
 import { setModules } from "../../../store/redux-toolkit/parcours/parcours-modules";
+import Wrapper from "../../UI/wrapper/wrapper.component";
+import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
 
 interface DragNDropAreaprops {
   formationModules: Module[];
@@ -24,11 +26,11 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
   );
   const isInitialRender = useRef(true);
   const isInitialEffect = useRef(true);
-  const newModule = useSelector((state: any) => state.parcoursModule.newModule);
+  //const newModule = useSelector((state: any) => state.parcoursModule.newModule);
 
   console.log("rendering...");
 
-  useEffect(() => {
+  /*   useEffect(() => {
     setDnd((prevModules) => {
       if (newModule) {
         if (prevModules) {
@@ -87,7 +89,7 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
         return null;
       }
     });
-  }, [newModule]);
+  }, [newModule]); */
 
   // on vérifie qu'il s'agit du premier rendu et que les "props" sont initialisées
   if (
@@ -244,17 +246,20 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       {dnd && dnd.tasks.length > 0 ? (
-        <section className="grid grid-cols-2 gap-y-8">
-          <ColumnItem
-            isDisabled={false}
-            column={dnd.columns.sourceColumn}
-            modulesList={dnd.tasks}
-          />
-          <ColumnItem
-            isDisabled={true}
-            column={dnd.columns.destColumn}
-            modulesList={dnd.tasks}
-          />
+        <section className="grid grid-cols-2 gap-8">
+          <SubWrapper>
+            <ColumnItem
+              isSource={true}
+              column={dnd.columns.sourceColumn}
+              modulesList={dnd.tasks}
+            />
+          </SubWrapper>
+          <SubWrapper>
+            <ColumnItem
+              column={dnd.columns.destColumn}
+              modulesList={dnd.tasks}
+            />
+          </SubWrapper>
         </section>
       ) : (
         <p>

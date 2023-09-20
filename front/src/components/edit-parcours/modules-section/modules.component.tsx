@@ -9,11 +9,14 @@ import Module from "../../../utils/interfaces/module";
 import ModuleForm from "./module-form.component";
 import { useDispatch } from "react-redux";
 import {
+  addNewModule,
   setCurrentModule,
   setModules,
   toggleEditionMode,
   toggleNewModule,
 } from "../../../store/redux-toolkit/parcours/parcours-modules";
+import Loader from "../../UI/loader";
+import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
 
 const ModulesSection = () => {
   const { isLoading, sendRequest } = useHttp();
@@ -32,6 +35,7 @@ const ModulesSection = () => {
   const editionMode = useSelector(
     (state: any) => state.parcoursModule.editionMode
   );
+  const newModule = useSelector((state: any) => state.parcoursModule.newModule);
 
   useEffect(() => {
     const applyData = (data: Module[]) => {
@@ -51,24 +55,60 @@ const ModulesSection = () => {
 
   // mise à jour de la liste des modules du parcours dans la bdd et mise à jour du state en cas de réussite
   const handleSubmitModules = () => {
+    console.log({ updatedModules });
+
     const applyData = (data: any) => {
-      dispatch(setModules(data));
+      //dispatch(setModules(data));
     };
     sendRequest(
       {
         path: `/modules/${parcoursId}`,
         method: "put",
-        body: updatedModules.map((item: string) => +item),
+        body: updatedModules.map((item: Module) => +item.id!),
       },
       applyData
     );
   };
 
   const handleCreateModule = () => {
+    dispatch(
+      setCurrentModule({
+        title: "",
+        description: "",
+        duration: "",
+      })
+    );
     dispatch(toggleNewModule(true));
   };
 
-  const handleSubmitNewModule = (file: File) => {};
+  const handleSubmitModule = (formData: FormData) => {
+    const applyData = (data: any) => {
+      console.log(data);
+      const module = {
+        ...data.data,
+        id: data.data.id.toString(),
+        contacts: data.data.contacts.map(
+          (itemContact: any) => itemContact.contact
+        ),
+        bonusSkills: data.data.bonusSkills.map(
+          (itemBonusSkills: any) => itemBonusSkills.bonusSkill
+        ),
+      };
+      dispatch(toggleEditionMode(false));
+      dispatch(addNewModule(module));
+      dispatch(setCurrentModule(null));
+      dispatch(toggleNewModule(false));
+      console.log("fini");
+    };
+    sendRequest(
+      {
+        path: "/modules/new-module",
+        method: "put",
+        body: formData,
+      },
+      applyData
+    );
+  };
 
   useEffect(() => {
     if (currentModule && formRef) {
@@ -90,44 +130,41 @@ const ModulesSection = () => {
       <section>
         <h1 className="text-3xl font-extrabold">Modules</h1>
       </section>
-      {editionMode ? null : (
-        <>
-          <section>
-            <Wrapper>
-              <DragNDropArea formationModules={formationModules} />
-            </Wrapper>
-          </section>
-          <section>
-            <div className="w-full flex justify-between">
-              <button
-                className="btn btn-outline btn-primary"
-                onClick={handleCreateModule}
-              >
-                Créer un module
-              </button>
-              {isLoading ? (
-                <button className="btn btn-primary" type="button">
-                  <span className="loading loading-spinner"></span>
-                  Validation en cours
-                </button>
-              ) : (
-                <button
-                  className="btn btn-primary"
-                  disabled={isLoading || updatedModules.length === 0}
-                  type="button"
-                  onClick={handleSubmitModules}
-                >
-                  Valider les modules
-                </button>
-              )}
-            </div>
-          </section>
-        </>
-      )}
+      <section>
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <Wrapper>
+            <DragNDropArea formationModules={formationModules} />
+          </Wrapper>
+        )}
+      </section>
+      <section>
+        <div className="w-full flex justify-between">
+          <button
+            className="btn btn-outline btn-primary"
+            onClick={handleCreateModule}
+          >
+            Créer un module
+          </button>
+          <button
+            className="btn btn-primary"
+            disabled={isLoading || updatedModules.length === 0}
+            type="button"
+            onClick={handleSubmitModules}
+          >
+            Valider les modules
+          </button>
+        </div>
+      </section>
 
-      {currentModule && editionMode ? (
+      {(currentModule && editionMode) || newModule ? (
         <Wrapper>
-          <ModuleForm onSubmitNewModule={handleSubmitNewModule} ref={formRef} />
+          <ModuleForm
+            onSubmitModule={handleSubmitModule}
+            isLoading={isLoading}
+            ref={formRef}
+          />
         </Wrapper>
       ) : null}
     </div>
