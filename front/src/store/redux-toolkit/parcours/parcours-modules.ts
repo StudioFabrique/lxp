@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import Module from "../../../utils/interfaces/module";
 import { sortArray } from "../../../utils/sortArray";
 
-const initialModuleState: {
+const initialModulesState: {
   modules: Module[] | null;
   currentModule: Module | null;
   editionMode: boolean;
@@ -18,7 +18,7 @@ const initialModuleState: {
 
 const parcoursModulesSlice = createSlice({
   name: "parcoursModules",
-  initialState: initialModuleState,
+  initialState: initialModulesState,
   reducers: {
     setModules(state, action) {
       state.modules = action.payload;

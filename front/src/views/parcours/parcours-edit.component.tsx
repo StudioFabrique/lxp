@@ -30,6 +30,7 @@ import ParcoursPreview from "../../components/edit-parcours/preview/parcours-pre
 import ModulesSection from "../../components/edit-parcours/modules-section/modules.component";
 import Calendrier from "../../components/edit-parcours/calendrier/calendrier";
 import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
+import ParcoursStudents from "../../components/edit-parcours/parcours-students/parcours-students.component";
 
 let initialState = true;
 
@@ -215,14 +216,16 @@ const EditParcours = () => {
   const handleUpdateStep = (id: number) => {
     const errors = checkStep(id);
 
-    if (errors!.length !== 0) {
+    if (errors && errors.length !== 0) {
       validateStep(id, false);
       toast.error(Object.values(errors![0]).toString());
       return;
     } else {
       if (id === stepsList[stepsList.length - 1].id - 1) {
         const finalErrors = checkStep(id + 1);
-        if (finalErrors!.length === 0) {
+        console.log(finalErrors);
+
+        if (finalErrors && finalErrors.length === 0) {
           validateStep(id, true);
         } else {
           toast.error(Object.values(finalErrors![0]).toString());
@@ -250,7 +253,7 @@ const EditParcours = () => {
         return testStep(id, skills);
       case 4:
         return testStep(id, modules);
-      case 5:
+      case 7:
         return testStep(id, {
           infos,
           tags,
@@ -325,7 +328,8 @@ const EditParcours = () => {
             {/* Cinquième étape : liste des étudiants */}
             {/* {actualStep.id === 5 ? <ParcoursStudents /> : null} */}
             {/* Etape finale : aperçu du parcours */}
-            {actualStep.id === 6 ? <ParcoursPreview /> : null}
+            {actualStep.id === 6 ? <ParcoursStudents /> : null}
+            {actualStep.id === 7 ? <ParcoursPreview /> : null}
           </div>
           <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">
             {actualStep.id === 1 ? (
