@@ -75,8 +75,6 @@ const useEagerLoadingList = (initialList: Array<any>, defaultSort: string) => {
   }, [initialList]);
 
   const sortData = (column: string) => {
-    console.log("coucou sorting");
-
     if (column === fieldSort) {
       setDirection((prevDirection) => !prevDirection);
     } else {

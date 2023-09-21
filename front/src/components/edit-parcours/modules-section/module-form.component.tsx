@@ -144,8 +144,12 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
           title: title.value,
           description: description.value,
           duration: duration.value,
-          minDate: parcoursInfos.startDate,
-          maxDate: parcoursInfos.endDate,
+          minDate: currentModule.minDate
+            ? currentModule.minDate
+            : parcoursInfos.startDate,
+          maxDate: currentModule.maxDate
+            ? currentModule.maxDate
+            : parcoursInfos.endDate,
           contacts: teachers,
           bonusSkills: skills,
           formations: [1],

@@ -6,8 +6,9 @@ import Group from "../../../utils/interfaces/group";
 
 const GroupItem: FC<{
   groupItem: Group;
+  showActions: boolean;
   onRowCheck: (id: string) => void;
-}> = ({ groupItem, onRowCheck }) => {
+}> = ({ groupItem, showActions, onRowCheck }) => {
   return (
     <>
       <td className="bg-transparent">
@@ -21,17 +22,19 @@ const GroupItem: FC<{
       <td className="font-bold bg-transparent">{groupItem.index}</td>
       <td className="bg-transparent">{toTitleCase(groupItem.name)}</td>
       <td className="bg-transparent">{toTitleCase(groupItem.desc)}</td>
-      <td className="bg-transparent font-bold text-xs">
-        <div className="flex gap-x-2">
-          <Can action="update" subject={groupItem.roles![0].role}>
-            <Link to="#">Editer</Link>
-          </Can>
+      {showActions ? (
+        <td className="bg-transparent font-bold text-xs">
+          <div className="flex gap-x-2">
+            <Can action="update" subject={groupItem.roles![0].role}>
+              <Link to="#">Editer</Link>
+            </Can>
 
-          <Can action="delete" subject={groupItem.roles![0].role}>
-            <Link to="#">Supprimer</Link>
-          </Can>
-        </div>
-      </td>
+            <Can action="delete" subject={groupItem.roles![0].role}>
+              <Link to="#">Supprimer</Link>
+            </Can>
+          </div>
+        </td>
+      ) : null}
     </>
   );
 };
