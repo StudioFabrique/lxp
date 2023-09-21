@@ -13,10 +13,16 @@ import { parcoursObjectivesAction } from "../../store/redux-toolkit/parcours/par
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import Loader from "../../components/UI/loader";
 import Error404 from "../../components/error404";
-import ParcoursStatistiques from "../../components/view-parcours/parcours-statistiques";
-import ParcoursContenu from "../../components/view-parcours/parcours-contenu/parcours-contenu";
-import ParcoursInformations from "../../components/view-parcours/parcours-informations";
-import ParcoursDescription from "../../components/view-parcours/parcours-description";
+import ParcoursViewStatistiques from "../../components/view-parcours/parcours-view-statistiques";
+import ParcoursViewContenu from "../../components/view-parcours/parcours-view-contenu/parcours-view-contenu";
+import ParcoursViewInformations from "../../components/view-parcours/parcours-view-informations";
+import ParcoursViewDescription from "../../components/view-parcours/parcours-view-description";
+import ParcoursViewTags from "../../components/view-parcours/parcours-view-tags";
+import ParcoursViewAwards from "../../components/view-parcours/parcours-view-awards";
+import ParcoursViewContacts from "../../components/view-parcours/parcours-view-contacts";
+import ParcoursViewCompetences from "../../components/view-parcours/parcours-view-competences";
+import ParcoursViewObjectifs from "../../components/view-parcours/parcours-view-objectifs";
+import ParcoursViewQuickStatistiques from "../../components/view-parcours/parcours-view-quick-statistiques";
 
 let initialState = true;
 
@@ -26,15 +32,6 @@ const ParcoursView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [image, setImage] = useState<string | undefined>(undefined);
-  //   const infos = useSelector((state: any) => state.parcoursInformations.infos);
-  //   const skills = useSelector((state: any) => state.parcoursSkills.skills);
-  //   const objectives = useSelector(
-  //     (state: any) => state.parcoursObjectives.objectives
-  //   );
-  //   const tags = useSelector((state: any) => state.tags.currentTags);
-  //   const contacts = useSelector(
-  //     (state: any) => state.parcoursContacts.currentContacts
-  //   );
 
   /**
    * enregistrement de l'image du parcours dans la bdd
@@ -165,24 +162,27 @@ const ParcoursView = () => {
               image={image}
               onUpdateImage={updateImage}
             />
-            <div className="w-full 2xl:w-4/6 mt-16 flex flex-col gap-y-5">
-              <ParcoursStatistiques />
-              <ParcoursContenu />
+            <div className="w-full mt-16 flex flex-col gap-y-5">
+              <ParcoursViewStatistiques />
+              <ParcoursViewContenu />
               <div className="grid grid-cols-3 gap-x-5">
                 <div className="grid grid-rows-2 gap-y-5">
-                  <ParcoursInformations />
-                  <ParcoursDescription />
+                  <ParcoursViewInformations />
+                  <ParcoursViewDescription />
                 </div>
                 <div className="grid grid-rows-2 gap-y-5">
-                  {/* <ParcoursTags /> */}
-                  {/* <ParcoursAwards /> */}
+                  <ParcoursViewTags />
+                  <ParcoursViewAwards />
                 </div>
-                <div>{/* <ParcoursContacts /> */}</div>
+                <div>
+                  <ParcoursViewContacts />
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-x-5">
-                {/* <Competences /> */}
-                {/* <Objectifs /> */}
+                <ParcoursViewCompetences />
+                <ParcoursViewObjectifs />
               </div>
+              <ParcoursViewQuickStatistiques />
             </div>
           </div>
         </FadeWrapper>
