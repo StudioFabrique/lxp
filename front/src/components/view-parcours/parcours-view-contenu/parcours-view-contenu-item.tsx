@@ -3,10 +3,10 @@ import Module from "../../../utils/interfaces/module";
 import { getMonth } from "../../../utils/dates";
 import RightArrowIcon from "../../UI/svg/right-arrow-icon";
 
-const ParcoursContenuItem: FC<{ module: Module; iterationCount: number }> = ({
-  module,
-  iterationCount,
-}) => {
+const ParcoursViewContenuItem: FC<{
+  module: Module;
+  iterationCount: number;
+}> = ({ module, iterationCount }) => {
   const minDate: { day: number; month: string } = {
     day: new Date(module.minDate!).getDay(),
     month: getMonth(new Date(module.minDate!).getMonth()),
@@ -31,4 +31,4 @@ const ParcoursContenuItem: FC<{ module: Module; iterationCount: number }> = ({
   );
 };
 
-export default ParcoursContenuItem;
+export default ParcoursViewContenuItem;
