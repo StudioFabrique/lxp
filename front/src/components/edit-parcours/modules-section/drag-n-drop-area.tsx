@@ -105,8 +105,6 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
       item.id?.toString()
     );
 
-    console.log({ formationModules });
-
     const parcoursModulesTitles = parcoursModules.map(
       (item: Module) => item.title
     );
@@ -171,6 +169,8 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
     }, autoSubmitTimer);
     return () => clearTimeout(timer);
   }, [updatedModules, dispatch]);
+
+  // Gestion du drag n drop
   const onDragEnd = (result: DropResult) => {
     const { destination, source, draggableId } = result;
     if (!destination) {

@@ -13,6 +13,7 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import DatesSelecter from "../../UI/dates-selecter/dates-selecter.component";
 import Tags from "../../UI/tags/tags.component";
 import Tag from "../../../utils/interfaces/tag";
+import { parcoursContactsAction } from "../../../store/redux-toolkit/parcours/parcours-contacts";
 
 type Props = {
   parcoursId?: string;
@@ -80,8 +81,15 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
 
   const submitContacts = useCallback(
     (contacts: Array<Contact>) => {
-      const processData = (data: { success: boolean; message: string }) => {
+      const processData = (data: {
+        success: boolean;
+        data: any;
+        message: string;
+      }) => {
         if (data.success) {
+          const updatedContacts = data.data.contacts.map(
+            (item: any) => item.contact
+          );
           toast.success(data.message);
         }
       };
@@ -94,7 +102,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
         processData
       );
     },
-    [parcoursId, sendRequest]
+    [parcoursId, sendRequest, dispatch]
   );
 
   useEffect(() => {
