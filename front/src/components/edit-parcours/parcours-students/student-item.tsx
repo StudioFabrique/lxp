@@ -18,7 +18,7 @@ const StudentItem = (props: StudentItemProps) => {
       </td>
       <td className="bg-transparent capitalize">{firstname}</td>
       <td className="bg-transparent capitalize">{lastname}</td>
-      <td className="bg-transparent capitalize">{email}</td>
+      <td className="bg-transparent">{email}</td>
       <td className="bg-transparent text-center">toto</td>
       <td className="bg-transparent text-center">{group?.name ?? "-"}</td>
       <td className="bg-transparent">

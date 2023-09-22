@@ -60,6 +60,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
       (state: any) => state.parcoursInformations.infos
     );
 
+    console.log({ listeContacts });
     console.log({ teachers });
 
     /**

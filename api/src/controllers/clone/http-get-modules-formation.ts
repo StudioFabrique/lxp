@@ -3,8 +3,10 @@ import { prisma } from "../../utils/db";
 
 async function httpGetModuleFormation(req: Request, res: Response) {
   try {
+    const { formationId } = req.params;
+
     const modulesIdList = await prisma.modulesOnFormation.findMany({
-      where: { formationId: 1 },
+      where: { formationId: +formationId },
     });
     const modules = await prisma.module.findMany({
       where: {
