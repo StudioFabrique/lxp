@@ -1,4 +1,4 @@
-import { MouseEvent, MouseEventHandler, useEffect, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import useHttp from "../../hooks/use-http";
@@ -6,8 +6,7 @@ import Parcours from "../../utils/interfaces/parcours";
 import Loader from "../../components/UI/loader";
 import { sortArray } from "../../utils/sortArray";
 import EditIcon from "../../components/UI/svg/edit-icon";
-import DeleteIcon from "../../components/UI/svg/delete-icon.compoenent";
-import { event } from "cypress/types/jquery";
+import DeleteIcon from "../../components/UI/svg/delete-icon.component";
 
 const ParcoursHome = () => {
   const [parcoursList, setParcoursList] = useState<Array<Parcours> | null>(
@@ -70,10 +69,14 @@ const ParcoursHome = () => {
               <td>{setDate(item.createdAt!)}</td>
               <td>{setDate(item.updatedAt!)}</td>
               <td onClick={(e) => handleEditParcours(e, item.id!)}>
-                <EditIcon />
+                <div className="w-4 h-4">
+                  <EditIcon />
+                </div>
               </td>
               <td onClick={(e) => handleDeleteParcours(e, item.id!)}>
-                <DeleteIcon />
+                <div className="w-4 h-4 text-error">
+                  <DeleteIcon />
+                </div>
               </td>
             </tr>
           ))}
