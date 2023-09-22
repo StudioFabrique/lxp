@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 
-import putParcoursSkill from "../../models/parcours/put-parcours-bonusskill";
+import putParcoursSkill from "../../models/parcours/put-parcours-bonus-skill";
 import { badQuery } from "../../utils/constantes";
 
 async function httpPutParcoursSkill(req: Request, res: Response) {

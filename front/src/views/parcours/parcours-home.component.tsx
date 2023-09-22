@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
+import { MouseEvent, MouseEventHandler, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import useHttp from "../../hooks/use-http";
 import Parcours from "../../utils/interfaces/parcours";
 import Loader from "../../components/UI/loader";
 import { sortArray } from "../../utils/sortArray";
+import EditIcon from "../../components/UI/svg/edit-icon";
+import DeleteIcon from "../../components/UI/svg/delete-icon.compoenent";
+import { event } from "cypress/types/jquery";
 
 const ParcoursHome = () => {
   const [parcoursList, setParcoursList] = useState<Array<Parcours> | null>(
@@ -31,8 +34,23 @@ const ParcoursHome = () => {
     ).toLocaleTimeString()}`;
   };
 
-  const handleEditParcours = (id: number) => {
+  const handleEditParcours = (
+    e: MouseEvent<HTMLTableCellElement>,
+    id: number
+  ) => {
+    e.stopPropagation();
     nav(`/admin/parcours/edit/${id}`);
+  };
+
+  const handleDeleteParcours = (
+    e: MouseEvent<HTMLTableCellElement>,
+    id: number
+  ) => {
+    e.stopPropagation();
+  };
+
+  const handleViewParcours = (id: number) => {
+    nav(`/admin/parcours/view/${id}`);
   };
 
   const content = (
@@ -43,7 +61,7 @@ const ParcoursHome = () => {
             <tr
               className="cursor-pointer hover:bg-secondary/20 hover:text-base-content"
               key={item.id}
-              onClick={() => handleEditParcours(item.id!)}
+              onClick={() => handleViewParcours(item.id!)}
             >
               <td>{item.id}</td>
               <td>{item.title}</td>
@@ -51,6 +69,12 @@ const ParcoursHome = () => {
               <td>{item.formation.level}</td>
               <td>{setDate(item.createdAt!)}</td>
               <td>{setDate(item.updatedAt!)}</td>
+              <td onClick={(e) => handleEditParcours(e, item.id!)}>
+                <EditIcon />
+              </td>
+              <td onClick={(e) => handleDeleteParcours(e, item.id!)}>
+                <DeleteIcon />
+              </td>
             </tr>
           ))}
         </>
@@ -79,6 +103,8 @@ const ParcoursHome = () => {
                     <th>Niveau</th>
                     <th>Crée le</th>
                     <th>Mis à jour le</th>
+                    <th></th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>{content}</tbody>

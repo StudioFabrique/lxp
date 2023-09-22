@@ -18,9 +18,15 @@ const ModulesItem: FC<{
   const dispatch = useDispatch();
   const { sendRequest } = useHttp();
 
+  const image = URL.createObjectURL(
+    new Blob([new Uint8Array(module.image.data)], {
+      type: "application/octet-stream",
+    })
+  );
+
   const handleDelete = () => {
     const applyData = (data: any) => {
-      dispatch(deleteParcoursModule(data.moduleId));
+      dispatch(parcoursModulesSliceActions.deleteParcoursModule(data.moduleId));
       toast.success("Module supprimé avec success");
     };
     console.log(module);
@@ -35,8 +41,9 @@ const ModulesItem: FC<{
   };
 
   const handleBeginEdit = () => {
-    console.log("test");
-    dispatch(updateCurrentParcoursModule(module.id));
+    dispatch(
+      parcoursModulesSliceActions.updateCurrentParcoursModule(module.id)
+    );
   };
 
   return (
@@ -45,7 +52,7 @@ const ModulesItem: FC<{
         <span className="w-[25%]">
           <img
             className="object-fill h-20 w-20 rounded-md"
-            src={module.imageUrl}
+            src={image}
             alt="module preview"
           />
         </span>

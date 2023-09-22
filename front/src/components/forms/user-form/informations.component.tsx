@@ -1,6 +1,6 @@
 import { FC } from "react";
-import Wrapper from "../../../UI/wrapper/wrapper.component";
-import ImageFileUpload from "../../../UI/image-file-upload/image-file-upload";
+import Wrapper from "../../UI/wrapper/wrapper.component";
+import ImageFileUpload from "../../UI/image-file-upload/image-file-upload";
 
 const Informations: FC<{
   lastname: any;
@@ -69,7 +69,7 @@ const Informations: FC<{
           autoComplete="off"
         />
       </span>
-      <ImageFileUpload type={2} onSetFile={onSetFile} maxSize={5} />
+      <ImageFileUpload type={2} onSetFile={onSetFile} maxSize={10000} />
     </Wrapper>
   );
 };

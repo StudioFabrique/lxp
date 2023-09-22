@@ -6,8 +6,10 @@ import httpDeleteModule from "../../controllers/module/http-delete-module";
 const moduleRouter = Router();
 
 moduleRouter.get("/:parcoursId", httpGetAllModules);
-moduleRouter.post("/", httpCreateModule);
+moduleRouter.post("/", fileUpload.single("image"), httpCreateModule);
 moduleRouter.put("/", httpUpdateModule);
+moduleRouter.put("/dates", httpUpdateDatesModule);
+moduleRouter.put("/duration", httpUpdateDurationModule);
 moduleRouter.delete("/:id", httpDeleteModule);
 
 export default moduleRouter;

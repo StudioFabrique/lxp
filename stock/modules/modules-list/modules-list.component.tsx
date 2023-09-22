@@ -9,8 +9,8 @@ import { useParams } from "react-router-dom";
 
 const ModulesList: FC<{}> = () => {
   const modules: Module[] = useSelector(
-    (state: any) => state.parcoursModule.modules
-  ) as Module[];
+    (state: any) => state.parcoursModules.modules
+  );
 
   const { id: parcoursId } = useParams();
 
@@ -21,8 +21,7 @@ const ModulesList: FC<{}> = () => {
   const fetchModules = useCallback(() => {
     const applyData = (data: any) => {
       console.log(data);
-
-      dispatch(initParcoursModules(data.modules));
+      dispatch(parcoursModulesSliceActions.initParcoursModules(data.modules));
     };
 
     sendRequest(

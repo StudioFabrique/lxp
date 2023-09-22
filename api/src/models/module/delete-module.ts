@@ -19,6 +19,12 @@ export default async function deleteModule(moduleId: number) {
       },
     });
 
+    await prisma.modulesOnParcours.deleteMany({
+      where: {
+        moduleId: moduleId,
+      },
+    });
+
     const deletedModule = await prisma.module.delete({
       where: { id: moduleId },
     });
