@@ -24,32 +24,20 @@ export default async function httpCreateUser(req: Request, res: Response) {
   console.log(hobbiesDataRequest ?? "no hobbies data");
 
   try {
+    if (!graduationsDataRequest || !linksDataRequest || !hobbiesDataRequest)
+      return res.status(404).send({ message: "problème requêtes" });
+
     const userResponse = await createUser(userDataRequest, userType); // crée un user + insert une référence mongodb dans prisma si le type utilisateur le permet
 
     if (!userResponse) {
       res.status(409).json({ message: alreadyExist });
     }
 
-    if (graduationsDataRequest) {
-      const graduationsResponse = await createManyGraduations(
-        userResponse!._id,
-        graduationsDataRequest
-      ); // insert graduations in mongodb with user ref _id
-    }
+    await createManyGraduations(userResponse!._id, graduationsDataRequest); // insert graduations in mongodb with user ref _id
 
-    if (linksDataRequest) {
-      const linksResponse = await createManyLinks(
-        userResponse!._id,
-        linksDataRequest
-      ); // insert links in mongodb with user ref _id
-    }
+    await createManyLinks(userResponse!._id, linksDataRequest); // insert links in mongodb with user ref _id
 
-    if (hobbiesDataRequest) {
-      const hobbiesResponse = await createManyHobbies(
-        userResponse!._id,
-        hobbiesDataRequest
-      ); // insert hobbies in mongodb with user ref _id
-    }
+    await createManyHobbies(userResponse!._id, hobbiesDataRequest); // insert hobbies in mongodb with user ref _id
 
     return res.status(201).json({ message: creationSuccessfull });
   } catch (e) {

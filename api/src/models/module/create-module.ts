@@ -8,7 +8,8 @@ export default async function createModule(
     contacts: any[];
     bonusSkills: any[];
   },
-  parcoursId: number
+  parcoursId: number,
+  imageFile: any
 ) {
   try {
     const existingContactsId = (

@@ -89,6 +89,8 @@ export function testStep(id: number, data: any) {
       break;
     // TOTO METTRE LES N° DES CASES À JOUR QD LE CALENDRIER ET LA LISTE DES ÉTUDIANTS AURONT ÉTÉ MERGE
     case 5:
+      break;
+    case 6:
       console.log({ id });
 
       if (!testTitle(data.infos.title)) {

@@ -8,8 +8,8 @@ import {
   SetStateAction,
   useState,
 } from "react";
-import Wrapper from "../../../UI/wrapper/wrapper.component";
-import Hobby from "../../../../utils/interfaces/hobby";
+import Hobby from "../../../utils/interfaces/hobby";
+import Wrapper from "../../UI/wrapper/wrapper.component";
 
 const CentreInterets: FC<{
   hobbies: Hobby[];

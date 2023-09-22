@@ -24,7 +24,7 @@ import ImportSkills from "../../components/edit-parcours/skills/import-skills.co
 import ImportObjectives from "../../components/edit-parcours/objectives/import-objectives";
 import ObjectivesList from "../../components/edit-parcours/objectives/objectives-list";
 import { parcoursObjectivesAction } from "../../store/redux-toolkit/parcours/parcours-objectives";
-import { toast } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { testStep } from "../../helpers/parcours-steps-validation";
 import ParcoursPreview from "../../components/edit-parcours/preview/parcours-preview.component";
 import ModulesSection from "../../components/edit-parcours/modules-section/modules.component";
@@ -214,6 +214,8 @@ const EditParcours = () => {
    * @param id number
    */
   const handleUpdateStep = (id: number) => {
+    console.log(id);
+
     const errors = checkStep(id);
 
     if (errors && errors.length !== 0) {

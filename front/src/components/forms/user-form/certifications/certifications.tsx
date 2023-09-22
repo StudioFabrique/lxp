@@ -10,11 +10,11 @@ import {
   SetStateAction,
   useState,
 } from "react";
-import Wrapper from "../../../../UI/wrapper/wrapper.component";
-import Graduation from "../../../../../utils/interfaces/graduation";
+import Wrapper from "../../../UI/wrapper/wrapper.component";
+import Graduation from "../../../../utils/interfaces/graduation";
 import { toast } from "react-hot-toast";
 import CertificationItem from "./certification-item";
-import { addIdToObject } from "../../../../../utils/add-id-to-objects";
+import { addIdToObject } from "../../../../utils/add-id-to-objects";
 
 const Certifications: FC<{
   graduations: Array<Graduation>;
