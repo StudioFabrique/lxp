@@ -24,7 +24,15 @@ const ParcoursStudents = () => {
       const applyData = (data: any) => {
         let updatedStudents = Array<User>();
         data.forEach((item: any) => {
-          updatedStudents = [...updatedStudents, ...item.users];
+          console.log({ item });
+
+          const updatedItem = item.users.map((user: any) => ({
+            ...user,
+            group: { _id: item._id, name: item.name },
+          }));
+          console.log("toto", updatedItem);
+
+          updatedStudents = [...updatedStudents, ...updatedItem];
         });
         setStudents(updatedStudents);
       };
@@ -71,7 +79,9 @@ const ParcoursStudents = () => {
         </section>
       ) : (
         <section>
-          <StudentsList initalList={students ?? []} />
+          <Wrapper>
+            <StudentsList initalList={students ?? []} />
+          </Wrapper>
         </section>
       )}
       <section></section>

@@ -6,10 +6,10 @@ interface StudentItemProps {
 }
 
 const StudentItem = (props: StudentItemProps) => {
-  console.log(props.studentItem);
-
   const { avatar, email, lastname, firstname, group, createdAt } =
     props.studentItem;
+
+  console.log("group", group);
 
   return (
     <>
@@ -20,7 +20,7 @@ const StudentItem = (props: StudentItemProps) => {
       <td className="bg-transparent capitalize">{lastname}</td>
       <td className="bg-transparent capitalize">{email}</td>
       <td className="bg-transparent text-center">toto</td>
-      <td className="bg-transparent text-center">toto</td>
+      <td className="bg-transparent text-center">{group?.name ?? "-"}</td>
       <td className="bg-transparent">
         {new Date(createdAt!).toLocaleDateString()}
       </td>

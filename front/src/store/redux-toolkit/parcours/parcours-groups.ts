@@ -24,6 +24,13 @@ const parcoursGroupsSlice = createSlice({
       payload = payload.filter((item: Group) => !groupsIds.includes(item._id));
       state.groups = [...state.groups, ...payload];
     },
+    removeGroup(state, action) {
+      if (state.groups) {
+        state.groups = state.groups?.filter(
+          (item) => item._id !== action.payload
+        );
+      }
+    },
   },
 });
 
