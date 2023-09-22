@@ -10,7 +10,7 @@ import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 const VirtualClass = () => {
   const parcoursId = useSelector((state: any) => state.parcours.id);
   const virtualClassProp = useSelector(
-    (state: any) => state.parcoursInformations.virtualClass
+    (state: any) => state.parcoursInformations.infos.virtualClass as string
   );
   const { value: virtualClass } = useInput(
     (value) => regexUrl.test(value),

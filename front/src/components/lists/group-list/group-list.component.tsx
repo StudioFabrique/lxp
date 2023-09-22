@@ -6,6 +6,7 @@ const GroupList: FC<{
   role: Role;
   allChecked: boolean;
   groupList: Array<any>;
+  showActions?: boolean;
   onRowCheck: (id: string) => void;
   onAllChecked: () => void;
   onSorting: (column: string) => void;
@@ -14,6 +15,7 @@ const GroupList: FC<{
   allChecked,
   role,
   groupList,
+  showActions = true,
   onRowCheck,
   onAllChecked,
   onUncheckAll,
@@ -56,13 +58,19 @@ const GroupList: FC<{
           >
             Description
           </th>
-          <th>Actions</th>
+          {showActions ? <th>Actions</th> : null}
         </tr>
       </thead>
       <tbody>
         {groupList.map((item: any) => (
           <tr className="hover:bg-primary/20" key={item._id}>
-            {<GroupItem groupItem={item} onRowCheck={onRowCheck} />}
+            {
+              <GroupItem
+                groupItem={item}
+                onRowCheck={onRowCheck}
+                showActions={showActions}
+              />
+            }
           </tr>
         ))}
       </tbody>

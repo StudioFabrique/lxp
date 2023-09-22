@@ -1,6 +1,6 @@
 export default async function getManyModules(parcoursId: number) {
-  const modules = await prisma?.module.findMany({
-    where: { parcours: { some: { parcoursId: parcoursId } } },
+  /* const modules = await prisma?.module.findMany({
+    where: { parcoursId: parcoursId },
     include: {
       bonusSkills: {
         select: { bonusSkill: { select: { id: true, description: true } } },
@@ -13,9 +13,9 @@ export default async function getManyModules(parcoursId: number) {
 
   if (!modules) {
     return null;
-  }
+  } */
 
-  const updatedModules = modules.map((module) => {
+  /*   const updatedModules = modules.map((module) => {
     const bonusSkills = module.bonusSkills.map(
       (bonusSkill) => bonusSkill.bonusSkill
     );
@@ -26,7 +26,7 @@ export default async function getManyModules(parcoursId: number) {
     updatedModule.bonusSkills = bonusSkills;
     updatedModule.contacts = contacts;
     return updatedModule;
-  });
+  }); */
 
-  return updatedModules;
+  return /* updatedModules */ null;
 }

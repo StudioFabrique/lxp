@@ -1,6 +1,11 @@
 import { FC } from "react";
+<<<<<<<< HEAD:stock/modules/parcours-modules.component.tsx
+import ModulesForm from "./modules-form/modules-form";
+import Wrapper from "../front/src/components/UI/wrapper/wrapper.component";
+========
 import ModulesForm from "./modules-form";
 import Wrapper from "../../UI/wrapper/wrapper.component";
+>>>>>>>> origin/dev:stock/modules/parcours-modules.tsx
 import ModulesList from "./modules-list/modules-list.component";
 
 const ParcoursModules: FC<{}> = () => {

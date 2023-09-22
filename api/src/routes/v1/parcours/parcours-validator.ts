@@ -55,9 +55,9 @@ export const updateInfosValidator = [
     .escape(),
   body("description")
     .isString()
-    .withMessage("Description invalide")
+    .withMessage("Description invalide") /* 
     .notEmpty()
-    .withMessage("Description absente")
+    .withMessage("Description absente") */
     .escape(),
   body("formation")
     .isNumeric()

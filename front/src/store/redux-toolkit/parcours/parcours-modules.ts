@@ -1,55 +1,66 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Module from "../../../utils/interfaces/module";
-import { toast } from "react-hot-toast";
-import { addIdToObject } from "../../../utils/add-id-to-objects";
+import { sortArray } from "../../../utils/sortArray";
 
-const initialModuleState: { modules: Module[]; currentModule: Module | null } =
-  {
-    modules: Array<Module>(),
-    /* currentModule est le module temporaire en cours d'édition et permet d'indiquer au formulaire
-    si le contenu est en cours d'édition ou si le contenu est nouveau (currentModule sera null) */
-    currentModule: null,
-  };
+const initialModulesState: {
+  modules: Module[] | null;
+  currentModule: Module | null;
+  editionMode: boolean;
+  newModule: boolean;
+  initialRender: boolean;
+} = {
+  modules: null,
+  currentModule: null,
+  editionMode: false,
+  newModule: false,
+  initialRender: true,
+};
 
 const parcoursModulesSlice = createSlice({
   name: "parcoursModules",
-  initialState: initialModuleState,
+  initialState: initialModulesState,
   reducers: {
-    initParcoursModules(state, action) {
-      const modules: Module[] = action.payload;
+    setModules(state, action) {
+      state.modules = action.payload;
+    },
+    setCurrentModule(state, action) {
+      state.currentModule = action.payload;
+    },
+    toggleEditionMode(state, action) {
+      state.editionMode = action.payload;
+    },
+    toggleNewModule(state, action) {
+      state.newModule = action.payload;
+    },
+    addNewModule(state, action) {
+      state.modules = state.modules!.filter((item) => item.id !== "0");
+      state.modules = [...state.modules, { ...action.payload }];
+    },
+    editModule(state, action) {
+      const module = action.payload;
+      let modules = state.modules;
+      modules = modules!.filter((item) => item.id !== module.id);
+      modules = sortArray([...modules, module], "id");
       state.modules = modules;
     },
-    addParcoursModule(state, action) {
-      const module: Module = action.payload.module;
-      const modules: Module[] = state.modules;
-      state.modules = addIdToObject([...modules, module]);
-      toast.success("Le module a bien été ajouté");
+    toggleInitialRender(state, action) {
+      state.initialRender = action.payload;
+    },
+    updateCurrentParcoursModule(state, action) {
+      const id = action.payload;
+      const modules: Module[] = state.modules!;
+      state.currentModule = modules.filter((module) => module.id === id)[0];
     },
     updateParcoursModule(state, action) {
       const module: Module = action.payload.module;
       const moduleId: number = action.payload.moduleId;
-      const modules: Module[] = state.modules;
+      const modules: Module[] = state.modules!;
 
       state.modules = modules.map((moduleToEdit) =>
         moduleToEdit.id === moduleId
           ? { ...moduleToEdit, ...module }
           : moduleToEdit
       );
-      toast.success("Le module a bien été modifié");
-    },
-    deleteParcoursModule(state, action) {
-      const id = action.payload;
-      const modules = state.modules;
-      state.modules = modules.filter((module) => module.id !== id);
-      toast.success("Le module a bien été supprimé");
-    },
-    updateCurrentParcoursModule(state, action) {
-      const id = action.payload;
-      const modules: Module[] = state.modules;
-      state.currentModule = modules.filter((module) => module.id === id)[0];
-    },
-    clearCurrentParcoursModule(state) {
-      state.currentModule = null;
     },
   },
 });

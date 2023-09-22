@@ -1,4 +1,25 @@
 import { FC, FormEvent, FormEventHandler, useEffect, useState } from "react";
+<<<<<<<< HEAD:stock/modules/modules-form/modules-form.tsx
+import ImageFileUpload from "../../front/src/components/UI/image-file-upload/image-file-upload";
+import useInput from "../../front/src/hooks/use-input";
+import { regexGeneric, regexNumber } from "../../front/src/utils/constantes";
+import User from "../../front/src/utils/interfaces/user";
+import Skill from "../../front/src/utils/interfaces/skill";
+import Module from "../../front/src/utils/interfaces/module";
+import { validateImageFile } from "../../front/src/utils/validate-image-file";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addParcoursModule,
+  clearCurrentParcoursModule,
+  updateParcoursModule,
+} from "../../front/src/store/redux-toolkit/parcours/parcours-modules";
+import DataAdder from "../../front/src/components/UI/data-adder/data-adder.component";
+// import { getDBSkills as skillsData } from "../../../utils/fixtures/skills";
+import { Toaster, toast } from "react-hot-toast";
+import { AddIcon1 } from "../../front/src/components/UI/svg/add-icons";
+import { useParams } from "react-router-dom";
+import useHttp from "../../front/src/hooks/use-http";
+========
 import ImageFileUpload from "../../UI/image-file-upload/image-file-upload";
 import useInput from "../../../hooks/use-input";
 import { regexGeneric, regexNumber } from "../../../utils/constantes";
@@ -14,6 +35,7 @@ import { Toaster, toast } from "react-hot-toast";
 import { AddIcon1 } from "../../UI/svg/add-icons";
 import { useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
+>>>>>>>> origin/dev:stock/modules/modules-form.tsx
 
 const ModulesForm: FC<{}> = () => {
   const { id: parcoursId } = useParams();
