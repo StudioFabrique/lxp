@@ -8,7 +8,10 @@ const ParcoursViewTags = () => {
   const tagsList =
     tags.length > 0 ? (
       tags.map((tag) => (
-        <p className="bg-secondary py-2 px-5 rounded-lg">{`# ${tag.name}`}</p>
+        <p
+          key={tag.id}
+          className="bg-secondary py-2 px-5 rounded-lg"
+        >{`# ${tag.name}`}</p>
       ))
     ) : (
       <p>Aucun tags</p>

@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
-import Module from "../../../utils/interfaces/module";
-import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
+import Module from "../../../../utils/interfaces/module";
+import SubWrapper from "../../../UI/sub-wrapper/sub-wrapper.component";
 
 const ParcoursViewContenuDetail = () => {
   const modules = useSelector(
@@ -10,7 +10,10 @@ const ParcoursViewContenuDetail = () => {
   const contentsList =
     modules.length > 0 ? (
       modules.map((module, i) => (
-        <div className="flex flex-col items-center bg-primary-focus p-4 rounded-lg hover:bg-secondary-focus w-full">
+        <div
+          key={module.id}
+          className="flex flex-col items-center bg-primary-focus p-4 rounded-lg hover:bg-secondary-focus w-full"
+        >
           <p className="self-start">{`Cours ${i + 1}`}</p>
           <div className="flex justify-between w-full">
             <p className="self-start">{module.title}</p>

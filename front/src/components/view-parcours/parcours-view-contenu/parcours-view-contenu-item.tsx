@@ -22,7 +22,7 @@ const ParcoursViewContenuItem: FC<{
         <p className="self-start">{`Module ${iterationCount}`}</p>
         <div className="flex justify-between w-full">
           <p className="self-start">{module.title}</p>
-          <span className="self-end">
+          <span className="self-end border-2 rounded-full">
             <RightArrowIcon />
           </span>
         </div>

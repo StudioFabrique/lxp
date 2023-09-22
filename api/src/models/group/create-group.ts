@@ -1,6 +1,6 @@
 import Group, { IGroup } from "../../utils/interfaces/db/group";
 import Role from "../../utils/interfaces/db/role";
-import { IUser } from "../../utils/interfaces/db/user";
+import User, { IUser } from "../../utils/interfaces/db/user";
 import updateManyUsers from "../user/update-many-users";
 import { prisma } from "../../utils/db";
 
@@ -19,7 +19,9 @@ export default async function createGroup(
 
   newGroup.roles = await Role.find({ role: "student", rank: 3 });
 
-  newGroup.users = await updateManyUsers(users);
+  newGroup.users = await User.find({
+    _id: { $in: users.map((user) => user._id) },
+  });
 
   const createdGroup = await Group.create(newGroup);
 
