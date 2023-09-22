@@ -1,7 +1,8 @@
 import { FC } from "react";
-import Graduation from "../../../../../utils/interfaces/graduation";
-import DeleteIcon from "../../../../UI/svg/delete-icon.component";
-import EditIcon from "../../../../UI/svg/edit-icon";
+
+import EditIcon from "../../../UI/svg/edit-icon";
+import DeleteIcon from "../../../UI/svg/delete-icon.component";
+import Graduation from "../../../../utils/interfaces/graduation";
 
 const CertificationItem: FC<{
   graduation: Graduation;
