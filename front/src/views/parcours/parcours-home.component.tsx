@@ -69,12 +69,12 @@ const ParcoursHome = () => {
               <td>{setDate(item.createdAt!)}</td>
               <td>{setDate(item.updatedAt!)}</td>
               <td onClick={(e) => handleEditParcours(e, item.id!)}>
-                <div className="w-4 h-4">
+                <div className="w-6 h-6">
                   <EditIcon />
                 </div>
               </td>
               <td onClick={(e) => handleDeleteParcours(e, item.id!)}>
-                <div className="w-4 h-4 text-error">
+                <div className="w-6 h-6 text-error">
                   <DeleteIcon />
                 </div>
               </td>
