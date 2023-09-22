@@ -2,7 +2,7 @@ import { FC } from "react";
 
 import Objective from "../../../utils/interfaces/objective";
 import EditIcon from "../../UI/svg/edit-icon";
-import DeleteIcon from "../../UI/svg/delete-icon.compoenent";
+import DeleteIcon from "../../UI/svg/delete-icon.component";
 import ArrowsIcon from "../../UI/svg/arrows-icon.component";
 
 type Props = {
@@ -32,14 +32,18 @@ const ObjectiveItem: FC<Props> = ({ objective, onDelete, onUpdate }) => {
         onClick={handleUpdate}
         aria-label="modification de l'objectif"
       >
-        <EditIcon />
+        <div className="w-6 h-6">
+          <EditIcon />
+        </div>
       </button>
       <button
         className="btn btn-primary btn-circle rounded-lg"
         onClick={() => onDelete(objective.id!)}
         aria-label="suppression de l'objectif"
       >
-        <DeleteIcon />
+        <div className="w-6 h-6">
+          <DeleteIcon />
+        </div>
       </button>
     </article>
   );

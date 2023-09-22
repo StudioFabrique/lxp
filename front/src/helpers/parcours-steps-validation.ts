@@ -33,8 +33,6 @@ const testContacts = (contacts: Array<Contact>) => {
 }; */
 
 const testObjectives = (objectives: Array<Objective>) => {
-  console.log(objectives);
-
   return objectives.length > 0;
 };
 
@@ -43,7 +41,19 @@ const testSkills = (skills: Array<Skill>) => {
 };
 
 const testModules = (modules: Array<Module>) => {
-  return modules.length > 0;
+  let result = true;
+  if (modules.length > 0) {
+    modules.forEach((module) => {
+      const sDate = new Date(module.minDate!).getTime();
+      const eDate = new Date(module.maxDate!).getTime();
+      if (eDate < sDate) {
+        result = false;
+      }
+    });
+  } else {
+    result = false;
+  }
+  return result;
 };
 
 export function testStep(id: number, data: any) {

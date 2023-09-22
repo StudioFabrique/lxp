@@ -18,6 +18,7 @@ import httpGetContacts from "../../../controllers/user/http-get-contacts";
 import postTeacherRouter from "./post-teacher";
 import httpCreateManyUser from "../../../controllers/user/http-create-many-users";
 import checkToken from "../../../middleware/check-token";
+import httpGetUsersByGroup from "../../../controllers/user/http-get-users-by-group";
 
 const userRouter = express.Router();
 
@@ -89,5 +90,7 @@ userRouter.get(
 userRouter.use("/new-teacher", postTeacherRouter);
 
 userRouter.get("/contacts", checkToken, httpGetContacts);
+
+userRouter.post("/group", checkToken, httpGetUsersByGroup);
 
 export default userRouter;

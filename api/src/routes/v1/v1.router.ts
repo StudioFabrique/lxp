@@ -9,7 +9,7 @@ import tagRouter from "./tag.router";
 import formationRouter from "./formation.router";
 import objectiveRouter from "./objective.router";
 import moduleRouter from "./module.router";
-import bonusSkillRouter from "./bonus-skill.router";
+import newModuleRouter from "./modules/new-module-router";
 
 const v1Router = express.Router();
 
@@ -22,6 +22,8 @@ v1Router.use("/tag", tagRouter);
 v1Router.use("/formation", formationRouter);
 v1Router.use("/bonus-skill", bonusSkillRouter);
 v1Router.use("/objective", objectiveRouter);
+// TODO : Renommer les routers pour les modules apres le merge de Martin
 v1Router.use("/module", moduleRouter);
+v1Router.use("/modules", newModuleRouter);
 
 export default v1Router;

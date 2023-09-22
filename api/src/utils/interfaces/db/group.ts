@@ -1,4 +1,4 @@
-import { Document, Schema, model } from "mongoose";
+import mongoose, { Document, Schema, model } from "mongoose";
 //import { IStudent } from "./student/student.model";
 import { IRole } from "./role";
 import { IUser } from "./user";
@@ -19,12 +19,12 @@ const groupSchema: Schema = new Schema(
     name: { type: String, required: true },
     desc: { type: String, required: true },
     users: {
-      type: [Schema.Types.ObjectId],
+      type: [mongoose.Schema.Types.ObjectId],
       ref: "User",
     },
     tags: { type: [Schema.Types.ObjectId], ref: "Role", required: "false" },
     roles: {
-      type: [Schema.Types.ObjectId],
+      type: [mongoose.Schema.Types.ObjectId],
       ref: "Role",
       required: true,
     },
@@ -32,6 +32,6 @@ const groupSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-const Group = model<IGroup>("Group", groupSchema);
+const Group = mongoose.model<IGroup>("Group", groupSchema);
 
 export default Group;

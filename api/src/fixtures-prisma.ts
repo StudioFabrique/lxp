@@ -4,6 +4,7 @@ dotenv.config();
 import mongoose from "mongoose";
 import User from "./utils/interfaces/db/user";
 import Role from "./utils/interfaces/db/role";
+import { modulesList } from "./utils/fixtures/data/data";
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
 
@@ -283,11 +284,40 @@ async function createFormation() {
   }
 }
 
+async function createModules() {
+  const modules = modulesList.map((item: string) => ({
+    title: item,
+  }));
+  await prisma.module.createMany({
+    data: modules,
+  });
+}
+
+async function createModulesOnFormation() {
+  const modules = await prisma.module.findMany();
+  const newModules = await prisma.formation.update({
+    where: { id: 1 },
+    data: {
+      modules: {
+        create: modules.map((m: any) => {
+          return {
+            module: {
+              connect: { id: m.id },
+            },
+          };
+        }),
+      },
+    },
+  });
+}
+
 async function loadFixtures() {
   await createTags();
   await createAdmins();
   await createTeachers();
   await createFormation();
+  //await createModules();
+  //await createModulesOnFormation();
   await disconnect();
 }
 

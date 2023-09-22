@@ -5,8 +5,8 @@ import { sortArray } from "../utils/sortArray";
 const useEagerLoadingList = (initialList: Array<any>, defaultSort: string) => {
   const [list, setList] = useState<Array<any> | null>(initialList); // liste temporaire des objets à afficher
   const [page, setPage] = useState(1); //  numéro de la page affichée
-  const [limit, setLimit] = useState(1000); // quantité d'objets à afficher
-  const [totalPages] = useState(initialList.length);
+  const [limit, setLimit] = useState(15); // quantité d'objets à afficher
+  const [totalPages, setTotalPages] = useState(0);
   const [allChecked, setAllChecked] = useState(false);
   const [fieldSort, setFieldSort] = useState<string>(defaultSort);
   const [direction, setDirection] = useState<boolean>(true);
@@ -35,15 +35,19 @@ const useEagerLoadingList = (initialList: Array<any>, defaultSort: string) => {
    * filtre la liste d'objets en fonction des filtes
    */
   const getFilteredList = useCallback(
-    (filters: Array<{ field: string; value: string }>) => {
+    (filters: { field: string; property: string; value: string }) => {
       let filteredList = initialList;
-      // on applique chaque filtre sur la liste créée par l'utilisation précédente de la fonction filter
-      filters.forEach((filter) => {
-        filteredList = filteredList.filter(
-          (item) => item[filter.field] === filter.value
+
+      if (filters.property.length > 0) {
+        filteredList = filteredList.filter((item: any) =>
+          item[filters.field][filters.property].includes(filters.value)
         );
-      });
-      // on attribue la liste réduite par les applications successives des filtres au state "list"
+      } else {
+        filteredList = filteredList.filter((item: any) =>
+          item[filters.field].includes(filters.value)
+        );
+      }
+
       setList(filteredList);
     },
     [initialList]
@@ -75,8 +79,6 @@ const useEagerLoadingList = (initialList: Array<any>, defaultSort: string) => {
   }, [initialList]);
 
   const sortData = (column: string) => {
-    console.log("coucou sorting");
-
     if (column === fieldSort) {
       setDirection((prevDirection) => !prevDirection);
     } else {
@@ -106,6 +108,16 @@ const useEagerLoadingList = (initialList: Array<any>, defaultSort: string) => {
     const offset = getPagination(page, limit);
     setList(initialList.slice(offset, offset + limit));
   }, [initialList, limit, page]);
+
+  useEffect(() => {
+    console.log(initialList.length / limit);
+
+    const pages =
+      initialList.length % limit === 0
+        ? initialList.length / limit
+        : Math.trunc(initialList.length / limit) + 1;
+    setTotalPages(pages);
+  }, [limit, initialList]);
 
   /**
    * gère le cochage / décochage de toutes les rows de la liste

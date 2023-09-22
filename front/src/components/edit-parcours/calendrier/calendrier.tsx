@@ -1,3 +1,7 @@
+/**
+ * MADE IN MARTIN
+ */
+
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useSelector } from "react-redux";
@@ -32,6 +36,12 @@ const Calendrier = () => {
       parcoursModulesSliceActions.updateCurrentParcoursModule(modules[0].id)
     );
   }, [dispatch, modules]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(parcoursModulesSliceActions.setCurrentModule(null));
+    };
+  }, [dispatch]);
 
   return (
     <div className="flex flex-col gap-y-5">
