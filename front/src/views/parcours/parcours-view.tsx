@@ -165,7 +165,7 @@ const ParcoursView = () => {
             <div className="w-full mt-16 flex flex-col gap-y-5">
               <ParcoursViewStatistiques />
               <ParcoursViewContenu />
-              <div className="grid grid-cols-3 gap-x-5">
+              <div className="grid lg:grid-cols-3 gap-x-5 gap-y-5">
                 <div className="grid grid-rows-2 gap-y-5">
                   <ParcoursViewInformations />
                   <ParcoursViewDescription />

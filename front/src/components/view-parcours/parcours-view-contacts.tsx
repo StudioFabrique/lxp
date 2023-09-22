@@ -10,9 +10,12 @@ const ParcoursViewContacts = () => {
   const contactsList =
     contacts.length > 0 ? (
       contacts.map((contact) => (
-        <div className="flex justify-between">
+        <div
+          key={contact.id}
+          className="flex justify-between bg-secondary p-4 rounded-lg"
+        >
           <p>{contact.name}</p>
-          <p>{contact.role}</p>
+          <p className="font-bold">{contact.role}</p>
         </div>
       ))
     ) : (
@@ -22,7 +25,9 @@ const ParcoursViewContacts = () => {
   return (
     <Wrapper>
       <h2 className="text-xl font-bold text-primary">Ressources & Contacts</h2>
-      <div>{contactsList}</div>
+      <div className="flex flex-col gap-y-5 overflow-y-auto h-[60vh]">
+        {contactsList}
+      </div>
     </Wrapper>
   );
 };

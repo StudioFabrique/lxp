@@ -7,6 +7,7 @@ import {
   serverIssue,
 } from "../../utils/constantes";
 import { IUser } from "../../utils/interfaces/db/user";
+import updateManyUsers from "../../models/user/update-many-users";
 
 export default async function httpCreateGroup(req: Request, res: Response) {
   const {
@@ -29,6 +30,13 @@ export default async function httpCreateGroup(req: Request, res: Response) {
     );
 
     console.log(response);
+
+    const usersToUpdate = users.map((user) => {
+      user.group?.push(response);
+      return user;
+    });
+
+    await updateManyUsers(usersToUpdate);
 
     if (response) {
       return res.status(201).json({ message: creationSuccessfull });

@@ -1,9 +1,9 @@
 const ParcoursViewQuickStatistiques = () => {
   return (
-    <div className="grid grid-cols-5 gap-x-10 mt-5">
+    <div className="grid lg:grid-cols-5 gap-y-5 gap-x-10 mt-5">
       <div className="flex flex-col gap-y-5 items-center bg-secondary p-10 rounded-lg">
         <p className="font-bold text-xl">Diplôme</p>
-        <p className="font-bold text-4xl">Bac +3</p>
+        <p className="font-bold text-4xl whitespace-nowrap">Bac +3</p>
       </div>
       <div className="flex flex-col gap-y-5 items-center bg-secondary p-10 rounded-lg">
         <p className="font-bold text-xl">Étudiants</p>

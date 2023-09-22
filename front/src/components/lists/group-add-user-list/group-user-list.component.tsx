@@ -1,5 +1,5 @@
-import { FC, useState } from "react";
-import GroupManageUserList from "./group-manage-user-list/group-manage-user-list.component";
+import { FC } from "react";
+import GroupManageUserList from "./group-manage-user-list/group-manage-user-list";
 import User from "../../../utils/interfaces/user";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import GroupUserItem from "./group-user-item.component";
@@ -14,28 +14,18 @@ const GroupUserList: FC<{
   onUpdateUser: (user: User) => void;
   onDeleteUser: (user: User) => void;
 }> = ({ usersToAdd, onAddUsers, onUpdateUser, onDeleteUser }) => {
-  const [needDataUpdate, setDataUpdateState] = useState<boolean>(false);
-
   return (
     <Wrapper>
       <div className="flex justify-between">
         <h2 className="font-bold text-lg">Etudiants</h2>
         <div className="flex gap-x-5">
-          <CsvImportUserList
-            setDataUpdateState={setDataUpdateState}
-            onAddUsers={onAddUsers}
-          />
+          <CsvImportUserList onAddUsers={onAddUsers} />
           <LoadingIcon />
           <ThreeDotIcon />
         </div>
       </div>
       <div className="flex justify-between items-center">
-        <GroupManageUserList
-          needDataUpdate={needDataUpdate}
-          setDataUpdateState={setDataUpdateState}
-          onAddUsers={onAddUsers}
-          usersToAdd={usersToAdd}
-        />
+        <GroupManageUserList onAddUsers={onAddUsers} usersToAdd={usersToAdd} />
         <SearchSimple placeholder="Rechercher un étudiant par nom ou prénom" />
       </div>
 
