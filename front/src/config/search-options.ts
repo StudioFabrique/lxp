@@ -8,3 +8,8 @@ export const userSearchOptions = [
 ];
 
 export const groupSearchOptions = [{ index: 1, value: "name", option: "Nom" }];
+
+export const userInGroupSearchOptions = [
+  { index: 1, value: "lastname", option: "Nom" },
+  { index: 2, value: "firstname", option: "Prénom" },
+];
