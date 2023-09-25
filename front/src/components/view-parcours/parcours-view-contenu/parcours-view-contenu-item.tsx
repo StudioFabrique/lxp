@@ -13,15 +13,15 @@ const ParcoursViewContenuItem: FC<{
   };
 
   return (
-    <div className="flex gap-x-5">
-      <div className="flex flex-col items-center bg-secondary p-4 w-20 h-20 rounded-lg">
+    <div className="flex gap-x-5 items-center">
+      <div className="flex flex-col items-center bg-secondary p-4 w-20 rounded-lg">
         <p className="font-bold text-xl">{minDate.day}</p>
         <p className="uppercase">{minDate.month}</p>
       </div>
       <div className="flex flex-col items-center bg-primary-focus p-4 rounded-lg hover:bg-secondary-focus w-full">
         <p className="self-start">{`Module ${iterationCount}`}</p>
         <div className="flex justify-between w-full">
-          <p className="self-start">{module.title}</p>
+          <p className="self-start text-xl font-bold">{module.title}</p>
           <span className="self-end border-2 rounded-full">
             <RightArrowIcon />
           </span>
