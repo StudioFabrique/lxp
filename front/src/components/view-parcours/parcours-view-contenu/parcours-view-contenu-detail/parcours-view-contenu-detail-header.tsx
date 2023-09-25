@@ -7,7 +7,7 @@ const ParcoursViewContenuDetailHeader: FC<{
   const classImage: React.CSSProperties = {
     backgroundImage: `url(${imageModuleHeader})`,
     width: "100%",
-    height: "10rem",
+    height: "12rem",
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
