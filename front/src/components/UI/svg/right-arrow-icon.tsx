@@ -10,7 +10,7 @@ const RightArrowIcon = () => (
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+      d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
     />
   </svg>
 );
