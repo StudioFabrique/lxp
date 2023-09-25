@@ -1,13 +1,21 @@
-import { FC, MouseEvent, MouseEventHandler, useState } from "react";
-import SortDownIcon from "../../../../UI/svg/sort-down-icon.component";
-import SortUpIcon from "../../../../UI/svg/sort-up-icon.component";
+import {
+  Dispatch,
+  FC,
+  MouseEvent,
+  MouseEventHandler,
+  SetStateAction,
+  useState,
+} from "react";
+import SortDownIcon from "../../../UI/svg/sort-down-icon.component";
+import SortUpIcon from "../../../UI/svg/sort-up-icon.component";
 
 const UserToAddListHeader: FC<{
   filters: { filterValue: string; placeholder: string }[];
   value: string;
   order: string;
   sortData: (order: string) => void;
-}> = ({ filters, value, order, sortData }) => {
+  setSelectAllUsers: Dispatch<SetStateAction<boolean>>;
+}> = ({ filters, value, order, sortData, setSelectAllUsers }) => {
   const [selectedFilter, setSelectedFilter] = useState<{
     filterValue: string;
     placeholder: string;
@@ -42,7 +50,11 @@ const UserToAddListHeader: FC<{
   return (
     <div className="flex items-center justify-between px-5">
       <span className="flex gap-x-5 items-center">
-        <input type="checkbox" className="checkbox checkbox-sm" />
+        <input
+          onChange={(e) => setSelectAllUsers(e.currentTarget.checked)}
+          type="checkbox"
+          className="checkbox checkbox-sm"
+        />
         <p>Sélection multiple</p>
       </span>
       <div className="flex items-center">

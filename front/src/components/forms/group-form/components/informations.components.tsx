@@ -7,7 +7,6 @@ import {
 } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 import ImageFileUpload from "../../../UI/image-file-upload/image-file-upload";
-import { title } from "process";
 
 const Informations: FC<{
   name: any;
@@ -29,7 +28,7 @@ const Informations: FC<{
         <input
           className={`input ${
             name.hasError && "input-error"
-          } input-sm w-full p-[20px] pl-[30px]`}
+          } input-sm w-full p-5`}
           type="text"
           onChange={name.valueChangeHandler}
           onBlur={name.valueBlurHandler}
@@ -42,7 +41,7 @@ const Informations: FC<{
         <textarea
           className={`textarea ${
             desc.hasError && "textarea-error"
-          } w-full p-[20px] pl-[30px] placeholder:text-purple-discrete`}
+          } w-full p-5 placeholder:text-purple-discrete`}
           onChange={desc.valueChangeHandler}
           onBlur={desc.valueBlurHandler}
           defaultValue={desc.value}
@@ -52,7 +51,7 @@ const Informations: FC<{
       <span className="flex row gap-x-5">
         <label>Statut</label>
         <input
-          className="toggle "
+          className="toggle"
           type="checkbox"
           onChange={handleToggle}
           defaultValue={isActive}
@@ -60,11 +59,7 @@ const Informations: FC<{
         />
         <label>Actif</label>
       </span>
-      <ImageFileUpload
-        maxSize={10000000000000000}
-        onSetFile={onSetFile}
-        type={2}
-      />
+      <ImageFileUpload maxSize={100000} onSetFile={onSetFile} type={2} />
     </Wrapper>
   );
 };

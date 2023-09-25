@@ -1,12 +1,12 @@
 import { FC, useEffect, useState } from "react";
 import { AddUsersButton } from "./group-manage-user-item/buttons.component";
-import UserToAddList from "./user-to-add-list/user-to-add-list.component";
 import usePagination from "../../../../hooks/use-pagination";
 import Pagination from "../../../UI/pagination/pagination";
 import RightSideDrawer from "../../../UI/right-side-drawer/right-side-drawer";
 import User from "../../../../utils/interfaces/user";
 import Search from "../../../UI/search/search.component";
-import UserToAddListHeader from "./user-to-add-list/user-to-add-list-header.component";
+import UserToAddListHeader from "./user-to-add-list-header.component";
+import GroupManageUserItem from "./group-manage-user-item/group-manage-user-item.component";
 
 const GroupManageUserList: FC<{
   usersToAdd: User[];
@@ -19,10 +19,10 @@ const GroupManageUserList: FC<{
     handlePageNumber,
     perPage,
     setPerPage,
-    getList,
-    setDataList,
     stype,
     sortData,
+    setAllChecked,
+    allChecked,
   } = usePagination("lastname", `/user/student`);
 
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
@@ -81,14 +81,21 @@ const GroupManageUserList: FC<{
   useEffect(() => {
     setUsersToShowInList(
       dataList.filter(
-        (data) =>
-          !dataList
-            .map((user) => user._id)
-            .includes(usersToAdd.map((user) => user._id))
+        (data) => {
+          console.log(data);
+          return !usersToAdd.map((user) => user._id).includes(data._id);
+        }
+        // !dataList
+        //   .map((user) => user._id)
+        //   .includes(usersToAdd.map((user) => user._id))
       )
     );
     console.log(usersToAdd);
   }, [dataList, usersToAdd]);
+
+  useEffect(() => {
+    setUsersSettedState(!allChecked);
+  }, [allChecked]);
 
   return (
     <RightSideDrawer
@@ -108,6 +115,7 @@ const GroupManageUserList: FC<{
           />
           <div className="w-full flex flex-col gap-y-4">
             <UserToAddListHeader
+              setSelectAllUsers={setAllChecked}
               order={stype}
               sortData={sortData}
               filters={[
@@ -117,19 +125,20 @@ const GroupManageUserList: FC<{
               ]}
               value="test"
             />
-            <UserToAddList
-              selectedUsers={selectedUsers}
-              userList={
-                userSearchResult.length > 0
-                  ? userSearchResult
-                  : usersToShowsInList
-              }
-              usersToAdd={usersToAdd}
-              onAddSelectedUser={handleAddSelectedUser}
-              onDeleteSelectedUser={handleDeleteSelectedUser}
-              onAddUserInstantly={handleAddUserInstantly}
-              isUsersSettedUp={isUsersSettedUp}
-            />
+            <div className="flex flex-col gap-y-5 h-full overflow-y-auto w-full">
+              {userSearchResult.length > 0
+                ? userSearchResult
+                : usersToShowsInList.map((user: User) => (
+                    <GroupManageUserItem
+                      key={user._id}
+                      allUserSelected={allChecked}
+                      user={user}
+                      onAddSelectedUser={handleAddSelectedUser}
+                      onDeleteSelectedUser={handleDeleteSelectedUser}
+                      onAddUserInstantly={handleAddUserInstantly}
+                    />
+                  ))}
+            </div>
 
             <Pagination
               page={page}
