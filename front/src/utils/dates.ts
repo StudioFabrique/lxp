@@ -71,3 +71,7 @@ export const monthItems = [
 export function getMonth(monthNumber: number) {
   return monthsList[monthNumber - 1];
 }
+
+export function convertMilisToWeeks(millisValue: number) {
+  return millisValue / 604800000;
+}

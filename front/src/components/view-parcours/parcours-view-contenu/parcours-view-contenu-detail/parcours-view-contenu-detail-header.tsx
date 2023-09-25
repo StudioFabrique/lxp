@@ -16,7 +16,7 @@ const ParcoursViewContenuDetailHeader: FC<{
 
   return (
     <div className="flex p-5" style={classImage}>
-      <p className="self-end">{moduleTitle}</p>
+      <p className="self-end capitalize">{moduleTitle}</p>
     </div>
   );
 };
