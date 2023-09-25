@@ -10,6 +10,13 @@ const ParcoursViewContenu = () => {
     (state: any) => state.parcoursModules.modules
   ) as Module[];
 
+  /* const image = () => {
+    const reader = new FileReader();
+    reader.readAsDataURL(modules[0]?.image.data);
+    console.log(reader.result);
+    return reader.result;
+  }; */
+
   const contentsList =
     modules.length > 0 ? (
       modules.map((module, i) => (
@@ -30,9 +37,7 @@ const ParcoursViewContenu = () => {
         <div className="flex flex-col gap-y-5">{contentsList}</div>
         <div className="">
           <ParcoursViewContenuDetailHeader
-            imageModuleHeader={`data:image/jpeg;base64,${
-              modules[0]?.image ?? ""
-            }`}
+            imageModuleHeader={`data:image/jpeg;base64,${/* image() ?? */ ""}`}
             moduleTitle="test"
           />
           <ParcoursViewContenuDetail />

@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import Module from "../../../../utils/interfaces/module";
 import SubWrapper from "../../../UI/sub-wrapper/sub-wrapper.component";
+import BookIcon from "../../../UI/svg/book-icon";
 
 const ParcoursViewContenuDetail = () => {
   const modules = useSelector(
@@ -12,16 +13,21 @@ const ParcoursViewContenuDetail = () => {
       modules.map((module, i) => (
         <div
           key={module.id}
-          className="flex flex-col items-center bg-primary-focus p-4 rounded-lg hover:bg-secondary-focus w-full"
+          className="flex items-center bg-primary-focus p-4 rounded-lg hover:bg-secondary-focus"
         >
-          <p className="self-start">{`Cours ${i + 1}`}</p>
-          <div className="flex justify-between w-full">
-            <p className="self-start">{module.title}</p>
+          <span className="w-14 mx-2">
+            <BookIcon />
+          </span>
+          <div className="flex flex-col items-center">
+            <p className="self-start">{`Cours ${i + 1}`}</p>
+            <div className="flex justify-between w-full">
+              <p className="self-start text-xl font-bold">{module.title}</p>
+            </div>
           </div>
         </div>
       ))
     ) : (
-      <p>Aucun modules</p>
+      <p>Aucun cours</p>
     );
 
   return (
