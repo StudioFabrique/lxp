@@ -14,6 +14,7 @@ const GroupManageUserList: FC<{
 }> = ({ usersToAdd, onAddUsers }) => {
   const {
     page,
+    setPage,
     totalPages,
     dataList,
     handlePageNumber,
@@ -110,6 +111,17 @@ const GroupManageUserList: FC<{
       handleRemoveSelectedAllUser();
     }
   }, [allChecked, handleAddSelectedAllUser, handleRemoveSelectedAllUser]);
+
+  /**
+   * Si le nombre d'utilisateurs pas encore ajoutés (usersToShowsInList) est vide,
+   * alors incrémente le nombre de page jusqu'au maximum et revérifie
+   * encore si des utilisateurs existent.
+   */
+  useEffect(() => {
+    if (usersToShowsInList <= 0 && page < totalPages!) {
+      setPage((page) => page + 1);
+    }
+  }, [usersToShowsInList, page, setPage, totalPages]);
 
   return (
     <RightSideDrawer
