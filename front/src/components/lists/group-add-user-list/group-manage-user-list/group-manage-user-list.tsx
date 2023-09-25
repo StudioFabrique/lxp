@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { AddUsersButton } from "./group-manage-user-item/buttons.component";
 import usePagination from "../../../../hooks/use-pagination";
 import Pagination from "../../../UI/pagination/pagination";
@@ -45,6 +45,16 @@ const GroupManageUserList: FC<{
     setUsersSettedState(false);
     console.log("id adding : " + user);
   };
+
+  const handleAddSelectedAllUser = useCallback(() => {
+    setSelectedUsers(usersToShowsInList);
+    setUsersSettedState(false);
+  }, [usersToShowsInList]);
+
+  const handleRemoveSelectedAllUser = useCallback(() => {
+    setSelectedUsers([]);
+    setUsersSettedState(true);
+  }, []);
 
   const handleDeleteSelectedUser = (user: User) => {
     setSelectedUsers((users) =>
@@ -94,13 +104,18 @@ const GroupManageUserList: FC<{
   }, [dataList, usersToAdd]);
 
   useEffect(() => {
-    setUsersSettedState(!allChecked);
-  }, [allChecked]);
+    if (allChecked) {
+      handleAddSelectedAllUser();
+    } else {
+      handleRemoveSelectedAllUser();
+    }
+  }, [allChecked, handleAddSelectedAllUser, handleRemoveSelectedAllUser]);
 
   return (
     <RightSideDrawer
       title="Ajouter des étudiants au groupe"
       id="add-user-to-group"
+      onCloseDrawer={() => setAllChecked(false)}
     >
       {usersToShowsInList.length > 0 ? (
         <div className="flex flex-col items-center gap-y-10 justify-between m-10">
