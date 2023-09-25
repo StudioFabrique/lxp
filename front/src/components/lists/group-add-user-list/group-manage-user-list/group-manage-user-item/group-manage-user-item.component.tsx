@@ -7,11 +7,13 @@ import { AddIcon2 } from "../../../../UI/svg/add-icons";
 
 const GroupManageUserItem: FC<{
   user: User;
+  allUserSelected: boolean;
   onAddSelectedUser: (user: User) => void;
   onDeleteSelectedUser: (user: User) => void;
   onAddUserInstantly: (user: User) => void;
 }> = ({
   user,
+  allUserSelected,
   onAddSelectedUser,
   onDeleteSelectedUser,
   onAddUserInstantly,
@@ -25,6 +27,7 @@ const GroupManageUserItem: FC<{
       <span className="flex items-center gap-x-4 p-2 pl-5 w-full bg-secondary-content rounded-lg">
         <SelectionButton
           currentUser={user}
+          allUserSelected={allUserSelected}
           onAddSelectedUser={onAddSelectedUser}
           onDeleteSelectedUser={onDeleteSelectedUser}
         />

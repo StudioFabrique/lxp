@@ -59,8 +59,8 @@ const GroupAddForm: FC<{
     desc.isValid &&
     dates.startDate.length > 0 &&
     dates.endDate.length > 0 &&
-    file !== null &&
-    parcoursId !== null &&
+    // file !== null &&
+    // parcoursId !== null &&
     isActive != null;
 
   const handleSubmit = () => {
