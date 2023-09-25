@@ -284,7 +284,7 @@ async function createFormation() {
   }
 }
 
-async function createModules() {
+/* async function createModules() {
   const modules = modulesList.map((item: string) => ({
     title: item,
   }));
@@ -309,7 +309,7 @@ async function createModulesOnFormation() {
       },
     },
   });
-}
+} */
 
 async function loadFixtures() {
   await createTags();

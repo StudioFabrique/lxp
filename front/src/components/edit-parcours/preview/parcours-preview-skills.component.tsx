@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import Skill from "../../../utils/interfaces/skill";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
+import TrophyIcon from "../../UI/svg/trophy-icon.component";
 
 const ParcoursPreviewSkills = () => {
   const skills = useSelector(
@@ -15,12 +16,16 @@ const ParcoursPreviewSkills = () => {
         {skills.map((skill) => (
           <li className="w-full flex gap-x-2 items-center" key={skill.id}>
             <SubWrapper>
-              <div className="w-6 h-6">
-                <img
-                  className="w-full h-full"
-                  src={skill.badge}
-                  alt={skill.description}
-                />
+              <div className="w-6 h-6 text-primary">
+                {skill.badge ? (
+                  <img
+                    className="w-full h-full"
+                    src={skill.badge}
+                    alt={skill.description}
+                  />
+                ) : (
+                  <TrophyIcon />
+                )}
               </div>
             </SubWrapper>
             <div className="flex-1">

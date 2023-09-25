@@ -16,7 +16,7 @@ const SkillBadge: FC<Props> = ({ badge }) => {
           alt="illustration badge"
         />
       ) : (
-        <div className="text-primary">
+        <div className="w-6 h-6 text-primary">
           <TrophyIcon />
         </div>
       )}

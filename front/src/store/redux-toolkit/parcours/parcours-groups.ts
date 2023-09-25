@@ -4,9 +4,11 @@ import Group from "../../../utils/interfaces/group";
 import User from "../../../utils/interfaces/user";
 
 const initialGroupsState: {
+  groupsIds: string[] | null;
   groups: Group[] | null;
   students: User[] | null;
 } = {
+  groupsIds: null,
   groups: null,
   students: null,
 };
@@ -15,6 +17,12 @@ const parcoursGroupsSlice = createSlice({
   name: "parcoursGroups",
   initialState: initialGroupsState,
   reducers: {
+    setGroupsIds(state, action) {
+      if (!state.groupsIds) {
+        state.groupsIds = [];
+      }
+      state.groupsIds = [...state.groupsIds, ...action.payload];
+    },
     setGroups(state, action) {
       if (!state.groups) {
         state.groups = [];

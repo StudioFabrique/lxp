@@ -31,6 +31,7 @@ import ModulesSection from "../../components/edit-parcours/modules-section/modul
 import Calendrier from "../../components/edit-parcours/calendrier/calendrier";
 import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
 import ParcoursStudents from "../../components/edit-parcours/parcours-students/parcours-students.component";
+import { parcoursGroupsAction } from "../../store/redux-toolkit/parcours/parcours-groups";
 
 let initialState = true;
 
@@ -139,6 +140,16 @@ const EditParcours = () => {
         );
       } else {
         dispatch(parcoursModulesSliceActions.setModules([]));
+      }
+
+      if (data.groups.length > 0) {
+        dispatch(
+          parcoursGroupsAction.setGroupsIds(
+            data.groups.map((item: any) => item.group)
+          )
+        );
+      } else {
+        dispatch(parcoursGroupsAction.setGroups([]));
       }
 
       setIsLoading(false);
@@ -353,7 +364,7 @@ const EditParcours = () => {
               className="btn btn-primary"
               onClick={() => handleUpdateStep(actualStep.id)}
             >
-              Etape suivante
+              {!finalStep ? "Etape suivante" : "Publier"}
             </button>
           </div>
         </FadeWrapper>
