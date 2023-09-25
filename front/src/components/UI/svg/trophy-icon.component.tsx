@@ -1,12 +1,4 @@
-import { FC } from "react";
-
-type Props = {
-  size?: number;
-};
-
-const TrophyIcon: FC<Props> = ({ size = 6 }) => {
-  let style = `w-${size} h-${size}`;
-
+const TrophyIcon = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -14,7 +6,7 @@ const TrophyIcon: FC<Props> = ({ size = 6 }) => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className={style}
+      className="w-full h-full"
     >
       <path
         strokeLinecap="round"

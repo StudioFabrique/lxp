@@ -41,7 +41,7 @@ model Parcours {
   modules      ModulesOnParcours[]
   bonusSkills  BonusSkill[]
   objectives   Objective[]
-  groups       Group[]
+  groups       GroupsOnParcours[]
   virtualClass String?
 }
 
@@ -114,10 +114,9 @@ model Teacher {
 }
 
 model Group {
-  id         Int      @id @default(autoincrement())
-  idMdb      String
-  parcours   Parcours @relation(fields: [parcoursId], references: [id])
-  parcoursId Int
+  id       Int                @id @default(autoincrement())
+  idMdb    String
+  parcours GroupsOnParcours[]
 }
 
 model Contact {
@@ -210,4 +209,13 @@ model ModulesOnParcours {
   parcoursId Int
 
   @@id([moduleId, parcoursId])
+}
+
+model GroupsOnParcours {
+  group      Group    @relation(fields: [groupId], references: [id])
+  groupId    Int
+  parcours   Parcours @relation(fields: [parcoursId], references: [id])
+  parcoursId Int
+
+  @@id([groupId, parcoursId])
 }
