@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import Module from "../../utils/interfaces/module";
+import { convertMilisToWeeks } from "../../utils/dates";
 
 const ParcoursViewQuickStatistiques = () => {
   const parcoursInfos = useSelector(
@@ -22,13 +23,10 @@ const ParcoursViewQuickStatistiques = () => {
 
   const parcoursWeeks = () => {
     const weeks = Math.floor(
-      (new Date(parcoursInfos.endDate).getTime() -
-        new Date(parcoursInfos.startDate).getTime()) /
-        1000 /
-        60 /
-        60 /
-        24 /
-        7
+      convertMilisToWeeks(
+        new Date(parcoursInfos.endDate).getTime() -
+          new Date(parcoursInfos.startDate).getTime()
+      )
     );
     console.log(weeks);
 

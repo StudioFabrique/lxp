@@ -7,14 +7,16 @@ const ParcoursViewStatistiques = () => {
 
   return (
     <Wrapper>
-      <h2 className="text-xl font-bold text-primary">
-        Statistiques du parcours
-      </h2>
-      <div className="flex justify-between">
-        <span />
-        <span onClick={() => navigate("statistiques")} className="self-end">
-          <RightArrowIcon />
-        </span>
+      <div className="h-40 flex flex-col justify-between">
+        <h2 className="text-2xl w-44 font-bold text-primary">
+          Statistiques du parcours
+        </h2>
+        <div className="flex justify-between">
+          <span />
+          <span onClick={() => navigate("statistiques")} className="self-end">
+            <RightArrowIcon />
+          </span>
+        </div>
       </div>
     </Wrapper>
   );
