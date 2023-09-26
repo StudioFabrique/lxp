@@ -24,10 +24,6 @@ const ModulesSection = () => {
   const currentModule = useSelector(
     (state: any) => state.parcoursModules.currentModule
   ) as Module;
-  const modules = useSelector(
-    (state: any) => state.parcoursModules.modules
-  ) as Module;
-  //const [newModule, setNewModule] = useState(false);
   const formRef = useRef<HTMLInputElement>(null);
   const editionMode = useSelector(
     (state: any) => state.parcoursModules.editionMode
@@ -101,7 +97,6 @@ const ModulesSection = () => {
       dispatch(parcoursModulesSliceActions.toggleEditionMode(false));
       dispatch(parcoursModulesSliceActions.setCurrentModule(null));
       dispatch(parcoursModulesSliceActions.toggleNewModule(false));
-      console.log({ modules });
 
       console.log("fini");
     };
@@ -115,6 +110,31 @@ const ModulesSection = () => {
     );
   };
 
+  const handleUpdateModule = (formData: FormData) => {
+    const applyData = (data: any) => {
+      console.log({ data });
+      const updatedModule = {
+        ...data.data,
+        id: data.data.id.toString(),
+        bonusSkills: data.data.bonusSkills.map((item: any) => item.bonusSkill),
+        contacts: data.data.contacts.map((item: any) => item.contact),
+      };
+      console.log({ updatedModule });
+
+      dispatch(parcoursModulesSliceActions.toggleEditionMode(false));
+      dispatch(parcoursModulesSliceActions.editModule(updatedModule));
+    };
+    sendRequest(
+      {
+        path: "/modules/new-module/update",
+        method: "put",
+        body: formData,
+      },
+      applyData
+    );
+  };
+
+  // scroll jusqu'au premier champ du formulaire qd ce dernier est ouvert
   useEffect(() => {
     if (currentModule && formRef && (editionMode || newModule)) {
       formRef.current!.scrollIntoView({ behavior: "smooth" });
@@ -149,6 +169,7 @@ const ModulesSection = () => {
           <button
             className="btn btn-outline btn-primary"
             onClick={handleCreateModule}
+            disabled={editionMode}
           >
             Créer un module
           </button>
@@ -166,7 +187,7 @@ const ModulesSection = () => {
       {(currentModule && editionMode) || newModule ? (
         <Wrapper>
           <ModuleForm
-            onSubmitModule={handleSubmitModule}
+            onSubmitModule={newModule ? handleSubmitModule : handleUpdateModule}
             isLoading={isLoading}
             ref={formRef}
           />

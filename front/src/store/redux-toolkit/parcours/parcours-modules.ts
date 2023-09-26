@@ -44,6 +44,7 @@ const parcoursModulesSlice = createSlice({
       modules = modules!.filter((item) => item.id !== module.id);
       modules = sortArray([...modules, module], "id");
       state.modules = modules;
+      console.log(state.modules);
     },
     toggleInitialRender(state, action) {
       state.initialRender = action.payload;

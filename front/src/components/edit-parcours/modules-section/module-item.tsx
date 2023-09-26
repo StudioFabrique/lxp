@@ -21,6 +21,9 @@ const ModuleItem: FC<ModuleItemProps> = ({ module, isSource, index }) => {
   const editionMode = useSelector(
     (state: any) => state.parcoursModules.editionMode
   );
+  const newModule = useSelector(
+    (state: any) => state.parcoursModules.newModule
+  );
 
   const parcoursTitle = useSelector(
     (state: any) => state.parcoursInformations.infos.title
@@ -46,7 +49,7 @@ const ModuleItem: FC<ModuleItemProps> = ({ module, isSource, index }) => {
 
   return (
     <Draggable
-      isDragDisabled={editionMode}
+      isDragDisabled={editionMode || newModule}
       draggableId={module.id!.toString()}
       index={index!}
     >
@@ -57,13 +60,13 @@ const ModuleItem: FC<ModuleItemProps> = ({ module, isSource, index }) => {
           {...provided.dragHandleProps}
           ref={provided.innerRef}
         >
-          <div className="w-[90%] h-full">
+          <div className="w-[99%] h-full">
             <div className="w-full flex gap-x-2">
               <div className="w-full flex-1 gap-y-4 rounded-lg">
                 <Wrapper>
                   <span className="w-full h-full flex gap-x-2 items-center">
                     <div style={classImage} />
-                    <p className="text-sm font-bold tracking-tight text-info">
+                    <p className="w-[80%] text-sm font-bold tracking-tight text-info">
                       {isSource
                         ? module.title
                         : `${module.title} - ${parcoursTitle}`}
@@ -77,6 +80,7 @@ const ModuleItem: FC<ModuleItemProps> = ({ module, isSource, index }) => {
                   <Link
                     className="btn btn-primary btn-circle rounded-md btn-sm"
                     to="#"
+                    aria-label="voir le module"
                   >
                     <div className="w-6 h-6">
                       <EyeIcon />
@@ -85,6 +89,8 @@ const ModuleItem: FC<ModuleItemProps> = ({ module, isSource, index }) => {
                   <button
                     className="btn btn-primary btn-circle rounded-md btn-sm"
                     onClick={() => setModuleToEdit(module)}
+                    disabled={newModule}
+                    aria-label="modifier le module"
                   >
                     <div className="w-6 h-6">
                       <EditIcon />

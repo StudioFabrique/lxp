@@ -119,7 +119,6 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
     const filteredFormationModulesIds = formationModulesIds.filter(
       (module: string) => !parcoursModulesIds.includes(module)
     );
-    console.log({ filteredFormationModules });
 
     const tasks = [...filteredFormationModules, ...parcoursModules];
     console.log({ tasks });
@@ -239,8 +238,6 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
     };
     setDnd(newState);
   };
-
-  console.log({ parcoursModules });
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>

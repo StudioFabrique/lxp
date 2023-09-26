@@ -27,6 +27,9 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
     const currentModule = useSelector(
       (state: any) => state.parcoursModules.currentModule
     );
+    const newModule = useSelector(
+      (state: any) => state.parcoursModules.newModule
+    ) as boolean;
     const parcours = useSelector((state: any) => state.parcours);
     const { value: title } = useInput(
       (value) => regexGeneric.test(value),
@@ -59,9 +62,6 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
     const parcoursInfos = useSelector(
       (state: any) => state.parcoursInformations.infos
     );
-
-    console.log({ listeContacts });
-    console.log({ teachers });
 
     /**
      * définit le style du champ formulaire en fonction de sa validité
@@ -137,11 +137,13 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
         teachers?.length > 0 &&
         skills &&
         skills.length > 0 &&
-        image &&
-        thumb;
+        newModule
+          ? image && thumb
+          : true;
 
       if (formIsValid) {
-        const module = {
+        let module = {
+          id: currentModule ? +currentModule.id : undefined,
           title: title.value,
           description: description.value,
           duration: duration.value,
@@ -157,8 +159,10 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
           parcoursId: parcours.id,
         };
         const formData = new FormData();
-        formData.append("image", image);
-        formData.append("thumb", thumb);
+        if (image && thumb) {
+          formData.append("image", image);
+          formData.append("thumb", thumb);
+        }
         formData.append("module", JSON.stringify(module));
 
         props.onSubmitModule(formData);
@@ -174,9 +178,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
     return (
       <form className="w-full" onSubmit={handleSubmitModule}>
         <h2 className="text-xl font-bold mb-4">
-          {currentModule.isNewModule
-            ? "Création de module"
-            : "Edition du module"}
+          {newModule ? "Création de module" : "Edition du module"}
         </h2>
         <section className="w-full  grid grid-cols-2 gap-8">
           <article className="flex flex-col gap-y-4">
@@ -232,7 +234,11 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
             <div className="w-full flex gap-x-4 items-center">
               <span style={classImage}></span>
               <div className="flex flex-col gap-y-4">
-                <label htmlFor="image">Téléverser une image</label>
+                <label htmlFor="image">
+                  {newModule
+                    ? "Téléverser une image"
+                    : "Choisir une nouvelle image"}
+                </label>
                 <MemoizedModuleFilesUpload setImage={handleUpdateImage} />
               </div>
             </div>
