@@ -1,8 +1,6 @@
 import { useSelector } from "react-redux";
 import useEagerLoadingList from "../../../hooks/use-eager-loading-list";
 import User from "../../../utils/interfaces/user";
-import SortColumnIcon from "../../UI/sort-column-icon.component/sort-column-icon.component";
-import StudentItem from "./student-item";
 import Group from "../../../utils/interfaces/group";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -11,6 +9,7 @@ import Pagination from "../../UI/pagination/pagination";
 import Search from "../../UI/search/search.component";
 import { userInGroupSearchOptions } from "../../../config/search-options";
 import RefreshIcon from "../../UI/svg/refresh-icon.component";
+import StudentsListTable from "./students-list-table";
 
 interface StudentsListProps {
   initalList: User[];
@@ -96,113 +95,12 @@ const StudentsList = (props: StudentsListProps) => {
       {list && list.length > 0 ? (
         <>
           <article>
-            <table className="table w-full border-separate border-spacing-y-2">
-              <thead>
-                <tr>
-                  <th>Avatar</th>
-                  <th
-                    className="cursor-pointer"
-                    onClick={() => {
-                      sortData("firstname");
-                    }}
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <p>Prénom</p>
-                      <SortColumnIcon
-                        fieldSort={fieldSort}
-                        column="firstname"
-                        direction={direction}
-                      />
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer"
-                    onClick={() => {
-                      sortData("lastname");
-                    }}
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <p>Nom</p>
-                      <SortColumnIcon
-                        fieldSort={fieldSort}
-                        column="lastname"
-                        direction={direction}
-                      />
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer"
-                    onClick={() => {
-                      sortData("email");
-                    }}
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <p>Email</p>
-                      <SortColumnIcon
-                        fieldSort={fieldSort}
-                        column="email"
-                        direction={direction}
-                      />
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer"
-                    onClick={() => {
-                      sortData("group");
-                    }}
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <p>Formation</p>
-                      <SortColumnIcon
-                        fieldSort={fieldSort}
-                        column="CDA"
-                        direction={direction}
-                      />
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer"
-                    onClick={() => {
-                      sortData("group");
-                    }}
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <p>Groupe</p>
-                      <SortColumnIcon
-                        fieldSort={fieldSort}
-                        column="group"
-                        direction={direction}
-                      />
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer"
-                    onClick={() => {
-                      sortData("createdAt");
-                    }}
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <p>Ajouté le</p>
-                      <SortColumnIcon
-                        fieldSort={fieldSort}
-                        column="createdAt"
-                        direction={direction}
-                      />
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {list.map((item: any, index: number) => (
-                  <tr
-                    className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content"
-                    key={index}
-                  >
-                    <StudentItem studentItem={item} />
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <StudentsListTable
+              list={list}
+              fieldSort={fieldSort}
+              direction={direction}
+              sortData={sortData}
+            />
           </article>
           <article>
             <Pagination page={page} totalPages={totalPages} setPage={setPage} />

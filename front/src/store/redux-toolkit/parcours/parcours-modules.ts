@@ -33,7 +33,9 @@ const parcoursModulesSlice = createSlice({
       state.newModule = action.payload;
     },
     addNewModule(state, action) {
-      state.modules = state.modules!.filter((item) => item.id !== "0");
+      if (!state.modules) {
+        state.modules = [];
+      }
       state.modules = [...state.modules, { ...action.payload }];
     },
     editModule(state, action) {
