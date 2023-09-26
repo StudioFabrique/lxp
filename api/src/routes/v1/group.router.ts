@@ -9,6 +9,9 @@ import {
 } from "../../middleware/validators";
 import httpSearchGroup from "../../controllers/group/http-search-group";
 import httpAddUser from "../../controllers/group/http-add-users-group";
+import { check } from "express-validator";
+import checkToken from "../../middleware/check-token";
+import httpGetGroupsById from "../../controllers/group/http-get-groups-by-id";
 
 const groupRouter = Router();
 
@@ -41,5 +44,7 @@ groupRouter.post("/", isUser, groupValidator, httpCreateGroup);
 groupRouter.get("/users", isUser);
 
 groupRouter.post("/users", isUser, httpAddUser);
+
+groupRouter.post("/groups", checkToken, httpGetGroupsById);
 
 export default groupRouter;

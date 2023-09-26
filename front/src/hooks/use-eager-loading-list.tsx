@@ -2,10 +2,14 @@ import { useCallback, useEffect, useState } from "react";
 import { getPagination } from "../utils/get-pagination";
 import { sortArray } from "../utils/sortArray";
 
-const useEagerLoadingList = (initialList: Array<any>, defaultSort: string) => {
+const useEagerLoadingList = (
+  initialList: Array<any>,
+  defaultSort: string,
+  defaultLimit = 15
+) => {
   const [list, setList] = useState<Array<any> | null>(initialList); // liste temporaire des objets à afficher
   const [page, setPage] = useState(1); //  numéro de la page affichée
-  const [limit, setLimit] = useState(15); // quantité d'objets à afficher
+  const [limit, setLimit] = useState(defaultLimit); // quantité d'objets à afficher
   const [totalPages, setTotalPages] = useState(0);
   const [allChecked, setAllChecked] = useState(false);
   const [fieldSort, setFieldSort] = useState<string>(defaultSort);

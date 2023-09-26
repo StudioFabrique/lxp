@@ -19,9 +19,13 @@ const ModulesSection = () => {
   const updatedModules = useSelector(
     (state: any) => state.parcoursModules.modules
   );
+  const formationId = useSelector((state: any) => state.parcours.formation.id);
   const dispatch = useDispatch();
   const currentModule = useSelector(
     (state: any) => state.parcoursModules.currentModule
+  ) as Module;
+  const modules = useSelector(
+    (state: any) => state.parcoursModules.modules
   ) as Module;
   //const [newModule, setNewModule] = useState(false);
   const formRef = useRef<HTMLInputElement>(null);
@@ -42,11 +46,11 @@ const ModulesSection = () => {
     };
     sendRequest(
       {
-        path: `/modules/formation/${1}`,
+        path: `/modules/formation/${formationId}`,
       },
       applyData
     );
-  }, [sendRequest]);
+  }, [sendRequest, formationId]);
 
   // mise à jour de la liste des modules du parcours dans la bdd et mise à jour du state en cas de réussite
   const handleSubmitModules = () => {
@@ -97,6 +101,8 @@ const ModulesSection = () => {
       dispatch(parcoursModulesSliceActions.toggleEditionMode(false));
       dispatch(parcoursModulesSliceActions.setCurrentModule(null));
       dispatch(parcoursModulesSliceActions.toggleNewModule(false));
+      console.log({ modules });
+
       console.log("fini");
     };
     sendRequest(

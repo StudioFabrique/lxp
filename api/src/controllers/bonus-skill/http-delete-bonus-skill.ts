@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
-import { badQuery } from "../../utils/constantes";
+import { badQuery, serverIssue } from "../../utils/constantes";
 import deleteBonusSkill from "../../models/bonus-skill/delete-bonus-skill";
 
 async function httpDeleteBonusSkill(req: Request, res: Response) {
@@ -14,9 +14,13 @@ async function httpDeleteBonusSkill(req: Request, res: Response) {
 
     const response = await deleteBonusSkill(parseInt(id));
 
-    return res.status(201).json({ suscces: true, response });
+    return res.status(201).json({ success: true, response });
   } catch (error: any) {
-    return res.status(500).json({ message: error.message });
+    console.log({ error });
+
+    return res
+      .status(error.statusCode ?? 500)
+      .json({ message: error.message ?? serverIssue });
   }
 }
 

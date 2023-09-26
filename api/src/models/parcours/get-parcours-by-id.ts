@@ -61,6 +61,16 @@ async function getParcoursById(parcoursId: number, userId: string) {
             },
           },
         },
+        groups: {
+          select: {
+            group: {
+              select: {
+                id: true,
+                idMdb: true,
+              },
+            },
+          },
+        },
         admin: { select: { id: true, idMdb: true } },
       },
     });
