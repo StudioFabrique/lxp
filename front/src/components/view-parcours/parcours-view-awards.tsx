@@ -20,7 +20,7 @@ const ParcoursViewAwards = () => {
 
   return (
     <Wrapper>
-      <h2 className="text-xl font-bold text-primary">Awards</h2>
+      <h2 className="text-xl font-bold text-secondary">Awards</h2>
       <div className="flex gap-4 flex-wrap overflow-y-auto">{skillList}</div>
     </Wrapper>
   );

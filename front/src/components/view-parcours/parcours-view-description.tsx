@@ -6,7 +6,7 @@ const ParcoursViewDescription = () => {
 
   return (
     <Wrapper>
-      <h2 className="text-xl font-bold text-primary">Description</h2>
+      <h2 className="text-xl font-bold text-secondary">Description</h2>
       <p>{infos.description ?? ""}</p>
     </Wrapper>
   );

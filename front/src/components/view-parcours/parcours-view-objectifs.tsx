@@ -10,7 +10,10 @@ const ParcoursViewObjectifs = () => {
   const objectivesList =
     objectives.length > 0 ? (
       objectives.map((objective, i) => (
-        <div key={objective.id} className="bg-secondary p-4 rounded-lg">
+        <div
+          key={objective.id}
+          className="bg-secondary p-4 rounded-lg text-secondary-content"
+        >
           <p className="font-bold">{`Objectif ${i + 1}`}</p>
           <p>{objective.description}</p>
         </div>
@@ -21,7 +24,7 @@ const ParcoursViewObjectifs = () => {
 
   return (
     <Wrapper>
-      <h2 className="text-xl font-bold text-primary">Objectifs</h2>
+      <h2 className="text-xl font-bold text-secondary">Objectifs</h2>
       <div className="flex flex-col gap-y-5 overflow-y-auto h-[60vh]">
         {objectivesList}
       </div>

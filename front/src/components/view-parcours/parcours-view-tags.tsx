@@ -19,7 +19,7 @@ const ParcoursViewTags = () => {
 
   return (
     <Wrapper>
-      <h2 className="text-xl font-bold text-primary">Tags</h2>
+      <h2 className="text-xl font-bold text-secondary">Tags</h2>
       <div className="flex gap-4 flex-wrap overflow-y-auto">{tagsList}</div>
     </Wrapper>
   );
