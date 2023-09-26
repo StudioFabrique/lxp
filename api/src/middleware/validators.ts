@@ -105,7 +105,7 @@ export const manyUsersValidator = [
 ];
 
 export const groupValidator = [
-  body("groupRequest.name").isString().trim().escape(),
+  body(["group.name", "group.desc"]).isString().trim().escape(),
   checkValidatorResult,
 ];
 

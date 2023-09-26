@@ -155,7 +155,7 @@ const GroupManageUserList: FC<{
             options={[
               { index: 0, option: "Prénom", value: "firstname" },
               { index: 1, option: "Nom", value: "lastname" },
-              { index: 2, option: "Formation", value: "group" },
+              // { index: 2, option: "Formation", value: "group" },
             ]}
           />
           <div className="w-full flex flex-col gap-y-4">
@@ -166,7 +166,7 @@ const GroupManageUserList: FC<{
               filters={[
                 { filterValue: "firstname", placeholder: "Prénom" },
                 { filterValue: "lastname", placeholder: "Nom" },
-                { filterValue: "group", placeholder: "Formation" },
+                // { filterValue: "group", placeholder: "Formation" },
               ]}
               value="test"
             />
