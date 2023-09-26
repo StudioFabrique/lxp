@@ -80,13 +80,17 @@ const GroupManageUserList: FC<{
   };
 
   const handleSearchUser = (entityToSearch: string, searchValue: string) => {
-    const result = usersToShowsInList.filter(
+    const resultsFromSearch = usersToShowsInList.filter(
       (user: any) =>
         user[entityToSearch].toLowerCase() === searchValue.toLowerCase()
     );
-    console.log(result);
+    console.log({ resultsFromSearch });
 
-    setUserSearchResult(result);
+    setUserSearchResult(resultsFromSearch);
+  };
+
+  const handleResetSearchUser = () => {
+    setUserSearchResult([]);
   };
 
   useEffect(() => {
@@ -123,6 +127,19 @@ const GroupManageUserList: FC<{
     }
   }, [usersToShowsInList, page, setPage, totalPages]);
 
+  const renderUserItems = (users: User[]) => {
+    return users.map((user: User) => (
+      <GroupManageUserItem
+        key={user._id}
+        allUserSelected={allChecked}
+        user={user}
+        onAddSelectedUser={handleAddSelectedUser}
+        onDeleteSelectedUser={handleDeleteSelectedUser}
+        onAddUserInstantly={handleAddUserInstantly}
+      />
+    ));
+  };
+
   return (
     <RightSideDrawer
       title="Ajouter des étudiants au groupe"
@@ -132,6 +149,7 @@ const GroupManageUserList: FC<{
       {usersToShowsInList.length > 0 ? (
         <div className="flex flex-col items-center gap-y-10 justify-between m-10">
           <Search
+            onResetInput={handleResetSearchUser}
             placeholder="Rechercher"
             onSearch={handleSearchUser}
             options={[
@@ -154,17 +172,8 @@ const GroupManageUserList: FC<{
             />
             <div className="flex flex-col gap-y-5 h-full overflow-y-auto w-full">
               {userSearchResult.length > 0
-                ? userSearchResult
-                : usersToShowsInList.map((user: User) => (
-                    <GroupManageUserItem
-                      key={user._id}
-                      allUserSelected={allChecked}
-                      user={user}
-                      onAddSelectedUser={handleAddSelectedUser}
-                      onDeleteSelectedUser={handleDeleteSelectedUser}
-                      onAddUserInstantly={handleAddUserInstantly}
-                    />
-                  ))}
+                ? renderUserItems(userSearchResult)
+                : renderUserItems(usersToShowsInList)}
             </div>
 
             <Pagination

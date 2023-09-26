@@ -10,6 +10,7 @@ const Search: FC<{
   }>;
   placeholder?: string;
   onSearch: (entityToSearch: string, searchValue: string) => void;
+  onResetInput?: () => void;
 }> = (props) => {
   const [searchType, setSearchType] = useState<string>("search");
   const [entityToSearch, setEntityToSearch] = useState<string>(
@@ -39,7 +40,11 @@ const Search: FC<{
   const handleSearchValueChange = (
     event: React.FormEvent<HTMLInputElement>
   ) => {
-    setSearchValue(event.currentTarget.value);
+    const value = event.currentTarget.value;
+    setSearchValue(value);
+    if (!!props.onResetInput && value.length <= 0) {
+      props.onResetInput();
+    }
   };
 
   const optionsList = (
