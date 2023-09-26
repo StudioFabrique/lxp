@@ -4,7 +4,7 @@ import path from "path";
 
 import httpPutModuleImage from "../../../controllers/parcours/http-put-module-parcours";
 import checkToken from "../../../middleware/check-token";
-import httpPutModule from "../../../controllers/clone/http-put-module";
+import httpPutModule from "../../../controllers/module/http-put-module";
 
 const putModuleImageRouter = express.Router();
 
