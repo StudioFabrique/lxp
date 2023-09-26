@@ -19,7 +19,7 @@ const SkillsList = () => {
   const [itemToUpdate, setItemToUpdate] = useState<any | null>(null);
   const [activeDrawer, setActiveDrawer] = useState<string | undefined>("");
   const [title, setTitle] = useState<string | undefined>("");
-  const { sendRequest } = useHttp();
+  const { sendRequest, error } = useHttp();
 
   const handleDeleteSkill = (skillId: number) => {
     const processData = (data: any) => {
@@ -33,6 +33,12 @@ const SkillsList = () => {
       processData
     );
   };
+
+  useEffect(() => {
+    if (error.length > 0) {
+      toast.error(error);
+    }
+  }, [error]);
 
   const handleCloseDrawer = (id: string) => {
     document.getElementById(id)?.click();

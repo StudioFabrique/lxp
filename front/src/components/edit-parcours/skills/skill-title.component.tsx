@@ -1,5 +1,4 @@
 import { FC } from "react";
-import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
 
 type Props = {
   title: string;

@@ -132,7 +132,7 @@ const ParcoursStudents = () => {
           <section>
             <Wrapper>
               <StudentsList initalList={students ?? []} />
-              <div>
+              <div className="mt-2">
                 <ButtonAdd
                   label="Ajouter un groupe"
                   outline={true}
