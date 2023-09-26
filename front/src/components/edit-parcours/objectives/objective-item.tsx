@@ -18,7 +18,7 @@ const ObjectiveItem: FC<Props> = ({ objective, onDelete, onUpdate }) => {
 
   return (
     <article className="flex gap-x-2 items-center">
-      <div className="flex-1 h-12 rounded-lg bg-neutral flex items-center pl-2">
+      <div className="flex-1 h-12 rounded-lg bg-secondary/10 flex items-center pl-2">
         <span className="flex gap-x-2 items-center">
           <div className="h-4 w-4">
             <ArrowsIcon />
