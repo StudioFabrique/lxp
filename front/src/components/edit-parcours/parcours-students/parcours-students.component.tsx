@@ -12,6 +12,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { parcoursGroupsAction } from "../../../store/redux-toolkit/parcours/parcours-groups";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
+import ButtonAdd from "../../UI/button-add/button-add";
 
 const ParcoursStudents = () => {
   const dispatch = useDispatch();
@@ -26,12 +27,12 @@ const ParcoursStudents = () => {
   ) as string[];
   const isInitialRender = useRef(true);
 
-  console.log({ groupsIds });
-
+  // Gère l'ouverture et la fermeture du drawer
   const handleDrawer = (id: string) => {
     document.getElementById(id)?.click();
   };
 
+  // envoie une requête pour récupérer la liste des étudiants appartenants aux groupes et une requête pour mettre la liste des groupes attachés au parcours à jour
   useEffect(() => {
     let timer: any;
     if (groups) {
@@ -46,12 +47,6 @@ const ParcoursStudents = () => {
         });
         setStudents(updatedStudents);
       };
-      const processData = (data: any) => {
-        toast.success("Le parcours a été mis à jour");
-        console.log({ data });
-        const updatedGroups = data.groups.map((item: any) => item.group);
-        dispatch(parcoursGroupsAction.setGroupsIds(updatedGroups));
-      };
       sendRequest(
         {
           path: `/user/group`,
@@ -60,6 +55,9 @@ const ParcoursStudents = () => {
         },
         applyData
       );
+      const processData = (_data: any) => {
+        toast.success("Le parcours a été mis à jour");
+      };
       timer = setTimeout(() => {
         if (!isInitialRender.current) {
           sendRequest(
@@ -83,6 +81,9 @@ const ParcoursStudents = () => {
     };
   }, [dispatch, groups, id, sendRequest]);
 
+  // qd le parcours est chargé en mémoire, s'il a déjà des groupes, les ids de ces derniers sont stockés en mémoire
+  // qd ce composant est initialisé, le useEffect récupère la liste des groupes venant venant de la collection Group de la bdd MongoDB
+  // les ids des groupes stockés lors du chargement du parcours en mémoire sont ensuite effacés pour que la requête ne se relance plus
   useEffect(() => {
     const processData = (data: any) => {
       dispatch(parcoursGroupsAction.setGroups(data));
@@ -99,6 +100,11 @@ const ParcoursStudents = () => {
       );
     }
   }, [groupsIds, dispatch, sendRequest]);
+
+  // gère l'ouvertude du drawer pour ajouter des groupes au parcours
+  const handleAddGroup = () => {
+    handleDrawer("add-group");
+  };
 
   return (
     <div className="flex flex-col gap-y-8">
@@ -118,25 +124,35 @@ const ParcoursStudents = () => {
                   Ajouter un groupe
                 </button>
               </div>
-              <RightSideDrawer
-                visible={false}
-                id="add-group"
-                title="Ajouter un groupe"
-                onCloseDrawer={handleDrawer}
-              >
-                <GroupsList onCancel={handleDrawer} />
-              </RightSideDrawer>
             </article>
           </Wrapper>
         </section>
       ) : (
-        <section>
-          <Wrapper>
-            <StudentsList initalList={students ?? []} />
-          </Wrapper>
-        </section>
+        <>
+          <section>
+            <Wrapper>
+              <StudentsList initalList={students ?? []} />
+              <div>
+                <ButtonAdd
+                  label="Ajouter un groupe"
+                  outline={true}
+                  onClickEvent={handleAddGroup}
+                />
+              </div>
+            </Wrapper>
+          </section>
+          <section>
+            <RightSideDrawer
+              visible={false}
+              id="add-group"
+              title="Ajouter un groupe"
+              onCloseDrawer={handleDrawer}
+            >
+              <GroupsList onCancel={handleDrawer} />
+            </RightSideDrawer>
+          </section>
+        </>
       )}
-      <section></section>
     </div>
   );
 };

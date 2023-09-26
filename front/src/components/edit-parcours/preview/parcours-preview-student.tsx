@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import Group from "../../../utils/interfaces/group";
 import User from "../../../utils/interfaces/user";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 import useEagerLoadingList from "../../../hooks/use-eager-loading-list";
 import StudentsListTable from "../parcours-students/students-list-table";
@@ -44,26 +44,19 @@ const ParcoursPreviewStudent = () => {
     }
   }, [groups, sendRequest]);
 
-  const groupsList = useMemo(() => {
-    let tmp = Array<string>();
-    for (let i = 0; i < groups.length; i++) {
-      let group = groups[i].name;
-      if (i < groups.length - 1) {
-        group += ",";
-      }
-      tmp = [...tmp, group];
-    }
-    return tmp;
-  }, [groups]);
-
   return (
     <Wrapper>
       <article className="flex flex-col gap-y-8">
-        <div className="flex text-xl font-bold">
-          <h2>Groupes :&nbsp;</h2>
+        <div className="flex items-center">
+          <h2 className="text-xl font-bold">Groupes :&nbsp;</h2>
           <ul className="flex gap-x-2">
-            {groupsList.map((item: string) => (
-              <li key={item}>{item}</li>
+            {groups.map((item: Group) => (
+              <li
+                className="badge badge-outline badge-primary text-xs"
+                key={item._id}
+              >
+                {item.name}
+              </li>
             ))}
           </ul>
         </div>

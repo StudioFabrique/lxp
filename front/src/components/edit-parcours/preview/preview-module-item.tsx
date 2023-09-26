@@ -22,14 +22,17 @@ const PreviewModuleItem = (props: PreviewModuleItemProps) => {
     module.minDate!
   ).toLocaleDateString()} au ${new Date(module.maxDate!).toLocaleDateString()}`;
 
-  const text = module.title.slice(0, 70) + "...";
+  const text =
+    module.title.length >= 70
+      ? module.title.slice(0, 70) + "..."
+      : module.title;
 
   return (
     <div className="flex flex-col bg-secondary/10 rounded-lg">
       <span style={classImage}></span>
       <span className="w-full h-[5rem] px-4 flex flex-col justify-center items-start">
         <p className="text-xs">{dates}</p>
-        <p className="text-xs xl:text-sm">{text}</p>
+        <p className="text-xs xl:text-sm font-bold">{text}</p>
       </span>
     </div>
   );

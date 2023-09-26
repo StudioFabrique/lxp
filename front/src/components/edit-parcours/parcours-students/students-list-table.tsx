@@ -1,4 +1,3 @@
-import React from "react";
 import SortColumnIcon from "../../UI/sort-column-icon.component/sort-column-icon.component";
 import User from "../../../utils/interfaces/user";
 import StudentItem from "./student-item";
