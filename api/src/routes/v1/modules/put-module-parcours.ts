@@ -1,10 +1,10 @@
 import express from "express";
 import multer from "multer";
 import path from "path";
-import { body } from "express-validator";
 
-import httpPutModuleImage from "../../../controllers/clone/http-put-module-parcours";
+import httpPutModuleImage from "../../../controllers/parcours/http-put-module-parcours";
 import checkToken from "../../../middleware/check-token";
+import httpPutModule from "../../../controllers/clone/http-put-module";
 
 const putModuleImageRouter = express.Router();
 
@@ -30,6 +30,13 @@ putModuleImageRouter.put(
   checkToken,
   upload.single("image"),
   httpPutModuleImage
+);
+
+putModuleImageRouter.put(
+  "/update",
+  checkToken,
+  upload.single("image"),
+  httpPutModule
 );
 
 export default putModuleImageRouter;

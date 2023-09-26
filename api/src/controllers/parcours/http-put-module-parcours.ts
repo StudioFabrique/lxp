@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import fs from "fs";
-import putModuleParcours from "../../models/clone/putModuleParcours";
+import putModuleParcours from "../../models/parcours/putModuleParcours";
 
 async function httpPutModuleParcours(req: Request, res: Response) {
   const { module, thumb } = req.body;
@@ -16,13 +16,11 @@ async function httpPutModuleParcours(req: Request, res: Response) {
         const response = await putModuleParcours(module, thumb, base64String);
         console.log({ response });
 
-        if (response !== false) {
-          await fs.promises.unlink(uploadedFile.path);
-          console.log("Fichier supprimé :", uploadedFile.path);
-          return res
-            .status(201)
-            .json({ message: "Mise à jour réussie", data: response });
-        }
+        await fs.promises.unlink(uploadedFile.path);
+        console.log("Fichier supprimé :", uploadedFile.path);
+        return res
+          .status(201)
+          .json({ message: "Mise à jour réussie", data: response });
       }
     } catch (error: any) {
       return res
