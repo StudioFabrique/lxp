@@ -71,7 +71,7 @@ const GroupAddForm: FC<{
 
     if (formIsValid) {
       props.onSubmitForm({
-        groupRequest: {
+        group: {
           name: name.value.trim(),
           desc: desc.value.trim(),
           startDate: dates.startDate,

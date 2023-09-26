@@ -24,7 +24,7 @@ const Informations: FC<{
     <Wrapper>
       <h2 className="font-bold text-xl">Informations</h2>
       <span className="flex flex-col gap-y-2">
-        <label>Titre du groupe</label>
+        <label>Titre du groupe *</label>
         <input
           className={`input ${
             name.hasError && "input-error"
@@ -37,7 +37,7 @@ const Informations: FC<{
         />
       </span>
       <span className="flex flex-col gap-y-2">
-        <label>Description du groupe</label>
+        <label>Description du groupe *</label>
         <textarea
           className={`textarea ${
             desc.hasError && "textarea-error"

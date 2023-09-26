@@ -11,23 +11,18 @@ import updateManyUsers from "../../models/user/update-many-users";
 
 export default async function httpCreateGroup(req: Request, res: Response) {
   const {
-    groupRequest,
+    group,
     users,
     formationId,
     parcoursId,
   }: {
-    groupRequest: IGroup;
+    group: IGroup;
     users: IUser[];
     formationId: number;
     parcoursId: number;
   } = req.body;
   try {
-    const response = await createGroup(
-      groupRequest,
-      users,
-      parcoursId,
-      formationId
-    );
+    const response = await createGroup(group, users, parcoursId, formationId);
 
     console.log(response);
 
