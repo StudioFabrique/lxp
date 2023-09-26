@@ -1,4 +1,5 @@
 import { FC } from "react";
+import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
 
 type Props = {
   title: string;
@@ -6,13 +7,8 @@ type Props = {
 
 const SkillTitle: FC<Props> = ({ title }) => {
   return (
-    <div className="flex flex-1">
-      <input
-        className="w-full input-lg rounded-lg bg-secondary/20 focus:outline-none hover:cursor-default"
-        type="text"
-        value={title}
-        readOnly={true}
-      />
+    <div className="flex-1 h-16 rounded-lg bg-secondary/10 flex items-center p-2">
+      <p>{title}</p>
     </div>
   );
 };
