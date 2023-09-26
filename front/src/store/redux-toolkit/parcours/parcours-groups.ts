@@ -33,7 +33,9 @@ const parcoursGroupsSlice = createSlice({
       let payload = action.payload;
       const groupsIds = state.groups.map((item) => item._id);
       payload = payload.filter((item: Group) => !groupsIds.includes(item._id));
-      state.groups = [...state.groups, ...payload];
+      if (payload.length > 0) {
+        state.groups = [...state.groups, ...payload];
+      }
     },
     removeGroup(state, action) {
       if (state.groups) {

@@ -21,8 +21,8 @@ const StudentItem = (props: StudentItemProps) => {
       <td className="bg-transparent capitalize">{firstname}</td>
       <td className="bg-transparent capitalize">{lastname}</td>
       <td className="bg-transparent">{email}</td>
-      <td className="bg-transparent text-center">{formation}</td>
-      <td className="bg-transparent text-center">{group?.name ?? "-"}</td>
+      <td className="bg-transparent">{formation}</td>
+      <td className="bg-transparent">{group!.name}</td>
       <td className="bg-transparent">
         {new Date(createdAt!).toLocaleDateString()}
       </td>
