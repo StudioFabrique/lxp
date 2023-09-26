@@ -26,6 +26,8 @@ const ParcoursStudents = () => {
   ) as string[];
   const isInitialRender = useRef(true);
 
+  console.log({ groupsIds });
+
   const handleDrawer = (id: string) => {
     document.getElementById(id)?.click();
   };
@@ -46,6 +48,9 @@ const ParcoursStudents = () => {
       };
       const processData = (data: any) => {
         toast.success("Le parcours a été mis à jour");
+        console.log({ data });
+        const updatedGroups = data.groups.map((item: any) => item.group);
+        dispatch(parcoursGroupsAction.setGroupsIds(updatedGroups));
       };
       sendRequest(
         {
@@ -55,8 +60,8 @@ const ParcoursStudents = () => {
         },
         applyData
       );
-      if (!isInitialRender.current) {
-        timer = setTimeout(() => {
+      timer = setTimeout(() => {
+        if (!isInitialRender.current) {
           sendRequest(
             {
               path: "/parcours/groups",
@@ -68,30 +73,31 @@ const ParcoursStudents = () => {
             },
             processData
           );
-        }, autoSubmitTimer);
-      } else {
-        isInitialRender.current = false;
-      }
+        } else {
+          isInitialRender.current = false;
+        }
+      }, autoSubmitTimer);
     }
     return () => {
       clearTimeout(timer);
     };
-  }, [groups, id, sendRequest]);
+  }, [dispatch, groups, id, sendRequest]);
 
   useEffect(() => {
     const processData = (data: any) => {
-      console.log({ data });
-
       dispatch(parcoursGroupsAction.setGroups(data));
+      dispatch(parcoursGroupsAction.resetGroupsIds());
     };
-    sendRequest(
-      {
-        path: "/group/groups",
-        method: "post",
-        body: { groupsIds: groupsIds.map((item: any) => item.idMdb) },
-      },
-      processData
-    );
+    if (groupsIds) {
+      sendRequest(
+        {
+          path: "/group/groups",
+          method: "post",
+          body: { groupsIds: groupsIds.map((item: any) => item.idMdb) },
+        },
+        processData
+      );
+    }
   }, [groupsIds, dispatch, sendRequest]);
 
   return (

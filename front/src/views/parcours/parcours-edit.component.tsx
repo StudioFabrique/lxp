@@ -364,7 +364,9 @@ const EditParcours = () => {
               className="btn btn-primary"
               onClick={() => handleUpdateStep(actualStep.id)}
             >
-              {!finalStep ? "Etape suivante" : "Publier"}
+              {actualStep.id !== stepsList.length
+                ? "Etape suivante"
+                : "Publier"}
             </button>
           </div>
         </FadeWrapper>

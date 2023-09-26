@@ -4,7 +4,7 @@ import Group from "../../../utils/interfaces/group";
 import User from "../../../utils/interfaces/user";
 
 const initialGroupsState: {
-  groupsIds: string[] | null;
+  groupsIds: Array<{ id: number; idMdb: string }> | null;
   groups: Group[] | null;
   students: User[] | null;
 } = {
@@ -22,6 +22,9 @@ const parcoursGroupsSlice = createSlice({
         state.groupsIds = [];
       }
       state.groupsIds = [...state.groupsIds, ...action.payload];
+    },
+    resetGroupsIds(state) {
+      state.groupsIds = null;
     },
     setGroups(state, action) {
       if (!state.groups) {

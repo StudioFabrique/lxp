@@ -29,7 +29,7 @@ async function putParcoursGroups(parcoursId: number, groupsIds: string[]) {
         parcoursId,
       },
     });
-    const updatedParcours = await tx.parcours.update({
+    updatedParcours = await tx.parcours.update({
       where: { id: parcoursId },
       data: {
         groups: {
@@ -42,6 +42,18 @@ async function putParcoursGroups(parcoursId: number, groupsIds: string[]) {
               },
             };
           }),
+        },
+      },
+      select: {
+        groups: {
+          select: {
+            group: {
+              select: {
+                id: true,
+                idMdb: true,
+              },
+            },
+          },
         },
       },
     });
