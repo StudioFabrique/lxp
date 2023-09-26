@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import Module from "../../../../utils/interfaces/module";
 import SubWrapper from "../../../UI/sub-wrapper/sub-wrapper.component";
 import BookIcon from "../../../UI/svg/book-icon";
+import { colorStyle, colorStyleHover } from "../../../../config/colors";
 
 const ParcoursViewContenuDetail = () => {
   const modules = useSelector(
@@ -13,9 +14,9 @@ const ParcoursViewContenuDetail = () => {
       modules.map((module, i) => (
         <div
           key={module.id}
-          className="flex items-center bg-primary-focus p-4 rounded-lg hover:bg-secondary-focus"
+          className={`flex items-center bg-secondary p-4 rounded-lg ${colorStyle} ${colorStyleHover}`}
         >
-          <span className="w-14 mx-2">
+          <span className="w-14 mx-4">
             <BookIcon />
           </span>
           <div className="flex flex-col items-center">
