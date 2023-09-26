@@ -29,16 +29,18 @@ const ParcoursViewContenu = () => {
 
   return (
     <Wrapper>
-      <h2 className="text-xl font-bold text-primary">Contenu du parcours</h2>
+      <h2 className="text-xl font-bold text-secondary">Contenu du parcours</h2>
       <div className="grid lg:grid-cols-2 gap-x-10 gap-y-5">
         <div className="flex flex-col gap-y-5">{contentsList}</div>
-        <div className="flex flex-col gap-y-4">
-          <ParcoursViewContenuDetailHeader
-            imageModuleHeader={`https://images.frandroid.com/wp-content/uploads/2017/10/udemy_header-630x310.png`}
-            moduleTitle={selectedModule.title}
-          />
-          <ParcoursViewContenuDetail />
-        </div>
+        {modules.length > 0 && (
+          <div className="flex flex-col gap-y-4">
+            <ParcoursViewContenuDetailHeader
+              imageModuleHeader={`https://images.frandroid.com/wp-content/uploads/2017/10/udemy_header-630x310.png`}
+              moduleTitle={selectedModule.title}
+            />
+            <ParcoursViewContenuDetail />
+          </div>
+        )}
       </div>
     </Wrapper>
   );
