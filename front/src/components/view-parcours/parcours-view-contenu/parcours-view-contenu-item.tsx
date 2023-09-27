@@ -7,7 +7,7 @@ import { colorStyle, colorStyleHover } from "../../../config/colors";
 const ParcoursViewContenuItem: FC<{
   module: Module;
   iterationCount: number;
-  setSelectedModule: Dispatch<SetStateAction<Module>>;
+  setSelectedModule: Dispatch<SetStateAction<Module | null>>;
 }> = ({ module, iterationCount, setSelectedModule }) => {
   const minDate: { day: number; month: string } = {
     day: new Date(module.minDate!).getDay(),
