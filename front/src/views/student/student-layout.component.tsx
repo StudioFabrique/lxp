@@ -12,6 +12,8 @@ const StudentLayout = () => {
     useContext(Context);
   const nav = useNavigate();
 
+  console.log({ user });
+
   useEffect(() => {
     if (isLoggedIn && user && user.roles[0].rank < 3) {
       fetchRoles(user!.roles[0]);

@@ -31,6 +31,10 @@ const router = createBrowserRouter([
         index: true,
         element: <StudentHome />,
       },
+      {
+        path: "parcours",
+        element: <ParcoursHome />,
+      },
     ],
   },
   {
