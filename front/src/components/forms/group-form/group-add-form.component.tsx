@@ -16,7 +16,6 @@ const GroupAddForm: FC<{
 }> = (props) => {
   const [file, setFile] = useState<File | null>(null);
   const [parcoursId, setParcoursId] = useState<number | null>(null);
-  const [formationId, setFormationId] = useState<number | null>(null);
   const [dates, setDates] = useState({ startDate: "", endDate: "" });
   const [tags, setTags] = useState<Tag[]>([]);
   const [isActive, setIsActive] = useState<boolean>(
@@ -29,10 +28,6 @@ const GroupAddForm: FC<{
 
   const handleSelectParcours = (newParcoursId: number) => {
     setParcoursId(newParcoursId);
-  };
-
-  const handleSelectFormation = (newFormationId: number) => {
-    setFormationId(newFormationId);
   };
 
   const handleSubmitTags = (tags: Array<Tag>) => {
@@ -75,7 +70,6 @@ const GroupAddForm: FC<{
             tags: tags,
           },
           parcoursId: parcoursId,
-          formationId: formationId,
         },
         file!
       );
@@ -93,10 +87,7 @@ const GroupAddForm: FC<{
           setIsActive={setIsActive}
           onSetFile={handleSetFile}
         />
-        <Details
-          onSelectFormation={handleSelectFormation}
-          onSelectParcours={handleSelectParcours}
-        />
+        <Details onSelectParcours={handleSelectParcours} />
         <div className="grid grid-row-2 max-md:mb-2 max-md:mt-2 gap-y-8">
           <GroupTags onSubmitTags={handleSubmitTags} />
           <Dates onSubmitDates={handleSubmitDates} />

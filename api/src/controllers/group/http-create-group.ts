@@ -17,23 +17,15 @@ export default async function httpCreateGroup(req: Request, res: Response) {
   const {
     group,
     users,
-    formationId,
     parcoursId,
   }: {
     group: IGroup;
     users: IUser[];
-    formationId: number;
     parcoursId: number;
   } = body;
 
   try {
-    const response = await createGroup(
-      group,
-      users,
-      image,
-      parcoursId,
-      formationId
-    );
+    const response = await createGroup(group, users, image, parcoursId);
 
     console.log(response);
 

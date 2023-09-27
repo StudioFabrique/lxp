@@ -7,8 +7,7 @@ export default async function createGroup(
   group: IGroup,
   users: IUser[],
   image: string,
-  parcoursId?: number,
-  formationId?: number
+  parcoursId?: number
 ) {
   const groupToFind = await Group.findOne({ name: group.name });
   if (groupToFind) {
