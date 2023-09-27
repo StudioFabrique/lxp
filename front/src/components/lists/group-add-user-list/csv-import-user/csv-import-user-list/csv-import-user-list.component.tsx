@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { FC, useState } from "react";
 import { csvUsersFields } from "../../../../../config/csv/csv-users-fields";
 import RightSideDrawer from "../../../../UI/right-side-drawer/right-side-drawer";
 import User from "../../../../../utils/interfaces/user";
@@ -8,9 +8,8 @@ import CsvUserListConfirmation from "./csv-user-list-confirmation.component";
 import CsvImportUser from "../csv-import.component";
 
 const CsvImportUserList: FC<{
-  setDataUpdateState: Dispatch<SetStateAction<boolean>>;
   onAddUsers: (users: Array<User>) => void;
-}> = ({ setDataUpdateState, onAddUsers }) => {
+}> = ({ onAddUsers }) => {
   const [usersToImport, setUsersToImport] = useState<User[]>([]);
   const [selectedUsersToUpload, setSelectedUsersToUpload] = useState<User[]>(
     []
@@ -35,7 +34,6 @@ const CsvImportUserList: FC<{
     }
     const applyData = (data: any) => {
       setDrawerOpenState(false);
-      setDataUpdateState(true);
       onAddUsers(data.usersCreated);
       toast.success("étudiants enregistrés");
     };
