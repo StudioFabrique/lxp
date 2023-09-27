@@ -10,12 +10,15 @@ const GroupAdd = () => {
 
   const { error, isLoading, sendRequest } = useHttp();
 
-  const handleSubmit = (data: any) => {
+  const handleSubmit = (data: any, file: File) => {
     console.log(data);
     console.log(usersToAdd);
+    const formData = new FormData();
+    formData.append("data", JSON.stringify({ ...data, users: usersToAdd }));
+    formData.append("image", file);
 
     sendRequest(
-      { method: "post", path: "/group", body: { ...data, users: usersToAdd } },
+      { method: "post", path: "/group", body: formData },
       (data: any) => {
         if (data) toast.success("Groupe créé avec succès");
       }

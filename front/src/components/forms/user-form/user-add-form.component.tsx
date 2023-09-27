@@ -82,11 +82,7 @@ const UserAddForm: FC<{
 
   //  test la validité du form via le custom hook useInput
   let formIsValid = false;
-  formIsValid =
-    email.isValid &&
-    firstname.isValid &&
-    lastname.isValid &&
-    (nickname.isValid || nickname.value.length <= 0); /* &&
+  formIsValid = email.isValid && firstname.isValid && lastname.isValid; /* &&
     (address.isValid || address == null) &&
     (city.isValid || city == null) &&
     (postCode.isValid || postCode) &&
@@ -100,9 +96,9 @@ const UserAddForm: FC<{
         firstname: firstname.value.trim(),
         lastname: lastname.value.trim(),
         description: description.value.trim(),
-        pseudo: nickname.value.trim(),
+        nickname: nickname.value.trim(),
         address: address.value.trim(),
-        postCode: parseInt(postCode.value.trim()),
+        postCode: parseInt(postCode.value.trim()).toString(),
         city: city.value.trim(),
         birthDate: birthDate,
         graduations: graduations,

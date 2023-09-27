@@ -137,6 +137,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     setAllChecked,
     handleRowCheck,
     setPerPage,
+    setPage,
     resetList,
     uncheckAll,
   };

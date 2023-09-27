@@ -27,6 +27,7 @@ const CsvUserListConfirmation: FC<IUserListConfirmation> = (props) => {
         <div className="flex flex-col gap-y-2 w-full ">
           {props.usersFromCsv.map((user) => (
             <GroupUserItem
+              allUserSelected={false}
               key={user.email}
               user={user}
               onAddSelectedUser={props.onAddSelectedUser}

@@ -10,13 +10,12 @@ import Dates from "./components/dates.component";
 
 const GroupAddForm: FC<{
   group?: any;
-  onSubmitForm: (group: any) => void;
+  onSubmitForm: (data: any, file: File) => void;
   error: string;
   isLoading: boolean;
 }> = (props) => {
   const [file, setFile] = useState<File | null>(null);
   const [parcoursId, setParcoursId] = useState<number | null>(null);
-  const [formationId, setFormationId] = useState<number | null>(null);
   const [dates, setDates] = useState({ startDate: "", endDate: "" });
   const [tags, setTags] = useState<Tag[]>([]);
   const [isActive, setIsActive] = useState<boolean>(
@@ -29,10 +28,6 @@ const GroupAddForm: FC<{
 
   const handleSelectParcours = (newParcoursId: number) => {
     setParcoursId(newParcoursId);
-  };
-
-  const handleSelectFormation = (newFormationId: number) => {
-    setFormationId(newFormationId);
   };
 
   const handleSubmitTags = (tags: Array<Tag>) => {
@@ -60,28 +55,24 @@ const GroupAddForm: FC<{
     dates.startDate.length > 0 &&
     dates.endDate.length > 0 &&
     file !== null &&
-    parcoursId !== null &&
+    // parcoursId !== null &&
     isActive != null;
 
   const handleSubmit = () => {
-    console.log("validitité formulaire : " + formIsValid);
-    console.log(
-      `name : ${name.value}, desc : ${desc.value}, startDate : ${dates.startDate}, endDate : ${dates.endDate}, parcours : ${parcoursId}, isActive : ${isActive}`
-    );
-
     if (formIsValid) {
-      props.onSubmitForm({
-        groupRequest: {
-          name: name.value.trim(),
-          desc: desc.value.trim(),
-          startDate: dates.startDate,
-          endDate: dates.endDate,
-          tags: tags,
-          img: file,
+      props.onSubmitForm(
+        {
+          group: {
+            name: name.value.trim(),
+            desc: desc.value.trim(),
+            startDate: dates.startDate,
+            endDate: dates.endDate,
+            tags: tags,
+          },
+          parcoursId: parcoursId,
         },
-        parcoursId: parcoursId,
-        formationId: formationId,
-      });
+        file!
+      );
     }
   };
 
@@ -96,10 +87,7 @@ const GroupAddForm: FC<{
           setIsActive={setIsActive}
           onSetFile={handleSetFile}
         />
-        <Details
-          onSelectFormation={handleSelectFormation}
-          onSelectParcours={handleSelectParcours}
-        />
+        <Details onSelectParcours={handleSelectParcours} />
         <div className="grid grid-row-2 max-md:mb-2 max-md:mt-2 gap-y-8">
           <GroupTags onSubmitTags={handleSubmitTags} />
           <Dates onSubmitDates={handleSubmitDates} />

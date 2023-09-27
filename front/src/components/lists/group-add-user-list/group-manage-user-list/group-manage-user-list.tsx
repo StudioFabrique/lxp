@@ -1,57 +1,41 @@
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { AddUsersButton } from "./group-manage-user-item/buttons.component";
-import UserToAddList from "./user-to-add-list/user-to-add-list.component";
 import usePagination from "../../../../hooks/use-pagination";
-import { Context } from "../../../../store/context.store";
 import Pagination from "../../../UI/pagination/pagination";
 import RightSideDrawer from "../../../UI/right-side-drawer/right-side-drawer";
 import User from "../../../../utils/interfaces/user";
 import Search from "../../../UI/search/search.component";
-import UserToAddListHeader from "./user-to-add-list/user-to-add-list-header.component";
+import UserToAddListHeader from "./user-to-add-list-header.component";
+import GroupManageUserItem from "./group-manage-user-item/group-manage-user-item.component";
 
 const GroupManageUserList: FC<{
-  needDataUpdate: boolean;
   usersToAdd: User[];
-  setDataUpdateState: Dispatch<SetStateAction<boolean>>;
   onAddUsers: (users: Array<User>) => void;
-}> = (props) => {
-  const { user } = useContext(Context);
-
-  const [selectedUsers, setSelectedUsers] = useState<Array<User>>([]);
-  const [isUsersSettedUp, setUsersSettedState] = useState(true);
-  const [userSearchResult, setUserSearchResult] = useState<User[]>([]);
-
+}> = ({ usersToAdd, onAddUsers }) => {
   const {
     page,
+    setPage,
     totalPages,
     dataList,
     handlePageNumber,
     perPage,
     setPerPage,
-    getList,
-    setDataList,
-    setStype,
     stype,
     sortData,
-  } = usePagination("lastname", `/user/${user!.roles[0].role}`);
+    setAllChecked,
+    allChecked,
+  } = usePagination("lastname", `/user/student`);
+
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+  const [isUsersSettedUp, setUsersSettedState] = useState(true);
+  const [userSearchResult, setUserSearchResult] = useState<User[]>([]);
+  const [usersToShowsInList, setUsersToShowInList]: any[] = useState([]);
 
   const handleSetUsersToAdd = () => {
-    props.onAddUsers(selectedUsers);
+    onAddUsers(selectedUsers);
     const selectedUsersIds = selectedUsers.map(
       (selectedUser) => selectedUser._id
     );
-    setDataList((currentUsers) => {
-      return currentUsers.filter(
-        (currentUser) => !selectedUsersIds.includes(currentUser._id)
-      );
-    });
     setSelectedUsers((users) =>
       users.filter((currentUser) => !selectedUsersIds.includes(currentUser._id))
     );
@@ -62,6 +46,16 @@ const GroupManageUserList: FC<{
     setUsersSettedState(false);
     console.log("id adding : " + user);
   };
+
+  const handleAddSelectedAllUser = useCallback(() => {
+    setSelectedUsers(usersToShowsInList);
+    setUsersSettedState(false);
+  }, [usersToShowsInList]);
+
+  const handleRemoveSelectedAllUser = useCallback(() => {
+    setSelectedUsers([]);
+    setUsersSettedState(true);
+  }, []);
 
   const handleDeleteSelectedUser = (user: User) => {
     setSelectedUsers((users) =>
@@ -78,68 +72,109 @@ const GroupManageUserList: FC<{
     if (userSearchResult.length > 0) {
       setUserSearchResult([]);
     }
-    props.onAddUsers([user]);
+    onAddUsers([user]);
     setSelectedUsers((users) =>
       users.filter((currentUser) => currentUser._id !== user._id)
     );
-    setDataList((users) => users.filter((value) => value._id !== user._id));
     console.log("id adding : " + user);
   };
 
   const handleSearchUser = (entityToSearch: string, searchValue: string) => {
-    const result = dataList.filter(
-      (user) => user[entityToSearch].toLowerCase() === searchValue.toLowerCase()
+    const resultsFromSearch = usersToShowsInList.filter(
+      (user: any) =>
+        user[entityToSearch].toLowerCase() === searchValue.toLowerCase()
     );
-    console.log(result);
+    console.log({ resultsFromSearch });
 
-    setUserSearchResult(result);
+    setUserSearchResult(resultsFromSearch);
+  };
+
+  const handleResetSearchUser = () => {
+    setUserSearchResult([]);
   };
 
   useEffect(() => {
-    if (props.needDataUpdate) {
-      getList();
-      props.setDataUpdateState(false);
+    setUsersToShowInList(
+      dataList.filter(
+        (data) => {
+          console.log(data);
+          return !usersToAdd.map((user) => user._id).includes(data._id);
+        }
+        // !dataList
+        //   .map((user) => user._id)
+        //   .includes(usersToAdd.map((user) => user._id))
+      )
+    );
+    console.log(usersToAdd);
+  }, [dataList, usersToAdd]);
+
+  useEffect(() => {
+    if (allChecked) {
+      handleAddSelectedAllUser();
+    } else {
+      handleRemoveSelectedAllUser();
     }
-  }, [props, getList]);
+  }, [allChecked, handleAddSelectedAllUser, handleRemoveSelectedAllUser]);
+
+  /**
+   * Si le nombre d'utilisateurs pas encore ajoutés (usersToShowsInList) est vide,
+   * alors incrémente le nombre de page jusqu'au maximum et revérifie
+   * encore si des utilisateurs existent.
+   */
+  useEffect(() => {
+    if (usersToShowsInList <= 0 && page < totalPages!) {
+      setPage((page) => page + 1);
+    }
+  }, [usersToShowsInList, page, setPage, totalPages]);
+
+  const renderUserItems = (users: User[]) => {
+    return users.map((user: User) => (
+      <GroupManageUserItem
+        key={user._id}
+        allUserSelected={allChecked}
+        user={user}
+        onAddSelectedUser={handleAddSelectedUser}
+        onDeleteSelectedUser={handleDeleteSelectedUser}
+        onAddUserInstantly={handleAddUserInstantly}
+      />
+    ));
+  };
 
   return (
     <RightSideDrawer
       title="Ajouter des étudiants au groupe"
       id="add-user-to-group"
+      onCloseDrawer={() => setAllChecked(false)}
     >
-      {dataList.length > 0 ? (
+      {usersToShowsInList.length > 0 ? (
         <div className="flex flex-col items-center gap-y-10 justify-between m-10">
           <Search
+            onResetInput={handleResetSearchUser}
             placeholder="Rechercher"
             onSearch={handleSearchUser}
             options={[
               { index: 0, option: "Prénom", value: "firstname" },
               { index: 1, option: "Nom", value: "lastname" },
-              { index: 2, option: "Formation", value: "group" },
+              // { index: 2, option: "Formation", value: "group" },
             ]}
           />
           <div className="w-full flex flex-col gap-y-4">
             <UserToAddListHeader
+              setSelectAllUsers={setAllChecked}
               order={stype}
               sortData={sortData}
               filters={[
                 { filterValue: "firstname", placeholder: "Prénom" },
                 { filterValue: "lastname", placeholder: "Nom" },
-                { filterValue: "group", placeholder: "Formation" },
+                // { filterValue: "group", placeholder: "Formation" },
               ]}
               value="test"
             />
-            <UserToAddList
-              selectedUsers={selectedUsers}
-              userList={
-                userSearchResult.length > 0 ? userSearchResult : dataList
-              }
-              usersToAdd={props.usersToAdd}
-              onAddSelectedUser={handleAddSelectedUser}
-              onDeleteSelectedUser={handleDeleteSelectedUser}
-              onAddUserInstantly={handleAddUserInstantly}
-              isUsersSettedUp={isUsersSettedUp}
-            />
+            <div className="flex flex-col gap-y-5 h-full overflow-y-auto w-full">
+              {userSearchResult.length > 0
+                ? renderUserItems(userSearchResult)
+                : renderUserItems(usersToShowsInList)}
+            </div>
 
             <Pagination
               page={page}
