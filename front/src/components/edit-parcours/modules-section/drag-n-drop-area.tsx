@@ -10,9 +10,11 @@ import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import Module from "../../../utils/interfaces/module";
 import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
 import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
+import toast from "react-hot-toast";
 
 interface DragNDropAreaprops {
   formationModules: Module[];
+  onDeleteModule: (id: string) => void;
 }
 
 const DragNDropArea = (props: DragNDropAreaprops) => {
@@ -29,68 +31,10 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
 
   console.log("rendering...");
 
-  /*   useEffect(() => {
-    setDnd((prevModules) => {
-      if (newModule) {
-        if (prevModules) {
-          return {
-            columns: {
-              destColumn: {
-                ...prevModules!.columns["destColumn"],
-                modulesIds: [
-                  ...prevModules!.columns["destColumn"].modulesIds,
-                  "0",
-                ],
-              },
-              sourceColumn: prevModules!.columns["sourceColumn"],
-            },
-            tasks: [
-              ...prevModules!.tasks,
-              {
-                id: "0",
-                title: "Nouveau module",
-                description: "Description",
-                duration: 1,
-                contacts: [],
-                bonusSkills: [],
-              },
-            ],
-          };
-        } else if (newModule) {
-          return {
-            tasks: [
-              {
-                id: "0",
-                title: "Nouveau module",
-                description: "Description",
-                duration: 1,
-                contacts: [],
-                bonusSkills: [],
-              },
-            ],
-            columns: {
-              destColumn: {
-                id: "destColumn",
-                title: "Modules ajoutés au parcours",
-                modulesIds: ["0"],
-              },
-              sourceColumn: {
-                id: "sourceColumn",
-                title: "Modules associés à la formation",
-                modulesIds: [],
-              },
-            },
-          };
-        } else {
-          return null;
-        }
-      } else {
-        return null;
-      }
-    });
-  }, [newModule]); */
+  useEffect(() => {
+    isInitialRender.current = true;
+  }, [formationModules]);
 
-  // on vérifie qu'il s'agit du premier rendu et que les "props" sont initialisées
   if (
     isInitialRender.current &&
     parcoursModules &&
@@ -175,6 +119,12 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
     if (!destination) {
       return;
     }
+    if (destination.droppableId === "sourceColumn") {
+      toast.error(
+        "Vous ne pouvez pas déposer de modules à cet endroit, utilisez l'icone supprimer pour retirer le module de la liste"
+      );
+      return;
+    }
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
@@ -254,6 +204,7 @@ const DragNDropArea = (props: DragNDropAreaprops) => {
             <ColumnItem
               column={dnd.columns.destColumn}
               modulesList={dnd.tasks}
+              onDeleteModule={props.onDeleteModule}
             />
           </SubWrapper>
         </section>

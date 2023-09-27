@@ -8,12 +8,14 @@ interface ColumnItemProps {
   column: Column;
   isSource?: boolean;
   modulesList?: Module[];
+  onDeleteModule?: (id: string) => void;
 }
 
 const ColumnItem: FC<ColumnItemProps> = ({
   column,
   isSource = false,
   modulesList,
+  onDeleteModule = () => {},
 }) => {
   const [modules, setModules] = useState<Module[] | null>(null);
 
@@ -46,6 +48,7 @@ const ColumnItem: FC<ColumnItemProps> = ({
                         isSource={isSource}
                         module={module}
                         index={index}
+                        onDeleteModule={onDeleteModule}
                       />
                     </li>
                   ))}

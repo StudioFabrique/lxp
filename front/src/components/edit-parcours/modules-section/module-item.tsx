@@ -1,22 +1,27 @@
 import React, { FC } from "react";
 import { Draggable } from "react-beautiful-dnd";
-import Module from "../../../utils/interfaces/module";
-import EditIcon from "../../UI/svg/edit-icon";
-import EyeIcon from "../../UI/svg/eye-icon";
-import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { defaultModuleThumb } from "../../../lib/defautltModuleThumb";
 import { useSelector } from "react-redux";
+
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
-
+import DeleteIcon from "../../UI/svg/delete-icon.component";
+import Module from "../../../utils/interfaces/module";
+import EditIcon from "../../UI/svg/edit-icon";
+import { defaultModuleThumb } from "../../../lib/defautltModuleThumb";
 interface ModuleItemProps {
   module: Module;
   index?: number;
   isSource: boolean;
+  onDeleteModule: (id: string) => void;
 }
 
-const ModuleItem: FC<ModuleItemProps> = ({ module, isSource, index }) => {
+const ModuleItem: FC<ModuleItemProps> = ({
+  module,
+  isSource,
+  index,
+  onDeleteModule,
+}) => {
   const dispatch = useDispatch();
   const editionMode = useSelector(
     (state: any) => state.parcoursModules.editionMode
@@ -77,15 +82,15 @@ const ModuleItem: FC<ModuleItemProps> = ({ module, isSource, index }) => {
               {!isSource ? (
                 <span className="h-parent flex flex-col justify-between py-1">
                   {/* TODO : implémenter le lien vers la vue édition du module */}
-                  <Link
+                  <button
                     className="btn btn-primary btn-circle rounded-md btn-sm"
-                    to="#"
                     aria-label="voir le module"
+                    onClick={() => onDeleteModule(module.id!.toString())}
                   >
                     <div className="w-6 h-6">
-                      <EyeIcon />
+                      <DeleteIcon />
                     </div>
-                  </Link>
+                  </button>
                   <button
                     className="btn btn-primary btn-circle rounded-md btn-sm"
                     onClick={() => setModuleToEdit(module)}

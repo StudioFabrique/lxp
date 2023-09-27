@@ -5,6 +5,7 @@ import httpGetModuleFormation from "../../../controllers/module/http-get-modules
 import httpParcoursModules from "../../../controllers/module/http-parcours-modules";
 import httpUpdateDatesModule from "../../../controllers/module/http-update-dates-module";
 import httpUpdateDurationModule from "../../../controllers/module/http-update-duration-module";
+import httpDeleteModule from "../../../controllers/module/http-delete-module";
 
 const modules = Router();
 
@@ -13,5 +14,6 @@ modules.get("/formation/:formationId", checkToken, httpGetModuleFormation);
 modules.put("/:parcoursId", checkToken, httpParcoursModules);
 modules.put("/calendar/dates", checkToken, httpUpdateDatesModule);
 modules.put("/calendar/duration", checkToken, httpUpdateDurationModule);
+modules.delete("/:moduleId", checkToken, httpDeleteModule);
 
 export default modules;
