@@ -55,6 +55,8 @@ const EditParcours = () => {
   );
   const modules = useSelector((state: any) => state.parcoursModules.modules);
 
+  const groups = useSelector((state: any) => state.parcoursGroups.groups);
+
   /**
    * télécharge les données du parcours depuis la bdd et initialise les différentes propriétés du parcours
    */
@@ -257,15 +259,19 @@ const EditParcours = () => {
    * @returns any[]
    */
   const checkStep = (id: number) => {
+    console.log({ groups });
+
     switch (id) {
       case 1:
-        return testStep(id, infos.title);
+        return testStep(id, infos);
       case 2:
         return testStep(id, objectives);
       case 3:
         return testStep(id, skills);
       case 4:
         return testStep(id, modules);
+      case 6:
+        return testStep(id, groups);
       case 7:
         return testStep(id, {
           infos,
@@ -274,6 +280,7 @@ const EditParcours = () => {
           objectives,
           skills,
           modules,
+          groups,
         });
     }
   };

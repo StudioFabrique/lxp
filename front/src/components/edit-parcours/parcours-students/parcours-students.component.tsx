@@ -108,7 +108,17 @@ const ParcoursStudents = () => {
 
   return (
     <div className="flex flex-col gap-y-8">
-      <Toaster />
+      <Toaster />{" "}
+      <section>
+        <RightSideDrawer
+          visible={false}
+          id="add-group"
+          title="Ajouter un groupe"
+          onCloseDrawer={handleDrawer}
+        >
+          <GroupsList onCancel={handleDrawer} />
+        </RightSideDrawer>
+      </section>
       <section>
         <h1 className="text-3xl font-extrabold capitalize">étudiants</h1>
       </section>
@@ -140,16 +150,6 @@ const ParcoursStudents = () => {
                 />
               </div>
             </Wrapper>
-          </section>
-          <section>
-            <RightSideDrawer
-              visible={false}
-              id="add-group"
-              title="Ajouter un groupe"
-              onCloseDrawer={handleDrawer}
-            >
-              <GroupsList onCancel={handleDrawer} />
-            </RightSideDrawer>
           </section>
         </>
       )}

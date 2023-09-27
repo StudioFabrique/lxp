@@ -89,12 +89,7 @@ const ModulesSection = () => {
           (itemBonusSkills: any) => itemBonusSkills.bonusSkill
         ),
       };
-      if (editionMode) {
-        dispatch(parcoursModulesSliceActions.editModule(module));
-      } else {
-        dispatch(parcoursModulesSliceActions.addNewModule(module));
-      }
-      dispatch(parcoursModulesSliceActions.toggleEditionMode(false));
+      dispatch(parcoursModulesSliceActions.addNewModule(module));
       dispatch(parcoursModulesSliceActions.setCurrentModule(null));
       dispatch(parcoursModulesSliceActions.toggleNewModule(false));
 
@@ -112,17 +107,14 @@ const ModulesSection = () => {
 
   const handleUpdateModule = (formData: FormData) => {
     const applyData = (data: any) => {
-      console.log({ data });
       const updatedModule = {
         ...data.data,
         id: data.data.id.toString(),
         bonusSkills: data.data.bonusSkills.map((item: any) => item.bonusSkill),
         contacts: data.data.contacts.map((item: any) => item.contact),
       };
-      console.log({ updatedModule });
-
-      dispatch(parcoursModulesSliceActions.toggleEditionMode(false));
       dispatch(parcoursModulesSliceActions.editModule(updatedModule));
+      dispatch(parcoursModulesSliceActions.toggleEditionMode(false));
     };
     sendRequest(
       {
