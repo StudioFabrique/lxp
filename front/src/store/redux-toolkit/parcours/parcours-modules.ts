@@ -65,6 +65,11 @@ const parcoursModulesSlice = createSlice({
           : moduleToEdit
       );
     },
+    removeModule(state, action) {
+      state.modules = state.modules!.filter(
+        (item) => item.id !== action.payload
+      );
+    },
   },
 });
 

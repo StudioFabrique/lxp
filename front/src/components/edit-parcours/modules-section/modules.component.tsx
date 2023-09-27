@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -32,13 +32,16 @@ const ModulesSection = () => {
     (state: any) => state.parcoursModules.newModule
   );
 
-  useEffect(() => {
+  const getFormationModules = useCallback(() => {
+    console.log("fetching");
+
     const applyData = (data: Module[]) => {
       const modules = data.map((module) => ({
         ...module,
         id: module.id!.toString(),
       }));
       setFormationModules(modules);
+      console.log({ modules });
     };
     sendRequest(
       {
@@ -46,7 +49,11 @@ const ModulesSection = () => {
       },
       applyData
     );
-  }, [sendRequest, formationId]);
+  }, [formationId, sendRequest]);
+
+  useEffect(() => {
+    getFormationModules();
+  }, [getFormationModules]);
 
   // mise à jour de la liste des modules du parcours dans la bdd et mise à jour du state en cas de réussite
   const handleSubmitModules = () => {
@@ -126,6 +133,31 @@ const ModulesSection = () => {
     );
   };
 
+  /**
+   * efface une copie de module rattachée au parcours et toutes ses relations avec les compétences et les contacts
+   * @param id string
+   */
+  const handleDeleteModule = (id: string) => {
+    console.log(formationModules);
+
+    if (formationModules.includes(+id)) {
+      dispatch(parcoursModulesSliceActions.removeModule(id));
+      getFormationModules();
+    }
+    const applyData = (data: Module) => {
+      dispatch(parcoursModulesSliceActions.removeModule(data.id!.toString()));
+      getFormationModules();
+    };
+
+    sendRequest(
+      {
+        path: `/modules/${id}`,
+        method: "delete",
+      },
+      applyData
+    );
+  };
+
   // scroll jusqu'au premier champ du formulaire qd ce dernier est ouvert
   useEffect(() => {
     if (currentModule && formRef && (editionMode || newModule)) {
@@ -152,7 +184,10 @@ const ModulesSection = () => {
           <Loader />
         ) : (
           <Wrapper>
-            <DragNDropArea formationModules={formationModules} />
+            <DragNDropArea
+              formationModules={formationModules}
+              onDeleteModule={handleDeleteModule}
+            />
           </Wrapper>
         )}
       </section>
