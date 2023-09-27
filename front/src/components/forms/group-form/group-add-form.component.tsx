@@ -10,7 +10,7 @@ import Dates from "./components/dates.component";
 
 const GroupAddForm: FC<{
   group?: any;
-  onSubmitForm: (group: any) => void;
+  onSubmitForm: (data: any, file: File) => void;
   error: string;
   isLoading: boolean;
 }> = (props) => {
@@ -59,29 +59,26 @@ const GroupAddForm: FC<{
     desc.isValid &&
     dates.startDate.length > 0 &&
     dates.endDate.length > 0 &&
-    // file !== null &&
+    file !== null &&
     // parcoursId !== null &&
     isActive != null;
 
   const handleSubmit = () => {
-    console.log("validitité formulaire : " + formIsValid);
-    console.log(
-      `name : ${name.value}, desc : ${desc.value}, startDate : ${dates.startDate}, endDate : ${dates.endDate}, parcours : ${parcoursId}, isActive : ${isActive}`
-    );
-
     if (formIsValid) {
-      props.onSubmitForm({
-        group: {
-          name: name.value.trim(),
-          desc: desc.value.trim(),
-          startDate: dates.startDate,
-          endDate: dates.endDate,
-          tags: tags,
-          img: file,
+      props.onSubmitForm(
+        {
+          group: {
+            name: name.value.trim(),
+            desc: desc.value.trim(),
+            startDate: dates.startDate,
+            endDate: dates.endDate,
+            tags: tags,
+          },
+          parcoursId: parcoursId,
+          formationId: formationId,
         },
-        parcoursId: parcoursId,
-        formationId: formationId,
-      });
+        file!
+      );
     }
   };
 

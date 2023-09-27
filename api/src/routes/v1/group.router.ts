@@ -9,6 +9,7 @@ import {
 } from "../../middleware/validators";
 import httpSearchGroup from "../../controllers/group/http-search-group";
 import httpAddUser from "../../controllers/group/http-add-users-group";
+import fileUpload from "../../middleware/fileUpload";
 
 const groupRouter = Router();
 
@@ -36,7 +37,13 @@ groupRouter.get(
   httpSearchGroup
 );
 
-groupRouter.post("/", isUser, groupValidator, httpCreateGroup);
+groupRouter.post(
+  "/",
+  isUser,
+  // groupValidator,
+  fileUpload.single("image"),
+  httpCreateGroup
+);
 
 groupRouter.get("/users", isUser);
 

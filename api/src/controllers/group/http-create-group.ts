@@ -8,8 +8,12 @@ import {
 } from "../../utils/constantes";
 import { IUser } from "../../utils/interfaces/db/user";
 import updateManyUsers from "../../models/user/update-many-users";
+import { getBase64ImageFromReq } from "../../middleware/fileUpload";
 
 export default async function httpCreateGroup(req: Request, res: Response) {
+  const body = JSON.parse(req.body.data);
+  const image = await getBase64ImageFromReq(req);
+
   const {
     group,
     users,
@@ -20,9 +24,16 @@ export default async function httpCreateGroup(req: Request, res: Response) {
     users: IUser[];
     formationId: number;
     parcoursId: number;
-  } = req.body;
+  } = body;
+
   try {
-    const response = await createGroup(group, users, parcoursId, formationId);
+    const response = await createGroup(
+      group,
+      users,
+      image,
+      parcoursId,
+      formationId
+    );
 
     console.log(response);
 
