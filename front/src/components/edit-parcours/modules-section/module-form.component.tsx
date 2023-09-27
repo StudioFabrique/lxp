@@ -63,6 +63,8 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
       (state: any) => state.parcoursInformations.infos
     );
 
+    console.log({ listeContacts });
+
     /**
      * définit le style du champ formulaire en fonction de sa validité
      * @param hasError boolean
@@ -127,6 +129,8 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
       } else setThumb(null);
     };
 
+    console.log({ teachers });
+
     const handleSubmitModule = (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       const formIsValid =
@@ -155,7 +159,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
             : parcoursInfos.endDate,
           contacts: teachers,
           bonusSkills: skills,
-          formations: [1],
+          formations: [parcours.formation.id],
           parcoursId: parcours.id,
         };
         const formData = new FormData();
