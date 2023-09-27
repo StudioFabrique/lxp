@@ -1,5 +1,4 @@
 import { getAdmin } from "../../helpers/get-admin";
-import { noAccess } from "../../utils/constantes";
 import { prisma } from "../../utils/db";
 
 async function getParcoursById(parcoursId: number, userId: string) {
@@ -41,6 +40,37 @@ async function getParcoursById(parcoursId: number, userId: string) {
         skills: { include: { skill: true } },
         bonusSkills: { select: { id: true, description: true, badge: true } },
         objectives: { select: { id: true, description: true } },
+        modules: {
+          select: {
+            module: {
+              select: {
+                id: true,
+                title: true,
+                description: true,
+                duration: true,
+                minDate: true,
+                maxDate: true,
+                thumb: true,
+                contacts: { select: { contact: true } },
+                bonusSkills: {
+                  select: {
+                    bonusSkill: { select: { id: true, description: true } },
+                  },
+                },
+              },
+            },
+          },
+        },
+        groups: {
+          select: {
+            group: {
+              select: {
+                id: true,
+                idMdb: true,
+              },
+            },
+          },
+        },
         admin: { select: { id: true, idMdb: true } },
       },
     });

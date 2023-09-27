@@ -74,6 +74,20 @@ async function putParcoursContacts(
             }),
           },
         },
+        select: {
+          contacts: {
+            select: {
+              contact: {
+                select: {
+                  id: true,
+                  idMdb: true,
+                  name: true,
+                  role: true,
+                },
+              },
+            },
+          },
+        },
       });
       return updatedParcours;
     });

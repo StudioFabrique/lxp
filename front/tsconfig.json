@@ -16,9 +16,5 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": [
-    "src",
-    "src/components/UI/button-refresh",
-    "src/components/edit-parcours/calendrier/.tsx"
-  ]
+  "include": ["src", "src/components/UI/button-refresh", "../modules"]
 }

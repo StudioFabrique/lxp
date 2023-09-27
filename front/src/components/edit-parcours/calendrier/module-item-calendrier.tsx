@@ -11,12 +11,6 @@ const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
 
   const dispatch = useDispatch();
 
-  const image = URL.createObjectURL(
-    new Blob([new Uint8Array(module.image.data)], {
-      type: "application/octet-stream",
-    })
-  );
-
   const [isSelected, setIsSelected] = useState(false);
 
   const handleClick = () => {
@@ -34,21 +28,25 @@ const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
   }, [currentModule?.id, module.id]);
 
   return (
-    <div
-      onClick={handleClick}
-      className={`${
-        isSelected ? "bg-secondary-focus" : "bg-secondary"
-      } flex items-center gap-x-4 text-black p-3 rounded-lg hover:bg-primary hover:cursor-pointer`}
-    >
-      <span className="w-[20%]">
-        <img
-          className="object-fill  rounded-md"
-          src={image}
-          alt="module preview"
-        />
-      </span>
-      <p>{module.title}</p>
-    </div>
+    <>
+      {currentModule ? (
+        <div
+          onClick={handleClick}
+          className={`${
+            isSelected ? "bg-secondary-focus" : "bg-secondary"
+          } flex items-center gap-x-4 text-black p-3 rounded-lg hover:bg-primary hover:cursor-pointer`}
+        >
+          <span className="w-[20%]">
+            <img
+              className="object-fill  rounded-md"
+              src={currentModule.thumb}
+              alt="module preview"
+            />
+          </span>
+          <p>{module.title}</p>
+        </div>
+      ) : null}
+    </>
   );
 };
 

@@ -24,12 +24,14 @@ import ImportSkills from "../../components/edit-parcours/skills/import-skills.co
 import ImportObjectives from "../../components/edit-parcours/objectives/import-objectives";
 import ObjectivesList from "../../components/edit-parcours/objectives/objectives-list";
 import { parcoursObjectivesAction } from "../../store/redux-toolkit/parcours/parcours-objectives";
-import Module from "../../utils/interfaces/module";
-import Calendrier from "../../components/edit-parcours/calendrier/calendrier";
-import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
-import ParcoursModules from "../../components/edit-parcours/modules/parcours-modules";
 import toast from "react-hot-toast";
 import { testStep } from "../../helpers/parcours-steps-validation";
+import ParcoursPreview from "../../components/edit-parcours/preview/parcours-preview.component";
+import ModulesSection from "../../components/edit-parcours/modules-section/modules.component";
+import Calendrier from "../../components/edit-parcours/calendrier/calendrier";
+import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
+import ParcoursStudents from "../../components/edit-parcours/parcours-students/parcours-students.component";
+import { parcoursGroupsAction } from "../../store/redux-toolkit/parcours/parcours-groups";
 
 let initialState = true;
 
@@ -119,6 +121,37 @@ const EditParcours = () => {
         );
       }
 
+      if (data.modules.length > 0) {
+        dispatch(
+          parcoursModulesSliceActions.setModules(
+            data.modules.map((item: any) => {
+              return {
+                ...item.module,
+                id: item.module.id.toString(),
+                contacts: item.module.contacts.map(
+                  (itemContact: any) => itemContact.contact
+                ),
+                bonusSkills: item.module.bonusSkills.map(
+                  (itemBonusSkills: any) => itemBonusSkills.bonusSkill
+                ),
+              };
+            })
+          )
+        );
+      } else {
+        dispatch(parcoursModulesSliceActions.setModules([]));
+      }
+
+      if (data.groups.length > 0) {
+        dispatch(
+          parcoursGroupsAction.setGroupsIds(
+            data.groups.map((item: any) => item.group)
+          )
+        );
+      } else {
+        dispatch(parcoursGroupsAction.setGroups([]));
+      }
+
       setIsLoading(false);
     };
     if (initialState) {
@@ -196,14 +229,16 @@ const EditParcours = () => {
 
     const errors = checkStep(id);
 
-    if (errors!.length !== 0) {
+    if (errors && errors.length !== 0) {
       validateStep(id, false);
       toast.error(Object.values(errors![0]).toString());
       return;
     } else {
       if (id === stepsList[stepsList.length - 1].id - 1) {
         const finalErrors = checkStep(id + 1);
-        if (finalErrors!.length === 0) {
+        console.log(finalErrors);
+
+        if (finalErrors && finalErrors.length === 0) {
           validateStep(id, true);
         } else {
           toast.error(Object.values(finalErrors![0]).toString());
@@ -231,7 +266,7 @@ const EditParcours = () => {
         return testStep(id, skills);
       case 4:
         return testStep(id, modules);
-      case 5:
+      case 7:
         return testStep(id, {
           infos,
           tags,
@@ -253,8 +288,6 @@ const EditParcours = () => {
 
   const handleResetImportedObjectives = () => {};
 
-  console.log({ stepsList });
-
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
       {isLoading ? (
@@ -267,6 +300,7 @@ const EditParcours = () => {
               image={image}
               onUpdateImage={updateImage}
             />
+            {/* Etapes du parcours */}
             <div className="p-4 rounded-xl w-5/6 bg-secondary/20">
               <Stepper
                 actualStep={actualStep}
@@ -277,9 +311,11 @@ const EditParcours = () => {
             </div>
           </div>
           <div className="w-full 2xl:w-4/6 mt-16">
+            {/* Premiere étap : infos générales du parcours */}
             {actualStep.id === 1 ? (
               <ParcoursInformations parcoursId={id} />
             ) : null}
+            {/* Seconde étape : liste des objectifs */}
             {actualStep.id === 2 ? (
               <ParcoursSection
                 title="Importer une liste d'objectifs"
@@ -289,6 +325,7 @@ const EditParcours = () => {
                 <ImportObjectives onCloseDrawer={() => {}} />
               </ParcoursSection>
             ) : null}
+            {/* Troisème étape : liste des compétences */}
             {actualStep.id === 3 ? (
               <ParcoursSection
                 title="Importer des compétences"
@@ -298,8 +335,14 @@ const EditParcours = () => {
                 <ImportSkills onCloseDrawer={() => {}} />
               </ParcoursSection>
             ) : null}
-            {actualStep.id === 4 ? <ParcoursModules /> : null}
+            {/* Quatrième étape : liste des modules */}
+            {actualStep.id === 4 && id ? <ModulesSection /> : null}
             {actualStep.id === 5 ? <Calendrier /> : null}
+            {/* Cinquième étape : liste des étudiants */}
+            {/* {actualStep.id === 5 ? <ParcoursStudents /> : null} */}
+            {/* Etape finale : aperçu du parcours */}
+            {actualStep.id === 6 ? <ParcoursStudents /> : null}
+            {actualStep.id === 7 ? <ParcoursPreview /> : null}
           </div>
           <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">
             {actualStep.id === 1 ? (
@@ -321,7 +364,9 @@ const EditParcours = () => {
               className="btn btn-primary"
               onClick={() => handleUpdateStep(actualStep.id)}
             >
-              Etape suivante
+              {actualStep.id !== stepsList.length
+                ? "Etape suivante"
+                : "Publier"}
             </button>
           </div>
         </FadeWrapper>

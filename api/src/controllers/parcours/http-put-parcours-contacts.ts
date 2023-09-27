@@ -16,10 +16,14 @@ async function httpPutParcoursContacts(req: CustomRequest, res: Response) {
     }
 
     const { parcoursId, contacts } = req.body;
-    await putParcoursContacts(+parcoursId, contacts, userId);
+    const response = await putParcoursContacts(+parcoursId, contacts, userId);
     return res
       .status(201)
-      .json({ success: true, message: "Contacts mis à jour avec succès" });
+      .json({
+        success: true,
+        message: "Contacts mis à jour avec succès",
+        data: response,
+      });
   } catch (error: any) {
     let returnedError: any;
 

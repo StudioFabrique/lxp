@@ -1,6 +1,5 @@
 import bcrypt from "bcrypt";
 
-import { hasRole } from "../../utils/services/permissions/hasRole";
 import { credentialsError } from "../../utils/constantes";
 import User from "../../utils/interfaces/db/user";
 

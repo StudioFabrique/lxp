@@ -13,6 +13,7 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import DatesSelecter from "../../UI/dates-selecter/dates-selecter.component";
 import Tags from "../../UI/tags/tags.component";
 import Tag from "../../../utils/interfaces/tag";
+import { parcoursContactsAction } from "../../../store/redux-toolkit/parcours/parcours-contacts";
 
 type Props = {
   parcoursId?: string;
@@ -80,8 +81,15 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
 
   const submitContacts = useCallback(
     (contacts: Array<Contact>) => {
-      const processData = (data: { success: boolean; message: string }) => {
+      const processData = (data: {
+        success: boolean;
+        data: any;
+        message: string;
+      }) => {
         if (data.success) {
+          const updatedContacts = data.data.contacts.map(
+            (item: any) => item.contact
+          );
           toast.success(data.message);
         }
       };
@@ -94,7 +102,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
         processData
       );
     },
-    [parcoursId, sendRequest]
+    [parcoursId, sendRequest, dispatch]
   );
 
   useEffect(() => {
@@ -103,7 +111,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
 
   return (
     <div className="w-full">
-      <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-x-16">
+      <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-8">
         <Wrapper>
           <h2 className="text-xl font-bold">Informations</h2>
           <div className="flex flex-col gap-y-8">
