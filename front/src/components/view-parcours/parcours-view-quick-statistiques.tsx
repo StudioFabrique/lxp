@@ -17,7 +17,7 @@ const ParcoursViewQuickStatistiques = () => {
 
   const modulesHourSum = () => {
     let hours: number = 0;
-    modules.forEach((module) => {
+    modules?.forEach((module) => {
       hours += module.duration;
     });
     return hours;

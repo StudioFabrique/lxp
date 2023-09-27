@@ -2,7 +2,7 @@ import { FC } from "react";
 
 const ParcoursViewContenuDetailHeader: FC<{
   imageModuleHeader: any;
-  moduleTitle: string;
+  moduleTitle: string | undefined;
 }> = ({ imageModuleHeader, moduleTitle }) => {
   const classImage: React.CSSProperties = {
     backgroundImage: `url(${imageModuleHeader})`,
