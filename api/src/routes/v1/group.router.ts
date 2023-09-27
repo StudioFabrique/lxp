@@ -9,7 +9,6 @@ import {
 } from "../../middleware/validators";
 import httpSearchGroup from "../../controllers/group/http-search-group";
 import httpAddUser from "../../controllers/group/http-add-users-group";
-import { check } from "express-validator";
 import checkToken from "../../middleware/check-token";
 import httpGetGroupsById from "../../controllers/group/http-get-groups-by-id";
 
