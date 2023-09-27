@@ -52,6 +52,11 @@ const Calendrier = () => {
               // color: getRandomHexColor(),
             };
           })}
+          onDoubleClickEvent={(event) => {
+            parcoursModulesSliceActions.updateCurrentParcoursModule(
+              modules[0].id
+            );
+          }}
         />
       </div>
       <div className="grid grid-cols-3 max-md:grid-cols-1 max-md:gap-y-5 gap-x-5">
