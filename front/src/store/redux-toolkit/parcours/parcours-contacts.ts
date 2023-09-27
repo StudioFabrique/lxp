@@ -53,7 +53,7 @@ const parcoursContactsSlice = createSlice({
         sortArray(state.currentContacts, "name");
       }
     },
-    removeTag(state, action) {
+    removeContact(state, action) {
       const contactId = action.payload;
       state.currentContacts = state.currentContacts.filter(
         (item: Contact) => item.idMdb !== contactId
@@ -62,12 +62,12 @@ const parcoursContactsSlice = createSlice({
     addNewContact(state, action) {
       const user = action.payload;
       state.initialContacts.push({
+        id: user.id,
         idMdb: user._id,
         name: `${user.firstname} ${user.lastname}`,
         role: user.roles[0].label,
       });
       state.initialContacts = sortArray(state.initialContacts, "name");
-      console.log(state.initialContacts);
     },
     reset(state) {
       state.initialContacts = [];

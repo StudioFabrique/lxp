@@ -32,6 +32,8 @@ const ModulesSection = () => {
     (state: any) => state.parcoursModules.newModule
   );
 
+  console.log({ currentModule });
+
   const getFormationModules = useCallback(() => {
     console.log("fetching");
 

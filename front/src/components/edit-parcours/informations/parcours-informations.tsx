@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useCallback, useEffect } from "react";
+import { FC, useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import ParcoursInformationsForm from "./parcours-informations-form";
@@ -14,6 +14,8 @@ import DatesSelecter from "../../UI/dates-selecter/dates-selecter.component";
 import Tags from "../../UI/tags/tags.component";
 import Tag from "../../../utils/interfaces/tag";
 import { parcoursContactsAction } from "../../../store/redux-toolkit/parcours/parcours-contacts";
+import User from "../../../utils/interfaces/user";
+import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 
 type Props = {
   parcoursId?: string;
@@ -31,6 +33,42 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
   const tagsIsValid = useSelector(
     (state: any) => state.parcoursInformations.tagsIsValid
   );
+  const contacts = useSelector(
+    (state: any) => state.parcoursContacts.currentContacts
+  );
+  const isInitialRender = useRef(true);
+  const isInitialEffect = useRef(true);
+
+  console.log({ contacts });
+
+  /**
+   * envoie une requête http pour récup la liste des formateurs et la stocke dans un slice redux
+   */
+  const fetchTeachers = useCallback(() => {
+    const applyData = (data: Array<User>) => {
+      const contacts = data.map((user: User) => ({
+        idMdb: user._id,
+        name: `${user.lastname} ${user.firstname}`,
+        role: user.roles[0].label,
+      }));
+      dispatch(parcoursContactsAction.initContacts(contacts));
+    };
+    sendRequest(
+      {
+        path: "/user/contacts",
+      },
+      applyData
+    );
+  }, [dispatch, sendRequest]);
+
+  // apple la fonction qui envoie la requete pour récupérer les formateurs
+  useEffect(() => {
+    if (isInitialRender.current) {
+      fetchTeachers();
+    } else {
+      isInitialRender.current = false;
+    }
+  }, [fetchTeachers]);
 
   const updateDates = useCallback(
     (startDate: string, endDate: string) => {
@@ -79,31 +117,41 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
     [updateDates, dispatch]
   );
 
-  const submitContacts = useCallback(
-    (contacts: Array<Contact>) => {
-      const processData = (data: {
-        success: boolean;
-        data: any;
-        message: string;
-      }) => {
-        if (data.success) {
-          const updatedContacts = data.data.contacts.map(
-            (item: any) => item.contact
-          );
-          toast.success(data.message);
-        }
-      };
-      sendRequest(
-        {
-          path: "/parcours/update-contacts",
-          method: "put",
-          body: { parcoursId, contacts },
-        },
-        processData
-      );
-    },
-    [parcoursId, sendRequest, dispatch]
-  );
+  useEffect(() => {
+    const processData = (data: {
+      success: boolean;
+      data: any;
+      message: string;
+    }) => {
+      if (data.success) {
+        console.log(data);
+
+        toast.success(data.message);
+        dispatch(
+          parcoursContactsAction.setCurrentContacts(
+            data.data.contacts.map((item: any) => item.contact)
+          )
+        );
+        dispatch(parcoursContactsAction.setNotSelectedContacts());
+      }
+    };
+    let timer: any;
+    if (!isInitialEffect.current) {
+      timer = setTimeout(() => {
+        sendRequest(
+          {
+            path: "/parcours/update-contacts",
+            method: "put",
+            body: { parcoursId, contacts },
+          },
+          processData
+        );
+      }, autoSubmitTimer);
+    } else {
+      isInitialEffect.current = false;
+    }
+    return () => clearTimeout(timer);
+  }, [parcoursId, sendRequest, contacts]);
 
   useEffect(() => {
     dispatch(parcoursInformationsAction.isValid());
@@ -127,9 +175,11 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
           <VirtualClass />
         </Wrapper>
         <div className="flex flex-col gap-y-8">
-          <Wrapper>
-            <Contacts onSubmitContacts={submitContacts} />
-          </Wrapper>
+          {contacts ? (
+            <Wrapper>
+              <Contacts contacts={contacts} />
+            </Wrapper>
+          ) : null}
           <Wrapper>
             <Tags onSubmitTags={updateTags} />
           </Wrapper>
