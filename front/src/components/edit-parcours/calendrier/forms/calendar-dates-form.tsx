@@ -75,7 +75,7 @@ const CalendarDatesForm: FC<{
 
     sendRequest(
       {
-        path: "/module/dates",
+        path: "/modules/calendar/dates",
         method: "put",
         body: {
           moduleId: currentModule.id,

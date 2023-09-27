@@ -57,7 +57,7 @@ const CalendarDurationForm = () => {
 
     sendRequest(
       {
-        path: "/module/duration",
+        path: "/modules/calendar/duration",
         method: "put",
         body: { id: currentModule.id, duration: duration },
       },

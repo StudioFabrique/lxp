@@ -8,7 +8,7 @@ type Props = {
 
 const SkillBadge: FC<Props> = ({ badge }) => {
   return (
-    <div className="btn btn-lg btn-circle rounded-lg bg-secondary/20 hover:bg-secondary/20 hover:cursor-default border-none no-animation">
+    <div className="w-16 h-16 rounded-lg bg-secondary/10 hover:bg-secondary/20 hover:cursor-default border-none no-animation flex items-center justify-center">
       {badge ? (
         <img
           className="w-full h-full p-2"
@@ -16,7 +16,7 @@ const SkillBadge: FC<Props> = ({ badge }) => {
           alt="illustration badge"
         />
       ) : (
-        <div className="text-primary">
+        <div className="w-6 h-6 text-primary">
           <TrophyIcon />
         </div>
       )}
