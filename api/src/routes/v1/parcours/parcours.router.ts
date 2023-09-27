@@ -36,7 +36,7 @@ parcoursRouter.delete(
   httpDeleteParcoursById
 );
 parcoursRouter.get(
-  "/parcours-by-formation/:formationID",
+  "/parcours-by-formation/:formationId",
   isAdmin,
   getParcoursByFormationValidator,
   httpGetParcoursByFormation

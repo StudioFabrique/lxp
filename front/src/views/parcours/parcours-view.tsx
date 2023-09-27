@@ -60,6 +60,8 @@ const ParcoursView = () => {
    */
   useEffect(() => {
     const processData = (data: Parcours) => {
+      console.log({ data });
+
       // mets en mémoire l'id du parcours pour le rendre disponible aux éléments de la vue
       dispatch(parcoursAction.setParcoursId(data.id));
       dispatch(
