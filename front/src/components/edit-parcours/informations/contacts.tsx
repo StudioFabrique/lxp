@@ -14,14 +14,13 @@ import UserQuickCreate from "../../user-quick-create/user-quick-create";
 
 type Props = {
   contacts: any[];
+  notSelectedContacts: Contact[];
 };
 
-const Contacts: FC<Props> = ({ contacts }) => {
+const Contacts: FC<Props> = ({ contacts, notSelectedContacts }) => {
   const dispatch = useDispatch();
   const { sendRequest, error } = useHttp();
-  const notSelectedContacts = useSelector(
-    (state: any) => state.parcoursContacts.notSelectedContacts
-  );
+
   const filteredContacts = useSelector(
     (state: any) => state.parcoursContacts.filteredContacts
   );
@@ -66,10 +65,6 @@ const Contacts: FC<Props> = ({ contacts }) => {
   const handleCloseDrawer = (id: string) => {
     document.getElementById(id)?.click();
   };
-
-  useEffect(() => {
-    dispatch(parcoursContactsAction.setNotSelectedContacts());
-  }, [dispatch, contacts]);
 
   /**
    * envoi d'une requête pour enregistrer dans la bdd un formateur créé à la volée

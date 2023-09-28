@@ -8,7 +8,6 @@ import Contacts from "./contacts";
 import VirtualClass from "./virtual-class";
 import useHttp from "../../../hooks/use-http";
 import { parcoursInformationsAction } from "../../../store/redux-toolkit/parcours/parcours-informations";
-import Contact from "../../../utils/interfaces/contact";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import DatesSelecter from "../../UI/dates-selecter/dates-selecter.component";
 import Tags from "../../UI/tags/tags.component";
@@ -36,10 +35,15 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
   const contacts = useSelector(
     (state: any) => state.parcoursContacts.currentContacts
   );
+  const notSelectedContacts = useSelector(
+    (state: any) => state.parcoursContacts.notSelectedContacts
+  );
   const isInitialRender = useRef(true);
   const isInitialEffect = useRef(true);
 
-  console.log({ contacts });
+  useEffect(() => {
+    dispatch(parcoursContactsAction.setNotSelectedContacts());
+  }, [dispatch, contacts]);
 
   /**
    * envoie une requête http pour récup la liste des formateurs et la stocke dans un slice redux
@@ -127,12 +131,6 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
         console.log(data);
 
         toast.success(data.message);
-        dispatch(
-          parcoursContactsAction.setCurrentContacts(
-            data.data.contacts.map((item: any) => item.contact)
-          )
-        );
-        dispatch(parcoursContactsAction.setNotSelectedContacts());
       }
     };
     let timer: any;
@@ -151,7 +149,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
       isInitialEffect.current = false;
     }
     return () => clearTimeout(timer);
-  }, [parcoursId, sendRequest, contacts]);
+  }, [dispatch, parcoursId, sendRequest, contacts]);
 
   useEffect(() => {
     dispatch(parcoursInformationsAction.isValid());
@@ -177,7 +175,10 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
         <div className="flex flex-col gap-y-8">
           {contacts ? (
             <Wrapper>
-              <Contacts contacts={contacts} />
+              <Contacts
+                contacts={contacts}
+                notSelectedContacts={notSelectedContacts}
+              />
             </Wrapper>
           ) : null}
           <Wrapper>
