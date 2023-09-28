@@ -12,40 +12,34 @@ import Skill from "../../../utils/interfaces/skill";
 import MemoizedItemsList from "./items-list.component";
 import { compressImage } from "../../../helpers/compress-image";
 import MemoizedModuleFilesUpload from "./module-files-upload.component";
-import { useDispatch } from "react-redux";
 import { defaultModuleThumb } from "../../../lib/defautltModuleThumb";
-import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
 
 interface ModuleFormProps {
   isLoading: boolean;
+  currentModule?: any;
+  onCancel: () => void;
   onSubmitModule: (formData: FormData) => void;
 }
 
 const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
   (props, ref) => {
-    const dispatch = useDispatch();
-    const currentModule = useSelector(
-      (state: any) => state.parcoursModules.currentModule
-    );
-    const newModule = useSelector(
-      (state: any) => state.parcoursModules.newModule
-    ) as boolean;
+    const currentModule = props.currentModule ? props.currentModule : null;
     const parcours = useSelector((state: any) => state.parcours);
     const { value: title } = useInput(
       (value) => regexGeneric.test(value),
-      currentModule.title ?? ""
+      currentModule.title
     );
     const { value: duration } = useInput(
       (value) => regexNumber.test(value),
-      currentModule.duration ?? ""
+      currentModule.duration
     );
     const { value: description } = useInput(
       (value) => regexOptionalGeneric.test(value),
-      currentModule.description ?? ""
+      currentModule.description
     );
     const [image, setImage] = useState<File | null>(null);
     const [thumb, setThumb] = useState<string | null>(
-      currentModule.thumb ?? null
+      currentModule?.thumb ?? null
     );
     const listeContacts = useSelector(
       (state: any) => state.parcoursContacts.currentContacts
@@ -54,16 +48,16 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
       (state: any) => state.parcoursSkills.skills
     ) as Skill[];
     const [teachers, setTeachers] = useState<Contact[] | null>(
-      currentModule.contacts ?? null
+      currentModule?.contacts ?? []
     );
     const [skills, setSkills] = useState<Skill[] | null>(
-      currentModule.bonusSkills ?? null
+      currentModule?.bonusSkills ?? []
     );
     const parcoursInfos = useSelector(
       (state: any) => state.parcoursInformations.infos
     );
 
-    console.log({ listeContacts });
+    console.log({ currentModule });
 
     /**
      * définit le style du champ formulaire en fonction de sa validité
@@ -97,7 +91,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
 
     const classImage: React.CSSProperties = {
       backgroundImage: `url('${
-        currentModule.thumb ? currentModule.thumb : defaultModuleThumb
+        currentModule ? currentModule.thumb : defaultModuleThumb
       }')`,
       width: "100px",
       height: "100%",
@@ -141,26 +135,25 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
         teachers?.length > 0 &&
         skills &&
         skills.length > 0 &&
-        newModule
+        !currentModule
           ? image && thumb
           : true;
 
       if (formIsValid) {
         let module = {
-          id: currentModule ? +currentModule.id : undefined,
+          formationId: parcours.formation.id,
+          id: currentModule ? currentModule.id : undefined,
           title: title.value,
           description: description.value,
           duration: duration.value,
-          minDate: currentModule.minDate
+          minDate: currentModule
             ? currentModule.minDate
             : parcoursInfos.startDate,
-          maxDate: currentModule.maxDate
+          maxDate: currentModule
             ? currentModule.maxDate
             : parcoursInfos.endDate,
           contacts: teachers,
           bonusSkills: skills,
-          formations: [parcours.formation.id],
-          parcoursId: parcours.id,
         };
         const formData = new FormData();
         if (image && thumb) {
@@ -168,21 +161,20 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
           formData.append("thumb", thumb);
         }
         formData.append("module", JSON.stringify(module));
-
         props.onSubmitModule(formData);
+      } else {
+        console.log("oops");
       }
     };
 
     const handleCancel = () => {
-      dispatch(parcoursModulesSliceActions.toggleEditionMode(false));
-      dispatch(parcoursModulesSliceActions.toggleNewModule(false));
-      dispatch(parcoursModulesSliceActions.setCurrentModule(null));
+      props.onCancel();
     };
 
     return (
       <form className="w-full" onSubmit={handleSubmitModule}>
         <h2 className="text-xl font-bold mb-4">
-          {newModule ? "Création de module" : "Edition du module"}
+          {!currentModule ? "Création de module" : "Edition du module"}
         </h2>
         <section className="w-full  grid grid-cols-2 gap-8">
           <article className="flex flex-col gap-y-4">
@@ -239,7 +231,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
               <span style={classImage}></span>
               <div className="flex flex-col gap-y-4">
                 <label htmlFor="image">
-                  {newModule
+                  {!currentModule
                     ? "Téléverser une image"
                     : "Choisir une nouvelle image"}
                 </label>
@@ -254,7 +246,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
               <label htmlFor="teachers">Formateurs du module</label>
               <MemoizedItemsList
                 itemsList={listeContacts}
-                selectedProp={currentModule.contacts}
+                selectedProp={currentModule ? currentModule.contacts : []}
                 propertyToSearch="name"
                 placeHolder="Rechercher un formateur de module"
                 onUpdateItems={handleUpdateTeachers}
@@ -267,7 +259,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
               <label htmlFor="skills">Compétences du module</label>
               <MemoizedItemsList
                 itemsList={listeSkills}
-                selectedProp={currentModule.bonusSkills}
+                selectedProp={currentModule ? currentModule.bonusSkills : []}
                 propertyToSearch="description"
                 placeHolder="Rechercher une compétence de module"
                 onUpdateItems={handleUpdateSkills}

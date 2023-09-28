@@ -5,15 +5,9 @@ import { sortArray } from "../../../utils/sortArray";
 const initialModulesState: {
   modules: Module[] | null;
   currentModule: Module | null;
-  editionMode: boolean;
-  newModule: boolean;
-  initialRender: boolean;
 } = {
   modules: null,
   currentModule: null,
-  editionMode: false,
-  newModule: false,
-  initialRender: true,
 };
 
 const parcoursModulesSlice = createSlice({
@@ -23,31 +17,15 @@ const parcoursModulesSlice = createSlice({
     setModules(state, action) {
       state.modules = action.payload;
     },
-    setCurrentModule(state, action) {
-      state.currentModule = action.payload;
-    },
-    toggleEditionMode(state, action) {
-      state.editionMode = action.payload;
-    },
-    toggleNewModule(state, action) {
-      state.newModule = action.payload;
-    },
     addNewModule(state, action) {
       if (!state.modules) {
         state.modules = [];
       }
-      state.modules = [...state.modules, { ...action.payload }];
-    },
-    editModule(state, action) {
-      const module = action.payload;
-      let modules = state.modules;
-      modules = modules!.filter((item) => item.id !== module.id);
-      modules = sortArray([...modules, module], "id");
-      state.modules = modules;
-      console.log(state.modules);
-    },
-    toggleInitialRender(state, action) {
-      state.initialRender = action.payload;
+      state.modules = sortArray(
+        [...state.modules, { ...action.payload }],
+        "id",
+        false
+      );
     },
     updateCurrentParcoursModule(state, action) {
       const id = action.payload;
@@ -69,6 +47,9 @@ const parcoursModulesSlice = createSlice({
       state.modules = state.modules!.filter(
         (item) => item.id !== action.payload
       );
+    },
+    setCurrentModule(state, action) {
+      state.currentModule = action.payload;
     },
   },
 });

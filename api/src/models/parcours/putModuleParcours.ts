@@ -5,21 +5,9 @@ import { log } from "console";
 async function putModuleParcours(module: any, thumb: string, image: any) {
   const newModule = JSON.parse(module);
 
-  const data = [
-    {
-      title: newModule.title,
-      description: newModule.description,
-      duration: newModule.duration,
-      image,
-      thumb,
-    },
-  ];
-  console.log(newModule);
   const existingParcours = await prisma.parcours.findUnique({
     where: { id: +newModule.parcoursId },
   });
-
-  console.log({ newModule });
 
   if (!existingParcours) {
     const newError = { message: "Le parcours n'existe pas", statusCode: 404 };
@@ -30,7 +18,7 @@ async function putModuleParcours(module: any, thumb: string, image: any) {
   let updatedParcours: Parcours | null = null;
 
   const transaction = await prisma.$transaction(async (tx) => {
-    const addModule = await tx.module.create({
+    /*     const addModule = await tx.module.create({
       data: {
         title: newModule.title,
         description: newModule.description,
@@ -47,7 +35,7 @@ async function putModuleParcours(module: any, thumb: string, image: any) {
           }),
         },
       },
-    });
+    }); */
 
     parcoursModule = await tx.module.create({
       data: {
