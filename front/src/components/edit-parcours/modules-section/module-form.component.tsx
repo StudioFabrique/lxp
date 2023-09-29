@@ -2,47 +2,41 @@ import { useSelector } from "react-redux";
 import React, { FormEvent, useState } from "react";
 
 import useInput from "../../../hooks/use-input";
-import {
-  regexGeneric,
-  regexNumber,
-  regexOptionalGeneric,
-} from "../../../utils/constantes";
+import { regexGeneric, regexNumber } from "../../../utils/constantes";
 import Contact from "../../../utils/interfaces/contact";
 import Skill from "../../../utils/interfaces/skill";
 import MemoizedItemsList from "./items-list.component";
 import { compressImage } from "../../../helpers/compress-image";
 import MemoizedModuleFilesUpload from "./module-files-upload.component";
-import { useDispatch } from "react-redux";
 import { defaultModuleThumb } from "../../../lib/defautltModuleThumb";
-import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
+import toast from "react-hot-toast";
 
 interface ModuleFormProps {
   isLoading: boolean;
+  currentModule?: any;
+  onCancel: () => void;
   onSubmitModule: (formData: FormData) => void;
 }
 
 const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
   (props, ref) => {
-    const dispatch = useDispatch();
-    const currentModule = useSelector(
-      (state: any) => state.parcoursModules.currentModule
-    );
+    const currentModule = props.currentModule ? props.currentModule : null;
     const parcours = useSelector((state: any) => state.parcours);
     const { value: title } = useInput(
       (value) => regexGeneric.test(value),
-      currentModule.title ?? ""
+      currentModule?.title || ""
     );
     const { value: duration } = useInput(
       (value) => regexNumber.test(value),
-      currentModule.duration ?? ""
+      currentModule?.duration || null
     );
     const { value: description } = useInput(
-      (value) => regexOptionalGeneric.test(value),
-      currentModule.description ?? ""
+      (value) => regexGeneric.test(value),
+      currentModule?.description || ""
     );
     const [image, setImage] = useState<File | null>(null);
     const [thumb, setThumb] = useState<string | null>(
-      currentModule.thumb ?? null
+      currentModule?.thumb ?? null
     );
     const listeContacts = useSelector(
       (state: any) => state.parcoursContacts.currentContacts
@@ -51,17 +45,14 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
       (state: any) => state.parcoursSkills.skills
     ) as Skill[];
     const [teachers, setTeachers] = useState<Contact[] | null>(
-      currentModule.contacts ?? null
+      currentModule?.contacts ?? []
     );
     const [skills, setSkills] = useState<Skill[] | null>(
-      currentModule.bonusSkills ?? null
+      currentModule?.bonusSkills ?? []
     );
     const parcoursInfos = useSelector(
       (state: any) => state.parcoursInformations.infos
     );
-
-    console.log({ listeContacts });
-    console.log({ teachers });
 
     /**
      * définit le style du champ formulaire en fonction de sa validité
@@ -95,7 +86,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
 
     const classImage: React.CSSProperties = {
       backgroundImage: `url('${
-        currentModule.thumb ? currentModule.thumb : defaultModuleThumb
+        currentModule ? currentModule.thumb : defaultModuleThumb
       }')`,
       width: "100px",
       height: "100%",
@@ -127,56 +118,64 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
       } else setThumb(null);
     };
 
-    const handleSubmitModule = (event: FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      const formIsValid =
+    const fields = [title, description, duration];
+
+    let formIsValid = false;
+
+    if (!currentModule) {
+      //  validation en mode création de module
+      formIsValid =
         title.isValid &&
         description.isValid &&
-        duration.isValid &&
-        teachers &&
-        teachers?.length > 0 &&
-        skills &&
-        skills.length > 0 &&
-        image &&
-        thumb;
+        image !== null &&
+        thumb !== null &&
+        thumb !== undefined;
+    } else {
+      //  validation en mode mise à jour du module
+      formIsValid = title.isValid && description.isValid && duration.isValid;
+    }
+
+    const handleSubmitModule = (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
 
       if (formIsValid) {
-        const module = {
+        let module = {
+          formationId: parcours.formation.id,
+          id: currentModule ? +currentModule.id : undefined,
           title: title.value,
           description: description.value,
           duration: duration.value,
-          minDate: currentModule.minDate
+          minDate: currentModule
             ? currentModule.minDate
             : parcoursInfos.startDate,
-          maxDate: currentModule.maxDate
+          maxDate: currentModule
             ? currentModule.maxDate
             : parcoursInfos.endDate,
           contacts: teachers,
           bonusSkills: skills,
-          formations: [1],
-          parcoursId: parcours.id,
         };
         const formData = new FormData();
-        formData.append("image", image);
-        formData.append("thumb", thumb);
+        if (image && thumb) {
+          formData.append("image", image);
+          formData.append("thumb", thumb);
+        }
         formData.append("module", JSON.stringify(module));
-
         props.onSubmitModule(formData);
+      } else {
+        // affichage des erreurs pour les champs obligatoires et un toast
+        fields.forEach((field: any) => field.isSubmitted());
+        toast.error("Le formulaire est incomplet");
       }
     };
 
     const handleCancel = () => {
-      dispatch(parcoursModulesSliceActions.toggleEditionMode(false));
-      dispatch(parcoursModulesSliceActions.toggleNewModule(false));
-      dispatch(parcoursModulesSliceActions.setCurrentModule(null));
+      props.onCancel();
     };
 
     return (
       <form className="w-full" onSubmit={handleSubmitModule}>
         <h2 className="text-xl font-bold mb-4">
-          {currentModule.isNewModule
-            ? "Création de module"
-            : "Edition du module"}
+          {!currentModule ? "Création de module" : "Edition du module"}
         </h2>
         <section className="w-full  grid grid-cols-2 gap-8">
           <article className="flex flex-col gap-y-4">
@@ -200,7 +199,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
             {/* description */}
 
             <div className="flex flex-col gap-y-4">
-              <label htmlFor="description">Description</label>
+              <label htmlFor="description">Description *</label>
               <textarea
                 className={setAreaStyle(description.hasError)}
                 id="description"
@@ -215,9 +214,11 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
             {/* durée du modules en heures */}
 
             <div className="flex flex-col gap-y-4">
-              <label htmlFor="duration">Nombre d'heures</label>
+              <label htmlFor="duration">
+                Nombre d'heures {currentModule ? "*" : ""}
+              </label>
               <input
-                className={setInputStyle(duration.hasError)}
+                className={setInputStyle(duration.hasError && currentModule)}
                 type="number"
                 id="duration"
                 name="duration"
@@ -232,7 +233,11 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
             <div className="w-full flex gap-x-4 items-center">
               <span style={classImage}></span>
               <div className="flex flex-col gap-y-4">
-                <label htmlFor="image">Téléverser une image</label>
+                <label htmlFor="image">
+                  {!currentModule
+                    ? "Téléverser une image"
+                    : "Choisir une nouvelle image"}
+                </label>
                 <MemoizedModuleFilesUpload setImage={handleUpdateImage} />
               </div>
             </div>
@@ -244,7 +249,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
               <label htmlFor="teachers">Formateurs du module</label>
               <MemoizedItemsList
                 itemsList={listeContacts}
-                selectedProp={currentModule.contacts}
+                selectedProp={currentModule ? currentModule.contacts : []}
                 propertyToSearch="name"
                 placeHolder="Rechercher un formateur de module"
                 onUpdateItems={handleUpdateTeachers}
@@ -257,7 +262,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
               <label htmlFor="skills">Compétences du module</label>
               <MemoizedItemsList
                 itemsList={listeSkills}
-                selectedProp={currentModule.bonusSkills}
+                selectedProp={currentModule ? currentModule.bonusSkills : []}
                 propertyToSearch="description"
                 placeHolder="Rechercher une compétence de module"
                 onUpdateItems={handleUpdateSkills}

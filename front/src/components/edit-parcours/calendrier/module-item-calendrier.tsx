@@ -3,6 +3,8 @@ import Module from "../../../utils/interfaces/module";
 import { useDispatch } from "react-redux";
 import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
 import { useSelector } from "react-redux";
+import ToolTipWarning from "../../UI/tooltip-warning/tooltip-warning";
+import { notValidModuleTooltip } from "../../../lib/not-valid-module";
 
 const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
   const currentModule: Module | null = useSelector(
@@ -12,6 +14,14 @@ const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
   const dispatch = useDispatch();
 
   const [isSelected, setIsSelected] = useState(false);
+
+  // un module item de la iste des modules du parcours n'est pas valide par défaut
+  let notValid = true;
+
+  // teste si un module du parcours est valide
+  if (module.contacts !== undefined && module.bonusSkills !== undefined) {
+    notValid = module.contacts.length === 0 || module.bonusSkills.length === 0;
+  }
 
   const handleClick = () => {
     dispatch(
@@ -34,8 +44,9 @@ const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
           onClick={handleClick}
           className={`${
             isSelected ? "bg-secondary-focus" : "bg-secondary"
-          } flex items-center gap-x-4 text-black p-3 rounded-lg hover:bg-primary hover:cursor-pointer`}
+          } flex items-center gap-x-4 text-black p-4 rounded-lg hover:bg-primary hover:cursor-pointer relative`}
         >
+          {notValid ? <ToolTipWarning message={notValidModuleTooltip} /> : null}
           <span className="w-[20%]">
             <img
               className="object-fill  rounded-md"

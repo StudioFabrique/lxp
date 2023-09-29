@@ -1,44 +1,33 @@
 import { prisma } from "../../utils/db";
 
-export default async function deleteModule(moduleId: number) {
-  /*   console.log("module : ");
-  console.log(module);
+async function deleteModule(moduleId: number) {
+  const existingModule = await prisma.module.findFirst({
+    where: { id: moduleId },
+  });
 
-  console.log("moduleId : " + moduleId);
+  if (!existingModule) {
+    const error = { message: "Le module n'existe pas", statusCode: 404 };
+    throw error;
+  }
 
-  try {
-    await prisma.bonusSkillsOnModule.deleteMany({
-      where: {
-        moduleId: moduleId,
-      },
+  let deletedModule = {};
+
+  const transaction = await prisma.$transaction(async (tx) => {
+    await tx.contactsOnModule.deleteMany({
+      where: { moduleId },
+    });
+    await tx.bonusSkillsOnModule.deleteMany({
+      where: { moduleId },
+    });
+    await tx.modulesOnParcours.deleteMany({
+      where: { moduleId },
     });
 
-    await prisma.contactsOnModule.deleteMany({
-      where: {
-        moduleId: moduleId,
-      },
-    });
-
-    await prisma.modulesOnParcours.deleteMany({
-      where: {
-        moduleId: moduleId,
-      },
-    });
-
-    const deletedModule = await prisma.module.delete({
+    deletedModule = await tx.module.delete({
       where: { id: moduleId },
     });
-
-    if (deletedModule) {
-      console.log(
-        "Module associé au parcours suprrimé avec succès:",
-        deletedModule
-      );
-      return deletedModule.id;
-    }
-    return null;
-  } catch (error) {
-    console.error("Erreur de suppression :", error);
-    return null;
-  }*/
+  });
+  return deletedModule;
 }
+
+export default deleteModule;

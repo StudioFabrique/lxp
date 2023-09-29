@@ -7,7 +7,7 @@ export default async function updateDatesModule(
 ) {
   const datesParcours = (
     await prisma.module.findUnique({
-      where: { id: moduleId },
+      where: { id: +moduleId },
       select: {
         parcours: {
           select: { parcours: { select: { startDate: true, endDate: true } } },
@@ -30,7 +30,7 @@ export default async function updateDatesModule(
   }
 
   const response = await prisma.module.update({
-    where: { id: moduleId },
+    where: { id: +moduleId },
     data: { minDate: minDate, maxDate: maxDate },
   });
 

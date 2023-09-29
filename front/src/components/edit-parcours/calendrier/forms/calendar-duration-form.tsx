@@ -30,7 +30,7 @@ const CalendarDurationForm = () => {
 
   const initDuration = useCallback(() => {
     if (currentModule) {
-      setDuration(currentModule.duration);
+      setDuration(currentModule.duration ?? 0);
     }
   }, [currentModule, setDuration]);
 

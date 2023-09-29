@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { serverIssue } from "../../utils/constantes";
+import putAddModule from "../../models/parcours/put-add-module";
 
-import deleteModule from "../../models/module/delete-module";
-
-async function httpDeleteModule(req: Request, res: Response) {
-  const { moduleId } = req.params;
+async function httpPutAddModule(req: Request, res: Response) {
+  const { moduleId, parcoursId } = req.params;
 
   try {
-    const response = await deleteModule(+moduleId);
+    const response = await putAddModule(+moduleId, +parcoursId);
+
     return res.status(201).json(response);
   } catch (error: any) {
     return res
@@ -16,4 +16,4 @@ async function httpDeleteModule(req: Request, res: Response) {
   }
 }
 
-export default httpDeleteModule;
+export default httpPutAddModule;

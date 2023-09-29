@@ -4,7 +4,7 @@ import path from "path";
 
 import httpPutModuleImage from "../../../controllers/parcours/http-put-module-parcours";
 import checkToken from "../../../middleware/check-token";
-import httpPutModule from "../../../controllers/clone/http-put-module";
+import httpPutModule from "../../../controllers/module/http-put-module";
 
 const putModuleImageRouter = express.Router();
 
@@ -25,6 +25,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 
+// crée une copie d'un module de la formation et l'ajoute à un parcours
 putModuleImageRouter.put(
   "/",
   checkToken,
@@ -32,6 +33,7 @@ putModuleImageRouter.put(
   httpPutModuleImage
 );
 
+// met à jour un module existant
 putModuleImageRouter.put(
   "/update",
   checkToken,

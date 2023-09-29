@@ -1,23 +1,21 @@
 import { Request, Response } from "express";
+import { serverIssue } from "../../utils/constantes";
+import postModule from "../../models/formation/post-module";
 import fs from "fs";
 
-import putModule from "../../models/clone/putModule";
-
-async function httpPutModule(req: Request, res: Response) {
+async function httpPostModule(req: Request, res: Response) {
   const { module, thumb } = req.body;
-  console.log(req.body);
 
   const uploadedFile: any = req.file;
-
   if (uploadedFile !== undefined) {
     try {
       {
         const data = await fs.promises.readFile(uploadedFile.path);
         const base64String = data.toString("base64");
-        const response = await putModule(module, thumb, base64String);
+        const response = await postModule(module, thumb, base64String);
         console.log({ response });
 
-        await fs.promises.unlink(uploadedFile.path);
+        // await fs.promises.unlink(uploadedFile.path);
         console.log("Fichier supprimé :", uploadedFile.path);
         return res
           .status(201)
@@ -26,9 +24,9 @@ async function httpPutModule(req: Request, res: Response) {
     } catch (error: any) {
       return res
         .status(error.statusCode ?? 500)
-        .json({ message: error.message });
+        .json({ message: error.message ?? serverIssue });
     }
   }
 }
 
-export default httpPutModule;
+export default httpPostModule;

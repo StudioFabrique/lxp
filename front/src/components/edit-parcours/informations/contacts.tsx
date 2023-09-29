@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useCallback, useEffect, useRef } from "react";
+import { FC, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 
@@ -8,55 +8,22 @@ import Contact from "../../../utils/interfaces/contact";
 import useHttp from "../../../hooks/use-http";
 import User from "../../../utils/interfaces/user";
 import { parcoursContactsAction } from "../../../store/redux-toolkit/parcours/parcours-contacts";
-import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import SearchDropdown from "../../UI/search-dropdown/search-dropdown";
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
 import UserQuickCreate from "../../user-quick-create/user-quick-create";
 
 type Props = {
-  onSubmitContacts: (contactsIds: Array<Contact>) => void;
+  contacts: any[];
+  notSelectedContacts: Contact[];
 };
 
-const Contacts: FC<Props> = ({ onSubmitContacts }) => {
-  const { sendRequest, error } = useHttp();
+const Contacts: FC<Props> = ({ contacts, notSelectedContacts }) => {
   const dispatch = useDispatch();
-  const contacts = useSelector(
-    (state: any) => state.parcoursContacts.currentContacts
-  );
-  const notSelectedContacts = useSelector(
-    (state: any) => state.parcoursContacts.notSelectedContacts
-  );
+  const { sendRequest, error } = useHttp();
+
   const filteredContacts = useSelector(
     (state: any) => state.parcoursContacts.filteredContacts
   );
-  const isInitialRender = useRef(true);
-
-  /**
-   * envoie une requête http pour récup la liste des formateurs et la stocke dans un slice redux
-   */
-  const fetchTeachers = useCallback(() => {
-    const applyData = (data: Array<User>) => {
-      const contacts = data.map((user: User) => ({
-        idMdb: user._id,
-        name: `${user.lastname} ${user.firstname}`,
-        role: user.roles[0].label,
-      }));
-      dispatch(parcoursContactsAction.initContacts(contacts));
-    };
-    sendRequest(
-      {
-        path: "/user/contacts",
-      },
-      applyData
-    );
-  }, [dispatch, sendRequest]);
-
-  // apple la fonction qui envoie la requete pour récupérer les formateurs
-  useEffect(() => {
-    if (isInitialRender) {
-      fetchTeachers();
-    }
-  }, [fetchTeachers]);
 
   // reset le filtre
   const handleResetFilter = useCallback(() => {
@@ -82,7 +49,7 @@ const Contacts: FC<Props> = ({ onSubmitContacts }) => {
       (item: Contact) => item.idMdb === contact.idMdb
     ).idMdb;
     if (contactId) {
-      dispatch(parcoursContactsAction.removeTag(contactId));
+      dispatch(parcoursContactsAction.removeContact(contactId));
     }
   };
 
@@ -98,24 +65,6 @@ const Contacts: FC<Props> = ({ onSubmitContacts }) => {
   const handleCloseDrawer = (id: string) => {
     document.getElementById(id)?.click();
   };
-
-  useEffect(() => {
-    dispatch(parcoursContactsAction.setNotSelectedContacts());
-  }, [dispatch, contacts]);
-
-  useEffect(() => {
-    let timer: any;
-    if (!isInitialRender.current) {
-      timer = setTimeout(() => {
-        onSubmitContacts(contacts);
-      }, autoSubmitTimer);
-    } else {
-      isInitialRender.current = false;
-    }
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [contacts, dispatch, onSubmitContacts]);
 
   /**
    * envoi d'une requête pour enregistrer dans la bdd un formateur créé à la volée

@@ -5,7 +5,7 @@ export default async function updateDurationModule(
   duration: number
 ) {
   const updatedModule = prisma.module.update({
-    where: { id },
+    where: { id: +id },
     data: { duration },
   });
 

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { regexGeneric /* regexUrl */ } from "../utils/constantes";
 import Contact from "../utils/interfaces/contact";
+import Group from "../utils/interfaces/group";
 import Module from "../utils/interfaces/module";
 import Objective from "../utils/interfaces/objective";
 import Skill from "../utils/interfaces/skill";
@@ -42,27 +43,39 @@ const testSkills = (skills: Array<Skill>) => {
 
 const testModules = (modules: Array<Module>) => {
   let result = true;
-  if (modules.length > 0) {
-    modules.forEach((module) => {
-      const sDate = new Date(module.minDate!).getTime();
-      const eDate = new Date(module.maxDate!).getTime();
-      if (eDate < sDate) {
+  modules.forEach((module) => {
+    if (module.contacts !== undefined && module.bonusSkills !== undefined) {
+      if (
+        module.duration === undefined ||
+        module.duration === 0 ||
+        module.contacts.length === 0 ||
+        module.bonusSkills.length === 0
+      ) {
         result = false;
       }
-    });
-  } else {
-    result = false;
-  }
+    } else {
+      result = false;
+    }
+  });
   return result;
+};
+
+const testGroups = (groups: Array<Group>) => {
+  return groups.length > 0;
 };
 
 export function testStep(id: number, data: any) {
   const validationErrors = Array<any>();
   switch (id) {
     case 1:
-      if (!testTitle(data as string)) {
+      if (!testTitle(data.title as string)) {
         validationErrors.push({
           title: "Titre du parcours non valide",
+        });
+      }
+      if (!testDates(data.startDate, data.endDate)) {
+        validationErrors.push({
+          dates: "Dates du parcours non valides",
         });
       }
       break;
@@ -81,7 +94,7 @@ export function testStep(id: number, data: any) {
       }
       break;
     case 4:
-      if (!testModules(data as Module[])) {
+      if (data === undefined || data.length === 0) {
         validationErrors.push({
           modules: "Le parcours doit avoir au moins un module",
         });
@@ -89,10 +102,15 @@ export function testStep(id: number, data: any) {
       break;
     // TOTO METTRE LES N° DES CASES À JOUR QD LE CALENDRIER ET LA LISTE DES ÉTUDIANTS AURONT ÉTÉ MERGE
     case 5:
+      return [];
+    case 6:
+      if (!testGroups(data as Group[])) {
+        validationErrors.push({
+          groups: "Le parcours doit avoir au moins un groupe d'apprenants",
+        });
+      }
       break;
     case 7:
-      console.log({ id });
-
       if (!testTitle(data.infos.title)) {
         validationErrors.push({
           title: "Titre du parcours non valide",
@@ -142,9 +160,9 @@ export function testStep(id: number, data: any) {
         });
         return validationErrors;
       }
-      if (!testModules(data.modules)) {
+      if (data.modules.length > 0 && !testModules(data.modules)) {
         validationErrors.push({
-          modules: "Le parcours doit avoir au moins un module",
+          modules: "Un ou plusieurs modules sont incomplets",
         });
         return validationErrors;
       }
