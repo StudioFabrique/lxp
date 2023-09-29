@@ -6,7 +6,7 @@ const LayoutAdmin = () => {
     <div className="w-full flex">
       <ul className="text-xs text-info font-bold px-4 flex flex-col gap-y-2 py-2">
         <li>
-          <Link to="/admin/parcours">Parcours</Link>
+          <Link to="../parcours">Parcours</Link>
         </li>
         <Can action="write" subject="parcours">
           <li>
