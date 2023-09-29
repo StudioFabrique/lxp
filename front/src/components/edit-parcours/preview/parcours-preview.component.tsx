@@ -4,8 +4,12 @@ import ParcoursPreviewObjectives from "./parcours-preview-objectives.component";
 import ParcoursPreviewSkills from "./parcours-preview-skills.component";
 import ParcoursPreviewStudent from "./parcours-preview-student";
 
+interface ParcoursPreviewProps {
+  onEdit: (id: number) => void;
+}
+
 /* Cyril */
-const ParcoursPreview = () => {
+const ParcoursPreview = (props: ParcoursPreviewProps) => {
   return (
     /* En tête de l'aperçu */
     <div className="w-full flex flex-col gap-y-8">
@@ -14,23 +18,23 @@ const ParcoursPreview = () => {
       </section>
       {/* Infos générales du parcours */}
       <section>
-        <ParcoursPreviewInfos />
+        <ParcoursPreviewInfos onEdit={props.onEdit} />
       </section>
       {/* Objectifs du parcours */}
       <section>
-        <ParcoursPreviewObjectives />
+        <ParcoursPreviewObjectives onEdit={props.onEdit} />
       </section>
       {/* Compétences du parcours */}
       <section>
-        <ParcoursPreviewSkills />
+        <ParcoursPreviewSkills onEdit={props.onEdit} />
       </section>
       {/* Modules du parcours */}
       <section>
-        <ParcoursPreviewModules />
+        <ParcoursPreviewModules onEdit={props.onEdit} />
       </section>
       {/* étudiants rattachés au parcours */}
       <section>
-        <ParcoursPreviewStudent />
+        <ParcoursPreviewStudent onEdit={props.onEdit} />
       </section>
       {/* TOTO : insérez le calendrier et les étudiants */}
     </div>
