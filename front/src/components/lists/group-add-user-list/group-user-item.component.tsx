@@ -4,14 +4,17 @@ import { AvatarSmall } from "../../UI/avatar/avatar.component";
 import { DeleteButton, EditButton } from "./buttons";
 
 const GroupUserItem: FC<{
-  user: User;
+  itemProps: any;
   onUpdateUser: (user: User) => void;
   onDeleteUser: (user: User) => void;
-}> = ({ user, onUpdateUser, onDeleteUser }) => {
+  onCheckRow: (id: number) => void;
+}> = ({ itemProps, onUpdateUser, onDeleteUser, onCheckRow }) => {
+  console.log({ itemProps });
+
   const handleToggleActiveState: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
-    const userUpdated = user;
+    const userUpdated = itemProps;
     userUpdated.isActive = event.target.checked;
     onUpdateUser(userUpdated);
   };
@@ -19,17 +22,22 @@ const GroupUserItem: FC<{
   return (
     <tr className="bg-secondary/10 hover:bg-blue-800 hover:text-white">
       <td className="bg-transparent rounded-l-xl p-5">
-        <input type="checkbox" className="checkbox checkbox-primary" />
+        <input
+          type="checkbox"
+          className="checkbox checkbox-primary"
+          onChange={() => onCheckRow(itemProps._id)}
+          checked={itemProps.isSelected}
+        />
       </td>
       <td className="bg-transparent">
-        {user.avatar && <AvatarSmall url={user.avatar} />}
+        {itemProps.avatar && <AvatarSmall url={itemProps.avatar} />}
       </td>
-      <td className="bg-transparent">{user.firstname}</td>
-      <td className="bg-transparent">{user.lastname}</td>
-      <td className="bg-transparent">{user.email}</td>
+      <td className="bg-transparent">{itemProps.firstname}</td>
+      <td className="bg-transparent">{itemProps.lastname}</td>
+      <td className="bg-transparent">{itemProps.email}</td>
       <td className="bg-transparent">CDA</td>
       <td className="bg-transparent text-primary">
-        {user.isActive ? "Actif" : "Inactif"}
+        {itemProps.isActive ? "Actif" : "Inactif"}
       </td>
       <td className="bg-transparent">
         <span className="flex items-center">
@@ -37,13 +45,13 @@ const GroupUserItem: FC<{
             type="checkbox"
             className="toggle"
             onChange={handleToggleActiveState}
-            defaultChecked={user.isActive}
+            defaultChecked={itemProps.isActive}
           />
         </span>
       </td>
       <td className="bg-transparent rounded-r-xl">
-        <EditButton user={user} />
-        <DeleteButton user={user} onDeleteUser={onDeleteUser} />
+        <EditButton user={itemProps} />
+        <DeleteButton user={itemProps} onDeleteUser={onDeleteUser} />
       </td>
     </tr>
   );

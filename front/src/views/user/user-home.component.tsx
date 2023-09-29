@@ -204,7 +204,7 @@ const UserHome = () => {
                 <RefreshIcon size={6} />
               </div>
               {!role ? null : (
-                <Can action="update" subject={role.role}>
+                <Can action="update" object={role.role}>
                   <DropdownActionsUser
                     itemsList={dataList}
                     roleTab={role}

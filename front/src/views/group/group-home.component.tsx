@@ -158,7 +158,7 @@ const GroupHome = () => {
           <div className="flex justify-between items-center">
             <div>
               {role && dataList.length > 0 ? (
-                <Can action={"update"} subject={role.role}>
+                <Can action={"update"} object={role.role}>
                   <RoleSelect
                     roleTab={role}
                     onGroupRolesChange={handleGroupRolesChange}

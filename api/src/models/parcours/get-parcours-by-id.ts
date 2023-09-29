@@ -1,12 +1,12 @@
 import { getAdmin } from "../../helpers/get-admin";
 import { prisma } from "../../utils/db";
 
-async function getParcoursById(parcoursId: number, userId: string) {
+async function getParcoursById(parcoursId: number /* , userId: string */) {
   try {
-    const admin = await getAdmin(userId);
+    // const admin = await getAdmin(userId);
 
     const parcours = await prisma.parcours.findFirst({
-      where: { id: parcoursId, adminId: admin.id },
+      where: { id: parcoursId /* , adminId: admin.id */ },
       select: {
         id: true,
         title: true,

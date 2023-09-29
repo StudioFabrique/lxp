@@ -5,7 +5,8 @@ import { sortArray } from "../utils/sortArray";
 const useEagerLoadingList = (
   initialList: Array<any>,
   defaultSort: string,
-  defaultLimit = 15
+  defaultLimit = 15,
+  idProperty: "id" | "_id" = "id"
 ) => {
   const [list, setList] = useState<Array<any> | null>(initialList); // liste temporaire des objets à afficher
   const [page, setPage] = useState(1); //  numéro de la page affichée
@@ -19,10 +20,12 @@ const useEagerLoadingList = (
    * gère le cochage décochage d'une row individuelle
    * @param id number
    */
-  const handleRowCheck = (id: number) => {
+  const handleRowCheck = (id: any) => {
     setList((prevList: any) =>
       prevList.map((item: any) =>
-        item.id === id ? { ...item, isSelected: !item.isSelected } : item
+        item[idProperty] === id
+          ? { ...item, isSelected: !item.isSelected }
+          : item
       )
     );
   };

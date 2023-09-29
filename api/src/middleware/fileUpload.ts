@@ -1,5 +1,14 @@
+import { Request } from "express";
 import multer from "multer";
 import path from "path";
+import * as fs from "fs";
+
+export const getBase64ImageFromReq = async (req: Request): Promise<string> => {
+  const image: any = req.file;
+  const imageData = await fs.promises.readFile(image.path);
+  const base64String = imageData.toString("base64");
+  return base64String;
+};
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
