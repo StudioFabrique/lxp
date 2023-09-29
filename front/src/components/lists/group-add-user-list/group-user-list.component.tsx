@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import GroupManageUserList from "./group-manage-user-list/group-manage-user-list";
 import User from "../../../utils/interfaces/user";
 import Wrapper from "../../UI/wrapper/wrapper.component";
@@ -7,6 +7,9 @@ import SearchSimple from "../../UI/search-simple/search-simple";
 import CsvImportUserList from "./csv-import-user/csv-import-user-list/csv-import-user-list.component";
 import LoadingIcon from "../../UI/svg/loading-icon.component";
 import ThreeDotIcon from "../../UI/svg/three-dot-icon.component";
+import useItems from "../../../hooks/use-items";
+import useEagerLoadingList from "../../../hooks/use-eager-loading-list";
+import Pagination from "../../UI/pagination/pagination";
 
 const GroupUserList: FC<{
   usersToAdd: User[];
@@ -14,6 +17,17 @@ const GroupUserList: FC<{
   onUpdateUser: (user: User) => void;
   onDeleteUser: (user: User) => void;
 }> = ({ usersToAdd, onAddUsers, onUpdateUser, onDeleteUser }) => {
+  const {
+    page,
+    setPage,
+    totalPages,
+    handleRowCheck,
+    allChecked,
+    setAllChecked,
+    getSelecteditems,
+    list,
+  } = useEagerLoadingList(usersToAdd, "ASC", 10);
+
   return (
     <Wrapper>
       <div className="flex justify-between">
@@ -30,12 +44,19 @@ const GroupUserList: FC<{
       </div>
 
       {/* liste des utilisateurs du groupe */}
-      {usersToAdd.length > 0 ? (
+      {list && list.length > 0 ? (
         <>
           <table className="table-auto border-separate border-spacing-y-4">
             <thead>
               <tr className="text-lg">
-                <th className="bg-transparent "></th>
+                <th className="bg-transparent">
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-primary"
+                    onChange={(e) => setAllChecked(e.currentTarget.checked)}
+                    checked={allChecked}
+                  />
+                </th>
                 <th className="bg-transparent"></th>
                 <th className="bg-transparent text-start">Prénom</th>
                 <th className="bg-transparent text-start">Nom</th>
@@ -47,16 +68,18 @@ const GroupUserList: FC<{
               </tr>
             </thead>
             <tbody>
-              {usersToAdd.map((user) => (
+              {list.map((item) => (
                 <GroupUserItem
-                  key={user._id}
-                  user={user}
+                  key={item._id}
+                  itemProps={item}
                   onUpdateUser={onUpdateUser}
                   onDeleteUser={onDeleteUser}
+                  onCheckRow={handleRowCheck}
                 />
               ))}
             </tbody>
           </table>
+          <Pagination page={page} setPage={setPage} totalPages={totalPages} />
         </>
       ) : (
         "Aucun utilisateurs dans ce groupe"
