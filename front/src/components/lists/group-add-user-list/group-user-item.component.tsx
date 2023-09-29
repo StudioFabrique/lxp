@@ -1,4 +1,11 @@
-import { ChangeEvent, ChangeEventHandler, FC, Ref, useRef } from "react";
+import {
+  ChangeEvent,
+  ChangeEventHandler,
+  FC,
+  Ref,
+  useEffect,
+  useRef,
+} from "react";
 import User from "../../../utils/interfaces/user";
 import { AvatarSmall } from "../../UI/avatar/avatar.component";
 import { DeleteButton, EditButton } from "./buttons";
@@ -11,8 +18,6 @@ const GroupUserItem: FC<{
 }> = ({ itemProps, onUpdateUser, onDeleteUser, onCheckRow }) => {
   console.log({ itemProps });
 
-  const checkBox: Ref<HTMLInputElement> = useRef(null);
-
   const handleToggleActiveState: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
@@ -21,20 +26,13 @@ const GroupUserItem: FC<{
     onUpdateUser(userUpdated);
   };
 
-  const handleCheck = (e: ChangeEvent<HTMLInputElement>) => {
-    e.currentTarget.checked
-      ? onCheckRow(itemProps.id)
-      : onCheckRow(itemProps.id);
-  };
-
   return (
     <tr className="bg-secondary/10 hover:bg-blue-800 hover:text-white">
       <td className="bg-transparent rounded-l-xl p-5">
         <input
-          ref={checkBox}
           type="checkbox"
           className="checkbox checkbox-primary"
-          onChange={handleCheck}
+          onChange={() => onCheckRow(itemProps._id)}
           checked={itemProps.isSelected}
         />
       </td>

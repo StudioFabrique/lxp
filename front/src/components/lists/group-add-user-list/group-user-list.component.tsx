@@ -1,4 +1,11 @@
-import { FC, useEffect } from "react";
+import {
+  DetailedHTMLProps,
+  FC,
+  HTMLAttributes,
+  Ref,
+  useEffect,
+  useRef,
+} from "react";
 import GroupManageUserList from "./group-manage-user-list/group-manage-user-list";
 import User from "../../../utils/interfaces/user";
 import Wrapper from "../../UI/wrapper/wrapper.component";
@@ -26,16 +33,44 @@ const GroupUserList: FC<{
     setAllChecked,
     getSelecteditems,
     list,
-  } = useEagerLoadingList(usersToAdd, "ASC", 10);
+  } = useEagerLoadingList(usersToAdd, "ASC", 10, "_id");
+
+  const menuDiv: Ref<HTMLDivElement> = useRef(null);
+
+  const handleToggleMenu = () => {
+    menuDiv.current &&
+      (menuDiv.current.style.visibility =
+        menuDiv.current.style.visibility === "visible" ? "hidden" : "visible");
+  };
+
+  const handleDeleteUsersToAdd = () => {
+    getSelecteditems()?.forEach((selectedItem) => onDeleteUser(selectedItem));
+  };
 
   return (
     <Wrapper>
       <div className="flex justify-between">
         <h2 className="font-bold text-lg">Etudiants</h2>
-        <div className="flex gap-x-5">
+        <div className="flex gap-x-2 items-center">
           <CsvImportUserList onAddUsers={onAddUsers} />
-          <LoadingIcon />
-          <ThreeDotIcon />
+          <button type="button" className="btn btn-ghost px-2">
+            <LoadingIcon />
+          </button>
+          <button
+            type="button"
+            className="btn btn-ghost px-2"
+            onClick={handleToggleMenu}
+          >
+            <ThreeDotIcon />
+          </button>
+          <div
+            ref={menuDiv}
+            className="absolute whitespace-nowrap translate-y-10"
+          >
+            <button type="button" onClick={handleDeleteUsersToAdd}>
+              Supprimer les utilisateurs selectionnés
+            </button>
+          </div>
         </div>
       </div>
       <div className="flex justify-between items-center">
