@@ -12,7 +12,7 @@ const ParcoursPreviewModules = () => {
   return (
     <Wrapper>
       <h2 className="text-xl font-bold">Liste des modules</h2>
-      <ul className="w-full flex gap-4 overflow-auto">
+      <ul className="w-full flex gap-4 overflow-auto py-2 ">
         {modules.map((module) => (
           <li className="w-[300px]" key={module.id}>
             <PreviewModuleItem module={module} />

@@ -5,9 +5,11 @@ import { sortArray } from "../../../utils/sortArray";
 const initialModulesState: {
   modules: Module[] | null;
   currentModule: Module | null;
+  isFormOpen: boolean;
 } = {
   modules: null,
   currentModule: null,
+  isFormOpen: false,
 };
 
 const parcoursModulesSlice = createSlice({
@@ -50,6 +52,22 @@ const parcoursModulesSlice = createSlice({
     },
     setCurrentModule(state, action) {
       state.currentModule = action.payload;
+    },
+    setIsFormOpen(state, action) {
+      state.isFormOpen = action.payload;
+    },
+    replaceModule(state, action) {
+      if (state.modules) {
+        state.modules = state.modules.filter(
+          (item) => item.id !== action.payload.id
+        );
+        state.modules = sortArray(
+          [...state.modules, action.payload],
+          "id",
+          false
+        );
+      }
+      console.log("modules", state.modules);
     },
   },
 });

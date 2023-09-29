@@ -45,7 +45,9 @@ const ModulesSection = () => {
     const applyData = (data: any) => {
       setNewModule(false);
       setToggleForm(false);
-      setFormationModules((prevData) => [...prevData, data.data]);
+      setFormationModules((prevData) =>
+        sortArray([...prevData, data.data], "id", false)
+      );
     };
     sendRequest(
       {
@@ -56,17 +58,18 @@ const ModulesSection = () => {
       applyData
     );
   };
-  /*
+
   const handleUpdateModule = (formData: FormData) => {
     const applyData = (data: any) => {
-      const updatedModule = {
+      console.log({ data });
+      const module = {
         ...data.data,
-        id: data.data.id.toString(),
-        bonusSkills: data.data.bonusSkills.map((item: any) => item.bonusSkill),
         contacts: data.data.contacts.map((item: any) => item.contact),
+        bonusSkills: data.data.bonusSkills.map((item: any) => item.bonusSkill),
       };
-      dispatch(parcoursModulesSliceActions.editModule(updatedModule));
-      dispatch(parcoursModulesSliceActions.toggleEditionMode(false));
+      dispatch(parcoursModulesSliceActions.replaceModule(module));
+      setModuleToEdit(null);
+      setToggleForm(false);
     };
     sendRequest(
       {
@@ -83,7 +86,7 @@ const ModulesSection = () => {
    * @param id string
    */
   const handleDeleteModule = (id: number) => {
-    const applyData = (data: Module) => {
+    const applyData = (_data: Module) => {
       dispatch(parcoursModulesSliceActions.removeModule(id));
     };
     sendRequest(
@@ -105,7 +108,7 @@ const ModulesSection = () => {
       dispatch(parcoursModulesSliceActions.addNewModule(data));
     };
     const module = formationModules.find((item) => item.id === id);
-    if (module) {
+    if (module && !toggleForm) {
       sendRequest(
         {
           path: `/modules/add-module/${parcoursId}/${module.id}`,
@@ -122,6 +125,8 @@ const ModulesSection = () => {
   };
 
   const handleModuleToEdit = (id: number) => {
+    console.log("id", id);
+
     const module = parcoursModules.find((item) => item.id === id);
     console.log("module", module);
 
@@ -137,6 +142,10 @@ const ModulesSection = () => {
     setToggleForm(false);
   };
 
+  useEffect(() => {
+    dispatch(parcoursModulesSliceActions.setIsFormOpen(toggleForm));
+  }, [toggleForm, dispatch]);
+
   // scroll jusqu'au premier champ du formulaire qd ce dernier est ouvert
   useEffect(() => {
     if ((newModule || moduleToEdit) && formRef && formRef.current) {
@@ -144,8 +153,6 @@ const ModulesSection = () => {
       formRef.current!.focus();
     }
   }, [newModule, moduleToEdit]);
-
-  console.log({ moduleToEdit });
 
   return (
     <div className="flex flex-col gap-y-8">
@@ -157,8 +164,10 @@ const ModulesSection = () => {
           <Wrapper>
             <ModuleList
               isSourceList={true}
+              isLoading={isLoading}
               modules={formationModules}
               label="Modules de la formation"
+              onEdit={() => {}}
               onSelect={handleSelectModule}
               onDelete={handleDeleteModule}
             />
@@ -166,9 +175,11 @@ const ModulesSection = () => {
           <Wrapper>
             <ModuleList
               isSourceList={false}
+              isLoading={isLoading}
               modules={parcoursModules}
               label="Modules du parcours"
-              onSelect={handleModuleToEdit}
+              onEdit={handleModuleToEdit}
+              onSelect={() => {}}
               onDelete={handleDeleteModule}
             />
           </Wrapper>
@@ -201,7 +212,7 @@ const ModulesSection = () => {
             <Wrapper>
               <ModuleForm
                 currentModule={moduleToEdit}
-                onSubmitModule={() => {}}
+                onSubmitModule={handleUpdateModule}
                 isLoading={isLoading}
                 ref={formRef}
                 onCancel={handleCancel}
