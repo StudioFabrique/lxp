@@ -61,7 +61,7 @@ export const SelectionButton: FC<{
     <input
       ref={checkboxRef}
       type="checkbox"
-      checked={checkboxRef.current?.checked}
+      checked={checkboxRef.current?.checked ?? false}
       onChange={handleChange}
       className="checkbox checkbox-sm rounded-md checkbox-primary"
     />
