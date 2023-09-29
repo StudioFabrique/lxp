@@ -60,7 +60,7 @@ const RoleSelect: FC<{
             {roles.map((role) => (
               <React.Fragment key={role._id}>
                 {props.roleTab.rank === role.rank ? (
-                  <Can action={"update"} subject={role.role}>
+                  <Can action={"update"} object={role.role}>
                     <li className="bg-primary/20">
                       <div className="flex gap-x-4">
                         <input
