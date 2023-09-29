@@ -20,6 +20,7 @@ const disconnect = async () => {
 let tags: any;
 let contacts: any;
 const image = blobParcours;
+let title: string;
 
 async function getTags() {
   return await prisma.tag.findMany();
@@ -29,7 +30,29 @@ async function getContacts() {
   return await prisma.teacher.findMany();
 }
 
-describe("HTTP Handshake", () => {
+async function getParcours() {
+  const parcours = await prisma.parcours.findMany();
+  if (parcours && parcours.length === 0) {
+    await prisma.parcours.create({
+      data: {
+        title: "test",
+        formation: {
+          connect: { id: 1 },
+        },
+        admin: {
+          connect: { id: 1 },
+        },
+      },
+    });
+  }
+  return parcours;
+}
+
+async function getFormation() {
+  return await prisma.formation.findMany();
+}
+
+describe("HTTP PARCOURS", () => {
   let authToken = {}; // Store the authentication token
 
   beforeAll(async () => {
@@ -45,15 +68,10 @@ describe("HTTP Handshake", () => {
     authToken = loginResponse.headers["set-cookie"][0];
   });
 
-  afterAll(async () => {
-    // Perform any cleanup after running the tests, such as logging out or closing database connections
-    // ...
-  });
-
-  describe("Test GET /parcours/contacts", () => {
+  describe("Test GET /user/contacts", () => {
     test("It should respond with 200 success", async () => {
       await request(app)
-        .get("/v1/parcours/contacts")
+        .get("/v1/user/contacts")
         .set("Cookie", [`${authToken}`])
         .expect(200);
     });
@@ -66,19 +84,21 @@ describe("HTTP Handshake", () => {
   //  jeu de données valides
   describe("Test POST /parcours", () => {
     test("It should respond with 201 success", async () => {
+      const parcours = await getParcours();
+
+      if (parcours && parcours.length > 0) {
+        console.log(`${parcours[0].title}-${parcours.length}`);
+
+        title = `${parcours[0].title}-${parcours.length + 1}`;
+      } else {
+        title = "test-1";
+      }
       await request(app)
         .post("/v1/parcours")
         .set("Cookie", [`${authToken}`])
         .send({
-          id: 1,
-          title: "testToto",
-          description: "testDescription",
-          degree: "testDegree",
-          startDate: new Date(),
-          endDate: new Date(),
-          tags,
-          contacts: [1],
-          image,
+          title: title,
+          formation: 1,
         })
         .expect(201);
     });
@@ -86,21 +106,28 @@ describe("HTTP Handshake", () => {
 
   // jeux de données non valides
 
+  // le titre du parcours existe déjà
+  describe("Test POST /parcours", () => {
+    test("It should respond with 500 failure", async () => {
+      await request(app)
+        .post("/v1/parcours")
+        .set("Cookie", [`${authToken}`])
+        .send({
+          title: title,
+          formation: 1,
+        })
+        .expect(500);
+    });
+  });
+
   describe("Test POST /parcours", () => {
     test("It should respond with 400 failure", async () => {
       await request(app)
         .post("/v1/parcours")
         .set("Cookie", [`${authToken}`])
         .send({
-          id: 1,
           title: 0,
-          description: "testDescription",
-          degree: "testDegree",
-          startDate: new Date(),
-          endDate: new Date(),
-          tags,
-          contacts: [1],
-          image,
+          formation: 1,
         })
         .expect(400);
     });
@@ -112,117 +139,244 @@ describe("HTTP Handshake", () => {
         .post("/v1/parcours")
         .set("Cookie", [`${authToken}`])
         .send({
-          id: 1,
-          title: "totoTest",
-          description: 0,
-          degree: "testDegree",
-          startDate: new Date(),
-          endDate: new Date(),
-          tags,
-          contacts: [1],
-          image,
+          title: "foo",
+          formation: "<hacked>trolololol</hacked>",
         })
         .expect(400);
     });
   });
 
-  describe("Test POST /parcours", () => {
+  /**
+   * GET PARCOURS BY ID
+   */
+
+  describe("Test GET /parcours-by-id/:parcoursId", () => {
+    test("It should respond with 200 success", async () => {
+      await request(app)
+        .get("/v1/parcours/parcours-by-id/1")
+        .set("Cookie", [`${authToken}`])
+        .expect(200);
+    });
+  });
+
+  describe("Test GET /parcours-by-id/:parcoursId", () => {
+    test("It should respond with 500 failure", async () => {
+      const parcours = await getParcours();
+      const id = parcours[parcours.length - 1].id + 1;
+      await request(app)
+        .get(`/v1/parcours/parcours-by-id/${id}`)
+        .set("Cookie", [`${authToken}`])
+        .expect(500);
+    });
+  });
+
+  describe("Test GET /parcours-by-id/:parcoursId", () => {
     test("It should respond with 400 failure", async () => {
       await request(app)
-        .post("/v1/parcours")
+        .get(`/v1/parcours/parcours-by-id/foo`)
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+  });
+
+  /**
+   * GET PARCOURS BY FORMATION
+   */
+
+  describe("Test Get /parcours-by-formation", () => {
+    test("It should respond 200 success", async () => {
+      const parcours = await getParcours();
+      const id = parcours[0].formationId;
+      await request(app)
+        .get(`/v1/parcours/parcours-by-formation/${id}`)
+        .set("Cookie", [`${authToken}`])
+        .expect(200);
+    });
+  });
+
+  describe("Test Get /parcours-by-formation", () => {
+    test("It should respond 404 failure", async () => {
+      const formations = await getFormation();
+      const id = formations[formations.length - 1].id + 1;
+
+      await request(app)
+        .get(`/v1/parcours/parcours-by-formation/${id}`)
+        .set("Cookie", [`${authToken}`])
+        .expect(404);
+    });
+  });
+
+  describe("Test Get /parcours-by-formation", () => {
+    test("It should respond 400 failure", async () => {
+      await request(app)
+        .get(`/v1/parcours/parcours-by-formation/foo`)
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+  });
+
+  /**
+   * PUT UPDATE INFOS
+   */
+
+  describe("Test Put /parcours/update-infos", () => {
+    test("It should respond 201 success", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
         .set("Cookie", [`${authToken}`])
         .send({
-          id: 1,
-          title: "totoTest",
-          description: "testDescription",
-          degree: 0,
-          startDate: new Date(),
-          endDate: new Date(),
-          tags,
-          contacts: [1],
-          image,
+          parcoursId: 1,
+          title: "foo",
+          description: "bar",
+          formation: 1,
+        })
+        .expect(201);
+    });
+  });
+
+  describe("Test Put /parcours/update-infos", () => {
+    test("It should respond 400 failure", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .set("Cookie", [`${authToken}`])
+        .send({
+          parcoursId: "toto",
+          title: "<hacker>",
+          description: "bar",
+          formation: 1,
         })
         .expect(400);
     });
   });
 
-  describe("Test POST /parcours", () => {
-    test("It should respond with 400 failure", async () => {
+  describe("Test Put /parcours/update-infos", () => {
+    test("It should respond 400 failure", async () => {
       await request(app)
-        .post("/v1/parcours")
+        .put("/v1/parcours/update-infos")
         .set("Cookie", [`${authToken}`])
         .send({
-          id: 1,
-          title: "totoTest",
-          description: "testDescription",
-          degree: "testDegree",
-          startDate: 0,
-          endDate: new Date(),
-          tags,
-          contacts: [1],
-          image,
+          parcoursId: 1,
+          title: 1,
+          description: "bar",
+          formation: 1,
         })
         .expect(400);
     });
   });
 
-  describe("Test POST /parcours", () => {
-    test("It should respond with 400 failure", async () => {
+  describe("Test Put /parcours/update-infos", () => {
+    test("It should respond 400 failure", async () => {
       await request(app)
-        .post("/v1/parcours")
+        .put("/v1/parcours/update-infos")
         .set("Cookie", [`${authToken}`])
         .send({
-          id: 1,
-          title: "totoTest",
-          description: "testDescription",
-          degree: "testDegree",
-          startDate: new Date(),
-          endDate: 0,
-          tags: [0],
-          contacts: [1],
-          image,
+          parcoursId: 1,
+          title: "foo",
+          description: 1,
+          formation: 1,
         })
         .expect(400);
     });
   });
 
-  describe("Test POST /parcours", () => {
-    test("It should respond with 400 failure", async () => {
+  describe("Test Put /parcours/update-infos", () => {
+    test("It should respond 400 failure", async () => {
       await request(app)
-        .post("/v1/parcours")
+        .put("/v1/parcours/update-infos")
         .set("Cookie", [`${authToken}`])
         .send({
-          id: 1,
-          title: "totoTest",
-          description: "testDescription",
-          degree: "testDegree",
-          startDate: new Date(),
-          endDate: 0,
-          tags,
-          contacts: [0],
-          image,
+          parcoursId: 1,
+          title: "foo",
+          description: "bar",
+          formation: "test",
         })
         .expect(400);
     });
   });
 
-  describe("Test POST /parcours", () => {
-    test("It should respond with 400 failure", async () => {
+  describe("Test Put /parcours/update-infos", () => {
+    test("It should respond 400 failure", async () => {
       await request(app)
-        .post("/v1/parcours")
+        .put("/v1/parcours/update-infos")
         .set("Cookie", [`${authToken}`])
         .send({
-          id: 1,
-          title: "totoTest",
-          description: "testDescription",
-          degree: "testDegree",
-          startDate: new Date(),
-          endDate: 0,
-          tags,
-          contacts: [1],
-          image: 0,
+          parcoursId: 1000000000,
+          title: "foo",
+          description: "bar",
+          formation: 1,
+        })
+        .expect(500);
+    });
+  });
+
+  describe("Test Put /parcours/update-infos", () => {
+    test("It should respond 400 failure", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .set("Cookie", [`${authToken}`])
+        .send({
+          parcoursId: 1,
+          title: "foo",
+          description: "bar",
+          formation: 1000000000,
+        })
+        .expect(500);
+    });
+  });
+
+  /**
+   * UPDATE PARCOURS DATES
+   */
+
+  describe("Test Put /parcoours/update-dates", () => {
+    test("It should respond 201 success", async () => {
+      await request(app)
+        .put("/v1/parcours/update-dates")
+        .send({
+          parcoursId: 1,
+          startDate: "1947-10-14",
+          endDate: "2000-01-01",
+        })
+        .expect(201);
+    });
+  });
+
+  describe("Test Put /parcoours/update-dates", () => {
+    test("It should respond 400 failure", async () => {
+      await request(app)
+        .put("/v1/parcours/update-dates")
+        .send({
+          parcoursId: "foo",
+          startDate: "1947-10-14",
+          endDate: "2000-01-01",
         })
         .expect(400);
+    });
+  });
+
+  describe("Test Put /parcoours/update-dates", () => {
+    test("It should respond 500 failure", async () => {
+      await request(app)
+        .put("/v1/parcours/update-dates")
+        .send({
+          parcoursId: 1,
+          startDate: "1947-10-14",
+          endDate: "foo",
+        })
+        .expect(400);
+    });
+  });
+
+  describe("Test Put /parcoours/update-dates", () => {
+    test("It should respond 500 failure", async () => {
+      await request(app)
+        .put("/v1/parcours/update-dates")
+        .send({
+          parcoursId: 1000000000,
+          startDate: "1947-10-14",
+          endDate: "2000-01-01",
+        })
+        .expect(500);
     });
   });
 

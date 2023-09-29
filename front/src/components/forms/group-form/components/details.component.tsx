@@ -1,35 +1,92 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
-import ImageFileUpload from "../../../UI/image-file-upload/image-file-upload";
+import Selecter from "../../../UI/selecter/selecter.component";
+import useHttp from "../../../../hooks/use-http";
 
-const Details: FC<{ promotion: any; desc: any }> = ({ promotion, desc }) => {
-  const handleSetFile = (file: File) => {};
+// type de données pour les listes
+type Item = {
+  id: number;
+  title: string;
+  formationId?: number;
+};
+
+const Details: FC<{
+  onSelectParcours: (id: number) => void;
+}> = ({ onSelectParcours }) => {
+  const { sendRequest } = useHttp();
+
+  const [formations, setFormations] = useState<Array<Item>>([]);
+  const [formation, setFormation] = useState<number | undefined>(undefined);
+  const [parcoursList, setParcoursList] = useState<Array<Item>>([]);
+  const [parcours, setParcours] = useState<number | undefined>(undefined);
+
+  /**
+   * requête pour récupérer la liste des formations dans la bdd
+   */
+  useEffect(() => {
+    const processData = (data: Array<Item>) => {
+      setFormations(data);
+    };
+    sendRequest(
+      {
+        path: "/formation",
+      },
+      processData
+    );
+  }, [sendRequest]);
+
+  /**
+   * sélection d'un formation
+   * @param id number
+   */
+  const handleFormation = (id: number) => {
+    setFormation(id);
+  };
+
+  /**
+   * sélection d'un parcours lié à la formation sélectionnée
+   * @param id number
+   */
+  const handleParcours = (id: number) => {
+    setParcours(id);
+    console.log({ parcours });
+  };
+
+  /**
+   * requête qui retourne la liste des parcours liés à la formation sélectionnée
+   */
+  useEffect(() => {
+    if (formation !== undefined) {
+      console.log(formation);
+
+      const processData = (data: any) => {
+        setParcoursList(data.data);
+      };
+      sendRequest(
+        {
+          path: `/parcours/parcours-by-formation/${formation}`,
+          method: "get",
+        },
+        processData
+      );
+    }
+  }, [formation, sendRequest]);
 
   return (
     <Wrapper>
       <h2 className="font-bold text-xl">Details</h2>
-      <span>
-        <label>Promotion</label>
-        <input
-          className="input input-sm w-full p-[20px] pl-[30px] placeholder:text-purple-discrete"
-          type="text"
-          onChange={promotion.valueChangeHandler}
-          onBlur={promotion.valueBlurHandler}
-          defaultValue={promotion.value}
-          autoComplete="off"
+      <div className="flex flex-col gap-y-8">
+        <Selecter
+          list={formations}
+          title="Choisissez une formation"
+          onSelectItem={handleFormation}
         />
-      </span>
-      <span>
-        <label>Description du groupe</label>
-        <textarea
-          className="textarea w-full p-[20px] pl-[30px] placeholder:text-purple-discrete"
-          onChange={desc.valueChangeHandler}
-          onBlur={desc.valueBlurHandler}
-          defaultValue={desc.value}
-          autoComplete="off"
+        <Selecter
+          list={parcoursList}
+          title="Choisisez un parcours"
+          onSelectItem={handleParcours}
         />
-      </span>
-      <ImageFileUpload maxSize={5} onSetFile={handleSetFile} />
+      </div>
     </Wrapper>
   );
 };

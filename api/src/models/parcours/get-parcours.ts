@@ -1,16 +1,21 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../utils/db";
 
 async function getParcours() {
-  const response = await prisma.parcours.findFirst();
+  const response = await prisma.parcours.findMany({
+    select: {
+      id: true,
+      title: true,
+      createdAt: true,
+      updatedAt: true,
+      formation: { select: { title: true, level: true } },
+      admin: { select: { idMdb: true } },
+    },
+  });
 
   if (!response) {
     throw new Error(`Data not found.`);
   }
-
-  const base64Image = response!.image.toString("base64");
-  return base64Image;
+  return response;
 }
 
 export default getParcours;
