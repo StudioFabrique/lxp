@@ -65,9 +65,13 @@ const GroupUserList: FC<{
           </button>
           <div
             ref={menuDiv}
-            className="absolute whitespace-nowrap translate-y-10"
+            className="absolute whitespace-nowrap translate-y-12 invisible"
           >
-            <button type="button" onClick={handleDeleteUsersToAdd}>
+            <button
+              type="button"
+              className="bg-secondary/80 p-2 rounded-lg"
+              onClick={handleDeleteUsersToAdd}
+            >
               Supprimer les utilisateurs selectionnés
             </button>
           </div>
@@ -84,7 +88,7 @@ const GroupUserList: FC<{
           <table className="table-auto border-separate border-spacing-y-4">
             <thead>
               <tr className="text-lg">
-                <th className="bg-transparent">
+                <th className="bg-transparent w-10">
                   <input
                     type="checkbox"
                     className="checkbox checkbox-primary"
