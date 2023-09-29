@@ -26,4 +26,5 @@ export default interface Parcours {
   objectives: Array<Objective>;
   modules: Array<Module>;
   groups: Array<Group>;
+  isPublished: boolean;
 }
