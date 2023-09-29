@@ -23,6 +23,7 @@ import ParcoursViewContacts from "../../components/view-parcours/parcours-view-c
 import ParcoursViewCompetences from "../../components/view-parcours/parcours-view-competences";
 import ParcoursViewObjectifs from "../../components/view-parcours/parcours-view-objectifs";
 import ParcoursViewQuickStatistiques from "../../components/view-parcours/parcours-view-quick-statistiques";
+import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
 
 let initialState = true;
 
@@ -119,6 +120,14 @@ const ParcoursView = () => {
         dispatch(
           parcoursObjectivesAction.addImportedObjectivesToObjectives(
             data.objectives
+          )
+        );
+      }
+
+      if (data.modules.length > 0) {
+        dispatch(
+          parcoursModulesSliceActions.setModules(
+            data.modules.map((module: any) => module.module)
           )
         );
       }
