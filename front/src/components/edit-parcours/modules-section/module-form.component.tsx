@@ -2,17 +2,14 @@ import { useSelector } from "react-redux";
 import React, { FormEvent, useState } from "react";
 
 import useInput from "../../../hooks/use-input";
-import {
-  regexGeneric,
-  regexNumber,
-  regexOptionalGeneric,
-} from "../../../utils/constantes";
+import { regexGeneric, regexNumber } from "../../../utils/constantes";
 import Contact from "../../../utils/interfaces/contact";
 import Skill from "../../../utils/interfaces/skill";
 import MemoizedItemsList from "./items-list.component";
 import { compressImage } from "../../../helpers/compress-image";
 import MemoizedModuleFilesUpload from "./module-files-upload.component";
 import { defaultModuleThumb } from "../../../lib/defautltModuleThumb";
+import toast from "react-hot-toast";
 
 interface ModuleFormProps {
   isLoading: boolean;
@@ -27,15 +24,15 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
     const parcours = useSelector((state: any) => state.parcours);
     const { value: title } = useInput(
       (value) => regexGeneric.test(value),
-      currentModule.title
+      currentModule?.title || ""
     );
     const { value: duration } = useInput(
       (value) => regexNumber.test(value),
-      currentModule.duration
+      currentModule?.duration || null
     );
     const { value: description } = useInput(
-      (value) => regexOptionalGeneric.test(value),
-      currentModule.description
+      (value) => regexGeneric.test(value),
+      currentModule?.description || ""
     );
     const [image, setImage] = useState<File | null>(null);
     const [thumb, setThumb] = useState<string | null>(
@@ -56,8 +53,6 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
     const parcoursInfos = useSelector(
       (state: any) => state.parcoursInformations.infos
     );
-
-    console.log({ currentModule });
 
     /**
      * définit le style du champ formulaire en fonction de sa validité
@@ -123,26 +118,30 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
       } else setThumb(null);
     };
 
-    console.log({ teachers });
+    const fields = [title, description, duration];
+
+    let formIsValid = false;
+
+    if (!currentModule) {
+      //  validation en mode création de module
+      formIsValid =
+        title.isValid &&
+        description.isValid &&
+        image !== null &&
+        thumb !== null &&
+        thumb !== undefined;
+    } else {
+      //  validation en mode mise à jour du module
+      formIsValid = title.isValid && description.isValid && duration.isValid;
+    }
 
     const handleSubmitModule = (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      const formIsValid =
-        title.isValid &&
-        description.isValid &&
-        duration.isValid &&
-        teachers &&
-        teachers?.length > 0 &&
-        skills &&
-        skills.length > 0 &&
-        !currentModule
-          ? image && thumb
-          : true;
 
       if (formIsValid) {
         let module = {
           formationId: parcours.formation.id,
-          id: currentModule ? currentModule.id : undefined,
+          id: currentModule ? +currentModule.id : undefined,
           title: title.value,
           description: description.value,
           duration: duration.value,
@@ -163,7 +162,9 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
         formData.append("module", JSON.stringify(module));
         props.onSubmitModule(formData);
       } else {
-        console.log("oops");
+        // affichage des erreurs pour les champs obligatoires et un toast
+        fields.forEach((field: any) => field.isSubmitted());
+        toast.error("Le formulaire est incomplet");
       }
     };
 
@@ -198,7 +199,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
             {/* description */}
 
             <div className="flex flex-col gap-y-4">
-              <label htmlFor="description">Description</label>
+              <label htmlFor="description">Description *</label>
               <textarea
                 className={setAreaStyle(description.hasError)}
                 id="description"
@@ -213,9 +214,11 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
             {/* durée du modules en heures */}
 
             <div className="flex flex-col gap-y-4">
-              <label htmlFor="duration">Nombre d'heures</label>
+              <label htmlFor="duration">
+                Nombre d'heures {currentModule ? "*" : ""}
+              </label>
               <input
-                className={setInputStyle(duration.hasError)}
+                className={setInputStyle(duration.hasError && currentModule)}
                 type="number"
                 id="duration"
                 name="duration"

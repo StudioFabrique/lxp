@@ -20,6 +20,7 @@ async function postModule(data: any, thumb: string, image: any) {
       data: {
         title: moduleToAdd.title,
         description: moduleToAdd.description,
+        duration: +moduleToAdd.duration,
         image,
         thumb,
       },

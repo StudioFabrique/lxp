@@ -10,7 +10,7 @@ async function putParcoursGroups(parcoursId: number, groupsIds: string[]) {
     },
   });
 
-  console.log({ parcoursId });
+  console.log({ groupsIds });
 
   const existingParcours = await prisma.parcours.findFirst({
     where: { id: parcoursId },

@@ -57,6 +57,8 @@ const EditParcours = () => {
 
   const groups = useSelector((state: any) => state.parcoursGroups.groups);
 
+  console.log([stepsList, stepsList.length]);
+
   /**
    * télécharge les données du parcours depuis la bdd et initialise les différentes propriétés du parcours
    */
@@ -129,7 +131,6 @@ const EditParcours = () => {
             data.modules.map((item: any) => {
               return {
                 ...item.module,
-                id: item.module.id.toString(),
                 contacts: item.module.contacts.map(
                   (itemContact: any) => itemContact.contact
                 ),
@@ -190,15 +191,6 @@ const EditParcours = () => {
     };
   }, [dispatch]);
 
-  /*   const handleUpdateStep = (id: number) => {
-    if (id < actualStep.id || id === 1) {
-      updateStep(id);
-    } else if (checkStep(actualStep.id) && checkStep(id - 1)) {
-      validateStep(actualStep.id, checkStep(actualStep.id));
-      updateStep(id);
-    }
-  }; /*
-
   /**
    * enregistrement de l'image du parcours dans la bdd
    */
@@ -228,28 +220,12 @@ const EditParcours = () => {
    */
   const handleUpdateStep = (id: number) => {
     console.log(id);
-
     const errors = checkStep(id);
-
     if (errors && errors.length !== 0) {
       validateStep(id, false);
       toast.error(Object.values(errors![0]).toString());
       return;
-    } else {
-      if (id === stepsList[stepsList.length - 1].id - 1) {
-        const finalErrors = checkStep(id + 1);
-        console.log(finalErrors);
-
-        if (finalErrors && finalErrors.length === 0) {
-          validateStep(id, true);
-        } else {
-          toast.error(Object.values(finalErrors![0]).toString());
-          return;
-        }
-      }
-      validateStep(id, true);
     }
-
     validateStep(id, true);
   };
 
@@ -259,8 +235,6 @@ const EditParcours = () => {
    * @returns any[]
    */
   const checkStep = (id: number) => {
-    console.log({ groups });
-
     switch (id) {
       case 1:
         return testStep(id, infos);
@@ -270,6 +244,8 @@ const EditParcours = () => {
         return testStep(id, skills);
       case 4:
         return testStep(id, modules);
+      case 5:
+        return testStep(id, {});
       case 6:
         return testStep(id, groups);
       case 7:
@@ -367,14 +343,21 @@ const EditParcours = () => {
                 Retour
               </button>
             )}
-            <button
-              className="btn btn-primary"
-              onClick={() => handleUpdateStep(actualStep.id)}
-            >
-              {actualStep.id !== stepsList.length
-                ? "Etape suivante"
-                : "Publier"}
-            </button>
+            {actualStep.id !== stepsList.length ? (
+              <button
+                className="btn btn-primary"
+                onClick={() => handleUpdateStep(actualStep.id)}
+              >
+                Etape suivante
+              </button>
+            ) : (
+              <button
+                className="btn btn-primary"
+                onClick={() => handleUpdateStep(7)}
+              >
+                Publier
+              </button>
+            )}
           </div>
         </FadeWrapper>
       ) : (
