@@ -7,6 +7,7 @@ import Loader from "../../components/UI/loader";
 import { sortArray } from "../../utils/sortArray";
 import EditIcon from "../../components/UI/svg/edit-icon";
 import DeleteIcon from "../../components/UI/svg/delete-icon.component";
+import Can from "../../components/UI/can/can.component";
 
 const ParcoursHome = () => {
   const [parcoursList, setParcoursList] = useState<Array<Parcours> | null>(
@@ -49,7 +50,7 @@ const ParcoursHome = () => {
   };
 
   const handleViewParcours = (id: number) => {
-    nav(`/admin/parcours/view/${id}`);
+    nav(`view/${id}`);
   };
 
   const content = (
@@ -70,12 +71,16 @@ const ParcoursHome = () => {
               <td>{setDate(item.updatedAt!)}</td>
               <td onClick={(e) => handleEditParcours(e, item.id!)}>
                 <div className="w-6 h-6">
-                  <EditIcon />
+                  <Can action="update" subject="parcours">
+                    <EditIcon />
+                  </Can>
                 </div>
               </td>
               <td onClick={(e) => handleDeleteParcours(e, item.id!)}>
                 <div className="w-6 h-6 text-error">
-                  <DeleteIcon />
+                  <Can action="delete" subject="parcours">
+                    <DeleteIcon />
+                  </Can>
                 </div>
               </td>
             </tr>

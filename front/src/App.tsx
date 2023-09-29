@@ -33,7 +33,11 @@ const router = createBrowserRouter([
       },
       {
         path: "parcours",
-        element: <ParcoursHome />,
+        element: <ParcoursLayout />,
+        children: [
+          { index: true, element: <ParcoursHome /> },
+          { path: "view/:id", element: <ParcoursView /> },
+        ],
       },
     ],
   },

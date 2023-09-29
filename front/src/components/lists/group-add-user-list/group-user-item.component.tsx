@@ -1,11 +1,4 @@
-import {
-  ChangeEvent,
-  ChangeEventHandler,
-  FC,
-  Ref,
-  useEffect,
-  useRef,
-} from "react";
+import { ChangeEvent, ChangeEventHandler, FC } from "react";
 import User from "../../../utils/interfaces/user";
 import { AvatarSmall } from "../../UI/avatar/avatar.component";
 import { DeleteButton, EditButton } from "./buttons";
