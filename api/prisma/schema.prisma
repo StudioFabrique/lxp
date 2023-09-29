@@ -43,7 +43,7 @@ model Parcours {
   objectives   Objective[]
   groups       GroupsOnParcours[]
   virtualClass String?
-  isPublished  Boolean
+  isPublished  Boolean              @default(false)
 }
 
 model Module {

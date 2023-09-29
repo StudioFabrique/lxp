@@ -54,10 +54,7 @@ const EditParcours = () => {
     (state: any) => state.parcoursContacts.currentContacts
   );
   const modules = useSelector((state: any) => state.parcoursModules.modules);
-
   const groups = useSelector((state: any) => state.parcoursGroups.groups);
-
-  console.log([stepsList, stepsList.length]);
 
   /**
    * télécharge les données du parcours depuis la bdd et initialise les différentes propriétés du parcours
@@ -221,12 +218,15 @@ const EditParcours = () => {
   const handleUpdateStep = (id: number) => {
     console.log(id);
     const errors = checkStep(id);
+    console.log({ errors });
+
     if (errors && errors.length !== 0) {
       validateStep(id, false);
       toast.error(Object.values(errors![0]).toString());
       return;
     }
     validateStep(id, true);
+    return errors;
   };
 
   /**
@@ -270,6 +270,27 @@ const EditParcours = () => {
   };
 
   const handleResetImportedObjectives = () => {};
+
+  const handlePublishParcours = () => {
+    const errors = handleUpdateStep(7);
+    if (errors && errors.length === 0) {
+      const applyData = (data: any) => {
+        if (data.success) {
+          toast.success(data.message);
+          setTimeout(() => {
+            nav("/admin/parcours");
+          }, 1000);
+        }
+      };
+      sendRequest(
+        {
+          path: `/parcours/publish/${1}`,
+          method: "put",
+        },
+        applyData
+      );
+    }
+  };
 
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
@@ -325,7 +346,9 @@ const EditParcours = () => {
             {/* {actualStep.id === 5 ? <ParcoursStudents /> : null} */}
             {/* Etape finale : aperçu du parcours */}
             {actualStep.id === 6 ? <ParcoursStudents /> : null}
-            {actualStep.id === 7 ? <ParcoursPreview /> : null}
+            {actualStep.id === 7 ? (
+              <ParcoursPreview onEdit={updateStep} />
+            ) : null}
           </div>
           <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">
             {actualStep.id === 1 ? (
@@ -353,7 +376,7 @@ const EditParcours = () => {
             ) : (
               <button
                 className="btn btn-primary"
-                onClick={() => handleUpdateStep(7)}
+                onClick={handlePublishParcours}
               >
                 Publier
               </button>

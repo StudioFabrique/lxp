@@ -27,6 +27,7 @@ import httpPutParcoursTags from "../../../controllers/parcours/http-put-parcours
 import httpPutParcoursContacts from "../../../controllers/parcours/http-put-parcours-contacts";
 import checkToken from "../../../middleware/check-token";
 import httpPutParcoursGroups from "../../../controllers/parcours/http-put-parcours-groups";
+import httpPublishParcours from "../../../controllers/parcours/http-publish-parcours";
 
 const parcoursRouter = express.Router();
 
@@ -93,5 +94,7 @@ parcoursRouter.put("/reorder-objectives", isAdmin, httpPutReorderObjectives);
 parcoursRouter.use("/update-image", isAdmin, putUpdateImageRouter);
 
 parcoursRouter.put("/groups", checkToken, httpPutParcoursGroups);
+
+parcoursRouter.put("/publish/:parcoursId", checkToken, httpPublishParcours);
 
 export default parcoursRouter;
