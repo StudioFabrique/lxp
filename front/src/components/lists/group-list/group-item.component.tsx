@@ -25,11 +25,11 @@ const GroupItem: FC<{
       {showActions ? (
         <td className="bg-transparent font-bold text-xs">
           <div className="flex gap-x-2">
-            <Can action="update" subject={groupItem.roles![0].role}>
+            <Can action="update" object={groupItem.roles![0].role}>
               <Link to="#">Editer</Link>
             </Can>
 
-            <Can action="delete" subject={groupItem.roles![0].role}>
+            <Can action="delete" object={groupItem.roles![0].role}>
               <Link to="#">Supprimer</Link>
             </Can>
           </div>
