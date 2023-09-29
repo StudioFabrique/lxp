@@ -27,6 +27,7 @@ import httpPutParcoursTags from "../../../controllers/parcours/http-put-parcours
 import httpPutParcoursContacts from "../../../controllers/parcours/http-put-parcours-contacts";
 import checkToken from "../../../middleware/check-token";
 import httpPutParcoursGroups from "../../../controllers/parcours/http-put-parcours-groups";
+import isStudent from "../../../middleware/is-student";
 
 const parcoursRouter = express.Router();
 
@@ -45,11 +46,11 @@ parcoursRouter.get(
 );
 parcoursRouter.get(
   "/parcours-by-id/:parcoursId",
-  isAdmin,
+  isStudent,
   parcoursByIdValidator,
   httpGetParcoursById
-);
-parcoursRouter.get("/", isAdmin, httpGetParcours);
+); // accès accordé à l'étudiant
+parcoursRouter.get("/", isStudent, httpGetParcours); // accès accordé à l'étudiant
 parcoursRouter.put(
   "/update-infos",
   isAdmin,
