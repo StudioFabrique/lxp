@@ -38,7 +38,7 @@ const ParcoursViewContenuDetail = () => {
         <h2 className="text-xl font-bold text-primary-content">
           Contenu du module
         </h2>
-        <Can action="write" subject="cours">
+        <Can action="write" object="cours">
           <button type="button" className="btn btn-primary btn-sm">
             Ajouter un cours
           </button>

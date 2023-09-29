@@ -71,14 +71,14 @@ const ParcoursHome = () => {
               <td>{setDate(item.updatedAt!)}</td>
               <td onClick={(e) => handleEditParcours(e, item.id!)}>
                 <div className="w-6 h-6">
-                  <Can action="update" subject="parcours">
+                  <Can action="update" object="parcours">
                     <EditIcon />
                   </Can>
                 </div>
               </td>
               <td onClick={(e) => handleDeleteParcours(e, item.id!)}>
                 <div className="w-6 h-6 text-error">
-                  <Can action="delete" subject="parcours">
+                  <Can action="delete" object="parcours">
                     <DeleteIcon />
                   </Can>
                 </div>

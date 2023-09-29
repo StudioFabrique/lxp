@@ -34,7 +34,7 @@ const ParcoursViewContenu = () => {
         <h2 className="text-xl font-bold text-secondary">
           Contenu du parcours
         </h2>
-        <Can action="update" subject="parcours">
+        <Can action="update" object="parcours">
           <button type="button" className="btn btn-primary btn-sm">
             Modifier
           </button>

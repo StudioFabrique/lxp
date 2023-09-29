@@ -8,7 +8,7 @@ const LayoutAdmin = () => {
         <li>
           <Link to="../parcours">Parcours</Link>
         </li>
-        <Can action="write" subject="parcours">
+        <Can action="write" object="parcours">
           <li>
             <NavLink
               className={({ isActive }) =>
