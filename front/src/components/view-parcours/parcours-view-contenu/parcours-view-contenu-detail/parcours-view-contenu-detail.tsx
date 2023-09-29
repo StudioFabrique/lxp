@@ -3,6 +3,7 @@ import Module from "../../../../utils/interfaces/module";
 import SubWrapper from "../../../UI/sub-wrapper/sub-wrapper.component";
 import BookIcon from "../../../UI/svg/book-icon";
 import { colorStyle, colorStyleHover } from "../../../../config/colors";
+import Can from "../../../UI/can/can.component";
 
 const ParcoursViewContenuDetail = () => {
   const modules = useSelector(
@@ -33,7 +34,16 @@ const ParcoursViewContenuDetail = () => {
 
   return (
     <SubWrapper>
-      <h2 className="text-xl font-bold text-primary">Contenu du module</h2>
+      <span className="flex justify-between">
+        <h2 className="text-xl font-bold text-primary-content">
+          Contenu du module
+        </h2>
+        <Can action="write" object="cours">
+          <button type="button" className="btn btn-primary btn-sm">
+            Ajouter un cours
+          </button>
+        </Can>
+      </span>
       <div className="flex flex-col gap-y-5">{contentsList}</div>
     </SubWrapper>
   );

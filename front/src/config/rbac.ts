@@ -13,6 +13,8 @@ const permDefs = {
       "stagiaire",
       "everything",
       "parcours",
+      "module",
+      "cours",
     ],
     write: [
       "teacher",
@@ -21,9 +23,29 @@ const permDefs = {
       "boss_teacher",
       "stagiaire",
       "parcours",
+      "module",
+      "cours",
     ],
-    update: ["teacher", "student", "coach", "boss_teacher", "stagiaire"],
-    delete: ["teacher", "student", "coach", "boss_teacher", "stagiaire"],
+    update: [
+      "teacher",
+      "student",
+      "coach",
+      "boss_teacher",
+      "stagiaire",
+      "parcours",
+      "module",
+      "cours",
+    ],
+    delete: [
+      "teacher",
+      "student",
+      "coach",
+      "boss_teacher",
+      "stagiaire",
+      "parcours",
+      "module",
+      "cours",
+    ],
   },
   teacher: {
     read: [
@@ -35,6 +57,9 @@ const permDefs = {
       "everything",
     ],
     update: ["student", "coach", "stagiaire"],
+  },
+  student: {
+    read: ["parcours"],
   },
   boss_teacher: {
     read: ["teacher", "student", "coach", "stagiaire", "everything"],

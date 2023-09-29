@@ -98,7 +98,7 @@ const UserAddForm: FC<{
         description: description.value.trim(),
         nickname: nickname.value.trim(),
         address: address.value.trim(),
-        postCode: parseInt(postCode.value.trim()).toString(),
+        postCode: postCode.value.trim(),
         city: city.value.trim(),
         birthDate: birthDate,
         graduations: graduations,
