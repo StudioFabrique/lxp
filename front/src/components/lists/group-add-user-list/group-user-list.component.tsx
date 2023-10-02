@@ -37,6 +37,7 @@ const GroupUserList: FC<{
 
   const handleDeleteUsersToAdd = () => {
     getSelecteditems()?.forEach((selectedItem) => onDeleteUser(selectedItem));
+    handleToggleMenu();
   };
 
   return (
