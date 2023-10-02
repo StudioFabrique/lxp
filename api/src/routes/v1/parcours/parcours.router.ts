@@ -29,6 +29,7 @@ import checkToken from "../../../middleware/check-token";
 import httpPutParcoursGroups from "../../../controllers/parcours/http-put-parcours-groups";
 import httpPublishParcours from "../../../controllers/parcours/http-publish-parcours";
 import isStudent from "../../../middleware/is-student";
+import checkPermissions from "../../../middleware/check-permissions";
 
 const parcoursRouter = express.Router();
 
@@ -51,7 +52,11 @@ parcoursRouter.get(
   parcoursByIdValidator,
   httpGetParcoursById
 ); // accès accordé à l'étudiant
-parcoursRouter.get("/", isStudent, httpGetParcours); // accès accordé à l'étudiant
+parcoursRouter.get(
+  "/",
+  checkPermissions(3, "read", "parcours"),
+  httpGetParcours
+); // accès accordé à l'étudiant
 parcoursRouter.put(
   "/update-infos",
   isAdmin,

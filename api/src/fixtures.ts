@@ -237,16 +237,67 @@ async function createRoles() {
 
 const permDefs = {
   admin: {
-    read: ["admin", "teacher", "student"],
-    write: ["teacher", "student"],
-    update: ["teacher", "student"],
-    delete: ["teacher", "student"],
+    read: [
+      "admin",
+      "mini-admin",
+      "teacher",
+      "student",
+      "coach",
+      "boss_teacher",
+      "stagiaire",
+      "everything",
+      "parcours",
+      "module",
+      "cours",
+    ],
+    write: [
+      "teacher",
+      "student",
+      "coach",
+      "boss_teacher",
+      "stagiaire",
+      "parcours",
+      "module",
+      "cours",
+    ],
+    update: [
+      "teacher",
+      "student",
+      "coach",
+      "boss_teacher",
+      "stagiaire",
+      "parcours",
+      "module",
+      "cours",
+    ],
+    delete: [
+      "teacher",
+      "student",
+      "coach",
+      "boss_teacher",
+      "stagiaire",
+      "parcours",
+      "module",
+      "cours",
+    ],
   },
   teacher: {
-    read: ["teacher", "student"],
-    update: ["student"],
-    write: ["student"],
-    delete: ["student"],
+    read: [
+      "teacher",
+      "boss_teacher",
+      "student",
+      "coach",
+      "stagiaire",
+      "everything",
+    ],
+    update: ["student", "coach", "stagiaire"],
+  },
+  student: {
+    read: ["parcours"],
+  },
+  boss_teacher: {
+    read: ["teacher", "student", "coach", "stagiaire", "everything"],
+    update: ["student", "coach", "stagiaire"],
   },
 };
 
@@ -256,7 +307,7 @@ async function createPermissions() {
 
   for (const [key, value] of Object.entries(permDefs)) {
     for (const [itemKey, itemValue] of Object.entries(value)) {
-      permissions.push({ role: key, action: itemKey, subject: itemValue });
+      permissions.push({ role: key, action: itemKey, ressources: itemValue });
     }
   }
   permissions.forEach((permissions) =>
