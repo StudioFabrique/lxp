@@ -60,6 +60,7 @@ model Module {
   parcours    ModulesOnParcours[]
   bonusSkills BonusSkillsOnModule[]
   contacts    ContactsOnModule[]
+  courses     Course[]
   createdAt   DateTime              @default(now())
   updatedAt   DateTime              @default(now())
 }
@@ -129,6 +130,16 @@ model Contact {
   updatedAt DateTime             @default(now())
   parcours  ContactsOnParcours[]
   modules   ContactsOnModule[]
+}
+
+model Course {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  module      Module   @relation(fields: [moduleId], references: [id])
+  moduleId    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
 }
 
 model Objective {

@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import getParcours from "../../models/parcours/get-parcours";
-import { serverIssue } from "../../utils/constantes";
 
 async function httpGetParcours(req: Request, res: Response) {
   try {

@@ -24,6 +24,7 @@ import ParcoursViewCompetences from "../../components/view-parcours/parcours-vie
 import ParcoursViewObjectifs from "../../components/view-parcours/parcours-view-objectifs";
 import ParcoursViewQuickStatistiques from "../../components/view-parcours/parcours-view-quick-statistiques";
 import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
+import { useSelector } from "react-redux";
 
 let initialState = true;
 
@@ -33,6 +34,8 @@ const ParcoursView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [image, setImage] = useState<string | undefined>(undefined);
+  const parcours = useSelector((state: any) => state.parcours);
+  const parcoursInfos = useSelector((state: any) => state.parcoursInfos);
 
   /**
    * enregistrement de l'image du parcours dans la bdd
@@ -168,11 +171,15 @@ const ParcoursView = () => {
       ) : error.length === 0 ? (
         <FadeWrapper>
           <div className="w-full">
-            <ImageHeader
-              defaultImage="/images/parcours-default.webp"
-              image={image}
-              onUpdateImage={updateImage}
-            />
+            {parcoursInfos && parcours.formation.title ? (
+              <ImageHeader
+                defaultImage="/images/parcours-default.webp"
+                image={image}
+                title={parcoursInfos.title}
+                parentTitle={parcours.formation.title}
+                onUpdateImage={updateImage}
+              />
+            ) : null}
             <div className="w-full mt-16 flex flex-col gap-y-5">
               <ParcoursViewStatistiques />
               <ParcoursViewContenu />

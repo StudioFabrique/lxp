@@ -55,6 +55,7 @@ const EditParcours = () => {
   );
   const modules = useSelector((state: any) => state.parcoursModules.modules);
   const groups = useSelector((state: any) => state.parcoursGroups.groups);
+  const formation = useSelector((state: any) => state.parcours.formation);
 
   /**
    * télécharge les données du parcours depuis la bdd et initialise les différentes propriétés du parcours
@@ -299,11 +300,16 @@ const EditParcours = () => {
       ) : error.length === 0 ? (
         <FadeWrapper>
           <div className="w-full flex flex-col items-center gap-y-8">
-            <ImageHeader
-              defaultImage="/images/parcours-default.webp"
-              image={image}
-              onUpdateImage={updateImage}
-            />
+            {infos.title && formation ? (
+              <ImageHeader
+                defaultImage="/images/parcours-default.webp"
+                image={image}
+                title={infos.title}
+                onUpdateImage={updateImage}
+                parentTitle={formation.title}
+              />
+            ) : null}
+
             {/* Etapes du parcours */}
             <div className="p-4 rounded-xl w-5/6 bg-secondary/20">
               <Stepper

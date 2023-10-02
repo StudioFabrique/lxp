@@ -12,7 +12,6 @@ import {
   getParcoursByFormationValidator,
   parcoursByIdValidator,
   postParcoursValidator,
-  putParcoursContactsValidator,
   putParcoursTagsValidator,
   updateDatesValidator,
   updateInfosValidator,
@@ -31,7 +30,7 @@ import httpPublishParcours from "../../../controllers/parcours/http-publish-parc
 import isStudent from "../../../middleware/is-student";
 
 const parcoursRouter = express.Router();
-
+parcoursRouter.get("/", checkToken, httpGetParcours);
 parcoursRouter.post("/", isAdmin, postParcoursValidator, httpCreateParcours);
 parcoursRouter.delete(
   "/:parcoursId",
