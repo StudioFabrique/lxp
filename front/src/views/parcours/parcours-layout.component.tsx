@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
 import Can from "../../components/UI/can/can.component";
+import CanAccessPage from "../../components/UI/can/can-access-page.component";
 
 const LayoutAdmin = () => {
   return (
@@ -22,7 +23,9 @@ const LayoutAdmin = () => {
         </Can>
       </ul>
       <div className="flex-1 min-h-screen">
-        <Outlet />
+        <CanAccessPage action="write" subject="cours">
+          <Outlet />
+        </CanAccessPage>
       </div>
     </div>
   );

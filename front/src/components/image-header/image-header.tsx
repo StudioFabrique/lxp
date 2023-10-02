@@ -9,7 +9,6 @@
 import React, { FC, useEffect, useState } from "react";
 
 import ImageFileUpload from "./image-file-upload";
-import { useSelector } from "react-redux";
 import ParcoursHeaderIcon from "../UI/svg/parcours-header-icon";
 import { compressImage } from "../../helpers/compress-image";
 
@@ -17,15 +16,23 @@ type Props = {
   image?: string;
   defaultImage: string;
   onUpdateImage: (image: File) => void;
+  title: string;
+  parentTitle: string;
 };
 
-const ImageHeader: FC<Props> = ({ defaultImage, image, onUpdateImage }) => {
+const ImageHeader: FC<Props> = ({
+  defaultImage,
+  image,
+  title,
+  parentTitle,
+  onUpdateImage,
+}) => {
   const [bgImage, setBgImage] = useState<any | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const parcours = useSelector((state: any) => state.parcours);
+  /*   const parcours = useSelector((state: any) => state.parcours);
   const parcoursInformations = useSelector(
     (state: any) => state.parcoursInformations
-  );
+  ); */
 
   // en l'absence de props affiche une image par défaut
   useEffect(() => {
@@ -69,17 +76,15 @@ const ImageHeader: FC<Props> = ({ defaultImage, image, onUpdateImage }) => {
 
   return (
     <>
-      {bgImage && parcours && parcoursInformations ? (
+      {bgImage && parentTitle && title ? (
         <div style={classImage}>
           <div className="rounded-xl w-full h-full bg-neutral/50 flex flex-col justify-end items-start">
             <div className="w-full flex gap-x-2 px-4 py-2 items-end justify-between font-bold">
               <span className="flex gap-x-2 items-center">
                 <ParcoursHeaderIcon size="lg" />
                 <div>
-                  <h1 className="text-xl">{parcours.formation.title}</h1>
-                  <h3 className="capitalise">
-                    {parcoursInformations.infos.title}
-                  </h3>
+                  <h1 className="text-xl">{parentTitle}</h1>
+                  <h3 className="capitalise">{title}</h3>
                 </div>
               </span>
               <span className="flex items-end">
