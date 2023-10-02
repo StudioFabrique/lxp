@@ -8,8 +8,14 @@ import defineRulesFor from "../../config/rbac";
 let initialState = true;
 
 const AdminLayout = () => {
-  const { initTheme, isLoggedIn, user, handshake, fetchRoles } =
-    useContext(Context);
+  const {
+    initTheme,
+    isLoggedIn,
+    user,
+    handshake,
+    fetchRoles,
+    fetchPermissions,
+  } = useContext(Context);
   const nav = useNavigate();
 
   useEffect(() => {
@@ -18,7 +24,7 @@ const AdminLayout = () => {
     } else if (!isLoggedIn || (user && user.roles[0].rank > 2)) {
       nav("/");
     }
-  }, [fetchRoles, nav, user, isLoggedIn]);
+  }, [fetchRoles, nav, user, isLoggedIn, fetchPermissions]);
 
   useEffect(() => {
     initTheme();
