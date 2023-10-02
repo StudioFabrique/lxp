@@ -11,3 +11,5 @@ permissionRouter.get(
   getPermissionsValidator,
   httpGetPermissions
 );
+
+export default permissionRouter;
