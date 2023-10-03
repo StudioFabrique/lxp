@@ -33,8 +33,6 @@ const filterItems = (
   unselectedItems: Array<any>,
   property: string
 ) => {
-  console.log({ unselectedItems });
-
   return unselectedItems.filter((item: any) =>
     item[property].toLowerCase().includes(name.toLowerCase())
   );
@@ -97,6 +95,12 @@ const listReducer = (state: any, action: any) => {
         list: action.value,
       }; */
 
+    case "INIT_SELECTED_ITEMS":
+      return {
+        ...state,
+        selectedItems: action.value,
+      };
+
     default:
       return state;
   }
@@ -109,15 +113,17 @@ const useItems = () => {
     dispatch({ type: "ADD_ITEM", value: name, property });
   }, []);
 
-  const removeItem = (item: any, property: string) => {
+  const removeItem = useCallback((item: any, property: string) => {
     dispatch({ type: "REMOVE_ITEM", value: item, property });
-  };
+  }, []);
 
   /*   const updateList = useCallback((newList: Array<any>) => {
     dispatch({ type: "UPDATE_LIST", value: newList });
   }, []); */
 
   const initItems = useCallback((itemsList: Array<any>) => {
+    console.log(itemsList);
+
     dispatch({ type: "INIT", value: itemsList });
   }, []);
 
@@ -129,6 +135,10 @@ const useItems = () => {
     dispatch({ type: "RESET_FILTER" });
   }, []);
 
+  const initSelectedItems = useCallback((itemsList: Array<any>) => {
+    dispatch({ type: "INIT_SELECTED_ITEMS", value: itemsList });
+  }, []);
+
   return {
     unselectedItems: listState.items,
     selectedItems: listState.selectedItems,
@@ -138,6 +148,7 @@ const useItems = () => {
     initItems,
     filterItems,
     resetFilterItems,
+    initSelectedItems,
     //list: listState.list,
     //updateList,
   };

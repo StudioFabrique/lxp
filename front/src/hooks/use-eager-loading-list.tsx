@@ -2,11 +2,16 @@ import { useCallback, useEffect, useState } from "react";
 import { getPagination } from "../utils/get-pagination";
 import { sortArray } from "../utils/sortArray";
 
-const useEagerLoadingList = (initialList: Array<any>, defaultSort: string) => {
+const useEagerLoadingList = (
+  initialList: Array<any>,
+  defaultSort: string,
+  defaultLimit = 15,
+  idProperty: "id" | "_id" = "id"
+) => {
   const [list, setList] = useState<Array<any> | null>(initialList); // liste temporaire des objets à afficher
   const [page, setPage] = useState(1); //  numéro de la page affichée
-  const [limit, setLimit] = useState(1000); // quantité d'objets à afficher
-  const [totalPages] = useState(initialList.length);
+  const [limit, setLimit] = useState(defaultLimit); // quantité d'objets à afficher
+  const [totalPages, setTotalPages] = useState(0);
   const [allChecked, setAllChecked] = useState(false);
   const [fieldSort, setFieldSort] = useState<string>(defaultSort);
   const [direction, setDirection] = useState<boolean>(true);
@@ -15,10 +20,12 @@ const useEagerLoadingList = (initialList: Array<any>, defaultSort: string) => {
    * gère le cochage décochage d'une row individuelle
    * @param id number
    */
-  const handleRowCheck = (id: number) => {
+  const handleRowCheck = (id: any) => {
     setList((prevList: any) =>
       prevList.map((item: any) =>
-        item.id === id ? { ...item, isSelected: !item.isSelected } : item
+        item[idProperty] === id
+          ? { ...item, isSelected: !item.isSelected }
+          : item
       )
     );
   };
@@ -35,15 +42,19 @@ const useEagerLoadingList = (initialList: Array<any>, defaultSort: string) => {
    * filtre la liste d'objets en fonction des filtes
    */
   const getFilteredList = useCallback(
-    (filters: Array<{ field: string; value: string }>) => {
+    (filters: { field: string; property: string; value: string }) => {
       let filteredList = initialList;
-      // on applique chaque filtre sur la liste créée par l'utilisation précédente de la fonction filter
-      filters.forEach((filter) => {
-        filteredList = filteredList.filter(
-          (item) => item[filter.field] === filter.value
+
+      if (filters.property.length > 0) {
+        filteredList = filteredList.filter((item: any) =>
+          item[filters.field][filters.property].includes(filters.value)
         );
-      });
-      // on attribue la liste réduite par les applications successives des filtres au state "list"
+      } else {
+        filteredList = filteredList.filter((item: any) =>
+          item[filters.field].includes(filters.value)
+        );
+      }
+
       setList(filteredList);
     },
     [initialList]
@@ -75,8 +86,6 @@ const useEagerLoadingList = (initialList: Array<any>, defaultSort: string) => {
   }, [initialList]);
 
   const sortData = (column: string) => {
-    console.log("coucou sorting");
-
     if (column === fieldSort) {
       setDirection((prevDirection) => !prevDirection);
     } else {
@@ -85,6 +94,9 @@ const useEagerLoadingList = (initialList: Array<any>, defaultSort: string) => {
     }
   };
 
+  /**
+   * tri les colonnes du tableau quand l'utilisateur clique sur le nom d'une colonne : perfect future
+   */
   useEffect(() => {
     setList((prevList: any) => {
       if (prevList && prevList.length !== 0) {
@@ -104,6 +116,16 @@ const useEagerLoadingList = (initialList: Array<any>, defaultSort: string) => {
     setList(initialList.slice(offset, offset + limit));
   }, [initialList, limit, page]);
 
+  useEffect(() => {
+    console.log(initialList.length / limit);
+
+    const pages =
+      initialList.length % limit === 0
+        ? initialList.length / limit
+        : Math.trunc(initialList.length / limit) + 1;
+    setTotalPages(pages);
+  }, [limit, initialList]);
+
   /**
    * gère le cochage / décochage de toutes les rows de la liste
    */
@@ -112,8 +134,6 @@ const useEagerLoadingList = (initialList: Array<any>, defaultSort: string) => {
       prevList.map((item: any) => ({ ...item, isSelected: allChecked }))
     );
   }, [allChecked]);
-
-  console.log({ list });
 
   return {
     allChecked,

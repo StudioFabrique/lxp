@@ -1,4 +1,4 @@
-import User, { IUser } from "../../utils/interfaces/db/user.model";
+import User, { IUser } from "../../utils/interfaces/db/user";
 
 async function updateUserStatus(user: IUser) {
   let userToUpdate = await User.findOne({ _id: user._id });

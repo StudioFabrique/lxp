@@ -16,5 +16,5 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "src/components/UI/button-refresh"]
+  "include": ["src", "src/components/UI/button-refresh", "../modules"]
 }

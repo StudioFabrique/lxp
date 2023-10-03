@@ -16,7 +16,7 @@ import DropdownActionsUser from "../../components/lists/user-list/dropdown-actio
 import UsersListStats from "../../components/lists/user-list/users-list-stats";
 import UsersStats from "../../utils/interfaces/users-stats";
 import Can from "../../components/UI/can/can.component";
-import RefreshIcon from "../../components/UI/svg-icons/refresh-icon.component";
+import RefreshIcon from "../../components/UI/svg/refresh-icon.component";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
@@ -195,7 +195,7 @@ const UserHome = () => {
             <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />
           ) : null}
           <div className="flex justify-end items-center">
-            <div className="flex gap-x-2">
+            <div className="flex items-center gap-x-2">
               <SearchUser
                 options={userSearchOptions}
                 onSearch={handleSearchResult}
@@ -204,7 +204,7 @@ const UserHome = () => {
                 <RefreshIcon size={6} />
               </div>
               {!role ? null : (
-                <Can action="update" subject={role.role}>
+                <Can action="update" object={role.role}>
                   <DropdownActionsUser
                     itemsList={dataList}
                     roleTab={role}
