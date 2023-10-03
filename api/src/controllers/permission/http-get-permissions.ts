@@ -15,7 +15,7 @@ export default async function httpGetPermissions(req: Request, res: Response) {
 
     console.log(permissions);
 
-    return res.status(200).json(permissions);
+    return res.status(200).json({ data: permissions });
   } catch (error) {
     console.log(error);
 

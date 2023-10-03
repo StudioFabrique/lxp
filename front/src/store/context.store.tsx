@@ -20,7 +20,6 @@ type ContextType = {
   user: User | null;
   roles: Array<Role>;
   fetchRoles: (role: Role) => void;
-  fetchPermissions: () => void;
 };
 
 type Props = { children: React.ReactNode };
@@ -38,7 +37,6 @@ export const Context = React.createContext<ContextType>({
   user: null,
   roles: Array<Role>(),
   fetchRoles: () => {},
-  fetchPermissions: () => {},
 });
 
 const ContextProvider: FC<Props> = (props) => {
@@ -49,7 +47,6 @@ const ContextProvider: FC<Props> = (props) => {
   const [error, setError] = useState("");
   const { axiosInstance, sendRequest } = useHttp();
   const [roles, setRoles] = useState<Array<Role>>([]);
-  const [permissions, setPermissions] = useState<any[]>([]);
 
   useEffect(() => {
     document
@@ -113,21 +110,6 @@ const ContextProvider: FC<Props> = (props) => {
       console.log(err);
     }
   };
-
-  const fetchPermissions = useCallback(async () => {
-    try {
-      const response = await axios.get(
-        `${BASE_URL}/permission/${roles[0].role}`,
-        {
-          withCredentials: true,
-        }
-      );
-      setPermissions(response.data);
-    } catch (err) {
-      console.log("les permissions n'ont pas pu être fetch");
-      console.log(err);
-    }
-  }, [roles]);
 
   const initTheme = () => {
     const lightTheme = localStorage.getItem("lightTheme");
@@ -197,7 +179,6 @@ const ContextProvider: FC<Props> = (props) => {
     user,
     roles,
     fetchRoles,
-    fetchPermissions,
   };
 
   return (
