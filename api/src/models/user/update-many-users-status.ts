@@ -1,4 +1,4 @@
-import User from "../../utils/interfaces/db/user";
+import User from "../../utils/interfaces/db/user.model";
 
 async function updateManyUsersStatus(usersIds: Array<string>, status: string) {
   let actualUsers = await User.find({ _id: usersIds });

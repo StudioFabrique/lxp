@@ -1,7 +1,5 @@
 import { useState, ChangeEvent, FC } from "react";
-
 import { regexGeneric } from "../../../utils/constantes";
-import MagnifyIcon from "../svg/magnify-icon";
 
 const Search: FC<{
   options: Array<{
@@ -9,9 +7,7 @@ const Search: FC<{
     value: string;
     option: string;
   }>;
-  placeholder?: string;
   onSearch: (entityToSearch: string, searchValue: string) => void;
-  onResetInput?: () => void;
 }> = (props) => {
   const [searchType, setSearchType] = useState<string>("search");
   const [entityToSearch, setEntityToSearch] = useState<string>(
@@ -41,14 +37,10 @@ const Search: FC<{
   const handleSearchValueChange = (
     event: React.FormEvent<HTMLInputElement>
   ) => {
-    const value = event.currentTarget.value;
-    setSearchValue(value);
-    if (!!props.onResetInput && value.length <= 0) {
-      props.onResetInput();
-    }
+    setSearchValue(event.currentTarget.value);
   };
 
-  const optionsList = (
+  let optionsList = (
     <>
       {props.options.map(
         (item: { index: number; value: string; option: string }) => (
@@ -79,7 +71,7 @@ const Search: FC<{
         <div>
           {entityToSearch !== "isActive" ? (
             <input
-              className="input input-bordered input-sm focus:outline-none join-item"
+              className="input input-bordered input-sm join-item"
               type={searchType}
               placeholder="Recherche..."
               value={searchValue}
@@ -88,7 +80,7 @@ const Search: FC<{
           ) : (
             <div>
               <select
-                className="select select-bordered select-sm focus:outline-none join-item"
+                className="select select-bordered select-sm join-item"
                 onChange={handleSwitchValueChange}
               >
                 <option value="actif">Actif</option>
@@ -107,17 +99,19 @@ const Search: FC<{
         </option>
         {optionsList}
       </select>
-      <button
-        className="btn btn-primary btn-sm join-item capitalize"
-        type="submit"
-      >
-        {props.placeholder ? (
-          props.placeholder
-        ) : (
-          <div className="w-6 h-6">
-            <MagnifyIcon />
-          </div>
-        )}
+      <button className="btn btn-primary btn-sm join-item" type="submit">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="w-6 h-6"
+        >
+          <path
+            fillRule="evenodd"
+            d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z"
+            clipRule="evenodd"
+          />
+        </svg>
       </button>
     </form>
   );

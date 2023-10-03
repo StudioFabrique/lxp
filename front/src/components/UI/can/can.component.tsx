@@ -4,20 +4,20 @@ import { casbinAuthorizer } from "../../../config/rbac";
 type Props = {
   children: ReactNode;
   action: string;
-  object: string;
+  subject: string;
 };
 
-const Can: React.FC<Props> = ({ children, action, object }) => {
+const Can: React.FC<Props> = ({ children, action, subject }) => {
   const [render, setRender] = React.useState(false);
 
   React.useEffect(() => {
     (async function () {
       if (casbinAuthorizer !== null && casbinAuthorizer !== undefined) {
-        const shouldRender = await casbinAuthorizer.can(action, object);
+        const shouldRender = await casbinAuthorizer.can(action, subject);
         setRender(shouldRender);
       }
     })();
-  }, [action, object]);
+  }, [action, subject]);
 
   if (render) return <>{children}</>;
 

@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useEffect, useRef, useState } from "react";
-
+import { FC, useEffect, useState } from "react";
 import toTitleCase from "../../../utils/toTitleCase";
 
 type Props = {
@@ -10,40 +8,44 @@ type Props = {
   filteredItems: Array<any>;
   property: string;
   placeHolder: string;
-  propertiesToRender?: Array<string>;
-  getId?: "_id" | "id";
 };
 
 const SearchDropdown: FC<Props> = ({
   addItem,
   filterItems,
+  resetFilterItems,
   filteredItems,
   property,
   placeHolder,
-  propertiesToRender,
-  getId,
 }) => {
   const [enteredValue, setEnteredValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  //const btnRef = useRef<any>();
 
   const handleEnteredValue = (event: React.FormEvent<HTMLInputElement>) => {
     setEnteredValue(event.currentTarget.value);
   };
 
   useEffect(() => {
-    if (filteredItems && filteredItems.length > 0) {
+    if (filteredItems.length > 0) {
+      /*      btnRef.current.focus({
+        preventScroll: true,
+      }); */
       setIsOpen(true);
     }
   }, [filteredItems]);
 
+  /*   const submitSearch = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (enteredValue.length > 0) {
+      filterItems(enteredValue, property);
+    }
+  }; */
+
   const handleSelectItem = (value: string) => {
     addItem(value, property);
+    resetFilterItems();
     setIsOpen(false);
-    if (inputRef) {
-      inputRef.current!.focus();
-      inputRef.current!.value = "";
-    }
   };
 
   useEffect(() => {
@@ -55,36 +57,31 @@ const SearchDropdown: FC<Props> = ({
     return () => {
       clearTimeout(timer);
     };
-  }, [enteredValue, filterItems, property, getId]);
+  }, [enteredValue, filterItems, property]);
 
   return (
-    <div className="w-full flex items-center gap-x-2">
-      <div className="w-full dropdown dropdown-bottom dropdown-end flex gap-y-4">
+    <div className="flex items-center gap-x-2 w-full">
+      <div className="dropdown dropdown-bottom dropdown-end flex gap-y-4 w-full">
         <input
-          ref={inputRef}
           type="search"
           name="enteredTagValue"
           placeholder={placeHolder}
-          className="flex-1 w-full input input-bordered input-sm focus:outline-none"
+          className="input input-bordered input-sm w-full"
           onChange={handleEnteredValue}
           defaultValue={enteredValue}
         />
         {isOpen ? (
           <ul
             tabIndex={0}
-            className="dropdown-content menu p-1 shadow bg-base-100 rounded-box w-full mt-4 z-50"
+            className="dropdown-content menu p-1 shadow bg-base-100 rounded-box w-full mt-4"
           >
             {filteredItems.map((item: any) => (
               <li
                 className="text-xs py-1 cursor-pointer"
                 key={item[property]}
-                onClick={() => handleSelectItem(item[getId ? getId : property])}
+                onClick={() => handleSelectItem(item[property])}
               >
-                <p className="font-bold">
-                  {propertiesToRender?.map(
-                    (property) => item[property] + " "
-                  ) ?? toTitleCase(item[property])}
-                </p>
+                <p className="font-bold">{toTitleCase(item[property])}</p>
               </li>
             ))}
           </ul>

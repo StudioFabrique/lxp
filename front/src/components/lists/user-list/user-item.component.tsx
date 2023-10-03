@@ -77,15 +77,15 @@ const UserItem: FC<{
       </td>
       <td className="bg-transparent font-bold text-xs rounded-r-xl">
         <div className="flex gap-x-2">
-          <Can action="update" object={userItem.roles[0].role}>
+          <Can action="update" subject={userItem.roles[0].role}>
             <Link to="#">Editer</Link>
           </Can>
-          <Can action="delete" object={userItem.roles[0].role}>
+          <Can action="delete" subject={userItem.roles[0].role}>
             <ButtonDelete
               error={error}
               isLoading={isUserDeleteLoading}
               userItem={userItem}
-              onDelete={() => {}}
+              onDelete={onDelete}
             />
           </Can>
         </div>

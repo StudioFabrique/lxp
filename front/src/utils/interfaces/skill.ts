@@ -1,8 +1,9 @@
+import Badge from "./badge";
+
 export default interface Skill {
   id?: number;
   description: string;
-  badge?: string;
+  badge?: Badge;
   createdAt?: string;
   updatedAt?: string;
-  isBonus?: boolean;
 }

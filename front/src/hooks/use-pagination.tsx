@@ -11,7 +11,7 @@ const initialState = {
 
 const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
   const [sdir, setSdir] = useState(false);
-  const [stype, setStype] = useState(defaultSortValue ?? "desc");
+  const [stype, setStype] = useState(defaultSortValue);
   const [page, setPage] = useState(initialState.page);
   const [perPage, setPerPage] = useState(initialState.perPage);
   const [totalPages, setTotalPages] = useState<number | null>(
@@ -57,13 +57,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     initPagination();
   };
 
-  const resetList = useCallback(() => {
-    setDataList([]);
-  }, []);
-
   const getList = useCallback(() => {
-    console.log("update des données des users en cours...");
-
     const applyData = (data: { list: Array<any>; total: number }) => {
       data.list.forEach((item: any) => {
         item.createdAt =
@@ -74,7 +68,6 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
       });
       handleTotalPages(data.total);
       setDataList(data.list);
-      console.log("update des données effectué");
     };
 
     sendRequest(
@@ -87,25 +80,11 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     );
   }, [sendRequest, page, perPage, handleTotalPages, stype, sdir, path]);
 
-  const uncheckAll = () => {
-    setDataList((prevDataList) => {
-      if (prevDataList) {
-        return prevDataList.map((data: any) => ({
-          ...data,
-          isSelected: false,
-        }));
-      }
-      return dataList;
-    });
-  };
-
   useEffect(() => {
     getList();
   }, [path, getList]);
 
   useEffect(() => {
-    console.log("hello use effect");
-
     setDataList((prevDataList: any) => {
       if (prevDataList) {
         return prevDataList.map((item: any) => {
@@ -137,9 +116,6 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     setAllChecked,
     handleRowCheck,
     setPerPage,
-    setPage,
-    resetList,
-    uncheckAll,
   };
 };
 

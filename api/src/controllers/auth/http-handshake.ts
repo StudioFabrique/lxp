@@ -4,7 +4,7 @@ import { noAccess, serverIssue } from "../../utils/constantes";
 import { IRole } from "../../utils/interfaces/db/role";
 import { hasRole } from "../../utils/services/permissions/hasRole";
 import getUser from "../../models/user/get-user";
-import { IUser } from "../../utils/interfaces/db/user";
+import { IUser } from "../../utils/interfaces/db/user.model";
 
 async function httpHandshake(req: CustomRequest, res: Response) {
   if (req.auth && req.auth.userId !== null) {
@@ -22,7 +22,7 @@ async function httpHandshake(req: CustomRequest, res: Response) {
       }
       return res.status(403).json({ message: noAccess });
     } catch (err) {
-      return res.status(500).json({ message: serverIssue });
+      return res.status(500).json({ message: serverIssue + err });
     }
   }
 }

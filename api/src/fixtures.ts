@@ -16,11 +16,10 @@ import Role from "./utils/interfaces/db/role";
 import Permission from "./utils/interfaces/db/permission";
 import Group, { IGroup } from "./utils/interfaces/db/group";
 import Tag from "./utils/interfaces/db/tag";
-import User from "./utils/interfaces/db/user";
+import User from "./utils/interfaces/db/user.model";
 dotenv.config();
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
-console.log({ MONGO_URL });
 
 mongoose.connection.once("open", () => {
   console.log("MongoDB connection ready!");
@@ -54,7 +53,6 @@ async function createUser() {
     postCode: "64000",
     city: "pau",
     email: "toto@toto.fr",
-    nickname: "gandalf",
     password: hash,
     roles: [new Object(role!._id)],
     isActive: true,
@@ -141,7 +139,7 @@ async function createManyTeachers() {
   const role = await Role.findOne({ role: "teacher" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
-  for (let i = 0; i < 5; i++) {
+  for (let i = 5; i < 15; i++) {
     const firstname = firstnames[getRandomNumber(0, 14)];
     const city = cities[getRandomNumber(0, 9)];
     const postCode = city.postcode;
@@ -168,7 +166,7 @@ async function createManyStudents() {
   const role = await Role.findOne({ role: "student" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 100; i++) {
     const firstname = firstnames[getRandomNumber(0, 14)];
     const city = cities[getRandomNumber(0, 9)];
     const postCode = city.postcode;
@@ -195,7 +193,7 @@ async function createManyCoach() {
   const role = await Role.findOne({ role: "coach" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 100; i++) {
     const firstname = firstnames[getRandomNumber(0, 14)];
     const city = cities[getRandomNumber(0, 9)];
     const postCode = city.postcode;
@@ -237,79 +235,16 @@ async function createRoles() {
 
 const permDefs = {
   admin: {
-    read: [
-      "admin",
-      "mini-admin",
-      "teacher",
-      "student",
-      "coach",
-      "boss_teacher",
-      "stagiaire",
-      "everything",
-      "parcours",
-      "module",
-      "cours",
-      "permission",
-    ],
-    write: [
-      "teacher",
-      "student",
-      "coach",
-      "boss_teacher",
-      "stagiaire",
-      "parcours",
-      "module",
-      "cours",
-      "permission",
-    ],
-    update: [
-      "teacher",
-      "student",
-      "coach",
-      "boss_teacher",
-      "stagiaire",
-      "parcours",
-      "module",
-      "cours",
-      "permission",
-    ],
-    delete: [
-      "teacher",
-      "student",
-      "coach",
-      "boss_teacher",
-      "stagiaire",
-      "parcours",
-      "module",
-      "cours",
-      "permission",
-    ],
+    read: ["admin", "teacher", "student"],
+    write: ["teacher", "student"],
+    update: ["teacher", "student"],
+    delete: ["teacher", "student"],
   },
   teacher: {
-    read: [
-      "teacher",
-      "boss_teacher",
-      "student",
-      "coach",
-      "stagiaire",
-      "everything",
-      "permission",
-    ],
-    update: ["student", "coach", "stagiaire"],
-  },
-  student: {
-    read: ["parcours", "permission"],
-  },
-  boss_teacher: {
-    read: [
-      "teacher",
-      "student",
-      "coach",
-      "stagiaire",
-      "everything",
-      "permission",
-    ],
-    update: ["student", "coach", "stagiaire"],
+    read: ["teacher", "student"],
+    update: ["student"],
+    write: ["student"],
+    delete: ["student"],
   },
 };
 
@@ -319,7 +254,7 @@ async function createPermissions() {
 
   for (const [key, value] of Object.entries(permDefs)) {
     for (const [itemKey, itemValue] of Object.entries(value)) {
-      permissions.push({ role: key, action: itemKey, ressources: itemValue });
+      permissions.push({ role: key, action: itemKey, subject: itemValue });
     }
   }
   permissions.forEach((permissions) =>

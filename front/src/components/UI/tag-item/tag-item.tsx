@@ -1,18 +1,14 @@
 import { FC } from "react";
-
 import Tag from "../../../utils/interfaces/tag";
 
 const TagItem: FC<{ tag: Tag }> = ({ tag }) => {
-  const tagClass =
-    "btn btn-sm pl-4 pr-1 py-1 font-bold rounded-lg flex border-none items-center gap-x-4 hover:brightness-125";
-
-  const tagStyle: React.CSSProperties = {
-    backgroundColor: tag.color,
+  const setTagClass = () => {
+    return `btn btn-sm btn-info pl-4 pr-1 py-1 font-normal rounded-lg flex items-center gap-x-4 ${tag.color} hover:brightness-125}`;
   };
 
   return (
     <div>
-      <button className={tagClass} style={tagStyle}>
+      <button className={setTagClass()}>
         <p>{`#${tag.name}`}</p>
         <svg
           xmlns="http://www.w3.org/2000/svg"

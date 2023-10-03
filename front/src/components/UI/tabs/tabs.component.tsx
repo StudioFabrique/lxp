@@ -26,7 +26,7 @@ const Tabs: FC<{
   return (
     <ul className="flex gap-x-1">
       {roles.map((role) => (
-        <Can key={role._id} action="read" object={role.role}>
+        <Can key={role._id} action="read" subject={role.role}>
           {setContent(role)}
         </Can>
       ))}

@@ -1,6 +1,6 @@
 import { FC, KeyboardEvent, KeyboardEventHandler, useEffect } from "react";
 import Portal from "../portal/portal";
-import DeleteIcon from "../svg/delete-icon.component";
+import DeleteIcon from "../svg-icons/delete-icon.compoenent";
 
 const DeleteModal: FC<{
   isLoading: boolean;

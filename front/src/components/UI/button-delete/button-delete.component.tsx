@@ -29,7 +29,7 @@ const ButtonDelete: FC<{
           error={error}
         />
       )}
-      <button type="button" onClick={() => {}}>
+      <button type="button" onClick={handleModal}>
         Supprimer
       </button>
     </>

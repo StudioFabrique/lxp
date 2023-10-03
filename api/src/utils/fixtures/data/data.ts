@@ -17,29 +17,6 @@ export const firstnames = [
   "Mason",
 ];
 
-export const modulesList = [
-  "HTML Fundamentals",
-  "CSS Styling Techniques",
-  "JavaScript Basics",
-  "Responsive Web Design",
-  "Front-end Frameworks (e.g., React)",
-  "Back-end Development with Node.js",
-  "Database Management (SQL and NoSQL)" /* 
-  "Web Security and Authentication",
-  "API Development and Integration",
-  "Progressive Web Apps (PWAs)",
-  "Serverless Computing",
-  "Web Performance Optimization",
-  "Web Accessibility Best Practices",
-  "Version Control with Git",
-  "UI/UX Design Principles",
-  "Testing and Debugging Strategies",
-  "Continuous Integration and Deployment (CI/CD)",
-  "Web Development Project Management",
-  "E-commerce Development",
-  "Cloud Computing for Web Apps", */,
-];
-
 // 20
 
 export const groupes = [

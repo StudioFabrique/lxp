@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useReducer } from "react";
 
 type Action = {
@@ -35,32 +34,19 @@ const useInput = (
   const valueIsValid = validateValue(inputState!.value);
   const hasError = !valueIsValid && inputState!.isTouched;
 
-  const valueChangeHandler = useCallback(
-    (event: React.FormEvent<HTMLInputElement>) => {
-      dispatch({ type: "INPUT", value: event.currentTarget.value });
-    },
-    []
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const valueBlurHandler = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    (_event: React.FormEvent) => {
-      dispatch({ type: "BLUR", value: inputState!.value });
-    },
-    [inputState]
-  );
-
-  const changeValue = (value: string) => {
-    dispatch({ type: "INPUT", value: value });
+  const valueChangeHandler = (event: React.FormEvent<HTMLInputElement>) => {
+    dispatch({ type: "INPUT", value: event.currentTarget.value });
   };
 
-  const textAreaChangeHandler = useCallback(
-    (event: React.FormEvent<HTMLTextAreaElement>) => {
-      dispatch({ type: "INPUT", value: event.currentTarget.value });
-    },
-    []
-  );
+  const valueBlurHandler = (_event: React.FormEvent) => {
+    dispatch({ type: "BLUR", value: inputState!.value });
+  };
+
+  const textAreaChangeHandler = (
+    event: React.FormEvent<HTMLTextAreaElement>
+  ) => {
+    dispatch({ type: "INPUT", value: event.currentTarget.value });
+  };
 
   const reset = useCallback(() => {
     dispatch({ type: "RESET", value: "" });
@@ -74,22 +60,16 @@ const useInput = (
     dispatch({ type: "NEW_PROPS", value });
   }, []);
 
-  const datePicking = useCallback((value: string) => {
-    dispatch({ type: "INPUT", value });
-  }, []);
-
   return {
     value: {
       value: inputState!.value,
       hasError,
       isValid: valueIsValid,
       valueChangeHandler,
-      changeValue,
       valueBlurHandler,
       reset,
       textAreaChangeHandler,
       isSubmitted,
-      datePicking,
     },
     newProps,
   };

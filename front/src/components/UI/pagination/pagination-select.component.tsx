@@ -9,7 +9,6 @@ const PaginationSelect: FC<{
       <div className="flex justify-end items-center focus:outline-none gap-x-2 self-end">
         <p>row per pages :</p>
         <select
-          defaultValue={perPage}
           onChange={handleSetPerPages}
           className="select select-sm bg-secondary/50"
         >
