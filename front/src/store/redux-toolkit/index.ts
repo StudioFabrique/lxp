@@ -8,7 +8,7 @@ import tagsSlice from "./tags";
 import parcoursContactsSlice from "./parcours/parcours-contacts";
 import parcoursObjectivesSlice from "./parcours/parcours-objectives";
 import parcoursGroupsSlice from "./parcours/parcours-groups";
-import courseSlice from "./course/course";
+import courseInfosSlice from "./course/course-infos";
 
 const store = configureStore({
   reducer: {
@@ -20,7 +20,7 @@ const store = configureStore({
     parcoursContacts: parcoursContactsSlice.reducer,
     parcoursObjectives: parcoursObjectivesSlice.reducer,
     parcoursGroups: parcoursGroupsSlice.reducer,
-    course: courseSlice.reducer,
+    courseInfos: courseInfosSlice.reducer,
   },
 });
 

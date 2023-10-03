@@ -7,6 +7,7 @@ async function getCourseInformations(courseId: number) {
       id: true,
       title: true,
       description: true,
+      image: true,
       module: {
         select: {
           id: true,
@@ -18,6 +19,17 @@ async function getCourseInformations(courseId: number) {
                   id: true,
                   title: true,
                   virtualClass: true,
+                  formation: {
+                    select: {
+                      id: true,
+                      title: true,
+                      tags: {
+                        select: {
+                          tag: true,
+                        },
+                      },
+                    },
+                  },
                   tags: {
                     select: {
                       tag: {
@@ -53,6 +65,14 @@ async function getCourseInformations(courseId: number) {
     const error = new Error("Le cours n'existe pas");
     (error as any).statusCode = 404;
     throw error;
+  }
+
+  if (course) {
+    if (course.image instanceof Buffer) {
+      const base64Image = course.image.toString("base64");
+      const result = { ...course, image: base64Image };
+      return result;
+    }
   }
 
   return course;

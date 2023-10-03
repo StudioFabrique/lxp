@@ -48,8 +48,6 @@ const CourseHome = () => {
     );
   }, [sendRequest]);
 
-  console.log(coursesList);
-
   const content = useMemo(() => {
     return (
       <>
@@ -64,7 +62,7 @@ const CourseHome = () => {
             <td>{course.module.title}</td>
             <td>{course.module.parcours.title}</td>
             <td>{localeDate(course.createdAt!)}</td>
-            <td>{localeDate(course.updatedAt!)}</td>{" "}
+            <td>{localeDate(course.updatedAt!)}</td>
             <td onClick={() => handleEditCourse(course.id!)}>
               <div className="w-6 h-6">
                 <Can action="update" object="cours">
@@ -110,7 +108,7 @@ const CourseHome = () => {
               </table>
             </div>
           ) : (
-            <p>Aucun parcours n'a été créé à ce jour</p>
+            <p>Aucun cours n'a été créé à ce jour</p>
           )}
         </>
       )}

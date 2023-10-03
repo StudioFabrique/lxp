@@ -321,7 +321,7 @@ const EditParcours = () => {
             </div>
           </div>
           <div className="w-full 2xl:w-4/6 mt-16">
-            {/* Premiere étap : infos générales du parcours */}
+            {/* Premiere étape : infos générales du parcours */}
             {actualStep.id === 1 ? (
               <ParcoursInformations parcoursId={id} />
             ) : null}

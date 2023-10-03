@@ -136,6 +136,7 @@ model Course {
   id          Int      @id @default(autoincrement())
   title       String
   description String?
+  image       Bytes?
   module      Module   @relation(fields: [moduleId], references: [id])
   moduleId    Int
   createdAt   DateTime @default(now())
