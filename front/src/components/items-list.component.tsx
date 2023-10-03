@@ -5,10 +5,10 @@
 
 import React, { useEffect } from "react";
 
-import useItems from "../../../hooks/use-items";
-import SearchDropdown from "../../UI/search-dropdown/search-dropdown";
-import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
 import ItemElement from "./item-element.component";
+import useItems from "../hooks/use-items";
+import SearchDropdown from "./UI/search-dropdown/search-dropdown";
+import SubWrapper from "./UI/sub-wrapper/sub-wrapper.component";
 
 interface ItemsListProps {
   itemsList: unknown[];
