@@ -77,7 +77,7 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
       <form className="flex flex-col px-4 gap-y-4" onSubmit={handleSubmit}>
         <Wrapper>
           <div className="flex flex-col gap-y-2">
-            <label htmlFor="description">Description de l'objectif *</label>
+            <label htmlFor="description">Description de la compétence *</label>
             <textarea
               className={textareaStyle}
               value={description.value}

@@ -222,6 +222,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
                 type="number"
                 id="duration"
                 name="duration"
+                min={0}
                 defaultValue={duration.value}
                 onChange={duration.valueChangeHandler}
                 onBlur={duration.valueBlurHandler}
