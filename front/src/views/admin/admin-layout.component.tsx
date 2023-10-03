@@ -3,7 +3,8 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 import { Context } from "../../store/context.store";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
-import defineRulesFor from "../../config/rbac";
+// import defineRulesFor from "../../config/rbac";
+import useRbac from "../../hooks/use-rbac";
 
 let initialState = true;
 
@@ -11,6 +12,8 @@ const AdminLayout = () => {
   const { initTheme, isLoggedIn, user, handshake, fetchRoles } =
     useContext(Context);
   const nav = useNavigate();
+
+  useRbac(user?.roles); // gère l'état des permissions
 
   useEffect(() => {
     if (isLoggedIn && user && user.roles[0].rank > 2) {
@@ -28,11 +31,11 @@ const AdminLayout = () => {
     }
   }, [initTheme, isLoggedIn, handshake]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (user) {
-      defineRulesFor(user);
+      defineRulesFor(user.roles);
     }
-  }, [user]);
+  }, [user]); */
 
   return (
     <div className="w-full">

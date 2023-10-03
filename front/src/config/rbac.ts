@@ -1,5 +1,5 @@
 import { Authorizer } from "casbin.js";
-import User from "../utils/interfaces/user";
+import Role from "../utils/interfaces/role";
 
 const permDefs = {
   admin: {
@@ -67,20 +67,21 @@ const permDefs = {
   },
 };
 
-export let casbinAuthorizer: Authorizer;
+export const casbinAuthorizer: Authorizer = new Authorizer();
 
-export default function defineRulesFor(user: User) {
+export default function defineRulesFor(roles: Role[]) {
   // superUser roles definition
   const builtPerms: Record<string, any> = {};
 
   // perms should be of format
   // { 'read': ['Contact', 'Database']}
-  user.roles.forEach((role) => {
+  roles.forEach((role) => {
     const permissions = permDefs[role.role as keyof typeof permDefs];
     Object.entries(permissions).forEach(([key, value]) => {
       builtPerms[key] = [...(builtPerms[key] || []), ...value];
     });
   });
-  casbinAuthorizer = new Authorizer();
+  console.log({ builtPerms });
+
   casbinAuthorizer.setPermission(builtPerms);
 }
