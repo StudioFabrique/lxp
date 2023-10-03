@@ -1,3 +1,4 @@
+import Contact from "./contact";
 import Module from "./module";
 import Tag from "./tag";
 
@@ -12,4 +13,5 @@ export default interface Course {
   tags: Tag[];
   virtualClass?: string;
   image?: string;
+  contacts: Contact[];
 }

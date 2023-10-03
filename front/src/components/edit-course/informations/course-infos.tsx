@@ -1,9 +1,11 @@
 import { useSelector } from "react-redux";
 
-import Tags from "../../UI/tags/tags.component";
 import Wrapper from "../../UI/wrapper/wrapper.component";
-import Contacts from "../../edit-parcours/informations/contacts";
 import CourseInfosForm from "./course-infos-form";
+import Contact from "../../../utils/interfaces/contact";
+import InheritedContacts from "../../inherited-items/inherited-contacts";
+import InheritedTags from "../../inherited-items/inherited-tags";
+import Tag from "../../../utils/interfaces/tag";
 
 const CourseInfos = () => {
   const title = useSelector(
@@ -12,10 +14,22 @@ const CourseInfos = () => {
   const description = useSelector(
     (state: any) => state.courseInfos.course.description
   ) as string;
+  const contacts = useSelector(
+    (state: any) => state.courseInfos.course.module.contacts
+  ) as Contact[];
+  const currentContacts = useSelector(
+    (state: any) => state.courseInfos.course.contacts
+  ) as Contact[];
+  const tags = useSelector(
+    (state: any) => state.courseInfos.course.module.parcours.tags
+  ) as Tag[];
+  const currentTags = useSelector(
+    (state: any) => state.courseInfos.course.tags
+  ) as Tag[];
 
   const handleSubmit = (data: { title: string; description: string }) => {};
 
-  console.log({ title });
+  console.log({ tags });
 
   return (
     <div className="w-full">
@@ -32,10 +46,18 @@ const CourseInfos = () => {
         </Wrapper>
         <div className="flex flex-col gap-y-8">
           <Wrapper>
-            <Contacts contacts={[]} notSelectedContacts={[]} />
+            <InheritedContacts
+              initialList={contacts}
+              currentItems={currentContacts}
+              property="name"
+            />
           </Wrapper>
           <Wrapper>
-            <Tags onSubmitTags={() => {}} />
+            <InheritedTags
+              initialList={tags}
+              currentItems={currentTags}
+              property="name"
+            />
           </Wrapper>
         </div>
       </div>

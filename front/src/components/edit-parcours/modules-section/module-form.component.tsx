@@ -5,11 +5,11 @@ import useInput from "../../../hooks/use-input";
 import { regexGeneric, regexNumber } from "../../../utils/constantes";
 import Contact from "../../../utils/interfaces/contact";
 import Skill from "../../../utils/interfaces/skill";
-import MemoizedItemsList from "./items-list.component";
 import { compressImage } from "../../../helpers/compress-image";
 import MemoizedModuleFilesUpload from "./module-files-upload.component";
 import { defaultModuleThumb } from "../../../lib/defautltModuleThumb";
 import toast from "react-hot-toast";
+import MemoizedItemsList from "../../items-list.component";
 
 interface ModuleFormProps {
   isLoading: boolean;

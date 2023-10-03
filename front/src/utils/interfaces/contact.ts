@@ -3,4 +3,5 @@ export default interface Contact {
   idMdb: string;
   name: string;
   role: string;
+  isSelected?: boolean;
 }
