@@ -21,7 +21,10 @@ const useRbac = (roles: Role[] | undefined) => {
         const permissions: any[] = data.data;
 
         permissions.forEach((permission) => {
-          builtPerms[key] = [...(builtPerms[key] || []), ...(value as [])];
+          builtPerms[permission.action] = [
+            ...(builtPerms[permission.action] || []),
+            ...permission.ressources,
+          ];
         });
       };
       sendRequest(
@@ -32,6 +35,7 @@ const useRbac = (roles: Role[] | undefined) => {
     console.log({ builtPerms });
 
     casbinAuthorizer.setPermission(builtPerms);
+    console.log({ casbinAuthorizer });
   }, [roles, sendRequest]);
 
   useEffect(() => {

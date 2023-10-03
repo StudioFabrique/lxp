@@ -81,5 +81,7 @@ export default function defineRulesFor(roles: Role[]) {
       builtPerms[key] = [...(builtPerms[key] || []), ...value];
     });
   });
+  console.log({ builtPerms });
+
   casbinAuthorizer.setPermission(builtPerms);
 }
