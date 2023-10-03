@@ -6,7 +6,7 @@
  * ou serveur) mais l'image ne sera pas mise à jour dans la vue
  */
 
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 
 import ImageFileUpload from "./image-file-upload";
 import ParcoursHeaderIcon from "../UI/svg/parcours-header-icon";
@@ -29,17 +29,18 @@ const ImageHeader: FC<Props> = ({
 }) => {
   const [bgImage, setBgImage] = useState<any | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  /*   const parcours = useSelector((state: any) => state.parcours);
-  const parcoursInformations = useSelector(
-    (state: any) => state.parcoursInformations
-  ); */
+  const isInitialRender = useRef(true);
 
   // en l'absence de props affiche une image par défaut
   useEffect(() => {
-    if (!image) {
-      setBgImage(defaultImage);
+    if (isInitialRender.current) {
+      if (!image) {
+        setBgImage(defaultImage);
+      } else {
+        setBgImage(image);
+      }
     } else {
-      setBgImage(image);
+      isInitialRender.current = false;
     }
   }, [defaultImage, image]);
 
@@ -73,6 +74,8 @@ const ImageHeader: FC<Props> = ({
       onUpdateImage(file);
     }
   }, [file, onUpdateImage]);
+
+  console.log({ bgImage });
 
   return (
     <>

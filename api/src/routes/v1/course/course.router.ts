@@ -8,8 +8,28 @@ import {
 } from "./course-validators";
 import httpGetCourses from "../../../controllers/course/http-get-courses";
 import httpGetCourseInformations from "../../../controllers/course/http-get-course-informations";
+import multer from "multer";
+import path from "path";
+import httpPutCourseImage from "../../../controllers/course/http-put-course-image";
 
 const courseRouter = express.Router();
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "..", "..", "..", "..", "uploads"));
+  },
+  filename: function (req, file, cb) {
+    if (file.mimetype.startsWith("image")) {
+      const newFileName =
+        Date.now() + "-" + Math.round(Math.random() * 1e9) + file.originalname;
+      cb(null, file.fieldname + "-" + newFileName);
+    } else {
+      return;
+    }
+  },
+});
+
+const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 
 // enregistre un nouveau cours en relation avec un module existant
 courseRouter.post("/", checkToken, postCourseValidator, httpPostCourse);
@@ -21,6 +41,14 @@ courseRouter.get(
   checkToken,
   getCourseInformationsValidator,
   httpGetCourseInformations
+);
+
+// met à jour l'image d'en-tête d'un cours
+courseRouter.put(
+  "/image",
+  checkToken,
+  upload.single("image"),
+  httpPutCourseImage
 );
 
 export default courseRouter;

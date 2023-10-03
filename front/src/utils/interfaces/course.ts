@@ -1,4 +1,5 @@
 import Module from "./module";
+import Tag from "./tag";
 
 export default interface Course {
   id: number;
@@ -8,4 +9,7 @@ export default interface Course {
   createdAt?: string;
   updatedAt?: string;
   module: Module;
+  tags: Tag[];
+  virtualClass?: string;
+  image?: string;
 }
