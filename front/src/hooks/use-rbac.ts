@@ -8,7 +8,7 @@ const useRbac = (roles: Role[] | undefined) => {
 
   const { sendRequest } = useHttp();
 
-  const defineRulesFor = useCallback(() => {
+  const defineRulesFor = useCallback(async () => {
     if (!roles) return;
 
     // superUser roles definition
@@ -16,7 +16,7 @@ const useRbac = (roles: Role[] | undefined) => {
 
     // perms should be of format
     // { 'read': ['Contact', 'Database']}
-    roles.forEach((role) => {
+    for (const role of roles) {
       const applyData = (data: any) => {
         const permissions: any[] = data.data;
 
@@ -27,11 +27,12 @@ const useRbac = (roles: Role[] | undefined) => {
           ];
         });
       };
-      sendRequest(
+
+      await sendRequest(
         { path: `/permission/${role.role}`, method: "get" },
         applyData
       );
-    });
+    }
     console.log({ builtPerms });
 
     casbinAuthorizer.setPermission(builtPerms);
