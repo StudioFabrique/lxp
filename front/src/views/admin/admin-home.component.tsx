@@ -12,6 +12,7 @@ const AdminHome = () => {
       <Link to="user">Interface utilisateurs</Link>
       <Link to="group">Interface Groupes</Link>
       <Link to="parcours">Interface Parcours</Link>
+      <Link to="course">Interface des Cours</Link>
     </div>
   );
 };

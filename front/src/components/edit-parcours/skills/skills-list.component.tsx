@@ -22,7 +22,7 @@ const SkillsList = () => {
   const { sendRequest, error } = useHttp();
 
   const handleDeleteSkill = (skillId: number) => {
-    const processData = (data: any) => {
+    const processData = (_data: any) => {
       dispatch(parcoursSkillsAction.deleteSkill(skillId));
     };
     sendRequest(
