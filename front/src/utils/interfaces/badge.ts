@@ -1,5 +1,8 @@
 export default interface Badge {
-  id?: number;
+  id: number;
+  title: string;
+  description?: string;
   image: string;
-  isSelected?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }

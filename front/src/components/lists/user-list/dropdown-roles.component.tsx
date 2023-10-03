@@ -46,7 +46,7 @@ const DropDownRoles: FC<{
       {roles.map((role) => (
         <React.Fragment key={role._id}>
           {props.roleTab.rank === role.rank ? (
-            <Can action={"update"} object={role.role}>
+            <Can action={"update"} subject={role.role}>
               <li>
                 <div className="flex gap-x-4">
                   <input

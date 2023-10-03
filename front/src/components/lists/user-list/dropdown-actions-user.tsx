@@ -69,19 +69,19 @@ const DropdownActionsUser: FC<Props> = ({
             tabIndex={0}
             className="dropdown-content menu p-1 shadow bg-base-100 rounded-box w-fit mt-4"
           >
-            <Can action="update" object={roleTab.role}>
+            <Can action="update" subject={roleTab.role}>
               <li onClick={handleAddUserToGroup}>
                 <p className={setDropDownStyle()}>Ajouter à un groupe</p>
               </li>
             </Can>
 
-            <Can action="update" object={roleTab.role}>
+            <Can action="update" subject={roleTab.role}>
               <li onClick={handleAddRoleToUser}>
                 <p className={setDropDownStyle()}>Ajouter un rôle</p>
               </li>
             </Can>
 
-            <Can action="update" object={roleTab.role}>
+            <Can action="update" subject={roleTab.role}>
               <li>
                 <p
                   className={setDropDownStyle()}
@@ -92,7 +92,7 @@ const DropdownActionsUser: FC<Props> = ({
               </li>
             </Can>
 
-            <Can action="update" object={roleTab.role}>
+            <Can action="update" subject={roleTab.role}>
               <li>
                 <p
                   className={setDropDownStyle()}
@@ -103,7 +103,7 @@ const DropdownActionsUser: FC<Props> = ({
               </li>
             </Can>
 
-            <Can action="write" object={roleTab.role}>
+            <Can action="write" subject={roleTab.role}>
               <li>
                 <p className={setDropDownStyle()}>Supprimer</p>
               </li>

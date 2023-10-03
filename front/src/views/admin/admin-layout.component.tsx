@@ -1,27 +1,21 @@
 import { useContext, useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
-
+import { Outlet } from "react-router-dom";
 import { Context } from "../../store/context.store";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
-// import defineRulesFor from "../../config/rbac";
-import useRbac from "../../hooks/use-rbac";
+import Login from "../../components/login/login.component";
+import defineRulesFor from "../../config/rbac";
 
 let initialState = true;
 
 const AdminLayout = () => {
   const { initTheme, isLoggedIn, user, handshake, fetchRoles } =
     useContext(Context);
-  const nav = useNavigate();
-
-  useRbac(user?.roles); // gère l'état des permissions
 
   useEffect(() => {
-    if (isLoggedIn && user && user.roles[0].rank > 2) {
+    if (isLoggedIn) {
       fetchRoles(user!.roles[0]);
-    } else if (!isLoggedIn || (user && user.roles[0].rank > 2)) {
-      nav("/");
     }
-  }, [fetchRoles, nav, user, isLoggedIn]);
+  }, [fetchRoles, user, isLoggedIn]);
 
   useEffect(() => {
     initTheme();
@@ -31,22 +25,28 @@ const AdminLayout = () => {
     }
   }, [initTheme, isLoggedIn, handshake]);
 
-  /* useEffect(() => {
+  useEffect(() => {
     if (user) {
-      defineRulesFor(user.roles);
+      defineRulesFor(user);
     }
-  }, [user]); */
+  }, [user]);
 
   return (
-    <div className="w-full">
+    <>
       {user && user.roles[0].rank < 3 ? (
         <FadeWrapper>
-          <div className="w-full flex flex-col h-screen">
+          <div className="flex flex-col h-screen">
             <Outlet />
           </div>
         </FadeWrapper>
-      ) : null}
-    </div>
+      ) : (
+        <FadeWrapper>
+          <div className="h-screen w-full fixed">
+            <Login />
+          </div>
+        </FadeWrapper>
+      )}
+    </>
   );
 };
 

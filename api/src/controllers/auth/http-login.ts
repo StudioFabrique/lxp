@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import {
-  badQuery,
   credentialsError,
   regexPassword,
   serverIssue,
@@ -9,28 +8,21 @@ import userLogin from "../../models/auth/user-login";
 import { setTokens } from "../../utils/services/auth/set-tokens";
 import { tokensMaxAge } from "../../config/config";
 import { validationResult } from "express-validator";
-import { logger } from "../../utils/logs/logger";
 
 async function httpLogin(req: Request, res: Response) {
-  const { email, password } = req.body;
   try {
     //  récupération du test de validation
     const result = validationResult(req);
 
+    const { email, password } = req.body;
+
     //  on vérifie que l'email et le password sont valides
     if (!result.isEmpty() || !password || !regexPassword.test(password)) {
-      throw { message: result.array()[0].msg ?? credentialsError, status: 401 };
+      return res.status(401).json({ message: credentialsError });
     }
-  } catch (error: any) {
-    logger.error(error);
-    return res.status(error.status ?? 500).json({
-      message: error.message ?? badQuery,
-    });
-  }
 
-  try {
-    /* on récupére les informations de l'utilisateur si les identifiants sont corrects,
-    et on créé des tokens qu'on retourne sous forme de cookies */
+    //  on récupére les informations de l'utilisateur si les identifiants sont corrects,
+    //  et on créé des tokens qu'on retourne sous forme de cookies
 
     const user = await userLogin(email, password);
 
@@ -51,11 +43,9 @@ async function httpLogin(req: Request, res: Response) {
         .status(200)
         .json(user);
     }
-    throw { message: credentialsError, status: 401 };
-  } catch (error: any) {
-    return res
-      .status(error.status ?? 500)
-      .json({ message: error.message ?? serverIssue });
+    return res.status(401).json({ message: credentialsError });
+  } catch (error) {
+    return res.status(500).json({ message: serverIssue + error });
   }
 }
 

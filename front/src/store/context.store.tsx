@@ -12,7 +12,7 @@ type ContextType = {
   initTheme: () => void;
   toggleTheme: () => void;
   isLoggedIn: boolean;
-  login: (email: string, password: string) => void;
+  login: (email: string, password: string, path: string) => void;
   logout: () => void;
   error: string;
   isLoading: boolean;

@@ -1,5 +1,5 @@
 import Role from "../../utils/interfaces/db/role";
-import User from "../../utils/interfaces/db/user";
+import User from "../../utils/interfaces/db/user.model";
 import { getPagination } from "../../utils/services/getPagination";
 
 async function searchUser(

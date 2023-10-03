@@ -18,7 +18,6 @@ const Pagination: FC<{
   };
 
   const handleSetPerPages = (event: ChangeEvent<HTMLSelectElement>) => {
-    setPage(1);
     setPerPages!(parseInt(event.currentTarget.value) ?? 5);
   };
 

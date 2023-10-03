@@ -67,11 +67,3 @@ export const monthItems = [
     maxDays: 31,
   },
 ];
-
-export function getMonth(monthNumber: number) {
-  return monthsList[monthNumber - 1];
-}
-
-export function convertMilisToWeeks(millisValue: number) {
-  return millisValue / 604800000;
-}

@@ -1,118 +1,32 @@
-import { NextFunction, Response } from "express";
-import {
-  ValidationChain,
-  body,
-  param,
-  query,
-  validationResult,
-} from "express-validator";
+import { NextFunction, Request, Response } from "express";
+import { body, param, query, validationResult } from "express-validator";
 import { badQuery } from "../utils/constantes";
-import { logger } from "../utils/logs/logger";
-import CustomRequest from "../utils/interfaces/express/custom-request";
 
-export const checkValidatorResult = (
-  req: CustomRequest,
+const checkValidatorResult = (
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const checkValues = validationResult(req);
 
-  console.log(checkValues);
-
   if (!checkValues.isEmpty()) {
-    const error = {
-      message: checkValues.array()[0].msg ?? badQuery,
-      from: req.socket.remoteAddress,
-      status: 400,
-    };
-    logger.error(error);
+    console.log(checkValues.array());
     return res.status(400).json({ message: badQuery });
   }
   next();
 };
 
-const customPostalCodeValidation = (value: string) => {
-  const postCodePattern = /^\d{5}$/;
-
-  if (
-    value === undefined ||
-    value === null ||
-    value === "" ||
-    postCodePattern.test(value)
-  ) {
-    return true; // Empty value is allowed
-  }
-
-  return false; // Run the original validation rules for non-empty value
-};
-
 export const userValidator = [
-  body("email")
-    .exists()
-    .isEmail()
-    .trim()
-    .escape()
-    .withMessage("email non conforme"),
-  body(["firstname", "lastname"])
-    .exists()
-    .notEmpty()
-    .isString()
-    .trim()
-    .escape()
-    .withMessage("firstname ou lastname non conforme"),
-  body([
-    "nickname",
-    "description",
-    "address",
-    "city",
-    "links.*.url",
-    "links.*.alias",
-    "hobbies.*.title",
-    "graduations.*.title",
-    "graduations.*.degree",
-  ])
-    .isString()
-    .trim()
-    .escape()
-    .withMessage(
-      "nickname, description, address, city, links, hobbies ou graduations non conforme"
-    ),
-  body("userType")
-    .exists()
-    .notEmpty()
-    .isNumeric()
-    .withMessage("userType non conforme"),
-  body("postCode")
-    .custom(customPostalCodeValidation)
-    .trim()
-    .escape()
-    .withMessage("postCode non conforme"),
-  // body(["graduations.*.date", "birthDate"])
-  //   .isDate()
-  //   .trim()
-  //   .escape()
-  //   .withMessage("graduations ou birthDate non conforme"),
-  body(["hobbies", "graduations", "links"])
-    .isArray()
-    .withMessage("hobbies, graduations ou links non conforme"),
-  checkValidatorResult,
-];
-
-export const manyUsersValidator = [
-  body().isArray(),
-  body("*.email").isEmail().trim().escape(),
-  body(["*.firstname", "*.lastname", "*.nickname", "*.address", "*.city"])
-    .isString()
-    .trim()
-    .escape(),
-  body("*.postCode").isPostalCode("FR").trim().escape(),
-  body("*.phoneNumber").isNumeric(),
-  /* body("*.birthDate").isDate({ format: "dd/mm/yyyy" }).toDate(), */
+  body("email").isEmail().trim().escape(),
+  body("password").isString().trim().escape(),
+  body(["firstname", "lastname", "address", "city"]).isString().trim().escape(),
+  body("postCode").isPostalCode("FR").trim().escape(),
+  //   body("roles").isArray(),
   checkValidatorResult,
 ];
 
 export const groupValidator = [
-  body(["group.name", "group.desc"]).isString().trim().escape(),
+  body("name", "desc").isString().trim().escape(),
   checkValidatorResult,
 ];
 

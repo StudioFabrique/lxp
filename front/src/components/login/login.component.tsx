@@ -1,17 +1,22 @@
-import { useContext } from "react";
-
+import React, { useContext } from "react";
 import { Context } from "../../store/context.store";
 import LoginForm from "./login-form.component";
 import bgSide from "../../assets/images/BG-side.png";
+import { useLocation } from "react-router-dom";
 
 const Login = () => {
   const { isLoading, error, login } = useContext(Context);
+  const location = useLocation();
 
   const handleSubmit = (email: string, password: string) => {
-    login(email, password);
+    login(
+      email,
+      password,
+      location.pathname.includes("/admin") ? "user" : "student"
+    );
   };
   return (
-    <div className="w-full h-screen flex flex-row justify-between items font-inter text-pink bg-gradient-to-b from-[#76284e] to-[#202237]">
+    <div className="h-screen flex flex-row justify-between items font-inter text-pink bg-gradient-to-b from-[#76284e] to-[#202237]">
       <div className="w-[73.5%] flex flex-col text-pink-900 justify-between bg-white rounded-r-[50px] p-20 pl-15 max-sm:p-2">
         <div className="text-[14pt] font-bold flex flex-col">
           <h1 className="text-[80pt] -mb-8 -m-2">LXP</h1>

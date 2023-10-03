@@ -1,7 +1,7 @@
 import { FC } from "react";
 
-import SortUpIcon from "../svg/sort-up-icon.component";
-import SortDownIcon from "../svg/sort-down-icon.component";
+import SortUpIcon from "../svg-icons/sort-up-icon.component";
+import SortDownIcon from "../svg-icons/sort-down-icon.component";
 
 type Props = {
   fieldSort: string;

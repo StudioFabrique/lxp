@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-
 import getContacts from "../../models/parcours/get-contacts";
 import { serverIssue } from "../../utils/constantes";
 

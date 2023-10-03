@@ -2,9 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
-import User from "./utils/interfaces/db/user";
+import User from "./utils/interfaces/db/user.model";
 import Role from "./utils/interfaces/db/role";
-import { modulesList } from "./utils/fixtures/data/data";
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
 
@@ -21,13 +20,6 @@ async function mongoConnect() {
 }
 
 const prisma = new PrismaClient();
-
-// Méthode pour fermer la connexion
-const disconnect = async () => {
-  if (mongoose.connection.readyState !== 0) {
-    await mongoose.connection.close();
-  }
-};
 
 const tags: string[] = [
   "HTML",
@@ -63,26 +55,23 @@ const tags: string[] = [
 ];
 
 const colors = [
-  "rgba(255, 0, 0, 0.5)", // Red
-  "rgba(0, 255, 0, 0.5)", // Green
-  "rgba(0, 0, 255, 0.5)", // Blue
-  "rgba(255, 255, 0, 0.5)", // Yellow
-  "rgba(255, 0, 255, 0.5)", // Magenta
-  "rgba(0, 255, 255, 0.5)", // Cyan
-  "rgba(128, 0, 0, 0.5)", // Maroon
-  "rgba(0, 128, 0, 0.5)", // Green (dark)
-  "rgba(0, 0, 128, 0.5)", // Navy
-  "rgba(128, 128, 0, 0.5)", // Olive
-  "rgba(128, 0, 128, 0.5)", // Purple
-  "rgba(0, 128, 128, 0.5)", // Teal
-  "rgba(255, 165, 0, 0.5)", // Orange
-  "rgba(139, 69, 19, 0.5)", // Saddle Brown
-  "rgba(220, 20, 60, 0.5)", // Crimson
-  "rgba(46, 139, 87, 0.5)", // Sea Green
-  "rgba(255, 215, 0, 0.5)", // Gold
-  "rgba(139, 0, 139, 0.5)", // Dark Magenta
-  "rgba(0, 100, 0, 0.5)", // Dark Green
-  "rgba(0, 0, 139, 0.5)", // Dark Blue
+  "bg-red-500/50",
+  "bg-orange-500/50",
+  "bg-amber-500/50",
+  "bg-yellow-500/50",
+  "bg-lime-500/50",
+  "bg-green-500/50",
+  "bg-emerald-500/50",
+  "bg-teal-500/50",
+  "bg-cyan-500/50",
+  "bg-sky-500/50",
+  "bg-blue-500/50",
+  "bg-indigo-500/50",
+  "bg-violet-500/50",
+  "bg-purple-500/50",
+  "bg-fuchsia-500/50",
+  "bg-pink-500/50",
+  "bg-rose-500/50",
 ];
 
 const formations = [
@@ -220,9 +209,9 @@ async function createAdmins() {
 async function createTeachers() {
   await mongoConnect();
   try {
-    const roleId = await Role.find({ role: "teacher" }, { _id: 1 });
+    const roleId = await Role.find({ rank: 2 }, { _id: 1 });
     const usersId = await User.find({ roles: roleId }, { _id: 1 });
-    console.log("formateurs", usersId);
+    console.log({ usersId });
 
     const newAdmins = Array<any>();
     usersId.forEach((item) => newAdmins.push({ idMdb: item._id.toString() }));
@@ -235,90 +224,45 @@ async function createTeachers() {
   }
 }
 
+async function createContacts() {
+  await mongoConnect();
+  try {
+    const roleId = await Role.find({ rank: 2 }, { _id: 1 });
+    const usersId = await User.find({ roles: roleId }, { _id: 1 });
+    console.log({ usersId });
+
+    const newAdmins = Array<any>();
+    usersId.forEach((item) => newAdmins.push({ idMdb: item._id.toString() }));
+    const storedUsersIds = await prisma.contact.createMany({
+      data: newAdmins,
+      skipDuplicates: true,
+    });
+  } catch (error) {
+    console.error("Error occurred while querying roles:", error);
+  }
+}
+
 async function createFormation() {
   try {
-    const tags1Dw = [1, 2, 3, 4, 5];
-    const tagsCDA = [10, 20, 25, 26, 28];
-    const newFormations = [
-      {
-        title: "Développeur Web",
-        description:
-          "Toutes les compétences pour développer des applications web et web mobile",
-        code: "007",
-        level: "bac + 2",
-      },
-      {
-        title: "Concepteur Développeur d'Application",
-        description:
-          "Toutes les compétences pour concevoir et développer des applications.",
-        code: "014",
-        level: "bac + 3",
-      },
-    ];
-    await prisma.formation.create({
-      data: {
-        ...newFormations[0],
-        tags: {
-          create: tags1Dw.map((item: number) => {
-            return {
-              tag: { connect: { id: item } },
-            };
-          }),
-        },
-      },
-    });
-    await prisma.formation.create({
-      data: {
-        ...newFormations[1],
-        tags: {
-          create: tagsCDA.map((item: number) => {
-            return {
-              tag: { connect: { id: item } },
-            };
-          }),
-        },
-      },
-    });
+    const newFormation = {
+      title: "Développeur Web",
+      description:
+        "Toutes les compétences pour développer des applications web et web mobile",
+      code: "007",
+      level: "3",
+    };
+    await prisma.formation.create({ data: newFormation });
   } catch (error) {
     console.log(error);
   }
 }
 
-/* async function createModules() {
-  const modules = modulesList.map((item: string) => ({
-    title: item,
-  }));
-  await prisma.module.createMany({
-    data: modules,
-  });
-}
-
-async function createModulesOnFormation() {
-  const modules = await prisma.module.findMany();
-  const newModules = await prisma.formation.update({
-    where: { id: 1 },
-    data: {
-      modules: {
-        create: modules.map((m: any) => {
-          return {
-            module: {
-              connect: { id: m.id },
-            },
-          };
-        }),
-      },
-    },
-  });
-} */
-
 async function loadFixtures() {
   await createTags();
   await createAdmins();
   await createTeachers();
+  await createContacts();
   await createFormation();
-  //await createModules();
-  //await createModulesOnFormation();
-  await disconnect();
 }
 
 loadFixtures();
