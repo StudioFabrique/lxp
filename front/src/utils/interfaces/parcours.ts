@@ -9,7 +9,6 @@ import Tag from "./tag";
 export default interface Parcours {
   id?: number;
   title: string;
-  degree: string;
   description?: string;
   image?: string;
   startDate?: string;

@@ -1,6 +1,8 @@
 import { addIdToObject } from "../../utils/add-id-to-objects";
 
-// étapes à suivre pour la création d'un parcours
+/**
+ * étapes à suivre pour la création d'un cours
+ */
 const steps = [
   {
     label: "Informations",
@@ -12,20 +14,17 @@ const steps = [
     label: "Compétences",
   },
   {
-    label: "Modules",
+    label: "Scénario",
   },
   {
     label: "Calendrier",
-  },
-  {
-    label: "Etudiants",
   },
   {
     label: "Aperçu",
   },
 ];
 
-export const stepsParcours = addIdToObject(steps).map((item: any) => ({
+export const stepsCourse = addIdToObject(steps).map((item: any) => ({
   ...item,
   saved: false,
   isValid: false,

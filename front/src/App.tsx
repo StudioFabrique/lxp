@@ -17,6 +17,11 @@ import EditParcours from "./views/parcours/parcours-edit.component";
 import StudentLayout from "./views/student/student-layout.component";
 import StudentHome from "./views/student";
 import ParcoursView from "./views/parcours/parcours-view";
+import LayoutCourse from "./views/course/layout-course";
+import CourseHome from "./views/course/course-home";
+import EditCourseHome from "./views/course/edit-course/edit-course-home";
+import AddCourse from "./views/course/add-course";
+import LayoutCourseEdit from "./views/course/edit-course/layout-edit-course";
 
 const router = createBrowserRouter([
   {
@@ -70,6 +75,30 @@ const router = createBrowserRouter([
           { path: "créer-un-parcours", element: <ParcoursAdd /> },
           { path: "edit/:id", element: <EditParcours /> },
           { path: "view/:id", element: <ParcoursView /> },
+        ],
+      },
+      {
+        path: "course",
+        element: <LayoutCourse />,
+        children: [
+          {
+            index: true,
+            element: <CourseHome />,
+          },
+          {
+            path: "edit/:courseId",
+            element: <LayoutCourseEdit />,
+            children: [
+              {
+                index: true,
+                element: <EditCourseHome />,
+              },
+            ],
+          },
+          {
+            path: "add",
+            element: <AddCourse />,
+          },
         ],
       },
     ],

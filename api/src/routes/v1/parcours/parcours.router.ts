@@ -12,7 +12,6 @@ import {
   getParcoursByFormationValidator,
   parcoursByIdValidator,
   postParcoursValidator,
-  putParcoursContactsValidator,
   putParcoursTagsValidator,
   updateDatesValidator,
   updateInfosValidator,
@@ -32,7 +31,7 @@ import isStudent from "../../../middleware/is-student";
 import checkPermissions from "../../../middleware/check-permissions";
 
 const parcoursRouter = express.Router();
-
+parcoursRouter.get("/", checkToken, httpGetParcours);
 parcoursRouter.post("/", isAdmin, postParcoursValidator, httpCreateParcours);
 parcoursRouter.delete(
   "/:parcoursId",

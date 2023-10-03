@@ -1,3 +1,4 @@
+import Parcours from "./parcours";
 import Skill from "./skill";
 import User from "./user";
 
@@ -12,4 +13,5 @@ export default interface Module {
   thumb?: string;
   minDate?: string;
   maxDate?: string;
+  parcours: Parcours;
 }
