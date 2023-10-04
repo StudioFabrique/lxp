@@ -8,9 +8,9 @@
     "build": "tsc --project ./",
     "start:dev": "NODE_ENV=development nodemon src/server.ts",
     "start:prod": "NODE_ENV=production node dist/server.js",
-    "fixtures": "",
-    "reset-mongo":"npx ts-node src/fixtures.ts",
-    "reset-prisma": "npx prisma db push --force-reset && npx prisma db push && npx ts-node src/fixtures-prisma.ts"
+    "reset-mongo": "npx ts-node src/fixtures.ts",
+    "reset-prisma": "npx prisma db push --force-reset && npx prisma db push && npx ts-node src/fixtures-prisma.ts",
+    "fixtures": "npm run reset-mongo && npm run reset-prisma"
   },
   "author": "studio@step.eco",
   "license": "ISC",

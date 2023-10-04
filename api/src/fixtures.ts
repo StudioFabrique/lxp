@@ -281,6 +281,11 @@ async function dropDatabase() {
   console.log("Database dropped!");
 }
 
+async function disconnect() {
+  await mongoose.disconnect();
+  process.exit();
+}
+
 async function main() {
   await mongoConnect();
   await dropDatabase();
@@ -293,6 +298,7 @@ async function main() {
   await createManyCoach();
   await createManyGroups();
   await createTag();
+  await disconnect();
 }
 
 main();
