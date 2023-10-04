@@ -1,6 +1,7 @@
 import User, { IUser } from "../../utils/interfaces/db/user";
 import { prisma } from "../../utils/db";
 import Role from "../../utils/interfaces/db/role";
+import { hash } from "bcrypt";
 
 export default async function createUser(user: IUser, userType: number) {
   const userToFind = await User.findOne({
@@ -37,6 +38,7 @@ export default async function createUser(user: IUser, userType: number) {
     email: user.email,
     firstname: user.firstname,
     lastname: user.lastname,
+    password: hash("Aiden.Bernard1@protonmail.com", 10), // A enlever par la suite !
     isActive: false,
     roles: roles,
   });
