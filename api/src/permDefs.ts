@@ -81,3 +81,5 @@ const permDefs = {
     update: ["student", "coach", "stagiaire"],
   },
 };
+
+export default permDefs;

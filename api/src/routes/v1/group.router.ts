@@ -14,6 +14,7 @@ import fileUpload from "../../middleware/fileUpload";
 import { check } from "express-validator";
 import checkToken from "../../middleware/check-token";
 import httpGetGroupsById from "../../controllers/group/http-get-groups-by-id";
+import checkPermissions from "../../middleware/check-permissions";
 
 const groupRouter = Router();
 
@@ -21,7 +22,7 @@ groupRouter.get(
   "/:role/:stype/:sdir",
 
   //  vérification du token et récupération du rôle de l'utilisateur
-  isUser,
+  checkPermissions(1, "group"),
   /* 
     //  vérification des permissions
     async (req: CustomRequest, res: Response, next: NextFunction) => {
@@ -37,22 +38,28 @@ groupRouter.get(
 
 groupRouter.get(
   "/search/:role/:entity/:value/:stype/:sdir",
+  checkPermissions(1, "group"),
   searchValidator,
   httpSearchGroup
 );
 
 groupRouter.post(
   "/",
-  isUser,
+  checkPermissions(1, "group"),
   // groupValidator,
   fileUpload.single("image"),
   httpCreateGroup
 );
 
-groupRouter.get("/users", isUser);
+groupRouter.get("/users", checkPermissions(1, "group"));
 
-groupRouter.post("/users", isUser, httpAddUser);
+groupRouter.post("/users", checkPermissions(1, "group"), httpAddUser);
 
-groupRouter.post("/groups", checkToken, httpGetGroupsById);
+groupRouter.post(
+  "/groups",
+  checkPermissions(1, "group"),
+  // checkToken,
+  httpGetGroupsById
+);
 
 export default groupRouter;

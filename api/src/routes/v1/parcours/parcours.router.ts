@@ -35,71 +35,83 @@ parcoursRouter.get("/", checkToken, httpGetParcours);
 parcoursRouter.post("/", isAdmin, postParcoursValidator, httpCreateParcours);
 parcoursRouter.delete(
   "/:parcoursId",
-  isAdmin,
+  checkPermissions(1, "parcours"),
   parcoursByIdValidator,
   httpDeleteParcoursById
 );
 parcoursRouter.get(
   "/parcours-by-formation/:formationId",
-  isAdmin,
+  checkPermissions(1, "parcours"),
   getParcoursByFormationValidator,
   httpGetParcoursByFormation
 );
 parcoursRouter.get(
   "/parcours-by-id/:parcoursId",
-  isStudent,
+  checkPermissions(3, "parcours"),
   parcoursByIdValidator,
   httpGetParcoursById
 ); // accès accordé à l'étudiant
-parcoursRouter.get(
-  "/",
-  checkPermissions(3, "read", "parcours"),
-  httpGetParcours
-); // accès accordé à l'étudiant
+parcoursRouter.get("/", checkPermissions(3, "parcours"), httpGetParcours); // accès accordé à l'étudiant
 parcoursRouter.put(
   "/update-infos",
-  isAdmin,
+  checkPermissions(1, "parcours"),
   updateInfosValidator,
   httpUpdateParcoursInfos
 );
 parcoursRouter.put(
   "/update-dates",
-  isAdmin,
+  checkPermissions(1, "parcours"),
   updateDatesValidator,
   httpUpdateParcoursDates
 );
 parcoursRouter.put(
   "/update-tags",
-  isAdmin,
+  checkPermissions(1, "parcours"),
   putParcoursTagsValidator,
   httpPutParcoursTags
 );
 parcoursRouter.put(
   "/update-contacts",
-  isAdmin,
+  checkPermissions(1, "parcours"),
   //putParcoursContactsValidator,
   httpPutParcoursContacts
 );
 //parcoursRouter.use("/update-skills", putParcoursSkillsRouter);
 parcoursRouter.put(
   "/update-virtual-class",
-  isAdmin,
+  checkPermissions(1, "parcours"),
   virtualClassValidator,
   httpPutVirtualClass
 );
 parcoursRouter.put(
   "/update-objectives",
-  isAdmin,
+  checkPermissions(1, "parcours"),
   body("parcoursId").isNumeric().notEmpty().escape(),
   body("objectives").isArray().notEmpty(),
   body("objectives.*").isString().notEmpty(),
   httpPutParcoursObjectives
 );
-parcoursRouter.put("/reorder-objectives", isAdmin, httpPutReorderObjectives);
-parcoursRouter.use("/update-image", isAdmin, putUpdateImageRouter);
+parcoursRouter.put(
+  "/reorder-objectives",
+  checkPermissions(1, "parcours"),
+  httpPutReorderObjectives
+);
+parcoursRouter.use(
+  "/update-image",
+  checkPermissions(1, "parcours"),
+  putUpdateImageRouter
+);
 
-parcoursRouter.put("/groups", checkToken, httpPutParcoursGroups);
+parcoursRouter.put(
+  "/groups",
+  checkPermissions(1, "parcours"),
+  httpPutParcoursGroups
+);
 
-parcoursRouter.put("/publish/:parcoursId", checkToken, httpPublishParcours);
+parcoursRouter.put(
+  "/publish/:parcoursId",
+  checkPermissions(1, "parcours"),
+  httpPublishParcours
+);
 
 export default parcoursRouter;

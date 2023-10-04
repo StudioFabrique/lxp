@@ -17,6 +17,7 @@ import Permission from "./utils/interfaces/db/permission";
 import Group, { IGroup } from "./utils/interfaces/db/group";
 import Tag from "./utils/interfaces/db/tag";
 import User from "./utils/interfaces/db/user";
+import permDefs from "./permDefs";
 dotenv.config();
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
