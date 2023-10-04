@@ -41,7 +41,7 @@ userRouter.get("/stats", checkPermissions("user"), httpGetUsersStats);
 //  récupération de la liste des utilisateurs en fonction de leur rôle principal
 userRouter.get(
   "/:role/:stype/:sdir",
-  checkPermissions("user"),
+  checkPermissions(),
   getAllValidator,
   httpGetUsersByRole
 );
@@ -87,7 +87,7 @@ userRouter.post(
 
 userRouter.get(
   "/search/:role/:entity/:value/:stype/:sdir",
-  checkPermissions("user"),
+  checkPermissions(),
   //  validators
   param("search").isString().notEmpty().trim().escape(),
   param("role").isString().notEmpty().trim().escape(),
