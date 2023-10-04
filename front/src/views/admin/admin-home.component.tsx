@@ -5,10 +5,15 @@ import { Link } from "react-router-dom";
 const AdminHome = () => {
   const { logout } = useContext(Context);
 
+  const logoutHandler = () => {
+    logout();
+    window.location.reload();
+  };
+
   return (
     <div className="home bg-red h-screen w-screen flex flex-col items-center">
       <p>Hey je suis la page Home</p>
-      <button onClick={logout}>logout</button>
+      <button onClick={logoutHandler}>logout</button>
       <Link to="user">Interface utilisateurs</Link>
       <Link to="group">Interface Groupes</Link>
       <Link to="parcours">Interface Parcours</Link>

@@ -23,7 +23,7 @@ const LayoutAdmin = () => {
         </Can>
       </ul>
       <div className="flex-1 min-h-screen">
-        <CanAccessPage action="write" subject="cours">
+        <CanAccessPage action="read" subject="parcours">
           <Outlet />
         </CanAccessPage>
       </div>

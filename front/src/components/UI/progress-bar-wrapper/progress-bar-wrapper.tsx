@@ -7,7 +7,12 @@ type Props = {
     loadingRate: number;
   };
 };
-
+/**
+ * Composant à utiliser avec le custom hook useProgressBar
+ * Affiche une barre de progression en dessous du composant enfant
+ * @param loader propriété loader du custom hook à passer
+ * @returns
+ */
 const ProgressBarWrapper: FC<Props> = ({ children, loader }) => {
   return (
     <div className="flex flex-col">
