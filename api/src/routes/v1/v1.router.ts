@@ -10,6 +10,7 @@ import formationRouter from "./formation.router";
 import objectiveRouter from "./objective.router";
 import moduleRouter from "./modules/module-router";
 import bonusSkillRouter from "./bonus-skill.router";
+import permissionRouter from "./permission/permission.router";
 import courseRouter from "./course/course.router";
 
 const v1Router = express.Router();
@@ -24,6 +25,7 @@ v1Router.use("/formation", formationRouter);
 v1Router.use("/bonus-skill", bonusSkillRouter);
 v1Router.use("/objective", objectiveRouter);
 v1Router.use("/modules", moduleRouter);
+v1Router.use("/permission", permissionRouter);
 v1Router.use("/course", courseRouter);
 
 export default v1Router;

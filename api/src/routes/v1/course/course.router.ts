@@ -16,6 +16,7 @@ import httpPutCourseInformations from "../../../controllers/course/http-put-cour
 import httpPutCourseTags from "../../../controllers/course/http-put-course-tags";
 import { idsArrayValidator } from "../../../helpers/custom-validators";
 import httpPutCourseContacts from "../../../controllers/course/http-put-course-contacts";
+import checkPermissions from "../../../middleware/check-permissions";
 
 const courseRouter = express.Router();
 
@@ -37,21 +38,34 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 
 // enregistre un nouveau cours en relation avec un module existant
-courseRouter.post("/", checkToken, postCourseValidator, httpPostCourse);
+courseRouter.post(
+  "/",
+  checkPermissions("course"),
+  // checkToken,
+  postCourseValidator,
+  httpPostCourse
+);
 // retourne la liste de tous les cours
-courseRouter.get("/", checkToken, httpGetCourses);
+courseRouter.get(
+  "/",
+  checkPermissions("course"),
+  // checkToken,
+  httpGetCourses
+);
 // retourne les informations d'un cours identifié par son ID
 courseRouter.get(
   "/infos/:courseId",
-  checkToken,
   courseIdValidator,
+  checkPermissions("course"),
+  getCourseInformationsValidator,
   httpGetCourseInformations
 );
 
 // met à jour l'image d'en-tête d'un cours
 courseRouter.put(
   "/image",
-  checkToken,
+  checkPermissions("course"),
+  // checkToken,
   upload.single("image"),
   httpPutCourseImage
 );

@@ -15,7 +15,7 @@ import ParcoursHome from "./views/parcours/parcours-home.component";
 import ParcoursAdd from "./views/parcours/parcours-add.component";
 import EditParcours from "./views/parcours/parcours-edit.component";
 import StudentLayout from "./views/student/student-layout.component";
-import StudentHome from "./views/student";
+import StudentHome from "./views/student/student-home";
 import ParcoursView from "./views/parcours/parcours-view";
 import LayoutCourse from "./views/course/layout-course";
 import CourseHome from "./views/course/course-home";

@@ -12,7 +12,7 @@ const permissionSchema: Schema = new Schema(
     action: { type: String, required: true },
     ressources: { type: [String], required: true },
   },
-  { timestamps: true }
+  { timestamps: false }
 );
 
 const Permission = mongoose.model<IPermission>("Permission", permissionSchema);
