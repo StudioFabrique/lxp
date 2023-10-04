@@ -7,69 +7,75 @@ import HomeIcon from "../../components/UI/svg/home-icon";
 import CourseIcon from "../../components/UI/svg/course-icon";
 import { useContext } from "react";
 import { Context } from "../../store/context.store";
+import CanAccessPage from "../../components/UI/can/can-access-page.component";
+import Can from "../../components/UI/can/can.component";
 
 const LayoutCourse = () => {
   const { logout } = useContext(Context);
 
   return (
-    <div className="flex gap-2 p-2">
-      <nav className="w-fit h-fit">
-        <Wrapper>
-          <ul className="text-primary flex flex-col gap-y-4">
-            <li>
-              <Link to="/admin/course">
-                <div
-                  className="tooltip tooltip-right w-6 h-6"
-                  data-tip="Accueil Interface de création des cours"
-                >
-                  <CourseIcon />
-                </div>
-              </Link>
-            </li>
-            <li>
-              <Link to="/admin/course/add">
-                <div
-                  className="tooltip tooltip-right w-6 h-6"
-                  data-tip="Création d'un nouveau cours"
-                >
-                  <AddIcon />
-                </div>
-              </Link>
-            </li>
-          </ul>
-          <div className="divider" />
-          <ul className="text-primary flex flex-col gap-y-4">
-            <li
-              className="tooltip tooltip-right"
-              data-tip="Mode Clair / Mode Sombre"
-            >
-              <ModeToggle />
-            </li>
+    <CanAccessPage action="read" subject="course">
+      <div className="flex gap-2 p-2">
+        <nav className="w-fit h-fit">
+          <Wrapper>
+            <ul className="text-primary flex flex-col gap-y-4">
+              <li>
+                <Link to="/admin/course">
+                  <div
+                    className="tooltip tooltip-right w-6 h-6"
+                    data-tip="Accueil Interface de création des cours"
+                  >
+                    <CourseIcon />
+                  </div>
+                </Link>
+              </li>
+              <li>
+                <Can action="write" object="course">
+                  <Link to="/admin/course/add">
+                    <div
+                      className="tooltip tooltip-right w-6 h-6"
+                      data-tip="Création d'un nouveau cours"
+                    >
+                      <AddIcon />
+                    </div>
+                  </Link>
+                </Can>
+              </li>
+            </ul>
             <div className="divider" />
-            <li>
-              <Link to="/">
-                <div
-                  className="tooltip tooltip-right w-6 h-6"
-                  data-tip="Accueil LXP"
-                >
-                  <HomeIcon />
-                </div>
-              </Link>
-            </li>
-            <li>
-              <div
-                className="tooltip tooltip-right w-6 h-6 cursor-pointer"
-                data-tip="Déconnexion"
-                onClick={() => logout()}
+            <ul className="text-primary flex flex-col gap-y-4">
+              <li
+                className="tooltip tooltip-right"
+                data-tip="Mode Clair / Mode Sombre"
               >
-                <LogoutIcon />
-              </div>
-            </li>
-          </ul>
-        </Wrapper>
-      </nav>
-      <Outlet />
-    </div>
+                <ModeToggle />
+              </li>
+              <div className="divider" />
+              <li>
+                <Link to="/">
+                  <div
+                    className="tooltip tooltip-right w-6 h-6"
+                    data-tip="Accueil LXP"
+                  >
+                    <HomeIcon />
+                  </div>
+                </Link>
+              </li>
+              <li>
+                <div
+                  className="tooltip tooltip-right w-6 h-6 cursor-pointer"
+                  data-tip="Déconnexion"
+                  onClick={() => logout()}
+                >
+                  <LogoutIcon />
+                </div>
+              </li>
+            </ul>
+          </Wrapper>
+        </nav>
+        <Outlet />
+      </div>
+    </CanAccessPage>
   );
 };
 

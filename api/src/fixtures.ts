@@ -17,6 +17,7 @@ import Permission from "./utils/interfaces/db/permission";
 import Group, { IGroup } from "./utils/interfaces/db/group";
 import Tag from "./utils/interfaces/db/tag";
 import User from "./utils/interfaces/db/user";
+import permDefs from "./permDefs";
 dotenv.config();
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
@@ -235,84 +236,6 @@ async function createRoles() {
   await Role.bulkSave(dbRoles);
 }
 
-const permDefs = {
-  admin: {
-    read: [
-      "admin",
-      "mini-admin",
-      "teacher",
-      "student",
-      "coach",
-      "boss_teacher",
-      "stagiaire",
-      "everything",
-      "parcours",
-      "module",
-      "cours",
-      "permission",
-    ],
-    write: [
-      "teacher",
-      "student",
-      "coach",
-      "boss_teacher",
-      "stagiaire",
-      "parcours",
-      "module",
-      "cours",
-      "permission",
-    ],
-    update: [
-      "teacher",
-      "student",
-      "coach",
-      "boss_teacher",
-      "stagiaire",
-      "parcours",
-      "module",
-      "cours",
-      "permission",
-    ],
-    delete: [
-      "teacher",
-      "student",
-      "coach",
-      "boss_teacher",
-      "stagiaire",
-      "parcours",
-      "module",
-      "cours",
-      "permission",
-    ],
-  },
-  teacher: {
-    read: [
-      "teacher",
-      "boss_teacher",
-      "student",
-      "coach",
-      "stagiaire",
-      "everything",
-      "permission",
-    ],
-    update: ["student", "coach", "stagiaire"],
-  },
-  student: {
-    read: ["parcours", "permission"],
-  },
-  boss_teacher: {
-    read: [
-      "teacher",
-      "student",
-      "coach",
-      "stagiaire",
-      "everything",
-      "permission",
-    ],
-    update: ["student", "coach", "stagiaire"],
-  },
-};
-
 async function createPermissions() {
   const permissions = Array<any>();
   const dbPermissions = Array<any>();
@@ -358,6 +281,11 @@ async function dropDatabase() {
   console.log("Database dropped!");
 }
 
+async function disconnect() {
+  await mongoose.disconnect();
+  process.exit();
+}
+
 async function main() {
   await mongoConnect();
   await dropDatabase();
@@ -370,6 +298,7 @@ async function main() {
   await createManyCoach();
   await createManyGroups();
   await createTag();
+  await disconnect();
 }
 
 main();
