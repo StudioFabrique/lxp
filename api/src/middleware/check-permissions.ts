@@ -16,11 +16,36 @@ import Permission from "../utils/interfaces/db/permission";
 
 export default function checkPermissions(
   rankRequired: number,
-  action: string,
-  ressource: string
+  ressource: string,
+  action?: string
 ) {
   return async (req: CustomRequest, res: Response, next: NextFunction) => {
     const authCookie = req.cookies.accessToken;
+
+    let actionDefined: string | undefined = action;
+
+    if (!actionDefined)
+      switch (req.method) {
+        case "GET":
+          actionDefined = "read";
+          break;
+        case "POST":
+          actionDefined = "write";
+          break;
+        case "PUT" || "PATCH":
+          actionDefined = "update";
+          break;
+        case "DELETE":
+          actionDefined = "delete";
+          break;
+        default:
+          break;
+      }
+
+    if (!actionDefined)
+      return res.status(403).json({
+        message: "Vous n'êtes pas autorisé à accéder à cette ressource",
+      });
 
     jwt.verify(authCookie, process.env.SECRET!, async (err: any, data: any) => {
       if (err) {
@@ -41,7 +66,7 @@ export default function checkPermissions(
        * Parcours tous les rôles de l'utilisateur actuel et si au moins l'un des roles est correct, renvoie true
        */
       for (const role of rolesToCheck)
-        if (await authorizeThisRole(role, rankRequired, action, ressource)) {
+        if (await authorizeThisRole(role, rankRequired, action!, ressource)) {
           isRolesCorrect = true;
         }
 
