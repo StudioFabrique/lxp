@@ -23,6 +23,11 @@ export default function checkPermissions(ressource?: string, action?: string) {
 
     const authCookie = req.cookies.accessToken;
 
+    if (!authCookie)
+      return res.status(403).json({
+        message: "Vous n'êtes pas autorisé à accéder à cette ressource",
+      });
+
     let actionDefined: string | undefined = action;
 
     console.log(req.method);
