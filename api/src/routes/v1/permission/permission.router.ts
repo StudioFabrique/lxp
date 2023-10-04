@@ -7,7 +7,7 @@ const permissionRouter = Router();
 
 permissionRouter.get(
   "/:role",
-  checkPermissions(1, "read", "permission"),
+  checkPermissions(3, "read", "permission"),
   getPermissionsValidator,
   httpGetPermissions
 );
