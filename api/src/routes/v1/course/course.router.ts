@@ -57,7 +57,7 @@ courseRouter.get(
   "/infos/:courseId",
   courseIdValidator,
   checkPermissions("course"),
-  getCourseInformationsValidator,
+  courseIdValidator,
   httpGetCourseInformations
 );
 
