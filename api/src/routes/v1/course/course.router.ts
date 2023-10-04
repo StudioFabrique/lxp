@@ -3,14 +3,19 @@ import checkToken from "../../../middleware/check-token";
 
 import httpPostCourse from "../../../controllers/course/http-post-course";
 import {
-  getCourseInformationsValidator,
+  courseIdValidator,
   postCourseValidator,
+  putCourseInformationsValidator,
 } from "./course-validators";
 import httpGetCourses from "../../../controllers/course/http-get-courses";
 import httpGetCourseInformations from "../../../controllers/course/http-get-course-informations";
 import multer from "multer";
 import path from "path";
 import httpPutCourseImage from "../../../controllers/course/http-put-course-image";
+import httpPutCourseInformations from "../../../controllers/course/http-put-course-informations";
+import httpPutCourseTags from "../../../controllers/course/http-put-course-tags";
+import { idsArrayValidator } from "../../../helpers/custom-validators";
+import httpPutCourseContacts from "../../../controllers/course/http-put-course-contacts";
 import checkPermissions from "../../../middleware/check-permissions";
 
 const courseRouter = express.Router();
@@ -50,8 +55,8 @@ courseRouter.get(
 // retourne les informations d'un cours identifié par son ID
 courseRouter.get(
   "/infos/:courseId",
+  courseIdValidator,
   checkPermissions("course"),
-  // checkToken,
   getCourseInformationsValidator,
   httpGetCourseInformations
 );
@@ -63,6 +68,32 @@ courseRouter.put(
   // checkToken,
   upload.single("image"),
   httpPutCourseImage
+);
+
+// mise à jour des informations du cours
+courseRouter.put(
+  "/infos",
+  checkToken,
+  putCourseInformationsValidator,
+  httpPutCourseInformations
+);
+
+// met à jour la liste des tags associés à un cours
+courseRouter.put(
+  "/tags/:courseId",
+  checkToken,
+  idsArrayValidator,
+  courseIdValidator,
+  httpPutCourseTags
+);
+
+// mise à jour de la liste des contacts
+courseRouter.put(
+  "/contacts/:courseId",
+  checkToken,
+  idsArrayValidator,
+  courseIdValidator,
+  httpPutCourseContacts
 );
 
 export default courseRouter;

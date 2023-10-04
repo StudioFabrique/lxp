@@ -8,10 +8,31 @@ async function getCourseInformations(courseId: number) {
       title: true,
       description: true,
       image: true,
+      tags: {
+        select: {
+          tag: true,
+        },
+      },
+      contacts: {
+        select: {
+          contact: true,
+        },
+      },
       module: {
         select: {
           id: true,
           title: true,
+          contacts: {
+            select: {
+              contact: {
+                select: {
+                  id: true,
+                  name: true,
+                  role: true,
+                },
+              },
+            },
+          },
           parcours: {
             select: {
               parcours: {
@@ -37,17 +58,6 @@ async function getCourseInformations(courseId: number) {
                           id: true,
                           color: true,
                           name: true,
-                        },
-                      },
-                    },
-                  },
-                  contacts: {
-                    select: {
-                      contact: {
-                        select: {
-                          id: true,
-                          name: true,
-                          role: true,
                         },
                       },
                     },

@@ -1,4 +1,4 @@
-import DeleteIcon from "../../UI/svg/delete-icon.component";
+import DeleteIcon from "./UI/svg/delete-icon.component";
 
 interface ItemElementProps {
   item: any;

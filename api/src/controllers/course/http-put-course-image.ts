@@ -1,12 +1,28 @@
 import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
+import { regexNumber, serverIssue } from "../../utils/constantes";
 import fs from "fs";
 import putCourseImage from "../../models/course/put-course-image";
 
 async function httpPutCourseImage(req: Request, res: Response) {
   const uploadedFile: any = req.file;
-  const courseId = +req.body.courseId;
+  const courseId = req.body.courseId;
+
   try {
+    let errorMsg = "";
+
+    if (!courseId) {
+      errorMsg = "L'identifiant du cours est requis";
+    }
+
+    if (courseId && !regexNumber.test(courseId)) {
+      errorMsg = "L'identifiant du cours n'est pas conforme";
+    }
+
+    if (errorMsg.length > 0) {
+      const error = new Error(errorMsg);
+      (error as any).statusCode(400);
+      throw error;
+    }
     if (uploadedFile !== undefined) {
       try {
         {

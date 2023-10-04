@@ -4,11 +4,9 @@ import httpGetAllGroups from "../../controllers/group/http-get-all-groups";
 import { getAllValidator, searchValidator } from "../../middleware/validators";
 import httpSearchGroup from "../../controllers/group/http-search-group";
 import httpAddUser from "../../controllers/group/http-add-users-group";
-
 import fileUpload from "../../middleware/fileUpload";
 import httpGetGroupsById from "../../controllers/group/http-get-groups-by-id";
 import checkPermissions from "../../middleware/check-permissions";
-
 const groupRouter = Router();
 
 groupRouter.get(

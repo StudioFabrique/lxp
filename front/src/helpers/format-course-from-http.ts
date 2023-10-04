@@ -1,3 +1,5 @@
+import { sortArray } from "../utils/sortArray";
+
 /**
  * transforme un cours venant de la bdd en Objet Course pouvant être
  * utilisé dans le frontend
@@ -9,13 +11,12 @@ export default function formatCourseFromHttp(course: any) {
     ...course,
     module: {
       ...course.module,
+      contacts: course.module.contacts.map((item: any) => item.contact),
       parcours: {
         ...course.module.parcours[0].parcours,
-        tags: course.module.parcours[0].parcours.tags.map(
-          (item: any) => item.tag
-        ),
-        contacts: course.module.parcours[0].parcours.contacts.map(
-          (item: any) => item.contact
+        tags: sortArray(
+          course.module.parcours[0].parcours.tags.map((item: any) => item.tag),
+          "name"
         ),
         formation: course.module.parcours[0].parcours.formation,
       },
@@ -30,10 +31,12 @@ export default function formatCourseFromHttp(course: any) {
   }
 
   if (updatedData.module.parcours.tags.length === 0) {
-    const tmp = course.module.parcours[0].parcours.formation.tags.map(
-      (item: any) => item.tag
+    const tmp = sortArray(
+      course.module.parcours[0].parcours.formation.tags.map(
+        (item: any) => item.tag
+      ),
+      "name"
     );
-
     updatedData = {
       ...updatedData,
       module: {
@@ -43,6 +46,24 @@ export default function formatCourseFromHttp(course: any) {
           tags: tmp,
         },
       },
+    };
+  }
+
+  if (!updatedData.tags) {
+    updatedData = { ...updatedData, tags: [] };
+  } else {
+    updatedData = {
+      ...updatedData,
+      tags: updatedData.tags.map((tag: any) => tag.tag),
+    };
+  }
+
+  if (!updatedData.contacts) {
+    updatedData = { ...updatedData, contacts: [] };
+  } else {
+    updatedData = {
+      ...updatedData,
+      contacts: updatedData.contacts.map((contact: any) => contact.contact),
     };
   }
 
