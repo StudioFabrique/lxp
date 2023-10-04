@@ -1,6 +1,7 @@
 const permDefs = {
   admin: {
     read: [
+      // roles
       "admin",
       "mini-admin",
       "teacher",
@@ -9,44 +10,63 @@ const permDefs = {
       "boss_teacher",
       "stagiaire",
       "everything",
+      // ressources
+      "tag",
       "permission",
       "user",
+      "group",
+      "formation",
       "parcours",
       "module",
       "cours",
     ],
     write: [
+      // roles
       "teacher",
       "student",
       "coach",
       "boss_teacher",
       "stagiaire",
+      // ressources
+      "tag",
       "permission",
       "user",
+      "group",
+      "formation",
       "parcours",
       "module",
       "cours",
     ],
     update: [
+      // roles
       "teacher",
       "student",
       "coach",
       "boss_teacher",
       "stagiaire",
+      // ressources
+      "tag",
       "permission",
       "user",
+      "group",
+      "formation",
       "parcours",
       "module",
       "cours",
     ],
     delete: [
+      // roles
       "teacher",
       "student",
       "coach",
       "boss_teacher",
       "stagiaire",
+      // ressources
+      "tag",
       "permission",
       "user",
+      "group",
+      "formation",
       "parcours",
       "module",
       "cours",
@@ -54,34 +74,62 @@ const permDefs = {
   },
   teacher: {
     read: [
+      // roles
       "teacher",
       "boss_teacher",
       "student",
       "coach",
       "stagiaire",
       "everything",
+      // ressources
       "permission",
       "user",
     ],
-    update: ["student", "coach", "stagiaire"],
+    update: [
+      // roles
+      "student",
+      "coach",
+      "stagiaire",
+      // ressources
+    ],
   },
   student: {
-    read: ["parcours", "permission"],
+    read: [
+      // roles
+
+      // ressources
+      "parcours",
+      "permission",
+    ],
   },
   boss_teacher: {
     read: [
+      // roles
       "teacher",
       "student",
       "coach",
       "stagiaire",
       "everything",
+      // ressources
       "permission",
       "user",
     ],
-    update: ["student", "coach", "stagiaire"],
+    update: [
+      // roles
+      "student",
+      "coach",
+      "stagiaire",
+      // ressources
+    ],
   },
   stagiaire: {
-    read: ["parcours", "permission"],
+    read: [
+      // roles
+
+      // ressources
+      "parcours",
+      "permission",
+    ],
   },
 };
 
