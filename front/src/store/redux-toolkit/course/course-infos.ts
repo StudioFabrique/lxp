@@ -17,6 +17,31 @@ const courseInfosSlice = createSlice({
     setCourse(state, action) {
       state.course = action.payload;
     },
+    setCourseInfos(state, action) {
+      if (state.course) {
+        state.course = {
+          ...state.course,
+          title: action.payload.title,
+          description: action.payload.description,
+        };
+      }
+    },
+    setCourseTags(state, action) {
+      if (state.course) {
+        state.course = {
+          ...state.course,
+          tags: action.payload,
+        };
+      }
+    },
+    setCourseContacts(state, action) {
+      if (state.course) {
+        state.course = {
+          ...state.course,
+          contacts: action.payload,
+        };
+      }
+    },
   },
 });
 

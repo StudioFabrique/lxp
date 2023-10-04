@@ -63,7 +63,6 @@ const AddCourse = () => {
     if (moduleId) {
       setIsLoading(true);
       const applyData = (data: any) => {
-        console.log({ data });
         setIsLoading(false);
         toast.success(data.message);
         nav(`/admin/course/edit/${data.course.id}`);
@@ -123,8 +122,6 @@ const AddCourse = () => {
       setIsLoading(false);
     }
   }, [error]);
-
-  console.log({ moduleId });
 
   return (
     <>

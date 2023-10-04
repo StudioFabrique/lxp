@@ -7,9 +7,11 @@ import SubWrapper from "../UI/sub-wrapper/sub-wrapper.component";
 import InheritedTextList from "./inherited-text-list";
 
 interface InheritedContactsProps {
+  loading: boolean;
   initialList: unknown[];
   currentItems: unknown[];
   property: string; // propriété utilisée pour trier les listes
+  onSubmit: (items: any[]) => void;
 }
 
 const InheritedItems = (props: InheritedContactsProps) => {
@@ -51,15 +53,25 @@ const InheritedItems = (props: InheritedContactsProps) => {
    * des contacts sélectionnés
    */
   useEffect(() => {
-    const updatedItems = props.initialList.filter(
-      (item) => !currentItems.includes(item)
-    );
+    let updatedItems = Array<any>();
+    props.initialList.forEach((item: any) => {
+      const contact = currentItems.find((element) => element.id === item.id);
+      if (!contact) {
+        updatedItems = [...updatedItems, item];
+      }
+    });
     setNotSelected(updatedItems);
-  }, [props.initialList, currentItems]);
+    props.onSubmit(currentItems);
+  }, [props.initialList, props, currentItems]);
 
   return (
     <section className="w-full flex flex-col gap-y-8">
-      <h2 className="text-xl font-bold">Ressources et Contacts</h2>
+      <span className="w-full flex items-center gap-x-2">
+        <h2 className="text-xl font-bold">Ressources et Contacts</h2>
+        {props.loading ? (
+          <div className="loading loading-spinner text-primary loading-sm"></div>
+        ) : null}
+      </span>
 
       <div className="w-full flex flex-col gap-y-4">
         {currentItems.length > 0 ? (
@@ -72,9 +84,10 @@ const InheritedItems = (props: InheritedContactsProps) => {
             <p className="text-xs">Aucun contact sélectionné</p>
           </SubWrapper>
         )}
-        <div className="w-full flex justify-center">
+        <div className="divider" />
+        <div className="w-full flex justify-start">
           <button
-            className="btn btn-primary"
+            className="btn btn-primary btn-sm"
             onClick={() => handleCloseDrawer("add-contacts")}
           >
             Ajouter des contacts

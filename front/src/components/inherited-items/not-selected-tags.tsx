@@ -11,11 +11,11 @@ const NotSelectedTags = (props: NotSelectedTagsProps) => {
   return (
     <>
       {props.list && props.list.length > 0 ? (
-        <ul>
+        <ul className="w-[30rem] flex flex-wrap gap-2">
           {props.list.map((tag) => (
-            <li key={tag.id} onClick={() => props.onAddTag(tag.id)}>
-              <TagItem tag={tag} />
-            </li>
+            <div key={tag.id} onClick={() => props.onAddTag(tag.id)}>
+              <TagItem tag={tag} noIcon={true} />
+            </div>
           ))}
         </ul>
       ) : (
