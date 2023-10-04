@@ -73,13 +73,23 @@ userRouter.put(
     )
     .trim()
     .escape(),
-  isUser,
+  checkPermissions(1, "user"),
   httpUpdateUserRoles
 );
 
-userRouter.post("/", isUser, userValidator, httpCreateUser);
+userRouter.post(
+  "/",
+  checkPermissions(1, "user"),
+  userValidator,
+  httpCreateUser
+);
 
-userRouter.post("/many", isUser, manyUsersValidator, httpCreateManyUser);
+userRouter.post(
+  "/many",
+  checkPermissions(1, "user"),
+  manyUsersValidator,
+  httpCreateManyUser
+);
 
 userRouter.get(
   "/search/:role/:entity/:value/:stype/:sdir",
@@ -93,13 +103,23 @@ userRouter.get(
   param("sdir").isString().notEmpty().trim().escape(),
   query("page").notEmpty().trim().escape().isInt(),
   query("limit").notEmpty().trim().escape().isInt(),
-
+  checkPermissions(1, "user"),
   httpSearchUser
 );
-userRouter.use("/new-teacher", postTeacherRouter);
+userRouter.use("/new-teacher", checkPermissions(1, "user"), postTeacherRouter);
 
-userRouter.get("/contacts", checkToken, httpGetContacts);
+userRouter.get(
+  "/contacts",
+  checkPermissions(1, "user"),
+  // checkToken,
+  httpGetContacts
+);
 
-userRouter.post("/group", checkToken, httpGetUsersByGroup);
+userRouter.post(
+  "/group",
+  checkPermissions(1, "user"),
+  // checkToken,
+  httpGetUsersByGroup
+);
 
 export default userRouter;

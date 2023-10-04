@@ -9,21 +9,58 @@ import httpPutAddModule from "../../../controllers/parcours/http-put-add-module"
 import putModuleImageRouter from "./put-module-parcours";
 import httpGetModulesFromParcours from "../../../controllers/module/http-get-modules-from-parcours";
 import { getModulesFromParcoursValidator } from "./module-validators";
+import checkPermissions from "../../../middleware/check-permissions";
 
 const modules = Router();
 
-modules.put("/add-module/:parcoursId/:moduleId", checkToken, httpPutAddModule);
-modules.get("/formation/:formationId", checkToken, httpGetModuleFormation);
-modules.put("/:parcoursId", checkToken, httpParcoursModules);
-modules.put("/calendar/dates", checkToken, httpUpdateDatesModule);
-modules.put("/calendar/duration", checkToken, httpUpdateDurationModule);
-modules.delete("/:moduleId", checkToken, httpDeleteModule);
-modules.use("/new-module", checkToken, putModuleImageRouter);
+modules.put(
+  "/add-module/:parcoursId/:moduleId",
+  checkPermissions(1, "module"),
+  // checkToken,
+  httpPutAddModule
+);
+modules.get(
+  "/formation/:formationId",
+  checkPermissions(1, "module"),
+  // checkToken,
+  httpGetModuleFormation
+);
+modules.put(
+  "/:parcoursId",
+  checkPermissions(1, "module"),
+  // checkToken,
+  httpParcoursModules
+);
+modules.put(
+  "/calendar/dates",
+  checkPermissions(1, "module"),
+  // checkToken,
+  httpUpdateDatesModule
+);
+modules.put(
+  "/calendar/duration",
+  checkPermissions(1, "module"),
+  // checkToken,
+  httpUpdateDurationModule
+);
+modules.delete(
+  "/:moduleId",
+  checkPermissions(1, "module"),
+  // checkToken,
+  httpDeleteModule
+);
+modules.use(
+  "/new-module",
+  checkPermissions(1, "module"),
+  // checkToken,
+  putModuleImageRouter
+);
 
 // retourne la liste des modules assocués à un parcours
 modules.get(
   "/:parcoursId",
-  checkToken,
+  checkPermissions(1, "module"),
+  // checkToken,
   getModulesFromParcoursValidator,
   httpGetModulesFromParcours
 );

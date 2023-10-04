@@ -4,11 +4,13 @@ import { body, param } from "express-validator";
 
 import httpDeleteObjective from "../../controllers/objective/http-delete-objective";
 import httpPutObjective from "../../controllers/objective/http-put-objective";
+import checkPermissions from "../../middleware/check-permissions";
 
 const objectiveRouter = express.Router();
 
 objectiveRouter.delete(
   "/:objectiveId",
+  checkPermissions(1, "objective"),
   //checkToken,
   param("objectiveId").isNumeric().notEmpty().escape(),
   httpDeleteObjective
@@ -16,7 +18,8 @@ objectiveRouter.delete(
 
 objectiveRouter.put(
   "/",
-  checkToken,
+  checkPermissions(1, "objective"),
+  // checkToken,
   //body("*").isObject().notEmpty(),
   body("*.id").isNumeric().notEmpty().escape(),
   body("*.description").isString().notEmpty(),
