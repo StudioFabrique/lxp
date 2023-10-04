@@ -8,12 +8,13 @@ import CourseIcon from "../../components/UI/svg/course-icon";
 import { useContext } from "react";
 import { Context } from "../../store/context.store";
 import CanAccessPage from "../../components/UI/can/can-access-page.component";
+import Can from "../../components/UI/can/can.component";
 
 const LayoutCourse = () => {
   const { logout } = useContext(Context);
 
   return (
-    <CanAccessPage action="write" subject="cours">
+    <CanAccessPage action="read" subject="course">
       <div className="flex gap-2 p-2">
         <nav className="w-fit h-fit">
           <Wrapper>
@@ -29,14 +30,16 @@ const LayoutCourse = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/admin/course/add">
-                  <div
-                    className="tooltip tooltip-right w-6 h-6"
-                    data-tip="Création d'un nouveau cours"
-                  >
-                    <AddIcon />
-                  </div>
-                </Link>
+                <Can action="write" object="course">
+                  <Link to="/admin/course/add">
+                    <div
+                      className="tooltip tooltip-right w-6 h-6"
+                      data-tip="Création d'un nouveau cours"
+                    >
+                      <AddIcon />
+                    </div>
+                  </Link>
+                </Can>
               </li>
             </ul>
             <div className="divider" />

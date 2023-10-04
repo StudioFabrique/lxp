@@ -13,8 +13,6 @@ export default async function createUser(user: IUser, userType: number) {
 
   let rolesToCheck = undefined;
 
-  console.log(userType);
-
   switch (userType) {
     case 0:
       rolesToCheck = { role: "student", rank: 3 };

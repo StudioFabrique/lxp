@@ -31,7 +31,7 @@ groupRouter.get(
 
 groupRouter.get(
   "/search/:role/:entity/:value/:stype/:sdir",
-  checkPermissions("group"),
+  checkPermissions(),
   searchValidator,
   httpSearchGroup
 );
