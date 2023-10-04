@@ -24,6 +24,8 @@ export default function checkPermissions(
 
     let actionDefined: string | undefined = action;
 
+    console.log(req.method);
+
     if (!actionDefined)
       switch (req.method) {
         case "GET":
@@ -66,7 +68,9 @@ export default function checkPermissions(
        * Parcours tous les rôles de l'utilisateur actuel et si au moins l'un des roles est correct, renvoie true
        */
       for (const role of rolesToCheck)
-        if (await authorizeThisRole(role, rankRequired, action!, ressource)) {
+        if (
+          await authorizeThisRole(role, rankRequired, actionDefined!, ressource)
+        ) {
           isRolesCorrect = true;
         }
 
