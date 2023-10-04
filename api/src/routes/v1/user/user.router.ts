@@ -19,22 +19,31 @@ import postTeacherRouter from "./post-teacher";
 import httpCreateManyUser from "../../../controllers/user/http-create-many-users";
 import checkToken from "../../../middleware/check-token";
 import httpGetUsersByGroup from "../../../controllers/user/http-get-users-by-group";
+import checkPermissions from "../../../middleware/check-permissions";
 
 const userRouter = express.Router();
 
 // TODO: VALIDATORS
-userRouter.put("/update-many-status", isUser, httpUpdateManyUsersStatus);
+userRouter.put(
+  "/update-many-status",
+  checkPermissions(1, "user"),
+  httpUpdateManyUsersStatus
+);
 
 // TODO: VALIDATORS
-userRouter.put("/update-user-status", isUser, httpUpdateUserStatus);
+userRouter.put(
+  "/update-user-status",
+  checkPermissions(1, "user"),
+  httpUpdateUserStatus
+);
 
 // TODO: VALIDATORS
-userRouter.get("/stats", isUser, httpGetUsersStats);
+userRouter.get("/stats", checkPermissions(1, "user"), httpGetUsersStats);
 
 //  récupération de la liste des utilisateurs en fonction de leur rôle principal
 userRouter.get(
   "/:role/:stype/:sdir",
-  isUser,
+  checkPermissions(1, "user"),
   getAllValidator,
   httpGetUsersByRole
 );
