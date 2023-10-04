@@ -51,10 +51,20 @@ export default function formatCourseFromHttp(course: any) {
 
   if (!updatedData.tags) {
     updatedData = { ...updatedData, tags: [] };
+  } else {
+    updatedData = {
+      ...updatedData,
+      tags: updatedData.tags.map((tag: any) => tag.tag),
+    };
   }
 
   if (!updatedData.contacts) {
     updatedData = { ...updatedData, contacts: [] };
+  } else {
+    updatedData = {
+      ...updatedData,
+      contacts: updatedData.contacts.map((contact: any) => contact.contact),
+    };
   }
 
   return updatedData;

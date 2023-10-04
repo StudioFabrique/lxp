@@ -2,16 +2,11 @@ import { Router } from "express";
 import httpCreateGroup from "../../controllers/group/http-create-group";
 import isUser from "../../middleware/is-admin";
 import httpGetAllGroups from "../../controllers/group/http-get-all-groups";
-import {
-  getAllValidator,
-  groupValidator,
-  searchValidator,
-} from "../../middleware/validators";
+import { getAllValidator, searchValidator } from "../../middleware/validators";
 import httpSearchGroup from "../../controllers/group/http-search-group";
 import httpAddUser from "../../controllers/group/http-add-users-group";
 
 import fileUpload from "../../middleware/fileUpload";
-import { check } from "express-validator";
 import checkToken from "../../middleware/check-token";
 import httpGetGroupsById from "../../controllers/group/http-get-groups-by-id";
 

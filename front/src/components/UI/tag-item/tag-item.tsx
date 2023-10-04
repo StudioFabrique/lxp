@@ -2,9 +2,12 @@ import { FC } from "react";
 
 import Tag from "../../../utils/interfaces/tag";
 
-const TagItem: FC<{ tag: Tag }> = ({ tag }) => {
+const TagItem: FC<{ tag: Tag; noIcon?: boolean }> = ({
+  tag,
+  noIcon = false,
+}) => {
   const tagClass =
-    "btn btn-sm pl-4 pr-1 py-1 font-bold rounded-lg flex border-none items-center gap-x-4 hover:brightness-125";
+    "btn btn-sm px-4 py-1 font-bold rounded-lg flex border-none items-center gap-x-4 hover:brightness-125";
 
   const tagStyle: React.CSSProperties = {
     backgroundColor: tag.color,
@@ -14,18 +17,20 @@ const TagItem: FC<{ tag: Tag }> = ({ tag }) => {
     <div>
       <button className={tagClass} style={tagStyle}>
         <p>{`#${tag.name}`}</p>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          className="w-4 h-4 text-base-content/50"
-        >
-          <path
-            fillRule="evenodd"
-            d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
-            clipRule="evenodd"
-          />
-        </svg>
+        {noIcon ? null : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="w-4 h-4 text-base-content/50"
+          >
+            <path
+              fillRule="evenodd"
+              d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
+              clipRule="evenodd"
+            />
+          </svg>
+        )}
       </button>
     </div>
   );

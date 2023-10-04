@@ -1,6 +1,10 @@
 import { body, param } from "express-validator";
 
 import { checkValidatorResult } from "../../../middleware/validators";
+import {
+  descriptionValidateOptional,
+  titleValidate,
+} from "../../../helpers/custom-validators";
 
 export const postCourseValidator = [
   body("title")
@@ -17,7 +21,26 @@ export const postCourseValidator = [
   checkValidatorResult,
 ];
 
-export const getCourseInformationsValidator = [
+export const putCourseInformationsValidator = [
+  body("id")
+    .notEmpty()
+    .withMessage("L'identifiant du cours est requis")
+    .isNumeric()
+    .withMessage("L'identifiant du cours doit être un nombre")
+    .trim()
+    .escape(),
+  body("title")
+    .notEmpty()
+    .withMessage("Le titre du cours est requis")
+    .custom(titleValidate)
+    .withMessage("Le titre du cours n'est pas conforme"),
+  body("description")
+    .custom(descriptionValidateOptional)
+    .withMessage("La description du cours n'est pas conforme"),
+  checkValidatorResult,
+];
+
+export const courseIdValidator = [
   param("courseId")
     .notEmpty()
     .withMessage("L'identifiant du cours est requis")

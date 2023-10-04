@@ -82,6 +82,7 @@ model Tag {
   updatedAt  DateTime          @default(now())
   parcours   TagsOnParcours[]
   formations TagsOnFormation[]
+  courses    TagsOnCourse[]
 }
 
 model Skill {
@@ -130,17 +131,20 @@ model Contact {
   updatedAt DateTime             @default(now())
   parcours  ContactsOnParcours[]
   modules   ContactsOnModule[]
+  courses   ContactsOnCourse[]
 }
 
 model Course {
-  id          Int      @id @default(autoincrement())
+  id          Int                @id @default(autoincrement())
   title       String
   description String?
   image       Bytes?
-  module      Module   @relation(fields: [moduleId], references: [id])
+  module      Module             @relation(fields: [moduleId], references: [id])
   moduleId    Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @default(now())
+  tags        TagsOnCourse[]
+  contacts    ContactsOnCourse[]
 }
 
 model Objective {
@@ -231,4 +235,22 @@ model GroupsOnParcours {
   parcoursId Int
 
   @@id([groupId, parcoursId])
+}
+
+model TagsOnCourse {
+  tag      Tag    @relation(fields: [tagId], references: [id])
+  tagId    Int
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId Int
+
+  @@id([tagId, courseId])
+}
+
+model ContactsOnCourse {
+  contact   Contact @relation(fields: [contactId], references: [id])
+  contactId Int
+  course    Course  @relation(fields: [courseId], references: [id])
+  courseId  Int
+
+  @@id([contactId, courseId])
 }

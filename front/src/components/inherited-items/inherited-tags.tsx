@@ -3,13 +3,15 @@ import { useEffect, useState } from "react";
 import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
 import { sortArray } from "../../utils/sortArray";
 import SubWrapper from "../UI/sub-wrapper/sub-wrapper.component";
-import InheritedTextList from "./inherited-text-list";
 import NotSelectedTags from "./not-selected-tags";
+import TagItem from "../UI/tag-item/tag-item";
 
 interface InheritedContactsProps {
+  loading: boolean;
   initialList: unknown[];
   currentItems: unknown[];
   property: string; // propriété utilisée pour trier les listes
+  onSubmit: (items: any[]) => void;
 }
 
 const InheritedTags = (props: InheritedContactsProps) => {
@@ -17,7 +19,7 @@ const InheritedTags = (props: InheritedContactsProps) => {
     document.getElementById(id)?.click();
   };
   const [currentItems, setCurrentItems] = useState<any[]>(props.currentItems);
-  const [notSelected, setNotSelected] = useState<any[]>(props.initialList);
+  const [notSelected, setNotSelected] = useState<any[]>([]);
 
   /**
    * ajoute des éléments à la liste des éléments sélectionnés
@@ -47,37 +49,49 @@ const InheritedTags = (props: InheritedContactsProps) => {
    * des contacts sélectionnés
    */
   useEffect(() => {
-    const updatedItems = props.initialList.filter(
-      (item) => !currentItems.includes(item)
-    );
+    let updatedItems = Array<any>();
+    props.initialList.forEach((item: any) => {
+      const tag = currentItems.find((element) => element.id === item.id);
+      if (!tag) {
+        updatedItems = [...updatedItems, item];
+      }
+    });
     setNotSelected(updatedItems);
-  }, [props.initialList, currentItems]);
+    props.onSubmit(currentItems);
+  }, [props.initialList, props, currentItems]);
 
   return (
     <section className="w-full flex flex-col gap-y-8">
-      <h2 className="text-xl font-bold">Ressources et Contacts</h2>
-
+      <span className="flex items-center gap-x-2">
+        <h2 className="text-xl font-bold">Tags</h2>
+        {props.loading ? (
+          <div className="loading loading-spinner text-primary loading-sm"></div>
+        ) : null}
+      </span>
       <div className="w-full flex flex-col gap-y-4">
         {currentItems.length > 0 ? (
-          <InheritedTextList
-            list={currentItems}
-            onRemoveItem={handleRemoveItem}
-          />
+          <ul className="flex gap-2 flex-wrap">
+            {currentItems.map((item) => (
+              <li key={item.id} onClick={() => handleRemoveItem(item)}>
+                <TagItem tag={item} />
+              </li>
+            ))}
+          </ul>
         ) : (
           <SubWrapper>
             <p className="text-xs">Aucun tag sélectionné</p>
           </SubWrapper>
         )}
-        <div className="w-full flex justify-center">
+        <div className="divider" />
+        <div className="w-full flex justify-start">
           <button
-            className="btn btn-primary"
+            className="btn btn-primary btn-sm"
             onClick={() => handleCloseDrawer("add-tags")}
           >
             Ajouter des tags
           </button>
         </div>
       </div>
-
       <RightSideDrawer
         title="Ajouter des tags"
         id="add-tags"

@@ -75,8 +75,6 @@ const ImageHeader: FC<Props> = ({
     }
   }, [file, onUpdateImage]);
 
-  console.log({ bgImage });
-
   return (
     <>
       {bgImage && parentTitle && title ? (
