@@ -10,7 +10,7 @@ const objectiveRouter = express.Router();
 
 objectiveRouter.delete(
   "/:objectiveId",
-  checkPermissions(1, "objective"),
+  checkPermissions("objective"),
   //checkToken,
   param("objectiveId").isNumeric().notEmpty().escape(),
   httpDeleteObjective
@@ -18,7 +18,7 @@ objectiveRouter.delete(
 
 objectiveRouter.put(
   "/",
-  checkPermissions(1, "objective"),
+  checkPermissions("objective"),
   // checkToken,
   //body("*").isObject().notEmpty(),
   body("*.id").isNumeric().notEmpty().escape(),

@@ -15,43 +15,43 @@ const modules = Router();
 
 modules.put(
   "/add-module/:parcoursId/:moduleId",
-  checkPermissions(1, "module"),
+  checkPermissions("module"),
   // checkToken,
   httpPutAddModule
 );
 modules.get(
   "/formation/:formationId",
-  checkPermissions(1, "module"),
+  checkPermissions("module"),
   // checkToken,
   httpGetModuleFormation
 );
 modules.put(
   "/:parcoursId",
-  checkPermissions(1, "module"),
+  checkPermissions("module"),
   // checkToken,
   httpParcoursModules
 );
 modules.put(
   "/calendar/dates",
-  checkPermissions(1, "module"),
+  checkPermissions("module"),
   // checkToken,
   httpUpdateDatesModule
 );
 modules.put(
   "/calendar/duration",
-  checkPermissions(1, "module"),
+  checkPermissions("module"),
   // checkToken,
   httpUpdateDurationModule
 );
 modules.delete(
   "/:moduleId",
-  checkPermissions(1, "module"),
+  checkPermissions("module"),
   // checkToken,
   httpDeleteModule
 );
 modules.use(
   "/new-module",
-  checkPermissions(1, "module"),
+  checkPermissions("module"),
   // checkToken,
   putModuleImageRouter
 );
@@ -59,7 +59,7 @@ modules.use(
 // retourne la liste des modules assocués à un parcours
 modules.get(
   "/:parcoursId",
-  checkPermissions(1, "module"),
+  checkPermissions("module"),
   // checkToken,
   getModulesFromParcoursValidator,
   httpGetModulesFromParcours

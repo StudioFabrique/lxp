@@ -4,7 +4,6 @@ import httpPutFormationTags from "../../controllers/formation/htttp-put-formatio
 import { body } from "express-validator";
 import multer from "multer";
 import path from "path";
-import checkToken from "../../middleware/check-token";
 import httpPostModule from "../../controllers/formation/http-post-module";
 import checkPermissions from "../../middleware/check-permissions";
 
@@ -27,10 +26,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 
-formationRouter.get("/", checkPermissions(1, "formation"), httpGetFormation);
+formationRouter.get("/", checkPermissions("formation"), httpGetFormation);
 formationRouter.put(
   "/update-tags",
-  checkPermissions(1, "formation"),
+  checkPermissions("formation"),
   body("formationId").isNumeric().notEmpty().escape(),
   body("tags").isArray().notEmpty(),
   body("tags.*").isNumeric().notEmpty().escape(),
@@ -38,7 +37,7 @@ formationRouter.put(
 );
 formationRouter.post(
   "/new-module",
-  checkPermissions(1, "formation"),
+  checkPermissions("formation"),
   // checkToken,
   upload.single("image"),
   httpPostModule

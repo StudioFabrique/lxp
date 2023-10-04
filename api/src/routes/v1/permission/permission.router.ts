@@ -5,11 +5,6 @@ import { getPermissionsValidator } from "./permission-validators";
 
 const permissionRouter = Router();
 
-permissionRouter.get(
-  "/:role",
-  checkPermissions(3, "permission"),
-  getPermissionsValidator,
-  httpGetPermissions
-);
+permissionRouter.get("/:role", getPermissionsValidator, httpGetPermissions);
 
 export default permissionRouter;
