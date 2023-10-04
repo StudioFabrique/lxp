@@ -1,7 +1,6 @@
 import express from "express";
 import { body, param, query } from "express-validator";
 
-import isUser from "../../../middleware/is-admin";
 import {
   getAllValidator,
   manyUsersValidator,
@@ -17,7 +16,6 @@ import httpUpdateManyUsersStatus from "../../../controllers/user/http-update-man
 import httpGetContacts from "../../../controllers/user/http-get-contacts";
 import postTeacherRouter from "./post-teacher";
 import httpCreateManyUser from "../../../controllers/user/http-create-many-users";
-import checkToken from "../../../middleware/check-token";
 import httpGetUsersByGroup from "../../../controllers/user/http-get-users-by-group";
 import checkPermissions from "../../../middleware/check-permissions";
 
@@ -26,30 +24,31 @@ const userRouter = express.Router();
 // TODO: VALIDATORS
 userRouter.put(
   "/update-many-status",
-  checkPermissions(1, "user"),
+  checkPermissions("user"),
   httpUpdateManyUsersStatus
 );
 
 // TODO: VALIDATORS
 userRouter.put(
   "/update-user-status",
-  checkPermissions(1, "user"),
+  checkPermissions("user"),
   httpUpdateUserStatus
 );
 
 // TODO: VALIDATORS
-userRouter.get("/stats", checkPermissions(1, "user"), httpGetUsersStats);
+userRouter.get("/stats", checkPermissions("user"), httpGetUsersStats);
 
 //  récupération de la liste des utilisateurs en fonction de leur rôle principal
 userRouter.get(
   "/:role/:stype/:sdir",
-  checkPermissions(1, "user"),
+  checkPermissions("user"),
   getAllValidator,
   httpGetUsersByRole
 );
 
 userRouter.put(
   "/user-roles",
+  checkPermissions("user"),
   // validators
   body("usersToUpdate")
     .isArray()
@@ -73,27 +72,22 @@ userRouter.put(
     )
     .trim()
     .escape(),
-  checkPermissions(1, "user"),
+
   httpUpdateUserRoles
 );
 
-userRouter.post(
-  "/",
-  checkPermissions(1, "user"),
-  userValidator,
-  httpCreateUser
-);
+userRouter.post("/", checkPermissions("user"), userValidator, httpCreateUser);
 
 userRouter.post(
   "/many",
-  checkPermissions(1, "user"),
+  checkPermissions("user"),
   manyUsersValidator,
   httpCreateManyUser
 );
 
 userRouter.get(
   "/search/:role/:entity/:value/:stype/:sdir",
-
+  checkPermissions("user"),
   //  validators
   param("search").isString().notEmpty().trim().escape(),
   param("role").isString().notEmpty().trim().escape(),
@@ -103,21 +97,21 @@ userRouter.get(
   param("sdir").isString().notEmpty().trim().escape(),
   query("page").notEmpty().trim().escape().isInt(),
   query("limit").notEmpty().trim().escape().isInt(),
-  checkPermissions(1, "user"),
+
   httpSearchUser
 );
-userRouter.use("/new-teacher", checkPermissions(1, "user"), postTeacherRouter);
+userRouter.use("/new-teacher", checkPermissions("user"), postTeacherRouter);
 
 userRouter.get(
   "/contacts",
-  checkPermissions(1, "user"),
+  checkPermissions("user"),
   // checkToken,
   httpGetContacts
 );
 
 userRouter.post(
   "/group",
-  checkPermissions(1, "user"),
+  checkPermissions("user"),
   // checkToken,
   httpGetUsersByGroup
 );

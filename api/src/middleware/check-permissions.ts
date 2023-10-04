@@ -8,18 +8,19 @@ import Permission from "../utils/interfaces/db/permission";
 /**
  * Check le token et en même temps les roles de l'utilisateur connecté en fonction des permissions sur le serveur ainsi que du rang authorisé
  *
- * @param rankRequired Le numéro de rang pour pouvoir accéder ou effectuer une opération sur la ressource
  * @param action L'action a effectuer
  * @param ressource La ressource sur laquelle l'action est effectué
  * @returns
  */
-
-export default function checkPermissions(
-  rankRequired: number,
-  ressource: string,
-  action?: string
-) {
+export default function checkPermissions(ressource?: string, action?: string) {
   return async (req: CustomRequest, res: Response, next: NextFunction) => {
+    const { role: roleFromParam } = req.params;
+
+    if (!ressource && !roleFromParam)
+      return res.status(400).json({
+        message: "Requête invalide",
+      });
+
     const authCookie = req.cookies.accessToken;
 
     let actionDefined: string | undefined = action;
@@ -67,12 +68,17 @@ export default function checkPermissions(
       /**
        * Parcours tous les rôles de l'utilisateur actuel et si au moins l'un des roles est correct, renvoie true
        */
-      for (const role of rolesToCheck)
-        if (
-          await authorizeThisRole(role, rankRequired, actionDefined!, ressource)
-        ) {
+
+      for (const role of rolesToCheck) {
+        const authorization =
+          !ressource && roleFromParam
+            ? await _authorizeThisRole(role, actionDefined!, roleFromParam)
+            : await authorizeThisRole(role, actionDefined!, ressource!);
+
+        if (authorization) {
           isRolesCorrect = true;
         }
+      }
 
       if (isRolesCorrect) {
         console.log("le role est correct ! passage accordé");
@@ -90,12 +96,9 @@ export default function checkPermissions(
 
 async function authorizeThisRole(
   role: IRole,
-  rankRequired: number,
   action: string,
   ressource: string
 ): Promise<boolean> {
-  if (role.rank > rankRequired) return false;
-
   console.log("vérification rang passé");
 
   const permissionFound = await Permission.findOne({
@@ -107,6 +110,29 @@ async function authorizeThisRole(
   console.log(permissionFound);
 
   if (permissionFound && permissionFound.ressources.includes(ressource)) {
+    return true;
+  }
+  console.log("vous ne passerez pas 🧙");
+
+  return false;
+}
+
+async function _authorizeThisRole(
+  role: IRole,
+  action: string,
+  roleFromParam: string
+): Promise<boolean> {
+  console.log("vérification rang passé");
+
+  const permissionFound = await Permission.findOne({
+    role: role.role,
+    action: action,
+  });
+
+  console.log("permission trouvé sur la base de données :");
+  console.log(permissionFound);
+
+  if (permissionFound && permissionFound.ressources.includes(roleFromParam)) {
     return true;
   }
   console.log("vous ne passerez pas 🧙");

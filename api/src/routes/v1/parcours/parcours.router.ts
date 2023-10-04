@@ -35,57 +35,57 @@ parcoursRouter.get("/", checkToken, httpGetParcours);
 parcoursRouter.post("/", isAdmin, postParcoursValidator, httpCreateParcours);
 parcoursRouter.delete(
   "/:parcoursId",
-  checkPermissions(1, "parcours"),
+  checkPermissions("parcours"),
   parcoursByIdValidator,
   httpDeleteParcoursById
 );
 parcoursRouter.get(
   "/parcours-by-formation/:formationId",
-  checkPermissions(1, "parcours"),
+  checkPermissions("parcours"),
   getParcoursByFormationValidator,
   httpGetParcoursByFormation
 );
 parcoursRouter.get(
   "/parcours-by-id/:parcoursId",
-  checkPermissions(3, "parcours"),
+  checkPermissions("parcours"),
   parcoursByIdValidator,
   httpGetParcoursById
 ); // accès accordé à l'étudiant
-parcoursRouter.get("/", checkPermissions(3, "parcours"), httpGetParcours); // accès accordé à l'étudiant
+parcoursRouter.get("/", checkPermissions("parcours"), httpGetParcours); // accès accordé à l'étudiant
 parcoursRouter.put(
   "/update-infos",
-  checkPermissions(1, "parcours"),
+  checkPermissions("parcours"),
   updateInfosValidator,
   httpUpdateParcoursInfos
 );
 parcoursRouter.put(
   "/update-dates",
-  checkPermissions(1, "parcours"),
+  checkPermissions("parcours"),
   updateDatesValidator,
   httpUpdateParcoursDates
 );
 parcoursRouter.put(
   "/update-tags",
-  checkPermissions(1, "parcours"),
+  checkPermissions("parcours"),
   putParcoursTagsValidator,
   httpPutParcoursTags
 );
 parcoursRouter.put(
   "/update-contacts",
-  checkPermissions(1, "parcours"),
+  checkPermissions("parcours"),
   //putParcoursContactsValidator,
   httpPutParcoursContacts
 );
 //parcoursRouter.use("/update-skills", putParcoursSkillsRouter);
 parcoursRouter.put(
   "/update-virtual-class",
-  checkPermissions(1, "parcours"),
+  checkPermissions("parcours"),
   virtualClassValidator,
   httpPutVirtualClass
 );
 parcoursRouter.put(
   "/update-objectives",
-  checkPermissions(1, "parcours"),
+  checkPermissions("parcours"),
   body("parcoursId").isNumeric().notEmpty().escape(),
   body("objectives").isArray().notEmpty(),
   body("objectives.*").isString().notEmpty(),
@@ -93,24 +93,24 @@ parcoursRouter.put(
 );
 parcoursRouter.put(
   "/reorder-objectives",
-  checkPermissions(1, "parcours"),
+  checkPermissions("parcours"),
   httpPutReorderObjectives
 );
 parcoursRouter.use(
   "/update-image",
-  checkPermissions(1, "parcours"),
+  checkPermissions("parcours"),
   putUpdateImageRouter
 );
 
 parcoursRouter.put(
   "/groups",
-  checkPermissions(1, "parcours"),
+  checkPermissions("parcours"),
   httpPutParcoursGroups
 );
 
 parcoursRouter.put(
   "/publish/:parcoursId",
-  checkPermissions(1, "parcours"),
+  checkPermissions("parcours"),
   httpPublishParcours
 );
 

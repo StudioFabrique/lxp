@@ -80,6 +80,9 @@ const permDefs = {
     ],
     update: ["student", "coach", "stagiaire"],
   },
+  stagiaire: {
+    read: ["parcours", "permission"],
+  },
 };
 
 export default permDefs;

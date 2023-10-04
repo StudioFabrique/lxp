@@ -6,10 +6,6 @@ import checkPermissions from "../../middleware/check-permissions";
 
 const skillsRouter = express.Router();
 
-skillsRouter.get(
-  "/:stype/:sdir",
-  checkPermissions(1, "skill"),
-  httpGetAllSkills
-);
+skillsRouter.get("/:stype/:sdir", checkPermissions("skill"), httpGetAllSkills);
 
 export default skillsRouter;

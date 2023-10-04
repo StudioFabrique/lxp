@@ -12,7 +12,7 @@ const bonusSkillRouter = express.Router();
 
 bonusSkillRouter.post(
   "/",
-  checkPermissions(1, "bonusSkill"),
+  checkPermissions("bonusSkill"),
   body("parcoursId").isNumeric().notEmpty(),
   body("skill.description").isString().notEmpty().escape(),
   httpPostBonusSkill
@@ -20,7 +20,7 @@ bonusSkillRouter.post(
 
 bonusSkillRouter.post(
   "/skills",
-  checkPermissions(1, "bonusSkill"),
+  checkPermissions("bonusSkill"),
   //body("parcoursId").isNumeric().notEmpty(),
   body("skills").isArray().notEmpty(),
   body("skills.*.description").isString().notEmpty(),
@@ -29,16 +29,16 @@ bonusSkillRouter.post(
 
 bonusSkillRouter.delete(
   "/:id",
-  checkPermissions(1, "bonusSkill"),
+  checkPermissions("bonusSkill"),
   param("id").isNumeric().notEmpty(),
   httpDeleteBonusSkill
 );
 
-bonusSkillRouter.put("/", checkPermissions(1, "bonusSkill"), httpPutBonusSkill);
+bonusSkillRouter.put("/", checkPermissions("bonusSkill"), httpPutBonusSkill);
 
 bonusSkillRouter.get(
   "/",
-  checkPermissions(1, "bonusSkill"),
+  checkPermissions("bonusSkill"),
   httpGetBonusSkillsFromParcours
 );
 
