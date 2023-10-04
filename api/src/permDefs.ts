@@ -19,6 +19,7 @@ const permDefs = {
       "parcours",
       "module",
       "course",
+      "bonusSkill",
     ],
     write: [
       // roles
@@ -36,6 +37,7 @@ const permDefs = {
       "parcours",
       "module",
       "course",
+      "bonusSkill",
     ],
     update: [
       // roles
@@ -53,6 +55,7 @@ const permDefs = {
       "parcours",
       "module",
       "course",
+      "bonusSkill",
     ],
     delete: [
       // roles
@@ -70,6 +73,7 @@ const permDefs = {
       "parcours",
       "module",
       "course",
+      "bonusSkill",
     ],
   },
   teacher: {

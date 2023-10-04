@@ -38,7 +38,7 @@ export default async function createUser(user: IUser, userType: number) {
     email: user.email,
     firstname: user.firstname,
     lastname: user.lastname,
-    password: hash("Abcdef@123456", 10), // A enlever par la suite !
+    password: await hash("Abcdef@123456", 10), // A enlever par la suite !
     isActive: false,
     roles: roles,
   });

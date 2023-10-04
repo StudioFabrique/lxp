@@ -17,14 +17,13 @@ export const checkValidatorResult = (
 ) => {
   const checkValues = validationResult(req);
 
-  console.log(checkValues);
-
   if (!checkValues.isEmpty()) {
     const error = {
       message: checkValues.array()[0].msg ?? badQuery,
       from: req.socket.remoteAddress,
       status: 400,
     };
+    console.log(checkValues);
     logger.error(error);
     return res.status(400).json({ message: badQuery });
   }
