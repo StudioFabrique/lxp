@@ -67,7 +67,7 @@ const permDefs = {
   },
 };
 
-export const casbinAuthorizer: Authorizer = new Authorizer();
+export const casbinAuthorizer: Authorizer = new Authorizer("manual");
 
 export default function defineRulesFor(roles: Role[]) {
   // superUser roles definition

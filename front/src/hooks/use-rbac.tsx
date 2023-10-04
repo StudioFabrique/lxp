@@ -4,7 +4,7 @@ import useHttp from "./use-http";
 import { casbinAuthorizer } from "../config/rbac";
 
 const useRbac = (roles: Role[] | undefined) => {
-  const [needRefresh, setRefreshState] = useState<boolean>();
+  const [needForceRefresh, setRefreshState] = useState<boolean>();
 
   const { sendRequest } = useHttp();
 
@@ -33,7 +33,6 @@ const useRbac = (roles: Role[] | undefined) => {
         applyData
       );
     }
-    console.log({ builtPerms });
 
     casbinAuthorizer.setPermission(builtPerms);
     console.log({ casbinAuthorizer });
@@ -43,18 +42,18 @@ const useRbac = (roles: Role[] | undefined) => {
     defineRulesFor();
   }, [defineRulesFor]);
 
-  /* useEffect(() => {
-    if (needRefresh) {
+  useEffect(() => {
+    if (needForceRefresh) {
       defineRulesFor();
       setRefreshState(false);
     }
-  }, [defineRulesFor, needRefresh]); */
+  }, [defineRulesFor, needForceRefresh]);
 
-  const refreshRbacPermissions = () => {
+  const forceRefreshRbacPermissions = () => {
     setRefreshState(true);
   };
 
-  return { refreshRbacPermissions };
+  return { forceRefreshRbacPermissions };
 };
 
 export default useRbac;

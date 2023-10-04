@@ -3,8 +3,8 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 import { Context } from "../../store/context.store";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
-// import defineRulesFor from "../../config/rbac";
 import useRbac from "../../hooks/use-rbac";
+// import defineRulesFor from "../../config/rbac";
 
 let initialState = true;
 
@@ -30,12 +30,6 @@ const AdminLayout = () => {
       handshake();
     }
   }, [initTheme, isLoggedIn, handshake]);
-
-  /* useEffect(() => {
-    if (user) {
-      defineRulesFor(user.roles);
-    }
-  }, [user]); */
 
   return (
     <div className="w-full">
