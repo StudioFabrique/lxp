@@ -117,8 +117,6 @@ const useEagerLoadingList = (
   }, [initialList, limit, page]);
 
   useEffect(() => {
-    console.log(initialList.length / limit);
-
     const pages =
       initialList.length % limit === 0
         ? initialList.length / limit

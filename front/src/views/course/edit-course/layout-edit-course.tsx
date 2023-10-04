@@ -88,7 +88,7 @@ const LayoutCourseEdit = () => {
               ) : null}
               {/* Etapes du parcours */}
             </div>
-            <Outlet />
+            {course ? <Outlet /> : <Loader />}
           </div>
         </FadeWrapper>
       )}
