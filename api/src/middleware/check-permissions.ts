@@ -8,11 +8,14 @@ import Permission from "../utils/interfaces/db/permission";
 /**
  * Check le token et en même temps les roles de l'utilisateur connecté en fonction des permissions sur le serveur ainsi que du rang authorisé
  *
- * @param action L'action a effectuer
- * @param ressource La ressource sur laquelle l'action est effectué
+ * @param ressource (optionnel) La ressource sur laquelle l'action est effectué
+ * @param action (optionnel) L'action à effectuer
  * @returns
  */
-export default function checkPermissions(ressource?: string, action?: string) {
+export default function checkPermissions(
+  ressource?: string,
+  action?: "read" | "write" | "update" | "delete"
+) {
   return async (req: CustomRequest, res: Response, next: NextFunction) => {
     const { role: roleFromParam } = req.params;
 

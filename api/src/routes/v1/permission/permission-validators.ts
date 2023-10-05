@@ -1,7 +1,7 @@
 import { param } from "express-validator";
 import { checkValidatorResult } from "../../../middleware/validators";
 
-export const getPermissionsValidator = [
+export const permissionsValidator = [
   param("role")
     .isString()
     .withMessage("Role invalide")

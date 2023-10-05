@@ -222,9 +222,9 @@ async function createManyCoach() {
 async function createRoles() {
   const roles = [
     { role: "admin", label: "admin", rank: 1 },
-    { role: "mini-admin", label: "mini-admin", rank: 1 },
+    { role: "miniAdmin", label: "mini-admin", rank: 1 },
     { role: "teacher", label: "formateur", rank: 2 },
-    { role: "boss_teacher", label: "Formateur en Chef", rank: 2 },
+    { role: "bossTeacher", label: "Formateur en Chef", rank: 2 },
     { role: "student", label: "apprenant", rank: 3 },
     { role: "coach", label: "mentor", rank: 3 },
     { role: "stagiaire", label: "gestion cafetière", rank: 3 },
