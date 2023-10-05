@@ -11,6 +11,7 @@ const permDefs = {
       "stagiaire",
       "everything",
       // ressources
+      "role",
       "tag",
       "permission",
       "user",
@@ -29,6 +30,7 @@ const permDefs = {
       "boss_teacher",
       "stagiaire",
       // ressources
+      "role",
       "tag",
       "permission",
       "user",
@@ -47,6 +49,7 @@ const permDefs = {
       "boss_teacher",
       "stagiaire",
       // ressources
+      "role",
       "tag",
       "permission",
       "user",
@@ -65,6 +68,7 @@ const permDefs = {
       "boss_teacher",
       "stagiaire",
       // ressources
+      "role",
       "tag",
       "permission",
       "user",
@@ -106,7 +110,7 @@ const permDefs = {
       "permission",
     ],
   },
-  boss_teacher: {
+  bossTeacher: {
     read: [
       // roles
       "teacher",

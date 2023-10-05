@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { serverIssue } from "../../utils/constantes";
-import getRoles from "../../models/auth/get-roles";
+import getRoles from "../../models/auth/get-current-roles";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 
-async function httpGetRoles(req: CustomRequest, res: Response) {
+async function httpGetCurrentRoles(req: CustomRequest, res: Response) {
   try {
     const roles = await getRoles(req.auth!.userRoles[0]);
     return res.status(200).json(roles);
@@ -14,4 +14,4 @@ async function httpGetRoles(req: CustomRequest, res: Response) {
   }
 }
 
-export default httpGetRoles;
+export default httpGetCurrentRoles;
