@@ -49,15 +49,9 @@ export const putCourseInformationsValidator = [
     .custom(descriptionValidateOptional)
     .withMessage("La description du cours n'est pas conforme"),
   checkValidatorResult,
-];
-
-export const putCourseVisibilityValidator = [
-  query("visibility")
+  body("Visibility")
     .notEmpty()
     .withMessage("Une valeur est requise pour la visibilité du cours")
-    .trim()
-    .escape()
     .isBoolean()
-    .withMessage("Une valeur booleene est requise"),
-  checkValidatorResult,
+    .withMessage("La visibilité du cours doit être une valeur booléenne"),
 ];
