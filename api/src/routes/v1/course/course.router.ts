@@ -6,6 +6,7 @@ import {
   courseIdValidator,
   postCourseValidator,
   putCourseInformationsValidator,
+  putCourseVisibilityValidator,
 } from "./course-validators";
 import httpGetCourses from "../../../controllers/course/http-get-courses";
 import httpGetCourseInformations from "../../../controllers/course/http-get-course-informations";
@@ -14,9 +15,14 @@ import path from "path";
 import httpPutCourseImage from "../../../controllers/course/http-put-course-image";
 import httpPutCourseInformations from "../../../controllers/course/http-put-course-informations";
 import httpPutCourseTags from "../../../controllers/course/http-put-course-tags";
-import { idsArrayValidator } from "../../../helpers/custom-validators";
+import {
+  idsArrayValidator,
+  virtualClassValidator,
+} from "../../../helpers/custom-validators";
 import httpPutCourseContacts from "../../../controllers/course/http-put-course-contacts";
 import checkPermissions from "../../../middleware/check-permissions";
+import httpPutCourseVirtualClass from "../../../controllers/course/http-put-course-virtual-class";
+import httpPutCourseVisibility from "../../../controllers/course/http-put-course-visibility";
 
 const courseRouter = express.Router();
 
@@ -94,6 +100,24 @@ courseRouter.put(
   idsArrayValidator,
   courseIdValidator,
   httpPutCourseContacts
+);
+
+// mise à jour du lien vers la classe virtuelle du cours
+courseRouter.put(
+  "/virtual-class/:courseId",
+  checkToken,
+  courseIdValidator,
+  virtualClassValidator,
+  httpPutCourseVirtualClass
+);
+
+// mise à jour de la visibilité du cours
+courseRouter.put(
+  "/visibility/:courseId",
+  checkToken,
+  courseIdValidator,
+  putCourseVisibilityValidator,
+  httpPutCourseVisibility
 );
 
 export default courseRouter;

@@ -5,6 +5,7 @@ import NotSelectedContacts from "./not-selected-contacts";
 import { sortArray } from "../../utils/sortArray";
 import SubWrapper from "../UI/sub-wrapper/sub-wrapper.component";
 import InheritedTextList from "./inherited-text-list";
+import ButtonAdd from "../UI/button-add/button-add";
 
 interface InheritedContactsProps {
   loading: boolean;
@@ -66,12 +67,19 @@ const InheritedItems = (props: InheritedContactsProps) => {
 
   return (
     <section className="w-full flex flex-col gap-y-8">
-      <span className="w-full flex items-center gap-x-2">
-        <h2 className="text-xl font-bold">Ressources et Contacts</h2>
-        {props.loading ? (
-          <div className="loading loading-spinner text-primary loading-sm"></div>
-        ) : null}
-      </span>
+      <div className="flex items-center justify-between">
+        <span className="w-full flex items-center gap-x-2">
+          <h2 className="text-xl font-bold">Ressources et Contacts</h2>
+          {props.loading ? (
+            <div className="loading loading-spinner text-primary loading-sm"></div>
+          ) : null}
+        </span>
+        <ButtonAdd
+          label="Ajouter"
+          small={true}
+          onClickEvent={() => handleCloseDrawer("add-contacts")}
+        />
+      </div>
 
       <div className="w-full flex flex-col gap-y-4">
         {currentItems.length > 0 ? (
@@ -84,15 +92,6 @@ const InheritedItems = (props: InheritedContactsProps) => {
             <p className="text-xs">Aucun contact sélectionné</p>
           </SubWrapper>
         )}
-        <div className="divider" />
-        <div className="w-full flex justify-start">
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => handleCloseDrawer("add-contacts")}
-          >
-            Ajouter des contacts
-          </button>
-        </div>
       </div>
 
       <RightSideDrawer

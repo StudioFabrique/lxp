@@ -135,16 +135,18 @@ model Contact {
 }
 
 model Course {
-  id          Int                @id @default(autoincrement())
-  title       String
-  description String?
-  image       Bytes?
-  module      Module             @relation(fields: [moduleId], references: [id])
-  moduleId    Int
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @default(now())
-  tags        TagsOnCourse[]
-  contacts    ContactsOnCourse[]
+  id           Int                @id @default(autoincrement())
+  title        String
+  description  String?
+  image        Bytes?
+  module       Module             @relation(fields: [moduleId], references: [id])
+  moduleId     Int
+  virtualClass String?
+  visibility   Boolean?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @default(now())
+  tags         TagsOnCourse[]
+  contacts     ContactsOnCourse[]
 }
 
 model Objective {

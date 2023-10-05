@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ParcoursInformationsForm from "./parcours-informations-form";
 import { toast } from "react-hot-toast";
 import Contacts from "./contacts";
-import VirtualClass from "./virtual-class";
+import VirtualClass from "../../virtual-class";
 import useHttp from "../../../hooks/use-http";
 import { parcoursInformationsAction } from "../../../store/redux-toolkit/parcours/parcours-informations";
 import Wrapper from "../../UI/wrapper/wrapper.component";
@@ -15,6 +15,8 @@ import Tag from "../../../utils/interfaces/tag";
 import { parcoursContactsAction } from "../../../store/redux-toolkit/parcours/parcours-contacts";
 import User from "../../../utils/interfaces/user";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
+import useInput from "../../../hooks/use-input";
+import { regexUrl } from "../../../utils/constantes";
 
 type Props = {
   parcoursId?: string;
@@ -40,6 +42,13 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
   );
   const isInitialRender = useRef(true);
   const isInitialEffect = useRef(true);
+  const { value: virtualClass } = useInput(
+    (value) => regexUrl.test(value),
+    useSelector(
+      (state: any) => state.parcoursInformations.infos.virtualClass as string
+    )
+  );
+  const isInitialVirtual = useRef(true);
 
   useEffect(() => {
     dispatch(parcoursContactsAction.setNotSelectedContacts());
@@ -155,6 +164,44 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
     dispatch(parcoursInformationsAction.isValid());
   }, [tagsIsValid, parcoursStartDate, parcoursEndDate, dispatch]);
 
+  useEffect(() => {
+    let timer: any;
+    const formIsValid = virtualClass.isValid;
+    if (!isInitialVirtual.current && formIsValid) {
+      timer = setTimeout(() => {
+        const processData = (data: { success: boolean; message: string }) => {
+          if (data.success) {
+            toast.success(data.message);
+          } else {
+            toast.error(
+              "Le lien vers la classe virtuelle n'a pas été mis à jour"
+            );
+          }
+          dispatch(
+            parcoursInformationsAction.setVirtualClass(virtualClass.value)
+          );
+        };
+        sendRequest(
+          {
+            path: "/parcours/update-virtual-class",
+            method: "put",
+            body: { parcoursId, virtualClass: virtualClass.value },
+          },
+          processData
+        );
+      }, autoSubmitTimer);
+    } else {
+      isInitialVirtual.current = false;
+    }
+    return () => clearTimeout(timer);
+  }, [
+    parcoursId,
+    virtualClass.value,
+    virtualClass.isValid,
+    dispatch,
+    sendRequest,
+  ]);
+
   return (
     <div className="w-full">
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-8">
@@ -170,7 +217,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
             />
           </div>
 
-          <VirtualClass />
+          <VirtualClass virtualClass={virtualClass} />
         </Wrapper>
         <div className="flex flex-col gap-y-8">
           {contacts ? (

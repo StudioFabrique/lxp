@@ -5,6 +5,7 @@ import { sortArray } from "../../utils/sortArray";
 import SubWrapper from "../UI/sub-wrapper/sub-wrapper.component";
 import NotSelectedTags from "./not-selected-tags";
 import TagItem from "../UI/tag-item/tag-item";
+import ButtonAdd from "../UI/button-add/button-add";
 
 interface InheritedContactsProps {
   loading: boolean;
@@ -62,12 +63,19 @@ const InheritedTags = (props: InheritedContactsProps) => {
 
   return (
     <section className="w-full flex flex-col gap-y-8">
-      <span className="flex items-center gap-x-2">
-        <h2 className="text-xl font-bold">Tags</h2>
-        {props.loading ? (
-          <div className="loading loading-spinner text-primary loading-sm"></div>
-        ) : null}
-      </span>
+      <div className="flex items-center justify-between">
+        <span className="w-full flex items-center gap-x-2">
+          <h2 className="text-xl font-bold">Tags</h2>
+          {props.loading ? (
+            <div className="loading loading-spinner text-primary loading-sm"></div>
+          ) : null}
+        </span>
+        <ButtonAdd
+          label="Ajouter"
+          small={true}
+          onClickEvent={() => handleCloseDrawer("add-tags")}
+        />
+      </div>
       <div className="w-full flex flex-col gap-y-4">
         {currentItems.length > 0 ? (
           <ul className="flex gap-2 flex-wrap">
@@ -82,15 +90,6 @@ const InheritedTags = (props: InheritedContactsProps) => {
             <p className="text-xs">Aucun tag sélectionné</p>
           </SubWrapper>
         )}
-        <div className="divider" />
-        <div className="w-full flex justify-start">
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => handleCloseDrawer("add-tags")}
-          >
-            Ajouter des tags
-          </button>
-        </div>
       </div>
       <RightSideDrawer
         title="Ajouter des tags"

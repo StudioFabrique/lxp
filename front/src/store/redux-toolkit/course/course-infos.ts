@@ -42,6 +42,22 @@ const courseInfosSlice = createSlice({
         };
       }
     },
+    setCourseVirtualClass(state, action) {
+      if (state.course) {
+        state.course = {
+          ...state.course,
+          virtualClass: action.payload,
+        };
+      }
+    },
+    setCourseVisibility(state, action) {
+      if (state.course) {
+        state.course = {
+          ...state.course,
+          visibility: action.payload,
+        };
+      }
+    },
   },
 });
 
