@@ -1,10 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "./utils/db";
 import dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
 import User from "./utils/interfaces/db/user";
 import Role from "./utils/interfaces/db/role";
-import { modulesList } from "./utils/fixtures/data/data";
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
 
@@ -19,8 +18,6 @@ mongoose.connection.on("error", (err) => {
 async function mongoConnect() {
   await mongoose.connect(MONGO_URL!);
 }
-
-const prisma = new PrismaClient();
 
 // Méthode pour fermer la connexion
 const disconnect = async () => {

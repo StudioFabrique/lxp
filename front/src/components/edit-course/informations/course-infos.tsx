@@ -7,8 +7,6 @@ import { useDispatch } from "react-redux";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import CourseInfosForm from "./course-infos-form";
 import Contact from "../../../utils/interfaces/contact";
-import InheritedContacts from "../../inherited-items/inherited-contacts";
-import InheritedTags from "../../inherited-items/inherited-tags";
 import Tag from "../../../utils/interfaces/tag";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import { courseInfosAction } from "../../../store/redux-toolkit/course/course-infos";
@@ -16,6 +14,8 @@ import useHttp from "../../../hooks/use-http";
 import VirtualClass from "../../virtual-class";
 import useInput from "../../../hooks/use-input";
 import { regexUrl } from "../../../utils/constantes";
+import TagsWithDrawer from "../../inherited-items/tags-with-drawer";
+import ContactsWithDrawer from "../../inherited-items/contacts-with-drawer";
 
 const CourseInfos = () => {
   const { courseId } = useParams();
@@ -198,7 +198,7 @@ const CourseInfos = () => {
         </Wrapper>
         <div className="flex flex-col gap-y-8">
           <Wrapper>
-            <InheritedContacts
+            <ContactsWithDrawer
               loading={loadingContacts}
               initialList={contacts}
               currentItems={currentContacts}
@@ -207,7 +207,7 @@ const CourseInfos = () => {
             />
           </Wrapper>
           <Wrapper>
-            <InheritedTags
+            <TagsWithDrawer
               loading={loadingTags}
               initialList={tags}
               currentItems={currentTags}

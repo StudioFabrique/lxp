@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 
 import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
-import NotSelectedContacts from "./not-selected-contacts";
-import { sortArray } from "../../utils/sortArray";
-import SubWrapper from "../UI/sub-wrapper/sub-wrapper.component";
-import InheritedTextList from "./inherited-text-list";
 import ButtonAdd from "../UI/button-add/button-add";
 
-interface InheritedContactsProps {
+interface InheritedItemsProps {
+  children: ReactNode[];
+  drawerId: string;
+  drawerTitle: string;
+  title: string;
   loading: boolean;
   initialList: unknown[];
   currentItems: unknown[];
@@ -15,28 +15,30 @@ interface InheritedContactsProps {
   onSubmit: (items: any[]) => void;
 }
 
-const InheritedItems = (props: InheritedContactsProps) => {
+const InheritedItems = (props: InheritedItemsProps) => {
   const handleCloseDrawer = (id: string) => {
     document.getElementById(id)?.click();
   };
   const [currentItems, setCurrentItems] = useState<any[]>(props.currentItems);
-  const [notSelected, setNotSelected] = useState<any[]>(props.initialList);
+  const [notSelected, setNotSelected] = useState<any[]>([]);
 
   /**
    * ajoute des éléments à la liste des éléments sélectionnés
    * @param contactsIds string[]
    */
-  const handleAddItem = (itemsIds: number[]) => {
-    let items = Array<any>();
-    itemsIds.forEach((id) => {
-      const item = props.initialList.find((item: any) => item.id === id);
-      if (item) {
-        items = [...items, item];
+  const handleAddItem = (ids: number[]) => {
+    console.log(ids);
+
+    let updatedItems = Array<any>();
+    ids.forEach((item: any) => {
+      const foundItem = props.initialList.find(
+        (element: any) => element.id === item
+      );
+      if (foundItem) {
+        updatedItems = [...updatedItems, foundItem];
       }
     });
-    setCurrentItems((prevState) =>
-      sortArray([...prevState, ...items], props.property)
-    );
+    setCurrentItems((prevState) => [...prevState, ...updatedItems]);
   };
 
   /**
@@ -56,8 +58,8 @@ const InheritedItems = (props: InheritedContactsProps) => {
   useEffect(() => {
     let updatedItems = Array<any>();
     props.initialList.forEach((item: any) => {
-      const contact = currentItems.find((element) => element.id === item.id);
-      if (!contact) {
+      const foundItem = currentItems.find((element) => element.id === item.id);
+      if (!foundItem) {
         updatedItems = [...updatedItems, item];
       }
     });
@@ -69,7 +71,7 @@ const InheritedItems = (props: InheritedContactsProps) => {
     <section className="w-full flex flex-col gap-y-8">
       <div className="flex items-center justify-between">
         <span className="w-full flex items-center gap-x-2">
-          <h2 className="text-xl font-bold">Ressources et Contacts</h2>
+          <h2 className="text-xl font-bold">{props.title}</h2>
           {props.loading ? (
             <div className="loading loading-spinner text-primary loading-sm"></div>
           ) : null}
@@ -77,34 +79,31 @@ const InheritedItems = (props: InheritedContactsProps) => {
         <ButtonAdd
           label="Ajouter"
           small={true}
-          onClickEvent={() => handleCloseDrawer("add-contacts")}
+          onClickEvent={() => handleCloseDrawer(props.drawerId)}
         />
       </div>
-
       <div className="w-full flex flex-col gap-y-4">
-        {currentItems.length > 0 ? (
-          <InheritedTextList
-            list={currentItems}
-            onRemoveItem={handleRemoveItem}
-          />
-        ) : (
-          <SubWrapper>
-            <p className="text-xs">Aucun contact sélectionné</p>
-          </SubWrapper>
-        )}
+        {React.cloneElement(props.children[0] as React.ReactElement, {
+          list: currentItems,
+          onRemoveItem: handleRemoveItem,
+        })}
       </div>
-
       <RightSideDrawer
-        title="Ajouter des contacts"
-        id="add-contacts"
+        title={props.drawerTitle}
+        id={props.drawerId}
         visible={false}
         onCloseDrawer={handleCloseDrawer}
       >
-        <NotSelectedContacts
+        {React.cloneElement(props.children[1] as React.ReactElement, {
+          list: notSelected,
+          onAddItem: handleAddItem,
+          onCloseDrawer: handleCloseDrawer,
+        })}
+        {/*         <NotSelectedTags
           list={notSelected}
-          onAddContact={handleAddItem}
+          onAddTag={handleAddItem}
           onCloseDrawer={handleCloseDrawer}
-        />
+        /> */}
       </RightSideDrawer>
     </section>
   );

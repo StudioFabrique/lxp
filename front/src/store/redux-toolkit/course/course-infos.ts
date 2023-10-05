@@ -51,6 +51,9 @@ const courseInfosSlice = createSlice({
         };
       }
     },
+    resetCourse(state) {
+      state.course = null;
+    },
   },
 });
 

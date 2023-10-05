@@ -58,6 +58,9 @@ const LayoutCourseEdit = () => {
       },
       applyData
     );
+    return () => {
+      dispatch(courseInfosAction.resetCourse());
+    };
   }, [courseId, dispatch, sendRequest]);
 
   /**

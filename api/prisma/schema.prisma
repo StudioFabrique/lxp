@@ -135,27 +135,29 @@ model Contact {
 }
 
 model Course {
-  id           Int                @id @default(autoincrement())
+  id           Int                  @id @default(autoincrement())
   title        String
   description  String?
   image        Bytes?
-  module       Module             @relation(fields: [moduleId], references: [id])
+  module       Module               @relation(fields: [moduleId], references: [id])
   moduleId     Int
   virtualClass String?
   visibility   Boolean?
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @default(now())
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @default(now())
   tags         TagsOnCourse[]
   contacts     ContactsOnCourse[]
+  objectives   ObjectivesOnCourse[]
 }
 
 model Objective {
-  id          Int      @id @default(autoincrement())
+  id          Int                  @id @default(autoincrement())
   description String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
-  parcours    Parcours @relation(fields: [parcoursId], references: [id])
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @default(now())
+  parcours    Parcours             @relation(fields: [parcoursId], references: [id])
   parcoursId  Int
+  courses     ObjectivesOnCourse[]
 }
 
 model ContactsOnParcours {
@@ -255,4 +257,13 @@ model ContactsOnCourse {
   courseId  Int
 
   @@id([contactId, courseId])
+}
+
+model ObjectivesOnCourse {
+  objective   Objective @relation(fields: [objectiveId], references: [id])
+  objectiveId Int
+  course      Course    @relation(fields: [courseId], references: [id])
+  courseId    Int
+
+  @@id([objectiveId, courseId])
 }

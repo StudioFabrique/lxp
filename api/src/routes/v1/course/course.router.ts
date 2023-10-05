@@ -21,6 +21,7 @@ import {
 import httpPutCourseContacts from "../../../controllers/course/http-put-course-contacts";
 import checkPermissions from "../../../middleware/check-permissions";
 import httpPutCourseVirtualClass from "../../../controllers/course/http-put-course-virtual-class";
+import httpGetCourseObjectives from "../../../controllers/course/http-get-course-objectives";
 
 const courseRouter = express.Router();
 
@@ -107,6 +108,14 @@ courseRouter.put(
   courseIdValidator,
   virtualClassValidator,
   httpPutCourseVirtualClass
+);
+
+// retourne la liste des objectifs liés à un cours
+courseRouter.get(
+  "/objectives/:courseId",
+  checkToken,
+  courseIdValidator,
+  httpGetCourseObjectives
 );
 
 export default courseRouter;
