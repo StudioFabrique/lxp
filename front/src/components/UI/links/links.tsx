@@ -84,7 +84,7 @@ const Item: FC<{
       <a href={link.url} className="w-full carousel">
         {link.alias ?? link.url}
       </a>
-      <button onClick={handleClick} type="button">
+      <button onClick={handleClick} type="button" className="w-6 h-6">
         <DeleteIcon />
       </button>
     </li>
