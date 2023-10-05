@@ -166,9 +166,7 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
               checked={visibility ? visibility : false}
               onChange={() => setVisibility((prevState) => !prevState)}
             />
-            {visibility ? (
-              <p className="font-bold text-accent">Visible</p>
-            ) : null}
+            <p className="text-sm">{visibility ? "Visible" : "Caché"}</p>
           </label>
         </div>
       </form>

@@ -5,9 +5,9 @@ import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.co
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 
 interface NotSelectedContactsProps {
-  list: Contact[];
-  onAddContact: (contactsIds: number[]) => void;
-  onCloseDrawer: (id: string) => void;
+  list?: Contact[];
+  onAddItem?: (contactsIds: number[]) => void;
+  onCloseDrawer?: (id: string) => void;
 }
 
 const NotSelectedContacts = (props: NotSelectedContactsProps) => {
@@ -19,7 +19,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
     setAllChecked,
     handleRowCheck,
     sortData,
-  } = useEagerLoadingList(props.list, "name");
+  } = useEagerLoadingList(props.list!, "name");
 
   /**
    * gère le coche / décochage de toutes les checkboxes
@@ -112,8 +112,8 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
       const contacts = list
         .filter((item) => item.isSelected)
         .map((item) => item.id);
-      props.onAddContact(contacts);
-      props.onCloseDrawer("add-contacts");
+      props.onAddItem!(contacts);
+      props.onCloseDrawer!("add-contacts");
     }
   };
 
