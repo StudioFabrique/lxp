@@ -17,11 +17,13 @@ async function putCourseInformations(course: Course) {
     data: {
       title: course.title,
       description: course.description ?? null,
+      visibility: course.visibility,
     },
     select: {
       id: true,
       title: true,
       description: true,
+      visibility: true,
     },
   });
   return updatedCourse;

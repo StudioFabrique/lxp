@@ -23,6 +23,7 @@ const courseInfosSlice = createSlice({
           ...state.course,
           title: action.payload.title,
           description: action.payload.description,
+          visibility: action.payload.visibility,
         };
       }
     },
@@ -47,14 +48,6 @@ const courseInfosSlice = createSlice({
         state.course = {
           ...state.course,
           virtualClass: action.payload,
-        };
-      }
-    },
-    setCourseVisibility(state, action) {
-      if (state.course) {
-        state.course = {
-          ...state.course,
-          visibility: action.payload,
         };
       }
     },
