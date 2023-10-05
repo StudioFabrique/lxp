@@ -11,6 +11,7 @@ import httpPutReorderObjectives from "../../../controllers/parcours/http-put-reo
 import {
   getParcoursByFormationValidator,
   parcoursByIdValidator,
+  parcoursIdValidator,
   postParcoursValidator,
   putParcoursTagsValidator,
   updateDatesValidator,
@@ -19,20 +20,22 @@ import {
 } from "./parcours-validator";
 import httpGetParcoursByFormation from "../../../controllers/parcours/http-get-parcours-by-formation";
 import httpGetParcoursById from "../../../controllers/parcours/http-get-parcours-by-id";
-import isAdmin from "../../../middleware/is-admin";
 import httpUpdateParcoursInfos from "../../../controllers/parcours/http-update-parcours-infos";
 import httpUpdateParcoursDates from "../../../controllers/parcours/http-update-parcours-dates";
 import httpPutParcoursTags from "../../../controllers/parcours/http-put-parcours-tags";
 import httpPutParcoursContacts from "../../../controllers/parcours/http-put-parcours-contacts";
-import checkToken from "../../../middleware/check-token";
 import httpPutParcoursGroups from "../../../controllers/parcours/http-put-parcours-groups";
 import httpPublishParcours from "../../../controllers/parcours/http-publish-parcours";
-import isStudent from "../../../middleware/is-student";
 import checkPermissions from "../../../middleware/check-permissions";
 
 const parcoursRouter = express.Router();
-parcoursRouter.get("/", checkToken, httpGetParcours);
-parcoursRouter.post("/", isAdmin, postParcoursValidator, httpCreateParcours);
+parcoursRouter.get("/", checkPermissions("parcours"), httpGetParcours);
+parcoursRouter.post(
+  "/",
+  checkPermissions("parcours"),
+  postParcoursValidator,
+  httpCreateParcours
+);
 parcoursRouter.delete(
   "/:parcoursId",
   checkPermissions("parcours"),
@@ -80,6 +83,7 @@ parcoursRouter.put(
 parcoursRouter.put(
   "/update-virtual-class",
   checkPermissions("parcours"),
+  parcoursIdValidator,
   virtualClassValidator,
   httpPutVirtualClass
 );

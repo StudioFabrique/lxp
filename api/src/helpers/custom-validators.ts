@@ -17,3 +17,12 @@ export const idsArrayValidator = [
     .withMessage("Les identifiant doivent être des valeurs numériques"),
   checkValidatorResult,
 ];
+
+export const virtualClassValidator = [
+  body("virtualClass")
+    .isURL()
+    .withMessage("Url non valide")
+    .notEmpty()
+    .withMessage("Url absente"),
+  checkValidatorResult,
+];

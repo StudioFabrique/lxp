@@ -63,19 +63,22 @@ const CourseHome = () => {
             <td>{course.module.parcours.title}</td>
             <td>{localeDate(course.createdAt!)}</td>
             <td>{localeDate(course.updatedAt!)}</td>
-            <td onClick={() => handleEditCourse(course.id!)}>
-              <div className="w-6 h-6">
-                <Can action="update" object="cours">
-                  <EditIcon />
-                </Can>
+            <td>
+              {/*   <Can action="update" object="cours"> */}
+              <div
+                className="w-6 h-6"
+                onClick={() => handleEditCourse(course.id!)}
+              >
+                <EditIcon />
               </div>
+              {/*    </Can> */}
             </td>
-            <td onClick={() => {}}>
-              <div className="w-6 h-6 text-error">
-                <Can action="delete" object="cours">
+            <td>
+              <Can action="delete" object="cours">
+                <div className="w-6 h-6 text-error" onClick={() => {}}>
                   <DeleteIcon />
-                </Can>
-              </div>
+                </div>
+              </Can>
             </td>
           </tr>
         ))}

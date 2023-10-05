@@ -12,6 +12,7 @@ export default interface Course {
   module: Module;
   tags: Tag[];
   virtualClass?: string;
+  visibility?: boolean;
   image?: string;
   contacts: Contact[];
 }

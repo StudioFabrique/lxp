@@ -127,7 +127,7 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
             defaultValue={title.value}
             onChange={title.valueChangeHandler}
             onBlur={title.valueBlurHandler}
-            placeholder="Exemple: CDA - Promo 2023"
+            placeholder="Exemple: Apprendre le HTML"
           />
         </div>
 

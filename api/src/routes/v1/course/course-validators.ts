@@ -1,10 +1,21 @@
-import { body, param } from "express-validator";
+import { body, param, query } from "express-validator";
 
 import { checkValidatorResult } from "../../../middleware/validators";
 import {
   descriptionValidateOptional,
   titleValidate,
 } from "../../../helpers/custom-validators";
+
+export const courseIdValidator = [
+  param("courseId")
+    .notEmpty()
+    .withMessage("L'identifiant du cours est requis")
+    .isNumeric()
+    .withMessage("L'identifiant du cours doit être un nombre")
+    .trim()
+    .escape(),
+  checkValidatorResult,
+];
 
 export const postCourseValidator = [
   body("title")
@@ -40,13 +51,13 @@ export const putCourseInformationsValidator = [
   checkValidatorResult,
 ];
 
-export const courseIdValidator = [
-  param("courseId")
+export const putCourseVisibilityValidator = [
+  query("visibility")
     .notEmpty()
-    .withMessage("L'identifiant du cours est requis")
-    .isNumeric()
-    .withMessage("L'identifiant du cours doit être un nombre")
+    .withMessage("Une valeur est requise pour la visibilité du cours")
     .trim()
-    .escape(),
+    .escape()
+    .isBoolean()
+    .withMessage("Une valeur booleene est requise"),
   checkValidatorResult,
 ];

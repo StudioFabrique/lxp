@@ -38,6 +38,9 @@ const CourseInfos = () => {
   const currentTags = useSelector(
     (state: any) => state.courseInfos.course.tags
   ) as Tag[];
+  const [visibility, setVisibility] = useState<boolean | null>(
+    useSelector((state: any) => state.courseInfos.course.visibility)
+  );
   const isInitialRender = useRef(true);
 
   /**
@@ -145,6 +148,19 @@ const CourseInfos = () => {
               courseTitle={title}
               courseDescription={description}
             />
+          </div>
+          <div>
+            <div className="form-control w-52">
+              <label className="cursor-pointer label">
+                <span className="label-text">Visibilité</span>
+                <input
+                  type="checkbox"
+                  className="toggle toggle-primary"
+                  checked={visibility ? visibility : false}
+                  onChange={() => setVisibility((prevState) => !prevState)}
+                />
+              </label>
+            </div>
           </div>
         </Wrapper>
         <div className="flex flex-col gap-y-8">

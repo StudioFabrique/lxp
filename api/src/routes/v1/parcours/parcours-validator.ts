@@ -137,6 +137,15 @@ export const putParcoursContactsValidator = [
   checkValidatorResult,
 ];
 
+export const parcoursIdValidator = [
+  param("parcoursId")
+    .notEmpty()
+    .withMessage("L'identifiant du parcours est requis")
+    .isNumeric()
+    .withMessage("L'identifiant du parcours n'est pas requis"),
+  checkValidatorResult,
+];
+
 export const virtualClassValidator = [
   body("parcoursId")
     .isNumeric()
