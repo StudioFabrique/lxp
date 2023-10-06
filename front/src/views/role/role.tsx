@@ -28,7 +28,7 @@ const Role = () => {
   return (
     <div className="flex flex-col gap-y-5 p-10">
       <h2 className="text-2xl font-semibold">Roles</h2>
-      <RoleList roles={roles} />
+      <RoleList roles={roles} setRoles={setRoles} />
     </div>
   );
 };

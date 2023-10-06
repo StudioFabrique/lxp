@@ -9,6 +9,7 @@ import {
   deleteRoleValidator,
   getPermissionsValidator,
   postRoleValidator,
+  putRoleValidator,
 } from "./permission-validators";
 
 const permissionRouter = Router();
@@ -37,5 +38,7 @@ permissionRouter.delete(
   deleteRoleValidator,
   httpDeleteRole
 );
+
+permissionRouter.put("/role/:role", checkPermissions("role"), putRoleValidator);
 
 export default permissionRouter;

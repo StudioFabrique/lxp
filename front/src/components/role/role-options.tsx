@@ -5,11 +5,13 @@ import useHttp from "../../hooks/use-http";
 import LoadingIcon from "../UI/svg/loading-icon.component";
 import CopyIcon from "../UI/svg/copy-icon";
 import SuccessIcon from "../UI/svg/success-icon";
+import { IRoleItem } from "../../views/role/role";
 
 const RoleOptions: FC<{
   role: string;
+  setRoles: Dispatch<SetStateAction<IRoleItem[]>>;
   setIsRoleDeleted: Dispatch<SetStateAction<boolean>>;
-}> = ({ role, setIsRoleDeleted }) => {
+}> = ({ role, setRoles, setIsRoleDeleted }) => {
   const { sendRequest, isLoading } = useHttp();
 
   const [isVisible, setIsVisible] = useState<boolean>();
@@ -31,7 +33,10 @@ const RoleOptions: FC<{
   // Role copy request
   const handleSendCopyRequest = () => {
     const applyData = (data: any) => {
+      console.log(data.data);
+
       setIsCopySuccessful(true);
+      setRoles((roles) => [...roles, data.data]);
     };
 
     sendRequest(
@@ -40,9 +45,14 @@ const RoleOptions: FC<{
     );
   };
 
+  const handleVisible = () => {
+    setIsVisible(!isVisible);
+    setIsCopySuccessful(false);
+  };
+
   return (
     <div className="flex">
-      <span onClick={() => setIsVisible(!isVisible)} className="w-6 h-6">
+      <span onClick={handleVisible} className="w-6 h-6">
         <ThreeDotIcon />
       </span>
       <div
