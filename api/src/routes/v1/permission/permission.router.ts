@@ -11,6 +11,7 @@ import {
   postRoleValidator,
   putRoleValidator,
 } from "./permission-validators";
+import httpPutRole from "../../../controllers/permission/http-put-role";
 
 const permissionRouter = Router();
 
@@ -25,8 +26,9 @@ permissionRouter.get(
 // Obtenir la liste des rôles existants avec le nombre de permissions associés à chaque type d'actions (crud)
 permissionRouter.get("/", checkPermissions("role"), httpGetRoles);
 
+// Créer un rôle ou copier un rôle avec ses permissions
 permissionRouter.post(
-  "/role/",
+  "/role",
   checkPermissions("role"),
   postRoleValidator,
   httpPostRole
@@ -39,6 +41,11 @@ permissionRouter.delete(
   httpDeleteRole
 );
 
-permissionRouter.put("/role/:role", checkPermissions("role"), putRoleValidator);
+permissionRouter.put(
+  "/role/:id",
+  checkPermissions("role"),
+  putRoleValidator,
+  httpPutRole
+);
 
 export default permissionRouter;
