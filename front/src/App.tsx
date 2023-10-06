@@ -22,7 +22,7 @@ import CourseHome from "./views/course/course-home";
 import EditCourseHome from "./views/course/edit-course/edit-course-home";
 import AddCourse from "./views/course/add-course";
 import LayoutCourseEdit from "./views/course/edit-course/layout-edit-course";
-import Role from "./components/role/role";
+import Role from "./views/role/role";
 
 const router = createBrowserRouter([
   {
