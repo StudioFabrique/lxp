@@ -21,7 +21,7 @@ const RoleItem: FC<{
 
   useEffect(() => {
     if (isRoleDeleted) {
-      divRef.current!.className += " animate-ping";
+      divRef.current!.className += " animate-bounce";
       setTimeout(() => {
         divRef.current!.className += " hidden";
       }, 500);

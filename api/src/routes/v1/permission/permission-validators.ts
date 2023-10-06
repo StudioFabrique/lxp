@@ -35,7 +35,7 @@ export const deleteRoleValidator = [
 ];
 
 export const putRoleValidator = [
-  param("_id")
+  param("id")
     .isString()
     .withMessage("_id invalide")
     .notEmpty()
