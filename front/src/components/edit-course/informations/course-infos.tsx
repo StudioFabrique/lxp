@@ -104,7 +104,6 @@ const CourseInfos = () => {
     let timer: any;
     if (!isInitialRender.current) {
       timer = setTimeout(() => {
-        console.log("tags triggered");
         handleSubmitData(
           currentTags.map((tag) => tag.id),
           "tags"
@@ -124,7 +123,6 @@ const CourseInfos = () => {
     let timer: any;
     if (!isInitialRender.current) {
       timer = setTimeout(() => {
-        console.log("contatcts triggered");
         handleSubmitData(
           currentContacts.map((contact) => contact.id),
           "contacts"

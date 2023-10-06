@@ -19,7 +19,7 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
       title="Tags"
       loading={props.loading}
       initialList={props.initialList}
-      currentItems={props.currentItems}
+      selectedItems={props.currentItems}
       property={props.property}
       onSubmit={props.onSubmit}
     >

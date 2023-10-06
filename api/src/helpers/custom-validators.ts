@@ -2,12 +2,12 @@ import { body } from "express-validator";
 import { regexGeneric, regexOptionalGeneric } from "../utils/constantes";
 import { checkValidatorResult } from "../middleware/validators";
 
-export function titleValidate(value: string) {
-  return regexGeneric.test(value);
+export function stringValidateOptional(value: string) {
+  return regexOptionalGeneric.test(value);
 }
 
-export function descriptionValidateOptional(value: string) {
-  return regexOptionalGeneric.test(value);
+export function stringValidateGeneric(value: string) {
+  return regexGeneric.test(value);
 }
 
 export const idsArrayValidator = [

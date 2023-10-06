@@ -3,6 +3,7 @@ import { FC } from "react";
 type Props = {
   label: string;
   small?: boolean;
+  isDisabled?: boolean;
   outline?: boolean;
   onClickEvent: () => void;
 };
@@ -10,6 +11,7 @@ type Props = {
 const ButtonAdd: FC<Props> = ({
   label,
   small = false,
+  isDisabled = false,
   outline = false,
   onClickEvent,
 }) => {
@@ -23,7 +25,7 @@ const ButtonAdd: FC<Props> = ({
   };
 
   return (
-    <button className={setStyle()} onClick={onClickEvent}>
+    <button className={setStyle()} disabled={isDisabled} onClick={onClickEvent}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"

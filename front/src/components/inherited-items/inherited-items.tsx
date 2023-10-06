@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useMemo, useState } from "react";
 
 import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
 import ButtonAdd from "../UI/button-add/button-add";
@@ -10,7 +10,8 @@ interface InheritedItemsProps {
   title: string;
   loading: boolean;
   initialList: unknown[];
-  currentItems: unknown[];
+  selectedItems: unknown[];
+  isDisabled?: boolean;
   property: string; // propriété utilisée pour trier les listes
   onSubmit: (items: any[]) => void;
 }
@@ -19,8 +20,12 @@ const InheritedItems = (props: InheritedItemsProps) => {
   const handleCloseDrawer = (id: string) => {
     document.getElementById(id)?.click();
   };
-  const [currentItems, setCurrentItems] = useState<any[]>(props.currentItems);
+  const [currentItems, setCurrentItems] = useState<any[]>(props.selectedItems);
   const [notSelected, setNotSelected] = useState<any[]>([]);
+
+  const isDisabled = useMemo(() => {
+    return props.isDisabled !== undefined ? props.isDisabled : false;
+  }, [props.isDisabled]);
 
   /**
    * ajoute des éléments à la liste des éléments sélectionnés
@@ -79,14 +84,21 @@ const InheritedItems = (props: InheritedItemsProps) => {
         <ButtonAdd
           label="Ajouter"
           small={true}
+          isDisabled={isDisabled}
           onClickEvent={() => handleCloseDrawer(props.drawerId)}
         />
       </div>
       <div className="w-full flex flex-col gap-y-4">
-        {React.cloneElement(props.children[0] as React.ReactElement, {
-          list: currentItems,
-          onRemoveItem: handleRemoveItem,
-        })}
+        {currentItems.length ? (
+          <>
+            {React.cloneElement(props.children[0] as React.ReactElement, {
+              list: currentItems,
+              onRemoveItem: handleRemoveItem,
+            })}
+          </>
+        ) : (
+          <p>Aucun élément sélectionné</p>
+        )}
       </div>
       <RightSideDrawer
         title={props.drawerTitle}
@@ -96,14 +108,9 @@ const InheritedItems = (props: InheritedItemsProps) => {
       >
         {React.cloneElement(props.children[1] as React.ReactElement, {
           list: notSelected,
-          onAddItem: handleAddItem,
+          onAddItems: handleAddItem,
           onCloseDrawer: handleCloseDrawer,
         })}
-        {/*         <NotSelectedTags
-          list={notSelected}
-          onAddTag={handleAddItem}
-          onCloseDrawer={handleCloseDrawer}
-        /> */}
       </RightSideDrawer>
     </section>
   );

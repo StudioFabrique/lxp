@@ -9,6 +9,19 @@ async function getCourseObjectives(courseId: number) {
           objective: true,
         },
       },
+      module: {
+        select: {
+          parcours: {
+            select: {
+              parcours: {
+                select: {
+                  objectives: true,
+                },
+              },
+            },
+          },
+        },
+      },
     },
   });
 
@@ -17,7 +30,6 @@ async function getCourseObjectives(courseId: number) {
     (error as any).statusCode = 404;
     throw error;
   }
-  console.log(objectives.objectives);
 
   return objectives;
 }

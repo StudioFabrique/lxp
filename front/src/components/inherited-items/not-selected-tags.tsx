@@ -3,14 +3,14 @@ import TagItem from "../UI/tag-item/tag-item";
 
 interface NotSelectedTagsProps {
   list?: Tag[];
-  onAddItem?: (items: number[]) => void;
+  onAddItems?: (items: number[]) => void;
   onCloseDrawer?: (id: string) => void;
 }
 
 const NotSelectedTags = (props: NotSelectedTagsProps) => {
   const handleAddTag = (id: number) => {
     const ids = [id];
-    props.onAddItem!(ids);
+    props.onAddItems!(ids);
   };
 
   return (
