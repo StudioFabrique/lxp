@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Permission from "../../utils/interfaces/db/permission";
 import Role, { IRole } from "../../utils/interfaces/db/role";
+import { serverIssue } from "../../utils/constantes";
 
 /**
  * Supprime un rôle ainsi que toutes ses permissions
@@ -29,6 +30,6 @@ export default async function httpDeleteRole(req: Request, res: Response) {
   } catch (error) {
     console.log(error);
 
-    return res.status(500).json({ message: "Problème serveur" });
+    return res.status(500).json({ message: serverIssue });
   }
 }

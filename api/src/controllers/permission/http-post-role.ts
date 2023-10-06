@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { postRole } from "../../models/role/post-role";
 import getRole from "../../models/role/get-role";
+import { serverIssue } from "../../utils/constantes";
 
 export default async function httpPostRole(req: Request, res: Response) {
   try {
@@ -25,6 +26,6 @@ export default async function httpPostRole(req: Request, res: Response) {
   } catch (error) {
     console.log(error);
 
-    return res.status(500).json({ message: "Problème serveur" });
+    return res.status(500).json({ message: serverIssue });
   }
 }

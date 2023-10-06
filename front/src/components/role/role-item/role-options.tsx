@@ -1,11 +1,18 @@
-import { Dispatch, FC, SetStateAction, useState } from "react";
-import ThreeDotIcon from "../UI/svg/three-dot-icon.component";
-import DeleteIcon from "../UI/svg/delete-icon.component";
-import useHttp from "../../hooks/use-http";
-import LoadingIcon from "../UI/svg/loading-icon.component";
-import CopyIcon from "../UI/svg/copy-icon";
-import SuccessIcon from "../UI/svg/success-icon";
-import { IRoleItem } from "../../views/role/role";
+import {
+  Dispatch,
+  FC,
+  MouseEvent,
+  MouseEventHandler,
+  SetStateAction,
+  useState,
+} from "react";
+import ThreeDotIcon from "../../UI/svg/three-dot-icon.component";
+import DeleteIcon from "../../UI/svg/delete-icon.component";
+import useHttp from "../../../hooks/use-http";
+import LoadingIcon from "../../UI/svg/loading-icon.component";
+import CopyIcon from "../../UI/svg/copy-icon";
+import SuccessIcon from "../../UI/svg/success-icon";
+import { IRoleItem } from "../../../views/role/role";
 
 const RoleOptions: FC<{
   role: string;
@@ -45,18 +52,27 @@ const RoleOptions: FC<{
     );
   };
 
-  const handleVisible = () => {
+  const handleVisible: MouseEventHandler<HTMLSpanElement> = (
+    e: MouseEvent<HTMLSpanElement>
+  ) => {
+    e.stopPropagation();
     setIsVisible(!isVisible);
     setIsCopySuccessful(false);
   };
 
   return (
     <div className="flex">
-      <span onClick={handleVisible} className="w-6 h-6">
-        <ThreeDotIcon />
-      </span>
+      <button
+        type="button"
+        onClick={handleVisible}
+        className="btn btn-primary btn-sm w-8"
+      >
+        <span className="flex stroke-primary-content w-6 h-6">
+          <ThreeDotIcon />
+        </span>
+      </button>
       <div
-        className={`flex flex-col absolute translate-x-10 ${
+        className={`bg-primary p-2 px-1 flex flex-col absolute translate-x-14 rounded-lg stroke-primary-content ${
           isVisible ? "visible" : "invisible"
         }`}
       >
