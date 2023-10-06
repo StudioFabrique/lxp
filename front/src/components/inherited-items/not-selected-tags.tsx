@@ -2,18 +2,23 @@ import Tag from "../../utils/interfaces/tag";
 import TagItem from "../UI/tag-item/tag-item";
 
 interface NotSelectedTagsProps {
-  list: Tag[];
-  onAddTag: (tagId: number) => void;
-  onCloseDrawer: (id: string) => void;
+  list?: Tag[];
+  onAddItems?: (items: number[]) => void;
+  onCloseDrawer?: (id: string) => void;
 }
 
 const NotSelectedTags = (props: NotSelectedTagsProps) => {
+  const handleAddTag = (id: number) => {
+    const ids = [id];
+    props.onAddItems!(ids);
+  };
+
   return (
     <>
       {props.list && props.list.length > 0 ? (
         <ul className="w-[30rem] flex flex-wrap gap-2">
           {props.list.map((tag) => (
-            <div key={tag.id} onClick={() => props.onAddTag(tag.id)}>
+            <div key={tag.id} onClick={() => handleAddTag(tag.id)}>
               <TagItem tag={tag} noIcon={true} />
             </div>
           ))}
@@ -21,15 +26,6 @@ const NotSelectedTags = (props: NotSelectedTagsProps) => {
       ) : (
         <>
           <p>Tous les tags ont été sélectionnés</p>
-          <div className="divider" />
-          <div className="w-full flex justify-center">
-            <button
-              className="btn btn-primary"
-              onClick={() => props.onCloseDrawer("add-tags")}
-            >
-              Fermer
-            </button>
-          </div>
         </>
       )}
     </>

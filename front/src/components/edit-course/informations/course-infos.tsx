@@ -7,12 +7,15 @@ import { useDispatch } from "react-redux";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import CourseInfosForm from "./course-infos-form";
 import Contact from "../../../utils/interfaces/contact";
-import InheritedContacts from "../../inherited-items/inherited-contacts";
-import InheritedTags from "../../inherited-items/inherited-tags";
 import Tag from "../../../utils/interfaces/tag";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import { courseInfosAction } from "../../../store/redux-toolkit/course/course-infos";
 import useHttp from "../../../hooks/use-http";
+import VirtualClass from "../../virtual-class";
+import useInput from "../../../hooks/use-input";
+import { regexUrl } from "../../../utils/constantes";
+import TagsWithDrawer from "../../inherited-items/tags-with-drawer";
+import ContactsWithDrawer from "../../inherited-items/contacts-with-drawer";
 
 const CourseInfos = () => {
   const { courseId } = useParams();
@@ -38,7 +41,15 @@ const CourseInfos = () => {
   const currentTags = useSelector(
     (state: any) => state.courseInfos.course.tags
   ) as Tag[];
+  const visibility = useSelector(
+    (state: any) => state.courseInfos.course.visibility
+  ) as boolean;
   const isInitialRender = useRef(true);
+  const { value: virtualClass } = useInput(
+    (value) => regexUrl.test(value),
+    useSelector((state: any) => state.courseInfos.course.virtualClass as string)
+  );
+  const isInitialVirtual = useRef(true);
 
   /**
    * envoi une requête pour mettre à jour la liste des tags
@@ -93,7 +104,6 @@ const CourseInfos = () => {
     let timer: any;
     if (!isInitialRender.current) {
       timer = setTimeout(() => {
-        console.log("tags triggered");
         handleSubmitData(
           currentTags.map((tag) => tag.id),
           "tags"
@@ -113,7 +123,6 @@ const CourseInfos = () => {
     let timer: any;
     if (!isInitialRender.current) {
       timer = setTimeout(() => {
-        console.log("contatcts triggered");
         handleSubmitData(
           currentContacts.map((contact) => contact.id),
           "contacts"
@@ -125,6 +134,43 @@ const CourseInfos = () => {
     return () => clearTimeout(timer);
   }, [currentContacts, handleSubmitData]);
 
+  /**
+   * détecté un changement de valeur du champ virtualClass
+   * et met à jour le lien vers la classe virtuelle dans la bdd
+   */
+  useEffect(() => {
+    let timer: any;
+    if (!isInitialVirtual.current) {
+      const applyData = (data: any) => {
+        if (data.success) {
+          toast.success(data.message);
+          dispatch(courseInfosAction.setCourseVirtualClass(virtualClass.value));
+        }
+      };
+      timer = setTimeout(() => {
+        if (virtualClass.isValid) {
+          sendRequest(
+            {
+              path: `/course/virtual-class/${courseId}`,
+              method: "put",
+              body: { virtualClass: virtualClass.value },
+            },
+            applyData
+          );
+        }
+      }, autoSubmitTimer);
+    } else {
+      isInitialVirtual.current = false;
+    }
+    return () => clearTimeout(timer);
+  }, [
+    courseId,
+    dispatch,
+    sendRequest,
+    virtualClass.isValid,
+    virtualClass.value,
+  ]);
+
   // gère les erreurs HTTP
   useEffect(() => {
     if (error.length > 0) {
@@ -135,7 +181,7 @@ const CourseInfos = () => {
   }, [error]);
 
   return (
-    <div className="w-full">
+    <div className="w-full flex flex-col gap-y-8">
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-8">
         <Wrapper>
           <h2 className="text-xl font-bold">Informations</h2>
@@ -144,12 +190,13 @@ const CourseInfos = () => {
               courseId={+courseId!}
               courseTitle={title}
               courseDescription={description}
+              visibility={visibility}
             />
           </div>
         </Wrapper>
         <div className="flex flex-col gap-y-8">
           <Wrapper>
-            <InheritedContacts
+            <ContactsWithDrawer
               loading={loadingContacts}
               initialList={contacts}
               currentItems={currentContacts}
@@ -158,7 +205,7 @@ const CourseInfos = () => {
             />
           </Wrapper>
           <Wrapper>
-            <InheritedTags
+            <TagsWithDrawer
               loading={loadingTags}
               initialList={tags}
               currentItems={currentTags}
@@ -168,6 +215,9 @@ const CourseInfos = () => {
           </Wrapper>
         </div>
       </div>
+      <Wrapper>
+        <VirtualClass virtualClass={virtualClass} />
+      </Wrapper>
     </div>
   );
 };

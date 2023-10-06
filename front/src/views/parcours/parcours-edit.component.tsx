@@ -217,10 +217,7 @@ const EditParcours = () => {
    * @param id number
    */
   const handleUpdateStep = (id: number) => {
-    console.log(id);
     const errors = checkStep(id);
-    console.log({ errors });
-
     if (errors && errors.length !== 0) {
       validateStep(id, false);
       toast.error(Object.values(errors![0]).toString());
@@ -262,6 +259,10 @@ const EditParcours = () => {
     }
   };
 
+  /**
+   * actualise le stepper et affiche le composant précédent
+   * associé à l'étape précédente
+   */
   const handleRetour = () => {
     updateStep(actualStep.id - 1);
   };

@@ -8,7 +8,7 @@ import ImageHeader from "../../../components/image-header/image-header";
 import useHttp from "../../../hooks/use-http";
 import FadeWrapper from "../../../components/UI/fade-wrapper/fade-wrapper";
 import { courseInfosAction } from "../../../store/redux-toolkit/course/course-infos";
-import formatCourseFromHttp from "../../../helpers/format-course-from-http";
+import formatCourseFromHttp from "../../../helpers/course/course-infos-from-http";
 import Course from "../../../utils/interfaces/course";
 import Loader from "../../../components/UI/loader";
 
@@ -58,6 +58,9 @@ const LayoutCourseEdit = () => {
       },
       applyData
     );
+    return () => {
+      dispatch(courseInfosAction.resetCourse());
+    };
   }, [courseId, dispatch, sendRequest]);
 
   /**

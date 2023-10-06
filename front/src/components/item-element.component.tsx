@@ -16,6 +16,7 @@ const ItemElement = (props: ItemElementProps) => {
       <p className="capitalize flex-1">{props.item[props.property]}</p>
       <div
         className="w-4 h-4 cursor-pointer flex justify-end text-error"
+        aria-label="supprimer l'objet"
         onClick={handleRemoveItem}
       >
         <div>

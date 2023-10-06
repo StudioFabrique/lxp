@@ -1,4 +1,4 @@
-import { sortArray } from "../utils/sortArray";
+import { sortArray } from "../../utils/sortArray";
 
 /**
  * transforme un cours venant de la bdd en Objet Course pouvant être
@@ -6,7 +6,7 @@ import { sortArray } from "../utils/sortArray";
  * @param course any
  * @returns Course
  */
-export default function formatCourseFromHttp(course: any) {
+export default function courseInfosFromHttp(course: any) {
   let updatedData = {
     ...course,
     module: {
@@ -47,6 +47,21 @@ export default function formatCourseFromHttp(course: any) {
         },
       },
     };
+  } else {
+    const tmp = sortArray(
+      course.module.parcours[0].parcours.tags.map((item: any) => item.tag),
+      "name"
+    );
+    updatedData = {
+      ...updatedData,
+      module: {
+        ...updatedData.module,
+        parcours: {
+          ...updatedData.module.parcours,
+          tags: tmp,
+        },
+      },
+    };
   }
 
   if (!updatedData.tags) {
@@ -66,6 +81,8 @@ export default function formatCourseFromHttp(course: any) {
       contacts: updatedData.contacts.map((contact: any) => contact.contact),
     };
   }
+
+  //console.log({ updatedData });
 
   return updatedData;
 }

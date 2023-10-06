@@ -1,16 +1,15 @@
 import { useCallback, useMemo } from "react";
-
-import Contact from "../../utils/interfaces/contact";
-import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
+import Objective from "../../utils/interfaces/objective";
+import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
 
-interface NotSelectedContactsProps {
-  list?: Contact[];
-  onAddItems?: (contactsIds: number[]) => void;
+interface NotSelectedObjectivesProps {
+  list?: Objective[];
+  onAddItems?: (ids: number[]) => void;
   onCloseDrawer?: (id: string) => void;
 }
 
-const NotSelectedContacts = (props: NotSelectedContactsProps) => {
+const NotSelectedObjectives = (props: NotSelectedObjectivesProps) => {
   const {
     allChecked,
     list,
@@ -44,29 +43,14 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
             <th
               className="cursor-pointer"
               onClick={() => {
-                sortData("name");
+                sortData("description");
               }}
             >
               <div className="flex items-center gap-x-2">
-                <p>Nom</p>
+                <p>Description</p>
                 <SortColumnIcon
                   fieldSort={fieldSort}
-                  column="name"
-                  direction={direction}
-                />
-              </div>
-            </th>
-            <th
-              className="cursor-pointer"
-              onClick={() => {
-                sortData("role");
-              }}
-            >
-              <div className="flex items-center gap-x-2">
-                <p>Role</p>
-                <SortColumnIcon
-                  fieldSort={fieldSort}
-                  column="role"
+                  column="description"
                   direction={direction}
                 />
               </div>
@@ -90,8 +74,7 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
                     onChange={() => handleRowCheck(item.id)}
                   />
                 </td>
-                <td>{item.name}</td>
-                <td>{item.role}</td>
+                <td>{item.description}</td>
               </tr>
             ))}
         </tbody>
@@ -107,13 +90,13 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
     sortData,
   ]);
 
-  const handleAddContacts = () => {
+  const handleAddItems = () => {
     if (list) {
-      const contacts = list
+      const items = list
         .filter((item) => item.isSelected)
         .map((item) => item.id);
-      props.onAddItems!(contacts);
-      props.onCloseDrawer!("add-contacts");
+      props.onAddItems!(items);
+      props.onCloseDrawer!("add-objectives");
     }
   };
 
@@ -123,16 +106,16 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
         <>
           {table}
           <div className="w-full flex justify-end mt-4">
-            <button className="btn btn-primary" onClick={handleAddContacts}>
+            <button className="btn btn-primary" onClick={handleAddItems}>
               Ajouter
             </button>
           </div>
         </>
       ) : (
-        <p>Tous les contacts ont déja été ajoutés</p>
+        <p>Tous les objectifs ont déja été ajoutés</p>
       )}
     </>
   );
 };
 
-export default NotSelectedContacts;
+export default NotSelectedObjectives;

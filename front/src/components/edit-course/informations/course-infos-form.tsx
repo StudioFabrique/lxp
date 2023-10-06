@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 
@@ -12,6 +12,7 @@ interface CourseInfosFormProps {
   courseId: number;
   courseTitle: string;
   courseDescription?: string;
+  visibility: boolean;
 }
 
 const CourseInfosForm = (props: CourseInfosFormProps) => {
@@ -24,6 +25,9 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
   const { value: description } = useInput(
     (value) => regexOptionalGeneric.test(value),
     props.courseDescription
+  );
+  const [visibility, setVisibility] = useState<boolean | null>(
+    props.visibility
   );
   const isInitialRender = useRef(true);
 
@@ -69,6 +73,7 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
             id: props.courseId,
             title: title.value,
             description: description.value,
+            visibility,
           },
         },
         applyData
@@ -82,6 +87,7 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
     sendRequest,
     formIsValid,
     props.courseId,
+    visibility,
   ]);
 
   /**
@@ -127,7 +133,7 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
             defaultValue={title.value}
             onChange={title.valueChangeHandler}
             onBlur={title.valueBlurHandler}
-            placeholder="Exemple: CDA - Promo 2023"
+            placeholder="Exemple: Apprendre le HTML"
           />
         </div>
 
@@ -149,6 +155,19 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
             onChange={description.textAreaChangeHandler}
             onBlur={description.valueBlurHandler}
           />
+        </div>
+
+        <div className="form-control w-fit">
+          <label className="flex gap-x-4 cursor-pointer items-center label">
+            <span className="font-bold">Visibilité</span>
+            <input
+              type="checkbox"
+              className="toggle toggle-primary"
+              checked={visibility ? visibility : false}
+              onChange={() => setVisibility((prevState) => !prevState)}
+            />
+            <p className="text-sm">{visibility ? "Visible" : "Caché"}</p>
+          </label>
         </div>
       </form>
     </>
