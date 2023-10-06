@@ -4,6 +4,7 @@ import DeleteIcon from "../UI/svg/delete-icon.component";
 import useHttp from "../../hooks/use-http";
 import LoadingIcon from "../UI/svg/loading-icon.component";
 import CopyIcon from "../UI/svg/copy-icon";
+import SuccessIcon from "../UI/svg/success-icon";
 
 const RoleOptions: FC<{
   role: string;
@@ -12,9 +13,9 @@ const RoleOptions: FC<{
   const { sendRequest, isLoading } = useHttp();
 
   const [isVisible, setIsVisible] = useState<boolean>();
+  const [isCopySuccessful, setIsCopySuccessful] = useState<boolean>();
 
-  // delete request
-
+  // Role deletion request
   const handleSendDeletionRequest = () => {
     const applyData = (data: any) => {
       setIsVisible(false);
@@ -23,6 +24,18 @@ const RoleOptions: FC<{
 
     sendRequest(
       { path: `/permission/role/${role}`, method: "delete" },
+      applyData
+    );
+  };
+
+  // Role copy request
+  const handleSendCopyRequest = () => {
+    const applyData = (data: any) => {
+      setIsCopySuccessful(true);
+    };
+
+    sendRequest(
+      { path: `/permission/role`, method: "post", body: { role: role } },
       applyData
     );
   };
@@ -37,15 +50,26 @@ const RoleOptions: FC<{
           isVisible ? "visible" : "invisible"
         }`}
       >
-        <span
-          onClick={handleSendDeletionRequest}
-          className={`w-6 h-6 ${isLoading ? "animate-spin" : ""}`}
-        >
-          {isLoading ? <LoadingIcon /> : <DeleteIcon />}
-        </span>
-        <span className="w-6 h-6">
-          <CopyIcon />
-        </span>
+        {isLoading ? (
+          <span className="animate-spin">
+            <LoadingIcon />
+          </span>
+        ) : (
+          <>
+            <span onClick={handleSendDeletionRequest} className="w-6 h-6">
+              <DeleteIcon />
+            </span>
+            {isCopySuccessful ? (
+              <span className="w-6 h-6">
+                <SuccessIcon />
+              </span>
+            ) : (
+              <span onClick={handleSendCopyRequest} className="w-6 h-6">
+                <CopyIcon />
+              </span>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

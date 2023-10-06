@@ -1,17 +1,27 @@
 import { Request, Response } from "express";
 import Permission from "../../utils/interfaces/db/permission";
-import Role from "../../utils/interfaces/db/role";
+import Role, { IRole } from "../../utils/interfaces/db/role";
 
 /**
  * Supprime un rôle ainsi que toutes ses permissions
  */
 export default async function httpDeleteRole(req: Request, res: Response) {
   try {
-    const role: string = req.params.role;
+    const roleToDelete: string = req.params.role;
 
-    await Permission.deleteMany({ role: role });
+    const roles: IRole[] = res.locals.roles; // récupérer le rôle défini dans le middleware précédent
 
-    await Role.deleteMany({ role: role });
+    // empêcher un utilisateur de supprimer son propre rôle
+    for (const role of roles) {
+      if (role.role === roleToDelete)
+        return res
+          .status(400)
+          .json({ message: "Impossible de supprimer son propre rôle" });
+    }
+
+    await Permission.deleteMany({ role: roleToDelete });
+
+    await Role.deleteMany({ role: roleToDelete });
 
     return res
       .status(200)

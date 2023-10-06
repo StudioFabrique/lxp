@@ -63,11 +63,9 @@ export default function checkPermissions(
         return res.status(403).json({ message: noAccess });
       }
 
-      console.log("les données :");
-
-      console.log(data);
-
       const rolesToCheck: Array<IRole> = data.userRoles;
+
+      res.locals.roles = rolesToCheck;
 
       let isRolesCorrect: boolean = false;
 
