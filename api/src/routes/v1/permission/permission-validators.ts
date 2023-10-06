@@ -8,6 +8,7 @@ export const getPermissionsValidator = [
     .notEmpty()
     .withMessage("Role absent")
     .escape(),
+
   checkValidatorResult,
 ];
 
@@ -18,6 +19,7 @@ export const postRoleValidator = [
     .notEmpty()
     .withMessage("Role absent")
     .escape(),
+
   checkValidatorResult,
 ];
 
@@ -28,5 +30,24 @@ export const deleteRoleValidator = [
     .notEmpty()
     .withMessage("Role absent")
     .escape(),
+
+  checkValidatorResult,
+];
+
+export const putRoleValidator = [
+  param("_id")
+    .isString()
+    .withMessage("_id invalide")
+    .notEmpty()
+    .withMessage("_id absent")
+    .escape(),
+
+  body("role")
+    .isString()
+    .withMessage("Role invalide")
+    .notEmpty()
+    .withMessage("Role absent")
+    .escape(),
+
   checkValidatorResult,
 ];
