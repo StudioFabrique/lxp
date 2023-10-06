@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 
 import { noAccess, serverIssue } from "../../utils/constantes";
 import deleteParcoursById from "../../models/parcours/delete-parcours-by-id";

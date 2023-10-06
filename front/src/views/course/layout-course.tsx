@@ -15,8 +15,8 @@ const LayoutCourse = () => {
 
   return (
     <CanAccessPage action="read" subject="course">
-      <div className="flex gap-2 p-2">
-        <nav className="w-fit h-fit">
+      <div className="w-screen flex gap-2 p-2">
+        <nav className="w-fit h-fit fixed">
           <Wrapper>
             <ul className="text-primary flex flex-col gap-y-4">
               <li>
@@ -73,7 +73,9 @@ const LayoutCourse = () => {
             </ul>
           </Wrapper>
         </nav>
-        <Outlet />
+        <div className="w-full min-h-screen pl-12">
+          <Outlet />
+        </div>
       </div>
     </CanAccessPage>
   );
