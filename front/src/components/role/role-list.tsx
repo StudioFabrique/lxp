@@ -1,5 +1,5 @@
 import { Dispatch, FC, SetStateAction } from "react";
-import RoleItem from "./role-item";
+import RoleItem from "./role-item/role-item";
 import { IRoleItem } from "../../views/role/role";
 
 const RoleList: FC<{
@@ -7,7 +7,7 @@ const RoleList: FC<{
   setRoles: Dispatch<SetStateAction<IRoleItem[]>>;
 }> = ({ roles, setRoles }) => {
   return (
-    <div className="flex flex-wrap gap-10">
+    <div className="flex flex-wrap gap-14">
       {roles.length > 0 ? (
         roles.map((role) => (
           <RoleItem key={role._id} role={role} setRoles={setRoles} />

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Permission from "../../utils/interfaces/db/permission";
 import Role, { IRole } from "../../utils/interfaces/db/role";
+import { serverIssue } from "../../utils/constantes";
 
 /**
  * Mets à jour le nom d'un rôle ainsi que toutes ses permissions
@@ -21,6 +22,6 @@ export default async function httpPutRole(req: Request, res: Response) {
   } catch (error) {
     console.log(error);
 
-    return res.status(500).json({ message: "Problème serveur" });
+    return res.status(500).json({ message: serverIssue });
   }
 }
