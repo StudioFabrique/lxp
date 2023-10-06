@@ -19,7 +19,7 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
       title="Contacts et Ressources"
       loading={props.loading}
       initialList={props.initialList}
-      currentItems={props.currentItems}
+      selectedItems={props.currentItems}
       property={props.property}
       onSubmit={props.onSubmit}
     >

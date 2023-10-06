@@ -6,6 +6,7 @@ import {
   courseIdValidator,
   postCourseValidator,
   putCourseInformationsValidator,
+  putCourseNewObjectiveValidator,
 } from "./course-validators";
 import httpGetCourses from "../../../controllers/course/http-get-courses";
 import httpGetCourseInformations from "../../../controllers/course/http-get-course-informations";
@@ -22,6 +23,8 @@ import httpPutCourseContacts from "../../../controllers/course/http-put-course-c
 import checkPermissions from "../../../middleware/check-permissions";
 import httpPutCourseVirtualClass from "../../../controllers/course/http-put-course-virtual-class";
 import httpGetCourseObjectives from "../../../controllers/course/http-get-course-objectives";
+import httpPutCourseObjectives from "../../../controllers/course/http-put-course-objectives";
+import httpPutCourseNewObjective from "../../../controllers/course/http-put-course-new-objective";
 
 const courseRouter = express.Router();
 
@@ -62,7 +65,6 @@ courseRouter.get(
   "/infos/:courseId",
   courseIdValidator,
   checkPermissions("course"),
-  courseIdValidator,
   httpGetCourseInformations
 );
 
@@ -116,6 +118,24 @@ courseRouter.get(
   checkToken,
   courseIdValidator,
   httpGetCourseObjectives
+);
+
+// met les objectifs du cours à jour dans la bdd
+courseRouter.put(
+  "/objectives/:courseId",
+  checkToken,
+  courseIdValidator,
+  idsArrayValidator,
+  httpPutCourseObjectives
+);
+
+// enregistre un nouvel objectif et l'associe à un parcours puis à un cours
+courseRouter.put(
+  "/new-objective/:courseId",
+  checkToken,
+  courseIdValidator,
+  putCourseNewObjectiveValidator,
+  httpPutCourseNewObjective
 );
 
 export default courseRouter;

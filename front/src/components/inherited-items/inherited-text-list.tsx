@@ -3,7 +3,9 @@ import ItemElement from "../item-element.component";
 
 interface InheritedTextListProps {
   list?: any[];
+  property?: string;
   onRemoveItem?: (item: any) => void;
+  onDelete?: (id: number) => void;
 }
 
 const InheritedTextList = (props: InheritedTextListProps) => {
@@ -20,7 +22,7 @@ const InheritedTextList = (props: InheritedTextListProps) => {
               <ItemElement
                 item={item}
                 onRemoveItem={() => handleRemoveItem(item)}
-                property="name"
+                property={props.property! ?? "name"}
               />
             </SubWrapper>
           </li>

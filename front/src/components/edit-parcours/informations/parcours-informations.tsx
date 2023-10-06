@@ -215,9 +215,8 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
               label="Dates de parcours"
               onSubmitDates={submitDates}
             />
+            <VirtualClass virtualClass={virtualClass} />
           </div>
-
-          <VirtualClass virtualClass={virtualClass} />
         </Wrapper>
         <div className="flex flex-col gap-y-8">
           {contacts ? (
