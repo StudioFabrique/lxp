@@ -1,11 +1,22 @@
 import { useSelector } from "react-redux";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import TypeScenario from "./type-scenario";
+import {
+  branchingScenario,
+  linearScenario,
+} from "../../../config/scenario-description";
+import { useDispatch } from "react-redux";
+import { courseScenarioActions } from "../../../store/redux-toolkit/course/course-scenario";
 
 const CourseScenario = () => {
+  const dispatch = useDispatch();
   const scenario = useSelector(
     (state: any) => state.courseScenario.scenario
   ) as boolean;
+
+  const handleChangeScenario = () => {
+    dispatch(courseScenarioActions.setScenario(!scenario));
+  };
 
   return (
     <div className="w-full flex flex-col gap-y-8">
@@ -17,8 +28,15 @@ const CourseScenario = () => {
             <TypeScenario
               scenario={scenario}
               label="Scénario Linéaire (par défaut)"
+              description={linearScenario}
+              onChangeScenario={handleChangeScenario}
             />
-            <p>tata</p>
+            <TypeScenario
+              scenario={!scenario}
+              label="Scénario à embranchements"
+              description={branchingScenario}
+              onChangeScenario={handleChangeScenario}
+            />
           </span>
         </div>
       </Wrapper>
