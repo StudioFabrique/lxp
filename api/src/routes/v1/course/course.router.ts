@@ -25,6 +25,8 @@ import httpPutCourseVirtualClass from "../../../controllers/course/http-put-cour
 import httpGetCourseObjectives from "../../../controllers/course/http-get-course-objectives";
 import httpPutCourseObjectives from "../../../controllers/course/http-put-course-objectives";
 import httpPutCourseNewObjective from "../../../controllers/course/http-put-course-new-objective";
+import httpGetCourseSkills from "../../../controllers/course/http-get-course-skills";
+import httpPutCourseBonusSkills from "../../../controllers/course/http-put-course-bonus-skills";
 
 const courseRouter = express.Router();
 
@@ -136,6 +138,23 @@ courseRouter.put(
   courseIdValidator,
   putCourseNewObjectiveValidator,
   httpPutCourseNewObjective
+);
+
+// retourne la liste des compétences associés à un cours et au module auquel le cours est rattaché
+courseRouter.get(
+  "/bonus-skills/:courseId",
+  checkToken,
+  courseIdValidator,
+  httpGetCourseSkills
+);
+
+// met la liste des compétences du cours à jour dans la bdd
+courseRouter.put(
+  "/bonus-skills/:courseId",
+  checkToken,
+  courseIdValidator,
+  idsArrayValidator,
+  httpPutCourseBonusSkills
 );
 
 export default courseRouter;
