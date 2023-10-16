@@ -32,8 +32,6 @@ const InheritedItems = (props: InheritedItemsProps) => {
    * @param contactsIds string[]
    */
   const handleAddItem = (ids: number[]) => {
-    console.log(ids);
-
     let updatedItems = Array<any>();
     ids.forEach((item: any) => {
       const foundItem = props.initialList.find(

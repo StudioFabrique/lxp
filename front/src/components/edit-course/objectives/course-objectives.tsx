@@ -71,24 +71,6 @@ const CourseObjectives = () => {
   };
 
   /**
-   * retourne la liste des objectives du parcours et du cours
-   * mis au propre grâce à la fonction courseObjecitvsFromHttp
-   */
-  useEffect(() => {
-    const applyData = (data: any) => {
-      dispatch(
-        courseObjectivesActions.initData(courseObjectivesFromHttp(data))
-      );
-    };
-    sendRequest(
-      {
-        path: `/course/objectives/${courseId}`,
-      },
-      applyData
-    );
-  }, [courseId, dispatch, sendRequest]);
-
-  /**
    * détecte les changements dans la liste des objectifs associés
    * au parcours et les met à jour dans la bdd
    */
@@ -97,7 +79,7 @@ const CourseObjectives = () => {
     let timer: any;
     if (!isInitialRender.current) {
       timer = setTimeout(() => {
-        const applyData = (data: any) => {
+        const applyData = (_data: any) => {
           setLoading(false);
         };
         sendRequest(
@@ -114,6 +96,24 @@ const CourseObjectives = () => {
     }
     return () => clearTimeout(timer);
   }, [courseObjectives, courseId, sendRequest]);
+
+  /**
+   * retourne la liste des objectives du parcours et du cours
+   * mis au propre grâce à la fonction courseObjecitvsFromHttp
+   */
+  useEffect(() => {
+    const applyData = (data: any) => {
+      dispatch(
+        courseObjectivesActions.initData(courseObjectivesFromHttp(data))
+      );
+    };
+    sendRequest(
+      {
+        path: `/course/objectives/${courseId}`,
+      },
+      applyData
+    );
+  }, [courseId, dispatch, sendRequest]);
 
   // gestion des erreurs HTTP
   useEffect(() => {

@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Objective from "../../../utils/interfaces/objective";
 import ObjectiveItem from "./objective-item";
@@ -9,13 +9,14 @@ import useHttp from "../../../hooks/use-http";
 import { parcoursObjectivesAction } from "../../../store/redux-toolkit/parcours/parcours-objectives";
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
 import FormObjective from "./form-objective";
+import toast from "react-hot-toast";
 
 const ObjectivesList = () => {
   const objectivesList = useSelector(
     (state: any) => state.parcoursObjectives.objectives
   );
   const parcoursId = useSelector((state: any) => state.parcours.id);
-  const { sendRequest } = useHttp();
+  const { sendRequest, error } = useHttp();
   const dispatch = useDispatch();
   const [itemToUpdate, setItemToUpdate] = useState<Objective | null>(null);
 
@@ -111,6 +112,12 @@ const ObjectivesList = () => {
 
     handleReorderObjectives(reorderedObjectives.map((item: any) => item.id));
   };
+
+  useEffect(() => {
+    if (error.length > 0) {
+      toast.error(error);
+    }
+  }, [error]);
 
   return (
     <>
