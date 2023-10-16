@@ -3,6 +3,7 @@ import useHttp from "../../hooks/use-http";
 import RolesList from "../../components/role/roles-list/roles-list";
 import RoleCreateForm from "../../components/role/role-form/role-form";
 import { Toaster } from "react-hot-toast";
+import PermissionsList from "../../components/role/permissions-list/permissions-list";
 
 export interface IRoleItem {
   _id: string;
@@ -44,6 +45,7 @@ const Role = () => {
             <RolesList roles={roles} setRoles={setRoles} />
           </div>
         </div>
+        <PermissionsList roles={roles} />
       </div>
     </>
   );
