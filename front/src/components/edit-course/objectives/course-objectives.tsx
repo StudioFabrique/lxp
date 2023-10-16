@@ -37,6 +37,7 @@ const CourseObjectives = () => {
    * @param data Objective[]
    */
   const handleUpdateObjectives = (data: Objective[]) => {
+    isInitialRender.current = false;
     dispatch(courseObjectivesActions.setCourseObjectives(data));
   };
 
@@ -72,7 +73,7 @@ const CourseObjectives = () => {
 
   /**
    * détecte les changements dans la liste des objectifs associés
-   * au parcours et les met à jour dans la bdd
+   * au cours et les met à jour dans la bdd
    */
   useEffect(() => {
     setLoading(true);
@@ -92,7 +93,6 @@ const CourseObjectives = () => {
         );
       }, autoSubmitTimer);
     } else {
-      isInitialRender.current = false;
     }
     return () => clearTimeout(timer);
   }, [courseObjectives, courseId, sendRequest]);
