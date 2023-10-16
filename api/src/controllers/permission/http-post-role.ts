@@ -7,10 +7,10 @@ export default async function httpPostRole(req: Request, res: Response) {
   try {
     const { role, rank }: { role: string; rank: number } = req.body;
 
-    if (role.substring(role.length - 6) === "_clone")
+    /* if (role.substring(role.length - 6) === "_clone")
       return res
         .status(400)
-        .json({ message: "Veuillez modifier le nom du role d'abord" });
+        .json({ message: "Veuillez modifier le nom du role d'abord" }); */
 
     const createdRole = await postRole(role, rank);
 
