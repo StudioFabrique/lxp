@@ -9,13 +9,14 @@ const RolesList: FC<{
 }> = ({ roles, setRoles }) => {
   return (
     <Wrapper>
+      <h2 className="font-bold">Gestion des rôles</h2>
       {roles.length > 0 ? (
-        <table className="table">
-          <thead>
-            <tr>
+        <table className="table grid">
+          <thead className="">
+            <tr className="grid grid-cols-10">
               <th></th>
               <th>Rôle</th>
-              <th>Permissions</th>
+              <th className="col-span-2">Permissions</th>
               <th>C</th>
               <th>R</th>
               <th>U</th>
@@ -24,7 +25,7 @@ const RolesList: FC<{
               <th></th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="h-[14em] overflow-y-auto">
             {roles.map((role) => (
               <RoleItem key={role._id} role={role} setRoles={setRoles} />
             ))}
