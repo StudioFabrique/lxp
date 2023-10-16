@@ -3,7 +3,7 @@ import Role, { IRole } from "../../utils/interfaces/db/role";
 
 export async function postRole(role: string, rank?: number) {
   try {
-    const isCloneExist = await Role.findOne({ role: `${role}_clone` });
+    /* const isCloneExist = await Role.findOne({ role: `${role}_clone` });
 
     if (isCloneExist) return null;
 
@@ -25,7 +25,11 @@ export async function postRole(role: string, rank?: number) {
       await _buildPermissions(roleCreated.role, existingPermissions);
 
       return roleCreated;
-    }
+    } */
+
+    const existingRole = await Role.findOne({ role: role });
+
+    if (!!existingRole) return null;
 
     const roleCreated = await Role.create({
       role,
