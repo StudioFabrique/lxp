@@ -1,15 +1,16 @@
 import { useParams } from "react-router-dom";
-import useHttp from "../../../hooks/use-http";
 import { useDispatch } from "react-redux";
 import { useEffect, useRef, useState } from "react";
-import courseSkillsFromHttp from "../../../helpers/course/course-skills-from-http";
 import { useSelector } from "react-redux";
-import Skill from "../../../utils/interfaces/skill";
-import { courseSkillsActiions } from "../../../store/redux-toolkit/course/course-skills";
 import toast from "react-hot-toast";
+
+import useHttp from "../../../hooks/use-http";
+import courseSkillsFromHttp from "../../../helpers/course/course-skills-from-http";
+import Skill from "../../../utils/interfaces/skill";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import SkillsWithDrawer from "./skills-with-drawer";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
+import { courseSkillsActions } from "../../../store/redux-toolkit/course/course-skills";
 
 const CourseSkills = () => {
   const { courseId } = useParams();
@@ -30,7 +31,7 @@ const CourseSkills = () => {
    */
   const handleUpdateSkills = (data: Skill[]) => {
     isInitialRender.current = false;
-    dispatch(courseSkillsActiions.setCourseSkills(data));
+    dispatch(courseSkillsActions.setCourseSkills(data));
   };
 
   /**
@@ -64,7 +65,7 @@ const CourseSkills = () => {
    */
   useEffect(() => {
     const applyData = (data: any) => {
-      dispatch(courseSkillsActiions.initData(courseSkillsFromHttp(data)));
+      dispatch(courseSkillsActions.initData(courseSkillsFromHttp(data)));
     };
     sendRequest(
       {

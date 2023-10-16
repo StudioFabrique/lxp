@@ -6,6 +6,7 @@ import CourseObjectives from "../../../components/edit-course/objectives/course-
 import { stepsCourse } from "../../../config/steps/steps-course";
 import useSteps from "../../../hooks/use-steps";
 import CourseSkills from "../../../components/edit-course/skills/course-skills";
+import CourseScenario from "../../../components/edit-course/scenario/course-scenario";
 
 const EditCourseHome = () => {
   const { actualStep, finalStep, stepsList, updateStep, validateStep } =
@@ -44,6 +45,7 @@ const EditCourseHome = () => {
         {actualStep.id === 1 ? <CourseInfos /> : null}
         {actualStep.id === 2 ? <CourseObjectives /> : null}
         {actualStep.id === 3 ? <CourseSkills /> : null}
+        {actualStep.id === 4 ? <CourseScenario /> : null}
       </div>
       <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">
         {actualStep.id === 1 ? (

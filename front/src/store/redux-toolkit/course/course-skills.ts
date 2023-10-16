@@ -27,6 +27,6 @@ const courseSkillsSlice = createSlice({
   },
 });
 
-export const courseSkillsActiions = courseSkillsSlice.actions;
+export const courseSkillsActions = courseSkillsSlice.actions;
 
 export default courseSkillsSlice;
