@@ -1,4 +1,5 @@
 import Objective from "../../../utils/interfaces/objective";
+import { sortArray } from "../../../utils/sortArray";
 import InheritedItems from "../../inherited-items/inherited-items";
 import InheritedTextList from "../../inherited-items/inherited-text-list";
 import NotSelectedObjectives from "../../inherited-items/not-selected-objtives";
@@ -19,7 +20,7 @@ const ObjectivesWithDrawer = (props: ObjectivesWithDrawerProps) => {
       drawerTitle="Ajouter des Objectifs"
       title="Objectifs"
       loading={props.loading}
-      initialList={props.initialList}
+      initialList={sortArray(props.initialList, "createdAt", false)}
       selectedItems={props.currentItems}
       isDisabled={props.isDisabled}
       property={props.property}
