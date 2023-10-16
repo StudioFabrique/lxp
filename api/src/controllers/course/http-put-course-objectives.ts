@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 import putCourseObjectives from "../../models/course/put-course-objectives";
 
 async function httpPutCourseObjectives(req: Request, res: Response) {
