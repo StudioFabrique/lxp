@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import Parcours from "../../utils/interfaces/parcours";
@@ -381,12 +381,17 @@ const EditParcours = () => {
                 Etape suivante
               </button>
             ) : (
-              <button
-                className="btn btn-primary"
-                onClick={handlePublishParcours}
-              >
-                Publier
-              </button>
+              <div className="flex gap-x-4 items-center">
+                <Link className="btn btn-secondary" to="..">
+                  Enregistrer le brouillon
+                </Link>
+                <button
+                  className="btn btn-primary"
+                  onClick={handlePublishParcours}
+                >
+                  Publier
+                </button>
+              </div>
             )}
           </div>
         </FadeWrapper>

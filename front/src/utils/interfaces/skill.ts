@@ -5,4 +5,5 @@ export default interface Skill {
   createdAt?: string;
   updatedAt?: string;
   isBonus?: boolean;
+  isSelected?: boolean;
 }

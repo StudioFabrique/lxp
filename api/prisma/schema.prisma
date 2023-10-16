@@ -103,6 +103,7 @@ model BonusSkill {
   parcours    Parcours              @relation(fields: [parcoursId], references: [id])
   modules     BonusSkillsOnModule[]
   parcoursId  Int
+  courses     BonusSkillOnCourse[]
 }
 
 model Admin {
@@ -148,6 +149,7 @@ model Course {
   tags         TagsOnCourse[]
   contacts     ContactsOnCourse[]
   objectives   ObjectivesOnCourse[]
+  bonusSkills  BonusSkillOnCourse[]
 }
 
 model Objective {
@@ -266,4 +268,13 @@ model ObjectivesOnCourse {
   courseId    Int
 
   @@id([objectiveId, courseId])
+}
+
+model BonusSkillOnCourse {
+  bonusSkill   BonusSkill @relation(fields: [bonusSkillId], references: [id])
+  bonusSkillId Int
+  course       Course     @relation(fields: [courseId], references: [id])
+  courseId     Int
+
+  @@id([bonusSkillId, courseId])
 }

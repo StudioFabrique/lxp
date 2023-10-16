@@ -16,6 +16,7 @@ import useInput from "../../../hooks/use-input";
 import { regexUrl } from "../../../utils/constantes";
 import TagsWithDrawer from "../../inherited-items/tags-with-drawer";
 import ContactsWithDrawer from "../../inherited-items/contacts-with-drawer";
+import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
 
 const CourseInfos = () => {
   const { courseId } = useParams();
@@ -23,6 +24,9 @@ const CourseInfos = () => {
   const { sendRequest, error } = useHttp();
   const [loadingTags, setLoadingTags] = useState(false);
   const [loadingContacts, setLoadingContacts] = useState(false);
+  const moduleTitle = useSelector(
+    (state: any) => state.courseInfos.course.module.title
+  ) as string;
   const title = useSelector(
     (state: any) => state.courseInfos.course.title
   ) as string;
@@ -186,6 +190,12 @@ const CourseInfos = () => {
         <Wrapper>
           <h2 className="text-xl font-bold">Informations</h2>
           <div className="flex flex-col gap-y-8">
+            <span className="flex flex-col gap-y-4">
+              <h2 className="font-bold">Titre du module</h2>
+              <SubWrapper>
+                <p>{moduleTitle}</p>
+              </SubWrapper>
+            </span>
             <CourseInfosForm
               courseId={+courseId!}
               courseTitle={title}

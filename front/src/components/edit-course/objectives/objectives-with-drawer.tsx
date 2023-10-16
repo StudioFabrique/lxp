@@ -2,7 +2,7 @@ import Objective from "../../../utils/interfaces/objective";
 import { sortArray } from "../../../utils/sortArray";
 import InheritedItems from "../../inherited-items/inherited-items";
 import InheritedTextList from "../../inherited-items/inherited-text-list";
-import NotSelectedObjectives from "../../inherited-items/not-selected-objtives";
+import NotSelectedObjectives from "../../inherited-items/not-selected-objectives";
 
 interface ObjectivesWithDrawerProps {
   loading: boolean;
