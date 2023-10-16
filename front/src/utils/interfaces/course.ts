@@ -1,4 +1,5 @@
 import Contact from "./contact";
+import Lesson from "./lesson";
 import Module from "./module";
 import Tag from "./tag";
 
@@ -15,4 +16,6 @@ export default interface Course {
   visibility?: boolean;
   image?: string;
   contacts: Contact[];
+  scenario?: boolean;
+  lessons: Lesson[];
 }
