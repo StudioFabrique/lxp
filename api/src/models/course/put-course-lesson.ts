@@ -17,6 +17,16 @@ async function putCourseLesson(courseId: number, lessonData: any) {
   const transaction = await prisma.$transaction(async (tx) => {
     newLesson = await prisma.lesson.create({
       data: lessonData,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        modalite: true,
+        createdAt: true,
+        updatedAt: true,
+        tag: true,
+        tagId: true,
+      },
     });
     await tx.course.update({
       where: { id: courseId },

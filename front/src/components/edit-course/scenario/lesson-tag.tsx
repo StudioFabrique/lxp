@@ -8,11 +8,16 @@ interface LessonTagsProps {
 }
 
 const LessonTags = (props: LessonTagsProps) => {
+  // ajoute un tag au formulaire de création de leçon
   const handleAddTag = (tag: Tag) => {
     props.onAddItems!(tag);
     handleToggleDrawer("add-tag");
   };
 
+  /**
+   * gère l'ouverture et la fermeture du drawer
+   * @param id string
+   */
   const handleToggleDrawer = (id: string) => {
     document.getElementById(id)?.click();
   };
