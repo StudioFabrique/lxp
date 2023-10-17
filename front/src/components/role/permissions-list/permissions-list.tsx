@@ -3,12 +3,33 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import { IRoleItem } from "../../../views/role/role";
 import RoleSelector from "./role-selector";
 import useHttp from "../../../hooks/use-http";
+import PermissionItem from "./permission-item";
 
 const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
   const { sendRequest, isLoading, error } = useHttp();
 
   const [currentRole, setCurrentRole] = useState(roles[0]?.role);
   const [permissions, setPermissions] = useState([]);
+  const [staticsRessources, setStaticsRessources] = useState([
+    "admin",
+    "mini-admin",
+    "teacher",
+    "student",
+    "coach",
+    "boss_teacher",
+    "stagiaire",
+    "everything",
+    "role",
+    "tag",
+    "permission",
+    "user",
+    "group",
+    "formation",
+    "parcours",
+    "module",
+    "course",
+    "bonusSkill",
+  ]);
 
   const handleChangeRole = (role: string) => {
     setCurrentRole(role);
@@ -25,8 +46,8 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
   }, [currentRole, sendRequest]);
 
   useEffect(() => {
-    if (currentRole) handleGetPermissions();
-  }, [currentRole, handleGetPermissions]);
+    handleGetPermissions();
+  }, [handleGetPermissions]);
 
   return (
     <Wrapper>
@@ -39,18 +60,17 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
       {isLoading ? (
         <span className="loading loading-spinner" />
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Permissions</th>
-              <th>Create</th>
-              <th>Read</th>
-              <th>Update</th>
-              <th>Delete</th>
-            </tr>
-          </thead>
-          <tbody>{permissions.map(permission => )}</tbody>
-        </table>
+        <div className="flex justify-between gap-5">
+          <div className="flex flex-col">
+            <p>Permissions</p>
+            {staticsRessources.map((perm) => (
+              <p>{perm}</p>
+            ))}
+          </div>
+          {permissions.map((item: any) => (
+            <PermissionItem key={item._id} item={item} />
+          ))}
+        </div>
       )}
     </Wrapper>
   );
