@@ -7,6 +7,7 @@ import {
 } from "../../../config/scenario-description";
 import { useDispatch } from "react-redux";
 import { courseScenarioActions } from "../../../store/redux-toolkit/course/course-scenario";
+import LinearScenarioLessons from "./linear-scenario-lessons";
 
 const CourseScenario = () => {
   const dispatch = useDispatch();
@@ -14,17 +15,18 @@ const CourseScenario = () => {
     (state: any) => state.courseScenario.scenario
   ) as boolean;
 
+  // switch entre les différents types de scénarios
   const handleChangeScenario = () => {
     dispatch(courseScenarioActions.setScenario(!scenario));
   };
 
   return (
-    <div className="w-full flex flex-col gap-y-8">
+    <main className="w-full flex flex-col gap-y-8">
       <h1 className="text-3xl font-bold">Scénario</h1>
       <Wrapper>
-        <div className="flex flex-col gap-y-4">
+        <section className="flex flex-col gap-y-4">
           <h2 className="text-xl font-bold">Type de scénario</h2>
-          <span className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <article className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <TypeScenario
               scenario={scenario}
               label="Scénario Linéaire (par défaut)"
@@ -33,14 +35,18 @@ const CourseScenario = () => {
             />
             <TypeScenario
               scenario={!scenario}
-              label="Scénario à embranchements"
+              label="Scénario à embranchements (bientôt)"
               description={branchingScenario}
               onChangeScenario={handleChangeScenario}
             />
-          </span>
-        </div>
+          </article>
+        </section>
       </Wrapper>
-    </div>
+      <Wrapper>
+        <h2 className="text-xl font-bold">Créer des leçons</h2>
+        <LinearScenarioLessons lessons={[]} />
+      </Wrapper>
+    </main>
   );
 };
 

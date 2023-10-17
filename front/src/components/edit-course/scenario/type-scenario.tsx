@@ -10,16 +10,18 @@ interface TypeScenarioProps {
 const TypeScenario = (props: TypeScenarioProps) => {
   const baseStyle = "flex flex-col gap-y-4 p-8 rounded-xl border ";
   const style = props.scenario
-    ? baseStyle + "border-secondary/50 bg-primary/10"
-    : "border-primary/50 bg-secondary/10";
+    ? baseStyle + "border-secondary/50 bg-primary/30"
+    : baseStyle + "border-primary/50 bg-secondary/10";
 
   return (
     <div className={style}>
       <label className="flex gap-x-4" htmlFor="scenario">
         <input
           type="radio"
+          name="scenario"
           checked={props.scenario}
           onChange={props.onChangeScenario}
+          disabled={!props.scenario}
         />
         <p className="text-lg font-bold">{props.label}</p>
       </label>
