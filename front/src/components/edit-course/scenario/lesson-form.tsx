@@ -2,12 +2,18 @@ import { FormEvent, useMemo } from "react";
 
 import SubmitButton from "../../UI/submit-button";
 import AddIcon from "../../UI/svg/add-icon";
+import Tag from "../../../utils/interfaces/tag";
+import TagItem from "../../UI/tag-item/tag-item";
+import LessonTags from "./lesson-tag";
 
 interface LessonFormProps {
   title: unknown;
   description: unknown;
   mode: string;
+  tag: Tag | null;
+  tags: Tag[];
   isLoading: boolean;
+  onSetTag: (value: Tag) => void;
   onSubmitLesson: () => void;
   onSetMode: (value: string) => void;
 }
@@ -41,7 +47,7 @@ const LessonForm = (props: LessonFormProps) => {
       : "textarea textarea-sm textarea-bordered focus:outline-none w-full";
   };
 
-  const formIsValid = title.isValid && description.isValid;
+  const formIsValid = title.isValid && description.isValid && props.tag;
 
   /**
    * Vérifie la validité du formulaire, s'il n'est pas valide affiche
@@ -96,6 +102,20 @@ const LessonForm = (props: LessonFormProps) => {
           onChange={description.textAreaChangeHandler}
           onBlur={description.valueBlurHandler}
         />
+      </div>
+
+      <div className="flex flex-col gap-y-4">
+        <span className="w-full flex justify-between items-center">
+          <p className="font-bold">Tag</p>
+          <LessonTags list={props.tags} onAddItems={props.onSetTag} />
+        </span>{" "}
+        {props.tag ? (
+          <div className="input py-8 flex items-center">
+            <TagItem tag={props.tag} />
+          </div>
+        ) : (
+          <p className="text-xs">Aucun tag sélectionné</p>
+        )}
       </div>
 
       <div className="flex flex-col gap-y-4">

@@ -43,7 +43,7 @@ const CourseScenario = () => {
         </section>
       </Wrapper>
       <Wrapper>
-        <h2 className="text-xl font-bold">Créer des leçons</h2>
+        <h2 className="text-xl mb-8 font-bold">Créer des leçons</h2>
         <LinearScenarioLessons lessons={[]} />
       </Wrapper>
     </main>
