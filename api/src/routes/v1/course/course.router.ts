@@ -6,6 +6,7 @@ import {
   courseIdValidator,
   postCourseValidator,
   putCourseInformationsValidator,
+  putCourseLessonValidator,
   putCourseNewObjectiveValidator,
 } from "./course-validators";
 import httpGetCourses from "../../../controllers/course/http-get-courses";
@@ -27,6 +28,7 @@ import httpPutCourseObjectives from "../../../controllers/course/http-put-course
 import httpPutCourseNewObjective from "../../../controllers/course/http-put-course-new-objective";
 import httpGetCourseSkills from "../../../controllers/course/http-get-course-skills";
 import httpPutCourseBonusSkills from "../../../controllers/course/http-put-course-bonus-skills";
+import httpPutCourseLesson from "../../../controllers/course/http-put-course-lesson";
 
 const courseRouter = express.Router();
 
@@ -155,6 +157,15 @@ courseRouter.put(
   courseIdValidator,
   idsArrayValidator,
   httpPutCourseBonusSkills
+);
+
+// enregistre une nouvelle leçon et l'associe à un cours
+courseRouter.put(
+  "/new-lesson/:courseId",
+  checkToken,
+  courseIdValidator,
+  putCourseLessonValidator,
+  httpPutCourseLesson
 );
 
 export default courseRouter;

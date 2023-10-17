@@ -4,8 +4,6 @@ async function putCourseBonusSkills(
   courseId: number,
   bonusSkillsIds: number[]
 ) {
-  console.log({ bonusSkillsIds });
-
   const existingCourse = await prisma.course.findFirst({
     where: { id: courseId },
   });

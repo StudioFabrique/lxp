@@ -13,7 +13,7 @@ const inputStateReducer = (state: any, action: Action) => {
     case "BLUR":
       return { value: action.value, isTouched: true };
     case "RESET":
-      return { value: action.value, isTouched: false };
+      return { value: "", isTouched: false };
     case "IS_SUBMITTED":
       return { ...state, isTouched: true };
     case "NEW_PROPS":

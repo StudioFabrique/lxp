@@ -15,7 +15,7 @@ const TagItem: FC<{ tag: Tag; noIcon?: boolean }> = ({
 
   return (
     <div>
-      <button className={tagClass} style={tagStyle}>
+      <button className={tagClass} type="button" style={tagStyle}>
         <p>{`#${tag.name}`}</p>
         {noIcon ? null : (
           <svg
