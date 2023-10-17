@@ -1,20 +1,19 @@
 import { FC } from "react";
 
-const PermissionItem: FC<{ item: any }> = ({ item }) => {
+const PermissionItem: FC<{ item: any; isDefaultChecked: boolean }> = ({
+  item,
+  isDefaultChecked,
+}) => {
   return (
-    <div className="flex flex-col">
-      <p className="capitalize">{item.action}</p>
-      {item.ressources.map((ressource: any) => (
-        <span key={ressource}>
-          <input
-            type="checkbox"
-            name="permCheck"
-            id="permCheck"
-            className="checkbox"
-          />
-        </span>
-      ))}
-    </div>
+    <span>
+      <input
+        type="checkbox"
+        name="permCheck"
+        id="permCheck"
+        className="checkbox"
+        defaultChecked={isDefaultChecked}
+      />
+    </span>
   );
 };
 

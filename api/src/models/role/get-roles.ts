@@ -8,7 +8,7 @@ export default async function getRoles() {
   for (const role of roles) {
     const permCount: any = {};
     (await Permission.find({ role: role.role })).forEach((perm) => {
-      permCount[perm.action] = perm.ressources.length + 1;
+      permCount[perm.action] = perm.ressources.length;
     });
 
     rolesArray.push({
