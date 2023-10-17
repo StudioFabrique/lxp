@@ -20,10 +20,6 @@ const Role = () => {
   const { sendRequest } = useHttp();
   const [roles, setRoles] = useState<IRoleItem[]>([]);
 
-  /* const handleCopyItem = (roleName: ) => {
-
-  }; */
-
   useEffect(() => {
     sendRequest({ path: "/permission" }, (data) => setRoles(data.data));
   }, [sendRequest]);
@@ -45,7 +41,7 @@ const Role = () => {
             <RolesList roles={roles} setRoles={setRoles} />
           </div>
         </div>
-        <PermissionsList roles={roles} />
+        {roles.length > 0 && <PermissionsList roles={roles} />}
       </div>
     </>
   );
