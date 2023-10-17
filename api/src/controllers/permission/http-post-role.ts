@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { postRole } from "../../models/role/post-role";
 import getRole from "../../models/role/get-role";
 import { serverIssue } from "../../utils/constantes";
+import Permission from "../../utils/interfaces/db/permission";
 
 export default async function httpPostRole(req: Request, res: Response) {
   try {
@@ -17,6 +18,30 @@ export default async function httpPostRole(req: Request, res: Response) {
     if (!createdRole) {
       return res.status(400).json({ message: "Problème requête" });
     }
+
+    await Permission.create({
+      role: createdRole.role,
+      action: "write",
+      ressources: [],
+    });
+
+    await Permission.create({
+      role: createdRole.role,
+      action: "read",
+      ressources: [],
+    });
+
+    await Permission.create({
+      role: createdRole.role,
+      action: "update",
+      ressources: [],
+    });
+
+    await Permission.create({
+      role: createdRole.role,
+      action: "delete",
+      ressources: [],
+    });
 
     const response = await getRole(createdRole.role);
 

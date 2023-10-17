@@ -63,13 +63,66 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
         <div className="flex justify-between gap-5">
           <div className="flex flex-col">
             <p>Permissions</p>
-            {staticsRessources.map((perm) => (
-              <p>{perm}</p>
+            {staticsRessources.map((res) => (
+              <p>{res}</p>
             ))}
           </div>
-          {permissions.map((item: any) => (
-            <PermissionItem key={item._id} item={item} />
-          ))}
+          <div className="flex flex-col">
+            <p>Lecture</p>
+            {permissions.map((perm: any) => {
+              if (perm.action === "read")
+                return staticsRessources.map((res) => (
+                  <PermissionItem
+                    key={res}
+                    item={res}
+                    isDefaultChecked={perm.ressources.includes(res)}
+                  />
+                ));
+              return undefined;
+            })}
+          </div>
+          <div className="flex flex-col">
+            <p>Écriture</p>
+            {permissions.map((perm: any) => {
+              if (perm.action === "write")
+                return staticsRessources.map((res) => (
+                  <PermissionItem
+                    key={res}
+                    item={res}
+                    isDefaultChecked={perm.ressources.includes(res)}
+                  />
+                ));
+              return undefined;
+            })}
+          </div>
+          <div className="flex flex-col">
+            <p>Mise à jour</p>
+            {permissions.map((perm: any) => {
+              if (perm.action === "update")
+                return staticsRessources.map((res) => (
+                  <PermissionItem
+                    key={res}
+                    item={res}
+                    isDefaultChecked={perm.ressources.includes(res)}
+                  />
+                ));
+              return undefined;
+            })}
+          </div>
+          <div className="flex flex-col">
+            <p>Suppression</p>
+            {permissions.map((perm: any) => {
+              if (perm.action === "delete")
+                return staticsRessources.map((res) => (
+                  <PermissionItem
+                    key={res}
+                    item={res}
+                    isDefaultChecked={perm.ressources.includes(res)}
+                  />
+                ));
+              return undefined;
+            })}
+          </div>
         </div>
       )}
     </Wrapper>
