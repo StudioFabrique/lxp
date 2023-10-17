@@ -1,12 +1,11 @@
-import { FormEvent, useMemo } from "react";
+import { FormEvent, ReactNode, useMemo } from "react";
 
-import SubmitButton from "../../UI/submit-button";
-import AddIcon from "../../UI/svg/add-icon";
 import Tag from "../../../utils/interfaces/tag";
 import TagItem from "../../UI/tag-item/tag-item";
 import LessonTags from "./lesson-tag";
 
 interface LessonFormProps {
+  children: ReactNode;
   title: unknown;
   description: unknown;
   mode: string;
@@ -165,17 +164,7 @@ const LessonForm = (props: LessonFormProps) => {
         </span>
       </div>
 
-      <div>
-        <SubmitButton
-          label="Ajouter la leçon"
-          loadingLabel="Ajout en cours"
-          isLoading={props.isLoading}
-        >
-          <div className="w-- h-6">
-            <AddIcon />
-          </div>
-        </SubmitButton>
-      </div>
+      {props.children}
     </form>
   );
 };

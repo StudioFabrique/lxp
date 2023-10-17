@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Lesson from "../../../utils/interfaces/lesson";
+import { sortArray } from "../../../utils/sortArray";
 
 interface CourseScenario {
   scenario: boolean;
@@ -21,6 +22,15 @@ const courseScenarioSlice = createSlice({
     },
     setScenario(state, action) {
       state.scenario = action.payload;
+    },
+    newLesson(state, action) {
+      if (state.courseLessons) {
+        state.courseLessons = sortArray(
+          [...state.courseLessons, action.payload],
+          "id",
+          false
+        );
+      }
     },
   },
 });

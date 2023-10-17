@@ -29,6 +29,7 @@ import httpPutCourseNewObjective from "../../../controllers/course/http-put-cour
 import httpGetCourseSkills from "../../../controllers/course/http-get-course-skills";
 import httpPutCourseBonusSkills from "../../../controllers/course/http-put-course-bonus-skills";
 import httpPutCourseLesson from "../../../controllers/course/http-put-course-lesson";
+import httpGetCourseScenario from "../../../controllers/course/http-get-course-scenario";
 
 const courseRouter = express.Router();
 
@@ -166,6 +167,14 @@ courseRouter.put(
   courseIdValidator,
   putCourseLessonValidator,
   httpPutCourseLesson
+);
+
+// retourne le scénario et les lessons d'un cours
+courseRouter.get(
+  "/scenario/:courseId",
+  checkToken,
+  courseIdValidator,
+  httpGetCourseScenario
 );
 
 export default courseRouter;
