@@ -9,7 +9,7 @@ const RolesList: FC<{
 }> = ({ roles, setRoles }) => {
   return (
     <Wrapper>
-      <h2 className="font-bold">Gestion des rôles</h2>
+      <h2 className="font-bold text-xl">Gestion des rôles</h2>
       {roles.length > 0 ? (
         <table className="table grid">
           <thead className="">

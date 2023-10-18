@@ -44,6 +44,21 @@ export default async function createUser(user: IUser, userType: number) {
   if (userType === 1) {
     // si type utilisateur en cours de création est "formateur"
     prisma.teacher.create({ data: { idMdb: createdUser._id } });
+    /**
+     * A virer si ça ne marche pas (reset Martin)
+     * ->
+     */
+    prisma.contact.create({
+      data: {
+        idMdb: createdUser._id,
+        name: `${createdUser.lastname} ${createdUser.firstname}`,
+        role: "teacher",
+      },
+    });
+    /**
+     * <-
+     * A virer si ça ne marche pas (reset Martin)
+     */
   }
 
   if (userType === 3) {
