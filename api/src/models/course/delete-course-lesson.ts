@@ -22,17 +22,9 @@ async function deleteCourseLesson(courseId: number, lessonId: number) {
   }
 
   const transaction = await prisma.$transaction(async (tx) => {
-    const count = await tx.lessonsOnCourse.count({
-      where: { lessonId },
-    });
     await tx.lessonsOnCourse.deleteMany({
       where: { AND: [{ courseId }, { lessonId }] },
     });
-    if (count === 1) {
-      await tx.lesson.delete({
-        where: { id: lessonId },
-      });
-    }
   });
 
   return transaction;

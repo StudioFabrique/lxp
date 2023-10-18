@@ -14,6 +14,8 @@ import { useParams } from "react-router-dom";
 import courseScenarioFromHttp from "../../../helpers/course/course-scenario-from-http";
 import Lesson from "../../../utils/interfaces/lesson";
 import toast from "react-hot-toast";
+import ButtonAdd from "../../UI/button-add/button-add";
+import LessonsInDrawer from "./lessons-in-drawer";
 
 const CourseScenario = () => {
   const { courseId } = useParams();
@@ -29,6 +31,24 @@ const CourseScenario = () => {
   // switch entre les différents types de scénarios
   const handleChangeScenario = () => {
     dispatch(courseScenarioActions.setScenario(!scenario));
+  };
+
+  /**
+   * associent plussieurs leçons à un cours dans la bdd
+   * @param lessonsIds number[]
+   */
+  const handleSaveManyLessons = (lessonsIds: number[]) => {
+    const applyData = (data: { success: boolean; message: string }) => {
+      console.log({ data });
+    };
+    sendRequest(
+      {
+        path: `/course/lessons/${courseId}`,
+        method: "put",
+        body: lessons.map((item) => item.id),
+      },
+      applyData
+    );
   };
 
   /**
@@ -76,10 +96,17 @@ const CourseScenario = () => {
         </section>
       </Wrapper>
       <Wrapper>
-        {" "}
         {scenario ? (
           <>
-            <h2 className="text-xl mb-8 font-bold">Créer des leçons</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl mb-8 font-bold">Créer des leçons</h2>
+              <ButtonAdd
+                label="Ajouter des leçons"
+                onClickEvent={() =>
+                  document.getElementById("add-lessons")?.click()
+                }
+              />
+            </div>
             <LinearScenarioLessons lessons={lessons} />
           </>
         ) : (
@@ -89,6 +116,9 @@ const CourseScenario = () => {
           </p>
         )}
       </Wrapper>
+      {scenario ? (
+        <LessonsInDrawer onAddNewLessons={handleSaveManyLessons} />
+      ) : null}
     </main>
   );
 };
