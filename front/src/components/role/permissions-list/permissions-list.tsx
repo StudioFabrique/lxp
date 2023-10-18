@@ -64,7 +64,10 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
           <div className="flex flex-col gap-y-5 w-full">
             <p className="bg-primary p-2 rounded-lg text-center">Permissions</p>
             {staticsRessources.map((res) => (
-              <p className="bg-secondary p-2 rounded-lg capitalize">{`Gestion ${res}`}</p>
+              <p
+                key={res}
+                className="bg-secondary p-2 rounded-lg capitalize"
+              >{`Gestion ${res}`}</p>
             ))}
           </div>
           <div className="flex flex-col gap-y-5 items-center w-full">

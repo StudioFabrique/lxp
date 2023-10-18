@@ -9,10 +9,18 @@ import toast from "react-hot-toast";
 const RoleItem: FC<{
   role: IRoleItem;
   setRoles: Dispatch<SetStateAction<IRoleItem[]>>;
-}> = ({ role, setRoles }) => {
+  setRoleToEdit: Dispatch<
+    SetStateAction<{
+      _id: string;
+      name: string;
+    } | null>
+  >;
+}> = ({ role, setRoles, setRoleToEdit }) => {
   const { sendRequest, isLoading, error } = useHttp();
 
-  const handleEditRole = () => {};
+  const handleEditRole = () => {
+    setRoleToEdit({ _id: role._id, name: role.role });
+  };
 
   const handleDeleteRole = () => {
     const applyData = (data: any) => {
@@ -62,11 +70,11 @@ const RoleItem: FC<{
           <span className="h-6 w-6 loading loading-spinner" />
         ) : (
           <>
-            <span className="h-6 w-6 hover:cursor-pointer">
+            <span onClick={handleEditRole} className="hover:cursor-pointer">
               <EditIcon />
             </span>
             <span
-              className="h-6 w-6 hover:cursor-pointer stroke-red-600"
+              className="hover:cursor-pointer stroke-red-600"
               onClick={handleDeleteRole}
             >
               <DeleteIcon />
