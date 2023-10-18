@@ -1,7 +1,7 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import useInput from "../../../hooks/use-input";
 import { regexGeneric, regexNumber } from "../../../utils/constantes";
-import { setInputStyle } from "../../../utils/formClasses";
+import { setInputStyle, setTextAreaStyle } from "../../../utils/formClasses";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
@@ -57,55 +57,69 @@ const RoleCreateForm: FC<{
 
   return (
     <Wrapper>
-      <span className="flex flex-col gap-y-1">
-        <h2 className="flex flex-col gap-y-4 font-bold">Création de rôles</h2>
-      </span>
+      <div className="flex flex-col gap-y-10">
+        <div className="flex flex-col gap-y-5">
+          <span className="flex flex-col gap-y-1">
+            <h2 className="flex flex-col gap-y-4 font-bold text-xl">
+              Création de rôles
+            </h2>
+            <p className="text-sm">
+              Après avoir créé un rôle, vous pourrez lui ajouter des permissions
+            </p>
+          </span>
 
-      <span className="flex flex-col gap-y-1">
-        <p>Nom du rôle</p>
-        <input
-          type="text"
-          name="name"
-          id="name"
-          className={setInputStyle(name.hasError)}
-          onChange={name.valueChangeHandler}
-          onBlur={name.valueBlurHandler}
-          defaultValue={name.value}
-        />
-      </span>
+          <span className="flex flex-col gap-y-1">
+            <p>Nom du rôle</p>
+            <input
+              type="text"
+              name="name"
+              id="name"
+              className={setInputStyle(name.hasError)}
+              onChange={name.valueChangeHandler}
+              onBlur={name.valueBlurHandler}
+              defaultValue={name.value}
+            />
+          </span>
 
-      <span className="flex flex-col gap-y-1">
-        <p>Description</p>
-        <input
-          type="text"
-          name="description"
-          id="description"
-          className={setInputStyle(description.hasError)}
-          onChange={description.valueChangeHandler}
-          onBlur={description.valueBlurHandler}
-          defaultValue={description.value}
-        />
-      </span>
+          <span className="flex flex-col gap-y-1">
+            <p>Description</p>
+            <textarea
+              name="description"
+              id="description"
+              className={setTextAreaStyle(description.hasError)}
+              onChange={description.valueChangeHandler}
+              onBlur={description.valueBlurHandler}
+              defaultValue={description.value}
+            />
+          </span>
+        </div>
 
-      <span className="flex gap-x-1">
-        <p>Status</p>
-        <input
-          type="checkbox"
-          className="toggle toggle-primary"
-          onChange={(e) => SetActive(e.currentTarget.checked)}
-        />
-        <p>{isActive ? "Actif" : "Inactif"}</p>
-      </span>
+        <span className="flex gap-x-1">
+          <p>Status</p>
+          <input
+            type="checkbox"
+            className="toggle toggle-primary"
+            onChange={(e) => SetActive(e.currentTarget.checked)}
+          />
+          <p>{isActive ? "Actif" : "Inactif"}</p>
+        </span>
 
-      {isRequestLoading ? (
-        <button type="button" className="btn">
-          <span className="loading loading-spinner" />
-        </button>
-      ) : (
-        <button type="button" className="btn" onClick={handleSubmitRole}>
-          Ajouter
-        </button>
-      )}
+        <div>
+          {isRequestLoading ? (
+            <button type="button" className="btn btn-sm">
+              <span className="loading loading-spinner" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="btn btn-sm normal-case"
+              onClick={handleSubmitRole}
+            >
+              Ajouter
+            </button>
+          )}
+        </div>
+      </div>
     </Wrapper>
   );
 };

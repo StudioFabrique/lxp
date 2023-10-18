@@ -51,7 +51,7 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
 
   return (
     <Wrapper>
-      <h2 className="font-bold">Gestion des permissions</h2>
+      <h2 className="font-bold text-xl">Gestion des permissions</h2>
       <RoleSelector
         roles={roles}
         currentRole={currentRole}
@@ -60,15 +60,17 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
       {isLoading ? (
         <span className="loading loading-spinner" />
       ) : (
-        <div className="flex justify-between gap-5">
-          <div className="flex flex-col">
-            <p>Permissions</p>
+        <div className="flex justify-between gap-x-5">
+          <div className="flex flex-col gap-y-5 w-full">
+            <p className="bg-primary p-2 rounded-lg text-center">Permissions</p>
             {staticsRessources.map((res) => (
-              <p>{res}</p>
+              <p className="bg-secondary p-2 rounded-lg capitalize">{`Gestion ${res}`}</p>
             ))}
           </div>
-          <div className="flex flex-col">
-            <p>Lecture</p>
+          <div className="flex flex-col gap-y-5 items-center w-full">
+            <p className="bg-secondary p-2 rounded-lg w-full text-center">
+              Lecture
+            </p>
             {permissions.map((perm: any) => {
               if (perm.action === "read")
                 return staticsRessources.map((res) => (
@@ -81,8 +83,10 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
               return undefined;
             })}
           </div>
-          <div className="flex flex-col">
-            <p>Écriture</p>
+          <div className="flex flex-col gap-y-5 items-center w-full">
+            <p className="bg-secondary p-2 rounded-lg w-full text-center">
+              Écriture
+            </p>
             {permissions.map((perm: any) => {
               if (perm.action === "write")
                 return staticsRessources.map((res) => (
@@ -95,8 +99,10 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
               return undefined;
             })}
           </div>
-          <div className="flex flex-col">
-            <p>Mise à jour</p>
+          <div className="flex flex-col gap-y-5 items-center w-full">
+            <p className="bg-secondary p-2 rounded-lg w-full text-center">
+              Mise à jour
+            </p>
             {permissions.map((perm: any) => {
               if (perm.action === "update")
                 return staticsRessources.map((res) => (
@@ -109,8 +115,10 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
               return undefined;
             })}
           </div>
-          <div className="flex flex-col">
-            <p>Suppression</p>
+          <div className="flex flex-col gap-y-5 items-center w-full">
+            <p className="bg-secondary p-2 rounded-lg w-full text-center">
+              Suppression
+            </p>
             {permissions.map((perm: any) => {
               if (perm.action === "delete")
                 return staticsRessources.map((res) => (

@@ -36,7 +36,11 @@ const useInput = (
   const hasError = !valueIsValid && inputState!.isTouched;
 
   const valueChangeHandler = useCallback(
-    (event: React.FormEvent<HTMLInputElement>) => {
+    (
+      event:
+        | React.FormEvent<HTMLInputElement>
+        | React.FormEvent<HTMLTextAreaElement>
+    ) => {
       dispatch({ type: "INPUT", value: event.currentTarget.value });
     },
     []
