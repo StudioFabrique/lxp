@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 import RolesList from "../../components/role/roles-list/roles-list";
-import RoleCreateForm from "../../components/role/role-form/role-form";
+import RoleForm from "../../components/role/role-form/role-form";
 import { Toaster } from "react-hot-toast";
 import PermissionsList from "../../components/role/permissions-list/permissions-list";
 
@@ -46,7 +46,7 @@ const Role = () => {
         ) : (
           <>
             <div className="grid grid-cols-3 gap-5">
-              <RoleCreateForm
+              <RoleForm
                 roleToEdit={roleToEdit}
                 setRoles={setRoles}
                 setRoleToEdit={setRoleToEdit}

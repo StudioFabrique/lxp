@@ -1,6 +1,6 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import useInput from "../../../hooks/use-input";
-import { regexGeneric, regexNumber } from "../../../utils/constantes";
+import { regexGeneric } from "../../../utils/constantes";
 import { setInputStyle, setTextAreaStyle } from "../../../utils/formClasses";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import useHttp from "../../../hooks/use-http";
@@ -42,19 +42,25 @@ const RoleCreateForm: FC<{
   ); */
 
   const handleSubmitRole = () => {
-    const applyData = (data: any) => {
+    const applyDataCreate = (data: any) => {
       setRoles((currentRoles) => [...currentRoles, data.data]);
-      toast.success("Rôle créé avec succès");
+      toast.success(data.message);
+    };
+
+    const applyDataUpdate = (data: any) => {
+      toast.success(data.message);
     };
 
     if (name.isValid && (description.isValid || description.value.length === 0))
       sendRequest(
         {
-          path: `/permission/role`,
-          method: "post",
+          path: roleToEdit
+            ? `/permission/role/${roleToEdit._id}`
+            : `/permission/role`,
+          method: roleToEdit ? "put" : "post",
           body: { role: name.value, rank: 1 },
         },
-        applyData
+        roleToEdit ? applyDataUpdate : applyDataCreate
       );
     else toast.error("Le formulaire n'est pas valide");
   };
