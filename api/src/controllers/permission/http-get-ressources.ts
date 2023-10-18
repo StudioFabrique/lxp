@@ -6,12 +6,16 @@ const ressourcesDef = ["tag, role, parcours"];
 
 export default async function httpGetRessources(req: Request, res: Response) {
   try {
+    console.log("test log");
+
     const roles = await Role.find();
 
     const ressources: string[] = [
       ...ressourcesDef,
       ...roles.map((role) => role.role),
     ];
+
+    console.log("ressources :");
 
     console.log(ressources);
 

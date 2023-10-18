@@ -69,17 +69,19 @@ const RoleItem: FC<{
         {isLoading ? (
           <span className="h-6 w-6 loading loading-spinner" />
         ) : (
-          <>
-            <span onClick={handleEditRole} className="hover:cursor-pointer">
-              <EditIcon />
-            </span>
-            <span
-              className="hover:cursor-pointer stroke-red-600"
-              onClick={handleDeleteRole}
-            >
-              <DeleteIcon />
-            </span>
-          </>
+          role.role !== "admin" && (
+            <>
+              <span onClick={handleEditRole} className="hover:cursor-pointer">
+                <EditIcon />
+              </span>
+              <span
+                className="hover:cursor-pointer stroke-red-600"
+                onClick={handleDeleteRole}
+              >
+                <DeleteIcon />
+              </span>
+            </>
+          )
         )}
       </td>
     </tr>

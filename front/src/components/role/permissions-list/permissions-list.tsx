@@ -10,30 +10,21 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
 
   const [currentRole, setCurrentRole] = useState(roles[0]?.role);
   const [permissions, setPermissions] = useState([]);
-  const [staticsRessources, setStaticsRessources] = useState([
-    "admin",
-    "mini-admin",
-    "teacher",
-    "student",
-    "coach",
-    "boss_teacher",
-    "stagiaire",
-    "everything",
-    "role",
-    "tag",
-    "permission",
-    "user",
-    "group",
-    "formation",
-    "parcours",
-    "module",
-    "course",
-    "bonusSkill",
-  ]);
+  const [ressources, setRessources] = useState([]);
 
   const handleChangeRole = (role: string) => {
     setCurrentRole(role);
   };
+
+  const handleGetRessources = useCallback(() => {
+    const applyData = (data: any) => {
+      console.log({ data });
+
+      setRessources(data.data);
+    };
+
+    sendRequest({ path: `/permission/ressources` }, applyData);
+  }, [sendRequest]);
 
   const handleGetPermissions = useCallback(() => {
     const applyData = (data: any) => {
@@ -46,8 +37,9 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
   }, [currentRole, sendRequest]);
 
   useEffect(() => {
+    handleGetRessources();
     handleGetPermissions();
-  }, [handleGetPermissions]);
+  }, [handleGetPermissions, handleGetRessources]);
 
   return (
     <Wrapper>
@@ -63,7 +55,7 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
         <div className="flex justify-between gap-x-5">
           <div className="flex flex-col gap-y-5 w-full">
             <p className="bg-primary p-2 rounded-lg text-center">Permissions</p>
-            {staticsRessources.map((res) => (
+            {ressources.map((res) => (
               <p
                 key={res}
                 className="bg-secondary p-2 rounded-lg capitalize"
@@ -76,7 +68,7 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
             </p>
             {permissions.map((perm: any) => {
               if (perm.action === "read")
-                return staticsRessources.map((res) => (
+                return ressources.map((res) => (
                   <PermissionItem
                     key={res}
                     item={res}
@@ -92,7 +84,7 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
             </p>
             {permissions.map((perm: any) => {
               if (perm.action === "write")
-                return staticsRessources.map((res) => (
+                return ressources.map((res) => (
                   <PermissionItem
                     key={res}
                     item={res}
@@ -108,7 +100,7 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
             </p>
             {permissions.map((perm: any) => {
               if (perm.action === "update")
-                return staticsRessources.map((res) => (
+                return ressources.map((res) => (
                   <PermissionItem
                     key={res}
                     item={res}
@@ -124,7 +116,7 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
             </p>
             {permissions.map((perm: any) => {
               if (perm.action === "delete")
-                return staticsRessources.map((res) => (
+                return ressources.map((res) => (
                   <PermissionItem
                     key={res}
                     item={res}
