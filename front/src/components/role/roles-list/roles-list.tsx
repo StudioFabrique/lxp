@@ -31,7 +31,7 @@ const RolesList: FC<{
               <th></th>
             </tr>
           </thead>
-          <tbody className="h-[14em] overflow-y-auto">
+          <tbody className="h-[22em] overflow-y-auto">
             {roles.map((role) => (
               <RoleItem
                 key={role._id}

@@ -20,13 +20,13 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
     const applyData = (data: any) => {
       console.log({ data });
 
-      setRessources(data.data);
+      // setRessources(data.data);
     };
 
-    sendRequest({ path: `/permission/ressources` }, applyData);
+    sendRequest({ path: `/permission/ressources`, method: "get" }, applyData);
   }, [sendRequest]);
 
-  const handleGetPermissions = useCallback(() => {
+  /* const handleGetPermissions = useCallback(() => {
     const applyData = (data: any) => {
       console.log(data.data);
 
@@ -34,12 +34,12 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
     };
 
     sendRequest({ path: `/permission/${currentRole}` }, applyData);
-  }, [currentRole, sendRequest]);
+  }, [currentRole, sendRequest]); */
 
   useEffect(() => {
     handleGetRessources();
-    handleGetPermissions();
-  }, [handleGetPermissions, handleGetRessources]);
+    // handleGetPermissions();
+  }, [/* handleGetPermissions, */ handleGetRessources]);
 
   return (
     <Wrapper>
