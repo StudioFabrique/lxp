@@ -145,7 +145,7 @@ model Course {
   moduleId     Int
   virtualClass String?
   visibility   Boolean?
-  scenario     Boolean              @default(false)
+  scenario     Boolean              @default(true)
   createdAt    DateTime             @default(now())
   updatedAt    DateTime             @default(now())
   tags         TagsOnCourse[]

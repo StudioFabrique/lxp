@@ -76,8 +76,18 @@ const CourseScenario = () => {
         </section>
       </Wrapper>
       <Wrapper>
-        <h2 className="text-xl mb-8 font-bold">Créer des leçons</h2>
-        <LinearScenarioLessons lessons={lessons} />
+        {" "}
+        {scenario ? (
+          <>
+            <h2 className="text-xl mb-8 font-bold">Créer des leçons</h2>
+            <LinearScenarioLessons lessons={lessons} />
+          </>
+        ) : (
+          <p>
+            Branching Scénario indisponible à l'heure actuelle, revenez plus
+            tard
+          </p>
+        )}
       </Wrapper>
     </main>
   );

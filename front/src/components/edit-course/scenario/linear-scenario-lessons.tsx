@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useInput from "../../../hooks/use-input";
 import { regexGeneric } from "../../../utils/constantes";
 import Lesson from "../../../utils/interfaces/lesson";
@@ -36,6 +36,8 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
   ) as Tag[];
   const [isLoading, setIsLoading] = useState(false);
   const [editionMode, setEditionMode] = useState(false);
+  const formRef = useRef<HTMLInputElement>(null);
+  const [editedLesson, setEditedLesson] = useState<Lesson | null>(null);
 
   /**
    * envoie une requête HTTP pour enregistrer une nouvelle
@@ -44,6 +46,7 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
   const handleSubmitLesson = () => {
     const applyData = (data: Lesson) => {
       dispatch(courseScenarioActions.newLesson(data));
+      handleResetForm();
       setIsLoading(false);
     };
     setIsLoading(true);
@@ -62,15 +65,85 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
     );
   };
 
+  /**
+   * Met à jour la leçon dans la bdd
+   */
+  const handleUpdateLesson = () => {
+    const applyData = (data: Lesson) => {
+      dispatch(courseScenarioActions.updateLesson(data));
+      handleResetForm();
+    };
+    sendRequest(
+      {
+        path: `/lesson/update`,
+        method: "put",
+        body: {
+          id: editedLesson!.id,
+          title: title.value,
+          description: description.value,
+          tagId: tag!.id,
+          modalite: mode,
+        },
+      },
+      applyData
+    );
+  };
+
+  /**
+   * Permet de modifier les informations de base d'une leçon
+   * @param lesson Lesson
+   */
   const handleEditLesson = (lesson: Lesson) => {
+    setEditedLesson(lesson);
+    setEditionMode(true);
     newTitle(lesson.title);
     newDescription(lesson.description);
     setTag(lesson.tag);
     setMode(lesson.modalite);
-    setEditionMode(true);
   };
 
-  const handleDeleteLesson = (lesson: Lesson) => {};
+  /**
+   * Permet de dissocier une leçon d'un cours
+   * @param lesson Lesson
+   */
+  const handleDeleteLesson = (lesson: Lesson) => {
+    const applyData = (data: { success: boolean; message: string }) => {
+      if (data.success) {
+        dispatch(courseScenarioActions.deleteLesson(lesson.id));
+        toast.success(data.message);
+      }
+    };
+    sendRequest(
+      {
+        path: `/course/delete-lesson/${courseId}/${lesson.id}`,
+        method: "delete",
+      },
+      applyData
+    );
+  };
+
+  /**
+   * réinitialise le formulaire
+   */
+  const handleResetForm = () => {
+    title.reset();
+    description.reset();
+    newTitle("");
+    newDescription("");
+    setTag(null);
+    setMode("hybride");
+    setEditionMode(false);
+  };
+
+  // quand le formulaire passe en mode édition la vue scroll jusqu'au premier champ du formulaire et lui donne le focus
+  useEffect(() => {
+    console.log("hello");
+
+    if (formRef && formRef.current && editionMode) {
+      formRef.current.scrollIntoView({ behavior: "smooth" });
+      formRef.current.focus();
+    }
+  }, [editionMode]);
 
   // gère les erreurs HTTP
   useEffect(() => {
@@ -80,29 +153,22 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
     }
   }, [error]);
 
-  const handleResetForm = () => {
-    newTitle("");
-    newDescription("");
-    setTag(null);
-    setMode("hybride");
-    setEditionMode(false);
-  };
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <LessonForm
-        title={title}
-        description={description}
-        mode={mode}
-        tag={tag}
-        isLoading={isLoading}
-        onSetTag={setTag}
-        tags={tagsList}
-        onSetMode={setMode}
-        onSubmitLesson={handleSubmitLesson}
-      >
-        <div className="w-full flex justify-between">
-          {editionMode ? (
+      {editionMode ? (
+        <LessonForm
+          ref={formRef}
+          title={title}
+          description={description}
+          mode={mode}
+          tag={tag}
+          isLoading={isLoading}
+          onSetTag={setTag}
+          tags={tagsList}
+          onSetMode={setMode}
+          onSubmitLesson={handleUpdateLesson}
+        >
+          <div className="w-full flex justify-between items-center">
             <button
               className="btn btn-primary btn-outline"
               type="button"
@@ -110,20 +176,43 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
             >
               Annuler
             </button>
-          ) : null}
-          <SubmitButton
-            label={editionMode ? "Mettre à jour" : "Ajouter la leçon"}
-            loadingLabel={
-              editionMode ? "Mise à jour en cours" : "Ajout en cours"
-            }
-            isLoading={isLoading}
-          >
-            <div className="w-- h-6">
-              {editionMode ? <EditIcon /> : <AddIcon />}
-            </div>
-          </SubmitButton>
-        </div>
-      </LessonForm>
+            <SubmitButton
+              label="Mettre à jour la leçon"
+              loadingLabel="Mise à jour en cours"
+              isLoading={isLoading}
+            >
+              <div className="w-- h-6">
+                <EditIcon />
+              </div>
+            </SubmitButton>
+          </div>
+        </LessonForm>
+      ) : (
+        <LessonForm
+          ref={formRef}
+          title={title}
+          description={description}
+          mode={mode}
+          tag={tag}
+          isLoading={isLoading}
+          onSetTag={setTag}
+          tags={tagsList}
+          onSetMode={setMode}
+          onSubmitLesson={handleSubmitLesson}
+        >
+          <div>
+            <SubmitButton
+              label="Ajouter la leçon"
+              loadingLabel="Ajout en cours"
+              isLoading={isLoading}
+            >
+              <div className="w-- h-6">
+                <AddIcon />
+              </div>
+            </SubmitButton>
+          </div>
+        </LessonForm>
+      )}
       <LessonsList
         lessonsList={props.lessons}
         onEdit={handleEditLesson}

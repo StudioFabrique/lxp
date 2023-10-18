@@ -4,6 +4,7 @@ import checkToken from "../../../middleware/check-token";
 import httpPostCourse from "../../../controllers/course/http-post-course";
 import {
   courseIdValidator,
+  deleteCourseLessonValidator,
   postCourseValidator,
   putCourseInformationsValidator,
   putCourseLessonValidator,
@@ -30,6 +31,7 @@ import httpGetCourseSkills from "../../../controllers/course/http-get-course-ski
 import httpPutCourseBonusSkills from "../../../controllers/course/http-put-course-bonus-skills";
 import httpPutCourseLesson from "../../../controllers/course/http-put-course-lesson";
 import httpGetCourseScenario from "../../../controllers/course/http-get-course-scenario";
+import httpDeleteCourseLesson from "../../../controllers/course/http-delete-course-lesson";
 
 const courseRouter = express.Router();
 
@@ -175,6 +177,15 @@ courseRouter.get(
   checkToken,
   courseIdValidator,
   httpGetCourseScenario
+);
+
+// dissocie une lesson d'un cours, si la lesson n'est associée qu'à un seul cours elle est définitivement supprimée
+courseRouter.delete(
+  "/delete-lesson/:courseId/:lessonId",
+  checkToken,
+  courseIdValidator,
+  deleteCourseLessonValidator,
+  httpDeleteCourseLesson
 );
 
 export default courseRouter;
