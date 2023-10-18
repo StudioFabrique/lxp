@@ -6,7 +6,13 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 const RolesList: FC<{
   roles: IRoleItem[];
   setRoles: Dispatch<SetStateAction<IRoleItem[]>>;
-}> = ({ roles, setRoles }) => {
+  setRoleToEdit: Dispatch<
+    SetStateAction<{
+      _id: string;
+      name: string;
+    } | null>
+  >;
+}> = ({ roles, setRoles, setRoleToEdit }) => {
   return (
     <Wrapper>
       <h2 className="font-bold text-xl">Gestion des rôles</h2>
@@ -27,7 +33,12 @@ const RolesList: FC<{
           </thead>
           <tbody className="h-[14em] overflow-y-auto">
             {roles.map((role) => (
-              <RoleItem key={role._id} role={role} setRoles={setRoles} />
+              <RoleItem
+                key={role._id}
+                role={role}
+                setRoles={setRoles}
+                setRoleToEdit={setRoleToEdit}
+              />
             ))}
           </tbody>
         </table>

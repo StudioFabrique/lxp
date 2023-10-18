@@ -23,7 +23,14 @@ const inputStateReducer = (state: any, action: Action) => {
   }
 };
 
-const useInput = (
+/**
+ * Version amélioré du useInput avec un useEffect en plus afin de surveiller si initialValue change
+ * (utile lorsque un formulaire est interversible pour un create et un edit en même temps)
+ * @param validateValue
+ * @param initialValue
+ * @returns
+ */
+const useWatchInput = (
   validateValue: (value: string) => boolean,
   initialValue: string = ""
 ) => {
@@ -78,6 +85,10 @@ const useInput = (
     dispatch({ type: "INPUT", value });
   }, []);
 
+  useEffect(() => {
+    dispatch({ type: "INPUT", value: initialValue });
+  }, [initialValue]);
+
   return {
     value: {
       value: inputState!.value,
@@ -94,4 +105,4 @@ const useInput = (
   };
 };
 
-export default useInput;
+export default useWatchInput;

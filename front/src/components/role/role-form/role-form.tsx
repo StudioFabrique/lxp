@@ -6,10 +6,18 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
 import { IRoleItem } from "../../../views/role/role";
+import useWatchInput from "../../../hooks/use-watch-input";
 
 const RoleCreateForm: FC<{
+  roleToEdit: { _id: string; name: string } | null;
   setRoles: Dispatch<SetStateAction<IRoleItem[]>>;
-}> = ({ setRoles }) => {
+  setRoleToEdit: Dispatch<
+    SetStateAction<{
+      _id: string;
+      name: string;
+    } | null>
+  >;
+}> = ({ roleToEdit, setRoles }) => {
   const {
     sendRequest,
     isLoading: isRequestLoading,
@@ -18,9 +26,9 @@ const RoleCreateForm: FC<{
 
   const [isActive, SetActive] = useState(true);
 
-  const { value: name } = useInput(
+  const { value: name } = useWatchInput(
     (value: string) => regexGeneric.test(value),
-    ""
+    roleToEdit?.name ? roleToEdit.name : ""
   );
 
   const { value: description } = useInput(
@@ -28,10 +36,10 @@ const RoleCreateForm: FC<{
     ""
   );
 
-  const { value: rank } = useInput(
+  /* const { value: rank } = useInput(
     (value: string) => regexNumber.test(value),
     ""
-  );
+  ); */
 
   const handleSubmitRole = () => {
     const applyData = (data: any) => {
@@ -112,7 +120,7 @@ const RoleCreateForm: FC<{
           ) : (
             <button
               type="button"
-              className="btn btn-sm normal-case"
+              className="btn btn-sm normal-case px-10"
               onClick={handleSubmitRole}
             >
               Ajouter

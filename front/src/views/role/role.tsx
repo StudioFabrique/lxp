@@ -18,7 +18,13 @@ export interface IRoleItem {
 
 const Role = () => {
   const { sendRequest } = useHttp();
+
   const [roles, setRoles] = useState<IRoleItem[]>([]);
+
+  const [roletoEdit, setRoleToEdit] = useState<{
+    _id: string;
+    name: string;
+  } | null>(null);
 
   useEffect(() => {
     sendRequest({ path: "/permission" }, (data) => setRoles(data.data));
@@ -36,9 +42,17 @@ const Role = () => {
           utilisateurs
         </p>
         <div className="grid grid-cols-3 gap-5">
-          <RoleCreateForm setRoles={setRoles} />
+          <RoleCreateForm
+            roleToEdit={roletoEdit}
+            setRoles={setRoles}
+            setRoleToEdit={setRoleToEdit}
+          />
           <div className="col-span-2">
-            <RolesList roles={roles} setRoles={setRoles} />
+            <RolesList
+              setRoleToEdit={setRoleToEdit}
+              roles={roles}
+              setRoles={setRoles}
+            />
           </div>
         </div>
         {roles.length > 0 && <PermissionsList roles={roles} />}
