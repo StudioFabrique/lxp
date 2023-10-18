@@ -41,8 +41,8 @@ const RoleItem: FC<{
   }, [error]);
 
   return (
-    <tr className="grid grid-cols-10 items-center">
-      <td className="flex">
+    <tr className="grid grid-cols-10 items-center bg-secondary rounded-xl">
+      <td className="flex items-center">
         <input
           type="checkbox"
           name="active"
@@ -50,13 +50,13 @@ const RoleItem: FC<{
           className="checkbox checkbox-sm checkbox-primary"
         />
       </td>
-      <td className="capitalize">{role.role}</td>
+      <td className="capitalize overflow-clip">{role.role}</td>
       <td className="col-span-2">{sumPropertiesAsNumber(role.permCount)}</td>
       <td>{role.permCount.write}</td>
       <td>{role.permCount.read}</td>
       <td>{role.permCount.update}</td>
       <td>{role.permCount.delete}</td>
-      <td>
+      <td className="flex items-center">
         <input
           type="checkbox"
           name="active"
@@ -69,19 +69,18 @@ const RoleItem: FC<{
         {isLoading ? (
           <span className="h-6 w-6 loading loading-spinner" />
         ) : (
-          role.role !== "admin" && (
-            <>
-              <span onClick={handleEditRole} className="hover:cursor-pointer">
-                <EditIcon />
-              </span>
-              <span
-                className="hover:cursor-pointer stroke-red-600"
-                onClick={handleDeleteRole}
-              >
-                <DeleteIcon />
-              </span>
-            </>
-          )
+          <>
+            <button type="button" onClick={handleEditRole} className="h-6 w-6">
+              <EditIcon />
+            </button>
+            <button
+              type="button"
+              className="h-6 w-6 stroke-red-600"
+              onClick={handleDeleteRole}
+            >
+              <DeleteIcon />
+            </button>
+          </>
         )}
       </td>
     </tr>

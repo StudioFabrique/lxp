@@ -1,16 +1,16 @@
 import { Request, Response } from "express";
 import { serverIssue } from "../../utils/constantes";
 import Role from "../../utils/interfaces/db/role";
+import { ressourcesRbac } from "../../utils/ressources-rbac";
 
 export default async function httpGetRessources(req: Request, res: Response) {
   try {
     console.log("test log");
-    const ressourcesDef = ["tag", "role", "parcours"];
 
     const roles = await Role.find();
 
     const ressources: string[] = [
-      ...ressourcesDef,
+      ...ressourcesRbac,
       ...roles.map((role) => role.role),
     ];
 

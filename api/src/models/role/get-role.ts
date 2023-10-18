@@ -9,7 +9,7 @@ export default async function getRole(roleName: string, withPerms = false) {
   const permCount: any = {};
   const permissions: any = {};
   (await Permission.find({ role: role.role })).forEach((perm) => {
-    permCount[perm.action] = perm.ressources.length + 1;
+    permCount[perm.action] = perm.ressources.length;
     if (withPerms) permissions[perm.action] = perm.ressources;
   });
 
