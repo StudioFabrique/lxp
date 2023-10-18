@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import getRoles from "../../models/role/get-roles";
 
-export default async function httpGetRoles(req: Request, res: Response) {
+export default async function httpGetAllPermissions(
+  req: Request,
+  res: Response
+) {
   try {
     const roles = await getRoles();
 
