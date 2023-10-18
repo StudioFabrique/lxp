@@ -9,7 +9,7 @@ import {
 export const courseIdValidator = [
   param("courseId")
     .notEmpty()
-    .withMessage("L'identifiant du cours est toto")
+    .withMessage("L'identifiant du cours est requis")
     .isNumeric()
     .withMessage("L'identifiant du cours doit être un nombre")
     .trim()
@@ -92,5 +92,16 @@ export const putCourseLessonValidator = [
     .withMessage("Un identifiant est requis pour le tag de la leçon")
     .isInt()
     .withMessage("L'identifiant du tag n'est pas un nombre entier"),
+  checkValidatorResult,
+];
+
+export const deleteCourseLessonValidator = [
+  param("lessonId")
+    .notEmpty()
+    .withMessage("L'identifiant de la leçon est requis")
+    .isNumeric()
+    .withMessage("L'identifiant de la leçon doit être un nombre")
+    .trim()
+    .escape(),
   checkValidatorResult,
 ];

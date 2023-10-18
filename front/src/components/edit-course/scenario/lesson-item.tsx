@@ -20,16 +20,20 @@ const LessonItem = (props: LessonItemProps) => {
       </article>
       <span className="flex flex-col justify-between">
         <button
-          className="btn btn-primary btn-sm btn-circle rounded-lg"
+          className="btn btn-primary btn-sm btn-circle rounded-md"
           onClick={() => props.onEdit(props.lesson)}
         >
-          <EditIcon />
+          <div className="w-5 h-5">
+            <EditIcon />
+          </div>
         </button>
         <button
-          className="btn btn-primary btn-sm btn-circle rounded-lg"
+          className="btn btn-primary btn-sm btn-circle rounded-md"
           onClick={() => props.onDelete(props.lesson)}
         >
-          <DeleteIcon />
+          <div className="w-5 h-5">
+            <DeleteIcon />
+          </div>
         </button>
       </span>
     </main>
