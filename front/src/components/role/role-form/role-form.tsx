@@ -17,7 +17,7 @@ const RoleCreateForm: FC<{
       name: string;
     } | null>
   >;
-}> = ({ roleToEdit, setRoles }) => {
+}> = ({ roleToEdit, setRoles, setRoleToEdit }) => {
   const {
     sendRequest,
     isLoading: isRequestLoading,
@@ -65,7 +65,7 @@ const RoleCreateForm: FC<{
 
   return (
     <Wrapper>
-      <div className="flex flex-col gap-y-10">
+      <form autoComplete="off" className="flex flex-col gap-y-10">
         <div className="flex flex-col gap-y-5">
           <span className="flex flex-col gap-y-1">
             <h2 className="flex flex-col gap-y-4 font-bold text-xl">
@@ -86,6 +86,7 @@ const RoleCreateForm: FC<{
               onChange={name.valueChangeHandler}
               onBlur={name.valueBlurHandler}
               defaultValue={name.value}
+              value={name.value}
             />
           </span>
 
@@ -98,6 +99,7 @@ const RoleCreateForm: FC<{
               onChange={description.valueChangeHandler}
               onBlur={description.valueBlurHandler}
               defaultValue={description.value}
+              value={description.value}
             />
           </span>
         </div>
@@ -112,9 +114,9 @@ const RoleCreateForm: FC<{
           <p>{isActive ? "Actif" : "Inactif"}</p>
         </span>
 
-        <div>
+        <div className="flex justify-between">
           {isRequestLoading ? (
-            <button type="button" className="btn btn-sm">
+            <button type="button" className="btn btn-sm px-10">
               <span className="loading loading-spinner" />
             </button>
           ) : (
@@ -123,11 +125,20 @@ const RoleCreateForm: FC<{
               className="btn btn-sm normal-case px-10"
               onClick={handleSubmitRole}
             >
-              Ajouter
+              {roleToEdit ? "Modifier" : "Ajouter"}
+            </button>
+          )}
+          {roleToEdit && (
+            <button
+              onClick={() => setRoleToEdit(null)}
+              type="button"
+              className="btn btn-sm normal-case px-10"
+            >
+              Annuler
             </button>
           )}
         </div>
-      </div>
+      </form>
     </Wrapper>
   );
 };

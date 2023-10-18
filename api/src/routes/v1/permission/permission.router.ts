@@ -27,16 +27,6 @@ permissionRouter.get(
 // Obtenir la liste des rôles existants avec le nombre de permissions associés à chaque type d'actions (crud)
 permissionRouter.get("/", checkPermissions("role"), httpGetRoles);
 
-/**
- * Obtenir la liste de toute les ressources existantes 
-(renvoi un tableau combinant le nom de tous les rôles ainsi que toutes les ressources defs)
- **/
-permissionRouter.get(
-  "/ressources",
-  checkPermissions("role"),
-  httpGetRessources
-);
-
 // Créer un rôle ou copier un rôle avec ses permissions
 permissionRouter.post(
   "/role",
@@ -57,6 +47,16 @@ permissionRouter.put(
   checkPermissions("role"),
   putRoleValidator,
   httpPutRole
+);
+
+/**
+ * Obtenir la liste de toute les ressources existantes 
+(renvoi un tableau combinant le nom de tous les rôles ainsi que toutes les ressources defs)
+ **/
+permissionRouter.get(
+  "/ressources",
+  checkPermissions("role"),
+  httpGetRessources
 );
 
 export default permissionRouter;
