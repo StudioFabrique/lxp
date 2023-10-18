@@ -10,7 +10,7 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
 
   const [currentRole, setCurrentRole] = useState(roles[0]?.role);
   const [permissions, setPermissions] = useState([]);
-  const [ressources, setRessources] = useState([]);
+  const [ressources, setRessources] = useState<string[]>([]);
 
   const handleChangeRole = (role: string) => {
     setCurrentRole(role);
@@ -18,28 +18,24 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
 
   const handleGetRessources = useCallback(() => {
     const applyData = (data: any) => {
-      console.log({ data });
-
-      // setRessources(data.data);
+      setRessources(data.data);
     };
 
-    sendRequest({ path: `/permission/ressources`, method: "get" }, applyData);
+    sendRequest({ path: `/permission/ressources` }, applyData);
   }, [sendRequest]);
 
-  /* const handleGetPermissions = useCallback(() => {
+  const handleGetPermissions = useCallback(() => {
     const applyData = (data: any) => {
-      console.log(data.data);
-
       setPermissions(data.data);
     };
 
     sendRequest({ path: `/permission/${currentRole}` }, applyData);
-  }, [currentRole, sendRequest]); */
+  }, [currentRole, sendRequest]);
 
   useEffect(() => {
     handleGetRessources();
-    // handleGetPermissions();
-  }, [/* handleGetPermissions, */ handleGetRessources]);
+    handleGetPermissions();
+  }, [handleGetPermissions, handleGetRessources]);
 
   return (
     <Wrapper>
@@ -55,7 +51,7 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
         <div className="flex justify-between gap-x-5">
           <div className="flex flex-col gap-y-5 w-full">
             <p className="bg-primary p-2 rounded-lg text-center">Permissions</p>
-            {ressources.map((res) => (
+            {ressources?.map((res) => (
               <p
                 key={res}
                 className="bg-secondary p-2 rounded-lg capitalize"
