@@ -32,6 +32,7 @@ import httpPutCourseBonusSkills from "../../../controllers/course/http-put-cours
 import httpPutCourseLesson from "../../../controllers/course/http-put-course-lesson";
 import httpGetCourseScenario from "../../../controllers/course/http-get-course-scenario";
 import httpDeleteCourseLesson from "../../../controllers/course/http-delete-course-lesson";
+import httpPutManyLessons from "../../../controllers/course/http-put-many-lessons";
 
 const courseRouter = express.Router();
 
@@ -186,6 +187,15 @@ courseRouter.delete(
   courseIdValidator,
   deleteCourseLessonValidator,
   httpDeleteCourseLesson
+);
+
+// associe une liste de leçons existante à un cours
+courseRouter.put(
+  "/lessons/:courseId",
+  checkToken,
+  courseIdValidator,
+  idsArrayValidator,
+  httpPutManyLessons
 );
 
 export default courseRouter;

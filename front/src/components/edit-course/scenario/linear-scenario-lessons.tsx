@@ -1,15 +1,16 @@
 import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+
 import useInput from "../../../hooks/use-input";
 import { regexGeneric } from "../../../utils/constantes";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonForm from "./lesson-form";
 import Tag from "../../../utils/interfaces/tag";
-import { useSelector } from "react-redux";
 import useHttp from "../../../hooks/use-http";
-import { useParams } from "react-router-dom";
-import toast from "react-hot-toast";
 import LessonsList from "./lessons-list";
-import { useDispatch } from "react-redux";
 import { courseScenarioActions } from "../../../store/redux-toolkit/course/course-scenario";
 import SubmitButton from "../../UI/submit-button";
 import AddIcon from "../../UI/svg/add-icon";

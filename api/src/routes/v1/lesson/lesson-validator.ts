@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import { stringValidateGeneric } from "../../../helpers/custom-validators";
 import { checkValidatorResult } from "../../../middleware/validators";
 
@@ -34,5 +34,16 @@ export const putLessonValidator = [
     .withMessage("Un identifiant est requis pour le tag de la leçon")
     .isInt()
     .withMessage("L'identifiant du tag n'est pas un nombre entier"),
+  checkValidatorResult,
+];
+
+export const getLessonsByTagValidator = [
+  param("tagId")
+    .notEmpty()
+    .withMessage("L'identifiant du tag est requis")
+    .isNumeric()
+    .withMessage("L'identifiant du tag doit être un nombre")
+    .trim()
+    .escape(),
   checkValidatorResult,
 ];

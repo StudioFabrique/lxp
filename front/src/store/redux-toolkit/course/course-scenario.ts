@@ -53,6 +53,25 @@ const courseScenarioSlice = createSlice({
         }
       }
     },
+    addManyLessons(state, action) {
+      if (!state.courseLessons || state.courseLessons.length === 0) {
+        console.log(action.payload);
+
+        state.courseLessons = action.payload;
+      } else {
+        let updatedLesson = Array<Lesson>();
+        state.courseLessons.forEach((stateLesson) => {
+          const lesson = action.payload.find(
+            (item: Lesson) => (item.id = stateLesson.id)
+          );
+          if (!lesson) updatedLesson = [...updatedLesson, lesson];
+        });
+        state.courseLessons = sortArray(
+          [...state.courseLessons, ...updatedLesson],
+          "id"
+        );
+      }
+    },
   },
 });
 

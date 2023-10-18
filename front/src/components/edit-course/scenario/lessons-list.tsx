@@ -12,14 +12,14 @@ interface LessonsListProps {
 const LessonsList = (props: LessonsListProps) => {
   return (
     <Wrapper>
-      <main className="max-h-[35rem] w-full pr-4 overflow-y-scroll scrollbar scrollbar-track-primary scrollbar-thumb-secondary">
+      <main className="max-h-[35rem] w-full pr-4 overflow-auto">
         <section>
           <h2 className="font-bold text-xl mb-8">
-            Liste des Leçons{" "}
+            Liste des Leçons
             {props.lessonsList && props.lessonsList.length > 0 ? (
-              <p className="text-sm font-normal">{` (${props.lessonsList.length} leçons)`}</p>
+              <p className="text-sm font-normal">{` ${props.lessonsList.length} leçon(s)`}</p>
             ) : (
-              " (aucune leçon)"
+              <p className="text-sm font-normal">aucune leçon</p>
             )}
           </h2>
         </section>

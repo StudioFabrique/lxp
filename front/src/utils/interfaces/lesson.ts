@@ -8,4 +8,5 @@ export default interface Lesson {
   tag: Tag;
   createdAt?: string;
   updatedAt?: string;
+  isSelected?: boolean;
 }
