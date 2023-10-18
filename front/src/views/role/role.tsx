@@ -17,11 +17,11 @@ export interface IRoleItem {
 }
 
 const Role = () => {
-  const { sendRequest } = useHttp();
+  const { sendRequest, isLoading } = useHttp();
 
   const [roles, setRoles] = useState<IRoleItem[]>([]);
 
-  const [roletoEdit, setRoleToEdit] = useState<{
+  const [roleToEdit, setRoleToEdit] = useState<{
     _id: string;
     name: string;
   } | null>(null);
@@ -41,21 +41,27 @@ const Role = () => {
           Créer et gérer des rôles, les droits et les permissions des
           utilisateurs
         </p>
-        <div className="grid grid-cols-3 gap-5">
-          <RoleCreateForm
-            roleToEdit={roletoEdit}
-            setRoles={setRoles}
-            setRoleToEdit={setRoleToEdit}
-          />
-          <div className="col-span-2">
-            <RolesList
-              setRoleToEdit={setRoleToEdit}
-              roles={roles}
-              setRoles={setRoles}
-            />
-          </div>
-        </div>
-        {roles.length > 0 && <PermissionsList roles={roles} />}
+        {isLoading ? (
+          <p>Chargement des rôles...</p>
+        ) : (
+          <>
+            <div className="grid grid-cols-3 gap-5">
+              <RoleCreateForm
+                roleToEdit={roleToEdit}
+                setRoles={setRoles}
+                setRoleToEdit={setRoleToEdit}
+              />
+              <div className="col-span-2">
+                <RolesList
+                  setRoleToEdit={setRoleToEdit}
+                  roles={roles}
+                  setRoles={setRoles}
+                />
+              </div>
+            </div>
+            {roles.length > 0 && <PermissionsList roles={roles} />}
+          </>
+        )}
       </div>
     </>
   );

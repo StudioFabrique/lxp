@@ -47,7 +47,7 @@ const RoleCreateForm: FC<{
       toast.success("Rôle créé avec succès");
     };
 
-    if (name.isValid && description.isValid)
+    if (name.isValid && (description.isValid || description.value.length === 0))
       sendRequest(
         {
           path: `/permission/role`,
@@ -82,10 +82,9 @@ const RoleCreateForm: FC<{
               type="text"
               name="name"
               id="name"
-              className={setInputStyle(name.hasError)}
+              className={setInputStyle(name.hasError && name.value.length > 0)}
               onChange={name.valueChangeHandler}
               onBlur={name.valueBlurHandler}
-              defaultValue={name.value}
               value={name.value}
             />
           </span>
@@ -95,10 +94,11 @@ const RoleCreateForm: FC<{
             <textarea
               name="description"
               id="description"
-              className={setTextAreaStyle(description.hasError)}
+              className={setTextAreaStyle(
+                description.hasError && description.value.length > 0
+              )}
               onChange={description.valueChangeHandler}
               onBlur={description.valueBlurHandler}
-              defaultValue={description.value}
               value={description.value}
             />
           </span>
