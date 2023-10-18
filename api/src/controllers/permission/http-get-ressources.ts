@@ -5,7 +5,7 @@ import Role from "../../utils/interfaces/db/role";
 export default async function httpGetRessources(req: Request, res: Response) {
   try {
     console.log("test log");
-    const ressourcesDef = ["tag, role, parcours"];
+    const ressourcesDef = ["tag", "role", "parcours"];
 
     const roles = await Role.find();
 
@@ -18,13 +18,13 @@ export default async function httpGetRessources(req: Request, res: Response) {
 
     console.log(ressources);
 
-    /* if (!ressources || ressources.length > 0) {
+    if (!ressources || ressources.length <= 0) {
       return res
         .status(404)
         .json({ message: "aucune ressources n'a été trouvé" });
-    } */
+    }
 
-    return res.status(200).json({ test: ressourcesDef /* ressources */ });
+    return res.status(200).json({ data: ressources });
   } catch (error) {
     console.log(error);
 
