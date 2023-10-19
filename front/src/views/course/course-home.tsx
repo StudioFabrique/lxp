@@ -8,6 +8,7 @@ import Can from "../../components/UI/can/can.component";
 import EditIcon from "../../components/UI/svg/edit-icon";
 import DeleteIcon from "../../components/UI/svg/delete-icon.component";
 import { useNavigate } from "react-router-dom";
+import { sortArray } from "../../utils/sortArray";
 
 const CourseHome = () => {
   const { sendRequest, isLoading } = useHttp();
@@ -31,13 +32,16 @@ const CourseHome = () => {
   useEffect(() => {
     const applyData = (data: any) => {
       setCoursesList(
-        data.map((item: any) => ({
-          ...item,
-          module: {
-            ...item.module,
-            parcours: item.module.parcours[0].parcours,
-          },
-        }))
+        sortArray(
+          data.map((item: any) => ({
+            ...item,
+            module: {
+              ...item.module,
+              parcours: item.module.parcours[0].parcours,
+            },
+          })),
+          "createdAt"
+        )
       );
     };
     sendRequest(

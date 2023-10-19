@@ -11,6 +11,7 @@ import React, { FC, useEffect, useRef, useState } from "react";
 import ImageFileUpload from "./image-file-upload";
 import ParcoursHeaderIcon from "../UI/svg/parcours-header-icon";
 import { compressImage } from "../../helpers/compress-image";
+import { headerImageMaxSize } from "../../config/images-sizes";
 
 type Props = {
   image?: string;
@@ -91,7 +92,7 @@ const ImageHeader: FC<Props> = ({
               <span className="flex items-end">
                 <ImageFileUpload
                   onSetFile={setNewFile}
-                  maxSize={2 * 1024 * 1024}
+                  maxSize={headerImageMaxSize}
                 />
               </span>
             </div>
