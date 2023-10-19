@@ -7,7 +7,7 @@ interface InheritedItemsProps {
   children: ReactNode[];
   drawerId: string;
   drawerTitle: string;
-  title: string;
+  title?: string;
   loading: boolean;
   initialList: unknown[];
   selectedItems: unknown[];
@@ -73,15 +73,13 @@ const InheritedItems = (props: InheritedItemsProps) => {
   return (
     <section className="w-full flex flex-col gap-y-8">
       <div className="flex items-center justify-between">
-        <span className="w-full flex items-center gap-x-2">
+        {props.title ? (
           <h2 className="text-xl font-bold">{props.title}</h2>
-          {props.loading ? (
-            <div className="loading loading-spinner text-primary loading-sm"></div>
-          ) : null}
-        </span>
+        ) : null}
         <ButtonAdd
           label="Ajouter"
           small={true}
+          loading={props.loading}
           isDisabled={isDisabled}
           onClickEvent={() => handleCloseDrawer(props.drawerId)}
         />

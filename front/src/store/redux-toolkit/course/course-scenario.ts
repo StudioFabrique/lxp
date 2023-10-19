@@ -55,8 +55,6 @@ const courseScenarioSlice = createSlice({
       }
     },
     addManyLessons(state, action) {
-      console.log(action.payload);
-
       if (!state.courseLessons || state.courseLessons.length === 0) {
         state.courseLessons = action.payload;
       } else {

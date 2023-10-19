@@ -86,7 +86,7 @@ const CourseScenario = () => {
 
   return (
     <main className="w-full flex flex-col gap-y-8">
-      <h1 className="text-3xl font-bold">Scénario</h1>
+      <h1 className="text-xl font-bold">Scénario</h1>
       <Wrapper>
         <section className="flex flex-col gap-y-4">
           <h2 className="text-xl font-bold">Type de scénario</h2>
@@ -118,7 +118,7 @@ const CourseScenario = () => {
                 }
               />
             </div>
-            <LinearScenarioLessons lessons={lessons} />
+            <LinearScenarioLessons lessons={lessons} loading={loading} />
           </>
         ) : (
           <p>

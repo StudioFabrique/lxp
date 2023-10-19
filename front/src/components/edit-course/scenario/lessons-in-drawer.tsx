@@ -82,7 +82,6 @@ const LessonsInDrawer = (props: LessonsInDrawerProps) => {
         updatedLessons = [...updatedLessons, lesson];
       }
     });
-    console.log("riri", updatedLessons);
 
     if (updatedLessons.length > 0) {
       props.onAddNewLessons(updatedLessons.map((item) => item.id!));
