@@ -16,17 +16,19 @@ const courseSkillsSlice = createSlice({
   initialState: initialCourseSkillsState,
   reducers: {
     initData(state, action) {
-      console.log("payload", action.payload);
-
       state.courseSkills = action.payload.courseSkills;
       state.moduleSkills = action.payload.moduleSkills;
     },
     setCourseSkills(state, action) {
       state.courseSkills = action.payload;
     },
+    resetCourseSkills(state) {
+      state.courseSkills = null;
+      state.moduleSkills = null;
+    },
   },
 });
 
-export const courseSkillsActiions = courseSkillsSlice.actions;
+export const courseSkillsActions = courseSkillsSlice.actions;
 
 export default courseSkillsSlice;

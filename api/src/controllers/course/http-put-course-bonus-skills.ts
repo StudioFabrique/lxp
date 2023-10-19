@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 import putCourseBonusSkills from "../../models/course/put-course-skills";
 
 async function httpPutCourseBonusSkills(req: Request, res: Response) {

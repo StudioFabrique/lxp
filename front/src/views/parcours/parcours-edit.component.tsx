@@ -329,6 +329,7 @@ const EditParcours = () => {
             {/* Seconde étape : liste des objectifs */}
             {actualStep.id === 2 ? (
               <ParcoursSection
+                section="Objectifs"
                 title="Importer une liste d'objectifs"
                 onResetList={handleResetImportedObjectives}
               >
@@ -339,6 +340,7 @@ const EditParcours = () => {
             {/* Troisème étape : liste des compétences */}
             {actualStep.id === 3 ? (
               <ParcoursSection
+                section="Compétences"
                 title="Importer des compétences"
                 onResetList={handleResetImportedSkills}
               >

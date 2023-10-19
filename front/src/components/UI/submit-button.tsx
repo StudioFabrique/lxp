@@ -1,4 +1,7 @@
+import { ReactNode } from "react";
+
 interface SubmitButtonProps {
+  children?: ReactNode;
   label: string;
   loadingLabel: string;
   isLoading: boolean;
@@ -19,6 +22,8 @@ const SubmitButton = (props: SubmitButtonProps) => {
         </button>
       ) : (
         <button className={style} type="submit">
+          {props.children ? <>{props.children}</> : null}
+
           {props.label}
         </button>
       )}
