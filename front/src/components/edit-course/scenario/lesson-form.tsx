@@ -1,4 +1,5 @@
 import React, { FormEvent, ReactNode, useMemo } from "react";
+import toast from "react-hot-toast";
 
 import Tag from "../../../utils/interfaces/tag";
 import TagItem from "../../UI/tag-item/tag-item";
@@ -55,6 +56,9 @@ const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
      * @param event FormEvent
      */
     const handleSubmitForm = (event: FormEvent) => {
+      if (!props.tag) {
+        toast.error("Veuillez choisir un tag pour la leçon svp");
+      }
       event.preventDefault();
       if (formIsValid) {
         props.onSubmitLesson();
@@ -92,7 +96,7 @@ const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
 
         <div className="flex flex-col gap-y-4">
           <label className="font-bold" htmlFor="description">
-            Description *
+            Description
           </label>
           <textarea
             className={setAreaStyle(description.hasError)}
@@ -109,7 +113,7 @@ const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
           <span className="w-full flex justify-between items-center">
             <p className="font-bold">Tag *</p>
             <LessonTags list={props.tags} onAddItems={props.onSetTag} />
-          </span>{" "}
+          </span>
           {props.tag ? (
             <div className="input py-8 flex items-center">
               <TagItem tag={props.tag} />
@@ -120,7 +124,7 @@ const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
         </div>
 
         <div className="flex flex-col gap-y-4">
-          <h2>Modalité *</h2>
+          <h2>Modalité</h2>
           <span className="w-full grid grid-cols-3 gap-4">
             <label
               className="w-full flex gap-x-4 items-center input"

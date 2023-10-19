@@ -73,10 +73,10 @@ export const putCourseLessonValidator = [
     .withMessage("Un titre est requis pour la leçon")
     .custom(stringValidateGeneric)
     .withMessage("Le titre de la leçon contient des caractères non autorisés"),
-  body("description")
+  body("description") /* 
     .notEmpty()
-    .withMessage("Une description est requise pour la leçon")
-    .custom(stringValidateGeneric)
+    .withMessage("Une description est requise pour la leçon") */
+    .custom(stringValidateOptional)
     .withMessage(
       "La description de la leçon contient des caractères non autorisés"
     ),

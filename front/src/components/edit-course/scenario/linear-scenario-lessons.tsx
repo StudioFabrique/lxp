@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 
 import useInput from "../../../hooks/use-input";
-import { regexGeneric } from "../../../utils/constantes";
+import { regexGeneric, regexOptionalGeneric } from "../../../utils/constantes";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonForm from "./lesson-form";
 import Tag from "../../../utils/interfaces/tag";
@@ -28,7 +28,7 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
     regexGeneric.test(value)
   );
   const { value: description, newProps: newDescription } = useInput((value) =>
-    regexGeneric.test(value)
+    regexOptionalGeneric.test(value)
   );
   const [mode, setMode] = useState<string>("hybride");
   const [tag, setTag] = useState<Tag | null>(null);
@@ -138,8 +138,6 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
 
   // quand le formulaire passe en mode édition la vue scroll jusqu'au premier champ du formulaire et lui donne le focus
   useEffect(() => {
-    console.log("hello");
-
     if (formRef && formRef.current && editionMode) {
       formRef.current.scrollIntoView({ behavior: "smooth" });
       formRef.current.focus();

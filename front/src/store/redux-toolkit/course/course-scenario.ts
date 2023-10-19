@@ -72,6 +72,10 @@ const courseScenarioSlice = createSlice({
         );
       }
     },
+    resetCourseScenario(state) {
+      state.scenario = true;
+      state.courseLessons = null;
+    },
   },
 });
 

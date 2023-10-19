@@ -45,7 +45,7 @@ const CourseScenario = () => {
       {
         path: `/course/lessons/${courseId}`,
         method: "put",
-        body: lessons.map((item) => item.id),
+        body: lessonsIds.map((id) => id),
       },
       applyData
     );
