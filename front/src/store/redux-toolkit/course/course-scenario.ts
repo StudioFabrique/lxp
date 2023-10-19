@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Lesson from "../../../utils/interfaces/lesson";
 import { sortArray } from "../../../utils/sortArray";
+import { arrayNoDoublon } from "../../../helpers/array-no-doublon";
 
 interface CourseScenario {
   scenario: boolean;
@@ -54,21 +55,14 @@ const courseScenarioSlice = createSlice({
       }
     },
     addManyLessons(state, action) {
-      if (!state.courseLessons || state.courseLessons.length === 0) {
-        console.log(action.payload);
+      console.log(action.payload);
 
+      if (!state.courseLessons || state.courseLessons.length === 0) {
         state.courseLessons = action.payload;
       } else {
-        let updatedLesson = Array<Lesson>();
-        state.courseLessons.forEach((stateLesson) => {
-          const lesson = action.payload.find(
-            (item: Lesson) => (item.id = stateLesson.id)
-          );
-          if (!lesson) updatedLesson = [...updatedLesson, lesson];
-        });
-        state.courseLessons = sortArray(
-          [...state.courseLessons, ...updatedLesson],
-          "id"
+        state.courseLessons = arrayNoDoublon(
+          state.courseLessons,
+          action.payload
         );
       }
     },

@@ -12,10 +12,6 @@ async function putManyLessons(courseId: number, lessonsIds: number[]) {
   }
 
   const transaction = await prisma.$transaction(async (tx) => {
-    await tx.lessonsOnCourse.deleteMany({
-      where: { courseId },
-    });
-
     const updatedCourse = await tx.course.update({
       where: { id: courseId },
       data: {
