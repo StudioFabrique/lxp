@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
 import useHttp from "../../../hooks/use-http";
@@ -81,6 +82,8 @@ const LessonsInDrawer = (props: LessonsInDrawerProps) => {
         updatedLessons = [...updatedLessons, lesson];
       }
     });
+    console.log("riri", updatedLessons);
+
     if (updatedLessons.length > 0) {
       props.onAddNewLessons(updatedLessons.map((item) => item.id!));
     }
@@ -106,6 +109,13 @@ const LessonsInDrawer = (props: LessonsInDrawerProps) => {
       );
     }
   }, [tag, sendRequest]);
+
+  // gère les erreurs http
+  useEffect(() => {
+    if (error.length > 0) {
+      toast.error(error);
+    }
+  }, [error]);
 
   return (
     <RightSideDrawer

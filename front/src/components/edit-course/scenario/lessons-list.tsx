@@ -26,15 +26,17 @@ const LessonsList = (props: LessonsListProps) => {
         <section>
           {props.lessonsList && LessonsList.length > 0 ? (
             <ul className="flex flex-col gap-y-4">
-              {props.lessonsList.map((lesson: Lesson) => (
-                <li key={lesson.id}>
-                  <LessonItem
-                    lesson={lesson}
-                    onEdit={props.onEdit}
-                    onDelete={props.onDelete}
-                  />
-                </li>
-              ))}
+              {sortArray(props.lessonsList, "createdAt").map(
+                (lesson: Lesson) => (
+                  <li key={lesson.id}>
+                    <LessonItem
+                      lesson={lesson}
+                      onEdit={props.onEdit}
+                      onDelete={props.onDelete}
+                    />
+                  </li>
+                )
+              )}
             </ul>
           ) : null}
         </section>
