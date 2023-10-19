@@ -18,7 +18,6 @@ const ObjectivesWithDrawer = (props: ObjectivesWithDrawerProps) => {
     <InheritedItems
       drawerId="add-objectives"
       drawerTitle="Ajouter des Objectifs"
-      title="Objectifs"
       loading={props.loading}
       initialList={sortArray(props.initialList, "createdAt", false)}
       selectedItems={props.currentItems}

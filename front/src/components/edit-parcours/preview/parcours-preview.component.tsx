@@ -8,13 +8,12 @@ interface ParcoursPreviewProps {
   onEdit: (id: number) => void;
 }
 
-/* Cyril */
 const ParcoursPreview = (props: ParcoursPreviewProps) => {
   return (
     /* En tête de l'aperçu */
     <div className="w-full flex flex-col gap-y-8">
       <section>
-        <h1 className="text-2xl font-extrabold">Aperçu général</h1>
+        <h1 className="text-3xl font-extrabold">Aperçu général</h1>
       </section>
       {/* Infos générales du parcours */}
       <section>
