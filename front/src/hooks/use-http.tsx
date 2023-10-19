@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Context } from "../store/context.store";
 import { BASE_URL } from "../config/urls";
@@ -12,41 +12,48 @@ const useHttp = () => {
     return axios.create({ withCredentials: true });
   }, []);
 
-  axiosInstance.interceptors.request.use(
-    (config) => {
-      return config;
-    },
-    (error) => {
-      Promise.reject(error);
-    }
-  );
-
-  axiosInstance.interceptors.response.use(
-    (response) => {
-      return response;
-    },
-    async function (error) {
-      const originalRequest = error.config;
-
-      if (
-        error.response.status === 403 &&
-        originalRequest.url === `${BASE_URL}/auth/refresh`
-      ) {
-        logout();
+  useEffect(() => {
+    const requestInterceptor = axiosInstance.interceptors.request.use(
+      (config) => {
+        return config;
+      },
+      (error) => {
         return Promise.reject(error);
       }
+    );
 
-      if (error.response.status === 403 && !originalRequest._retry) {
-        originalRequest._retry = true;
+    const responseInterceptor = axiosInstance.interceptors.response.use(
+      (response) => {
+        return response;
+      },
+      async function (error) {
+        const originalRequest = error.config;
 
-        const res = await axiosInstance.get(`${BASE_URL}/auth/refresh`);
-        if (res.status === 200) {
-          return axiosInstance(originalRequest);
+        if (
+          error.response.status === 403 &&
+          originalRequest.url === `${BASE_URL}/auth/refresh`
+        ) {
+          logout();
+          return Promise.reject(error);
         }
+
+        if (error.response.status === 403 && !originalRequest._retry) {
+          originalRequest._retry = true;
+
+          const res = await axiosInstance.get(`${BASE_URL}/auth/refresh`);
+          if (res.status === 200) {
+            return axiosInstance(originalRequest);
+          }
+        }
+        return Promise.reject(error);
       }
-      return Promise.reject(error);
-    }
-  );
+    );
+
+    return () => {
+      axiosInstance.interceptors.request.eject(requestInterceptor);
+      axiosInstance.interceptors.response.eject(responseInterceptor);
+    };
+  }, [axiosInstance, logout]);
 
   const sendRequest = useCallback(
     async (

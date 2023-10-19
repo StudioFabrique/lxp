@@ -1,11 +1,13 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
+import { compressImage } from "../../../../helpers/compress-image";
+
 import Badge from "../../../../utils/interfaces/badge";
 import { validateImageFile } from "../../../../utils/validate-image-file";
-import { compressImage } from "../../../../helpers/compress-image";
 import UploadIcon from "../../../UI/svg/upload-icon.component";
+import { badgeMaxSize } from "../../../../config/images-sizes";
 
-const maxSize = 1024 * 1024;
+const maxSize = badgeMaxSize;
 
 type Props = {
   onSubmit: (badge: Badge) => void;
