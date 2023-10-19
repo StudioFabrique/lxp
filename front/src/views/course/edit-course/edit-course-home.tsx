@@ -1,4 +1,7 @@
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+
 import FadeWrapper from "../../../components/UI/fade-wrapper/fade-wrapper";
 import Stepper from "../../../components/UI/stepper.-component/stepper.-component";
 import CourseInfos from "../../../components/edit-course/informations/course-infos";
@@ -6,8 +9,14 @@ import CourseObjectives from "../../../components/edit-course/objectives/course-
 import { stepsCourse } from "../../../config/steps/steps-course";
 import useSteps from "../../../hooks/use-steps";
 import CourseSkills from "../../../components/edit-course/skills/course-skills";
+import CourseScenario from "../../../components/edit-course/scenario/course-scenario";
+import { courseInfosAction } from "../../../store/redux-toolkit/course/course-infos";
+import { courseObjectivesActions } from "../../../store/redux-toolkit/course/course-objectives";
+import { courseScenarioActions } from "../../../store/redux-toolkit/course/course-scenario";
+import { courseSkillsActions } from "../../../store/redux-toolkit/course/course-skills";
 
 const EditCourseHome = () => {
+  const dispatch = useDispatch();
   const { actualStep, finalStep, stepsList, updateStep, validateStep } =
     useSteps(stepsCourse);
 
@@ -29,6 +38,18 @@ const EditCourseHome = () => {
     validateStep(id, true);
   };
 
+  /**
+   * reset les states stockés en mémoire
+   */
+  useEffect(() => {
+    return () => {
+      dispatch(courseInfosAction.resetCourse());
+      dispatch(courseObjectivesActions.resetCourseObjectives());
+      dispatch(courseScenarioActions.resetCourseScenario());
+      dispatch(courseSkillsActions.resetCourseSkills());
+    };
+  }, [dispatch]);
+
   return (
     <FadeWrapper>
       <div className="p-4 rounded-xl w-5/6 bg-secondary/20">
@@ -44,6 +65,7 @@ const EditCourseHome = () => {
         {actualStep.id === 1 ? <CourseInfos /> : null}
         {actualStep.id === 2 ? <CourseObjectives /> : null}
         {actualStep.id === 3 ? <CourseSkills /> : null}
+        {actualStep.id === 4 ? <CourseScenario /> : null}
       </div>
       <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">
         {actualStep.id === 1 ? (

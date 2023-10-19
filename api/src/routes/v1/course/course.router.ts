@@ -4,8 +4,10 @@ import checkToken from "../../../middleware/check-token";
 import httpPostCourse from "../../../controllers/course/http-post-course";
 import {
   courseIdValidator,
+  deleteCourseLessonValidator,
   postCourseValidator,
   putCourseInformationsValidator,
+  putCourseLessonValidator,
   putCourseNewObjectiveValidator,
 } from "./course-validators";
 import httpGetCourses from "../../../controllers/course/http-get-courses";
@@ -27,6 +29,10 @@ import httpPutCourseObjectives from "../../../controllers/course/http-put-course
 import httpPutCourseNewObjective from "../../../controllers/course/http-put-course-new-objective";
 import httpGetCourseSkills from "../../../controllers/course/http-get-course-skills";
 import httpPutCourseBonusSkills from "../../../controllers/course/http-put-course-bonus-skills";
+import httpPutCourseLesson from "../../../controllers/course/http-put-course-lesson";
+import httpGetCourseScenario from "../../../controllers/course/http-get-course-scenario";
+import httpDeleteCourseLesson from "../../../controllers/course/http-delete-course-lesson";
+import httpPutManyLessons from "../../../controllers/course/http-put-many-lessons";
 
 const courseRouter = express.Router();
 
@@ -155,6 +161,41 @@ courseRouter.put(
   courseIdValidator,
   idsArrayValidator,
   httpPutCourseBonusSkills
+);
+
+// enregistre une nouvelle leçon et l'associe à un cours
+courseRouter.put(
+  "/new-lesson/:courseId",
+  checkToken,
+  courseIdValidator,
+  putCourseLessonValidator,
+  httpPutCourseLesson
+);
+
+// retourne le scénario et les lessons d'un cours
+courseRouter.get(
+  "/scenario/:courseId",
+  checkToken,
+  courseIdValidator,
+  httpGetCourseScenario
+);
+
+// dissocie une lesson d'un cours, si la lesson n'est associée qu'à un seul cours elle est définitivement supprimée
+courseRouter.delete(
+  "/delete-lesson/:courseId/:lessonId",
+  checkToken,
+  courseIdValidator,
+  deleteCourseLessonValidator,
+  httpDeleteCourseLesson
+);
+
+// associe une liste de leçons existante à un cours
+courseRouter.put(
+  "/lessons/:courseId",
+  checkToken,
+  courseIdValidator,
+  idsArrayValidator,
+  httpPutManyLessons
 );
 
 export default courseRouter;

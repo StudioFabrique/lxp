@@ -7,10 +7,16 @@ import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
 type Props = {
   title: string;
   children: [ReactNode, ReactElement];
+  section: string;
   onResetList: () => void;
 };
 
-const ParcoursSection: FC<Props> = ({ title, children, onResetList }) => {
+const ParcoursSection: FC<Props> = ({
+  title,
+  children,
+  section,
+  onResetList,
+}) => {
   // gère la fermeture du drawer
   const handleCloseDrawer = (id: string) => {
     onResetList();
@@ -25,7 +31,7 @@ const ParcoursSection: FC<Props> = ({ title, children, onResetList }) => {
 
   return (
     <div className="w-full">
-      <h3 className="text-xl font-bold mb-4">Objectifs</h3>
+      <h3 className="text-3xl font-extrabold mb-4">{section}</h3>
       <Wrapper>
         <ParcoursSectionHeader
           label={title}

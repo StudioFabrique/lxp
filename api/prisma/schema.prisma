@@ -83,6 +83,7 @@ model Tag {
   parcours   TagsOnParcours[]
   formations TagsOnFormation[]
   courses    TagsOnCourse[]
+  lessons    Lesson[]
 }
 
 model Skill {
@@ -144,12 +145,26 @@ model Course {
   moduleId     Int
   virtualClass String?
   visibility   Boolean?
+  scenario     Boolean              @default(true)
   createdAt    DateTime             @default(now())
   updatedAt    DateTime             @default(now())
   tags         TagsOnCourse[]
   contacts     ContactsOnCourse[]
   objectives   ObjectivesOnCourse[]
   bonusSkills  BonusSkillOnCourse[]
+  lessons      LessonsOnCourse[]
+}
+
+model Lesson {
+  id          Int               @id @default(autoincrement())
+  title       String
+  description String
+  modalite    String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @default(now())
+  courses     LessonsOnCourse[]
+  tag         Tag               @relation(fields: [tagId], references: [id])
+  tagId       Int
 }
 
 model Objective {
@@ -160,6 +175,15 @@ model Objective {
   parcours    Parcours             @relation(fields: [parcoursId], references: [id])
   parcoursId  Int
   courses     ObjectivesOnCourse[]
+}
+
+model LessonsOnCourse {
+  lesson   Lesson @relation(fields: [lessonId], references: [id])
+  lessonId Int
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId Int
+
+  @@id([lessonId, courseId])
 }
 
 model ContactsOnParcours {

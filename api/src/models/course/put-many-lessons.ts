@@ -1,9 +1,6 @@
 import { prisma } from "../../utils/db";
 
-async function putCourseBonusSkills(
-  courseId: number,
-  bonusSkillsIds: number[]
-) {
+async function putManyLessons(courseId: number, lessonsIds: number[]) {
   const existingCourse = await prisma.course.findFirst({
     where: { id: courseId },
   });
@@ -15,17 +12,17 @@ async function putCourseBonusSkills(
   }
 
   const transaction = await prisma.$transaction(async (tx) => {
-    await tx.bonusSkillOnCourse.deleteMany({
+    await tx.lessonsOnCourse.deleteMany({
       where: { courseId },
     });
 
     const updatedCourse = await tx.course.update({
       where: { id: courseId },
       data: {
-        bonusSkills: {
-          create: bonusSkillsIds.map((id: number) => {
+        lessons: {
+          create: lessonsIds.map((id: number) => {
             return {
-              bonusSkill: {
+              lesson: {
                 connect: { id },
               },
             };
@@ -37,4 +34,4 @@ async function putCourseBonusSkills(
   return transaction;
 }
 
-export default putCourseBonusSkills;
+export default putManyLessons;

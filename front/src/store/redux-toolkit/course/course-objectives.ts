@@ -31,6 +31,10 @@ const courseObjectivesSlice = createSlice({
         state.courseObjectives = [...state.courseObjectives, action.payload];
       }
     },
+    resetCourseObjectives(state) {
+      state.parcoursObjectives = null;
+      state.courseObjectives = null;
+    },
   },
 });
 

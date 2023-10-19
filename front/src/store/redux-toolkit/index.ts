@@ -11,6 +11,7 @@ import parcoursGroupsSlice from "./parcours/parcours-groups";
 import courseInfosSlice from "./course/course-infos";
 import courseObjectivesSlice from "./course/course-objectives";
 import courseSkillsSlice from "./course/course-skills";
+import courseScenarioSlice from "./course/course-scenario";
 
 const store = configureStore({
   reducer: {
@@ -25,6 +26,7 @@ const store = configureStore({
     courseInfos: courseInfosSlice.reducer,
     courseObjectives: courseObjectivesSlice.reducer,
     courseSkills: courseSkillsSlice.reducer,
+    courseScenario: courseScenarioSlice.reducer,
   },
 });
 
