@@ -8,7 +8,7 @@ const RoleSelector: FC<{
 }> = ({ roles, currentRole, onChangeRole }) => {
   return roles ? (
     <select
-      className="w-full select select-sm border border-neutral/50 focus:outline-none"
+      className="w-[20%] select select-sm border border-neutral/50 focus:outline-none"
       name="menu"
       id="menu"
       value={currentRole}

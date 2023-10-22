@@ -5,7 +5,7 @@ const PermissionItem: FC<{ item: any; isDefaultChecked: boolean }> = ({
   isDefaultChecked,
 }) => {
   return (
-    <span className="h-full bg-secondary/50 p-2 rounded-lg w-full flex justify-center items-center">
+    <span className="h-full bg-secondary/50 p-2 w-full flex justify-center items-center">
       <input
         type="checkbox"
         name="permCheck"

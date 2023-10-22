@@ -9,16 +9,16 @@ export default async function httpGetRessources(req: Request, res: Response) {
 
     const roles = await Role.find();
 
-    const ressources: string[] = [
-      ...ressourcesRbac,
-      ...roles.map((role) => role.role),
-    ];
+    const ressources = {
+      ressources: ressourcesRbac,
+      roles: roles.map((role) => role.role),
+    };
 
     console.log("ressources :");
 
     console.log(ressources);
 
-    if (!ressources || ressources.length <= 0) {
+    if (!ressources || ressources.ressources.length <= 0) {
       return res
         .status(404)
         .json({ message: "aucune ressources n'a été trouvé" });
