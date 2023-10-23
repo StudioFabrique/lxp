@@ -39,23 +39,33 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
     console.log(ressourceName);
 
     checked
-      ? setPermissions((oldPermissions) => {
-          const test = oldPermissions.filter((permission: any) => {
+      ? setPermissions((oldPermissions) =>
+          oldPermissions.filter((permission: any) => {
             if (permission.action === action)
               return {
                 ...permission,
-                ressources: [...permission.ressources, ressourceName],
+                ressources: permission.ressources.push(ressourceName),
               };
             return permission;
-          });
-          console.log(test);
-
-          return test;
-        })
-      : console.log("delete");
+          })
+        )
+      : setPermissions((oldPermissions) =>
+          oldPermissions.filter((permission: any) => {
+            if (permission.action === action)
+              return {
+                ...permission,
+                ressources: permission.ressources.filter(
+                  (res: string) => ressourceName !== res
+                ),
+              };
+            return permission;
+          })
+        );
   };
 
-  const handleSubmitPermissions = () => {};
+  const handleSubmitPermissions = () => {
+    const applyData = () => {};
+  };
 
   useEffect(() => {
     handleGetRessources();
