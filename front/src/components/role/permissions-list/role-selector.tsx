@@ -1,20 +1,33 @@
-import { FC } from "react";
+import {
+  ChangeEvent,
+  ChangeEventHandler,
+  Dispatch,
+  FC,
+  SetStateAction,
+} from "react";
 import { IRoleItem } from "../../../views/role/role";
 
 const RoleSelector: FC<{
   roles: IRoleItem[];
-  currentRole: string;
-  onChangeRole: (role: string) => void;
-}> = ({ roles, currentRole, onChangeRole }) => {
+  currentRole: IRoleItem;
+  onSetCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
+}> = ({ roles, currentRole, onSetCurrentRole }) => {
+  const onSelect: ChangeEventHandler<HTMLSelectElement> = (
+    e: ChangeEvent<HTMLSelectElement>
+  ) => {
+    const newRole = roles.find((role) => e.currentTarget.value === role.role);
+    onSetCurrentRole((previousRole) => newRole ?? previousRole);
+  };
+
   return roles ? (
     <select
       className="w-[20%] select select-sm border border-neutral/50 focus:outline-none"
       name="menu"
       id="menu"
-      value={currentRole}
-      onChange={(e) => onChangeRole(e.currentTarget.value)}
+      value={currentRole.role}
+      onChange={onSelect}
     >
-      {roles.map((item: any) => (
+      {roles.map((item) => (
         <option className="capitalize text-xs" key={item._id} value={item.role}>
           {item.role}
         </option>
