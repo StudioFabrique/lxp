@@ -8,16 +8,12 @@ import RessourcesByAction from "./ressources-by-action";
 const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
   const { sendRequest, isLoading, error } = useHttp();
 
-  const [currentRole, setCurrentRole] = useState(roles[0]?.role);
+  const [currentRole, setCurrentRole] = useState<IRoleItem>(roles[0]);
   const [permissions, setPermissions] = useState([]);
   const [ressources, setRessources] = useState<{
     ressources: string[];
     roles: string[];
   } | null>(null);
-
-  const handleChangeRole = (role: string) => {
-    setCurrentRole(role);
-  };
 
   const handleGetRessources = useCallback(() => {
     const applyData = (data: any) => {
@@ -32,7 +28,7 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
       setPermissions(data.data);
     };
 
-    sendRequest({ path: `/permission/${currentRole}` }, applyData);
+    sendRequest({ path: `/permission/${currentRole.role}` }, applyData);
   }, [currentRole, sendRequest]);
 
   useEffect(() => {
@@ -47,7 +43,7 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
         <RoleSelector
           roles={roles}
           currentRole={currentRole}
-          onChangeRole={handleChangeRole}
+          onSetCurrentRole={setCurrentRole}
         />
         <button type="button" className="btn btn-primary">
           Sauvegarder

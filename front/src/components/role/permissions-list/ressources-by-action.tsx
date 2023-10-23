@@ -18,7 +18,7 @@ const RessourcesByAction: FC<{
   return (
     <div className="flex flex-col gap-y-5 items-center w-full">
       <p className="bg-secondary p-2 rounded-lg w-[95%] text-center">{title}</p>
-      {ressources?.ressources.map((res: any) => (
+      {ressources?.ressources.map((res) => (
         <PermissionItem
           key={res}
           item={res}

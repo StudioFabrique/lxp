@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-const PermissionItem: FC<{ item: any; isDefaultChecked: boolean }> = ({
+const PermissionItem: FC<{ item: string; isDefaultChecked: boolean }> = ({
   item,
   isDefaultChecked,
 }) => {
@@ -9,7 +9,7 @@ const PermissionItem: FC<{ item: any; isDefaultChecked: boolean }> = ({
       <input
         type="checkbox"
         name="permCheck"
-        id="permCheck"
+        id={item}
         className="checkbox checkbox-sm rounded-none"
         defaultChecked={isDefaultChecked}
       />
