@@ -5,6 +5,8 @@ const RessourcesByAction: FC<{
   action: "read" | "write" | "update" | "delete";
   title: string;
   unfilteredPermissions: any;
+  roundedLeft?: boolean;
+  roundedRight?: boolean;
   ressources: {
     ressources: string[];
     roles: string[];
@@ -18,6 +20,8 @@ const RessourcesByAction: FC<{
   action,
   title,
   unfilteredPermissions,
+  roundedLeft,
+  roundedRight,
   ressources,
   onChangePermission,
 }) => {
@@ -29,10 +33,13 @@ const RessourcesByAction: FC<{
   return (
     <div className="flex flex-col gap-y-5 items-center w-full">
       <p className="bg-secondary p-2 rounded-lg w-[95%] text-center">{title}</p>
-      {ressources?.ressources.map((res) => (
+      {ressources?.ressources.map((res, i) => (
         <PermissionItem
           key={res}
           item={res}
+          color={i % 2 > 0}
+          roundedLeft={roundedLeft}
+          roundedRight={roundedRight}
           isDefaultChecked={permissions.ressources.includes(res)}
           onChangePermission={(ressourceName, isChecked) =>
             onChangePermission(ressourceName, isChecked, action)
@@ -40,10 +47,11 @@ const RessourcesByAction: FC<{
         />
       ))}
       <hr className="border-black w-[110%]" />
-      {ressources?.roles.map((res) => (
+      {ressources?.roles.map((res, i) => (
         <PermissionItem
           key={res}
           item={res}
+          color={i % 2 > 0}
           isDefaultChecked={permissions.ressources.includes(res)}
           onChangePermission={(ressourceName, isChecked) =>
             onChangePermission(ressourceName, isChecked, action)

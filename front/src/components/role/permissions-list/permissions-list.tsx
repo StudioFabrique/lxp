@@ -127,6 +127,7 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
             action="read"
             title="Lecture"
             ressources={ressources}
+            roundedLeft
             unfilteredPermissions={permissions}
             onChangePermission={handleChangePermission}
           />
@@ -148,6 +149,7 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
             action="delete"
             title="Suppression"
             ressources={ressources}
+            roundedRight
             unfilteredPermissions={permissions}
             onChangePermission={handleChangePermission}
           />
