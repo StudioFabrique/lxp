@@ -31,7 +31,7 @@ const RoleCreateForm: FC<{
     roleToEdit?.name ? roleToEdit.name : ""
   );
 
-  const { value: description } = useInput(
+  const { value: description } = useWatchInput(
     (value: string) => regexGeneric.test(value),
     ""
   );
@@ -59,14 +59,14 @@ const RoleCreateForm: FC<{
       toast.success(data.message);
     };
 
-    if (name.isValid && (description.isValid || description.value.length === 0))
+    if (name.isValid && description.isValid)
       sendRequest(
         {
           path: roleToEdit
             ? `/permission/role/${roleToEdit._id}`
             : `/permission/role`,
           method: roleToEdit ? "put" : "post",
-          body: { role: name.value, rank: 1 },
+          body: { role: name.value, description: description.value, rank: 1 },
         },
         roleToEdit ? applyDataUpdate : applyDataCreate
       );

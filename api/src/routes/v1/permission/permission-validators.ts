@@ -49,6 +49,7 @@ export const putRoleValidator = [
     .escape(),
 
   // body("role").isString().withMessage("Role invalide").escape(),
+  // body("description").isString().withMessage("Description invalide").escape(),
 
   body("permissions.*.action")
     .isString()
