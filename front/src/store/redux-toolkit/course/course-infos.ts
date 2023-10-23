@@ -54,6 +54,15 @@ const courseInfosSlice = createSlice({
     resetCourse(state) {
       state.course = null;
     },
+    setCourseDuration(state, action) {
+      if (state.course) {
+        state.course = {
+          ...state.course,
+          synchroneDuration: action.payload.synchroneDuration,
+          asynchroneDuration: action.payload.asynchroneDuration,
+        };
+      }
+    },
   },
 });
 

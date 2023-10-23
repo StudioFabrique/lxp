@@ -4,6 +4,7 @@ dotenv.config();
 import mongoose from "mongoose";
 import User from "./utils/interfaces/db/user";
 import Role from "./utils/interfaces/db/role";
+import Group from "./utils/interfaces/db/group";
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
 
@@ -232,6 +233,16 @@ async function createTeachers() {
   }
 }
 
+async function createSqlGroups() {
+  const mongoGroups = await Group.find({}, { _id: 1 });
+  console.log({ mongoGroups });
+
+  const data = mongoGroups.map((item: any) => ({ idMdb: item._id.toString() }));
+  const sqlGroups = await prisma.group.createMany({
+    data: data,
+  });
+}
+
 async function createFormation() {
   try {
     const tags1Dw = [1, 2, 3, 4, 5];
@@ -313,6 +324,7 @@ async function loadFixtures() {
   await createAdmins();
   await createTeachers();
   await createFormation();
+  await createSqlGroups();
   //await createModules();
   //await createModulesOnFormation();
   await disconnect();

@@ -6,6 +6,7 @@ import {
   courseIdValidator,
   deleteCourseLessonValidator,
   postCourseValidator,
+  putCourseDurationValidator,
   putCourseInformationsValidator,
   putCourseLessonValidator,
   putCourseNewObjectiveValidator,
@@ -33,6 +34,7 @@ import httpPutCourseLesson from "../../../controllers/course/http-put-course-les
 import httpGetCourseScenario from "../../../controllers/course/http-get-course-scenario";
 import httpDeleteCourseLesson from "../../../controllers/course/http-delete-course-lesson";
 import httpPutManyLessons from "../../../controllers/course/http-put-many-lessons";
+import httpPutCourseDuration from "../../../controllers/course/http-put-course-duration";
 
 const courseRouter = express.Router();
 
@@ -196,6 +198,15 @@ courseRouter.put(
   courseIdValidator,
   idsArrayValidator,
   httpPutManyLessons
+);
+
+// enregistre les durée du cours asynchrone et synchrone
+courseRouter.put(
+  "/duration/:courseId",
+  checkToken,
+  courseIdValidator,
+  putCourseDurationValidator,
+  httpPutCourseDuration
 );
 
 export default courseRouter;

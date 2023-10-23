@@ -10,6 +10,8 @@ async function getCourseInformations(courseId: number) {
       image: true,
       virtualClass: true,
       visibility: true,
+      asynchroneDuration: true,
+      synchroneDuration: true,
       tags: {
         select: {
           tag: true,

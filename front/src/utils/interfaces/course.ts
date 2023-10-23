@@ -18,4 +18,6 @@ export default interface Course {
   contacts: Contact[];
   scenario?: boolean;
   lessons: Lesson[];
+  synchroneDuration?: number;
+  asynchroneDuration?: number;
 }
