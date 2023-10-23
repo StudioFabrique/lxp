@@ -13,13 +13,14 @@ const RoleItem: FC<{
     SetStateAction<{
       _id: string;
       name: string;
+      description: string;
     } | null>
   >;
 }> = ({ role, setRoles, setRoleToEdit }) => {
   const { sendRequest, isLoading, error } = useHttp();
 
   const handleEditRole = () => {
-    setRoleToEdit({ _id: role._id, name: role.role });
+    setRoleToEdit({ _id: role._id, name: role.role, description: role.label });
   };
 
   const handleDeleteRole = () => {

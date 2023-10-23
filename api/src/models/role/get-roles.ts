@@ -14,6 +14,7 @@ export default async function getRoles() {
     rolesArray.push({
       _id: role._id,
       role: role.role,
+      label: role.label,
       permCount: permCount,
     });
   }
