@@ -105,3 +105,17 @@ export const deleteCourseLessonValidator = [
     .escape(),
   checkValidatorResult,
 ];
+
+export const putCourseDurationValidator = [
+  body("synchroneDuration")
+    .isInt()
+    .withMessage("La durée synchrone du cours doit être un nombre entier")
+    .trim()
+    .escape(),
+  body("asynchroneDuration")
+    .isInt()
+    .withMessage("La durée asynchrone du cours doit être un nombre entier")
+    .trim()
+    .escape(),
+  checkValidatorResult,
+];
