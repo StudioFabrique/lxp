@@ -22,6 +22,6 @@ export const setInputStyle = (hasError: boolean) => {
  */
 export const setTextAreaStyle = (hasError: boolean) => {
   return hasError
-    ? "textarea textarea-error text-error textarea-sm textarea-bordered focus:outline-none w-full"
-    : "textarea textarea-sm focus:outline-none w-full";
+    ? "textarea textarea-error text-error textarea-sm textarea-bordered focus:outline-none w-full resize-none"
+    : "textarea textarea-sm textarea-bordered focus:outline-none w-full resize-none";
 };

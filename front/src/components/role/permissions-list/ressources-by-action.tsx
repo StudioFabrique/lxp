@@ -9,12 +9,21 @@ const RessourcesByAction: FC<{
     ressources: string[];
     roles: string[];
   } | null;
-}> = ({ action, title, unfilteredPermissions, ressources }) => {
+  onChangePermission: (
+    ressourceName: string,
+    checked: boolean,
+    action: string
+  ) => void;
+}> = ({
+  action,
+  title,
+  unfilteredPermissions,
+  ressources,
+  onChangePermission,
+}) => {
   const permissions = unfilteredPermissions.find(
     (perm: any) => perm.action === action
   );
-
-  console.log({ permissions });
 
   if (!permissions) return <p>error</p>;
   return (
@@ -25,6 +34,9 @@ const RessourcesByAction: FC<{
           key={res}
           item={res}
           isDefaultChecked={permissions.ressources.includes(res)}
+          onChangePermission={(ressourceName, isChecked) =>
+            onChangePermission(ressourceName, isChecked, action)
+          }
         />
       ))}
       <hr className="border-black w-[110%]" />
@@ -33,6 +45,9 @@ const RessourcesByAction: FC<{
           key={res}
           item={res}
           isDefaultChecked={permissions.ressources.includes(res)}
+          onChangePermission={(ressourceName, isChecked) =>
+            onChangePermission(ressourceName, isChecked, action)
+          }
         />
       ))}
     </div>

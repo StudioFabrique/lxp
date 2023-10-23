@@ -31,6 +31,32 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
     sendRequest({ path: `/permission/${currentRole.role}` }, applyData);
   }, [currentRole, sendRequest]);
 
+  const handleChangePermission = (
+    ressourceName: string,
+    checked: boolean,
+    action: string
+  ) => {
+    console.log(ressourceName);
+
+    checked
+      ? setPermissions((oldPermissions) => {
+          const test = oldPermissions.filter((permission: any) => {
+            if (permission.action === action)
+              return {
+                ...permission,
+                ressources: [...permission.ressources, ressourceName],
+              };
+            return permission;
+          });
+          console.log(test);
+
+          return test;
+        })
+      : console.log("delete");
+  };
+
+  const handleSubmitPermissions = () => {};
+
   useEffect(() => {
     handleGetRessources();
     handleGetPermissions();
@@ -54,7 +80,9 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
       ) : (
         <div className="flex justify-between">
           <div className="flex flex-col gap-y-5 w-full">
-            <p className="bg-primary p-2 rounded-lg text-center">Permissions</p>
+            <p className="bg-primary text-primary-content p-2 rounded-lg text-center">
+              Permissions
+            </p>
             {ressources?.ressources.map((res) => (
               <p
                 key={res}
@@ -75,24 +103,28 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
             title="Lecture"
             ressources={ressources}
             unfilteredPermissions={permissions}
+            onChangePermission={handleChangePermission}
           />
           <RessourcesByAction
             action="write"
             title="Écriture"
             ressources={ressources}
             unfilteredPermissions={permissions}
+            onChangePermission={handleChangePermission}
           />
           <RessourcesByAction
             action="update"
             title="Mise à jour"
             ressources={ressources}
             unfilteredPermissions={permissions}
+            onChangePermission={handleChangePermission}
           />
           <RessourcesByAction
             action="delete"
             title="Suppression"
             ressources={ressources}
             unfilteredPermissions={permissions}
+            onChangePermission={handleChangePermission}
           />
         </div>
       )}

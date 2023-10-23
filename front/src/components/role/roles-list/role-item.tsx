@@ -41,7 +41,7 @@ const RoleItem: FC<{
   }, [error]);
 
   return (
-    <tr className="grid grid-cols-10 items-center bg-secondary rounded-xl">
+    <tr className="grid grid-cols-10 items-center bg-secondary text-secondary-content rounded-xl">
       <td className="flex items-center">
         <input
           type="checkbox"

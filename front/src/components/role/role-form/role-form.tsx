@@ -136,7 +136,7 @@ const RoleCreateForm: FC<{
           ) : (
             <button
               type="button"
-              className="btn btn-sm normal-case px-10"
+              className="btn btn-sm btn-primary normal-case px-10"
               onClick={handleSubmitRole}
             >
               {roleToEdit ? "Modifier" : "Ajouter"}

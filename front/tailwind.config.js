@@ -3,6 +3,27 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   daisyui: {
     themes: [
+      {
+        perfectfuture: {
+          primary: "#8b5cf6",
+
+          secondary: "#ede9fe",
+
+          accent: "#1dcdbc",
+
+          neutral: "#2b3440",
+
+          "base-100": "#ffffff",
+
+          info: "#3abff8",
+
+          success: "#36d399",
+
+          warning: "#fbbd23",
+
+          error: "#f87272",
+        },
+      },
       "light",
       "dark",
       "cupcake",
