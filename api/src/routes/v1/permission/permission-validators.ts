@@ -48,12 +48,12 @@ export const putRoleValidator = [
     .withMessage("_id absent")
     .escape(),
 
-  body("role")
+  body("role").isString().withMessage("Role invalide").escape(),
+
+  body("permissions.*.action")
     .isString()
-    .withMessage("Role invalide")
-    .notEmpty()
-    .withMessage("Role absent")
-    .escape(),
+    .withMessage("L'action doit être une chaîne de caractère")
+    .notEmpty(),
 
   checkValidatorResult,
 ];

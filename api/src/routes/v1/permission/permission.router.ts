@@ -52,6 +52,7 @@ permissionRouter.delete(
   httpDeleteRole
 );
 
+// Modifier le nom du rôle ou/et modifier les permissions
 permissionRouter.put(
   "/role/:id",
   checkPermissions("role"),

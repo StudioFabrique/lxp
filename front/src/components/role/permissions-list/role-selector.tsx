@@ -12,10 +12,12 @@ const RoleSelector: FC<{
   currentRole: IRoleItem;
   onSetCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
 }> = ({ roles, currentRole, onSetCurrentRole }) => {
-  const onSelect: ChangeEventHandler<HTMLSelectElement> = (
+  const handleSelect: ChangeEventHandler<HTMLSelectElement> = (
     e: ChangeEvent<HTMLSelectElement>
   ) => {
     const newRole = roles.find((role) => e.currentTarget.value === role.role);
+    console.warn({ newRole });
+
     onSetCurrentRole((previousRole) => newRole ?? previousRole);
   };
 
@@ -25,7 +27,7 @@ const RoleSelector: FC<{
       name="menu"
       id="menu"
       value={currentRole.role}
-      onChange={onSelect}
+      onChange={handleSelect}
     >
       {roles.map((item) => (
         <option className="capitalize text-xs" key={item._id} value={item.role}>

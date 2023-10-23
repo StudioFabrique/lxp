@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import Permission from "../../utils/interfaces/db/permission";
-import Role, { IRole } from "../../utils/interfaces/db/role";
+import Permission, { IPermission } from "../../utils/interfaces/db/permission";
+import Role from "../../utils/interfaces/db/role";
 import { serverIssue } from "../../utils/constantes";
 
 /**
@@ -10,11 +10,25 @@ export default async function httpPutRole(req: Request, res: Response) {
   try {
     const idRole: string = req.params.id;
 
-    const role: string = req.body.role;
+    const {
+      role,
+      permissions,
+    }: {
+      role: string;
+      permissions: IPermission[];
+    } = req.body;
 
     const oldRole = await Role.findOneAndUpdate({ _id: idRole }, { role });
 
-    await Permission.updateMany({ role: oldRole?.role }, { role });
+    if (!!permissions)
+      for (const permission of permissions) {
+        await Permission.updateOne(
+          { role: oldRole?.role, action: permission.action },
+          { ressources: permission.ressources }
+        );
+      }
+
+    if (!!role) await Permission.updateMany({ role: oldRole?.role }, { role });
 
     return res
       .status(200)
