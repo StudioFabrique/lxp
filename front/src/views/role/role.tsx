@@ -8,6 +8,7 @@ import PermissionsList from "../../components/role/permissions-list/permissions-
 export interface IRoleItem {
   _id: string;
   role: string;
+  label: string;
   permCount: {
     read: number;
     write: number;
@@ -24,6 +25,7 @@ const Role = () => {
   const [roleToEdit, setRoleToEdit] = useState<{
     _id: string;
     name: string;
+    description: string;
   } | null>(null);
 
   useEffect(() => {

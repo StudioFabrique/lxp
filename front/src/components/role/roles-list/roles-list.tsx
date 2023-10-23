@@ -11,6 +11,7 @@ const RolesList: FC<{
     SetStateAction<{
       _id: string;
       name: string;
+      description: string;
     } | null>
   >;
 }> = ({ roles, setRoles, setRoleToEdit }) => {

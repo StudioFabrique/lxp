@@ -1,5 +1,4 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import useInput from "../../../hooks/use-input";
 import { regexGeneric } from "../../../utils/constantes";
 import { setInputStyle, setTextAreaStyle } from "../../../utils/formClasses";
 import Wrapper from "../../UI/wrapper/wrapper.component";
@@ -9,12 +8,13 @@ import { IRoleItem } from "../../../views/role/role";
 import useWatchInput from "../../../hooks/use-watch-input";
 
 const RoleCreateForm: FC<{
-  roleToEdit: { _id: string; name: string } | null;
+  roleToEdit: { _id: string; name: string; description: string } | null;
   setRoles: Dispatch<SetStateAction<IRoleItem[]>>;
   setRoleToEdit: Dispatch<
     SetStateAction<{
       _id: string;
       name: string;
+      description: string;
     } | null>
   >;
 }> = ({ roleToEdit, setRoles, setRoleToEdit }) => {
@@ -33,7 +33,7 @@ const RoleCreateForm: FC<{
 
   const { value: description } = useWatchInput(
     (value: string) => regexGeneric.test(value),
-    ""
+    roleToEdit?.description ? roleToEdit.description : ""
   );
 
   /* const { value: rank } = useInput(
