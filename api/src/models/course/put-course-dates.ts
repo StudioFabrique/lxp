@@ -1,12 +1,16 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../utils/db";
 
-async function putCourseDuration(
+async function putCourseDates(
   courseId: number,
+  minDate: string,
+  maxDate: string,
   synchroneDuration: number,
   asynchroneDuration: number
 ) {
   const existingCourse = await prisma.course.findFirst({
     where: { id: courseId },
+    select: { dates: true },
   });
 
   if (!existingCourse) {
@@ -15,19 +19,23 @@ async function putCourseDuration(
     throw error;
   }
 
+  let existingDates = existingCourse.dates;
+  existingDates = [
+    ...existingDates,
+    { minDate, maxDate, synchroneDuration, asynchroneDuration },
+  ];
+
   const updatedCourse = await prisma.course.update({
     where: { id: courseId },
     data: {
-      synchroneDuration,
-      asynchroneDuration,
-    },
+      dates: existingDates,
+    } as Prisma.CourseUpdateInput,
     select: {
-      synchroneDuration: true,
-      asynchroneDuration: true,
+      dates: true,
     },
   });
 
   return updatedCourse;
 }
 
-export default putCourseDuration;
+export default putCourseDates;

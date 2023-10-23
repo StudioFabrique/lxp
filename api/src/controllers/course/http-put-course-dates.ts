@@ -1,13 +1,16 @@
 import { Request, Response } from "express";
-import putCourseDuration from "../../models/course/put-course-duration";
+import putCourseDates from "../../models/course/put-course-dates";
 
-async function httpPutCourseDuration(req: Request, res: Response) {
+async function httpPutCourseDates(req: Request, res: Response) {
   const { courseId } = req.params;
-  const { synchroneDuration, asynchroneDuration } = req.body;
+  const { minDate, maxDate, synchroneDuration, asynchroneDuration } = req.body;
+  console.log(req.body);
 
   try {
-    const response = await putCourseDuration(
+    const response = await putCourseDates(
       +courseId,
+      minDate,
+      maxDate,
       +synchroneDuration,
       +asynchroneDuration
     );
@@ -19,4 +22,4 @@ async function httpPutCourseDuration(req: Request, res: Response) {
   }
 }
 
-export default httpPutCourseDuration;
+export default httpPutCourseDates;
