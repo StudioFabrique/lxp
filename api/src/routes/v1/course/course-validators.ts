@@ -119,3 +119,17 @@ export const putCourseDurationValidator = [
     .escape(),
   checkValidatorResult,
 ];
+
+export const putCourseDatesValidator = [
+  body("minDate")
+    .custom(stringValidateGeneric)
+    .withMessage("La date fournie contient des caractères non autorisés")
+    .trim()
+    .escape(),
+  body("maxDate")
+    .custom(stringValidateGeneric)
+    .withMessage("La date fournie contient des caractères non autorisés")
+    .trim()
+    .escape(),
+  checkValidatorResult,
+];

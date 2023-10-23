@@ -6,6 +6,7 @@ import {
   courseIdValidator,
   deleteCourseLessonValidator,
   postCourseValidator,
+  putCourseDatesValidator,
   putCourseDurationValidator,
   putCourseInformationsValidator,
   putCourseLessonValidator,
@@ -34,7 +35,7 @@ import httpPutCourseLesson from "../../../controllers/course/http-put-course-les
 import httpGetCourseScenario from "../../../controllers/course/http-get-course-scenario";
 import httpDeleteCourseLesson from "../../../controllers/course/http-delete-course-lesson";
 import httpPutManyLessons from "../../../controllers/course/http-put-many-lessons";
-import httpPutCourseDuration from "../../../controllers/course/http-put-course-duration";
+import httpPutCourseDates from "../../../controllers/course/http-put-course-dates";
 
 const courseRouter = express.Router();
 
@@ -200,13 +201,13 @@ courseRouter.put(
   httpPutManyLessons
 );
 
-// enregistre les durée du cours asynchrone et synchrone
+// ajoute une plage de dates au cours
 courseRouter.put(
-  "/duration/:courseId",
+  "/dates/:courseId",
   checkToken,
   courseIdValidator,
-  putCourseDurationValidator,
-  httpPutCourseDuration
+  putCourseDatesValidator,
+  httpPutCourseDates
 );
 
 export default courseRouter;

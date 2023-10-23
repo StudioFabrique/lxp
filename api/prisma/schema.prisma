@@ -146,9 +146,7 @@ model Course {
   virtualClass       String?
   visibility         Boolean?
   scenario           Boolean              @default(true)
-  dates              DateTime[]
-  synchroneDuration  Int?
-  asynchroneDuration Int?
+  dates              Json[]
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @default(now())
   tags               TagsOnCourse[]
