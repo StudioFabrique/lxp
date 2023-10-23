@@ -49,8 +49,8 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
             return permission;
           })
         )
-      : setPermissions((oldPermissions) =>
-          oldPermissions.filter((permission: any) => {
+      : setPermissions((oldPermissions: any) => {
+          return oldPermissions.map((permission: any) => {
             if (permission.action === action)
               return {
                 ...permission,
@@ -59,12 +59,23 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
                 ),
               };
             return permission;
-          })
-        );
+          });
+        });
   };
 
   const handleSubmitPermissions = () => {
-    const applyData = () => {};
+    const applyData = (data: any) => {
+      console.log(data);
+    };
+
+    sendRequest(
+      {
+        path: `/permission/role/${currentRole._id}`,
+        body: { permissions },
+        method: "put",
+      },
+      applyData
+    );
   };
 
   useEffect(() => {
@@ -81,7 +92,11 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
           currentRole={currentRole}
           onSetCurrentRole={setCurrentRole}
         />
-        <button type="button" className="btn btn-primary">
+        <button
+          onClick={handleSubmitPermissions}
+          type="button"
+          className="btn btn-primary"
+        >
           Sauvegarder
         </button>
       </div>
