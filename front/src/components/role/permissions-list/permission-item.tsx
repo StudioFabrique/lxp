@@ -1,9 +1,15 @@
-import { FC } from "react";
+import { ChangeEvent, ChangeEventHandler, FC } from "react";
 
 const PermissionItem: FC<{ item: string; isDefaultChecked: boolean }> = ({
   item,
   isDefaultChecked,
 }) => {
+  const handleCheck: ChangeEventHandler<HTMLInputElement> = (
+    e: ChangeEvent<HTMLInputElement>
+  ) => {
+    console.warn("item :", { item }, "check state :", e.currentTarget.checked);
+  };
+
   return (
     <span className="h-full bg-secondary/50 p-2 w-full flex justify-center items-center">
       <input
@@ -11,7 +17,8 @@ const PermissionItem: FC<{ item: string; isDefaultChecked: boolean }> = ({
         name="permCheck"
         id={item}
         className="checkbox checkbox-sm rounded-none"
-        defaultChecked={isDefaultChecked}
+        checked={isDefaultChecked}
+        onChange={handleCheck}
       />
     </span>
   );

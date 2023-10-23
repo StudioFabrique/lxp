@@ -9,4 +9,5 @@ export const ressourcesRbac = [
   "module",
   "course",
   "bonusSkill",
+  "everyone",
 ];

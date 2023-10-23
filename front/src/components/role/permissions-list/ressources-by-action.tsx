@@ -10,9 +10,11 @@ const RessourcesByAction: FC<{
     roles: string[];
   } | null;
 }> = ({ action, title, unfilteredPermissions, ressources }) => {
-  const permissions = unfilteredPermissions.filter(
+  const permissions = unfilteredPermissions.find(
     (perm: any) => perm.action === action
-  )[0];
+  );
+
+  console.log({ permissions });
 
   if (!permissions) return <p>error</p>;
   return (
@@ -26,7 +28,7 @@ const RessourcesByAction: FC<{
         />
       ))}
       <hr className="border-black w-[110%]" />
-      {ressources?.roles.map((res: any) => (
+      {ressources?.roles.map((res) => (
         <PermissionItem
           key={res}
           item={res}

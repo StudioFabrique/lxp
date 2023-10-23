@@ -49,6 +49,13 @@ const RoleCreateForm: FC<{
 
     const applyDataUpdate = (data: any) => {
       toast.success(data.message);
+      setRoles((currentRoles) =>
+        currentRoles.map((role) => {
+          if (role._id === roleToEdit?._id)
+            return { ...role, name: roleToEdit.name };
+          return role;
+        })
+      );
     };
 
     if (name.isValid && (description.isValid || description.value.length === 0))
