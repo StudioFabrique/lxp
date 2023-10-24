@@ -13,14 +13,20 @@ const RoleItem: FC<{
     SetStateAction<{
       _id: string;
       name: string;
-      description: string;
+      label: string;
+      isActive: boolean;
     } | null>
   >;
 }> = ({ role, setRoles, setRoleToEdit }) => {
   const { sendRequest, isLoading, error } = useHttp();
 
   const handleEditRole = () => {
-    setRoleToEdit({ _id: role._id, name: role.role, description: role.label });
+    setRoleToEdit({
+      _id: role._id,
+      name: role.role,
+      label: role.label,
+      isActive: role.isActive,
+    });
   };
 
   const handleDeleteRole = () => {
@@ -57,33 +63,42 @@ const RoleItem: FC<{
       <td>{role.permCount.read}</td>
       <td>{role.permCount.update}</td>
       <td>{role.permCount.delete}</td>
-      <td className="flex items-center">
-        <input
-          type="checkbox"
-          name="active"
-          id="active"
-          className="toggle toggle-sm toggle-primary"
-        />
-      </td>
+      {role.role !== "admin" && (
+        <>
+          <td className="flex items-center">
+            <input
+              type="checkbox"
+              name="active"
+              id="active"
+              defaultChecked={role.isActive}
+              className="toggle toggle-sm toggle-primary"
+            />
+          </td>
 
-      <td className="flex gap-x-2">
-        {isLoading ? (
-          <span className="h-6 w-6 loading loading-spinner" />
-        ) : (
-          <>
-            <button type="button" onClick={handleEditRole} className="h-6 w-6">
-              <EditIcon />
-            </button>
-            <button
-              type="button"
-              className="h-6 w-6 stroke-red-600"
-              onClick={handleDeleteRole}
-            >
-              <DeleteIcon />
-            </button>
-          </>
-        )}
-      </td>
+          <td className="flex gap-x-2">
+            {isLoading ? (
+              <span className="h-6 w-6 loading loading-spinner" />
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={handleEditRole}
+                  className="h-6 w-6"
+                >
+                  <EditIcon />
+                </button>
+                <button
+                  type="button"
+                  className="h-6 w-6 stroke-red-600"
+                  onClick={handleDeleteRole}
+                >
+                  <DeleteIcon />
+                </button>
+              </>
+            )}
+          </td>
+        </>
+      )}
     </tr>
   );
 };

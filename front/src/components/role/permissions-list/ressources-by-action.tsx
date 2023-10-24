@@ -37,7 +37,7 @@ const RessourcesByAction: FC<{
         <PermissionItem
           key={res}
           item={res}
-          color={i % 2 > 0}
+          color={i % 2 > 0} // boolean value
           roundedLeft={roundedLeft}
           roundedRight={roundedRight}
           isDefaultChecked={permissions.ressources.includes(res)}
@@ -51,7 +51,7 @@ const RessourcesByAction: FC<{
         <PermissionItem
           key={res}
           item={res}
-          color={i % 2 > 0}
+          color={i % 2 > 0} // boolean value
           isDefaultChecked={permissions.ressources.includes(res)}
           onChangePermission={(ressourceName, isChecked) =>
             onChangePermission(ressourceName, isChecked, action)

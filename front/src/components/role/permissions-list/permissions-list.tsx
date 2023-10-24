@@ -4,6 +4,7 @@ import { IRoleItem } from "../../../views/role/role";
 import RoleSelector from "./role-selector";
 import useHttp from "../../../hooks/use-http";
 import RessourcesByAction from "./ressources-by-action";
+import toast from "react-hot-toast";
 
 const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
   const { sendRequest, isLoading, error } = useHttp();
@@ -65,7 +66,7 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
 
   const handleSubmitPermissions = () => {
     const applyData = (data: any) => {
-      console.log(data);
+      toast.success(data.message);
     };
 
     sendRequest(

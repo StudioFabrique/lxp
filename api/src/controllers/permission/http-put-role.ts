@@ -12,11 +12,13 @@ export default async function httpPutRole(req: Request, res: Response) {
 
     const {
       role,
-      description,
+      label,
+      isActive,
       permissions,
     }: {
       role: string;
-      description: string;
+      label: string;
+      isActive: boolean;
       permissions: IPermission[];
     } = req.body;
 
@@ -33,13 +35,13 @@ export default async function httpPutRole(req: Request, res: Response) {
     if (!!role)
       await Permission.updateMany(
         { role: oldRole?.role },
-        { role, description }
+        { role, label, isActive }
       );
 
     const roleUpdated = await Role.findOne({ _id: idRole });
 
     return res.status(200).json({
-      message: "mise à jour effectuée avec succès",
+      message: "Mise à jour effectuée avec succès",
       data: roleUpdated,
     });
   } catch (error) {
