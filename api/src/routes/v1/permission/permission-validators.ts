@@ -19,12 +19,6 @@ export const postRoleValidator = [
     .notEmpty()
     .withMessage("Role absent")
     .escape(),
-  body("rank")
-    .isNumeric()
-    .withMessage("Rank invalide")
-    .notEmpty()
-    .withMessage("Rank absent")
-    .escape(),
 
   checkValidatorResult,
 ];

@@ -24,7 +24,7 @@ const RoleCreateForm: FC<{
     error: requestError,
   } = useHttp();
 
-  const [isActive, SetActive] = useState(true);
+  const [isActive, SetActive] = useState(false);
 
   const { value: name } = useWatchInput(
     (value: string) => regexGeneric.test(value),
@@ -36,14 +36,15 @@ const RoleCreateForm: FC<{
     roleToEdit?.description ? roleToEdit.description : ""
   );
 
-  /* const { value: rank } = useInput(
-    (value: string) => regexNumber.test(value),
-    ""
-  ); */
+  const cancelForm = () => {
+    setRoleToEdit(null);
+    SetActive(false);
+  };
 
   const handleSubmitRole = () => {
     const applyDataCreate = (data: any) => {
       setRoles((currentRoles) => [...currentRoles, data.data]);
+      cancelForm();
       toast.success(data.message);
     };
 
@@ -51,11 +52,11 @@ const RoleCreateForm: FC<{
       setRoles((currentRoles) =>
         currentRoles.map((role) => {
           if (role._id === roleToEdit?._id)
-            return { ...role, role: name.value };
+            return { ...role, role: data.data.role, label: data.data.label };
           return role;
         })
       );
-      setRoleToEdit(null);
+      cancelForm();
       toast.success(data.message);
     };
 
@@ -66,7 +67,7 @@ const RoleCreateForm: FC<{
             ? `/permission/role/${roleToEdit._id}`
             : `/permission/role`,
           method: roleToEdit ? "put" : "post",
-          body: { role: name.value, description: description.value, rank: 1 },
+          body: { role: name.value, description: description.value },
         },
         roleToEdit ? applyDataUpdate : applyDataCreate
       );
@@ -123,6 +124,7 @@ const RoleCreateForm: FC<{
           <input
             type="checkbox"
             className="toggle toggle-primary"
+            checked={isActive}
             onChange={(e) => SetActive(e.currentTarget.checked)}
           />
           <p>{isActive ? "Actif" : "Inactif"}</p>
@@ -144,7 +146,7 @@ const RoleCreateForm: FC<{
           )}
           {roleToEdit && (
             <button
-              onClick={() => setRoleToEdit(null)}
+              onClick={cancelForm}
               type="button"
               className="btn btn-sm normal-case px-10"
             >

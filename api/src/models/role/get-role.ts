@@ -16,6 +16,7 @@ export default async function getRole(roleName: string, withPerms = false) {
   return {
     _id: role._id,
     role: role.role,
+    label: role.label,
     permCount: permCount,
     perms: withPerms ? permissions : undefined,
   };
