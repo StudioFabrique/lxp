@@ -38,7 +38,7 @@ const TypeUtilisateur: FC<{
         </button>
       </div>
 
-      <div className="flex flex-col gap-y-5">
+      <div className="flex flex-col gap-y-5 h-[15em] overflow-y-auto">
         {isLoading ? (
           <p>Chargement des roles...</p>
         ) : (
