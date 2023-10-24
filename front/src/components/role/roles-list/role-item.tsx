@@ -71,6 +71,7 @@ const RoleItem: FC<{
               name="active"
               id="active"
               checked={role.isActive}
+              onChange={() => {}}
               className="toggle toggle-sm toggle-primary"
             />
           </td>

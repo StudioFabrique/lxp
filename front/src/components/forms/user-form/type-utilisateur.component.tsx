@@ -1,12 +1,4 @@
-import {
-  ChangeEvent,
-  ChangeEventHandler,
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import { useLocation, useNavigate } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
