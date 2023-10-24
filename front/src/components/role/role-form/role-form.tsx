@@ -1,4 +1,12 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import {
+  Dispatch,
+  FC,
+  Ref,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { regexGeneric } from "../../../utils/constantes";
 import { setInputStyle, setTextAreaStyle } from "../../../utils/formClasses";
 import Wrapper from "../../UI/wrapper/wrapper.component";
@@ -31,6 +39,8 @@ const RoleCreateForm: FC<{
   } = useHttp();
 
   const [isActive, SetActive] = useState(false);
+
+  const nameInputRef: Ref<HTMLInputElement> = useRef(null);
 
   const { value: name } = useWatchInput(
     (value: string) => regexGeneric.test(value),
@@ -91,9 +101,15 @@ const RoleCreateForm: FC<{
     if (requestError) toast.error(requestError);
   }, [requestError]);
 
+  /**
+   * Dès qu'un rôle à editer est défini, alors activer le toggle en fonction de l'état d'activation du role
+   * puis faire un focus sur l'input du nom du rôle (name)
+   */
   useEffect(() => {
-    if (roleToEdit) SetActive(roleToEdit?.isActive);
-    else SetActive(false);
+    if (roleToEdit) {
+      SetActive(roleToEdit?.isActive);
+      nameInputRef.current?.focus();
+    } else SetActive(false);
   }, [roleToEdit]);
 
   return (
@@ -112,6 +128,7 @@ const RoleCreateForm: FC<{
           <span className="flex flex-col gap-y-1">
             <p>Nom du rôle</p>
             <input
+              ref={nameInputRef}
               type="text"
               name="name"
               id="name"
