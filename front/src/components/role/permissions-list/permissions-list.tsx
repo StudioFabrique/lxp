@@ -24,13 +24,18 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
     sendRequest({ path: `/permission/ressources` }, applyData);
   }, [sendRequest]);
 
+  /**
+   * Récupérer les permissions.
+   * Rafraichir les permissions lors de la modification d'un role du composant parent.
+   */
   const handleGetPermissions = useCallback(() => {
     const applyData = (data: any) => {
       setPermissions(data.data);
     };
 
-    sendRequest({ path: `/permission/${currentRole.role}` }, applyData);
-  }, [currentRole, sendRequest]);
+    if (roles)
+      sendRequest({ path: `/permission/${currentRole.role}` }, applyData);
+  }, [currentRole, sendRequest, roles]);
 
   const handleChangePermission = (
     ressourceName: string,
