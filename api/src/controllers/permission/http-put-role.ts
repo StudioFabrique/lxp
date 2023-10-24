@@ -22,7 +22,10 @@ export default async function httpPutRole(req: Request, res: Response) {
       permissions: IPermission[];
     } = req.body;
 
-    const oldRole = await Role.findOneAndUpdate({ _id: idRole }, { role });
+    const oldRole = await Role.findOneAndUpdate(
+      { _id: idRole },
+      { role, label, isActive }
+    );
 
     if (!!permissions)
       for (const permission of permissions) {
@@ -32,11 +35,7 @@ export default async function httpPutRole(req: Request, res: Response) {
         );
       }
 
-    if (!!role)
-      await Permission.updateMany(
-        { role: oldRole?.role },
-        { role, label, isActive }
-      );
+    if (!!role) await Permission.updateMany({ role: oldRole?.role }, { role });
 
     const roleUpdated = await Role.findOne({ _id: idRole });
 
