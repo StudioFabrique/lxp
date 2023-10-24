@@ -16,7 +16,7 @@ export default async function httpCreateUser(req: Request, res: Response) {
     userDataRequest.graduations;
   const linksDataRequest: ILink[] | undefined = userDataRequest.links;
   const hobbiesDataRequest: IHobby[] | undefined = userDataRequest.hobbies;
-  const { userType } = req.body;
+  const { roleId } = req.body;
 
   console.log(userDataRequest);
   console.log(graduationsDataRequest ?? "no graduations data");
@@ -27,7 +27,7 @@ export default async function httpCreateUser(req: Request, res: Response) {
     if (!graduationsDataRequest || !linksDataRequest || !hobbiesDataRequest)
       return res.status(404).send({ message: "problème requêtes" });
 
-    const userResponse = await createUser(userDataRequest, userType); // crée un user + insert une référence mongodb dans prisma si le type utilisateur le permet
+    const userResponse = await createUser(userDataRequest, roleId); // crée un user + insert une référence mongodb dans prisma si le type utilisateur le permet
 
     if (!userResponse) {
       res.status(409).json({ message: alreadyExist });

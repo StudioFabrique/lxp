@@ -80,7 +80,7 @@ const RoleCreateForm: FC<{
             ? `/permission/role/${roleToEdit._id}`
             : `/permission/role`,
           method: roleToEdit ? "put" : "post",
-          body: { role: name.value, description: label.value, isActive },
+          body: { role: name.value, label: label.value, isActive },
         },
         roleToEdit ? applyDataUpdate : applyDataCreate
       );
@@ -88,7 +88,7 @@ const RoleCreateForm: FC<{
   };
 
   useEffect(() => {
-    if (requestError) toast.error("problème requête");
+    if (requestError) toast.error(requestError);
   }, [requestError]);
 
   useEffect(() => {

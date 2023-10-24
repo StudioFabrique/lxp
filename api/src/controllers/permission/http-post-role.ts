@@ -12,6 +12,8 @@ export default async function httpPostRole(req: Request, res: Response) {
       isActive,
     }: { role: string; label: string; isActive: boolean } = req.body;
 
+    console.log({ label });
+
     /* if (role.substring(role.length - 6) === "_clone")
       return res
         .status(400)
@@ -20,7 +22,7 @@ export default async function httpPostRole(req: Request, res: Response) {
     const createdRole = await postRole(role, label, isActive);
 
     if (!createdRole) {
-      return res.status(400).json({ message: "Problème requête" });
+      return res.status(400).json({ message: "Le rôle existe déjà" });
     }
 
     await Permission.create({
