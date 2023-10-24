@@ -70,7 +70,7 @@ const RoleItem: FC<{
               type="checkbox"
               name="active"
               id="active"
-              defaultChecked={role.isActive}
+              checked={role.isActive}
               className="toggle toggle-sm toggle-primary"
             />
           </td>

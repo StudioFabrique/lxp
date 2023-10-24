@@ -44,7 +44,6 @@ const RoleCreateForm: FC<{
 
   const cancelForm = () => {
     setRoleToEdit(null);
-    SetActive(false);
   };
 
   const handleSubmitRole = () => {
@@ -55,10 +54,18 @@ const RoleCreateForm: FC<{
     };
 
     const applyDataUpdate = (data: any) => {
+      console.log(data.data);
+
       setRoles((currentRoles) =>
         currentRoles.map((role) => {
+          const roleData = data.data;
           if (role._id === roleToEdit?._id)
-            return { ...role, role: data.data.role, label: data.data.label };
+            return {
+              ...role,
+              role: roleData.role,
+              label: roleData.label,
+              isActive: roleData.isActive,
+            };
           return role;
         })
       );
