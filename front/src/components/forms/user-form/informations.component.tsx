@@ -1,6 +1,7 @@
 import { FC } from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
-import ImageFileUpload from "../../UI/image-file-upload/image-file-upload";
+import { headerImageMaxSize } from "../../../config/images-sizes";
+import MemoizedImageFileUpload from "../../UI/image-file-upload/image-file-upload";
 
 const Informations: FC<{
   lastname: any;
@@ -69,7 +70,11 @@ const Informations: FC<{
           autoComplete="off"
         />
       </span>
-      <ImageFileUpload type={2} onSetFile={onSetFile} maxSize={10000} />
+      <MemoizedImageFileUpload
+        label="Téléverser une image de groupe"
+        onSetFile={onSetFile}
+        maxSize={headerImageMaxSize}
+      />
     </Wrapper>
   );
 };

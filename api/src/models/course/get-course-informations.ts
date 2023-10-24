@@ -10,6 +10,7 @@ async function getCourseInformations(courseId: number) {
       image: true,
       virtualClass: true,
       visibility: true,
+      dates: true,
       tags: {
         select: {
           tag: true,
@@ -24,6 +25,8 @@ async function getCourseInformations(courseId: number) {
         select: {
           id: true,
           title: true,
+          minDate: true,
+          maxDate: true,
           contacts: {
             select: {
               contact: {

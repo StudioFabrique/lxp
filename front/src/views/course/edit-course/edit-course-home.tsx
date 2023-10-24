@@ -14,6 +14,7 @@ import { courseInfosAction } from "../../../store/redux-toolkit/course/course-in
 import { courseObjectivesActions } from "../../../store/redux-toolkit/course/course-objectives";
 import { courseScenarioActions } from "../../../store/redux-toolkit/course/course-scenario";
 import { courseSkillsActions } from "../../../store/redux-toolkit/course/course-skills";
+import CourseCalendar from "../../../components/edit-course/calendar/course-calendar";
 
 const EditCourseHome = () => {
   const dispatch = useDispatch();
@@ -66,6 +67,7 @@ const EditCourseHome = () => {
         {actualStep.id === 2 ? <CourseObjectives /> : null}
         {actualStep.id === 3 ? <CourseSkills /> : null}
         {actualStep.id === 4 ? <CourseScenario /> : null}
+        {actualStep.id === 5 ? <CourseCalendar /> : null}
       </div>
       <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">
         {actualStep.id === 1 ? (

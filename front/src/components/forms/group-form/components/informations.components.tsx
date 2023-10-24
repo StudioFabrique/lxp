@@ -6,7 +6,8 @@ import {
   SetStateAction,
 } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
-import ImageFileUpload from "../../../UI/image-file-upload/image-file-upload";
+import { headerImageMaxSize } from "../../../../config/images-sizes";
+import MemoizedImageFileUpload from "../../../UI/image-file-upload/image-file-upload";
 
 const Informations: FC<{
   name: any;
@@ -59,7 +60,11 @@ const Informations: FC<{
         />
         <label>Actif</label>
       </span>
-      <ImageFileUpload maxSize={100000} onSetFile={onSetFile} type={2} />
+      <MemoizedImageFileUpload
+        maxSize={headerImageMaxSize}
+        onSetFile={onSetFile}
+        label="Téléverser une image de groupe"
+      />
     </Wrapper>
   );
 };

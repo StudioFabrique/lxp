@@ -26,7 +26,11 @@ const ImageFileUpload: FC<{
           return;
         }
         if (selectedFile.size > maxSize) {
-          toast.error("La taille du fichier doit être inférieure à 1mo");
+          toast.error(
+            `La taille du fichier doit être inférieure à ${
+              maxSize / (1024 * 1024)
+            } mo`
+          );
           return;
         }
       }
@@ -36,6 +40,9 @@ const ImageFileUpload: FC<{
 
   const handleSetFile = () => {
     if (fileRef) {
+      if (fileRef.current) {
+        fileRef.current.value = "";
+      }
       fileRef.current?.click();
     }
   };

@@ -137,22 +137,23 @@ model Contact {
 }
 
 model Course {
-  id           Int                  @id @default(autoincrement())
-  title        String
-  description  String?
-  image        Bytes?
-  module       Module               @relation(fields: [moduleId], references: [id])
-  moduleId     Int
-  virtualClass String?
-  visibility   Boolean?
-  scenario     Boolean              @default(true)
-  createdAt    DateTime             @default(now())
-  updatedAt    DateTime             @default(now())
-  tags         TagsOnCourse[]
-  contacts     ContactsOnCourse[]
-  objectives   ObjectivesOnCourse[]
-  bonusSkills  BonusSkillOnCourse[]
-  lessons      LessonsOnCourse[]
+  id                 Int                  @id @default(autoincrement())
+  title              String
+  description        String?
+  image              Bytes?
+  module             Module               @relation(fields: [moduleId], references: [id])
+  moduleId           Int
+  virtualClass       String?
+  visibility         Boolean?
+  scenario           Boolean              @default(true)
+  dates              Json[]
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @default(now())
+  tags               TagsOnCourse[]
+  contacts           ContactsOnCourse[]
+  objectives         ObjectivesOnCourse[]
+  bonusSkills        BonusSkillOnCourse[]
+  lessons            LessonsOnCourse[]
 }
 
 model Lesson {

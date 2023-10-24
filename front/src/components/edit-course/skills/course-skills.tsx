@@ -85,6 +85,7 @@ const CourseSkills = () => {
 
   return (
     <div className="w-full flex flex-col gap-y-8">
+      <h2 className="text-3xl font-extrabold">Compétences</h2>
       <div className="w-full">
         {courseSkills && moduleSkills ? (
           <Wrapper>

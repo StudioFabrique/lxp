@@ -18,6 +18,7 @@ import EditIcon from "../../UI/svg/edit-icon";
 
 interface LinearScenarioLessonsProps {
   lessons: Lesson[];
+  loading: boolean;
 }
 
 const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
@@ -216,6 +217,7 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
         lessonsList={props.lessons}
         onEdit={handleEditLesson}
         onDelete={handleDeleteLesson}
+        loading={props.loading}
       />
     </div>
   );

@@ -1,15 +1,20 @@
 import { useSelector } from "react-redux";
 import React, { FormEvent, useState } from "react";
+import toast from "react-hot-toast";
 
 import useInput from "../../../hooks/use-input";
-import { regexGeneric, regexNumber } from "../../../utils/constantes";
+import {
+  regexGeneric,
+  regexNumber,
+  regexOptionalGeneric,
+} from "../../../utils/constantes";
 import Contact from "../../../utils/interfaces/contact";
 import Skill from "../../../utils/interfaces/skill";
 import { compressImage } from "../../../helpers/compress-image";
-import MemoizedModuleFilesUpload from "./module-files-upload.component";
 import { defaultModuleThumb } from "../../../lib/defautltModuleThumb";
-import toast from "react-hot-toast";
 import MemoizedItemsList from "../../items-list.component";
+import { headerImageMaxSize } from "../../../config/images-sizes";
+import MemoizedImageFileUpload from "../../UI/image-file-upload/image-file-upload";
 
 interface ModuleFormProps {
   isLoading: boolean;
@@ -31,7 +36,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
       currentModule?.duration || null
     );
     const { value: description } = useInput(
-      (value) => regexGeneric.test(value),
+      (value) => regexOptionalGeneric.test(value),
       currentModule?.description || ""
     );
     const [image, setImage] = useState<File | null>(null);
@@ -199,7 +204,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
             {/* description */}
 
             <div className="flex flex-col gap-y-4">
-              <label htmlFor="description">Description *</label>
+              <label htmlFor="description">Description</label>
               <textarea
                 className={setAreaStyle(description.hasError)}
                 id="description"
@@ -215,7 +220,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
 
             <div className="flex flex-col gap-y-4">
               <label htmlFor="duration">
-                Nombre d'heures {currentModule ? "*" : ""}
+                Nombre d'heures *{/* {currentModule ? "*" : ""} */}
               </label>
               <input
                 className={setInputStyle(duration.hasError && currentModule)}
@@ -232,15 +237,24 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
             {/* image du module */}
 
             <div className="w-full flex gap-x-4 items-center">
-              <span style={classImage}></span>
-              <div className="flex flex-col gap-y-4">
+              {/*  <div className="flex flex-col gap-y-4">
                 <label htmlFor="image">
                   {!currentModule
                     ? "Téléverser une image"
                     : "Choisir une nouvelle image"}
                 </label>
                 <MemoizedModuleFilesUpload setImage={handleUpdateImage} />
-              </div>
+              </div> */}
+              <MemoizedImageFileUpload
+                maxSize={headerImageMaxSize}
+                label={
+                  !currentModule
+                    ? "Téléverser une image *"
+                    : "Choisir une nouvelle image"
+                }
+                onSetFile={handleUpdateImage}
+              />
+              <span style={classImage} />
             </div>
           </article>
           <article className="flex flex-col gap-y-4">
