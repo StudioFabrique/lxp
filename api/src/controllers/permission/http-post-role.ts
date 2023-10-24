@@ -6,15 +6,18 @@ import Permission from "../../utils/interfaces/db/permission";
 
 export default async function httpPostRole(req: Request, res: Response) {
   try {
-    const { role, description }: { role: string; description: string } =
-      req.body;
+    const {
+      role,
+      label,
+      isActive,
+    }: { role: string; label: string; isActive: boolean } = req.body;
 
     /* if (role.substring(role.length - 6) === "_clone")
       return res
         .status(400)
         .json({ message: "Veuillez modifier le nom du role d'abord" }); */
 
-    const createdRole = await postRole(role, description);
+    const createdRole = await postRole(role, label, isActive);
 
     if (!createdRole) {
       return res.status(400).json({ message: "Problème requête" });

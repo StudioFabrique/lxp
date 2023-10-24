@@ -9,6 +9,7 @@ export interface IRoleItem {
   _id: string;
   role: string;
   label: string;
+  isActive: boolean;
   permCount: {
     read: number;
     write: number;
@@ -25,7 +26,8 @@ const Role = () => {
   const [roleToEdit, setRoleToEdit] = useState<{
     _id: string;
     name: string;
-    description: string;
+    label: string;
+    isActive: boolean;
   } | null>(null);
 
   useEffect(() => {

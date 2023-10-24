@@ -8,13 +8,19 @@ import { IRoleItem } from "../../../views/role/role";
 import useWatchInput from "../../../hooks/use-watch-input";
 
 const RoleCreateForm: FC<{
-  roleToEdit: { _id: string; name: string; description: string } | null;
+  roleToEdit: {
+    _id: string;
+    name: string;
+    label: string;
+    isActive: boolean;
+  } | null;
   setRoles: Dispatch<SetStateAction<IRoleItem[]>>;
   setRoleToEdit: Dispatch<
     SetStateAction<{
       _id: string;
       name: string;
-      description: string;
+      label: string;
+      isActive: boolean;
     } | null>
   >;
 }> = ({ roleToEdit, setRoles, setRoleToEdit }) => {
@@ -31,9 +37,9 @@ const RoleCreateForm: FC<{
     roleToEdit?.name ? roleToEdit.name : ""
   );
 
-  const { value: description } = useWatchInput(
+  const { value: label } = useWatchInput(
     (value: string) => regexGeneric.test(value),
-    roleToEdit?.description ? roleToEdit.description : ""
+    roleToEdit?.label ? roleToEdit.label : ""
   );
 
   const cancelForm = () => {
@@ -60,14 +66,14 @@ const RoleCreateForm: FC<{
       toast.success(data.message);
     };
 
-    if (name.isValid && description.isValid)
+    if (name.isValid && label.isValid)
       sendRequest(
         {
           path: roleToEdit
             ? `/permission/role/${roleToEdit._id}`
             : `/permission/role`,
           method: roleToEdit ? "put" : "post",
-          body: { role: name.value, description: description.value },
+          body: { role: name.value, description: label.value, isActive },
         },
         roleToEdit ? applyDataUpdate : applyDataCreate
       );
@@ -77,6 +83,11 @@ const RoleCreateForm: FC<{
   useEffect(() => {
     if (requestError) toast.error("problème requête");
   }, [requestError]);
+
+  useEffect(() => {
+    if (roleToEdit) SetActive(roleToEdit?.isActive);
+    else SetActive(false);
+  }, [roleToEdit]);
 
   return (
     <Wrapper>
@@ -110,11 +121,11 @@ const RoleCreateForm: FC<{
               name="description"
               id="description"
               className={setTextAreaStyle(
-                description.hasError && description.value.length > 0
+                label.hasError && label.value.length > 0
               )}
-              onChange={description.valueChangeHandler}
-              onBlur={description.valueBlurHandler}
-              value={description.value}
+              onChange={label.valueChangeHandler}
+              onBlur={label.valueBlurHandler}
+              value={label.value}
             />
           </span>
         </div>
