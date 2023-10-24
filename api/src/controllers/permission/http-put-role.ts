@@ -36,9 +36,12 @@ export default async function httpPutRole(req: Request, res: Response) {
         { role, description }
       );
 
-    return res
-      .status(200)
-      .json({ message: "mise à jour effectuée avec succès" });
+    const roleUpdated = await Role.findOne({ _id: idRole });
+
+    return res.status(200).json({
+      message: "mise à jour effectuée avec succès",
+      data: roleUpdated,
+    });
   } catch (error) {
     console.log(error);
 
