@@ -3,6 +3,7 @@ import { IRoleItem } from "../../../views/role/role";
 import RoleItem from "./role-item";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import DownloadIcon from "../../UI/svg/download-icon";
+import CSVDownloader from "../../UI/csv-downloader/csv-downloader";
 
 const RolesList: FC<{
   roles: IRoleItem[];
@@ -21,7 +22,7 @@ const RolesList: FC<{
       <div className="flex justify-between">
         <h2 className="font-bold text-xl">Gestion des rôles</h2>
         <button type="button" onClick={() => {}} className="flex gap-2">
-          <p>exporter les rôles en .csv</p>
+          <CSVDownloader data={roles} />
           <span className="w-6 h-6">
             <DownloadIcon />
           </span>
