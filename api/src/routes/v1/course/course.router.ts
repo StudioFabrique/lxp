@@ -4,8 +4,10 @@ import checkToken from "../../../middleware/check-token";
 import httpPostCourse from "../../../controllers/course/http-post-course";
 import {
   courseIdValidator,
+  deleteCourseDatesValidator,
   deleteCourseLessonValidator,
   postCourseValidator,
+  putCourseDatesValidator,
   putCourseInformationsValidator,
   putCourseLessonValidator,
   putCourseNewObjectiveValidator,
@@ -33,6 +35,8 @@ import httpPutCourseLesson from "../../../controllers/course/http-put-course-les
 import httpGetCourseScenario from "../../../controllers/course/http-get-course-scenario";
 import httpDeleteCourseLesson from "../../../controllers/course/http-delete-course-lesson";
 import httpPutManyLessons from "../../../controllers/course/http-put-many-lessons";
+import httpPutCourseDates from "../../../controllers/course/http-put-course-dates";
+import httpDeleteCourseDates from "../../../controllers/course/http-delete-courseDates";
 
 const courseRouter = express.Router();
 
@@ -196,6 +200,24 @@ courseRouter.put(
   courseIdValidator,
   idsArrayValidator,
   httpPutManyLessons
+);
+
+// ajoute une plage de dates au cours
+courseRouter.put(
+  "/dates/:courseId",
+  checkToken,
+  courseIdValidator,
+  putCourseDatesValidator,
+  httpPutCourseDates
+);
+
+// efface une plage de dates du cours
+courseRouter.delete(
+  "/dates/:courseId/:datesId",
+  checkToken,
+  courseIdValidator,
+  deleteCourseDatesValidator,
+  httpDeleteCourseDates
 );
 
 export default courseRouter;

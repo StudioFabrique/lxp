@@ -1,15 +1,16 @@
 import { useSelector } from "react-redux";
+import { useEffect, useRef, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import { useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import GroupsList from "./groups-list.component";
-import { useEffect, useRef, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 import Group from "../../../utils/interfaces/group";
 import StudentsList from "./students-list";
 import User from "../../../utils/interfaces/user";
-import toast, { Toaster } from "react-hot-toast";
-import { useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { parcoursGroupsAction } from "../../../store/redux-toolkit/parcours/parcours-groups";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import ButtonAdd from "../../UI/button-add/button-add";

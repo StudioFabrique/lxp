@@ -125,6 +125,7 @@ const CourseObjectives = () => {
 
   return (
     <div className="w-full flex flex-col gap-y-8">
+      <h2 className="text-3xl font-extrabold">Objectifs</h2>
       <div className="w-full">
         {courseObjectives && parcoursObjectives ? (
           <Wrapper>
@@ -136,6 +137,22 @@ const CourseObjectives = () => {
               property="description"
               onSubmit={handleUpdateObjectives}
             />
+            <div className="w-full flex justify-start">
+              {!toggleForm ? (
+                <ButtonAdd
+                  label="Créer un nouvel objectif"
+                  onClickEvent={() => setToggleForm((prevState) => !prevState)}
+                  outline={true}
+                />
+              ) : (
+                <button
+                  className="btn btn-primary btn-outline"
+                  onClick={handleCancelForm}
+                >
+                  Annuler
+                </button>
+              )}
+            </div>
           </Wrapper>
         ) : null}
       </div>
@@ -148,22 +165,6 @@ const CourseObjectives = () => {
           />
         </Wrapper>
       ) : null}
-      <div className="w-full flex justify-start">
-        {!toggleForm ? (
-          <ButtonAdd
-            label="Créer un nouvel objectif"
-            onClickEvent={() => setToggleForm((prevState) => !prevState)}
-            outline={true}
-          />
-        ) : (
-          <button
-            className="btn btn-primary btn-outline"
-            onClick={handleCancelForm}
-          >
-            Annuler
-          </button>
-        )}
-      </div>
     </div>
   );
 };

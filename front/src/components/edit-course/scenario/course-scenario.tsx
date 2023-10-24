@@ -8,7 +8,7 @@ import {
 import { useDispatch } from "react-redux";
 import { courseScenarioActions } from "../../../store/redux-toolkit/course/course-scenario";
 import LinearScenarioLessons from "./linear-scenario-lessons";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 import { useParams } from "react-router-dom";
 import courseScenarioFromHttp from "../../../helpers/course/course-scenario-from-http";
@@ -27,6 +27,7 @@ const CourseScenario = () => {
   const lessons = useSelector(
     (state: any) => state.courseScenario.courseLessons
   ) as Lesson[];
+  const [loading, setLoading] = useState(false);
 
   // switch entre les différents types de scénarios
   const handleChangeScenario = () => {
@@ -38,21 +39,30 @@ const CourseScenario = () => {
    * @param lessonsIds number[]
    */
   const handleSaveManyLessons = (lessonsIds: number[]) => {
+    let newLessons = Array<number>();
+    lessonsIds.forEach((id) => {
+      if (!lessons.find((item) => item.id === id))
+        newLessons = [...newLessons, id];
+    });
     const applyData = (data: { success: boolean; message: string }) => {
-      console.log({ data });
+      setLoading(false);
+      if (data.success) {
+        toast.success(data.message);
+      }
     };
+    setLoading(true);
     sendRequest(
       {
         path: `/course/lessons/${courseId}`,
         method: "put",
-        body: lessonsIds.map((id) => id),
+        body: newLessons,
       },
       applyData
     );
   };
 
   /**
-   * récuppère le type de scénario et les leçons qui lui sont associées
+   * récupère le type de scénario et les leçons qui lui sont associées
    */
   useEffect(() => {
     const applyData = (data: any) => {
@@ -70,12 +80,13 @@ const CourseScenario = () => {
   useEffect(() => {
     if (error.length > 0) {
       toast.error(error);
+      setLoading(false);
     }
   }, [error]);
 
   return (
     <main className="w-full flex flex-col gap-y-8">
-      <h1 className="text-3xl font-bold">Scénario</h1>
+      <h1 className="text-xl font-bold">Scénario</h1>
       <Wrapper>
         <section className="flex flex-col gap-y-4">
           <h2 className="text-xl font-bold">Type de scénario</h2>
@@ -107,7 +118,7 @@ const CourseScenario = () => {
                 }
               />
             </div>
-            <LinearScenarioLessons lessons={lessons} />
+            <LinearScenarioLessons lessons={lessons} loading={loading} />
           </>
         ) : (
           <p>

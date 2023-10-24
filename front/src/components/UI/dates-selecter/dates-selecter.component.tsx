@@ -15,7 +15,7 @@ type Props = {
 const DatesSelecter: FC<Props> = ({
   startDateProp = "",
   endDateProp = "",
-  label = "Dates",
+  label = "",
   onSubmitDates,
 }) => {
   const { value: startDate } = useInput(
@@ -42,9 +42,9 @@ const DatesSelecter: FC<Props> = ({
   useEffect(() => {
     setError(false);
     const timer = setTimeout(() => {
-      const date = new Date().getTime();
+      /*       const date = new Date().getTime();
       const sDate = new Date(dates.startDate).getTime();
-      const eDate = new Date(dates.endDate).getTime();
+      const eDate = new Date(dates.endDate).getTime(); */
       if (startDate.isValid && endDate.isValid) {
         /* if (sDate > date && sDate < eDate) { */
         if (!isInitialRender.current) {
@@ -83,7 +83,7 @@ const DatesSelecter: FC<Props> = ({
       <h3 className="font-bold">{label}</h3>
       <div className="flex flex-col gap-y-4">
         <div className="flex justify-between items-center">
-          <p className="whitespace-nowrap w-20">Début *</p>
+          <p className="whitespace-nowrap w-20">Début</p>
           <input
             className="ml-2 input input-sm w-5/6"
             name="startingDate"
@@ -93,7 +93,7 @@ const DatesSelecter: FC<Props> = ({
           />
         </div>
         <div className="flex justify-between items-center">
-          <p className="whitespace-nowrap w-20">Fin *</p>
+          <p className="whitespace-nowrap w-20">Fin</p>
           <input
             className="ml-2 input input-sm w-5/6"
             name="endingDate"

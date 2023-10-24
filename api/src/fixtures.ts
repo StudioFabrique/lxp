@@ -296,7 +296,7 @@ async function main() {
   await createManyTeachers();
   await createManyStudents();
   await createManyCoach();
-  await createManyGroups();
+  //await createManyGroups();
   await createTag();
   await disconnect();
 }

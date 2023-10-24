@@ -86,7 +86,10 @@ const StudentsList = (props: StudentsListProps) => {
         </ul>
         <div className="flex gap-x-2 items-center">
           <Search options={userInGroupSearchOptions} onSearch={handleSearch} />
-          <div className="text-primary" onClick={handleRefreshList}>
+          <div
+            className="text-primary cursor-pointer"
+            onClick={handleRefreshList}
+          >
             <RefreshIcon size={6} />
           </div>
         </div>

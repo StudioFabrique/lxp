@@ -1,4 +1,5 @@
 import Contact from "./contact";
+import CourseDates from "./course-dates";
 import Lesson from "./lesson";
 import Module from "./module";
 import Tag from "./tag";
@@ -18,4 +19,5 @@ export default interface Course {
   contacts: Contact[];
   scenario?: boolean;
   lessons: Lesson[];
+  dates: CourseDates[];
 }
