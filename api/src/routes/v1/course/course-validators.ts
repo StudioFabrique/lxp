@@ -2,6 +2,7 @@ import { body, param, query } from "express-validator";
 
 import { checkValidatorResult } from "../../../middleware/validators";
 import {
+  dateValidateGeneric,
   stringValidateGeneric,
   stringValidateOptional,
 } from "../../../helpers/custom-validators";
@@ -122,13 +123,31 @@ export const putCourseDurationValidator = [
 
 export const putCourseDatesValidator = [
   body("minDate")
-    .custom(stringValidateGeneric)
+    .custom(dateValidateGeneric)
     .withMessage("La date fournie contient des caractères non autorisés")
     .trim()
     .escape(),
   body("maxDate")
-    .custom(stringValidateGeneric)
+    .custom(dateValidateGeneric)
     .withMessage("La date fournie contient des caractères non autorisés")
+    .trim()
+    .escape(),
+  body("id")
+    .notEmpty()
+    .withMessage("L'identifiant de la plage de dates est requis")
+    .isNumeric()
+    .withMessage("L'identifiant de la plage de dates doit être un nombre")
+    .trim()
+    .escape(),
+  checkValidatorResult,
+];
+
+export const deleteCourseDatesValidator = [
+  param("datesId")
+    .notEmpty()
+    .withMessage("L'identifiant du cours est requis")
+    .isNumeric()
+    .withMessage("L'identifiant du cours doit être un nombre")
     .trim()
     .escape(),
   checkValidatorResult,

@@ -1,73 +1,79 @@
 import { useSelector } from "react-redux";
-import Module from "../../../utils/interfaces/module";
-import useInput from "../../../hooks/use-input";
-import { regexGeneric } from "../../../utils/constantes";
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
-import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import { useDispatch } from "react-redux";
-import { courseInfosAction } from "../../../store/redux-toolkit/course/course-infos";
+
 import CourseDates from "../../../utils/interfaces/course-dates";
 import DatesList from "./dates-list";
-import DatesItem from "./dates-item";
+import { courseDatesActions } from "../../../store/redux-toolkit/course/course-dates";
+import DatesForm from "./dates-form";
+import setId from "../../../helpers/set-id";
 
 const CourseCalendar = () => {
-  const { courseId } = useParams();
   const dispatch = useDispatch();
-  const currentDates = useSelector(
-    (state: any) => state.courseDates.currentDates
-  ) as CourseDates;
+  const { courseId } = useParams();
   const { sendRequest, error } = useHttp();
   const dates = useSelector(
-    (state: any) => state.courseInfos.course.dates
+    (state: any) => state.courseDates.courseDates
   ) as CourseDates[];
-  const isInitialRender = useRef(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmitDates = useCallback(
-    (dates: {
-      startDate: string;
-      endDate: string;
-      synchroneDuration: number;
-      asynchroneDuration: number;
-    }) => {
-      const applyData = (data: {
-        minDate: string;
-        maxDate: string;
-        synchroneDuration: number;
-        asynchroneDuration: number;
-      }) => {
-        console.log({ data });
-      };
-      sendRequest(
-        {
-          path: `/course/dates/${courseId}`,
-          method: "put",
-          body: {
-            minDate: dates.startDate,
-            maxDate: dates.endDate,
-            synchroneDuration: dates.synchroneDuration,
-            asynchroneDuration: dates.asynchroneDuration,
-          },
-        },
-        applyData
-      );
-    },
-    [courseId, sendRequest]
-  );
+  console.log({ dates });
+
+  /**
+   * enregistre une nouvelle plage de dates dans la bdd
+   * @param values CourseDates
+   */
+  const handleSubmitDates = (values: CourseDates) => {
+    const tmpDates = { ...values, id: setId(dates ?? []) };
+    setIsLoading(true);
+    const applyData = (_data: any) => {
+      setIsLoading(false);
+      dispatch(courseDatesActions.setCourseDates(tmpDates));
+    };
+    sendRequest(
+      {
+        path: `/course/dates/${courseId}`,
+        method: "put",
+        body: tmpDates,
+      },
+      applyData
+    );
+  };
+
+  /**
+   * efface une plage de dates de la bdd
+   * @param id number
+   */
+  const handleDeleteItem = (id: number) => {
+    const applyData = (data: { success: boolean; message: string }) => {
+      dispatch(courseDatesActions.deleteCourseDates(id));
+    };
+    sendRequest(
+      {
+        path: `/course/dates/${courseId}/${id}`,
+        method: "delete",
+      },
+      applyData
+    );
+  };
 
   // gère les erreurs HTTP
   useEffect(() => {
-    if (error.length > 0) toast.error(error);
+    if (error.length > 0) {
+      setIsLoading(false);
+      toast.error(error);
+    }
   }, [error]);
 
   return (
     <section className="w-full flex flex-col gap-y-8">
       <h2 className="text-3xl font-extrabold">Calendrier</h2>
       <article className="w-full flex flex-col gap-y-8">
-        <DatesList datesList={dates} />
-        <DatesItem onSubmitDates={handleSubmitDates} />
+        <DatesForm isLoading={isLoading} onSubmitDates={handleSubmitDates} />
+        <DatesList datesList={dates} onDeleteItem={handleDeleteItem} />
       </article>
     </section>
   );
