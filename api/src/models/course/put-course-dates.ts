@@ -6,7 +6,8 @@ async function putCourseDates(
   minDate: string,
   maxDate: string,
   synchroneDuration: number,
-  asynchroneDuration: number
+  asynchroneDuration: number,
+  id: number
 ) {
   const existingCourse = await prisma.course.findFirst({
     where: { id: courseId },
@@ -22,7 +23,7 @@ async function putCourseDates(
   let existingDates = existingCourse.dates;
   existingDates = [
     ...existingDates,
-    { minDate, maxDate, synchroneDuration, asynchroneDuration },
+    { minDate, maxDate, synchroneDuration, asynchroneDuration, id },
   ];
 
   const updatedCourse = await prisma.course.update({

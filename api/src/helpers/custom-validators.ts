@@ -1,5 +1,9 @@
 import { body } from "express-validator";
-import { regexGeneric, regexOptionalGeneric } from "../utils/constantes";
+import {
+  regexDate,
+  regexGeneric,
+  regexOptionalGeneric,
+} from "../utils/constantes";
 import { checkValidatorResult } from "../middleware/validators";
 
 export function stringValidateOptional(value: string) {
@@ -8,6 +12,10 @@ export function stringValidateOptional(value: string) {
 
 export function stringValidateGeneric(value: string) {
   return regexGeneric.test(value);
+}
+
+export function dateValidateGeneric(value: string) {
+  return regexDate.test(value);
 }
 
 export const idsArrayValidator = [

@@ -1,8 +1,9 @@
 import CourseDates from "../../../utils/interfaces/course-dates";
-import DatesItem from "./dates-item";
+import DatesCard from "./dates-card";
 
 interface DatesListProps {
   datesList: CourseDates[];
+  onDeleteItem: (id: number) => void;
 }
 
 const DatesList = (props: DatesListProps) => {
@@ -11,10 +12,10 @@ const DatesList = (props: DatesListProps) => {
   return (
     <>
       {datesList && datesList.length > 0 ? (
-        <ul>
+        <ul className="flex flex-col gap-y-4">
           {datesList.map((date) => (
             <li key={date.id}>
-              <DatesItem dateItem={date} onSubmitDates={() => {}} />
+              <DatesCard datesItem={date} onDeleteItem={props.onDeleteItem} />
             </li>
           ))}
         </ul>

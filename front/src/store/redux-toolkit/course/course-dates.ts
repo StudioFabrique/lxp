@@ -1,11 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-interface CourseDates {
+import CourseDates from "../../../utils/interfaces/course-dates";
+
+interface CourseDatesState {
   courseDates: CourseDates[] | null;
   currentDates: CourseDates | null;
 }
 
-const initialCourseDates: CourseDates = {
+const initialCourseDates: CourseDatesState = {
   courseDates: null,
   currentDates: null,
 };
@@ -13,7 +15,33 @@ const initialCourseDates: CourseDates = {
 const courseDatesSlice = createSlice({
   name: "courseDates",
   initialState: initialCourseDates,
-  reducers: {},
+  reducers: {
+    setCourseDates(state, action) {
+      if (!state.courseDates) {
+        state.courseDates = [];
+      }
+      state.courseDates = [...state.courseDates, action.payload];
+    },
+    setCurrentDates(state, action) {
+      console.log(action.payload);
+
+      if (state.courseDates) {
+        state.currentDates = {
+          ...action.payload,
+          id: state.courseDates[state.courseDates.length + 1],
+        };
+      } else {
+        state.courseDates = { ...action.payload, id: 1 };
+      }
+    },
+    deleteCourseDates(state, action) {
+      if (state.courseDates) {
+        state.courseDates = state.courseDates.filter(
+          (item: CourseDates) => item.id !== action.payload
+        );
+      }
+    },
+  },
 });
 
 export const courseDatesActions = courseDatesSlice.actions;

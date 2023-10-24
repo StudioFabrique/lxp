@@ -18,3 +18,4 @@ export const regexNumber = /^[0-9]*$/;
 export const regexGeneric = /^[a-zA-Z0-9\s,.'\-+éàè?î!âôêû:\/ù]{1,}$/;
 export const regexOptionalGeneric = /^[a-zA-Z0-9\s,.'\-+éîàè?!:\/âôêûù]{0,}$/;
 export const regexUrl = /^https?:\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/;
+export const regexDate = /^\d{4}-\d{2}-\d{2}$/;
