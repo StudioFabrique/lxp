@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
 
 const TypeUtilisateur: FC<{
@@ -16,6 +16,7 @@ const TypeUtilisateur: FC<{
   onSetRoleId: Dispatch<SetStateAction<string | null>>;
 }> = ({ roleId, onSetRoleId }) => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const { sendRequest, isLoading } = useHttp();
 
@@ -33,7 +34,12 @@ const TypeUtilisateur: FC<{
     <Wrapper>
       <div className="flex justify-between">
         <h2 className="font-bold text-xl">Type d'utilisateur</h2>
-        <button type="button" onClick={() => navigate("/admin/roles")}>
+        <button
+          type="button"
+          onClick={() =>
+            navigate("/admin/roles", { state: { from: pathname } })
+          }
+        >
           Gérer les roles
         </button>
       </div>
