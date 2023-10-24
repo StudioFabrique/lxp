@@ -4,6 +4,7 @@ import RolesList from "../../components/role/roles-list/roles-list";
 import RoleForm from "../../components/role/role-form/role-form";
 import { Toaster } from "react-hot-toast";
 import PermissionsList from "../../components/role/permissions-list/permissions-list";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export interface IRoleItem {
   _id: string;
@@ -19,6 +20,8 @@ export interface IRoleItem {
 }
 
 const Role = () => {
+  const { state: history } = useLocation();
+  const navigate = useNavigate();
   const { sendRequest, isLoading } = useHttp();
 
   const [roles, setRoles] = useState<IRoleItem[]>([]);
@@ -38,6 +41,15 @@ const Role = () => {
     <>
       <Toaster />
       <div className="flex flex-col gap-y-5 p-10">
+        {!!history?.from && (
+          <button
+            onClick={() => navigate(history.from)}
+            type="button"
+            className="self-start"
+          >
+            Retour
+          </button>
+        )}
         <h1 className="text-2xl font-semibold">
           Controler des rôles et des accès
         </h1>

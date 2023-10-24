@@ -21,7 +21,7 @@ const RolesList: FC<{
     <Wrapper>
       <div className="flex justify-between">
         <h2 className="font-bold text-xl">Gestion des rôles</h2>
-        <button type="button" onClick={() => {}} className="flex gap-2">
+        <button type="button" className="flex gap-2">
           <CSVDownloader data={roles} />
           <span className="w-6 h-6">
             <DownloadIcon />

@@ -1,4 +1,4 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, useState } from "react";
 import useInput from "../../../hooks/use-input";
 import {
   regexGeneric,
