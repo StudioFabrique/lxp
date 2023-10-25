@@ -1,4 +1,4 @@
 export const themes = {
-  light: "winter",
-  dark: "halloween",
+  light: "perfectfuture",
+  dark: "night",
 };

@@ -1,4 +1,4 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, useState } from "react";
 import useInput from "../../../hooks/use-input";
 import {
   regexGeneric,
@@ -31,7 +31,7 @@ const UserAddForm: FC<{
 
   const [links, setLinks] = useState<Array<Link>>([]);
 
-  const [typeUtilisateur, setTypeUtilisateur] = useState<number>(0);
+  const [roleId, setRoleId] = useState<string | null>(null);
 
   const [hobbies, setHobbies] = useState<Array<Hobby>>([]);
 
@@ -82,7 +82,11 @@ const UserAddForm: FC<{
 
   //  test la validité du form via le custom hook useInput
   let formIsValid = false;
-  formIsValid = email.isValid && firstname.isValid && lastname.isValid; /* &&
+  formIsValid =
+    email.isValid &&
+    firstname.isValid &&
+    lastname.isValid &&
+    !!roleId?.length; /* &&
     (address.isValid || address == null) &&
     (city.isValid || city == null) &&
     (postCode.isValid || postCode) &&
@@ -100,12 +104,12 @@ const UserAddForm: FC<{
         address: address.value.trim(),
         postCode: postCode.value.trim(),
         city: city.value.trim(),
-        birthDate: birthDate,
-        graduations: graduations,
+        birthDate,
+        graduations,
         avatar: file,
-        userType: typeUtilisateur,
-        links: links,
-        hobbies: hobbies,
+        roleId,
+        links,
+        hobbies,
       });
     }
   };
@@ -131,10 +135,7 @@ const UserAddForm: FC<{
             postCode={postCode}
           />
           <div className="grid grid-rows-1 gap-y-5">
-            <TypeUtilisateur
-              typeUtilisateur={typeUtilisateur}
-              onSetTypeUtilisateur={setTypeUtilisateur}
-            />
+            <TypeUtilisateur roleId={roleId} onSetRoleId={setRoleId} />
             <CentreInterets hobbies={hobbies} setHobbies={setHobbies} />
           </div>
         </div>

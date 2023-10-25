@@ -17,7 +17,7 @@ import Permission from "./utils/interfaces/db/permission";
 import Group, { IGroup } from "./utils/interfaces/db/group";
 import Tag from "./utils/interfaces/db/tag";
 import User from "./utils/interfaces/db/user";
-import permDefs from "./permDefs";
+import permDefs from "./fixtures-permissions";
 dotenv.config();
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
@@ -221,10 +221,10 @@ async function createManyCoach() {
 
 async function createRoles() {
   const roles = [
-    { role: "admin", label: "admin", rank: 1 },
-    { role: "mini-admin", label: "mini-admin", rank: 1 },
+    { role: "admin", label: "admin", rank: 1, isActive: true },
+    { role: "miniAdmin", label: "mini-admin", rank: 1 },
     { role: "teacher", label: "formateur", rank: 2 },
-    { role: "boss_teacher", label: "Formateur en Chef", rank: 2 },
+    { role: "bossTeacher", label: "Formateur en Chef", rank: 2 },
     { role: "student", label: "apprenant", rank: 3 },
     { role: "coach", label: "mentor", rank: 3 },
     { role: "stagiaire", label: "gestion cafetière", rank: 3 },

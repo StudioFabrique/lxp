@@ -24,7 +24,7 @@ const GroupManageUserItem: FC<{
 
   return (
     <div className="flex justify-between items-center gap-x-2">
-      <span className="flex items-center gap-x-4 p-2 pl-5 w-full bg-secondary-content rounded-lg">
+      <span className="flex items-center gap-x-4 p-2 pl-5 w-full bg-secondary rounded-lg">
         <SelectionButton
           currentUser={user}
           allUserSelected={allUserSelected}

@@ -1,12 +1,8 @@
-// import attributeChange from "../../../../utils/attributeChange";
-
 import {
   ChangeEvent,
   ChangeEventHandler,
   Dispatch,
   FC,
-  MouseEvent,
-  MouseEventHandler,
   SetStateAction,
   useState,
 } from "react";
@@ -78,7 +74,6 @@ const Certifications: FC<{
         toast("error");
         break;
     }
-    /* attributeChange(event, currentGraduation, setCurrentGraduation); */
   };
 
   return (
@@ -128,7 +123,7 @@ const Certifications: FC<{
             Ajouter la certification
           </button>
         </div>
-        <div className="bg-secondary-content flex flex-col items-center gap-y-4 p-5 m-2 rounded-xl md:h-[300px] lg:h-[400px] overflow-y-auto">
+        <div className="bg-secondary flex flex-col items-center gap-y-4 p-5 m-2 rounded-xl md:h-[300px] lg:h-[400px] overflow-y-auto">
           {/* List of certifications */}
           {graduations.map((graduation) => (
             <CertificationItem
