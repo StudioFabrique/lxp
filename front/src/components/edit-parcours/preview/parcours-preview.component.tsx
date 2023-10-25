@@ -1,14 +1,25 @@
+import { useSelector } from "react-redux";
+
 import ParcoursPreviewInfos from "./parcours-preview-infos.component";
 import ParcoursPreviewModules from "./parcours-preview-modules.component";
-import ParcoursPreviewObjectives from "./parcours-preview-objectives.component";
-import ParcoursPreviewSkills from "./parcours-preview-skills.component";
 import ParcoursPreviewStudent from "./parcours-preview-student";
+import Objective from "../../../utils/interfaces/objective";
+import PreviewObjectives from "../../preview/preview-objectives";
+import Skill from "../../../utils/interfaces/skill";
+import PreviewSkills from "../../preview/preview-skills";
 
 interface ParcoursPreviewProps {
   onEdit: (id: number) => void;
 }
 
 const ParcoursPreview = (props: ParcoursPreviewProps) => {
+  const objectives = useSelector(
+    (state: any) => state.parcoursObjectives.objectives
+  ) as Objective[];
+  const skills = useSelector(
+    (state: any) => state.parcoursSkills.skills
+  ) as Skill[];
+
   return (
     /* En tête de l'aperçu */
     <div className="w-full flex flex-col gap-y-8">
@@ -21,11 +32,11 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
       </section>
       {/* Objectifs du parcours */}
       <section>
-        <ParcoursPreviewObjectives onEdit={props.onEdit} />
+        <PreviewObjectives objectives={objectives} onEdit={props.onEdit} />
       </section>
       {/* Compétences du parcours */}
       <section>
-        <ParcoursPreviewSkills onEdit={props.onEdit} />
+        <PreviewSkills skills={skills} onEdit={props.onEdit} />
       </section>
       {/* Modules du parcours */}
       <section>

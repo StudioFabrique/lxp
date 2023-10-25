@@ -49,12 +49,12 @@ export const putCourseInformationsValidator = [
   body("description")
     .custom(stringValidateOptional)
     .withMessage("La description du cours n'est pas conforme"),
-  checkValidatorResult,
   body("Visibility")
     .notEmpty()
     .withMessage("Une valeur est requise pour la visibilité du cours")
     .isBoolean()
     .withMessage("La visibilité du cours doit être une valeur booléenne"),
+  checkValidatorResult,
 ];
 
 export const putCourseNewObjectiveValidator = [
