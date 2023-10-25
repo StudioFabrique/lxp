@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Permission, { IPermission } from "../../utils/interfaces/db/permission";
 import Role from "../../utils/interfaces/db/role";
 import { serverIssue } from "../../utils/constantes";
+import { putRole } from "../../models/role/put-role";
 
 /**
  * Mets à jour le nom d'un rôle ainsi que toutes ses permissions
@@ -24,22 +25,14 @@ export default async function httpPutRole(req: Request, res: Response) {
       permissions: IPermission[];
     } = req.body;
 
-    const oldRole = await Role.findOneAndUpdate(
-      { _id: idRole },
-      { role, label, rank, isActive }
+    const roleUpdated = await putRole(
+      idRole,
+      permissions,
+      role.toLocaleLowerCase().trim(),
+      label.toLocaleLowerCase().trim(),
+      rank,
+      isActive
     );
-
-    if (!!permissions)
-      for (const permission of permissions) {
-        await Permission.updateOne(
-          { role: oldRole?.role, action: permission.action },
-          { ressources: permission.ressources }
-        );
-      }
-
-    if (!!role) await Permission.updateMany({ role: oldRole?.role }, { role });
-
-    const roleUpdated = await Role.findOne({ _id: idRole });
 
     return res.status(200).json({
       message: "Mise à jour effectuée avec succès",
