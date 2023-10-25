@@ -49,7 +49,7 @@ export const putCourseInformationsValidator = [
   body("description")
     .custom(stringValidateOptional)
     .withMessage("La description du cours n'est pas conforme"),
-  body("Visibility")
+  body("visibility")
     .notEmpty()
     .withMessage("Une valeur est requise pour la visibilité du cours")
     .isBoolean()

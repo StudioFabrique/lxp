@@ -42,7 +42,7 @@ const DatesForm = (props: DatesFormProps) => {
    */
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (formIsValid) {
+    if (formIsValid()) {
       props.onSubmitDates({
         minDate: startDate.value,
         maxDate: endDate.value,
@@ -70,12 +70,15 @@ const DatesForm = (props: DatesFormProps) => {
     endDate.datePicking(event.currentTarget.value);
   };
 
-  const formIsValid =
-    synchrone.isValid &&
-    asynchrone.isValid &&
-    startDate.isValid &&
-    endDate.isValid &&
-    testDates();
+  const formIsValid = () => {
+    return (
+      synchrone.isValid &&
+      asynchrone.isValid &&
+      startDate.isValid &&
+      endDate.isValid &&
+      testDates()
+    );
+  };
 
   return (
     <form
@@ -89,7 +92,7 @@ const DatesForm = (props: DatesFormProps) => {
             <div className="flex justify-between items-center">
               <p className="whitespace-nowrap w-20">Début</p>
               <input
-                className={setInputStyle(!testDates())}
+                className="flex-1 input input-sm input-bordered focus:outline-none w-full"
                 name="startingDate"
                 type="date"
                 value={startDate.value}
@@ -99,7 +102,7 @@ const DatesForm = (props: DatesFormProps) => {
             <div className="flex justify-between items-center">
               <p className="whitespace-nowrap w-20">Fin</p>
               <input
-                className={setInputStyle(!testDates())}
+                className="flex-1 input input-sm input-bordered focus:outline-none w-full"
                 name="endingDate"
                 type="date"
                 value={endDate.value}

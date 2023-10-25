@@ -11,6 +11,7 @@ async function getCourseInformations(courseId: number) {
       virtualClass: true,
       visibility: true,
       dates: true,
+      isPublished: true,
       tags: {
         select: {
           tag: true,
