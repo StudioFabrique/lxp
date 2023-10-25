@@ -19,6 +19,7 @@ type Props = {
   onUpdateImage: (image: File) => void;
   title: string;
   parentTitle: string;
+  isPublished?: boolean;
 };
 
 const ImageHeader: FC<Props> = ({
@@ -27,6 +28,7 @@ const ImageHeader: FC<Props> = ({
   title,
   parentTitle,
   onUpdateImage,
+  isPublished = false,
 }) => {
   const [bgImage, setBgImage] = useState<any | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -85,7 +87,9 @@ const ImageHeader: FC<Props> = ({
               <span className="flex gap-x-2 items-center">
                 <ParcoursHeaderIcon size="lg" />
                 <div>
-                  <h1 className="text-xl">{parentTitle}</h1>
+                  <h1 className="text-xl">
+                    {parentTitle} - {isPublished ? "(Publié)" : "(Brouillon)"}
+                  </h1>
                   <h3 className="capitalise">{title}</h3>
                 </div>
               </span>
