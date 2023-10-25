@@ -13,11 +13,18 @@ export const getPermissionsValidator = [
 ];
 
 export const postRoleValidator = [
-  body(["role" /* ,"role.description" */])
+  body(["role", "label"])
     .isString()
     .withMessage("Role invalide")
     .notEmpty()
     .withMessage("Role absent")
+    .toLowerCase()
+    .escape(),
+  body("rank")
+    .isNumeric()
+    .withMessage("Rang invalide")
+    .notEmpty()
+    .withMessage("Rang absent")
     .escape(),
 
   checkValidatorResult,

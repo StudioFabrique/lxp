@@ -2,8 +2,6 @@ import { Request, Response } from "express";
 import { postRole } from "../../models/role/post-role";
 import getRole from "../../models/role/get-role";
 import { serverIssue } from "../../utils/constantes";
-import Permission from "../../utils/interfaces/db/permission";
-import Role from "../../utils/interfaces/db/role";
 import CreatePermission from "../../models/permission/create-permission";
 
 export default async function httpPostRole(req: Request, res: Response) {
@@ -23,7 +21,12 @@ export default async function httpPostRole(req: Request, res: Response) {
         .status(400)
         .json({ message: "Veuillez modifier le nom du role d'abord" }); */
 
-    const createdRole = await postRole(role, label, rank, isActive);
+    const createdRole = await postRole(
+      role.toLocaleLowerCase().trim(),
+      label.toLocaleLowerCase().trim(),
+      rank,
+      isActive
+    );
 
     if (!createdRole) {
       return res.status(400).json({ message: "Le rôle existe déjà" });
