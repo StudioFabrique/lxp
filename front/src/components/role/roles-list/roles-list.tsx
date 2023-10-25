@@ -4,6 +4,7 @@ import RoleItem from "./role-item";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import DownloadIcon from "../../UI/svg/download-icon";
 import CSVDownloader from "../../UI/csv-downloader/csv-downloader";
+import { transformRolesCsv } from "../../../utils/csv/csv-data-transform";
 
 const RolesList: FC<{
   roles: IRoleItem[];
@@ -22,7 +23,7 @@ const RolesList: FC<{
       <div className="flex justify-between">
         <h2 className="font-bold text-xl">Gestion des rôles</h2>
         <button type="button" className="flex gap-2">
-          <CSVDownloader data={roles} />
+          <CSVDownloader data={transformRolesCsv(roles)} />
           <span className="w-6 h-6">
             <DownloadIcon />
           </span>

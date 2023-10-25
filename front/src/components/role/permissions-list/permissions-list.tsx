@@ -146,7 +146,7 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
           />
           <RessourcesByAction
             action="update"
-            title="Mise à jour"
+            title="Édition"
             ressources={ressources}
             unfilteredPermissions={permissions}
             onChangePermission={handleChangePermission}
