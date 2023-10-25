@@ -3,14 +3,18 @@ import { postRole } from "../../models/role/post-role";
 import getRole from "../../models/role/get-role";
 import { serverIssue } from "../../utils/constantes";
 import Permission from "../../utils/interfaces/db/permission";
+import Role from "../../utils/interfaces/db/role";
+import CreatePermission from "../../models/permission/create-permission";
 
 export default async function httpPostRole(req: Request, res: Response) {
   try {
     const {
       role,
       label,
+      rank,
       isActive,
-    }: { role: string; label: string; isActive: boolean } = req.body;
+    }: { role: string; label: string; rank: number; isActive: boolean } =
+      req.body;
 
     console.log({ label });
 
@@ -19,35 +23,80 @@ export default async function httpPostRole(req: Request, res: Response) {
         .status(400)
         .json({ message: "Veuillez modifier le nom du role d'abord" }); */
 
-    const createdRole = await postRole(role, label, isActive);
+    const createdRole = await postRole(role, label, rank, isActive);
 
     if (!createdRole) {
       return res.status(400).json({ message: "Le rôle existe déjà" });
     }
 
-    await Permission.create({
+    for (const action of ["read", "write", "update", "delete"])
+      await CreatePermission(createdRole.role, rank, action);
+
+    /* await Permission.create({
       role: createdRole.role,
       action: "write",
-      ressources: [],
+      ressources: async () => {
+        switch (rank) {
+          case 1:
+            return [
+              ...ressourcesRbac1,
+              ...(await Role.find()).map((role) => role.role),
+            ];
+          case 2:
+            [];
+          default:
+            return [];
+        }
+      },
     });
 
     await Permission.create({
       role: createdRole.role,
       action: "read",
-      ressources: [],
+      ressources: async () => {
+        switch (rank) {
+          case 1:
+            return [
+              ...ressourcesRbac1,
+              ...(await Role.find()).map((role) => role.role),
+            ];
+          default:
+            return [];
+        }
+      },
     });
 
     await Permission.create({
       role: createdRole.role,
       action: "update",
-      ressources: [],
+      ressources: async () => {
+        switch (rank) {
+          case 1:
+            return [
+              ...ressourcesRbac1,
+              ...(await Role.find()).map((role) => role.role),
+            ];
+          default:
+            return [];
+        }
+      },
     });
 
     await Permission.create({
       role: createdRole.role,
       action: "delete",
-      ressources: [],
-    });
+      ressources: async () => {
+        switch (rank) {
+          case 1:
+            return [
+              ...ressourcesRbac1,
+              ...(await Role.find()).map((role) => role.role),
+            ];
+          default:
+            return [];
+        }
+      },
+    }); */
 
     const response = await getRole(createdRole.role);
 

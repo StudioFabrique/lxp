@@ -1,5 +1,5 @@
 import { Dispatch, FC, SetStateAction } from "react";
-import { IRoleItem } from "../../../views/role/role";
+import { IRoleItem, IRoleToEdit } from "../../../views/role/role";
 import RoleItem from "./role-item";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import DownloadIcon from "../../UI/svg/download-icon";
@@ -9,14 +9,7 @@ import { transformRolesCsv } from "../../../utils/csv/csv-data-transform";
 const RolesList: FC<{
   roles: IRoleItem[];
   setRoles: Dispatch<SetStateAction<IRoleItem[]>>;
-  setRoleToEdit: Dispatch<
-    SetStateAction<{
-      _id: string;
-      name: string;
-      label: string;
-      isActive: boolean;
-    } | null>
-  >;
+  setRoleToEdit: Dispatch<SetStateAction<IRoleToEdit | null>>;
 }> = ({ roles, setRoles, setRoleToEdit }) => {
   return (
     <Wrapper>
@@ -44,7 +37,7 @@ const RolesList: FC<{
               <th></th>
             </tr>
           </thead>
-          <tbody className="h-[22em] overflow-y-auto gap-y-4 grid text-primary-content">
+          <tbody className="flex flex-col h-[28em] overflow-y-auto gap-y-4 text-primary-content">
             {roles.map((role) => (
               <RoleItem
                 key={role._id}

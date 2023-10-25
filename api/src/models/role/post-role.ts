@@ -1,7 +1,12 @@
 import Permission, { IPermission } from "../../utils/interfaces/db/permission";
 import Role, { IRole } from "../../utils/interfaces/db/role";
 
-export async function postRole(role: string, label: string, isActive: boolean) {
+export async function postRole(
+  role: string,
+  label: string,
+  rank: number,
+  isActive: boolean
+) {
   try {
     /* const isCloneExist = await Role.findOne({ role: `${role}_clone` });
 
@@ -34,7 +39,7 @@ export async function postRole(role: string, label: string, isActive: boolean) {
     const roleCreated = await Role.create({
       role,
       label,
-      rank: 2,
+      rank,
       isActive,
     });
 

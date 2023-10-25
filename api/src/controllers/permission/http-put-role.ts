@@ -13,18 +13,20 @@ export default async function httpPutRole(req: Request, res: Response) {
     const {
       role,
       label,
+      rank,
       isActive,
       permissions,
     }: {
       role: string;
       label: string;
+      rank: number;
       isActive: boolean;
       permissions: IPermission[];
     } = req.body;
 
     const oldRole = await Role.findOneAndUpdate(
       { _id: idRole },
-      { role, label, isActive }
+      { role, label, rank, isActive }
     );
 
     if (!!permissions)

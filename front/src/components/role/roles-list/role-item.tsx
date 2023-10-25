@@ -1,5 +1,5 @@
 import { Dispatch, FC, SetStateAction, useEffect } from "react";
-import { IRoleItem } from "../../../views/role/role";
+import { IRoleItem, IRoleToEdit } from "../../../views/role/role";
 import { sumPropertiesAsNumber } from "../../../utils/object-properties-calculation";
 import EditIcon from "../../UI/svg/edit-icon";
 import DeleteIcon from "../../UI/svg/delete-icon.component";
@@ -9,14 +9,7 @@ import toast from "react-hot-toast";
 const RoleItem: FC<{
   role: IRoleItem;
   setRoles: Dispatch<SetStateAction<IRoleItem[]>>;
-  setRoleToEdit: Dispatch<
-    SetStateAction<{
-      _id: string;
-      name: string;
-      label: string;
-      isActive: boolean;
-    } | null>
-  >;
+  setRoleToEdit: Dispatch<SetStateAction<IRoleToEdit | null>>;
 }> = ({ role, setRoles, setRoleToEdit }) => {
   const { sendRequest, isLoading, error } = useHttp();
 
@@ -25,6 +18,7 @@ const RoleItem: FC<{
       _id: role._id,
       name: role.role,
       label: role.label,
+      rank: role.rank,
       isActive: role.isActive,
     });
   };
@@ -57,7 +51,15 @@ const RoleItem: FC<{
           className="checkbox checkbox-sm checkbox-primary"
         />
       </td>
-      <td className="capitalize overflow-clip">{role.role}</td>
+      <td className="capitalize ">
+        <div
+          data-tip={role.role}
+          className="w-10 h-10 tooltip tooltip-bottom absolute"
+        />
+        <div className="overflow-x-clip">
+          <p>{role.role}</p>
+        </div>
+      </td>
       <td className="col-span-2">{sumPropertiesAsNumber(role.permCount)}</td>
       <td>{role.permCount.write}</td>
       <td>{role.permCount.read}</td>
