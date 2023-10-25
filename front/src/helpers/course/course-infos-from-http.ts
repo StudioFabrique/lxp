@@ -82,7 +82,7 @@ export default function courseInfosFromHttp(course: any) {
     };
   }
 
-  //console.log({ updatedData });
+  console.log({ updatedData });
 
   return updatedData;
 }

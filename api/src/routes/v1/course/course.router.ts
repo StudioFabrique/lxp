@@ -37,6 +37,7 @@ import httpDeleteCourseLesson from "../../../controllers/course/http-delete-cour
 import httpPutManyLessons from "../../../controllers/course/http-put-many-lessons";
 import httpPutCourseDates from "../../../controllers/course/http-put-course-dates";
 import httpDeleteCourseDates from "../../../controllers/course/http-delete-courseDates";
+import httpPutCourseIsPublished from "../../../controllers/course/http-put-course-ispublished";
 
 const courseRouter = express.Router();
 
@@ -218,6 +219,13 @@ courseRouter.delete(
   courseIdValidator,
   deleteCourseDatesValidator,
   httpDeleteCourseDates
+);
+
+// met à jour le statut publié / brouillon du cours
+courseRouter.put(
+  "/publish/:courseId",
+  courseIdValidator,
+  httpPutCourseIsPublished
 );
 
 export default courseRouter;

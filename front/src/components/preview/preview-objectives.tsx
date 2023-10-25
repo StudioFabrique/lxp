@@ -1,18 +1,15 @@
-import { useSelector } from "react-redux";
-
-import Objective from "../../../utils/interfaces/objective";
-import Wrapper from "../../UI/wrapper/wrapper.component";
-import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
-import EditIcon from "../../UI/svg/edit-icon";
+import Objective from "../../utils/interfaces/objective";
+import Wrapper from "../UI/wrapper/wrapper.component";
+import SubWrapper from "../UI/sub-wrapper/sub-wrapper.component";
+import EditIcon from "../UI/svg/edit-icon";
 
 interface ParcoursPreviewObjectivesProps {
+  objectives: Objective[];
   onEdit: (id: number) => void;
 }
 
-const ParcoursPreviewObjectives = (props: ParcoursPreviewObjectivesProps) => {
-  const objectives = useSelector(
-    (state: any) => state.parcoursObjectives.objectives
-  ) as Objective[];
+const PreviewObjectives = (props: ParcoursPreviewObjectivesProps) => {
+  const { objectives } = props;
 
   return (
     <article>
@@ -38,4 +35,4 @@ const ParcoursPreviewObjectives = (props: ParcoursPreviewObjectivesProps) => {
   );
 };
 
-export default ParcoursPreviewObjectives;
+export default PreviewObjectives;

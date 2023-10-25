@@ -20,4 +20,5 @@ export default interface Course {
   scenario?: boolean;
   lessons: Lesson[];
   dates: CourseDates[];
+  isPublished: boolean;
 }
