@@ -5,14 +5,21 @@ import { noAccess } from "../utils/constantes";
 import { IRole } from "../utils/interfaces/db/role";
 import Permission from "../utils/interfaces/db/permission";
 
+function youShallNotPass() {
+  console.log("vous ne passerez pas 🧙");
+}
+
 /**
  * Check le token et en même temps les roles de l'utilisateur connecté en fonction des permissions sur le serveur ainsi que du rang authorisé
  *
- * @param action L'action a effectuer
- * @param ressource La ressource sur laquelle l'action est effectué
+ * @param ressource (optionnel) La ressource sur laquelle l'action est effectué
+ * @param action (optionnel) L'action à effectuer
  * @returns
  */
-export default function checkPermissions(ressource?: string, action?: string) {
+export default function checkPermissions(
+  ressource?: string,
+  action?: "read" | "write" | "update" | "delete"
+) {
   return async (req: CustomRequest, res: Response, next: NextFunction) => {
     const { role: roleFromParam } = req.params;
 
@@ -29,8 +36,6 @@ export default function checkPermissions(ressource?: string, action?: string) {
       });
 
     let actionDefined: string | undefined = action;
-
-    console.log(req.method);
 
     if (!actionDefined)
       switch (req.method) {
@@ -60,15 +65,11 @@ export default function checkPermissions(ressource?: string, action?: string) {
         return res.status(403).json({ message: noAccess });
       }
 
-      console.log("les données :");
-
-      console.log(data);
-
       const rolesToCheck: Array<IRole> = data.userRoles;
 
-      let isRolesCorrect: boolean = false;
+      res.locals.roles = rolesToCheck;
 
-      console.log(rolesToCheck.length);
+      let isRolesCorrect: boolean = false;
 
       /**
        * Parcours tous les rôles de l'utilisateur actuel et si au moins l'un des roles est correct, renvoie true
@@ -90,7 +91,6 @@ export default function checkPermissions(ressource?: string, action?: string) {
         req.auth = { userId: data.userId, userRoles: data.userRoles };
         next();
       } else {
-        console.log("le role n'est pas correct !");
         return res.status(403).json({
           message: "Vous n'êtes pas autorisé à accéder à cette ressource",
         });
@@ -104,21 +104,15 @@ async function authorizeThisRole(
   action: string,
   ressource: string
 ): Promise<boolean> {
-  console.log("vérification rang passé");
-
   const permissionFound = await Permission.findOne({
     role: role.role,
     action: action,
   });
 
-  console.log("permission trouvé sur la base de données :");
-  console.log(permissionFound);
-
   if (permissionFound && permissionFound.ressources.includes(ressource)) {
     return true;
   }
-  console.log("vous ne passerez pas 🧙");
-
+  youShallNotPass();
   return false;
 }
 
@@ -127,20 +121,14 @@ async function _authorizeThisRole(
   action: string,
   roleFromParam: string
 ): Promise<boolean> {
-  console.log("vérification rang passé");
-
   const permissionFound = await Permission.findOne({
     role: role.role,
     action: action,
   });
 
-  console.log("permission trouvé sur la base de données :");
-  console.log(permissionFound);
-
   if (permissionFound && permissionFound.ressources.includes(roleFromParam)) {
     return true;
   }
-  console.log("vous ne passerez pas 🧙");
-
+  youShallNotPass();
   return false;
 }

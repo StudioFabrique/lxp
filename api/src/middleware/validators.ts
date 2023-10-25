@@ -52,7 +52,7 @@ export const userValidator = [
     .trim()
     .escape()
     .withMessage("email non conforme"),
-  body(["firstname", "lastname"])
+  body(["firstname", "lastname", "roleId"])
     .exists()
     .notEmpty()
     .isString()
@@ -76,11 +76,6 @@ export const userValidator = [
     .withMessage(
       "nickname, description, address, city, links, hobbies ou graduations non conforme"
     ),
-  body("userType")
-    .exists()
-    .notEmpty()
-    .isNumeric()
-    .withMessage("userType non conforme"),
   body("postCode")
     .custom(customPostalCodeValidation)
     .trim()

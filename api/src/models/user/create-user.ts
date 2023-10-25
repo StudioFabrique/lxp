@@ -3,7 +3,7 @@ import { prisma } from "../../utils/db";
 import Role from "../../utils/interfaces/db/role";
 import { hash } from "bcrypt";
 
-export default async function createUser(user: IUser, userType: number) {
+export default async function createUser(user: IUser, roleId: string) {
   const userToFind = await User.findOne({
     email: user.email,
   });
@@ -13,7 +13,7 @@ export default async function createUser(user: IUser, userType: number) {
 
   let rolesToCheck = undefined;
 
-  switch (userType) {
+  /* switch (userType) {
     case 0:
       rolesToCheck = { role: "student", rank: 3 };
       break;
@@ -28,9 +28,9 @@ export default async function createUser(user: IUser, userType: number) {
       break;
     default:
       return null;
-  }
+  } */
 
-  const roles = await Role.find(rolesToCheck);
+  const firstRole = await Role.find({ _id: roleId });
 
   const createdUser = await User.create({
     email: user.email,
@@ -38,15 +38,30 @@ export default async function createUser(user: IUser, userType: number) {
     lastname: user.lastname,
     password: await hash("Abcdef@123456", 10), // A enlever par la suite !
     isActive: false,
-    roles: roles,
+    roles: firstRole,
   });
 
-  if (userType === 1) {
+  if (firstRole[0].rank === 1) {
     // si type utilisateur en cours de création est "formateur"
     prisma.teacher.create({ data: { idMdb: createdUser._id } });
+    /**
+     * A virer si ça ne marche pas (reset Martin)
+     * ->
+     */
+    prisma.contact.create({
+      data: {
+        idMdb: createdUser._id,
+        name: `${createdUser.lastname} ${createdUser.firstname}`,
+        role: "teacher",
+      },
+    });
+    /**
+     * <-
+     * A virer si ça ne marche pas (reset Martin)
+     */
   }
 
-  if (userType === 3) {
+  if (firstRole[0].rank === 3) {
     // si type utilisateur en cours de création est "administrateur"
     prisma.admin.create({ data: { idMdb: createdUser._id } });
   }
