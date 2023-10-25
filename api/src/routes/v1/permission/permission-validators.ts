@@ -24,8 +24,7 @@ export const postRoleValidator = [
     .isNumeric()
     .withMessage("Rang invalide")
     .notEmpty()
-    .withMessage("Rang absent")
-    .escape(),
+    .withMessage("Rang absent"),
 
   checkValidatorResult,
 ];

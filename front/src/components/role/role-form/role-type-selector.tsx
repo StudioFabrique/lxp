@@ -23,8 +23,6 @@ const RoleTypeSelector: FC<{
     const newRoleType = roleTypes.find(
       (roleType) => e.currentTarget.value === roleType.rank.toString()
     );
-    console.warn({ newRoleType });
-
     onSetCurrentRoleType(
       (previousRole: any) => newRoleType?.rank ?? previousRole
     );
