@@ -34,7 +34,7 @@ const PermissionItem: FC<{
         type="checkbox"
         name="permCheck"
         id={item}
-        disabled={item === "role"}
+        disabled={["role", "permission"].includes(item)}
         className="checkbox checkbox-sm rounded-sm border-2 border-secondary-content disabled:cursor-default"
         checked={isDefaultChecked}
         onChange={handleCheck}

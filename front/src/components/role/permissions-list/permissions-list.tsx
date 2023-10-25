@@ -1,4 +1,11 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import { IRoleItem } from "../../../views/role/role";
 import RoleSelector from "./role-selector";
@@ -6,36 +13,18 @@ import useHttp from "../../../hooks/use-http";
 import RessourcesByAction from "./ressources-by-action";
 import toast from "react-hot-toast";
 
-const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
+const PermissionsList: FC<{
+  roles: IRoleItem[];
+  currentRole: IRoleItem;
+  setCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
+}> = ({ roles, currentRole, setCurrentRole }) => {
   const { sendRequest, isLoading, error } = useHttp();
 
-  const [currentRole, setCurrentRole] = useState<IRoleItem>(roles[0]);
   const [permissions, setPermissions] = useState([]);
   const [ressources, setRessources] = useState<{
     ressources: string[];
     roles: string[];
   } | null>(null);
-
-  const handleGetRessources = useCallback(() => {
-    const applyData = (data: any) => {
-      setRessources(data.data);
-    };
-
-    sendRequest({ path: `/permission/ressources` }, applyData);
-  }, [sendRequest]);
-
-  /**
-   * Récupérer les permissions.
-   * Rafraichir les permissions lors de la modification d'un role du composant parent.
-   */
-  const handleGetPermissions = useCallback(() => {
-    const applyData = (data: any) => {
-      setPermissions(data.data);
-    };
-
-    if (roles)
-      sendRequest({ path: `/permission/${currentRole.role}` }, applyData);
-  }, [currentRole, sendRequest, roles]);
 
   const handleChangePermission = (
     ressourceName: string,
@@ -45,7 +34,7 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
     console.log(ressourceName);
 
     checked
-      ? setPermissions((oldPermissions) =>
+      ? setPermissions((oldPermissions: any) =>
           oldPermissions.filter((permission: any) => {
             if (permission.action === action)
               return {
@@ -83,6 +72,27 @@ const PermissionsList: FC<{ roles: IRoleItem[] }> = ({ roles }) => {
       applyData
     );
   };
+
+  /**
+   * Récupérer les permissions.
+   * Rafraichir les permissions lors de la modification d'un role du composant parent.
+   */
+  const handleGetPermissions = useCallback(() => {
+    const applyData = (data: any) => {
+      setPermissions(data.data);
+    };
+
+    if (roles)
+      sendRequest({ path: `/permission/${currentRole?.role}` }, applyData);
+  }, [currentRole, sendRequest, roles]);
+
+  const handleGetRessources = useCallback(() => {
+    const applyData = (data: any) => {
+      setRessources(data.data);
+    };
+
+    sendRequest({ path: `/permission/ressources` }, applyData);
+  }, [sendRequest]);
 
   useEffect(() => {
     handleGetRessources();

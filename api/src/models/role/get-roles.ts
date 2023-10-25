@@ -15,6 +15,7 @@ export default async function getRoles() {
       _id: role._id,
       role: role.role,
       label: role.label,
+      rank: role.rank,
       isActive: role.isActive,
       permCount: permCount,
     });

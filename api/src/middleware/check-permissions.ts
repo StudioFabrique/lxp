@@ -5,6 +5,10 @@ import { noAccess } from "../utils/constantes";
 import { IRole } from "../utils/interfaces/db/role";
 import Permission from "../utils/interfaces/db/permission";
 
+function youShallNotPass() {
+  console.log("vous ne passerez pas 🧙");
+}
+
 /**
  * Check le token et en même temps les roles de l'utilisateur connecté en fonction des permissions sur le serveur ainsi que du rang authorisé
  *
@@ -32,8 +36,6 @@ export default function checkPermissions(
       });
 
     let actionDefined: string | undefined = action;
-
-    console.log(req.method);
 
     if (!actionDefined)
       switch (req.method) {
@@ -69,8 +71,6 @@ export default function checkPermissions(
 
       let isRolesCorrect: boolean = false;
 
-      console.log(rolesToCheck.length);
-
       /**
        * Parcours tous les rôles de l'utilisateur actuel et si au moins l'un des roles est correct, renvoie true
        */
@@ -91,7 +91,6 @@ export default function checkPermissions(
         req.auth = { userId: data.userId, userRoles: data.userRoles };
         next();
       } else {
-        console.log("le role n'est pas correct !");
         return res.status(403).json({
           message: "Vous n'êtes pas autorisé à accéder à cette ressource",
         });
@@ -105,21 +104,15 @@ async function authorizeThisRole(
   action: string,
   ressource: string
 ): Promise<boolean> {
-  console.log("vérification rang passé");
-
   const permissionFound = await Permission.findOne({
     role: role.role,
     action: action,
   });
 
-  console.log("permission trouvé sur la base de données :");
-  console.log(permissionFound);
-
   if (permissionFound && permissionFound.ressources.includes(ressource)) {
     return true;
   }
-  console.log("vous ne passerez pas 🧙");
-
+  youShallNotPass();
   return false;
 }
 
@@ -128,20 +121,14 @@ async function _authorizeThisRole(
   action: string,
   roleFromParam: string
 ): Promise<boolean> {
-  console.log("vérification rang passé");
-
   const permissionFound = await Permission.findOne({
     role: role.role,
     action: action,
   });
 
-  console.log("permission trouvé sur la base de données :");
-  console.log(permissionFound);
-
   if (permissionFound && permissionFound.ressources.includes(roleFromParam)) {
     return true;
   }
-  console.log("vous ne passerez pas 🧙");
-
+  youShallNotPass();
   return false;
 }

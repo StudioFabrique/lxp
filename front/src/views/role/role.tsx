@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 import RolesList from "../../components/role/roles-list/roles-list";
 import RoleForm from "../../components/role/role-form/role-form";
@@ -10,6 +10,7 @@ export interface IRoleItem {
   _id: string;
   role: string;
   label: string;
+  rank: number;
   isActive: boolean;
   permCount: {
     read: number;
@@ -19,23 +20,37 @@ export interface IRoleItem {
   };
 }
 
+export interface IRoleToEdit {
+  _id: string;
+  name: string;
+  label: string;
+  rank: number;
+  isActive: boolean;
+}
+
 const Role = () => {
   const { state: history } = useLocation();
   const navigate = useNavigate();
   const { sendRequest, isLoading } = useHttp();
 
+  const [isRolesInitialized, setIsRolesInitialized] = useState<boolean>(false);
+
   const [roles, setRoles] = useState<IRoleItem[]>([]);
 
-  const [roleToEdit, setRoleToEdit] = useState<{
-    _id: string;
-    name: string;
-    label: string;
-    isActive: boolean;
-  } | null>(null);
+  const [roleToEdit, setRoleToEdit] = useState<IRoleToEdit | null>(null);
+
+  const [currentRole, setCurrentRole] = useState<IRoleItem>(roles[0]);
 
   useEffect(() => {
     sendRequest({ path: "/permission" }, (data) => setRoles(data.data));
   }, [sendRequest]);
+
+  useEffect(() => {
+    if (roles.length > 0 && !isRolesInitialized) {
+      setCurrentRole(roles[0]);
+      setIsRolesInitialized(true);
+    }
+  }, [roles, isRolesInitialized]);
 
   return (
     <>
@@ -66,6 +81,7 @@ const Role = () => {
                 roleToEdit={roleToEdit}
                 setRoles={setRoles}
                 setRoleToEdit={setRoleToEdit}
+                setCurrentRole={setCurrentRole}
               />
               <div className="col-span-2">
                 <RolesList
@@ -75,7 +91,13 @@ const Role = () => {
                 />
               </div>
             </div>
-            {roles.length > 0 && <PermissionsList roles={roles} />}
+            {roles.length > 0 && currentRole && (
+              <PermissionsList
+                roles={roles}
+                currentRole={currentRole}
+                setCurrentRole={setCurrentRole}
+              />
+            )}
           </>
         )}
       </div>

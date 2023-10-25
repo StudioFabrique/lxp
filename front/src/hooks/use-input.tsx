@@ -23,6 +23,12 @@ const inputStateReducer = (state: any, action: Action) => {
   }
 };
 
+/**
+ * Gestion d'un champ de formulaire (validation, modification et state)
+ * @param validateValue
+ * @param initialValue
+ * @returns
+ */
 const useInput = (
   validateValue: (value: string) => boolean,
   initialValue: string = ""
@@ -77,6 +83,10 @@ const useInput = (
   const datePicking = useCallback((value: string) => {
     dispatch({ type: "INPUT", value });
   }, []);
+
+  useEffect(() => {
+    dispatch({ type: "INPUT", value: initialValue });
+  }, [initialValue]);
 
   return {
     value: {

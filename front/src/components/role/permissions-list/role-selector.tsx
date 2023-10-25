@@ -23,7 +23,7 @@ const RoleSelector: FC<{
 
   return roles ? (
     <select
-      className="w-[20%] select select-sm border border-neutral/50 focus:outline-none"
+      className="select select-sm border border-neutral/50 focus:outline-none"
       name="menu"
       id="menu"
       value={currentRole.role}

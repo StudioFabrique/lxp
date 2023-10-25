@@ -12,26 +12,16 @@ import { setInputStyle, setTextAreaStyle } from "../../../utils/formClasses";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
-import { IRoleItem } from "../../../views/role/role";
-import useWatchInput from "../../../hooks/use-watch-input";
+import { IRoleItem, IRoleToEdit } from "../../../views/role/role";
+import useInput from "../../../hooks/use-input";
+import RoleTypeSelector from "./role-type-selector";
 
 const RoleCreateForm: FC<{
-  roleToEdit: {
-    _id: string;
-    name: string;
-    label: string;
-    isActive: boolean;
-  } | null;
+  roleToEdit: IRoleToEdit | null;
   setRoles: Dispatch<SetStateAction<IRoleItem[]>>;
-  setRoleToEdit: Dispatch<
-    SetStateAction<{
-      _id: string;
-      name: string;
-      label: string;
-      isActive: boolean;
-    } | null>
-  >;
-}> = ({ roleToEdit, setRoles, setRoleToEdit }) => {
+  setRoleToEdit: Dispatch<SetStateAction<IRoleToEdit | null>>;
+  setCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
+}> = ({ roleToEdit, setRoles, setRoleToEdit, setCurrentRole }) => {
   const {
     sendRequest,
     isLoading: isRequestLoading,
@@ -40,26 +30,32 @@ const RoleCreateForm: FC<{
 
   const [isActive, SetActive] = useState(false);
 
+  const [currentRoleType, setCurrentRoleType] = useState<number>(1);
+
   const nameInputRef: Ref<HTMLInputElement> = useRef(null);
 
-  const { value: name } = useWatchInput(
+  const { value: name } = useInput(
     (value: string) => regexGeneric.test(value),
     roleToEdit?.name ? roleToEdit.name : ""
   );
 
-  const { value: label } = useWatchInput(
+  const { value: label } = useInput(
     (value: string) => regexGeneric.test(value),
     roleToEdit?.label ? roleToEdit.label : ""
   );
 
   const cancelForm = () => {
     setRoleToEdit(null);
+    name.reset();
+    label.reset();
+    setCurrentRoleType(1);
   };
 
   const handleSubmitRole = () => {
     const applyDataCreate = (data: any) => {
       setRoles((currentRoles) => [...currentRoles, data.data]);
       cancelForm();
+      setCurrentRole(data.data);
       toast.success(data.message);
     };
 
@@ -74,6 +70,7 @@ const RoleCreateForm: FC<{
               ...role,
               role: roleData.role,
               label: roleData.label,
+              rank: roleData.rank,
               isActive: roleData.isActive,
             };
           return role;
@@ -90,7 +87,12 @@ const RoleCreateForm: FC<{
             ? `/permission/role/${roleToEdit._id}`
             : `/permission/role`,
           method: roleToEdit ? "put" : "post",
-          body: { role: name.value, label: label.value, isActive },
+          body: {
+            role: name.value,
+            label: label.value,
+            rank: currentRoleType,
+            isActive,
+          },
         },
         roleToEdit ? applyDataUpdate : applyDataCreate
       );
@@ -107,7 +109,8 @@ const RoleCreateForm: FC<{
    */
   useEffect(() => {
     if (roleToEdit) {
-      SetActive(roleToEdit?.isActive);
+      SetActive(roleToEdit.isActive);
+      setCurrentRoleType(roleToEdit.rank);
       nameInputRef.current?.focus();
     } else SetActive(false);
   }, [roleToEdit]);
@@ -150,6 +153,14 @@ const RoleCreateForm: FC<{
               onChange={label.valueChangeHandler}
               onBlur={label.valueBlurHandler}
               value={label.value}
+            />
+          </span>
+
+          <span className="flex flex-col gap-y-1">
+            <p>Modèle de rôle</p>
+            <RoleTypeSelector
+              currentRoleType={currentRoleType}
+              onSetCurrentRoleType={setCurrentRoleType}
             />
           </span>
         </div>
