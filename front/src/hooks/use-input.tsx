@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useReducer } from "react";
+import { useCallback, useEffect, useReducer } from "react";
 
 type Action = {
   value: string;
@@ -23,6 +23,12 @@ const inputStateReducer = (state: any, action: Action) => {
   }
 };
 
+/**
+ * Gestion d'un champ de formulaire (validation, modification et state)
+ * @param validateValue
+ * @param initialValue
+ * @returns
+ */
 const useInput = (
   validateValue: (value: string) => boolean,
   initialValue: string = ""
@@ -36,7 +42,11 @@ const useInput = (
   const hasError = !valueIsValid && inputState!.isTouched;
 
   const valueChangeHandler = useCallback(
-    (event: React.FormEvent<HTMLInputElement>) => {
+    (
+      event:
+        | React.FormEvent<HTMLInputElement>
+        | React.FormEvent<HTMLTextAreaElement>
+    ) => {
       dispatch({ type: "INPUT", value: event.currentTarget.value });
     },
     []
@@ -50,10 +60,6 @@ const useInput = (
     },
     [inputState]
   );
-
-  const changeValue = (value: string) => {
-    dispatch({ type: "INPUT", value: value });
-  };
 
   const textAreaChangeHandler = useCallback(
     (event: React.FormEvent<HTMLTextAreaElement>) => {
@@ -78,13 +84,16 @@ const useInput = (
     dispatch({ type: "INPUT", value });
   }, []);
 
+  useEffect(() => {
+    dispatch({ type: "INPUT", value: initialValue });
+  }, [initialValue]);
+
   return {
     value: {
       value: inputState!.value,
       hasError,
       isValid: valueIsValid,
       valueChangeHandler,
-      changeValue,
       valueBlurHandler,
       reset,
       textAreaChangeHandler,

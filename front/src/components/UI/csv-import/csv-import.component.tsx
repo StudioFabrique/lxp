@@ -10,7 +10,7 @@ import {
 import Papa from "papaparse";
 
 import UploadIcon from "../svg/upload-icon.component";
-import { checkCSV } from "../../../utils/check-csv";
+import { checkCSV } from "../../../utils/csv/check-csv";
 
 type Props = {
   origin: string;

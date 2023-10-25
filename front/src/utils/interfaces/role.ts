@@ -3,4 +3,5 @@ export default interface Role {
   role: string;
   label: string;
   rank: number;
+  isActive?: boolean;
 }
