@@ -87,6 +87,7 @@ const LayoutCourseEdit = () => {
                   image={course.image ?? undefined}
                   parentTitle={course.module.title}
                   onUpdateImage={updateImage}
+                  isPublished={course.isPublished}
                 />
               ) : null}
               {/* Etapes du parcours */}

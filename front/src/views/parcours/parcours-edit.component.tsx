@@ -68,6 +68,7 @@ const EditParcours = () => {
         parcoursInformationsAction.updateParcoursInfos({
           title: data.title,
           description: data.description,
+          isPublished: data.isPublished,
         })
       );
       dispatch(
@@ -308,6 +309,7 @@ const EditParcours = () => {
                 title={infos.title}
                 onUpdateImage={updateImage}
                 parentTitle={formation.title}
+                isPublished
               />
             ) : null}
 
@@ -385,7 +387,7 @@ const EditParcours = () => {
             ) : (
               <div className="flex gap-x-4 items-center">
                 <Link className="btn btn-secondary" to="..">
-                  Enregistrer le brouillon
+                  Sauvegarder le brouillon
                 </Link>
                 <button
                   className="btn btn-primary"

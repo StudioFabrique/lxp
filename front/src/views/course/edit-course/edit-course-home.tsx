@@ -15,6 +15,7 @@ import { courseObjectivesActions } from "../../../store/redux-toolkit/course/cou
 import { courseScenarioActions } from "../../../store/redux-toolkit/course/course-scenario";
 import { courseSkillsActions } from "../../../store/redux-toolkit/course/course-skills";
 import CourseCalendar from "../../../components/edit-course/calendar/course-calendar";
+import CoursePreview from "../../../components/edit-course/preview/course-preview";
 
 const EditCourseHome = () => {
   const dispatch = useDispatch();
@@ -62,38 +63,41 @@ const EditCourseHome = () => {
         />
       </div>
 
+      {/* Composant principal affiché dans la vue */}
       <div className="w-full 2xl:w-4/6 mt-16">
         {actualStep.id === 1 ? <CourseInfos /> : null}
         {actualStep.id === 2 ? <CourseObjectives /> : null}
         {actualStep.id === 3 ? <CourseSkills /> : null}
         {actualStep.id === 4 ? <CourseScenario /> : null}
         {actualStep.id === 5 ? <CourseCalendar /> : null}
+        {actualStep.id === 6 ? <CoursePreview onEdit={updateStep} /> : null}
       </div>
+
       <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">
-        {actualStep.id === 1 ? (
-          <Link className="btn btn-primary btn-outline" to="/admin/course">
-            Retour
-          </Link>
-        ) : (
-          <button
-            className="btn btn-primary btn-outline"
-            onClick={handleRetour}
-          >
-            Retour
-          </button>
-        )}
         {actualStep.id !== stepsList.length ? (
-          <button
-            className="btn btn-primary"
-            onClick={() => handleUpdateStep(actualStep.id)}
-          >
-            Etape suivante
-          </button>
-        ) : (
-          <button className="btn btn-primary" onClick={() => {}}>
-            Publier
-          </button>
-        )}
+          <>
+            {actualStep.id === 1 ? (
+              <Link className="btn btn-primary btn-outline" to="/admin/course">
+                Retour
+              </Link>
+            ) : (
+              <button
+                className="btn btn-primary btn-outline"
+                onClick={handleRetour}
+              >
+                Retour
+              </button>
+            )}
+            {actualStep.id !== stepsList.length ? (
+              <button
+                className="btn btn-primary"
+                onClick={() => handleUpdateStep(actualStep.id)}
+              >
+                Etape suivante
+              </button>
+            ) : null}
+          </>
+        ) : null}
       </div>
     </FadeWrapper>
   );
