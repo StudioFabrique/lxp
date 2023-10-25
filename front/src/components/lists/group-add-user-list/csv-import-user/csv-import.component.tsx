@@ -9,7 +9,7 @@ import {
 } from "react";
 import Papa from "papaparse";
 
-import { checkCSV } from "../../../../utils/check-csv";
+import { checkCSV } from "../../../../utils/csv/check-csv";
 import UploadIcon from "../../../UI/svg/upload-icon.component";
 
 type Props = {

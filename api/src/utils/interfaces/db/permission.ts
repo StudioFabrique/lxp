@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-export interface IPermission {
+export interface IPermission extends Document {
   role: string;
   action: string;
   ressources: Array<string>;

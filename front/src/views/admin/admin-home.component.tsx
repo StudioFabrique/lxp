@@ -18,6 +18,7 @@ const AdminHome = () => {
       <Link to="group">Interface Groupes</Link>
       <Link to="parcours">Interface Parcours</Link>
       <Link to="course">Interface des Cours</Link>
+      <Link to="roles">Interface Roles</Link>
     </div>
   );
 };
