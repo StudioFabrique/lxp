@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Context } from "../../store/context.store";
+import { Link } from "react-router-dom";
 
 import Role from "../../utils/interfaces/role";
 import Tabs from "../../components/UI/tabs/tabs.component";
@@ -11,12 +12,12 @@ import useHttp from "../../hooks/use-http";
 import { hasPermission } from "../../utils/hasPermission";
 import Modal from "../../components/UI/modal/modal";
 import UserList from "../../components/lists/user-list/user-list.component";
-import UserHeader from "../../components/user-header/user-header;component";
 import DropdownActionsUser from "../../components/lists/user-list/dropdown-actions-user";
 import UsersListStats from "../../components/lists/user-list/users-list-stats";
 import UsersStats from "../../utils/interfaces/users-stats";
 import Can from "../../components/UI/can/can.component";
 import RefreshIcon from "../../components/UI/svg/refresh-icon.component";
+import Header from "../../components/UI/header";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
@@ -187,7 +188,15 @@ const UserHome = () => {
   return (
     <>
       <div className="w-full flex flex-col items-center px-4 py-8 gap-8">
-        <UserHeader />
+        <Header
+          title="Liste d'utilisateurs"
+          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in urna
+          eget pura."
+        >
+          <Link className="btn btn-primary" to="/admin/user/add">
+            Créer un utilisateur
+          </Link>
+        </Header>
 
         <UsersListStats stats={stats} isLoading={isLoading} />
         <div className="flex flex-col gap-y-8">
