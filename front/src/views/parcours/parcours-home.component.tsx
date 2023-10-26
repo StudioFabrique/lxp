@@ -8,14 +8,19 @@ import { sortArray } from "../../utils/sortArray";
 import EditIcon from "../../components/UI/svg/edit-icon";
 import DeleteIcon from "../../components/UI/svg/delete-icon.component";
 import Can from "../../components/UI/can/can.component";
+import toast from "react-hot-toast";
+import ParcoursList from "../../components/parcours-home/parcours-list";
 
 const ParcoursHome = () => {
   const [parcoursList, setParcoursList] = useState<Array<Parcours> | null>(
     null
   );
-  const { sendRequest, isLoading } = useHttp();
+  const { sendRequest, isLoading, error } = useHttp();
   const nav = useNavigate();
 
+  /**
+   * retourne la liste de tous les parcours pour les afficher à l'écran
+   */
   useEffect(() => {
     const applyData = (data: any) => {
       setParcoursList(sortArray(data, "id"));
@@ -28,12 +33,22 @@ const ParcoursHome = () => {
     );
   }, [sendRequest]);
 
+  /**
+   * formate les dates venant de la bdd en quelque chose de plus agréable à lire
+   * @param value string
+   * @returns
+   */
   const setDate = (value: string) => {
     return `${new Date(value).toLocaleDateString()} - ${new Date(
       value
     ).toLocaleTimeString()}`;
   };
 
+  /**
+   * navique vers la vue édition du parcours
+   * @param e MouseEvent<HTMLTableCellElement>
+   * @param id number
+   */
   const handleEditParcours = (
     e: MouseEvent<HTMLTableCellElement>,
     id: number
@@ -49,10 +64,15 @@ const ParcoursHome = () => {
     e.stopPropagation();
   };
 
+  /**
+   * navigue vers la vue aperçu du parcours
+   * @param id number
+   */
   const handleViewParcours = (id: number) => {
     nav(`view/${id}`);
   };
 
+  // contenu du tableau
   const content = (
     <>
       {parcoursList && parcoursList.length > 0 ? (
@@ -94,7 +114,13 @@ const ParcoursHome = () => {
     </>
   );
 
+  // gestion des erreurs HTTP
+  useEffect(() => {
+    if (error.length > 0) toast.error(error);
+  }, [error]);
+
   return (
+    /* 
     <div className="w-full min-h-[50%] flex justify-center items-center">
       {isLoading ? (
         <Loader />
@@ -123,7 +149,12 @@ const ParcoursHome = () => {
           )}
         </>
       )}
-    </div>
+    </div> */
+    <main className="w-full">
+      {parcoursList && parcoursList?.length > 0 ? (
+        <ParcoursList parcoursList={parcoursList} />
+      ) : null}
+    </main>
   );
 };
 
