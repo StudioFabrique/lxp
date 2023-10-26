@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-import ImageHeader from "../../components/image-header/image-header";
 import useHttp from "../../hooks/use-http";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -25,6 +24,8 @@ import ParcoursViewObjectifs from "../../components/view-parcours/parcours-view-
 import ParcoursViewQuickStatistiques from "../../components/view-parcours/parcours-view-quick-statistiques";
 import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
 import { useSelector } from "react-redux";
+import HeaderIcon from "../../components/UI/svg/header-icon";
+import ImageHeaderMutable from "../../components/image-header/image-header-mutable";
 
 let initialState = true;
 
@@ -172,13 +173,15 @@ const ParcoursView = () => {
         <FadeWrapper>
           <div className="w-full">
             {parcoursInfos && parcours.formation.title ? (
-              <ImageHeader
+              <ImageHeaderMutable
                 defaultImage="/images/parcours-default.webp"
                 image={image}
                 title={parcoursInfos.title}
                 parentTitle={parcours.formation.title}
                 onUpdateImage={updateImage}
-              />
+              >
+                <HeaderIcon />
+              </ImageHeaderMutable>
             ) : null}
             <div className="w-full mt-16 flex flex-col gap-y-5">
               <ParcoursViewStatistiques />

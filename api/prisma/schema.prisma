@@ -136,6 +136,7 @@ model Contact {
   courses   ContactsOnCourse[]
 }
 
+// TODO : supprimer le champ image de la table Course
 model Course {
   id           Int                  @id @default(autoincrement())
   title        String

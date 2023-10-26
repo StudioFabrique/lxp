@@ -6,10 +6,9 @@
  * ou serveur) mais l'image ne sera pas mise à jour dans la vue
  */
 
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, ReactNode, useEffect, useRef, useState } from "react";
 
 import ImageFileUpload from "./image-file-upload";
-import ParcoursHeaderIcon from "../UI/svg/parcours-header-icon";
 import { compressImage } from "../../helpers/compress-image";
 import { headerImageMaxSize } from "../../config/images-sizes";
 
@@ -20,15 +19,17 @@ type Props = {
   title: string;
   parentTitle: string;
   isPublished?: boolean;
+  children: ReactNode;
 };
 
-const ImageHeader: FC<Props> = ({
+const ImageHeaderMutable: FC<Props> = ({
   defaultImage,
   image,
   title,
   parentTitle,
   onUpdateImage,
   isPublished = false,
+  children,
 }) => {
   const [bgImage, setBgImage] = useState<any | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -85,7 +86,7 @@ const ImageHeader: FC<Props> = ({
           <div className="rounded-xl w-full h-full bg-neutral/50 flex flex-col justify-end items-start">
             <div className="w-full flex gap-x-2 px-4 py-2 items-end justify-between font-bold">
               <span className="flex gap-x-2 items-center">
-                <ParcoursHeaderIcon size="lg" />
+                <div className="w-12 h-12">{children}</div>
                 <div>
                   <h1 className="text-xl">
                     {parentTitle} - {isPublished ? "(Publié)" : "(Brouillon)"}
@@ -107,4 +108,4 @@ const ImageHeader: FC<Props> = ({
   );
 };
 
-export default ImageHeader;
+export default ImageHeaderMutable;
