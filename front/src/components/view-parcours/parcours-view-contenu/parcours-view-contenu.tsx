@@ -31,9 +31,7 @@ const ParcoursViewContenu = () => {
   return (
     <Wrapper>
       <span className="flex justify-between">
-        <h2 className="text-xl font-bold text-secondary">
-          Contenu du parcours
-        </h2>
+        <h2 className="text-xl font-bold text-primary">Contenu du parcours</h2>
         <Can action="update" object="parcours">
           <button type="button" className="btn btn-primary btn-sm">
             Modifier

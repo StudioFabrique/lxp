@@ -24,7 +24,7 @@ const ParcoursViewObjectifs = () => {
 
   return (
     <Wrapper>
-      <h2 className="text-xl font-bold text-secondary">Objectifs</h2>
+      <h2 className="text-xl font-bold text-primary">Objectifs</h2>
       <div className="flex flex-col gap-y-5 overflow-y-auto h-[60vh]">
         {objectivesList}
       </div>
