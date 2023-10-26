@@ -1,27 +1,4 @@
-import React, { FC } from "react";
-
-type Props = {
-  size?: string;
-};
-
-const ParcoursHeaderIcon: FC<Props> = ({ size = "sm" }) => {
-  const setSize = () => {
-    switch (size) {
-      case "xs":
-        return "w-4 h-4";
-      case "md":
-        return "w-8 h-8";
-      case "lg":
-        return "w-10 h-10";
-      case "xl":
-        return "w-16 h-16";
-      default:
-        return "w-6 h-6";
-    }
-  };
-
-  let iconClass: string = setSize();
-
+const HeaderIcon = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -29,7 +6,7 @@ const ParcoursHeaderIcon: FC<Props> = ({ size = "sm" }) => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className={iconClass}
+      className="w-full h-full"
     >
       <path
         strokeLinecap="round"
@@ -40,4 +17,4 @@ const ParcoursHeaderIcon: FC<Props> = ({ size = "sm" }) => {
   );
 };
 
-export default ParcoursHeaderIcon;
+export default HeaderIcon;
