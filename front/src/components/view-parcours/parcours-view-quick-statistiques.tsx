@@ -13,8 +13,6 @@ const ParcoursViewQuickStatistiques = () => {
     (state: any) => state.parcoursModules.modules
   ) as Module[];
 
-  console.log({ parcoursInfos });
-
   const modulesHourSum = () => {
     let hours: number = 0;
     modules?.forEach((module) => {
@@ -30,7 +28,6 @@ const ParcoursViewQuickStatistiques = () => {
           new Date(parcoursInfos.startDate).getTime()
       )
     );
-    console.log(weeks);
 
     return weeks;
   };

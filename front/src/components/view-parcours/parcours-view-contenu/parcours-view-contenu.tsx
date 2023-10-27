@@ -12,7 +12,9 @@ const ParcoursViewContenu = () => {
     (state: any) => state.parcoursModules.modules
   ) as Module[];
 
-  const [selectedModule, setSelectedModule] = useState<Module | null>(null);
+  const [selectedModule, setSelectedModule] = useState<Module | null>(
+    modules ? modules[0] : null
+  );
 
   const contentsList =
     modules?.length > 0 ? (
@@ -43,7 +45,7 @@ const ParcoursViewContenu = () => {
         {modules?.length > 0 && (
           <div className="flex flex-col gap-y-4">
             <ParcoursViewContenuDetailHeader
-              imageModuleHeader={`https://images.frandroid.com/wp-content/uploads/2017/10/udemy_header-630x310.png`}
+              imageModuleHeader={selectedModule?.thumb}
               moduleTitle={selectedModule?.title}
             />
             <ParcoursViewContenuDetail />
