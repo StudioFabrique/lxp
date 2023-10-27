@@ -54,7 +54,6 @@ const Role = () => {
 
   return (
     <>
-      <Toaster />
       <div className="flex flex-col gap-y-5 p-10">
         {!!history?.from && (
           <button
