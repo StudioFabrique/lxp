@@ -33,6 +33,8 @@ model Parcours {
   updatedAt    DateTime             @default(now())
   tags         TagsOnParcours[]
   admin        Admin                @relation(fields: [adminId], references: [id])
+  author       String
+  visibility   Boolean              @default(false)
   adminId      Int
   contacts     ContactsOnParcours[]
   formation    Formation            @relation(fields: [formationId], references: [id])

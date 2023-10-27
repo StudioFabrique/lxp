@@ -67,6 +67,7 @@ const LayoutCourseEdit = () => {
                   imageUrl={course.module.image!}
                 >
                   <BookIcon />
+                  <></>
                 </ImageHeader>
               ) : null}
               {/* Etapes du parcours */}

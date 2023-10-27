@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Context } from "../../store/context.store";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import Login from "../../components/login/login.component";
+import { Toaster } from "react-hot-toast";
 
 let initialState = true;
 
@@ -33,6 +34,7 @@ const RootLayout = () => {
 
   return (
     <div className="w-screen min-h-screen">
+      <Toaster />
       <FadeWrapper>
         <div className="w-5/6">
           <Login />

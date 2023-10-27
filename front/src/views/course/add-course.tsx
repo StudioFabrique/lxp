@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import Selecter from "../../components/UI/selecter/selecter.component";
 import NewCourseForm from "../../components/edit-course/new-course-form";
@@ -124,50 +124,47 @@ const AddCourse = () => {
   }, [error]);
 
   return (
-    <>
-      <Toaster />
-      <FadeWrapper>
-        <div className="w-full xl:w-5/6 grid grid-cols-1 lg:grid-cols-2 gap-16 px-8 mx-auto my-16">
-          <>
-            <div>
-              <div className="grid grid-rows-2 gap-8">
-                <h1 className="text-2xl font-extrabold">Création d'un cours</h1>
+    <FadeWrapper>
+      <div className="w-full xl:w-5/6 grid grid-cols-1 lg:grid-cols-2 gap-16 px-8 mx-auto my-16">
+        <>
+          <div>
+            <div className="grid grid-rows-2 gap-8">
+              <h1 className="text-2xl font-extrabold">Création d'un cours</h1>
 
-                <h3>
-                  Pour commencer, veulliez saisir les informations nécessaires
-                  pour créer le cours
-                </h3>
+              <h3>
+                Pour commencer, veulliez saisir les informations nécessaires
+                pour créer le cours
+              </h3>
 
-                <Wrapper>
-                  <div className="h-full flex flex-col justify-around gap-y-4">
-                    <div className="text-sm font-bold">
-                      Choisissez un parcours
-                    </div>
-                    <div className="flex flex-col gap-y-8">
-                      <Selecter
-                        list={parcoursList}
-                        title="Choisissez un parcours"
-                        onSelectItem={handleParcours}
-                      />
-                      <Selecter
-                        list={modulesList}
-                        title="Choisisez un module"
-                        onSelectItem={handleModuleId}
-                      />
-                      <NewCourseForm
-                        isLoading={isLoading}
-                        onSubmit={handleSubmit}
-                      />
-                    </div>
+              <Wrapper>
+                <div className="h-full flex flex-col justify-around gap-y-4">
+                  <div className="text-sm font-bold">
+                    Choisissez un parcours
                   </div>
-                </Wrapper>
-              </div>
+                  <div className="flex flex-col gap-y-8">
+                    <Selecter
+                      list={parcoursList}
+                      title="Choisissez un parcours"
+                      onSelectItem={handleParcours}
+                    />
+                    <Selecter
+                      list={modulesList}
+                      title="Choisisez un module"
+                      onSelectItem={handleModuleId}
+                    />
+                    <NewCourseForm
+                      isLoading={isLoading}
+                      onSubmit={handleSubmit}
+                    />
+                  </div>
+                </div>
+              </Wrapper>
             </div>
-            <div style={classImage} />
-          </>
-        </div>
-      </FadeWrapper>
-    </>
+          </div>
+          <div style={classImage} />
+        </>
+      </div>
+    </FadeWrapper>
   );
 };
 

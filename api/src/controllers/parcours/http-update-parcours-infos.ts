@@ -4,6 +4,7 @@ import updateParcoursInfos from "../../models/parcours/update-parcours-infos";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import { noAccess, serverIssue } from "../../utils/constantes";
 import { logger } from "../../utils/logs/logger";
+import { customEscape } from "../../helpers/custom-escape";
 
 async function httpUpdateParcoursInfos(req: CustomRequest, res: Response) {
   try {
@@ -11,7 +12,10 @@ async function httpUpdateParcoursInfos(req: CustomRequest, res: Response) {
     if (!userId) {
       throw { message: noAccess, status: 403 };
     }
-    const { parcoursId, title, description, formation } = req.body;
+    let { parcoursId, title, description, formation } = req.body;
+
+    title = customEscape(title);
+    description = customEscape(description ?? "");
 
     const response = await updateParcoursInfos(
       parseInt(parcoursId),
