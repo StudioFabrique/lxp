@@ -37,7 +37,6 @@ const ParcoursViewHeaderMenu = () => (
           </span>
         </button>
       </span>
-
       <button type="button" className="btn btn-primary">
         <span className="w-5 h-5">
           <PlayIcon />
