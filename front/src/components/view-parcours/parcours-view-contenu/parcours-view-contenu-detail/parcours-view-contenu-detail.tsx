@@ -10,6 +10,8 @@ const ParcoursViewContenuDetail = () => {
     (state: any) => state.parcoursModules.modules
   ) as Module[];
 
+  console.log(useSelector((state: any) => state.parcoursModules));
+
   const contentsList =
     modules.length > 0 ? (
       modules.map((module, i) => (
@@ -17,7 +19,7 @@ const ParcoursViewContenuDetail = () => {
           key={module.id}
           className={`flex items-center bg-secondary p-4 rounded-lg ${colorStyle} ${colorStyleHover}`}
         >
-          <span className="w-14 mx-4">
+          <span className="w-14 h-14 mx-4">
             <BookIcon />
           </span>
           <div className="flex flex-col items-center">
@@ -35,9 +37,7 @@ const ParcoursViewContenuDetail = () => {
   return (
     <SubWrapper>
       <span className="flex justify-between">
-        <h2 className="text-xl font-bold text-primary-content">
-          Contenu du module
-        </h2>
+        <h2 className="text-xl font-bold text-primary">Contenu du module</h2>
         <Can action="write" object="cours">
           <button type="button" className="btn btn-primary btn-sm">
             Ajouter un cours
