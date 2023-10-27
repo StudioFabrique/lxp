@@ -31,7 +31,7 @@ export interface IRoleToEdit {
 const Role = () => {
   const { state: history } = useLocation();
   const navigate = useNavigate();
-  const { sendRequest, isLoading } = useHttp();
+  const { sendRequest, isLoading } = useHttp(true);
 
   const [isRolesInitialized, setIsRolesInitialized] = useState<boolean>(false);
 

@@ -18,7 +18,6 @@ const PermissionItem: FC<{
   const handleCheck: ChangeEventHandler<HTMLInputElement> = (
     e: ChangeEvent<HTMLInputElement>
   ) => {
-    console.warn("item :", { item }, "check state :", e.currentTarget.checked);
     onChangePermission(item, e.currentTarget.checked);
   };
 

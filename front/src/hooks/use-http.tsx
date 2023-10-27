@@ -2,8 +2,9 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Context } from "../store/context.store";
 import { BASE_URL } from "../config/urls";
+import toast from "react-hot-toast";
 
-const useHttp = () => {
+const useHttp = (invokeErrorToast?: boolean) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { logout } = useContext(Context);
@@ -54,6 +55,10 @@ const useHttp = () => {
       axiosInstance.interceptors.response.eject(responseInterceptor);
     };
   }, [axiosInstance, logout]);
+
+  useEffect(() => {
+    if (invokeErrorToast && error) toast.error(error);
+  });
 
   const sendRequest = useCallback(
     async (
