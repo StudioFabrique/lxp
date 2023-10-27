@@ -10,14 +10,14 @@ const ParcoursViewHeaderMenu = () => (
       <div className="flex justify-end gap-4">
         <span>
           <button type="button" className="btn btn-primary">
-            <span className="w-10 h-10">
+            <span className="w-5 h-5">
               <MagnifyIcon />
             </span>
           </button>
         </span>
         <span className="flex justify-end">
           <button type="button" className="btn btn-primary">
-            <span className="w-10 h-10">
+            <span className="w-5 h-5">
               <BellIcon />
             </span>
           </button>
@@ -25,21 +25,21 @@ const ParcoursViewHeaderMenu = () => (
       </div>
       <span className="flex justify-end">
         <button type="button" className="btn btn-primary">
-          <span className="w-10 h-10">
+          <span className="w-5 h-5">
             <CameraIcon />
           </span>
         </button>
       </span>
       <span className="flex justify-end">
-        <button type="button" className="btn btn-primary ">
-          <span className="w-10 h-10">
+        <button type="button" className="btn btn-primary">
+          <span className="w-5 h-5">
             <GroupIcon />
           </span>
         </button>
       </span>
 
       <button type="button" className="btn btn-primary">
-        <span className="w-10 h-10">
+        <span className="w-5 h-5">
           <PlayIcon />
         </span>
         <p>Reprendre le cours</p>

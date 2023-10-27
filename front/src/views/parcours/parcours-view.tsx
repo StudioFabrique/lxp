@@ -34,7 +34,7 @@ const ParcoursView = () => {
   const { sendRequest, error } = useHttp();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
-  const [image, setImage] = useState<string | undefined>(undefined);
+  const [image, setImage] = useState<string>();
   const parcours = useSelector((state: any) => state.parcours);
   const parcoursInfos = useSelector(
     (state: any) => state.parcoursInformations.infos
@@ -60,6 +60,7 @@ const ParcoursView = () => {
         })
       );
       dispatch(parcoursAction.setParcoursFormation(data.formation));
+
       if (data.image) {
         setImage(`data:image/jpeg;base64,${data.image}`);
       }
@@ -151,12 +152,14 @@ const ParcoursView = () => {
         <FadeWrapper>
           <div className="w-full">
             <div className="flex">
-              <ImageHeaderCopy
-                imageUrl={image!}
-                title={parcoursInfos.title}
-                subTitle={parcours.formation?.title}
-                children={[, <ParcoursViewHeaderMenu />]}
-              />
+              {image && (
+                <ImageHeaderCopy
+                  imageUrl={image}
+                  title={parcoursInfos.title}
+                  subTitle={parcours.formation?.title}
+                  children={[<></>, <ParcoursViewHeaderMenu />]}
+                />
+              )}
             </div>
 
             <div className="w-full mt-16 flex flex-col gap-y-5">

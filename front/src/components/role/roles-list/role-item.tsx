@@ -47,12 +47,12 @@ const RoleItem: FC<{
           className="checkbox checkbox-sm checkbox-primary"
         />
       </td>
-      <td className="capitalize ">
+      <td className="capitalize">
         <div
           data-tip={role.role}
           className="w-10 h-10 tooltip tooltip-bottom absolute"
         />
-        <div className="overflow-x-clip">
+        <div className="truncate">
           <p>{role.role}</p>
         </div>
       </td>
