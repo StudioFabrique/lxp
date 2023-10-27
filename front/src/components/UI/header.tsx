@@ -4,8 +4,6 @@
 
 import { ReactNode } from "react";
 
-import EllipsisIcon from "../UI/svg/ellipsis-icon";
-
 interface HeaderProps {
   title: string;
   description: string;
@@ -18,12 +16,6 @@ const Header = (props: HeaderProps) => {
       <div className="w-full flex flex-col items-start">
         <h2 className="text-4xl text-base-content font-bold">{props.title}</h2>
         <p className="mt-2">{props.description}</p>
-      </div>
-      <div className="flex items-center gap-x-2 justify-center md:justify-end">
-        {props.children}
-        <button className="btn btn-outline btn-circle rounded-md btn-primary">
-          <EllipsisIcon />
-        </button>
       </div>
     </div>
   );

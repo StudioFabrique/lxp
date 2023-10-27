@@ -79,7 +79,7 @@ const Search: FC<{
         <div>
           {entityToSearch !== "isActive" ? (
             <input
-              className="input input-bordered input-sm focus:outline-none join-item"
+              className="input input-bordered focus:outline-none join-item"
               type={searchType}
               placeholder="Recherche..."
               value={searchValue}
@@ -88,7 +88,7 @@ const Search: FC<{
           ) : (
             <div>
               <select
-                className="select select-bordered select-sm focus:outline-none join-item"
+                className="select select-bordered focus:outline-none join-item"
                 onChange={handleSwitchValueChange}
               >
                 <option value="actif">Actif</option>
@@ -99,7 +99,7 @@ const Search: FC<{
         </div>
       </div>
       <select
-        className="select select-bordered select-sm join-item font-normal"
+        className="select select-bordered join-item font-normal"
         onChange={handleTypeToSearchChange}
       >
         <option disabled defaultValue="">
@@ -107,10 +107,7 @@ const Search: FC<{
         </option>
         {optionsList}
       </select>
-      <button
-        className="btn btn-primary btn-sm join-item capitalize"
-        type="submit"
-      >
+      <button className="btn btn-primary join-item capitalize" type="submit">
         {props.placeholder ? (
           props.placeholder
         ) : (
