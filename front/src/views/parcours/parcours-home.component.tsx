@@ -9,13 +9,13 @@ import EditIcon from "../../components/UI/svg/edit-icon";
 import DeleteIcon from "../../components/UI/svg/delete-icon.component";
 import Can from "../../components/UI/can/can.component";
 import toast from "react-hot-toast";
-import ParcoursList from "../../components/parcours-home/parcours-list";
+import ParcoursList from "../../components/parcours-home/parcours-home";
 
 const ParcoursHome = () => {
   const [parcoursList, setParcoursList] = useState<Array<Parcours> | null>(
     null
   );
-  const { sendRequest, isLoading, error } = useHttp();
+  const { sendRequest, error } = useHttp();
   const nav = useNavigate();
 
   /**
@@ -72,48 +72,6 @@ const ParcoursHome = () => {
     nav(`view/${id}`);
   };
 
-  // contenu du tableau
-  const content = (
-    <>
-      {parcoursList && parcoursList.length > 0 ? (
-        <>
-          {parcoursList.map((item: Parcours) => (
-            <tr
-              className="cursor-pointer hover:bg-secondary/20 hover:text-base-content"
-              key={item.id}
-              onClick={() => handleViewParcours(item.id!)}
-            >
-              <td>{item.id}</td>
-              <td>{item.title}</td>
-              <td>{item.formation.title}</td>
-              <td>{item.formation.level}</td>
-              <td>{setDate(item.createdAt!)}</td>
-              <td>{setDate(item.updatedAt!)}</td>
-              <td onClick={(e) => handleEditParcours(e, item.id!)}>
-                <div className="w-6 h-6">
-                  <Can action="update" object="parcours">
-                    <EditIcon />
-                  </Can>
-                </div>
-              </td>
-              <td onClick={(e) => handleDeleteParcours(e, item.id!)}>
-                <div className="w-6 h-6 text-error">
-                  <Can action="delete" object="parcours">
-                    <DeleteIcon />
-                  </Can>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </>
-      ) : (
-        <tr>
-          <td colSpan={6}>Aucun parcours n'a été créé à ce jour</td>
-        </tr>
-      )}
-    </>
-  );
-
   // gestion des erreurs HTTP
   useEffect(() => {
     if (error.length > 0) toast.error(error);
@@ -150,7 +108,7 @@ const ParcoursHome = () => {
         </>
       )}
     </div> */
-    <main className="w-full">
+    <main className="w-full flex justify-center">
       {parcoursList && parcoursList?.length > 0 ? (
         <ParcoursList parcoursList={parcoursList} />
       ) : null}

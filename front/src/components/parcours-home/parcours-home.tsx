@@ -12,7 +12,7 @@ interface ParcoursListProps {
 
 const ParcoursList = (props: ParcoursListProps) => {
   return (
-    <main className="w-full flex flex-col items-center px-4 py-8 gap-8">
+    <main className="w-5/6 flex flex-col items-center px-4 py-8 gap-8">
       <section className="w-full">
         <Header
           title="Liste des parcours"
@@ -20,12 +20,14 @@ const ParcoursList = (props: ParcoursListProps) => {
         />
       </section>
       <section className="w-full flex justify-between items-center">
-        <Can action="write" object="parcours²&">
-          <ButtonAdd label="Créer un parcours" onClickEvent={() => {}} />
-        </Can>
-        <div className="flex flex-col gap-y-8">
-          <div className="flex justify-end items-center">
-            <div className="flex items-center gap-x-2">
+        <div className="w-full flex flex-col gap-y-8">
+          <div className="w-full flex items-center">
+            <div className="flex justify-start">
+              <Can action="write" object="parcours">
+                <ButtonAdd label="Créer un parcours" onClickEvent={() => {}} />
+              </Can>
+            </div>
+            <div className="w-full flex justify-end items-center gap-x-2">
               <Search
                 options={parcoursSearchOptions}
                 placeholder="Filtrer par ..."

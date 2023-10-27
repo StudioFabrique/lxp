@@ -30,8 +30,3 @@ const Header = (props: HeaderProps) => {
 };
 
 export default Header;
-
-/*
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in urna
-          eget pura.
-          */

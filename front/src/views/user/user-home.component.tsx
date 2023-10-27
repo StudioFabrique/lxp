@@ -188,15 +188,17 @@ const UserHome = () => {
   return (
     <>
       <div className="w-full flex flex-col items-center px-4 py-8 gap-8">
-        <Header
-          title="Liste d'utilisateurs"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in urna
+        <div className="w-5/6">
+          <Header
+            title="Liste d'utilisateurs"
+            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in urna
           eget pura."
-        >
-          <Link className="btn btn-primary" to="/admin/user/add">
-            Créer un utilisateur
-          </Link>
-        </Header>
+          >
+            <Link className="btn btn-primary" to="/admin/user/add">
+              Créer un utilisateur
+            </Link>
+          </Header>
+        </div>
 
         <UsersListStats stats={stats} isLoading={isLoading} />
         <div className="flex flex-col gap-y-8">
