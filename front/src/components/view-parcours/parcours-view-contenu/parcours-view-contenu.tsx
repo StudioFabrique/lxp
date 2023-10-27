@@ -48,7 +48,7 @@ const ParcoursViewContenu = () => {
               imageModuleHeader={selectedModule?.thumb}
               moduleTitle={selectedModule?.title}
             />
-            <ParcoursViewContenuDetail />
+            <ParcoursViewContenuDetail moduleId={selectedModule?.id!} />
           </div>
         )}
       </div>
