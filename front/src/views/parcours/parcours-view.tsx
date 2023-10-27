@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
-import ImageHeader from "../../components/image-header/image-header";
 import useHttp from "../../hooks/use-http";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import Parcours from "../../utils/interfaces/parcours";
 import { parcoursAction } from "../../store/redux-toolkit/parcours/parcours";
@@ -25,6 +24,8 @@ import ParcoursViewQuickStatistiques from "../../components/view-parcours/parcou
 import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
 import { useSelector } from "react-redux";
 import ParcoursViewProgressStats from "../../components/view-parcours/parcours-view-progress-stats";
+import ImageHeaderCopy from "../../components/image-header/image-header.copy";
+import ParcoursViewHeaderMenu from "../../components/view-parcours/parcours-view-header-menu";
 
 let initialState = true;
 
@@ -37,28 +38,6 @@ const ParcoursView = () => {
   const parcours = useSelector((state: any) => state.parcours);
   const parcoursInfos = useSelector(
     (state: any) => state.parcoursInformations.infos
-  );
-
-  /**
-   * enregistrement de l'image du parcours dans la bdd
-   */
-  const updateImage = useCallback(
-    (image: File) => {
-      const formData = new FormData();
-      formData.append("parcoursId", id!);
-      formData.append("image", image);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const processData = (_data: any) => {};
-      sendRequest(
-        {
-          path: "/parcours/update-image",
-          method: "put",
-          body: formData,
-        },
-        processData
-      );
-    },
-    [id, sendRequest]
   );
 
   /**
@@ -171,13 +150,14 @@ const ParcoursView = () => {
       ) : error.length === 0 ? (
         <FadeWrapper>
           <div className="w-full">
-            <ImageHeader
-              defaultImage="/images/parcours-default.webp"
-              image={image}
-              title={parcoursInfos.title}
-              parentTitle={parcours.formation?.title}
-              onUpdateImage={updateImage}
-            />
+            <div className="flex">
+              <ImageHeaderCopy
+                imageUrl={image!}
+                title={parcoursInfos.title}
+                subTitle={parcours.formation?.title}
+                children={[, <ParcoursViewHeaderMenu />]}
+              />
+            </div>
 
             <div className="w-full mt-16 flex flex-col gap-y-5">
               <ParcoursViewProgressStats />
