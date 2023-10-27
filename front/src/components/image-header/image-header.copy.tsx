@@ -19,8 +19,6 @@ const ImageHeaderCopy = (props: ImageHeaderProps) => {
     borderRadius: "0.75rem",
   };
 
-  console.log(props.imageUrl);
-
   return (
     <div style={classImage}>
       <div className="rounded-xl w-full h-full flex flex-col justify-end items-start relative">
