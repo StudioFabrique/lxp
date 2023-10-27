@@ -11,17 +11,17 @@ const ParcoursViewContenuItem: FC<{
 }> = ({ module, iterationCount, setSelectedModule }) => {
   const minDate: { day: number; month: string } = {
     day: new Date(module.minDate!).getDay(),
-    month: getMonth(new Date(module.minDate!).getMonth()),
+    month: getMonth(new Date(module.minDate!).getMonth()).substring(0, 4),
   };
 
   return (
     <div
-      className="flex gap-x-5 items-center"
+      className="flex gap-x-4 items-center"
       onClick={() => setSelectedModule(module)}
     >
-      <div className="flex flex-col items-center justify-center bg-secondary p-4 w-20 rounded-lg h-full">
+      <div className="flex flex-col items-center justify-center bg-secondary p-4 w-24 h-full rounded-lg ">
         <p className="font-bold text-xl">{minDate.day}</p>
-        <p className="uppercase">{minDate.month}</p>
+        <p className="uppercase text-sm">{minDate.month}</p>
       </div>
       <div
         className={`flex flex-col items-center p-4 rounded-lg w-full ${colorStyle} ${colorStyleHover}`}

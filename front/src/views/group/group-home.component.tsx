@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Context } from "../../store/context.store";
 import Role from "../../utils/interfaces/role";
@@ -13,6 +13,7 @@ import Search from "../../components/UI/search/search.component";
 import GroupList from "../../components/lists/group-list/group-list.component";
 import Pagination from "../../components/UI/pagination/pagination";
 import Modal from "../../components/UI/modal/modal";
+import toast from "react-hot-toast";
 
 const GroupHome = () => {
   const { user, roles } = useContext(Context);
@@ -33,6 +34,7 @@ const GroupHome = () => {
     setAllChecked,
     handleRowCheck,
   } = usePagination("lastname", `/group/${user!.roles[0].role}`);
+  const { state: history } = useLocation();
   const { sendRequest } = useHttp();
 
   // const handleAddUsersToGroup = (usersId: string[]) => {
@@ -137,6 +139,12 @@ const GroupHome = () => {
   const setErrorModal = () => {
     setShowErrorModal((prevState) => !prevState);
   };
+
+  useEffect(() => {
+    if (history?.toastFrom) {
+      toast.success(history.toastFrom);
+    }
+  }, [history?.toastFrom]);
 
   useEffect(() => {
     setRole(roles[0]);
