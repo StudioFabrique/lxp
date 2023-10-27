@@ -5,6 +5,7 @@ import Can from "../UI/can/can.component";
 import EditIcon from "../UI/svg/edit-icon";
 import DeleteIcon from "../UI/svg/delete-icon.component";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
+import EyeIcon from "../UI/svg/eye-icon";
 
 interface ParcoursTableProps {
   parcoursList: Parcours[];
@@ -31,13 +32,25 @@ const ParcoursTable = (props: ParcoursTableProps) => {
               className="cursor-pointer hover:bg-secondary/20 hover:text-base-content"
               key={item.id}
             >
-              <td className="bg-transparent rounded-l-lg">{item.title}</td>
-              <td className="bg-transparent">{item.formation.title}</td>
-              <td className="bg-transparent">{item.formation.level}</td>
-              <td className="bg-transparent">{localeDate(item.createdAt!)}</td>
-              <td className="bg-transparent">{localeDate(item.updatedAt!)}</td>
-              <td className="bg-transparent">{item.author}</td>
-              <td className="bg-transparent">
+              <td className="bg-transparent rounded-l-lg truncate">
+                {item.title}
+              </td>
+              <td className="bg-transparent truncate">
+                {item.formation.title}
+              </td>
+              <td className="bg-transparent truncate">
+                {item.formation.level}
+              </td>
+              <td className="bg-transparent truncate">
+                {localeDate(item.createdAt!)}
+              </td>
+              <td className="bg-transparent truncate">
+                {localeDate(item.updatedAt!)}
+              </td>
+              <td className="bg-transparent capitalize truncate">
+                {item.author}
+              </td>
+              <td className="bg-transparent truncate">
                 {item.isPublished ? "Publié" : "Brouillon"}
               </td>
               <td className="bg-transparent">
@@ -51,21 +64,55 @@ const ParcoursTable = (props: ParcoursTableProps) => {
               <td className="bg-transparent">
                 <div className="w-6 h-6">
                   <Can action="update" object="parcours">
-                    <Link to={`edit/${item.id}`}>
-                      <EditIcon />
-                    </Link>
+                    <div
+                      className="tooltip tooltip-bottom"
+                      data-tip="Aperçu du parcours"
+                    >
+                      <Link
+                        className="text-primary"
+                        to={`view/${item.id}`}
+                        aria-label="aperçu du parcours"
+                      >
+                        <EyeIcon />
+                      </Link>
+                    </div>
+                  </Can>
+                </div>
+              </td>
+              <td className="bg-transparent">
+                <div className="w-6 h-6">
+                  <Can action="update" object="parcours">
+                    <div
+                      className="tooltip tooltip-bottom"
+                      data-tip="Modifier le parcours"
+                    >
+                      <Link
+                        className="text-primary"
+                        to={`edit/${item.id}`}
+                        aria-label="modifier le parcours"
+                      >
+                        <EditIcon />
+                      </Link>
+                    </div>
                   </Can>
                 </div>
               </td>
               <td className="bg-transparent rounded-r-lg">
-                <Can action="delete" object="parcours">
-                  <div
-                    className="w-6 h-6 text-error"
-                    onClick={() => handleDeleteParcours(item.id!)}
-                  >
-                    <DeleteIcon />
-                  </div>
-                </Can>
+                <div
+                  className="w-6 h-6 text-error"
+                  aria-label="suppression du parcours"
+                >
+                  <Can action="delete" object="parcours">
+                    <div
+                      className="tooltip tooltip-bottom flex-items-center"
+                      data-tip="Supprimer le parcours"
+                    >
+                      <div onClick={() => handleDeleteParcours(item.id!)}>
+                        <DeleteIcon />
+                      </div>
+                    </div>
+                  </Can>
+                </div>
               </td>
             </tr>
           ))}
@@ -176,6 +223,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
               </th>
               <th>Statut</th>
               <th>Visibilité</th>
+              <th></th>
               <th></th>
               <th></th>
             </tr>

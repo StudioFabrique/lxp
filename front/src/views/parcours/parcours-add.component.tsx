@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Toaster, toast } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 import bgImage from "../../assets/images/new-parcours-default.jpg";
@@ -122,7 +122,6 @@ const AddParcours = () => {
 
   return (
     <>
-      <Toaster />
       <FadeWrapper>
         <div className="w-full xl:w-5/6 grid grid-cols-1 lg:grid-cols-2 gap-16 px-8 mx-auto my-16">
           <>

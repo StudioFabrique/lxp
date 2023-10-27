@@ -8,14 +8,24 @@ import RefreshIcon from "../UI/svg/refresh-icon.component";
 import ParcoursTable from "./parcours-table";
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import Pagination from "../UI/pagination/pagination";
+import { Link } from "react-router-dom";
+import AddIcon from "../UI/svg/add-icon";
 
 interface ParcoursListProps {
   parcoursList: Parcours[];
 }
 
 const ParcoursList = (props: ParcoursListProps) => {
-  const { list, sortData, page, totalPages, fieldSort, direction, setPage } =
-    useEagerLoadingList(props.parcoursList, "title", 15);
+  const {
+    list,
+    sortData,
+    page,
+    totalPages,
+    fieldSort,
+    direction,
+    getFilteredList,
+    setPage,
+  } = useEagerLoadingList(props.parcoursList, "title", 15);
 
   return (
     <main className="w-5/6 flex flex-col items-center px-4 py-8 gap-8">
@@ -30,13 +40,20 @@ const ParcoursList = (props: ParcoursListProps) => {
           <div className="w-full flex items-center">
             <div className="flex justify-start">
               <Can action="write" object="parcours">
-                <ButtonAdd label="Créer un parcours" onClickEvent={() => {}} />
+                <Link className="btn btn-primary" to="créer-un-parcours">
+                  <div className="flex gap-x-2 items-center">
+                    <div className="w-8 h-8">
+                      <AddIcon />
+                    </div>
+                    <p>Créer un parcours</p>
+                  </div>
+                </Link>
               </Can>
             </div>
             <div className="w-full flex justify-end items-center gap-x-2">
               <Search
                 options={parcoursSearchOptions}
-                placeholder="Filtrer par ..."
+                placeholder="Filtrer"
                 onSearch={() => {}}
               />
               <div className="text-primary" onClick={() => {}}>
