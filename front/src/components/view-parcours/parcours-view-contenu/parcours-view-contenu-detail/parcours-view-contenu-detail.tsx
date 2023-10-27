@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux";
 import SubWrapper from "../../../UI/sub-wrapper/sub-wrapper.component";
 import BookIcon from "../../../UI/svg/book-icon";
 import { colorStyle, colorStyleHover } from "../../../../config/colors";
@@ -11,8 +10,6 @@ import Course from "../../../../utils/interfaces/course";
 const ParcoursViewContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
   const { sendRequest, isLoading } = useHttp(true);
   const [courses, setCourses] = useState<Course[]>([]);
-
-  console.log(courses);
 
   /**
    * récupère la liste des cours depuis la bdd
