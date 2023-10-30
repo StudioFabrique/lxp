@@ -16,8 +16,6 @@ const RoleSelector: FC<{
     e: ChangeEvent<HTMLSelectElement>
   ) => {
     const newRole = roles.find((role) => e.currentTarget.value === role.role);
-    console.warn({ newRole });
-
     onSetCurrentRole((previousRole) => newRole ?? previousRole);
   };
 
@@ -31,7 +29,7 @@ const RoleSelector: FC<{
     >
       {roles.map((item) => (
         <option className="capitalize text-xs" key={item._id} value={item.role}>
-          {item.role}
+          {item.role} {item.role === "admin" && "(mon rôle)"}
         </option>
       ))}
     </select>

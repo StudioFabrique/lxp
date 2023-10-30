@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 import RolesList from "../../components/role/roles-list/roles-list";
 import RoleForm from "../../components/role/role-form/role-form";
-import { Toaster } from "react-hot-toast";
 import PermissionsList from "../../components/role/permissions-list/permissions-list";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -31,7 +30,7 @@ export interface IRoleToEdit {
 const Role = () => {
   const { state: history } = useLocation();
   const navigate = useNavigate();
-  const { sendRequest, isLoading } = useHttp();
+  const { sendRequest, isLoading } = useHttp(true);
 
   const [isRolesInitialized, setIsRolesInitialized] = useState<boolean>(false);
 
@@ -54,7 +53,6 @@ const Role = () => {
 
   return (
     <>
-      <Toaster />
       <div className="flex flex-col gap-y-5 p-10">
         {!!history?.from && (
           <button
@@ -88,6 +86,7 @@ const Role = () => {
                   setRoleToEdit={setRoleToEdit}
                   roles={roles}
                   setRoles={setRoles}
+                  setCurrentRole={setCurrentRole}
                 />
               </div>
             </div>

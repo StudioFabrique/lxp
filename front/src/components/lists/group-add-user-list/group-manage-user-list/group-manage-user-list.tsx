@@ -44,7 +44,6 @@ const GroupManageUserList: FC<{
   const handleAddSelectedUser = (user: User) => {
     setSelectedUsers((users) => [...users, user]);
     setUsersSettedState(false);
-    console.log("id adding : " + user);
   };
 
   const handleAddSelectedAllUser = useCallback(() => {
@@ -62,7 +61,6 @@ const GroupManageUserList: FC<{
       users.filter((currentUser) => currentUser._id !== user._id)
     );
     setUsersSettedState(false);
-    console.log("id deleting : " + user);
   };
 
   /* 
@@ -76,7 +74,6 @@ const GroupManageUserList: FC<{
     setSelectedUsers((users) =>
       users.filter((currentUser) => currentUser._id !== user._id)
     );
-    console.log("id adding : " + user);
   };
 
   const handleSearchUser = (entityToSearch: string, searchValue: string) => {
@@ -84,7 +81,6 @@ const GroupManageUserList: FC<{
       (user: any) =>
         user[entityToSearch].toLowerCase() === searchValue.toLowerCase()
     );
-    console.log({ resultsFromSearch });
 
     setUserSearchResult(resultsFromSearch);
   };
@@ -97,7 +93,6 @@ const GroupManageUserList: FC<{
     setUsersToShowInList(
       dataList.filter(
         (data) => {
-          console.log(data);
           return !usersToAdd.map((user) => user._id).includes(data._id);
         }
         // !dataList
@@ -105,7 +100,6 @@ const GroupManageUserList: FC<{
         //   .includes(usersToAdd.map((user) => user._id))
       )
     );
-    console.log(usersToAdd);
   }, [dataList, usersToAdd]);
 
   useEffect(() => {

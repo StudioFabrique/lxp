@@ -7,7 +7,7 @@ const ParcoursViewInformations = () => {
 
   return (
     <Wrapper>
-      <h2 className="text-xl font-bold text-secondary">Informations</h2>
+      <h2 className="text-xl font-bold text-primary">Informations</h2>
       <div className="flex flex-col gap-y-5">
         <span className="flex gap-x-5">
           <p className="font-bold">Diplôme</p>

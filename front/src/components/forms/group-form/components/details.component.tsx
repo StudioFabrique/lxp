@@ -49,7 +49,6 @@ const Details: FC<{
    */
   const handleParcours = (id: number) => {
     setParcours(id);
-    console.log({ parcours });
   };
 
   /**
@@ -57,8 +56,6 @@ const Details: FC<{
    */
   useEffect(() => {
     if (formation !== undefined) {
-      console.log(formation);
-
       const processData = (data: any) => {
         setParcoursList(data.data);
       };

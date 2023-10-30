@@ -22,7 +22,7 @@ const ImageFileUpload: FC<{
       const selectedFile = event.target.files[0];
       if (selectedFile !== undefined) {
         if (!selectedFile.type.startsWith("image/")) {
-          toast.error("Ce fichier n'est pass un fichier image");
+          toast.error("Ce fichier n'est pas un fichier image");
           return;
         }
         if (selectedFile.size > maxSize) {

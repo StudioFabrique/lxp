@@ -22,11 +22,7 @@ const RoleCreateForm: FC<{
   setRoleToEdit: Dispatch<SetStateAction<IRoleToEdit | null>>;
   setCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
 }> = ({ roleToEdit, setRoles, setRoleToEdit, setCurrentRole }) => {
-  const {
-    sendRequest,
-    isLoading: isRequestLoading,
-    error: requestError,
-  } = useHttp();
+  const { sendRequest, isLoading: isRequestLoading } = useHttp(true);
 
   const [isActive, SetActive] = useState(false);
 
@@ -60,8 +56,6 @@ const RoleCreateForm: FC<{
     };
 
     const applyDataUpdate = (data: any) => {
-      console.log(data.data);
-
       setRoles((currentRoles) =>
         currentRoles.map((role) => {
           const roleData = data.data;
@@ -98,10 +92,6 @@ const RoleCreateForm: FC<{
       );
     else toast.error("Le formulaire n'est pas valide");
   };
-
-  useEffect(() => {
-    if (requestError) toast.error(requestError);
-  }, [requestError]);
 
   /**
    * Dès qu'un rôle à editer est défini, alors activer le toggle en fonction de l'état d'activation du role

@@ -130,7 +130,6 @@ const AddCourse = () => {
           <div>
             <div className="grid grid-rows-2 gap-8">
               <h1 className="text-2xl font-extrabold">Création d'un cours</h1>
-
               <h3>
                 Pour commencer, veulliez saisir les informations nécessaires
                 pour créer le cours

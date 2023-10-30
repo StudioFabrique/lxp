@@ -14,11 +14,7 @@ const ParcoursViewContenuDetailHeader: FC<{
     borderRadius: "0.75rem",
   };
 
-  return (
-    <div className="flex p-5" style={classImage}>
-      <p className="self-end capitalize">{moduleTitle}</p>
-    </div>
-  );
+  return <div className="flex p-5" style={classImage} />;
 };
 
 export default ParcoursViewContenuDetailHeader;
