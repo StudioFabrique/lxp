@@ -2,15 +2,14 @@ import SubWrapper from "../../../UI/sub-wrapper/sub-wrapper.component";
 import BookIcon from "../../../UI/svg/book-icon";
 import { colorStyle, colorStyleHover } from "../../../../config/colors";
 import Can from "../../../UI/can/can.component";
-import { FC, MouseEvent, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import useHttp from "../../../../hooks/use-http";
 import { sortArray } from "../../../../utils/sortArray";
 import Course from "../../../../utils/interfaces/course";
 import EditIcon from "../../../UI/svg/edit-icon";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const ParcoursViewContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
-  const navigate = useNavigate();
   const { sendRequest, isLoading } = useHttp(true);
   const [courses, setCourses] = useState<Course[]>([]);
 
@@ -44,14 +43,6 @@ const ParcoursViewContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
     );
   }, [sendRequest, moduleId]);
 
-  const onNavigateEditCourse = (
-    e: MouseEvent<HTMLButtonElement>,
-    courseId: number
-  ) => {
-    e.stopPropagation();
-    navigate(`/admin/course/edit/${courseId}`);
-  };
-
   const contentsList =
     !isLoading && courses!.length > 0 ? (
       courses.map((course, i) => (
@@ -69,13 +60,9 @@ const ParcoursViewContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
             </div>
           </div>
           <Can action="update" object="course">
-            <button
-              type="button"
-              className="h-8 w-8"
-              onClick={(e) => onNavigateEditCourse(e, course.id)}
-            >
+            <Link to={`/admin/course/edit/${course.id}`} className="h-8 w-8">
               <EditIcon />
-            </button>
+            </Link>
           </Can>
         </div>
       ))
@@ -88,9 +75,9 @@ const ParcoursViewContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
       <span className="flex justify-between">
         <h2 className="text-xl font-bold text-primary">Contenu du module</h2>
         <Can action="write" object="course">
-          <button type="button" className="btn btn-primary btn-sm">
+          <Link to="/admin/course/add" className="btn btn-primary btn-sm">
             Ajouter un cours
-          </button>
+          </Link>
         </Can>
       </span>
       <div className="flex flex-col gap-y-5">{contentsList}</div>

@@ -8,35 +8,22 @@ const ParcoursViewHeaderMenu = () => (
   <div className="absolute flex justify-end w-full h-full p-4">
     <div className="flex flex-col gap-4 justify-between z-20">
       <div className="flex justify-end gap-4">
-        <span>
-          <button type="button" className="btn btn-primary">
-            <span className="w-5 h-5">
-              <MagnifyIcon />
-            </span>
-          </button>
-        </span>
-        <span className="flex justify-end">
-          <button type="button" className="btn btn-primary">
-            <span className="w-5 h-5">
-              <BellIcon />
-            </span>
-          </button>
-        </span>
+        <button type="button" className="btn btn-primary btn-sm py-1">
+          <MagnifyIcon />
+        </button>
+        <button type="button" className="btn btn-primary btn-sm py-1">
+          <BellIcon />
+        </button>
       </div>
-      <span className="flex justify-end">
-        <button type="button" className="btn btn-primary">
-          <span className="w-5 h-5">
-            <CameraIcon />
-          </span>
+      <span className="flex-1" />
+      <div className="self-end flex flex-col gap-4">
+        <button type="button" className="btn btn-primary btn-sm py-1">
+          <CameraIcon />
         </button>
-      </span>
-      <span className="flex justify-end">
-        <button type="button" className="btn btn-primary">
-          <span className="w-5 h-5">
-            <GroupIcon />
-          </span>
+        <button type="button" className="btn btn-primary btn-sm py-1">
+          <GroupIcon />
         </button>
-      </span>
+      </div>
       <button type="button" className="btn btn-primary">
         <span className="w-5 h-5">
           <PlayIcon />

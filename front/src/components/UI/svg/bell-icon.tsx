@@ -5,6 +5,7 @@ const BellIcon = () => (
     viewBox="0 0 24 24"
     stroke-width="1.5"
     stroke="currentColor"
+    className="w-full h-full"
   >
     <path
       stroke-linecap="round"
