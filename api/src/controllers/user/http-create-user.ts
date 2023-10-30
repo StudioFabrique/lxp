@@ -18,6 +18,9 @@ export default async function httpCreateUser(req: Request, res: Response) {
   const hobbiesDataRequest: IHobby[] | undefined = userDataRequest.hobbies;
   const { roleId } = req.body;
 
+  console.log(graduationsDataRequest);
+  console.log(hobbiesDataRequest);
+
   console.log(userDataRequest);
   console.log(graduationsDataRequest ?? "no graduations data");
   console.log(linksDataRequest ?? "no links data");

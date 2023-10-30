@@ -20,13 +20,17 @@ const CertificationItem: FC<{
         <p className="text-lg font-bold">{graduation.title}</p>
         <p>{graduation.date.getFullYear()}</p>
       </span>
-      <span>
+      <span className="flex items-center gap-2">
         <button type="button" onClick={handleClickButtonEdit}>
           <div className="w-6 h-6">
             <EditIcon />
           </div>
         </button>
-        <button type="button" onClick={handleClickButtonDelete}>
+        <button
+          type="button"
+          onClick={handleClickButtonDelete}
+          className="h-6 w-6"
+        >
           <DeleteIcon />
         </button>
       </span>
