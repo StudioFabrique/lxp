@@ -12,13 +12,13 @@ const ParcoursViewProgressStats = () => {
     (state: any) => state.parcoursModules.modules
   ) as Module[];
 
-  const radialStyle: CSSProperties = {
-    /* "--value": 70, */
-  };
+  const radialStyle = {
+    "--value": 70,
+  } as CSSProperties;
 
   return (
     <Wrapper>
-      <div className="h-40 flex flex-col justify-between">
+      <div className="flex flex-col justify-between">
         <div className="flex gap-10 items-center">
           <h2 className="text-2xl w-44 font-bold text-primary">
             Votre avancement dans le parcours
@@ -27,7 +27,7 @@ const ParcoursViewProgressStats = () => {
             {modules
               ?.filter((x, i) => i < 4)
               .map((module, i) => (
-                <div className="flex flex-col items-center bg-secondary-focus text-primary-focus font-bold p-10 rounded-xl">
+                <div className="flex flex-col justify-center gap-1 items-center bg-secondary-focus text-primary-focus font-bold w-[8em] h-[8em] rounded-xl">
                   <p className="radial-progress" style={radialStyle}>
                     70 %
                   </p>
