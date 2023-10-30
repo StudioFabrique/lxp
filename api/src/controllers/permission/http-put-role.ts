@@ -28,8 +28,8 @@ export default async function httpPutRole(req: Request, res: Response) {
     const roleUpdated = await putRole(
       idRole,
       permissions,
-      role.toLocaleLowerCase().trim(),
-      label.toLocaleLowerCase().trim(),
+      role && role.toLocaleLowerCase().trim(),
+      label && label.toLocaleLowerCase().trim(),
       rank,
       isActive
     );

@@ -31,7 +31,7 @@ export interface IRoleToEdit {
 const Role = () => {
   const { state: history } = useLocation();
   const navigate = useNavigate();
-  const { sendRequest, isLoading } = useHttp();
+  const { sendRequest, isLoading } = useHttp(true);
 
   const [isRolesInitialized, setIsRolesInitialized] = useState<boolean>(false);
 
@@ -54,7 +54,6 @@ const Role = () => {
 
   return (
     <>
-      <Toaster />
       <div className="flex flex-col gap-y-5 p-10">
         {!!history?.from && (
           <button

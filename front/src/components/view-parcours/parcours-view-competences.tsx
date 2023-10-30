@@ -9,13 +9,15 @@ const ParcoursViewCompetences = () => {
 
   const skillList =
     skills.length > 0 ? (
-      skills.map((skill, i) => (
+      skills.map((skill) => (
         <div
           key={skill.id}
           className="bg-secondary p-4 rounded-lg text-secondary-content"
         >
-          <p className="font-bold">{`Compétence ${i + 1}`}</p>
-          <p>{skill.description}</p>
+          <p className="font-bold first-letter:uppercase">
+            {skill.description}
+          </p>
+          <p>Ipsume Litus lorem cand</p>
         </div>
       ))
     ) : (
@@ -24,7 +26,7 @@ const ParcoursViewCompetences = () => {
 
   return (
     <Wrapper>
-      <h2 className="text-xl font-bold text-secondary">Compétences</h2>
+      <h2 className="text-xl font-bold text-primary">Compétences</h2>
       <div className="flex flex-col gap-y-5 overflow-y-auto h-[60vh]">
         {skillList}
       </div>

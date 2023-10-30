@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import Selecter from "../../components/UI/selecter/selecter.component";
 import NewCourseForm from "../../components/edit-course/new-course-form";
@@ -125,7 +125,6 @@ const AddCourse = () => {
 
   return (
     <>
-      <Toaster />
       <FadeWrapper>
         <div className="w-full xl:w-5/6 grid grid-cols-1 lg:grid-cols-2 gap-16 px-8 mx-auto my-16">
           <>

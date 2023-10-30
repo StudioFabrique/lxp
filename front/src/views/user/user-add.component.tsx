@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import useHttp from "../../hooks/use-http";
 import UserAddForm from "../../components/forms/user-form/user-add-form.component";
-import { Toaster, toast } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { useEffect } from "react";
 
 const UserAdd = () => {
@@ -27,7 +27,6 @@ const UserAdd = () => {
 
   return (
     <div className="p-10">
-      <Toaster />
       <UserAddForm
         onSubmitForm={handleSubmit}
         error={error}

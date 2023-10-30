@@ -6,13 +6,18 @@ import ParcoursViewContenuDetail from "./parcours-view-contenu-detail/parcours-v
 import ParcoursViewContenuDetailHeader from "./parcours-view-contenu-detail/parcours-view-contenu-detail-header";
 import { useState } from "react";
 import Can from "../../UI/can/can.component";
+import { Link, useParams } from "react-router-dom";
 
 const ParcoursViewContenu = () => {
   const modules = useSelector(
     (state: any) => state.parcoursModules.modules
   ) as Module[];
 
-  const [selectedModule, setSelectedModule] = useState<Module | null>(null);
+  const { id: parcoursId } = useParams();
+
+  const [selectedModule, setSelectedModule] = useState<Module | null>(
+    modules ? modules[0] : null
+  );
 
   const contentsList =
     modules?.length > 0 ? (
@@ -31,13 +36,14 @@ const ParcoursViewContenu = () => {
   return (
     <Wrapper>
       <span className="flex justify-between">
-        <h2 className="text-xl font-bold text-secondary">
-          Contenu du parcours
-        </h2>
+        <h2 className="text-xl font-bold text-primary">Contenu du parcours</h2>
         <Can action="update" object="parcours">
-          <button type="button" className="btn btn-primary btn-sm">
+          <Link
+            to={`/admin/parcours/edit/${parcoursId}`}
+            className="btn btn-primary btn-sm"
+          >
             Modifier
-          </button>
+          </Link>
         </Can>
       </span>
       <div className="grid lg:grid-cols-2 gap-x-10 gap-y-5">
@@ -45,10 +51,10 @@ const ParcoursViewContenu = () => {
         {modules?.length > 0 && (
           <div className="flex flex-col gap-y-4">
             <ParcoursViewContenuDetailHeader
-              imageModuleHeader={`https://images.frandroid.com/wp-content/uploads/2017/10/udemy_header-630x310.png`}
+              imageModuleHeader={selectedModule?.thumb}
               moduleTitle={selectedModule?.title}
             />
-            <ParcoursViewContenuDetail />
+            <ParcoursViewContenuDetail moduleId={selectedModule?.id!} />
           </div>
         )}
       </div>

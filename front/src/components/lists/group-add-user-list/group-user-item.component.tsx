@@ -9,8 +9,6 @@ const GroupUserItem: FC<{
   onDeleteUser: (user: User) => void;
   onCheckRow: (id: number) => void;
 }> = ({ itemProps, onUpdateUser, onDeleteUser, onCheckRow }) => {
-  console.log({ itemProps });
-
   const handleToggleActiveState: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>
   ) => {

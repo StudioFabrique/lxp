@@ -3,26 +3,25 @@ import GroupAddForm from "../../components/forms/group-form/group-add-form.compo
 import GroupUserList from "../../components/lists/group-add-user-list/group-user-list.component";
 import { useState } from "react";
 import User from "../../utils/interfaces/user";
-import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const GroupAdd = () => {
+  const navigate = useNavigate();
+  const { isLoading, sendRequest } = useHttp(true);
   const [usersToAdd, setUsersToAdd] = useState<Array<User>>([]);
 
-  const { error, isLoading, sendRequest } = useHttp();
-
   const handleSubmit = (data: any, file: File) => {
-    console.log(data);
-    console.log(usersToAdd);
+    const applyData = (data: any) => {
+      navigate("/admin/group", {
+        state: { toastFrom: "Groupe créé avec succès" },
+      });
+    };
+
     const formData = new FormData();
     formData.append("data", JSON.stringify({ ...data, users: usersToAdd }));
     formData.append("image", file);
 
-    sendRequest(
-      { method: "post", path: "/group", body: formData },
-      (data: any) => {
-        if (data) toast.success("Groupe créé avec succès");
-      }
-    );
+    sendRequest({ method: "post", path: "/group", body: formData }, applyData);
   };
 
   const handleAddUsers = (users: Array<User>) => {
@@ -47,12 +46,7 @@ const GroupAdd = () => {
 
   return (
     <div className="flex flex-col p-10 gap-y-10">
-      <Toaster />
-      <GroupAddForm
-        onSubmitForm={handleSubmit}
-        error={error}
-        isLoading={isLoading}
-      />
+      <GroupAddForm onSubmitForm={handleSubmit} isLoading={isLoading} />
       <GroupUserList
         usersToAdd={usersToAdd}
         onAddUsers={handleAddUsers}
