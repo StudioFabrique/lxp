@@ -16,8 +16,6 @@ const RoleSelector: FC<{
     e: ChangeEvent<HTMLSelectElement>
   ) => {
     const newRole = roles.find((role) => e.currentTarget.value === role.role);
-    console.warn({ newRole });
-
     onSetCurrentRole((previousRole) => newRole ?? previousRole);
   };
 

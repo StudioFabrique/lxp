@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useEffect } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import { IRoleItem, IRoleToEdit } from "../../../views/role/role";
 import { sumPropertiesAsNumber } from "../../../utils/object-properties-calculation";
 import EditIcon from "../../UI/svg/edit-icon";
@@ -11,7 +11,7 @@ const RoleItem: FC<{
   setRoles: Dispatch<SetStateAction<IRoleItem[]>>;
   setRoleToEdit: Dispatch<SetStateAction<IRoleToEdit | null>>;
 }> = ({ role, setRoles, setRoleToEdit }) => {
-  const { sendRequest, isLoading, error } = useHttp();
+  const { sendRequest, isLoading } = useHttp(true);
 
   const handleEditRole = () => {
     setRoleToEdit({
@@ -37,10 +37,6 @@ const RoleItem: FC<{
     );
   };
 
-  useEffect(() => {
-    if (error) toast.error("Erreur de requête");
-  }, [error]);
-
   return (
     <tr className="grid grid-cols-10 items-center bg-secondary text-secondary-content rounded-xl">
       <td className="flex items-center">
@@ -51,12 +47,12 @@ const RoleItem: FC<{
           className="checkbox checkbox-sm checkbox-primary"
         />
       </td>
-      <td className="capitalize ">
+      <td className="capitalize">
         <div
           data-tip={role.role}
           className="w-10 h-10 tooltip tooltip-bottom absolute"
         />
-        <div className="overflow-x-clip">
+        <div className="truncate">
           <p>{role.role}</p>
         </div>
       </td>
@@ -73,8 +69,8 @@ const RoleItem: FC<{
               name="active"
               id="active"
               checked={role.isActive}
-              onChange={() => {}}
-              className="toggle toggle-sm toggle-primary"
+              disabled
+              className="toggle toggle-sm toggle-primary disabled:opacity-100 disabled:toggle-primary disabled:cursor-default"
             />
           </td>
 

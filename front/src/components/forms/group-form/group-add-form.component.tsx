@@ -7,11 +7,11 @@ import GroupsHeader from "../../groups-header/groups-header.component";
 import Tag from "../../../utils/interfaces/tag";
 import GroupTags from "./components/group-tags.component";
 import Dates from "./components/dates.component";
+import toast from "react-hot-toast";
 
 const GroupAddForm: FC<{
   group?: any;
   onSubmitForm: (data: any, file: File) => void;
-  error: string;
   isLoading: boolean;
 }> = (props) => {
   const [file, setFile] = useState<File | null>(null);
@@ -55,7 +55,6 @@ const GroupAddForm: FC<{
     dates.startDate.length > 0 &&
     dates.endDate.length > 0 &&
     file !== null &&
-    // parcoursId !== null &&
     isActive != null;
 
   const handleSubmit = () => {
@@ -73,6 +72,8 @@ const GroupAddForm: FC<{
         },
         file!
       );
+    } else {
+      toast.error("Le formulaire n'est pas valide");
     }
   };
 
