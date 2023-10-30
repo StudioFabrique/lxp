@@ -52,7 +52,10 @@ const CentreInterets: FC<{
       </div>
       <div className="flex gap-x-5 gap-y-2 flex-wrap overflow-y-auto">
         {hobbies.map((hobby) => (
-          <p key={hobby.title} className="bg-slate-800 p-2 rounded-xl h-10">
+          <p
+            key={hobby.title}
+            className="bg-secondary text-secondary-content p-2 rounded-xl h-10"
+          >
             {hobby.title}
           </p>
         ))}
