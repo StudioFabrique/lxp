@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import useHttp from "../../hooks/use-http";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import Parcours from "../../utils/interfaces/parcours";
 import { parcoursAction } from "../../store/redux-toolkit/parcours/parcours";
@@ -12,7 +12,6 @@ import { parcoursObjectivesAction } from "../../store/redux-toolkit/parcours/par
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import Loader from "../../components/UI/loader";
 import Error404 from "../../components/error404";
-import ParcoursViewStatistiques from "../../components/view-parcours/parcours-view-statistiques";
 import ParcoursViewContenu from "../../components/view-parcours/parcours-view-contenu/parcours-view-contenu";
 import ParcoursViewInformations from "../../components/view-parcours/parcours-view-informations";
 import ParcoursViewDescription from "../../components/view-parcours/parcours-view-description";
@@ -27,6 +26,7 @@ import { useSelector } from "react-redux";
 import HeaderIcon from "../../components/UI/svg/header-icon";
 import ImageHeaderMutable from "../../components/image-header/image-header-mutable";
 
+
 let initialState = true;
 
 const ParcoursView = () => {
@@ -34,30 +34,10 @@ const ParcoursView = () => {
   const { sendRequest, error } = useHttp();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
-  const [image, setImage] = useState<string | undefined>(undefined);
+  const [image, setImage] = useState<string>();
   const parcours = useSelector((state: any) => state.parcours);
-  const parcoursInfos = useSelector((state: any) => state.parcoursInfos);
-
-  /**
-   * enregistrement de l'image du parcours dans la bdd
-   */
-  const updateImage = useCallback(
-    (image: File) => {
-      const formData = new FormData();
-      formData.append("parcoursId", id!);
-      formData.append("image", image);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const processData = (_data: any) => {};
-      sendRequest(
-        {
-          path: "/parcours/update-image",
-          method: "put",
-          body: formData,
-        },
-        processData
-      );
-    },
-    [id, sendRequest]
+  const parcoursInfos = useSelector(
+    (state: any) => state.parcoursInformations.infos
   );
 
   /**
@@ -65,8 +45,6 @@ const ParcoursView = () => {
    */
   useEffect(() => {
     const processData = (data: Parcours) => {
-      console.log({ data });
-
       // mets en mémoire l'id du parcours pour le rendre disponible aux éléments de la vue
       dispatch(parcoursAction.setParcoursId(data.id));
       dispatch(
@@ -82,6 +60,7 @@ const ParcoursView = () => {
         })
       );
       dispatch(parcoursAction.setParcoursFormation(data.formation));
+
       if (data.image) {
         setImage(`data:image/jpeg;base64,${data.image}`);
       }
@@ -166,7 +145,7 @@ const ParcoursView = () => {
   }, [dispatch]);
 
   return (
-    <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
+    <div className="w-full h-full flex flex-col justify-start items-center px-8 p-4">
       {isLoading ? (
         <Loader />
       ) : error.length === 0 ? (
@@ -183,8 +162,9 @@ const ParcoursView = () => {
                 <HeaderIcon />
               </ImageHeaderMutable>
             ) : null}
+
             <div className="w-full mt-16 flex flex-col gap-y-5">
-              <ParcoursViewStatistiques />
+              <ParcoursViewProgressStats />
               <ParcoursViewContenu />
               <div className="grid lg:grid-cols-3 gap-x-5 gap-y-5">
                 <div className="grid grid-rows-2 gap-y-5">

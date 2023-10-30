@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import Permission, { IPermission } from "../../utils/interfaces/db/permission";
-import Role from "../../utils/interfaces/db/role";
 import { serverIssue } from "../../utils/constantes";
 import { putRole } from "../../models/role/put-role";
 
@@ -28,8 +27,8 @@ export default async function httpPutRole(req: Request, res: Response) {
     const roleUpdated = await putRole(
       idRole,
       permissions,
-      role.toLocaleLowerCase().trim(),
-      label.toLocaleLowerCase().trim(),
+      role && role.toLocaleLowerCase().trim(),
+      label && label.toLocaleLowerCase().trim(),
       rank,
       isActive
     );

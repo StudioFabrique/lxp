@@ -18,7 +18,7 @@ const PermissionsList: FC<{
   currentRole: IRoleItem;
   setCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
 }> = ({ roles, currentRole, setCurrentRole }) => {
-  const { sendRequest, isLoading, error } = useHttp();
+  const { sendRequest, isLoading } = useHttp(true);
 
   const [permissions, setPermissions] = useState([]);
   const [ressources, setRessources] = useState<{
@@ -31,8 +31,6 @@ const PermissionsList: FC<{
     checked: boolean,
     action: string
   ) => {
-    console.log(ressourceName);
-
     checked
       ? setPermissions((oldPermissions: any) =>
           oldPermissions.filter((permission: any) => {
@@ -149,7 +147,7 @@ const PermissionsList: FC<{
           />
           <RessourcesByAction
             action="write"
-            title="Écriture"
+            title="Création"
             ressources={ressources}
             unfilteredPermissions={permissions}
             onChangePermission={handleChangePermission}

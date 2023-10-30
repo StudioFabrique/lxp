@@ -70,7 +70,6 @@ const Search: FC<{
     }
 
     if (regexGeneric.test(searchValue)) {
-      console.log(`Searching ${searchValue} as ${entityToSearch}`);
       props.onSearch(entityToSearch, searchValue);
     }
   };

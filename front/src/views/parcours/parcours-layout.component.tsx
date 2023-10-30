@@ -7,6 +7,7 @@ const LayoutAdmin = () => {
     <div className="w-full flex p-2">
       <ParcoursSidebar />
       <div className="flex-1 min-h-screen pl-10">
+
         <CanAccessPage action="read" subject="parcours">
           <Outlet />
         </CanAccessPage>
