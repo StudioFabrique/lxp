@@ -75,7 +75,10 @@ const ParcoursViewContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
       <span className="flex justify-between">
         <h2 className="text-xl font-bold text-primary">Contenu du module</h2>
         <Can action="write" object="course">
-          <Link to="/admin/course/add" className="btn btn-primary btn-sm">
+          <Link
+            to="/admin/course/add"
+            className="btn btn-primary btn-sm normal-case"
+          >
             Ajouter un cours
           </Link>
         </Can>
