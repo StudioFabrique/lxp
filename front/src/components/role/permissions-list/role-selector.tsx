@@ -29,7 +29,7 @@ const RoleSelector: FC<{
     >
       {roles.map((item) => (
         <option className="capitalize text-xs" key={item._id} value={item.role}>
-          {item.role}
+          {item.role} {item.role === "admin" && "(mon rôle)"}
         </option>
       ))}
     </select>
