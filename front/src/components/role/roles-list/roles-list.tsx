@@ -10,7 +10,8 @@ const RolesList: FC<{
   roles: IRoleItem[];
   setRoles: Dispatch<SetStateAction<IRoleItem[]>>;
   setRoleToEdit: Dispatch<SetStateAction<IRoleToEdit | null>>;
-}> = ({ roles, setRoles, setRoleToEdit }) => {
+  setCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
+}> = ({ roles, setRoles, setRoleToEdit, setCurrentRole }) => {
   return (
     <Wrapper>
       <div className="flex justify-between">
@@ -44,6 +45,7 @@ const RolesList: FC<{
                 role={role}
                 setRoles={setRoles}
                 setRoleToEdit={setRoleToEdit}
+                setCurrentRole={setCurrentRole}
               />
             ))}
           </tbody>

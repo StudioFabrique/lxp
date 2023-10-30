@@ -10,7 +10,8 @@ const RoleItem: FC<{
   role: IRoleItem;
   setRoles: Dispatch<SetStateAction<IRoleItem[]>>;
   setRoleToEdit: Dispatch<SetStateAction<IRoleToEdit | null>>;
-}> = ({ role, setRoles, setRoleToEdit }) => {
+  setCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
+}> = ({ role, setRoles, setRoleToEdit, setCurrentRole }) => {
   const { sendRequest, isLoading } = useHttp(true);
 
   const handleEditRole = () => {
@@ -21,6 +22,7 @@ const RoleItem: FC<{
       rank: role.rank,
       isActive: role.isActive,
     });
+    setCurrentRole(role);
   };
 
   const handleDeleteRole = () => {
