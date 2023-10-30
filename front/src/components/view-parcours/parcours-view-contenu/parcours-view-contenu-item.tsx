@@ -9,6 +9,8 @@ const ParcoursViewContenuItem: FC<{
   iterationCount: number;
   setSelectedModule: Dispatch<SetStateAction<Module | null>>;
 }> = ({ module, iterationCount, setSelectedModule }) => {
+  console.log(module.minDate);
+
   const minDate: { day: number; month: string } = {
     day: new Date(module.minDate!).getDay(),
     month: getMonth(new Date(module.minDate!).getMonth()).substring(0, 4),
