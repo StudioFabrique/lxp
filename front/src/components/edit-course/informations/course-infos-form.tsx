@@ -73,7 +73,7 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
             id: props.courseId,
             title: title.value,
             description: description.value,
-            visibility,
+            visibility: visibility === undefined || !visibility ? false : true,
           },
         },
         applyData

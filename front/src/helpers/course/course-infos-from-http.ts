@@ -23,10 +23,13 @@ export default function courseInfosFromHttp(course: any) {
     },
   };
 
-  if (updatedData.image) {
+  if (updatedData.module.image) {
     updatedData = {
       ...updatedData,
-      image: `data:image/jpeg;base64,${updatedData.image}`,
+      module: {
+        ...updatedData.module,
+        image: `data:image/jpeg;base64,${updatedData.module.image}`,
+      },
     };
   }
 

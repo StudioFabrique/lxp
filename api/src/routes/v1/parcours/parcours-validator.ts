@@ -10,12 +10,11 @@ export const postParcoursValidator = [
     .withMessage("Identifiant de formation absent")
     .escape(),
   body("title")
+    .trim()
     .isString()
     .withMessage("Titre de parcours non valide")
     .notEmpty()
-    .withMessage("Le titre du parcours doit avoir au moins 1 caractère")
-    .trim()
-    .escape(),
+    .withMessage("Le titre du parcours doit avoir au moins 1 caractère"),
   checkValidatorResult,
 ];
 
@@ -51,14 +50,10 @@ export const updateInfosValidator = [
     .withMessage("Titre de parcours non valide")
     .notEmpty()
     .withMessage("Le titre du parcours doit avoir au moins 1 caractère")
-    .trim()
-    .escape(),
-  body("description")
-    .isString()
-    .withMessage("Description invalide") /* 
+    .trim(),
+  body("description").isString().withMessage("Description invalide") /* 
     .notEmpty()
-    .withMessage("Description absente") */
-    .escape(),
+    .withMessage("Description absente") */,
   body("formation")
     .isNumeric()
     .withMessage("Identifiant de formation invalide")

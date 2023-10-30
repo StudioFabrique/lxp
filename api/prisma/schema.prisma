@@ -33,6 +33,8 @@ model Parcours {
   updatedAt    DateTime             @default(now())
   tags         TagsOnParcours[]
   admin        Admin                @relation(fields: [adminId], references: [id])
+  author       String
+  visibility   Boolean              @default(false)
   adminId      Int
   contacts     ContactsOnParcours[]
   formation    Formation            @relation(fields: [formationId], references: [id])
@@ -136,6 +138,7 @@ model Contact {
   courses   ContactsOnCourse[]
 }
 
+// TODO : supprimer le champ image de la table Course
 model Course {
   id           Int                  @id @default(autoincrement())
   title        String
