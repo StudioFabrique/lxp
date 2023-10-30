@@ -26,4 +26,6 @@ export default interface Parcours {
   modules: Array<Module>;
   groups: Array<Group>;
   isPublished: boolean;
+  author: string;
+  visibility: boolean;
 }

@@ -1,13 +1,8 @@
 import SubWrapper from "../../../UI/sub-wrapper/sub-wrapper.component";
-import BookIcon from "../../../UI/svg/book-icon";
 import { colorStyle, colorStyleHover } from "../../../../config/colors";
 import Can from "../../../UI/can/can.component";
-import { FC, MouseEvent, useEffect, useState } from "react";
-import useHttp from "../../../../hooks/use-http";
-import { sortArray } from "../../../../utils/sortArray";
-import Course from "../../../../utils/interfaces/course";
-import EditIcon from "../../../UI/svg/edit-icon";
-import { useNavigate } from "react-router-dom";
+import BookIcon from "../../../UI/svg/book-icon";
+
 
 const ParcoursViewContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
   const navigate = useNavigate();

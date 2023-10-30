@@ -41,6 +41,8 @@ const testDates = (dates: CourseDates[]) => {
 export function testStep(data: any) {
   const validationErrors = Array<any>();
 
+  console.log({ data });
+
   if (!testTitle(data.title)) {
     validationErrors.push({
       title: "Titre du cours non valide",
@@ -88,5 +90,7 @@ export function testStep(data: any) {
       dates: "Le cours doit avoir au moins une plage de dates",
     });
   }
+  console.log({ validationErrors });
+
   return validationErrors;
 }

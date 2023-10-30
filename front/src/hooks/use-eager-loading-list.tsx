@@ -39,7 +39,7 @@ const useEagerLoadingList = (
   };
 
   /**
-   * filtre la liste d'objets en fonction des filtes
+   * filtre la liste d'objets en fonction des filtres
    */
   const getFilteredList = useCallback(
     (filters: { field: string; property: string; value: string }) => {
@@ -47,11 +47,13 @@ const useEagerLoadingList = (
 
       if (filters.property.length > 0) {
         filteredList = filteredList.filter((item: any) =>
-          item[filters.field][filters.property].includes(filters.value)
+          item[filters.field][filters.property]
+            .toLowerCase()
+            .includes(filters.value)
         );
       } else {
         filteredList = filteredList.filter((item: any) =>
-          item[filters.field].includes(filters.value)
+          item[filters.field].toLowerCase().includes(filters.value)
         );
       }
 

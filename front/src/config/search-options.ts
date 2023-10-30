@@ -13,3 +13,9 @@ export const userInGroupSearchOptions = [
   { index: 1, value: "lastname", option: "Nom" },
   { index: 2, value: "firstname", option: "Prénom" },
 ];
+
+export const parcoursSearchOptions = [
+  { index: 1, value: "formation", option: "Formation" },
+  { index: 2, value: "author", option: "Auteur" },
+  { index: 3, value: "level", option: "Niveau" },
+];

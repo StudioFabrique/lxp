@@ -1,16 +1,17 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 
-import ImageHeader from "../../../components/image-header/image-header";
 import useHttp from "../../../hooks/use-http";
 import FadeWrapper from "../../../components/UI/fade-wrapper/fade-wrapper";
 import { courseInfosAction } from "../../../store/redux-toolkit/course/course-infos";
 import formatCourseFromHttp from "../../../helpers/course/course-infos-from-http";
 import Course from "../../../utils/interfaces/course";
 import Loader from "../../../components/UI/loader";
+import ImageHeader from "../../../components/image-header";
+import BookIcon from "../../../components/UI/svg/book-icon";
 
 const LayoutCourseEdit = () => {
   const { sendRequest, error } = useHttp();
@@ -20,27 +21,6 @@ const LayoutCourseEdit = () => {
   const course = useSelector(
     (state: any) => state.courseInfos.course
   ) as Course;
-
-  /**
-   * mise à jour de l'image du cours dans la bdd
-   */
-  const updateImage = useCallback(
-    (image: File) => {
-      const formData = new FormData();
-      formData.append("courseId", courseId!);
-      formData.append("image", image);
-      const processData = (_data: any) => {};
-      sendRequest(
-        {
-          path: "/course/image",
-          method: "put",
-          body: formData,
-        },
-        processData
-      );
-    },
-    [courseId, sendRequest]
-  );
 
   /**
    * retourne les informations de base d'un parcours et les
@@ -82,13 +62,13 @@ const LayoutCourseEdit = () => {
             <div className="w-full flex flex-col items-center gap-y-8">
               {course && course.title && course.module.title ? (
                 <ImageHeader
-                  defaultImage="/images/parcours-default.jpg"
-                  title={course.title}
-                  image={course.image ?? undefined}
-                  parentTitle={course.module.title}
-                  onUpdateImage={updateImage}
-                  isPublished={course.isPublished}
-                />
+                  title={course.module.title}
+                  subTitle={course.title}
+                  imageUrl={course.module.image!}
+                >
+                  <BookIcon />
+                  <></>
+                </ImageHeader>
               ) : null}
               {/* Etapes du parcours */}
             </div>
