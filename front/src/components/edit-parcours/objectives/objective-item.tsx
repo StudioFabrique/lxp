@@ -3,7 +3,6 @@ import { FC } from "react";
 import Objective from "../../../utils/interfaces/objective";
 import EditIcon from "../../UI/svg/edit-icon";
 import DeleteIcon from "../../UI/svg/delete-icon.component";
-import ArrowsIcon from "../../UI/svg/arrows-icon.component";
 
 type Props = {
   objective: Objective;

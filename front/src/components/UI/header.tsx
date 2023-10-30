@@ -17,6 +17,7 @@ const Header = (props: HeaderProps) => {
         <h2 className="text-4xl text-base-content font-bold">{props.title}</h2>
         <p className="mt-2">{props.description}</p>
       </div>
+      <div className="flex justify-end items-center">{props.children}</div>
     </div>
   );
 };

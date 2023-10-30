@@ -29,7 +29,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
         <>
           {parcoursList.map((item: Parcours) => (
             <tr
-              className="cursor-pointer hover:bg-secondary/20 hover:text-base-content"
+              className="text-xs lg:text-sm cursor-pointer hover:bg-secondary/20 hover:text-base-content"
               key={item.id}
             >
               <td className="bg-transparent rounded-l-lg truncate">
@@ -71,7 +71,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                       <Link
                         className="text-primary"
                         to={`view/${item.id}`}
-                        aria-label="aperçu du parcours"
+                        aria-label="Aperçu du parcours"
                       >
                         <EyeIcon />
                       </Link>
@@ -117,16 +117,12 @@ const ParcoursTable = (props: ParcoursTableProps) => {
             </tr>
           ))}
         </>
-      ) : (
-        <tr>
-          <td colSpan={6}>Aucun parcours n'a été créé à ce jour</td>
-        </tr>
-      )}
+      ) : null}
     </>
   );
 
   return (
-    <div className="w-full min-h-[50%] flex justify-center items-center">
+    <div className="w-full min-h-[50%] flex justify-center items-center text-xs lg:text-sm">
       {parcoursList && parcoursList.length > 0 ? (
         <table className="table w-full border-separate border-spacing-y-2">
           <thead>
@@ -231,7 +227,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
           <tbody>{content}</tbody>
         </table>
       ) : (
-        <p>Aucun parcours n'a été créé à ce jour</p>
+        <p>Aucun parcours trouvé</p>
       )}
     </div>
   );
