@@ -23,9 +23,9 @@ import ParcoursViewObjectifs from "../../components/view-parcours/parcours-view-
 import ParcoursViewQuickStatistiques from "../../components/view-parcours/parcours-view-quick-statistiques";
 import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
 import { useSelector } from "react-redux";
-import HeaderIcon from "../../components/UI/svg/header-icon";
-import ImageHeaderMutable from "../../components/image-header/image-header-mutable";
-
+import ParcoursViewProgressStats from "../../components/view-parcours/parcours-view-progress-stats";
+import ImageHeaderCopy from "../../components/image-header/image-header.copy";
+import ParcoursViewHeaderMenu from "../../components/view-parcours/parcours-view-header-menu";
 
 let initialState = true;
 
@@ -151,17 +151,16 @@ const ParcoursView = () => {
       ) : error.length === 0 ? (
         <FadeWrapper>
           <div className="w-full">
-            {parcoursInfos && parcours.formation.title ? (
-              <ImageHeaderMutable
-                defaultImage="/images/parcours-default.webp"
-                image={image}
-                title={parcoursInfos.title}
-                parentTitle={parcours.formation.title}
-                onUpdateImage={updateImage}
-              >
-                <HeaderIcon />
-              </ImageHeaderMutable>
-            ) : null}
+            <div className="flex">
+              {image && (
+                <ImageHeaderCopy
+                  imageUrl={image}
+                  title={parcoursInfos.title}
+                  subTitle={parcours.formation?.title}
+                  children={[<></>, <ParcoursViewHeaderMenu />]}
+                />
+              )}
+            </div>
 
             <div className="w-full mt-16 flex flex-col gap-y-5">
               <ParcoursViewProgressStats />
