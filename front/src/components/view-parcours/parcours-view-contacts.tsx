@@ -14,8 +14,8 @@ const ParcoursViewContacts = () => {
           key={contact.id}
           className="flex justify-between bg-secondary p-4 rounded-lg text-secondary-content"
         >
-          <p>{contact.name}</p>
-          <p className="font-bold">{contact.role}</p>
+          <p className="capitalize">{contact.name}</p>
+          <p className="font-bold capitalize">{contact.role}</p>
         </div>
       ))
     ) : (

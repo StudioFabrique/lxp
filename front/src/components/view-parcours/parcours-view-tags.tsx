@@ -1,18 +1,14 @@
 import { useSelector } from "react-redux";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import Tag from "../../utils/interfaces/tag";
+import TagItem from "../UI/tag-item/tag-item";
 
 const ParcoursViewTags = () => {
   const tags = useSelector((state: any) => state.tags.currentTags) as Tag[];
 
   const tagsList =
     tags.length > 0 ? (
-      tags.map((tag) => (
-        <p
-          key={tag.id}
-          className="bg-secondary py-2 px-5 rounded-lg"
-        >{`# ${tag.name}`}</p>
-      ))
+      tags.map((tag) => <TagItem key={tag.id} tag={tag} noIcon />)
     ) : (
       <p>Aucun tags</p>
     );

@@ -9,13 +9,15 @@ const ParcoursViewObjectifs = () => {
 
   const objectivesList =
     objectives.length > 0 ? (
-      objectives.map((objective, i) => (
+      objectives.map((objective) => (
         <div
           key={objective.id}
           className="bg-secondary p-4 rounded-lg text-secondary-content"
         >
-          <p className="font-bold">{`Objectif ${i + 1}`}</p>
-          <p>{objective.description}</p>
+          <p className="font-bold first-letter:uppercase">
+            {objective.description}
+          </p>
+          <p>Ipsume Litus lorem cand</p>
         </div>
       ))
     ) : (

@@ -9,13 +9,15 @@ const ParcoursViewCompetences = () => {
 
   const skillList =
     skills.length > 0 ? (
-      skills.map((skill, i) => (
+      skills.map((skill) => (
         <div
           key={skill.id}
           className="bg-secondary p-4 rounded-lg text-secondary-content"
         >
-          <p className="font-bold">{`Compétence ${i + 1}`}</p>
-          <p>{skill.description}</p>
+          <p className="font-bold first-letter:uppercase">
+            {skill.description}
+          </p>
+          <p>Ipsume Litus lorem cand</p>
         </div>
       ))
     ) : (
