@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import Permission, { IPermission } from "../../utils/interfaces/db/permission";
-import Role from "../../utils/interfaces/db/role";
 import { serverIssue } from "../../utils/constantes";
 import { putRole } from "../../models/role/put-role";
 
