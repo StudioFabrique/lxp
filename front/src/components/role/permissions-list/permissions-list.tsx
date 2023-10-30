@@ -147,7 +147,7 @@ const PermissionsList: FC<{
           />
           <RessourcesByAction
             action="write"
-            title="Écriture"
+            title="Création"
             ressources={ressources}
             unfilteredPermissions={permissions}
             onChangePermission={handleChangePermission}
