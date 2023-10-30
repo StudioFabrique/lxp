@@ -24,7 +24,7 @@ const ImageHeaderCopy = (props: ImageHeaderProps) => {
       <div className="rounded-xl w-full h-full flex flex-col justify-end items-start relative">
         <div className="absolute top-0 left-0 w-full h-full bg-neutral/50 z-0" />
         {props.children[1]}
-        <div className="w-full flex gap-x-2 px-4 py-2 items-end justify-between font-bold absolute z-50">
+        <div className="w-full flex gap-x-2 px-4 py-2 items-end justify-between font-bold absolute z-10">
           <span className="flex gap-x-2 items-center">
             <div className="w-12 h-12 text-white">{props.children[0]}</div>
             <div>
