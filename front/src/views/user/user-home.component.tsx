@@ -194,9 +194,11 @@ const UserHome = () => {
             description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in urna
           eget pura."
           >
-            <Link className="btn btn-primary" to="/admin/user/add">
-              Créer un utilisateur
-            </Link>
+            <Can action="write" object="user">
+              <Link className="btn btn-primary" to="/admin/user/add">
+                Créer un utilisateur
+              </Link>
+            </Can>
           </Header>
         </div>
 
