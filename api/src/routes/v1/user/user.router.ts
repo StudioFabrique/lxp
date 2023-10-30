@@ -46,6 +46,14 @@ userRouter.get(
   httpGetUsersByRole
 );
 
+//  récupération de la liste des utilisateurs en fonction de leur rang de leur rôle
+userRouter.get(
+  "/:rank/:stype/:sdir",
+  checkPermissions(),
+  getAllValidator,
+  httpGetUsersByRole
+);
+
 userRouter.put(
   "/user-roles",
   checkPermissions("user"),
