@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from "react-redux";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useEffect, useState } from "react";
 
 import Objective from "../../../utils/interfaces/objective";
@@ -85,7 +84,7 @@ const ObjectivesList = () => {
     );
   };
 
-  const handleReorderObjectives = (objectivesId: Array<string>) => {
+  /*   const handleReorderObjectives = (objectivesId: Array<string>) => {
     const applyData = (data: any) => {
       dispatch(parcoursObjectivesAction.setObjectives(data.data.objectives));
     };
@@ -97,9 +96,9 @@ const ObjectivesList = () => {
       },
       applyData
     );
-  };
+  }; */
 
-  const handleDragEnd = (result: any) => {
+  /*   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
 
     // Reorder the objectivesList based on the drag result
@@ -111,7 +110,7 @@ const ObjectivesList = () => {
     reorderedObjectives.splice(result.destination.index, 0, reorderedObjective);
 
     handleReorderObjectives(reorderedObjectives.map((item: any) => item.id));
-  };
+  }; */
 
   useEffect(() => {
     if (error.length > 0) {
@@ -121,44 +120,21 @@ const ObjectivesList = () => {
 
   return (
     <>
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="objectives-list" type="OBJECTIVE">
-          {(provided) => (
-            <ul
-              className="flex flex-col gap-y-2"
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-            >
-              {objectivesList && objectivesList.length > 0 ? (
-                objectivesList.map((item: Objective, index: number) => (
-                  <Draggable
-                    key={item.id}
-                    draggableId={item.id!.toString()}
-                    index={index}
-                  >
-                    {(provided) => (
-                      <li
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <ObjectiveItem
-                          objective={item}
-                          onDelete={handleDeletion}
-                          onUpdate={handleUpdateObjective}
-                        />
-                      </li>
-                    )}
-                  </Draggable>
-                ))
-              ) : (
-                <p>Objectifs non renseignés</p>
-              )}
-              {provided.placeholder}
-            </ul>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <ul className="flex flex-col gap-y-2">
+        {objectivesList && objectivesList.length > 0 ? (
+          objectivesList.map((item: Objective) => (
+            <li key={item.id}>
+              <ObjectiveItem
+                objective={item}
+                onDelete={handleDeletion}
+                onUpdate={handleUpdateObjective}
+              />
+            </li>
+          ))
+        ) : (
+          <p>Objectifs non renseignés</p>
+        )}
+      </ul>
 
       <div className="w-fit">
         <ButtonAdd

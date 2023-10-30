@@ -38,24 +38,22 @@ async function putReorderObjectives(
       }
     }
 
-    console.log({ tmp });
-
-    await prismaClient.objective.deleteMany({ where: { parcoursId: id } });
-
-    const updatedParcours = await prismaClient.parcours.update({
-      where: { id },
-      data: {
-        objectives: {
-          create: tmp.map((objective: any) => {
-            return {
-              description: objective.description,
-            };
-          }),
+    const transaction = await prisma.$transaction(async (tx) => {
+      await prismaClient.objective.deleteMany({ where: { parcoursId: id } });
+      const updatedParcours = await tx.parcours.update({
+        where: { id },
+        data: {
+          objectives: {
+            create: tmp.map((objective: any) => {
+              return {
+                description: objective.description,
+              };
+            }),
+          },
         },
-      },
-      select: { objectives: { select: { id: true, description: true } } },
+        select: { objectives: { select: { id: true, description: true } } },
+      });
     });
-    return updatedParcours;
   });
 }
 
