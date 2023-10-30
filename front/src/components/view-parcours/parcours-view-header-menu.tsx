@@ -5,7 +5,7 @@ import MagnifyIcon from "../UI/svg/magnify-icon";
 import PlayIcon from "../UI/svg/play-icon";
 
 const ParcoursViewHeaderMenu = () => (
-  <div className="absolute flex justify-end w-full h-full p-4">
+  <div className="absolute flex justify-end w-full h-full p-5 px-10">
     <div className="flex flex-col gap-4 justify-between z-20">
       <div className="flex justify-end gap-4">
         <button type="button" className="btn btn-primary btn-sm py-1">
@@ -28,7 +28,7 @@ const ParcoursViewHeaderMenu = () => (
         <span className="w-5 h-5">
           <PlayIcon />
         </span>
-        <p>Reprendre le cours</p>
+        <p className="normal-case">Reprendre le cours</p>
       </button>
     </div>
   </div>
