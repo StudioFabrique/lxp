@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 import RolesList from "../../components/role/roles-list/roles-list";
 import RoleForm from "../../components/role/role-form/role-form";
-import { Toaster } from "react-hot-toast";
 import PermissionsList from "../../components/role/permissions-list/permissions-list";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -87,6 +86,7 @@ const Role = () => {
                   setRoleToEdit={setRoleToEdit}
                   roles={roles}
                   setRoles={setRoles}
+                  setCurrentRole={setCurrentRole}
                 />
               </div>
             </div>
