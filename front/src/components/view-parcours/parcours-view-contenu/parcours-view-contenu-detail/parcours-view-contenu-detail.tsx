@@ -71,7 +71,7 @@ const ParcoursViewContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
           <Can action="update" object="course">
             <button
               type="button"
-              className="h-10 w-10"
+              className="h-8 w-8"
               onClick={(e) => onNavigateEditCourse(e, course.id)}
             >
               <EditIcon />
@@ -87,7 +87,7 @@ const ParcoursViewContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
     <SubWrapper>
       <span className="flex justify-between">
         <h2 className="text-xl font-bold text-primary">Contenu du module</h2>
-        <Can action="write" object="cours">
+        <Can action="write" object="course">
           <button type="button" className="btn btn-primary btn-sm">
             Ajouter un cours
           </button>
