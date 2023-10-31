@@ -26,12 +26,31 @@ const ParcoursCard = ({ parcours }: ParcoursCardProps) => {
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
+    position: "relative",
   };
 
   return (
-    <div className="card w-96 h-full bg-base-100 shadow-xl border border-primary/20">
-      <figure style={classImage}></figure>
-      <div className="card-body w-full pt-4">
+    <div className="card w-92 h-full bg-base-100 shadow-xl border border-primary/20">
+      <figure style={classImage}>
+        {/* position relative à l'image affichée */}
+        <div className="p-1 rounded-sm flex items-center bg-neutral/90 absolute bottom-2 right-2">
+          <Can action="update" object="parcours">
+            <div className="tooltip tooltip-left" data-tip="Aperçu du parcours">
+              <div className="w-6 h-6 ">
+                <Link
+                  className="text-primary"
+                  to={`view/${parcours.id}`}
+                  aria-label="Aperçu du parcours"
+                >
+                  <EyeIcon />
+                </Link>
+              </div>
+            </div>
+          </Can>
+        </div>
+      </figure>
+
+      <div className="card-body w-full flex flex-col justify-between pt-4">
         <div className="flex flex-col gap-y-2 mb-4">
           <h2 className="card-title text-primary">
             {parcours.formation.title}
@@ -76,23 +95,23 @@ const ParcoursCard = ({ parcours }: ParcoursCardProps) => {
           </span>
         </div>
 
-        <div className="card-actions w-full flex items-center justify-end">
-          <div className="w-6 h-6 mt-1">
-            <Can action="update" object="parcours">
+        <div className="card-actions w-full flex items-center justify-between">
+          <div
+            className="w-6 h-6 mt-1 text-error"
+            aria-label="suppression du parcours"
+          >
+            <Can action="delete" object="parcours">
               <div
-                className="tooltip tooltip-bottom"
-                data-tip="Aperçu du parcours"
+                className="tooltip tooltip-bottom flex-items-center"
+                data-tip="Supprimer le parcours"
               >
-                <Link
-                  className="text-primary"
-                  to={`view/${parcours.id}`}
-                  aria-label="Aperçu du parcours"
-                >
-                  <EyeIcon />
-                </Link>
+                <div onClick={() => handleDeleteParcours(parcours.id!)}>
+                  <DeleteIcon />
+                </div>
               </div>
             </Can>
           </div>
+
           <div className="w-6 h-6">
             <Can action="update" object="parcours">
               <div
@@ -106,21 +125,6 @@ const ParcoursCard = ({ parcours }: ParcoursCardProps) => {
                 >
                   <EditIcon />
                 </Link>
-              </div>
-            </Can>
-          </div>
-          <div
-            className="w-6 h-6 mt-1 text-error"
-            aria-label="suppression du parcours"
-          >
-            <Can action="delete" object="parcours">
-              <div
-                className="tooltip tooltip-bottom flex-items-center"
-                data-tip="Supprimer le parcours"
-              >
-                <div onClick={() => handleDeleteParcours(parcours.id!)}>
-                  <DeleteIcon />
-                </div>
               </div>
             </Can>
           </div>
