@@ -1,7 +1,12 @@
 import { getAdmin } from "../../helpers/get-admin";
 import { prisma } from "../../utils/db";
 
-async function updateImage(parcoursId: number, image: any, userId: string) {
+async function updateImage(
+  parcoursId: number,
+  image: any,
+  thumb: any,
+  userId: string
+) {
   try {
     const admin = await getAdmin(userId);
     const result = await prisma.parcours.update({
@@ -11,6 +16,7 @@ async function updateImage(parcoursId: number, image: any, userId: string) {
       },
       data: {
         image,
+        thumb,
       },
     });
     if (!result) {
