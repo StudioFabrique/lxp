@@ -17,10 +17,7 @@ const courseDatesSlice = createSlice({
   initialState: initialCourseDates,
   reducers: {
     setCourseDates(state, action) {
-      if (!state.courseDates) {
-        state.courseDates = [];
-      }
-      state.courseDates = [...state.courseDates, action.payload];
+      state.courseDates = action.payload;
     },
     setCurrentDates(state, action) {
       console.log(action.payload);
@@ -40,6 +37,10 @@ const courseDatesSlice = createSlice({
           (item: CourseDates) => item.id !== action.payload
         );
       }
+    },
+    resetDates(state) {
+      state.currentDates = null;
+      state.courseDates = null;
     },
   },
 });
