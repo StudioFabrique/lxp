@@ -2,6 +2,7 @@ import express from "express";
 import { body, param, query } from "express-validator";
 
 import {
+  getAllByRankValidator,
   getAllValidator,
   manyUsersValidator,
   userValidator,
@@ -18,6 +19,7 @@ import postTeacherRouter from "./post-teacher";
 import httpCreateManyUser from "../../../controllers/user/http-create-many-users";
 import httpGetUsersByGroup from "../../../controllers/user/http-get-users-by-group";
 import checkPermissions from "../../../middleware/check-permissions";
+import httpGetUsersByRank from "../../../controllers/user/http-get-users-by-rank";
 
 const userRouter = express.Router();
 
@@ -41,17 +43,17 @@ userRouter.get("/stats", checkPermissions("user"), httpGetUsersStats);
 //  récupération de la liste des utilisateurs en fonction de leur rôle principal
 userRouter.get(
   "/:role/:stype/:sdir",
-  checkPermissions(),
+  checkPermissions("user"),
   getAllValidator,
   httpGetUsersByRole
 );
 
 //  récupération de la liste des utilisateurs en fonction de leur rang de leur rôle
 userRouter.get(
-  "/:rank/:stype/:sdir",
-  checkPermissions(),
-  getAllValidator,
-  httpGetUsersByRole
+  "/byRank/:rank/:stype/:sdir",
+  checkPermissions("user"),
+  getAllByRankValidator,
+  httpGetUsersByRank
 );
 
 userRouter.put(
@@ -95,7 +97,7 @@ userRouter.post(
 
 userRouter.get(
   "/search/:role/:entity/:value/:stype/:sdir",
-  checkPermissions(),
+  checkPermissions("user"),
   //  validators
   param("search").isString().notEmpty().trim().escape(),
   param("role").isString().notEmpty().trim().escape(),

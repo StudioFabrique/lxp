@@ -24,7 +24,7 @@ const GroupManageUserList: FC<{
     sortData,
     setAllChecked,
     allChecked,
-  } = usePagination("lastname", `/user/student`);
+  } = usePagination("lastname", "/user/byRank/3");
 
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [isUsersSettedUp, setUsersSettedState] = useState(true);
