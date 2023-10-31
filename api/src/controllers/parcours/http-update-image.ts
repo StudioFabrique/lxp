@@ -5,6 +5,7 @@ import { badQuery, noAccess, serverIssue } from "../../utils/constantes";
 import updateImage from "../../models/parcours/update-image";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import { logger } from "../../utils/logs/logger";
+import sharp from "sharp";
 
 async function httpUpdateImage(req: CustomRequest, res: Response) {
   try {
@@ -21,13 +22,27 @@ async function httpUpdateImage(req: CustomRequest, res: Response) {
     const uploadedFile: any = req.file;
     const parcoursId = req.body.parcoursId;
 
+    console.log("file", req.file);
+
     if (uploadedFile !== undefined) {
       try {
         {
           const data = await fs.promises.readFile(uploadedFile.path);
           const base64String = data.toString("base64");
-          const response = await updateImage(+parcoursId, base64String, userId);
+
+          const resizedPic = sharp(uploadedFile.path).resize(200, 200);
+          const thumb = resizedPic.toBuffer();
+          const thumb64 = (await thumb).toString("base64");
+
+          const response = await updateImage(
+            +parcoursId,
+            base64String,
+            thumb64,
+            userId
+          );
           if (response) {
+            console.log("response dans la place");
+
             await fs.promises.unlink(uploadedFile.path);
             console.log("Fichier supprimé :", uploadedFile.path);
             return res.status(201).json({ message: "Mise à jour réussie" });

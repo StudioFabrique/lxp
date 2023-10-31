@@ -81,10 +81,20 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
         : "textarea textarea-sm textarea-bordered focus:outline-none w-full";
     };
 
+    /**
+     * met à jour la liste des formateurs en mémoire
+     * le type spécifié est "any" car la liste vient d'un composant réutilisable
+     * @param items any[]
+     */
     const handleUpdateTeachers = (items: any[]) => {
       setTeachers(items);
     };
 
+    /**
+     * met à jour la liste des compétences en mémoire
+     * le type spécifié est "any" car la liste vient d'un composant réutilisable
+     * @param items any[]
+     */
     const handleUpdateSkills = (items: any[]) => {
       setSkills(items);
     };
