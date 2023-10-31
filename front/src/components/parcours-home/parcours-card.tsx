@@ -17,15 +17,27 @@ const ParcoursCard = ({ parcours }: ParcoursCardProps) => {
     nav(``);
   };
 
+  const imageUrl = `data:image/jpeg;base64,${parcours.thumb}`;
+
+  const classImage: React.CSSProperties = {
+    backgroundImage: `url('${imageUrl}')`,
+    width: "100%",
+    height: "9rem",
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+  };
+
   return (
-    <div className="card w-92 h-full bg-base-100 shadow-xl">
-      <figure className="h-[33%] flex justify-start bg-primary text-base-100 p-4">
-        <div className="flex flex-col gap-y-2">
-          <h2 className="card-title">{parcours.formation.title}</h2>
-          <h2 className="card-title">{parcours.title}</h2>
+    <div className="card w-96 h-full bg-base-100 shadow-xl border border-primary/20">
+      <figure style={classImage}></figure>
+      <div className="card-body w-full pt-4">
+        <div className="flex flex-col gap-y-2 mb-4">
+          <h2 className="card-title text-primary">
+            {parcours.formation.title}
+          </h2>
+          <h2 className="card-title text-sm font-normal">{parcours.title}</h2>
         </div>
-      </figure>
-      <div className="card-body justify-between w-full items-center">
         <div className="flex flex-col items-start gap-y-1 mb-4 w-full">
           <span className="flex justify-between gap-x-4 items-center w-full">
             <p className="font-bold w-24">Niveau :</p>

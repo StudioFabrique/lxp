@@ -9,6 +9,7 @@ interface DatesCardProps {
 
 const DatesCard = (props: DatesCardProps) => {
   const { datesItem } = props;
+
   return (
     <article className="text-xs grid grid-cols-1 lg:grid-cols-2">
       <Wrapper>

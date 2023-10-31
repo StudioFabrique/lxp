@@ -9,7 +9,7 @@ async function getCourseInformations(courseId: number) {
       description: true,
       virtualClass: true,
       visibility: true,
-      dates: true,
+      //dates: true,
       isPublished: true,
       tags: {
         select: {

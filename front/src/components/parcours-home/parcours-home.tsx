@@ -52,38 +52,35 @@ const ParcoursList = (props: ParcoursListProps) => {
         <Header
           title="Liste des parcours"
           description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in urna eget pura."
-        />
-      </section>
-      <section className="w-full flex justify-between items-center">
-        <div className="w-full flex flex-col gap-y-8">
-          <div className="w-full flex flex-col xl:flex-row gap-y-4 justify-between">
-            <div className="w-full flex justify-start items-center gap-x-4">
-              <Can action="write" object="parcours">
-                <Link className="btn btn-primary" to="créer-un-parcours">
-                  <div className="flex gap-x-2 items-center">
-                    <div className="w-8 h-8">
-                      <AddIcon />
-                    </div>
-                    <p>Créer un parcours</p>
-                  </div>
-                </Link>
-                <ToggleList showList={showList} onToggle={setShowList} />
-              </Can>
-            </div>
-            <div className="flex items-center gap-x-2">
-              <Search
-                options={parcoursSearchOptions}
-                placeholder="Filtrer"
-                onSearch={handleSearchResult}
-              />
-              <div className="text-primary" onClick={handleResetSearch}>
-                <RefreshIcon size={8} />
+        >
+          <Can action="write" object="parcours">
+            <Link className="btn btn-primary" to="créer-un-parcours">
+              <div className="flex gap-x-2 items-center">
+                <div className="w-8 h-8">
+                  <AddIcon />
+                </div>
+                <p>Créer un parcours</p>
               </div>
-            </div>
-          </div>
-        </div>
+            </Link>
+          </Can>
+        </Header>
       </section>
-      <section className="w-full">
+      <section className="w-full flex">
+        <article className="w-full flex justify-end items-center gap-x-2">
+          <Search
+            options={parcoursSearchOptions}
+            placeholder="Filtrer"
+            onSearch={handleSearchResult}
+          />
+          <div className="text-primary" onClick={handleResetSearch}>
+            <RefreshIcon size={8} />
+          </div>
+        </article>
+      </section>
+      <section className="w-full flex flex-col">
+        <article className="w-full flex justify-end items-center gap-x-4">
+          <ToggleList showList={showList} onToggle={setShowList} />
+        </article>
         {list ? (
           <>
             {showList ? (
