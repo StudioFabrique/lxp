@@ -120,8 +120,8 @@ const CourseInfos = () => {
   }, [currentTags, handleSubmitData]);
 
   /**
-   * détecte un changement au niveau des tags et envoi une
-   * requête pour mettre à jour les tags du cours dans la bdd
+   * détecte un changement au niveau des contacts et envoi une
+   * requête pour mettre à jour les contacts du cours dans la bdd
    */
   useEffect(() => {
     let timer: any;

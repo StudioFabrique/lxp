@@ -1,11 +1,11 @@
 import SubWrapper from "../../../UI/sub-wrapper/sub-wrapper.component";
-import BookIcon from "../../../UI/svg/book-icon";
 import { colorStyle, colorStyleHover } from "../../../../config/colors";
 import Can from "../../../UI/can/can.component";
-import { FC, useEffect, useState } from "react";
+import BookIcon from "../../../UI/svg/book-icon";
 import useHttp from "../../../../hooks/use-http";
-import { sortArray } from "../../../../utils/sortArray";
+import { FC, MouseEvent, useEffect, useState } from "react";
 import Course from "../../../../utils/interfaces/course";
+import { sortArray } from "../../../../utils/sortArray";
 import EditIcon from "../../../UI/svg/edit-icon";
 import { Link } from "react-router-dom";
 

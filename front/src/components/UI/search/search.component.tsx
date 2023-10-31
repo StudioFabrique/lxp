@@ -60,6 +60,8 @@ const Search: FC<{
     </>
   );
 
+  console.log(props.options[0].value);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -78,7 +80,7 @@ const Search: FC<{
         <div>
           {entityToSearch !== "isActive" ? (
             <input
-              className="input input-bordered input-sm focus:outline-none join-item"
+              className="input input-sm md:input-md input-bordered focus:outline-none join-item"
               type={searchType}
               placeholder="Recherche..."
               value={searchValue}
@@ -87,7 +89,7 @@ const Search: FC<{
           ) : (
             <div>
               <select
-                className="select select-bordered select-sm focus:outline-none join-item"
+                className="select select-sm md:select-md select-bordered focus:outline-none join-item"
                 onChange={handleSwitchValueChange}
               >
                 <option value="actif">Actif</option>
@@ -98,7 +100,7 @@ const Search: FC<{
         </div>
       </div>
       <select
-        className="select select-bordered select-sm join-item font-normal"
+        className="select select-sm md:select-md select-bordered join-item font-normal"
         onChange={handleTypeToSearchChange}
       >
         <option disabled defaultValue="">
@@ -107,7 +109,7 @@ const Search: FC<{
         {optionsList}
       </select>
       <button
-        className="btn btn-primary btn-sm join-item capitalize"
+        className="btn btn-sm md:btn-md btn-primary join-item capitalize"
         type="submit"
       >
         {props.placeholder ? (
