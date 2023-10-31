@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import useHttp from "../../hooks/use-http";
 import UserAddForm from "../../components/forms/user-form/user-add-form.component";
-import { toast } from "react-hot-toast";
+
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 const UserAdd = () => {
   const { error, isLoading, sendRequest } = useHttp();

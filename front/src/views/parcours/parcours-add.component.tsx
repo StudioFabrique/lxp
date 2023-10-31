@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Toaster, toast } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 import bgImage from "../../assets/images/new-parcours-default.jpg";

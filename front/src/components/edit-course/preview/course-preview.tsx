@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 import CoursePreviewInfos from "./course-preview-infos";
 import Objective from "../../../utils/interfaces/objective";
@@ -11,7 +12,6 @@ import CourseDates from "../../../utils/interfaces/course-dates";
 import PreviewCalendar from "../../preview/preview-calendar";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import useValidateCourse from "./hook/use-validate-course";
-import toast from "react-hot-toast";
 import useHttp from "../../../hooks/use-http";
 import { useEffect } from "react";
 
@@ -46,7 +46,6 @@ const CoursePreview = (props: CoursePreviewProps) => {
     const validationsErrors = validateCourse();
     if (validationsErrors && validationsErrors.length !== 0) {
       toast.error(Object.values(validationsErrors![0]).toString());
-      return;
     } else {
       const applyData = (data: { success: boolean; message: string }) => {
         if (data.success) {

@@ -7,7 +7,6 @@ async function getCourseInformations(courseId: number) {
       id: true,
       title: true,
       description: true,
-      image: true,
       virtualClass: true,
       visibility: true,
       dates: true,
@@ -28,6 +27,7 @@ async function getCourseInformations(courseId: number) {
           title: true,
           minDate: true,
           maxDate: true,
+          image: true,
           contacts: {
             select: {
               contact: {
@@ -84,9 +84,12 @@ async function getCourseInformations(courseId: number) {
   }
 
   if (course) {
-    if (course.image instanceof Buffer) {
-      const base64Image = course.image.toString("base64");
-      const result = { ...course, image: base64Image };
+    if (course.module.image instanceof Buffer) {
+      const base64Image = course.module.image.toString("base64");
+      const result = {
+        ...course,
+        module: { ...course.module, image: base64Image },
+      };
       return result;
     }
   }

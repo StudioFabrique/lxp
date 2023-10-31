@@ -13,7 +13,6 @@ import { tagsAction } from "../../store/redux-toolkit/tags";
 import { parcoursContactsAction } from "../../store/redux-toolkit/parcours/parcours-contacts";
 import Loader from "../../components/UI/loader";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
-import ImageHeader from "../../components/image-header/image-header";
 import Error404 from "../../components/error404";
 import { parcoursSkillsAction } from "../../store/redux-toolkit/parcours/parcours-skills";
 import Stepper from "../../components/UI/stepper.-component/stepper.-component";
@@ -32,6 +31,8 @@ import Calendrier from "../../components/edit-parcours/calendrier/calendrier";
 import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
 import ParcoursStudents from "../../components/edit-parcours/parcours-students/parcours-students.component";
 import { parcoursGroupsAction } from "../../store/redux-toolkit/parcours/parcours-groups";
+import HeaderIcon from "../../components/UI/svg/header-icon";
+import ImageHeaderMutable from "../../components/image-header/image-header-mutable";
 
 let initialState = true;
 
@@ -303,14 +304,16 @@ const EditParcours = () => {
         <FadeWrapper>
           <div className="w-full flex flex-col items-center gap-y-8">
             {infos.title && formation ? (
-              <ImageHeader
+              <ImageHeaderMutable
                 defaultImage="/images/parcours-default.webp"
                 image={image}
                 title={infos.title}
                 onUpdateImage={updateImage}
                 parentTitle={formation.title}
                 isPublished
-              />
+              >
+                <HeaderIcon />
+              </ImageHeaderMutable>
             ) : null}
 
             {/* Etapes du parcours */}
