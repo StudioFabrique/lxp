@@ -35,7 +35,7 @@ const ParcoursViewHeaderMenu = () => {
                 type="text"
                 name="search"
                 id="search"
-                className="w-0"
+                className="w-0 hidden"
               />
             </span>
           </button>
