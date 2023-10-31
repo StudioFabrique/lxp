@@ -30,7 +30,7 @@ async function httpUpdateImage(req: CustomRequest, res: Response) {
           const data = await fs.promises.readFile(uploadedFile.path);
           const base64String = data.toString("base64");
 
-          const resizedPic = sharp(uploadedFile.path).resize(200, 200);
+          const resizedPic = sharp(uploadedFile.path).resize(400, 400);
           const thumb = resizedPic.toBuffer();
           const thumb64 = (await thumb).toString("base64");
 

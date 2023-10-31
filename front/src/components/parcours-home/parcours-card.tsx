@@ -5,6 +5,7 @@ import DeleteIcon from "../UI/svg/delete-icon.component";
 import EditIcon from "../UI/svg/edit-icon";
 import EyeIcon from "../UI/svg/eye-icon";
 import Can from "../UI/can/can.component";
+import { useEffect, useState } from "react";
 
 interface ParcoursCardProps {
   parcours: Parcours;
@@ -12,15 +13,22 @@ interface ParcoursCardProps {
 
 const ParcoursCard = ({ parcours }: ParcoursCardProps) => {
   const nav = useNavigate();
+  const [image, setImage] = useState<string | null>(null);
 
   const handleDeleteParcours = (id: number) => {
     nav(``);
   };
 
-  const imageUrl = `data:image/jpeg;base64,${parcours.thumb}`;
+  useEffect(() => {
+    if (!parcours.thumb) {
+      setImage("/images/parcours-default.jpg");
+    } else {
+      setImage(`data:image/jpeg;base64,${parcours.thumb}`);
+    }
+  }, [parcours.thumb]);
 
   const classImage: React.CSSProperties = {
-    backgroundImage: `url('${imageUrl}')`,
+    backgroundImage: `url('${image}')`,
     width: "100%",
     height: "9rem",
     backgroundSize: "cover",
@@ -30,21 +38,21 @@ const ParcoursCard = ({ parcours }: ParcoursCardProps) => {
   };
 
   return (
-    <div className="card w-92 h-full bg-base-100 shadow-xl border border-primary/20">
+    <div className="card w-96 h-full bg-base-100 shadow-xl border border-primary/20">
       <figure style={classImage}>
         {/* position relative à l'image affichée */}
-        <div className="p-1 rounded-sm flex items-center bg-neutral/90 absolute bottom-2 right-2">
+        <div className="flex items-center  absolute bottom-2 right-2">
           <Can action="update" object="parcours">
             <div className="tooltip tooltip-left" data-tip="Aperçu du parcours">
-              <div className="w-6 h-6 ">
-                <Link
-                  className="text-primary"
-                  to={`view/${parcours.id}`}
-                  aria-label="Aperçu du parcours"
-                >
+              <Link
+                className="btn btn-sm btn-primary btn-circle rounded-md"
+                to={`view/${parcours.id}`}
+                aria-label="Aperçu du parcours"
+              >
+                <div className="w-6 h-6 ">
                   <EyeIcon />
-                </Link>
-              </div>
+                </div>
+              </Link>
             </div>
           </Can>
         </div>
@@ -96,38 +104,40 @@ const ParcoursCard = ({ parcours }: ParcoursCardProps) => {
         </div>
 
         <div className="card-actions w-full flex items-center justify-between">
-          <div
-            className="w-6 h-6 mt-1 text-error"
-            aria-label="suppression du parcours"
-          >
+          <div aria-label="suppression du parcours">
             <Can action="delete" object="parcours">
               <div
                 className="tooltip tooltip-bottom flex-items-center"
                 data-tip="Supprimer le parcours"
               >
-                <div onClick={() => handleDeleteParcours(parcours.id!)}>
-                  <DeleteIcon />
-                </div>
+                <button
+                  className="btn btn-sm btn-outline btn-circle rounded-md btn-error"
+                  onClick={() => handleDeleteParcours(parcours.id!)}
+                >
+                  <div className="w-5 h-5">
+                    <DeleteIcon />
+                  </div>
+                </button>
               </div>
             </Can>
           </div>
 
-          <div className="w-6 h-6">
-            <Can action="update" object="parcours">
-              <div
-                className="tooltip tooltip-bottom"
-                data-tip="Modifier le parcours"
+          <Can action="update" object="parcours">
+            <div
+              className="tooltip tooltip-bottom"
+              data-tip="Modifier le parcours"
+            >
+              <Link
+                className="btn btn-outline btn-sm btn-circle rounded-md  text-primary"
+                to={`edit/${parcours.id}`}
+                aria-label="modifier le parcours"
               >
-                <Link
-                  className="text-primary"
-                  to={`edit/${parcours.id}`}
-                  aria-label="modifier le parcours"
-                >
+                <div className="w-5 h-5">
                   <EditIcon />
-                </Link>
-              </div>
-            </Can>
-          </div>
+                </div>
+              </Link>
+            </div>
+          </Can>
         </div>
       </div>
     </div>
