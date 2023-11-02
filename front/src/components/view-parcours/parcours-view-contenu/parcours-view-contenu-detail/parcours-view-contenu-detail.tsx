@@ -47,12 +47,12 @@ const ParcoursViewContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
       courses.map((course, i) => (
         <div
           key={course?.id}
-          className={`flex justify-between items-center bg-secondary p-4 rounded-lg`}
+          className="flex justify-between items-center bg-secondary p-4 rounded-lg"
         >
           <span className="w-14 h-14 mx-4">
             <BookIcon />
           </span>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center w-full px-2">
             <p className="self-start">{`Cours ${i + 1}`}</p>
             <div className="flex justify-between w-full">
               <p className="self-start text-xl font-bold">{course.title}</p>
