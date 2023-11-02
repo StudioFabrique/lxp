@@ -3,6 +3,7 @@ import {
   FC,
   Ref,
   SetStateAction,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -15,6 +16,7 @@ import toast from "react-hot-toast";
 import { IRoleItem, IRoleToEdit } from "../../../views/role/role";
 import useInput from "../../../hooks/use-input";
 import RoleTypeSelector from "./role-type-selector";
+import { Context } from "../../../store/context.store";
 
 const RoleCreateForm: FC<{
   roleToEdit: IRoleToEdit | null;
@@ -49,9 +51,10 @@ const RoleCreateForm: FC<{
 
   const handleSubmitRole = () => {
     const applyDataCreate = (data: any) => {
-      setRoles((currentRoles) => [...currentRoles, data.data]);
+      const newRole: IRoleItem = data.data;
+      setRoles((currentRoles) => [...currentRoles, newRole]);
+      setCurrentRole(newRole);
       cancelForm();
-      setCurrentRole(data.data);
       toast.success(data.message);
     };
 
