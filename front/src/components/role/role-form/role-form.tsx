@@ -3,7 +3,6 @@ import {
   FC,
   Ref,
   SetStateAction,
-  useContext,
   useEffect,
   useRef,
   useState,
@@ -16,7 +15,6 @@ import toast from "react-hot-toast";
 import { IRoleItem, IRoleToEdit } from "../../../views/role/role";
 import useInput from "../../../hooks/use-input";
 import RoleTypeSelector from "./role-type-selector";
-import { Context } from "../../../store/context.store";
 
 const RoleCreateForm: FC<{
   roleToEdit: IRoleToEdit | null;
