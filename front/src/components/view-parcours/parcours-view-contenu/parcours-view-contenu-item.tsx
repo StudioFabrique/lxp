@@ -2,7 +2,6 @@ import { Dispatch, FC, SetStateAction } from "react";
 import Module from "../../../utils/interfaces/module";
 import { getMonth } from "../../../utils/dates";
 import RightArrowRoundedIcon from "../../UI/svg/right-arrow-rounded-icon";
-import { colorStyle, colorStyleHover } from "../../../config/colors";
 
 const ParcoursViewContenuItem: FC<{
   module: Module;
@@ -21,13 +20,11 @@ const ParcoursViewContenuItem: FC<{
       className="flex gap-x-4 items-center"
       onClick={() => setSelectedModule(module)}
     >
-      <div className="flex flex-col items-center justify-center bg-secondary p-4 w-24 h-full rounded-lg ">
-        <p className="font-bold text-xl">{minDate.day}</p>
-        <p className="uppercase text-sm">{minDate.month}</p>
+      <div className="flex flex-col items-center justify-center bg-primary/50 text-primary-content p-4 w-24 h-full rounded-lg">
+        <p className="font-bold text-2xl">{minDate.day}</p>
+        <p className="font-bold uppercase">{minDate.month}</p>
       </div>
-      <div
-        className={`flex flex-col items-center p-4 rounded-lg w-full ${colorStyle} ${colorStyleHover}`}
-      >
+      <div className="flex flex-col items-center p-4 rounded-lg w-full h-full bg-secondary hover:bg-primary hover:text-primary-content">
         <p className="self-start">{`Module ${iterationCount}`}</p>
         <div className="flex justify-between w-full">
           <p className="self-start text-xl font-semibold">{module.title}</p>
