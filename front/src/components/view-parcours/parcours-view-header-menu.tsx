@@ -17,9 +17,9 @@ const ParcoursViewHeaderMenu = () => {
   const modal = (
     <>
       <input type="checkbox" id="modal_1" className="modal-toggle" />
-      <div className="modal">
-        <div className="modal-box">
-          <div className="flex flex-col gap-4 h-full w-full justify-between">
+      <div className="modal modal-top flex justify-center">
+        <div className="modal-box w-[50%]">
+          <div className="flex flex-col gap-4 justify-between">
             <span className="flex justify-between">
               <h3>Recherche :</h3>
               <label htmlFor="modal_1" className="btn btn-xs">
