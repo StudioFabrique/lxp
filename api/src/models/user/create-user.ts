@@ -11,9 +11,9 @@ export default async function createUser(user: IUser, roleId: string) {
     return null;
   }
 
-  let rolesToCheck = undefined;
+  /* let rolesToCheck = undefined;
 
-  /* switch (userType) {
+  switch (userType) {
     case 0:
       rolesToCheck = { role: "student", rank: 3 };
       break;
@@ -42,6 +42,11 @@ export default async function createUser(user: IUser, roleId: string) {
   });
 
   if (firstRole[0].rank === 1) {
+    // si type utilisateur en cours de création est "administrateur"
+    prisma.admin.create({ data: { idMdb: createdUser._id } });
+  }
+
+  if (firstRole[0].rank === 2) {
     // si type utilisateur en cours de création est "formateur"
     prisma.teacher.create({ data: { idMdb: createdUser._id } });
     /**
@@ -59,11 +64,6 @@ export default async function createUser(user: IUser, roleId: string) {
      * <-
      * A virer si ça ne marche pas (reset Martin)
      */
-  }
-
-  if (firstRole[0].rank === 3) {
-    // si type utilisateur en cours de création est "administrateur"
-    prisma.admin.create({ data: { idMdb: createdUser._id } });
   }
 
   return createdUser;
