@@ -1,16 +1,14 @@
 import SubWrapper from "../../../UI/sub-wrapper/sub-wrapper.component";
-import { colorStyle, colorStyleHover } from "../../../../config/colors";
 import Can from "../../../UI/can/can.component";
 import BookIcon from "../../../UI/svg/book-icon";
-import { useNavigate } from "react-router-dom";
 import useHttp from "../../../../hooks/use-http";
-import { FC, MouseEvent, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Course from "../../../../utils/interfaces/course";
 import { sortArray } from "../../../../utils/sortArray";
 import EditIcon from "../../../UI/svg/edit-icon";
+import { Link } from "react-router-dom";
 
 const ParcoursViewContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
-  const navigate = useNavigate();
   const { sendRequest, isLoading } = useHttp(true);
   const [courses, setCourses] = useState<Course[]>([]);
 
@@ -44,38 +42,26 @@ const ParcoursViewContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
     );
   }, [sendRequest, moduleId]);
 
-  const onNavigateEditCourse = (
-    e: MouseEvent<HTMLButtonElement>,
-    courseId: number
-  ) => {
-    e.stopPropagation();
-    navigate(`/admin/course/edit/${courseId}`);
-  };
-
   const contentsList =
     !isLoading && courses!.length > 0 ? (
       courses.map((course, i) => (
         <div
           key={course?.id}
-          className={`flex justify-between items-center bg-secondary p-4 rounded-lg ${colorStyle} ${colorStyleHover}`}
+          className="flex justify-between items-center bg-secondary p-4 rounded-lg"
         >
           <span className="w-14 h-14 mx-4">
             <BookIcon />
           </span>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center w-full px-2">
             <p className="self-start">{`Cours ${i + 1}`}</p>
             <div className="flex justify-between w-full">
               <p className="self-start text-xl font-bold">{course.title}</p>
             </div>
           </div>
           <Can action="update" object="course">
-            <button
-              type="button"
-              className="h-8 w-8"
-              onClick={(e) => onNavigateEditCourse(e, course.id)}
-            >
+            <Link to={`/admin/course/edit/${course.id}`} className="h-8 w-8">
               <EditIcon />
-            </button>
+            </Link>
           </Can>
         </div>
       ))
@@ -88,9 +74,12 @@ const ParcoursViewContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
       <span className="flex justify-between">
         <h2 className="text-xl font-bold text-primary">Contenu du module</h2>
         <Can action="write" object="course">
-          <button type="button" className="btn btn-primary btn-sm">
+          <Link
+            to="/admin/course/add"
+            className="btn btn-primary btn-sm normal-case"
+          >
             Ajouter un cours
-          </button>
+          </Link>
         </Can>
       </span>
       <div className="flex flex-col gap-y-5">{contentsList}</div>

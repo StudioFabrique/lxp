@@ -52,10 +52,10 @@ const RoleCreateForm: FC<{
 
   const handleSubmitRole = () => {
     const applyDataCreate = (data: any) => {
-      setRoles((currentRoles) => [...currentRoles, data.data]);
+      const newRole: IRoleItem = data.data;
+      setRoles((currentRoles) => [...currentRoles, newRole]);
+      setCurrentRole(newRole);
       cancelForm();
-      setCurrentRole(data.data);
-      fetchRoles(user!.roles[0]);
       toast.success(data.message);
     };
 

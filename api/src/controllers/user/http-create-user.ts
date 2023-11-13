@@ -33,7 +33,7 @@ export default async function httpCreateUser(req: Request, res: Response) {
     const userResponse = await createUser(userDataRequest, roleId); // crée un user + insert une référence mongodb dans prisma si le type utilisateur le permet
 
     if (!userResponse) {
-      res.status(409).json({ message: alreadyExist });
+      return res.status(409).json({ message: alreadyExist });
     }
 
     await createManyGraduations(userResponse!._id, graduationsDataRequest); // insert graduations in mongodb with user ref _id

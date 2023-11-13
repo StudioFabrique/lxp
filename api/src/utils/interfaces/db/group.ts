@@ -1,5 +1,4 @@
 import mongoose, { Document, Schema, model } from "mongoose";
-//import { IStudent } from "./student/student.model";
 import { IRole } from "./role";
 import { IUser } from "./user";
 import { ITag } from "./tag";

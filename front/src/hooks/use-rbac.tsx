@@ -1,12 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import Role from "../utils/interfaces/role";
 import useHttp from "./use-http";
 import { casbinAuthorizer } from "../config/rbac";
 import toast from "react-hot-toast";
 
 const useRbac = (roles: Role[] | undefined) => {
-  const [needForceRefresh, setRefreshState] = useState<boolean>();
-
   const { sendRequest, error } = useHttp();
 
   const defineRulesFor = useCallback(async () => {
@@ -39,20 +37,13 @@ const useRbac = (roles: Role[] | undefined) => {
     console.log({ casbinAuthorizer });
   }, [roles, sendRequest]);
 
+  const forceRefreshRbacPermissions = () => {
+    defineRulesFor();
+  };
+
   useEffect(() => {
     defineRulesFor();
   }, [defineRulesFor]);
-
-  useEffect(() => {
-    if (needForceRefresh) {
-      defineRulesFor();
-      setRefreshState(false);
-    }
-  }, [defineRulesFor, needForceRefresh]);
-
-  /*   const forceRefreshRbacPermissions = () => {
-    setRefreshState(true);
-  }; */
 
   // gestion des erreurs HTTP
   useEffect(() => {
@@ -60,7 +51,7 @@ const useRbac = (roles: Role[] | undefined) => {
   }, [error]);
 
   return {
-    /* forceRefreshRbacPermissions */
+    forceRefreshRbacPermissions,
   };
 };
 

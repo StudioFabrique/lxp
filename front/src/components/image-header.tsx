@@ -8,9 +8,9 @@ interface ImageHeaderProps {
   children: ReactNode[]; // composant contenant une icône svg
 }
 
-const ImageHeader = (props: ImageHeaderProps) => {
+const ImageHeaderCopy = (props: ImageHeaderProps) => {
   const classImage: React.CSSProperties = {
-    backgroundImage: `url('${props.imageUrl}')`,
+    backgroundImage: `url(${props.imageUrl})`,
     width: "100%",
     height: "20rem",
     backgroundSize: "cover",
@@ -21,10 +21,10 @@ const ImageHeader = (props: ImageHeaderProps) => {
 
   return (
     <div style={classImage}>
-      <div className="rounded-xl w-full h-full flex flex-col justify-end items-start relative">
-        <div className="absolute top-0 left-0 w-full h-full bg-neutral/20 z-0" />
+      <div className="w-full h-full flex flex-col justify-end items-start relative">
+        <div className="rounded-xl absolute top-0 left-0 w-full h-full bg-neutral/50 z-0" />
         {props.children[1]}
-        <div className="w-full flex gap-x-2 px-4 py-2 items-end justify-between font-bold absolute z-50">
+        <div className="w-full flex gap-x-2 px-4 py-5 items-end justify-between font-bold absolute z-10">
           <span className="flex gap-x-2 items-center">
             <div className="w-12 h-12 text-white">{props.children[0]}</div>
             <div>
@@ -40,4 +40,4 @@ const ImageHeader = (props: ImageHeaderProps) => {
   );
 };
 
-export default ImageHeader;
+export default ImageHeaderCopy;
