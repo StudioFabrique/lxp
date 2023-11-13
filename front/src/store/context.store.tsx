@@ -6,6 +6,7 @@ import { BASE_URL } from "../config/urls";
 import useHttp from "../hooks/use-http";
 import User from "../utils/interfaces/user";
 import Role from "../utils/interfaces/role";
+import { casbinAuthorizer } from "../config/rbac";
 
 type ContextType = {
   theme: string;
@@ -20,6 +21,7 @@ type ContextType = {
   user: User | null;
   roles: Array<Role>;
   fetchRoles: (role: Role) => void;
+  defineRulesFor: () => void;
 };
 
 type Props = { children: React.ReactNode };
@@ -37,6 +39,7 @@ export const Context = React.createContext<ContextType>({
   user: null,
   roles: Array<Role>(),
   fetchRoles: () => {},
+  defineRulesFor: () => {},
 });
 
 const ContextProvider: FC<Props> = (props) => {
@@ -47,22 +50,6 @@ const ContextProvider: FC<Props> = (props) => {
   const [error, setError] = useState("");
   const { axiosInstance, sendRequest } = useHttp();
   const [roles, setRoles] = useState<Array<Role>>([]);
-
-  useEffect(() => {
-    document
-      .querySelector("html")!
-      .setAttribute(
-        "data-theme",
-        theme === "light" ? themes.light : themes.dark
-      );
-  }, [theme]);
-
-  useEffect(() => {
-    if (user) {
-      setIsLoggedIn(true);
-      setIsLoading(false);
-    }
-  }, [user]);
 
   const login = async (email: string, password: string) => {
     setError("");
@@ -142,6 +129,37 @@ const ContextProvider: FC<Props> = (props) => {
     }
   };
 
+  const defineRulesFor = useCallback(async () => {
+    if (!roles) return;
+
+    // superUser roles definition
+    const builtPerms: Record<string, any> = {};
+
+    // perms should be of format
+    // { 'read': ['Contact', 'Database']}
+    for (const role of roles) {
+      const applyData = (data: any) => {
+        const permissions: any[] = data.data;
+
+        permissions.forEach((permission) => {
+          builtPerms[permission.action] = [
+            ...(builtPerms[permission.action] || []),
+            ...permission.ressources,
+          ];
+        });
+      };
+
+      await sendRequest(
+        { path: `/permission/${role.role}`, method: "get" },
+        applyData
+      );
+    }
+    console.log(builtPerms);
+
+    casbinAuthorizer.setPermission(builtPerms);
+    console.log({ casbinAuthorizer });
+  }, [roles, sendRequest]);
+
   const fetchRoles = useCallback(
     (role: Role) => {
       const applyData = (data: Array<Role>) => {
@@ -166,6 +184,26 @@ const ContextProvider: FC<Props> = (props) => {
     [sendRequest]
   );
 
+  useEffect(() => {
+    defineRulesFor();
+  }, [defineRulesFor, roles]);
+
+  useEffect(() => {
+    document
+      .querySelector("html")!
+      .setAttribute(
+        "data-theme",
+        theme === "light" ? themes.light : themes.dark
+      );
+  }, [theme]);
+
+  useEffect(() => {
+    if (user) {
+      setIsLoggedIn(true);
+      setIsLoading(false);
+    }
+  }, [user]);
+
   const contextValue = {
     theme,
     initTheme,
@@ -179,6 +217,7 @@ const ContextProvider: FC<Props> = (props) => {
     user,
     roles,
     fetchRoles,
+    defineRulesFor,
   };
 
   return (

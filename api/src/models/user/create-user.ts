@@ -7,28 +7,10 @@ export default async function createUser(user: IUser, roleId: string) {
   const userToFind = await User.findOne({
     email: user.email,
   });
+
   if (userToFind) {
     return null;
   }
-
-  /* let rolesToCheck = undefined;
-
-  switch (userType) {
-    case 0:
-      rolesToCheck = { role: "student", rank: 3 };
-      break;
-    case 1:
-      rolesToCheck = { role: "teacher", rank: 2 };
-      break;
-    case 2:
-      rolesToCheck = { role: "mini-admin", rank: 1 };
-      break;
-    case 3:
-      rolesToCheck = { role: "visitor", rank: 3 };
-      break;
-    default:
-      return null;
-  } */
 
   const firstRole = await Role.findOne({ _id: roleId });
 

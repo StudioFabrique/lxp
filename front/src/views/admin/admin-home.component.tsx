@@ -7,7 +7,6 @@ const AdminHome = () => {
 
   const logoutHandler = () => {
     logout();
-    window.location.reload();
   };
 
   return (
