@@ -6,6 +6,7 @@ async function updateParcoursInfos(
   title: string,
   description: string,
   formation: number,
+  visibility: boolean,
   userId: string
 ) {
   try {
@@ -15,6 +16,7 @@ async function updateParcoursInfos(
       data: {
         title: title,
         description: description,
+        visibility,
         formation: {
           connect: { id: formation },
         },

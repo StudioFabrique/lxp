@@ -17,6 +17,18 @@ type Props = {
   notSelectedContacts: Contact[];
 };
 
+type Teacher = {
+  firstname: string;
+  lastname: string;
+  email: string;
+  nickname?: string;
+  address?: string;
+  city?: string;
+  postCode?: string;
+  phoneNumber?: string;
+  isActive: boolean;
+};
+
 const Contacts: FC<Props> = ({ contacts, notSelectedContacts }) => {
   const dispatch = useDispatch();
   const { sendRequest, error } = useHttp();
@@ -69,23 +81,15 @@ const Contacts: FC<Props> = ({ contacts, notSelectedContacts }) => {
   /**
    * envoi d'une requête pour enregistrer dans la bdd un formateur créé à la volée
    */
-  const submitNewTeacher = (teacher: {
-    firstname: string;
-    lastname: string;
-    email: string;
-    nickname?: string;
-    address?: string;
-    city?: string;
-    postCode?: string;
-    phoneNumber?: string;
-    isActive: boolean;
-  }) => {
+  const submitNewTeacher = (teacher: Teacher) => {
     const processData = (data: {
       success: boolean;
       message: string;
       contact: User;
     }) => {
       if (data.success) {
+        console.log({ data });
+
         toast.success(data.message);
         handleCloseDrawer("new-contact");
         dispatch(parcoursContactsAction.addNewContact(data.contact));

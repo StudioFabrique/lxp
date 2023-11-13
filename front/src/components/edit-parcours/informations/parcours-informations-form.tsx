@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { FC, useCallback, useEffect, useRef } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import useHttp from "../../../hooks/use-http";
@@ -28,6 +28,9 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
     (value) => regexOptionalGeneric.test(value),
     parcoursInfos.description
   );
+  const [visibility, setVisibility] = useState<boolean>(
+    parcoursInfos.visibility
+  );
   const isInitialRender = useRef(true);
 
   // vérification des champs du formulaire
@@ -50,6 +53,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
             title: title.value,
             description: description.value,
             formation: formation.id.toString(),
+            visibility,
           },
         },
         processData
@@ -62,6 +66,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
     formIsValid,
     sendRequest,
     parcoursId,
+    visibility,
   ]);
 
   /**
@@ -73,6 +78,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
         parcoursInformationsAction.updateParcoursInfos({
           title: title.value,
           description: description.value,
+          visibility,
         })
       );
       if (!isInitialRender.current) {
@@ -87,7 +93,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
     return () => {
       clearTimeout(timer);
     };
-  }, [updateInfos, description.value, title.value, dispatch]);
+  }, [updateInfos, visibility, description.value, title.value, dispatch]);
 
   /**
    * définit le style du champ formulaire en fonction de sa validité
@@ -175,6 +181,19 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
                   disabled={true}
                   value={formation.level}
                 />
+              </div>
+
+              <div className="form-control w-fit">
+                <label className="flex gap-x-4 cursor-pointer items-center label">
+                  <span className="font-bold">Visibilité</span>
+                  <input
+                    type="checkbox"
+                    className="toggle toggle-primary"
+                    checked={visibility ? visibility : false}
+                    onChange={() => setVisibility((prevState) => !prevState)}
+                  />
+                  <p className="text-sm">{visibility ? "Visible" : "Caché"}</p>
+                </label>
               </div>
             </form>
           </>

@@ -3,6 +3,7 @@ import {
   FC,
   Ref,
   SetStateAction,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -15,6 +16,7 @@ import toast from "react-hot-toast";
 import { IRoleItem, IRoleToEdit } from "../../../views/role/role";
 import useInput from "../../../hooks/use-input";
 import RoleTypeSelector from "./role-type-selector";
+import { Context } from "../../../store/context.store";
 
 const RoleCreateForm: FC<{
   roleToEdit: IRoleToEdit | null;
@@ -22,6 +24,7 @@ const RoleCreateForm: FC<{
   setRoleToEdit: Dispatch<SetStateAction<IRoleToEdit | null>>;
   setCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
 }> = ({ roleToEdit, setRoles, setRoleToEdit, setCurrentRole }) => {
+  const { fetchRoles, user } = useContext(Context);
   const { sendRequest, isLoading: isRequestLoading } = useHttp(true);
 
   const [isActive, SetActive] = useState(false);
@@ -52,6 +55,7 @@ const RoleCreateForm: FC<{
       setRoles((currentRoles) => [...currentRoles, data.data]);
       cancelForm();
       setCurrentRole(data.data);
+      fetchRoles(user!.roles[0]);
       toast.success(data.message);
     };
 
