@@ -27,7 +27,10 @@ const ParcoursViewProgressStats = () => {
             {modules
               ?.filter((x, i) => i < 4)
               .map((module, i) => (
-                <div className="flex flex-col justify-center gap-2 items-center bg-secondary-focus text-primary-focus font-bold w-[10em] h-[10em] rounded-xl">
+                <div
+                  className="flex flex-col justify-center gap-2 items-center bg-secondary-focus text-primary-focus font-bold w-[10em] h-[10em] rounded-xl"
+                  key={module.id}
+                >
                   <p className="radial-progress" style={radialStyle}>
                     70 %
                   </p>
