@@ -24,8 +24,8 @@ import ParcoursViewQuickStatistiques from "../../components/view-parcours/parcou
 import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
 import { useSelector } from "react-redux";
 import ParcoursViewProgressStats from "../../components/view-parcours/parcours-view-progress-stats";
-import ImageHeaderCopy from "../../components/image-header/image-header.copy";
 import ParcoursViewHeaderMenu from "../../components/view-parcours/parcours-view-header-menu";
+import ImageHeader from "../../components/image-header";
 
 let initialState = true;
 
@@ -153,7 +153,7 @@ const ParcoursView = () => {
           <div className="w-full">
             <div className="flex">
               {image && (
-                <ImageHeaderCopy
+                <ImageHeader
                   imageUrl={image}
                   title={parcoursInfos.title}
                   subTitle={parcours.formation?.title}

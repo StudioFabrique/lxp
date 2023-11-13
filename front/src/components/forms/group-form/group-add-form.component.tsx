@@ -6,7 +6,6 @@ import Details from "./components/details.component";
 import GroupsHeader from "../../groups-header/groups-header.component";
 import Tag from "../../../utils/interfaces/tag";
 import GroupTags from "./components/group-tags.component";
-import Dates from "./components/dates.component";
 import toast from "react-hot-toast";
 
 const GroupAddForm: FC<{
@@ -16,7 +15,6 @@ const GroupAddForm: FC<{
 }> = (props) => {
   const [file, setFile] = useState<File | null>(null);
   const [parcoursId, setParcoursId] = useState<number | null>(null);
-  const [dates, setDates] = useState({ startDate: "", endDate: "" });
   const [tags, setTags] = useState<Tag[]>([]);
   const [isActive, setIsActive] = useState<boolean>(
     props.group?.isActive ?? false
@@ -33,9 +31,6 @@ const GroupAddForm: FC<{
   const handleSubmitTags = (tags: Array<Tag>) => {
     setTags(tags);
   };
-  const handleSubmitDates = (dates: { startDate: string; endDate: string }) => {
-    setDates(dates);
-  };
 
   const { value: name } = useInput(
     (value: string) => regexGeneric.test(value),
@@ -50,12 +45,7 @@ const GroupAddForm: FC<{
   //  test la validité du form via le custom hook useInput
   let formIsValid = false;
   formIsValid =
-    name.isValid &&
-    desc.isValid &&
-    dates.startDate.length > 0 &&
-    dates.endDate.length > 0 &&
-    file !== null &&
-    isActive != null;
+    name.isValid && desc.isValid && file !== null && isActive != null;
 
   const handleSubmit = () => {
     if (formIsValid) {
@@ -64,8 +54,6 @@ const GroupAddForm: FC<{
           group: {
             name: name.value.trim(),
             desc: desc.value.trim(),
-            startDate: dates.startDate,
-            endDate: dates.endDate,
             tags: tags,
           },
           parcoursId: parcoursId,
@@ -89,9 +77,8 @@ const GroupAddForm: FC<{
           onSetFile={handleSetFile}
         />
         <Details onSelectParcours={handleSelectParcours} />
-        <div className="grid grid-row-2 max-md:mb-2 max-md:mt-2 gap-y-8">
+        <div className="max-md:mb-2 max-md:mt-2 gap-y-8">
           <GroupTags onSubmitTags={handleSubmitTags} />
-          <Dates onSubmitDates={handleSubmitDates} />
         </div>
       </div>
     </form>
