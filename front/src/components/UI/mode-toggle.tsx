@@ -6,9 +6,12 @@ const ModeToggle = () => {
 
   return (
     <div className="w-fit flex gap-x-2 justify-center items-center">
-      <label className="swap swap-rotate text-base-cotent">
+      <label
+        className="swap swap-rotate text-base-cotent"
+        htmlFor="mode-toggle"
+      >
         {/* this hidden checkbox controls the state */}
-        <input type="checkbox" onClick={toggleTheme} />
+        <input type="checkbox" id="mode-toggle" onClick={toggleTheme} />
 
         {/* sun icon */}
         <svg

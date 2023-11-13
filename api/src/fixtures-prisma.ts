@@ -243,6 +243,28 @@ async function createSqlGroups() {
   });
 }
 
+async function createSqlContacts() {
+  try {
+    const roleId = await Role.find({ role: "teacher" }, { _id: 1 });
+    const usersId = await User.find(
+      { roles: roleId },
+      { _id: 1, firstname: 1, lastname: 1 }
+    );
+    const contacts = usersId.map((user: any) => {
+      return {
+        idMdb: user._id,
+        role: "formateur",
+        name: `${user.firstname} ${user.lastname}`,
+      };
+    });
+    await prisma.contact.createMany({
+      data: contacts,
+    });
+  } catch (error: any) {
+    console.log(error.message);
+  }
+}
+
 async function createFormation() {
   try {
     const tags1Dw = [1, 2, 3, 4, 5];
@@ -325,6 +347,7 @@ async function loadFixtures() {
   await createTeachers();
   await createFormation();
   await createSqlGroups();
+  await createSqlContacts();
   //await createModules();
   //await createModulesOnFormation();
   await disconnect();

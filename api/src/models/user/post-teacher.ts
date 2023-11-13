@@ -1,3 +1,4 @@
+import { prisma } from "../../utils/db";
 import Role from "../../utils/interfaces/db/role";
 import User, { IUser } from "../../utils/interfaces/db/user";
 import bcrypt from "bcrypt";
@@ -23,13 +24,21 @@ async function postTeacher(teacher: IUser) {
     roles: [new Object(fetchedRole!._id)],
   });
 
-  console.log({ newTeacher });
   if (newTeacher) {
     const updatedTeacher = await User.findOne(
       { _id: newTeacher._id },
       { _id: 1, firstname: 1, lastname: 1 }
     ).populate("roles", { label: 1 });
-    return updatedTeacher;
+    if (updatedTeacher) {
+      const contact = await prisma.contact.create({
+        data: {
+          idMdb: updatedTeacher._id,
+          name: `${updatedTeacher.lastname} ${updatedTeacher.firstname}`,
+          role: updatedTeacher.roles[0].label,
+        },
+      });
+      return contact;
+    }
   } else {
     return false;
   }

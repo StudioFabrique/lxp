@@ -28,7 +28,8 @@ const LayoutCourseEdit = () => {
    */
   useEffect(() => {
     const applyData = (data: any) => {
-      dispatch(courseInfosAction.setCourse(formatCourseFromHttp(data)));
+      const loadedCourse = formatCourseFromHttp(data);
+      dispatch(courseInfosAction.setCourse(loadedCourse));
       setLoading(false);
     };
     setLoading(true);

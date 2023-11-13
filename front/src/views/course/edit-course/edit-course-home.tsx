@@ -16,6 +16,7 @@ import { courseScenarioActions } from "../../../store/redux-toolkit/course/cours
 import { courseSkillsActions } from "../../../store/redux-toolkit/course/course-skills";
 import CourseCalendar from "../../../components/edit-course/calendar/course-calendar";
 import CoursePreview from "../../../components/edit-course/preview/course-preview";
+import { courseDatesActions } from "../../../store/redux-toolkit/course/course-dates";
 
 const EditCourseHome = () => {
   const dispatch = useDispatch();
@@ -49,6 +50,7 @@ const EditCourseHome = () => {
       dispatch(courseObjectivesActions.resetCourseObjectives());
       dispatch(courseScenarioActions.resetCourseScenario());
       dispatch(courseSkillsActions.resetCourseSkills());
+      dispatch(courseDatesActions.resetDates());
     };
   }, [dispatch]);
 

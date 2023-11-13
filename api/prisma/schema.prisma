@@ -29,6 +29,7 @@ model Parcours {
   endDate      DateTime?
   degree       String?
   image        Bytes?
+  thumb        Bytes?
   createdAt    DateTime             @default(now())
   updatedAt    DateTime             @default(now())
   tags         TagsOnParcours[]

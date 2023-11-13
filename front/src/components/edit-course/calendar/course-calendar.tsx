@@ -20,18 +20,21 @@ const CourseCalendar = () => {
   ) as CourseDates[];
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log({ dates });
-
   /**
    * enregistre une nouvelle plage de dates dans la bdd
    * @param values CourseDates
    */
   const handleSubmitDates = (values: CourseDates) => {
-    const tmpDates = { ...values, id: setId(dates ?? []) };
+    console.log(dates);
+
+    if (!dates) {
+      dispatch(courseDatesActions.setCourseDates([]));
+    }
+    const tmpDates = { ...values, id: setId(dates) };
     setIsLoading(true);
     const applyData = (_data: any) => {
       setIsLoading(false);
-      dispatch(courseDatesActions.setCourseDates(tmpDates));
+      dispatch(courseDatesActions.setCourseDates([...dates, tmpDates]));
     };
     sendRequest(
       {
@@ -60,6 +63,22 @@ const CourseCalendar = () => {
     );
   };
 
+  /**
+   * retourne la liste des plages de dates associées à un cours
+   * et la stock dans redux
+   */
+  useEffect(() => {
+    const applyData = (data: { dates: CourseDates[] }) => {
+      dispatch(courseDatesActions.setCourseDates(data.dates));
+    };
+    sendRequest(
+      {
+        path: `/course/dates/${courseId}`,
+      },
+      applyData
+    );
+  }, [courseId, dispatch, sendRequest]);
+
   // gère les erreurs HTTP
   useEffect(() => {
     if (error.length > 0) {
@@ -73,7 +92,9 @@ const CourseCalendar = () => {
       <h2 className="text-3xl font-extrabold">Calendrier</h2>
       <article className="w-full flex flex-col gap-y-8">
         <DatesForm isLoading={isLoading} onSubmitDates={handleSubmitDates} />
-        <DatesList datesList={dates} onDeleteItem={handleDeleteItem} />
+        {dates && dates.length > 0 ? (
+          <DatesList datesList={dates} onDeleteItem={handleDeleteItem} />
+        ) : null}
       </article>
     </section>
   );

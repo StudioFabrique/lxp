@@ -28,4 +28,5 @@ export default interface Parcours {
   isPublished: boolean;
   author: string;
   visibility: boolean;
+  thumb?: string;
 }

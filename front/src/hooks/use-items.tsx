@@ -122,8 +122,6 @@ const useItems = () => {
   }, []); */
 
   const initItems = useCallback((itemsList: Array<any>) => {
-    console.log(itemsList);
-
     dispatch({ type: "INIT", value: itemsList });
   }, []);
 
