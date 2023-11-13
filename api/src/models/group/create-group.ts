@@ -1,7 +1,6 @@
 import Group, { IGroup } from "../../utils/interfaces/db/group";
 import Role from "../../utils/interfaces/db/role";
 import User, { IUser } from "../../utils/interfaces/db/user";
-import updateManyUsers from "../user/update-many-users";
 import { prisma } from "../../utils/db";
 
 export default async function createGroup(

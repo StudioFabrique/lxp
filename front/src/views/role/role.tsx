@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
 import useHttp from "../../hooks/use-http";
 import RolesList from "../../components/role/roles-list/roles-list";
 import RoleForm from "../../components/role/role-form/role-form";
 import PermissionsList from "../../components/role/permissions-list/permissions-list";
-import { useLocation, useNavigate } from "react-router-dom";
 
 export interface IRoleItem {
   _id: string;

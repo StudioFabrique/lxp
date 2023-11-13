@@ -3,6 +3,7 @@ import {
   FC,
   SetStateAction,
   useCallback,
+  useContext,
   useEffect,
   useState,
 } from "react";
@@ -12,12 +13,19 @@ import RoleSelector from "./role-selector";
 import useHttp from "../../../hooks/use-http";
 import RessourcesByAction from "./ressources-by-action";
 import toast from "react-hot-toast";
+import { Context } from "../../../store/context.store";
 
 const PermissionsList: FC<{
   roles: IRoleItem[];
   currentRole: IRoleItem;
   setCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
 }> = ({ roles, currentRole, setCurrentRole }) => {
+  const {
+    defineRulesFor,
+    roles: roleFromContext,
+    fetchRoles,
+    user,
+  } = useContext(Context);
   const { sendRequest, isLoading } = useHttp(true);
 
   const [permissions, setPermissions] = useState([]);
@@ -58,6 +66,9 @@ const PermissionsList: FC<{
 
   const handleSubmitPermissions = () => {
     const applyData = (data: any) => {
+      fetchRoles(user!.roles[0]);
+      defineRulesFor();
+      console.log(roleFromContext);
       toast.success(data.message);
     };
 
