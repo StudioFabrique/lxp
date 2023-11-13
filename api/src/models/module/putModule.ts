@@ -1,7 +1,7 @@
-import { BonusSkill, Contact, Module } from "@prisma/client";
+import { BonusSkill, Contact } from "@prisma/client";
 import { prisma } from "../../utils/db";
 
-async function putModule(module: any, thumb: string | undefined, image: any) {
+async function putModule(module: any, thumb: any, image: any) {
   const existingModule = await prisma.module.findFirst({
     where: { id: module.id },
   });
@@ -12,9 +12,6 @@ async function putModule(module: any, thumb: string | undefined, image: any) {
   }
 
   let updatedModule: any;
-
-  console.log(module.contacts);
-  console.log(module.bonusSkills);
 
   const transaction = await prisma.$transaction(async (tx) => {
     await tx.contactsOnModule.deleteMany({

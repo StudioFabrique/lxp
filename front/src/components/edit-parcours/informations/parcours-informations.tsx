@@ -59,12 +59,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
    */
   const fetchTeachers = useCallback(() => {
     const applyData = (data: Array<User>) => {
-      const contacts = data.map((user: User) => ({
-        idMdb: user._id,
-        name: `${user.lastname} ${user.firstname}`,
-        role: user.roles[0].label,
-      }));
-      dispatch(parcoursContactsAction.initContacts(contacts));
+      dispatch(parcoursContactsAction.initContacts(data));
     };
     sendRequest(
       {

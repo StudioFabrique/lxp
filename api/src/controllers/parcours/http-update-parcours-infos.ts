@@ -12,7 +12,7 @@ async function httpUpdateParcoursInfos(req: CustomRequest, res: Response) {
     if (!userId) {
       throw { message: noAccess, status: 403 };
     }
-    let { parcoursId, title, description, formation } = req.body;
+    let { parcoursId, title, description, formation, visibility } = req.body;
 
     title = customEscape(title);
     description = customEscape(description ?? "");
@@ -22,6 +22,7 @@ async function httpUpdateParcoursInfos(req: CustomRequest, res: Response) {
       title,
       description,
       +formation,
+      visibility,
       userId
     );
     if (response) {

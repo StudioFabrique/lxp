@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { alreadyExist, creationSuccessfull } from "../../utils/constantes";
-import createUser from "../../models/user/create-user";
 import { serverIssue } from "../../utils/constantes";
 import { IUser } from "../../utils/interfaces/db/user";
 import createManyGraduations from "../../models/graduation/create-many-graduations";
@@ -9,6 +8,7 @@ import { ILink } from "../../utils/interfaces/db/link";
 import { IHobby } from "../../utils/interfaces/db/hobby";
 import createManyLinks from "../../models/links/create-many-links";
 import createManyHobbies from "../../models/hobby/create-many-hobbies";
+import createUser from "../../models/user/create-user";
 
 export default async function httpCreateUser(req: Request, res: Response) {
   const userDataRequest: IUser = req.body;

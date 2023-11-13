@@ -40,7 +40,7 @@ export default async function createUser(user: IUser, roleId: string) {
       data: {
         idMdb: createdUser._id,
         name: `${createdUser.lastname} ${createdUser.firstname}`,
-        role: "teacher",
+        role: firstRole.label,
       },
     });
   }

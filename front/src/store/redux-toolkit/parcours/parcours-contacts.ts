@@ -61,12 +61,7 @@ const parcoursContactsSlice = createSlice({
     },
     addNewContact(state, action) {
       const user = action.payload;
-      state.initialContacts.push({
-        id: user.id,
-        idMdb: user._id,
-        name: `${user.firstname} ${user.lastname}`,
-        role: user.roles[0].label,
-      });
+      state.initialContacts.push(user);
       state.initialContacts = sortArray(state.initialContacts, "name");
     },
     reset(state) {

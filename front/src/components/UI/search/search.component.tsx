@@ -60,8 +60,6 @@ const Search: FC<{
     </>
   );
 
-  console.log(props.options[0].value);
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -82,14 +80,17 @@ const Search: FC<{
             <input
               className="input input-sm md:input-md input-bordered focus:outline-none join-item"
               type={searchType}
+              id="searchtype"
               placeholder="Recherche..."
               value={searchValue}
               onChange={handleSearchValueChange}
+              autoComplete="off"
             />
           ) : (
             <div>
               <select
                 className="select select-sm md:select-md select-bordered focus:outline-none join-item"
+                id="isactive"
                 onChange={handleSwitchValueChange}
               >
                 <option value="actif">Actif</option>
@@ -101,6 +102,7 @@ const Search: FC<{
       </div>
       <select
         className="select select-sm md:select-md select-bordered join-item font-normal"
+        id="typetosearch"
         onChange={handleTypeToSearchChange}
       >
         <option disabled defaultValue="">

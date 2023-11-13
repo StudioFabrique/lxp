@@ -38,6 +38,7 @@ import httpPutManyLessons from "../../../controllers/course/http-put-many-lesson
 import httpPutCourseDates from "../../../controllers/course/http-put-course-dates";
 import httpDeleteCourseDates from "../../../controllers/course/http-delete-courseDates";
 import httpPutCourseIsPublished from "../../../controllers/course/http-put-course-ispublished";
+import httpGetCourseDates from "../../../controllers/course/http-get-course-dates";
 
 const courseRouter = express.Router();
 
@@ -226,6 +227,14 @@ courseRouter.put(
   "/publish/:courseId",
   courseIdValidator,
   httpPutCourseIsPublished
+);
+
+// retourne la liste des plages de dates associées à un cours
+courseRouter.get(
+  "/dates/:courseId",
+  checkPermissions("role"),
+  courseIdValidator,
+  httpGetCourseDates
 );
 
 export default courseRouter;

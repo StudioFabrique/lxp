@@ -1,7 +1,7 @@
 import { prisma } from "../../utils/db";
 
 async function getParcours() {
-  const response = await prisma.parcours.findMany({
+  const parcoursList = await prisma.parcours.findMany({
     select: {
       id: true,
       title: true,
@@ -12,13 +12,24 @@ async function getParcours() {
       author: true,
       isPublished: true,
       visibility: true,
+      thumb: true,
     },
   });
 
-  if (!response) {
+  if (!parcoursList) {
     throw new Error(`Data not found.`);
   }
-  return response;
+  if (parcoursList) {
+    const response = parcoursList.map((parcours) => {
+      if (parcours.thumb instanceof Buffer) {
+        const base64thumb = parcours.thumb.toString("base64");
+        const result = { ...parcours, thumb: base64thumb };
+        return result;
+      }
+      return parcours;
+    });
+    return response;
+  }
 }
 
 export default getParcours;

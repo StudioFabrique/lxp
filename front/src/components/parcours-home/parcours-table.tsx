@@ -56,6 +56,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
               <td className="bg-transparent">
                 <input
                   type="checkbox"
+                  id={item.id!.toString()}
                   className="toggle toggle-primary disabled:toggle-primary disabled:opacity-100 disabled:cursor-default"
                   disabled
                   checked={item.visibility}
