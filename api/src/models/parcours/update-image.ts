@@ -1,31 +1,23 @@
 import { getAdmin } from "../../helpers/get-admin";
 import { prisma } from "../../utils/db";
 
-async function updateImage(
-  parcoursId: number,
-  image: any,
-  thumb: any,
-  userId: string
-) {
-  try {
-    const admin = await getAdmin(userId);
-    const result = await prisma.parcours.update({
-      where: {
-        id: parcoursId,
-        adminId: admin.id,
-      },
-      data: {
-        image,
-        thumb,
-      },
-    });
-    if (!result) {
-      throw { message: "Vous n'avez pas accès à cette ressource", status: 403 };
-    }
-    return result;
-  } catch (error) {
+async function updateImage(parcoursId: number, image: any, thumb: any) {
+  const result = await prisma.parcours.update({
+    where: {
+      id: parcoursId,
+    },
+    data: {
+      image,
+      thumb,
+    },
+  });
+  if (!result) {
+    const error = new Error("Le parcours n'existe pas");
+    (error as any).status = 404;
     throw error;
   }
+
+  return result;
 }
 
 export default updateImage;

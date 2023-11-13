@@ -70,6 +70,7 @@ const EditParcours = () => {
           title: data.title,
           description: data.description,
           isPublished: data.isPublished,
+          visibility: data.visibility,
         })
       );
       dispatch(

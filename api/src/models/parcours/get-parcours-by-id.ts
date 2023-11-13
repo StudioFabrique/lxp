@@ -16,6 +16,7 @@ async function getParcoursById(parcoursId: number /* , userId: string */) {
         image: true,
         virtualClass: true,
         isPublished: true,
+        visibility: true,
         formation: {
           select: {
             id: true,
