@@ -106,49 +106,24 @@ export const manyUsersValidator = [
 ];
 
 export const groupValidator = [
-  body("title")
-    .exists()
-    .isEmail()
-    .trim()
-    .escape()
-    .withMessage("email non conforme"),
-  body(["firstname", "lastname", "roleId"])
+  body(["data.group.name", "data.group.desc"])
     .exists()
     .notEmpty()
     .isString()
     .trim()
     .escape()
-    .withMessage("firstname ou lastname non conforme"),
+    .withMessage("titre (name) ou description (desc) non conforme"),
   body([
-    "nickname",
-    "description",
-    "address",
-    "city",
-    "links.*.url",
-    "links.*.alias",
-    "hobbies.*.title",
-    "graduations.*.title",
-    "graduations.*.degree",
+    "data.users.*.email",
+    "data.users.*.firstname",
+    "data.users.*.lastname",
   ])
+    .notEmpty()
     .isString()
     .trim()
     .escape()
-    .withMessage(
-      "nickname, description, address, city, links, hobbies ou graduations non conforme"
-    ),
-  body("postCode")
-    .custom(customPostalCodeValidation)
-    .trim()
-    .escape()
-    .withMessage("postCode non conforme"),
-  // body(["graduations.*.date", "birthDate"])
-  //   .isDate()
-  //   .trim()
-  //   .escape()
-  //   .withMessage("graduations ou birthDate non conforme"),
-  body(["hobbies", "graduations", "links"])
-    .isArray()
-    .withMessage("hobbies, graduations ou links non conforme"),
+    .withMessage("champs dans users non valides"),
+  body("data.users").isArray().withMessage("users n'est pas un Array"),
   checkValidatorResult,
 ];
 

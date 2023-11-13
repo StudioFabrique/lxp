@@ -41,8 +41,8 @@ groupRouter.get(
 groupRouter.post(
   "/",
   checkPermissions("group"),
-  groupValidator,
   fileUpload.single("image"),
+  groupValidator,
   httpCreateGroup
 );
 
