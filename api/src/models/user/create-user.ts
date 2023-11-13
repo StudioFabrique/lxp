@@ -7,30 +7,16 @@ export default async function createUser(user: IUser, roleId: string) {
   const userToFind = await User.findOne({
     email: user.email,
   });
+
   if (userToFind) {
     return null;
   }
 
-  let rolesToCheck = undefined;
+  const firstRole = await Role.findOne({ _id: roleId });
 
-  /* switch (userType) {
-    case 0:
-      rolesToCheck = { role: "student", rank: 3 };
-      break;
-    case 1:
-      rolesToCheck = { role: "teacher", rank: 2 };
-      break;
-    case 2:
-      rolesToCheck = { role: "mini-admin", rank: 1 };
-      break;
-    case 3:
-      rolesToCheck = { role: "visitor", rank: 3 };
-      break;
-    default:
-      return null;
-  } */
+  if (!firstRole) return null;
 
-  const firstRole = await Role.find({ _id: roleId });
+  console.log("role is not null");
 
   const createdUser = await User.create({
     email: user.email,
@@ -41,29 +27,22 @@ export default async function createUser(user: IUser, roleId: string) {
     roles: firstRole,
   });
 
-  if (firstRole[0].rank === 1) {
+  if (firstRole.rank === 1) {
+    // si type utilisateur en cours de création est "administrateur"
+    await prisma.admin.create({ data: { idMdb: createdUser._id } });
+  }
+
+  if (firstRole.rank === 2) {
     // si type utilisateur en cours de création est "formateur"
-    prisma.teacher.create({ data: { idMdb: createdUser._id } });
-    /**
-     * A virer si ça ne marche pas (reset Martin)
-     * ->
-     */
-    prisma.contact.create({
+    await prisma.teacher.create({ data: { idMdb: createdUser._id } });
+
+    await prisma.contact.create({
       data: {
         idMdb: createdUser._id,
         name: `${createdUser.lastname} ${createdUser.firstname}`,
         role: "teacher",
       },
     });
-    /**
-     * <-
-     * A virer si ça ne marche pas (reset Martin)
-     */
-  }
-
-  if (firstRole[0].rank === 3) {
-    // si type utilisateur en cours de création est "administrateur"
-    prisma.admin.create({ data: { idMdb: createdUser._id } });
   }
 
   return createdUser;

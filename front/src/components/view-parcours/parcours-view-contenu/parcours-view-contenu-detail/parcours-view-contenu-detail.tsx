@@ -1,9 +1,8 @@
 import SubWrapper from "../../../UI/sub-wrapper/sub-wrapper.component";
-import { colorStyle, colorStyleHover } from "../../../../config/colors";
 import Can from "../../../UI/can/can.component";
 import BookIcon from "../../../UI/svg/book-icon";
 import useHttp from "../../../../hooks/use-http";
-import { FC, MouseEvent, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Course from "../../../../utils/interfaces/course";
 import { sortArray } from "../../../../utils/sortArray";
 import EditIcon from "../../../UI/svg/edit-icon";
@@ -48,12 +47,12 @@ const ParcoursViewContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
       courses.map((course, i) => (
         <div
           key={course?.id}
-          className={`flex justify-between items-center bg-secondary p-4 rounded-lg ${colorStyle} ${colorStyleHover}`}
+          className="flex justify-between items-center bg-secondary p-4 rounded-lg"
         >
           <span className="w-14 h-14 mx-4">
             <BookIcon />
           </span>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center w-full px-2">
             <p className="self-start">{`Cours ${i + 1}`}</p>
             <div className="flex justify-between w-full">
               <p className="self-start text-xl font-bold">{course.title}</p>

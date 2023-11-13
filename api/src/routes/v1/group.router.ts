@@ -1,7 +1,11 @@
 import { Router } from "express";
 import httpCreateGroup from "../../controllers/group/http-create-group";
 import httpGetAllGroups from "../../controllers/group/http-get-all-groups";
-import { getAllValidator, searchValidator } from "../../middleware/validators";
+import {
+  getAllValidator,
+  groupValidator,
+  searchValidator,
+} from "../../middleware/validators";
 import httpSearchGroup from "../../controllers/group/http-search-group";
 import httpAddUser from "../../controllers/group/http-add-users-group";
 import fileUpload from "../../middleware/fileUpload";
@@ -37,8 +41,8 @@ groupRouter.get(
 groupRouter.post(
   "/",
   checkPermissions("group"),
-  // groupValidator,
   fileUpload.single("image"),
+  groupValidator,
   httpCreateGroup
 );
 
@@ -46,11 +50,6 @@ groupRouter.get("/users", checkPermissions("group"));
 
 groupRouter.post("/users", checkPermissions("group"), httpAddUser);
 
-groupRouter.post(
-  "/groups",
-  checkPermissions("group"),
-  // checkToken,
-  httpGetGroupsById
-);
+groupRouter.post("/groups", checkPermissions("group"), httpGetGroupsById);
 
 export default groupRouter;

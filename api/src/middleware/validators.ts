@@ -106,7 +106,24 @@ export const manyUsersValidator = [
 ];
 
 export const groupValidator = [
-  body(["group.name", "group.desc"]).isString().trim().escape(),
+  body(["data.group.name", "data.group.desc"])
+    .exists()
+    .notEmpty()
+    .isString()
+    .trim()
+    .escape()
+    .withMessage("titre (name) ou description (desc) non conforme"),
+  body([
+    "data.users.*.email",
+    "data.users.*.firstname",
+    "data.users.*.lastname",
+  ])
+    .notEmpty()
+    .isString()
+    .trim()
+    .escape()
+    .withMessage("champs dans users non valides"),
+  body("data.users").isArray().withMessage("users n'est pas un Array"),
   checkValidatorResult,
 ];
 
