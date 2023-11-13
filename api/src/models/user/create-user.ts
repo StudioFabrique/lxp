@@ -30,7 +30,11 @@ export default async function createUser(user: IUser, roleId: string) {
       return null;
   } */
 
-  const firstRole = await Role.find({ _id: roleId });
+  const firstRole = await Role.findOne({ _id: roleId });
+
+  if (!firstRole) return null;
+
+  console.log("role is not null");
 
   const createdUser = await User.create({
     email: user.email,
@@ -41,29 +45,22 @@ export default async function createUser(user: IUser, roleId: string) {
     roles: firstRole,
   });
 
-  if (firstRole[0].rank === 1) {
+  if (firstRole.rank === 1) {
     // si type utilisateur en cours de création est "administrateur"
-    prisma.admin.create({ data: { idMdb: createdUser._id } });
+    await prisma.admin.create({ data: { idMdb: createdUser._id } });
   }
 
-  if (firstRole[0].rank === 2) {
+  if (firstRole.rank === 2) {
     // si type utilisateur en cours de création est "formateur"
-    prisma.teacher.create({ data: { idMdb: createdUser._id } });
-    /**
-     * A virer si ça ne marche pas (reset Martin)
-     * ->
-     */
-    prisma.contact.create({
+    await prisma.teacher.create({ data: { idMdb: createdUser._id } });
+
+    await prisma.contact.create({
       data: {
         idMdb: createdUser._id,
         name: `${createdUser.lastname} ${createdUser.firstname}`,
         role: "teacher",
       },
     });
-    /**
-     * <-
-     * A virer si ça ne marche pas (reset Martin)
-     */
   }
 
   return createdUser;

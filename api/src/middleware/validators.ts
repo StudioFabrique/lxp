@@ -106,7 +106,49 @@ export const manyUsersValidator = [
 ];
 
 export const groupValidator = [
-  body(["group.name", "group.desc"]).isString().trim().escape(),
+  body("title")
+    .exists()
+    .isEmail()
+    .trim()
+    .escape()
+    .withMessage("email non conforme"),
+  body(["firstname", "lastname", "roleId"])
+    .exists()
+    .notEmpty()
+    .isString()
+    .trim()
+    .escape()
+    .withMessage("firstname ou lastname non conforme"),
+  body([
+    "nickname",
+    "description",
+    "address",
+    "city",
+    "links.*.url",
+    "links.*.alias",
+    "hobbies.*.title",
+    "graduations.*.title",
+    "graduations.*.degree",
+  ])
+    .isString()
+    .trim()
+    .escape()
+    .withMessage(
+      "nickname, description, address, city, links, hobbies ou graduations non conforme"
+    ),
+  body("postCode")
+    .custom(customPostalCodeValidation)
+    .trim()
+    .escape()
+    .withMessage("postCode non conforme"),
+  // body(["graduations.*.date", "birthDate"])
+  //   .isDate()
+  //   .trim()
+  //   .escape()
+  //   .withMessage("graduations ou birthDate non conforme"),
+  body(["hobbies", "graduations", "links"])
+    .isArray()
+    .withMessage("hobbies, graduations ou links non conforme"),
   checkValidatorResult,
 ];
 
