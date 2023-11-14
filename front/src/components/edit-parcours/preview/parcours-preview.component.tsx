@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 
 import ParcoursPreviewInfos from "./parcours-preview-infos.component";
