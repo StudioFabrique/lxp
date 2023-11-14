@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC } from "react";
 import { Link } from "react-router-dom";
 
@@ -24,8 +25,11 @@ const UserItem: FC<{
     updateStatus();
   };
 
+  console.log(userItem);
+
   const updateStatus = () => {
-    const applyData = (data: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const applyData = (_data: any) => {
       console.log("Mise à jour réussie!");
     };
     sendRequest(
@@ -49,7 +53,7 @@ const UserItem: FC<{
         />
       </td>
       <td className="bg-transparent">
-        <AvatarSmall url={userItem.avatar} />
+        <AvatarSmall url={`data:image/jpeg;base64,${userItem.avatar}`} />
       </td>
       <td className="bg-transparent">{toTitleCase(userItem.firstname)}</td>
       <td className="bg-transparent">{toTitleCase(userItem.lastname)}</td>

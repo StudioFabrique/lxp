@@ -23,7 +23,7 @@ async function getUsersByRole(
     return false;
   }
 
-  const users = await User.find(
+  const data = await User.find(
     { roles: { $in: fetchedRoles } },
     { password: 0 }
   )
@@ -32,6 +32,18 @@ async function getUsersByRole(
     .skip(getPagination(page, limit))
     .limit(limit);
   const total = await User.count({ roles: { $in: fetchedRoles } });
+
+  console.log({ data });
+
+  const users = data.map((user) => {
+    if (user.avatar) {
+      return { ...user, avatar: user.avatar.toString("base64") };
+    } else {
+      return user;
+    }
+  });
+  console.log({ users });
+
   return { total, users };
 }
 export default getUsersByRole;
