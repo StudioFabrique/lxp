@@ -1,10 +1,11 @@
-import { Dispatch, FC, SetStateAction } from "react";
+import { Dispatch, FC, SetStateAction, useContext } from "react";
 import { IRoleItem, IRoleToEdit } from "../../../views/role/role";
 import { sumPropertiesAsNumber } from "../../../utils/object-properties-calculation";
 import EditIcon from "../../UI/svg/edit-icon";
 import DeleteIcon from "../../UI/svg/delete-icon.component";
 import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
+import { Context } from "../../../store/context.store";
 
 const RoleItem: FC<{
   role: IRoleItem;
@@ -12,6 +13,8 @@ const RoleItem: FC<{
   setRoleToEdit: Dispatch<SetStateAction<IRoleToEdit | null>>;
   setCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
 }> = ({ role, setRoles, setRoleToEdit, setCurrentRole }) => {
+  const { defineRulesFor, fetchRoles, user } = useContext(Context);
+
   const { sendRequest, isLoading } = useHttp(true);
 
   const handleEditRole = () => {
@@ -30,6 +33,8 @@ const RoleItem: FC<{
       setRoles((roles) =>
         roles.filter((currentRole) => role.role !== currentRole.role)
       );
+      fetchRoles(user!.roles[0]);
+      defineRulesFor();
       toast.success("Rôle supprimé avec succès");
     };
 
@@ -50,10 +55,12 @@ const RoleItem: FC<{
         />
       </td>
       <td className="capitalize">
-        <div
-          data-tip={role.role}
-          className="w-10 h-10 tooltip tooltip-bottom absolute"
-        />
+        <div className="relative">
+          <span
+            data-tip={role.role}
+            className="w-10 h-10 tooltip tooltip-bottom absolute"
+          />
+        </div>
         <div className="truncate">
           <p>{role.role}</p>
         </div>
