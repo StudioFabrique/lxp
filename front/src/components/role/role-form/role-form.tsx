@@ -24,7 +24,7 @@ const RoleCreateForm: FC<{
   setRoleToEdit: Dispatch<SetStateAction<IRoleToEdit | null>>;
   setCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
 }> = ({ roleToEdit, setRoles, setRoleToEdit, setCurrentRole }) => {
-  const { fetchRoles, user } = useContext(Context);
+  const { defineRulesFor, fetchRoles, user } = useContext(Context);
   const { sendRequest, isLoading: isRequestLoading } = useHttp(true);
 
   const [isActive, SetActive] = useState(false);
@@ -56,6 +56,7 @@ const RoleCreateForm: FC<{
       setRoles((currentRoles) => [...currentRoles, newRole]);
       setCurrentRole(newRole);
       cancelForm();
+      defineRulesFor();
       toast.success(data.message);
     };
 
@@ -75,6 +76,8 @@ const RoleCreateForm: FC<{
         })
       );
       cancelForm();
+      fetchRoles(user!.roles[0]);
+      defineRulesFor();
       toast.success(data.message);
     };
 
