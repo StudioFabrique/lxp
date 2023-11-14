@@ -15,7 +15,7 @@ export async function putRole(
       { role, label, rank, isActive }
     );
 
-    if (!!permissions)
+    if (Boolean(permissions))
       for (const permission of permissions) {
         await Permission.updateOne(
           { role: oldRole?.role, action: permission.action },
@@ -23,7 +23,8 @@ export async function putRole(
         );
       }
 
-    if (!!role) await Permission.updateMany({ role: oldRole?.role }, { role });
+    if (Boolean(role))
+      await Permission.updateMany({ role: oldRole?.role }, { role });
 
     const roleUpdated = await Role.findOne({ _id: idRole });
 

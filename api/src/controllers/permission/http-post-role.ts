@@ -3,6 +3,7 @@ import { postRole } from "../../models/role/post-role";
 import getRole from "../../models/role/get-role";
 import { serverIssue } from "../../utils/constantes";
 import CreatePermission from "../../models/permission/create-permission";
+import Role from "../../utils/interfaces/db/role";
 
 export default async function httpPostRole(req: Request, res: Response) {
   try {
@@ -30,8 +31,11 @@ export default async function httpPostRole(req: Request, res: Response) {
       return res.status(400).json({ message: "Le rôle existe déjà" });
     }
 
-    for (const action of ["read", "write", "update", "delete"])
-      await CreatePermission(createdRole.role, rank, action);
+    const adminsRoles = await Role.find({ rank: 1 });
+
+    for (const action of ["read", "write", "update", "delete"]) {
+      await CreatePermission(createdRole.role, rank, action, adminsRoles);
+    }
 
     const response = await getRole(createdRole.role);
 
