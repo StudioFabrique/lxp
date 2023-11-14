@@ -289,7 +289,7 @@ const EditParcours = () => {
       };
       sendRequest(
         {
-          path: `/parcours/publish/${1}`,
+          path: `/parcours/publish/${id}`,
           method: "put",
         },
         applyData
