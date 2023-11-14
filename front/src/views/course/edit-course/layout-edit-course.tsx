@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -28,11 +29,11 @@ const LayoutCourseEdit = () => {
    */
   useEffect(() => {
     const applyData = (data: any) => {
+      setLoading(false);
       const loadedCourse = formatCourseFromHttp(data);
       dispatch(courseInfosAction.setCourse(loadedCourse));
-      setLoading(false);
     };
-    setLoading(true);
+    //setLoading(true);
     sendRequest(
       {
         path: `/course/infos/${courseId}`,
@@ -49,6 +50,7 @@ const LayoutCourseEdit = () => {
    */
   useEffect(() => {
     if (error.length > 0) {
+      setLoading(false);
       toast.error(error);
     }
   }, [error]);
