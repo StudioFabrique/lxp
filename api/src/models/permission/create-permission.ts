@@ -1,25 +1,21 @@
 import Permission from "../../utils/interfaces/db/permission";
-import Role from "../../utils/interfaces/db/role";
+import Role, { IRole } from "../../utils/interfaces/db/role";
 import { ressourcesRbacByRank } from "../../utils/ressources-rbac";
 
 export default async function CreatePermission(
   role: string,
   rank: number,
-  action: string
+  action: string,
+  duplicateForAdmins?: IRole[]
 ) {
-  console.log({ role }, { rank }, { action });
-
   const ressources = async () => {
     switch (rank) {
       case 1:
-        console.log("rank 1 passed");
-
         return [
           ...ressourcesRbacByRank[rank],
           ...(await Role.find()).map((role) => role.role),
         ];
       case 2:
-        console.log("rank 2 passed");
         return [
           ...ressourcesRbacByRank[rank],
           ...(action === "read"
@@ -27,13 +23,10 @@ export default async function CreatePermission(
             : []),
         ];
       case 3:
-        console.log("rank 3 passed");
         return action === "read" ? [...ressourcesRbacByRank[rank]] : [];
       case 4:
-        console.log("rank 4 passed");
         return [];
       default:
-        console.log("rank no passed");
         return [];
     }
   };
@@ -43,4 +36,13 @@ export default async function CreatePermission(
     action: action,
     ressources: await ressources(),
   });
+
+  if (duplicateForAdmins)
+    for (const adminRole of duplicateForAdmins)
+      await Permission.updateMany(
+        { role: adminRole.role, action: action },
+        {
+          $push: { ressources: role },
+        }
+      );
 }
