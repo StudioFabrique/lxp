@@ -15,7 +15,10 @@ const courseInfosSlice = createSlice({
   initialState: initialCourseInfosState,
   reducers: {
     setCourse(state, action) {
+      console.log("payload", action.payload);
+
       state.course = action.payload;
+      console.log("state", state.course);
     },
     setCourseInfos(state, action) {
       if (state.course) {

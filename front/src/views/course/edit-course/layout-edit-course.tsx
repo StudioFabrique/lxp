@@ -9,10 +9,10 @@ import useHttp from "../../../hooks/use-http";
 import FadeWrapper from "../../../components/UI/fade-wrapper/fade-wrapper";
 import { courseInfosAction } from "../../../store/redux-toolkit/course/course-infos";
 import formatCourseFromHttp from "../../../helpers/course/course-infos-from-http";
-import Course from "../../../utils/interfaces/course";
 import Loader from "../../../components/UI/loader";
 import ImageHeader from "../../../components/image-header";
 import BookIcon from "../../../components/UI/svg/book-icon";
+import Course from "../../../utils/interfaces/course";
 
 const LayoutCourseEdit = () => {
   const { sendRequest, error } = useHttp();
@@ -30,10 +30,12 @@ const LayoutCourseEdit = () => {
   useEffect(() => {
     const applyData = (data: any) => {
       setLoading(false);
+      console.log({ data });
+
       const loadedCourse = formatCourseFromHttp(data);
       dispatch(courseInfosAction.setCourse(loadedCourse));
     };
-    //setLoading(true);
+    setLoading(true);
     sendRequest(
       {
         path: `/course/infos/${courseId}`,
@@ -54,6 +56,8 @@ const LayoutCourseEdit = () => {
       toast.error(error);
     }
   }, [error]);
+
+  console.log({ course });
 
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
