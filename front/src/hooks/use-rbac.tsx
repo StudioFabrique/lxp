@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect } from "react";
 import Role from "../utils/interfaces/role";
 import useHttp from "./use-http";

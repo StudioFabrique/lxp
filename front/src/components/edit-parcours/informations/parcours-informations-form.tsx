@@ -8,6 +8,7 @@ import useInput from "../../../hooks/use-input";
 import { regexGeneric, regexOptionalGeneric } from "../../../utils/constantes";
 import { parcoursInformationsAction } from "../../../store/redux-toolkit/parcours/parcours-informations";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
+import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
 
 type Props = {
   parcoursId?: string;
@@ -123,18 +124,8 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
         {formation && parcoursInfos.title ? (
           <>
             <div className="flex flex-col gap-y-4">
-              <label className="font-bold" htmlFor="formation">
-                Formation
-              </label>
-              <input
-                className="input input-sm input-bordered focus:outline-none w-full"
-                id="formation"
-                name="formation"
-                type="formation"
-                readOnly={true}
-                disabled={true}
-                value={formation.title}
-              />
+              <h2 className="font-bold">Formation</h2>
+              <SubWrapper>{formation.title}</SubWrapper>
             </div>
             <form className="w-full flex flex-col gap-y-8 mt-8">
               <div className="flex flex-col gap-y-4">
@@ -169,18 +160,8 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
               </div>
 
               <div className="flex flex-col gap-y-4">
-                <label className="font-bold" htmlFor="level">
-                  Niveau du parcours
-                </label>
-                <input
-                  className="input input-sm input-bordered focus:outline-none w-full"
-                  id="level"
-                  name="level"
-                  type="level"
-                  readOnly={true}
-                  disabled={true}
-                  value={formation.level}
-                />
+                <h2 className="font-bold">Niveau du parcours</h2>
+                <SubWrapper>{formation.level}</SubWrapper>
               </div>
 
               <div className="form-control w-fit">
