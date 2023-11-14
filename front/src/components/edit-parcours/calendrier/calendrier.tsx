@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * MADE IN MARTIN
  */
@@ -30,8 +31,6 @@ const Calendrier = () => {
     startDate: new Date(parcoursInfos.startDate),
     endDate: new Date(parcoursInfos.endDate),
   };
-
-  console.log({ module });
 
   useEffect(() => {
     dispatch(
