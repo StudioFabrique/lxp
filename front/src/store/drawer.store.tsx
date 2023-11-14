@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, useState, ReactNode, useCallback } from "react";
 
 type DrawerContextProps = {
