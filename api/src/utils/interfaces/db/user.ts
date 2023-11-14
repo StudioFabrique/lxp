@@ -10,7 +10,7 @@ export interface IUser extends Document {
   firstname: string;
   lastname: string;
   password?: string;
-  avatar?: string;
+  avatar?: Buffer;
   isActive: boolean;
   nickname?: string;
   address?: string;
@@ -33,7 +33,7 @@ const userSchema: Schema = new Schema(
     firstname: { type: String, required: true },
     lastname: { type: String, required: true },
     password: { type: String, require: false },
-    avatar: { type: String, required: false },
+    avatar: { type: Buffer, required: false },
     isActive: { type: Boolean, required: true },
     nickname: { type: String, required: false },
     address: { type: String, required: false },

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import React, { FormEvent, useState } from "react";
 import toast from "react-hot-toast";
@@ -154,7 +155,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
       event.preventDefault();
 
       if (formIsValid) {
-        let module = {
+        const module = {
           formationId: parcours.formation.id,
           id: currentModule ? +currentModule.id : undefined,
           title: title.value,
