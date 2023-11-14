@@ -23,7 +23,6 @@ import EditCourseHome from "./views/course/edit-course/edit-course-home";
 import AddCourse from "./views/course/add-course";
 import LayoutCourseEdit from "./views/course/edit-course/layout-edit-course";
 import Role from "./views/role/role";
-import { Toaster } from "react-hot-toast";
 
 const router = createBrowserRouter([
   {
@@ -114,7 +113,6 @@ const router = createBrowserRouter([
 function App() {
   return (
     <ContextProvider>
-      <Toaster />
       <RouterProvider router={router}></RouterProvider>
     </ContextProvider>
   );
