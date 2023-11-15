@@ -1,6 +1,6 @@
 import { prisma } from "../../utils/db";
 
-async function postModule(data: any, thumb: string, image: any) {
+async function postModule(data: any, thumb: any, image: any) {
   const moduleToAdd = JSON.parse(data);
   const existingParcours = await prisma.formation.findFirst({
     where: { id: moduleToAdd.formationId },

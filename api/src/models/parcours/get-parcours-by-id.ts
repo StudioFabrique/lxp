@@ -76,14 +76,23 @@ async function getParcoursById(parcoursId: number /* , userId: string */) {
         admin: { select: { id: true, idMdb: true } },
       },
     });
-
+    let result: any = parcours;
     if (parcours) {
       if (parcours.image instanceof Buffer) {
         const base64Image = parcours.image.toString("base64");
-        const result = { ...parcours, image: base64Image };
+        result = { ...result, image: base64Image };
+      }
+      if (parcours.modules) {
+        const updatedModules = parcours.modules.map((item: any) => ({
+          ...item,
+          module: {
+            ...item.module,
+            thumb: item.module.thumb.toString("base64"),
+          },
+        }));
+        result = { ...result, modules: updatedModules };
         return result;
       }
-
       return parcours;
     }
     throw { message: "Vous n'avez pas accès à cette ressource", status: 403 };
