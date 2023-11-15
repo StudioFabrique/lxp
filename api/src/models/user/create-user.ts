@@ -12,6 +12,8 @@ export default async function createUser(user: IUser, roleId: string) {
     return null;
   }
 
+  console.log({ user });
+
   const firstRole = await Role.findOne({ _id: roleId });
 
   if (!firstRole) return null;
@@ -24,6 +26,7 @@ export default async function createUser(user: IUser, roleId: string) {
     lastname: user.lastname,
     password: await hash("Abcdef@123456", 10), // A enlever par la suite !
     isActive: false,
+    avatar: user.avatar,
     roles: firstRole,
   });
 
@@ -44,6 +47,8 @@ export default async function createUser(user: IUser, roleId: string) {
       },
     });
   }
+
+  console.log("createduser", createdUser);
 
   return createdUser;
 }
