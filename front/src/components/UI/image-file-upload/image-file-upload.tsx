@@ -52,7 +52,7 @@ const ImageFileUpload: FC<{
       <span className="flex w-full items-center">
         <p
           onClick={handleSetFile}
-          className="flex justify-center items-center cursor-pointer bg-primary-focus text-neutral text-center text-xs lg:text-sm p-2 rounded-l-lg w-[50%] h-10"
+          className="flex justify-center items-center cursor-pointer bg-primary font-bold text-neutral text-center text-xs lg:text-sm p-2 rounded-l-lg w-[50%] h-10"
         >
           Choisir un fichier
         </p>

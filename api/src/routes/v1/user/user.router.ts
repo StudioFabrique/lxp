@@ -1,11 +1,12 @@
 import express from "express";
 import { body, param, query } from "express-validator";
+import path from "path";
 
 import {
   getAllByRankValidator,
   getAllValidator,
   manyUsersValidator,
-  userValidator,
+  //userValidator,
 } from "../../../middleware/validators";
 import httpCreateUser from "../../../controllers/user/http-create-user";
 import httpUpdateUserRoles from "../../../controllers/user/http-update-user-roles";
@@ -20,8 +21,26 @@ import httpCreateManyUser from "../../../controllers/user/http-create-many-users
 import httpGetUsersByGroup from "../../../controllers/user/http-get-users-by-group";
 import checkPermissions from "../../../middleware/check-permissions";
 import httpGetUsersByRank from "../../../controllers/user/http-get-users-by-rank";
+import multer from "multer";
 
 const userRouter = express.Router();
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "..", "..", "..", "..", "uploads"));
+  },
+  filename: function (req, file, cb) {
+    if (file.mimetype.startsWith("image")) {
+      const newFileName =
+        Date.now() + "-" + Math.round(Math.random() * 1e9) + file.originalname;
+      cb(null, file.fieldname + "-" + newFileName);
+    } else {
+      return;
+    }
+  },
+});
+
+const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 
 // TODO: VALIDATORS
 userRouter.put(
@@ -86,7 +105,13 @@ userRouter.put(
   httpUpdateUserRoles
 );
 
-userRouter.post("/", checkPermissions("user"), userValidator, httpCreateUser);
+userRouter.post(
+  "/",
+  checkPermissions("user"),
+  upload.single("image"),
+  //userValidator,
+  httpCreateUser
+);
 
 userRouter.post(
   "/many",

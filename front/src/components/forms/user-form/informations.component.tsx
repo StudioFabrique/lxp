@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC } from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import { headerImageMaxSize } from "../../../config/images-sizes";

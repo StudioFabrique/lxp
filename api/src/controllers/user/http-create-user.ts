@@ -1,5 +1,10 @@
 import { Request, Response } from "express";
-import { alreadyExist, creationSuccessfull } from "../../utils/constantes";
+import fs from "fs";
+import {
+  alreadyExist,
+  badQuery,
+  creationSuccessfull,
+} from "../../utils/constantes";
 import { serverIssue } from "../../utils/constantes";
 import { IUser } from "../../utils/interfaces/db/user";
 import createManyGraduations from "../../models/graduation/create-many-graduations";
@@ -11,12 +16,14 @@ import createManyHobbies from "../../models/hobby/create-many-hobbies";
 import createUser from "../../models/user/create-user";
 
 export default async function httpCreateUser(req: Request, res: Response) {
-  const userDataRequest: IUser = req.body;
+  let userDataRequest = JSON.parse(req.body.user);
   const graduationsDataRequest: IGraduation[] | undefined =
     userDataRequest.graduations;
+  console.log("toto", userDataRequest.roleId);
   const linksDataRequest: ILink[] | undefined = userDataRequest.links;
   const hobbiesDataRequest: IHobby[] | undefined = userDataRequest.hobbies;
-  const { roleId } = req.body;
+  const { roleId } = userDataRequest;
+  const uploadedFile = req.file;
 
   console.log(graduationsDataRequest);
   console.log(hobbiesDataRequest);
@@ -26,9 +33,17 @@ export default async function httpCreateUser(req: Request, res: Response) {
   console.log(linksDataRequest ?? "no links data");
   console.log(hobbiesDataRequest ?? "no hobbies data");
 
+  console.log({ roleId });
+
   try {
-    if (!graduationsDataRequest || !linksDataRequest || !hobbiesDataRequest)
-      return res.status(404).send({ message: "problème requêtes" });
+    if (uploadedFile) {
+      const avatar = await fs.promises.readFile(uploadedFile.path);
+      userDataRequest = { ...userDataRequest, avatar };
+    }
+
+    if (!graduationsDataRequest || !linksDataRequest || !hobbiesDataRequest) {
+      return res.status(404).send({ message: badQuery });
+    }
 
     const userResponse = await createUser(userDataRequest, roleId); // crée un user + insert une référence mongodb dans prisma si le type utilisateur le permet
 
@@ -41,6 +56,10 @@ export default async function httpCreateUser(req: Request, res: Response) {
     await createManyLinks(userResponse!._id, linksDataRequest); // insert links in mongodb with user ref _id
 
     await createManyHobbies(userResponse!._id, hobbiesDataRequest); // insert hobbies in mongodb with user ref _id
+
+    if (uploadedFile) {
+      await fs.promises.unlink(uploadedFile.path);
+    }
 
     return res.status(201).json({ message: creationSuccessfull });
   } catch (e) {

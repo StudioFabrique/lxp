@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useState } from "react";
 import useInput from "../../../hooks/use-input";
 import {
@@ -94,8 +95,10 @@ const UserAddForm: FC<{
     (description.isValid || !description); */
 
   const handleSubmit = () => {
+    console.log("validating...");
+
     if (formIsValid) {
-      props.onSubmitForm({
+      const newUser = {
         email: email.value.trim(),
         firstname: firstname.value.trim(),
         lastname: lastname.value.trim(),
@@ -106,11 +109,16 @@ const UserAddForm: FC<{
         city: city.value.trim(),
         birthDate,
         graduations,
-        avatar: file,
         roleId,
         links,
         hobbies,
-      });
+      };
+      const formData = new FormData();
+      formData.append("user", JSON.stringify(newUser));
+      if (file) {
+        formData.append("image", file);
+      }
+      props.onSubmitForm(formData);
     }
   };
 
