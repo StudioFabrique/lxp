@@ -16,7 +16,7 @@ const UserItem: FC<{
   onDelete: (id: string) => void;
   isUserDeleteLoading: boolean;
   error?: string;
-}> = ({ userItem, onRowCheck, onDelete, isUserDeleteLoading, error }) => {
+}> = ({ userItem, onRowCheck, /* onDelete, */ isUserDeleteLoading, error }) => {
   //const [isActive, setIsActive] = useState<boolean>(userItem.isActive);
   const { isLoading, sendRequest } = useHttp();
 
@@ -25,12 +25,10 @@ const UserItem: FC<{
     updateStatus();
   };
 
-  console.log(userItem);
-
   const updateStatus = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const applyData = (_data: any) => {
-      console.log("Mise à jour réussie!");
+      console.log("Mise à jour réussie !");
     };
     sendRequest(
       {
@@ -53,7 +51,13 @@ const UserItem: FC<{
         />
       </td>
       <td className="bg-transparent">
-        <AvatarSmall url={`data:image/jpeg;base64,${userItem.avatar}`} />
+        <AvatarSmall
+          url={
+            userItem.avatar
+              ? `data:image/jpeg;base64,${userItem.avatar}`
+              : undefined
+          }
+        />
       </td>
       <td className="bg-transparent">{toTitleCase(userItem.firstname)}</td>
       <td className="bg-transparent">{toTitleCase(userItem.lastname)}</td>

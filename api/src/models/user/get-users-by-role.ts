@@ -33,16 +33,14 @@ async function getUsersByRole(
     .limit(limit);
   const total = await User.count({ roles: { $in: fetchedRoles } });
 
-  console.log({ data });
-
-  const users = data.map((user) => {
+  const users = data.map((item) => {
+    let user = item.toObject();
     if (user.avatar) {
       return { ...user, avatar: user.avatar.toString("base64") };
     } else {
-      return user;
+      return { ...user };
     }
   });
-  console.log({ users });
 
   return { total, users };
 }

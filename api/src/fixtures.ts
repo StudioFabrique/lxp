@@ -59,7 +59,7 @@ async function createUser() {
     password: hash,
     roles: [new Object(role!._id)],
     isActive: true,
-    avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
+    //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
   await newUser.save();
   robotIndex++;
@@ -75,7 +75,7 @@ async function createUser() {
     password: hash,
     roles: [new Object(role2!._id)],
     isActive: true,
-    avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
+    //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
   await newTeacher.save();
   robotIndex++;
@@ -91,7 +91,7 @@ async function createUser() {
     password: hash,
     roles: [new Object(role!._id)],
     isActive: true,
-    avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
+    //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
   await newStudent.save();
   robotIndex++;
@@ -116,7 +116,7 @@ async function createManyAdmins() {
       city: cityName,
       roles: [new Object(role!._id)],
       isActive: true,
-      avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
+      //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });
     userList.push(user);
     robotIndex++;
@@ -157,7 +157,7 @@ async function createManyTeachers() {
       city: cityName,
       roles: [new Object(role!._id)],
       isActive: true,
-      avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
+      //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });
     userList.push(user);
     robotIndex++;
@@ -184,7 +184,7 @@ async function createManyStudents() {
       city: cityName,
       roles: [new Object(role!._id)],
       isActive: true,
-      avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
+      //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });
     userList.push(user);
     robotIndex++;
@@ -211,7 +211,7 @@ async function createManyCoach() {
       city: cityName,
       roles: [new Object(role!._id)],
       isActive: getRandomNumber(0, 1) === 0,
-      avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
+      //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });
     userList.push(user);
     robotIndex++;
