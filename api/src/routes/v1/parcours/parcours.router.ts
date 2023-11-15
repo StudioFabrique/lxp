@@ -27,9 +27,9 @@ import httpPutParcoursContacts from "../../../controllers/parcours/http-put-parc
 import httpPutParcoursGroups from "../../../controllers/parcours/http-put-parcours-groups";
 import httpPublishParcours from "../../../controllers/parcours/http-publish-parcours";
 import checkPermissions from "../../../middleware/check-permissions";
-import { maxHeaderSize } from "http";
 import { createFileUploadMiddleware } from "../../../middleware/fileUpload";
 import httpUpdateImage from "../../../controllers/parcours/http-update-image";
+import { headerImageMaxSize } from "../../../config/images-sizes";
 
 const parcoursRouter = express.Router();
 parcoursRouter.get("/", checkPermissions("parcours"), httpGetParcours);
@@ -104,9 +104,9 @@ parcoursRouter.put(
   httpPutReorderObjectives
 );
 parcoursRouter.put(
-  "/update-image",
+  "/update-image/:parcoursId",
   checkPermissions("parcours"),
-  createFileUploadMiddleware(maxHeaderSize),
+  createFileUploadMiddleware(headerImageMaxSize),
   parcoursIdValidator,
   httpUpdateImage
 );

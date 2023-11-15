@@ -204,7 +204,7 @@ const EditParcours = () => {
       const processData = (_data: any) => {};
       sendRequest(
         {
-          path: "/parcours/update-image",
+          path: `/parcours/update-image/${id}`,
           method: "put",
           body: formData,
         },
