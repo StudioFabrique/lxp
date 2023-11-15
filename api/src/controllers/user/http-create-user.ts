@@ -6,7 +6,6 @@ import {
   creationSuccessfull,
 } from "../../utils/constantes";
 import { serverIssue } from "../../utils/constantes";
-import { IUser } from "../../utils/interfaces/db/user";
 import createManyGraduations from "../../models/graduation/create-many-graduations";
 import { IGraduation } from "../../utils/interfaces/db/graduation";
 import { ILink } from "../../utils/interfaces/db/link";

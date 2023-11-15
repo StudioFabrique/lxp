@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import useHttp from "../../hooks/use-http";
 import GroupAddForm from "../../components/forms/group-form/group-add-form.component";
 import GroupUserList from "../../components/lists/group-add-user-list/group-user-list.component";
@@ -11,7 +12,8 @@ const GroupAdd = () => {
   const [usersToAdd, setUsersToAdd] = useState<Array<User>>([]);
 
   const handleSubmit = (data: any, file: File) => {
-    const applyData = (data: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const applyData = (_data: any) => {
       navigate("/admin/group", {
         state: { toastFrom: "Groupe créé avec succès" },
       });
