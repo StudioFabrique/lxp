@@ -9,7 +9,7 @@ export interface IGroup extends Document {
   users?: IUser["_id"];
   tags?: ITag["_id"];
   roles: IRole["_id"];
-  image: string;
+  image: Buffer;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -28,7 +28,7 @@ const groupSchema: Schema = new Schema(
       ref: "Role",
       required: true,
     },
-    image: { type: Schema.Types.String, required: false },
+    image: { type: Buffer, required: false },
   },
   { timestamps: true }
 );

@@ -8,11 +8,15 @@ import {
 } from "../../utils/constantes";
 import { IUser } from "../../utils/interfaces/db/user";
 import updateManyUsers from "../../models/user/update-many-users";
-import { getBase64ImageFromReq } from "../../middleware/fileUpload";
+import {
+  deleteTempUploadedFile,
+  getBase64ImageFromReq,
+} from "../../middleware/fileUpload";
+import fs from "fs";
 
 export default async function httpCreateGroup(req: Request, res: Response) {
   const body = JSON.parse(req.body.data);
-  const image = await getBase64ImageFromReq(req);
+  const uploadedFile = req.file;
 
   const {
     group,
@@ -24,10 +28,15 @@ export default async function httpCreateGroup(req: Request, res: Response) {
     parcoursId: number;
   } = body;
 
+  let image: any;
+
   try {
+    if (!!uploadedFile) {
+      image = await fs.promises.readFile(uploadedFile.path);
+    }
     const response = await createGroup(group, users, image, parcoursId);
 
-    console.log(response);
+    //console.log(response);
 
     const usersToUpdate = users.map((user) => {
       user.group?.push(response);
@@ -36,6 +45,7 @@ export default async function httpCreateGroup(req: Request, res: Response) {
 
     await updateManyUsers(usersToUpdate);
 
+    await deleteTempUploadedFile(req);
     if (response) {
       return res.status(201).json({ message: creationSuccessfull });
     }
@@ -43,6 +53,7 @@ export default async function httpCreateGroup(req: Request, res: Response) {
   } catch (e) {
     console.log(e);
 
+    await deleteTempUploadedFile(req);
     return res.status(500).json({ message: serverIssue + e });
   }
 }
