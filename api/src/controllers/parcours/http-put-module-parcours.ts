@@ -4,7 +4,6 @@ import putModuleParcours from "../../models/parcours/putModuleParcours";
 
 async function httpPutModuleParcours(req: Request, res: Response) {
   const { module, thumb } = req.body;
-  console.log(req.body);
 
   const uploadedFile: any = req.file;
 

@@ -1,5 +1,6 @@
 import React, { ChangeEvent, FC, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { maxSizeError } from "../../../helpers/max-size-error";
 
 const allowedExtensions = /(\.jpeg|\.jpg|\.png|\.gif|\.webp)$/i;
 
@@ -24,11 +25,7 @@ const ImageFileUpload: FC<{
           return;
         }
         if (selectedFile.size > maxSize) {
-          toast.error(
-            `La taille du fichier doit être inférieure à ${
-              maxSize / (1024 * 1024)
-            } mo`
-          );
+          toast.error(maxSizeError(maxSize));
           return;
         }
         setFileName(selectedFile.name);
@@ -52,7 +49,7 @@ const ImageFileUpload: FC<{
       <span className="flex w-full items-center">
         <p
           onClick={handleSetFile}
-          className="flex justify-center items-center cursor-pointer bg-primary font-bold text-neutral text-center text-xs lg:text-sm p-2 rounded-l-lg w-[50%] h-10"
+          className="flex justify-center items-center cursor-pointer bg-primary text-neutral text-center text-xs lg:text-sm p-2 rounded-l-lg w-[50%] h-10"
         >
           Choisir un fichier
         </p>

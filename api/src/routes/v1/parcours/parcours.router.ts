@@ -4,7 +4,6 @@ import { body } from "express-validator";
 import httpGetParcours from "../../../controllers/parcours/http-get-parcours";
 import httpDeleteParcoursById from "../../../controllers/parcours/http-delete-parcours-by-id";
 import httpCreateParcours from "../../../controllers/parcours/http-create-parcours";
-import putUpdateImageRouter from "./put-update-image";
 import httpPutVirtualClass from "../../../controllers/parcours/http-put-virtual-class";
 import httpPutParcoursObjectives from "../../../controllers/parcours/http-put-parcours-objectives";
 import httpPutReorderObjectives from "../../../controllers/parcours/http-put-reorder-objectives";
@@ -27,6 +26,9 @@ import httpPutParcoursContacts from "../../../controllers/parcours/http-put-parc
 import httpPutParcoursGroups from "../../../controllers/parcours/http-put-parcours-groups";
 import httpPublishParcours from "../../../controllers/parcours/http-publish-parcours";
 import checkPermissions from "../../../middleware/check-permissions";
+import { createFileUploadMiddleware } from "../../../middleware/fileUpload";
+import httpUpdateImage from "../../../controllers/parcours/http-update-image";
+import { headerImageMaxSize } from "../../../config/images-sizes";
 
 const parcoursRouter = express.Router();
 parcoursRouter.get("/", checkPermissions("parcours"), httpGetParcours);
@@ -100,18 +102,18 @@ parcoursRouter.put(
   checkPermissions("parcours"),
   httpPutReorderObjectives
 );
-parcoursRouter.use(
-  "/update-image",
+parcoursRouter.put(
+  "/update-image/:parcoursId",
   checkPermissions("parcours"),
-  putUpdateImageRouter
+  createFileUploadMiddleware(headerImageMaxSize),
+  parcoursIdValidator,
+  httpUpdateImage
 );
-
 parcoursRouter.put(
   "/groups",
   checkPermissions("parcours"),
   httpPutParcoursGroups
 );
-
 parcoursRouter.put(
   "/publish/:parcoursId",
   checkPermissions("parcours"),
