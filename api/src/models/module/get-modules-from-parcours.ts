@@ -7,13 +7,13 @@ async function getModulesFromParcours(parcoursId: number) {
     });
     if (modulesIds.length === 0) {
       const error = new Error("Aucun module associé au parcours");
-      (error as any).statusCode = 404; // Added type assertion to assign statusCode
+      (error as any).statusCode = 404;
       throw error;
     }
     const modules = await tx.module.findMany({
       where: {
         id: {
-          in: modulesIds.map((module) => module.moduleId), // Fixed mapping function
+          in: modulesIds.map((module) => module.moduleId),
         },
       },
       select: {
@@ -22,12 +22,12 @@ async function getModulesFromParcours(parcoursId: number) {
         description: true,
       },
     });
-    return modules; // Added return statement
+    return modules;
   });
 
-  console.log({ transaction });
+  //console.log({ transaction });
 
-  return transaction; // Added return statement
+  return transaction;
 }
 
 export default getModulesFromParcours;

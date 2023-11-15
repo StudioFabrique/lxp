@@ -1,7 +1,7 @@
 import { BonusSkill, Contact, Module, Parcours } from "@prisma/client";
 import { prisma } from "../../utils/db";
 
-async function putModuleParcours(module: any, thumb: string, image: any) {
+async function putModuleParcours(module: any, thumb: any, image: any) {
   const newModule = JSON.parse(module);
 
   const existingParcours = await prisma.parcours.findUnique({

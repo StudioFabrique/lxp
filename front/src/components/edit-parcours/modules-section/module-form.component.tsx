@@ -41,9 +41,9 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
       currentModule?.description || ""
     );
     const [image, setImage] = useState<File | null>(null);
-    const [thumb, setThumb] = useState<string | null>(
+    /*     const [thumb, setThumb] = useState<string | null>(
       currentModule?.thumb ?? null
-    );
+    ); */
     const listeContacts = useSelector(
       (state: any) => state.parcoursContacts.currentContacts
     ) as Contact[];
@@ -120,7 +120,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
         setImage(compressedHeadImage);
       } else {
         setImage(null);
-      }
+      } /* 
       const compressedThumb = await compressImage(file, 20);
       if (compressedThumb) {
         const reader = new FileReader();
@@ -131,7 +131,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
           }
         };
         reader.readAsDataURL(file);
-      } else setThumb(null);
+      } else setThumb(null); */
     };
 
     const fields = [title, description, duration];
@@ -141,11 +141,9 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
     if (!currentModule) {
       //  validation en mode création de module
       formIsValid =
-        title.isValid &&
-        description.isValid &&
-        image !== null &&
+        title.isValid && description.isValid && image !== null; /*  &&
         thumb !== null &&
-        thumb !== undefined;
+        thumb !== undefined; */
     } else {
       //  validation en mode mise à jour du module
       formIsValid = title.isValid && description.isValid && duration.isValid;
@@ -171,9 +169,9 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
           bonusSkills: skills,
         };
         const formData = new FormData();
-        if (image && thumb) {
+        if (image /*  && thumb */) {
           formData.append("image", image);
-          formData.append("thumb", thumb);
+          //formData.append("thumb", thumb);
         }
         formData.append("module", JSON.stringify(module));
         props.onSubmitModule(formData);
