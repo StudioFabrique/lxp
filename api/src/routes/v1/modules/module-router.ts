@@ -1,5 +1,5 @@
 import { Router } from "express";
-import checkToken from "../../../middleware/check-token";
+
 import httpGetModuleFormation from "../../../controllers/module/http-get-modules-formation";
 import httpParcoursModules from "../../../controllers/module/http-parcours-modules";
 import httpUpdateDatesModule from "../../../controllers/module/http-update-dates-module";
@@ -10,6 +10,10 @@ import putModuleImageRouter from "./put-module-parcours";
 import httpGetModulesFromParcours from "../../../controllers/module/http-get-modules-from-parcours";
 import { getModulesFromParcoursValidator } from "./module-validators";
 import checkPermissions from "../../../middleware/check-permissions";
+import { createFileUploadMiddleware } from "../../../middleware/fileUpload";
+import { headerImageMaxSize } from "../../../config/images-sizes";
+import httpPutModuleParcours from "../../../controllers/parcours/http-put-module-parcours";
+import httpPutModule from "../../../controllers/module/http-put-module";
 
 const modules = Router();
 
@@ -49,13 +53,18 @@ modules.delete(
   // checkToken,
   httpDeleteModule
 );
-modules.use(
+modules.put(
   "/new-module",
   checkPermissions("module"),
-  // checkToken,
-  putModuleImageRouter
+  createFileUploadMiddleware(headerImageMaxSize),
+  httpPutModuleParcours
 );
-
+modules.put(
+  "/new-module/update",
+  checkPermissions("module"),
+  createFileUploadMiddleware(headerImageMaxSize),
+  httpPutModule
+);
 // retourne la liste des modules assocués à un parcours
 modules.get(
   "/:parcoursId",

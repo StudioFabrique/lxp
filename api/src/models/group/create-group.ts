@@ -6,7 +6,7 @@ import { prisma } from "../../utils/db";
 export default async function createGroup(
   group: IGroup,
   users: IUser[],
-  image: string,
+  image: Buffer | undefined,
   parcoursId?: number
 ) {
   const groupToFind = await Group.findOne({ name: group.name });
@@ -22,7 +22,9 @@ export default async function createGroup(
     _id: { $in: users.map((user) => user._id) },
   });
 
-  newGroup.image = image;
+  if (!!image) {
+    newGroup.image = image;
+  }
 
   const createdGroup = await Group.create(newGroup);
 

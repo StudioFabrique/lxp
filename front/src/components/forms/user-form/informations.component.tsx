@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC } from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
-import { headerImageMaxSize } from "../../../config/images-sizes";
+import { avatarImageMaxSize } from "../../../config/images-sizes";
 import MemoizedImageFileUpload from "../../UI/image-file-upload/image-file-upload";
 
 const Informations: FC<{
@@ -72,9 +72,9 @@ const Informations: FC<{
         />
       </span>
       <MemoizedImageFileUpload
-        label="Téléverser une image de groupe"
+        label="Téléverser un avatar"
         onSetFile={onSetFile}
-        maxSize={headerImageMaxSize}
+        maxSize={avatarImageMaxSize}
       />
     </Wrapper>
   );

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useState } from "react";
 import { regexGeneric } from "../../../utils/constantes";
 import useInput from "../../../hooks/use-input";
