@@ -6,14 +6,13 @@ import httpUpdateDatesModule from "../../../controllers/module/http-update-dates
 import httpUpdateDurationModule from "../../../controllers/module/http-update-duration-module";
 import httpDeleteModule from "../../../controllers/module/http-delete-module";
 import httpPutAddModule from "../../../controllers/parcours/http-put-add-module";
-import putModuleImageRouter from "./put-module-parcours";
-import httpGetModulesFromParcours from "../../../controllers/module/http-get-modules-from-parcours";
 import { getModulesFromParcoursValidator } from "./module-validators";
 import checkPermissions from "../../../middleware/check-permissions";
 import { createFileUploadMiddleware } from "../../../middleware/fileUpload";
 import { headerImageMaxSize } from "../../../config/images-sizes";
 import httpPutModuleParcours from "../../../controllers/parcours/http-put-module-parcours";
 import httpPutModule from "../../../controllers/module/http-put-module";
+import httpGetModulesFromParcours from "../../../controllers/module/http-get-modules-from-parcours";
 
 const modules = Router();
 
