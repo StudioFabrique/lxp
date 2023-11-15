@@ -4,7 +4,6 @@ import { body } from "express-validator";
 import httpGetParcours from "../../../controllers/parcours/http-get-parcours";
 import httpDeleteParcoursById from "../../../controllers/parcours/http-delete-parcours-by-id";
 import httpCreateParcours from "../../../controllers/parcours/http-create-parcours";
-import putUpdateImageRouter from "./put-update-image";
 import httpPutVirtualClass from "../../../controllers/parcours/http-put-virtual-class";
 import httpPutParcoursObjectives from "../../../controllers/parcours/http-put-parcours-objectives";
 import httpPutReorderObjectives from "../../../controllers/parcours/http-put-reorder-objectives";

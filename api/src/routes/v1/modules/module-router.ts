@@ -6,50 +6,64 @@ import httpUpdateDatesModule from "../../../controllers/module/http-update-dates
 import httpUpdateDurationModule from "../../../controllers/module/http-update-duration-module";
 import httpDeleteModule from "../../../controllers/module/http-delete-module";
 import httpPutAddModule from "../../../controllers/parcours/http-put-add-module";
-import { getModulesFromParcoursValidator } from "./module-validators";
+import {
+  getModuleFormationValidator,
+  getModulesFromParcoursValidator,
+  moduleIdFromBodyValidator,
+  moduleIdValidator,
+  updateDurationValidator,
+} from "./module-validators";
 import checkPermissions from "../../../middleware/check-permissions";
 import { createFileUploadMiddleware } from "../../../middleware/fileUpload";
 import { headerImageMaxSize } from "../../../config/images-sizes";
 import httpPutModuleParcours from "../../../controllers/parcours/http-put-module-parcours";
 import httpPutModule from "../../../controllers/module/http-put-module";
 import httpGetModulesFromParcours from "../../../controllers/module/http-get-modules-from-parcours";
+import {
+  parcoursIdValidator,
+  updateDatesValidator,
+} from "../parcours/parcours-validator";
+import { idsArrayValidator } from "../../../helpers/custom-validators";
 
 const modules = Router();
 
 modules.put(
   "/add-module/:parcoursId/:moduleId",
   checkPermissions("module"),
-  // checkToken,
+  moduleIdValidator,
+  parcoursIdValidator,
   httpPutAddModule
 );
 modules.get(
   "/formation/:formationId",
   checkPermissions("module"),
-  // checkToken,
+  getModuleFormationValidator,
   httpGetModuleFormation
 );
 modules.put(
   "/:parcoursId",
   checkPermissions("module"),
-  // checkToken,
+  parcoursIdValidator,
+  idsArrayValidator,
   httpParcoursModules
 );
 modules.put(
   "/calendar/dates",
   checkPermissions("module"),
-  // checkToken,
+  moduleIdFromBodyValidator,
+  updateDatesValidator,
   httpUpdateDatesModule
 );
 modules.put(
   "/calendar/duration",
   checkPermissions("module"),
-  // checkToken,
+  updateDurationValidator,
   httpUpdateDurationModule
 );
 modules.delete(
   "/:moduleId",
   checkPermissions("module"),
-  // checkToken,
+  moduleIdValidator,
   httpDeleteModule
 );
 modules.put(
@@ -68,7 +82,7 @@ modules.put(
 modules.get(
   "/:parcoursId",
   checkPermissions("module"),
-  // checkToken,
+
   getModulesFromParcoursValidator,
   httpGetModulesFromParcours
 );
