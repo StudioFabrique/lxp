@@ -1,31 +1,32 @@
 import { Request, Response } from "express";
 import fs from "fs";
 import putModuleParcours from "../../models/parcours/putModuleParcours";
+import {
+  deleteTempUploadedFile,
+  getBase64ImageFromReq,
+} from "../../middleware/fileUpload";
+import sharp from "sharp";
 
 async function httpPutModuleParcours(req: Request, res: Response) {
-  const { module, thumb } = req.body;
+  const { module } = req.body;
+  const uploadedFile = req.file;
 
-  const uploadedFile: any = req.file;
-
-  if (uploadedFile !== undefined) {
-    try {
-      {
-        const data = await fs.promises.readFile(uploadedFile.path);
-        const base64String = data.toString("base64");
-        const response = await putModuleParcours(module, thumb, base64String);
-        console.log({ response });
-
-        await fs.promises.unlink(uploadedFile.path);
-        console.log("Fichier supprimé :", uploadedFile.path);
-        return res
-          .status(201)
-          .json({ message: "Mise à jour réussie", data: response });
-      }
-    } catch (error: any) {
+  try {
+    if (uploadedFile) {
+      const data = await fs.promises.readFile(uploadedFile.path);
+      const image = data.toString("base64");
+      const resizedPic = sharp(uploadedFile.path).resize(400, 400);
+      const thumb = resizedPic.toBuffer();
+      const thumb64 = (await thumb).toString("base64");
+      const response = await putModuleParcours(module, thumb64, image);
+      await deleteTempUploadedFile(req);
       return res
-        .status(error.statusCode ?? 500)
-        .json({ message: error.message });
+        .status(201)
+        .json({ message: "Mise à jour réussie", data: response });
     }
+  } catch (error: any) {
+    await deleteTempUploadedFile(req);
+    return res.status(error.statusCode ?? 500).json({ message: error.message });
   }
 }
 

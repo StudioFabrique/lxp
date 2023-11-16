@@ -13,7 +13,15 @@ async function httpGetModuleFormation(req: Request, res: Response) {
         id: { in: modulesIdList.map((item: any) => item.moduleId) },
       },
     });
-    return res.status(200).json(modules);
+
+    //console.log({ modules });
+
+    const result = modules.map((module) => ({
+      ...module,
+      thumb: module.thumb.toString("base64"),
+    }));
+
+    return res.status(200).json(result);
   } catch (error) {
     console.log(error);
   }
