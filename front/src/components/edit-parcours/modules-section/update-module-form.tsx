@@ -36,9 +36,9 @@ const UpdateModuleForm = React.forwardRef<
 >((props, ref) => {
   const { values, onChangeValue, errors, onValidationErrors } = props.useForm;
 
-  const formationId = useSelector(
-    (state: any) => state.parcours.formation.id
-  ) as number;
+  const parcoursInfos = useSelector((state: any) => state.parcours);
+
+  const formationId = parcoursInfos.formation.id;
 
   const [image, setImage] = useState<File | null>(null);
 
@@ -115,17 +115,26 @@ const UpdateModuleForm = React.forwardRef<
       }
     }
 
-    if (!!teachers && teachers?.length > 0) {
+    if (teachers && teachers.length === 0) {
       toast.error("Le module doit avoir au moins un formateur");
       return;
     }
-    if (!!skills && skills?.length > 0) {
+    if (skills && skills.length === 0) {
       toast.error("Le module doit avoir au moins une compétence");
       return;
     }
 
     const formData = new FormData();
-    const module = { ...values, formationId };
+    const module = {
+      ...values,
+      formationId,
+      id: +currentModule.id,
+      duration: values.duration,
+      minDate: currentModule ? currentModule.minDate : parcoursInfos.startDate,
+      maxDate: currentModule ? currentModule.maxDate : parcoursInfos.endDate,
+      contacts: teachers,
+      bonusSkills: skills,
+    };
     formData.append("module", JSON.stringify(module));
     if (image) {
       formData.append("image", image);
@@ -138,6 +147,8 @@ const UpdateModuleForm = React.forwardRef<
       toast.error(errors[0].message);
     }
   }, [errors]);
+
+  console.log({ skills });
 
   return (
     <form onSubmit={handleSubmitForm}>
