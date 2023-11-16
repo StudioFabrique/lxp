@@ -1,36 +1,38 @@
 import CustomError from "../../../utils/interfaces/custom-error";
 
-interface FieldProps {
+interface FieldNumberProps {
   label?: string;
   placeholder?: string;
   name: string;
-  rows?: number;
+  min: number;
   data: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     values: Record<string, string>;
-    onChangeValue: (field: string, value: string) => void;
+    onChangeValue: (fieldNumber: string, value: string) => void;
     errors: CustomError[];
   };
 }
 
-const FieldArea = (props: FieldProps) => {
-  const { label, placeholder, name } = props;
-  const rows = props.rows !== undefined ? props.rows : 3;
+const FieldNumber = (props: FieldNumberProps) => {
+  const { label, placeholder, name, min } = props;
 
-  const baseStyle = "textarea focus:outline-none";
+  const baseStyle = "input focus:outline-none";
 
   const style = props.data.errors.find((item) => item.type === name)
-    ? baseStyle + " textarea-error"
+    ? baseStyle + " input-error"
     : baseStyle;
+
+  console.log(name + " :", props.data.values[name]);
 
   return (
     <div className="flex flex-col gap-y-2">
       <label htmlFor={name}>{label}</label>
-      <textarea
+      <input
         className={style}
+        type="number"
         id={name}
         name={name}
-        rows={rows}
+        min={min}
         value={
           props.data.values[name] !== undefined ? props.data.values[name] : ""
         }
@@ -43,4 +45,4 @@ const FieldArea = (props: FieldProps) => {
   );
 };
 
-export default FieldArea;
+export default FieldNumber;
