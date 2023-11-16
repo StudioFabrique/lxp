@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { FC } from "react";
 import { useSelector } from "react-redux";
 
@@ -20,7 +21,8 @@ interface ModuleItemProps {
 const ModuleItem: FC<ModuleItemProps> = ({
   module,
   fromSource,
-  onEdit = (id: number) => {},
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onEdit = (_id: number) => {},
   onSelect,
   onDeleteModule,
 }) => {
@@ -31,9 +33,13 @@ const ModuleItem: FC<ModuleItemProps> = ({
     (state: any) => state.parcoursModules.isFormOpen
   ) as boolean;
 
+  console.log("module", module);
+
   const classImage: React.CSSProperties = {
     backgroundImage: `url('${
-      module.thumb ? module.thumb : defaultModuleThumb
+      module.thumb
+        ? `data:image/jpeg;base64,${module.thumb}`
+        : defaultModuleThumb
     }')`,
     width: "50px",
     height: "50px",

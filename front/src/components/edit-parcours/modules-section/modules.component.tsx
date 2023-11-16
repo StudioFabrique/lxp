@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -25,6 +26,10 @@ const ModulesSection = () => {
     (state: any) => state.parcoursModules.modules
   ) as Module[];
   const [moduleToEdit, setModuleToEdit] = useState<Module | null>(null);
+
+  /**
+   * retourne les modules associés à la formation
+   */
   const getFormationModules = useCallback(() => {
     const applyData = (data: Module[]) => {
       setFormationModules(sortArray(data, "id", false));
@@ -61,7 +66,6 @@ const ModulesSection = () => {
 
   const handleUpdateModule = (formData: FormData) => {
     const applyData = (data: any) => {
-      console.log({ data });
       const module = {
         ...data.data,
         contacts: data.data.contacts.map((item: any) => item.contact),
@@ -86,6 +90,7 @@ const ModulesSection = () => {
    * @param id string
    */
   const handleDeleteModule = (id: number) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const applyData = (_data: Module) => {
       dispatch(parcoursModulesSliceActions.removeModule(id));
     };
@@ -128,7 +133,7 @@ const ModulesSection = () => {
     console.log("id", id);
 
     const module = parcoursModules.find((item) => item.id === id);
-    console.log("module", module);
+    //console.log("module", module);
 
     if (module) {
       setModuleToEdit(module);

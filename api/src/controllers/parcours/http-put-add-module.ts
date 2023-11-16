@@ -7,8 +7,8 @@ async function httpPutAddModule(req: Request, res: Response) {
 
   try {
     const response = await putAddModule(+moduleId, +parcoursId);
-
-    return res.status(201).json(response);
+    const result = { ...response, thumb: response.thumb.toString("base64") };
+    return res.status(201).json(result);
   } catch (error: any) {
     return res
       .status(error.statusCode ?? 500)
