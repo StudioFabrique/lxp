@@ -11,8 +11,6 @@ async function postModule(data: any, thumb: any, image: any) {
     throw error;
   }
 
-  console.log({ moduleToAdd });
-
   let newModule: any = {};
 
   const transaction = await prisma.$transaction(async (tx) => {
