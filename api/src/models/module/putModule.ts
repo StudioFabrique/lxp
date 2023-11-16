@@ -76,7 +76,12 @@ async function putModule(module: any, thumb: any, image: any) {
     });
   });
 
-  return updatedModule;
+  const result = {
+    ...updatedModule,
+    thumb: updatedModule.thumb.toString("base64"),
+  };
+
+  return result;
 }
 
 export default putModule;

@@ -66,7 +66,6 @@ const ModulesSection = () => {
 
   const handleUpdateModule = (formData: FormData) => {
     const applyData = (data: any) => {
-      console.log({ data });
       const module = {
         ...data.data,
         contacts: data.data.contacts.map((item: any) => item.contact),
