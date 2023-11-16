@@ -1,123 +1,62 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, FormEvent, useState } from "react";
 
-import useInput from "../../hooks/use-input";
-import {
-  regexGeneric,
-  regexMail,
-  regexOptionalGeneric,
-} from "../../utils/constantes";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import DrawerFormButtons from "../UI/drawer-form-buttons/drawer-form-buttons.component";
+import Field from "../UI/forms/field";
+import React, { useState } from "react";
+import { userQuickCreateSchema } from "../../lib/validation/user-quick-create-val";
+import { ZodError } from "zod";
+import useForm from "../UI/forms/hooks/use-form";
+import { validationErrors } from "../../helpers/validate";
 
 type Props = {
-  onSubmitUser: (newUser: {
-    firstname: string;
-    lastname: string;
-    email: string;
-    nickname?: string;
-    address?: string;
-    city?: string;
-    postCode?: string;
-    phoneNumber?: string;
-    isActive: boolean;
-  }) => void;
+  onSubmitUser: (newUser: any) => void;
+  onCloseDrawer: (id: string) => void;
 };
 
-const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
-  const { value: email } = useInput((value) => regexMail.test(value));
-  const { value: firstname } = useInput((value) => regexGeneric.test(value));
-  const { value: lastname } = useInput((value) => regexGeneric.test(value));
-  const { value: nickname } = useInput((value) =>
-    regexOptionalGeneric.test(value)
-  );
-  const { value: address } = useInput((value) =>
-    regexOptionalGeneric.test(value)
-  );
-  const { value: postCode } = useInput((value) =>
-    regexOptionalGeneric.test(value)
-  );
-  const { value: city } = useInput((value) => regexOptionalGeneric.test(value));
-  const { value: phoneNumber } = useInput((value) =>
-    regexOptionalGeneric.test(value)
-  );
+const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
   const [isActive, setIsActive] = useState(true);
-  const [isFormValid, setIsFormValid] = useState(true);
+  const { errors, values, onChangeValue, onValidationErrors, onResetForm } =
+    useForm();
 
-  const fields = [
-    email,
-    firstname,
-    lastname,
-    nickname,
-    address,
-    postCode,
-    city,
-    phoneNumber,
-  ];
-
-  const formIsValid =
-    email.isValid &&
-    firstname.isValid &&
-    lastname.isValid &&
-    nickname.isValid &&
-    address.isValid &&
-    postCode.isValid &&
-    city.isValid &&
-    phoneNumber.isValid;
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (formIsValid) {
-      setIsFormValid(true);
-      onSubmitUser({
-        email: email.value,
-        firstname: firstname.value,
-        lastname: lastname.value,
-        nickname: nickname.value,
-        address: address.value,
-        city: city.value,
-        postCode: postCode.value,
-        phoneNumber: phoneNumber.value,
-        isActive: isActive,
-      });
-      //handleCloseDrawer();
-    } else {
-      setIsFormValid(false);
-      fields.forEach((field: any) => field.isSubmitted());
-    }
-  };
-
+  // détermine si le compte de l'utilisateur sera activé dès sa création
   const handleToggleIsActive = () => {
     setIsActive((prevState) => !prevState);
   };
 
-  const handleCloseDrawer = () => {
-    handleResetForm();
-    document.getElementById("new-contact")?.click();
+  const data = { values, errors, onChangeValue };
+
+  // ferme le drawer et reset le formulaire
+  const handleCancel = () => {
+    onResetForm();
+    onCloseDrawer("new-contact");
   };
 
-  const setInputStyle = (hasError: boolean) => {
-    return hasError
-      ? "input input-error text-error input-sm input-bordered w-full focus:outline-none"
-      : "input input-sm input-bordered w-full focus:outline-none";
+  // vérifie si le formulaire est valide et le transmet les valeurs des champs au parent
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      userQuickCreateSchema.parse(values);
+    } catch (error: any) {
+      if (error instanceof ZodError) {
+        console.log({ error });
+        const errors = validationErrors(error);
+        onValidationErrors(errors);
+        return;
+      }
+    }
+
+    onSubmitUser({ ...values, isActive });
+    onResetForm();
+    onCloseDrawer("new-contact");
   };
 
-  const handleResetForm = () => {
-    setIsFormValid(true);
-    setIsActive(true);
-    fields.forEach((field: any) => field.reset());
-  };
-
-  const setErrorMessage = () => {
-    return isFormValid
-      ? "w-full text-xs font-bold text-error flex pr-2 invisible"
-      : "w-full text-xs font-bold text-error flex pr-2 visible";
-  };
+  console.log("data :", values);
 
   return (
     <div className="flex flex-col">
-      <form className="flex flex-col gap-y-4 px-4" onSubmit={handleSubmit}>
-        <div>
+      <form className="flex flex-col gap-y-4" onSubmit={handleSubmit}>
+        <div className="flex flex-col gap-y-4 px-4">
           <label className="flex gap-x-4 items-center cursor-pointer">
             <span className="text-primary/50">Status</span>
             <input
@@ -138,141 +77,77 @@ const UserQuickCreate: FC<Props> = ({ onSubmitUser }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Wrapper>
-            <div className="flex flex-col gap-y-2 w-full">
-              <label className="text-base-content/50" htmlFor="lastname">
-                Nom *
-              </label>
-              <input
-                className={setInputStyle(lastname.hasError)}
-                type="text"
-                value={lastname.value}
-                onBlur={lastname.valueBlurHandler}
-                onChange={lastname.valueChangeHandler}
-                placeholder="Dupont"
-                name="lastname"
-              />
-            </div>
-            <div className="flex flex-col gap-y-2 w-full">
-              <label className="text-base-content/50" htmlFor="firstname">
-                Prénom *
-              </label>
-              <input
-                className={setInputStyle(firstname.hasError)}
-                type="text"
-                value={firstname.value}
-                onBlur={firstname.valueBlurHandler}
-                onChange={firstname.valueChangeHandler}
-                placeholder="Jean"
-                name="firstname"
-              />
-            </div>
-            <div className="flex flex-col gap-y-2 w-full">
-              <label className="text-base-content/50" htmlFor="pseudo">
-                Pseudo
-              </label>
-              <input
-                className={setInputStyle(nickname.hasError)}
-                type="text"
-                value={nickname.value}
-                onBlur={nickname.valueBlurHandler}
-                onChange={nickname.valueChangeHandler}
-                name="nickname"
-              />
-            </div>
-            <div className="flex flex-col gap-y-2 w-full">
-              <label className="text-base-content/50" htmlFor="email">
-                Adresse Email *
-              </label>
-              <input
-                className={setInputStyle(email.hasError)}
-                type="email"
-                value={email.value}
-                onBlur={email.valueBlurHandler}
-                onChange={email.valueChangeHandler}
-                placeholder="email@exemple.com"
-                name="email"
-              />
-            </div>
+            <Field
+              label="Nom *"
+              name="lastname"
+              placeholder="Dupont"
+              data={data}
+            />
+
+            <Field
+              label="Prénom *"
+              name="firstname"
+              placeholder="Jean"
+              data={data}
+            />
+
+            <Field
+              label="Pseudo"
+              name="nickname"
+              placeholder="Toto"
+              data={data}
+            />
+
+            <Field
+              label="Email *"
+              name="email"
+              type="email"
+              placeholder="Ex : email@exemple.com"
+              data={data}
+            />
           </Wrapper>
           <Wrapper>
-            <div className="flex flex-col gap-y-2 w-full">
-              <label className="text-base-content/50" htmlFor="address">
-                Adresse
-              </label>
-              <input
-                className={setInputStyle(address.hasError)}
-                type="text"
-                value={address.value}
-                onBlur={address.valueBlurHandler}
-                onChange={address.valueChangeHandler}
-                placeholder="12 place Royale"
-                name="address"
-              />
-            </div>
-            <div className="flex flex-col gap-y-2 w-full">
-              <label className="text-base-content/50" htmlFor="city">
-                Ville
-              </label>
-              <input
-                className={setInputStyle(city.hasError)}
-                type="text"
-                value={city.value}
-                onBlur={city.valueBlurHandler}
-                onChange={city.valueChangeHandler}
-                placeholder="Paris"
-                name="city"
-              />
-            </div>
-            <div className="flex flex-col gap-y-2 w-full">
-              <label className="text-base-content/50" htmlFor="postCode">
-                Code Postal
-              </label>
-              <input
-                className={setInputStyle(postCode.hasError)}
-                type="text"
-                value={postCode.value}
-                onBlur={postCode.valueBlurHandler}
-                onChange={postCode.valueChangeHandler}
-                placeholder="75000"
-                name="postCode"
-              />
-            </div>
-            <div className="flex flex-col gap-y-2 w-full">
-              <label className="text-base-content/50" htmlFor="phoneNumber">
-                Téléphone
-              </label>
-              <input
-                className={setInputStyle(phoneNumber.hasError)}
-                type="text"
-                value={phoneNumber.value}
-                onBlur={phoneNumber.valueBlurHandler}
-                onChange={phoneNumber.valueChangeHandler}
-                placeholder="06 07 08 09 10"
-                name="phoneNumber"
-              />
-            </div>
+            <Field
+              label="Adresse"
+              name="address"
+              placeholder="Ex : 2 place royale"
+              data={data}
+            />
+
+            <Field
+              label="Ville"
+              name="city"
+              placeholder="Ex : Paris"
+              data={data}
+            />
+
+            <Field
+              label="Code Postal"
+              name="postCode"
+              placeholder="Ex : 75000"
+              data={data}
+            />
+
+            <Field
+              label="Numéro de téléphone"
+              name="phoneNumber"
+              placeholder="Ex : 01 02 03 04 05"
+              data={data}
+            />
           </Wrapper>
         </div>
         <div className="w-full flex flex-col gap-y-4">
-          <p className="text-xs px-2">
+          <p className="text-xs px-2 mt-2">
             Note : Les identifiants de l'utilisateur lui seront envoyés par mail
             à la validation du formulaire
           </p>
-          <div className="w-full flex flex-col items-center gap-x-2 pr-2 mt-4">
-            <p className={setErrorMessage()}>
-              Un ou plusieurs champs sont mal remplis
-            </p>
-            {/*             <div className="flex gap-x-4">
-              <button
-                className="btn btn-outline btn-sm btn-primary font-normal w-32"
-                type="reset"
-                onClick={handleCloseDrawer}
-              >
-                Annuler
-              </button>
-              <button className="btn btn-primary btn-sm w-32">Valider</button>
-            </div> */}
-            <DrawerFormButtons onCancel={handleCloseDrawer} />
+          <div className="w-full flex flex-col items-center gap-x-2 pr-2">
+            {errors && errors.length > 0 ? (
+              <p className="w-full text-left pl-2 font-bold text-error">
+                {errors[0].message}
+              </p>
+            ) : null}
+            <DrawerFormButtons onCancel={handleCancel} />
           </div>
         </div>
       </form>
