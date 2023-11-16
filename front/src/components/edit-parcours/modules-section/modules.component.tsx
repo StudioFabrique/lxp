@@ -6,13 +6,23 @@ import { useSelector } from "react-redux";
 import useHttp from "../../../hooks/use-http";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import Module from "../../../utils/interfaces/module";
-import ModuleForm from "./module-form.component";
 import { useDispatch } from "react-redux";
 import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
 import ModuleList from "./module-list";
 import { sortArray } from "../../../utils/sortArray";
+import CreateModuleForm from "./create-module-form";
+import useForm from "../../UI/forms/hooks/use-form";
+import UpdateModuleForm from "./update-module-form";
 
 const ModulesSection = () => {
+  const {
+    values,
+    onChangeValue,
+    onResetForm,
+    errors,
+    onValidationErrors,
+    initValues,
+  } = useForm();
   const dispatch = useDispatch();
   const { isLoading, sendRequest } = useHttp();
   const [formationModules, setFormationModules] = useState<Module[]>([]);
@@ -53,6 +63,7 @@ const ModulesSection = () => {
       setFormationModules((prevData) =>
         sortArray([...prevData, data.data], "id", false)
       );
+      onResetForm();
     };
     sendRequest(
       {
@@ -145,6 +156,7 @@ const ModulesSection = () => {
     setNewModule(false);
     setModuleToEdit(null);
     setToggleForm(false);
+    onResetForm();
   };
 
   useEffect(() => {
@@ -154,10 +166,22 @@ const ModulesSection = () => {
   // scroll jusqu'au premier champ du formulaire qd ce dernier est ouvert
   useEffect(() => {
     if ((newModule || moduleToEdit) && formRef && formRef.current) {
+      if (moduleToEdit) {
+        initValues({
+          title: moduleToEdit!.title,
+          description: moduleToEdit!.description,
+          duration: moduleToEdit!.duration.toString(),
+        });
+        formRef.current!.scrollIntoView({ behavior: "smooth" });
+        formRef.current!.focus();
+      }
       formRef.current!.scrollIntoView({ behavior: "smooth" });
       formRef.current!.focus();
+      console.log("coucou scrolling");
     }
-  }, [newModule, moduleToEdit]);
+  }, [newModule, initValues, moduleToEdit]);
+
+  console.log({ formRef });
 
   return (
     <div className="flex flex-col gap-y-8">
@@ -206,18 +230,30 @@ const ModulesSection = () => {
         <>
           {newModule ? (
             <Wrapper>
-              <ModuleForm
-                onSubmitModule={handleSubmitModule}
+              <CreateModuleForm
+                useForm={{
+                  values,
+                  onChangeValue,
+                  onValidationErrors,
+                  errors,
+                }}
                 isLoading={isLoading}
-                ref={formRef}
                 onCancel={handleCancel}
+                onSubmit={handleSubmitModule}
+                ref={formRef}
               />
             </Wrapper>
           ) : (
             <Wrapper>
-              <ModuleForm
+              <UpdateModuleForm
+                useForm={{
+                  values,
+                  onChangeValue,
+                  onValidationErrors,
+                  errors,
+                }}
                 currentModule={moduleToEdit}
-                onSubmitModule={handleUpdateModule}
+                onSubmit={handleUpdateModule}
                 isLoading={isLoading}
                 ref={formRef}
                 onCancel={handleCancel}

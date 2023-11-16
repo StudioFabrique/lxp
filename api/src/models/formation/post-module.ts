@@ -38,7 +38,9 @@ async function postModule(data: any, thumb: any, image: any) {
     });
   });
 
-  return newModule;
+  const result = { ...newModule, thumb: newModule.thumb.toString("base64") };
+
+  return result;
 }
 
 export default postModule;

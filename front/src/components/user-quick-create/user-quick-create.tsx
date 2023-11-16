@@ -4,7 +4,7 @@ import Wrapper from "../UI/wrapper/wrapper.component";
 import DrawerFormButtons from "../UI/drawer-form-buttons/drawer-form-buttons.component";
 import Field from "../UI/forms/field";
 import React, { useState } from "react";
-import { userQuickCreateSchema } from "../../lib/validation/user-quick-create-val";
+import { userQuickCreateSchema } from "../../lib/validation/parcours-edit/user-quick-create-val";
 import { ZodError } from "zod";
 import useForm from "../UI/forms/hooks/use-form";
 import { validationErrors } from "../../helpers/validate";

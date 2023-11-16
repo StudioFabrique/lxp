@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect, useCallback } from "react";
 import CustomError from "../../../../utils/interfaces/custom-error";
 
 const useForm = (data = {}) => {
@@ -27,6 +28,10 @@ const useForm = (data = {}) => {
     setErrors([]);
   };
 
+  const initValues = useCallback((data: any) => {
+    setValues(data);
+  }, []);
+
   /*useEffect(() => {
     if (hasBeenSubmitted) {
       setErrors([]);
@@ -50,6 +55,7 @@ const useForm = (data = {}) => {
     onValidationErrors,
     onChangeValue,
     onResetForm,
+    initValues,
   };
 };
 
