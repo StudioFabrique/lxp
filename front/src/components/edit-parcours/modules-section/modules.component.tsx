@@ -13,6 +13,7 @@ import { sortArray } from "../../../utils/sortArray";
 import CreateModuleForm from "./create-module-form";
 import useForm from "../../UI/forms/hooks/use-form";
 import UpdateModuleForm from "./update-module-form";
+import toast from "react-hot-toast";
 
 const ModulesSection = () => {
   const {
@@ -24,7 +25,7 @@ const ModulesSection = () => {
     initValues,
   } = useForm();
   const dispatch = useDispatch();
-  const { isLoading, sendRequest } = useHttp();
+  const { isLoading, sendRequest, error } = useHttp();
   const [formationModules, setFormationModules] = useState<Module[]>([]);
   const params = useParams();
   const parcoursId = params.id;
@@ -85,6 +86,7 @@ const ModulesSection = () => {
       dispatch(parcoursModulesSliceActions.replaceModule(module));
       setModuleToEdit(null);
       setToggleForm(false);
+      onResetForm();
     };
     sendRequest(
       {
@@ -165,6 +167,7 @@ const ModulesSection = () => {
 
   // scroll jusqu'au premier champ du formulaire qd ce dernier est ouvert
   useEffect(() => {
+    let timer: any;
     if ((newModule || moduleToEdit) && formRef && formRef.current) {
       if (moduleToEdit) {
         initValues({
@@ -172,16 +175,28 @@ const ModulesSection = () => {
           description: moduleToEdit!.description,
           duration: moduleToEdit!.duration.toString(),
         });
-        formRef.current!.scrollIntoView({ behavior: "smooth" });
-        formRef.current!.focus();
+        timer = setTimeout(() => {
+          formRef.current!.scrollIntoView({ behavior: "smooth" });
+          formRef.current!.focus();
+        }, 100);
       }
       formRef.current!.scrollIntoView({ behavior: "smooth" });
       formRef.current!.focus();
       console.log("coucou scrolling");
     }
+    return () => clearTimeout(timer);
   }, [newModule, initValues, moduleToEdit]);
 
   console.log({ formRef });
+
+  /**
+   * gestion des erreurs HTTP
+   */
+  useEffect(() => {
+    if (error.length > 0) {
+      toast.error(error);
+    }
+  }, [error]);
 
   return (
     <div className="flex flex-col gap-y-8">
