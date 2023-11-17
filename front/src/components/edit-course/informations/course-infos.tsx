@@ -55,6 +55,7 @@ const CourseInfos = () => {
     useSelector((state: any) => state.courseInfos.course.virtualClass as string)
   );
   const isInitialVirtual = useRef(true);
+  const [submit, setSubmit] = useState<boolean>(false);
 
   /**
    * envoi une requête pour mettre à jour la liste des tags
@@ -72,16 +73,18 @@ const CourseInfos = () => {
         setLoadingTags(false);
         setLoadingContacts(false);
       };
-      sendRequest(
-        {
-          path: `/course/${path}/${courseId}`,
-          method: "put",
-          body: value,
-        },
-        applyData
-      );
+      if (submit) {
+        sendRequest(
+          {
+            path: `/course/${path}/${courseId}`,
+            method: "put",
+            body: value,
+          },
+          applyData
+        );
+      }
     },
-    [courseId, sendRequest]
+    [courseId, submit, sendRequest]
   );
 
   /**
@@ -90,6 +93,7 @@ const CourseInfos = () => {
    * @param tags Tag[]
    */
   const handleUpdateTags = (tags: Tag[]) => {
+    setSubmit(true);
     dispatch(courseInfosAction.setCourseTags(tags));
   };
 
@@ -107,17 +111,14 @@ const CourseInfos = () => {
    * requête pour mettre à jour les tags du cours dans la bdd
    */
   useEffect(() => {
-    let timer: any;
-    if (!isInitialRender.current) {
-      timer = setTimeout(() => {
-        handleSubmitData(
-          currentTags.map((tag) => tag.id),
-          "tags"
-        );
-      }, autoSubmitTimer);
-    } else {
-      isInitialRender.current = false;
-    }
+    const timer = setTimeout(() => {
+      handleSubmitData(
+        currentTags.map((tag) => tag.id),
+        "tags"
+      );
+      setSubmit(false);
+    }, autoSubmitTimer);
+
     return () => clearTimeout(timer);
   }, [currentTags, handleSubmitData]);
 
@@ -133,6 +134,7 @@ const CourseInfos = () => {
           currentContacts.map((contact) => contact.id),
           "contacts"
         );
+        setSubmit(false);
       }, autoSubmitTimer);
     } else {
       isInitialRender.current = false;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import SubWrapper from "../UI/sub-wrapper/sub-wrapper.component";
 import ItemElement from "../item-element.component";
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Tag from "../../utils/interfaces/tag";
 import CurrentTags from "./current-tags";
 import InheritedItems from "./inherited-items";
