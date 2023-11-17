@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useState } from "react";
-import { regexGeneric } from "../../../utils/constantes";
-import useInput from "../../../hooks/use-input";
+import toast from "react-hot-toast";
+
 import Informations from "./components/informations.components";
 import Details from "./components/details.component";
 import GroupsHeader from "../../groups-header/groups-header.component";
 import Tag from "../../../utils/interfaces/tag";
 import GroupTags from "./components/group-tags.component";
-import toast from "react-hot-toast";
 import useForm from "../../UI/forms/hooks/use-form";
 import { createGroupSchema } from "../../../lib/validation/create-group-schema";
 import { validationErrors } from "../../../helpers/validate";
@@ -24,8 +23,7 @@ const GroupAddForm: FC<{
     props.group?.isActive ?? false
   );
 
-  const { values, errors, onChangeValue, onValidationErrors, onResetForm } =
-    useForm();
+  const { values, errors, onChangeValue, onValidationErrors } = useForm();
 
   const handleSetFile = (file: File) => {
     setFile(file);
@@ -55,25 +53,35 @@ const GroupAddForm: FC<{
     name.isValid && desc.isValid && file !== null && isActive != null; */
 
   const handleSubmit = () => {
+    const name = values.name;
+    const desc = values.desc;
     try {
       createGroupSchema.parse({
-        name: values.name.trim(),
-        des: values.desc.trim(),
+        name,
+        desc,
       });
     } catch (error: any) {
-      onValidationErrors(validationErrors(error));
+      console.log(error);
+      const newErrors = validationErrors(error);
+      toast.error(newErrors[0].message);
+      onValidationErrors(newErrors);
+      return;
     }
-    props.onSubmitForm(
-      {
-        group: {
-          name: values.name.trim(),
-          desc: values.desc.trim(),
-          tags: tags,
+    if (file) {
+      props.onSubmitForm(
+        {
+          group: {
+            name: name,
+            desc: desc,
+            tags: tags,
+          },
+          parcoursId: parcoursId,
         },
-        parcoursId: parcoursId,
-      },
-      file!
-    );
+        file!
+      );
+    } else {
+      toast.error("Un fichier image pour le groupe est requis");
+    }
   };
 
   return (
