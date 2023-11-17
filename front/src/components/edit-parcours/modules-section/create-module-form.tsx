@@ -37,6 +37,7 @@ const CreateModuleForm = React.forwardRef<
 
   const [image, setImage] = useState<File | null>(null);
 
+  // objet passé en prop aux champs du formulaire
   const data = {
     values,
     onChangeValue,
@@ -53,6 +54,11 @@ const CreateModuleForm = React.forwardRef<
     }
   };
 
+  /**
+   * soumet le formulaire au backend après validation
+   * @param event React.FormEvent
+   * @returns
+   */
   const handleSubmitForm = (event: React.FormEvent) => {
     event.preventDefault();
     try {
@@ -74,6 +80,9 @@ const CreateModuleForm = React.forwardRef<
     }
   };
 
+  /**
+   * gère les erreurs HTTP
+   */
   useEffect(() => {
     if (errors.length > 0) {
       toast.error(errors[0].message);
