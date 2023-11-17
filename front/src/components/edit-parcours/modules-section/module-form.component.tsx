@@ -120,18 +120,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
         setImage(compressedHeadImage);
       } else {
         setImage(null);
-      } /* 
-      const compressedThumb = await compressImage(file, 20);
-      if (compressedThumb) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const imageString = reader.result as string;
-          if (imageString) {
-            setThumb(imageString);
-          }
-        };
-        reader.readAsDataURL(file);
-      } else setThumb(null); */
+      }
     };
 
     const fields = [title, description, duration];
@@ -140,10 +129,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
 
     if (!currentModule) {
       //  validation en mode création de module
-      formIsValid =
-        title.isValid && description.isValid && image !== null; /*  &&
-        thumb !== null &&
-        thumb !== undefined; */
+      formIsValid = title.isValid && description.isValid && image !== null;
     } else {
       //  validation en mode mise à jour du module
       formIsValid = title.isValid && description.isValid && duration.isValid;

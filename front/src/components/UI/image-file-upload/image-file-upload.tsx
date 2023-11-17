@@ -63,6 +63,9 @@ const ImageFileUpload: FC<{
         accept=".jpg, ;jpeg, .png, .webp, .gif"
         className="hidden"
         onChange={handleFileChange}
+        name="file"
+        aria-label="téléverser une image"
+        id="file"
       />
     </div>
   );

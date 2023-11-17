@@ -11,11 +11,11 @@ postTeacherRouter.post(
   body("firstname").isString().notEmpty().trim().escape(),
   body("lastname").isString().notEmpty().trim().escape(),
   body("isActive").isBoolean().notEmpty().trim().escape(),
-  body("nickname").isString().trim().escape(),
-  body("address").isString().notEmpty().trim().escape(),
-  body("postCode").isString().notEmpty().trim().escape(),
-  body("city").isString().notEmpty().trim().escape(),
-  body("phoneNumber").isString().trim().escape(),
+  body("nickname").isString().trim().escape().optional(),
+  body("address").isString().trim().escape().optional(),
+  body("postCode").isString().trim().escape().optional(),
+  body("city").isString().trim().escape().optional(),
+  body("phoneNumber").isString().trim().escape().optional(),
   httpPostTeacher
 );
 

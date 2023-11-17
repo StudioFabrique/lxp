@@ -91,7 +91,6 @@ const Contacts: FC<Props> = ({ contacts, notSelectedContacts }) => {
         console.log({ data });
 
         toast.success(data.message);
-        handleCloseDrawer("new-contact");
         dispatch(parcoursContactsAction.addNewContact(data.contact));
         dispatch(parcoursContactsAction.setNotSelectedContacts());
       }
@@ -131,7 +130,10 @@ const Contacts: FC<Props> = ({ contacts, notSelectedContacts }) => {
               title="Ajouter un Formateur"
               //onCloseDrawer={handleCloseDrawer}
             >
-              <UserQuickCreate onSubmitUser={submitNewTeacher} />
+              <UserQuickCreate
+                onCloseDrawer={handleCloseDrawer}
+                onSubmitUser={submitNewTeacher}
+              />
             </RightSideDrawer>
           </div>
           <ul className="flex flex-col gap-y-2">
