@@ -57,14 +57,14 @@ const UpdateModuleForm = React.forwardRef<
     currentModule?.bonusSkills ?? []
   );
 
+  // prop passée aux différents champs du formulaire
   const data = {
     values,
     onChangeValue,
     errors,
   };
 
-  console.log({ currentModule });
-
+  // affiche une image en background d'une div de manière dynamique
   const classImage: React.CSSProperties = {
     backgroundImage: `data:image/jpeg;base64,${props.currentModule.thumb}`,
     width: "100px",
@@ -104,6 +104,11 @@ const UpdateModuleForm = React.forwardRef<
     setSkills(items);
   };
 
+  /**
+   * soumet les modifications du module au backend après validation
+   * @param event React.EventForm
+   * @returns null (point de sortie)
+   */
   const handleSubmitForm = (event: React.FormEvent) => {
     event.preventDefault();
     try {
@@ -142,6 +147,9 @@ const UpdateModuleForm = React.forwardRef<
     props.onSubmit(formData);
   };
 
+  /**
+   * gère les erreurs HTTP
+   */
   useEffect(() => {
     if (errors.length > 0) {
       toast.error(errors[0].message);
