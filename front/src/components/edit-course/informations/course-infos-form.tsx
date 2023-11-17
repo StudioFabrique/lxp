@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 
@@ -29,7 +30,8 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
   const [visibility, setVisibility] = useState<boolean | null>(
     props.visibility
   );
-  const isInitialRender = useRef(true);
+  //const isInitialRender = useRef(true);
+  const [submit, setSubmit] = useState<boolean>(false);
 
   /**
    * définit le style du champ formulaire en fonction de sa validité
@@ -78,7 +80,6 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
         },
         applyData
       );
-    } else {
     }
   }, [
     dispatch,
@@ -96,15 +97,14 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
    */
   useEffect(() => {
     let timer: any;
-    if (!isInitialRender.current) {
+    if (submit) {
       timer = setTimeout(() => {
         handleSubmit();
+        setSubmit(false);
       }, autoSubmitTimer);
-    } else {
-      isInitialRender.current = false;
     }
     return () => clearTimeout(timer);
-  }, [handleSubmit]);
+  }, [submit, handleSubmit]);
 
   // gestion des erreurs http
   useEffect(() => {
@@ -112,6 +112,40 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
       toast.error(error);
     }
   }, [error]);
+
+  const handleUpdatedValue = () => {
+    if (!submit) {
+      setSubmit(true);
+    }
+  };
+
+  /**
+   * active l'auto submit si la valeur du titre change
+   * @param event React.FormEvent<HTMLInputElement>
+   */
+  const handleChangeTitle = (event: React.FormEvent<HTMLInputElement>) => {
+    handleUpdatedValue();
+    title.valueChangeHandler(event);
+  };
+
+  /**
+   * active l'auto submit si la valeur de la description change
+   * @param event React.FormEvent<HTMLInputElement>
+   */
+  const handleChangeDescription = (
+    event: React.FormEvent<HTMLTextAreaElement>
+  ) => {
+    handleUpdatedValue();
+    description.textAreaChangeHandler(event);
+  };
+
+  /**
+   * active l'auto submit lors d'un changement de valeur de la visibilité du cours
+   */
+  const handleChangeVisibility = () => {
+    handleUpdatedValue();
+    setVisibility((prevState) => !prevState);
+  };
 
   return (
     <>
@@ -131,7 +165,7 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
             name="title"
             type="text"
             defaultValue={title.value}
-            onChange={title.valueChangeHandler}
+            onChange={handleChangeTitle}
             onBlur={title.valueBlurHandler}
             placeholder="Exemple: Apprendre le HTML"
           />
@@ -152,7 +186,7 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
             name="description"
             rows={3}
             defaultValue={description.value}
-            onChange={description.textAreaChangeHandler}
+            onChange={handleChangeDescription}
             onBlur={description.valueBlurHandler}
           />
         </div>
@@ -164,7 +198,7 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
               type="checkbox"
               className="toggle toggle-primary"
               checked={visibility ? visibility : false}
-              onChange={() => setVisibility((prevState) => !prevState)}
+              onChange={handleChangeVisibility}
             />
             <p className="text-sm">{visibility ? "Visible" : "Caché"}</p>
           </label>

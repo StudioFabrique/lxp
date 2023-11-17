@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
@@ -66,7 +67,8 @@ const CourseInfos = () => {
       } else {
         setLoadingContacts(true);
       }
-      const applyData = (data: any) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const applyData = (_data: any) => {
         setLoadingTags(false);
         setLoadingContacts(false);
       };
