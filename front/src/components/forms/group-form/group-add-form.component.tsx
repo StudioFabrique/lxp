@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useState } from "react";
-import { regexGeneric } from "../../../utils/constantes";
-import useInput from "../../../hooks/use-input";
+import toast from "react-hot-toast";
+
 import Informations from "./components/informations.components";
 import Details from "./components/details.component";
 import GroupsHeader from "../../groups-header/groups-header.component";
 import Tag from "../../../utils/interfaces/tag";
 import GroupTags from "./components/group-tags.component";
-import toast from "react-hot-toast";
+import useForm from "../../UI/forms/hooks/use-form";
+import { createGroupSchema } from "../../../lib/validation/create-group-schema";
+import { validationErrors } from "../../../helpers/validate";
 
 const GroupAddForm: FC<{
   group?: any;
@@ -21,6 +23,8 @@ const GroupAddForm: FC<{
     props.group?.isActive ?? false
   );
 
+  const { values, errors, onChangeValue, onValidationErrors } = useForm();
+
   const handleSetFile = (file: File) => {
     setFile(file);
   };
@@ -33,7 +37,7 @@ const GroupAddForm: FC<{
     setTags(tags);
   };
 
-  const { value: name } = useInput(
+  /*   const { value: name } = useInput(
     (value: string) => regexGeneric.test(value),
     props.group?.name ?? ""
   );
@@ -41,20 +45,34 @@ const GroupAddForm: FC<{
   const { value: desc } = useInput(
     (value: string) => regexGeneric.test(value),
     props.group?.desc ?? ""
-  );
+  ); */
 
-  //  test la validité du form via le custom hook useInput
+  /*   //  test la validité du form via le custom hook useInput
   let formIsValid = false;
   formIsValid =
-    name.isValid && desc.isValid && file !== null && isActive != null;
+    name.isValid && desc.isValid && file !== null && isActive != null; */
 
   const handleSubmit = () => {
-    if (formIsValid) {
+    const name = values.name;
+    const desc = values.desc;
+    try {
+      createGroupSchema.parse({
+        name,
+        desc,
+      });
+    } catch (error: any) {
+      console.log(error);
+      const newErrors = validationErrors(error);
+      toast.error(newErrors[0].message);
+      onValidationErrors(newErrors);
+      return;
+    }
+    if (file) {
       props.onSubmitForm(
         {
           group: {
-            name: name.value.trim(),
-            desc: desc.value.trim(),
+            name: name,
+            desc: desc,
             tags: tags,
           },
           parcoursId: parcoursId,
@@ -62,7 +80,7 @@ const GroupAddForm: FC<{
         file!
       );
     } else {
-      toast.error("Le formulaire n'est pas valide");
+      toast.error("Un fichier image pour le groupe est requis");
     }
   };
 
@@ -71,8 +89,9 @@ const GroupAddForm: FC<{
       <GroupsHeader onSubmit={handleSubmit} />
       <div className="grid grid-cols-3 max-md:grid-cols-1 gap-x-5">
         <Informations
-          name={name}
-          desc={desc}
+          values={values}
+          onChangeValue={onChangeValue}
+          errors={errors}
           isActive={isActive}
           setIsActive={setIsActive}
           onSetFile={handleSetFile}
