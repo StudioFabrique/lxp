@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ReactNode, useEffect, useMemo, useState } from "react";
 
 import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
@@ -42,6 +43,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
       }
     });
     setCurrentItems((prevState) => [...prevState, ...updatedItems]);
+    props.onSubmit(currentItems);
   };
 
   /**
@@ -52,6 +54,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
     setCurrentItems((prevState) =>
       prevState.filter((item) => item.id !== value.id)
     );
+    props.onSubmit(currentItems);
   };
 
   /**
@@ -67,8 +70,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
       }
     });
     setNotSelected(updatedItems);
-    props.onSubmit(currentItems);
-  }, [props.initialList, props, currentItems]);
+  }, [props.initialList, currentItems]);
 
   return (
     <section className="w-full flex flex-col gap-y-8">
