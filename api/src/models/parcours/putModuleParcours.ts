@@ -89,6 +89,9 @@ async function putModuleParcours(module: any, thumb: any, image: any) {
       },
     });
   });
+
+  console.log({ updatedParcours });
+
   return updatedParcours ? parcoursModule : false;
 }
 

@@ -33,8 +33,6 @@ const ModuleItem: FC<ModuleItemProps> = ({
     (state: any) => state.parcoursModules.isFormOpen
   ) as boolean;
 
-  console.log("module", module);
-
   const classImage: React.CSSProperties = {
     backgroundImage: `url('${
       module.thumb
