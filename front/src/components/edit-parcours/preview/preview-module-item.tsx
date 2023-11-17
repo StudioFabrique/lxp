@@ -10,7 +10,7 @@ const PreviewModuleItem = (props: PreviewModuleItemProps) => {
   const { module } = props;
 
   const classImage: React.CSSProperties = {
-    backgroundImage: `url('${module.thumb}')`,
+    backgroundImage: `url('data:image/jpeg;base64,${props.module.thumb}')`,
     width: "100%",
     minHeight: "9rem",
     backgroundSize: "cover",
