@@ -18,7 +18,7 @@ export async function deleteTempUploadedFile(req: Request) {
   }
 }
 
-export const createFileUploadMiddleware = (maxFileSize: number) => {
+export const createFileUploadMiddleware: any = (maxFileSize: number) => {
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, path.join(__dirname, "..", "..", "uploads"));

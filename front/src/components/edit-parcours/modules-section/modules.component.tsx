@@ -173,7 +173,7 @@ const ModulesSection = () => {
         initValues({
           title: moduleToEdit!.title,
           description: moduleToEdit!.description,
-          duration: moduleToEdit!.duration.toString(),
+          duration: moduleToEdit!.duration?.toString() ?? "0",
         });
         timer = setTimeout(() => {
           formRef.current!.scrollIntoView({ behavior: "smooth" });
