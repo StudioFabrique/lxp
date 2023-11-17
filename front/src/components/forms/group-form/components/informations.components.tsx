@@ -73,6 +73,7 @@ const Informations: FC<{
           autoComplete="off"
         />
       </span> */}
+
       <span className="flex row gap-x-5">
         <label>Statut</label>
         <input

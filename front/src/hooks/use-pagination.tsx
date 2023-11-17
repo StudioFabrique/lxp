@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
 
 import useHttp from "./use-http";
@@ -104,8 +105,6 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
   }, [path, getList]);
 
   useEffect(() => {
-    console.log("hello use effect");
-
     setDataList((prevDataList: any) => {
       if (prevDataList) {
         return prevDataList.map((item: any) => {
