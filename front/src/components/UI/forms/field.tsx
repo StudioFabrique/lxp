@@ -17,7 +17,7 @@ const Field = (props: FieldProps) => {
   const { label, placeholder, name } = props;
   const type = props.type ?? "text";
 
-  const baseStyle = "input focus:outline-none";
+  const baseStyle = "input input-sm focus:outline-none";
 
   const style = props.data.errors.find((item) => item.type === name)
     ? baseStyle + " input-error"
