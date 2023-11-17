@@ -88,6 +88,7 @@ const ModulesSection = () => {
       setToggleForm(false);
       onResetForm();
     };
+
     sendRequest(
       {
         path: "/modules/new-module/update",
@@ -186,8 +187,6 @@ const ModulesSection = () => {
     }
     return () => clearTimeout(timer);
   }, [newModule, initValues, moduleToEdit]);
-
-  console.log({ formRef });
 
   /**
    * gestion des erreurs HTTP

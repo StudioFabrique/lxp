@@ -11,6 +11,7 @@ interface ParcoursPreviewModulesProps {
 
 const ParcoursPreviewModules = (props: ParcoursPreviewModulesProps) => {
   const modules = useSelector(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (state: any) => state.parcoursModules.modules
   ) as Module[];
 

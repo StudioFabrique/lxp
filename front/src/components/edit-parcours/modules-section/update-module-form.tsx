@@ -66,7 +66,7 @@ const UpdateModuleForm = React.forwardRef<
 
   // affiche une image en background d'une div de manière dynamique
   const classImage: React.CSSProperties = {
-    backgroundImage: `data:image/jpeg;base64,${props.currentModule.thumb}`,
+    backgroundImage: `url('data:image/jpeg;base64,${props.currentModule.thumb}')`,
     width: "100px",
     height: "100%",
     backgroundSize: "cover",
@@ -137,11 +137,15 @@ const UpdateModuleForm = React.forwardRef<
       duration: values.duration,
       minDate: currentModule ? currentModule.minDate : parcoursInfos.startDate,
       maxDate: currentModule ? currentModule.maxDate : parcoursInfos.endDate,
-      contacts: teachers,
-      bonusSkills: skills,
+      contacts: teachers?.map((teacher) => teacher.id),
+      bonusSkills: skills?.map((skill) => skill.id),
     };
+    console.log({ module });
+
     formData.append("module", JSON.stringify(module));
     if (image) {
+      console.log("image spotted !");
+
       formData.append("image", image);
     }
     props.onSubmit(formData);
@@ -155,8 +159,6 @@ const UpdateModuleForm = React.forwardRef<
       toast.error(errors[0].message);
     }
   }, [errors]);
-
-  console.log({ skills });
 
   return (
     <form onSubmit={handleSubmitForm}>
@@ -193,7 +195,7 @@ const UpdateModuleForm = React.forwardRef<
           <div className="w-full flex gap-x-4 items-center">
             <MemoizedImageFileUpload
               maxSize={headerImageMaxSize}
-              label="Téléverser une image *"
+              label="Choisir une nouvelle image *"
               onSetFile={handleUpdateImage}
             />
             <span style={classImage} />

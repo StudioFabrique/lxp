@@ -23,7 +23,7 @@ const Field = (props: FieldProps) => {
     ? baseStyle + " input-error"
     : baseStyle;
 
-  console.log(name + " :", props.data.values[name]);
+  //
 
   return (
     <div className="flex flex-col gap-y-2">
