@@ -119,7 +119,7 @@ const CourseInfos = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       const applyData = (_data: any) => {
-        setLoadingTags(false);
+        setLoadingContacts(false);
       };
       if (submitContacts) {
         setLoadingContacts(true);
@@ -131,7 +131,7 @@ const CourseInfos = () => {
           },
           applyData
         );
-        setSubmitTags(false);
+        setSubmitContacts(false);
       }
     }, autoSubmitTimer);
 
