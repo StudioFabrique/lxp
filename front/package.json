@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.7",
-    "axios": "^1.6.1",
+    "axios": "^1.6.2",
     "browser-image-compression": "^2.0.2",
     "casbin": "^5.27.1",
     "casbin.js": "^0.5.1",

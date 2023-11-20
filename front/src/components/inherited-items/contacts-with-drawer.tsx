@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Contact from "../../utils/interfaces/contact";
 import InheritedItems from "./inherited-items";
 import InheritedTextList from "./inherited-text-list";

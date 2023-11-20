@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import DeleteIcon from "./UI/svg/delete-icon.component";
 
 interface ItemElementProps {

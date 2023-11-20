@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
-import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
 
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import CourseInfosForm from "./course-infos-form";
@@ -48,39 +50,13 @@ const CourseInfos = () => {
   const visibility = useSelector(
     (state: any) => state.courseInfos.course.visibility
   ) as boolean;
-  const isInitialRender = useRef(true);
   const { value: virtualClass } = useInput(
     (value) => regexUrl.test(value),
     useSelector((state: any) => state.courseInfos.course.virtualClass as string)
   );
-  const isInitialVirtual = useRef(true);
-
-  /**
-   * envoi une requête pour mettre à jour la liste des tags
-   * ou des contacts associés au cours
-   */
-  const handleSubmitData = useCallback(
-    (value: unknown[], path: string) => {
-      if (path === "tags") {
-        setLoadingTags(true);
-      } else {
-        setLoadingContacts(true);
-      }
-      const applyData = (data: any) => {
-        setLoadingTags(false);
-        setLoadingContacts(false);
-      };
-      sendRequest(
-        {
-          path: `/course/${path}/${courseId}`,
-          method: "put",
-          body: value,
-        },
-        applyData
-      );
-    },
-    [courseId, sendRequest]
-  );
+  const [submitTags, setSubmitTags] = useState<boolean>(false);
+  const [submitContacts, setSubmitContacts] = useState<boolean>(false);
+  const [submitVirtualClass, setSubmitVirtualClass] = useState<boolean>(false);
 
   /**
    * récupère la liste des tags du composant enfant
@@ -88,6 +64,7 @@ const CourseInfos = () => {
    * @param tags Tag[]
    */
   const handleUpdateTags = (tags: Tag[]) => {
+    setSubmitTags(true);
     dispatch(courseInfosAction.setCourseTags(tags));
   };
 
@@ -97,7 +74,17 @@ const CourseInfos = () => {
    * @param contacts Contact[]
    */
   const handleUpdateContacts = (contacts: Contact[]) => {
+    setSubmitContacts(true);
     dispatch(courseInfosAction.setCourseContacts(contacts));
+  };
+
+  const handleChangeVirtualClass = (
+    event: React.FormEvent<HTMLInputElement>
+  ) => {
+    if (!submitVirtualClass) {
+      setSubmitVirtualClass(true);
+    }
+    virtualClass.valueChangeHandler(event);
   };
 
   /**
@@ -105,72 +92,82 @@ const CourseInfos = () => {
    * requête pour mettre à jour les tags du cours dans la bdd
    */
   useEffect(() => {
-    let timer: any;
-    if (!isInitialRender.current) {
-      timer = setTimeout(() => {
-        handleSubmitData(
-          currentTags.map((tag) => tag.id),
-          "tags"
+    const timer = setTimeout(() => {
+      const applyData = (_data: any) => {
+        setLoadingTags(false);
+      };
+      if (submitTags) {
+        setLoadingTags(true);
+        sendRequest(
+          {
+            path: `/course/tags/${courseId}`,
+            method: "put",
+            body: currentTags.map((item) => item.id),
+          },
+          applyData
         );
-      }, autoSubmitTimer);
-    } else {
-      isInitialRender.current = false;
-    }
+        setSubmitTags(false);
+      }
+    }, autoSubmitTimer);
     return () => clearTimeout(timer);
-  }, [currentTags, handleSubmitData]);
+  }, [courseId, submitTags, currentTags, sendRequest]);
 
   /**
    * détecte un changement au niveau des contacts et envoi une
    * requête pour mettre à jour les contacts du cours dans la bdd
    */
   useEffect(() => {
-    let timer: any;
-    if (!isInitialRender.current) {
-      timer = setTimeout(() => {
-        handleSubmitData(
-          currentContacts.map((contact) => contact.id),
-          "contacts"
+    const timer = setTimeout(() => {
+      const applyData = (_data: any) => {
+        setLoadingContacts(false);
+      };
+      if (submitContacts) {
+        setLoadingContacts(true);
+        sendRequest(
+          {
+            path: `/course/contacts/${courseId}`,
+            method: "put",
+            body: currentContacts.map((item) => item.id),
+          },
+          applyData
         );
-      }, autoSubmitTimer);
-    } else {
-      isInitialRender.current = false;
-    }
+        setSubmitContacts(false);
+      }
+    }, autoSubmitTimer);
+
     return () => clearTimeout(timer);
-  }, [currentContacts, handleSubmitData]);
+  }, [courseId, currentContacts, submitContacts, sendRequest]);
 
   /**
    * détecté un changement de valeur du champ virtualClass
    * et met à jour le lien vers la classe virtuelle dans la bdd
    */
   useEffect(() => {
-    let timer: any;
-    if (!isInitialVirtual.current) {
+    const timer = setTimeout(() => {
       const applyData = (data: any) => {
         if (data.success) {
           toast.success(data.message);
           dispatch(courseInfosAction.setCourseVirtualClass(virtualClass.value));
         }
       };
-      timer = setTimeout(() => {
-        if (virtualClass.isValid) {
-          sendRequest(
-            {
-              path: `/course/virtual-class/${courseId}`,
-              method: "put",
-              body: { virtualClass: virtualClass.value },
-            },
-            applyData
-          );
-        }
-      }, autoSubmitTimer);
-    } else {
-      isInitialVirtual.current = false;
-    }
+      if (virtualClass.isValid && submitVirtualClass) {
+        sendRequest(
+          {
+            path: `/course/virtual-class/${courseId}`,
+            method: "put",
+            body: { virtualClass: virtualClass.value },
+          },
+          applyData
+        );
+        setSubmitVirtualClass(false);
+      }
+    }, autoSubmitTimer);
     return () => clearTimeout(timer);
   }, [
     courseId,
     dispatch,
     sendRequest,
+    submitVirtualClass,
     virtualClass.isValid,
     virtualClass.value,
   ]);
@@ -226,7 +223,10 @@ const CourseInfos = () => {
         </div>
       </div>
       <Wrapper>
-        <VirtualClass virtualClass={virtualClass} />
+        <VirtualClass
+          onChangeValue={handleChangeVirtualClass}
+          virtualClass={virtualClass}
+        />
       </Wrapper>
     </div>
   );

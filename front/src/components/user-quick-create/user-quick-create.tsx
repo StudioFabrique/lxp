@@ -51,7 +51,7 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
     onCloseDrawer("new-contact");
   };
 
-  console.log("data :", values);
+  //console.log("data :", values);
 
   return (
     <div className="flex flex-col">
