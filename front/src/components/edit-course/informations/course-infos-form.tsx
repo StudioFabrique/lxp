@@ -2,14 +2,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
+import { ZodError } from "zod";
 
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import useHttp from "../../../hooks/use-http";
 import { courseInfosAction } from "../../../store/redux-toolkit/course/course-infos";
 import Field from "../../UI/forms/field";
 import FieldArea from "../../UI/forms/field-area";
-import { infosSchema } from "../../../lib/validation/course/infos-schemas";
-import { ZodError } from "zod";
+import { infosCourseSchema } from "../../../lib/validation/course/infos--course-schemas";
+
 import { validationErrors } from "../../../helpers/validate";
 import useFormAutoSubmit from "../../UI/forms/hooks/use-form-auto-submit";
 
@@ -26,7 +27,7 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
   const [visibility, setVisibility] = useState<boolean | null>(
     props.visibility
   );
-  //const isInitialRender = useRef(true);
+
   const {
     errors,
     values,
@@ -53,14 +54,14 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
   // envoie au composant parent l'ordre de soumission du formulaire
   const handleSubmit = useCallback(() => {
     try {
-      infosSchema.parse(values);
+      infosCourseSchema.parse(values);
     } catch (error: any) {
       if (error instanceof ZodError) {
         const errors = validationErrors(error);
         onValidationErrors(errors);
         toast.error(errors[0].message);
-        return;
       }
+      return;
     }
     const applyData = (data: any) => {
       if (data.success) {
