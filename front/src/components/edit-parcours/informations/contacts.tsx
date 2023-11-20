@@ -15,6 +15,7 @@ import UserQuickCreate from "../../user-quick-create/user-quick-create";
 type Props = {
   contacts: any[];
   notSelectedContacts: Contact[];
+  setSubmit: (value: boolean) => void;
 };
 
 type Teacher = {
@@ -29,7 +30,7 @@ type Teacher = {
   isActive: boolean;
 };
 
-const Contacts: FC<Props> = ({ contacts, notSelectedContacts }) => {
+const Contacts: FC<Props> = ({ setSubmit, contacts, notSelectedContacts }) => {
   const dispatch = useDispatch();
   const { sendRequest, error } = useHttp();
 
@@ -49,11 +50,12 @@ const Contacts: FC<Props> = ({ contacts, notSelectedContacts }) => {
         (item: Contact) => item.name === name
       );
       if (contact) {
+        setSubmit(true);
         dispatch(parcoursContactsAction.addContact(contact.idMdb));
         handleResetFilter();
       }
     },
-    [notSelectedContacts, dispatch, handleResetFilter]
+    [notSelectedContacts, setSubmit, dispatch, handleResetFilter]
   );
 
   const handleRemoveContact = (contact: Contact) => {
@@ -61,6 +63,7 @@ const Contacts: FC<Props> = ({ contacts, notSelectedContacts }) => {
       (item: Contact) => item.idMdb === contact.idMdb
     ).idMdb;
     if (contactId) {
+      setSubmit(true);
       dispatch(parcoursContactsAction.removeContact(contactId));
     }
   };
@@ -88,8 +91,6 @@ const Contacts: FC<Props> = ({ contacts, notSelectedContacts }) => {
       contact: User;
     }) => {
       if (data.success) {
-        console.log({ data });
-
         toast.success(data.message);
         dispatch(parcoursContactsAction.addNewContact(data.contact));
         dispatch(parcoursContactsAction.setNotSelectedContacts());
