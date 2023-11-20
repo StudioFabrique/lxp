@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 
@@ -16,7 +18,7 @@ const CourseSkills = () => {
   const { courseId } = useParams();
   const { sendRequest, error } = useHttp();
   const dispatch = useDispatch();
-  const isInitialRender = useRef(true);
+  const [submit, setSubmit] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const courseSkills = useSelector(
     (state: any) => state.courseSkills.courseSkills
@@ -30,7 +32,7 @@ const CourseSkills = () => {
    * @param data Skill[]
    */
   const handleUpdateSkills = (data: Skill[]) => {
-    isInitialRender.current = false;
+    setSubmit(true);
     dispatch(courseSkillsActions.setCourseSkills(data));
   };
 
@@ -39,13 +41,13 @@ const CourseSkills = () => {
    * au cours et les met à jour dans la bdd
    */
   useEffect(() => {
-    setLoading(true);
-    let timer: any;
-    if (!isInitialRender.current) {
-      timer = setTimeout(() => {
+    const timer = setTimeout(() => {
+      if (submit) {
+        //typescript-eslint/no-unused-vars
         const applyData = (_data: any) => {
           setLoading(false);
         };
+        setLoading(true);
         sendRequest(
           {
             path: `/course/bonus-skills/${courseId}`,
@@ -54,10 +56,12 @@ const CourseSkills = () => {
           },
           applyData
         );
-      }, autoSubmitTimer);
-    }
+        setSubmit(false);
+      }
+    }, autoSubmitTimer);
+
     return () => clearTimeout(timer);
-  }, [courseSkills, courseId, sendRequest]);
+  }, [courseSkills, courseId, submit, sendRequest]);
 
   /**
    * retourne la liste des compétences associées au cours et celle des compétences

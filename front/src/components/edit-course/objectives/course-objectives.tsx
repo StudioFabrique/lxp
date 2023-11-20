@@ -23,7 +23,6 @@ const CourseObjectives = () => {
   const [submit, setSubmit] = useState<boolean>(false);
   const { sendRequest, error } = useHttp();
   const dispatch = useDispatch();
-  const isInitialRender = useRef(true);
   const [loading, setLoading] = useState(false);
   const courseObjectives = useSelector(
     (state: any) => state.courseObjectives.courseObjectives
@@ -40,7 +39,7 @@ const CourseObjectives = () => {
    * @param data Objective[]
    */
   const handleUpdateObjectives = (data: Objective[]) => {
-    isInitialRender.current = false;
+    setSubmit(true);
     dispatch(courseObjectivesActions.setCourseObjectives(data));
   };
 
@@ -94,7 +93,6 @@ const CourseObjectives = () => {
           applyData
         );
         setSubmit(false);
-        setLoading(false);
       }
     }, autoSubmitTimer);
 
