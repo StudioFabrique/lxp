@@ -20,6 +20,7 @@ import { courseObjectivesActions } from "../../../store/redux-toolkit/course/cou
 
 const CourseObjectives = () => {
   const { courseId } = useParams();
+  const [submit, setSubmit] = useState<boolean>(false);
   const { sendRequest, error } = useHttp();
   const dispatch = useDispatch();
   const isInitialRender = useRef(true);
@@ -78,13 +79,12 @@ const CourseObjectives = () => {
    * au cours et les met à jour dans la bdd
    */
   useEffect(() => {
-    setLoading(true);
-    let timer: any;
-    if (!isInitialRender.current) {
-      timer = setTimeout(() => {
-        const applyData = (_data: any) => {
-          setLoading(false);
-        };
+    const timer = setTimeout(() => {
+      const applyData = (_data: any) => {
+        setLoading(false);
+      };
+      if (submit) {
+        setLoading(true);
         sendRequest(
           {
             path: `/course/objectives/${courseId}`,
@@ -93,14 +93,16 @@ const CourseObjectives = () => {
           },
           applyData
         );
-      }, autoSubmitTimer);
-    } else {
-    }
+        setSubmit(false);
+        setLoading(false);
+      }
+    }, autoSubmitTimer);
+
     return () => clearTimeout(timer);
-  }, [courseObjectives, courseId, sendRequest]);
+  }, [courseObjectives, courseId, submit, sendRequest]);
 
   /**
-   * retourne la liste des objectives du parcours et du cours
+   * retourne la liste des objectifs du parcours et du cours
    * mis au propre grâce à la fonction courseObjecitvsFromHttp
    */
   useEffect(() => {
