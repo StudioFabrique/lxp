@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useCallback, useEffect, useRef } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
 
 import ParcoursInformationsForm from "./parcours-informations-form";
-import { toast } from "react-hot-toast";
 import Contacts from "./contacts";
 import VirtualClass from "../../virtual-class";
 import useHttp from "../../../hooks/use-http";
@@ -19,10 +19,11 @@ import useInput from "../../../hooks/use-input";
 import { regexUrl } from "../../../utils/constantes";
 
 type Props = {
-  parcoursId?: string;
+  parcoursId: string;
 };
 
-const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
+const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
+  const [submitVirtualClass, setSubmitVirtualClass] = useState<boolean>(false);
   const parcoursStartDate = useSelector(
     (state: any) => state.parcoursInformations.infos.startDate
   );
@@ -48,7 +49,6 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
       (state: any) => state.parcoursInformations.infos.virtualClass as string
     )
   );
-  const isInitialVirtual = useRef(true);
 
   useEffect(() => {
     dispatch(parcoursContactsAction.setNotSelectedContacts());
@@ -125,6 +125,15 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
     [updateDates, dispatch]
   );
 
+  const handleVirtualClassValue = (
+    event: React.FormEvent<HTMLInputElement>
+  ) => {
+    if (!submitVirtualClass) {
+      setSubmitVirtualClass(true);
+    }
+    virtualClass.valueChangeHandler(event);
+  };
+
   useEffect(() => {
     const processData = (data: {
       success: boolean;
@@ -160,22 +169,23 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
   }, [tagsIsValid, parcoursStartDate, parcoursEndDate, dispatch]);
 
   useEffect(() => {
-    let timer: any;
-    const formIsValid = virtualClass.isValid;
-    if (!isInitialVirtual.current && formIsValid) {
-      timer = setTimeout(() => {
-        const processData = (data: { success: boolean; message: string }) => {
-          if (data.success) {
-            toast.success(data.message);
-          } else {
-            toast.error(
-              "Le lien vers la classe virtuelle n'a pas été mis à jour"
-            );
-          }
-          dispatch(
-            parcoursInformationsAction.setVirtualClass(virtualClass.value)
+    const timer = setTimeout(() => {
+      const formIsValid = virtualClass.isValid;
+      const processData = (data: { success: boolean; message: string }) => {
+        if (data.success) {
+          toast.success(data.message);
+        } else {
+          toast.error(
+            "Le lien vers la classe virtuelle n'a pas été mis à jour"
           );
-        };
+        }
+        dispatch(
+          parcoursInformationsAction.setVirtualClass(virtualClass.value)
+        );
+      };
+      if (formIsValid && submitVirtualClass) {
+        console.log(virtualClass.value, parcoursId);
+
         sendRequest(
           {
             path: "/parcours/update-virtual-class",
@@ -184,15 +194,16 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
           },
           processData
         );
-      }, autoSubmitTimer);
-    } else {
-      isInitialVirtual.current = false;
-    }
+        setSubmitVirtualClass(false);
+      }
+    }, autoSubmitTimer);
+
     return () => clearTimeout(timer);
   }, [
     parcoursId,
     virtualClass.value,
     virtualClass.isValid,
+    submitVirtualClass,
     dispatch,
     sendRequest,
   ]);
@@ -210,7 +221,10 @@ const ParcoursInformations: FC<Props> = ({ parcoursId = "1" }) => {
               label="Dates de parcours"
               onSubmitDates={submitDates}
             />
-            <VirtualClass virtualClass={virtualClass} />
+            <VirtualClass
+              onChangeValue={handleVirtualClassValue}
+              virtualClass={virtualClass}
+            />
           </div>
         </Wrapper>
         <div className="flex flex-col gap-y-8">

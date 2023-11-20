@@ -33,7 +33,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
    * @param contactsIds string[]
    */
   const handleAddItem = (ids: number[]) => {
-    let updatedItems = Array<any>();
+    let updatedItems = currentItems;
     ids.forEach((item: any) => {
       const foundItem = props.initialList.find(
         (element: any) => element.id === item
@@ -42,8 +42,8 @@ const InheritedItems = (props: InheritedItemsProps) => {
         updatedItems = [...updatedItems, foundItem];
       }
     });
-    setCurrentItems((prevState) => [...prevState, ...updatedItems]);
-    props.onSubmit(currentItems);
+    setCurrentItems(updatedItems);
+    props.onSubmit(updatedItems);
   };
 
   /**
@@ -51,10 +51,9 @@ const InheritedItems = (props: InheritedItemsProps) => {
    * @param value any (Constact)
    */
   const handleRemoveItem = (value: any) => {
-    setCurrentItems((prevState) =>
-      prevState.filter((item) => item.id !== value.id)
-    );
-    props.onSubmit(currentItems);
+    const updatedItems = currentItems.filter((item) => item.id !== value.id);
+    setCurrentItems(updatedItems);
+    props.onSubmit(updatedItems);
   };
 
   /**

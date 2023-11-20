@@ -60,17 +60,10 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 
 // enregistre un nouveau cours en relation avec un module existant
-courseRouter.post(
-  "/",
-  checkPermissions("course"),
-  // checkToken,
-  postCourseValidator,
-  httpPostCourse
-);
+courseRouter.post("/", postCourseValidator, httpPostCourse);
 // retourne la liste de tous les cours
 courseRouter.get(
   "/",
-  checkPermissions("course"),
   // checkToken,
   httpGetCourses
 );
@@ -78,14 +71,12 @@ courseRouter.get(
 courseRouter.get(
   "/infos/:courseId",
   courseIdValidator,
-  checkPermissions("course"),
   httpGetCourseInformations
 );
 
 // met à jour l'image d'en-tête d'un cours
 courseRouter.put(
   "/image",
-  checkPermissions("course"),
   // checkToken,
   upload.single("image"),
   httpPutCourseImage
@@ -129,7 +120,7 @@ courseRouter.put(
 // retourne la liste des objectifs liés à un cours
 courseRouter.get(
   "/objectives/:courseId",
-  checkToken,
+  checkPermissions("course"),
   courseIdValidator,
   httpGetCourseObjectives
 );
