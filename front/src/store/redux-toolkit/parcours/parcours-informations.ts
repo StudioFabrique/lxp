@@ -43,6 +43,7 @@ const parcoursInformationsSlice = createSlice({
       state.infos.description = "";
       state.infos.startDate = "";
       state.infos.endDate = "";
+      state.infos.virtualClass = "";
       state.infosIsValid = false;
       state.isValid = false;
       state.tagsIsValid = false;
