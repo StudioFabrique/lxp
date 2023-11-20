@@ -7,7 +7,7 @@ async function getUsersByGroup(groupsIds: string[]) {
   );
 
   const group = await Group.find({ _id: { $in: ids } }).populate("users", {});
-  console.log({ group });
+  //console.log({ group });
 
   if (!group) {
     const error = { message: "Groupe inexistant", statusCode: 404 };
