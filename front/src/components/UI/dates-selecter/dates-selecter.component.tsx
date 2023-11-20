@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import useInput from "../../../hooks/use-input";
 import { regexGeneric } from "../../../utils/constantes";
@@ -27,7 +27,7 @@ const DatesSelecter: FC<Props> = ({
     endDateProp ? formatDateToYYYYMMDD(new Date(endDateProp)) : ""
   );
   const [error, setError] = useState(false);
-  const isInitialRender = useRef(true);
+  const [submit, setSubmit] = useState<boolean>(false);
 
   const dates = useMemo(() => {
     return {
@@ -42,30 +42,30 @@ const DatesSelecter: FC<Props> = ({
   useEffect(() => {
     setError(false);
     const timer = setTimeout(() => {
-      /*       const date = new Date().getTime();
-      const sDate = new Date(dates.startDate).getTime();
-      const eDate = new Date(dates.endDate).getTime(); */
-      if (startDate.isValid && endDate.isValid) {
-        /* if (sDate > date && sDate < eDate) { */
-        if (!isInitialRender.current) {
-          onSubmitDates(dates);
-        } else {
-          isInitialRender.current = false;
+      if (submit) {
+        const date = new Date().getTime();
+        const sDate = new Date(dates.startDate).getTime();
+        const eDate = new Date(dates.endDate).getTime();
+        if (startDate.isValid && endDate.isValid) {
+          if (sDate > date && sDate < eDate) {
+            onSubmitDates(dates);
+            setSubmit(false);
+          } else {
+            setError(true);
+            setSubmit(false);
+          }
         }
-        /* } else {
-          setError(true);
-        } */
       }
     }, autoSubmitTimer);
     return () => {
       clearTimeout(timer);
     };
-  }, [dates, startDate.isValid, endDate.isValid, onSubmitDates]);
+  }, [dates, startDate.isValid, submit, endDate.isValid, onSubmitDates]);
 
   const handleChangeStartDate = useCallback(
     (event: React.FormEvent<HTMLInputElement>) => {
       startDate.datePicking(event.currentTarget.value);
-      isInitialRender.current = false;
+      setSubmit(true);
     },
     [startDate]
   );
@@ -73,7 +73,7 @@ const DatesSelecter: FC<Props> = ({
   const handleChangeEndDate = useCallback(
     (event: React.FormEvent<HTMLInputElement>) => {
       endDate.datePicking(event.currentTarget.value);
-      isInitialRender.current = false;
+      setSubmit(true);
     },
     [endDate]
   );

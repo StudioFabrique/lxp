@@ -24,6 +24,7 @@ type Props = {
 
 const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
   const [submitVirtualClass, setSubmitVirtualClass] = useState<boolean>(false);
+  const [submitContacts, setSubmitContacts] = useState<boolean>(false);
   const parcoursStartDate = useSelector(
     (state: any) => state.parcoursInformations.infos.startDate
   );
@@ -42,7 +43,6 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
     (state: any) => state.parcoursContacts.notSelectedContacts
   );
   const isInitialRender = useRef(true);
-  const isInitialEffect = useRef(true);
   const { value: virtualClass } = useInput(
     (value) => regexUrl.test(value),
     useSelector(
@@ -134,6 +134,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
     virtualClass.valueChangeHandler(event);
   };
 
+  // mise à jour des tags vets la base de données
   useEffect(() => {
     const processData = (data: {
       success: boolean;
@@ -141,14 +142,11 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
       message: string;
     }) => {
       if (data.success) {
-        console.log(data);
-
         toast.success(data.message);
       }
     };
-    let timer: any;
-    if (!isInitialEffect.current) {
-      timer = setTimeout(() => {
+    const timer = setTimeout(() => {
+      if (submitContacts) {
         sendRequest(
           {
             path: "/parcours/update-contacts",
@@ -157,17 +155,17 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
           },
           processData
         );
-      }, autoSubmitTimer);
-    } else {
-      isInitialEffect.current = false;
-    }
+        setSubmitContacts(false);
+      }
+    }, autoSubmitTimer);
     return () => clearTimeout(timer);
-  }, [dispatch, parcoursId, sendRequest, contacts]);
+  }, [dispatch, parcoursId, submitContacts, sendRequest, contacts]);
 
   useEffect(() => {
     dispatch(parcoursInformationsAction.isValid());
   }, [tagsIsValid, parcoursStartDate, parcoursEndDate, dispatch]);
 
+  // met à jour la classe virtuelle vers la bdd
   useEffect(() => {
     const timer = setTimeout(() => {
       const formIsValid = virtualClass.isValid;
@@ -233,6 +231,7 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
               <Contacts
                 contacts={contacts}
                 notSelectedContacts={notSelectedContacts}
+                setSubmit={setSubmitContacts}
               />
             </Wrapper>
           ) : null}
