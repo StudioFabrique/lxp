@@ -6,8 +6,6 @@ import { serverIssue } from "../../utils/constantes";
 async function httpGetUsersByGroup(req: CustomRequest, res: Response) {
   const groupsIds = req.body;
 
-  console.log("toto");
-
   try {
     const response = await getUsersByGroup(groupsIds);
     return res.status(200).json(response);

@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface VirtualClassProps {
   virtualClass: any;
+  onChangeValue: (event: React.FormEvent<HTMLInputElement>) => void;
 }
 
 const VirtualClass = (props: VirtualClassProps) => {
-  const { virtualClass } = props;
+  const { virtualClass, onChangeValue } = props;
 
   return (
     <div className="w- full flex items-center gap-x-4">
@@ -13,7 +15,7 @@ const VirtualClass = (props: VirtualClassProps) => {
         id="virtual"
         name="virtual"
         defaultValue={virtualClass.value}
-        onChange={virtualClass.valueChangeHandler}
+        onChange={onChangeValue}
         onBlur={virtualClass.valueBlurHandler}
         placeholder="Lien vers la classe virtuelle"
       />

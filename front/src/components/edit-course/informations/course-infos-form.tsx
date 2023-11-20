@@ -1,12 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 
-import useInput from "../../../hooks/use-input";
-import { regexGeneric, regexOptionalGeneric } from "../../../utils/constantes";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import useHttp from "../../../hooks/use-http";
 import { courseInfosAction } from "../../../store/redux-toolkit/course/course-infos";
+import Field from "../../UI/forms/field";
+import FieldArea from "../../UI/forms/field-area";
+import { infosSchema } from "../../../lib/validation/course/infos-schemas";
+import { ZodError } from "zod";
+import { validationErrors } from "../../../helpers/validate";
+import useFormAutoSubmit from "../../UI/forms/hooks/use-form-auto-submit";
 
 interface CourseInfosFormProps {
   courseId: number;
@@ -17,77 +22,72 @@ interface CourseInfosFormProps {
 
 const CourseInfosForm = (props: CourseInfosFormProps) => {
   const dispatch = useDispatch();
-  const { sendRequest, isLoading, error } = useHttp();
-  const { value: title } = useInput(
-    (value) => regexGeneric.test(value),
-    props.courseTitle
-  );
-  const { value: description } = useInput(
-    (value) => regexOptionalGeneric.test(value),
-    props.courseDescription
-  );
+  const { sendRequest, error } = useHttp();
   const [visibility, setVisibility] = useState<boolean | null>(
     props.visibility
   );
-  const isInitialRender = useRef(true);
+  //const isInitialRender = useRef(true);
+  const {
+    errors,
+    values,
+    submit,
+    setSubmit,
+    onChangeValue,
+    onValidationErrors,
+    initValues,
+  } = useFormAutoSubmit();
 
-  /**
-   * définit le style du champ formulaire en fonction de sa validité
-   * @param hasError boolean
-   * @returns string
-   */
-  const setInputStyle = (hasError: boolean) => {
-    return hasError
-      ? "input input-error text-error input-sm input-bordered focus:outline-none w-full"
-      : "input input-sm input-bordered focus:outline-none w-full";
+  const data = {
+    values,
+    onChangeValue,
+    errors,
   };
 
-  /**
-   * définit le style du champ formulaire en fonction de sa validité
-   * @param hasError boolean
-   * @returns string
-   */
-  const setAreaStyle = (hasError: boolean) => {
-    return hasError
-      ? "textarea textarea-error text-error textarea-sm textarea-bordered focus:outline-none w-full"
-      : "textarea textarea-sm textarea-bordered focus:outline-none w-full";
-  };
-
-  // vérifie la validité du formulaire
-  const formIsValid = title.isValid && description.isValid;
+  useEffect(() => {
+    initValues({
+      title: props.courseTitle,
+      description: props.courseDescription,
+    });
+  }, [props.courseTitle, props.courseDescription, initValues]);
 
   // envoie au composant parent l'ordre de soumission du formulaire
   const handleSubmit = useCallback(() => {
-    if (formIsValid) {
-      const applyData = (data: any) => {
-        if (data.success) {
-          dispatch(courseInfosAction.setCourseInfos(data.data));
-          toast.success(data.message);
-        }
-      };
-      sendRequest(
-        {
-          path: "/course/infos",
-          method: "put",
-          body: {
-            id: props.courseId,
-            title: title.value,
-            description: description.value,
-            visibility: visibility === undefined || !visibility ? false : true,
-          },
-        },
-        applyData
-      );
-    } else {
+    try {
+      infosSchema.parse(values);
+    } catch (error: any) {
+      if (error instanceof ZodError) {
+        const errors = validationErrors(error);
+        onValidationErrors(errors);
+        toast.error(errors[0].message);
+        return;
+      }
     }
+    const applyData = (data: any) => {
+      if (data.success) {
+        dispatch(courseInfosAction.setCourseInfos(data.data));
+        toast.success(data.message);
+      }
+    };
+    sendRequest(
+      {
+        path: "/course/infos",
+        method: "put",
+        body: {
+          id: props.courseId,
+          title: values.title,
+          description: values.description,
+          visibility: visibility === undefined || !visibility ? false : true,
+        },
+      },
+      applyData
+    );
   }, [
     dispatch,
-    description.value,
-    title.value,
     sendRequest,
-    formIsValid,
-    props.courseId,
+    values,
     visibility,
+    props.courseId,
+    onValidationErrors,
   ]);
 
   /**
@@ -96,15 +96,14 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
    */
   useEffect(() => {
     let timer: any;
-    if (!isInitialRender.current) {
+    if (submit) {
       timer = setTimeout(() => {
         handleSubmit();
+        setSubmit(false);
       }, autoSubmitTimer);
-    } else {
-      isInitialRender.current = false;
     }
     return () => clearTimeout(timer);
-  }, [handleSubmit]);
+  }, [submit, setSubmit, handleSubmit]);
 
   // gestion des erreurs http
   useEffect(() => {
@@ -113,48 +112,30 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
     }
   }, [error]);
 
+  /**
+   * active l'auto submit lors d'un changement de valeur de la visibilité du cours
+   */
+  const handleChangeVisibility = () => {
+    if (!submit) {
+      setSubmit(true);
+    }
+    setVisibility((prevState) => !prevState);
+  };
+
   return (
     <>
       <form className="w-full flex flex-col gap-y-8">
         <div className="flex flex-col gap-y-4">
-          <span className="flex items-center gap-x-2">
-            <label className="font-bold" htmlFor="title">
-              Titre du cours *
-            </label>
-            {isLoading ? (
-              <div className="loading loading-spinner text-primary loading-sm"></div>
-            ) : null}
-          </span>
-          <input
-            className={setInputStyle(title.hasError)}
-            id="title"
+          <Field
+            label="Titre du cours *"
             name="title"
-            type="text"
-            defaultValue={title.value}
-            onChange={title.valueChangeHandler}
-            onBlur={title.valueBlurHandler}
-            placeholder="Exemple: Apprendre le HTML"
+            placeholder="Ex : Les bases du HTML"
+            data={data}
           />
         </div>
 
         <div className="flex flex-col gap-y-4">
-          <span className="flex items-center gap-x-2">
-            <label className="font-bold" htmlFor="description">
-              Description
-            </label>
-            {isLoading ? (
-              <div className="loading loading-spinner text-primary loading-sm"></div>
-            ) : null}
-          </span>
-          <textarea
-            className={setAreaStyle(description.hasError)}
-            id="description"
-            name="description"
-            rows={3}
-            defaultValue={description.value}
-            onChange={description.textAreaChangeHandler}
-            onBlur={description.valueBlurHandler}
-          />
+          <FieldArea label="Description" name="description" data={data} />
         </div>
 
         <div className="form-control w-fit">
@@ -164,7 +145,7 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
               type="checkbox"
               className="toggle toggle-primary"
               checked={visibility ? visibility : false}
-              onChange={() => setVisibility((prevState) => !prevState)}
+              onChange={handleChangeVisibility}
             />
             <p className="text-sm">{visibility ? "Visible" : "Caché"}</p>
           </label>

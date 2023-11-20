@@ -85,7 +85,6 @@ parcoursRouter.put(
 parcoursRouter.put(
   "/update-virtual-class",
   checkPermissions("parcours"),
-  parcoursIdValidator,
   virtualClassValidator,
   httpPutVirtualClass
 );

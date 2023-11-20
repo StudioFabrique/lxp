@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ReactNode, useEffect, useMemo, useState } from "react";
 
 import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
@@ -32,7 +33,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
    * @param contactsIds string[]
    */
   const handleAddItem = (ids: number[]) => {
-    let updatedItems = Array<any>();
+    let updatedItems = currentItems;
     ids.forEach((item: any) => {
       const foundItem = props.initialList.find(
         (element: any) => element.id === item
@@ -41,7 +42,8 @@ const InheritedItems = (props: InheritedItemsProps) => {
         updatedItems = [...updatedItems, foundItem];
       }
     });
-    setCurrentItems((prevState) => [...prevState, ...updatedItems]);
+    setCurrentItems(updatedItems);
+    props.onSubmit(updatedItems);
   };
 
   /**
@@ -49,9 +51,9 @@ const InheritedItems = (props: InheritedItemsProps) => {
    * @param value any (Constact)
    */
   const handleRemoveItem = (value: any) => {
-    setCurrentItems((prevState) =>
-      prevState.filter((item) => item.id !== value.id)
-    );
+    const updatedItems = currentItems.filter((item) => item.id !== value.id);
+    setCurrentItems(updatedItems);
+    props.onSubmit(updatedItems);
   };
 
   /**
@@ -67,8 +69,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
       }
     });
     setNotSelected(updatedItems);
-    props.onSubmit(currentItems);
-  }, [props.initialList, props, currentItems]);
+  }, [props.initialList, currentItems]);
 
   return (
     <section className="w-full flex flex-col gap-y-8">
