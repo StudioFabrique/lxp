@@ -1,14 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { ZodError } from "zod";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
+
 import useHttp from "../../../hooks/use-http";
-import useInput from "../../../hooks/use-input";
-import { regexGeneric, regexOptionalGeneric } from "../../../utils/constantes";
 import { parcoursInformationsAction } from "../../../store/redux-toolkit/parcours/parcours-informations";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
+import useFormAutoSubmit from "../../UI/forms/hooks/use-form-auto-submit";
+import Field from "../../UI/forms/field";
+import FieldArea from "../../UI/forms/field-area";
+import { infosParCoursSchema } from "../../../lib/validation/parcours-edit/infos-parcours-schema";
+import { validationErrors } from "../../../helpers/validate";
 
 type Props = {
   parcoursId?: string;
@@ -21,50 +25,76 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
   );
   const { sendRequest } = useHttp();
   const dispatch = useDispatch();
-  const { value: title } = useInput(
-    (value) => regexGeneric.test(value),
-    parcoursInfos.title
-  );
-  const { value: description } = useInput(
-    (value) => regexOptionalGeneric.test(value),
-    parcoursInfos.description
-  );
+
   const [visibility, setVisibility] = useState<boolean>(
     parcoursInfos.visibility
   );
   const isInitialRender = useRef(true);
 
-  // vérification des champs du formulaire
-  const formIsValid = title.isValid && description.isValid;
+  const {
+    errors,
+    values,
+    submit,
+    setSubmit,
+    onChangeValue,
+    onValidationErrors,
+    initValues,
+  } = useFormAutoSubmit();
+
+  const data = {
+    values,
+    onChangeValue,
+    errors,
+  };
+
+  /**
+   * initialise le  formulaire avec les données stockées dans le state partagé
+   */
+  useEffect(() => {
+    if (isInitialRender.current) {
+      initValues({
+        title: parcoursInfos.title,
+        description: parcoursInfos.description,
+      });
+      isInitialRender.current = false;
+    }
+  }, [parcoursInfos.title, parcoursInfos.description, initValues]);
 
   /**
    * envoi d'une requête http pour mettre à jour les informations du formulaire
    */
   const updateInfos = useCallback(() => {
+    try {
+      infosParCoursSchema.parse(values);
+    } catch (error: any) {
+      if (error instanceof ZodError) {
+        const errors = validationErrors(error);
+        onValidationErrors(errors);
+        toast.error(errors[0].message);
+      }
+      return;
+    }
     const processData = (data: { message: string }) => {
       toast.success(data.message);
     };
-    if (formIsValid) {
-      sendRequest(
-        {
-          path: "/parcours/update-infos",
-          method: "put",
-          body: {
-            parcoursId,
-            title: title.value,
-            description: description.value,
-            formation: formation.id.toString(),
-            visibility,
-          },
+    sendRequest(
+      {
+        path: "/parcours/update-infos",
+        method: "put",
+        body: {
+          parcoursId,
+          title: values.title,
+          description: values.description,
+          visibility,
+          formation: formation.id.toString(),
         },
-        processData
-      );
-    }
+      },
+      processData
+    );
   }, [
-    description.value,
-    title.value,
+    values,
+    onValidationErrors,
     formation,
-    formIsValid,
     sendRequest,
     parcoursId,
     visibility,
@@ -77,46 +107,31 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
     const setInfos = async () => {
       dispatch(
         parcoursInformationsAction.updateParcoursInfos({
-          title: title.value,
-          description: description.value,
+          title: values.title,
+          description: values.description,
           visibility,
         })
       );
-      if (!isInitialRender.current) {
-        updateInfos();
-      } else {
-        isInitialRender.current = false;
-      }
+      updateInfos();
+      setSubmit(false);
     };
     const timer = setTimeout(() => {
-      setInfos();
+      if (submit) {
+        setInfos();
+      }
     }, autoSubmitTimer);
     return () => {
       clearTimeout(timer);
     };
-  }, [updateInfos, visibility, description.value, title.value, dispatch]);
-
-  /**
-   * définit le style du champ formulaire en fonction de sa validité
-   * @param hasError boolean
-   * @returns string
-   */
-  const setInputStyle = (hasError: boolean) => {
-    return hasError
-      ? "input input-error text-error input-sm input-bordered focus:outline-none w-full"
-      : "input input-sm input-bordered focus:outline-none w-full";
-  };
-
-  /**
-   * définit le style du champ formulaire en fonction de sa validité
-   * @param hasError boolean
-   * @returns string
-   */
-  const setAreaStyle = (hasError: boolean) => {
-    return hasError
-      ? "textarea textarea-error text-error textarea-sm textarea-bordered focus:outline-none w-full"
-      : "textarea textarea-sm textarea-bordered focus:outline-none w-full";
-  };
+  }, [
+    updateInfos,
+    submit,
+    setSubmit,
+    visibility,
+    values.title,
+    values.description,
+    dispatch,
+  ]);
 
   return (
     <>
@@ -128,36 +143,14 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
               <SubWrapper>{formation.title}</SubWrapper>
             </div>
             <form className="w-full flex flex-col gap-y-8 mt-8">
-              <div className="flex flex-col gap-y-4">
-                <label className="font-bold" htmlFor="title">
-                  Titre du parcours *
-                </label>
-                <input
-                  className={setInputStyle(title.hasError)}
-                  id="title"
-                  name="title"
-                  type="text"
-                  defaultValue={title.value}
-                  onChange={title.valueChangeHandler}
-                  onBlur={title.valueBlurHandler}
-                  placeholder="Exemple: CDA - Promo 2023"
-                />
-              </div>
+              <Field
+                label="Titre *"
+                name="title"
+                placeholder="Ex : CDA - Promo 2023"
+                data={data}
+              />
 
-              <div className="flex flex-col gap-y-4">
-                <label className="font-bold" htmlFor="level">
-                  Description
-                </label>
-                <textarea
-                  className={setAreaStyle(description.hasError)}
-                  id="description"
-                  name="description"
-                  rows={3}
-                  defaultValue={description.value}
-                  onChange={description.textAreaChangeHandler}
-                  onBlur={description.valueBlurHandler}
-                />
-              </div>
+              <FieldArea label="Description" name="description" data={data} />
 
               <div className="flex flex-col gap-y-4">
                 <h2 className="font-bold">Niveau du parcours</h2>
