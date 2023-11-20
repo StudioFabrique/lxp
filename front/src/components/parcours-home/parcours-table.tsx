@@ -53,7 +53,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
               <td className="bg-transparent truncate">
                 {item.isPublished ? "Publié" : "Brouillon"}
               </td>
-              <td className="bg-transparent">
+              <td className="bg-transparent flex items-center">
                 <input
                   type="checkbox"
                   id={item.id!.toString()}

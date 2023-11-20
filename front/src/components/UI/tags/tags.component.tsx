@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useCallback, useEffect, useRef } from "react";
+import { FC, useCallback, useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import useHttp from "../../../hooks/use-http";
@@ -23,6 +23,7 @@ const Tags: FC<Props> = ({ onSubmitTags }) => {
   const filteredItems = useSelector((state: any) => state.tags.filteredItems);
   const dispatch = useDispatch();
   const isInitialRender = useRef(true);
+  const [submit, setSubmit] = useState<boolean>(false);
 
   /**
    * télécharge la liste de tous les tags depuis la bdd
@@ -46,6 +47,7 @@ const Tags: FC<Props> = ({ onSubmitTags }) => {
    * @param tag Tag
    */
   const handleRemoveTag = (tag: Tag) => {
+    setSubmit(true);
     dispatch(tagsAction.removeTag(tag.id));
   };
 
@@ -76,11 +78,12 @@ const Tags: FC<Props> = ({ onSubmitTags }) => {
     (name: string, _property: string) => {
       const tag = notSelectedTags.find((item: Tag) => item.name === name);
       if (tag) {
+        setSubmit(true);
         dispatch(tagsAction.addTag(tag.id));
         handleResetFilter();
       }
     },
-    [notSelectedTags, dispatch, handleResetFilter]
+    [notSelectedTags, dispatch, setSubmit, handleResetFilter]
   );
 
   /**
@@ -98,20 +101,16 @@ const Tags: FC<Props> = ({ onSubmitTags }) => {
    * initialise l'auto-submit après un court délai sans action de l'utilisateur pour sauvegarder les changements dans la bdd
    */
   useEffect(() => {
-    let timer: any;
-    if (!isInitialRender.current) {
-      timer = setTimeout(() => {
-        if (currentTags.length > 0) {
-          onSubmitTags(currentTags);
-        }
-      }, autoSubmitTimer);
-    } else {
-      isInitialRender.current = false;
-    }
+    const timer = setTimeout(() => {
+      if (currentTags.length > 0 && submit) {
+        onSubmitTags(currentTags);
+        setSubmit(false);
+      }
+    }, autoSubmitTimer);
     return () => {
       clearTimeout(timer);
     };
-  }, [currentTags, onSubmitTags]);
+  }, [currentTags, submit, onSubmitTags]);
 
   return (
     <div className="h-full flex flex-col gap-y-4">
