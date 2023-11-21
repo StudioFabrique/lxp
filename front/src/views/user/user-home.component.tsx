@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Context } from "../../store/context.store";
 import { Link } from "react-router-dom";
@@ -96,7 +98,7 @@ const UserHome = () => {
 
     const updatedRolesIds = updatedRoles.map((role: Role) => role._id);
 
-    const applyData = (data: any) => {
+    const applyData = (_data: any) => {
       initPagination();
       getList();
       handleUncheckALL();
@@ -152,7 +154,7 @@ const UserHome = () => {
   }, [handleGetUsersStats]);
 
   const handleUpdateManyStatus = (value: string) => {
-    const applyData = (data: any) => {
+    const applyData = (_data: any) => {
       handleRefreshDataList();
     };
     const usersToUpdate = dataList.filter((item) => item.isSelected);

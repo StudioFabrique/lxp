@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect } from "react";
 import Role from "../../../utils/interfaces/role";
 import UserItem from "./user-item.component";
@@ -28,7 +29,7 @@ const UserList: FC<{
   onAllChecked,
   onSorting,
   onUncheckAll,
-  onDelete,
+  /* onDelete, */
   isLoading,
   error,
 }) => {
@@ -70,7 +71,7 @@ const UserList: FC<{
     onUncheckAll();
   }, [role, page, onUncheckAll]);
 
-  let content = (
+  const content = (
     <table className="table w-full border-separate border-spacing-y-2">
       <thead>
         <tr>
