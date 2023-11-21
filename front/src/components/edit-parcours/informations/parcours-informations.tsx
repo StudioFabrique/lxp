@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 
 import ParcoursInformationsForm from "./parcours-informations-form";
-import Contacts from "./contacts";
 import VirtualClass from "../../virtual-class";
 import useHttp from "../../../hooks/use-http";
 import { parcoursInformationsAction } from "../../../store/redux-toolkit/parcours/parcours-informations";
@@ -17,6 +16,8 @@ import User from "../../../utils/interfaces/user";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import useInput from "../../../hooks/use-input";
 import { regexUrl } from "../../../utils/constantes";
+import ContactsWithDrawer from "./contacts-with-drawer";
+import Contact from "../../../utils/interfaces/contact";
 
 type Props = {
   parcoursId: string;
@@ -95,6 +96,14 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
       );
     },
     [parcoursId, sendRequest]
+  );
+
+  const updateContacts = useCallback(
+    (updatedContacts: Contact[]) => {
+      setSubmitContacts(true);
+      dispatch(parcoursContactsAction.setCurrentContacts(updatedContacts));
+    },
+    [dispatch]
   );
 
   const updateTags = useCallback(
@@ -228,10 +237,12 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
         <div className="flex flex-col gap-y-8">
           {contacts ? (
             <Wrapper>
-              <Contacts
-                contacts={contacts}
-                notSelectedContacts={notSelectedContacts}
-                setSubmit={setSubmitContacts}
+              <ContactsWithDrawer
+                loading={false}
+                initialList={notSelectedContacts}
+                currentItems={contacts}
+                property="name"
+                onSubmit={updateContacts}
               />
             </Wrapper>
           ) : null}
