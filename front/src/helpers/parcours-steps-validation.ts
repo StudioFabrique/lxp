@@ -41,8 +41,8 @@ const testSkills = (skills: Array<Skill>) => {
   return skills.length > 0;
 };
 
-const testModules = (modules: Array<Module>) => {
-  let result = true;
+export const testModules = (modules: Array<Module>) => {
+  let result = modules.length > 0;
   modules.forEach((module) => {
     if (module.contacts !== undefined && module.bonusSkills !== undefined) {
       if (
@@ -64,11 +64,9 @@ const testGroups = (groups: Array<Group>) => {
   return groups.length > 0;
 };
 
-export function testStep(id: number, data: any) {
+export function testStep(data: any) {
   const validationErrors = Array<any>();
-  switch (id) {
-    case 1:
-      if (!testTitle(data.title as string)) {
+  /*       if (!testTitle(data.title as string)) {
         validationErrors.push({
           title: "Titre du parcours non valide",
         });
@@ -78,100 +76,80 @@ export function testStep(id: number, data: any) {
           dates: "Dates du parcours non valides",
         });
       }
-      break;
-    case 2:
       if (!testObjectives(data as Objective[])) {
         validationErrors.push({
           objectives: "Le parcours doit avoir au moins un objectif",
         });
       }
-      break;
-    case 3:
       if (!testSkills(data as Skill[])) {
         validationErrors.push({
           skills: "Le parcours doit avoir au moins une compétence",
         });
       }
-      break;
-    case 4:
       if (data === undefined || data.length === 0) {
         validationErrors.push({
           modules: "Le parcours doit avoir au moins un module",
         });
       }
-      break;
-    // TOTO METTRE LES N° DES CASES À JOUR QD LE CALENDRIER ET LA LISTE DES ÉTUDIANTS AURONT ÉTÉ MERGE
-    case 5:
       return [];
-    case 6:
       if (!testGroups(data as Group[])) {
         validationErrors.push({
           groups: "Le parcours doit avoir au moins un groupe d'apprenants",
         });
-      }
-      break;
-    case 7:
-      if (!testTitle(data.infos.title)) {
-        validationErrors.push({
-          title: "Titre du parcours non valide",
-        });
-        return validationErrors;
-      }
-      if (!testDescription(data.infos.description)) {
-        validationErrors.push({
-          description: "Description du parcours non valide",
-        });
-        return validationErrors;
-      }
-      if (!testDates(data.infos.startDate, data.infos.endDate)) {
-        validationErrors.push({
-          dates: "Dates du parcours non valides",
-        });
-        return validationErrors;
-      }
-      if (!testTags(data.tags)) {
-        validationErrors.push({
-          tags: "Le parcours doit avoir au moins un tag",
-        });
-        return validationErrors;
-      }
-      if (!testContacts(data.contacts)) {
-        validationErrors.push({
-          contacts: "Le parcours doit avoir au moins un contact",
-        });
-        return validationErrors;
-      }
-      /*       if (!testVirtualClass(data.virtualClass)) {
-        validationErrors.push({
-          virtualClass:
-            "Le parcours n'a pas de lien vers une salle de classe virtuelle",
-        });
-        return validationErrors;
       } */
-      if (!testObjectives(data.objectives as Objective[])) {
-        validationErrors.push({
-          objectives: "Le parcours doit avoir au moins un objectif",
-        });
-        return validationErrors;
-      }
-      if (!testSkills(data.skills as Skill[])) {
-        validationErrors.push({
-          skills: "Le parcours doit avoir au moins une compétence",
-        });
-        return validationErrors;
-      }
-      if (data.modules.length > 0 && !testModules(data.modules)) {
-        validationErrors.push({
-          modules: "Un ou plusieurs modules sont incomplets",
-        });
-        return validationErrors;
-      }
-      return [];
-    default:
-      return [];
+  if (!testTitle(data.infos.title)) {
+    validationErrors.push({
+      title: "Titre du parcours non valide",
+    });
+    return validationErrors;
   }
-  return validationErrors;
+  if (!testDescription(data.infos.description)) {
+    validationErrors.push({
+      description: "Description du parcours non valide",
+    });
+    return validationErrors;
+  }
+  if (!testDates(data.infos.startDate, data.infos.endDate)) {
+    validationErrors.push({
+      dates: "Dates du parcours non valides",
+    });
+    return validationErrors;
+  }
+  if (!testTags(data.tags)) {
+    validationErrors.push({
+      tags: "Le parcours doit avoir au moins un tag",
+    });
+    return validationErrors;
+  }
+  if (!testContacts(data.contacts)) {
+    validationErrors.push({
+      contacts: "Le parcours doit avoir au moins un contact",
+    });
+    return validationErrors;
+  }
+  if (!testObjectives(data.objectives as Objective[])) {
+    validationErrors.push({
+      objectives: "Le parcours doit avoir au moins un objectif",
+    });
+    return validationErrors;
+  }
+  if (!testSkills(data.skills as Skill[])) {
+    validationErrors.push({
+      skills: "Le parcours doit avoir au moins une compétence",
+    });
+    return validationErrors;
+  }
+  if (data.modules.length > 0 && !testModules(data.modules)) {
+    validationErrors.push({
+      modules: "Un ou plusieurs modules sont incomplets",
+    });
+    return validationErrors;
+  }
+  if (!testGroups(data.groups)) {
+    validationErrors.push({
+      groups:
+        "Le parcours doit avoir au moins un groupe d'apprenants rattachés",
+    });
+  }
+  return [];
 }
-
-/*   if (Object.keys(validationErrors).length > 0) {
-  } */
