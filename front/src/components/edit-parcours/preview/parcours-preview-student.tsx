@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import Group from "../../../utils/interfaces/group";
 import User from "../../../utils/interfaces/user";
-import { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 import useEagerLoadingList from "../../../hooks/use-eager-loading-list";
 import StudentsListTable from "../parcours-students/students-list-table";
