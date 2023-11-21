@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDispatch } from "react-redux";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import useHttp from "../../../../hooks/use-http";
 import { parcoursAction } from "../../../../store/redux-toolkit/parcours/parcours";
@@ -117,6 +117,10 @@ const useParcoursService = () => {
     },
     [dispatch, sendRequest]
   );
+
+  useEffect(() => {
+    return () => setImage("");
+  }, []);
 
   return {
     getParcours,
