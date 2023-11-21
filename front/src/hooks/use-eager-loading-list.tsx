@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
 import { getPagination } from "../utils/get-pagination";
 import { sortArray } from "../utils/sortArray";
