@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { regexGeneric } from "../utils/constantes";
 import Contact from "../utils/interfaces/contact";
 import CourseDates from "../utils/interfaces/course-dates";
@@ -40,8 +41,6 @@ const testDates = (dates: CourseDates[]) => {
 
 export function testStep(data: any) {
   const validationErrors = Array<any>();
-
-  console.log({ data });
 
   if (!testTitle(data.title)) {
     validationErrors.push({

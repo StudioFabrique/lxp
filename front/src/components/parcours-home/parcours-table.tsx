@@ -6,6 +6,8 @@ import EditIcon from "../UI/svg/edit-icon";
 import DeleteIcon from "../UI/svg/delete-icon.component";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
 import EyeIcon from "../UI/svg/eye-icon";
+import EyeSlash from "../UI/svg/eyse-slash";
+import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 
 interface ParcoursTableProps {
   parcoursList: Parcours[];
@@ -18,7 +20,8 @@ const ParcoursTable = (props: ParcoursTableProps) => {
   const { parcoursList, fieldSort, direction, onSorting } = props;
   const nav = useNavigate();
 
-  const handleDeleteParcours = (id: number) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleDeleteParcours = (_id: number) => {
     nav(``);
   };
 
@@ -53,14 +56,10 @@ const ParcoursTable = (props: ParcoursTableProps) => {
               <td className="bg-transparent truncate">
                 {item.isPublished ? "Publié" : "Brouillon"}
               </td>
-              <td className="bg-transparent flex items-center">
-                <input
-                  type="checkbox"
-                  id={item.id!.toString()}
-                  className="toggle toggle-primary disabled:toggle-primary disabled:opacity-100 disabled:cursor-default"
-                  disabled
-                  checked={item.visibility}
-                />
+              <td className="bg-transparent flex justify-center items-center">
+                <div className="w-6 h-6">
+                  {item.visibility ? <EyeIcon /> : <EyeSlash />}
+                </div>
               </td>
               <td className="bg-transparent">
                 <div className="w-6 h-6">
@@ -74,7 +73,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                         to={`view/${item.id}`}
                         aria-label="Aperçu du parcours"
                       >
-                        <EyeIcon />
+                        <ArrowTopRightIcon />
                       </Link>
                     </div>
                   </Can>
@@ -88,7 +87,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                       data-tip="Modifier le parcours"
                     >
                       <Link
-                        className="text-primary"
+                        className="text-secondary"
                         to={`edit/${item.id}`}
                         aria-label="modifier le parcours"
                       >

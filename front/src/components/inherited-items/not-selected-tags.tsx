@@ -1,4 +1,5 @@
 import Tag from "../../utils/interfaces/tag";
+import { sortArray } from "../../utils/sortArray";
 import TagItem from "../UI/tag-item/tag-item";
 
 interface NotSelectedTagsProps {
@@ -17,7 +18,7 @@ const NotSelectedTags = (props: NotSelectedTagsProps) => {
     <>
       {props.list && props.list.length > 0 ? (
         <ul className="w-[30rem] flex flex-wrap gap-2">
-          {props.list.map((tag) => (
+          {sortArray(props.list, "name").map((tag) => (
             <div key={tag.id} onClick={() => handleAddTag(tag.id)}>
               <TagItem tag={tag} noIcon={true} />
             </div>

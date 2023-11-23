@@ -13,7 +13,7 @@ import GroupAdd from "./views/group/group-add.component";
 import ParcoursLayout from "./views/parcours/parcours-layout.component";
 import ParcoursHome from "./views/parcours/parcours-home.component";
 import ParcoursAdd from "./views/parcours/parcours-add.component";
-import EditParcours from "./views/parcours/parcours-edit.component";
+import EditParcours from "./views/parcours/parcours-edit/parcours-edit.component";
 import StudentLayout from "./views/student/student-layout.component";
 import StudentHome from "./views/student/student-home";
 import ParcoursView from "./views/parcours/parcours-view";

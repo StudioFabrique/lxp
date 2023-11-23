@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import Course from "../../../../utils/interfaces/course";
 import Objective from "../../../../utils/interfaces/objective";

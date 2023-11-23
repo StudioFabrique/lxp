@@ -9,9 +9,8 @@ interface StudentItemProps {
 const StudentItem = (props: StudentItemProps) => {
   const { avatar, email, lastname, firstname, group, createdAt } =
     props.studentItem;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formation = useSelector((state: any) => state.parcours.formation.title);
-
-  console.log("group", group);
 
   return (
     <>
