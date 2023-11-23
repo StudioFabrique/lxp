@@ -24,6 +24,9 @@ import {
   updateDatesValidator,
 } from "../parcours/parcours-validator";
 import { idsArrayValidator } from "../../../helpers/custom-validators";
+import httpGetAllModules from "../../../controllers/module/http-get-all-modules";
+import httpGetFormationsList from "../../../controllers/module/http-get-formations-list";
+import httpGetParcoursList from "../../../controllers/module/http-get-parcours-list";
 
 const modules = Router();
 
@@ -78,13 +81,22 @@ modules.put(
   createFileUploadMiddleware(headerImageMaxSize),
   httpPutModule
 );
+// retourne une liste simplifiée des parcours
+modules.get("/parcours-list", checkPermissions("module"), httpGetParcoursList);
+// retourne une liste simplifiée des formations
+modules.get(
+  "/formations-list",
+  checkPermissions("module"),
+  httpGetFormationsList
+);
 // retourne la liste des modules assocués à un parcours
 modules.get(
   "/:parcoursId",
   checkPermissions("module"),
-
   getModulesFromParcoursValidator,
   httpGetModulesFromParcours
 );
+// retourne la liste de tous les modules
+modules.get("/", checkPermissions("module"), httpGetAllModules);
 
 export default modules;
