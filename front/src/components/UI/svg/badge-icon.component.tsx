@@ -6,7 +6,7 @@ type Props = {
 };
 
 const BadgeIcon: FC<Props> = ({ size, color }) => {
-  let style = `w-${size} h-${size} text-${color}`;
+  const style = `w-${size} h-${size} text-${color}`;
 
   return (
     <svg
