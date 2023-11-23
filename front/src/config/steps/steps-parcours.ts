@@ -25,6 +25,7 @@ const steps = [
   },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const stepsParcours = addIdToObject(steps).map((item: any) => ({
   ...item,
   saved: false,

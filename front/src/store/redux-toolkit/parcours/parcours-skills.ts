@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice } from "@reduxjs/toolkit";
 
 import Skill from "../../../utils/interfaces/skill";
@@ -15,7 +16,7 @@ const parcoursSkillsSlice = createSlice({
   initialState: initialParcoursState,
   reducers: {
     addSkill(state, action) {
-      let updatedSkills = state.skills;
+      const updatedSkills = state.skills;
       const skill = { ...action.payload, isBonus: true };
       updatedSkills.push(skill);
       state.skills = sortArray(updatedSkills, "description");
