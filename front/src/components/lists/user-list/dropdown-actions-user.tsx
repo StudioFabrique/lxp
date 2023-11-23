@@ -5,6 +5,7 @@ import AddRoleDrawer from "./add-role-drawer.component";
 import AddUserToGroupDrawer from "./add-user-to-group-drawer.component";
 
 type Props = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   itemsList: Array<any>;
   roleTab: Role;
   onGroupRolesChange: (updatedRoles: Array<Role>) => void;

@@ -23,6 +23,8 @@ import EditCourseHome from "./views/course/edit-course/edit-course-home";
 import AddCourse from "./views/course/add-course";
 import LayoutCourseEdit from "./views/course/edit-course/layout-edit-course";
 import Role from "./views/role/role";
+import LayoutModule from "./views/module/layout-module";
+import ModuleHome from "./views/module/module-home";
 
 const router = createBrowserRouter([
   {
@@ -103,6 +105,16 @@ const router = createBrowserRouter([
           {
             path: "add",
             element: <AddCourse />,
+          },
+        ],
+      },
+      {
+        path: "module",
+        element: <LayoutModule />,
+        children: [
+          {
+            index: true,
+            element: <ModuleHome />,
           },
         ],
       },
