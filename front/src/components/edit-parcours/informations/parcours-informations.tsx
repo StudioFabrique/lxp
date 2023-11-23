@@ -25,8 +25,6 @@ type Props = {
 
 const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
   const [submitVirtualClass, setSubmitVirtualClass] = useState<boolean>(false);
-  const [loadingContacts, setLoadingContacts] = useState<boolean>(false);
-  const [loadingTags, setLoadingTags] = useState<boolean>(false);
 
   const parcoursStartDate = useSelector(
     (state: any) => state.parcoursInformations.infos.startDate
@@ -36,7 +34,12 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
   );
   const dispatch = useDispatch();
   const { sendRequest, error } = useHttp();
-  const { updateParcoursContacts, updateParcoursTags } = useInfosService();
+  const {
+    loadingContacts,
+    loadingTags,
+    updateParcoursContacts,
+    updateParcoursTags,
+  } = useInfosService();
   const { value: virtualClass } = useInput(
     (value) => regexUrl.test(value),
     useSelector(
@@ -150,8 +153,6 @@ const ParcoursInformations: FC<Props> = ({ parcoursId }) => {
   useEffect(() => {
     if (error.length > 0) {
       toast.error(error);
-      setLoadingTags(false);
-      setLoadingContacts(false);
     }
   }, [error]);
 
