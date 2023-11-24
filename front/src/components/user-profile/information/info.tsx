@@ -37,6 +37,7 @@ const Info: FC<{ userInfo: Record<string, string | undefined> }> = ({
         <form onSubmit={handleSubmitForm} className="flex flex-col gap-4">
           <Field name="firstName" label="Prénom" data={formProps} />
           <Field name="lastName" label="Nom" data={formProps} />
+          <Field name="nickname" label="Pseudo" data={formProps} />
           <button type="submit" className="btn btn-primary">
             test
           </button>
