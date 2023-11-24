@@ -7,10 +7,12 @@ import ModuleHomeList from "../../components/module-home/module-home";
 
 const ModuleHome = () => {
   const [modules, setModules] = useState<Module[] | null>(null);
-  const { sendRequest, error, isLoading } = useHttp();
+  const { sendRequest, isLoading } = useHttp();
 
   useEffect(() => {
     const applyData = (data: any) => {
+      console.log({ data });
+
       setModules(data.response);
     };
     sendRequest(
