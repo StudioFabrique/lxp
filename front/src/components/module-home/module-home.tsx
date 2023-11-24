@@ -1,4 +1,5 @@
-import { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useMemo, useState } from "react";
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import Module from "../../utils/interfaces/module";
 import Header from "../UI/header";
@@ -6,6 +7,7 @@ import ToggleList from "../UI/toggle-list";
 import Pagination from "../UI/pagination/pagination";
 import ModuleTable from "./module-table";
 import ModuleCardList from "./modules-card-list";
+import { stepsParcours } from "../../config/steps/steps-parcours";
 
 interface ModuleHomeListProps {
   modulesList: Module[];
@@ -24,6 +26,10 @@ const ModuleHomeList = ({ modulesList }: ModuleHomeListProps) => {
     //resetFilters,
     setPage,
   } = useEagerLoadingList(modulesList, "title", 15);
+
+  const stepId = useMemo(() => {
+    return stepsParcours.find((item: any) => item.label === "Modules").id;
+  }, []);
 
   return (
     <main className="w-5/6 flex flex-col items-center px-4 py-8 gap-8">
@@ -53,9 +59,10 @@ const ModuleHomeList = ({ modulesList }: ModuleHomeListProps) => {
                 onSorting={sortData}
                 direction={direction}
                 fieldSort={fieldSort}
+                stepId={stepId}
               />
             ) : (
-              <ModuleCardList modulesList={list} />
+              <ModuleCardList stepId={stepId} modulesList={list} />
             )}
           </>
         ) : null}

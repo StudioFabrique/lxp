@@ -29,6 +29,11 @@ export default async function getAllModules() {
           },
         },
       },
+      courses: {
+        select: {
+          id: true,
+        },
+      },
     },
   });
 
@@ -42,11 +47,23 @@ export default async function getAllModules() {
       };
     }
     if (item.parcours.length > 0) {
-      return { ...item, parcours: item.parcours[0].parcours.title };
+      return {
+        ...item,
+        parcours: {
+          id: item.parcours[0].parcours.id,
+          title: item.parcours[0].parcours.title,
+        },
+      };
     }
   });
 
-  const modules = serializedModules.map((item: any) => {
+  const updatedModules = serializedModules.map((item: any) => {
+    if (item.courses) {
+      return { ...item, courses: item.courses.length };
+    }
+  });
+
+  const modules = updatedModules.map((item: any) => {
     if (item.thumb) {
       const base64Image = item.thumb.toString("base64");
       return { ...item, thumb: base64Image };

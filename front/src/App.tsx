@@ -80,7 +80,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <ParcoursHome /> },
           { path: "créer-un-parcours", element: <ParcoursAdd /> },
-          { path: "edit/:id", element: <EditParcours /> },
+          { path: "edit/:id/:step", element: <EditParcours /> },
           { path: "view/:id", element: <ParcoursView /> },
         ],
       },
