@@ -5,11 +5,14 @@ import { localeDate } from "../../helpers/locale-date";
 import Can from "../UI/can/can.component";
 import DeleteIcon from "../UI/svg/delete-icon.component";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
+import { Link } from "react-router-dom";
+import EditIcon from "../UI/svg/edit-icon";
 
 interface ModuleTableProps {
   modulesList: any[];
   fieldSort: string;
   direction: boolean;
+  stepId: number;
   onSorting: (property: string) => void;
 }
 
@@ -18,6 +21,7 @@ const ModuleTable = ({
   fieldSort,
   direction,
   onSorting,
+  stepId,
 }: ModuleTableProps) => {
   //const nav = useNavigate();
 
@@ -33,11 +37,14 @@ const ModuleTable = ({
               <td className="bg-transparent rounded-l-lg truncate">
                 {item.title}
               </td>
+              <td className="bg-transparent capitalize truncate">
+                {item.author}
+              </td>
               <td className="bg-transparent truncate">
                 {item.formation ? item.formation : "ND"}
               </td>
               <td className="bg-transparent truncate">
-                {item.parcours ? item.parcours : "ND"}
+                {item.parcours ? item.parcours.title : "ND"}
               </td>
               <td className="bg-transparent truncate">
                 {localeDate(item.createdAt!)}
@@ -45,8 +52,29 @@ const ModuleTable = ({
               <td className="bg-transparent truncate">
                 {localeDate(item.updatedAt!)}
               </td>
-              <td className="bg-transparent capitalize truncate">
-                {item.author}
+              <td className="bg-transparent">
+                <div className="w-6 h-6">
+                  <Can action="update" object="parcours">
+                    <div
+                      className="tooltip tooltip-bottom"
+                      data-tip="Modifier le parcours"
+                    >
+                      {item.parcours ? (
+                        <Link
+                          className="text-secondary"
+                          to={`/admin/parcours/edit/${item.parcours.id}/${stepId}`}
+                          aria-label="Editer le module"
+                        >
+                          <EditIcon />
+                        </Link>
+                      ) : (
+                        <div className="text-base-content/50">
+                          <EditIcon />
+                        </div>
+                      )}
+                    </div>
+                  </Can>
+                </div>
               </td>
               <td className="bg-transparent rounded-r-lg">
                 <div
@@ -85,10 +113,25 @@ const ModuleTable = ({
                 }}
               >
                 <div className="flex items-center gap-x-2">
-                  <p>Titre</p>{" "}
+                  <p>Titre</p>
                   <SortColumnIcon
                     fieldSort={fieldSort}
                     column="title"
+                    direction={direction}
+                  />
+                </div>
+              </th>
+              <th
+                className="cursor-pointer"
+                onClick={() => {
+                  onSorting("author");
+                }}
+              >
+                <div className="flex items-center gap-x-2">
+                  <p>Auteur</p>
+                  <SortColumnIcon
+                    fieldSort={fieldSort}
+                    column="author"
                     direction={direction}
                   />
                 </div>
@@ -149,21 +192,6 @@ const ModuleTable = ({
                   <SortColumnIcon
                     fieldSort={fieldSort}
                     column="updatedAt"
-                    direction={direction}
-                  />
-                </div>
-              </th>
-              <th
-                className="cursor-pointer"
-                onClick={() => {
-                  onSorting("author");
-                }}
-              >
-                <div className="flex items-center gap-x-2">
-                  <p>Auteur</p>
-                  <SortColumnIcon
-                    fieldSort={fieldSort}
-                    column="author"
                     direction={direction}
                   />
                 </div>
