@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Information from "../../components/user-profile/information/information";
 import Calendar from "../../components/user-profile/calendar";
 import Evaluations from "../../components/user-profile/evaluations";
-import Awards from "../../components/user-profile/awards";
+import Awards from "../../components/user-profile/awards/awards";
 import Account from "../../components/user-profile/account";
 import User from "../../utils/interfaces/user";
 import useHttp from "../../hooks/use-http";
@@ -29,20 +29,13 @@ const UserProfile = () => {
   const Render = () => {
     switch (currentTab) {
       case "Info":
-        return (
-          <Information
-            userInfo={{
-              firstName: userData?.firstname,
-              lastName: userData?.lastname,
-            }}
-          />
-        );
+        return <Information userData={userData} />;
       case "Calendar":
         return <Calendar />;
       case "Evals":
         return <Evaluations />;
       case "Awards":
-        return <Awards />;
+        return <Awards userData={userData} />;
       case "Account":
         return <Account />;
     }
