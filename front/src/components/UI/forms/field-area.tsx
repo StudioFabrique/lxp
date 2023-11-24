@@ -32,7 +32,10 @@ const FieldArea = (props: FieldProps) => {
         name={name}
         rows={rows}
         value={
-          props.data.values[name] !== undefined ? props.data.values[name] : ""
+          props.data.values[name] !== undefined &&
+          props.data.values[name] !== null
+            ? props.data.values[name]
+            : ""
         }
         placeholder={placeholder}
         onChange={(event) =>

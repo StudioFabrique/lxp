@@ -6,10 +6,12 @@ import {
   getBase64ImageFromReq,
 } from "../../middleware/fileUpload";
 import sharp from "sharp";
+import CustomRequest from "../../utils/interfaces/express/custom-request";
 
-async function httpPutModuleParcours(req: Request, res: Response) {
+async function httpPutModuleParcours(req: CustomRequest, res: Response) {
   const { module } = req.body;
   const uploadedFile = req.file;
+  const userId = req.auth?.userId;
 
   try {
     if (uploadedFile) {
@@ -18,7 +20,7 @@ async function httpPutModuleParcours(req: Request, res: Response) {
       const resizedPic = sharp(uploadedFile.path).resize(400, 400);
       const thumb = resizedPic.toBuffer();
       const thumb64 = (await thumb).toString("base64");
-      const response = await putModuleParcours(module, thumb64, image);
+      const response = await putModuleParcours(module, thumb64, image, userId!);
       await deleteTempUploadedFile(req);
       return res
         .status(201)

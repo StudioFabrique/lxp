@@ -197,6 +197,8 @@ const ModulesSection = () => {
     }
   }, [error]);
 
+  console.log(parcoursModules);
+
   return (
     <div className="flex flex-col gap-y-8">
       <section>
