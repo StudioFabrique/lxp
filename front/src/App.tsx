@@ -23,6 +23,7 @@ import EditCourseHome from "./views/course/edit-course/edit-course-home";
 import AddCourse from "./views/course/add-course";
 import LayoutCourseEdit from "./views/course/edit-course/layout-edit-course";
 import Role from "./views/role/role";
+import UserProfile from "./views/user-profile/user-profile";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,7 @@ const router = createBrowserRouter([
           { path: "view/:id", element: <ParcoursView /> },
         ],
       },
+      { path: "profil", element: <UserProfile /> },
     ],
   },
   {
