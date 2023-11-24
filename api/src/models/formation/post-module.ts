@@ -1,15 +1,28 @@
 import { prisma } from "../../utils/db";
+import User from "../../utils/interfaces/db/user";
 
-async function postModule(data: any, thumb: any, image: any) {
+async function postModule(data: any, thumb: any, image: any, userId: string) {
   const moduleToAdd = JSON.parse(data);
   const existingParcours = await prisma.formation.findFirst({
     where: { id: moduleToAdd.formationId },
   });
 
-  if (!existingParcours) {
-    const error = { message: "Ressource inexistante", statusCode: 404 };
-    throw error;
-  }
+  checkRessource(existingParcours !== null);
+
+  const existingUser = await User.findById(userId, {
+    firstname: 1,
+    lastname: 1,
+  });
+
+  checkRessource(existingUser !== null);
+
+  const existingAdmin = await prisma.admin.findFirst({
+    where: { idMdb: userId },
+  });
+
+  checkRessource(existingAdmin !== null);
+
+  const author = `${existingUser?.firstname} ${existingUser?.lastname}`;
 
   let newModule: any = {};
 
@@ -21,6 +34,8 @@ async function postModule(data: any, thumb: any, image: any) {
         duration: +moduleToAdd.duration,
         image,
         thumb,
+        author,
+        adminId: existingAdmin!.id,
       },
       select: { id: true, title: true, description: true, thumb: true },
     });
@@ -44,3 +59,10 @@ async function postModule(data: any, thumb: any, image: any) {
 }
 
 export default postModule;
+
+function checkRessource(value: boolean) {
+  if (!value) {
+    const error = { message: "Ressource inexistante", statusCode: 404 };
+    throw error;
+  }
+}

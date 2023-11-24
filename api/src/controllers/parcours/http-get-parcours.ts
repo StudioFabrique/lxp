@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import getParcoursList from "../../models/module/get-parcours-list";
+import getParcoursList from "../../models/parcours/get-parcours";
 
 async function httpGetParcours(req: Request, res: Response) {
   try {
