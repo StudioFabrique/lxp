@@ -73,7 +73,11 @@ const ModuleHomeList = ({ modulesList }: ModuleHomeListProps) => {
                 onDelete={handleConfirmDeleteModule}
               />
             ) : (
-              <ModuleCardList stepId={stepId} modulesList={list} />
+              <ModuleCardList
+                stepId={stepId}
+                modulesList={list}
+                onDelete={handleConfirmDeleteModule}
+              />
             )}
           </>
         ) : null}
