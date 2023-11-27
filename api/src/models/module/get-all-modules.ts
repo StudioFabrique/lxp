@@ -32,6 +32,7 @@ export default async function getAllModules() {
       courses: {
         select: {
           id: true,
+          title: true,
         },
       },
     },
@@ -53,17 +54,18 @@ export default async function getAllModules() {
           id: item.parcours[0].parcours.id,
           title: item.parcours[0].parcours.title,
         },
+        courses: item.courses.map((item) => item),
       };
     }
   });
 
-  const updatedModules = serializedModules.map((item: any) => {
+  /*   const updatedModules = serializedModules.map((item: any) => {
     if (item.courses) {
       return { ...item, courses: item.courses.length };
     }
-  });
+  }); */
 
-  const modules = updatedModules.map((item: any) => {
+  const modules = serializedModules.map((item: any) => {
     if (item.thumb) {
       const base64Image = item.thumb.toString("base64");
       return { ...item, thumb: base64Image };
