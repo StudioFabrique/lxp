@@ -14,6 +14,7 @@ interface ModuleTableProps {
   direction: boolean;
   stepId: number;
   onSorting: (property: string) => void;
+  onDelete: (id: number) => void;
 }
 
 const ModuleTable = ({
@@ -22,6 +23,7 @@ const ModuleTable = ({
   direction,
   onSorting,
   stepId,
+  onDelete,
 }: ModuleTableProps) => {
   //const nav = useNavigate();
 
@@ -86,7 +88,7 @@ const ModuleTable = ({
                       className="tooltip tooltip-bottom flex-items-center"
                       data-tip="Supprimer le parcours"
                     >
-                      <div onClick={() => {}}>
+                      <div onClick={() => onDelete(item.id)}>
                         <DeleteIcon />
                       </div>
                     </div>

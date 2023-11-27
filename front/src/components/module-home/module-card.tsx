@@ -4,14 +4,16 @@ import Can from "../UI/can/can.component";
 import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 import { useState } from "react";
 import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
+import DeleteIcon from "../UI/svg/delete-icon.component";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ModuleCardProps {
   stepId: number;
   module: any;
+  onDelete: (id: number) => void;
 }
 
-const ModuleCard = ({ stepId, module }: ModuleCardProps) => {
+const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
 
   const classImage: React.CSSProperties = {
@@ -84,19 +86,39 @@ const ModuleCard = ({ stepId, module }: ModuleCardProps) => {
               <span className="flex gap-x-1 items-center">
                 <p>Cours :</p>
                 <p className="font-normal">
-                  {module.courses === 0 ? "Aucun" : module.courses}
+                  {module.courses.length === 0
+                    ? "Aucun"
+                    : module.courses.length}
                 </p>
               </span>
             </div>
           </FadeWrapper>
         ) : null}
-        <div>
+        <div className="w-full flex justify-between items-center">
           <p
             className="text-xs text-primary underline font-normal cursor-pointer"
             onClick={handleToggleDetails}
           >
             {showDetails ? "Fermer" : "Détails"}
           </p>
+
+          <div aria-label="suppression du module">
+            <Can action="delete" object="module">
+              <div
+                className="tooltip tooltip-bottom flex-items-center"
+                data-tip="Supprimer le module"
+              >
+                <button
+                  className="btn btn-sm btn-outlne btn-circle rounded-md btn-error"
+                  onClick={() => onDelete(module.id)}
+                >
+                  <div className="w-5 h-5">
+                    <DeleteIcon />
+                  </div>
+                </button>
+              </div>
+            </Can>
+          </div>
         </div>
       </div>
     </div>

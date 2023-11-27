@@ -25,8 +25,7 @@ import {
 } from "../parcours/parcours-validator";
 import { idsArrayValidator } from "../../../helpers/custom-validators";
 import httpGetAllModules from "../../../controllers/module/http-get-all-modules";
-import httpGetFormationsList from "../../../controllers/module/http-get-formations-list";
-import httpGetParcoursList from "../../../controllers/module/http-get-parcours-list";
+import httpDeleteFormationModule from "../../../controllers/module/http-delete-formation-module";
 
 const modules = Router();
 
@@ -81,14 +80,6 @@ modules.put(
   createFileUploadMiddleware(headerImageMaxSize),
   httpPutModule
 );
-// retourne une liste simplifiée des parcours
-modules.get("/parcours-list", checkPermissions("module"), httpGetParcoursList);
-// retourne une liste simplifiée des formations
-modules.get(
-  "/formations-list",
-  checkPermissions("module"),
-  httpGetFormationsList
-);
 // retourne la liste des modules assocués à un parcours
 modules.get(
   "/:parcoursId",
@@ -98,5 +89,11 @@ modules.get(
 );
 // retourne la liste de tous les modules
 modules.get("/", checkPermissions("module"), httpGetAllModules);
+// supprime définitvement un module attaché à une formation
+modules.delete(
+  "/formation/:moduleId",
+  checkPermissions("module"),
+  httpDeleteFormationModule
+);
 
 export default modules;

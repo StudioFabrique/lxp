@@ -11,9 +11,13 @@ import { stepsParcours } from "../../config/steps/steps-parcours";
 
 interface ModuleHomeListProps {
   modulesList: Module[];
+  onDeleteModule: (module: any) => void;
 }
 
-const ModuleHomeList = ({ modulesList }: ModuleHomeListProps) => {
+const ModuleHomeList = ({
+  modulesList,
+  onDeleteModule,
+}: ModuleHomeListProps) => {
   const [showList, setShowList] = useState(true);
   const {
     list,
@@ -31,6 +35,17 @@ const ModuleHomeList = ({ modulesList }: ModuleHomeListProps) => {
     return stepsParcours.find((item: any) => item.label === "Modules").id;
   }, []);
 
+  /**
+   * stocke en mémoire le module à supprimer
+   * @param id number
+   */
+  const handleConfirmDeleteModule = (id: number) => {
+    const module = list?.find((item: any) => item.id === id);
+    if (module) {
+      onDeleteModule(module);
+    }
+  };
+
   return (
     <main className="w-5/6 flex flex-col items-center px-4 py-8 gap-8">
       <section className="w-full">
@@ -39,14 +54,6 @@ const ModuleHomeList = ({ modulesList }: ModuleHomeListProps) => {
           description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in urna eget pura."
         ></Header>
       </section>
-      {/*       <section className="w-full flex">
-        <article className="w-full flex justify-end items-center gap-x-2">
-          <SelectDropdown onSelectItem={() => {}} />
-          <div className="text-primary" onClick={handleResetSearch}>
-            <RefreshIcon size={8} />
-          </div>
-        </article>
-      </section> */}
       <section className="w-full flex flex-col">
         <article className="w-full flex justify-end items-center gap-x-4">
           <ToggleList showList={showList} onToggle={setShowList} />
@@ -60,9 +67,14 @@ const ModuleHomeList = ({ modulesList }: ModuleHomeListProps) => {
                 direction={direction}
                 fieldSort={fieldSort}
                 stepId={stepId}
+                onDelete={handleConfirmDeleteModule}
               />
             ) : (
-              <ModuleCardList stepId={stepId} modulesList={list} />
+              <ModuleCardList
+                stepId={stepId}
+                modulesList={list}
+                onDelete={handleConfirmDeleteModule}
+              />
             )}
           </>
         ) : null}

@@ -89,7 +89,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                     >
                       <Link
                         className="text-secondary"
-                        to={`edit/${item.id}`}
+                        to={`edit/${item.id}/1`}
                         aria-label="modifier le parcours"
                       >
                         <EditIcon />
