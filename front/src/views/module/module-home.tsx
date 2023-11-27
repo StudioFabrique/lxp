@@ -8,10 +8,12 @@ import ModalSuppression from "../../components/module-home/modal-suppression";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { stepsParcours } from "../../config/steps/steps-parcours";
+import RightSideDrawer from "../../components/UI/right-side-drawer/right-side-drawer";
 
 const ModuleHome = () => {
   const [modules, setModules] = useState<Module[] | null>(null);
   const [moduleToDelete, setModuleToDelete] = useState<any>(null);
+  const [currentModule, setCurrentModule] = useState<any>(null);
   const { sendRequest, error, isLoading } = useHttp();
   const nav = useNavigate();
 
@@ -51,6 +53,16 @@ const ModuleHome = () => {
       nav(`/admin/parcours/edit/${moduleToDelete.parcours.id}/${stepId}`);
     }
   }, [moduleToDelete, nav]);
+
+  const handleCoursesList = (id: number) => {
+    setCurrentModule(modules?.find((item) => item.id === id));
+  };
+
+  useEffect(() => {
+    if (currentModule) {
+      document.getElementById("courses-list")?.click();
+    }
+  }, [currentModule]);
 
   // retourne la liste de tous les modules
   useEffect(() => {
@@ -110,6 +122,7 @@ const ModuleHome = () => {
               <ModuleHomeList
                 modulesList={modules}
                 onDeleteModule={handleDeleteModule}
+                onCoursesList={handleCoursesList}
               />
             ) : null}
           </>
@@ -127,6 +140,16 @@ const ModuleHome = () => {
             }
           />
         ) : null}
+      </section>
+      <section>
+        <RightSideDrawer
+          id="courses-list"
+          title="Liste des Cours"
+          visible={false}
+          onCloseDrawer={() => {}}
+        >
+          <p>toto</p>
+        </RightSideDrawer>
       </section>
     </main>
   );

@@ -12,11 +12,13 @@ import { stepsParcours } from "../../config/steps/steps-parcours";
 interface ModuleHomeListProps {
   modulesList: Module[];
   onDeleteModule: (module: any) => void;
+  onCoursesList: (id: number) => void;
 }
 
 const ModuleHomeList = ({
   modulesList,
   onDeleteModule,
+  onCoursesList,
 }: ModuleHomeListProps) => {
   const [showList, setShowList] = useState(true);
   const {
@@ -67,6 +69,7 @@ const ModuleHomeList = ({
                 direction={direction}
                 fieldSort={fieldSort}
                 stepId={stepId}
+                onCoursesList={onCoursesList}
                 onDelete={handleConfirmDeleteModule}
               />
             ) : (

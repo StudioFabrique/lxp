@@ -7,6 +7,7 @@ import DeleteIcon from "../UI/svg/delete-icon.component";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
 import { Link } from "react-router-dom";
 import EditIcon from "../UI/svg/edit-icon";
+import DocumentIcon from "../UI/svg/document-icon";
 
 interface ModuleTableProps {
   modulesList: any[];
@@ -15,6 +16,7 @@ interface ModuleTableProps {
   stepId: number;
   onSorting: (property: string) => void;
   onDelete: (id: number) => void;
+  onCoursesList: (id: number) => void;
 }
 
 const ModuleTable = ({
@@ -24,6 +26,7 @@ const ModuleTable = ({
   onSorting,
   stepId,
   onDelete,
+  onCoursesList,
 }: ModuleTableProps) => {
   //const nav = useNavigate();
 
@@ -72,6 +75,29 @@ const ModuleTable = ({
                       ) : (
                         <div className="text-base-content/50">
                           <EditIcon />
+                        </div>
+                      )}
+                    </div>
+                  </Can>
+                </div>
+              </td>
+              <td className="bg-transparent rounded-r-lg">
+                <div
+                  className="w-6 h-6 text-secondary"
+                  aria-label="afficher la liste des cours"
+                >
+                  <Can action="update" object="module">
+                    <div
+                      className="tooltip tooltip-bottom flex-items-center"
+                      data-tip="Voir la liste des cours"
+                    >
+                      {item.courses.length > 0 ? (
+                        <div onClick={() => onCoursesList(item.id)}>
+                          <DocumentIcon />
+                        </div>
+                      ) : (
+                        <div className="text-secondary/50">
+                          <DocumentIcon />
                         </div>
                       )}
                     </div>
@@ -198,6 +224,7 @@ const ModuleTable = ({
                   />
                 </div>
               </th>
+              <th></th>
               <th></th>
             </tr>
           </thead>
