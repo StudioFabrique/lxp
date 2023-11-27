@@ -86,7 +86,9 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
               <span className="flex gap-x-1 items-center">
                 <p>Cours :</p>
                 <p className="font-normal">
-                  {module.courses === 0 ? "Aucun" : module.courses}
+                  {module.courses.length === 0
+                    ? "Aucun"
+                    : module.courses.length}
                 </p>
               </span>
             </div>
