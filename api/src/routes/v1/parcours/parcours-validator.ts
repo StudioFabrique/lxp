@@ -137,7 +137,7 @@ export const parcoursIdValidator = [
     .notEmpty()
     .withMessage("L'identifiant du parcours est requis")
     .isNumeric()
-    .withMessage("L'identifiant du parcours n'est pas requis"),
+    .withMessage("L'identifiant du parcours doit être un nombre entier"),
   checkValidatorResult,
 ];
 

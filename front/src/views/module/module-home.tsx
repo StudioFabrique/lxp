@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { stepsParcours } from "../../config/steps/steps-parcours";
 import RightSideDrawer from "../../components/UI/right-side-drawer/right-side-drawer";
+import CoursesList from "../../components/module-home/courses-list";
 
 const ModuleHome = () => {
   const [modules, setModules] = useState<Module[] | null>(null);
@@ -54,10 +55,20 @@ const ModuleHome = () => {
     }
   }, [moduleToDelete, nav]);
 
+  /**
+   * stock le module dont on veut voir la liste des cours en mémoire
+   * @param id number
+   */
   const handleCoursesList = (id: number) => {
     setCurrentModule(modules?.find((item) => item.id === id));
   };
 
+  const handleCloseDrawer = (id: string) => {
+    setCurrentModule(null);
+    document.getElementById("courses-list")?.click();
+  };
+
+  // si un module est stocké en mémoire ouvre le drawer qui affiche la liste des cours
   useEffect(() => {
     if (currentModule) {
       document.getElementById("courses-list")?.click();
@@ -146,9 +157,14 @@ const ModuleHome = () => {
           id="courses-list"
           title="Liste des Cours"
           visible={false}
-          onCloseDrawer={() => {}}
+          onCloseDrawer={handleCloseDrawer}
         >
-          <p>toto</p>
+          {currentModule ? (
+            <CoursesList
+              coursesList={currentModule.courses}
+              moduleId={currentModule.id}
+            />
+          ) : null}
         </RightSideDrawer>
       </section>
     </main>

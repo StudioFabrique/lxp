@@ -7,7 +7,7 @@ export const moduleIdValidator = [
     .notEmpty()
     .withMessage("L'identifiant du module est requis")
     .isNumeric()
-    .withMessage("L'identifiant du module n'est pas requis"),
+    .withMessage("L'identifiant du module n'est pas un nombre entier"),
   checkValidatorResult,
 ];
 
@@ -27,7 +27,7 @@ export const getModulesFromParcoursValidator = [
     .isNumeric()
     .withMessage("Identifiant de parcours non valide")
     .notEmpty()
-    .withMessage("Un identifiant de parcours est requise")
+    .withMessage("Un identifiant de parcours est requis")
     .trim()
     .escape(),
   checkValidatorResult,
@@ -67,7 +67,7 @@ export const updateDurationValidator = [
     .isNumeric()
     .withMessage("Identifiant de module non valide")
     .notEmpty()
-    .withMessage("Un identifiant de module est requise")
+    .withMessage("Un identifiant de module est requis")
     .trim()
     .escape(),
   body("duration")

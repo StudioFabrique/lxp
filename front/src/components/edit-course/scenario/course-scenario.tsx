@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import TypeScenario from "./type-scenario";

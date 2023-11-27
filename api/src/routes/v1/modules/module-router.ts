@@ -26,9 +26,16 @@ import {
 import { idsArrayValidator } from "../../../helpers/custom-validators";
 import httpGetAllModules from "../../../controllers/module/http-get-all-modules";
 import httpDeleteFormationModule from "../../../controllers/module/http-delete-formation-module";
+import httpPutReleaseCourses from "../../../controllers/module/http-put-release-courses";
 
 const modules = Router();
 
+// dissocie un ou plusieurs cours d'un module
+modules.put(
+  "/release-courses",
+  //checkPermissions("module"),
+  httpPutReleaseCourses
+);
 modules.put(
   "/add-module/:parcoursId/:moduleId",
   checkPermissions("module"),

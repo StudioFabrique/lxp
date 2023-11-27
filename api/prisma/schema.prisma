@@ -149,7 +149,7 @@ model Course {
   title        String
   description  String?
   image        Bytes?
-  module       Module               @relation(fields: [moduleId], references: [id])
+  module       Module?               @relation(fields: [moduleId], references: [id]) 
   moduleId     Int
   virtualClass String?
   visibility   Boolean?
