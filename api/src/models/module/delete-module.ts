@@ -3,10 +3,19 @@ import { prisma } from "../../utils/db";
 async function deleteModule(moduleId: number) {
   const existingModule = await prisma.module.findFirst({
     where: { id: moduleId },
+    select: { courses: true },
   });
 
   if (!existingModule) {
     const error = { message: "Le module n'existe pas", statusCode: 404 };
+    throw error;
+  }
+
+  if (existingModule.courses) {
+    const error = {
+      message: "Suppression impossible, des cours sont rattachés à ce module",
+      statusCode: 405,
+    };
     throw error;
   }
 

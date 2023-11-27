@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import Module from "../../utils/interfaces/module";
 import Header from "../UI/header";
@@ -11,11 +11,14 @@ import { stepsParcours } from "../../config/steps/steps-parcours";
 
 interface ModuleHomeListProps {
   modulesList: Module[];
+  onDeleteModule: (module: any) => void;
 }
 
-const ModuleHomeList = ({ modulesList }: ModuleHomeListProps) => {
+const ModuleHomeList = ({
+  modulesList,
+  onDeleteModule,
+}: ModuleHomeListProps) => {
   const [showList, setShowList] = useState(true);
-  const [moduleToDelete, setModuleToDelete] = useState<any>(null);
   const {
     list,
     sortData,
@@ -32,22 +35,16 @@ const ModuleHomeList = ({ modulesList }: ModuleHomeListProps) => {
     return stepsParcours.find((item: any) => item.label === "Modules").id;
   }, []);
 
+  /**
+   * stocke en mémoire le module à supprimer
+   * @param id number
+   */
   const handleConfirmDeleteModule = (id: number) => {
     const module = list?.find((item: any) => item.id === id);
     if (module) {
-      setModuleToDelete(module);
+      onDeleteModule(module);
     }
   };
-
-  const handleCloseModal = () => {
-    setModuleToDelete(null);
-  };
-
-  useEffect(() => {
-    if (moduleToDelete) {
-      (document.getElementById("my_modal_3") as HTMLFormElement).showModal();
-    }
-  }, [moduleToDelete]);
 
   return (
     <main className="w-5/6 flex flex-col items-center px-4 py-8 gap-8">
@@ -87,31 +84,6 @@ const ModuleHomeList = ({ modulesList }: ModuleHomeListProps) => {
           <Pagination page={page} totalPages={totalPages} setPage={setPage} />
         ) : null}
       </section>
-
-      <dialog id="my_modal_3" className="modal">
-        <div className="modal-box">
-          <form method="dialog" onSubmit={handleCloseModal}>
-            {/* if there is a button in form, it will close the modal */}
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-              ✕
-            </button>
-          </form>
-          <h3 className="font-bold text-lg text-warning">
-            Supprimer le module {moduleToDelete?.title}
-          </h3>
-          <p className="py-4">
-            Confirmez-vous la suppression définitive de ce module ?
-          </p>
-          <div className="w-full flex justify-end gap-x-2 mt-4">
-            <form method="dialog" onSubmit={handleCloseModal}>
-              <button className="btn btn-sm btn-outline" type="submit">
-                Annuler
-              </button>
-            </form>
-            <button className="btn btn-sm btn-error">Confirmer</button>
-          </div>
-        </div>
-      </dialog>
     </main>
   );
 };
