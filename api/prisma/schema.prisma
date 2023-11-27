@@ -63,7 +63,7 @@ model Module {
   parcours    ModulesOnParcours[]
   bonusSkills BonusSkillsOnModule[]
   contacts    ContactsOnModule[]
-  courses     Course[]
+  courses     CoursesOnModule[]
   createdAt   DateTime              @default(now())
   updatedAt   DateTime              @default(now())
   author      String
@@ -149,8 +149,6 @@ model Course {
   title        String
   description  String?
   image        Bytes?
-  module       Module?               @relation(fields: [moduleId], references: [id]) 
-  moduleId     Int
   virtualClass String?
   visibility   Boolean?
   scenario     Boolean              @default(true)
@@ -163,6 +161,7 @@ model Course {
   objectives   ObjectivesOnCourse[]
   bonusSkills  BonusSkillOnCourse[]
   lessons      LessonsOnCourse[]
+  modules CoursesOnModule[]
 }
 
 model Lesson {
@@ -311,4 +310,14 @@ model BonusSkillOnCourse {
   courseId     Int
 
   @@id([bonusSkillId, courseId])
+}
+
+
+model CoursesOnModule {
+  course Course @relation(fields: [courseId], references: [id])
+  courseId Int
+  module Module @relation(fields: [moduleId], references: [id])
+  moduleId Int
+
+  @@id([courseId,moduleId])
 }

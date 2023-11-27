@@ -6,13 +6,17 @@ async function putCourseNewObjective(courseId: number, objective: Objective) {
     where: { id: courseId },
     select: {
       id: true,
-      module: {
+      modules: {
         select: {
-          parcours: {
+          module: {
             select: {
               parcours: {
                 select: {
-                  id: true,
+                  parcours: {
+                    select: {
+                      id: true,
+                    },
+                  },
                 },
               },
             },
@@ -31,7 +35,7 @@ async function putCourseNewObjective(courseId: number, objective: Objective) {
   let newObjective: Objective;
 
   const transaction = await prisma.$transaction(async (tx) => {
-    const parcoursId = existingCourse.module.parcours[0].parcours.id;
+    const parcoursId = existingCourse.modules[0].module.parcours[0].parcours.id;
     newObjective = await tx.objective.create({
       data: { ...objective, parcoursId },
     });

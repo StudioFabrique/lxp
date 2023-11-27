@@ -31,11 +31,11 @@ import httpPutReleaseCourses from "../../../controllers/module/http-put-release-
 const modules = Router();
 
 // dissocie un ou plusieurs cours d'un module
-modules.put(
+/* modules.put(
   "/release-courses",
   //checkPermissions("module"),
   httpPutReleaseCourses
-);
+); */
 modules.put(
   "/add-module/:parcoursId/:moduleId",
   checkPermissions("module"),
@@ -95,7 +95,7 @@ modules.get(
   httpGetModulesFromParcours
 );
 // retourne la liste de tous les modules
-modules.get("/", checkPermissions("module"), httpGetAllModules);
+//modules.get("/", checkPermissions("module"), httpGetAllModules);
 // supprime définitvement un module attaché à une formation
 modules.delete(
   "/formation/:moduleId",

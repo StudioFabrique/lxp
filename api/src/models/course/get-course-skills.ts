@@ -9,11 +9,15 @@ async function getCourseSkills(courseId: number) {
           bonusSkill: true,
         },
       },
-      module: {
+      modules: {
         select: {
-          bonusSkills: {
+          module: {
             select: {
-              bonusSkill: true,
+              bonusSkills: {
+                select: {
+                  bonusSkill: true,
+                },
+              },
             },
           },
         },

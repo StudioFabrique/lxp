@@ -21,49 +21,53 @@ async function getCourseInformations(courseId: number) {
           contact: true,
         },
       },
-      module: {
+      modules: {
         select: {
-          id: true,
-          title: true,
-          minDate: true,
-          maxDate: true,
-          image: true,
-          contacts: {
+          module: {
             select: {
-              contact: {
+              id: true,
+              title: true,
+              minDate: true,
+              maxDate: true,
+              image: true,
+              contacts: {
                 select: {
-                  id: true,
-                  name: true,
-                  role: true,
+                  contact: {
+                    select: {
+                      id: true,
+                      name: true,
+                      role: true,
+                    },
+                  },
                 },
               },
-            },
-          },
-          parcours: {
-            select: {
               parcours: {
                 select: {
-                  id: true,
-                  title: true,
-                  virtualClass: true,
-                  formation: {
+                  parcours: {
                     select: {
                       id: true,
                       title: true,
-                      tags: {
-                        select: {
-                          tag: true,
-                        },
-                      },
-                    },
-                  },
-                  tags: {
-                    select: {
-                      tag: {
+                      virtualClass: true,
+                      formation: {
                         select: {
                           id: true,
-                          color: true,
-                          name: true,
+                          title: true,
+                          tags: {
+                            select: {
+                              tag: true,
+                            },
+                          },
+                        },
+                      },
+                      tags: {
+                        select: {
+                          tag: {
+                            select: {
+                              id: true,
+                              color: true,
+                              name: true,
+                            },
+                          },
                         },
                       },
                     },
@@ -83,7 +87,7 @@ async function getCourseInformations(courseId: number) {
     throw error;
   }
 
-  if (course) {
+  /*   if (course) {
     if (course.module && course.module.image instanceof Buffer) {
       const base64Image = course.module.image.toString("base64");
       const result = {
@@ -92,7 +96,7 @@ async function getCourseInformations(courseId: number) {
       };
       return result;
     }
-  }
+  } */
 
   return course;
 }

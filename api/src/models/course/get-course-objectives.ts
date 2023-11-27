@@ -9,13 +9,17 @@ async function getCourseObjectives(courseId: number) {
           objective: true,
         },
       },
-      module: {
+      modules: {
         select: {
-          parcours: {
+          module: {
             select: {
               parcours: {
                 select: {
-                  objectives: true,
+                  parcours: {
+                    select: {
+                      objectives: true,
+                    },
+                  },
                 },
               },
             },

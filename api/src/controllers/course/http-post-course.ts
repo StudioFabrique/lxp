@@ -9,7 +9,6 @@ async function httpPostCourse(req: Request, res: Response) {
 
   course = {
     title: customEscape(course.title),
-    moduleId: +course.moduleId,
   };
 
   try {

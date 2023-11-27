@@ -5,16 +5,20 @@ async function getCourses() {
     select: {
       id: true,
       title: true,
-      module: {
+      modules: {
         select: {
-          id: true,
-          title: true,
-          parcours: {
+          module: {
             select: {
+              id: true,
+              title: true,
               parcours: {
                 select: {
-                  id: true,
-                  title: true,
+                  parcours: {
+                    select: {
+                      id: true,
+                      title: true,
+                    },
+                  },
                 },
               },
             },
