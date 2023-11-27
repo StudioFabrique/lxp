@@ -9,4 +9,5 @@ export default async function deleteFormationModule(moduleId: number) {
       where: { id: moduleId },
     });
   });
+  return true;
 }
