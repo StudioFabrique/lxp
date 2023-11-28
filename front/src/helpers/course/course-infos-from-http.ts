@@ -8,6 +8,23 @@ import { sortArray } from "../../utils/sortArray";
  * @returns Course
  */
 export default function courseInfosFromHttp(course: any) {
+  if (!course.module) {
+    const module = {
+      title: "Ce cours n'est associé à aucun module",
+      image: "/images/parcours-default.jpg",
+      contacts: course.contacts,
+      parcours: {
+        tags: [],
+      },
+    };
+    console.log(course.tags);
+
+    return {
+      ...course,
+      tags: course.tags.map((item: any) => item.tag),
+      module,
+    };
+  }
   let updatedData = {
     ...course,
     module: {
@@ -24,48 +41,50 @@ export default function courseInfosFromHttp(course: any) {
     },
   };
 
-  if (updatedData.module.image) {
-    updatedData = {
-      ...updatedData,
-      module: {
-        ...updatedData.module,
-        image: `data:image/jpeg;base64,${updatedData.module.image}`,
-      },
-    };
-  }
+  if (updatedData.module) {
+    if (updatedData.module.image) {
+      updatedData = {
+        ...updatedData,
+        module: {
+          ...updatedData.module,
+          image: `data:image/jpeg;base64,${updatedData.module.image}`,
+        },
+      };
+    }
 
-  if (updatedData.module.parcours.tags.length === 0) {
-    const tmp = sortArray(
-      course.module.parcours[0].parcours.formation.tags.map(
-        (item: any) => item.tag
-      ),
-      "name"
-    );
-    updatedData = {
-      ...updatedData,
-      module: {
-        ...updatedData.module,
-        parcours: {
-          ...updatedData.module.parcours,
-          tags: tmp,
+    if (updatedData.module.parcours.tags.length === 0) {
+      const tmp = sortArray(
+        course.module.parcours[0].parcours.formation.tags.map(
+          (item: any) => item.tag
+        ),
+        "name"
+      );
+      updatedData = {
+        ...updatedData,
+        module: {
+          ...updatedData.module,
+          parcours: {
+            ...updatedData.module.parcours,
+            tags: tmp,
+          },
         },
-      },
-    };
-  } else {
-    const tmp = sortArray(
-      course.module.parcours[0].parcours.tags.map((item: any) => item.tag),
-      "name"
-    );
-    updatedData = {
-      ...updatedData,
-      module: {
-        ...updatedData.module,
-        parcours: {
-          ...updatedData.module.parcours,
-          tags: tmp,
+      };
+    } else {
+      const tmp = sortArray(
+        course.module.parcours[0].parcours.tags.map((item: any) => item.tag),
+        "name"
+      );
+      updatedData = {
+        ...updatedData,
+        module: {
+          ...updatedData.module,
+          parcours: {
+            ...updatedData.module.parcours,
+            tags: tmp,
+          },
         },
-      },
-    };
+      };
+    }
   }
 
   if (!updatedData.tags) {

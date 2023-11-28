@@ -7,16 +7,13 @@ export default async function httpPutReleaseCourses(
   res: Response
 ) {
   try {
-    const coursesIds = req.body;
-    console.log({ coursesIds });
+    const { coursesIds, moduleId } = req.body;
 
-    await putReleaseCourses(coursesIds);
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Les cours ont été dissociés du module",
-      });
+    await putReleaseCourses(coursesIds, moduleId);
+    return res.status(200).json({
+      success: true,
+      message: "Les cours ont été dissociés du module",
+    });
   } catch (error: any) {
     return res
       .status(error.statusCode ?? 500)

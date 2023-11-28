@@ -1,6 +1,4 @@
 import { prisma } from "../../utils/db";
-import ResponseCourseInformations from "../../utils/interfaces/data/response-course-informations";
-import ResponseCourse from "../../utils/interfaces/data/response-course-informations";
 
 async function getCourseInformations(courseId: number) {
   const course = await prisma.course.findFirst({
@@ -89,11 +87,23 @@ async function getCourseInformations(courseId: number) {
     throw error;
   }
 
-  const response = {
-    ...course,
-    module: { ...course.modules[0].module },
-    modules: null,
-  };
+  let response: any = {};
+
+  if (course.modules.length > 0) {
+    response = {
+      ...course,
+      module: { ...course.modules[0].module },
+      modules: null,
+    };
+  } else {
+    response = {
+      ...course,
+      module: null,
+      modules: null,
+    };
+  }
+
+  console.log({ response });
 
   if (response.module && response.module.image instanceof Buffer) {
     const base64Image = response.module.image.toString("base64");
@@ -104,7 +114,7 @@ async function getCourseInformations(courseId: number) {
     return result;
   }
 
-  return course;
+  return response;
 }
 
 export default getCourseInformations;

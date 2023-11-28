@@ -43,6 +43,19 @@ const CourseHome = () => {
     );
   }, [sendRequest]);
 
+  const getModuleTitle = (course: any) => {
+    let title = "";
+    if (course.modules.length > 0) {
+      title = course.modules[0].title;
+      if (course.modules.length > 1) {
+        title += " ...";
+      }
+    } else {
+      title = "nd";
+    }
+    return title;
+  };
+
   const content = useMemo(() => {
     return (
       <>
@@ -54,10 +67,12 @@ const CourseHome = () => {
           >
             <td>{course.id}</td>
             <td>{course.title}</td>
+            <td>{getModuleTitle(course)}</td>
             <td>
-              {course.modules[0].title} {course.modules.length > 1 ? "..." : ""}
+              {course.modules.length > 0
+                ? course.modules[0].parcours.title
+                : "nd"}
             </td>
-            <td>{course.modules[0].parcours.title}</td>
             <td>{localeDate(course.createdAt!)}</td>
             <td>{localeDate(course.updatedAt!)}</td>
             <td>

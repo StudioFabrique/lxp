@@ -1,11 +1,17 @@
 import { prisma } from "../../utils/db";
 
-export default async function putReleaseCourses(coursesIds: number[]) {
-  for (const courseId of coursesIds) {
-    const result = await prisma.course.update({
-      where: { id: courseId },
-      data: { moduleId: undefined }, // Set moduleId to null to remove the relation
-    });
-    console.log({ result });
-  }
+export default async function putReleaseCourses(
+  coursesIds: number[],
+  moduleId: number
+) {
+  const transaction = await prisma.$transaction(async (tx) => {
+    for (const courseId of coursesIds) {
+      if (courseId) {
+        await tx.coursesOnModule.deleteMany({
+          where: { courseId, moduleId },
+        });
+      }
+    }
+  });
+  return transaction;
 }

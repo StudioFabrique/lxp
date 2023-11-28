@@ -125,6 +125,8 @@ const CourseObjectives = () => {
     }
   }, [error]);
 
+  console.log({ courseObjectives });
+
   return (
     <div className="w-full flex flex-col gap-y-8">
       <h2 className="text-3xl font-extrabold">Objectifs</h2>

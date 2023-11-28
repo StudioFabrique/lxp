@@ -85,7 +85,12 @@ const CoursesList = ({ coursesList, moduleId }: CoursesListProps) => {
       {
         path: `/modules/release-courses`,
         method: "put",
-        body: list?.filter((item) => item.isSelected).map((item) => item.id),
+        body: {
+          coursesIds: list
+            ?.filter((item) => item.isSelected)
+            .map((item) => item.id),
+          moduleId,
+        },
       },
       applyData
     );
@@ -136,7 +141,7 @@ const CoursesList = ({ coursesList, moduleId }: CoursesListProps) => {
       </table>
       <div className="divider" />
       <div className="w-full flex justify-end">
-        <button className="btn btn btn-primary" onClick={handleReleaseCourse}>
+        <button className="btn btn-primary" onClick={handleReleaseCourse}>
           Détacher les cours du module
         </button>
       </div>

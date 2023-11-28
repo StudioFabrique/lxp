@@ -10,6 +10,7 @@ interface ObjectivesWithDrawerProps {
   currentItems: Objective[];
   property: string;
   isDisabled: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onSubmit: (items: any[]) => void;
 }
 

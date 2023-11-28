@@ -36,7 +36,6 @@ const ModuleHome = () => {
       modules?.filter((item) => item.id !== moduleToDelete.id);
       setModuleToDelete(null);
     };
-    console.log({ moduleToDelete });
     sendRequest(
       {
         path: `/modules/formation/${moduleToDelete.id}`,
@@ -65,7 +64,7 @@ const ModuleHome = () => {
 
   const handleCloseDrawer = (id: string) => {
     setCurrentModule(null);
-    document.getElementById("courses-list")?.click();
+    document.getElementById(id)?.click();
   };
 
   // si un module est stocké en mémoire ouvre le drawer qui affiche la liste des cours

@@ -31,8 +31,12 @@ export default async function getAllModules() {
       },
       courses: {
         select: {
-          id: true,
-          title: true,
+          course: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
         },
       },
     },
@@ -54,7 +58,7 @@ export default async function getAllModules() {
           id: item.parcours[0].parcours.id,
           title: item.parcours[0].parcours.title,
         },
-        courses: item.courses.map((item) => item),
+        courses: item.courses.map((elem) => elem.course),
       };
     }
   });

@@ -13,6 +13,7 @@ import Loader from "../../../components/UI/loader";
 import ImageHeader from "../../../components/image-header";
 import BookIcon from "../../../components/UI/svg/book-icon";
 import Course from "../../../utils/interfaces/course";
+import { BASE_URL } from "../../../config/urls";
 
 const LayoutCourseEdit = () => {
   const { sendRequest, error } = useHttp();
@@ -23,16 +24,43 @@ const LayoutCourseEdit = () => {
     (state: any) => state.courseInfos.course
   ) as Course;
 
+  // retourne la liste des tags pour les cours en standalone
+  const handleFetchTags = () => {
+    const getTags = async () => {
+      const response = await fetch(`${BASE_URL}/tag`, {
+        credentials: "include",
+      });
+      if (!response.ok) {
+        toast.error(
+          "Un problème est survenu en récupérant les tags, veuillez rafraichir la page svp"
+        );
+        return;
+      }
+      const result = await response.json();
+      console.log({ result });
+
+      return result;
+    };
+    return getTags();
+  };
+
   /**
    * retourne les informations de base d'un parcours et les
    * stock dans un state global
    */
   useEffect(() => {
-    const applyData = (data: Course) => {
+    const applyData = async (data: Course) => {
       setLoading(false);
       console.log({ data });
 
-      const loadedCourse = formatCourseFromHttp(data);
+      let loadedCourse = formatCourseFromHttp(data);
+      if (!data.module) {
+        const tags = await handleFetchTags();
+        loadedCourse = {
+          ...loadedCourse,
+          module: { ...loadedCourse.module, parcours: { tags } },
+        };
+      }
       dispatch(courseInfosAction.setCourse(loadedCourse));
     };
     setLoading(true);

@@ -31,13 +31,17 @@ async function getCourses() {
   });
 
   const response = courses.map((course) => {
-    return {
-      ...course,
-      modules: course.modules.map((item) => ({
-        ...item.module,
-        parcours: item.module.parcours[0].parcours,
-      })),
-    };
+    if (course.modules.length > 0) {
+      return {
+        ...course,
+        modules: course.modules.map((item) => ({
+          ...item.module,
+          parcours: item.module.parcours[0].parcours,
+        })),
+      };
+    } else {
+      return course;
+    }
   });
 
   return response;

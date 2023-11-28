@@ -26,6 +26,7 @@ const CourseInfos = () => {
   const { sendRequest, error } = useHttp();
   const [loadingTags, setLoadingTags] = useState(false);
   const [loadingContacts, setLoadingContacts] = useState(false);
+  const module = useSelector((state: any) => state.courseInfos.course.module);
   const moduleTitle = useSelector(
     (state: any) => state.courseInfos.course.module.title
   ) as string;
@@ -202,15 +203,17 @@ const CourseInfos = () => {
           </div>
         </Wrapper>
         <div className="flex flex-col gap-y-8">
-          <Wrapper>
-            <ContactsWithDrawer
-              loading={loadingContacts}
-              initialList={contacts}
-              currentItems={currentContacts}
-              property="name"
-              onSubmit={handleUpdateContacts}
-            />
-          </Wrapper>
+          {module.id ? (
+            <Wrapper>
+              <ContactsWithDrawer
+                loading={loadingContacts}
+                initialList={contacts}
+                currentItems={currentContacts}
+                property="name"
+                onSubmit={handleUpdateContacts}
+              />
+            </Wrapper>
+          ) : null}
           <Wrapper>
             <TagsWithDrawer
               loading={loadingTags}
