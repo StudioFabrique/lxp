@@ -31,7 +31,13 @@ async function getCourseSkills(courseId: number) {
     throw error;
   }
 
-  return skills;
+  const response = {
+    ...skills,
+    module: skills.modules[0].module,
+    modules: null,
+  };
+
+  return response;
 }
 
 export default getCourseSkills;

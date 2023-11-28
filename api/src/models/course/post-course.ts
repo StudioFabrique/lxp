@@ -1,10 +1,12 @@
+import { Course } from "@prisma/client";
 import { prisma } from "../../utils/db";
+import Module from "module";
 
-async function postCourse(course: any) {
+async function postCourse(title: string, moduleId: number) {
   let existingModule: any = {};
-  if (course.moduleId) {
+  if (moduleId) {
     existingModule = await prisma.module.findFirst({
-      where: { id: course.moduleId },
+      where: { id: moduleId },
     });
 
     if (!existingModule) {
@@ -15,15 +17,27 @@ async function postCourse(course: any) {
   }
 
   const newCourse = await prisma.course.create({
-    data: course,
+    data: { title },
     select: { id: true },
   });
 
+  let updatedModule: any = {};
+
   if (existingModule) {
-    await prisma.coursesOnModule.create({
+    updatedModule = await prisma.module.update({
+      where: { id: moduleId },
       data: {
-        moduleId: course.moduleId,
-        courseId: newCourse.id,
+        courses: {
+          create: [newCourse].map((item: any) => {
+            return {
+              course: {
+                connect: {
+                  id: newCourse.id,
+                },
+              },
+            };
+          }),
+        },
       },
     });
   }

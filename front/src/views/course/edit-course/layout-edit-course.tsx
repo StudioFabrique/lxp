@@ -28,7 +28,7 @@ const LayoutCourseEdit = () => {
    * stock dans un state global
    */
   useEffect(() => {
-    const applyData = (data: any) => {
+    const applyData = (data: Course) => {
       setLoading(false);
       console.log({ data });
 

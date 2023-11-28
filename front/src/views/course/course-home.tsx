@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import useHttp from "../../hooks/use-http";
 
-import Course from "../../utils/interfaces/course";
 import Loader from "../../components/UI/loader";
 import { localeDate } from "../../helpers/locale-date";
 import Can from "../../components/UI/can/can.component";
@@ -12,7 +12,7 @@ import { sortArray } from "../../utils/sortArray";
 
 const CourseHome = () => {
   const { sendRequest, isLoading } = useHttp();
-  const [coursesList, setCoursesList] = useState<Course[] | null>(null);
+  const [coursesList, setCoursesList] = useState<any[] | null>(null);
   const nav = useNavigate();
 
   /**
@@ -31,18 +31,9 @@ const CourseHome = () => {
    */
   useEffect(() => {
     const applyData = (data: any) => {
-      setCoursesList(
-        sortArray(
-          data.map((item: any) => ({
-            ...item,
-            module: {
-              ...item.module,
-              parcours: item.module.parcours[0].parcours,
-            },
-          })),
-          "createdAt"
-        )
-      );
+      console.log({ data });
+
+      setCoursesList(sortArray(data, "title"));
     };
     sendRequest(
       {
@@ -63,8 +54,10 @@ const CourseHome = () => {
           >
             <td>{course.id}</td>
             <td>{course.title}</td>
-            <td>{course.module.title}</td>
-            <td>{course.module.parcours.title}</td>
+            <td>
+              {course.modules[0].title} {course.modules.length > 1 ? "..." : ""}
+            </td>
+            <td>{course.modules[0].parcours.title}</td>
             <td>{localeDate(course.createdAt!)}</td>
             <td>{localeDate(course.updatedAt!)}</td>
             <td>
@@ -103,7 +96,7 @@ const CourseHome = () => {
                   <tr>
                     <th>Id</th>
                     <th>Titre</th>
-                    <th>Module</th>
+                    <th>Modules</th>
                     <th>Parcours</th>
                     <th>Crée le</th>
                     <th>Mis à jour le</th>

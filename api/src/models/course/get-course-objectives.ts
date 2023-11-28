@@ -35,7 +35,13 @@ async function getCourseObjectives(courseId: number) {
     throw error;
   }
 
-  return objectives;
+  const response = {
+    ...objectives,
+    module: objectives.modules[0].module,
+    modules: null,
+  };
+
+  return response;
 }
 
 export default getCourseObjectives;

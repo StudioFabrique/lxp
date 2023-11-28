@@ -29,7 +29,18 @@ async function getCourses() {
       updatedAt: true,
     },
   });
-  return courses;
+
+  const response = courses.map((course) => {
+    return {
+      ...course,
+      modules: course.modules.map((item) => ({
+        ...item.module,
+        parcours: item.module.parcours[0].parcours,
+      })),
+    };
+  });
+
+  return response;
 }
 
 export default getCourses;

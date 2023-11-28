@@ -5,14 +5,12 @@ import postCourse from "../../models/course/post-course";
 import { customEscape } from "../../helpers/custom-escape";
 
 async function httpPostCourse(req: Request, res: Response) {
-  let course = req.body;
+  let { title, moduleId } = req.body;
 
-  course = {
-    title: customEscape(course.title),
-  };
+  title = customEscape(title);
 
   try {
-    const response = await postCourse(course);
+    const response = await postCourse(title, +moduleId);
     return res
       .status(201)
       .json({ message: "Cours créé avec succès", course: response });

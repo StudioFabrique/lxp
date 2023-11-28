@@ -8,6 +8,7 @@ import Selecter from "../../components/UI/selecter/selecter.component";
 import NewCourseForm from "../../components/edit-course/new-course-form";
 import bgImage from "../../assets/images/new-parcours-default.jpg";
 import { useNavigate } from "react-router-dom";
+import Course from "../../utils/interfaces/course";
 
 // type de données pour les listes
 type Item = {
@@ -62,7 +63,12 @@ const AddCourse = () => {
   const handleSubmit = (title: string) => {
     if (moduleId) {
       setIsLoading(true);
-      const applyData = (data: any) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const applyData = (data: {
+        success: boolean;
+        message: string;
+        course: Course;
+      }) => {
         setIsLoading(false);
         toast.success(data.message);
         nav(`/admin/course/edit/${data.course.id}`);
@@ -100,7 +106,7 @@ const AddCourse = () => {
     // quand un parcours est séléctionné on envoie une requête pour
     // récupérer les modules associés au parcours
     if (parcoursId) {
-      const applyData = (data: any[]) => {
+      const applyData = (data: Item[]) => {
         setModulesList(data);
       };
 
