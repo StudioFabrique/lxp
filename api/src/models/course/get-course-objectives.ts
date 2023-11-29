@@ -29,17 +29,29 @@ async function getCourseObjectives(courseId: number) {
     },
   });
 
+  console.log("toto");
+
   if (!objectives) {
     const error = new Error("Le cours n'existe pas");
     (error as any).statusCode = 404;
     throw error;
   }
 
-  const response = {
-    ...objectives,
-    module: objectives.modules[0].module,
-    modules: null,
-  };
+  let response = {};
+
+  if (objectives.modules !== undefined) {
+    response = {
+      ...objectives,
+      module: objectives.modules[0].module,
+      modules: null,
+    };
+  } else {
+    response = {
+      ...objectives,
+      module: null,
+      modules: null,
+    };
+  }
 
   return response;
 }

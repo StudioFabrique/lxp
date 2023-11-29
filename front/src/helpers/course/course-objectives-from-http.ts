@@ -4,6 +4,7 @@ export default function courseObjectivesFromHttp(data: any) {
     courseObjectives: data.objectives.map((item: any) => item.objective) ?? [],
     parcoursObjectives: data.module.parcours[0].parcours.objectives ?? [],
   };
+  console.log("updated objectives", updatedData);
 
   return updatedData;
 }
