@@ -24,6 +24,8 @@ import AddCourse from "./views/course/add-course";
 import LayoutCourseEdit from "./views/course/edit-course/layout-edit-course";
 import Role from "./views/role/role";
 import UserProfile from "./views/user-profile/user-profile";
+import LayoutModule from "./views/module/layout-module";
+import ModuleHome from "./views/module/module-home";
 
 const router = createBrowserRouter([
   {
@@ -80,7 +82,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <ParcoursHome /> },
           { path: "créer-un-parcours", element: <ParcoursAdd /> },
-          { path: "edit/:id", element: <EditParcours /> },
+          { path: "edit/:id/:step", element: <EditParcours /> },
           { path: "view/:id", element: <ParcoursView /> },
         ],
       },
@@ -105,6 +107,16 @@ const router = createBrowserRouter([
           {
             path: "add",
             element: <AddCourse />,
+          },
+        ],
+      },
+      {
+        path: "module",
+        element: <LayoutModule />,
+        children: [
+          {
+            index: true,
+            element: <ModuleHome />,
           },
         ],
       },
