@@ -47,7 +47,6 @@ export const testModules = (modules: Array<Module>) => {
     if (module.contacts !== undefined && module.bonusSkills !== undefined) {
       if (
         module.duration === undefined ||
-        module.duration === 0 ||
         module.contacts.length === 0 ||
         module.bonusSkills.length === 0
       ) {

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
@@ -37,6 +37,7 @@ let initialState = true;
 
 const EditParcours = () => {
   const { id } = useParams();
+  const { step } = useParams();
   const { sendRequest } = useHttp();
   const dispatch = useDispatch();
   const { actualStep, finalStep, stepsList, updateStep, validateStep } =
@@ -47,6 +48,7 @@ const EditParcours = () => {
   const modules = useSelector(
     (state: any) => state.parcoursModules.modules
   ) as Module[];
+  const checkStep = useRef(true);
 
   /**
    * télécharge les données du parcours depuis la bdd et initialise les différentes propriétés du parcours
@@ -57,6 +59,13 @@ const EditParcours = () => {
       initialState = false;
     }
   }, [id, getParcours]);
+
+  useEffect(() => {
+    if (step && checkStep.current) {
+      updateStep(+step);
+      checkStep.current = false;
+    }
+  }, [step, updateStep]);
 
   /**
    * réinitialise les données du parcours lorsque l'utilisateur quitte la page

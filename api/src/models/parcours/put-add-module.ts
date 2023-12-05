@@ -1,7 +1,12 @@
 import { Module } from "@prisma/client";
 import { prisma } from "../../utils/db";
+import User from "../../utils/interfaces/db/user";
 
-async function putAddModule(moduleId: number, parcoursId: number) {
+async function putAddModule(
+  moduleId: number,
+  parcoursId: number,
+  userId: string
+) {
   const existingParcours = await prisma.parcours.findFirst({
     where: { id: parcoursId },
   });
@@ -13,6 +18,27 @@ async function putAddModule(moduleId: number, parcoursId: number) {
     const error = { message: "Ressource inexistante", statusCode: 404 };
     throw error;
   }
+
+  const existingUser = await User.findById(userId, {
+    firstname: 1,
+    lastname: 1,
+  });
+
+  if (!existingUser) {
+    const error = { message: "Ressource inexistante", statusCode: 404 };
+    throw error;
+  }
+
+  const existingAdmin = await prisma.admin.findFirst({
+    where: { idMdb: userId },
+  });
+
+  if (!existingAdmin) {
+    const error = { message: "Ressource inexistante", statusCode: 404 };
+    throw error;
+  }
+
+  const author = `${existingUser?.firstname} ${existingUser?.lastname}`;
 
   let newModule: any = {};
 
@@ -26,6 +52,8 @@ async function putAddModule(moduleId: number, parcoursId: number) {
         duration: existingModule.duration,
         minDate: new Date(existingParcours.startDate!),
         maxDate: new Date(existingParcours.endDate!),
+        author,
+        adminId: existingAdmin.id,
       },
     });
     const updatedParcours = await tx.parcours.update({

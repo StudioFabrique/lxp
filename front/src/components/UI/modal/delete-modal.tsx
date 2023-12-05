@@ -1,4 +1,4 @@
-import { FC, KeyboardEvent, KeyboardEventHandler, useEffect } from "react";
+import { FC, useEffect } from "react";
 import Portal from "../portal/portal";
 import DeleteIcon from "../svg/delete-icon.component";
 
