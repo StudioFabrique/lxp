@@ -46,13 +46,13 @@ const customPostalCodeValidation = (value: string) => {
 };
 
 export const userValidator = [
-  body("email")
+  body("user.email")
     .exists()
     .isEmail()
     .trim()
     .escape()
     .withMessage("email non conforme"),
-  body(["firstname", "lastname", "roleId"])
+  body(["user.firstname", "user.lastname", "user.roleId"])
     .exists()
     .notEmpty()
     .isString()
@@ -60,15 +60,15 @@ export const userValidator = [
     .escape()
     .withMessage("firstname ou lastname non conforme"),
   body([
-    "nickname",
-    "description",
-    "address",
-    "city",
-    "links.*.url",
-    "links.*.alias",
-    "hobbies.*.title",
-    "graduations.*.title",
-    "graduations.*.degree",
+    "user.nickname",
+    "user.description",
+    "user.address",
+    "user.city",
+    "user.links.*.url",
+    "user.links.*.alias",
+    "user.hobbies.*.title",
+    "user.graduations.*.title",
+    "user.graduations.*.degree",
   ])
     .isString()
     .trim()
@@ -76,7 +76,7 @@ export const userValidator = [
     .withMessage(
       "nickname, description, address, city, links, hobbies ou graduations non conforme"
     ),
-  body("postCode")
+  body("user.postCode")
     .custom(customPostalCodeValidation)
     .trim()
     .escape()
@@ -86,7 +86,7 @@ export const userValidator = [
   //   .trim()
   //   .escape()
   //   .withMessage("graduations ou birthDate non conforme"),
-  body(["hobbies", "graduations", "links"])
+  body(["user.hobbies", "user.graduations", "user.links"])
     .isArray()
     .withMessage("hobbies, graduations ou links non conforme"),
   checkValidatorResult,

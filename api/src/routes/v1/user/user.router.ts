@@ -6,6 +6,7 @@ import {
   getAllByRankValidator,
   getAllValidator,
   manyUsersValidator,
+  userValidator,
   //userValidator,
 } from "../../../middleware/validators";
 import httpCreateUser from "../../../controllers/user/http-create-user";
@@ -22,6 +23,7 @@ import httpGetUsersByGroup from "../../../controllers/user/http-get-users-by-gro
 import checkPermissions from "../../../middleware/check-permissions";
 import httpGetUsersByRank from "../../../controllers/user/http-get-users-by-rank";
 import multer from "multer";
+import httpGetConnectedUser from "../../../controllers/user/http-get-connected-user";
 
 const userRouter = express.Router();
 
@@ -41,6 +43,11 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
+
+/**
+ * Récupère les informations de l'utilisateur connecté
+ */
+userRouter.get("/connected", checkPermissions("profile"), httpGetConnectedUser);
 
 // TODO: VALIDATORS
 userRouter.put(
@@ -109,7 +116,7 @@ userRouter.post(
   "/",
   checkPermissions("user"),
   upload.single("image"),
-  //userValidator,
+  userValidator,
   httpCreateUser
 );
 

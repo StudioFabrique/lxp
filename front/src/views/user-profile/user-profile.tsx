@@ -18,9 +18,8 @@ const UserProfile = () => {
 
   useEffect(() => {
     const applyData = (data: { message: string; data: User }) => {
-      console.log({ informations: data.data });
-
       setUserData(data.data);
+      console.log(data.data);
     };
 
     sendRequest({ path: "/user/connected" }, applyData);
