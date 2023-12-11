@@ -26,6 +26,8 @@ import Role from "./views/role/role";
 import UserProfile from "./views/user-profile/user-profile";
 import LayoutModule from "./views/module/layout-module";
 import ModuleHome from "./views/module/module-home";
+import LayoutLesson from "./views/lesson/layout-lesson";
+import LessonHomePage from "./views/lesson/lesson-home-page";
 
 const router = createBrowserRouter([
   {
@@ -117,6 +119,16 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <ModuleHome />,
+          },
+        ],
+      },
+      {
+        path: "lesson",
+        element: <LayoutLesson />,
+        children: [
+          {
+            index: true,
+            element: <LessonHomePage />,
           },
         ],
       },
