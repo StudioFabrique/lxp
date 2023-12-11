@@ -163,21 +163,22 @@ model Course {
   contacts     ContactsOnCourse[]
   objectives   ObjectivesOnCourse[]
   bonusSkills  BonusSkillOnCourse[]
-  lessons      LessonsOnCourse[]
+  lessons      Lesson[]
 }
 
 model Lesson {
-  id          Int               @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   title       String
   description String
   modalite    String
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
   author      String
-  admin       Admin             @relation(fields: [adminId], references: [id])
+  admin       Admin    @relation(fields: [adminId], references: [id])
   adminId     Int
-  courses     LessonsOnCourse[]
-  tag         Tag               @relation(fields: [tagId], references: [id])
+  course      Course   @relation(fields: [courseId], references: [id])
+  courseId    Int
+  tag         Tag      @relation(fields: [tagId], references: [id])
   tagId       Int
 }
 
@@ -191,14 +192,14 @@ model Objective {
   courses     ObjectivesOnCourse[]
 }
 
-model LessonsOnCourse {
-  lesson   Lesson @relation(fields: [lessonId], references: [id])
-  lessonId Int
-  course   Course @relation(fields: [courseId], references: [id])
-  courseId Int
+//model LessonsOnCourse {
+//lesson   Lesson @relation(fields: [lessonId], references: [id])
+//lessonId Int
+//course   Course @relation(fields: [courseId], references: [id])
+//courseId Int
 
-  @@id([lessonId, courseId])
-}
+//@@id([lessonId, courseId])
+//}
 
 model ContactsOnParcours {
   parcours   Parcours @relation(fields: [parcoursId], references: [id])

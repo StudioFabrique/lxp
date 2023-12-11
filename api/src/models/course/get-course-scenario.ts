@@ -7,17 +7,11 @@ async function getCourseScenario(courseId: number) {
       scenario: true,
       lessons: {
         select: {
-          lesson: {
-            select: {
-              id: true,
-              title: true,
-              description: true,
-              modalite: true,
-              createdAt: true,
-              updatedAt: true,
-              tag: true,
-            },
-          },
+          id: true,
+          title: true,
+          description: true,
+          tag: true,
+          modalite: true,
         },
       },
     },

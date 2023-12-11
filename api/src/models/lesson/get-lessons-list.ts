@@ -17,21 +17,14 @@ export default async function getLessonsList() {
       updatedAt: true,
       author: true,
       adminId: true,
-      courses: {
+      course: {
         select: {
-          course: {
-            select: {
-              id: true,
-              title: true,
-            },
-          },
+          id: true,
+          title: true,
         },
       },
     },
   });
-  const lessons = existingLessons.map((item) => ({
-    ...item,
-    courses: item.courses.map((elem) => elem.course),
-  }));
-  return lessons;
+
+  return existingLessons;
 }
