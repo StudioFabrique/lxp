@@ -28,6 +28,7 @@ const ParcoursViewContenu = () => {
         <ParcoursContenuItem
           key={module.id}
           module={module}
+          selectedModuleId={selectedModule?.id}
           iterationCount={i + 1}
           setSelectedModule={setSelectedModule}
         />
@@ -45,7 +46,7 @@ const ParcoursViewContenu = () => {
           </h2>
           <Can action="update" object="parcours">
             <Link
-              to={`/admin/parcours/edit/${parcoursId}`}
+              to={`/admin/parcours/edit/${parcoursId}/4`}
               className="btn btn-primary "
             >
               <span className="h-5 w-5">
