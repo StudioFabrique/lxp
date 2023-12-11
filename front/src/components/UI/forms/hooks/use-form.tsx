@@ -31,6 +31,11 @@ const useForm = (data = {}) => {
     setValues(data);
   }, []);
 
+  useEffect(() => {
+    setValues({});
+    setErrors([]);
+  }, []);
+
   /*useEffect(() => {
     if (hasBeenSubmitted) {
       setErrors([]);
@@ -42,11 +47,6 @@ const useForm = (data = {}) => {
       setValues(data);
     }
   }, [data]); */
-
-  useEffect(() => {
-    setValues({});
-    setErrors([]);
-  }, []);
 
   return {
     values,

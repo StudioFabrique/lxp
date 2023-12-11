@@ -4,8 +4,10 @@ const ParcoursViewContenuDetailHeader: FC<{
   imageModuleHeader: any;
   moduleTitle: string | undefined;
 }> = ({ imageModuleHeader, moduleTitle }) => {
+  console.log(imageModuleHeader);
+
   const classImage: React.CSSProperties = {
-    backgroundImage: `url(${imageModuleHeader})`,
+    backgroundImage: `url('data:image/jpeg;base64,${imageModuleHeader}')`,
     width: "100%",
     height: "12rem",
     backgroundSize: "cover",
@@ -14,7 +16,11 @@ const ParcoursViewContenuDetailHeader: FC<{
     borderRadius: "0.75rem",
   };
 
-  return <div className="flex p-5" style={classImage} />;
+  return (
+    <div>
+      <div className="flex p-5" style={classImage} />
+    </div>
+  );
 };
 
 export default ParcoursViewContenuDetailHeader;

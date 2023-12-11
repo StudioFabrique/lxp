@@ -8,6 +8,8 @@ import { useState } from "react";
 import Can from "../../UI/can/can.component";
 import { Link, useParams } from "react-router-dom";
 import EditIcon from "../../UI/svg/edit-icon";
+import ImageHeaderMutable from "../../image-header/image-header-mutable";
+import ImageHeaderCopy from "../../image-header";
 
 const ParcoursViewContenu = () => {
   const modules = useSelector(
