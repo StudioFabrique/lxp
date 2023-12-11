@@ -17,7 +17,9 @@ const Contact: FC<{ formProps: FormProps }> = ({ formProps }) => {
       <Wrapper>
         <div className="flex flex-col gap-4">
           <Field name="address" label="Adresse" data={formProps} />
-          <Field name="lastName" label="Nom" data={formProps} />
+          <Field name="city" label="Ville" data={formProps} />
+          <Field name="postalCode" label="Code Postal" data={formProps} />
+          <Field name="phone" label="Telephone" data={formProps} />
         </div>
       </Wrapper>
     </div>

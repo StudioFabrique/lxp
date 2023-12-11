@@ -43,8 +43,8 @@ const Information: FC<{ userData: User | undefined }> = ({ userData }) => {
         <Contact formProps={formProps} />
       </div>
       <Presentation formProps={formProps} />
-      <Hobbies />
-      <SocialNetworks />
+      <Hobbies hobbies={userData?.hobbies ?? []} />
+      <SocialNetworks links={userData?.links ?? []} />
     </form>
   );
 };
