@@ -90,7 +90,7 @@ const AddParcours = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const processData = (data: any) => {
       //toast.success("Parcours enregistré avec succès");
-      nav(`/admin/parcours/edit/${data.parcoursId}`);
+      nav(`/admin/parcours/edit/${data.parcoursId}/1`);
     };
     setIsLoading(true);
     sendRequest(
