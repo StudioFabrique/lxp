@@ -10,6 +10,7 @@ export const ressourcesRbac = [
   "module",
   "course",
   "bonusSkill",
+  "profile",
 ];
 
 export const ressourcesRbacByRank = {

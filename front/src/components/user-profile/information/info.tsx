@@ -1,47 +1,25 @@
-import { FC, FormEvent, FormEventHandler, useEffect } from "react";
+import { FC } from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
-import useForm from "../../UI/forms/hooks/use-form";
 import Field from "../../UI/forms/field";
-import { infoSchema } from "../../../lib/validation/profile/info-schema";
-import toast from "react-hot-toast";
-import { validationErrors } from "../../../helpers/validate";
+import CustomError from "../../../utils/interfaces/custom-error";
 
-const Info: FC<{ userInfo: Record<string, string | undefined> }> = ({
-  userInfo,
-}) => {
-  const { initValues, onValidationErrors, ...formProps } = useForm();
+type FormProps = {
+  values: Record<string, string>;
+  errors: CustomError[];
+  onChangeValue: (field: string, value: string) => void;
+  onResetForm: () => void;
+};
 
-  const handleSubmitForm: FormEventHandler = (e: FormEvent) => {
-    e.preventDefault();
-    console.log({ donneesDuFormulaire: formProps });
-
-    try {
-      infoSchema.parse(formProps.values);
-      toast.success("Formulaire envoyé avec succès !");
-    } catch (error) {
-      const newErrors = validationErrors(error);
-      toast.error(newErrors[0].message);
-      onValidationErrors(newErrors);
-      return;
-    }
-  };
-
-  useEffect(() => {
-    initValues(userInfo);
-  }, [initValues, userInfo]);
-
+const Info: FC<{ formProps: FormProps }> = ({ formProps }) => {
   return (
     <div>
       <h3 className="text-lg font-semibold">Information</h3>
       <Wrapper>
-        <form onSubmit={handleSubmitForm} className="flex flex-col gap-4">
-          <Field name="firstName" label="Prénom" data={formProps} />
-          <Field name="lastName" label="Nom" data={formProps} />
+        <div className="flex flex-col gap-4">
+          <Field name="firstname" label="Prénom" data={formProps} />
+          <Field name="lastname" label="Nom" data={formProps} />
           <Field name="nickname" label="Pseudo" data={formProps} />
-          <button type="submit" className="btn btn-primary">
-            test
-          </button>
-        </form>
+        </div>
       </Wrapper>
     </div>
   );

@@ -24,6 +24,7 @@ export default async function createUser(user: IUser, roleId: string) {
     email: user.email,
     firstname: user.firstname,
     lastname: user.lastname,
+    description: user.description,
     password: await hash("Abcdef@123456", 10), // A enlever par la suite !
     isActive: false,
     avatar: user.avatar,
