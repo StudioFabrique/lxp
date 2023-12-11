@@ -64,7 +64,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
               </td>
               <td className="bg-transparent">
                 <div className="w-6 h-6">
-                  <Can action="update" object="parcours">
+                  <Can action="read" object="parcours">
                     <div
                       className="tooltip tooltip-bottom"
                       data-tip="Aperçu du parcours"

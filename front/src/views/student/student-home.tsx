@@ -27,6 +27,13 @@ const StudentHome = () => {
         Interface Parcours
       </button>
       <button
+        type="button"
+        className="btn btn-primary"
+        onClick={() => navigateTo("profil")}
+      >
+        Profil Utilisateur
+      </button>
+      <button
         className="w-fit btn btn-primary btn-outline"
         onClick={logoutHandler}
       >
