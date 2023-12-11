@@ -44,7 +44,7 @@ async function putCourseLesson(
   let newLesson: Lesson | null = null;
 
   const transaction = await prisma.$transaction(async (tx) => {
-    newLesson = await prisma.lesson.create({
+    newLesson = await tx.lesson.create({
       data: {
         title: lessonData.title,
         description: lessonData.description,
@@ -55,6 +55,9 @@ async function putCourseLesson(
         },
         admin: {
           connect: { id: prismaAdmin.id },
+        },
+        course: {
+          connect: { id: courseId },
         },
       },
       select: {
@@ -68,18 +71,7 @@ async function putCourseLesson(
         tagId: true,
         author: true,
         adminId: true,
-      },
-    });
-    await tx.course.update({
-      where: { id: courseId },
-      data: {
-        lessons: {
-          create: {
-            lesson: {
-              connect: { id: newLesson!.id },
-            },
-          },
-        },
+        courseId: true,
       },
     });
   });
