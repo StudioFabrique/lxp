@@ -20,11 +20,11 @@ export default function LayoutEditLesson() {
   const { lessonId } = useParams();
   const { sendRequest, error } = useHttp();
   const [loading, setLoading] = useState(false);
-  const [activities, setActivities] = useState<number[]>([1]);
+  const [activities] = useState<number[]>([1]);
 
   console.log({ lesson });
 
-  // retounr les détails d'une leçon
+  // retourne une leçon et la stock dans l'état partagé
   useEffect(() => {
     const applyData = (data: Lesson) => {
       console.log(data);
