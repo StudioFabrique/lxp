@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { FormEvent, ReactNode, useMemo } from "react";
 import toast from "react-hot-toast";
 

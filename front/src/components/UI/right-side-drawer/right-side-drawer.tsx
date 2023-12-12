@@ -22,6 +22,11 @@ const RightSideDrawer: FC<Props> = ({
 }) => {
   const checkboxRef = useRef<HTMLInputElement | null>(null);
 
+  const btnStyle =
+    buttonTitle !== undefined
+      ? "drawer-button btn btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary focus:outline-none"
+      : "drawer-button btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary focus:outline-none";
+
   const handleCloseDrawer = () => {
     if (onCloseDrawer) {
       onCloseDrawer(id);
@@ -57,12 +62,9 @@ const RightSideDrawer: FC<Props> = ({
       <div className="drawer-content">
         {/* Page content here */}
         {visible ? (
-          <label
-            htmlFor={id}
-            className="drawer-button btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary focus:outline-none"
-          >
+          <label htmlFor={id} className={btnStyle}>
             {buttonTitle ? (
-              <>
+              <div className="w-fit flex items-center gap-x-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -78,7 +80,7 @@ const RightSideDrawer: FC<Props> = ({
                   />
                 </svg>
                 <p>{buttonTitle}</p>
-              </>
+              </div>
             ) : (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
