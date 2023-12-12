@@ -8,8 +8,9 @@ import User from "../../utils/interfaces/user";
 import useHttp from "../../hooks/use-http";
 import Loader from "../../components/UI/loader";
 
+type Tab = "Info" | "Calendar" | "Evals" | "Awards" | "Account";
+
 const UserProfile = () => {
-  type Tab = "Info" | "Calendar" | "Evals" | "Awards" | "Account";
   const { sendRequest, isLoading } = useHttp(true);
 
   const [currentTab, setCurrentTab] = useState<Tab>("Info");
@@ -19,7 +20,6 @@ const UserProfile = () => {
   useEffect(() => {
     const applyData = (data: { message: string; data: User }) => {
       setUserData(data.data);
-      console.log({ donneesduserveur: data.data });
     };
 
     sendRequest({ path: "/user/connected" }, applyData);
@@ -83,6 +83,9 @@ const UserProfile = () => {
           onClick={(e) => setCurrentTab(e.currentTarget.value as Tab)}
         >
           Compte
+        </button>
+        <button type="button" className="btn justify-self-end">
+          modifier
         </button>
       </div>
       {isLoading ? <Loader /> : <Render />}
