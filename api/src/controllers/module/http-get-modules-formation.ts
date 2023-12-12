@@ -12,6 +12,15 @@ async function httpGetModuleFormation(req: Request, res: Response) {
       where: {
         id: { in: modulesIdList.map((item: any) => item.moduleId) },
       },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        duration: true,
+        thumb: true,
+        contacts: true,
+        bonusSkills: true,
+      },
     });
 
     //console.log({ modules });
@@ -22,8 +31,8 @@ async function httpGetModuleFormation(req: Request, res: Response) {
     }));
 
     return res.status(200).json(result);
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
   }
 }
 
