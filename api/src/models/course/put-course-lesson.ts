@@ -72,6 +72,8 @@ async function putCourseLesson(
         author: true,
         adminId: true,
         courseId: true,
+        isPublished: true,
+        visibility: true,
       },
     });
   });

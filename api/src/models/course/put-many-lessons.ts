@@ -26,7 +26,7 @@ async function putManyLessons(courseId: number, lessonsIds: number[]) {
         ...lessonsCopy,
         {
           ...lesson,
-          title: `${existingCourse.title} - ${lesson.title}`,
+          title: `Copie de : ${lesson.title}`,
           courseId: existingCourse.id,
           id: undefined,
         },
