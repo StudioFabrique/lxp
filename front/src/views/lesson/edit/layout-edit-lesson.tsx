@@ -49,6 +49,9 @@ export default function LayoutEditLesson() {
     }
   }, [error]);
 
+  // hardcoded pour tester
+  dispatch(lessonActions.setCurrentType("texte"));
+
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
       {loading ? (
