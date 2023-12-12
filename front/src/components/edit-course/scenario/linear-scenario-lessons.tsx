@@ -34,6 +34,7 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
   const [mode, setMode] = useState<string>("hybride");
   const [tag, setTag] = useState<Tag | null>(null);
   const tagsList = useSelector(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (state: any) => state.courseInfos.course.tags
   ) as Tag[];
   const [isLoading, setIsLoading] = useState(false);
@@ -117,7 +118,7 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
     };
     sendRequest(
       {
-        path: `/course/delete-lesson/${courseId}/${lesson.id}`,
+        path: `/lesson/${lesson.id}`,
         method: "delete",
       },
       applyData

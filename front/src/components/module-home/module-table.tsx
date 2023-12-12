@@ -56,15 +56,15 @@ const ModuleTable = ({
               </td>
               <td className="bg-transparent">
                 <div className="w-6 h-6">
-                  <Can action="update" object="parcours">
+                  <Can action="update" object="module">
                     <div
                       className="tooltip tooltip-bottom"
-                      data-tip="Modifier le parcours"
+                      data-tip="Modifier le module"
                     >
                       {item.parcours ? (
                         <Link
                           className="text-secondary"
-                          to={`/admin/parcours/edit/${item.parcours.id}/${stepId}`}
+                          to={`/admin/parcours/edit/${item.parcours.id}?step=${stepId}`}
                           aria-label="Editer le module"
                         >
                           <EditIcon />
@@ -81,12 +81,12 @@ const ModuleTable = ({
               <td className="bg-transparent rounded-r-lg">
                 <div
                   className="w-6 h-6 text-error"
-                  aria-label="suppression du parcours"
+                  aria-label="suppression du module"
                 >
                   <Can action="delete" object="module">
                     <div
                       className="tooltip tooltip-bottom flex-items-center"
-                      data-tip="Supprimer le parcours"
+                      data-tip="Supprimer le module"
                     >
                       <div onClick={() => onDelete(item.id)}>
                         <DeleteIcon />

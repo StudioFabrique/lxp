@@ -26,6 +26,10 @@ import Role from "./views/role/role";
 import UserProfile from "./views/user-profile/user-profile";
 import LayoutModule from "./views/module/layout-module";
 import ModuleHome from "./views/module/module-home";
+import LayoutLesson from "./views/lesson/layout-lesson";
+import LessonHomePage from "./views/lesson/lesson-home-page";
+import LayoutEditLesson from "./views/lesson/edit/layout-edit-lesson";
+import EditLessonHome from "./views/lesson/edit/edit-lesson-home";
 
 const router = createBrowserRouter([
   {
@@ -82,7 +86,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <ParcoursHome /> },
           { path: "créer-un-parcours", element: <ParcoursAdd /> },
-          { path: "edit/:id/:step", element: <EditParcours /> },
+          { path: "edit/:id/", element: <EditParcours /> },
           { path: "view/:id", element: <ParcoursView /> },
         ],
       },
@@ -117,6 +121,26 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <ModuleHome />,
+          },
+        ],
+      },
+      {
+        path: "lesson",
+        element: <LayoutLesson />,
+        children: [
+          {
+            index: true,
+            element: <LessonHomePage />,
+          },
+          {
+            path: "edit/:lessonId",
+            element: <LayoutEditLesson />,
+            children: [
+              {
+                index: true,
+                element: <EditLessonHome />,
+              },
+            ],
           },
         ],
       },

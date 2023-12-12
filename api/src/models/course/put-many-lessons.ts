@@ -12,21 +12,32 @@ async function putManyLessons(courseId: number, lessonsIds: number[]) {
   }
 
   const transaction = await prisma.$transaction(async (tx) => {
-    const updatedCourse = await tx.course.update({
-      where: { id: courseId },
-      data: {
-        lessons: {
-          create: lessonsIds.map((id: number) => {
-            return {
-              lesson: {
-                connect: { id },
-              },
-            };
-          }),
+    const existingLessons = await tx.lesson.findMany({
+      where: {
+        id: {
+          in: lessonsIds,
         },
       },
     });
+
+    let lessonsCopy: any = [];
+    for (const lesson of existingLessons) {
+      lessonsCopy = [
+        ...lessonsCopy,
+        {
+          ...lesson,
+          title: `Copie de : ${lesson.title}`,
+          courseId: existingCourse.id,
+          id: undefined,
+        },
+      ];
+    }
+
+    await tx.lesson.createMany({
+      data: lessonsCopy,
+    });
   });
+
   return transaction;
 }
 

@@ -1,3 +1,4 @@
+import Course from "./course";
 import Tag from "./tag";
 
 export default interface Lesson {
@@ -9,4 +10,7 @@ export default interface Lesson {
   createdAt?: string;
   updatedAt?: string;
   isSelected?: boolean;
+  author?: string;
+  adminId: number;
+  course: Course;
 }
