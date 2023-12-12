@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import Loader from "../../../components/UI/loader";
 import FadeWrapper from "../../../components/UI/fade-wrapper/fade-wrapper";
@@ -10,18 +11,25 @@ import books from "../../../assets/images/bookshelf.jpg";
 import DocDuplicateIcon from "../../../components/UI/svg/doc-duplicate-icon";
 import HeaderButton from "./header-buttons";
 import AddBlock from "../../../components/edit-lesson/add-block";
+import { useDispatch, useSelector } from "react-redux";
+import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 
 export default function LayoutEditLesson() {
+  const dispatch = useDispatch();
+  const lesson = useSelector((state: any) => state.lesson.lesson);
   const { lessonId } = useParams();
   const { sendRequest, error } = useHttp();
   const [loading, setLoading] = useState(false);
-  const [lesson, setLesson] = useState<Lesson | null>(null);
   const [activities, setActivities] = useState<number[]>([1]);
+
+  console.log({ lesson });
 
   // retounr les détails d'une leçon
   useEffect(() => {
     const applyData = (data: Lesson) => {
-      setLesson(data);
+      console.log(data);
+
+      dispatch(lessonActions.initLesson(data));
       setLoading(false);
     };
     setLoading(true);
@@ -31,7 +39,7 @@ export default function LayoutEditLesson() {
       },
       applyData
     );
-  }, [lessonId, sendRequest]);
+  }, [lessonId, dispatch, sendRequest]);
 
   // gestion erreurs HTTP
   useEffect(() => {
@@ -50,6 +58,7 @@ export default function LayoutEditLesson() {
           <div className="w-full h-full flex flex-col items-center gap-y-8">
             <div className="w-full flex flex-col items-center gap-y-8">
               {lesson &&
+              lesson !== undefined &&
               lesson.title &&
               lesson.course &&
               lesson.course.title ? (
@@ -63,7 +72,7 @@ export default function LayoutEditLesson() {
                 </ImageHeader>
               ) : null}
             </div>
-            {lesson ? (
+            {lesson !== undefined ? (
               <div className="w-full 2xl:w-4/6 mt-8 flex flex-col items-center">
                 <div className="w-full flex justify-end">
                   <HeaderButton
