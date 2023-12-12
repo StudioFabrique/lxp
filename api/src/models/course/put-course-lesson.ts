@@ -1,7 +1,14 @@
 import { Lesson } from "@prisma/client";
 import { prisma } from "../../utils/db";
+import User from "../../utils/interfaces/db/user";
 
-async function putCourseLesson(courseId: number, lessonData: any) {
+async function putCourseLesson(
+  courseId: number,
+  lessonData: any,
+  adminId: string
+) {
+  console.log({ lessonData });
+
   const existingCourse = await prisma.course.findFirst({
     where: { id: courseId },
   });
@@ -12,11 +19,47 @@ async function putCourseLesson(courseId: number, lessonData: any) {
     throw error;
   }
 
+  const prismaAdmin = await prisma.admin.findFirst({
+    where: { idMdb: adminId },
+    select: { id: true },
+  });
+
+  if (!prismaAdmin) {
+    const error = new Error("L'auteur n'existe pas");
+    (error as any).statusCode = 404;
+    throw error;
+  }
+
+  const existingAdmin = await User.findOne(
+    { _id: adminId },
+    { firstname: 1, lastname: 1 }
+  );
+
+  if (!existingAdmin) {
+    const error = new Error("L'auteur n'existe pas");
+    (error as any).statusCode = 404;
+    throw error;
+  }
+
   let newLesson: Lesson | null = null;
 
   const transaction = await prisma.$transaction(async (tx) => {
-    newLesson = await prisma.lesson.create({
-      data: lessonData,
+    newLesson = await tx.lesson.create({
+      data: {
+        title: lessonData.title,
+        description: lessonData.description,
+        modalite: lessonData.modalite,
+        author: `${existingAdmin.firstname} ${existingAdmin.lastname}`,
+        tag: {
+          connect: { id: lessonData.tagId },
+        },
+        admin: {
+          connect: { id: prismaAdmin.id },
+        },
+        course: {
+          connect: { id: courseId },
+        },
+      },
       select: {
         id: true,
         title: true,
@@ -26,18 +69,11 @@ async function putCourseLesson(courseId: number, lessonData: any) {
         updatedAt: true,
         tag: true,
         tagId: true,
-      },
-    });
-    await tx.course.update({
-      where: { id: courseId },
-      data: {
-        lessons: {
-          create: {
-            lesson: {
-              connect: { id: newLesson.id },
-            },
-          },
-        },
+        author: true,
+        adminId: true,
+        courseId: true,
+        isPublished: true,
+        visibility: true,
       },
     });
   });

@@ -5,7 +5,7 @@ type Props = {
 };
 
 const UploadIcon: FC<Props> = ({ size }) => {
-  let style = `w-${size} h-${size}`;
+  const style = `w-${size} h-${size}`;
 
   return (
     <svg

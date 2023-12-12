@@ -33,7 +33,6 @@ const ModuleHome = () => {
       modules?.filter((item) => item.id !== moduleToDelete.id);
       setModuleToDelete(null);
     };
-    console.log({ moduleToDelete });
     sendRequest(
       {
         path: `/modules/formation/${moduleToDelete.id}`,
@@ -48,7 +47,7 @@ const ModuleHome = () => {
       const stepId = stepsParcours.find((item) => item.label === "Modules").id;
       console.log(stepId);
 
-      nav(`/admin/parcours/edit/${moduleToDelete.parcours.id}/${stepId}`);
+      nav(`/admin/parcours/edit/${moduleToDelete.parcours.id}?step=${stepId}`);
     }
   }, [moduleToDelete, nav]);
 
