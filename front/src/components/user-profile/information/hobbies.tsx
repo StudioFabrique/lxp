@@ -9,7 +9,7 @@ const Hobbies: FC<{ hobbies: Hobby[] }> = ({ hobbies }) => {
       <Wrapper>
         {hobbies.length > 0
           ? hobbies.map((hobby) => <p>{hobby.title}</p>)
-          : "Aucune passions"}
+          : "Aucunes passions"}
       </Wrapper>
     </div>
   );

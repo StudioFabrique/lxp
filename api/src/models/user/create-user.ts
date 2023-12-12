@@ -18,8 +18,6 @@ export default async function createUser(user: IUser, roleId: string) {
 
   if (!firstRole) return null;
 
-  console.log("role is not null");
-
   const createdUser = await User.create({
     email: user.email,
     firstname: user.firstname,
@@ -48,8 +46,6 @@ export default async function createUser(user: IUser, roleId: string) {
       },
     });
   }
-
-  console.log("createduser", createdUser);
 
   return createdUser;
 }
