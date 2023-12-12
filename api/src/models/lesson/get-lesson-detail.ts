@@ -10,6 +10,7 @@ export default async function getLessonDetail(lessonId: number) {
         select: {
           id: true,
           title: true,
+          image: true,
         },
       },
     },
@@ -19,6 +20,22 @@ export default async function getLessonDetail(lessonId: number) {
     const error = new Error("La leçon n'existe pas");
     (error as any).statusCode = 404;
     throw error;
+  }
+
+  console.log({ existingLesson });
+
+  if (existingLesson.course && existingLesson.course.image) {
+    if (existingLesson.course.image instanceof Buffer) {
+      const base64Image = existingLesson.course.image.toString("base64");
+      const result = {
+        ...existingLesson,
+        course: {
+          ...existingLesson.course,
+          image: base64Image,
+        },
+      };
+      return result;
+    }
   }
 
   return existingLesson;
