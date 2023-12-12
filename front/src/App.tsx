@@ -28,6 +28,8 @@ import LayoutModule from "./views/module/layout-module";
 import ModuleHome from "./views/module/module-home";
 import LayoutLesson from "./views/lesson/layout-lesson";
 import LessonHomePage from "./views/lesson/lesson-home-page";
+import LayoutEditLesson from "./views/lesson/edit/layout-edit-lesson";
+import EditLessonHome from "./views/lesson/edit/edit-lesson-home";
 
 const router = createBrowserRouter([
   {
@@ -129,6 +131,16 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <LessonHomePage />,
+          },
+          {
+            path: "edit/:lessonId",
+            element: <LayoutEditLesson />,
+            children: [
+              {
+                index: true,
+                element: <EditLessonHome />,
+              },
+            ],
           },
         ],
       },

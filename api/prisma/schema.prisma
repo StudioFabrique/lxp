@@ -180,6 +180,8 @@ model Lesson {
   courseId    Int
   tag         Tag      @relation(fields: [tagId], references: [id])
   tagId       Int
+  isPublished Boolean  @default(false)
+  visibility  Boolean  @default(false)
 }
 
 model Objective {

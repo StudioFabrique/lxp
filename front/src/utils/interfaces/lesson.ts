@@ -12,5 +12,5 @@ export default interface Lesson {
   isSelected?: boolean;
   author?: string;
   adminId: number;
-  courses?: Course[];
+  course: Course;
 }

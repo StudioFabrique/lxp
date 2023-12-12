@@ -39,9 +39,7 @@ export default function LessonHome({ lessonsList }: LessonHomeProps) {
                 {item.title}
               </td>
               <td className="bg-transparent capitalize truncate">
-                {item.courses && item.courses.length > 0
-                  ? item.courses[0].title
-                  : "ND"}
+                {item.course ? item.course.title : "ND"}
               </td>
               <td className="bg-transparent capitalize truncate">
                 {item.author}
@@ -61,7 +59,7 @@ export default function LessonHome({ lessonsList }: LessonHomeProps) {
                     >
                       <Link
                         className="text-secondary"
-                        to={`/admin/lesson/edit/${item}`}
+                        to={`/admin/lesson/edit/${item.id}`}
                         aria-label="Editer la leçon"
                       >
                         <EditIcon />
