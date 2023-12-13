@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, Ref, useEffect, useRef, useState } from "react";
 import Information from "../../components/user-profile/information/information";
 import Calendar from "../../components/user-profile/calendar";
 import Evaluations from "../../components/user-profile/evaluations";
@@ -23,7 +23,7 @@ const UserProfile = () => {
 
   const [editMode, setEditMode] = useState<boolean>(false);
 
-  const [requestReady, setRequestReady] = useState<boolean>(false);
+  const formRef: Ref<HTMLFormElement> = useRef(null);
 
   const Render = () => {
     switch (currentTab) {
@@ -32,9 +32,8 @@ const UserProfile = () => {
           <Information
             userData={userData}
             editMode={editMode}
-            requestReady={requestReady}
-            setRequestReady={setRequestReady}
             sendRequestInTab={sendRequestInTab}
+            formRef={formRef}
           />
         );
       case "Calendar":
@@ -60,7 +59,7 @@ const UserProfile = () => {
         {editMode && (
           <button
             className="btn btn-sm justify-self-end"
-            onClick={() => setRequestReady(true)}
+            onClick={() => formRef.current?.requestSubmit()}
           >
             Soumettre les changements
           </button>
@@ -78,18 +77,12 @@ const UserProfile = () => {
     );
 
   useEffect(() => {
-    console.log("requete init envoyé");
-
     const applyData = (data: { message: string; data: User }) => {
       setUserData(data.data);
     };
 
     sendRequest({ path: "/user/connected" }, applyData);
   }, [sendRequest]);
-
-  useEffect(() => {
-    setRequestReady(false);
-  }, [currentTab]);
 
   return (
     <div className="flex flex-col gap-5 p-10">
