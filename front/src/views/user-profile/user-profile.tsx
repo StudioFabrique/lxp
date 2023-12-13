@@ -67,7 +67,9 @@ const UserProfile = () => {
         {(withEditButton || editMode) && (
           <button
             type="button"
-            className="btn btn-sm justify-self-end w-10 h-5 p-0"
+            className={`btn btn-sm justify-self-end ${
+              editMode ? "w-auto" : "w-10 p-0"
+            } h-5`}
             onClick={() => setEditMode((editMode) => !editMode)}
           >
             {editMode ? "annuler" : <EditIcon />}
