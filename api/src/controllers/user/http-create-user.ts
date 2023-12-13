@@ -50,6 +50,8 @@ export default async function httpCreateUser(req: Request, res: Response) {
       return res.status(409).json({ message: alreadyExist });
     }
 
+    console.log(graduationsDataRequest);
+
     await createManyGraduations(userResponse!._id, graduationsDataRequest); // insert graduations in mongodb with user ref _id
 
     await createManyLinks(userResponse!._id, linksDataRequest); // insert links in mongodb with user ref _id

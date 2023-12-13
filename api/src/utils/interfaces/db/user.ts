@@ -19,10 +19,10 @@ export interface IUser extends Document {
   city?: string;
   birthDate?: Date;
   phoneNumber?: string;
-  graduations?: IGraduation["_id"][];
-  hobbies?: IHobby["_id"][];
-  links: ILink["_id"][];
-  group?: IGroup["_id"][];
+  graduations?: IGraduation["_id"];
+  hobbies?: IHobby["_id"];
+  links: ILink["_id"];
+  group?: IGroup["_id"];
   roles: IRole["_id"];
   createdAt?: Date;
   updatedAt?: Date;
@@ -45,17 +45,17 @@ const userSchema: Schema = new Schema(
     phoneNumber: { type: String, required: false },
     graduations: {
       type: [mongoose.Schema.Types.ObjectId],
-      ref: "Graduations",
+      ref: "Graduation",
       require: false,
     },
     hobbies: {
       type: [mongoose.Schema.Types.ObjectId],
-      ref: "Hobbies",
+      ref: "Hobby",
       require: false,
     },
     links: {
       type: [mongoose.Schema.Types.ObjectId],
-      ref: "Links",
+      ref: "Link",
       require: false,
     },
     group: {
