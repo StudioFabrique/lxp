@@ -3,6 +3,7 @@ import CustomError from "../../../utils/interfaces/custom-error";
 interface FieldProps {
   label?: string;
   placeholder?: string;
+  isDisabled?: boolean;
   name: string;
   type?: string;
   data: {
@@ -14,10 +15,11 @@ interface FieldProps {
 }
 
 const Field = (props: FieldProps) => {
-  const { label, placeholder, name } = props;
+  const { label, placeholder, name, isDisabled } = props;
   const type = props.type ?? "text";
 
-  const baseStyle = "input input-sm focus:outline-none";
+  const baseStyle =
+    "input input-sm focus:outline-none disabled:cursor-default disabled:text-primary-content";
 
   const style = props.data.errors.find((item) => item.type === name)
     ? baseStyle + " input-error"
@@ -37,6 +39,7 @@ const Field = (props: FieldProps) => {
           props.data.values[name] !== undefined ? props.data.values[name] : ""
         }
         placeholder={placeholder}
+        disabled={isDisabled}
         onChange={(event) =>
           props.data.onChangeValue(name, event.currentTarget.value)
         }

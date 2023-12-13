@@ -10,13 +10,16 @@ type FormProps = {
   onResetForm: () => void;
 };
 
-const Presentation: FC<{ formProps: FormProps }> = ({ formProps }) => {
+const Presentation: FC<{ formProps: FormProps; editMode: boolean }> = ({
+  formProps,
+  editMode,
+}) => {
   return (
     <div>
       <h3 className="text-lg font-semibold">Presentation</h3>
       <Wrapper>
         <p>Qui je suis ?</p>
-        <FieldArea name="description" data={formProps} />
+        <FieldArea name="description" data={formProps} isDisabled={!editMode} />
       </Wrapper>
     </div>
   );

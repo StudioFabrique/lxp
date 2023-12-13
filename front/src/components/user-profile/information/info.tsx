@@ -10,15 +10,33 @@ type FormProps = {
   onResetForm: () => void;
 };
 
-const Info: FC<{ formProps: FormProps }> = ({ formProps }) => {
+const Info: FC<{ formProps: FormProps; editMode: boolean }> = ({
+  formProps,
+  editMode,
+}) => {
   return (
     <div>
       <h3 className="text-lg font-semibold">Information</h3>
       <Wrapper>
         <div className="flex flex-col gap-4">
-          <Field name="firstname" label="Prénom" data={formProps} />
-          <Field name="lastname" label="Nom" data={formProps} />
-          <Field name="nickname" label="Pseudo" data={formProps} />
+          <Field
+            name="firstname"
+            label="Prénom"
+            data={formProps}
+            isDisabled={!editMode}
+          />
+          <Field
+            name="lastname"
+            label="Nom"
+            data={formProps}
+            isDisabled={!editMode}
+          />
+          <Field
+            name="nickname"
+            label="Pseudo"
+            data={formProps}
+            isDisabled={!editMode}
+          />
         </div>
       </Wrapper>
     </div>
