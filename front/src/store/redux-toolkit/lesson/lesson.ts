@@ -16,7 +16,13 @@ const lessonSlice = createSlice({
   initialState: initialLessonsState,
   reducers: {
     initLesson(state, action) {
-      state.lesson = action.payload;
+      let content = action.payload;
+      console.log({ content });
+
+      if (!content.activities || content.activities === undefined) {
+        content = { ...content, activities: [] };
+      }
+      state.lesson = content;
     },
     setCurrentType(state, action) {
       state.currentType = action.payload;

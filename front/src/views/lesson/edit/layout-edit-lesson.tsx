@@ -27,8 +27,6 @@ export default function LayoutEditLesson() {
   // retourne une leçon et la stock dans l'état partagé
   useEffect(() => {
     const applyData = (data: Lesson) => {
-      console.log(data);
-
       dispatch(lessonActions.initLesson(data));
       setLoading(false);
     };
@@ -49,8 +47,18 @@ export default function LayoutEditLesson() {
     }
   }, [error]);
 
-  // hardcoded pour tester
-  dispatch(lessonActions.setCurrentType("texte"));
+  useEffect(() => {
+    return () => {
+      dispatch(lessonActions.resetCurrentType());
+      dispatch(lessonActions.resetLesson());
+    };
+  }, [dispatch]);
+
+  const handleClickActivityType = (activityType: string) => {
+    dispatch(lessonActions.setCurrentType(activityType));
+  };
+
+  console.log({ lesson });
 
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
@@ -84,7 +92,7 @@ export default function LayoutEditLesson() {
                     onPublish={() => {}}
                   />
                 </div>
-                <AddBlock />
+                <AddBlock onActivityType={handleClickActivityType} />
                 <Outlet />
               </div>
             ) : (

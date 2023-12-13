@@ -32,5 +32,10 @@ export default function LessonHomePage() {
     return <p>Aucune leçon n'a été trouvée.</p>;
   }
 
-  return <LessonHome lessonsList={lessonsList} />;
+  return (
+    <main className="w-full flex flex-col gap-y-4">
+      <h2 className="text-xl font-bold text-primary">Ajouter un bloc</h2>
+      <LessonHome lessonsList={lessonsList} />
+    </main>
+  );
 }
