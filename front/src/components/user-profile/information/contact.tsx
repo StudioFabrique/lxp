@@ -10,16 +10,39 @@ type FormProps = {
   onResetForm: () => void;
 };
 
-const Contact: FC<{ formProps: FormProps }> = ({ formProps }) => {
+const Contact: FC<{ formProps: FormProps; editMode: boolean }> = ({
+  formProps,
+  editMode,
+}) => {
   return (
     <div>
       <h3 className="text-lg font-semibold">Contacts</h3>
       <Wrapper>
         <div className="flex flex-col gap-4">
-          <Field name="address" label="Adresse" data={formProps} />
-          <Field name="city" label="Ville" data={formProps} />
-          <Field name="postalCode" label="Code Postal" data={formProps} />
-          <Field name="phone" label="Telephone" data={formProps} />
+          <Field
+            name="address"
+            label="Adresse"
+            data={formProps}
+            isDisabled={!editMode}
+          />
+          <Field
+            name="city"
+            label="Ville"
+            data={formProps}
+            isDisabled={!editMode}
+          />
+          <Field
+            name="postalCode"
+            label="Code Postal"
+            data={formProps}
+            isDisabled={!editMode}
+          />
+          <Field
+            name="phone"
+            label="Telephone"
+            data={formProps}
+            isDisabled={!editMode}
+          />
         </div>
       </Wrapper>
     </div>

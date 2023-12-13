@@ -35,7 +35,6 @@ const useRbac = (roles: Role[] | undefined) => {
     }
 
     casbinAuthorizer.setPermission(builtPerms);
-    console.log({ casbinAuthorizer });
   }, [roles, sendRequest]);
 
   const forceRefreshRbacPermissions = () => {
