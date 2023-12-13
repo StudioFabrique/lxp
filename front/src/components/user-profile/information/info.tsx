@@ -37,6 +37,12 @@ const Info: FC<{ formProps: FormProps; editMode: boolean }> = ({
             data={formProps}
             isDisabled={!editMode}
           />
+          <Field
+            name="email"
+            label="Email"
+            data={formProps}
+            isDisabled={!editMode}
+          />
         </div>
       </Wrapper>
     </div>

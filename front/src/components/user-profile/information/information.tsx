@@ -31,8 +31,10 @@ const Information: FC<{
 
   const handleSubmitForm: FormEventHandler = useCallback(
     (e: FormEvent) => {
-      e.preventDefault();
       const applyData = () => {};
+
+      e.preventDefault();
+      console.log(formProps.values);
 
       try {
         informationSchema.parse(formProps.values);
