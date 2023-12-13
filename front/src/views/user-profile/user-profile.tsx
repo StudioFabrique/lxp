@@ -8,6 +8,7 @@ import User from "../../utils/interfaces/user";
 import useHttp from "../../hooks/use-http";
 import Loader from "../../components/UI/loader";
 import EditIcon from "../../components/UI/svg/edit-icon";
+import Can from "../../components/UI/can/can.component";
 
 type Tab = "Info" | "Calendar" | "Evals" | "Awards" | "Account";
 
@@ -132,10 +133,14 @@ const UserProfile = () => {
             Compte
           </button>
         </div>
-        <SubmitButtonsSet withEditButton />
+        <Can object="profile" action="update">
+          <SubmitButtonsSet withEditButton />
+        </Can>
       </div>
       {isLoading ? <Loader /> : <Render />}
-      <SubmitButtonsSet />
+      <Can object="profile" action="update">
+        <SubmitButtonsSet />
+      </Can>
     </div>
   );
 };
