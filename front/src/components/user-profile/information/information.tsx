@@ -1,4 +1,11 @@
-import { Dispatch, FC, SetStateAction, useCallback, useEffect } from "react";
+import {
+  FC,
+  FormEvent,
+  FormEventHandler,
+  Ref,
+  useCallback,
+  useEffect,
+} from "react";
 import Contact from "./contact";
 import Hobbies from "./hobbies";
 import Info from "./info";
@@ -13,49 +20,40 @@ import { informationSchema } from "../../../lib/validation/profile/info-schema";
 const Information: FC<{
   userData: User | undefined;
   editMode: boolean;
-  requestReady: boolean;
-  setRequestReady: Dispatch<SetStateAction<boolean>>;
   sendRequestInTab: any;
-}> = ({
-  userData,
-  editMode,
-  requestReady,
-  setRequestReady,
-  sendRequestInTab,
-}) => {
+  formRef: Ref<HTMLFormElement>;
+}> = ({ userData, editMode, sendRequestInTab, formRef }) => {
   const {
     initValues,
     onValidationErrors,
     ...formProps /* ...formProps prend le reste des valeurs de useForm non utilisées */
   } = useForm();
 
-  const handleSubmitForm = useCallback(() => {
-    const applyData = () => {};
+  const handleSubmitForm: FormEventHandler = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault();
+      const applyData = () => {};
 
-    try {
-      informationSchema.parse(formProps.values);
-      toast.success("Formulaire envoyé avec succès !");
-      setRequestReady(false);
-      return;
-    } catch (error) {
-      const newErrors = validationErrors(error);
-      toast.error(newErrors[0].message);
-      onValidationErrors(newErrors);
-      setRequestReady(false);
-      return;
-    }
-  }, [formProps, onValidationErrors, setRequestReady]);
+      try {
+        informationSchema.parse(formProps.values);
+        toast.success("Formulaire envoyé avec succès !");
+      } catch (error) {
+        const newErrors = validationErrors(error);
+        toast.error(newErrors[0].message);
+        onValidationErrors(newErrors);
+      }
+    },
+    [formProps.values, onValidationErrors]
+  );
 
   useEffect(() => {
-    initValues(userData);
+    if (userData) {
+      initValues(userData);
+    }
   }, [initValues, userData]);
 
-  useEffect(() => {
-    if (requestReady) handleSubmitForm();
-  }, [requestReady, handleSubmitForm]);
-
   return (
-    <form>
+    <form ref={formRef} onSubmit={handleSubmitForm}>
       <div className="grid grid-cols-2 gap-5">
         <Info formProps={formProps} editMode={editMode} />
         <Contact formProps={formProps} editMode={editMode} />
