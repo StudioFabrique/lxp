@@ -43,6 +43,7 @@ const TypeUtilisateur: FC<{
           roles.map((role: any) => (
             <span className="flex gap-x-2">
               <input
+                key={role._id}
                 name={role.role}
                 type="checkbox"
                 className="checkbox checkbox-primary"
