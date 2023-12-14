@@ -27,6 +27,8 @@ export default function LayoutEditLesson() {
   // retourne une leçon et la stock dans l'état partagé
   useEffect(() => {
     const applyData = (data: Lesson) => {
+      console.log("hello dispatch");
+
       dispatch(lessonActions.initLesson(data));
       setLoading(false);
     };
@@ -66,8 +68,8 @@ export default function LayoutEditLesson() {
         <Loader />
       ) : (
         <FadeWrapper>
-          <div className="w-full h-full flex flex-col items-center gap-y-8">
-            <div className="w-full flex flex-col items-center gap-y-8">
+          <div className="w-full h-full flex flex-col items-center gap-y-4">
+            <div className="w-full flex flex-col items-center gap-y-4">
               {lesson &&
               lesson !== undefined &&
               lesson.title &&
@@ -83,7 +85,7 @@ export default function LayoutEditLesson() {
                 </ImageHeader>
               ) : null}
             </div>
-            {lesson !== undefined ? (
+            {lesson && lesson !== undefined ? (
               <div className="w-full 2xl:w-4/6 mt-8 flex flex-col items-center">
                 <div className="w-full flex justify-end">
                   <HeaderButton

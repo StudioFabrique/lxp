@@ -4,11 +4,13 @@ import Lesson from "../../../utils/interfaces/lesson";
 interface LessonsType {
   lesson: Lesson | null;
   currentType: string;
+  blogEdition: number | null;
 }
 
 const initialLessonsState: LessonsType = {
   lesson: null,
   currentType: "",
+  blogEdition: null,
 };
 
 const lessonSlice = createSlice({
@@ -16,16 +18,13 @@ const lessonSlice = createSlice({
   initialState: initialLessonsState,
   reducers: {
     initLesson(state, action) {
-      let content = action.payload;
-      console.log({ content });
-
-      if (!content.activities || content.activities === undefined) {
-        content = { ...content, activities: [] };
-      }
-      state.lesson = content;
+      state.lesson = action.payload;
     },
     setCurrentType(state, action) {
       state.currentType = action.payload;
+    },
+    setBlogEdition(state, action) {
+      state.blogEdition = action.payload;
     },
     resetCurrentType(state) {
       state.currentType = "";
@@ -33,6 +32,7 @@ const lessonSlice = createSlice({
     resetLesson(state) {
       state.lesson = null;
       state.currentType = "";
+      state.blogEdition = null;
     },
   },
 });

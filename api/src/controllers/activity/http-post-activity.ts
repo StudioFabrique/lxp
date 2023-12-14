@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
+
 import { serverIssue } from "../../utils/constantes";
+import postText from "../../models/acitivity/post-activity/post-text";
 
 export default async function httpPostActivity(req: Request, res: Response) {
   try {
@@ -11,7 +13,7 @@ export default async function httpPostActivity(req: Request, res: Response) {
 
     switch (type) {
       case "text":
-        response.message = "texte incoming";
+        response = await postText(+lessonId, value, type, order);
         break;
     }
     return res.status(201).json(response);
