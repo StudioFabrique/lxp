@@ -4,7 +4,7 @@ import { Quill } from "react-quill";
 // from 'quill/assets/icons/undo.svg' but I found that a number of loaders do not
 // handle them correctly
 
-const CustomUndo = () => (
+/* const CustomUndo = () => (
   <svg viewBox="0 0 18 18">
     <polygon className="ql-fill ql-stroke" points="6 10 4 12 2 10 6 10" />
     <path
@@ -23,15 +23,15 @@ const CustomRedo = () => (
       d="M9.91,13.91A4.6,4.6,0,0,1,9,14a5,5,0,1,1,5-5"
     />
   </svg>
-);
+); */
 
-// Undo and redo functions for Custom Toolbar
+/* // Undo and redo functions for Custom Toolbar
 function undoChange() {
   //quill.history.undo();
 }
 function redoChange() {
   //quill.history.redo();
-}
+} */
 
 // Modules object for setting up the Quill editor
 
@@ -59,10 +59,10 @@ export const formats = [
 export const modules = {
   toolbar: {
     container: "#toolbar",
-    handlers: {
+    /*     handlers: {
       undo: undoChange(),
       redo: redoChange,
-    },
+    }, */
   },
   history: {
     delay: 500,
@@ -143,14 +143,14 @@ export const QuillToolbar = () => (
       <button className="ql-code-block" />
       <button className="ql-clean" />
     </span>
-    <span className="ql-formats">
+    {/*     <span className="ql-formats">
       <button className="ql-undo">
         <CustomUndo />
       </button>
       <button className="ql-redo">
         <CustomRedo />
       </button>
-    </span>
+    </span> */}
   </div>
 );
 
