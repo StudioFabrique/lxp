@@ -1,3 +1,4 @@
+import { Ref } from "react";
 import CustomError from "../../../utils/interfaces/custom-error";
 
 interface FieldProps {
@@ -6,6 +7,7 @@ interface FieldProps {
   isDisabled?: boolean;
   name: string;
   type?: string;
+  fieldRef?: Ref<HTMLInputElement>;
   data: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     values: Record<string, string>;
@@ -15,7 +17,7 @@ interface FieldProps {
 }
 
 const Field = (props: FieldProps) => {
-  const { label, placeholder, name, isDisabled } = props;
+  const { label, placeholder, name, isDisabled, fieldRef } = props;
   const type = props.type ?? "text";
 
   const baseStyle =
@@ -31,6 +33,7 @@ const Field = (props: FieldProps) => {
     <div className="flex flex-col gap-y-2">
       <label htmlFor={name}>{label}</label>
       <input
+        ref={fieldRef}
         className={style}
         type={type}
         id={name}

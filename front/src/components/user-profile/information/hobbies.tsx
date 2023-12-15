@@ -3,7 +3,6 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import Hobby from "../../../utils/interfaces/hobby";
 
 const Hobbies: FC<{ hobbies: Hobby[] }> = ({ hobbies }) => {
-  console.log(hobbies);
   return (
     <div>
       <h3 className="text-lg font-semibold">Mes passions</h3>

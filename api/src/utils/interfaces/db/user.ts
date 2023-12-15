@@ -21,6 +21,8 @@ export interface IUser extends Document {
   phoneNumber?: string;
   group?: IGroup["_id"];
   roles: IRole["_id"];
+  hobbies?: IHobby["_id"][];
+  links?: ILink["_id"][];
   graduations?: IGraduation["_id"][];
   createdAt?: Date;
   updatedAt?: Date;

@@ -32,13 +32,13 @@ const Contact: FC<{ formProps: FormProps; editMode: boolean }> = ({
             isDisabled={!editMode}
           />
           <Field
-            name="postalCode"
+            name="postCode"
             label="Code Postal"
             data={formProps}
             isDisabled={!editMode}
           />
           <Field
-            name="phone"
+            name="phoneNumber"
             label="Telephone"
             data={formProps}
             isDisabled={!editMode}
