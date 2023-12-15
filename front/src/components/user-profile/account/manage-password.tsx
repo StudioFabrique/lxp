@@ -1,7 +1,7 @@
 import { FC, Ref } from "react";
+import CustomError from "../../../utils/interfaces/custom-error";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import Field from "../../UI/forms/field";
-import CustomError from "../../../utils/interfaces/custom-error";
 
 type FormProps = {
   values: Record<string, string>;
@@ -10,37 +10,31 @@ type FormProps = {
   onResetForm: () => void;
 };
 
-const Info: FC<{
+const ManagePassword: FC<{
   formProps: FormProps;
   editMode: boolean;
   firstInputRef: Ref<HTMLInputElement>;
 }> = ({ formProps, editMode, firstInputRef }) => (
   <div>
-    <h3 className="text-lg font-semibold">Information</h3>
+    <h3 className="text-lg font-semibold">Changer le mot de passe</h3>
     <Wrapper>
       <div className="flex flex-col gap-4">
         <Field
           fieldRef={firstInputRef}
-          name="firstname"
-          label="Prénom"
+          name="oldPass"
+          label="Ancien mot de passe"
           data={formProps}
           isDisabled={!editMode}
         />
         <Field
-          name="lastname"
-          label="Nom"
+          name="newPass"
+          label="Nouveau mot de passe"
           data={formProps}
           isDisabled={!editMode}
         />
         <Field
-          name="nickname"
-          label="Pseudo"
-          data={formProps}
-          isDisabled={!editMode}
-        />
-        <Field
-          name="email"
-          label="Email"
+          name="confirmNewPass"
+          label="Confirmer le nouveau mot de passe"
           data={formProps}
           isDisabled={!editMode}
         />
@@ -48,4 +42,5 @@ const Info: FC<{
     </Wrapper>
   </div>
 );
-export default Info;
+
+export default ManagePassword;
