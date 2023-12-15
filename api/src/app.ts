@@ -11,7 +11,11 @@ import cookieParser from "cookie-parser";
 const app = express();
 
 app
-  .use(helmet())
+  .use(
+    helmet({
+      crossOriginResourcePolicy: false,
+    })
+  )
   .use(
     cors({
       origin: ["http://localhost:3000", "http://localhost:5173"],

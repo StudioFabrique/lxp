@@ -22,13 +22,9 @@ export default function LayoutEditLesson() {
   const [loading, setLoading] = useState(false);
   const [activities] = useState<number[]>([1]);
 
-  console.log({ lesson });
-
   // retourne une leçon et la stock dans l'état partagé
   useEffect(() => {
     const applyData = (data: Lesson) => {
-      console.log("hello dispatch");
-
       dispatch(lessonActions.initLesson(data));
       setLoading(false);
     };
@@ -59,8 +55,6 @@ export default function LayoutEditLesson() {
   const handleClickActivityType = (activityType: string) => {
     dispatch(lessonActions.setCurrentType(activityType));
   };
-
-  console.log({ lesson });
 
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
@@ -94,6 +88,9 @@ export default function LayoutEditLesson() {
                     onPublish={() => {}}
                   />
                 </div>
+                <h2 className="text-xl font-bold text-primary">
+                  Ajouter un bloc
+                </h2>
                 <AddBlock onActivityType={handleClickActivityType} />
                 <Outlet />
               </div>
