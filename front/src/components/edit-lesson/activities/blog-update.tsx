@@ -1,40 +1,45 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import "react-quill/dist/quill.snow.css";
 import { useEffect, useState } from "react";
-import Markdown from "markdown-to-jsx";
 import { useDispatch, useSelector } from "react-redux";
 import Activity from "../../../utils/interfaces/activity";
 import { markdownToHtml } from "../../../helpers/html-parser";
 import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 import Editor from "../../markdown-editor/mark-down-editor";
+import Markdown from "react-markdown";
 
 interface EditorProps {
-  activity?: Activity;
-  onSubmit: (value: any) => void;
+  activity: Activity;
+  onUpdate: (activity: any) => void;
 }
 
-export const BlogUpdate = ({ activity, onSubmit }: EditorProps) => {
+export const BlogUpdate = ({ activity, onUpdate }: EditorProps) => {
   const dispatch = useDispatch();
   const [value, setValue] = useState<string>("");
   const blogEdition = useSelector(
     (state: any) => state.lesson.blogEdition
   ) as number;
 
-  const handleSubmit = () => {
-    onSubmit(value);
+  console.log("rendering...");
+
+  const handleUpdate = (newValue: string) => {
+    onUpdate({
+      ...activity,
+      value: newValue,
+    });
+    dispatch(lessonActions.setBlogEdition(null));
   };
 
   useEffect(() => {
     if (activity && activity !== undefined) {
       fetch(`http://localhost:5001/activities/${activity.url}`)
         .then((response: any) => response.text())
-        .then((text) => markdownToHtml(text))
+        //.then((text) => markdownToHtml(text))
         .then((mdContent: string) => {
-          console.log(mdContent);
           setValue(mdContent);
         });
     }
-  }, [activity]);
+  }, [activity, activity.url]);
 
   const handleToggleEditionMode = (id: number) => {
     dispatch(lessonActions.setBlogEdition(id));
@@ -44,21 +49,19 @@ export const BlogUpdate = ({ activity, onSubmit }: EditorProps) => {
     dispatch(lessonActions.setBlogEdition(null));
   };
 
-  console.log({ blogEdition });
-
   return (
     <div className="my-8">
       {blogEdition === activity!.id ? (
         <>
           <Editor
             content={value}
-            onSubmit={handleSubmit}
+            onSubmit={handleUpdate}
             onCancel={handleCancelEdition}
           />
         </>
       ) : (
         <>
-          <Markdown>{value}</Markdown>{" "}
+          <Markdown>{value}</Markdown>
           <div className="flex justify-end mt-4">
             <button
               className="btn btn-sm btn-primary"

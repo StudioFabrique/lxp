@@ -56,20 +56,19 @@ export const formats = [
   "color",
   "code-block",
 ];
-export const modules = {
+/* export const modules = {
   toolbar: {
     container: "#toolbar",
-    /*     handlers: {
-      undo: undoChange(),
-      redo: redoChange,
-    }, */
+    handlers: {
+      // image: imageHandler,
+    },
   },
   history: {
     delay: 500,
     maxStack: 100,
     userOnly: true,
   },
-};
+}; */
 
 // Add sizes to whitelist and register them
 const Size = Quill.import("formats/size");

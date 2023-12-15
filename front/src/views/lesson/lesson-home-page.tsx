@@ -26,8 +26,6 @@ export default function LessonHomePage() {
     );
   }, [sendRequest]);
 
-  console.log({ lessonsList });
-
   if (!lessonsList || lessonsList.length === 0) {
     return <p>Aucune leçon n'a été trouvée.</p>;
   }

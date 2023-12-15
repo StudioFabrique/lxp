@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Lesson from "../../../utils/interfaces/lesson";
+import Activity from "../../../utils/interfaces/activity";
 
 interface LessonsType {
   lesson: Lesson | null;
@@ -20,11 +21,33 @@ const lessonSlice = createSlice({
     initLesson(state, action) {
       state.lesson = action.payload;
     },
+    addActivity(state, action) {
+      if (state.lesson && state.lesson.activities !== undefined) {
+        state.lesson = {
+          ...state.lesson,
+          activities: [...state.lesson.activities, action.payload],
+        };
+      }
+    },
     setCurrentType(state, action) {
       state.currentType = action.payload;
     },
     setBlogEdition(state, action) {
       state.blogEdition = action.payload;
+    },
+    updateActivity(state, action) {
+      const updatedActivity: Activity = action.payload;
+      if (state.lesson && state.lesson.activities !== undefined) {
+        const updatedActivities: Activity[] = state.lesson.activities.filter(
+          (item) => item.id !== updatedActivity.id
+        );
+        const updatedLesson: Lesson = {
+          ...state.lesson,
+          activities: [...updatedActivities, updatedActivity],
+        };
+        state.lesson = updatedLesson;
+        console.log("updated lesson : ", state.lesson);
+      }
     },
     resetCurrentType(state) {
       state.currentType = "";
