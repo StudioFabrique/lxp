@@ -58,14 +58,12 @@ const Information: FC<{
 
   const handleSubmitForm: FormEventHandler = (e: FormEvent) => {
     const applyData = (data: any) => {
-      console.log({ dataFromRequest: data });
       setUserData(data.data);
       setEditMode(false);
       toast.success("Formulaire envoyé avec succès !");
     };
 
     e.preventDefault();
-    console.log(formProps.values);
 
     try {
       informationSchema.parse(formProps.values);
@@ -100,7 +98,6 @@ const Information: FC<{
 
   useEffect(() => {
     if (editMode) {
-      console.log("focus");
       setTimeout(() => firstInputRef.current?.focus(), 100);
     }
   }, [editMode]);
