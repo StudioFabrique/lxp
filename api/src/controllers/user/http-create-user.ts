@@ -24,14 +24,6 @@ export default async function httpCreateUser(req: Request, res: Response) {
   const { roleId } = userDataRequest;
   const uploadedFile = req.file;
 
-  console.log(graduationsDataRequest);
-  console.log(hobbiesDataRequest);
-
-  console.log(userDataRequest);
-  console.log(graduationsDataRequest ?? "no graduations data");
-  console.log(linksDataRequest ?? "no links data");
-  console.log(hobbiesDataRequest ?? "no hobbies data");
-
   console.log({ roleId });
 
   try {
@@ -49,8 +41,6 @@ export default async function httpCreateUser(req: Request, res: Response) {
     if (!userResponse) {
       return res.status(409).json({ message: alreadyExist });
     }
-
-    console.log(graduationsDataRequest);
 
     await createManyGraduations(userResponse!._id, graduationsDataRequest); // insert graduations in mongodb with user ref _id
 

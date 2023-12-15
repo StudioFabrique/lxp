@@ -19,11 +19,9 @@ export interface IUser extends Document {
   city?: string;
   birthDate?: Date;
   phoneNumber?: string;
-  graduations?: IGraduation["_id"];
-  hobbies?: IHobby["_id"];
-  links: ILink["_id"];
   group?: IGroup["_id"];
   roles: IRole["_id"];
+  graduations?: IGraduation["_id"][];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -43,31 +41,37 @@ const userSchema: Schema = new Schema(
     city: { type: String, required: false },
     birthDate: { type: Date, required: false },
     phoneNumber: { type: String, required: false },
-    graduations: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "Graduation",
-      require: false,
-    },
-    hobbies: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "Hobby",
-      require: false,
-    },
-    links: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "Link",
-      require: false,
-    },
-    group: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "Group",
-      require: false,
-    },
     roles: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Role",
       required: true,
     },
+    group: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Group",
+      required: false,
+    },
+    graduations: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Graduation",
+        required: false,
+      },
+    ],
+    links: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Link",
+        required: false,
+      },
+    ],
+    hobbies: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Hobby",
+        required: false,
+      },
+    ],
   },
   { timestamps: true }
 );

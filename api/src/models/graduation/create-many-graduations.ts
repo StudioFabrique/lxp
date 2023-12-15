@@ -1,4 +1,5 @@
 import Graduation, { IGraduation } from "../../utils/interfaces/db/graduation";
+import User from "../../utils/interfaces/db/user";
 
 export default async function createManyGraduations(
   userId: string,
@@ -8,5 +9,12 @@ export default async function createManyGraduations(
     delete graduation.id;
     return { ...graduation, user: userId };
   });
-  Graduation.insertMany(graduationsUpdatedWithUserId);
+
+  const graduationsToAdd = await Graduation.insertMany(
+    graduationsUpdatedWithUserId
+  );
+
+  await User.findByIdAndUpdate(userId, {
+    $push: { graduations: graduationsToAdd },
+  });
 }
