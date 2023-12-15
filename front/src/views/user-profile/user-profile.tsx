@@ -3,7 +3,7 @@ import Information from "../../components/user-profile/information/information";
 import Calendar from "../../components/user-profile/calendar";
 import Evaluations from "../../components/user-profile/evaluations";
 import Awards from "../../components/user-profile/awards/awards";
-import Account from "../../components/user-profile/account";
+import Account from "../../components/user-profile/account/account";
 import useHttp from "../../hooks/use-http";
 import Loader from "../../components/UI/loader";
 import EditIcon from "../../components/UI/svg/edit-icon";
@@ -39,7 +39,14 @@ const UserProfile = () => {
       case "Awards":
         return <Awards />;
       case "Account":
-        return <Account />;
+        return (
+          <Account
+            editMode={editMode}
+            setEditMode={setEditMode}
+            sendRequestInTab={sendRequestInTab}
+            formRef={formRef}
+          />
+        );
     }
   };
 

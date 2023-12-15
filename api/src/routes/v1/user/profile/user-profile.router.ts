@@ -1,8 +1,8 @@
 import { Router } from "express";
-import httpUpdateUser from "../../../../controllers/user/profile/http-update-user-profile";
+import httpUpdateUserProfile from "../../../../controllers/user/profile/http-update-user-profile";
 import httpGetUserProfileInformation from "../../../../controllers/user/profile/http-get-user-profile";
 import { userValidator } from "../../../../middleware/validators";
-import { body } from "express-validator";
+import httpUpdateUserPassword from "../../../../controllers/user/profile/http-update-user-password";
 
 const userProfileRouter = Router();
 
@@ -11,6 +11,12 @@ const userProfileRouter = Router();
  */
 userProfileRouter.get("/information", httpGetUserProfileInformation);
 
-userProfileRouter.put("/information/:id", userValidator(), httpUpdateUser);
+userProfileRouter.put(
+  "/information/:id",
+  userValidator(),
+  httpUpdateUserProfile
+);
+
+userProfileRouter.put("/password", httpUpdateUserPassword);
 
 export default userProfileRouter;
