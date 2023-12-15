@@ -113,7 +113,15 @@ userRouter.post(
   "/",
   checkPermissions("user"),
   upload.single("image"),
-  userValidator,
+  userValidator(
+    body("roleId")
+      .exists()
+      .notEmpty()
+      .isString()
+      .trim()
+      .escape()
+      .withMessage("firstname ou lastname non conforme")
+  ),
   httpCreateUser
 );
 

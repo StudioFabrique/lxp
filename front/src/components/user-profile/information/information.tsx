@@ -73,7 +73,7 @@ const Information: FC<{
         {
           path: `/user/profile/information/${userData?._id}`,
           method: "put",
-          body: { userData: formProps.values },
+          body: { user: formProps.values },
         },
         applyData
       );

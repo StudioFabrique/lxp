@@ -7,10 +7,10 @@ export default async function httpUpdateUserProfile(
   res: Response
 ) {
   const { id } = req.params;
-  const { userData }: { userData: IUser } = req.body;
+  const { user }: { user: IUser } = req.body;
 
   try {
-    const response = await updateUser(id, userData);
+    const response = await updateUser(id, user);
 
     if (!response) {
       return res.status(404).json({ message: "non trouvé" });
