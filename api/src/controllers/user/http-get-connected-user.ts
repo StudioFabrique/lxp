@@ -1,6 +1,7 @@
 import { Response } from "express";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import User from "../../utils/interfaces/db/user";
+import { IGraduation } from "../../utils/interfaces/db/graduation";
 
 export default async function httpGetConnectedUser(
   req: CustomRequest,
@@ -8,7 +9,11 @@ export default async function httpGetConnectedUser(
 ) {
   const userId = req.auth?.userId;
 
-  const response = await User.findById(userId, { password: 0 });
+  const response = await User.findById(userId, { password: 0 }).populate([
+    "graduations",
+    "hobbies",
+    "links",
+  ]);
 
   if (!response) {
     return res.status(400).json({

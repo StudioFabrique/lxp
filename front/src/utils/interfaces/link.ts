@@ -9,6 +9,7 @@ export type LinkType =
   | "linkedin";
 
 export interface Link {
+  _id?: string;
   url: string;
   type: LinkType;
   alias?: string | null;

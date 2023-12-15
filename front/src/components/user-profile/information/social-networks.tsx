@@ -8,7 +8,7 @@ const SocialNetworks: FC<{ links: Link[] }> = ({ links }) => {
       <h3 className="text-lg font-semibold">Réseaux sociaux</h3>
       <Wrapper>
         {links.length
-          ? links.map((link) => <p>{link.type ?? link.url}</p>)
+          ? links.map((link) => <p key={link._id}>{link.type ?? link.url}</p>)
           : "Aucuns réseaux sociaux"}
       </Wrapper>
     </div>

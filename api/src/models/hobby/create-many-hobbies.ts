@@ -1,4 +1,5 @@
 import Hobby, { IHobby } from "../../utils/interfaces/db/hobby";
+import User from "../../utils/interfaces/db/user";
 
 export default async function createManyHobbies(
   userId: string,
@@ -7,5 +8,9 @@ export default async function createManyHobbies(
   const hobbiesUpdatedWithUserId = hobbies.map((hobby) => {
     return { ...hobby, user: userId };
   });
-  Hobby.insertMany(hobbiesUpdatedWithUserId);
+  const hobbiesToAdd = await Hobby.insertMany(hobbiesUpdatedWithUserId);
+
+  await User.findByIdAndUpdate(userId, {
+    $push: { hobbies: hobbiesToAdd },
+  });
 }

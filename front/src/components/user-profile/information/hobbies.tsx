@@ -3,12 +3,13 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import Hobby from "../../../utils/interfaces/hobby";
 
 const Hobbies: FC<{ hobbies: Hobby[] }> = ({ hobbies }) => {
+  console.log(hobbies);
   return (
     <div>
       <h3 className="text-lg font-semibold">Mes passions</h3>
       <Wrapper>
         {hobbies.length > 0
-          ? hobbies.map((hobby) => <p>{hobby.title}</p>)
+          ? hobbies.map((hobby) => <p key={hobby._id}>{hobby.title}</p>)
           : "Aucunes passions"}
       </Wrapper>
     </div>
