@@ -14,7 +14,7 @@ import httpUpdateUserRoles from "../../../controllers/user/http-update-user-role
 import httpSearchUser from "../../../controllers/user/http-search-user";
 import httpGetUsersByRole from "../../../controllers/user/http-get-users-by-role";
 import httpGetUsersStats from "../../../controllers/user/http-get-users-stats";
-import httpUpdateUserStatus from "../../../controllers/user/http-update-user";
+import httpUpdateUserStatus from "../../../controllers/user/http-update-user-status";
 import httpUpdateManyUsersStatus from "../../../controllers/user/http-update-many-users-status";
 import httpGetContacts from "../../../controllers/user/http-get-contacts";
 import postTeacherRouter from "./post-teacher";
@@ -23,7 +23,9 @@ import httpGetUsersByGroup from "../../../controllers/user/http-get-users-by-gro
 import checkPermissions from "../../../middleware/check-permissions";
 import httpGetUsersByRank from "../../../controllers/user/http-get-users-by-rank";
 import multer from "multer";
-import httpGetConnectedUser from "../../../controllers/user/http-get-connected-user";
+import httpGetConnectedUser from "../../../controllers/user/profile/http-get-user-profile";
+import httpUpdateUser from "../../../controllers/user/profile/http-update-user-profile";
+import userProfileRouter from "./profile/user-profile.router";
 
 const userRouter = express.Router();
 
@@ -43,11 +45,6 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
-
-/**
- * Récupère les informations de l'utilisateur connecté
- */
-userRouter.get("/connected", checkPermissions("profile"), httpGetConnectedUser);
 
 // TODO: VALIDATORS
 userRouter.put(
@@ -157,5 +154,7 @@ userRouter.post(
   // checkToken,
   httpGetUsersByGroup
 );
+
+userRouter.use("/profile", checkPermissions("profile"), userProfileRouter);
 
 export default userRouter;

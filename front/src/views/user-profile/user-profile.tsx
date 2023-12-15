@@ -1,10 +1,9 @@
-import { FC, Ref, useEffect, useRef, useState } from "react";
+import { FC, Ref, useRef, useState } from "react";
 import Information from "../../components/user-profile/information/information";
 import Calendar from "../../components/user-profile/calendar";
 import Evaluations from "../../components/user-profile/evaluations";
 import Awards from "../../components/user-profile/awards/awards";
 import Account from "../../components/user-profile/account";
-import User from "../../utils/interfaces/user";
 import useHttp from "../../hooks/use-http";
 import Loader from "../../components/UI/loader";
 import EditIcon from "../../components/UI/svg/edit-icon";
@@ -13,14 +12,10 @@ import Can from "../../components/UI/can/can.component";
 type Tab = "Info" | "Calendar" | "Evals" | "Awards" | "Account";
 
 const UserProfile = () => {
-  const { sendRequest, isLoading } = useHttp(true);
-
   const { sendRequest: sendRequestInTab, isLoading: isLoadingInTab } =
     useHttp(true);
 
   const [currentTab, setCurrentTab] = useState<Tab>("Info");
-
-  const [userData, setUserData] = useState<User>();
 
   const [editMode, setEditMode] = useState<boolean>(false);
 
@@ -31,8 +26,8 @@ const UserProfile = () => {
       case "Info":
         return (
           <Information
-            userData={userData}
             editMode={editMode}
+            setEditMode={setEditMode}
             sendRequestInTab={sendRequestInTab}
             formRef={formRef}
           />
@@ -42,7 +37,7 @@ const UserProfile = () => {
       case "Evals":
         return <Evaluations />;
       case "Awards":
-        return <Awards userData={userData} />;
+        return <Awards />;
       case "Account":
         return <Account />;
     }
@@ -78,14 +73,6 @@ const UserProfile = () => {
         )}
       </div>
     );
-
-  useEffect(() => {
-    const applyData = (data: { message: string; data: User }) => {
-      setUserData(data.data);
-    };
-
-    sendRequest({ path: "/user/connected" }, applyData);
-  }, [sendRequest]);
 
   return (
     <div className="flex flex-col gap-5 p-10">
@@ -137,7 +124,7 @@ const UserProfile = () => {
           <SubmitButtonsSet withEditButton />
         </Can>
       </div>
-      {isLoading ? <Loader /> : <Render />}
+      <Render />
       <Can object="profile" action="update">
         <SubmitButtonsSet />
       </Can>

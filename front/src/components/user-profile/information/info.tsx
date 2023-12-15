@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, Ref } from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import Field from "../../UI/forms/field";
 import CustomError from "../../../utils/interfaces/custom-error";
@@ -10,16 +10,18 @@ type FormProps = {
   onResetForm: () => void;
 };
 
-const Info: FC<{ formProps: FormProps; editMode: boolean }> = ({
-  formProps,
-  editMode,
-}) => {
+const Info: FC<{
+  formProps: FormProps;
+  editMode: boolean;
+  firstInputRef: Ref<HTMLInputElement>;
+}> = ({ formProps, editMode, firstInputRef }) => {
   return (
     <div>
       <h3 className="text-lg font-semibold">Information</h3>
       <Wrapper>
         <div className="flex flex-col gap-4">
           <Field
+            fieldRef={firstInputRef}
             name="firstname"
             label="Prénom"
             data={formProps}
