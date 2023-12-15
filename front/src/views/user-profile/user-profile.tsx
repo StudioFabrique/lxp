@@ -77,7 +77,7 @@ const UserProfile = () => {
   return (
     <div className="flex flex-col gap-5 p-10">
       <h2 className="font-bold text-xl">Mon profil</h2>
-      <div className="flex justify-between">
+      <div className="flex flex-col xl:flex-row justify-between gap-5">
         <div className="flex gap-5">
           <button
             type="button"
