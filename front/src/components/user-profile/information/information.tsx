@@ -69,7 +69,7 @@ const Information: FC<{
       informationSchema.parse(formProps.values);
       sendRequestInTab(
         {
-          path: `/user/profile/information/${userData?._id}`,
+          path: `/user/profile/information`,
           method: "put",
           body: { user: formProps.values },
         },
