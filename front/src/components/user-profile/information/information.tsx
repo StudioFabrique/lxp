@@ -105,7 +105,11 @@ const Information: FC<{
   if (isLoading) return <Loader />;
 
   return (
-    <form ref={formRef} onSubmit={handleSubmitForm}>
+    <form
+      className="flex flex-col gap-5"
+      ref={formRef}
+      onSubmit={handleSubmitForm}
+    >
       <div className="grid grid-cols-2 gap-5">
         <Info
           formProps={formProps}

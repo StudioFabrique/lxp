@@ -5,6 +5,7 @@ import { Context } from "../../store/context.store";
 //import defineRulesFor from "../../config/rbac";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import useRbac from "../../hooks/use-rbac";
+import Sidebar from "../../components/UI/sidebar/base-sidebar/sidebar";
 
 let initialState = true;
 
@@ -34,11 +35,14 @@ const StudentLayout = () => {
   return (
     <div className="w-full">
       {user && user.roles[0].rank > 2 ? (
-        <FadeWrapper>
-          <div className="w-full flex flex-col h-screen">
-            <Outlet />
-          </div>
-        </FadeWrapper>
+        <div>
+          <Sidebar />
+          <FadeWrapper>
+            <div className="w-full flex flex-col pl-20">
+              <Outlet />
+            </div>
+          </FadeWrapper>
+        </div>
       ) : null}
     </div>
   );

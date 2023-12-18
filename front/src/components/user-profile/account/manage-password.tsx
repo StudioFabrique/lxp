@@ -15,7 +15,7 @@ const ManagePassword: FC<{
   editMode: boolean;
   firstInputRef: Ref<HTMLInputElement>;
 }> = ({ formProps, editMode, firstInputRef }) => (
-  <div>
+  <div className="flex flex-col gap-2">
     <h3 className="text-lg font-semibold">Changer le mot de passe</h3>
     <Wrapper>
       <div className="flex flex-col gap-4">

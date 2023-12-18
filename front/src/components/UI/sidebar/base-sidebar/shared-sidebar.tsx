@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 
-import ModeToggle from "../mode-toggle";
-import HomeIcon from "../svg/home-icon";
-import LogoutIcon from "../svg/logout-icon";
+import ModeToggle from "../../mode-toggle";
+import HomeIcon from "../../svg/home-icon";
+import LogoutIcon from "../../svg/logout-icon";
 
 interface SharedSideBarProps {
   onLogout: () => void;

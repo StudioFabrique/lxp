@@ -27,6 +27,7 @@ export const ressourcesRbacByRank = {
     "parcours",
     "module",
     "course",
+    "lesson",
     "bonusSkill",
     "profile",
   ],
@@ -41,6 +42,7 @@ export const ressourcesRbacByRank = {
     "parcours",
     "module",
     "course",
+    "lesson",
     "bonusSkill",
     "profile",
   ],
@@ -54,6 +56,7 @@ export const ressourcesRbacByRank = {
     "module",
     "course",
     "bonusSkill",
+    "lesson",
   ],
   // apprenant
   3: [],
