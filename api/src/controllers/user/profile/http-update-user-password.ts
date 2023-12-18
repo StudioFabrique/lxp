@@ -1,14 +1,19 @@
 import { Request, Response } from "express";
 import updateUserPassword from "../../../models/user/update-user-password";
+import CustomRequest from "../../../utils/interfaces/express/custom-request";
 
 export default async function httpUpdateUserPassword(
-  req: Request,
+  req: CustomRequest,
   res: Response
 ) {
-  const { id, oldPass, newPass } = req.body;
+  const { oldPass, newPass } = req.body;
+
+  const id = req.auth?.userId;
+
+  console.log(id, oldPass, newPass);
 
   try {
-    const response = await updateUserPassword(id, oldPass, newPass);
+    const response = id ? await updateUserPassword(id, oldPass, newPass) : null;
 
     if (!response) {
       return res.status(404).json({ message: "non trouvé" });

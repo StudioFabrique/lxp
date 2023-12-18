@@ -5,16 +5,14 @@ import {
   FormEventHandler,
   Ref,
   SetStateAction,
+  useContext,
   useEffect,
   useRef,
-  useState,
 } from "react";
 import toast from "react-hot-toast";
-import { informationSchema } from "../../../lib/validation/profile/info-schema";
 import useForm from "../../UI/forms/hooks/use-form";
 import { validationErrors } from "../../../helpers/validate";
 import ManagePassword from "./manage-password";
-import Loader from "../../UI/loader";
 
 const Account: FC<{
   editMode: boolean;
@@ -38,12 +36,15 @@ const Account: FC<{
     e.preventDefault();
 
     try {
-      informationSchema.parse(formProps.values);
+      /* informationSchema.parse(formProps.values); */
       sendRequestInTab(
         {
-          path: `/user/profile/password}`,
+          path: `/user/profile/password`,
           method: "put",
-          body: { user: formProps.values },
+          body: {
+            oldPass: formProps.values.oldPass,
+            newPass: formProps.values.newPass,
+          },
         },
         applyData
       );
