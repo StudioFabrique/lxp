@@ -19,7 +19,7 @@ const Sidebar = () => {
   const SidebarRoute = () => {
     switch (currentRoute[1]) {
       case "parcours":
-        return <SidebarParcours />;
+        return <SidebarParcours interfaceType={currentRoute[0]} />;
       case "course":
         return <SidebarCourse />;
       case "user":
@@ -45,7 +45,7 @@ const Sidebar = () => {
           <div className="divider" />
         </motion.div>
       }
-      <SharedSideBar onLogout={logout} />
+      <SharedSideBar interfaceType={currentRoute[0]} onLogout={logout} />
     </SidebarWrapper>
   );
 };
