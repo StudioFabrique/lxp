@@ -5,6 +5,8 @@ import SidebarParcours from "../sidebar-parcours";
 import { useLocation } from "react-router-dom";
 import SidebarCourse from "../sidebar-course";
 import SidebarWrapper from "./sidebar-wrapper";
+import SidebarUser from "../sidebar-user";
+import SidebarGroup from "../sidebar-group";
 
 const Sidebar = () => {
   const { pathname } = useLocation();
@@ -18,7 +20,10 @@ const Sidebar = () => {
         return <SidebarParcours />;
       case "course":
         return <SidebarCourse />;
-
+      case "user":
+        return <SidebarUser />;
+      case "group":
+        return <SidebarGroup />;
       default:
         return undefined;
     }

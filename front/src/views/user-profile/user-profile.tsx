@@ -81,6 +81,11 @@ const UserProfile = () => {
       </div>
     );
 
+  const handleChangeTab = (tab: Tab) => {
+    setEditMode(false);
+    setCurrentTab(tab);
+  };
+
   return (
     <div className="flex flex-col gap-5 p-10">
       <h2 className="font-bold text-xl">Mon profil</h2>
@@ -90,7 +95,7 @@ const UserProfile = () => {
             type="button"
             className="btn"
             value="Info"
-            onClick={(e) => setCurrentTab(e.currentTarget.value as Tab)}
+            onClick={() => handleChangeTab("Info")}
           >
             Information
           </button>
@@ -98,7 +103,7 @@ const UserProfile = () => {
             type="button"
             className="btn"
             value="Calendar"
-            onClick={(e) => setCurrentTab(e.currentTarget.value as Tab)}
+            onClick={() => handleChangeTab("Calendar")}
           >
             Calendrier
           </button>
@@ -106,7 +111,7 @@ const UserProfile = () => {
             type="button"
             className="btn"
             value="Evals"
-            onClick={(e) => setCurrentTab(e.currentTarget.value as Tab)}
+            onClick={() => handleChangeTab("Evals")}
           >
             Evaluations
           </button>
@@ -114,7 +119,7 @@ const UserProfile = () => {
             type="button"
             className="btn"
             value="Awards"
-            onClick={(e) => setCurrentTab(e.currentTarget.value as Tab)}
+            onClick={() => handleChangeTab("Awards")}
           >
             Badge & Compétences
           </button>
@@ -122,7 +127,7 @@ const UserProfile = () => {
             type="button"
             className="btn"
             value="Account"
-            onClick={(e) => setCurrentTab(e.currentTarget.value as Tab)}
+            onClick={() => handleChangeTab("Account")}
           >
             Compte
           </button>
