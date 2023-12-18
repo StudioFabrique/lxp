@@ -114,7 +114,7 @@ userRouter.post(
   checkPermissions("user"),
   upload.single("image"),
   userValidator(
-    body("roleId")
+    body("user.roleId")
       .exists()
       .notEmpty()
       .isString()

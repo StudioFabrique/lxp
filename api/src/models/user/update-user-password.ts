@@ -10,7 +10,7 @@ export default async function updateUserPassword(
 
   if (
     !currentUserPassData?.password ||
-    (await compare(oldPass, currentUserPassData?.password))
+    !(await compare(oldPass, currentUserPassData?.password))
   ) {
     return null;
   }
