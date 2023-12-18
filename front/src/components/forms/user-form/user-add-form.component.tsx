@@ -107,6 +107,7 @@ const UserAddForm: FC<{
         address: address.value.trim(),
         postCode: postCode.value.trim(),
         city: city.value.trim(),
+        phoneNumber: phone.value.trim(),
         birthDate,
         graduations,
         roleId,

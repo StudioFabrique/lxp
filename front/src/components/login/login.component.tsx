@@ -23,7 +23,7 @@ const Login = () => {
           error={error}
         />
         <div className="flex flex-row gap-x-2">
-          <img className="h-8" src="connexion/info.svg" alt="" />
+          {/* <img className="h-8" src="connexion/info.svg" alt="" /> */}
           <button className="text-[10pt]">Besoin d'aide?</button>
         </div>
       </div>

@@ -144,6 +144,7 @@ const router = createBrowserRouter([
           },
         ],
       },
+      { path: "profil", element: <UserProfile /> },
     ],
   },
 ]);
