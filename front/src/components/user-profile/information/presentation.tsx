@@ -15,7 +15,7 @@ const Presentation: FC<{ formProps: FormProps; editMode: boolean }> = ({
   editMode,
 }) => {
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       <h3 className="text-lg font-semibold">Presentation</h3>
       <Wrapper>
         <p>Qui je suis ?</p>

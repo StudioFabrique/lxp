@@ -5,7 +5,7 @@ import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
 
 const Hobbies: FC<{ hobbies: Hobby[] }> = ({ hobbies }) => {
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       <h3 className="text-lg font-semibold">Mes passions</h3>
       <Wrapper>
         <div className="flex flex-grow gap-2">

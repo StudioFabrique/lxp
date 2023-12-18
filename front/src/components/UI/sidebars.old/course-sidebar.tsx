@@ -3,21 +3,21 @@ import { Link } from "react-router-dom";
 import CourseIcon from "../svg/course-icon";
 import Can from "../can/can.component";
 import AddIcon from "../svg/add-icon";
-import SharedSideBar from "./shared-sidebar";
+import SharedSideBar from "../sidebar/base-sidebar/shared-sidebar";
 import { Context } from "../../../store/context.store";
-import Sidebar from "./sidebar";
+import Sidebar from "../sidebar/base-sidebar/sidebar-wrapper";
 
-const ParcoursSidebar = () => {
+const CourseSideBar = () => {
   const { logout } = useContext(Context);
 
   return (
     <Sidebar>
       <ul className="text-primary flex flex-col gap-y-4">
         <li>
-          <Link to="/admin/parcours/">
+          <Link to="/admin/course">
             <div
               className="tooltip tooltip-right w-6 h-6"
-              data-tip="Accueil Interface de création des parcours"
+              data-tip="Accueil Interface de création des cours"
             >
               <CourseIcon />
             </div>
@@ -25,10 +25,10 @@ const ParcoursSidebar = () => {
         </li>
         <li>
           <Can action="write" object="course">
-            <Link to="/admin/parcours/créer-un-parcours">
+            <Link to="/admin/course/add">
               <div
                 className="tooltip tooltip-right w-6 h-6"
-                data-tip="Création d'un nouveau parcours"
+                data-tip="Création d'un nouveau cours"
               >
                 <AddIcon />
               </div>
@@ -42,4 +42,4 @@ const ParcoursSidebar = () => {
   );
 };
 
-export default ParcoursSidebar;
+export default CourseSideBar;

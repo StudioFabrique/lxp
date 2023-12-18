@@ -3,6 +3,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 import { Context } from "../../store/context.store";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
+import Sidebar from "../../components/UI/sidebar/base-sidebar/sidebar";
 
 let initialState = true;
 
@@ -30,11 +31,14 @@ const AdminLayout = () => {
   return (
     <div className="w-full">
       {user && user.roles[0].rank < 3 ? (
-        <FadeWrapper>
-          <div className="w-full flex flex-col h-screen">
-            <Outlet />
-          </div>
-        </FadeWrapper>
+        <div>
+          <Sidebar />
+          <FadeWrapper>
+            <div className="w-full flex flex-col pl-20">
+              <Outlet />
+            </div>
+          </FadeWrapper>
+        </div>
       ) : null}
     </div>
   );

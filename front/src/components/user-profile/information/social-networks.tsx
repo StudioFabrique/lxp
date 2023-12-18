@@ -4,7 +4,7 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 
 const SocialNetworks: FC<{ links: Link[] }> = ({ links }) => {
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       <h3 className="text-lg font-semibold">Réseaux sociaux</h3>
       <Wrapper>
         {links.length
