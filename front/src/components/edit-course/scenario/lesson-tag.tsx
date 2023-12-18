@@ -27,6 +27,7 @@ const LessonTags = (props: LessonTagsProps) => {
       title="Ajouter un tag"
       id="add-tag"
       onCloseDrawer={handleToggleDrawer}
+      buttonTitle="Ajouter un tag"
     >
       {props.list && props.list.length > 0 ? (
         <>

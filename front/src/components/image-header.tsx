@@ -8,7 +8,7 @@ interface ImageHeaderProps {
   children: ReactNode[]; // composant contenant une icône svg
 }
 
-const ImageHeaderCopy = (props: ImageHeaderProps) => {
+const ImageHeader = (props: ImageHeaderProps) => {
   const classImage: React.CSSProperties = {
     backgroundImage: `url(${props.imageUrl})`,
     width: "100%",
@@ -40,4 +40,4 @@ const ImageHeaderCopy = (props: ImageHeaderProps) => {
   );
 };
 
-export default ImageHeaderCopy;
+export default ImageHeader;

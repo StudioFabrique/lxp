@@ -138,7 +138,7 @@ const ParcoursCard = ({ parcours }: ParcoursCardProps) => {
             >
               <Link
                 className="btn btn-outline btn-sm btn-circle rounded-md  text-primary"
-                to={`edit/${parcours.id}/1`}
+                to={`edit/${parcours.id}`}
                 aria-label="modifier le parcours"
               >
                 <div className="w-5 h-5">

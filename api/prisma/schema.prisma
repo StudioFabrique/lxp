@@ -10,6 +10,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Activity {
+  id          Int    @id @default(autoincrement())
+  title       String
+  description String
+  type        String
+  order       Int
+  url         String
+  lesson      Lesson @relation(fields: [lessonId], references: [id])
+  lessonId    Int
+}
+
 model Formation {
   id          Int                  @id @default(autoincrement())
   title       String               @unique
@@ -118,6 +129,7 @@ model Admin {
   idMdb    String
   parcours Parcours[]
   modules  Module[]
+  lessons  Lesson[]
 }
 
 model Teacher {
@@ -162,19 +174,26 @@ model Course {
   contacts     ContactsOnCourse[]
   objectives   ObjectivesOnCourse[]
   bonusSkills  BonusSkillOnCourse[]
-  lessons      LessonsOnCourse[]
+  lessons      Lesson[]
 }
 
 model Lesson {
-  id          Int               @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   title       String
   description String
   modalite    String
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @default(now())
-  courses     LessonsOnCourse[]
-  tag         Tag               @relation(fields: [tagId], references: [id])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now())
+  author      String
+  admin       Admin      @relation(fields: [adminId], references: [id])
+  adminId     Int
+  course      Course     @relation(fields: [courseId], references: [id])
+  courseId    Int
+  tag         Tag        @relation(fields: [tagId], references: [id])
   tagId       Int
+  isPublished Boolean    @default(false)
+  visibility  Boolean    @default(false)
+  activities  Activity[]
 }
 
 model Objective {
@@ -187,14 +206,14 @@ model Objective {
   courses     ObjectivesOnCourse[]
 }
 
-model LessonsOnCourse {
-  lesson   Lesson @relation(fields: [lessonId], references: [id])
-  lessonId Int
-  course   Course @relation(fields: [courseId], references: [id])
-  courseId Int
+//model LessonsOnCourse {
+//lesson   Lesson @relation(fields: [lessonId], references: [id])
+//lessonId Int
+//course   Course @relation(fields: [courseId], references: [id])
+//courseId Int
 
-  @@id([lessonId, courseId])
-}
+//@@id([lessonId, courseId])
+//}
 
 model ContactsOnParcours {
   parcours   Parcours @relation(fields: [parcoursId], references: [id])

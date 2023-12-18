@@ -33,7 +33,6 @@ import httpGetCourseSkills from "../../../controllers/course/http-get-course-ski
 import httpPutCourseBonusSkills from "../../../controllers/course/http-put-course-bonus-skills";
 import httpPutCourseLesson from "../../../controllers/course/http-put-course-lesson";
 import httpGetCourseScenario from "../../../controllers/course/http-get-course-scenario";
-import httpDeleteCourseLesson from "../../../controllers/course/http-delete-course-lesson";
 import httpPutManyLessons from "../../../controllers/course/http-put-many-lessons";
 import httpPutCourseDates from "../../../controllers/course/http-put-course-dates";
 import httpDeleteCourseDates from "../../../controllers/course/http-delete-courseDates";
@@ -178,13 +177,13 @@ courseRouter.get(
 );
 
 // dissocie une lesson d'un cours, si la lesson n'est associée qu'à un seul cours elle est définitivement supprimée
-courseRouter.delete(
+/* courseRouter.delete(
   "/delete-lesson/:courseId/:lessonId",
   checkToken,
   courseIdValidator,
   deleteCourseLessonValidator,
   httpDeleteCourseLesson
-);
+); */
 
 // associe une liste de leçons existante à un cours
 courseRouter.put(
