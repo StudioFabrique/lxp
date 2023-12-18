@@ -11,11 +11,7 @@ const userProfileRouter = Router();
  */
 userProfileRouter.get("/information", httpGetUserProfileInformation);
 
-userProfileRouter.put(
-  "/information/:id",
-  userValidator(),
-  httpUpdateUserProfile
-);
+userProfileRouter.put("/information", userValidator(), httpUpdateUserProfile);
 
 userProfileRouter.put("/password", httpUpdateUserPassword);
 
