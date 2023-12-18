@@ -68,8 +68,6 @@ const Account: FC<{
           editMode={editMode}
           firstInputRef={firstInputRef}
         />
-        {/* <Contact formProps={formProps} editMode={editMode} /> */}
-        <div></div>
       </div>
     </form>
   );
