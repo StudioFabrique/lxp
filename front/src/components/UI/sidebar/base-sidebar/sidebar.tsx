@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 import { useContext } from "react";
 import { Context } from "../../../../store/context.store";
 import SharedSideBar from "./shared-sidebar";
@@ -31,12 +33,18 @@ const Sidebar = () => {
 
   return (
     <SidebarWrapper>
-      {SidebarRoute() && (
-        <>
+      {
+        <motion.div
+          initial={{ opacity: 0, height: "0px" }}
+          animate={{
+            opacity: SidebarRoute() ? 1 : 0,
+            height: SidebarRoute() ? "100px" : "0px",
+          }}
+        >
           <SidebarRoute />
           <div className="divider" />
-        </>
-      )}
+        </motion.div>
+      }
       <SharedSideBar onLogout={logout} />
     </SidebarWrapper>
   );
