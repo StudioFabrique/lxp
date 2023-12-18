@@ -1,6 +1,8 @@
 //  admin and teacher
 
 import Group from "./group";
+import Hobby from "./hobby";
+import { Link } from "./link";
 import Role from "./role";
 
 export default interface User {
@@ -20,4 +22,6 @@ export default interface User {
   updatedAt?: Date;
   isActive: boolean;
   group?: Group;
+  hobbies?: Array<Hobby>;
+  links?: Array<Link>;
 }

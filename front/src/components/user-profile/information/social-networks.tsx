@@ -1,11 +1,15 @@
+import { FC } from "react";
+import { Link } from "../../../utils/interfaces/link";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 
-const SocialNetworks = () => {
+const SocialNetworks: FC<{ links: Link[] }> = ({ links }) => {
   return (
     <div>
-      <h3 className="text-lg font-semibold">Mes reseaux sociaux</h3>
+      <h3 className="text-lg font-semibold">Réseaux sociaux</h3>
       <Wrapper>
-        <p>Twitter link</p>
+        {links.length
+          ? links.map((link) => <p key={link._id}>{link.type ?? link.url}</p>)
+          : "Aucuns réseaux sociaux"}
       </Wrapper>
     </div>
   );

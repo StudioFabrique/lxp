@@ -6,6 +6,7 @@ import {
   getAllByRankValidator,
   getAllValidator,
   manyUsersValidator,
+  userValidator,
   //userValidator,
 } from "../../../middleware/validators";
 import httpCreateUser from "../../../controllers/user/http-create-user";
@@ -13,7 +14,7 @@ import httpUpdateUserRoles from "../../../controllers/user/http-update-user-role
 import httpSearchUser from "../../../controllers/user/http-search-user";
 import httpGetUsersByRole from "../../../controllers/user/http-get-users-by-role";
 import httpGetUsersStats from "../../../controllers/user/http-get-users-stats";
-import httpUpdateUserStatus from "../../../controllers/user/http-update-user";
+import httpUpdateUserStatus from "../../../controllers/user/http-update-user-status";
 import httpUpdateManyUsersStatus from "../../../controllers/user/http-update-many-users-status";
 import httpGetContacts from "../../../controllers/user/http-get-contacts";
 import postTeacherRouter from "./post-teacher";
@@ -22,6 +23,9 @@ import httpGetUsersByGroup from "../../../controllers/user/http-get-users-by-gro
 import checkPermissions from "../../../middleware/check-permissions";
 import httpGetUsersByRank from "../../../controllers/user/http-get-users-by-rank";
 import multer from "multer";
+import httpGetConnectedUser from "../../../controllers/user/profile/http-get-user-profile";
+import httpUpdateUser from "../../../controllers/user/profile/http-update-user-profile";
+import userProfileRouter from "./profile/user-profile.router";
 
 const userRouter = express.Router();
 
@@ -109,7 +113,15 @@ userRouter.post(
   "/",
   checkPermissions("user"),
   upload.single("image"),
-  //userValidator,
+  userValidator(
+    body("user.roleId")
+      .exists()
+      .notEmpty()
+      .isString()
+      .trim()
+      .escape()
+      .withMessage("firstname ou lastname non conforme")
+  ),
   httpCreateUser
 );
 
@@ -150,5 +162,7 @@ userRouter.post(
   // checkToken,
   httpGetUsersByGroup
 );
+
+userRouter.use("/profile", checkPermissions("profile"), userProfileRouter);
 
 export default userRouter;

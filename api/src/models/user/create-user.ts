@@ -18,12 +18,16 @@ export default async function createUser(user: IUser, roleId: string) {
 
   if (!firstRole) return null;
 
-  console.log("role is not null");
-
   const createdUser = await User.create({
     email: user.email,
     firstname: user.firstname,
     lastname: user.lastname,
+    nickname: user.nickname,
+    description: user.description,
+    address: user.address,
+    city: user.city,
+    postCode: user.postCode,
+    phoneNumber: user.phoneNumber,
     password: await hash("Abcdef@123456", 10), // A enlever par la suite !
     isActive: false,
     avatar: user.avatar,
@@ -47,8 +51,6 @@ export default async function createUser(user: IUser, roleId: string) {
       },
     });
   }
-
-  console.log("createduser", createdUser);
 
   return createdUser;
 }

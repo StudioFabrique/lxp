@@ -9,7 +9,8 @@ export interface IUser extends Document {
   email: string;
   firstname: string;
   lastname: string;
-  password?: string;
+  description?: string;
+  password: string;
   avatar?: Buffer;
   isActive: boolean;
   nickname?: string;
@@ -18,11 +19,11 @@ export interface IUser extends Document {
   city?: string;
   birthDate?: Date;
   phoneNumber?: string;
-  graduations?: IGraduation["_id"][];
-  hobbies?: IHobby["_id"][];
-  links: ILink["_id"][];
-  group?: IGroup["_id"][];
+  group?: IGroup["_id"];
   roles: IRole["_id"];
+  hobbies?: IHobby["_id"][];
+  links?: ILink["_id"][];
+  graduations?: IGraduation["_id"][];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -32,7 +33,8 @@ const userSchema: Schema = new Schema(
     email: { type: String, required: true, unique: true },
     firstname: { type: String, required: true },
     lastname: { type: String, required: true },
-    password: { type: String, require: false },
+    description: { type: String, required: false },
+    password: { type: String, require: true },
     avatar: { type: Buffer, required: false },
     isActive: { type: Boolean, required: true },
     nickname: { type: String, required: false },
@@ -41,31 +43,37 @@ const userSchema: Schema = new Schema(
     city: { type: String, required: false },
     birthDate: { type: Date, required: false },
     phoneNumber: { type: String, required: false },
-    graduations: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "Graduations",
-      require: false,
-    },
-    hobbies: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "Hobbies",
-      require: false,
-    },
-    links: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "Links",
-      require: false,
-    },
-    group: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "Group",
-      require: false,
-    },
     roles: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Role",
       required: true,
     },
+    group: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Group",
+      required: false,
+    },
+    graduations: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Graduation",
+        required: false,
+      },
+    ],
+    links: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Link",
+        required: false,
+      },
+    ],
+    hobbies: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Hobby",
+        required: false,
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -6,7 +6,7 @@ const Skills: FC<{ skillData: Skill[] }> = ({ skillData }) => {
     skillData.length > 0 ? (
       <div>
         {skillData.map((skill) => (
-          <p>{skill.description}</p>
+          <p key={skill.id}>{skill.description}</p>
         ))}
       </div>
     ) : (
