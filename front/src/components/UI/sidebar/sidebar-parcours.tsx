@@ -6,7 +6,7 @@ import AddIcon from "../svg/add-icon";
 const SidebarParcours = (props: { interfaceType: string }) => (
   <ul className="text-primary flex flex-col gap-y-4">
     <li>
-      <Link to={`/${props.interfaceType}/parcours/`}>
+      <Link to={`/${props.interfaceType}/parcours`}>
         <div
           className="tooltip tooltip-right w-6 h-6"
           data-tip="Accueil Interface de création des parcours"
@@ -16,8 +16,8 @@ const SidebarParcours = (props: { interfaceType: string }) => (
       </Link>
     </li>
     <li>
-      <Can action="write" object="course">
-        <Link to={`/${props.interfaceType}/créer-un-parcours/`}>
+      <Can action="write" object="parcours">
+        <Link to={`/${props.interfaceType}/parcours/créer-un-parcours`}>
           <div
             className="tooltip tooltip-right w-6 h-6"
             data-tip="Création d'un nouveau parcours"

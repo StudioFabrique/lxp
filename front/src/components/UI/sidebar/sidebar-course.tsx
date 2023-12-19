@@ -3,10 +3,10 @@ import CourseIcon from "../svg/course-icon";
 import Can from "../can/can.component";
 import AddIcon from "../svg/add-icon";
 
-const SidebarCourse = () => (
+const SidebarCourse = (props: { interfaceType: string }) => (
   <ul className="text-primary flex flex-col gap-y-4">
     <li>
-      <Link to="/admin/course">
+      <Link to={`/${props.interfaceType}/course`}>
         <div
           className="tooltip tooltip-right w-6 h-6"
           data-tip="Accueil Interface de création des cours"
@@ -17,7 +17,7 @@ const SidebarCourse = () => (
     </li>
     <li>
       <Can action="write" object="course">
-        <Link to="/admin/course/add">
+        <Link to={`/${props.interfaceType}/course/add`}>
           <div
             className="tooltip tooltip-right w-6 h-6"
             data-tip="Création d'un nouveau cours"

@@ -1,4 +1,4 @@
-import { FC, Ref, useRef, useState } from "react";
+import { FC, Ref, useEffect, useRef, useState } from "react";
 import Information from "../../components/user-profile/information/information";
 import Calendar from "../../components/user-profile/calendar";
 import Evaluations from "../../components/user-profile/evaluations";
@@ -8,10 +8,14 @@ import useHttp from "../../hooks/use-http";
 import Loader from "../../components/UI/loader";
 import EditIcon from "../../components/UI/svg/edit-icon";
 import Can from "../../components/UI/can/can.component";
+import { useLocation } from "react-router-dom";
 
 type Tab = "Info" | "Calendar" | "Evals" | "Awards" | "Account";
 
-const UserProfile = () => {
+const Profile = () => {
+  const { state } = useLocation();
+  console.log(state);
+
   const { sendRequest: sendRequestInTab, isLoading: isLoadingInTab } =
     useHttp(true);
 
@@ -86,6 +90,13 @@ const UserProfile = () => {
     setCurrentTab(tab);
   };
 
+  useEffect(() => {
+    if (state?.refreshId) {
+      state?.tab && handleChangeTab(state?.tab ?? "Info");
+      state?.editMode && setEditMode(state?.editMode ?? false);
+    }
+  }, [state?.refreshId, state?.tab, state?.editMode]);
+
   return (
     <div className="flex flex-col gap-5 p-10">
       <h2 className="font-bold text-xl">Mon profil</h2>
@@ -144,4 +155,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default Profile;
