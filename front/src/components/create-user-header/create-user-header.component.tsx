@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { Link } from "react-router-dom";
 
 const CreateUserHeader: FC<{
   onSubmit: () => void;
@@ -18,9 +19,9 @@ const CreateUserHeader: FC<{
         </p>
       </div>
       <div className="flex items-center gap-x-2 justify-center md:justify-end">
-        <button type="button" className="btn btn-outline md:w-32 normal-case">
+        <Link to=".." className="btn btn-outline md:w-32 normal-case">
           Annuler
-        </button>
+        </Link>
         <button
           onClick={handleClick}
           type="button"

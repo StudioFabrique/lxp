@@ -9,6 +9,7 @@ import SidebarCourse from "../sidebar-course";
 import SidebarWrapper from "./sidebar-wrapper";
 import SidebarUser from "../sidebar-user";
 import SidebarGroup from "../sidebar-group";
+import SidebarProfile from "../sidebar-profile";
 
 const Sidebar = () => {
   const { pathname } = useLocation();
@@ -21,11 +22,13 @@ const Sidebar = () => {
       case "parcours":
         return <SidebarParcours interfaceType={currentRoute[0]} />;
       case "course":
-        return <SidebarCourse />;
+        return <SidebarCourse interfaceType={currentRoute[0]} />;
       case "user":
-        return <SidebarUser />;
+        return <SidebarUser interfaceType={currentRoute[0]} />;
       case "group":
-        return <SidebarGroup />;
+        return <SidebarGroup interfaceType={currentRoute[0]} />;
+      case "profil":
+        return <SidebarProfile interfaceType={currentRoute[0]} />;
       default:
         return undefined;
     }

@@ -23,7 +23,7 @@ import EditCourseHome from "./views/course/edit-course/edit-course-home";
 import AddCourse from "./views/course/add-course";
 import LayoutCourseEdit from "./views/course/edit-course/layout-edit-course";
 import Role from "./views/role/role";
-import UserProfile from "./views/user-profile/user-profile";
+import UserProfile from "./views/profile/profile";
 import LayoutModule from "./views/module/layout-module";
 import ModuleHome from "./views/module/module-home";
 import LayoutLesson from "./views/lesson/layout-lesson";

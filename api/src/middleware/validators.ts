@@ -65,6 +65,7 @@ export const userValidator = (extraValidationChain?: ValidationChain) => {
       "user.description",
       "user.address",
       "user.city",
+      "user.phoneNumber",
       "user.links.*.url",
       "user.links.*.alias",
       "user.hobbies.*.title",
@@ -85,7 +86,6 @@ export const userValidator = (extraValidationChain?: ValidationChain) => {
     body(["user.hobbies", "user.graduations", "user.links"])
       .isArray()
       .withMessage("hobbies, graduations ou links non conforme"),
-    body("user.phoneNumber").isNumeric(),
     // Include the extraValidationChain if provided
     ...(extraValidationChain ? [extraValidationChain] : []),
     checkValidatorResult,
