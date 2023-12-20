@@ -36,19 +36,17 @@ const Sidebar = () => {
 
   return (
     <SidebarWrapper>
-      {
-        <motion.div
-          initial={{ opacity: 0, height: "0px" }}
-          animate={{
-            opacity: SidebarRoute() ? 1 : 0,
-            height: SidebarRoute() ? "100px" : "0px",
-          }}
-        >
-          <SidebarRoute />
-          <div className="divider" />
-        </motion.div>
-      }
       <SharedSideBar interfaceType={currentRoute[0]} onLogout={logout} />
+      <motion.div
+        animate={{
+          opacity: SidebarRoute() ? 1 : 0,
+          height: SidebarRoute() ? "auto" : 0,
+        }}
+        className="-my-2"
+      >
+        <div className="divider" />
+        <SidebarRoute />
+      </motion.div>
     </SidebarWrapper>
   );
 };
