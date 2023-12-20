@@ -56,34 +56,29 @@ const Profile = () => {
 
   const SubmitButtonsSet: FC<{ withEditButton?: boolean }> = ({
     withEditButton,
-  }) =>
-    isLoadingInTab ? (
-      <span>
-        <Loader />
-      </span>
-    ) : (
-      <div className="flex gap-2 items-center">
-        {editMode && (
-          <button
-            className="btn btn-sm justify-self-end"
-            onClick={() => formRef.current?.requestSubmit()}
-          >
-            Soumettre les changements
-          </button>
-        )}
-        {(withEditButton || editMode) && (
-          <button
-            type="button"
-            className={`btn btn-sm justify-self-end ${
-              editMode ? "w-auto" : "w-10 p-0"
-            } h-5`}
-            onClick={() => setEditMode((editMode) => !editMode)}
-          >
-            {editMode ? "annuler" : <EditIcon />}
-          </button>
-        )}
-      </div>
-    );
+  }) => (
+    <div className="flex gap-2 items-center">
+      {editMode && (
+        <button
+          className="btn btn-sm justify-self-end"
+          onClick={() => formRef.current?.requestSubmit()}
+        >
+          Soumettre les changements
+        </button>
+      )}
+      {(withEditButton || editMode) && (
+        <button
+          type="button"
+          className={`btn btn-sm justify-self-end ${
+            editMode ? "w-auto" : "w-10 p-0"
+          } h-5`}
+          onClick={() => setEditMode((editMode) => !editMode)}
+        >
+          {editMode ? "annuler" : <EditIcon />}
+        </button>
+      )}
+    </div>
+  );
 
   const handleChangeTab = (tab: Tab) => {
     setEditMode(false);
