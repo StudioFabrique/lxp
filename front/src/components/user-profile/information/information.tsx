@@ -119,8 +119,8 @@ const Information: FC<{
         <Contact formProps={formProps} editMode={editMode} />
       </div>
       <Presentation formProps={formProps} editMode={editMode} />
-      <Hobbies hobbies={userData?.hobbies ?? []} />
-      <SocialNetworks links={userData?.links ?? []} />
+      <Hobbies hobbies={userData?.hobbies ?? []} editMode={editMode} />
+      <SocialNetworks links={userData?.links ?? []} editMode={editMode} />
     </form>
   );
 };
