@@ -65,7 +65,7 @@ const Hobbies: FC<{ hobbies: Hobby[]; editMode: boolean }> = ({
         )}
       </div>
       <Wrapper>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-5">
           {hobbies.length > 0
             ? hobbies.map((hobby) => (
                 <SubWrapper key={hobby._id}>
