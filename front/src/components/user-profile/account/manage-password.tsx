@@ -21,6 +21,7 @@ const ManagePassword: FC<{
       <div className="flex flex-col gap-4">
         <Field
           fieldRef={firstInputRef}
+          type="password"
           name="oldPass"
           label="Ancien mot de passe"
           data={formProps}
@@ -28,12 +29,14 @@ const ManagePassword: FC<{
         />
         <Field
           name="newPass"
+          type="password"
           label="Nouveau mot de passe"
           data={formProps}
           isDisabled={!editMode}
         />
         <Field
           name="confirmNewPass"
+          type="password"
           label="Confirmer le nouveau mot de passe"
           data={formProps}
           isDisabled={!editMode}
