@@ -1,20 +1,64 @@
-import { FC } from "react";
+import { ChangeEvent, FC, Ref, useRef, useState } from "react";
 import { Link } from "../../../utils/interfaces/link";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import DeleteIcon from "../../UI/svg/delete-icon.component";
+import Can from "../../UI/can/can.component";
+import useHttp from "../../../hooks/use-http";
 
 const SocialNetworks: FC<{ links: Link[]; editMode: boolean }> = ({
   links,
   editMode,
 }) => {
+  const { sendRequest, isLoading } = useHttp(true);
+  const modalRef: Ref<HTMLDialogElement> = useRef(null);
+
+  const [value, setValue] = useState<string>("");
+
+  const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+    setValue(e.currentTarget.value);
+  };
+
   const handleOpenLinkNewTab = (link: string) => {
     if (editMode) return;
     window.open(link);
   };
 
+  const handleShowModal = () => {
+    modalRef.current?.showModal();
+  };
+
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="text-lg font-semibold">Réseaux sociaux</h3>
+      <dialog ref={modalRef} className="modal">
+        <div className="modal-box flex flex-col gap-10">
+          <span className="flex justify-between">
+            <input
+              type="text"
+              className="input input-secondary"
+              value={value}
+              onChange={handleChangeValue}
+            />
+            <button type="button" className="btn">
+              Ajouter
+            </button>
+          </span>
+        </div>
+      </dialog>
+      <div className="flex justify-between">
+        <h3 className="text-lg font-semibold">Réseaux sociaux</h3>
+        {editMode && (
+          <Can action="write" object="profile">
+            <button
+              type="button"
+              className="btn btn-sm btn-primary"
+              onClick={handleShowModal}
+            >
+              +
+            </button>
+          </Can>
+        )}
+      </div>
+
       <Wrapper>
         <div
           className={`flex flex-wrap ${
@@ -41,7 +85,7 @@ const SocialNetworks: FC<{ links: Link[]; editMode: boolean }> = ({
                         className="input input-sm w-full"
                         value={link.url}
                       />
-                      <span className="w-5 h-5 cursor-pointer">
+                      <span className="w-6 h-6 cursor-pointer">
                         <DeleteIcon />
                       </span>
                     </>
