@@ -1,21 +1,25 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-import ModeToggle from "../mode-toggle";
-import HomeIcon from "../svg/home-icon";
-import LogoutIcon from "../svg/logout-icon";
+import ModeToggle from "../../mode-toggle";
+import HomeIcon from "../../svg/home-icon";
+import LogoutIcon from "../../svg/logout-icon";
 
 interface SharedSideBarProps {
+  interfaceType: string;
   onLogout: () => void;
 }
 
 const SharedSideBar = (props: SharedSideBarProps) => {
+  const { pathname } = useLocation();
+  const interfaceType = pathname.split("/")[1];
+
   return (
     <ul className="text-primary flex flex-col gap-y-4">
       <li className="tooltip tooltip-right" data-tip="Mode Clair / Mode Sombre">
         <ModeToggle />
       </li>
       <li>
-        <Link to="/">
+        <Link to={`/${interfaceType}`}>
           <div className="tooltip tooltip-right w-6 h-6" data-tip="Accueil LXP">
             <HomeIcon />
           </div>

@@ -5,7 +5,6 @@ import {
   FormEventHandler,
   Ref,
   SetStateAction,
-  useContext,
   useEffect,
   useRef,
 } from "react";
@@ -13,6 +12,7 @@ import toast from "react-hot-toast";
 import useForm from "../../UI/forms/hooks/use-form";
 import { validationErrors } from "../../../helpers/validate";
 import ManagePassword from "./manage-password";
+import { passwordSchema } from "../../../lib/validation/profile/password-schema";
 
 const Account: FC<{
   editMode: boolean;
@@ -36,7 +36,11 @@ const Account: FC<{
     e.preventDefault();
 
     try {
-      /* informationSchema.parse(formProps.values); */
+      passwordSchema.parse(formProps.values);
+      if (formProps.values.newPass !== formProps.values.confirmNewPass) {
+        toast.error("Les mot des passes ne correspondent pas");
+        return;
+      }
       sendRequestInTab(
         {
           path: `/user/profile/password`,
@@ -69,8 +73,6 @@ const Account: FC<{
           editMode={editMode}
           firstInputRef={firstInputRef}
         />
-        {/* <Contact formProps={formProps} editMode={editMode} /> */}
-        <div></div>
       </div>
     </form>
   );

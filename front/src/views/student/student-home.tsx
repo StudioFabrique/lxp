@@ -8,7 +8,6 @@ const StudentHome = () => {
 
   const logoutHandler = () => {
     logout();
-    window.location.reload();
   };
 
   const navigateTo = useNavigate();

@@ -10,7 +10,7 @@ const AdminHome = () => {
   };
 
   return (
-    <div className="home bg-red h-screen w-screen flex flex-col items-center">
+    <div className="home bg-red h-screen flex flex-col items-center">
       <p>Hey je suis la page Home</p>
       <button onClick={logoutHandler}>logout</button>
       <Link to="user">Interface utilisateurs</Link>
@@ -19,8 +19,8 @@ const AdminHome = () => {
       <Link to="course">Interface des Cours</Link>
       <Link to="roles">Interface Roles</Link>
       <Link to="module">Interface Module</Link>
-      <Link to="profil">Profil</Link>
       <Link to="lesson">Interface Leçon</Link>
+      <Link to="profil">Profil</Link>
     </div>
   );
 };
