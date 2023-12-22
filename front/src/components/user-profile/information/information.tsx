@@ -69,7 +69,7 @@ const Information: FC<{
       informationSchema.parse(formProps.values);
       sendRequestInTab(
         {
-          path: `/user/profile/information/${userData?._id}`,
+          path: `/user/profile/information`,
           method: "put",
           body: { user: formProps.values },
         },
@@ -105,7 +105,11 @@ const Information: FC<{
   if (isLoading) return <Loader />;
 
   return (
-    <form ref={formRef} onSubmit={handleSubmitForm}>
+    <form
+      className="flex flex-col gap-5"
+      ref={formRef}
+      onSubmit={handleSubmitForm}
+    >
       <div className="grid grid-cols-2 gap-5">
         <Info
           formProps={formProps}
@@ -115,8 +119,8 @@ const Information: FC<{
         <Contact formProps={formProps} editMode={editMode} />
       </div>
       <Presentation formProps={formProps} editMode={editMode} />
-      <Hobbies hobbies={userData?.hobbies ?? []} />
-      <SocialNetworks links={userData?.links ?? []} />
+      <Hobbies hobbies={userData?.hobbies ?? []} editMode={editMode} />
+      <SocialNetworks links={userData?.links ?? []} editMode={editMode} />
     </form>
   );
 };

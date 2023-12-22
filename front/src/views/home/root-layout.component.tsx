@@ -33,13 +33,11 @@ const RootLayout = () => {
   }, [nav, user, initTheme, isLoggedIn, handshake]);
 
   return (
-    <div className="w-screen min-h-screen">
-      <FadeWrapper>
-        <div className="w-5/6">
-          <Login />
-        </div>
-      </FadeWrapper>
-    </div>
+    <FadeWrapper>
+      <div className="w-full">
+        <Login />
+      </div>
+    </FadeWrapper>
   );
 };
 

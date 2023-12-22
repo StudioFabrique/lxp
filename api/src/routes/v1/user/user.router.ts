@@ -23,9 +23,8 @@ import httpGetUsersByGroup from "../../../controllers/user/http-get-users-by-gro
 import checkPermissions from "../../../middleware/check-permissions";
 import httpGetUsersByRank from "../../../controllers/user/http-get-users-by-rank";
 import multer from "multer";
-import httpGetConnectedUser from "../../../controllers/user/profile/http-get-user-profile";
-import httpUpdateUser from "../../../controllers/user/profile/http-update-user-profile";
 import userProfileRouter from "./profile/user-profile.router";
+import hobbyRouter from "./hobby/hobby.router";
 
 const userRouter = express.Router();
 
@@ -164,5 +163,7 @@ userRouter.post(
 );
 
 userRouter.use("/profile", checkPermissions("profile"), userProfileRouter);
+
+userRouter.use("/hobby", checkPermissions("profile"), hobbyRouter);
 
 export default userRouter;

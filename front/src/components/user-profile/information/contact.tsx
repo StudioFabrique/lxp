@@ -15,7 +15,7 @@ const Contact: FC<{ formProps: FormProps; editMode: boolean }> = ({
   editMode,
 }) => {
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       <h3 className="text-lg font-semibold">Contacts</h3>
       <Wrapper>
         <div className="flex flex-col gap-4">
