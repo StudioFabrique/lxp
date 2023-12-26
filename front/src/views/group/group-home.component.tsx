@@ -158,7 +158,7 @@ const GroupHome = () => {
 
   return (
     <>
-      <div className="w-screen flex justify-center my-8">
+      <div className="flex justify-center my-8">
         <div className="flex flex-col gap-y-4">
           {user && role ? (
             <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />

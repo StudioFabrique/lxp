@@ -155,10 +155,11 @@ const ContextProvider: FC<Props> = (props) => {
         applyData
       );
     }
-    console.log(builtPerms);
 
-    casbinAuthorizer.setPermission(builtPerms);
-    console.log({ casbinAuthorizer });
+    if (builtPerms) {
+      casbinAuthorizer.setPermission(builtPerms);
+      console.log({ autorisationsPourUtilisateurConnecteActuel: builtPerms });
+    }
   }, [roles, sendRequest]);
 
   const fetchRoles = useCallback(

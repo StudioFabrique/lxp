@@ -6,8 +6,9 @@ import RightArrowRoundedIcon from "../../UI/svg/right-arrow-rounded-icon";
 const ParcoursViewContenuItem: FC<{
   module: Module;
   iterationCount: number;
+  selectedModuleId: number | undefined;
   setSelectedModule: Dispatch<SetStateAction<Module | null>>;
-}> = ({ module, iterationCount, setSelectedModule }) => {
+}> = ({ module, iterationCount, selectedModuleId, setSelectedModule }) => {
   console.log(module.minDate);
 
   const minDate: { day: number; month: string } = {
@@ -24,7 +25,11 @@ const ParcoursViewContenuItem: FC<{
         <p className="font-bold text-2xl">{minDate.day}</p>
         <p className="font-bold uppercase">{minDate.month}</p>
       </div>
-      <div className="flex flex-col items-center p-4 rounded-lg w-full h-full bg-secondary hover:bg-primary hover:text-primary-content">
+      <div
+        className={`flex flex-col items-center p-4 rounded-lg w-full h-full ${
+          selectedModuleId === module.id ? "bg-primary" : "bg-secondary"
+        } hover:bg-primary/70 hover:text-primary-content`}
+      >
         <p className="self-start">{`Module ${iterationCount}`}</p>
         <div className="flex justify-between w-full">
           <p className="self-start text-xl font-semibold">{module.title}</p>

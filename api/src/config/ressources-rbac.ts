@@ -11,8 +11,10 @@ export const ressourcesRbac = [
   "course",
   "lesson",
   "bonusSkill",
+  "profile",
 ];
 
+// Ressources (toutes permissions crud) sur les différents rôles template
 export const ressourcesRbacByRank = {
   // super administrateur ?
   0: [
@@ -25,7 +27,9 @@ export const ressourcesRbacByRank = {
     "parcours",
     "module",
     "course",
+    "lesson",
     "bonusSkill",
+    "profile",
   ],
   // administrateur
   1: [
@@ -38,7 +42,9 @@ export const ressourcesRbacByRank = {
     "parcours",
     "module",
     "course",
+    "lesson",
     "bonusSkill",
+    "profile",
   ],
   // formateur
   2: [
@@ -50,9 +56,10 @@ export const ressourcesRbacByRank = {
     "module",
     "course",
     "bonusSkill",
+    "lesson",
   ],
   // apprenant
-  3: [],
+  3: ["profile"],
   // autre
   4: [],
 };

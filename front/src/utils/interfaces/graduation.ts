@@ -1,7 +1,7 @@
 import User from "./user";
 
 export default interface Graduation {
-  id?: number;
+  _id?: string;
   title: string;
   degree: string;
   date: Date;
