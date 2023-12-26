@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { serverIssue } from "../../../utils/constantes";
-import updateText from "../../../models/acitivity/update-activity/update-text";
+import updateText from "../../../models/activity/update-activity/update-text";
 
 export default async function httpUpdateActivity(req: Request, res: Response) {
   try {

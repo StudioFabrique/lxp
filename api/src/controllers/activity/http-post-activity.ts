@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
 import { serverIssue } from "../../utils/constantes";
-import postText from "../../models/acitivity/post-activity/post-text";
+import postText from "../../models/activity/post-activity/post-text";
 
 export default async function httpPostActivity(req: Request, res: Response) {
   try {

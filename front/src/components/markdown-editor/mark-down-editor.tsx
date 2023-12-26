@@ -21,6 +21,8 @@ export const Editor = ({ content = "", onSubmit, onCancel }: EditorProps) => {
     onSubmit(value);
   };
 
+  console.log("from editor", value);
+
   const imageHandler = useCallback(async () => {
     const input = document.createElement("input");
 
@@ -33,13 +35,8 @@ export const Editor = ({ content = "", onSubmit, onCancel }: EditorProps) => {
       formData.append("image", file);
       const quillObj = quillRef.current;
       const applyData = (res: any) => {
-        console.log("toto");
-
         const data = res.response;
-        console.log(data);
         const range = quillRef.current.getEditor().getSelection();
-        console.log("range", range);
-
         quillObj.getEditor().insertEmbed(range.index, "image", data);
       };
       sendRequest(

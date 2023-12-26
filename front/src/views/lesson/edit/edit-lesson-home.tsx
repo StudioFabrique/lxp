@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
@@ -23,8 +24,6 @@ export default function EditLessonHome() {
     (state: any) => state.lesson.lesson.activities
   ) as Activity[];
 
-  console.log("rendering");
-
   const handleSubmit = (value: any) => {
     const applyData = (data: any) => {
       toast.success("Document enregistré !");
@@ -32,6 +31,7 @@ export default function EditLessonHome() {
       dispatch(lessonActions.resetCurrentType());
     };
     const getData = async () => {
+      console.log(await fromHtmlToMarkdown(value));
       sendRequest(
         {
           path: `/activity/${lessonId}`,

@@ -45,10 +45,11 @@ export default function LessonHome({ lessonsList }: LessonHomeProps) {
                 {item.author}
               </td>
               <td className="bg-transparent truncate">
-                {localeDate(item.createdAt!)} à {localeTime(item.createdAt!)}
+                {localeDate(item.createdAt ?? "")} à{" "}
+                {localeTime(item.createdAt ?? "")}
               </td>
               <td className="bg-transparent truncate">
-                {localeDate(item.updatedAt!)}
+                {localeDate(item.updatedAt ?? "")}
               </td>
               <td className="bg-transparent">
                 <div className="w-6 h-6">
