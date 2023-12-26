@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import useHttp from "../../hooks/use-http";
 import GroupAddForm from "../../components/forms/group-form/group-add-form.component";
-import GroupUserList from "../../components/lists/group-add-user-list/group-user-list.component";
+import GroupUserList from "../../components/lists/group-add-user-list/group-user-list";
 import { useState } from "react";
 import User from "../../utils/interfaces/user";
 import { useNavigate } from "react-router-dom";

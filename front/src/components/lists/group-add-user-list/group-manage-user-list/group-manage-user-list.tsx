@@ -141,7 +141,7 @@ const GroupManageUserList: FC<{
       onCloseDrawer={() => setAllChecked(false)}
     >
       {usersToShowsInList.length > 0 ? (
-        <div className="flex flex-col items-center gap-y-10 justify-between m-10">
+        <div className="flex flex-col items-center gap-y-10 justify-between m-10 h-[74vh]">
           <Search
             onResetInput={handleResetSearchUser}
             placeholder="Rechercher"
@@ -152,7 +152,8 @@ const GroupManageUserList: FC<{
               // { index: 2, option: "Formation", value: "group" },
             ]}
           />
-          <div className="w-full flex flex-col gap-y-4">
+          <div className="flex flex-col justify-between gap-y-4 h-full">
+            {/* TOP */}
             <UserToAddListHeader
               setSelectAllUsers={setAllChecked}
               order={stype}
@@ -164,12 +165,13 @@ const GroupManageUserList: FC<{
               ]}
               value="test"
             />
-            <div className="flex flex-col gap-y-5 h-full overflow-y-auto w-full">
+            {/* MIDDLE */}
+            <div className="flex flex-col h-full my-5 gap-y-5 overflow-y-auto">
               {userSearchResult.length > 0
                 ? renderUserItems(userSearchResult)
                 : renderUserItems(usersToShowsInList)}
             </div>
-
+            {/* BOTTOM */}
             <Pagination
               page={page}
               totalPages={totalPages}
@@ -178,7 +180,7 @@ const GroupManageUserList: FC<{
               setPerPages={setPerPage}
             />
           </div>
-          <div className="w-full flex justify-end">
+          <div className="flex">
             <AddUsersButton
               onSetUsersToAdd={handleSetUsersToAdd}
               setUsersSettedState={setUsersSettedState}
