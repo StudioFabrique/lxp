@@ -22,13 +22,9 @@ export default function LayoutEditLesson() {
   const [loading, setLoading] = useState(false);
   const [activities] = useState<number[]>([1]);
 
-  console.log({ lesson });
-
   // retourne une leçon et la stock dans l'état partagé
   useEffect(() => {
     const applyData = (data: Lesson) => {
-      console.log(data);
-
       dispatch(lessonActions.initLesson(data));
       setLoading(false);
     };
@@ -49,14 +45,25 @@ export default function LayoutEditLesson() {
     }
   }, [error]);
 
+  useEffect(() => {
+    return () => {
+      dispatch(lessonActions.resetCurrentType());
+      dispatch(lessonActions.resetLesson());
+    };
+  }, [dispatch]);
+
+  const handleClickActivityType = (activityType: string) => {
+    dispatch(lessonActions.setCurrentType(activityType));
+  };
+
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
       {loading ? (
         <Loader />
       ) : (
         <FadeWrapper>
-          <div className="w-full h-full flex flex-col items-center gap-y-8">
-            <div className="w-full flex flex-col items-center gap-y-8">
+          <div className="w-full h-full flex flex-col items-center gap-y-4">
+            <div className="w-full flex flex-col items-center gap-y-4">
               {lesson &&
               lesson !== undefined &&
               lesson.title &&
@@ -72,7 +79,7 @@ export default function LayoutEditLesson() {
                 </ImageHeader>
               ) : null}
             </div>
-            {lesson !== undefined ? (
+            {lesson && lesson !== undefined ? (
               <div className="w-full 2xl:w-4/6 mt-8 flex flex-col items-center">
                 <div className="w-full flex justify-end">
                   <HeaderButton
@@ -81,7 +88,10 @@ export default function LayoutEditLesson() {
                     onPublish={() => {}}
                   />
                 </div>
-                <AddBlock />
+                <h2 className="text-xl font-bold text-primary">
+                  Ajouter un bloc
+                </h2>
+                <AddBlock onActivityType={handleClickActivityType} />
                 <Outlet />
               </div>
             ) : (

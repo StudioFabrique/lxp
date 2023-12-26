@@ -1,0 +1,60 @@
+import { prisma } from "../../../utils/db";
+
+import fs from "fs";
+import path from "path";
+import { v4 as uuidv4 } from "uuid";
+
+export default async function postText(
+  lessonId: number,
+  value: string,
+  type: string,
+  order: number
+) {
+  const existingLesson = await prisma.lesson.findFirst({
+    where: { id: lessonId },
+  });
+
+  if (!existingLesson) {
+    const error = new Error("La leçon n'existe pas");
+    (error as any).statusCode = 404;
+    throw error;
+  }
+
+  const uniqueID: string = uuidv4();
+  const fileName: string = uniqueID + new Date().getTime() + ".mdx";
+
+  try {
+    const file = fs.writeFileSync(
+      path.join(
+        __dirname,
+        "..",
+        "..",
+        "..",
+        "..",
+        "uploads",
+        "activities",
+        fileName
+      ),
+      value
+    );
+  } catch (error: any) {
+    throw new Error(
+      "Le fichier n'a pas pu être enregistré, réessayez plus tard svp..."
+    );
+  }
+
+  const createdActivity = await prisma.activity.create({
+    data: {
+      url: fileName,
+      order,
+      type,
+      lesson: {
+        connect: {
+          id: lessonId,
+        },
+      },
+    },
+  });
+
+  return createdActivity;
+}
