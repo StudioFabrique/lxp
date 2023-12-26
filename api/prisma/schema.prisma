@@ -12,8 +12,6 @@ datasource db {
 
 model Activity {
   id          Int    @id @default(autoincrement())
-  title       String
-  description String
   type        String
   order       Int
   url         String

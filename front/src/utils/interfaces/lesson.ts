@@ -1,3 +1,4 @@
+import Activity from "./activity";
 import Course from "./course";
 import Tag from "./tag";
 
@@ -13,4 +14,5 @@ export default interface Lesson {
   author?: string;
   adminId: number;
   course: Course;
+  activities?: Activity[];
 }

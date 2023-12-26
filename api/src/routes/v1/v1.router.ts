@@ -14,6 +14,7 @@ import permissionRouter from "./permission/permission.router";
 import courseRouter from "./course/course.router";
 import lessonRouter from "./lesson/lesson.router";
 import checkPermissions from "../../middleware/check-permissions";
+import activityRouter from "../activity/activityRouter";
 
 const v1Router = express.Router();
 
@@ -30,5 +31,6 @@ v1Router.use("/modules", moduleRouter);
 v1Router.use("/permission", permissionRouter);
 v1Router.use("/course", checkPermissions("course"), courseRouter);
 v1Router.use("/lesson", lessonRouter);
+v1Router.use("/activity", activityRouter);
 
 export default v1Router;

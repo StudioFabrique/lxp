@@ -26,11 +26,13 @@ export default function LessonHomePage() {
     );
   }, [sendRequest]);
 
-  console.log({ lessonsList });
-
   if (!lessonsList || lessonsList.length === 0) {
     return <p>Aucune leçon n'a été trouvée.</p>;
   }
 
-  return <LessonHome lessonsList={lessonsList} />;
+  return (
+    <main className="w-full flex flex-col gap-y-4">
+      <LessonHome lessonsList={lessonsList} />
+    </main>
+  );
 }
