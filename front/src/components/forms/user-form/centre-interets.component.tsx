@@ -10,54 +10,66 @@ import {
 } from "react";
 import Hobby from "../../../utils/interfaces/hobby";
 import Wrapper from "../../UI/wrapper/wrapper.component";
+import DeleteIcon from "../../UI/svg/delete-icon.component";
 
 const CentreInterets: FC<{
   hobbies: Hobby[];
   setHobbies: Dispatch<SetStateAction<Hobby[]>>;
 }> = ({ hobbies, setHobbies }) => {
-  const [currentHobby, setCurrentHobby] = useState("");
+  const [currentHobbyValue, setCurrentHobbyValue] = useState("");
 
-  const handleAddInteret: KeyboardEventHandler<HTMLInputElement> = (
+  const handleAddHobby: KeyboardEventHandler<HTMLInputElement> = (
     event: KeyboardEvent<HTMLInputElement>
   ) => {
     if (
       event.code === "Enter" &&
-      hobbies.filter((hobby) => hobby.title === currentHobby).length === 0 &&
-      currentHobby.length > 0
+      hobbies.filter((hobby) => hobby.title === currentHobbyValue).length ===
+        0 &&
+      currentHobbyValue.length > 0
     ) {
       console.log("adding");
 
-      setHobbies((hobbies) => [...hobbies, { title: currentHobby }]);
-      setCurrentHobby("");
+      setHobbies((hobbies) => [...hobbies, { title: currentHobbyValue }]);
+      setCurrentHobbyValue("");
     }
+  };
+
+  const handleDeleteHobby = (title: string) => {
+    setHobbies((hobbies) => hobbies.filter((hobby) => hobby.title !== title));
   };
 
   const handleChangeInput: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
-    setCurrentHobby(event.currentTarget.value);
+    setCurrentHobbyValue(event.currentTarget.value);
   };
 
   return (
     <Wrapper>
       <div className="flex flex-col gap-y-2">
-        <p className="text-xl font-bold">Centre d'interets</p>
+        <p className="text-xl font-bold">Centre d'intérêts</p>
         <input
-          onKeyDown={handleAddInteret}
+          onKeyDown={handleAddHobby}
           onChange={handleChangeInput}
           type="text"
           className="input"
-          value={currentHobby}
+          value={currentHobbyValue}
         />
       </div>
       <div className="flex gap-x-5 gap-y-2 flex-wrap overflow-y-auto">
         {hobbies.map((hobby) => (
-          <p
+          <div
             key={hobby.title}
-            className="bg-secondary text-secondary-content p-2 rounded-xl h-10"
+            className="flex gap-2 bg-secondary text-secondary-content p-2 rounded-xl h-10"
           >
-            {hobby.title}
-          </p>
+            <p>{hobby.title}</p>
+            <span
+              className="h-6 w-6 cursor-pointer"
+              onClick={() => handleDeleteHobby(hobby.title)}
+            >
+              <DeleteIcon />
+            </span>
+          </div>
         ))}
       </div>
     </Wrapper>

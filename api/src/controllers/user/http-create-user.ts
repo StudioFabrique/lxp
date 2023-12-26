@@ -24,14 +24,6 @@ export default async function httpCreateUser(req: Request, res: Response) {
   const { roleId } = userDataRequest;
   const uploadedFile = req.file;
 
-  console.log(graduationsDataRequest);
-  console.log(hobbiesDataRequest);
-
-  console.log(userDataRequest);
-  console.log(graduationsDataRequest ?? "no graduations data");
-  console.log(linksDataRequest ?? "no links data");
-  console.log(hobbiesDataRequest ?? "no hobbies data");
-
   console.log({ roleId });
 
   try {
