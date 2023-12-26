@@ -53,6 +53,8 @@ async function httpLogin(req: Request, res: Response) {
     }
     throw { message: credentialsError, status: 401 };
   } catch (error: any) {
+    console.log(error);
+
     return res
       .status(error.status ?? 500)
       .json({ message: error.message ?? serverIssue });

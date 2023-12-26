@@ -38,11 +38,12 @@ const Sidebar = () => {
     <SidebarWrapper>
       <SharedSideBar interfaceType={currentRoute[0]} onLogout={logout} />
       <motion.div
+        transition={{ duration: 0.2 }}
         animate={{
-          maxHeight: SidebarRoute() ? 1000 : 0,
+          height: SidebarRoute() ? "auto" : 0,
           opacity: SidebarRoute() ? 1 : 0,
         }}
-        className="-my-2 max-h-0"
+        className="-my-2 h-auto"
       >
         <div className="divider" />
         <SidebarRoute />
