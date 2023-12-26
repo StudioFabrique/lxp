@@ -1,28 +1,31 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import "react-quill/dist/quill.snow.css";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Activity from "../../../utils/interfaces/activity";
-import { markdownToHtml } from "../../../helpers/html-parser";
+import markdownit from "markdown-it";
 import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 import Editor from "../../markdown-editor/mark-down-editor";
 import Markdown from "react-markdown";
+import useHttp from "../../../hooks/use-http";
 
 interface EditorProps {
   activity: Activity;
   onUpdate: (activity: any) => void;
 }
 
+const md = markdownit();
+
 export const BlogUpdate = ({ activity, onUpdate }: EditorProps) => {
   const dispatch = useDispatch();
+  const { sendRequest } = useHttp();
   const [value, setValue] = useState<string>("");
   const blogEdition = useSelector(
     (state: any) => state.lesson.blogEdition
   ) as number;
 
-  console.log("rendering...");
-
-  const handleUpdate = (newValue: string) => {
+  const handleUpdate = async (newValue: string) => {
     onUpdate({
       ...activity,
       value: newValue,
@@ -30,11 +33,24 @@ export const BlogUpdate = ({ activity, onUpdate }: EditorProps) => {
     dispatch(lessonActions.setBlogEdition(null));
   };
 
+  const handleDeleteActivity = (id: number) => {
+    const applyData = (data: any) => {
+      console.log("from delete : ", data);
+    };
+    sendRequest(
+      {
+        path: `/activity/${id}`,
+        method: "delete",
+      },
+      applyData
+    );
+  };
+
   useEffect(() => {
     if (activity && activity !== undefined) {
       fetch(`http://localhost:5001/activities/${activity.url}`)
         .then((response: any) => response.text())
-        //.then((text) => markdownToHtml(text))
+        //.then((text) => md.render(text))
         .then((mdContent: string) => {
           setValue(mdContent);
         });
@@ -49,23 +65,31 @@ export const BlogUpdate = ({ activity, onUpdate }: EditorProps) => {
     dispatch(lessonActions.setBlogEdition(null));
   };
 
+  //console.log(value);
+
   return (
     <div className="my-8">
-      {blogEdition === activity!.id ? (
+      {blogEdition === activity.id ? (
         <>
           <Editor
-            content={value}
+            content={md.render(value)}
             onSubmit={handleUpdate}
             onCancel={handleCancelEdition}
           />
         </>
       ) : (
         <>
-          <Markdown>{value}</Markdown>
-          <div className="flex justify-end mt-4">
+          <Markdown className="prose">{value}</Markdown>
+          <div className="flex justify-end items-center gap-x-2 mt-4">
+            <button
+              className="btn btn-outline btn-warning btn-sm"
+              onClick={() => handleDeleteActivity(activity.id!)}
+            >
+              Supprimer
+            </button>
             <button
               className="btn btn-sm btn-primary"
-              onClick={() => handleToggleEditionMode(activity!.id!)}
+              onClick={() => handleToggleEditionMode(activity.id!)}
             >
               Editer
             </button>

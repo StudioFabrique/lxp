@@ -17,15 +17,7 @@ export async function markdownToHtml(markdownText: string) {
 }
 
 export async function fromHtmlToMarkdown(htmlText: string) {
-  /*   const file = remark()
-    .use(rehypeParse, { emitParseErrors: true, duplicateAttribute: false })
-    .use(rehypeRemark)
-    .use(remarkImages)
-    .use(remarkStringify)
-    .processSync(htmlText); */
-
   const file = await htmlToMarkdown({ html: htmlText });
-  console.log({ file });
 
   return file;
 }
