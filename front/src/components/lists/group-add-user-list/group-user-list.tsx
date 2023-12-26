@@ -2,7 +2,7 @@ import { FC, Ref, useRef } from "react";
 import GroupManageUserList from "./group-manage-user-list/group-manage-user-list";
 import User from "../../../utils/interfaces/user";
 import Wrapper from "../../UI/wrapper/wrapper.component";
-import GroupUserItem from "./group-user-item.component";
+import GroupUserItem from "./group-user-item";
 import SearchSimple from "../../UI/search-simple/search-simple";
 import CsvImportUserList from "./csv-import-user/csv-import-user-list/csv-import-user-list.component";
 import LoadingIcon from "../../UI/svg/loading-icon.component";
