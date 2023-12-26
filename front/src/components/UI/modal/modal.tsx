@@ -1,5 +1,5 @@
 import { FC } from "react";
-import Portal from "../portal/portal";
+import LoadingIcon from "../svg/loading-icon.component";
 
 const Modal: FC<{
   onLeftClick?: () => void;
@@ -8,36 +8,35 @@ const Modal: FC<{
   message: string;
   leftLabel?: string;
   rightLabel: string;
-}> = (props) => {
+  isSubmitting?: boolean;
+}> = (props, { isSubmitting = false }) => {
   return (
-    <>
-      <Portal>
-        <div className="relative left-0 top-0 w-screen h-screen bg-black/20 z-20">
-          <div className="absolute modal-open z-50 top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] min-w-[30rem]">
-            <div className="modal-box  border border-primary">
-              <h3 className="font-bold text-xs pb-4">{props.title}</h3>
-              <p className="py-4">{props.message}</p>
-              <div className="modal-action">
-                {props.leftLabel && (
-                  <button
-                    className="btn text-primary border-none bg-base-100"
-                    onClick={props.onLeftClick}
-                  >
-                    {props.leftLabel}
-                  </button>
-                )}
-                <button
-                  className="btn btn-primary btn-sm"
-                  onClick={props.onRightClick}
-                >
-                  {props.rightLabel}
-                </button>
-              </div>
-            </div>
-          </div>
+    <dialog id="my_modal_4" className="modal">
+      <div className="modal-box">
+        <h3 className="font-bold text-lg">{props.title}</h3>
+        <p className="py-4">{props.message}</p>
+        <div className="modal-action">
+          <form method="dialog">
+            {/* if there is a button, it will close the modal */}
+            <button className="btn btn-outline btn-primary">
+              {props.leftLabel}
+            </button>
+          </form>
+          <button
+            className="btn btn-primary flex items-center gap-x-2"
+            disabled={isSubmitting}
+            onClick={props.onRightClick}
+          >
+            {isSubmitting ? (
+              <span className="w-4 h-4 animate-spin">
+                <LoadingIcon />
+              </span>
+            ) : null}
+            <span>{props.rightLabel}</span>
+          </button>
         </div>
-      </Portal>
-    </>
+      </div>
+    </dialog>
   );
 };
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import Loader from "../../../components/UI/loader";
@@ -85,10 +86,10 @@ export default function LayoutEditLesson() {
                   <HeaderButton
                     lessonId={+lessonId!}
                     showPreview={activities.length > 0}
-                    onPublish={() => {}}
+                    //onPublish={() => {}}
                   />
                 </div>
-                <h2 className="text-xl font-bold text-primary">
+                <h2 className="text-xl font-bold text-primary mb-2">
                   Ajouter un bloc
                 </h2>
                 <AddBlock onActivityType={handleClickActivityType} />

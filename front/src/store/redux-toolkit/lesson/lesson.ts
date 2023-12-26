@@ -49,6 +49,14 @@ const lessonSlice = createSlice({
         console.log("updated lesson : ", state.lesson);
       }
     },
+    removeActivity(state, action) {
+      const activities = state.lesson?.activities?.filter(
+        (item) => item.id !== action.payload
+      );
+      if (state.lesson) {
+        state.lesson = { ...state.lesson, activities };
+      }
+    },
     resetCurrentType(state) {
       state.currentType = "";
     },

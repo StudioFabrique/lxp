@@ -85,15 +85,16 @@ export default function EditLessonHome() {
     <>
       {activities && activities.length > 0 ? (
         <section className="mt-8 flex flex-col items-center">
-          <ul>
-            {sortArray(activities, "order").map((item, index) => (
+          <ul className="w-full">
+            {sortArray(activities, "order").map((item) => (
               <li key={item.id}>
                 <h2 className="font-bold text-md text-primary">
-                  Activité n° {index + 1}
+                  Activité n° {item.order}
                 </h2>
                 {item.type === "text" ? (
                   <BlogUpdate activity={item} onUpdate={handleUpdate} />
                 ) : null}
+                {item.type === "video" ? <p>Video</p> : null}
               </li>
             ))}
           </ul>
