@@ -9,6 +9,7 @@ import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 import Editor from "../../markdown-editor/mark-down-editor";
 import Markdown from "react-markdown";
 import useHttp from "../../../hooks/use-http";
+import Modal from "../../UI/modal/modal";
 
 interface EditorProps {
   activity: Activity;
@@ -33,17 +34,22 @@ export const BlogUpdate = ({ activity, onUpdate }: EditorProps) => {
     dispatch(lessonActions.setBlogEdition(null));
   };
 
-  const handleDeleteActivity = (id: number) => {
+  const handleDeleteActivity = () => {
     const applyData = (data: any) => {
       console.log("from delete : ", data);
+      dispatch(lessonActions.removeActivity(activity.id));
     };
     sendRequest(
       {
-        path: `/activity/${id}`,
+        path: `/activity/${activity.id}`,
         method: "delete",
       },
       applyData
     );
+  };
+
+  const toggleModal = () => {
+    window.my_modal_4.showModal();
   };
 
   useEffect(() => {
@@ -68,35 +74,47 @@ export const BlogUpdate = ({ activity, onUpdate }: EditorProps) => {
   //console.log(value);
 
   return (
-    <div className="my-8">
-      {blogEdition === activity.id ? (
-        <>
-          <Editor
-            content={md.render(value)}
-            onSubmit={handleUpdate}
-            onCancel={handleCancelEdition}
-          />
-        </>
-      ) : (
-        <>
-          <Markdown className="prose">{value}</Markdown>
-          <div className="flex justify-end items-center gap-x-2 mt-4">
-            <button
-              className="btn btn-outline btn-warning btn-sm"
-              onClick={() => handleDeleteActivity(activity.id!)}
-            >
-              Supprimer
-            </button>
-            <button
-              className="btn btn-sm btn-primary"
-              onClick={() => handleToggleEditionMode(activity.id!)}
-            >
-              Editer
-            </button>
-          </div>
-        </>
-      )}
-    </div>
+    <>
+      <div className="my-8">
+        {blogEdition === activity.id ? (
+          <>
+            <Editor
+              content={md.render(value)}
+              onSubmit={handleUpdate}
+              onCancel={handleCancelEdition}
+            />
+          </>
+        ) : (
+          <>
+            <div className="px-4 py-2 border border-primary/50 rounded-lg shadow-lg">
+              <Markdown className="prose">{value}</Markdown>
+            </div>{" "}
+            <div className="flex justify-end items-center gap-x-2 mt-4">
+              <button
+                className="btn btn-outline btn-warning btn-sm"
+                onClick={toggleModal}
+              >
+                Supprimer
+              </button>
+              <button
+                className="btn btn-sm btn-primary"
+                onClick={() => handleToggleEditionMode(activity.id!)}
+              >
+                Editer
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+      <Modal
+        onLeftClick={toggleModal}
+        onRightClick={handleDeleteActivity}
+        title={`Supprimer l'activité n° ${activity.order + 1}`}
+        message="Attention l'activité et les ressources qui lui sont associées seront définitivement supprimées."
+        leftLabel="Annuler"
+        rightLabel="Confirmer"
+      />
+    </>
   );
 };
 

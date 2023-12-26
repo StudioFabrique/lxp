@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 interface HeaderButtonProps {
   lessonId: number;
   showPreview: boolean;
-  onPublish: () => void;
+  //onPublish: () => void;
 }
 
 export default function HeaderButton({
   showPreview,
-  onPublish,
-}: HeaderButtonProps) {
+}: //onPublish,
+HeaderButtonProps) {
   const nav = useNavigate();
 
   const btnStyle = "btn btn-sm btn-primary";
@@ -40,7 +40,7 @@ export default function HeaderButton({
         <button
           className={btnStyle}
           disabled={!showPreview}
-          onClick={onPublish}
+          //onClick={onPublish}
         >
           Publier
         </button>
