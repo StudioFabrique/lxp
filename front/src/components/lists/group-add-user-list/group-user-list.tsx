@@ -1,4 +1,4 @@
-import { FC, Ref, useRef } from "react";
+import { FC, Ref, useEffect, useRef } from "react";
 import GroupManageUserList from "./group-manage-user-list/group-manage-user-list";
 import User from "../../../utils/interfaces/user";
 import Wrapper from "../../UI/wrapper/wrapper.component";
@@ -40,6 +40,10 @@ const GroupUserList: FC<{
     handleToggleMenu();
   };
 
+  useEffect(() => {
+    setPage(totalPages);
+  }, [setPage, totalPages]);
+
   return (
     <Wrapper>
       <div className="flex justify-between">
@@ -76,7 +80,7 @@ const GroupUserList: FC<{
       </div>
 
       {/* liste des utilisateurs du groupe */}
-      {list && list.length > 0 ? (
+      {totalPages > 0 ? (
         <>
           <table className="table-auto border-separate border-spacing-y-4">
             <thead>
@@ -100,17 +104,19 @@ const GroupUserList: FC<{
               </tr>
             </thead>
             <tbody>
-              {list.map((item) => (
-                <GroupUserItem
-                  key={item._id}
-                  itemProps={item}
-                  onUpdateUser={onUpdateUser}
-                  onDeleteUser={onDeleteUser}
-                  onCheckRow={handleRowCheck}
-                />
-              ))}
+              {list &&
+                list.map((item) => (
+                  <GroupUserItem
+                    key={item._id}
+                    itemProps={item}
+                    onUpdateUser={onUpdateUser}
+                    onDeleteUser={onDeleteUser}
+                    onCheckRow={handleRowCheck}
+                  />
+                ))}
             </tbody>
           </table>
+
           <Pagination page={page} setPage={setPage} totalPages={totalPages} />
         </>
       ) : (
