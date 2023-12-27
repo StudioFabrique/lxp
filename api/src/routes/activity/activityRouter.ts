@@ -6,6 +6,8 @@ import httpUpdateActivity from "../../controllers/activity/update/http-update-ac
 import { uploadActivityImage } from "../../middleware/upload-activity-image";
 import httpPostBlogImage from "../../controllers/activity/http-post-blog-image";
 import httpDeleteActivity from "../../controllers/activity/http-delete-activity";
+import httpPostVideo from "../../controllers/activity/http-post-video";
+import { uploadActivityVideo } from "../../middleware/upload-activity-video";
 
 const activityRouter = express.Router();
 
@@ -14,6 +16,13 @@ activityRouter.post(
   checkPermissions("lesson"),
   uploadActivityImage(),
   httpPostBlogImage
+);
+
+activityRouter.post(
+  "/video/:lessonId",
+  checkPermissions("lesson"),
+  uploadActivityVideo,
+  httpPostVideo
 );
 
 // enregistre une activité et l'attache à une lesson

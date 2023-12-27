@@ -46,6 +46,7 @@ export default function LayoutEditLesson() {
     }
   }, [error]);
 
+  // supprimer les éléments du state global lorsque le composant est "démonté"
   useEffect(() => {
     return () => {
       dispatch(lessonActions.resetCurrentType());
@@ -53,6 +54,10 @@ export default function LayoutEditLesson() {
     };
   }, [dispatch]);
 
+  /**
+   * met à jour le type de la nouvelle activité dans le state global
+   * @param activityType string
+   */
   const handleClickActivityType = (activityType: string) => {
     dispatch(lessonActions.setCurrentType(activityType));
   };

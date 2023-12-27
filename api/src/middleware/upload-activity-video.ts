@@ -4,18 +4,18 @@ import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { serverIssue } from "../utils/constantes";
 
-export const uploadActivityImage = () => {
+export const uploadActivityVideo = () => {
   console.log("arrow");
 
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(
         null,
-        path.join(__dirname, "..", "..", "uploads", "activities", "images")
+        path.join(__dirname, "..", "..", "uploads", "activities", "videos")
       );
     },
     filename: function (req, file, cb) {
-      if (file.mimetype.startsWith("image")) {
+      if (file.mimetype.startsWith("video")) {
         const uniqueID: string = uuidv4();
         const fileName: string = uniqueID + new Date().getTime();
         cb(null, file.fieldname + "-" + fileName + file.originalname);
@@ -29,8 +29,8 @@ export const uploadActivityImage = () => {
     console.log("from middleware with love");
     const upload = multer({
       storage: storage,
-      limits: { fileSize: 1 * 1024 * 1024 },
-    }).single("image");
+      limits: { fileSize: 1024 * 1024 * 1024 },
+    }).single("video");
 
     upload(req, res, function (err) {
       if (err instanceof multer.MulterError) {

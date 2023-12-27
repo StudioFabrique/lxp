@@ -28,8 +28,10 @@ export const Editor = ({
     onSubmit(value);
   };
 
-  console.log("from editor", value);
-
+  /**
+   * valide l'upload d'image vers le serveur, et ajoute l'url de l'image dans le
+   * document markdown en cours d'édition
+   */
   const imageHandler = useCallback(async () => {
     const input = document.createElement("input");
 
@@ -83,8 +85,6 @@ export const Editor = ({
       },
     };
   }, [imageHandler]);
-
-  console.log(value);
 
   return (
     <div className="my-8">

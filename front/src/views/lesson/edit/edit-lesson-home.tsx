@@ -30,6 +30,11 @@ export default function EditLessonHome() {
     (state: any) => state.lesson.activityToDelete
   ) as Activity;
 
+  /**
+   * soumet une nouvelle activité vers la base de données, sa propriété "order" est déterminée en fonction de son placement dans la liste
+   * une nouvelle activité est tjrs placée en fin de liste par défaut, donc son "order" est égal à la longueur du tableau
+   * @param value any (activity n'ayant pas encore toutes ses propriétés d'initialisées)
+   */
   const handleSubmit = (value: any) => {
     const applyData = (data: any) => {
       toast.success("Document enregistré !");
@@ -54,6 +59,9 @@ export default function EditLessonHome() {
     getData();
   };
 
+  /**
+   * soumet les modifications apportées à une activité vers la bdd
+   */
   const handleUpdate = (activity: any) => {
     const applyData = (data: {
       success: boolean;
@@ -86,10 +94,18 @@ export default function EditLessonHome() {
     getData();
   };
 
+  /**
+   * définit le type d'une activité pour afficher le composant approprié dans la vue pour y ajouter du contenu
+   * @param activityType string
+   */
   const handleSelectActivityType = (activityType: string) => {
     dispatch(lessonActions.setCurrentType(activityType));
   };
 
+  /**
+   * supprime une activité de la bdd de manière définitive ainssi que toutes les ressources qui
+   * lui sont associées après confirmation via une fenêtre modal
+   */
   const handleDeleteActivity = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const applyData = (_data: any) => {
@@ -107,10 +123,15 @@ export default function EditLessonHome() {
     );
   };
 
+  /**
+   * annule la suppression d'une activité et ferme la modal
+   * de confirmation
+   */
   const handleCancelDeletion = () => {
     dispatch(lessonActions.setActivityToDelete(null));
   };
 
+  // gère les erreurs HTTP
   useEffect(() => {
     if (error.length > 0) {
       toast.error(error);
@@ -118,8 +139,6 @@ export default function EditLessonHome() {
       setIsLoading(false);
     }
   }, [error, dispatch]);
-
-  console.log(isLoading);
 
   return (
     <>
@@ -153,7 +172,7 @@ export default function EditLessonHome() {
           Ajoutez du contenu à la leçon en sélectionnant un type d'activité
         </p>
       ) : (
-        <CurrentBlock onSubmit={handleSubmit} />
+        <CurrentBlock isSubmitting={isLoading} onSubmit={handleSubmit} />
       )}
       {activityToDelete ? (
         <Modal
