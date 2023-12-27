@@ -5,14 +5,21 @@ import QuillToolbar, { formats } from "./editor-toolbar";
 import { useCallback, useMemo, useRef, useState } from "react";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import useHttp from "../../hooks/use-http";
+import { Loader2 } from "lucide-react";
 
 interface EditorProps {
   content?: string;
+  isSubmitting: boolean;
   onSubmit: (value: any) => void;
   onCancel: () => void;
 }
 
-export const Editor = ({ content = "", onSubmit, onCancel }: EditorProps) => {
+export const Editor = ({
+  content = "",
+  isSubmitting,
+  onSubmit,
+  onCancel,
+}: EditorProps) => {
   const [value, setValue] = useState<string>(content);
   const quillRef = useRef<any>(null);
   const { sendRequest } = useHttp();
@@ -100,7 +107,12 @@ export const Editor = ({ content = "", onSubmit, onCancel }: EditorProps) => {
         <button className="btn btn-outline btn-primary" onClick={onCancel}>
           Annuler
         </button>
-        <button className="btn btn-primary" onClick={handleSubmit}>
+        <button
+          className="btn btn-primary flex items-center gap-x-2"
+          disabled={isSubmitting}
+          onClick={handleSubmit}
+        >
+          {isSubmitting ? <Loader2 className="animate-spin" /> : null}
           Valider
         </button>
       </div>
