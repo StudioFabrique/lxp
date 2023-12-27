@@ -8,19 +8,21 @@ import markdownit from "markdown-it";
 import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 import Editor from "../../markdown-editor/mark-down-editor";
 import Markdown from "react-markdown";
-import useHttp from "../../../hooks/use-http";
-import Modal from "../../UI/modal/modal";
 
 interface EditorProps {
   activity: Activity;
+  isSubmitting: boolean;
   onUpdate: (activity: any) => void;
 }
 
 const md = markdownit();
 
-export const BlogUpdate = ({ activity, onUpdate }: EditorProps) => {
+export const BlogUpdate = ({
+  activity,
+  isSubmitting,
+  onUpdate,
+}: EditorProps) => {
   const dispatch = useDispatch();
-  const { sendRequest } = useHttp();
   const [value, setValue] = useState<string>("");
   const blogEdition = useSelector(
     (state: any) => state.lesson.blogEdition
@@ -31,25 +33,10 @@ export const BlogUpdate = ({ activity, onUpdate }: EditorProps) => {
       ...activity,
       value: newValue,
     });
-    dispatch(lessonActions.setBlogEdition(null));
   };
 
-  const handleDeleteActivity = () => {
-    const applyData = (data: any) => {
-      console.log("from delete : ", data);
-      dispatch(lessonActions.removeActivity(activity.id));
-    };
-    sendRequest(
-      {
-        path: `/activity/${activity.id}`,
-        method: "delete",
-      },
-      applyData
-    );
-  };
-
-  const toggleModal = () => {
-    window.my_modal_4.showModal();
+  const setItemToDelete = () => {
+    dispatch(lessonActions.setActivityToDelete(activity));
   };
 
   useEffect(() => {
@@ -71,8 +58,6 @@ export const BlogUpdate = ({ activity, onUpdate }: EditorProps) => {
     dispatch(lessonActions.setBlogEdition(null));
   };
 
-  //console.log(value);
-
   return (
     <>
       <div className="my-8">
@@ -80,6 +65,7 @@ export const BlogUpdate = ({ activity, onUpdate }: EditorProps) => {
           <>
             <Editor
               content={md.render(value)}
+              isSubmitting={isSubmitting}
               onSubmit={handleUpdate}
               onCancel={handleCancelEdition}
             />
@@ -88,11 +74,11 @@ export const BlogUpdate = ({ activity, onUpdate }: EditorProps) => {
           <>
             <div className="px-4 py-2 border border-primary/50 rounded-lg shadow-lg">
               <Markdown className="prose">{value}</Markdown>
-            </div>{" "}
+            </div>
             <div className="flex justify-end items-center gap-x-2 mt-4">
               <button
                 className="btn btn-outline btn-warning btn-sm"
-                onClick={toggleModal}
+                onClick={setItemToDelete}
               >
                 Supprimer
               </button>
@@ -106,14 +92,6 @@ export const BlogUpdate = ({ activity, onUpdate }: EditorProps) => {
           </>
         )}
       </div>
-      <Modal
-        onLeftClick={toggleModal}
-        onRightClick={handleDeleteActivity}
-        title={`Supprimer l'activité n° ${activity.order + 1}`}
-        message="Attention l'activité et les ressources qui lui sont associées seront définitivement supprimées."
-        leftLabel="Annuler"
-        rightLabel="Confirmer"
-      />
     </>
   );
 };

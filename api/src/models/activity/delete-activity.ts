@@ -8,7 +8,7 @@ export default async function deleteActivity(activId: number) {
   });
 
   if (!existingActivity) {
-    const error: any = { message: "L'acitivité n'existe pas", statusCode: 404 };
+    const error: any = { message: "L'activité n'existe pas", statusCode: 404 };
     throw error;
   }
 

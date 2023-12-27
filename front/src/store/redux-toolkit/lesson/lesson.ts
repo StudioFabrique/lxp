@@ -6,12 +6,14 @@ interface LessonsType {
   lesson: Lesson | null;
   currentType: string;
   blogEdition: number | null;
+  activityToDelete: Activity | null;
 }
 
 const initialLessonsState: LessonsType = {
   lesson: null,
   currentType: "",
   blogEdition: null,
+  activityToDelete: null,
 };
 
 const lessonSlice = createSlice({
@@ -28,6 +30,9 @@ const lessonSlice = createSlice({
           activities: [...state.lesson.activities, action.payload],
         };
       }
+    },
+    setActivityToDelete(state, action) {
+      state.activityToDelete = action.payload;
     },
     setCurrentType(state, action) {
       state.currentType = action.payload;

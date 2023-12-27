@@ -11,11 +11,14 @@ import { BlogUpdate } from "../../../components/edit-lesson/activities/blog-upda
 import AddBlock from "../../../components/edit-lesson/add-block";
 import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 import { sortArray } from "../../../utils/sortArray";
+import Modal from "../../../components/UI/modal/modal";
+import { useEffect, useState } from "react";
 
 export default function EditLessonHome() {
   const { lessonId } = useParams();
-  const { sendRequest } = useHttp();
+  const { sendRequest, error } = useHttp();
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
 
   const currentType = useSelector(
     (state: any) => state.lesson.currentType
@@ -23,6 +26,9 @@ export default function EditLessonHome() {
   const activities = useSelector(
     (state: any) => state.lesson.lesson.activities
   ) as Activity[];
+  const activityToDelete = useSelector(
+    (state: any) => state.lesson.activityToDelete
+  ) as Activity;
 
   const handleSubmit = (value: any) => {
     const applyData = (data: any) => {
@@ -31,14 +37,14 @@ export default function EditLessonHome() {
       dispatch(lessonActions.resetCurrentType());
     };
     const getData = async () => {
-      console.log(await fromHtmlToMarkdown(value));
+      console.log(activities.length);
       sendRequest(
         {
           path: `/activity/${lessonId}`,
           method: "post",
           body: {
             type: currentType,
-            order: activities.length > 0 ? activities.length - 1 : 0,
+            order: activities.length > 0 ? activities.length + 1 : 1,
             value: await fromHtmlToMarkdown(value),
           },
         },
@@ -58,8 +64,11 @@ export default function EditLessonHome() {
         toast.success(data.message);
         dispatch(lessonActions.updateActivity(data.response));
       }
+      dispatch(lessonActions.setBlogEdition(null));
+      setIsLoading(false);
     };
     const getData = async () => {
+      setIsLoading(true);
       sendRequest(
         {
           path: `/activity/${activity.id!}`,
@@ -81,6 +90,37 @@ export default function EditLessonHome() {
     dispatch(lessonActions.setCurrentType(activityType));
   };
 
+  const handleDeleteActivity = () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const applyData = (_data: any) => {
+      dispatch(lessonActions.removeActivity(activityToDelete.id));
+      dispatch(lessonActions.setActivityToDelete(null));
+      setIsLoading(false);
+    };
+    setIsLoading(true);
+    sendRequest(
+      {
+        path: `/activity/${activityToDelete.id}`,
+        method: "delete",
+      },
+      applyData
+    );
+  };
+
+  const handleCancelDeletion = () => {
+    dispatch(lessonActions.setActivityToDelete(null));
+  };
+
+  useEffect(() => {
+    if (error.length > 0) {
+      toast.error(error);
+      dispatch(lessonActions.setActivityToDelete(null));
+      setIsLoading(false);
+    }
+  }, [error, dispatch]);
+
+  console.log(isLoading);
+
   return (
     <>
       {activities && activities.length > 0 ? (
@@ -92,7 +132,11 @@ export default function EditLessonHome() {
                   Activité n° {item.order}
                 </h2>
                 {item.type === "text" ? (
-                  <BlogUpdate activity={item} onUpdate={handleUpdate} />
+                  <BlogUpdate
+                    activity={item}
+                    onUpdate={handleUpdate}
+                    isSubmitting={isLoading}
+                  />
                 ) : null}
                 {item.type === "video" ? <p>Video</p> : null}
               </li>
@@ -111,6 +155,17 @@ export default function EditLessonHome() {
       ) : (
         <CurrentBlock onSubmit={handleSubmit} />
       )}
+      {activityToDelete ? (
+        <Modal
+          onLeftClick={handleCancelDeletion}
+          onRightClick={handleDeleteActivity}
+          title={`Supprimer l'activité n° ${activityToDelete.order + 1}`}
+          isSubmitting={isLoading}
+          message="Attention l'activité et les ressources qui lui sont associées seront définitivement supprimées."
+          leftLabel="Annuler"
+          rightLabel="Confirmer"
+        />
+      ) : null}
     </>
   );
 }
