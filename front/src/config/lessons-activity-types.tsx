@@ -35,7 +35,7 @@ const activityTypes: ActivityType[] = [
   {
     icon: <PlayCircleIcon />,
     label: "Video",
-    tooltip: "",
+    tooltip: "Insérez une video",
     type: "video",
   },
   {

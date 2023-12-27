@@ -28,6 +28,11 @@ export const BlogUpdate = ({
     (state: any) => state.lesson.blogEdition
   ) as number;
 
+  /**
+   * trigger la mise à jour du document markdown en cours d'édition au niveau
+   * du composant parent
+   * @param newValue string
+   */
   const handleUpdate = async (newValue: string) => {
     onUpdate({
       ...activity,
@@ -35,10 +40,19 @@ export const BlogUpdate = ({
     });
   };
 
+  /**
+   * trigger la suppression du document markdown et des ressources
+   * qui lui sont associées au niveau du composant parent.
+   * on met à jour une propriété dans le state global qui va déclencher
+   * l'affichage d'une modal de confirmation
+   */
   const setItemToDelete = () => {
     dispatch(lessonActions.setActivityToDelete(activity));
   };
 
+  /**
+   * récupère le contenu d'un fichier markdown depuis le serveur
+   */
   useEffect(() => {
     if (activity && activity !== undefined) {
       fetch(`http://localhost:5001/activities/${activity.url}`)
@@ -50,10 +64,18 @@ export const BlogUpdate = ({
     }
   }, [activity, activity.url]);
 
+  /**
+   * affiche l'éditeur de texte pour une activité de type texte sélectionnée
+   * @param id number
+   */
   const handleToggleEditionMode = (id: number) => {
     dispatch(lessonActions.setBlogEdition(id));
   };
 
+  /**
+   * annule l'affichage de l'éditeur de texte sans prendre et les
+   * mises à jour que le formateur aurait pu y apporter
+   */
   const handleCancelEdition = () => {
     dispatch(lessonActions.setBlogEdition(null));
   };
