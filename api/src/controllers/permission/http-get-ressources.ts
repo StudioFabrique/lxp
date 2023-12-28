@@ -5,18 +5,12 @@ import { ressourcesRbac } from "../../config/ressources-rbac";
 
 export default async function httpGetRessources(req: Request, res: Response) {
   try {
-    console.log("test log");
-
     const roles = await Role.find();
 
     const ressources = {
       ressources: ressourcesRbac,
       roles: roles.map((role) => role.role),
     };
-
-    console.log("ressources :");
-
-    console.log(ressources);
 
     if (!ressources || ressources.ressources.length <= 0) {
       return res

@@ -20,19 +20,8 @@ const PermissionsList: FC<{
   currentRole: IRoleItem;
   setCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
 }> = ({ roles, currentRole, setCurrentRole }) => {
-  const {
-    defineRulesFor,
-    roles: roleFromContext,
-    fetchRoles,
-    user,
-  } = useContext(Context);
-  const {
-    sendRequest: sendRequestPermissions,
-    isLoading: isLoadingPermissions,
-  } = useHttp(true);
-
-  const { sendRequest: sendRequestRessources, isLoading: isLoadingRessources } =
-    useHttp(true);
+  const { defineRulesFor, fetchRoles, user } = useContext(Context);
+  const { sendRequest, isLoading: isLoadingPermissions } = useHttp(true);
 
   const [permissions, setPermissions] = useState([]);
   const [ressources, setRessources] = useState<{
@@ -74,11 +63,10 @@ const PermissionsList: FC<{
     const applyData = (data: any) => {
       fetchRoles(user!.roles[0]);
       defineRulesFor();
-      console.log(roleFromContext);
       toast.success(data.message);
     };
 
-    sendRequestPermissions(
+    sendRequest(
       {
         path: `/permission/role/${currentRole._id}`,
         body: { permissions },
@@ -94,31 +82,16 @@ const PermissionsList: FC<{
    */
   const handleGetPermissions = useCallback(() => {
     const applyData = (data: any) => {
-      setPermissions(data.data);
+      setPermissions(data.data.permissions);
+      setRessources(data.data.ressources);
     };
 
-    if (roles)
-      sendRequestPermissions(
-        { path: `/permission/${currentRole?.role}` },
-        applyData
-      );
-  }, [currentRole, sendRequestPermissions, roles]);
-
-  const handleGetRessources = useCallback(() => {
-    const applyData = (data: any) => {
-      setRessources(data.data);
-    };
-
-    sendRequestRessources({ path: `/permission/ressources` }, applyData);
-  }, [sendRequestRessources]);
+    sendRequest({ path: `/permission/${currentRole?.role}` }, applyData);
+  }, [currentRole, sendRequest]);
 
   useEffect(() => {
     handleGetPermissions();
   }, [handleGetPermissions]);
-
-  useEffect(() => {
-    handleGetRessources();
-  }, [handleGetRessources]);
 
   return (
     <Wrapper>
@@ -138,7 +111,7 @@ const PermissionsList: FC<{
           Sauvegarder
         </button>
       </div>
-      {isLoadingRessources || isLoadingPermissions ? (
+      {isLoadingPermissions || isLoadingPermissions ? (
         <span className="loading loading-spinner" />
       ) : (
         <div className="flex justify-between">
