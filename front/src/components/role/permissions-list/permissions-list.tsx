@@ -86,7 +86,10 @@ const PermissionsList: FC<{
       setRessources(data.data.ressources);
     };
 
-    sendRequest({ path: `/permission/${currentRole?.role}` }, applyData);
+    sendRequest(
+      { path: `/permission/ressources/${currentRole?.role}` },
+      applyData
+    );
   }, [currentRole, sendRequest]);
 
   useEffect(() => {
