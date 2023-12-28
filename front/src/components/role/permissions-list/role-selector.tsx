@@ -19,21 +19,26 @@ const RoleSelector: FC<{
     onSetCurrentRole((previousRole) => newRole ?? previousRole);
   };
 
-  return roles ? (
+  return (
     <select
       className="select select-sm border border-neutral/50 focus:outline-none"
       name="menu"
       id="menu"
-      value={currentRole.role}
+      value={currentRole?.role}
       onChange={handleSelect}
     >
-      {roles.map((item) => (
-        <option className="capitalize text-xs" key={item._id} value={item.role}>
-          {item.role} {item.role === "admin" && "(mon rôle)"}
-        </option>
-      ))}
+      {roles &&
+        roles.map((item) => (
+          <option
+            className="capitalize text-xs"
+            key={item._id}
+            value={item.role}
+          >
+            {item.role} {item.role === "admin" && "(mon rôle)"}
+          </option>
+        ))}
     </select>
-  ) : null;
+  );
 };
 
 export default RoleSelector;
