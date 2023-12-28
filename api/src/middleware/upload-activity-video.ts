@@ -32,7 +32,7 @@ export const uploadActivityVideo = () => {
       limits: { fileSize: 1024 * 1024 * 1024 },
     }).single("video");
 
-    upload(req, res, function (err) {
+    upload(req, res, function (err: any) {
       if (err instanceof multer.MulterError) {
         // A Multer error occurred when uploading.
         return res.status(400).json({
@@ -40,7 +40,7 @@ export const uploadActivityVideo = () => {
         });
       } else if (err) {
         // An unknown error occurred.
-        return res.status(500).json({ message: serverIssue });
+        return res.status(500).json({ message: err.message });
       }
       next();
     });

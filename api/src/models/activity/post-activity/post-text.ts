@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export default async function postText(
   lessonId: number,
+  userId: string,
   value: string,
   type: string,
   order: number
@@ -16,6 +17,16 @@ export default async function postText(
 
   if (!existingLesson) {
     const error = new Error("La leçon n'existe pas");
+    (error as any).statusCode = 404;
+    throw error;
+  }
+
+  const existingAuthor = await prisma.admin.findFirst({
+    where: { idMdb: userId },
+  });
+
+  if (!existingAuthor) {
+    const error = new Error("L'utilisateur n'existe pas");
     (error as any).statusCode = 404;
     throw error;
   }
@@ -51,6 +62,11 @@ export default async function postText(
       lesson: {
         connect: {
           id: lessonId,
+        },
+      },
+      author: {
+        connect: {
+          id: existingAuthor.id,
         },
       },
     },

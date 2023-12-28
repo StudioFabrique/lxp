@@ -1,13 +1,13 @@
 import express from "express";
 
-import checkPermissions from "../../middleware/check-permissions";
-import httpPostActivity from "../../controllers/activity/http-post-activity";
-import httpUpdateActivity from "../../controllers/activity/update/http-update-activity";
-import { uploadActivityImage } from "../../middleware/upload-activity-image";
-import httpPostBlogImage from "../../controllers/activity/http-post-blog-image";
-import httpDeleteActivity from "../../controllers/activity/http-delete-activity";
-import httpPostVideo from "../../controllers/activity/http-post-video";
-import { uploadActivityVideo } from "../../middleware/upload-activity-video";
+import checkPermissions from "../../../middleware/check-permissions";
+import { uploadActivityImage } from "../../../middleware/upload-activity-image";
+import httpPostBlogImage from "../../../controllers/activity/http-post-blog-image";
+import { uploadActivityVideo } from "../../../middleware/upload-activity-video";
+import httpPostVideo from "../../../controllers/activity/http-post-video";
+import httpPostActivity from "../../../controllers/activity/http-post-activity";
+import httpUpdateActivity from "../../../controllers/activity/update/http-update-activity";
+import httpDeleteActivity from "../../../controllers/activity/http-delete-activity";
 
 const activityRouter = express.Router();
 
@@ -21,7 +21,7 @@ activityRouter.post(
 activityRouter.post(
   "/video/:lessonId",
   checkPermissions("lesson"),
-  uploadActivityVideo,
+  uploadActivityVideo(),
   httpPostVideo
 );
 
