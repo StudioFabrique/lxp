@@ -1,5 +1,6 @@
 import { FC } from "react";
 import PermissionItem from "./permission-item";
+import Loader from "../../UI/loader";
 
 const RessourcesByAction: FC<{
   action: "read" | "write" | "update" | "delete";
@@ -29,7 +30,7 @@ const RessourcesByAction: FC<{
     (perm: any) => perm.action === action
   );
 
-  if (!permissions) return <p>error</p>;
+  if (!permissions) return <Loader />;
   return (
     <div className="flex flex-col gap-y-5 items-center w-full">
       <p className="bg-secondary p-2 rounded-lg w-[95%] text-center font-bold">

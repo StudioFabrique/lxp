@@ -26,7 +26,13 @@ const PermissionsList: FC<{
     fetchRoles,
     user,
   } = useContext(Context);
-  const { sendRequest, isLoading } = useHttp(true);
+  const {
+    sendRequest: sendRequestPermissions,
+    isLoading: isLoadingPermissions,
+  } = useHttp(true);
+
+  const { sendRequest: sendRequestRessources, isLoading: isLoadingRessources } =
+    useHttp(true);
 
   const [permissions, setPermissions] = useState([]);
   const [ressources, setRessources] = useState<{
@@ -72,7 +78,7 @@ const PermissionsList: FC<{
       toast.success(data.message);
     };
 
-    sendRequest(
+    sendRequestPermissions(
       {
         path: `/permission/role/${currentRole._id}`,
         body: { permissions },
@@ -92,21 +98,27 @@ const PermissionsList: FC<{
     };
 
     if (roles)
-      sendRequest({ path: `/permission/${currentRole?.role}` }, applyData);
-  }, [currentRole, sendRequest, roles]);
+      sendRequestPermissions(
+        { path: `/permission/${currentRole?.role}` },
+        applyData
+      );
+  }, [currentRole, sendRequestPermissions, roles]);
 
   const handleGetRessources = useCallback(() => {
     const applyData = (data: any) => {
       setRessources(data.data);
     };
 
-    sendRequest({ path: `/permission/ressources` }, applyData);
-  }, [sendRequest]);
+    sendRequestRessources({ path: `/permission/ressources` }, applyData);
+  }, [sendRequestRessources]);
+
+  useEffect(() => {
+    handleGetPermissions();
+  }, [handleGetPermissions]);
 
   useEffect(() => {
     handleGetRessources();
-    handleGetPermissions();
-  }, [handleGetPermissions, handleGetRessources]);
+  }, [handleGetRessources]);
 
   return (
     <Wrapper>
@@ -117,6 +129,7 @@ const PermissionsList: FC<{
           currentRole={currentRole}
           onSetCurrentRole={setCurrentRole}
         />
+
         <button
           onClick={handleSubmitPermissions}
           type="button"
@@ -125,7 +138,7 @@ const PermissionsList: FC<{
           Sauvegarder
         </button>
       </div>
-      {isLoading ? (
+      {isLoadingRessources || isLoadingPermissions ? (
         <span className="loading loading-spinner" />
       ) : (
         <div className="flex justify-between">
@@ -152,9 +165,9 @@ const PermissionsList: FC<{
             action="read"
             title="Lecture"
             ressources={ressources}
-            roundedLeft
             unfilteredPermissions={permissions}
             onChangePermission={handleChangePermission}
+            roundedLeft
           />
           <RessourcesByAction
             action="write"
@@ -174,9 +187,9 @@ const PermissionsList: FC<{
             action="delete"
             title="Suppression"
             ressources={ressources}
-            roundedRight
             unfilteredPermissions={permissions}
             onChangePermission={handleChangePermission}
+            roundedRight
           />
         </div>
       )}

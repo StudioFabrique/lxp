@@ -5,13 +5,15 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import DownloadIcon from "../../UI/svg/download-icon";
 import CSVDownloader from "../../UI/csv-downloader/csv-downloader";
 import { transformRolesCsv } from "../../../utils/csv/csv-data-transform";
+import Loader from "../../UI/loader";
 
 const RolesList: FC<{
   roles: IRoleItem[];
+  isLoading: boolean;
   setRoles: Dispatch<SetStateAction<IRoleItem[]>>;
   setRoleToEdit: Dispatch<SetStateAction<IRoleToEdit | null>>;
   setCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
-}> = ({ roles, setRoles, setRoleToEdit, setCurrentRole }) => {
+}> = ({ roles, isLoading, setRoles, setRoleToEdit, setCurrentRole }) => {
   return (
     <Wrapper>
       <div className="flex justify-between">
@@ -23,7 +25,9 @@ const RolesList: FC<{
           </span>
         </button>
       </div>
-      {roles.length > 0 ? (
+      {isLoading ? (
+        <Loader />
+      ) : roles.length > 0 ? (
         <table className="table grid">
           <thead className="">
             <tr className="grid grid-cols-10">
