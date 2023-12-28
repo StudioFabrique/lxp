@@ -1,22 +1,29 @@
 import { Request, Response } from "express";
 import postVideo from "../../models/activity/post-activity/post-video";
+import CustomRequest from "../../utils/interfaces/express/custom-request";
 
-export default async function httpPostVideo(req: Request, res: Response) {
+export default async function httpPostVideo(req: CustomRequest, res: Response) {
   try {
     console.log(req.body);
 
     const uploadedFile = req.file;
+    const userId = req.auth?.userId;
     const { lessonId } = req.params;
-    const body = JSON.parse(req.body);
-    const data = body.data;
-    console.log({ data });
+    const data = JSON.parse(req.body.data);
+    console.log(data);
 
     const url =
       uploadedFile !== null && uploadedFile !== undefined
-        ? process.env.STATIC_FILES_URL + uploadedFile.path
+        ? uploadedFile.filename
         : data.url;
 
-    const response = await postVideo(+lessonId, data.type, data.order, url);
+    const response = await postVideo(
+      +lessonId,
+      userId!,
+      data.type,
+      data.order,
+      url
+    );
 
     return res.status(201).json({
       success: true,

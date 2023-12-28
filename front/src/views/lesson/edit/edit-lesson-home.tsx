@@ -13,6 +13,7 @@ import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 import { sortArray } from "../../../utils/sortArray";
 import Modal from "../../../components/UI/modal/modal";
 import { useEffect, useState } from "react";
+import Video from "../../../components/edit-lesson/activities/video";
 
 export default function EditLessonHome() {
   const { lessonId } = useParams();
@@ -157,7 +158,7 @@ export default function EditLessonHome() {
                     isSubmitting={isLoading}
                   />
                 ) : null}
-                {item.type === "video" ? <p>Video</p> : null}
+                {item.type === "video" ? <Video activity={item} /> : null}
               </li>
             ))}
           </ul>

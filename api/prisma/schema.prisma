@@ -11,12 +11,16 @@ datasource db {
 }
 
 model Activity {
-  id          Int    @id @default(autoincrement())
-  type        String
-  order       Int
-  url         String
-  lesson      Lesson @relation(fields: [lessonId], references: [id])
-  lessonId    Int
+  id        Int      @id @default(autoincrement())
+  type      String
+  order     Int
+  url       String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id])
+  lessonId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  author    Admin    @relation(fields: [authorId], references: [id])
+  authorId  Int
 }
 
 model Formation {
@@ -123,11 +127,12 @@ model BonusSkill {
 }
 
 model Admin {
-  id       Int        @id @default(autoincrement())
-  idMdb    String
-  parcours Parcours[]
-  modules  Module[]
-  lessons  Lesson[]
+  id         Int        @id @default(autoincrement())
+  idMdb      String
+  parcours   Parcours[]
+  modules    Module[]
+  lessons    Lesson[]
+  activities Activity[]
 }
 
 model Teacher {
