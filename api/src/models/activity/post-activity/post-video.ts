@@ -1,15 +1,11 @@
 import { prisma } from "../../../utils/db";
 
-import fs from "fs";
-import path from "path";
-import { v4 as uuidv4 } from "uuid";
-
-export default async function postText(
+export default async function postVideo(
   lessonId: number,
   userId: string,
-  value: string,
   type: string,
-  order: number
+  order: number,
+  url: string
 ) {
   const existingLesson = await prisma.lesson.findFirst({
     where: { id: lessonId },
@@ -31,34 +27,11 @@ export default async function postText(
     throw error;
   }
 
-  const uniqueID: string = uuidv4();
-  const fileName: string = uniqueID + new Date().getTime() + ".mdx";
-
-  try {
-    const file = fs.writeFileSync(
-      path.join(
-        __dirname,
-        "..",
-        "..",
-        "..",
-        "..",
-        "uploads",
-        "activities",
-        fileName
-      ),
-      value
-    );
-  } catch (error: any) {
-    throw new Error(
-      "Le fichier n'a pas pu être enregistré, réessayez plus tard svp..."
-    );
-  }
-
   const createdActivity = await prisma.activity.create({
     data: {
-      url: fileName,
-      order,
       type,
+      order,
+      url,
       lesson: {
         connect: {
           id: lessonId,

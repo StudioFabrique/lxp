@@ -5,14 +5,21 @@ import QuillToolbar, { formats } from "./editor-toolbar";
 import { useCallback, useMemo, useRef, useState } from "react";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import useHttp from "../../hooks/use-http";
+import { Loader2 } from "lucide-react";
 
 interface EditorProps {
   content?: string;
+  isSubmitting: boolean;
   onSubmit: (value: any) => void;
   onCancel: () => void;
 }
 
-export const Editor = ({ content = "", onSubmit, onCancel }: EditorProps) => {
+export const Editor = ({
+  content = "",
+  isSubmitting,
+  onSubmit,
+  onCancel,
+}: EditorProps) => {
   const [value, setValue] = useState<string>(content);
   const quillRef = useRef<any>(null);
   const { sendRequest } = useHttp();
@@ -21,8 +28,10 @@ export const Editor = ({ content = "", onSubmit, onCancel }: EditorProps) => {
     onSubmit(value);
   };
 
-  console.log("from editor", value);
-
+  /**
+   * valide l'upload d'image vers le serveur, et ajoute l'url de l'image dans le
+   * document markdown en cours d'édition
+   */
   const imageHandler = useCallback(async () => {
     const input = document.createElement("input");
 
@@ -77,8 +86,6 @@ export const Editor = ({ content = "", onSubmit, onCancel }: EditorProps) => {
     };
   }, [imageHandler]);
 
-  console.log(value);
-
   return (
     <div className="my-8">
       <Wrapper>
@@ -97,10 +104,18 @@ export const Editor = ({ content = "", onSubmit, onCancel }: EditorProps) => {
         </div>
       </Wrapper>
       <div className="flex justify-between mt-4">
-        <button className="btn btn-outline btn-primary" onClick={onCancel}>
+        <button
+          className="btn btn-sm btn-outline btn-primary"
+          onClick={onCancel}
+        >
           Annuler
         </button>
-        <button className="btn btn-primary" onClick={handleSubmit}>
+        <button
+          className="btn btn-sm btn-primary flex items-center gap-x-2"
+          disabled={isSubmitting}
+          onClick={handleSubmit}
+        >
+          {isSubmitting ? <Loader2 className="animate-spin" /> : null}
           Valider
         </button>
       </div>

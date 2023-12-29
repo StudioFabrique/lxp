@@ -8,44 +8,41 @@ import markdownit from "markdown-it";
 import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 import Editor from "../../markdown-editor/mark-down-editor";
 import Markdown from "react-markdown";
-import useHttp from "../../../hooks/use-http";
 
 interface EditorProps {
   activity: Activity;
+  isSubmitting: boolean;
   onUpdate: (activity: any) => void;
 }
 
 const md = markdownit();
 
-export const BlogUpdate = ({ activity, onUpdate }: EditorProps) => {
+export const BlogUpdate = ({
+  activity,
+  isSubmitting,
+  onUpdate,
+}: EditorProps) => {
   const dispatch = useDispatch();
-  const { sendRequest } = useHttp();
   const [value, setValue] = useState<string>("");
   const blogEdition = useSelector(
     (state: any) => state.lesson.blogEdition
   ) as number;
 
+  /**
+   * trigger la mise à jour du document markdown en cours d'édition au niveau
+   * du composant parent
+   * @param newValue string
+   */
   const handleUpdate = async (newValue: string) => {
     onUpdate({
       ...activity,
       value: newValue,
     });
-    dispatch(lessonActions.setBlogEdition(null));
   };
 
-  const handleDeleteActivity = (id: number) => {
-    const applyData = (data: any) => {
-      console.log("from delete : ", data);
-    };
-    sendRequest(
-      {
-        path: `/activity/${id}`,
-        method: "delete",
-      },
-      applyData
-    );
-  };
-
+  /**
+   * récupère le contenu d'un fichier markdown depuis le serveur
+   */
   useEffect(() => {
     if (activity && activity !== undefined) {
       fetch(`http://localhost:5001/activities/${activity.url}`)
@@ -57,46 +54,33 @@ export const BlogUpdate = ({ activity, onUpdate }: EditorProps) => {
     }
   }, [activity, activity.url]);
 
-  const handleToggleEditionMode = (id: number) => {
-    dispatch(lessonActions.setBlogEdition(id));
-  };
-
+  /**
+   * annule l'affichage de l'éditeur de texte sans prendre et les
+   * mises à jour que le formateur aurait pu y apporter
+   */
   const handleCancelEdition = () => {
     dispatch(lessonActions.setBlogEdition(null));
   };
 
-  //console.log(value);
-
   return (
-    <div className="my-8">
-      {blogEdition === activity.id ? (
-        <>
-          <Editor
-            content={md.render(value)}
-            onSubmit={handleUpdate}
-            onCancel={handleCancelEdition}
-          />
-        </>
-      ) : (
-        <>
-          <Markdown className="prose">{value}</Markdown>
-          <div className="flex justify-end items-center gap-x-2 mt-4">
-            <button
-              className="btn btn-outline btn-warning btn-sm"
-              onClick={() => handleDeleteActivity(activity.id!)}
-            >
-              Supprimer
-            </button>
-            <button
-              className="btn btn-sm btn-primary"
-              onClick={() => handleToggleEditionMode(activity.id!)}
-            >
-              Editer
-            </button>
-          </div>
-        </>
-      )}
-    </div>
+    <>
+      <div className="my-8">
+        {blogEdition === activity.id ? (
+          <>
+            <Editor
+              content={md.render(value)}
+              isSubmitting={isSubmitting}
+              onSubmit={handleUpdate}
+              onCancel={handleCancelEdition}
+            />
+          </>
+        ) : (
+          <>
+            <Markdown className="prose">{value}</Markdown>
+          </>
+        )}
+      </div>
+    </>
   );
 };
 

@@ -6,12 +6,14 @@ interface LessonsType {
   lesson: Lesson | null;
   currentType: string;
   blogEdition: number | null;
+  activityToDelete: Activity | null;
 }
 
 const initialLessonsState: LessonsType = {
   lesson: null,
   currentType: "",
   blogEdition: null,
+  activityToDelete: null,
 };
 
 const lessonSlice = createSlice({
@@ -28,6 +30,9 @@ const lessonSlice = createSlice({
           activities: [...state.lesson.activities, action.payload],
         };
       }
+    },
+    setActivityToDelete(state, action) {
+      state.activityToDelete = action.payload;
     },
     setCurrentType(state, action) {
       state.currentType = action.payload;
@@ -46,7 +51,27 @@ const lessonSlice = createSlice({
           activities: [...updatedActivities, updatedActivity],
         };
         state.lesson = updatedLesson;
-        console.log("updated lesson : ", state.lesson);
+      }
+    },
+    removeActivity(state, action) {
+      const activities = state.lesson?.activities?.filter(
+        (item) => item.id !== action.payload
+      );
+      if (state.lesson) {
+        state.lesson = { ...state.lesson, activities };
+      }
+      const reorderedActivities = state.lesson?.activities;
+
+      if (state.lesson && reorderedActivities !== undefined) {
+        state.lesson = {
+          ...state.lesson,
+          activities: reorderedActivities.map((item, index) => {
+            return {
+              ...item,
+              order: index + 1,
+            };
+          }),
+        };
       }
     },
     resetCurrentType(state) {

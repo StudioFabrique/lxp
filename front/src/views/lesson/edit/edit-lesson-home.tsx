@@ -11,11 +11,16 @@ import { BlogUpdate } from "../../../components/edit-lesson/activities/blog-upda
 import AddBlock from "../../../components/edit-lesson/add-block";
 import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 import { sortArray } from "../../../utils/sortArray";
+import Modal from "../../../components/UI/modal/modal";
+import { useEffect, useState } from "react";
+import Video from "../../../components/edit-lesson/activities/video";
+import ActionsButtonsGroup from "../../../components/edit-lesson/actions-buttons-group";
 
 export default function EditLessonHome() {
   const { lessonId } = useParams();
-  const { sendRequest } = useHttp();
+  const { sendRequest, error } = useHttp();
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
 
   const currentType = useSelector(
     (state: any) => state.lesson.currentType
@@ -23,7 +28,18 @@ export default function EditLessonHome() {
   const activities = useSelector(
     (state: any) => state.lesson.lesson.activities
   ) as Activity[];
+  const activityToDelete = useSelector(
+    (state: any) => state.lesson.activityToDelete
+  ) as Activity;
+  const blogEdition = useSelector(
+    (state: any) => state.lesson.blogEdition
+  ) as number;
 
+  /**
+   * soumet une nouvelle activité vers la base de données, sa propriété "order" est déterminée en fonction de son placement dans la liste
+   * une nouvelle activité est tjrs placée en fin de liste par défaut, donc son "order" est égal à la longueur du tableau
+   * @param value any (activity n'ayant pas encore toutes ses propriétés d'initialisées)
+   */
   const handleSubmit = (value: any) => {
     const applyData = (data: any) => {
       toast.success("Document enregistré !");
@@ -31,14 +47,14 @@ export default function EditLessonHome() {
       dispatch(lessonActions.resetCurrentType());
     };
     const getData = async () => {
-      console.log(await fromHtmlToMarkdown(value));
+      console.log(activities.length);
       sendRequest(
         {
           path: `/activity/${lessonId}`,
           method: "post",
           body: {
             type: currentType,
-            order: activities.length > 0 ? activities.length - 1 : 0,
+            order: activities.length > 0 ? activities.length + 1 : 1,
             value: await fromHtmlToMarkdown(value),
           },
         },
@@ -48,6 +64,9 @@ export default function EditLessonHome() {
     getData();
   };
 
+  /**
+   * soumet les modifications apportées à une activité vers la bdd
+   */
   const handleUpdate = (activity: any) => {
     const applyData = (data: {
       success: boolean;
@@ -58,8 +77,11 @@ export default function EditLessonHome() {
         toast.success(data.message);
         dispatch(lessonActions.updateActivity(data.response));
       }
+      dispatch(lessonActions.setBlogEdition(null));
+      setIsLoading(false);
     };
     const getData = async () => {
+      setIsLoading(true);
       sendRequest(
         {
           path: `/activity/${activity.id!}`,
@@ -77,23 +99,75 @@ export default function EditLessonHome() {
     getData();
   };
 
+  /**
+   * définit le type d'une activité pour afficher le composant approprié dans la vue pour y ajouter du contenu
+   * @param activityType string
+   */
   const handleSelectActivityType = (activityType: string) => {
     dispatch(lessonActions.setCurrentType(activityType));
   };
+
+  /**
+   * supprime une activité de la bdd de manière définitive ainssi que toutes les ressources qui
+   * lui sont associées après confirmation via une fenêtre modal
+   */
+  const handleDeleteActivity = () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const applyData = (_data: any) => {
+      dispatch(lessonActions.removeActivity(activityToDelete.id));
+      dispatch(lessonActions.setActivityToDelete(null));
+      setIsLoading(false);
+    };
+    setIsLoading(true);
+    sendRequest(
+      {
+        path: `/activity/${activityToDelete.id}`,
+        method: "delete",
+      },
+      applyData
+    );
+  };
+
+  /**
+   * annule la suppression d'une activité et ferme la modal
+   * de confirmation
+   */
+  const handleCancelDeletion = () => {
+    dispatch(lessonActions.setActivityToDelete(null));
+  };
+
+  // gère les erreurs HTTP
+  useEffect(() => {
+    if (error.length > 0) {
+      toast.error(error);
+      dispatch(lessonActions.setActivityToDelete(null));
+      setIsLoading(false);
+    }
+  }, [error, dispatch]);
+
+  console.log({ activities });
 
   return (
     <>
       {activities && activities.length > 0 ? (
         <section className="mt-8 flex flex-col items-center">
-          <ul>
-            {sortArray(activities, "order").map((item, index) => (
-              <li key={item.id}>
+          <ul className="w-full">
+            {sortArray(activities, "order").map((item) => (
+              <li className="mb-8" key={item.id}>
                 <h2 className="font-bold text-md text-primary">
-                  Activité n° {index + 1}
+                  Activité n° {item.order}
                 </h2>
-                {item.type === "text" ? (
-                  <BlogUpdate activity={item} onUpdate={handleUpdate} />
-                ) : null}
+                <div className="flex justify-center px-4 border border-primary/50 rounded-lg shadow-lg">
+                  {item.type === "text" ? (
+                    <BlogUpdate
+                      activity={item}
+                      onUpdate={handleUpdate}
+                      isSubmitting={isLoading}
+                    />
+                  ) : null}
+                  {item.type === "video" ? <Video activity={item} /> : null}
+                </div>
+                {!blogEdition ? <ActionsButtonsGroup activity={item} /> : null}
               </li>
             ))}
           </ul>
@@ -108,8 +182,19 @@ export default function EditLessonHome() {
           Ajoutez du contenu à la leçon en sélectionnant un type d'activité
         </p>
       ) : (
-        <CurrentBlock onSubmit={handleSubmit} />
+        <CurrentBlock isSubmitting={isLoading} onSubmit={handleSubmit} />
       )}
+      {activityToDelete ? (
+        <Modal
+          onLeftClick={handleCancelDeletion}
+          onRightClick={handleDeleteActivity}
+          title={`Supprimer l'activité n° ${activityToDelete.order + 1}`}
+          isSubmitting={isLoading}
+          message="Attention l'activité et les ressources qui lui sont associées seront définitivement supprimées."
+          leftLabel="Annuler"
+          rightLabel="Confirmer"
+        />
+      ) : null}
     </>
   );
 }
