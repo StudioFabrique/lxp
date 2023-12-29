@@ -8,7 +8,6 @@ import markdownit from "markdown-it";
 import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 import Editor from "../../markdown-editor/mark-down-editor";
 import Markdown from "react-markdown";
-import ActionsButtonsGroup from "../actions-buttons-group";
 
 interface EditorProps {
   activity: Activity;
@@ -77,10 +76,7 @@ export const BlogUpdate = ({
           </>
         ) : (
           <>
-            <div className="px-4 py-2 border border-primary/50 rounded-lg shadow-lg">
-              <Markdown className="prose">{value}</Markdown>
-            </div>
-            <ActionsButtonsGroup activity={activity} />
+            <Markdown className="prose">{value}</Markdown>
           </>
         )}
       </div>

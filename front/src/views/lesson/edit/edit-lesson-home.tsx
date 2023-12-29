@@ -14,6 +14,7 @@ import { sortArray } from "../../../utils/sortArray";
 import Modal from "../../../components/UI/modal/modal";
 import { useEffect, useState } from "react";
 import Video from "../../../components/edit-lesson/activities/video";
+import ActionsButtonsGroup from "../../../components/edit-lesson/actions-buttons-group";
 
 export default function EditLessonHome() {
   const { lessonId } = useParams();
@@ -30,6 +31,9 @@ export default function EditLessonHome() {
   const activityToDelete = useSelector(
     (state: any) => state.lesson.activityToDelete
   ) as Activity;
+  const blogEdition = useSelector(
+    (state: any) => state.lesson.blogEdition
+  ) as number;
 
   /**
    * soumet une nouvelle activité vers la base de données, sa propriété "order" est déterminée en fonction de son placement dans la liste
@@ -141,24 +145,29 @@ export default function EditLessonHome() {
     }
   }, [error, dispatch]);
 
+  console.log({ activities });
+
   return (
     <>
       {activities && activities.length > 0 ? (
         <section className="mt-8 flex flex-col items-center">
           <ul className="w-full">
             {sortArray(activities, "order").map((item) => (
-              <li key={item.id}>
+              <li className="mb-8" key={item.id}>
                 <h2 className="font-bold text-md text-primary">
                   Activité n° {item.order}
                 </h2>
-                {item.type === "text" ? (
-                  <BlogUpdate
-                    activity={item}
-                    onUpdate={handleUpdate}
-                    isSubmitting={isLoading}
-                  />
-                ) : null}
-                {item.type === "video" ? <Video activity={item} /> : null}
+                <div className="flex justify-center px-4 border border-primary/50 rounded-lg shadow-lg">
+                  {item.type === "text" ? (
+                    <BlogUpdate
+                      activity={item}
+                      onUpdate={handleUpdate}
+                      isSubmitting={isLoading}
+                    />
+                  ) : null}
+                  {item.type === "video" ? <Video activity={item} /> : null}
+                </div>
+                {!blogEdition ? <ActionsButtonsGroup activity={item} /> : null}
               </li>
             ))}
           </ul>

@@ -9,7 +9,6 @@ import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 import toast from "react-hot-toast";
 import VideoEditor from "./video-editor";
 import { ACTIVITIES_VIDEOS } from "../../../config/urls";
-import ActionsButtonsGroup from "../actions-buttons-group";
 
 interface VideoProps {
   activity?: Activity;
@@ -61,10 +60,14 @@ export default function Video({ activity }: VideoProps) {
 
   const handleSubmit = () => {
     const fd = new FormData();
-    fd.append(
-      "data",
-      JSON.stringify({ type: "video", order, url: file ? "" : video })
-    );
+    if (activity !== undefined) {
+      fd.append("data", JSON.stringify(activity));
+    } else {
+      fd.append(
+        "data",
+        JSON.stringify({ type: "video", order, url: file ? "" : video })
+      );
+    }
     if (file) {
       fd.append("video", file);
     }
@@ -83,11 +86,15 @@ export default function Video({ activity }: VideoProps) {
     sendRequest(
       {
         path: `/activity/video/${lessonId}`,
-        method: "post",
+        method: activity !== undefined ? "put" : "post",
         body: fd,
       },
       applyData
     );
+  };
+
+  const handleCancel = () => {
+    dispatch(lessonActions.setBlogEdition(null));
   };
 
   useEffect(() => {
@@ -95,8 +102,6 @@ export default function Video({ activity }: VideoProps) {
       if (activity.url.startsWith("http")) {
         setVideo(activity.url);
       } else {
-        // console.log(ACTIVITIES_VIDEOS + activity.url);
-
         setVideo(ACTIVITIES_VIDEOS + activity.url);
       }
     }
@@ -130,16 +135,16 @@ export default function Video({ activity }: VideoProps) {
 
       <section>
         {video ? (
-          <article className="px-4 py-2 border border-primary/50 rounded-lg shadow-lg">
+          <article className="py-2">
             <VideoPlayer source={video} />
             {(activity !== undefined && blogEdition === activity.id) ||
             activity === undefined ? (
-              <div className="flex justify-end items-center gap-x-2 mt-4">
+              <div className="flex justify-between items-center gap-x-2 mt-4">
                 <button
-                  className="btn btn-warning btn-sm btn-outline"
-                  onClick={handleReset}
+                  className="btn btn-primary btn-sm btn-outline"
+                  onClick={handleCancel}
                 >
-                  Réinitialiser
+                  Annuler
                 </button>
                 <button
                   className="btn btn-primary btn-sm"
@@ -148,9 +153,6 @@ export default function Video({ activity }: VideoProps) {
                   Sauvegarder
                 </button>
               </div>
-            ) : null}
-            {activity !== undefined && !blogEdition ? (
-              <ActionsButtonsGroup activityId={activity.id!} />
             ) : null}
           </article>
         ) : null}
