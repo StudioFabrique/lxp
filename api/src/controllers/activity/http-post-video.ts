@@ -4,13 +4,10 @@ import CustomRequest from "../../utils/interfaces/express/custom-request";
 
 export default async function httpPostVideo(req: CustomRequest, res: Response) {
   try {
-    console.log(req.body);
-
     const uploadedFile = req.file;
     const userId = req.auth?.userId;
     const { lessonId } = req.params;
     const data = JSON.parse(req.body.data);
-    console.log(data);
 
     const url =
       uploadedFile !== null && uploadedFile !== undefined
