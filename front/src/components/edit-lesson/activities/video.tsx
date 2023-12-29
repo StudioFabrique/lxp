@@ -61,7 +61,7 @@ export default function Video({ activity }: VideoProps) {
   const handleSubmit = () => {
     const fd = new FormData();
     if (activity !== undefined) {
-      fd.append("data", JSON.stringify(activity));
+      fd.append("data", JSON.stringify({ ...activity, url }));
     } else {
       fd.append(
         "data",
