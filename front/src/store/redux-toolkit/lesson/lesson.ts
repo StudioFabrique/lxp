@@ -51,7 +51,6 @@ const lessonSlice = createSlice({
           activities: [...updatedActivities, updatedActivity],
         };
         state.lesson = updatedLesson;
-        console.log("updated lesson : ", state.lesson);
       }
     },
     removeActivity(state, action) {
@@ -60,6 +59,19 @@ const lessonSlice = createSlice({
       );
       if (state.lesson) {
         state.lesson = { ...state.lesson, activities };
+      }
+      const reorderedActivities = state.lesson?.activities;
+
+      if (state.lesson && reorderedActivities !== undefined) {
+        state.lesson = {
+          ...state.lesson,
+          activities: reorderedActivities.map((item, index) => {
+            return {
+              ...item,
+              order: index + 1,
+            };
+          }),
+        };
       }
     },
     resetCurrentType(state) {

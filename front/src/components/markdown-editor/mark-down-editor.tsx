@@ -104,11 +104,14 @@ export const Editor = ({
         </div>
       </Wrapper>
       <div className="flex justify-between mt-4">
-        <button className="btn btn-outline btn-primary" onClick={onCancel}>
+        <button
+          className="btn btn-sm btn-outline btn-primary"
+          onClick={onCancel}
+        >
           Annuler
         </button>
         <button
-          className="btn btn-primary flex items-center gap-x-2"
+          className="btn btn-sm btn-primary flex items-center gap-x-2"
           disabled={isSubmitting}
           onClick={handleSubmit}
         >
