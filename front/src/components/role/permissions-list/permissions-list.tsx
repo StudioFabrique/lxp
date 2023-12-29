@@ -20,13 +20,8 @@ const PermissionsList: FC<{
   currentRole: IRoleItem;
   setCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
 }> = ({ roles, currentRole, setCurrentRole }) => {
-  const {
-    defineRulesFor,
-    roles: roleFromContext,
-    fetchRoles,
-    user,
-  } = useContext(Context);
-  const { sendRequest, isLoading } = useHttp(true);
+  const { defineRulesFor, fetchRoles, user } = useContext(Context);
+  const { sendRequest, isLoading: isLoadingPermissions } = useHttp(true);
 
   const [permissions, setPermissions] = useState([]);
   const [ressources, setRessources] = useState<{
@@ -68,7 +63,6 @@ const PermissionsList: FC<{
     const applyData = (data: any) => {
       fetchRoles(user!.roles[0]);
       defineRulesFor();
-      console.log(roleFromContext);
       toast.success(data.message);
     };
 
@@ -88,25 +82,19 @@ const PermissionsList: FC<{
    */
   const handleGetPermissions = useCallback(() => {
     const applyData = (data: any) => {
-      setPermissions(data.data);
+      setPermissions(data.data.permissions);
+      setRessources(data.data.ressources);
     };
 
-    if (roles)
-      sendRequest({ path: `/permission/${currentRole?.role}` }, applyData);
-  }, [currentRole, sendRequest, roles]);
-
-  const handleGetRessources = useCallback(() => {
-    const applyData = (data: any) => {
-      setRessources(data.data);
-    };
-
-    sendRequest({ path: `/permission/ressources` }, applyData);
-  }, [sendRequest]);
+    sendRequest(
+      { path: `/permission/ressources/${currentRole?.role}` },
+      applyData
+    );
+  }, [currentRole, sendRequest]);
 
   useEffect(() => {
-    handleGetRessources();
     handleGetPermissions();
-  }, [handleGetPermissions, handleGetRessources]);
+  }, [handleGetPermissions]);
 
   return (
     <Wrapper>
@@ -117,6 +105,7 @@ const PermissionsList: FC<{
           currentRole={currentRole}
           onSetCurrentRole={setCurrentRole}
         />
+
         <button
           onClick={handleSubmitPermissions}
           type="button"
@@ -125,7 +114,7 @@ const PermissionsList: FC<{
           Sauvegarder
         </button>
       </div>
-      {isLoading ? (
+      {isLoadingPermissions || isLoadingPermissions ? (
         <span className="loading loading-spinner" />
       ) : (
         <div className="flex justify-between">
@@ -152,9 +141,9 @@ const PermissionsList: FC<{
             action="read"
             title="Lecture"
             ressources={ressources}
-            roundedLeft
             unfilteredPermissions={permissions}
             onChangePermission={handleChangePermission}
+            roundedLeft
           />
           <RessourcesByAction
             action="write"
@@ -174,9 +163,9 @@ const PermissionsList: FC<{
             action="delete"
             title="Suppression"
             ressources={ressources}
-            roundedRight
             unfilteredPermissions={permissions}
             onChangePermission={handleChangePermission}
+            roundedRight
           />
         </div>
       )}

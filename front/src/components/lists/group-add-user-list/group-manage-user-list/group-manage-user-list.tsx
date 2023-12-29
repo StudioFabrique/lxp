@@ -14,7 +14,6 @@ const GroupManageUserList: FC<{
 }> = ({ usersToAdd, onAddUsers }) => {
   const {
     page,
-    setPage,
     totalPages,
     dataList,
     handlePageNumber,
@@ -91,14 +90,9 @@ const GroupManageUserList: FC<{
 
   useEffect(() => {
     setUsersToShowInList(
-      dataList.filter(
-        (data) => {
-          return !usersToAdd.map((user) => user._id).includes(data._id);
-        }
-        // !dataList
-        //   .map((user) => user._id)
-        //   .includes(usersToAdd.map((user) => user._id))
-      )
+      dataList.filter((data) => {
+        return !usersToAdd.map((user) => user._id).includes(data._id);
+      })
     );
   }, [dataList, usersToAdd]);
 
@@ -109,17 +103,6 @@ const GroupManageUserList: FC<{
       handleRemoveSelectedAllUser();
     }
   }, [allChecked, handleAddSelectedAllUser, handleRemoveSelectedAllUser]);
-
-  /**
-   * Si le nombre d'utilisateurs pas encore ajoutés (usersToShowsInList) est vide,
-   * alors incrémente le nombre de page jusqu'au maximum et revérifie
-   * encore si des utilisateurs existent.
-   */
-  useEffect(() => {
-    if (usersToShowsInList <= 0 && page < totalPages!) {
-      setPage((page) => page + 1);
-    }
-  }, [usersToShowsInList, page, setPage, totalPages]);
 
   const renderUserItems = (users: User[]) => {
     return users.map((user: User) => (
@@ -140,57 +123,59 @@ const GroupManageUserList: FC<{
       id="add-user-to-group"
       onCloseDrawer={() => setAllChecked(false)}
     >
-      {usersToShowsInList.length > 0 ? (
-        <div className="flex flex-col items-center gap-y-10 justify-between m-10">
-          <Search
-            onResetInput={handleResetSearchUser}
-            placeholder="Rechercher"
-            onSearch={handleSearchUser}
-            options={[
-              { index: 0, option: "Prénom", value: "firstname" },
-              { index: 1, option: "Nom", value: "lastname" },
-              // { index: 2, option: "Formation", value: "group" },
+      <div className="flex flex-col items-center gap-y-10 justify-between m-10 h-[74vh]">
+        <Search
+          onResetInput={handleResetSearchUser}
+          placeholder="Rechercher"
+          onSearch={handleSearchUser}
+          options={[
+            { index: 0, option: "Prénom", value: "firstname" },
+            { index: 1, option: "Nom", value: "lastname" },
+            // { index: 2, option: "Formation", value: "group" },
+          ]}
+        />
+        <div className="flex flex-col justify-between gap-y-4 h-full">
+          {/* TOP */}
+          <UserToAddListHeader
+            setSelectAllUsers={setAllChecked}
+            order={stype}
+            sortData={sortData}
+            filters={[
+              { filterValue: "firstname", placeholder: "Prénom" },
+              { filterValue: "lastname", placeholder: "Nom" },
+              // { filterValue: "group", placeholder: "Formation" },
             ]}
+            value="test"
           />
-          <div className="w-full flex flex-col gap-y-4">
-            <UserToAddListHeader
-              setSelectAllUsers={setAllChecked}
-              order={stype}
-              sortData={sortData}
-              filters={[
-                { filterValue: "firstname", placeholder: "Prénom" },
-                { filterValue: "lastname", placeholder: "Nom" },
-                // { filterValue: "group", placeholder: "Formation" },
-              ]}
-              value="test"
-            />
-            <div className="flex flex-col gap-y-5 h-full overflow-y-auto w-full">
+          {/* MIDDLE */}
+          {usersToShowsInList.length > 0 ? (
+            <div className="flex flex-col h-full my-5 gap-y-5 overflow-y-auto">
               {userSearchResult.length > 0
                 ? renderUserItems(userSearchResult)
                 : renderUserItems(usersToShowsInList)}
             </div>
-
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              perPage={perPage}
-              setPage={handlePageNumber}
-              setPerPages={setPerPage}
-            />
-          </div>
-          <div className="w-full flex justify-end">
-            <AddUsersButton
-              onSetUsersToAdd={handleSetUsersToAdd}
-              setUsersSettedState={setUsersSettedState}
-              isUserSettedUp={isUsersSettedUp}
-            />
-          </div>
+          ) : (
+            <p className="text-center">
+              Aucun utilisateurs éligibles à être ajouté
+            </p>
+          )}
+          {/* BOTTOM */}
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            perPage={perPage}
+            setPage={handlePageNumber}
+            setPerPages={setPerPage}
+          />
         </div>
-      ) : (
-        <p className="text-center">
-          Aucun utilisateurs éligibles à être ajouté
-        </p>
-      )}
+        <div className="flex">
+          <AddUsersButton
+            onSetUsersToAdd={handleSetUsersToAdd}
+            setUsersSettedState={setUsersSettedState}
+            isUserSettedUp={isUsersSettedUp}
+          />
+        </div>
+      </div>
     </RightSideDrawer>
   );
 };

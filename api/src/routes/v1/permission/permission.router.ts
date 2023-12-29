@@ -21,8 +21,9 @@ const permissionRouter = Router();
  * (renvoi un tableau combinant le nom de tous les rôles ainsi que toutes les ressources defs)
  **/
 permissionRouter.get(
-  "/ressources",
+  "/ressources/:role",
   checkPermissions("role"),
+  getPermissionsValidator,
   httpGetRessources
 );
 
