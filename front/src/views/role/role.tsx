@@ -42,15 +42,14 @@ const Role = () => {
   const [currentRole, setCurrentRole] = useState<IRoleItem>(roles[0]);
 
   useEffect(() => {
-    sendRequest({ path: "/permission" }, (data) => setRoles(data.data));
-  }, [sendRequest]);
-
-  useEffect(() => {
-    if (roles.length > 0 && !isRolesInitialized) {
+    if (roles.length > 0) {
       setCurrentRole(roles[0]);
       setIsRolesInitialized(true);
     }
-  }, [roles, isRolesInitialized]);
+    if (!isRolesInitialized) {
+      sendRequest({ path: "/permission" }, (data) => setRoles(data.data));
+    }
+  }, [roles, isRolesInitialized, sendRequest]);
 
   return (
     <>
@@ -71,35 +70,31 @@ const Role = () => {
           Créer et gérer des rôles, les droits et les permissions des
           utilisateurs
         </p>
-        {isLoading ? (
-          <p>Chargement des rôles...</p>
-        ) : (
-          <>
-            <div className="grid grid-cols-3 gap-5">
-              <RoleForm
-                roleToEdit={roleToEdit}
-                setRoles={setRoles}
+
+        <>
+          <div className="grid grid-cols-3 gap-5">
+            <RoleForm
+              roleToEdit={roleToEdit}
+              setRoles={setRoles}
+              setRoleToEdit={setRoleToEdit}
+              setCurrentRole={setCurrentRole}
+            />
+            <div className="col-span-2">
+              <RolesList
                 setRoleToEdit={setRoleToEdit}
-                setCurrentRole={setCurrentRole}
-              />
-              <div className="col-span-2">
-                <RolesList
-                  setRoleToEdit={setRoleToEdit}
-                  roles={roles}
-                  setRoles={setRoles}
-                  setCurrentRole={setCurrentRole}
-                />
-              </div>
-            </div>
-            {roles.length > 0 && currentRole && (
-              <PermissionsList
                 roles={roles}
-                currentRole={currentRole}
+                isLoading={isLoading}
+                setRoles={setRoles}
                 setCurrentRole={setCurrentRole}
               />
-            )}
-          </>
-        )}
+            </div>
+          </div>
+          <PermissionsList
+            roles={roles}
+            currentRole={currentRole}
+            setCurrentRole={setCurrentRole}
+          />
+        </>
       </div>
     </>
   );

@@ -2,10 +2,19 @@ import { Request, Response } from "express";
 import { serverIssue } from "../../utils/constantes";
 import Role from "../../utils/interfaces/db/role";
 import { ressourcesRbac } from "../../config/ressources-rbac";
+import Permission from "../../utils/interfaces/db/permission";
 
 export default async function httpGetRessources(req: Request, res: Response) {
   try {
-    console.log("test log");
+    const role: string = req.params.role;
+
+    const permissions = await Permission.find({ role });
+
+    if (!permissions) {
+      return res
+        .status(404)
+        .json({ message: "aucune permissions n'a été trouvé" });
+    }
 
     const roles = await Role.find();
 
@@ -14,17 +23,15 @@ export default async function httpGetRessources(req: Request, res: Response) {
       roles: roles.map((role) => role.role),
     };
 
-    console.log("ressources :");
-
-    console.log(ressources);
-
     if (!ressources || ressources.ressources.length <= 0) {
       return res
         .status(404)
         .json({ message: "aucune ressources n'a été trouvé" });
     }
 
-    return res.status(200).json({ data: ressources });
+    console.log(permissions);
+
+    return res.status(200).json({ data: { permissions, ressources } });
   } catch (error) {
     console.log(error);
 
