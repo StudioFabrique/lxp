@@ -32,7 +32,7 @@ export default function Video({ activity }: VideoProps) {
   console.log(video);
 
   const handleOnChangeOrigin = (event: ChangeEvent<HTMLSelectElement>) => {
-    handleReset();
+    //handleReset();
     setOrigin(event.currentTarget.value);
   };
 
@@ -94,6 +94,13 @@ export default function Video({ activity }: VideoProps) {
   };
 
   const handleCancel = () => {
+    if (activity !== undefined) {
+      if (activity.url.startsWith("http")) {
+        setVideo(activity.url);
+      } else {
+        setVideo(ACTIVITIES_VIDEOS + activity.url);
+      }
+    }
     dispatch(lessonActions.setBlogEdition(null));
   };
 
