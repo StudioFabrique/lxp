@@ -110,6 +110,7 @@ const GroupManageUserList: FC<{
         key={user._id}
         allUserSelected={allChecked}
         user={user}
+        usersToAdd={usersToAdd}
         onAddSelectedUser={handleAddSelectedUser}
         onDeleteSelectedUser={handleDeleteSelectedUser}
         onAddUserInstantly={handleAddUserInstantly}
@@ -148,11 +149,11 @@ const GroupManageUserList: FC<{
             value="test"
           />
           {/* MIDDLE */}
-          {usersToShowsInList.length > 0 ? (
+          {dataList.length > 0 ? (
             <div className="flex flex-col h-full my-5 gap-y-5 overflow-y-auto">
               {userSearchResult.length > 0
                 ? renderUserItems(userSearchResult)
-                : renderUserItems(usersToShowsInList)}
+                : renderUserItems(dataList)}
             </div>
           ) : (
             <p className="text-center">
