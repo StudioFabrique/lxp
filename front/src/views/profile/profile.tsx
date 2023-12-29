@@ -98,7 +98,7 @@ const Profile = () => {
         <div className="flex gap-5">
           <button
             type="button"
-            className="btn"
+            className={`btn ${currentTab === "Info" && "btn-secondary"}`}
             value="Info"
             onClick={() => handleChangeTab("Info")}
           >
@@ -106,7 +106,7 @@ const Profile = () => {
           </button>
           <button
             type="button"
-            className="btn"
+            className={`btn ${currentTab === "Calendar" && "btn-secondary"}`}
             value="Calendar"
             onClick={() => handleChangeTab("Calendar")}
           >
@@ -114,7 +114,7 @@ const Profile = () => {
           </button>
           <button
             type="button"
-            className="btn"
+            className={`btn ${currentTab === "Evals" && "btn-secondary"}`}
             value="Evals"
             onClick={() => handleChangeTab("Evals")}
           >
@@ -122,7 +122,7 @@ const Profile = () => {
           </button>
           <button
             type="button"
-            className="btn"
+            className={`btn ${currentTab === "Awards" && "btn-secondary"}`}
             value="Awards"
             onClick={() => handleChangeTab("Awards")}
           >
@@ -130,7 +130,7 @@ const Profile = () => {
           </button>
           <button
             type="button"
-            className="btn"
+            className={`btn ${currentTab === "Account" && "btn-secondary"}`}
             value="Account"
             onClick={() => handleChangeTab("Account")}
           >
