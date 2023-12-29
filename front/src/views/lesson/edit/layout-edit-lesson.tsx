@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import Loader from "../../../components/UI/loader";
@@ -45,6 +46,7 @@ export default function LayoutEditLesson() {
     }
   }, [error]);
 
+  // supprimer les éléments du state global lorsque le composant est "démonté"
   useEffect(() => {
     return () => {
       dispatch(lessonActions.resetCurrentType());
@@ -52,6 +54,10 @@ export default function LayoutEditLesson() {
     };
   }, [dispatch]);
 
+  /**
+   * met à jour le type de la nouvelle activité dans le state global
+   * @param activityType string
+   */
   const handleClickActivityType = (activityType: string) => {
     dispatch(lessonActions.setCurrentType(activityType));
   };
@@ -85,10 +91,10 @@ export default function LayoutEditLesson() {
                   <HeaderButton
                     lessonId={+lessonId!}
                     showPreview={activities.length > 0}
-                    onPublish={() => {}}
+                    //onPublish={() => {}}
                   />
                 </div>
-                <h2 className="text-xl font-bold text-primary">
+                <h2 className="text-xl font-bold text-primary mb-2">
                   Ajouter un bloc
                 </h2>
                 <AddBlock onActivityType={handleClickActivityType} />
