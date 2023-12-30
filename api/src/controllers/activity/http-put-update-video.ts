@@ -6,6 +6,7 @@ export default async function httpPutUpdateVideo(req: Request, res: Response) {
   try {
     const uploadedFile = req.file;
     const data = JSON.parse(req.body.data);
+    console.log("data", data);
 
     const url =
       uploadedFile !== null && uploadedFile !== undefined

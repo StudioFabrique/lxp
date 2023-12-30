@@ -22,6 +22,10 @@ export default async function updateVideo(activityId: number, url: string) {
     },
   });
 
+  if (existingActivity.url === url) {
+    return existingActivity;
+  }
+
   if (!existingActivity.url.startsWith("http")) {
     await fs.promises.unlink(
       path.join(

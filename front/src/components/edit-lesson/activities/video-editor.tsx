@@ -1,16 +1,50 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
+import VideoPlayer from "../../UI/video-player";
 
 interface VideoEditorProps {
-  origin: string;
-  file: File | null;
-  url: string;
-  onChangeOrigin: (event: ChangeEvent<HTMLSelectElement>) => void;
-  onSelectFile: (event: ChangeEvent<HTMLInputElement>) => void;
-  onChangeUrl: (event: ChangeEvent<HTMLInputElement>) => void;
-  onSelectExternalSource: () => void;
+  propVideo?: string;
+  onCancel: () => void;
+  onSubmit: (value: { videoValue: string; fileValue: File | null }) => void;
 }
 
-export default function VideoEditor(props: VideoEditorProps) {
+export default function VideoEditor({
+  propVideo = "",
+  onCancel,
+  onSubmit,
+}: VideoEditorProps) {
+  const [origin, setOrigin] = useState("fileSystem");
+  const [video, setVideo] = useState<string>(propVideo);
+  const [file, setFile] = useState<File | null>(null);
+  const [url, setUrl] = useState<string>("");
+
+  const handleOnChangeOrigin = (event: ChangeEvent<HTMLSelectElement>) => {
+    //handleReset();
+    setOrigin(event.currentTarget.value);
+  };
+
+  const handleSelectFile = (event: ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files && event.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setVideo(URL.createObjectURL(selectedFile));
+    }
+  };
+
+  const handleOnChangeUrl = (event: ChangeEvent<HTMLInputElement>) => {
+    setUrl(event.currentTarget.value);
+  };
+
+  const handleSelectExternalSource = () => {
+    setVideo(url);
+  };
+
+  const handleSubmit = () => {
+    onSubmit({
+      videoValue: file ? "" : video,
+      fileValue: file,
+    });
+  };
+
   return (
     <>
       <section>
@@ -19,8 +53,8 @@ export default function VideoEditor(props: VideoEditorProps) {
           <select
             name="origin"
             id="origin"
-            value={props.origin}
-            onChange={props.onChangeOrigin}
+            value={origin}
+            onChange={handleOnChangeOrigin}
           >
             <option value="fileSystem">Votre ordinateur</option>
             <option value="web">Un lien externe</option>
@@ -28,12 +62,12 @@ export default function VideoEditor(props: VideoEditorProps) {
         </label>
       </section>
       <section>
-        {props.origin === "fileSystem" ? (
+        {origin === "fileSystem" ? (
           <input
             type="file"
             name="fileUpload"
             id="fileUpload"
-            onChange={props.onSelectFile}
+            onChange={handleSelectFile}
           />
         ) : (
           <div className="flex items-center gap-x-2">
@@ -42,17 +76,35 @@ export default function VideoEditor(props: VideoEditorProps) {
               name="httpsLink"
               id="httpsLink"
               placeholder="Lien https"
-              value={props.url}
-              onChange={props.onChangeUrl}
+              value={url}
+              onChange={handleOnChangeUrl}
             />
             <button
               className="btn btn-sm btn-primary btn-outline"
-              onClick={props.onSelectExternalSource}
+              onClick={handleSelectExternalSource}
             >
               Aperçu
             </button>
           </div>
         )}
+      </section>
+      <section>
+        {video ? (
+          <article className="py-2">
+            <VideoPlayer source={video} />
+            <div className="flex justify-between items-center gap-x-2 mt-4">
+              <button
+                className="btn btn-primary btn-sm btn-outline"
+                onClick={onCancel}
+              >
+                Annuler
+              </button>
+              <button className="btn btn-primary btn-sm" onClick={handleSubmit}>
+                Sauvegarder
+              </button>
+            </div>
+          </article>
+        ) : null}
       </section>
     </>
   );
