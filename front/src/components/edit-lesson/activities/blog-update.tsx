@@ -8,21 +8,19 @@ import markdownit from "markdown-it";
 import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 import Editor from "../../markdown-editor/mark-down-editor";
 import Markdown from "react-markdown";
+import useHttp from "../../../hooks/use-http";
+import toast from "react-hot-toast";
+import { fromHtmlToMarkdown } from "../../../helpers/html-parser";
 
 interface EditorProps {
   activity: Activity;
-  isSubmitting: boolean;
-  onUpdate: (activity: any) => void;
 }
 
 const md = markdownit();
 
-export const BlogUpdate = ({
-  activity,
-  isSubmitting,
-  onUpdate,
-}: EditorProps) => {
+export const BlogUpdate = ({ activity }: EditorProps) => {
   const dispatch = useDispatch();
+  const { sendRequest, error, isLoading } = useHttp();
   const [value, setValue] = useState<string>("");
   const blogEdition = useSelector(
     (state: any) => state.lesson.blogEdition
@@ -33,11 +31,45 @@ export const BlogUpdate = ({
    * du composant parent
    * @param newValue string
    */
-  const handleUpdate = async (newValue: string) => {
+  /* const handleUpdate = async (newValue: string) => {
     onUpdate({
       ...activity,
       value: newValue,
     });
+  };
+  
+ */
+  /**
+   * soumet les modifications apportées à une activité vers la bdd
+   */
+  const handleUpdate = (newValue: string) => {
+    const applyData = (data: {
+      success: boolean;
+      message: string;
+      response: Activity;
+    }) => {
+      if (data.success) {
+        toast.success(data.message);
+        dispatch(lessonActions.updateActivity(data.response));
+      }
+      dispatch(lessonActions.setBlogEdition(null));
+    };
+    const getData = async () => {
+      sendRequest(
+        {
+          path: `/activity/${activity.id!}`,
+          method: "put",
+          body: {
+            value: await fromHtmlToMarkdown(newValue),
+            type: activity.type,
+            order: activity.order,
+            url: activity.url,
+          },
+        },
+        applyData
+      );
+    };
+    getData();
   };
 
   /**
@@ -54,6 +86,13 @@ export const BlogUpdate = ({
     }
   }, [activity, activity.url]);
 
+  // gère les erreurs HTTP
+  useEffect(() => {
+    if (error.length > 0) {
+      toast.error(error);
+    }
+  }, [error]);
+
   /**
    * annule l'affichage de l'éditeur de texte sans prendre et les
    * mises à jour que le formateur aurait pu y apporter
@@ -69,7 +108,7 @@ export const BlogUpdate = ({
           <>
             <Editor
               content={md.render(value)}
-              isSubmitting={isSubmitting}
+              isSubmitting={isLoading}
               onSubmit={handleUpdate}
               onCancel={handleCancelEdition}
             />

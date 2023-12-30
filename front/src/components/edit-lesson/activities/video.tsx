@@ -88,7 +88,11 @@ export default function Video({ activity }: VideoProps) {
       message: string;
       response: Activity;
     }) => {
-      console.log(data);
+      //console.log(data);
+      if (data.success) {
+        toast.success(data.message);
+      }
+      dispatch(lessonActions.setBlogEdition(null));
     };
     sendRequest(
       {

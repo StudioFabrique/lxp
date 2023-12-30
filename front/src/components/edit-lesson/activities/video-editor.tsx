@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeEvent, useState } from "react";
 import VideoPlayer from "../../UI/video-player";
+//import { useSelector } from "react-redux";
 
 interface VideoEditorProps {
   propVideo?: string;
@@ -12,6 +14,9 @@ export default function VideoEditor({
   onCancel,
   onSubmit,
 }: VideoEditorProps) {
+  /*   const blogEdition = useSelector(
+    (state: any) => state.lesson.blogEdition
+  ) as number; */
   const [origin, setOrigin] = useState("fileSystem");
   const [video, setVideo] = useState<string>(propVideo);
   const [file, setFile] = useState<File | null>(null);
