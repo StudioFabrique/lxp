@@ -12,6 +12,13 @@ import httpPutUpdateVideo from "../../../controllers/activity/http-put-update-vi
 
 const activityRouter = express.Router();
 
+// mise à jour d'une activité de type vidéo
+activityRouter.put(
+  "/video",
+  checkPermissions("lesson"),
+  uploadActivityVideo(),
+  httpPutUpdateVideo
+);
 activityRouter.post(
   "/blog-image",
   checkPermissions("lesson"),
@@ -33,13 +40,7 @@ activityRouter.put(
   checkPermissions("lesson"),
   httpUpdateActivity
 );
-// mise à jour d'une activité de type vidéo
-activityRouter.put(
-  "/video/:activityId",
-  checkPermissions("lesson"),
-  uploadActivityVideo(),
-  httpPutUpdateVideo
-);
+
 // supprime une activité et les ressources associées (fichiers md, images, etc...)
 activityRouter.delete(
   "/:activId",
