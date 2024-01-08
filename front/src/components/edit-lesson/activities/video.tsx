@@ -1,14 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ChangeEvent, useEffect, useState } from "react";
-import VideoPlayer from "../../UI/video-player";
 import { useDispatch, useSelector } from "react-redux";
 import useHttp from "../../../hooks/use-http";
 import Activity from "../../../utils/interfaces/activity";
 import { useParams } from "react-router-dom";
+import VideoEditor from "./video-editor";
 import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 import toast from "react-hot-toast";
-import VideoEditor from "./video-editor";
-import { ACTIVITIES_VIDEOS } from "../../../config/urls";
+import VideoPlayer from "../../UI/video-player";
 
 interface VideoProps {
   activity?: Activity;
@@ -24,52 +22,30 @@ export default function Video({ activity }: VideoProps) {
   ) as number;
   const { lessonId } = useParams();
   const { sendRequest } = useHttp();
-  const [origin, setOrigin] = useState("fileSystem");
-  const [video, setVideo] = useState<string | null>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [url, setUrl] = useState<string>("");
 
-  console.log(video);
-
-  const handleOnChangeOrigin = (event: ChangeEvent<HTMLSelectElement>) => {
-    handleReset();
-    setOrigin(event.currentTarget.value);
+  const handleCancelNewVideo = () => {
+    dispatch(lessonActions.resetCurrentType());
   };
 
-  const handleSelectFile = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files && event.target.files[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      setVideo(URL.createObjectURL(selectedFile));
-    }
+  const handleCancelEditVideo = () => {
+    dispatch(lessonActions.setBlogEdition(null));
   };
 
-  const handleOnChangeUrl = (event: ChangeEvent<HTMLInputElement>) => {
-    setUrl(event.currentTarget.value);
-  };
-
-  const handleSelectExternalSource = () => {
-    setVideo(url);
-  };
-
-  const handleReset = () => {
-    setVideo(null);
-    setFile(null);
-    setUrl("");
-  };
-
-  const handleSubmit = () => {
+  const handleSubmit = (value: {
+    videoValue: string;
+    fileValue: File | null;
+  }) => {
     const fd = new FormData();
-    if (activity !== undefined) {
-      fd.append("data", JSON.stringify(activity));
-    } else {
-      fd.append(
-        "data",
-        JSON.stringify({ type: "video", order, url: file ? "" : video })
-      );
-    }
-    if (file) {
-      fd.append("video", file);
+    fd.append(
+      "data",
+      JSON.stringify({
+        type: "video",
+        order,
+        url: value.fileValue ? "" : value.videoValue,
+      })
+    );
+    if (value.fileValue) {
+      fd.append("video", value.fileValue);
     }
     const applyData = (data: {
       success: boolean;
@@ -78,7 +54,6 @@ export default function Video({ activity }: VideoProps) {
     }) => {
       if (data.success) {
         toast.success(data.message);
-        handleReset();
         dispatch(lessonActions.addActivity(data.response));
         dispatch(lessonActions.resetCurrentType());
       }
@@ -86,77 +61,65 @@ export default function Video({ activity }: VideoProps) {
     sendRequest(
       {
         path: `/activity/video/${lessonId}`,
-        method: activity !== undefined ? "put" : "post",
+        method: "post",
         body: fd,
       },
       applyData
     );
   };
 
-  const handleCancel = () => {
-    dispatch(lessonActions.setBlogEdition(null));
-  };
-
-  useEffect(() => {
-    if (activity !== undefined) {
-      if (activity.url.startsWith("http")) {
-        setVideo(activity.url);
-      } else {
-        setVideo(ACTIVITIES_VIDEOS + activity.url);
-      }
+  const handleUpdate = (value: {
+    videoValue: string;
+    fileValue: File | null;
+  }) => {
+    const fd = new FormData();
+    fd.append(
+      "data",
+      JSON.stringify({
+        id: activity!.id,
+        url: value.fileValue ? "" : value.videoValue,
+      })
+    );
+    if (value.fileValue) {
+      fd.append("video", value.fileValue);
     }
-  }, [activity]);
+    const applyData = (data: {
+      success: boolean;
+      message: string;
+      response: Activity;
+    }) => {
+      //console.log(data);
+      if (data.success) {
+        toast.success(data.message);
+      }
+      dispatch(lessonActions.updateActivity(data.response));
+      dispatch(lessonActions.setBlogEdition(null));
+    };
+    sendRequest(
+      {
+        path: "/activity/video",
+        method: "put",
+        body: fd,
+      },
+      applyData
+    );
+  };
 
   return (
     <main>
+      {activity === undefined ? (
+        <VideoEditor onSubmit={handleSubmit} onCancel={handleCancelNewVideo} />
+      ) : null}
       {activity !== undefined && blogEdition === activity.id ? (
         <VideoEditor
-          origin={origin}
-          file={file}
-          url={url}
-          onChangeOrigin={handleOnChangeOrigin}
-          onSelectFile={handleSelectFile}
-          onChangeUrl={handleOnChangeUrl}
-          onSelectExternalSource={handleSelectExternalSource}
+          propVideo={activity.url}
+          onSubmit={handleUpdate}
+          onCancel={handleCancelEditVideo}
         />
       ) : null}
-
-      {activity === undefined && !video ? (
-        <VideoEditor
-          origin={origin}
-          file={file}
-          url={url}
-          onChangeOrigin={handleOnChangeOrigin}
-          onSelectFile={handleSelectFile}
-          onChangeUrl={handleOnChangeUrl}
-          onSelectExternalSource={handleSelectExternalSource}
-        />
+      {activity !== undefined && blogEdition !== activity.id ? (
+        <VideoPlayer source={activity.url} />
       ) : null}
-
-      <section>
-        {video ? (
-          <article className="py-2">
-            <VideoPlayer source={video} />
-            {(activity !== undefined && blogEdition === activity.id) ||
-            activity === undefined ? (
-              <div className="flex justify-between items-center gap-x-2 mt-4">
-                <button
-                  className="btn btn-primary btn-sm btn-outline"
-                  onClick={handleCancel}
-                >
-                  Annuler
-                </button>
-                <button
-                  className="btn btn-primary btn-sm"
-                  onClick={handleSubmit}
-                >
-                  Sauvegarder
-                </button>
-              </div>
-            ) : null}
-          </article>
-        ) : null}
-      </section>
     </main>
   );
 }

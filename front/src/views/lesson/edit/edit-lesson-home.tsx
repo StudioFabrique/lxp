@@ -15,6 +15,7 @@ import Modal from "../../../components/UI/modal/modal";
 import { useEffect, useState } from "react";
 import Video from "../../../components/edit-lesson/activities/video";
 import ActionsButtonsGroup from "../../../components/edit-lesson/actions-buttons-group";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export default function EditLessonHome() {
   const { lessonId } = useParams();
@@ -56,41 +57,6 @@ export default function EditLessonHome() {
             type: currentType,
             order: activities.length > 0 ? activities.length + 1 : 1,
             value: await fromHtmlToMarkdown(value),
-          },
-        },
-        applyData
-      );
-    };
-    getData();
-  };
-
-  /**
-   * soumet les modifications apportées à une activité vers la bdd
-   */
-  const handleUpdate = (activity: any) => {
-    const applyData = (data: {
-      success: boolean;
-      message: string;
-      response: Activity;
-    }) => {
-      if (data.success) {
-        toast.success(data.message);
-        dispatch(lessonActions.updateActivity(data.response));
-      }
-      dispatch(lessonActions.setBlogEdition(null));
-      setIsLoading(false);
-    };
-    const getData = async () => {
-      setIsLoading(true);
-      sendRequest(
-        {
-          path: `/activity/${activity.id!}`,
-          method: "put",
-          body: {
-            value: await fromHtmlToMarkdown(activity.value),
-            type: activity.type,
-            order: activity.order,
-            url: activity.url,
           },
         },
         applyData
@@ -154,20 +120,41 @@ export default function EditLessonHome() {
           <ul className="w-full">
             {sortArray(activities, "order").map((item) => (
               <li className="mb-8" key={item.id}>
-                <h2 className="font-bold text-md text-primary">
-                  Activité n° {item.order}
-                </h2>
-                <div className="flex justify-center px-4 border border-primary/50 rounded-lg shadow-lg">
-                  {item.type === "text" ? (
-                    <BlogUpdate
-                      activity={item}
-                      onUpdate={handleUpdate}
-                      isSubmitting={isLoading}
-                    />
-                  ) : null}
-                  {item.type === "video" ? <Video activity={item} /> : null}
+                <div className="flex justify-center items-center gap-x-8">
+                  <span className="text-primary flex flex-col gap-y-1">
+                    <button
+                      className="hover:text-accent"
+                      disabled={item.order === 1}
+                    >
+                      <ChevronUp />
+                    </button>
+                    <button
+                      className="hover:text-accent"
+                      disabled={item.order === activities.length}
+                    >
+                      <ChevronDown />
+                    </button>
+                  </span>
+
+                  <div className="w-full">
+                    <h2 className="font-bold text-md text-primary">
+                      Activité n° {item.order}
+                    </h2>
+                    <div className="flex justify-center px-4 border border-primary/50 rounded-lg shadow-lg">
+                      {item.type === "text" ? (
+                        <BlogUpdate activity={item} />
+                      ) : null}
+                      {item.type === "video" ? (
+                        <div className="py-2">
+                          <Video activity={item} />
+                        </div>
+                      ) : null}
+                    </div>
+                    {!blogEdition ? (
+                      <ActionsButtonsGroup activity={item} />
+                    ) : null}
+                  </div>
                 </div>
-                {!blogEdition ? <ActionsButtonsGroup activity={item} /> : null}
               </li>
             ))}
           </ul>

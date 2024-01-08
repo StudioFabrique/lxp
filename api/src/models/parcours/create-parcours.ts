@@ -8,7 +8,7 @@ async function createParcours(parcours: any, userId: string) {
   });
 
   if (!admin) {
-    const error = new Error("L'utilsiateur n'existe pas");
+    const error = new Error("L'utilisateur n'existe pas");
     (error as any).statusCode = 403;
     throw error;
   }
@@ -19,7 +19,7 @@ async function createParcours(parcours: any, userId: string) {
   );
 
   if (!user) {
-    const error = new Error("L'utilsiateur n'existe pas");
+    const error = new Error("L'utilisateur n'existe pas");
     (error as any).statusCode = 403;
     throw error;
   }

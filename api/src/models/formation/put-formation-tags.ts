@@ -6,7 +6,11 @@ async function putFormationTags(formationId: number, newTags: Array<number>) {
   });
 
   if (!existingFormation) {
-    throw new Error(`La formation avec l'id ${formationId} n'existe pas`);
+    const error: any = {
+      message: "La formation n'existe pas",
+      statusCode: 404,
+    };
+    throw error;
   }
 
   await prisma.tagsOnFormation.deleteMany({

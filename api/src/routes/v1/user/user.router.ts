@@ -7,7 +7,6 @@ import {
   getAllValidator,
   manyUsersValidator,
   userValidator,
-  //userValidator,
 } from "../../../middleware/validators";
 import httpCreateUser from "../../../controllers/user/http-create-user";
 import httpUpdateUserRoles from "../../../controllers/user/http-update-user-roles";
@@ -25,6 +24,8 @@ import httpGetUsersByRank from "../../../controllers/user/http-get-users-by-rank
 import multer from "multer";
 import userProfileRouter from "./profile/user-profile.router";
 import hobbyRouter from "./hobby/hobby.router";
+import { getUsersByRoleValidator } from "./user-validators";
+import { paginationValidator } from "../../../helpers/custom-validators";
 
 const userRouter = express.Router();
 
@@ -66,7 +67,8 @@ userRouter.get("/stats", checkPermissions("user"), httpGetUsersStats);
 userRouter.get(
   "/:role/:stype/:sdir",
   checkPermissions("user"),
-  getAllValidator,
+  getUsersByRoleValidator,
+  paginationValidator,
   httpGetUsersByRole
 );
 

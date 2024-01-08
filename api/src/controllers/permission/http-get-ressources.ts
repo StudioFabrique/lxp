@@ -29,12 +29,8 @@ export default async function httpGetRessources(req: Request, res: Response) {
         .json({ message: "aucune ressources n'a été trouvé" });
     }
 
-    console.log(permissions);
-
     return res.status(200).json({ data: { permissions, ressources } });
   } catch (error) {
-    console.log(error);
-
     return res.status(500).json({ message: serverIssue });
   }
 }
