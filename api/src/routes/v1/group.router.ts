@@ -13,6 +13,7 @@ import httpGetGroupsById from "../../controllers/group/http-get-groups-by-id";
 import checkPermissions from "../../middleware/check-permissions";
 import { createFileUploadMiddleware } from "../../middleware/fileUpload";
 import { headerImageMaxSize } from "../../config/images-sizes";
+import jsonParser from "../../middleware/json-parser";
 const groupRouter = Router();
 
 groupRouter.get(
@@ -44,6 +45,7 @@ groupRouter.post(
   "/",
   checkPermissions("group"),
   createFileUploadMiddleware(headerImageMaxSize),
+  jsonParser,
   groupValidator,
   httpCreateGroup
 );
