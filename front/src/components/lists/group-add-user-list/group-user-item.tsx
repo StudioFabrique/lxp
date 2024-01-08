@@ -18,11 +18,11 @@ const GroupUserItem: FC<{
   };
 
   return (
-    <tr className="bg-secondary/10 hover:bg-blue-800 hover:text-white">
+    <tr className="bg-secondary/10 hover:bg-primary hover:text-primary-content">
       <td className="bg-transparent rounded-l-xl p-5">
         <input
           type="checkbox"
-          className="checkbox checkbox-primary"
+          className="checkbox"
           onChange={() => onCheckRow(itemProps._id)}
           checked={itemProps.isSelected}
         />
