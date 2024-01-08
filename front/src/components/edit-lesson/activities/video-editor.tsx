@@ -51,24 +51,26 @@ export default function VideoEditor({
   };
 
   return (
-    <>
-      <section>
-        <label htmlFor="origin">
-          Sélectionner la provenance de la vidéo
-          <select
-            name="origin"
-            id="origin"
-            value={origin}
-            onChange={handleOnChangeOrigin}
-          >
-            <option value="fileSystem">Votre ordinateur</option>
-            <option value="web">Un lien externe</option>
-          </select>
+    <main className="flex flex-col gap-y-4">
+      <section className="flex items-center gap-x-4">
+        <label className="text-primary" htmlFor="origin">
+          Sélectionner la provenance de la vidéo :
         </label>
+        <select
+          className="pl-2 select select-primary select-sm focus:outline-none"
+          name="origin"
+          id="origin"
+          value={origin}
+          onChange={handleOnChangeOrigin}
+        >
+          <option value="fileSystem">Votre ordinateur</option>
+          <option value="web">Un lien externe</option>
+        </select>
       </section>
       <section>
         {origin === "fileSystem" ? (
           <input
+            className="file-input file-input-bordered file-input-sm file-input-primary"
             type="file"
             name="fileUpload"
             id="fileUpload"
@@ -77,6 +79,7 @@ export default function VideoEditor({
         ) : (
           <div className="flex items-center gap-x-2">
             <input
+              className="input input-sm input-primary focus:outline-none"
               type="text"
               name="httpsLink"
               id="httpsLink"
@@ -111,6 +114,6 @@ export default function VideoEditor({
           </article>
         ) : null}
       </section>
-    </>
+    </main>
   );
 }
