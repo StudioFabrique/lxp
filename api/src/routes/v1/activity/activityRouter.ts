@@ -9,6 +9,14 @@ import httpPostActivity from "../../../controllers/activity/http-post-activity";
 import httpUpdateActivity from "../../../controllers/activity/update/http-update-activity";
 import httpDeleteActivity from "../../../controllers/activity/http-delete-activity";
 import httpPutUpdateVideo from "../../../controllers/activity/http-put-update-video";
+import { lessonIdValidator } from "../lesson/lesson-validator";
+import {
+  activityIdValidator,
+  postVideoValidator,
+  updateActivityValidator,
+  updateVideoValidator,
+} from "./activityValidator";
+import jsonParser from "../../../middleware/json-parser";
 
 const activityRouter = express.Router();
 
@@ -17,8 +25,11 @@ activityRouter.put(
   "/video",
   checkPermissions("lesson"),
   uploadActivityVideo(),
+  jsonParser,
+  updateVideoValidator,
   httpPutUpdateVideo
 );
+// upload d'une image insérée dans un document de type texte
 activityRouter.post(
   "/blog-image",
   checkPermissions("lesson"),
@@ -30,6 +41,9 @@ activityRouter.post(
   "/video/:lessonId",
   checkPermissions("lesson"),
   uploadActivityVideo(),
+  jsonParser,
+  lessonIdValidator,
+  postVideoValidator,
   httpPostVideo
 );
 // enregistre une activité et l'attache à une lesson
@@ -38,13 +52,16 @@ activityRouter.post("/:lessonId", checkPermissions("lesson"), httpPostActivity);
 activityRouter.put(
   "/:activityId",
   checkPermissions("lesson"),
+  lessonIdValidator,
+  updateActivityValidator,
   httpUpdateActivity
 );
 
 // supprime une activité et les ressources associées (fichiers md, images, etc...)
 activityRouter.delete(
-  "/:activId",
+  "/:activityId",
   checkPermissions("lesson"),
+  activityIdValidator,
   httpDeleteActivity
 );
 
