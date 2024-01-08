@@ -88,7 +88,6 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                       data-tip="Modifier le parcours"
                     >
                       <Link
-                        className="text-secondary"
                         to={`edit/${item.id}`}
                         aria-label="modifier le parcours"
                       >
