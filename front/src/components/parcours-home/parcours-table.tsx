@@ -135,7 +135,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                 }}
               >
                 <div className="flex items-center gap-x-2">
-                  <p>Titre</p>{" "}
+                  <p>Titre</p>
                   <SortColumnIcon
                     fieldSort={fieldSort}
                     column="title"
