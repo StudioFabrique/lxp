@@ -1,5 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 
+/**
+ * TO DO NEXT :
+ * - enlever la vérification de module
+ * - Utiliser seulement data dans le contenu du body lors d'une requête qui implique un form data
+ */
 export default async function jsonParser(
   req: Request,
   res: Response,

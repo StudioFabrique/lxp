@@ -15,7 +15,6 @@ import {
 import fs from "fs";
 
 export default async function httpCreateGroup(req: Request, res: Response) {
-  const body = JSON.parse(req.body.data);
   const uploadedFile = req.file;
 
   const {
@@ -26,7 +25,7 @@ export default async function httpCreateGroup(req: Request, res: Response) {
     group: IGroup;
     users: IUser[];
     parcoursId: number;
-  } = body;
+  } = req.body.data;
 
   let image: any;
 
