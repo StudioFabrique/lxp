@@ -2,6 +2,18 @@ import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
 
 async function createParcours(parcours: any, userId: string) {
+  const existingFormation = await prisma.formation.findFirst({
+    where: { id: +parcours.formation },
+  });
+
+  if (!existingFormation) {
+    const error: any = {
+      message: "La formation n'existe pas.",
+      statusCode: 404,
+    };
+    throw error;
+  }
+
   const admin = await prisma.admin.findFirst({
     where: { idMdb: userId },
     select: { id: true },

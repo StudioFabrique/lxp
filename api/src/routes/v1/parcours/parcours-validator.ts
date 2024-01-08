@@ -1,6 +1,7 @@
 import { body, param } from "express-validator";
 
 import { checkValidatorResult } from "../../../middleware/validators";
+import { stringValidateGeneric } from "../../../helpers/custom-validators";
 
 export const postParcoursValidator = [
   body("formation")
@@ -14,7 +15,9 @@ export const postParcoursValidator = [
     .isString()
     .withMessage("Titre de parcours non valide")
     .notEmpty()
-    .withMessage("Le titre du parcours doit avoir au moins 1 caractère"),
+    .withMessage("Le titre du parcours doit avoir au moins 1 caractère")
+    .custom(stringValidateGeneric)
+    .withMessage("Le titre du parcours contient des caractères non autorisés."),
   checkValidatorResult,
 ];
 

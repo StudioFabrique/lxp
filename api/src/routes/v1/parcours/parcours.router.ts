@@ -55,8 +55,7 @@ parcoursRouter.get(
   checkPermissions("parcours"),
   parcoursByIdValidator,
   httpGetParcoursById
-); // accès accordé à l'étudiant
-parcoursRouter.get("/", checkPermissions("parcours"), httpGetParcours); // accès accordé à l'étudiant
+);
 parcoursRouter.put(
   "/update-infos",
   checkPermissions("parcours"),
