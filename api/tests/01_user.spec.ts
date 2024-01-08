@@ -24,7 +24,7 @@ describe("HTTP /user", () => {
   beforeAll(async () => {
     // Perform any setup before running the tests, such as logging in and obtaining the authentication token
 
-    await mongoConnect(MONGO_TEST_URL!);
+    await mongoConnect();
     const loginResponse = await request(app)
       .post("/v1/auth/login")
       .send({ email: "toto@toto.fr", password: "Abcdef@123456" });
