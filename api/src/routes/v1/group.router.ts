@@ -7,9 +7,6 @@ import {
   searchValidator,
 } from "../../middleware/validators";
 import httpSearchGroup from "../../controllers/group/http-search-group";
-import httpAddUser from "../../controllers/group/http-add-users-group";
-
-import httpGetGroupsById from "../../controllers/group/http-get-groups-by-id";
 import checkPermissions from "../../middleware/check-permissions";
 import { createFileUploadMiddleware } from "../../middleware/fileUpload";
 import { headerImageMaxSize } from "../../config/images-sizes";
@@ -18,18 +15,7 @@ const groupRouter = Router();
 
 groupRouter.get(
   "/:role/:stype/:sdir",
-
-  //  vérification du token et récupération du rôle de l'utilisateur
   checkPermissions(),
-  /* 
-    //  vérification des permissions
-    async (req: CustomRequest, res: Response, next: NextFunction) => {
-      if (await hasPermission(req.auth!.userRoles[0], "read", "user")) {
-        next();
-      } else {
-        return res.status(400).json({ message: noAccess });
-      }
-    }, */
   getAllValidator,
   httpGetAllGroups
 );
@@ -49,11 +35,5 @@ groupRouter.post(
   groupValidator,
   httpCreateGroup
 );
-
-groupRouter.get("/users", checkPermissions("group"));
-
-groupRouter.post("/users", checkPermissions("group"), httpAddUser);
-
-groupRouter.post("/groups", checkPermissions("group"), httpGetGroupsById);
 
 export default groupRouter;
