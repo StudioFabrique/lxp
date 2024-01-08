@@ -27,7 +27,9 @@ const GroupManageUserItem: FC<{
   };
 
   useEffect(() => {
-    usersToAdd.includes(user) ? setDisabled(true) : setDisabled(false);
+    usersToAdd.filter((userToAdd) => userToAdd._id === user._id).length > 0
+      ? setDisabled(true)
+      : setDisabled(false);
   }, [user, usersToAdd]);
 
   return (
