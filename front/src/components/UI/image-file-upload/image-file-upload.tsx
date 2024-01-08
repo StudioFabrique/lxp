@@ -53,7 +53,7 @@ const ImageFileUpload: FC<{
         >
           Choisir un fichier
         </p>
-        <p className="text-center my-auto p-2 text-xs  lg:text-sm bg-primary-content rounded-r-lg w-full overflow-x-clip h-10">
+        <p className="text-center my-auto p-2 text-xs lg:text-sm bg-secondary/50 rounded-r-lg w-full overflow-x-clip h-10">
           {fileName ?? "Aucun fichier choisi"}
         </p>
       </span>
