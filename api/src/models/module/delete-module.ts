@@ -11,7 +11,7 @@ async function deleteModule(moduleId: number) {
     throw error;
   }
 
-  if (existingModule.courses) {
+  if (existingModule.courses && existingModule.courses.length > 0) {
     const error = {
       message: "Suppression impossible, des cours sont rattachés à ce module",
       statusCode: 405,

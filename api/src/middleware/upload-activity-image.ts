@@ -5,8 +5,6 @@ import { v4 as uuidv4 } from "uuid";
 import { serverIssue } from "../utils/constantes";
 
 export const uploadActivityImage = () => {
-  console.log("arrow");
-
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(
@@ -26,7 +24,6 @@ export const uploadActivityImage = () => {
   });
 
   return (req: Request, res: Response, next: NextFunction) => {
-    console.log("from middleware with love");
     const upload = multer({
       storage: storage,
       limits: { fileSize: 1 * 1024 * 1024 },

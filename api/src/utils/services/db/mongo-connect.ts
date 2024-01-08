@@ -13,8 +13,12 @@ mongoose.connection.on("error", (err) => {
   console.error(err);
 });
 
-async function mongoConnect() {
-  await mongoose.connect(MONGO_URL!);
+async function mongoConnect(url: string) {
+  if (url.length === 0) {
+    await mongoose.connect(MONGO_URL!);
+  } else {
+    await mongoose.connect(url);
+  }
 }
 
 export default mongoConnect;

@@ -92,6 +92,7 @@ export default function Video({ activity }: VideoProps) {
       if (data.success) {
         toast.success(data.message);
       }
+      dispatch(lessonActions.updateActivity(data.response));
       dispatch(lessonActions.setBlogEdition(null));
     };
     sendRequest(

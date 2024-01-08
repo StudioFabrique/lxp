@@ -14,7 +14,6 @@ export const getBase64ImageFromReq = async (req: Request): Promise<string> => {
 export async function deleteTempUploadedFile(req: Request) {
   if (req.file) {
     await fs.promises.unlink(req.file.path);
-    console.log("Fichier supprimé :", req.file.path);
   }
 }
 

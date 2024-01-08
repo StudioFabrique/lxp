@@ -25,7 +25,7 @@ export const putLessonValidator = [
   body("modalite")
     .notEmpty()
     .withMessage("Une modalité est requise pour la leçon")
-    .isString()
+    .custom(stringValidateGeneric)
     .withMessage(
       "La modalité de la leçon contient des caractères non autorisés"
     ),

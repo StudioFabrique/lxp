@@ -4,10 +4,18 @@ import fs from "fs";
 import { deleteTempUploadedFile } from "../../middleware/fileUpload";
 import sharp from "sharp";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { validationResult } from "express-validator";
+import { serverIssue } from "../../utils/constantes";
 
 async function httpPostModule(req: CustomRequest, res: Response) {
-  const { module } = req.body;
+  const module = req.body.module;
+
   const uploadedFile = req.file;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    await deleteTempUploadedFile(req);
+    return res.status(400).json({ message: "Requête non valide." });
+  }
 
   try {
     const userId = req.auth?.userId;
@@ -25,7 +33,9 @@ async function httpPostModule(req: CustomRequest, res: Response) {
     }
   } catch (error: any) {
     await deleteTempUploadedFile(req);
-    return res.status(error.statusCode ?? 500).json({ message: error.message });
+    return res
+      .status(error.statusCode ?? 500)
+      .json({ message: error.message ?? serverIssue });
   }
 }
 

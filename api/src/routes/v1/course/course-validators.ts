@@ -22,7 +22,7 @@ export const postCourseValidator = [
   body("title")
     .notEmpty()
     .withMessage("Le titre du cours est requis")
-    .isString()
+    .custom(stringValidateGeneric)
     .withMessage("Le titre du cours n'est pas conforme"),
   body("moduleId")
     .notEmpty()
