@@ -19,3 +19,10 @@ export const parcoursSearchOptions = [
   { index: 2, value: "author", option: "Auteur" },
   { index: 3, value: "level", option: "Niveau" },
 ];
+
+export const courseSearchOptions = [
+  { index: 1, value: "title", option: "Titre" },
+  { index: 2, value: "module", option: "Module" },
+  { index: 3, value: "parcours", option: "Parcours" },
+  { index: 4, value: "author", option: "Auteur" },
+];

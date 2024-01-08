@@ -1,48 +1,33 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 
-import Course from "../../utils/interfaces/course";
 import Loader from "../../components/UI/loader";
-import { localeDate } from "../../helpers/locale-date";
-import Can from "../../components/UI/can/can.component";
-import EditIcon from "../../components/UI/svg/edit-icon";
-import DeleteIcon from "../../components/UI/svg/delete-icon.component";
-import { useNavigate } from "react-router-dom";
-import { sortArray } from "../../utils/sortArray";
+import CustomResponse from "../../utils/interfaces/custom-response";
+import CourseList from "../../components/course-home/course-list";
+
+interface CustomCourse {
+  id: number;
+  author: string;
+  title: string;
+  module: string;
+  parcours: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 const CourseHome = () => {
   const { sendRequest, isLoading } = useHttp();
-  const [coursesList, setCoursesList] = useState<Course[] | null>(null);
-  const nav = useNavigate();
-
-  /**
-   * navigue jusU'à la vue d'édition du cours identifié par son id
-   * @param id number
-   */
-  const handleEditCourse = useCallback(
-    (id: number) => {
-      nav(`/admin/course/edit/${id}`);
-    },
-    [nav]
-  );
+  const [coursesList, setCoursesList] = useState<CustomCourse[] | null>(null);
 
   /**
    * récupère la liste des cours depuis la bdd
    */
   useEffect(() => {
-    const applyData = (data: any) => {
-      setCoursesList(
-        sortArray(
-          data.map((item: any) => ({
-            ...item,
-            module: {
-              ...item.module,
-              parcours: item.module.parcours[0].parcours,
-            },
-          })),
-          "createdAt"
-        )
-      );
+    const applyData = (data: CustomResponse) => {
+      if (data.success) {
+        setCoursesList(data.response);
+      }
     };
     sendRequest(
       {
@@ -52,74 +37,16 @@ const CourseHome = () => {
     );
   }, [sendRequest]);
 
-  const content = useMemo(() => {
-    return (
-      <>
-        {coursesList?.map((course) => (
-          <tr
-            className="cursor-pointer hover:bg-secondary/20 hover:text-base-content"
-            key={course.id}
-            onClick={() => {}}
-          >
-            <td>{course.id}</td>
-            <td>{course.title}</td>
-            <td>{course.module.title}</td>
-            <td>{course.module.parcours.title}</td>
-            <td>{localeDate(course.createdAt!)}</td>
-            <td>{localeDate(course.updatedAt!)}</td>
-            <td>
-              {/*   <Can action="update" object="cours"> */}
-              <div
-                className="w-6 h-6"
-                onClick={() => handleEditCourse(course.id!)}
-              >
-                <EditIcon />
-              </div>
-              {/*    </Can> */}
-            </td>
-            <td>
-              <Can action="delete" object="cours">
-                <div className="w-6 h-6 text-error" onClick={() => {}}>
-                  <DeleteIcon />
-                </div>
-              </Can>
-            </td>
-          </tr>
-        ))}
-      </>
-    );
-  }, [coursesList, handleEditCourse]);
-
   return (
-    <div className="w-full min-h-[50%] flex justify-center items-center">
+    <main className="w-full min-h-screen flex justify-center ">
       {isLoading ? (
-        <Loader />
+        <div className="flex items-center">
+          <Loader />
+        </div>
       ) : (
-        <>
-          {coursesList && coursesList.length > 0 ? (
-            <div className="w-4/6">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Id</th>
-                    <th>Titre</th>
-                    <th>Module</th>
-                    <th>Parcours</th>
-                    <th>Crée le</th>
-                    <th>Mis à jour le</th>
-                    <th></th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>{content}</tbody>
-              </table>
-            </div>
-          ) : (
-            <p>Aucun cours n'a été créé à ce jour</p>
-          )}
-        </>
+        <>{coursesList ? <CourseList coursesList={coursesList} /> : null}</>
       )}
-    </div>
+    </main>
   );
 };
 

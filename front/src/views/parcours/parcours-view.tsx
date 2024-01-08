@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams } from "react-router-dom";
 import useHttp from "../../hooks/use-http";
 import { useEffect, useState } from "react";
