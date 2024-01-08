@@ -13,7 +13,8 @@
     "start:prod": "NODE_ENV=production node dist/server.js",
     "reset-mongo": "npx ts-node src/fixtures.ts",
     "reset-prisma": "npx prisma db push --force-reset && npx prisma db push && npx ts-node src/fixtures-prisma.ts",
-    "fixtures": "npm run reset-mongo && npm run reset-prisma"
+    "fixtures": "npm run reset-mongo && npm run reset-prisma",
+    "elastic-search": "npx ts-node src/elastic-search/generate-indices/generate-all-indices.ts"
   },
   "author": "studio@step.eco",
   "license": "ISC",
@@ -24,7 +25,7 @@
     "@types/express-validator": "^3.0.0",
     "@types/jsonwebtoken": "^9.0.1",
     "accesscontrol": "^2.2.1",
-    "algoliasearch": "^4.20.0",
+    "@elastic/elasticsearch": "^8.10.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
