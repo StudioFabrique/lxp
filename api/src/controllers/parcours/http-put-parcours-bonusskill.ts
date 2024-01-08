@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 
-import putParcoursSkill from "../../models/parcours/put-parcours-bonus-skill";
 import { badQuery } from "../../utils/constantes";
+import putParcoursSkills from "../../models/parcours/put-parcours-skills";
 
 async function httpPutParcoursSkill(req: Request, res: Response) {
   const result = validationResult(req);
@@ -13,7 +13,7 @@ async function httpPutParcoursSkill(req: Request, res: Response) {
 
   try {
     const { parcoursId, skill } = req.body;
-    const response = await putParcoursSkill(parseInt(parcoursId), skill);
+    const response = await putParcoursSkills(parseInt(parcoursId), skill);
     return res.status(201).json({ success: true, skills: response });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
