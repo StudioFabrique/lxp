@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
 async function httpLogout(req: Request, res: Response) {
-  res
+  return res
     .clearCookie("accessToken")
     .clearCookie("refreshToken")
     .status(200)

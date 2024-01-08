@@ -6,6 +6,9 @@ import multer from "multer";
 import path from "path";
 import httpPostModule from "../../controllers/formation/http-post-module";
 import checkPermissions from "../../middleware/check-permissions";
+import jsonParser from "../../middleware/json-parser";
+import { stringValidateGeneric } from "../../helpers/custom-validators";
+import { isStringObject } from "util/types";
 
 const formationRouter = express.Router();
 
@@ -26,6 +29,28 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 
+const validationModule = [
+  body("module.formationId")
+    .notEmpty()
+    .withMessage("L'identifiant de la formation est requis.")
+    .isInt()
+    .withMessage("L'identifiant de la formation doit être un nombre entier."),
+  body("module.title")
+    .notEmpty()
+    .withMessage("Le titre du module est requis.")
+    .isString()
+    .withMessage("Le titre du module doit être une chaîne de caractères.")
+    .custom(stringValidateGeneric)
+    .withMessage("Le titre du module contient des caractères invalides."),
+  body("module.description")
+    .notEmpty()
+    .withMessage("La description du module est requise.")
+    .isString()
+    .withMessage("La description du module doit être une chaîne de caractères.")
+    .custom(stringValidateGeneric)
+    .withMessage("La description du module contient des caractères"),
+];
+
 formationRouter.get("/", checkPermissions("formation"), httpGetFormation);
 formationRouter.put(
   "/update-tags",
@@ -38,8 +63,9 @@ formationRouter.put(
 formationRouter.post(
   "/new-module",
   checkPermissions("formation"),
-  // checkToken,
   upload.single("image"),
+  jsonParser,
+  validationModule,
   httpPostModule
 );
 

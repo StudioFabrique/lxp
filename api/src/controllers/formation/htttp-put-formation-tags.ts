@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 
-import { badQuery } from "../../utils/constantes";
+import { badQuery, serverIssue } from "../../utils/constantes";
 import putFormationTags from "../../models/formation/put-formation-tags";
 
 async function httpPutFormationTags(req: Request, res: Response) {
@@ -16,10 +16,12 @@ async function httpPutFormationTags(req: Request, res: Response) {
   try {
     const response = await putFormationTags(parseInt(formationId), tags);
     return res
-      .status(201)
+      .status(200)
       .json({ success: true, message: "Tags mis à jour avec succes" });
   } catch (error: any) {
-    return res.status(500).json({ message: error.message });
+    return res
+      .status(error.statusCode ?? 500)
+      .json({ message: error.message ?? serverIssue });
   }
 }
 
