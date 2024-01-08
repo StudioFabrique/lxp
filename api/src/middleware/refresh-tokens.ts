@@ -7,11 +7,9 @@ import { tokensMaxAge } from "../config/config";
 
 function refreshTokens(req: CustomRequest, res: Response, next: NextFunction) {
   const authCookie = req.cookies.refreshToken;
-  console.log(authCookie);
 
   jwt.verify(authCookie, process.env.SECRET!, (err: any, data: any) => {
     if (err) {
-      console.log("token expiré!");
       return res.status(403).json({ message: noAccess });
     } else {
       const accessToken = setTokens(data.userId, data.userRoles);

@@ -17,7 +17,7 @@ if (process.env.NODE_ENV === "production") {
 mongoInit();
 
 async function mongoInit() {
-  await mongoConnect();
+  await mongoConnect(process.env.MONGO_LOCAL_URL!);
   server.listen(PORT);
   console.log(`Serveur démarré sur le port: ${PORT}`);
 }
