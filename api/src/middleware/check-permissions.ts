@@ -14,11 +14,13 @@ function youShallNotPass() {
  *
  * @param ressource (optionnel) La ressource sur laquelle l'action est effectué
  * @param action (optionnel) L'action à effectuer
+ * @param failedRedirectPath (optionnel) la route de redirection API en cas d'echec
  * @returns
  */
 export default function checkPermissions(
   ressource?: string,
-  action?: "read" | "write" | "update" | "delete"
+  action?: "read" | "write" | "update" | "delete",
+  failedRedirectPath?: string
 ) {
   return async (req: CustomRequest, res: Response, next: NextFunction) => {
     const { role: roleFromParam } = req.params;
@@ -87,12 +89,16 @@ export default function checkPermissions(
       }
 
       if (isRolesCorrect) {
+        console.log("le role est correct ! passage accordé");
         req.auth = { userId: data.userId, userRoles: data.userRoles };
         next();
       } else {
-        return res.status(403).json({
-          message: "Vous n'êtes pas autorisé à accéder à cette ressource",
-        });
+        if (failedRedirectPath)
+          res.redirect(failedRedirectPath.replace("[:userId]", data.userId));
+        else
+          return res.status(403).json({
+            message: "Vous n'êtes pas autorisé à accéder à cette ressource",
+          });
       }
     });
   };
