@@ -1,7 +1,7 @@
 import { AccessControl } from "accesscontrol";
 import Permission from "../../interfaces/db/permission";
 
-async function getPermissions() {
+/* async function getPermissions() {
   const grantArray = Array<any>();
   const permissions = await Permission.find({});
   for (let perm of permissions) {
@@ -16,4 +16,4 @@ async function getPermissions() {
   return new AccessControl(grantArray);
 }
 
-export default getPermissions;
+export default getPermissions; */

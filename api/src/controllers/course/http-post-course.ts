@@ -3,9 +3,12 @@ import { Request, Response } from "express";
 import { serverIssue } from "../../utils/constantes";
 import postCourse from "../../models/course/post-course";
 import { customEscape } from "../../helpers/custom-escape";
+import CustomRequest from "../../utils/interfaces/express/custom-request";
 
-async function httpPostCourse(req: Request, res: Response) {
+async function httpPostCourse(req: CustomRequest, res: Response) {
   let course = req.body;
+
+  const userId = req.auth?.userId;
 
   course = {
     title: customEscape(course.title),
@@ -13,7 +16,7 @@ async function httpPostCourse(req: Request, res: Response) {
   };
 
   try {
-    const response = await postCourse(course);
+    const response = await postCourse(userId!, course);
     return res
       .status(201)
       .json({ message: "Cours créé avec succès", course: response });

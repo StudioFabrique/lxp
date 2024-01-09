@@ -14,7 +14,7 @@ async function httpDeleteParcoursById(req: CustomRequest, res: Response) {
     }
     const { parcoursId } = req.params;
     await deleteParcoursById(+parcoursId, userId);
-    return res.status(201).json({
+    return res.status(200).json({
       message: `Le parcours identifié par l'id : ${parcoursId} a bien été supprimé`,
     });
   } catch (error: any) {

@@ -1,4 +1,4 @@
-import { IRole } from "../utils/interfaces/db/role";
+/* import { IRole } from "../utils/interfaces/db/role";
 import getPermissions from "../utils/services/permissions/accessControl";
 
 async function hasPermission(role: IRole, action: string, resource: string) {
@@ -21,3 +21,4 @@ async function hasPermission(role: IRole, action: string, resource: string) {
 }
 
 export default hasPermission;
+ */
