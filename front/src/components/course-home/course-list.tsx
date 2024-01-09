@@ -11,6 +11,7 @@ import ToggleList from "../UI/toggle-list";
 import CourseTable from "./course-table";
 import Pagination from "../UI/pagination/pagination";
 import CustomCourse from "./interfaces/custom-course";
+import CourseCardsList from "./course-cards-list";
 
 interface CourseListProps {
   coursesList: CustomCourse[];
@@ -107,9 +108,7 @@ export default function CourseList(props: CourseListProps) {
                 onEditCourse={handleEditCourse}
               />
             ) : (
-              {
-                /* <ParcoursCardsList parcoursList={list} /> */
-              }
+              <CourseCardsList courseList={list} />
             )}
           </>
         ) : null}

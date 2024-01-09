@@ -18,7 +18,7 @@ const ParcoursCardsList = ({ parcoursList }: ParcoursCardsListProps) => {
           ))}
         </CardListItem>
       ) : (
-        <p>Aucun parcours trouvé</p>
+        <p>Aucun parcours trouvé.</p>
       )}
     </>
   );
