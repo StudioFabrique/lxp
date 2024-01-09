@@ -37,7 +37,7 @@ export default function CourseTable({
             <td>{localeDate(course.updatedAt!)}</td>
             <td>{course.author}</td>
             <td>{course.isPublished ? "Publié" : "Brouillon"}</td>
-            <td className="w-full flex justify-center items-center">
+            <td className="w-full h-full flex justify-center items-center">
               {course.visibility ? (
                 <div
                   className="tooltip tooltip-bottom"

@@ -109,7 +109,7 @@ async function createManyAdmins() {
     const user = new User({
       firstname: firstname.toLowerCase(),
       lastname: lastnames[i].toLowerCase(),
-      email: createMail(firstname, lastnames[i], i),
+      email: createMail(firstname, lastnames[i], robotIndex),
       password: hash,
       address: addresses[i],
       postCode,
@@ -150,7 +150,7 @@ async function createManyTeachers() {
     const user = new User({
       firstname: firstname.toLowerCase(),
       lastname: lastnames[i].toLowerCase(),
-      email: createMail(firstname, lastnames[i], i),
+      email: createMail(firstname, lastnames[i], robotIndex),
       password: hash,
       address: addresses[i],
       postCode,
@@ -177,7 +177,7 @@ async function createManyStudents() {
     const user = new User({
       firstname: firstname.toLowerCase(),
       lastname: lastnames[i].toLowerCase(),
-      email: createMail(firstname, lastnames[i], i),
+      email: createMail(firstname, lastnames[i], robotIndex),
       password: hash,
       address: addresses[i] || addresses[i - 50],
       postCode,
@@ -204,7 +204,7 @@ async function createManyCoach() {
     const user = new User({
       firstname: firstname.toLowerCase(),
       lastname: "dupont",
-      email: createMail(firstname, lastnames[i], i),
+      email: createMail(firstname, lastnames[i], robotIndex),
       password: hash,
       address: addresses[i] || addresses[i - 50],
       postCode,

@@ -4,7 +4,7 @@ version: "3.9"
 # The containers that compose the project
 services:
   db:
-    image: postgres:13
+    image: postgres:latest
     restart: always
     container_name: integration-tests-prisma
     ports:
@@ -13,3 +13,9 @@ services:
       POSTGRES_USER: prisma
       POSTGRES_PASSWORD: prisma
       POSTGRES_DB: tests
+  mongo:
+    image: mongo:latest
+    restart: always
+    container_name: integration-tests-mongo
+    ports:
+      - "26000:27017"
