@@ -1,19 +1,10 @@
 import { useMemo } from "react";
+import { Eye, EyeOff, Pencil, Trash2 } from "lucide-react";
 
 import { localeDate } from "../../helpers/locale-date";
-import { Pencil, Trash2 } from "lucide-react";
 import Can from "../UI/can/can.component";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
-
-interface CustomCourse {
-  id: number;
-  author: string;
-  title: string;
-  module: string;
-  parcours: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import CustomCourse from "./interfaces/custom-course";
 
 interface CourseTableProps {
   coursesList: CustomCourse[];
@@ -45,19 +36,58 @@ export default function CourseTable({
             <td>{localeDate(course.createdAt!)}</td>
             <td>{localeDate(course.updatedAt!)}</td>
             <td>{course.author}</td>
+            <td>{course.isPublished ? "Publié" : "Brouillon"}</td>
+            <td className="w-full flex justify-center items-center">
+              {course.visibility ? (
+                <div
+                  className="tooltip tooltip-bottom"
+                  data-tip="La visibilité du cours pour les apprenants est activée."
+                >
+                  <Eye
+                    className="w-4 h-4"
+                    aria-label="le cours est visible par les apprenants"
+                  />
+                </div>
+              ) : (
+                <div
+                  className="tooltip tooltip-bottom"
+                  data-tip="La visibilité du cours pour les apprenants n'est pas activée."
+                >
+                  <EyeOff
+                    className="w-4 h-4"
+                    aria-label="le cours n'est pas visible par les apprenants"
+                  />
+                </div>
+              )}
+            </td>
             <td>
               {/*   <Can action="update" object="cours"> */}
 
-              <Pencil
-                className="w-4 h-4 text-primary"
-                onClick={() => onEditCourse(course.id!)}
-              />
+              <div
+                className="tooltip tooltip-bottom"
+                data-tip="Modifier le cours."
+              >
+                <Pencil
+                  className="w-4 h-4 text-primary"
+                  aria-label="éditer le cours"
+                  onClick={() => onEditCourse(course.id!)}
+                />
+              </div>
 
               {/*    </Can> */}
             </td>
             <td>
-              <Can action="delete" object="cours">
-                <Trash2 className="w-4 h-4 text-error" onClick={() => {}} />
+              <Can action="delete" object="course">
+                <div
+                  className="tooltip tooltip-bottom"
+                  data-tip="Supprimer le cours définitivement."
+                >
+                  <Trash2
+                    className="w-4 h-4 text-error"
+                    aria-label="supprimer le cours"
+                    onClick={() => {}}
+                  />
+                </div>
               </Can>
             </td>
           </tr>
@@ -69,7 +99,7 @@ export default function CourseTable({
   return (
     <>
       {coursesList && coursesList.length > 0 ? (
-        <div className="w-4/6">
+        <div className="w-5/6">
           <table className="table">
             <thead>
               <tr>
@@ -95,7 +125,7 @@ export default function CourseTable({
                   }}
                 >
                   <div className="flex items-center gap-x-2">
-                    <p>Titre</p>
+                    <p>Module</p>
                     <SortColumnIcon
                       fieldSort={fieldSort}
                       column="module"
@@ -110,7 +140,7 @@ export default function CourseTable({
                   }}
                 >
                   <div className="flex items-center gap-x-2">
-                    <p>Titre</p>{" "}
+                    <p>Parcours</p>{" "}
                     <SortColumnIcon
                       fieldSort={fieldSort}
                       column="parcours"
@@ -125,7 +155,7 @@ export default function CourseTable({
                   }}
                 >
                   <div className="flex items-center gap-x-2">
-                    <p>Titre</p>{" "}
+                    <p>Créé le</p>{" "}
                     <SortColumnIcon
                       fieldSort={fieldSort}
                       column="createdAt"
@@ -140,7 +170,7 @@ export default function CourseTable({
                   }}
                 >
                   <div className="flex items-center gap-x-2">
-                    <p>Titre</p>
+                    <p>Màj le</p>
                     <SortColumnIcon
                       fieldSort={fieldSort}
                       column="updatedAt"
@@ -155,10 +185,40 @@ export default function CourseTable({
                   }}
                 >
                   <div className="flex items-center gap-x-2">
-                    <p>Titre</p>
+                    <p>Auteur</p>
                     <SortColumnIcon
                       fieldSort={fieldSort}
                       column="author"
+                      direction={direction}
+                    />
+                  </div>
+                </th>
+                <th
+                  className="cursor-pointer"
+                  onClick={() => {
+                    onSorting("isPublished");
+                  }}
+                >
+                  <div className="flex items-center gap-x-2">
+                    <p>Statut</p>
+                    <SortColumnIcon
+                      fieldSort={fieldSort}
+                      column="isPublished"
+                      direction={direction}
+                    />
+                  </div>
+                </th>
+                <th
+                  className="cursor-pointer"
+                  onClick={() => {
+                    onSorting("visibility");
+                  }}
+                >
+                  <div className="flex items-center gap-x-2">
+                    <p>Visibilité</p>
+                    <SortColumnIcon
+                      fieldSort={fieldSort}
+                      column="visibility"
                       direction={direction}
                     />
                   </div>

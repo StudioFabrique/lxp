@@ -10,16 +10,7 @@ import { courseSearchOptions } from "../../config/search-options";
 import ToggleList from "../UI/toggle-list";
 import CourseTable from "./course-table";
 import Pagination from "../UI/pagination/pagination";
-
-interface CustomCourse {
-  id: number;
-  author: string;
-  title: string;
-  module: string;
-  parcours: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import CustomCourse from "./interfaces/custom-course";
 
 interface CourseListProps {
   coursesList: CustomCourse[];
@@ -64,6 +55,7 @@ export default function CourseList(props: CourseListProps) {
   const handleResetSearch = () => {
     resetFilters();
   };
+
   return (
     <main className="w-5/6 flex flex-col items-center px-4 py-8 gap-8">
       <section className="w-full">
@@ -88,7 +80,16 @@ export default function CourseList(props: CourseListProps) {
             placeholder="Filtrer"
             onSearch={handleSearchResult}
           />
-          <RefreshCw className="text-primary" onClick={handleResetSearch} />
+          <div
+            className="tooltip tooltip-left"
+            data-tip="Réinitialise les options de recherche."
+          >
+            <RefreshCw
+              className="text-primary cursor-pointer hover:animate-pulse"
+              aria-label="réinitialise les options de recherche"
+              onClick={handleResetSearch}
+            />
+          </div>
         </article>
       </section>
       <section className="w-full flex flex-col">

@@ -5,16 +5,7 @@ import useHttp from "../../hooks/use-http";
 import Loader from "../../components/UI/loader";
 import CustomResponse from "../../utils/interfaces/custom-response";
 import CourseList from "../../components/course-home/course-list";
-
-interface CustomCourse {
-  id: number;
-  author: string;
-  title: string;
-  module: string;
-  parcours: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import CustomCourse from "../../components/course-home/interfaces/custom-course";
 
 const CourseHome = () => {
   const { sendRequest, isLoading } = useHttp();

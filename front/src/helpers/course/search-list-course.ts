@@ -4,29 +4,29 @@ export function searchListCourse(entityToSearch: string, searchValue: string) {
   switch (entityToSearch) {
     case "title":
       filters = {
-        field: "titre",
-        property: "title",
+        field: "title",
+        property: "",
         value: searchValue.toLocaleLowerCase(),
       };
       break;
     case "module":
       filters = {
         field: "module",
-        property: "module",
+        property: "",
         value: searchValue.toLocaleLowerCase(),
       };
       break;
     case "parcours":
       filters = {
         field: "parcours",
-        property: "parcours",
+        property: "",
         value: searchValue.toLocaleLowerCase(),
       };
       break;
     case "auteur":
       filters = {
-        field: "auteur",
-        propeerty: "author",
+        field: "author",
+        propeerty: "",
         value: searchValue.toLocaleLowerCase(),
       };
       break;
