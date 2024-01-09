@@ -2,6 +2,15 @@ import { body, param } from "express-validator";
 import { stringValidateGeneric } from "../../../helpers/custom-validators";
 import { checkValidatorResult } from "../../../middleware/validators";
 
+export const lessonIdValidator = [
+  param("lessonId")
+    .notEmpty()
+    .withMessage("L'idientifiant de l'activité est requis.")
+    .isNumeric()
+    .isInt()
+    .withMessage("L'identifiant de l'activité doit être un nombre entier."),
+];
+
 export const putLessonValidator = [
   body("id")
     .notEmpty()

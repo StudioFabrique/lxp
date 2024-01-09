@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -133,6 +134,7 @@ model Admin {
   modules    Module[]
   lessons    Lesson[]
   activities Activity[]
+  courses    Course[]
 }
 
 model Teacher {
@@ -173,11 +175,14 @@ model Course {
   isPublished  Boolean              @default(false)
   createdAt    DateTime             @default(now())
   updatedAt    DateTime             @default(now())
+  author       String
   tags         TagsOnCourse[]
   contacts     ContactsOnCourse[]
   objectives   ObjectivesOnCourse[]
   bonusSkills  BonusSkillOnCourse[]
   lessons      Lesson[]
+  admin        Admin                @relation(fields: [adminId], references: [id])
+  adminId      Int
 }
 
 model Lesson {
