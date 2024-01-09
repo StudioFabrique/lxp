@@ -37,7 +37,7 @@ export const uploadActivityImage = () => {
         });
       } else if (err) {
         // An unknown error occurred.
-        return res.status(500).json({ message: serverIssue });
+        return res.status(500).json({ message: err });
       }
       next();
     });

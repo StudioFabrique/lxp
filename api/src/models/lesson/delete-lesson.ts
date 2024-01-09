@@ -10,9 +10,17 @@ export default async function deleteLesson(lessonId: number) {
     (error as any).statusCode = 404;
     throw error;
   }
-
-  const deletedLesson = await prisma.lesson.delete({
-    where: { id: lessonId },
-  });
-  return deletedLesson;
+  try {
+    await prisma.lesson.delete({
+      where: { id: lessonId },
+    });
+    return true;
+  } catch (error: any) {
+    const returnedError: any = {
+      message:
+        "La leçon n'a pas pu être supprimée. Une raison possible est qu'il existe des activités attachées à la leçon.",
+      statusCode: 500,
+    };
+    throw returnedError;
+  }
 }

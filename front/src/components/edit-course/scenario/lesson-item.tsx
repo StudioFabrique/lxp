@@ -1,7 +1,8 @@
+import { Trash2 } from "lucide-react";
 import Lesson from "../../../utils/interfaces/lesson";
-import DeleteIcon from "../../UI/svg/delete-icon.component";
 import DocumentIcon from "../../UI/svg/document-icon";
 import EditIcon from "../../UI/svg/edit-icon";
+import Can from "../../UI/can/can.component";
 
 interface LessonItemProps {
   lesson: Lesson;
@@ -27,14 +28,14 @@ const LessonItem = (props: LessonItemProps) => {
             <EditIcon />
           </div>
         </button>
-        <button
-          className="btn btn-primary btn-sm btn-circle rounded-md"
-          onClick={() => props.onDelete(props.lesson)}
-        >
-          <div className="w-5 h-5">
-            <DeleteIcon />
-          </div>
-        </button>
+        <Can action="delete" object="lesson">
+          <button
+            className="btn btn-primary btn-sm btn-circle rounded-md"
+            onClick={() => props.onDelete(props.lesson)}
+          >
+            <Trash2 className="w-5 h-5" />
+          </button>
+        </Can>
       </span>
     </main>
   );

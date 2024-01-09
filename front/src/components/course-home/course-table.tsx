@@ -37,27 +37,17 @@ export default function CourseTable({
             <td>{localeDate(course.updatedAt!)}</td>
             <td>{course.author}</td>
             <td>{course.isPublished ? "Publié" : "Brouillon"}</td>
-            <td className="w-full h-full flex justify-center items-center">
+            <td className="flex justify-center items-center">
               {course.visibility ? (
-                <div
-                  className="tooltip tooltip-bottom"
-                  data-tip="La visibilité du cours pour les apprenants est activée."
-                >
-                  <Eye
-                    className="w-4 h-4"
-                    aria-label="le cours est visible par les apprenants"
-                  />
-                </div>
+                <Eye
+                  className="w-6 h-6"
+                  aria-label="le cours est visible par les apprenants"
+                />
               ) : (
-                <div
-                  className="tooltip tooltip-bottom"
-                  data-tip="La visibilité du cours pour les apprenants n'est pas activée."
-                >
-                  <EyeOff
-                    className="w-4 h-4"
-                    aria-label="le cours n'est pas visible par les apprenants"
-                  />
-                </div>
+                <EyeOff
+                  className="w-6 h-6"
+                  aria-label="le cours n'est pas visible par les apprenants"
+                />
               )}
             </td>
             <td>
@@ -68,7 +58,7 @@ export default function CourseTable({
                 data-tip="Modifier le cours."
               >
                 <Pencil
-                  className="w-4 h-4 text-primary"
+                  className="w-6 h-6 text-primary"
                   aria-label="éditer le cours"
                   onClick={() => onEditCourse(course.id!)}
                 />
@@ -83,7 +73,7 @@ export default function CourseTable({
                   data-tip="Supprimer le cours définitivement."
                 >
                   <Trash2
-                    className="w-4 h-4 text-error"
+                    className="w-6 h-6 text-error"
                     aria-label="supprimer le cours"
                     onClick={() => {}}
                   />

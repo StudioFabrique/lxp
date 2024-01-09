@@ -99,7 +99,11 @@ const useHttp = (invokeErrorToast?: boolean) => {
             response = await axiosInstance.get(`${BASE_URL}${req.path}`, {});
             break;
         }
-        applyData!(response.data);
+        if (applyData) {
+          applyData(response.data);
+        } else {
+          return response.data;
+        }
       } catch (err: any) {
         setError(err.response?.data.message ?? "erreur inconnue");
 

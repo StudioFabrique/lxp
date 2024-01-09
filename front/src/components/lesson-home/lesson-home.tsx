@@ -11,9 +11,10 @@ import Header from "../UI/header";
 
 interface LessonHomeProps {
   lessonsList: Lesson[];
+  onDelete: (id: number) => void;
 }
 
-export default function LessonHome({ lessonsList }: LessonHomeProps) {
+export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
   const {
     list,
     sortData,
@@ -79,7 +80,7 @@ export default function LessonHome({ lessonsList }: LessonHomeProps) {
                       className="tooltip tooltip-bottom flex-items-center"
                       data-tip="Supprimer le module"
                     >
-                      <div onClick={() => {}}>
+                      <div onClick={() => onDelete(item.id!)}>
                         <DeleteIcon />
                       </div>
                     </div>
@@ -186,7 +187,7 @@ export default function LessonHome({ lessonsList }: LessonHomeProps) {
               <tbody>{content}</tbody>
             </table>
           ) : (
-            <p>Aucun parcours trouvé</p>
+            <p>Aucune leçon trouvée</p>
           )}
         </div>
       </section>

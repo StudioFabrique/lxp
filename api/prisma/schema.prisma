@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
@@ -16,7 +16,7 @@ model Activity {
   type      String
   order     Int
   url       String
-  lesson    Lesson   @relation(fields: [lessonId], references: [id])
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   lessonId  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
@@ -199,6 +199,7 @@ model Lesson {
   courseId    Int
   tag         Tag        @relation(fields: [tagId], references: [id])
   tagId       Int
+  order       Int
   isPublished Boolean    @default(false)
   visibility  Boolean    @default(false)
   activities  Activity[]

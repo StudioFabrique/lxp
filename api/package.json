@@ -5,8 +5,8 @@
   "main": "dist/server.js",
   "scripts": {
     "wait-for-db": "npx ts-node check-test-db.ts",
-    "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down",
+    "docker:up": "cd tests && docker-compose up -d && cd ..",
+    "docker:down": "cd tests && docker-compose down && cd ..",
     "test": "npm run docker:up && npm run wait-for-db && dotenv -e .env.test -- npx prisma db push --force-reset && dotenv -e .env.test -- npm run reset-mongo && dotenv -e .env.test -- npx ts-node src/fixtures-prisma-test && dotenv -e .env.test -- jest -i && npm run docker:down",
     "build": "tsc --project ./",
     "start:dev": "NODE_ENV=development nodemon src/server.ts",

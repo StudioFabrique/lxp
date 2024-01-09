@@ -1,21 +1,50 @@
 # Set the version of docker compose to use
 version: "3.9"
 
+networks:
+  lxp_api:
+    external: true
+
+volumes:
+  data: # Definition du volume
+
 # The containers that compose the project
 services:
-  db:
+  db-pg:
     image: postgres:latest
     restart: always
-    container_name: integration-tests-prisma
+    container_name: lxp-prisma
+    networks:
+      - lxp_api
     ports:
-      - "5433:5432"
+      - "5500:5432"
     environment:
-      POSTGRES_USER: prisma
-      POSTGRES_PASSWORD: prisma
-      POSTGRES_DB: tests
-  mongo:
+      POSTGRES_USER: lxp-studio
+      POSTGRES_PASSWORD: gandalf
+      POSTGRES_DB: lxp
+  db-mongo:
     image: mongo:latest
     restart: always
-    container_name: integration-tests-mongo
+    container_name: lxp-mongo
+    networks:
+      - lxp_api
     ports:
-      - "26000:27017"
+      - "25000:27017"
+  api:
+    image: lxp-api
+    networks:
+      - lxp_api
+    restart: always
+    container_name: lxp-api
+    ports:
+      - "5002:5001"
+    links:
+      - db-pg
+      - db-mongo
+    depends_on:
+      - db-pg
+      - db-mongo
+    command: pm2 start dist/src/server.js
+    environment:
+      - DATABASE_URL=postgresql://lxp-studio:gandalf@localhost:5432/lxp
+      - MONGO_LOCAL_URL=mongodb://db-mongo:27017/lxp
