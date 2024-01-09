@@ -9,6 +9,7 @@ async function getCourses() {
         select: {
           id: true,
           title: true,
+          thumb: true,
           parcours: {
             select: {
               parcours: {
@@ -24,6 +25,8 @@ async function getCourses() {
       author: true,
       createdAt: true,
       updatedAt: true,
+      isPublished: true,
+      visibility: true,
     },
   });
 
@@ -35,6 +38,9 @@ async function getCourses() {
     author: item.author,
     createdAt: item.createdAt,
     updatedAt: item.updatedAt,
+    isPublished: item.isPublished,
+    visibility: item.visibility,
+    thumb: item.module.thumb.toString("base64"),
   }));
 
   return result;
