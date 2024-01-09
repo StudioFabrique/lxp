@@ -27,7 +27,9 @@ app
   .use(express.json())
   .use(express.static(path.join(__dirname, "public")))
   .use(express.static(path.join(__dirname, "..", "uploads")))
-
+  .get("/", (req, res) => {
+    res.send("<h1>Hello World !</h1>");
+  })
   .use("/v1", api)
   .use(({ res }: { res: Response }) => {
     const message = "Impossible de trouver les ressources demandées.";

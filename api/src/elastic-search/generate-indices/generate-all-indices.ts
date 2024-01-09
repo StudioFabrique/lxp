@@ -18,7 +18,7 @@ async function clearAllIndices() {
 }
 
 export async function generateAllIndices(withExit: boolean = false) {
-  await mongoConnect("");
+  await mongoConnect();
   await clearAllIndices();
   await generateTagsDataIntoIndex();
   await generateCoursesDataIntoIndex();

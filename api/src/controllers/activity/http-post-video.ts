@@ -7,7 +7,7 @@ export default async function httpPostVideo(req: CustomRequest, res: Response) {
     const uploadedFile = req.file;
     const userId = req.auth?.userId;
     const { lessonId } = req.params;
-    const data = JSON.parse(req.body.data);
+    const data = req.body.data;
 
     const url =
       uploadedFile !== null && uploadedFile !== undefined

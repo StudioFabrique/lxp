@@ -15,6 +15,8 @@ import { courseScenarioActions } from "../../../store/redux-toolkit/course/cours
 import SubmitButton from "../../UI/submit-button";
 import AddIcon from "../../UI/svg/add-icon";
 import EditIcon from "../../UI/svg/edit-icon";
+import Modal from "../../UI/modal/modal";
+import useLessonHTTP from "../../../hooks/use-lesson-http";
 
 interface LinearScenarioLessonsProps {
   lessons: Lesson[];
@@ -25,6 +27,7 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
   const { courseId } = useParams();
   const dispatch = useDispatch();
   const { sendRequest, error } = useHttp();
+  const { deleteLesson } = useLessonHTTP();
   const { value: title, newProps: newTitle } = useInput((value) =>
     regexGeneric.test(value)
   );
@@ -37,10 +40,12 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (state: any) => state.courseInfos.course.tags
   ) as Tag[];
+  //const submit = useSelector()
   const [isLoading, setIsLoading] = useState(false);
   const [editionMode, setEditionMode] = useState(false);
   const formRef = useRef<HTMLInputElement>(null);
   const [editedLesson, setEditedLesson] = useState<Lesson | null>(null);
+  const [lessonToDelete, setLessonToDelete] = useState<number | null>(null);
 
   /**
    * envoie une requête HTTP pour enregistrer une nouvelle
@@ -67,6 +72,8 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
       applyData
     );
   };
+
+  const handleReorderLessons = () => {};
 
   /**
    * Met à jour la leçon dans la bdd
@@ -105,24 +112,21 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
     setMode(lesson.modalite);
   };
 
+  const setDeletion = (lesson: Lesson) => {
+    setLessonToDelete(lesson.id!);
+  };
+
   /**
    * Permet de dissocier une leçon d'un cours
    * @param lesson Lesson
    */
-  const handleDeleteLesson = (lesson: Lesson) => {
-    const applyData = (data: { success: boolean; message: string }) => {
-      if (data.success) {
-        dispatch(courseScenarioActions.deleteLesson(lesson.id));
-        toast.success(data.message);
-      }
-    };
-    sendRequest(
-      {
-        path: `/lesson/${lesson.id}`,
-        method: "delete",
-      },
-      applyData
-    );
+  const handleDeleteLesson = async () => {
+    const data = await deleteLesson(lessonToDelete!);
+    if (data.success) {
+      dispatch(courseScenarioActions.deleteLesson(lessonToDelete));
+      toast.success(data.message);
+      setLessonToDelete(null);
+    }
   };
 
   /**
@@ -155,72 +159,85 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
   }, [error]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      {editionMode ? (
-        <LessonForm
-          ref={formRef}
-          title={title}
-          description={description}
-          mode={mode}
-          tag={tag}
-          isLoading={isLoading}
-          onSetTag={setTag}
-          tags={tagsList}
-          onSetMode={setMode}
-          onSubmitLesson={handleUpdateLesson}
-        >
-          <div className="w-full flex justify-between items-center">
-            <button
-              className="btn btn-primary btn-outline"
-              type="button"
-              onClick={handleResetForm}
-            >
-              Annuler
-            </button>
-            <SubmitButton
-              label="Mettre à jour la leçon"
-              loadingLabel="Mise à jour en cours"
-              isLoading={isLoading}
-            >
-              <div className="w-- h-6">
-                <EditIcon />
-              </div>
-            </SubmitButton>
-          </div>
-        </LessonForm>
-      ) : (
-        <LessonForm
-          ref={formRef}
-          title={title}
-          description={description}
-          mode={mode}
-          tag={tag}
-          isLoading={isLoading}
-          onSetTag={setTag}
-          tags={tagsList}
-          onSetMode={setMode}
-          onSubmitLesson={handleSubmitLesson}
-        >
-          <div>
-            <SubmitButton
-              label="Ajouter la leçon"
-              loadingLabel="Ajout en cours"
-              isLoading={isLoading}
-            >
-              <div className="w-- h-6">
-                <AddIcon />
-              </div>
-            </SubmitButton>
-          </div>
-        </LessonForm>
-      )}
-      <LessonsList
-        lessonsList={props.lessons}
-        onEdit={handleEditLesson}
-        onDelete={handleDeleteLesson}
-        loading={props.loading}
-      />
-    </div>
+    <>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {editionMode ? (
+          <LessonForm
+            ref={formRef}
+            title={title}
+            description={description}
+            mode={mode}
+            tag={tag}
+            isLoading={isLoading}
+            onSetTag={setTag}
+            tags={tagsList}
+            onSetMode={setMode}
+            onSubmitLesson={handleUpdateLesson}
+          >
+            <div className="w-full flex justify-between items-center">
+              <button
+                className="btn btn-primary btn-outline"
+                type="button"
+                onClick={handleResetForm}
+              >
+                Annuler
+              </button>
+              <SubmitButton
+                label="Mettre à jour la leçon"
+                loadingLabel="Mise à jour en cours"
+                isLoading={isLoading}
+              >
+                <div className="w-- h-6">
+                  <EditIcon />
+                </div>
+              </SubmitButton>
+            </div>
+          </LessonForm>
+        ) : (
+          <LessonForm
+            ref={formRef}
+            title={title}
+            description={description}
+            mode={mode}
+            tag={tag}
+            isLoading={isLoading}
+            onSetTag={setTag}
+            tags={tagsList}
+            onSetMode={setMode}
+            onSubmitLesson={handleSubmitLesson}
+          >
+            <div>
+              <SubmitButton
+                label="Ajouter la leçon"
+                loadingLabel="Ajout en cours"
+                isLoading={isLoading}
+              >
+                <div className="w-- h-6">
+                  <AddIcon />
+                </div>
+              </SubmitButton>
+            </div>
+          </LessonForm>
+        )}
+        <LessonsList
+          lessonsList={props.lessons}
+          onEdit={handleEditLesson}
+          onDelete={setDeletion}
+          loading={props.loading}
+        />
+      </div>
+      {lessonToDelete ? (
+        <Modal
+          onLeftClick={() => setLessonToDelete(null)}
+          onRightClick={handleDeleteLesson}
+          title="Supprimer une leçon"
+          isSubmitting={isLoading}
+          message="Attention la leçon et les ressources qui lui sont associées seront définitivement supprimées."
+          leftLabel="Annuler"
+          rightLabel="Confirmer"
+        />
+      ) : null}
+    </>
   );
 };
 
