@@ -11,6 +11,7 @@ async function putCourseLesson(
 
   const existingCourse = await prisma.course.findFirst({
     where: { id: courseId },
+    select: { lessons: true },
   });
 
   if (!existingCourse) {
@@ -50,6 +51,7 @@ async function putCourseLesson(
         description: lessonData.description,
         modalite: lessonData.modalite,
         author: `${existingAdmin.firstname} ${existingAdmin.lastname}`,
+        order: existingCourse.lessons.length,
         tag: {
           connect: { id: lessonData.tagId },
         },
@@ -74,6 +76,7 @@ async function putCourseLesson(
         courseId: true,
         isPublished: true,
         visibility: true,
+        order: true,
       },
     });
   });

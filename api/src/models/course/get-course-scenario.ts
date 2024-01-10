@@ -12,6 +12,7 @@ async function getCourseScenario(courseId: number) {
           description: true,
           tag: true,
           modalite: true,
+          order: true,
         },
       },
     },

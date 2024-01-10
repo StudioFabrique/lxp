@@ -6,11 +6,13 @@ import { arrayNoDoublon } from "../../../helpers/array-no-doublon";
 interface CourseScenario {
   scenario: boolean;
   courseLessons: Lesson[] | null;
+  submit: boolean;
 }
 
 const initialCourseScenarioState: CourseScenario = {
   scenario: true,
   courseLessons: [],
+  submit: false,
 };
 
 const courseScenarioSlice = createSlice({
@@ -28,8 +30,7 @@ const courseScenarioSlice = createSlice({
       if (state.courseLessons) {
         state.courseLessons = sortArray(
           [...state.courseLessons, action.payload],
-          "id",
-          false
+          "order"
         );
       }
     },
@@ -39,6 +40,15 @@ const courseScenarioSlice = createSlice({
           (lesson) => lesson.id !== action.payload
         );
       }
+    },
+    reorderLessons(state, action) {
+      let i = -1;
+      const lessons = action.payload.map((item: Lesson) => {
+        i += 1;
+        return { ...item, order: i };
+      });
+      state.courseLessons = lessons;
+      state.submit = true;
     },
     updateLesson(state, action) {
       if (state.courseLessons) {
@@ -50,7 +60,7 @@ const courseScenarioSlice = createSlice({
             (item) => item.id !== action.payload.id
           );
           updatedLessons = [...updatedLessons, action.payload];
-          state.courseLessons = sortArray(updatedLessons, "createdAt", false);
+          state.courseLessons = sortArray(updatedLessons, "order", false);
         }
       }
     },
@@ -62,11 +72,19 @@ const courseScenarioSlice = createSlice({
           state.courseLessons,
           action.payload
         );
+        let i = -1;
+        state.courseLessons = state.courseLessons.map((item) => {
+          i += 1;
+          return { ...item, order: i };
+        });
       }
     },
     resetCourseScenario(state) {
       state.scenario = true;
       state.courseLessons = null;
+    },
+    resetSubmit(state) {
+      state.submit = false;
     },
   },
 });

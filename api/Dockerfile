@@ -16,9 +16,10 @@ COPY . .
 # Transpilation du code TypeScript en JavaScript
 RUN npm run build
 RUN npx prisma generate
+RUN npm i -g pm2
 
 # Définition du port sur lequel l'application va écouter
 EXPOSE 5001
 
 # Commande pour démarrer l'application
-CMD ["npm", "run", "start:prod"]
+#CMD ["npm", "run", "start:prod"]
