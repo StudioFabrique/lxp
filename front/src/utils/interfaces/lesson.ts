@@ -15,4 +15,5 @@ export default interface Lesson {
   adminId: number;
   course: Course;
   activities?: Activity[];
+  order?: number;
 }

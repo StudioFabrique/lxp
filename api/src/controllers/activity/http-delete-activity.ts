@@ -4,8 +4,8 @@ import deleteActivity from "../../models/activity/delete-activity";
 
 export default async function httpDeleteActivity(req: Request, res: Response) {
   try {
-    const { activId } = req.params;
-    const response = await deleteActivity(+activId);
+    const { activityId } = req.params;
+    const response = await deleteActivity(+activityId);
     return res.status(200).json(response);
   } catch (error: any) {
     return res

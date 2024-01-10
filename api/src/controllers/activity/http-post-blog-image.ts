@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
 
 export default async function httpPostBlogImage(req: Request, res: Response) {
   try {
@@ -14,6 +13,8 @@ export default async function httpPostBlogImage(req: Request, res: Response) {
       response: `http://localhost:5001/activities/images/${uploadedFile.filename}`,
     });
   } catch (error: any) {
+    console.log(error.message);
+
     return res.status(500).json({ message: error.message });
   }
 }
