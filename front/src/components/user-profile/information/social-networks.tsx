@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ChangeEvent,
   FC,
@@ -5,6 +6,7 @@ import {
   FormEventHandler,
   Reducer,
   Ref,
+  useContext,
   useReducer,
   useRef,
   useState,
@@ -16,6 +18,7 @@ import Can from "../../UI/can/can.component";
 import useHttp from "../../../hooks/use-http";
 import { PlusCircle } from "lucide-react";
 import toast from "react-hot-toast";
+import { Context } from "../../../store/context.store";
 
 enum ActionType {
   add,
@@ -56,7 +59,8 @@ const SocialNetworks: FC<{ initLinks: Link[]; editMode: boolean }> = ({
   initLinks,
   editMode,
 }) => {
-  const { sendRequest, isLoading } = useHttp(true);
+  const { user } = useContext(Context);
+  const { sendRequest } = useHttp(true);
   const modalRef: Ref<HTMLDialogElement> = useRef(null);
 
   const [value, setValue] = useState<string>("");
@@ -98,14 +102,14 @@ const SocialNetworks: FC<{ initLinks: Link[]; editMode: boolean }> = ({
     );
   };
 
-  const handleDeleteLink = (id: string) => {
+  /* const handleDeleteLink = (id: string) => {
     const applyData = () => {
       dispatch({ type: ActionType.delete, payload: { id: id } });
       toast.success("Centre d'intérêt supprimé avec succès");
     };
 
     sendRequest({ path: `/user/hobby/${id}`, method: "delete" }, applyData);
-  };
+  }; */
 
   const handleOpenLinkNewTab = (link: string) => {
     if (editMode) return;
