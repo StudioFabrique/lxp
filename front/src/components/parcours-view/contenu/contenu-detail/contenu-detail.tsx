@@ -9,7 +9,7 @@ import { sortArray } from "../../../../utils/sortArray";
 import EditIcon from "../../../UI/svg/edit-icon";
 import { Link } from "react-router-dom";
 
-const ParcoursViewContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
+const ContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
   const { sendRequest, isLoading } = useHttp(true);
   const [courses, setCourses] = useState<Course[]>([]);
 
@@ -18,9 +18,12 @@ const ParcoursViewContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
    */
   useEffect(() => {
     const applyData = (data: any) => {
+      console.log({ data });
+
+      const courses = data.response;
       setCourses(
         sortArray(
-          data.filter((item: any) =>
+          courses.filter((item: any) =>
             item.module.id === moduleId
               ? {
                   ...item,
@@ -37,14 +40,14 @@ const ParcoursViewContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
     };
     sendRequest(
       {
-        path: "/course",
+        path: "/course?",
       },
       applyData
     );
   }, [sendRequest, moduleId]);
 
   const contentsList =
-    !isLoading && courses!.length > 0 ? (
+    !isLoading && courses.length > 0 ? (
       courses.map((course, i) => (
         <div
           key={course?.id}
@@ -88,4 +91,4 @@ const ParcoursViewContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
   );
 };
 
-export default ParcoursViewContenuDetail;
+export default ContenuDetail;
