@@ -21,6 +21,7 @@ import useLessonHTTP from "../../../hooks/use-lesson-http";
 interface LinearScenarioLessonsProps {
   lessons: Lesson[];
   loading: boolean;
+  success: boolean;
 }
 
 const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
@@ -40,7 +41,6 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (state: any) => state.courseInfos.course.tags
   ) as Tag[];
-  //const submit = useSelector()
   const [isLoading, setIsLoading] = useState(false);
   const [editionMode, setEditionMode] = useState(false);
   const formRef = useRef<HTMLInputElement>(null);
@@ -72,8 +72,6 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
       applyData
     );
   };
-
-  const handleReorderLessons = () => {};
 
   /**
    * Met à jour la leçon dans la bdd
@@ -224,6 +222,7 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
           onEdit={handleEditLesson}
           onDelete={setDeletion}
           loading={props.loading}
+          success={props.success}
         />
       </div>
       {lessonToDelete ? (

@@ -10,6 +10,7 @@ import checkPermissions from "../../../middleware/check-permissions";
 import httpGetLessonsList from "../../../controllers/lesson/http-get-lessons-list";
 import httpGetLessonDetail from "../../../controllers/lesson/http-get-losson-detail";
 import httpDeleteLesson from "../../../controllers/lesson/http-delete-lesson";
+import httpPutReorderLessons from "../../../controllers/lesson/http-put-reorder-lessons";
 
 const lessonRouter = express.Router();
 
@@ -32,5 +33,12 @@ lessonRouter.get("/:lessonId", checkPermissions("lesson"), httpGetLessonDetail);
 
 // supprime définitivement une leçon
 lessonRouter.delete("/:lessonId", checkPermissions("lesson"), httpDeleteLesson);
+
+// modifiie l'ordre des leçons associées à un cours
+lessonRouter.put(
+  "/reorder/:courseId",
+  checkPermissions("lesson"),
+  httpPutReorderLessons
+);
 
 export default lessonRouter;

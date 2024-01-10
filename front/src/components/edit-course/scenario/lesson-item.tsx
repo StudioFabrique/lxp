@@ -1,4 +1,4 @@
-import { Trash2 } from "lucide-react";
+import { GripVertical, Trash2 } from "lucide-react";
 import Lesson from "../../../utils/interfaces/lesson";
 import DocumentIcon from "../../UI/svg/document-icon";
 import EditIcon from "../../UI/svg/edit-icon";
@@ -12,14 +12,21 @@ interface LessonItemProps {
 
 const LessonItem = (props: LessonItemProps) => {
   return (
-    <main className="w-full flex gap-x-2">
-      <article className="w-full h-full flex items-center gap-x-4 p-5 rounded-lg bg-secondary/20">
+    <main className="w-full h-full flex gap-x-2 items-center">
+      <span className="h-full flex items-cente">
         <div className="w-8 h-8 text-primary">
-          <DocumentIcon />
+          <GripVertical />
+        </div>
+      </span>
+      <article className="w-full h-full flex items-center gap-x-4 p-5 rounded-lg bg-secondary/20">
+        <div className="flex gap-x-2">
+          <div className="w-8 h-8 text-primary">
+            <DocumentIcon />
+          </div>
         </div>
         <p className="flex-1">{props.lesson.title}</p>
       </article>
-      <span className="flex flex-col justify-between">
+      <span className="h-fit flex flex-col gap-y-2">
         <button
           className="btn btn-primary btn-sm btn-circle rounded-md"
           onClick={() => props.onEdit(props.lesson)}
