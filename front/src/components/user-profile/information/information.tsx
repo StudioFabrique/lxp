@@ -41,9 +41,8 @@ type UserInformation = {
 const Information: FC<{
   editMode: boolean;
   setEditMode: Dispatch<SetStateAction<boolean>>;
-  sendRequestInTab: any;
   formRef: Ref<HTMLFormElement>;
-}> = ({ editMode, setEditMode, sendRequestInTab, formRef }) => {
+}> = ({ editMode, setEditMode, formRef }) => {
   const { sendRequest, isLoading } = useHttp(true);
 
   const {
@@ -57,17 +56,17 @@ const Information: FC<{
   const firstInputRef: Ref<HTMLInputElement> = useRef(null);
 
   const handleSubmitForm: FormEventHandler = (e: FormEvent) => {
+    e.preventDefault();
+
     const applyData = (data: any) => {
       setUserData(data.data);
       setEditMode(false);
       toast.success("Formulaire envoyé avec succès !");
     };
 
-    e.preventDefault();
-
     try {
       informationSchema.parse(formProps.values);
-      sendRequestInTab(
+      sendRequest(
         {
           path: `/user/profile/information`,
           method: "put",
@@ -105,23 +104,25 @@ const Information: FC<{
   if (isLoading) return <Loader />;
 
   return (
-    <form
-      className="flex flex-col gap-5"
-      ref={formRef}
-      onSubmit={handleSubmitForm}
-    >
-      <div className="grid grid-cols-2 gap-5">
-        <Info
-          formProps={formProps}
-          editMode={editMode}
-          firstInputRef={firstInputRef}
-        />
-        <Contact formProps={formProps} editMode={editMode} />
-      </div>
+    <div className="flex flex-col gap-5">
+      <form
+        className="flex flex-col gap-5"
+        ref={formRef}
+        onSubmit={handleSubmitForm}
+      >
+        <div className="grid grid-cols-2 gap-5">
+          <Info
+            formProps={formProps}
+            editMode={editMode}
+            firstInputRef={firstInputRef}
+          />
+          <Contact formProps={formProps} editMode={editMode} />
+        </div>
+      </form>
       <Presentation formProps={formProps} editMode={editMode} />
-      <Hobbies hobbies={userData?.hobbies ?? []} editMode={editMode} />
+      <Hobbies initHobbies={userData?.hobbies ?? []} editMode={editMode} />
       <SocialNetworks links={userData?.links ?? []} editMode={editMode} />
-    </form>
+    </div>
   );
 };
 
