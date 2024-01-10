@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC } from "react";
 
 const ParcoursViewContenuDetailHeader: FC<{
   imageModuleHeader: any;
-  moduleTitle: string | undefined;
-}> = ({ imageModuleHeader, moduleTitle }) => {
+}> = ({ imageModuleHeader }) => {
   console.log(imageModuleHeader);
 
   const classImage: React.CSSProperties = {

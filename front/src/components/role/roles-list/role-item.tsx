@@ -29,7 +29,7 @@ const RoleItem: FC<{
   };
 
   const handleDeleteRole = () => {
-    const applyData = (data: any) => {
+    const applyData = () => {
       setRoles((roles) =>
         roles.filter((currentRole) => role.role !== currentRole.role)
       );

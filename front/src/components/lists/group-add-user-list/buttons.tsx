@@ -4,7 +4,7 @@ import User from "../../../utils/interfaces/user";
 export const EditButton: FC<{
   user: User;
   // onEditUser: (user: User) => void;
-}> = ({ user /* onEditUser */ }) => {
+}> = () => {
   const handleClick = () => {
     // onEditUser(user);
   };
