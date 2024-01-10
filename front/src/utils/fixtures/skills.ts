@@ -1,5 +1,4 @@
-import Skill from "../interfaces/skill";
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const data: any = [
   {
     description: "Développement front-end",

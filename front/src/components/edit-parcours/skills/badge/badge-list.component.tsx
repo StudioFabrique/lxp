@@ -1,4 +1,5 @@
-import React, { FC, useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { FC, useState } from "react";
 
 import ImportBadges from "./import-badges.component";
 import BadgeItem from "./badge-item.component";
@@ -19,7 +20,7 @@ const BadgeList: FC<Props> = ({ badgeProp, onSubmitBadge }) => {
     onSubmitBadge(newBadge);
   };
 
-  let content = (
+  const content = (
     <div className="flex flex-col w-full gap-y-8 items-center">
       {badge && badge.image ? <BadgeItem badge={badge} /> : null}
       <ImportBadges onSubmit={handleSubmitBadge} />

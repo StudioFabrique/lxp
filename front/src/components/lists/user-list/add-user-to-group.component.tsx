@@ -1,11 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useContext, useEffect } from "react";
 import { DrawerContext } from "../../../store/drawer.store";
 import usePagination from "../../../hooks/use-pagination";
 import AddUserToGroupItem from "./add-user-to-group-item";
 
-const AddUserToGroup: FC<{ selectedUsers: Array<any> }> = ({
-  selectedUsers,
-}) => {
+const AddUserToGroup: FC<{ selectedUsers: Array<any> }> = () => {
   const { isDrawerOpen } = useContext(DrawerContext);
   const handleAllChecked = () => {
     setAllChecked((prevAllChecked) => !prevAllChecked);

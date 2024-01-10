@@ -121,7 +121,7 @@ const Information: FC<{
       </form>
       <Presentation formProps={formProps} editMode={editMode} />
       <Hobbies initHobbies={userData?.hobbies ?? []} editMode={editMode} />
-      <SocialNetworks links={userData?.links ?? []} editMode={editMode} />
+      <SocialNetworks initLinks={userData?.links ?? []} editMode={editMode} />
     </div>
   );
 };

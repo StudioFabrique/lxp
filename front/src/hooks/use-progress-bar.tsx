@@ -19,7 +19,7 @@ const useProgressBar = (formValidation: boolean) => {
 
   const [isReadyToSendRequest, setReadyToSendRequest] = useState(false);
 
-  const [intervalId, setIntervalId] = useState<NodeJS.Timer | null>(null);
+  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
 
   /**
    * Les types de résultat de la requête au backend

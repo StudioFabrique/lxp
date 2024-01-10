@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useState } from "react";
 import { csvUsersFields } from "../../../../../config/csv/csv-users-fields";
 import RightSideDrawer from "../../../../UI/right-side-drawer/right-side-drawer";
@@ -16,7 +17,7 @@ const CsvImportUserList: FC<{
   );
   const [isDrawerOpen, setDrawerOpenState] = useState<boolean>(false);
 
-  const { isLoading, sendRequest, error } = useHttp();
+  const { isLoading, sendRequest } = useHttp();
 
   const handleImportCsv = (data: User[]) => {
     if (data) {

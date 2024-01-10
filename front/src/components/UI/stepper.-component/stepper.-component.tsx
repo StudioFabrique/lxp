@@ -14,7 +14,7 @@ const Stepper: FC<Props> = ({
   actualStep,
   finalStep,
   stepsList,
-  updateStep,
+  /* updateStep, */
 }) => {
   /**
    * définit le composant affiché à l'écran, si l'étape n'est pas valide aucun changement n'est effectué

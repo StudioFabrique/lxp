@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ChangeEvent,
   FC,
@@ -13,13 +14,12 @@ import {
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import Hobby from "../../../utils/interfaces/hobby";
 import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
-import DeleteIcon from "../../UI/svg/delete-icon.component";
 import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
 import Loader from "../../UI/loader";
 import Can from "../../UI/can/can.component";
 import { Context } from "../../../store/context.store";
-import { PlusCircle } from "lucide-react";
+import { Delete, Edit, PlusCircle } from "lucide-react";
 
 enum ActionType {
   add,
@@ -39,7 +39,6 @@ const reducer: Reducer<Hobby[], { type: ActionType; payload: PayloadType }> = (
   switch (type) {
     case ActionType.add: {
       const { newHobby } = payload;
-      console.log(newHobby);
 
       if (!newHobby) throw Error(`Incorrect payload: ${payload}`);
       return [...hobbies, newHobby];
@@ -167,14 +166,17 @@ const Hobbies: FC<{ initHobbies: Hobby[]; editMode: boolean }> = ({
                           <Loader />
                         </span>
                       ) : (
-                        <Can action="delete" object="profile">
-                          <span
-                            className="w-5 h-5 self-end cursor-pointer"
-                            onClick={() => handleDeleteHobby(hobby._id!)}
-                          >
-                            <DeleteIcon />
-                          </span>
-                        </Can>
+                        <span className="flex items-center">
+                          <Can action="update" object="profile">
+                            <Edit className="h-5 cursor-pointer" />
+                          </Can>
+                          <Can action="delete" object="profile">
+                            <Delete
+                              className="h-5 cursor-pointer"
+                              onClick={() => handleDeleteHobby(hobby._id!)}
+                            />
+                          </Can>
+                        </span>
                       ))}
                   </div>
                 </SubWrapper>
