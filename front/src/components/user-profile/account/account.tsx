@@ -13,13 +13,14 @@ import useForm from "../../UI/forms/hooks/use-form";
 import { validationErrors } from "../../../helpers/validate";
 import ManagePassword from "./manage-password";
 import { passwordSchema } from "../../../lib/validation/profile/password-schema";
+import useHttp from "../../../hooks/use-http";
 
 const Account: FC<{
   editMode: boolean;
   setEditMode: Dispatch<SetStateAction<boolean>>;
-  sendRequestInTab: any;
   formRef: Ref<HTMLFormElement>;
-}> = ({ editMode, setEditMode, sendRequestInTab, formRef }) => {
+}> = ({ editMode, setEditMode, formRef }) => {
+  const { sendRequest } = useHttp(true);
   const {
     onValidationErrors,
     ...formProps /* ...formProps prend le reste des valeurs de useForm non utilisées */
@@ -28,7 +29,7 @@ const Account: FC<{
   const firstInputRef: Ref<HTMLInputElement> = useRef(null);
 
   const handleSubmitForm: FormEventHandler = (e: FormEvent) => {
-    const applyData = (data: any) => {
+    const applyData = () => {
       setEditMode(false);
       toast.success("Formulaire envoyé avec succès !");
     };
@@ -41,7 +42,7 @@ const Account: FC<{
         toast.error("Les mot des passes ne correspondent pas");
         return;
       }
-      sendRequestInTab(
+      sendRequest(
         {
           path: `/user/profile/password`,
           method: "put",

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ChangeEvent,
   ChangeEventHandler,
@@ -45,7 +46,7 @@ const CalendarDurationForm = () => {
   const handleSubmit = useCallback(() => {
     progressBarProps.setFetchResultType("loading");
 
-    const applyData = (data: any) => {
+    const applyData = () => {
       dispatch(
         parcoursModulesSliceActions.updateParcoursModule({
           moduleId: currentModule.id,

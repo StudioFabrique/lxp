@@ -4,7 +4,6 @@ import Calendar from "../../components/user-profile/calendar";
 import Evaluations from "../../components/user-profile/evaluations";
 import Awards from "../../components/user-profile/awards/awards";
 import Account from "../../components/user-profile/account/account";
-import useHttp from "../../hooks/use-http";
 import EditIcon from "../../components/UI/svg/edit-icon";
 import Can from "../../components/UI/can/can.component";
 import { useLocation } from "react-router-dom";
@@ -13,10 +12,6 @@ type Tab = "Info" | "Calendar" | "Evals" | "Awards" | "Account";
 
 const Profile = () => {
   const { state } = useLocation();
-  console.log(state);
-
-  const { sendRequest: sendRequestInTab, isLoading: isLoadingInTab } =
-    useHttp(true);
 
   const [currentTab, setCurrentTab] = useState<Tab>("Info");
 
@@ -31,7 +26,6 @@ const Profile = () => {
           <Information
             editMode={editMode}
             setEditMode={setEditMode}
-            sendRequestInTab={sendRequestInTab}
             formRef={formRef}
           />
         );
@@ -46,7 +40,6 @@ const Profile = () => {
           <Account
             editMode={editMode}
             setEditMode={setEditMode}
-            sendRequestInTab={sendRequestInTab}
             formRef={formRef}
           />
         );

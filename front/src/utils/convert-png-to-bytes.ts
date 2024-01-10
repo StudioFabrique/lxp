@@ -1,4 +1,4 @@
-export function convertPngToBytes(file: File) {
+export function convertPngToBytes(/* file: File */) {
   const toBase64 = (file: File) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();

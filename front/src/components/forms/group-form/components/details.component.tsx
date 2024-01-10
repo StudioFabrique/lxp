@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 import Selecter from "../../../UI/selecter/selecter.component";
@@ -12,13 +13,12 @@ type Item = {
 
 const Details: FC<{
   onSelectParcours: (id: number) => void;
-}> = ({ onSelectParcours }) => {
+}> = () => {
   const { sendRequest } = useHttp();
 
   const [formations, setFormations] = useState<Array<Item>>([]);
   const [formation, setFormation] = useState<number | undefined>(undefined);
   const [parcoursList, setParcoursList] = useState<Array<Item>>([]);
-  const [parcours, setParcours] = useState<number | undefined>(undefined);
 
   /**
    * requête pour récupérer la liste des formations dans la bdd
@@ -47,9 +47,7 @@ const Details: FC<{
    * sélection d'un parcours lié à la formation sélectionnée
    * @param id number
    */
-  const handleParcours = (id: number) => {
-    setParcours(id);
-  };
+  const handleParcours = () => {};
 
   /**
    * requête qui retourne la liste des parcours liés à la formation sélectionnée

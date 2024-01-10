@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import SubWrapper from "../../../UI/sub-wrapper/sub-wrapper.component";
 import Can from "../../../UI/can/can.component";
 import BookIcon from "../../../UI/svg/book-icon";

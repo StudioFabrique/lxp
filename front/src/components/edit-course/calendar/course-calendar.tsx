@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
@@ -32,7 +33,7 @@ const CourseCalendar = () => {
     }
     const tmpDates = { ...values, id: setId(dates) };
     setIsLoading(true);
-    const applyData = (_data: any) => {
+    const applyData = () => {
       setIsLoading(false);
       dispatch(courseDatesActions.setCourseDates([...dates, tmpDates]));
     };
@@ -51,7 +52,7 @@ const CourseCalendar = () => {
    * @param id number
    */
   const handleDeleteItem = (id: number) => {
-    const applyData = (data: { success: boolean; message: string }) => {
+    const applyData = () => {
       dispatch(courseDatesActions.deleteCourseDates(id));
     };
     sendRequest(

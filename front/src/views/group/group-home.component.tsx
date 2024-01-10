@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link, useLocation } from "react-router-dom";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Context } from "../../store/context.store";
@@ -116,7 +117,7 @@ const GroupHome = () => {
 
     const updatedRolesIds = updatedRoles.map((role: Role) => role._id);
 
-    const applyData = (data: any) => {
+    const applyData = () => {
       initPagination();
       getList();
     };
