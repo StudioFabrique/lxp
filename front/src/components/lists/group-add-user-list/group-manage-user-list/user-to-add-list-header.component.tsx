@@ -15,7 +15,7 @@ const UserToAddListHeader: FC<{
   order: string;
   sortData: (order: string) => void;
   setSelectAllUsers: Dispatch<SetStateAction<boolean>>;
-}> = ({ filters, value, order, sortData, setSelectAllUsers }) => {
+}> = ({ filters, order, sortData, setSelectAllUsers }) => {
   const [selectedFilter, setSelectedFilter] = useState<{
     filterValue: string;
     placeholder: string;
@@ -41,9 +41,7 @@ const UserToAddListHeader: FC<{
     setFilterSelectorState(false);
   };
 
-  const handleClickOrder: MouseEventHandler<HTMLButtonElement> = (
-    event: MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleClickOrder: MouseEventHandler<HTMLButtonElement> = () => {
     sortData(selectedFilter.filterValue);
   };
 

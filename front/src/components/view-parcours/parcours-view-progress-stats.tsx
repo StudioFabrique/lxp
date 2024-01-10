@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate } from "react-router-dom";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import RightArrowIcon from "../UI/svg/right-arrow-icon";

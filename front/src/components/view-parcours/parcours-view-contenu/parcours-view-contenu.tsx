@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import ParcoursContenuItem from "./parcours-view-contenu-item";
@@ -8,8 +9,6 @@ import { useState } from "react";
 import Can from "../../UI/can/can.component";
 import { Link, useParams } from "react-router-dom";
 import EditIcon from "../../UI/svg/edit-icon";
-import ImageHeaderMutable from "../../image-header/image-header-mutable";
-import ImageHeaderCopy from "../../image-header";
 
 const ParcoursViewContenu = () => {
   const modules = useSelector(
@@ -62,9 +61,8 @@ const ParcoursViewContenu = () => {
             <div className="flex flex-col gap-y-4">
               <ParcoursViewContenuDetailHeader
                 imageModuleHeader={selectedModule?.thumb}
-                moduleTitle={selectedModule?.title}
               />
-              <ParcoursViewContenuDetail moduleId={selectedModule?.id!} />
+              <ParcoursViewContenuDetail moduleId={selectedModule?.id ?? 0} />
             </div>
           )}
         </div>

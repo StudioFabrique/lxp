@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useCallback, useEffect, useState } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 import Module from "../../../../utils/interfaces/module";
@@ -61,7 +62,7 @@ const CalendarDatesForm: FC<{
       );
     }
 
-    const applyData = (data: any) => {
+    const applyData = () => {
       dispatch(
         parcoursModulesSliceActions.updateParcoursModule({
           module: {

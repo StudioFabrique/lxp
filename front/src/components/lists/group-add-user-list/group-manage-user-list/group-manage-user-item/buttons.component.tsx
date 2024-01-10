@@ -1,11 +1,4 @@
-import {
-  ChangeEvent,
-  FC,
-  FormEventHandler,
-  Ref,
-  useEffect,
-  useRef,
-} from "react";
+import { FC, FormEventHandler, Ref, useEffect, useRef } from "react";
 import User from "../../../../../utils/interfaces/user";
 
 export const AddUsersButton: FC<{
@@ -41,7 +34,7 @@ export const SelectionButton: FC<{
 }> = (props) => {
   const checkboxRef: Ref<HTMLInputElement> = useRef(null);
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = () => {
     if (checkboxRef.current == null) return;
     if (checkboxRef.current.checked) {
       checkboxRef.current.checked = true;

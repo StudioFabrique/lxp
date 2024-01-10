@@ -47,8 +47,8 @@ const twitterAlias = (pathnameParts: string[]) => {
   return pathnameParts[1];
 };
 
-const facebookAlias = (pathnameParts: string[]) => {};
+/* const facebookAlias = (pathnameParts: string[]) => {};
 
 const instagramAlias = (pathnameParts: string[]) => {};
 
-const linkedinAlias = (pathnameParts: string[]) => {};
+const linkedinAlias = (pathnameParts: string[]) => {}; */
