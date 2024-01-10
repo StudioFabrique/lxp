@@ -26,7 +26,7 @@ const ParcoursViewProgressStats = () => {
           </h2>
           <div className="flex gap-10">
             {modules
-              ?.filter((x, i) => i < 4)
+              ?.filter((_x, i) => i < 4)
               .map((module, i) => (
                 <div
                   className="flex flex-col justify-center gap-2 items-center bg-secondary-focus text-primary-focus font-bold w-[10em] h-[10em] rounded-xl"
