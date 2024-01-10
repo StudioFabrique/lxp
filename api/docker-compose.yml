@@ -6,7 +6,8 @@ networks:
     external: true
 
 volumes:
-  data: # Definition du volume
+  pg:
+  mongo:
 
 # The containers that compose the project
 services:
@@ -14,6 +15,8 @@ services:
     image: postgres:latest
     restart: always
     container_name: lxp-prisma
+    volumes:
+      - pg:/var/lib/postgresql/data
     networks:
       - lxp_api
     ports:
@@ -26,6 +29,8 @@ services:
     image: mongo:latest
     restart: always
     container_name: lxp-mongo
+    volumes:
+      - mongo:/data/db
     networks:
       - lxp_api
     ports:
@@ -44,7 +49,7 @@ services:
     depends_on:
       - db-pg
       - db-mongo
-    command: pm2 start dist/src/server.js
+    command: npm run start:prod
     environment:
-      - DATABASE_URL=postgresql://lxp-studio:gandalf@localhost:5432/lxp
+      - DATABASE_URL=postgresql://lxp-studio:gandalf@db-pg:5432/lxp
       - MONGO_LOCAL_URL=mongodb://db-mongo:27017/lxp
