@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import Module from "../../utils/interfaces/module";
 import { CSSProperties } from "react";
 
-const ParcoursViewProgressStats = () => {
+const ProgressStats = () => {
   const navigate = useNavigate();
 
   const modules = useSelector(
@@ -52,4 +52,4 @@ const ParcoursViewProgressStats = () => {
   );
 };
 
-export default ParcoursViewProgressStats;
+export default ProgressStats;

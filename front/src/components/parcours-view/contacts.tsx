@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import Contact from "../../utils/interfaces/contact";
 
-const ParcoursViewContacts = () => {
+const Contacts = () => {
   const contacts = useSelector(
     (state: any) => state.parcoursContacts.currentContacts
   ) as Contact[];
@@ -32,4 +33,4 @@ const ParcoursViewContacts = () => {
   );
 };
 
-export default ParcoursViewContacts;
+export default Contacts;
