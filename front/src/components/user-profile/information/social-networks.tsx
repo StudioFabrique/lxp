@@ -4,6 +4,7 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import DeleteIcon from "../../UI/svg/delete-icon.component";
 import Can from "../../UI/can/can.component";
 import useHttp from "../../../hooks/use-http";
+import { PlusCircle } from "lucide-react";
 
 const SocialNetworks: FC<{ links: Link[]; editMode: boolean }> = ({
   links,
@@ -44,8 +45,8 @@ const SocialNetworks: FC<{ links: Link[]; editMode: boolean }> = ({
           </span>
         </div>
       </dialog>
-      <div className="flex justify-between">
-        <h3 className="text-lg font-semibold">Réseaux sociaux</h3>
+      <div className="flex gap-5">
+        <h3 className="text-lg font-semibold">Mes réseaux sociaux</h3>
         {editMode && (
           <Can action="write" object="profile">
             <button
@@ -53,7 +54,7 @@ const SocialNetworks: FC<{ links: Link[]; editMode: boolean }> = ({
               className="btn btn-sm btn-primary"
               onClick={handleShowModal}
             >
-              +
+              Ajouter <PlusCircle className="h-5" />
             </button>
           </Can>
         )}

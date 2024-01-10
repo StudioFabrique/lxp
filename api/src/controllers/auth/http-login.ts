@@ -35,8 +35,8 @@ async function httpLogin(req: Request, res: Response) {
     const user = await userLogin(email, password);
 
     if (user) {
-      const accessToken = setTokens(user.id, user.roles);
-      const refreshToken = setTokens(user.id, user.roles);
+      const accessToken = setTokens(user._id, user.roles);
+      const refreshToken = setTokens(user._id, user.roles);
       return res
         .cookie("accessToken", accessToken, {
           maxAge: tokensMaxAge.accessToken,

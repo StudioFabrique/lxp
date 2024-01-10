@@ -1,4 +1,15 @@
-import { ChangeEvent, FC, Ref, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  FC,
+  FormEvent,
+  FormEventHandler,
+  Reducer,
+  Ref,
+  useContext,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import Hobby from "../../../utils/interfaces/hobby";
 import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
@@ -7,22 +18,97 @@ import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
 import Loader from "../../UI/loader";
 import Can from "../../UI/can/can.component";
+import { Context } from "../../../store/context.store";
+import { PlusCircle } from "lucide-react";
 
-const Hobbies: FC<{ hobbies: Hobby[]; editMode: boolean }> = ({
+enum ActionType {
+  add,
+  edit,
+  delete,
+}
+
+type PayloadType = {
+  id?: string;
+  newHobby?: Hobby;
+};
+
+const reducer: Reducer<Hobby[], { type: ActionType; payload: PayloadType }> = (
   hobbies,
+  { type, payload }
+) => {
+  switch (type) {
+    case ActionType.add: {
+      const { newHobby } = payload;
+      console.log(newHobby);
+
+      if (!newHobby) throw Error(`Incorrect payload: ${payload}`);
+      return [...hobbies, newHobby];
+    }
+    case ActionType.edit: {
+      const { id, newHobby } = payload;
+      if (!newHobby) throw Error(`Incorrect payload: ${payload}`);
+      return hobbies.map((hobby) => (hobby._id === id ? newHobby : hobby));
+    }
+    case ActionType.delete: {
+      const { id } = payload;
+      return hobbies.filter((hobby) => id !== hobby._id);
+    }
+    default:
+      throw Error(`Unknown action: ${type}`);
+  }
+};
+
+const Hobbies: FC<{ initHobbies: Hobby[]; editMode: boolean }> = ({
+  initHobbies,
   editMode,
 }) => {
+  const { user } = useContext(Context);
   const { sendRequest, isLoading } = useHttp(true);
+
   const modalRef: Ref<HTMLDialogElement> = useRef(null);
+  const inputRef: Ref<HTMLInputElement> = useRef(null);
 
   const [value, setValue] = useState<string>("");
+  const [hobbies, dispatch] = useReducer(reducer, initHobbies);
 
   const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.currentTarget.value);
   };
 
-  const handleDelete = (id: string) => {
+  const handleAddHobby: FormEventHandler<HTMLFormElement> = (
+    e: FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+    console.log("test");
+
+    const applyData = (data: any) => {
+      const hobby = data.data;
+      dispatch({
+        type: ActionType.add,
+        payload: {
+          newHobby: {
+            _id: hobby._id,
+            title: hobby.title,
+            user: user ?? undefined,
+          },
+        },
+      });
+      toast.success("Centre d'intérêt ajouté avec succès");
+    };
+
+    sendRequest(
+      {
+        path: `/user/hobby`,
+        body: { title: value, id: user?._id },
+        method: "post",
+      },
+      applyData
+    );
+  };
+
+  const handleDeleteHobby = (id: string) => {
     const applyData = () => {
+      dispatch({ type: ActionType.delete, payload: { id: id } });
       toast.success("Centre d'intérêt supprimé avec succès");
     };
 
@@ -31,26 +117,30 @@ const Hobbies: FC<{ hobbies: Hobby[]; editMode: boolean }> = ({
 
   const handleShowModal = () => {
     modalRef.current?.showModal();
+    inputRef.current?.focus();
   };
 
   return (
     <div className="flex flex-col gap-2">
       <dialog ref={modalRef} className="modal">
         <div className="modal-box flex flex-col gap-10">
-          <span className="flex justify-between">
+          <form
+            onSubmit={handleAddHobby}
+            className="flex justify-between items-center"
+          >
             <input
               type="text"
               className="input input-secondary"
               value={value}
               onChange={handleChangeValue}
             />
-            <button type="button" className="btn">
+            <button type="submit" className="btn">
               Ajouter
             </button>
-          </span>
+          </form>
         </div>
       </dialog>
-      <div className="flex justify-between">
+      <div className="flex gap-5">
         <h3 className="text-lg font-semibold">Mes centres d'intérêts</h3>
         {editMode && (
           <Can action="write" object="profile">
@@ -59,7 +149,7 @@ const Hobbies: FC<{ hobbies: Hobby[]; editMode: boolean }> = ({
               className="btn btn-sm btn-primary"
               onClick={handleShowModal}
             >
-              +
+              Ajouter <PlusCircle className="h-5" />
             </button>
           </Can>
         )}
@@ -80,7 +170,7 @@ const Hobbies: FC<{ hobbies: Hobby[]; editMode: boolean }> = ({
                         <Can action="delete" object="profile">
                           <span
                             className="w-5 h-5 self-end cursor-pointer"
-                            onClick={() => handleDelete(hobby._id!)}
+                            onClick={() => handleDeleteHobby(hobby._id!)}
                           >
                             <DeleteIcon />
                           </span>
