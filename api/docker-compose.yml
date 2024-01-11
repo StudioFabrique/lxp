@@ -56,8 +56,8 @@ services:
     develop:
       watch:
         - action: sync
-          path: ./src
-          target: /
+          path: .
+          target: /app
           ignore:
             - node_modules/
         - action: rebuild

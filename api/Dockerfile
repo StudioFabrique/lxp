@@ -12,9 +12,9 @@ RUN npm install
 RUN npm i -g nodemon
 
 # Copie du code source dans l'image
-COPY . .
+COPY . /app
 
-# Transpilation du code TypeScript en JavaScript
-#RUN npm run build
 RUN npx prisma generate
+# Transpilation du code TypeScript en JavaScript
+RUN npm run build
 
