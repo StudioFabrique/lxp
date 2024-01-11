@@ -1,18 +1,23 @@
 import React from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { Pen, Trash2 } from "lucide-react";
+import { CheckCircle, GripVertical, Loader2, Pen, Trash2 } from "lucide-react";
 import Course from "../../utils/interfaces/course";
 import BookIcon from "../UI/svg/book-icon";
 import Wrapper from "../UI/wrapper/wrapper.component";
+import { Link } from "react-router-dom";
 
 interface EditModuleCourseProps {
   courses: Course[];
+  updating: boolean;
+  success: boolean;
   onSetSubmit: (value: boolean) => void;
   onUpdateCourses: (updatedCourses: Course[]) => void;
 }
 
 const EditModuleCourse: React.FC<EditModuleCourseProps> = ({
   courses,
+  updating,
+  success,
   onSetSubmit,
   onUpdateCourses,
 }) => {
@@ -34,7 +39,13 @@ const EditModuleCourse: React.FC<EditModuleCourseProps> = ({
 
   return (
     <Wrapper>
-      <h2 className="text-lg font-bold text-primary">Contenu du module</h2>
+      <div className="flex items-center gap-x-2">
+        <h2 className="text-lg font-bold text-primary">Contenu du module</h2>
+        {updating ? (
+          <Loader2 className="w-4 h-4 text-primary animate-spin" />
+        ) : null}
+        {success ? <CheckCircle className="w-4 h-4 text-success" /> : null}
+      </div>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="courses">
           {(provided) => (
@@ -58,6 +69,7 @@ const EditModuleCourse: React.FC<EditModuleCourseProps> = ({
                       <Wrapper>
                         <article className="flex justify-between items-center">
                           <div className="flex items-center gap-x-4">
+                            <GripVertical className="w-10 h-10 text-primary/50" />
                             <div className="w-10 h-10 text-primary">
                               <BookIcon />
                             </div>
@@ -69,7 +81,9 @@ const EditModuleCourse: React.FC<EditModuleCourseProps> = ({
                             </span>
                           </div>
                           <span className="flex items-center gap-x-4">
-                            <Pen className="w-4 h-4 text-primary" />
+                            <Link to={`/admin/course/edit/${item.id}`}>
+                              <Pen className="w-4 h-4 text-primary" />
+                            </Link>
                             <Trash2 className="w-4 h-4 text-error" />
                           </span>
                         </article>
