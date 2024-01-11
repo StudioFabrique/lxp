@@ -7,11 +7,11 @@ interface EditModuleSkillsProps {
 
 export default function EditModuleSkills({ skills }: EditModuleSkillsProps) {
   return (
-    <section className="w-full grid grid-rows-3 gap-4">
-      <Wrapper>
+    <Wrapper>
+      <section className="w-full">
         <article className="flex flex-col gap-y-2">
           <h2 className="text-lg font-bold text-primary">Compétences</h2>
-          <ul>
+          <ul className="flex flex-col gap-y-2">
             {skills.map((item) => (
               <li key={item.id}>
                 <Wrapper>
@@ -21,7 +21,7 @@ export default function EditModuleSkills({ skills }: EditModuleSkillsProps) {
             ))}
           </ul>
         </article>
-      </Wrapper>
-    </section>
+      </section>
+    </Wrapper>
   );
 }

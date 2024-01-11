@@ -31,12 +31,16 @@ interface ModuleDetail {
 export default function EditModuleHome() {
   const { moduleId } = useParams();
   const [module, setModule] = useState<ModuleDetail | null>(null);
-  const { sendRequest, isLoading, error } = useHttp();
+  const { sendRequest, error } = useHttp();
   const [submit, setSubmit] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [updating, setUpdating] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const fetchModule = useCallback(() => {
     const applyData = (data: ModuleDetail) => {
       setModule(data);
+      setLoading(false);
     };
     sendRequest(
       {
@@ -47,10 +51,14 @@ export default function EditModuleHome() {
   }, [moduleId, sendRequest]);
 
   const handleReorderCourses = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const applyData = (data: any) => {
       console.log(data);
       fetchModule();
+      setUpdating(false);
+      setSuccess(true);
     };
+    setUpdating(true);
     sendRequest(
       {
         path: `/course/reorder/${moduleId}`,
@@ -77,18 +85,31 @@ export default function EditModuleHome() {
   }, [submit, handleReorderCourses]);
 
   useEffect(() => {
+    setLoading(true);
     fetchModule();
   }, [fetchModule]);
 
   useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (success) {
+      timer = setTimeout(() => {
+        setSuccess(false);
+      }, 3000);
+    }
+    return () => clearTimeout(timer);
+  }, [success]);
+
+  useEffect(() => {
     if (error.length > 0) {
       toast.error(error);
+      setUpdating(false);
+      setLoading(false);
     }
   }, [error]);
 
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
-      {isLoading ? (
+      {loading ? (
         <Loader />
       ) : (
         <FadeWrapper>
@@ -108,7 +129,7 @@ export default function EditModuleHome() {
             </div>
             {module ? (
               <>
-                <section className="w-4/6 grid grid-cols-2 gap-16 my-2">
+                <section className="w-4/6 grid grid-cols-2 gap-4 my-4">
                   <article>
                     <EditModuleInfos
                       minDate={module.minDate}
@@ -123,6 +144,8 @@ export default function EditModuleHome() {
                 </section>
                 <section className="w-4/6">
                   <EditModuleCourse
+                    updating={updating}
+                    success={success}
                     courses={module.courses}
                     onSetSubmit={setSubmit}
                     onUpdateCourses={handleUpdateCoursesList}
