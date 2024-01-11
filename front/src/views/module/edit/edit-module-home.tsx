@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Skill from "../../../utils/interfaces/skill";
 import Contact from "../../../utils/interfaces/contact";
 import Course from "../../../utils/interfaces/course";
@@ -9,7 +9,10 @@ import Loader from "../../../components/UI/loader";
 import BookIcon from "../../../components/UI/svg/book-icon";
 import EditModuleInfos from "../../../components/edit-module/edit-module-infos";
 import { useParams } from "react-router-dom";
-import Wrapper from "../../../components/UI/wrapper/wrapper.component";
+import EditModuleSkills from "../../../components/edit-module/edit-module-skills";
+import EditModuleCourse from "../../../components/edit-module/edit-module-course";
+import toast from "react-hot-toast";
+import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 
 interface ModuleDetail {
   id: number;
@@ -29,8 +32,9 @@ export default function EditModuleHome() {
   const { moduleId } = useParams();
   const [module, setModule] = useState<ModuleDetail | null>(null);
   const { sendRequest, isLoading, error } = useHttp();
+  const [submit, setSubmit] = useState(false);
 
-  useEffect(() => {
+  const fetchModule = useCallback(() => {
     const applyData = (data: ModuleDetail) => {
       setModule(data);
     };
@@ -42,13 +46,53 @@ export default function EditModuleHome() {
     );
   }, [moduleId, sendRequest]);
 
+  const handleReorderCourses = useCallback(() => {
+    const applyData = (data: any) => {
+      console.log(data);
+      fetchModule();
+    };
+    sendRequest(
+      {
+        path: `/course/reorder/${moduleId}`,
+        method: "put",
+        body: module?.courses.map((item) => item.id),
+      },
+      applyData
+    );
+    setSubmit(false);
+  }, [moduleId, module?.courses, fetchModule, sendRequest]);
+
+  const handleUpdateCoursesList = (updatedCourses: Course[]) => {
+    setModule((prevModule) => ({ ...prevModule!, courses: updatedCourses }));
+  };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (submit) {
+      timer = setTimeout(() => {
+        handleReorderCourses();
+      }, autoSubmitTimer);
+    }
+    return () => clearTimeout(timer);
+  }, [submit, handleReorderCourses]);
+
+  useEffect(() => {
+    fetchModule();
+  }, [fetchModule]);
+
+  useEffect(() => {
+    if (error.length > 0) {
+      toast.error(error);
+    }
+  }, [error]);
+
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
       {isLoading ? (
         <Loader />
       ) : (
         <FadeWrapper>
-          <div className="w-full h-full flex flex-col gap-y-8">
+          <div className="w-full h-full flex flex-col items-center first-letter:gap-y-8">
             <div className="w-full flex flex-col items-center gap-y-8">
               {module ? (
                 <ImageHeader
@@ -63,19 +107,28 @@ export default function EditModuleHome() {
               {/* Etapes du parcours */}
             </div>
             {module ? (
-              <section className="w-5/6 flex justify-center bg-pink-400">
-                <article className="w-4/6 grid grid-cols-2 gap-16">
-                  <Wrapper>
+              <>
+                <section className="w-4/6 grid grid-cols-2 gap-16 my-2">
+                  <article>
                     <EditModuleInfos
                       minDate={module.minDate}
                       maxDate={module.maxDate}
                       description={module.description}
                       contacts={module.contacts}
                     />
-                  </Wrapper>
-                </article>
-                <article className="w-4/6 bg-orange-500">toto</article>
-              </section>
+                  </article>
+                  <article className="w-full">
+                    <EditModuleSkills skills={module.bonusSkills} />
+                  </article>
+                </section>
+                <section className="w-4/6">
+                  <EditModuleCourse
+                    courses={module.courses}
+                    onSetSubmit={setSubmit}
+                    onUpdateCourses={handleUpdateCoursesList}
+                  />
+                </section>
+              </>
             ) : (
               <Loader />
             )}
