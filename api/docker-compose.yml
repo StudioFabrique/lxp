@@ -7,7 +7,9 @@ networks:
 
 volumes:
   pg:
+    driver: local
   mongo:
+    driver: local
 
 # The containers that compose the project
 services:
@@ -36,7 +38,8 @@ services:
     ports:
       - "25000:27017"
   api:
-    image: lxp-api
+    #image: lxp-api
+    build: .
     networks:
       - lxp_api
     restart: always
@@ -49,7 +52,16 @@ services:
     depends_on:
       - db-pg
       - db-mongo
-    command: npm run start:prod
+    command: npm run start:dev
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
     environment:
       - DATABASE_URL=postgresql://lxp-studio:gandalf@db-pg:5432/lxp
       - MONGO_LOCAL_URL=mongodb://db-mongo:27017/lxp
