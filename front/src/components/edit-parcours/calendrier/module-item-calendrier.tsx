@@ -50,7 +50,7 @@ const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
           <span className="w-[20%]">
             <img
               className="object-fill  rounded-md"
-              src={currentModule.thumb}
+              src={`data:image/jpeg;base64,${module.thumb}`}
               alt="module preview"
             />
           </span>

@@ -38,6 +38,7 @@ import httpPutCourseDates from "../../../controllers/course/http-put-course-date
 import httpDeleteCourseDates from "../../../controllers/course/http-delete-courseDates";
 import httpPutCourseIsPublished from "../../../controllers/course/http-put-course-ispublished";
 import httpGetCourseDates from "../../../controllers/course/http-get-course-dates";
+import httpGetCoursesByModule from "../../../controllers/course/http-get-courses-by-module";
 
 const courseRouter = express.Router();
 
@@ -60,12 +61,15 @@ const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 
 // enregistre un nouveau cours en relation avec un module existant
 courseRouter.post("/", postCourseValidator, httpPostCourse);
+
 // retourne la liste de tous les cours
 courseRouter.get(
   "/",
   // checkToken,
   httpGetCourses
 );
+//retourne la liste des cours en fonction de l'id de leur module rattaché
+courseRouter.get("/:moduleId", httpGetCoursesByModule);
 // retourne les informations d'un cours identifié par son ID
 courseRouter.get(
   "/infos/:courseId",
