@@ -5,7 +5,6 @@ import BookIcon from "../../../UI/svg/book-icon";
 import useHttp from "../../../../hooks/use-http";
 import { FC, useEffect, useState } from "react";
 import Course from "../../../../utils/interfaces/course";
-import { sortArray } from "../../../../utils/sortArray";
 import EditIcon from "../../../UI/svg/edit-icon";
 import { Link } from "react-router-dom";
 
@@ -18,29 +17,12 @@ const ContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
    */
   useEffect(() => {
     const applyData = (data: any) => {
-      console.log({ data });
-
       const courses = data.response;
-      setCourses(
-        sortArray(
-          courses.filter((item: any) =>
-            item.module.id === moduleId
-              ? {
-                  ...item,
-                  module: {
-                    ...item.module,
-                    parcours: item.module.parcours[0].parcours,
-                  },
-                }
-              : null
-          ),
-          "createdAt"
-        )
-      );
+      setCourses(courses);
     };
     sendRequest(
       {
-        path: "/course?",
+        path: `/course/${moduleId}`,
       },
       applyData
     );

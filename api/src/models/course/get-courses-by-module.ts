@@ -1,7 +1,10 @@
 import { prisma } from "../../utils/db";
 
-async function getCourses() {
+async function getCoursesByModule(moduleId: number) {
   const courses = await prisma.course.findMany({
+    where: {
+      moduleId,
+    },
     select: {
       id: true,
       title: true,
@@ -46,4 +49,4 @@ async function getCourses() {
   return result;
 }
 
-export default getCourses;
+export default getCoursesByModule;
