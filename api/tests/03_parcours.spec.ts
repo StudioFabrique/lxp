@@ -158,7 +158,7 @@ describe("HTTP Parcours", () => {
     });
   });
 
-  describe("Test GET /parcours-by-id/:formationId", () => {
+  describe("Test GET /parcours-by-formation/:formationId", () => {
     test("It should respond 403 forbidden", async () => {
       await request(app)
         .get("/v1/parcours/parcours-by-formation/1")
@@ -177,6 +177,19 @@ describe("HTTP Parcours", () => {
         .get("/v1/parcours/parcours-by-formation/toto")
         .set("Cookie", [`${authToken}`])
         .expect(400);
+    });
+
+    test("It should respond 404 not found", async () => {
+      await request(app)
+        .get("/v1/parcours/parcours-by-formation")
+        .set("Cookie", [`${authToken}`])
+        .expect(404);
+    });
+  });
+
+  describe("Test GET /parcours-id/:parcoursId", () => {
+    test("It should respond 403 forbidden", async () => {
+      await request(app).get("/v1/parcours/parcours-by-id/1").expect(403);
     });
   });
 

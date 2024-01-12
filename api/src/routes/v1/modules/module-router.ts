@@ -26,6 +26,7 @@ import {
 import { idsArrayValidator } from "../../../helpers/custom-validators";
 import httpGetAllModules from "../../../controllers/module/http-get-all-modules";
 import httpDeleteFormationModule from "../../../controllers/module/http-delete-formation-module";
+import httpGetModuleDetail from "../../../controllers/module/http-get-module-detail";
 
 const modules = Router();
 
@@ -94,6 +95,12 @@ modules.delete(
   "/formation/:moduleId",
   checkPermissions("module"),
   httpDeleteFormationModule
+);
+// retourne les détails d'un module pour les afficher dans l'interface de gestion des modules
+modules.get(
+  "/detail/:moduleId",
+  checkPermissions("module"),
+  httpGetModuleDetail
 );
 
 export default modules;

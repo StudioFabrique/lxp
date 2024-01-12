@@ -5,12 +5,12 @@ import httpPostCourse from "../../../controllers/course/http-post-course";
 import {
   courseIdValidator,
   deleteCourseDatesValidator,
-  deleteCourseLessonValidator,
   postCourseValidator,
   putCourseDatesValidator,
   putCourseInformationsValidator,
   putCourseLessonValidator,
   putCourseNewObjectiveValidator,
+  putReorderCoursesValidator,
 } from "./course-validators";
 import httpGetCourses from "../../../controllers/course/http-get-courses";
 import httpGetCourseInformations from "../../../controllers/course/http-get-course-informations";
@@ -38,6 +38,7 @@ import httpPutCourseDates from "../../../controllers/course/http-put-course-date
 import httpDeleteCourseDates from "../../../controllers/course/http-delete-courseDates";
 import httpPutCourseIsPublished from "../../../controllers/course/http-put-course-ispublished";
 import httpGetCourseDates from "../../../controllers/course/http-get-course-dates";
+import httpPutReorderCourses from "../../../controllers/course/http-put-reorder-coursers";
 
 const courseRouter = express.Router();
 
@@ -225,6 +226,14 @@ courseRouter.get(
   checkPermissions("role"),
   courseIdValidator,
   httpGetCourseDates
+);
+
+// met à jour l'ordre des cours associés à un module
+courseRouter.put(
+  "/reorder/:moduleId",
+  checkPermissions("course"),
+  putReorderCoursesValidator,
+  httpPutReorderCourses
 );
 
 export default courseRouter;

@@ -152,3 +152,27 @@ export const deleteCourseDatesValidator = [
     .escape(),
   checkValidatorResult,
 ];
+
+export const putReorderCoursesValidator = [
+  param("moduleId")
+    .notEmpty()
+    .withMessage("L'identifiant du module est requis.")
+    .isNumeric()
+    .isInt()
+    .withMessage("L'identifiant du module doit être un nombre entier."),
+  body()
+    .isArray()
+    .notEmpty()
+    .withMessage("La requête requiert un tableau.")
+    .notEmpty(),
+  body("*")
+    .notEmpty()
+    .withMessage(
+      "Le tableau d'identifiants doit contenir une ou plusieurs valeurs."
+    )
+    .isNumeric()
+    .withMessage(
+      "Le tableau d'identifiants doit contenir des nombres entiers uniquement."
+    ),
+  checkValidatorResult,
+];
