@@ -23,7 +23,14 @@ const v1Router = express.Router();
 v1Router.use("/auth", authRouter);
 v1Router.use("/user", userRouter);
 v1Router.use("/group", groupRouter);
-v1Router.use("/parcours", parcoursRouter);
+v1Router.use(
+  "/parcours",
+  parcoursRouter /* , [
+  () => {
+    return console.log("elastic search to be implemented here ...");
+  },
+] */
+);
 v1Router.use("/skills", skillsRouter);
 v1Router.use("/tag", tagRouter);
 v1Router.use("/formation", formationRouter);
