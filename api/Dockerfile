@@ -16,5 +16,5 @@ COPY . /app
 
 RUN npx prisma generate
 # Transpilation du code TypeScript en JavaScript
-RUN npm run build
+# RUN npm run build
 
