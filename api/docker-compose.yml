@@ -24,9 +24,9 @@ services:
     ports:
       - "5500:5432"
     environment:
-      POSTGRES_USER: lxp-studio
-      POSTGRES_PASSWORD: gandalf
-      POSTGRES_DB: lxp
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
   db-mongo:
     image: mongo:latest
     restart: always
