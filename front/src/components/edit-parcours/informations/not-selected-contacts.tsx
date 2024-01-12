@@ -138,6 +138,8 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
   };
 
   const handleCloseDrawer = (id: string) => {
+    console.log("click");
+
     document.getElementById(id)?.click();
   };
 
@@ -201,7 +203,28 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
           </RightSideDrawer>
         </>
       ) : (
-        <p>Tous les contacts ont déja été ajoutés</p>
+        <div className="flex flex-col gap-y-8">
+          <p>Tous les contacts ont déja été ajoutés</p>
+          <button
+            className="btn btn-accent"
+            onClick={() => {
+              handleCloseDrawer("new-contact");
+            }}
+          >
+            Créer un contact
+          </button>
+          <RightSideDrawer
+            id="new-contact"
+            title="Ajouter un Formateur"
+            visible={false}
+            //onCloseDrawer={handleCloseDrawer}
+          >
+            <UserQuickCreate
+              onCloseDrawer={handleCloseDrawer}
+              onSubmitUser={submitNewTeacher}
+            />
+          </RightSideDrawer>
+        </div>
       )}
     </>
   );

@@ -22,7 +22,7 @@ const ModuleTable = ({
   fieldSort,
   direction,
   onSorting,
-  stepId,
+  //stepId,
   onDelete,
 }: ModuleTableProps) => {
   //const nav = useNavigate();
@@ -64,7 +64,7 @@ const ModuleTable = ({
                       {item.parcours ? (
                         <Link
                           className="text-secondary"
-                          to={`/admin/parcours/edit/${item.parcours.id}?step=${stepId}`}
+                          to={`/admin/module/edit/${item.id}`}
                           aria-label="Editer le module"
                         >
                           <EditIcon />

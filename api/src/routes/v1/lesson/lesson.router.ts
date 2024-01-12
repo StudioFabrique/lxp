@@ -4,6 +4,7 @@ import httpPutLesson from "../../../controllers/lesson/http-put-lesson";
 import {
   getLessonsByTagValidator,
   putLessonValidator,
+  putReorderLessonsValidator,
 } from "./lesson-validator";
 import httpGetLessonsByTag from "../../../controllers/lesson/http-get-lessons-by-tag";
 import checkPermissions from "../../../middleware/check-permissions";
@@ -38,6 +39,7 @@ lessonRouter.delete("/:lessonId", checkPermissions("lesson"), httpDeleteLesson);
 lessonRouter.put(
   "/reorder/:courseId",
   checkPermissions("lesson"),
+  putReorderLessonsValidator,
   httpPutReorderLessons
 );
 
