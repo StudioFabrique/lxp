@@ -63,5 +63,5 @@ services:
         - action: rebuild
           path: package.json
     environment:
-      - DATABASE_URL=postgresql://lxp-studio:gandalf@db-pg:5432/lxp
-      - MONGO_LOCAL_URL=mongodb://db-mongo:27017/lxp
+      - DATABASE_URL=${DATABASE_URL}
+      - MONGO_LOCAL_URL=${MONGO_LOCAL_URL}
