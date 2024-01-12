@@ -22,7 +22,7 @@ services:
     networks:
       - lxp_api
     ports:
-      - "5500:5432"
+      - "5600:5432"
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -45,7 +45,7 @@ services:
     restart: always
     container_name: lxp-api
     ports:
-      - "5002:5001"
+      - "5001:5001"
     links:
       - db-pg
       - db-mongo
