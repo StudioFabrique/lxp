@@ -13,8 +13,13 @@ const Progression = ({ courses }: ProgressionProps) => {
   return (
     <Wrapper>
       <div className="flex justify-between">
-        <h2 className="w-28">Progression du module</h2>
-        <div className="radial-progress" style={radialStyle}>
+        <h2 className="text-xl font-bold w-28 text-primary">
+          Progression du module
+        </h2>
+        <div
+          className="radial-progress bg-secondary text-primary"
+          style={radialStyle}
+        >
           25%
         </div>
       </div>

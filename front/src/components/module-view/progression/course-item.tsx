@@ -2,6 +2,7 @@ import { ArrowDown, ArrowRight } from "lucide-react";
 import Course from "../../../utils/interfaces/course";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import LessonItem from "./lesson-item";
 
 type CourseItemProps = { course: Course };
 
@@ -9,7 +10,7 @@ const CourseItem = ({ course }: CourseItemProps) => {
   const [isCourseOpen, setCourseOpen] = useState(false);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full">
       <div
         className="flex flex-col w-full cursor-pointer"
         onClick={() => setCourseOpen(!isCourseOpen)}
@@ -44,13 +45,19 @@ const CourseItem = ({ course }: CourseItemProps) => {
         />
       </div>
       <motion.div
-        className="bg-secondary/80 -mt-2 rounded-b-xl p-2 flex flex-col items-center"
+        className="bg-secondary/80 -mt-2 rounded-b-xl"
         animate={{
           display: isCourseOpen ? "block" : "none",
-          height: isCourseOpen ? 200 : 0,
+          maxHeight: isCourseOpen ? 200 : 0,
         }}
       >
-        <p>Aucune leçons</p>
+        <div className="p-4 flex flex-col gap-4 items-center">
+          {course.lessons.length > 0 ? (
+            course.lessons.map((lesson) => <LessonItem lesson={lesson} />)
+          ) : (
+            <p>Aucune leçons</p>
+          )}
+        </div>
       </motion.div>
     </div>
   );
