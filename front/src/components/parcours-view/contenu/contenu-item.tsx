@@ -1,7 +1,6 @@
 import { Dispatch, FC, SetStateAction } from "react";
 import Module from "../../../utils/interfaces/module";
 import { getMonth } from "../../../utils/dates";
-import RightArrowRoundedIcon from "../../UI/svg/right-arrow-rounded-icon";
 import { ArrowRightCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 

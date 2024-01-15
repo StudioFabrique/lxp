@@ -146,45 +146,41 @@ const ParcoursView = () => {
   }, [dispatch]);
 
   return (
-    <div className="w-full h-full flex flex-col justify-start items-center px-8 p-4">
+    <div className="px-8 p-4">
       {isLoading ? (
         <Loader />
       ) : error.length === 0 ? (
         <FadeWrapper>
           <div className="w-full">
-            <div className="flex">
-              {image && (
-                <ImageHeader
-                  imageUrl={image}
-                  title={parcoursInfos.title}
-                  subTitle={parcours.formation?.title}
-                  children={[<></>, <HeaderMenu />]}
-                />
-              )}
-            </div>
+            <ImageHeader
+              imageUrl={image ?? ""}
+              title={parcoursInfos.title}
+              subTitle={parcours.formation?.title}
+              children={[<></>, <HeaderMenu />]}
+            />
+          </div>
 
-            <div className="w-full mt-16 flex flex-col gap-y-5">
-              <ProgressStats />
-              <Contenu />
-              <div className="grid lg:grid-cols-3 gap-x-5 gap-y-5">
-                <div className="grid grid-rows-2 gap-y-5">
-                  <Informations />
-                  <Description />
-                </div>
-                <div className="grid grid-rows-2 gap-y-5">
-                  <Tags />
-                  <Awards />
-                </div>
-                <div>
-                  <Contacts />
-                </div>
+          <div className="mt-5 flex flex-col gap-y-5">
+            <ProgressStats />
+            <Contenu />
+            <div className="grid lg:grid-cols-3 gap-x-5 gap-y-5">
+              <div className="grid grid-rows-2 gap-y-5">
+                <Informations />
+                <Description />
               </div>
-              <div className="grid grid-cols-2 gap-x-5">
-                <Competences />
-                <Objectifs />
+              <div className="grid grid-rows-2 gap-y-5">
+                <Tags />
+                <Awards />
               </div>
-              <QuickStatistiques />
+              <div>
+                <Contacts />
+              </div>
             </div>
+            <div className="grid grid-cols-2 gap-x-5">
+              <Competences />
+              <Objectifs />
+            </div>
+            <QuickStatistiques />
           </div>
         </FadeWrapper>
       ) : (

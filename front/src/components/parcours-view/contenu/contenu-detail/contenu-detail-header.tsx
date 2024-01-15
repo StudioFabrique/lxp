@@ -4,8 +4,6 @@ import { FC } from "react";
 const ContenuDetailHeader: FC<{
   imageModuleHeader: any;
 }> = ({ imageModuleHeader }) => {
-  console.log(imageModuleHeader);
-
   const classImage: React.CSSProperties = {
     backgroundImage: `url('data:image/jpeg;base64,${imageModuleHeader}')`,
     width: "100%",
