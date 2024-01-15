@@ -40,7 +40,8 @@ const ModuleView = () => {
               children={[<></>, <HeaderMenu />]}
             />
           </div>
-          <div className="w-full mt-5 grid grid-cols-4">
+
+          <div className="w-full mt-5 grid grid-cols-4 gap-5">
             <Progression courses={moduleData.courses} />
             <div className="col-span-3">
               <Wrapper>
