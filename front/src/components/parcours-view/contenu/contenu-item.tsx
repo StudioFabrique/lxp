@@ -2,6 +2,8 @@ import { Dispatch, FC, SetStateAction } from "react";
 import Module from "../../../utils/interfaces/module";
 import { getMonth } from "../../../utils/dates";
 import RightArrowRoundedIcon from "../../UI/svg/right-arrow-rounded-icon";
+import { ArrowRightCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const ContenuItem: FC<{
   module: Module;
@@ -9,8 +11,6 @@ const ContenuItem: FC<{
   selectedModuleId: number | undefined;
   setSelectedModule: Dispatch<SetStateAction<Module | null>>;
 }> = ({ module, iterationCount, selectedModuleId, setSelectedModule }) => {
-  console.log(module.minDate);
-
   const minDate: { day: number; month: string } = {
     day: new Date(module.minDate!).getDay(),
     month: getMonth(new Date(module.minDate!).getMonth()).substring(0, 4),
@@ -33,9 +33,9 @@ const ContenuItem: FC<{
         <p className="self-start">{`Module ${iterationCount}`}</p>
         <div className="flex justify-between w-full">
           <p className="self-start text-xl font-semibold">{module.title}</p>
-          <span className="self-end w-6">
-            <RightArrowRoundedIcon />
-          </span>
+          <Link className="self-end w-6" to={`../../module/view/${module.id}`}>
+            <ArrowRightCircle />
+          </Link>
         </div>
       </div>
     </div>
