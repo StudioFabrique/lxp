@@ -6,7 +6,12 @@ export default async function httpGetModuleDetail(req: Request, res: Response) {
   try {
     const { moduleId } = req.params;
     const response = await getModuleDetail(+moduleId);
-    return res.status(200).json(response);
+    return res
+      .status(200)
+      .json({
+        message: "Les détails du module ont bien étés récupérés",
+        data: response,
+      });
   } catch (error: any) {
     return res
       .status(error.statusCode ?? 500)

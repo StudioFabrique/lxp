@@ -1,17 +1,56 @@
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import ImageHeader from "../../components/image-header";
 import HeaderMenu from "../../components/UI/header-menu";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import useHttp from "../../hooks/use-http";
+import Progression from "../../components/module-view/progression/progression";
+import Loader from "../../components/UI/loader";
+import Wrapper from "../../components/UI/wrapper/wrapper.component";
 
 const ModuleView = () => {
-  return (
-    <FadeWrapper>
-      <ImageHeader
-        imageUrl={/* image */ "test"}
-        title={/* parcoursInfos.title */ "test"}
-        subTitle={/* parcours.formation?.title */ "test"}
-        children={[<></>, <HeaderMenu />]}
-      />
-    </FadeWrapper>
+  const { sendRequest, isLoading } = useHttp(true);
+  const { moduleId } = useParams();
+
+  const [moduleData, setModuleData] = useState(null);
+
+  useEffect(() => {
+    const applyData = (data: any) => {
+      console.log({ DonnéesDuModule: data.data });
+      setModuleData(data.data);
+    };
+
+    sendRequest(
+      { path: `/modules/detail/${moduleId}`, method: "get" },
+      applyData
+    );
+  }, [moduleId, sendRequest]);
+
+  return isLoading ? (
+    <Loader />
+  ) : (
+    moduleData && (
+      <div className="px-8 p-4">
+        <FadeWrapper>
+          <div className="w-full">
+            <ImageHeader
+              imageUrl={`data:image/jpeg;base64,${moduleData.image}`}
+              title={moduleData.title}
+              subTitle={`${moduleData.parcours} > Module`}
+              children={[<></>, <HeaderMenu />]}
+            />
+          </div>
+          <div className="w-full mt-5 grid grid-cols-4">
+            <Progression courses={moduleData.courses} />
+            <div className="col-span-3">
+              <Wrapper>
+                <div></div>
+              </Wrapper>
+            </div>
+          </div>
+        </FadeWrapper>
+      </div>
+    )
   );
 };
 
