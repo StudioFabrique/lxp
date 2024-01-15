@@ -3,7 +3,7 @@ import Module from "../../../utils/interfaces/module";
 import { getMonth } from "../../../utils/dates";
 import RightArrowRoundedIcon from "../../UI/svg/right-arrow-rounded-icon";
 
-const ParcoursViewContenuItem: FC<{
+const ContenuItem: FC<{
   module: Module;
   iterationCount: number;
   selectedModuleId: number | undefined;
@@ -42,4 +42,4 @@ const ParcoursViewContenuItem: FC<{
   );
 };
 
-export default ParcoursViewContenuItem;
+export default ContenuItem;

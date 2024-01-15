@@ -6,7 +6,7 @@ import MagnifyIcon from "../UI/svg/magnify-icon";
 import PlayIcon from "../UI/svg/play-icon";
 import SearchModal from "../search-modal/search-modal";
 
-const ParcoursViewHeaderMenu = () => {
+const HeaderMenu = () => {
   const [isModalOpen, setModalState] = useState(false);
 
   return (
@@ -46,4 +46,4 @@ const ParcoursViewHeaderMenu = () => {
   );
 };
 
-export default ParcoursViewHeaderMenu;
+export default HeaderMenu;

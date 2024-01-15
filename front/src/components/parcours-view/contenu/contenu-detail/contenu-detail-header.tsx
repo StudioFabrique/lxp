@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC } from "react";
 
-const ParcoursViewContenuDetailHeader: FC<{
+const ContenuDetailHeader: FC<{
   imageModuleHeader: any;
 }> = ({ imageModuleHeader }) => {
   console.log(imageModuleHeader);
@@ -23,4 +23,4 @@ const ParcoursViewContenuDetailHeader: FC<{
   );
 };
 
-export default ParcoursViewContenuDetailHeader;
+export default ContenuDetailHeader;

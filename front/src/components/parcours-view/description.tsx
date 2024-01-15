@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import Wrapper from "../UI/wrapper/wrapper.component";
 
-const ParcoursViewDescription = () => {
+const Description = () => {
   const infos = useSelector((state: any) => state.parcoursInformations.infos);
 
   return (
@@ -12,4 +13,4 @@ const ParcoursViewDescription = () => {
   );
 };
 
-export default ParcoursViewDescription;
+export default Description;

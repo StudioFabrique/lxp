@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import Tag from "../../utils/interfaces/tag";
 import TagItem from "../UI/tag-item/tag-item";
 
-const ParcoursViewTags = () => {
+const Tags = () => {
   const tags = useSelector((state: any) => state.tags.currentTags) as Tag[];
 
   const tagsList =
@@ -21,4 +22,4 @@ const ParcoursViewTags = () => {
   );
 };
 
-export default ParcoursViewTags;
+export default Tags;

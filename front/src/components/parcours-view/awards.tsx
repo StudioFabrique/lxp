@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import Skill from "../../utils/interfaces/skill";
 
-const ParcoursViewAwards = () => {
+const Awards = () => {
   const skills = useSelector(
     (state: any) => state.parcoursSkills.skills
   ) as Skill[];
@@ -26,4 +27,4 @@ const ParcoursViewAwards = () => {
   );
 };
 
-export default ParcoursViewAwards;
+export default Awards;

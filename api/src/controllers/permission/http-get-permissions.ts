@@ -14,8 +14,6 @@ export default async function httpGetPermissions(req: Request, res: Response) {
         .json({ message: "aucune permissions n'a été trouvé" });
     }
 
-    console.log(permissions);
-
     return res.status(200).json({ data: permissions });
   } catch (error) {
     console.log(error);

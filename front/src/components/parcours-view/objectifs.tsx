@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import Objective from "../../utils/interfaces/objective";
 
-const ParcoursViewObjectifs = () => {
+const Objectifs = () => {
   const objectives = useSelector(
     (state: any) => state.parcoursObjectives.objectives
   ) as Objective[];
@@ -34,4 +35,4 @@ const ParcoursViewObjectifs = () => {
   );
 };
 
-export default ParcoursViewObjectifs;
+export default Objectifs;
