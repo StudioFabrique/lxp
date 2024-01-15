@@ -1,9 +1,9 @@
 import { useState } from "react";
-import BellIcon from "../UI/svg/bell-icon";
-import CameraIcon from "../UI/svg/camera-icon";
-import GroupIcon from "../UI/svg/group-icon";
-import MagnifyIcon from "../UI/svg/magnify-icon";
-import PlayIcon from "../UI/svg/play-icon";
+import BellIcon from "./svg/bell-icon";
+import CameraIcon from "./svg/camera-icon";
+import GroupIcon from "./svg/group-icon";
+import MagnifyIcon from "./svg/magnify-icon";
+import PlayIcon from "./svg/play-icon";
 import SearchModal from "../search-modal/search-modal";
 
 const HeaderMenu = () => {
