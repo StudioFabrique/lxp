@@ -18,16 +18,8 @@ async function httpGetParcoursById(req: CustomRequest, res: Response) {
       return res.status(200).json(response);
     }
   } catch (error: any) {
-    let returnedError: any;
-
-    if (error.status === 403) {
-      returnedError = { ...error, from: req.socket.remoteAddress };
-    } else {
-      returnedError = error;
-    }
-
     return res
-      .status(returnedError.status ?? 500)
+      .status(error.statusCode ?? 500)
       .json({ message: error.message ?? serverIssue });
   }
 }

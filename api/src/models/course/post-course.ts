@@ -6,6 +6,7 @@ async function postCourse(userId: string, course: any) {
 
   const existingModule = await prisma.module.findFirst({
     where: { id: course.moduleId },
+    select: { courses: true },
   });
 
   if (!existingModule) {
@@ -46,6 +47,7 @@ async function postCourse(userId: string, course: any) {
       },
       author: `${adminName.firstname} ${adminName.lastname}`,
       admin: { connect: { id: existingAdmin.id } },
+      order: existingModule.courses.length,
     },
     select: { id: true },
   });

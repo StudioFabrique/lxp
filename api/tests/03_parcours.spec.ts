@@ -4,8 +4,6 @@ import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import mongoConnect from "../src/utils/services/db/mongo-connect";
 import mongoose from "mongoose";
-import path from "path";
-import { json } from "body-parser";
 
 dotenv.config();
 
@@ -158,7 +156,7 @@ describe("HTTP Parcours", () => {
     });
   });
 
-  describe("Test GET /parcours-by-id/:formationId", () => {
+  describe("Test GET /parcours-by-formation/:formationId", () => {
     test("It should respond 403 forbidden", async () => {
       await request(app)
         .get("/v1/parcours/parcours-by-formation/1")
@@ -175,6 +173,235 @@ describe("HTTP Parcours", () => {
     test("It should respond 400 bad request", async () => {
       await request(app)
         .get("/v1/parcours/parcours-by-formation/toto")
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 404 not found", async () => {
+      await request(app)
+        .get("/v1/parcours/parcours-by-formation")
+        .set("Cookie", [`${authToken}`])
+        .expect(404);
+    });
+  });
+
+  describe("Test GET /parcours-by-id/:parcoursId", () => {
+    test("It should respond 403 forbidden", async () => {
+      await request(app).get("/v1/parcours/parcours-by-id/1").expect(403);
+    });
+
+    test("It should respond 200 success", async () => {
+      await request(app)
+        .get("/v1/parcours/parcours-by-id/1")
+        .set("Cookie", [`${authToken}`])
+        .expect(200);
+    });
+
+    test("It should respond 404 not found", async () => {
+      await request(app)
+        .get("/v1/parcours/parcours-by-id/10000")
+        .set("Cookie", [`${authToken}`])
+        .expect(404);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .get("/v1/parcours/parcours-by-id/toto")
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 404 not found", async () => {
+      await request(app)
+        .get("/v1/parcours/parcours-by-id/")
+        .set("Cookie", [`${authToken}`])
+        .expect(404);
+    });
+  });
+
+  describe("Test PUT /update-infos", () => {
+    test("It should respond 403 forbidden", async () => {
+      await request(app).put("/v1/parcours/update-infos").expect(403);
+    });
+
+    test("It should respond 200 success", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .send({
+          parcoursId: 1,
+          title: "update-infos test",
+          description: "random description",
+          formation: 1,
+          visibility: true,
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(200);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .send({
+          //parcoursId: 1,
+          title: "update-infos test",
+          description: "random description",
+          formation: 1,
+          visibility: true,
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .send({
+          parcoursId: "<hacked>oops</hacked>>",
+          title: "update-infos test",
+          description: "random description",
+          formation: 1,
+          visibility: true,
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .send({
+          //parcoursId: "<hacked>oops</hacked>>",
+          title: "update-infos test",
+          description: "random description",
+          formation: 1,
+          visibility: true,
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 404 not found", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .send({
+          parcoursId: 10000,
+          title: "update-infos test",
+          description: "random description",
+          formation: 1,
+          visibility: true,
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(404);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .send({
+          parcoursId: 1,
+          //title: "update-infos test",
+          description: "random description",
+          formation: 1,
+          visibility: true,
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .send({
+          parcoursId: 1,
+          title: "<hacked>oops</hacked>",
+          description: "random description",
+          formation: 1,
+          visibility: true,
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .send({
+          parcoursId: 1,
+          title: "random title",
+          //description: "random description",
+          formation: 1,
+          visibility: true,
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .send({
+          parcoursId: 1,
+          title: "random title",
+          description: "<hacked>oops</hacked>>",
+          formation: 1,
+          visibility: true,
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .send({
+          parcoursId: 1,
+          title: "random title",
+          description: "random description",
+          formation: "toto",
+          visibility: true,
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 404 not found", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .send({
+          parcoursId: 1,
+          title: "random title",
+          description: "random description",
+          formation: 10000,
+          visibility: true,
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(404);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .send({
+          parcoursId: 1,
+          title: "random title",
+          description: "random description",
+          formation: 1,
+          //visibility: true,
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/parcours/update-infos")
+        .send({
+          parcoursId: 1,
+          title: "random title",
+          description: "random description",
+          formation: 1,
+          visibility: "toto",
+        })
         .set("Cookie", [`${authToken}`])
         .expect(400);
     });
