@@ -45,9 +45,9 @@ const ModuleView = () => {
             />
           </div>
 
-          <div className="w-full mt-5 grid grid-cols-4 gap-5">
+          <div className="mt-5 grid grid-cols-4 gap-5">
             <Progression courses={moduleData.courses} />
-            <div className="col-span-3 gap-5 grid grid-rows-3">
+            <div className="flex flex-col gap-5 col-span-3">
               <ProgressBar courses={moduleData.courses} />
               <Objectifs objectives={moduleData.bonusSkills} />
               <div className="grid grid-cols-2 gap-5">
