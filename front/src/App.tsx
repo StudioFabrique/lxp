@@ -124,6 +124,7 @@ const router = createBrowserRouter([
             index: true,
             element: <ModuleHome />,
           },
+          { path: "view/:moduleId", element: undefined },
           {
             path: "edit/:moduleId",
             element: <LayoutEditModule />,
