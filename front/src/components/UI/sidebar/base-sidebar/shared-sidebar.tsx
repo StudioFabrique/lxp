@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import ModeToggle from "../../mode-toggle";
 import HomeIcon from "../../svg/home-icon";
 import LogoutIcon from "../../svg/logout-icon";
+import { LucideUserCircle } from "lucide-react";
 
 interface SharedSideBarProps {
   interfaceType: string;
@@ -22,6 +23,13 @@ const SharedSideBar = (props: SharedSideBarProps) => {
         <Link to={`/${interfaceType}`}>
           <div className="tooltip tooltip-right w-6 h-6" data-tip="Accueil LXP">
             <HomeIcon />
+          </div>
+        </Link>
+      </li>
+      <li>
+        <Link to={`/${interfaceType}/profil`}>
+          <div className="tooltip tooltip-right w-6 h-6" data-tip="Profil">
+            <LucideUserCircle />
           </div>
         </Link>
       </li>

@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import Module from "../../utils/interfaces/module";
 import { convertMilisToWeeks } from "../../utils/dates";
 
-const ParcoursViewQuickStatistiques = () => {
+const QuickStatistiques = () => {
   const parcoursInfos = useSelector(
     (state: any) => state.parcoursInformations.infos
   );
@@ -60,4 +61,4 @@ const ParcoursViewQuickStatistiques = () => {
   );
 };
 
-export default ParcoursViewQuickStatistiques;
+export default QuickStatistiques;
