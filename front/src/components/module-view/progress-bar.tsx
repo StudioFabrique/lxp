@@ -1,5 +1,4 @@
-import { Truck } from "lucide-react";
-import Wrapper from "../UI/wrapper/wrapper.component";
+import { Bus } from "lucide-react";
 import SubWrapper from "../UI/sub-wrapper/sub-wrapper.component";
 import Course from "../../utils/interfaces/course";
 
@@ -9,20 +8,18 @@ type ProgressBarProps = {
 
 const ProgressBar = ({ courses }: ProgressBarProps) => {
   return (
-    <Wrapper>
-      <div className="flex items-center h-full gap-4">
-        <Truck className="w-16 h-16" />
-        {courses.map((course) => (
-          <SubWrapper>
-            <div className="flex gap-4 h-10">
-              {course.lessons.map((lesson) => (
-                <span className="h-10 w-8 bg-primary/10"></span>
-              ))}
-            </div>
-          </SubWrapper>
-        ))}
-      </div>
-    </Wrapper>
+    <div className="flex items-center gap-4 bg-secondary/20 rounded-xl p-3">
+      <Bus className="w-12 h-12 stroke-1" />
+      {courses.map((course) => (
+        <div className="bg-secondary/10 p-2 rounded-lg px-3">
+          <div className="flex gap-2">
+            {course.lessons.map((lesson) => (
+              <span className="h-[3vh] w-[2vh] bg-primary/10"></span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 };
 
