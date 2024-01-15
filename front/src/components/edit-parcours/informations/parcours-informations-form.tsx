@@ -47,6 +47,11 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
     errors,
   };
 
+  const handleSetVisibility = () => {
+    setVisibility((prevState) => !prevState);
+    setSubmit(true);
+  };
+
   /**
    * initialise le  formulaire avec les données stockées dans le state partagé
    */
@@ -164,7 +169,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
                     type="checkbox"
                     className="toggle toggle-primary"
                     checked={visibility ? visibility : false}
-                    onChange={() => setVisibility((prevState) => !prevState)}
+                    onChange={handleSetVisibility}
                   />
                   <p className="text-sm">{visibility ? "Visible" : "Caché"}</p>
                 </label>

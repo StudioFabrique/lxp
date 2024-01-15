@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from "react";
 import Module from "../../../utils/interfaces/module";
 import { useDispatch } from "react-redux";

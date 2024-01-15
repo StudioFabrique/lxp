@@ -7,7 +7,7 @@ type Props = {
 };
 
 const BadgeItem: FC<Props> = ({ badge }) => {
-  let badgeStyle =
+  const badgeStyle =
     "border border-primary w-[75px] h-[75px] bg-secondary/20 p-2 rounded-xl flex justify-center items-center hover:scale-105 hover:bg-secondary/50";
   console.log(badge.image);
 

@@ -53,16 +53,27 @@ export const updateInfosValidator = [
     .withMessage("Titre de parcours non valide")
     .notEmpty()
     .withMessage("Le titre du parcours doit avoir au moins 1 caractère")
+    .custom(stringValidateGeneric)
+    .withMessage("Le titre du parcours contient des caractères invalides.")
     .trim(),
-  body("description").isString().withMessage("Description invalide") /* 
+  body("description")
+    .isString()
+    .withMessage("Description invalide")
     .notEmpty()
-    .withMessage("Description absente") */,
+    .withMessage("Description absente")
+    .custom(stringValidateGeneric)
+    .withMessage("La description contient des caractères invalides."),
   body("formation")
     .isNumeric()
     .withMessage("Identifiant de formation invalide")
     .notEmpty()
     .withMessage("Identifiant de formation absent")
     .escape(),
+  body("visibility")
+    .notEmpty()
+    .withMessage("La visibilité du parcours est requise.")
+    .isBoolean()
+    .withMessage("La visibilité du parcours doit être une valeur booléenne."),
   checkValidatorResult,
 ];
 

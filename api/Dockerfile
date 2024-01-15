@@ -9,17 +9,13 @@ COPY package*.json tsconfig.json .env ./
 
 # Installation des dépendances
 RUN npm install
+RUN npm i -g nodemon
 
 # Copie du code source dans l'image
-COPY . .
+COPY . /app
+COPY uploads/ /app/uploads
 
-# Transpilation du code TypeScript en JavaScript
-RUN npm run build
 RUN npx prisma generate
-RUN npm i -g pm2
+# Transpilation du code TypeScript en JavaScript
+# RUN npm run build
 
-# Définition du port sur lequel l'application va écouter
-EXPOSE 5001
-
-# Commande pour démarrer l'application
-#CMD ["npm", "run", "start:prod"]

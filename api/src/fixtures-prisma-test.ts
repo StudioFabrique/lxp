@@ -315,6 +315,27 @@ async function createFormation() {
   }
 }
 
+async function createParcours() {
+  try {
+    await prisma.parcours.create({
+      data: {
+        title: "Parcours Test 1",
+        formation: {
+          connect: {
+            id: 1,
+          },
+        },
+        author: "jacques durand",
+        admin: {
+          connect: { id: 1 },
+        },
+      },
+    });
+  } catch (error: any) {
+    console.log(error);
+  }
+}
+
 /* async function createModules() {
   const modules = modulesList.map((item: string) => ({
     title: item,
@@ -349,6 +370,7 @@ async function loadFixtures() {
   await createFormation();
   await createSqlGroups();
   await createSqlContacts();
+  await createParcours();
   //await createModules();
   //await createModulesOnFormation();
   await disconnect();

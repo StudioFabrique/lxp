@@ -5,10 +5,10 @@ import { checkValidatorResult } from "../../../middleware/validators";
 export const lessonIdValidator = [
   param("lessonId")
     .notEmpty()
-    .withMessage("L'idientifiant de l'activité est requis.")
+    .withMessage("L'idientifiant de la leçon est requis.")
     .isNumeric()
     .isInt()
-    .withMessage("L'identifiant de l'activité doit être un nombre entier."),
+    .withMessage("L'identifiant de la leçon doit être un nombre entier."),
 ];
 
 export const putLessonValidator = [
@@ -54,5 +54,29 @@ export const getLessonsByTagValidator = [
     .withMessage("L'identifiant du tag doit être un nombre")
     .trim()
     .escape(),
+  checkValidatorResult,
+];
+
+export const putReorderLessonsValidator = [
+  param("courseId")
+    .notEmpty()
+    .withMessage("L'idientifiant du cours est requis.")
+    .isNumeric()
+    .isInt()
+    .withMessage("L'identifiant du cours doit être un nombre entier."),
+  body()
+    .isArray()
+    .notEmpty()
+    .withMessage("La requête requiert un tableau.")
+    .notEmpty(),
+  body("*")
+    .notEmpty()
+    .withMessage(
+      "Le tableau d'identifiants doit contenir une ou plusieurs valeurs."
+    )
+    .isNumeric()
+    .withMessage(
+      "Le tableau d'identifiants doit contenir des nombres entiers uniquement."
+    ),
   checkValidatorResult,
 ];
