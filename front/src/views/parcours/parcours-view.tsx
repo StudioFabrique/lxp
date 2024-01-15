@@ -25,7 +25,7 @@ import QuickStatistiques from "../../components/parcours-view/quick-statistiques
 import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
 import { useSelector } from "react-redux";
 import ProgressStats from "../../components/parcours-view/progress-stats";
-import HeaderMenu from "../../components/parcours-view/header-menu";
+import HeaderMenu from "../../components/UI/header-menu";
 import ImageHeader from "../../components/image-header";
 
 let initialState = true;
