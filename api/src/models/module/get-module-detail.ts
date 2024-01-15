@@ -18,6 +18,7 @@ export default async function getModuleDetail(moduleId: number) {
         select: {
           id: true,
           title: true,
+          description: true,
           lessons: true,
         },
       },
