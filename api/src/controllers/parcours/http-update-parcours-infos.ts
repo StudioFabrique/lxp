@@ -18,27 +18,21 @@ async function httpUpdateParcoursInfos(req: CustomRequest, res: Response) {
     description = customEscape(description ?? "");
 
     const response = await updateParcoursInfos(
-      parseInt(parcoursId),
+      +parcoursId,
       title,
       description,
       +formation,
       visibility,
       userId
     );
-    if (response) {
-      return res
-        .status(201)
-        .json({ message: "Informations du parcours mises à jour" });
-    }
-  } catch (error: any) {
-    let returnedError = error;
-    if (error.status === 403) {
-      returnedError = { ...returnedError, from: req.socket.remoteAddress };
-      logger.error(returnedError);
-    }
+
     return res
-      .status(returnedError.status ?? 500)
-      .json({ message: returnedError.message ?? serverIssue });
+      .status(200)
+      .json({ message: "Informations du parcours mises à jour" });
+  } catch (error: any) {
+    return res
+      .status(error.statusCode ?? 500)
+      .json({ message: error.message ?? serverIssue });
   }
 }
 

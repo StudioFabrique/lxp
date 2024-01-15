@@ -9,26 +9,43 @@ async function updateParcoursInfos(
   visibility: boolean,
   userId: string
 ) {
-  try {
-    const admin = await getAdmin(userId);
-    const updatedParcours = await prisma.parcours.update({
-      where: { id: parcoursId, adminId: admin.id },
-      data: {
-        title: title,
-        description: description,
-        visibility,
-        formation: {
-          connect: { id: formation },
-        },
-      },
-    });
-    if (updatedParcours) {
-      return updatedParcours;
-    }
-    throw { message: "Vous n'avez pas accès à cette ressource", status: 403 };
-  } catch (error: any) {
+  const existingParcours = await prisma.parcours.findFirst({
+    where: { id: parcoursId },
+  });
+
+  const existingFormation = await prisma.formation.findFirst({
+    where: { id: formation },
+  });
+
+  if (!existingFormation) {
+    const error: any = {
+      message: "La formation n'existe pas.",
+      statusCode: 404,
+    };
     throw error;
   }
+
+  if (!existingParcours) {
+    const error: any = {
+      message: "Le parcours n'existe pas.",
+      statusCode: 404,
+    };
+    throw error;
+  }
+
+  const updatedParcours = await prisma.parcours.update({
+    where: { id: parcoursId },
+    data: {
+      title: title,
+      description: description,
+      visibility,
+      formation: {
+        connect: { id: formation },
+      },
+    },
+  });
+
+  return updatedParcours;
 }
 
 export default updateParcoursInfos;
