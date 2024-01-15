@@ -1,5 +1,5 @@
-const ViewModule = () => {
+const ModuleView = () => {
   return <div></div>;
 };
 
-export default ViewModule;
+export default ModuleView;
