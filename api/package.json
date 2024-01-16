@@ -14,7 +14,8 @@
     "reset-mongo": "npx ts-node src/fixtures.ts",
     "reset-prisma": "npx prisma db push --force-reset && npx prisma db push && npx ts-node src/fixtures-prisma.ts",
     "fixtures": "npm run reset-mongo && npm run reset-prisma",
-    "elastic-search": "npx ts-node src/elastic-search/generate-indices/generate-all-indices.ts"
+    "elastic-search": "npx ts-node src/elastic-search/generate-indices/generate-all-indices.ts",
+    "prisma-generate": "npx prisma generate"
   },
   "author": "studio@step.eco",
   "license": "ISC",

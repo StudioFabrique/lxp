@@ -17,5 +17,6 @@ COPY uploads/ /app/uploads
 
 RUN npx prisma generate
 # Transpilation du code TypeScript en JavaScript
-# RUN npm run build
+RUN npm run build
 
+COPY uploads/ /app/dist/uploads

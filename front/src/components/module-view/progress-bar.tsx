@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Bus } from "lucide-react";
-import SubWrapper from "../UI/sub-wrapper/sub-wrapper.component";
 import Course from "../../utils/interfaces/course";
 
 type ProgressBarProps = {
@@ -13,7 +13,7 @@ const ProgressBar = ({ courses }: ProgressBarProps) => {
       {courses.map((course) => (
         <div className="bg-secondary/10 p-2 rounded-lg px-3">
           <div className="flex gap-2">
-            {course.lessons.map((lesson) => (
+            {course.lessons.map((_lesson) => (
               <span className="h-[3vh] w-[2vh] bg-primary/10"></span>
             ))}
           </div>
