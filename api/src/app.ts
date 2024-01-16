@@ -18,11 +18,7 @@ app
   )
   .use(
     cors({
-      origin: [
-        "http://localhost:3000",
-        "http://localhost:5173",
-        "http://localhost:5174",
-      ],
+      origin: "*",
       credentials: true,
     })
   )
@@ -31,13 +27,15 @@ app
   .use(express.json())
   .use(express.static(path.join(__dirname, "public")))
   .use(express.static(path.join(__dirname, "..", "uploads")))
-  .get("/", (req, res) => {
-    res.send("<h1>Hello World !</h1>");
-  })
   .use("/v1", api)
   .use(({ res }: { res: Response }) => {
     const message = "Impossible de trouver les ressources demandées.";
     res.status(404).json(message);
+  })
+  .get("/*", (req, res) => {
+    console.log(path.join(__dirname, "..", "public", "index.html"));
+
+    res.sendFile(path.join(__dirname, "..", "public", "index.html"));
   });
 
 export default app;

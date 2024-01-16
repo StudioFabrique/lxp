@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import ImageHeader from "../../components/image-header";
 import HeaderMenu from "../../components/UI/header-menu";
@@ -10,13 +11,12 @@ import ProgressBar from "../../components/module-view/progress-bar";
 import Objectifs from "../../components/module-view/objectifs";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import Contacts from "../../components/module-view/contacts";
-import Tags from "../../components/module-view/tags";
 
 const ModuleView = () => {
   const { sendRequest, isLoading } = useHttp(true);
   const { moduleId } = useParams();
 
-  const [moduleData, setModuleData] = useState(null);
+  const [moduleData, setModuleData] = useState<any | null>(null);
 
   useEffect(() => {
     const applyData = (data: any) => {

@@ -52,16 +52,8 @@ services:
     depends_on:
       - db-pg
       - db-mongo
-    command: npm run start:dev
-    develop:
-      watch:
-        - action: sync
-          path: .
-          target: /app
-          ignore:
-            - node_modules/
-        - action: rebuild
-          path: package.json
+    command: node api/dist/src/server.js
+
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - MONGO_LOCAL_URL=${MONGO_LOCAL_URL}
