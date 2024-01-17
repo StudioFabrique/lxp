@@ -7,7 +7,7 @@ const ModeToggle = () => {
   return (
     <div className="w-fit flex gap-x-2 justify-center items-center">
       <label
-        className="swap swap-rotate text-base-cotent"
+        className="swap swap-rotate text-base-content"
         htmlFor="mode-toggle"
       >
         {/* this hidden checkbox controls the state */}
