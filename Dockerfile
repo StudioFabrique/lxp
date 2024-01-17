@@ -11,7 +11,6 @@ RUN npm run install-client
 
 COPY api/package*.json api/
 COPY api/tsconfig.json api/
-COPY api/.env api/
 COPY api/prisma/ api/
 RUN npm run install-server
 
