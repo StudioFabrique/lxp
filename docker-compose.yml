@@ -38,8 +38,8 @@ services:
     ports:
       - "27000:27017"
   api:
-    #image: lxp-api
-    build: firizgoude/lxp-api:latest
+    image: firizgoude/lxp-api:latest
+    pull_policy: always
     networks:
       - lxp_network
     restart: always
