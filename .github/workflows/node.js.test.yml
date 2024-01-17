@@ -6,6 +6,7 @@ on:
 env:
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  PRIVATE_KEY: ${{ secrets.SSH_KEY }}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -40,9 +41,14 @@ jobs:
           username: ${{ env.DOCKERHUB_USERNAME }}
           password: ${{ env.DOCKERHUB_TOKEN }}
 
-      - name: Login to Docker on EC2
+      - name: Set permissions for private key
         run: |
-          ssh -o StrictHostKeyChecking=no ${{secrets.USERNAME}}@${{secrets.HOST}} 'docker login -u ${{env.DOCKERHUB_USERNAME}} -p ${{env.DOCKERHUB_TOKEN}}'
+          echo "${{ env.PRIVATE_KEY }}" > key.pem
+          chmod 600 key.pem
+
+      - name: Login to Docker on VPS
+        run: |
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'docker login -u ${{env.DOCKERHUB_USERNAME}} -p ${{env.DOCKERHUB_TOKEN}}'
       - name: "Create env file"
         run: |
           ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'echo "${{ secrets.APP_ENV }}" > .env || true'
