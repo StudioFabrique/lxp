@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Context } from "../../store/context.store";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import Login from "../../components/login/login.component";
+import Sidebar from "../../components/UI/sidebar/sidebar";
 
 let initialState = true;
 
@@ -11,7 +12,6 @@ const RootLayout = () => {
   const { user, fetchRoles, initTheme, isLoggedIn, handshake } =
     useContext(Context);
   const nav = useNavigate();
-  /* useRbac(user?.roles); */ // gère l'état des permissions
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -35,6 +35,7 @@ const RootLayout = () => {
   return (
     <FadeWrapper>
       <div className="w-full">
+        <Sidebar />
         <Login />
       </div>
     </FadeWrapper>
