@@ -52,7 +52,6 @@ services:
     depends_on:
       - db-pg
       - db-mongo
-
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - MONGO_LOCAL_URL=${MONGO_LOCAL_URL}
