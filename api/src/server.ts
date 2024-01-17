@@ -8,13 +8,13 @@ const PORT = 5001;
 
 let server!: any;
 
-if (process.env.NODE_ENV === "production") {
+/* if (process.env.NODE_ENV === "production") {
   server = https.createServer(app);
 } else {
   server = http.createServer(app);
-}
+} */
 
-//server = http.createServer(app);
+server = http.createServer(app);
 
 mongoInit();
 
