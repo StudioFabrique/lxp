@@ -25,7 +25,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/svelte-poste-api:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/lxp-api:latest
   deploy:
     needs: build # Specifies that the `deploy` job depends on the `build` job
     runs-on: ubuntu-latest
