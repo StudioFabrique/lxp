@@ -54,19 +54,19 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'echo "${{ secrets.APP_ENV }}" > .env || true'
       - name: Suppression du fichier docker-compose.yml
         run: |
-          ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'sudo rm docker-compose.yml || true'
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'rm docker-compose.yml || true'
       - name: Copier fichier vers EC2
         run: |
           scp -i key.pem ./docker-compose.yml ${{secrets.USERNAME}}@${{secrets.HOST}}:~/docker-compose.yml
       - name: Stop running container
         run: |
-          ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'sudo docker-compose down || true'
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'docker-compose down || true'
       - name: Delete old images
         run: |
-          ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'sudo docker image rm ${{secrets.DOCKERHUB_USERNAME}}/lxp-api:latest || true'
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'docker image rm ${{secrets.DOCKERHUB_USERNAME}}/lxp-api:latest || true'
       - name: Création du network
         run: |
-          ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'sudo docker network create lxp_api || true'
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'docker network create lxp_api || true'
       - name: Run new container
         run: |
-          ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'cd ~/ && sudo docker-compose up -d'
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'cd ~/ && docker-compose up -d'
