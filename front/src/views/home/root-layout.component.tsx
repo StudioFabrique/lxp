@@ -35,7 +35,6 @@ const RootLayout = () => {
   return (
     <FadeWrapper>
       <div className="w-full">
-        <Sidebar />
         <Login />
       </div>
     </FadeWrapper>
