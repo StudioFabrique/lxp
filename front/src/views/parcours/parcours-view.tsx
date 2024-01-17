@@ -16,7 +16,7 @@ import Error404 from "../../components/error404";
 import Contenu from "../../components/parcours-view/contenu/contenu";
 import Informations from "../../components/parcours-view/informations";
 import Description from "../../components/parcours-view/description";
-import Tags from "../../components/parcours-view/parcours-view-tags";
+import Tags from "../../components/parcours-view/tags";
 import Awards from "../../components/parcours-view/awards";
 import Contacts from "../../components/parcours-view/contacts";
 import Competences from "../../components/parcours-view/competences";
