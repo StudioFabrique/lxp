@@ -10,6 +10,8 @@ volumes:
     driver: local
   mongo:
     driver: local
+  api:
+    driver: local
 
 # The containers that compose the project
 services:
@@ -39,6 +41,8 @@ services:
       - "27000:27017"
   api:
     build: .
+    volumes:
+      - api:/api/dist/uploads
     networks:
       - lxp_network
     restart: always

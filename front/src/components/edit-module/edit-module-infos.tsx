@@ -34,18 +34,20 @@ export default function EditModuleInfos(props: EditModuleInfosProps) {
       <Wrapper>
         <article className="flex flex-col gap-y-2">
           <h2 className="text-lg font-bold text-primary">Contacts</h2>
-          <ul className="flex flex-col gap-y-2">
-            {props.contacts.map((item) => (
-              <li key={item.id}>
-                <Wrapper>
-                  <span className="flex justify-between items-center">
-                    <p className="capitalize">{item.name}</p>
-                    <p className="font-bold capitalize">{item.role}</p>
-                  </span>
-                </Wrapper>
-              </li>
-            ))}
-          </ul>
+          {props.contacts && props.contacts.length > 0 ? (
+            <ul className="flex flex-col gap-y-2">
+              {props.contacts.map((item) => (
+                <li key={item.id}>
+                  <Wrapper>
+                    <span className="flex justify-between items-center">
+                      <p className="capitalize">{item.name}</p>
+                      <p className="font-bold capitalize">{item.role}</p>
+                    </span>
+                  </Wrapper>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </article>
       </Wrapper>
     </section>
