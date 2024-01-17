@@ -15,7 +15,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "deploy": "npm run build --prefix api && npm run build --prefix front",
     "generate": "npm run prisma-generate --prefix api",
-    "start": "npm run start:prod --prefix api"
+    "start": "npm run start:prod --prefix api",
+    "fixtures": "npm run fixtures --prefix api"
   },
   "keywords": [],
   "author": "",
