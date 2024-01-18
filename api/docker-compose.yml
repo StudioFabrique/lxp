@@ -43,7 +43,8 @@ services:
     #image: lxp-api
     build: .
     volumes:
-      - api:/dist/uploads
+      - api:/app/api/dist/uploads
+      - logs:/app/api/dist/logs
     networks:
       - lxp_network
     restart: always
