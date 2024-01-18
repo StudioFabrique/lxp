@@ -42,7 +42,7 @@ services:
     ports:
       - "27000:27017"
   api:
-    image: ${IMAGE}
+    image: studiostep/lxp:latest
     pull_policy: always
     volumes:
       - api:/app/api/dist/uploads
