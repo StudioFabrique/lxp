@@ -12,23 +12,6 @@ const Sidebar = () => {
 
   const currentRoute = pathname.split("/").slice(1) ?? [];
 
-  /* const SidebarRoute = () => {
-    switch (currentRoute[1]) {
-      case "parcours":
-        return <SidebarParcours interfaceType={currentRoute[0]} />;
-      case "course":
-        return <SidebarCourse interfaceType={currentRoute[0]} />;
-      case "user":
-        return <SidebarUser interfaceType={currentRoute[0]} />;
-      case "group":
-        return <SidebarGroup interfaceType={currentRoute[0]} />;
-      case "profil":
-        return <SidebarProfile interfaceType={currentRoute[0]} />;
-      default:
-        return undefined;
-    }
-  }; */
-
   return (
     <SidebarWrapper>
       {currentRoute[0] === "admin" ? (
