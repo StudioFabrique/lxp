@@ -1,8 +1,8 @@
 const url =
-  process.env.NODE_ENV === "development" ? "http://localhost:5001/v1" : "/v1";
+  process.env.NODE_ENV === "development" ? "http://localhost:5001/" : "/";
 
-export const BASE_URL = url;
+export const BASE_URL = url + "v1";
 
-export const DOWNLOAD_URL = "http://localhost:5001/";
+export const DOWNLOAD_URL = url;
 
-export const ACTIVITIES_VIDEOS = "http://api:5001/activities/videos/";
+export const ACTIVITIES_VIDEOS = url + "activities/videos/";
