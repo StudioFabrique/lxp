@@ -21,10 +21,8 @@ RUN npm run generate
 COPY front/ front/
 
 COPY api/ api/
-COPY api/uploads /app/dist/
-
+COPY api/uploads/ api/dist/uploads
 RUN npm run deploy
 
-COPY api/uploads/ api/dist/uploads/
 
 CMD ["npm", "run", "start"]

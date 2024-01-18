@@ -42,7 +42,8 @@ services:
   api:
     build: .
     volumes:
-      - api:/api/dist/uploads
+      - api:/app/api/dist/uploads
+      - api:/app/api/dist/logs
     networks:
       - lxp_network
     restart: always
@@ -59,4 +60,3 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - MONGO_LOCAL_URL=${MONGO_LOCAL_URL}
-      - BASE_URL=${BASE_URL}
