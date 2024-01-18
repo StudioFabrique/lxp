@@ -9,7 +9,7 @@ type SharedSideBarProps = {
 
 const SidebarBottom = ({ interfaceType, onLogout }: SharedSideBarProps) => {
   return (
-    <ul className="text-primary flex flex-col gap-y-4">
+    <ul className="flex flex-col gap-y-4">
       <li
         className="tooltip tooltip-right mb-1"
         data-tip="Mode Clair / Mode Sombre"
@@ -19,7 +19,7 @@ const SidebarBottom = ({ interfaceType, onLogout }: SharedSideBarProps) => {
 
       <li>
         <Link to={`/${interfaceType}/profil`}>
-          <div className="tooltip tooltip-right w-6 h-6" data-tip="Accueil LXP">
+          <div className="tooltip tooltip-right w-6 h-6" data-tip="Profil">
             <LucideUserCircle />
           </div>
         </Link>
