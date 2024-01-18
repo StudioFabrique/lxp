@@ -10,7 +10,7 @@ const Parcours = ({ interfaceType }: { interfaceType: string }) => {
 
   return (
     <li onMouseOver={() => setIsHover(true)}>
-      <Link to={`/${interfaceType}/parcours`} className="flex">
+      <Link to={`/${interfaceType}/parcours`} className="flex items-center">
         <div className="tooltip tooltip-top w-6 h-6 z-10" data-tip="Parcours">
           <RocketIcon />
         </div>
@@ -19,7 +19,7 @@ const Parcours = ({ interfaceType }: { interfaceType: string }) => {
           <Can action="write" object="parcours">
             <Link to={`/${interfaceType}/parcours/créer-un-parcours`}>
               <div
-                className="ml-16 tooltip tooltip-top w-6 h-6"
+                className="ml-14 tooltip tooltip-top w-6 h-6"
                 data-tip="Création d'un nouveau parcours"
               >
                 <AddIcon />
@@ -29,7 +29,7 @@ const Parcours = ({ interfaceType }: { interfaceType: string }) => {
           <Can action="write" object="parcours">
             <Link to={`/${interfaceType}/parcours/créer-un-parcours`}>
               <div
-                className="mr-5 tooltip tooltip-top w-6 h-6"
+                className="mr-4 tooltip tooltip-top w-6 h-6"
                 data-tip="Création d'un nouveau parcours"
               >
                 <AddIcon />
