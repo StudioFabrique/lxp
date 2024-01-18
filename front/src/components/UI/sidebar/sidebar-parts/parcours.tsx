@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import Can from "../../can/can.component";
 import AddIcon from "../../svg/add-icon";
 import { RocketIcon } from "lucide-react";
 import { useState } from "react";
+import MotionSidebarWrapper from "./motion-sidebar-wrapper";
 
 const Parcours = ({ interfaceType }: { interfaceType: string }) => {
   const [isHover, setIsHover] = useState(false);
@@ -15,15 +15,7 @@ const Parcours = ({ interfaceType }: { interfaceType: string }) => {
           <RocketIcon />
         </div>
 
-        <motion.div
-          onMouseLeave={() => setIsHover(false)}
-          animate={{
-            width: isHover ? "auto" : 0,
-            opacity: isHover ? 1 : 0,
-            visibility: isHover ? "visible" : "hidden",
-          }}
-          className="absolute text-primary flex gap-x-5 bg-secondary/20 bg-black h-11 items-center -translate-y-2 -translate-x-2 rounded-r-xl"
-        >
+        <MotionSidebarWrapper isHover={isHover} setIsHover={setIsHover}>
           <Can action="write" object="parcours">
             <Link to={`/${interfaceType}/parcours/créer-un-parcours`}>
               <div
@@ -44,7 +36,7 @@ const Parcours = ({ interfaceType }: { interfaceType: string }) => {
               </div>
             </Link>
           </Can>
-        </motion.div>
+        </MotionSidebarWrapper>
       </Link>
     </li>
   );

@@ -4,7 +4,7 @@ import { CalendarIcon } from "lucide-react";
 const Calendar = ({ interfaceType }: { interfaceType: string }) => (
   <li>
     <Link to={`/${interfaceType}`}>
-      <div className="tooltip tooltip-right w-6 h-6" data-tip="Accueil LXP">
+      <div className="tooltip tooltip-top w-6 h-6 z-10" data-tip="Calendrier">
         <CalendarIcon />
       </div>
     </Link>

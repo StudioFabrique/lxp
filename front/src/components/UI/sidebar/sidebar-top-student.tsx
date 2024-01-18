@@ -9,7 +9,7 @@ type SharedSideBarProps = {
 };
 
 const SidebarTopStudent = ({ interfaceType }: SharedSideBarProps) => (
-  <ul className="text-primary flex flex-col gap-y-4">
+  <ul className="flex flex-col gap-y-6">
     <Home interfaceType={interfaceType} />
     <Parcours interfaceType={interfaceType} />
     <Calendar interfaceType={interfaceType} />
