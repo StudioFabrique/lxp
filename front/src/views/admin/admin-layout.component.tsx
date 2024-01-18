@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 import { Context } from "../../store/context.store";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
-import Sidebar from "../../components/UI/sidebar.old/base-sidebar/sidebar";
+import Sidebar from "../../components/UI/sidebar/sidebar";
 
 let initialState = true;
 
