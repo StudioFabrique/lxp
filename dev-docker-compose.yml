@@ -59,3 +59,4 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - MONGO_LOCAL_URL=${MONGO_LOCAL_URL}
+      - BASE_URL=${BASE_URL}
