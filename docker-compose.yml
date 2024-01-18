@@ -43,7 +43,8 @@ services:
     image: firizgoude/lxp-api:latest
     pull_policy: always
     volumes:
-      - api:/api/dist/uploads
+      - api:/app/api/dist/uploads
+      - api:/app/api/dist/logs
     networks:
       - lxp_network
     restart: always

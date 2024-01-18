@@ -23,8 +23,7 @@ export const checkValidatorResult = (
       from: req.socket.remoteAddress,
       status: 400,
     };
-    console.log(checkValues);
-    logger.error(error);
+    logger.info(error);
     return res.status(400).json({ message: badQuery });
   }
   next();
