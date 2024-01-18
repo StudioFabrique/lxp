@@ -1,53 +1,21 @@
-import {
-  CalendarIcon,
-  HomeIcon,
-  LibraryBigIcon,
-  MessageCircleIcon,
-} from "lucide-react";
-import { Link } from "react-router-dom";
 import Parcours from "./sidebar-parts/parcours";
+import Home from "./sidebar-parts/home";
+import Calendar from "./sidebar-parts/calendar";
+import Library from "./sidebar-parts/library";
+import Forum from "./sidebar-parts/forum";
 
 type SharedSideBarProps = {
   interfaceType: string;
 };
 
-const SidebarTopStudent = ({ interfaceType }: SharedSideBarProps) => {
-  return (
-    <ul className="text-primary flex flex-col gap-y-4">
-      <li>
-        <Link to={`/${interfaceType}`}>
-          <div className="tooltip tooltip-right w-6 h-6" data-tip="Accueil LXP">
-            <HomeIcon />
-          </div>
-        </Link>
-      </li>
-      <Parcours interfaceType={interfaceType} />
-      <li>
-        <Link to={`/${interfaceType}/calendar`}>
-          <div className="tooltip tooltip-right w-6 h-6" data-tip="Calendrier">
-            <CalendarIcon />
-          </div>
-        </Link>
-      </li>
-      <li>
-        <Link to={`/${interfaceType}/library`}>
-          <div
-            className="tooltip tooltip-right w-6 h-6"
-            data-tip="Bibliothèque"
-          >
-            <LibraryBigIcon />
-          </div>
-        </Link>
-      </li>
-      <li>
-        <Link to={`/${interfaceType}/forum`}>
-          <div className="tooltip tooltip-right w-6 h-6" data-tip="Forum">
-            <MessageCircleIcon />
-          </div>
-        </Link>
-      </li>
-    </ul>
-  );
-};
+const SidebarTopStudent = ({ interfaceType }: SharedSideBarProps) => (
+  <ul className="text-primary flex flex-col gap-y-4">
+    <Home interfaceType={interfaceType} />
+    <Parcours interfaceType={interfaceType} />
+    <Calendar interfaceType={interfaceType} />
+    <Library interfaceType={interfaceType} />
+    <Forum interfaceType={interfaceType} />
+  </ul>
+);
 
 export default SidebarTopStudent;
