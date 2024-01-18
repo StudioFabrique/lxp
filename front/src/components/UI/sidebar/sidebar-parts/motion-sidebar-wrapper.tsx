@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { Dispatch, ReactNode, SetStateAction } from "react";
+import { Dispatch, ReactNode, SetStateAction, useContext } from "react";
+import { Context } from "../../../../store/context.store";
 
 type MotionSidebarWrapperProps = {
   isHover: boolean;
@@ -12,6 +13,8 @@ const MotionSidebarWrapper = ({
   setIsHover,
   children,
 }: MotionSidebarWrapperProps) => {
+  const { theme } = useContext(Context);
+
   return (
     <motion.div
       onMouseLeave={() => setIsHover(false)}
@@ -20,7 +23,9 @@ const MotionSidebarWrapper = ({
         opacity: isHover ? 1 : 0,
         visibility: isHover ? "visible" : "hidden",
       }}
-      className="absolute flex gap-x-5 h-11 items-center -translate-y-2 -translate-x-2 rounded-r-xl text-white bg-slate-800"
+      className={`absolute flex gap-x-5 h-11 items-center -translate-y-2 -translate-x-2 rounded-r-xl ${
+        theme === "dark" ? "text-white bg-slate-500" : "text-white bg-slate-800"
+      }`}
     >
       {children}
     </motion.div>
