@@ -12,6 +12,8 @@ volumes:
     driver: local
   api:
     driver: local
+  logs:
+    driver: local
 
 # The containers that compose the project
 services:
@@ -40,11 +42,11 @@ services:
     ports:
       - "27000:27017"
   api:
-    image: firizgoude/lxp-api:latest
+    image: ${IMAGE}
     pull_policy: always
     volumes:
       - api:/app/api/dist/uploads
-      - api:/app/api/dist/logs
+      - logs:/app/api/dist/logs
     networks:
       - lxp_network
     restart: always
