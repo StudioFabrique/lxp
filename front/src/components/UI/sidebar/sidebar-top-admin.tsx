@@ -1,9 +1,8 @@
-import { MessageCircleIcon } from "lucide-react";
-import { Link } from "react-router-dom";
 import Parcours from "./sidebar-parts/parcours";
 import Home from "./sidebar-parts/home";
 import Calendar from "./sidebar-parts/calendar";
 import Library from "./sidebar-parts/library";
+import Forum from "./sidebar-parts/forum";
 
 type SharedSideBarProps = {
   interfaceType: string;
@@ -15,13 +14,7 @@ const SidebarTopAdmin = ({ interfaceType }: SharedSideBarProps) => (
     <Parcours interfaceType={interfaceType} />
     <Calendar interfaceType={interfaceType} />
     <Library interfaceType={interfaceType} />
-    <li>
-      <Link to={`/${interfaceType}/forum`}>
-        <div className="tooltip tooltip-right w-6 h-6" data-tip="Forum">
-          <MessageCircleIcon />
-        </div>
-      </Link>
-    </li>
+    <Forum interfaceType={interfaceType} />
   </ul>
 );
 
