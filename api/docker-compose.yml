@@ -2,7 +2,7 @@
 version: "3.9"
 
 networks:
-  lxp_api:
+  lxp_network:
     external: true
 
 volumes:
@@ -22,7 +22,7 @@ services:
     volumes:
       - pg:/var/lib/postgresql/data
     networks:
-      - lxp_api
+      - lxp_network
     ports:
       - "5432:5432"
     environment:
@@ -36,7 +36,7 @@ services:
     volumes:
       - mongo:/data/db
     networks:
-      - lxp_api
+      - lxp_network
     ports:
       - "27000:27017"
   api:
@@ -45,7 +45,7 @@ services:
     volumes:
       - api:/api/dist/uploads
     networks:
-      - lxp_api
+      - lxp_network
     restart: always
     container_name: lxp-api
     ports:
