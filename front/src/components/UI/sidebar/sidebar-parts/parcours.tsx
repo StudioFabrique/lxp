@@ -13,36 +13,32 @@ const Parcours = ({ interfaceType }: { interfaceType: string }) => {
   }, [isHover]);
 
   return (
-    <li
-      onMouseOver={() => setIsHover(true)}
-      /* onMouseLeave={() => setIsHover(false)} */
-    >
+    <li onMouseOver={() => setIsHover(true)}>
       <Link to={`/${interfaceType}/parcours`} className="flex">
-        <div className="tooltip tooltip-right w-6 h-6" data-tip="Parcours">
+        <div className="tooltip tooltip-right w-6 h-6 z-10" data-tip="Parcours">
           <RocketIcon />
         </div>
 
-        <motion.ul
+        <motion.div
+          onMouseLeave={() => setIsHover(false)}
           animate={{
-            /* width: isHover ? 10 : 0, */
+            width: isHover ? "auto" : 0,
             opacity: isHover ? 1 : 0,
             visibility: isHover ? "visible" : "hidden",
           }}
-          className="absolute ml-16 text-primary flex gap-y-4"
+          className="absolute text-primary flex gap-y-4 bg-black"
         >
-          <li>
-            {/* <Can action="write" object="parcours"> */}
+          <Can action="write" object="parcours">
             <Link to={`/${interfaceType}/parcours/créer-un-parcours`}>
               <div
-                className="tooltip tooltip-right w-6 h-6"
+                className="ml-8 tooltip tooltip-right w-6 h-6"
                 data-tip="Création d'un nouveau parcours"
               >
                 <AddIcon />
               </div>
             </Link>
-            {/* </Can> */}
-          </li>
-        </motion.ul>
+          </Can>
+        </motion.div>
       </Link>
     </li>
   );
