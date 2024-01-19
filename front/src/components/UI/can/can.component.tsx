@@ -12,7 +12,7 @@ const Can: React.FC<Props> = ({ children, action, object }) => {
 
   React.useEffect(() => {
     (async function () {
-      if (casbinAuthorizer !== null && casbinAuthorizer !== undefined) {
+      if (casbinAuthorizer) {
         const shouldRender = await casbinAuthorizer.can(action, object);
         setRender(shouldRender);
       }
@@ -20,8 +20,9 @@ const Can: React.FC<Props> = ({ children, action, object }) => {
   }, [action, object]);
 
   if (render) return <>{children}</>;
+  console.log("supposed to not being rendered");
 
-  return null;
+  return false;
 };
 
 export default Can;

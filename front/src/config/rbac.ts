@@ -69,6 +69,9 @@ const permDefs = {
 
 export const casbinAuthorizer: Authorizer = new Authorizer("manual");
 
+/**
+ * Not used
+ */
 export default function defineRulesFor(roles: Role[]) {
   // superUser roles definition
   const builtPerms: Record<string, any> = {};
