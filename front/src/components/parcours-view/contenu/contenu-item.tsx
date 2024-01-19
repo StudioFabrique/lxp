@@ -32,7 +32,7 @@ const ContenuItem: FC<{
         <p className="self-start">{`Module ${iterationCount}`}</p>
         <div className="flex justify-between w-full">
           <p className="self-start text-xl font-semibold">{module.title}</p>
-          <Link className="self-end w-6" to={`../../module/view/${module.id}`}>
+          <Link className="self-end w-6" to={`../module/${module.id}`}>
             <ArrowRightCircle />
           </Link>
         </div>
