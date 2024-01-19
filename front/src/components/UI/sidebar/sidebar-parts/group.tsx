@@ -20,17 +20,7 @@ const Group = ({ interfaceType }: { interfaceType: string }) => {
           <Can action="write" object="group">
             <Link to={`/${interfaceType}/group/add`}>
               <div
-                className="ml-14 tooltip tooltip-top w-6 h-6"
-                data-tip="Création d'un nouveau groupe"
-              >
-                <AddIcon />
-              </div>
-            </Link>
-          </Can>
-          <Can action="write" object="group">
-            <Link to={`/${interfaceType}/group/add`}>
-              <div
-                className="mr-4 tooltip tooltip-top w-6 h-6"
+                className="tooltip tooltip-top w-6 h-6"
                 data-tip="Création d'un nouveau groupe"
               >
                 <AddIcon />
