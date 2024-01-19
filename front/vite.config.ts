@@ -11,9 +11,4 @@ export default defineConfig({
     },
     outDir: "../api/dist/public/",
   },
-  server: {
-    headers: {
-      "Content-Security-Policy": `default-src 'self'; script-src 'self' https://www.youtube.com/iframe_api;`,
-    },
-  },
-});
+})
