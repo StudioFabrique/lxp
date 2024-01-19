@@ -32,7 +32,7 @@ import LayoutEditLesson from "./views/lesson/edit/layout-edit-lesson";
 import EditLessonHome from "./views/lesson/edit/edit-lesson-home";
 import LayoutEditModule from "./views/module/edit/Layout-edit-module";
 import EditModuleHome from "./views/module/edit/edit-module-home";
-import ModuleView from "./views/module/module-view";
+import ModuleViewFromParcours from "./views/module/module-view-from-parcours";
 
 const router = createHashRouter([
   {
@@ -53,6 +53,7 @@ const router = createHashRouter([
         children: [
           { index: true, element: <ParcoursHome /> },
           { path: "view/:id", element: <ParcoursView /> },
+          { path: "module/:moduleId", element: <ModuleViewFromParcours /> },
         ],
       },
       { path: "profil", element: <UserProfile /> },
@@ -91,6 +92,7 @@ const router = createHashRouter([
           { path: "créer-un-parcours", element: <ParcoursAdd /> },
           { path: "edit/:id/", element: <EditParcours /> },
           { path: "view/:id", element: <ParcoursView /> },
+          { path: "module/:moduleId", element: <ModuleViewFromParcours /> },
         ],
       },
       {
@@ -125,7 +127,6 @@ const router = createHashRouter([
             index: true,
             element: <ModuleHome />,
           },
-          { path: "view/:moduleId", element: <ModuleView /> },
           {
             path: "edit/:moduleId",
             element: <LayoutEditModule />,

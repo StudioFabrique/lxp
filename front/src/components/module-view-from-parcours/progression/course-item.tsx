@@ -1,12 +1,21 @@
 import { ArrowDown, ArrowRight } from "lucide-react";
 import Course from "../../../utils/interfaces/course";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { motion } from "framer-motion";
 import LessonItem from "./lesson-item";
+import Lesson from "../../../utils/interfaces/lesson";
 
-type CourseItemProps = { course: Course };
+type CourseItemProps = {
+  course: Course;
+  selectedLesson: Lesson | undefined;
+  setSelectedLesson: Dispatch<SetStateAction<Lesson | undefined>>;
+};
 
-const CourseItem = ({ course }: CourseItemProps) => {
+const CourseItem = ({
+  course,
+  selectedLesson,
+  setSelectedLesson,
+}: CourseItemProps) => {
   const [isCourseOpen, setCourseOpen] = useState(false);
 
   return (
@@ -53,7 +62,13 @@ const CourseItem = ({ course }: CourseItemProps) => {
       >
         <div className="p-4 pt-6 flex flex-col gap-4 items-center">
           {course.lessons.length > 0 ? (
-            course.lessons.map((lesson) => <LessonItem lesson={lesson} />)
+            course.lessons.map((lesson) => (
+              <LessonItem
+                lesson={lesson}
+                selectedLesson={selectedLesson}
+                setSelectedLesson={setSelectedLesson}
+              />
+            ))
           ) : (
             <p>Aucune leçons</p>
           )}
