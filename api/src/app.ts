@@ -15,6 +15,16 @@ app
   .use(
     helmet({
       crossOriginResourcePolicy: false,
+      contentSecurityPolicy: {
+        directives: {
+          scriptSrc: ["'self'", "https://www.youtube.com"],
+          childSrc: ["'self'", "youtube.com", "www.youtube.com"],
+        },
+      },
+      crossOriginEmbedderPolicy: false,
+      crossOriginOpenerPolicy: true,
+      referrerPolicy: false,
+      originAgentCluster: false,
     })
   )
   .use(
