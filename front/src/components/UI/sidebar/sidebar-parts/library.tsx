@@ -4,7 +4,7 @@ import { LibraryBigIcon } from "lucide-react";
 const Library = ({ interfaceType }: { interfaceType: string }) => (
   <li>
     <Link to={`/${interfaceType}`}>
-      <div className="tooltip tooltip-right w-6 h-6" data-tip="Accueil LXP">
+      <div className="tooltip tooltip-right w-6 h-6" data-tip="Bibliothèque">
         <LibraryBigIcon />
       </div>
     </Link>
