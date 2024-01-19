@@ -1,12 +1,13 @@
+import Contact from "./contact";
+import Course from "./course";
 import Parcours from "./parcours";
 import Skill from "./skill";
-import User from "./user";
 
 export default interface Module {
   id?: number;
   title: string;
   description: string;
-  contacts: Array<User>;
+  contacts: Array<Contact>;
   bonusSkills: Array<Skill>;
   duration: number;
   image?: string;
@@ -14,4 +15,5 @@ export default interface Module {
   minDate?: string;
   maxDate?: string;
   parcours: Parcours;
+  courses: Array<Course>;
 }

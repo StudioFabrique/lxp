@@ -11,7 +11,6 @@ const RootLayout = () => {
   const { user, fetchRoles, initTheme, isLoggedIn, handshake } =
     useContext(Context);
   const nav = useNavigate();
-  /* useRbac(user?.roles); */ // gère l'état des permissions
 
   useEffect(() => {
     if (isLoggedIn) {
