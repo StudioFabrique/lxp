@@ -19,33 +19,13 @@ const Course = ({ interfaceType }: { interfaceType: string }) => {
           <Can action="write" object="course">
             <Link to={`/${interfaceType}/course/add`}>
               <div
-                className="ml-14 mr-4 tooltip tooltip-top w-6 h-6"
+                className="tooltip tooltip-top w-6 h-6"
                 data-tip="Création d'un nouveau cours"
               >
                 <AddIcon />
               </div>
             </Link>
           </Can>
-          {/* <Can action="write" object="course">
-            <Link to={`/${interfaceType}/course/add`}>
-              <div
-                className="ml-16 tooltip tooltip-top w-6 h-6"
-                data-tip="Création d'un nouveau cours"
-              >
-                <AddIcon />
-              </div>
-            </Link>
-          </Can>
-          <Can action="write" object="course">
-            <Link to={`/${interfaceType}/course/add`}>
-              <div
-                className="mr-4 tooltip tooltip-top w-6 h-6"
-                data-tip="Création d'un nouveau cours"
-              >
-                <AddIcon />
-              </div>
-            </Link>
-          </Can> */}
         </MotionSidebarWrapper>
       </Link>
     </li>

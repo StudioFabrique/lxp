@@ -23,11 +23,13 @@ const MotionSidebarWrapper = ({
         opacity: isHover ? 1 : 0,
         visibility: isHover ? "visible" : "hidden",
       }}
-      className={`absolute flex gap-x-5 h-11 items-center rounded-r-xl pt-[5px] ${
+      className={`absolute rounded-r-xl pt-[5px] ${
         theme === "dark" ? "text-white bg-slate-500" : "text-white bg-slate-800"
       }`}
     >
-      {children}
+      <div className="flex gap-x-5 h-11 items-center ml-14 mr-4">
+        {children}
+      </div>
     </motion.div>
   );
 };
