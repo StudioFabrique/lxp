@@ -15,7 +15,11 @@ const LessonItem = ({
 }: LessonItemProps) => {
   return (
     <div
-      onClick={() => setSelectedLesson(lesson)}
+      onClick={() =>
+        setSelectedLesson(
+          selectedLesson && selectedLesson.id === lesson.id ? undefined : lesson
+        )
+      }
       className={`flex items-center justify-between rounded-xl p-2 w-full cursor-pointer ${
         selectedLesson?.id === lesson.id ? "bg-primary" : "bg-primary/50"
       }`}
