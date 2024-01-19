@@ -12,6 +12,7 @@ import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import Contacts from "../../components/module-view-from-parcours/contacts";
 import Module from "../../utils/interfaces/module";
 import Lesson from "../../utils/interfaces/lesson";
+import PreviewLesson from "../../components/module-view-from-parcours/preview-lesson/preview-lesson";
 
 /**
  * Aperçu du module du point de vue de l'apprenant
@@ -23,9 +24,7 @@ const ModuleViewFromParcours = () => {
   const [moduleData, setModuleData] = useState<Module>();
   const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>();
 
-  useEffect(() => {
-    setSelectedLesson(moduleData?.courses[0].lessons[0]);
-  }, [moduleData?.courses]);
+  console.log(selectedLesson);
 
   useEffect(() => {
     const applyData = (data: { data: Module }) => {
@@ -61,17 +60,23 @@ const ModuleViewFromParcours = () => {
             />
             <div className="flex flex-col gap-5 col-span-3">
               <ProgressBar courses={moduleData.courses} />
-              <Objectifs objectives={moduleData.bonusSkills} />
-              <div className="grid grid-cols-2 gap-5">
-                <Contacts contacts={moduleData.contacts} />
-                {/* <Tags tags={moduleData.tags} /> */}
-                <Wrapper>
-                  <div></div>
-                </Wrapper>
-              </div>
-              <Wrapper>
-                <div></div>
-              </Wrapper>
+              {selectedLesson ? (
+                <PreviewLesson selectedLessonId={selectedLesson.id} />
+              ) : (
+                <>
+                  <Objectifs objectives={moduleData.bonusSkills} />
+                  <div className="grid grid-cols-2 gap-5">
+                    <Contacts contacts={moduleData.contacts} />
+                    {/* <Tags tags={moduleData.tags} /> */}
+                    <Wrapper>
+                      <div></div>
+                    </Wrapper>
+                  </div>
+                  <Wrapper>
+                    <div></div>
+                  </Wrapper>
+                </>
+              )}
             </div>
           </div>
         </FadeWrapper>
