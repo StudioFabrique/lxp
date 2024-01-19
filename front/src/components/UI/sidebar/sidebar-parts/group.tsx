@@ -10,7 +10,10 @@ const Group = ({ interfaceType }: { interfaceType: string }) => {
   const [isHover, setIsHover] = useState(false);
 
   return (
-    <li onMouseOver={() => setIsHover(true)}>
+    <li
+      onMouseOver={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
+    >
       <Link to={`/${interfaceType}/group`} className="flex items-center">
         <div className="tooltip tooltip-top w-6 h-6 z-10" data-tip="Groupes">
           <GroupIcon />
