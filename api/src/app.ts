@@ -10,10 +10,21 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
+console.log(path.join(__dirname, "..", "public", "index.html"));
 app
   .use(
     helmet({
       crossOriginResourcePolicy: false,
+      contentSecurityPolicy: {
+        directives: {
+          scriptSrc: ["'self'", "https://www.youtube.com"],
+          childSrc: ["'self'", "youtube.com", "www.youtube.com"],
+        },
+      },
+      crossOriginEmbedderPolicy: false,
+      crossOriginOpenerPolicy: true,
+      referrerPolicy: false,
+      originAgentCluster: false,
     })
   )
   .use(
@@ -22,6 +33,7 @@ app
         "http://localhost:3000",
         "http://localhost:5173",
         "http://localhost:5174",
+        "http://localhost:4173",
       ],
       credentials: true,
     })
@@ -29,11 +41,8 @@ app
   .use(cookieParser())
   .use(morgan("combined"))
   .use(express.json())
-  .use(express.static(path.join(__dirname, "public")))
+  .use(express.static(path.join(__dirname, "..", "public")))
   .use(express.static(path.join(__dirname, "..", "uploads")))
-  .get("/", (req, res) => {
-    res.send("<h1>Hello World !</h1>");
-  })
   .use("/v1", api)
   .use(({ res }: { res: Response }) => {
     const message = "Impossible de trouver les ressources demandées.";
