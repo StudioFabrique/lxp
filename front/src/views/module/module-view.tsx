@@ -10,16 +10,16 @@ import ProgressBar from "../../components/module-view/progress-bar";
 import Objectifs from "../../components/module-view/objectifs";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import Contacts from "../../components/module-view/contacts";
-import Tags from "../../components/module-view/tags";
+import Module from "../../utils/interfaces/module";
 
 const ModuleView = () => {
   const { sendRequest, isLoading } = useHttp(true);
   const { moduleId } = useParams();
 
-  const [moduleData, setModuleData] = useState(null);
+  const [moduleData, setModuleData] = useState<Module>();
 
   useEffect(() => {
-    const applyData = (data: any) => {
+    const applyData = (data: { data: Module }) => {
       console.log({ DonnéesDuModule: data.data });
       setModuleData(data.data);
     };
@@ -45,7 +45,7 @@ const ModuleView = () => {
             />
           </div>
 
-          <div className="mt-5 grid grid-cols-4 gap-5">
+          <div className="mt-5 grid grid-cols-4 gap-5 w-full">
             <Progression courses={moduleData.courses} />
             <div className="flex flex-col gap-5 col-span-3">
               <ProgressBar courses={moduleData.courses} />
