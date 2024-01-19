@@ -17,7 +17,6 @@ const MotionSidebarWrapper = ({
 
   return (
     <motion.div
-      onMouseLeave={() => setIsHover(false)}
       animate={{
         width: isHover ? "auto" : 0,
         opacity: isHover ? 1 : 0,

@@ -9,7 +9,10 @@ const User = ({ interfaceType }: { interfaceType: string }) => {
   const [isHover, setIsHover] = useState(false);
 
   return (
-    <li onMouseOver={() => setIsHover(true)}>
+    <li
+      onMouseOver={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
+    >
       <Link to={`/${interfaceType}/user`} className="flex items-center">
         <div
           className="tooltip tooltip-top w-6 h-6 z-10"
