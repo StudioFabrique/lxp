@@ -12,7 +12,7 @@ const ProgressBar = ({ courses }: ProgressBarProps) => {
       {courses.map((course) => (
         <div className="bg-secondary/10 h-[80%] w-full rounded-lg">
           <div className="flex gap-x-2 h-full items-center px-5">
-            {course.lessons.map((lesson) => (
+            {course.lessons.map(() => (
               <span className="h-[70%] w-[15px] bg-primary/20"></span>
             ))}
           </div>
