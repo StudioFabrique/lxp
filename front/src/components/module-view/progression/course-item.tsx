@@ -51,7 +51,7 @@ const CourseItem = ({ course }: CourseItemProps) => {
           maxHeight: isCourseOpen ? 200 : 0,
         }}
       >
-        <div className="p-4 flex flex-col gap-4 items-center">
+        <div className="p-4 pt-6 flex flex-col gap-4 items-center">
           {course.lessons.length > 0 ? (
             course.lessons.map((lesson) => <LessonItem lesson={lesson} />)
           ) : (
