@@ -6,11 +6,17 @@
   "scripts": {
     "install-server": "npm install --prefix api",
     "install-client": "npm install --prefix front",
+    "build-client": "npm run build --prefix front",
+    "build-server": "npm run build --prefix api",
     "install": "npm run install-server && npm run install-client",
     "server": "npm run start --prefix api",
     "client": "npm dev --prefix front",
     "watch": "npm run start:dev --prefix api & npm run dev --prefix front",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "npm run build --prefix api && npm run build --prefix front",
+    "generate": "npm run prisma-generate --prefix api",
+    "start": "npm run start:prod --prefix api",
+    "fixtures": "npm run fixtures --prefix api"
   },
   "keywords": [],
   "author": "",
