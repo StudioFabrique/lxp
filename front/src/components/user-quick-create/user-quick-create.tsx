@@ -94,7 +94,7 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
             <Field
               label="Pseudo"
               name="nickname"
-              placeholder="Toto"
+              placeholder="jean64"
               data={data}
             />
 
@@ -102,7 +102,7 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
               label="Email *"
               name="email"
               type="email"
-              placeholder="Ex : email@exemple.com"
+              placeholder="email@exemple.com"
               data={data}
             />
           </Wrapper>
@@ -110,28 +110,23 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
             <Field
               label="Adresse"
               name="address"
-              placeholder="Ex : 2 place royale"
+              placeholder="2 place royale"
               data={data}
             />
 
-            <Field
-              label="Ville"
-              name="city"
-              placeholder="Ex : Paris"
-              data={data}
-            />
+            <Field label="Ville" name="city" placeholder="Paris" data={data} />
 
             <Field
               label="Code Postal"
               name="postCode"
-              placeholder="Ex : 75000"
+              placeholder="75000"
               data={data}
             />
 
             <Field
               label="Numéro de téléphone"
               name="phoneNumber"
-              placeholder="Ex : 01 02 03 04 05"
+              placeholder="01 02 03 04 05"
               data={data}
             />
           </Wrapper>
