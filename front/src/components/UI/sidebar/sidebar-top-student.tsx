@@ -5,16 +5,16 @@ import Library from "./sidebar-parts/library";
 import Forum from "./sidebar-parts/forum";
 
 type SharedSideBarProps = {
-  interfaceType: string;
+  currentRoute: string[];
 };
 
-const SidebarTopStudent = ({ interfaceType }: SharedSideBarProps) => (
+const SidebarTopStudent = ({ currentRoute }: SharedSideBarProps) => (
   <ul className="flex flex-col gap-y-6">
-    <Home interfaceType={interfaceType} />
-    <Parcours interfaceType={interfaceType} />
-    <Calendar interfaceType={interfaceType} />
-    <Library interfaceType={interfaceType} />
-    <Forum interfaceType={interfaceType} />
+    <Home currentRoute={currentRoute} />
+    <Parcours currentRoute={currentRoute} />
+    <Calendar currentRoute={currentRoute} />
+    <Library currentRoute={currentRoute} />
+    <Forum currentRoute={currentRoute} />
   </ul>
 );
 
