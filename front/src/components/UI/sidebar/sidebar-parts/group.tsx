@@ -15,11 +15,16 @@ const Group = ({ interfaceType }: { interfaceType: string }) => {
       onMouseLeave={() => setIsHover(false)}
     >
       <Link to={`/${interfaceType}/group`} className="flex items-center">
-        <div className="tooltip tooltip-top w-6 h-6 z-10" data-tip="Groupes">
+        <div
+          className={`tooltip tooltip-top w-6 h-6 z-10 ${
+            isHover && "text-primary"
+          }`}
+          data-tip="Groupes"
+        >
           <GroupIcon />
         </div>
 
-        <MotionSidebarWrapper isHover={isHover} setIsHover={setIsHover}>
+        <MotionSidebarWrapper isHover={isHover}>
           <Can action="write" object="group">
             <Link to={`/${interfaceType}/group/add`}>
               <div

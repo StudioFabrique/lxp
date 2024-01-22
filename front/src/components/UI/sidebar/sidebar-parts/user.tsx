@@ -15,13 +15,15 @@ const User = ({ interfaceType }: { interfaceType: string }) => {
     >
       <Link to={`/${interfaceType}/user`} className="flex items-center">
         <div
-          className="tooltip tooltip-top w-6 h-6 z-10"
+          className={`tooltip tooltip-top w-6 h-6 z-10 ${
+            isHover && "text-primary"
+          }`}
           data-tip="Utilisateurs"
         >
           <UserIcon />
         </div>
 
-        <MotionSidebarWrapper isHover={isHover} setIsHover={setIsHover}>
+        <MotionSidebarWrapper isHover={isHover}>
           <Can action="write" object="user">
             <Link to={`/${interfaceType}/user/add`}>
               <div
