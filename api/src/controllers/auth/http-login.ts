@@ -51,10 +51,18 @@ async function httpLogin(req: Request, res: Response) {
         .status(200)
         .json(user);
     }
-    throw { message: credentialsError, status: 401 };
+    const error: any = {
+      message: credentialsError,
+      status: 401,
+    };
+    throw error;
   } catch (error: any) {
-    console.log(error);
-
+    if (error.status === 401) {
+      const childLogger = logger.child({
+        from: req.socket.remoteAddress ?? "unknown",
+      });
+      childLogger.info(error);
+    }
     return res
       .status(error.status ?? 500)
       .json({ message: error.message ?? serverIssue });

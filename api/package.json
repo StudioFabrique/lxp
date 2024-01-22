@@ -20,13 +20,13 @@
   "author": "studio@step.eco",
   "license": "ISC",
   "dependencies": {
+    "@elastic/elasticsearch": "^8.10.0",
     "@prisma/client": "^5.1.0",
     "@types/bcrypt": "^5.0.0",
     "@types/cookie-parser": "^1.4.3",
     "@types/express-validator": "^3.0.0",
     "@types/jsonwebtoken": "^9.0.1",
     "accesscontrol": "^2.2.1",
-    "@elastic/elasticsearch": "^8.10.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
@@ -41,7 +41,8 @@
     "multer": "^1.4.5-lts.1",
     "sharp": "^0.32.6",
     "uuid": "^9.0.1",
-    "winston": "^3.10.0"
+    "winston": "^3.10.0",
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",
