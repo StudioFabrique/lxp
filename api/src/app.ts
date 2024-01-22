@@ -13,7 +13,7 @@ const app = express();
 console.log(path.join(__dirname, "..", "public", "index.html"));
 app
   .use(
-    helmet({
+/*     helmet({
       crossOriginResourcePolicy: false,
       contentSecurityPolicy: {
         directives: {
@@ -29,7 +29,7 @@ app
         },
       },
     })
-  )
+  ) */
   .use(
     cors({
       origin: [
