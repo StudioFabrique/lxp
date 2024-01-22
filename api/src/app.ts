@@ -21,10 +21,6 @@ app
           childSrc: ["'self'", "youtube.com", "www.youtube.com"],
         },
       },
-      crossOriginEmbedderPolicy: false,
-      crossOriginOpenerPolicy: true,
-      referrerPolicy: false,
-      originAgentCluster: false,
     })
   )
   .use(
