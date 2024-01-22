@@ -1,13 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeEvent, useState } from "react";
 import VideoPlayer from "../../UI/video-player";
-//import { useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
+import { maxSizeError } from "../../../helpers/max-size-error";
+import { activityVideoSize } from "../../../config/images-sizes";
 
 interface VideoEditorProps {
   propVideo?: string;
   onCancel: () => void;
   onSubmit: (value: { videoValue: string; fileValue: File | null }) => void;
 }
+
+const maxSize = activityVideoSize;
 
 export default function VideoEditor({
   propVideo = "",
@@ -30,6 +34,14 @@ export default function VideoEditor({
   const handleSelectFile = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files && event.target.files[0];
     if (selectedFile) {
+      if (!selectedFile.type.startsWith("video/")) {
+        toast.error("Merci de choisir un fichier de type video.");
+        setFile(null);
+        return;
+      }
+      if (selectedFile.size > maxSize) {
+        toast.error(maxSizeError(maxSize));
+      }
       setFile(selectedFile);
       setVideo(URL.createObjectURL(selectedFile));
     }
