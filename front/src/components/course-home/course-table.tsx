@@ -221,7 +221,9 @@ export default function CourseTable({
           </table>
         </div>
       ) : (
-        <p>Aucun cours n'a été créé à ce jour</p>
+        <p className="flex justify-center">
+          Aucun cours n'a été créé à ce jour
+        </p>
       )}
     </>
   );

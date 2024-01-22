@@ -25,6 +25,7 @@ type ContextType = {
   roles: Array<Role>;
   fetchRoles: (role: Role) => void;
   defineRulesFor: () => void;
+  builtPerms: Record<string, any> | undefined;
 };
 
 type Props = { children: React.ReactNode };
@@ -43,6 +44,7 @@ export const Context = React.createContext<ContextType>({
   roles: Array<Role>(),
   fetchRoles: () => {},
   defineRulesFor: () => {},
+  builtPerms: {},
 });
 
 const ContextProvider: FC<Props> = (props) => {
@@ -53,6 +55,9 @@ const ContextProvider: FC<Props> = (props) => {
   const [error, setError] = useState("");
   const { axiosInstance, sendRequest } = useHttp();
   const [roles, setRoles] = useState<Array<Role>>([]);
+  const [builtPerms, setBuiltPerms] = useState<
+    Record<string, any> | undefined
+  >();
 
   const login = async (email: string, password: string) => {
     setError("");
@@ -161,6 +166,7 @@ const ContextProvider: FC<Props> = (props) => {
     if (builtPerms) {
       casbinAuthorizer.setPermission(builtPerms);
       console.log({ autorisationsPourUtilisateurConnecteActuel: builtPerms });
+      setBuiltPerms(builtPerms);
     }
   }, [roles, sendRequest]);
 
@@ -222,6 +228,7 @@ const ContextProvider: FC<Props> = (props) => {
     roles,
     fetchRoles,
     defineRulesFor,
+    builtPerms,
   };
 
   return (
