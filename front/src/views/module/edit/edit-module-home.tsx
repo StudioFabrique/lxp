@@ -38,8 +38,8 @@ export default function EditModuleHome() {
   const [success, setSuccess] = useState(false);
 
   const fetchModule = useCallback(() => {
-    const applyData = (data: ModuleDetail) => {
-      setModule(data);
+    const applyData = (data: { data: ModuleDetail; message: string }) => {
+      setModule(data.data);
       setLoading(false);
     };
     sendRequest(

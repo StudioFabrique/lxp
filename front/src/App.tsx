@@ -1,4 +1,4 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RouterProvider, createHashRouter } from "react-router-dom";
 
 import ContextProvider from "./store/context.store";
 import RootLayout from "./views/home/root-layout.component";
@@ -34,7 +34,7 @@ import LayoutEditModule from "./views/module/edit/Layout-edit-module";
 import EditModuleHome from "./views/module/edit/edit-module-home";
 import ModuleViewFromParcours from "./views/module/module-view-from-parcours";
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <RootLayout />,

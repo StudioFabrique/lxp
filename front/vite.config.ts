@@ -11,4 +11,4 @@ export default defineConfig({
     },
     outDir: "../api/dist/public/",
   },
-})
+});

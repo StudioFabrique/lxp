@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Bus } from "lucide-react";
 import Course from "../../utils/interfaces/course";
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import ImageHeader from "../../components/image-header";
 import HeaderMenu from "../../components/UI/header-menu";
@@ -11,8 +12,8 @@ import Objectifs from "../../components/module-view-from-parcours/objectifs";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import Contacts from "../../components/module-view-from-parcours/contacts";
 import Module from "../../utils/interfaces/module";
-import Lesson from "../../utils/interfaces/lesson";
 import PreviewLesson from "../../components/module-view-from-parcours/preview-lesson/preview-lesson";
+import Lesson from "../../utils/interfaces/lesson";
 
 /**
  * Aperçu du module du point de vue de l'apprenant
@@ -21,10 +22,9 @@ const ModuleViewFromParcours = () => {
   const { sendRequest, isLoading } = useHttp(true);
   const { moduleId } = useParams();
 
-  const [moduleData, setModuleData] = useState<Module>();
-  const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>();
+  const [moduleData, setModuleData] = useState<any | null>(null);
 
-  console.log(selectedLesson);
+  const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>();
 
   useEffect(() => {
     const applyData = (data: { data: Module }) => {

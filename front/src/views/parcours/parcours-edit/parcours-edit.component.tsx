@@ -137,7 +137,9 @@ const EditParcours = () => {
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
       {isLoading ? (
-        <Loader />
+        <div className="h-[100vh] flex items-center">
+          <Loader />
+        </div>
       ) : error.length === 0 ? (
         <FadeWrapper>
           <div className="w-full flex flex-col items-center gap-y-8">
