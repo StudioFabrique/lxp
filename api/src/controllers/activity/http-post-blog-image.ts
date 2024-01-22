@@ -10,7 +10,7 @@ export default async function httpPostBlogImage(req: Request, res: Response) {
     return res.status(201).json({
       success: true,
       message: "Image téléversée avec succès",
-      response: `http://localhost:5001/activities/images/${uploadedFile.filename}`,
+      response: `/activities/images/${uploadedFile.filename}`,
     });
   } catch (error: any) {
     console.log(error.message);
