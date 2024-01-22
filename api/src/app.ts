@@ -12,8 +12,8 @@ const app = express();
 
 console.log(path.join(__dirname, "..", "public", "index.html"));
 app
-  /*.use
-     helmet({
+  .use(
+    helmet({
       crossOriginResourcePolicy: false,
       contentSecurityPolicy: {
         directives: {
@@ -29,8 +29,7 @@ app
         },
       },
     })
-   
-  ()*/
+  )
   .use(
     cors({
       origin: [
@@ -38,7 +37,6 @@ app
         "http://localhost:5173",
         "http://localhost:5174",
         "http://localhost:4173",
-        "http://lxp.tests.step.eco",
       ],
       credentials: true,
     })
