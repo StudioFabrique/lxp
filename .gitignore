@@ -7,4 +7,4 @@ front/node_modules
 front.old/nodeModules
 node_modules
 
-.env
+.env.local
