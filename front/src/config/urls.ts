@@ -3,6 +3,6 @@ const url =
 
 export const BASE_URL = url + "v1";
 
-export const DOWNLOAD_URL = url;
+export const DOWNLOAD_URL = url + "dist";
 
 export const ACTIVITIES_VIDEOS = url + "activities/videos/";
