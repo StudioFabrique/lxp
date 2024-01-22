@@ -1,16 +1,14 @@
 import { motion } from "framer-motion";
-import { Dispatch, ReactNode, SetStateAction, useContext } from "react";
+import { ReactNode, useContext } from "react";
 import { Context } from "../../../../store/context.store";
 
 type MotionSidebarWrapperProps = {
   isHover: boolean;
-  setIsHover: Dispatch<SetStateAction<boolean>>;
   children: ReactNode;
 };
 
 const MotionSidebarWrapper = ({
   isHover,
-  setIsHover,
   children,
 }: MotionSidebarWrapperProps) => {
   const { theme } = useContext(Context);

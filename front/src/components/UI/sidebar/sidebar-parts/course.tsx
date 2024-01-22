@@ -14,11 +14,16 @@ const Course = ({ interfaceType }: { interfaceType: string }) => {
       onMouseLeave={() => setIsHover(false)}
     >
       <Link to={`/${interfaceType}/course`} className="flex items-center">
-        <div className="tooltip tooltip-top w-6 h-6 z-10" data-tip="Cours">
+        <div
+          className={`tooltip tooltip-top w-6 h-6 z-10 ${
+            isHover && "text-primary"
+          }`}
+          data-tip="Cours"
+        >
           <CourseIcon />
         </div>
 
-        <MotionSidebarWrapper isHover={isHover} setIsHover={setIsHover}>
+        <MotionSidebarWrapper isHover={isHover}>
           <Can action="write" object="course">
             <Link to={`/${interfaceType}/course/add`}>
               <div
