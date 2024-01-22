@@ -1,5 +1,6 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useContext } from "react";
 import { casbinAuthorizer } from "../../../config/rbac";
+import { Context } from "../../../store/context.store";
 
 type Props = {
   children: ReactNode;
@@ -8,7 +9,8 @@ type Props = {
 };
 
 const Can: React.FC<Props> = ({ children, action, object }) => {
-  const [render, setRender] = React.useState(false);
+  const { builtPerms } = useContext(Context);
+  const [render, setRender] = React.useState(true);
 
   React.useEffect(() => {
     (async function () {
@@ -17,12 +19,14 @@ const Can: React.FC<Props> = ({ children, action, object }) => {
         setRender(shouldRender);
       }
     })();
-  }, [action, object]);
+  }, [action, object, builtPerms]);
 
-  if (render) return <>{children}</>;
-  console.log("supposed to not being rendered");
+  if (!render) {
+    console.log("supposed to not being rendered");
+    return false;
+  }
 
-  return false;
+  return <>{children}</>;
 };
 
 export default Can;
