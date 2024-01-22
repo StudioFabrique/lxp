@@ -54,10 +54,10 @@ const CourseItem = ({
         />
       </div>
       <motion.div
-        className="bg-secondary/80 -mt-2 rounded-b-xl"
+        className="bg-secondary/80 -mt-2 rounded-b-xl overflow-y-auto"
         animate={{
           display: isCourseOpen ? "block" : "none",
-          maxHeight: isCourseOpen ? 200 : 0,
+          maxHeight: isCourseOpen ? 280 : 0,
         }}
       >
         <div className="p-4 pt-6 flex flex-col gap-4 items-center">

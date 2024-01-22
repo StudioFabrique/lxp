@@ -5,7 +5,7 @@ const SidebarWrapper = ({ children }: { children: ReactNode }) => {
   const { theme } = useContext(Context);
 
   return (
-    <nav className="w-fit h-full fixed p-5">
+    <nav className="w-fit h-full fixed p-5 z-10">
       <div
         className={`flex flex-col gap-y-4 p-5 rounded-lg h-full relative ${
           theme === "dark"
