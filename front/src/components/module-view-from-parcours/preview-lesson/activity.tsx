@@ -28,7 +28,7 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
     }
   }, [activity, activity.url]);
 
-  return <Markdown className="prose">{value}</Markdown>;
+  return <Markdown className="prose p-5 max-w-none">{value}</Markdown>;
 };
 
 export default ActivityPreview;
