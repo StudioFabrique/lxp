@@ -12,6 +12,8 @@ volumes:
     driver: local
   api:
     driver: local
+  logs:
+    driver: local
 
 # The containers that compose the project
 services:
