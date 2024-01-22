@@ -17,7 +17,7 @@ app
       crossOriginResourcePolicy: false,
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ["'self'"],
+          defaultSrc: ["'self'", "http://localhost:5001"],
           imgSrc: ["'self'", "data:"],
           scriptSrc: ["'self'", "https://www.youtube.com"],
           frameSrc: [
