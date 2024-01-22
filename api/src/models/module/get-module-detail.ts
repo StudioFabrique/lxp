@@ -1,6 +1,9 @@
 import { prisma } from "../../utils/db";
 
-export default async function getModuleDetail(moduleId: number) {
+export default async function getModuleDetail(
+  moduleId: number,
+  userMongoId: string
+) {
   const existingModule = await prisma.module.findFirst({
     where: { id: moduleId },
     select: {
@@ -29,6 +32,15 @@ export default async function getModuleDetail(moduleId: number) {
     const error: any = { message: "Le module n'existe pas.", statusCode: 404 };
     throw error;
   }
+
+  const lessons = existingModule.courses.map((course) =>
+    course.lessons.map((lesson) => {
+      lesson.readBy = lesson.readBy.includes(userMongoId) ? [userMongoId] : [];
+      return lesson;
+    })
+  );
+
+  console.log({ lessons });
 
   const result = {
     id: existingModule.id,

@@ -43,4 +43,7 @@ lessonRouter.put(
   httpPutReorderLessons
 );
 
+// ajoute un "vu" à la leçon en ajoutant l'id de l'utilisateur connecté
+lessonRouter.put("/readMark/:userId");
+
 export default lessonRouter;
