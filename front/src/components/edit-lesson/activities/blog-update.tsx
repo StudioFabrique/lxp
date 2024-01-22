@@ -77,7 +77,7 @@ export const BlogUpdate = ({ activity }: EditorProps) => {
    */
   useEffect(() => {
     if (activity && activity !== undefined) {
-      fetch(`http://localhost:5001/activities/${activity.url}`)
+      fetch(`/activities/${activity.url}`)
         .then((response: any) => response.text())
         //.then((text) => md.render(text))
         .then((mdContent: string) => {
