@@ -153,7 +153,7 @@ const ParcoursView = () => {
         <FadeWrapper>
           <div className="w-full">
             <ImageHeader
-              imageUrl={image ?? ""}
+              imageUrl={image ?? "/images/parcours-default.webp"}
               title={parcoursInfos.title}
               subTitle={parcours.formation?.title}
               children={[<></>, <HeaderMenu />]}
