@@ -4,9 +4,15 @@ import { ACTIVITIES_VIDEOS } from "../../config/urls";
 
 interface VideoPlayerProps {
   source: string;
+  title?: string;
+  description?: string;
 }
 
-export default function VideoPlayer({ source }: VideoPlayerProps) {
+export default function VideoPlayer({
+  source,
+  title,
+  description,
+}: VideoPlayerProps) {
   const [videoUrl, setVideoUrl] = useState("");
 
   useEffect(() => {
@@ -20,7 +26,9 @@ export default function VideoPlayer({ source }: VideoPlayerProps) {
   }, [source]);
 
   return (
-    <div>
+    <div className="flex flex-col gap-y-2">
+      <h2>{title}</h2>
+      <h2>{description}</h2>
       <ReactPlayer url={videoUrl} controls />
     </div>
   );

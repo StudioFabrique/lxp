@@ -2,13 +2,26 @@
 import { ChangeEvent, useState } from "react";
 import VideoPlayer from "../../UI/video-player";
 import { toast } from "react-hot-toast";
+import { ZodError } from "zod";
+
 import { maxSizeError } from "../../../helpers/max-size-error";
 import { activityVideoSize } from "../../../config/images-sizes";
+import useForm from "../../UI/forms/hooks/use-form";
+import Field from "../../UI/forms/field";
+import FieldArea from "../../UI/forms/field-area";
+import Wrapper from "../../UI/wrapper/wrapper.component";
+import { activiteVideo } from "../../../lib/validation/lesson/activite-video";
+import { validationErrors } from "../../../helpers/validate";
 
 interface VideoEditorProps {
   propVideo?: string;
   onCancel: () => void;
-  onSubmit: (value: { videoValue: string; fileValue: File | null }) => void;
+  onSubmit: (value: {
+    videoValue: string;
+    fileValue: File | null;
+    title: string;
+    description: string | null;
+  }) => void;
 }
 
 const maxSize = activityVideoSize;
@@ -25,6 +38,9 @@ export default function VideoEditor({
   const [video, setVideo] = useState<string>(propVideo);
   const [file, setFile] = useState<File | null>(null);
   const [url, setUrl] = useState<string>("");
+  const { errors, values, onChangeValue, onValidationErrors } = useForm();
+
+  const data = { values, errors, onChangeValue };
 
   const handleOnChangeOrigin = (event: ChangeEvent<HTMLSelectElement>) => {
     //handleReset();
@@ -55,8 +71,20 @@ export default function VideoEditor({
     setVideo(url);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      activiteVideo.parse(values);
+    } catch (error: any) {
+      if (error instanceof ZodError) {
+        const errors = validationErrors(error);
+        onValidationErrors(errors);
+        return;
+      }
+    }
     onSubmit({
+      title: values.title,
+      description: values.description,
       videoValue: file ? "" : video,
       fileValue: file,
     });
@@ -110,9 +138,20 @@ export default function VideoEditor({
       </section>
       <section>
         {video ? (
-          <article className="py-2">
+          <article className="py-2 flex flex-col gap-y-4">
             <VideoPlayer source={video} />
-            <div className="flex justify-between items-center gap-x-2 mt-4">
+            <Wrapper>
+              <form>
+                <Field
+                  label="Titre *"
+                  placeholder="Titre de la video"
+                  name="title"
+                  data={data}
+                />
+                <FieldArea label="Description" name="description" data={data} />
+              </form>
+            </Wrapper>
+            <div className="flex justify-between items-center gap-x-2">
               <button
                 className="btn btn-primary btn-sm btn-outline"
                 onClick={onCancel}

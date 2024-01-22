@@ -3,4 +3,6 @@ export default interface Activity {
   url: string;
   type: string;
   order: number;
+  title?: string;
+  description?: string;
 }
