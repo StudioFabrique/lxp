@@ -52,7 +52,7 @@ activityRouter.post("/:lessonId", checkPermissions("lesson"), httpPostActivity);
 activityRouter.put(
   "/:activityId",
   checkPermissions("lesson"),
-  lessonIdValidator,
+  activityIdValidator,
   updateActivityValidator,
   httpUpdateActivity
 );
