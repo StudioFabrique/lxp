@@ -5,19 +5,28 @@ import { RocketIcon } from "lucide-react";
 import { useState } from "react";
 import MotionSidebarWrapper from "./motion-sidebar-wrapper";
 
-const Parcours = ({ interfaceType }: { interfaceType: string }) => {
+const Parcours = ({ currentRoute }: { currentRoute: string[] }) => {
   const [isHover, setIsHover] = useState(false);
+  const isCurrentPathActive = currentRoute[1] === "parcours";
 
   return (
-    <li onMouseOver={() => setIsHover(true)}>
-      <Link to={`/${interfaceType}/parcours`} className="flex items-center">
-        <div className="tooltip tooltip-top w-6 h-6 z-10" data-tip="Parcours">
+    <li
+      onMouseOver={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
+    >
+      <Link to={`/${currentRoute[0]}/parcours`} className="flex items-center">
+        <div
+          className={`tooltip tooltip-top w-6 h-6 z-10 ${
+            (isHover || isCurrentPathActive) && "text-primary"
+          }`}
+          data-tip="Parcours"
+        >
           <RocketIcon />
         </div>
 
-        <MotionSidebarWrapper isHover={isHover} setIsHover={setIsHover}>
+        <MotionSidebarWrapper isHover={isHover}>
           <Can action="write" object="parcours">
-            <Link to={`/${interfaceType}/parcours/créer-un-parcours`}>
+            <Link to={`/${currentRoute[0]}/parcours/créer-un-parcours`}>
               <div
                 className="tooltip tooltip-top w-6 h-6"
                 data-tip="Création d'un nouveau parcours"
