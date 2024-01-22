@@ -8,16 +8,16 @@ import User from "./sidebar-parts/user";
 import Group from "./sidebar-parts/group";
 
 type SharedSideBarProps = {
-  interfaceType: string;
+  currentRoute: string[];
 };
 
-const SidebarTopAdmin = ({ interfaceType }: SharedSideBarProps) => (
+const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => (
   <ul className="flex flex-col gap-y-6">
-    <Home interfaceType={interfaceType} />
-    <Parcours interfaceType={interfaceType} />
-    <Course interfaceType={interfaceType} />
-    <User interfaceType={interfaceType} />
-    <Group interfaceType={interfaceType} />
+    <Home currentRoute={currentRoute} />
+    <Parcours currentRoute={currentRoute} />
+    <Course currentRoute={currentRoute} />
+    <User currentRoute={currentRoute} />
+    <Group currentRoute={currentRoute} />
     {/* <Calendar interfaceType={interfaceType} />
     <Library interfaceType={interfaceType} />
     <Forum interfaceType={interfaceType} /> */}

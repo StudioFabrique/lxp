@@ -15,9 +15,9 @@ const Sidebar = () => {
   return (
     <SidebarWrapper>
       {currentRoute[0] === "admin" ? (
-        <SidebarTopAdmin interfaceType={currentRoute[0]} />
+        <SidebarTopAdmin currentRoute={currentRoute} />
       ) : (
-        <SidebarTopStudent interfaceType={currentRoute[0]} />
+        <SidebarTopStudent currentRoute={currentRoute} />
       )}
       <SidebarBottom interfaceType={currentRoute[0]} onLogout={logout} />
     </SidebarWrapper>
