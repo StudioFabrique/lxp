@@ -14,6 +14,7 @@ import Contacts from "../../components/module-view-from-parcours/contacts";
 import Module from "../../utils/interfaces/module";
 import PreviewLesson from "../../components/module-view-from-parcours/preview-lesson/preview-lesson";
 import Lesson from "../../utils/interfaces/lesson";
+import Tags from "../../components/module-view-from-parcours/tags";
 
 /**
  * Aperçu du module du point de vue de l'apprenant
@@ -67,7 +68,7 @@ const ModuleViewFromParcours = () => {
                   <Objectifs objectives={moduleData.bonusSkills} />
                   <div className="grid grid-cols-2 gap-5">
                     <Contacts contacts={moduleData.contacts} />
-                    {/* <Tags tags={moduleData.tags} /> */}
+                    <Tags tags={moduleData.tags ?? []} />
                     <Wrapper>
                       <div></div>
                     </Wrapper>
