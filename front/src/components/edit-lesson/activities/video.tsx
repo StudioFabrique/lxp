@@ -32,6 +32,8 @@ export default function Video({ activity }: VideoProps) {
   };
 
   const handleSubmit = (value: {
+    title: string;
+    description: string | null;
     videoValue: string;
     fileValue: File | null;
   }) => {
@@ -39,6 +41,8 @@ export default function Video({ activity }: VideoProps) {
     fd.append(
       "data",
       JSON.stringify({
+        title: value.title,
+        description: value.description ?? "",
         type: "video",
         order,
         url: value.fileValue ? "" : value.videoValue,
@@ -118,7 +122,11 @@ export default function Video({ activity }: VideoProps) {
         />
       ) : null}
       {activity !== undefined && blogEdition !== activity.id ? (
-        <VideoPlayer source={activity.url} />
+        <VideoPlayer
+          source={activity.url}
+          title={activity.title!}
+          description={activity.description}
+        />
       ) : null}
     </main>
   );
