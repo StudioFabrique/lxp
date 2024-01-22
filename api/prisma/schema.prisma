@@ -204,6 +204,7 @@ model Lesson {
   isPublished Boolean    @default(false)
   visibility  Boolean    @default(false)
   activities  Activity[]
+  readBy String[]
 }
 
 model Objective {
