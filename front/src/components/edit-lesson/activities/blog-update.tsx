@@ -102,6 +102,8 @@ export const BlogUpdate = ({ activity }: EditorProps) => {
     dispatch(lessonActions.setBlogEdition(null));
   };
 
+  console.log(value);
+
   return (
     <Wrapper>
       <div className="w-full my-8">
@@ -116,7 +118,7 @@ export const BlogUpdate = ({ activity }: EditorProps) => {
           </>
         ) : (
           <>
-            <Markdown className="prose w-full">{value}</Markdown>
+            <Markdown className="prose prose-slate w-full">{value}</Markdown>
           </>
         )}
       </div>
