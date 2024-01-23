@@ -33,14 +33,14 @@ export default async function getModuleDetail(
     throw error;
   }
 
-  const lessons = existingModule.courses.map((course) =>
-    course.lessons.map((lesson) => {
+  const courses = existingModule.courses.map((course) => {
+    course.lessons = course.lessons.map((lesson) => {
       lesson.readBy = lesson.readBy.includes(userMongoId) ? [userMongoId] : [];
       return lesson;
-    })
-  );
+    });
 
-  console.log(lessons[0][0].readBy);
+    return course;
+  });
 
   const result = {
     id: existingModule.id,
@@ -53,7 +53,7 @@ export default async function getModuleDetail(
     parcours: existingModule.parcours[0].parcours.title,
     bonusSkills: existingModule.bonusSkills.map((item) => item.bonusSkill),
     contacts: existingModule.contacts.map((item) => item.contact),
-    courses: existingModule.courses,
+    courses: courses,
   };
 
   return result;
