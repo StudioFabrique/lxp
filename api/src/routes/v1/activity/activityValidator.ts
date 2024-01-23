@@ -3,6 +3,7 @@ import { checkValidatorResult } from "../../../middleware/validators";
 import {
   stringValidateGeneric,
   stringValidateOptional,
+  videoUrlValidate,
 } from "../../../helpers/custom-validators";
 
 export const activityIdValidator = [
@@ -31,19 +32,20 @@ export const updateActivityValidator = [
 ];
 
 export const updateVideoValidator = [
-  body("url")
-    .notEmpty()
-    .withMessage("L'url de l'activité video est requise.")
-    .isURL()
-    .withMessage("L'url fournie n'est pas une url valide."),
-  body("title")
+  body("data.url")
+    .optional({ nullable: true })
+    .isString()
+    .withMessage("L'url fournie n'est pas une chaîne de caractères valide.")
+    .custom(videoUrlValidate)
+    .withMessage("L'url de la video contient des caractères non autorisés."),
+  body("data.title")
     .notEmpty()
     .withMessage("Le titre de la video est obligatoire.")
     .isString()
     .withMessage("Le titre de la video doit être une chaîne de caractères.")
     .custom(stringValidateGeneric)
     .withMessage("Le titre de la video contient des caractères non autorisés."),
-  body("description")
+  body("data.description")
     .isString()
     .withMessage(
       "La description de la video doit être une chaîne de caractères."
