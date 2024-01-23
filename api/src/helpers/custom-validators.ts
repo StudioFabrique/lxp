@@ -5,6 +5,7 @@ import {
   regexNumber,
   regexOptionalGeneric,
   regexPassword,
+  regexVideoUrl,
 } from "../utils/constantes";
 import { checkValidatorResult } from "../middleware/validators";
 
@@ -26,6 +27,10 @@ export function passwordValidateGeneric(value: string) {
 
 export function dateValidateGeneric(value: string) {
   return regexDate.test(value);
+}
+
+export function videoUrlValidate(value: string) {
+  return regexVideoUrl.test(value);
 }
 
 export const idsArrayValidator = [
