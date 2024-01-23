@@ -1,6 +1,12 @@
 export default async function putReadLesson(lessonId: number, userId: string) {
-  const lesson = prisma?.lesson.update({
-    where: { id: lessonId },
+  const lesson = await prisma?.lesson.findUnique({ where: { id: lessonId } });
+
+  if (lesson?.readBy.includes(userId)) {
+    return lesson;
+  }
+
+  prisma?.lesson.update({
+    where: { id: lesson?.id },
     data: { readBy: { push: userId } },
   });
 
