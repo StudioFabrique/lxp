@@ -1,0 +1,25 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/martindhollande/Documents/Studio Step/LXP/lxp/api/logs/.ddbd45e77713ce10c00a4e2e658a3543669a0047-audit.json",
+    "files": [
+        {
+            "date": 1706004247073,
+            "name": "/Users/martindhollande/Documents/Studio Step/LXP/lxp/api/logs/application-2024-01-23-11.log",
+            "hash": "86aaa1795f60a411db11c6590e7893afd1e7588f3e85d4f8080bc6288d21d7d7"
+        },
+        {
+            "date": 1706009170198,
+            "name": "/Users/martindhollande/Documents/Studio Step/LXP/lxp/api/logs/application-2024-01-23-12.log",
+            "hash": "b34ecc5ba83652d82ccdefeb38c4d7afd947caa73d4bc9259b4185aaed163f8a"
+        },
+        {
+            "date": 1706012154025,
+            "name": "/Users/martindhollande/Documents/Studio Step/LXP/lxp/api/logs/application-2024-01-23-13.log",
+            "hash": "fdbd15a9dc5947b41c628824a96689ef9896233a3cc09a651cf9f1077e7f10f1"
+        }
+    ],
+    "hashType": "sha256"
+}

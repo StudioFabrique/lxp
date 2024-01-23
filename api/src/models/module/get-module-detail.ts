@@ -40,7 +40,7 @@ export default async function getModuleDetail(
     })
   );
 
-  console.log({ lessons });
+  console.log(lessons[0][0].readBy);
 
   const result = {
     id: existingModule.id,

@@ -12,6 +12,17 @@ const PreviewLesson = ({ selectedLessonId }: PreviewLessonProps) => {
   const { sendRequest, isLoading } = useHttp(true);
   const [lessonDetail, setLessonDetail] = useState<Lesson>();
 
+  const handleReadLesson = () => {
+    const applyData = (data: { message: string }) => {
+      console.log(data.message);
+    };
+
+    sendRequest(
+      { path: `/lesson/read/${selectedLessonId}`, method: "put" },
+      applyData
+    );
+  };
+
   useEffect(() => {
     const applyData = (data: Lesson) => {
       setLessonDetail(data);
@@ -23,7 +34,7 @@ const PreviewLesson = ({ selectedLessonId }: PreviewLessonProps) => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div>
+    <div className="flex flex-col">
       {lessonDetail?.activities && lessonDetail?.activities.length > 0 ? (
         lessonDetail?.activities?.map((activity) => (
           <ActivityPreview activity={activity} />
@@ -31,6 +42,9 @@ const PreviewLesson = ({ selectedLessonId }: PreviewLessonProps) => {
       ) : (
         <p>Aucune activités</p>
       )}
+      <button className="btn self-end" onClick={handleReadLesson}>
+        Leçon Suivante
+      </button>
     </div>
   );
 };
