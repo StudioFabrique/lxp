@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import { ACTIVITIES_VIDEOS } from "../../config/urls";
+import Wrapper from "./wrapper/wrapper.component";
 
 interface VideoPlayerProps {
   source: string;
@@ -27,9 +28,15 @@ export default function VideoPlayer({
 
   return (
     <div className="flex flex-col gap-y-2">
-      <h2>{title}</h2>
-      <h2>{description}</h2>
-      <ReactPlayer url={videoUrl} controls />
+      {title !== undefined ? (
+        <Wrapper>
+          <h2>{title}</h2>
+          <h2>{description}</h2>
+        </Wrapper>
+      ) : null}
+      <Wrapper>
+        <ReactPlayer url={videoUrl} controls />
+      </Wrapper>
     </div>
   );
 }
