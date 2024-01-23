@@ -19,6 +19,11 @@
             "date": 1706012154025,
             "name": "/Users/martindhollande/Documents/Studio Step/LXP/lxp/api/logs/application-2024-01-23-13.log",
             "hash": "fdbd15a9dc5947b41c628824a96689ef9896233a3cc09a651cf9f1077e7f10f1"
+        },
+        {
+            "date": 1706016226423,
+            "name": "/Users/martindhollande/Documents/Studio Step/LXP/lxp/api/logs/application-2024-01-23-14.log",
+            "hash": "2206c18b62a53dd54bf14e15fd6cb5f0df2033be707e1597e240bb9fdaa55409"
         }
     ],
     "hashType": "sha256"

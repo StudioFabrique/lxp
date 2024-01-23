@@ -5,7 +5,7 @@ export default async function putReadLesson(lessonId: number, userId: string) {
     return lesson;
   }
 
-  prisma?.lesson.update({
+  await prisma?.lesson.update({
     where: { id: lesson?.id },
     data: { readBy: { push: userId } },
   });
