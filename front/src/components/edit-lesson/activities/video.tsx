@@ -7,6 +7,7 @@ import VideoEditor from "./video-editor";
 import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 import toast from "react-hot-toast";
 import VideoPlayer from "../../UI/video-player";
+import { useEffect, useState } from "react";
 
 interface VideoProps {
   activity?: Activity;
@@ -21,7 +22,8 @@ export default function Video({ activity }: VideoProps) {
     (state: any) => state.lesson.blogEdition
   ) as number;
   const { lessonId } = useParams();
-  const { sendRequest } = useHttp();
+  const { sendRequest, error } = useHttp();
+  const [loading, setLoading] = useState(false);
 
   const handleCancelNewVideo = () => {
     dispatch(lessonActions.resetCurrentType());
@@ -32,6 +34,8 @@ export default function Video({ activity }: VideoProps) {
   };
 
   const handleSubmit = (value: {
+    title: string;
+    description: string | null;
     videoValue: string;
     fileValue: File | null;
   }) => {
@@ -39,6 +43,8 @@ export default function Video({ activity }: VideoProps) {
     fd.append(
       "data",
       JSON.stringify({
+        title: value.title,
+        description: value.description ?? "",
         type: "video",
         order,
         url: value.fileValue ? "" : value.videoValue,
@@ -56,8 +62,10 @@ export default function Video({ activity }: VideoProps) {
         toast.success(data.message);
         dispatch(lessonActions.addActivity(data.response));
         dispatch(lessonActions.resetCurrentType());
+        setLoading(false);
       }
     };
+    setLoading(true);
     sendRequest(
       {
         path: `/activity/video/${lessonId}`,
@@ -71,13 +79,19 @@ export default function Video({ activity }: VideoProps) {
   const handleUpdate = (value: {
     videoValue: string;
     fileValue: File | null;
+    title: string;
+    description: string | null;
   }) => {
+    console.log({ value });
+
     const fd = new FormData();
     fd.append(
       "data",
       JSON.stringify({
         id: activity!.id,
         url: value.fileValue ? "" : value.videoValue,
+        title: value.title,
+        description: value.description,
       })
     );
     if (value.fileValue) {
@@ -91,10 +105,12 @@ export default function Video({ activity }: VideoProps) {
       //console.log(data);
       if (data.success) {
         toast.success(data.message);
+        setLoading(false);
       }
       dispatch(lessonActions.updateActivity(data.response));
       dispatch(lessonActions.setBlogEdition(null));
     };
+    setLoading(true);
     sendRequest(
       {
         path: "/activity/video",
@@ -105,20 +121,41 @@ export default function Video({ activity }: VideoProps) {
     );
   };
 
+  // affichage des erreurs HTTP
+  useEffect(() => {
+    if (error.length > 0) {
+      toast.error(error);
+      setLoading(false);
+    }
+  }, [error]);
+
   return (
-    <main>
+    <main className="w-full flex justify-center">
       {activity === undefined ? (
-        <VideoEditor onSubmit={handleSubmit} onCancel={handleCancelNewVideo} />
+        <VideoEditor
+          title={""}
+          description={""}
+          onSubmit={handleSubmit}
+          onCancel={handleCancelNewVideo}
+          loading={loading}
+        />
       ) : null}
       {activity !== undefined && blogEdition === activity.id ? (
         <VideoEditor
           propVideo={activity.url}
+          title={activity.title ?? ""}
+          description={activity.description ?? ""}
+          loading={loading}
           onSubmit={handleUpdate}
           onCancel={handleCancelEditVideo}
         />
       ) : null}
       {activity !== undefined && blogEdition !== activity.id ? (
-        <VideoPlayer source={activity.url} />
+        <VideoPlayer
+          source={activity.url}
+          title={activity.title!}
+          description={activity.description}
+        />
       ) : null}
     </main>
   );

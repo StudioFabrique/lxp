@@ -1,6 +1,10 @@
 import { body, param } from "express-validator";
 import { checkValidatorResult } from "../../../middleware/validators";
-import { stringValidateGeneric } from "../../../helpers/custom-validators";
+import {
+  stringValidateGeneric,
+  stringValidateOptional,
+  videoUrlValidate,
+} from "../../../helpers/custom-validators";
 
 export const activityIdValidator = [
   param("activityId")
@@ -28,11 +32,28 @@ export const updateActivityValidator = [
 ];
 
 export const updateVideoValidator = [
-  body("url")
+  body("data.url")
+    .optional({ nullable: true })
+    .isString()
+    .withMessage("L'url fournie n'est pas une chaîne de caractères valide.")
+    .custom(videoUrlValidate)
+    .withMessage("L'url de la video contient des caractères non autorisés."),
+  body("data.title")
     .notEmpty()
-    .withMessage("L'url de l'activité video est requise.")
-    .isURL()
-    .withMessage("L'url fournie n'est pas une url valide."),
+    .withMessage("Le titre de la video est obligatoire.")
+    .isString()
+    .withMessage("Le titre de la video doit être une chaîne de caractères.")
+    .custom(stringValidateGeneric)
+    .withMessage("Le titre de la video contient des caractères non autorisés."),
+  body("data.description")
+    .isString()
+    .withMessage(
+      "La description de la video doit être une chaîne de caractères."
+    )
+    .custom(stringValidateOptional)
+    .withMessage(
+      "La description de la video contient des caractères non autorisés."
+    ),
   checkValidatorResult,
 ];
 
@@ -50,5 +71,21 @@ export const postVideoValidator = [
     .isNumeric()
     .isInt()
     .withMessage("La propriété order doit être un nombre entier."),
+  body("data.title")
+    .notEmpty()
+    .withMessage("Le titre de la video est obligatoire.")
+    .isString()
+    .withMessage("Le titre de la video doit être une chaîne de caractères.")
+    .custom(stringValidateGeneric)
+    .withMessage("Le titre de la video contient des caractères non autorisés."),
+  body("data.description")
+    .isString()
+    .withMessage(
+      "La description de la video doit être une chaîne de caractères."
+    )
+    .custom(stringValidateOptional)
+    .withMessage(
+      "La description de la video contient des caractères non autorisés."
+    ),
   checkValidatorResult,
 ];
