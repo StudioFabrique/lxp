@@ -11,6 +11,7 @@ import Markdown from "react-markdown";
 import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
 import { fromHtmlToMarkdown } from "../../../helpers/html-parser";
+import Wrapper from "../../UI/wrapper/wrapper.component";
 
 interface EditorProps {
   activity: Activity;
@@ -102,8 +103,8 @@ export const BlogUpdate = ({ activity }: EditorProps) => {
   };
 
   return (
-    <>
-      <div className="my-8">
+    <Wrapper>
+      <div className="w-full my-8">
         {blogEdition === activity.id ? (
           <>
             <Editor
@@ -115,11 +116,11 @@ export const BlogUpdate = ({ activity }: EditorProps) => {
           </>
         ) : (
           <>
-            <Markdown className="prose">{value}</Markdown>
+            <Markdown className="prose w-full">{value}</Markdown>
           </>
         )}
       </div>
-    </>
+    </Wrapper>
   );
 };
 

@@ -19,6 +19,8 @@ export default async function getLessonDetail(lessonId: number) {
           type: true,
           order: true,
           url: true,
+          title: true,
+          description: true,
         },
       },
     },

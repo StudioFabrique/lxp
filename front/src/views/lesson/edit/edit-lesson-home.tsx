@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import Video from "../../../components/edit-lesson/activities/video";
 import ActionsButtonsGroup from "../../../components/edit-lesson/actions-buttons-group";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import Wrapper from "../../../components/UI/wrapper/wrapper.component";
 
 export default function EditLessonHome() {
   const { lessonId } = useParams();
@@ -117,35 +118,39 @@ export default function EditLessonHome() {
     <>
       {activities && activities.length > 0 ? (
         <section className="mt-8 flex flex-col items-center">
-          <ul className="w-full">
+          <ul className="w-full flex flex-col justify-center items-center">
             {sortArray(activities, "order").map((item) => (
               <li className="mb-8" key={item.id}>
                 <div className="flex justify-center items-center gap-x-8">
-                  <span className="text-primary flex flex-col gap-y-1">
-                    <button
-                      className="hover:text-accent"
-                      disabled={item.order === 1}
-                    >
-                      <ChevronUp />
-                    </button>
-                    <button
-                      className="hover:text-accent"
-                      disabled={item.order === activities.length}
-                    >
-                      <ChevronDown />
-                    </button>
-                  </span>
+                  <Wrapper>
+                    <span className="text-primary flex flex-col gap-y-1">
+                      <button
+                        className="hover:text-accent"
+                        disabled={item.order === 1}
+                      >
+                        <ChevronUp />
+                      </button>
+                      <button
+                        className="hover:text-accent"
+                        disabled={item.order === activities.length}
+                      >
+                        <ChevronDown />
+                      </button>
+                    </span>
+                  </Wrapper>
 
-                  <div className="w-full">
-                    <h2 className="font-bold text-md text-primary">
-                      Activité n° {item.order}
-                    </h2>
-                    <div className="flex justify-center px-4 border border-primary/50 rounded-lg shadow-lg">
+                  <div className="w-full flex flex-col gap-y-2">
+                    <Wrapper>
+                      <h2 className="font-bold text-md text-primary">
+                        Activité n° {item.order}
+                      </h2>
+                    </Wrapper>
+                    <div className="w-full flex justify-center">
                       {item.type === "text" ? (
                         <BlogUpdate activity={item} />
                       ) : null}
                       {item.type === "video" ? (
-                        <div className="py-2">
+                        <div>
                           <Video activity={item} />
                         </div>
                       ) : null}

@@ -2,7 +2,12 @@ import { prisma } from "../../../utils/db";
 import path from "path";
 import fs from "fs";
 
-export default async function updateVideo(activityId: number, url: string) {
+export default async function updateVideo(
+  activityId: number,
+  title: string,
+  description: string,
+  url: string
+) {
   const existingActivity = await prisma.activity.findFirst({
     where: { id: activityId },
   });
@@ -18,6 +23,8 @@ export default async function updateVideo(activityId: number, url: string) {
     where: { id: activityId },
     data: {
       ...existingActivity,
+      title,
+      description,
       url,
     },
   });

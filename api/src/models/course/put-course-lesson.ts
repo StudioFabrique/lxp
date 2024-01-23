@@ -61,6 +61,7 @@ async function putCourseLesson(
         course: {
           connect: { id: courseId },
         },
+        readBy: [],
       },
       select: {
         id: true,
@@ -77,6 +78,7 @@ async function putCourseLesson(
         isPublished: true,
         visibility: true,
         order: true,
+        readBy: true,
       },
     });
   });
