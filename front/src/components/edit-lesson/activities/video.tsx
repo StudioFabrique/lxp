@@ -79,13 +79,19 @@ export default function Video({ activity }: VideoProps) {
   const handleUpdate = (value: {
     videoValue: string;
     fileValue: File | null;
+    title: string;
+    description: string | null;
   }) => {
+    console.log({ value });
+
     const fd = new FormData();
     fd.append(
       "data",
       JSON.stringify({
         id: activity!.id,
         url: value.fileValue ? "" : value.videoValue,
+        title: value.title,
+        description: value.description,
       })
     );
     if (value.fileValue) {

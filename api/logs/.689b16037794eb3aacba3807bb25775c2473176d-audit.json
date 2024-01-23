@@ -19,6 +19,11 @@
             "date": 1706004016281,
             "name": "/home/cyril/studio/lxp/api/logs/application-2024-01-23-11.log",
             "hash": "0781e237b2a78d5247c3490b52d147a999e8fc5e006d1629d03cd58867eb1d1f"
+        },
+        {
+            "date": 1706007898069,
+            "name": "/home/cyril/studio/lxp/api/logs/application-2024-01-23-12.log",
+            "hash": "5549ef255a54ee65a99136a89ece41e79b7fbcb76e2297befd49bbd788aaef56"
         }
     ],
     "hashType": "sha256"
