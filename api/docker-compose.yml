@@ -10,10 +10,6 @@ volumes:
     driver: local
   mongo:
     driver: local
-  api:
-    driver: local
-  logs:
-    driver: local
 
 # The containers that compose the project
 services:
@@ -41,34 +37,3 @@ services:
       - lxp_network
     ports:
       - "27000:27017"
-  api:
-    #image: lxp-api
-    build: .
-    volumes:
-      - api:/app/api/dist/uploads
-      - logs:/app/api/dist/logs
-    networks:
-      - lxp_network
-    restart: always
-    container_name: lxp-api
-    ports:
-      - "5001:5001"
-    links:
-      - db-pg
-      - db-mongo
-    depends_on:
-      - db-pg
-      - db-mongo
-    command: npm run start:dev
-    develop:
-      watch:
-        - action: sync
-          path: .
-          target: /app
-          ignore:
-            - node_modules/
-        - action: rebuild
-          path: package.json
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - MONGO_LOCAL_URL=${MONGO_LOCAL_URL}
