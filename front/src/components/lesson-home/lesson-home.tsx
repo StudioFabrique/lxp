@@ -96,101 +96,95 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
 
   return (
     <main className="w-full flex flex-col items-center px-4 py-8 gap-8">
-      <section className="w-5/6 flex flex-col items-center">
-        <Header
-          title="Liste des leçons"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in urna eget pura."
-        ></Header>
-        <div className="w-full mt-16 min-h-[50%] flex justify-center items-center text-xs lg:text-sm">
-          {lessonsList && LessonsList.length > 0 ? (
-            <table className="table w-full border-separate border-spacing-y-2">
-              <thead>
-                <tr>
-                  <th
-                    className="cursor-pointer"
-                    onClick={() => {
-                      sortData("title");
-                    }}
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <p>Titre</p>
-                      <SortColumnIcon
-                        fieldSort={fieldSort}
-                        column="title"
-                        direction={direction}
-                      />
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer"
-                    onClick={() => {
-                      sortData("courses");
-                    }}
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <p>Cours</p>
-                      <SortColumnIcon
-                        fieldSort={fieldSort}
-                        column="courses"
-                        direction={direction}
-                      />
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer"
-                    onClick={() => {
-                      sortData("author");
-                    }}
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <p>Auteur</p>
-                      <SortColumnIcon
-                        fieldSort={fieldSort}
-                        column="author"
-                        direction={direction}
-                      />
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer"
-                    onClick={() => {
-                      sortData("createdAt");
-                    }}
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <p>Date de création</p>
-                      <SortColumnIcon
-                        fieldSort={fieldSort}
-                        column="createdAt"
-                        direction={direction}
-                      />
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer"
-                    onClick={() => {
-                      sortData("updatedAt");
-                    }}
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <p>Dernière màj</p>
-                      <SortColumnIcon
-                        fieldSort={fieldSort}
-                        column="updatedAt"
-                        direction={direction}
-                      />
-                    </div>
-                  </th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>{content}</tbody>
-            </table>
-          ) : (
-            <p>Aucune leçon trouvée</p>
-          )}
-        </div>
-      </section>
+      <div className="w-full mt-16 min-h-[50%] flex justify-center items-center text-xs lg:text-sm">
+        {lessonsList && LessonsList.length > 0 ? (
+          <table className="table w-full border-separate border-spacing-y-2">
+            <thead>
+              <tr>
+                <th
+                  className="cursor-pointer"
+                  onClick={() => {
+                    sortData("title");
+                  }}
+                >
+                  <div className="flex items-center gap-x-2">
+                    <p>Titre</p>
+                    <SortColumnIcon
+                      fieldSort={fieldSort}
+                      column="title"
+                      direction={direction}
+                    />
+                  </div>
+                </th>
+                <th
+                  className="cursor-pointer"
+                  onClick={() => {
+                    sortData("courses");
+                  }}
+                >
+                  <div className="flex items-center gap-x-2">
+                    <p>Cours</p>
+                    <SortColumnIcon
+                      fieldSort={fieldSort}
+                      column="courses"
+                      direction={direction}
+                    />
+                  </div>
+                </th>
+                <th
+                  className="cursor-pointer"
+                  onClick={() => {
+                    sortData("author");
+                  }}
+                >
+                  <div className="flex items-center gap-x-2">
+                    <p>Auteur</p>
+                    <SortColumnIcon
+                      fieldSort={fieldSort}
+                      column="author"
+                      direction={direction}
+                    />
+                  </div>
+                </th>
+                <th
+                  className="cursor-pointer"
+                  onClick={() => {
+                    sortData("createdAt");
+                  }}
+                >
+                  <div className="flex items-center gap-x-2">
+                    <p>Date de création</p>
+                    <SortColumnIcon
+                      fieldSort={fieldSort}
+                      column="createdAt"
+                      direction={direction}
+                    />
+                  </div>
+                </th>
+                <th
+                  className="cursor-pointer"
+                  onClick={() => {
+                    sortData("updatedAt");
+                  }}
+                >
+                  <div className="flex items-center gap-x-2">
+                    <p>Dernière màj</p>
+                    <SortColumnIcon
+                      fieldSort={fieldSort}
+                      column="updatedAt"
+                      direction={direction}
+                    />
+                  </div>
+                </th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>{content}</tbody>
+          </table>
+        ) : (
+          <p>Aucune leçon trouvée</p>
+        )}
+      </div>
     </main>
   );
 }
