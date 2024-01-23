@@ -1,0 +1,25 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/home/cyril/studio/lxp/api/logs/.689b16037794eb3aacba3807bb25775c2473176d-audit.json",
+    "files": [
+        {
+            "date": 1705996251557,
+            "name": "/home/cyril/studio/lxp/api/logs/application-2024-01-23-08.log",
+            "hash": "1b9aca84177b67c4ca25e68dc94d61879541f697c2e52f80aa6faa1f20526870"
+        },
+        {
+            "date": 1706000595391,
+            "name": "/home/cyril/studio/lxp/api/logs/application-2024-01-23-10.log",
+            "hash": "c749861b9547326084bdf64d869f5469bcbd7a87173d126710c1ede7a9456a15"
+        },
+        {
+            "date": 1706004016281,
+            "name": "/home/cyril/studio/lxp/api/logs/application-2024-01-23-11.log",
+            "hash": "0781e237b2a78d5247c3490b52d147a999e8fc5e006d1629d03cd58867eb1d1f"
+        }
+    ],
+    "hashType": "sha256"
+}
