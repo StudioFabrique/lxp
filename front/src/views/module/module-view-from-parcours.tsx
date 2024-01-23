@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import ImageHeader from "../../components/image-header";
 import HeaderMenu from "../../components/UI/header-menu";
@@ -23,7 +22,7 @@ const ModuleViewFromParcours = () => {
   const { sendRequest, isLoading } = useHttp(true);
   const { moduleId } = useParams();
 
-  const [moduleData, setModuleData] = useState<any | null>(null);
+  const [moduleData, setModuleData] = useState<Module | null>(null);
 
   const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>();
 
@@ -62,7 +61,13 @@ const ModuleViewFromParcours = () => {
             <div className="flex flex-col gap-5 col-span-3">
               <ProgressBar courses={moduleData.courses} />
               {selectedLesson ? (
-                <PreviewLesson selectedLessonId={selectedLesson.id} />
+                <PreviewLesson
+                  selectedLesson={selectedLesson}
+                  lessons={([] as Lesson[]).concat(
+                    ...moduleData.courses.map((course) => course.lessons)
+                  )}
+                  setSelectedLesson={setSelectedLesson}
+                />
               ) : (
                 <>
                   <Objectifs objectives={moduleData.bonusSkills} />
