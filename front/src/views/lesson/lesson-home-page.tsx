@@ -6,6 +6,7 @@ import LessonHome from "../../components/lesson-home/lesson-home";
 import useLessonHTTP from "../../hooks/use-lesson-http";
 import toast from "react-hot-toast";
 import Modal from "../../components/UI/modal/modal";
+import Header from "../../components/UI/header";
 
 export default function LessonHomePage() {
   const [lessonsList, setLessonsList] = useState<Lesson[] | null>(null);
@@ -53,13 +54,19 @@ export default function LessonHomePage() {
     fetchData();
   }, [fetchData]);
 
-  if (!lessonsList || lessonsList.length === 0) {
-    return <p>Aucune leçon n'a été trouvée.</p>;
-  }
-
   return (
-    <main className="w-full flex flex-col gap-y-4">
-      <LessonHome lessonsList={lessonsList} onDelete={setDeletion} />{" "}
+    <main className="w-full flex flex-col items-center px-4 py-8 gap-8">
+      <section className="w-5/6 flex flex-col items-center">
+        <Header
+          title="Liste des leçons"
+          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in urna eget pura."
+        ></Header>
+      </section>
+      {lessonsList && lessonsList.length > 0 ? (
+        <LessonHome lessonsList={lessonsList} onDelete={setDeletion} />
+      ) : (
+        <p className="w-5/6 text-primary">Aucune leçon trouvée.</p>
+      )}
       {lessonToDelete ? (
         <Modal
           onLeftClick={() => setLessonToDelete(null)}

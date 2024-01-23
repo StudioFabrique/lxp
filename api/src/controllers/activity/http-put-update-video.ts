@@ -18,6 +18,8 @@ export default async function httpPutUpdateVideo(req: Request, res: Response) {
       data.description,
       url
     );
+    console.log({ response });
+
     return res
       .status(200)
       .json({ success: true, message: "Activité mise à jour.", response });
