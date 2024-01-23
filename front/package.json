@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.7",
+    "@tinymce/tinymce-react": "^4.3.2",
     "@wcj/html-to-markdown": "^2.0.0",
     "axios": "^1.6.2",
     "browser-image-compression": "^2.0.2",
