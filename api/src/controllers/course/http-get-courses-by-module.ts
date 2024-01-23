@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 import { serverIssue } from "../../utils/constantes";
-import getCourses from "../../models/course/get-courses";
 import getCoursesByModule from "../../models/course/get-courses-by-module";
+import CustomRequest from "../../utils/interfaces/express/custom-request";
 
-async function httpGetCoursesByModule(req: Request, res: Response) {
+async function httpGetCoursesByModule(req: CustomRequest, res: Response) {
   const { moduleId } = req.params;
+
+  console.log({ userId: req.auth?.userId });
 
   try {
     const response = await getCoursesByModule(parseInt(moduleId));

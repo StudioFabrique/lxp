@@ -12,8 +12,6 @@ type ActivityProps = {
 const ActivityPreview = ({ activity }: ActivityProps) => {
   const [value, setValue] = useState<string>("");
 
-  console.log(value);
-
   /**
    * récupère le contenu d'un fichier markdown depuis le serveur
    */
