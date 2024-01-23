@@ -16,4 +16,5 @@ export default interface Lesson {
   course: Course;
   activities?: Activity[];
   order?: number;
+  readBy?: string[];
 }
