@@ -61,7 +61,7 @@ async function putCourseLesson(
         course: {
           connect: { id: courseId },
         },
-        readBy: ["test"],
+        readBy: [],
       },
       select: {
         id: true,
