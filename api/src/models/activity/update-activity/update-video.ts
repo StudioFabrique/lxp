@@ -30,20 +30,22 @@ export default async function updateVideo(
   });
 
   if (!existingActivity.url.startsWith("http")) {
-    await fs.promises.unlink(
-      path.join(
-        __dirname,
-        "..",
-        "..",
-        "..",
-        "..",
-        "uploads",
-        "activities",
-        "videos",
-        existingActivity.url
-      )
-    );
-    console.log("Fichier supprimé :", url);
+    if (existingActivity.url !== url) {
+      await fs.promises.unlink(
+        path.join(
+          __dirname,
+          "..",
+          "..",
+          "..",
+          "..",
+          "uploads",
+          "activities",
+          "videos",
+          existingActivity.url
+        )
+      );
+      console.log("Fichier supprimé :", url);
+    }
   }
   return updatedActivity;
 }
