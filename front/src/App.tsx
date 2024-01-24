@@ -162,6 +162,7 @@ const router = createHashRouter([
         ],
       },
       { path: "profil", element: <UserProfile /> },
+      { path: "features", element: <FeaturesList /> },
     ],
   },
 ]);
