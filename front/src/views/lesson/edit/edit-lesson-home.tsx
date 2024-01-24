@@ -12,17 +12,20 @@ import AddBlock from "../../../components/edit-lesson/add-block";
 import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 import { sortArray } from "../../../utils/sortArray";
 import Modal from "../../../components/UI/modal/modal";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Video from "../../../components/edit-lesson/activities/video";
 import ActionsButtonsGroup from "../../../components/edit-lesson/actions-buttons-group";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { CheckCircle, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import Wrapper from "../../../components/UI/wrapper/wrapper.component";
+import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 
 export default function EditLessonHome() {
   const { lessonId } = useParams();
   const { sendRequest, error } = useHttp();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [submit, setSubmit] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const currentType = useSelector(
     (state: any) => state.lesson.currentType
@@ -56,7 +59,7 @@ export default function EditLessonHome() {
           method: "post",
           body: {
             type: currentType,
-            order: activities.length > 0 ? activities.length + 1 : 1,
+            order: activities.length > 0 ? activities.length : 0,
             value: await fromHtmlToMarkdown(value),
           },
         },
@@ -114,6 +117,78 @@ export default function EditLessonHome() {
 
   console.log({ activities });
 
+  const handleClickUp = (act: Activity) => {
+    const oldOrder = act.order;
+    const replacedAct = activities.find((item) => item.order === oldOrder - 1);
+    if (replacedAct) {
+      let updatedActivities = activities.filter(
+        (item) => item.id !== act.id && item.id !== replacedAct.id
+      );
+      updatedActivities = [
+        ...updatedActivities,
+        { ...act, order: act.order - 1 },
+        { ...replacedAct, order: replacedAct.order + 1 },
+      ];
+      dispatch(lessonActions.setActivity(updatedActivities));
+      setSubmit(true);
+    }
+  };
+
+  const handleClickDown = (act: Activity) => {
+    const oldOrder = act.order;
+    const replacedAct = activities.find((item) => item.order === oldOrder + 1);
+    if (replacedAct) {
+      let updatedActivities = activities.filter(
+        (item) => item.id !== act.id && item.id !== replacedAct.id
+      );
+      updatedActivities = [
+        ...updatedActivities,
+        { ...act, order: act.order + 1 },
+        { ...replacedAct, order: replacedAct.order - 1 },
+      ];
+      dispatch(lessonActions.setActivity(updatedActivities));
+      setSubmit(true);
+    }
+  };
+
+  const updateActivitiesOrder = useCallback(() => {
+    const applyData = (data: { message: string }) => {
+      console.log(data.message);
+      setIsLoading(false);
+      setSuccess(true);
+    };
+    setIsLoading(true);
+    sendRequest(
+      {
+        path: `/activity/reorder/${lessonId}`,
+        method: "put",
+        body: sortArray(activities, "order").map((item) => item.id),
+      },
+      applyData
+    );
+    setSubmit(false);
+  }, [lessonId, activities, sendRequest]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (submit) {
+      timer = setTimeout(() => {
+        updateActivitiesOrder();
+      }, autoSubmitTimer);
+    }
+    return () => clearTimeout(timer);
+  }, [submit, updateActivitiesOrder]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (success) {
+      timer = setTimeout(() => {
+        setSuccess(false);
+      }, 3000);
+    }
+    return () => clearTimeout(timer);
+  }, [success]);
+
   return (
     <>
       {activities && activities.length > 0 ? (
@@ -122,28 +197,36 @@ export default function EditLessonHome() {
             {sortArray(activities, "order").map((item) => (
               <li className="w-full mb-8" key={item.id}>
                 <div className="flex justify-center items-center gap-x-8">
-                  <Wrapper>
-                    <span className="text-primary flex flex-col gap-y-1">
-                      <button
-                        className="hover:text-accent"
-                        disabled={item.order === 1}
-                      >
-                        <ChevronUp />
-                      </button>
-                      <button
-                        className="hover:text-accent"
-                        disabled={item.order === activities.length}
-                      >
-                        <ChevronDown />
-                      </button>
-                    </span>
-                  </Wrapper>
+                  <span className="text-primary flex flex-col gap-y-2">
+                    <button
+                      className="btn btn-primary btn-outline"
+                      disabled={item.order === 0}
+                      onClick={() => handleClickUp(item)}
+                    >
+                      <ChevronUp />
+                    </button>
+                    <button
+                      className="btn btn-primary btn-outline"
+                      disabled={item.order === activities.length - 1}
+                      onClick={() => handleClickDown(item)}
+                    >
+                      <ChevronDown />
+                    </button>
+                  </span>
 
                   <div className="w-full flex flex-col gap-y-2">
                     <Wrapper>
-                      <h2 className="font-bold text-md text-primary">
-                        Activité n° {item.order}
-                      </h2>
+                      <span className="flex items-center gap-x-2">
+                        <h2 className="font-bold text-md text-primary">
+                          Activité n° {item.order + 1}
+                        </h2>
+                        {isLoading ? (
+                          <Loader2 className="w-4 h-4 text-primary animate-spin" />
+                        ) : null}
+                        {success ? (
+                          <CheckCircle className="w-4 h-4 text-success" />
+                        ) : null}
+                      </span>
                     </Wrapper>
                     <div className="w-full flex justify-center">
                       {item.type === "text" ? (

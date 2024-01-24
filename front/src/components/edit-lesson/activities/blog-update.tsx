@@ -102,8 +102,6 @@ export const BlogUpdate = ({ activity }: EditorProps) => {
     dispatch(lessonActions.setBlogEdition(null));
   };
 
-  console.log(value);
-
   return (
     <div className="w-full">
       {blogEdition === activity.id ? (

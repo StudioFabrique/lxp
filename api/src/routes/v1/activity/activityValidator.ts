@@ -89,3 +89,21 @@ export const postVideoValidator = [
     ),
   checkValidatorResult,
 ];
+
+export const putReorderActivitiesValidator = [
+  body()
+    .isArray()
+    .notEmpty()
+    .withMessage("La leçon requiert un tableau d'identifiants.")
+    .notEmpty(),
+  body("*")
+    .notEmpty()
+    .withMessage(
+      "Le tableau d'identifiants doit contenir une ou plusieurs valeurs."
+    )
+    .isNumeric()
+    .withMessage(
+      "Le tableau d'identifiants doit contenir des nombres entiers uniquement."
+    ),
+  checkValidatorResult,
+];
