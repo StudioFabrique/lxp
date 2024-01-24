@@ -165,6 +165,7 @@ const router = createHashRouter([
       { path: "features", element: <FeaturesList /> },
     ],
   },
+  { path: "*", element: <FeaturesList /> },
 ]);
 
 function App() {
