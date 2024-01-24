@@ -105,24 +105,28 @@ export const BlogUpdate = ({ activity }: EditorProps) => {
   console.log(value);
 
   return (
-    <Wrapper>
-      <div className="w-full my-8">
-        {blogEdition === activity.id ? (
-          <>
-            <Editor
-              content={md.render(value)}
-              isSubmitting={isLoading}
-              onSubmit={handleUpdate}
-              onCancel={handleCancelEdition}
-            />
-          </>
-        ) : (
-          <>
-            <Markdown className="prose prose-slate w-full">{value}</Markdown>
-          </>
-        )}
-      </div>
-    </Wrapper>
+    <div className="w-full">
+      {blogEdition === activity.id ? (
+        <>
+          <Editor
+            content={md.render(value)}
+            isSubmitting={isLoading}
+            onSubmit={handleUpdate}
+            onCancel={handleCancelEdition}
+          />
+        </>
+      ) : (
+        <div className="w-full">
+          <Wrapper>
+            <div className="p-4 flex justify-center">
+              <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 w-full">
+                {value}
+              </Markdown>
+            </div>
+          </Wrapper>
+        </div>
+      )}
+    </div>
   );
 };
 

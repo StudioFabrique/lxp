@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   daisyui: {
@@ -63,10 +64,21 @@ module.exports = {
       borderRadius: {
         xs: "15px",
       },
+      typography: () => ({
+        DEFAULT: {
+          css: {
+            img: {
+              // Ajoutez la classe mx-auto pour centrer horizontalement l'image
+              margin: "auto",
+            },
+          },
+        },
+      }),
     },
   },
   plugins: [
-    require("daisyui", "tailwind-scrollbar"),
+    require("daisyui"),
+    require("tailwind-scrollbar"),
     require("@tailwindcss/typography"),
   ],
 };

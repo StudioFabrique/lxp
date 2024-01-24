@@ -28,6 +28,8 @@ export const Editor = ({
     onSubmit(value);
   };
 
+  console.log(value);
+
   /**
    * valide l'upload d'image vers le serveur, et ajoute l'url de l'image dans le
    * document markdown en cours d'édition
