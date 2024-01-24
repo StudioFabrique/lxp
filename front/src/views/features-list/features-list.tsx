@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import features from "../../lib/features/features-to-be-implemented.json";
 import announcements from "../../lib/features/announcements.json";
 import { useEffect } from "react";
+import UserTopBar from "../../components/UI/user-top-bar/user-top-bar";
 
 /**
  * Composant parent de la route /features
@@ -17,7 +18,7 @@ const FeaturesList = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="h-20 bg-black mt-10 mx-10">{/* Top Bar */}</div>
+      <UserTopBar />
       <div className="grid grid-rows-5 gap-5 p-20">
         <div className="flex flex-col row-span-2 items-center gap-y-5 justify-center h-full bg-secondary p-20 rounded-lg">
           <p className="font-bold text-6xl">Page non trouvée</p>
