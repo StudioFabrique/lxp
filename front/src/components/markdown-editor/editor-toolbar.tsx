@@ -127,7 +127,6 @@ export const QuillToolbar = () => (
       <button className="ql-script" value="super" />
       <button className="ql-script" value="sub" />
       <button className="ql-blockquote" />
-      <button className="ql-direction" />
     </span>
     <span className="ql-formats">
       <select className="ql-align" />

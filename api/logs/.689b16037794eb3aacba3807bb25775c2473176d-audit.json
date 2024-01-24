@@ -34,6 +34,16 @@
             "date": 1706014814458,
             "name": "/home/cyril/studio/lxp/api/logs/application-2024-01-23-14.log",
             "hash": "6fdfbfcd829b223aaf3641929d3440ea83c98ea7e64512b73680193c345712fe"
+        },
+        {
+            "date": 1706081984223,
+            "name": "/home/cyril/studio/lxp/api/logs/application-2024-01-24-08.log",
+            "hash": "7264271d838b2c9b4ee77db2365fe80603cb62a183e35ece2d42fb015237c7a4"
+        },
+        {
+            "date": 1706084134751,
+            "name": "/home/cyril/studio/lxp/api/logs/application-2024-01-24-09.log",
+            "hash": "21fcbd817ceab3081d95a563b332c2537d6a4050b0e3a315f6e791e108fd82b6"
         }
     ],
     "hashType": "sha256"

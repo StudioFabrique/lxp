@@ -120,7 +120,7 @@ export default function EditLessonHome() {
         <section className="mt-8 flex flex-col items-center">
           <ul className="w-full flex flex-col justify-center items-center">
             {sortArray(activities, "order").map((item) => (
-              <li className="mb-8" key={item.id}>
+              <li className="w-full mb-8" key={item.id}>
                 <div className="flex justify-center items-center gap-x-8">
                   <Wrapper>
                     <span className="text-primary flex flex-col gap-y-1">
@@ -149,11 +149,7 @@ export default function EditLessonHome() {
                       {item.type === "text" ? (
                         <BlogUpdate activity={item} />
                       ) : null}
-                      {item.type === "video" ? (
-                        <div>
-                          <Video activity={item} />
-                        </div>
-                      ) : null}
+                      {item.type === "video" ? <Video activity={item} /> : null}
                     </div>
                     {!blogEdition ? (
                       <ActionsButtonsGroup activity={item} />

@@ -27,15 +27,23 @@ export default function VideoPlayer({
   }, [source]);
 
   return (
-    <div className="flex flex-col gap-y-2">
-      {title !== undefined ? (
-        <Wrapper>
-          <h2>{title}</h2>
-          <h2>{description}</h2>
-        </Wrapper>
-      ) : null}
+    <div className="w-full flex flex-col items gap-y-2">
       <Wrapper>
-        <ReactPlayer url={videoUrl} controls />
+        {title !== undefined ? (
+          <>
+            <p className="text-xs">Titre</p>
+            <Wrapper>
+              <h2>{title}</h2>
+            </Wrapper>
+            <p className="text-xs">Description</p>
+            <Wrapper>
+              <h2>{description}</h2>
+            </Wrapper>
+          </>
+        ) : null}
+        <div className="flex justify-center">
+          <ReactPlayer url={videoUrl} controls />
+        </div>
       </Wrapper>
     </div>
   );
