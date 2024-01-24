@@ -199,14 +199,14 @@ export default function EditLessonHome() {
                 <div className="flex justify-center items-center gap-x-8">
                   <span className="text-primary flex flex-col gap-y-2">
                     <button
-                      className="btn btn-primary btn-outline"
+                      className="btn btn-primary btn-sm btn-circle rounded-md btn-outline"
                       disabled={item.order === 0}
                       onClick={() => handleClickUp(item)}
                     >
                       <ChevronUp />
                     </button>
                     <button
-                      className="btn btn-primary btn-outline"
+                      className="btn btn-primary btn-sm btn-circle rounded-md btn-outline"
                       disabled={item.order === activities.length - 1}
                       onClick={() => handleClickDown(item)}
                     >
