@@ -1,10 +1,10 @@
 import { FC, FormEvent, useState } from "react";
-import { Toaster, toast } from "react-hot-toast";
 
 import useInput from "../../hooks/use-input";
 import { Link } from "react-router-dom";
 import { regexGeneric } from "../../utils/constantes";
 import Selecter from "../UI/selecter/selecter.component";
+import toast from "react-hot-toast";
 
 type Item = {
   id: number;
@@ -66,7 +66,6 @@ const NewParcoursForm: FC<Props> = ({ formations, onSubmit }) => {
 
   return (
     <>
-      <Toaster />
       <div className="font-bold">
         <div className="flex flex-col gap-y-4">
           <h3>Formation</h3>
