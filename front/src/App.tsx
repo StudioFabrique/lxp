@@ -58,7 +58,7 @@ const router = createHashRouter([
         ],
       },
       { path: "profil", element: <UserProfile /> },
-      { path: "features", element: <FeaturesList /> },
+      { path: "*", element: <FeaturesList /> },
     ],
   },
   {
@@ -162,10 +162,9 @@ const router = createHashRouter([
         ],
       },
       { path: "profil", element: <UserProfile /> },
-      { path: "features", element: <FeaturesList /> },
+      { path: "*", element: <FeaturesList /> },
     ],
   },
-  { path: "*", element: <FeaturesList /> },
 ]);
 
 function App() {
