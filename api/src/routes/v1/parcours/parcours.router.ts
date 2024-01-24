@@ -12,6 +12,7 @@ import {
   parcoursByIdValidator,
   parcoursIdValidator,
   postParcoursValidator,
+  putParcoursContactsValidator,
   putParcoursTagsValidator,
   updateDatesValidator,
   updateInfosValidator,
@@ -77,7 +78,7 @@ parcoursRouter.put(
 parcoursRouter.put(
   "/update-contacts",
   checkPermissions("parcours"),
-  //putParcoursContactsValidator,
+  putParcoursContactsValidator,
   httpPutParcoursContacts
 );
 //parcoursRouter.use("/update-skills", putParcoursSkillsRouter);

@@ -11,6 +11,18 @@ async function updateParcoursDates(
   const startDate = new Date(start);
   const endDate = new Date(end);
 
+  const existingParcours = await prisma.parcours.findFirst({
+    where: { id: parcoursId, adminId: admin.id },
+  });
+
+  if (!existingParcours) {
+    const error: any = {
+      message: "Le parcours n'existe pas.",
+      statusCode: 404,
+    };
+    throw error;
+  }
+
   const updatedDates = await prisma.parcours.update({
     where: { id: parcoursId, adminId: admin.id },
     data: {

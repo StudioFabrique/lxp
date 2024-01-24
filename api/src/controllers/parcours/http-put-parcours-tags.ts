@@ -17,7 +17,7 @@ async function httpPutParcoursTags(req: CustomRequest, res: Response) {
   try {
     const response = await putParcoursTags(+parcoursId, tags, userId);
     return res
-      .status(201)
+      .status(200)
       .json({ success: true, message: "Tags mis à jour avec succès" });
   } catch (error: any) {
     let returnedError = error;
