@@ -17,6 +17,11 @@ const CourseItem = ({
   setSelectedLesson,
 }: CourseItemProps) => {
   const [isCourseOpen, setCourseOpen] = useState(false);
+  const courseProgress =
+    course.lessons.reduce(
+      (sum, lesson) => sum + (lesson.readBy?.length || 0),
+      0
+    ) / course.lessons.length;
 
   return (
     <div className="flex flex-col w-full">
@@ -50,7 +55,7 @@ const CourseItem = ({
         </div>
         <progress
           className="w-full progress progress-primary -mt-[8px] rounded-b-full"
-          value={0.5}
+          value={courseProgress}
         />
       </div>
       <motion.div

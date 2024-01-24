@@ -10,15 +10,29 @@ type ProgressionProps = {
   setSelectedLesson: Dispatch<SetStateAction<Lesson | undefined>>;
 };
 
-const radialStyle = {
-  "--value": 25,
-} as CSSProperties;
-
 const Progression = ({
   courses,
   selectedLesson,
   setSelectedLesson,
 }: ProgressionProps) => {
+  const moduleProgress =
+    courses.reduce(
+      (sum, course) =>
+        sum +
+        course.lessons.reduce(
+          (sum, lesson) => sum + (lesson.readBy?.length || 0),
+          0
+        ) /
+          course.lessons.length,
+      0
+    ) / courses.length;
+
+  console.log({ moduleProgress });
+
+  const radialStyle = {
+    "--value": moduleProgress * 100,
+  } as CSSProperties;
+
   return (
     <Wrapper>
       <div className="flex justify-between">
@@ -29,7 +43,7 @@ const Progression = ({
           className="radial-progress bg-secondary text-primary"
           style={radialStyle}
         >
-          25%
+          {moduleProgress * 100}%
         </div>
       </div>
       <div className="flex flex-col items-center gap-5">
