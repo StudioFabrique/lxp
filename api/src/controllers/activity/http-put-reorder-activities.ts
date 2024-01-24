@@ -1,19 +1,19 @@
 import { Request, Response } from "express";
 import { serverIssue } from "../../utils/constantes";
-import putReorderLessons from "../../models/lesson/put-reorder-lessons";
+import updateReorderActrivities from "../../models/activity/update-reorder-activities";
 
-export default async function httpPutReorderLessons(
+export default async function httpPutReorderActivities(
   req: Request,
   res: Response
 ) {
   try {
-    const { courseId } = req.params;
-    const lessonsId = req.body;
+    const { lessonId } = req.params;
+    const activitiesIds = req.body;
 
-    const response = await putReorderLessons(+courseId, lessonsId);
+    const response = await updateReorderActrivities(+lessonId, activitiesIds);
     return res.status(200).json({
       success: true,
-      message: "L'ordre des leçons a bien été modifié.",
+      message: "L'ordre des activités a bien été modifié.",
       response,
     });
   } catch (error: any) {
