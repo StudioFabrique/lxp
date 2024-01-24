@@ -13,7 +13,7 @@ async function httpHandshake(req: CustomRequest, res: Response) {
           _id: user._id.toString(),
           email: user.email,
           roles: user.roles,
-          avatar: user.avatar,
+          avatar: user.avatar?.toString("base64"),
           createdAt: user.createdAt,
         });
       }
