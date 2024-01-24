@@ -13,10 +13,12 @@ import { lessonIdValidator } from "../lesson/lesson-validator";
 import {
   activityIdValidator,
   postVideoValidator,
+  putReorderActivitiesValidator,
   updateActivityValidator,
   updateVideoValidator,
 } from "./activityValidator";
 import jsonParser from "../../../middleware/json-parser";
+import httpPutReorderActivities from "../../../controllers/activity/http-put-reorder-activities";
 
 const activityRouter = express.Router();
 
@@ -56,13 +58,20 @@ activityRouter.put(
   updateActivityValidator,
   httpUpdateActivity
 );
-
 // supprime une activité et les ressources associées (fichiers md, images, etc...)
 activityRouter.delete(
   "/:activityId",
   checkPermissions("lesson"),
   activityIdValidator,
   httpDeleteActivity
+);
+// réorganise l'ordre des activités liées à une leçon
+activityRouter.put(
+  "/reorder/:lessonId",
+  checkPermissions("lesson"),
+  lessonIdValidator,
+  putReorderActivitiesValidator,
+  httpPutReorderActivities
 );
 
 export default activityRouter;

@@ -7,7 +7,6 @@ import DeleteIcon from "../UI/svg/delete-icon.component";
 import EditIcon from "../UI/svg/edit-icon";
 import LessonsList from "../edit-course/scenario/lessons-list";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
-import Header from "../UI/header";
 
 interface LessonHomeProps {
   lessonsList: Lesson[];

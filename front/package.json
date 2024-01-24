@@ -11,13 +11,14 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.7",
+    "@tinymce/tinymce-react": "^4.3.2",
     "@wcj/html-to-markdown": "^2.0.0",
     "axios": "^1.6.2",
     "browser-image-compression": "^2.0.2",
     "casbin": "^5.27.1",
     "casbin.js": "^0.5.1",
     "chart.js": "^4.4.1",
-    "daisyui": "^4.0.3",
+    "daisyui": "^4.6.0",
     "framer-motion": "^10.16.4",
     "lucide-react": "^0.302.0",
     "markdown-it": "^14.0.0",
@@ -42,6 +43,7 @@
     "remark-html": "^16.0.1",
     "remark-images": "^4.0.0",
     "remark-stringify": "^11.0.0",
+    "tailwind-scrollbar": "^3.0.5",
     "zod": "^3.22.4"
   },
   "devDependencies": {

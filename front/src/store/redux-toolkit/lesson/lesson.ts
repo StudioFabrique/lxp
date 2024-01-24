@@ -74,6 +74,11 @@ const lessonSlice = createSlice({
         };
       }
     },
+    setActivity(state, action) {
+      if (state.lesson) {
+        state.lesson = { ...state.lesson, activities: action.payload };
+      }
+    },
     resetCurrentType(state) {
       state.currentType = "";
     },
