@@ -27,11 +27,13 @@ const LessonItem = ({
       }`}
     >
       <p className="max-h-14 overflow-clip">{lesson.title}</p>
-      {lesson.readBy && lesson.readBy?.length > 0 ? (
-        <CheckCircle2 />
-      ) : (
-        <ArrowRight />
-      )}
+      <div>
+        {lesson.readBy && lesson.readBy?.length > 0 ? (
+          <CheckCircle2 className="w-5 h-5" />
+        ) : (
+          <ArrowRight />
+        )}
+      </div>
     </div>
   );
 };
