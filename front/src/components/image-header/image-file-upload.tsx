@@ -1,7 +1,7 @@
 import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
-import { Toaster, toast } from "react-hot-toast";
 
 import EditIcon from "../UI/svg/edit-icon";
+import toast from "react-hot-toast";
 
 const ImageFileUpload: FC<{
   maxSize: number;
@@ -49,7 +49,6 @@ const ImageFileUpload: FC<{
 
   return (
     <>
-      <Toaster />
       <span className="flex gap-x-2 cursor-pointer">
         <p onClick={handleSetFile}>Changer l'image</p>
         <input
