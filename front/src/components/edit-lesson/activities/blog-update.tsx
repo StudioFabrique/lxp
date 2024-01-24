@@ -117,7 +117,7 @@ export const BlogUpdate = ({ activity }: EditorProps) => {
         <div className="w-full">
           <Wrapper>
             <div className="p-4 flex justify-center">
-              <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 w-full">
+              <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 w-full">
                 {value}
               </Markdown>
             </div>
