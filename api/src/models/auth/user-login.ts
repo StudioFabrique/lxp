@@ -17,7 +17,7 @@ async function userLogin(email: string, password: string) {
         _id: user._id.toString(),
         email: user.email,
         roles: user.roles,
-        avatar: user.avatar,
+        avatar: user.avatar?.toString("base64"),
         createdAt: user.createdAt,
       };
     }
