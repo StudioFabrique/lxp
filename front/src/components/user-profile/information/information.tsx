@@ -63,19 +63,6 @@ const Information: FC<{
 
   const firstInputRef: Ref<HTMLInputElement> = useRef(null);
 
-  const handleSubmitAvatar = () => {
-    if (temporaryAvatar.file) {
-      const formData = new FormData();
-      formData.append("image", temporaryAvatar.file);
-
-      sendRequest({
-        path: `/user/profile/avatar`,
-        method: "put",
-        body: formData,
-      });
-    }
-  };
-
   const handleSubmitForm: FormEventHandler = (e: FormEvent) => {
     e.preventDefault();
 
@@ -86,13 +73,17 @@ const Information: FC<{
       handshake();
     };
 
+    const formData = new FormData();
+    if (temporaryAvatar.file) formData.append("image", temporaryAvatar.file);
+    formData.append("data", JSON.stringify({ user: formProps.values }));
+
     try {
       informationSchema.parse(formProps.values);
       sendRequest(
         {
           path: `/user/profile/information`,
           method: "put",
-          body: { user: formProps.values },
+          body: formData,
         },
         applyData
       );
