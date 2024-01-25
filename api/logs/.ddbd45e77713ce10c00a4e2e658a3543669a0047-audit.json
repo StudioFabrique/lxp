@@ -44,6 +44,16 @@
             "date": 1706188329155,
             "name": "/Users/martindhollande/Documents/Studio Step/LXP/lxp/api/logs/application-2024-01-25-14.log",
             "hash": "2bac83c5ea92a782e3b82dd0bee3b6e9c00c7315b7ae55a6f2f326920d378e52"
+        },
+        {
+            "date": 1706194554067,
+            "name": "/Users/martindhollande/Documents/Studio Step/LXP/lxp/api/logs/application-2024-01-25-15.log",
+            "hash": "dbad6a459593f26f9439968309a9558b196582595a624d35c755d6cb483d414a"
+        },
+        {
+            "date": 1706194858709,
+            "name": "/Users/martindhollande/Documents/Studio Step/LXP/lxp/api/logs/application-2024-01-25-16.log",
+            "hash": "7a033b985777f02a50732ef7855a370c1a62370fe73889fe783ee755d11eeca9"
         }
     ],
     "hashType": "sha256"
