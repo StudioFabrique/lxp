@@ -3,7 +3,6 @@ import Can from "../../can/can.component";
 import AddIcon from "../../svg/add-icon";
 import { useState } from "react";
 import MotionSidebarWrapper from "./motion-sidebar-wrapper";
-import {} from "lucide-react";
 import GroupIcon from "../../svg/group-icon";
 
 const Group = ({ currentRoute }: { currentRoute: string[] }) => {
@@ -15,15 +14,16 @@ const Group = ({ currentRoute }: { currentRoute: string[] }) => {
       onMouseOver={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
     >
-      <Link to={`/${currentRoute[0]}/group`} className="flex items-center">
-        <div
+      <div className="flex items-center">
+        <Link
+          to={`/${currentRoute[0]}/group`}
           className={`tooltip tooltip-top w-6 h-6 z-10 ${
             (isHover || isCurrentPathActive) && "text-primary"
           }`}
           data-tip="Groupes"
         >
           <GroupIcon />
-        </div>
+        </Link>
 
         <MotionSidebarWrapper isHover={isHover}>
           <Can action="write" object="group">
@@ -37,7 +37,7 @@ const Group = ({ currentRoute }: { currentRoute: string[] }) => {
             </Link>
           </Can>
         </MotionSidebarWrapper>
-      </Link>
+      </div>
     </li>
   );
 };
