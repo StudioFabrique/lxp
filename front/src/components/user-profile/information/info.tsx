@@ -59,15 +59,11 @@ const Info: FC<{
                 onClick={onClickChangeAvatar}
                 className="btn btn-primary text-white p-0 rounded-lg h-[60px] w-[60px]"
               >
-                {user?.avatar ? (
-                  <img
-                    className="h-[58px] w-[58px] rounded-lg border-2 border-primary object-cover"
-                    src={`data:image/jpeg;base64,${user?.avatar}`}
-                    alt="User Avatar"
-                  />
-                ) : (
-                  <User className="" />
-                )}
+                <img
+                  className="h-[58px] w-[58px] rounded-lg border-2 border-primary object-cover"
+                  src={`data:image/jpeg;base64,${user?.avatar}`}
+                  alt="User Avatar"
+                />
                 <span className="flex justify-end items-end p-1 absolute h-[56px] w-[56px] rounded-lg backdrop-blur-[2px] opacity-0 hover:opacity-100">
                   <EditIcon className="text-primary-content stroke-[3px]" />
                 </span>
