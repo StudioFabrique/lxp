@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -93,9 +95,9 @@ const ParcoursStudents = () => {
     if (groupsIds) {
       sendRequest(
         {
-          path: "/group/groups",
+          path: "/user/group",
           method: "post",
-          body: { groupsIds: groupsIds.map((item: any) => item.idMdb) },
+          body: groupsIds.map((item: any) => item.idMdb),
         },
         processData
       );

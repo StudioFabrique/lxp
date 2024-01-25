@@ -19,6 +19,8 @@ async function userLogin(email: string, password: string) {
         roles: user.roles,
         avatar: user.avatar?.toString("base64"),
         createdAt: user.createdAt,
+        firstname: user.firstname,
+        lastname: user.lastname,
       };
     }
     throw { message: credentialsError, status: 401 };

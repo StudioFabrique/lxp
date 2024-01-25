@@ -78,8 +78,25 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                     </div>
                   </Can>
                 </div>
-              </td>
+              </td>{" "}
               <td className="bg-transparent">
+                <div
+                  className="w-6 h-6 text-error"
+                  aria-label="suppression du parcours"
+                >
+                  <Can action="delete" object="parcours">
+                    <div
+                      className="tooltip tooltip-bottom flex-items-center"
+                      data-tip="Supprimer le parcours"
+                    >
+                      <div onClick={() => handleDeleteParcours(item.id!)}>
+                        <DeleteIcon />
+                      </div>
+                    </div>
+                  </Can>
+                </div>
+              </td>
+              <td className="bg-transparent rounded-r-lg">
                 <div className="w-6 h-6">
                   <Can action="read" object="parcours">
                     <div
@@ -93,23 +110,6 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                       >
                         <ArrowTopRightIcon />
                       </Link>
-                    </div>
-                  </Can>
-                </div>
-              </td>
-              <td className="bg-transparent rounded-r-lg">
-                <div
-                  className="w-6 h-6 text-error"
-                  aria-label="suppression du parcours"
-                >
-                  <Can action="delete" object="parcours">
-                    <div
-                      className="tooltip tooltip-bottom flex-items-center"
-                      data-tip="Supprimer le parcours"
-                    >
-                      <div onClick={() => handleDeleteParcours(item.id!)}>
-                        <DeleteIcon />
-                      </div>
                     </div>
                   </Can>
                 </div>

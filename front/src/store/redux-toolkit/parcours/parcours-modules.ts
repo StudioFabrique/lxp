@@ -69,6 +69,11 @@ const parcoursModulesSlice = createSlice({
       }
       console.log("modules", state.modules);
     },
+    resetModule(state) {
+      state.modules = null;
+      state.currentModule = null;
+      state.isFormOpen = false;
+    },
   },
 });
 

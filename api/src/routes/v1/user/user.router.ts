@@ -26,6 +26,7 @@ import userProfileRouter from "./profile/user-profile.router";
 import hobbyRouter from "./hobby/hobby.router";
 import { getUsersByRoleValidator } from "./user-validators";
 import { paginationValidator } from "../../../helpers/custom-validators";
+import httpGetUserLastParcours from "../../../controllers/user/http-get-user-last-parcours";
 
 const userRouter = express.Router();
 
@@ -167,5 +168,12 @@ userRouter.post(
 userRouter.use("/profile", checkPermissions("profile"), userProfileRouter);
 
 userRouter.use("/hobby", checkPermissions("profile"), hobbyRouter);
+
+// retourne les deux derniers parcours auquel l'utilisateur participe en tant que contact
+userRouter.get(
+  "/last-parcours",
+  checkPermissions("parcours"),
+  httpGetUserLastParcours
+);
 
 export default userRouter;
