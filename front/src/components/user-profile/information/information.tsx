@@ -5,6 +5,7 @@ import {
   FormEventHandler,
   Ref,
   SetStateAction,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -22,6 +23,7 @@ import useHttp from "../../../hooks/use-http";
 import Loader from "../../UI/loader";
 import Hobby from "../../../utils/interfaces/hobby";
 import { Link } from "../../../utils/interfaces/link";
+import { Context } from "../../../store/context.store";
 
 type UserInformation = {
   _id: string;
@@ -43,6 +45,7 @@ const Information: FC<{
   setEditMode: Dispatch<SetStateAction<boolean>>;
   formRef: Ref<HTMLFormElement>;
 }> = ({ editMode, setEditMode, formRef }) => {
+  const { handshake } = useContext(Context);
   const { sendRequest, isLoading } = useHttp(true);
 
   const {
@@ -60,6 +63,19 @@ const Information: FC<{
 
   const firstInputRef: Ref<HTMLInputElement> = useRef(null);
 
+  const handleSubmitAvatar = () => {
+    if (temporaryAvatar.file) {
+      const formData = new FormData();
+      formData.append("image", temporaryAvatar.file);
+
+      sendRequest({
+        path: `/user/profile/avatar`,
+        method: "put",
+        body: formData,
+      });
+    }
+  };
+
   const handleSubmitForm: FormEventHandler = (e: FormEvent) => {
     e.preventDefault();
 
@@ -67,6 +83,7 @@ const Information: FC<{
       setUserData(data.data);
       setEditMode(false);
       toast.success("Formulaire envoyé avec succès !");
+      handshake();
     };
 
     try {
