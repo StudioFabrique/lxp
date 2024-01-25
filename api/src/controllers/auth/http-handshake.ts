@@ -15,6 +15,8 @@ async function httpHandshake(req: CustomRequest, res: Response) {
           roles: user.roles,
           avatar: user.avatar?.toString("base64"),
           createdAt: user.createdAt,
+          firstname: user.firstname,
+          lastname: user.lastname,
         });
       }
       return res.status(403).json({ message: noAccess });
