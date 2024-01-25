@@ -1,13 +1,22 @@
-import { FC, Ref, useContext } from "react";
+import {
+  ChangeEventHandler,
+  Dispatch,
+  FC,
+  Ref,
+  SetStateAction,
+  useContext,
+  useRef,
+} from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import Field from "../../UI/forms/field";
 import CustomError from "../../../utils/interfaces/custom-error";
 import { Context } from "../../../store/context.store";
-import { EditIcon, User } from "lucide-react";
+import { EditIcon } from "lucide-react";
 
 type FormProps = {
   values: Record<string, string>;
   errors: CustomError[];
+
   onChangeValue: (field: string, value: string) => void;
   onResetForm: () => void;
 };
@@ -16,10 +25,30 @@ const Info: FC<{
   formProps: FormProps;
   editMode: boolean;
   firstInputRef: Ref<HTMLInputElement>;
-}> = ({ formProps, editMode, firstInputRef }) => {
+  temporaryAvatar: { file: File | null; url: string | null };
+  setTemporaryAvatar: Dispatch<
+    SetStateAction<{ file: File | null; url: string | null }>
+  >;
+}> = ({
+  formProps,
+  editMode,
+  firstInputRef,
+  temporaryAvatar,
+  setTemporaryAvatar,
+}) => {
   const { user } = useContext(Context);
 
-  const onClickChangeAvatar = () => {};
+  const fileUploadRef: Ref<HTMLInputElement> = useRef(null);
+
+  const onClickChangeAvatar = () => {
+    fileUploadRef.current?.click();
+  };
+
+  const onSubmitAvatar: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const file = e.currentTarget.files![0];
+    const temporaryUrl = URL.createObjectURL(file);
+    setTemporaryAvatar({ file: file, url: temporaryUrl });
+  };
 
   return (
     <div className="flex flex-col gap-2">
@@ -57,16 +86,27 @@ const Info: FC<{
               <button
                 type="button"
                 onClick={onClickChangeAvatar}
+                disabled={!editMode}
                 className="btn btn-primary text-white p-0 rounded-lg h-[60px] w-[60px]"
               >
                 <img
                   className="h-[58px] w-[58px] rounded-lg border-2 border-primary object-cover"
-                  src={`data:image/jpeg;base64,${user?.avatar}`}
+                  src={
+                    temporaryAvatar.url
+                      ? temporaryAvatar.url
+                      : `data:image/jpeg;base64,${user?.avatar}`
+                  }
                   alt="User Avatar"
                 />
                 <span className="flex justify-end items-end p-1 absolute h-[56px] w-[56px] rounded-lg backdrop-blur-[2px] opacity-0 hover:opacity-100">
                   <EditIcon className="text-primary-content stroke-[3px]" />
                 </span>
+                <input
+                  ref={fileUploadRef}
+                  className="hidden"
+                  type="file"
+                  onChange={onSubmitAvatar}
+                />
               </button>
             </div>
           </div>

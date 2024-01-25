@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { IUser } from "../../../utils/interfaces/db/user";
 import updateUser from "../../../models/user/update-user";
 import CustomRequest from "../../../utils/interfaces/express/custom-request";
