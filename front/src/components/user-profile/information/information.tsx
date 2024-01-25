@@ -53,12 +53,17 @@ const Information: FC<{
 
   const [userData, setUserData] = useState<UserInformation | undefined>();
 
+  const [temporaryAvatar, setTemporaryAvatar] = useState<{
+    file: File | null;
+    url: string | null;
+  }>({ file: null, url: null });
+
   const firstInputRef: Ref<HTMLInputElement> = useRef(null);
 
   const handleSubmitForm: FormEventHandler = (e: FormEvent) => {
     e.preventDefault();
 
-    const applyData = (data: any) => {
+    const applyData = (data: { data: UserInformation }) => {
       setUserData(data.data);
       setEditMode(false);
       toast.success("Formulaire envoyé avec succès !");
@@ -115,6 +120,8 @@ const Information: FC<{
             formProps={formProps}
             editMode={editMode}
             firstInputRef={firstInputRef}
+            temporaryAvatar={temporaryAvatar}
+            setTemporaryAvatar={setTemporaryAvatar}
           />
           <Contact formProps={formProps} editMode={editMode} />
         </div>

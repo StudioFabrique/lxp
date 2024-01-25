@@ -148,6 +148,7 @@ userRouter.get(
 
   httpSearchUser
 );
+
 userRouter.use("/new-teacher", checkPermissions("user"), postTeacherRouter);
 
 userRouter.get(
