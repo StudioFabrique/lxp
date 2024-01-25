@@ -30,7 +30,7 @@ const UserTopBar = () => {
         className="btn btn-primary text-white p-0 rounded-lg"
       >
         <img
-          className="max-h-[100%] rounded-lg border-2 border-primary"
+          className="h-[45px] w-[45px] rounded-lg border-2 border-primary object-cover"
           src={`data:image/jpeg;base64,${user?.avatar}`}
           alt="User Avatar"
         />
