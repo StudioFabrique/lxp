@@ -14,15 +14,16 @@ const Course = ({ currentRoute }: { currentRoute: string[] }) => {
       onMouseOver={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
     >
-      <Link to={`/${currentRoute[0]}/course`} className="flex items-center">
-        <div
+      <div className="flex items-center">
+        <Link
+          to={`/${currentRoute[0]}/course`}
           className={`tooltip tooltip-top w-6 h-6 z-10 ${
             (isHover || isCurrentPathActive) && "text-primary"
           }`}
           data-tip="Cours"
         >
           <CourseIcon />
-        </div>
+        </Link>
 
         <MotionSidebarWrapper isHover={isHover}>
           <Can action="write" object="course">
@@ -36,7 +37,7 @@ const Course = ({ currentRoute }: { currentRoute: string[] }) => {
             </Link>
           </Can>
         </MotionSidebarWrapper>
-      </Link>
+      </div>
     </li>
   );
 };
