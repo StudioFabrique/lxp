@@ -3,6 +3,9 @@ import httpUpdateUserProfile from "../../../../controllers/user/profile/http-upd
 import httpGetUserProfileInformation from "../../../../controllers/user/profile/http-get-user-profile";
 import { userValidator } from "../../../../middleware/validators";
 import httpUpdateUserPassword from "../../../../controllers/user/profile/http-update-user-password";
+import { createFileUploadMiddleware } from "../../../../middleware/fileUpload";
+import { avatarImageMaxSize } from "../../../../config/images-sizes";
+import jsonParser from "../../../../middleware/json-parser";
 
 const userProfileRouter = Router();
 
@@ -11,8 +14,20 @@ const userProfileRouter = Router();
  */
 userProfileRouter.get("/information", httpGetUserProfileInformation);
 
-userProfileRouter.put("/information", userValidator(), httpUpdateUserProfile);
+userProfileRouter.put(
+  "/information",
+  createFileUploadMiddleware(avatarImageMaxSize),
+  jsonParser,
+  userValidator(undefined, true),
+  httpUpdateUserProfile
+);
 
 userProfileRouter.put("/password", httpUpdateUserPassword);
+
+/* userProfileRouter.put(
+  "/avatar",
+  createFileUploadMiddleware(avatarImageMaxSize),
+  httpUpdateUserAvatar
+); */
 
 export default userProfileRouter;
