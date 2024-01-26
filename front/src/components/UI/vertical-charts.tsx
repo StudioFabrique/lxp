@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -26,7 +26,7 @@ const VerticalCharts: FC<Props> = memo(({ stats }) => {
     Legend
   );
 
-  const options = {
+  const options = {é
     responsive: true,
     plugins: {
       legend: {
@@ -55,3 +55,4 @@ const VerticalCharts: FC<Props> = memo(({ stats }) => {
 });
 
 export default VerticalCharts;
+ */
