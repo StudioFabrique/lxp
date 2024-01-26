@@ -31,6 +31,7 @@ import { createFileUploadMiddleware } from "../../../middleware/fileUpload";
 import httpUpdateImage from "../../../controllers/parcours/http-update-image";
 import { headerImageMaxSize } from "../../../config/images-sizes";
 import httpGetRootAdminParcours from "../../../controllers/parcours/http:-get-root-admin-parcours";
+import httpGetTeacherParcours from "../../../controllers/parcours/http-get-teacher-parcours";
 
 const parcoursRouter = express.Router();
 parcoursRouter.get("/", checkPermissions("parcours"), httpGetParcours);
@@ -124,6 +125,12 @@ parcoursRouter.get(
   "/root-parcours",
   checkPermissions("parcours"),
   httpGetRootAdminParcours
+);
+// retourne la liste des parcours auquel le formateur connecté est associé en tant que contact pour la vue home parcours
+parcoursRouter.get(
+  "/teacher-parcours",
+  checkPermissions("parcours"),
+  httpGetTeacherParcours
 );
 
 export default parcoursRouter;

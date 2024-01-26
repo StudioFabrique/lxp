@@ -38,8 +38,8 @@ export default async function getUserLastParcours(userId: string) {
 
   const result = userParcours.map((item) => ({
     ...item,
-    thumb: item.thumb?.toString("base64" ?? null),
+    thumb: item.thumb?.toString("base64") ?? null,
   }));
 
-  return userParcours;
+  return result;
 }
