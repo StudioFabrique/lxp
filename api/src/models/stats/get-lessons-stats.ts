@@ -6,6 +6,10 @@ export default async function getLessonsStats() {
       title: true,
       readBy: true,
     },
+    take: 10,
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   const result = lessons.map((item) => ({
