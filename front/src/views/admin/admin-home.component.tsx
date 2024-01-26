@@ -39,7 +39,7 @@ const AdminHome = () => {
 
   return (
     <>
-      <main className="p-4 flex flex-col gap-y-4">
+      {/*       <main className="flex flex-col gap-y-4">
         <section className="flex justify-between items-start">
           <article>
             <span className="flex flex-col gap-y-4">
@@ -106,7 +106,7 @@ const AdminHome = () => {
         <section>
           <article></article>
         </section>
-      </main>
+      </main> */}
       <div className="home bg-red h-screen flex flex-col items-center">
         <p>Hey je suis la page Home</p>
         <button onClick={logoutHandler}>logout</button>
