@@ -18,7 +18,7 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
   return (
     <>
       {list && list.length > 0 ? (
-        <table className="table w-full border-separate border-spacing-y-2 text-xs text-black">
+        <table className="table w-4/6 md:w-full border-separate border-spacing-y-2 text-xs text-black">
           <thead>
             <tr className="text-white">
               <th

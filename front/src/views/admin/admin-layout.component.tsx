@@ -34,7 +34,7 @@ const AdminLayout = () => {
         <>
           <Sidebar />
           <FadeWrapper>
-            <div className="w-full flex flex-col pl-20">
+            <div className="w-full flex flex-col pl-24 pr-2 py-2">
               <Outlet />
             </div>
           </FadeWrapper>

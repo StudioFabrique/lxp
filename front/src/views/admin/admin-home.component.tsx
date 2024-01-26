@@ -6,6 +6,10 @@ import TeacherLastParcours from "../../components/admin-home/teacher-last-parcou
 import Can from "../../components/UI/can/can.component";
 import LastParcours from "../../components/admin-home/last-parcours";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
+import StatsBar from "../../components/admin-home/stats-bar";
+import StatsDonut from "../../components/admin-home/stats-donut";
+import StatsLine from "../../components/admin-home/stats-line";
+import LastFeedback from "../../components/admin-home/last-feedback";
 
 const links = [
   {
@@ -39,8 +43,8 @@ const AdminHome = () => {
 
   return (
     <>
-      {/*       <main className="flex flex-col gap-y-4">
-        <section className="flex justify-between items-start">
+      <main className="w-full flex flex-col gap-y-4">
+        <section className="flex flex-col-reverse xl:flex-row justify-between items-start">
           <article>
             <span className="flex flex-col gap-y-4">
               <h2 className="text-3xl font-extrabold capitalize">
@@ -82,31 +86,55 @@ const AdminHome = () => {
               </div>
             </span>
           </article>
-          <article>
+          <article className="w-full flex justify-end">
             <UserTopBar />
           </article>
         </section>
-        <section className="w-full flex gap-x-4">
-          <article className="w-3/6 flex flex-col gap-y-2">
+        <section className="w-full flex flex-col xl:flex-row gap-x-4 gap-y-4">
+          <article className="w-full xl:w-3/6 flex flex-col gap-y-2">
             {user?.roles.find((role) => role.role === "teacher") ? (
               <TeacherLastParcours />
             ) : null}
             <LastParcours />
           </article>
-          <article className="w-full h-full">
-            <Wrapper>STATS</Wrapper>
+          <article>
+            <Wrapper>
+              <div className="w-full h-full flex flex-col items-center xl:items:start">
+                <StatsBar />
+                <StatsDonut />
+              </div>
+            </Wrapper>
+          </article>
+          <article>
+            <Wrapper>
+              <LastFeedback />
+            </Wrapper>
           </article>
         </section>
-        <section>
-          <ul></ul>
-        </section>
-        <section>
+        <section className="w-full flex flex-col xl:flex-row gap-x-4 gap-y-4">
+          <article>
+            <ul className="grid grid-cols-2 gap-2">
+              <li>
+                <Wrapper>
+                  <StatsLine />
+                </Wrapper>
+              </li>
+              <li>
+                <Wrapper>
+                  <StatsLine />
+                </Wrapper>
+              </li>
+            </ul>
+          </article>
           <article></article>
         </section>
         <section>
           <article></article>
         </section>
-      </main> */}
+        <section>
+          <article></article>
+        </section>
+      </main>
       <div className="home bg-red h-screen flex flex-col items-center">
         <p>Hey je suis la page Home</p>
         <button onClick={logoutHandler}>logout</button>
