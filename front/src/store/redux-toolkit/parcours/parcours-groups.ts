@@ -44,6 +44,11 @@ const parcoursGroupsSlice = createSlice({
         );
       }
     },
+    resetGroups(state) {
+      state.groupsIds = null;
+      state.groups = null;
+      state.students = null;
+    },
   },
 });
 
