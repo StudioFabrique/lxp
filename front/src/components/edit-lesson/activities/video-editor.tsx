@@ -109,9 +109,9 @@ export default function VideoEditor({
 
   return (
     <main className="w-full flex flex-col gap-y-4">
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-        <article>
-          <Wrapper>
+      <Wrapper>
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+          <article>
             <form className="flex flex-col gap-y-2">
               <Field
                 label="Titre *"
@@ -121,11 +121,9 @@ export default function VideoEditor({
               />
               <FieldArea label="Description" name="description" data={data} />
             </form>
-          </Wrapper>
-        </article>
-        <article>
-          <Wrapper>
-            <span className="flex items-center gap-x-4">
+          </article>
+          <article className="flex flex-col gap-y-4 justify-center">
+            <span className="flex items-center justify-between">
               <label className="text-primary" htmlFor="origin">
                 Sélectionner la provenance de la vidéo :
               </label>
@@ -169,17 +167,15 @@ export default function VideoEditor({
                 </div>
               )}
             </span>
-          </Wrapper>
-        </article>
-      </section>
-      {video ? (
-        <Wrapper>
+          </article>
+        </section>
+        {video ? (
           <section className="w-full py-2 flex flex-col items-center gap-y-4">
             <h2 className="w-full">Aperçu de la vidéo</h2>
             <VideoPlayer source={video} />
           </section>
-        </Wrapper>
-      ) : null}
+        ) : null}
+      </Wrapper>
       <section className="flex justify-between items-center gap-x-2">
         <button
           className="btn btn-primary btn-sm btn-outline"

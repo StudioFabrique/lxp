@@ -50,6 +50,8 @@ const ImageHeaderMutable: FC<Props> = ({
     }
   }, [defaultImage, image]);
 
+  console.log(image);
+
   const classImage: React.CSSProperties = {
     backgroundImage: `url('${bgImage}')`,
     width: "100%",

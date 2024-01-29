@@ -17,7 +17,7 @@ const UserTopBar = () => {
     <div className="self-end h-20 mt-10 mx-10 flex gap-3">
       <input
         placeholder="Que voulez-vous apprendre ?"
-        className="input input-secondary bg-secondary"
+        className="input input-secondary bg-secondary/20"
       />
       <button className="btn btn-primary text-white">
         <Search />

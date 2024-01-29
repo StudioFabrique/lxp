@@ -17,6 +17,7 @@ import checkPermissions from "../../middleware/check-permissions";
 import activityRouter from "./activity/activityRouter";
 import searchRouter from "./search/search.router";
 import restrictedSearchRouter from "./search/restricted-search.router";
+import statsRouter from "./stats.router";
 
 const v1Router = express.Router();
 
@@ -34,6 +35,7 @@ v1Router.use("/permission", permissionRouter);
 v1Router.use("/course", checkPermissions("course"), courseRouter);
 v1Router.use("/lesson", lessonRouter);
 v1Router.use("/activity", activityRouter);
+v1Router.use("/stats", statsRouter);
 
 /**
  * Routes de recherche dédié à elastic search :
