@@ -24,7 +24,7 @@ async function httpUpdateParcoursDates(req: CustomRequest, res: Response) {
     );
 
     if (response) {
-      return res.status(201).json({
+      return res.status(200).json({
         success: true,
         message: "Les dates du parcours ont été mises à jour",
       });

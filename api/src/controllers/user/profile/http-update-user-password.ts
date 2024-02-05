@@ -10,8 +10,6 @@ export default async function httpUpdateUserPassword(
 
   const id = req.auth?.userId;
 
-  console.log(id, oldPass, newPass);
-
   try {
     const response = id ? await updateUserPassword(id, oldPass, newPass) : null;
 

@@ -22,7 +22,6 @@ const Can: React.FC<Props> = ({ children, action, object }) => {
   }, [action, object, builtPerms]);
 
   if (!render) {
-    console.log("supposed to not being rendered");
     return false;
   }
 

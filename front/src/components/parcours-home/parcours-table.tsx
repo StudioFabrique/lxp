@@ -64,24 +64,6 @@ const ParcoursTable = (props: ParcoursTableProps) => {
               </td>
               <td className="bg-transparent">
                 <div className="w-6 h-6">
-                  <Can action="read" object="parcours">
-                    <div
-                      className="tooltip tooltip-bottom"
-                      data-tip="Aperçu du parcours"
-                    >
-                      <Link
-                        className="text-primary"
-                        to={`view/${item.id}`}
-                        aria-label="Aperçu du parcours"
-                      >
-                        <ArrowTopRightIcon />
-                      </Link>
-                    </div>
-                  </Can>
-                </div>
-              </td>
-              <td className="bg-transparent">
-                <div className="w-6 h-6">
                   <Can action="update" object="parcours">
                     <div
                       className="tooltip tooltip-bottom"
@@ -96,8 +78,8 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                     </div>
                   </Can>
                 </div>
-              </td>
-              <td className="bg-transparent rounded-r-lg">
+              </td>{" "}
+              <td className="bg-transparent">
                 <div
                   className="w-6 h-6 text-error"
                   aria-label="suppression du parcours"
@@ -110,6 +92,24 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                       <div onClick={() => handleDeleteParcours(item.id!)}>
                         <DeleteIcon />
                       </div>
+                    </div>
+                  </Can>
+                </div>
+              </td>
+              <td className="bg-transparent rounded-r-lg">
+                <div className="w-6 h-6">
+                  <Can action="read" object="parcours">
+                    <div
+                      className="tooltip tooltip-bottom"
+                      data-tip="Aperçu du parcours"
+                    >
+                      <Link
+                        className="text-primary"
+                        to={`view/${item.id}`}
+                        aria-label="Aperçu du parcours"
+                      >
+                        <ArrowTopRightIcon />
+                      </Link>
                     </div>
                   </Can>
                 </div>

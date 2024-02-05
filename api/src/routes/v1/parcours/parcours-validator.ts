@@ -12,8 +12,6 @@ export const postParcoursValidator = [
     .escape(),
   body("title")
     .trim()
-    .isString()
-    .withMessage("Titre de parcours non valide")
     .notEmpty()
     .withMessage("Le titre du parcours doit avoir au moins 1 caractère")
     .custom(stringValidateGeneric)
@@ -49,16 +47,12 @@ export const updateInfosValidator = [
     .withMessage("Identifiant de parcours absent")
     .escape(),
   body("title")
-    .isString()
-    .withMessage("Titre de parcours non valide")
     .notEmpty()
     .withMessage("Le titre du parcours doit avoir au moins 1 caractère")
     .custom(stringValidateGeneric)
     .withMessage("Le titre du parcours contient des caractères invalides.")
     .trim(),
   body("description")
-    .isString()
-    .withMessage("Description invalide")
     .notEmpty()
     .withMessage("Description absente")
     .custom(stringValidateGeneric)
@@ -85,17 +79,17 @@ export const updateDatesValidator = [
     .withMessage("Identifiant de parcours absent")
     .escape(),
   body("startDate")
-    .isString()
-    .withMessage("Date de début non valide")
     .notEmpty()
     .withMessage("Date de début absente")
+    .custom(stringValidateGeneric)
+    .withMessage("La date contient des caractères non autorisés.")
     .trim()
     .escape(),
   body("endDate")
-    .isString()
-    .withMessage("Date de fin non valide")
     .notEmpty()
     .withMessage("Date de fin absente")
+    .custom(stringValidateGeneric)
+    .withMessage("La date contient des caractères non autorisés.")
     .trim()
     .escape(),
   checkValidatorResult,
@@ -118,30 +112,32 @@ export const putParcoursTagsValidator = [
 
 export const putParcoursContactsValidator = [
   body("parcoursId")
-    .isNumeric()
-    .withMessage("Identifiant de parcours invalide")
     .notEmpty()
     .withMessage("Identifiant de parcours absent")
+    .isNumeric()
+    .withMessage("Identifiant de parcours invalide")
     .escape(),
   body("contacts").isArray().notEmpty().withMessage("Contacts absents"),
   body("contacts.*.id").isNumeric().withMessage("Id contact invalide").escape(),
   body("contacts.*.idMdb")
-    .isString()
-    .withMessage("Id nosql invalide")
     .notEmpty()
     .withMessage("Id nosql absent")
+    .custom(stringValidateGeneric)
+    .withMessage(
+      "Caractères non autorisés pour l'identifiant nosql du contact."
+    )
     .escape(),
-  body("contact.*.name")
-    .isString()
-    .withMessage("Nom invalide")
+  body("contacts.*.name")
     .notEmpty()
     .withMessage("Nom absent")
+    .custom(stringValidateGeneric)
+    .withMessage("Caractères non autorisés pour le nom du contact.")
     .escape(),
-  body("contact.*.role")
-    .isString()
-    .withMessage("Role invalide")
+  body("contacts.*.role")
     .notEmpty()
     .withMessage("Role absent")
+    .custom(stringValidateGeneric)
+    .withMessage("Caractères non autorisés pour le rôle du contact.")
     .escape(),
   checkValidatorResult,
 ];

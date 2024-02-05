@@ -12,7 +12,14 @@ export default async function httpPutUpdateVideo(req: Request, res: Response) {
         ? uploadedFile.filename
         : data.url;
 
-    const response = await updateVideo(data.id, url);
+    const response = await updateVideo(
+      data.id,
+      data.title,
+      data.description,
+      url
+    );
+    console.log({ response });
+
     return res
       .status(200)
       .json({ success: true, message: "Activité mise à jour.", response });

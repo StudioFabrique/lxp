@@ -1,0 +1,5 @@
+{"from":"::1","level":"info","message":"Le titre du parcours contient des caractères invalides.","status":400,"timestamp":"2024-01-24 03:02:33.741 PM"}
+{"from":"::1","level":"info","message":"La date contient des caractères non autorisés.","status":400,"timestamp":"2024-01-24 03:26:43.643 PM"}
+{"from":"::1","level":"error","message":"Vous n'avez pas accès à cette ressource","status":403,"timestamp":"2024-01-24 03:42:08.810 PM"}
+{"from":"::1","level":"info","message":"Les tags doivent être des nombres","status":400,"timestamp":"2024-01-24 03:44:00.165 PM"}
+{"from":"::1","level":"info","message":"Les tags doivent être des nombres","status":400,"timestamp":"2024-01-24 03:44:15.877 PM"}

@@ -12,8 +12,6 @@ type ActivityProps = {
 const ActivityPreview = ({ activity }: ActivityProps) => {
   const [value, setValue] = useState<string>("");
 
-  console.log(value);
-
   /**
    * récupère le contenu d'un fichier markdown depuis le serveur
    */
@@ -28,7 +26,11 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
     }
   }, [activity, activity.url]);
 
-  return <Markdown className="prose p-5 max-w-none">{value}</Markdown>;
+  return (
+    <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 max-w-none">
+      {value}
+    </Markdown>
+  );
 };
 
 export default ActivityPreview;

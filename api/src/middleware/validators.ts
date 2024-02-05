@@ -44,15 +44,20 @@ const customPostalCodeValidation = (value: string) => {
   return false; // Run the original validation rules for non-empty value
 };
 
-export const userValidator = (extraValidationChain?: ValidationChain) => {
+export const userValidator = (
+  extraValidationChain?: ValidationChain,
+  isFormData: boolean = false
+) => {
+  const validatorSubject = `${isFormData ? "data.user" : "user"}`;
+
   const validationChain = [
-    body("user.email")
+    body(validatorSubject + ".email")
       .exists()
       .isEmail()
       .trim()
       .escape()
       .withMessage("email non conforme"),
-    body(["user.firstname", "user.lastname"])
+    body([validatorSubject + ".firstname", validatorSubject + ".lastname"])
       .exists()
       .notEmpty()
       .isString()
@@ -60,16 +65,16 @@ export const userValidator = (extraValidationChain?: ValidationChain) => {
       .escape()
       .withMessage("firstname ou lastname non conforme"),
     body([
-      "user.nickname",
-      "user.description",
-      "user.address",
-      "user.city",
-      "user.phoneNumber",
-      "user.links.*.url",
-      "user.links.*.alias",
-      "user.hobbies.*.title",
-      "user.graduations.*.title",
-      "user.graduations.*.degree",
+      validatorSubject + ".nickname",
+      validatorSubject + ".description",
+      validatorSubject + ".address",
+      validatorSubject + ".city",
+      validatorSubject + ".phoneNumber",
+      validatorSubject + ".links.*.url",
+      validatorSubject + ".links.*.alias",
+      validatorSubject + ".hobbies.*.title",
+      validatorSubject + ".graduations.*.title",
+      validatorSubject + ".graduations.*.degree",
     ])
       .isString()
       .trim()
@@ -77,12 +82,16 @@ export const userValidator = (extraValidationChain?: ValidationChain) => {
       .withMessage(
         "nickname, description, address, city, links, hobbies ou graduations non conforme"
       ),
-    body("user.postCode")
+    body(validatorSubject + ".postCode")
       .custom(customPostalCodeValidation)
       .trim()
       .escape()
       .withMessage("postCode non conforme"),
-    body(["user.hobbies", "user.graduations", "user.links"])
+    body([
+      validatorSubject + ".hobbies",
+      validatorSubject + ".graduations",
+      validatorSubject + ".links",
+    ])
       .isArray()
       .withMessage("hobbies, graduations ou links non conforme"),
     // Include the extraValidationChain if provided

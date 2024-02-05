@@ -2,6 +2,7 @@ import Contact from "./contact";
 import Course from "./course";
 import Parcours from "./parcours";
 import Skill from "./skill";
+import Tag from "./tag";
 
 export default interface Module {
   id?: number;
@@ -16,4 +17,5 @@ export default interface Module {
   maxDate?: string;
   parcours: Parcours;
   courses: Array<Course>;
+  tags: Array<Tag>;
 }
