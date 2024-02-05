@@ -27,7 +27,7 @@ const PreviewLesson = ({
       );
   };
 
-  const handleReadLesson = () => {
+  const handleFinishReadLesson = () => {
     const applyData = () => {
       switchToNextLesson();
     };
@@ -59,7 +59,7 @@ const PreviewLesson = ({
       )}
       <button
         className="btn btn-primary text-white self-end"
-        onClick={handleReadLesson}
+        onClick={handleFinishReadLesson}
       >
         Leçon Suivante
       </button>

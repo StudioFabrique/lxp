@@ -31,8 +31,8 @@ const StudentHome = () => {
       <div className="grid grid-cols-3">
         <div className="col-span-2 flex flex-col gap-4">
           <Notifications />
-          <ResumeActivity />
-          <ResumeActivities />
+          {/* <ResumeActivity />
+          <ResumeActivities /> */}
         </div>
 
         <div className="flex flex-col gap-4"></div>

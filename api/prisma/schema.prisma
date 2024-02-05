@@ -223,7 +223,6 @@ model Lesson {
   visibility  Boolean    @default(false)
   activities  Activity[]
   lessonsRead LessonRead[]
-  readBy      String[]   @default([])
 }
 
 model Objective {
