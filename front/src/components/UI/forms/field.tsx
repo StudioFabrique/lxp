@@ -30,7 +30,7 @@ const Field = (props: FieldProps) => {
   //console.log(props.data.values[name]);
 
   return (
-    <div className="flex flex-col gap-y-2">
+    <div className="flex flex-col gap-y-2 w-full">
       <label htmlFor={name}>{label}</label>
       <input
         ref={fieldRef}

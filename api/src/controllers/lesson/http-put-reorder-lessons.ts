@@ -10,8 +10,6 @@ export default async function httpPutReorderLessons(
     const { courseId } = req.params;
     const lessonsId = req.body;
 
-    console.log(req.body);
-
     const response = await putReorderLessons(+courseId, lessonsId);
     return res.status(200).json({
       success: true,

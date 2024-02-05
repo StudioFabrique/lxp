@@ -5,6 +5,7 @@ import {
   FormEventHandler,
   Ref,
   SetStateAction,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -22,6 +23,7 @@ import useHttp from "../../../hooks/use-http";
 import Loader from "../../UI/loader";
 import Hobby from "../../../utils/interfaces/hobby";
 import { Link } from "../../../utils/interfaces/link";
+import { Context } from "../../../store/context.store";
 
 type UserInformation = {
   _id: string;
@@ -43,6 +45,7 @@ const Information: FC<{
   setEditMode: Dispatch<SetStateAction<boolean>>;
   formRef: Ref<HTMLFormElement>;
 }> = ({ editMode, setEditMode, formRef }) => {
+  const { handshake } = useContext(Context);
   const { sendRequest, isLoading } = useHttp(true);
 
   const {
@@ -53,16 +56,26 @@ const Information: FC<{
 
   const [userData, setUserData] = useState<UserInformation | undefined>();
 
+  const [temporaryAvatar, setTemporaryAvatar] = useState<{
+    file: File | null;
+    url: string | null;
+  }>({ file: null, url: null });
+
   const firstInputRef: Ref<HTMLInputElement> = useRef(null);
 
   const handleSubmitForm: FormEventHandler = (e: FormEvent) => {
     e.preventDefault();
 
-    const applyData = (data: any) => {
+    const applyData = (data: { data: UserInformation }) => {
       setUserData(data.data);
       setEditMode(false);
       toast.success("Formulaire envoyé avec succès !");
+      handshake();
     };
+
+    const formData = new FormData();
+    if (temporaryAvatar.file) formData.append("image", temporaryAvatar.file);
+    formData.append("data", JSON.stringify({ user: formProps.values }));
 
     try {
       informationSchema.parse(formProps.values);
@@ -70,7 +83,7 @@ const Information: FC<{
         {
           path: `/user/profile/information`,
           method: "put",
-          body: { user: formProps.values },
+          body: formData,
         },
         applyData
       );
@@ -115,6 +128,8 @@ const Information: FC<{
             formProps={formProps}
             editMode={editMode}
             firstInputRef={firstInputRef}
+            temporaryAvatar={temporaryAvatar}
+            setTemporaryAvatar={setTemporaryAvatar}
           />
           <Contact formProps={formProps} editMode={editMode} />
         </div>

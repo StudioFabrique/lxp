@@ -1,6 +1,9 @@
 import { prisma } from "../../utils/db";
 
-export default async function getModuleDetail(moduleId: number) {
+export default async function getModuleDetail(
+  moduleId: number,
+  userMongoId: string
+) {
   const existingModule = await prisma.module.findFirst({
     where: { id: moduleId },
     select: {
@@ -30,6 +33,15 @@ export default async function getModuleDetail(moduleId: number) {
     throw error;
   }
 
+  const courses = existingModule.courses.map((course) => {
+    course.lessons = course.lessons.map((lesson) => {
+      lesson.readBy = lesson.readBy.includes(userMongoId) ? [userMongoId] : [];
+      return lesson;
+    });
+
+    return course;
+  });
+
   const result = {
     id: existingModule.id,
     title: existingModule.title,
@@ -41,7 +53,7 @@ export default async function getModuleDetail(moduleId: number) {
     parcours: existingModule.parcours[0].parcours.title,
     bonusSkills: existingModule.bonusSkills.map((item) => item.bonusSkill),
     contacts: existingModule.contacts.map((item) => item.contact),
-    courses: existingModule.courses,
+    courses: courses,
   };
 
   return result;

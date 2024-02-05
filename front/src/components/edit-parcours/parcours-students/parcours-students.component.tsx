@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
@@ -14,6 +15,7 @@ import User from "../../../utils/interfaces/user";
 import { parcoursGroupsAction } from "../../../store/redux-toolkit/parcours/parcours-groups";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import ButtonAdd from "../../UI/button-add/button-add";
+import toast from "react-hot-toast";
 
 const ParcoursStudents = () => {
   const dispatch = useDispatch();
@@ -93,9 +95,9 @@ const ParcoursStudents = () => {
     if (groupsIds) {
       sendRequest(
         {
-          path: "/group/groups",
+          path: "/user/group",
           method: "post",
-          body: { groupsIds: groupsIds.map((item: any) => item.idMdb) },
+          body: groupsIds.map((item: any) => item.idMdb),
         },
         processData
       );
@@ -109,7 +111,6 @@ const ParcoursStudents = () => {
 
   return (
     <div className="flex flex-col gap-y-8">
-      <Toaster />{" "}
       <section>
         <RightSideDrawer
           visible={false}

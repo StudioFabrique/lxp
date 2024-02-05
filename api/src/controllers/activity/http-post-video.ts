@@ -19,6 +19,8 @@ export default async function httpPostVideo(req: CustomRequest, res: Response) {
       userId!,
       data.type,
       data.order,
+      data.title,
+      data.description,
       url
     );
 

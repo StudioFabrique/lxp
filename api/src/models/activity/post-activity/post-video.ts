@@ -5,6 +5,8 @@ export default async function postVideo(
   userId: string,
   type: string,
   order: number,
+  title: string,
+  description: string,
   url: string
 ) {
   const existingLesson = await prisma.lesson.findFirst({
@@ -31,6 +33,8 @@ export default async function postVideo(
     data: {
       type,
       order,
+      title,
+      description,
       url,
       lesson: {
         connect: {

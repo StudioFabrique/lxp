@@ -6,7 +6,7 @@ const Calendar = ({ currentRoute }: { currentRoute: string[] }) => {
 
   return (
     <li>
-      <Link to={`/${currentRoute[0]}`}>
+      <Link to={`/${currentRoute[0]}/calendar`}>
         <div
           className={`tooltip tooltip-right w-6 h-6 ${
             isCurrentPathActive && "text-primary"

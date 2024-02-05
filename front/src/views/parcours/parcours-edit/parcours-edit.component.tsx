@@ -32,6 +32,8 @@ import ImageHeaderMutable from "../../../components/image-header/image-header-mu
 import useParcoursService from "./hooks/use-parcours-services";
 import { testModules } from "../../../helpers/parcours-steps-validation";
 import Module from "../../../utils/interfaces/module";
+import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
+import { parcoursGroupsAction } from "../../../store/redux-toolkit/parcours/parcours-groups";
 
 let initialState = true;
 
@@ -81,6 +83,8 @@ const EditParcours = () => {
       dispatch(parcoursContactsAction.reset());
       dispatch(parcoursSkillsAction.reset());
       dispatch(parcoursObjectivesAction.reset());
+      dispatch(parcoursModulesSliceActions.resetModule());
+      dispatch(parcoursGroupsAction.resetGroups());
     };
   }, [dispatch]);
 

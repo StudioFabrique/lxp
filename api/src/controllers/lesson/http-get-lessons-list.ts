@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
 import getLessonsList from "../../models/lesson/get-lessons-list";
 
 export default async function httpGetLessonsList(req: Request, res: Response) {

@@ -32,7 +32,8 @@ import LayoutEditLesson from "./views/lesson/edit/layout-edit-lesson";
 import EditLessonHome from "./views/lesson/edit/edit-lesson-home";
 import LayoutEditModule from "./views/module/edit/Layout-edit-module";
 import EditModuleHome from "./views/module/edit/edit-module-home";
-import ModuleViewFromParcours from "./views/module/module-view-from-parcours";
+import ModuleViewFromParcours from "./views/parcours/module-view-from-parcours";
+import FeaturesList from "./views/features-list/features-list";
 
 const router = createHashRouter([
   {
@@ -57,6 +58,7 @@ const router = createHashRouter([
         ],
       },
       { path: "profil", element: <UserProfile /> },
+      { path: "*", element: <FeaturesList /> },
     ],
   },
   {
@@ -160,6 +162,7 @@ const router = createHashRouter([
         ],
       },
       { path: "profil", element: <UserProfile /> },
+      { path: "*", element: <FeaturesList /> },
     ],
   },
 ]);
