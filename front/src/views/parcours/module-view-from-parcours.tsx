@@ -67,6 +67,7 @@ const ModuleViewFromParcours = () => {
                     ...moduleData.courses.map((course) => course.lessons)
                   )}
                   setSelectedLesson={setSelectedLesson}
+                  setModuleData={setModuleData}
                 />
               ) : (
                 <>
