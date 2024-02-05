@@ -12,7 +12,8 @@ import httpGetLessonsList from "../../../controllers/lesson/http-get-lessons-lis
 import httpGetLessonDetail from "../../../controllers/lesson/http-get-losson-detail";
 import httpDeleteLesson from "../../../controllers/lesson/http-delete-lesson";
 import httpPutReorderLessons from "../../../controllers/lesson/http-put-reorder-lessons";
-import httpPutReadLesson from "../../../controllers/lesson/http-put-read-lesson";
+import httpPutFinishReadLesson from "../../../controllers/lesson/http-post-begin-read-lesson";
+import httpPostBeginReadLesson from "../../../controllers/lesson/http-post-begin-read-lesson";
 
 const lessonRouter = express.Router();
 
@@ -44,11 +45,17 @@ lessonRouter.put(
   httpPutReorderLessons
 );
 
+lessonRouter.post(
+  "/read/:lessonId",
+  checkPermissions("lesson"),
+  httpPostBeginReadLesson
+);
+
 // ajoute un "vu" à la leçon en ajoutant l'id de l'utilisateur connecté
 lessonRouter.put(
   "/read/:lessonId",
   checkPermissions("lesson"),
-  httpPutReadLesson
+  httpPutFinishReadLesson
 );
 
 export default lessonRouter;

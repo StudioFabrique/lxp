@@ -1,6 +1,8 @@
-import { LogOutIcon, LucideUserCircle } from "lucide-react";
+import { LogOutIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import ModeToggle from "../mode-toggle";
+import { useContext } from "react";
+import { Context } from "../../../store/context.store";
 
 type SharedSideBarProps = {
   interfaceType: string;
@@ -8,6 +10,8 @@ type SharedSideBarProps = {
 };
 
 const SidebarBottom = ({ interfaceType, onLogout }: SharedSideBarProps) => {
+  const { user } = useContext(Context);
+
   return (
     <ul className="flex flex-col gap-y-4">
       <li
@@ -18,14 +22,6 @@ const SidebarBottom = ({ interfaceType, onLogout }: SharedSideBarProps) => {
       </li>
 
       <li>
-        <Link to={`/${interfaceType}/profil`}>
-          <div className="tooltip tooltip-right w-6 h-6" data-tip="Profil">
-            <LucideUserCircle />
-          </div>
-        </Link>
-      </li>
-
-      <li>
         <div
           className="tooltip tooltip-right w-6 h-6 cursor-pointer"
           data-tip="Déconnexion"
@@ -33,6 +29,22 @@ const SidebarBottom = ({ interfaceType, onLogout }: SharedSideBarProps) => {
         >
           <LogOutIcon />
         </div>
+      </li>
+
+      <li className="w-5 h-10" />
+
+      <li className="absolute bottom-4 left-[12px]">
+        <Link
+          to={`/${interfaceType}/profil`}
+          className="tooltip tooltip-right text-white rounded-lg"
+          data-tip="Profil"
+        >
+          <img
+            className="w-[40px] rounded-lg object-cover"
+            src={`data:image/jpeg;base64,${user?.avatar}`}
+            alt="User Avatar"
+          />
+        </Link>
       </li>
     </ul>
   );

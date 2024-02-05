@@ -52,5 +52,10 @@ export default async function createUser(user: IUser, roleId: string) {
     });
   }
 
+  if (firstRole.rank === 3) {
+    // si type utilisateur en cours de création est "apprenant"
+    await prisma.student.create({ data: { idMdb: createdUser._id } });
+  }
+
   return createdUser;
 }
