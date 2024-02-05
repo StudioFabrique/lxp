@@ -15,7 +15,7 @@ const PreviewLesson = ({
   lessons,
   setSelectedLesson,
 }: PreviewLessonProps) => {
-  const { sendRequest, isLoading } = useHttp(true);
+  const { sendRequest, isLoading } = useHttp();
   const [lessonDetail, setLessonDetail] = useState<Lesson>();
 
   const switchToNextLesson = () => {

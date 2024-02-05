@@ -20,7 +20,7 @@ const Progression = ({
       (sum, course) =>
         sum +
         course.lessons.reduce(
-          (sum, lesson) => sum + (lesson.readBy?.length || 0),
+          (sum, lesson) => sum + (lesson?.lessonsRead?.length || 0),
           0
         ) /
           course.lessons.length,

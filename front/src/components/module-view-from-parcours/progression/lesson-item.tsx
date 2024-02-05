@@ -42,7 +42,7 @@ const LessonItem = ({
       <div>
         {isLoading ? (
           <Loader />
-        ) : lesson.readBy && lesson.readBy?.length > 0 ? (
+        ) : lesson.lessonsRead && lesson.lessonsRead?.length > 0 ? (
           <CheckCircle2
             className={`w-5 h-5 ${
               isLessonSelected ? "stroke-secondary" : "stroke-primary"

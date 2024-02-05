@@ -6,6 +6,8 @@ export default async function putFinishReadLesson(
     where: { lessonId, student: { idMdb: userIdMdb } },
   });
 
+  console.log("start");
+
   if (!lessonRead) {
     return null;
   }
@@ -13,6 +15,8 @@ export default async function putFinishReadLesson(
   if (Boolean(lessonRead.finishedAt)) {
     return lessonRead;
   }
+
+  console.log("update");
 
   await prisma?.lessonRead.update({
     where: { id: lessonRead.id },
