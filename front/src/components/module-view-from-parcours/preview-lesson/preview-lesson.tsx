@@ -3,17 +3,20 @@ import useHttp from "../../../hooks/use-http";
 import Loader from "../../UI/loader";
 import Lesson from "../../../utils/interfaces/lesson";
 import ActivityPreview from "./activity";
+import Module from "../../../utils/interfaces/module";
 
 type PreviewLessonProps = {
   selectedLesson: Lesson;
   lessons: Lesson[];
   setSelectedLesson: Dispatch<SetStateAction<Lesson | undefined>>;
+  setModuleData: Dispatch<SetStateAction<Module | null>>;
 };
 
 const PreviewLesson = ({
   selectedLesson,
   lessons,
   setSelectedLesson,
+  setModuleData,
 }: PreviewLessonProps) => {
   const { sendRequest, isLoading } = useHttp();
   const [lessonDetail, setLessonDetail] = useState<Lesson>();
@@ -28,6 +31,16 @@ const PreviewLesson = ({
   };
 
   const handleFinishReadLesson = () => {
+    setModuleData((data) =>
+      data.courses.map((course) =>
+        course.lessons.map((lesson) => {
+          lesson.lessonsRead?.push({});
+
+          return lesson;
+        })
+      )
+    );
+
     const applyData = () => {
       switchToNextLesson();
     };
