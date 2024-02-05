@@ -12,8 +12,8 @@ import httpGetLessonsList from "../../../controllers/lesson/http-get-lessons-lis
 import httpGetLessonDetail from "../../../controllers/lesson/http-get-losson-detail";
 import httpDeleteLesson from "../../../controllers/lesson/http-delete-lesson";
 import httpPutReorderLessons from "../../../controllers/lesson/http-put-reorder-lessons";
-import httpPutFinishReadLesson from "../../../controllers/lesson/http-post-begin-read-lesson";
 import httpPostBeginReadLesson from "../../../controllers/lesson/http-post-begin-read-lesson";
+import httpPutFinishReadLesson from "../../../controllers/lesson/http-put-finish-read-lesson";
 
 const lessonRouter = express.Router();
 
