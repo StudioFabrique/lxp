@@ -27,8 +27,6 @@ const Progression = ({
       0
     ) / courses.length;
 
-  console.log({ moduleProgress });
-
   const radialStyle = {
     "--value": moduleProgress * 100,
   } as CSSProperties;
