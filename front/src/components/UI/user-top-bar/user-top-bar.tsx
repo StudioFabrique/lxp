@@ -14,7 +14,7 @@ const UserTopBar = () => {
   console.log(user?.avatar);
 
   return (
-    <div className="self-end h-20 mt-10 mx-10 flex gap-3">
+    <div className="self-end h-20 mx-10 flex gap-3">
       <input
         placeholder="Que voulez-vous apprendre ?"
         className="input input-secondary bg-secondary/20"

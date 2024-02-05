@@ -13,23 +13,27 @@ const LessonItem = ({
   selectedLesson,
   setSelectedLesson,
 }: LessonItemProps) => {
+  const isLessonSelected = selectedLesson?.id === lesson.id;
+
   return (
     <div
       onClick={() =>
         setSelectedLesson(
-          selectedLesson && selectedLesson.id === lesson.id ? undefined : lesson
+          selectedLesson && isLessonSelected ? undefined : lesson
         )
       }
       className={`flex items-center justify-between rounded-xl p-2 w-full cursor-pointer ${
-        selectedLesson?.id === lesson.id
-          ? "bg-primary text-white"
-          : "bg-primary/50"
+        isLessonSelected ? "bg-primary text-white" : "bg-primary/50"
       }`}
     >
       <p className="max-h-14 overflow-clip">{lesson.title}</p>
       <div>
         {lesson.readBy && lesson.readBy?.length > 0 ? (
-          <CheckCircle2 className="w-5 h-5" />
+          <CheckCircle2
+            className={`w-5 h-5 ${
+              isLessonSelected ? "stroke-secondary" : "stroke-primary"
+            }`}
+          />
         ) : (
           <ArrowRight />
         )}

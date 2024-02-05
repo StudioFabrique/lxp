@@ -129,6 +129,22 @@ model BonusSkill {
   courses     BonusSkillOnCourse[]
 }
 
+model LessonRead {
+  id         Int        @id @default(autoincrement())
+  beganAt    DateTime   @default(now())
+  finishedAt DateTime?
+  lesson     Lesson     @relation(fields: [lessonId], references: [id])
+  lessonId   Int
+  student    Student    @relation(fields: [studentId], references: [id])
+  studentId  Int
+}
+
+model Student {
+  id          Int        @id @default(autoincrement())
+  idMdb       String
+  lessonsRead LessonRead[]
+}
+
 model Admin {
   id         Int        @id @default(autoincrement())
   idMdb      String
@@ -206,6 +222,7 @@ model Lesson {
   isPublished Boolean    @default(false)
   visibility  Boolean    @default(false)
   activities  Activity[]
+  lessonsRead LessonRead[]
   readBy      String[]   @default([])
 }
 
