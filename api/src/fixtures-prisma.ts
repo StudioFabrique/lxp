@@ -58,6 +58,28 @@ const tags: string[] = [
   "AWS",
   "Docker",
   "Kubernetes",
+  "Boulangerie",
+  "Patisserie",
+  "Boulanger",
+  "Farine",
+  "Pâte",
+  "Pain",
+  "Croissant",
+  "Viennoiserie",
+  "Levain",
+  "Fermenttion",
+  "Artisanale",
+  "Fabrication",
+  "Entreprise",
+  "Pétrissage",
+  "Pesée",
+  "Technique",
+  "Approvisionnement",
+  "Cuisson",
+  "Façonnage",
+  "Distribution",
+  "Alimentation",
+  "Gaspillage",
 ];
 
 const colors = [
@@ -83,7 +105,7 @@ const colors = [
   "rgba(0, 0, 139, 0.5)", // Dark Blue
 ];
 
-const formations = [
+/* const formations = [
   {
     title: "Formation en marketing digital",
     description:
@@ -164,7 +186,7 @@ const formations = [
     endDate: "2023-08-10",
     duration: 6,
   },
-];
+]; */
 
 function getRandomNumber(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -269,6 +291,10 @@ async function createFormation() {
   try {
     const tags1Dw = [1, 2, 3, 4, 5];
     const tagsCDA = [10, 20, 25, 26, 28];
+    const tagsBoulangerie = [
+      30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 45, 46, 47, 48,
+      49, 50, 51,
+    ];
     const newFormations = [
       {
         title: "Développeur Web",
@@ -284,13 +310,12 @@ async function createFormation() {
         code: "014",
         level: "bac + 3",
       },
-
       {
         title: "Boulangerie",
         description:
-          "Ce parcours  en boulangerie est conçu pour guider les apprenants à travers un voyage complet dans l'art de la boulangerie, alliant connaissances théoriques et compétences pratiques. Il convient aux boulangers expérimentés désirant approfondir leurs connaissances et techniques. Les modules couvrent des aspects variés du métier, depuis les fondamentaux jusqu'aux tendances modernes et pratiques durables.",
+          "Ce parcours en boulangerie est conçu pour guider les apprenants à travers un voyage complet dans l'art de la boulangerie, alliant connaissances théoriques et compétences pratiques. Il convient aux boulangers expérimentés désirant approfondir leurs connaissances et techniques. Les modules couvrent des aspects variés du métier, depuis les fondamentaux jusqu'aux tendances modernes et pratiques durables.",
         code: "021",
-        level: "CAP",
+        level: "cap",
       },
     ];
     await prisma.formation.create({
@@ -310,6 +335,18 @@ async function createFormation() {
         ...newFormations[1],
         tags: {
           create: tagsCDA.map((item: number) => {
+            return {
+              tag: { connect: { id: item } },
+            };
+          }),
+        },
+      },
+    });
+    await prisma.formation.create({
+      data: {
+        ...newFormations[2],
+        tags: {
+          create: tagsBoulangerie.map((item: number) => {
             return {
               tag: { connect: { id: item } },
             };
