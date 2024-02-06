@@ -10,6 +10,14 @@ export default async function postBeginReadLesson(
     return null;
   }
 
+  const existingLessonRead = await prisma?.lessonRead.findFirst({
+    where: { lessonId, studentId: student.id },
+  });
+
+  if (existingLessonRead) {
+    return existingLessonRead;
+  }
+
   const lessonRead = await prisma?.lessonRead.create({
     data: { lessonId, studentId: student.id },
   });

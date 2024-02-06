@@ -37,7 +37,12 @@ const PreviewLesson = ({
         if (!previousModule) return previousModule;
         previousModule.courses.map((course) =>
           course.lessons.map((lesson) => {
-            lesson.lessonsRead?.push(data.data);
+            if (
+              lesson.id === lessonDetail?.id &&
+              lesson.lessonsRead &&
+              !(lesson.lessonsRead.length > 0)
+            )
+              lesson.lessonsRead?.push(data.data);
 
             return lesson;
           })
@@ -48,6 +53,8 @@ const PreviewLesson = ({
 
       switchToNextLesson();
     };
+
+    console.log(selectedLesson.id);
 
     sendRequest(
       { path: `/lesson/read/${selectedLesson.id}`, method: "put" },
@@ -62,6 +69,16 @@ const PreviewLesson = ({
 
     sendRequest({ path: `/lesson/${selectedLesson.id}` }, applyData);
   }, [selectedLesson.id, sendRequest]);
+
+  useEffect(() => {
+    const applyData = () => {};
+
+    if (selectedLesson.lessonsRead && !(selectedLesson.lessonsRead?.length > 0))
+      sendRequest(
+        { path: `/lesson/read/${selectedLesson.id}`, method: "post" },
+        applyData
+      );
+  }, [selectedLesson.id, selectedLesson.lessonsRead, sendRequest]);
 
   return isLoading ? (
     <Loader />
