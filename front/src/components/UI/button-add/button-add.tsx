@@ -27,7 +27,12 @@ const ButtonAdd: FC<Props> = ({
   };
 
   return (
-    <button className={setStyle()} disabled={isDisabled} onClick={onClickEvent}>
+    <button
+      className={setStyle()}
+      disabled={isDisabled}
+      onClick={onClickEvent}
+      type="button"
+    >
       {!loading ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
