@@ -16,7 +16,7 @@ const ProgressBar = ({ courses }: ProgressBarProps) => {
             {course.lessons.map((lesson) => (
               <span
                 className={`h-[70%] w-[15px]  ${
-                  lesson.readBy && lesson.readBy?.length > 0
+                  lesson.lessonsRead && lesson.lessonsRead?.length > 0
                     ? "bg-primary"
                     : "bg-primary/20"
                 }`}
