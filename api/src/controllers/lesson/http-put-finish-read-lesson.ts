@@ -24,6 +24,7 @@ export default async function httpPutFinishReadLesson(
 
     return res.status(201).json({
       message: "La leçon a bien été marqué comme lu",
+      data: response,
     });
   } catch (error: any) {
     return res

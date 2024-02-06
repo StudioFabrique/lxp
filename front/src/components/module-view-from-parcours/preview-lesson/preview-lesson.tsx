@@ -4,6 +4,7 @@ import Loader from "../../UI/loader";
 import Lesson from "../../../utils/interfaces/lesson";
 import ActivityPreview from "./activity";
 import Module from "../../../utils/interfaces/module";
+import LessonRead from "../../../utils/interfaces/lesson-read";
 
 type PreviewLessonProps = {
   selectedLesson: Lesson;
@@ -31,17 +32,20 @@ const PreviewLesson = ({
   };
 
   const handleFinishReadLesson = () => {
-    setModuleData((data) =>
-      data.courses.map((course) =>
-        course.lessons.map((lesson) => {
-          lesson.lessonsRead?.push({});
+    const applyData = (data: { data: LessonRead }) => {
+      setModuleData((previousModule) => {
+        if (!previousModule) return previousModule;
+        previousModule.courses.map((course) =>
+          course.lessons.map((lesson) => {
+            lesson.lessonsRead?.push(data.data);
 
-          return lesson;
-        })
-      )
-    );
+            return lesson;
+          })
+        );
 
-    const applyData = () => {
+        return previousModule;
+      });
+
       switchToNextLesson();
     };
 
