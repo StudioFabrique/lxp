@@ -44,6 +44,7 @@ const AdminHome = () => {
   return (
     <>
       <main className="w-full flex flex-col gap-y-4">
+        <div>
         <section className="flex flex-col-reverse xl:flex-row justify-between items-start">
           <article>
             <span className="flex flex-col gap-y-4">
