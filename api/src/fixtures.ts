@@ -55,7 +55,7 @@ async function createUser() {
     postCode: "64000",
     city: "pau",
     email: "admin@studio.eco",
-    nickname: "gandalf",
+    nickname: "studio",
     password: hash,
     roles: [new Object(role!._id)],
     isActive: true,
