@@ -1,7 +1,7 @@
 import Activity from "./activity";
 import Course from "./course";
+import LessonRead from "./lesson-read";
 import Tag from "./tag";
-import User from "./user";
 
 export default interface Lesson {
   id?: number;
@@ -17,11 +17,5 @@ export default interface Lesson {
   course: Course;
   activities?: Activity[];
   order?: number;
-  lessonsRead?: {
-    id: number;
-    lesson: Lesson;
-    user: User;
-    beganAt: Date;
-    finishedAt: Date;
-  }[];
+  lessonsRead?: LessonRead[];
 }

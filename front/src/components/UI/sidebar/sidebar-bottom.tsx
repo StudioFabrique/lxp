@@ -33,14 +33,14 @@ const SidebarBottom = ({ interfaceType, onLogout }: SharedSideBarProps) => {
 
       <li className="w-5 h-10" />
 
-      <li className="absolute bottom-4 left-[12px]">
+      <li className="absolute bottom-2 left-[10px]">
         <Link
           to={`/${interfaceType}/profil`}
-          className="tooltip tooltip-right text-white rounded-lg"
+          className="btn text-white p-0 rounded-lg h-[30px] w-[45px] tooltip tooltip-right"
           data-tip="Profil"
         >
           <img
-            className="w-[40px] rounded-lg object-cover"
+            className="h-full w-full rounded-lg object-cover"
             src={`data:image/jpeg;base64,${user?.avatar}`}
             alt="User Avatar"
           />
