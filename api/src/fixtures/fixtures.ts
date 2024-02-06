@@ -11,12 +11,12 @@ import {
   groupes,
   lastnames,
   tags,
-} from "./utils/fixtures/data/data";
-import Role from "./utils/interfaces/db/role";
-import Permission from "./utils/interfaces/db/permission";
-import Group, { IGroup } from "./utils/interfaces/db/group";
-import Tag from "./utils/interfaces/db/tag";
-import User from "./utils/interfaces/db/user";
+} from "../utils/fixtures/data/data";
+import Role from "../utils/interfaces/db/role";
+import Permission from "../utils/interfaces/db/permission";
+import Group, { IGroup } from "../utils/interfaces/db/group";
+import Tag from "../utils/interfaces/db/tag";
+import User from "../utils/interfaces/db/user";
 import permDefs from "./fixtures-permissions";
 dotenv.config();
 
