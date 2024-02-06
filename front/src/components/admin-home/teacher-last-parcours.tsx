@@ -53,7 +53,7 @@ export default function TeacherLastParcours() {
 
       {parcours && parcours.length > 0 ? (
         <ul className={style}>
-          {parcours?.map((item) => (
+          {parcours.map((item) => (
             <li key={item.id}>
               <ParcoursItem parcours={item} />
             </li>
