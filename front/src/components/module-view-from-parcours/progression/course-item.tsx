@@ -1,6 +1,6 @@
 import { ArrowDown, ArrowRight } from "lucide-react";
 import Course from "../../../utils/interfaces/course";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import LessonItem from "./lesson-item";
 import Lesson from "../../../utils/interfaces/lesson";
@@ -22,6 +22,13 @@ const CourseItem = ({
       (sum, lesson) => sum + (lesson?.lessonsRead?.length || 0),
       0
     ) / course.lessons.length;
+
+  // Ouvre la barre litteral lorsqu'une leçon a été selectionné par un autre moyen (clic sur le bouton "Leçon Suivante")
+  useEffect(() => {
+    if (selectedLesson && course.lessons.includes(selectedLesson)) {
+      setCourseOpen(true);
+    }
+  }, [course.lessons, selectedLesson]);
 
   return (
     <div className="flex flex-col w-full">
