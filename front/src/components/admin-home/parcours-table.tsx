@@ -3,6 +3,7 @@ import { localeDate } from "../../helpers/locale-date";
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import ParcoursSummary from "../../utils/interfaces/parcours-summary";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
+import { Link } from "react-router-dom";
 
 interface ParcoursTableProps {
   parcoursList: ParcoursSummary[];
@@ -14,6 +15,7 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
     "title",
     3
   );
+  console.log(parcoursList);
 
   return (
     <>
@@ -149,7 +151,9 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
                   {item.visibility ? "Public" : "Caché"}
                 </td>
                 <td className="bg-transparent rounded-r-lg truncate">
-                  <MoveUpRight className="w-4 h-4" />
+                  <Link to={`/admin/parcours/view/${item.id}`}>
+                    <MoveUpRight className="w-4 h-4" />
+                  </Link>
                 </td>
               </tr>
             ))}
