@@ -75,7 +75,10 @@ const NewParcoursForm: FC<Props> = ({ formations, onSubmit }) => {
               title="Choisissez une formation"
               onSelectItem={handleFormation}
             />
-            <Link className="text-xs underline font-normal pl-2" to="#">
+            <Link
+              className="text-xs underline font-normal pl-2"
+              to="/admin/formation"
+            >
               Créer une nouvelle formation
             </Link>
           </div>
