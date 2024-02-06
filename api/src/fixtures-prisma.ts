@@ -292,8 +292,8 @@ async function createFormation() {
     const tags1Dw = [1, 2, 3, 4, 5];
     const tagsCDA = [10, 20, 25, 26, 28];
     const tagsBoulangerie = [
-      30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 45, 46, 47, 48,
-      49, 50, 51,
+      30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+      48, 49, 50, 51,
     ];
     const newFormations = [
       {
