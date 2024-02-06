@@ -83,7 +83,7 @@ async function createUser() {
   role = await Role.findOne({ role: "student" });
   const newStudent = new User({
     firstname: "jacqueline",
-    lastname: "dupond",
+    lastname: "fillipini",
     address: "14 bvd olga ducresnes",
     postCode: "64000",
     city: "pau",
