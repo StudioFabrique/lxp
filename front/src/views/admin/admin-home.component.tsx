@@ -1,7 +1,6 @@
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { Context } from "../../store/context.store";
 import { Link } from "react-router-dom";
-import UserTopBar from "../../components/UI/user-top-bar/user-top-bar";
 import TeacherLastParcours from "../../components/admin-home/teacher-last-parcours";
 import Can from "../../components/UI/can/can.component";
 import LastParcours from "../../components/admin-home/last-parcours";
@@ -13,24 +12,24 @@ import LastFeedback from "../../components/admin-home/last-feedback";
 
 const links = [
   {
-    path: "/",
+    path: "/admin/parcours/créer-un-parcours",
     label: "Créer un parcours",
   },
   {
-    path: "/",
-    label: "Créer un module",
+    path: "/admin/module",
+    label: "Interface modules",
   },
   {
-    path: "/",
-    label: "Créer un cours",
+    path: "/admin/course",
+    label: "Interface cours",
   },
   {
-    path: "/",
-    label: "Créer une leçon",
+    path: "/admin/lesson",
+    label: "Interface leçons",
   },
   {
-    path: "/",
-    label: "Créer un utilisateur",
+    path: "/admin/user",
+    label: "Interface utilisateurs",
   },
 ];
 
@@ -57,14 +56,11 @@ const AdminHome = () => {
               </p>
             </span>
           </article>
-          <article className="w-full flex justify-end">
-            <UserTopBar />
-          </article>
         </section>
         <section>
           <ul className="flex items-center gap-x-2">
             <Can action="write" object="parcours">
-              <li>
+              <li key={1}>
                 <Link className="btn btn-primary" to={links[0].path}>
                   {links[0].label}
                 </Link>
@@ -78,19 +74,19 @@ const AdminHome = () => {
               </li>
             </Can>
             {links.map((item, index) => (
-              <>
+              <React.Fragment key={item.label}>
                 {index > 1 ? (
-                  <li key={item.label}>
+                  <li>
                     <Link className="btn btn-primary" to={item.path}>
                       {item.label}
                     </Link>
                   </li>
                 ) : null}
-              </>
+              </React.Fragment>
             ))}
           </ul>
         </section>
-        <section className="w-full flex gap-4">
+        <section className="w-full flex flex-col xl:flex-row gap-4">
           <span className="flex-1 flex flex-col gap-4">
             <article className="w-full flex flex-col gap-y-2">
               {user?.roles.find((role) => role.role === "teacher") ? (
@@ -98,7 +94,7 @@ const AdminHome = () => {
               ) : null}
               <LastParcours />
             </article>
-            <article className="w-full grid grid-cols-2 gap-4">
+            <article className="w-full grid grid-cols-1 xl:grid-cols-2 gap-4">
               <Wrapper>
                 <div className="w-full h-full flex flex-col items-center xl:items:start">
                   <StatsBar />
@@ -111,13 +107,13 @@ const AdminHome = () => {
             </article>
           </span>
           <article>
-            <ul className="grid grid-cols-1 gap-4">
-              <li>
+            <ul className="w-full grid grid-cols-1 gap-4 place-items-center">
+              <li className="w-fit xl:w-full">
                 <Wrapper>
                   <StatsLine />
                 </Wrapper>
               </li>
-              <li>
+              <li className="w-fit xl:w-full">
                 <Wrapper>
                   <StatsLine />
                 </Wrapper>
@@ -148,7 +144,7 @@ const AdminHome = () => {
         <Link to="module">Interface Module</Link>
         <Link to="lesson">Interface Leçon</Link>
         <Link to="profil">Profil</Link>
-      </div>{" "}
+      </div>
     </>
   );
 };
