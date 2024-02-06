@@ -284,6 +284,14 @@ async function createFormation() {
         code: "014",
         level: "bac + 3",
       },
+
+      {
+        title: "Boulangerie",
+        description:
+          "Ce parcours  en boulangerie est conçu pour guider les apprenants à travers un voyage complet dans l'art de la boulangerie, alliant connaissances théoriques et compétences pratiques. Il convient aux boulangers expérimentés désirant approfondir leurs connaissances et techniques. Les modules couvrent des aspects variés du métier, depuis les fondamentaux jusqu'aux tendances modernes et pratiques durables.",
+        code: "021",
+        level: "CAP",
+      },
     ];
     await prisma.formation.create({
       data: {
