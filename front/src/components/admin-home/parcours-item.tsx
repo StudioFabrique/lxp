@@ -4,7 +4,6 @@ import Parcours from "../../utils/interfaces/parcours";
 
 import defaultImage from "../../assets/images/books.jpeg";
 import { Eye } from "lucide-react";
-import { defaultUrlTransform } from "react-markdown";
 
 interface ParcoursItemProps {
   parcours: Parcours;
@@ -25,8 +24,6 @@ export default function ParcoursItem({ parcours }: ParcoursItemProps) {
       isInitialRender.current = false;
     }
   }, [parcours.thumb]);
-
-  console.log(bgImage);
 
   const classImage: React.CSSProperties = {
     backgroundImage: `url('${bgImage}')`,
