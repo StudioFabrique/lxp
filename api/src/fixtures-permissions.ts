@@ -104,9 +104,20 @@ const permDefs = {
     delete: [],
   },
   student: {
-    read: [],
+    read: [
+      "tag",
+      "user",
+      "group",
+      "formation",
+      "parcours",
+      "module",
+      "course",
+      "bonusSkill",
+      "lesson",
+      "profile",
+    ],
     write: [],
-    update: [],
+    update: ["profile"],
     delete: [],
   },
   bossTeacher: {
