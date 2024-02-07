@@ -22,8 +22,6 @@ const StudentHome = () => {
     sendRequest({ path: "/lesson/lastRead" }, applyData);
   }, [sendRequest]);
 
-  console.log({ lastLessons });
-
   return (
     <div className="flex flex-col gap-6 m-6">
       <div className="flex w-full justify-between">
