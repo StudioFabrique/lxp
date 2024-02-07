@@ -13,7 +13,10 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
       </h2>
       <div className="grid grid-cols-3 gap-2">
         {lastLessons.map((item) => (
-          <div className={`flex flex-col p-5 bg-secondary rounded-lg gap-10`}>
+          <div
+            key={item.id}
+            className={`flex flex-col p-5 bg-secondary rounded-lg gap-10`}
+          >
             <span>
               <p>{`Module: ${item.lesson.course.module.title}`}</p>
               <p>{`Cours: ${item.lesson.course.title}`}</p>

@@ -22,7 +22,7 @@ export default async function httpGetLastLessonsRead(
     }
 
     return res.status(201).json({
-      message: "La leçon a bien été marqué comme lu",
+      message: "Les dernière lecons lus ont été récupérées",
       data: response,
     });
   } catch (error: any) {

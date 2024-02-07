@@ -34,7 +34,7 @@ const FeaturesList = () => {
             </p>
             <ul className="mt-5 list-disc">
               {features.map((feature) => (
-                <li>{feature}</li>
+                <li key={feature}>{feature}</li>
               ))}
             </ul>
           </div>
@@ -42,7 +42,7 @@ const FeaturesList = () => {
             <p className="font-semibold text-white">Annonces</p>
             <ul className="mt-5 list-disc text-white">
               {announcements.map((announcement) => (
-                <li>{announcement}</li>
+                <li key={announcement}>{announcement}</li>
               ))}
             </ul>
           </div>
