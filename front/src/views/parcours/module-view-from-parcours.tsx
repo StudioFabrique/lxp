@@ -1,7 +1,7 @@
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import ImageHeader from "../../components/image-header";
 import HeaderMenu from "../../components/UI/header-menu";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 import Progression from "../../components/module-view-from-parcours/progression/progression";
@@ -19,6 +19,7 @@ import Tags from "../../components/module-view-from-parcours/tags";
  * Aperçu du module du point de vue de l'apprenant
  */
 const ModuleViewFromParcours = () => {
+  const { state } = useLocation();
   const { sendRequest, isLoading } = useHttp(true);
   const { moduleId } = useParams();
 
@@ -29,13 +30,21 @@ const ModuleViewFromParcours = () => {
   useEffect(() => {
     const applyData = (data: { data: Module }) => {
       setModuleData(data.data);
+
+      const lessonToSelect = data.data.courses
+        .map((course) => {
+          return course.lessons.find((lesson) => lesson.id === state.lessonId);
+        })
+        .filter((course) => course !== undefined)[0];
+
+      setSelectedLesson(lessonToSelect);
     };
 
     sendRequest(
       { path: `/modules/detail/${moduleId}`, method: "get" },
       applyData
     );
-  }, [moduleId, sendRequest]);
+  }, [moduleId, sendRequest, state.lessonId]);
 
   return isLoading ? (
     <Loader />

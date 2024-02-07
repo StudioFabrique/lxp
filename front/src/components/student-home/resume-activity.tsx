@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import ImageHeader from "../image-header";
 import { PlayCircleIcon } from "lucide-react";
 import LessonRead from "../../utils/interfaces/lesson-read";
@@ -9,6 +9,9 @@ type ResumeActivityProps = {
 };
 
 const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
+  const { pathname } = useLocation();
+  const currentRoute = pathname.split("/").slice(1) ?? [];
+
   return (
     <div className="flex gap-2">
       <ImageHeader
@@ -18,7 +21,11 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
         children={[
           <React.Fragment key="fragment"></React.Fragment>,
           <div key="link" className="p-5 w-full flex justify-end">
-            <Link to={``} className="z-20 btn btn-primary text-white flex">
+            <Link
+              to={`/${currentRoute}/parcours/module/${lastLesson.lesson.course.module.id}`}
+              state={{ lessonId: lastLesson.lesson.id }}
+              className="z-20 btn btn-primary text-white flex"
+            >
               <PlayCircleIcon />
               <p>Démarrer</p>
             </Link>
