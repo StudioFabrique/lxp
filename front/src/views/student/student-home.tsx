@@ -22,7 +22,7 @@ const StudentHome = () => {
     sendRequest({ path: "/lesson/lastRead" }, applyData);
   }, [sendRequest]);
 
-  console.log(lastLessons);
+  console.log({ lastLessons });
 
   return (
     <div className="flex flex-col gap-6 m-6">
@@ -44,9 +44,7 @@ const StudentHome = () => {
           {lastLessons && lastLessons?.length > 0 ? (
             <>
               <ResumeActivity lastLesson={lastLessons[0]} />
-              {lastLessons.splice(1).length > 0 && (
-                <ResumeActivities lastLessons={lastLessons.splice(1)} />
-              )}
+              <ResumeActivities lastLessons={lastLessons.splice(1)} />
             </>
           ) : (
             <p>Aucun contenus</p>
