@@ -31,20 +31,24 @@ const ModuleViewFromParcours = () => {
     const applyData = (data: { data: Module }) => {
       setModuleData(data.data);
 
-      const lessonToSelect = data.data.courses
-        .map((course) => {
-          return course.lessons.find((lesson) => lesson.id === state.lessonId);
-        })
-        .filter((course) => course !== undefined)[0];
+      if (state?.lessonId) {
+        const lessonToSelect = data.data.courses
+          .map((course) => {
+            return course.lessons.find(
+              (lesson) => lesson.id === state.lessonId
+            );
+          })
+          .filter((course) => course !== undefined)[0];
 
-      setSelectedLesson(lessonToSelect);
+        setSelectedLesson(lessonToSelect);
+      }
     };
 
     sendRequest(
       { path: `/modules/detail/${moduleId}`, method: "get" },
       applyData
     );
-  }, [moduleId, sendRequest, state.lessonId]);
+  }, [moduleId, sendRequest, state?.lessonId]);
 
   return isLoading ? (
     <Loader />

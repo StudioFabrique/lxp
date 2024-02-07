@@ -9,7 +9,7 @@ import LessonRead from "../../utils/interfaces/lesson-read";
 import RightSide from "../../components/student-home/right-side/right-side";
 
 const StudentHome = () => {
-  const { sendRequest } = useHttp(true);
+  const { sendRequest } = useHttp();
   const { user } = useContext(Context);
 
   const [lastLessons, setLastLessons] = useState<LessonRead[]>();
@@ -21,6 +21,8 @@ const StudentHome = () => {
 
     sendRequest({ path: "/lesson/lastRead" }, applyData);
   }, [sendRequest]);
+
+  console.log(lastLessons);
 
   return (
     <div className="flex flex-col gap-6 m-6">

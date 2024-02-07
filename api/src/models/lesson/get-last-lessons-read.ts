@@ -9,7 +9,10 @@ export default async function getLastLessonsRead(userIdMdb: string) {
           id: true,
           title: true,
           course: {
-            select: { title: true, module: { select: { title: true } } },
+            select: {
+              title: true,
+              module: { select: { id: true, title: true } },
+            },
           },
         },
       },
@@ -25,16 +28,21 @@ export default async function getLastLessonsRead(userIdMdb: string) {
       },
       include: {
         course: {
-          select: { title: true, module: { select: { title: true } } },
+          select: {
+            title: true,
+            module: { select: { id: true, title: true } },
+          },
         },
       },
     });
+
+    if (!lesson) return null;
 
     const lessonReformated = {
       lesson: { id: lesson?.id, title: lesson?.title, course: lesson?.course },
     };
 
-    return [lessonReformated];
+    return lessonReformated;
   }
 
   return lessons;
