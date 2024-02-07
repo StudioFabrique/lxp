@@ -3,19 +3,23 @@ import useHttp from "../../../hooks/use-http";
 import Loader from "../../UI/loader";
 import Lesson from "../../../utils/interfaces/lesson";
 import ActivityPreview from "./activity";
+import Module from "../../../utils/interfaces/module";
+import LessonRead from "../../../utils/interfaces/lesson-read";
 
 type PreviewLessonProps = {
   selectedLesson: Lesson;
   lessons: Lesson[];
   setSelectedLesson: Dispatch<SetStateAction<Lesson | undefined>>;
+  setModuleData: Dispatch<SetStateAction<Module | null>>;
 };
 
 const PreviewLesson = ({
   selectedLesson,
   lessons,
   setSelectedLesson,
+  setModuleData,
 }: PreviewLessonProps) => {
-  const { sendRequest, isLoading } = useHttp(true);
+  const { sendRequest, isLoading } = useHttp();
   const [lessonDetail, setLessonDetail] = useState<Lesson>();
 
   const switchToNextLesson = () => {
@@ -27,10 +31,30 @@ const PreviewLesson = ({
       );
   };
 
-  const handleReadLesson = () => {
-    const applyData = () => {
+  const handleFinishReadLesson = () => {
+    const applyData = (data: { data: LessonRead }) => {
+      setModuleData((previousModule) => {
+        if (!previousModule) return previousModule;
+        previousModule.courses.map((course) =>
+          course.lessons.map((lesson) => {
+            if (
+              lesson.id === lessonDetail?.id &&
+              lesson.lessonsRead &&
+              !(lesson.lessonsRead.length > 0)
+            )
+              lesson.lessonsRead?.push(data.data);
+
+            return lesson;
+          })
+        );
+
+        return previousModule;
+      });
+
       switchToNextLesson();
     };
+
+    console.log(selectedLesson.id);
 
     sendRequest(
       { path: `/lesson/read/${selectedLesson.id}`, method: "put" },
@@ -46,6 +70,16 @@ const PreviewLesson = ({
     sendRequest({ path: `/lesson/${selectedLesson.id}` }, applyData);
   }, [selectedLesson.id, sendRequest]);
 
+  useEffect(() => {
+    const applyData = () => {};
+
+    if (selectedLesson.lessonsRead && !(selectedLesson.lessonsRead?.length > 0))
+      sendRequest(
+        { path: `/lesson/read/${selectedLesson.id}`, method: "post" },
+        applyData
+      );
+  }, [selectedLesson.id, selectedLesson.lessonsRead, sendRequest]);
+
   return isLoading ? (
     <Loader />
   ) : (
@@ -59,7 +93,7 @@ const PreviewLesson = ({
       )}
       <button
         className="btn btn-primary text-white self-end"
-        onClick={handleReadLesson}
+        onClick={handleFinishReadLesson}
       >
         Leçon Suivante
       </button>

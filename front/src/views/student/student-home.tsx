@@ -1,43 +1,51 @@
-import { useContext } from "react";
-
+import { useContext, useEffect, useState } from "react";
 import { Context } from "../../store/context.store";
-import { useNavigate } from "react-router-dom";
+import UserTopBar from "../../components/UI/user-top-bar/user-top-bar";
+import Notifications from "../../components/student-home/notifications";
+import ResumeActivity from "../../components/student-home/resume-activity";
+import ResumeActivities from "../../components/student-home/resume-activities";
+import useHttp from "../../hooks/use-http";
+import LessonRead from "../../utils/interfaces/lesson-read";
 
 const StudentHome = () => {
-  const { logout } = useContext(Context);
+  const { sendRequest } = useHttp(true);
+  const { user } = useContext(Context);
 
-  const logoutHandler = () => {
-    logout();
-  };
+  const [lastCourses, setLastCourses] = useState<LessonRead[]>();
 
-  const navigateTo = useNavigate();
+  useEffect(() => {
+    const applyData = (data: { data: LessonRead[] }) => {
+      setLastCourses(data.data);
+    };
+
+    sendRequest({ path: "/lesson/lastRead" }, applyData);
+  }, [sendRequest]);
+
+  console.log(lastCourses);
 
   return (
-    <div className="w-full flex flex-col gap-4 items-center mt-8">
-      <p className="w-fit">
-        Bienvenue sur l'interface des apprenants, lieu où il fait bon
-        apprendre...
-      </p>
-      <button
-        type="button"
-        className="btn btn-primary"
-        onClick={() => navigateTo("parcours")}
-      >
-        Interface Parcours
-      </button>
-      <button
-        type="button"
-        className="btn btn-primary"
-        onClick={() => navigateTo("profil")}
-      >
-        Profil Utilisateur
-      </button>
-      <button
-        className="w-fit btn btn-primary btn-outline"
-        onClick={logoutHandler}
-      >
-        Déconnexion
-      </button>
+    <div className="flex flex-col gap-6 m-6">
+      <div className="flex w-full justify-between">
+        <span className="mt-5">
+          <h1 className="font-bold text-2xl">{`Bonjour, ${user?.firstname} ${user?.lastname} !`}</h1>
+          <p>
+            Bienvenue dans votre espace. Commencez votre apprentissage ou
+            reprenez là où vous avez arrêté
+          </p>
+        </span>
+        <span>
+          <UserTopBar />
+        </span>
+      </div>
+      <div className="grid grid-cols-3">
+        <div className="col-span-2 flex flex-col gap-4">
+          <Notifications />
+          {/* <ResumeActivity />
+          <ResumeActivities /> */}
+        </div>
+
+        <div className="flex flex-col gap-4"></div>
+      </div>
     </div>
   );
 };

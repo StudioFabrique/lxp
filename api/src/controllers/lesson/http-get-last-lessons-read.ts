@@ -1,9 +1,10 @@
 import { Response } from "express";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { badQuery, serverIssue } from "../../utils/constantes";
-import putReadLesson from "../../models/lesson/put-read-lesson";
 
-export default async function httpPutReadLesson(
+import { badQuery, serverIssue } from "../../utils/constantes";
+import getLastLessonsRead from "../../models/lesson/get-last-lessons-read";
+
+export default async function httpGetLastLessonsRead(
   req: CustomRequest,
   res: Response
 ) {
@@ -14,9 +15,7 @@ export default async function httpPutReadLesson(
   }
 
   try {
-    const { lessonId } = req.params;
-
-    const response = await putReadLesson(+lessonId, userId);
+    const response = await getLastLessonsRead(userId);
 
     if (!response) {
       return res.status(404).json({ message: "Leçon non trouvé" });
@@ -24,6 +23,7 @@ export default async function httpPutReadLesson(
 
     return res.status(201).json({
       message: "La leçon a bien été marqué comme lu",
+      data: response,
     });
   } catch (error: any) {
     return res

@@ -20,14 +20,12 @@ const Progression = ({
       (sum, course) =>
         sum +
         course.lessons.reduce(
-          (sum, lesson) => sum + (lesson.readBy?.length || 0),
+          (sum, lesson) => sum + (lesson?.lessonsRead?.length || 0),
           0
         ) /
           course.lessons.length,
       0
     ) / courses.length;
-
-  console.log({ moduleProgress });
 
   const radialStyle = {
     "--value": moduleProgress * 100,
@@ -39,12 +37,14 @@ const Progression = ({
         <h2 className="text-xl font-bold w-28 text-primary">
           Progression du module
         </h2>
-        <div
-          className="radial-progress bg-secondary text-primary"
-          style={radialStyle}
-        >
-          {moduleProgress * 100}%
-        </div>
+        {courses.length > 0 && (
+          <div
+            className="radial-progress bg-secondary text-primary"
+            style={radialStyle}
+          >
+            {Math.round(moduleProgress * 100)}%
+          </div>
+        )}
       </div>
       <div className="flex flex-col items-center gap-5">
         {courses.length > 0 ? (
