@@ -12,7 +12,7 @@ tagRouter.get("/", checkPermissions("tag"), httpGetAllTags);
 tagRouter.post(
   "/",
   checkPermissions("tag"),
-  postManyTagsValidator,
+
   httpPostManyTags
 );
 

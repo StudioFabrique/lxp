@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Tag from "../utils/interfaces/tag";
 import { createTag } from "../helpers/create-tag";
 
@@ -11,6 +11,10 @@ const useTags = (initialTags: Tag[]) => {
     setTag(event.currentTarget.value);
   };
 
+  /**
+   * met à jour la liste des tags sélectionnés
+   * @param event: React.FormEvent
+   */
   const handleTagSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     const exisitingTag = notSelected.find(
@@ -55,22 +59,15 @@ const useTags = (initialTags: Tag[]) => {
   };
 
   const updatedTags = (newTags: Tag[]) => {
-    let updatedTags = Array<Tag>();
-    let updatedCurrentTags = currentTags;
-
+    let updatedTags = currentTags;
     newTags.forEach((item) => {
-      if (
-        currentTags.find(
-          (elem) => elem.name.toLowerCase() === item.name.toLowerCase()
-        )
-      ) {
-        updatedTags = [...updatedTags, item];
-        updatedCurrentTags = updatedCurrentTags.filter(
-          (elem) => elem.name.toLowerCase() !== item.name.toLowerCase()
-        );
-      }
+      updatedTags = updatedTags.filter(
+        (elem) => elem.name.toLowerCase() !== item.name.toLowerCase()
+      );
     });
-    return [...updatedTags, ...currentTags];
+    console.log("toto", [...updatedTags, ...currentTags]);
+
+    return [...updatedTags, ...newTags];
   };
 
   useEffect(() => {
