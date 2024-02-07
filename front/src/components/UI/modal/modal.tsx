@@ -1,11 +1,11 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 
 const Modal: FC<{
   onLeftClick?: () => void;
   onRightClick: () => void;
   title: string;
-  message: string;
+  children: ReactNode;
   leftLabel?: string;
   rightLabel: string;
   isSubmitting?: boolean;
@@ -19,7 +19,7 @@ const Modal: FC<{
     <dialog id="my_modal_4" className="modal modal-open">
       <div className="modal-box">
         <h3 className="font-bold text-lg">{props.title}</h3>
-        <p className="py-4">{props.message}</p>
+        {props.children}
         <div className="modal-action">
           {/* if there is a button, it will close the modal */}
           <button

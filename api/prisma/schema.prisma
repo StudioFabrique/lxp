@@ -35,6 +35,8 @@ model Formation {
   parcours    Parcours[]
   tags        TagsOnFormation[]
   modules     ModulesOnFormation[]
+  admin       Admin                @relation(fields: [adminId], references: [id])
+  adminId     Int
 }
 
 model Parcours {
@@ -130,13 +132,14 @@ model BonusSkill {
 }
 
 model Admin {
-  id         Int        @id @default(autoincrement())
+  id         Int         @id @default(autoincrement())
   idMdb      String
   parcours   Parcours[]
   modules    Module[]
   lessons    Lesson[]
   activities Activity[]
   courses    Course[]
+  formation  Formation[]
 }
 
 model Teacher {

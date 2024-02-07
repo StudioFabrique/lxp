@@ -304,7 +304,7 @@ async function createFormation() {
         level: "bac + 2",
       },
       {
-        title: "Concepteur Développeur d'Application",
+        title: "Concepteur Développeur d'Applications",
         description:
           "Toutes les compétences pour concevoir et développer des applications.",
         code: "014",
@@ -321,6 +321,7 @@ async function createFormation() {
     await prisma.formation.create({
       data: {
         ...newFormations[0],
+        adminId: 1,
         tags: {
           create: tags1Dw.map((item: number) => {
             return {
@@ -333,6 +334,7 @@ async function createFormation() {
     await prisma.formation.create({
       data: {
         ...newFormations[1],
+        adminId: 1,
         tags: {
           create: tagsCDA.map((item: number) => {
             return {
@@ -352,6 +354,7 @@ async function createFormation() {
             };
           }),
         },
+        adminId: 1,
       },
     });
   } catch (error) {
