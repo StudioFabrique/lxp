@@ -9,7 +9,7 @@ import LessonRead from "../../utils/interfaces/lesson-read";
 import RightSide from "../../components/student-home/right-side/right-side";
 
 const StudentHome = () => {
-  const { sendRequest } = useHttp(true);
+  const { sendRequest } = useHttp();
   const { user } = useContext(Context);
 
   const [lastLessons, setLastLessons] = useState<LessonRead[]>();
@@ -36,8 +36,8 @@ const StudentHome = () => {
           <UserTopBar />
         </span>
       </div>
-      <div className="grid grid-cols-3">
-        <div className="col-span-2 flex flex-col gap-5">
+      <div className="grid grid-cols-4">
+        <div className="col-span-3 flex flex-col gap-5">
           <Notifications />
           {lastLessons && lastLessons?.length > 0 ? (
             <>
@@ -45,7 +45,7 @@ const StudentHome = () => {
               <ResumeActivities lastLessons={lastLessons.splice(1)} />
             </>
           ) : (
-            <p>Aucun activités commencé recemment</p>
+            <p>Aucun contenus</p>
           )}
           <div>
             <h2 className="font-bold text-xl">Mon emploi du temps</h2>
