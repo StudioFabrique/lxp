@@ -54,8 +54,8 @@ async function createUser() {
     address: "12 place royale",
     postCode: "64000",
     city: "pau",
-    email: "toto@toto.fr",
-    nickname: "gandalf",
+    email: "admin@studio.eco",
+    nickname: "studio",
     password: hash,
     roles: [new Object(role!._id)],
     isActive: true,
@@ -66,12 +66,12 @@ async function createUser() {
 
   let role2 = await Role.findOne({ role: "teacher" });
   const newTeacher = new User({
-    firstname: "bob",
+    firstname: "raymond",
     lastname: "dupont",
     address: "12 place royale",
     postCode: "64000",
     city: "pau",
-    email: "titi@toto.fr",
+    email: "formateur@studio.eco",
     password: hash,
     roles: [new Object(role2!._id)],
     isActive: true,
@@ -83,11 +83,11 @@ async function createUser() {
   role = await Role.findOne({ role: "student" });
   const newStudent = new User({
     firstname: "jacqueline",
-    lastname: "dupond",
+    lastname: "fillipini",
     address: "14 bvd olga ducresnes",
     postCode: "64000",
     city: "pau",
-    email: "test@toto.fr",
+    email: "apprenant@studio.eco",
     password: hash,
     roles: [new Object(role!._id)],
     isActive: true,
