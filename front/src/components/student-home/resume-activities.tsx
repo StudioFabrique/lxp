@@ -10,6 +10,8 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
 
+  console.log({ lastLessons });
+
   return (
     <div className="flex flex-col gap-4">
       <h2 className="font-bold text-xl">

@@ -42,7 +42,7 @@ export default async function getLastLessonsRead(userIdMdb: string) {
       lesson: { id: lesson?.id, title: lesson?.title, course: lesson?.course },
     };
 
-    return lessonReformated;
+    return [lessonReformated];
   }
 
   return lessons;
