@@ -32,7 +32,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
           </div>,
         ]}
       />
-      <div className="grid grid-rows-4 gap-2">
+      <div className="text-primary grid grid-rows-4 gap-2">
         <span className="bg-secondary rounded-lg p-2 text-center">
           <p>Diplôme</p>
           <p>Bac +3</p>
