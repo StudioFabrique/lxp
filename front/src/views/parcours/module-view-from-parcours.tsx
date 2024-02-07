@@ -37,6 +37,8 @@ const ModuleViewFromParcours = () => {
     );
   }, [moduleId, sendRequest]);
 
+  console.log(moduleData);
+
   return isLoading ? (
     <Loader />
   ) : (

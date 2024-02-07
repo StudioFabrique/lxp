@@ -1,15 +1,16 @@
-import { prisma } from "../utils/db";
+import { prisma } from "./utils/db";
 import dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
-import User from "../utils/interfaces/db/user";
-import Role from "../utils/interfaces/db/role";
-import Group from "../utils/interfaces/db/group";
+import User from "./utils/interfaces/db/user";
+import Role from "./utils/interfaces/db/role";
+import Group from "./utils/interfaces/db/group";
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
 
 mongoose.connection.once("open", () => {
   console.log("MongoDB connection ready!");
+  console.log(MONGO_URL);
 });
 
 mongoose.connection.on("error", (err) => {
@@ -314,6 +315,27 @@ async function createFormation() {
   }
 }
 
+async function createParcours() {
+  try {
+    await prisma.parcours.create({
+      data: {
+        title: "Parcours Test 1",
+        formation: {
+          connect: {
+            id: 1,
+          },
+        },
+        author: "jacques durand",
+        admin: {
+          connect: { id: 1 },
+        },
+      },
+    });
+  } catch (error: any) {
+    console.log(error);
+  }
+}
+
 /* async function createModules() {
   const modules = modulesList.map((item: string) => ({
     title: item,
@@ -348,6 +370,7 @@ async function loadFixtures() {
   await createFormation();
   await createSqlGroups();
   await createSqlContacts();
+  await createParcours();
   //await createModules();
   //await createModulesOnFormation();
   await disconnect();

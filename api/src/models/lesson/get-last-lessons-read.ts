@@ -4,4 +4,6 @@ export default async function getLastLessonsRead(userIdMdb: string) {
     orderBy: { beganAt: "desc" },
     take: 4,
   });
+
+  return lessons;
 }
