@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
 import ImageHeader from "../image-header";
 import { PlayCircleIcon } from "lucide-react";
 import LessonRead from "../../utils/interfaces/lesson-read";
@@ -8,6 +9,9 @@ type ResumeActivityProps = {
 };
 
 const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
+  const { pathname } = useLocation();
+  const currentRoute = pathname.split("/").slice(1) ?? [];
+
   return (
     <div className="flex gap-2">
       <ImageHeader
@@ -15,16 +19,20 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
         title={`Module: ${lastLesson.lesson.course.module.title}`}
         subTitle={`Cours: ${lastLesson.lesson.course.title}`}
         children={[
-          <></>,
-          <div className="p-5 w-full flex justify-end">
-            <Link to={``} className="z-20 btn btn-primary text-white flex">
+          <React.Fragment key="fragment"></React.Fragment>,
+          <div key="link" className="p-5 w-full flex justify-end">
+            <Link
+              to={`/${currentRoute}/parcours/module/${lastLesson.lesson.course.module.id}`}
+              state={{ lessonId: lastLesson.lesson.id }}
+              className="z-20 btn btn-primary text-white flex"
+            >
               <PlayCircleIcon />
               <p>Démarrer</p>
             </Link>
           </div>,
         ]}
       />
-      <div className="grid grid-rows-4 gap-2">
+      <div className="text-primary grid grid-rows-4 gap-2">
         <span className="bg-secondary rounded-lg p-2 text-center">
           <p>Diplôme</p>
           <p>Bac +3</p>
