@@ -34,10 +34,10 @@ const SidebarBottom = ({ interfaceType, onLogout }: SharedSideBarProps) => {
 
       <li className="w-5 h-10" />
 
-      <li className="absolute bottom-2 left-[10px]">
+      <li className="absolute bottom-4 left-[14px]">
         <Link
           to={`/${interfaceType}/profil`}
-          className="btn text-white p-0 rounded-lg h-[30px] w-[45px] tooltip tooltip-right"
+          className="text-white p-0 rounded-lg h-[35px] w-[35px] tooltip tooltip-right"
           data-tip="Profil"
         >
           <img
