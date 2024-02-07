@@ -3,7 +3,13 @@ export default async function getLastLessonsRead(userIdMdb: string) {
     where: { student: { idMdb: userIdMdb } },
     include: {
       lesson: {
-        select: { id: true, title: true, course: { select: { title: true } } },
+        select: {
+          id: true,
+          title: true,
+          course: {
+            select: { title: true, module: { select: { title: true } } },
+          },
+        },
       },
     },
     orderBy: { beganAt: "desc" },

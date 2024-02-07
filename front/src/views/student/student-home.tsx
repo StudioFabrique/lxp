@@ -6,28 +6,27 @@ import ResumeActivity from "../../components/student-home/resume-activity";
 import ResumeActivities from "../../components/student-home/resume-activities";
 import useHttp from "../../hooks/use-http";
 import LessonRead from "../../utils/interfaces/lesson-read";
+import RightSide from "../../components/student-home/right-side/right-side";
 
 const StudentHome = () => {
   const { sendRequest } = useHttp(true);
   const { user } = useContext(Context);
 
-  const [lastCourses, setLastCourses] = useState<LessonRead[]>();
+  const [lastLessons, setLastLessons] = useState<LessonRead[]>();
 
   useEffect(() => {
     const applyData = (data: { data: LessonRead[] }) => {
-      setLastCourses(data.data);
+      setLastLessons(data.data);
     };
 
     sendRequest({ path: "/lesson/lastRead" }, applyData);
   }, [sendRequest]);
 
-  console.log(lastCourses);
-
   return (
     <div className="flex flex-col gap-6 m-6">
       <div className="flex w-full justify-between">
         <span className="mt-5">
-          <h1 className="font-bold text-2xl">{`Bonjour, ${user?.firstname} ${user?.lastname} !`}</h1>
+          <h1 className="font-bold text-3xl">{`Bonjour, ${user?.firstname} ${user?.lastname} !`}</h1>
           <p>
             Bienvenue dans votre espace. Commencez votre apprentissage ou
             reprenez là où vous avez arrêté
@@ -38,13 +37,21 @@ const StudentHome = () => {
         </span>
       </div>
       <div className="grid grid-cols-3">
-        <div className="col-span-2 flex flex-col gap-4">
+        <div className="col-span-2 flex flex-col gap-5">
           <Notifications />
-          {/* <ResumeActivity />
-          <ResumeActivities /> */}
+          {lastLessons && lastLessons?.length > 0 ? (
+            <>
+              <ResumeActivity lastLesson={lastLessons[0]} />
+              <ResumeActivities lastLessons={lastLessons.splice(1)} />
+            </>
+          ) : (
+            <p>Aucun activités commencé recemment</p>
+          )}
+          <div>
+            <h2 className="font-bold text-xl">Mon emploi du temps</h2>
+          </div>
         </div>
-
-        <div className="flex flex-col gap-4"></div>
+        <RightSide />
       </div>
     </div>
   );
