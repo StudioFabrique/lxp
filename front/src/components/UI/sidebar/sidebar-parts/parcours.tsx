@@ -25,7 +25,7 @@ const Parcours = ({ currentRoute }: { currentRoute: string[] }) => {
           <RocketIcon />
         </Link>
 
-        <MotionSidebarWrapper isHover={isHover}>
+        <MotionSidebarWrapper isHover={currentRoute[0] === "admin" && isHover}>
           <Can action="write" object="parcours">
             <Link to={`/${currentRoute[0]}/parcours/créer-un-parcours`}>
               <div
