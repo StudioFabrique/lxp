@@ -5,14 +5,23 @@ import Notifications from "../../components/student-home/notifications";
 import ResumeActivity from "../../components/student-home/resume-activity";
 import ResumeActivities from "../../components/student-home/resume-activities";
 import useHttp from "../../hooks/use-http";
+import LessonRead from "../../utils/interfaces/lesson-read";
 
 const StudentHome = () => {
   const { sendRequest } = useHttp(true);
   const { user } = useContext(Context);
 
-  const [,] = useState();
+  const [lastCourses, setLastCourses] = useState<LessonRead[]>();
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const applyData = (data: { data: LessonRead[] }) => {
+      setLastCourses(data.data);
+    };
+
+    sendRequest({ path: "/lesson/lastRead" }, applyData);
+  }, [sendRequest]);
+
+  console.log(lastCourses);
 
   return (
     <div className="flex flex-col gap-6 m-6">

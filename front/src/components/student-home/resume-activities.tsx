@@ -4,7 +4,7 @@ type ResumeActivitiesProps = {
   courses: Course[];
 };
 
-const ResumeActivities = ({ courses }: ResumeActivitiesProps) => {
+const ResumeActivities = ({ lastCourses }: ResumeActivitiesProps) => {
   return (
     <div>
       <h2 className="font-bold">

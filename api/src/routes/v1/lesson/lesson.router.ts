@@ -14,6 +14,7 @@ import httpDeleteLesson from "../../../controllers/lesson/http-delete-lesson";
 import httpPutReorderLessons from "../../../controllers/lesson/http-put-reorder-lessons";
 import httpPostBeginReadLesson from "../../../controllers/lesson/http-post-begin-read-lesson";
 import httpPutFinishReadLesson from "../../../controllers/lesson/http-put-finish-read-lesson";
+import httpGetLastLessonsRead from "../../../controllers/lesson/http-get-last-lessons-read";
 
 const lessonRouter = express.Router();
 
@@ -30,6 +31,12 @@ lessonRouter.get(
 
 // retourne la liste de toutes les leçons
 lessonRouter.get("/", checkPermissions("lesson"), httpGetLessonsList);
+
+lessonRouter.get(
+  "/lastRead",
+  checkPermissions("lesson"),
+  httpGetLastLessonsRead
+);
 
 // retourne une leçon en particulier identifiée par son ID
 lessonRouter.get("/:lessonId", checkPermissions("lesson"), httpGetLessonDetail);
