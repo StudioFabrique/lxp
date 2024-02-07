@@ -1,13 +1,16 @@
 import { Request, Response } from "express";
-import getLessonsStats from "../../models/stats/get-lessons-stats";
 import { serverIssue } from "../../utils/constantes";
+import getAllFormations from "../../models/formation/get-all-formations";
 
-export default async function httpGetLessonsStats(req: Request, res: Response) {
+export default async function httpGetAllFormations(
+  _req: Request,
+  res: Response
+) {
   try {
-    const response = await getLessonsStats();
+    const response = await getAllFormations();
     return res.status(200).json({
-      message: response.length === 0 ? "Aucune stats pour les leçons." : "",
       success: true,
+      message: response.length === 0 ? "Liste vide." : "",
       response,
     });
   } catch (error: any) {
