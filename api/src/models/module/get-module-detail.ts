@@ -22,7 +22,7 @@ export default async function getModuleDetail(
           id: true,
           title: true,
           description: true,
-          lessons: true,
+          lessons: { include: { lessonsRead: { include: { student: true } } } },
         },
       },
     },
@@ -35,7 +35,11 @@ export default async function getModuleDetail(
 
   const courses = existingModule.courses.map((course) => {
     course.lessons = course.lessons.map((lesson) => {
-      lesson.readBy = lesson.readBy.includes(userMongoId) ? [userMongoId] : [];
+      lesson.lessonsRead = lesson.lessonsRead.filter(
+        (lessonRead) =>
+          lessonRead.student.idMdb === userMongoId && lessonRead.finishedAt
+      );
+
       return lesson;
     });
 
