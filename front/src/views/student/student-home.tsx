@@ -42,10 +42,12 @@ const StudentHome = () => {
           {lastLessons && lastLessons?.length > 0 ? (
             <>
               <ResumeActivity lastLesson={lastLessons[0]} />
-              <ResumeActivities lastLessons={lastLessons.splice(1)} />
+              {lastLessons.splice(1).length > 0 && (
+                <ResumeActivities lastLessons={lastLessons.splice(1)} />
+              )}
             </>
           ) : (
-            <p>Aucun activités commencé recemment</p>
+            <p>Aucun contenus</p>
           )}
           <div>
             <h2 className="font-bold text-xl">Mon emploi du temps</h2>
