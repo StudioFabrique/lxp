@@ -47,14 +47,14 @@ lessonRouter.put(
 
 lessonRouter.post(
   "/read/:lessonId",
-  checkPermissions("lesson"),
+  checkPermissions("lesson", "read"),
   httpPostBeginReadLesson
 );
 
 // ajoute un "vu" à la leçon en ajoutant l'id de l'utilisateur connecté
 lessonRouter.put(
   "/read/:lessonId",
-  checkPermissions("lesson"),
+  checkPermissions("lesson", "read"),
   httpPutFinishReadLesson
 );
 

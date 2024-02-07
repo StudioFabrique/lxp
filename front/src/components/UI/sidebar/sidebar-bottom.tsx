@@ -12,6 +12,8 @@ type SharedSideBarProps = {
 const SidebarBottom = ({ interfaceType, onLogout }: SharedSideBarProps) => {
   const { user } = useContext(Context);
 
+  console.log({ pictureAvatar: user?.avatar });
+
   return (
     <ul className="flex flex-col gap-y-4">
       <li

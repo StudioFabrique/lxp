@@ -129,16 +129,6 @@ model BonusSkill {
   courses     BonusSkillOnCourse[]
 }
 
-model LessonRead {
-  id         Int        @id @default(autoincrement())
-  beganAt    DateTime   @default(now())
-  finishedAt DateTime?
-  lesson     Lesson     @relation(fields: [lessonId], references: [id])
-  lessonId   Int
-  student    Student    @relation(fields: [studentId], references: [id])
-  studentId  Int
-}
-
 model Student {
   id          Int        @id @default(autoincrement())
   idMdb       String
@@ -243,6 +233,16 @@ model Objective {
 
 //@@id([lessonId, courseId])
 //}
+
+model LessonRead {
+  id         Int        @id @default(autoincrement())
+  beganAt    DateTime   @default(now())
+  finishedAt DateTime?
+  lesson     Lesson     @relation(fields: [lessonId], references: [id])
+  lessonId   Int
+  student    Student    @relation(fields: [studentId], references: [id])
+  studentId  Int
+}
 
 model ContactsOnParcours {
   parcours   Parcours @relation(fields: [parcoursId], references: [id])
