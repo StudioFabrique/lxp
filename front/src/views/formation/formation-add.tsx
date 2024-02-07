@@ -49,6 +49,8 @@ export default function FormationAdd() {
     code: string,
     tags: Tag[]
   ) => {
+    console.log(tags);
+
     const applyData = (data: {
       success: boolean;
       message: string;

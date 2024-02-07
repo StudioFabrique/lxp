@@ -7,12 +7,12 @@ import { postFormationSchema } from "../../lib/validation/post-formation-schema"
 import { ZodError } from "zod";
 import { validationErrors } from "../../helpers/validate";
 import toast from "react-hot-toast";
-import TagItem from "../UI/tag-item/tag-item";
 import useTags from "../../hooks/use-tags";
 import AddTag from "../UI/add-tag";
 import Modal from "../UI/modal/modal";
 import { useState } from "react";
 import useHttp from "../../hooks/use-http";
+import TagsList from "./tags-list";
 
 interface FormationAddFormProps {
   initialTags: Tag[];
@@ -42,6 +42,7 @@ export default function FormationAddForm({
     handleRemoveTag,
     handleTagSubmit,
     resetTags,
+    updatedTags,
   } = useTags(initialTags);
   const [showModal, setShowModal] = useState(false);
   const [newTags, setNewTags] = useState<Tag[]>([]);
@@ -52,16 +53,16 @@ export default function FormationAddForm({
     errors,
   };
 
-  /**
-   * met à jour la liste des tags sélectionnés
-   * @param tags Tag[]
-   */
+  const handleSubmit = (tags: Tag[]) => {
+    // envoi des données saisies vers le composant parent pour les soumettre au backend
+    onSubmit(values.title, values.description, values.code, values.level, tags);
+  };
 
   /**
    * Validation et soumission des données du formulaire
    * @param event React.FOrmEvent
    */
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleValidate = (event: React.FormEvent) => {
     event.preventDefault();
     //validation du formulaire
     try {
@@ -80,16 +81,11 @@ export default function FormationAddForm({
       return;
     }
     setNewTags(handleCheckTags());
-    if (newTags.length > 0) setShowModal(true);
-
-    // envoi des données saisies vers le composant parent pour les soumettre au backend
-    /*     onSubmit(
-      values.title,
-      values.description,
-      values.code,
-      values.level,
-      currentTags
-    ); */
+    if (newTags.length > 0) {
+      setShowModal(true);
+    } else {
+      handleSubmit(currentTags);
+    }
   };
 
   /*   const handleReset = () => {
@@ -100,25 +96,28 @@ export default function FormationAddForm({
   const handleSubmitNewTags = () => {
     const applyData = (data: Tag[]) => {
       onNewTags(data);
+      const tags = updatedTags(data);
+      console.log({ tags });
+
+      onSubmit(
+        values.title,
+        values.description,
+        values.code,
+        values.level,
+        tags
+      );
     };
     sendRequest(
       {
         path: "/tag",
         method: "post",
+        body: {
+          tags: newTags.map((item) => ({ name: item.name, color: item.color })),
+        },
       },
       applyData
     );
   };
-
-  const tagsList = (
-    <ul className="flex flex-wrap gap-2">
-      {currentTags.map((item) => (
-        <li key={item.id} onClick={() => handleRemoveTag(item.id)}>
-          <TagItem tag={item} />
-        </li>
-      ))}
-    </ul>
-  );
 
   return (
     <>
@@ -153,13 +152,13 @@ export default function FormationAddForm({
         onSubmit={handleTagSubmit}
       />
 
-      {tagsList}
+      <TagsList tagsList={currentTags} onRemove={handleRemoveTag} />
 
       <div className="w-full flex justify-between">
         <button className="btn btn-outline btn-primary" onClick={() => {}}>
           Annuler
         </button>
-        <button className="btn btn-primary" onClick={handleSubmit}>
+        <button className="btn btn-primary" onClick={handleValidate}>
           Sauvegarder
         </button>
       </div>
@@ -169,13 +168,13 @@ export default function FormationAddForm({
           leftLabel="Annuler"
           onLeftClick={() => setShowModal(false)}
           rightLabel="Sauvegarder"
-          onRightClick={() => {}}
+          onRightClick={handleSubmitNewTags}
         >
           <p className="my-4">
             Les tags suivant n'existent pas encore, souhaitez vous les
             sauvegarder ?
           </p>
-          {tagsList}
+          <TagsList tagsList={newTags} />
         </Modal>
       ) : null}
     </>
