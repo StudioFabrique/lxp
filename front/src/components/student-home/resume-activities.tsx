@@ -1,11 +1,15 @@
 import { ArrowUpRightIcon } from "lucide-react";
 import LessonRead from "../../utils/interfaces/lesson-read";
+import { Link, useLocation } from "react-router-dom";
 
 type ResumeActivitiesProps = {
   lastLessons: LessonRead[];
 };
 
 const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
+  const { pathname } = useLocation();
+  const currentRoute = pathname.split("/").slice(1) ?? [];
+
   return (
     <div className="flex flex-col gap-4">
       <h2 className="font-bold text-xl">
@@ -23,7 +27,12 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
             </span>
             <span className="flex justify-between">
               <p>{item.lesson.title}</p>
-              <ArrowUpRightIcon />
+              <Link
+                to={`/${currentRoute}/parcours/module/${item.lesson.course.module.id}`}
+                state={{ lessonId: item.lesson.id }}
+              >
+                <ArrowUpRightIcon />
+              </Link>
             </span>
           </div>
         ))}

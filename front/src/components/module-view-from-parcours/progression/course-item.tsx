@@ -27,6 +27,8 @@ const CourseItem = ({
   useEffect(() => {
     if (selectedLesson && course.lessons.includes(selectedLesson)) {
       setCourseOpen(true);
+    } else {
+      setCourseOpen(false);
     }
   }, [course.lessons, selectedLesson]);
 
