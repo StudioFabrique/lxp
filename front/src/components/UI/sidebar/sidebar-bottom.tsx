@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import ModeToggle from "../mode-toggle";
 import { useContext } from "react";
 import { Context } from "../../../store/context.store";
+import imageProfileReplacement from "../../../config/image-profile-replacement";
 
 type SharedSideBarProps = {
   interfaceType: string;
@@ -43,7 +44,9 @@ const SidebarBottom = ({ interfaceType, onLogout }: SharedSideBarProps) => {
         >
           <img
             className="h-full w-full rounded-lg object-cover"
-            src={`data:image/jpeg;base64,${user?.avatar}`}
+            src={`data:image/jpeg;base64,${
+              user?.avatar ?? imageProfileReplacement
+            }`}
             alt="User Avatar"
           />
         </Link>
