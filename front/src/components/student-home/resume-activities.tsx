@@ -1,21 +1,27 @@
-import Course from "../../utils/interfaces/course";
+import { ArrowUpRightIcon } from "lucide-react";
+import LessonRead from "../../utils/interfaces/lesson-read";
 
 type ResumeActivitiesProps = {
-  courses: Course[];
+  lastLessons: LessonRead[];
 };
 
-const ResumeActivities = ({ lastCourses }: ResumeActivitiesProps) => {
+const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
   return (
-    <div>
-      <h2 className="font-bold">
+    <div className="flex flex-col gap-4">
+      <h2 className="font-bold text-xl">
         Reprendre mes activités là où je m'étais arrêté
       </h2>
-      <div className="">
-        {courses.map((course) => (
-          <div>
-            <p>{course.module.title}</p>
-            <p>{course.title}</p>
-            <p></p>
+      <div className="grid grid-cols-3 gap-2">
+        {lastLessons.map((item) => (
+          <div className={`flex flex-col p-5 bg-secondary rounded-lg gap-10`}>
+            <span>
+              <p>{`Module: ${item.lesson.course.module.title}`}</p>
+              <p>{`Cours: ${item.lesson.course.title}`}</p>
+            </span>
+            <span className="flex justify-between">
+              <p>{item.lesson.title}</p>
+              <ArrowUpRightIcon />
+            </span>
           </div>
         ))}
       </div>
