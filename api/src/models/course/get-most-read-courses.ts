@@ -32,12 +32,26 @@ export default async function getMostReadCourses(
   ORDER BY lessonReadCount
   LIMIT ${max}`;
 
-  // code to avoid the problem "do not know how to serialize a bigint"
-  const coursesReformated: Course[] = courses.map((course: any) => {
-    const { lessonreadcount, ...courseReformated } = course;
+  // code to add module id,lesson id and to avoid the problem "do not know how to serialize a bigint"
+  const coursesReformated: Course[] = await Promise.all(
+    courses.map(async (course: any) => {
+      const { lessonreadcount, moduleId, ...courseReformated } = course;
 
-    return courseReformated;
-  });
+      const lessonId = (
+        await prisma?.lesson.findFirst({
+          select: { id: true },
+          where: { courseId: courseReformated.id },
+          orderBy: { order: "asc" },
+        })
+      )?.id;
+
+      return {
+        module: { id: moduleId },
+        lessons: [{ id: lessonId }],
+        ...courseReformated,
+      };
+    })
+  );
 
   return coursesReformated;
 }
