@@ -21,7 +21,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
   const handleCloseDrawer = (id: string) => {
     document.getElementById(id)?.click();
   };
-  const [currentItems, setCurrentItems] = useState<any[]>(props.selectedItems);
+  const [currentItems, setCurrentItems] = useState<any[]>([]);
   const [notSelected, setNotSelected] = useState<any[]>([]);
 
   const isDisabled = useMemo(() => {
@@ -70,6 +70,13 @@ const InheritedItems = (props: InheritedItemsProps) => {
     });
     setNotSelected(updatedItems);
   }, [props.initialList, currentItems]);
+
+  /**
+   * met à jour la liste des objets sélectionnés qd les props sont modifiées
+   */
+  useEffect(() => {
+    setCurrentItems(props.selectedItems);
+  }, [props.selectedItems]);
 
   return (
     <section className="w-full flex flex-col gap-y-8">

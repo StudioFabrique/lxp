@@ -89,7 +89,6 @@ export default function checkPermissions(
       }
 
       if (isRolesCorrect) {
-        console.log("le role est correct ! passage accordé");
         req.auth = { userId: data.userId, userRoles: data.userRoles };
         next();
       } else {

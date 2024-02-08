@@ -32,6 +32,10 @@ model Formation {
   modules     ModulesOnFormation[]
   parcours    Parcours[]
   tags        TagsOnFormation[]
+  
+  modules     ModulesOnFormation[]
+  admin       Admin                @relation(fields: [adminId], references: [id])
+  adminId     Int
 }
 
 model Parcours {
@@ -133,10 +137,11 @@ model Student {
 }
 
 model Admin {
-  id         Int        @id @default(autoincrement())
+  id         Int         @id @default(autoincrement())
   idMdb      String
   activities Activity[]
   courses    Course[]
+  formation  Formation[]
   lessons    Lesson[]
   modules    Module[]
   parcours   Parcours[]
