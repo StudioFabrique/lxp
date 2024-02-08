@@ -6,11 +6,6 @@
     "auditLog": "/Users/martindhollande/Documents/Studio Step/LXP/lxp/api/logs/.ddbd45e77713ce10c00a4e2e658a3543669a0047-audit.json",
     "files": [
         {
-            "date": 1706170208581,
-            "name": "/Users/martindhollande/Documents/Studio Step/LXP/lxp/api/logs/application-2024-01-25-09.log",
-            "hash": "9f2d1fba8849a9cdc1b84630c63ae6a8c5c47e6a133deff3cb3a731d56386c4a"
-        },
-        {
             "date": 1706184660515,
             "name": "/Users/martindhollande/Documents/Studio Step/LXP/lxp/api/logs/application-2024-01-25-13.log",
             "hash": "f1e6706829b0622eb42d76aa8cac63f2296c0676ff2f72ec03d464b6ac29634b"
@@ -54,6 +49,26 @@
             "date": 1707229338433,
             "name": "/Users/martindhollande/Documents/Studio Step/LXP/lxp/api/logs/application-2024-02-06-15.log",
             "hash": "3d02538db35ecad5080f76c8b05af18a10f0537eda309c77568a4a6e7ff591ff"
+        },
+        {
+            "date": 1707378962005,
+            "name": "/Users/martindhollande/Documents/Studio Step/LXP/lxp/api/logs/application-2024-02-08-08.log",
+            "hash": "3ff61535ad8a444c4841fb238994de79223075e57e8b943364e3bbde4f35d544"
+        },
+        {
+            "date": 1707381861874,
+            "name": "/Users/martindhollande/Documents/Studio Step/LXP/lxp/api/logs/application-2024-02-08-09.log",
+            "hash": "e25f7fa289796ab35f1281e4caa4e98a0dadce5f61292b84eaa33355a0389ac6"
+        },
+        {
+            "date": 1707382802547,
+            "name": "/Users/martindhollande/Documents/Studio Step/LXP/lxp/api/logs/application-2024-02-08-10.log",
+            "hash": "a2fc9b7f5c4e1bb767f53cabe040845174987eb0f20ebdbd4324512b6e8a8ee6"
+        },
+        {
+            "date": 1707386495098,
+            "name": "/Users/martindhollande/Documents/Studio Step/LXP/lxp/api/logs/application-2024-02-08-11.log",
+            "hash": "a982cb0c111e560420f2aefdea7add3445d2cf6228b49fe04d9808ec6142bd8e"
         }
     ],
     "hashType": "sha256"
