@@ -6,8 +6,6 @@ import CustomRequest from "../../utils/interfaces/express/custom-request";
 async function httpGetCoursesByModule(req: CustomRequest, res: Response) {
   const { moduleId } = req.params;
 
-  console.log({ userId: req.auth?.userId });
-
   try {
     const response = await getCoursesByModule(parseInt(moduleId));
     return res.status(200).json({
