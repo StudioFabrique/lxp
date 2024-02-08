@@ -6,6 +6,8 @@ import useHttp from "../../hooks/use-http";
 import toast from "react-hot-toast";
 import FormationsList from "../../components/formation-home/formations-list";
 import { sortArray } from "../../utils/sortArray";
+import useForm from "../../components/UI/forms/hooks/use-form";
+import useTags from "../../hooks/use-tags";
 
 type FormationItem = {
   id: number;
@@ -26,6 +28,26 @@ export default function FormationAdd() {
     null
   );
 
+  const {
+    values,
+    onChangeValue,
+    onResetForm,
+    errors,
+    initValues,
+    onValidationErrors,
+  } = useForm();
+  const {
+    tag,
+    currentTags,
+    handleCheckTags,
+    handleOnChange,
+    handleRemoveTag,
+    handleTagSubmit,
+    resetTags,
+    updatedTags,
+    handleSetCurrentTags,
+  } = useTags(tags);
+
   /**
    * retourne la liste des tags enregistrés dans la base de données
    */
@@ -41,6 +63,11 @@ export default function FormationAdd() {
     );
   }, [sendRequest]);
 
+  /**
+   * active le mode mise à jour de la formation, remplit le formulaire avec
+   * les données de la formation à éditer
+   * @param id number
+   */
   const handleSelectFormation = (id: number) => {
     const formation = formationsList.find((item) => item.id === id);
     if (formation) {
@@ -68,12 +95,16 @@ export default function FormationAdd() {
       message: string;
       response: FormationItem;
     }) => {
+      console.log(data.response);
+
       if (data.success) {
         toast.success(data.message);
         console.log(data.response);
         setFormationsList((prevState) => [...prevState, data.response]);
       }
       setSubmitting(false);
+      onResetForm();
+      resetTags();
     };
     setSubmitting(true);
     sendRequest(
@@ -92,6 +123,14 @@ export default function FormationAdd() {
     );
   };
 
+  /**
+   * Mise à jour des données d'une formation
+   * @param title string
+   * @param description string
+   * @param code string
+   * @param level string
+   * @param tags Tag[]
+   */
   const handleUpdate = (
     title: string,
     description: string,
@@ -109,10 +148,13 @@ export default function FormationAdd() {
         let updatedList = formationsList.filter(
           (item) => item.id !== formationToEdit!.id
         );
-        updatedList = sortArray([...updatedList, data.response], "id", false);
+        updatedList = sortArray([...updatedList, data.response], "id");
         setFormationsList(updatedList);
       }
       setSubmitting(false);
+      setFormationToEdit(null);
+      onResetForm();
+      resetTags();
     };
     setSubmitting(true);
     sendRequest(
@@ -175,6 +217,8 @@ export default function FormationAdd() {
     setSubmitting(false);
   }, [error]);
 
+  console.log(tags);
+
   return (
     <main className="flex flex-col gap-2 mt-4">
       <section>
@@ -190,19 +234,47 @@ export default function FormationAdd() {
           <Wrapper>
             {formationToEdit ? (
               <FormationAddForm
+                values={values}
+                onChangeValue={onChangeValue}
+                onResetForm={onResetForm}
+                errors={errors}
+                initValues={initValues}
+                onValidationErrors={onValidationErrors}
                 formation={formationToEdit}
-                initialTags={tags}
                 onSubmit={handleUpdate}
                 onNewTags={handleNewTags}
                 submitting={submitting}
                 onCancel={handleCancel}
+                tag={tag}
+                currentTags={currentTags}
+                handleOnChange={handleOnChange}
+                handleCheckTags={handleCheckTags}
+                handleRemoveTag={handleRemoveTag}
+                handleTagSubmit={handleTagSubmit}
+                resetTags={resetTags}
+                updatedTags={updatedTags}
+                handleSetCurrentTags={handleSetCurrentTags}
               />
             ) : (
               <FormationAddForm
-                initialTags={tags}
+                values={values}
+                onChangeValue={onChangeValue}
+                onResetForm={onResetForm}
+                errors={errors}
+                initValues={initValues}
+                onValidationErrors={onValidationErrors}
                 onSubmit={handleSubmit}
                 onNewTags={handleNewTags}
                 submitting={submitting}
+                tag={tag}
+                currentTags={currentTags}
+                handleOnChange={handleOnChange}
+                handleCheckTags={handleCheckTags}
+                handleRemoveTag={handleRemoveTag}
+                handleTagSubmit={handleTagSubmit}
+                resetTags={resetTags}
+                updatedTags={updatedTags}
+                handleSetCurrentTags={handleSetCurrentTags}
               />
             )}
           </Wrapper>

@@ -12,7 +12,18 @@ import { loginValidator } from "./auth-validator";
 
 const authRouter = express.Router();
 
-authRouter.post("/login", loginValidator, httpLogin);
+authRouter.post(
+  "/login",
+  body("email").isEmail().withMessage("Email invalide").trim().escape(),
+  body("password")
+    .notEmpty()
+    .withMessage("Le mot de passe est requis.")
+    .isString()
+    .withMessage("Le mot de passe doit être une chaîne de caractères.")
+    .custom(passwordValidateGeneric)
+    .withMessage("Identifiants incorrects."),
+  httpLogin
+);
 authRouter.get("/handshake", checkToken, httpHandshake);
 authRouter.get("/logout", httpLogout);
 authRouter.get("/refresh", refreshTokens);

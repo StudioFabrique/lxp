@@ -7,14 +7,14 @@ export default async function httpPutFormation(req: Request, res: Response) {
     const { formationId } = req.params;
     const { formation } = req.body;
     const response = await putFormation(+formationId, formation);
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "La formation a été mise à jour.",
-        response,
-      });
+    return res.status(200).json({
+      success: true,
+      message: "La formation a été mise à jour.",
+      response,
+    });
   } catch (error: any) {
+    console.log(error.message);
+
     return res
       .status(error.statusCode ?? 500)
       .json({ message: error.message ?? serverIssue });

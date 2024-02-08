@@ -1,6 +1,9 @@
 import { body } from "express-validator";
 import { checkValidatorResult } from "../../../middleware/validators";
-import { stringValidateGeneric } from "../../../helpers/custom-validators";
+import {
+  rgbaValidator,
+  stringValidateGeneric,
+} from "../../../helpers/custom-validators";
 
 export const postManyTagsValidator = [
   // Valider le champ 'tableau'
@@ -22,10 +25,15 @@ export const postManyTagsValidator = [
       }
       return true;
     }),
-  body("*.name")
+  body("tags.*.name")
     .notEmpty()
     .withMessage("Le nom du tag est obligatoire.")
-    .custom(stringValidateGeneric),
-  body("*.color").notEmpty().withMessage("La couleur du tag est obligatoire."),
+    .custom(stringValidateGeneric)
+    .withMessage("Le nom d'un tag contient des caractères non autorisés."),
+  body("tags.*.color")
+    .notEmpty()
+    .withMessage("La couleur du tag est obligatoire.")
+    .custom(rgbaValidator)
+    .withMessage("Une couleur d'un tag contient des caractères non autorisés."),
   checkValidatorResult,
 ];

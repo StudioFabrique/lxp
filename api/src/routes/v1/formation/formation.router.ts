@@ -9,7 +9,11 @@ import checkPermissions from "../../../middleware/check-permissions";
 import jsonParser from "../../../middleware/json-parser";
 import { stringValidateGeneric } from "../../../helpers/custom-validators";
 import httpPostFormation from "../../../controllers/formation/http-post-formation";
-import { postFormationValidator } from "./formation-validators";
+import {
+  fomrationIdValidator,
+  postFormationValidator,
+  putFormationValidator,
+} from "./formation-validators";
 import httpGetAllFormations from "../../../controllers/formation/http-get-all-formations";
 import httpPutFormation from "../../../controllers/formation/http-put-formation";
 const formationRouter = express.Router();
@@ -90,6 +94,8 @@ formationRouter.get(
 formationRouter.put(
   "/:formationId",
   checkPermissions("formation"),
+  fomrationIdValidator,
+  putFormationValidator,
   httpPutFormation
 );
 

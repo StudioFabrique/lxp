@@ -2,6 +2,7 @@ import React, { ChangeEvent } from "react";
 
 interface AddTagProps {
   tag: string;
+  placeholder?: string;
   onChangeValue: (event: ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (event: React.FormEvent) => void;
 }
@@ -18,6 +19,7 @@ export default function AddTag(props: AddTagProps) {
       <input
         className="input input-sm focus:outline-none"
         type="text"
+        placeholder={props.placeholder ?? ""}
         value={props.tag}
         onChange={props.onChangeValue}
       />

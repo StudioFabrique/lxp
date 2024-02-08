@@ -53,6 +53,7 @@ export default async function postFormation(
     select: {
       id: true,
       title: true,
+      description: true,
       code: true,
       level: true,
       parcours: {
@@ -60,11 +61,13 @@ export default async function postFormation(
           id: true,
         },
       },
+      tags: { select: { tag: { select: { id: true } } } },
     },
   });
 
   return {
     ...formation,
     parcours: formation.parcours.length,
+    tags: formation.tags.map((item) => item.tag.id),
   };
 }
