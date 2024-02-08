@@ -1,5 +1,3 @@
-import { LessonRead } from "@prisma/client";
-
 export default async function getLastLessonsRead(userIdMdb: string) {
   const lessons = await prisma?.lessonRead.findMany({
     where: { student: { idMdb: userIdMdb }, finishedAt: null },
@@ -17,7 +15,7 @@ export default async function getLastLessonsRead(userIdMdb: string) {
         },
       },
     },
-    orderBy: { beganAt: "desc" },
+    orderBy: { lastOpenedAt: "desc" },
     take: 4,
   });
 
