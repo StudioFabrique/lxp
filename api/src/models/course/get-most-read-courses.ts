@@ -1,3 +1,4 @@
+import { Course } from "@prisma/client";
 import { prisma } from "../../utils/db";
 import Group from "../../utils/interfaces/db/group";
 
@@ -17,7 +18,7 @@ export default async function getMostReadCourses(
 
   const groupIds: string[] = groupsWhereStudentIs.map((group) => group.id);
 
-  const courses = await prisma.$queryRaw`
+  const courses: any = await prisma.$queryRaw`
   SELECT c.id, c.title, c."moduleId", COUNT(lr.*) AS lessonReadCount
   FROM "Course" c
   JOIN "Lesson" l ON c.id = l."courseId"
@@ -31,8 +32,12 @@ export default async function getMostReadCourses(
   ORDER BY lessonReadCount
   LIMIT ${max}`;
 
-  console.log({ courses });
+  // code to avoid the problem "do not know how to serialize a bigint"
+  const coursesReformated: Course[] = courses.map((course: any) => {
+    const { lessonreadcount, ...courseReformated } = course;
 
-  return [];
-  /* return courses; */
+    return courseReformated;
+  });
+
+  return coursesReformated;
 }
