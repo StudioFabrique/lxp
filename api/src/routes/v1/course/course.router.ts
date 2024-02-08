@@ -40,6 +40,7 @@ import httpPutCourseIsPublished from "../../../controllers/course/http-put-cours
 import httpGetCourseDates from "../../../controllers/course/http-get-course-dates";
 import httpGetCoursesByModule from "../../../controllers/course/http-get-courses-by-module";
 import httpPutReorderCourses from "../../../controllers/course/http-put-reorder-coursers";
+import httpGetMostReadCourses from "../../../controllers/course/http-get-most-read-courses";
 
 const courseRouter = express.Router();
 
@@ -69,6 +70,9 @@ courseRouter.get(
   // checkToken,
   httpGetCourses
 );
+
+courseRouter.get("/most-read", httpGetMostReadCourses);
+
 //retourne la liste des cours en fonction de l'id de leur module rattaché
 courseRouter.get("/:moduleId", httpGetCoursesByModule);
 // retourne les informations d'un cours identifié par son ID
