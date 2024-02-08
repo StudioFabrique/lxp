@@ -33,7 +33,7 @@ lessonRouter.get(
 lessonRouter.get("/", checkPermissions("lesson"), httpGetLessonsList);
 
 lessonRouter.get(
-  "/lastRead",
+  "/last-read",
   checkPermissions("lesson"),
   httpGetLastLessonsRead
 );
