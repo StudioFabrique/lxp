@@ -32,8 +32,6 @@ model Formation {
   modules     ModulesOnFormation[]
   parcours    Parcours[]
   tags        TagsOnFormation[]
-  
-  modules     ModulesOnFormation[]
   admin       Admin                @relation(fields: [adminId], references: [id])
   adminId     Int
 }
