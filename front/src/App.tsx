@@ -34,6 +34,7 @@ import LayoutEditModule from "./views/module/edit/Layout-edit-module";
 import EditModuleHome from "./views/module/edit/edit-module-home";
 import ModuleViewFromParcours from "./views/parcours/module-view-from-parcours";
 import FeaturesList from "./views/features-list/features-list";
+import FormationAdd from "./views/formation/formation-add";
 
 const router = createHashRouter([
   {
@@ -69,6 +70,10 @@ const router = createHashRouter([
       {
         path: "roles",
         element: <Role />,
+      },
+      {
+        path: "formation",
+        element: <FormationAdd />,
       },
       {
         path: "user",

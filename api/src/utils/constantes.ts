@@ -21,3 +21,5 @@ export const regexUrl = /^https?:\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/;
 export const regexDate = /^\d{4}-\d{2}-\d{2}$/;
 export const regexVideoUrl =
   /^(https?:\/\/\S+)?|(video-[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}\d{17}traffic\.mp4)$/i;
+export const regexRgba =
+  /^rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(0(\.\d+)?|1(\.0+)?)\s*\)$/;

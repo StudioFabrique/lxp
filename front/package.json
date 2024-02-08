@@ -19,7 +19,7 @@
     "casbin": "^5.27.1",
     "casbin.js": "^0.5.1",
     "chart.js": "^4.4.1",
-    "daisyui": "^4.6.0",
+    "daisyui": "^4.6.2",
     "framer-motion": "^10.16.4",
     "lucide-react": "^0.302.0",
     "markdown-it": "^14.0.0",

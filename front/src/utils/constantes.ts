@@ -6,9 +6,9 @@ export const regexPassword =
 
 export const regexNumber = /^[0-9]*$/;
 
-export const regexGeneric = /^[a-zA-Z0-9\s,.'\-+éÉàÀè?îÎ!âÂôÔêÊûÛ:\/ùÙ]{1,}$/;
+export const regexGeneric = /^[a-zA-Z0-9\s,.'\-+éÉàÀè?çîÎ!âÂôÔêÊûÛ:\/ùÙ]{1,}$/;
 
-export const regexOptionalGeneric = /^[a-zA-Z0-9\s,.'\-+éîàè?!:\/âôêûù]{0,}$/;
+export const regexOptionalGeneric = /^[a-zA-Z0-9\s,.'\-+éîàèç?!:\/âôêûù]{0,}$/;
 
 export const regexUrl = /^https?:\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/;
 

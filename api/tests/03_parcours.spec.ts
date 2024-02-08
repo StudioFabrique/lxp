@@ -27,7 +27,7 @@ describe("HTTP Parcours", () => {
     await mongoConnect();
     const loginResponse = await request(app)
       .post("/v1/auth/login")
-      .send({ email: "toto@toto.fr", password: "Abcdef@123456" });
+      .send({ email: "admin@studio.eco", password: "Abcdef@123456" });
 
     authToken = loginResponse.headers["set-cookie"][0];
   });
