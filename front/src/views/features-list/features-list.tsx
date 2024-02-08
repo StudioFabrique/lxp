@@ -17,7 +17,7 @@ const FeaturesList = () => {
   }, []);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col mt-10">
       <UserTopBar />
       <div className="grid grid-rows-5 gap-5 p-20">
         <div className="flex flex-col row-span-2 items-center gap-y-5 justify-center h-full bg-secondary p-20 rounded-lg">
@@ -34,7 +34,7 @@ const FeaturesList = () => {
             </p>
             <ul className="mt-5 list-disc">
               {features.map((feature) => (
-                <li>{feature}</li>
+                <li key={feature}>{feature}</li>
               ))}
             </ul>
           </div>
@@ -42,7 +42,7 @@ const FeaturesList = () => {
             <p className="font-semibold text-white">Annonces</p>
             <ul className="mt-5 list-disc text-white">
               {announcements.map((announcement) => (
-                <li>{announcement}</li>
+                <li key={announcement}>{announcement}</li>
               ))}
             </ul>
           </div>

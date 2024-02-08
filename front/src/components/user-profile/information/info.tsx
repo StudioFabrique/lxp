@@ -12,6 +12,7 @@ import Field from "../../UI/forms/field";
 import CustomError from "../../../utils/interfaces/custom-error";
 import { Context } from "../../../store/context.store";
 import { EditIcon } from "lucide-react";
+import imageProfileReplacement from "../../../config/image-profile-replacement";
 
 type FormProps = {
   values: Record<string, string>;
@@ -94,7 +95,9 @@ const Info: FC<{
                   src={
                     temporaryAvatar.url
                       ? temporaryAvatar.url
-                      : `data:image/jpeg;base64,${user?.avatar}`
+                      : `data:image/jpeg;base64,${
+                          user?.avatar ?? imageProfileReplacement
+                        }`
                   }
                   alt="User Avatar"
                 />

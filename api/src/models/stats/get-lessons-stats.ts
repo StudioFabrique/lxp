@@ -4,7 +4,7 @@ export default async function getLessonsStats() {
   const lessons = await prisma.lesson.findMany({
     select: {
       title: true,
-      readBy: true,
+      lessonsRead: true,
     },
     take: 10,
     orderBy: {
@@ -14,7 +14,7 @@ export default async function getLessonsStats() {
 
   const result = lessons.map((item) => ({
     title: item.title,
-    total: item.readBy.length,
+    total: item.lessonsRead.length,
   }));
   return result;
 }

@@ -1,5 +1,6 @@
 import Activity from "./activity";
 import Course from "./course";
+import LessonRead from "./lesson-read";
 import Tag from "./tag";
 
 export default interface Lesson {
@@ -16,5 +17,5 @@ export default interface Lesson {
   course: Course;
   activities?: Activity[];
   order?: number;
-  readBy?: string[];
+  lessonsRead?: LessonRead[];
 }
