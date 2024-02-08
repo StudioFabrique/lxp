@@ -15,7 +15,11 @@ export default async function postBeginReadLesson(
   });
 
   if (existingLessonRead) {
-    return existingLessonRead;
+    const updatedExistingLessonRead = await prisma?.lessonRead.update({
+      where: { id: existingLessonRead.id },
+      data: { lastOpenedAt: new Date() },
+    });
+    return updatedExistingLessonRead;
   }
 
   const lessonRead = await prisma?.lessonRead.create({

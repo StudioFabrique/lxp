@@ -1,7 +1,7 @@
 const FeedbackApprenant = () => {
   return (
     <div className="flex flex-col items-center justify-between bg-secondary rounded-lg p-5 gap-5">
-      <p className="font-bold">Derniers feedback des apprenants</p>
+      <p className="font-bold self-start">Derniers feedback des apprenants</p>
       <span className="w-full bg-indigo-200 rounded-lg p-2">
         <p className="font-semibold">Jean Marc DUPONT</p>
         <p>vient de terminer le cours 5</p>

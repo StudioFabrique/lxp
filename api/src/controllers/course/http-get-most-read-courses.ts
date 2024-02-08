@@ -2,9 +2,9 @@ import { Response } from "express";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 
 import { badQuery, serverIssue } from "../../utils/constantes";
-import getLastLessonsRead from "../../models/lesson/get-last-lessons-read";
+import getMostReadCourses from "../../models/course/get-most-read-courses";
 
-export default async function httpGetLastLessonsRead(
+export default async function httpGetMostReadCourses(
   req: CustomRequest,
   res: Response
 ) {
@@ -15,7 +15,7 @@ export default async function httpGetLastLessonsRead(
   }
 
   try {
-    const response = await getLastLessonsRead(userId, 4);
+    const response = await getMostReadCourses(userId, 4);
 
     if (!response) {
       return res.status(404).json({ message: "Leçon non trouvé" });
@@ -26,6 +26,8 @@ export default async function httpGetLastLessonsRead(
       data: response,
     });
   } catch (error: any) {
+    console.log(error);
+
     return res
       .status(error.statusCode ?? 500)
       .json({ message: error.message ?? serverIssue });

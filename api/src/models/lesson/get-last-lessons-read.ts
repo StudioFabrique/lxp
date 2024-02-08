@@ -1,6 +1,13 @@
-import { LessonRead } from "@prisma/client";
-
-export default async function getLastLessonsRead(userIdMdb: string) {
+/**
+ * Récupère la liste des dernières leçons lues par un étudiant et n'étant pas terminé.
+ * @param userIdMdb L'id de l'étudiant
+ * @param max Le nombre de leçons maximum à récupérer
+ * @returns
+ */
+export default async function getLastLessonsRead(
+  userIdMdb: string,
+  max?: number
+) {
   const lessons = await prisma?.lessonRead.findMany({
     where: { student: { idMdb: userIdMdb }, finishedAt: null },
     include: {
@@ -17,8 +24,8 @@ export default async function getLastLessonsRead(userIdMdb: string) {
         },
       },
     },
-    orderBy: { beganAt: "desc" },
-    take: 4,
+    orderBy: { lastOpenedAt: "desc" },
+    take: max,
   });
 
   if (lessons && !(lessons?.length > 0)) {

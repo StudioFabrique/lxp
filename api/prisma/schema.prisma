@@ -225,13 +225,14 @@ model Objective {
 }
 
 model LessonRead {
-  id         Int       @id @default(autoincrement())
-  beganAt    DateTime  @default(now())
-  finishedAt DateTime?
-  lessonId   Int
-  studentId  Int
-  lesson     Lesson    @relation(fields: [lessonId], references: [id])
-  student    Student   @relation(fields: [studentId], references: [id])
+  id            Int       @id @default(autoincrement())
+  beganAt       DateTime  @default(now())
+  lastOpenedAt  DateTime  @default(now())
+  finishedAt    DateTime?
+  lessonId      Int
+  studentId     Int
+  lesson        Lesson    @relation(fields: [lessonId], references: [id])
+  student       Student   @relation(fields: [studentId], references: [id])
 }
 
 model ContactsOnParcours {

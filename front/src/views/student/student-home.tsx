@@ -19,7 +19,7 @@ const StudentHome = () => {
       setLastLessons(data.data);
     };
 
-    sendRequest({ path: "/lesson/lastRead" }, applyData);
+    sendRequest({ path: "/lesson/last-read" }, applyData);
   }, [sendRequest]);
 
   return (
