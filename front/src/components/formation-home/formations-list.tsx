@@ -10,10 +10,12 @@ type FormationItem = {
 
 interface FormationsListProps {
   formationsList: FormationItem[];
+  onSelect: (id: number) => void;
 }
 
 export default function FormationsList({
   formationsList,
+  onSelect,
 }: FormationsListProps) {
   return (
     <div className="p-5 flex flex-col gap-y-4">
@@ -28,7 +30,7 @@ export default function FormationsList({
                 code={item.code}
                 level={item.level}
                 parcours={item.parcours}
-                onSelect={() => {}}
+                onSelect={onSelect}
               />
             </li>
           ))}

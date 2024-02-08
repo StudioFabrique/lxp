@@ -10,12 +10,25 @@ import toast from "react-hot-toast";
 import useTags from "../../hooks/use-tags";
 import AddTag from "../UI/add-tag";
 import Modal from "../UI/modal/modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 import TagsList from "./tags-list";
+import { Loader2 } from "lucide-react";
+
+type FormationItem = {
+  id: number;
+  title: string;
+  description?: string;
+  code: string;
+  level: string;
+  parcours: number;
+  tags?: number[];
+};
 
 interface FormationAddFormProps {
+  formation?: FormationItem;
   initialTags: Tag[];
+  submitting: boolean;
   onSubmit: (
     title: string,
     description: string,
@@ -23,17 +36,27 @@ interface FormationAddFormProps {
     code: string,
     tags: Tag[]
   ) => void;
+  onCancel?: () => void;
   onNewTags: (newTags: Tag[]) => void;
 }
 
 export default function FormationAddForm({
+  formation,
   initialTags,
+  submitting,
   onSubmit,
   onNewTags,
+  onCancel,
 }: FormationAddFormProps) {
-  const { sendRequest } = useHttp();
-  const { values, onChangeValue, onResetForm, errors, onValidationErrors } =
-    useForm();
+  const { sendRequest, error } = useHttp();
+  const {
+    values,
+    onChangeValue,
+    onResetForm,
+    errors,
+    initValues,
+    onValidationErrors,
+  } = useForm();
   const {
     tag,
     currentTags,
@@ -43,9 +66,11 @@ export default function FormationAddForm({
     handleTagSubmit,
     resetTags,
     updatedTags,
+    handleSetCurrentTags,
   } = useTags(initialTags);
   const [showModal, setShowModal] = useState(false);
   const [newTags, setNewTags] = useState<Tag[]>([]);
+  const [saving, setSaving] = useState(false);
 
   const data = {
     values,
@@ -53,9 +78,15 @@ export default function FormationAddForm({
     errors,
   };
 
+  /**
+   * enregistre la nouvelle formation dans la bdd
+   * @param tags Tag[]
+   */
   const handleSubmit = (tags: Tag[]) => {
     // envoi des données saisies vers le composant parent pour les soumettre au backend
     onSubmit(values.title, values.description, values.code, values.level, tags);
+    onResetForm();
+    resetTags();
   };
 
   /**
@@ -69,7 +100,6 @@ export default function FormationAddForm({
       postFormationSchema.parse(values);
     } catch (error: any) {
       if (error instanceof ZodError) {
-        console.log({ error });
         const errors = validationErrors(error);
         onValidationErrors(errors);
         return;
@@ -80,33 +110,28 @@ export default function FormationAddForm({
       toast.error("Au moins un tag est requis pour enregistrer la formation.");
       return;
     }
-    setNewTags(handleCheckTags());
-    if (newTags.length > 0) {
+    // on filtre les tags qui n'existent pas dans la base de données
+    const tmpTags = handleCheckTags();
+    setNewTags(tmpTags);
+    if (tmpTags.length > 0) {
       setShowModal(true);
     } else {
       handleSubmit(currentTags);
     }
   };
 
-  /*   const handleReset = () => {
-    onResetForm();
-    setCurrentTags([]);
-  }; */
-
+  /**
+   * enregistre les tags dans la bdd qui ne sont pas déjà enregistrés
+   */
   const handleSubmitNewTags = () => {
     const applyData = (data: Tag[]) => {
       onNewTags(data);
       const tags = updatedTags(data);
-      console.log({ tags });
-
-      onSubmit(
-        values.title,
-        values.description,
-        values.code,
-        values.level,
-        tags
-      );
+      setSaving(false);
+      setShowModal(false);
+      handleSubmit(tags);
     };
+    setSaving(true);
     sendRequest(
       {
         path: "/tag",
@@ -118,6 +143,42 @@ export default function FormationAddForm({
       applyData
     );
   };
+
+  const handleCancel = () => {
+    if (onCancel !== undefined) {
+      onCancel();
+    }
+    resetTags();
+    onResetForm();
+  };
+
+  useEffect(() => {
+    if (formation !== undefined) {
+      initValues({
+        id: formation.id,
+        title: formation.title,
+        description: formation.description,
+        code: formation.code,
+        level: formation.level,
+      });
+      handleSetCurrentTags(formation.tags!);
+    }
+  }, [formation, handleSetCurrentTags, initValues]);
+
+  /**
+   * gestion des erreurs http
+   */
+  useEffect(() => {
+    if (error.length > 0) {
+      toast.error(error);
+      setSaving(false);
+      setShowModal(false);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    return () => console.log("unmounting");
+  }, []);
 
   return (
     <>
@@ -155,15 +216,27 @@ export default function FormationAddForm({
       <TagsList tagsList={currentTags} onRemove={handleRemoveTag} />
 
       <div className="w-full flex justify-between">
-        <button className="btn btn-outline btn-primary" onClick={() => {}}>
+        <button className="btn btn-outline btn-primary" onClick={handleCancel}>
           Annuler
         </button>
-        <button className="btn btn-primary" onClick={handleValidate}>
-          Sauvegarder
+        <button
+          className="btn btn-primary"
+          disabled={saving}
+          onClick={handleValidate}
+        >
+          {submitting ? (
+            <span className="flex items-center gap-x-2">
+              <Loader2 className="animate animate-spin" />
+              <p>Sauvegarde en cours...</p>
+            </span>
+          ) : (
+            <span>Sauvegarde</span>
+          )}
         </button>
       </div>
       {showModal ? (
         <Modal
+          isSubmitting={saving}
           title="Sauvegarder les nouveaux tags"
           leftLabel="Annuler"
           onLeftClick={() => setShowModal(false)}

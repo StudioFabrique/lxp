@@ -34,6 +34,10 @@ const useForm = (data = {}) => {
   useEffect(() => {
     setValues({});
     setErrors([]);
+    return () => {
+      setValues({});
+      setErrors([]);
+    };
   }, []);
 
   /*useEffect(() => {

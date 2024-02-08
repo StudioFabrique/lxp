@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import Tag from "../utils/interfaces/tag";
 import { createTag } from "../helpers/create-tag";
 
@@ -65,10 +65,15 @@ const useTags = (initialTags: Tag[]) => {
         (elem) => elem.name.toLowerCase() !== item.name.toLowerCase()
       );
     });
-    console.log("toto", [...updatedTags, ...currentTags]);
-
     return [...updatedTags, ...newTags];
   };
+
+  const handleSetCurrentTags = useCallback(
+    (ids: number[]) => {
+      setCurrentTags(initialTags.filter((item) => ids.includes(item.id)));
+    },
+    [initialTags]
+  );
 
   useEffect(() => {
     let tags = Array<Tag>();
@@ -81,6 +86,7 @@ const useTags = (initialTags: Tag[]) => {
 
   return {
     tag,
+    handleSetCurrentTags,
     currentTags,
     handleOnChange,
     handleTagSubmit,
