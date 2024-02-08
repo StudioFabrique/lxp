@@ -6,59 +6,84 @@
     "auditLog": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/.3262fb49be6bc0c9780284a4a90a751a5c499da3-audit.json",
     "files": [
         {
-            "date": 1705918820237,
-            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-01-22-11.log",
-            "hash": "834f09506fcc6358d07d3b097d26700a4d5c5cd4ec166ac447f9f2f4ee025141"
+            "date": 1707119353953,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-05-08.log",
+            "hash": "5caec3c14059e4a2b01d5a8099cc5fe496120e3db3ac816909a111ad8fd5b573"
         },
         {
-            "date": 1705924914445,
-            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-01-22-13.log",
-            "hash": "ffc4f8fb5e3cf2441d062924ff2e88f9ba0ea0b539fa42438232bf13ea6bae2e"
+            "date": 1707120065368,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-05-09.log",
+            "hash": "0cfc4bc857305e988ca7126d878c75cd6ce1775d7027fbb478768f08722e4a60"
         },
         {
-            "date": 1705931877520,
-            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-01-22-14.log",
-            "hash": "4a08a5864a46e9cc79dadef8f5c4467a29a28c9a0f04667a2f44c079a967e523"
+            "date": 1707126015652,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-05-10.log",
+            "hash": "7e177fd15a315ea6017603e369d0c9584ba27132dab45def12ec6d9a36a16427"
         },
         {
-            "date": 1705932524427,
-            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-01-22-15.log",
-            "hash": "ec9b166212b5fe90de2a7d4123f8ae32da71a6c377cf03001d82c6454127442f"
+            "date": 1707134833415,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-05-13.log",
+            "hash": "80221462ca20d4cb342783499e6935877423c3d3445640aaf25ac26a48dd07f3"
         },
         {
-            "date": 1705935744530,
-            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-01-22-16.log",
-            "hash": "cfca759585abec15736c9bf1bc0ceeb308a33adfab291c0c571f0384bbdbf0cd"
+            "date": 1707138000474,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-05-14.log",
+            "hash": "4821bdab96749ba4f9624367df41fc627ee028c3cb32594480a5616b34c7e7f7"
         },
         {
-            "date": 1706081793614,
-            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-01-24-08.log",
-            "hash": "771354c0c40ccd803a63dbba9f14bb44147804cedd2c5cd157dbfacd9b31dec5"
+            "date": 1707143739347,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-05-15.log",
+            "hash": "6de9b32b2d190a1124496cae4a31d3d77c8292ff2a3269b77e2c6f4ce533ad0a"
         },
         {
-            "date": 1706084134769,
-            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-01-24-09.log",
-            "hash": "9560e9d658fa07c9765e2dfa2b69e2158bdd10c1ac5ca6411d0f53ad3baa52a5"
+            "date": 1707145469572,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-05-16.log",
+            "hash": "d9850eb8d8c8cf255a08442e973cf24d5bb3b4a1690b21bb8afa08f89612abb4"
         },
         {
-            "date": 1706090879180,
-            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-01-24-11.log",
-            "hash": "786b0d5be6748d96fe04f2c25bbee43f65d3d8cd95b0277f08507e0e9a62a0e2"
+            "date": 1707292591478,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-07-08.log",
+            "hash": "d5f93a940ac1e23ee9931ae3a7bb8b50458a3200c2b33488f26385249b6fad78"
         },
         {
-            "date": 1706096336931,
-            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-01-24-12.log",
-            "hash": "bcc506d7bcb0af8f0335eed8ac4aec224930032b9d0f33159270659cc5c35d91"
+            "date": 1707293877062,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-07-09.log",
+            "hash": "55279d0169341a1be9be7bb10c598e4686f2fab1588aa6ba27d68c0b7326bd75"
         },
         {
-            "date": 1706098362711,
-            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-01-24-13.log",
-            "hash": "e61ff0a8967ca893e59231d5c8ac737dfaa64fa02298b507c6819f7baaa3d305"
+            "date": 1707297438671,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-07-10.log",
+            "hash": "9c0ea1ea13aa64958a0d1daab44ec2fc1ee0604e418c6425dbc1f566a29f643e"
         },
         {
-            "date": 1706106426201,
-            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-01-24-15.log",
-            "hash": "fcf01eb3d2b0cf38386529365fef2401c3ed64059e36405b8b955ff19727513c"
+            "date": 1707300295633,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-07-11.log",
+            "hash": "7349b3575d49ed5b4e0e55b90252e7ee5894c3b79edbf99b018b125171e4ba07"
+        },
+        {
+            "date": 1707307122910,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-07-12.log",
+            "hash": "a5b10e0767bc198f567ca0df1c8fe7cb8ce541feed505bf49ba944f11382b862"
+        },
+        {
+            "date": 1707307699389,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-07-13.log",
+            "hash": "c3814e2097d448d56e250e07d1642b071c83b2d980b90caa4d609d1dff445758"
+        },
+        {
+            "date": 1707311424018,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-07-14.log",
+            "hash": "8ca8bf0668170497e6fc7ecb792425773840a2eb8867caf674bba3b0b23c624d"
+        },
+        {
+            "date": 1707314491861,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-07-15.log",
+            "hash": "2cc07855c17f11fd7d150d6957c607404074dc0a94f42e47fa7ec99a75ee6ebe"
+        },
+        {
+            "date": 1707319060555,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-07-16.log",
+            "hash": "563cd11b1fa35737b4adb3ab69c543293423c9dbb0297e54781b9758f6c5788c"
         }
     ],
     "hashType": "sha256"

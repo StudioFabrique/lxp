@@ -1,9 +1,9 @@
 import { Response } from "express";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import { badQuery, serverIssue } from "../../utils/constantes";
-import putReadLesson from "../../models/lesson/put-read-lesson";
+import postBeginReadLesson from "../../models/lesson/post-begin-read-lesson";
 
-export default async function httpPutReadLesson(
+export default async function httpPostBeginReadLesson(
   req: CustomRequest,
   res: Response
 ) {
@@ -16,7 +16,7 @@ export default async function httpPutReadLesson(
   try {
     const { lessonId } = req.params;
 
-    const response = await putReadLesson(+lessonId, userId);
+    const response = await postBeginReadLesson(+lessonId, userId);
 
     if (!response) {
       return res.status(404).json({ message: "Leçon non trouvé" });
