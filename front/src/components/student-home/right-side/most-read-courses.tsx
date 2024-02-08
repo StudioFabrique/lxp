@@ -4,11 +4,13 @@ import Course from "../../../utils/interfaces/course";
 import { ArrowUpRightSquare } from "lucide-react";
 
 const MostReadCourses = () => {
-  const { sendRequest } = useHttp();
+  const { sendRequest } = useHttp(true);
 
   const [courses, setCourses] = useState<Course[]>();
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    sendRequest({ path: "/course/most-read" });
+  }, [sendRequest]);
 
   return (
     <div className="flex flex-col items-center justify-between bg-secondary rounded-lg p-5 gap-5">
