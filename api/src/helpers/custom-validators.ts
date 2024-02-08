@@ -5,9 +5,14 @@ import {
   regexNumber,
   regexOptionalGeneric,
   regexPassword,
+  regexRgba,
   regexVideoUrl,
 } from "../utils/constantes";
 import { checkValidatorResult } from "../middleware/validators";
+
+export function rgbaValidator(value: string) {
+  return regexRgba.test(value);
+}
 
 export function stringValidateOptional(value: string) {
   return regexOptionalGeneric.test(value);

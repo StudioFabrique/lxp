@@ -15,6 +15,18 @@ export default async function putFormation(
     };
   }
 
+  const existingTitle = await prisma.formation.findFirst({
+    where: { title: formation.title },
+  });
+
+  if (existingTitle) {
+    const error: any = {
+      message: "Une formation avec ce titre existe déjà.",
+      statusCode: 409,
+    };
+    throw error;
+  }
+
   let updatedFormation: any = {};
 
   await prisma.$transaction(async (tx) => {

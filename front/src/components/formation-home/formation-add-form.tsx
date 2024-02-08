@@ -2,18 +2,17 @@
 import Tag from "../../utils/interfaces/tag";
 import Field from "../UI/forms/field";
 import FieldArea from "../UI/forms/field-area";
-import useForm from "../UI/forms/hooks/use-form";
 import { postFormationSchema } from "../../lib/validation/post-formation-schema";
 import { ZodError } from "zod";
 import { validationErrors } from "../../helpers/validate";
 import toast from "react-hot-toast";
-import useTags from "../../hooks/use-tags";
 import AddTag from "../UI/add-tag";
 import Modal from "../UI/modal/modal";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 import TagsList from "./tags-list";
 import { Loader2 } from "lucide-react";
+import CustomError from "../../utils/interfaces/custom-error";
 
 type FormationItem = {
   id: number;
@@ -27,7 +26,7 @@ type FormationItem = {
 
 interface FormationAddFormProps {
   formation?: FormationItem;
-  initialTags: Tag[];
+
   submitting: boolean;
   onSubmit: (
     title: string,
@@ -38,36 +37,47 @@ interface FormationAddFormProps {
   ) => void;
   onCancel?: () => void;
   onNewTags: (newTags: Tag[]) => void;
+  values: Record<string, string>;
+  onChangeValue: (field: string, value: string) => void;
+  onResetForm: () => void;
+  errors: CustomError[];
+  initValues: (data: any) => void;
+  onValidationErrors: (data: CustomError[]) => void;
+  tag: string;
+  currentTags: Tag[];
+  handleOnChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleCheckTags: () => Tag[];
+  handleRemoveTag: (id: number) => void;
+  handleTagSubmit: (event: React.FormEvent) => void;
+  resetTags: () => void;
+  updatedTags: (newTags: Tag[]) => Tag[];
+  handleSetCurrentTags: (ids: number[]) => void;
 }
 
 export default function FormationAddForm({
   formation,
-  initialTags,
   submitting,
   onSubmit,
   onNewTags,
   onCancel,
+  values,
+  onChangeValue,
+  onResetForm,
+  errors,
+  initValues,
+  onValidationErrors,
+  tag,
+  currentTags,
+  handleOnChange,
+  handleCheckTags,
+  handleRemoveTag,
+  handleTagSubmit,
+  resetTags,
+  updatedTags,
+  handleSetCurrentTags,
 }: FormationAddFormProps) {
   const { sendRequest, error } = useHttp();
-  const {
-    values,
-    onChangeValue,
-    onResetForm,
-    errors,
-    initValues,
-    onValidationErrors,
-  } = useForm();
-  const {
-    tag,
-    currentTags,
-    handleCheckTags,
-    handleOnChange,
-    handleRemoveTag,
-    handleTagSubmit,
-    resetTags,
-    updatedTags,
-    handleSetCurrentTags,
-  } = useTags(initialTags);
+
   const [showModal, setShowModal] = useState(false);
   const [newTags, setNewTags] = useState<Tag[]>([]);
   const [saving, setSaving] = useState(false);
@@ -85,8 +95,6 @@ export default function FormationAddForm({
   const handleSubmit = (tags: Tag[]) => {
     // envoi des données saisies vers le composant parent pour les soumettre au backend
     onSubmit(values.title, values.description, values.code, values.level, tags);
-    onResetForm();
-    resetTags();
   };
 
   /**
@@ -161,6 +169,8 @@ export default function FormationAddForm({
         code: formation.code,
         level: formation.level,
       });
+      console.log({ formation });
+
       handleSetCurrentTags(formation.tags!);
     }
   }, [formation, handleSetCurrentTags, initValues]);
@@ -209,6 +219,7 @@ export default function FormationAddForm({
 
       <AddTag
         tag={tag}
+        placeholder="Exemple : artisanal, technologie, industriel"
         onChangeValue={handleOnChange}
         onSubmit={handleTagSubmit}
       />

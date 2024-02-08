@@ -28,7 +28,7 @@ describe("HTTP Formation", () => {
     await mongoConnect();
     const loginResponse = await request(app)
       .post("/v1/auth/login")
-      .send({ email: "toto@toto.fr", password: "Abcdef@123456" });
+      .send({ email: "admin@studio.eco", password: "Abcdef@123456" });
 
     authToken = loginResponse.headers["set-cookie"][0];
   });
@@ -247,6 +247,392 @@ describe("HTTP Formation", () => {
         .attach("image", filePath)
         .set("Cookie", [`${authToken}`])
         .expect(400);
+    });
+  });
+
+  describe("Test POST /", () => {
+    test("It should respond 403 forbidden", async () => {
+      await request(app)
+        .post("/v1/formation")
+        .send({
+          title: "random title",
+          description: "random description",
+          code: "random code",
+          level: "random level",
+          tags: [1, 2, 3],
+        })
+        .expect(403);
+    });
+
+    test("It should respond 409 conflict", async () => {
+      await request(app)
+        .post("/v1/formation")
+        .send({
+          title: "Développeur Web",
+          description: "random description",
+          code: "random code",
+          level: "random level",
+          tags: [1, 2, 3],
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(409);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/formation")
+        .send({
+          description: "random description",
+          code: "random code",
+          level: "random level",
+          tags: [1, 2, 3],
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/formation")
+        .send({
+          title: "<hacker/>",
+          description: "random description",
+          code: "random code",
+          level: "random level",
+          tags: [1, 2, 3],
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/formation")
+        .send({
+          title: "random title",
+          code: "random code",
+          level: "random level",
+          tags: [1, 2, 3],
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/formation")
+        .send({
+          title: "random title",
+          description: "<hacker/>",
+          code: "random code",
+          level: "random level",
+          tags: [1, 2, 3],
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/formation")
+        .send({
+          title: "random title",
+          description: "random description",
+
+          level: "random level",
+          tags: [1, 2, 3],
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/formation")
+        .send({
+          title: "random title",
+          description: "random description",
+          code: "<hacker/>",
+          level: "random level",
+          tags: [1, 2, 3],
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/formation")
+        .send({
+          title: "random title",
+          description: "random description",
+          code: "random code",
+          tags: [1, 2, 3],
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/formation")
+        .send({
+          title: "random title",
+          description: "random description",
+          code: "random code",
+          level: "<hacker/>",
+          tags: [1, 2, 3],
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/formation")
+        .send({
+          title: "random title",
+          description: "random description",
+          code: "random code",
+          level: "random level",
+          tags: ["toto", 2, 3],
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/formation")
+        .send({
+          title: "random title",
+          description: "random description",
+          code: "random code",
+          level: "random level",
+          tags: ["<hacker/>", 2, 3],
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 201 success", async () => {
+      await request(app)
+        .post("/v1/formation")
+        .send({
+          title: "random title",
+          description: "random description",
+          code: "random code",
+          level: "random level",
+          tags: [1, 2, 3],
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(201);
+    });
+  });
+
+  describe("Test PUT /", () => {
+    test("It should respond 403 forbidden", async () => {
+      await request(app)
+        .put("/v1/formation/1")
+        .send({
+          formation: {
+            title: "random title",
+            description: "random description",
+            code: "random code",
+            level: "random level",
+            tags: [1, 2, 3],
+          },
+        })
+        .expect(403);
+    });
+
+    test("It should respond 409 conflict", async () => {
+      await request(app)
+        .put("/v1/formation/1")
+        .send({
+          formation: {
+            title: "Développeur Web",
+            description: "random description",
+            code: "random code",
+            level: "random level",
+            tags: [1, 2, 3],
+          },
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(409);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/formation/1")
+        .send({
+          formation: {
+            description: "random description",
+            code: "random code",
+            level: "random level",
+            tags: [1, 2, 3],
+          },
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/formation/1")
+        .send({
+          formation: {
+            title: "<hacker/>",
+            description: "random description",
+            code: "random code",
+            level: "random level",
+            tags: [1, 2, 3],
+          },
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/formation/1")
+        .send({
+          formation: {
+            title: "random title",
+            code: "random code",
+            level: "random level",
+            tags: [1, 2, 3],
+          },
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/formation/1")
+        .send({
+          formation: {
+            title: "random title",
+            description: "<hacker/>",
+            code: "random code",
+            level: "random level",
+            tags: [1, 2, 3],
+          },
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/formation/1")
+        .send({
+          formation: {
+            title: "random title",
+            description: "random description",
+
+            level: "random level",
+            tags: [1, 2, 3],
+          },
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/formation/1")
+        .send({
+          formation: {
+            title: "random title",
+            description: "random description",
+            code: "<hacker/>",
+            level: "random level",
+            tags: [1, 2, 3],
+          },
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/formation/1")
+        .send({
+          formation: {
+            title: "random title",
+            description: "random description",
+            code: "random code",
+            tags: [1, 2, 3],
+          },
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/formation/1")
+        .send({
+          formation: {
+            title: "random title",
+            description: "random description",
+            code: "random code",
+            level: "<hacker/>",
+            tags: [1, 2, 3],
+          },
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/formation/1")
+        .send({
+          formation: {
+            title: "random title",
+            description: "random description",
+            code: "random code",
+            level: "random level",
+            tags: ["toto", 2, 3],
+          },
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .put("/v1/formation/1")
+        .send({
+          formation: {
+            title: "random title",
+            description: "random description",
+            code: "random code",
+            level: "random level",
+            tags: ["<hacker/>", 2, 3],
+          },
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should respond 200 success", async () => {
+      await request(app)
+        .put("/v1/formation/1")
+        .send({
+          formation: {
+            title: "not random title",
+            description: "random description",
+            code: "random code",
+            level: "random level",
+            tags: [1, 2, 3],
+          },
+        })
+        .set("Cookie", [`${authToken}`])
+        .expect(200);
     });
   });
 

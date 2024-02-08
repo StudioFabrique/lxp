@@ -14,9 +14,7 @@ export default function FormationCard(props: FormationCardProp) {
 
   return (
     <div className="group flex flex-col gap-y-2 p-5 rounded-lg bg-secondary/20 h-full hover:bg-primary hover:text-white">
-      <h2 className="font-bold group-hover:text-white text-secondary">
-        {title}
-      </h2>
+      <h2 className="font-bold group-hover:text-white text-primary">{title}</h2>
       <p>RNCP : {code}</p>
       <p>Niveau : {level}</p>
       <span className="flex justify-between items-center">

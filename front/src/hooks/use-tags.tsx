@@ -70,6 +70,8 @@ const useTags = (initialTags: Tag[]) => {
 
   const handleSetCurrentTags = useCallback(
     (ids: number[]) => {
+      console.log({ ids });
+
       setCurrentTags(initialTags.filter((item) => ids.includes(item.id)));
     },
     [initialTags]
