@@ -5,6 +5,7 @@ export default async function getAllFormations() {
     select: {
       id: true,
       title: true,
+      description: true,
       code: true,
       level: true,
       parcours: {
@@ -12,12 +13,25 @@ export default async function getAllFormations() {
           id: true,
         },
       },
+      tags: {
+        select: {
+          tag: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      id: "desc",
     },
   });
 
   const result = formations.map((item) => ({
     ...item,
     parcours: item.parcours.length,
+    tags: item.tags.map((item) => item.tag.id),
   }));
 
   return result;
