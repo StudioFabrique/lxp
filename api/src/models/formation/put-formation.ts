@@ -13,13 +13,14 @@ export default async function putFormation(
       message: "La formation n'existe pas.",
       statusCode: 404,
     };
+    throw error;
   }
 
   const existingTitle = await prisma.formation.findFirst({
     where: { title: formation.title },
   });
 
-  if (existingTitle) {
+  if (existingTitle && existingTitle.id !== formationId) {
     const error: any = {
       message: "Une formation avec ce titre existe déjà.",
       statusCode: 409,
