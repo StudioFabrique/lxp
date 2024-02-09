@@ -41,13 +41,24 @@ export default async function getLastLessonsRead(
           title: true,
           course: {
             select: {
+              id: true,
               title: true,
               module: { select: { id: true, title: true } },
               bonusSkills: {
                 select: { bonusSkill: { select: { id: true, badge: true } } },
               },
+              lessons: {
+                select: {
+                  id: true,
+                  lessonsRead: {
+                    where: { student: { idMdb: userIdMdb } },
+                    select: { id: true, finishedAt: true },
+                  },
+                },
+              },
             },
           },
+          order: true,
         },
       },
     },
