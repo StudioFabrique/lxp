@@ -26,6 +26,7 @@ type ContextType = {
   fetchRoles: (role: Role) => void;
   defineRulesFor: () => void;
   builtPerms: Record<string, any> | undefined;
+  closeTab: () => void;
 };
 
 type Props = { children: React.ReactNode };
@@ -45,6 +46,7 @@ export const Context = React.createContext<ContextType>({
   fetchRoles: () => {},
   defineRulesFor: () => {},
   builtPerms: {},
+  closeTab: () => {},
 });
 
 const ContextProvider: FC<Props> = (props) => {
@@ -58,6 +60,12 @@ const ContextProvider: FC<Props> = (props) => {
   const [builtPerms, setBuiltPerms] = useState<
     Record<string, any> | undefined
   >();
+
+  const closeTab = useCallback(async () => {
+    await axiosInstance.get(`${BASE_URL}/auth/close`, {
+      withCredentials: true,
+    });
+  }, [axiosInstance]);
 
   const login = async (email: string, password: string) => {
     setError("");
@@ -96,7 +104,7 @@ const ContextProvider: FC<Props> = (props) => {
 
   const logout = async () => {
     try {
-      await axios.get(`${BASE_URL}/auth/logout`, {
+      await axiosInstance.get(`${BASE_URL}/auth/logout`, {
         withCredentials: true,
       });
       setIsLoggedIn(false);
@@ -231,6 +239,7 @@ const ContextProvider: FC<Props> = (props) => {
     fetchRoles,
     defineRulesFor,
     builtPerms,
+    closeTab,
   };
 
   return (
