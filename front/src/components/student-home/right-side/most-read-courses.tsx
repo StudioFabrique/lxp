@@ -26,7 +26,7 @@ const MostReadCourses = () => {
         courses?.map((course) => (
           <span
             key={course.id}
-            className="flex justify-between gap-5 bg-indigo-200 rounded-lg p-2"
+            className="w-full flex justify-between gap-5 bg-indigo-200 rounded-lg p-2"
           >
             <p>{course.title}</p>
             <Link
