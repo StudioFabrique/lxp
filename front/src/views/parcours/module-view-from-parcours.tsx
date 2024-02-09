@@ -2,7 +2,7 @@ import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import ImageHeader from "../../components/image-header";
 import HeaderMenu from "../../components/UI/header-menu";
 import { useLocation, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 import Progression from "../../components/module-view-from-parcours/progression/progression";
 import Loader from "../../components/UI/loader";
@@ -61,7 +61,10 @@ const ModuleViewFromParcours = () => {
               imageUrl={`data:image/jpeg;base64,${moduleData.image}`}
               title={moduleData.title}
               subTitle={`${moduleData.parcours} > Module`}
-              children={[<></>, <HeaderMenu />]}
+              children={[
+                <Fragment key="fragment" />,
+                <HeaderMenu key="header" />,
+              ]}
             />
           </div>
 

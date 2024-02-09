@@ -12,8 +12,6 @@ export default async function getMostReadCourses(
   userIdMdb: string,
   max?: number
 ) {
-  console.log(userIdMdb);
-
   const groupsWhereStudentIs = await Group.find({ users: userIdMdb });
 
   const groupIds: string[] = groupsWhereStudentIs.map((group) => group.id);

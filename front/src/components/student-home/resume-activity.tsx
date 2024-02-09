@@ -1,4 +1,4 @@
-import React from "react";
+import { Fragment } from "react";
 import { Link, useLocation } from "react-router-dom";
 import ImageHeader from "../image-header";
 import { PlayCircleIcon } from "lucide-react";
@@ -19,7 +19,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
         title={`Module: ${lastLesson.lesson.course.module.title}`}
         subTitle={`Cours: ${lastLesson.lesson.course.title}`}
         children={[
-          <React.Fragment key="fragment"></React.Fragment>,
+          <Fragment key="fragment" />,
           <div key="link" className="p-5 w-full flex justify-end">
             <Link
               to={`/${currentRoute}/parcours/module/${lastLesson.lesson.course.module.id}`}
@@ -27,7 +27,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
               className="z-20 btn btn-primary text-white flex"
             >
               <PlayCircleIcon />
-              <p>Démarrer</p>
+              <p>{lastLesson.beganAt ? "Reprendre" : "Démarrer"}</p>
             </Link>
           </div>,
         ]}
