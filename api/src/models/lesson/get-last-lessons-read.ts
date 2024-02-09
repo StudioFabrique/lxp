@@ -25,7 +25,7 @@ export default async function getLastLessonsRead(
             parcours: {
               every: {
                 parcours: {
-                  groups: { every: { group: { idMdb: { in: groupIds } } } },
+                  groups: { some: { group: { idMdb: { in: groupIds } } } },
                 },
               },
             },
@@ -61,7 +61,7 @@ export default async function getLastLessonsRead(
             parcours: {
               every: {
                 parcours: {
-                  groups: { every: { group: { idMdb: { in: groupIds } } } },
+                  groups: { some: { group: { idMdb: { in: groupIds } } } },
                 },
               },
             },
