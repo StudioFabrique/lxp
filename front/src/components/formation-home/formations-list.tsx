@@ -6,6 +6,7 @@ type FormationItem = {
   code: string;
   level: string;
   parcours: number;
+  createdAt: string;
 };
 
 interface FormationsListProps {
@@ -30,6 +31,7 @@ export default function FormationsList({
                 code={item.code}
                 level={item.level}
                 parcours={item.parcours}
+                createdAt={item.createdAt}
                 onSelect={onSelect}
               />
             </li>
