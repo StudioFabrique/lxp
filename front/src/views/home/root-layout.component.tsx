@@ -8,7 +8,7 @@ import Login from "../../components/login/login.component";
 let initialState = true;
 
 const RootLayout = () => {
-  const { user, fetchRoles, initTheme, isLoggedIn, handshake } =
+  const { user, fetchRoles, initTheme, isLoggedIn, handshake, closeTab } =
     useContext(Context);
   const nav = useNavigate();
 
@@ -30,6 +30,11 @@ const RootLayout = () => {
       handshake();
     }
   }, [nav, user, initTheme, isLoggedIn, handshake]);
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", closeTab);
+    return () => removeEventListener("beforeunload", closeTab);
+  }, [closeTab]);
 
   return (
     <FadeWrapper>

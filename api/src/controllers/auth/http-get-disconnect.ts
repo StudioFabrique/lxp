@@ -1,10 +1,12 @@
 import { Response } from "express";
-
-import CustomRequest from "../../utils/interfaces/express/custom-request";
-import User from "../../utils/interfaces/db/user";
 import ConnectionInfos from "../../utils/interfaces/db/connection-infos";
+import User from "../../utils/interfaces/db/user";
+import CustomRequest from "../../utils/interfaces/express/custom-request";
 
-async function httpLogout(req: CustomRequest, res: Response) {
+export default async function httpGetDisconnect(
+  req: CustomRequest,
+  res: Response
+) {
   const user = await User.findOne({ _id: req.auth?.userId }).populate("roles");
 
   if (user && user.roles[0].rank > 2) {
@@ -22,12 +24,5 @@ async function httpLogout(req: CustomRequest, res: Response) {
       );
     }
   }
-
-  return res
-    .clearCookie("accessToken")
-    .clearCookie("refreshToken")
-    .status(200)
-    .json({ message: "Déconnecté(e)." });
+  return res.status(200).json({ message: "Déconnecté(e)." });
 }
-
-export default httpLogout;
