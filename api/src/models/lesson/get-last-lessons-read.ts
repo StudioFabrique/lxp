@@ -41,10 +41,24 @@ export default async function getLastLessonsRead(
           title: true,
           course: {
             select: {
+              id: true,
               title: true,
               module: { select: { id: true, title: true } },
+              bonusSkills: {
+                select: { bonusSkill: { select: { id: true, badge: true } } },
+              },
+              lessons: {
+                select: {
+                  id: true,
+                  lessonsRead: {
+                    where: { student: { idMdb: userIdMdb } },
+                    select: { id: true, finishedAt: true },
+                  },
+                },
+              },
             },
           },
+          order: true,
         },
       },
     },
@@ -87,5 +101,18 @@ export default async function getLastLessonsRead(
     return [lessonReformated];
   }
 
-  return lessons;
+  const lessonsReformatedWithSkillBadge = lessons?.map((lessonRead) => {
+    const { course } = lessonRead.lesson;
+
+    const bonusSkills = course.bonusSkills.map((bonusSkill) => {
+      return bonusSkill.bonusSkill;
+    });
+
+    return {
+      ...lessonRead,
+      lesson: { ...lessonRead.lesson, course: { ...course, bonusSkills } },
+    };
+  });
+
+  return lessonsReformatedWithSkillBadge;
 }
