@@ -20,26 +20,28 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
           {lastLessons.map((item) => (
             <div
               key={item.id}
-              className={`flex flex-col p-5 bg-secondary rounded-lg gap-10`}
+              className={`flex flex-col p-5 bg-secondary rounded-lg gap-4`}
             >
-              <span>
+              <div>
                 <p className="font-semibold text-primary">{`Module: ${item.lesson.course.module.title}`}</p>
                 <p>{`Cours: ${item.lesson.course.title}`}</p>
-              </span>
-              <div>
-                <div>
-                  {item.lesson.course.bonusSkills.map(
-                    (skill) =>
-                      skill.badge && (
-                        <img
-                          key={skill.id}
-                          className="w-full h-full p-2"
-                          src={skill.badge}
-                          alt="illustration badge"
-                        />
-                      )
-                  )}
+                <div className="flex gap-1 overflow-x-hidden">
+                  {item.lesson.course.bonusSkills
+                    .filter((skill) => skill.badge)
+                    .map(
+                      (skill, i) =>
+                        i < 5 && (
+                          <img
+                            key={skill.id}
+                            className="w-12 h-12 p-2"
+                            src={skill.badge}
+                            alt="illustration badge"
+                          />
+                        )
+                    )}
                 </div>
+              </div>
+              <div>
                 <span className="flex justify-between">
                   <span className="flex gap-x-4 capitalize">
                     <p>1/10</p>
