@@ -41,7 +41,10 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                   )}
                 </div>
                 <span className="flex justify-between">
-                  <p>{item.lesson.title}</p>
+                  <span className="flex gap-x-4 capitalize">
+                    <p>1/10</p>
+                    <p>{item.lesson.title}</p>
+                  </span>
                   <Link
                     to={`/${currentRoute}/parcours/module/${item.lesson.course.module.id}`}
                     state={{ lessonId: item.lesson.id }}
