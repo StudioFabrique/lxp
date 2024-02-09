@@ -4,7 +4,7 @@ const FeedbackApprenant = () => {
   return (
     <div className="flex flex-col items-center justify-between bg-secondary rounded-lg p-5 gap-5">
       <p className="font-bold self-start">Derniers feedback des apprenants</p>
-      <div className="flex gap-4 w-full bg-indigo-200 rounded-lg p-2 tooltip tooltip-right">
+      <div className="flex gap-4 items-center w-full bg-indigo-200 rounded-lg p-2 tooltip tooltip-right">
         <img
           className="rounded-lg h-[35px] w-[35px] object-cover"
           src={`data:image/jpeg;base64,${imageProfileReplacement}`}
@@ -15,7 +15,7 @@ const FeedbackApprenant = () => {
           <p>vient d'ajouter un commentaire</p>
         </span>
       </div>
-      <div className="flex gap-4 w-full bg-indigo-200 rounded-lg p-2 tooltip tooltip-right">
+      <div className="flex gap-4 items-center w-full bg-indigo-200 rounded-lg p-2 tooltip tooltip-right">
         <img
           className="rounded-lg h-[35px] w-[35px] object-cover"
           src={`data:image/jpeg;base64,${imageProfileReplacement}`}
@@ -26,7 +26,7 @@ const FeedbackApprenant = () => {
           <p>vient d'ajouter un commentaire</p>
         </span>
       </div>
-      <div className="flex gap-4 w-full bg-indigo-200 rounded-lg p-2 tooltip tooltip-right">
+      <div className="flex gap-4 items-center w-full bg-indigo-200 rounded-lg p-2 tooltip tooltip-right">
         <img
           className="rounded-lg h-[35px] w-[35px] object-cover"
           src={`data:image/jpeg;base64,${imageProfileReplacement}`}

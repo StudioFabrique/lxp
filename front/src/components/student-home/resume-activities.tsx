@@ -17,47 +17,66 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
           Reprendre mes activités là où je m'étais arrêté
         </h2>
         <div className="grid grid-cols-3 gap-2">
-          {lastLessons.map((item) => (
-            <div
-              key={item.id}
-              className={`flex flex-col p-5 bg-secondary rounded-lg gap-4`}
-            >
-              <div>
-                <p className="font-semibold text-primary">{`Module: ${item.lesson.course.module.title}`}</p>
-                <p>{`Cours: ${item.lesson.course.title}`}</p>
-                <div className="flex gap-1 overflow-x-hidden">
-                  {item.lesson.course.bonusSkills
-                    .filter((skill) => skill.badge)
-                    .map(
-                      (skill, i) =>
-                        i < 5 && (
-                          <img
-                            key={skill.id}
-                            className="w-12 h-12 p-2"
-                            src={skill.badge}
-                            alt="illustration badge"
-                          />
-                        )
-                    )}
+          {lastLessons.map((item) => {
+            const progressCalculation =
+              item.lesson.course.lessons.reduce((sum, lesson) => {
+                return (
+                  sum +
+                  (lesson.lessonsRead &&
+                  lesson.lessonsRead?.length > 0 &&
+                  lesson.lessonsRead[0].finishedAt
+                    ? 1
+                    : 0)
+                );
+              }, 0) / item.lesson.course.lessons.length;
+
+            return (
+              <div
+                key={item.id}
+                className={`flex flex-col p-5 bg-secondary rounded-lg gap-4`}
+              >
+                <div>
+                  <p className="font-semibold text-primary">{`Module: ${item.lesson.course.module.title}`}</p>
+                  <p>{`Cours: ${item.lesson.course.title}`}</p>
+                  <div className="flex gap-1 overflow-x-hidden">
+                    {item.lesson.course.bonusSkills
+                      .filter((skill) => skill.badge)
+                      .map(
+                        (skill, i) =>
+                          i < 5 && (
+                            <img
+                              key={skill.id}
+                              className="w-12 h-12 p-2"
+                              src={skill.badge}
+                              alt="illustration badge"
+                            />
+                          )
+                      )}
+                  </div>
+                </div>
+                <div>
+                  <span className="flex justify-between">
+                    <span className="flex gap-x-4 capitalize">
+                      <p>{`${(item.lesson.order ?? 0) + 1}/${
+                        item.lesson.course.lessons.length
+                      }`}</p>
+                      <p>{item.lesson.title}</p>
+                    </span>
+                    <Link
+                      to={`/${currentRoute}/parcours/module/${item.lesson.course.module.id}`}
+                      state={{ lessonId: item.lesson.id }}
+                    >
+                      <ArrowUpRightIcon className="text-primary" />
+                    </Link>
+                  </span>
+                  <progress
+                    className="progress progress-primary"
+                    value={progressCalculation}
+                  />
                 </div>
               </div>
-              <div>
-                <span className="flex justify-between">
-                  <span className="flex gap-x-4 capitalize">
-                    <p>1/10</p>
-                    <p>{item.lesson.title}</p>
-                  </span>
-                  <Link
-                    to={`/${currentRoute}/parcours/module/${item.lesson.course.module.id}`}
-                    state={{ lessonId: item.lesson.id }}
-                  >
-                    <ArrowUpRightIcon className="text-primary" />
-                  </Link>
-                </span>
-                <progress className="progress progress-primary" value={0.5} />
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     );
