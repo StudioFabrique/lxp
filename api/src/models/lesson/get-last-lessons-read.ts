@@ -90,5 +90,18 @@ export default async function getLastLessonsRead(
     return [lessonReformated];
   }
 
-  return lessons;
+  const lessonsReformatedWithSkillBadge = lessons?.map((lessonRead) => {
+    const { course } = lessonRead.lesson;
+
+    const bonusSkills = course.bonusSkills.map((bonusSkill) => {
+      return bonusSkill.bonusSkill;
+    });
+
+    return {
+      ...lessonRead,
+      lesson: { ...lessonRead.lesson, course: { ...course, bonusSkills } },
+    };
+  });
+
+  return lessonsReformatedWithSkillBadge;
 }

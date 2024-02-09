@@ -12,6 +12,8 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
 
+  console.log({ lastLesson });
+
   return (
     <div className="flex gap-2">
       <ImageHeader
