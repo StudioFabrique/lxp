@@ -114,6 +114,11 @@
             "date": 1707483603288,
             "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-09-14.log",
             "hash": "1a4c8b390af5d3cbbecf0b832a4b49ef7a96e1721cbfaeabbb8b37a4a7e87f0f"
+        },
+        {
+            "date": 1707487267823,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-09-15.log",
+            "hash": "404b9b961ca58d2055c883f8552152b8d3382c5b888b3063f7e714af981175a8"
         }
     ],
     "hashType": "sha256"
