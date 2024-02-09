@@ -43,6 +43,9 @@ export default async function getLastLessonsRead(
             select: {
               title: true,
               module: { select: { id: true, title: true } },
+              bonusSkills: {
+                select: { bonusSkill: { select: { id: true, badge: true } } },
+              },
             },
           },
         },

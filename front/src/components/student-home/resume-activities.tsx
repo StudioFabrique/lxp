@@ -23,18 +23,34 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
               className={`flex flex-col p-5 bg-secondary rounded-lg gap-10`}
             >
               <span>
-                <p>{`Module: ${item.lesson.course.module.title}`}</p>
+                <p className="font-semibold text-primary">{`Module: ${item.lesson.course.module.title}`}</p>
                 <p>{`Cours: ${item.lesson.course.title}`}</p>
               </span>
-              <span className="flex justify-between">
-                <p>{item.lesson.title}</p>
-                <Link
-                  to={`/${currentRoute}/parcours/module/${item.lesson.course.module.id}`}
-                  state={{ lessonId: item.lesson.id }}
-                >
-                  <ArrowUpRightIcon />
-                </Link>
-              </span>
+              <div>
+                <div>
+                  {item.lesson.course.bonusSkills.map(
+                    (skill) =>
+                      skill.badge && (
+                        <img
+                          key={skill.id}
+                          className="w-full h-full p-2"
+                          src={skill.badge}
+                          alt="illustration badge"
+                        />
+                      )
+                  )}
+                </div>
+                <span className="flex justify-between">
+                  <p>{item.lesson.title}</p>
+                  <Link
+                    to={`/${currentRoute}/parcours/module/${item.lesson.course.module.id}`}
+                    state={{ lessonId: item.lesson.id }}
+                  >
+                    <ArrowUpRightIcon className="text-primary" />
+                  </Link>
+                </span>
+                <progress className="progress progress-primary" value={0.5} />
+              </div>
             </div>
           ))}
         </div>
