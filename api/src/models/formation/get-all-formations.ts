@@ -8,6 +8,7 @@ export default async function getAllFormations() {
       description: true,
       code: true,
       level: true,
+      createdAt: true,
       parcours: {
         select: {
           id: true,

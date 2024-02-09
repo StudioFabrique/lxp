@@ -41,6 +41,7 @@ export default async function putFormation(
         description: formation.description,
         code: formation.code,
         level: formation.level,
+        updatedAt: new Date(),
         tags: {
           create: formation.tags.map((item: number) => {
             return {
@@ -57,6 +58,7 @@ export default async function putFormation(
         level: true,
         parcours: { select: { id: true } },
         tags: { select: { tag: { select: { id: true } } } },
+        createdAt: true,
       },
     });
   });
