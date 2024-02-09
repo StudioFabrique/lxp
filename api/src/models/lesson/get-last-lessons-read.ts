@@ -1,3 +1,5 @@
+import Group from "../../utils/interfaces/db/group";
+
 /**
  * Récupère la liste des dernières leçons lues par un étudiant et n'étant pas terminé.
  * @param userIdMdb L'id de l'étudiant
@@ -8,8 +10,30 @@ export default async function getLastLessonsRead(
   userIdMdb: string,
   max?: number
 ) {
+  const groupsWhereStudentIs = await Group.find({ users: userIdMdb });
+
+  const groupIds: string[] = groupsWhereStudentIs.map((group) => group.id);
+
+  if (!(groupIds.length > 0)) return null;
+
   const lessons = await prisma?.lessonRead.findMany({
-    where: { student: { idMdb: userIdMdb }, finishedAt: null },
+    where: {
+      student: { idMdb: userIdMdb },
+      lesson: {
+        course: {
+          module: {
+            parcours: {
+              every: {
+                parcours: {
+                  groups: { some: { group: { idMdb: { in: groupIds } } } },
+                },
+              },
+            },
+          },
+        },
+      },
+      finishedAt: null,
+    },
     include: {
       lesson: {
         select: {
@@ -32,6 +56,17 @@ export default async function getLastLessonsRead(
     const lesson = await prisma?.lesson.findFirst({
       where: {
         lessonsRead: { every: { NOT: { student: { idMdb: userIdMdb } } } },
+        course: {
+          module: {
+            parcours: {
+              every: {
+                parcours: {
+                  groups: { some: { group: { idMdb: { in: groupIds } } } },
+                },
+              },
+            },
+          },
+        },
       },
       include: {
         course: {
