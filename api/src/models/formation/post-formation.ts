@@ -56,6 +56,7 @@ export default async function postFormation(
       description: true,
       code: true,
       level: true,
+      createdAt: true,
       parcours: {
         select: {
           id: true,
