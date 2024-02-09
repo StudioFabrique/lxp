@@ -2,6 +2,7 @@ import Contact from "./contact";
 import CourseDates from "./course-dates";
 import Lesson from "./lesson";
 import Module from "./module";
+import Skill from "./skill";
 import Tag from "./tag";
 
 export default interface Course {
@@ -21,4 +22,5 @@ export default interface Course {
   lessons: Lesson[];
   dates: CourseDates[];
   isPublished: boolean;
+  bonusSkills: Skill[];
 }
