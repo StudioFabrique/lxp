@@ -15,8 +15,11 @@ const Progression = ({
   selectedLesson,
   setSelectedLesson,
 }: ProgressionProps) => {
+  const coursesWithLessons = courses.filter(
+    (course) => course.lessons.length > 0
+  );
   const moduleProgress =
-    courses.reduce(
+    coursesWithLessons.reduce(
       (sum, course) =>
         sum +
         course.lessons.reduce(
@@ -25,7 +28,7 @@ const Progression = ({
         ) /
           course.lessons.length,
       0
-    ) / courses.length;
+    ) / coursesWithLessons.length;
 
   const radialStyle = {
     "--value": moduleProgress * 100,
