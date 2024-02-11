@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -6,14 +7,15 @@ import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import Login from "../../components/login/login.component";
 
 let initialState = true;
+let socket: any;
 
 const RootLayout = () => {
-  const { user, fetchRoles, initTheme, isLoggedIn, handshake, closeTab } =
+  const { user, fetchRoles, initTheme, isLoggedIn, handshake } =
     useContext(Context);
   const nav = useNavigate();
 
   useEffect(() => {
-    if (isLoggedIn) {
+    if (isLoggedIn && user) {
       fetchRoles(user!.roles[0]);
       if (user && user.roles[0].rank < 3) {
         nav("/admin");
@@ -29,12 +31,13 @@ const RootLayout = () => {
       initialState = false;
       handshake();
     }
-  }, [nav, user, initTheme, isLoggedIn, handshake]);
+  }, [initTheme, isLoggedIn, handshake]);
 
   useEffect(() => {
-    window.addEventListener("beforeunload", closeTab);
-    return () => removeEventListener("beforeunload", closeTab);
-  }, [closeTab]);
+    if (!isLoggedIn && socket !== undefined) {
+      socket.disconnect();
+    }
+  }, [isLoggedIn]);
 
   return (
     <FadeWrapper>

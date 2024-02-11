@@ -19,6 +19,26 @@
             "date": 1707341518327,
             "name": "/home/firiz/Documents/studio/lxp/api/logs/application-2024-02-07-22.log",
             "hash": "11933c00c08ee606905ccf5d257c13e422fcdc1e52008f30949b3f4bbdfdfc26"
+        },
+        {
+            "date": 1707597682210,
+            "name": "/home/firiz/Documents/studio/lxp/api/logs/application-2024-02-10-21.log",
+            "hash": "6b74ad270de7ee136ae64183ca2d1906663bee680672783139b3e38c50a7b0ed"
+        },
+        {
+            "date": 1707599554400,
+            "name": "/home/firiz/Documents/studio/lxp/api/logs/application-2024-02-10-22.log",
+            "hash": "ec009e7ef720b224f9414da5ec882c8559125d0fadc1f4631fd4e3314cb1e656"
+        },
+        {
+            "date": 1707602592552,
+            "name": "/home/firiz/Documents/studio/lxp/api/logs/application-2024-02-10-23.log",
+            "hash": "0dba662342941a4e2aa24717d9d73daf939487af5aa0cb717abae55d722d7012"
+        },
+        {
+            "date": 1707607111024,
+            "name": "/home/firiz/Documents/studio/lxp/api/logs/application-2024-02-11-00.log",
+            "hash": "8a754890c85b66d4a26d27a7cb80a5c0c1b01d61cabf8ec48ca5cde1fabcceee"
         }
     ],
     "hashType": "sha256"
