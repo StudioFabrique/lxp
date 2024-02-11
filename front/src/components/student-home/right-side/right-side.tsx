@@ -5,7 +5,7 @@ import MostReadCourses from "./most-read-courses";
 
 const RightSide = () => {
   return (
-    <div className="flex flex-col px-10 gap-5">
+    <div className="flex flex-col xl:px-10 gap-5">
       <FeelingFeedback />
       <Chat />
       <FeedbackApprenant />
