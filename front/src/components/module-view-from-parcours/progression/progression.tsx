@@ -53,6 +53,7 @@ const Progression = ({
         {courses.length > 0 ? (
           courses.map((course) => (
             <CourseItem
+              key={course.id}
               course={course}
               selectedLesson={selectedLesson}
               setSelectedLesson={setSelectedLesson}
