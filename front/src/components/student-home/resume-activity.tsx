@@ -18,7 +18,10 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
         title={`Module: ${lastLesson.lesson.course.module.title}`}
         subTitle={`Cours: ${lastLesson.lesson.course.title}`}
         children={[
-          <div key="badges" className="absolute right-5 -top-52">
+          <div
+            key="badges"
+            className="absolute right-5 lg:-top-[28vh] sm:-top-[26vh] -top-[15vh]"
+          >
             <div className="flex gap-1 overflow-x-hidden">
               {lastLesson.lesson.course.bonusSkills
                 .filter((skill) => skill.badge)
