@@ -4,7 +4,6 @@ import path from "path";
 
 import {
   getAllByRankValidator,
-  getAllValidator,
   manyUsersValidator,
   userValidator,
 } from "../../../middleware/validators";
@@ -27,6 +26,7 @@ import hobbyRouter from "./hobby/hobby.router";
 import { getUsersByRoleValidator } from "./user-validators";
 import { paginationValidator } from "../../../helpers/custom-validators";
 import httpGetUserLastParcours from "../../../controllers/user/http-get-user-last-parcours";
+import httpGetUser from "../../../controllers/user/http-get-user";
 
 const userRouter = express.Router();
 
@@ -176,5 +176,8 @@ userRouter.get(
   checkPermissions("parcours"),
   httpGetUserLastParcours
 );
+
+// retourne les informations d'un utilisateur ainsi que ses rôles et son temps de connexion
+userRouter.get("/data/:userId", checkPermissions("user"), httpGetUser);
 
 export default userRouter;
