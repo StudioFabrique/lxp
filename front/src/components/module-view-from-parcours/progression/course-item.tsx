@@ -40,7 +40,7 @@ const CourseItem = ({
       >
         <div className="bg-secondary p-4 rounded-xl flex flex-col gap-2">
           {/* Titre du cours + tooltip */}
-          <td className="capitalize">
+          <div className="capitalize">
             <div className="relative">
               <span
                 data-tip={`Titre : ${course.title}`}
@@ -50,7 +50,7 @@ const CourseItem = ({
             <div className="truncate">
               <h3 className="text-secondary-content/70">{course.title}</h3>
             </div>
-          </td>
+          </div>
           <div className="flex justify-between gap-5">
             <p className="text-secondary-content font-semibold text-sm w-[80%] max-h-10 break-words overflow-y-clip">
               {course.description}
@@ -78,6 +78,7 @@ const CourseItem = ({
           {course.lessons.length > 0 ? (
             course.lessons.map((lesson) => (
               <LessonItem
+                key={lesson.id}
                 lesson={lesson}
                 selectedLesson={selectedLesson}
                 setSelectedLesson={setSelectedLesson}

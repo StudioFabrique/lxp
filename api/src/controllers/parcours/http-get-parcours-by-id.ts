@@ -6,14 +6,14 @@ import { noAccess, serverIssue } from "../../utils/constantes";
 
 async function httpGetParcoursById(req: CustomRequest, res: Response) {
   try {
-    /* const userId = req.auth?.userId;
+    const userId = req.auth?.userId;
 
     if (!userId) {
       throw { message: noAccess, status: 403 };
-    } */
+    }
 
     const { parcoursId } = req.params;
-    const response = await getParcoursById(+parcoursId /* , userId */);
+    const response = await getParcoursById(+parcoursId, userId);
     if (response) {
       return res.status(200).json(response);
     }
