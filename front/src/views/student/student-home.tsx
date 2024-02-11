@@ -24,7 +24,7 @@ const StudentHome = () => {
 
   return (
     <div className="flex flex-col gap-6 m-6">
-      <div className="flex w-full justify-between">
+      <div className="flex flex-col-reverse lg:flex-row w-full justify-between">
         <span className="mt-5">
           <h1 className="font-bold text-3xl">{`Bonjour, ${user?.firstname} ${user?.lastname} !`}</h1>
           <p>
@@ -36,8 +36,8 @@ const StudentHome = () => {
           <UserTopBar />
         </span>
       </div>
-      <div className="grid grid-cols-4">
-        <div className="col-span-3 flex flex-col gap-5">
+      <div className="grid xl:grid-cols-4 xl:gap-0 gap-10">
+        <div className="xl:col-span-3 flex flex-col gap-5">
           <Notifications />
           {lastLessons && lastLessons?.length > 0 ? (
             <>
