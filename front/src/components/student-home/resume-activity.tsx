@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import { Link, useLocation } from "react-router-dom";
 import ImageHeader from "../image-header";
 import { PlayCircleIcon } from "lucide-react";
@@ -19,7 +18,23 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
         title={`Module: ${lastLesson.lesson.course.module.title}`}
         subTitle={`Cours: ${lastLesson.lesson.course.title}`}
         children={[
-          <Fragment key="fragment" />,
+          <div key="badges" className="absolute right-5 -top-52">
+            <div className="flex gap-1 overflow-x-hidden">
+              {lastLesson.lesson.course.bonusSkills
+                .filter((skill) => skill.badge)
+                .map(
+                  (skill, i) =>
+                    i < 5 && (
+                      <img
+                        key={skill.id}
+                        className="w-12 h-12 p-2"
+                        src={skill.badge}
+                        alt="illustration badge"
+                      />
+                    )
+                )}
+            </div>
+          </div>,
           <div key="link" className="p-5 w-full flex justify-end">
             <Link
               to={`/${currentRoute}/parcours/module/${lastLesson.lesson.course.module.id}`}
