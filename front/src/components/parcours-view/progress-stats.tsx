@@ -31,7 +31,7 @@ const ProgressStats = () => {
               ?.filter((_x, i) => i < 4)
               .map((module, i) => {
                 const moduleProgress =
-                  module.courses.length > 0
+                  (module.courses.length > 0
                     ? module.courses.reduce(
                         (sum, course) =>
                           sum +
@@ -47,7 +47,7 @@ const ProgressStats = () => {
                             course.lessons.length,
                         0
                       ) / module.courses.length
-                    : 0 * 100;
+                    : 0) * 100;
 
                 return (
                   <div
