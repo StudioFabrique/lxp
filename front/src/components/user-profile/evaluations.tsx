@@ -52,7 +52,7 @@ const Evaluations = () => {
       <h3 className="text-lg font-semibold">Notes et Evaluations</h3>
       <Wrapper>
         <div className="flex flex-col gap-5 max-h-[50vh] overflow-y-auto">
-          <div className="flex justify-between w-full rounded-xl h-[5vh] px-10 text-secondary-content">
+          <div className="flex justify-between w-full rounded-xl h-[5vh] px-10">
             <p className="py-5 self-center">Sujet</p>
             <span className="border-r-2 border-secondary-content" />
             <p className="py-5 self-center">Note</p>
