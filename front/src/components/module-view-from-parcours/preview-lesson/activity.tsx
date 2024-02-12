@@ -45,7 +45,6 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
     case "text":
       return (
         <Wrapper>
-          {" "}
           <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 max-w-none">
             {value}
           </Markdown>
