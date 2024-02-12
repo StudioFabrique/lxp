@@ -13,10 +13,10 @@ const Forum = ({ currentRoute }: { currentRoute: string[] }) => {
           }`}
           data-tip="Forum"
         >
-          <div className="flex hover:text-primary text-primary-content justify-center items-center">
+          <div className="flex hover justify-center items-center">
             <MessageCircleIcon className="z-10 pointer-events-none" />
             <span
-              className={`absolute p-5 rounded-lg ${
+              className={`absolute p-5 rounded-lg hover:bg-primary/50 ${
                 isCurrentPathActive && "bg-primary/50"
               }`}
             />
