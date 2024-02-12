@@ -13,7 +13,14 @@ const Calendar = ({ currentRoute }: { currentRoute: string[] }) => {
           }`}
           data-tip="Calendrier"
         >
-          <CalendarIcon />
+          <div className="flex hover:text-primary text-primary-content justify-center items-center">
+            <CalendarIcon className="z-10 pointer-events-none" />
+            <span
+              className={`absolute p-5 rounded-lg ${
+                isCurrentPathActive && "bg-primary/50"
+              }`}
+            />
+          </div>
         </div>
       </Link>
     </li>
