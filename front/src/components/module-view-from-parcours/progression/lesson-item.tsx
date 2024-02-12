@@ -35,7 +35,9 @@ const LessonItem = ({
     <div
       onClick={handleBeginReadLesson}
       className={`flex items-center justify-between rounded-xl p-2 w-full cursor-pointer ${
-        isLessonSelected ? "bg-primary text-white" : "bg-primary/50"
+        isLessonSelected
+          ? "bg-primary text-primary-content"
+          : "bg-primary/60 text-primary-content"
       }`}
     >
       <p className="max-h-14 overflow-clip">{lesson.title}</p>
@@ -45,7 +47,9 @@ const LessonItem = ({
         ) : lesson.lessonsRead && lesson.lessonsRead?.length > 0 ? (
           <CheckCircle2
             className={`w-5 h-5 ${
-              isLessonSelected ? "stroke-secondary" : "stroke-primary"
+              isLessonSelected
+                ? "stroke-secondary-content"
+                : "stroke-primary-content"
             }`}
           />
         ) : (

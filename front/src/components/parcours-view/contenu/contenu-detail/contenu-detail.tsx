@@ -33,7 +33,7 @@ const ContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
       courses.map((course, i) => (
         <div
           key={course?.id}
-          className="flex justify-between items-center bg-secondary p-4 rounded-lg"
+          className="flex justify-between items-center bg-secondary text-secondary-content p-4 rounded-lg"
         >
           <span className="w-14 h-14 mx-4">
             <BookIcon />

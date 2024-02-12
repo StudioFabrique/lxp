@@ -1,6 +1,6 @@
 const FeelingFeedback = () => {
   return (
-    <div className="flex flex-col bg-secondary p-5 rounded-lg">
+    <div className="flex flex-col bg-secondary text-secondary-content p-5 rounded-lg">
       <p className="font-bold">Comment vous sentez-vous aujourd'hui ?</p>
       <button
         type="button"
