@@ -33,10 +33,10 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
             return (
               <div
                 key={item.id}
-                className={`flex flex-col justify-between p-5 bg-secondary rounded-lg gap-4`}
+                className={`flex flex-col justify-between p-5 bg-secondary/70 text-secondary-content rounded-lg gap-4`}
               >
                 <div>
-                  <p className="font-semibold text-primary">{`Module: ${item.lesson.course.module.title}`}</p>
+                  <p className="font-semibold">{`Module: ${item.lesson.course.module.title}`}</p>
                   <p>{`Cours: ${item.lesson.course.title}`}</p>
                   <div className="flex gap-1 overflow-x-hidden">
                     {item.lesson.course.bonusSkills
@@ -68,11 +68,11 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                       to={`/${currentRoute}/parcours/module/${item.lesson.course.module.id}`}
                       state={{ lessonId: item.lesson.id }}
                     >
-                      <ArrowUpRightIcon className="text-primary" />
+                      <ArrowUpRightIcon />
                     </Link>
                   </span>
                   <progress
-                    className="progress progress-primary"
+                    className="progress progress-primary bg-secondary/80"
                     value={progressCalculation}
                   />
                 </div>

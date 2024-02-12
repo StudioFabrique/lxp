@@ -85,7 +85,7 @@ const GroupUserList: FC<{
           <table className="table-auto border-separate border-spacing-y-4">
             <thead>
               <tr className="text-lg">
-                <th className="bg-transparent w-10">
+                <th className="bg-transparent w-10 pt-2">
                   <input
                     type="checkbox"
                     className="checkbox checkbox-primary"
