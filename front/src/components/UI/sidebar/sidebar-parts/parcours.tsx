@@ -22,7 +22,14 @@ const Parcours = ({ currentRoute }: { currentRoute: string[] }) => {
           }`}
           data-tip="Parcours"
         >
-          <RocketIcon />
+          <div className="flex hover:text-primary text-primary-content justify-center items-center">
+            <RocketIcon className="z-10 pointer-events-none" />
+            <span
+              className={`absolute p-5 rounded-lg ${
+                isCurrentPathActive && "bg-primary/50"
+              }`}
+            />
+          </div>
         </Link>
 
         <MotionSidebarWrapper isHover={currentRoute[0] === "admin" && isHover}>
