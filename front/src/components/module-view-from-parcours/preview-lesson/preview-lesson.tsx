@@ -83,7 +83,7 @@ const PreviewLesson = ({
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-4">
       {lessonDetail?.activities && lessonDetail?.activities.length > 0 ? (
         lessonDetail?.activities?.map((activity) => (
           <ActivityPreview key={activity.id} activity={activity} />

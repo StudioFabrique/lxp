@@ -17,15 +17,13 @@ const Group = ({ currentRoute }: { currentRoute: string[] }) => {
       <div className="flex items-center">
         <Link
           to={`/${currentRoute[0]}/group`}
-          className={`tooltip tooltip-top w-6 h-6 z-10 ${
-            (isHover || isCurrentPathActive) && "text-primary"
-          }`}
+          className="tooltip tooltip-top w-6 h-6 z-10"
           data-tip="Groupes"
         >
-          <div className="flex hover:text-primary text-primary-content justify-center items-center">
+          <div className="flex hover justify-center items-center">
             <GroupIcon />
             <span
-              className={`absolute p-5 rounded-lg ${
+              className={`absolute p-5 rounded-lg hover:bg-primary/50 ${
                 isCurrentPathActive && "bg-primary/50"
               }`}
             />
