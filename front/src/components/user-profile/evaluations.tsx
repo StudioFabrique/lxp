@@ -1,8 +1,5 @@
-import { CategoryScale, Chart } from "chart.js/auto";
+import ReactApexChart from "react-apexcharts";
 import Wrapper from "../UI/wrapper/wrapper.component";
-import { Radar } from "react-chartjs-2";
-
-Chart.register(CategoryScale);
 
 const Evaluations = () => {
   const evaluations = [
@@ -26,6 +23,27 @@ const Evaluations = () => {
       note: 13,
       feedback: "très intéressant",
       coefficient: "4",
+    },
+  ];
+
+  const randomParticipations = Array.from(
+    { length: 12 },
+    () => Math.floor(Math.random() * (200 - 10 + 1)) + 10
+  );
+
+  const randomMotivations = Array.from(
+    { length: 12 },
+    () => Math.floor(Math.random() * (200 - 10 + 1)) + 10
+  );
+
+  const series = [
+    {
+      name: "Motivation",
+      data: randomMotivations,
+    },
+    {
+      name: "Participation",
+      data: randomParticipations,
     },
   ];
 
@@ -61,46 +79,53 @@ const Evaluations = () => {
         <div></div>
       </Wrapper>
       <h3 className="text-lg font-semibold">Graphique d'évaluation</h3>
-      <div className="flex justify-center h-[50vh] w-full">
-        <div className="bg-secondary/50 rounded-3xl">
-          <Radar
-            data={{
-              labels: [
-                "Eating",
-                "Drinking",
-                "Sleeping",
-                "Designing",
-                "Coding",
-                "Cycling",
-                "Running",
-              ],
-              datasets: [
-                {
-                  label: "My First Dataset",
-                  data: [65, 59, 90, 81, 56, 55, 40],
-                  fill: true,
-                  backgroundColor: "rgba(255, 99, 132, 0.2)",
-                  borderColor: "rgb(255, 99, 132)",
-                  pointBackgroundColor: "rgb(255, 99, 132)",
-                  pointBorderColor: "#fff",
-                  pointHoverBackgroundColor: "#fff",
-                  pointHoverBorderColor: "rgb(255, 99, 132)",
-                },
-                {
-                  label: "My Second Dataset",
-                  data: [28, 48, 40, 19, 96, 27, 100],
-                  fill: true,
-                  backgroundColor: "rgba(54, 162, 235, 0.2)",
-                  borderColor: "rgb(54, 162, 235)",
-                  pointBackgroundColor: "rgb(54, 162, 235)",
-                  pointBorderColor: "#fff",
-                  pointHoverBackgroundColor: "#fff",
-                  pointHoverBorderColor: "rgb(54, 162, 235)",
-                },
-              ],
-            }}
-          />
-        </div>
+      <div className="flex justify-center h-full w-full">
+        <ReactApexChart
+          type="radar"
+          width="500"
+          series={series}
+          options={{
+            series: [
+              {
+                name: "Series 1",
+                data: [80, 50, 30, 40, 100, 20],
+              },
+              {
+                name: "Series 2",
+                data: [20, 30, 40, 80, 20, 80],
+              },
+              {
+                name: "Series 3",
+                data: [44, 76, 78, 13, 43, 10],
+              },
+            ],
+            chart: {
+              height: 350,
+              type: "radar",
+              dropShadow: {
+                enabled: true,
+                blur: 1,
+                left: 1,
+                top: 1,
+              },
+            },
+            title: {
+              text: "Radar Chart - Multi Series",
+            },
+            stroke: {
+              width: 2,
+            },
+            fill: {
+              opacity: 0.1,
+            },
+            markers: {
+              size: 0,
+            },
+            xaxis: {
+              categories: ["2011", "2012", "2013", "2014", "2015", "2016"],
+            },
+          }}
+        />
       </div>
     </div>
   );
