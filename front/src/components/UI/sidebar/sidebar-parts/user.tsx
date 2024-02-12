@@ -22,7 +22,14 @@ const User = ({ currentRoute }: { currentRoute: string[] }) => {
           }`}
           data-tip="Utilisateurs"
         >
-          <UserIcon />
+          <div className="flex hover:text-primary text-primary-content justify-center items-center">
+            <UserIcon className="z-10 pointer-events-none" />
+            <span
+              className={`absolute p-5 rounded-lg ${
+                isCurrentPathActive && "bg-primary/50"
+              }`}
+            />
+          </div>
         </Link>
 
         <MotionSidebarWrapper isHover={isHover}>
