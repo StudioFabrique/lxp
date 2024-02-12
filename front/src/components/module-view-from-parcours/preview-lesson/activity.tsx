@@ -1,9 +1,10 @@
-/* import markdownit from "markdown-it"; */
+import "./video-style.css";
 import { useEffect, useState } from "react";
 import Activity from "../../../utils/interfaces/activity";
 import Markdown from "react-markdown";
-import ReactPlayer from "react-player";
 import { ACTIVITIES_VIDEOS } from "../../../config/urls";
+import BaseReactPlayer from "react-player";
+import Wrapper from "../../UI/wrapper/wrapper.component";
 
 type ActivityProps = {
   activity: Activity;
@@ -43,15 +44,20 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
   switch (activity.type) {
     case "text":
       return (
-        <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 max-w-none">
-          {value}
-        </Markdown>
+        <Wrapper>
+          {" "}
+          <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 max-w-none">
+            {value}
+          </Markdown>
+        </Wrapper>
       );
     case "video":
       return (
-        <div className="flex justify-center">
-          <ReactPlayer url={videoUrl} controls />
-        </div>
+        <Wrapper>
+          <div className="flex justify-center rounded-xl">
+            <BaseReactPlayer url={videoUrl} controls />
+          </div>
+        </Wrapper>
       );
     default:
       return undefined;
