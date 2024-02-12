@@ -34,7 +34,7 @@ const QuickStatistiques = () => {
   };
 
   return (
-    <div className="grid lg:grid-cols-5 gap-y-5 gap-x-10 mt-5 text-primary">
+    <div className="grid lg:grid-cols-5 gap-y-5 gap-x-10 mt-5 text-primary-content">
       <div className="flex flex-col gap-y-5 items-center bg-secondary p-10 rounded-lg">
         <p className="font-bold text-xl">Diplôme</p>
         <p className="font-bold text-4xl whitespace-nowrap">

@@ -38,7 +38,7 @@ const CourseItem = ({
         className="flex flex-col w-full cursor-pointer"
         onClick={() => setCourseOpen(!isCourseOpen)}
       >
-        <div className="bg-secondary p-4 rounded-xl flex flex-col gap-2">
+        <div className="bg-secondary/80 p-4 rounded-xl flex flex-col gap-2">
           {/* Titre du cours + tooltip */}
           <div className="capitalize">
             <div className="relative">
@@ -48,7 +48,7 @@ const CourseItem = ({
               />
             </div>
             <div className="truncate">
-              <h3 className="text-secondary-content/70">{course.title}</h3>
+              <h3 className="text-secondary-content/80">{course.title}</h3>
             </div>
           </div>
           <div className="flex justify-between gap-5">
@@ -56,19 +56,19 @@ const CourseItem = ({
               {course.description}
             </p>
             {isCourseOpen ? (
-              <ArrowDown className="stroke-primary" />
+              <ArrowDown className="stroke-primary-content" />
             ) : (
-              <ArrowRight className="stroke-primary" />
+              <ArrowRight className="stroke-primary-content" />
             )}
           </div>
         </div>
         <progress
-          className="w-full progress progress-primary -mt-[8px] rounded-b-full"
+          className="w-full progress progress-primary bg-secondary -mt-[8px] rounded-b-full"
           value={courseProgress}
         />
       </div>
       <motion.div
-        className="bg-secondary/80 -mt-2 rounded-b-xl overflow-y-auto"
+        className="bg-secondary/20 -mt-2 rounded-b-xl overflow-y-auto"
         animate={{
           display: isCourseOpen ? "block" : "none",
           maxHeight: isCourseOpen ? 280 : 0,

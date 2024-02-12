@@ -22,7 +22,7 @@ const GroupUserItem: FC<{
       <td className="bg-transparent rounded-l-xl p-5">
         <input
           type="checkbox"
-          className="checkbox"
+          className="checkbox checkbox-primary mt-1"
           onChange={() => onCheckRow(itemProps._id)}
           checked={itemProps.isSelected}
         />
@@ -34,7 +34,7 @@ const GroupUserItem: FC<{
       <td className="bg-transparent">{itemProps.lastname}</td>
       <td className="bg-transparent">{itemProps.email}</td>
       <td className="bg-transparent">CDA</td>
-      <td className="bg-transparent text-primary">
+      <td className="bg-transparent">
         {itemProps.isActive ? "Actif" : "Inactif"}
       </td>
       <td className="bg-transparent">

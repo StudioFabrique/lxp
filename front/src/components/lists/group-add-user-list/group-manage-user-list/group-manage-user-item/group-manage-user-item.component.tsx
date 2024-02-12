@@ -34,7 +34,7 @@ const GroupManageUserItem: FC<{
 
   return (
     <div className="flex justify-between items-center gap-x-2">
-      <span className="flex items-center gap-x-4 p-2 pl-5 w-full bg-secondary rounded-lg">
+      <span className="flex items-center gap-x-4 p-2 pl-5 w-full bg-secondary text-secondary-content rounded-lg">
         {disabled ? (
           <input type="checkbox" className="checkbox" disabled />
         ) : (
@@ -46,8 +46,10 @@ const GroupManageUserItem: FC<{
           />
         )}
         {user.avatar && <AvatarSmall url={user.avatar} />}
-        <p>{toTitleCase(user.firstname)}</p>
-        <p>{toTitleCase(user.lastname)}</p>
+        <span className="flex gap-x-4">
+          <p>{toTitleCase(user.firstname)}</p>
+          <p>{toTitleCase(user.lastname)}</p>
+        </span>
       </span>
       <button
         type="button"

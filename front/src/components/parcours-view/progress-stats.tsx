@@ -31,23 +31,23 @@ const ProgressStats = () => {
               ?.filter((_x, i) => i < 4)
               .map((module, i) => {
                 const moduleProgress =
-                  (module.courses.reduce(
-                    (sum, course) =>
-                      sum +
-                      course.lessons.reduce(
-                        (sum, lesson) =>
+                  module.courses.length > 0
+                    ? module.courses.reduce(
+                        (sum, course) =>
                           sum +
-                          (lesson?.lessonsRead?.length &&
-                          lesson.lessonsRead[0].finishedAt
-                            ? 1
-                            : 0),
+                          course.lessons.reduce(
+                            (sum, lesson) =>
+                              sum +
+                              (lesson?.lessonsRead?.length &&
+                              lesson.lessonsRead[0].finishedAt
+                                ? 1
+                                : 0),
+                            0
+                          ) /
+                            course.lessons.length,
                         0
-                      ) /
-                        course.lessons.length,
-                    0
-                  ) /
-                    module.courses.length) *
-                  100;
+                      ) / module.courses.length
+                    : 0 * 100;
 
                 return (
                   <div
