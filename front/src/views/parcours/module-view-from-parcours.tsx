@@ -68,13 +68,13 @@ const ModuleViewFromParcours = () => {
             />
           </div>
 
-          <div className="mt-5 grid grid-cols-4 gap-5 w-full">
+          <div className="mt-5 max-xl:flex max-xl:flex-col-reverse xl:grid xl:grid-cols-4 gap-5 w-full">
             <Progression
               courses={moduleData.courses}
               selectedLesson={selectedLesson}
               setSelectedLesson={setSelectedLesson}
             />
-            <div className="flex flex-col gap-5 col-span-3">
+            <div className="flex flex-col gap-5 xl:col-span-3">
               <ProgressBar courses={moduleData.courses} />
               {selectedLesson ? (
                 <PreviewLesson
@@ -91,13 +91,7 @@ const ModuleViewFromParcours = () => {
                   <div className="grid grid-cols-2 gap-5">
                     <Contacts contacts={moduleData.contacts} />
                     <Tags tags={moduleData.tags ?? []} />
-                    <Wrapper>
-                      <div></div>
-                    </Wrapper>
                   </div>
-                  <Wrapper>
-                    <div></div>
-                  </Wrapper>
                 </>
               )}
             </div>
