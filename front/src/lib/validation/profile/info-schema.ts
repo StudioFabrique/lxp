@@ -21,10 +21,40 @@ export const informationSchema = z.object({
     .regex(regexMail, {
       message: "L'email contient des caractères invalides",
     }),
-  description: z.string().regex(regexOptionalGeneric, {
-    message: "La description contient des caractères invalides",
-  }),
-  nickname: z.string().regex(regexOptionalGeneric, {
-    message: "Le pseudo contient des caractères invalides",
-  }),
+  nickname: z
+    .string()
+    .regex(regexOptionalGeneric, {
+      message: "Le pseudo contient des caractères invalides",
+    })
+    .optional(),
+  address: z
+    .string()
+    .regex(regexOptionalGeneric, {
+      message: "La description contient des caractères invalides",
+    })
+    .optional(),
+  city: z
+    .string()
+    .regex(regexOptionalGeneric, {
+      message: "La description contient des caractères invalides",
+    })
+    .optional(),
+  postCode: z
+    .string()
+    .regex(regexOptionalGeneric, {
+      message: "La description contient des caractères invalides",
+    })
+    .optional(),
+  phoneNumber: z
+    .string()
+    .regex(regexOptionalGeneric, {
+      message: "La description contient des caractères invalides",
+    })
+    .optional(),
+  description: z
+    .string()
+    .regex(regexOptionalGeneric, {
+      message: "La description contient des caractères invalides",
+    })
+    .optional(),
 });

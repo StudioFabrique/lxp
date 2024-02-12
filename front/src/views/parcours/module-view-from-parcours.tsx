@@ -8,7 +8,6 @@ import Progression from "../../components/module-view-from-parcours/progression/
 import Loader from "../../components/UI/loader";
 import ProgressBar from "../../components/module-view-from-parcours/progress-bar";
 import Objectifs from "../../components/module-view-from-parcours/objectifs";
-import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import Contacts from "../../components/module-view-from-parcours/contacts";
 import Module from "../../utils/interfaces/module";
 import PreviewLesson from "../../components/module-view-from-parcours/preview-lesson/preview-lesson";
