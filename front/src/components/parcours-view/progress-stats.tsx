@@ -51,7 +51,7 @@ const ProgressStats = () => {
 
                 return (
                   <div
-                    className="flex flex-col justify-center gap-2 items-center bg-secondary-focus text-primary-focus font-bold w-[10em] h-[10em] rounded-xl"
+                    className="flex flex-col justify-center gap-2 items-center text-primary-focus font-bold w-[10em] h-[10em]"
                     key={module.id}
                   >
                     <p
