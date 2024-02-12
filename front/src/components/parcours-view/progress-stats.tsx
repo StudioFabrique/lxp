@@ -31,7 +31,7 @@ const ProgressStats = () => {
               ?.filter((_x, i) => i < 4)
               .map((module, i) => {
                 const moduleProgress =
-                  module.courses.length > 0
+                  (module.courses.length > 0
                     ? module.courses.reduce(
                         (sum, course) =>
                           sum +
@@ -47,11 +47,11 @@ const ProgressStats = () => {
                             course.lessons.length,
                         0
                       ) / module.courses.length
-                    : 0 * 100;
+                    : 0) * 100;
 
                 return (
                   <div
-                    className="flex flex-col justify-center gap-2 items-center bg-secondary-focus text-primary-focus font-bold w-[10em] h-[10em] rounded-xl"
+                    className="flex flex-col justify-center gap-2 items-center text-primary-focus font-bold w-[10em] h-[10em]"
                     key={module.id}
                   >
                     <p
