@@ -8,7 +8,7 @@ type ProgressBarProps = {
 
 const ProgressBar = ({ courses }: ProgressBarProps) => {
   return (
-    <div className="flex items-center gap-4 bg-secondary/20 rounded-xl p-2">
+    <div className="flex max-xl:hidden items-center gap-4 bg-secondary/20 rounded-xl p-2">
       <Bus className="w-20 h-10 stroke-1" />
       {courses.map((course) => (
         <div
