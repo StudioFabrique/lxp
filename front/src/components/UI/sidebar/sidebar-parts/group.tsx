@@ -22,7 +22,14 @@ const Group = ({ currentRoute }: { currentRoute: string[] }) => {
           }`}
           data-tip="Groupes"
         >
-          <GroupIcon />
+          <div className="flex hover:text-primary text-primary-content justify-center items-center">
+            <GroupIcon />
+            <span
+              className={`absolute p-5 rounded-lg ${
+                isCurrentPathActive && "bg-primary/50"
+              }`}
+            />
+          </div>
         </Link>
 
         <MotionSidebarWrapper isHover={isHover}>
