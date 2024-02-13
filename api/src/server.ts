@@ -24,6 +24,7 @@ const io = new Server(server, {
       "http://localhost:3000",
       "http://localhost:5173",
       "http://localhost:5174",
+      "http://lcoalhost:5175",
       "http://localhost:4173",
     ],
     credentials: true,
