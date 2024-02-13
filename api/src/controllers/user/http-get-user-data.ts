@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
 import { serverIssue } from "../../utils/constantes";
-import getUser from "../../models/user/get-user";
+import getUserData from "../../models/user/get-user-data";
 
-export default async function httpGetUser(req: Request, res: Response) {
+export default async function httpGetUserData(req: Request, res: Response) {
   try {
     const { userId } = req.params;
-    const response = await getUser(new Object(userId));
+    console.log("id : ", userId);
+
+    const response = await getUserData(userId);
     return res.status(200).json(response);
   } catch (error: any) {
     return res
