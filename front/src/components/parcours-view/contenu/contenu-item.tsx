@@ -20,13 +20,15 @@ const ContenuItem: FC<{
       className="flex gap-x-4 items-center"
       onClick={() => setSelectedModule(module)}
     >
-      <div className="flex flex-col items-center justify-center bg-primary/50 text-primary-content p-4 w-24 h-full rounded-lg">
+      <div className="flex flex-col items-center justify-center bg-secondary text-secondary-content p-4 w-24 h-full rounded-lg">
         <p className="font-bold text-2xl">{minDate.day}</p>
         <p className="font-bold uppercase">{minDate.month}</p>
       </div>
       <div
         className={`flex flex-col items-center p-4 rounded-lg w-full h-full ${
-          selectedModuleId === module.id ? "bg-primary" : "bg-secondary"
+          selectedModuleId === module.id
+            ? "bg-primary text-primary-content"
+            : "bg-secondary text-secondary-content"
         } hover:bg-primary/70 hover:text-primary-content`}
       >
         <p className="self-start">{`Module ${iterationCount}`}</p>

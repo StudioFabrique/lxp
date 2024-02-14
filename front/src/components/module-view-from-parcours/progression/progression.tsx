@@ -30,9 +30,11 @@ const Progression = ({
       0
     ) / coursesWithLessons.length;
 
-  const radialStyle = {
-    "--value": moduleProgress * 100,
-  } as CSSProperties;
+  const radialStyle = (value: number) => {
+    return {
+      "--value": value * 100,
+    } as CSSProperties;
+  };
 
   return (
     <Wrapper>
@@ -41,18 +43,23 @@ const Progression = ({
           Progression du module
         </h2>
         {courses.length > 0 && (
-          <div
-            className="radial-progress bg-secondary text-primary"
-            style={radialStyle}
+          <span
+            className="radial-progress text-secondary"
+            style={radialStyle(moduleProgress)}
           >
-            {Math.round(moduleProgress * 100)}%
-          </div>
+            <p>{Math.round(moduleProgress * 100)}%</p>
+            <span
+              className="absolute radial-progress text-primary/40"
+              style={radialStyle(1)}
+            />
+          </span>
         )}
       </div>
       <div className="flex flex-col items-center gap-5">
         {courses.length > 0 ? (
           courses.map((course) => (
             <CourseItem
+              key={course.id}
               course={course}
               selectedLesson={selectedLesson}
               setSelectedLesson={setSelectedLesson}

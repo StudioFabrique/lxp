@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import { Link, useLocation } from "react-router-dom";
 import ImageHeader from "../image-header";
 import { PlayCircleIcon } from "lucide-react";
@@ -19,7 +18,24 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
         title={`Module: ${lastLesson.lesson.course.module.title}`}
         subTitle={`Cours: ${lastLesson.lesson.course.title}`}
         children={[
-          <Fragment key="fragment" />,
+          <div key="badges" className="absolute right-5 -top-[230%]">
+            <div className="flex gap-1 overflow-x-hidden">
+              {lastLesson.lesson.course.bonusSkills &&
+                lastLesson.lesson.course.bonusSkills
+                  .filter((skill) => skill.badge)
+                  .map(
+                    (skill, i) =>
+                      i < 5 && (
+                        <img
+                          key={skill.id}
+                          className="w-12 h-12 p-2"
+                          src={skill.badge}
+                          alt="illustration badge"
+                        />
+                      )
+                  )}
+            </div>
+          </div>,
           <div key="link" className="p-5 w-full flex justify-end">
             <Link
               to={`/${currentRoute}/parcours/module/${lastLesson.lesson.course.module.id}`}
@@ -33,21 +49,21 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
         ]}
       />
       <div className="text-primary grid grid-rows-4 gap-2">
-        <span className="bg-secondary rounded-lg p-2 text-center">
+        <span className="flex flex-col justify-center items-center bg-secondary text-secondary-content rounded-lg p-2">
           <p>Diplôme</p>
-          <p>Bac +3</p>
+          <p className="font-bold text-lg">Bac +3</p>
         </span>
-        <span className="bg-secondary rounded-lg p-2 text-center">
+        <span className="flex flex-col justify-center items-center bg-secondary text-secondary-content rounded-lg p-2">
           <p>Semaine</p>
-          <p>12</p>
+          <p className="font-bold text-lg">12</p>
         </span>
-        <span className="bg-secondary rounded-lg p-2 text-center">
+        <span className="flex flex-col justify-center items-center bg-secondary text-secondary-content rounded-lg p-2">
           <p>Heure</p>
-          <p>457</p>
+          <p className="font-bold text-lg">457</p>
         </span>
-        <span className="bg-secondary rounded-lg p-2 text-center">
+        <span className="flex flex-col justify-center items-center bg-secondary text-secondary-content rounded-lg p-2">
           <p>Modules</p>
-          <p>8</p>
+          <p className="font-bold text-lg">8</p>
         </span>
       </div>
     </div>

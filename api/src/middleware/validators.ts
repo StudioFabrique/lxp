@@ -44,6 +44,21 @@ const customPostalCodeValidation = (value: string) => {
   return false; // Run the original validation rules for non-empty value
 };
 
+const customPhoneNumberValidation = (value: string) => {
+  const phoneNumberPattern = /^\d{10}$/;
+
+  if (
+    value === undefined ||
+    value === null ||
+    value === "" ||
+    phoneNumberPattern.test(value)
+  ) {
+    return true; // Empty value is allowed
+  }
+
+  return false; // Run the original validation rules for non-empty value
+};
+
 export const userValidator = (
   extraValidationChain?: ValidationChain,
   isFormData: boolean = false
@@ -69,7 +84,6 @@ export const userValidator = (
       validatorSubject + ".description",
       validatorSubject + ".address",
       validatorSubject + ".city",
-      validatorSubject + ".phoneNumber",
       validatorSubject + ".links.*.url",
       validatorSubject + ".links.*.alias",
       validatorSubject + ".hobbies.*.title",
@@ -94,6 +108,10 @@ export const userValidator = (
     ])
       .isArray()
       .withMessage("hobbies, graduations ou links non conforme"),
+    body(validatorSubject + ".phoneNumber", "Numéro de téléphone incorrect")
+      .custom(customPhoneNumberValidation)
+      .trim()
+      .escape(),
     // Include the extraValidationChain if provided
     ...(extraValidationChain ? [extraValidationChain] : []),
     checkValidatorResult,

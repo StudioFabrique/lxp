@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "test": "vitest",
     "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -18,7 +19,6 @@
     "browser-image-compression": "^2.0.2",
     "casbin": "^5.27.1",
     "casbin.js": "^0.5.1",
-    "chart.js": "^4.4.1",
     "daisyui": "^3.9.4",
     "framer-motion": "^10.16.4",
     "lucide-react": "^0.302.0",
@@ -28,7 +28,6 @@
     "react-apexcharts": "^1.4.1",
     "react-beautiful-dnd": "^13.1.1",
     "react-big-calendar": "^1.8.5",
-    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.1",
     "react-markdown": "^9.0.1",
@@ -51,6 +50,7 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",
+    "@testing-library/react": "^14.2.1",
     "@types/markdown-it": "^13.0.7",
     "@types/react": "^18.2.15",
     "@types/react-beautiful-dnd": "^13.1.8",
@@ -63,10 +63,12 @@
     "eslint": "^8.45.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
+    "jsdom": "^24.0.0",
     "postcss": "^8.4.31",
     "sass": "^1.69.5",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "vite": "^4.4.5",
+    "vitest": "^1.2.2"
   }
 }

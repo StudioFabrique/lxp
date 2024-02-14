@@ -1,7 +1,7 @@
 export default interface Activity {
   id?: number;
   url: string;
-  type: string;
+  type: "text" | "video";
   order: number;
   title?: string;
   description?: string;
