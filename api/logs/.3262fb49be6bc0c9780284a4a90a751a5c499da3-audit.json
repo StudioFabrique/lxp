@@ -164,6 +164,16 @@
             "date": 1707896537427,
             "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-14-08.log",
             "hash": "0174d577dfbd38d8260262b3df0084ca033ccbcfc59189250f37c3f340fe6c8d"
+        },
+        {
+            "date": 1707908781415,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-14-12.log",
+            "hash": "8aceaa6909114f9eb0dd5f36c92f57161640f12d063d1a22d7ea52e9324996d8"
+        },
+        {
+            "date": 1707912208954,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-14-13.log",
+            "hash": "3e97ff02b490a106e77a31eccd9fe1f431910cb36dd78d6f5025a7e07ca5f4a9"
         }
     ],
     "hashType": "sha256"

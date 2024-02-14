@@ -1,19 +1,52 @@
-import { CloudSunRainIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+  CloudFogIcon,
+  CloudLightningIcon,
+  CloudRainIcon,
+  CloudSnowIcon,
+  CloudSunIcon,
+  CloudSunRainIcon,
+  SunIcon,
+} from "lucide-react";
+import { ChangeEvent, useEffect, useState } from "react";
 
-const incrementalValue = 1 / 7;
+const maxIcon = 7;
+const baseIncrementalValue = (1 * 100) / maxIcon;
+
+const roundedIconValue = (index: number, precision: number = 100) =>
+  Math.floor((index / maxIcon) * precision);
 
 const FeelingFeedback = () => {
-  const [xPos, setXPos] = useState<{ previous?: number; current?: number }>();
+  /* const [xPos, setXPos] = useState<{ previous?: number; current?: number }>(); */
 
   const [currentProgressValue, setCurrentProgressValue] = useState<number>(
-    incrementalValue * 4
+    baseIncrementalValue * 4
   );
 
-  const [currentIcon, setCurrentIcon] = useState();
+  console.log(currentProgressValue);
+
+  const CurrentIcon = () => {
+    switch (Math.floor(currentProgressValue)) {
+      case roundedIconValue(1):
+        return <CloudLightningIcon />;
+      case roundedIconValue(2):
+        return <CloudFogIcon />;
+      case roundedIconValue(3):
+        return <CloudRainIcon />;
+      case roundedIconValue(4):
+        return <CloudSnowIcon />;
+      case roundedIconValue(5):
+        return <CloudSunRainIcon />;
+      case roundedIconValue(6):
+        return <CloudSunIcon />;
+      case roundedIconValue(7):
+        return <SunIcon />;
+      default:
+        return undefined;
+    }
+  };
 
   // watch the xPos and determine if the progress bar increase or decrease
-  useEffect(() => {
+  /* useEffect(() => {
     if (
       xPos &&
       xPos.previous &&
@@ -21,20 +54,30 @@ const FeelingFeedback = () => {
       xPos.current !== xPos.previous
     ) {
       if (xPos.current > xPos.previous) {
-        // + 1
-        console.log("+1");
+        setCurrentProgressValue((previousValue) => {
+          const calculation = previousValue + baseIncrementalValue;
+
+          return Math.floor(calculation * 100) > roundedIconValue(6)
+            ? baseIncrementalValue * maxIcon
+            : calculation;
+        });
       } else {
-        // -1
-        console.log("-1");
+        setCurrentProgressValue((previousValue) => {
+          const calculation = previousValue - baseIncrementalValue;
+
+          return calculation < baseIncrementalValue
+            ? baseIncrementalValue
+            : calculation;
+        });
       }
     }
-  }, [xPos]);
+  }, [xPos]); */
 
-  const handleDrag = (xPos: number) => {
+  /* const handleDrag = (xPos: number) => {
     setXPos((previousXPos) => {
       return { previous: previousXPos?.current ?? xPos, current: xPos };
     });
-  };
+  }; */
 
   return (
     <div className="flex flex-col gap-2 bg-secondary text-secondary-content p-5 rounded-lg">
@@ -42,13 +85,20 @@ const FeelingFeedback = () => {
         <p className="font-bold w-[70%]">
           Comment vous sentez-vous aujourd'hui ?
         </p>
-        <CloudSunRainIcon className="w-10 h-10" />
+        <CurrentIcon />
       </span>
-      <progress
-        className="progress progress-primary bg-secondary-focus cursor-grab"
+      <input
+        type="range"
+        className="range range-xs range-primary my-2"
         value={currentProgressValue}
-        onDrag={(e) => handleDrag(e.clientX)}
+        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+          setCurrentProgressValue(e.currentTarget.valueAsNumber)
+        }
+        min={baseIncrementalValue * 1}
+        max={baseIncrementalValue * 7.1}
+        step={baseIncrementalValue}
       />
+      <textarea />
       <button
         type="button"
         className="btn btn-xs self-end btn-primary text-white"
