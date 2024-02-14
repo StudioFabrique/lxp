@@ -1,8 +1,14 @@
 import { CloudSunRainIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
+const incrementalValue = 1 / 7;
+
 const FeelingFeedback = () => {
   const [xPos, setXPos] = useState<{ previous?: number; current?: number }>();
+
+  const [currentProgressValue, setCurrentProgressValue] = useState<number>(
+    incrementalValue * 4
+  );
 
   const [currentIcon, setCurrentIcon] = useState();
 
@@ -40,7 +46,7 @@ const FeelingFeedback = () => {
       </span>
       <progress
         className="progress progress-primary bg-secondary-focus cursor-grab"
-        value={0.3}
+        value={currentProgressValue}
         onDrag={(e) => handleDrag(e.clientX)}
       />
       <button
