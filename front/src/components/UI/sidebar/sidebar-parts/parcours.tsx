@@ -17,12 +17,17 @@ const Parcours = ({ currentRoute }: { currentRoute: string[] }) => {
       <div className="flex items-center">
         <Link
           to={`/${currentRoute[0]}/parcours`}
-          className={`tooltip tooltip-top w-6 h-6 z-10 ${
-            (isHover || isCurrentPathActive) && "text-primary"
-          }`}
+          className="tooltip tooltip-top w-6 h-6 z-10"
           data-tip="Parcours"
         >
-          <RocketIcon />
+          <div className="flex hover justify-center items-center">
+            <RocketIcon className="z-10 pointer-events-none" />
+            <span
+              className={`absolute p-5 rounded-lg hover:bg-primary/50 ${
+                isCurrentPathActive && "bg-primary/50"
+              }`}
+            />
+          </div>
         </Link>
 
         <MotionSidebarWrapper isHover={currentRoute[0] === "admin" && isHover}>

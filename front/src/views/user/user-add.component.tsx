@@ -11,7 +11,6 @@ const UserAdd = () => {
   const navigate = useNavigate();
 
   const handleSubmit = (user: any) => {
-    console.log("event emit (form)");
     sendRequest({ method: "post", path: "/user", body: user }, (data: any) => {
       if (data)
         return navigate(

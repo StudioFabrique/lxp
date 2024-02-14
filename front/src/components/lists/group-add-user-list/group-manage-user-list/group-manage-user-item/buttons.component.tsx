@@ -56,7 +56,7 @@ export const SelectionButton: FC<{
       type="checkbox"
       checked={checkboxRef.current?.checked ?? false}
       onChange={handleChange}
-      className="checkbox checkbox-sm rounded-md checkbox-primary"
+      className="checkbox checkbox-sm rounded-md checkbox-primary border-2"
     />
   );
 };
