@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from "mongoose";
 
 export interface IConnectionInfos extends Document {
   lastConnection: Date;
-  totalConnTime: number;
+  duration: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -14,7 +14,7 @@ const connectionInfosSchema: Schema = new Schema({
     default: new Date(),
     unique: false,
   },
-  totalConnTime: { type: Number, required: true, unique: false, default: 0 },
+  duration: { type: Number, required: true, unique: false, default: 0 },
 });
 
 const ConnectionInfos = mongoose.model<IConnectionInfos>(

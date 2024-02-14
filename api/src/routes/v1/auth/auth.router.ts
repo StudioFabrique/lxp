@@ -1,5 +1,5 @@
 import express from "express";
-import { body, param } from "express-validator";
+import { body } from "express-validator";
 
 import httpLogout from "../../../controllers/auth/http-logout";
 import refreshTokens from "../../../middleware/refresh-tokens";
@@ -8,7 +8,6 @@ import httpHandshake from "../../../controllers/auth/http-handshake";
 import checkToken from "../../../middleware/check-token";
 import httpGetCurrentRoles from "../../../controllers/auth/http-get-current-roles";
 import { passwordValidateGeneric } from "../../../helpers/custom-validators";
-import { loginValidator } from "./auth-validator";
 import httpGetDisconnect from "../../../controllers/auth/http-get-disconnect";
 
 const authRouter = express.Router();
@@ -26,7 +25,7 @@ authRouter.post(
   httpLogin
 );
 authRouter.get("/handshake", checkToken, httpHandshake);
-authRouter.get("/logout", checkToken, httpLogout);
+authRouter.get("/logout", httpLogout);
 authRouter.get("/refresh", refreshTokens);
 authRouter.get("/roles", checkToken, httpGetCurrentRoles);
 authRouter.get("/close", checkToken, httpGetDisconnect);

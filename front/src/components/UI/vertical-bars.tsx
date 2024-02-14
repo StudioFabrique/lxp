@@ -11,6 +11,7 @@ interface VerticalChartsProps {
   grid?: boolean;
   width?: string;
   height?: string;
+  warning?: number;
 }
 
 export default function VerticalBars({
@@ -21,6 +22,7 @@ export default function VerticalBars({
   grid = false,
   width = "450px",
   height = "300px",
+  warning = 0,
 }: VerticalChartsProps) {
   // Tronquer les noms de catégories trop longs
   const truncatedCategories = categories.map((category) =>
@@ -57,7 +59,7 @@ export default function VerticalBars({
           ranges: [
             {
               from: 0,
-              to: 200,
+              to: warning,
               color: "#FFA500", // Orange
             },
           ],
