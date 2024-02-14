@@ -19,8 +19,8 @@ export default function UserData() {
     <>
       {student ? (
         <Wrapper>
-          <section className="flex gap-4">
-            <article className="w-1/6">
+          <section className="flex flex-col md:flex-row gap-4">
+            <article className="w-full md:w-fit md:min-w-1/6">
               <Wrapper>
                 <StudentCard
                   avatar={student?.avatar}
