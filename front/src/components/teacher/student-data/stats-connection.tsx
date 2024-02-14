@@ -31,7 +31,7 @@ export default function StatsConnection({
         label="Durée des sessions"
         type="bar"
         warning={2}
-        width="600px"
+        width="100%"
       />
     </div>
   );

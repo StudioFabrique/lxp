@@ -1,35 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams } from "react-router-dom";
-import useHttp from "../../hooks/use-http";
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import { ReactNode, useMemo } from "react";
+
 import StudentCard from "../../components/teacher/student-data/student-card";
-import User from "../../utils/interfaces/user";
-import Parcours from "../../utils/interfaces/parcours";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import StatsConnection from "../../components/teacher/student-data/stats-connection";
+import useTeacher from "./hooks/useTeacher";
 
 export default function UserData() {
   const { studentId } = useParams();
-  const { sendRequest } = useHttp();
-  const [student, setStudent] = useState<User | null>(null);
-  const [parcours, setParcours] = useState<Parcours | null>(null);
+  const { student, parcours, getTotalConnectionTime } = useTeacher(studentId!);
 
-  const getStudentData = useCallback(() => {
-    const applyData = (data: any) => {
-      setStudent(data.user);
-      setParcours(data.parcours);
-    };
-    sendRequest(
-      {
-        path: `/user/data/${studentId}`,
-      },
-      applyData
-    );
-  }, [sendRequest, studentId]);
-
-  useEffect(() => {
-    getStudentData();
-  }, [getStudentData]);
+  const totalConnectionTime = useMemo(() => {
+    return getTotalConnectionTime();
+  }, [getTotalConnectionTime]);
 
   return (
     <>
@@ -53,7 +37,9 @@ export default function UserData() {
               <div className="flex flex-col gap-y-4">
                 <span className="grid grid-cols-1 xl:grid-cols-3 gap-4">
                   <StatsUser label="Complétion Parcours">ND</StatsUser>
-                  <StatsUser label="Temps de connexion">1h</StatsUser>
+                  <StatsUser label="Temps de connexion">
+                    {totalConnectionTime}
+                  </StatsUser>
                   <StatsUser label="Jours d'absence">0</StatsUser>
                 </span>
 
