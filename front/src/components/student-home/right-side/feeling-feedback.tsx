@@ -7,7 +7,7 @@ import {
   CloudSunRainIcon,
   SunIcon,
 } from "lucide-react";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 
 const maxIcon = 7;
 const baseIncrementalValue = (1 * 100) / maxIcon;
@@ -80,7 +80,7 @@ const FeelingFeedback = () => {
   }; */
 
   return (
-    <div className="flex flex-col gap-2 bg-secondary text-secondary-content p-5 rounded-lg">
+    <div className="flex flex-col gap-4 bg-secondary text-secondary-content p-5 rounded-lg">
       <span className="flex justify-between">
         <p className="font-bold w-[70%]">
           Comment vous sentez-vous aujourd'hui ?
@@ -89,7 +89,7 @@ const FeelingFeedback = () => {
       </span>
       <input
         type="range"
-        className="range range-xs range-primary my-2"
+        className="range range-xs range-primary my-2 bg-secondary-focus"
         value={currentProgressValue}
         onChange={(e: ChangeEvent<HTMLInputElement>) =>
           setCurrentProgressValue(e.currentTarget.valueAsNumber)
@@ -98,7 +98,8 @@ const FeelingFeedback = () => {
         max={baseIncrementalValue * 7.1}
         step={baseIncrementalValue}
       />
-      <textarea />
+      <p>{"Commentaire (facultatif)"}</p>
+      <textarea className="textarea resize-none text-black" />
       <button
         type="button"
         className="btn btn-xs self-end btn-primary text-white"
