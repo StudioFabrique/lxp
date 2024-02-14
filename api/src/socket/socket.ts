@@ -20,8 +20,6 @@ export function socket(io: Server): void {
 
     socket.on("students-count", async () => {
       const count = await countConnectedUser();
-      console.log({ count });
-
       io.emit("students-count", count);
     });
   });
