@@ -144,6 +144,7 @@ const AdminHome = () => {
         <Link to="module">Interface Module</Link>
         <Link to="lesson">Interface Leçon</Link>
         <Link to="profil">Profil</Link>
+        <Link to="teacher">Formateurs</Link>
       </div>
     </>
   );
