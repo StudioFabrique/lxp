@@ -102,6 +102,7 @@ async function createUser() {
     infos = [
       ...infos,
       new IConnectionInfos({
+        userId: createdStudent._id,
         lastConnection: date.date,
         duration: date.duration,
       }),

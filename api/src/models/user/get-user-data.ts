@@ -4,6 +4,8 @@ import User from "../../utils/interfaces/db/user";
 export default async function getUserData(userId: string) {
   const user = await User.findOne({ _id: userId }, { password: 0 })
     .populate("connectionInfos")
+    .sort({ createdAt: -1 })
+    .limit(5)
     .populate("group");
 
   console.log({ user });

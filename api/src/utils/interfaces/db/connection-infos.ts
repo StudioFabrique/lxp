@@ -5,6 +5,7 @@ export interface IConnectionInfos extends Document {
   duration: number;
   createdAt?: Date;
   updatedAt?: Date;
+  userId: string;
 }
 
 const connectionInfosSchema: Schema = new Schema({
@@ -15,6 +16,7 @@ const connectionInfosSchema: Schema = new Schema({
     unique: false,
   },
   duration: { type: Number, required: true, unique: false, default: 0 },
+  userId: { type: String, required: true, unique: false },
 });
 
 const ConnectionInfos = mongoose.model<IConnectionInfos>(
