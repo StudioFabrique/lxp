@@ -17,12 +17,17 @@ const User = ({ currentRoute }: { currentRoute: string[] }) => {
       <div className="flex items-center">
         <Link
           to={`/${currentRoute[0]}/user`}
-          className={`tooltip tooltip-top w-6 h-6 z-10 ${
-            (isHover || isCurrentPathActive) && "text-primary"
-          }`}
+          className="tooltip tooltip-top w-6 h-6 z-10"
           data-tip="Utilisateurs"
         >
-          <UserIcon />
+          <div className="flex hover justify-center items-center">
+            <UserIcon className="z-10 pointer-events-none" />
+            <span
+              className={`absolute p-5 rounded-lg hover:bg-primary/50 ${
+                isCurrentPathActive && "bg-primary/50"
+              }`}
+            />
+          </div>
         </Link>
 
         <MotionSidebarWrapper isHover={isHover}>

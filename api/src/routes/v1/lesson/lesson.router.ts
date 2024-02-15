@@ -12,7 +12,9 @@ import httpGetLessonsList from "../../../controllers/lesson/http-get-lessons-lis
 import httpGetLessonDetail from "../../../controllers/lesson/http-get-losson-detail";
 import httpDeleteLesson from "../../../controllers/lesson/http-delete-lesson";
 import httpPutReorderLessons from "../../../controllers/lesson/http-put-reorder-lessons";
-import httpPutReadLesson from "../../../controllers/lesson/http-put-read-lesson";
+import httpPostBeginReadLesson from "../../../controllers/lesson/http-post-begin-read-lesson";
+import httpPutFinishReadLesson from "../../../controllers/lesson/http-put-finish-read-lesson";
+import httpGetLastLessonsRead from "../../../controllers/lesson/http-get-last-lessons-read";
 
 const lessonRouter = express.Router();
 
@@ -30,6 +32,12 @@ lessonRouter.get(
 // retourne la liste de toutes les leçons
 lessonRouter.get("/", checkPermissions("lesson"), httpGetLessonsList);
 
+lessonRouter.get(
+  "/last-read",
+  checkPermissions("lesson"),
+  httpGetLastLessonsRead
+);
+
 // retourne une leçon en particulier identifiée par son ID
 lessonRouter.get("/:lessonId", checkPermissions("lesson"), httpGetLessonDetail);
 
@@ -44,11 +52,17 @@ lessonRouter.put(
   httpPutReorderLessons
 );
 
+lessonRouter.post(
+  "/read/:lessonId",
+  checkPermissions("lesson", "read"),
+  httpPostBeginReadLesson
+);
+
 // ajoute un "vu" à la leçon en ajoutant l'id de l'utilisateur connecté
 lessonRouter.put(
   "/read/:lessonId",
-  checkPermissions("lesson"),
-  httpPutReadLesson
+  checkPermissions("lesson", "read"),
+  httpPutFinishReadLesson
 );
 
 export default lessonRouter;

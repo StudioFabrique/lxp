@@ -24,4 +24,5 @@ export default interface User {
   group?: Group;
   hobbies?: Array<Hobby>;
   links?: Array<Link>;
+  connectionInfos?: Array<{ lastConnection: string; duration: number }>;
 }

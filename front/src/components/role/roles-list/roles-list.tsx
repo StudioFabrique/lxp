@@ -42,7 +42,7 @@ const RolesList: FC<{
               <th></th>
             </tr>
           </thead>
-          <tbody className="flex flex-col h-[28em] overflow-y-auto gap-y-4 text-primary-content">
+          <tbody className="flex flex-col h-[28em] overflow-y-auto gap-y-4">
             {roles.map((role) => (
               <RoleItem
                 key={role._id}

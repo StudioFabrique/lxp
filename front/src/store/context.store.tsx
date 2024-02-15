@@ -5,11 +5,12 @@ import axios from "axios";
 import React, { FC, useCallback, useEffect, useState } from "react";
 
 import { themes } from "../config/themes";
-import { BASE_URL } from "../config/urls";
+import { BASE_URL, SOCKET_URL } from "../config/urls";
 import useHttp from "../hooks/use-http";
 import User from "../utils/interfaces/user";
 import Role from "../utils/interfaces/role";
 import { casbinAuthorizer } from "../config/rbac";
+import { Socket, io } from "socket.io-client";
 
 type ContextType = {
   theme: string;
@@ -26,6 +27,8 @@ type ContextType = {
   fetchRoles: (role: Role) => void;
   defineRulesFor: () => void;
   builtPerms: Record<string, any> | undefined;
+  closeTab: () => void;
+  socket: any;
 };
 
 type Props = { children: React.ReactNode };
@@ -45,10 +48,12 @@ export const Context = React.createContext<ContextType>({
   fetchRoles: () => {},
   defineRulesFor: () => {},
   builtPerms: {},
+  closeTab: () => {},
+  socket: null,
 });
 
 const ContextProvider: FC<Props> = (props) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [theme, setTheme] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -58,6 +63,13 @@ const ContextProvider: FC<Props> = (props) => {
   const [builtPerms, setBuiltPerms] = useState<
     Record<string, any> | undefined
   >();
+  const [socket, setSocket] = useState<Socket | null>(null);
+
+  const closeTab = useCallback(async () => {
+    await axiosInstance.get(`${BASE_URL}/auth/close`, {
+      withCredentials: true,
+    });
+  }, [axiosInstance]);
 
   const login = async (email: string, password: string) => {
     setError("");
@@ -83,24 +95,24 @@ const ContextProvider: FC<Props> = (props) => {
     }
   };
 
-  const handshake = async () => {
-    try {
-      const response = await axiosInstance.get(`${BASE_URL}/auth/handshake`, {
-        withCredentials: true,
-      });
-      setUser(response.data);
-    } catch (err) {
-      logout();
-    }
-  };
+  const handshake = useCallback(async () => {
+    const applyData = (data: User) => {
+      setUser(data);
+    };
+    sendRequest({ path: "/auth/handshake" }, applyData);
+  }, [sendRequest]);
 
   const logout = async () => {
     try {
-      await axios.get(`${BASE_URL}/auth/logout`, {
+      await axiosInstance.get(`${BASE_URL}/auth/logout`, {
         withCredentials: true,
       });
       setIsLoggedIn(false);
       setUser(null);
+      if (socket) {
+        socket.disconnect();
+        setSocket(null);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -213,8 +225,18 @@ const ContextProvider: FC<Props> = (props) => {
     if (user) {
       setIsLoggedIn(true);
       setIsLoading(false);
+      if (!socket) {
+        setSocket(
+          io(SOCKET_URL, {
+            query: {
+              userId: user._id,
+            },
+            withCredentials: true,
+          })
+        );
+      }
     }
-  }, [user]);
+  }, [user, socket]);
 
   const contextValue = {
     theme,
@@ -231,6 +253,8 @@ const ContextProvider: FC<Props> = (props) => {
     fetchRoles,
     defineRulesFor,
     builtPerms,
+    closeTab,
+    socket,
   };
 
   return (

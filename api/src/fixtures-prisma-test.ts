@@ -296,6 +296,7 @@ async function createFormation() {
             };
           }),
         },
+        admin: { connect: { id: 1 } },
       },
     });
     await prisma.formation.create({
@@ -308,6 +309,7 @@ async function createFormation() {
             };
           }),
         },
+        admin: { connect: { id: 1 } },
       },
     });
   } catch (error) {

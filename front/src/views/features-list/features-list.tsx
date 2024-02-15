@@ -17,10 +17,10 @@ const FeaturesList = () => {
   }, []);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col mt-10">
       <UserTopBar />
       <div className="grid grid-rows-5 gap-5 p-20">
-        <div className="flex flex-col row-span-2 items-center gap-y-5 justify-center h-full bg-secondary p-20 rounded-lg">
+        <div className="flex flex-col row-span-2 items-center gap-y-5 justify-center h-full bg-secondary text-secondary-content p-20 rounded-lg">
           <p className="font-bold text-6xl">Page non trouvée</p>
           <p className="font-semibold w-[60%] text-center">
             Oups ! Il semble que vous ayez trouvé une page qui n'existe pas...
@@ -28,21 +28,19 @@ const FeaturesList = () => {
           </p>
         </div>
         <div className="grid grid-cols-5 row-span-2 gap-5">
-          <div className="bg-secondary rounded-lg col-span-3 px-14 py-5">
-            <p className="font-semibold text-secondary-content">
-              Fonctionnalités à venir
-            </p>
+          <div className="bg-secondary text-secondary-content rounded-lg col-span-3 px-14 py-5">
+            <p className="font-semibold">Fonctionnalités à venir</p>
             <ul className="mt-5 list-disc">
               {features.map((feature) => (
-                <li>{feature}</li>
+                <li key={feature}>{feature}</li>
               ))}
             </ul>
           </div>
-          <div className="bg-primary rounded-lg col-span-2 px-14 py-5">
-            <p className="font-semibold text-white">Annonces</p>
-            <ul className="mt-5 list-disc text-white">
+          <div className="bg-primary text-primary-content rounded-lg col-span-2 px-14 py-5">
+            <p className="font-semibold">Annonces</p>
+            <ul className="mt-5 list-disc">
               {announcements.map((announcement) => (
-                <li>{announcement}</li>
+                <li key={announcement}>{announcement}</li>
               ))}
             </ul>
           </div>

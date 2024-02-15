@@ -111,8 +111,8 @@ const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
         </div>
 
         <div className="flex flex-col gap-y-4">
-          <span className="w-full flex justify-between items-center">
-            <p className="font-bold">Tag *</p>
+          <span className="w-full flex justify-between items-center gap-x-2">
+            <p className="flex font-bold">Tag *</p>
             <LessonTags list={props.tags} onAddItems={props.onSetTag} />
           </span>
           {props.tag ? (

@@ -48,8 +48,10 @@ activityRouter.post(
   postVideoValidator,
   httpPostVideo
 );
+
 // enregistre une activité et l'attache à une lesson
 activityRouter.post("/:lessonId", checkPermissions("lesson"), httpPostActivity);
+
 // met à jour un document texte
 activityRouter.put(
   "/:activityId",

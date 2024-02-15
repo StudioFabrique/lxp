@@ -1,12 +1,12 @@
-import express, { NextFunction } from "express";
+import express from "express";
 
 import authRouter from "./auth/auth.router";
 import userRouter from "./user/user.router";
 import groupRouter from "./group.router";
 import parcoursRouter from "./parcours/parcours.router";
 import skillsRouter from "./skills.router";
-import tagRouter from "./tag.router";
-import formationRouter from "./formation.router";
+import tagRouter from "./tags/tag.router";
+import formationRouter from "./formation/formation.router";
 import objectiveRouter from "./objective.router";
 import moduleRouter from "./modules/module-router";
 import bonusSkillRouter from "./bonus-skill.router";

@@ -287,6 +287,22 @@ async function createSqlContacts() {
   }
 }
 
+async function createStudents() {
+  try {
+    const roleId = await Role.find({ role: "student" }, { _id: 1 });
+    const usersId = await User.find(
+      { roles: roleId },
+      { _id: 1, firstname: 1, lastname: 1 }
+    );
+    const students = usersId.map((user: any) => {
+      return { idMdb: user._id };
+    });
+    await prisma.student.createMany({ data: students });
+  } catch (error: any) {
+    console.log(error.message);
+  }
+}
+
 async function createFormation() {
   try {
     const tags1Dw = [1, 2, 3, 4, 5];
@@ -304,7 +320,7 @@ async function createFormation() {
         level: "bac + 2",
       },
       {
-        title: "Concepteur Développeur d'Application",
+        title: "Concepteur Développeur d'Applications",
         description:
           "Toutes les compétences pour concevoir et développer des applications.",
         code: "014",
@@ -321,6 +337,7 @@ async function createFormation() {
     await prisma.formation.create({
       data: {
         ...newFormations[0],
+        adminId: 1,
         tags: {
           create: tags1Dw.map((item: number) => {
             return {
@@ -333,6 +350,7 @@ async function createFormation() {
     await prisma.formation.create({
       data: {
         ...newFormations[1],
+        adminId: 1,
         tags: {
           create: tagsCDA.map((item: number) => {
             return {
@@ -352,6 +370,7 @@ async function createFormation() {
             };
           }),
         },
+        adminId: 1,
       },
     });
   } catch (error) {
@@ -393,6 +412,7 @@ async function loadFixtures() {
   await createFormation();
   await createSqlGroups();
   await createSqlContacts();
+  await createStudents();
   //await createModules();
   //await createModulesOnFormation();
   await disconnect();

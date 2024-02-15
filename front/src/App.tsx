@@ -34,6 +34,10 @@ import LayoutEditModule from "./views/module/edit/Layout-edit-module";
 import EditModuleHome from "./views/module/edit/edit-module-home";
 import ModuleViewFromParcours from "./views/parcours/module-view-from-parcours";
 import FeaturesList from "./views/features-list/features-list";
+import FormationAdd from "./views/formation/formation-add";
+import TeacherHome from "./views/teacher/teacher-home";
+import RootTeacher from "./views/teacher/layout-teacher";
+import UserData from "./views/teacher/user-data";
 
 const router = createHashRouter([
   {
@@ -69,6 +73,10 @@ const router = createHashRouter([
       {
         path: "roles",
         element: <Role />,
+      },
+      {
+        path: "formation",
+        element: <FormationAdd />,
       },
       {
         path: "user",
@@ -162,6 +170,20 @@ const router = createHashRouter([
         ],
       },
       { path: "profil", element: <UserProfile /> },
+      {
+        path: "teacher",
+        element: <RootTeacher />,
+        children: [
+          {
+            index: true,
+            element: <TeacherHome />,
+          },
+          {
+            path: "student/:studentId",
+            element: <UserData />,
+          },
+        ],
+      },
       { path: "*", element: <FeaturesList /> },
     ],
   },

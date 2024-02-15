@@ -1,9 +1,10 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, mongo } from "mongoose";
 import { IRole } from "./role";
 import { IGroup } from "./group";
 import { IGraduation } from "./graduation";
 import { IHobby } from "./hobby";
 import { ILink } from "./link";
+import { IConnectionInfos } from "./connection-infos";
 
 export interface IUser extends Document {
   email: string;
@@ -26,6 +27,7 @@ export interface IUser extends Document {
   graduations?: IGraduation["_id"][];
   createdAt?: Date;
   updatedAt?: Date;
+  connectionInfos?: IConnectionInfos["_id"];
 }
 
 const userSchema: Schema = new Schema(
@@ -43,6 +45,11 @@ const userSchema: Schema = new Schema(
     city: { type: String, required: false },
     birthDate: { type: Date, required: false },
     phoneNumber: { type: String, required: false },
+    connectionInfos: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "ConnectionInfos",
+      required: false,
+    },
     roles: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Role",
