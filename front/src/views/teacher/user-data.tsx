@@ -8,18 +8,20 @@ import useTeacher from "./hooks/useTeacher";
 import UserConnection from "../../components/stats/user-connection";
 export default function UserData() {
   const { studentId } = useParams();
-  const { student, parcours, parcoursCompletion, getTotalConnectionTime } =
-    useTeacher(studentId!);
+  const {
+    student,
+    parcours,
+    parcoursCompletion,
+    image,
+    getTotalConnectionTime,
+  } = useTeacher(studentId!);
 
   const totalConnectionTime = useMemo(() => {
     return getTotalConnectionTime();
   }, [getTotalConnectionTime]);
 
   const classImage: React.CSSProperties = {
-    backgroundImage: `url(${
-      `data:image/jpeg;base64,${parcours?.image}` ??
-      "/images/parcours-default.webp"
-    })`,
+    backgroundImage: `url(${image})`,
     width: "100%",
     height: "20rem",
     backgroundSize: "cover",
