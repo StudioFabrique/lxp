@@ -27,6 +27,7 @@ import { getUsersByRoleValidator } from "./user-validators";
 import { paginationValidator } from "../../../helpers/custom-validators";
 import httpGetUserLastParcours from "../../../controllers/user/http-get-user-last-parcours";
 import httpGetUserData from "../../../controllers/user/http-get-user-data";
+import httpGetLastFeedback from "../../../controllers/user/feedback/http-get-last-feedback";
 
 const userRouter = express.Router();
 
@@ -179,5 +180,11 @@ userRouter.get(
 
 // retourne les informations d'un utilisateur ainsi que ses rôles et son temps de connexion
 userRouter.get("/data/:userId", checkPermissions("user"), httpGetUserData);
+
+userRouter.get(
+  "/last-feedback",
+  checkPermissions("profile"),
+  httpGetLastFeedback
+);
 
 export default userRouter;
