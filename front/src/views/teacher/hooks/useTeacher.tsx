@@ -8,6 +8,7 @@ const useTeacher = (studentId: string) => {
   const [student, setStudent] = useState<User | null>(null);
   const [parcours, setParcours] = useState<Parcours | null>(null);
   const [parcoursCompletion, setParcoursCompletion] = useState(0);
+  const [image, setImage] = useState("/images/parcours-default.webp");
 
   /**
    * retourne les infos d'un apprenant et les infos du dernier parcours auquel il ou elle est inscrit
@@ -47,9 +48,16 @@ const useTeacher = (studentId: string) => {
     getStudentData();
   }, [getStudentData]);
 
+  useEffect(() => {
+    if (parcours && parcours.image) {
+      setImage(`data:image/jpeg;base64,${parcours?.image}`);
+    }
+  }, [parcours]);
+
   return {
     student,
     parcours,
+    image,
     parcoursCompletion,
     getTotalConnectionTime,
   };
