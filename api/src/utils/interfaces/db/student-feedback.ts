@@ -1,11 +1,11 @@
 import mongoose, { Document, Schema } from "mongoose";
+import { IUser } from "./user";
 
 export interface IStudentFeedback extends Document {
   feelingLevel: string;
   feedbackAt: Date;
+  user: IUser;
   comment?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 const studentFeedbackSchema: Schema = new Schema({
@@ -25,11 +25,16 @@ const studentFeedbackSchema: Schema = new Schema({
     require: false,
     unique: false,
   },
+  user: {
+    type: Schema.Types.ObjectId,
+    Ref: "User",
+    require: true,
+  },
 });
 
-const ConnectionInfos = mongoose.model<IStudentFeedback>(
+const StudentFeedback = mongoose.model<IStudentFeedback>(
   "StudentFeedback",
   studentFeedbackSchema
 );
 
-export default ConnectionInfos;
+export default StudentFeedback;

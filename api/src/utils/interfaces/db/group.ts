@@ -22,7 +22,7 @@ const groupSchema: Schema = new Schema(
       type: [mongoose.Schema.Types.ObjectId],
       ref: "User",
     },
-    tags: { type: [Schema.Types.ObjectId], ref: "Role", required: false },
+    tags: { type: [Schema.Types.ObjectId], ref: "Tag", required: false },
     roles: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Role",
