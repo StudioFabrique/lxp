@@ -28,7 +28,7 @@ type ContextType = {
   defineRulesFor: () => void;
   builtPerms: Record<string, any> | undefined;
   closeTab: () => void;
-  socket: any;
+  socket: Socket | null;
 };
 
 type Props = { children: React.ReactNode };

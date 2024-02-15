@@ -1,9 +1,9 @@
 import { Response } from "express";
 import CustomRequest from "../../../utils/interfaces/express/custom-request";
 import { noAccess, serverIssue } from "../../../utils/constantes";
-import getLastFeedback from "../../../models/user/feedback/get-last-feedback";
+import postFeedBack from "../../../models/user/feedback/post-feedback";
 
-export default async function httpGetLastFeedback(
+export default async function httpPostFeedback(
   req: CustomRequest,
   res: Response
 ) {
@@ -14,7 +14,9 @@ export default async function httpGetLastFeedback(
 
     const { userId } = req.auth;
 
-    const response = await getLastFeedback(userId);
+    const { feelingLevel, comment } = req.body;
+
+    const response = await postFeedBack(userId, feelingLevel, comment);
 
     return res.status(200).json({ data: response });
   } catch (error) {

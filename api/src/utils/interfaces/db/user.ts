@@ -5,6 +5,7 @@ import { IGraduation } from "./graduation";
 import { IHobby } from "./hobby";
 import { ILink } from "./link";
 import { IConnectionInfos } from "./connection-infos";
+import { IStudentFeedback } from "./student-feedback";
 
 export interface IUser extends Document {
   email: string;
@@ -28,6 +29,7 @@ export interface IUser extends Document {
   createdAt?: Date;
   updatedAt?: Date;
   connectionInfos?: IConnectionInfos["_id"];
+  studentFeedbacks?: IStudentFeedback["_id"];
 }
 
 const userSchema: Schema = new Schema(
@@ -48,6 +50,11 @@ const userSchema: Schema = new Schema(
     connectionInfos: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "ConnectionInfos",
+      required: false,
+    },
+    studentFeedbacks: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "StudentFeedback",
       required: false,
     },
     roles: {

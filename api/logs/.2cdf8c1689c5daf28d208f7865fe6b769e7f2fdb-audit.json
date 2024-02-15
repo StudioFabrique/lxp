@@ -24,6 +24,21 @@
             "date": 1707991212112,
             "name": "/Users/martindhollande/Documents/Studio_Step/lxp-workspace/lxp/api/logs/application-2024-02-15-11.log",
             "hash": "b3fa2b7691f9bb6ec02cb0e1e70135621d9e7283b3b10e221ea7dbf077f04150"
+        },
+        {
+            "date": 1707999936343,
+            "name": "/Users/martindhollande/Documents/Studio_Step/lxp-workspace/lxp/api/logs/application-2024-02-15-13.log",
+            "hash": "603a2288afaa16f393d2e4f011f891a0a530740c2e7c574caac52ea18bcf5f07"
+        },
+        {
+            "date": 1708003479280,
+            "name": "/Users/martindhollande/Documents/Studio_Step/lxp-workspace/lxp/api/logs/application-2024-02-15-14.log",
+            "hash": "72aee7eb553c4dd07e25101be5d4bc0f99d0c0a1794f9d0d03ba49589183a83b"
+        },
+        {
+            "date": 1708005661161,
+            "name": "/Users/martindhollande/Documents/Studio_Step/lxp-workspace/lxp/api/logs/application-2024-02-15-15.log",
+            "hash": "1546c529fb6ed637e52453c76800ac367a05aa3479f09ced2f0a31360b2204de"
         }
     ],
     "hashType": "sha256"

@@ -182,7 +182,7 @@ userRouter.get(
 userRouter.get("/data/:userId", checkPermissions("user"), httpGetUserData);
 
 userRouter.get(
-  "/lastFeedback",
+  "/last-feedback",
   checkPermissions("profile"),
   httpGetLastFeedback
 );
