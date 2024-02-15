@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-async function httpLogout(req: Request, res: Response) {
+async function httpLogout(_req: Request, res: Response) {
   return res
     .clearCookie("accessToken")
     .clearCookie("refreshToken")

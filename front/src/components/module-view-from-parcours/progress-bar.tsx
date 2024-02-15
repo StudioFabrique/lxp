@@ -8,15 +8,19 @@ type ProgressBarProps = {
 
 const ProgressBar = ({ courses }: ProgressBarProps) => {
   return (
-    <div className="flex items-center gap-4 bg-secondary/20 rounded-xl p-2">
+    <div className="flex max-xl:hidden items-center gap-4 bg-secondary/20 rounded-xl p-2">
       <Bus className="w-20 h-10 stroke-1" />
       {courses.map((course) => (
-        <div className="bg-secondary/10 h-[80%] w-full rounded-lg">
+        <div
+          key={course.id}
+          className="bg-secondary/10 h-[80%] w-full rounded-lg"
+        >
           <div className="flex gap-x-2 h-full items-center px-5">
             {course.lessons.map((lesson) => (
               <span
+                key={lesson.id}
                 className={`h-[70%] w-[15px]  ${
-                  lesson.readBy && lesson.readBy?.length > 0
+                  lesson.lessonsRead && lesson.lessonsRead?.length > 0
                     ? "bg-primary"
                     : "bg-primary/20"
                 }`}

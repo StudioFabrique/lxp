@@ -15,9 +15,11 @@ export const regexMail =
 export const regexPassword =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-!@#\$%\^&\*])(?=.{8,})/;
 export const regexNumber = /^[0-9]*$/;
-export const regexGeneric = /^[a-zA-Z0-9\s,.'\-+éàè?î!âôêû:\/ù]{1,}$/;
-export const regexOptionalGeneric = /^[a-zA-Z0-9\s,.'\-+éîàè?!:\/âôêûù]{0,}$/;
+export const regexGeneric = /^[a-zA-Z0-9\s,.'\-+éàèç,?î!âôêû:\/ù]{1,}$/;
+export const regexOptionalGeneric = /^[a-zA-Z0-9\s,.'\-+éîàè?!:\/âô,çêûù]{0,}$/;
 export const regexUrl = /^https?:\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/;
 export const regexDate = /^\d{4}-\d{2}-\d{2}$/;
 export const regexVideoUrl =
   /^(https?:\/\/\S+)?|(video-[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}\d{17}traffic\.mp4)$/i;
+export const regexRgba =
+  /^rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(0(\.\d+)?|1(\.0+)?)\s*\)$/;

@@ -18,6 +18,8 @@ import Group, { IGroup } from "./utils/interfaces/db/group";
 import Tag from "./utils/interfaces/db/tag";
 import User from "./utils/interfaces/db/user";
 import permDefs from "./fixtures-permissions";
+import IConnectionInfos from "./utils/interfaces/db/connection-infos";
+import ConnectionInfos from "./utils/interfaces/db/connection-infos";
 dotenv.config();
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
@@ -59,7 +61,7 @@ async function createUser() {
     password: hash,
     roles: [new Object(role!._id)],
     isActive: true,
-    avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
+    //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
   await newUser.save();
   robotIndex++;
@@ -75,7 +77,7 @@ async function createUser() {
     password: hash,
     roles: [new Object(role2!._id)],
     isActive: true,
-    avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
+    //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
   await newTeacher.save();
   robotIndex++;
@@ -91,9 +93,27 @@ async function createUser() {
     password: hash,
     roles: [new Object(role!._id)],
     isActive: true,
-    avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
+    //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
-  await newStudent.save();
+  const createdStudent = await newStudent.save();
+  const dates = createConnectionInfos();
+  let infos = Array<any>();
+  dates.forEach((date: any) => {
+    infos = [
+      ...infos,
+      new IConnectionInfos({
+        userId: createdStudent._id,
+        lastConnection: date.date,
+        duration: date.duration,
+      }),
+    ];
+  });
+  const newInfos = await ConnectionInfos.insertMany(infos);
+  const infosIds = newInfos.map((item) => item._id);
+  await User.findOneAndUpdate(
+    { _id: createdStudent._id },
+    { connectionInfos: infosIds }
+  );
   robotIndex++;
 }
 
@@ -274,6 +294,17 @@ async function createTag() {
     index++;
   });
   await Tag.bulkSave(tab);
+}
+
+function createConnectionInfos() {
+  const date = new Date().getTime();
+  let dates = Array<{ date: string; duration: number }>();
+  for (let i = 14; i >= 1; i--) {
+    const tmp = new Date(date - i * (1000 * 3600 * 24));
+    const duration = getRandomNumber(1 * 1000 * 3600, 8 * 1000 * 3600);
+    dates = [...dates, { date: tmp.toString(), duration }];
+  }
+  return dates;
 }
 
 async function dropDatabase() {

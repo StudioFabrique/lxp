@@ -28,7 +28,7 @@ describe("HTTP auth", () => {
     await mongoConnect();
     const loginResponse = await request(app)
       .post("/v1/auth/login")
-      .send({ email: "toto@toto.fr", password: "Abcdef@123456" });
+      .send({ email: "admin@studio.eco", password: "Abcdef@123456" });
 
     authToken = loginResponse.headers["set-cookie"][0];
     refreshToken = loginResponse.headers["set-cookie"][1];
@@ -39,7 +39,7 @@ describe("HTTP auth", () => {
       await request(app)
         .post("/v1/auth/login")
         .send({
-          email: "toto@toto.fr",
+          email: "admin@studio.eco",
           password: "Abcdef@123456",
         })
         .expect(200);
@@ -49,7 +49,7 @@ describe("HTTP auth", () => {
       await request(app)
         .post("/v1/auth/login")
         .send({
-          //email: "toto@toto.fr",
+          //email: "admin@studio.eco",
           password: "Abcdef@123456",
         })
         .expect(401);
@@ -69,7 +69,7 @@ describe("HTTP auth", () => {
       await request(app)
         .post("/v1/auth/login")
         .send({
-          email: "toto@toto.frr",
+          email: "admin@studio.ecor",
           password: "Abcdef@123456",
         })
         .expect(401);
@@ -79,7 +79,7 @@ describe("HTTP auth", () => {
       await request(app)
         .post("/v1/auth/login")
         .send({
-          email: "toto@toto.fr",
+          email: "admin@studio.eco",
           //password: "Abcdef@123456",
         })
         .expect(401);
@@ -89,7 +89,7 @@ describe("HTTP auth", () => {
       await request(app)
         .post("/v1/auth/login")
         .send({
-          email: "toto@toto.fr",
+          email: "admin@studio.eco",
           password: "Abcdef@1234567",
         })
         .expect(401);
@@ -99,7 +99,7 @@ describe("HTTP auth", () => {
       await request(app)
         .post("/v1/auth/login")
         .send({
-          email: "toto@toto.fr",
+          email: "admin@studio.eco",
           password: "<hacked>lol</hacked>",
         })
         .expect(401);

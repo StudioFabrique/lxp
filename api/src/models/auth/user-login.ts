@@ -2,6 +2,8 @@ import bcrypt from "bcrypt";
 
 import { credentialsError } from "../../utils/constantes";
 import User from "../../utils/interfaces/db/user";
+import IConnectionInfos from "../../utils/interfaces/db/connection-infos";
+import ConnectionInfos from "../../utils/interfaces/db/connection-infos";
 
 async function userLogin(email: string, password: string) {
   try {

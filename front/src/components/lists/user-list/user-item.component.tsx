@@ -39,6 +39,8 @@ const UserItem: FC<{
     );
   };
 
+  console.log(userItem._id);
+
   return (
     <>
       <td className="bg-transparent rounded-l-xl">
@@ -84,6 +86,9 @@ const UserItem: FC<{
       </td>
       <td className="bg-transparent font-bold text-xs rounded-r-xl">
         <div className="flex gap-x-2">
+          <Can action="read" object={"user"}>
+            <Link to={`/admin/teacher/student/${userItem._id}`}>Voir</Link>
+          </Can>
           <Can action="update" object={userItem.roles[0].role}>
             <Link to="../features">Editer</Link>
           </Can>

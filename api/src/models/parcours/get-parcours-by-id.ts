@@ -1,9 +1,7 @@
 import { getAdmin } from "../../helpers/get-admin";
 import { prisma } from "../../utils/db";
 
-async function getParcoursById(parcoursId: number /* , userId: string */) {
-  // const admin = await getAdmin(userId);
-
+async function getParcoursById(parcoursId: number, userId: string) {
   const parcours = await prisma.parcours.findFirst({
     where: { id: parcoursId /* , adminId: admin.id */ },
     select: {
@@ -56,6 +54,18 @@ async function getParcoursById(parcoursId: number /* , userId: string */) {
               bonusSkills: {
                 select: {
                   bonusSkill: { select: { id: true, description: true } },
+                },
+              },
+              courses: {
+                select: {
+                  lessons: {
+                    select: {
+                      lessonsRead: {
+                        where: { student: { idMdb: userId } },
+                        select: { id: true, finishedAt: true },
+                      },
+                    },
+                  },
                 },
               },
             },
