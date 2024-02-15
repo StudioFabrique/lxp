@@ -1,26 +1,41 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams } from "react-router-dom";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 
 import StudentCard from "../../components/teacher/student-data/student-card";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
-import StatsConnection from "../../components/teacher/student-data/stats-connection";
 import useTeacher from "./hooks/useTeacher";
-
+import UserConnection from "../../components/stats/user-connection";
 export default function UserData() {
   const { studentId } = useParams();
-  const { student, parcours, getTotalConnectionTime } = useTeacher(studentId!);
+  const { student, parcours, parcoursCompletion, getTotalConnectionTime } =
+    useTeacher(studentId!);
 
   const totalConnectionTime = useMemo(() => {
     return getTotalConnectionTime();
   }, [getTotalConnectionTime]);
 
+  const classImage: React.CSSProperties = {
+    backgroundImage: `url(${
+      `data:image/jpeg;base64,${parcours?.image}` ??
+      "/images/parcours-default.webp"
+    })`,
+    width: "100%",
+    height: "20rem",
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+    borderRadius: "0.75rem",
+  };
+
   return (
-    <>
+    <main className="flex flex-col gap-y-4 mt-4">
+      <section style={classImage} />
+
       {student ? (
         <Wrapper>
-          <section className="flex gap-4">
-            <article className="w-1/6">
+          <section className="flex flex-col xl:flex-row gap-4">
+            <article className="w-full xl:w-3/12">
               <Wrapper>
                 <StudentCard
                   avatar={student?.avatar}
@@ -33,49 +48,16 @@ export default function UserData() {
                 />
               </Wrapper>
             </article>
-            <article className="flex-1">
-              <div className="flex flex-col gap-y-4">
-                <span className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-                  <StatsUser label="Complétion Parcours">ND</StatsUser>
-                  <StatsUser label="Temps de connexion">
-                    {totalConnectionTime}
-                  </StatsUser>
-                  <StatsUser label="Jours d'absence">0</StatsUser>
-                </span>
-
-                <span className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                  <Wrapper>
-                    {student && student.connectionInfos ? (
-                      <StatsConnection
-                        connectionTime={student.connectionInfos!}
-                      />
-                    ) : (
-                      <p>Aucune statistique de connexion</p>
-                    )}
-                  </Wrapper>
-                  <Wrapper>stats</Wrapper>
-                </span>
-              </div>
-            </article>
+            {student && student.connectionInfos !== undefined ? (
+              <UserConnection
+                totalConnectionTime={totalConnectionTime}
+                connectionInfos={student.connectionInfos}
+                parcoursCompletion={parcoursCompletion}
+              />
+            ) : null}
           </section>
         </Wrapper>
       ) : null}
-    </>
-  );
-}
-
-interface StatsUserProps {
-  label: string;
-  children: ReactNode;
-}
-
-export function StatsUser({ label, children }: StatsUserProps) {
-  return (
-    <Wrapper>
-      <div className="flex gap-x-4">
-        <h2>{label}</h2>
-        <div>{children}</div>
-      </div>
-    </Wrapper>
+    </main>
   );
 }

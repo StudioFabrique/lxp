@@ -1,5 +1,5 @@
-import { localeDate } from "../../../helpers/locale-date";
-import VerticalBars from "../../UI/vertical-bars";
+import { localeDate } from "../../helpers/locale-date";
+import VerticalBars from "../UI/vertical-bars";
 
 interface StatsConnectionProps {
   connectionTime: Array<{
@@ -18,7 +18,7 @@ export default function StatsConnection({
   );
 
   return (
-    <div className="w-full">
+    <div className="w-full h-[100%]">
       <h2 className="text-xs font-bold">Durée des sessions</h2>
       <VerticalBars
         categories={categories}
@@ -32,6 +32,7 @@ export default function StatsConnection({
         type="bar"
         warning={2}
         width="100%"
+        height="200px"
       />
     </div>
   );

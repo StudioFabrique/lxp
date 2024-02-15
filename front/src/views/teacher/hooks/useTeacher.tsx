@@ -7,14 +7,20 @@ const useTeacher = (studentId: string) => {
   const { sendRequest } = useHttp();
   const [student, setStudent] = useState<User | null>(null);
   const [parcours, setParcours] = useState<Parcours | null>(null);
+  const [parcoursCompletion, setParcoursCompletion] = useState(0);
 
   /**
    * retourne les infos d'un apprenant et les infos du dernier parcours auquel il ou elle est inscrit
    */
   const getStudentData = useCallback(() => {
-    const applyData = (data: { user: User; parcours: Parcours }) => {
+    const applyData = (data: {
+      user: User;
+      parcours: Parcours;
+      parcoursCoompletion: number;
+    }) => {
       setStudent(data.user);
-      setParcours(data.parcours);
+      setParcours(data.parcours ?? null);
+      setParcoursCompletion(data.parcoursCoompletion ?? 0);
     };
     sendRequest(
       {
@@ -24,15 +30,18 @@ const useTeacher = (studentId: string) => {
     );
   }, [sendRequest, studentId]);
 
-  const getTotalConnectionTime = (): number => {
+  /**
+   * retourne le temps total de connexion de l'apprenant sur l'application
+   */
+  const getTotalConnectionTime = useCallback((): number => {
     let total = 0;
     if (student && student.connectionInfos !== undefined) {
       student!.connectionInfos!.forEach((item) => {
-        total += item.duration / 3600000;
+        total += item.duration;
       });
     }
-    return total;
-  };
+    return Math.ceil(total / 3600000);
+  }, [student]);
 
   useEffect(() => {
     getStudentData();
@@ -41,6 +50,7 @@ const useTeacher = (studentId: string) => {
   return {
     student,
     parcours,
+    parcoursCompletion,
     getTotalConnectionTime,
   };
 };
