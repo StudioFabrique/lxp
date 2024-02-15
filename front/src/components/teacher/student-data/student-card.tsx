@@ -12,7 +12,7 @@ interface StudentCardProps {
 
 export default function StudentCard(props: StudentCardProps) {
   return (
-    <div className="text-xs capitalize flex flex-col gap-y-2">
+    <div className="capitalize flex flex-col gap-y-2">
       <div className="avatar mb-2">
         <div className="w-24 rounded-xl">
           <img
