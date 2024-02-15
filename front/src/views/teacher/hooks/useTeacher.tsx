@@ -7,37 +7,20 @@ const useTeacher = (studentId: string) => {
   const { sendRequest } = useHttp();
   const [student, setStudent] = useState<User | null>(null);
   const [parcours, setParcours] = useState<Parcours | null>(null);
+  const [parcoursCompletion, setParcoursCompletion] = useState(0);
 
   /**
    * retourne les infos d'un apprenant et les infos du dernier parcours auquel il ou elle est inscrit
    */
   const getStudentData = useCallback(() => {
-    const applyData = (datas: { user: User; parcours: Parcours }) => {
-      const today = new Date().getDate();
-      const now = new Date().getTime();
-      let data = Array<{ lastConnection: string; duration: number }>();
-      if (datas.user && datas.user.connectionInfos !== undefined) {
-        for (let i = datas.user?.connectionInfos!.length - 1; i >= 0; i--) {
-          if (
-            new Date(datas.user.connectionInfos[i].lastConnection).getDate() ===
-            today - i
-          ) {
-            data = [
-              ...data,
-              {
-                ...datas.user.connectionInfos[i],
-                lastConnection: datas.user.connectionInfos[i].lastConnection,
-                duration: datas.user.connectionInfos[i].duration,
-              },
-            ];
-          } else {
-            const tmp = new Date(now - i * 3600000 * 24);
-            data = [...data, { lastConnection: tmp.toString(), duration: 0 }];
-          }
-        }
-      }
-      setStudent({ ...datas.user, connectionInfos: data });
-      setParcours(datas.parcours);
+    const applyData = (data: {
+      user: User;
+      parcours: Parcours;
+      parcoursCoompletion: number;
+    }) => {
+      setStudent(data.user);
+      setParcours(data.parcours ?? null);
+      setParcoursCompletion(data.parcoursCoompletion ?? 0);
     };
     sendRequest(
       {
@@ -67,6 +50,7 @@ const useTeacher = (studentId: string) => {
   return {
     student,
     parcours,
+    parcoursCompletion,
     getTotalConnectionTime,
   };
 };
