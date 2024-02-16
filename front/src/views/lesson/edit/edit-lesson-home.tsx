@@ -59,7 +59,7 @@ export default function EditLessonHome() {
           method: "post",
           body: {
             type: currentType,
-            order: activities.length > 0 ? activities.length : 0,
+            order: activities.length > 0 ? activities.length - 1 : 0,
             value: await fromHtmlToMarkdown(value),
           },
         },
@@ -261,10 +261,14 @@ export default function EditLessonHome() {
           onRightClick={handleDeleteActivity}
           title={`Supprimer l'activité n° ${activityToDelete.order + 1}`}
           isSubmitting={isLoading}
-          message="Attention l'activité et les ressources qui lui sont associées seront définitivement supprimées."
           leftLabel="Annuler"
           rightLabel="Confirmer"
-        />
+        >
+          <p>
+            Attention l'activité et les ressources qui lui sont associées seront
+            définitivement supprimées.
+          </p>
+        </Modal>
       ) : null}
     </>
   );
