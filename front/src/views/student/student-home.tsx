@@ -7,6 +7,7 @@ import ResumeActivities from "../../components/student-home/resume-activities";
 import useHttp from "../../hooks/use-http";
 import LessonRead from "../../utils/interfaces/lesson-read";
 import RightSide from "../../components/student-home/right-side/right-side";
+import CalendarTimeline from "../../components/student-home/calendar-timeline";
 
 const StudentHome = () => {
   const { sendRequest } = useHttp();
@@ -39,17 +40,13 @@ const StudentHome = () => {
       <div className="grid xl:grid-cols-4 xl:gap-0 gap-10">
         <div className="xl:col-span-3 flex flex-col gap-5">
           <Notifications />
-          {lastLessons && lastLessons?.length > 0 ? (
+          {lastLessons && lastLessons?.length > 0 && (
             <>
               <ResumeActivity lastLesson={lastLessons[0]} />
               <ResumeActivities lastLessons={lastLessons.splice(1)} />
             </>
-          ) : (
-            <p>Aucun contenus</p>
           )}
-          <div>
-            <h2 className="font-bold text-xl">Mon emploi du temps</h2>
-          </div>
+          <CalendarTimeline />
         </div>
         <RightSide />
       </div>
