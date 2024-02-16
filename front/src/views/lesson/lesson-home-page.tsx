@@ -73,10 +73,12 @@ export default function LessonHomePage() {
           onRightClick={handleDeleteLesson}
           title="Supprimer une leçon"
           isSubmitting={isLoading}
-          message="Attention la leçon et les ressources qui lui sont associées seront définitivement supprimées."
           leftLabel="Annuler"
           rightLabel="Confirmer"
-        />
+        >
+          Attention la leçon et les ressources qui lui sont associées seront
+          définitivement supprimées.
+        </Modal>
       ) : null}
     </main>
   );
