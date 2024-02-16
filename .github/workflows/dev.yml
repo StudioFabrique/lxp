@@ -72,4 +72,4 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'chown ${{secrets.USERNAME}}:${{secrets.USERNAME}} /home/${{secrets.USERNAME}}/.env'
       - name: Run new container
         run: |
-          ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'cd ~/ && docker-compose -f dev-docker-compose-yml up -d'
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'cd ~/ && docker-compose -f dev-docker-compose.yml up -d'
