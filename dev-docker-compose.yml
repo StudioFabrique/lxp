@@ -30,7 +30,7 @@ services:
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_DB=${DEV_POSTGRES_DB}
   dev-db-mongo:
     image: mongo:latest
     restart: always
