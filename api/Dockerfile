@@ -14,6 +14,7 @@ RUN npm i -g nodemon
 # Copie du code source dans l'image
 COPY . /app
 COPY uploads/ /app/uploads
+COPY src/uploads /app/src/uploads
 
 RUN npx prisma generate
 # Transpilation du code TypeScript en JavaScript

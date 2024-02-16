@@ -189,6 +189,8 @@ export default function EditLessonHome() {
     return () => clearTimeout(timer);
   }, [success]);
 
+  console.log({ activities });
+
   return (
     <>
       {activities && activities.length > 0 ? (
