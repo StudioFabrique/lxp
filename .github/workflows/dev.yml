@@ -57,7 +57,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'rm dev-docker-compose.yml || true'
       - name: Copier fichier vers EC2
         run: |
-          scp -i key.pem ./docker-compose.yml ${{secrets.USERNAME}}@${{secrets.HOST}}:~/dev-docker-compose.yml
+          scp -i key.pem ./dev-docker-compose.yml ${{secrets.USERNAME}}@${{secrets.HOST}}:~/dev-docker-compose.yml
       - name: Stop running container
         run: |
           ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'docker-compose -f dev-docker-compose.yml down || true'
