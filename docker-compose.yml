@@ -44,6 +44,7 @@ services:
   api:
     image: studiostep/lxp:latest
     pull_policy: always
+    # build: .
     volumes:
       - api:/app/api/dist/uploads
       - logs:/app/api/dist/logs
