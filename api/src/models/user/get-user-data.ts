@@ -40,42 +40,42 @@ export default async function getUserData(userId: string) {
     connectionInfos: tmp,
   } as IUser;
 
-  let response = await prisma.group.findFirst({
-    where: { idMdb: user.group[0]._id },
-    select: {
-      parcours: {
-        select: {
-          parcours: true,
-        },
-        orderBy: {
-          parcoursId: "desc",
-        },
-        take: 1,
-      },
-    },
-  });
-
   let parcours: any = {};
-  let lessonsIds: Array<any> = [];
+  let parcoursCompletion = 0;
 
-  console.log({ response });
-
-  if (response && response.parcours.length > 0) {
-    parcours = response.parcours.map((item: any) => item.parcours)[0];
-
-    console.log({ parcours });
-
-    lessonsIds = await prisma.parcours.findMany({
-      where: { id: parcours.id },
+  if (user.group.length > 0) {
+    let response = await prisma.group.findFirst({
+      where: { idMdb: user.group[0]._id },
       select: {
-        modules: {
+        parcours: {
           select: {
-            module: {
-              select: {
-                courses: {
-                  select: {
-                    lessons: {
-                      select: { id: true },
+            parcours: true,
+          },
+          orderBy: {
+            parcoursId: "desc",
+          },
+          take: 1,
+        },
+      },
+    });
+
+    let lessonsIds: Array<any> = [];
+
+    if (response && response.parcours.length > 0) {
+      parcours = response.parcours.map((item: any) => item.parcours)[0];
+
+      lessonsIds = await prisma.parcours.findMany({
+        where: { id: parcours.id },
+        select: {
+          modules: {
+            select: {
+              module: {
+                select: {
+                  courses: {
+                    select: {
+                      lessons: {
+                        select: { id: true },
+                      },
                     },
                   },
                 },
@@ -83,35 +83,31 @@ export default async function getUserData(userId: string) {
             },
           },
         },
-      },
+      });
+    }
+
+    const student = await prisma.student.findFirst({
+      where: { idMdb: userId },
     });
-  }
 
-  console.log({ lessonsIds });
+    const finishedLessons = await prisma.student.findMany({
+      where: { id: student!.id },
+      select: { lessonsRead: { select: { id: true } } },
+    });
 
-  const student = await prisma.student.findFirst({
-    where: { idMdb: userId },
-  });
+    parcoursCompletion = (finishedLessons.length / lessonsIds.length) * 100;
 
-  console.log({ student });
-
-  const finishedLessons = await prisma.student.findMany({
-    where: { id: student!.id },
-    select: { lessonsRead: { select: { id: true } } },
-  });
-
-  const parcoursCompletion = (finishedLessons.length / lessonsIds.length) * 100;
-
-  if (parcours && parcours.image) {
-    parcours = {
-      ...parcours,
-      image: parcours.image.toString("base64"),
-    };
+    if (parcours && parcours.image) {
+      parcours = {
+        ...parcours,
+        image: parcours.image.toString("base64"),
+      };
+    }
   }
 
   return {
     user,
     parcours: parcours ?? null,
-    parcoursCompletion,
+    parcoursCompletion: parcoursCompletion,
   };
 }
