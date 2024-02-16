@@ -3,3 +3,8 @@
 {"from":"::1","level":"info","message":"Identifiant de parcours invalide","status":400,"timestamp":"2024-02-16 02:22:22.785 PM"}
 {"from":"::1","level":"info","message":"Identifiant de parcours invalide","status":400,"timestamp":"2024-02-16 02:22:24.790 PM"}
 {"from":"::1","level":"info","message":"Identifiant de parcours invalide","status":400,"timestamp":"2024-02-16 02:22:26.091 PM"}
+{"from":"::1","level":"info","message":"Identifiant ou mot de passe incorrect.","status":401,"timestamp":"2024-02-16 02:35:09.046 PM"}
+{"from":"::1","level":"info","message":"Identifiant de parcours invalide","status":400,"timestamp":"2024-02-16 02:49:25.130 PM"}
+{"from":"::1","level":"info","message":"Identifiant de parcours invalide","status":400,"timestamp":"2024-02-16 02:49:28.907 PM"}
+{"from":"::1","level":"info","message":"Identifiant de parcours invalide","status":400,"timestamp":"2024-02-16 02:49:35.454 PM"}
+{"from":"::1","level":"info","message":"Le titre de la leçon contient des caractères non autorisés","status":400,"timestamp":"2024-02-16 02:56:39.251 PM"}
