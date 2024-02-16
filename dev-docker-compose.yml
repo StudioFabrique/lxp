@@ -53,7 +53,7 @@ services:
     restart: always
     container_name: dev-lxp-api
     ports:
-      - "5002:5002"
+      - "5002:5001"
     links:
       - db-pg
       - db-mongo
