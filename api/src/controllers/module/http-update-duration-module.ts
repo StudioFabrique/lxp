@@ -8,7 +8,7 @@ export default async function httpUpdateDurationModule(
   try {
     const { duration, id }: { duration: number; id: number } = req.body;
 
-    const response = updateDurationModule(id, duration);
+    const response = updateDurationModule(id, +duration);
 
     if (!response) {
       return res.status(404).send({ message: "ressource non trouvé" });
