@@ -12,7 +12,7 @@ export default function UserData() {
     student,
     parcours,
     parcoursCompletion,
-    image,
+    imageUrl,
     getTotalConnectionTime,
   } = useTeacher(studentId!);
 
@@ -21,7 +21,7 @@ export default function UserData() {
   }, [getTotalConnectionTime]);
 
   const classImage: React.CSSProperties = {
-    backgroundImage: `url(${image})`,
+    backgroundImage: `url(${imageUrl})`,
     width: "100%",
     height: "20rem",
     backgroundSize: "cover",
