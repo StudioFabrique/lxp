@@ -63,10 +63,10 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'docker-compose -f dev-docker-compose.yml down || true'
       - name: Delete old images
         run: |
-          ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'docker image rm ${{secrets.DOCKERHUB_USERNAME}}/lxp:latest || true'
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'docker image rm ${{secrets.DOCKERHUB_USERNAME}}/dev-lxp:latest || true'
       - name: Création du network
         run: |
-          ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'docker network create dev-lxp_network || true'
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'docker network create lxp_network || true'
       - name: Grand permissions to .env
         run: |
           ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'chown ${{secrets.USERNAME}}:${{secrets.USERNAME}} /home/${{secrets.USERNAME}}/.env'
