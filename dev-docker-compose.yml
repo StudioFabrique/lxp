@@ -6,9 +6,9 @@ networks:
     external: true
 
 volumes:
-  dev-pg:
+  pg:
     driver: local
-  dev-mongo:
+  mongo:
     driver: local
   dev-api:
     driver: local
@@ -22,7 +22,7 @@ services:
     restart: always
     container_name: dev-lxp-prisma
     volumes:
-      - dev-pg:/var/lib/postgresql/data
+      - pg:/var/lib/postgresql/data
     networks:
       - dev-lxp_network
     ports:
@@ -30,13 +30,13 @@ services:
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_DB=${POSTGRES_DB_DEV}
   dev-db-mongo:
     image: mongo:latest
     restart: always
     container_name: dev-lxp-mongo
     volumes:
-      - dev-mongo:/data/db
+      - mongo:/data/db
     networks:
       - dev-lxp_network
     ports:
@@ -55,11 +55,11 @@ services:
     ports:
       - "5002:5002"
     links:
-      - dev-db-pg
-      - dev-db-mongo
+      - db-pg
+      - db-mongo
     depends_on:
-      - dev-db-pg
-      - dev-db-mongo
+      - db-pg
+      - db-mongo
     environment:
       - DATABASE_URL=${DEV_DATABASE_URL}
       - MONGO_LOCAL_URL=${DEV_MONGO_LOCAL_URL}
