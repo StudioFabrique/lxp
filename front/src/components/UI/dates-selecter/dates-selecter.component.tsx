@@ -18,13 +18,19 @@ const DatesSelecter: FC<Props> = ({
   label = "",
   onSubmitDates,
 }) => {
+  const tommorowDate = new Date(new Date().setDate(new Date().getDate() + 1));
+
   const { value: startDate } = useInput(
     (value) => regexGeneric.test(value),
-    startDateProp ? formatDateToYYYYMMDD(new Date(startDateProp)) : ""
+    startDateProp
+      ? formatDateToYYYYMMDD(new Date(startDateProp))
+      : formatDateToYYYYMMDD(tommorowDate)
   );
   const { value: endDate } = useInput(
     (value) => regexGeneric.test(value),
-    endDateProp ? formatDateToYYYYMMDD(new Date(endDateProp)) : ""
+    endDateProp
+      ? formatDateToYYYYMMDD(new Date(endDateProp))
+      : formatDateToYYYYMMDD(tommorowDate)
   );
   const [error, setError] = useState(false);
   const [submit, setSubmit] = useState<boolean>(false);
@@ -40,13 +46,14 @@ const DatesSelecter: FC<Props> = ({
    * vérification de la validité des dates et envoie des données au composant parent pour les mettre à jour dans le state global et la bdd
    */
   useEffect(() => {
-    setError(false);
     const timer = setTimeout(() => {
       if (submit) {
         const date = new Date().getTime();
         const sDate = new Date(dates.startDate).getTime();
         const eDate = new Date(dates.endDate).getTime();
+
         if (startDate.isValid && endDate.isValid) {
+          setError(false);
           if (sDate > date && sDate < eDate) {
             onSubmitDates(dates);
             setSubmit(false);
@@ -77,7 +84,6 @@ const DatesSelecter: FC<Props> = ({
     },
     [endDate]
   );
-
   return (
     <div className="flex flex-col gap-y-4">
       <h3 className="font-bold">{label}</h3>
@@ -104,9 +110,9 @@ const DatesSelecter: FC<Props> = ({
         </div>
       </div>
       {error ? (
-        <p className="text-base-content text-xs mt-4 text-center font-bold">
+        <p className="text-error text-xs mt-4 text-center font-bold">
           La date de début doit être comprise entre aujourd'hui et la date de
-          fin de la formation
+          fin de la formation.
         </p>
       ) : null}
     </div>
