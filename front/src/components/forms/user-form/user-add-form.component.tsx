@@ -63,7 +63,7 @@ const UserAddForm: FC<{
 
   const { value: phone } = useInput(
     (value: string) => regexNumber.test(value),
-    props.user?.phone ?? null
+    props.user?.phone ?? ""
   );
 
   const { value: postCode } = useInput(

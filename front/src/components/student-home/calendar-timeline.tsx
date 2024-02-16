@@ -17,6 +17,7 @@ const CalendarTimeline = () => {
                     new Date("2019-03-02").getTime(),
                     new Date("2019-03-04").getTime(),
                   ],
+                  fillColor: "#F44336",
                 },
                 {
                   x: "Test",
@@ -46,6 +47,7 @@ const CalendarTimeline = () => {
             plotOptions: {
               bar: {
                 horizontal: true,
+                borderRadius: 5,
               },
             },
             xaxis: {
