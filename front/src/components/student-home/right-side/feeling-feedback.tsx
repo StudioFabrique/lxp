@@ -19,7 +19,7 @@ const FeelingFeedback = () => {
 
   const [feedbackAlreadySent, setFeedbackSent] = useState<boolean>(false);
 
-  const [currentProgressValue, setCurrentProgressValue] = useState<number>(4);
+  const [currentProgressValue, setCurrentProgressValue] = useState<number>(3);
 
   const [commentValue, setCommentValue] = useState<string>();
 
@@ -30,16 +30,12 @@ const FeelingFeedback = () => {
       case 1:
         return <CloudLightningIcon className={iconClassname} />;
       case 2:
-        return <CloudFogIcon className={iconClassname} />;
-      case 3:
         return <CloudRainIcon className={iconClassname} />;
-      case 4:
-        return <CloudSnowIcon className={iconClassname} />;
-      case 5:
+      case 3:
         return <CloudSunRainIcon className={iconClassname} />;
-      case 6:
+      case 4:
         return <CloudSunIcon className={iconClassname} />;
-      case 7:
+      case 5:
         return <SunIcon className={iconClassname} />;
       default:
         return undefined;
@@ -101,7 +97,7 @@ const FeelingFeedback = () => {
                 setCurrentProgressValue(e.currentTarget.valueAsNumber)
               }
               min={1}
-              max={7}
+              max={5}
               step={1}
             />
             <p>{"Commentaire (facultatif)"}</p>
