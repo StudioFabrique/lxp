@@ -50,7 +50,8 @@ export const informationSchema = z.object({
     .regex(regexOptionalGeneric, {
       message: "La description contient des caractères invalides",
     })
-    .optional(),
+    .optional()
+    .nullable(),
   description: z
     .string()
     .regex(regexOptionalGeneric, {

@@ -7,77 +7,76 @@ import {
   CloudSunRainIcon,
   SunIcon,
 } from "lucide-react";
-import { ChangeEvent, useState } from "react";
-
-const maxIcon = 7;
-const baseIncrementalValue = (1 * 100) / maxIcon;
-
-const roundedIconValue = (index: number, precision: number = 100) =>
-  Math.floor((index / maxIcon) * precision);
+import { ChangeEvent, useContext, useEffect, useState } from "react";
+import { Context } from "../../../store/context.store";
+import useHttp from "../../../hooks/use-http";
+import Loader from "../../UI/loader";
+import toast from "react-hot-toast";
 
 const FeelingFeedback = () => {
-  /* const [xPos, setXPos] = useState<{ previous?: number; current?: number }>(); */
+  const { sendRequest, isLoading } = useHttp(true);
+  const { socket } = useContext(Context);
 
-  const [currentProgressValue, setCurrentProgressValue] = useState<number>(
-    baseIncrementalValue * 4
-  );
+  const [feedbackAlreadySent, setFeedbackSent] = useState<boolean>(false);
 
-  console.log(currentProgressValue);
+  const [currentProgressValue, setCurrentProgressValue] = useState<number>(4);
+
+  const [commentValue, setCommentValue] = useState<string>();
 
   const CurrentIcon = () => {
-    switch (Math.floor(currentProgressValue)) {
-      case roundedIconValue(1):
+    switch (currentProgressValue) {
+      case 1:
         return <CloudLightningIcon />;
-      case roundedIconValue(2):
+      case 2:
         return <CloudFogIcon />;
-      case roundedIconValue(3):
+      case 3:
         return <CloudRainIcon />;
-      case roundedIconValue(4):
+      case 4:
         return <CloudSnowIcon />;
-      case roundedIconValue(5):
+      case 5:
         return <CloudSunRainIcon />;
-      case roundedIconValue(6):
+      case 6:
         return <CloudSunIcon />;
-      case roundedIconValue(7):
+      case 7:
         return <SunIcon />;
       default:
         return undefined;
     }
   };
 
-  // watch the xPos and determine if the progress bar increase or decrease
-  /* useEffect(() => {
-    if (
-      xPos &&
-      xPos.previous &&
-      xPos.current &&
-      xPos.current !== xPos.previous
-    ) {
-      if (xPos.current > xPos.previous) {
-        setCurrentProgressValue((previousValue) => {
-          const calculation = previousValue + baseIncrementalValue;
-
-          return Math.floor(calculation * 100) > roundedIconValue(6)
-            ? baseIncrementalValue * maxIcon
-            : calculation;
-        });
-      } else {
-        setCurrentProgressValue((previousValue) => {
-          const calculation = previousValue - baseIncrementalValue;
-
-          return calculation < baseIncrementalValue
-            ? baseIncrementalValue
-            : calculation;
-        });
-      }
+  const handleSubmitFeedback = () => {
+    if (!socket) {
+      toast("problème socket");
+      return;
     }
-  }, [xPos]); */
 
-  /* const handleDrag = (xPos: number) => {
-    setXPos((previousXPos) => {
-      return { previous: previousXPos?.current ?? xPos, current: xPos };
+    socket.emit("student-feedback", {
+      feelingLevel: currentProgressValue,
+      comment: commentValue,
     });
-  }; */
+
+    toast("feedback envoyé !");
+
+    setFeedbackSent(true);
+  };
+
+  useEffect(() => {
+    const applyData = (data: { data: any }) => {
+      const lastFeedback = data.data;
+      if (
+        lastFeedback &&
+        Math.floor(
+          (new Date(lastFeedback.feedbackAt).getTime() - new Date().getTime()) *
+            2.77778e-7
+        ) < 24
+      ) {
+        setFeedbackSent(true);
+        setCurrentProgressValue(lastFeedback.feelingLevel);
+      }
+    };
+
+    sendRequest({ path: "/user/last-feedback", method: "get" }, applyData);
+  }, [sendRequest]);
 
   return (
     <div className="flex flex-col gap-4 bg-secondary text-secondary-content p-5 rounded-lg">
@@ -87,25 +86,38 @@ const FeelingFeedback = () => {
         </p>
         <CurrentIcon />
       </span>
-      <input
-        type="range"
-        className="range range-xs range-primary my-2 bg-secondary-focus"
-        value={currentProgressValue}
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setCurrentProgressValue(e.currentTarget.valueAsNumber)
-        }
-        min={baseIncrementalValue * 1}
-        max={baseIncrementalValue * 7.1}
-        step={baseIncrementalValue}
-      />
-      <p>{"Commentaire (facultatif)"}</p>
-      <textarea className="textarea resize-none text-black" />
-      <button
-        type="button"
-        className="btn btn-xs self-end btn-primary text-white"
-      >
-        Envoyer
-      </button>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        !feedbackAlreadySent && (
+          <>
+            <input
+              type="range"
+              className="range range-xs range-primary my-2 bg-secondary-focus"
+              value={currentProgressValue}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setCurrentProgressValue(e.currentTarget.valueAsNumber)
+              }
+              min={1}
+              max={7}
+              step={1}
+            />
+            <p>{"Commentaire (facultatif)"}</p>
+            <textarea
+              onChange={(e) => setCommentValue(e.currentTarget.value)}
+              value={commentValue}
+              className="textarea text-base-content resize-none"
+            />
+            <button
+              type="button"
+              className="btn btn-xs self-end btn-primary text-white"
+              onClick={handleSubmitFeedback}
+            >
+              Envoyer
+            </button>
+          </>
+        )
+      )}
     </div>
   );
 };
