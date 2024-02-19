@@ -35,9 +35,13 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                 key={item.id}
                 className={`flex flex-col justify-between p-5 bg-secondary/70 text-secondary-content rounded-lg gap-4`}
               >
-                <div>
-                  <p className="font-semibold">{`Module: ${item.lesson.course.module.title}`}</p>
-                  <p>{`Cours: ${item.lesson.course.title}`}</p>
+                <div
+                  className="w-full text-left"
+                  /* data-tip={`Module: ${item.lesson.course.module.title} => Cours: ${item.lesson.course.title}`} */
+                >
+                  <p className="font-semibold truncate overflow-clip">{`Module: ${item.lesson.course.module.title}`}</p>
+                  <p className="truncate overflow-clip">{`Cours: ${item.lesson.course.title}`}</p>
+
                   <div className="flex gap-1 overflow-x-hidden">
                     {item.lesson.course.bonusSkills
                       .filter((skill) => skill.badge)
@@ -46,7 +50,7 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                           i < 5 && (
                             <img
                               key={skill.id}
-                              className="w-12 h-12 p-2"
+                              className="w-16 h-16 p-2"
                               src={skill.badge}
                               alt="illustration badge"
                             />

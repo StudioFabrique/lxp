@@ -1,5 +1,5 @@
 import Chat from "./chat";
-import FeedbackApprenant from "./feedback-apprenant";
+import FeedbackApprenant from "./feedback-apprenant/feedback-apprenant";
 import FeelingFeedback from "./feeling-feedback";
 import MostReadCourses from "./most-read-courses";
 
