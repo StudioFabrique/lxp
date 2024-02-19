@@ -7,9 +7,9 @@ const RightSide = () => {
   return (
     <div className="flex flex-col xl:px-10 gap-5">
       <FeelingFeedback />
-      <Chat />
       <FeedbackApprenant />
       <MostReadCourses />
+      <Chat />
     </div>
   );
 };

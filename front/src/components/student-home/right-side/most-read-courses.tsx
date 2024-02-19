@@ -20,7 +20,11 @@ const MostReadCourses = () => {
   }, [sendRequest]);
 
   return (
-    <div className="flex flex-col items-center justify-between bg-secondary text-secondary-content rounded-lg p-5 gap-5">
+    <div
+      className={`flex flex-col items-center bg-secondary text-secondary-content rounded-lg p-5 gap-5 ${
+        courses && courses?.length < 3 && "h-[300px]"
+      }`}
+    >
       <p className="font-bold self-start">Les cours les plus consultés</p>
       {courses && courses?.length > 0 ? (
         courses?.map((course) => (

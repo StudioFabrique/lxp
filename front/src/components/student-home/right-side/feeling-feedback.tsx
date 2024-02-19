@@ -1,8 +1,6 @@
 import {
-  CloudFogIcon,
   CloudLightningIcon,
   CloudRainIcon,
-  CloudSnowIcon,
   CloudSunIcon,
   CloudSunRainIcon,
   SunIcon,
@@ -19,26 +17,24 @@ const FeelingFeedback = () => {
 
   const [feedbackAlreadySent, setFeedbackSent] = useState<boolean>(false);
 
-  const [currentProgressValue, setCurrentProgressValue] = useState<number>(4);
+  const [currentProgressValue, setCurrentProgressValue] = useState<number>(3);
 
   const [commentValue, setCommentValue] = useState<string>();
+
+  const iconClassname = "w-10 h-10";
 
   const CurrentIcon = () => {
     switch (currentProgressValue) {
       case 1:
-        return <CloudLightningIcon />;
+        return <CloudLightningIcon className={iconClassname} />;
       case 2:
-        return <CloudFogIcon />;
+        return <CloudRainIcon className={iconClassname} />;
       case 3:
-        return <CloudRainIcon />;
+        return <CloudSunRainIcon className={iconClassname} />;
       case 4:
-        return <CloudSnowIcon />;
+        return <CloudSunIcon className={iconClassname} />;
       case 5:
-        return <CloudSunRainIcon />;
-      case 6:
-        return <CloudSunIcon />;
-      case 7:
-        return <SunIcon />;
+        return <SunIcon className={iconClassname} />;
       default:
         return undefined;
     }
@@ -80,7 +76,7 @@ const FeelingFeedback = () => {
 
   return (
     <div className="flex flex-col gap-4 bg-secondary text-secondary-content p-5 rounded-lg">
-      <span className="flex justify-between">
+      <span className="flex justify-between items-center">
         <p className="font-bold w-[70%]">
           Comment vous sentez-vous aujourd'hui ?
         </p>
@@ -99,7 +95,7 @@ const FeelingFeedback = () => {
                 setCurrentProgressValue(e.currentTarget.valueAsNumber)
               }
               min={1}
-              max={7}
+              max={5}
               step={1}
             />
             <p>{"Commentaire (facultatif)"}</p>
