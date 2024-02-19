@@ -38,10 +38,10 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
         children={[
           <div
             key="title-and-badges"
-            className="absolute md:-top-[230%] -top-[160%] flex justify-between w-full items-center"
+            className="absolute md:-top-[230%] -top-[160%] flex justify-between w-[95%] overflow-x-hidden"
           >
             <p className="text-white">{`Module: ${lastLesson.lesson.course.module.title}`}</p>
-            <div className="flex gap-1 overflow-x-hidden pr-10">
+            <div className="flex gap-1">
               {lastLesson.lesson.course.bonusSkills &&
                 lastLesson.lesson.course.bonusSkills
                   .filter((skill) => skill.badge)
@@ -50,7 +50,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
                       i < 5 && (
                         <img
                           key={skill.id}
-                          className="w-12 h-12 p-2"
+                          className="w-20 h-20 p-2"
                           src={skill.badge}
                           alt="illustration badge"
                         />
