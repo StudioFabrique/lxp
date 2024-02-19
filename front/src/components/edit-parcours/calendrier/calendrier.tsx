@@ -27,15 +27,21 @@ const Calendrier = () => {
   const modules: Module[] = useSelector(
     (state: any) => state.parcoursModules.modules
   );
+  const currentModule = useSelector(
+    (state: any) => state.parcoursModules.currentModule
+  );
+
   const datesParcours = {
     startDate: new Date(parcoursInfos.startDate),
     endDate: new Date(parcoursInfos.endDate),
   };
 
   useEffect(() => {
-    dispatch(
-      parcoursModulesSliceActions.updateCurrentParcoursModule(modules[0].id)
-    );
+    if (!currentModule) {
+      dispatch(
+        parcoursModulesSliceActions.updateCurrentParcoursModule(modules[0].id)
+      );
+    }
   }, [dispatch, modules]);
 
   useEffect(() => {

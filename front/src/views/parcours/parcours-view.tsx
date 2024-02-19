@@ -24,7 +24,7 @@ import Objectifs from "../../components/parcours-view/objectifs";
 import QuickStatistiques from "../../components/parcours-view/quick-statistiques";
 import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
 import { useSelector } from "react-redux";
-import ProgressStats from "../../components/parcours-view/progress-stats";
+import ProgressModulesStats from "../../components/parcours-view/progress-stats";
 import HeaderMenu from "../../components/UI/header-menu";
 import ImageHeader from "../../components/image-header";
 
@@ -164,7 +164,7 @@ const ParcoursView = () => {
           </div>
 
           <div className="mt-5 flex flex-col gap-y-5">
-            <ProgressStats />
+            <ProgressModulesStats />
             <Contenu />
             <div className="grid lg:grid-cols-3 gap-x-5 gap-y-5">
               <div className="grid grid-rows-2 gap-y-5">
