@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 import Course from "../../../utils/interfaces/course";
-import { ArrowUpRightSquare } from "lucide-react";
+import { ArrowUpRightIcon } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const MostReadCourses = () => {
@@ -41,7 +41,7 @@ const MostReadCourses = () => {
               state={{ lessonId: course.lessons[0].id }}
               className="self-end"
             >
-              <ArrowUpRightSquare />
+              <ArrowUpRightIcon />
             </Link>
           </div>
         ))
