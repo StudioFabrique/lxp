@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import Wrapper from "../../UI/wrapper/wrapper.component";
-import ParcoursContenuItem from "./contenu-item";
+import ContenuItem from "./contenu-item";
 import Module from "../../../utils/interfaces/module";
 import ContenuDetail from "./contenu-detail/contenu-detail";
 import ContenuDetailHeader from "./contenu-detail/contenu-detail-header";
@@ -24,7 +24,7 @@ const Contenu = () => {
   const contentsList =
     modules?.length > 0 ? (
       modules.map((module, i) => (
-        <ParcoursContenuItem
+        <ContenuItem
           key={module.id}
           module={module}
           selectedModuleId={selectedModule?.id}
