@@ -49,7 +49,7 @@ const Evaluations = () => {
 
   return (
     <div className="flex flex-col gap-y-4">
-      <h3 className="text-lg font-semibold">Notes et Evaluations</h3>
+      <h3 className="text-lg font-semibold">Parcours</h3>
       <Wrapper>
         <div className="flex flex-col gap-5 max-h-[50vh] overflow-y-auto">
           <div className="flex justify-between w-full rounded-xl h-[5vh] px-10">

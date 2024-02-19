@@ -10,7 +10,6 @@ const useTeacher = (studentId: string) => {
   const [parcoursCompletion, setParcoursCompletion] = useState(0);
   const [imageUrl, setImageUrl] = useState("/images/parcours-default.webp");
 
-
   /**
    * retourne les infos d'un apprenant et les infos du dernier parcours auquel il ou elle est inscrit
    */
@@ -59,7 +58,6 @@ const useTeacher = (studentId: string) => {
     imageUrl,
     student,
     parcours,
-    image,
     parcoursCompletion,
     getTotalConnectionTime,
   };

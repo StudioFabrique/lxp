@@ -111,7 +111,7 @@ const Profile = () => {
             value="Evals"
             onClick={() => handleChangeTab("Evals")}
           >
-            Evaluations
+            Parcours
           </button>
           <button
             type="button"
