@@ -2,24 +2,46 @@ import { Link, useLocation } from "react-router-dom";
 import ImageHeader from "../image-header";
 import { PlayCircleIcon } from "lucide-react";
 import LessonRead from "../../utils/interfaces/lesson-read";
+import useHttp from "../../hooks/use-http";
+import { useEffect, useState } from "react";
 
 type ResumeActivityProps = {
   lastLesson: LessonRead;
 };
 
 const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
+  const { sendRequest, isLoading } = useHttp();
+  const [image, setImage] = useState<string>();
+
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
+
+  useEffect(() => {
+    const applyData = (data: { data: { image: string } }) => {
+      setImage(`data:image/jpeg;base64,${data.data.image}`);
+    };
+
+    sendRequest(
+      {
+        path: `/modules/image/${lastLesson.lesson.course.module.id}`,
+      },
+      applyData
+    );
+  }, [lastLesson.lesson.course.module.id, sendRequest]);
 
   return (
     <div className="flex gap-2">
       <ImageHeader
-        imageUrl={/* image ?? */ "/images/parcours-default.webp"}
-        title={`Module: ${lastLesson.lesson.course.module.title}`}
-        subTitle={`Cours: ${lastLesson.lesson.course.title}`}
+        imageUrl={isLoading ? "" : image ?? "/images/parcours-default.webp"}
+        title={`Cours: ${lastLesson.lesson.course.title}`}
+        subTitle={`Leçon: ${lastLesson.lesson.title}`}
         children={[
-          <div key="badges" className="absolute right-5 -top-[230%]">
-            <div className="flex gap-1 overflow-x-hidden">
+          <div
+            key="title-and-badges"
+            className="absolute md:-top-[230%] -top-[160%] flex justify-between w-full items-center"
+          >
+            <p className="text-white">{`Module: ${lastLesson.lesson.course.module.title}`}</p>
+            <div className="flex gap-1 overflow-x-hidden pr-10">
               {lastLesson.lesson.course.bonusSkills &&
                 lastLesson.lesson.course.bonusSkills
                   .filter((skill) => skill.badge)

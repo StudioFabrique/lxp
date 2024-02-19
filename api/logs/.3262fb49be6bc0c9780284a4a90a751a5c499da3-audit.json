@@ -1,0 +1,20 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/.3262fb49be6bc0c9780284a4a90a751a5c499da3-audit.json",
+    "files": [
+        {
+            "date": 1708343812803,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-19-12.log",
+            "hash": "7ecfe2ecb2bfac92e991da78676d9105918d809f4993764176c35a5142807b75"
+        },
+        {
+            "date": 1708344051505,
+            "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-19-13.log",
+            "hash": "17daae7cea8fdfdfa33131f85734a32a484789779b4cca60f9813d40d3f43f56"
+        }
+    ],
+    "hashType": "sha256"
+}
