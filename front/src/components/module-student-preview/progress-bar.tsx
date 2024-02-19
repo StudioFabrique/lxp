@@ -8,8 +8,10 @@ type ProgressBarProps = {
 
 const ProgressBar = ({ courses }: ProgressBarProps) => {
   return (
-    <div className="flex max-xl:hidden items-center gap-4 bg-secondary/20 rounded-xl p-2">
-      <PlaneTakeoffIcon className="w-10 h-10 stroke-1" />
+    <div className="flex max-xl:hidden items-center gap-4 bg-secondary/20 rounded-xl p-4">
+      <span>
+        <PlaneTakeoffIcon className="w-10 h-10 stroke-1" />
+      </span>
       {courses.map((course) => (
         <div
           key={course.id}
@@ -29,7 +31,9 @@ const ProgressBar = ({ courses }: ProgressBarProps) => {
           </div>
         </div>
       ))}
-      <PlaneLandingIcon className="w-10 h-10 stroke-1" />
+      <span>
+        <PlaneTakeoffIcon className="w-10 h-10 stroke-1" />
+      </span>
     </div>
   );
 };
