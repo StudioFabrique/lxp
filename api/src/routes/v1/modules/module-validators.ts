@@ -44,7 +44,7 @@ export const getModuleFormationValidator = [
   checkValidatorResult,
 ];
 
-export const updateDatesModules = [
+export const updateDatesModulesValidator = [
   body("minDate")
     .trim()
     .notEmpty()
@@ -52,7 +52,7 @@ export const updateDatesModules = [
     .custom(dateValidateGeneric)
     .withMessage("La date de début du module contient des caractères invalides")
     .escape(),
-  body("dateMax")
+  body("maxDate")
     .trim()
     .notEmpty()
     .withMessage("Une date de fin est requise")
