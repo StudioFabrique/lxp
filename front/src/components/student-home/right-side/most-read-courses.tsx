@@ -34,7 +34,7 @@ const MostReadCourses = () => {
           >
             <span className="flex flex-col w-full overflow-clip">
               <p className="font-semibold truncate">{course.title}</p>
-              <p className="text-sm truncate ">{`Module ${course.module.title}`}</p>
+              <p className="text-sm truncate">{`Module ${course.module.title}`}</p>
             </span>
             <Link
               to={`/${currentRoute}/parcours/module/${course.module.id}`}
