@@ -45,7 +45,7 @@ const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
           onClick={handleClick}
           className={`${
             isSelected ? "bg-secondary-focus" : "bg-secondary"
-          } flex items-center gap-x-4 text-black p-4 rounded-lg hover:bg-primary hover:cursor-pointer relative`}
+          } flex items-center gap-x-4 text-base-100 p-4 rounded-lg hover:bg-primary hover:cursor-pointer relative`}
         >
           {notValid ? <ToolTipWarning message={notValidModuleTooltip} /> : null}
           <span className="w-[20%]">

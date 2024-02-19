@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import useHttp from "../../hooks/use-http";

@@ -30,7 +30,7 @@ const DatePicker: FC<{
       />
       <button
         onClick={handleClick}
-        className="btn btn-sm rounded-md"
+        className="btn btn-sm rounded-md fill-secondary"
         type="button"
       >
         <CalendarIcon />
