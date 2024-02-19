@@ -37,12 +37,12 @@ const Calendrier = () => {
   };
 
   useEffect(() => {
-    if (!currentModule) {
-      dispatch(
-        parcoursModulesSliceActions.updateCurrentParcoursModule(modules[0].id)
-      );
-    }
-  }, [dispatch, modules]);
+    dispatch(
+      parcoursModulesSliceActions.updateCurrentParcoursModule(
+        !currentModule ? modules[0].id : currentModule.id
+      )
+    );
+  }, [dispatch, currentModule, modules]);
 
   useEffect(() => {
     return () => {

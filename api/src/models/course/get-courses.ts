@@ -22,6 +22,7 @@ async function getCourses() {
           },
         },
       },
+
       author: true,
       createdAt: true,
       updatedAt: true,
