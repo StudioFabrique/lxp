@@ -26,6 +26,7 @@ import httpGetAllModules from "../../../controllers/module/http-get-all-modules"
 import httpDeleteFormationModule from "../../../controllers/module/http-delete-formation-module";
 import httpGetModuleDetail from "../../../controllers/module/http-get-module-detail";
 import httpGetModulesTimeline from "../../../controllers/module/http-get-modules-timeline";
+import httpGetModuleImage from "../../../controllers/module/http-get-module-image";
 
 const modules = Router();
 
@@ -106,5 +107,7 @@ modules.get(
   checkPermissions("module"),
   httpGetModuleDetail
 );
+
+modules.get("/image/:moduleId", checkPermissions("module"), httpGetModuleImage);
 
 export default modules;

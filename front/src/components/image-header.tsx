@@ -26,7 +26,7 @@ const ImageHeader = (props: ImageHeaderProps) => {
         {props.children[1]}
         <div className="w-full flex gap-x-2 px-4 py-5 items-end justify-between font-bold absolute z-10">
           <span className="flex gap-x-2 items-center">
-            <div className="w-12 h-12 text-white">{props.children[0]}</div>
+            <div>{props.children[0]}</div>
             <div>
               <h1 className="text-xl text-white">
                 {props.title} - {props.isPublished ? "(Publié)" : "(Brouillon)"}

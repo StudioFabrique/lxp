@@ -46,10 +46,7 @@ const LessonItem = ({
           <Loader />
         ) : lesson.lessonsRead && lesson.lessonsRead?.length > 0 ? (
           <CheckCircle2
-            className={`w-5 h-5 ${
-              isLessonSelected
-                ? "stroke-secondary-content"
-                : "stroke-primary-content"
+            className={`w-5 h-5 stroke-green-400
             }`}
           />
         ) : (
