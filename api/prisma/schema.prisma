@@ -131,9 +131,10 @@ model BonusSkill {
 }
 
 model Student {
-  id          Int          @id @default(autoincrement())
-  idMdb       String
-  lessonsRead LessonRead[]
+  id              Int          @id @default(autoincrement())
+  idMdb           String
+  lessonsRead     LessonRead[]
+  accomplishments Accomplishment[]
 }
 
 model Admin {
@@ -232,9 +233,17 @@ model LessonRead {
   lastOpenedAt DateTime  @default(now())
   finishedAt   DateTime?
   lessonId     Int
-  studentId    Int
   lesson       Lesson    @relation(fields: [lessonId], references: [id])
+  studentId    Int
   student      Student   @relation(fields: [studentId], references: [id])
+}
+
+model Accomplishment {
+  id              Int @id @default(autoincrement())
+  description     String
+  accomplishedAt  DateTime @default(now())
+  studentId       Int
+  student Student @relation(fields: [studentId], references: [id])
 }
 
 model ContactsOnParcours {
