@@ -30,7 +30,7 @@ const MostReadCourses = () => {
         courses?.map((course) => (
           <div
             key={course.id}
-            className="w-full flex justify-between gap-5 bg-primary text-primary-content rounded-lg p-2"
+            className="w-full flex justify-between gap-5 bg-primary text-primary-content rounded-lg p-2 px-4"
           >
             <span className="flex flex-col w-full overflow-clip">
               <p className="font-semibold truncate">{course.title}</p>

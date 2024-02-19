@@ -51,7 +51,7 @@ const ProgressModulesStats = () => {
 
                 return (
                   <div
-                    className="flex flex-col justify-center gap-2 items-center text-primary-focus font-bold h-[10em] tooltip tooltip-bottom"
+                    className="flex flex-col justify-center gap-2 items-center text-primary-content font-bold tooltip tooltip-bottom bg-primary rounded-xl p-4"
                     data-tip={module.title}
                     key={module.id}
                   >
