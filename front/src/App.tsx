@@ -32,12 +32,13 @@ import LayoutEditLesson from "./views/lesson/edit/layout-edit-lesson";
 import EditLessonHome from "./views/lesson/edit/edit-lesson-home";
 import LayoutEditModule from "./views/module/edit/Layout-edit-module";
 import EditModuleHome from "./views/module/edit/edit-module-home";
-import ModuleViewFromParcours from "./views/parcours/module-view-from-parcours";
+import ModuleViewFromParcours from "./views/module/module-student-preview";
 import FeaturesList from "./views/features-list/features-list";
 import FormationAdd from "./views/formation/formation-add";
 import TeacherHome from "./views/teacher/teacher-home";
 import RootTeacher from "./views/teacher/layout-teacher";
 import UserData from "./views/teacher/user-data";
+import ModuleStudentPreview from "./views/module/module-student-preview";
 
 const router = createHashRouter([
   {
@@ -58,7 +59,7 @@ const router = createHashRouter([
         children: [
           { index: true, element: <ParcoursHome /> },
           { path: "view/:id", element: <ParcoursView /> },
-          { path: "module/:moduleId", element: <ModuleViewFromParcours /> },
+          { path: "module/:moduleId", element: <ModuleStudentPreview /> },
         ],
       },
       { path: "profil", element: <UserProfile /> },

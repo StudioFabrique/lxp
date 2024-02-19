@@ -95,7 +95,12 @@ const PreviewLesson = ({
         className="btn btn-primary text-white self-end"
         onClick={handleFinishReadLesson}
       >
-        Leçon Suivante
+        {selectedLesson.lessonsRead &&
+        selectedLesson.lessonsRead?.filter(
+          (lessonRead) => !!lessonRead.finishedAt
+        ).length > 0
+          ? "Leçon Suivante"
+          : "Marquer comme terminé"}
       </button>
     </div>
   );

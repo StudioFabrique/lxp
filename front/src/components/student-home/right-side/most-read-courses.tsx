@@ -28,11 +28,14 @@ const MostReadCourses = () => {
       <p className="font-bold self-start">Les cours les plus consultés</p>
       {courses && courses?.length > 0 ? (
         courses?.map((course) => (
-          <span
+          <div
             key={course.id}
             className="w-full flex justify-between gap-5 bg-primary text-primary-content rounded-lg p-2"
           >
-            <p>{course.title}</p>
+            <span className="flex flex-col w-full overflow-clip">
+              <p className="font-semibold truncate">{course.title}</p>
+              <p className="text-sm truncate">{`Module ${course.module.title}`}</p>
+            </span>
             <Link
               to={`/${currentRoute}/parcours/module/${course.module.id}`}
               state={{ lessonId: course.lessons[0].id }}
@@ -40,7 +43,7 @@ const MostReadCourses = () => {
             >
               <ArrowUpRightSquare />
             </Link>
-          </span>
+          </div>
         ))
       ) : (
         <p>Aucun cours disponibles</p>
