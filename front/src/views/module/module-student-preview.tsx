@@ -4,20 +4,20 @@ import HeaderMenu from "../../components/UI/header-menu";
 import { useLocation, useParams } from "react-router-dom";
 import { Fragment, useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
-import Progression from "../../components/module-view-from-parcours/progression/progression";
+import Progression from "../../components/module-student-preview/progression/progression";
 import Loader from "../../components/UI/loader";
-import ProgressBar from "../../components/module-view-from-parcours/progress-bar";
-import Objectifs from "../../components/module-view-from-parcours/objectifs";
-import Contacts from "../../components/module-view-from-parcours/contacts";
+import ProgressBar from "../../components/module-student-preview/progress-bar";
+import Objectifs from "../../components/module-student-preview/objectifs";
+import Contacts from "../../components/module-student-preview/contacts";
 import Module from "../../utils/interfaces/module";
-import PreviewLesson from "../../components/module-view-from-parcours/preview-lesson/preview-lesson";
+import PreviewLesson from "../../components/module-student-preview/preview-lesson/preview-lesson";
 import Lesson from "../../utils/interfaces/lesson";
-import Tags from "../../components/module-view-from-parcours/tags";
+import Tags from "../../components/module-student-preview/tags";
 
 /**
  * Aperçu du module du point de vue de l'apprenant
  */
-const ModuleViewFromParcours = () => {
+const ModuleStudentPreview = () => {
   const { state } = useLocation();
   const { sendRequest, isLoading } = useHttp(true);
   const { moduleId } = useParams();
@@ -101,4 +101,4 @@ const ModuleViewFromParcours = () => {
   );
 };
 
-export default ModuleViewFromParcours;
+export default ModuleStudentPreview;

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Bus } from "lucide-react";
+import { PlaneLandingIcon, PlaneTakeoffIcon } from "lucide-react";
 import Course from "../../utils/interfaces/course";
 
 type ProgressBarProps = {
@@ -9,7 +9,7 @@ type ProgressBarProps = {
 const ProgressBar = ({ courses }: ProgressBarProps) => {
   return (
     <div className="flex max-xl:hidden items-center gap-4 bg-secondary/20 rounded-xl p-2">
-      <Bus className="w-20 h-10 stroke-1" />
+      <PlaneTakeoffIcon className="w-10 h-10 stroke-1" />
       {courses.map((course) => (
         <div
           key={course.id}
@@ -29,6 +29,7 @@ const ProgressBar = ({ courses }: ProgressBarProps) => {
           </div>
         </div>
       ))}
+      <PlaneLandingIcon className="w-10 h-10 stroke-1" />
     </div>
   );
 };
