@@ -32,7 +32,7 @@ const ProgressBar = ({ courses }: ProgressBarProps) => {
         </div>
       ))}
       <span>
-        <PlaneTakeoffIcon className="w-10 h-10 stroke-1" />
+        <PlaneLandingIcon className="w-10 h-10 stroke-1" />
       </span>
     </div>
   );
