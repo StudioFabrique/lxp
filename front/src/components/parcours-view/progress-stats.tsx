@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import Module from "../../utils/interfaces/module";
 import { CSSProperties } from "react";
 
-const ProgressStats = () => {
+const ProgressModulesStats = () => {
   const navigate = useNavigate();
 
   const modules = useSelector(
@@ -26,7 +26,7 @@ const ProgressStats = () => {
           <h2 className="text-2xl w-44 font-bold text-primary">
             Votre avancement dans le parcours
           </h2>
-          <div className="flex gap-10">
+          <div className="grid grid-cols-4 gap-10">
             {modules
               ?.filter((_x, i) => i < 4)
               .map((module, i) => {
@@ -51,7 +51,8 @@ const ProgressStats = () => {
 
                 return (
                   <div
-                    className="flex flex-col justify-center gap-2 items-center text-primary-focus font-bold w-[10em] h-[10em]"
+                    className="flex flex-col justify-center gap-2 items-center text-primary-focus font-bold h-[10em] tooltip tooltip-bottom"
+                    data-tip={module.title}
                     key={module.id}
                   >
                     <p
@@ -60,7 +61,8 @@ const ProgressStats = () => {
                     >
                       {`${Math.round(moduleProgress)} %`}
                     </p>
-                    <p>{`Module ${i}`}</p>
+                    <p>Module</p>
+                    <p className="truncate w-40 ">{module.title}</p>
                   </div>
                 );
               })}
@@ -78,4 +80,4 @@ const ProgressStats = () => {
   );
 };
 
-export default ProgressStats;
+export default ProgressModulesStats;
