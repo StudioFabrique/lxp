@@ -33,7 +33,7 @@ const CalendarDurationForm = () => {
     if (currentModule) {
       setDuration(currentModule.duration ?? 0);
     }
-  }, [currentModule, setDuration]);
+  }, [currentModule]);
 
   const handleChangeDurationValue: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>
@@ -66,7 +66,7 @@ const CalendarDurationForm = () => {
     );
 
     progressBarProps.handleStopRequest();
-  }, [currentModule, dispatch, duration, sendRequest, progressBarProps]);
+  }, [currentModule, dispatch, duration, progressBarProps, sendRequest]);
 
   useEffect(() => {
     initDuration();

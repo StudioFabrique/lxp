@@ -11,6 +11,7 @@ import {
   getModulesFromParcoursValidator,
   moduleIdFromBodyValidator,
   moduleIdValidator,
+  updateDatesModulesValidator,
   updateDurationValidator,
 } from "./module-validators";
 import checkPermissions from "../../../middleware/check-permissions";
@@ -19,10 +20,7 @@ import { headerImageMaxSize } from "../../../config/images-sizes";
 import httpPutModuleParcours from "../../../controllers/parcours/http-put-module-parcours";
 import httpPutModule from "../../../controllers/module/http-put-module";
 import httpGetModulesFromParcours from "../../../controllers/module/http-get-modules-from-parcours";
-import {
-  parcoursIdValidator,
-  updateDatesValidator,
-} from "../parcours/parcours-validator";
+import { parcoursIdValidator } from "../parcours/parcours-validator";
 import { idsArrayValidator } from "../../../helpers/custom-validators";
 import httpGetAllModules from "../../../controllers/module/http-get-all-modules";
 import httpDeleteFormationModule from "../../../controllers/module/http-delete-formation-module";
@@ -49,18 +47,12 @@ modules.get(
   getModuleFormationValidator,
   httpGetModuleFormation
 );
-modules.put(
-  "/:parcoursId",
-  checkPermissions("module"),
-  parcoursIdValidator,
-  idsArrayValidator,
-  httpParcoursModules
-);
+
 modules.put(
   "/calendar/dates",
   checkPermissions("module"),
   moduleIdFromBodyValidator,
-  updateDatesValidator,
+  updateDatesModulesValidator,
   httpUpdateDatesModule
 );
 modules.put(
@@ -68,6 +60,13 @@ modules.put(
   checkPermissions("module"),
   updateDurationValidator,
   httpUpdateDurationModule
+);
+modules.put(
+  "/:parcoursId",
+  checkPermissions("module"),
+  parcoursIdValidator,
+  idsArrayValidator,
+  httpParcoursModules
 );
 modules.delete(
   "/:moduleId",
