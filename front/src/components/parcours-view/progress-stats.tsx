@@ -34,7 +34,8 @@ const ProgressModulesStats = () => {
                   (module.courses.length > 0
                     ? module.courses.reduce(
                         (sum, course) =>
-                          sum + course.lessons.length > 0
+                          sum +
+                          (course.lessons.length > 0
                             ? course.lessons.reduce(
                                 (sum, lesson) =>
                                   sum +
@@ -44,7 +45,7 @@ const ProgressModulesStats = () => {
                                     : 0),
                                 0
                               ) / course.lessons.length
-                            : 0,
+                            : 0),
                         0
                       ) / module.courses.length
                     : 0) * 100;
