@@ -1,16 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  CloudLightningIcon,
-  CloudRainIcon,
-  CloudSunIcon,
-  CloudSunRainIcon,
-  SunIcon,
-} from "lucide-react";
 import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { Context } from "../../../store/context.store";
 import useHttp from "../../../hooks/use-http";
 import Loader from "../../UI/loader";
 import toast from "react-hot-toast";
+import FeelingLevel from "../../UI/feeling-level";
 
 const FeelingFeedback = () => {
   const { sendRequest, isLoading } = useHttp(true);
@@ -22,32 +16,13 @@ const FeelingFeedback = () => {
 
   const [commentValue, setCommentValue] = useState<string>();
 
-  const iconClassname = "w-10 h-10";
-
-  const CurrentIcon = () => {
-    switch (currentProgressValue) {
-      case 1:
-        return <CloudLightningIcon className={iconClassname} />;
-      case 2:
-        return <CloudRainIcon className={iconClassname} />;
-      case 3:
-        return <CloudSunRainIcon className={iconClassname} />;
-      case 4:
-        return <CloudSunIcon className={iconClassname} />;
-      case 5:
-        return <SunIcon className={iconClassname} />;
-      default:
-        return undefined;
-    }
-  };
-
   const handleSubmitFeedback = () => {
     if (!socket) {
       toast("problème socket");
       return;
     }
 
-    socket.emit("student-feedback", {
+    socket.emit("receive_student-feedback", {
       feelingLevel: currentProgressValue,
       comment: commentValue,
     });
@@ -81,7 +56,7 @@ const FeelingFeedback = () => {
         <p className="font-bold w-[70%]">
           Comment vous sentez-vous aujourd'hui ?
         </p>
-        <CurrentIcon />
+        <FeelingLevel value={currentProgressValue} />
       </span>
       {isLoading ? (
         <Loader />
