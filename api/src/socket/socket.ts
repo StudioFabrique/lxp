@@ -3,6 +3,9 @@ import connect from "./db/connect";
 import disconnect from "./db/disconnect";
 import countConnectedUser from "./db/count-connected-students";
 import postFeedBack from "../models/user/feedback/post-feedback";
+import congratulateStudent from "./db/congratulate-student";
+import User from "../utils/interfaces/db/user";
+import getUserGroupId from "./db/get-user-group-id";
 import getFeedbacks from "./db/get-connected-contacts";
 import getUserData from "./db/get-user-data";
 
@@ -12,6 +15,16 @@ export function socket(io: Server): void {
     await connect(socket.id, userId);
     const count = await countConnectedUser();
     io.emit("read:students-count", count);
+
+    const groupId = await getUserGroupId(userId);
+    console.log({ groupId });
+    console.log({ userId });
+
+    if (groupId) {
+      if (!socket.rooms.has(groupId)) socket.rooms.add(groupId);
+      socket.join(groupId);
+      console.log(`room ${groupId} joined by ${userId}`);
+    }
 
     socket.on("disconnect", async () => {
       await disconnect(socket.id);
@@ -48,6 +61,25 @@ export function socket(io: Server): void {
               console.error(`Socket non trouvé pour l'ID : ${contact}`);
             }
           }
+      }
+    );
+
+    socket.on(
+      "write:receive-accomplishment",
+      async ({ studentMdbIdToFelicitate, accomplishmentId, idMdbUserFrom }) => {
+        const accomplishment = await congratulateStudent(
+          studentMdbIdToFelicitate,
+          accomplishmentId
+        );
+
+        if (accomplishment) {
+          const userFrom = await User.findOne({ _id: idMdbUserFrom });
+          const nameFrom = `${userFrom?.firstname} ${userFrom?.lastname}`;
+
+          io.to(groupId).emit("read:send-accomplishment", {
+            studentMdbIdToFelicitate,
+            nameFrom,
+          });
         }
       }
     );

@@ -1,3 +1,5 @@
+import User from "../../utils/interfaces/db/user";
+
 export default async function putFinishReadLesson(
   lessonId: number,
   userIdMdb: string
@@ -6,7 +8,9 @@ export default async function putFinishReadLesson(
     where: { idMdb: userIdMdb },
   });
 
-  if (!student) {
+  const studentData = await User.findById(student?.idMdb);
+
+  if (!student || !studentData) {
     return null;
   }
 
@@ -30,6 +34,7 @@ export default async function putFinishReadLesson(
     }),
     prisma.accomplishment.create({
       data: {
+        name: `${studentData.firstname} ${studentData.lastname}`,
         description: `vient de terminer la leçon ${lessonRead.lesson.title}`,
         student: { connect: { id: student.id } },
       },

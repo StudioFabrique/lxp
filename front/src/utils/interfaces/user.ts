@@ -7,6 +7,7 @@ import Role from "./role";
 
 export default interface User {
   _id: string;
+  idMdb?: string;
   email: string;
   password?: string;
   firstname: string;

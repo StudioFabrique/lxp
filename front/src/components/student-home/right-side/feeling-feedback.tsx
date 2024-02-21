@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { Context } from "../../../store/context.store";
 import useHttp from "../../../hooks/use-http";
@@ -48,7 +47,7 @@ const FeelingFeedback = () => {
       }
     };
 
-    sendRequest({ path: "/user/last-feedback", method: "get" }, applyData);
+    sendRequest({ path: "/user/own-feedback" }, applyData);
   }, [sendRequest]);
 
   return (
