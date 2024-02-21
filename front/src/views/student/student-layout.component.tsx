@@ -36,7 +36,7 @@ const StudentLayout = () => {
   }, [initTheme, isLoggedIn, handshake]);
 
   useEffect(() => {
-    function felicitateUser({
+    function congratulateUser({
       studentMdbIdToFelicitate,
       nameFrom,
     }: {
@@ -54,10 +54,10 @@ const StudentLayout = () => {
     }
 
     if (!socket) return;
-    socket.on("send-accomplishment", felicitateUser);
+    socket.on("read:send-accomplishment", congratulateUser);
 
     return () => {
-      socket.off("send-accomplishment", felicitateUser);
+      socket.off("read:send-accomplishment", congratulateUser);
     };
   }, [socket, user]);
 

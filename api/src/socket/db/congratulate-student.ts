@@ -1,6 +1,6 @@
 import putAccomplishmentCompleted from "../../models/user/accomplishments/put-accomplishment-completed";
 
-export default async function felicitateStudent(
+export default async function congratulateStudent(
   studentMdbId: string,
   accomplishmentId: number
 ) {
