@@ -16,7 +16,7 @@ const Portal = (props: PortalProps) => {
 
   return mounted && ref.current
     ? createPortal(
-        <div className="fixed z-10 top-0 left-0 w-screen h-screen">
+        <div className="fixed -z-10 top-0 left-0 w-screen h-screen">
           {props.children}
         </div>,
         ref.current

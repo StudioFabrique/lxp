@@ -3,6 +3,8 @@ import connect from "./db/connect";
 import disconnect from "./db/disconnect";
 import countConnectedUser from "./db/count-connected-students";
 import postFeedBack from "../models/user/feedback/post-feedback";
+import felicitateStudent from "./db/felicitate-student";
+import User from "../utils/interfaces/db/user";
 
 export function socket(io: Server): void {
   io.on("connection", async (socket: Socket) => {
@@ -27,5 +29,25 @@ export function socket(io: Server): void {
     socket.on("student-feedback", async ({ feelingLevel, comment }) => {
       await postFeedBack(userId, feelingLevel, comment);
     });
+
+    socket.on(
+      "receive-accomplishment",
+      async ({ studentMdbIdToFelicitate, accomplishmentId, idMdbUserFrom }) => {
+        const accomplishment = await felicitateStudent(
+          studentMdbIdToFelicitate,
+          accomplishmentId
+        );
+
+        if (accomplishment) {
+          const userFrom = await User.findOne({ id: idMdbUserFrom });
+          const nameFrom = `${userFrom?.firstname} ${userFrom?.lastname}`;
+
+          io.emit("send-accomplishment", {
+            studentMdbIdToFelicitate,
+            nameFrom,
+          });
+        }
+      }
+    );
   });
 }

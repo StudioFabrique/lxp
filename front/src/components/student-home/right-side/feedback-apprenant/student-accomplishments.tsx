@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import useHttp from "../../../../hooks/use-http";
 import Loader from "../../../UI/loader";
-import Student from "../../../../utils/interfaces/student";
 import Item from "./item";
+import User from "../../../../utils/interfaces/user";
 
 export interface Accomplishment {
-  description: stirng;
+  description: string;
   id: number;
   name: string;
-  student: Student;
+  student: User;
 }
 
-const FeedbackApprenant = () => {
+const StudentAccomplishments = () => {
   const { sendRequest, isLoading } = useHttp();
   const [accomplishments, setAccomplishments] = useState<Accomplishment[]>();
 
@@ -39,4 +39,4 @@ const FeedbackApprenant = () => {
   );
 };
 
-export default FeedbackApprenant;
+export default StudentAccomplishments;
