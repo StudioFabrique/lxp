@@ -6,9 +6,9 @@
     "auditLog": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/.3262fb49be6bc0c9780284a4a90a751a5c499da3-audit.json",
     "files": [
         {
-            "date": 1708524881620,
+            "date": 1708526018079,
             "name": "/home/martin/Desktop/lxp-workspace/lxp/api/logs/application-2024-02-21-15.log",
-            "hash": "67f71145be0cf4be54668501207ceba941d56fe4f051d03086f3837b89084914"
+            "hash": "64420934fa4fb7e98e367553a532d740087ccf92eaabe2c7557c98d1f7be16a3"
         }
     ],
     "hashType": "sha256"

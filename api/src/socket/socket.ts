@@ -61,6 +61,7 @@ export function socket(io: Server): void {
               console.error(`Socket non trouvé pour l'ID : ${contact}`);
             }
           }
+        }
       }
     );
 
