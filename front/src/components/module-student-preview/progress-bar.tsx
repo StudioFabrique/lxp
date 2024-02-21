@@ -7,6 +7,7 @@ type ProgressBarProps = {
 };
 
 const ProgressBar = ({ courses }: ProgressBarProps) => {
+  if (!(courses.length > 0)) return undefined;
   return (
     <div className="flex max-xl:hidden items-center gap-4 bg-secondary/20 rounded-xl p-4">
       <span>

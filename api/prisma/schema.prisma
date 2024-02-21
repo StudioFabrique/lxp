@@ -227,6 +227,16 @@ model Objective {
   courses     ObjectivesOnCourse[]
 }
 
+model Accomplishment {
+  id                    Int @id @default(autoincrement())
+  name                  String
+  description           String
+  accomplishedAt        DateTime @default(now())
+  hasBeenCongratulated  Boolean @default(false)
+  studentId             Int
+  student               Student @relation(fields: [studentId], references: [id])
+}
+
 model LessonRead {
   id           Int       @id @default(autoincrement())
   beganAt      DateTime  @default(now())
@@ -236,14 +246,6 @@ model LessonRead {
   lesson       Lesson    @relation(fields: [lessonId], references: [id])
   studentId    Int
   student      Student   @relation(fields: [studentId], references: [id])
-}
-
-model Accomplishment {
-  id              Int @id @default(autoincrement())
-  description     String
-  accomplishedAt  DateTime @default(now())
-  studentId       Int
-  student Student @relation(fields: [studentId], references: [id])
 }
 
 model ContactsOnParcours {

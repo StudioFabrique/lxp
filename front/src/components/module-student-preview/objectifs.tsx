@@ -12,7 +12,7 @@ const Objectifs = ({ objectives }: ObjectifsProps) => {
         <h3 className="text-xl font-bold">Objectifs du module</h3>
         <ul className="list-disc pl-5">
           {objectives.map((objective) => (
-            <li>{objective.description}</li>
+            <li key={objective.id}>{objective.description}</li>
           ))}
         </ul>
       </div>

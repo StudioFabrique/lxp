@@ -12,7 +12,7 @@ const Contacts = ({ contacts }: ContactsProps) => {
         <h3 className="text-xl font-bold">Ressources & Contacts</h3>
         <ul className="list-disc pl-5">
           {contacts.map((contact) => (
-            <li>{contact.name}</li>
+            <li key={contact.id}>{contact.name}</li>
           ))}
         </ul>
       </div>

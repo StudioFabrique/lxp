@@ -27,6 +27,7 @@ import { getUsersByRoleValidator } from "./user-validators";
 import { paginationValidator } from "../../../helpers/custom-validators";
 import httpGetUserLastParcours from "../../../controllers/user/http-get-user-last-parcours";
 import httpGetUserData from "../../../controllers/user/http-get-user-data";
+import httpGetAccomplishements from "../../../controllers/user/accomplishment/http-get-accomplishments";
 import httpGetLastFeedback from "../../../controllers/user/feedback/http-get-own-feedback";
 import httpGetLastFeedbacks from "../../../controllers/user/feedback/http-get-last-feedbacks";
 
@@ -168,9 +169,9 @@ userRouter.post(
   httpGetUsersByGroup
 );
 
-userRouter.use("/profile", checkPermissions("profile"), userProfileRouter);
+userRouter.use("/profile", checkPermissions("basic"), userProfileRouter);
 
-userRouter.use("/hobby", checkPermissions("profile"), hobbyRouter);
+userRouter.use("/hobby", checkPermissions("basic"), hobbyRouter);
 
 // retourne les deux derniers parcours auquel l'utilisateur participe en tant que contact
 userRouter.get(
@@ -184,14 +185,20 @@ userRouter.get("/data/:userId", checkPermissions("user"), httpGetUserData);
 
 userRouter.get(
   "/own-feedback",
-  checkPermissions("profile"),
+  checkPermissions("basic"),
   httpGetLastFeedback
 );
+
+// réceupère les accomplissements de tous les autres étudiants étant dans le même groupe que l'étudiant connnecté.
+userRouter.get(
+  "/accomplishment",
+  checkPermissions("basic"),
+  httpGetAccomplishements);
 
 // retourne la liste des derniers feedbacks enregistrés
 userRouter.get(
   "/last-feedbacks",
-  checkPermissions("profile"),
+  checkPermissions("basic"),
   httpGetLastFeedbacks
 );
 

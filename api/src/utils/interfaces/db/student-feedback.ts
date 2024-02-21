@@ -30,6 +30,12 @@ const studentFeedbackSchema: Schema = new Schema({
     ref: "User",
     require: true,
   },
+  hasBeenReviewed: {
+    type: Schema.Types.Boolean,
+    require: true,
+    default: false,
+    unique: false,
+  },
 });
 
 const StudentFeedback = mongoose.model<IStudentFeedback>(
