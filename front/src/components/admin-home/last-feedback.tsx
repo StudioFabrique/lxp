@@ -33,7 +33,7 @@ export default function LastFeedback() {
 
   useEffect(() => {
     if (mySocket) {
-      mySocket.on("read:new_feedback_received", (feedback: StudentFeedback) => {
+      mySocket.on("read:new-feedback-received", (feedback: StudentFeedback) => {
         console.log({ feedback });
         setFeedbacks((prevState) => [...prevState, feedback]);
       });
