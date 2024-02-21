@@ -1,7 +1,6 @@
 import { Response } from "express";
 import CustomRequest from "../../../utils/interfaces/express/custom-request";
 import { noAccess, serverIssue } from "../../../utils/constantes";
-import getLastFeedback from "../../../models/user/feedback/get-last-feedback";
 import getLastAccomplishments from "../../../models/user/accomplishments/get-last-accomplishments";
 
 /**
