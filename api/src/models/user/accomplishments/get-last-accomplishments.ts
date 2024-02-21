@@ -10,12 +10,13 @@ export default async function getLastAccomplishments(studentMdbId: string) {
       student: {
         idMdb: { in: studentsIdsMdbInSameGroup, not: studentMdbId },
       },
+      hasBeenCongratulated: false,
     },
     select: {
       id: true,
       name: true,
       description: true,
-      student: { select: { id: true } },
+      student: { select: { id: true, idMdb: true } },
     },
     orderBy: { accomplishedAt: "desc" },
     distinct: "studentId",

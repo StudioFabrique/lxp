@@ -6,6 +6,8 @@ import Home from "./sidebar-parts/home";
 import Course from "./sidebar-parts/course";
 import User from "./sidebar-parts/user";
 import Group from "./sidebar-parts/group";
+import Lesson from "./sidebar-parts/lesson";
+import Formation from "./sidebar-parts/formation";
 
 type SharedSideBarProps = {
   currentRoute: string[];
@@ -14,8 +16,10 @@ type SharedSideBarProps = {
 const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => (
   <ul className="flex flex-col gap-y-6">
     <Home currentRoute={currentRoute} />
+    <Formation currentRoute={currentRoute} />
     <Parcours currentRoute={currentRoute} />
     <Course currentRoute={currentRoute} />
+    <Lesson currentRoute={currentRoute} />
     <User currentRoute={currentRoute} />
     <Group currentRoute={currentRoute} />
     {/* <Calendar interfaceType={interfaceType} />
