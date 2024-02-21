@@ -72,7 +72,7 @@ const FeelingFeedback = () => {
       }
     };
 
-    sendRequest({ path: "/user/last-feedback", method: "get" }, applyData);
+    sendRequest({ path: "/user/own-feedback" }, applyData);
   }, [sendRequest]);
 
   return (
