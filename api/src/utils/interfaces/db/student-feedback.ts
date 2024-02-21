@@ -4,7 +4,7 @@ import { IUser } from "./user";
 export interface IStudentFeedback extends Document {
   feelingLevel: string;
   feedbackAt: Date;
-  user: IUser;
+  user: IUser["_id"];
   comment?: string;
 }
 
@@ -26,8 +26,8 @@ const studentFeedbackSchema: Schema = new Schema({
     unique: false,
   },
   user: {
-    type: Schema.Types.ObjectId,
-    Ref: "User",
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
     require: true,
   },
 });
