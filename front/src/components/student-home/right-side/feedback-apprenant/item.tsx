@@ -6,7 +6,7 @@ import { useContext } from "react";
 import { Context } from "../../../../store/context.store";
 
 const Item = ({ accomplishment }: { accomplishment: Accomplishment }) => {
-  const { socket } = useContext(Context);
+  const { socket, user } = useContext(Context);
 
   const [animate, cycle] = useCycle(
     { scale: 1.0, opacity: 1 },
@@ -15,10 +15,12 @@ const Item = ({ accomplishment }: { accomplishment: Accomplishment }) => {
 
   const handleTap = () => {
     if (!socket) return;
+    const idMdbUserFrom = user?._id;
 
     socket.emit("receive-accomplishment", {
       studentMdbIdToFelicitate: accomplishment.student.idMdb,
       accomplishmentId: accomplishment.id,
+      idMdbUserFrom,
     });
 
     cycle(1);

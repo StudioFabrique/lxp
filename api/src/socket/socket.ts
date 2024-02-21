@@ -39,7 +39,7 @@ export function socket(io: Server): void {
         );
 
         if (accomplishment) {
-          const userFrom = await User.findOne({ id: idMdbUserFrom });
+          const userFrom = await User.findOne({ _id: idMdbUserFrom });
           const nameFrom = `${userFrom?.firstname} ${userFrom?.lastname}`;
 
           io.emit("send-accomplishment", {
