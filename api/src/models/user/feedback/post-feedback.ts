@@ -1,6 +1,6 @@
 import StudentFeedback from "../../../utils/interfaces/db/student-feedback";
 import User from "../../../utils/interfaces/db/user";
-import getLastFeedback from "./get-last-feedback";
+import getLastFeedback from "./get-own-feedback";
 
 export default async function postFeedBack(
   studentMdbId: string,
@@ -9,13 +9,18 @@ export default async function postFeedBack(
 ) {
   const existingFeedback = await getLastFeedback(studentMdbId);
 
+  const today = new Date();
+
   // Check if a feedback has been sent within previous 24 hour
   if (
     existingFeedback &&
-    Math.floor(
+    today.getDate() === existingFeedback.feedbackAt.getDate() &&
+    today.getMonth() === existingFeedback.feedbackAt.getMonth() &&
+    today.getFullYear() === existingFeedback.feedbackAt.getFullYear()
+    /*     Math.floor(
       (existingFeedback.feedbackAt.getTime() - new Date().getTime()) *
         2.77778e-7
-    ) < 24
+    ) < 24 */
   ) {
     return null;
   }

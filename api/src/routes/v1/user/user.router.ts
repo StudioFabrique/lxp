@@ -27,7 +27,8 @@ import { getUsersByRoleValidator } from "./user-validators";
 import { paginationValidator } from "../../../helpers/custom-validators";
 import httpGetUserLastParcours from "../../../controllers/user/http-get-user-last-parcours";
 import httpGetUserData from "../../../controllers/user/http-get-user-data";
-import httpGetLastFeedback from "../../../controllers/user/feedback/http-get-last-feedback";
+import httpGetLastFeedback from "../../../controllers/user/feedback/http-get-own-feedback";
+import httpGetLastFeedbacks from "../../../controllers/user/feedback/http-get-last-feedbacks";
 
 const userRouter = express.Router();
 
@@ -182,9 +183,16 @@ userRouter.get(
 userRouter.get("/data/:userId", checkPermissions("user"), httpGetUserData);
 
 userRouter.get(
-  "/last-feedback",
+  "/own-feedback",
   checkPermissions("profile"),
   httpGetLastFeedback
+);
+
+// retourne la liste des derniers feedbacks enregistrés
+userRouter.get(
+  "/last-feedbacks",
+  checkPermissions("profile"),
+  httpGetLastFeedbacks
 );
 
 export default userRouter;

@@ -6,7 +6,7 @@ export default function TeacherHome() {
   const { socket } = useContext(Context);
   const [count, setCount] = useState(0);
 
-  const mySocket: Socket = useMemo(() => {
+  const mySocket: Socket | null = useMemo(() => {
     return socket;
   }, [socket]);
 
@@ -15,14 +15,14 @@ export default function TeacherHome() {
 
   const getStudentsCount = useCallback(() => {
     if (mySocket) {
-      mySocket.emit("students-count");
+      mySocket.emit("read:students-count");
     }
   }, [mySocket]);
 
   useEffect(() => {
     getStudentsCount();
     if (mySocket) {
-      mySocket.on("students-count", (count: number) => setCount(count));
+      mySocket.on("read:students-count", (count: number) => setCount(count));
     }
   }, [getStudentsCount, mySocket]);
 
