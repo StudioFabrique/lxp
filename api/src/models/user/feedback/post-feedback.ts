@@ -13,10 +13,10 @@ export default async function postFeedBack(
 
   // Check if a feedback has been sent within previous 24 hour
   if (
-    existingFeedback &&
-    today.getDate() === existingFeedback.feedbackAt.getDate() &&
-    today.getMonth() === existingFeedback.feedbackAt.getMonth() &&
-    today.getFullYear() === existingFeedback.feedbackAt.getFullYear()
+    !existingFeedback ||
+    today.getDate() !== existingFeedback.feedbackAt.getDate() ||
+    today.getMonth() !== existingFeedback.feedbackAt.getMonth() ||
+    today.getFullYear() !== existingFeedback.feedbackAt.getFullYear()
     /*     Math.floor(
       (existingFeedback.feedbackAt.getTime() - new Date().getTime()) *
         2.77778e-7
