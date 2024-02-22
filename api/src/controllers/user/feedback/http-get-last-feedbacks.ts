@@ -1,13 +1,15 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { serverIssue } from "../../../utils/constantes";
 import getLastFeedbacks from "../../../models/user/feedback/get-last-feedbacks";
+import CustomRequest from "../../../utils/interfaces/express/custom-request";
 
 export default async function httpGetLastFeedbacks(
-  req: Request,
+  req: CustomRequest,
   res: Response
 ) {
   try {
-    const response = await getLastFeedbacks();
+    const userId = req.auth?.userId;
+    const response = await getLastFeedbacks(userId!);
     return res.status(200).json({
       success: true,
       message: response.length === 0 ? "Liste vide" : "",

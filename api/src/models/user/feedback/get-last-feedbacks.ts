@@ -1,7 +1,7 @@
 import StudentFeedback from "../../../utils/interfaces/db/student-feedback";
 
-export default async function getLastFeedbacks() {
-  const result = await StudentFeedback.find({})
+export default async function getLastFeedbacks(teacherId: string) {
+  const result = await StudentFeedback.find({ teacher: new Object(teacherId) })
     .sort({ feedbackAt: "desc" })
     .limit(5)
     .populate("user", { _id: 1, firstname: 1, lastname: 1, avatar: 1 });
