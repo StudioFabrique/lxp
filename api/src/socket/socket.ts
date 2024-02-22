@@ -8,6 +8,7 @@ import User from "../utils/interfaces/db/user";
 import getUserGroupId from "./db/get-user-group-id";
 import getFeedbacks from "./db/get-connected-contacts";
 import getUserData from "./db/get-user-data";
+import { feedbackReviewed } from "./helpers/feedback-reviewed";
 
 export function socket(io: Server): void {
   io.on("connection", async (socket: Socket) => {
@@ -50,6 +51,8 @@ export function socket(io: Server): void {
           feelingLevel: result.feelingLevel,
           name: `${userData.firstname} ${userData.lastname}`,
           avatar: userData.avatar,
+          hasBeenReviewed: false,
+          userId,
         };
         for (const contact of contactsList) {
           const sock = io.sockets.sockets.get(contact.socketId);
@@ -61,6 +64,17 @@ export function socket(io: Server): void {
         }
       }
     });
+    
+    socket.on(
+      "feedback-reviewed",
+      async ({
+        studentId,
+        feedbackId,
+      }: {
+        studentId: string;
+        feedbackId: string;
+      }) => feedbackReviewed(io, socket, studentId, feedbackId)
+    );
 
     socket.on(
       "receive-accomplishment",
