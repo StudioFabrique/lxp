@@ -24,19 +24,12 @@ type FormProps = {
 
 const Info: FC<{
   formProps: FormProps;
-  editMode: boolean;
   firstInputRef: Ref<HTMLInputElement>;
   temporaryAvatar: { file: File | null; url: string | null };
   setTemporaryAvatar: Dispatch<
     SetStateAction<{ file: File | null; url: string | null }>
   >;
-}> = ({
-  formProps,
-  editMode,
-  firstInputRef,
-  temporaryAvatar,
-  setTemporaryAvatar,
-}) => {
+}> = ({ formProps, firstInputRef, temporaryAvatar, setTemporaryAvatar }) => {
   const { user } = useContext(Context);
 
   const fileUploadRef: Ref<HTMLInputElement> = useRef(null);
@@ -61,33 +54,16 @@ const Info: FC<{
             name="firstname"
             label="Prénom"
             data={formProps}
-            isDisabled={!editMode}
           />
-          <Field
-            name="lastname"
-            label="Nom"
-            data={formProps}
-            isDisabled={!editMode}
-          />
-          <Field
-            name="nickname"
-            label="Pseudo"
-            data={formProps}
-            isDisabled={!editMode}
-          />
+          <Field name="lastname" label="Nom" data={formProps} />
+          <Field name="nickname" label="Pseudo" data={formProps} />
           <div className="flex gap-5 justify-between">
-            <Field
-              name="email"
-              label="Email"
-              data={formProps}
-              isDisabled={!editMode}
-            />
+            <Field name="email" label="Email" data={formProps} />
             <div className="flex flex-col w-[50%] items-end gap-2">
               <h4>Avatar</h4>
               <button
                 type="button"
                 onClick={onClickChangeAvatar}
-                disabled={!editMode}
                 className="btn btn-primary text-white p-0 rounded-lg h-[60px] w-[60px]"
               >
                 <img
