@@ -14,7 +14,7 @@ export function socket(io: Server): void {
     const { userId } = socket.handshake.query as { userId: string };
     await connect(socket.id, userId);
     const count = await countConnectedUser();
-    io.emit("read:students-count", count);
+    io.emit("students-count", count);
 
     const groupId = await getUserGroupId(userId);
     console.log({ groupId });
