@@ -130,12 +130,12 @@ const Profile = () => {
             Compte
           </button>
         </div>
-        <Can object="profile" action="update">
+        <Can object="basic" action="update">
           <SubmitButtonsSet withEditButton />
         </Can>
       </div>
       <Render />
-      <Can object="profile" action="update">
+      <Can object="basic" action="update">
         <SubmitButtonsSet />
       </Can>
     </div>

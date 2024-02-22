@@ -10,20 +10,22 @@ export default async function postFeedBack(
   const existingFeedback = await getLastFeedback(studentMdbId);
 
   const today = new Date();
-
-  // Check if a feedback has been sent within previous 24 hour
-  if (
-    !existingFeedback ||
-    today.getDate() !== existingFeedback.feedbackAt.getDate() ||
-    today.getMonth() !== existingFeedback.feedbackAt.getMonth() ||
-    today.getFullYear() !== existingFeedback.feedbackAt.getFullYear()
-    /*     Math.floor(
-      (existingFeedback.feedbackAt.getTime() - new Date().getTime()) *
+  let feedbackDate: Date;
+  if (existingFeedback && existingFeedback.feedbackAt) {
+    feedbackDate = new Date(existingFeedback.feedbackAt);
+    if (
+      today.getDate() === feedbackDate.getDate() &&
+      today.getMonth() === feedbackDate.getMonth() &&
+      today.getFullYear() === feedbackDate.getFullYear()
+      /*     Math.floor(
+      (feedbackDate.getTime() - new Date().getTime()) *
         2.77778e-7
     ) < 24 */
-  ) {
-    return null;
+    ) {
+      return null;
+    }
   }
+  // vérification qu'un feedback n'ait pas été envoyé par l'apprenant à cette même date
 
   const feedback = await StudentFeedback.create({
     feelingLevel,

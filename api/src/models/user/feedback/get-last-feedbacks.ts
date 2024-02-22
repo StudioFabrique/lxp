@@ -15,6 +15,8 @@ export default async function getLastFeedbacks() {
     comment: item.comment,
     avatar: item.user.avatar,
     name: `${item.user.firstname} ${item.user.lastname}`,
+    hasBeenReviewed: item.hasBeenReviewed,
+    studentId: item.user._id,
   }));
 
   return feedbacks;
