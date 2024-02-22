@@ -8,8 +8,7 @@ import User from "../utils/interfaces/db/user";
 import getUserGroupId from "./db/get-user-group-id";
 import getFeedbacks from "./db/get-connected-contacts";
 import getUserData from "./db/get-user-data";
-import updateFeedback from "./db/update-feedback";
-import getConnectedStudent from "./db/get-connected-student";
+import { feedbackReviewed } from "./helpers/feedback-reviewed";
 
 export function socket(io: Server): void {
   io.on("connection", async (socket: Socket) => {
@@ -74,19 +73,7 @@ export function socket(io: Server): void {
       }: {
         studentId: string;
         feedbackId: string;
-        teacherId: string;
-      }) => {
-        await updateFeedback(feedbackId);
-        const socketId = await getConnectedStudent(studentId);
-        if (socketId) {
-          const sock = io.sockets.sockets.get(socketId);
-          if (sock) {
-            sock.emit("feedback-reviewed");
-          }
-        }
-        socket.emit("response-feedback-reviewed", feedbackId);
-        console.log("response emitted !");
-      }
+      }) => feedbackReviewed(io, socket, studentId, feedbackId)
     );
 
     socket.on(

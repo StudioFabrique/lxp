@@ -4,6 +4,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { Context } from "../../store/context.store";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import Sidebar from "../../components/UI/sidebar/sidebar";
+//import Portal from "../../components/UI/portal/portal";
 
 let initialState = true;
 
@@ -38,6 +39,11 @@ const AdminLayout = () => {
               <Outlet />
             </div>
           </FadeWrapper>
+          {/*           <Portal>
+            <section className="w-[30rem] h-[15rem] rounded-lg shadow-lg bottom-5 right-5 bg-slate-500 absolute p-4">
+              <h2>Chat avec </h2>
+            </section>
+          </Portal> */}
         </>
       ) : null}
     </div>

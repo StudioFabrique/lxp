@@ -21,7 +21,7 @@ export default function LastFeedback() {
     };
     sendRequest(
       {
-        path: "/user/last-feedbacks",
+        path: `/user/last-feedbacks`,
       },
       applyData
     );
