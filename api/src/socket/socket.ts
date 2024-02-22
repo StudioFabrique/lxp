@@ -29,44 +29,41 @@ export function socket(io: Server): void {
     socket.on("disconnect", async () => {
       await disconnect(socket.id);
       const count = await countConnectedUser();
-      io.emit("read:students-count", count);
+      io.emit("students-count", count);
     });
 
-    socket.on("read:students-count", async () => {
+    socket.on("students-count", async () => {
       const count = await countConnectedUser();
-      io.emit("read:students-count", count);
+      io.emit("students-count", count);
     });
 
-    socket.on(
-      "write:receive-student-feedback",
-      async ({ feelingLevel, comment }) => {
-        const result = await postFeedBack(userId, feelingLevel, comment);
-        const contactsList = await getFeedbacks(userId);
-        const userData = await getUserData(userId);
+    socket.on("receive-student-feedback", async ({ feelingLevel, comment }) => {
+      const result = await postFeedBack(userId, feelingLevel, comment);
+      const contactsList = await getFeedbacks(userId);
+      const userData = await getUserData(userId);
 
-        if (result) {
-          const feedback = {
-            _id: result._id,
-            feedbackAt: result.feedbackAt,
-            comment: result.comment,
-            feelingLevel: result.feelingLevel,
-            name: `${userData.firstname} ${userData.lastname}`,
-            avatar: userData.avatar,
-          };
-          for (const contact of contactsList) {
-            const sock = io.sockets.sockets.get(contact.socketId);
-            if (sock) {
-              sock.emit("read:new-feedback-received", feedback);
-            } else {
-              console.error(`Socket non trouvé pour l'ID : ${contact}`);
-            }
+      if (result) {
+        const feedback = {
+          _id: result._id,
+          feedbackAt: result.feedbackAt,
+          comment: result.comment,
+          feelingLevel: result.feelingLevel,
+          name: `${userData.firstname} ${userData.lastname}`,
+          avatar: userData.avatar,
+        };
+        for (const contact of contactsList) {
+          const sock = io.sockets.sockets.get(contact.socketId);
+          if (sock) {
+            sock.emit("new-feedback-received", feedback);
+          } else {
+            console.error(`Socket non trouvé pour l'ID : ${contact}`);
           }
         }
       }
-    );
+    });
 
     socket.on(
-      "write:receive-accomplishment",
+      "receive-accomplishment",
       async ({ studentMdbIdToFelicitate, accomplishmentId, idMdbUserFrom }) => {
         const accomplishment = await congratulateStudent(
           studentMdbIdToFelicitate,
@@ -77,7 +74,7 @@ export function socket(io: Server): void {
           const userFrom = await User.findOne({ _id: idMdbUserFrom });
           const nameFrom = `${userFrom?.firstname} ${userFrom?.lastname}`;
 
-          io.to(groupId).emit("read:send-accomplishment", {
+          io.to(groupId).emit("send-accomplishment", {
             studentMdbIdToFelicitate,
             nameFrom,
           });

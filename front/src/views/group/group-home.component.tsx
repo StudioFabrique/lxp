@@ -121,6 +121,7 @@ const GroupHome = () => {
       initPagination();
       getList();
     };
+
     if (updatedDataList.length > 0) {
       sendRequest(
         {
@@ -157,24 +158,24 @@ const GroupHome = () => {
     }
   }, [page, getList, role]);
 
+  useEffect(() => {
+    handleRoleSwitch(role);
+  }, [handleRoleSwitch, role]);
+
   return (
-    <>
+    <div className="flex flex-col py-5">
       <div className="flex justify-center my-8">
         <div className="flex flex-col gap-y-4">
+          <span className="flex justify-between">
+            <h2 className="text-4xl font-bold">Liste des groupes</h2>
+            <Link className="btn btn-primary" to="/admin/group/add">
+              Créer un groupe
+            </Link>
+          </span>
           {user && role ? (
             <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />
           ) : null}
-          <div className="flex justify-between items-center">
-            <div>
-              {role && dataList.length > 0 ? (
-                <Can action={"update"} object={role.role}>
-                  <RoleSelect
-                    roleTab={role}
-                    onGroupRolesChange={handleGroupRolesChange}
-                  />
-                </Can>
-              ) : null}
-            </div>
+          <div className="flex justify-end items-center">
             <div className="flex flex-col">
               <Search
                 options={groupSearchOptions}
@@ -208,22 +209,19 @@ const GroupHome = () => {
               setPage={handlePageNumber}
             />
           ) : null}
-          <Link className="btn" to="/admin/group/add">
-            Créer un groupe
-          </Link>
         </div>
       </div>
       <>
         {showErrorModal ? (
           <Modal
             title="Mettre à jour les rôles des groupes sélectionnés"
-            message="Un ou plusieurs groupes ne peuvent pas être mis à jour."
             rightLabel="Fermer"
             onRightClick={setErrorModal}
+            children={[]}
           />
         ) : null}
       </>
-    </>
+    </div>
   );
 };
 
