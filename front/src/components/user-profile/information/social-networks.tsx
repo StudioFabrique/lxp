@@ -55,16 +55,14 @@ const reducer: Reducer<Link[], { type: ActionType; payload: PayloadType }> = (
   }
 };
 
-const SocialNetworks: FC<{ initLinks: Link[]; editMode: boolean }> = ({
-  initLinks,
-  editMode,
-}) => {
+const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
   const { user } = useContext(Context);
   const { sendRequest } = useHttp(true);
   const modalRef: Ref<HTMLDialogElement> = useRef(null);
 
   const [value, setValue] = useState<string>("");
   const [links, dispatch] = useReducer(reducer, initLinks);
+  const [editMode, setEditMode] = useState(false);
 
   const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.currentTarget.value);

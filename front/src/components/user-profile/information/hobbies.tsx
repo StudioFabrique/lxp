@@ -57,10 +57,7 @@ const reducer: Reducer<Hobby[], { type: ActionType; payload: PayloadType }> = (
   }
 };
 
-const Hobbies: FC<{ initHobbies: Hobby[]; editMode: boolean }> = ({
-  initHobbies,
-  editMode,
-}) => {
+const Hobbies: FC<{ initHobbies: Hobby[] }> = ({ initHobbies }) => {
   const { user } = useContext(Context);
   const { sendRequest, isLoading } = useHttp(true);
 
@@ -141,17 +138,15 @@ const Hobbies: FC<{ initHobbies: Hobby[]; editMode: boolean }> = ({
       </dialog>
       <div className="flex gap-5">
         <h3 className="text-lg font-semibold">Mes centres d'intérêts</h3>
-        {editMode && (
-          <Can action="write" object="profile">
-            <button
-              type="button"
-              className="btn btn-sm btn-primary"
-              onClick={handleShowModal}
-            >
-              Ajouter <PlusCircle className="h-5" />
-            </button>
-          </Can>
-        )}
+        <Can action="write" object="profile">
+          <button
+            type="button"
+            className="btn btn-sm btn-primary"
+            onClick={handleShowModal}
+          >
+            Ajouter <PlusCircle className="h-5" />
+          </button>
+        </Can>
       </div>
       <Wrapper>
         <div className="flex flex-wrap gap-5">
@@ -160,24 +155,23 @@ const Hobbies: FC<{ initHobbies: Hobby[]; editMode: boolean }> = ({
                 <SubWrapper key={hobby._id}>
                   <div className="flex gap-2">
                     <p>{hobby.title}</p>
-                    {editMode &&
-                      (isLoading ? (
-                        <span className="h-5 w-5">
-                          <Loader />
-                        </span>
-                      ) : (
-                        <span className="flex items-center">
-                          <Can action="update" object="profile">
-                            <Edit className="h-5 cursor-pointer" />
-                          </Can>
-                          <Can action="delete" object="profile">
-                            <Delete
-                              className="h-5 cursor-pointer"
-                              onClick={() => handleDeleteHobby(hobby._id!)}
-                            />
-                          </Can>
-                        </span>
-                      ))}
+                    {isLoading ? (
+                      <span className="h-5 w-5">
+                        <Loader />
+                      </span>
+                    ) : (
+                      <span className="flex items-center">
+                        <Can action="update" object="profile">
+                          <Edit className="h-5 cursor-pointer" />
+                        </Can>
+                        <Can action="delete" object="profile">
+                          <Delete
+                            className="h-5 cursor-pointer"
+                            onClick={() => handleDeleteHobby(hobby._id!)}
+                          />
+                        </Can>
+                      </span>
+                    )}
                   </div>
                 </SubWrapper>
               ))
