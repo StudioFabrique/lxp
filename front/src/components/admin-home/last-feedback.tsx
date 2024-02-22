@@ -27,15 +27,34 @@ export default function LastFeedback() {
     );
   }, [sendRequest]);
 
+  const reviewFeedback = (studentId: string, feedbackId: string) => {
+    if (mySocket) {
+      mySocket.emit("feedback-reviewed", {
+        studentId,
+        feedbackId,
+      });
+    }
+  };
+
   const mySocket: Socket | null = useMemo(() => {
     return socket;
   }, [socket]);
 
   useEffect(() => {
     if (mySocket) {
-      mySocket.on("read:new-feedback-received", (feedback: StudentFeedback) => {
-        console.log({ feedback });
+      mySocket.on("new-feedback-received", (feedback: StudentFeedback) => {
         setFeedbacks((prevState) => [...prevState, feedback]);
+      });
+      mySocket.on("response-feedback-reviewed", (feedbackId: string) => {
+        console.log("notif received");
+        setFeedbacks((prevState) =>
+          prevState.map((feedback) => {
+            if (feedback._id === feedbackId) {
+              return { ...feedback, hasBeenReviewed: true };
+            }
+            return feedback;
+          })
+        );
       });
     }
   }, [mySocket]);
@@ -53,6 +72,7 @@ export default function LastFeedback() {
         {feedbacks.map((item) => (
           <li key={item._id}>
             <AvatarCard
+              _id={item._id}
               avatarSrc={`data:image/jpeg;base64,${
                 item.avatar ?? imageProfileReplacement
               }`}
@@ -60,6 +80,9 @@ export default function LastFeedback() {
               message={item.comment ?? "Aucun commentaire."}
               feelingLevel={+item.feelingLevel}
               feedbackAt={item.feedbackAt}
+              hasBeenReviewed={item.hasBeenReviewed}
+              studentId={item.studentId}
+              onReview={reviewFeedback}
             />
           </li>
         ))}

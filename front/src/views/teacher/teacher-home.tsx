@@ -22,7 +22,7 @@ export default function TeacherHome() {
   useEffect(() => {
     getStudentsCount();
     if (mySocket) {
-      mySocket.on("read:students-count", (count: number) => setCount(count));
+      mySocket.on("students-count", (count: number) => setCount(count));
     }
   }, [getStudentsCount, mySocket]);
 

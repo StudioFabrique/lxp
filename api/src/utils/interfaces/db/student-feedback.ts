@@ -6,6 +6,7 @@ export interface IStudentFeedback extends Document {
   feedbackAt: Date;
   user: IUser["_id"];
   comment?: string;
+  hasBeenReviewed: boolean;
 }
 
 const studentFeedbackSchema: Schema = new Schema({
