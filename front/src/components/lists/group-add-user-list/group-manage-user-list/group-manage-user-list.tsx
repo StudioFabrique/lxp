@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useCallback, useEffect, useState } from "react";
 import { AddUsersButton } from "./group-manage-user-item/buttons.component";
 import usePagination from "../../../../hooks/use-pagination";
@@ -38,6 +39,7 @@ const GroupManageUserList: FC<{
     setSelectedUsers((users) =>
       users.filter((currentUser) => !selectedUsersIds.includes(currentUser._id))
     );
+    setAllChecked(false);
   };
 
   const handleAddSelectedUser = (user: User) => {
@@ -139,6 +141,7 @@ const GroupManageUserList: FC<{
           {/* TOP */}
           <UserToAddListHeader
             setSelectAllUsers={setAllChecked}
+            isAllUsersSelected={allChecked}
             order={stype}
             sortData={sortData}
             filters={[
