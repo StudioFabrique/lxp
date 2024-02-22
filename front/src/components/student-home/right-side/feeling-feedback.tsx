@@ -14,7 +14,7 @@ const FeelingFeedback = () => {
 
   const [currentProgressValue, setCurrentProgressValue] = useState<number>(3);
 
-  const [commentValue, setCommentValue] = useState<string>();
+  const [commentValue, setCommentValue] = useState<string>("");
 
   const handleSubmitFeedback = () => {
     if (!socket) {
@@ -35,15 +35,17 @@ const FeelingFeedback = () => {
   useEffect(() => {
     const applyData = (data: { data: any }) => {
       const lastFeedback = data.data;
-      if (
-        lastFeedback &&
-        Math.floor(
-          (new Date(lastFeedback.feedbackAt).getTime() - new Date().getTime()) *
-            2.77778e-7
-        ) < 24
-      ) {
-        setFeedbackSent(true);
-        setCurrentProgressValue(lastFeedback.feelingLevel);
+      const today = new Date();
+      if (lastFeedback) {
+        const feedbackDate = new Date(lastFeedback.feedbackAt);
+        if (
+          today.getDate() === feedbackDate.getDate() &&
+          today.getMonth() === feedbackDate.getMonth() &&
+          today.getFullYear() === feedbackDate.getFullYear()
+        ) {
+          setFeedbackSent(true);
+          setCurrentProgressValue(lastFeedback.feelingLevel);
+        }
       }
     };
 

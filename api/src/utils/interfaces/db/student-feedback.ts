@@ -6,6 +6,9 @@ export interface IStudentFeedback extends Document {
   feedbackAt: Date;
   user: IUser["_id"];
   comment?: string;
+  hasBeenReviewed: boolean;
+  // formateur qui a pris en charge le feedback de l'apprenant
+  teacher: IUser["_id"];
 }
 
 const studentFeedbackSchema: Schema = new Schema({
@@ -34,6 +37,11 @@ const studentFeedbackSchema: Schema = new Schema({
     type: Schema.Types.Boolean,
     require: true,
     default: false,
+    unique: false,
+  },
+  teacher: {
+    type: mongoose.Schema.Types.ObjectId,
+    requre: false,
     unique: false,
   },
 });

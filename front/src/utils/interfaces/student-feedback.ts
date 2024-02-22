@@ -5,4 +5,6 @@ export default interface StudentFeedback {
   name: string;
   avatar?: string;
   comment?: string;
+  hasBeenReviewed: boolean;
+  studentId: string;
 }
