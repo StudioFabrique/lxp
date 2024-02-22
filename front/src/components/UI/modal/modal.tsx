@@ -13,8 +13,6 @@ const Modal: FC<{
   const isSubmitting =
     props.isSubmitting !== undefined ? props.isSubmitting : false;
 
-  console.log({ isSubmitting });
-
   return (
     <dialog id="my_modal_4" className="modal modal-open">
       <div className="modal-box">

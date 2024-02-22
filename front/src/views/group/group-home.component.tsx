@@ -121,6 +121,7 @@ const GroupHome = () => {
       initPagination();
       getList();
     };
+
     if (updatedDataList.length > 0) {
       sendRequest(
         {
@@ -156,6 +157,10 @@ const GroupHome = () => {
       getList();
     }
   }, [page, getList, role]);
+
+  useEffect(() => {
+    handleRoleSwitch(role);
+  }, [handleRoleSwitch, role]);
 
   return (
     <>
@@ -217,9 +222,9 @@ const GroupHome = () => {
         {showErrorModal ? (
           <Modal
             title="Mettre à jour les rôles des groupes sélectionnés"
-            message="Un ou plusieurs groupes ne peuvent pas être mis à jour."
             rightLabel="Fermer"
             onRightClick={setErrorModal}
+            children={[]}
           />
         ) : null}
       </>
