@@ -15,7 +15,7 @@ export default function TeacherHome() {
 
   const getStudentsCount = useCallback(() => {
     if (mySocket) {
-      mySocket.emit("read:students-count");
+      mySocket.emit("students-count");
     }
   }, [mySocket]);
 

@@ -17,7 +17,7 @@ const Item = ({ accomplishment }: { accomplishment: Accomplishment }) => {
     if (!socket) return;
     const idMdbUserFrom = user?._id;
 
-    socket.emit("write:receive-accomplishment", {
+    socket.emit("receive-accomplishment", {
       studentMdbIdToFelicitate: accomplishment.student.idMdb,
       accomplishmentId: accomplishment.id,
       idMdbUserFrom,

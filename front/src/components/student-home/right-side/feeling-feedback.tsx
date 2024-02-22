@@ -22,7 +22,7 @@ const FeelingFeedback = () => {
       return;
     }
 
-    socket.emit("write:receive-student-feedback", {
+    socket.emit("receive-student-feedback", {
       feelingLevel: currentProgressValue,
       comment: commentValue,
     });
