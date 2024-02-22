@@ -110,7 +110,6 @@ userRouter.put(
     )
     .trim()
     .escape(),
-
   httpUpdateUserRoles
 );
 
@@ -169,9 +168,9 @@ userRouter.post(
   httpGetUsersByGroup
 );
 
-userRouter.use("/profile", checkPermissions("basic"), userProfileRouter);
+userRouter.use("/profile", checkPermissions("default"), userProfileRouter);
 
-userRouter.use("/hobby", checkPermissions("basic"), hobbyRouter);
+userRouter.use("/hobby", checkPermissions("default"), hobbyRouter);
 
 // retourne les deux derniers parcours auquel l'utilisateur participe en tant que contact
 userRouter.get(
@@ -185,20 +184,21 @@ userRouter.get("/data/:userId", checkPermissions("user"), httpGetUserData);
 
 userRouter.get(
   "/own-feedback",
-  checkPermissions("basic"),
+  checkPermissions("default"),
   httpGetLastFeedback
 );
 
 // réceupère les accomplissements de tous les autres étudiants étant dans le même groupe que l'étudiant connnecté.
 userRouter.get(
   "/accomplishment",
-  checkPermissions("basic"),
-  httpGetAccomplishements);
+  checkPermissions("default"),
+  httpGetAccomplishements
+);
 
 // retourne la liste des derniers feedbacks enregistrés
 userRouter.get(
   "/last-feedbacks",
-  checkPermissions("basic"),
+  checkPermissions("default"),
   httpGetLastFeedbacks
 );
 

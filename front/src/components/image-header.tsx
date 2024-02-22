@@ -5,6 +5,7 @@ interface ImageHeaderProps {
   title: string;
   subTitle: string;
   isPublished?: boolean;
+  hidePublished?: boolean;
   children: ReactNode[]; // composant contenant une icône svg
 }
 
@@ -29,7 +30,9 @@ const ImageHeader = (props: ImageHeaderProps) => {
             <div>{props.children[0]}</div>
             <div>
               <h1 className="text-xl text-white">
-                {props.title} - {props.isPublished ? "(Publié)" : "(Brouillon)"}
+                {props.title}
+                {!props.hidePublished &&
+                  (props.isPublished ? "-(Publié)" : "-(Brouillon)")}
               </h1>
               <h3 className="capitalise text-white">{props.subTitle}</h3>
             </div>
