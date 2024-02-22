@@ -35,6 +35,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
         imageUrl={isLoading ? "" : image ?? "/images/parcours-default.webp"}
         title={`Cours: ${lastLesson.lesson.course.title}`}
         subTitle={`Leçon: ${lastLesson.lesson.title}`}
+        hidePublished
         children={[
           <div
             key="title-and-badges"
