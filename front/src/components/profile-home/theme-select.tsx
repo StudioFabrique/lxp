@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, useMemo } from "react";
 
 interface ThemeSelectProps {
   label: string;
@@ -11,11 +11,12 @@ export default function ThemeSelect({
   themesList,
   onThemeChange,
 }: ThemeSelectProps) {
+  const mode = useMemo(() => {
+    return label === "Thème clair" ? "light" : "dark";
+  }, [label]);
+
   const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    onThemeChange(
-      event.target.value,
-      label === "Thème clair" ? "light" : "dark"
-    );
+    onThemeChange(event.target.value, mode);
   };
   return (
     <span className="w-full flex justify-between items-center">
@@ -25,6 +26,7 @@ export default function ThemeSelect({
         name="lightTheme"
         id="lightTheme"
         onChange={handleChange}
+        defaultValue={localStorage.getItem(`${mode}Theme`)!}
       >
         {themesList.map((theme: string) => (
           <option key={theme} value={theme}>
