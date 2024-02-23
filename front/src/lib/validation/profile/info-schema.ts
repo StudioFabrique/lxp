@@ -2,7 +2,9 @@ import { z } from "zod";
 import {
   regexGeneric,
   regexMail,
+  regexNumber,
   regexOptionalGeneric,
+  regexPhoneNumber,
 } from "../../../utils/constantes";
 
 export const informationSchema = z.object({
@@ -30,28 +32,27 @@ export const informationSchema = z.object({
   address: z
     .string()
     .regex(regexOptionalGeneric, {
-      message: "La description contient des caractères invalides",
+      message: "L'adresse contient des caractères invalides",
     })
     .optional(),
   city: z
     .string()
     .regex(regexOptionalGeneric, {
-      message: "La description contient des caractères invalides",
+      message: "La ville contient des caractères invalides",
     })
     .optional(),
   postCode: z
     .string()
     .regex(regexOptionalGeneric, {
-      message: "La description contient des caractères invalides",
+      message: "Le code postal contient des caractères invalides",
     })
     .optional(),
   phoneNumber: z
     .string()
-    .regex(regexOptionalGeneric, {
-      message: "La description contient des caractères invalides",
+    .regex(regexPhoneNumber, {
+      message: "Le numéro de téléphone contient des caractères invalides",
     })
-    .optional()
-    .nullable(),
+    .optional(),
   description: z
     .string()
     .regex(regexOptionalGeneric, {

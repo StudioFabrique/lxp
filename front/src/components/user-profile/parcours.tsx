@@ -1,7 +1,7 @@
 import ReactApexChart from "react-apexcharts";
 import Wrapper from "../UI/wrapper/wrapper.component";
 
-const Evaluations = () => {
+const Parcours = () => {
   const evaluations = [
     {
       id: "zqd4D45Ee",
@@ -131,4 +131,4 @@ const Evaluations = () => {
   );
 };
 
-export default Evaluations;
+export default Parcours;

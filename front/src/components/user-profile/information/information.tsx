@@ -98,7 +98,6 @@ const Information: FC<{
     const applyData = (data: { message: string; data: UserInformation }) => {
       setUserData(data.data);
     };
-
     sendRequest({ path: "/user/profile/information" }, applyData);
   }, [sendRequest]);
 
@@ -117,7 +116,7 @@ const Information: FC<{
         ref={formRef}
         onSubmit={handleSubmitForm}
       >
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid lg:grid-cols-2 gap-5">
           <Info
             formProps={formProps}
             firstInputRef={firstInputRef}
