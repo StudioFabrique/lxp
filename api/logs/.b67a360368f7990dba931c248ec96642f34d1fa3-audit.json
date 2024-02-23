@@ -49,6 +49,11 @@
             "date": 1708682821370,
             "name": "/Users/martindhollande/Documents/studio/lxp-workspace/lxp/api/logs/application-2024-02-23-11.log",
             "hash": "d1cb56c8507d77e0f58c6dbb9264e921cffbc1dd895932c9e21bfd6b69f67afd"
+        },
+        {
+            "date": 1708689257328,
+            "name": "/Users/martindhollande/Documents/studio/lxp-workspace/lxp/api/logs/application-2024-02-23-12.log",
+            "hash": "dbcacb99c023f6082b4598b5eb58ed8fe847e27cec1147cbb0448d4a63aca695"
         }
     ],
     "hashType": "sha256"
