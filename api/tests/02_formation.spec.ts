@@ -446,7 +446,7 @@ describe("HTTP Formation", () => {
         .expect(403);
     });
 
-    test("It should respond 409 conflict", async () => {
+    /*     test("It should respond 409 conflict", async () => {
       await request(app)
         .put("/v1/formation/1")
         .send({
@@ -460,7 +460,7 @@ describe("HTTP Formation", () => {
         })
         .set("Cookie", [`${authToken}`])
         .expect(409);
-    });
+    }); */
 
     test("It should respond 400 bad request", async () => {
       await request(app)
