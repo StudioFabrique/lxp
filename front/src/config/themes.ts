@@ -7,7 +7,6 @@ export const lightThemes = [
   "acid",
   "autumn",
   "bumblebee",
-  "business",
   "cmyk",
   "cupcake",
   "corporate",
@@ -27,6 +26,7 @@ export const lightThemes = [
 export const darkThemes = [
   "aqua",
   "black",
+  "business",
   "coffee",
   "dark",
   "dracula",
