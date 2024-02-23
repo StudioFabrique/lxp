@@ -22,6 +22,7 @@ import Loader from "../../UI/loader";
 import Hobby from "../../../utils/interfaces/hobby";
 import { Link } from "../../../utils/interfaces/link";
 import { Context } from "../../../store/context.store";
+import { useLocation } from "react-router-dom";
 
 type UserInformation = {
   _id: string;
@@ -43,6 +44,10 @@ const Information: FC<{
 }> = ({ formRef }) => {
   const { handshake } = useContext(Context);
   const { sendRequest, isLoading } = useHttp(true);
+
+  const { pathname } = useLocation();
+
+  const currentRoute = pathname.split("/").slice(1) ?? [];
 
   const {
     initValues,
@@ -123,8 +128,12 @@ const Information: FC<{
         </div>
       </form>
       <Presentation formProps={formProps} />
-      <Hobbies initHobbies={userData?.hobbies ?? []} />
-      <SocialNetworks initLinks={userData?.links ?? []} />
+      {currentRoute[0] === "student" && (
+        <>
+          <Hobbies initHobbies={userData?.hobbies ?? []} />
+          <SocialNetworks initLinks={userData?.links ?? []} />
+        </>
+      )}
     </div>
   );
 };
