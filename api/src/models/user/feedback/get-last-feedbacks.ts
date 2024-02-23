@@ -2,7 +2,10 @@ import { prisma } from "../../../utils/db";
 import Group from "../../../utils/interfaces/db/group";
 import StudentFeedback from "../../../utils/interfaces/db/student-feedback";
 
-export default async function getLastFeedbacks(teacherId: string) {
+export default async function getLastFeedbacks(
+  teacherId: string,
+  notReviewed: boolean
+) {
   const groupsSql = await prisma.group.findMany({
     where: {
       parcours: {
@@ -34,13 +37,20 @@ export default async function getLastFeedbacks(teacherId: string) {
     item.users.map((elem: any) => elem._id)
   );
 
-  const result = await StudentFeedback.find({
-    user: { $in: ids[0] },
-    hasBeenReviewed: false,
-  })
-    .sort({ feedbackAt: "desc" })
-    .limit(5)
-    .populate("user", { _id: 1, firstname: 1, lastname: 1, avatar: 1 });
+  const result = notReviewed
+    ? await StudentFeedback.find({
+        user: { $in: ids[0] },
+        hasBeenReviewed: false,
+      })
+        .sort({ feedbackAt: "desc" })
+        .limit(5)
+        .populate("user", { _id: 1, firstname: 1, lastname: 1, avatar: 1 })
+    : await StudentFeedback.find({
+        user: { $in: ids[0] },
+      })
+        .sort({ feedbackAt: "desc" })
+        .limit(5)
+        .populate("user", { _id: 1, firstname: 1, lastname: 1, avatar: 1 });
 
   const feedbacks = result.map((item) => ({
     _id: item._id,

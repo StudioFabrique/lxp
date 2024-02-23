@@ -197,7 +197,7 @@ userRouter.get(
 
 // retourne la liste des derniers feedbacks enregistrés
 userRouter.get(
-  "/last-feedbacks",
+  "/last-feedbacks/:notReviewed",
   checkPermissions("default"),
   httpGetLastFeedbacks
 );
