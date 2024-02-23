@@ -53,10 +53,10 @@ const StudentLayout = () => {
     }
 
     if (!socket) return;
-    socket.on("read:send-accomplishment", congratulateUser);
+    socket.on("send-accomplishment", congratulateUser);
 
     return () => {
-      socket.off("read:send-accomplishment", congratulateUser);
+      socket.off("send-accomplishment", congratulateUser);
     };
   }, [socket, user]);
 
