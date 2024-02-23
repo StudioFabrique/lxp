@@ -138,7 +138,7 @@ const Hobbies: FC<{ initHobbies: Hobby[] }> = ({ initHobbies }) => {
       </dialog>
       <div className="flex gap-5">
         <h3 className="text-lg font-semibold">Mes centres d'intérêts</h3>
-        <Can action="write" object="profile">
+        <Can action="write" object="default">
           <button
             type="button"
             className="btn btn-sm btn-primary"
@@ -161,10 +161,10 @@ const Hobbies: FC<{ initHobbies: Hobby[] }> = ({ initHobbies }) => {
                       </span>
                     ) : (
                       <span className="flex items-center">
-                        <Can action="update" object="profile">
+                        <Can action="update" object="default">
                           <Edit className="h-5 cursor-pointer" />
                         </Can>
-                        <Can action="delete" object="profile">
+                        <Can action="delete" object="default">
                           <Delete
                             className="h-5 cursor-pointer"
                             onClick={() => handleDeleteHobby(hobby._id!)}
