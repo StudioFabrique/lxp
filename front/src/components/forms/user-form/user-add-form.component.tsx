@@ -17,6 +17,7 @@ import Contact from "./contact.component";
 import TypeUtilisateur from "./type-utilisateur.component";
 import CentreInterets from "./centre-interets.component";
 import Presentation from "./presentation.component";
+import toast from "react-hot-toast";
 
 const UserAddForm: FC<{
   user?: any;
@@ -53,74 +54,71 @@ const UserAddForm: FC<{
 
   const { value: nickname } = useInput(
     (value: string) => regexGeneric.test(value),
-    props.user?.nickname ?? ""
+    props.user?.nickname
   );
 
   const { value: address } = useInput(
     (value: string) => regexGeneric.test(value),
-    props.user?.address ?? ""
+    props.user?.address
   );
 
   const { value: phone } = useInput(
     (value: string) => regexNumber.test(value),
-    props.user?.phone ?? ""
+    props.user?.phone
   );
 
   const { value: postCode } = useInput(
     (value: string) => regexNumber.test(value),
-    props.user?.postCode ?? ""
+    props.user?.postCode
   );
 
   const { value: city } = useInput(
     (value: string) => regexGeneric.test(value),
-    props.user?.city ?? ""
+    props.user?.city
   );
 
   const { value: description } = useInput(
     (value: string) => regexGeneric.test(value),
-    props.user?.description ?? ""
+    props.user?.description
   );
 
   //  test la validité du form via le custom hook useInput
   let formIsValid = false;
   formIsValid =
-    email.isValid &&
-    firstname.isValid &&
-    lastname.isValid &&
-    !!roleId?.length; /* &&
-    (address.isValid || address == null) &&
-    (city.isValid || city == null) &&
-    (postCode.isValid || postCode) &&
+    email.isValid && firstname.isValid && lastname.isValid && !!roleId?.length;
+  /* && (address.isValid || !address) &&
+    (city.isValid || !city) &&
+    (postCode.isValid || !postCode)  &&
     (phone.isValid || !phone) &&
-    (description.isValid || !description); */
+    (description.isValid || !description) */
 
   const handleSubmit = () => {
-    console.log("validating...");
-
-    if (formIsValid) {
-      const newUser = {
-        email: email.value.trim(),
-        firstname: firstname.value.trim(),
-        lastname: lastname.value.trim(),
-        description: description.value.trim(),
-        nickname: nickname.value.trim(),
-        address: address.value.trim(),
-        postCode: postCode.value.trim(),
-        city: city.value.trim(),
-        phoneNumber: phone.value.trim(),
-        birthDate,
-        graduations,
-        roleId,
-        links,
-        hobbies,
-      };
-      const formData = new FormData();
-      formData.append("user", JSON.stringify(newUser));
-      if (file) {
-        formData.append("image", file);
-      }
-      props.onSubmitForm(formData);
+    if (!formIsValid) {
+      toast.error("le formulaire est incorrect");
+      return;
     }
+    const newUser = {
+      email: email.value.trim(),
+      firstname: firstname.value.trim(),
+      lastname: lastname.value.trim(),
+      description: description.value.trim(),
+      nickname: nickname.value.trim(),
+      address: address.value.trim(),
+      postCode: postCode.value.trim(),
+      city: city.value.trim(),
+      phoneNumber: phone.value.trim(),
+      birthDate,
+      graduations,
+      roleId,
+      links,
+      hobbies,
+    };
+    const formData = new FormData();
+    formData.append("user", JSON.stringify(newUser));
+    if (file) {
+      formData.append("image", file);
+    }
+    props.onSubmitForm(formData);
   };
 
   return (

@@ -79,23 +79,56 @@ export const userValidator = (
       .trim()
       .escape()
       .withMessage("firstname ou lastname non conforme"),
-    body([
-      validatorSubject + ".nickname",
-      validatorSubject + ".description",
-      validatorSubject + ".address",
-      validatorSubject + ".city",
-      validatorSubject + ".links.*.url",
-      validatorSubject + ".links.*.alias",
-      validatorSubject + ".hobbies.*.title",
-      validatorSubject + ".graduations.*.title",
-      validatorSubject + ".graduations.*.degree",
-    ])
+    body(validatorSubject + ".nickname")
       .isString()
       .trim()
       .escape()
-      .withMessage(
-        "nickname, description, address, city, links, hobbies ou graduations non conforme"
-      ),
+      .withMessage("nickname"),
+    body(validatorSubject + ".description")
+      .isString()
+      .trim()
+      .escape()
+      .withMessage("description"),
+    body(validatorSubject + ".address")
+      .isString()
+      .trim()
+      .escape()
+      .withMessage("address"),
+    body(validatorSubject + ".description")
+      .isString()
+      .trim()
+      .escape()
+      .withMessage("city"),
+    body(validatorSubject + ".city")
+      .isString()
+      .trim()
+      .escape()
+      .withMessage("links.*.url"),
+    body(validatorSubject + ".links.*.url")
+      .isString()
+      .trim()
+      .escape()
+      .withMessage("links.*.url"),
+    body(validatorSubject + ".links.*.alias")
+      .isString()
+      .trim()
+      .escape()
+      .withMessage("links.*.alias"),
+    body(validatorSubject + ".hobbies.*.title")
+      .isString()
+      .trim()
+      .escape()
+      .withMessage("hobbies.*.title"),
+    body(validatorSubject + ".graduations.*.title")
+      .isString()
+      .trim()
+      .escape()
+      .withMessage(".graduations.*.title"),
+    body(validatorSubject + ".graduations.*.degree")
+      .isString()
+      .trim()
+      .escape()
+      .withMessage(".graduations.*.degree"),
     body(validatorSubject + ".postCode")
       .custom(customPostalCodeValidation)
       .trim()
