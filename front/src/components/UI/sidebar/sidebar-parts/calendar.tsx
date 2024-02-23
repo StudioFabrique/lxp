@@ -7,10 +7,7 @@ const Calendar = ({ currentRoute }: { currentRoute: string[] }) => {
   return (
     <li>
       <Link to={`/${currentRoute[0]}/calendar`}>
-        <div
-          className="tooltip tooltip-right w-6 h-6 text-primary-content"
-          data-tip="Calendrier"
-        >
+        <div className="tooltip tooltip-right w-6 h-6" data-tip="Calendrier">
           <div className="flex hover justify-center items-center">
             <CalendarIcon className="z-10 pointer-events-none" />
             <span

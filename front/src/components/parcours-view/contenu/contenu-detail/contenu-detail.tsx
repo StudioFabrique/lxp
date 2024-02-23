@@ -6,10 +6,13 @@ import useHttp from "../../../../hooks/use-http";
 import { FC, useEffect, useState } from "react";
 import Course from "../../../../utils/interfaces/course";
 import EditIcon from "../../../UI/svg/edit-icon";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const ContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
   const { sendRequest, isLoading } = useHttp(true);
+  const { pathname } = useLocation();
+  const currentRoute = pathname.split("/").slice(1) ?? [];
+
   const [courses, setCourses] = useState<Course[]>([]);
 
   /**
@@ -31,7 +34,11 @@ const ContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
   const contentsList =
     !isLoading && courses.length > 0 ? (
       courses.map((course, i) => (
-        <div
+        <Link
+          to={`/${currentRoute[0]}/parcours/module/${moduleId}`}
+          state={{
+            lessonId: course.lessons.length > 0 ? course.lessons[0].id : null,
+          }}
           key={course?.id}
           className="flex justify-between items-center bg-secondary text-secondary-content p-4 rounded-lg"
         >
@@ -45,11 +52,14 @@ const ContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
             </div>
           </div>
           <Can action="update" object="course">
-            <Link to={`/admin/course/edit/${course.id}`} className="h-8 w-8">
+            <Link
+              to={`/${currentRoute[0]}/course/edit/${course.id}`}
+              className="h-8 w-8"
+            >
               <EditIcon />
             </Link>
           </Can>
-        </div>
+        </Link>
       ))
     ) : (
       <p>Aucun cours</p>

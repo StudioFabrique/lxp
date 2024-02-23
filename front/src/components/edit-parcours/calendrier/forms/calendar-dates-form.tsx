@@ -14,7 +14,7 @@ const CalendarDatesForm: FC<{
 }> = ({ datesParcours }) => {
   const dispatch = useDispatch();
 
-  const { sendRequest } = useHttp();
+  const { sendRequest } = useHttp(true);
 
   const currentModule: Module = useSelector(
     (state: any) => state.parcoursModules.currentModule
@@ -80,8 +80,8 @@ const CalendarDatesForm: FC<{
         method: "put",
         body: {
           moduleId: currentModule.id,
-          minDate: new Date(datesModule.minDate).toISOString(),
-          maxDate: new Date(datesModule.maxDate).toISOString(),
+          minDate: datesModule.minDate,
+          maxDate: datesModule.maxDate,
         },
       },
       applyData

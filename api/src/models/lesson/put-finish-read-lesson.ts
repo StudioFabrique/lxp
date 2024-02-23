@@ -1,9 +1,22 @@
+import User from "../../utils/interfaces/db/user";
+
 export default async function putFinishReadLesson(
   lessonId: number,
   userIdMdb: string
 ) {
+  const student = await prisma?.student.findFirst({
+    where: { idMdb: userIdMdb },
+  });
+
+  const studentData = await User.findById(student?.idMdb);
+
+  if (!student || !studentData) {
+    return null;
+  }
+
   const lessonRead = await prisma?.lessonRead.findFirst({
-    where: { lessonId, student: { idMdb: userIdMdb } },
+    where: { lessonId, student },
+    select: { id: true, finishedAt: true, lesson: { select: { title: true } } },
   });
 
   if (!lessonRead) {
@@ -14,10 +27,19 @@ export default async function putFinishReadLesson(
     return lessonRead;
   }
 
-  const lessonReadUpdated = await prisma?.lessonRead.update({
-    where: { id: lessonRead.id },
-    data: { finishedAt: new Date() },
-  });
+  const transactionResult = await prisma?.$transaction([
+    prisma.lessonRead.update({
+      where: { id: lessonRead.id },
+      data: { finishedAt: new Date() },
+    }),
+    prisma.accomplishment.create({
+      data: {
+        name: `${studentData.firstname} ${studentData.lastname}`,
+        description: `vient de terminer la leçon ${lessonRead.lesson.title}`,
+        student: { connect: { id: student.id } },
+      },
+    }),
+  ]);
 
-  return lessonReadUpdated;
+  return transactionResult?.[0];
 }

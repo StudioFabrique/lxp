@@ -1,10 +1,8 @@
 import {
-  Dispatch,
   FC,
   FormEvent,
   FormEventHandler,
   Ref,
-  SetStateAction,
   useContext,
   useEffect,
   useRef,
@@ -24,6 +22,7 @@ import Loader from "../../UI/loader";
 import Hobby from "../../../utils/interfaces/hobby";
 import { Link } from "../../../utils/interfaces/link";
 import { Context } from "../../../store/context.store";
+import { useLocation } from "react-router-dom";
 
 type UserInformation = {
   _id: string;
@@ -41,12 +40,14 @@ type UserInformation = {
 };
 
 const Information: FC<{
-  editMode: boolean;
-  setEditMode: Dispatch<SetStateAction<boolean>>;
   formRef: Ref<HTMLFormElement>;
-}> = ({ editMode, setEditMode, formRef }) => {
+}> = ({ formRef }) => {
   const { handshake } = useContext(Context);
   const { sendRequest, isLoading } = useHttp(true);
+
+  const { pathname } = useLocation();
+
+  const currentRoute = pathname.split("/").slice(1) ?? [];
 
   const {
     initValues,
@@ -68,7 +69,6 @@ const Information: FC<{
 
     const applyData = (data: { data: UserInformation }) => {
       setUserData(data.data);
-      setEditMode(false);
       toast.success("Formulaire envoyé avec succès !");
       handshake();
     };
@@ -98,7 +98,6 @@ const Information: FC<{
     const applyData = (data: { message: string; data: UserInformation }) => {
       setUserData(data.data);
     };
-
     sendRequest({ path: "/user/profile/information" }, applyData);
   }, [sendRequest]);
 
@@ -107,12 +106,6 @@ const Information: FC<{
       initValues(userData);
     }
   }, [initValues, userData]);
-
-  useEffect(() => {
-    if (editMode) {
-      setTimeout(() => firstInputRef.current?.focus(), 100);
-    }
-  }, [editMode]);
 
   if (isLoading) return <Loader />;
 
@@ -123,20 +116,23 @@ const Information: FC<{
         ref={formRef}
         onSubmit={handleSubmitForm}
       >
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid lg:grid-cols-2 gap-5">
           <Info
             formProps={formProps}
-            editMode={editMode}
             firstInputRef={firstInputRef}
             temporaryAvatar={temporaryAvatar}
             setTemporaryAvatar={setTemporaryAvatar}
           />
-          <Contact formProps={formProps} editMode={editMode} />
+          <Contact formProps={formProps} />
         </div>
       </form>
-      <Presentation formProps={formProps} editMode={editMode} />
-      <Hobbies initHobbies={userData?.hobbies ?? []} editMode={editMode} />
-      <SocialNetworks initLinks={userData?.links ?? []} editMode={editMode} />
+      <Presentation formProps={formProps} />
+      {currentRoute[0] === "student" && (
+        <>
+          <Hobbies initHobbies={userData?.hobbies ?? []} />
+          <SocialNetworks initLinks={userData?.links ?? []} />
+        </>
+      )}
     </div>
   );
 };

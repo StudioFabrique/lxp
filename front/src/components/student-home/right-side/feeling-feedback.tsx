@@ -1,15 +1,10 @@
-import {
-  CloudLightningIcon,
-  CloudRainIcon,
-  CloudSunIcon,
-  CloudSunRainIcon,
-  SunIcon,
-} from "lucide-react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { Context } from "../../../store/context.store";
 import useHttp from "../../../hooks/use-http";
 import Loader from "../../UI/loader";
 import toast from "react-hot-toast";
+import FeelingLevel from "../../UI/feeling-level";
 
 const FeelingFeedback = () => {
   const { sendRequest, isLoading } = useHttp(true);
@@ -19,26 +14,7 @@ const FeelingFeedback = () => {
 
   const [currentProgressValue, setCurrentProgressValue] = useState<number>(3);
 
-  const [commentValue, setCommentValue] = useState<string>();
-
-  const iconClassname = "w-10 h-10";
-
-  const CurrentIcon = () => {
-    switch (currentProgressValue) {
-      case 1:
-        return <CloudLightningIcon className={iconClassname} />;
-      case 2:
-        return <CloudRainIcon className={iconClassname} />;
-      case 3:
-        return <CloudSunRainIcon className={iconClassname} />;
-      case 4:
-        return <CloudSunIcon className={iconClassname} />;
-      case 5:
-        return <SunIcon className={iconClassname} />;
-      default:
-        return undefined;
-    }
-  };
+  const [commentValue, setCommentValue] = useState<string>("");
 
   const handleSubmitFeedback = () => {
     if (!socket) {
@@ -46,7 +22,7 @@ const FeelingFeedback = () => {
       return;
     }
 
-    socket.emit("student-feedback", {
+    socket.emit("receive-student-feedback", {
       feelingLevel: currentProgressValue,
       comment: commentValue,
     });
@@ -59,19 +35,21 @@ const FeelingFeedback = () => {
   useEffect(() => {
     const applyData = (data: { data: any }) => {
       const lastFeedback = data.data;
-      if (
-        lastFeedback &&
-        Math.floor(
-          (new Date(lastFeedback.feedbackAt).getTime() - new Date().getTime()) *
-            2.77778e-7
-        ) < 24
-      ) {
-        setFeedbackSent(true);
-        setCurrentProgressValue(lastFeedback.feelingLevel);
+      const today = new Date();
+      if (lastFeedback) {
+        const feedbackDate = new Date(lastFeedback.feedbackAt);
+        if (
+          today.getDate() === feedbackDate.getDate() &&
+          today.getMonth() === feedbackDate.getMonth() &&
+          today.getFullYear() === feedbackDate.getFullYear()
+        ) {
+          setFeedbackSent(true);
+          setCurrentProgressValue(lastFeedback.feelingLevel);
+        }
       }
     };
 
-    sendRequest({ path: "/user/last-feedback", method: "get" }, applyData);
+    sendRequest({ path: "/user/own-feedback" }, applyData);
   }, [sendRequest]);
 
   return (
@@ -80,7 +58,7 @@ const FeelingFeedback = () => {
         <p className="font-bold w-[70%]">
           Comment vous sentez-vous aujourd'hui ?
         </p>
-        <CurrentIcon />
+        <FeelingLevel value={currentProgressValue} />
       </span>
       {isLoading ? (
         <Loader />

@@ -42,7 +42,11 @@ export default async function connect(socketId: string, userId: string) {
 
           if (
             lastConnectionInfos &&
-            today.getDate() === lastConnectionInfos.lastConnection.getDate()
+            today.getDate() === lastConnectionInfos.lastConnection.getDate() &&
+            today.getMonth() ===
+              lastConnectionInfos.lastConnection.getMonth() &&
+            today.getFullYear() ===
+              lastConnectionInfos.lastConnection.getFullYear()
           ) {
             // Update existing connection infos
             await lastConnectionInfos.updateOne({ lastConnection: today });

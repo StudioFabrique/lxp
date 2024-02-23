@@ -27,8 +27,9 @@ type ContextType = {
   fetchRoles: (role: Role) => void;
   defineRulesFor: () => void;
   builtPerms: Record<string, any> | undefined;
-  closeTab: () => void;
+  //closeTab: () => void;
   socket: Socket | null;
+  chooseTheme: (newTheme: string, mode: string) => void;
 };
 
 type Props = { children: React.ReactNode };
@@ -48,8 +49,9 @@ export const Context = React.createContext<ContextType>({
   fetchRoles: () => {},
   defineRulesFor: () => {},
   builtPerms: {},
-  closeTab: () => {},
+  //closeTab: () => {},
   socket: null,
+  chooseTheme: () => {},
 });
 
 const ContextProvider: FC<Props> = (props) => {
@@ -65,11 +67,11 @@ const ContextProvider: FC<Props> = (props) => {
   >();
   const [socket, setSocket] = useState<Socket | null>(null);
 
-  const closeTab = useCallback(async () => {
+  /*   const closeTab = useCallback(async () => {
     await axiosInstance.get(`${BASE_URL}/auth/close`, {
       withCredentials: true,
     });
-  }, [axiosInstance]);
+  }, [axiosInstance]); */
 
   const login = async (email: string, password: string) => {
     setError("");
@@ -95,12 +97,16 @@ const ContextProvider: FC<Props> = (props) => {
     }
   };
 
-  const handshake = useCallback(async () => {
-    const applyData = (data: User) => {
-      setUser(data);
-    };
-    sendRequest({ path: "/auth/handshake" }, applyData);
-  }, [sendRequest]);
+  const handshake = async () => {
+    try {
+      const response = await axiosInstance.get(`${BASE_URL}/auth/handshake`, {
+        withCredentials: true,
+      });
+      setUser(response.data);
+    } catch (err) {
+      logout();
+    }
+  };
 
   const logout = async () => {
     try {
@@ -124,10 +130,14 @@ const ContextProvider: FC<Props> = (props) => {
 
     if (lightTheme) {
       themes.light = lightTheme;
+    } else {
+      localStorage.setItem("lightTheme", "winter");
     }
 
     if (darkTheme) {
       themes.dark = darkTheme;
+    } else {
+      localStorage.setItem("darkTheme", "night");
     }
 
     const activeTheme = localStorage.getItem("activeTheme");
@@ -138,6 +148,26 @@ const ContextProvider: FC<Props> = (props) => {
       localStorage.setItem("activeTheme", "light");
     }
   };
+
+  const chooseTheme = useCallback(
+    (newTheme: string, mode: string) => {
+      if (mode === "light") {
+        themes.light = newTheme;
+        localStorage.setItem("lightTheme", newTheme);
+      } else {
+        themes.dark = newTheme;
+        localStorage.setItem("darkTheme", newTheme);
+      }
+      if (theme === "light") {
+        document
+          .querySelector("html")!
+          .setAttribute("data-theme", themes.light);
+      } else if (theme === "dark") {
+        document.querySelector("html")!.setAttribute("data-theme", themes.dark);
+      }
+    },
+    [theme]
+  );
 
   const toggleTheme = () => {
     if (theme === "light") {
@@ -253,8 +283,9 @@ const ContextProvider: FC<Props> = (props) => {
     fetchRoles,
     defineRulesFor,
     builtPerms,
-    closeTab,
+    //closeTab,
     socket,
+    chooseTheme,
   };
 
   return (

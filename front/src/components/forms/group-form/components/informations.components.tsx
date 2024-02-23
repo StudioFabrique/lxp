@@ -83,7 +83,7 @@ const Informations: FC<{
           defaultValue={isActive}
           autoComplete="off"
         />
-        <label>Actif</label>
+        <label>{isActive ? "Actif" : "Inactif"}</label>
       </span>
       <MemoizedImageFileUpload
         maxSize={headerImageMaxSize}

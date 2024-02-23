@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import Module from "../../utils/interfaces/module";
 import { CSSProperties } from "react";
 
-const ProgressStats = () => {
+const ProgressModulesStats = () => {
   const navigate = useNavigate();
 
   const modules = useSelector(
@@ -26,7 +26,7 @@ const ProgressStats = () => {
           <h2 className="text-2xl w-44 font-bold text-primary">
             Votre avancement dans le parcours
           </h2>
-          <div className="flex gap-10">
+          <div className="grid grid-cols-4 gap-10">
             {modules
               ?.filter((_x, i) => i < 4)
               .map((module, i) => {
@@ -35,23 +35,25 @@ const ProgressStats = () => {
                     ? module.courses.reduce(
                         (sum, course) =>
                           sum +
-                          course.lessons.reduce(
-                            (sum, lesson) =>
-                              sum +
-                              (lesson?.lessonsRead?.length &&
-                              lesson.lessonsRead[0].finishedAt
-                                ? 1
-                                : 0),
-                            0
-                          ) /
-                            course.lessons.length,
+                          (course.lessons.length > 0
+                            ? course.lessons.reduce(
+                                (sum, lesson) =>
+                                  sum +
+                                  (lesson?.lessonsRead?.length &&
+                                  lesson.lessonsRead[0].finishedAt
+                                    ? 1
+                                    : 0),
+                                0
+                              ) / course.lessons.length
+                            : 0),
                         0
                       ) / module.courses.length
                     : 0) * 100;
 
                 return (
                   <div
-                    className="flex flex-col justify-center gap-2 items-center text-primary-focus font-bold w-[10em] h-[10em]"
+                    className="flex flex-col justify-center gap-2 items-center text-primary-content font-bold tooltip tooltip-bottom bg-primary rounded-xl p-4"
+                    data-tip={module.title}
                     key={module.id}
                   >
                     <p
@@ -60,7 +62,8 @@ const ProgressStats = () => {
                     >
                       {`${Math.round(moduleProgress)} %`}
                     </p>
-                    <p>{`Module ${i}`}</p>
+                    <p>Module</p>
+                    <p className="truncate w-40 ">{module.title}</p>
                   </div>
                 );
               })}
@@ -78,4 +81,4 @@ const ProgressStats = () => {
   );
 };
 
-export default ProgressStats;
+export default ProgressModulesStats;

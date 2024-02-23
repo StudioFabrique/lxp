@@ -13,9 +13,10 @@ const UserToAddListHeader: FC<{
   filters: { filterValue: string; placeholder: string }[];
   value: string;
   order: string;
+  isAllUsersSelected: boolean;
   sortData: (order: string) => void;
   setSelectAllUsers: Dispatch<SetStateAction<boolean>>;
-}> = ({ filters, order, sortData, setSelectAllUsers }) => {
+}> = ({ filters, order, isAllUsersSelected, sortData, setSelectAllUsers }) => {
   const [selectedFilter, setSelectedFilter] = useState<{
     filterValue: string;
     placeholder: string;
@@ -50,6 +51,7 @@ const UserToAddListHeader: FC<{
       <span className="flex gap-x-5 items-center">
         <input
           onChange={(e) => setSelectAllUsers(e.currentTarget.checked)}
+          checked={isAllUsersSelected}
           type="checkbox"
           className="checkbox checkbox-sm"
         />
