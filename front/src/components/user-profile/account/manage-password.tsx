@@ -13,9 +13,8 @@ type FormProps = {
 
 const ManagePassword: FC<{
   formProps: FormProps;
-  editMode: boolean;
   firstInputRef: Ref<HTMLInputElement>;
-}> = ({ formProps, editMode, firstInputRef }) => {
+}> = ({ formProps, firstInputRef }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -29,7 +28,6 @@ const ManagePassword: FC<{
             name="oldPass"
             label="Ancien mot de passe"
             data={formProps}
-            isDisabled={!editMode}
           />
           <span className="flex gap-5">
             <Field
@@ -37,14 +35,11 @@ const ManagePassword: FC<{
               type={showPassword ? "text" : "password"}
               label="Nouveau mot de passe"
               data={formProps}
-              isDisabled={!editMode}
             />
-            {editMode && (
-              <EyeIcon
-                className="translate-y-9 cursor-pointer"
-                onClick={() => setShowPassword(!showPassword)}
-              />
-            )}
+            <EyeIcon
+              className="translate-y-9 cursor-pointer"
+              onClick={() => setShowPassword(!showPassword)}
+            />
           </span>
 
           <Field
@@ -52,7 +47,6 @@ const ManagePassword: FC<{
             type={showPassword ? "text" : "password"}
             label="Confirmer le nouveau mot de passe"
             data={formProps}
-            isDisabled={!editMode}
           />
         </div>
       </Wrapper>
