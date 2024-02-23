@@ -22,6 +22,7 @@ COPY front/ front/
 
 COPY api/ api/
 COPY api/uploads/ api/dist/uploads
+COPY api/src/uploads api/dist/src/uploads
 RUN npm run deploy
 
 
