@@ -12,7 +12,7 @@ export default function Settings() {
   };
 
   return (
-    <section className="flex flex-col gap-y-4">
+    <section className="w-full md:w-3/6 flex flex-col gap-y-4">
       <h2 className="text-lg font-semi-bold">Préférences</h2>
       <Wrapper>
         <ThemeSelect
