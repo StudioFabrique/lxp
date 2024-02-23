@@ -6,8 +6,9 @@ import Awards from "../../components/user-profile/awards/awards";
 import Account from "../../components/user-profile/account/account";
 import Can from "../../components/UI/can/can.component";
 import { useLocation } from "react-router-dom";
+import Settings from "../../components/profile-home/settings";
 
-type Tab = "Info" | "Calendar" | "Evals" | "Awards" | "Account";
+type Tab = "Info" | "Calendar" | "Evals" | "Awards" | "Account" | "Préférences";
 
 const Profile = () => {
   const { state } = useLocation();
@@ -28,6 +29,8 @@ const Profile = () => {
         return <Awards />;
       case "Account":
         return <Account formRef={formRef} />;
+      case "Préférences":
+        return <Settings />;
     }
   };
 
@@ -86,27 +89,37 @@ const Profile = () => {
           >
             Compte
           </button>
-        </div>
-        <Can object="default" action="update">
           <button
-            className="hidden xl:block btn btn-sm justify-self-end"
-            onClick={() => formRef.current?.requestSubmit()}
+            className={`btn ${currentTab === "Préférences" && "btn-secondary"}`}
+            onClick={() => handleChangeTab("Préférences")}
           >
-            Soumettre les changements
+            Préférences
           </button>
-        </Can>
+        </div>
+        {currentTab === "Préférences" ? null : (
+          <Can object="default" action="update">
+            <button
+              className="btn btn-sm justify-self-end"
+              onClick={() => formRef.current?.requestSubmit()}
+            >
+              Soumettre les changements
+            </button>
+          </Can>
+        )}
       </div>
       <Render />
-      <div className="flex justify-end">
-        <Can object="default" action="update">
-          <button
-            className="btn btn-sm justify-self-end"
-            onClick={() => formRef.current?.requestSubmit()}
-          >
-            Soumettre les changements
-          </button>
-        </Can>
-      </div>
+      {currentTab === "Préférences" ? null : (
+        <div className="flex justify-end">
+          <Can object="default" action="update">
+            <button
+              className="btn btn-sm justify-self-end"
+              onClick={() => formRef.current?.requestSubmit()}
+            >
+              Soumettre les changements
+            </button>
+          </Can>
+        </div>
+      )}
     </div>
   );
 };
