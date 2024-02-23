@@ -39,6 +39,16 @@
             "date": 1708678214994,
             "name": "/Users/martindhollande/Documents/studio/lxp-workspace/lxp/api/logs/application-2024-02-23-09.log",
             "hash": "10986c79bd82bbba2d8443974ae97dd4852100aa3c9fc82e729514e36d11d6a4"
+        },
+        {
+            "date": 1708681061044,
+            "name": "/Users/martindhollande/Documents/studio/lxp-workspace/lxp/api/logs/application-2024-02-23-10.log",
+            "hash": "a177fbb03f679f39e19edd44f20e5e5767c70eccf697edf523c5b4d2c1355744"
+        },
+        {
+            "date": 1708682821370,
+            "name": "/Users/martindhollande/Documents/studio/lxp-workspace/lxp/api/logs/application-2024-02-23-11.log",
+            "hash": "d1cb56c8507d77e0f58c6dbb9264e921cffbc1dd895932c9e21bfd6b69f67afd"
         }
     ],
     "hashType": "sha256"
