@@ -1,14 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import Confetti from "react-confetti";
 
 import { Context } from "../../store/context.store";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import Sidebar from "../../components/UI/sidebar/sidebar";
-import Portal from "../../components/UI/portal/portal";
 import toast from "react-hot-toast";
 import { PartyPopperIcon } from "lucide-react";
 import toTitleCase from "../../utils/toTitleCase";
+import PortalConfetti from "../../components/UI/portal/portal-confetti";
 
 let initialState = true;
 
@@ -65,7 +64,7 @@ const StudentLayout = () => {
     <div className="w-full">
       {user && user.roles[0].rank > 2 ? (
         <div>
-          <Portal>{showConfetti && <Confetti className="fixed" />}</Portal>
+          {showConfetti && <PortalConfetti />}
           <Sidebar />
           <FadeWrapper>
             <div className="w-full flex flex-col pl-20">
