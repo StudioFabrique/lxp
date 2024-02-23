@@ -68,25 +68,29 @@ export default function LastFeedback() {
   return (
     <div className="flex flex-col gap-y-2">
       <h2 className="font-bold">Derniers feedbacks des apprenants</h2>
-      <ul className="flex flex-col gap-y-2">
-        {feedbacks.map((item) => (
-          <li key={item._id}>
-            <AvatarCard
-              _id={item._id}
-              avatarSrc={`data:image/jpeg;base64,${
-                item.avatar ?? imageProfileReplacement
-              }`}
-              username={item.name}
-              message={item.comment ?? "Aucun commentaire."}
-              feelingLevel={+item.feelingLevel}
-              feedbackAt={item.feedbackAt}
-              hasBeenReviewed={item.hasBeenReviewed}
-              studentId={item.studentId}
-              onReview={reviewFeedback}
-            />
-          </li>
-        ))}
-      </ul>
+      {feedbacks.length > 0 ? (
+        <ul className="flex flex-col gap-y-2">
+          {feedbacks.map((item) => (
+            <li key={item._id}>
+              <AvatarCard
+                _id={item._id}
+                avatarSrc={`data:image/jpeg;base64,${
+                  item.avatar ?? imageProfileReplacement
+                }`}
+                username={item.name}
+                message={item.comment ?? "Aucun commentaire."}
+                feelingLevel={+item.feelingLevel}
+                feedbackAt={item.feedbackAt}
+                hasBeenReviewed={item.hasBeenReviewed}
+                studentId={item.studentId}
+                onReview={reviewFeedback}
+              />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-4">Aucun feedback récent.</p>
+      )}
     </div>
   );
 }

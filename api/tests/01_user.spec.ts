@@ -76,6 +76,26 @@ describe("HTTP /user", () => {
     });
   });
 
+  // en tant que formateur
+  describe("Test /last-feedbacks", () => {
+    test("It should respond 200 success", async () => {
+      await mongoConnect();
+      const loginResponse = await request(app)
+        .post("/v1/auth/login")
+        .send({ email: "formateur@studio.eco", password: "Abcdef@123456" });
+
+      authToken = loginResponse.headers["set-cookie"][0];
+      await request(app)
+        .get("/v1/user/last-feedbacks")
+        .set("Cookie", [`${authToken}`])
+        .expect(200);
+    });
+
+    test("It should respond 403 forbidden", async () => {
+      await request(app).get("/v1/user/last-feedbacks").expect(403);
+    });
+  });
+
   afterAll(async () => {
     // Fermer la connexion à MongoDB
     await disconnect();

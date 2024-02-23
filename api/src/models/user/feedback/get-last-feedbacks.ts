@@ -34,7 +34,10 @@ export default async function getLastFeedbacks(teacherId: string) {
     item.users.map((elem: any) => elem._id)
   );
 
-  const result = await StudentFeedback.find({ user: { $in: ids[0] } })
+  const result = await StudentFeedback.find({
+    user: { $in: ids[0] },
+    hasBeenReviewed: false,
+  })
     .sort({ feedbackAt: "desc" })
     .limit(5)
     .populate("user", { _id: 1, firstname: 1, lastname: 1, avatar: 1 });
