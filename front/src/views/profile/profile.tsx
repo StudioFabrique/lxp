@@ -1,7 +1,7 @@
 import { Ref, useEffect, useRef, useState } from "react";
 import Information from "../../components/user-profile/information/information";
 import Calendar from "../../components/user-profile/calendar";
-import Evaluations from "../../components/user-profile/evaluations";
+import Parcours from "../../components/user-profile/parcours";
 import Awards from "../../components/user-profile/awards/awards";
 import Account from "../../components/user-profile/account/account";
 import Can from "../../components/UI/can/can.component";
@@ -24,7 +24,7 @@ const Profile = () => {
       case "Calendar":
         return <Calendar />;
       case "Evals":
-        return <Evaluations />;
+        return <Parcours />;
       case "Awards":
         return <Awards />;
       case "Account":
@@ -48,7 +48,7 @@ const Profile = () => {
     <div className="flex flex-col gap-5 p-10">
       <h2 className="font-bold text-xl">Mon profil</h2>
       <div className="flex flex-col xl:flex-row justify-between gap-5">
-        <div className="flex gap-5">
+        <div className="flex flex-col lg:flex-row gap-5">
           <button
             type="button"
             className={`btn ${currentTab === "Info" && "btn-secondary"}`}
