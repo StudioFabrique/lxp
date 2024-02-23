@@ -9,7 +9,6 @@ import { avatarImageMaxSize } from "../../../config/images-sizes";
 type FormProps = {
   values: Record<string, string>;
   errors: CustomError[];
-
   onChangeValue: (field: string, value: string) => void;
   onResetForm: () => void;
 };
