@@ -19,7 +19,6 @@ const ResumeParcours = (/* { parcours }: ResumeParcoursProps */) => {
   useEffect(() => {
     const applyData = (data: Parcours[]) => {
       setParcours(data[0]);
-      console.log({ parcours });
     };
 
     sendRequest(
@@ -28,7 +27,7 @@ const ResumeParcours = (/* { parcours }: ResumeParcoursProps */) => {
       },
       applyData
     );
-  }, [sendRequest, parcours]);
+  }, [sendRequest]);
 
   return (
     <div className="flex gap-2">
