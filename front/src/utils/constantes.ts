@@ -6,6 +6,8 @@ export const regexPassword =
 
 export const regexNumber = /^[0-9]*$/;
 
+export const regexPhoneNumber = /^\d{10}$/;
+
 export const regexGeneric = /^[a-zA-Z0-9\s,.'\-+éÉàÀè?çî,Î!âÂôÔêÊûÛ:\/ùÙ]{1,}$/;
 
 export const regexOptionalGeneric = /^[a-zA-Z0-9\s,.'\-+éîà,èç?!:\/âôêûù]{0,}$/;
