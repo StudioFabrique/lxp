@@ -16,7 +16,7 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import DeleteIcon from "../../UI/svg/delete-icon.component";
 import Can from "../../UI/can/can.component";
 import useHttp from "../../../hooks/use-http";
-import { PlusCircle } from "lucide-react";
+import { EditIcon, PlusCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { Context } from "../../../store/context.store";
 
@@ -62,7 +62,7 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
 
   const [value, setValue] = useState<string>("");
   const [links, dispatch] = useReducer(reducer, initLinks);
-  const [editMode, setEditMode] = useState(false);
+  const [editMode /* setEditMode */] = useState(false);
 
   const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.currentTarget.value);
@@ -140,17 +140,15 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
       </dialog>
       <div className="flex gap-5">
         <h3 className="text-lg font-semibold">Mes réseaux sociaux</h3>
-        {editMode && (
-          <Can action="write" object="profile">
-            <button
-              type="button"
-              className="btn btn-sm btn-primary"
-              onClick={handleShowModal}
-            >
-              Ajouter <PlusCircle className="h-5" />
-            </button>
-          </Can>
-        )}
+        <Can action="write" object="default">
+          <button
+            type="button"
+            className="btn btn-sm btn-primary"
+            onClick={handleShowModal}
+          >
+            Ajouter <PlusCircle className="h-5" />
+          </button>
+        </Can>
       </div>
 
       <Wrapper>
@@ -179,9 +177,14 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
                         className="input input-sm w-full"
                         value={link.url}
                       />
-                      <span className="w-6 h-6 cursor-pointer">
-                        <DeleteIcon />
-                      </span>
+                      <Can action="update" object="default">
+                        <EditIcon className="w-6 h-6 cursor-pointer" />
+                      </Can>
+                      <Can action="delete" object="default">
+                        <span className="w-6 h-6 cursor-pointer">
+                          <DeleteIcon />
+                        </span>
+                      </Can>
                     </>
                   )}
                 </div>
