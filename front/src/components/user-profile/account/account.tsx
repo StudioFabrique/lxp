@@ -49,11 +49,13 @@ const Account: FC<{
   };
 
   return (
-    <form ref={formRef} onSubmit={handleSubmitForm}>
-      <div className="grid grid-cols-2 gap-5">
-        <ManagePassword formProps={formProps} firstInputRef={firstInputRef} />
-      </div>
-    </form>
+    <>
+      <form ref={formRef} onSubmit={handleSubmitForm}>
+        <div className="grid grid-cols-2 gap-5">
+          <ManagePassword formProps={formProps} firstInputRef={firstInputRef} />
+        </div>
+      </form>
+    </>
   );
 };
 
