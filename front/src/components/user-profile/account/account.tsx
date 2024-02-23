@@ -1,13 +1,4 @@
-import {
-  Dispatch,
-  FC,
-  FormEvent,
-  FormEventHandler,
-  Ref,
-  SetStateAction,
-  useEffect,
-  useRef,
-} from "react";
+import { FC, FormEvent, FormEventHandler, Ref, useRef } from "react";
 import toast from "react-hot-toast";
 import useForm from "../../UI/forms/hooks/use-form";
 import { validationErrors } from "../../../helpers/validate";
@@ -16,10 +7,8 @@ import { passwordSchema } from "../../../lib/validation/profile/password-schema"
 import useHttp from "../../../hooks/use-http";
 
 const Account: FC<{
-  editMode: boolean;
-  setEditMode: Dispatch<SetStateAction<boolean>>;
   formRef: Ref<HTMLFormElement>;
-}> = ({ editMode, setEditMode, formRef }) => {
+}> = ({ formRef }) => {
   const { sendRequest } = useHttp(true);
   const {
     onValidationErrors,
@@ -30,7 +19,6 @@ const Account: FC<{
 
   const handleSubmitForm: FormEventHandler = (e: FormEvent) => {
     const applyData = () => {
-      setEditMode(false);
       toast.success("Formulaire envoyé avec succès !");
     };
 
@@ -60,22 +48,14 @@ const Account: FC<{
     }
   };
 
-  useEffect(() => {
-    if (editMode) {
-      setTimeout(() => firstInputRef.current?.focus(), 100);
-    }
-  }, [editMode]);
-
   return (
-    <form ref={formRef} onSubmit={handleSubmitForm}>
-      <div className="grid grid-cols-2 gap-5">
-        <ManagePassword
-          formProps={formProps}
-          editMode={editMode}
-          firstInputRef={firstInputRef}
-        />
-      </div>
-    </form>
+    <>
+      <form ref={formRef} onSubmit={handleSubmitForm}>
+        <div className="grid grid-cols-2 gap-5">
+          <ManagePassword formProps={formProps} firstInputRef={firstInputRef} />
+        </div>
+      </form>
+    </>
   );
 };
 

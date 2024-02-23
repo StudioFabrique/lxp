@@ -6,7 +6,7 @@ export default function TeacherHome() {
   const { socket } = useContext(Context);
   const [count, setCount] = useState(0);
 
-  const mySocket: Socket = useMemo(() => {
+  const mySocket: Socket | null = useMemo(() => {
     return socket;
   }, [socket]);
 

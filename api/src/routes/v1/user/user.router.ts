@@ -27,7 +27,9 @@ import { getUsersByRoleValidator } from "./user-validators";
 import { paginationValidator } from "../../../helpers/custom-validators";
 import httpGetUserLastParcours from "../../../controllers/user/http-get-user-last-parcours";
 import httpGetUserData from "../../../controllers/user/http-get-user-data";
-import httpGetLastFeedback from "../../../controllers/user/feedback/http-get-last-feedback";
+import httpGetAccomplishements from "../../../controllers/user/accomplishment/http-get-accomplishments";
+import httpGetLastFeedback from "../../../controllers/user/feedback/http-get-own-feedback";
+import httpGetLastFeedbacks from "../../../controllers/user/feedback/http-get-last-feedbacks";
 
 const userRouter = express.Router();
 
@@ -108,7 +110,6 @@ userRouter.put(
     )
     .trim()
     .escape(),
-
   httpUpdateUserRoles
 );
 
@@ -167,9 +168,9 @@ userRouter.post(
   httpGetUsersByGroup
 );
 
-userRouter.use("/profile", checkPermissions("profile"), userProfileRouter);
+userRouter.use("/profile", checkPermissions("default"), userProfileRouter);
 
-userRouter.use("/hobby", checkPermissions("profile"), hobbyRouter);
+userRouter.use("/hobby", checkPermissions("default"), hobbyRouter);
 
 // retourne les deux derniers parcours auquel l'utilisateur participe en tant que contact
 userRouter.get(
@@ -182,9 +183,23 @@ userRouter.get(
 userRouter.get("/data/:userId", checkPermissions("user"), httpGetUserData);
 
 userRouter.get(
-  "/last-feedback",
-  checkPermissions("profile"),
+  "/own-feedback",
+  checkPermissions("default"),
   httpGetLastFeedback
+);
+
+// réceupère les accomplissements de tous les autres étudiants étant dans le même groupe que l'étudiant connnecté.
+userRouter.get(
+  "/accomplishment",
+  checkPermissions("default"),
+  httpGetAccomplishements
+);
+
+// retourne la liste des derniers feedbacks enregistrés
+userRouter.get(
+  "/last-feedbacks",
+  checkPermissions("default"),
+  httpGetLastFeedbacks
 );
 
 export default userRouter;

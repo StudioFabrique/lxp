@@ -1,86 +1,46 @@
-import { FC, Ref, useEffect, useRef, useState } from "react";
+import { Ref, useEffect, useRef, useState } from "react";
 import Information from "../../components/user-profile/information/information";
 import Calendar from "../../components/user-profile/calendar";
-import Evaluations from "../../components/user-profile/evaluations";
+import Parcours from "../../components/user-profile/parcours";
 import Awards from "../../components/user-profile/awards/awards";
 import Account from "../../components/user-profile/account/account";
-import EditIcon from "../../components/UI/svg/edit-icon";
 import Can from "../../components/UI/can/can.component";
 import { useLocation } from "react-router-dom";
+import Settings from "../../components/profile-home/settings";
 
-type Tab = "Info" | "Calendar" | "Evals" | "Awards" | "Account";
+type Tab = "Info" | "Calendar" | "Evals" | "Awards" | "Account" | "Préférences";
 
 const Profile = () => {
   const { state } = useLocation();
 
   const [currentTab, setCurrentTab] = useState<Tab>("Info");
 
-  const [editMode, setEditMode] = useState<boolean>(false);
-
   const formRef: Ref<HTMLFormElement> = useRef(null);
 
   const Render = () => {
     switch (currentTab) {
       case "Info":
-        return (
-          <Information
-            editMode={editMode}
-            setEditMode={setEditMode}
-            formRef={formRef}
-          />
-        );
+        return <Information formRef={formRef} />;
       case "Calendar":
         return <Calendar />;
       case "Evals":
-        return <Evaluations />;
+        return <Parcours />;
       case "Awards":
         return <Awards />;
       case "Account":
-        return (
-          <Account
-            editMode={editMode}
-            setEditMode={setEditMode}
-            formRef={formRef}
-          />
-        );
+        return <Account formRef={formRef} />;
+      case "Préférences":
+        return <Settings />;
     }
   };
 
-  const SubmitButtonsSet: FC<{ withEditButton?: boolean }> = ({
-    withEditButton,
-  }) => (
-    <div className="flex gap-2 items-center">
-      {editMode && (
-        <button
-          className="btn btn-sm justify-self-end"
-          onClick={() => formRef.current?.requestSubmit()}
-        >
-          Soumettre les changements
-        </button>
-      )}
-      {(withEditButton || editMode) && (
-        <button
-          type="button"
-          className={`btn btn-sm justify-self-end ${
-            editMode ? "w-auto" : "w-10 p-0"
-          } h-5`}
-          onClick={() => setEditMode((editMode) => !editMode)}
-        >
-          {editMode ? "annuler" : <EditIcon />}
-        </button>
-      )}
-    </div>
-  );
-
   const handleChangeTab = (tab: Tab) => {
-    setEditMode(false);
     setCurrentTab(tab);
   };
 
   useEffect(() => {
     if (state?.refreshId) {
       state?.tab && handleChangeTab(state?.tab ?? "Info");
-      state?.editMode && setEditMode(state?.editMode ?? false);
     }
   }, [state?.refreshId, state?.tab, state?.editMode]);
 
@@ -88,7 +48,7 @@ const Profile = () => {
     <div className="flex flex-col gap-5 p-10">
       <h2 className="font-bold text-xl">Mon profil</h2>
       <div className="flex flex-col xl:flex-row justify-between gap-5">
-        <div className="flex gap-5">
+        <div className="flex flex-col lg:flex-row gap-5">
           <button
             type="button"
             className={`btn ${currentTab === "Info" && "btn-secondary"}`}
@@ -129,15 +89,37 @@ const Profile = () => {
           >
             Compte
           </button>
+          <button
+            className={`btn ${currentTab === "Préférences" && "btn-secondary"}`}
+            onClick={() => handleChangeTab("Préférences")}
+          >
+            Préférences
+          </button>
         </div>
-        <Can object="profile" action="update">
-          <SubmitButtonsSet withEditButton />
-        </Can>
+        {currentTab === "Préférences" ? null : (
+          <Can object="default" action="update">
+            <button
+              className="btn btn-sm justify-self-end"
+              onClick={() => formRef.current?.requestSubmit()}
+            >
+              Soumettre les changements
+            </button>
+          </Can>
+        )}
       </div>
       <Render />
-      <Can object="profile" action="update">
-        <SubmitButtonsSet />
-      </Can>
+      {currentTab === "Préférences" ? null : (
+        <div className="flex justify-end">
+          <Can object="default" action="update">
+            <button
+              className="btn btn-sm justify-self-end"
+              onClick={() => formRef.current?.requestSubmit()}
+            >
+              Soumettre les changements
+            </button>
+          </Can>
+        </div>
+      )}
     </div>
   );
 };

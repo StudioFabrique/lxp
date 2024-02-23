@@ -19,19 +19,21 @@ export default async function updateDatesModule(
   if (!datesParcours || !datesParcours.startDate || !datesParcours.endDate) {
     return null;
   }
+  const minDateTime = new Date(minDate);
+  const maxDateTime = new Date(maxDate);
 
   if (
-    new Date(minDate) < datesParcours.startDate ||
-    new Date(maxDate) > datesParcours.endDate ||
-    new Date(minDate) > new Date(maxDate) ||
-    new Date(maxDate) < new Date(minDate)
+    minDateTime < datesParcours.startDate ||
+    maxDateTime > datesParcours.endDate ||
+    minDateTime > maxDateTime ||
+    maxDateTime < minDateTime
   ) {
     return null;
   }
 
   const response = await prisma.module.update({
     where: { id: +moduleId },
-    data: { minDate: minDate, maxDate: maxDate },
+    data: { minDate: minDateTime, maxDate: maxDateTime },
   });
 
   if (!response) {

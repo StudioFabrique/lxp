@@ -2,6 +2,7 @@
 export const ressourcesRbac = [
   "role",
   "permission",
+  "default", // permission default permet de couvir l'ensemble des opération réalisables par un étudiant
   "tag",
   "user",
   "group",
@@ -11,7 +12,6 @@ export const ressourcesRbac = [
   "course",
   "lesson",
   "bonusSkill",
-  "profile",
 ];
 
 // Ressources (toutes permissions crud) sur les différents rôles template
@@ -29,7 +29,7 @@ export const ressourcesRbacByRank = {
     "course",
     "lesson",
     "bonusSkill",
-    "profile",
+    "default",
   ],
   // administrateur
   1: [
@@ -44,7 +44,7 @@ export const ressourcesRbacByRank = {
     "course",
     "lesson",
     "bonusSkill",
-    "profile",
+    "default",
   ],
   // formateur
   2: [
@@ -57,9 +57,10 @@ export const ressourcesRbacByRank = {
     "course",
     "bonusSkill",
     "lesson",
+    "default",
   ],
   // apprenant
-  3: ["profile"],
+  3: ["default"],
   // autre
   4: [],
 };
