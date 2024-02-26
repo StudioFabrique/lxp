@@ -10,6 +10,7 @@ const useHttp = (invokeErrorToast?: boolean) => {
   const [error, setError] = useState("");
   const { logout } = useContext(Context);
 
+  // implémentation de l'intercepteur
   const axiosInstance = useMemo(() => {
     return axios.create({ withCredentials: true });
   }, []);
@@ -24,6 +25,7 @@ const useHttp = (invokeErrorToast?: boolean) => {
       }
     );
 
+    // gestion du rafraîchissement des tokens
     const responseInterceptor = axiosInstance.interceptors.response.use(
       (response) => {
         return response;
@@ -51,6 +53,7 @@ const useHttp = (invokeErrorToast?: boolean) => {
       }
     );
 
+    // nettoyage de la mémoire lors du démontage du composant
     return () => {
       axiosInstance.interceptors.request.eject(requestInterceptor);
       axiosInstance.interceptors.response.eject(responseInterceptor);
