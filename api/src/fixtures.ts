@@ -96,6 +96,18 @@ async function createUser() {
     //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
   const createdStudent = await newStudent.save();
+  const rssi = new User({
+    firstname: "paul",
+    lastname: "dupuis",
+    address: "12 place clémenceau",
+    postCode: "64000",
+    city: "pzu",
+    email: "rssi@studio.eco",
+    password: hash,
+    roles: [new Object(role!._id)],
+    isActive: true,
+  });
+  await rssi.save();
   const dates = createConnectionInfos();
   let infos = Array<any>();
   dates.forEach((date: any) => {
