@@ -220,7 +220,7 @@ export default function EditLessonHome() {
                     <Wrapper>
                       <span className="flex items-center gap-x-2">
                         <h2 className="font-bold text-md text-primary">
-                          Activité n° {item.order + 1}
+                          Activité n° {item.order}
                         </h2>
                         {isLoading ? (
                           <Loader2 className="w-4 h-4 text-primary animate-spin" />
