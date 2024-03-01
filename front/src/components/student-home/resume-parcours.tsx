@@ -62,24 +62,26 @@ const ResumeParcours = (/* { parcours }: ResumeParcoursProps */) => {
           </div>,
         ]}
       />
-      <div className="text-primary grid grid-rows-4 gap-2">
-        <span className="flex flex-col justify-center items-center bg-secondary text-secondary-content rounded-lg p-2">
-          <p>Diplôme</p>
-          <p className="font-bold text-lg">Bac +3</p>
-        </span>
-        <span className="flex flex-col justify-center items-center bg-secondary text-secondary-content rounded-lg p-2">
-          <p>Semaine</p>
-          <p className="font-bold text-lg">12</p>
-        </span>
-        <span className="flex flex-col justify-center items-center bg-secondary text-secondary-content rounded-lg p-2">
-          <p>Heure</p>
-          <p className="font-bold text-lg">457</p>
-        </span>
-        <span className="flex flex-col justify-center items-center bg-secondary text-secondary-content rounded-lg p-2">
-          <p>Modules</p>
-          <p className="font-bold text-lg">8</p>
-        </span>
-      </div>
+      {parcours && (
+        <div className="text-primary grid grid-rows-4 gap-2">
+          <span className="flex flex-col justify-center items-center bg-secondary text-secondary-content rounded-lg p-2">
+            <p>Diplôme</p>
+            <p className="font-bold text-lg">Bac +3</p>
+          </span>
+          <span className="flex flex-col justify-center items-center bg-secondary text-secondary-content rounded-lg p-2">
+            <p>Semaine</p>
+            <p className="font-bold text-lg">12</p>
+          </span>
+          <span className="flex flex-col justify-center items-center bg-secondary text-secondary-content rounded-lg p-2">
+            <p>Heure</p>
+            <p className="font-bold text-lg">457</p>
+          </span>
+          <span className="flex flex-col justify-center items-center bg-secondary text-secondary-content rounded-lg p-2">
+            <p>Modules</p>
+            <p className="font-bold text-lg">8</p>
+          </span>
+        </div>
+      )}
     </div>
   );
 };
