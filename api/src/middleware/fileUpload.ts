@@ -52,7 +52,7 @@ export const createFileUploadMiddleware: any = (maxFileSize: number) => {
         });
       } else if (err) {
         // An unknown error occurred.
-        return res.status(500).json({ message: serverIssue });
+        return res.status(500).json({ message: err.message });
       }
       // No errors, continue with the next middleware or route handler.
       next();
