@@ -1,6 +1,8 @@
-import { FC, useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Dispatch, FC, SetStateAction, useEffect } from "react";
 import Role from "../../../utils/interfaces/role";
 import GroupItem from "./group-item.component";
+import { EditUsersModalContent } from "../../../views/group/group-home.component";
 
 const GroupList: FC<{
   role: Role;
@@ -11,6 +13,9 @@ const GroupList: FC<{
   onAllChecked: () => void;
   onSorting: (column: string) => void;
   onUncheckAll: () => void;
+  onSetModalContent: Dispatch<
+    SetStateAction<EditUsersModalContent | undefined>
+  >;
 }> = ({
   allChecked,
   role,
@@ -20,6 +25,7 @@ const GroupList: FC<{
   onAllChecked,
   onUncheckAll,
   onSorting,
+  onSetModalContent,
 }) => {
   const handleAllChecked = () => {
     onAllChecked();
@@ -29,7 +35,7 @@ const GroupList: FC<{
     onUncheckAll();
   }, [role, onUncheckAll]);
 
-  let content = (
+  const content = (
     <table className="table w-full">
       <thead className="bg-none">
         <tr>
@@ -69,6 +75,7 @@ const GroupList: FC<{
                 groupItem={item}
                 onRowCheck={onRowCheck}
                 showActions={showActions}
+                onSetModalContent={onSetModalContent}
               />
             }
           </tr>
