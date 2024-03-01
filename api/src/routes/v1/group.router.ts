@@ -11,6 +11,7 @@ import checkPermissions from "../../middleware/check-permissions";
 import { createFileUploadMiddleware } from "../../middleware/fileUpload";
 import { headerImageMaxSize } from "../../config/images-sizes";
 import jsonParser from "../../middleware/json-parser";
+import httpPutGroupUsers from "../../controllers/group/http-put-group-users";
 const groupRouter = Router();
 
 groupRouter.get(
@@ -26,6 +27,8 @@ groupRouter.get(
   searchValidator,
   httpSearchGroup
 );
+
+groupRouter.put("/:id" /* ,validator */, httpPutGroupUsers);
 
 groupRouter.post(
   "/",
