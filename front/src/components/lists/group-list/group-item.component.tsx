@@ -1,6 +1,5 @@
 import { Dispatch, FC, SetStateAction } from "react";
 import toTitleCase from "../../../utils/toTitleCase";
-import { Link } from "react-router-dom";
 import Can from "../../UI/can/can.component";
 import Group from "../../../utils/interfaces/group";
 import { EditUsersModalContent } from "../../../views/group/group-home.component";
@@ -37,6 +36,7 @@ const GroupItem: FC<{
                   onSetModalContent({
                     groupId: groupItem._id,
                     isModalOpen: true,
+                    groupName: groupItem.name,
                   })
                 }
               >
@@ -44,9 +44,9 @@ const GroupItem: FC<{
               </button>
             </Can>
 
-            <Can action="delete" object={groupItem.roles![0].role}>
+            {/* <Can action="delete" object={groupItem.roles![0].role}>
               <Link to="#">Supprimer</Link>
-            </Can>
+            </Can> */}
           </div>
         </td>
       ) : null}

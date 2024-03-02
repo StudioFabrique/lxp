@@ -11,18 +11,16 @@ import GroupList from "../../components/lists/group-list/group-list.component";
 import Pagination from "../../components/UI/pagination/pagination";
 import Modal from "../../components/UI/modal/modal";
 import toast from "react-hot-toast";
-import EditUsersModal from "../../components/group-home/modals/edit-users-modal";
-import User from "../../utils/interfaces/user";
-import useHttp from "../../hooks/use-http";
+import EditUsersModal from "../../components/group-home/modals/edit-users/edit-users-modal";
+import { invokeSingleAnswerToast } from "../../components/UI/custom-toast/single-answer-toast";
 
 export type EditUsersModalContent = {
   isModalOpen: boolean;
   groupId?: string;
-  users?: User[];
+  groupName?: string;
 };
 
 const GroupHome = () => {
-  const { sendRequest } = useHttp(true);
   const { user, roles } = useContext(Context);
 
   const [modalContent, setModalContent] = useState<EditUsersModalContent>();
@@ -79,6 +77,16 @@ const GroupHome = () => {
     setAllChecked(false);
   }, [setAllChecked]);
 
+  const handleDeleteEntireGroup = () => {
+    const groupIdToDelete = modalContent?.groupId;
+
+    const applyData = () => {
+      setModalContent({ isModalOpen: false });
+      toast.remove();
+      toast.success("Groupe supprimé avec succès");
+    };
+  };
+
   useEffect(() => {
     if (history?.toastFrom) {
       toast.success(history.toastFrom);
@@ -98,25 +106,6 @@ const GroupHome = () => {
   useEffect(() => {
     handleRoleSwitch(role);
   }, [handleRoleSwitch, role]);
-
-  /**
-   * UseEffect implémenté dans le cadre de la modal, à chaque fois que l'id
-   * de groupe du state modalContent change, alors effectué une requête des
-   * utilisateur du nouveau groupe selectionné.
-   */
-  useEffect(() => {
-    const applyData = () => {};
-
-    if (modalContent?.isModalOpen && modalContent?.groupId)
-      sendRequest(
-        {
-          path: `group/${modalContent.groupId}`,
-          method: "put",
-          body: {},
-        },
-        applyData
-      );
-  }, [modalContent?.groupId, modalContent?.isModalOpen, sendRequest]);
 
   return (
     <div className="flex flex-col py-5">
@@ -171,14 +160,24 @@ const GroupHome = () => {
       <>
         {modalContent?.isModalOpen ? (
           <Modal
-            title="Mettre à jour les utilisateurs du groupe"
+            title={`Mettre à jour les utilisateurs du groupe ${
+              modalContent.groupName ?? ""
+            }`}
             rightLabel="Fermer"
+            leftLabel="Supprimer le groupe"
             onRightClick={() =>
               setModalContent((modalContent) => {
                 return { ...modalContent, isModalOpen: false };
               })
             }
-            children={[<Fragment key="modal">{EditUsersModal()}</Fragment>]}
+            onLeftClick={() =>
+              invokeSingleAnswerToast("Oui", handleDeleteEntireGroup)
+            }
+            children={[
+              <Fragment key="modal">
+                <EditUsersModal modalContent={modalContent} />
+              </Fragment>,
+            ]}
           />
         ) : null}
       </>
