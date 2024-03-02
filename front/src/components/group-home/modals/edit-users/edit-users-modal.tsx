@@ -51,12 +51,14 @@ const EditUsersModal = ({ modalContent }: EditUsersModalProps) => {
                   previousUsers?.filter((prevUser) => prevUser._id !== user._id)
                 )
               }
-              flex
+              flex={true}
             />
           ))
         ) : (
           <tr>
-            <p>Aucun utilisateur dans le groupe</p>
+            <td>
+              <p>Aucun utilisateur dans le groupe</p>
+            </td>
           </tr>
         )}
       </tbody>

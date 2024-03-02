@@ -7,7 +7,7 @@ export default async function editUsers(groupId: string, users: IUser[]) {
   try {
     const group = await Group.findOneAndUpdate(
       { id: groupId },
-      { users: ids },
+      { $push: { users: ids } },
       { new: true }
     );
 

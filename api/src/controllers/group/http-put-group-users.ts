@@ -9,14 +9,12 @@ export default async function httpPutGroupUsers(req: Request, res: Response) {
   const { users }: { users: IUser[] } = req.body;
 
   try {
-    const groupUpdated = editUsers(groupId, users);
+    const groupUpdated = await editUsers(groupId, users);
 
-    return res
-      .status(201)
-      .json({
-        message: "Utilisateurs du groupe mis à jour",
-        data: groupUpdated,
-      });
+    return res.status(201).json({
+      message: "Utilisateurs du groupe mis à jour",
+      data: groupUpdated,
+    });
   } catch (error) {
     return res.status(500).json({ message: serverIssue });
   }

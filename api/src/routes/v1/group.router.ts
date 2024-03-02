@@ -12,6 +12,7 @@ import { createFileUploadMiddleware } from "../../middleware/fileUpload";
 import { headerImageMaxSize } from "../../config/images-sizes";
 import jsonParser from "../../middleware/json-parser";
 import httpPutGroupUsers from "../../controllers/group/http-put-group-users";
+import httpDeleteGroup from "../../controllers/group/http-delete-group";
 const groupRouter = Router();
 
 groupRouter.get(
@@ -38,5 +39,7 @@ groupRouter.post(
   groupValidator,
   httpCreateGroup
 );
+
+groupRouter.delete("/:id", checkPermissions("group"), httpDeleteGroup);
 
 export default groupRouter;
