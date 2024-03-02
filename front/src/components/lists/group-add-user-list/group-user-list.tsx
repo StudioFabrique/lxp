@@ -108,7 +108,7 @@ const GroupUserList: FC<{
                 list.map((item) => (
                   <GroupUserItem
                     key={item._id}
-                    itemProps={item}
+                    user={item}
                     onUpdateUser={onUpdateUser}
                     onDeleteUser={onDeleteUser}
                     onCheckRow={handleRowCheck}

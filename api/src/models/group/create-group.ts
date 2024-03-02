@@ -35,7 +35,7 @@ export default async function createGroup(
   await prisma.group.create({
     data: {
       idMdb: createdGroup._id,
-      parcours: parcoursId ? { create: { parcoursId: parcoursId } } : undefined,
+      parcours: parcoursId ? { create: { parcoursId } } : undefined,
     },
   });
 
