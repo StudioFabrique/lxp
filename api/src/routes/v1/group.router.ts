@@ -13,6 +13,7 @@ import { headerImageMaxSize } from "../../config/images-sizes";
 import jsonParser from "../../middleware/json-parser";
 import httpPutGroupUsers from "../../controllers/group/http-put-group-users";
 import httpDeleteGroup from "../../controllers/group/http-delete-group";
+import httpDeleteUserFromGroup from "../../controllers/group/http-delete-user-from-group";
 const groupRouter = Router();
 
 groupRouter.get(
@@ -41,5 +42,11 @@ groupRouter.post(
 );
 
 groupRouter.delete("/:id", checkPermissions("group"), httpDeleteGroup);
+
+groupRouter.delete(
+  "/user/:groupId/:userId",
+  checkPermissions("group"),
+  httpDeleteUserFromGroup
+);
 
 export default groupRouter;

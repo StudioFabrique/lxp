@@ -1,16 +1,23 @@
 import Group from "../../utils/interfaces/db/group";
 import { prisma } from "../../utils/db";
+import User from "../../utils/interfaces/db/user";
 
 export default async function deleteGroup(groupId: string) {
-  const group = await Group.findOneAndRemove({
-    _id: groupId,
-  });
+  try {
+    const group = await Group.findOneAndRemove({
+      _id: groupId,
+    });
 
-  console.log({ groupIdToDelete: groupId });
+    await User.updateMany(
+      { _id: group?.users },
+      { $unset: { group: groupId } }
+    );
 
-  console.log({ group });
+    await prisma.group.deleteMany({ where: { idMdb: groupId } });
 
-  await prisma.group.deleteMany({ where: { idMdb: groupId } });
-
-  return group ?? [];
+    return group ?? [];
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
 }
