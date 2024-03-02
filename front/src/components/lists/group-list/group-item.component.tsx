@@ -1,14 +1,17 @@
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import toTitleCase from "../../../utils/toTitleCase";
-import { Link } from "react-router-dom";
 import Can from "../../UI/can/can.component";
 import Group from "../../../utils/interfaces/group";
+import { EditUsersModalContent } from "../../../views/group/group-home.component";
 
 const GroupItem: FC<{
   groupItem: Group;
   showActions: boolean;
   onRowCheck: (id: string) => void;
-}> = ({ groupItem, showActions, onRowCheck }) => {
+  onSetModalContent: Dispatch<
+    SetStateAction<EditUsersModalContent | undefined>
+  >;
+}> = ({ groupItem, showActions, onRowCheck, onSetModalContent }) => {
   return (
     <>
       <td className="bg-transparent">
@@ -26,12 +29,24 @@ const GroupItem: FC<{
         <td className="bg-transparent font-bold text-xs">
           <div className="flex gap-x-2">
             <Can action="update" object={groupItem.roles![0].role}>
-              <Link to="#">Editer</Link>
+              <button
+                type="button"
+                onClick={() =>
+                  groupItem._id &&
+                  onSetModalContent({
+                    groupId: groupItem._id,
+                    isModalOpen: true,
+                    groupName: groupItem.name,
+                  })
+                }
+              >
+                Editer
+              </button>
             </Can>
 
-            <Can action="delete" object={groupItem.roles![0].role}>
+            {/* <Can action="delete" object={groupItem.roles![0].role}>
               <Link to="#">Supprimer</Link>
-            </Can>
+            </Can> */}
           </div>
         </td>
       ) : null}

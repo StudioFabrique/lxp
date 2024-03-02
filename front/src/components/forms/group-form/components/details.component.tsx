@@ -13,7 +13,7 @@ type Item = {
 
 const Details: FC<{
   onSelectParcours: (id: number) => void;
-}> = () => {
+}> = ({ onSelectParcours }) => {
   const { sendRequest } = useHttp();
 
   const [formations, setFormations] = useState<Array<Item>>([]);
@@ -47,7 +47,9 @@ const Details: FC<{
    * sélection d'un parcours lié à la formation sélectionnée
    * @param id number
    */
-  const handleParcours = () => {};
+  const handleParcours = (id: number) => {
+    onSelectParcours(id);
+  };
 
   /**
    * requête qui retourne la liste des parcours liés à la formation sélectionnée
