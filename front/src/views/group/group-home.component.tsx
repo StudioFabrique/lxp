@@ -13,6 +13,7 @@ import Modal from "../../components/UI/modal/modal";
 import toast from "react-hot-toast";
 import EditUsersModal from "../../components/group-home/modals/edit-users/edit-users-modal";
 import { invokeSingleAnswerToast } from "../../components/UI/custom-toast/single-answer-toast";
+import useHttp from "../../hooks/use-http";
 
 export type EditUsersModalContent = {
   isModalOpen: boolean;
@@ -22,6 +23,7 @@ export type EditUsersModalContent = {
 
 const GroupHome = () => {
   const { user, roles } = useContext(Context);
+  const { sendRequest } = useHttp(true);
 
   const [modalContent, setModalContent] = useState<EditUsersModalContent>();
   const [role, setRole] = useState<Role>(roles[0]);
@@ -77,14 +79,26 @@ const GroupHome = () => {
     setAllChecked(false);
   }, [setAllChecked]);
 
-  const handleDeleteEntireGroup = () => {
+  const handleDeleteEntireGroup = (toastId: string) => {
     const groupIdToDelete = modalContent?.groupId;
 
     const applyData = () => {
       setModalContent({ isModalOpen: false });
-      toast.remove();
+      getList();
+      toast.remove(toastId);
       toast.success("Groupe supprimé avec succès");
     };
+
+    sendRequest(
+      { path: `/group/${groupIdToDelete}`, method: "delete" },
+      applyData
+    );
+  };
+
+  const handleLeftClick = () => {
+    const toastId = invokeSingleAnswerToast("Oui", () =>
+      handleDeleteEntireGroup(toastId)
+    );
   };
 
   useEffect(() => {
@@ -170,9 +184,7 @@ const GroupHome = () => {
                 return { ...modalContent, isModalOpen: false };
               })
             }
-            onLeftClick={() =>
-              invokeSingleAnswerToast("Oui", handleDeleteEntireGroup)
-            }
+            onLeftClick={handleLeftClick}
             children={[
               <Fragment key="modal">
                 <EditUsersModal modalContent={modalContent} />
