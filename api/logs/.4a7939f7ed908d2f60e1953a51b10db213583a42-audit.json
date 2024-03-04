@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/cyrilponsan/studio/lxp/api/logs/.4a7939f7ed908d2f60e1953a51b10db213583a42-audit.json",
+    "files": [
+        {
+            "date": 1709590030928,
+            "name": "/Users/cyrilponsan/studio/lxp/api/logs/application-2024-03-04-23.log",
+            "hash": "3fc9000d3a15c4e2813c25752bee79ac5a8a1b7a297d85407c3e6406a0b98040"
+        }
+    ],
+    "hashType": "sha256"
+}
