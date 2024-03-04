@@ -89,11 +89,13 @@ const Role = () => {
               />
             </div>
           </div>
-          <PermissionsList
-            roles={roles}
-            currentRole={currentRole}
-            setCurrentRole={setCurrentRole}
-          />
+          {isRolesInitialized && (
+            <PermissionsList
+              roles={roles}
+              currentRole={currentRole}
+              setCurrentRole={setCurrentRole}
+            />
+          )}
         </>
       </div>
     </>
