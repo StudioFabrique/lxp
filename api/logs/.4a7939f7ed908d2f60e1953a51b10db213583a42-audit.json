@@ -9,6 +9,11 @@
             "date": 1709590030928,
             "name": "/Users/cyrilponsan/studio/lxp/api/logs/application-2024-03-04-23.log",
             "hash": "3fc9000d3a15c4e2813c25752bee79ac5a8a1b7a297d85407c3e6406a0b98040"
+        },
+        {
+            "date": 1709593323858,
+            "name": "/Users/cyrilponsan/studio/lxp/api/logs/application-2024-03-05-00.log",
+            "hash": "4af1798fcd4fea8eeda8418c3c9fe67a473e44a61be07583f495537e1ef5543d"
         }
     ],
     "hashType": "sha256"
