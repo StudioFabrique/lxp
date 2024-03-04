@@ -22,8 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm install -g dotenv-cli
-          npm install jest
-          npm install supertest
+          mkdir /home/runner/work/lxp/lxp/api/src/uploads
           npm install
 
       - name: Run Jest tests
