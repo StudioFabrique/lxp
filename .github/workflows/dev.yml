@@ -22,6 +22,8 @@ jobs:
       - name: Install dependencies
         run: |
           npm install -g dotenv-cli
+          npm install jest
+          npm install supertest
           npm install
 
       - name: Run Jest tests
