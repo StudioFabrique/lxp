@@ -42,12 +42,18 @@ const ManagePassword: FC<{
             />
           </span>
 
-          <Field
-            name="confirmNewPass"
-            type={showPassword ? "text" : "password"}
-            label="Confirmer le nouveau mot de passe"
-            data={formProps}
-          />
+          <span className="flex gap-5">
+            <Field
+              name="confirmNewPass"
+              type={showPassword ? "text" : "password"}
+              label="Confirmer le nouveau mot de passe"
+              data={formProps}
+            />
+            <EyeIcon
+              className="translate-y-9 cursor-pointer"
+              onClick={() => setShowPassword(!showPassword)}
+            />
+          </span>
         </div>
       </Wrapper>
     </div>
