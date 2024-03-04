@@ -14,6 +14,22 @@ const EditUsersModal = ({ modalContent }: EditUsersModalProps) => {
   const { sendRequest, isLoading } = useHttp(true);
   const [users, setUsers] = useState<User[]>();
 
+  const handleDeleteUser = (user: User) => {
+    const applyData = () => {
+      setUsers((previousUsers) =>
+        previousUsers?.filter((prevUser) => prevUser._id !== user._id)
+      );
+    };
+
+    sendRequest(
+      {
+        path: `/group/user/${modalContent.groupId}/${user._id}`,
+        method: "delete",
+      },
+      applyData
+    );
+  };
+
   /**
    * À chaque fois que l'id de groupe du state modalContent change,
    * alors effectue une requête GET de la récupération utilisateurs
@@ -46,11 +62,7 @@ const EditUsersModal = ({ modalContent }: EditUsersModalProps) => {
             <GroupUserItem
               key={user._id}
               user={user}
-              onDeleteUser={(user) =>
-                setUsers((previousUsers) =>
-                  previousUsers?.filter((prevUser) => prevUser._id !== user._id)
-                )
-              }
+              onDeleteUser={handleDeleteUser}
               flex={true}
             />
           ))
