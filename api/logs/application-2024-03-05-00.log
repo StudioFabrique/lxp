@@ -1,0 +1,94 @@
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le champ \"title\" ne peut pas être vide","status":400,"timestamp":"2024-03-05 12:15:40.337 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le titre de la formation contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:15:40.341 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le champ \"description\" ne peut pas être vide","status":400,"timestamp":"2024-03-05 12:15:40.347 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"La description de la formation contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:15:40.349 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le champ \"code\" ne peut pas être vide","status":400,"timestamp":"2024-03-05 12:15:40.352 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le code de la formation contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:15:40.354 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le champ \"level\" ne peut pas être vide","status":400,"timestamp":"2024-03-05 12:15:40.357 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le niveau de la formation contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:15:40.359 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Chaque élément du tableau \"tags\" doit être un nombre","status":400,"timestamp":"2024-03-05 12:15:40.361 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Chaque élément du tableau \"tags\" doit être un nombre","status":400,"timestamp":"2024-03-05 12:15:40.364 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le champ \"title\" ne peut pas être vide","status":400,"timestamp":"2024-03-05 12:15:40.387 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le titre de la formation contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:15:40.389 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le champ \"description\" ne peut pas être vide","status":400,"timestamp":"2024-03-05 12:15:40.391 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"La description de la formation contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:15:40.393 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le champ \"code\" ne peut pas être vide","status":400,"timestamp":"2024-03-05 12:15:40.397 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le code de la formation contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:15:40.399 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le champ \"level\" ne peut pas être vide","status":400,"timestamp":"2024-03-05 12:15:40.402 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le niveau de la formation contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:15:40.404 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Chaque élément du tableau \"tags\" doit être un nombre","status":400,"timestamp":"2024-03-05 12:15:40.407 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Chaque élément du tableau \"tags\" doit être un nombre","status":400,"timestamp":"2024-03-05 12:15:40.409 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant de formation non valide","status":400,"timestamp":"2024-03-05 12:15:40.701 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le titre du parcours doit avoir au moins 1 caractère","status":400,"timestamp":"2024-03-05 12:15:40.704 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant de formation non valide","status":400,"timestamp":"2024-03-05 12:15:40.713 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le titre du parcours contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:15:40.716 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant de parcours invalide","status":400,"timestamp":"2024-03-05 12:15:40.774 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant de formation invalide","status":400,"timestamp":"2024-03-05 12:15:40.787 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant de parcours invalide","status":400,"timestamp":"2024-03-05 12:15:40.807 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant de parcours invalide","status":400,"timestamp":"2024-03-05 12:15:40.819 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant de parcours invalide","status":400,"timestamp":"2024-03-05 12:15:40.821 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant de parcours invalide","status":400,"timestamp":"2024-03-05 12:15:40.823 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le titre du parcours doit avoir au moins 1 caractère","status":400,"timestamp":"2024-03-05 12:15:40.828 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le titre du parcours contient des caractères invalides.","status":400,"timestamp":"2024-03-05 12:15:40.830 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Description absente","status":400,"timestamp":"2024-03-05 12:15:40.833 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"La description contient des caractères invalides.","status":400,"timestamp":"2024-03-05 12:15:40.835 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant de formation invalide","status":400,"timestamp":"2024-03-05 12:15:40.837 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"La visibilité du parcours est requise.","status":400,"timestamp":"2024-03-05 12:15:40.843 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"La visibilité du parcours doit être une valeur booléenne.","status":400,"timestamp":"2024-03-05 12:15:40.846 AM"}
+{"level":"error","message":"Email invalide","status":401,"timestamp":"2024-03-05 12:15:41.112 AM"}
+{"level":"error","message":"Email invalide","status":401,"timestamp":"2024-03-05 12:15:41.113 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant ou mot de passe incorrect.","status":401,"timestamp":"2024-03-05 12:15:41.116 AM"}
+{"level":"error","message":"Le mot de passe est requis.","status":401,"timestamp":"2024-03-05 12:15:41.119 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant ou mot de passe incorrect.","status":401,"timestamp":"2024-03-05 12:15:41.167 AM"}
+{"level":"error","message":"Identifiants incorrects.","status":401,"timestamp":"2024-03-05 12:15:41.168 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le rôle contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:15:41.433 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"La propriété pour le tri du tableau contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:15:41.436 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"La direction pour le tri du tableau contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:15:41.438 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le numéro de la page doit être un nombre entier.","status":400,"timestamp":"2024-03-05 12:15:41.441 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le champ \"title\" ne peut pas être vide","status":400,"timestamp":"2024-03-05 12:17:19.271 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le titre de la formation contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:17:19.277 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le champ \"description\" ne peut pas être vide","status":400,"timestamp":"2024-03-05 12:17:19.279 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"La description de la formation contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:17:19.282 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le champ \"code\" ne peut pas être vide","status":400,"timestamp":"2024-03-05 12:17:19.284 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le code de la formation contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:17:19.286 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le champ \"level\" ne peut pas être vide","status":400,"timestamp":"2024-03-05 12:17:19.288 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le niveau de la formation contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:17:19.290 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Chaque élément du tableau \"tags\" doit être un nombre","status":400,"timestamp":"2024-03-05 12:17:19.292 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Chaque élément du tableau \"tags\" doit être un nombre","status":400,"timestamp":"2024-03-05 12:17:19.294 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le champ \"title\" ne peut pas être vide","status":400,"timestamp":"2024-03-05 12:17:19.314 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le titre de la formation contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:17:19.318 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le champ \"description\" ne peut pas être vide","status":400,"timestamp":"2024-03-05 12:17:19.321 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"La description de la formation contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:17:19.323 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le champ \"code\" ne peut pas être vide","status":400,"timestamp":"2024-03-05 12:17:19.325 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le code de la formation contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:17:19.328 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le champ \"level\" ne peut pas être vide","status":400,"timestamp":"2024-03-05 12:17:19.330 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le niveau de la formation contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:17:19.332 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Chaque élément du tableau \"tags\" doit être un nombre","status":400,"timestamp":"2024-03-05 12:17:19.334 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Chaque élément du tableau \"tags\" doit être un nombre","status":400,"timestamp":"2024-03-05 12:17:19.336 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant de formation non valide","status":400,"timestamp":"2024-03-05 12:17:19.551 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le titre du parcours doit avoir au moins 1 caractère","status":400,"timestamp":"2024-03-05 12:17:19.554 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant de formation non valide","status":400,"timestamp":"2024-03-05 12:17:19.566 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le titre du parcours contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:17:19.568 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant de parcours invalide","status":400,"timestamp":"2024-03-05 12:17:19.621 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant de formation invalide","status":400,"timestamp":"2024-03-05 12:17:19.632 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant de parcours invalide","status":400,"timestamp":"2024-03-05 12:17:19.654 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant de parcours invalide","status":400,"timestamp":"2024-03-05 12:17:19.665 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant de parcours invalide","status":400,"timestamp":"2024-03-05 12:17:19.667 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant de parcours invalide","status":400,"timestamp":"2024-03-05 12:17:19.669 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le titre du parcours doit avoir au moins 1 caractère","status":400,"timestamp":"2024-03-05 12:17:19.676 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le titre du parcours contient des caractères invalides.","status":400,"timestamp":"2024-03-05 12:17:19.678 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Description absente","status":400,"timestamp":"2024-03-05 12:17:19.680 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"La description contient des caractères invalides.","status":400,"timestamp":"2024-03-05 12:17:19.682 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant de formation invalide","status":400,"timestamp":"2024-03-05 12:17:19.684 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"La visibilité du parcours est requise.","status":400,"timestamp":"2024-03-05 12:17:19.692 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"La visibilité du parcours doit être une valeur booléenne.","status":400,"timestamp":"2024-03-05 12:17:19.694 AM"}
+{"level":"error","message":"Email invalide","status":401,"timestamp":"2024-03-05 12:17:19.927 AM"}
+{"level":"error","message":"Email invalide","status":401,"timestamp":"2024-03-05 12:17:19.929 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant ou mot de passe incorrect.","status":401,"timestamp":"2024-03-05 12:17:19.932 AM"}
+{"level":"error","message":"Le mot de passe est requis.","status":401,"timestamp":"2024-03-05 12:17:19.933 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Identifiant ou mot de passe incorrect.","status":401,"timestamp":"2024-03-05 12:17:19.980 AM"}
+{"level":"error","message":"Identifiants incorrects.","status":401,"timestamp":"2024-03-05 12:17:19.981 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le rôle contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:17:20.208 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"La propriété pour le tri du tableau contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:17:20.211 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"La direction pour le tri du tableau contient des caractères non autorisés.","status":400,"timestamp":"2024-03-05 12:17:20.213 AM"}
+{"from":"::ffff:127.0.0.1","level":"info","message":"Le numéro de la page doit être un nombre entier.","status":400,"timestamp":"2024-03-05 12:17:20.216 AM"}

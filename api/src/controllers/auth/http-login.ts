@@ -61,7 +61,7 @@ async function httpLogin(req: Request, res: Response) {
       const childLogger = logger.child({
         from: req.socket.remoteAddress ?? "unknown",
       });
-      console.log(error.message);
+      console.log("ERREUR", error.message);
 
       childLogger.info(error);
     }
