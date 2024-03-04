@@ -29,7 +29,6 @@ describe("HTTP auth", () => {
     const loginResponse = await request(app)
       .post("/v1/auth/login")
       .send({ email: "admin@studio.eco", password: "Abcdef@123456" });
-    console.log("toto");
 
     authToken = loginResponse.headers["set-cookie"][0];
     refreshToken = loginResponse.headers["set-cookie"][1];
