@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC } from "react";
 import PermissionItem from "./permission-item";
 import Loader from "../../UI/loader";

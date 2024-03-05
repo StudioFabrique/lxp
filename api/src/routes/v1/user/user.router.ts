@@ -161,6 +161,7 @@ userRouter.get(
   httpGetContacts
 );
 
+// Rechercher des groupes en fonctions d'une liste d'ids de groupes passé en body et populate les users
 userRouter.post(
   "/group",
   checkPermissions("user"),

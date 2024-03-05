@@ -11,6 +11,9 @@ import checkPermissions from "../../middleware/check-permissions";
 import { createFileUploadMiddleware } from "../../middleware/fileUpload";
 import { headerImageMaxSize } from "../../config/images-sizes";
 import jsonParser from "../../middleware/json-parser";
+import httpPutGroupUsers from "../../controllers/group/http-put-group-users";
+import httpDeleteGroup from "../../controllers/group/http-delete-group";
+import httpDeleteUserFromGroup from "../../controllers/group/http-delete-user-from-group";
 const groupRouter = Router();
 
 groupRouter.get(
@@ -27,6 +30,8 @@ groupRouter.get(
   httpSearchGroup
 );
 
+groupRouter.put("/:id" /* ,validator */, httpPutGroupUsers);
+
 groupRouter.post(
   "/",
   checkPermissions("group"),
@@ -34,6 +39,14 @@ groupRouter.post(
   jsonParser,
   groupValidator,
   httpCreateGroup
+);
+
+groupRouter.delete("/:id", checkPermissions("group"), httpDeleteGroup);
+
+groupRouter.delete(
+  "/user/:groupId/:userId",
+  checkPermissions("group"),
+  httpDeleteUserFromGroup
 );
 
 export default groupRouter;
