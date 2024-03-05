@@ -29,14 +29,20 @@ export default async function getLastFeedbacks(
 
   const groupsIds = groupsSql.map((item) => new Object(item.idMdb));
 
+  console.log({ groupsIds });
+
   const studentsIds = await Group.find(
     { _id: { $in: groupsIds } },
     { _id: 1 }
   ).populate("users");
 
+  console.log({ studentsIds });
+
   const ids = studentsIds.map((item) =>
     item.users.map((elem: any) => elem._id)
   );
+
+  console.log({ ids });
 
   // retourne la liste des feedbacks vu ou non vus
   let result = notReviewed
@@ -58,8 +64,12 @@ export default async function getLastFeedbacks(
           avatar: 1,
         });
 
+  console.log({ result });
+
   // retourne la liste des identifiants des formateurs ayant vus les feedbacks
   const teachersIds = result.map((item) => item.teacher._id);
+
+  console.log({ teachersIds });
 
   // retourne le nom des formateurs ayant vu les feedbacks
   const teachers = await User.find(
@@ -68,6 +78,8 @@ export default async function getLastFeedbacks(
     },
     { _id: 1, firstname: 1, lastname: 1 }
   );
+
+  console.log({ teachers });
 
   const feedbacks = result.map((item) => ({
     _id: item._id,
@@ -86,6 +98,8 @@ export default async function getLastFeedbacks(
         }
       })[0] ?? "",
   }));
+
+  console.log({ feedbacks });
 
   for (const fb of feedbacks) {
     console.log(`FEEDBACK ID : ${fb._id} , STUDENT ID : ${fb.studentId}`);
