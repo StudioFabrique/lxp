@@ -13,7 +13,7 @@ export default async function httpGetUserLastParcours(
       const error: any = {
         message:
           "L'utilisateur n'a pas accès à cette ressource ou n'existe pas.",
-        statusCode: 403,
+        statusCode: 400,
       };
       throw error;
     }
