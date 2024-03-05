@@ -32,7 +32,7 @@ export default async function getLastFeedbacks(
   const studentsIds = await Group.find(
     { _id: { $in: groupsIds } },
     { _id: 1 }
-  ).populate("users", { _id: 1 });
+  ).populate("users");
 
   const ids = studentsIds.map((item) =>
     item.users.map((elem: any) => elem._id)
@@ -46,13 +46,17 @@ export default async function getLastFeedbacks(
       })
         .sort({ feedbackAt: "desc" })
         .limit(5)
-        .populate("user", { _id: 1, firstname: 1, lastname: 1, avatar: 1 })
+        .populate("user", { firstname: 1, lastname: 1, avatar: 1 })
     : await StudentFeedback.find({
         user: { $in: ids[0] },
       })
         .sort({ feedbackAt: "desc" })
         .limit(5)
-        .populate("user", { _id: 1, firstname: 1, lastname: 1, avatar: 1 });
+        .populate("user", {
+          firstname: 1,
+          lastname: 1,
+          avatar: 1,
+        });
 
   // retourne la liste des identifiants des formateurs ayant vus les feedbacks
   const teachersIds = result.map((item) => item.teacher._id);
