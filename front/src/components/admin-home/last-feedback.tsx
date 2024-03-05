@@ -6,6 +6,7 @@ import StudentFeedback from "../../utils/interfaces/student-feedback";
 import imageProfileReplacement from "../../config/image-profile-replacement";
 import { Socket } from "socket.io-client";
 import useHttp from "../../hooks/use-http";
+import Wrapper from "../UI/wrapper/wrapper.component";
 
 export default function LastFeedback() {
   const { socket } = useContext(Context);
@@ -72,19 +73,21 @@ export default function LastFeedback() {
         <ul className="flex flex-col gap-y-2">
           {feedbacks.map((item) => (
             <li key={item._id}>
-              <AvatarCard
-                _id={item._id}
-                avatarSrc={`data:image/jpeg;base64,${
-                  item.avatar ?? imageProfileReplacement
-                }`}
-                username={item.name}
-                message={item.comment ?? "Aucun commentaire."}
-                feelingLevel={+item.feelingLevel}
-                feedbackAt={item.feedbackAt}
-                hasBeenReviewed={item.hasBeenReviewed}
-                studentId={item.studentId}
-                onReview={reviewFeedback}
-              />
+              <Wrapper>
+                <AvatarCard
+                  _id={item._id}
+                  avatarSrc={`data:image/jpeg;base64,${
+                    item.avatar ?? imageProfileReplacement
+                  }`}
+                  username={item.name}
+                  message={item.comment ?? "Aucun commentaire."}
+                  feelingLevel={+item.feelingLevel}
+                  feedbackAt={item.feedbackAt}
+                  hasBeenReviewed={item.hasBeenReviewed}
+                  studentId={item.studentId}
+                  onReview={reviewFeedback}
+                />
+              </Wrapper>
             </li>
           ))}
         </ul>
