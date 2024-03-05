@@ -21,6 +21,12 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npm run install
+      - name: Install dependencies
+        run: |
+          npm install -g dotenv-cli
+          mkdir /home/runner/work/lxp/lxp/api/src/uploads
+      - name: Run Jest tests
+        run: npm run test
       - run: npm run deploy
       - name: "Create env file"
         run: |
