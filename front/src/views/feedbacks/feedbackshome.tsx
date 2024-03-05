@@ -19,7 +19,7 @@ export default function FeedbacksHome() {
     };
     sendRequest(
       {
-        path: "/user/last-feedbacks/false",
+        path: "/user/last-feedbacks/true",
       },
       applyData
     );
