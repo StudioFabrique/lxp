@@ -7,8 +7,6 @@ export default async function getLastFeedbacks(
   teacherId: string,
   notReviewed: boolean
 ) {
-  console.log("Model : ", teacherId);
-
   const groupsSql = await prisma.group.findMany({
     where: {
       parcours: {
@@ -29,32 +27,33 @@ export default async function getLastFeedbacks(
 
   const groupsIds = groupsSql.map((item) => new Object(item.idMdb));
 
-  console.log({ groupsIds });
-
   const studentsIds = await Group.find(
     { _id: { $in: groupsIds } },
     { _id: 1 }
   ).populate("users");
 
-  console.log({ studentsIds });
-
-  const ids = studentsIds.map((item) =>
+  // retourne des tableaux d'ids d'utilisateurs, un tableau par groupes
+  let usersArrays = studentsIds.map((item) =>
     item.users.map((elem: any) => elem._id)
   );
 
-  console.log({ ids });
+  // regroupe toutes les ids d'utilisateurs dans un seul tableau
+  let ids = Array<any>();
+  for (const user of usersArrays) {
+    ids = [...ids, ...user.map((item: any) => item._id)];
+  }
 
-  // retourne la liste des feedbacks vu ou non vus
+  // retourne la liste des feedbacks vu ou non vus dont les apprenants
+  // ont cours avec l'utilisateur
   let result = notReviewed
     ? await StudentFeedback.find({
-        user: { $in: ids[0] },
-        hasBeenReviewed: false,
+        $and: [{ user: { $in: ids } }, { hasBeenReviewed: true }],
       })
         .sort({ feedbackAt: "desc" })
         .limit(5)
         .populate("user", { firstname: 1, lastname: 1, avatar: 1 })
     : await StudentFeedback.find({
-        user: { $in: ids[0] },
+        $and: [{ user: { $in: ids } }, { hasBeenReviewed: false }],
       })
         .sort({ feedbackAt: "desc" })
         .limit(5)
@@ -64,12 +63,12 @@ export default async function getLastFeedbacks(
           avatar: 1,
         });
 
-  console.log({ result });
-
   // retourne la liste des identifiants des formateurs ayant vus les feedbacks
-  const teachersIds = result.map((item) => item.teacher._id);
-
-  console.log({ teachersIds });
+  const teachersIds = result.map((item) => {
+    if (item.teacher) {
+      return item.teacher._id;
+    }
+  });
 
   // retourne le nom des formateurs ayant vu les feedbacks
   const teachers = await User.find(
@@ -78,8 +77,6 @@ export default async function getLastFeedbacks(
     },
     { _id: 1, firstname: 1, lastname: 1 }
   );
-
-  console.log({ teachers });
 
   const feedbacks = result.map((item) => ({
     _id: item._id,
@@ -98,14 +95,6 @@ export default async function getLastFeedbacks(
         }
       })[0] ?? "",
   }));
-
-  console.log({ feedbacks });
-
-  for (const fb of feedbacks) {
-    console.log(`FEEDBACK ID : ${fb._id} , STUDENT ID : ${fb.studentId}`);
-  }
-
-  console.log("FEEDBACKS : ", feedbacks);
 
   return feedbacks;
 }

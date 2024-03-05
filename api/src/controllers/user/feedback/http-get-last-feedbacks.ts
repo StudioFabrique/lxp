@@ -9,7 +9,6 @@ export default async function httpGetLastFeedbacks(
 ) {
   try {
     const userId = req.auth?.userId;
-    console.log("controller : ", userId);
 
     if (!userId) {
       throw {
@@ -29,8 +28,6 @@ export default async function httpGetLastFeedbacks(
       response,
     });
   } catch (error: any) {
-    console.log("ERREUR : ", error.message);
-
     return res
       .status(error.statusCode ?? 500)
       .json({ message: error.message ?? serverIssue });

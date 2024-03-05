@@ -19,7 +19,7 @@ const studentFeedbackSchema: Schema = new Schema({
   },
   feedbackAt: {
     type: Date,
-    required: true,
+    require: true,
     default: new Date(),
     unique: false,
   },
@@ -41,7 +41,7 @@ const studentFeedbackSchema: Schema = new Schema({
   },
   teacher: {
     type: mongoose.Schema.Types.ObjectId,
-    requre: false,
+    require: false,
     unique: false,
   },
 });
