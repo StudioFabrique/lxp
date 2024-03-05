@@ -9,6 +9,15 @@ export default async function httpGetLastFeedbacks(
 ) {
   try {
     const userId = req.auth?.userId;
+    console.log("controller : userId");
+
+    if (!userId) {
+      throw {
+        message: "L'utilisateur n'est pas authentifié.",
+        statusCode: 401,
+      };
+    }
+
     const { notReviewed } = req.params;
     if (notReviewed !== "true" && notReviewed !== "false") {
       return res.status(400).json({ message: badQuery });
