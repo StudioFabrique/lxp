@@ -39,6 +39,7 @@ import TeacherHome from "./views/teacher/teacher-home";
 import RootTeacher from "./views/teacher/layout-teacher";
 import UserData from "./views/teacher/user-data";
 import ModuleStudentPreview from "./views/module/module-student-preview";
+import FeedbacksHome from "./views/feedbacks/feedbackshome";
 
 const router = createHashRouter([
   {
@@ -184,6 +185,10 @@ const router = createHashRouter([
             element: <UserData />,
           },
         ],
+      },
+      {
+        path: "feedbacks",
+        element: <FeedbacksHome />,
       },
       { path: "*", element: <FeaturesList /> },
     ],

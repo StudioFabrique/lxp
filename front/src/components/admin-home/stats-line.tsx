@@ -39,15 +39,15 @@ const series = [
 export default function StatsLine() {
   return (
     <div>
-      <h2 className="font-bold">Martin Betatest</h2>
+      <h2 className="font-bold">Martin Durand</h2>
       <VerticalBars
         label="Martin Betatest"
         series={series}
         categories={monthes}
         type="line"
         grid={true}
-        width="380px"
-        height="250px"
+        width="600px"
+        height="300px"
       />
       <h3 className="font-bold text-xs">Progression du parcours</h3>
       <progress
