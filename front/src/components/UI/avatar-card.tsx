@@ -1,7 +1,6 @@
 import { CheckCircle } from "lucide-react";
 import { localeTime } from "../../helpers/locale-date";
 import FeelingLevel from "./feeling-level";
-import Wrapper from "./wrapper/wrapper.component";
 
 interface AvatarCardProps {
   _id: string;
@@ -33,7 +32,7 @@ export default function AvatarCard({
   };
 
   return (
-    <Wrapper>
+    <>
       <span className="text-xs flex items-start gap-x-4" onClick={handleReview}>
         <div className="avatar">
           <div className="w-12 mask mask-squircle">
@@ -72,6 +71,6 @@ export default function AvatarCard({
         </button>
         <button className="btn btn-xs btn-primary">Chat</button>
       </div>
-    </Wrapper>
+    </>
   );
 }
