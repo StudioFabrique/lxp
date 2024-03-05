@@ -65,16 +65,13 @@ const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 courseRouter.post("/", postCourseValidator, httpPostCourse);
 
 // retourne la liste de tous les cours
-courseRouter.get(
-  "/",
-  // checkToken,
-  httpGetCourses
-);
+courseRouter.get("/", httpGetCourses);
 
 courseRouter.get("/most-read", httpGetMostReadCourses);
 
-//retourne la liste des cours en fonction de l'id de leur module rattaché
+//retourne la liste des cours associés à un module
 courseRouter.get("/:moduleId", httpGetCoursesByModule);
+
 // retourne les informations d'un cours identifié par son ID
 courseRouter.get(
   "/infos/:courseId",

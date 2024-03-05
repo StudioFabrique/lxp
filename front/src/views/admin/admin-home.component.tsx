@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Context } from "../../store/context.store";
 import { Link } from "react-router-dom";
 import TeacherLastParcours from "../../components/admin-home/teacher-last-parcours";
@@ -9,8 +9,15 @@ import StatsBar from "../../components/admin-home/stats-bar";
 import StatsDonut from "../../components/admin-home/stats-donut";
 import StatsLine from "../../components/admin-home/stats-line";
 import LastFeedback from "../../components/admin-home/last-feedback";
+import useHttp from "../../hooks/use-http";
+import Parcours from "../../utils/interfaces/parcours";
+import toast from "react-hot-toast";
 
 const links = [
+  {
+    path: "/admin/formation",
+    label: "Créer une formation",
+  },
   {
     path: "/admin/parcours/créer-un-parcours",
     label: "Créer un parcours",
@@ -31,14 +38,49 @@ const links = [
     path: "/admin/user",
     label: "Interface utilisateurs",
   },
+  {
+    path: "/admin/feedbacks",
+    label: "Voir les feedbacks",
+  },
 ];
 
 const AdminHome = () => {
   const { logout, user } = useContext(Context);
+  const { sendRequest, isLoading, error } = useHttp();
+  const [parcours, setParcours] = useState<Parcours[] | null>(null);
 
   const logoutHandler = () => {
     logout();
   };
+
+  // retourne les deux parcours auquel l'utilisateur est associé en tant que contact
+  const getParcours = useCallback(() => {
+    const applyData = (data: {
+      message: string;
+      success: boolean;
+      response: Parcours[];
+    }) => {
+      console.log(data);
+      setParcours(data.response);
+    };
+    sendRequest(
+      {
+        path: "/user/last-parcours",
+      },
+      applyData
+    );
+  }, [sendRequest]);
+
+  useEffect(() => {
+    getParcours();
+  }, [getParcours]);
+
+  // gère les erreurs HTTP
+  useEffect(() => {
+    if (error.length > 0) {
+      toast.error(error);
+    }
+  }, [error]);
 
   return (
     <>
@@ -59,17 +101,24 @@ const AdminHome = () => {
         </section>
         <section>
           <ul className="flex items-center gap-x-2">
-            <Can action="write" object="parcours">
-              <li key={1}>
+            <Can action="write" object="formation">
+              <li key={0}>
                 <Link className="btn btn-primary" to={links[0].path}>
                   {links[0].label}
                 </Link>
               </li>
             </Can>
-            <Can action="write" object="module">
-              <li>
+            <Can action="write" object="parcours">
+              <li key={1}>
                 <Link className="btn btn-primary" to={links[1].path}>
                   {links[1].label}
+                </Link>
+              </li>
+            </Can>
+            <Can action="write" object="module">
+              <li>
+                <Link className="btn btn-primary" to={links[2].path}>
+                  {links[2].label}
                 </Link>
               </li>
             </Can>
@@ -89,8 +138,13 @@ const AdminHome = () => {
         <section className="w-full flex flex-col xl:flex-row gap-4">
           <span className="flex-1 flex flex-col gap-4">
             <article className="w-full flex flex-col gap-y-2">
-              {user?.roles.find((role) => role.role === "teacher") ? (
-                <TeacherLastParcours />
+              {user?.roles.find((role) => role.role === "teacher") &&
+              parcours &&
+              parcours.length > 0 ? (
+                <TeacherLastParcours
+                  parcours={parcours}
+                  isLoading={isLoading}
+                />
               ) : null}
               <LastParcours />
             </article>

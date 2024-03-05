@@ -42,7 +42,7 @@ const EditCourseHome = () => {
   };
 
   /**
-   * reset les states stockés en mémoire
+   * reset les states globaux stockés en mémoire
    */
   useEffect(() => {
     return () => {
