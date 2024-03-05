@@ -1,4 +1,4 @@
-name: Build on DockerHub and Deploy to AWS
+name: Build on DockerHub and Deploy to Ionos as dev
 on:
   push:
     branches:
@@ -82,7 +82,7 @@ jobs:
       - name: Création du network
         run: |
           ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'docker network create lxp_network || true'
-      - name: Grand permissions to .env
+      - name: Grant permissions to .env
         run: |
           ssh -o StrictHostKeyChecking=no -i key.pem ${{secrets.USERNAME}}@${{secrets.HOST}} 'chown ${{secrets.USERNAME}}:${{secrets.USERNAME}} /home/${{secrets.USERNAME}}/.env'
       - name: Run new container
