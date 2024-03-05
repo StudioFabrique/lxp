@@ -8,6 +8,8 @@ import User from "./sidebar-parts/user";
 import Group from "./sidebar-parts/group";
 import Lesson from "./sidebar-parts/lesson";
 import Formation from "./sidebar-parts/formation";
+import Can from "../can/can.component";
+import Roles from "./sidebar-parts/roles";
 
 type SharedSideBarProps = {
   currentRoute: string[];
@@ -22,6 +24,9 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => (
     <Lesson currentRoute={currentRoute} />
     <User currentRoute={currentRoute} />
     <Group currentRoute={currentRoute} />
+    <Can action="write" object="role">
+      <Roles currentRoute={currentRoute} />
+    </Can>
     {/* <Calendar interfaceType={interfaceType} />
     <Library interfaceType={interfaceType} />
     <Forum interfaceType={interfaceType} /> */}
