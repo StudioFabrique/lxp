@@ -130,7 +130,7 @@ export default function Video({ activity }: VideoProps) {
   }, [error]);
 
   return (
-    <main className="w-full flex justify-center">
+    <main className="w-full flex justify-center mt-4">
       {activity === undefined ? (
         <VideoEditor
           title={""}

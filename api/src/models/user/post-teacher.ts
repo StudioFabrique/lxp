@@ -9,12 +9,14 @@ async function postTeacher(teacher: IUser) {
     { email: 1 }
   );
 
+  // vérification de la disponibilité de l'adresse email
   if (existingUser) {
     throw new Error(
       `L'utilisateur avec l'email : ${teacher.email} existe déjà`
     );
   }
 
+  // enregistrement du contact dans la base de données Mongodb
   const password = await bcrypt.hash(generateRandomString(), 10);
   const fetchedRole = await Role.findOne({ role: "teacher" }, { _id: 1 });
 
@@ -24,6 +26,8 @@ async function postTeacher(teacher: IUser) {
     roles: [new Object(fetchedRole!._id)],
   });
 
+  // si l'enregistement de l'utisilateur dans la base de données Mongodb a réussi
+  // on enregistre la référence de cet enregistrement dans la base de données sql
   if (newTeacher) {
     const updatedTeacher = await User.findOne(
       { _id: newTeacher._id },

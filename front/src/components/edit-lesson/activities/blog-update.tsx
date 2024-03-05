@@ -12,6 +12,7 @@ import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
 import { fromHtmlToMarkdown } from "../../../helpers/html-parser";
 import Wrapper from "../../UI/wrapper/wrapper.component";
+import { ACTIVITIES } from "../../../config/urls";
 
 interface EditorProps {
   activity: Activity;
@@ -78,7 +79,7 @@ export const BlogUpdate = ({ activity }: EditorProps) => {
    */
   useEffect(() => {
     if (activity && activity !== undefined) {
-      fetch(`/activities/${activity.url}`)
+      fetch(`${ACTIVITIES}${activity.url}`)
         .then((response: any) => response.text())
         //.then((text) => md.render(text))
         .then((mdContent: string) => {

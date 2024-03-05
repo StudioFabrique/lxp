@@ -34,25 +34,35 @@ import httpGetTeacherParcours from "../../../controllers/parcours/http-get-teach
 import httpGetRootAdminParcours from "../../../controllers/parcours/http-get-root-admin-parcours";
 
 const parcoursRouter = express.Router();
+
+// retourne la liste de tous les parcours
 parcoursRouter.get("/", checkPermissions("parcours"), httpGetParcours);
+
+// enregistre un nouveau parcours
 parcoursRouter.post(
   "/",
   checkPermissions("parcours"),
   postParcoursValidator,
   httpCreateParcours
 );
+
+// supprime un parcours de la base de données
 parcoursRouter.delete(
   "/:parcoursId",
   checkPermissions("parcours"),
   parcoursByIdValidator,
   httpDeleteParcoursById
 );
+
+// retourne la liste des parcours associés à une formation
 parcoursRouter.get(
   "/parcours-by-formation/:formationId",
   checkPermissions("parcours"),
   getParcoursByFormationValidator,
   httpGetParcoursByFormation
 );
+
+// retourne les détails d'un parcours
 parcoursRouter.get(
   "/parcours-by-id/:parcoursId",
   checkPermissions("parcours"),

@@ -55,6 +55,13 @@ export const virtualClassValidator = [
   checkValidatorResult,
 ];
 
+export const isBoolean = (value: any) => {
+  if (typeof value !== "boolean") {
+    throw new Error("La valeur doit être un booléen");
+  }
+  return true;
+};
+
 export const paginationValidator = [
   param("stype")
     .notEmpty()
