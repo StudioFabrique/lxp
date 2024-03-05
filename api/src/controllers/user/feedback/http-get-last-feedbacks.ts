@@ -9,7 +9,7 @@ export default async function httpGetLastFeedbacks(
 ) {
   try {
     const userId = req.auth?.userId;
-    console.log("controller : userId");
+    console.log("controller : ", userId);
 
     if (!userId) {
       throw {
