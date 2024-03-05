@@ -7,6 +7,6 @@ export const DOWNLOAD_URL = url;
 
 export const ACTIVITIES = url + "activities/";
 
-export const SOCKET_URL = "http://localhost:5001";
+export const SOCKET_URL = url;
 
 export const ACTIVITIES_VIDEOS = url + "activities/videos/";
