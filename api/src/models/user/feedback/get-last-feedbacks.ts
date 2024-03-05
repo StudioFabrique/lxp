@@ -7,6 +7,8 @@ export default async function getLastFeedbacks(
   teacherId: string,
   notReviewed: boolean
 ) {
+  console.log("Model : ", teacherId);
+
   const groupsSql = await prisma.group.findMany({
     where: {
       parcours: {
