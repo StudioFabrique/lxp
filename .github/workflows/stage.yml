@@ -20,8 +20,14 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       - run: npm ci
-      - run: npm run install --omit=dev
-      - run: npm run build --prefix client
+      - run: npm run install
+      - name: Install dependencies
+        run: |
+          npm install -g dotenv-cli
+          mkdir /home/runner/work/lxp/lxp/api/src/uploads
+      - name: Run Jest tests
+        run: npm run test
+      - run: npm run deploy
       - name: "Create env file"
         run: |
           echo "${{ secrets.APP_ENV}}" > api/.env
@@ -35,3 +41,11 @@ jobs:
           source: "."
           target: ${{ secrets.TARGET }}
       # run commands on production
+      - name: Executing remote ssh commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME  }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            pm2 restart ${{ secrets.TARGET }}/api/dist/src/server.js
