@@ -29,6 +29,8 @@ export default async function httpGetLastFeedbacks(
       response,
     });
   } catch (error: any) {
+    console.log("ERREUR : ", error.message);
+
     return res
       .status(error.statusCode ?? 500)
       .json({ message: error.message ?? serverIssue });
