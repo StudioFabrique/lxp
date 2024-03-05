@@ -8,4 +8,5 @@ export default interface StudentFeedback {
   hasBeenReviewed: boolean;
   studentId: string;
   isSelected?: boolean;
+  teacher?: string;
 }

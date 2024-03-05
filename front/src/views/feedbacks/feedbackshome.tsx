@@ -1,21 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import StudentFeedback from "../../utils/interfaces/student-feedback";
 import useHttp from "../../hooks/use-http";
-import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import FeedbacksList from "../../components/feedbacks-home/feedbacks-list";
 
 export default function FeedbacksHome() {
   const [feedbacks, setFeedbacks] = useState<StudentFeedback[]>([]);
-  const { sendRequest, isLoading, error } = useHttp();
-  const {
-    allChecked,
-    list,
-    fieldSort,
-    direction,
-    setAllChecked,
-    handleRowCheck,
-    sortData,
-  } = useEagerLoadingList(feedbacks, "name");
+  const { sendRequest } = useHttp();
 
   const getLastFeedback = useCallback(() => {
     const applyData = (data: {
@@ -29,29 +19,21 @@ export default function FeedbacksHome() {
     };
     sendRequest(
       {
-        path: "/user/last-feedbacks/true",
+        path: "/user/last-feedbacks/false",
       },
       applyData
     );
   }, [sendRequest]);
 
   useEffect(() => {
-    getLastFeedback;
+    getLastFeedback();
   }, [getLastFeedback]);
 
   return (
     <div>
       <h1 className="text-2xl font-bold">Feedbacks des apprenants</h1>
       <section>
-        <FeedbacksList
-          allChecked={allChecked}
-          list={list!}
-          fieldSort={fieldSort}
-          direction={direction}
-          setAllChecked={setAllChecked}
-          handleRowCheck={handleRowCheck}
-          sortData={sortData}
-        />
+        {feedbacks.length > 0 ? <FeedbacksList feedbacks={feedbacks} /> : null}
       </section>
     </div>
   );

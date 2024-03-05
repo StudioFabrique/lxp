@@ -8,10 +8,11 @@ import {
 
 interface FeelingLevelProps {
   value: number;
+  size?: number;
 }
 
-export default function FeelingLevel({ value }: FeelingLevelProps) {
-  const iconClassname = "w-10 h-10";
+export default function FeelingLevel({ value, size = 10 }: FeelingLevelProps) {
+  const iconClassname = `w-${size} h-${size}`;
 
   switch (value) {
     case 1:
