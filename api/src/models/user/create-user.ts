@@ -34,14 +34,13 @@ export default async function createUser(user: IUser, roleId: string) {
     roles: firstRole,
   });
 
-  if (firstRole.rank === 1) {
+  if (firstRole.rank === 1 || firstRole.rank === 2) {
     // si type utilisateur en cours de création est "administrateur"
     await prisma.admin.create({ data: { idMdb: createdUser._id } });
   }
 
   if (firstRole.rank === 2) {
     // si type utilisateur en cours de création est "formateur"
-    await prisma.teacher.create({ data: { idMdb: createdUser._id } });
 
     await prisma.contact.create({
       data: {
