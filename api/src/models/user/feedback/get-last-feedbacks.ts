@@ -83,5 +83,11 @@ export default async function getLastFeedbacks(
       })[0] ?? "",
   }));
 
+  for (const fb of feedbacks) {
+    console.log(`FEEDBACK ID : ${fb._id} , STUDENT ID : ${fb.studentId}`);
+  }
+
+  console.log("FEEDBACKS : ", feedbacks);
+
   return feedbacks;
 }
