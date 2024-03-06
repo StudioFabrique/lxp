@@ -5,8 +5,6 @@ import {
   creationSuccessfull,
   serverIssue,
 } from "../../utils/constantes";
-import { IUser } from "../../utils/interfaces/db/user";
-import updateManyUsers from "../../models/user/update-many-users";
 import { deleteTempUploadedFile } from "../../middleware/fileUpload";
 import fs from "fs";
 import putGroup from "../../models/group/put-group";
@@ -29,10 +27,7 @@ export default async function httpPutGroup(req: Request, res: Response) {
     const response = await putGroup(group, image);
 
     await deleteTempUploadedFile(req);
-    if (response) {
-      return res.status(201).json({ message: creationSuccessfull });
-    }
-    return res.status(409).json({ message: alreadyExist });
+    return res.status(201).json({ message: creationSuccessfull });
   } catch (e) {
     console.log(e);
 

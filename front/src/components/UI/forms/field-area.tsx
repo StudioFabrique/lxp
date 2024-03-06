@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CustomError from "../../../utils/interfaces/custom-error";
 
 interface FieldProps {
@@ -19,6 +19,7 @@ interface FieldProps {
 const FieldArea = (props: FieldProps) => {
   const { label, placeholder, name, isDisabled } = props;
   const rows = props.rows !== undefined ? props.rows : 3;
+  const [firstRender, setFirstRender] = useState(true);
 
   const baseStyle =
     "textarea focus:outline-none disabled:cursor-default disabled:text-base-content";
@@ -28,13 +29,13 @@ const FieldArea = (props: FieldProps) => {
     : baseStyle;
 
   useEffect(() => {
-    if (
-      props.existingValue &&
-      props.existingValue !== props.data.values[name]
-    ) {
+    if (firstRender && props.existingValue) {
+      const initialValue = props.data.values[name];
+      console.log({ value: props.existingValue });
       props.data.onChangeValue(name, props.existingValue);
+      if (initialValue === props.existingValue) setFirstRender(false);
     }
-  }, [name, props.data, props.existingValue]);
+  }, [firstRender, name, props.data, props.existingValue]);
 
   return (
     <div className="flex flex-col gap-y-2">
