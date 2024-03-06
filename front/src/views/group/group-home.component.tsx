@@ -86,7 +86,7 @@ const GroupHome = () => {
   }, [setAllChecked]);
 
   const handleDeleteEntireGroup = (toastId: string) => {
-    const groupIdToDelete = usersModalContent?.groupId;
+    const groupIdToDelete = formModalContent?.groupId;
 
     const applyData = () => {
       setFormModalContent({ isModalOpen: false });

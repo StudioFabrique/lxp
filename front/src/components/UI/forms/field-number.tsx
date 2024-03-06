@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import CustomError from "../../../utils/interfaces/custom-error";
 
 interface FieldNumberProps {
@@ -5,6 +6,7 @@ interface FieldNumberProps {
   placeholder?: string;
   name: string;
   min: number;
+  existingValue?: string;
   data: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     values: Record<string, string>;
@@ -24,6 +26,15 @@ const FieldNumber = (props: FieldNumberProps) => {
     : baseStyle;
 
   //console.log(name + " :", props.data.values[name]);
+
+  useEffect(() => {
+    if (
+      props.existingValue &&
+      props.existingValue !== props.data.values[name]
+    ) {
+      props.data.onChangeValue(name, props.existingValue);
+    }
+  }, [name, props.data, props.existingValue]);
 
   return (
     <div className="flex flex-col gap-y-2">

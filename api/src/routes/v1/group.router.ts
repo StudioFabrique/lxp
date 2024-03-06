@@ -3,6 +3,7 @@ import httpCreateGroup from "../../controllers/group/http-create-group";
 import httpGetAllGroups from "../../controllers/group/http-get-all-groups";
 import {
   getAllValidator,
+  groupPutValidator,
   groupValidator,
   searchValidator,
 } from "../../middleware/validators";
@@ -15,6 +16,7 @@ import httpPutGroupUsers from "../../controllers/group/http-put-group-users";
 import httpDeleteGroup from "../../controllers/group/http-delete-group";
 import httpDeleteUserFromGroup from "../../controllers/group/http-delete-user-from-group";
 import httpGetGroupDetails from "../../controllers/group/http-get-group-details";
+import httpPutGroup from "../../controllers/group/http-put-group";
 const groupRouter = Router();
 
 groupRouter.get("/:id", checkPermissions("group"), httpGetGroupDetails);
@@ -33,8 +35,6 @@ groupRouter.get(
   httpSearchGroup
 );
 
-groupRouter.put("/:id" /* ,validator */, httpPutGroupUsers);
-
 groupRouter.post(
   "/",
   checkPermissions("group"),
@@ -42,6 +42,16 @@ groupRouter.post(
   jsonParser,
   groupValidator,
   httpCreateGroup
+);
+
+/* groupRouter.put("/:id", validator, httpPutGroupUsers); */
+groupRouter.put(
+  "/:id",
+  checkPermissions("group"),
+  createFileUploadMiddleware(headerImageMaxSize),
+  jsonParser,
+  groupPutValidator,
+  httpPutGroup
 );
 
 groupRouter.delete("/:id", checkPermissions("group"), httpDeleteGroup);
