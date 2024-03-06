@@ -10,6 +10,7 @@ export interface IGroup extends Document {
   tags?: ITag["_id"];
   roles: IRole["_id"];
   image: Buffer;
+  isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -28,6 +29,7 @@ const groupSchema: Schema = new Schema(
       ref: "Role",
       required: true,
     },
+    isActive: { type: Boolean, default: false },
     image: { type: Buffer, required: false },
   },
   { timestamps: true }

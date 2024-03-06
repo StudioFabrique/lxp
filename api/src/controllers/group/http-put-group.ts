@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { IGroup } from "../../utils/interfaces/db/group";
-import createGroup from "../../models/group/create-group";
 import {
   alreadyExist,
   creationSuccessfull,
@@ -10,18 +9,15 @@ import { IUser } from "../../utils/interfaces/db/user";
 import updateManyUsers from "../../models/user/update-many-users";
 import { deleteTempUploadedFile } from "../../middleware/fileUpload";
 import fs from "fs";
+import putGroup from "../../models/group/put-group";
 
-export default async function httpCreateGroup(req: Request, res: Response) {
+export default async function httpPutGroup(req: Request, res: Response) {
   const uploadedFile = req.file;
 
   const {
     group,
-    users,
-    parcoursId,
   }: {
     group: IGroup;
-    users: IUser[];
-    parcoursId: number;
   } = req.body.data;
 
   let image: any;
@@ -30,14 +26,7 @@ export default async function httpCreateGroup(req: Request, res: Response) {
     if (!!uploadedFile) {
       image = await fs.promises.readFile(uploadedFile.path);
     }
-    const response = await createGroup(group, users, image, parcoursId);
-
-    const usersToUpdate = users.map((user) => {
-      user.group?.push(response);
-      return user;
-    });
-
-    await updateManyUsers(usersToUpdate);
+    const response = await putGroup(group, image);
 
     await deleteTempUploadedFile(req);
     if (response) {

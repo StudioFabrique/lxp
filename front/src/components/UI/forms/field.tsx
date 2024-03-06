@@ -1,4 +1,4 @@
-import { Ref } from "react";
+import { Ref, useEffect } from "react";
 import CustomError from "../../../utils/interfaces/custom-error";
 
 interface FieldProps {
@@ -8,6 +8,7 @@ interface FieldProps {
   name: string;
   type?: string;
   fieldRef?: Ref<HTMLInputElement>;
+  existingValue?: string;
   data: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     values: Record<string, string>;
@@ -28,6 +29,15 @@ const Field = (props: FieldProps) => {
     : baseStyle;
 
   //console.log(props.data.values[name]);
+
+  useEffect(() => {
+    if (
+      props.existingValue &&
+      props.existingValue !== props.data.values[name]
+    ) {
+      props.data.onChangeValue(name, props.existingValue);
+    }
+  }, [name, props.data, props.existingValue]);
 
   return (
     <div className="flex flex-col gap-y-2 w-full">
