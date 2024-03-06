@@ -11,12 +11,16 @@ const Modal: FC<{
   isSubmitting?: boolean;
   buttonsBothTopBottom?: boolean;
   modalBoxStyle?: string;
+  sendModalBottom?: boolean; // send a modal at z-index 0, useful when a drawer come at the top at the same time
 }> = (props) => {
   const isSubmitting =
     props.isSubmitting !== undefined ? props.isSubmitting : false;
 
   return (
-    <dialog id="my_modal_4" className="modal modal-open">
+    <dialog
+      id="my_modal_4"
+      className={`modal modal-open ${props.sendModalBottom && "z-0"}`}
+    >
       <div className={`modal-box ${props.modalBoxStyle}`}>
         {props.buttonsBothTopBottom && (
           <div className="modal-action mb-4">
