@@ -15,11 +15,14 @@ import EditUsersModal from "../../components/group-home/modals/edit-users/edit-u
 import { invokeSingleAnswerToast } from "../../components/UI/custom-toast/single-answer-toast";
 import useHttp from "../../hooks/use-http";
 import EditFormModal from "../../components/group-home/modals/edit-form/edit-form-modal";
+import GroupManageUserList from "../../components/lists/group-add-user-list/group-manage-user-list/group-manage-user-list";
+import User from "../../utils/interfaces/user";
 
 export type GroupModalContent = {
-  isModalOpen: boolean;
+  isModalOpen?: boolean;
   groupId?: string;
   groupName?: string;
+  refresh?: boolean;
 };
 
 const GroupHome = () => {
@@ -27,6 +30,7 @@ const GroupHome = () => {
   const { sendRequest } = useHttp(true);
   const [role, setRole] = useState<Role>(roles[0]);
   const [isSearchActive, setIsSearchActive] = useState(false);
+  const [isDrawerActive, setActiveDrawer] = useState(false);
 
   /**
    * States relatifs aux modals
@@ -34,6 +38,7 @@ const GroupHome = () => {
   const [usersModalContent, setUsersModalContent] =
     useState<GroupModalContent>();
   const [formModalContent, setFormModalContent] = useState<GroupModalContent>();
+  const [usersInSelectedGroup, setUsersInSelectedGroup] = useState<User[]>();
 
   const {
     allChecked,
@@ -112,6 +117,32 @@ const GroupHome = () => {
       return { ...initialModalContent, isModalOpen: false };
     });
     getList();
+  };
+
+  const handleToggleDrawer = () => {
+    setActiveDrawer((prevState) => !prevState);
+    setUsersModalContent((prevContent) => {
+      return { ...prevContent, refresh: true };
+    });
+  };
+
+  const handleSubmitAddUsers = (users: User[]) => {
+    const applyData = () => {
+      toast.success("utilisateurs ajoutés avec succès");
+      setUsersInSelectedGroup((prevUsers) => {
+        if (prevUsers) return [...prevUsers, ...users];
+      });
+    };
+
+    if (usersModalContent?.groupId)
+      sendRequest(
+        {
+          path: `/group/addUsers/${usersModalContent.groupId}`,
+          method: "put",
+          body: { users },
+        },
+        applyData
+      );
   };
 
   useEffect(() => {
@@ -196,9 +227,15 @@ const GroupHome = () => {
               })
             }
             modalBoxStyle="max-w-[50%]"
+            sendModalBottom={isDrawerActive}
             children={[
               <Fragment key="modal">
-                <EditUsersModal modalContent={usersModalContent} />
+                <EditUsersModal
+                  modalContent={usersModalContent}
+                  setModalContent={setUsersModalContent}
+                  onClickAddUsers={handleToggleDrawer}
+                  onSetUsersInSelectedGroup={setUsersInSelectedGroup}
+                />
               </Fragment>,
             ]}
           />
@@ -226,6 +263,15 @@ const GroupHome = () => {
             ]}
           />
         )}
+        <GroupManageUserList
+          onAddUsers={handleSubmitAddUsers}
+          usersToAdd={usersInSelectedGroup ?? []}
+          drawerOptions={{
+            isOpen: isDrawerActive,
+            visible: false,
+          }}
+          onCloseDrawer={handleToggleDrawer}
+        />
       </>
     </div>
   );
