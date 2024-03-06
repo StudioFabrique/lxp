@@ -16,6 +16,7 @@ import httpDeleteGroup from "../../controllers/group/http-delete-group";
 import httpDeleteUserFromGroup from "../../controllers/group/http-delete-user-from-group";
 import httpGetGroupDetails from "../../controllers/group/http-get-group-details";
 import httpPutGroup from "../../controllers/group/http-put-group";
+import httpPutAddUsersGroup from "../../controllers/group/http-put-add-users-group";
 const groupRouter = Router();
 
 groupRouter.get("/:id", checkPermissions("group"), httpGetGroupDetails);
@@ -51,6 +52,12 @@ groupRouter.put(
   jsonParser,
   groupPutValidator,
   httpPutGroup
+);
+
+groupRouter.put(
+  "/addUsers/:id",
+  checkPermissions("group"),
+  httpPutAddUsersGroup
 );
 
 groupRouter.delete("/:id", checkPermissions("group"), httpDeleteGroup);

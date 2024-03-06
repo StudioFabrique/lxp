@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { GroupModalContent } from "../../../../views/group/group-home.component";
 import useHttp from "../../../../hooks/use-http";
 import User from "../../../../utils/interfaces/user";
@@ -8,9 +8,17 @@ import Group from "../../../../utils/interfaces/group";
 
 type EditUsersModalProps = {
   modalContent: GroupModalContent;
+  setModalContent: Dispatch<SetStateAction<GroupModalContent | undefined>>;
+  onClickAddUsers: () => void;
+  onSetUsersInSelectedGroup: Dispatch<SetStateAction<User[] | undefined>>;
 };
 
-const EditUsersModal = ({ modalContent }: EditUsersModalProps) => {
+const EditUsersModal = ({
+  modalContent,
+  setModalContent,
+  onClickAddUsers,
+  onSetUsersInSelectedGroup,
+}: EditUsersModalProps) => {
   const { sendRequest, isLoading } = useHttp(true);
   const [users, setUsers] = useState<User[]>();
 
@@ -18,6 +26,10 @@ const EditUsersModal = ({ modalContent }: EditUsersModalProps) => {
     const applyData = () => {
       setUsers((previousUsers) =>
         previousUsers?.filter((prevUser) => prevUser._id !== user._id)
+      );
+      onSetUsersInSelectedGroup(
+        (prevUsers) =>
+          prevUsers && prevUsers.filter((item) => item._id !== user._id)
       );
     };
 
@@ -37,10 +49,20 @@ const EditUsersModal = ({ modalContent }: EditUsersModalProps) => {
    */
   useEffect(() => {
     const applyData = (data: Group[]) => {
-      setUsers(data[0].users);
+      if (data[0].users) {
+        setUsers(data[0].users);
+        onSetUsersInSelectedGroup(data[0].users);
+        setModalContent((prevContent) => {
+          return { ...prevContent, refresh: false };
+        });
+      }
     };
 
-    if (modalContent?.isModalOpen && modalContent?.groupId) {
+    if (
+      modalContent.refresh &&
+      modalContent?.isModalOpen &&
+      modalContent?.groupId
+    ) {
       sendRequest(
         {
           path: `/user/group`,
@@ -50,7 +72,14 @@ const EditUsersModal = ({ modalContent }: EditUsersModalProps) => {
         applyData
       );
     }
-  }, [modalContent.groupId, modalContent?.isModalOpen, sendRequest]);
+  }, [
+    modalContent.groupId,
+    modalContent?.isModalOpen,
+    modalContent.refresh,
+    onSetUsersInSelectedGroup,
+    sendRequest,
+    setModalContent,
+  ]);
 
   if (isLoading) return <Loader />;
 
@@ -61,39 +90,39 @@ const EditUsersModal = ({ modalContent }: EditUsersModalProps) => {
           <h3 className="text-xl font-bold">
             Utilisateurs existants du groupe
           </h3>
-          <button type="button" className="btn btn-primary">
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={onClickAddUsers}
+          >
             Ajouter des utilisateurs à ce groupe
           </button>
         </span>
-        <table>
-          <thead>
-            <tr className="flex w-full justify-between px-5">
-              <th>Avatar</th>
-              <th>Prénom</th>
-              <th>Nom</th>
-              <th>Email</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody className="flex flex-col gap-4 h-[50vh] overflow-y-auto">
-            {users && users?.length > 0 ? (
-              users?.map((user) => (
+        {users && users?.length > 0 ? (
+          <table>
+            <thead>
+              <tr className="flex w-full justify-between px-5">
+                <th>Avatar</th>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody className="flex flex-col gap-4 h-[50vh] overflow-y-auto">
+              {users?.map((user) => (
                 <GroupUserItem
                   key={user._id}
                   user={user}
                   onDeleteUser={handleDeleteUser}
                   flex={true}
                 />
-              ))
-            ) : (
-              <tr>
-                <td>
-                  <p>Aucun utilisateur dans le groupe</p>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>Aucun utilisateur dans le groupe</p>
+        )}
       </div>
     </div>
   );
