@@ -12,7 +12,6 @@ import checkPermissions from "../../middleware/check-permissions";
 import { createFileUploadMiddleware } from "../../middleware/fileUpload";
 import { headerImageMaxSize } from "../../config/images-sizes";
 import jsonParser from "../../middleware/json-parser";
-import httpPutGroupUsers from "../../controllers/group/http-put-group-users";
 import httpDeleteGroup from "../../controllers/group/http-delete-group";
 import httpDeleteUserFromGroup from "../../controllers/group/http-delete-user-from-group";
 import httpGetGroupDetails from "../../controllers/group/http-get-group-details";
