@@ -2,16 +2,25 @@ import { Dispatch, FC, SetStateAction } from "react";
 import toTitleCase from "../../../utils/toTitleCase";
 import Can from "../../UI/can/can.component";
 import Group from "../../../utils/interfaces/group";
-import { EditUsersModalContent } from "../../../views/group/group-home.component";
+import { GroupModalContent } from "../../../views/group/group-home.component";
 
 const GroupItem: FC<{
   groupItem: Group;
   showActions: boolean;
   onRowCheck: (id: string) => void;
-  onSetModalContent: Dispatch<
-    SetStateAction<EditUsersModalContent | undefined>
+  onSetUsersModalContent: Dispatch<
+    SetStateAction<GroupModalContent | undefined>
   >;
-}> = ({ groupItem, showActions, onRowCheck, onSetModalContent }) => {
+  onSetFormModalContent: Dispatch<
+    SetStateAction<GroupModalContent | undefined>
+  >;
+}> = ({
+  groupItem,
+  showActions,
+  onRowCheck,
+  onSetUsersModalContent,
+  onSetFormModalContent,
+}) => {
   return (
     <>
       <td className="bg-transparent">
@@ -28,12 +37,27 @@ const GroupItem: FC<{
       {showActions ? (
         <td className="bg-transparent font-bold text-xs">
           <div className="flex gap-x-2">
+            <Can action="read" object={groupItem.roles![0].role}>
+              <button
+                type="button"
+                onClick={() =>
+                  groupItem._id &&
+                  onSetUsersModalContent({
+                    groupId: groupItem._id,
+                    isModalOpen: true,
+                    groupName: groupItem.name,
+                  })
+                }
+              >
+                Utilisateurs
+              </button>
+            </Can>
             <Can action="update" object={groupItem.roles![0].role}>
               <button
                 type="button"
                 onClick={() =>
                   groupItem._id &&
-                  onSetModalContent({
+                  onSetFormModalContent({
                     groupId: groupItem._id,
                     isModalOpen: true,
                     groupName: groupItem.name,

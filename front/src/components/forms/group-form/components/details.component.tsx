@@ -71,18 +71,20 @@ const Details: FC<{
 
   return (
     <Wrapper>
-      <h2 className="font-bold text-xl">Details</h2>
-      <div className="flex flex-col gap-y-8">
-        <Selecter
-          list={formations}
-          title="Choisissez une formation"
-          onSelectItem={handleFormation}
-        />
-        <Selecter
-          list={parcoursList}
-          title="Choisisez un parcours"
-          onSelectItem={handleParcours}
-        />
+      <div className="flex flex-col gap-5">
+        <h2 className="font-bold text-xl">Details</h2>
+        <div className="flex flex-col gap-y-8">
+          <Selecter
+            list={formations}
+            title="Choisissez une formation"
+            onSelectItem={handleFormation}
+          />
+          <Selecter
+            list={parcoursList}
+            title="Choisisez un parcours"
+            onSelectItem={handleParcours}
+          />
+        </div>
       </div>
     </Wrapper>
   );

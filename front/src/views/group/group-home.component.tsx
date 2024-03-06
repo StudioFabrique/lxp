@@ -14,8 +14,9 @@ import toast from "react-hot-toast";
 import EditUsersModal from "../../components/group-home/modals/edit-users/edit-users-modal";
 import { invokeSingleAnswerToast } from "../../components/UI/custom-toast/single-answer-toast";
 import useHttp from "../../hooks/use-http";
+import EditFormModal from "../../components/group-home/modals/edit-form/edit-form-modal";
 
-export type EditUsersModalContent = {
+export type GroupModalContent = {
   isModalOpen: boolean;
   groupId?: string;
   groupName?: string;
@@ -24,10 +25,15 @@ export type EditUsersModalContent = {
 const GroupHome = () => {
   const { user, roles } = useContext(Context);
   const { sendRequest } = useHttp(true);
-
-  const [modalContent, setModalContent] = useState<EditUsersModalContent>();
   const [role, setRole] = useState<Role>(roles[0]);
   const [isSearchActive, setIsSearchActive] = useState(false);
+
+  /**
+   * States relatifs aux modals
+   */
+  const [usersModalContent, setUsersModalContent] =
+    useState<GroupModalContent>();
+  const [formModalContent, setFormModalContent] = useState<GroupModalContent>();
 
   const {
     allChecked,
@@ -80,10 +86,10 @@ const GroupHome = () => {
   }, [setAllChecked]);
 
   const handleDeleteEntireGroup = (toastId: string) => {
-    const groupIdToDelete = modalContent?.groupId;
+    const groupIdToDelete = usersModalContent?.groupId;
 
     const applyData = () => {
-      setModalContent({ isModalOpen: false });
+      setUsersModalContent({ isModalOpen: false });
       getList();
       toast.remove(toastId);
       toast.success("Groupe supprimé avec succès");
@@ -160,7 +166,8 @@ const GroupHome = () => {
             onAllChecked={handleAllChecked}
             onSorting={handleSorting}
             onUncheckAll={handleUncheckALL}
-            onSetModalContent={setModalContent}
+            onSetUsersModalContent={setUsersModalContent}
+            onSetFormModalContent={setFormModalContent}
           />
           {dataList.length > 0 ? (
             <Pagination
@@ -172,26 +179,43 @@ const GroupHome = () => {
         </div>
       </div>
       <>
-        {modalContent?.isModalOpen ? (
+        {usersModalContent?.isModalOpen ? (
           <Modal
-            title={`Mettre à jour les utilisateurs du groupe ${
-              modalContent.groupName ?? ""
-            }`}
-            rightLabel="Fermer"
-            leftLabel="Supprimer le groupe"
+            title=""
+            rightLabel="Annuler"
             onRightClick={() =>
-              setModalContent((modalContent) => {
+              setUsersModalContent((modalContent) => {
                 return { ...modalContent, isModalOpen: false };
               })
             }
-            onLeftClick={handleLeftClick}
+            modalBoxStyle="max-w-[70%]"
             children={[
               <Fragment key="modal">
-                <EditUsersModal modalContent={modalContent} />
+                <EditUsersModal modalContent={usersModalContent} />
               </Fragment>,
             ]}
           />
         ) : null}
+        {formModalContent?.isModalOpen && (
+          <Modal
+            title=""
+            rightLabel="Annuler"
+            leftLabel="Supprimer le groupe"
+            onRightClick={() =>
+              setFormModalContent((modalContent) => {
+                return { ...modalContent, isModalOpen: false };
+              })
+            }
+            onLeftClick={handleLeftClick}
+            buttonsBothTopBottom
+            modalBoxStyle="max-w-[70%]"
+            children={[
+              <Fragment key="modal">
+                <EditFormModal modalContent={formModalContent} />
+              </Fragment>,
+            ]}
+          />
+        )}
       </>
     </div>
   );
