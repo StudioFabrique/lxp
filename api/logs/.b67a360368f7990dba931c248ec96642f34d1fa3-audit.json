@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/martindhollande/Documents/studio/lxp-workspace/lxp/api/logs/.b67a360368f7990dba931c248ec96642f34d1fa3-audit.json",
+    "files": [
+        {
+            "date": 1709716644310,
+            "name": "/Users/martindhollande/Documents/studio/lxp-workspace/lxp/api/logs/application-2024-03-06-10.log",
+            "hash": "64477293ac6e71bd875d7c9a38af26e1a7916486cd03eb8bc61a74ca191c45c5"
+        }
+    ],
+    "hashType": "sha256"
+}

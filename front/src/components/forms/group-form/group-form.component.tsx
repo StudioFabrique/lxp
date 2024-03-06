@@ -34,25 +34,6 @@ const GroupForm: FC<{
     setParcoursId(newParcoursId);
   };
 
-  /* const handleSubmitTags = (tags: Array<Tag>) => {
-    setTags(tags);
-  }; */
-
-  /*   const { value: name } = useInput(
-    (value: string) => regexGeneric.test(value),
-    props.group?.name ?? ""
-  );
-
-  const { value: desc } = useInput(
-    (value: string) => regexGeneric.test(value),
-    props.group?.desc ?? ""
-  ); */
-
-  /*   //  test la validité du form via le custom hook useInput
-  let formIsValid = false;
-  formIsValid =
-    name.isValid && desc.isValid && file !== null && isActive != null; */
-
   const handleSubmit = () => {
     const name = values.name;
     const desc = values.desc;

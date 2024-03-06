@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { GroupModalContent } from "../../../../views/group/group-home.component";
 import useHttp from "../../../../hooks/use-http";
 import Loader from "../../../UI/loader";
@@ -11,6 +11,7 @@ type EditFormModalProps = {
 
 const EditFormModal = ({ modalContent }: EditFormModalProps) => {
   const { sendRequest, isLoading } = useHttp(true);
+  const [group, setGroup] = useState<Group>();
 
   /**
    * À chaque fois que l'id de groupe du state modalContent change,
@@ -18,17 +19,18 @@ const EditFormModal = ({ modalContent }: EditFormModalProps) => {
    * du nouveau groupe selectionné.
    */
   useEffect(() => {
-    const applyData = (data: Group[]) => {};
+    const applyData = (data: { data: Group }) => {
+      setGroup(data.data);
+    };
 
     if (modalContent?.isModalOpen && modalContent?.groupId) {
-      /* sendRequest(
+      sendRequest(
         {
-          path: `/user/group`,
-          method: "post",
+          path: `/group/${modalContent.groupId}`,
           body: [modalContent.groupId],
         },
         applyData
-      ); */
+      );
     }
   }, [modalContent.groupId, modalContent?.isModalOpen, sendRequest]);
 
@@ -37,6 +39,7 @@ const EditFormModal = ({ modalContent }: EditFormModalProps) => {
   return (
     <div className="flex flex-col gap-10 w-full mt-2">
       <GroupEditForm
+        group={group}
         isLoading={false}
         onSubmitForm={() => {}}
         gridType="rows"

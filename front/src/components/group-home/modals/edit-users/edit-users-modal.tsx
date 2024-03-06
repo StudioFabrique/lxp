@@ -56,10 +56,26 @@ const EditUsersModal = ({ modalContent }: EditUsersModalProps) => {
 
   return (
     <div className="flex flex-col gap-10 w-full mt-2">
-      <div className="flex flex-col gap-y-4">
-        <h3 className="text-xl font-bold">Utilisateurs existants du groupe</h3>
+      <div className="flex flex-col gap-y-10">
+        <span className="flex justify-between items-center">
+          <h3 className="text-xl font-bold">
+            Utilisateurs existants du groupe
+          </h3>
+          <button type="button" className="btn btn-primary">
+            Ajouter des utilisateurs à ce groupe
+          </button>
+        </span>
         <table>
-          <tbody className="flex flex-col gap-2">
+          <thead>
+            <tr className="flex w-full justify-between px-5">
+              <th>Avatar</th>
+              <th>Prénom</th>
+              <th>Nom</th>
+              <th>Email</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody className="flex flex-col gap-4 h-[50vh] overflow-y-auto">
             {users && users?.length > 0 ? (
               users?.map((user) => (
                 <GroupUserItem
