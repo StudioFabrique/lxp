@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CustomError from "../../../utils/interfaces/custom-error";
 
 interface FieldNumberProps {
@@ -17,6 +17,7 @@ interface FieldNumberProps {
 
 const FieldNumber = (props: FieldNumberProps) => {
   const { label, placeholder, name, min } = props;
+  const [firstRender, setFirstRender] = useState(true);
 
   const baseStyle =
     "input focus:outline-none disabled:cursor-default disabled:text-primary-content disabled:text-base-content";
@@ -25,16 +26,14 @@ const FieldNumber = (props: FieldNumberProps) => {
     ? baseStyle + " input-error"
     : baseStyle;
 
-  //console.log(name + " :", props.data.values[name]);
-
   useEffect(() => {
-    if (
-      props.existingValue &&
-      props.existingValue !== props.data.values[name]
-    ) {
+    if (firstRender && props.existingValue) {
+      const initialValue = props.data.values[name];
+      console.log({ value: props.existingValue });
       props.data.onChangeValue(name, props.existingValue);
+      if (initialValue === props.existingValue) setFirstRender(false);
     }
-  }, [name, props.data, props.existingValue]);
+  }, [firstRender, name, props.data, props.existingValue]);
 
   return (
     <div className="flex flex-col gap-y-2">
