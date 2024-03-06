@@ -111,6 +111,7 @@ const GroupHome = () => {
     setFormModalContent((initialModalContent) => {
       return { ...initialModalContent, isModalOpen: false };
     });
+    getList();
   };
 
   useEffect(() => {
