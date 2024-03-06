@@ -51,7 +51,7 @@ async function putParcoursContacts(
         select: { admin: { select: { id: true } } },
       });
 
-      if (!existingParcours || admin.id !== existingParcours.admin.id) {
+      if (!existingParcours /* || admin.id !== existingParcours.admin.id */) {
         throw {
           message: "Vous n'avez pas accès à ce parcours",
           status: 403,
