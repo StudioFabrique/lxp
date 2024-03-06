@@ -89,7 +89,7 @@ const GroupHome = () => {
     const groupIdToDelete = usersModalContent?.groupId;
 
     const applyData = () => {
-      setUsersModalContent({ isModalOpen: false });
+      setFormModalContent({ isModalOpen: false });
       getList();
       toast.remove(toastId);
       toast.success("Groupe supprimé avec succès");
@@ -188,7 +188,7 @@ const GroupHome = () => {
                 return { ...modalContent, isModalOpen: false };
               })
             }
-            modalBoxStyle="max-w-[70%]"
+            modalBoxStyle="max-w-[50%]"
             children={[
               <Fragment key="modal">
                 <EditUsersModal modalContent={usersModalContent} />
@@ -199,7 +199,7 @@ const GroupHome = () => {
         {formModalContent?.isModalOpen && (
           <Modal
             title=""
-            rightLabel="Annuler"
+            rightLabel="Fermer"
             leftLabel="Supprimer le groupe"
             onRightClick={() =>
               setFormModalContent((modalContent) => {

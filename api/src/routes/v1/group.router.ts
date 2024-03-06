@@ -14,7 +14,10 @@ import jsonParser from "../../middleware/json-parser";
 import httpPutGroupUsers from "../../controllers/group/http-put-group-users";
 import httpDeleteGroup from "../../controllers/group/http-delete-group";
 import httpDeleteUserFromGroup from "../../controllers/group/http-delete-user-from-group";
+import httpGetGroupDetails from "../../controllers/group/http-get-group-details";
 const groupRouter = Router();
+
+groupRouter.get("/:id", checkPermissions("group"), httpGetGroupDetails);
 
 groupRouter.get(
   "/:role/:stype/:sdir",
