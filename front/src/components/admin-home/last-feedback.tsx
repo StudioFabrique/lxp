@@ -64,8 +64,6 @@ export default function LastFeedback() {
     getLastFeedback();
   }, [getLastFeedback]);
 
-  console.log({ feedbacks });
-
   return (
     <div className="flex flex-col gap-y-2">
       <h2 className="font-bold">Derniers feedbacks des apprenants</h2>
@@ -92,7 +90,11 @@ export default function LastFeedback() {
           ))}
         </ul>
       ) : (
-        <p className="mt-4">Aucun feedback récent.</p>
+        <div className="mt-2">
+          <Wrapper>
+            <p>Aucun feedback récent.</p>
+          </Wrapper>
+        </div>
       )}
     </div>
   );

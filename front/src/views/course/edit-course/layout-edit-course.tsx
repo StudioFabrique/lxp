@@ -73,7 +73,9 @@ const LayoutCourseEdit = () => {
                   subTitle={course.title}
                   imageUrl={course.module.image!}
                 >
-                  <BookIcon />
+                  <div className="w-12 h-12 text-white">
+                    <BookIcon />
+                  </div>
                   <></>
                 </ImageHeader>
               ) : null}

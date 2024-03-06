@@ -11,7 +11,7 @@ async function putParcoursTags(
 
   // on verifie l'existence du parcours et on récupère les tags de la formation avec laquelle il est en relation
   const existingParcours = await prisma.parcours.findUnique({
-    where: { id: parcoursId, adminId: admin.id },
+    where: { id: parcoursId /* adminId: admin.id */ },
     include: {
       formation: {
         include: { tags: true },
@@ -47,7 +47,7 @@ async function putParcoursTags(
     });
 
     const updatedParcours = await prisma.parcours.update({
-      where: { id: parcoursId, adminId: admin.id },
+      where: { id: parcoursId /*  adminId: admin.id  */ },
       data: {
         tags: {
           create: newTags.map((tag: number) => {
