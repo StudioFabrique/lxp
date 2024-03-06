@@ -221,7 +221,7 @@ const GroupHome = () => {
         {usersModalContent?.isModalOpen ? (
           <Modal
             title=""
-            rightLabel="Annuler"
+            rightLabel="Fermer"
             onRightClick={() =>
               setUsersModalContent((modalContent) => {
                 return { ...modalContent, isModalOpen: false };
