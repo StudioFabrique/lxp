@@ -188,6 +188,17 @@ export const groupValidator = [
   checkValidatorResult,
 ];
 
+export const groupPutValidator = [
+  body(["data.group.name", "data.group.desc"])
+    .exists()
+    .notEmpty()
+    .isString()
+    .trim()
+    .escape()
+    .withMessage("titre (name) ou description (desc) non conforme"),
+  checkValidatorResult,
+];
+
 // global validators :
 
 export const getAllValidator = [

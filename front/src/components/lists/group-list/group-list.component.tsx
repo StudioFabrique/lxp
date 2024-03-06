@@ -2,7 +2,7 @@
 import { Dispatch, FC, SetStateAction, useEffect } from "react";
 import Role from "../../../utils/interfaces/role";
 import GroupItem from "./group-item.component";
-import { EditUsersModalContent } from "../../../views/group/group-home.component";
+import { GroupModalContent } from "../../../views/group/group-home.component";
 
 const GroupList: FC<{
   role: Role;
@@ -13,8 +13,11 @@ const GroupList: FC<{
   onAllChecked: () => void;
   onSorting: (column: string) => void;
   onUncheckAll: () => void;
-  onSetModalContent: Dispatch<
-    SetStateAction<EditUsersModalContent | undefined>
+  onSetUsersModalContent: Dispatch<
+    SetStateAction<GroupModalContent | undefined>
+  >;
+  onSetFormModalContent: Dispatch<
+    SetStateAction<GroupModalContent | undefined>
   >;
 }> = ({
   allChecked,
@@ -25,7 +28,8 @@ const GroupList: FC<{
   onAllChecked,
   onUncheckAll,
   onSorting,
-  onSetModalContent,
+  onSetUsersModalContent,
+  onSetFormModalContent,
 }) => {
   const handleAllChecked = () => {
     onAllChecked();
@@ -75,7 +79,8 @@ const GroupList: FC<{
                 groupItem={item}
                 onRowCheck={onRowCheck}
                 showActions={showActions}
-                onSetModalContent={onSetModalContent}
+                onSetUsersModalContent={onSetUsersModalContent}
+                onSetFormModalContent={onSetFormModalContent}
               />
             }
           </tr>
