@@ -71,13 +71,6 @@ const AdminHome = () => {
     getParcours();
   }, [getParcours]);
 
-  // gère les erreurs HTTP
-  useEffect(() => {
-    if (error.length > 0) {
-      toast.error(error);
-    }
-  }, [error]);
-
   return (
     <main className="w-full flex flex-col gap-4">
       <section className="flex flex-col-reverse xl:flex-row justify-between items-start xl:items-center">
