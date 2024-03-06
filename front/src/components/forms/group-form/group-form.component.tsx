@@ -55,6 +55,7 @@ const GroupForm: FC<{
       props.onSubmitForm(
         {
           group: {
+            _id: props.group?._id,
             name: name,
             desc: desc,
             isActive: isActive,

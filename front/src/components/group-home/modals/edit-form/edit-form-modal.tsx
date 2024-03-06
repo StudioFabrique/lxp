@@ -9,15 +9,17 @@ import toast from "react-hot-toast";
 
 type EditFormModalProps = {
   modalContent: GroupModalContent;
+  onCloseModal: () => void;
 };
 
-const EditFormModal = ({ modalContent }: EditFormModalProps) => {
+const EditFormModal = ({ modalContent, onCloseModal }: EditFormModalProps) => {
   const { sendRequest, isLoading } = useHttp(true);
   const [group, setGroup] = useState<Group>();
 
   const handleSubmitForm = (data: any, file: File) => {
     const applyData = () => {
       toast.success("Informations du groupe mis à jour");
+      onCloseModal();
     };
 
     const formData = new FormData();
@@ -58,15 +60,17 @@ const EditFormModal = ({ modalContent }: EditFormModalProps) => {
 
   return (
     <div className="flex flex-col gap-10 w-full mt-2">
-      <GroupEditForm
-        group={group}
-        isLoading={false}
-        onSubmitForm={handleSubmitForm}
-        gridType="rows"
-        title={`Modifier le groupe ${modalContent.groupName}`}
-        hideCancelButton
-        hideDetailsComponent
-      />
+      {group && (
+        <GroupEditForm
+          group={group}
+          isLoading={false}
+          onSubmitForm={handleSubmitForm}
+          gridType="rows"
+          title={`Modifier le groupe ${modalContent.groupName}`}
+          hideCancelButton
+          hideDetailsComponent
+        />
+      )}
     </div>
   );
 };
