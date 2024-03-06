@@ -35,8 +35,9 @@ const GroupHome = () => {
   /**
    * States relatifs aux modals
    */
-  const [usersModalContent, setUsersModalContent] =
-    useState<GroupModalContent>();
+  const [usersModalContent, setUsersModalContent] = useState<
+    GroupModalContent | undefined
+  >({ refresh: true });
   const [formModalContent, setFormModalContent] = useState<GroupModalContent>();
   const [usersInSelectedGroup, setUsersInSelectedGroup] = useState<User[]>();
 
@@ -220,7 +221,7 @@ const GroupHome = () => {
         {usersModalContent?.isModalOpen ? (
           <Modal
             title=""
-            rightLabel="Annuler"
+            rightLabel="Fermer"
             onRightClick={() =>
               setUsersModalContent((modalContent) => {
                 return { ...modalContent, isModalOpen: false };
