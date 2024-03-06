@@ -58,11 +58,7 @@ const EditUsersModal = ({
       }
     };
 
-    if (
-      modalContent.refresh &&
-      modalContent?.isModalOpen &&
-      modalContent?.groupId
-    ) {
+    if (modalContent?.isModalOpen && modalContent?.groupId) {
       sendRequest(
         {
           path: `/user/group`,
@@ -73,9 +69,9 @@ const EditUsersModal = ({
       );
     }
   }, [
-    modalContent.groupId,
+    modalContent?.groupId,
     modalContent?.isModalOpen,
-    modalContent.refresh,
+    modalContent?.refresh,
     onSetUsersInSelectedGroup,
     sendRequest,
     setModalContent,
