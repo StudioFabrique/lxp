@@ -8,14 +8,16 @@ import GroupsHeader from "../../groups-header/groups-header.component";
 import useForm from "../../UI/forms/hooks/use-form";
 import { createGroupSchema } from "../../../lib/validation/create-group-schema";
 import { validationErrors } from "../../../helpers/validate";
+import Group from "../../../utils/interfaces/group";
 
 const GroupForm: FC<{
   onSubmitForm: (data: any, file: File) => void;
   isLoading?: boolean;
-  group?: any;
+  group?: Group;
   title?: string;
   gridType?: "cols" | "rows";
   hideCancelButton?: boolean;
+  hideDetailsComponent?: boolean;
 }> = (props) => {
   const [file, setFile] = useState<File | null>(null);
   const [parcoursId, setParcoursId] = useState<number | null>(null);
@@ -55,9 +57,10 @@ const GroupForm: FC<{
           group: {
             name: name,
             desc: desc,
+            isActive: isActive,
             /* tags: tags, */
           },
-          parcoursId: parcoursId,
+          parcoursId: !props.hideDetailsComponent && parcoursId,
         },
         file!
       );
@@ -75,7 +78,8 @@ const GroupForm: FC<{
       />
       <div
         className={`grid ${
-          props.gridType === "rows" ? "grid-rows-2" : "grid-cols-2"
+          !props.hideDetailsComponent &&
+          (props.gridType === "rows" ? "grid-rows-2" : "grid-cols-2")
         } max-md:grid-cols-1 gap-5`}
       >
         <Informations
@@ -85,8 +89,11 @@ const GroupForm: FC<{
           isActive={isActive}
           setIsActive={setIsActive}
           onSetFile={handleSetFile}
+          group={props.group}
         />
-        <Details onSelectParcours={handleSelectParcours} />
+        {!props.hideDetailsComponent && (
+          <Details onSelectParcours={handleSelectParcours} />
+        )}
         {/* à rétablir dès que le bug est corrigé */}
         {/* <div className="max-md:mb-2 max-md:mt-2 gap-y-8">
           <GroupTags onSubmitTags={handleSubmitTags} />

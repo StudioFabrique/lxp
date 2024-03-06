@@ -19,8 +19,6 @@ const GroupAdd = () => {
       });
     };
 
-    console.log({ data });
-
     const formData = new FormData();
     formData.append("data", JSON.stringify({ ...data, users: usersToAdd }));
     formData.append("image", file);

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import CustomError from "../../../utils/interfaces/custom-error";
 
 interface FieldProps {
@@ -6,6 +7,7 @@ interface FieldProps {
   isDisabled?: boolean;
   name: string;
   rows?: number;
+  existingValue?: string;
   data: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     values: Record<string, string>;
@@ -24,6 +26,15 @@ const FieldArea = (props: FieldProps) => {
   const style = props.data.errors.find((item) => item.type === name)
     ? baseStyle + " textarea-error"
     : baseStyle;
+
+  useEffect(() => {
+    if (
+      props.existingValue &&
+      props.existingValue !== props.data.values[name]
+    ) {
+      props.data.onChangeValue(name, props.existingValue);
+    }
+  }, [name, props.data, props.existingValue]);
 
   return (
     <div className="flex flex-col gap-y-2">

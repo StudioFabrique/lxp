@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { GroupModalContent } from "../../../../views/group/group-home.component";
 import useHttp from "../../../../hooks/use-http";
 import Loader from "../../../UI/loader";
 import Group from "../../../../utils/interfaces/group";
 import GroupEditForm from "../../../forms/group-form/group-form.component";
+import toast from "react-hot-toast";
 
 type EditFormModalProps = {
   modalContent: GroupModalContent;
@@ -12,6 +14,25 @@ type EditFormModalProps = {
 const EditFormModal = ({ modalContent }: EditFormModalProps) => {
   const { sendRequest, isLoading } = useHttp(true);
   const [group, setGroup] = useState<Group>();
+
+  const handleSubmitForm = (data: any, file: File) => {
+    const applyData = () => {
+      toast.success("Informations du groupe mis à jour");
+    };
+
+    const formData = new FormData();
+    formData.append("data", JSON.stringify(data));
+    formData.append("image", file);
+
+    sendRequest(
+      {
+        path: `/group/${modalContent.groupId}`,
+        method: "put",
+        body: formData,
+      },
+      applyData
+    );
+  };
 
   /**
    * À chaque fois que l'id de groupe du state modalContent change,
@@ -27,7 +48,6 @@ const EditFormModal = ({ modalContent }: EditFormModalProps) => {
       sendRequest(
         {
           path: `/group/${modalContent.groupId}`,
-          body: [modalContent.groupId],
         },
         applyData
       );
@@ -41,10 +61,11 @@ const EditFormModal = ({ modalContent }: EditFormModalProps) => {
       <GroupEditForm
         group={group}
         isLoading={false}
-        onSubmitForm={() => {}}
+        onSubmitForm={handleSubmitForm}
         gridType="rows"
         title={`Modifier le groupe ${modalContent.groupName}`}
         hideCancelButton
+        hideDetailsComponent
       />
     </div>
   );
