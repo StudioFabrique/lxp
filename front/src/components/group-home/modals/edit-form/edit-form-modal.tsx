@@ -58,15 +58,17 @@ const EditFormModal = ({ modalContent }: EditFormModalProps) => {
 
   return (
     <div className="flex flex-col gap-10 w-full mt-2">
-      <GroupEditForm
-        group={group}
-        isLoading={false}
-        onSubmitForm={handleSubmitForm}
-        gridType="rows"
-        title={`Modifier le groupe ${modalContent.groupName}`}
-        hideCancelButton
-        hideDetailsComponent
-      />
+      {group && (
+        <GroupEditForm
+          group={group}
+          isLoading={false}
+          onSubmitForm={handleSubmitForm}
+          gridType="rows"
+          title={`Modifier le groupe ${modalContent.groupName}`}
+          hideCancelButton
+          hideDetailsComponent
+        />
+      )}
     </div>
   );
 };

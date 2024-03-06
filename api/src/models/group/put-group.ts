@@ -4,7 +4,9 @@ export default async function putGroup(
   group: IGroup,
   image: Buffer | undefined
 ) {
-  const groupToFind = await Group.findOne({ name: group.name });
+  console.log(group._id);
+
+  const groupToFind = await Group.findOne({ _id: group._id });
   if (!groupToFind) {
     return null;
   }
@@ -13,7 +15,7 @@ export default async function putGroup(
     group.image = image;
   }
 
-  const createdGroup = await Group.updateOne({}, group);
+  const createdGroup = await Group.updateOne({ _id: group._id }, group);
 
   if (!createdGroup) {
     return null;
