@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { UserCheck } from "lucide-react";
 
 const Roles = ({ currentRoute }: { currentRoute: string[] }) => {
-  const isCurrentPathActive = currentRoute[1] === "group";
+  const isCurrentPathActive = currentRoute[1] === "roles";
 
   return (
     <li>

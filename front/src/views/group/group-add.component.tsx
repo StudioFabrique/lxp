@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import useHttp from "../../hooks/use-http";
-import GroupAddForm from "../../components/forms/group-form/group-add-form.component";
+import GroupAddForm from "../../components/forms/group-form/group-form.component";
 import GroupUserList from "../../components/lists/group-add-user-list/group-user-list";
 import { useState } from "react";
 import User from "../../utils/interfaces/user";
@@ -18,8 +18,6 @@ const GroupAdd = () => {
         state: { toastFrom: "Groupe créé avec succès" },
       });
     };
-
-    console.log({ data });
 
     const formData = new FormData();
     formData.append("data", JSON.stringify({ ...data, users: usersToAdd }));

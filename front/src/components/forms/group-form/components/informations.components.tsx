@@ -12,6 +12,7 @@ import MemoizedImageFileUpload from "../../../UI/image-file-upload/image-file-up
 import Field from "../../../UI/forms/field";
 import FieldArea from "../../../UI/forms/field-area";
 import CustomError from "../../../../utils/interfaces/custom-error";
+import Group from "../../../../utils/interfaces/group";
 
 const Informations: FC<{
   values: Record<string, string>;
@@ -20,7 +21,16 @@ const Informations: FC<{
   isActive: any;
   setIsActive: Dispatch<SetStateAction<boolean>>;
   onSetFile: (file: File) => void;
-}> = ({ values, errors, onChangeValue, isActive, setIsActive, onSetFile }) => {
+  group?: Group;
+}> = ({
+  values,
+  errors,
+  onChangeValue,
+  isActive,
+  setIsActive,
+  onSetFile,
+  group,
+}) => {
   const handleToggle: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
@@ -36,51 +46,26 @@ const Informations: FC<{
   return (
     <Wrapper>
       <h2 className="font-bold text-xl">Informations</h2>
-
       <Field
         label="Titre du groupe *"
         placeholder="Ex: Promo 2025"
         name="name"
         data={data}
+        existingValue={group?.name}
       />
-
-      {/*       <span className="flex flex-col gap-y-2">
-        <label>Titre du groupe *</label>
-        <input
-          className={`input ${
-            name.hasError && "input-error"
-          } input-sm w-full p-5`}
-          type="text"
-          onChange={name.valueChangeHandler}
-          onBlur={name.valueBlurHandler}
-          defaultValue={name.value}
-          autoComplete="off"
-        />
-      </span> */}
-
-      <FieldArea label="Description du groupe *" name="desc" data={data} />
-
-      {/* 
-      <span className="flex flex-col gap-y-2">
-        <label>Description du groupe *</label>
-        <textarea
-          className={`textarea ${
-            desc.hasError && "textarea-error"
-          } w-full p-5 placeholder:text-purple-discrete`}
-          onChange={desc.valueChangeHandler}
-          onBlur={desc.valueBlurHandler}
-          defaultValue={desc.value}
-          autoComplete="off"
-        />
-      </span> */}
-
+      <FieldArea
+        label="Description du groupe *"
+        name="desc"
+        data={data}
+        existingValue={group?.desc}
+      />
       <span className="flex row gap-x-5">
         <label>Statut</label>
         <input
           className="toggle"
           type="checkbox"
           onChange={handleToggle}
-          defaultValue={isActive}
+          checked={isActive}
           autoComplete="off"
         />
         <label>{isActive ? "Actif" : "Inactif"}</label>
