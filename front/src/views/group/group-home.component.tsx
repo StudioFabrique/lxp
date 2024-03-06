@@ -107,6 +107,12 @@ const GroupHome = () => {
     );
   };
 
+  const handleCloseFormModal = () => {
+    setFormModalContent((initialModalContent) => {
+      return { ...initialModalContent, isModalOpen: false };
+    });
+  };
+
   useEffect(() => {
     if (history?.toastFrom) {
       toast.success(history.toastFrom);
@@ -211,7 +217,10 @@ const GroupHome = () => {
             modalBoxStyle="max-w-[70%]"
             children={[
               <Fragment key="modal">
-                <EditFormModal modalContent={formModalContent} />
+                <EditFormModal
+                  modalContent={formModalContent}
+                  onCloseModal={handleCloseFormModal}
+                />
               </Fragment>,
             ]}
           />
