@@ -12,7 +12,9 @@ import GroupManageUserItem from "./group-manage-user-item/group-manage-user-item
 const GroupManageUserList: FC<{
   usersToAdd: User[];
   onAddUsers: (users: Array<User>) => void;
-}> = ({ usersToAdd, onAddUsers }) => {
+  drawerOptions?: { visible: boolean; isOpen: boolean };
+  onCloseDrawer?: () => void;
+}> = ({ usersToAdd, drawerOptions, onAddUsers, onCloseDrawer }) => {
   const {
     page,
     totalPages,
@@ -90,6 +92,11 @@ const GroupManageUserList: FC<{
     setUserSearchResult([]);
   };
 
+  const handleCloseDrawer = () => {
+    setAllChecked(false);
+    onCloseDrawer && onCloseDrawer();
+  };
+
   useEffect(() => {
     setUsersToShowInList(
       dataList.filter((data) => {
@@ -124,7 +131,9 @@ const GroupManageUserList: FC<{
     <RightSideDrawer
       title="Ajouter des étudiants au groupe"
       id="add-user-to-group"
-      onCloseDrawer={() => setAllChecked(false)}
+      onCloseDrawer={handleCloseDrawer}
+      visible={drawerOptions?.visible}
+      isOpen={drawerOptions?.isOpen}
     >
       <div className="flex flex-col items-center gap-y-10 justify-between m-10 h-[74vh]">
         <Search
