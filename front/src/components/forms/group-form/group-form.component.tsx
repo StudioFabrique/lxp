@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 import Informations from "./components/informations.components";
@@ -26,7 +26,8 @@ const GroupForm: FC<{
     props.group?.isActive ?? false
   );
 
-  const { values, errors, onChangeValue, onValidationErrors } = useForm();
+  const { values, errors, onChangeValue, onValidationErrors, initValues } =
+    useForm();
 
   const handleSetFile = (file: File) => {
     setFile(file);
@@ -70,6 +71,12 @@ const GroupForm: FC<{
     }
   };
 
+  useEffect(() => {
+    if (props.group) {
+      initValues(props.group);
+    }
+  }, [initValues, props.group]);
+
   return (
     <form className="flex flex-col gap-y-10" autoComplete="off">
       <GroupsHeader
@@ -90,7 +97,6 @@ const GroupForm: FC<{
           isActive={isActive}
           setIsActive={setIsActive}
           onSetFile={handleSetFile}
-          group={props.group}
         />
         {!props.hideDetailsComponent && (
           <Details onSelectParcours={handleSelectParcours} />
