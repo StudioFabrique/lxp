@@ -5,6 +5,7 @@ import useHttp from "../../../hooks/use-http";
 import Loader from "../../UI/loader";
 import toast from "react-hot-toast";
 import FeelingLevel from "../../UI/feeling-level";
+import StudentFeedback from "../../../utils/interfaces/student-feedback";
 
 const FeelingFeedback = () => {
   const { sendRequest, isLoading } = useHttp(true);
@@ -33,7 +34,7 @@ const FeelingFeedback = () => {
   };
 
   useEffect(() => {
-    const applyData = (data: { data: any }) => {
+    const applyData = (data: { data: StudentFeedback }) => {
       const lastFeedback = data.data;
       const today = new Date();
       if (lastFeedback) {
