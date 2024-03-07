@@ -1,6 +1,6 @@
 export default interface StudentFeedback {
   _id: string;
-  feelingLevel: string;
+  feelingLevel: number;
   feedbackAt: string;
   name: string;
   avatar?: string;

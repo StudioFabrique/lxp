@@ -137,7 +137,7 @@ export default function FeedbacksList({ feedbacks }: FeedbacksListProps) {
                 <td>{item.name}</td>
                 <td>
                   <div
-                    className="tooltip tooltip-bottom"
+                    className="tooltip tooltip-bottom text-left"
                     data-tip={item.comment}
                   >
                     {item.comment}

@@ -20,7 +20,7 @@ const studentFeedbackSchema: Schema = new Schema({
   feedbackAt: {
     type: Date,
     require: true,
-    default: new Date(),
+    default: Date.now,
     unique: false,
   },
   comment: {
