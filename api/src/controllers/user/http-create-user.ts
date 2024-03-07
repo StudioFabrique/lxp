@@ -18,13 +18,10 @@ export default async function httpCreateUser(req: Request, res: Response) {
   let userDataRequest = JSON.parse(req.body.user);
   const graduationsDataRequest: IGraduation[] | undefined =
     userDataRequest.graduations;
-  console.log("toto", userDataRequest.roleId);
   const linksDataRequest: ILink[] | undefined = userDataRequest.links;
   const hobbiesDataRequest: IHobby[] | undefined = userDataRequest.hobbies;
   const { roleId } = userDataRequest;
   const uploadedFile = req.file;
-
-  console.log({ roleId });
 
   try {
     if (uploadedFile) {
