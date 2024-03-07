@@ -119,7 +119,7 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div data-testid="social-networks" className="flex flex-col gap-2">
       <dialog ref={modalRef} className="modal">
         <div className="modal-box flex flex-col gap-10">
           <form
