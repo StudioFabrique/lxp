@@ -94,16 +94,11 @@ export const userValidator = (
       .trim()
       .escape()
       .withMessage("address"),
-    body(validatorSubject + ".description")
-      .isString()
-      .trim()
-      .escape()
-      .withMessage("city"),
     body(validatorSubject + ".city")
       .isString()
       .trim()
       .escape()
-      .withMessage("links.*.url"),
+      .withMessage("city"),
     body(validatorSubject + ".links.*.url")
       .isString()
       .trim()
