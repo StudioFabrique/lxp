@@ -43,7 +43,7 @@ export default async function getUserData(userId: string) {
   let parcours: any = {};
   let parcoursCompletion = 0;
 
-  if (user.group.length > 0) {
+  if (user.group && user.group.length > 0) {
     let response = await prisma.group.findFirst({
       where: { idMdb: user.group[0]._id },
       select: {
