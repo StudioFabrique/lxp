@@ -139,7 +139,7 @@ const UserList: FC<{
               <p>Formation</p>
               <SortColumnIcon
                 fieldSort={stype}
-                column="group"
+                column="formation"
                 direction={sdir}
               />
             </div>
@@ -154,7 +154,7 @@ const UserList: FC<{
               <p>Promotion</p>
               <SortColumnIcon
                 fieldSort={stype}
-                column="group"
+                column="parcours"
                 direction={sdir}
               />
             </div>

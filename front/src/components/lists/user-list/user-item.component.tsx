@@ -5,9 +5,9 @@ import { Link } from "react-router-dom";
 import Can from "../../UI/can/can.component";
 import { AvatarSmall } from "../../UI/avatar/avatar.component";
 import useHttp from "../../../hooks/use-http";
-import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
 import UpdateUserStatus from "../../UI/update-user-status/update-user-status.component";
 import ButtonDelete from "../../UI/button-delete/button-delete.component";
+import { Edit2Icon, MoveUpRight } from "lucide-react";
 
 const UserItem: FC<{
   userItem: any;
@@ -33,7 +33,7 @@ const UserItem: FC<{
       {
         path: "/user/update-user-status",
         method: "put",
-        body: userItem,
+        body: { userId: userItem._id, value: userItem.isActive },
       },
       applyData
     );
@@ -64,10 +64,10 @@ const UserItem: FC<{
       <td className="bg-transparent capitalize">{userItem.lastname}</td>
       <td className="bg-transparent">{userItem.email}</td>
       <td className="bg-transparent text-center capitalize">
-        {userItem.group.name ? userItem.group.name : "-"}
+        {userItem.formation ? userItem.formation : "-"}
       </td>
       <td className="bg-transparent text-center">
-        {userItem.group.name ? userItem.group.name : "-"}
+        {userItem.parcours ? userItem.parcours : "-"}
       </td>
       <td className="bg-transparent">{userItem.createdAt}</td>
       <td className="bg-transparent">
@@ -76,24 +76,41 @@ const UserItem: FC<{
             <span className="loading loading-bars text-primary loading-sm"></span>
           </div>
         ) : (
-          <FadeWrapper>
-            <UpdateUserStatus
-              isActive={userItem.isActive}
-              onToggleStatus={handleToggleStatus}
-            />
-          </FadeWrapper>
+          <UpdateUserStatus
+            isActive={userItem.isActive}
+            onToggleStatus={handleToggleStatus}
+          />
         )}
       </td>
       <td className="bg-transparent font-bold text-xs rounded-r-xl">
-        <div className="flex gap-x-2">
+        <div className="flex gap-x-4 text-primary">
           <Can action="read" object={"user"}>
-            <Link to={`/admin/teacher/student/${userItem._id}`}>Voir</Link>
+            <Link
+              className="tooltip tooltip-bottom"
+              data-tip="Voir les informations de l'utilisateur"
+              aria-label="visualier les informations de l'utilisateur"
+              to={`/admin/teacher/student/${userItem._id}`}
+            >
+              <MoveUpRight className="w-4 h-4" />
+            </Link>
           </Can>
           <Can action="update" object={userItem.roles[0].role}>
-            <Link to="../features">Editer</Link>
+            <Link
+              className="tooltip tooltip-bottom"
+              data-tip="Mettre à jour les informations de l'utilisateur"
+              aria-label="Mettre à jour les informations de l'utilisateur"
+              to="../features"
+            >
+              <Edit2Icon className="w-4 h-4" />
+            </Link>
           </Can>
           <Can action="delete" object={userItem.roles[0].role}>
-            <Link to={"../features"}>
+            <Link
+              className="tooltip tooltip-bottom"
+              data-tip="Supprimer l'utilisateur"
+              aria-label="Supprimer l'utilisateur"
+              to={"../features"}
+            >
               <ButtonDelete
                 error={error}
                 isLoading={isUserDeleteLoading}
