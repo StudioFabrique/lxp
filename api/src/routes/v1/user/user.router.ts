@@ -124,7 +124,7 @@ userRouter.post(
       .isString()
       .trim()
       .escape()
-      .withMessage("firstname ou lastname non conforme")
+      .withMessage("roleId non conforme")
   ),
   httpCreateUser
 );
