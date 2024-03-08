@@ -20,9 +20,9 @@ export default async function createUser(user: IUser, roleId: string) {
 
   const createdUser = await User.create({
     email: user.email,
-    firstname: user.firstname,
-    lastname: user.lastname,
-    nickname: user.nickname,
+    firstname: user.firstname.toLowerCase(),
+    lastname: user.lastname.toLowerCase(),
+    nickname: user.nickname?.toLowerCase(),
     description: user.description,
     address: user.address,
     city: user.city,
