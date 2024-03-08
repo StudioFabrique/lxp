@@ -42,6 +42,7 @@ export function socket(io: Server): void {
       const result = await postFeedBack(userId, feelingLevel, comment);
       const contactsList = await getFeedbacks(userId);
       const userData = await getUserData(userId);
+      console.log({ contactsList });
 
       if (result) {
         const feedback = {
@@ -64,7 +65,7 @@ export function socket(io: Server): void {
         }
       }
     });
-    
+
     socket.on(
       "feedback-reviewed",
       async ({

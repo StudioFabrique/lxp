@@ -18,8 +18,8 @@ export default async function createUser(user: IUser, roleId: string) {
 
   const createdUser = await User.create({
     email: user.email,
-    firstname: user.firstname,
-    lastname: user.lastname,
+    firstname: user.firstname.toLowerCase(),
+    lastname: user.lastname.toLowerCase(),
     nickname:
       user.phoneNumber && user.phoneNumber.length > 0
         ? user.phoneNumber

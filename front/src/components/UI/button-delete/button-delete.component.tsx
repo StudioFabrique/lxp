@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useState } from "react";
 import DeleteModal from "../modal/delete-modal";
+import { Trash2Icon } from "lucide-react";
 
 const ButtonDelete: FC<{
   userItem: any;
@@ -30,7 +32,7 @@ const ButtonDelete: FC<{
         />
       )}
       <button type="button" onClick={() => {}}>
-        Supprimer
+        <Trash2Icon className="w-4 h-4 text-error" />
       </button>
     </>
   );
