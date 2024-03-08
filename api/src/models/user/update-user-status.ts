@@ -1,12 +1,12 @@
 import User, { IUser } from "../../utils/interfaces/db/user";
 
-async function updateUserStatus(user: IUser) {
-  let userToUpdate = await User.findOne({ _id: user._id });
+async function updateUserStatus(userId: string, value: boolean) {
+  let userToUpdate = await User.findOne({ _id: userId });
   if (!userToUpdate) {
-    return false;
+    throw [{ message: "L'utilisateur n'existe pas.", statusCode: 404 }];
   }
-  userToUpdate = await User.findByIdAndUpdate(user._id, {
-    isActive: user.isActive,
+  userToUpdate = await User.findByIdAndUpdate(userId, {
+    isActive: value,
   });
   return userToUpdate;
 }

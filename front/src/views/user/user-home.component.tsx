@@ -262,10 +262,11 @@ const UserHome = () => {
         {showErrorModal ? (
           <Modal
             title="Mettre à jour les rôles des utilisateurs sélectionnés"
-            message="Un ou plusieurs utilisateurs ne peuvent pas être mis à jour."
             rightLabel="Fermer"
             onRightClick={setErrorModal}
-          />
+          >
+            <p>Un ou plusieurs utilisateurs ne peuvent pas être mis à jour.</p>
+          </Modal>
         ) : null}
       </>
     </>
