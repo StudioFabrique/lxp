@@ -22,15 +22,7 @@ const Informations: FC<{
   setIsActive: Dispatch<SetStateAction<boolean>>;
   onSetFile: (file: File) => void;
   group?: Group;
-}> = ({
-  values,
-  errors,
-  onChangeValue,
-  isActive,
-  setIsActive,
-  onSetFile,
-  group,
-}) => {
+}> = ({ values, errors, onChangeValue, isActive, setIsActive, onSetFile }) => {
   const handleToggle: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
@@ -51,14 +43,8 @@ const Informations: FC<{
         placeholder="Ex: Promo 2025"
         name="name"
         data={data}
-        existingValue={group?.name}
       />
-      <FieldArea
-        label="Description du groupe *"
-        name="desc"
-        data={data}
-        existingValue={group?.desc}
-      />
+      <FieldArea label="Description du groupe *" name="desc" data={data} />
       <span className="flex row gap-x-5">
         <label>Statut</label>
         <input

@@ -2,9 +2,7 @@ import { z } from "zod";
 import {
   regexGeneric,
   regexMail,
-  regexNumber,
   regexOptionalGeneric,
-  regexPhoneNumber,
 } from "../../../utils/constantes";
 
 export const informationSchema = z.object({
@@ -49,7 +47,7 @@ export const informationSchema = z.object({
     .optional(),
   phoneNumber: z
     .string()
-    .regex(regexPhoneNumber, {
+    .regex(/* regexPhoneNumber */ regexOptionalGeneric, {
       message: "Le numéro de téléphone contient des caractères invalides",
     })
     .optional(),
