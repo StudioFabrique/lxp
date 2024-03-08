@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import Can from "../../UI/can/can.component";
 import { AvatarSmall } from "../../UI/avatar/avatar.component";
 import useHttp from "../../../hooks/use-http";
-import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
 import UpdateUserStatus from "../../UI/update-user-status/update-user-status.component";
 import ButtonDelete from "../../UI/button-delete/button-delete.component";
 
@@ -33,7 +32,7 @@ const UserItem: FC<{
       {
         path: "/user/update-user-status",
         method: "put",
-        body: userItem,
+        body: { userId: userItem._id, value: userItem.isActive },
       },
       applyData
     );
@@ -76,12 +75,10 @@ const UserItem: FC<{
             <span className="loading loading-bars text-primary loading-sm"></span>
           </div>
         ) : (
-          <FadeWrapper>
-            <UpdateUserStatus
-              isActive={userItem.isActive}
-              onToggleStatus={handleToggleStatus}
-            />
-          </FadeWrapper>
+          <UpdateUserStatus
+            isActive={userItem.isActive}
+            onToggleStatus={handleToggleStatus}
+          />
         )}
       </td>
       <td className="bg-transparent font-bold text-xs rounded-r-xl">

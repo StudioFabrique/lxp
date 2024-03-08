@@ -59,7 +59,7 @@ async function getUsersByRole(
 
   const data = await User.find(
     { roles: { $in: fetchedRoles } },
-    { _id: 1, firstname: 1, lastname: 1, email: 1, avatar: 1 }
+    { _id: 1, firstname: 1, lastname: 1, email: 1, avatar: 1, isActive: 1 }
   )
     .populate("group")
     .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })

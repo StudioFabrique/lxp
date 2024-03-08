@@ -11,9 +11,12 @@ export default async function getConnectedContacts(userId: string) {
   if (!groupId) {
     throw { message: "Le groupe n'existe pas.", statusCode: 404 };
   }
+  console.log("groupId :", groupId);
+
+  console.log("id : ", groupId.group._id);
 
   const existingContacts = await prisma.group.findFirst({
-    where: { idMdb: groupId.group._id },
+    where: { idMdb: groupId.group[0]._id },
     select: {
       parcours: {
         select: {
