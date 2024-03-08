@@ -50,10 +50,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 
-// TODO: VALIDATORS
 userRouter.put(
   "/update-many-status",
   checkPermissions("user"),
+
   httpUpdateManyUsersStatus
 );
 

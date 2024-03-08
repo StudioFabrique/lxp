@@ -1,3 +1,4 @@
+import { nicknames } from "../../utils/fixtures/data/data";
 import User, { IUser } from "../../utils/interfaces/db/user";
 
 export default async function createManyUsers(
@@ -8,12 +9,10 @@ export default async function createManyUsers(
     users.map((user) => user.email)
   );
 
-  const usersToInsert = users.filter((user) => {
+  let usersToInsert = users.filter((user) => {
     user.isActive = false;
     return !emailsExist.includes(user.email);
   });
-
-  console.log(usersToInsert);
 
   if (!usersToInsert || usersToInsert.length <= 0) {
     return null;
