@@ -1,13 +1,22 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { badQuery, serverIssue } from "../../utils/constantes";
 import { validationResult } from "express-validator";
 import getUsersByRole from "../../models/user/get-users-by-role";
+import CustomRequest from "../../utils/interfaces/express/custom-request";
 
-async function httpGetUsersByRole(req: Request, res: Response) {
+async function httpGetUsersByRole(req: CustomRequest, res: Response) {
   const result = validationResult(req);
 
   const { role, stype, sdir } = req.params;
   const { page, limit } = req.query;
+  const userRole = req.auth?.userRoles[0];
+
+  if (!userRole) {
+    throw {
+      message: "L'utilisateur n'est pas  autorisé à accéder à ces ressources.",
+      statusCode: 401,
+    };
+  }
 
   if (!result.isEmpty()) {
     return res.status(400).json({ message: badQuery });
@@ -21,8 +30,10 @@ async function httpGetUsersByRole(req: Request, res: Response) {
     }
 
     return res.status(200).json({ total: result!.total, list: result!.users });
-  } catch (err) {
-    return res.status(500).json({ message: serverIssue + err });
+  } catch (err: any) {
+    return res
+      .status(err.statusCode ?? 500)
+      .json({ message: serverIssue + err });
   }
 }
 
