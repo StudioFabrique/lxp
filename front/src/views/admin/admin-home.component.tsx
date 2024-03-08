@@ -11,7 +11,6 @@ import StatsLine from "../../components/admin-home/stats-line";
 import LastFeedback from "../../components/admin-home/last-feedback";
 import useHttp from "../../hooks/use-http";
 import Parcours from "../../utils/interfaces/parcours";
-import toast from "react-hot-toast";
 
 const links = [
   {
@@ -46,7 +45,7 @@ const links = [
 
 const AdminHome = () => {
   const { user } = useContext(Context);
-  const { sendRequest, isLoading, error } = useHttp();
+  const { sendRequest, isLoading } = useHttp();
   const [parcours, setParcours] = useState<Parcours[] | null>(null);
 
   // retourne les deux parcours auquel l'utilisateur est associé en tant que contact
@@ -56,7 +55,6 @@ const AdminHome = () => {
       success: boolean;
       response: Parcours[];
     }) => {
-      console.log(data);
       setParcours(data.response);
     };
     sendRequest(
@@ -73,7 +71,7 @@ const AdminHome = () => {
 
   return (
     <main className="w-full flex flex-col gap-4">
-      <section className="flex flex-col-reverse xl:flex-row justify-between items-start xl:items-center">
+      <section className="flex flex-col-reverse lg:flex-row justify-between items-start lg:items-center">
         <article className="w-full">
           <span className="w-full flex flex-1 flex-col gap-y-2">
             <h2 className="w-full text-3xl font-extrabold capitalize">
@@ -88,7 +86,7 @@ const AdminHome = () => {
         </article>
       </section>
       <section>
-        <ul className="flex items-center gap-x-2">
+        <ul className="flex flex-wrap items-center gap-2">
           <Can action="write" object="formation">
             <li key={0}>
               <Link className="btn btn-primary" to={links[0].path}>
@@ -123,7 +121,7 @@ const AdminHome = () => {
           ))}
         </ul>
       </section>
-      <section className="w-full flex flex-col xl:flex-row gap-4">
+      <section className="w-full flex flex-col 2xl:flex-row gap-4">
         <span className="flex-1 flex flex-col gap-4">
           <article className="w-full flex flex-col gap-y-2">
             {user?.roles.find((role) => role.role === "teacher") &&
@@ -145,12 +143,12 @@ const AdminHome = () => {
         </span>
         <article>
           <ul className="w-full grid grid-cols-1 gap-4 place-items-center">
-            <li className="w-fit xl:w-full">
+            <li className="w-fit lg:w-full">
               <Wrapper>
                 <StatsLine />
               </Wrapper>
             </li>
-            <li className="w-fit xl:w-full">
+            <li className="w-fit lg:w-full">
               <Wrapper>
                 <StatsLine />
               </Wrapper>

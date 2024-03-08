@@ -5,9 +5,16 @@ import { IUser } from "../../utils/interfaces/db/user";
 import createManyUsers from "../../models/user/create-many-users";
 
 export default async function httpCreateManyUser(req: Request, res: Response) {
-  const users: IUser[] = req.body;
+  let users = req.body;
 
   /* users.roles = [new Object((await Role.findOne({ role: "student" }))!._id)]; */
+
+  users = users.map((user: any) => ({
+    ...user,
+    firstname: user.firstname.toLowerCase(),
+    lastname: user.lastname.toLowerCase(),
+    nickname: user.nickname?.toLowerCase(),
+  }));
 
   try {
     const response = await createManyUsers(users);

@@ -26,4 +26,6 @@ export default interface User {
   hobbies?: Array<Hobby>;
   links?: Array<Link>;
   connectionInfos?: Array<{ lastConnection: string; duration: number }>;
+  parcours?: string;
+  formation?: string;
 }

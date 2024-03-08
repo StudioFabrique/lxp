@@ -64,10 +64,10 @@ const UserItem: FC<{
       <td className="bg-transparent capitalize">{userItem.lastname}</td>
       <td className="bg-transparent">{userItem.email}</td>
       <td className="bg-transparent text-center capitalize">
-        {userItem.group.name ? userItem.group.name : "-"}
+        {userItem.formation ? userItem.formation : "-"}
       </td>
       <td className="bg-transparent text-center">
-        {userItem.group.name ? userItem.group.name : "-"}
+        {userItem.parcours ? userItem.parcours : "-"}
       </td>
       <td className="bg-transparent">{userItem.createdAt}</td>
       <td className="bg-transparent">

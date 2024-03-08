@@ -224,7 +224,7 @@ async function createManyStudents() {
   await User.bulkSave(userList);
 }
 
-async function createManyCoach() {
+/* async function createManyCoach() {
   const role = await Role.findOne({ role: "coach" });
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
@@ -249,17 +249,13 @@ async function createManyCoach() {
     robotIndex++;
   }
   await User.bulkSave(userList);
-}
+} */
 
 async function createRoles() {
   const roles = [
     { role: "admin", label: "admin", rank: 1, isActive: true },
-    { role: "miniAdmin", label: "mini-admin", rank: 1 },
     { role: "teacher", label: "formateur", rank: 2 },
-    { role: "bossTeacher", label: "Formateur en Chef", rank: 2 },
     { role: "student", label: "apprenant", rank: 3 },
-    { role: "coach", label: "mentor", rank: 3 },
-    { role: "stagiaire", label: "gestion cafetière", rank: 3 },
   ];
   const dbRoles = Array<any>();
   roles.forEach((role) => {
@@ -338,7 +334,7 @@ async function main() {
   await createManyAdmins();
   await createManyTeachers();
   await createManyStudents();
-  await createManyCoach();
+  //await createManyCoach();
   //await createManyGroups();
   await createTag();
   await disconnect();
