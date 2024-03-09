@@ -80,25 +80,40 @@ export const userValidator = (
       .escape()
       .withMessage("firstname ou lastname non conforme"),
     body(validatorSubject + ".nickname")
+      .optional()
       .isString()
       .trim()
       .escape()
       .withMessage("nickname"),
     body(validatorSubject + ".description")
+      .optional()
       .isString()
       .trim()
       .escape()
       .withMessage("description"),
     body(validatorSubject + ".address")
+      .optional()
       .isString()
       .trim()
       .escape()
       .withMessage("address"),
     body(validatorSubject + ".city")
+      .optional()
       .isString()
       .trim()
       .escape()
       .withMessage("city"),
+    body(validatorSubject + ".postCode")
+      .optional()
+      .custom(customPostalCodeValidation)
+      .trim()
+      .escape()
+      .withMessage("postCode non conforme"),
+    body(validatorSubject + ".phoneNumber", "Numéro de téléphone incorrect")
+      .optional()
+      .custom(customPhoneNumberValidation)
+      .trim()
+      .escape(),
     body(validatorSubject + ".links.*.url")
       .isString()
       .trim()
@@ -124,11 +139,7 @@ export const userValidator = (
       .trim()
       .escape()
       .withMessage(".graduations.*.degree"),
-    body(validatorSubject + ".postCode")
-      .custom(customPostalCodeValidation)
-      .trim()
-      .escape()
-      .withMessage("postCode non conforme"),
+
     body([
       validatorSubject + ".hobbies",
       validatorSubject + ".graduations",
@@ -136,10 +147,7 @@ export const userValidator = (
     ])
       .isArray()
       .withMessage("hobbies, graduations ou links non conforme"),
-    body(validatorSubject + ".phoneNumber", "Numéro de téléphone incorrect")
-      .custom(customPhoneNumberValidation)
-      .trim()
-      .escape(),
+
     // Include the extraValidationChain if provided
     ...(extraValidationChain ? [extraValidationChain] : []),
     checkValidatorResult,
