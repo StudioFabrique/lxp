@@ -34,7 +34,7 @@ const RessourcesByAction: FC<{
   if (!permissions) return <Loader />;
   return (
     <div className="flex flex-col gap-y-5 items-center w-full">
-      <p className="bg-secondary text-secondary-content p-2 rounded-lg w-[95%] text-center font-bold">
+      <p className="bg-primary-focus text-secondary-content p-2 rounded-lg w-[95%] text-center font-bold">
         {title}
       </p>
       {ressources?.ressources.map((res, i) => (
