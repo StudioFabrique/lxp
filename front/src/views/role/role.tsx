@@ -72,14 +72,14 @@ const Role = () => {
         </p>
 
         <>
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid lg:grid-cols-3 gap-5">
             <RoleForm
               roleToEdit={roleToEdit}
               setRoles={setRoles}
               setRoleToEdit={setRoleToEdit}
               setCurrentRole={setCurrentRole}
             />
-            <div className="col-span-2">
+            <div className="lg:col-span-2">
               <RolesList
                 setRoleToEdit={setRoleToEdit}
                 roles={roles}
