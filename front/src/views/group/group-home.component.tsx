@@ -128,6 +128,8 @@ const GroupHome = () => {
   };
 
   const handleSubmitAddUsers = (users: User[]) => {
+    const usersId = users.map((user) => user._id);
+
     const applyData = () => {
       toast.success("utilisateurs ajoutés avec succès");
       setUsersInSelectedGroup((prevUsers) => {
@@ -140,7 +142,7 @@ const GroupHome = () => {
         {
           path: `/group/addUsers/${usersModalContent.groupId}`,
           method: "put",
-          body: { users },
+          body: { usersId },
         },
         applyData
       );

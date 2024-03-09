@@ -22,14 +22,14 @@ export default async function updateDatesModule(
   const minDateTime = new Date(minDate);
   const maxDateTime = new Date(maxDate);
 
-  if (
+  /* if (
     minDateTime < datesParcours.startDate ||
     maxDateTime > datesParcours.endDate ||
     minDateTime > maxDateTime ||
     maxDateTime < minDateTime
   ) {
     return null;
-  }
+  } */
 
   const response = await prisma.module.update({
     where: { id: +moduleId },
