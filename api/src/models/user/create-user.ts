@@ -17,32 +17,30 @@ export default async function createUser(user: IUser, roleId: string) {
   if (!firstRole) return null;
 
   const createdUser = await User.create({
-    email: user.email,
+    email: user.email.toLowerCase(),
     firstname: user.firstname.toLowerCase(),
     lastname: user.lastname.toLowerCase(),
     nickname:
-      user.phoneNumber && user.phoneNumber.length > 0
-        ? user.phoneNumber
+      user.nickname && user.nickname.length > 0
+        ? user.nickname.toLowerCase()
         : undefined,
     description:
-      user.phoneNumber && user.phoneNumber.length > 0
-        ? user.phoneNumber
+      user.description && user.description.length > 0
+        ? user.description.toLowerCase()
         : undefined,
     address:
-      user.phoneNumber && user.phoneNumber.length > 0
-        ? user.phoneNumber
+      user.address && user.address.length > 0
+        ? user.address.toLowerCase()
         : undefined,
     city:
-      user.phoneNumber && user.phoneNumber.length > 0
-        ? user.phoneNumber
-        : undefined,
+      user.city && user.city.length > 0 ? user.city.toLowerCase() : undefined,
     postCode:
-      user.phoneNumber && user.phoneNumber.length > 0
-        ? user.phoneNumber
+      user.postCode && user.postCode.length > 0
+        ? user.postCode.toLowerCase()
         : undefined,
     phoneNumber:
       user.phoneNumber && user.phoneNumber.length > 0
-        ? user.phoneNumber
+        ? user.phoneNumber.toLowerCase()
         : undefined,
     password: await hash("Abcdef@123456", 10), // A enlever par la suite !
     isActive: false,

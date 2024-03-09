@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Dispatch,
   FC,
@@ -9,7 +10,7 @@ import {
   useState,
 } from "react";
 import { regexGeneric } from "../../../utils/constantes";
-import { setInputStyle, setTextAreaStyle } from "../../../utils/formClasses";
+import { setInputStyle } from "../../../utils/formClasses";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
@@ -114,7 +115,11 @@ const RoleCreateForm: FC<{
 
   return (
     <Wrapper>
-      <form autoComplete="off" className="flex flex-col gap-y-10">
+      <form
+        autoComplete="off"
+        className="flex flex-col gap-y-10"
+        onSubmit={(e) => e.preventDefault()}
+      >
         <div className="flex flex-col gap-y-5">
           <span className="flex flex-col gap-y-1">
             <h2 className="flex flex-col gap-y-4 font-bold text-xl">
@@ -140,16 +145,17 @@ const RoleCreateForm: FC<{
           </span>
 
           <span className="flex flex-col gap-y-1">
-            <p>Description</p>
-            <textarea
-              name="description"
-              id="description"
-              className={setTextAreaStyle(
+            <p>Label</p>
+            <input
+              name="label"
+              id="label"
+              className={setInputStyle(
                 label.hasError && label.value.length > 0
               )}
               onChange={label.valueChangeHandler}
               onBlur={label.valueBlurHandler}
               value={label.value}
+              maxLength={15}
             />
           </span>
 
