@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import "./video-style.css";
 import { useEffect, useState } from "react";
 import Activity from "../../../utils/interfaces/activity";
 import Markdown from "react-markdown";
-import { ACTIVITIES_VIDEOS } from "../../../config/urls";
+import { ACTIVITIES, ACTIVITIES_VIDEOS } from "../../../config/urls";
 import BaseReactPlayer from "react-player";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 
@@ -32,7 +33,7 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
    */
   useEffect(() => {
     if (activity && activity !== undefined) {
-      fetch(`http://localhost:5001/activities/${activity.url}`)
+      fetch(`${ACTIVITIES}${activity.url}`)
         .then((response: any) => response.text())
         //.then((text) => md.render(text))
         .then((mdContent: string) => {

@@ -54,8 +54,6 @@ const PreviewLesson = ({
       switchToNextLesson();
     };
 
-    console.log(selectedLesson.id);
-
     sendRequest(
       { path: `/lesson/read/${selectedLesson.id}`, method: "put" },
       applyData
