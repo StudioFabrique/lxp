@@ -34,7 +34,7 @@ const RoleSelector: FC<{
             key={item._id}
             value={item.role}
           >
-            {item.role} {item.role === "admin" && "(mon rôle)"}
+            {item.role}
           </option>
         ))}
     </select>

@@ -121,14 +121,14 @@ const PermissionsList: FC<{
             {ressources?.ressources.map((res) => (
               <p
                 key={res}
-                className="bg-secondary text-secondary-content p-2 rounded-lg capitalize"
+                className="bg-secondary/90 text-secondary-content p-2 rounded-lg capitalize"
               >{`Gestion ${res}`}</p>
             ))}
             <hr className="border-black w-[105%]" />
             {ressources?.roles.map((res) => (
               <p
                 key={res}
-                className="bg-secondary text-secondary-content p-2 rounded-lg capitalize"
+                className="bg-primary text-primary-content p-2 rounded-lg capitalize"
               >{`Gestion ${res}`}</p>
             ))}
           </div>
