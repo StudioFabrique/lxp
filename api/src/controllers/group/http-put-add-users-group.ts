@@ -7,12 +7,10 @@ export default async function httpPutAddUsersGroup(
   res: Response
 ) {
   const { id } = req.params;
-  const { users } = req.body;
-
-  console.log({ id });
+  const { usersId }: { usersId: string[] } = req.body;
 
   try {
-    const response = await addUsers(id, users);
+    const response = await addUsers(id, usersId);
 
     if (!response) {
       return res.status(400).json({ message: badQuery });

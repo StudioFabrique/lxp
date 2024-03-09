@@ -323,7 +323,7 @@ async function createFormation() {
         code: "007",
         level: "bac + 2",
       },
-      {
+      /*       {
         title: "Concepteur Développeur d'Applications",
         description:
           "Toutes les compétences pour concevoir et développer des applications.",
@@ -336,7 +336,7 @@ async function createFormation() {
           "Ce parcours en boulangerie est conçu pour guider les apprenants à travers un voyage complet dans l'art de la boulangerie, alliant connaissances théoriques et compétences pratiques. Il convient aux boulangers expérimentés désirant approfondir leurs connaissances et techniques. Les modules couvrent des aspects variés du métier, depuis les fondamentaux jusqu'aux tendances modernes et pratiques durables.",
         code: "021",
         level: "cap",
-      },
+      }, */
     ];
     await prisma.formation.create({
       data: {
@@ -351,7 +351,7 @@ async function createFormation() {
         },
       },
     });
-    await prisma.formation.create({
+    /*     await prisma.formation.create({
       data: {
         ...newFormations[1],
         adminId: 1,
@@ -376,7 +376,7 @@ async function createFormation() {
         },
         adminId: 1,
       },
-    });
+    }); */
   } catch (error) {
     console.log(error);
   }
