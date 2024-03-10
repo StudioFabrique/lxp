@@ -10,7 +10,14 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-console.log(path.join(__dirname, "..", "public", "index.html"));
+const origins =
+  process.env.NODE_ENV === "production"
+    ? []
+    : [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+      ];
 app
   .use(
     helmet({
@@ -36,11 +43,7 @@ app
   )
   .use(
     cors({
-      origin: [
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://localhost:5175",
-      ],
+      origin: origins,
       credentials: true,
     })
   )
