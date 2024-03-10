@@ -11,8 +11,7 @@ export default async function connect(socketId: string, userId: string) {
     }).populate("roles");
 
     if (!existingUser) {
-      console.log("User not found or inactive");
-      return;
+      throw new Error("L'utilisateur n'existe pas ou est inactif.");
     }
 
     // Remove existing socket
@@ -32,7 +31,6 @@ export default async function connect(socketId: string, userId: string) {
             existingUser.connectionInfos.length - 1
           ],
         });
-        console.log("toto", lastConnectionInfos);
 
         if (lastConnectionInfos) {
           const today = new Date();
@@ -77,6 +75,6 @@ export default async function connect(socketId: string, userId: string) {
       }
     }
   } catch (error: any) {
-    console.error(error);
+    throw error;
   }
 }

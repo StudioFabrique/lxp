@@ -10,6 +10,7 @@ import { setTokens } from "../../utils/services/auth/set-tokens";
 import { tokensMaxAge } from "../../config/config";
 import { validationResult } from "express-validator";
 import { logger } from "../../utils/logs/logger";
+import { userConnectionNotification } from "../../socket/socket";
 
 async function httpLogin(req: Request, res: Response) {
   const { email, password } = req.body;
@@ -37,6 +38,13 @@ async function httpLogin(req: Request, res: Response) {
     if (user) {
       const accessToken = setTokens(user._id, user.roles);
       const refreshToken = setTokens(user._id, user.roles);
+
+      /*       if (user.roles[0].rank > 2) {
+        await userConnectionNotification(
+          user._id,
+          `${user.firstname} ${user.lastname} vient de se connecter.`
+        );
+      } */
       return res
         .cookie("accessToken", accessToken, {
           maxAge: tokensMaxAge.accessToken,
