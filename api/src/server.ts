@@ -14,7 +14,7 @@ server = http.createServer(app);
 
 const origins =
   process.env.NODE_ENV === "production"
-    ? ["http://localhost:5001"]
+    ? []
     : [
         "http://localhost:5173",
         "http://localhost:5174",
