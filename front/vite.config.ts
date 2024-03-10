@@ -7,7 +7,7 @@ export default defineConfig({
   build: {
     manifest: true,
     rollupOptions: {
-      input: "./index.html",
+      input: "./main.tsx",
     },
     outDir: "../api/dist/public/",
   },
