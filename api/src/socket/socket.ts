@@ -24,13 +24,10 @@ export function socket(io: Server): void {
         io.emit("students-count", count);
 
         groupId = await getUserGroupId(userId);
-        console.log({ groupId });
-        console.log({ userId });
 
         if (groupId) {
           if (!socket.rooms.has(groupId)) socket.rooms.add(groupId);
           socket.join(groupId);
-          console.log(`room ${groupId} joined by ${userId}`);
         }
 
         socket.on("disconnect", async () => {
@@ -64,7 +61,6 @@ export function socket(io: Server): void {
           const result = await postFeedBack(userId, feelingLevel, comment);
           const contactsList = await getFeedbacks(userId);
           const userData = await getUserData(userId);
-          console.log({ contactsList });
 
           if (result) {
             const feedback = {
