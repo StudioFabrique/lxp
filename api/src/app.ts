@@ -53,10 +53,6 @@ app
   .use(express.static(path.join(__dirname, "..", "public")))
   .use(express.static(path.join(__dirname, "..", "uploads")))
   .use("/v1", api);
-/*   .use(({ res }: { res: Response }) => {
-    const message = "Impossible de trouver les ressources demandées.";
-    res.status(404).json(message);
-  }); */
 app.get("*", (_req, res) => {
   res.sendFile(path.join(__dirname, "..", "public", "index.html"));
 });
