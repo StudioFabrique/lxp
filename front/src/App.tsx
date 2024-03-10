@@ -1,4 +1,4 @@
-import { RouterProvider, createHashRouter } from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import ContextProvider from "./store/context.store";
 import RootLayout from "./views/home/root-layout.component";
@@ -41,7 +41,7 @@ import UserData from "./views/teacher/user-data";
 import ModuleStudentPreview from "./views/module/module-student-preview";
 import FeedbacksHome from "./views/feedbacks/feedbackshome";
 
-const router = createHashRouter([
+const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
