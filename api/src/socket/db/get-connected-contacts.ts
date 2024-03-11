@@ -13,7 +13,7 @@ export default async function getConnectedContacts(userId: string) {
   }
 
   const existingContacts = await prisma.group.findFirst({
-    where: { idMdb: groupId.group[0]._id },
+    where: { idMdb: groupId.group._id },
     select: {
       parcours: {
         select: {
