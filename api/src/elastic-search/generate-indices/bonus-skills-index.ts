@@ -9,7 +9,7 @@ const bonusSkillSchema: ElasticSchema = {
 };
 
 async function createBonusSkillsIntoIndex() {
-  const bonusSkillsDataFromPrisma = await prisma?.bonusSkill.findMany({
+  const bonusSkillsDataFromPrisma = await prisma.bonusSkill.findMany({
     include: { parcours: { select: { id: true } } },
   });
 

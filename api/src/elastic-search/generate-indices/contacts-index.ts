@@ -1,3 +1,4 @@
+import { prisma } from "../../utils/db";
 import { log } from "console";
 import elasticSearchClient, { ElasticSchema } from "../elastic-search";
 
@@ -9,7 +10,7 @@ const ContactSchema: ElasticSchema = {
 };
 
 async function createContactsIntoIndex() {
-  const contactsDataFromPrisma = await prisma?.contact.findMany({
+  const contactsDataFromPrisma = await prisma.contact.findMany({
     include: { parcours: { select: { parcours: { select: { id: true } } } } },
   });
 
