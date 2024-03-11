@@ -51,7 +51,7 @@ const ModuleHomeList = ({
       <section className="w-full">
         <Header
           title="Liste des modules"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in urna eget pura."
+          description="Gérer tous les modules qui sont créer au sein de l'application."
         ></Header>
       </section>
       <section className="w-full flex flex-col">

@@ -59,7 +59,7 @@ export default function LessonHomePage() {
       <section className="w-5/6 flex flex-col items-center">
         <Header
           title="Liste des leçons"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in urna eget pura."
+          description="Gérer toutes les leçons qui  vous sont attribuées."
         ></Header>
       </section>
       {lessonsList && lessonsList.length > 0 ? (
