@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import useHttp from "../../hooks/use-http";
 import Parcours from "../../utils/interfaces/parcours";
@@ -7,8 +7,16 @@ import Loader from "../../components/UI/loader";
 import { sortArray } from "../../utils/sortArray";
 import toast from "react-hot-toast";
 import ParcoursList from "../../components/parcours-home/parcours-home";
+import { useLocation } from "react-router-dom";
 
 const ParcoursHome = () => {
+  const { pathname } = useLocation();
+
+  const currentRoute = useMemo(
+    () => pathname.split("/").slice(1) ?? [],
+    [pathname]
+  );
+
   const [parcoursList, setParcoursList] = useState<Array<Parcours> | null>(
     null
   );
@@ -23,11 +31,14 @@ const ParcoursHome = () => {
     };
     sendRequest(
       {
-        path: "/parcours",
+        path:
+          currentRoute[0] === "student"
+            ? "/parcours/parcours-as-student"
+            : "/parcours",
       },
       applyData
     );
-  }, [sendRequest]);
+  }, [currentRoute, sendRequest]);
 
   // gestion des erreurs HTTP
   useEffect(() => {
