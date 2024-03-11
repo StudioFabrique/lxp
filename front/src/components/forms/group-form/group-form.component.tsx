@@ -15,6 +15,7 @@ const GroupForm: FC<{
   isLoading?: boolean;
   group?: Group;
   title?: string;
+  isFileNotRequired?: boolean;
   gridType?: "cols" | "rows";
   hideCancelButton?: boolean;
   hideDetailsComponent?: boolean;
@@ -52,7 +53,7 @@ const GroupForm: FC<{
       onValidationErrors(newErrors);
       return;
     }
-    if (file) {
+    if (props.isFileNotRequired || file) {
       props.onSubmitForm(
         {
           group: {
