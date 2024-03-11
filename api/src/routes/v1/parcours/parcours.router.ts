@@ -32,6 +32,7 @@ import httpUpdateImage from "../../../controllers/parcours/http-update-image";
 import { headerImageMaxSize } from "../../../config/images-sizes";
 import httpGetTeacherParcours from "../../../controllers/parcours/http-get-teacher-parcours";
 import httpGetRootAdminParcours from "../../../controllers/parcours/http-get-root-admin-parcours";
+import httpGetParcoursAsStudent from "../../../controllers/parcours/http-get-parcours-as-student";
 
 const parcoursRouter = express.Router();
 
@@ -72,7 +73,7 @@ parcoursRouter.get(
 parcoursRouter.get(
   "/parcours-as-student",
   checkPermissions("default"),
-  httpGetParcours
+  httpGetParcoursAsStudent
 );
 parcoursRouter.put(
   "/update-infos",
