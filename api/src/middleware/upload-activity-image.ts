@@ -16,7 +16,10 @@ export const uploadActivityImage = () => {
       if (file.mimetype.startsWith("image")) {
         const uniqueID: string = uuidv4();
         const fileName: string = uniqueID + new Date().getTime();
-        cb(null, file.fieldname + "-" + fileName + file.originalname);
+        const ext = file.mimetype.split("/")[1];
+        console.log(file);
+
+        cb(null, file.fieldname + "-" + fileName + "." + ext);
       } else {
         console.log("oops");
       }
