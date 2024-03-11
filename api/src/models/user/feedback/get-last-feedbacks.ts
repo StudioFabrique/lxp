@@ -83,7 +83,7 @@ export default async function getLastFeedbacks(
     feelingLevel: item.feelingLevel,
     feedbackAt: item.feedbackAt,
     comment: item.comment,
-    avatar: item.user.avatar,
+    avatar: item.user.avatar ? item.user.avatar.toString("base64") : null,
     name: `${item.user.firstname} ${item.user.lastname}`,
     hasBeenReviewed: item.hasBeenReviewed,
     studentId: item.user._id,
