@@ -79,8 +79,9 @@ const AdminHome = () => {
               !
             </h2>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in
-              urna eget pura.
+              Bienvenue dans votre panneau d'administration, l'outil central
+              pour gérer et surveiller tous les aspects de l'apprentissage des
+              vos apprenants.
             </p>
           </span>
         </article>
@@ -110,7 +111,7 @@ const AdminHome = () => {
           </Can>
           {links.map((item, index) => (
             <React.Fragment key={item.label}>
-              {index > 1 ? (
+              {index > 2 ? (
                 <li>
                   <Link className="btn btn-primary" to={item.path}>
                     {item.label}

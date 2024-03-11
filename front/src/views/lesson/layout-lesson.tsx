@@ -6,7 +6,7 @@ export default function LayoutLesson() {
   return (
     <CanAccessPage action="read" subject="course">
       <div className="w-screen flex gap-2 p-2">
-        <div className="w-full min-h-screen pl-12">
+        <div className="w-full min-h-screen">
           <Outlet />
         </div>
       </div>
