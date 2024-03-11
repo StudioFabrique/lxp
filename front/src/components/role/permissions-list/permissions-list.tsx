@@ -13,6 +13,7 @@ import RoleSelector from "./role-selector";
 import useHttp from "../../../hooks/use-http";
 import RessourcesByAction from "./ressources-by-action";
 import toast from "react-hot-toast";
+import { invokeSingleAnswerToast } from "../../UI/custom-toast/single-answer-toast";
 
 const PermissionsList: FC<{
   roles: IRoleItem[];
@@ -59,6 +60,11 @@ const PermissionsList: FC<{
 
   const handleSubmitPermissions = () => {
     const applyData = (data: any) => {
+      invokeSingleAnswerToast(
+        "Les permissions ont été mises à jour, recharger la page ?",
+        "Oui",
+        () => window.location.reload()
+      );
       toast.success(data.message);
     };
 
