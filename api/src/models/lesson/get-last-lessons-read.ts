@@ -1,3 +1,5 @@
+import { prisma } from "../../utils/db";
+
 import Group from "../../utils/interfaces/db/group";
 
 /**
@@ -16,7 +18,7 @@ export default async function getLastLessonsRead(
 
   if (!(groupIds.length > 0)) return null;
 
-  const lessons = await prisma?.lessonRead.findMany({
+  const lessons = await prisma.lessonRead.findMany({
     where: {
       student: { idMdb: userIdMdb },
       lesson: {
@@ -67,7 +69,7 @@ export default async function getLastLessonsRead(
   });
 
   if (lessons && !(lessons?.length > 0)) {
-    const lesson = await prisma?.lesson.findFirst({
+    const lesson = await prisma.lesson.findFirst({
       where: {
         lessonsRead: { every: { NOT: { student: { idMdb: userIdMdb } } } },
         course: {

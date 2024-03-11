@@ -1,10 +1,12 @@
+import { prisma } from "../../utils/db";
+
 import User from "../../utils/interfaces/db/user";
 
 export default async function putFinishReadLesson(
   lessonId: number,
   userIdMdb: string
 ) {
-  const student = await prisma?.student.findFirst({
+  const student = await prisma.student.findFirst({
     where: { idMdb: userIdMdb },
   });
 
@@ -14,7 +16,7 @@ export default async function putFinishReadLesson(
     return null;
   }
 
-  const lessonRead = await prisma?.lessonRead.findFirst({
+  const lessonRead = await prisma.lessonRead.findFirst({
     where: { lessonId, student },
     select: { id: true, finishedAt: true, lesson: { select: { title: true } } },
   });
@@ -27,7 +29,7 @@ export default async function putFinishReadLesson(
     return lessonRead;
   }
 
-  const transactionResult = await prisma?.$transaction([
+  const transactionResult = await prisma.$transaction([
     prisma.lessonRead.update({
       where: { id: lessonRead.id },
       data: { finishedAt: new Date() },

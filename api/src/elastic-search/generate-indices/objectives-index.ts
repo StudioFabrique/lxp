@@ -1,3 +1,4 @@
+import { prisma } from "../../utils/db";
 import { log } from "console";
 import elasticSearchClient, { ElasticSchema } from "../elastic-search";
 
@@ -8,7 +9,7 @@ const SkillSchema: ElasticSchema = {
 };
 
 async function createObjectivesIntoIndex() {
-  const skillsDataFromPrisma = await prisma?.objective.findMany({
+  const skillsDataFromPrisma = await prisma.objective.findMany({
     include: { parcours: { select: { id: true } } },
   });
 

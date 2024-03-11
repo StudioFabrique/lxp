@@ -1,5 +1,6 @@
-import { Course } from "@prisma/client";
 import { prisma } from "../../utils/db";
+
+import { Course } from "@prisma/client";
 import Group from "../../utils/interfaces/db/group";
 
 /**
@@ -43,7 +44,7 @@ export default async function getMostReadCourses(
       } = course;
 
       const lessonId = (
-        await prisma?.lesson.findFirst({
+        await prisma.lesson.findFirst({
           select: { id: true },
           where: { courseId: courseReformated.id },
           orderBy: { order: "asc" },

@@ -1,3 +1,4 @@
+import { prisma } from "../../utils/db";
 import { log } from "console";
 import elasticSearchClient, { ElasticSchema } from "../elastic-search";
 
@@ -13,7 +14,7 @@ const ModuleSchema: ElasticSchema = {
 };
 
 async function createModulesIntoIndex() {
-  const modulesDataFromPrisma = await prisma?.module.findMany({
+  const modulesDataFromPrisma = await prisma.module.findMany({
     include: {
       parcours: {
         select: {
