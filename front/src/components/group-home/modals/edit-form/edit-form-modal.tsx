@@ -69,6 +69,7 @@ const EditFormModal = ({ modalContent, onCloseModal }: EditFormModalProps) => {
           title={`Modifier le groupe ${modalContent.groupName}`}
           hideCancelButton
           hideDetailsComponent
+          isFileNotRequired
         />
       )}
     </div>

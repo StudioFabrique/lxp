@@ -177,17 +177,10 @@ export const groupValidator = [
     .trim()
     .escape()
     .withMessage("titre (name) ou description (desc) non conforme"),
-  body([
-    "data.users.*.email",
-    "data.users.*.firstname",
-    "data.users.*.lastname",
-  ])
-    .notEmpty()
+  body("data.usersId").isArray().withMessage("users n'est pas un Array"),
+  body("data.usersId.*")
     .isString()
-    .trim()
-    .escape()
-    .withMessage("champs dans users non valides"),
-  body("data.users").isArray().withMessage("users n'est pas un Array"),
+    .withMessage("le contenu du tableau users doit être de type string"),
   checkValidatorResult,
 ];
 

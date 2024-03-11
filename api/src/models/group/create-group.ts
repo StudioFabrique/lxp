@@ -1,11 +1,11 @@
 import Group, { IGroup } from "../../utils/interfaces/db/group";
 import Role from "../../utils/interfaces/db/role";
-import User, { IUser } from "../../utils/interfaces/db/user";
+import User from "../../utils/interfaces/db/user";
 import { prisma } from "../../utils/db";
 
 export default async function createGroup(
   group: IGroup,
-  users: IUser[],
+  usersId: string[],
   image: Buffer | undefined,
   parcoursId?: number
 ) {
@@ -19,7 +19,7 @@ export default async function createGroup(
   newGroup.roles = await Role.find({ role: "student", rank: 3 });
 
   newGroup.users = await User.find({
-    _id: { $in: users.map((user) => user._id) },
+    _id: { $in: usersId },
   });
 
   if (!!image) {
@@ -38,6 +38,11 @@ export default async function createGroup(
       parcours: parcoursId ? { create: { parcoursId } } : undefined,
     },
   });
+
+  await User.updateMany(
+    { id: { usersId } },
+    { $push: { group: createdGroup._id } }
+  );
 
   return createdGroup;
 }

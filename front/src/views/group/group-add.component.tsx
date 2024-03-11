@@ -19,8 +19,10 @@ const GroupAdd = () => {
       });
     };
 
+    const usersId = usersToAdd.map((user) => user._id);
+
     const formData = new FormData();
-    formData.append("data", JSON.stringify({ ...data, users: usersToAdd }));
+    formData.append("data", JSON.stringify({ ...data, usersId }));
     formData.append("image", file);
 
     sendRequest({ method: "post", path: "/group", body: formData }, applyData);
