@@ -1,10 +1,10 @@
 import User, { IUser } from "../../utils/interfaces/db/user";
 
-export default async function updateManyUsers(users: IUser[]) {
-  const promises = users.map(async (user) => {
+export default async function updateManyUsers(users: string[]) {
+  const promises = users.map(async (userId) => {
     // Update the user and get the updated document
     const updatedUser = await User.findOneAndUpdate(
-      { _id: user._id },
+      { _id: userId },
       { ...user },
       { returnDocument: "after" }
     );
