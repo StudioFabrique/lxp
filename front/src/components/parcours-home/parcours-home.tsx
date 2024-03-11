@@ -51,7 +51,7 @@ const ParcoursList = (props: ParcoursListProps) => {
       <section className="w-full">
         <Header
           title="Liste des parcours"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in urna eget pura."
+          description="Gérer tous les parcours qui vous sont attribués."
         >
           <Can action="write" object="parcours">
             <Link className="btn btn-primary" to="créer-un-parcours">
