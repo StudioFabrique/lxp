@@ -30,7 +30,6 @@ export const io = new Server(server, {
 });
 io.use((socket, next) => {
   const cookie = socket.request.headers.cookie;
-  console.log({ cookie });
   next();
 });
 
