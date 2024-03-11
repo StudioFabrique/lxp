@@ -327,7 +327,7 @@ async function disconnect() {
 
 async function main() {
   await mongoConnect();
-  await dropDatabase();
+  //await dropDatabase();
   await createRoles();
   await createPermissions();
   await createUser();
