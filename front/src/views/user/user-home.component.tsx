@@ -195,8 +195,7 @@ const UserHome = () => {
         <div>
           <Header
             title="Liste d'utilisateurs"
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in urna
-          eget pura."
+            description="Créez, modifiez et supprimez des comptes, assignez des rôles et des permissions, et mettez à jour vos utilisateurs"
           >
             <Can action="write" object="user">
               <Link className="btn btn-primary" to="/admin/user/add">
