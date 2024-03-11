@@ -1,3 +1,4 @@
+import { prisma } from "../../utils/db";
 import { Request, Response } from "express";
 import elasticSearchClient from "../../elastic-search/elastic-search";
 import { elasticSearchTerms } from "../../config/elasticSearchTerms";
@@ -13,7 +14,7 @@ export default async function httpRestrictedSearchParcours(
     const groups = await Group.find({ users: { _id: userId } });
 
     const parcoursIdFromGroup = (
-      await prisma?.parcours.findMany({
+      await prisma.parcours.findMany({
         where: {
           OR: [
             {
