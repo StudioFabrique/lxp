@@ -52,9 +52,10 @@ app
   .use(express.json())
   .use(express.static(path.join(__dirname, "..", "public")))
   .use(express.static(path.join(__dirname, "..", "uploads")))
-  .use("/v1", api);
-app.get("*", (_req, res) => {
-  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
-});
+  .use("/v1", api)
+  .set("trust proxy", ["loopback", "linklocal", "uniquelocal"])
+  .get("*", (_req, res) => {
+    res.sendFile(path.join(__dirname, "..", "public", "index.html"));
+  });
 
 export default app;
