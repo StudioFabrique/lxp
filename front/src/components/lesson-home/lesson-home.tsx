@@ -24,7 +24,7 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
     //getFilteredList,
     //resetFilters,
     //setPage,
-  } = useEagerLoadingList(lessonsList, "title", 15);
+  } = useEagerLoadingList(lessonsList, "title", 1000);
 
   const content = (
     <>
@@ -94,7 +94,7 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
   );
 
   return (
-    <main className="w-full flex flex-col items-center px-4 py-8 gap-8">
+    <main className="w-5/6 flex flex-col items-center px-4 py-8 gap-8">
       <div className="w-full mt-16 min-h-[50%] flex justify-center items-center text-xs lg:text-sm">
         {lessonsList && LessonsList.length > 0 ? (
           <table className="table w-full border-separate border-spacing-y-2">
