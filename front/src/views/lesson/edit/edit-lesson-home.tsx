@@ -196,20 +196,20 @@ export default function EditLessonHome() {
       {activities && activities.length > 0 ? (
         <section className="mt-8 flex flex-col items-center">
           <ul className="w-full flex flex-col justify-center items-center">
-            {sortArray(activities, "order").map((item) => (
+            {sortArray(activities, "order").map((item, index) => (
               <li className="w-full mb-8" key={item.id}>
                 <div className="flex justify-center items-center gap-x-8">
                   <span className="text-primary flex flex-col gap-y-2">
                     <button
                       className="btn btn-primary btn-sm btn-circle rounded-md btn-outline"
-                      disabled={item.order === 0}
+                      disabled={index === 0}
                       onClick={() => handleClickUp(item)}
                     >
                       <ChevronUp />
                     </button>
                     <button
                       className="btn btn-primary btn-sm btn-circle rounded-md btn-outline"
-                      disabled={item.order === activities.length - 1}
+                      disabled={index === activities.length - 1}
                       onClick={() => handleClickDown(item)}
                     >
                       <ChevronDown />
@@ -220,7 +220,7 @@ export default function EditLessonHome() {
                     <Wrapper>
                       <span className="flex items-center gap-x-2">
                         <h2 className="font-bold text-md text-primary">
-                          Activité n° {item.order}
+                          Activité n° {index + 1}
                         </h2>
                         {isLoading ? (
                           <Loader2 className="w-4 h-4 text-primary animate-spin" />
