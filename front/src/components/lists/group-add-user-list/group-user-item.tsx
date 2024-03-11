@@ -42,7 +42,7 @@ const GroupUserItem: FC<{
           onCheckRow ? "bg-transparent" : "bg-transparent rounded-l-xl p-2"
         }
       >
-        {user.avatar && <AvatarSmall url={user.avatar} />}
+        <AvatarSmall url={user?.avatar} />
       </td>
       <td className="bg-transparent">{user.firstname}</td>
       <td className="bg-transparent">{user.lastname}</td>

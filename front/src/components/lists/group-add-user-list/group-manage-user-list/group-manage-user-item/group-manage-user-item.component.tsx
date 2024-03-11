@@ -45,7 +45,7 @@ const GroupManageUserItem: FC<{
             onDeleteSelectedUser={onDeleteSelectedUser}
           />
         )}
-        {user.avatar && <AvatarSmall url={user.avatar} />}
+        <AvatarSmall url={user.avatar} />
         <span className="flex gap-x-4">
           <p>{toTitleCase(user.firstname)}</p>
           <p>{toTitleCase(user.lastname)}</p>
