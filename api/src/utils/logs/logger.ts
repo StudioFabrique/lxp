@@ -5,7 +5,6 @@ import path from "path";
 const { combine, timestamp, json } = winston.format;
 
 const logPath = path.join(__dirname, "..", "..", "..", "logs");
-console.log({ logPath });
 
 const transportInfo = new winston.transports.DailyRotateFile({
   level: "info",
