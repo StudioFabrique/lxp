@@ -1,3 +1,5 @@
+import { prisma } from "../../utils/db";
+
 import Group from "../../utils/interfaces/db/group";
 
 export default async function getModulesTimeline(
@@ -10,7 +12,7 @@ export default async function getModulesTimeline(
 
   if (!(groupIds.length > 0)) return null;
 
-  const modulesWithMinMaxDates = await prisma?.module.findMany({
+  const modulesWithMinMaxDates = await prisma.module.findMany({
     select: { id: true, title: true, minDate: true, maxDate: true },
     where: {
       parcours: {

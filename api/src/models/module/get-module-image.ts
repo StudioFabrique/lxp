@@ -1,5 +1,7 @@
+import { prisma } from "../../utils/db";
+
 export default async function getModuleImage(moduleId: number) {
-  const module = await prisma?.module.findUnique({
+  const module = await prisma.module.findUnique({
     where: { id: moduleId },
     select: { image: true },
   });

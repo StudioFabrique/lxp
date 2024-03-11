@@ -1,3 +1,4 @@
+import { prisma } from "../../utils/db";
 import { log } from "console";
 import elasticSearchClient, { ElasticSchema } from "../elastic-search";
 
@@ -9,7 +10,7 @@ const TagSchema: ElasticSchema = {
 };
 
 async function createTagsIntoIndex() {
-  const tagsDataFromPrisma = await prisma?.tag.findMany({
+  const tagsDataFromPrisma = await prisma.tag.findMany({
     include: { parcours: { select: { parcours: { select: { id: true } } } } },
   });
 
