@@ -77,7 +77,12 @@ const EditUsersModal = ({
     setModalContent,
   ]);
 
-  if (isLoading) return <Loader />;
+  if (isLoading)
+    return (
+      <div className="w-full h-[60vh]">
+        <Loader />
+      </div>
+    );
 
   return (
     <div className="flex flex-col gap-10 w-full mt-2">
