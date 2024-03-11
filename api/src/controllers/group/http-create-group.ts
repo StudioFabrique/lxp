@@ -6,7 +6,6 @@ import {
   creationSuccessfull,
   serverIssue,
 } from "../../utils/constantes";
-import updateManyUsers from "../../models/user/update-many-users";
 import { deleteTempUploadedFile } from "../../middleware/fileUpload";
 import fs from "fs";
 
