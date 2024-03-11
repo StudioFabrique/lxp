@@ -79,13 +79,13 @@ const EditUsersModal = ({
 
   if (isLoading)
     return (
-      <div className="w-full h-[60vh]">
+      <div className="w-full min-h-[60vh]">
         <Loader />
       </div>
     );
 
   return (
-    <div className="flex flex-col gap-10 w-full mt-2">
+    <div className="flex flex-col gap-10 w-full mt-2 min-h-[60vh]">
       <div className="flex flex-col gap-y-10">
         <span className="flex justify-between items-center">
           <h3 className="text-xl font-bold">
