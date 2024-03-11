@@ -5,10 +5,11 @@ import toast from "react-hot-toast";
  * un toast avec une réponse.
  */
 export const invokeSingleAnswerToast = (
+  question: string,
   answer: string,
   onClickAnswer: () => void
 ) =>
-  toast("Êtes-vous sûr ?", {
+  toast(question, {
     position: "bottom-right",
     className: "flex flex-row-reverse gap-x-5",
     icon: (
