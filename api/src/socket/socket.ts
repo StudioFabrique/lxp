@@ -69,7 +69,9 @@ export function socket(io: Server): void {
               comment: result.comment,
               feelingLevel: result.feelingLevel,
               name: `${userData.firstname} ${userData.lastname}`,
-              avatar: userData.avatar,
+              avatar: userData.avatar
+                ? userData.avatar.toString("base64")
+                : null,
               hasBeenReviewed: false,
               userId,
             };
