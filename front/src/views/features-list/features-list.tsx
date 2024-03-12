@@ -21,7 +21,7 @@ const FeaturesList = () => {
       <UserTopBar />
       <div className="grid grid-rows-5 gap-5 p-20">
         <div className="flex flex-col row-span-2 items-center gap-y-5 justify-center h-full bg-secondary text-secondary-content p-20 rounded-lg">
-          <p className="font-bold text-6xl">Page non trouvée</p>
+          <p className="font-bold text-6xl">Disponible bientôt</p>
           <p className="font-semibold w-[60%] text-center">
             Oups ! Il semble que vous ayez trouvé une page qui n'existe pas...
             Mais ne vous inquiétez pas, l'apprentissage continue !
