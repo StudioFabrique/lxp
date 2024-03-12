@@ -56,7 +56,7 @@ const EditCourseHome = () => {
 
   return (
     <FadeWrapper>
-      <div className="p-4 rounded-xl w-5/6 bg-secondary/20">
+      <div className="rounded-xl w-5/6 bg-secondary/20">
         <Stepper
           actualStep={actualStep}
           finalStep={finalStep}
