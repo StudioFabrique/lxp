@@ -63,13 +63,13 @@ export default function LayoutEditLesson() {
   };
 
   return (
-    <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
+    <div className="w-full h-full flex flex-col justify-start items-center py-2">
       {loading ? (
         <Loader />
       ) : (
         <FadeWrapper>
           <div className="w-full h-full flex flex-col items-center gap-y-4">
-            <div className="w-full flex flex-col items-center gap-y-4 pl-20">
+            <div className="w-full flex flex-col items-center gap-y-4">
               {lesson &&
               lesson !== undefined &&
               lesson.title &&

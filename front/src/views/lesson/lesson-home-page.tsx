@@ -55,7 +55,7 @@ export default function LessonHomePage() {
   }, [fetchData]);
 
   return (
-    <main className="w-full flex flex-col items-center px-4 py-8 gap-8">
+    <main className="w-full flex flex-col items-center py-8 gap-8">
       <section className="w-5/6 flex flex-col items-center">
         <Header
           title="Liste des leçons"
