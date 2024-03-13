@@ -17,6 +17,7 @@ import useHttp from "../../hooks/use-http";
 import EditFormModal from "../../components/group-home/modals/edit-form/edit-form-modal";
 import GroupManageUserList from "../../components/lists/group-add-user-list/group-manage-user-list/group-manage-user-list";
 import User from "../../utils/interfaces/user";
+import Can from "../../components/UI/can/can.component";
 
 export type GroupModalContent = {
   isModalOpen?: boolean;
@@ -66,7 +67,7 @@ const GroupHome = () => {
       setRole(role);
       setPath(`/group/${role.role}`);
     },
-    [initPagination, setPath]
+    [initPagination, setPath],
   );
 
   const handleSearchResult = (entityToSearch: string, searchValue: string) => {
@@ -103,13 +104,13 @@ const GroupHome = () => {
 
     sendRequest(
       { path: `/group/${groupIdToDelete}`, method: "delete" },
-      applyData
+      applyData,
     );
   };
 
   const handleLeftClick = () => {
     const toastId = invokeSingleAnswerToast("Êtes-vous sûr ?", "Oui", () =>
-      handleDeleteEntireGroup(toastId)
+      handleDeleteEntireGroup(toastId),
     );
   };
 
@@ -144,7 +145,7 @@ const GroupHome = () => {
           method: "put",
           body: { usersId },
         },
-        applyData
+        applyData,
       );
   };
 
@@ -170,18 +171,20 @@ const GroupHome = () => {
 
   return (
     <div className="flex flex-col py-5">
-      <div className="flex justify-center my-8">
-        <div className="flex flex-col gap-y-4 w-[80vw]">
+      <div className="my-8 flex justify-center">
+        <div className="flex w-[80vw] flex-col gap-y-4">
           <span className="flex justify-between">
             <h2 className="text-4xl font-bold">Liste des groupes</h2>
-            <Link className="btn btn-primary" to="/admin/group/add">
-              Créer un groupe
-            </Link>
+            <Can action="write" object="group">
+              <Link className="btn btn-primary" to="/admin/group/add">
+                Créer un groupe
+              </Link>
+            </Can>
           </span>
           {user && role ? (
             <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />
           ) : null}
-          <div className="flex justify-end items-center">
+          <div className="flex items-center justify-end">
             <div className="flex flex-col">
               <Search
                 options={groupSearchOptions}
