@@ -43,7 +43,7 @@ const Information: FC<{
   formRef: Ref<HTMLFormElement>;
 }> = ({ formRef }) => {
   const { handshake } = useContext(Context);
-  const { sendRequest, isLoading } = useHttp(true);
+  const { sendRequest, isLoading } = useHttp();
 
   const { pathname } = useLocation();
 
