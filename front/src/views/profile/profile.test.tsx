@@ -2,11 +2,11 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 import { act } from "react-dom/test-utils";
-import Information from "../../components/user-profile/information/information";
+import Profile from "./profile";
 
 describe(
   "Conditional tests about components render along with the router state",
-  Tests
+  Tests,
 );
 
 function Tests() {
@@ -15,9 +15,9 @@ function Tests() {
     await act(async () =>
       render(
         <MemoryRouter initialEntries={["/admin"]}>
-          <Information formRef={null} />
-        </MemoryRouter>
-      )
+          <Profile />
+        </MemoryRouter>,
+      ),
     );
 
     // Check if Profile does not contain any skills or links
@@ -30,9 +30,9 @@ function Tests() {
     await act(async () =>
       render(
         <MemoryRouter initialEntries={["/student"]}>
-          <Information formRef={null} />
-        </MemoryRouter>
-      )
+          <Profile />
+        </MemoryRouter>,
+      ),
     );
 
     // Check if Profile contain skills or links component
