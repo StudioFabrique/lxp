@@ -1,0 +1,9 @@
+Connexion Kibana : http://0.0.0.0:5601/
+
+docker exec -it elasticsearch bin/elasticsearch-create-enrollment-token --scope kibana
+docker exec -it kibana bin/kibana-verification-code
+docker exec -it elasticsearch bin/elasticsearch-reset-password -u elastic
+docker cp elasticsearch:/usr/share/elasticsearch/config/certs/http_ca.crt Downloads/.Copy http_ca.crt into certs folder
+
+On Kibana, generate a new API key and copy paste from the encoded one to .env ELASTIC_API.
+npm run elastic-search
