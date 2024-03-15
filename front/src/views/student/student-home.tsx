@@ -25,10 +25,10 @@ const StudentHome = () => {
   }, [sendRequest]);
 
   return (
-    <div className="flex flex-col gap-6 m-6">
-      <div className="flex flex-col-reverse lg:flex-row w-full justify-between">
+    <div className="m-6 flex flex-col gap-6">
+      <div className="flex w-full flex-col-reverse justify-between lg:flex-row">
         <span className="mt-5">
-          <h1 className="font-bold text-3xl">{`Bonjour, ${user?.firstname} ${user?.lastname} !`}</h1>
+          <h1 className="text-3xl font-bold capitalize ">{`Bonjour, ${user?.firstname} ${user?.lastname} !`}</h1>
           <p>
             Bienvenue dans votre espace. Commencez votre apprentissage ou
             reprenez là où vous avez arrêté
@@ -38,8 +38,8 @@ const StudentHome = () => {
           <UserTopBar />
         </span>
       </div>
-      <div className="grid xl:grid-cols-4 xl:gap-0 gap-10">
-        <div className="xl:col-span-3 flex flex-col gap-5">
+      <div className="grid gap-10 xl:grid-cols-4 xl:gap-0">
+        <div className="flex flex-col gap-5 xl:col-span-3">
           <Notifications />
           {lastLessons && lastLessons?.length > 0 ? (
             <>
