@@ -52,13 +52,9 @@ const UserItem: FC<{
         />
       </td>
       <td className="bg-transparent">
-        <AvatarSmall
-          url={
-            userItem.avatar
-              ? `data:image/jpeg;base64,${userItem.avatar}`
-              : undefined
-          }
-        />
+        {userItem.avatar ? (
+          <AvatarSmall url={`data:image/jpeg;base64,${userItem.avatar}`} />
+        ) : null}
       </td>
       <td className="bg-transparent capitalize">{userItem.firstname}</td>
       <td className="bg-transparent capitalize">{userItem.lastname}</td>
