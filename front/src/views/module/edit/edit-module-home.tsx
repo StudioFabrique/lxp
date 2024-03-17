@@ -37,6 +37,7 @@ export default function EditModuleHome() {
   const [updating, setUpdating] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  // retourne les informations d'un module
   const fetchModule = useCallback(() => {
     const applyData = (data: { data: ModuleDetail; message: string }) => {
       setModule(data.data);
@@ -50,6 +51,7 @@ export default function EditModuleHome() {
     );
   }, [moduleId, sendRequest]);
 
+  // met à jour l'ordre dans lequel les cours sont affichés dans la bdd
   const handleReorderCourses = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const applyData = (data: any) => {
@@ -74,6 +76,7 @@ export default function EditModuleHome() {
     setModule((prevModule) => ({ ...prevModule!, courses: updatedCourses }));
   };
 
+  // debounce pour envoyer la requête de mise à jour des informations du module
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (submit) {
@@ -89,6 +92,7 @@ export default function EditModuleHome() {
     fetchModule();
   }, [fetchModule]);
 
+  // debounce pour la confirmation du succes de la mise à jour d'un module
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (success) {
@@ -121,7 +125,9 @@ export default function EditModuleHome() {
                   subTitle={module.parcours}
                   imageUrl={`data:image/jpeg;base64,${module.image}`}
                 >
-                  <BookIcon />
+                  <div className="w-12 h-12 text-white">
+                    <BookIcon />
+                  </div>
                   <></>
                 </ImageHeader>
               ) : null}
