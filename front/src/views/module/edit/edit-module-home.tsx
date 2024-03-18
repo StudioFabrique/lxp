@@ -112,7 +112,7 @@ export default function EditModuleHome() {
   }, [error]);
 
   return (
-    <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
+    <div className="w-full h-full flex flex-col justify-start items-center p2-8 py-2">
       {loading ? (
         <Loader />
       ) : (
@@ -135,7 +135,7 @@ export default function EditModuleHome() {
             </div>
             {module ? (
               <>
-                <section className="w-4/6 grid grid-cols-2 gap-4 my-4">
+                <section className="w-full xl:w-4/6 grid grid-cols-1 lg:grid-cols-2 gap-4 my-4">
                   <article>
                     <EditModuleInfos
                       minDate={module.minDate}
@@ -148,7 +148,7 @@ export default function EditModuleHome() {
                     <EditModuleSkills skills={module.bonusSkills} />
                   </article>
                 </section>
-                <section className="w-4/6">
+                <section className="w-full xl:w-4/6">
                   <EditModuleCourse
                     updating={updating}
                     success={success}

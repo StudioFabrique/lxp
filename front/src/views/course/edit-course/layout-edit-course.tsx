@@ -60,7 +60,7 @@ const LayoutCourseEdit = () => {
   console.log({ course });
 
   return (
-    <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
+    <div className="w-full h-full flex flex-col justify-start items-center px-2 py-2">
       {loading ? (
         <Loader />
       ) : (

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
 import { Context } from "../../store/context.store";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
@@ -41,9 +41,7 @@ const RootLayout = () => {
 
   return (
     <FadeWrapper>
-      <div className="w-full">
-        <Login />
-      </div>
+      <div className="w-full">{!isLoggedIn ? <Login /> : <Outlet />}</div>
     </FadeWrapper>
   );
 };
