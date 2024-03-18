@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export default function courseSkillsFromHttp(data: any) {
   const updatedData = {
     courseSkills: data.bonusSkills.map((item: any) => item.bonusSkill),
