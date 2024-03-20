@@ -21,7 +21,7 @@ const FormObjective: FC<Props> = ({ objective, onCloseDrawer, onSubmit }) => {
   //const textAreaRef = useRef<any>(null);
 
   // test la validité du formulaire
-  let formIsValid = description.isValid;
+  const formIsValid = description.isValid;
 
   //console.log(objective?.description);
 
