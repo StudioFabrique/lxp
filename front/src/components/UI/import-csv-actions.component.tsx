@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useCallback } from "react";
 
 import CsvImport from "./csv-import/csv-import.component";
