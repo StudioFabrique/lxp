@@ -10,7 +10,9 @@ const useHttp = (invokeErrorToast?: boolean) => {
   const [error, setError] = useState("");
   const { logout } = useContext(Context);
 
-  // implémentation de l'intercepteur
+  /** implémentation de l'intercepteur, une seule instance de l'intercepteur
+   *  est crée durant le cycle de vie de ce composant
+   */
   const axiosInstance = useMemo(() => {
     return axios.create({ withCredentials: true });
   }, []);
@@ -41,11 +43,19 @@ const useHttp = (invokeErrorToast?: boolean) => {
           return Promise.reject(error);
         }
 
+        /**
+         * ici on vérifie qu'en cas d'erreur 403 ce soit la première fois
+         * qu'on tente de rafraichir la requete. Si c'est la première
+         * tentative on notifie que la prochaine tentative ne sera plus
+         * la premiere fois.
+         * Si c'est la première fois on tente de refresh les tokens
+         */
         if (error.response.status === 403 && !originalRequest._retry) {
           originalRequest._retry = true;
 
           const res = await axiosInstance.get(`${BASE_URL}/auth/refresh`);
           if (res.status === 200) {
+            // si les tokens sont refresh avec succes on relance la
             return axiosInstance(originalRequest);
           }
         }
@@ -61,8 +71,10 @@ const useHttp = (invokeErrorToast?: boolean) => {
   }, [axiosInstance, logout]);
 
   useEffect(() => {
-    if (invokeErrorToast && error) toast.error(error);
-  });
+    if (invokeErrorToast && error.length > 0) {
+      toast.error(error);
+    }
+  }, [error, invokeErrorToast]);
 
   const sendRequest = useCallback(
     async (
