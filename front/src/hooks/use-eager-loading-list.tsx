@@ -40,7 +40,9 @@ const useEagerLoadingList = (
   };
 
   /**
-   * filtre la liste d'objets en fonction des filtres
+   * filtre la liste d'objets, ici "property" est utilisée dans le
+   * cas ou la propriété du champà recherche ne soir pas une chaîne
+   * de caractères mais pas exemple un booleen
    */
   const getFilteredList = useCallback(
     (filters: { field: string; property: string; value: string }) => {
@@ -64,7 +66,7 @@ const useEagerLoadingList = (
   );
 
   /**
-   * extration des différentes valeurs de la liste d'objets par propriété
+   * extraction des différentes valeurs de la liste d'objets par propriété
    */
   const getFieldValues = useCallback(
     (field: string) => {
@@ -98,7 +100,7 @@ const useEagerLoadingList = (
   };
 
   /**
-   * tri les colonnes du tableau quand l'utilisateur clique sur le nom d'une colonne : perfect future
+   * tri les colonnes du tableau quand l'utilisateur clique sur le nom d'une colonne
    */
   useEffect(() => {
     setList((prevList: any) => {

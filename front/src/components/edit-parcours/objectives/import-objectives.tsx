@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -19,8 +20,6 @@ const ImportObjectives: FC<Props> = ({ onCloseDrawer }) => {
   );
   const parcoursId = useSelector((state: any) => state.parcours.id);
   const { sendRequest } = useHttp();
-  /*   const parcoursId = useSelector((state: any) => state.parcours.id);
-  const { sendRequest, error } = useHttp(); */
 
   const handleCloseDrawer = () => {
     onCloseDrawer("import-data");
@@ -30,7 +29,6 @@ const ImportObjectives: FC<Props> = ({ onCloseDrawer }) => {
     handleCloseDrawer();
 
     const applyData = (data: any) => {
-      console.log("reponse", data);
       dispatch(
         parcoursObjectivesAction.addImportedObjectivesToObjectives(
           data.data.objectives
@@ -61,7 +59,7 @@ const ImportObjectives: FC<Props> = ({ onCloseDrawer }) => {
     <div className="flex flex-col gap-y-4 px-4">
       <ImportCSVActions
         modelFileUrl={`${DOWNLOAD_URL}/csv-objectifs-modele.txt`}
-        modelFileName={"csv-objectufs-modele.txt"}
+        modelFileName={"csv-objectifs-modele.txt"}
         onHandleFromCSV={handleFromCSV}
         fields={objectivesFields}
       />
