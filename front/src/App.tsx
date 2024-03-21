@@ -20,6 +20,7 @@ const router = createBrowserRouter([
     path: "/",
     element: <RootLayout />,
     children: [
+      // espace apprenant
       {
         path: "student",
         element: (
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
         ),
         children: studentRoutes,
       },
+      // espace admin - formateur
       {
         path: "admin",
         element: (

@@ -62,7 +62,12 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 
 // enregistre un nouveau cours en relation avec un module existant
-courseRouter.post("/", postCourseValidator, httpPostCourse);
+courseRouter.post(
+  "/",
+  checkPermissions("course"),
+  postCourseValidator,
+  httpPostCourse
+);
 
 // retourne la liste de tous les cours
 courseRouter.get("/", httpGetCourses);
