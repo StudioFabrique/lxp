@@ -47,6 +47,7 @@ async function postCourse(userId: string, course: any) {
       },
       author: `${adminName.firstname} ${adminName.lastname}`,
       admin: { connect: { id: existingAdmin.id } },
+      // on place le nouveau cours en fin de liste des cours associés au module
       order: existingModule.courses.length,
     },
     select: { id: true },
