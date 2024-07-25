@@ -6,6 +6,15 @@ pipeline {
     }
 
     stages {
+        stage('Check Node.js and npm') {
+            steps {
+                sh '''
+                    node --version
+                    npm --version
+                '''
+            }
+        }
+        
         stage('Checkout') {
             steps {
                 // Checkout the code from the Git repository
