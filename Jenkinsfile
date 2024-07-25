@@ -74,8 +74,12 @@ pipeline {
           stage('Docker Deploy to dev') {
             steps {
                 withCredentials([file(credentialsId: 'lxp-env-file', variable: 'ENV_FILE')]) {
-                    sh 'echo "$ENV_FILE" > .env'
-                    //sh 'export $(grep -v ^# .env | xargs)'
+                    script {
+                        // Read the contents of the environment file
+                        def envContent = readFile("${ENV_FILE}")
+                        // Write the contents to .env file in the workspace
+                        writeFile file: '.env', text: envContent
+                    }
                 }
                script {
                    withDockerRegistry(credentialsId: 'docker-registry', toolName: 'docker') {
