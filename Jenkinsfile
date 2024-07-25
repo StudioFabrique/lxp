@@ -23,7 +23,7 @@ pipeline {
         stage('Load Environment Variables') {
             steps {
                 withCredentials([file(credentialsId: 'env-file', variable: 'ENV_FILE')]) {
-                    sh 'cp $ENV_FILE /home/cponsan/lxp/api/.env'
+                    sh 'cp $ENV_FILE ./api/.env'
                 }
             }
         }
