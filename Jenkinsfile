@@ -18,14 +18,6 @@ pipeline {
             }
         }
         
-         stage('Load Credentials') {
-            steps {
-                withCredentials([file(credentialsId: 'lxp-env-file', variable: 'ENV_FILE')]) {
-                    sh 'cp $ENV_FILE ./api/.env'
-                    sh 'export $(grep -v ^# ./api/.env | xargs)'
-                }
-            }
-        }
 
         
           stage('Trivy FS Scan') {
@@ -76,6 +68,15 @@ pipeline {
                         sh 'docker push studiostep/lxp:latest'
                     }
                }
+            }
+        }
+
+        stage('Load Credentials') {
+            steps {
+                withCredentials([file(credentialsId: 'lxp-env-file', variable: 'ENV_FILE')]) {
+                    sh 'echo $ENV_FILE > .env'
+                    sh 'export $(grep -v ^# .env | xargs)'
+                }
             }
         }
         
