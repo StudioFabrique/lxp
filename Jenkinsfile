@@ -1,24 +1,15 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:20' // Use an official Node.js Docker image
-            args '-u root' // Optional: to run as root
-        }
-    }
-    stages {
-        stage('Check Node.js and npm') {
-            steps {
-                sh '''
-                    node --version
-                    npm --version
-                '''
-            }
-        }
+    agent any
 
+    environment {
+        NODE_VERSION = '20.x'
+    }
+
+    stages {
         stage('Checkout') {
             steps {
                 // Checkout the code from the Git repository
-                git branch: 'cicd', credentialsId: 'cyril-token', url: 'https://github.com/StudioFabrique/lxp.git'
+                git branch: 'cicd', credentialsId: 'cyril-token-lxp', url: 'https://github.com/StudioFabrique/lxp.git'
             }
         }
 
