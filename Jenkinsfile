@@ -27,11 +27,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                withCredentials([string(credentialsId: 'SECRET_MESSAGE', variable: 'MY_SECRET_TEXT')]) {
-                    echo MY_SECRET_TEXT
-                    // Build the application (if required)
-                    sh 'npm run build'
-                }
+                echo 'All good !'
             }
         }
     }
