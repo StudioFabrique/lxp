@@ -1,10 +1,10 @@
 pipeline {
-    agent any
-
-    environment {
-        NODE_VERSION = '22.x'
+    agent {
+        docker {
+            image 'node:20' // Use an official Node.js Docker image
+            args '-u root' // Optional: to run as root
+        }
     }
-
     stages {
         stage('Check Node.js and npm') {
             steps {
@@ -14,7 +14,7 @@ pipeline {
                 '''
             }
         }
-        
+
         stage('Checkout') {
             steps {
                 // Checkout the code from the Git repository
