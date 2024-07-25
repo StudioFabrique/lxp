@@ -16,9 +16,20 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo "Hello Toto"
+
                 // Install npm dependencies
+                sh 'npm run install'
+
+                // Install npm dependencies for 'front' directory
                 sh '''
-                    npm run install
+                    cd front
+                    npm audit fix
+                '''
+                
+                // Install npm dependencies for 'api' directory
+                sh '''
+                    cd api
+                    npm audit fix
                 '''
             }
         }
