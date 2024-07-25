@@ -75,7 +75,7 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'lxp-env-file', variable: 'ENV_FILE')]) {
                     sh 'echo $ENV_FILE > .env'
-                    sh 'export $(grep -v ^# .env | xargs)'
+                    //sh 'export $(grep -v ^# .env | xargs)'
                 }
             }
         }
