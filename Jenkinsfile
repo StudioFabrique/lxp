@@ -20,7 +20,7 @@ pipeline {
         
          stage('Load Credentials') {
             steps {
-                withCredentials([file(credentialsId: 'env-file', variable: 'ENV_FILE')]) {
+                withCredentials([file(credentialsId: 'lxp-env-file', variable: 'ENV_FILE')]) {
                     sh 'cp $ENV_FILE .env'
                     sh 'export $(grep -v ^# .env | xargs)'
                 }
