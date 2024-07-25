@@ -70,18 +70,13 @@ pipeline {
                }
             }
         }
-
-        stage('Load Credentials') {
+        
+          stage('Docker Deploy to dev') {
             steps {
                 withCredentials([file(credentialsId: 'lxp-env-file', variable: 'ENV_FILE')]) {
                     sh 'echo $ENV_FILE > .env'
                     //sh 'export $(grep -v ^# .env | xargs)'
                 }
-            }
-        }
-        
-          stage('Docker Deploy to dev') {
-            steps {
                script {
                    withDockerRegistry(credentialsId: 'docker-registry', toolName: 'docker') {
                         sh 'docker compose up -d'
