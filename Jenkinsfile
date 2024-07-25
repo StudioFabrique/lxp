@@ -9,7 +9,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the code from the Git repository
-                git branch: 'cicd', credentialsId: 'cyril-token-lxp', url: 'https://github.com/CyrilPonsan/simple-node-js-react-npm-app.git'
+                git branch: 'cicd', credentialsId: 'cyril-token', url: 'https://github.com/CyrilPonsan/simple-node-js-react-npm-app.git'
             }
         }
 
