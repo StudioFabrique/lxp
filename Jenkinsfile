@@ -74,7 +74,7 @@ pipeline {
           stage('Docker Deploy to dev') {
             steps {
                 withCredentials([file(credentialsId: 'lxp-env-file', variable: 'ENV_FILE')]) {
-                    sh 'echo $ENV_FILE > .env'
+                    sh 'echo "$ENV_FILE" > .env'
                     //sh 'export $(grep -v ^# .env | xargs)'
                 }
                script {
