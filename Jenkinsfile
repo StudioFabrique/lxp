@@ -15,16 +15,16 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                echo "Hello Toto"
-
                 // Install npm dependencies
                 sh 'npm run install'
+            }
+        }
 
-                // Install npm dependencies for 'front' directory
-                sh 'cd front && npm audit fix'
-                
-                // Install npm dependencies for 'api' directory
-                sh 'cd api && npm audit fix'
+        stage('Load Environment Variables') {
+            steps {
+                withCredentials([file(credentialsId: 'env-file', variable: 'ENV_FILE')]) {
+                    sh 'cp $ENV_FILE lxp/api/.env'
+                }
             }
         }
 
