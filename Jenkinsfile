@@ -8,6 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                echo $WORKSPACE
                 // Checkout the code from the Git repository
                 git branch: 'cicd', credentialsId: 'cyril-token-lxp', url: 'https://github.com/StudioFabrique/lxp.git'
             }
