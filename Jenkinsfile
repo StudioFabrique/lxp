@@ -19,8 +19,6 @@ pipeline {
                 // Install npm dependencies
                 sh '''
                     npm run install
-                    cd front && npm audit fix
-                    cd ../api && npm audit fix
                 '''
             }
         }
