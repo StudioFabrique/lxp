@@ -48,7 +48,7 @@ pipeline {
         stage('Tests backend') {
             steps {
                 sh 'npm -g i dotenv-cli'
-                sh 'mkdir api/uploads'
+                sh 'mkdir api/uploads || true'
                 sh 'npm run install'
                 sh 'npm run test'
             }
