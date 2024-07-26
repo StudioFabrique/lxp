@@ -3,7 +3,7 @@ db.createUser({
   pwd: "Tata1234",
   roles: [
     {
-      role: "readWriteDatabase",
+      role: "readWrite",
       db: "lxp",
     },
   ],
