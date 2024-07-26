@@ -37,6 +37,7 @@ services:
     container_name: lxp-mongo
     volumes:
       - mongo:/data/db
+      - ./mongodb/init-db:/docker-entrypoint-initdb.d
     networks:
       - lxp_network
     ports:
