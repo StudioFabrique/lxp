@@ -51,6 +51,7 @@ pipeline {
                 sh 'npm -g i dotenv-cli'
                 sh 'ls api/src'
                 sh 'mkdir api/uploads || true'
+                sh 'mkdir api/src/uploads'
                 sh 'npm run install'
                 sh 'npm run test'
             }
