@@ -23,7 +23,7 @@ import ConnectionInfos from "./utils/interfaces/db/connection-infos";
 dotenv.config();
 
 const MONGO_URL = process.env.FIXTURES_MONGO_URL;
-console.log({ MONGO_URL });
+console.log("coucou les gens !");
 
 mongoose.connection.once("open", () => {
   console.log("MongoDB connection ready!");
