@@ -26,7 +26,7 @@ pipeline {
             }
         }
         
-          stage('SoanrQube') {
+          stage('SonarQube') {
             steps {
                 sh """
                     ${SCANNER_HOME}/bin/sonar-scanner \
