@@ -41,10 +41,6 @@ services:
       - lxp_network
     ports:
       - "27000:27017"
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=gandalf
-      - MONGO_INITDB_ROOT_PASSWORD= Toto1234
-      - MONGO_INITDB_DATABASE=test
   api:
     image: studiostep/lxp:latest
     pull_policy: always
