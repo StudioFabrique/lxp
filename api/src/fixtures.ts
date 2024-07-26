@@ -22,7 +22,7 @@ import IConnectionInfos from "./utils/interfaces/db/connection-infos";
 import ConnectionInfos from "./utils/interfaces/db/connection-infos";
 dotenv.config();
 
-const MONGO_URL = process.env.MONGO_LOCAL_URL;
+const MONGO_URL = process.env.FIXTURES_MONGO_URL;
 console.log({ MONGO_URL });
 
 mongoose.connection.once("open", () => {
