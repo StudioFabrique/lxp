@@ -68,4 +68,5 @@ services:
     environment:
       - DATABASE_URL=${DEV_DATABASE_URL}
       - MONGO_LOCAL_URL=${DEV_MONGO_LOCAL_URL}
+      - FIXTURES_MONGO_URL=${FIXTURES_MONGO_URL}
       - SECRET=${SECRET}
