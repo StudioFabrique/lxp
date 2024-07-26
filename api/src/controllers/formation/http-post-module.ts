@@ -33,7 +33,7 @@ async function httpPostModule(req: CustomRequest, res: Response) {
     }
   } catch (error: any) {
     await deleteTempUploadedFile(req);
-    console.log(error.message);
+    console.log("error upload", error.message);
 
     return res
       .status(error.statusCode ?? 500)
