@@ -83,10 +83,10 @@ pipeline {
                 }
                script {
                    withDockerRegistry(credentialsId: 'docker-registry', toolName: 'docker') {
-                        sh 'docker network create lxp_network'
                         sh 'docker compose down'
                         sh 'docker network rm lxp_network'
                         sh 'docker rm lxp:latest'
+                        sh 'docker network create lxp_network'
                         sh 'docker compose up -d'
                     }
                }
