@@ -70,8 +70,15 @@ pipeline {
                }
             }
         }
+
+        stage('Tests backend') {
+            steps {
+                sh 'npm -g i dotenv-cli'
+                sh 'npm run test'
+            }
+        }
         
-          stage('Docker Deploy to dev') {
+        stage('Docker Deploy to dev') {
             steps {
                 withCredentials([file(credentialsId: 'lxp-env-file', variable: 'ENV_FILE')]) {
                     script {
