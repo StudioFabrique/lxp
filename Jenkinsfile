@@ -44,6 +44,14 @@ pipeline {
                 sh '${SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=Campground -Dsonar.projectName=Campground'
             }
         }*/
+
+        stage('Tests backend') {
+            steps {
+                sh 'npm -g i dotenv-cli'
+                sh 'npm run install'
+                sh 'npm run test'
+            }
+        }
         
           stage('Docker build & tag') {
             steps {
@@ -68,13 +76,6 @@ pipeline {
                         sh 'docker push studiostep/lxp:latest'
                     }
                }
-            }
-        }
-
-        stage('Tests backend') {
-            steps {
-                sh 'npm -g i dotenv-cli'
-                sh 'npm run test'
             }
         }
         
