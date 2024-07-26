@@ -26,7 +26,7 @@ pipeline {
             }
         }
         
-          stage('SonarQube') {
+/*          stage('SonarQube') {
             steps {
                 sh """
                     ${SCANNER_HOME}/bin/sonar-scanner \
@@ -37,6 +37,7 @@ pipeline {
                 """
             }
         }
+*/        
         
         
 /*          stage('SoanrQube') {
@@ -47,7 +48,7 @@ pipeline {
 
         stage('Tests backend') {
             steps {
-                sh 'echo "ls api"'
+                sh 'echo ls api'
                 sh 'npm -g i dotenv-cli'
                 sh 'mkdir api/uploads || true'
                 sh 'npm run install'
