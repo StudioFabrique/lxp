@@ -2,7 +2,7 @@ pipeline {
     agent any
     
    tools {
-        nodejs 'nodejs21'
+        nodejs 'nodejs20'
     }
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
@@ -84,6 +84,9 @@ pipeline {
                script {
                    withDockerRegistry(credentialsId: 'docker-registry', toolName: 'docker') {
                         sh 'docker network create lxp_network'
+                        sh 'docker compose down'
+                        sh 'docker network rm lxp_network'
+                        sh 'docker rm lxp:latest'
                         sh 'docker compose up -d'
                     }
                }
