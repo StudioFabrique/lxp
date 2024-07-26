@@ -44,7 +44,7 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=gandalf
       - MONGO_INITDB_ROOT_PASSWORD= Toto1234
-      - MONGO_INITDB_DATABASE=test
+      - MONGO_INITDB_DATABASE=admin
   api:
     image: studiostep/lxp:latest
     pull_policy: always
