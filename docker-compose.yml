@@ -46,6 +46,7 @@ services:
     pull_policy: always
     volumes:
       - api:/app/api/dist/uploads
+      - api:/app/api/dist/src/uploads
       - logs:/app/api/dist/logs
     networks:
       - lxp_network
