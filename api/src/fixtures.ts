@@ -22,10 +22,7 @@ import IConnectionInfos from "./utils/interfaces/db/connection-infos";
 import ConnectionInfos from "./utils/interfaces/db/connection-infos";
 dotenv.config();
 
-const MONGO_URL =
-  process.env.ENVIRONMENT === "test"
-    ? process.env.MONGO_LOCAL_URL
-    : process.env.FIXTURES_MONGO_URL;
+const MONGO_URL = process.env.MONGO_LOCAL_URL;
 console.log(MONGO_URL);
 
 mongoose.connection.once("open", () => {
@@ -330,7 +327,7 @@ async function disconnect() {
 
 async function main() {
   await mongoConnect();
-  await dropDatabase();
+  //await dropDatabase();
   await createRoles();
   await createPermissions();
   await createUser();
