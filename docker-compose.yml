@@ -46,6 +46,8 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ADMIN_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ADMIN_PASSWORD}
       - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
+      - MONGO_USERNAME=${MONGO_USERNAME}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
   api:
     image: studiostep/lxp:latest
     pull_policy: always
