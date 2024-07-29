@@ -6,7 +6,7 @@ import User from "./utils/interfaces/db/user";
 import Role from "./utils/interfaces/db/role";
 import Group from "./utils/interfaces/db/group";
 
-const MONGO_URL = process.env.FIXTURES_MONGO_URL;
+const MONGO_URL = process.env.MONGO_LOCAL_URL;
 
 mongoose.connection.once("open", () => {
   console.log("MongoDB connection ready!");
