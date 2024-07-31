@@ -1,15 +1,14 @@
 pipeline {
     agent any
-    
+
    tools {
         nodejs 'nodejs20'
     }
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
-        SONAR_TOKEN = credentials('sonar-token') 
-        SONAR_HOST_URL = 'http://51.15.183.215:9000/' 
+        SONAR_TOKEN = credentials('sonar-token')
+        SONAR_HOST_URL = 'http://51.15.183.215:9000/'
     }
-    
 
     stages {
         stage('Git Checkout') {
@@ -17,16 +16,16 @@ pipeline {
                 git branch: 'cicd', credentialsId: 'cyril-token-lxp', url: 'https://github.com/StudioFabrique/lxp.git'
             }
         }
-        
 
-        
+
+
           stage('Trivy FS Scan') {
             steps {
                sh 'trivy filesystem --format table -o fs-report.html .'
             }
         }
-        
- /*       stage('SonarQube') {
+
+      stage('SonarQube') {
             steps {
                 sh """
                     ${SCANNER_HOME}/bin/sonar-scanner \
@@ -37,9 +36,7 @@ pipeline {
                 """
             }
         }
- */      
-        
-        
+
 /*          stage('SoanrQube') {
             steps {
                 sh '${SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=Campground -Dsonar.projectName=Campground'
@@ -53,7 +50,7 @@ pipeline {
                 sh 'npm run test'
             }
         }
-        
+
           stage('Docker build & tag') {
             steps {
                script {
@@ -63,13 +60,13 @@ pipeline {
                }
             }
         }
-        
+
           stage('Trivy Image scan') {
             steps {
                 sh 'trivy image --format table -o fs-report.html studiostep/lxp:latest'
             }
         }
-        
+
           stage('Docker Push image') {
             steps {
                script {
@@ -79,7 +76,7 @@ pipeline {
                }
             }
         }
-        
+
         stage('Docker Deploy to dev') {
             steps {
                 withCredentials([file(credentialsId: 'lxp-env-file', variable: 'ENV_FILE')]) {
@@ -101,6 +98,6 @@ pipeline {
                }
             }
         }
-        
+
     }
 }
