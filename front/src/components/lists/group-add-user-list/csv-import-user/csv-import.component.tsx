@@ -11,6 +11,7 @@ import Papa from "papaparse";
 
 import { checkCSV } from "../../../../utils/csv/check-csv";
 import UploadIcon from "../../../UI/svg/upload-icon.component";
+import toast from "react-hot-toast";
 
 type Props = {
   origin: string;
@@ -74,11 +75,8 @@ const CsvImportUser: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
         ...commonConfig,
         header: true,
         complete: (result: any) => {
-          console.log("resultat", result.meta);
           if (checkCSV(fields, result.meta.fields)) {
             result.data.pop();
-            console.log({ data: result.data });
-
             onParseCsv(result.data);
             handleEmptyFile();
           } else {
@@ -88,6 +86,10 @@ const CsvImportUser: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
       });
     }
   }, [selectedFile, commonConfig, fields, onParseCsv, handleEmptyFile]);
+
+  useEffect(() => {
+    if (fileError) toast.error(fileError);
+  });
 
   return (
     <>
