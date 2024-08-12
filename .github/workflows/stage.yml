@@ -2,7 +2,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: ["stage"]
+    branches: ["inactif"]
 
 jobs:
   build:
@@ -48,4 +48,5 @@ jobs:
           username: ${{ secrets.USERNAME  }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            mkdir ${{secrets.TARGET}}/api/dist/uploads
             pm2 restart ${{ secrets.TARGET }}/api/dist/src/server.js
