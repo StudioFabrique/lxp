@@ -23,7 +23,7 @@ import ConnectionInfos from "./utils/interfaces/db/connection-infos";
 dotenv.config();
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
-console.log({ MONGO_URL });
+console.log(MONGO_URL);
 
 mongoose.connection.once("open", () => {
   console.log("MongoDB connection ready!");
@@ -327,7 +327,7 @@ async function disconnect() {
 
 async function main() {
   await mongoConnect();
-  await dropDatabase();
+  //await dropDatabase();
   await createRoles();
   await createPermissions();
   await createUser();
