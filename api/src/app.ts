@@ -7,6 +7,7 @@ import morgan from "morgan";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
+import responseHandler from "./middleware/response-handler";
 
 const app = express();
 
@@ -39,13 +40,13 @@ app
       crossOriginOpenerPolicy: true,
       referrerPolicy: false,
       originAgentCluster: false,
-    })
+    }),
   )
   .use(
     cors({
       origin: origins,
       credentials: true,
-    })
+    }),
   )
   .use(cookieParser())
   .use(morgan("combined"))
@@ -56,6 +57,7 @@ app
   .set("trust proxy", ["loopback", "linklocal", "uniquelocal"])
   .get("*", (_req, res) => {
     res.sendFile(path.join(__dirname, "..", "public", "index.html"));
-  });
+  })
+  .use(responseHandler);
 
 export default app;
