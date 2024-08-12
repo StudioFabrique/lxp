@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Git Checkout') {
             steps {
-                git branch: 'cicd', credentialsId: 'cyril-token-lxp', url: 'https://github.com/StudioFabrique/lxp.git'
+                git branch: 'stage', credentialsId: 'cyril-token-lxp', url: 'https://github.com/StudioFabrique/lxp.git'
             }
         }
 
