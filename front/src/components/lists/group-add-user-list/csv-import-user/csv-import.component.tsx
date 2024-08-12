@@ -12,6 +12,8 @@ import Papa from "papaparse";
 import { checkCSV } from "../../../../utils/csv/check-csv";
 import UploadIcon from "../../../UI/svg/upload-icon.component";
 import toast from "react-hot-toast";
+import { downloadFile } from "../../../../helpers/download-csv-template";
+import { DOWNLOAD_URL } from "../../../../config/urls";
 
 type Props = {
   origin: string;
@@ -69,6 +71,13 @@ const CsvImportUser: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
     }
   }, [isEmptyingReady]);
 
+  const handleDownloadFile = () => {
+    downloadFile(
+      `${DOWNLOAD_URL}/users-groups-template.csv`,
+      "users-groups-template.csv"
+    );
+  };
+
   useEffect(() => {
     if (selectedFile) {
       Papa.parse(selectedFile, {
@@ -120,8 +129,21 @@ const CsvImportUser: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
           </div>
         </div>
       ) : (
-        <div onClick={handleFileSelection} className="cursor-pointer">
-          <p>Importer une liste d'étudiant</p>
+        <div className="flex gap-5">
+          <button
+            type="button"
+            onClick={handleFileSelection}
+            className="cursor-pointer"
+          >
+            Importer une liste d'étudiant
+          </button>
+          <button
+            type="button"
+            onClick={handleDownloadFile}
+            className="cursor-pointer"
+          >
+            Télécharger le modèle en csv
+          </button>
         </div>
       )}
       <input
