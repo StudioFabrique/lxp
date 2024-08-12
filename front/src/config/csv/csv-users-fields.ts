@@ -3,7 +3,6 @@ export const csvUsersFields = [
   "firstname",
   "lastname",
   "nickname",
-  "pseudo",
   "birthDate",
   "address",
   "postCode",

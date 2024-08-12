@@ -77,6 +77,8 @@ const CsvImportUser: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
           console.log("resultat", result.meta);
           if (checkCSV(fields, result.meta.fields)) {
             result.data.pop();
+            console.log({ data: result.data });
+
             onParseCsv(result.data);
             handleEmptyFile();
           } else {
