@@ -34,6 +34,7 @@ const CsvUserListConfirmation: FC<IUserListConfirmation> = (props) => {
               onAddSelectedUser={props.onAddSelectedUser}
               onDeleteSelectedUser={props.onDeleteSelectedUser}
               onAddUserInstantly={props.onAddUserInstantly}
+              forceEnableCheckbox={true}
             />
           ))}
         </div>
