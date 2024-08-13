@@ -12,6 +12,7 @@ const GroupManageUserItem: FC<{
   onAddSelectedUser: (user: User) => void;
   onDeleteSelectedUser: (user: User) => void;
   onAddUserInstantly: (user: User) => void;
+  forceEnableCheckbox?: boolean;
 }> = ({
   user,
   allUserSelected,
@@ -19,6 +20,7 @@ const GroupManageUserItem: FC<{
   onAddSelectedUser,
   onDeleteSelectedUser,
   onAddUserInstantly,
+  forceEnableCheckbox,
 }) => {
   const [disabled, setDisabled] = useState(false);
 
@@ -35,7 +37,7 @@ const GroupManageUserItem: FC<{
   return (
     <div className="flex justify-between items-center gap-x-2">
       <span className="flex items-center gap-x-4 p-2 pl-5 w-full bg-secondary text-secondary-content rounded-lg">
-        {disabled ? (
+        {disabled && !forceEnableCheckbox ? (
           <input type="checkbox" className="checkbox" disabled />
         ) : (
           <SelectionButton
