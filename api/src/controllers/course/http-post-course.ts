@@ -17,6 +17,7 @@ async function httpPostCourse(req: CustomRequest, res: Response) {
 
   try {
     const response = await postCourse(userId!, course);
+    console.log(response);
     return res
       .status(201)
       .json({ message: "Cours créé avec succès", course: response });
