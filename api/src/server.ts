@@ -38,6 +38,8 @@ mongoInit();
 async function mongoInit() {
   await mongoConnect();
   server.listen(PORT);
+ 
+  
   console.log(`Serveur démarré sur le port: ${PORT}`);
   socket(io);
 }

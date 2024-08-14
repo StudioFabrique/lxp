@@ -1,22 +1,19 @@
 import { Request, Response, NextFunction } from "express";
-import deleteCourseFromModule from "../../models/course/delete-course-from-module";
+import { prisma } from "../../utils/db";
 
-export async function httpDeleteCourseFromModule(
+export async function deleteCourseFromModule(
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
   try {
-    console.log("hello detach course");
-    const { courseId } = req.params;
-    await deleteCourseFromModule(+courseId);
+    //throw { statusCode: 404, message: "Le cours n'existe pas" };
     const result = {
       statusCode: 200,
       data: { message: "All good bro" },
     };
     next(result);
   } catch (error: any) {
-    console.log(error.message);
     const err = {
       statusCode: error.statusCode ?? 500,
       message: error.message,

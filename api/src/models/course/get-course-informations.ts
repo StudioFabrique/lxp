@@ -84,11 +84,11 @@ async function getCourseInformations(courseId: number) {
   }
 
   if (course) {
-    if (course.module!.image instanceof Buffer) {
-      const base64Image = course.module!.image.toString("base64");
+    if (course.module.image instanceof Buffer) {
+      const base64Image = course.module.image.toString("base64");
       const result = {
         ...course,
-        module: { ...course.module!, image: base64Image },
+        module: { ...course.module, image: base64Image },
       };
       return result;
     }

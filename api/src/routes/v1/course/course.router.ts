@@ -1,36 +1,7 @@
 import express from "express";
+import checkToken from "../../../middleware/check-token";
 
-import multer from "multer";
-import path from "path";
-import { httpDeleteCourseFromModule } from "../../../controllers/course/http-delete-course-from-module";
-import httpDeleteCourseDates from "../../../controllers/course/http-delete-courseDates";
-import httpGetCourseDates from "../../../controllers/course/http-get-course-dates";
-import httpGetCourseInformations from "../../../controllers/course/http-get-course-informations";
-import httpGetCourseObjectives from "../../../controllers/course/http-get-course-objectives";
-import httpGetCourseScenario from "../../../controllers/course/http-get-course-scenario";
-import httpGetCourseSkills from "../../../controllers/course/http-get-course-skills";
-import httpGetCourses from "../../../controllers/course/http-get-courses";
-import httpGetCoursesByModule from "../../../controllers/course/http-get-courses-by-module";
-import httpGetMostReadCourses from "../../../controllers/course/http-get-most-read-courses";
 import httpPostCourse from "../../../controllers/course/http-post-course";
-import httpPutCourseBonusSkills from "../../../controllers/course/http-put-course-bonus-skills";
-import httpPutCourseContacts from "../../../controllers/course/http-put-course-contacts";
-import httpPutCourseDates from "../../../controllers/course/http-put-course-dates";
-import httpPutCourseImage from "../../../controllers/course/http-put-course-image";
-import httpPutCourseInformations from "../../../controllers/course/http-put-course-informations";
-import httpPutCourseIsPublished from "../../../controllers/course/http-put-course-ispublished";
-import httpPutCourseLesson from "../../../controllers/course/http-put-course-lesson";
-import httpPutCourseNewObjective from "../../../controllers/course/http-put-course-new-objective";
-import httpPutCourseObjectives from "../../../controllers/course/http-put-course-objectives";
-import httpPutCourseTags from "../../../controllers/course/http-put-course-tags";
-import httpPutCourseVirtualClass from "../../../controllers/course/http-put-course-virtual-class";
-import httpPutManyLessons from "../../../controllers/course/http-put-many-lessons";
-import httpPutReorderCourses from "../../../controllers/course/http-put-reorder-coursers";
-import {
-  idsArrayValidator,
-  virtualClassValidator,
-} from "../../../helpers/custom-validators";
-import checkPermissions from "../../../middleware/check-permissions";
 import {
   courseIdValidator,
   deleteCourseDatesValidator,
@@ -41,6 +12,35 @@ import {
   putCourseNewObjectiveValidator,
   putReorderCoursesValidator,
 } from "./course-validators";
+import httpGetCourses from "../../../controllers/course/http-get-courses";
+import httpGetCourseInformations from "../../../controllers/course/http-get-course-informations";
+import multer from "multer";
+import path from "path";
+import httpPutCourseImage from "../../../controllers/course/http-put-course-image";
+import httpPutCourseInformations from "../../../controllers/course/http-put-course-informations";
+import httpPutCourseTags from "../../../controllers/course/http-put-course-tags";
+import {
+  idsArrayValidator,
+  virtualClassValidator,
+} from "../../../helpers/custom-validators";
+import httpPutCourseContacts from "../../../controllers/course/http-put-course-contacts";
+import checkPermissions from "../../../middleware/check-permissions";
+import httpPutCourseVirtualClass from "../../../controllers/course/http-put-course-virtual-class";
+import httpGetCourseObjectives from "../../../controllers/course/http-get-course-objectives";
+import httpPutCourseObjectives from "../../../controllers/course/http-put-course-objectives";
+import httpPutCourseNewObjective from "../../../controllers/course/http-put-course-new-objective";
+import httpGetCourseSkills from "../../../controllers/course/http-get-course-skills";
+import httpPutCourseBonusSkills from "../../../controllers/course/http-put-course-bonus-skills";
+import httpPutCourseLesson from "../../../controllers/course/http-put-course-lesson";
+import httpGetCourseScenario from "../../../controllers/course/http-get-course-scenario";
+import httpPutManyLessons from "../../../controllers/course/http-put-many-lessons";
+import httpPutCourseDates from "../../../controllers/course/http-put-course-dates";
+import httpDeleteCourseDates from "../../../controllers/course/http-delete-courseDates";
+import httpPutCourseIsPublished from "../../../controllers/course/http-put-course-ispublished";
+import httpGetCourseDates from "../../../controllers/course/http-get-course-dates";
+import httpGetCoursesByModule from "../../../controllers/course/http-get-courses-by-module";
+import httpPutReorderCourses from "../../../controllers/course/http-put-reorder-coursers";
+import httpGetMostReadCourses from "../../../controllers/course/http-get-most-read-courses";
 
 const courseRouter = express.Router();
 
@@ -66,7 +66,7 @@ courseRouter.post(
   "/",
   checkPermissions("course"),
   postCourseValidator,
-  httpPostCourse,
+  httpPostCourse
 );
 
 // retourne la liste de tous les cours
@@ -81,50 +81,50 @@ courseRouter.get("/:moduleId", httpGetCoursesByModule);
 courseRouter.get(
   "/infos/:courseId",
   courseIdValidator,
-  httpGetCourseInformations,
+  httpGetCourseInformations
 );
 
 // met à jour l'image d'en-tête d'un cours
 courseRouter.put(
   "/image",
-  // checkPermissions("course"),
+  // checkToken,
   upload.single("image"),
-  httpPutCourseImage,
+  httpPutCourseImage
 );
 
 // mise à jour des informations du cours
 courseRouter.put(
   "/infos",
-  checkPermissions("course"),
+  checkToken,
   putCourseInformationsValidator,
-  httpPutCourseInformations,
+  httpPutCourseInformations
 );
 
 // met à jour la liste des tags associés à un cours
 courseRouter.put(
   "/tags/:courseId",
-  checkPermissions("course"),
+  checkToken,
   idsArrayValidator,
   courseIdValidator,
-  httpPutCourseTags,
+  httpPutCourseTags
 );
 
 // mise à jour de la liste des contacts
 courseRouter.put(
   "/contacts/:courseId",
-  checkPermissions("course"),
+  checkToken,
   idsArrayValidator,
   courseIdValidator,
-  httpPutCourseContacts,
+  httpPutCourseContacts
 );
 
 // mise à jour du lien vers la classe virtuelle du cours
 courseRouter.put(
   "/virtual-class/:courseId",
-  checkPermissions("course"),
+  checkToken,
   courseIdValidator,
   virtualClassValidator,
-  httpPutCourseVirtualClass,
+  httpPutCourseVirtualClass
 );
 
 // retourne la liste des objectifs liés à un cours
@@ -132,65 +132,65 @@ courseRouter.get(
   "/objectives/:courseId",
   checkPermissions("course"),
   courseIdValidator,
-  httpGetCourseObjectives,
+  httpGetCourseObjectives
 );
 
 // met les objectifs du cours à jour dans la bdd
 courseRouter.put(
   "/objectives/:courseId",
-  checkPermissions("course"),
+  checkToken,
   courseIdValidator,
   idsArrayValidator,
-  httpPutCourseObjectives,
+  httpPutCourseObjectives
 );
 
 // enregistre un nouvel objectif et l'associe à un parcours puis à un cours
 courseRouter.put(
   "/new-objective/:courseId",
-  checkPermissions("course"),
+  checkToken,
   courseIdValidator,
   putCourseNewObjectiveValidator,
-  httpPutCourseNewObjective,
+  httpPutCourseNewObjective
 );
 
 // retourne la liste des compétences associés à un cours et au module auquel le cours est rattaché
 courseRouter.get(
   "/bonus-skills/:courseId",
-  checkPermissions("course"),
+  checkToken,
   courseIdValidator,
-  httpGetCourseSkills,
+  httpGetCourseSkills
 );
 
 // met la liste des compétences du cours à jour dans la bdd
 courseRouter.put(
   "/bonus-skills/:courseId",
-  checkPermissions("course"),
+  checkToken,
   courseIdValidator,
   idsArrayValidator,
-  httpPutCourseBonusSkills,
+  httpPutCourseBonusSkills
 );
 
 // enregistre une nouvelle leçon et l'associe à un cours
 courseRouter.put(
   "/new-lesson/:courseId",
-  checkPermissions("course"),
+  checkToken,
   courseIdValidator,
   putCourseLessonValidator,
-  httpPutCourseLesson,
+  httpPutCourseLesson
 );
 
 // retourne le scénario et les lessons d'un cours
 courseRouter.get(
   "/scenario/:courseId",
-  checkPermissions("course"),
+  checkToken,
   courseIdValidator,
-  httpGetCourseScenario,
+  httpGetCourseScenario
 );
 
 // dissocie une lesson d'un cours, si la lesson n'est associée qu'à un seul cours elle est définitivement supprimée
 /* courseRouter.delete(
   "/delete-lesson/:courseId/:lessonId",
-  checkPermissions("course"),
+  checkToken,
   courseIdValidator,
   deleteCourseLessonValidator,
   httpDeleteCourseLesson
@@ -199,43 +199,35 @@ courseRouter.get(
 // associe une liste de leçons existante à un cours
 courseRouter.put(
   "/lessons/:courseId",
-  checkPermissions("course"),
+  checkToken,
   courseIdValidator,
   idsArrayValidator,
-  httpPutManyLessons,
+  httpPutManyLessons
 );
 
 // ajoute une plage de dates au cours
 courseRouter.put(
   "/dates/:courseId",
-  checkPermissions("course"),
+  checkToken,
   courseIdValidator,
   putCourseDatesValidator,
-  httpPutCourseDates,
-);
-
-// detache un cours d'un module, le cours devient orphelin
-courseRouter.delete(
-  "/detach-course/:courseId",
-  checkPermissions("course"),
-  courseIdValidator,
-  httpDeleteCourseFromModule,
+  httpPutCourseDates
 );
 
 // efface une plage de dates du cours
 courseRouter.delete(
   "/dates/:courseId/:datesId",
-  checkPermissions("course"),
+  checkToken,
   courseIdValidator,
   deleteCourseDatesValidator,
-  httpDeleteCourseDates,
+  httpDeleteCourseDates
 );
 
 // met à jour le statut publié / brouillon du cours
 courseRouter.put(
   "/publish/:courseId",
   courseIdValidator,
-  httpPutCourseIsPublished,
+  httpPutCourseIsPublished
 );
 
 // retourne la liste des plages de dates associées à un cours
@@ -243,7 +235,7 @@ courseRouter.get(
   "/dates/:courseId",
   checkPermissions("role"),
   courseIdValidator,
-  httpGetCourseDates,
+  httpGetCourseDates
 );
 
 // met à jour l'ordre des cours associés à un module
@@ -251,7 +243,7 @@ courseRouter.put(
   "/reorder/:moduleId",
   checkPermissions("course"),
   putReorderCoursesValidator,
-  httpPutReorderCourses,
+  httpPutReorderCourses
 );
 
 export default courseRouter;
