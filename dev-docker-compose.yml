@@ -58,6 +58,7 @@ services:
       - db-pg
       - db-mongo
     environment:
+      - DOWNLOAD_URL=${DOWNLOAD_URL}
       - DATABASE_URL=${DEV_DATABASE_URL}
       - MONGO_LOCAL_URL=${MONGO_LOCAL_URL}
       - FIXTURES_MONGO_URL=${FIXTURES_MONGO_URL}
