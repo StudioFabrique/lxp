@@ -8,24 +8,12 @@ export default async function httpCreateManyUser(req: Request, res: Response) {
 
   /* users.roles = [new Object((await Role.findOne({ role: "student" }))!._id)]; */
 
-  users = users.map((user: any) => ({
-    ...user,
-    firstname: user.firstname.toLowerCase(),
-    lastname: user.lastname.toLowerCase(),
-    nickname: user.nickname?.toLowerCase(),
-  }));
-
   try {
     const response = await createManyUsers(users, 3);
 
-    if (response) {
-      return res
-        .status(201)
-        .json({ message: creationSuccessfull, usersCreated: response });
-    }
-
-    res.status(409).json({ message: alreadyExist });
-    return;
+    return res
+      .status(201)
+      .json({ message: creationSuccessfull, usersCreated: response });
   } catch (e) {
     res.status(500).json({ message: serverIssue + e });
   }
