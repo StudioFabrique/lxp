@@ -54,14 +54,14 @@ userRouter.put(
   "/update-many-status",
   checkPermissions("user"),
 
-  httpUpdateManyUsersStatus
+  httpUpdateManyUsersStatus,
 );
 
 // TODO: VALIDATORS
 userRouter.put(
   "/update-user-status",
   checkPermissions("user"),
-  httpUpdateUserStatus
+  httpUpdateUserStatus,
 );
 
 // TODO: VALIDATORS
@@ -73,7 +73,7 @@ userRouter.get(
   checkPermissions("user"),
   getUsersByRoleValidator,
   paginationValidator,
-  httpGetUsersByRole
+  httpGetUsersByRole,
 );
 
 //  récupération de la liste des utilisateurs en fonction de leur rang de leur rôle
@@ -81,7 +81,7 @@ userRouter.get(
   "/byRank/:rank/:stype/:sdir",
   checkPermissions("user"),
   getAllByRankValidator,
-  httpGetUsersByRank
+  httpGetUsersByRank,
 );
 
 userRouter.put(
@@ -95,7 +95,7 @@ userRouter.put(
   body("usersToUpdate.*")
     .isString()
     .withMessage(
-      "Chaque élément de studentsToUpdate doit être une chaîne de caractères."
+      "Chaque élément de studentsToUpdate doit être une chaîne de caractères.",
     )
     .trim()
     .escape(),
@@ -106,11 +106,11 @@ userRouter.put(
   body("rolesId.*")
     .isString()
     .withMessage(
-      "Chaque élément de rolesId doit être une chaîne de caractères."
+      "Chaque élément de rolesId doit être une chaîne de caractères.",
     )
     .trim()
     .escape(),
-  httpUpdateUserRoles
+  httpUpdateUserRoles,
 );
 
 userRouter.post(
@@ -124,16 +124,18 @@ userRouter.post(
       .isString()
       .trim()
       .escape()
-      .withMessage("roleId non conforme")
+      .withMessage("roleId non conforme"),
   ),
-  httpCreateUser
+  httpCreateUser,
 );
 
+// Création de plusieurs utilisateurs à la chaine
+// renvoie en réponse les utilisateurs créés et déjà créés
 userRouter.post(
   "/many",
   checkPermissions("user"),
   manyUsersValidator,
-  httpCreateManyUser
+  httpCreateManyUser,
 );
 
 userRouter.get(
@@ -149,7 +151,7 @@ userRouter.get(
   query("page").notEmpty().trim().escape().isInt(),
   query("limit").notEmpty().trim().escape().isInt(),
 
-  httpSearchUser
+  httpSearchUser,
 );
 
 userRouter.use("/new-teacher", checkPermissions("user"), postTeacherRouter);
@@ -158,7 +160,7 @@ userRouter.get(
   "/contacts",
   checkPermissions("user"),
   // checkToken,
-  httpGetContacts
+  httpGetContacts,
 );
 
 // Rechercher des groupes en fonctions d'une liste d'ids de groupes passé en body et populate les users
@@ -166,7 +168,7 @@ userRouter.post(
   "/group",
   checkPermissions("user"),
   // checkToken,
-  httpGetUsersByGroup
+  httpGetUsersByGroup,
 );
 
 userRouter.use("/profile", checkPermissions("default"), userProfileRouter);
@@ -177,7 +179,7 @@ userRouter.use("/hobby", checkPermissions("default"), hobbyRouter);
 userRouter.get(
   "/last-parcours",
   checkPermissions("parcours"),
-  httpGetUserLastParcours
+  httpGetUserLastParcours,
 );
 
 // retourne les informations d'un utilisateur ainsi que ses rôles et son temps de connexion
@@ -186,21 +188,21 @@ userRouter.get("/data/:userId", checkPermissions("user"), httpGetUserData);
 userRouter.get(
   "/own-feedback",
   checkPermissions("default"),
-  httpGetLastFeedback
+  httpGetLastFeedback,
 );
 
 // réceupère les accomplissements de tous les autres étudiants étant dans le même groupe que l'étudiant connnecté.
 userRouter.get(
   "/accomplishment",
   checkPermissions("default"),
-  httpGetAccomplishements
+  httpGetAccomplishements,
 );
 
 // retourne la liste des derniers feedbacks enregistrés
 userRouter.get(
   "/last-feedbacks/:notReviewed",
   checkPermissions("default"),
-  httpGetLastFeedbacks
+  httpGetLastFeedbacks,
 );
 
 export default userRouter;

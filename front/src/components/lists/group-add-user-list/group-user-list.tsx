@@ -49,7 +49,10 @@ const GroupUserList: FC<{
       <div className="flex justify-between items-center">
         <h2 className="font-bold text-lg">Etudiants</h2>
         <div className="flex gap-x-2 items-center">
-          <CsvImportUserList onAddUsers={onAddUsers} />
+          <CsvImportUserList
+            onAddUsers={onAddUsers}
+            usersAddedInTable={usersToAdd}
+          />
           <button type="button" className="btn btn-ghost px-2">
             <LoadingIcon />
           </button>

@@ -10,14 +10,15 @@ import CsvImportUser from "../csv-import.component";
 
 const CsvImportUserList: FC<{
   onAddUsers: (users: Array<User>) => void;
-}> = ({ onAddUsers }) => {
+  usersAddedInTable: User[];
+}> = ({ onAddUsers, usersAddedInTable }) => {
   const [usersToImport, setUsersToImport] = useState<User[]>([]);
   const [selectedUsersToUpload, setSelectedUsersToUpload] = useState<User[]>(
-    []
+    [],
   );
   const [isDrawerOpen, setDrawerOpenState] = useState<boolean>(false);
 
-  const { isLoading, sendRequest } = useHttp();
+  const { isLoading, sendRequest } = useHttp(true);
 
   const handleImportCsv = (data: User[]) => {
     if (data) {
@@ -44,7 +45,7 @@ const CsvImportUserList: FC<{
         body: selectedUsersToUpload,
         method: "post",
       },
-      applyData
+      applyData,
     );
   };
 
@@ -58,16 +59,16 @@ const CsvImportUserList: FC<{
   const handleDeleteSelectedUser = (user: User) => {
     setSelectedUsersToUpload((selectedUsersToUpload) =>
       selectedUsersToUpload.filter(
-        (currentUser) => currentUser.email !== user.email
-      )
+        (currentUser) => currentUser.email !== user.email,
+      ),
     );
   };
 
   const handleAddUserInstantly = (user: User) => {
     setSelectedUsersToUpload((selectedUsersToUpload) =>
       selectedUsersToUpload.filter(
-        (currentUser) => currentUser.email !== user.email
-      )
+        (currentUser) => currentUser.email !== user.email,
+      ),
     );
   };
 
@@ -87,6 +88,7 @@ const CsvImportUserList: FC<{
       >
         <CsvUserListConfirmation
           usersFromCsv={usersToImport}
+          usersToAdd={usersAddedInTable}
           onConfirmSubmit={handleSubmitToDatabase}
           setDrawerOpenState={setDrawerOpenState}
           isLoading={isLoading}
