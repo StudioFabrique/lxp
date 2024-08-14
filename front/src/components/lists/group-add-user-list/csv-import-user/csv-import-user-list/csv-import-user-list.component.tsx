@@ -10,7 +10,8 @@ import CsvImportUser from "../csv-import.component";
 
 const CsvImportUserList: FC<{
   onAddUsers: (users: Array<User>) => void;
-}> = ({ onAddUsers }) => {
+  usersAddedInTable: User[];
+}> = ({ onAddUsers, usersAddedInTable }) => {
   const [usersToImport, setUsersToImport] = useState<User[]>([]);
   const [selectedUsersToUpload, setSelectedUsersToUpload] = useState<User[]>(
     [],
@@ -87,6 +88,7 @@ const CsvImportUserList: FC<{
       >
         <CsvUserListConfirmation
           usersFromCsv={usersToImport}
+          usersToAdd={usersAddedInTable}
           onConfirmSubmit={handleSubmitToDatabase}
           setDrawerOpenState={setDrawerOpenState}
           isLoading={isLoading}
