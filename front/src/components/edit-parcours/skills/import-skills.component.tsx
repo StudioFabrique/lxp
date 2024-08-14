@@ -15,6 +15,8 @@ type Props = {
 };
 
 const ImportSkills: FC<Props> = ({ onCloseDrawer }) => {
+  const protocol = window.location.href.split("/")[0];
+
   const dispatch = useDispatch();
   const skills = useSelector(
     (state: any) => state.parcoursSkills.importedSkills
@@ -75,8 +77,8 @@ const ImportSkills: FC<Props> = ({ onCloseDrawer }) => {
   return (
     <div className="flex flex-col gap-y-4 px-4">
       <ImportCSVActions
-        modelFileUrl={`${DOWNLOAD_URL}/csv-competences-modele.txt`}
-        modelFileName={"csv-competences-modele.txt"}
+        modelFileUrl={`${protocol + DOWNLOAD_URL}/csv-competences-modele.csv`}
+        modelFileName={"csv-competences-modele.csv"}
         onHandleFromCSV={handleFromCSV}
         fields={skillsFields}
       />
