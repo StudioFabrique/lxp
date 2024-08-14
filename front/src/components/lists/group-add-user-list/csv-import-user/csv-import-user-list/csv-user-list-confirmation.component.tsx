@@ -4,6 +4,7 @@ import GroupUserItem from "../../group-manage-user-list/group-manage-user-item/g
 
 interface IUserListConfirmation {
   usersFromCsv: Array<User>;
+  usersToAdd: Array<User>;
   onConfirmSubmit: () => void;
   setDrawerOpenState: Dispatch<SetStateAction<boolean>>;
   onAddSelectedUser: (user: User) => void;
@@ -27,7 +28,8 @@ const CsvUserListConfirmation: FC<IUserListConfirmation> = (props) => {
         <div className="flex flex-col gap-y-2 w-full ">
           {props.usersFromCsv.map((user) => (
             <GroupUserItem
-              usersToAdd={props.usersFromCsv}
+              usersToAdd={props.usersToAdd}
+              verificationAttribute="email"
               allUserSelected={false}
               key={user.email}
               user={user}
