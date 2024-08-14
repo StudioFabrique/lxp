@@ -8,6 +8,7 @@ const MONGO_URL = process.env.MONGO_LOCAL_URL;
 mongoose.connection.once("open", () => {
   console.log("MongoDB connection ready!");
   console.log("ENVIRONMENT", process.env.NODE_ENV);
+  console.log("ENVIRONMENT", MONGO_URL);
 });
 
 mongoose.connection.on("error", (err) => {

@@ -20,7 +20,7 @@ function youShallNotPass() {
 export default function checkPermissions(
   ressource?: string,
   action?: "read" | "write" | "update" | "delete",
-  failedRedirectPath?: string
+  failedRedirectPath?: string,
 ) {
   return async (req: CustomRequest, res: Response, next: NextFunction) => {
     const { role: roleFromParam } = req.params;
@@ -106,7 +106,7 @@ export default function checkPermissions(
 async function authorizeThisRole(
   role: IRole,
   action: string,
-  ressource: string
+  ressource: string,
 ): Promise<boolean> {
   const permissionFound = await Permission.findOne({
     role: role.role,
@@ -123,7 +123,7 @@ async function authorizeThisRole(
 async function _authorizeThisRole(
   role: IRole,
   action: string,
-  roleFromParam: string
+  roleFromParam: string,
 ): Promise<boolean> {
   const permissionFound = await Permission.findOne({
     role: role.role,
