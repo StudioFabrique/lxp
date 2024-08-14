@@ -176,7 +176,7 @@ model Course {
   title        String
   description  String?
   image        Bytes?
-  moduleId     Int?
+  moduleId     Int
   virtualClass String?
   visibility   Boolean?
   scenario     Boolean              @default(true)
@@ -190,7 +190,7 @@ model Course {
   bonusSkills  BonusSkillOnCourse[]
   contacts     ContactsOnCourse[]
   admin        Admin                @relation(fields: [adminId], references: [id])
-  module       Module?               @relation(fields: [moduleId], references: [id])
+  module       Module               @relation(fields: [moduleId], references: [id])
   lessons      Lesson[]
   objectives   ObjectivesOnCourse[]
   tags         TagsOnCourse[]
