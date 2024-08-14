@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import User from "../../../../../utils/interfaces/user";
 import { AvatarSmall } from "../../../../UI/avatar/avatar.component";
 import toTitleCase from "../../../../../utils/toTitleCase";
@@ -7,6 +7,7 @@ import { AddIcon2 } from "../../../../UI/svg/add-icons";
 
 const GroupManageUserItem: FC<{
   user: User;
+  verificationAttribute?: "id" | "email";
   allUserSelected: boolean;
   usersToAdd: User[];
   onAddSelectedUser: (user: User) => void;
@@ -15,12 +16,12 @@ const GroupManageUserItem: FC<{
   forceEnableCheckbox?: boolean;
 }> = ({
   user,
+  verificationAttribute = "id",
   allUserSelected,
   usersToAdd,
   onAddSelectedUser,
   onDeleteSelectedUser,
   onAddUserInstantly,
-  forceEnableCheckbox,
 }) => {
   const [disabled, setDisabled] = useState(false);
 
@@ -29,15 +30,22 @@ const GroupManageUserItem: FC<{
   };
 
   useEffect(() => {
-    usersToAdd.filter((userToAdd) => userToAdd._id === user._id).length > 0
-      ? setDisabled(true)
-      : setDisabled(false);
-  }, [user, usersToAdd]);
+    if (
+      usersToAdd.filter((item) =>
+        verificationAttribute === "id"
+          ? item._id === user._id
+          : item.email === user.email,
+      ).length > 0
+    ) {
+      setDisabled(true);
+      onDeleteSelectedUser(user);
+    } else setDisabled(false);
+  }, [user, usersToAdd, verificationAttribute, onDeleteSelectedUser]);
 
   return (
     <div className="flex justify-between items-center gap-x-2">
       <span className="flex items-center gap-x-4 p-2 pl-5 w-full bg-secondary text-secondary-content rounded-lg">
-        {disabled && !forceEnableCheckbox ? (
+        {disabled ? (
           <input type="checkbox" className="checkbox" disabled />
         ) : (
           <SelectionButton
