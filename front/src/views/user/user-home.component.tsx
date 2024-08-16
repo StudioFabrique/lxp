@@ -187,8 +187,6 @@ const UserHome = () => {
     );
   };
 
-  console.log("roles", roles);
-
   return (
     <>
       <div className="w-full flex flex-col items-center p-10 gap-8">
