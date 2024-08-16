@@ -16,11 +16,14 @@ const Certifications: FC<{
   graduations: Array<Graduation>;
   setGraduations: Dispatch<SetStateAction<Graduation[]>>;
 }> = ({ graduations, setGraduations }) => {
-  const [currentGraduation, setCurrentGraduation] = useState<Graduation>({
+  const initGraduation = {
     title: "",
     date: new Date(),
     degree: "",
-  });
+  };
+
+  const [currentGraduation, setCurrentGraduation] =
+    useState<Graduation>(initGraduation);
 
   const handleAddGraduation = () => {
     if (
@@ -29,23 +32,25 @@ const Certifications: FC<{
       currentGraduation.title
     ) {
       setGraduations((graduations) =>
-        addIdToObject([...graduations, currentGraduation])
+        addIdToObject([...graduations, currentGraduation]),
       );
+
+      setCurrentGraduation(initGraduation);
     }
   };
 
   const handleDeleteGraduation = (id: number) => {
     setGraduations((graduations) =>
-      graduations.filter((graduation) => graduation.id !== id)
+      graduations.filter((graduation) => graduation.id !== id),
     );
   };
 
-  /* 
+  /*
     Récupère la valeur de l'attribut "name" lors de l'évenement du changement de l'input (texte ou date) puis
     en fonction de cette valeur, change la propriété de l'objet ayant le nom de cette valeur de l'attribut "name"
   */
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (
-    event: ChangeEvent<HTMLInputElement>
+    event: ChangeEvent<HTMLInputElement>,
   ) => {
     const name = event.currentTarget.getAttribute("name");
     switch (name) {
@@ -89,7 +94,7 @@ const Certifications: FC<{
                 className="input input-sm input-bordered focus:outline-none w-full"
                 type="text"
                 onChange={handleInputChange}
-                defaultValue={currentGraduation.title}
+                value={currentGraduation.title}
                 autoComplete="off"
               />
             </span>
@@ -100,7 +105,7 @@ const Certifications: FC<{
                 className="input input-sm input-bordered focus:outline-none w-full"
                 type="text"
                 onChange={handleInputChange}
-                defaultValue={currentGraduation.degree}
+                value={currentGraduation.degree}
                 autoComplete="off"
               />
             </span>
@@ -110,6 +115,7 @@ const Certifications: FC<{
                 name="date"
                 className="input input-sm input-bordered focus:outline-none w-full"
                 type="date"
+                value={currentGraduation.date.toISOString().split("T")[0]}
                 onChange={handleInputChange}
                 autoComplete="off"
               />
