@@ -61,12 +61,12 @@ const GroupManageUserList: FC<{
     setUsersSettedState(true);
   }, []);
 
-  const handleDeleteSelectedUser = (user: User) => {
+  const handleDeleteSelectedUser = useCallback((user: User) => {
     setSelectedUsers((users) =>
       users.filter((currentUser) => currentUser._id !== user._id),
     );
     setUsersSettedState(false);
-  };
+  }, []);
 
   /*
     Ajoute un utilisateur directement dans la liste sans checklist
@@ -107,14 +107,6 @@ const GroupManageUserList: FC<{
     );
   }, [dataList, usersToAdd]);
 
-  useEffect(() => {
-    if (allChecked) {
-      handleAddSelectedAllUser();
-    } else {
-      handleRemoveSelectedAllUser();
-    }
-  }, [allChecked, handleAddSelectedAllUser, handleRemoveSelectedAllUser]);
-
   const renderUserItems = (users: User[]) => {
     return users.map((user: User) => (
       <GroupManageUserItem
@@ -128,6 +120,14 @@ const GroupManageUserList: FC<{
       />
     ));
   };
+
+  useEffect(() => {
+    if (allChecked) {
+      handleAddSelectedAllUser();
+    } else {
+      handleRemoveSelectedAllUser();
+    }
+  }, [allChecked, handleAddSelectedAllUser, handleRemoveSelectedAllUser]);
 
   return (
     <RightSideDrawer
