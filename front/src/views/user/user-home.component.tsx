@@ -191,7 +191,7 @@ const UserHome = () => {
 
   return (
     <>
-      <div className="w-full flex flex-col items-center py-8 gap-8">
+      <div className="w-full flex flex-col items-center p-10 gap-8">
         <div>
           <Header
             title="Liste d'utilisateurs"
