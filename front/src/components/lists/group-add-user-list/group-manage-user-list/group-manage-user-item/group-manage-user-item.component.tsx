@@ -7,37 +7,45 @@ import { AddIcon2 } from "../../../../UI/svg/add-icons";
 
 const GroupManageUserItem: FC<{
   user: User;
+  verificationAttribute?: "id" | "email";
   allUserSelected: boolean;
   usersToAdd: User[];
   onAddSelectedUser: (user: User) => void;
   onDeleteSelectedUser: (user: User) => void;
-  onAddUserInstantly: (user: User) => void;
+  onAddUserInstantly?: (user: User) => void;
   forceEnableCheckbox?: boolean;
 }> = ({
   user,
+  verificationAttribute = "id",
   allUserSelected,
   usersToAdd,
   onAddSelectedUser,
   onDeleteSelectedUser,
   onAddUserInstantly,
-  forceEnableCheckbox,
 }) => {
   const [disabled, setDisabled] = useState(false);
 
   const handleAddUserInstantly = () => {
-    onAddUserInstantly(user);
+    onAddUserInstantly && onAddUserInstantly(user);
   };
 
   useEffect(() => {
-    usersToAdd.filter((userToAdd) => userToAdd._id === user._id).length > 0
-      ? setDisabled(true)
-      : setDisabled(false);
-  }, [user, usersToAdd]);
+    if (
+      usersToAdd.filter((item) =>
+        verificationAttribute === "id"
+          ? item._id === user._id
+          : item.email === user.email,
+      ).length > 0
+    ) {
+      setDisabled(true);
+      onDeleteSelectedUser(user);
+    } else setDisabled(false);
+  }, [user, usersToAdd, verificationAttribute, onDeleteSelectedUser]);
 
   return (
     <div className="flex justify-between items-center gap-x-2">
-      <span className="flex items-center gap-x-4 p-2 pl-5 w-full bg-secondary text-secondary-content rounded-lg">
-        {disabled && !forceEnableCheckbox ? (
+      <span className="flex items-center gap-x-4 p-2 pl-5 w-full bg-secondary/10 rounded-lg">
+        {disabled ? (
           <input type="checkbox" className="checkbox" disabled />
         ) : (
           <SelectionButton
@@ -53,14 +61,16 @@ const GroupManageUserItem: FC<{
           <p>{toTitleCase(user.lastname)}</p>
         </span>
       </span>
-      <button
-        type="button"
-        disabled={disabled}
-        className="btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary"
-        onClick={handleAddUserInstantly}
-      >
-        <AddIcon2 />
-      </button>
+      {onAddUserInstantly && (
+        <button
+          type="button"
+          disabled={disabled}
+          className="btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary"
+          onClick={handleAddUserInstantly}
+        >
+          <AddIcon2 />
+        </button>
+      )}
     </div>
   );
 };
