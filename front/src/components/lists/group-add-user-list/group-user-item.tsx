@@ -12,7 +12,7 @@ const GroupUserItem: FC<{
   flex?: boolean;
 }> = ({ user, onUpdateUser, onDeleteUser, onCheckRow, flex = false }) => {
   const handleToggleActiveState: ChangeEventHandler<HTMLInputElement> = (
-    event: ChangeEvent<HTMLInputElement>
+    event: ChangeEvent<HTMLInputElement>,
   ) => {
     if (onUpdateUser) {
       const userUpdated = user;

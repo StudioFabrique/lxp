@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useState } from "react";
+import { FC, useCallback, useState } from "react";
 import { csvUsersFields } from "../../../../../config/csv/csv-users-fields";
 import RightSideDrawer from "../../../../UI/right-side-drawer/right-side-drawer";
 import User from "../../../../../utils/interfaces/user";
@@ -29,7 +29,7 @@ const CsvImportUserList: FC<{
     }
   };
 
-  const handleSubmitToDatabase = async () => {
+  const handleSubmitToDatabase = () => {
     if (!(selectedUsersToUpload.length > 0)) {
       toast.error("aucun utilisateur sélectionné");
       return;
@@ -56,21 +56,13 @@ const CsvImportUserList: FC<{
     ]);
   };
 
-  const handleDeleteSelectedUser = (user: User) => {
+  const handleDeleteSelectedUser = useCallback((user: User) => {
     setSelectedUsersToUpload((selectedUsersToUpload) =>
       selectedUsersToUpload.filter(
         (currentUser) => currentUser.email !== user.email,
       ),
     );
-  };
-
-  const handleAddUserInstantly = (user: User) => {
-    setSelectedUsersToUpload((selectedUsersToUpload) =>
-      selectedUsersToUpload.filter(
-        (currentUser) => currentUser.email !== user.email,
-      ),
-    );
-  };
+  }, []);
 
   return (
     <div>
@@ -94,7 +86,6 @@ const CsvImportUserList: FC<{
           isLoading={isLoading}
           onAddSelectedUser={handleAddSelectedUser}
           onDeleteSelectedUser={handleDeleteSelectedUser}
-          onAddUserInstantly={handleAddUserInstantly}
         />
       </RightSideDrawer>
     </div>
