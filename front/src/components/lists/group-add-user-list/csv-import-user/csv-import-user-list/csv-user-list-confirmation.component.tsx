@@ -9,7 +9,6 @@ interface IUserListConfirmation {
   setDrawerOpenState: Dispatch<SetStateAction<boolean>>;
   onAddSelectedUser: (user: User) => void;
   onDeleteSelectedUser: (user: User) => void;
-  onAddUserInstantly: (user: User) => void;
   isLoading: boolean;
 }
 
@@ -35,7 +34,6 @@ const CsvUserListConfirmation: FC<IUserListConfirmation> = (props) => {
               user={user}
               onAddSelectedUser={props.onAddSelectedUser}
               onDeleteSelectedUser={props.onDeleteSelectedUser}
-              onAddUserInstantly={props.onAddUserInstantly}
               forceEnableCheckbox={true}
             />
           ))}
