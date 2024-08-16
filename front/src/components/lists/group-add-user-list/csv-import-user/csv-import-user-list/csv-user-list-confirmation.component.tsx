@@ -9,7 +9,6 @@ interface IUserListConfirmation {
   setDrawerOpenState: Dispatch<SetStateAction<boolean>>;
   onAddSelectedUser: (user: User) => void;
   onDeleteSelectedUser: (user: User) => void;
-  onAddUserInstantly: (user: User) => void;
   isLoading: boolean;
 }
 
@@ -24,7 +23,7 @@ const CsvUserListConfirmation: FC<IUserListConfirmation> = (props) => {
 
   if (props.usersFromCsv.length > 0) {
     return (
-      <div className="flex flex-col justify-between items-center">
+      <div className="flex flex-col justify-between items-center gap-10">
         <div className="flex flex-col gap-y-2 w-full ">
           {props.usersFromCsv.map((user) => (
             <GroupUserItem
@@ -35,18 +34,17 @@ const CsvUserListConfirmation: FC<IUserListConfirmation> = (props) => {
               user={user}
               onAddSelectedUser={props.onAddSelectedUser}
               onDeleteSelectedUser={props.onDeleteSelectedUser}
-              onAddUserInstantly={props.onAddUserInstantly}
               forceEnableCheckbox={true}
             />
           ))}
         </div>
-        <div className="flex">
-          <button className="btn" onClick={handleCancel}>
+        <div className="flex justify-between w-full items-center">
+          <button className="btn btn-outline" onClick={handleCancel}>
             Annuler
           </button>
           <button
             onClick={handleConfirm}
-            className={`btn ${props.isLoading && "loading"}`}
+            className={`btn btn-primary ${props.isLoading && "loading"}`}
           >
             Confirmer
           </button>
