@@ -24,7 +24,7 @@ const Informations: FC<{
   group?: Group;
 }> = ({ values, errors, onChangeValue, isActive, setIsActive, onSetFile }) => {
   const handleToggle: ChangeEventHandler<HTMLInputElement> = (
-    event: ChangeEvent<HTMLInputElement>
+    event: ChangeEvent<HTMLInputElement>,
   ) => {
     setIsActive(event.target.checked);
   };
@@ -59,7 +59,7 @@ const Informations: FC<{
       <MemoizedImageFileUpload
         maxSize={headerImageMaxSize}
         onSetFile={onSetFile}
-        label="Téléverser une image de groupe"
+        label="Téléverser une image de groupe *"
       />
     </Wrapper>
   );
