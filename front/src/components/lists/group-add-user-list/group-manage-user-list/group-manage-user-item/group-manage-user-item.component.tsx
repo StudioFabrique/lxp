@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import User from "../../../../../utils/interfaces/user";
 import { AvatarSmall } from "../../../../UI/avatar/avatar.component";
 import toTitleCase from "../../../../../utils/toTitleCase";
