@@ -13,7 +13,7 @@ import CustomRequest from "../utils/interfaces/express/custom-request";
 export const checkValidatorResult = (
   req: CustomRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const checkValues = validationResult(req);
 
@@ -61,7 +61,7 @@ const customPhoneNumberValidation = (value: string) => {
 
 export const userValidator = (
   extraValidationChain?: ValidationChain,
-  isFormData: boolean = false
+  isFormData: boolean = false,
 ) => {
   const validatorSubject = `${isFormData ? "data.user" : "user"}`;
 
@@ -161,6 +161,7 @@ export const manyUsersValidator = [
   body("*.email").isEmail().trim().escape(),
   body(["*.firstname", "*.lastname", "*.nickname", "*.address", "*.city"])
     .isString()
+    .toLowerCase()
     .trim()
     .escape(),
   body("*.postCode").isPostalCode("FR").trim().escape(),
@@ -232,5 +233,5 @@ export const searchValidator = [
         ...,
         body(...).isSomething().isSomethingElse(),
         checkValidatorResult
-    ] 
+    ]
 */
