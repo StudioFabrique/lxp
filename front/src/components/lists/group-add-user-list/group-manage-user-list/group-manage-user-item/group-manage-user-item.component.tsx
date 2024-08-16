@@ -12,7 +12,7 @@ const GroupManageUserItem: FC<{
   usersToAdd: User[];
   onAddSelectedUser: (user: User) => void;
   onDeleteSelectedUser: (user: User) => void;
-  onAddUserInstantly: (user: User) => void;
+  onAddUserInstantly?: (user: User) => void;
   forceEnableCheckbox?: boolean;
 }> = ({
   user,
@@ -26,7 +26,7 @@ const GroupManageUserItem: FC<{
   const [disabled, setDisabled] = useState(false);
 
   const handleAddUserInstantly = () => {
-    onAddUserInstantly(user);
+    onAddUserInstantly && onAddUserInstantly(user);
   };
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const GroupManageUserItem: FC<{
 
   return (
     <div className="flex justify-between items-center gap-x-2">
-      <span className="flex items-center gap-x-4 p-2 pl-5 w-full bg-secondary text-secondary-content rounded-lg">
+      <span className="flex items-center gap-x-4 p-2 pl-5 w-full bg-secondary/10 rounded-lg">
         {disabled ? (
           <input type="checkbox" className="checkbox" disabled />
         ) : (
@@ -61,14 +61,16 @@ const GroupManageUserItem: FC<{
           <p>{toTitleCase(user.lastname)}</p>
         </span>
       </span>
-      <button
-        type="button"
-        disabled={disabled}
-        className="btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary"
-        onClick={handleAddUserInstantly}
-      >
-        <AddIcon2 />
-      </button>
+      {onAddUserInstantly && (
+        <button
+          type="button"
+          disabled={disabled}
+          className="btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary"
+          onClick={handleAddUserInstantly}
+        >
+          <AddIcon2 />
+        </button>
+      )}
     </div>
   );
 };

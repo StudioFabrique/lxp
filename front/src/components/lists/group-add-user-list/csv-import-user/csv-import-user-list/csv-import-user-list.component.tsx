@@ -64,14 +64,6 @@ const CsvImportUserList: FC<{
     );
   };
 
-  const handleAddUserInstantly = (user: User) => {
-    setSelectedUsersToUpload((selectedUsersToUpload) =>
-      selectedUsersToUpload.filter(
-        (currentUser) => currentUser.email !== user.email,
-      ),
-    );
-  };
-
   return (
     <div>
       <CsvImportUser
@@ -94,7 +86,6 @@ const CsvImportUserList: FC<{
           isLoading={isLoading}
           onAddSelectedUser={handleAddSelectedUser}
           onDeleteSelectedUser={handleDeleteSelectedUser}
-          onAddUserInstantly={handleAddUserInstantly}
         />
       </RightSideDrawer>
     </div>
