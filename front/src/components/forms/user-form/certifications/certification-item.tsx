@@ -7,6 +7,7 @@ import Graduation from "../../../../utils/interfaces/graduation";
 const CertificationItem: FC<{
   graduation: Graduation;
   onDelete: (id: number) => void;
+  onSetEditMode: (id: number) => void;
 }> = ({ graduation, onDelete }) => {
   const handleClickButtonEdit = () => {};
 
@@ -21,10 +22,12 @@ const CertificationItem: FC<{
         <p>{graduation.date.getFullYear()}</p>
       </span>
       <span className="flex items-center gap-2">
-        <button type="button" onClick={handleClickButtonEdit}>
-          <div className="w-6 h-6">
-            <EditIcon />
-          </div>
+        <button
+          type="button"
+          onClick={handleClickButtonEdit}
+          className="h-6 w-6"
+        >
+          <EditIcon />
         </button>
         <button
           type="button"
