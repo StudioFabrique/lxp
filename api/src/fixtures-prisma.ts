@@ -274,7 +274,7 @@ async function createSqlContacts() {
     const roleId = await Role.find({ role: "teacher" }, { _id: 1 });
     const usersId = await User.find(
       { roles: roleId },
-      { _id: 1, firstname: 1, lastname: 1 }
+      { _id: 1, firstname: 1, lastname: 1 },
     );
     const contacts = usersId.map((user: any) => {
       return {
@@ -296,7 +296,7 @@ async function createStudents() {
     const roleId = await Role.find({ role: "student" }, { _id: 1 });
     const usersId = await User.find(
       { roles: roleId },
-      { _id: 1, firstname: 1, lastname: 1 }
+      { _id: 1, firstname: 1, lastname: 1 },
     );
     const students = usersId.map((user: any) => {
       return { idMdb: user._id };
@@ -323,7 +323,14 @@ async function createFormation() {
         code: "007",
         level: "bac + 2",
       },
-      /*       {
+      /*{
+        title: "Poubelle",
+        description:
+          "Stockage temporaire des données destinées à la suppression",
+        code: "null",
+        level: "null",
+      },
+            {
         title: "Concepteur Développeur d'Applications",
         description:
           "Toutes les compétences pour concevoir et développer des applications.",
