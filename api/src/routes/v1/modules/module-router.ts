@@ -27,15 +27,8 @@ import httpDeleteFormationModule from "../../../controllers/module/http-delete-f
 import httpGetModuleDetail from "../../../controllers/module/http-get-module-detail";
 import httpGetModulesTimeline from "../../../controllers/module/http-get-modules-timeline";
 import httpGetModuleImage from "../../../controllers/module/http-get-module-image";
-import { deleteCourseFromModule } from "../../../controllers/module/http-delete-course-from-module";
 
 const modules = Router();
-
-modules.delete(
-  "/detach-course",
-  checkPermissions("module"),
-  deleteCourseFromModule,
-);
 
 // retourne la liste de tous les modules
 modules.get("/", checkPermissions("module"), httpGetAllModules);
