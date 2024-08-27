@@ -1,10 +1,21 @@
-import { useState } from "react";
-import Course from "../../utils/interfaces/course";
-import useHttp from "../../hooks/use-http";
-import toast from "react-hot-toast";
+/**
+Custom Hook qui gère la logique de suppression d'un cours
+Le type T est soit le type Course ou CustomCourse implémenté dans
+l'interface de gestion des cours
+*/
 
-export default function useDeleteCourse(onRefreshModule: () => void) {
-  const [showModal, setShowModal] = useState<Course | null>(null);
+import { useState } from "react";
+import toast from "react-hot-toast";
+import useHttp from "./use-http";
+
+interface WithId {
+  id: number;
+}
+
+export default function useDeleteCourse<T extends WithId>(
+  onRefreshCourses: () => void,
+) {
+  const [showModal, setShowModal] = useState<T | null>(null);
   const { sendRequest, error } = useHttp();
 
   /**
@@ -12,7 +23,7 @@ export default function useDeleteCourse(onRefreshModule: () => void) {
    * fenêtre modale pour confirmer la suppression d'un cours
    * @param course Course
    */
-  const handleShowModal = (course: Course) => {
+  const handleShowModal = (course: T) => {
     setShowModal(course);
   };
 
@@ -31,7 +42,7 @@ export default function useDeleteCourse(onRefreshModule: () => void) {
       const applyData = (data: { success: boolean; message: string }) => {
         if (data.success) toast.success(data.message);
         setShowModal(null);
-        onRefreshModule();
+        onRefreshCourses();
       };
       sendRequest(
         { path: `/course/delete-course/${showModal.id}`, method: "delete" },
@@ -39,6 +50,8 @@ export default function useDeleteCourse(onRefreshModule: () => void) {
       );
     }
   };
+
+  console.log({ showModal });
 
   return {
     showModal,
