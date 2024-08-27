@@ -47,7 +47,7 @@ export default function EditModuleHome() {
       {
         path: `/modules/detail/${moduleId}`,
       },
-      applyData
+      applyData,
     );
   }, [moduleId, sendRequest]);
 
@@ -67,7 +67,7 @@ export default function EditModuleHome() {
         method: "put",
         body: module?.courses.map((item) => item.id),
       },
-      applyData
+      applyData,
     );
     setSubmit(false);
   }, [moduleId, module?.courses, fetchModule, sendRequest]);
@@ -155,6 +155,7 @@ export default function EditModuleHome() {
                     courses={module.courses}
                     onSetSubmit={setSubmit}
                     onUpdateCourses={handleUpdateCoursesList}
+                    onRefreshModule={fetchModule}
                   />
                 </section>
               </>
