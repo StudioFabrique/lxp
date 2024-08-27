@@ -4,7 +4,7 @@ Le type T est soit le type Course ou CustomCourse implémenté dans
 l'interface de gestion des cours
 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import useHttp from "./use-http";
 
@@ -51,11 +51,13 @@ export default function useDeleteCourse<T extends WithId>(
     }
   };
 
-  console.log({ showModal });
+  //  affiche un toast avec le message d'erreur retourné par l'api
+  useEffect(() => {
+    if (error) toast.error(error);
+  }, [error]);
 
   return {
     showModal,
-    error,
     handleShowModal,
     handleCloseModal,
     handleDeleteCourse,
