@@ -1,7 +1,6 @@
 import { CheckCircle, GripVertical, Loader2, Pen, Trash2 } from "lucide-react";
 import React, { useEffect } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import Course from "../../utils/interfaces/course";
 import BookIcon from "../UI/svg/book-icon";
@@ -27,13 +26,8 @@ const EditModuleCourse: React.FC<EditModuleCourseProps> = ({
   onRefreshModule,
 }) => {
   //  custom hook qui héberge la logique de suppression d'un cours
-  const {
-    showModal,
-    error,
-    handleShowModal,
-    handleCloseModal,
-    handleDeleteCourse,
-  } = useDeleteCourse<Course>(onRefreshModule);
+  const { showModal, handleShowModal, handleCloseModal, handleDeleteCourse } =
+    useDeleteCourse<Course>(onRefreshModule);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onDragEnd = (result: any) => {
@@ -57,12 +51,6 @@ const EditModuleCourse: React.FC<EditModuleCourseProps> = ({
       (document.getElementById("my_modal_3") as HTMLFormElement).showModal();
     }
   }, [showModal]);
-
-  //  gestion des erreurs en provenance de l'api'
-  useEffect(() => {
-    if (error) toast.error(error);
-    //setShowModal(null);
-  }, [error]);
 
   return (
     <>
