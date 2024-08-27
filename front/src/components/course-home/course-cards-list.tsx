@@ -4,16 +4,20 @@ import CustomCourse from "./interfaces/custom-course";
 
 interface CourseCardsListProps {
   courseList: CustomCourse[];
+  onDeleteCourse: (course: CustomCourse) => void;
 }
 
-export default function CourseCardsList({ courseList }: CourseCardsListProps) {
+export default function CourseCardsList({
+  courseList,
+  onDeleteCourse,
+}: CourseCardsListProps) {
   return (
     <>
       {courseList && courseList.length > 0 ? (
         <CardListItem>
           {courseList.map((item) => (
             <li key={item.id}>
-              <CourseCard course={item} />
+              <CourseCard course={item} onDeleteCourse={onDeleteCourse} />
             </li>
           ))}
         </CardListItem>

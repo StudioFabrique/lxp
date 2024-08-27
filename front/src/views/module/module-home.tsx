@@ -38,7 +38,7 @@ const ModuleHome = () => {
         path: `/modules/formation/${moduleToDelete.id}`,
         method: "delete",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest, moduleToDelete, modules]);
 
@@ -60,7 +60,7 @@ const ModuleHome = () => {
       {
         path: "/modules",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
 
