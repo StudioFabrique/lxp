@@ -6,8 +6,8 @@ import { Link } from "react-router-dom";
 import Course from "../../utils/interfaces/course";
 import BookIcon from "../UI/svg/book-icon";
 import Wrapper from "../UI/wrapper/wrapper.component";
-import ModalDeleteCourse from "./modal-delete-course";
-import useDeleteCourse from "./use-delete-course";
+import useDeleteCourse from "../../hooks/use-delete-course";
+import ModalDeleteCourse from "../UI/modal-delete-course";
 
 interface EditModuleCourseProps {
   courses: Course[];
@@ -26,13 +26,14 @@ const EditModuleCourse: React.FC<EditModuleCourseProps> = ({
   onUpdateCourses,
   onRefreshModule,
 }) => {
+  //  custom hook qui héberge la logique de suppression d'un cours
   const {
     showModal,
     error,
     handleShowModal,
     handleCloseModal,
     handleDeleteCourse,
-  } = useDeleteCourse(onRefreshModule);
+  } = useDeleteCourse<Course>(onRefreshModule);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onDragEnd = (result: any) => {
@@ -134,17 +135,14 @@ const EditModuleCourse: React.FC<EditModuleCourseProps> = ({
       </Wrapper>
       <section>
         {showModal ? (
-          <>
-            <p>hello modal</p>
-            <ModalDeleteCourse
-              courseId={showModal.id}
-              courseTitle={showModal.title}
-              message="Le cours et les ressources qui lui sont associées seront définitivement supprimés."
-              onConfirm={handleDeleteCourse}
-              onCloseModal={handleCloseModal}
-              rightLabel="Confirmer"
-            />
-          </>
+          <ModalDeleteCourse
+            courseId={showModal.id}
+            courseTitle={showModal.title}
+            message="Le cours et les ressources qui lui sont associées seront définitivement supprimés."
+            onConfirm={handleDeleteCourse}
+            onCloseModal={handleCloseModal}
+            rightLabel="Confirmer"
+          />
         ) : null}
       </section>
     </>

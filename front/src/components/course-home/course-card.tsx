@@ -10,9 +10,13 @@ import { localeDate } from "../../helpers/locale-date";
 
 interface CourseCardProps {
   course: CustomCourse;
+  onDeleteCourse: (couse: CustomCourse) => void;
 }
 
-export default function CourseCard({ course }: CourseCardProps) {
+export default function CourseCard({
+  course,
+  onDeleteCourse,
+}: CourseCardProps) {
   const classImage: React.CSSProperties = {
     backgroundImage: `url('data:image/jpeg;base64,${course.thumb}')`,
     width: "100%",
@@ -105,7 +109,10 @@ export default function CourseCard({ course }: CourseCardProps) {
                   className="btn btn-sm btn-outline btn-circle rounded-md btn-error"
                   onClick={() => {}}
                 >
-                  <Trash2 className="w-5 h-5" />
+                  <Trash2
+                    className="w-5 h-5"
+                    onClick={() => onDeleteCourse(course)}
+                  />
                 </button>
               </div>
             </Can>

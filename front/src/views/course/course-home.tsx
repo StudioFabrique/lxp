@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 
 import Loader from "../../components/UI/loader";
@@ -11,10 +11,7 @@ const CourseHome = () => {
   const { sendRequest, isLoading } = useHttp();
   const [coursesList, setCoursesList] = useState<CustomCourse[] | null>(null);
 
-  /**
-   * récupère la liste des cours depuis la bdd
-   */
-  useEffect(() => {
+  const getCourses = useCallback(async () => {
     const applyData = (data: CustomResponse) => {
       if (data.success) {
         setCoursesList(data.response);
@@ -24,9 +21,16 @@ const CourseHome = () => {
       {
         path: "/course",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
+
+  /**
+   * récupère la liste des cours depuis la bdd
+   */
+  useEffect(() => {
+    getCourses();
+  }, [getCourses]);
 
   return (
     <main className="w-full min-h-screen flex justify-center ">
@@ -35,7 +39,14 @@ const CourseHome = () => {
           <Loader />
         </div>
       ) : (
-        <>{coursesList ? <CourseList coursesList={coursesList} /> : null}</>
+        <>
+          {coursesList ? (
+            <CourseList
+              coursesList={coursesList}
+              onRefreshCourses={getCourses}
+            />
+          ) : null}
+        </>
       )}
     </main>
   );
