@@ -3,7 +3,7 @@ import Can from "../UI/can/can.component";
 import Header from "../UI/header";
 import { PlusCircle, RefreshCw } from "lucide-react";
 import Search from "../UI/search/search.component";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import { searchListCourse } from "../../helpers/course/search-list-course";
 import { courseSearchOptions } from "../../config/search-options";
@@ -12,9 +12,12 @@ import CourseTable from "./course-table";
 import Pagination from "../UI/pagination/pagination";
 import CustomCourse from "./interfaces/custom-course";
 import CourseCardsList from "./course-cards-list";
+import useDeleteCourse from "../../hooks/use-delete-course";
+import ModalDeleteCourse from "../UI/modal-delete-course";
 
 interface CourseListProps {
   coursesList: CustomCourse[];
+  onRefreshCourses: () => void;
 }
 
 export default function CourseList(props: CourseListProps) {
@@ -31,6 +34,8 @@ export default function CourseList(props: CourseListProps) {
     resetFilters,
     setPage,
   } = useEagerLoadingList(props.coursesList, "title", 15);
+  const { showModal, handleShowModal, handleCloseModal, handleDeleteCourse } =
+    useDeleteCourse<CustomCourse>(props.onRefreshCourses);
 
   /**
    * navigue jusU'à la vue d'édition du cours identifié par son id
@@ -40,7 +45,7 @@ export default function CourseList(props: CourseListProps) {
     (id: number) => {
       nav(`/admin/course/edit/${id}`);
     },
-    [nav]
+    [nav],
   );
 
   /**
@@ -56,6 +61,13 @@ export default function CourseList(props: CourseListProps) {
   const handleResetSearch = () => {
     resetFilters();
   };
+
+  // affiche la modal de confirmation de suppression du cours
+  useEffect(() => {
+    if (showModal) {
+      (document.getElementById("my_modal_3") as HTMLFormElement).showModal();
+    }
+  }, [showModal]);
 
   return (
     <main className="w-5/6 flex flex-col items-center px-4 py-8 gap-8">
@@ -106,9 +118,13 @@ export default function CourseList(props: CourseListProps) {
                 direction={direction}
                 fieldSort={fieldSort}
                 onEditCourse={handleEditCourse}
+                onDeleteCourse={handleShowModal}
               />
             ) : (
-              <CourseCardsList courseList={list} />
+              <CourseCardsList
+                courseList={list}
+                onDeleteCourse={handleShowModal}
+              />
             )}
           </>
         ) : null}
@@ -118,6 +134,16 @@ export default function CourseList(props: CourseListProps) {
           <Pagination page={page} totalPages={totalPages} setPage={setPage} />
         ) : null}
       </section>
+      {showModal ? (
+        <ModalDeleteCourse
+          courseId={showModal.id}
+          courseTitle={showModal.title}
+          rightLabel="Confirmer"
+          message="Le cours et les ressources qui lui sont associées seront définitivement supprimés."
+          onConfirm={handleDeleteCourse}
+          onCloseModal={handleCloseModal}
+        />
+      ) : null}
     </main>
   );
 }

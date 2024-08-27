@@ -1,12 +1,13 @@
-interface ModalSuppressionProps {
+type Props = {
+  courseId: number;
+  courseTitle: string;
   message: string;
   rightLabel: string;
-  moduleTitle: string;
   onCloseModal: () => void;
   onConfirm: () => void;
-}
+};
 
-const ModalSuppression = (props: ModalSuppressionProps) => {
+export default function ModalDeleteCourse(props: Props) {
   return (
     <dialog id="my_modal_3" className="modal">
       <div className="modal-box">
@@ -16,8 +17,8 @@ const ModalSuppression = (props: ModalSuppressionProps) => {
             ✕
           </button>
         </form>
-        <h3 className="font-bold text-lg text-warning">
-          Supprimer le module {props.moduleTitle}
+        <h3 className="font-bold text-lg">
+          Supprimer le cours : {props.courseTitle}
         </h3>
         <p className="py-4">{props.message}</p>
         <div className="w-full flex justify-end gap-x-2 mt-4">
@@ -25,7 +26,7 @@ const ModalSuppression = (props: ModalSuppressionProps) => {
             <button
               className="btn btn-sm btn-outline"
               type="submit"
-              aria-label="supprime le module"
+              aria-label="supprime le cours"
             >
               Annuler
             </button>
@@ -37,6 +38,4 @@ const ModalSuppression = (props: ModalSuppressionProps) => {
       </div>
     </dialog>
   );
-};
-
-export default ModalSuppression;
+}
