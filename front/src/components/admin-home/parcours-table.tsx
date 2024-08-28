@@ -3,7 +3,8 @@ import { localeDate } from "../../helpers/locale-date";
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import ParcoursSummary from "../../utils/interfaces/parcours-summary";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Can from "../UI/can/can.component";
 
 interface ParcoursTableProps {
   parcoursList: ParcoursSummary[];
@@ -13,9 +14,20 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
   const { list, fieldSort, direction, sortData } = useEagerLoadingList(
     parcoursList,
     "title",
-    3
+    3,
   );
-  console.log(parcoursList);
+  const nav = useNavigate();
+
+  //  redirige l'utilisateur sur l'interface permettant d'éditer le parcours sur lequel il a cliqué
+  const handleEditParcours = (event: React.MouseEvent, parcoursId: number) => {
+    event.stopPropagation();
+    nav(`/admin/parcours/edit/${parcoursId}`);
+  };
+
+  //  redirige l'utilisateur sur la vue affichant une aperçu du parcours
+  const handleViewParcours = (parcoursId: number) => {
+    nav(`/admin/parcours/view/${parcoursId}`);
+  };
 
   return (
     <>
@@ -136,6 +148,7 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
               <tr
                 className="text-xs lg:text-sm cursor-pointer hover:bg-secondary/20 hover:text-white bg-white"
                 key={item.id}
+                onClick={() => handleViewParcours(item.id)}
               >
                 <td className="bg-transparent rounded-l-lg truncate">
                   {item.title}
@@ -151,9 +164,14 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
                   {item.visibility ? "Public" : "Caché"}
                 </td>
                 <td className="bg-transparent rounded-r-lg truncate">
-                  <Link to={`/admin/parcours/view/${item.id}`}>
-                    <MoveUpRight className="w-4 h-4" />
-                  </Link>
+                  <Can action="update" object="parcours">
+                    <span
+                      className="z-50"
+                      onClick={(event) => handleEditParcours(event, item.id)}
+                    >
+                      <MoveUpRight className="w-4 h-4" />
+                    </span>
+                  </Can>
                 </td>
               </tr>
             ))}
