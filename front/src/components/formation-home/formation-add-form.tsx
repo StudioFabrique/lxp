@@ -33,7 +33,7 @@ interface FormationAddFormProps {
     description: string,
     level: string,
     code: string,
-    tags: Tag[]
+    tags: Tag[],
   ) => void;
   onCancel?: () => void;
   onNewTags: (newTags: Tag[]) => void;
@@ -148,7 +148,7 @@ export default function FormationAddForm({
           tags: newTags.map((item) => ({ name: item.name, color: item.color })),
         },
       },
-      applyData
+      applyData,
     );
   };
 
@@ -255,7 +255,7 @@ export default function FormationAddForm({
           onRightClick={handleSubmitNewTags}
         >
           <p className="my-4">
-            Les tags suivant n'existent pas encore, souhaitez vous les
+            Les tags suivants n'existent pas encore, souhaitez vous les
             sauvegarder ?
           </p>
           <TagsList tagsList={newTags} />
