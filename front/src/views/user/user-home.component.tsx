@@ -74,7 +74,7 @@ const UserHome = () => {
 
   const handleGroupRolesChange = async (updatedRoles: Array<Role>) => {
     const selectedDataList = dataList.filter(
-      (user: any) => user.isSelected === true
+      (user: any) => user.isSelected === true,
     );
     const updatedDataList = Array<string>();
 
@@ -110,7 +110,7 @@ const UserHome = () => {
           method: "put",
           body: { usersToUpdate: updatedDataList, rolesId: updatedRolesIds },
         },
-        applyData
+        applyData,
       );
     }
   };
@@ -145,7 +145,7 @@ const UserHome = () => {
       {
         path: "/user/stats",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
 
@@ -165,7 +165,7 @@ const UserHome = () => {
         method: "put",
         body: { usersIds, status: value },
       },
-      applyData
+      applyData,
     );
   };
 
@@ -183,25 +183,23 @@ const UserHome = () => {
 
         const dataToChange = dataList.filter((user) => user._id !== id);
         setDataList(dataToChange);
-      }
+      },
     );
   };
 
   return (
     <>
       <div className="w-full flex flex-col items-center p-10 gap-8">
-        <div>
-          <Header
-            title="Liste d'utilisateurs"
-            description="Créez, modifiez et supprimez des comptes, assignez des rôles et des permissions, et mettez à jour vos utilisateurs"
-          >
-            <Can action="write" object="user">
-              <Link className="btn btn-primary" to="/admin/user/add">
-                Créer un utilisateur
-              </Link>
-            </Can>
-          </Header>
-        </div>
+        <Header
+          title="Liste d'utilisateurs"
+          description="Créez, modifiez et supprimez des comptes, assignez des rôles et des permissions, et mettez à jour vos utilisateurs"
+        >
+          <Can action="write" object="user">
+            <Link className="btn btn-primary" to="/admin/user/add">
+              Créer un utilisateur
+            </Link>
+          </Can>
+        </Header>
 
         <UsersListStats stats={stats} isLoading={isLoading} />
         <div className="flex flex-col gap-y-8">
