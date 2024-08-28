@@ -44,6 +44,12 @@ const Certifications: FC<{
     }
   };
 
+  const handleSetEditMode = (graduation: Graduation) => {
+    if (!graduation.id) return;
+    setCurrentGraduation(graduation);
+    setEditMode({ isActive: true, idToEdit: graduation.id });
+  };
+
   const handleEditGraduation = () => {
     if (
       currentGraduation.date &&
@@ -59,6 +65,7 @@ const Certifications: FC<{
       );
 
       setCurrentGraduation(initGraduation);
+      setEditMode((prevEditMode) => ({ ...prevEditMode, isActive: false }));
     }
   };
 
@@ -66,6 +73,8 @@ const Certifications: FC<{
     setGraduations((prevGraduations) =>
       prevGraduations.filter((item) => item.id !== id),
     );
+    setCurrentGraduation(initGraduation);
+    setEditMode((prevEditMode) => ({ ...prevEditMode, isActive: false }));
   };
 
   /*
@@ -169,7 +178,7 @@ const Certifications: FC<{
               key={graduation.id}
               onDelete={handleDeleteGraduation}
               graduation={graduation}
-              onSetEditMode={() => {}}
+              onSetEditMode={handleSetEditMode}
             />
           ))}
         </div>

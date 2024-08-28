@@ -7,9 +7,11 @@ import Graduation from "../../../../utils/interfaces/graduation";
 const CertificationItem: FC<{
   graduation: Graduation;
   onDelete: (id: number) => void;
-  onSetEditMode: (id: number) => void;
-}> = ({ graduation, onDelete }) => {
-  const handleClickButtonEdit = () => {};
+  onSetEditMode: (graduation: Graduation) => void;
+}> = ({ graduation, onDelete, onSetEditMode }) => {
+  const handleClickButtonEdit = () => {
+    onSetEditMode(graduation);
+  };
 
   const handleClickButtonDelete = () => {
     onDelete(graduation.id!);
