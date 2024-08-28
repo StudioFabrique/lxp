@@ -55,7 +55,7 @@ const AddParcours = () => {
       {
         path: "/formation",
       },
-      processData
+      processData,
     );
   }, [sendRequest]);
 
@@ -99,7 +99,7 @@ const AddParcours = () => {
         method: "post",
         body: { title, formation: formationId },
       },
-      processData
+      processData,
     );
     setIsLoading(false);
   };
@@ -116,7 +116,7 @@ const AddParcours = () => {
         {
           path: `/parcours/parcours-by-formation/${formation}`,
         },
-        processData
+        processData,
       );
     }
   }, [formation, sendRequest]);
@@ -139,7 +139,7 @@ const AddParcours = () => {
                   </h1>
 
                   <h3>
-                    Pour commencer, veulliez saisir les informations nécessaires
+                    Pour commencer, veuillez saisir les informations nécessaires
                     pour créer le parcours
                   </h3>
 
