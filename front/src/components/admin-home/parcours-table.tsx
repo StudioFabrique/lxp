@@ -3,7 +3,7 @@ import { localeDate } from "../../helpers/locale-date";
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import ParcoursSummary from "../../utils/interfaces/parcours-summary";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface ParcoursTableProps {
   parcoursList: ParcoursSummary[];
@@ -13,9 +13,14 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
   const { list, fieldSort, direction, sortData } = useEagerLoadingList(
     parcoursList,
     "title",
-    3
+    3,
   );
-  console.log(parcoursList);
+  const nav = useNavigate();
+
+  //  redirige l'utilisateur sur l'interface permettant d'éditer le parcours sur lequel il a cliqué
+  const handleEditParcours = (parcoursId: number) => {
+    nav(`/admin/parcours/edit/${parcoursId}`);
+  };
 
   return (
     <>
@@ -136,6 +141,7 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
               <tr
                 className="text-xs lg:text-sm cursor-pointer hover:bg-secondary/20 hover:text-white bg-white"
                 key={item.id}
+                onClick={() => handleEditParcours(item.id)}
               >
                 <td className="bg-transparent rounded-l-lg truncate">
                   {item.title}
