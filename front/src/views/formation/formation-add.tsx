@@ -25,7 +25,7 @@ export default function FormationAdd() {
   const { sendRequest, error } = useHttp();
   const [submitting, setSubmitting] = useState(false);
   const [formationToEdit, setFormationToEdit] = useState<FormationItem | null>(
-    null
+    null,
   );
 
   const {
@@ -59,7 +59,7 @@ export default function FormationAdd() {
       {
         path: "/tag",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
 
@@ -88,7 +88,7 @@ export default function FormationAdd() {
     description: string,
     code: string,
     level: string,
-    tags: Tag[]
+    tags: Tag[],
   ) => {
     const applyData = (data: {
       success: boolean;
@@ -119,7 +119,7 @@ export default function FormationAdd() {
           tags: tags.map((item) => item.id),
         },
       },
-      applyData
+      applyData,
     );
   };
 
@@ -136,7 +136,7 @@ export default function FormationAdd() {
     description: string,
     code: string,
     level: string,
-    tags: Tag[]
+    tags: Tag[],
   ) => {
     const applyData = (data: {
       success: boolean;
@@ -146,7 +146,7 @@ export default function FormationAdd() {
       if (data.success) {
         toast.success(data.message);
         let updatedList = formationsList.filter(
-          (item) => item.id !== formationToEdit!.id
+          (item) => item.id !== formationToEdit!.id,
         );
         updatedList = sortArray([...updatedList, data.response], "id");
         setFormationsList(updatedList);
@@ -171,7 +171,7 @@ export default function FormationAdd() {
           },
         },
       },
-      applyData
+      applyData,
     );
   };
 
@@ -187,7 +187,7 @@ export default function FormationAdd() {
       {
         path: "/formation/list",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
 
