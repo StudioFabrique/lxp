@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import Course from "../../utils/interfaces/course";
 import BookIcon from "../UI/svg/book-icon";
 import Wrapper from "../UI/wrapper/wrapper.component";
+import { Link } from "react-router-dom";
+import Can from "../UI/can/can.component";
 import useDeleteCourse from "../../hooks/use-delete-course";
 import ModalDeleteCourse from "../UI/modal-delete-course";
 
@@ -106,6 +108,32 @@ const EditModuleCourse: React.FC<EditModuleCourseProps> = ({
                                   onClick={() => handleShowModal(item)}
                                 />
                               </span>
+                            </div>
+                            <span className="flex items-center gap-x-4">
+                              <Can action="update" object="course">
+                                <Link to={`/admin/course/edit/${item.id}`}>
+                                  <Pen className="w-4 h-4 text-primary" />
+                                </Link>
+                              </Can>
+                              <Can action="delete" object="course">
+                                <Trash2 className="w-4 h-4 text-error" />
+                              </Can>
+                            </span>
+                          </article>
+                        </Wrapper>
+                      </li>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </ul>
+            )}
+          </Droppable>
+        </DragDropContext>
+      ) : (
+        <p className="text-xs">Aucun cours n'est associé à ce module.</p>
+      )}
+    </Wrapper>
                             </article>
                           </Wrapper>
                         </li>
