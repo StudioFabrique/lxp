@@ -39,47 +39,47 @@ const UserAddForm: FC<{
 
   const { value: email } = useInput(
     (value: string) => regexMail.test(value),
-    props.user?.email ?? ""
+    props.user?.email ?? "",
   );
 
   const { value: firstname } = useInput(
     (value: string) => regexGeneric.test(value),
-    props.user?.firstname ?? ""
+    props.user?.firstname ?? "",
   );
 
   const { value: lastname } = useInput(
     (value: string) => regexGeneric.test(value),
-    props.user?.lastname ?? ""
+    props.user?.lastname ?? "",
   );
 
   const { value: nickname } = useInput(
     (value: string) => regexGeneric.test(value),
-    props.user?.nickname
+    props.user?.nickname,
   );
 
   const { value: address } = useInput(
     (value: string) => regexGeneric.test(value),
-    props.user?.address
+    props.user?.address,
   );
 
   const { value: phone } = useInput(
     (value: string) => regexNumber.test(value),
-    props.user?.phone
+    props.user?.phone,
   );
 
   const { value: postCode } = useInput(
     (value: string) => regexNumber.test(value),
-    props.user?.postCode
+    props.user?.postCode,
   );
 
   const { value: city } = useInput(
     (value: string) => regexGeneric.test(value),
-    props.user?.city
+    props.user?.city,
   );
 
   const { value: description } = useInput(
     (value: string) => regexGeneric.test(value),
-    props.user?.description
+    props.user?.description,
   );
 
   //  test la validité du form via le custom hook useInput
