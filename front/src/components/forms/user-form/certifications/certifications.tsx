@@ -25,24 +25,56 @@ const Certifications: FC<{
   const [currentGraduation, setCurrentGraduation] =
     useState<Graduation>(initGraduation);
 
+  const [editMode, setEditMode] = useState({
+    isActive: false,
+    idToEdit: 0,
+  });
+
   const handleAddGraduation = () => {
     if (
       currentGraduation.date &&
       currentGraduation.degree &&
       currentGraduation.title
     ) {
-      setGraduations((graduations) =>
-        addIdToObject([...graduations, currentGraduation]),
+      setGraduations((prevGraduations) =>
+        addIdToObject([...prevGraduations, currentGraduation]),
       );
 
       setCurrentGraduation(initGraduation);
     }
   };
 
+  const handleSetEditMode = (graduation: Graduation) => {
+    if (!graduation.id) return;
+    setCurrentGraduation(graduation);
+    setEditMode({ isActive: true, idToEdit: graduation.id });
+  };
+
+  const handleEditGraduation = () => {
+    if (
+      currentGraduation.date &&
+      currentGraduation.degree &&
+      currentGraduation.title
+    ) {
+      setGraduations((prevGraduations) =>
+        prevGraduations.map((item) =>
+          item.id === editMode.idToEdit
+            ? { ...item, ...currentGraduation }
+            : item,
+        ),
+      );
+
+      setCurrentGraduation(initGraduation);
+      setEditMode((prevEditMode) => ({ ...prevEditMode, isActive: false }));
+    }
+  };
+
   const handleDeleteGraduation = (id: number) => {
-    setGraduations((graduations) =>
-      graduations.filter((graduation) => graduation.id !== id),
+    setGraduations((prevGraduations) =>
+      prevGraduations.filter((item) => item.id !== id),
     );
+    setCurrentGraduation(initGraduation);
+    setEditMode((prevEditMode) => ({ ...prevEditMode, isActive: false }));
   };
 
   /*
@@ -121,13 +153,23 @@ const Certifications: FC<{
               />
             </span>
           </div>
-          <button
-            type="button"
-            className="mt-2 normal-case self-start btn btn-primary"
-            onClick={handleAddGraduation}
-          >
-            Ajouter la certification
-          </button>
+          {editMode.isActive ? (
+            <button
+              type="button"
+              className="mt-2 normal-case self-start btn btn-primary"
+              onClick={handleEditGraduation}
+            >
+              Modifier la certification
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="mt-2 normal-case self-start btn btn-primary"
+              onClick={handleAddGraduation}
+            >
+              Ajouter la certification
+            </button>
+          )}
         </div>
         <div className="bg-secondary flex flex-col items-center gap-y-4 p-5 m-2 rounded-xl md:h-[300px] lg:h-[400px] overflow-y-auto">
           {/* List of certifications */}
@@ -136,6 +178,7 @@ const Certifications: FC<{
               key={graduation.id}
               onDelete={handleDeleteGraduation}
               graduation={graduation}
+              onSetEditMode={handleSetEditMode}
             />
           ))}
         </div>
