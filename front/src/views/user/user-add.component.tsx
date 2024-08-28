@@ -15,7 +15,7 @@ const UserAdd = () => {
       if (data)
         return navigate(
           { pathname: "/admin/user" },
-          { state: { sucessToastMessage: "Utilisateur crée avec succès" } }
+          { state: { sucessToastMessage: "Utilisateur crée avec succès" } },
         );
     });
   };
