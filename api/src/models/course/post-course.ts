@@ -2,8 +2,6 @@ import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
 
 async function postCourse(userId: string, course: any) {
-  console.log({ course });
-
   const existingModule = await prisma.module.findFirst({
     where: { id: course.moduleId },
     select: { courses: true },
@@ -47,6 +45,7 @@ async function postCourse(userId: string, course: any) {
       },
       author: `${adminName.firstname} ${adminName.lastname}`,
       admin: { connect: { id: existingAdmin.id } },
+      // on place le nouveau cours en fin de liste des cours associés au module
       order: existingModule.courses.length,
     },
     select: { id: true },

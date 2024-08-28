@@ -19,24 +19,28 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
-  },
-  {
-    path: "student",
-    element: (
-      <Suspense fallback={<Loader />}>
-        <StudentLayout />
-      </Suspense>
-    ),
-    children: studentRoutes,
-  },
-  {
-    path: "admin",
-    element: (
-      <Suspense fallback={<Loader />}>
-        <AdminLayout />
-      </Suspense>
-    ),
-    children: adminRoutes,
+    children: [
+      // espace apprenant
+      {
+        path: "student",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <StudentLayout />
+          </Suspense>
+        ),
+        children: studentRoutes,
+      },
+      // espace admin - formateur
+      {
+        path: "admin",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <AdminLayout />
+          </Suspense>
+        ),
+        children: adminRoutes,
+      },
+    ],
   },
 ]);
 

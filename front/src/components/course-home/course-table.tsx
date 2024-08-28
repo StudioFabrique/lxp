@@ -12,6 +12,7 @@ interface CourseTableProps {
   direction: boolean;
   onSorting: (property: string) => void;
   onEditCourse: (id: number) => void;
+  onDeleteCourse: (course: CustomCourse) => void;
 }
 
 export default function CourseTable({
@@ -20,6 +21,7 @@ export default function CourseTable({
   direction,
   onSorting,
   onEditCourse,
+  onDeleteCourse,
 }: CourseTableProps) {
   const content = useMemo(() => {
     return (
@@ -75,7 +77,9 @@ export default function CourseTable({
                   <Trash2
                     className="w-6 h-6 text-error"
                     aria-label="supprimer le cours"
-                    onClick={() => {}}
+                    onClick={() => {
+                      onDeleteCourse(course);
+                    }}
                   />
                 </div>
               </Can>
@@ -84,7 +88,7 @@ export default function CourseTable({
         ))}
       </>
     );
-  }, [coursesList, onEditCourse]);
+  }, [coursesList, onEditCourse, onDeleteCourse]);
 
   return (
     <>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, FormEvent } from "react";
 
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
