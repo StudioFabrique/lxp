@@ -29,7 +29,6 @@ const LoginForm: FC<{
     event.preventDefault();
     if (formIsValid) {
       props.onSubmit(email.value.trim(), password.value.trim());
-      console.log("bonjour form");
     }
   };
 

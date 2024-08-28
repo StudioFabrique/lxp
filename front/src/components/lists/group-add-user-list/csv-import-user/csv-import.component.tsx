@@ -11,6 +11,9 @@ import Papa from "papaparse";
 
 import { checkCSV } from "../../../../utils/csv/check-csv";
 import UploadIcon from "../../../UI/svg/upload-icon.component";
+import toast from "react-hot-toast";
+import { downloadFile } from "../../../../helpers/download-csv-template";
+import { DOWNLOAD_URL } from "../../../../config/urls";
 
 type Props = {
   origin: string;
@@ -29,7 +32,7 @@ const CsvImportUser: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
     () => ({
       worker: true,
     }),
-    []
+    [],
   );
 
   const handleSelectedFile = (event: ChangeEvent<HTMLInputElement>) => {
@@ -51,7 +54,6 @@ const CsvImportUser: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
   };
 
   const handleFileSelection = () => {
-    console.log(selectedFile);
     if (selectedFile && fileRef.current) {
       fileRef.current.value = "";
     }
@@ -68,15 +70,20 @@ const CsvImportUser: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
     }
   }, [isEmptyingReady]);
 
+  const handleDownloadFile = () => {
+    downloadFile(
+      `${DOWNLOAD_URL}/csv-users-group-modele.csv`,
+      "csv-users-group-modele",
+    );
+  };
+
   useEffect(() => {
     if (selectedFile) {
       Papa.parse(selectedFile, {
         ...commonConfig,
         header: true,
         complete: (result: any) => {
-          console.log("resultat", result.meta);
           if (checkCSV(fields, result.meta.fields)) {
-            result.data.pop();
             onParseCsv(result.data);
             handleEmptyFile();
           } else {
@@ -87,6 +94,10 @@ const CsvImportUser: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
     }
   }, [selectedFile, commonConfig, fields, onParseCsv, handleEmptyFile]);
 
+  useEffect(() => {
+    if (fileError) toast.error(fileError);
+  });
+
   return (
     <>
       {type === undefined || type === "icon" ? (
@@ -95,8 +106,8 @@ const CsvImportUser: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
             fileError
               ? "border-error"
               : selectedFile
-              ? "border-success"
-              : "border-primary/50"
+                ? "border-success"
+                : "border-primary/50"
           } ${origin === "csv" ? "bg-primary" : ""}`}
           onClick={handleFileSelection}
         >
@@ -110,14 +121,27 @@ const CsvImportUser: FC<Props> = ({ origin, onParseCsv, fields, type }) => {
               {fileError
                 ? fileError
                 : selectedFile
-                ? selectedFile.name
-                : "Sélectionner un fichier"}
+                  ? selectedFile.name
+                  : "Sélectionner un fichier"}
             </p>
           </div>
         </div>
       ) : (
-        <div onClick={handleFileSelection} className="cursor-pointer">
-          <p>Importer une liste d'étudiant</p>
+        <div className="flex gap-5">
+          <button
+            type="button"
+            onClick={handleFileSelection}
+            className="cursor-pointer"
+          >
+            Importer une liste d'étudiant
+          </button>
+          <button
+            type="button"
+            onClick={handleDownloadFile}
+            className="cursor-pointer"
+          >
+            Télécharger le modèle en csv
+          </button>
         </div>
       )}
       <input

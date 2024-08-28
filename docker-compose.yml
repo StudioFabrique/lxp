@@ -30,29 +30,35 @@ services:
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${DEV_POSTGRES_DB}
+      - POSTGRES_DB=${POSTGRES_DB}
   db-mongo:
     image: mongo:latest
     restart: always
     container_name: lxp-mongo
     volumes:
       - mongo:/data/db
+      - ./api/mongodb/init-db:/docker-entrypoint-initdb.d
     networks:
       - lxp_network
     ports:
       - "27000:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ADMIN_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ADMIN_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
   api:
     image: studiostep/lxp:latest
     pull_policy: always
     volumes:
       - api:/app/api/dist/uploads
+      - api:/app/api/dist/src/uploads
       - logs:/app/api/dist/logs
     networks:
       - lxp_network
     restart: always
     container_name: lxp-api
     ports:
-      - "5002:5001"
+      - "5001:5001"
     links:
       - db-pg
       - db-mongo
@@ -62,4 +68,5 @@ services:
     environment:
       - DATABASE_URL=${DEV_DATABASE_URL}
       - MONGO_LOCAL_URL=${DEV_MONGO_LOCAL_URL}
+      - FIXTURES_MONGO_URL=${FIXTURES_MONGO_URL}
       - SECRET=${SECRET}
