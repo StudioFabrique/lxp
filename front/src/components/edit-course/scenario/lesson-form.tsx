@@ -77,7 +77,10 @@ const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
     };
 
     return (
-      <form className="flex flex-col gap-y-8" onSubmit={handleSubmitForm}>
+      <form
+        className="w-full flex flex-col gap-y-8"
+        onSubmit={handleSubmitForm}
+      >
         <div className="flex flex-col gap-y-4">
           <label className="font-bold" htmlFor="title">
             Titre de la leçon *
@@ -110,10 +113,12 @@ const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
           />
         </div>
 
-        <div className="flex flex-col gap-y-4">
+        <div className="w-full flex flex-col gap-y-4">
           <span className="w-full flex justify-between items-center gap-x-2">
-            <p className="flex font-bold">Tag *</p>
-            <LessonTags list={props.tags} onAddItems={props.onSetTag} />
+            <p className="flex-1 font-bold">Tag *</p>
+            <div>
+              <LessonTags list={props.tags} onAddItems={props.onSetTag} />
+            </div>
           </span>
           {props.tag ? (
             <div className="input py-8 flex items-center">
@@ -174,7 +179,7 @@ const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
         {props.children}
       </form>
     );
-  }
+  },
 );
 
 export default LessonForm;
