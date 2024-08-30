@@ -6,12 +6,16 @@ const TagItem: FC<{ tag: Tag; noIcon?: boolean }> = ({
   tag,
   noIcon = false,
 }) => {
-  const tagClass =
+  let tagClass =
     "btn btn-sm px-4 py-1 font-bold rounded-lg flex border-none items-center gap-x-4 hover:brightness-125";
+
+  if (noIcon) tagClass += " no-animation";
 
   const tagStyle: React.CSSProperties = {
     backgroundColor: tag.color,
   };
+
+  if (noIcon) tagStyle.cursor = "default";
 
   return (
     <div>
