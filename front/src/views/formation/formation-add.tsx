@@ -8,16 +8,7 @@ import FormationsList from "../../components/formation-home/formations-list";
 import { sortArray } from "../../utils/sortArray";
 import useForm from "../../components/UI/forms/hooks/use-form";
 import useTags from "../../hooks/use-tags";
-
-type FormationItem = {
-  id: number;
-  title: string;
-  description?: string;
-  code: string;
-  level: string;
-  parcours: number;
-  tags?: number[];
-};
+import FormationItem from "../../utils/interfaces/formation-item";
 
 export default function FormationAdd() {
   const [tags, setTags] = useState<Tag[]>([]);
