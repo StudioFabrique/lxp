@@ -1,13 +1,5 @@
+import FormationItem from "../../utils/interfaces/formation-item";
 import FormationCard from "./formation-card";
-
-type FormationItem = {
-  id: number;
-  title: string;
-  code: string;
-  level: string;
-  parcours: number;
-  createdAt: string;
-};
 
 interface FormationsListProps {
   formationsList: FormationItem[];
