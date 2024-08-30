@@ -8,17 +8,18 @@ import {
 } from "../../utils/constantes";
 import { deleteTempUploadedFile } from "../../middleware/fileUpload";
 import fs from "fs";
+import { IUser } from "../../utils/interfaces/db/user";
 
 export default async function httpCreateGroup(req: Request, res: Response) {
   const uploadedFile = req.file;
 
   const {
     group,
-    usersId,
+    users,
     parcoursId,
   }: {
     group: IGroup;
-    usersId: string[];
+    users: IUser[];
     parcoursId: number;
   } = req.body.data;
 
@@ -28,7 +29,7 @@ export default async function httpCreateGroup(req: Request, res: Response) {
     if (!!uploadedFile) {
       image = await fs.promises.readFile(uploadedFile.path);
     }
-    const response = await createGroup(group, usersId, image, parcoursId);
+    const response = await createGroup(group, users, image, parcoursId);
 
     await deleteTempUploadedFile(req);
     if (response) {
