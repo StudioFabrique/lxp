@@ -12,7 +12,7 @@ export default async function createManyUsers(
   const roles = await Role.find({ rank: roleRank });
 
   const usersToInsert = users.filter((user) => {
-    user.isActive = false;
+    user.isActive = true;
     user.roles = roles;
     return !emailsExist.includes(user.email);
   });
