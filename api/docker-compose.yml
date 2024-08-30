@@ -1,5 +1,6 @@
 # Set the version of docker compose to use
 version: "3.9"
+name: lxp-api
 
 networks:
   lxp_network:
