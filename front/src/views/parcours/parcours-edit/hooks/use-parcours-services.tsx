@@ -27,13 +27,13 @@ const useParcoursService = () => {
             description: data.description,
             isPublished: data.isPublished,
             visibility: data.visibility,
-          })
+          }),
         );
         dispatch(
           parcoursInformationsAction.updateParcoursDates({
             startDate: data.startDate,
             endDate: data.endDate,
-          })
+          }),
         );
         dispatch(parcoursAction.setParcoursFormation(data.formation));
         if (data.image) {
@@ -41,32 +41,32 @@ const useParcoursService = () => {
         }
         if (data.tags.length > 0) {
           dispatch(
-            tagsAction.setCurrentTags(data.tags.map((item: any) => item.tag))
+            tagsAction.setCurrentTags(data.tags.map((item: any) => item.tag)),
           );
         } else {
           dispatch(
             tagsAction.setCurrentTags(
-              data.formation.tags.map((item: any) => item.tag)
-            )
+              data.formation.tags.map((item: any) => item.tag),
+            ),
           );
         }
         if (data.virtualClass) {
           dispatch(
-            parcoursInformationsAction.setVirtualClass(data.virtualClass)
+            parcoursInformationsAction.setVirtualClass(data.virtualClass),
           );
         }
         if (data.contacts.length > 0) {
           dispatch(
             parcoursContactsAction.setCurrentContacts(
-              data.contacts.map((item: any) => item.contact)
-            )
+              data.contacts.map((item: any) => item.contact),
+            ),
           );
         }
         if (data.skills.length > 0) {
           dispatch(
             parcoursSkillsAction.setSkillsList(
-              data.skills.map((item: any) => item.skill)
-            )
+              data.skills.map((item: any) => item.skill),
+            ),
           );
         }
         if (data.bonusSkills.length > 0) {
@@ -75,8 +75,8 @@ const useParcoursService = () => {
         if (data.objectives.length > 0) {
           dispatch(
             parcoursObjectivesAction.addImportedObjectivesToObjectives(
-              data.objectives
-            )
+              data.objectives,
+            ),
           );
         }
         if (data.modules.length > 0) {
@@ -86,14 +86,14 @@ const useParcoursService = () => {
                 return {
                   ...item.module,
                   contacts: item.module.contacts.map(
-                    (itemContact: any) => itemContact.contact
+                    (itemContact: any) => itemContact.contact,
                   ),
                   bonusSkills: item.module.bonusSkills.map(
-                    (itemBonusSkills: any) => itemBonusSkills.bonusSkill
+                    (itemBonusSkills: any) => itemBonusSkills.bonusSkill,
                   ),
                 };
-              })
-            )
+              }),
+            ),
           );
         } else {
           dispatch(parcoursModulesSliceActions.setModules([]));
@@ -101,21 +101,24 @@ const useParcoursService = () => {
         if (data.groups.length > 0) {
           dispatch(
             parcoursGroupsAction.setGroupsIds(
-              data.groups.map((item: any) => item.group)
-            )
+              data.groups.map((item: any) => item.group),
+            ),
           );
         } else {
           dispatch(parcoursGroupsAction.setGroups([]));
         }
+        /*         dispatch(
+          tagsAction.initTags(data.formation.tags.map((item: any) => item.tag)),
+        );*/
       };
       sendRequest(
         {
           path: `/parcours/parcours-by-id/${parcoursId}`,
         },
-        processData
+        processData,
       );
     },
-    [dispatch, sendRequest]
+    [dispatch, sendRequest],
   );
 
   useEffect(() => {
