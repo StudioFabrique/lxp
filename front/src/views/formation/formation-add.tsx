@@ -9,8 +9,12 @@ import { sortArray } from "../../utils/sortArray";
 import useForm from "../../components/UI/forms/hooks/use-form";
 import useTags from "../../hooks/use-tags";
 import FormationItem from "../../utils/interfaces/formation-item";
+import { useParams, useSearchParams } from "react-router-dom";
 
 export default function FormationAdd() {
+  const [searchParams] = useSearchParams();
+  const formationId = searchParams.get("formationId");
+
   const [tags, setTags] = useState<Tag[]>([]);
   const [formationsList, setFormationsList] = useState<FormationItem[]>([]);
   const { sendRequest, error } = useHttp();
@@ -59,12 +63,15 @@ export default function FormationAdd() {
    * les données de la formation à éditer
    * @param id number
    */
-  const handleSelectFormation = (id: number) => {
-    const formation = formationsList.find((item) => item.id === id);
-    if (formation) {
-      setFormationToEdit(formation);
-    }
-  };
+  const handleSelectFormation = useCallback(
+    (id: number) => {
+      const formation = formationsList.find((item) => item.id === id);
+      if (formation) {
+        setFormationToEdit(formation);
+      }
+    },
+    [formationsList],
+  );
 
   /**
    * Enregistrement d'une nouvelle formation dans la base de données
@@ -199,6 +206,12 @@ export default function FormationAdd() {
       setFormationsList([]);
     };
   }, [getTags, getFormationsList]);
+
+  useEffect(() => {
+    console.log("formation id", formationId);
+    if (formationId && !isNaN(+formationId))
+      handleSelectFormation(+formationId);
+  }, [formationId, handleSelectFormation]);
 
   // gestion des erreurs HTTP
   useEffect(() => {
