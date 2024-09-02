@@ -64,6 +64,10 @@ const CsvImportUserList: FC<{
     );
   }, []);
 
+  const handleCloseDrawer = () => {
+    setDrawerOpenState(false);
+  };
+
   return (
     <div>
       <CsvImportUser
@@ -77,7 +81,7 @@ const CsvImportUserList: FC<{
         id="add-user"
         visible={false}
         isOpen={isDrawerOpen}
-        hideCloseArrow
+        onCloseDrawer={handleCloseDrawer}
       >
         <CsvUserListConfirmation
           usersFromCsv={usersToImport}

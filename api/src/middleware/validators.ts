@@ -66,12 +66,6 @@ export const userValidator = (
   const validatorSubject = `${isFormData ? "data.user" : "user"}`;
 
   const validationChain = [
-    body(validatorSubject + ".email")
-      .exists()
-      .isEmail()
-      .trim()
-      .escape()
-      .withMessage("email non conforme"),
     body([validatorSubject + ".firstname", validatorSubject + ".lastname"])
       .exists()
       .notEmpty()

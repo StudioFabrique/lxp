@@ -4,6 +4,7 @@ export default async function updateUser(_id: string, user: IUser) {
   // isolate some properties of user to prevent security risk
   delete user._id;
   const {
+    email,
     hobbies,
     links,
     password,
