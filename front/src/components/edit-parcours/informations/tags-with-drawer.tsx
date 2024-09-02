@@ -15,25 +15,19 @@ interface TagsWithDrawerProps {
   onSubmit: (items: any[]) => void;
 }
 
-type Item = {
-  title: string;
-  formationId?: number;
-};
-
 const TagsWithDrawer = (props: TagsWithDrawerProps) => {
   const formation = useSelector((state: any) => state.parcours.formation);
   const currentTags = useSelector(
-    (state: any) => state.tags.currentTags,
+    (state: any) => state.tags.currentTags
   ) as Tag[];
   const initialTags = useSelector(
-    (state: any) => state.tags.initialTags,
+    (state: any) => state.tags.initialTags
   ) as Tag[];
   const dispatch = useDispatch();
   const [submit, setSubmit] = useState<boolean>(false);
   const isInitialRender = useRef(true);
   const { sendRequest } = useHttp();
   const [formationTags, setFormationTags] = useState<Tag[]>([]);
-  const [currentFormation, setCurrentFormation] = useState<Item | null>(null);
 
   console.log({ formation });
 
@@ -45,7 +39,7 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
       setSubmit(true);
       dispatch(tagsAction.setCurrentTags(tags));
     },
-    [dispatch],
+    [dispatch]
   );
 
   /**
@@ -75,7 +69,7 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
         {
           path: "/tag",
         },
-        processData,
+        processData
       );
     }
   }, [dispatch, sendRequest]);
@@ -92,21 +86,17 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
       drawerTitle="Ajouter des Tags"
       title="Tags"
       loading={props.loading}
-      initialList={formationTags}
+      initialList={initialTags}
       selectedItems={currentTags}
       property="name"
       onSubmit={handleUpdateTags}
     >
       <CurrentTags />
-      <ParcoursTagsSelecter
-        formations={[]}
-        formationId={1}
-        onSearchTag={() => {}}
-      >
-        <div className="max-w-96">
-          <p>
+      <ParcoursTagsSelecter formationTags={formationTags}>
+        <div className="max-w-[30rem] flex justify-center">
+          <p className="w-full text-center">
             Tous les tags en lien avec la formation ont été ajoutés au parcours.
-            Si vous souhaitez créer de nouveau tags pour ce parcours il faut
+            Si vous souhaitez créer de nouveaux tags pour ce parcours il faut
             d'abord les ajouter à la formation en suivant ce{" "}
             {formation ? (
               <Link
@@ -116,12 +106,6 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
                 lien
               </Link>
             ) : null}
-            .
-          </p>
-
-          <p>
-            Vous pouvez également ajouter des tags en lien avec d'autres
-            formations en utilisant le menu déroulant.
           </p>
         </div>
       </ParcoursTagsSelecter>
