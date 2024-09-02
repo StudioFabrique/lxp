@@ -40,6 +40,10 @@ const GroupUserList: FC<{
     handleToggleMenu();
   };
 
+  const handleCloseDrawer = (id: string) => {
+    document.getElementById(id)?.click();
+  };
+
   useEffect(() => {
     setPage(totalPages);
   }, [setPage, totalPages]);
@@ -78,7 +82,11 @@ const GroupUserList: FC<{
         </div>
       </div>
       <div className="flex justify-between items-center">
-        <GroupManageUserList onAddUsers={onAddUsers} usersToAdd={usersToAdd} />
+        <GroupManageUserList
+          onAddUsers={onAddUsers}
+          usersToAdd={usersToAdd}
+          onCloseDrawer={handleCloseDrawer}
+        />
         <SearchSimple placeholder="Rechercher un étudiant par nom ou prénom" />
       </div>
 
