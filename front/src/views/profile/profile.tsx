@@ -57,30 +57,36 @@ const Profile = () => {
           >
             Information
           </button>
-          <button
-            type="button"
-            className={`btn ${currentTab === "Calendar" && "btn-secondary"}`}
-            value="Calendar"
-            onClick={() => handleChangeTab("Calendar")}
-          >
-            Calendrier
-          </button>
-          <button
-            type="button"
-            className={`btn ${currentTab === "Evals" && "btn-secondary"}`}
-            value="Evals"
-            onClick={() => handleChangeTab("Evals")}
-          >
-            Parcours
-          </button>
-          <button
-            type="button"
-            className={`btn ${currentTab === "Awards" && "btn-secondary"}`}
-            value="Awards"
-            onClick={() => handleChangeTab("Awards")}
-          >
-            Badge & Compétences
-          </button>
+          <Can object="parcours" action="read">
+            <button
+              type="button"
+              className={`btn ${currentTab === "Calendar" && "btn-secondary"}`}
+              value="Calendar"
+              onClick={() => handleChangeTab("Calendar")}
+            >
+              Calendrier
+            </button>
+          </Can>
+          <Can object="parcours" action="read">
+            <button
+              type="button"
+              className={`btn ${currentTab === "Evals" && "btn-secondary"}`}
+              value="Evals"
+              onClick={() => handleChangeTab("Evals")}
+            >
+              Parcours
+            </button>
+          </Can>
+          <Can object="bonusSkill" action="read">
+            <button
+              type="button"
+              className={`btn ${currentTab === "Awards" && "btn-secondary"}`}
+              value="Awards"
+              onClick={() => handleChangeTab("Awards")}
+            >
+              Badge & Compétences
+            </button>
+          </Can>
           <button
             type="button"
             className={`btn ${currentTab === "Account" && "btn-secondary"}`}
