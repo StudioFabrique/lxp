@@ -9,6 +9,7 @@ type Props = {
   id?: string;
   isOpen?: boolean;
   onCloseDrawer?: (id: string) => void;
+  hideCloseArrow?: boolean;
 };
 
 const RightSideDrawer: FC<Props> = ({
@@ -19,6 +20,7 @@ const RightSideDrawer: FC<Props> = ({
   id = "my-drawer-4",
   isOpen,
   onCloseDrawer,
+  hideCloseArrow,
 }) => {
   const checkboxRef = useRef<HTMLInputElement | null>(null);
 
@@ -102,7 +104,11 @@ const RightSideDrawer: FC<Props> = ({
         <ul className="min-w-[30rem] block menu p-4 top-0 right-0 min-h-screen bg-base-200 text-base-content rounded-l-2xl overflow-auto">
           {/* Sidebar content here */}
           <div className="flex items-center gap-x-4">
-            <div className="text-primary" onClick={handleCloseDrawer}>
+            <div
+              hidden={hideCloseArrow}
+              className="text-primary"
+              onClick={handleCloseDrawer}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"

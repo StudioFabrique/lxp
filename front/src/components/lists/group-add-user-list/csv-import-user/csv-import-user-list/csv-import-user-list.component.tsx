@@ -77,6 +77,7 @@ const CsvImportUserList: FC<{
         id="add-user"
         visible={false}
         isOpen={isDrawerOpen}
+        hideCloseArrow
       >
         <CsvUserListConfirmation
           usersFromCsv={usersToImport}
