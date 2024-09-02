@@ -171,7 +171,7 @@ const Certifications: FC<{
             </button>
           )}
         </div>
-        <div className="bg-secondary flex flex-col items-center gap-y-4 p-5 m-2 rounded-xl md:h-[300px] lg:h-[400px] overflow-y-auto">
+        <div className="bg-secondary/10 flex flex-col items-center gap-y-4 p-5 m-2 rounded-xl md:h-[300px] lg:h-[400px] overflow-y-auto">
           {/* List of certifications */}
           {graduations.map((graduation) => (
             <CertificationItem
