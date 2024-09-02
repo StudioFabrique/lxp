@@ -42,7 +42,6 @@ type UserInformation = {
 const Information: FC<{
   formRef: Ref<HTMLFormElement>;
 }> = ({ formRef }) => {
-  const { handshake } = useContext(Context);
   const { sendRequest, isLoading } = useHttp();
 
   const { pathname } = useLocation();
@@ -70,7 +69,6 @@ const Information: FC<{
     const applyData = (data: { data: UserInformation }) => {
       setUserData(data.data);
       toast.success("Formulaire envoyé avec succès !");
-      handshake();
     };
 
     const formData = new FormData();
@@ -85,7 +83,7 @@ const Information: FC<{
           method: "put",
           body: formData,
         },
-        applyData
+        applyData,
       );
     } catch (error) {
       const newErrors = validationErrors(error);

@@ -99,6 +99,7 @@ const Profile = () => {
         {currentTab === "Préférences" ? null : (
           <Can object="default" action="update">
             <button
+              type="button"
               className="btn btn-sm justify-self-end"
               onClick={() => formRef.current?.requestSubmit()}
             >
@@ -112,6 +113,7 @@ const Profile = () => {
         <div className="flex justify-end">
           <Can object="default" action="update">
             <button
+              type="button"
               className="btn btn-sm justify-self-end"
               onClick={() => formRef.current?.requestSubmit()}
             >
