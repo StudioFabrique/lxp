@@ -19,10 +19,16 @@ const GroupAdd = () => {
       });
     };
 
-    const usersId = usersToAdd.map((user) => user._id);
+    const usersIdWithActiveState = usersToAdd.map((user) => ({
+      _id: user._id,
+      isActive: user.isActive,
+    }));
 
     const formData = new FormData();
-    formData.append("data", JSON.stringify({ ...data, usersId }));
+    formData.append(
+      "data",
+      JSON.stringify({ ...data, users: usersIdWithActiveState }),
+    );
     formData.append("image", file);
 
     sendRequest({ method: "post", path: "/group", body: formData }, applyData);
@@ -37,14 +43,14 @@ const GroupAdd = () => {
       usersToAdd.map((userToAdd) =>
         userToAdd._id === user._id
           ? { ...userToAdd, isActive: user.isActive }
-          : userToAdd
-      )
+          : userToAdd,
+      ),
     );
   };
 
   const handleDeleteUser = (user: User) => {
     setUsersToAdd((usersToAdd) =>
-      usersToAdd.filter((userToAdd) => userToAdd._id !== user._id)
+      usersToAdd.filter((userToAdd) => userToAdd._id !== user._id),
     );
   };
 

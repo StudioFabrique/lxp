@@ -178,10 +178,13 @@ export const groupValidator = [
     .trim()
     .escape()
     .withMessage("titre (name) ou description (desc) non conforme"),
-  body("data.usersId").isArray().withMessage("users n'est pas un Array"),
-  body("data.usersId.*")
+  body("data.users").isArray().withMessage("users n'est pas un Array"),
+  body("data.users.*._id")
     .isString()
-    .withMessage("le contenu du tableau users doit être de type string"),
+    .withMessage("les id du tableau users doivent être de type string"),
+  body("data.users.*.isActive")
+    .isBoolean()
+    .withMessage("isActive du tableau users doit être de type boolean"),
   checkValidatorResult,
 ];
 
