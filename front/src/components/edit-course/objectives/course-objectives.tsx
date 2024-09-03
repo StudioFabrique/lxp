@@ -25,10 +25,10 @@ const CourseObjectives = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const courseObjectives = useSelector(
-    (state: any) => state.courseObjectives.courseObjectives
+    (state: any) => state.courseObjectives.courseObjectives,
   ) as Objective[];
   const parcoursObjectives = useSelector(
-    (state: any) => state.courseObjectives.parcoursObjectives
+    (state: any) => state.courseObjectives.parcoursObjectives,
   ) as Objective[];
   const [toggleForm, setToggleForm] = useState(false);
   const formRef = useRef<HTMLInputElement>(null);
@@ -61,7 +61,7 @@ const CourseObjectives = () => {
         method: "put",
         body: { description: value },
       },
-      applyData
+      applyData,
     );
   };
 
@@ -90,7 +90,7 @@ const CourseObjectives = () => {
             method: "put",
             body: courseObjectives.map((item) => item.id),
           },
-          applyData
+          applyData,
         );
         setSubmit(false);
       }
@@ -106,14 +106,14 @@ const CourseObjectives = () => {
   useEffect(() => {
     const applyData = (data: any) => {
       dispatch(
-        courseObjectivesActions.initData(courseObjectivesFromHttp(data))
+        courseObjectivesActions.initData(courseObjectivesFromHttp(data)),
       );
     };
     sendRequest(
       {
         path: `/course/objectives/${courseId}`,
       },
-      applyData
+      applyData,
     );
   }, [courseId, dispatch, sendRequest]);
 
@@ -146,14 +146,7 @@ const CourseObjectives = () => {
                   onClickEvent={() => setToggleForm((prevState) => !prevState)}
                   outline={true}
                 />
-              ) : (
-                <button
-                  className="btn btn-primary btn-outline"
-                  onClick={handleCancelForm}
-                >
-                  Annuler
-                </button>
-              )}
+              ) : null}
             </div>
           </Wrapper>
         ) : null}
@@ -164,6 +157,7 @@ const CourseObjectives = () => {
             newObjective={newObjective}
             ref={formRef}
             onSubmit={handleSubmitNewObjective}
+            onCancel={handleCancelForm}
           />
         </Wrapper>
       ) : null}

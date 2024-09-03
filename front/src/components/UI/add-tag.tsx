@@ -21,7 +21,7 @@ export default function AddTag(props: AddTagProps) {
 
   return (
     <form className="flex flex-col gap-y-2" onSubmit={handleTagSubmit}>
-      <label htmlFor="">Tags</label>
+      <label>Tags</label>
       <input
         className={style}
         type="text"
@@ -29,6 +29,10 @@ export default function AddTag(props: AddTagProps) {
         value={props.tag}
         onChange={props.onChangeValue}
       />
+      <p className="text-xs text-secondary pl-1">
+        Appuyer sur la touche "Entrée" après avoir saisi un nom de tag pour
+        l'ajouter à la liste.
+      </p>
     </form>
   );
 }
