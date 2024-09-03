@@ -46,7 +46,7 @@ const TypeUtilisateur: FC<{
                 key={role._id}
                 name={role.role}
                 type="checkbox"
-                className="checkbox checkbox-primary"
+                className="checkbox checkbox-primary rounded-full"
                 onChange={() => handleCheck(role._id)}
                 checked={roleId === role._id}
               />
