@@ -6,13 +6,14 @@ import { Suspense, lazy } from "react";
 import studentRoutes from "./lib/routes/students-routes";
 import adminRoutes from "./lib/routes/admin-routes";
 import Loader from "./components/UI/loader";
+import Sidebar from "./components/UI/sidebar/sidebar";
 
 const StudentLayout = lazy(
-  async () => await import("./views/student/student-layout.component")
+  async () => await import("./views/student/student-layout.component"),
 );
 
 const AdminLayout = lazy(
-  async () => await import("./views/admin/admin-layout.component")
+  async () => await import("./views/admin/admin-layout.component"),
 );
 
 const router = createBrowserRouter([
@@ -24,9 +25,13 @@ const router = createBrowserRouter([
       {
         path: "student",
         element: (
-          <Suspense fallback={<Loader />}>
-            <StudentLayout />
-          </Suspense>
+          <div>
+            <Sidebar />
+
+            <Suspense fallback={<Loader />}>
+              <StudentLayout />
+            </Suspense>
+          </div>
         ),
         children: studentRoutes,
       },
@@ -34,9 +39,13 @@ const router = createBrowserRouter([
       {
         path: "admin",
         element: (
-          <Suspense fallback={<Loader />}>
-            <AdminLayout />
-          </Suspense>
+          <div>
+            <Sidebar />
+
+            <Suspense fallback={<Loader />}>
+              <AdminLayout />
+            </Suspense>
+          </div>
         ),
         children: adminRoutes,
       },
@@ -47,7 +56,7 @@ const router = createBrowserRouter([
 function App() {
   return (
     <ContextProvider>
-      <RouterProvider router={router}></RouterProvider>
+      <RouterProvider router={router} />
     </ContextProvider>
   );
 }
