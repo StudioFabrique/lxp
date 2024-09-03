@@ -3,6 +3,7 @@ import React from "react";
 interface ObjectivesFormProps {
   newObjective: any;
   onSubmit: (value: string) => void;
+  onCancel: () => void;
 }
 
 const ObjectivesForm = React.forwardRef<HTMLInputElement, ObjectivesFormProps>(
@@ -29,9 +30,21 @@ const ObjectivesForm = React.forwardRef<HTMLInputElement, ObjectivesFormProps>(
           onBlur={newObjective.valueBlurHandler}
           placeholder="Entrez un nouvel objectif"
         />
+        <div className="flex justify-between items-center pt-2">
+          <p className="text-xs text-secondary pl-1">
+            Appuyez sur "Entrée" après saisi un objectif de cours pour
+            l'enregistrer.
+          </p>
+          <button
+            className="btn btn-primary btn-outline btn-sm"
+            onClick={props.onCancel}
+          >
+            Annuler
+          </button>
+        </div>
       </form>
     );
-  }
+  },
 );
 
 export default ObjectivesForm;
