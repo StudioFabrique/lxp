@@ -1,7 +1,10 @@
 import { body, param } from "express-validator";
 
 import { checkValidatorResult } from "../../../middleware/validators";
-import { stringValidateGeneric } from "../../../helpers/custom-validators";
+import {
+  stringValidateGeneric,
+  stringValidateOptional,
+} from "../../../helpers/custom-validators";
 
 export const postParcoursValidator = [
   body("formation")
@@ -53,9 +56,8 @@ export const updateInfosValidator = [
     .withMessage("Le titre du parcours contient des caractères invalides.")
     .trim(),
   body("description")
-    .notEmpty()
-    .withMessage("Description absente")
-    .custom(stringValidateGeneric)
+    .optional()
+    .custom(stringValidateOptional)
     .withMessage("La description contient des caractères invalides."),
   body("formation")
     .isNumeric()
@@ -124,7 +126,7 @@ export const putParcoursContactsValidator = [
     .withMessage("Id nosql absent")
     .custom(stringValidateGeneric)
     .withMessage(
-      "Caractères non autorisés pour l'identifiant nosql du contact."
+      "Caractères non autorisés pour l'identifiant nosql du contact.",
     )
     .escape(),
   body("contacts.*.name")
