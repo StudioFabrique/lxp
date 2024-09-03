@@ -45,8 +45,8 @@ const TypeUtilisateur: FC<{
               <input
                 key={role._id}
                 name={role.role}
-                type="checkbox"
-                className="checkbox checkbox-primary"
+                type="radio"
+                className="radio radio-primary"
                 onChange={() => handleCheck(role._id)}
                 checked={roleId === role._id}
               />
