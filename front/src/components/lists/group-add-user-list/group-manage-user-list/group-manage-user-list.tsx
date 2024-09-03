@@ -13,7 +13,7 @@ const GroupManageUserList: FC<{
   usersToAdd: User[];
   onAddUsers: (users: Array<User>) => void;
   drawerOptions?: { visible: boolean; isOpen: boolean };
-  onCloseDrawer?: () => void;
+  onCloseDrawer?: (id: string) => void;
 }> = ({ usersToAdd, drawerOptions, onAddUsers, onCloseDrawer }) => {
   const {
     page,
@@ -36,12 +36,10 @@ const GroupManageUserList: FC<{
   const handleSetUsersToAdd = () => {
     onAddUsers(selectedUsers);
     const selectedUsersIds = selectedUsers.map(
-      (selectedUser) => selectedUser._id,
+      (selectedUser) => selectedUser._id
     );
     setSelectedUsers((users) =>
-      users.filter(
-        (currentUser) => !selectedUsersIds.includes(currentUser._id),
-      ),
+      users.filter((currentUser) => !selectedUsersIds.includes(currentUser._id))
     );
     setAllChecked(false);
   };
@@ -63,7 +61,7 @@ const GroupManageUserList: FC<{
 
   const handleDeleteSelectedUser = useCallback((user: User) => {
     setSelectedUsers((users) =>
-      users.filter((currentUser) => currentUser._id !== user._id),
+      users.filter((currentUser) => currentUser._id !== user._id)
     );
     setUsersSettedState(false);
   }, []);
@@ -77,14 +75,14 @@ const GroupManageUserList: FC<{
     }
     onAddUsers([user]);
     setSelectedUsers((users) =>
-      users.filter((currentUser) => currentUser._id !== user._id),
+      users.filter((currentUser) => currentUser._id !== user._id)
     );
   };
 
   const handleSearchUser = (entityToSearch: string, searchValue: string) => {
     const resultsFromSearch = usersToShowsInList.filter(
       (user: any) =>
-        user[entityToSearch].toLowerCase() === searchValue.toLowerCase(),
+        user[entityToSearch].toLowerCase() === searchValue.toLowerCase()
     );
 
     setUserSearchResult(resultsFromSearch);
@@ -96,14 +94,14 @@ const GroupManageUserList: FC<{
 
   const handleCloseDrawer = () => {
     setAllChecked(false);
-    onCloseDrawer && onCloseDrawer();
+    onCloseDrawer && onCloseDrawer("add-user-to-group");
   };
 
   useEffect(() => {
     setUsersToShowInList(
       dataList.filter((data) => {
         return !usersToAdd.map((user) => user._id).includes(data._id);
-      }),
+      })
     );
   }, [dataList, usersToAdd]);
 
