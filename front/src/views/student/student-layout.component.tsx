@@ -65,7 +65,6 @@ const StudentLayout = () => {
       {user && user.roles[0].rank > 2 ? (
         <div>
           {showConfetti && <PortalConfetti />}
-          <Sidebar />
           <FadeWrapper>
             <div className="w-full flex flex-col pl-20">
               <Outlet />
