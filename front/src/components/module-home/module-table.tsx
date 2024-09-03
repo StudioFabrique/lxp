@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 //import { useNavigate } from "react-router-dom";
 
+import { Link } from "react-router-dom";
 import { localeDate } from "../../helpers/locale-date";
 import Can from "../UI/can/can.component";
-import DeleteIcon from "../UI/svg/delete-icon.component";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
-import { Link } from "react-router-dom";
-import EditIcon from "../UI/svg/edit-icon";
+import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
+import DeleteIcon from "../UI/svg/delete-icon.component";
 
 interface ModuleTableProps {
   modulesList: any[];
@@ -22,7 +22,7 @@ const ModuleTable = ({
   fieldSort,
   direction,
   onSorting,
-  //stepId,
+  stepId,
   onDelete,
 }: ModuleTableProps) => {
   //const nav = useNavigate();
@@ -64,14 +64,14 @@ const ModuleTable = ({
                       {item.parcours ? (
                         <Link
                           className="text-secondary"
-                          to={`/admin/module/edit/${item.id}`}
+                          to={`/admin/parcours/edit/${item.parcours.id}?step=${stepId}`}
                           aria-label="Editer le module"
                         >
-                          <EditIcon />
+                          <ArrowTopRightIcon />
                         </Link>
                       ) : (
                         <div className="text-base-content/50">
-                          <EditIcon />
+                          <ArrowTopRightIcon />
                         </div>
                       )}
                     </div>
