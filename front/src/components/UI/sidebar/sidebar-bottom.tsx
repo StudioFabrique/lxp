@@ -14,7 +14,7 @@ const SidebarBottom = ({ interfaceType, onLogout }: SharedSideBarProps) => {
   const { user } = useContext(Context);
 
   return (
-    <ul className="flex flex-col gap-y-4 items-center">
+    <ul className="flex flex-col gap-4 items-center">
       <li className="left-[14px]">
         <Link
           to={`/${interfaceType}/profil`}
