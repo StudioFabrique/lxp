@@ -33,7 +33,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
         <>
           {parcoursList.map((item: Parcours) => (
             <tr
-              className="text-xs lg:text-sm cursor-pointer hover:bg-secondary/20 hover:text-base-content"
+              className="text-xs lg:text-sm hover:bg-secondary/20 hover:text-base-content"
               key={item.id}
             >
               <td className="bg-transparent rounded-l-lg truncate">
@@ -89,7 +89,10 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                       className="tooltip tooltip-bottom flex-items-center"
                       data-tip="Supprimer le parcours"
                     >
-                      <div onClick={() => handleDeleteParcours(item.id!)}>
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => handleDeleteParcours(item.id!)}
+                      >
                         <DeleteIcon />
                       </div>
                     </div>
