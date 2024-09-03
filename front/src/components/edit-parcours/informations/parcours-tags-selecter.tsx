@@ -13,15 +13,20 @@ interface Props {
 }
 
 const ParcoursTagsSelecter = (props: Props) => {
+  //  les tags affichés dans la partie inférieure du drawer, cette liste est filtrée avec le terme de la recherche
   const [tags, setTags] = useState(props.list);
+  //  valeur du champs de formulaire dédié à la recherche de tags
   const [searchTerm, setSearchTerm] = useState("");
+  //  liste des tags affichée dans la partie supérieure du drawer
   const [filteredTags, setFilteredTags] = useState<Tag[]>([]);
 
+  // ajoute des tags à la liste des tags sélectionnés
   const handleAddTag = (id: number) => {
     const ids = [id];
     props.onAddItems!(ids);
   };
 
+  //  filtre la liste des tags liés à la formation en fonction de la valeur du champs de recherche
   useEffect(() => {
     let updatedTags: Tag[] = [];
     props.formationTags.forEach((elem) => {
@@ -31,20 +36,21 @@ const ParcoursTagsSelecter = (props: Props) => {
     setFilteredTags(updatedTags);
   }, [props.formationTags, tags]);
 
+  //  filtre la liste de tous les tags en fonction de la valeur du champ de recherche
   useEffect(() => {
     if (searchTerm.length > 0)
       setTags(
         props.list?.filter((item) =>
-          item.name.toLocaleLowerCase().includes(searchTerm.toLowerCase())
-        )
+          item.name.toLocaleLowerCase().includes(searchTerm.toLowerCase()),
+        ),
       );
     else setTags(props.list);
   }, [searchTerm, props.list]);
 
   return (
     <div className="flex flex-col gap-y-4">
-      {(filteredTags && filteredTags.length > 0) ||
-      (tags && tags?.length > 0) ? (
+      {/*moitié supérieure du drawer */}
+      {filteredTags || (tags && tags?.length > 0) ? (
         <>
           {filteredTags.length > 0 ? (
             <ul className="w-[30rem] flex flex-wrap gap-2">
@@ -58,7 +64,9 @@ const ParcoursTagsSelecter = (props: Props) => {
             props.children
           ) : null}
           <p className="divider">Tous les tags</p>
+          {/* champs pour recherche un tag dans la liste de tous les tags */}
           <SearchTag searchTerm={searchTerm} onSetSearchTerm={setSearchTerm} />
+          {/* moitié inférieure du drawer affichant la liste de tous les tags */}
           {tags && tags.length > 0 ? (
             <ul className="w-[30rem] flex flex-wrap gap-2 overflow-auto">
               {sortArray(tags, "name").map((tag) => (
