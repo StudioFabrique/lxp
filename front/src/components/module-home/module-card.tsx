@@ -58,22 +58,35 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
 
       <div className="card-body w-full flex flex-col pt-4">
         <div className="flex flex-col gap-y-2 mb-4">
-          <h2 className="card-title text-primary">{module.title}</h2>
-          <span className="w-fit flex items-center gap-x-1">
-            <p>Formation :</p>
-            <p className="font-normal">
+          <span
+            className="card-title text-primary tooltip tooltip-bottom"
+            data-tip={module.title}
+          >
+            <h2 className="w-full block truncate text-left">{module.title}</h2>
+          </span>
+          <span
+            className="text-right w-full flex items-center gap-x-1 tooltip tooltip-bottom"
+            data-tip={module.formation}
+          >
+            <p className="text-left w-full">Formation :</p>
+            <div className="text-right font-normal w-full block truncate">
               {module.formation ?? "Non disponible"}
+            </div>
+          </span>
+          <span
+            className="w-full flex items-center gap-x-1 tooltip tooltip-bottom"
+            data-tip={module.parcours ? module.parcours : "Non disponible"}
+          >
+            <p className="text-left w-full">Parcours :</p>
+            <p className="text-right font-normal w-full block truncate">
+              {module.parcours ? module.parcours : "Non disponible"}
             </p>
           </span>
-          <span className="w-fit flex items-center gap-x-1">
-            <p>Parcours :</p>
-            <p className="font-normal">
-              {module.parcours ? module.parcours.title : "Non disponible"}
+          <span className="w-full flex gap-x-1 items-center">
+            <p className="text-left">Dernière màj :</p>
+            <p className="text-right font-normal">
+              {localeDate(module.updatedAt!)}
             </p>
-          </span>
-          <span className="w-fit flex gap-x-1 items-center">
-            <p>Dernière màj :</p>
-            <p className="font-normal">{localeDate(module.updatedAt!)}</p>
           </span>
         </div>
         {showDetails ? (

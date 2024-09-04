@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-//import { useNavigate } from "react-router-dom";
-
 import { Link } from "react-router-dom";
 import { localeDate } from "../../helpers/locale-date";
 import Can from "../UI/can/can.component";
@@ -25,7 +22,9 @@ const ModuleTable = ({
   stepId,
   onDelete,
 }: ModuleTableProps) => {
-  //const nav = useNavigate();
+  const truncateText = (text: string, maxLength: number) => {
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
 
   const content = (
     <>
@@ -36,17 +35,25 @@ const ModuleTable = ({
               className="text-xs lg:text-sm cursor-pointer hover:bg-secondary/20 hover:text-base-content"
               key={item.id}
             >
-              <td className="bg-transparent rounded-l-lg truncate">
-                {item.title}
+              <td className="bg-transparent rounded-l-lg max-w-[150px] truncate">
+                <span className="tooltip" data-tip={item.title}>
+                  {truncateText(item.title, 20)}
+                </span>
               </td>
-              <td className="bg-transparent capitalize truncate">
-                {item.author}
+              <td className="bg-transparent capitalize max-w-[100px] truncate">
+                <span className="tooltip" data-tip={item.author}>
+                  {truncateText(item.author, 15)}
+                </span>
               </td>
-              <td className="bg-transparent truncate">
-                {item.formation ? item.formation : "ND"}
+              <td className="bg-transparent max-w-[150px] truncate">
+                <span className="tooltip" data-tip={item.formation || "ND"}>
+                  {truncateText(item.formation, 20)}
+                </span>
               </td>
-              <td className="bg-transparent truncate">
-                {item.parcours ? item.parcours.title : "ND"}
+              <td className="bg-transparent max-w-[150px] truncate">
+                <span className="tooltip" data-tip={item.parcours}>
+                  {truncateText(item.parcours, 20)}
+                </span>
               </td>
               <td className="bg-transparent truncate">
                 {localeDate(item.createdAt!)}
@@ -101,6 +108,8 @@ const ModuleTable = ({
       ) : null}
     </>
   );
+
+  // Le reste du code reste inchangé...
 
   return (
     <div className="w-full min-h-[50%] flex justify-center items-center text-xs lg:text-sm">
