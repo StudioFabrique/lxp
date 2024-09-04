@@ -21,7 +21,6 @@ import useHttp from "../../../hooks/use-http";
 import Loader from "../../UI/loader";
 import Hobby from "../../../utils/interfaces/hobby";
 import { Link } from "../../../utils/interfaces/link";
-import { Context } from "../../../store/context.store";
 import { useLocation } from "react-router-dom";
 
 type UserInformation = {
