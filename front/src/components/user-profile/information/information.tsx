@@ -42,7 +42,7 @@ type UserInformation = {
 const Information: FC<{
   formRef: Ref<HTMLFormElement>;
 }> = ({ formRef }) => {
-  const { sendRequest, isLoading } = useHttp();
+  const { sendRequest, isLoading } = useHttp(true);
 
   const { pathname } = useLocation();
 
