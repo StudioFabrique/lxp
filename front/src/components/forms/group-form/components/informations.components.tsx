@@ -59,7 +59,7 @@ const Informations: FC<{
       <MemoizedImageFileUpload
         maxSize={headerImageMaxSize}
         onSetFile={onSetFile}
-        label="Téléverser une image de groupe *"
+        label="Téléverser une image de groupe"
       />
     </Wrapper>
   );
