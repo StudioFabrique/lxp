@@ -56,7 +56,11 @@ const GroupAdd = () => {
 
   return (
     <div className="flex flex-col p-10 gap-y-10">
-      <GroupAddForm onSubmitForm={handleSubmit} isLoading={isLoading} />
+      <GroupAddForm
+        onSubmitForm={handleSubmit}
+        isLoading={isLoading}
+        isFileNotRequired
+      />
       <GroupUserList
         usersToAdd={usersToAdd}
         onAddUsers={handleAddUsers}
