@@ -54,7 +54,14 @@ const ModuleHome = () => {
   // retourne la liste de tous les modules
   useEffect(() => {
     const applyData = (data: any) => {
-      setModules(data.response);
+      console.log({ data });
+      const updatedModules = data.response.map((item: any) => ({
+        ...item,
+        formation: item.formation ?? "ND",
+        parcours: item.parcours ? item.parcours.title : "ND",
+      }));
+      console.log({ updatedModules });
+      setModules(updatedModules);
     };
     sendRequest(
       {
