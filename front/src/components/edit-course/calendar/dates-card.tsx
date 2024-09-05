@@ -11,7 +11,7 @@ const DatesCard = (props: DatesCardProps) => {
   const { datesItem } = props;
 
   return (
-    <article className="text-xs grid grid-cols-1 lg:grid-cols-2">
+    <article className="text-xs grid grid-cols-1 lg:grid-cols-2 gap-8">
       <Wrapper>
         <Wrapper>
           <span className="w-full flex justify-between items-center">
