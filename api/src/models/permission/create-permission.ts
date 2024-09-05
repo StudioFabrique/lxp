@@ -5,25 +5,25 @@ import { ressourcesRbacByRank } from "../../config/ressources-rbac";
 export default async function CreatePermission(
   role: string,
   rank: number,
-  action: string,
-  duplicateForAdmins?: IRole[]
+  action: "read" | "write" | "update" | "delete",
+  duplicateForAdmins?: IRole[],
 ) {
   const ressources = async () => {
     switch (rank) {
       case 1:
         return [
-          ...ressourcesRbacByRank[rank],
+          ...ressourcesRbacByRank[rank][action],
           ...(await Role.find()).map((role) => role.role),
         ];
       case 2:
         return [
-          ...ressourcesRbacByRank[rank],
+          ...ressourcesRbacByRank[rank][action],
           ...(action === "read"
             ? (await Role.find()).map((role) => role.role)
             : []),
         ];
       case 3:
-        return action === "read" ? [...ressourcesRbacByRank[rank]] : [];
+        return action === "read" ? [...ressourcesRbacByRank[rank][action]] : [];
       case 4:
         return [];
       default:
@@ -43,6 +43,6 @@ export default async function CreatePermission(
         { role: adminRole.role, action: action },
         {
           $push: { ressources: role },
-        }
+        },
       );
 }
