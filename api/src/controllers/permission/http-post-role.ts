@@ -24,7 +24,7 @@ export default async function httpPostRole(req: Request, res: Response) {
       role.toLocaleLowerCase().trim(),
       label.toLocaleLowerCase().trim(),
       rank,
-      isActive
+      isActive,
     );
 
     if (!createdRole) {
@@ -33,9 +33,16 @@ export default async function httpPostRole(req: Request, res: Response) {
 
     const adminsRoles = await Role.find({ rank: 1 });
 
-    for (const action of ["read", "write", "update", "delete"]) {
-      await CreatePermission(createdRole.role, rank, action, adminsRoles);
-    }
+    await Promise.all(
+      ["read", "write", "update", "delete"].map(async (action) => {
+        await CreatePermission(
+          createdRole.role,
+          rank,
+          action as "read" | "write" | "update" | "delete",
+          adminsRoles,
+        );
+      }),
+    );
 
     const response = await getRole(createdRole.role);
 
