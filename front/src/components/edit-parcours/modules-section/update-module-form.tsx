@@ -45,16 +45,16 @@ const UpdateModuleForm = React.forwardRef<
   const currentModule = props.currentModule;
 
   const listeContacts = useSelector(
-    (state: any) => state.parcoursContacts.currentContacts
+    (state: any) => state.parcoursContacts.currentContacts,
   ) as Contact[];
   const listeSkills = useSelector(
-    (state: any) => state.parcoursSkills.skills
+    (state: any) => state.parcoursSkills.skills,
   ) as Skill[];
   const [teachers, setTeachers] = useState<Contact[] | null>(
-    currentModule?.contacts ?? []
+    currentModule?.contacts ?? [],
   );
   const [skills, setSkills] = useState<Skill[] | null>(
-    currentModule?.bonusSkills ?? []
+    currentModule?.bonusSkills ?? [],
   );
 
   // prop passée aux différents champs du formulaire
@@ -183,7 +183,7 @@ const UpdateModuleForm = React.forwardRef<
           {/* duration */}
 
           <FieldNumber
-            label="Durée *"
+            label="Durée du module en heures *"
             name="duration"
             placeholder="Ex : 12"
             min={0}
