@@ -12,7 +12,7 @@ interface CoursePreviewInfosProps {
 
 const CoursePreviewInfos = (props: CoursePreviewInfosProps) => {
   const course = useSelector(
-    (state: any) => state.courseInfos.course
+    (state: any) => state.courseInfos.course,
   ) as Course;
 
   return (
@@ -43,7 +43,9 @@ const CoursePreviewInfos = (props: CoursePreviewInfosProps) => {
               </div>
               <h2 className="text-xl font-bold">Classe virtuelle</h2>
               <SubWrapper>
-                <p>{course.virtualClass || "Non renseigné"}</p>
+                <p className="truncate w-full block">
+                  {course.virtualClass || "Non renseigné"}
+                </p>
               </SubWrapper>
             </Wrapper>
           </article>
