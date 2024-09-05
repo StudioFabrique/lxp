@@ -28,6 +28,7 @@ async function getCourseInformations(courseId: number) {
           minDate: true,
           maxDate: true,
           image: true,
+          duration: true,
           contacts: {
             select: {
               contact: {
