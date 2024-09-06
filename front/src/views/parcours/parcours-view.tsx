@@ -27,13 +27,12 @@ import { useSelector } from "react-redux";
 import ProgressModulesStats from "../../components/parcours-view/progress-stats";
 import HeaderMenu from "../../components/UI/header-menu";
 import ImageHeader from "../../components/image-header";
-import { Context } from "../../store/context.store";
+import Can from "../../components/UI/can/can.component";
 
 let initialState = true;
 
 const ParcoursView = () => {
   const { id } = useParams();
-  const { user } = useContext(Context);
   const { sendRequest, error } = useHttp();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
@@ -158,21 +157,20 @@ const ParcoursView = () => {
               imageUrl={image ?? "/images/parcours-default.webp"}
               title={parcoursInfos.title}
               subTitle={parcours.formation?.title}
-              children={
-                user?.roles[0].rank && user?.roles[0].rank > 2
-                  ? [<Fragment key="fragment" />, <HeaderMenu key="header" />]
-                  : []
-              }
+              children={[
+                <Fragment key="fragment" />,
+                <Can object="cursus" action="read">
+                  <HeaderMenu key="header" />
+                </Can>,
+              ]}
             />
           </div>
 
           <div className="mt-5 flex flex-col gap-y-5">
-            {user?.roles[0].rank && user?.roles[0].rank > 2 && (
-              <>
-                <ProgressModulesStats />
-                <Contenu />
-              </>
-            )}
+            <Can object="cursus" action="read">
+              <ProgressModulesStats />
+              <Contenu />
+            </Can>
             <div className="grid lg:grid-cols-3 gap-x-5 gap-y-5">
               <div className="grid grid-rows-2 gap-y-5">
                 <Informations />

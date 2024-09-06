@@ -1,8 +1,12 @@
 // Toutes les ressources
 export const ressourcesRbac = [
   "role",
+  // permission default permet de couvir l'ensemble des opération réalisables par tous le monde
+  "default",
   "permission",
-  "default", // permission default permet de couvir l'ensemble des opération réalisables par un étudiant
+  // cursus est une permission complémentaire avec default afin que seul l'étudiant
+  // voit les éléments désignés par cette permission
+  "cursus",
   "tag",
   "user",
   "group",
@@ -45,10 +49,10 @@ export const ressourcesRbacByRank = {
   },
   // apprenant
   3: {
-    read: "default",
-    write: [],
-    update: [],
-    delete: [],
+    read: ["default", "cursus"],
+    write: ["cursus"],
+    update: ["cursus"],
+    delete: ["cursus"],
   },
   // autre
   4: [],
