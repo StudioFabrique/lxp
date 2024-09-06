@@ -18,6 +18,7 @@ export const checkValidatorResult = (
   const checkValues = validationResult(req);
 
   if (!checkValues.isEmpty()) {
+    console.log({ "erreur validation": checkValues.array() });
     const error = {
       message: checkValues.array()[0].msg ?? badQuery,
       from: req.socket.remoteAddress,
@@ -66,6 +67,12 @@ export const userValidator = (
   const validatorSubject = `${isFormData ? "data.user" : "user"}`;
 
   const validationChain = [
+    body(validatorSubject + ".email")
+      .exists()
+      .isEmail()
+      .trim()
+      .escape()
+      .withMessage("email non conforme"),
     body([validatorSubject + ".firstname", validatorSubject + ".lastname"])
       .exists()
       .notEmpty()
