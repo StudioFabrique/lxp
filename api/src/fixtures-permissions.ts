@@ -198,6 +198,7 @@ const permDefs = {
       "course",
       "bonusSkill",
       "lesson",
+      "cursus",
       "default",
     ],
     write: ["default"],
