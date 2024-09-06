@@ -207,9 +207,6 @@ const ContextProvider: FC<Props> = (props) => {
 
     if (builtPerms) {
       casbinAuthorizer.setPermission(builtPerms);
-      if (Object.entries(builtPerms).length > 0) {
-        console.log({ autorisationsPourUtilisateurConnecteActuel: builtPerms });
-      }
       setBuiltPerms(builtPerms);
     }
   }, [roles, sendRequest]);

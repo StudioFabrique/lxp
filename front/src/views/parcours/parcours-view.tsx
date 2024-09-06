@@ -159,7 +159,7 @@ const ParcoursView = () => {
               subTitle={parcours.formation?.title}
               children={[
                 <Fragment key="fragment" />,
-                <Can object="cursus" action="write">
+                <Can object="cursus" action="read">
                   <HeaderMenu key="header" />
                 </Can>,
               ]}
@@ -167,7 +167,7 @@ const ParcoursView = () => {
           </div>
 
           <div className="mt-5 flex flex-col gap-y-5">
-            <Can object="cursus" action="write">
+            <Can object="cursus" action="read">
               <ProgressModulesStats />
               <Contenu />
             </Can>
