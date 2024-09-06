@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams } from "react-router-dom";
 import useHttp from "../../hooks/use-http";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import Parcours from "../../utils/interfaces/parcours";
 import { parcoursAction } from "../../store/redux-toolkit/parcours/parcours";
@@ -27,18 +27,20 @@ import { useSelector } from "react-redux";
 import ProgressModulesStats from "../../components/parcours-view/progress-stats";
 import HeaderMenu from "../../components/UI/header-menu";
 import ImageHeader from "../../components/image-header";
+import { Context } from "../../store/context.store";
 
 let initialState = true;
 
 const ParcoursView = () => {
   const { id } = useParams();
+  const { user } = useContext(Context);
   const { sendRequest, error } = useHttp();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [image, setImage] = useState<string>();
   const parcours = useSelector((state: any) => state.parcours);
   const parcoursInfos = useSelector(
-    (state: any) => state.parcoursInformations.infos
+    (state: any) => state.parcoursInformations.infos,
   );
 
   /**
@@ -52,13 +54,13 @@ const ParcoursView = () => {
         parcoursInformationsAction.updateParcoursInfos({
           title: data.title,
           description: data.description,
-        })
+        }),
       );
       dispatch(
         parcoursInformationsAction.updateParcoursDates({
           startDate: data.startDate,
           endDate: data.endDate,
-        })
+        }),
       );
       dispatch(parcoursAction.setParcoursFormation(data.formation));
 
@@ -67,13 +69,13 @@ const ParcoursView = () => {
       }
       if (data.tags.length > 0) {
         dispatch(
-          tagsAction.setCurrentTags(data.tags.map((item: any) => item.tag))
+          tagsAction.setCurrentTags(data.tags.map((item: any) => item.tag)),
         );
       } else {
         dispatch(
           tagsAction.setCurrentTags(
-            data.formation.tags.map((item: any) => item.tag)
-          )
+            data.formation.tags.map((item: any) => item.tag),
+          ),
         );
       }
 
@@ -84,15 +86,15 @@ const ParcoursView = () => {
       if (data.contacts.length > 0) {
         dispatch(
           parcoursContactsAction.setCurrentContacts(
-            data.contacts.map((item: any) => item.contact)
-          )
+            data.contacts.map((item: any) => item.contact),
+          ),
         );
       }
       if (data.skills.length > 0) {
         dispatch(
           parcoursSkillsAction.setSkillsList(
-            data.skills.map((item: any) => item.skill)
-          )
+            data.skills.map((item: any) => item.skill),
+          ),
         );
       }
 
@@ -103,16 +105,16 @@ const ParcoursView = () => {
       if (data.objectives.length > 0) {
         dispatch(
           parcoursObjectivesAction.addImportedObjectivesToObjectives(
-            data.objectives
-          )
+            data.objectives,
+          ),
         );
       }
 
       if (data.modules.length > 0) {
         dispatch(
           parcoursModulesSliceActions.setModules(
-            data.modules.map((module: any) => module.module)
-          )
+            data.modules.map((module: any) => module.module),
+          ),
         );
       }
 
@@ -124,7 +126,7 @@ const ParcoursView = () => {
         {
           path: `/parcours/parcours-by-id/${id}`,
         },
-        processData
+        processData,
       );
       initialState = false;
     }
@@ -156,16 +158,21 @@ const ParcoursView = () => {
               imageUrl={image ?? "/images/parcours-default.webp"}
               title={parcoursInfos.title}
               subTitle={parcours.formation?.title}
-              children={[
-                <Fragment key="fragment" />,
-                <HeaderMenu key="header" />,
-              ]}
+              children={
+                user?.roles[0].rank && user?.roles[0].rank > 2
+                  ? [<Fragment key="fragment" />, <HeaderMenu key="header" />]
+                  : []
+              }
             />
           </div>
 
           <div className="mt-5 flex flex-col gap-y-5">
-            <ProgressModulesStats />
-            <Contenu />
+            {user?.roles[0].rank && user?.roles[0].rank > 2 && (
+              <>
+                <ProgressModulesStats />
+                <Contenu />
+              </>
+            )}
             <div className="grid lg:grid-cols-3 gap-x-5 gap-y-5">
               <div className="grid grid-rows-2 gap-y-5">
                 <Informations />
