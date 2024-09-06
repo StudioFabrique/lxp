@@ -6,7 +6,7 @@ interface ImageHeaderProps {
   subTitle: string;
   isPublished?: boolean;
   hidePublished?: boolean;
-  children: ReactNode[]; // composant contenant une icône svg
+  children?: ReactNode[]; // composant contenant une icône svg
 }
 
 const ImageHeader = (props: ImageHeaderProps) => {
