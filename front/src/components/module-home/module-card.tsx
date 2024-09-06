@@ -43,7 +43,7 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
               >
                 <Link
                   className="btn btn-sm btn-primary btn-circle rounded-md"
-                  to={`/admin/parcours/edit/${module.parcours.id}?step=${stepId}`}
+                  to={`/admin/parcours/edit/${module.parcoursId}?step=${stepId}`}
                   aria-label="Aperçu du parcours"
                 >
                   <div className="w-5 h-5 ">

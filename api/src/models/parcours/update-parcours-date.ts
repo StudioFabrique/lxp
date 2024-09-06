@@ -5,11 +5,12 @@ async function updateParcoursDates(
   parcoursId: number,
   start: string,
   end: string,
-  userId: string
+  userId: string,
 ) {
   const admin = await getAdmin(userId);
   const startDate = new Date(start);
   const endDate = new Date(end);
+  console.log(endDate.toString());
 
   const existingParcours = await prisma.parcours.findFirst({
     where: { id: parcoursId /* adminId: admin.id */ },

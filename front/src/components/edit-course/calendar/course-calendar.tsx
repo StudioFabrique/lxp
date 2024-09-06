@@ -11,15 +11,23 @@ import DatesList from "./dates-list";
 import { courseDatesActions } from "../../../store/redux-toolkit/course/course-dates";
 import DatesForm from "./dates-form";
 import setId from "../../../helpers/set-id";
+import Module from "../../../utils/interfaces/module";
 
 const CourseCalendar = () => {
   const dispatch = useDispatch();
   const { courseId } = useParams();
   const { sendRequest, error } = useHttp();
+  const module = useSelector(
+    (state: any) => state.courseInfos.course.module,
+  ) as Module;
   const dates = useSelector(
-    (state: any) => state.courseDates.courseDates
+    (state: any) => state.courseDates.courseDates,
   ) as CourseDates[];
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    console.log(module.duration);
+  }, [module]);
 
   /**
    * enregistre une nouvelle plage de dates dans la bdd
@@ -43,7 +51,7 @@ const CourseCalendar = () => {
         method: "put",
         body: tmpDates,
       },
-      applyData
+      applyData,
     );
   };
 
@@ -60,7 +68,7 @@ const CourseCalendar = () => {
         path: `/course/dates/${courseId}/${id}`,
         method: "delete",
       },
-      applyData
+      applyData,
     );
   };
 
@@ -76,7 +84,7 @@ const CourseCalendar = () => {
       {
         path: `/course/dates/${courseId}`,
       },
-      applyData
+      applyData,
     );
   }, [courseId, dispatch, sendRequest]);
 
@@ -92,7 +100,14 @@ const CourseCalendar = () => {
     <section className="w-full flex flex-col gap-y-8">
       <h2 className="text-3xl font-extrabold">Calendrier</h2>
       <article className="w-full flex flex-col gap-y-8">
-        <DatesForm isLoading={isLoading} onSubmitDates={handleSubmitDates} />
+        {module.minDate && module.maxDate ? (
+          <DatesForm
+            isLoading={isLoading}
+            module={module}
+            datesList={dates}
+            onSubmitDates={handleSubmitDates}
+          />
+        ) : null}
         {dates && dates.length > 0 ? (
           <DatesList datesList={dates} onDeleteItem={handleDeleteItem} />
         ) : null}

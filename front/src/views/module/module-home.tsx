@@ -59,6 +59,7 @@ const ModuleHome = () => {
         ...item,
         formation: item.formation ?? "ND",
         parcours: item.parcours ? item.parcours.title : "ND",
+        parcoursId: item.parcours ? item.parcours.id : null,
       }));
       console.log({ updatedModules });
       setModules(updatedModules);
