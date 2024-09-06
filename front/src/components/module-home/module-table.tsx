@@ -71,7 +71,7 @@ const ModuleTable = ({
                       {item.parcours ? (
                         <Link
                           className="text-secondary"
-                          to={`/admin/parcours/edit/${item.parcours.id}?step=${stepId}`}
+                          to={`/admin/parcours/edit/${item.parcoursId}?step=${stepId}`}
                           aria-label="Editer le module"
                         >
                           <ArrowTopRightIcon />

@@ -6,6 +6,7 @@ import ButtonAdd from "../../UI/button-add/button-add";
 import toast from "react-hot-toast";
 import Module from "../../../utils/interfaces/module";
 import { useEffect, useState } from "react";
+import { localeDate } from "../../../helpers/locale-date";
 
 interface DatesFormProps {
   isLoading: boolean;
@@ -59,7 +60,7 @@ const DatesForm = (props: DatesFormProps) => {
 
   const testDates = () => {
     return (
-      new Date(startDate.value).getTime() < new Date(endDate.value).getTime()
+      new Date(startDate.value).getTime() <= new Date(endDate.value).getTime()
     );
   };
 
@@ -68,6 +69,7 @@ const DatesForm = (props: DatesFormProps) => {
     const tmpMaxDate = new Date(endDate.value).getTime();
     const minModuleDate = new Date(props.module.minDate!).getTime();
     const maxModuleDate = new Date(props.module.maxDate!).getTime();
+    console.log(tmpMinDate, tmpMaxDate, minModuleDate, maxModuleDate);
     return (
       tmpMinDate >= minModuleDate &&
       tmpMinDate <= maxModuleDate &&
@@ -95,19 +97,17 @@ const DatesForm = (props: DatesFormProps) => {
       toast.error("Vérifiez le format des dates et des durées du cours svp.");
       return false;
     }
-    if (!testDates) {
+    if (!testDates()) {
       toast.error(
         "La date de fin ne doit pas être antérieure à la date de début.",
       );
       return false;
-    }
-    if (!testModuleDates) {
+    } else if (!testModuleDates()) {
       toast.error(
-        "Les dates saisies doivent correspondre à la plage de dates du module.",
+        `Les dates saisies doivent se situer entre le ${localeDate(props.module.minDate!)} et le ${localeDate(props.module.maxDate!)}, ce qui correspond à la plage de dates du module.`,
       );
       return false;
-    }
-    if (
+    } else if (
       +synchrone.value + +asynchrone.value + cumulDurations >
       props.module.duration
     ) {
@@ -126,7 +126,7 @@ const DatesForm = (props: DatesFormProps) => {
   useEffect(() => {
     if (props.datesList && props.datesList.length > 0) {
       const duration = props.datesList.reduce((accumulator, date) => {
-        return accumulator + date.asynchroneDuration + date.synchroneDuration;
+        return accumulator + +date.asynchroneDuration + +date.synchroneDuration;
       }, 0);
       setCumulDurations(duration);
     }

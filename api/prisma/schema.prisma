@@ -42,8 +42,8 @@ model Parcours {
   id           Int                  @id @default(autoincrement())
   title        String               @unique
   description  String?
-  startDate    DateTime?            @default(dbgenerated("NOW() + interval '1 day'"))
-  endDate      DateTime?            @default(dbgenerated("NOW() + interval '2 month'"))
+  startDate    DateTime?            @default(dbgenerated("DATE_TRUNC('day', NOW() + interval '1 day')"))
+  endDate      DateTime?            @default(dbgenerated("DATE_TRUNC('day', NOW() + interval '2 month')"))
   degree       String?
   image        Bytes?
   thumb        Bytes?
