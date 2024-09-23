@@ -73,13 +73,13 @@ export default function CourseTable({
                 <div
                   className="tooltip tooltip-bottom"
                   data-tip="Supprimer le cours définitivement."
+                  onClick={() => {
+                    onDeleteCourse(course);
+                  }}
                 >
                   <Trash2
                     className="w-6 h-6 text-error"
                     aria-label="supprimer le cours"
-                    onClick={() => {
-                      onDeleteCourse(course);
-                    }}
                   />
                 </div>
               </Can>
