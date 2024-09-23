@@ -26,6 +26,8 @@ const ModuleTable = ({
     return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
   };
 
+  console.log({ modulesList });
+
   const content = (
     <>
       {modulesList && modulesList.length > 0 ? (
@@ -64,20 +66,22 @@ const ModuleTable = ({
               <td className="bg-transparent">
                 <div className="w-6 h-6">
                   <Can action="update" object="module">
-                    <div
-                      className="tooltip tooltip-bottom"
-                      data-tip="Modifier le module"
-                    >
-                      {item.parcours ? (
+                    <div className="tooltip tooltip-bottom">
+                      {item.parcoursId ? (
                         <Link
-                          className="text-secondary"
+                          className="text-secondary tooltip tooltip-bottom"
+                          data-tip="Modifier le module"
                           to={`/admin/parcours/edit/${item.parcoursId}?step=${stepId}`}
                           aria-label="Editer le module"
                         >
                           <ArrowTopRightIcon />
                         </Link>
                       ) : (
-                        <div className="text-base-content/50">
+                        <div
+                          className="text-base-content/50 tooltip tooltip-bottom"
+                          data-tip="Vous ne pouvez pas modifier un module
+                            attaché à une formation"
+                        >
                           <ArrowTopRightIcon />
                         </div>
                       )}
