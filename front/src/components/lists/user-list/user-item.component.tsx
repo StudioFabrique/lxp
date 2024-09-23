@@ -11,11 +11,18 @@ import { Edit2Icon, MoveUpRight } from "lucide-react";
 
 const UserItem: FC<{
   userItem: any;
+  role: string;
   onRowCheck: (id: string) => void;
   onDelete: (id: string) => void;
   isUserDeleteLoading: boolean;
   error?: string;
-}> = ({ userItem, onRowCheck, /* onDelete, */ isUserDeleteLoading, error }) => {
+}> = ({
+  role,
+  userItem,
+  onRowCheck,
+  /* onDelete, */ isUserDeleteLoading,
+  error,
+}) => {
   //const [isActive, setIsActive] = useState<boolean>(userItem.isActive);
   const { isLoading, sendRequest } = useHttp();
 
@@ -38,8 +45,6 @@ const UserItem: FC<{
       applyData,
     );
   };
-
-  console.log(userItem._id);
 
   return (
     <>
@@ -71,6 +76,7 @@ const UserItem: FC<{
       <td className="bg-transparent text-center">
         {userItem.parcours ? userItem.parcours : "-"}
       </td>
+      {role === "everything" ? <td>{userItem.roles[0].label} </td> : null}
       <td className="bg-transparent">{userItem.createdAt}</td>
       <td className="bg-transparent">
         {isLoading ? (
