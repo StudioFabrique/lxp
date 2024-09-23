@@ -107,12 +107,9 @@ export default function CourseCard({
               >
                 <button
                   className="btn btn-sm btn-outline btn-circle rounded-md btn-error"
-                  onClick={() => {}}
+                  onClick={() => onDeleteCourse(course)}
                 >
-                  <Trash2
-                    className="w-5 h-5"
-                    onClick={() => onDeleteCourse(course)}
-                  />
+                  <Trash2 className="w-5 h-5" />
                 </button>
               </div>
             </Can>
