@@ -21,6 +21,7 @@ const MONGO_TEST_URL = process.env.MONGO_TEST_URL;
 
 describe("HTTP Course", () => {
   let authToken = {}; // Store the authentication token
+  let authToken2 = {}; // token secondaire pour tester le propriétaire d'un élément d'une table
 
   beforeAll(async () => {
     // Perform any setup before running the tests, such as logging in and obtaining the authentication token
@@ -29,8 +30,12 @@ describe("HTTP Course", () => {
     const loginResponse = await request(app)
       .post("/v1/auth/login")
       .send({ email: "admin@studio.eco", password: "Abcdef@123456" });
+    const loginResponse2 = await request(app)
+      .post("/v1/auth/login")
+      .send({ email: "formateur@studio.eco", password: "Abcdef@123456" });
 
     authToken = loginResponse.headers["set-cookie"][0];
+    authToken2 = loginResponse2.headers["set-cookie"][0];
   });
 
   describe("Test POST /", () => {
@@ -126,6 +131,13 @@ describe("HTTP Course", () => {
         .delete(`/v1/course/delete-course/10000`)
         .set("Cookie", [`${authToken}`])
         .expect(404);
+    });
+
+    test("It should responds 406 not acceptable", async () => {
+      await request(app)
+        .delete(`/v1/course/delete-course/1`)
+        .set("Cookie", [`${authToken2}`])
+        .expect(406);
     });
 
     test("It should responde 200 success", async () => {

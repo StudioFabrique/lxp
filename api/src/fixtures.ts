@@ -81,6 +81,20 @@ async function createUser() {
   });
   await newTeacher.save();
   robotIndex++;
+  const newTeacher2 = new User({
+    firstname: "raymond",
+    lastname: "dupond",
+    address: "14 place royale",
+    postCode: "64000",
+    city: "pau",
+    email: "formateur2@studio.eco",
+    password: hash,
+    roles: [new Object(role2!._id)],
+    isActive: true,
+    //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
+  });
+  await newTeacher2.save();
+  robotIndex++;
 
   role = await Role.findOne({ role: "student" });
   const newStudent = new User({
@@ -124,7 +138,7 @@ async function createUser() {
   const infosIds = newInfos.map((item) => item._id);
   await User.findOneAndUpdate(
     { _id: createdStudent._id },
-    { connectionInfos: infosIds }
+    { connectionInfos: infosIds },
   );
   robotIndex++;
 }
@@ -274,7 +288,7 @@ async function createPermissions() {
     }
   }
   permissions.forEach((permissions) =>
-    dbPermissions.push(new Permission(permissions))
+    dbPermissions.push(new Permission(permissions)),
   );
   await Permission.bulkSave(dbPermissions);
 }
