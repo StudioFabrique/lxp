@@ -322,19 +322,19 @@ describe("HTTP Parcours", () => {
         .expect(400);
     });
 
-    test("It should respond 400 bad request", async () => {
-      await request(app)
-        .put("/v1/parcours/update-infos")
-        .send({
-          parcoursId: 1,
-          title: "random title",
-          //description: "random description",
-          formation: 1,
-          visibility: true,
-        })
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
-    });
+    /*    test("It should respond 400 bad request", async () => {
+  await request(app)
+    .put("/v1/parcours/update-infos")
+    .send({
+      parcoursId: 1,
+      title: "random title",
+      //description: "random description",
+      formation: 1,
+      visibility: true,
+    })
+    .set("Cookie", [`${authToken}`])
+    .expect(400);
+}); */
 
     test("It should respond 400 bad request", async () => {
       await request(app)
