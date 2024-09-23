@@ -35,7 +35,7 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
       <figure style={classImage}>
         {/* position relative à l'image affichée */}
         <div className="flex items-center  absolute bottom-2 right-2">
-          {module.parcours ? (
+          {module.parcoursId ? (
             <Can action="update" object="parcours">
               <div
                 className="tooltip tooltip-left"
