@@ -1,8 +1,16 @@
-import { FC } from "react";
+import { Dispatch, FC, FormEvent, SetStateAction } from "react";
 
-const SearchSimple: FC<{ placeholder: string }> = ({ placeholder }) => {
+const SearchSimple: FC<{
+  placeholder: string;
+  setFilter: Dispatch<SetStateAction<string | undefined>>;
+}> = ({ placeholder, setFilter }) => {
+  const handleChange = (event: FormEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    setFilter(event.currentTarget.value);
+  };
+
   return (
-    <div className="flex items-center bg-secondary/10 w-[40%] gap-x-2 p-2 rounded-md">
+    <form className="flex items-center bg-secondary/10 w-[40%] gap-x-2 p-2 rounded-md">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -19,10 +27,11 @@ const SearchSimple: FC<{ placeholder: string }> = ({ placeholder }) => {
       </svg>
       <input
         type="text"
+        onInputCapture={handleChange}
         className="bg-transparent focus:outline-none w-full text-sm"
         placeholder={placeholder}
       />
-    </div>
+    </form>
   );
 };
 

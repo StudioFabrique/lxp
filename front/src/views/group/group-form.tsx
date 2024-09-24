@@ -6,7 +6,7 @@ import { useState } from "react";
 import User from "../../utils/interfaces/user";
 import { useNavigate } from "react-router-dom";
 
-const GroupAdd = () => {
+const GroupForm = () => {
   const navigate = useNavigate();
   const { isLoading, sendRequest } = useHttp(true);
   const [usersToAdd, setUsersToAdd] = useState<Array<User>>([]);
@@ -71,4 +71,4 @@ const GroupAdd = () => {
   );
 };
 
-export default GroupAdd;
+export default GroupForm;
