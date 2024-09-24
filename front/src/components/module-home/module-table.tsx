@@ -4,6 +4,7 @@ import Can from "../UI/can/can.component";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
 import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 import DeleteIcon from "../UI/svg/delete-icon.component";
+import { truncateText } from "../../helpers/truncate-text";
 
 interface ModuleTableProps {
   modulesList: any[];
@@ -22,10 +23,6 @@ const ModuleTable = ({
   stepId,
   onDelete,
 }: ModuleTableProps) => {
-  const truncateText = (text: string, maxLength: number) => {
-    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-  };
-
   console.log({ modulesList });
 
   const content = (
@@ -37,36 +34,43 @@ const ModuleTable = ({
               className="text-xs lg:text-sm cursor-pointer hover:bg-secondary/20 hover:text-base-content"
               key={item.id}
             >
-              <td className="bg-transparent rounded-l-lg max-w-[150px] truncate">
-                <span className="tooltip" data-tip={item.title}>
+              <td className="bg-transparent rounded-l-lg max-w-[150px]">
+                <span className="tooltip tooltip-bottom" data-tip={item.title}>
                   {truncateText(item.title, 20)}
                 </span>
               </td>
-              <td className="bg-transparent capitalize max-w-[100px] truncate">
-                <span className="tooltip" data-tip={item.author}>
-                  {truncateText(item.author, 15)}
-                </span>
+              <td className="bg-transparent capitalize max-w-[100px]">
+                <div>
+                  <span
+                    className="tooltip tooltip-bottom"
+                    data-tip={item.author}
+                  >
+                    {truncateText(item.author, 15)}
+                  </span>
+                </div>
               </td>
-              <td className="bg-transparent max-w-[150px] truncate">
-                <span className="tooltip" data-tip={item.formation || "ND"}>
+              <td className="bg-transparent max-w-[150px]">
+                <span
+                  className="tooltip tooltip-bottom text"
+                  data-tip={item.formation || "ND"}
+                >
                   {truncateText(item.formation, 20)}
                 </span>
               </td>
-              <td className="bg-transparent max-w-[150px] truncate">
-                <span className="tooltip" data-tip={item.parcours}>
+              <td className="bg-transparent max-w-[150px]">
+                <span
+                  className="tooltip tooltip-bottom"
+                  data-tip={item.parcours}
+                >
                   {truncateText(item.parcours, 20)}
                 </span>
               </td>
-              <td className="bg-transparent truncate">
-                {localeDate(item.createdAt!)}
-              </td>
-              <td className="bg-transparent truncate">
-                {localeDate(item.updatedAt!)}
-              </td>
+              <td className="bg-transparent">{localeDate(item.createdAt!)}</td>
+              <td className="bg-transparent">{localeDate(item.updatedAt!)}</td>
               <td className="bg-transparent">
                 <div className="w-6 h-6">
                   <Can action="update" object="module">
-                    <div className="tooltip tooltip-bottom">
+                    <div>
                       {item.parcoursId ? (
                         <Link
                           className="text-secondary tooltip tooltip-bottom"
