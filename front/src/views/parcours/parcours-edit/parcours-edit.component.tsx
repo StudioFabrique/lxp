@@ -1,39 +1,39 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 
-import { parcoursAction } from "../../../store/redux-toolkit/parcours/parcours";
-import { parcoursInformationsAction } from "../../../store/redux-toolkit/parcours/parcours-informations";
-import useHttp from "../../../hooks/use-http";
-import useSteps from "../../../hooks/use-steps";
-import { stepsParcours } from "../../../config/steps/steps-parcours";
-import { tagsAction } from "../../../store/redux-toolkit/tags";
-import { parcoursContactsAction } from "../../../store/redux-toolkit/parcours/parcours-contacts";
-import Loader from "../../../components/UI/loader";
 import FadeWrapper from "../../../components/UI/fade-wrapper/fade-wrapper";
-import Error404 from "../../../components/error404";
-import { parcoursSkillsAction } from "../../../store/redux-toolkit/parcours/parcours-skills";
+import Loader from "../../../components/UI/loader";
 import Stepper from "../../../components/UI/stepper.-component/stepper.-component";
+import HeaderIcon from "../../../components/UI/svg/header-icon";
+import Calendrier from "../../../components/edit-parcours/calendrier/calendrier";
 import ParcoursInformations from "../../../components/edit-parcours/informations/parcours-informations";
-import ParcoursSection from "../../../components/edit-parcours/parcours-section";
-import SkillsList from "../../../components/edit-parcours/skills/skills-list.component";
-import ImportSkills from "../../../components/edit-parcours/skills/import-skills.component";
+import ModulesSection from "../../../components/edit-parcours/modules-section/modules.component";
 import ImportObjectives from "../../../components/edit-parcours/objectives/import-objectives";
 import ObjectivesList from "../../../components/edit-parcours/objectives/objectives-list";
-import { parcoursObjectivesAction } from "../../../store/redux-toolkit/parcours/parcours-objectives";
-import ParcoursPreview from "../../../components/edit-parcours/preview/parcours-preview.component";
-import ModulesSection from "../../../components/edit-parcours/modules-section/modules.component";
-import Calendrier from "../../../components/edit-parcours/calendrier/calendrier";
+import ParcoursSection from "../../../components/edit-parcours/parcours-section";
 import ParcoursStudents from "../../../components/edit-parcours/parcours-students/parcours-students.component";
-import HeaderIcon from "../../../components/UI/svg/header-icon";
+import ParcoursPreview from "../../../components/edit-parcours/preview/parcours-preview.component";
+import ImportSkills from "../../../components/edit-parcours/skills/import-skills.component";
+import SkillsList from "../../../components/edit-parcours/skills/skills-list.component";
+import Error404 from "../../../components/error404";
 import ImageHeaderMutable from "../../../components/image-header/image-header-mutable";
-import useParcoursService from "./hooks/use-parcours-services";
+import { stepsParcours } from "../../../config/steps/steps-parcours";
 import { testModules } from "../../../helpers/parcours-steps-validation";
-import Module from "../../../utils/interfaces/module";
-import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
+import useHttp from "../../../hooks/use-http";
+import useSteps from "../../../hooks/use-steps";
+import { parcoursAction } from "../../../store/redux-toolkit/parcours/parcours";
+import { parcoursContactsAction } from "../../../store/redux-toolkit/parcours/parcours-contacts";
 import { parcoursGroupsAction } from "../../../store/redux-toolkit/parcours/parcours-groups";
+import { parcoursInformationsAction } from "../../../store/redux-toolkit/parcours/parcours-informations";
+import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
+import { parcoursObjectivesAction } from "../../../store/redux-toolkit/parcours/parcours-objectives";
+import { parcoursSkillsAction } from "../../../store/redux-toolkit/parcours/parcours-skills";
+import { tagsAction } from "../../../store/redux-toolkit/tags";
+import Module from "../../../utils/interfaces/module";
+import useParcoursService from "./hooks/use-parcours-services";
 
 let initialState = true;
 
@@ -48,7 +48,7 @@ const EditParcours = () => {
   const formation = useSelector((state: any) => state.parcours.formation);
   const { image, getParcours, isLoading, error } = useParcoursService();
   const modules = useSelector(
-    (state: any) => state.parcoursModules.modules
+    (state: any) => state.parcoursModules.modules,
   ) as Module[];
   const checkStep = useRef(true);
 
@@ -104,10 +104,10 @@ const EditParcours = () => {
           method: "put",
           body: formData,
         },
-        processData
+        processData,
       );
     },
-    [id, sendRequest]
+    [id, sendRequest],
   );
 
   /**
@@ -118,8 +118,7 @@ const EditParcours = () => {
    */
   const handleUpdateStep = (id: number) => {
     if (id === 4 && (!modules || !testModules(modules))) {
-      toast.error("Le parcours doit avoir au moins un module");
-      return;
+      id += 1;
     }
     validateStep(id, true);
   };
@@ -129,7 +128,9 @@ const EditParcours = () => {
    * associé à l'étape précédente
    */
   const handleRetour = () => {
-    updateStep(actualStep.id - 1);
+    if (actualStep.id === 6 && (!modules || !testModules(modules))) {
+      updateStep(4);
+    } else updateStep(actualStep.id - 1);
   };
 
   const handleResetImportedSkills = () => {
