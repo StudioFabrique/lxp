@@ -39,18 +39,20 @@ export default function CourseTable({
             <td>{localeDate(course.updatedAt!)}</td>
             <td>{course.author}</td>
             <td>{course.isPublished ? "Publié" : "Brouillon"}</td>
-            <td className="flex justify-center items-center">
-              {course.visibility ? (
-                <Eye
-                  className="w-6 h-6"
-                  aria-label="le cours est visible par les apprenants"
-                />
-              ) : (
-                <EyeOff
-                  className="w-6 h-6"
-                  aria-label="le cours n'est pas visible par les apprenants"
-                />
-              )}
+            <td>
+              <div className="flex justify-center">
+                {course.visibility ? (
+                  <Eye
+                    className="w-6 h-6"
+                    aria-label="le cours est visible par les apprenants"
+                  />
+                ) : (
+                  <EyeOff
+                    className="w-6 h-6"
+                    aria-label="le cours n'est pas visible par les apprenants"
+                  />
+                )}
+              </div>
             </td>
             <td>
               {/*   <Can action="update" object="cours"> */}
