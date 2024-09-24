@@ -30,6 +30,9 @@ import httpGetUserData from "../../../controllers/user/http-get-user-data";
 import httpGetAccomplishements from "../../../controllers/user/accomplishment/http-get-accomplishments";
 import httpGetLastFeedback from "../../../controllers/user/feedback/http-get-own-feedback";
 import httpGetLastFeedbacks from "../../../controllers/user/feedback/http-get-last-feedbacks";
+import { createFileUploadMiddleware } from "../../../middleware/fileUpload";
+import { headerImageMaxSize } from "../../../config/images-sizes";
+import jsonParser from "../../../middleware/json-parser";
 
 const userRouter = express.Router();
 
@@ -116,16 +119,9 @@ userRouter.put(
 userRouter.post(
   "/",
   checkPermissions("user"),
-  upload.single("image"),
-  userValidator(
-    body("user.roleId")
-      .exists()
-      .notEmpty()
-      .isString()
-      .trim()
-      .escape()
-      .withMessage("roleId non conforme"),
-  ),
+  createFileUploadMiddleware(headerImageMaxSize),
+  jsonParser,
+  userValidator(true),
   httpCreateUser,
 );
 

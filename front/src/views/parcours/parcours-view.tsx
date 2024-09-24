@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams } from "react-router-dom";
 import useHttp from "../../hooks/use-http";
-import { Fragment, useContext, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import Parcours from "../../utils/interfaces/parcours";
 import { parcoursAction } from "../../store/redux-toolkit/parcours/parcours";
