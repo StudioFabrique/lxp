@@ -158,7 +158,7 @@ const ModuleTable = ({
                 }}
               >
                 <div className="flex items-center gap-x-2">
-                  <p>Formation</p>{" "}
+                  <p>Formation</p>
                   <SortColumnIcon
                     fieldSort={fieldSort}
                     column="formation"
@@ -173,7 +173,7 @@ const ModuleTable = ({
                 }}
               >
                 <div className="flex items-center gap-x-2">
-                  <p>Parcours</p>{" "}
+                  <p>Parcours</p>
                   <SortColumnIcon
                     fieldSort={fieldSort}
                     column="parcours"

@@ -27,7 +27,7 @@ async function httpGetModuleFormation(req: Request, res: Response) {
 
     const result = modules.map((module) => ({
       ...module,
-      thumb: module.thumb.toString("base64"),
+      thumb: module.thumb?.toString("base64") ?? null,
     }));
 
     return res.status(200).json(result);

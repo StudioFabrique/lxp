@@ -6,7 +6,7 @@ async function putModuleParcours(
   module: any,
   thumb: any,
   image: any,
-  userId: string
+  userId: string,
 ) {
   const newModule = JSON.parse(module);
 
@@ -118,8 +118,6 @@ async function putModuleParcours(
       },
     });
   });
-
-  console.log({ updatedParcours });
 
   return updatedParcours ? parcoursModule : false;
 }

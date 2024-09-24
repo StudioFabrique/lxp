@@ -5,6 +5,7 @@ import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 import { useState } from "react";
 import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
 import DeleteIcon from "../UI/svg/delete-icon.component";
+import defaultImage from "../../assets/images/module-default-thumb.png";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ModuleCardProps {
@@ -17,7 +18,7 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
 
   const classImage: React.CSSProperties = {
-    backgroundImage: `url('${`data:image/jpeg;base64,${module.thumb}`}')`,
+    backgroundImage: `url('${module.thumb ? `data:image/jpeg;base64,${module.thumb}` : defaultImage}')`,
     width: "100%",
     height: "9rem",
     backgroundSize: "cover",

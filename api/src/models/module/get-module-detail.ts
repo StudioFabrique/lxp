@@ -2,7 +2,7 @@ import { prisma } from "../../utils/db";
 
 export default async function getModuleDetail(
   moduleId: number,
-  userMongoId: string
+  userMongoId: string,
 ) {
   const existingModule = await prisma.module.findFirst({
     where: { id: moduleId },
@@ -37,7 +37,7 @@ export default async function getModuleDetail(
     course.lessons = course.lessons.map((lesson) => {
       lesson.lessonsRead = lesson.lessonsRead.filter(
         (lessonRead) =>
-          lessonRead.student.idMdb === userMongoId && lessonRead.finishedAt
+          lessonRead.student.idMdb === userMongoId && lessonRead.finishedAt,
       );
 
       return lesson;
@@ -50,7 +50,7 @@ export default async function getModuleDetail(
     id: existingModule.id,
     title: existingModule.title,
     description: existingModule.description,
-    image: existingModule.image.toString("base64"),
+    image: existingModule.image?.toString("base64") ?? null,
     duration: existingModule.duration,
     minDate: existingModule.minDate,
     maxDate: existingModule.maxDate,
