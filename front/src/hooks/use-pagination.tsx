@@ -16,7 +16,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
   const [page, setPage] = useState(initialState.page);
   const [perPage, setPerPage] = useState(initialState.perPage);
   const [totalPages, setTotalPages] = useState<number | null>(
-    initialState.totalPages
+    initialState.totalPages,
   );
   const [dataList, setDataList] = useState<Array<any>>([]);
   const [path, setPath] = useState(defaultUrlPath);
@@ -35,14 +35,14 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     (total: number) => {
       setTotalPages(Math.ceil(total! / perPage));
     },
-    [perPage]
+    [perPage],
   );
 
   const handleRowCheck = (id: string) => {
     setDataList((prevDataList: any) =>
       prevDataList.map((item: any) =>
-        item._id === id ? { ...item, isSelected: !item.isSelected } : item
-      )
+        item._id === id ? { ...item, isSelected: !item.isSelected } : item,
+      ),
     );
   };
 
@@ -63,8 +63,6 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
   }, []);
 
   const getList = useCallback(() => {
-    console.log("update des données des users en cours...");
-
     const applyData = (data: { list: Array<any>; total: number }) => {
       data.list.forEach((item: any) => {
         item.createdAt =
@@ -75,7 +73,6 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
       });
       handleTotalPages(data.total);
       setDataList(data.list);
-      console.log("update des données effectué");
     };
 
     sendRequest(
@@ -84,7 +81,7 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
           sdir ? "desc" : "asc"
         }?page=${page}&limit=${perPage}`,
       },
-      applyData
+      applyData,
     );
   }, [sendRequest, page, perPage, handleTotalPages, stype, sdir, path]);
 

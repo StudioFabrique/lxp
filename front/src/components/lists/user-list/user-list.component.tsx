@@ -71,6 +71,8 @@ const UserList: FC<{
     onUncheckAll();
   }, [role, page, onUncheckAll]);
 
+  console.log({ role });
+
   const content = (
     <table className="table w-full border-separate border-spacing-y-2">
       <thead>
@@ -159,6 +161,7 @@ const UserList: FC<{
               />
             </div>
           </th>
+          {role.role === "everything" ? <th>Role</th> : null}
           <th
             className="cursor-pointer"
             onClick={() => {
@@ -200,6 +203,7 @@ const UserList: FC<{
           >
             {
               <UserItem
+                role={role.role}
                 onDelete={() => {}}
                 userItem={item}
                 onRowCheck={onRowCheck}
