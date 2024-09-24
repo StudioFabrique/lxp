@@ -10,6 +10,7 @@ import PublishedIcon from "../UI/svg/published-icon";
 import DraftIcon from "../UI/svg/draft-icon";
 import EyeSlash from "../UI/svg/eyse-slash";
 import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
+import { truncateText } from "../../helpers/truncate-text";
 
 interface ParcoursCardProps {
   parcours: Parcours;
@@ -66,7 +67,12 @@ const ParcoursCard = ({ parcours }: ParcoursCardProps) => {
       <div className="card-body w-full flex flex-col justify-between pt-4">
         <div className="flex flex-col gap-y-2 mb-4">
           <span className="flex justify-between items-center">
-            <h2 className="card-title text-primary">{parcours.title}</h2>
+            <h2
+              className="card-title text-primary tooltip tooltip-bottom"
+              data-tip={parcours.title}
+            >
+              {truncateText(parcours.title, 25)}
+            </h2>
 
             {parcours.isPublished ? (
               <div className="w-7 h-7 text-primary">
@@ -85,8 +91,11 @@ const ParcoursCard = ({ parcours }: ParcoursCardProps) => {
               </div>
             )}
           </span>
-          <h2 className="card-title text-sm font-normal">
-            {parcours.formation.title}
+          <h2
+            className="card-title text-sm text-left font-normal tooltip tooltip-bottom"
+            data-tip={parcours.formation.title}
+          >
+            {truncateText(parcours.formation.title, 25)}
           </h2>
         </div>
         <div className="flex flex-col items-start gap-y-1 mb-4 w-full">
@@ -102,7 +111,12 @@ const ParcoursCard = ({ parcours }: ParcoursCardProps) => {
           </span>
           <span className="flex justify-between gap-x-4 items-center w-full">
             <p className="font-bold w-24">Auteur :</p>
-            <p className="flex justify-end capitalize">{parcours.author}</p>
+            <p
+              className="flex justify-end capitalize tooltip tooltip-bottom"
+              data-tip={parcours.author}
+            >
+              {truncateText(parcours.author, 20)}
+            </p>
           </span>
           <span className="flex justify-between gap-x-4 items-center w-full">
             <p className="font-bold w-24">Visibilité :</p>
