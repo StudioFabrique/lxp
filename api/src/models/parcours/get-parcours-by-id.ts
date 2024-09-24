@@ -105,7 +105,7 @@ async function getParcoursById(parcoursId: number, userId: string) {
         ...item,
         module: {
           ...item.module,
-          thumb: item.module.thumb.toString("base64"),
+          thumb: item.module.thumb?.toString("base64") ?? null,
         },
       }));
       result = { ...result, modules: updatedModules };

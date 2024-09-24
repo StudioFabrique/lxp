@@ -32,7 +32,7 @@ const CreateModuleForm = React.forwardRef<
   const { values, onChangeValue, errors, onValidationErrors } = props.useForm;
 
   const formationId = useSelector(
-    (state: any) => state.parcours.formation.id
+    (state: any) => state.parcours.formation.id,
   ) as number;
 
   const [image, setImage] = useState<File | null>(null);
@@ -69,15 +69,12 @@ const CreateModuleForm = React.forwardRef<
         return;
       }
     }
-    if (image) {
-      const formData = new FormData();
-      const module = { ...values, formationId };
-      formData.append("module", JSON.stringify(module));
-      formData.append("image", image);
-      props.onSubmit(formData);
-    } else {
-      toast.error("Vous n'avez pas choisi d'image pour le module");
-    }
+
+    const formData = new FormData();
+    const module = { ...values, formationId };
+    formData.append("module", JSON.stringify(module));
+    if (image) formData.append("image", image);
+    props.onSubmit(formData);
   };
 
   /**

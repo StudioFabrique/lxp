@@ -7,6 +7,7 @@ import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 import PublishedIcon from "../UI/svg/published-icon";
 import DraftIcon from "../UI/svg/draft-icon";
 import { localeDate } from "../../helpers/locale-date";
+import defaultThumb from "../../assets/images/module-default-thumb.png";
 
 interface CourseCardProps {
   course: CustomCourse;
@@ -18,7 +19,7 @@ export default function CourseCard({
   onDeleteCourse,
 }: CourseCardProps) {
   const classImage: React.CSSProperties = {
-    backgroundImage: `url('data:image/jpeg;base64,${course.thumb}')`,
+    backgroundImage: `url(${course.thumb ? "data:image/jpeg;base64," + course.thumb : defaultThumb})`,
     width: "100%",
     height: "9rem",
     backgroundSize: "cover",
@@ -27,7 +28,7 @@ export default function CourseCard({
     position: "relative",
   };
 
-  console.log({ course });
+  console.log(course.thumb);
 
   return (
     <div className="card w-96 h-full bg-base-100 shadow-xl border border-primary/20">

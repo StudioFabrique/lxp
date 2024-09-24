@@ -70,8 +70,8 @@ model Module {
   id          Int                   @id @default(autoincrement())
   title       String
   description String?
-  image       Bytes
-  thumb       Bytes
+  image       Bytes?
+  thumb       Bytes?
   duration    Int?
   rating      Float?
   minDate     DateTime?
