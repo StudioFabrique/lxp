@@ -15,7 +15,7 @@ import createManyHobbies from "../../models/hobby/create-many-hobbies";
 import createUser from "../../models/user/create-user";
 
 export default async function httpCreateUser(req: Request, res: Response) {
-  let userDataRequest = JSON.parse(req.body.user);
+  let userDataRequest = req.body.data.user;
   const graduationsDataRequest: IGraduation[] | undefined =
     userDataRequest.graduations;
   const linksDataRequest: ILink[] | undefined = userDataRequest.links;
