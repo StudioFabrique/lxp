@@ -15,15 +15,9 @@ const UserHome = React.lazy(
   () => import("../../views/user/user-home.component"),
 );
 const UserAdd = React.lazy(() => import("../../views/user/user-add.component"));
-const GroupLayout = React.lazy(
-  () => import("../../views/group/group-layout.component"),
-);
-const GroupHome = React.lazy(
-  () => import("../../views/group/group-home.component"),
-);
-const GroupAdd = React.lazy(
-  () => import("../../views/group/group-add.component"),
-);
+const GroupLayout = React.lazy(() => import("../../views/group/group-layout"));
+const GroupHome = React.lazy(() => import("../../views/group/group-home"));
+const GroupAdd = React.lazy(() => import("../../views/group/group-form"));
 const ParcoursLayout = React.lazy(
   () => import("../../views/parcours/parcours-layout.component"),
 );
