@@ -6,7 +6,7 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import DeleteIcon from "../../UI/svg/delete-icon.component";
 import Module from "../../../utils/interfaces/module";
 import EditIcon from "../../UI/svg/edit-icon";
-import { defaultModuleThumb } from "../../../lib/defautltModuleThumb";
+import defaultModuleThumb from "../../../assets/images/module-default-thumb.png";
 import DuplicateIcon from "../../UI/svg/duplicate-icon";
 import ToolTipWarning from "../../UI/tooltip-warning/tooltip-warning";
 import { notValidModuleTooltip } from "../../../lib/not-valid-module";
@@ -27,10 +27,10 @@ const ModuleItem: FC<ModuleItemProps> = ({
   onDeleteModule,
 }) => {
   const parcoursTitle = useSelector(
-    (state: any) => state.parcoursInformations.infos.title
+    (state: any) => state.parcoursInformations.infos.title,
   );
   const isFormOpen = useSelector(
-    (state: any) => state.parcoursModules.isFormOpen
+    (state: any) => state.parcoursModules.isFormOpen,
   ) as boolean;
 
   const classImage: React.CSSProperties = {

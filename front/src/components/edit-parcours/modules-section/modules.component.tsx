@@ -34,7 +34,7 @@ const ModulesSection = () => {
   const [toggleForm, setToggleForm] = useState(false);
   const [newModule, setNewModule] = useState(false);
   const parcoursModules = useSelector(
-    (state: any) => state.parcoursModules.modules
+    (state: any) => state.parcoursModules.modules,
   ) as Module[];
   const [moduleToEdit, setModuleToEdit] = useState<Module | null>(null);
 
@@ -49,7 +49,7 @@ const ModulesSection = () => {
       {
         path: `/modules/formation/${formationId}`,
       },
-      applyData
+      applyData,
     );
   }, [formationId, sendRequest]);
 
@@ -62,7 +62,7 @@ const ModulesSection = () => {
       setNewModule(false);
       setToggleForm(false);
       setFormationModules((prevData) =>
-        sortArray([...prevData, data.data], "id", false)
+        sortArray([...prevData, data.data], "id", false),
       );
       onResetForm();
     };
@@ -72,7 +72,7 @@ const ModulesSection = () => {
         method: "post",
         body: formData,
       },
-      applyData
+      applyData,
     );
   };
 
@@ -95,7 +95,7 @@ const ModulesSection = () => {
         method: "put",
         body: formData,
       },
-      applyData
+      applyData,
     );
   };
 
@@ -113,7 +113,7 @@ const ModulesSection = () => {
         path: `/modules/${id}`,
         method: "delete",
       },
-      applyData
+      applyData,
     );
   };
 
@@ -133,7 +133,7 @@ const ModulesSection = () => {
           path: `/modules/add-module/${parcoursId}/${module.id}`,
           method: "put",
         },
-        applyData
+        applyData,
       );
     }
   };
@@ -183,7 +183,6 @@ const ModulesSection = () => {
       }
       formRef.current!.scrollIntoView({ behavior: "smooth" });
       formRef.current!.focus();
-      console.log("coucou scrolling");
     }
     return () => clearTimeout(timer);
   }, [newModule, initValues, moduleToEdit]);

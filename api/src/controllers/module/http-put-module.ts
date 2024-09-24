@@ -19,18 +19,23 @@ async function httpPutModule(req: Request, res: Response) {
       const resizedPic = sharp(uploadedFile.path).resize(400, 400);
       const thumb = resizedPic.toBuffer();
       thumb64 = (await thumb).toString("base64");
+
+      const response = await putModule(module, thumb64, image);
+      //console.log({ response });
+
+      await deleteTempUploadedFile(req);
+
+      return res
+        .status(201)
+        .json({ message: "Mise à jour réussie", data: response });
+    } else {
+      const response = await putModule(module, null, null);
+      return res
+        .status(201)
+        .json({ message: "Mise à jour réussie", data: response });
     }
-
-    const response = await putModule(module, thumb64, image);
-    //console.log({ response });
-
-    await deleteTempUploadedFile(req);
-
-    return res
-      .status(201)
-      .json({ message: "Mise à jour réussie", data: response });
   } catch (error: any) {
-    await deleteTempUploadedFile(req);
+    if (uploadedFile) await deleteTempUploadedFile(req);
     return res.status(error.statusCode ?? 500).json({ message: error.message });
   }
 }

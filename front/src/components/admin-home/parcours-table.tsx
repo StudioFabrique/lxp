@@ -5,6 +5,7 @@ import ParcoursSummary from "../../utils/interfaces/parcours-summary";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
 import { Link, useNavigate } from "react-router-dom";
 import Can from "../UI/can/can.component";
+import { truncateText } from "../../helpers/truncate-text";
 
 interface ParcoursTableProps {
   parcoursList: ParcoursSummary[];
@@ -150,8 +151,10 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
                 key={item.id}
                 onClick={() => handleViewParcours(item.id)}
               >
-                <td className="bg-transparent rounded-l-lg truncate">
-                  {item.title}
+                <td className="bg-transparent rounded-l-lg">
+                  <p className="tooltip tooltip-bottom" data-tip={item.title}>
+                    {truncateText(item.title, 30)}
+                  </p>
                 </td>
                 <td className="bg-transparent truncate">{item.level}</td>
                 <td className="bg-transparent truncate">{item.students}</td>

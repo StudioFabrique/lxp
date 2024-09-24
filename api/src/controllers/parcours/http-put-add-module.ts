@@ -8,7 +8,10 @@ async function httpPutAddModule(req: CustomRequest, res: Response) {
   const userId = req.auth?.userId;
   try {
     const response = await putAddModule(+moduleId, +parcoursId, userId!);
-    const result = { ...response, thumb: response.thumb.toString("base64") };
+    const result = {
+      ...response,
+      thumb: response.thumb?.toString("base64") ?? null,
+    };
     return res.status(201).json(result);
   } catch (error: any) {
     return res
