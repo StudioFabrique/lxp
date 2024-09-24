@@ -23,6 +23,7 @@ export const checkValidatorResult = (
       from: req.socket.remoteAddress,
       status: 400,
     };
+    console.log({ errors: checkValues.array() });
     logger.info(error);
     return res.status(400).json({ message: badQuery });
   }
@@ -59,10 +60,106 @@ const customPhoneNumberValidation = (value: string) => {
   return false; // Run the original validation rules for non-empty value
 };
 
-export const userValidator = (
-  extraValidationChain?: ValidationChain,
-  isFormData: boolean = false,
-) => {
+export const userValidator = (isFormData: boolean = false) => {
+  const validatorSubject = `${isFormData ? "data.user" : "user"}`;
+
+  const validationChain = [
+    body(validatorSubject + ".email")
+      .exists()
+      .notEmpty()
+      .isEmail()
+      .trim()
+      .escape()
+      .withMessage("firstname ou lastname non conforme"),
+    body([validatorSubject + ".firstname", validatorSubject + ".lastname"])
+      .exists()
+      .notEmpty()
+      .isString()
+      .trim()
+      .escape()
+      .withMessage("firstname ou lastname non conforme"),
+    body(validatorSubject + ".nickname")
+      .optional()
+      .isString()
+      .trim()
+      .escape()
+      .withMessage("nickname"),
+    body(validatorSubject + ".description")
+      .optional()
+      .isString()
+      .trim()
+      .escape()
+      .withMessage("description"),
+    body(validatorSubject + ".address")
+      .optional()
+      .isString()
+      .trim()
+      .escape()
+      .withMessage("address"),
+    body(validatorSubject + ".city")
+      .optional()
+      .isString()
+      .trim()
+      .escape()
+      .withMessage("city"),
+    body(validatorSubject + ".postCode")
+      .optional()
+      .custom(customPostalCodeValidation)
+      .trim()
+      .escape()
+      .withMessage("postCode non conforme"),
+    body(validatorSubject + ".phoneNumber", "Numéro de téléphone incorrect")
+      .optional()
+      .custom(customPhoneNumberValidation)
+      .trim()
+      .escape(),
+    body(validatorSubject + ".links.*.url")
+      .isString()
+      .trim()
+      .escape()
+      .withMessage("links.*.url"),
+    body(validatorSubject + ".links.*.alias")
+      .isString()
+      .trim()
+      .escape()
+      .withMessage("links.*.alias"),
+    body(validatorSubject + ".hobbies.*.title")
+      .isString()
+      .trim()
+      .escape()
+      .withMessage("hobbies.*.title"),
+    body(validatorSubject + ".graduations.*.title")
+      .isString()
+      .trim()
+      .escape()
+      .withMessage(".graduations.*.title"),
+    body(validatorSubject + ".graduations.*.degree")
+      .isString()
+      .trim()
+      .escape()
+      .withMessage(".graduations.*.degree"),
+
+    body([
+      validatorSubject + ".hobbies",
+      validatorSubject + ".graduations",
+      validatorSubject + ".links",
+    ])
+      .isArray()
+      .withMessage("hobbies, graduations ou links non conforme"),
+    body(validatorSubject + ".roleId")
+      .exists()
+      .notEmpty()
+      .isString()
+      .trim()
+      .escape()
+      .withMessage("roleId non conforme"),
+    checkValidatorResult,
+  ];
+
+  return validationChain;
+};
+
+export const userProfileValidator = (isFormData: boolean = false) => {
   const validatorSubject = `${isFormData ? "data.user" : "user"}`;
 
   const validationChain = [
@@ -142,8 +239,6 @@ export const userValidator = (
       .isArray()
       .withMessage("hobbies, graduations ou links non conforme"),
 
-    // Include the extraValidationChain if provided
-    ...(extraValidationChain ? [extraValidationChain] : []),
     checkValidatorResult,
   ];
 

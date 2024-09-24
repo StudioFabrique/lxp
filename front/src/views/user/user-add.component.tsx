@@ -10,14 +10,23 @@ const UserAdd = () => {
   const { error, isLoading, sendRequest } = useHttp();
   const navigate = useNavigate();
 
-  const handleSubmit = (user: any) => {
-    sendRequest({ method: "post", path: "/user", body: user }, (data: any) => {
-      if (data)
-        return navigate(
-          { pathname: "/admin/user" },
-          { state: { sucessToastMessage: "Utilisateur crée avec succès" } },
-        );
-    });
+  const handleSubmit = (user: any, file: File | null) => {
+    const formData = new FormData();
+    formData.append("data", JSON.stringify({ user }));
+    if (file) {
+      formData.append("image", file);
+    }
+
+    sendRequest(
+      { method: "post", path: "/user", body: formData },
+      (data: any) => {
+        if (data)
+          return navigate(
+            { pathname: "/admin/user" },
+            { state: { sucessToastMessage: "Utilisateur crée avec succès" } },
+          );
+      },
+    );
   };
 
   useEffect(() => {

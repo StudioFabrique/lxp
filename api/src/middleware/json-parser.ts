@@ -8,8 +8,9 @@ import { Request, Response, NextFunction } from "express";
 export default async function jsonParser(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
+  console.log({ body: req.body });
   if (req.body.module && req.body.module !== undefined) {
     const module = JSON.parse(req.body.module);
     req.body.module = module;

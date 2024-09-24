@@ -21,7 +21,7 @@ import toast from "react-hot-toast";
 
 const UserAddForm: FC<{
   user?: any;
-  onSubmitForm: (user: any) => void;
+  onSubmitForm: (user: any, file: File | null) => void;
   error: string;
   isLoading: boolean;
 }> = (props) => {
@@ -86,11 +86,6 @@ const UserAddForm: FC<{
   let formIsValid = false;
   formIsValid =
     email.isValid && firstname.isValid && lastname.isValid && !!roleId?.length;
-  /* && (address.isValid || !address) &&
-    (city.isValid || !city) &&
-    (postCode.isValid || !postCode)  &&
-    (phone.isValid || !phone) &&
-    (description.isValid || !description) */
 
   const handleSubmit = () => {
     if (!formIsValid) {
@@ -113,12 +108,8 @@ const UserAddForm: FC<{
       links,
       hobbies,
     };
-    const formData = new FormData();
-    formData.append("user", JSON.stringify(newUser));
-    if (file) {
-      formData.append("image", file);
-    }
-    props.onSubmitForm(formData);
+
+    props.onSubmitForm(newUser, file);
   };
 
   return (

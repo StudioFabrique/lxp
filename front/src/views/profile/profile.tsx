@@ -1,6 +1,5 @@
 import { Ref, useEffect, useRef, useState } from "react";
 import Information from "../../components/user-profile/information/information";
-import Calendar from "../../components/user-profile/calendar";
 import Parcours from "../../components/user-profile/parcours";
 import Awards from "../../components/user-profile/awards/awards";
 import Account from "../../components/user-profile/account/account";
@@ -22,7 +21,7 @@ const Profile = () => {
       case "Info":
         return <Information formRef={formRef} />;
       case "Calendar":
-        return <Calendar />;
+        return undefined;
       case "Evals":
         return <Parcours />;
       case "Awards":
