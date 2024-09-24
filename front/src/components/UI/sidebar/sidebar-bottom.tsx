@@ -14,7 +14,26 @@ const SidebarBottom = ({ interfaceType, onLogout }: SharedSideBarProps) => {
   const { user } = useContext(Context);
 
   return (
-    <ul className="flex flex-col gap-y-4">
+    <ul className="flex flex-col gap-4 items-center">
+      <li className="left-[14px]">
+        <Link
+          to={`/${interfaceType}/profil`}
+          className="text-white p-0 rounded-lg h-[35px] w-[35px] tooltip tooltip-right"
+          data-tip={
+            user?.firstname &&
+            user?.lastname &&
+            `${user?.firstname.charAt(0).toUpperCase() + user?.firstname.slice(1)} ${user?.lastname.charAt(0).toUpperCase() + user?.lastname.slice(1)} - ${user?.roles[0].label.toUpperCase()}`
+          }
+        >
+          <img
+            className="h-full w-full rounded-lg object-cover"
+            src={`data:image/jpeg;base64,${
+              user?.avatar ?? imageProfileReplacement
+            }`}
+            alt="User Avatar"
+          />
+        </Link>
+      </li>
       <li
         className="tooltip tooltip-right mb-1"
         data-tip="Mode Clair / Mode Sombre"
@@ -30,24 +49,6 @@ const SidebarBottom = ({ interfaceType, onLogout }: SharedSideBarProps) => {
         >
           <LogOutIcon />
         </div>
-      </li>
-
-      <li className="w-5 h-10" />
-
-      <li className="absolute bottom-4 left-[14px]">
-        <Link
-          to={`/${interfaceType}/profil`}
-          className="text-white p-0 rounded-lg h-[35px] w-[35px] tooltip tooltip-right"
-          data-tip="Profil"
-        >
-          <img
-            className="h-full w-full rounded-lg object-cover"
-            src={`data:image/jpeg;base64,${
-              user?.avatar ?? imageProfileReplacement
-            }`}
-            alt="User Avatar"
-          />
-        </Link>
       </li>
     </ul>
   );

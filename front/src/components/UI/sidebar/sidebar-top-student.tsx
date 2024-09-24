@@ -9,7 +9,7 @@ type SharedSideBarProps = {
 };
 
 const SidebarTopStudent = ({ currentRoute }: SharedSideBarProps) => (
-  <ul className="flex flex-col gap-y-6">
+  <ul className="flex flex-col gap-6 items-center">
     <Home currentRoute={currentRoute} />
     <Parcours currentRoute={currentRoute} />
     <Calendar currentRoute={currentRoute} />
