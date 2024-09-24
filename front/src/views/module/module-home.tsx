@@ -25,7 +25,6 @@ const ModuleHome = () => {
         parcours: item.parcours ? item.parcours.title : "ND",
         parcoursId: item.parcours ? item.parcours.id : null,
       }));
-      console.log({ updatedModules });
       setModules(updatedModules);
     };
     sendRequest(

@@ -78,7 +78,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                     </div>
                   </Can>
                 </div>
-              </td>{" "}
+              </td>
               <td className="bg-transparent">
                 <div
                   className="w-6 h-6 text-error"

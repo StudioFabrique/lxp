@@ -25,9 +25,15 @@ async function httpPutModuleParcours(req: CustomRequest, res: Response) {
       return res
         .status(201)
         .json({ message: "Mise à jour réussie", data: response });
+    } else {
+      const response = await putModuleParcours(module, null, null, userId!);
+      return res
+        .status(201)
+        .json({ message: "Mise à jour réussie", data: response });
     }
   } catch (error: any) {
-    await deleteTempUploadedFile(req);
+    console.log({ error });
+    if (uploadedFile) await deleteTempUploadedFile(req);
     return res.status(error.statusCode ?? 500).json({ message: error.message });
   }
 }

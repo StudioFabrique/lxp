@@ -78,7 +78,7 @@ async function putModule(module: any, thumb: any, image: any) {
 
   const result = {
     ...updatedModule,
-    thumb: updatedModule.thumb.toString("base64"),
+    thumb: updatedModule.thumb?.toString("base64") ?? null,
   };
 
   return result;

@@ -27,13 +27,15 @@ async function httpPostModule(req: CustomRequest, res: Response) {
       const thumb64 = (await thumb).toString("base64");
       const response = await postModule(module, thumb64, image, userId);
       await deleteTempUploadedFile(req);
+    } else {
+      const response = await postModule(module, null, null, userId!);
       return res
         .status(201)
         .json({ message: "Mise à jour réussie", data: response });
     }
   } catch (error: any) {
-    await deleteTempUploadedFile(req);
-    console.log("error upload", error.message);
+    if (uploadedFile) await deleteTempUploadedFile(req);
+    //console.log("error upload", error.message);
 
     return res
       .status(error.statusCode ?? 500)

@@ -5,7 +5,7 @@ async function postModule(
   moduleToAdd: any,
   thumb: any,
   image: any,
-  userId: string
+  userId: string,
 ) {
   const existingParcours = await prisma.formation.findFirst({
     where: { id: moduleToAdd.formationId },
@@ -75,7 +75,10 @@ async function postModule(
     });
   });
 
-  const result = { ...newModule, thumb: newModule.thumb.toString("base64") };
+  const result = {
+    ...newModule,
+    thumb: newModule.thumb?.toString("base64") ?? null,
+  };
 
   return result;
 }
