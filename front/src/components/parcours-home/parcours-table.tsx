@@ -9,6 +9,7 @@ import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.co
 import EyeIcon from "../UI/svg/eye-icon";
 import EyeSlash from "../UI/svg/eyse-slash";
 import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
+import { truncateText } from "../../helpers/truncate-text";
 
 interface ParcoursTableProps {
   parcoursList: Parcours[];
@@ -36,11 +37,18 @@ const ParcoursTable = (props: ParcoursTableProps) => {
               className="text-xs lg:text-sm hover:bg-secondary/20 hover:text-base-content"
               key={item.id}
             >
-              <td className="bg-transparent rounded-l-lg truncate">
-                {item.title}
+              <td className="bg-transparent rounded-l-lg">
+                <p className="tooltip tooltip-bottom" data-tip={item.title}>
+                  {truncateText(item.title, 20)}
+                </p>
               </td>
-              <td className="bg-transparent truncate">
-                {item.formation.title}
+              <td className="bg-transparent">
+                <p
+                  className="tooltip tooltip-bottom"
+                  data-tip={item.formation.title}
+                >
+                  {truncateText(item.formation.title, 20)}
+                </p>
               </td>
               <td className="bg-transparent truncate">
                 {item.formation.level}
@@ -51,8 +59,10 @@ const ParcoursTable = (props: ParcoursTableProps) => {
               <td className="bg-transparent truncate">
                 {localeDate(item.updatedAt!)}
               </td>
-              <td className="bg-transparent capitalize truncate">
-                {item.author}
+              <td className="bg-transparent capitalize">
+                <p className="tooltip tooltip-bottom" data-tip={item.author}>
+                  {truncateText(item.author, 20)}
+                </p>
               </td>
               <td className="bg-transparent truncate">
                 {item.isPublished ? "Publié" : "Brouillon"}
