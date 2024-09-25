@@ -2,7 +2,8 @@ import { Dispatch, FC, SetStateAction } from "react";
 import toTitleCase from "../../../utils/toTitleCase";
 import Can from "../../UI/can/can.component";
 import Group from "../../../utils/interfaces/group";
-import { GroupModalContent } from "../../../views/group/group-home.component";
+import { Link } from "react-router-dom";
+import { GroupModalContent } from "../../../views/group/group-home";
 
 const GroupItem: FC<{
   groupItem: Group;
@@ -14,13 +15,7 @@ const GroupItem: FC<{
   onSetFormModalContent: Dispatch<
     SetStateAction<GroupModalContent | undefined>
   >;
-}> = ({
-  groupItem,
-  showActions,
-  onRowCheck,
-  onSetUsersModalContent,
-  onSetFormModalContent,
-}) => {
+}> = ({ groupItem, showActions, onRowCheck, onSetUsersModalContent }) => {
   return (
     <>
       <td className="bg-transparent">
@@ -37,40 +32,13 @@ const GroupItem: FC<{
       {showActions ? (
         <td className="bg-transparent font-bold text-xs">
           <div className="flex gap-x-2">
-            <Can action="read" object={groupItem.roles![0].role}>
-              <button
-                type="button"
-                onClick={() =>
-                  groupItem._id &&
-                  onSetUsersModalContent({
-                    groupId: groupItem._id,
-                    isModalOpen: true,
-                    groupName: groupItem.name,
-                  })
-                }
-              >
-                Utilisateurs
-              </button>
-            </Can>
             <Can action="update" object={groupItem.roles![0].role}>
-              <button
-                type="button"
-                onClick={() =>
-                  groupItem._id &&
-                  onSetFormModalContent({
-                    groupId: groupItem._id,
-                    isModalOpen: true,
-                    groupName: groupItem.name,
-                  })
-                }
-              >
-                Editer
-              </button>
+              <Link to={`edit/${groupItem._id}`}>Editer</Link>
             </Can>
 
-            {/* <Can action="delete" object={groupItem.roles![0].role}>
-              <Link to="#">Supprimer</Link>
-            </Can> */}
+            <Can action="delete" object={groupItem.roles![0].role}>
+              <button type="button">Supprimer</button>
+            </Can>
           </div>
         </td>
       ) : null}
