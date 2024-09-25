@@ -41,6 +41,10 @@ const links = [
     path: "/admin/feedbacks",
     label: "Voir les feedbacks",
   },
+  {
+    path: "/admin/teacher/evaluations",
+    label: "Evaluer un apprenant",
+  },
 ];
 
 const AdminHome = () => {
@@ -61,13 +65,15 @@ const AdminHome = () => {
       {
         path: "/user/last-parcours",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
 
   useEffect(() => {
     getParcours();
   }, [getParcours]);
+
+  console.log({ parcours });
 
   return (
     <main className="w-full flex flex-col gap-4">

@@ -20,6 +20,8 @@ export default async function getUserLastParcours(userId: string) {
     select: { parcoursId: true },
   });
 
+  console.log(userParcoursId);
+
   const userParcours = await prisma.parcours.findMany({
     where: {
       id: {
