@@ -73,7 +73,6 @@ const AddParcours = () => {
    */
   const handleParcours = (id: number) => {
     setParcours(id);
-    console.log({ parcours });
   };
 
   /**
@@ -120,7 +119,6 @@ const AddParcours = () => {
       );
     }
   }, [formation, sendRequest]);
-  // coucou
 
   return (
     <>

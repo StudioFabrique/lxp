@@ -13,6 +13,8 @@ interface StudentsListTableProps {
 const StudentsListTable = (props: StudentsListTableProps) => {
   const { list, fieldSort, direction, sortData } = props;
 
+  console.log({ list });
+
   return (
     <table className="table w-full border-separate border-spacing-y-2">
       <thead>
@@ -66,14 +68,14 @@ const StudentsListTable = (props: StudentsListTableProps) => {
           <th
             className="cursor-pointer"
             onClick={() => {
-              sortData("group");
+              sortData("formation");
             }}
           >
             <div className="flex items-center gap-x-2">
               <p>Formation</p>
               <SortColumnIcon
                 fieldSort={fieldSort}
-                column="CDA"
+                column="formation"
                 direction={direction}
               />
             </div>
