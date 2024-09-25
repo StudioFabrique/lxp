@@ -20,12 +20,11 @@ const GroupForm: FC<{
   hideCancelButton?: boolean;
   hideDetailsComponent?: boolean;
 }> = (props) => {
+  console.log({ group: props.group });
   const [file, setFile] = useState<File | null>(null);
   const [parcoursId, setParcoursId] = useState<number | null>(null);
   /* const [tags, setTags] = useState<Tag[]>([]); */
-  const [isActive, setIsActive] = useState<boolean>(
-    props.group?.isActive ?? false
-  );
+  const [isActive, setIsActive] = useState<boolean>(false);
 
   const { values, errors, onChangeValue, onValidationErrors, initValues } =
     useForm();
@@ -61,11 +60,10 @@ const GroupForm: FC<{
             name: name,
             desc: desc,
             isActive: isActive,
-            /* tags: tags, */
           },
           parcoursId: !props.hideDetailsComponent && parcoursId,
         },
-        file!
+        file!,
       );
     } else {
       toast.error("Un fichier image pour le groupe est requis");
@@ -75,6 +73,7 @@ const GroupForm: FC<{
   useEffect(() => {
     if (props.group) {
       initValues(props.group);
+      setIsActive(props.group.isActive ?? false);
     }
   }, [initValues, props.group]);
 
