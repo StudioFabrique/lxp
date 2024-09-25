@@ -12,9 +12,7 @@ import Pagination from "../../components/UI/pagination/pagination";
 import Modal from "../../components/UI/modal/modal";
 import toast from "react-hot-toast";
 import EditUsersModal from "../../components/group-home/modals/edit-users/edit-users-modal";
-import { invokeSingleAnswerToast } from "../../components/UI/custom-toast/single-answer-toast";
 import useHttp from "../../hooks/use-http";
-import EditFormModal from "../../components/group-home/modals/edit-form/edit-form-modal";
 import GroupManageUserList from "../../components/lists/group-add-user-list/group-manage-user-list/group-manage-user-list";
 import User from "../../utils/interfaces/user";
 import Can from "../../components/UI/can/can.component";
@@ -39,7 +37,6 @@ const GroupHome = () => {
   const [usersModalContent, setUsersModalContent] = useState<
     GroupModalContent | undefined
   >({ refresh: true });
-  const [formModalContent, setFormModalContent] = useState<GroupModalContent>();
   const [usersInSelectedGroup, setUsersInSelectedGroup] = useState<User[]>();
 
   const {
@@ -92,33 +89,13 @@ const GroupHome = () => {
     setAllChecked(false);
   }, [setAllChecked]);
 
-  const handleDeleteEntireGroup = (toastId: string) => {
-    const groupIdToDelete = formModalContent?.groupId;
-
+  const handleDeleteGroup = (id: string) => {
     const applyData = () => {
-      setFormModalContent({ isModalOpen: false });
       getList();
-      toast.remove(toastId);
       toast.success("Groupe supprimé avec succès");
     };
 
-    sendRequest(
-      { path: `/group/${groupIdToDelete}`, method: "delete" },
-      applyData,
-    );
-  };
-
-  const handleLeftClick = () => {
-    const toastId = invokeSingleAnswerToast("Êtes-vous sûr ?", "Oui", () =>
-      handleDeleteEntireGroup(toastId),
-    );
-  };
-
-  const handleCloseFormModal = () => {
-    setFormModalContent((initialModalContent) => {
-      return { ...initialModalContent, isModalOpen: false };
-    });
-    getList();
+    sendRequest({ path: `/group/${id}`, method: "delete" }, applyData);
   };
 
   const handleToggleDrawer = () => {
@@ -210,8 +187,7 @@ const GroupHome = () => {
             onAllChecked={handleAllChecked}
             onSorting={handleSorting}
             onUncheckAll={handleUncheckALL}
-            onSetUsersModalContent={setUsersModalContent}
-            onSetFormModalContent={setFormModalContent}
+            onDeleteGroup={handleDeleteGroup}
           />
           {dataList.length > 0 ? (
             <Pagination
@@ -246,29 +222,6 @@ const GroupHome = () => {
             ]}
           />
         ) : null}
-        {formModalContent?.isModalOpen && (
-          <Modal
-            title=""
-            rightLabel="Fermer"
-            leftLabel="Supprimer le groupe"
-            onRightClick={() =>
-              setFormModalContent((modalContent) => {
-                return { ...modalContent, isModalOpen: false };
-              })
-            }
-            onLeftClick={handleLeftClick}
-            buttonsBothTopBottom
-            modalBoxStyle="max-w-[70%]"
-            children={[
-              <Fragment key="modal">
-                <EditFormModal
-                  modalContent={formModalContent}
-                  onCloseModal={handleCloseFormModal}
-                />
-              </Fragment>,
-            ]}
-          />
-        )}
         <GroupManageUserList
           onAddUsers={handleSubmitAddUsers}
           usersToAdd={usersInSelectedGroup ?? []}

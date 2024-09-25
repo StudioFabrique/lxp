@@ -47,7 +47,7 @@ export default async function createGroup(
   });
 
   await User.updateMany(
-    { id: { usersId } },
+    { _id: { $in: usersId } },
     { $push: { group: createdGroup._id } },
   );
 
