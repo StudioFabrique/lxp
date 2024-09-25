@@ -12,7 +12,7 @@ interface ParcoursPreviewModulesProps {
 const ParcoursPreviewModules = (props: ParcoursPreviewModulesProps) => {
   const modules = useSelector(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (state: any) => state.parcoursModules.modules
+    (state: any) => state.parcoursModules.modules,
   ) as Module[];
 
   return (
@@ -26,7 +26,7 @@ const ParcoursPreviewModules = (props: ParcoursPreviewModulesProps) => {
           <EditIcon />
         </div>
       </span>
-      <ul className="w-full flex gap-4 overflow-auto py-2 ">
+      <ul className="w-full flex flex-wrap gap-4 overflow-auto py-2 ">
         {modules.map((module) => (
           <li className="w-[300px]" key={module.id}>
             <PreviewModuleItem module={module} />
