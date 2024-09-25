@@ -1,21 +1,15 @@
-import { Dispatch, FC, SetStateAction } from "react";
+import { FC } from "react";
 import toTitleCase from "../../../utils/toTitleCase";
 import Can from "../../UI/can/can.component";
 import Group from "../../../utils/interfaces/group";
 import { Link } from "react-router-dom";
-import { GroupModalContent } from "../../../views/group/group-home";
 
 const GroupItem: FC<{
   groupItem: Group;
   showActions: boolean;
   onRowCheck: (id: string) => void;
-  onSetUsersModalContent: Dispatch<
-    SetStateAction<GroupModalContent | undefined>
-  >;
-  onSetFormModalContent: Dispatch<
-    SetStateAction<GroupModalContent | undefined>
-  >;
-}> = ({ groupItem, showActions, onRowCheck, onSetUsersModalContent }) => {
+  onDeleteGroup: (id: string) => void;
+}> = ({ groupItem, showActions, onRowCheck, onDeleteGroup }) => {
   return (
     <>
       <td className="bg-transparent">
@@ -37,7 +31,12 @@ const GroupItem: FC<{
             </Can>
 
             <Can action="delete" object={groupItem.roles![0].role}>
-              <button type="button">Supprimer</button>
+              <button
+                type="button"
+                onClick={() => groupItem._id && onDeleteGroup(groupItem._id)}
+              >
+                Supprimer
+              </button>
             </Can>
           </div>
         </td>

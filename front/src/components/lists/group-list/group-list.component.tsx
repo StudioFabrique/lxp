@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Dispatch, FC, SetStateAction, useEffect } from "react";
+import { FC, useEffect } from "react";
 import Role from "../../../utils/interfaces/role";
 import GroupItem from "./group-item.component";
-import { GroupModalContent } from "../../../views/group/group-home";
 
 const GroupList: FC<{
   role: Role;
@@ -13,12 +12,7 @@ const GroupList: FC<{
   onAllChecked: () => void;
   onSorting: (column: string) => void;
   onUncheckAll: () => void;
-  onSetUsersModalContent: Dispatch<
-    SetStateAction<GroupModalContent | undefined>
-  >;
-  onSetFormModalContent: Dispatch<
-    SetStateAction<GroupModalContent | undefined>
-  >;
+  onDeleteGroup: (id: string) => void;
 }> = ({
   allChecked,
   role,
@@ -28,8 +22,7 @@ const GroupList: FC<{
   onAllChecked,
   onUncheckAll,
   onSorting,
-  onSetUsersModalContent,
-  onSetFormModalContent,
+  onDeleteGroup,
 }) => {
   const handleAllChecked = () => {
     onAllChecked();
@@ -79,8 +72,7 @@ const GroupList: FC<{
                 groupItem={item}
                 onRowCheck={onRowCheck}
                 showActions={showActions}
-                onSetUsersModalContent={onSetUsersModalContent}
-                onSetFormModalContent={onSetFormModalContent}
+                onDeleteGroup={onDeleteGroup}
               />
             }
           </tr>
