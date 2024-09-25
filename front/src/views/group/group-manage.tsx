@@ -22,6 +22,7 @@ const GroupManage = () => {
         onSubmitForm={onSubmit}
         isLoading={isLoading}
         isFileNotRequired
+        hideDetailsComponent
       />
       <GroupUserList
         usersToAdd={usersToAdd}
