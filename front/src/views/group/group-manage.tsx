@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import GroupAddForm from "../../components/forms/group-form/group-form.component";
+import GroupForm from "../../components/forms/group-form/group-form.component";
 import GroupUserList from "../../components/lists/group-add-user-list/group-user-list";
-import useGroupForm from "./use-group-form";
+import useGroupManage from "./use-group-manage";
 
-const GroupForm = () => {
+const GroupManage = () => {
   const {
     existingGroup,
     usersToAdd,
@@ -12,11 +12,11 @@ const GroupForm = () => {
     onAddUsers,
     onUpdateUser,
     onDeleteUser,
-  } = useGroupForm();
+  } = useGroupManage();
 
   return (
     <div className="flex flex-col p-10 gap-y-10">
-      <GroupAddForm
+      <GroupForm
         title={existingGroup && "Modifier un groupe de formation"}
         group={existingGroup}
         onSubmitForm={onSubmit}
@@ -33,4 +33,4 @@ const GroupForm = () => {
   );
 };
 
-export default GroupForm;
+export default GroupManage;
