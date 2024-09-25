@@ -18,4 +18,5 @@ export default interface Group {
   index?: number;
   tags: Array<Tag>;
   roles?: Array<Role>;
+  formation?: string;
 }

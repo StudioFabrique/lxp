@@ -23,7 +23,9 @@ async function httpGetAllGroups(req: Request, res: Response) {
     }
     //console.log(result);
 
-    return res.status(200).json({ total: result!.total, list: result!.groups });
+    return res
+      .status(200)
+      .json({ total: result!.total, list: result!.groupsWithFormation });
   } catch (err) {
     return res.status(500).json({ message: serverIssue + err });
   }

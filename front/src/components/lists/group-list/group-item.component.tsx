@@ -55,7 +55,7 @@ const GroupItem: FC<{
       <td className="bg-transparent flex gap-4 items-center">
         <p>{groupItem.isActive ? "Actif" : "Inactif"}</p>
         <input
-          checked={groupItem.isActive}
+          defaultChecked={groupItem.isActive}
           className="toggle"
           type="checkbox"
         />
