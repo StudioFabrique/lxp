@@ -24,7 +24,6 @@ const GroupHome = () => {
   const { user, roles } = useContext(Context);
   const { sendRequest } = useHttp(true);
   const [role, setRole] = useState<Role>(roles[0]);
-  const [isSearchActive, setIsSearchActive] = useState(false);
 
   const {
     allChecked,
@@ -58,14 +57,6 @@ const GroupHome = () => {
     initPagination();
     setPath(`/group/search/${role.role}/${entityToSearch}/${searchValue}`);
     getList();
-    setIsSearchActive(true);
-  };
-
-  const handleCloseSearch = () => {
-    setIsSearchActive(false);
-    initPagination();
-    setPath(`/group/${role.role}`);
-    getList();
   };
 
   const handleAllChecked = () => {
@@ -76,13 +67,15 @@ const GroupHome = () => {
     setAllChecked(false);
   }, [setAllChecked]);
 
-  const handleDeleteGroup = (id: string) => {
+  const handleDeleteGroup = async (id: string) => {
     const applyData = () => {
       getList();
       toast.success("Groupe supprimé avec succès");
     };
 
-    sendRequest({ path: `/group/${id}`, method: "delete" }, applyData);
+    await sendRequest({ path: `/group/${id}`, method: "delete" }, applyData);
+
+    return true;
   };
 
   useEffect(() => {
@@ -126,16 +119,6 @@ const GroupHome = () => {
                 options={groupSearchOptions}
                 onSearch={handleSearchResult}
               />
-              {isSearchActive ? (
-                <div className="flex justify-end">
-                  <button
-                    className="btn btn-info btn-sm"
-                    onClick={handleCloseSearch}
-                  >
-                    Fermer la recherche
-                  </button>
-                </div>
-              ) : null}
             </div>
           </div>
           <GroupList

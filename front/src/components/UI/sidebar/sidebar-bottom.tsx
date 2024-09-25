@@ -19,11 +19,8 @@ const SidebarBottom = ({ interfaceType, onLogout }: SharedSideBarProps) => {
         <Link
           to={`/${interfaceType}/profil`}
           className="text-white p-0 rounded-lg h-[35px] w-[35px] tooltip tooltip-right"
-          data-tip={
-            user?.firstname &&
-            user?.lastname &&
-            `${user?.firstname.charAt(0).toUpperCase() + user?.firstname.slice(1)} ${user?.lastname.charAt(0).toUpperCase() + user?.lastname.slice(1)} - ${user?.roles[0].label.toUpperCase()}`
-          }
+          data-tip={`${user?.firstname && user?.firstname.charAt(0).toUpperCase() + user?.firstname.slice(1)}
+            ${user?.lastname && user?.lastname.charAt(0).toUpperCase() + user?.lastname.slice(1)}`}
         >
           <img
             className="h-full w-full rounded-lg object-cover"

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import GroupForm from "../../components/forms/group-form/group-form.component";
 import GroupUserList from "../../components/lists/group-add-user-list/group-user-list";
 import useGroupManage from "./use-group-manage";
@@ -22,7 +21,6 @@ const GroupManage = () => {
         onSubmitForm={onSubmit}
         isLoading={isLoading}
         isFileNotRequired
-        hideDetailsComponent
       />
       <GroupUserList
         usersToAdd={usersToAdd}

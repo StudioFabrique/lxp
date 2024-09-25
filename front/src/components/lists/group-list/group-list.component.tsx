@@ -12,7 +12,7 @@ const GroupList: FC<{
   onAllChecked: () => void;
   onSorting: (column: string) => void;
   onUncheckAll: () => void;
-  onDeleteGroup: (id: string) => void;
+  onDeleteGroup: (id: string) => Promise<boolean>;
 }> = ({
   allChecked,
   role,

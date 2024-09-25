@@ -31,7 +31,7 @@ const Details: FC<{
       {
         path: "/formation",
       },
-      processData
+      processData,
     );
   }, [sendRequest]);
 
@@ -64,14 +64,14 @@ const Details: FC<{
           path: `/parcours/parcours-by-formation/${formation}`,
           method: "get",
         },
-        processData
+        processData,
       );
     }
   }, [formation, sendRequest]);
 
   return (
     <Wrapper>
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-5 max-w-[50vh]">
         <h2 className="font-bold text-xl">Details</h2>
         <div className="flex flex-col gap-y-8">
           <Selecter
