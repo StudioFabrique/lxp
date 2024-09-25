@@ -1,23 +1,36 @@
 import Group, { IGroup } from "../../utils/interfaces/db/group";
+import { IUser } from "../../utils/interfaces/db/user";
 
 export default async function putGroup(
+  id: string,
   group: IGroup,
-  image: Buffer | undefined
+  users: IUser[],
+  image: Buffer | undefined,
 ) {
-  const groupToFind = await Group.findOne({ _id: group._id });
+  // Find the group by id
+  const groupToFind = await Group.findOne({ _id: id });
   if (!groupToFind) {
     return null;
   }
 
-  if (!!image) {
-    group.image = image;
+  const updateData: any = { ...group };
+
+  if (image) {
+    updateData.image = image;
   }
 
-  const createdGroup = await Group.updateOne({ _id: group._id }, group);
+  const ids = users.map((user) => user._id);
+  updateData.users = ids;
 
-  if (!createdGroup) {
+  try {
+    const updatedGroup = await Group.updateOne(
+      { _id: id },
+      { $set: updateData },
+    );
+
+    return updatedGroup;
+  } catch (error) {
+    console.error("Error updating group:", error);
     return null;
   }
-
-  return createdGroup;
 }

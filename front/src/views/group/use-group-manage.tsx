@@ -18,7 +18,12 @@ function useGroupManage() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const applyData = (_data: any) => {
       navigate("/admin/group", {
-        state: { toastFrom: "Groupe créé avec succès" },
+        state: {
+          toastFrom:
+            submitMethod === "post"
+              ? "Groupe modifié avec succès"
+              : "Groupe créé avec succès",
+        },
       });
     };
 
