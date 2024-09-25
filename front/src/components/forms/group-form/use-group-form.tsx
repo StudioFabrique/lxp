@@ -9,12 +9,10 @@ function useGroupForm({
   onSubmitForm,
   group,
   isFileNotRequired,
-  hideDetailsComponent,
 }: {
   onSubmitForm: (data: any, file: File) => void;
   group?: Group;
   isFileNotRequired?: boolean;
-  hideDetailsComponent?: boolean;
 }) {
   const [file, setFile] = useState<File | null>(null);
   const [parcoursId, setParcoursId] = useState<number | null>(null);
@@ -56,7 +54,7 @@ function useGroupForm({
             desc: desc,
             isActive: isActive,
           },
-          parcoursId: !hideDetailsComponent && parcoursId,
+          parcoursId: parcoursId,
         },
         file!,
       );

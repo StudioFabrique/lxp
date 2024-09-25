@@ -38,29 +38,32 @@ const Informations: FC<{
   return (
     <Wrapper>
       <h2 className="font-bold text-xl">Informations</h2>
-      <Field
-        label="Titre du groupe *"
-        placeholder="Ex: Promo 2025"
-        name="name"
-        data={data}
-      />
-      <FieldArea label="Description du groupe *" name="desc" data={data} />
-      <span className="flex row gap-x-5">
-        <label>Statut</label>
-        <input
-          className="toggle"
-          type="checkbox"
-          onChange={handleToggle}
-          checked={isActive}
-          autoComplete="off"
+      <span className="max-w-[70vh] flex flex-col gap-y-4">
+        <Field
+          label="Titre du groupe *"
+          placeholder="Ex: Promo 2025"
+          name="name"
+          data={data}
         />
-        <label>{isActive ? "Actif" : "Inactif"}</label>
+        <FieldArea label="Description du groupe *" name="desc" data={data} />
+
+        <span className="flex row gap-x-5">
+          <label>Statut</label>
+          <input
+            className="toggle"
+            type="checkbox"
+            onChange={handleToggle}
+            checked={isActive}
+            autoComplete="off"
+          />
+          <label>{isActive ? "Actif" : "Inactif"}</label>
+        </span>
+        <MemoizedImageFileUpload
+          maxSize={headerImageMaxSize}
+          onSetFile={onSetFile}
+          label="Téléverser une image de groupe"
+        />
       </span>
-      <MemoizedImageFileUpload
-        maxSize={headerImageMaxSize}
-        onSetFile={onSetFile}
-        label="Téléverser une image de groupe"
-      />
     </Wrapper>
   );
 };

@@ -15,7 +15,6 @@ const GroupForm: FC<{
   isFileNotRequired?: boolean;
   gridType?: "cols" | "rows";
   hideCancelButton?: boolean;
-  hideDetailsComponent?: boolean;
 }> = (props) => {
   const {
     errors,
@@ -29,7 +28,6 @@ const GroupForm: FC<{
   } = useGroupForm({
     onSubmitForm: props.onSubmitForm,
     group: props.group,
-    hideDetailsComponent: props.hideDetailsComponent,
     isFileNotRequired: props.isFileNotRequired,
   });
 
@@ -42,8 +40,7 @@ const GroupForm: FC<{
       />
       <div
         className={`grid ${
-          !props.hideDetailsComponent &&
-          (props.gridType === "rows" ? "grid-rows-2" : "grid-cols-2")
+          props.gridType === "rows" ? "grid-rows-2" : "grid-cols-2"
         } max-md:grid-cols-1 gap-5`}
       >
         <Informations
@@ -54,9 +51,7 @@ const GroupForm: FC<{
           setIsActive={setIsActive}
           onSetFile={onSetFile}
         />
-        {!props.hideDetailsComponent && (
-          <Details onSelectParcours={onSelectParcours} />
-        )}
+        <Details onSelectParcours={onSelectParcours} />
       </div>
     </form>
   );
