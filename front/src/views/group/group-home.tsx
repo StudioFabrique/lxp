@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link, useLocation } from "react-router-dom";
-import { Fragment, useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Context } from "../../store/context.store";
 import Role from "../../utils/interfaces/role";
 import Tabs from "../../components/UI/tabs/tabs.component";
@@ -9,12 +9,8 @@ import { groupSearchOptions } from "../../config/search-options";
 import Search from "../../components/UI/search/search.component";
 import GroupList from "../../components/lists/group-list/group-list.component";
 import Pagination from "../../components/UI/pagination/pagination";
-import Modal from "../../components/UI/modal/modal";
 import toast from "react-hot-toast";
-import EditUsersModal from "../../components/group-home/modals/edit-users/edit-users-modal";
 import useHttp from "../../hooks/use-http";
-import GroupManageUserList from "../../components/lists/group-add-user-list/group-manage-user-list/group-manage-user-list";
-import User from "../../utils/interfaces/user";
 import Can from "../../components/UI/can/can.component";
 
 export type GroupModalContent = {
@@ -29,15 +25,6 @@ const GroupHome = () => {
   const { sendRequest } = useHttp(true);
   const [role, setRole] = useState<Role>(roles[0]);
   const [isSearchActive, setIsSearchActive] = useState(false);
-  const [isDrawerActive, setActiveDrawer] = useState(false);
-
-  /**
-   * States relatifs aux modals
-   */
-  const [usersModalContent, setUsersModalContent] = useState<
-    GroupModalContent | undefined
-  >({ refresh: true });
-  const [usersInSelectedGroup, setUsersInSelectedGroup] = useState<User[]>();
 
   const {
     allChecked,
@@ -85,7 +72,7 @@ const GroupHome = () => {
     setAllChecked((prevAllchecked) => !prevAllchecked);
   };
 
-  const handleUncheckALL = useCallback(() => {
+  const handleUncheckAll = useCallback(() => {
     setAllChecked(false);
   }, [setAllChecked]);
 
@@ -96,34 +83,6 @@ const GroupHome = () => {
     };
 
     sendRequest({ path: `/group/${id}`, method: "delete" }, applyData);
-  };
-
-  const handleToggleDrawer = () => {
-    setActiveDrawer((prevState) => !prevState);
-    setUsersModalContent((prevContent) => {
-      return { ...prevContent, refresh: true };
-    });
-  };
-
-  const handleSubmitAddUsers = (users: User[]) => {
-    const usersId = users.map((user) => user._id);
-
-    const applyData = () => {
-      toast.success("utilisateurs ajoutés avec succès");
-      setUsersInSelectedGroup((prevUsers) => {
-        if (prevUsers) return [...prevUsers, ...users];
-      });
-    };
-
-    if (usersModalContent?.groupId)
-      sendRequest(
-        {
-          path: `/group/addUsers/${usersModalContent.groupId}`,
-          method: "put",
-          body: { usersId },
-        },
-        applyData,
-      );
   };
 
   useEffect(() => {
@@ -186,7 +145,7 @@ const GroupHome = () => {
             onRowCheck={handleRowCheck}
             onAllChecked={handleAllChecked}
             onSorting={handleSorting}
-            onUncheckAll={handleUncheckALL}
+            onUncheckAll={handleUncheckAll}
             onDeleteGroup={handleDeleteGroup}
           />
           {dataList.length > 0 ? (
@@ -198,40 +157,6 @@ const GroupHome = () => {
           ) : null}
         </div>
       </div>
-      <>
-        {usersModalContent?.isModalOpen ? (
-          <Modal
-            title=""
-            rightLabel="Fermer"
-            onRightClick={() =>
-              setUsersModalContent((modalContent) => {
-                return { ...modalContent, isModalOpen: false };
-              })
-            }
-            modalBoxStyle="max-w-[50%]"
-            sendModalBottom={isDrawerActive}
-            children={[
-              <Fragment key="modal">
-                <EditUsersModal
-                  modalContent={usersModalContent}
-                  setModalContent={setUsersModalContent}
-                  onClickAddUsers={handleToggleDrawer}
-                  onSetUsersInSelectedGroup={setUsersInSelectedGroup}
-                />
-              </Fragment>,
-            ]}
-          />
-        ) : null}
-        <GroupManageUserList
-          onAddUsers={handleSubmitAddUsers}
-          usersToAdd={usersInSelectedGroup ?? []}
-          drawerOptions={{
-            isOpen: isDrawerActive,
-            visible: false,
-          }}
-          onCloseDrawer={handleToggleDrawer}
-        />
-      </>
     </div>
   );
 };
