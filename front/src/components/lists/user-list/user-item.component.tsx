@@ -8,6 +8,7 @@ import useHttp from "../../../hooks/use-http";
 import UpdateUserStatus from "../../UI/update-user-status/update-user-status.component";
 import ButtonDelete from "../../UI/button-delete/button-delete.component";
 import { Edit2Icon, MoveUpRight } from "lucide-react";
+import { truncateText } from "../../../helpers/truncate-text";
 
 const UserItem: FC<{
   userItem: any;
@@ -69,12 +70,20 @@ const UserItem: FC<{
       </td>
       <td className="bg-transparent capitalize">{userItem.firstname}</td>
       <td className="bg-transparent capitalize">{userItem.lastname}</td>
-      <td className="bg-transparent">{userItem.email}</td>
+      <td className="bg-transparent">
+        <span className="tooltip tooltip-bottom" data-tip={userItem.email}>
+          {truncateText(userItem.email, 20)}
+        </span>
+      </td>
       <td className="bg-transparent text-center capitalize">
-        {userItem.formation ? userItem.formation : "-"}
+        <span className="tooltip tooltip-bottom" data-tip={userItem.formation}>
+          {userItem.formation ? truncateText(userItem.formation, 20) : "-"}
+        </span>
       </td>
       <td className="bg-transparent text-center">
-        {userItem.parcours ? userItem.parcours : "-"}
+        <span className="tooltip tooltip-bottom" data-tip={userItem.parcours}>
+          {userItem.formation ? truncateText(userItem.parcours, 20) : "-"}
+        </span>
       </td>
       {role === "everything" ? <td>{userItem.roles[0].label} </td> : null}
       <td className="bg-transparent">{userItem.createdAt}</td>
