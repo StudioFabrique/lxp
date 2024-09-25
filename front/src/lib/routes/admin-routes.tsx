@@ -83,6 +83,9 @@ const UserData = React.lazy(() => import("../../views/teacher/user-data"));
 const FeedbacksHome = React.lazy(
   () => import("../../views/feedbacks/feedbackshome"),
 );
+const StudentEvaluationView = React.lazy(
+  () => import("../../views/teacher/student-evaluation"),
+);
 
 const adminRoutes = [
   { index: true, element: <AdminHome /> },
@@ -198,6 +201,10 @@ const adminRoutes = [
       {
         index: true,
         element: <TeacherHome />,
+      },
+      {
+        path: "evaluations",
+        element: <StudentEvaluationView />,
       },
       {
         path: "student/:studentId",
