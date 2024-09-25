@@ -4,7 +4,7 @@ import Can from "../../UI/can/can.component";
 import Group from "../../../utils/interfaces/group";
 import { Link } from "react-router-dom";
 import DeleteModal from "../../UI/modal/delete-modal";
-import { Pen, Trash, Trash2 } from "lucide-react";
+import { Pen, Trash2 } from "lucide-react";
 
 const GroupItem: FC<{
   groupItem: Group;
@@ -52,6 +52,14 @@ const GroupItem: FC<{
       <td className="font-bold bg-transparent">{groupItem.index}</td>
       <td className="bg-transparent">{toTitleCase(groupItem.name)}</td>
       <td className="bg-transparent">{toTitleCase(groupItem.desc)}</td>
+      <td className="bg-transparent flex gap-4 items-center">
+        <p>{groupItem.isActive ? "Actif" : "Inactif"}</p>
+        <input
+          checked={groupItem.isActive}
+          className="toggle"
+          type="checkbox"
+        />
+      </td>
       {showActions ? (
         <td className="bg-transparent font-bold text-xs">
           <div className="flex gap-x-4">

@@ -94,6 +94,8 @@ const GroupHome = () => {
     handleRoleSwitch(role);
   }, [handleRoleSwitch, role]);
 
+  console.log({ dataList });
+
   return (
     <div className="flex flex-col py-5">
       <div className="my-8 flex justify-center">
