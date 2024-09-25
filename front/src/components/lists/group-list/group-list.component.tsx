@@ -2,7 +2,7 @@
 import { Dispatch, FC, SetStateAction, useEffect } from "react";
 import Role from "../../../utils/interfaces/role";
 import GroupItem from "./group-item.component";
-import { GroupModalContent } from "../../../views/group/group-home.component";
+import { GroupModalContent } from "../../../views/group/group-home";
 
 const GroupList: FC<{
   role: Role;
