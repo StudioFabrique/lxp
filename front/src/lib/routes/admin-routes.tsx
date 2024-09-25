@@ -17,7 +17,7 @@ const UserHome = React.lazy(
 const UserAdd = React.lazy(() => import("../../views/user/user-add.component"));
 const GroupLayout = React.lazy(() => import("../../views/group/group-layout"));
 const GroupHome = React.lazy(() => import("../../views/group/group-home"));
-const GroupForm = React.lazy(() => import("../../views/group/group-form"));
+const GroupManage = React.lazy(() => import("../../views/group/group-manage"));
 const ParcoursLayout = React.lazy(
   () => import("../../views/parcours/parcours-layout.component"),
 );
@@ -111,8 +111,8 @@ const adminRoutes = [
     element: <GroupLayout />,
     children: [
       { index: true, element: <GroupHome /> },
-      { path: "add", element: <GroupForm /> },
-      { path: "edit/:id", element: <GroupForm /> },
+      { path: "add", element: <GroupManage /> },
+      { path: "edit/:id", element: <GroupManage /> },
     ],
   },
   {

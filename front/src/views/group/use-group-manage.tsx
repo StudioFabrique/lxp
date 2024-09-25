@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import User from "../../utils/interfaces/user";
 import Group from "../../utils/interfaces/group";
 
-function useGroupForm() {
+function useGroupManage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isLoading, sendRequest } = useHttp(true);
@@ -67,6 +67,7 @@ function useGroupForm() {
   const getExistingGroup = useCallback(() => {
     const applyData = (data: { data: Group }) => {
       setExistingGroup(data.data);
+      setUsersToAdd(data.data.users ?? []);
     };
     sendRequest({ path: `/group/${id}` }, applyData);
   }, [id, sendRequest]);
@@ -89,4 +90,4 @@ function useGroupForm() {
   };
 }
 
-export default useGroupForm;
+export default useGroupManage;
