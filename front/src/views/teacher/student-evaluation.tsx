@@ -31,7 +31,7 @@ export default function StudentEvaluationView() {
 
   const getGroups = () => {};
 
-  const getStudents = () => {};
+  //const getStudents = () => {};
 
   const handleParcoursChange = (event: any) => {
     console.log(event.currentTarget.value);

@@ -2,6 +2,8 @@ import User, { IUser } from "../../utils/interfaces/db/user";
 import { prisma } from "../../utils/db";
 import Role from "../../utils/interfaces/db/role";
 import { hash } from "bcrypt";
+import { alreadyExist } from "../../utils/constantes";
+import { randomUUID } from "crypto";
 
 export default async function createUser(user: IUser, roleId: string) {
   const userToFind = await User.findOne({
@@ -9,12 +11,15 @@ export default async function createUser(user: IUser, roleId: string) {
   });
 
   if (userToFind) {
-    return null;
+    throw {
+      statusCode: 409,
+      message: "Un utilisateur a déjà été enregistré avec cette adresse email.",
+    };
   }
 
   const firstRole = await Role.findOne({ _id: roleId });
 
-  if (!firstRole) return null;
+  if (!firstRole) throw { statusCode: 404, message: "Le rôle n'existe pas." };
 
   const createdUser = await User.create({
     email: user.email.toLowerCase(),
@@ -42,7 +47,7 @@ export default async function createUser(user: IUser, roleId: string) {
       user.phoneNumber && user.phoneNumber.length > 0
         ? user.phoneNumber.toLowerCase()
         : undefined,
-    password: await hash("Abcdef@123456", 10), // A enlever par la suite !
+    password: await hash(randomUUID() + "@Sn99", 10),
     isActive: false,
     avatar: user.avatar,
     roles: firstRole,
@@ -70,5 +75,5 @@ export default async function createUser(user: IUser, roleId: string) {
     await prisma.student.create({ data: { idMdb: createdUser._id } });
   }
 
-  return createdUser;
+  return { createdUser, firstRole };
 }
