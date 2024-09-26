@@ -1,14 +1,9 @@
 import { Request, Response } from "express";
 import { IGroup } from "../../utils/interfaces/db/group";
-import {
-  alreadyExist,
-  creationSuccessfull,
-  serverIssue,
-} from "../../utils/constantes";
+import { creationSuccessfull, serverIssue } from "../../utils/constantes";
 import { deleteTempUploadedFile } from "../../middleware/fileUpload";
 import fs from "fs";
 import putGroup from "../../models/group/put-group";
-import editUsers from "../../models/group/edit-users";
 import { IUser } from "../../utils/interfaces/db/user";
 
 export default async function httpPutGroup(req: Request, res: Response) {
@@ -19,9 +14,11 @@ export default async function httpPutGroup(req: Request, res: Response) {
   const {
     group,
     users,
+    parcoursId,
   }: {
     group: IGroup;
     users: IUser[];
+    parcoursId: number;
   } = req.body.data;
 
   let image: any;
@@ -30,7 +27,8 @@ export default async function httpPutGroup(req: Request, res: Response) {
     if (!!uploadedFile) {
       image = await fs.promises.readFile(uploadedFile.path);
     }
-    const response = await putGroup(id, group, users, image);
+
+    const response = await putGroup(id, group, users, image, parcoursId);
 
     await deleteTempUploadedFile(req);
     return res.status(201).json({ message: creationSuccessfull });
