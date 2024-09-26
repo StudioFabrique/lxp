@@ -29,11 +29,10 @@ const UserList: FC<{
   onAllChecked,
   onSorting,
   onUncheckAll,
-  /* onDelete, */
+  onDelete,
   isLoading,
   error,
 }) => {
-  console.log({ userList });
   const handleAllChecked = () => {
     onAllChecked();
   };
@@ -71,8 +70,6 @@ const UserList: FC<{
   useEffect(() => {
     onUncheckAll();
   }, [role, page, onUncheckAll]);
-
-  console.log({ role });
 
   const content = (
     <table className="table w-full border-separate border-spacing-y-2">
@@ -205,7 +202,7 @@ const UserList: FC<{
             {
               <UserItem
                 role={role.role}
-                onDelete={() => {}}
+                onDelete={onDelete}
                 userItem={item}
                 onRowCheck={onRowCheck}
                 isUserDeleteLoading={isLoading}

@@ -17,14 +17,7 @@ const UserItem: FC<{
   onDelete: (id: string) => void;
   isUserDeleteLoading: boolean;
   error?: string;
-}> = ({
-  role,
-  userItem,
-  onRowCheck,
-  /* onDelete, */ isUserDeleteLoading,
-  error,
-}) => {
-  //const [isActive, setIsActive] = useState<boolean>(userItem.isActive);
+}> = ({ role, userItem, onRowCheck, isUserDeleteLoading, error, onDelete }) => {
   const { isLoading, sendRequest } = useHttp();
 
   const handleToggleStatus = () => {
@@ -43,7 +36,7 @@ const UserItem: FC<{
         method: "put",
         body: { userId: userItem._id, value: userItem.isActive },
       },
-      applyData,
+      applyData
     );
   };
 
@@ -122,19 +115,12 @@ const UserItem: FC<{
             </Link>
           </Can>
           <Can action="delete" object={userItem.roles[0].role}>
-            <Link
-              className="tooltip tooltip-bottom"
-              data-tip="Supprimer l'utilisateur"
-              aria-label="Supprimer l'utilisateur"
-              to={"../features"}
-            >
-              <ButtonDelete
-                error={error}
-                isLoading={isUserDeleteLoading}
-                userItem={userItem}
-                onDelete={() => {}}
-              />
-            </Link>
+            <ButtonDelete
+              error={error}
+              isLoading={isUserDeleteLoading}
+              userItem={userItem}
+              onDelete={onDelete}
+            />
           </Can>
         </div>
       </td>

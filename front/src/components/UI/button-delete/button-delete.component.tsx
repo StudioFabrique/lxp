@@ -11,8 +11,12 @@ const ButtonDelete: FC<{
 }> = ({ userItem, isLoading, onDelete, error }) => {
   const [isModalActive, setModalState] = useState<boolean>(false);
 
-  const handleModal = () => {
-    setModalState(!isModalActive);
+  const handleShowModal = () => {
+    setModalState(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalState(false);
   };
 
   const handleConfirmDelete = () => {
@@ -27,11 +31,11 @@ const ButtonDelete: FC<{
         <DeleteModal
           isLoading={isLoading}
           onConfirm={handleConfirmDelete}
-          onCancel={handleModal}
+          onCancel={handleCloseModal}
           error={error}
         />
       )}
-      <button type="button" onClick={() => {}}>
+      <button type="button" onClick={handleShowModal}>
         <Trash2Icon className="w-4 h-4 text-error" />
       </button>
     </>

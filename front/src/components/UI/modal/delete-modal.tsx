@@ -1,7 +1,5 @@
 import { FC, useEffect } from "react";
 import Portal from "../portal/portal";
-import DeleteIcon from "../svg/delete-icon.component";
-import { Delete } from "lucide-react";
 
 const DeleteModal: FC<{
   isLoading: boolean;
@@ -13,7 +11,7 @@ const DeleteModal: FC<{
   useEffect(() => {
     document.body.addEventListener(
       "keydown",
-      (e) => e.key === "Escape" && onCancel(),
+      (e) => e.key === "Escape" && onCancel()
     );
   });
 
@@ -35,7 +33,9 @@ const DeleteModal: FC<{
                 </h3>
               </div>
               <p className="py-2">
-                {`Êtes-vous sûr de supprimer ${descriptionSubject ? descriptionSubject : "cet utilisateur"} ?`}
+                {`Êtes-vous sûr de supprimer ${
+                  descriptionSubject ? descriptionSubject : "cet utilisateur"
+                } ?`}
               </p>
               <p className=" text-red-700 text-sm pb-2">
                 Attention: Cette opération ne peut pas être annulée
