@@ -19,4 +19,6 @@ export default interface Group {
   tags: Array<Tag>;
   roles?: Array<Role>;
   formation?: string;
+  formationId?: number;
+  parcoursId?: number;
 }

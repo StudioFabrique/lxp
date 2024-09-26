@@ -20,8 +20,8 @@ function useGroupManage() {
         state: {
           toastFrom:
             submitMethod === "post"
-              ? "Groupe modifié avec succès"
-              : "Groupe créé avec succès",
+              ? "Groupe créé avec succès"
+              : "Groupe modifié avec succès",
         },
       });
     };

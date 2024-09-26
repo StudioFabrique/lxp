@@ -3,6 +3,8 @@ import { FC, useEffect, useState } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 import Selecter from "../../../UI/selecter/selecter.component";
 import useHttp from "../../../../hooks/use-http";
+import Group from "../../../../utils/interfaces/group";
+import toTitleCase from "../../../../utils/toTitleCase";
 
 // type de données pour les listes
 type Item = {
@@ -12,8 +14,9 @@ type Item = {
 };
 
 const Details: FC<{
+  group?: Group;
   onSelectParcours: (id: number) => void;
-}> = ({ onSelectParcours }) => {
+}> = ({ group, onSelectParcours }) => {
   const { sendRequest } = useHttp();
 
   const [formations, setFormations] = useState<Array<Item>>([]);
@@ -31,7 +34,7 @@ const Details: FC<{
       {
         path: "/formation",
       },
-      processData,
+      processData
     );
   }, [sendRequest]);
 
@@ -64,7 +67,7 @@ const Details: FC<{
           path: `/parcours/parcours-by-formation/${formation}`,
           method: "get",
         },
-        processData,
+        processData
       );
     }
   }, [formation, sendRequest]);
@@ -72,7 +75,10 @@ const Details: FC<{
   return (
     <Wrapper>
       <div className="flex flex-col gap-5 max-w-[50vh]">
-        <h2 className="font-bold text-xl">Details</h2>
+        <span className="flex justify-between">
+          <h2 className="font-bold text-xl">Details</h2>
+          <p>{group?.formation && toTitleCase(group.formation)}</p>
+        </span>
         <div className="flex flex-col gap-y-8">
           <Selecter
             list={formations}
