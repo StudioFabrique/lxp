@@ -59,8 +59,9 @@ const GroupItem: FC<{
         <p>{groupItem.isActive ? "Actif" : "Inactif"}</p>
         <input
           defaultChecked={groupItem.isActive}
-          className="toggle"
+          className="toggle disabled:toggle-primary"
           type="checkbox"
+          disabled
         />
       </td>
       {showActions ? (
