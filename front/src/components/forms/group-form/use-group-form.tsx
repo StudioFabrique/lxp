@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useCallback, useEffect, useState } from "react";
 import useForm from "../../UI/forms/hooks/use-form";
 import { validationErrors } from "../../../helpers/validate";
 import { createGroupSchema } from "../../../lib/validation/create-group-schema";
@@ -26,9 +27,9 @@ function useGroupForm({
     setFile(file);
   };
 
-  const handleSelectParcours = (newParcoursId: number) => {
+  const handleSelectParcours = useCallback((newParcoursId: number) => {
     setParcoursId(newParcoursId);
-  };
+  }, []);
 
   const handleSubmit = () => {
     const name = values.name;
@@ -56,7 +57,7 @@ function useGroupForm({
           },
           parcoursId: parcoursId,
         },
-        file!,
+        file!
       );
     } else {
       toast.error("Un fichier image pour le groupe est requis");
@@ -77,6 +78,7 @@ function useGroupForm({
     onSetFile: handleSetFile,
     values,
     errors,
+    parcoursId,
     onSelectParcours: handleSelectParcours,
     isActive,
   };

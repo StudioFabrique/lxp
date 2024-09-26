@@ -51,7 +51,7 @@ const GroupForm: FC<{
           setIsActive={setIsActive}
           onSetFile={onSetFile}
         />
-        <Details onSelectParcours={onSelectParcours} />
+        <Details group={props.group} onSelectParcours={onSelectParcours} />
       </div>
     </form>
   );
