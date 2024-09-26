@@ -5,7 +5,5 @@ export default async function getGroupDetails(groupId: string) {
     _id: groupId,
   }).populate("users");
 
-  return {
-    ...group,
-  };
+  return group;
 }
