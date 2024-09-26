@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate, useParams } from "react-router-dom";
 import useHttp from "../../hooks/use-http";
 import { useCallback, useEffect, useState } from "react";
@@ -12,10 +14,7 @@ function useGroupManage() {
   const [submitMethod, setSubmitMethod] = useState<"put" | "post">("post");
   const [existingGroup, setExistingGroup] = useState<Group>();
 
-  console.log({ usersToAdd });
-
   const handleSubmit = (data: any, file: File) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const applyData = (_data: any) => {
       navigate("/admin/group", {
         state: {
@@ -35,7 +34,7 @@ function useGroupManage() {
     const formData = new FormData();
     formData.append(
       "data",
-      JSON.stringify({ ...data, users: usersIdWithActiveState }),
+      JSON.stringify({ ...data, users: usersIdWithActiveState })
     );
     formData.append("image", file);
 
@@ -45,7 +44,7 @@ function useGroupManage() {
         path: submitMethod === "post" ? "/group" : `/group/${id}`,
         body: formData,
       },
-      applyData,
+      applyData
     );
   };
 
@@ -58,14 +57,14 @@ function useGroupManage() {
       usersToAdd.map((userToAdd) =>
         userToAdd._id === user._id
           ? { ...userToAdd, isActive: user.isActive }
-          : userToAdd,
-      ),
+          : userToAdd
+      )
     );
   };
 
   const handleDeleteUser = (user: User) => {
     setUsersToAdd((usersToAdd) =>
-      usersToAdd.filter((userToAdd) => userToAdd._id !== user._id),
+      usersToAdd.filter((userToAdd) => userToAdd._id !== user._id)
     );
   };
 

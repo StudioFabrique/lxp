@@ -22,9 +22,18 @@ const Informations: FC<{
   setIsActive: Dispatch<SetStateAction<boolean>>;
   onSetFile: (file: File) => void;
   group?: Group;
-}> = ({ values, errors, onChangeValue, isActive, setIsActive, onSetFile }) => {
+  isLoading?: boolean;
+}> = ({
+  values,
+  errors,
+  onChangeValue,
+  isActive,
+  setIsActive,
+  onSetFile,
+  isLoading,
+}) => {
   const handleToggle: ChangeEventHandler<HTMLInputElement> = (
-    event: ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement>
   ) => {
     setIsActive(event.target.checked);
   };
@@ -44,8 +53,14 @@ const Informations: FC<{
           placeholder="Ex: Promo 2025"
           name="name"
           data={data}
+          isDisabled={isLoading}
         />
-        <FieldArea label="Description du groupe *" name="desc" data={data} />
+        <FieldArea
+          label="Description du groupe *"
+          name="desc"
+          data={data}
+          isDisabled={isLoading}
+        />
 
         <span className="flex row gap-x-5">
           <label>Statut</label>
@@ -55,6 +70,7 @@ const Informations: FC<{
             onChange={handleToggle}
             checked={isActive}
             autoComplete="off"
+            disabled={isLoading}
           />
           <label>{isActive ? "Actif" : "Inactif"}</label>
         </span>
