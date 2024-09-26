@@ -46,7 +46,7 @@ const GroupHome = () => {
       setRole(role);
       setPath(`/group/${role.role}`);
     },
-    [initPagination, setPath],
+    [initPagination, setPath]
   );
 
   const handleSearchResult = (entityToSearch: string, searchValue: string) => {
@@ -93,8 +93,6 @@ const GroupHome = () => {
   useEffect(() => {
     handleRoleSwitch(role);
   }, [handleRoleSwitch, role]);
-
-  console.log({ dataList });
 
   return (
     <div className="flex flex-col py-5">

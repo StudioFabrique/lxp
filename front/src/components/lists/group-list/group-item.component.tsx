@@ -52,6 +52,9 @@ const GroupItem: FC<{
       <td className="font-bold bg-transparent">{groupItem.index}</td>
       <td className="bg-transparent">{toTitleCase(groupItem.name)}</td>
       <td className="bg-transparent">{toTitleCase(groupItem.desc)}</td>
+      <td className="bg-transparent">
+        {toTitleCase(groupItem.formation ?? "-")}
+      </td>
       <td className="bg-transparent flex gap-4 items-center">
         <p>{groupItem.isActive ? "Actif" : "Inactif"}</p>
         <input

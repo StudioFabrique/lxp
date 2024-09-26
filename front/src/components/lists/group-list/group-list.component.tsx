@@ -67,6 +67,14 @@ const GroupList: FC<{
               onSorting("desc");
             }}
           >
+            Formation - Parcours
+          </th>
+          <th
+            className="cursor-pointer"
+            onClick={() => {
+              onSorting("desc");
+            }}
+          >
             Actif
           </th>
           {showActions ? <th>Actions</th> : null}
