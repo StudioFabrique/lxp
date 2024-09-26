@@ -43,7 +43,6 @@ async function getUsersByRole(
 
   let groupsData = Array<any>();
   for (const group of groupsSql) {
-    console.log(group.parcours[0]);
     groupsData = [
       ...groupsData,
       {
