@@ -40,17 +40,13 @@ const GroupHome = () => {
   } = usePagination("lastname", `/group/${user!.roles[0].role}`);
   const { state: history } = useLocation();
 
-  const handleSorting = (column: string) => {
-    sortData(column);
-  };
-
   const handleRoleSwitch = useCallback(
     (role: Role) => {
       initPagination();
       setRole(role);
       setPath(`/group/${role.role}`);
     },
-    [initPagination, setPath],
+    [initPagination, setPath]
   );
 
   const handleSearchResult = (entityToSearch: string, searchValue: string) => {
@@ -127,7 +123,7 @@ const GroupHome = () => {
             groupList={dataList}
             onRowCheck={handleRowCheck}
             onAllChecked={handleAllChecked}
-            onSorting={handleSorting}
+            onSorting={sortData}
             onUncheckAll={handleUncheckAll}
             onDeleteGroup={handleDeleteGroup}
           />

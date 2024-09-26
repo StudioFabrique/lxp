@@ -4,6 +4,7 @@ import Can from "../../UI/can/can.component";
 import Group from "../../../utils/interfaces/group";
 import { Link } from "react-router-dom";
 import DeleteModal from "../../UI/modal/delete-modal";
+import { Pen, Trash2 } from "lucide-react";
 
 const GroupItem: FC<{
   groupItem: Group;
@@ -51,16 +52,38 @@ const GroupItem: FC<{
       <td className="font-bold bg-transparent">{groupItem.index}</td>
       <td className="bg-transparent">{toTitleCase(groupItem.name)}</td>
       <td className="bg-transparent">{toTitleCase(groupItem.desc)}</td>
+      <td className="bg-transparent">
+        {toTitleCase(groupItem.formation ?? "-")}
+      </td>
+      <td className="bg-transparent flex gap-4 items-center">
+        <p>{groupItem.isActive ? "Actif" : "Inactif"}</p>
+        <input
+          defaultChecked={groupItem.isActive}
+          className="toggle"
+          type="checkbox"
+        />
+      </td>
       {showActions ? (
         <td className="bg-transparent font-bold text-xs">
-          <div className="flex gap-x-2">
+          <div className="flex gap-x-4">
             <Can action="update" object={groupItem.roles![0].role}>
-              <Link to={`edit/${groupItem._id}`}>Editer</Link>
+              <Link
+                className="tooltip"
+                data-tip="Modifier"
+                to={`edit/${groupItem._id}`}
+              >
+                <Pen className="w-4" />
+              </Link>
             </Can>
 
             <Can action="delete" object={groupItem.roles![0].role}>
-              <button type="button" onClick={handleShowModal}>
-                Supprimer
+              <button
+                className="tooltip"
+                data-tip="Supprimer"
+                type="button"
+                onClick={handleShowModal}
+              >
+                <Trash2 className="w-4 stroke-red-400" />
               </button>
             </Can>
           </div>
