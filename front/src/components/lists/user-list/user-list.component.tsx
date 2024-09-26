@@ -33,6 +33,7 @@ const UserList: FC<{
   isLoading,
   error,
 }) => {
+  console.log({ userList });
   const handleAllChecked = () => {
     onAllChecked();
   };
