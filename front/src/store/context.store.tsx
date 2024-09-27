@@ -154,9 +154,11 @@ const ContextProvider: FC<Props> = (props) => {
       if (mode === "light") {
         themes.light = newTheme;
         localStorage.setItem("lightTheme", newTheme);
+        setTheme("light");
       } else {
         themes.dark = newTheme;
         localStorage.setItem("darkTheme", newTheme);
+        setTheme("dark");
       }
       if (theme === "light") {
         document
