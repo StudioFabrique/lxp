@@ -20,18 +20,17 @@ const UserAdd = () => {
     sendRequest(
       { method: "post", path: "/user", body: formData },
       (data: any) => {
-        if (data)
-          return navigate(
-            { pathname: "/admin/user" },
-            { state: { sucessToastMessage: "Utilisateur crée avec succès" } },
-          );
+        if (data.success) {
+          toast.success(data.message);
+          return navigate("/admin/user");
+        }
       },
     );
   };
 
   useEffect(() => {
-    if (error) {
-      toast.error("problème lors de la création de l'utilisateur");
+    if (error.length > 0) {
+      toast.error(error);
     }
   }, [error]);
 
