@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useCallback, useEffect, useState } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
-import Module from "../../../../utils/interfaces/module";
 import { useSelector } from "react-redux";
 import DatePicker from "../date-picker";
 import { useDispatch } from "react-redux";
@@ -13,52 +12,53 @@ const CalendarDatesForm: FC<{
   datesParcours: { startDate: Date; endDate: Date };
 }> = ({ datesParcours }) => {
   const dispatch = useDispatch();
-
   const { sendRequest } = useHttp(true);
 
-  const currentModule: Module = useSelector(
-    (state: any) => state.parcoursModules.currentModule
+  const currentModule = useSelector(
+    (state: any) => state.parcoursModules.currentModule,
   );
 
   const [datesModule, setDatesModule] = useState({
-    minDate: "",
-    maxDate: "",
+    minDate: currentModule?.minDate
+      ? new Date(currentModule.minDate).toISOString().split("T")[0]
+      : "",
+    maxDate: currentModule?.maxDate
+      ? new Date(currentModule.maxDate).toISOString().split("T")[0]
+      : "",
   });
 
   const setDates = useCallback(() => {
     setDatesModule({
       minDate: currentModule?.minDate
-        ? new Date(currentModule?.minDate).toISOString().split("T")[0]
+        ? new Date(currentModule.minDate).toISOString().split("T")[0]
         : "",
       maxDate: currentModule?.maxDate
-        ? new Date(currentModule?.maxDate ?? "").toISOString().split("T")[0]
+        ? new Date(currentModule.maxDate).toISOString().split("T")[0]
         : "",
     });
-  }, [currentModule?.minDate, currentModule?.maxDate]);
+  }, [currentModule]);
 
   const handleSubmitDates = (id: string, date: string) => {
     const newMinDate = id === "date1" ? date : datesModule.minDate;
-
     const newMaxDate = id === "date2" ? date : datesModule.maxDate;
 
+    if (newMinDate && new Date(newMinDate) < datesParcours.startDate) {
+      return toast.error(
+        "La date doit être comprise entre le début et la fin du parcours",
+      );
+    }
+    if (newMaxDate && new Date(newMaxDate) > datesParcours.endDate) {
+      return toast.error(
+        "La date doit être comprise entre le début et la fin du parcours",
+      );
+    }
     if (
-      new Date(newMinDate) < datesParcours.startDate ||
-      new Date(newMaxDate) > datesParcours.endDate
+      newMinDate &&
+      newMaxDate &&
+      new Date(newMinDate) > new Date(newMaxDate)
     ) {
       return toast.error(
-        "La date doit être comprise entre le début et la fin du parcours"
-      );
-    }
-
-    if (new Date(newMinDate) > new Date(datesModule.maxDate)) {
-      return toast.error(
-        "La date minimum ne peut pas être supérieure à la date maximum"
-      );
-    }
-
-    if (new Date(newMaxDate) < new Date(datesModule.minDate)) {
-      return toast.error(
-        "La date maximum ne peut pas être inférieure à la date minimum"
+        "La date minimum ne peut pas être supérieure à la date maximum",
       );
     }
 
@@ -70,7 +70,7 @@ const CalendarDatesForm: FC<{
             maxDate: newMaxDate,
           },
           moduleId: currentModule.id,
-        })
+        }),
       );
     };
 
@@ -80,11 +80,11 @@ const CalendarDatesForm: FC<{
         method: "put",
         body: {
           moduleId: currentModule.id,
-          minDate: datesModule.minDate,
-          maxDate: datesModule.maxDate,
+          minDate: newMinDate,
+          maxDate: newMaxDate,
         },
       },
-      applyData
+      applyData,
     );
   };
 
