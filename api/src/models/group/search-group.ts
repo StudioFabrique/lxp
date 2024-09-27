@@ -9,7 +9,7 @@ async function searchGroup(
   page: number,
   limit: number,
   stype: string,
-  sdir: string
+  sdir: string,
 ) {
   const dir = sdir === "asc" ? 1 : -1;
 
@@ -38,12 +38,10 @@ async function searchGroup(
     field = value;
   }
 
-  console.log({ field });
-
   if (fetchedRole.rank < 3) {
     const groups = await Group.find(
       { [entity]: field, roles: fetchedRole._id },
-      { password: 0 }
+      { password: 0 },
     )
       .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
       .sort({ [stype]: dir })
@@ -57,7 +55,7 @@ async function searchGroup(
   } else if (fetchedRole.rank > 2) {
     const groups = await Group.find(
       { [entity]: field, roles: fetchedRole._id },
-      { password: 0 }
+      { password: 0 },
     )
       .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
       .sort({ [stype]: dir })
