@@ -5,11 +5,11 @@ import createManyGraduations from "../../models/graduation/create-many-graduatio
 import createManyHobbies from "../../models/hobby/create-many-hobbies";
 import createManyLinks from "../../models/links/create-many-links";
 import createUser from "../../models/user/create-user";
-import { newUserMail } from "../../services/mailer";
 import { badQuery } from "../../utils/constantes";
 import { IGraduation } from "../../utils/interfaces/db/graduation";
 import { IHobby } from "../../utils/interfaces/db/hobby";
 import { ILink } from "../../utils/interfaces/db/link";
+import { newUserMail } from "../../services/mailer";
 
 export default async function httpCreateUser(req: Request, res: Response) {
   let userDataRequest = req.body.data.user;
@@ -44,18 +44,6 @@ export default async function httpCreateUser(req: Request, res: Response) {
     if (uploadedFile) {
       await fs.promises.unlink(uploadedFile.path);
     }
-
-    const token = jwt.sign(
-      { userId: userResponse.createdUser._id },
-      process.env.SECRET!,
-      {
-        expiresIn: "24h",
-      },
-    );
-
-    console.log(userResponse.firstRole);
-
-    //await newUserMail(userDataRequest.email, token);
 
     return res.status(201).json({
       success: true,
