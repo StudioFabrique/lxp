@@ -84,12 +84,17 @@ const UserAddForm: FC<{
 
   //  test la validité du form via le custom hook useInput
   let formIsValid = false;
-  formIsValid =
-    email.isValid && firstname.isValid && lastname.isValid && !!roleId?.length;
+  formIsValid = email.isValid && firstname.isValid && lastname.isValid;
 
   const handleSubmit = () => {
     if (!formIsValid) {
-      toast.error("le formulaire est incorrect");
+      toast.error(
+        "Certains champs du formulaire sont manquants ou mal remplis.",
+      );
+
+      return;
+    } else if (!roleId || (roleId && roleId?.length < 1)) {
+      toast.error("Veuillez choisir un rôle svp ...");
       return;
     }
     const newUser = {
