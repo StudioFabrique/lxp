@@ -7,7 +7,7 @@ import studentRoutes from "./lib/routes/students-routes";
 import adminRoutes from "./lib/routes/admin-routes";
 import Loader from "./components/UI/loader";
 import Sidebar from "./components/UI/sidebar/sidebar";
-import RegisterHome from "./views/register";
+import RegisterHome from "./views/register/register";
 
 const StudentLayout = lazy(
   async () => await import("./views/student/student-layout.component"),
