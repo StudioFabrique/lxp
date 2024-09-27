@@ -41,16 +41,20 @@ export default async function createUser(user: IUser, roleId: string) {
       roles: firstRole,
     });
 
+    console.log(createdUser);
+
     if (firstRole.rank === 3) {
       // Générer un token pour l'envoi de l'email
-      const token = jwt.sign({ userId: createdUser._id }, process.env.SECRET!, {
-        expiresIn: "24h",
-      });
+      const token = jwt.sign(
+        { userId: createdUser._id, userRoles: firstRole },
+        process.env.REGISTER_SECRET!,
+        {
+          expiresIn: "24h",
+        },
+      );
 
       try {
         await newUserMail(createdUser.email, token); // Envoi de l'email
-
-        // Créer l'entrée pour un étudiant si l'email est envoyé avec succès
       } catch (emailError) {
         await User.deleteOne({ _id: createdUser._id });
 
