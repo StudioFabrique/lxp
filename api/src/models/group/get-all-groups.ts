@@ -7,7 +7,7 @@ async function getAllGroups(
   limit: number,
   role: string,
   stype: string,
-  sdir: string
+  sdir: string,
 ) {
   const dir = sdir === "asc" ? 1 : -1;
   let fetchedRoles;
@@ -56,10 +56,8 @@ async function getAllGroups(
               : undefined,
         };
       }
-    })
+    }),
   );
-
-  console.log({ groupsWithFormation });
 
   const total = await Group.count({ roles: { $in: fetchedRoles } });
   return { total, groupsWithFormation };

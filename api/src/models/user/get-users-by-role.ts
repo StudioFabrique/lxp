@@ -99,7 +99,6 @@ async function getUsersByRole(
   const total = await User.count({ roles: { $in: fetchedRoles } });
 
   let users = data.map((user) => {
-    console.log(user.group[0]);
     return {
       ...user.toObject(),
       parcours:
