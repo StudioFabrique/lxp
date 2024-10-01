@@ -1,4 +1,11 @@
-import { ChangeEvent, ChangeEventHandler, FC, Ref, useRef } from "react";
+import {
+  ChangeEvent,
+  ChangeEventHandler,
+  FC,
+  Ref,
+  useMemo,
+  useRef,
+} from "react";
 import CalendarIcon from "../../UI/svg/calendar-icon";
 
 const DatePicker: FC<{
@@ -7,6 +14,11 @@ const DatePicker: FC<{
   label?: string;
   onSubmitDate: (id: string, date: string) => void;
 }> = ({ id, date, label, onSubmitDate }) => {
+  const dateFormatted = useMemo(
+    () => new Date(date).toLocaleDateString("fr-FR"),
+    [date],
+  );
+
   const dateRef: Ref<HTMLInputElement> = useRef(null);
 
   const handleClick = () => {
@@ -14,7 +26,7 @@ const DatePicker: FC<{
   };
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (
-    event: ChangeEvent<HTMLInputElement>
+    event: ChangeEvent<HTMLInputElement>,
   ) => {
     onSubmitDate(event.target.id, event.target.value);
   };
@@ -25,7 +37,7 @@ const DatePicker: FC<{
       <input
         className="input btn-sm sm:w-20 md:w-24 lg:w-40 text-center"
         type="text"
-        value={date}
+        value={dateFormatted}
         onChange={handleChange}
       />
       <button
