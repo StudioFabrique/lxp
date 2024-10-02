@@ -49,19 +49,19 @@ const DatesSelecter: FC<Props> = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       if (submit) {
-        const date = new Date().getTime();
-        const sDate = new Date(dates.startDate).getTime();
-        const eDate = new Date(dates.endDate).getTime();
+        // const date = new Date().getTime();
+        // const sDate = new Date(dates.startDate).getTime();
+        // const eDate = new Date(dates.endDate).getTime();
 
         if (startDate.isValid && endDate.isValid) {
           setError(false);
-          if (sDate > date && sDate < eDate) {
-            onSubmitDates(dates);
-            setSubmit(false);
-          } else {
-            setError(true);
-            setSubmit(false);
-          }
+          // if (sDate > date && sDate < eDate) {
+          onSubmitDates(dates);
+          setSubmit(false);
+          // } else {
+          //   setError(true);
+          //   setSubmit(false);
+          // }
         }
       }
     }, autoSubmitTimer);
@@ -116,8 +116,9 @@ const DatesSelecter: FC<Props> = ({
       </div>
       {error ? (
         <p className="text-error text-xs mt-4 text-center font-bold">
-          La date de début doit être comprise entre aujourd'hui et la date de
-          fin de la formation.
+          Un problème est survenu lors du changement des dates
+          {/*La date de début doit être comprise entre aujourd'hui et la date de
+          fin de la formation.*/}
         </p>
       ) : null}
     </div>
