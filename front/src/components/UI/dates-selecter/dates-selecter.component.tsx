@@ -4,6 +4,7 @@ import useInput from "../../../hooks/use-input";
 import { regexGeneric } from "../../../utils/constantes";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import { formatDateToYYYYMMDD } from "../../../helpers/convert-date";
+import DatePicker from "../../edit-parcours/calendrier/date-picker";
 
 type Props = {
   onSubmitDates: (dates: { startDate: string; endDate: string }) => void;
@@ -18,22 +19,19 @@ const DatesSelecter: FC<Props> = ({
   label = "",
   onSubmitDates,
 }) => {
-
-
-
   const tommorowDate = new Date(new Date().setDate(new Date().getDate() + 1));
 
   const { value: startDate } = useInput(
     (value) => regexGeneric.test(value),
     startDateProp
       ? formatDateToYYYYMMDD(new Date(startDateProp))
-      : formatDateToYYYYMMDD(tommorowDate)
+      : formatDateToYYYYMMDD(tommorowDate),
   );
   const { value: endDate } = useInput(
     (value) => regexGeneric.test(value),
     endDateProp
       ? formatDateToYYYYMMDD(new Date(endDateProp))
-      : formatDateToYYYYMMDD(tommorowDate)
+      : formatDateToYYYYMMDD(tommorowDate),
   );
   const [error, setError] = useState(false);
   const [submit, setSubmit] = useState<boolean>(false);
@@ -77,7 +75,7 @@ const DatesSelecter: FC<Props> = ({
       startDate.datePicking(event.currentTarget.value);
       setSubmit(true);
     },
-    [startDate]
+    [startDate],
   );
 
   const handleChangeEndDate = useCallback(
@@ -85,32 +83,36 @@ const DatesSelecter: FC<Props> = ({
       endDate.datePicking(event.currentTarget.value);
       setSubmit(true);
     },
-    [endDate]
+    [endDate],
   );
   return (
     <div className="flex flex-col gap-y-4">
       <h3 className="font-bold">{label}</h3>
       <div className="flex flex-col gap-y-4">
-        <div className="flex justify-between items-center">
+        {/* <div className="flex justify-between items-center">
           <p className="whitespace-nowrap w-20">Début</p>
           <input
             className="ml-2 input input-sm w-5/6"
             name="startingDate"
             type="date"
-            value={startDate.value}
+            value={dates.startDate}
             onChange={handleChangeStartDate}
           />
-        </div>
-        <div className="flex justify-between items-center">
-          <p className="whitespace-nowrap w-20">Fin</p>
-          <input
-            className="ml-2 input input-sm w-5/6"
-            name="endingDate"
-            type="date"
-            value={endDate.value}
-            onChange={handleChangeEndDate}
-          />
-        </div>
+        </div> */}
+        <DatePicker
+          id="date1"
+          name="startingDate"
+          label="Début"
+          date={dates.startDate}
+          onChangeDate={handleChangeStartDate}
+        />
+        <DatePicker
+          id="date2"
+          name="startingDate"
+          label="Fin"
+          date={dates.endDate}
+          onChangeDate={handleChangeEndDate}
+        />
       </div>
       {error ? (
         <p className="text-error text-xs mt-4 text-center font-bold">

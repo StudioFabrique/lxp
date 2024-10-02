@@ -98,7 +98,7 @@ const CalendarDatesForm: FC<{
         <form className="flex flex-col gap-y-5">
           <h3>Dates de module</h3>
           <div className="flex flex-col gap-y-5">
-            <span className="flex items-center">
+            <span className="flex">
               <DatePicker
                 id="date1"
                 label="Début"
