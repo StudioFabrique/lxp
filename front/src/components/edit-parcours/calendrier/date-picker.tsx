@@ -39,7 +39,7 @@ const DatePicker: FC<{
       {label && <label className="w-20">{label}</label>}
       <span className="w-full flex gap-2 items-center justify-end">
         <input
-          className="w-full input input-sm text-center"
+          className="w-full input input-sm pl-10"
           type="text"
           name={name}
           value={dateFormatted}
