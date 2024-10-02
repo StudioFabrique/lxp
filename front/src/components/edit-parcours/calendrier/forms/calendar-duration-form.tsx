@@ -17,16 +17,14 @@ import ProgressBarWrapper from "../../../UI/progress-bar-wrapper/progress-bar-wr
 const CalendarDurationForm = () => {
   const [duration, setDuration] = useState(0);
 
-  const formValidation = duration > 0;
-
-  const progressBarProps = useProgressBar(formValidation);
+  const progressBar = useProgressBar(duration > 0);
 
   const dispatch = useDispatch();
 
   const { sendRequest } = useHttp();
 
   const currentModule: Module = useSelector(
-    (state: any) => state.parcoursModules.currentModule
+    (state: any) => state.parcoursModules.currentModule,
   );
 
   const initDuration = useCallback(() => {
@@ -36,24 +34,24 @@ const CalendarDurationForm = () => {
   }, [currentModule]);
 
   const handleChangeDurationValue: ChangeEventHandler<HTMLInputElement> = (
-    event: ChangeEvent<HTMLInputElement>
+    event: ChangeEvent<HTMLInputElement>,
   ) => {
     const value = parseInt(event.currentTarget.value);
     setDuration(value);
-    progressBarProps.handlePrepareRequest(value);
+    progressBar.handlePrepareRequest(value);
   };
 
   const handleSubmit = useCallback(() => {
-    progressBarProps.setFetchResultType("loading");
+    progressBar.setFetchResultType("loading");
 
     const applyData = () => {
       dispatch(
         parcoursModulesSliceActions.updateParcoursModule({
           moduleId: currentModule.id,
           module: { ...currentModule, duration: duration },
-        })
+        }),
       );
-      progressBarProps.setFetchResultType("success");
+      progressBar.setFetchResultType("success");
     };
 
     sendRequest(
@@ -62,56 +60,31 @@ const CalendarDurationForm = () => {
         method: "put",
         body: { id: currentModule.id, duration: duration },
       },
-      applyData
+      applyData,
     );
 
-    progressBarProps.handleStopRequest();
-  }, [currentModule, dispatch, duration, progressBarProps, sendRequest]);
+    progressBar.handleStopRequest();
+  }, [currentModule, dispatch, duration, progressBar, sendRequest]);
 
   useEffect(() => {
     initDuration();
   }, [initDuration]);
 
   useEffect(() => {
-    if (progressBarProps.canSendRequestNow) {
+    if (progressBar.canSendRequestNow) {
       handleSubmit();
     }
-  }, [progressBarProps.canSendRequestNow, handleSubmit]);
+  }, [progressBar.canSendRequestNow, handleSubmit]);
 
   return (
-    <ProgressBarWrapper loader={progressBarProps.loader}>
+    <ProgressBarWrapper loader={progressBar.loader}>
       {currentModule && (
         <form className="flex flex-col gap-y-5">
           <span className="flex gap-x-2">
             <h3>Durée du module</h3>
-            {progressBarProps.componentFetchType()}
+            {progressBar.componentFetchType()}
           </span>
           <div className="flex gap-x-5">
-            {/* Fields asychrone/sychrone */}
-            {/* <div className="flex flex-col gap-y-2 ">
-              <span className="flex gap-x-2">
-                <input
-                  id="radio1"
-                  name="radio1"
-                  type="radio"
-                  className="radio"
-                  checked={synchrone}
-                  onChange={handleChangeSynchrone}
-                />
-                <label htmlFor="radio1">Synchrone</label>
-              </span>
-              <span className="flex gap-x-2">
-                <input
-                  id="radio2"
-                  name="radio2"
-                  type="radio"
-                  className="radio"
-                  checked={!synchrone}
-                  onChange={handleChangeSynchrone}
-                />
-                <label htmlFor="radio2">Asynchrone</label>
-              </span>
-            </div> */}
             <span className="flex gap-x-2 items-center">
               <input
                 onChange={handleChangeDurationValue}
