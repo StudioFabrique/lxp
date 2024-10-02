@@ -123,8 +123,6 @@ const CalendarDatesForm: FC<{
     }
   }, [progressBar.canSendRequestNow, handleSubmit]);
 
-  console.log(progressBar.loader);
-
   return (
     <ProgressBarWrapper loader={progressBar.loader}>
       {currentModule && (
