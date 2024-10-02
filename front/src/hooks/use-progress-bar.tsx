@@ -40,7 +40,7 @@ const useProgressBar = (formValidation: boolean) => {
    * Utilisation dans le composant parent : lors du changement d'un input
    * @param currentFocusValueLength taille de la valeur du dernier input (permet d'aider l'actualisation de la logique)
    */
-  const handlePrepareRequest = (currentFocusValueLength: number) => {
+  const handlePrepareRequest = (currentFocusValueLength: number = 1) => {
     setFetchResultType("none");
     setCurrentFocusValueLength(currentFocusValueLength);
     if (intervalId) clearInterval(intervalId);
