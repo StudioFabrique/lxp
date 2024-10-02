@@ -49,26 +49,33 @@ const DatesSelecter: FC<Props> = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       if (submit) {
-        // const date = new Date().getTime();
-        // const sDate = new Date(dates.startDate).getTime();
-        // const eDate = new Date(dates.endDate).getTime();
+        const sDate = new Date(startDate.value).getTime();
+        const eDate = new Date(endDate.value).getTime();
 
         if (startDate.isValid && endDate.isValid) {
           setError(false);
-          // if (sDate > date && sDate < eDate) {
-          onSubmitDates(dates);
-          setSubmit(false);
-          // } else {
-          //   setError(true);
-          //   setSubmit(false);
-          // }
+          if (sDate < eDate) {
+            onSubmitDates(dates);
+            setSubmit(false);
+          } else {
+            setError(true);
+            setSubmit(false);
+          }
         }
       }
     }, autoSubmitTimer);
     return () => {
       clearTimeout(timer);
     };
-  }, [dates, startDate.isValid, submit, endDate.isValid, onSubmitDates]);
+  }, [
+    dates,
+    startDate.isValid,
+    startDate.value,
+    submit,
+    endDate.isValid,
+    endDate.value,
+    onSubmitDates,
+  ]);
 
   const handleChangeStartDate = useCallback(
     (event: React.FormEvent<HTMLInputElement>) => {
