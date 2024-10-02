@@ -6,7 +6,7 @@ import { autoSubmitTimer } from "../config/auto-submit-timer";
  * @param formValidation valeur booléenne à passer pour indiquer si les champs du formulaire sont respectés
  */
 
-const useProgressBar = (formValidation: boolean) => {
+function useProgressBar(formValidation: boolean) {
   const [loader, setLoader] = useState<{
     lastTime: number;
     loadingRate: number;
@@ -15,7 +15,7 @@ const useProgressBar = (formValidation: boolean) => {
     loadingRate: 0,
   });
 
-  const [currentFocusValueLength, setCurrentFocusValueLength] = useState(0);
+  const [currentFocusValue, setCurrentFocusValue] = useState(0);
 
   const [isReadyToSendRequest, setReadyToSendRequest] = useState(false);
 
@@ -38,11 +38,11 @@ const useProgressBar = (formValidation: boolean) => {
   /**
    * Initialise les valeurs des propriétés du hook permettant le déclenchement du timer avant le submit
    * Utilisation dans le composant parent : lors du changement d'un input
-   * @param currentFocusValueLength taille de la valeur du dernier input (permet d'aider l'actualisation de la logique)
+   * @param currentFocusValue taille de la valeur du dernier input (permet d'aider l'actualisation de la logique)
    */
-  const handlePrepareRequest = (currentFocusValueLength: number = 1) => {
+  const handlePrepareRequest = (currentFocusValue: number) => {
     setFetchResultType("none");
-    setCurrentFocusValueLength(currentFocusValueLength);
+    setCurrentFocusValue(currentFocusValue);
     if (intervalId) clearInterval(intervalId);
     setReadyToSendRequest(true);
   };
@@ -86,7 +86,7 @@ const useProgressBar = (formValidation: boolean) => {
   };
 
   useEffect(() => {
-    if (isReadyToSendRequest && formValidation && currentFocusValueLength > 0) {
+    if (isReadyToSendRequest && formValidation && currentFocusValue > 0) {
       setLoader({
         lastTime: Date.now(),
         loadingRate: 0,
@@ -109,7 +109,7 @@ const useProgressBar = (formValidation: boolean) => {
     fetchResultType,
     formValidation,
     isReadyToSendRequest,
-    currentFocusValueLength,
+    currentFocusValue,
   ]);
 
   useEffect(() => {
@@ -120,7 +120,7 @@ const useProgressBar = (formValidation: boolean) => {
       if (
         isReadyToSendRequest &&
         formValidation &&
-        currentFocusValueLength > 0 &&
+        currentFocusValue > 0 &&
         timeElapsed > autoSubmitTimer
       ) {
         setCanSendRequestNow(true);
@@ -129,7 +129,7 @@ const useProgressBar = (formValidation: boolean) => {
       if (
         isReadyToSendRequest &&
         formValidation &&
-        currentFocusValueLength > 0 &&
+        currentFocusValue > 0 &&
         fetchResultType === "none"
       ) {
         setLoader((currentLoader) => {
@@ -148,7 +148,7 @@ const useProgressBar = (formValidation: boolean) => {
     formValidation,
     isReadyToSendRequest,
     loader.lastTime,
-    currentFocusValueLength,
+    currentFocusValue,
   ]);
 
   return {
@@ -159,6 +159,6 @@ const useProgressBar = (formValidation: boolean) => {
     handleStopRequest,
     canSendRequestNow,
   };
-};
+}
 
 export default useProgressBar;
