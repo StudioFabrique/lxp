@@ -6,10 +6,11 @@ import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcou
 import { useSelector } from "react-redux";
 import ToolTipWarning from "../../UI/tooltip-warning/tooltip-warning";
 import { notValidModuleTooltip } from "../../../lib/not-valid-module";
+import defaultModuleThumb from "../../../assets/images/module-default-thumb.png";
 
 const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
   const currentModule: Module | null = useSelector(
-    (state: any) => state.parcoursModules.currentModule
+    (state: any) => state.parcoursModules.currentModule,
   );
 
   const dispatch = useDispatch();
@@ -26,7 +27,7 @@ const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
 
   const handleClick = () => {
     dispatch(
-      parcoursModulesSliceActions.updateCurrentParcoursModule(module.id)
+      parcoursModulesSliceActions.updateCurrentParcoursModule(module.id),
     );
   };
 
@@ -48,10 +49,14 @@ const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
           } flex items-center gap-x-4 text-base-100 p-4 rounded-lg hover:bg-primary-focus hover:cursor-pointer relative`}
         >
           {notValid ? <ToolTipWarning message={notValidModuleTooltip} /> : null}
-          <span className="w-[20%]">
+          <span className="w-10 h-10">
             <img
-              className="object-fill  rounded-md"
-              src={`data:image/jpeg;base64,${module.thumb}`}
+              className="h-full object-cover rounded-md"
+              src={
+                module.thumb
+                  ? `data:image/jpeg;base64,${module.thumb}`
+                  : defaultModuleThumb
+              }
               alt="module preview"
             />
           </span>
