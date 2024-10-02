@@ -147,7 +147,7 @@ const CalendarDatesForm: FC<{
               />
             </span>
           </div>
-          <p>{error}</p>
+          <p className="text-error">{error}</p>
         </form>
       )}
     </ProgressBarWrapper>
