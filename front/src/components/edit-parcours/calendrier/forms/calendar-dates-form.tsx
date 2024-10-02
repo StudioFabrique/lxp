@@ -52,12 +52,12 @@ const CalendarDatesForm: FC<{
 
     if (newMinDate && new Date(newMinDate) < datesParcours.startDate) {
       return setError(
-        "La date doit être comprise entre le début et la fin du parcours",
+        `La date doit être comprise entre le début (${datesParcours.startDate.toLocaleDateString("fr-FR")}) et la fin (${datesParcours.endDate.toLocaleDateString("fr-FR")}) du parcours`,
       );
     }
     if (newMaxDate && new Date(newMaxDate) > datesParcours.endDate) {
       return setError(
-        "La date doit être comprise entre le début et la fin du parcours",
+        `La date doit être comprise entre le début (${datesParcours.startDate.toLocaleDateString("fr-FR")}) et la fin (${datesParcours.endDate.toLocaleDateString("fr-FR")}) du parcours`,
       );
     }
     if (
@@ -70,7 +70,9 @@ const CalendarDatesForm: FC<{
       );
     }
     setError(null);
-    progressBar.handlePrepareRequest();
+    progressBar.handlePrepareRequest(
+      datesParcours.startDate.getTime() + datesParcours.endDate.getTime(),
+    );
   };
 
   const handleSubmit = useCallback(() => {
@@ -100,6 +102,7 @@ const CalendarDatesForm: FC<{
       },
       applyData,
     );
+
     progressBar.handleStopRequest();
   }, [
     currentModule?.id,
@@ -120,6 +123,8 @@ const CalendarDatesForm: FC<{
     }
   }, [progressBar.canSendRequestNow, handleSubmit]);
 
+  console.log(progressBar.loader);
+
   return (
     <ProgressBarWrapper loader={progressBar.loader}>
       {currentModule && (
@@ -135,6 +140,10 @@ const CalendarDatesForm: FC<{
                 id="date1"
                 label="Début"
                 date={datesModule.minDate}
+                disabled={
+                  progressBar.loader.loadingRate > 0 &&
+                  progressBar.loader.loadingRate < 1.2
+                }
                 onSubmitDate={handleSetDates}
               />
             </span>
@@ -144,6 +153,10 @@ const CalendarDatesForm: FC<{
                 id="date2"
                 label="Fin"
                 date={datesModule.maxDate}
+                disabled={
+                  progressBar.loader.loadingRate > 0 &&
+                  progressBar.loader.loadingRate < 1.2
+                }
                 onSubmitDate={handleSetDates}
               />
             </span>
