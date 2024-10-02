@@ -36,7 +36,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
     let updatedItems = currentItems;
     ids.forEach((item: any) => {
       const foundItem = props.initialList.find(
-        (element: any) => element.id === item
+        (element: any) => element.id === item,
       );
       if (foundItem) {
         updatedItems = [...updatedItems, foundItem];
