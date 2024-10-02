@@ -67,9 +67,11 @@ const ParcoursTable = (props: ParcoursTableProps) => {
               <td className="bg-transparent truncate">
                 {item.isPublished ? "Publié" : "Brouillon"}
               </td>
-              <td className="bg-transparent flex justify-center items-center">
-                <div className="w-6 h-6">
-                  {item.visibility ? <EyeIcon /> : <EyeSlash />}
+              <td className="bg-transparent ">
+                <div className="flex justify-center items-center">
+                  <div className="w-6 h-6">
+                    {item.visibility ? <EyeIcon /> : <EyeSlash />}
+                  </div>
                 </div>
               </td>
               <td className="bg-transparent">

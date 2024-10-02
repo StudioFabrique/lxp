@@ -22,13 +22,13 @@ const Calendrier = () => {
   const dispatch = useDispatch();
 
   const parcoursInfos = useSelector(
-    (state: any) => state.parcoursInformations.infos
+    (state: any) => state.parcoursInformations.infos,
   );
   const modules: Module[] = useSelector(
-    (state: any) => state.parcoursModules.modules
+    (state: any) => state.parcoursModules.modules,
   );
   const currentModule = useSelector(
-    (state: any) => state.parcoursModules.currentModule
+    (state: any) => state.parcoursModules.currentModule,
   );
 
   const datesParcours = {
@@ -39,8 +39,8 @@ const Calendrier = () => {
   useEffect(() => {
     dispatch(
       parcoursModulesSliceActions.updateCurrentParcoursModule(
-        !currentModule ? modules[0].id : currentModule.id
-      )
+        !currentModule ? modules[0].id : currentModule.id,
+      ),
     );
   }, [dispatch, currentModule, modules]);
 
@@ -53,7 +53,9 @@ const Calendrier = () => {
   return (
     <div className="flex flex-col gap-y-5">
       <h1 className="text-2xl">Calendrier</h1>
-      <p className="text-sm text-slate-400 pl-2">{`Dates du parcours : ${datesParcours.startDate.toLocaleDateString()} au ${datesParcours.endDate.toLocaleDateString()}`}</p>
+      <p className="text-sm text-slate-400 pl-2">
+        {`Dates du parcours : ${datesParcours.startDate.toLocaleDateString("fr-FR")} au ${datesParcours.endDate.toLocaleDateString("fr-FR")}`}
+      </p>
       <div className="grid grid-cols-3 gap-x-5 min-h-[60vh]">
         <ModulesListCalendrier modules={modules} />
         <Calendar
@@ -70,8 +72,8 @@ const Calendrier = () => {
           onDoubleClickEvent={(event) =>
             dispatch(
               parcoursModulesSliceActions.updateCurrentParcoursModule(
-                modules.filter((module) => module.title === event.title)[0].id
-              )
+                modules.filter((module) => module.title === event.title)[0].id,
+              ),
             )
           }
         />
