@@ -52,7 +52,7 @@ const CalendarDatesForm: FC<{
 
     if (newMinDate && new Date(newMinDate) < datesParcours.startDate) {
       return setError(
-        "La date doit être comprise entre le début et la fin du parcours",
+        `La date doit être comprise entre le début (${datesParcours.startDate.toLocaleDateString("fr-FR")}) et la fin (${datesParcours.endDate.toLocaleDateString("fr-FR")}) du parcours`,
       );
     }
     if (newMaxDate && new Date(newMaxDate) > datesParcours.endDate) {
