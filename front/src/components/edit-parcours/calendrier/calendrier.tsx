@@ -14,7 +14,6 @@ import { useDispatch } from "react-redux";
 import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
 import CalendarDatesForm from "./forms/calendar-dates-form";
 import CalendarDurationForm from "./forms/calendar-duration-form";
-// import { getRandomHexColor } from "../../../utils/randomColor";
 
 const localizer = momentLocalizer(moment);
 
