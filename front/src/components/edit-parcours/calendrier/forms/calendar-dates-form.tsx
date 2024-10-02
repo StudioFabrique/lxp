@@ -138,6 +138,7 @@ const CalendarDatesForm: FC<{
                 onSubmitDate={handleSetDates}
               />
             </span>
+
             <span className="flex items-center">
               <DatePicker
                 id="date2"
@@ -147,7 +148,7 @@ const CalendarDatesForm: FC<{
               />
             </span>
           </div>
-          <p>{error}</p>
+          <p className="text-error">{error}</p>
         </form>
       )}
     </ProgressBarWrapper>
