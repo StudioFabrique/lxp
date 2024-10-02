@@ -13,9 +13,10 @@ const DatePicker: FC<{
   name?: string;
   date: string;
   label?: string;
+  disabled?: boolean;
   onSubmitDate?: (id: string, date: string) => void;
   onChangeDate?: (event: React.FormEvent<HTMLInputElement>) => void;
-}> = ({ id, date, name, label, onSubmitDate, onChangeDate }) => {
+}> = ({ id, date, name, label, disabled, onSubmitDate, onChangeDate }) => {
   const dateFormatted = useMemo(
     () => new Date(date).toLocaleDateString("fr-FR"),
     [date],
@@ -49,6 +50,7 @@ const DatePicker: FC<{
           onClick={handleClick}
           className="btn btn-sm rounded-md fill-secondary"
           type="button"
+          disabled={disabled}
         >
           <CalendarIcon />
         </button>
