@@ -123,7 +123,7 @@ const DatesSelecter: FC<Props> = ({
       </div>
       {error ? (
         <p className="text-error text-xs mt-4 text-center font-bold">
-          Un problème est survenu lors du changement des dates
+          La date de début doit être inférieure à la date de fin
           {/*La date de début doit être comprise entre aujourd'hui et la date de
           fin de la formation.*/}
         </p>
