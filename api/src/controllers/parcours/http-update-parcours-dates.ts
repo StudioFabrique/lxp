@@ -14,13 +14,11 @@ async function httpUpdateParcoursDates(req: CustomRequest, res: Response) {
     }
     const { parcoursId, startDate, endDate } = req.body;
 
-    console.log(req.body);
-
     const response = await updateParcoursDates(
       +parcoursId,
       startDate,
       endDate,
-      userId
+      userId,
     );
 
     if (response) {
