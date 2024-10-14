@@ -10,7 +10,8 @@ const Informations: FC<{
   nickname: any;
   email: any;
   onSetFile: (file: File) => void;
-}> = ({ onSetFile, lastname, firstname, nickname, email }) => {
+  disabled?: boolean;
+}> = ({ onSetFile, lastname, firstname, nickname, email, disabled }) => {
   /**
    * définit le style du champ formulaire en fonction de sa validité
    * @param hasError boolean
@@ -34,6 +35,7 @@ const Informations: FC<{
           onBlur={lastname.valueBlurHandler}
           defaultValue={lastname.value}
           autoComplete="off"
+          disabled={disabled}
         />
       </span>
       <span className="flex flex-col gap-y-2">
@@ -45,19 +47,21 @@ const Informations: FC<{
           onBlur={firstname.valueBlurHandler}
           defaultValue={firstname.value}
           autoComplete="off"
+          disabled={disabled}
         />
       </span>
       <span className="flex flex-col gap-y-2">
         <label>Pseudo</label>
         <input
           className={setInputStyle(
-            nickname.hasError && nickname.value.length > 0
+            nickname.hasError && nickname.value.length > 0,
           )}
           type="text"
           onChange={nickname.valueChangeHandler}
           onBlur={nickname.valueBlurHandler}
           defaultValue={nickname.value}
           autoComplete="off"
+          disabled={disabled}
         />
       </span>
       <span className="flex flex-col gap-y-2">
@@ -69,6 +73,7 @@ const Informations: FC<{
           onBlur={email.valueBlurHandler}
           defaultValue={email.value}
           autoComplete="off"
+          disabled={disabled}
         />
       </span>
       <MemoizedImageFileUpload

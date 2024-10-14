@@ -1,7 +1,10 @@
 import { FC } from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 
-const Presentation: FC<{ description: any }> = ({ description }) => {
+const Presentation: FC<{ description: any; disabled?: boolean }> = ({
+  description,
+  disabled,
+}) => {
   return (
     <Wrapper>
       <h2 className="font-bold text-xl">Présentation</h2>
@@ -12,6 +15,7 @@ const Presentation: FC<{ description: any }> = ({ description }) => {
         onBlur={description.valueBlurHandler}
         defaultValue={description.value}
         autoComplete="off"
+        disabled={disabled}
       />
     </Wrapper>
   );

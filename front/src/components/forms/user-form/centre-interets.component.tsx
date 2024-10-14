@@ -15,11 +15,12 @@ import DeleteIcon from "../../UI/svg/delete-icon.component";
 const CentreInterets: FC<{
   hobbies: Hobby[];
   setHobbies: Dispatch<SetStateAction<Hobby[]>>;
-}> = ({ hobbies, setHobbies }) => {
+  disabled?: boolean;
+}> = ({ hobbies, setHobbies, disabled }) => {
   const [currentHobbyValue, setCurrentHobbyValue] = useState("");
 
   const handleAddHobby: KeyboardEventHandler<HTMLInputElement> = (
-    event: KeyboardEvent<HTMLInputElement>
+    event: KeyboardEvent<HTMLInputElement>,
   ) => {
     if (
       event.code === "Enter" &&
@@ -39,7 +40,7 @@ const CentreInterets: FC<{
   };
 
   const handleChangeInput: ChangeEventHandler<HTMLInputElement> = (
-    event: ChangeEvent<HTMLInputElement>
+    event: ChangeEvent<HTMLInputElement>,
   ) => {
     setCurrentHobbyValue(event.currentTarget.value);
   };
@@ -54,6 +55,7 @@ const CentreInterets: FC<{
           type="text"
           className="input"
           value={currentHobbyValue}
+          disabled={disabled}
         />
       </div>
       <div className="flex gap-x-5 gap-y-2 flex-wrap overflow-y-auto">
