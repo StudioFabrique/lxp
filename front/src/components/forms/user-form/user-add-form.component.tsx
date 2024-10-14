@@ -8,7 +8,6 @@ import {
 } from "../../../utils/constantes";
 import Certifications from "./certifications/certifications";
 import Graduation from "../../../utils/interfaces/graduation";
-import CreateUserHeader from "../../create-user-header/create-user-header.component";
 import Links from "../../UI/links/links";
 import { Link } from "../../../utils/interfaces/link";
 import Hobby from "../../../utils/interfaces/hobby";
@@ -18,12 +17,14 @@ import TypeUtilisateur from "./type-utilisateur.component";
 import CentreInterets from "./centre-interets.component";
 import Presentation from "./presentation.component";
 import toast from "react-hot-toast";
+import UserFormHeader from "./user-form-header";
 
 const UserAddForm: FC<{
   user?: any;
   onSubmitForm: (user: any, file: File | null) => void;
   error: string;
   isLoading: boolean;
+  fieldsDisabled?: boolean;
 }> = (props) => {
   const [graduations, setGraduations] = useState<Array<Graduation>>([]);
 
@@ -119,7 +120,7 @@ const UserAddForm: FC<{
 
   return (
     <form className="flex flex-col gap-y-10" autoComplete="off">
-      <CreateUserHeader onSubmit={handleSubmit} />
+      <UserFormHeader onSubmit={handleSubmit} />
       <div className="flex flex-col gap-y-5">
         <div className="grid grid-cols-3 gap-x-5">
           <Informations

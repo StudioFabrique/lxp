@@ -36,7 +36,7 @@ const UserItem: FC<{
         method: "put",
         body: { userId: userItem._id, value: userItem.isActive },
       },
-      applyData
+      applyData,
     );
   };
 
@@ -109,7 +109,7 @@ const UserItem: FC<{
               className="tooltip tooltip-bottom"
               data-tip="Mettre à jour les informations de l'utilisateur"
               aria-label="Mettre à jour les informations de l'utilisateur"
-              to="../features"
+              to={`edit/${userItem._id}`}
             >
               <Edit2Icon className="w-4 h-4" />
             </Link>
