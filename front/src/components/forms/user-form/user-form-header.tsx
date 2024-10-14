@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Link } from "react-router-dom";
 
-const CreateUserHeader: FC<{
+const UserFormHeader: FC<{
   onSubmit: () => void;
 }> = ({ onSubmit }) => {
   const handleClick = () => {
@@ -33,4 +33,4 @@ const CreateUserHeader: FC<{
     </div>
   );
 };
-export default CreateUserHeader;
+export default UserFormHeader;
