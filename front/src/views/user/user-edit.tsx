@@ -21,7 +21,7 @@ const UserAdd = () => {
     }
 
     sendRequest(
-      { method: "post", path: "/user", body: formData },
+      { method: "put", path: `/user/${id}`, body: formData },
       (data: any) => {
         if (data.success) {
           toast.success(data.message);
@@ -58,6 +58,7 @@ const UserAdd = () => {
         error={error}
         isLoading={isLoading}
         fieldsDisabled={!user}
+        editMode
       />
     </div>
   );

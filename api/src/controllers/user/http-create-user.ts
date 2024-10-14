@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import fs from "fs";
-import jwt from "jsonwebtoken";
 import createManyGraduations from "../../models/graduation/create-many-graduations";
 import createManyHobbies from "../../models/hobby/create-many-hobbies";
 import createManyLinks from "../../models/links/create-many-links";
@@ -9,7 +8,6 @@ import { badQuery } from "../../utils/constantes";
 import { IGraduation } from "../../utils/interfaces/db/graduation";
 import { IHobby } from "../../utils/interfaces/db/hobby";
 import { ILink } from "../../utils/interfaces/db/link";
-import { newUserMail } from "../../services/mailer";
 
 export default async function httpCreateUser(req: Request, res: Response) {
   let userDataRequest = req.body.data.user;

@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 
 const UserFormHeader: FC<{
   onSubmit: () => void;
-}> = ({ onSubmit }) => {
+  title?: string;
+  disabled?: boolean;
+}> = ({ onSubmit, title, disabled }) => {
   const handleClick = () => {
     onSubmit();
   };
@@ -11,7 +13,7 @@ const UserFormHeader: FC<{
     <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-y-8">
       <div>
         <h2 className="text-4xl text-base-content font-bold">
-          Créer un utilisateur
+          {title ?? "Créer un utilisateur"}
         </h2>
         <p className="mt-2">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in urna
@@ -26,6 +28,7 @@ const UserFormHeader: FC<{
           onClick={handleClick}
           type="button"
           className="btn btn-primary md:w-32 normal-case"
+          disabled={disabled}
         >
           Sauvegarder
         </button>

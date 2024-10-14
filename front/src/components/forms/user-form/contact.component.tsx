@@ -8,9 +8,10 @@ const Contact: FC<{
   phone: any;
   birthDate: Date | null;
   onChangeDate: (date: Date | null) => void;
-}> = ({ address, city, postCode, phone, onChangeDate }) => {
+  disabled?: boolean;
+}> = ({ address, city, postCode, phone, onChangeDate, disabled }) => {
   const handleChangeDate: ChangeEventHandler<HTMLInputElement> = (
-    event: ChangeEvent<HTMLInputElement>
+    event: ChangeEvent<HTMLInputElement>,
   ) => {
     onChangeDate(event.currentTarget.valueAsDate);
   };
@@ -30,19 +31,21 @@ const Contact: FC<{
           type="date"
           onChange={handleChangeDate}
           autoComplete="off"
+          disabled={disabled}
         />
       </span>
       <span className="flex flex-col gap-y-2">
         <label>Adresse</label>
         <input
           className={setInputStyle(
-            address.hasError && address.value.length > 0
+            address.hasError && address.value.length > 0,
           )}
           type="text"
           onChange={address.valueChangeHandler}
           onBlur={address.valueBlurHandler}
           defaultValue={address.value}
           autoComplete="off"
+          disabled={disabled}
         />
       </span>
       <span className="flex flex-col gap-y-2">
@@ -54,19 +57,21 @@ const Contact: FC<{
           onBlur={city.valueBlurHandler}
           defaultValue={city.value}
           autoComplete="off"
+          disabled={disabled}
         />
       </span>
       <span className="flex flex-col gap-y-2">
         <label>Code Postal</label>
         <input
           className={setInputStyle(
-            postCode.hasError && postCode.value.length > 0
+            postCode.hasError && postCode.value.length > 0,
           )}
           type="text"
           onChange={postCode.valueChangeHandler}
           onBlur={postCode.valueBlurHandler}
           defaultValue={postCode.value}
           autoComplete="off"
+          disabled={disabled}
         />
       </span>
       <span className="flex flex-col gap-y-2">
@@ -78,6 +83,7 @@ const Contact: FC<{
           onBlur={phone.valueBlurHandler}
           defaultValue={phone.value}
           autoComplete="off"
+          disabled={disabled}
         />
       </span>
     </Wrapper>

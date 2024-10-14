@@ -7,6 +7,8 @@ export default async function getUserData(userId: string) {
   let user = (await User.findOne({ _id: userId }, { password: 0 })
     .populate("connectionInfos")
     .populate("group", { image: 0 })
+    .populate("graduations")
+    .populate("links")
     .lean()) as IUser;
 
   if (!user) {
@@ -18,7 +20,7 @@ export default async function getUserData(userId: string) {
   const now = new Date().getTime();
   tmp = tmp.filter(
     (item: IConnectionInfos) =>
-      new Date(item.lastConnection).getTime() >= now - 15 * 24 * 3600 * 1000
+      new Date(item.lastConnection).getTime() >= now - 15 * 24 * 3600 * 1000,
   );
 
   let newInfos = Array<any>();
@@ -26,7 +28,7 @@ export default async function getUserData(userId: string) {
   for (let delay = 14; delay > 0; delay--) {
     const date = new Date(now - delay * 24 * 3600 * 1000);
     const info = tmp.find(
-      (elem: any) => elem.lastConnection.getDate() === date.getDate()
+      (elem: any) => elem.lastConnection.getDate() === date.getDate(),
     );
     if (!info) {
       newInfos = [...newInfos, { lastConnection: date, duration: 0 }];
