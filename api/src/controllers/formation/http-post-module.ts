@@ -27,6 +27,9 @@ async function httpPostModule(req: CustomRequest, res: Response) {
       const thumb64 = (await thumb).toString("base64");
       const response = await postModule(module, thumb64, image, userId);
       await deleteTempUploadedFile(req);
+      return res
+        .status(201)
+        .json({ message: "Mise à jour réussie", data: response });
     } else {
       const response = await postModule(module, null, null, userId!);
       return res

@@ -138,6 +138,19 @@ describe("HTTP Formation", () => {
         .expect(201);
     });
 
+    test("It should response 201 success", async () => {
+      const module = {
+        formationId: 1,
+        title: "Random title",
+        description: "Description random",
+      };
+      await request(app)
+        .post("/v1/formation/new-module")
+        .field("module", JSON.stringify(module))
+        .set("Cookie", [`${authToken}`])
+        .expect(201);
+    });
+
     test("It should respond 400 bad request", async () => {
       const module = {
         //formationId: 1,

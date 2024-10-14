@@ -6,6 +6,7 @@ import { useState } from "react";
 import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
 import DeleteIcon from "../UI/svg/delete-icon.component";
 import defaultImage from "../../assets/images/module-default-thumb.png";
+import { Eye } from "lucide-react";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ModuleCardProps {
@@ -116,22 +117,46 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
             {showDetails ? "Fermer" : "Détails"}
           </p>
 
-          <div aria-label="suppression du module">
-            <Can action="delete" object="module">
-              <div
-                className="tooltip tooltip-bottom flex-items-center"
-                data-tip="Supprimer le module"
-              >
-                <button
-                  className="btn btn-sm btn-outlne btn-circle rounded-md btn-error"
-                  onClick={() => onDelete(module.id)}
-                >
-                  <div className="w-5 h-5">
-                    <DeleteIcon />
+          <div className="flex place-items-center gap-x-2">
+            <Can action="read" object="module">
+              <div className="">
+                {module.parcoursId ? (
+                  <Link
+                    className="btn btn-sm btn-primary flex justify-center place-items-center btn-circle rounded-md tooltip tooltip-bottom"
+                    data-tip="Voir le module"
+                    to={`/admin/module/edit/${module.id}`}
+                    aria-label="Voir les détails du module"
+                  >
+                    <Eye />
+                  </Link>
+                ) : (
+                  <div
+                    className="text-base-content/50 tooltip tooltip-bottom"
+                    data-tip="Vous ne pouvez pas modifier un module
+                      attaché à une formation"
+                  >
+                    <Eye />
                   </div>
-                </button>
+                )}
               </div>
             </Can>
+            <div aria-label="suppression du module">
+              <Can action="delete" object="module">
+                <div
+                  className="tooltip tooltip-bottom flex-items-center"
+                  data-tip="Supprimer le module"
+                >
+                  <button
+                    className="btn btn-sm btn-outlne btn-circle rounded-md btn-error"
+                    onClick={() => onDelete(module.id)}
+                  >
+                    <div className="w-5 h-5">
+                      <DeleteIcon />
+                    </div>
+                  </button>
+                </div>
+              </Can>
+            </div>
           </div>
         </div>
       </div>

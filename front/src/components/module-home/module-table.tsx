@@ -5,6 +5,7 @@ import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.co
 import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 import DeleteIcon from "../UI/svg/delete-icon.component";
 import { truncateText } from "../../helpers/truncate-text";
+import { Eye } from "lucide-react";
 
 interface ModuleTableProps {
   modulesList: any[];
@@ -66,7 +67,35 @@ const ModuleTable = ({
                 </span>
               </td>
               <td className="bg-transparent">{localeDate(item.createdAt!)}</td>
-              <td className="bg-transparent">{localeDate(item.updatedAt!)}</td>
+              <td className="bg-transparent">
+                {localeDate(item.updatedAt!)}
+              </td>{" "}
+              <td className="bg-transparent">
+                <div className="w-6 h-6">
+                  <Can action="read" object="module">
+                    <div>
+                      {item.parcoursId ? (
+                        <Link
+                          className="text-secondary tooltip tooltip-bottom"
+                          data-tip="Voir le module"
+                          to={`/admin/module/edit/${item.id}`}
+                          aria-label="Voir les détails du module"
+                        >
+                          <Eye />
+                        </Link>
+                      ) : (
+                        <div
+                          className="text-base-content/50 tooltip tooltip-bottom"
+                          data-tip="Vous ne pouvez pas modifier un module
+                            attaché à une formation"
+                        >
+                          <Eye />
+                        </div>
+                      )}
+                    </div>
+                  </Can>
+                </div>
+              </td>
               <td className="bg-transparent">
                 <div className="w-6 h-6">
                   <Can action="update" object="module">
@@ -75,7 +104,7 @@ const ModuleTable = ({
                         <Link
                           className="text-secondary tooltip tooltip-bottom"
                           data-tip="Modifier le module"
-                          to={`/admin/parcours/edit/${item.parcoursId}?step=${stepId}`}
+                          to={`/admin/parcours/edit/${item.parcoursId}?step=4`}
                           aria-label="Editer le module"
                         >
                           <ArrowTopRightIcon />
