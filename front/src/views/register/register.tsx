@@ -15,10 +15,18 @@ export default function RegisterHome() {
   const { chooseTheme } = useContext(Context);
   const [searchParams] = useSearchParams();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsValid({
       p1: regexPassword.test(password),
       p2: regexPassword.test(password2),
+    });
+    await fetch("http://localhost:5001/v1/user/activate", {
+      method: "post",
+      body: JSON.stringify({
+        token: searchParams.get("id") ?? "toto ken",
+        password,
+      }),
+      headers: { "Content-Type": "application/json" },
     });
   };
 
