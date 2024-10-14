@@ -8,7 +8,7 @@ async function getUsersByRole(
   limit: number,
   role: string,
   stype: string,
-  sdir: string
+  sdir: string,
 ) {
   const dir = sdir === "asc" ? 1 : -1;
   let fetchedRoles;
@@ -57,13 +57,43 @@ async function getUsersByRole(
     ];
   }
 
+  /**
+ Tri dynamique de la liste des utilisateurs avec Mongoose.
+ Par défaut la liste est triée par la propriété "stype" passée
+ en argument, puis par noms croissants et prénoms croissants.
+ Les cas ou la propriété dynamique utilisée pour le tri est le nom
+ ou le prénom sont pris en compte
+  */
+
+  const sortObject: any = {};
+
+  if (stype === "firstname") {
+    sortObject["firstname"] = dir; // tri dynamique par firstname
+    sortObject["lastname"] = 1; // tri secondaire par lastname
+  } else if (stype === "lastname") {
+    sortObject["lastname"] = dir; // tri dynamique par lastname
+    sortObject["firstname"] = 1; // tri secondaire par firstname
+  } else {
+    sortObject[stype] = dir; // tri dynamique pour n'importe quelle autre propriété
+    sortObject["lastname"] = 1; // tri dynamique par lastname
+    sortObject["firstname"] = 1; // tri dynamique par firstname
+  }
+
   const data = await User.find(
     { roles: { $in: fetchedRoles } },
-    { _id: 1, firstname: 1, lastname: 1, email: 1, avatar: 1, isActive: 1 }
+    {
+      _id: 1,
+      firstname: 1,
+      lastname: 1,
+      email: 1,
+      avatar: 1,
+      isActive: 1,
+      createdAt: 1,
+    },
   )
     .populate("group")
     .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
-    .sort({ [stype]: dir })
+    .sort(sortObject)
     .skip(getPagination(page, limit))
     .limit(limit);
   const total = await User.count({ roles: { $in: fetchedRoles } });
@@ -74,13 +104,13 @@ async function getUsersByRole(
       parcours:
         user.group && user.group.length > 0
           ? groupsData.find(
-              (item) => user.group[0]._id.toString() === item.groupId
+              (item) => user.group[0]._id.toString() === item.groupId,
             ).parcours
           : "-",
       formation:
         user.group && user.group.length > 0
           ? groupsData.find(
-              (item) => user.group[0]._id.toString() === item.groupId
+              (item) => user.group[0]._id.toString() === item.groupId,
             ).formation
           : "-",
       avatar: user.avatar ? user.avatar.toString("base64") : null,

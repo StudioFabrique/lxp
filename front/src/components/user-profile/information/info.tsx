@@ -37,7 +37,7 @@ const Info: FC<{
           <Field name="lastname" label="Nom" data={formProps} />
           <Field name="nickname" label="Pseudo" data={formProps} />
           <div className="flex gap-5 justify-between">
-            <Field name="email" label="Email" data={formProps} />
+            <Field isDisabled name="email" label="Email" data={formProps} />
             <div className="flex flex-col w-[50%] items-end gap-2">
               <h4>Avatar</h4>
               <ProfileImageFileUpload

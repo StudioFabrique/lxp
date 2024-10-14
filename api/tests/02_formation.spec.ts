@@ -107,9 +107,10 @@ describe("HTTP Formation", () => {
       "..",
       "uploads",
       "tests",
-      "test-image.png"
+      "test-image.png",
     );
     test("It should respond 403 forbidden", async () => {
+      console.log("test test test");
       const module = {
         formationId: 1,
         title: "Random title",
@@ -133,6 +134,19 @@ describe("HTTP Formation", () => {
         .post("/v1/formation/new-module")
         .field("module", JSON.stringify(module))
         .attach("image", filePath)
+        .set("Cookie", [`${authToken}`])
+        .expect(201);
+    });
+
+    test("It should response 201 success", async () => {
+      const module = {
+        formationId: 1,
+        title: "Random title",
+        description: "Description random",
+      };
+      await request(app)
+        .post("/v1/formation/new-module")
+        .field("module", JSON.stringify(module))
         .set("Cookie", [`${authToken}`])
         .expect(201);
     });

@@ -1,18 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
-import Skill from "../../../utils/interfaces/skill";
-import Contact from "../../../utils/interfaces/contact";
-import Course from "../../../utils/interfaces/course";
-import useHttp from "../../../hooks/use-http";
+import toast from "react-hot-toast";
+import { useParams } from "react-router-dom";
+import defaultImage from "../../../assets/images/module-default.jpg";
 import FadeWrapper from "../../../components/UI/fade-wrapper/fade-wrapper";
-import ImageHeader from "../../../components/image-header";
 import Loader from "../../../components/UI/loader";
 import BookIcon from "../../../components/UI/svg/book-icon";
-import EditModuleInfos from "../../../components/edit-module/edit-module-infos";
-import { useParams } from "react-router-dom";
-import EditModuleSkills from "../../../components/edit-module/edit-module-skills";
 import EditModuleCourse from "../../../components/edit-module/edit-module-course";
-import toast from "react-hot-toast";
+import EditModuleInfos from "../../../components/edit-module/edit-module-infos";
+import EditModuleSkills from "../../../components/edit-module/edit-module-skills";
+import ImageHeader from "../../../components/image-header";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
+import useHttp from "../../../hooks/use-http";
+import Contact from "../../../utils/interfaces/contact";
+import Course from "../../../utils/interfaces/course";
+import Skill from "../../../utils/interfaces/skill";
 
 interface ModuleDetail {
   id: number;
@@ -47,7 +48,7 @@ export default function EditModuleHome() {
       {
         path: `/modules/detail/${moduleId}`,
       },
-      applyData
+      applyData,
     );
   }, [moduleId, sendRequest]);
 
@@ -67,7 +68,7 @@ export default function EditModuleHome() {
         method: "put",
         body: module?.courses.map((item) => item.id),
       },
-      applyData
+      applyData,
     );
     setSubmit(false);
   }, [moduleId, module?.courses, fetchModule, sendRequest]);
@@ -123,7 +124,11 @@ export default function EditModuleHome() {
                 <ImageHeader
                   title={module.title}
                   subTitle={module.parcours}
-                  imageUrl={`data:image/jpeg;base64,${module.image}`}
+                  imageUrl={
+                    module.image
+                      ? "data:image/jpeg;base64," + module.image
+                      : defaultImage
+                  }
                 >
                   <div className="w-12 h-12 text-white">
                     <BookIcon />
@@ -155,6 +160,7 @@ export default function EditModuleHome() {
                     courses={module.courses}
                     onSetSubmit={setSubmit}
                     onUpdateCourses={handleUpdateCoursesList}
+                    onRefreshModule={fetchModule}
                   />
                 </section>
               </>

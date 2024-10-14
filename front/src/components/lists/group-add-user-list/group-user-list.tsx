@@ -1,4 +1,4 @@
-import { FC, Ref, useEffect, useRef } from "react";
+import { FC, Ref, useEffect, useMemo, useRef, useState } from "react";
 import GroupManageUserList from "./group-manage-user-list/group-manage-user-list";
 import User from "../../../utils/interfaces/user";
 import Wrapper from "../../UI/wrapper/wrapper.component";
@@ -16,6 +16,17 @@ const GroupUserList: FC<{
   onUpdateUser: (user: User) => void;
   onDeleteUser: (user: User) => void;
 }> = ({ usersToAdd, onAddUsers, onUpdateUser, onDeleteUser }) => {
+  const [filter, setFilter] = useState<string>();
+
+  const usersToAddFiltered = useMemo(
+    () =>
+      usersToAdd &&
+      usersToAdd?.filter(
+        (item) => item.firstname === filter || item.lastname === filter,
+      ),
+    [filter, usersToAdd],
+  );
+
   const {
     page,
     setPage,
@@ -25,7 +36,12 @@ const GroupUserList: FC<{
     setAllChecked,
     getSelecteditems,
     list,
-  } = useEagerLoadingList(usersToAdd, "ASC", 10, "_id");
+  } = useEagerLoadingList(
+    filter && filter?.length > 0 ? usersToAddFiltered : usersToAdd,
+    "ASC",
+    10,
+    "_id",
+  );
 
   const menuDiv: Ref<HTMLDivElement> = useRef(null);
 
@@ -40,16 +56,23 @@ const GroupUserList: FC<{
     handleToggleMenu();
   };
 
+  const handleCloseDrawer = (id: string) => {
+    document.getElementById(id)?.click();
+  };
+
   useEffect(() => {
     setPage(totalPages);
   }, [setPage, totalPages]);
 
   return (
     <Wrapper>
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center">
         <h2 className="font-bold text-lg">Etudiants</h2>
         <div className="flex gap-x-2 items-center">
-          <CsvImportUserList onAddUsers={onAddUsers} />
+          <CsvImportUserList
+            onAddUsers={onAddUsers}
+            usersAddedInTable={usersToAdd}
+          />
           <button type="button" className="btn btn-ghost px-2">
             <LoadingIcon />
           </button>
@@ -75,8 +98,15 @@ const GroupUserList: FC<{
         </div>
       </div>
       <div className="flex justify-between items-center">
-        <GroupManageUserList onAddUsers={onAddUsers} usersToAdd={usersToAdd} />
-        <SearchSimple placeholder="Rechercher un étudiant par nom ou prénom" />
+        <GroupManageUserList
+          onAddUsers={onAddUsers}
+          usersToAdd={usersToAdd}
+          onCloseDrawer={handleCloseDrawer}
+        />
+        <SearchSimple
+          setFilter={setFilter}
+          placeholder="Rechercher un étudiant par nom ou prénom"
+        />
       </div>
 
       {/* liste des utilisateurs du groupe */}
@@ -120,7 +150,7 @@ const GroupUserList: FC<{
           <Pagination page={page} setPage={setPage} totalPages={totalPages} />
         </>
       ) : (
-        "Aucun utilisateurs dans ce groupe"
+        "Aucun utilisateurs"
       )}
     </Wrapper>
   );

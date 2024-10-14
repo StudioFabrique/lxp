@@ -172,9 +172,8 @@ const UserHome = () => {
   const handleDeleteUser = (id: string) => {
     sendRequest(
       {
-        path: "/user",
+        path: `/user/${id}`,
         method: "delete",
-        body: { id },
       },
       (data) => {
         if (!data || error) {
@@ -187,23 +186,19 @@ const UserHome = () => {
     );
   };
 
-  console.log("roles", roles);
-
   return (
     <>
-      <div className="w-full flex flex-col items-center py-8 gap-8">
-        <div>
-          <Header
-            title="Liste d'utilisateurs"
-            description="Créez, modifiez et supprimez des comptes, assignez des rôles et des permissions, et mettez à jour vos utilisateurs"
-          >
-            <Can action="write" object="user">
-              <Link className="btn btn-primary" to="/admin/user/add">
-                Créer un utilisateur
-              </Link>
-            </Can>
-          </Header>
-        </div>
+      <div className="w-full flex flex-col items-center p-10 gap-8">
+        <Header
+          title="Liste d'utilisateurs"
+          description="Créez, modifiez et supprimez des comptes, assignez des rôles et des permissions, et mettez à jour vos utilisateurs"
+        >
+          <Can action="write" object="user">
+            <Link className="btn btn-primary" to="/admin/user/add">
+              Créer un utilisateur
+            </Link>
+          </Can>
+        </Header>
 
         <UsersListStats stats={stats} isLoading={isLoading} />
         <div className="flex flex-col gap-y-8">

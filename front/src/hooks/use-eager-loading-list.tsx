@@ -7,7 +7,7 @@ const useEagerLoadingList = (
   initialList: Array<any>,
   defaultSort: string,
   defaultLimit = 15,
-  idProperty: "id" | "_id" = "id"
+  idProperty: "id" | "_id" = "id",
 ) => {
   const [list, setList] = useState<Array<any> | null>(initialList); // liste temporaire des objets à afficher
   const [page, setPage] = useState(1); //  numéro de la page affichée
@@ -26,8 +26,8 @@ const useEagerLoadingList = (
       prevList.map((item: any) =>
         item[idProperty] === id
           ? { ...item, isSelected: !item.isSelected }
-          : item
-      )
+          : item,
+      ),
     );
   };
 
@@ -52,17 +52,17 @@ const useEagerLoadingList = (
         filteredList = filteredList.filter((item: any) =>
           item[filters.field][filters.property]
             .toLowerCase()
-            .includes(filters.value)
+            .includes(filters.value),
         );
       } else {
         filteredList = filteredList.filter((item: any) =>
-          item[filters.field].toLowerCase().includes(filters.value)
+          item[filters.field].toLowerCase().includes(filters.value),
         );
       }
 
       setList(filteredList);
     },
-    [initialList]
+    [initialList],
   );
 
   /**
@@ -79,7 +79,7 @@ const useEagerLoadingList = (
       });
       return values;
     },
-    [initialList]
+    [initialList],
   );
 
   /**
@@ -134,7 +134,7 @@ const useEagerLoadingList = (
    */
   useEffect(() => {
     setList((prevList: any) =>
-      prevList.map((item: any) => ({ ...item, isSelected: allChecked }))
+      prevList.map((item: any) => ({ ...item, isSelected: allChecked })),
     );
   }, [allChecked]);
 

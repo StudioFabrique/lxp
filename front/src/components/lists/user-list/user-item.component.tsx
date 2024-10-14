@@ -8,15 +8,16 @@ import useHttp from "../../../hooks/use-http";
 import UpdateUserStatus from "../../UI/update-user-status/update-user-status.component";
 import ButtonDelete from "../../UI/button-delete/button-delete.component";
 import { Edit2Icon, MoveUpRight } from "lucide-react";
+import { truncateText } from "../../../helpers/truncate-text";
 
 const UserItem: FC<{
   userItem: any;
+  role: string;
   onRowCheck: (id: string) => void;
   onDelete: (id: string) => void;
   isUserDeleteLoading: boolean;
   error?: string;
-}> = ({ userItem, onRowCheck, /* onDelete, */ isUserDeleteLoading, error }) => {
-  //const [isActive, setIsActive] = useState<boolean>(userItem.isActive);
+}> = ({ role, userItem, onRowCheck, isUserDeleteLoading, error, onDelete }) => {
   const { isLoading, sendRequest } = useHttp();
 
   const handleToggleStatus = () => {
@@ -35,11 +36,9 @@ const UserItem: FC<{
         method: "put",
         body: { userId: userItem._id, value: userItem.isActive },
       },
-      applyData
+      applyData,
     );
   };
-
-  console.log(userItem._id);
 
   return (
     <>
@@ -54,17 +53,32 @@ const UserItem: FC<{
       <td className="bg-transparent">
         {userItem.avatar ? (
           <AvatarSmall url={`data:image/jpeg;base64,${userItem.avatar}`} />
-        ) : null}
+        ) : (
+          <p className="text-xs flex justify-center items-center p-4 w-6 h-6 rounded-full bg-accent text-base-200">
+            {(userItem.firstname[0] + userItem.lastname[0])
+              .trim()
+              .toUpperCase()}
+          </p>
+        )}
       </td>
       <td className="bg-transparent capitalize">{userItem.firstname}</td>
       <td className="bg-transparent capitalize">{userItem.lastname}</td>
-      <td className="bg-transparent">{userItem.email}</td>
+      <td className="bg-transparent">
+        <span className="tooltip tooltip-bottom" data-tip={userItem.email}>
+          {truncateText(userItem.email, 20)}
+        </span>
+      </td>
       <td className="bg-transparent text-center capitalize">
-        {userItem.formation ? userItem.formation : "-"}
+        <span className="tooltip tooltip-bottom" data-tip={userItem.formation}>
+          {userItem.formation ? truncateText(userItem.formation, 20) : "-"}
+        </span>
       </td>
       <td className="bg-transparent text-center">
-        {userItem.parcours ? userItem.parcours : "-"}
+        <span className="tooltip tooltip-bottom" data-tip={userItem.parcours}>
+          {userItem.formation ? truncateText(userItem.parcours, 20) : "-"}
+        </span>
       </td>
+      {role === "everything" ? <td>{userItem.roles[0].label} </td> : null}
       <td className="bg-transparent">{userItem.createdAt}</td>
       <td className="bg-transparent">
         {isLoading ? (
@@ -95,25 +109,18 @@ const UserItem: FC<{
               className="tooltip tooltip-bottom"
               data-tip="Mettre à jour les informations de l'utilisateur"
               aria-label="Mettre à jour les informations de l'utilisateur"
-              to="../features"
+              to={`edit/${userItem._id}`}
             >
               <Edit2Icon className="w-4 h-4" />
             </Link>
           </Can>
           <Can action="delete" object={userItem.roles[0].role}>
-            <Link
-              className="tooltip tooltip-bottom"
-              data-tip="Supprimer l'utilisateur"
-              aria-label="Supprimer l'utilisateur"
-              to={"../features"}
-            >
-              <ButtonDelete
-                error={error}
-                isLoading={isUserDeleteLoading}
-                userItem={userItem}
-                onDelete={() => {}}
-              />
-            </Link>
+            <ButtonDelete
+              error={error}
+              isLoading={isUserDeleteLoading}
+              userItem={userItem}
+              onDelete={onDelete}
+            />
           </Can>
         </div>
       </td>

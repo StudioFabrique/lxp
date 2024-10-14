@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC } from "react";
+import defaultImage from "../../../../assets/images/module-default.jpg";
 
 const ContenuDetailHeader: FC<{
   imageModuleHeader: any;
 }> = ({ imageModuleHeader }) => {
   const classImage: React.CSSProperties = {
-    backgroundImage: `url('data:image/jpeg;base64,${imageModuleHeader}')`,
+    backgroundImage: `url(${imageModuleHeader ? "data:image/jpeg;base64," + imageModuleHeader : defaultImage})`,
     width: "100%",
     height: "12rem",
     backgroundSize: "cover",

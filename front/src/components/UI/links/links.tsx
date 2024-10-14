@@ -16,11 +16,12 @@ import { urlIsValid, transformLink } from "./link-transform-service";
 const Links: FC<{
   links: Array<Link>;
   onSetLinks: Dispatch<SetStateAction<Array<Link>>>;
-}> = ({ links, onSetLinks }) => {
+  disabled?: boolean;
+}> = ({ links, onSetLinks, disabled }) => {
   const [currentLink, setCurrentLink] = useState<string>("");
 
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (
-    event: ChangeEvent<HTMLInputElement>
+    event: ChangeEvent<HTMLInputElement>,
   ) => {
     setCurrentLink(event.currentTarget.value);
   };
@@ -39,6 +40,7 @@ const Links: FC<{
           ...linkProperties,
         },
       ]);
+      setCurrentLink("");
     }
   };
 
@@ -52,8 +54,10 @@ const Links: FC<{
       <span className="flex justify-between gap-x-5">
         <input
           onChange={handleInputChange}
+          value={currentLink}
           type="text"
           className="input input-sm w-full rounded-md"
+          disabled={disabled}
         />
         <button onClick={handleAddLink} type="button" className="btn btn-sm">
           +
@@ -77,11 +81,11 @@ const Item: FC<{
   };
 
   return (
-    <li className="flex gap-x-5 items-center cursor-pointer hover:bg-slate-600 p-2">
-      <div className="flex justify-center items-center bg-secondary h-10 w-10 rounded-lg">
+    <li className="flex gap-x-5 items-center cursor-pointer hover:bg-slate-100 p-2">
+      <div className="flex justify-center items-center bg-secondary/20 h-10 w-10 rounded-lg">
         <SocialNetworksIconSwitcher iconType={link.type} />
       </div>
-      <a href={link.url} className="w-full carousel">
+      <a href={link.url} target="_blank" className="w-full carousel">
         {link.alias ?? link.url}
       </a>
       <button onClick={handleClick} type="button" className="w-6 h-6">

@@ -29,7 +29,7 @@ const UserList: FC<{
   onAllChecked,
   onSorting,
   onUncheckAll,
-  /* onDelete, */
+  onDelete,
   isLoading,
   error,
 }) => {
@@ -159,6 +159,7 @@ const UserList: FC<{
               />
             </div>
           </th>
+          {role.role === "everything" ? <th>Role</th> : null}
           <th
             className="cursor-pointer"
             onClick={() => {
@@ -200,7 +201,8 @@ const UserList: FC<{
           >
             {
               <UserItem
-                onDelete={() => {}}
+                role={role.role}
+                onDelete={onDelete}
                 userItem={item}
                 onRowCheck={onRowCheck}
                 isUserDeleteLoading={isLoading}

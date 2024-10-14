@@ -5,6 +5,7 @@ import ItemElement from "../item-element.component";
 interface InheritedTextListProps {
   list?: any[];
   property?: string;
+  additionalProperty?: string; // propriété additionnelle facultative rajouté
   onRemoveItem?: (item: any) => void;
   onDelete?: (id: number) => void;
 }
@@ -24,6 +25,7 @@ const InheritedTextList = (props: InheritedTextListProps) => {
                 item={item}
                 onRemoveItem={() => handleRemoveItem(item)}
                 property={props.property! ?? "name"}
+                additionalProperty={props.additionalProperty}
               />
             </SubWrapper>
           </li>

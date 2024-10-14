@@ -10,7 +10,6 @@ import { setTokens } from "../../utils/services/auth/set-tokens";
 import { tokensMaxAge } from "../../config/config";
 import { validationResult } from "express-validator";
 import { logger } from "../../utils/logs/logger";
-import { userConnectionNotification } from "../../socket/socket";
 
 async function httpLogin(req: Request, res: Response) {
   const { email, password } = req.body;

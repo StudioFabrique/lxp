@@ -20,10 +20,10 @@ interface ParcoursPreviewProps {
 const ParcoursPreview = (props: ParcoursPreviewProps) => {
   const { id } = useParams();
   const objectives = useSelector(
-    (state: any) => state.parcoursObjectives.objectives
+    (state: any) => state.parcoursObjectives.objectives,
   ) as Objective[];
   const skills = useSelector(
-    (state: any) => state.parcoursSkills.skills
+    (state: any) => state.parcoursSkills.skills,
   ) as Skill[];
   const { validateParcours } = useValidateParcours();
   const nav = useNavigate();
@@ -31,6 +31,7 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
 
   const handlePublishParcours = () => {
     const validationsErrors = validateParcours();
+    console.log({ validationsErrors });
     if (validationsErrors && validationsErrors.length !== 0) {
       toast.error(Object.values(validationsErrors![0]).toString());
     } else {
@@ -47,7 +48,7 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
           path: `/parcours/publish/${id}`,
           method: "put",
         },
-        applyData
+        applyData,
       );
     }
   };

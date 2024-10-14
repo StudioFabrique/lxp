@@ -41,7 +41,7 @@ const CalendarTimeline = () => {
               ],
               fillColor: getRandomHexColor(),
             };
-          })
+          }),
       );
     };
 
@@ -51,7 +51,7 @@ const CalendarTimeline = () => {
   return (
     <div>
       <h2 className="font-bold text-xl">Mon emploi du temps</h2>
-      <div className="">
+      <div>
         {timelineData && (
           <ReactApexChart
             type={"rangeBar"}

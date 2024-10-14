@@ -22,7 +22,11 @@ const ModalSuppression = (props: ModalSuppressionProps) => {
         <p className="py-4">{props.message}</p>
         <div className="w-full flex justify-end gap-x-2 mt-4">
           <form method="dialog" onSubmit={props.onCloseModal}>
-            <button className="btn btn-sm btn-outline" type="submit">
+            <button
+              className="btn btn-sm btn-outline"
+              type="submit"
+              aria-label="supprime le module"
+            >
               Annuler
             </button>
           </form>

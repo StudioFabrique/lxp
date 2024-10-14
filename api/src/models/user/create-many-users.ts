@@ -1,24 +1,23 @@
-import { nicknames } from "../../utils/fixtures/data/data";
+import Role from "../../utils/interfaces/db/role";
 import User, { IUser } from "../../utils/interfaces/db/user";
 
 export default async function createManyUsers(
-  users: IUser[]
+  users: IUser[],
+  roleRank: number,
 ): Promise<IUser[] | null> {
   const emails = users.map((user) => user.email);
-  const emailsExist = await User.find({ email: emails }).then((users) =>
-    users.map((user) => user.email)
-  );
+  const existingUsers = await User.find({ email: emails });
+  const emailsExist = existingUsers.map((user) => user.email);
 
-  let usersToInsert = users.filter((user) => {
-    user.isActive = false;
+  const roles = await Role.find({ rank: roleRank });
+
+  const usersToInsert = users.filter((user) => {
+    user.isActive = true;
+    user.roles = roles;
     return !emailsExist.includes(user.email);
   });
 
-  if (!usersToInsert || usersToInsert.length <= 0) {
-    return null;
-  }
-
   const createdUsers = await User.insertMany(usersToInsert);
 
-  return createdUsers;
+  return [...createdUsers, ...existingUsers];
 }

@@ -7,14 +7,19 @@ import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 import PublishedIcon from "../UI/svg/published-icon";
 import DraftIcon from "../UI/svg/draft-icon";
 import { localeDate } from "../../helpers/locale-date";
+import defaultThumb from "../../assets/images/module-default-thumb.png";
 
 interface CourseCardProps {
   course: CustomCourse;
+  onDeleteCourse: (couse: CustomCourse) => void;
 }
 
-export default function CourseCard({ course }: CourseCardProps) {
+export default function CourseCard({
+  course,
+  onDeleteCourse,
+}: CourseCardProps) {
   const classImage: React.CSSProperties = {
-    backgroundImage: `url('data:image/jpeg;base64,${course.thumb}')`,
+    backgroundImage: `url(${course.thumb ? "data:image/jpeg;base64," + course.thumb : defaultThumb})`,
     width: "100%",
     height: "9rem",
     backgroundSize: "cover",
@@ -23,7 +28,7 @@ export default function CourseCard({ course }: CourseCardProps) {
     position: "relative",
   };
 
-  console.log({ course });
+  console.log(course.thumb);
 
   return (
     <div className="card w-96 h-full bg-base-100 shadow-xl border border-primary/20">
@@ -103,7 +108,7 @@ export default function CourseCard({ course }: CourseCardProps) {
               >
                 <button
                   className="btn btn-sm btn-outline btn-circle rounded-md btn-error"
-                  onClick={() => {}}
+                  onClick={() => onDeleteCourse(course)}
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>

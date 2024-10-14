@@ -12,6 +12,7 @@ interface CourseTableProps {
   direction: boolean;
   onSorting: (property: string) => void;
   onEditCourse: (id: number) => void;
+  onDeleteCourse: (course: CustomCourse) => void;
 }
 
 export default function CourseTable({
@@ -20,6 +21,7 @@ export default function CourseTable({
   direction,
   onSorting,
   onEditCourse,
+  onDeleteCourse,
 }: CourseTableProps) {
   const content = useMemo(() => {
     return (
@@ -37,18 +39,20 @@ export default function CourseTable({
             <td>{localeDate(course.updatedAt!)}</td>
             <td>{course.author}</td>
             <td>{course.isPublished ? "Publié" : "Brouillon"}</td>
-            <td className="flex justify-center items-center">
-              {course.visibility ? (
-                <Eye
-                  className="w-6 h-6"
-                  aria-label="le cours est visible par les apprenants"
-                />
-              ) : (
-                <EyeOff
-                  className="w-6 h-6"
-                  aria-label="le cours n'est pas visible par les apprenants"
-                />
-              )}
+            <td>
+              <div className="flex justify-center">
+                {course.visibility ? (
+                  <Eye
+                    className="w-6 h-6"
+                    aria-label="le cours est visible par les apprenants"
+                  />
+                ) : (
+                  <EyeOff
+                    className="w-6 h-6"
+                    aria-label="le cours n'est pas visible par les apprenants"
+                  />
+                )}
+              </div>
             </td>
             <td>
               {/*   <Can action="update" object="cours"> */}
@@ -71,11 +75,13 @@ export default function CourseTable({
                 <div
                   className="tooltip tooltip-bottom"
                   data-tip="Supprimer le cours définitivement."
+                  onClick={() => {
+                    onDeleteCourse(course);
+                  }}
                 >
                   <Trash2
                     className="w-6 h-6 text-error"
                     aria-label="supprimer le cours"
-                    onClick={() => {}}
                   />
                 </div>
               </Can>
@@ -84,7 +90,7 @@ export default function CourseTable({
         ))}
       </>
     );
-  }, [coursesList, onEditCourse]);
+  }, [coursesList, onEditCourse, onDeleteCourse]);
 
   return (
     <>

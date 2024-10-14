@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import Parcours from "../../utils/interfaces/parcours";
 
 import defaultImage from "../../assets/images/books.jpeg";
-import { Eye } from "lucide-react";
+import { Eye, Users } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface ParcoursItemProps {
   parcours: Parcours;
@@ -47,8 +48,8 @@ export default function ParcoursItem({ parcours }: ParcoursItemProps) {
               </h1>
             </div>
           </span>
-          <span className="flex justify-end items-end text-white">
-            <Eye className="w-5 h-5 text-white cursor-pointer" />
+          <span className="flex justify-end items-end gap-2 text-white">
+            <Eye className="w-5 h-5  cursor-pointer" />
           </span>
         </div>
       </div>
