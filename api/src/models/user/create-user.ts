@@ -41,26 +41,14 @@ export default async function createUser(user: IUser, roleId: string) {
       roles: firstRole,
     });
 
-    if (firstRole.rank === 3) {
-      // Générer un token pour l'envoi de l'email
-      const token = jwt.sign({ userId: createdUser._id }, process.env.SECRET!, {
+    // Génére un token pour l'envoi de l'email
+    const token = jwt.sign(
+      { userId: createdUser._id, userRoles: [firstRole] },
+      process.env.REGISTER_SECRET!,
+      {
         expiresIn: "24h",
-      });
-
-      try {
-        await newUserMail(createdUser.email, token); // Envoi de l'email
-
-        // Créer l'entrée pour un étudiant si l'email est envoyé avec succès
-      } catch (emailError) {
-        await User.deleteOne({ _id: createdUser._id });
-
-        throw {
-          statusCode: 500,
-          message:
-            "Le mail d'activation n'a pas pu être envoyé, la création de compte est annulée.",
-        };
-      }
-    }
+      },
+    );
 
     // Gérer les créations Prisma en fonction du rôle
     if (firstRole.rank === 1 || firstRole.rank === 2) {
@@ -80,10 +68,21 @@ export default async function createUser(user: IUser, roleId: string) {
     if (firstRole.rank === 3)
       await prisma.student.create({ data: { idMdb: createdUser._id } });
 
+    // Envoi de l'email d'activation
+    try {
+      await newUserMail(createdUser.email, token);
+    } catch (emailError) {
+      await User.deleteOne({ _id: createdUser._id });
+      throw {
+        statusCode: 500,
+        message:
+          "Le mail d'activation n'a pas pu être envoyé, la création de compte est annulée.",
+      };
+    }
+
     // Retourner l'utilisateur créé et le rang du rôle
     return { createdUser, role: firstRole.rank };
   } catch (error) {
-    // Gérer les erreurs en les relayant
     throw error;
   }
 }

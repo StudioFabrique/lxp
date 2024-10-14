@@ -34,6 +34,8 @@ import { createFileUploadMiddleware } from "../../../middleware/fileUpload";
 import { headerImageMaxSize } from "../../../config/images-sizes";
 import jsonParser from "../../../middleware/json-parser";
 import httpDeleteUser from "../../../controllers/user/http-delete-user";
+import activateAccount from "../../../middleware/activate-account";
+import httpPutPassword from "../../../controllers/user/http-put-password";
 
 const userRouter = express.Router();
 
@@ -217,5 +219,7 @@ userRouter.get(
   checkPermissions("default"),
   httpGetLastFeedbacks,
 );
+
+userRouter.post("/activate", activateAccount, httpPutPassword);
 
 export default userRouter;
