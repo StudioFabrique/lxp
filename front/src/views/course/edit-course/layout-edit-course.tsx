@@ -13,6 +13,7 @@ import Loader from "../../../components/UI/loader";
 import ImageHeader from "../../../components/image-header";
 import BookIcon from "../../../components/UI/svg/book-icon";
 import Course from "../../../utils/interfaces/course";
+import defaultImage from "../../../assets/images/module-default.jpg";
 
 const LayoutCourseEdit = () => {
   const { sendRequest, error } = useHttp();
@@ -20,7 +21,7 @@ const LayoutCourseEdit = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const course = useSelector(
-    (state: any) => state.courseInfos.course
+    (state: any) => state.courseInfos.course,
   ) as Course;
 
   /**
@@ -40,7 +41,7 @@ const LayoutCourseEdit = () => {
       {
         path: `/course/infos/${courseId}`,
       },
-      applyData
+      applyData,
     );
     return () => {
       dispatch(courseInfosAction.resetCourse());
@@ -71,7 +72,7 @@ const LayoutCourseEdit = () => {
                 <ImageHeader
                   title={course.module.title}
                   subTitle={course.title}
-                  imageUrl={course.module.image!}
+                  imageUrl={course.module.image ?? defaultImage}
                 >
                   <div className="w-12 h-12 text-white">
                     <BookIcon />

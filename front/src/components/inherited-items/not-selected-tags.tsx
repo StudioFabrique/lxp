@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import Tag from "../../utils/interfaces/tag";
 import { sortArray } from "../../utils/sortArray";
 import TagItem from "../UI/tag-item/tag-item";
@@ -6,6 +7,7 @@ interface NotSelectedTagsProps {
   list?: Tag[];
   onAddItems?: (items: number[]) => void;
   onCloseDrawer?: (id: string) => void;
+  children?: ReactNode;
 }
 
 const NotSelectedTags = (props: NotSelectedTagsProps) => {
@@ -13,7 +15,7 @@ const NotSelectedTags = (props: NotSelectedTagsProps) => {
     const ids = [id];
     props.onAddItems!(ids);
   };
-
+  console.log("liste", props.list);
   return (
     <>
       {props.list && props.list.length > 0 ? (
@@ -26,7 +28,11 @@ const NotSelectedTags = (props: NotSelectedTagsProps) => {
         </ul>
       ) : (
         <>
-          <p>Tous les tags ont été sélectionnés</p>
+          {props.children ? (
+            props.children
+          ) : (
+            <p>Tous les tags ont été sélectionnés</p>
+          )}
         </>
       )}
     </>

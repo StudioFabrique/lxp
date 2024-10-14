@@ -42,8 +42,8 @@ model Parcours {
   id           Int                  @id @default(autoincrement())
   title        String               @unique
   description  String?
-  startDate    DateTime?            @default(dbgenerated("NOW() + interval '1 day'"))
-  endDate      DateTime?            @default(dbgenerated("NOW() + interval '2 month'"))
+  startDate    DateTime?            @default(dbgenerated("DATE_TRUNC('day', NOW() + interval '1 day')"))
+  endDate      DateTime?            @default(dbgenerated("DATE_TRUNC('day', NOW() + interval '2 month')"))
   degree       String?
   image        Bytes?
   thumb        Bytes?
@@ -70,8 +70,8 @@ model Module {
   id          Int                   @id @default(autoincrement())
   title       String
   description String?
-  image       Bytes
-  thumb       Bytes
+  image       Bytes?
+  thumb       Bytes?
   duration    Int?
   rating      Float?
   minDate     DateTime?
@@ -131,7 +131,7 @@ model BonusSkill {
 }
 
 model Student {
-  id              Int          @id @default(autoincrement())
+  id              Int              @id @default(autoincrement())
   idMdb           String
   lessonsRead     LessonRead[]
   accomplishments Accomplishment[]
@@ -212,7 +212,7 @@ model Lesson {
   visibility  Boolean      @default(false)
   activities  Activity[]
   admin       Admin        @relation(fields: [adminId], references: [id])
-  course      Course       @relation(fields: [courseId], references: [id])
+  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   tag         Tag          @relation(fields: [tagId], references: [id])
   lessonsRead LessonRead[]
 }
@@ -228,13 +228,13 @@ model Objective {
 }
 
 model Accomplishment {
-  id                    Int @id @default(autoincrement())
-  name                  String
-  description           String
-  accomplishedAt        DateTime @default(now())
-  hasBeenCongratulated  Boolean @default(false)
-  studentId             Int
-  student               Student @relation(fields: [studentId], references: [id])
+  id                   Int      @id @default(autoincrement())
+  name                 String
+  description          String
+  accomplishedAt       DateTime @default(now())
+  hasBeenCongratulated Boolean  @default(false)
+  studentId            Int
+  student              Student  @relation(fields: [studentId], references: [id])
 }
 
 model LessonRead {
@@ -332,7 +332,7 @@ model GroupsOnParcours {
 model TagsOnCourse {
   tagId    Int
   courseId Int
-  course   Course @relation(fields: [courseId], references: [id])
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
   tag      Tag    @relation(fields: [tagId], references: [id])
 
   @@id([tagId, courseId])
@@ -342,7 +342,7 @@ model ContactsOnCourse {
   contactId Int
   courseId  Int
   contact   Contact @relation(fields: [contactId], references: [id])
-  course    Course  @relation(fields: [courseId], references: [id])
+  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@id([contactId, courseId])
 }
@@ -350,7 +350,7 @@ model ContactsOnCourse {
 model ObjectivesOnCourse {
   objectiveId Int
   courseId    Int
-  course      Course    @relation(fields: [courseId], references: [id])
+  course      Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
   objective   Objective @relation(fields: [objectiveId], references: [id])
 
   @@id([objectiveId, courseId])
@@ -360,7 +360,7 @@ model BonusSkillOnCourse {
   bonusSkillId Int
   courseId     Int
   bonusSkill   BonusSkill @relation(fields: [bonusSkillId], references: [id])
-  course       Course     @relation(fields: [courseId], references: [id])
+  course       Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@id([bonusSkillId, courseId])
 }

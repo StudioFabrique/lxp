@@ -30,10 +30,15 @@ async function httpPostModule(req: CustomRequest, res: Response) {
       return res
         .status(201)
         .json({ message: "Mise à jour réussie", data: response });
+    } else {
+      const response = await postModule(module, null, null, userId!);
+      return res
+        .status(201)
+        .json({ message: "Mise à jour réussie", data: response });
     }
   } catch (error: any) {
-    await deleteTempUploadedFile(req);
-    console.log("error upload", error.message);
+    if (uploadedFile) await deleteTempUploadedFile(req);
+    //console.log("error upload", error.message);
 
     return res
       .status(error.statusCode ?? 500)

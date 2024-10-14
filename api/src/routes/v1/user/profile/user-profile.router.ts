@@ -1,7 +1,7 @@
 import { Router } from "express";
 import httpUpdateUserProfile from "../../../../controllers/user/profile/http-update-user-profile";
 import httpGetUserProfileInformation from "../../../../controllers/user/profile/http-get-user-profile";
-import { userValidator } from "../../../../middleware/validators";
+import { userProfileValidator } from "../../../../middleware/validators";
 import httpUpdateUserPassword from "../../../../controllers/user/profile/http-update-user-password";
 import { createFileUploadMiddleware } from "../../../../middleware/fileUpload";
 import { avatarImageMaxSize } from "../../../../config/images-sizes";
@@ -18,8 +18,8 @@ userProfileRouter.put(
   "/information",
   createFileUploadMiddleware(avatarImageMaxSize),
   jsonParser,
-  userValidator(undefined, true),
-  httpUpdateUserProfile
+  userProfileValidator(true),
+  httpUpdateUserProfile,
 );
 
 userProfileRouter.put("/password", httpUpdateUserPassword);

@@ -9,6 +9,7 @@ import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.co
 import EyeIcon from "../UI/svg/eye-icon";
 import EyeSlash from "../UI/svg/eyse-slash";
 import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
+import { truncateText } from "../../helpers/truncate-text";
 
 interface ParcoursTableProps {
   parcoursList: Parcours[];
@@ -33,14 +34,21 @@ const ParcoursTable = (props: ParcoursTableProps) => {
         <>
           {parcoursList.map((item: Parcours) => (
             <tr
-              className="text-xs lg:text-sm cursor-pointer hover:bg-secondary/20 hover:text-base-content"
+              className="text-xs lg:text-sm hover:bg-secondary/20 hover:text-base-content"
               key={item.id}
             >
-              <td className="bg-transparent rounded-l-lg truncate">
-                {item.title}
+              <td className="bg-transparent rounded-l-lg">
+                <p className="tooltip tooltip-bottom" data-tip={item.title}>
+                  {truncateText(item.title, 20)}
+                </p>
               </td>
-              <td className="bg-transparent truncate">
-                {item.formation.title}
+              <td className="bg-transparent">
+                <p
+                  className="tooltip tooltip-bottom"
+                  data-tip={item.formation.title}
+                >
+                  {truncateText(item.formation.title, 20)}
+                </p>
               </td>
               <td className="bg-transparent truncate">
                 {item.formation.level}
@@ -51,15 +59,19 @@ const ParcoursTable = (props: ParcoursTableProps) => {
               <td className="bg-transparent truncate">
                 {localeDate(item.updatedAt!)}
               </td>
-              <td className="bg-transparent capitalize truncate">
-                {item.author}
+              <td className="bg-transparent capitalize">
+                <p className="tooltip tooltip-bottom" data-tip={item.author}>
+                  {truncateText(item.author, 20)}
+                </p>
               </td>
               <td className="bg-transparent truncate">
                 {item.isPublished ? "Publié" : "Brouillon"}
               </td>
-              <td className="bg-transparent flex justify-center items-center">
-                <div className="w-6 h-6">
-                  {item.visibility ? <EyeIcon /> : <EyeSlash />}
+              <td className="bg-transparent ">
+                <div className="flex justify-center items-center">
+                  <div className="w-6 h-6">
+                    {item.visibility ? <EyeIcon /> : <EyeSlash />}
+                  </div>
                 </div>
               </td>
               <td className="bg-transparent">
@@ -78,7 +90,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                     </div>
                   </Can>
                 </div>
-              </td>{" "}
+              </td>
               <td className="bg-transparent">
                 <div
                   className="w-6 h-6 text-error"
@@ -89,7 +101,10 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                       className="tooltip tooltip-bottom flex-items-center"
                       data-tip="Supprimer le parcours"
                     >
-                      <div onClick={() => handleDeleteParcours(item.id!)}>
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => handleDeleteParcours(item.id!)}
+                      >
                         <DeleteIcon />
                       </div>
                     </div>

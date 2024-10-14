@@ -22,10 +22,10 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
   const dispatch = useDispatch();
   const { sendRequest } = useHttp();
   const currentContacts = useSelector(
-    (state: any) => state.parcoursContacts.currentContacts
+    (state: any) => state.parcoursContacts.currentContacts,
   ) as Contact[];
   const initialContacts = useSelector(
-    (state: any) => state.parcoursContacts.initialContacts
+    (state: any) => state.parcoursContacts.initialContacts,
   ) as Contact[];
 
   /**
@@ -36,7 +36,7 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
       setSubmit(true);
       dispatch(parcoursContactsAction.setCurrentContacts(contacts));
     },
-    [dispatch]
+    [dispatch],
   );
 
   /**
@@ -66,7 +66,7 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
         {
           path: "/user/contacts",
         },
-        applyData
+        applyData,
       );
     } else {
       isInitialRender.current = false;
@@ -86,7 +86,7 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
           property="name"
           onSubmit={handleUpdateContacts}
         >
-          <InheritedTextList />
+          <InheritedTextList additionalProperty="role" />
           <NotSelectedContacts />
         </InheritedItems>
       ) : null}

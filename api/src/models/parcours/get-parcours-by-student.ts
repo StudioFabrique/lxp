@@ -7,7 +7,11 @@ async function getParcoursByStudent(studentId: string) {
   const groupIds: string[] = groupsWhereStudentIs.map((group) => group.id);
 
   const parcoursList = await prisma.parcours.findMany({
-    where: { groups: { some: { group: { idMdb: { in: groupIds } } } } },
+    where: {
+      isPublished: true,
+      visibility: true,
+      groups: { some: { group: { idMdb: { in: groupIds } } } },
+    },
     select: {
       id: true,
       title: true,

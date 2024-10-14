@@ -5,7 +5,7 @@ import CustomRequest from "../../utils/interfaces/express/custom-request";
 
 export default async function httpGetModuleDetail(
   req: CustomRequest,
-  res: Response
+  res: Response,
 ) {
   const userId = req.auth?.userId;
 
@@ -15,6 +15,7 @@ export default async function httpGetModuleDetail(
 
   try {
     const { moduleId } = req.params;
+    console.log("controller module id :", moduleId);
     const response = await getModuleDetail(+moduleId, userId);
     return res.status(200).json({
       message: "Les détails du module ont bien étés récupérés",

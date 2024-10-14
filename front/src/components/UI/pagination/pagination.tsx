@@ -17,6 +17,14 @@ const Pagination: FC<{
     setPage(page + 1);
   };
 
+  const goToFistPage = () => {
+    setPage(1);
+  };
+
+  const goToLastPage = () => {
+    setPage(totalPages!);
+  };
+
   const handleSetPerPages = (event: ChangeEvent<HTMLSelectElement>) => {
     setPage(1);
     setPerPages!(parseInt(event.currentTarget.value) ?? 5);
@@ -31,22 +39,42 @@ const Pagination: FC<{
       <p>
         Page {page} sur {totalPages}
       </p>
-      <div className="btn-group gap-x-4">
-        <button
-          className="btn-primary btn btn-sm"
-          disabled={page === 1}
-          onClick={decrementPage}
-        >
-          {"<"}
-        </button>
-        <button
-          className="btn-primary btn btn-sm"
-          disabled={page === totalPages}
-          onClick={incrementPage}
-        >
-          {">"}
-        </button>
-      </div>
+      {totalPages && totalPages > 1 ? (
+        <div className="btn-group gap-x-4">
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={goToFistPage}
+            disabled={page === 1}
+            aria-label="afficher la première page"
+          >
+            {"<<"}
+          </button>
+          <button
+            className="btn-primary btn btn-sm"
+            disabled={page === 1}
+            onClick={decrementPage}
+            aria-label="afficher la page précédente"
+          >
+            {"<"}
+          </button>
+          <button
+            className="btn-primary btn btn-sm"
+            disabled={page === totalPages}
+            onClick={incrementPage}
+            aria-label="afficher la page suivante"
+          >
+            {">"}
+          </button>
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={goToLastPage}
+            disabled={page === totalPages}
+            aria-label="afficher la dernière page"
+          >
+            {">>"}
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 };

@@ -7,24 +7,29 @@ import Graduation from "../../../../utils/interfaces/graduation";
 const CertificationItem: FC<{
   graduation: Graduation;
   onDelete: (id: number) => void;
-}> = ({ graduation, onDelete }) => {
-  const handleClickButtonEdit = () => {};
+  onSetEditMode: (graduation: Graduation) => void;
+}> = ({ graduation, onDelete, onSetEditMode }) => {
+  const handleClickButtonEdit = () => {
+    onSetEditMode(graduation);
+  };
 
   const handleClickButtonDelete = () => {
     onDelete(graduation.id!);
   };
 
   return (
-    <div className="flex items-center justify-between bg-base-100 rounded-md w-full py-2 px-5 max-h-[80px]">
+    <div className="flex items-center justify-between bg-secondary/20 rounded-md w-full py-2 px-5 max-h-[80px]">
       <span>
         <p className="text-lg font-bold">{graduation.title}</p>
-        <p>{graduation.date.getFullYear()}</p>
+        <p>{new Date(graduation.date).getFullYear()}</p>
       </span>
       <span className="flex items-center gap-2">
-        <button type="button" onClick={handleClickButtonEdit}>
-          <div className="w-6 h-6">
-            <EditIcon />
-          </div>
+        <button
+          type="button"
+          onClick={handleClickButtonEdit}
+          className="h-6 w-6"
+        >
+          <EditIcon />
         </button>
         <button
           type="button"

@@ -5,8 +5,6 @@ export default async function getUserLastParcours(userId: string) {
     where: { idMdb: userId },
   });
 
-  console.log({ userId, contact });
-
   if (!contact) {
     const error: any = {
       message: "L'utilisateur n'existe pas dans la liste des contacts.",

@@ -138,7 +138,17 @@ export function testStep(data: any) {
     });
     return validationErrors;
   }
+
+  if (!data.modules || data.modules.length === 0) {
+    console.log("coucou modules");
+    validationErrors.push({
+      modules: "Aucun module n'est attaché au parcours",
+    });
+    return validationErrors;
+  }
+
   if (data.modules.length > 0 && !testModules(data.modules)) {
+    console.log("coucou");
     validationErrors.push({
       modules: "Un ou plusieurs modules sont incomplets",
     });

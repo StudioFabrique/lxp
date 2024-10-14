@@ -11,7 +11,7 @@
     "install": "npm run install-server && npm run install-client",
     "server": "npm run start --prefix api",
     "client": "npm dev --prefix front",
-    "watch": "npm run start:dev --prefix api & npm run dev --prefix front",
+    "watch": "concurrently \"npm run start:dev --prefix api\" \"npm run dev --prefix front\"",
     "test": "npm run test --prefix api",
     "deploy": "npm run build --prefix api && npm run build --prefix front",
     "generate": "npm run prisma-generate --prefix api",
@@ -22,6 +22,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "unimported": "^1.31.1"
   }
 }

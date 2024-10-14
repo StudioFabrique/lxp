@@ -33,7 +33,7 @@ interface FormationAddFormProps {
     description: string,
     level: string,
     code: string,
-    tags: Tag[]
+    tags: Tag[],
   ) => void;
   onCancel?: () => void;
   onNewTags: (newTags: Tag[]) => void;
@@ -81,6 +81,7 @@ export default function FormationAddForm({
   const [showModal, setShowModal] = useState(false);
   const [newTags, setNewTags] = useState<Tag[]>([]);
   const [saving, setSaving] = useState(false);
+  const [tagError, setTagError] = useState(false);
 
   const data = {
     values,
@@ -103,6 +104,16 @@ export default function FormationAddForm({
    */
   const handleValidate = (event: React.FormEvent) => {
     event.preventDefault();
+
+    setTagError(false);
+
+    // vérification qu'au moins un tag est présent dans la liste des tags
+    if (currentTags.length === 0) {
+      setTagError(true);
+      toast.error("Au moins un tag est requis pour enregistrer la formation.");
+      return;
+    }
+
     //validation du formulaire
     try {
       postFormationSchema.parse(values);
@@ -113,11 +124,7 @@ export default function FormationAddForm({
         return;
       }
     }
-    // vérification qu'au moins un tag est présent dans la liste des tags
-    if (currentTags.length === 0) {
-      toast.error("Au moins un tag est requis pour enregistrer la formation.");
-      return;
-    }
+
     // on filtre les tags qui n'existent pas dans la base de données
     const tmpTags = handleCheckTags();
     setNewTags(tmpTags);
@@ -148,7 +155,7 @@ export default function FormationAddForm({
           tags: newTags.map((item) => ({ name: item.name, color: item.color })),
         },
       },
-      applyData
+      applyData,
     );
   };
 
@@ -169,11 +176,20 @@ export default function FormationAddForm({
         code: formation.code,
         level: formation.level,
       });
-      console.log({ formation });
 
       handleSetCurrentTags(formation.tags!);
     }
   }, [formation, handleSetCurrentTags, initValues]);
+
+  /**
+   * Réinitialise le state tagError qd l'utilisateur ajoute un tag à la formation
+   * afin que la bordure rouger disparaisse de la zone de saisie des tags
+   * @param event React.FormEvent
+   */
+  const resetStyle = (event: React.FormEvent) => {
+    setTagError(false);
+    handleTagSubmit(event);
+  };
 
   /**
    * gestion des erreurs http
@@ -189,6 +205,8 @@ export default function FormationAddForm({
   useEffect(() => {
     return () => console.log("unmounting");
   }, []);
+
+  console.log({ tagError });
 
   return (
     <>
@@ -218,10 +236,11 @@ export default function FormationAddForm({
       </form>
 
       <AddTag
+        error={tagError}
         tag={tag}
         placeholder="Exemple : artisanal, technologie, industriel"
         onChangeValue={handleOnChange}
-        onSubmit={handleTagSubmit}
+        onSubmit={resetStyle}
       />
 
       <TagsList tagsList={currentTags} onRemove={handleRemoveTag} />
@@ -255,7 +274,7 @@ export default function FormationAddForm({
           onRightClick={handleSubmitNewTags}
         >
           <p className="my-4">
-            Les tags suivant n'existent pas encore, souhaitez vous les
+            Les tags suivants n'existent pas encore, souhaitez vous les
             sauvegarder ?
           </p>
           <TagsList tagsList={newTags} />

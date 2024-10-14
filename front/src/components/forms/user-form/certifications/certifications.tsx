@@ -15,11 +15,20 @@ import { addIdToObject } from "../../../../utils/add-id-to-objects";
 const Certifications: FC<{
   graduations: Array<Graduation>;
   setGraduations: Dispatch<SetStateAction<Graduation[]>>;
-}> = ({ graduations, setGraduations }) => {
-  const [currentGraduation, setCurrentGraduation] = useState<Graduation>({
+  disabled?: boolean;
+}> = ({ graduations, setGraduations, disabled }) => {
+  const initGraduation = {
     title: "",
     date: new Date(),
     degree: "",
+  };
+
+  const [currentGraduation, setCurrentGraduation] =
+    useState<Graduation>(initGraduation);
+
+  const [editMode, setEditMode] = useState({
+    isActive: false,
+    idToEdit: 0,
   });
 
   const handleAddGraduation = () => {
@@ -28,24 +37,53 @@ const Certifications: FC<{
       currentGraduation.degree &&
       currentGraduation.title
     ) {
-      setGraduations((graduations) =>
-        addIdToObject([...graduations, currentGraduation])
+      setGraduations((prevGraduations) =>
+        addIdToObject([...prevGraduations, currentGraduation]),
       );
+
+      setCurrentGraduation(initGraduation);
+    }
+  };
+
+  const handleSetEditMode = (graduation: Graduation) => {
+    if (!graduation.id) return;
+    setCurrentGraduation(graduation);
+    setEditMode({ isActive: true, idToEdit: graduation.id });
+  };
+
+  const handleEditGraduation = () => {
+    if (
+      currentGraduation.date &&
+      currentGraduation.degree &&
+      currentGraduation.title
+    ) {
+      setGraduations((prevGraduations) =>
+        prevGraduations.map((item) =>
+          item.id === editMode.idToEdit
+            ? { ...item, ...currentGraduation }
+            : item,
+        ),
+      );
+
+      setCurrentGraduation(initGraduation);
+      setEditMode((prevEditMode) => ({ ...prevEditMode, isActive: false }));
     }
   };
 
   const handleDeleteGraduation = (id: number) => {
-    setGraduations((graduations) =>
-      graduations.filter((graduation) => graduation.id !== id)
+    setGraduations((prevGraduations) =>
+      prevGraduations.filter((item) => item.id !== id),
     );
+    setCurrentGraduation(initGraduation);
+    setEditMode((prevEditMode) => ({ ...prevEditMode, isActive: false }));
   };
 
-  /* 
+  /*
     Récupère la valeur de l'attribut "name" lors de l'évenement du changement de l'input (texte ou date) puis
     en fonction de cette valeur, change la propriété de l'objet ayant le nom de cette valeur de l'attribut "name"
   */
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (
-    event: ChangeEvent<HTMLInputElement>
+    event: ChangeEvent<HTMLInputElement>,
   ) => {
     const name = event.currentTarget.getAttribute("name");
     switch (name) {
@@ -89,8 +127,9 @@ const Certifications: FC<{
                 className="input input-sm input-bordered focus:outline-none w-full"
                 type="text"
                 onChange={handleInputChange}
-                defaultValue={currentGraduation.title}
+                value={currentGraduation.title}
                 autoComplete="off"
+                disabled={disabled}
               />
             </span>
             <span className="flex flex-col gap-y-2">
@@ -100,8 +139,9 @@ const Certifications: FC<{
                 className="input input-sm input-bordered focus:outline-none w-full"
                 type="text"
                 onChange={handleInputChange}
-                defaultValue={currentGraduation.degree}
+                value={currentGraduation.degree}
                 autoComplete="off"
+                disabled={disabled}
               />
             </span>
             <span className="flex flex-col gap-y-2">
@@ -110,26 +150,41 @@ const Certifications: FC<{
                 name="date"
                 className="input input-sm input-bordered focus:outline-none w-full"
                 type="date"
+                value={currentGraduation.date.toISOString().split("T")[0]}
                 onChange={handleInputChange}
                 autoComplete="off"
+                disabled={disabled}
               />
             </span>
           </div>
-          <button
-            type="button"
-            className="mt-2 normal-case self-start btn btn-primary"
-            onClick={handleAddGraduation}
-          >
-            Ajouter la certification
-          </button>
+          {editMode.isActive ? (
+            <button
+              type="button"
+              className="mt-2 normal-case self-start btn btn-primary"
+              onClick={handleEditGraduation}
+              disabled={disabled}
+            >
+              Modifier la certification
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="mt-2 normal-case self-start btn btn-primary"
+              onClick={handleAddGraduation}
+              disabled={disabled}
+            >
+              Ajouter la certification
+            </button>
+          )}
         </div>
-        <div className="bg-secondary flex flex-col items-center gap-y-4 p-5 m-2 rounded-xl md:h-[300px] lg:h-[400px] overflow-y-auto">
+        <div className="bg-secondary/10 flex flex-col items-center gap-y-4 p-5 m-2 rounded-xl md:h-[300px] lg:h-[400px] overflow-y-auto">
           {/* List of certifications */}
           {graduations.map((graduation) => (
             <CertificationItem
               key={graduation.id}
               onDelete={handleDeleteGraduation}
               graduation={graduation}
+              onSetEditMode={handleSetEditMode}
             />
           ))}
         </div>

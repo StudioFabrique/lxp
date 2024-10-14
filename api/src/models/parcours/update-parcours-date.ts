@@ -5,7 +5,7 @@ async function updateParcoursDates(
   parcoursId: number,
   start: string,
   end: string,
-  userId: string
+  userId: string,
 ) {
   const admin = await getAdmin(userId);
   const startDate = new Date(start);

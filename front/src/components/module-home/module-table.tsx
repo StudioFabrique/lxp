@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-//import { useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
 import { localeDate } from "../../helpers/locale-date";
 import Can from "../UI/can/can.component";
-import DeleteIcon from "../UI/svg/delete-icon.component";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
-import { Link } from "react-router-dom";
-import EditIcon from "../UI/svg/edit-icon";
+import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
+import DeleteIcon from "../UI/svg/delete-icon.component";
+import { truncateText } from "../../helpers/truncate-text";
+import { Eye } from "lucide-react";
 
 interface ModuleTableProps {
   modulesList: any[];
@@ -22,10 +21,10 @@ const ModuleTable = ({
   fieldSort,
   direction,
   onSorting,
-  //stepId,
+  stepId,
   onDelete,
 }: ModuleTableProps) => {
-  //const nav = useNavigate();
+  console.log({ modulesList });
 
   const content = (
     <>
@@ -36,42 +35,87 @@ const ModuleTable = ({
               className="text-xs lg:text-sm cursor-pointer hover:bg-secondary/20 hover:text-base-content"
               key={item.id}
             >
-              <td className="bg-transparent rounded-l-lg truncate">
-                {item.title}
+              <td className="bg-transparent rounded-l-lg max-w-[150px]">
+                <span className="tooltip tooltip-bottom" data-tip={item.title}>
+                  {truncateText(item.title, 20)}
+                </span>
               </td>
-              <td className="bg-transparent capitalize truncate">
-                {item.author}
+              <td className="bg-transparent capitalize max-w-[100px]">
+                <div>
+                  <span
+                    className="tooltip tooltip-bottom"
+                    data-tip={item.author}
+                  >
+                    {truncateText(item.author, 15)}
+                  </span>
+                </div>
               </td>
-              <td className="bg-transparent truncate">
-                {item.formation ? item.formation : "ND"}
+              <td className="bg-transparent max-w-[150px]">
+                <span
+                  className="tooltip tooltip-bottom text"
+                  data-tip={item.formation || "ND"}
+                >
+                  {truncateText(item.formation, 20)}
+                </span>
               </td>
-              <td className="bg-transparent truncate">
-                {item.parcours ? item.parcours.title : "ND"}
+              <td className="bg-transparent max-w-[150px]">
+                <span
+                  className="tooltip tooltip-bottom"
+                  data-tip={item.parcours}
+                >
+                  {truncateText(item.parcours, 20)}
+                </span>
               </td>
-              <td className="bg-transparent truncate">
-                {localeDate(item.createdAt!)}
-              </td>
-              <td className="bg-transparent truncate">
+              <td className="bg-transparent">{localeDate(item.createdAt!)}</td>
+              <td className="bg-transparent">
                 {localeDate(item.updatedAt!)}
+              </td>{" "}
+              <td className="bg-transparent">
+                <div className="w-6 h-6">
+                  <Can action="read" object="module">
+                    <div>
+                      {item.parcoursId ? (
+                        <Link
+                          className="text-secondary tooltip tooltip-bottom"
+                          data-tip="Voir le module"
+                          to={`/admin/module/edit/${item.id}`}
+                          aria-label="Voir les détails du module"
+                        >
+                          <Eye />
+                        </Link>
+                      ) : (
+                        <div
+                          className="text-base-content/50 tooltip tooltip-bottom"
+                          data-tip="Vous ne pouvez pas modifier un module
+                            attaché à une formation"
+                        >
+                          <Eye />
+                        </div>
+                      )}
+                    </div>
+                  </Can>
+                </div>
               </td>
               <td className="bg-transparent">
                 <div className="w-6 h-6">
                   <Can action="update" object="module">
-                    <div
-                      className="tooltip tooltip-bottom"
-                      data-tip="Modifier le module"
-                    >
-                      {item.parcours ? (
+                    <div>
+                      {item.parcoursId ? (
                         <Link
-                          className="text-secondary"
-                          to={`/admin/module/edit/${item.id}`}
+                          className="text-secondary tooltip tooltip-bottom"
+                          data-tip="Modifier le module"
+                          to={`/admin/parcours/edit/${item.parcoursId}?step=4`}
                           aria-label="Editer le module"
                         >
-                          <EditIcon />
+                          <ArrowTopRightIcon />
                         </Link>
                       ) : (
-                        <div className="text-base-content/50">
-                          <EditIcon />
+                        <div
+                          className="text-base-content/50 tooltip tooltip-bottom"
+                          data-tip="Vous ne pouvez pas modifier un module
+                            attaché à une formation"
+                        >
+                          <ArrowTopRightIcon />
                         </div>
                       )}
                     </div>
@@ -101,6 +145,8 @@ const ModuleTable = ({
       ) : null}
     </>
   );
+
+  // Le reste du code reste inchangé...
 
   return (
     <div className="w-full min-h-[50%] flex justify-center items-center text-xs lg:text-sm">
@@ -145,7 +191,7 @@ const ModuleTable = ({
                 }}
               >
                 <div className="flex items-center gap-x-2">
-                  <p>Formation</p>{" "}
+                  <p>Formation</p>
                   <SortColumnIcon
                     fieldSort={fieldSort}
                     column="formation"
@@ -160,7 +206,7 @@ const ModuleTable = ({
                 }}
               >
                 <div className="flex items-center gap-x-2">
-                  <p>Parcours</p>{" "}
+                  <p>Parcours</p>
                   <SortColumnIcon
                     fieldSort={fieldSort}
                     column="parcours"

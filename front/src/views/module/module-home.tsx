@@ -15,6 +15,26 @@ const ModuleHome = () => {
   const { sendRequest, error, isLoading } = useHttp();
   const nav = useNavigate();
 
+  // retourne la liste de tous les modules
+  const getModules = useCallback(() => {
+    const applyData = (data: any) => {
+      console.log({ data });
+      const updatedModules = data.response.map((item: any) => ({
+        ...item,
+        formation: item.formation ?? "ND",
+        parcours: item.parcours ? item.parcours.title : "ND",
+        parcoursId: item.parcours ? item.parcours.id : null,
+      }));
+      setModules(updatedModules);
+    };
+    sendRequest(
+      {
+        path: "/modules",
+      },
+      applyData,
+    );
+  }, [sendRequest]);
+
   const handleDeleteModule = (module: any) => {
     setModuleToDelete(module);
   };
@@ -32,37 +52,29 @@ const ModuleHome = () => {
       handleCloseModal();
       modules?.filter((item) => item.id !== moduleToDelete.id);
       setModuleToDelete(null);
+      getModules();
     };
     sendRequest(
       {
         path: `/modules/formation/${moduleToDelete.id}`,
         method: "delete",
       },
-      applyData
+      applyData,
     );
-  }, [sendRequest, moduleToDelete, modules]);
+  }, [sendRequest, getModules, moduleToDelete, modules]);
 
   const handleGotoModule = useCallback(() => {
     if (moduleToDelete && moduleToDelete.parcours) {
       const stepId = stepsParcours.find((item) => item.label === "Modules").id;
       console.log(stepId);
 
-      nav(`/admin/parcours/edit/${moduleToDelete.parcours.id}?step=${stepId}`);
+      nav(`/admin/parcours/edit/${moduleToDelete.parcoursId}?step=${stepId}`);
     }
   }, [moduleToDelete, nav]);
 
-  // retourne la liste de tous les modules
   useEffect(() => {
-    const applyData = (data: any) => {
-      setModules(data.response);
-    };
-    sendRequest(
-      {
-        path: "/modules",
-      },
-      applyData
-    );
-  }, [sendRequest]);
+    getModules();
+  }, [getModules]);
 
   // affiche la modal de confirmation de suppression du module
   useEffect(() => {
@@ -75,9 +87,9 @@ const ModuleHome = () => {
   let rightLabel: string = "";
 
   if (moduleToDelete) {
-    if (moduleToDelete.parcours) {
+    if (moduleToDelete.parcoursId) {
       message =
-        "Ce module est associé à un parcours, il ne peut-être supprimer qu'à partir de l'interface d'édion du parcours.";
+        "Ce module est associé à un parcours, il ne peut-être supprimer qu'à partir de l'interface d'édition du parcours.";
       rightLabel = "Voir le module dans le parcours";
     } else if (moduleToDelete.formation) {
       message = "Confirmez la suppression définitive du module svp";
@@ -122,7 +134,7 @@ const ModuleHome = () => {
             rightLabel={rightLabel}
             onCloseModal={handleCloseModal}
             onConfirm={
-              moduleToDelete.parcours ? handleGotoModule : handleConfirmDelete
+              moduleToDelete.parcoursId ? handleGotoModule : handleConfirmDelete
             }
           />
         ) : null}

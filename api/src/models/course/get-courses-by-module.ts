@@ -45,7 +45,7 @@ async function getCoursesByModule(moduleId: number) {
     updatedAt: item.updatedAt,
     isPublished: item.isPublished,
     visibility: item.visibility,
-    thumb: item.module.thumb.toString("base64"),
+    thumb: item.module.thumb?.toString("base64") ?? null,
   }));
 
   return result;

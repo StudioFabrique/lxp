@@ -9,12 +9,11 @@ async function searchUser(
   page: number,
   limit: number,
   stype: string,
-  sdir: string
+  sdir: string,
 ) {
   const dir = sdir === "asc" ? 1 : -1;
 
   let fetchedRoles;
-  console.log({ role });
 
   if (role === "everything") {
     fetchedRoles = await Role.find({}, { _id: 1 });
@@ -49,7 +48,7 @@ async function searchUser(
 
   const users = await User.find(
     { [entity]: field, roles: { $in: fetchedRoles } },
-    { password: 0 }
+    { password: 0 },
   )
     .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
     .sort({ [stype]: dir })

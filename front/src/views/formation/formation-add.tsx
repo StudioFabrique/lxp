@@ -8,24 +8,19 @@ import FormationsList from "../../components/formation-home/formations-list";
 import { sortArray } from "../../utils/sortArray";
 import useForm from "../../components/UI/forms/hooks/use-form";
 import useTags from "../../hooks/use-tags";
-
-type FormationItem = {
-  id: number;
-  title: string;
-  description?: string;
-  code: string;
-  level: string;
-  parcours: number;
-  tags?: number[];
-};
+import FormationItem from "../../utils/interfaces/formation-item";
+import { useParams, useSearchParams } from "react-router-dom";
 
 export default function FormationAdd() {
+  const [searchParams] = useSearchParams();
+  const formationId = searchParams.get("formationId");
+
   const [tags, setTags] = useState<Tag[]>([]);
   const [formationsList, setFormationsList] = useState<FormationItem[]>([]);
   const { sendRequest, error } = useHttp();
   const [submitting, setSubmitting] = useState(false);
   const [formationToEdit, setFormationToEdit] = useState<FormationItem | null>(
-    null
+    null,
   );
 
   const {
@@ -59,7 +54,7 @@ export default function FormationAdd() {
       {
         path: "/tag",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
 
@@ -68,12 +63,15 @@ export default function FormationAdd() {
    * les données de la formation à éditer
    * @param id number
    */
-  const handleSelectFormation = (id: number) => {
-    const formation = formationsList.find((item) => item.id === id);
-    if (formation) {
-      setFormationToEdit(formation);
-    }
-  };
+  const handleSelectFormation = useCallback(
+    (id: number) => {
+      const formation = formationsList.find((item) => item.id === id);
+      if (formation) {
+        setFormationToEdit(formation);
+      }
+    },
+    [formationsList],
+  );
 
   /**
    * Enregistrement d'une nouvelle formation dans la base de données
@@ -88,7 +86,7 @@ export default function FormationAdd() {
     description: string,
     code: string,
     level: string,
-    tags: Tag[]
+    tags: Tag[],
   ) => {
     const applyData = (data: {
       success: boolean;
@@ -119,7 +117,7 @@ export default function FormationAdd() {
           tags: tags.map((item) => item.id),
         },
       },
-      applyData
+      applyData,
     );
   };
 
@@ -136,7 +134,7 @@ export default function FormationAdd() {
     description: string,
     code: string,
     level: string,
-    tags: Tag[]
+    tags: Tag[],
   ) => {
     const applyData = (data: {
       success: boolean;
@@ -146,7 +144,7 @@ export default function FormationAdd() {
       if (data.success) {
         toast.success(data.message);
         let updatedList = formationsList.filter(
-          (item) => item.id !== formationToEdit!.id
+          (item) => item.id !== formationToEdit!.id,
         );
         updatedList = sortArray([...updatedList, data.response], "id");
         setFormationsList(updatedList);
@@ -171,7 +169,7 @@ export default function FormationAdd() {
           },
         },
       },
-      applyData
+      applyData,
     );
   };
 
@@ -187,7 +185,7 @@ export default function FormationAdd() {
       {
         path: "/formation/list",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
 
@@ -208,6 +206,12 @@ export default function FormationAdd() {
       setFormationsList([]);
     };
   }, [getTags, getFormationsList]);
+
+  useEffect(() => {
+    console.log("formation id", formationId);
+    if (formationId && !isNaN(+formationId))
+      handleSelectFormation(+formationId);
+  }, [formationId, handleSelectFormation]);
 
   // gestion des erreurs HTTP
   useEffect(() => {

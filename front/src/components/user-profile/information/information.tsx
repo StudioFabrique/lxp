@@ -3,7 +3,6 @@ import {
   FormEvent,
   FormEventHandler,
   Ref,
-  useContext,
   useEffect,
   useRef,
   useState,
@@ -21,8 +20,6 @@ import useHttp from "../../../hooks/use-http";
 import Loader from "../../UI/loader";
 import Hobby from "../../../utils/interfaces/hobby";
 import { Link } from "../../../utils/interfaces/link";
-import { Context } from "../../../store/context.store";
-import { useLocation } from "react-router-dom";
 
 type UserInformation = {
   _id: string;
@@ -41,13 +38,9 @@ type UserInformation = {
 
 const Information: FC<{
   formRef: Ref<HTMLFormElement>;
-}> = ({ formRef }) => {
-  const { handshake } = useContext(Context);
-  const { sendRequest, isLoading } = useHttp();
-
-  const { pathname } = useLocation();
-
-  const currentRoute = pathname.split("/").slice(1) ?? [];
+  style?: { showStudentElements?: boolean };
+}> = ({ formRef, style }) => {
+  const { sendRequest, isLoading } = useHttp(true);
 
   const {
     initValues,
@@ -70,7 +63,6 @@ const Information: FC<{
     const applyData = (data: { data: UserInformation }) => {
       setUserData(data.data);
       toast.success("Formulaire envoyé avec succès !");
-      handshake();
     };
 
     const formData = new FormData();
@@ -85,7 +77,7 @@ const Information: FC<{
           method: "put",
           body: formData,
         },
-        applyData
+        applyData,
       );
     } catch (error) {
       const newErrors = validationErrors(error);
@@ -127,7 +119,7 @@ const Information: FC<{
         </div>
       </form>
       <Presentation formProps={formProps} />
-      {currentRoute[0] === "student" && (
+      {style?.showStudentElements && (
         <>
           <Hobbies initHobbies={userData?.hobbies ?? []} />
           <SocialNetworks initLinks={userData?.links ?? []} />

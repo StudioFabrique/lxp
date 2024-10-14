@@ -1,25 +1,24 @@
-import Parcours from "./sidebar-parts/parcours";
-/* import Calendar from "./sidebar-parts/calendar";
-import Library from "./sidebar-parts/library";
-import Forum from "./sidebar-parts/forum"; */
-import Home from "./sidebar-parts/home";
-import Course from "./sidebar-parts/course";
-import User from "./sidebar-parts/user";
-import Group from "./sidebar-parts/group";
-import Lesson from "./sidebar-parts/lesson";
-import Formation from "./sidebar-parts/formation";
 import Can from "../can/can.component";
+import Course from "./sidebar-parts/course";
+import Formation from "./sidebar-parts/formation";
+import Group from "./sidebar-parts/group";
+import Home from "./sidebar-parts/home";
+import Lesson from "./sidebar-parts/lesson";
+import Module from "./sidebar-parts/module";
+import Parcours from "./sidebar-parts/parcours";
 import Roles from "./sidebar-parts/roles";
+import User from "./sidebar-parts/user";
 
 type SharedSideBarProps = {
   currentRoute: string[];
 };
 
 const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => (
-  <ul className="flex flex-col gap-y-6">
+  <ul className="flex flex-col gap-6 items-center">
     <Home currentRoute={currentRoute} />
     <Formation currentRoute={currentRoute} />
     <Parcours currentRoute={currentRoute} />
+    <Module currentRoute={currentRoute} />
     <Course currentRoute={currentRoute} />
     <Lesson currentRoute={currentRoute} />
     <User currentRoute={currentRoute} />

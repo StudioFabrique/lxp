@@ -14,16 +14,13 @@ async function httpUpdateParcoursInfos(req: CustomRequest, res: Response) {
     }
     let { parcoursId, title, description, formation, visibility } = req.body;
 
-    title = customEscape(title);
-    description = customEscape(description ?? "");
-
-    const response = await updateParcoursInfos(
+    await updateParcoursInfos(
       +parcoursId,
       title,
       description,
       +formation,
       visibility,
-      userId
+      userId,
     );
 
     return res

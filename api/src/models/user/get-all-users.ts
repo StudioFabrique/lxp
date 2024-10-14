@@ -5,7 +5,7 @@ async function getAllUsers(
   page: number,
   limit: number,
   stype: string,
-  sdir: string
+  sdir: string,
 ) {
   const dir = sdir === "asc" ? 1 : -1;
 
@@ -23,8 +23,6 @@ async function getAllUsers(
       return user;
     }
   });
-
-  console.log({ users });
 
   return { total, users };
 }

@@ -13,7 +13,7 @@ const GroupManageUserList: FC<{
   usersToAdd: User[];
   onAddUsers: (users: Array<User>) => void;
   drawerOptions?: { visible: boolean; isOpen: boolean };
-  onCloseDrawer?: () => void;
+  onCloseDrawer?: (id: string) => void;
 }> = ({ usersToAdd, drawerOptions, onAddUsers, onCloseDrawer }) => {
   const {
     page,
@@ -33,15 +33,22 @@ const GroupManageUserList: FC<{
   const [userSearchResult, setUserSearchResult] = useState<User[]>([]);
   const [usersToShowsInList, setUsersToShowInList]: any[] = useState([]);
 
+  const handleCloseDrawer = () => {
+    setAllChecked(false);
+    onCloseDrawer && onCloseDrawer("add-user-to-group");
+  };
+
   const handleSetUsersToAdd = () => {
     onAddUsers(selectedUsers);
     const selectedUsersIds = selectedUsers.map(
-      (selectedUser) => selectedUser._id
+      (selectedUser) => selectedUser._id,
     );
     setSelectedUsers((users) =>
-      users.filter((currentUser) => !selectedUsersIds.includes(currentUser._id))
+      users.filter(
+        (currentUser) => !selectedUsersIds.includes(currentUser._id),
+      ),
     );
-    setAllChecked(false);
+    handleCloseDrawer();
   };
 
   const handleAddSelectedUser = (user: User) => {
@@ -59,14 +66,14 @@ const GroupManageUserList: FC<{
     setUsersSettedState(true);
   }, []);
 
-  const handleDeleteSelectedUser = (user: User) => {
+  const handleDeleteSelectedUser = useCallback((user: User) => {
     setSelectedUsers((users) =>
-      users.filter((currentUser) => currentUser._id !== user._id)
+      users.filter((currentUser) => currentUser._id !== user._id),
     );
     setUsersSettedState(false);
-  };
+  }, []);
 
-  /* 
+  /*
     Ajoute un utilisateur directement dans la liste sans checklist
    */
   const handleAddUserInstantly = (user: User) => {
@@ -75,14 +82,14 @@ const GroupManageUserList: FC<{
     }
     onAddUsers([user]);
     setSelectedUsers((users) =>
-      users.filter((currentUser) => currentUser._id !== user._id)
+      users.filter((currentUser) => currentUser._id !== user._id),
     );
   };
 
   const handleSearchUser = (entityToSearch: string, searchValue: string) => {
     const resultsFromSearch = usersToShowsInList.filter(
       (user: any) =>
-        user[entityToSearch].toLowerCase() === searchValue.toLowerCase()
+        user[entityToSearch].toLowerCase() === searchValue.toLowerCase(),
     );
 
     setUserSearchResult(resultsFromSearch);
@@ -92,26 +99,13 @@ const GroupManageUserList: FC<{
     setUserSearchResult([]);
   };
 
-  const handleCloseDrawer = () => {
-    setAllChecked(false);
-    onCloseDrawer && onCloseDrawer();
-  };
-
   useEffect(() => {
     setUsersToShowInList(
       dataList.filter((data) => {
         return !usersToAdd.map((user) => user._id).includes(data._id);
-      })
+      }),
     );
   }, [dataList, usersToAdd]);
-
-  useEffect(() => {
-    if (allChecked) {
-      handleAddSelectedAllUser();
-    } else {
-      handleRemoveSelectedAllUser();
-    }
-  }, [allChecked, handleAddSelectedAllUser, handleRemoveSelectedAllUser]);
 
   const renderUserItems = (users: User[]) => {
     return users.map((user: User) => (
@@ -127,6 +121,14 @@ const GroupManageUserList: FC<{
     ));
   };
 
+  useEffect(() => {
+    if (allChecked) {
+      handleAddSelectedAllUser();
+    } else {
+      handleRemoveSelectedAllUser();
+    }
+  }, [allChecked, handleAddSelectedAllUser, handleRemoveSelectedAllUser]);
+
   return (
     <RightSideDrawer
       title="Ajouter des étudiants au groupe"
@@ -135,7 +137,7 @@ const GroupManageUserList: FC<{
       visible={drawerOptions?.visible}
       isOpen={drawerOptions?.isOpen}
     >
-      <div className="flex flex-col items-center gap-y-10 justify-between m-10 h-[74vh]">
+      <div className="flex flex-col gap-y-5 items-center justify-between w-[45vw]">
         <Search
           onResetInput={handleResetSearchUser}
           placeholder="Rechercher"
@@ -146,7 +148,7 @@ const GroupManageUserList: FC<{
             // { index: 2, option: "Formation", value: "group" },
           ]}
         />
-        <div className="flex flex-col justify-between gap-y-4 h-full">
+        <div className="flex flex-col gap-y-4 w-full">
           {/* TOP */}
           <UserToAddListHeader
             setSelectAllUsers={setAllChecked}
@@ -162,7 +164,7 @@ const GroupManageUserList: FC<{
           />
           {/* MIDDLE */}
           {dataList.length > 0 ? (
-            <div className="flex flex-col h-full my-5 gap-y-5 overflow-y-auto">
+            <div className="flex flex-col gap-y-5 h-[55vh] overflow-y-auto">
               {userSearchResult.length > 0
                 ? renderUserItems(userSearchResult)
                 : renderUserItems(dataList)}
@@ -173,21 +175,23 @@ const GroupManageUserList: FC<{
             </p>
           )}
           {/* BOTTOM */}
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            perPage={perPage}
-            setPage={handlePageNumber}
-            setPerPages={setPerPage}
-          />
         </div>
-        <div className="flex">
+      </div>
+      <div className="flex flex-col gap-2">
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          perPage={perPage}
+          setPage={handlePageNumber}
+          setPerPages={setPerPage}
+        />
+        <span className="self-end">
           <AddUsersButton
             onSetUsersToAdd={handleSetUsersToAdd}
             setUsersSettedState={setUsersSettedState}
             isUserSettedUp={isUsersSettedUp}
           />
-        </div>
+        </span>
       </div>
     </RightSideDrawer>
   );
