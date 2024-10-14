@@ -15,7 +15,8 @@ import { addIdToObject } from "../../../../utils/add-id-to-objects";
 const Certifications: FC<{
   graduations: Array<Graduation>;
   setGraduations: Dispatch<SetStateAction<Graduation[]>>;
-}> = ({ graduations, setGraduations }) => {
+  disabled?: boolean;
+}> = ({ graduations, setGraduations, disabled }) => {
   const initGraduation = {
     title: "",
     date: new Date(),
@@ -128,6 +129,7 @@ const Certifications: FC<{
                 onChange={handleInputChange}
                 value={currentGraduation.title}
                 autoComplete="off"
+                disabled={disabled}
               />
             </span>
             <span className="flex flex-col gap-y-2">
@@ -139,6 +141,7 @@ const Certifications: FC<{
                 onChange={handleInputChange}
                 value={currentGraduation.degree}
                 autoComplete="off"
+                disabled={disabled}
               />
             </span>
             <span className="flex flex-col gap-y-2">
@@ -150,6 +153,7 @@ const Certifications: FC<{
                 value={currentGraduation.date.toISOString().split("T")[0]}
                 onChange={handleInputChange}
                 autoComplete="off"
+                disabled={disabled}
               />
             </span>
           </div>
@@ -158,6 +162,7 @@ const Certifications: FC<{
               type="button"
               className="mt-2 normal-case self-start btn btn-primary"
               onClick={handleEditGraduation}
+              disabled={disabled}
             >
               Modifier la certification
             </button>
@@ -166,6 +171,7 @@ const Certifications: FC<{
               type="button"
               className="mt-2 normal-case self-start btn btn-primary"
               onClick={handleAddGraduation}
+              disabled={disabled}
             >
               Ajouter la certification
             </button>
