@@ -4,6 +4,7 @@ export default async function getModuleDetail(
   moduleId: number,
   userMongoId: string,
 ) {
+  console.log(moduleId);
   const existingModule = await prisma.module.findFirst({
     where: { id: moduleId },
     select: {
