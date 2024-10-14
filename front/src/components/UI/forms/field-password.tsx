@@ -1,3 +1,9 @@
+/**
+Champ de formulaire customisé pour les mots de passe.
+Affiche un icone "oeil" clickable qui permet d'alterner
+le type du champ entre "password" et "text".
+*/
+
 import { CheckCircle, Eye, EyeOff } from "lucide-react";
 import CircleXIcon from "../svg/circle-x-icon";
 import { useState } from "react";

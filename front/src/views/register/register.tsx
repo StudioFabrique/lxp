@@ -22,7 +22,10 @@ export default function RegisterHome() {
     });
     await fetch("http://localhost:5001/v1/user/activate", {
       method: "post",
-      body: JSON.stringify({ token: searchParams.get("id") ?? "toto ken" }),
+      body: JSON.stringify({
+        token: searchParams.get("id") ?? "toto ken",
+        password,
+      }),
       headers: { "Content-Type": "application/json" },
     });
   };
