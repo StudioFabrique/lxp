@@ -33,15 +33,22 @@ const GroupManageUserList: FC<{
   const [userSearchResult, setUserSearchResult] = useState<User[]>([]);
   const [usersToShowsInList, setUsersToShowInList]: any[] = useState([]);
 
+  const handleCloseDrawer = () => {
+    setAllChecked(false);
+    onCloseDrawer && onCloseDrawer("add-user-to-group");
+  };
+
   const handleSetUsersToAdd = () => {
     onAddUsers(selectedUsers);
     const selectedUsersIds = selectedUsers.map(
-      (selectedUser) => selectedUser._id
+      (selectedUser) => selectedUser._id,
     );
     setSelectedUsers((users) =>
-      users.filter((currentUser) => !selectedUsersIds.includes(currentUser._id))
+      users.filter(
+        (currentUser) => !selectedUsersIds.includes(currentUser._id),
+      ),
     );
-    setAllChecked(false);
+    handleCloseDrawer();
   };
 
   const handleAddSelectedUser = (user: User) => {
@@ -61,7 +68,7 @@ const GroupManageUserList: FC<{
 
   const handleDeleteSelectedUser = useCallback((user: User) => {
     setSelectedUsers((users) =>
-      users.filter((currentUser) => currentUser._id !== user._id)
+      users.filter((currentUser) => currentUser._id !== user._id),
     );
     setUsersSettedState(false);
   }, []);
@@ -75,14 +82,14 @@ const GroupManageUserList: FC<{
     }
     onAddUsers([user]);
     setSelectedUsers((users) =>
-      users.filter((currentUser) => currentUser._id !== user._id)
+      users.filter((currentUser) => currentUser._id !== user._id),
     );
   };
 
   const handleSearchUser = (entityToSearch: string, searchValue: string) => {
     const resultsFromSearch = usersToShowsInList.filter(
       (user: any) =>
-        user[entityToSearch].toLowerCase() === searchValue.toLowerCase()
+        user[entityToSearch].toLowerCase() === searchValue.toLowerCase(),
     );
 
     setUserSearchResult(resultsFromSearch);
@@ -92,16 +99,11 @@ const GroupManageUserList: FC<{
     setUserSearchResult([]);
   };
 
-  const handleCloseDrawer = () => {
-    setAllChecked(false);
-    onCloseDrawer && onCloseDrawer("add-user-to-group");
-  };
-
   useEffect(() => {
     setUsersToShowInList(
       dataList.filter((data) => {
         return !usersToAdd.map((user) => user._id).includes(data._id);
-      })
+      }),
     );
   }, [dataList, usersToAdd]);
 
@@ -135,7 +137,7 @@ const GroupManageUserList: FC<{
       visible={drawerOptions?.visible}
       isOpen={drawerOptions?.isOpen}
     >
-      <div className="flex flex-col gap-y-5 items-center justify-between m-10 h-[65vh]">
+      <div className="flex flex-col gap-y-5 items-center justify-between w-[45vw]">
         <Search
           onResetInput={handleResetSearchUser}
           placeholder="Rechercher"
@@ -146,7 +148,7 @@ const GroupManageUserList: FC<{
             // { index: 2, option: "Formation", value: "group" },
           ]}
         />
-        <div className="flex flex-col justify-between gap-y-4 h-full">
+        <div className="flex flex-col gap-y-4 w-full">
           {/* TOP */}
           <UserToAddListHeader
             setSelectAllUsers={setAllChecked}
@@ -162,7 +164,7 @@ const GroupManageUserList: FC<{
           />
           {/* MIDDLE */}
           {dataList.length > 0 ? (
-            <div className="flex flex-col gap-y-5 overflow-y-auto">
+            <div className="flex flex-col gap-y-5 h-[55vh] overflow-y-auto">
               {userSearchResult.length > 0
                 ? renderUserItems(userSearchResult)
                 : renderUserItems(dataList)}
@@ -173,21 +175,23 @@ const GroupManageUserList: FC<{
             </p>
           )}
           {/* BOTTOM */}
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            perPage={perPage}
-            setPage={handlePageNumber}
-            setPerPages={setPerPage}
-          />
         </div>
-        <div className="self-end">
+      </div>
+      <div className="flex flex-col gap-2">
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          perPage={perPage}
+          setPage={handlePageNumber}
+          setPerPages={setPerPage}
+        />
+        <span className="self-end">
           <AddUsersButton
             onSetUsersToAdd={handleSetUsersToAdd}
             setUsersSettedState={setUsersSettedState}
             isUserSettedUp={isUsersSettedUp}
           />
-        </div>
+        </span>
       </div>
     </RightSideDrawer>
   );
