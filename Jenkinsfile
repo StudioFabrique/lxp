@@ -19,11 +19,11 @@ pipeline {
 
 
 
-       /*   stage('Trivy FS Scan') {
+       / stage('Trivy FS Scan') {
             steps {
                sh 'trivy filesystem --format table -o fs-report.html .'
             }
-        }*/
+        }
 
       stage('SonarQube') {
             steps {
@@ -37,14 +37,15 @@ pipeline {
             }
         }
 
-/*          stage('SoanrQube') {
+         stage('SoanrQube') {
             steps {
                 sh '${SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=Campground -Dsonar.projectName=Campground'
             }
-        }*/
+        }
 
         stage('Tests backend') {
             steps {
+                sh 'npm i --save-dev @types/node'
                 sh 'npm -g i dotenv-cli'
                 sh 'mkdir api/src/uploads || true'
                 sh 'npm run test'
