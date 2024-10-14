@@ -10,11 +10,13 @@ export default async function putPassword(userId: string, password: string) {
 
   if (!existingUser)
     throw { statusCode: 404, message: "L'utilisateur n'existe pas" };
-
+  /*
   const hashedPassword = await hash(password, 10);
   const updatedUser = await User.updateOne(
     { _id: new mongoose.Types.ObjectId(userId) },
     { ...existingUser, password: hashedPassword },
   );
   return updatedUser;
+  */
+  return true;
 }
