@@ -21,7 +21,7 @@ const CertificationItem: FC<{
     <div className="flex items-center justify-between bg-secondary/20 rounded-md w-full py-2 px-5 max-h-[80px]">
       <span>
         <p className="text-lg font-bold">{graduation.title}</p>
-        <p>{graduation.date.getFullYear()}</p>
+        <p>{new Date(graduation.date).getFullYear()}</p>
       </span>
       <span className="flex items-center gap-2">
         <button

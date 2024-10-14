@@ -15,9 +15,7 @@ export default async function createGroup(
     return null;
   }
 
-  const usersActivated = await activateMultipleUsers(users);
-
-  if (!usersActivated) return null;
+  await activateMultipleUsers(users);
 
   const newGroup: IGroup = group;
 

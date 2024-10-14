@@ -16,7 +16,8 @@ import { urlIsValid, transformLink } from "./link-transform-service";
 const Links: FC<{
   links: Array<Link>;
   onSetLinks: Dispatch<SetStateAction<Array<Link>>>;
-}> = ({ links, onSetLinks }) => {
+  disabled?: boolean;
+}> = ({ links, onSetLinks, disabled }) => {
   const [currentLink, setCurrentLink] = useState<string>("");
 
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (
@@ -56,6 +57,7 @@ const Links: FC<{
           value={currentLink}
           type="text"
           className="input input-sm w-full rounded-md"
+          disabled={disabled}
         />
         <button onClick={handleAddLink} type="button" className="btn btn-sm">
           +

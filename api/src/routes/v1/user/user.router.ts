@@ -128,6 +128,15 @@ userRouter.post(
   httpCreateUser,
 );
 
+userRouter.put(
+  "/:id",
+  checkPermissions("user"),
+  createFileUploadMiddleware(headerImageMaxSize),
+  jsonParser,
+  userValidator(true),
+  httpCreateUser,
+);
+
 userRouter.delete(
   "/:id",
   checkPermissions("user"),

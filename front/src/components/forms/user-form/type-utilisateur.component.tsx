@@ -6,7 +6,8 @@ import useHttp from "../../../hooks/use-http";
 const TypeUtilisateur: FC<{
   roleId: string | null;
   onSetRoleId: Dispatch<SetStateAction<string | null>>;
-}> = ({ roleId, onSetRoleId }) => {
+  disabled?: boolean;
+}> = ({ roleId, onSetRoleId, disabled }) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -49,6 +50,7 @@ const TypeUtilisateur: FC<{
                 className="radio radio-primary"
                 onChange={() => handleCheck(role._id)}
                 checked={roleId === role._id}
+                disabled={disabled}
               />
               <label htmlFor="etudiant">{role.label}</label>
             </span>
