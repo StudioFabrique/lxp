@@ -45,9 +45,9 @@ pipeline {
 
         stage('Tests backend') {
             steps {
-                sh 'npm i --save-dev @types/node'
                 sh 'npm -g i dotenv-cli'
                 sh 'mkdir api/src/uploads || true'
+                sh 'npm i --save-dev @types/node'
                 sh 'npm run test'
             }
         }
