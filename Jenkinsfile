@@ -25,7 +25,7 @@ pipeline {
             }
         }
 
-/*        stage('SonarQube') {
+        stage('SonarQube') {
             steps {
                 sh """
                     ${SCANNER_HOME}/bin/sonar-scanner \
@@ -41,7 +41,7 @@ pipeline {
             steps {
                 sh '${SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=Campground -Dsonar.projectName=Campground'
             }
-        }*/
+        }
 
         /*stage('Tests backend') {
             steps {
@@ -89,6 +89,7 @@ pipeline {
                 }
                script {
                    withDockerRegistry(credentialsId: 'docker-registry', toolName: 'docker') {
+                        sh 'cp docker-compose.yml .'
                         sh 'docker compose down'
                         sh 'docker network rm lxp_network || true'
                         sh 'docker image rm lxp:latest || true'
