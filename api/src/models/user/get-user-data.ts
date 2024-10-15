@@ -9,6 +9,7 @@ export default async function getUserData(userId: string) {
     .populate("group", { image: 0 })
     .populate("graduations")
     .populate("links")
+    .populate("roles")
     .lean()) as IUser;
 
   if (!user) {
