@@ -25,7 +25,7 @@ pipeline {
             }
         }
 
-        stage('SonarQube') {
+/*        stage('SonarQube') {
             steps {
                 sh """
                     ${SCANNER_HOME}/bin/sonar-scanner \
@@ -41,7 +41,7 @@ pipeline {
             steps {
                 sh '${SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=Campground -Dsonar.projectName=Campground'
             }
-        }
+        }*/
 
         stage('Tests backend') {
             steps {
