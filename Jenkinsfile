@@ -89,7 +89,6 @@ pipeline {
                 }
                script {
                    withDockerRegistry(credentialsId: 'docker-registry', toolName: 'docker') {
-                        sh 'cp docker-compose.yml /home/cponsan'
                         sh 'docker compose down'
                         sh 'docker network rm lxp_network || true'
                         sh 'docker image rm lxp:latest || true'
