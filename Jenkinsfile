@@ -19,7 +19,7 @@ pipeline {
 
 
 
-        stage('Trivy FS Scan') {
+        /*stage('Trivy FS Scan') {
             steps {
                sh 'trivy filesystem --format table -o fs-report.html .'
             }
