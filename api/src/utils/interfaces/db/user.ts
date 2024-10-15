@@ -30,6 +30,8 @@ export interface IUser extends Document {
   updatedAt?: Date;
   connectionInfos?: IConnectionInfos["_id"];
   studentFeedbacks?: IStudentFeedback["_id"];
+  emailVerified: boolean;
+  invitationSent: boolean;
 }
 
 const userSchema: Schema = new Schema(
@@ -47,6 +49,9 @@ const userSchema: Schema = new Schema(
     city: { type: String, required: false },
     birthDate: { type: Date, required: false },
     phoneNumber: { type: String, required: false },
+    emailVerified: { type: Boolean, default: false },
+    invitationSent: { type: Boolean, default: false },
+
     connectionInfos: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "ConnectionInfos",
@@ -89,7 +94,7 @@ const userSchema: Schema = new Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const User = mongoose.model<IUser>("User", userSchema);
