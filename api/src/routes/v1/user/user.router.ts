@@ -36,6 +36,7 @@ import jsonParser from "../../../middleware/json-parser";
 import httpDeleteUser from "../../../controllers/user/http-delete-user";
 import activateAccount from "../../../middleware/activate-account";
 import httpPutPassword from "../../../controllers/user/http-put-password";
+import httpUpdateUser from "../../../controllers/user/http-update-user";
 
 const userRouter = express.Router();
 
@@ -134,7 +135,7 @@ userRouter.put(
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
   userValidator(true),
-  httpCreateUser,
+  httpUpdateUser,
 );
 
 userRouter.delete(

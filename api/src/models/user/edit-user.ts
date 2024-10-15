@@ -1,11 +1,14 @@
 import User, { IUser } from "../../utils/interfaces/db/user";
-import { prisma } from "../../utils/db";
 import Role from "../../utils/interfaces/db/role";
 
-export default async function editUser(user: IUser, roleId: string) {
+export default async function editUser(
+  userId: string,
+  user: IUser,
+  roleId: string,
+) {
   try {
     // Vérifier si l'utilisateur existe
-    const userToUpdate = await User.findOne({ _id: user._id });
+    const userToUpdate = await User.findOne({ _id: userId });
     if (!userToUpdate) {
       throw {
         statusCode: 404,
@@ -21,7 +24,7 @@ export default async function editUser(user: IUser, roleId: string) {
 
     // Mettre à jour l'utilisateur dans MongoDB
     const updatedUser = await User.findByIdAndUpdate(
-      user._id,
+      userId,
       {
         email: user.email.toLowerCase(),
         firstname: user.firstname.toLowerCase(),
