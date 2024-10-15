@@ -103,10 +103,10 @@ pipeline {
                         sh 'docker network rm lxp_network || true'
 
                         // Supprimer l'image si elle existe
-                        sh 'docker image rm lxp:latest || true'
+                        sh 'docker image rm studio/lxp:latest || true'
 
                         // Créer un nouveau réseau
-                        sh 'docker network create lxp_network'
+                        sh 'docker network create lxp_network || true'
 
                         // Démarrer les services
                         sh 'docker compose up -d'
