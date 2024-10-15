@@ -19,13 +19,13 @@ pipeline {
 
 
 
-       stage('Trivy FS Scan') {
+        stage('Trivy FS Scan') {
             steps {
                sh 'trivy filesystem --format table -o fs-report.html .'
             }
         }
 
-      stage('SonarQube') {
+        stage('SonarQube') {
             steps {
                 sh """
                     ${SCANNER_HOME}/bin/sonar-scanner \
@@ -37,7 +37,7 @@ pipeline {
             }
         }
 
-         stage('SonarQube') {
+        stage('SonarQube') {
             steps {
                 sh '${SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=Campground -Dsonar.projectName=Campground'
             }
@@ -51,7 +51,7 @@ pipeline {
             }
         }
 
-          stage('Docker build & tag') {
+        stage('Docker build & tag') {
             steps {
                script {
                    withDockerRegistry(credentialsId: 'docker-registry', toolName: 'docker') {
