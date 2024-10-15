@@ -19,7 +19,7 @@ pipeline {
 
 
 
-       / stage('Trivy FS Scan') {
+       stage('Trivy FS Scan') {
             steps {
                sh 'trivy filesystem --format table -o fs-report.html .'
             }
@@ -43,7 +43,13 @@ pipeline {
             }
         }
 
-
+        stage('Tests backend') {
+            steps {
+                sh 'npm -g i dotenv-cli'
+                sh 'mkdir api/src/uploads || true'
+                sh 'npm run test'
+            }
+        }
 
           stage('Docker build & tag') {
             steps {
