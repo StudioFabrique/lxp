@@ -47,7 +47,6 @@ pipeline {
             steps {
                 sh 'npm -g i dotenv-cli'
                 sh 'mkdir api/src/uploads || true'
-                //sh 'npm i -D @types/node'
                 sh 'npm run test'
             }
         }
