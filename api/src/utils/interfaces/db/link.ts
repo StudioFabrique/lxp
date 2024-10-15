@@ -13,7 +13,7 @@ export interface ILink extends Document {
   url: string;
   type: LinkType;
   alias?: string | null;
-  user: IUser;
+  user: IUser["_id"];
 }
 
 const linkSchema = new Schema({
@@ -23,6 +23,6 @@ const linkSchema = new Schema({
   user: { type: mongoose.Types.ObjectId, ref: "User", required: true },
 });
 
-const Link = mongoose.model("Link", linkSchema);
+const Link = mongoose.model<ILink>("Link", linkSchema);
 
 export default Link;
