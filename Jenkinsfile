@@ -95,6 +95,7 @@ pipeline {
                         sh 'docker image rm lxp:latest || true'
                         sh 'docker network create lxp_network'
                         sh 'docker compose up -d'
+                        sh 'docker system prune -f --all'
                     }
                }
             }
