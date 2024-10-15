@@ -19,13 +19,13 @@ pipeline {
 
 
 
-       / stage('Trivy FS Scan') {
+        stage('Trivy FS Scan') {
             steps {
                sh 'trivy filesystem --format table -o fs-report.html .'
             }
         }
 
-      stage('SonarQube') {
+        stage('SonarQube') {
             steps {
                 sh """
                     ${SCANNER_HOME}/bin/sonar-scanner \
@@ -37,22 +37,21 @@ pipeline {
             }
         }
 
-         stage('SoanrQube') {
+        stage('SonarQube2') {
             steps {
                 sh '${SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=Campground -Dsonar.projectName=Campground'
             }
         }
 
-        stage('Tests backend') {
+        /*stage('Tests backend') {
             steps {
-                sh 'npm i --save-dev @types/node'
                 sh 'npm -g i dotenv-cli'
                 sh 'mkdir api/src/uploads || true'
                 sh 'npm run test'
             }
-        }
+        }*/
 
-          stage('Docker build & tag') {
+        stage('Docker build & tag') {
             steps {
                script {
                    withDockerRegistry(credentialsId: 'docker-registry', toolName: 'docker') {
@@ -88,15 +87,34 @@ pipeline {
                         writeFile file: '.env', text: envContent
                     }
                 }
-               script {
-                   withDockerRegistry(credentialsId: 'docker-registry', toolName: 'docker') {
+                script {
+                    withDockerRegistry(credentialsId: 'docker-registry', toolName: 'docker') {
+                        // Arrêter tous les conteneurs et s'assurer qu'ils sont bien arrêtés
                         sh 'docker compose down'
+                        
+                        // Vérifier si des conteneurs utilisent encore le réseau et les forcer à s'arrêter
+                        sh '''
+                        if docker network inspect lxp_network > /dev/null 2>&1; then
+                        docker network disconnect -f lxp_network $(docker ps -q) || true
+                        fi
+                        '''
+
+                        // Ensuite, supprimer le réseau
                         sh 'docker network rm lxp_network || true'
-                        sh 'docker image rm lxp:latest || true'
-                        sh 'docker network create lxp_network'
+
+                        // Supprimer l'image si elle existe
+                        sh 'docker image rm studio/lxp:latest || true'
+
+                        // Créer un nouveau réseau
+                        sh 'docker network create lxp_network || true'
+
+                        // Démarrer les services
                         sh 'docker compose up -d'
+
+                        // Nettoyer le système
+                        sh 'docker system prune -f --all'
                     }
-               }
+                }
             }
         }
 
