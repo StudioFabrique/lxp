@@ -1,4 +1,5 @@
 import Group from "../../utils/interfaces/db/group";
+import { prisma } from "../../utils/db";
 
 export default async function getGroupDetails(groupId: string) {
   const group = await Group.findOne({
@@ -7,7 +8,7 @@ export default async function getGroupDetails(groupId: string) {
     .populate("users")
     .lean();
 
-  const groupPrisma = await prisma?.group.findFirst({
+  const groupPrisma = await prisma.group.findFirst({
     select: {
       parcours: {
         select: {
