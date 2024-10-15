@@ -9,11 +9,12 @@ import {
 import { badQuery } from "../utils/constantes";
 import { logger } from "../utils/logs/logger";
 import CustomRequest from "../utils/interfaces/express/custom-request";
+import { stringValidateGeneric } from "../helpers/custom-validators";
 
 export const checkValidatorResult = (
   req: CustomRequest,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const checkValues = validationResult(req);
 
@@ -76,31 +77,31 @@ export const userValidator = (isFormData: boolean = false) => {
       .notEmpty()
       .isString()
       .trim()
-      .escape()
+      .custom(stringValidateGeneric)
       .withMessage("firstname ou lastname non conforme"),
     body(validatorSubject + ".nickname")
       .optional()
       .isString()
       .trim()
-      .escape()
+      .custom(stringValidateGeneric)
       .withMessage("nickname"),
     body(validatorSubject + ".description")
       .optional()
       .isString()
       .trim()
-      .escape()
+      .custom(stringValidateGeneric)
       .withMessage("description"),
     body(validatorSubject + ".address")
       .optional()
       .isString()
       .trim()
-      .escape()
+      .custom(stringValidateGeneric)
       .withMessage("address"),
     body(validatorSubject + ".city")
       .optional()
       .isString()
       .trim()
-      .escape()
+      .custom(stringValidateGeneric)
       .withMessage("city"),
     body(validatorSubject + ".postCode")
       .optional()
@@ -265,7 +266,7 @@ export const groupValidator = [
     .notEmpty()
     .isString()
     .trim()
-    .escape()
+    .custom(stringValidateGeneric)
     .withMessage("titre (name) ou description (desc) non conforme"),
   body("data.users").isArray().withMessage("users n'est pas un Array"),
   body("data.users.*._id")
@@ -283,7 +284,7 @@ export const groupPutValidator = [
     .notEmpty()
     .isString()
     .trim()
-    .escape()
+    .custom(stringValidateGeneric)
     .withMessage("titre (name) ou description (desc) non conforme"),
   checkValidatorResult,
 ];
