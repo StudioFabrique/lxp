@@ -123,7 +123,6 @@ const UserAddForm: FC<{
   useEffect(() => {
     if (props.user?.graduations) {
       setGraduations(props.user?.graduations);
-      console.log("test effectué");
     }
     if (props.user?.roles) {
       setRoleId(props.user?.roles[0]._id);

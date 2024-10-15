@@ -26,9 +26,14 @@ const Certifications: FC<{
   const [currentGraduation, setCurrentGraduation] =
     useState<Graduation>(initGraduation);
 
-  const [editMode, setEditMode] = useState({
+  const [editMode, setEditMode] = useState<{
+    isActive: boolean;
+    idToEdit: number | null;
+    _idToEdit: string | null;
+  }>({
     isActive: false,
-    idToEdit: 0,
+    idToEdit: null,
+    _idToEdit: null,
   });
 
   const handleAddGraduation = () => {
@@ -46,9 +51,13 @@ const Certifications: FC<{
   };
 
   const handleSetEditMode = (graduation: Graduation) => {
-    if (!graduation.id) return;
+    if (!graduation.id && !graduation._id) return;
     setCurrentGraduation(graduation);
-    setEditMode({ isActive: true, idToEdit: graduation.id });
+    setEditMode(
+      graduation._id
+        ? { isActive: true, idToEdit: null, _idToEdit: graduation._id }
+        : { isActive: true, idToEdit: graduation.id ?? null, _idToEdit: null },
+    );
   };
 
   const handleEditGraduation = () => {
@@ -59,9 +68,13 @@ const Certifications: FC<{
     ) {
       setGraduations((prevGraduations) =>
         prevGraduations.map((item) =>
-          item.id === editMode.idToEdit
-            ? { ...item, ...currentGraduation }
-            : item,
+          editMode._idToEdit
+            ? item._id === editMode._idToEdit
+              ? { ...item, ...currentGraduation }
+              : item
+            : item.id === editMode.idToEdit
+              ? { ...item, ...currentGraduation }
+              : item,
         ),
       );
 
@@ -150,7 +163,9 @@ const Certifications: FC<{
                 name="date"
                 className="input input-sm input-bordered focus:outline-none w-full"
                 type="date"
-                value={currentGraduation.date.toISOString().split("T")[0]}
+                value={
+                  new Date(currentGraduation.date).toISOString().split("T")[0]
+                }
                 onChange={handleInputChange}
                 autoComplete="off"
                 disabled={disabled}
@@ -181,7 +196,7 @@ const Certifications: FC<{
           {/* List of certifications */}
           {graduations.map((graduation) => (
             <CertificationItem
-              key={graduation.id}
+              key={graduation._id ? graduation.id : graduation._id}
               onDelete={handleDeleteGraduation}
               graduation={graduation}
               onSetEditMode={handleSetEditMode}

@@ -49,6 +49,7 @@ export default async function httpUpdateUser(req: Request, res: Response) {
       message: "L'utilisateur a été modifié avec succès.",
     });
   } catch (error: any) {
+    console.log({ error });
     return res.status(error.statusCode ?? 500).json({ message: error.message });
   }
 }
