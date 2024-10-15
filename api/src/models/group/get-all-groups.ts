@@ -1,6 +1,7 @@
 import Group from "../../utils/interfaces/db/group";
 import Role from "../../utils/interfaces/db/role";
 import { getPagination } from "../../utils/services/getPagination";
+import { prisma } from "../../utils/db";
 
 async function getAllGroups(
   page: number,
@@ -32,7 +33,7 @@ async function getAllGroups(
   const groupsWithFormation = await Promise.all(
     groups.map(async (group) => {
       {
-        const groupPrisma = await prisma?.group.findFirst({
+        const groupPrisma = await prisma.group.findFirst({
           select: {
             parcours: {
               select: {
