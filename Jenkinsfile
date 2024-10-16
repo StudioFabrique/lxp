@@ -82,6 +82,7 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'lxp-env-file', variable: 'ENV_FILE')]) {
                     script {
+                        sh 'rm .env'
                         // Read the contents of the environment file
                         def envContent = readFile("${ENV_FILE}")
                         // Write the contents to .env file in the workspace
