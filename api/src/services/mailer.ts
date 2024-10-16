@@ -12,15 +12,12 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function newUserMail(email: string, token: string) {
-  console.log(email, token, process.env.SMTP_EMAIL, process.env.ENVIRONMENT);
-  console.log(process.env.SMTP);
-  console.log(process.env.SMTP_PORT);
-
   try {
     if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
 
     const activationLink = `${process.env.FRONT_URL}/register?id=${token}`;
-    const destination = email;
+    const destination =
+      process.env.ENVIRONMENT === "production" ? email : process.env.SMTP_EMAIL;
 
     await transporter.sendMail({
       from: '"LXP - Administrateur" <martin@group-worker.com>',
