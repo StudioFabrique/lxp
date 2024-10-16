@@ -80,14 +80,14 @@ pipeline {
 
         stage('Docker Deploy to dev') {
             steps {
-                withCredentials([file(credentialsId: 'lxp-env-file', variable: 'ENV_FILE')]) {
+/*                withCredentials([file(credentialsId: 'lxp-env-file', variable: 'ENV_FILE')]) {
                     script {
                         // Read the contents of the environment file
                         def envContent = readFile("${ENV_FILE}")
                         // Write the contents to .env file in the workspace
                         writeFile file: '.env', text: envContent
                     }
-                }
+                }*/
                 script {
                     withDockerRegistry(credentialsId: 'docker-registry', toolName: 'docker') {
                         // Arrêter tous les conteneurs et s'assurer qu'ils sont bien arrêtés
