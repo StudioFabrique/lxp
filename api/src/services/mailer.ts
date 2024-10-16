@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP!,
-  port: +process.env.SMTP_PORT!,
+  port: 587,
   secure: true,
   auth: {
     user: process.env.EMAIL!,
