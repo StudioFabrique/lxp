@@ -18,6 +18,7 @@ const UserList: FC<{
   onDelete: (id: string) => void;
   isLoading: boolean;
   error?: string;
+  sendInvitation: (userId: string) => void;
 }> = ({
   allChecked,
   page,
@@ -32,40 +33,11 @@ const UserList: FC<{
   onDelete,
   isLoading,
   error,
+  sendInvitation,
 }) => {
   const handleAllChecked = () => {
     onAllChecked();
   };
-
-  // fonction pour changer les rôles d'un unique utilisateur, elle a été déplacé ailleurs
-
-  /*   const handleRolesChange = (newRoles: Array<Role>, userId: string) => {
-    const updatedUserList = userList.map((item: any) =>
-      item._id === userId
-        ? {
-            ...item,
-            roles: sortArray(newRoles, "rank"),
-          }
-        : item
-    );
-    setUserList(updatedUserList);
-
-    const applyData = (data: any) => {};
-    sendRequest(
-      {
-        path: `/user/${role.role === "admin" ? "user" : "student"}/${userId}`,
-        method: "put",
-        body: newRoles,
-      },
-      applyData
-    );
-  }; */
-
-  /*   useEffect(() => {
-    if (userList.some((item) => !item.isSelected)) {
-      onUncheckAll();
-    }
-  }, [userList, onUncheckAll]); */
 
   useEffect(() => {
     onUncheckAll();
@@ -190,6 +162,21 @@ const UserList: FC<{
               />
             </div>
           </th>
+          <th
+            className="cursor-pointer"
+            onClick={() => {
+              onSorting("emailVerified");
+            }}
+          >
+            <div className="flex items-center gap-x-2">
+              <p>Email vérifié</p>
+              <SortColumnIcon
+                fieldSort={stype}
+                column="emailVerified"
+                direction={sdir}
+              />
+            </div>
+          </th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -207,6 +194,7 @@ const UserList: FC<{
                 onRowCheck={onRowCheck}
                 isUserDeleteLoading={isLoading}
                 error={error}
+                sendInvitation={sendInvitation}
               />
             }
           </tr>
