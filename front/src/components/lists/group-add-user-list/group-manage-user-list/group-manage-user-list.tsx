@@ -137,61 +137,63 @@ const GroupManageUserList: FC<{
       visible={drawerOptions?.visible}
       isOpen={drawerOptions?.isOpen}
     >
-      <div className="flex flex-col gap-y-5 items-center justify-between w-[45vw]">
-        <Search
-          onResetInput={handleResetSearchUser}
-          placeholder="Rechercher"
-          onSearch={handleSearchUser}
-          options={[
-            { index: 0, option: "Prénom", value: "firstname" },
-            { index: 1, option: "Nom", value: "lastname" },
-            // { index: 2, option: "Formation", value: "group" },
-          ]}
-        />
-        <div className="flex flex-col gap-y-4 w-full">
-          {/* TOP */}
-          <UserToAddListHeader
-            setSelectAllUsers={setAllChecked}
-            isAllUsersSelected={allChecked}
-            order={stype}
-            sortData={sortData}
-            filters={[
-              { filterValue: "firstname", placeholder: "Prénom" },
-              { filterValue: "lastname", placeholder: "Nom" },
-              // { filterValue: "group", placeholder: "Formation" },
+      <div className="h-[80vh] w-[35rm]">
+        <div className="flex flex-col gap-y-5 items-center  h-[85%]">
+          <Search
+            onResetInput={handleResetSearchUser}
+            placeholder="Rechercher"
+            onSearch={handleSearchUser}
+            options={[
+              { index: 0, option: "Prénom", value: "firstname" },
+              { index: 1, option: "Nom", value: "lastname" },
+              // { index: 2, option: "Formation", value: "group" },
             ]}
-            value="test"
           />
-          {/* MIDDLE */}
-          {dataList.length > 0 ? (
-            <div className="flex flex-col gap-y-5 h-[55vh] overflow-y-auto">
-              {userSearchResult.length > 0
-                ? renderUserItems(userSearchResult)
-                : renderUserItems(dataList)}
-            </div>
-          ) : (
-            <p className="text-center">
-              Aucun utilisateurs éligibles à être ajouté
-            </p>
-          )}
-          {/* BOTTOM */}
+          <div className="flex flex-col gap-y-4 w-full h-[85%]">
+            {/* TOP */}
+            <UserToAddListHeader
+              setSelectAllUsers={setAllChecked}
+              isAllUsersSelected={allChecked}
+              order={stype}
+              sortData={sortData}
+              filters={[
+                { filterValue: "firstname", placeholder: "Prénom" },
+                { filterValue: "lastname", placeholder: "Nom" },
+                // { filterValue: "group", placeholder: "Formation" },
+              ]}
+              value="test"
+            />
+            {/* MIDDLE */}
+            {dataList.length > 0 ? (
+              <div className="flex flex-col gap-y-5 h-full overflow-y-auto">
+                {userSearchResult.length > 0
+                  ? renderUserItems(userSearchResult)
+                  : renderUserItems(dataList)}
+              </div>
+            ) : (
+              <p className="text-center">
+                Aucun utilisateurs éligibles à être ajouté
+              </p>
+            )}
+            {/* BOTTOM */}
+          </div>
         </div>
-      </div>
-      <div className="flex flex-col gap-2">
-        <Pagination
-          page={page}
-          totalPages={totalPages}
-          perPage={perPage}
-          setPage={handlePageNumber}
-          setPerPages={setPerPage}
-        />
-        <span className="self-end">
-          <AddUsersButton
-            onSetUsersToAdd={handleSetUsersToAdd}
-            setUsersSettedState={setUsersSettedState}
-            isUserSettedUp={isUsersSettedUp}
+        <div className="flex flex-col gap-2">
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            perPage={perPage}
+            setPage={handlePageNumber}
+            setPerPages={setPerPage}
           />
-        </span>
+          <span className="self-end">
+            <AddUsersButton
+              onSetUsersToAdd={handleSetUsersToAdd}
+              setUsersSettedState={setUsersSettedState}
+              isUserSettedUp={isUsersSettedUp}
+            />
+          </span>
+        </div>
       </div>
     </RightSideDrawer>
   );

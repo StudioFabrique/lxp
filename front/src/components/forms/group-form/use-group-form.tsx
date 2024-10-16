@@ -18,7 +18,6 @@ function useGroupForm({
   const [file, setFile] = useState<File | null>(null);
   const [parcoursId, setParcoursId] = useState<number | null>(null);
   /* const [tags, setTags] = useState<Tag[]>([]); */
-  const [isActive, setIsActive] = useState<boolean>(false);
 
   const { values, errors, onChangeValue, onValidationErrors, initValues } =
     useForm();
@@ -53,11 +52,10 @@ function useGroupForm({
             _id: group?._id,
             name: name,
             desc: desc,
-            isActive: isActive,
           },
           parcoursId: parcoursId,
         },
-        file!
+        file!,
       );
     } else {
       toast.error("Un fichier image pour le groupe est requis");
@@ -67,20 +65,17 @@ function useGroupForm({
   useEffect(() => {
     if (group) {
       initValues(group);
-      setIsActive(group.isActive ?? false);
     }
   }, [initValues, group]);
 
   return {
     onSubmit: handleSubmit,
     onChangeValue: onChangeValue,
-    setIsActive,
     onSetFile: handleSetFile,
     values,
     errors,
     parcoursId,
     onSelectParcours: handleSelectParcours,
-    isActive,
   };
 }
 
