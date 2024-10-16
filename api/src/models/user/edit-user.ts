@@ -1,87 +1,55 @@
 import User, { IUser } from "../../utils/interfaces/db/user";
-import { prisma } from "../../utils/db";
 import Role from "../../utils/interfaces/db/role";
-import { hash } from "bcrypt";
-import { randomUUID } from "crypto";
-import { newUserMail } from "../../services/mailer";
-import jwt from "jsonwebtoken";
 
-export default async function editUser(user: IUser, roleId: string) {
+export default async function editUser(
+  userId: string,
+  user: IUser,
+  roleId: string,
+) {
   try {
-    // Vérifier si l'utilisateur existe déjà
-    const userToFind = await User.findOne({ email: user.email });
-    if (userToFind) {
+    // Vérifier si l'utilisateur existe
+    const userToUpdate = await User.findOne({ _id: userId });
+    if (!userToUpdate) {
       throw {
-        statusCode: 409,
-        message:
-          "Un utilisateur a déjà été enregistré avec cette adresse email.",
+        statusCode: 404,
+        message: "Utilisateur non trouvé.",
       };
     }
 
     // Vérifier si le rôle existe
-    const firstRole = await Role.findOne({ _id: roleId });
-    if (!firstRole) {
+    const newRole = await Role.findOne({ _id: roleId });
+    if (!newRole) {
       throw { statusCode: 404, message: "Le rôle n'existe pas." };
     }
 
-    // Créer un nouvel utilisateur dans MongoDB
-    const createdUser = await User.create({
-      email: user.email.toLowerCase(),
-      firstname: user.firstname.toLowerCase(),
-      lastname: user.lastname.toLowerCase(),
-      nickname: user.nickname?.toLowerCase(),
-      description: user.description?.toLowerCase(),
-      address: user.address?.toLowerCase(),
-      city: user.city?.toLowerCase(),
-      postCode: user.postCode?.toLowerCase(),
-      phoneNumber: user.phoneNumber?.toLowerCase(),
-      password: await hash(randomUUID() + "@Sn99", 10),
-      isActive: false,
-      avatar: user.avatar,
-      roles: firstRole,
-    });
+    // Mettre à jour l'utilisateur dans MongoDB
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        email: user.email.toLowerCase(),
+        firstname: user.firstname.toLowerCase(),
+        lastname: user.lastname.toLowerCase(),
+        nickname: user.nickname?.toLowerCase(),
+        description: user.description?.toLowerCase(),
+        address: user.address?.toLowerCase(),
+        city: user.city?.toLowerCase(),
+        postCode: user.postCode?.toLowerCase(),
+        phoneNumber: user.phoneNumber?.toLowerCase(),
+        avatar: user.avatar,
+        roles: newRole,
+      },
+      { new: true },
+    );
 
-    if (firstRole.rank === 3) {
-      // Générer un token pour l'envoi de l'email
-      const token = jwt.sign({ userId: createdUser._id }, process.env.SECRET!, {
-        expiresIn: "24h",
-      });
-
-      try {
-        await newUserMail(createdUser.email, token); // Envoi de l'email
-
-        // Créer l'entrée pour un étudiant si l'email est envoyé avec succès
-      } catch (emailError) {
-        await User.deleteOne({ _id: createdUser._id });
-
-        throw {
-          statusCode: 500,
-          message:
-            "Le mail d'activation n'a pas pu être envoyé, la création de compte est annulée.",
-        };
-      }
+    if (!updatedUser) {
+      throw {
+        statusCode: 404,
+        message: "Impossible de mettre à jour l'utilisateur.",
+      };
     }
 
-    // Gérer les créations Prisma en fonction du rôle
-    if (firstRole.rank === 1 || firstRole.rank === 2) {
-      await prisma.admin.create({ data: { idMdb: createdUser._id } });
-    }
-
-    if (firstRole.rank === 2) {
-      await prisma.contact.create({
-        data: {
-          idMdb: createdUser._id,
-          name: `${createdUser.lastname} ${createdUser.firstname}`,
-          role: firstRole.label,
-        },
-      });
-    }
-
-    if (firstRole.rank === 3)
-      await prisma.student.create({ data: { idMdb: createdUser._id } });
-
-    // Retourner l'utilisateur créé et le rang du rôle
-    return { createdUser, role: firstRole.rank };
+    // Retourner l'utilisateur mis à jour et le rang du rôle
+    return { updatedUser, role: newRole.rank };
   } catch (error) {
     // Gérer les erreurs en les relayant
     throw error;

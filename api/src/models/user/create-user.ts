@@ -71,7 +71,8 @@ export default async function createUser(user: IUser, roleId: string) {
     // Envoi de l'email d'activation
     try {
       await newUserMail(createdUser.email, token);
-    } catch (emailError) {
+    } catch (emailError: any) {
+      console.log({ emailError });
       await User.deleteOne({ _id: createdUser._id });
       throw {
         statusCode: 500,
@@ -82,7 +83,7 @@ export default async function createUser(user: IUser, roleId: string) {
 
     // Retourner l'utilisateur créé et le rang du rôle
     return { createdUser, role: firstRole.rank };
-  } catch (error) {
+  } catch (error: any) {
     throw error;
   }
 }
