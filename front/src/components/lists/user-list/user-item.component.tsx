@@ -7,7 +7,7 @@ import { AvatarSmall } from "../../UI/avatar/avatar.component";
 import useHttp from "../../../hooks/use-http";
 import UpdateUserStatus from "../../UI/update-user-status/update-user-status.component";
 import ButtonDelete from "../../UI/button-delete/button-delete.component";
-import { Edit2Icon, MoveUpRight } from "lucide-react";
+import { CheckCircle, Edit2Icon, ScrollText } from "lucide-react";
 import { truncateText } from "../../../helpers/truncate-text";
 
 const UserItem: FC<{
@@ -70,12 +70,12 @@ const UserItem: FC<{
       </td>
       <td className="bg-transparent text-center capitalize">
         <span className="tooltip tooltip-bottom" data-tip={userItem.formation}>
-          {userItem.formation ? truncateText(userItem.formation, 20) : "-"}
+          {userItem.formation ? truncateText(userItem.formation, 20) : "ND"}
         </span>
       </td>
       <td className="bg-transparent text-center">
         <span className="tooltip tooltip-bottom" data-tip={userItem.parcours}>
-          {userItem.formation ? truncateText(userItem.parcours, 20) : "-"}
+          {userItem.formation ? truncateText(userItem.parcours, 20) : "ND"}
         </span>
       </td>
       {role === "everything" ? <td>{userItem.roles[0].label} </td> : null}
@@ -92,18 +92,41 @@ const UserItem: FC<{
           />
         )}
       </td>
+      <td className="mx-auto w-full">
+        {!userItem.invitationSent ? (
+          <button className="btn btn-accent btn-xs">Inviter</button>
+        ) : !userItem.emailVerified ? (
+          <button className="btn btn-accent btn-xs" disabled>
+            En cours...
+          </button>
+        ) : (
+          <CheckCircle className="text-success" />
+        )}
+      </td>
       <td className="bg-transparent font-bold text-xs rounded-r-xl">
         <div className="flex gap-x-4 text-primary">
-          <Can action="read" object={"user"}>
-            <Link
-              className="tooltip tooltip-bottom"
-              data-tip="Voir les informations de l'utilisateur"
-              aria-label="visualier les informations de l'utilisateur"
-              to={`/admin/teacher/student/${userItem._id}`}
-            >
-              <MoveUpRight className="w-4 h-4" />
-            </Link>
-          </Can>
+          {userItem.roles[0].rank > 2 ? (
+            <Can action="read" object={"user"}>
+              <Link
+                className="tooltip tooltip-bottom"
+                data-tip="Voir les informations de l'utilisateur"
+                aria-label="visualiser les informations de l'utilisateur"
+                to={`/admin/teacher/student/${userItem._id}`}
+              >
+                <ScrollText className="w-4 h-4" />
+              </Link>
+            </Can>
+          ) : (
+            <Can action="read" object={"user"}>
+              <div
+                className="tooltip tooltip-bottom"
+                data-tip="Voir les informations de l'utilisateur"
+                aria-label="visualiser les informations de l'utilisateur"
+              >
+                <ScrollText className="w-4 h-4 text-primary/20" />
+              </div>
+            </Can>
+          )}
           <Can action="update" object={userItem.roles[0].role}>
             <Link
               className="tooltip tooltip-bottom"

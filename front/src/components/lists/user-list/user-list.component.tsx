@@ -37,36 +37,6 @@ const UserList: FC<{
     onAllChecked();
   };
 
-  // fonction pour changer les rôles d'un unique utilisateur, elle a été déplacé ailleurs
-
-  /*   const handleRolesChange = (newRoles: Array<Role>, userId: string) => {
-    const updatedUserList = userList.map((item: any) =>
-      item._id === userId
-        ? {
-            ...item,
-            roles: sortArray(newRoles, "rank"),
-          }
-        : item
-    );
-    setUserList(updatedUserList);
-
-    const applyData = (data: any) => {};
-    sendRequest(
-      {
-        path: `/user/${role.role === "admin" ? "user" : "student"}/${userId}`,
-        method: "put",
-        body: newRoles,
-      },
-      applyData
-    );
-  }; */
-
-  /*   useEffect(() => {
-    if (userList.some((item) => !item.isSelected)) {
-      onUncheckAll();
-    }
-  }, [userList, onUncheckAll]); */
-
   useEffect(() => {
     onUncheckAll();
   }, [role, page, onUncheckAll]);
@@ -186,6 +156,21 @@ const UserList: FC<{
               <SortColumnIcon
                 fieldSort={stype}
                 column="isActive"
+                direction={sdir}
+              />
+            </div>
+          </th>
+          <th
+            className="cursor-pointer"
+            onClick={() => {
+              onSorting("emailVerified");
+            }}
+          >
+            <div className="flex items-center gap-x-2">
+              <p>Email vérifié</p>
+              <SortColumnIcon
+                fieldSort={stype}
+                column="emailVerified"
                 direction={sdir}
               />
             </div>
