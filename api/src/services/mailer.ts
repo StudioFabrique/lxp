@@ -12,6 +12,7 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function newUserMail(email: string, token: string) {
+  console.log(email, token, process.env.ENVIRONMENT);
   try {
     if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
 
