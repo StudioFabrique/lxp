@@ -44,7 +44,7 @@ export default async function createUser(user: IUser, roleId: string) {
     // Génére un token pour l'envoi de l'email
     const token = jwt.sign(
       { userId: createdUser._id, userRoles: [firstRole] },
-      "toto-secret",
+      process.env.REGISTER_SECRET!,
       {
         expiresIn: "24h",
       },
@@ -82,7 +82,7 @@ export default async function createUser(user: IUser, roleId: string) {
 
     // Retourner l'utilisateur créé et le rang du rôle
     return { createdUser, role: firstRole.rank };
-  } catch (error) {
+  } catch (error: any) {
     throw error;
   }
 }

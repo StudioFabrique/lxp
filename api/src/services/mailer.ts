@@ -26,6 +26,7 @@ export async function newUserMail(email: string, token: string) {
       html: `<b>Hello apprenant, pour activer votre compte veuillez cliquer sur le lien ci-dessous dans un délai de 24h</b><br/><a href=${activationLink}>Lien d'activation</a><br/><p>A bientôt !</p>`,
     });
   } catch (error: any) {
+    console.log({ error });
     throw {
       statusCode: 500,
       message:
