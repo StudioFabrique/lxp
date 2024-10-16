@@ -41,6 +41,8 @@ export default async function createUser(user: IUser, roleId: string) {
       roles: firstRole,
     });
 
+    console.log(process.env.EMAIL, process.env.REGISTER_SECRET);
+
     // Génére un token pour l'envoi de l'email
     const token = jwt.sign(
       { userId: createdUser._id, userRoles: [firstRole] },
