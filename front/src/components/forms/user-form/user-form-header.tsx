@@ -15,10 +15,7 @@ const UserFormHeader: FC<{
         <h2 className="text-4xl text-base-content font-bold">
           {title ?? "Créer un utilisateur"}
         </h2>
-        <p className="mt-2">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in urna
-          eget pura.
-        </p>
+        <p className="mt-2">Modifier les informations d'un utilisateur.</p>
       </div>
       <div className="flex items-center gap-x-2 justify-center md:justify-end">
         <Link to=".." className="btn btn-outline md:w-32 normal-case">
