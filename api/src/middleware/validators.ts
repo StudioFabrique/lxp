@@ -105,13 +105,13 @@ export const userValidator = (isFormData: boolean = false) => {
       .withMessage("city"),
     body(validatorSubject + ".postCode")
       .optional()
-      .escape()
+      .custom(customPostalCodeValidation)
       .trim()
       .escape()
       .withMessage("postCode non conforme"),
     body(validatorSubject + ".phoneNumber", "Numéro de téléphone incorrect")
       .optional()
-      .escape()
+      .custom(customPhoneNumberValidation)
       .trim()
       .escape(),
     body(validatorSubject + ".links.*.url")
