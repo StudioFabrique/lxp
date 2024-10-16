@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import useHttp from "./use-http";
 import { rowsPerPage } from "../config/pagination";
+import toast from "react-hot-toast";
 
 const initialState = {
   page: 1,
@@ -97,6 +98,26 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     });
   };
 
+  /**
+  retourne les identifiants des objets sélectionnés via les checkboxes
+  */
+  const getSelectedIds = (): string[] => {
+    const ids = dataList.map((item) => {
+      if (item.isSelected) return item._id;
+    });
+    return ids;
+  };
+
+  const sendInvitation = (userId: string) => {
+    const applyData = (data: { success: boolean; message: string }) => {
+      if (data.success) toast.success(data.message);
+    };
+    sendRequest(
+      { path: `/user/invitation/${userId}`, method: "put" },
+      applyData,
+    );
+  };
+
   useEffect(() => {
     getList();
   }, [path, getList]);
@@ -136,6 +157,8 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
     setPage,
     resetList,
     uncheckAll,
+    getSelectedIds,
+    sendInvitation,
   };
 };
 
