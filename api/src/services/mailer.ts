@@ -20,10 +20,9 @@ export async function newUserMail(email: string, token: string) {
     if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
 
     const activationLink = `${process.env.FRONT_URL}/register?id=${token}`;
-    const destination =
-      process.env.ENVIRONMENT === "production" ? email : process.env.SMTP_EMAIL;
+    const destination = email;
 
-    const accountActivation = await transporter.sendMail({
+    await transporter.sendMail({
       from: '"LXP - Administrateur" <martin@group-worker.com>',
       to: destination,
       subject: "Activation du compte",
