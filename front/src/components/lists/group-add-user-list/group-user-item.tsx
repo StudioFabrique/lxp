@@ -2,7 +2,6 @@
 import { ChangeEvent, ChangeEventHandler, FC } from "react";
 import User from "../../../utils/interfaces/user";
 import { AvatarSmall } from "../../UI/avatar/avatar.component";
-import { DeleteIcon } from "lucide-react";
 
 const GroupUserItem: FC<{
   user: any;
@@ -66,13 +65,15 @@ const GroupUserItem: FC<{
         </>
       )}
       <td className="bg-transparent rounded-r-xl">
-        <button
-          type="button"
-          className="btn btn-ghost hover:btn-ghost"
-          onClick={() => onDeleteUser(user)}
-        >
-          <DeleteIcon />
-        </button>
+        <div className="w-full flex justify-center">
+          <button
+            type="button"
+            className="btn btn-ghost hover:btn-ghost"
+            onClick={() => onDeleteUser(user)}
+          >
+            Supprimer
+          </button>
+        </div>
       </td>
     </tr>
   );

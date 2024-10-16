@@ -9,6 +9,7 @@ export default interface Group {
   desc: string;
   users?: Array<User>;
   students?: Array<Student>;
+  nbStudents?: number;
   startDate: string;
   endDate: string;
   createdAt?: Date;
