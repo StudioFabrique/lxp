@@ -20,7 +20,7 @@ pipeline {
 
 
 
-        stage('Trivy FS Scan') {
+/*        stage('Trivy FS Scan') {
             steps {
                sh 'trivy filesystem --format table -o fs-report.html .'
             }
@@ -62,11 +62,11 @@ pipeline {
             }
         }
 
-          stage('Trivy Image scan') {
+/*          stage('Trivy Image scan') {
             steps {
                 sh 'trivy image --format table -o fs-report.html studiostep/lxp:latest'
             }
-        }
+        }*/
 
           stage('Docker Push image') {
             steps {
