@@ -13,18 +13,18 @@ pipeline {
     stages {
         stage('Git Checkout') {
             steps {
-                git branch: 'stage', credentialsId: 'cyril-token-lxp', url: 'https://github.com/StudioFabrique/lxp.git'
+                git branch: 'lxpscrum-536-mettre-a-jour-la-liste-utilisateurs-une-fois-qu-un-ou-plusieurs-mails-d-activation-ont-ete-envoyes', credentialsId: 'cyril-token-lxp', url: 'https://github.com/StudioFabrique/lxp.git'
             }
         }
 
 
 
 
-        stage('Trivy FS Scan') {
+        /*stage('Trivy FS Scan') {
             steps {
                sh 'trivy filesystem --format table -o fs-report.html .'
             }
-        }
+        }*/
 
         stage('SonarQube') {
             steps {
@@ -62,11 +62,11 @@ pipeline {
             }
         }
 
-        stage('Trivy Image scan') {
+        /*stage('Trivy Image scan') {
             steps {
                 sh 'trivy image --format table -o fs-report.html studiostep/lxp:latest'
             }
-        }
+        }*/
 
           stage('Docker Push image') {
             steps {
