@@ -83,7 +83,7 @@ export default async function createUser(user: IUser, roleId: string) {
 
     // Retourner l'utilisateur créé et le rang du rôle
     return { createdUser, role: firstRole.rank };
-  } catch (error) {
+  } catch (error: any) {
     throw error;
   }
 }
