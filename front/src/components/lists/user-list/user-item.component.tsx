@@ -17,7 +17,16 @@ const UserItem: FC<{
   onDelete: (id: string) => void;
   isUserDeleteLoading: boolean;
   error?: string;
-}> = ({ role, userItem, onRowCheck, isUserDeleteLoading, error, onDelete }) => {
+  sendInvitation: (userId: string) => void;
+}> = ({
+  role,
+  userItem,
+  onRowCheck,
+  isUserDeleteLoading,
+  error,
+  onDelete,
+  sendInvitation,
+}) => {
   const { isLoading, sendRequest } = useHttp();
 
   const handleToggleStatus = () => {
@@ -94,7 +103,12 @@ const UserItem: FC<{
       </td>
       <td className="mx-auto w-full">
         {!userItem.invitationSent ? (
-          <button className="btn btn-accent btn-xs">Inviter</button>
+          <button
+            className="btn btn-accent btn-xs"
+            onClick={() => sendInvitation(userItem._id)}
+          >
+            Inviter
+          </button>
         ) : !userItem.emailVerified ? (
           <button className="btn btn-accent btn-xs" disabled>
             En cours...

@@ -37,6 +37,7 @@ import httpDeleteUser from "../../../controllers/user/http-delete-user";
 import activateAccount from "../../../middleware/activate-account";
 import httpPutPassword from "../../../controllers/user/http-put-password";
 import httpUpdateUser from "../../../controllers/user/http-update-user";
+import httpPutInvitation from "../../../controllers/user/http-put-invitation";
 
 const userRouter = express.Router();
 
@@ -222,5 +223,11 @@ userRouter.get(
 );
 
 userRouter.post("/activate", activateAccount, httpPutPassword);
+
+userRouter.put(
+  "/invitation/:userId",
+  checkPermissions("user"),
+  httpPutInvitation,
+);
 
 export default userRouter;

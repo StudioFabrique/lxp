@@ -20,6 +20,7 @@ import UsersStats from "../../utils/interfaces/users-stats";
 import Can from "../../components/UI/can/can.component";
 import RefreshIcon from "../../components/UI/svg/refresh-icon.component";
 import Header from "../../components/UI/header";
+import useInvitation from "../../hooks/use-invitation";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
@@ -42,6 +43,7 @@ const UserHome = () => {
     handleRowCheck,
     setAllChecked,
     setDataList,
+    sendInvitation,
   } = usePagination("lastname", "/user/everything");
   const { isLoading, sendRequest, error } = useHttp();
 
@@ -74,7 +76,7 @@ const UserHome = () => {
 
   const handleGroupRolesChange = async (updatedRoles: Array<Role>) => {
     const selectedDataList = dataList.filter(
-      (user: any) => user.isSelected === true
+      (user: any) => user.isSelected === true,
     );
     const updatedDataList = Array<string>();
 
@@ -110,7 +112,7 @@ const UserHome = () => {
           method: "put",
           body: { usersToUpdate: updatedDataList, rolesId: updatedRolesIds },
         },
-        applyData
+        applyData,
       );
     }
   };
@@ -145,7 +147,7 @@ const UserHome = () => {
       {
         path: "/user/stats",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
 
@@ -165,7 +167,7 @@ const UserHome = () => {
         method: "put",
         body: { usersIds, status: value },
       },
-      applyData
+      applyData,
     );
   };
 
@@ -182,7 +184,7 @@ const UserHome = () => {
 
         const dataToChange = dataList.filter((user) => user._id !== id);
         setDataList(dataToChange);
-      }
+      },
     );
   };
 
@@ -241,6 +243,7 @@ const UserHome = () => {
               stype={stype}
               onDelete={handleDeleteUser}
               error={error}
+              sendInvitation={sendInvitation}
             />
             {dataList.length > 0 ? (
               <Pagination

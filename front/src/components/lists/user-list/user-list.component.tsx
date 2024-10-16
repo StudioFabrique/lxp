@@ -18,6 +18,7 @@ const UserList: FC<{
   onDelete: (id: string) => void;
   isLoading: boolean;
   error?: string;
+  sendInvitation: (userId: string) => void;
 }> = ({
   allChecked,
   page,
@@ -32,6 +33,7 @@ const UserList: FC<{
   onDelete,
   isLoading,
   error,
+  sendInvitation,
 }) => {
   const handleAllChecked = () => {
     onAllChecked();
@@ -192,6 +194,7 @@ const UserList: FC<{
                 onRowCheck={onRowCheck}
                 isUserDeleteLoading={isLoading}
                 error={error}
+                sendInvitation={sendInvitation}
               />
             }
           </tr>
