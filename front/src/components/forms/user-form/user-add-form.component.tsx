@@ -123,10 +123,9 @@ const UserAddForm: FC<{
   useEffect(() => {
     if (props.user?.graduations) {
       setGraduations(props.user?.graduations);
-      console.log("test effectué");
     }
     if (props.user?.roles) {
-      setRoleId(props.user?.roles[0]);
+      setRoleId(props.user?.roles[0]._id);
     }
   }, [props.user]);
 
@@ -138,9 +137,7 @@ const UserAddForm: FC<{
         disabled={props.fieldsDisabled}
       />
       <div className="flex flex-col gap-y-5">
-        <div
-          className={`grid ${props.editMode ? "grid-cols-2" : "grid-cols-3"} gap-x-5`}
-        >
+        <div className={`grid grid-cols-3 gap-x-5`}>
           <Informations
             lastname={lastname}
             firstname={firstname}
@@ -158,20 +155,18 @@ const UserAddForm: FC<{
             postCode={postCode}
             disabled={props.fieldsDisabled}
           />
-          {!props.editMode ? (
-            <div className="grid grid-rows-1 gap-y-5">
-              <TypeUtilisateur
-                roleId={roleId}
-                onSetRoleId={setRoleId}
-                disabled={props.fieldsDisabled}
-              />
-              <CentreInterets
-                hobbies={hobbies}
-                setHobbies={setHobbies}
-                disabled={props.fieldsDisabled}
-              />
-            </div>
-          ) : undefined}
+          <div className="grid grid-rows-1 gap-y-5">
+            <TypeUtilisateur
+              roleId={roleId}
+              onSetRoleId={setRoleId}
+              disabled={props.fieldsDisabled || props.editMode}
+            />
+            <CentreInterets
+              hobbies={hobbies}
+              setHobbies={setHobbies}
+              disabled={props.fieldsDisabled}
+            />
+          </div>
         </div>
         <div>
           <Presentation
@@ -179,9 +174,7 @@ const UserAddForm: FC<{
             disabled={props.fieldsDisabled}
           />
         </div>
-        <div
-          className={`grid ${props.editMode ? "grid-cols-2" : "grid-cols-3"} gap-x-5`}
-        >
+        <div className={`grid grid-cols-3 gap-x-5`}>
           <div className="col-span-2">
             <Certifications
               graduations={graduations}
@@ -189,13 +182,11 @@ const UserAddForm: FC<{
               disabled={props.fieldsDisabled}
             />
           </div>
-          {!props.editMode ? (
-            <Links
-              links={links}
-              onSetLinks={setLinks}
-              disabled={props.fieldsDisabled}
-            />
-          ) : undefined}
+          <Links
+            links={links}
+            onSetLinks={setLinks}
+            disabled={props.fieldsDisabled}
+          />
         </div>
       </div>
     </form>
