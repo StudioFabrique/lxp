@@ -47,7 +47,7 @@ const DropdownActionsUser: FC<Props> = ({
 
   return (
     <>
-      <div className="dropdown dropdown-bottom dropdown-end flex gap-y-4 w-fit z-50">
+      <div className="dropdown dropdown-bottom dropdown-end flex gap-y-4 w-64 z-50">
         <button
           className="btn btn-outline btn-sm border-none text-primary"
           onClick={() => setShowDropDown(true)}
@@ -68,7 +68,7 @@ const DropdownActionsUser: FC<Props> = ({
         {showDropDown ? (
           <ul
             tabIndex={0}
-            className="dropdown-content menu p-1 shadow bg-base-100 rounded-box w-fit mt-4"
+            className="dropdown-content menu p-1 shadow bg-base-100 rounded-box w-48 mt-4"
           >
             <Can action="update" object={roleTab.role}>
               <li onClick={handleAddUserToGroup}>
