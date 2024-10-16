@@ -23,6 +23,7 @@ const GroupForm: FC<{
     onSetFile,
     onSubmit,
     values,
+    parcoursId,
   } = useGroupForm({
     onSubmitForm: props.onSubmitForm,
     group: props.group,
@@ -47,7 +48,11 @@ const GroupForm: FC<{
           errors={errors}
           onSetFile={onSetFile}
         />
-        <Details group={props.group} onSelectParcours={onSelectParcours} />
+        <Details
+          group={props.group}
+          onSelectParcours={onSelectParcours}
+          selectedParcoursId={parcoursId}
+        />
       </div>
     </form>
   );
