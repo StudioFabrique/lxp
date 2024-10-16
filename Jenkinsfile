@@ -13,14 +13,14 @@ pipeline {
     stages {
         stage('Git Checkout') {
             steps {
-                git branch: 'lxpscrum-532-envoyer-un-courriel-a-l-utilisateur-qui-vient-de-creer-son-compte-ou-au-developpeur-dans-un-environnement-de-dev', credentialsId: 'cyril-token-lxp', url: 'https://github.com/StudioFabrique/lxp.git'
+                git branch: 'stage', credentialsId: 'cyril-token-lxp', url: 'https://github.com/StudioFabrique/lxp.git'
             }
         }
 
 
 
 
-/*        stage('Trivy FS Scan') {
+        stage('Trivy FS Scan') {
             steps {
                sh 'trivy filesystem --format table -o fs-report.html .'
             }
@@ -62,11 +62,11 @@ pipeline {
             }
         }
 
-/*          stage('Trivy Image scan') {
+        stage('Trivy Image scan') {
             steps {
                 sh 'trivy image --format table -o fs-report.html studiostep/lxp:latest'
             }
-        }*/
+        }
 
           stage('Docker Push image') {
             steps {
@@ -80,14 +80,14 @@ pipeline {
 
         stage('Docker Deploy to dev') {
             steps {
-/*                withCredentials([file(credentialsId: 'lxp-env-file', variable: 'ENV_FILE')]) {
+                withCredentials([file(credentialsId: 'lxp-env-file', variable: 'ENV_FILE')]) {
                     script {
                         // Read the contents of the environment file
                         def envContent = readFile("${ENV_FILE}")
                         // Write the contents to .env file in the workspace
                         writeFile file: '.env', text: envContent
                     }
-                }*/
+                }
                 script {
                     withDockerRegistry(credentialsId: 'docker-registry', toolName: 'docker') {
                         // Arrêter tous les conteneurs et s'assurer qu'ils sont bien arrêtés
