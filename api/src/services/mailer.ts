@@ -17,7 +17,9 @@ export async function newUserMail(email: string, token: string) {
 
     const activationLink = `${process.env.FRONT_URL}/register?id=${token}`;
     const destination =
-      process.env.ENVIRONMENT === "production" ? email : process.env.SMTP_EMAIL;
+      process.env.ENVIRONMENT === "development"
+        ? process.env.SMTP_EMAIL
+        : email;
 
     await transporter.sendMail({
       from: '"LXP - Administrateur" <martin@group-worker.com>',
