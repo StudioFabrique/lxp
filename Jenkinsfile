@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Git Checkout') {
             steps {
-                git branch: 'stage', credentialsId: 'cyril-token-lxp', url: 'https://github.com/StudioFabrique/lxp.git'
+                git branch: 'lxpscrum-532-envoyer-un-courriel-a-l-utilisateur-qui-vient-de-creer-son-compte-ou-au-developpeur-dans-un-environnement-de-dev', credentialsId: 'cyril-token-lxp', url: 'https://github.com/StudioFabrique/lxp.git'
             }
         }
 
