@@ -51,6 +51,7 @@ async function getAllGroups(
 
         return {
           ...group,
+          nbStudents: group.users.length,
           formation:
             groupPrisma?.parcours && groupPrisma?.parcours.length > 0
               ? `${groupPrisma?.parcours[0].parcours.formation.title} - ${groupPrisma?.parcours[0].parcours.title}`
