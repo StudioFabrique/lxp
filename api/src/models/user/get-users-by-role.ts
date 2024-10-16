@@ -48,11 +48,11 @@ async function getUsersByRole(
       {
         groupId: group.idMdb,
         parcours:
-          group.parcours.length > 0 ? group.parcours[0].parcours.title : "-",
+          group.parcours.length > 0 ? group.parcours[0].parcours.title : "ND",
         formation:
           group.parcours.length > 0
             ? group.parcours[0].parcours.formation.title
-            : "-",
+            : "ND",
       },
     ];
   }
@@ -89,6 +89,8 @@ async function getUsersByRole(
       avatar: 1,
       isActive: 1,
       createdAt: 1,
+      emailVerified: 1,
+      invitationSent: 1,
     },
   )
     .populate("group")
@@ -106,13 +108,13 @@ async function getUsersByRole(
           ? groupsData.find(
               (item) => user.group[0]._id.toString() === item.groupId,
             ).parcours
-          : "-",
+          : "ND",
       formation:
         user.group && user.group.length > 0
           ? groupsData.find(
               (item) => user.group[0]._id.toString() === item.groupId,
             ).formation
-          : "-",
+          : "ND",
       avatar: user.avatar ? user.avatar.toString("base64") : null,
     };
   });
