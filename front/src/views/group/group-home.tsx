@@ -46,7 +46,7 @@ const GroupHome = () => {
       setRole(role);
       setPath(`/group/${role.role}`);
     },
-    [initPagination, setPath]
+    [initPagination, setPath],
   );
 
   const handleSearchResult = (entityToSearch: string, searchValue: string) => {
@@ -81,10 +81,6 @@ const GroupHome = () => {
   }, [history?.toastFrom]);
 
   useEffect(() => {
-    setRole(roles[0]);
-  }, [roles]);
-
-  useEffect(() => {
     if (role) {
       getList();
     }
@@ -106,9 +102,6 @@ const GroupHome = () => {
               </Link>
             </Can>
           </span>
-          {user && role ? (
-            <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />
-          ) : null}
           <div className="flex items-center justify-end">
             <div className="flex flex-col">
               <Search
