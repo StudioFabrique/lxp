@@ -38,6 +38,7 @@ import activateAccount from "../../../middleware/activate-account";
 import httpPutPassword from "../../../controllers/user/http-put-password";
 import httpUpdateUser from "../../../controllers/user/http-update-user";
 import httpPutInvitation from "../../../controllers/user/http-put-invitation";
+import httpPostCheckActivationToken from "../../../controllers/user/http-post-check-activation-token";
 
 const userRouter = express.Router();
 
@@ -228,6 +229,12 @@ userRouter.put(
   "/invitation/:userId",
   checkPermissions("user"),
   httpPutInvitation,
+);
+
+userRouter.post(
+  "/check-invitation",
+  activateAccount,
+  httpPostCheckActivationToken,
 );
 
 export default userRouter;
