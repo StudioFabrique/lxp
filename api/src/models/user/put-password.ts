@@ -11,10 +11,11 @@ export default async function putPassword(userId: string, password: string) {
     throw { statusCode: 404, message: "L'utilisateur n'existe pas" };
 
   const hashedPassword = await hash(password, 10);
-  const updatedUser = await User.findOneAndUpdate(
-    { _id: userId },
-    { ...existingUser, password: hashedPassword },
-    { new: false },
+  const updatedResult = await User.updateOne(
+    { _id: existingUser._id },
+    {
+      $set: { password: hashedPassword, isActive: true, emailVerified: true },
+    },
   );
-  return updatedUser;
+  return updatedResult;
 }
