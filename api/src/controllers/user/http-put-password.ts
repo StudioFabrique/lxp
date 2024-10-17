@@ -9,16 +9,14 @@ export default async function httpPutPassword(
 ) {
   try {
     const userId = req.auth?.userId;
-    const { password } = req.body;
-    console.log({ userId });
-    await putPassword(userId!, password);
+    const { password, token } = req.body;
+    await putPassword(userId!, password, token);
     const result = {
       statusCode: 200,
       data: { success: true, message: "Mot de passe mis à jour avec succès" },
     };
     next(result);
   } catch (error: any) {
-    console.log({ error });
     const err = {
       statusCode: error.statusCode ?? 500,
       message: error.message,
