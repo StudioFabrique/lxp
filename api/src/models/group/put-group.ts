@@ -1,3 +1,4 @@
+import { prisma } from "../../utils/db";
 import Group, { IGroup } from "../../utils/interfaces/db/group";
 import User, { IUser } from "../../utils/interfaces/db/user";
 import activateMultipleUsers from "../user/activate-multiple-users";
@@ -33,7 +34,7 @@ export default async function putGroup(
     );
 
     if (parcoursId) {
-      await prisma?.groupsOnParcours.updateMany({
+      await prisma.groupsOnParcours.updateMany({
         where: { group: { idMdb: id } },
         data: { parcoursId },
       });

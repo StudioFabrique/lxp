@@ -75,7 +75,7 @@ const GroupList: FC<{
               onSorting("desc");
             }}
           >
-            Actif
+            Nombre d'étudiants
           </th>
           {showActions ? <th>Actions</th> : null}
         </tr>

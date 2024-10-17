@@ -3,12 +3,12 @@ import GroupManageUserList from "./group-manage-user-list/group-manage-user-list
 import User from "../../../utils/interfaces/user";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import GroupUserItem from "./group-user-item";
-import SearchSimple from "../../UI/search-simple/search-simple";
 import CsvImportUserList from "./csv-import-user/csv-import-user-list/csv-import-user-list.component";
 import LoadingIcon from "../../UI/svg/loading-icon.component";
 import ThreeDotIcon from "../../UI/svg/three-dot-icon.component";
 import useEagerLoadingList from "../../../hooks/use-eager-loading-list";
 import Pagination from "../../UI/pagination/pagination";
+import SearchBar from "../../UI/search-bar/search-bar";
 
 const GroupUserList: FC<{
   usersToAdd: User[];
@@ -103,7 +103,7 @@ const GroupUserList: FC<{
           usersToAdd={usersToAdd}
           onCloseDrawer={handleCloseDrawer}
         />
-        <SearchSimple
+        <SearchBar
           setFilter={setFilter}
           placeholder="Rechercher un étudiant par nom ou prénom"
         />

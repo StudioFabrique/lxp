@@ -12,9 +12,11 @@ export default async function getGroupDetails(groupId: string) {
     select: {
       parcours: {
         select: {
+          parcoursId: true,
           parcours: {
             select: {
-              formation: { select: { title: true } },
+              formationId: true,
+              formation: { select: { id: true, title: true } },
               title: true,
             },
           },
@@ -28,9 +30,11 @@ export default async function getGroupDetails(groupId: string) {
 
   return {
     ...group,
-    formation:
-      groupPrisma?.parcours && groupPrisma?.parcours.length > 0
-        ? `${groupPrisma?.parcours[0].parcours.formation.title} - ${groupPrisma?.parcours[0].parcours.title}`
-        : undefined,
+    // formation:
+    //   groupPrisma?.parcours && groupPrisma?.parcours.length > 0
+    //     ? `${groupPrisma?.parcours[0].parcours.formation.title} - ${groupPrisma?.parcours[0].parcours.title}`
+    //     : undefined,
+    formationId: groupPrisma?.parcours[0].parcours.formationId,
+    parcoursId: groupPrisma?.parcours[0].parcoursId,
   };
 }

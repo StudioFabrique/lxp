@@ -68,9 +68,10 @@ services:
       - FIXTURES_MONGO_URL=${FIXTURES_MONGO_URL}
       - SECRET=${SECRET}
       - EMAIL=${EMAIL}
-      - PASSWORD =${PASSWORD}
+      - PASSWORD=${PASSWORD}
       - SMTP=${SMTP}
       - SMTP_EMAIL=${SMTP_EMAIL}
       - SMTP_PORT=${SMTP_PORT}
       - FROM=${FROM}
       - REGISTER_SECRET=${REGISTER_SECRET}
+      - FRONT_URL=${FRONT_URL}

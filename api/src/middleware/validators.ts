@@ -14,7 +14,7 @@ import { stringValidateGeneric } from "../helpers/custom-validators";
 export const checkValidatorResult = (
   req: CustomRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const checkValues = validationResult(req);
 
@@ -272,9 +272,6 @@ export const groupValidator = [
   body("data.users.*._id")
     .isString()
     .withMessage("les id du tableau users doivent être de type string"),
-  body("data.users.*.isActive")
-    .isBoolean()
-    .withMessage("isActive du tableau users doit être de type boolean"),
   checkValidatorResult,
 ];
 
