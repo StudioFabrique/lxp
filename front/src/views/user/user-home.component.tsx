@@ -20,7 +20,6 @@ import UsersStats from "../../utils/interfaces/users-stats";
 import Can from "../../components/UI/can/can.component";
 import RefreshIcon from "../../components/UI/svg/refresh-icon.component";
 import Header from "../../components/UI/header";
-import useInvitation from "../../hooks/use-invitation";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
