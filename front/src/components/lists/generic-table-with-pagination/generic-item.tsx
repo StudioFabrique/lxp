@@ -1,11 +1,11 @@
 import { PropsWithChildren, ReactNode } from "react";
 import GenericCell from "./generic-cell";
 import GenericActionCell from "./generic-action-cell";
-import { GenericActionItem } from "./interfaces/generic-action";
+import GenericAction from "./interfaces/generic-action";
 
 type ItemProps<TData extends ArrayLike<string>> = {
   data: TData;
-  actions: GenericActionItem[];
+  actions: GenericAction[];
 };
 
 const GenericItem = <TData extends ArrayLike<string>>(
@@ -21,7 +21,7 @@ const GenericItem = <TData extends ArrayLike<string>>(
         </GenericCell>
       ))}
       {props.actions.map((action) => (
-        <GenericActionCell id={action.id} />
+        <GenericActionCell {...action} />
       ))}
     </tr>
   );
