@@ -67,7 +67,9 @@ const GroupUserList: FC<{
   return (
     <Wrapper>
       <div className="flex justify-between items-center">
-        <h2 className="font-bold text-lg">Etudiants</h2>
+        <div>
+          <h2 className="font-bold text-lg">Etudiants</h2>
+        </div>
         <div className="flex gap-x-2 items-center">
           <CsvImportUserList
             onAddUsers={onAddUsers}

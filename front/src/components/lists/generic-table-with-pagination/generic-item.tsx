@@ -1,7 +1,7 @@
 import { PropsWithChildren, ReactNode } from "react";
 import GenericCell from "./generic-cell";
 import GenericActionCell from "./generic-action-cell";
-import GenericAction from "./interfaces/generic-action";
+import { GenericAction } from "./interfaces/generic-action";
 
 type ItemProps<TData extends ArrayLike<string>> = {
   data: TData;

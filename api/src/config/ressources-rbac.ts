@@ -21,7 +21,8 @@ export const ressourcesRbac = [
 // Pour les actions write, update et delete pour teacher rank 2
 // enlever certaines ressources du tableau
 const teacherRbacRessources = ressourcesRbac.filter(
-  (ressource) => !ressource.includes("user"),
+  (ressource) =>
+    !ressource.includes("user") || !ressource.includes("permission"),
 );
 
 // Ressources (toutes permissions crud) sur les différents rôles template

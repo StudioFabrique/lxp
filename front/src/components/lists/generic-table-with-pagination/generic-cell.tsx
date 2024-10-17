@@ -2,6 +2,7 @@ import { PropsWithChildren } from "react";
 
 type CellProps = {
   property: string;
+  label?: string;
 };
 
 /**
