@@ -18,7 +18,7 @@ export async function newUserMail(email: string, token: string) {
   try {
     if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
 
-    const activationLink = `${process.env.FRONT_URL}/register?id=${token}`;
+    const activationLink = `${process.env.FRONT_URL}register?id=${token}`;
     const destination =
       process.env.ENVIRONMENT === "development"
         ? process.env.SMTP_EMAIL
