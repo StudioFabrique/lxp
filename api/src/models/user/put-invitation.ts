@@ -46,7 +46,7 @@ export default async function putInvitation(userId: string) {
   // si le mail a été envoyé sans erreur de la part du serveur, la propriété invitationSent est mise à jour dans la BDD
   const updateResult = await User.updateOne(
     { _id: existingUser._id },
-    { $set: { invitationSent: true, firstname: "toto" } }
+    { $set: { invitationSent: true } },
   );
   console.log({ updateResult });
   return updateResult;

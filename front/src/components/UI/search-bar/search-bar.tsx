@@ -1,6 +1,6 @@
 import { Dispatch, FC, FormEvent, SetStateAction } from "react";
 
-const SearchSimple: FC<{
+const SearchBar: FC<{
   placeholder: string;
   setFilter: Dispatch<SetStateAction<string | undefined>>;
 }> = ({ placeholder, setFilter }) => {
@@ -9,8 +9,15 @@ const SearchSimple: FC<{
     setFilter(event.currentTarget.value);
   };
 
+  const handlePreventSubmit = (event: FormEvent) => {
+    event.preventDefault();
+  };
+
   return (
-    <form className="flex items-center bg-secondary/10 w-[40%] gap-x-2 p-2 rounded-md">
+    <form
+      className="flex items-center bg-secondary/10 w-[40%] gap-x-2 p-2 rounded-md"
+      onSubmit={handlePreventSubmit}
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -35,4 +42,4 @@ const SearchSimple: FC<{
   );
 };
 
-export default SearchSimple;
+export default SearchBar;

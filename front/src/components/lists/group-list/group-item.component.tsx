@@ -56,13 +56,7 @@ const GroupItem: FC<{
         {toTitleCase(groupItem.formation ?? "-")}
       </td>
       <td className="bg-transparent flex gap-4 items-center">
-        <p>{groupItem.isActive ? "Actif" : "Inactif"}</p>
-        <input
-          defaultChecked={groupItem.isActive}
-          className="toggle disabled:toggle-primary"
-          type="checkbox"
-          disabled
-        />
+        {groupItem?.nbStudents}
       </td>
       {showActions ? (
         <td className="bg-transparent font-bold text-xs">
