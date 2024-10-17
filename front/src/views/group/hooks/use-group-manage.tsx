@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate, useParams } from "react-router-dom";
-import useHttp from "../../hooks/use-http";
+import useHttp from "../../../hooks/use-http";
 import { useCallback, useEffect, useState } from "react";
-import User from "../../utils/interfaces/user";
-import Group from "../../utils/interfaces/group";
+import User from "../../../utils/interfaces/user";
+import Group from "../../../utils/interfaces/group";
 
 function useGroupManage() {
   const { id } = useParams();
@@ -34,7 +34,7 @@ function useGroupManage() {
     const formData = new FormData();
     formData.append(
       "data",
-      JSON.stringify({ ...data, users: usersIdWithActiveState })
+      JSON.stringify({ ...data, users: usersIdWithActiveState }),
     );
     formData.append("image", file);
 
@@ -44,7 +44,7 @@ function useGroupManage() {
         path: submitMethod === "post" ? "/group" : `/group/${id}`,
         body: formData,
       },
-      applyData
+      applyData,
     );
   };
 
@@ -57,14 +57,14 @@ function useGroupManage() {
       usersToAdd.map((userToAdd) =>
         userToAdd._id === user._id
           ? { ...userToAdd, isActive: user.isActive }
-          : userToAdd
-      )
+          : userToAdd,
+      ),
     );
   };
 
   const handleDeleteUser = (user: User) => {
     setUsersToAdd((usersToAdd) =>
-      usersToAdd.filter((userToAdd) => userToAdd._id !== user._id)
+      usersToAdd.filter((userToAdd) => userToAdd._id !== user._id),
     );
   };
 

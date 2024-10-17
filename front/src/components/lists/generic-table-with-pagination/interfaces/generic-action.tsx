@@ -8,3 +8,4 @@ export default interface GenericAction {
 }
 
 type ActionType = "submit" | "button" | "toggle" | "checkbox";
+// include list selecter type later
