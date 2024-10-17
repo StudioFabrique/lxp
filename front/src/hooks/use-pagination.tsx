@@ -110,7 +110,10 @@ const usePagination = (defaultSortValue: string, defaultUrlPath: string) => {
 
   const sendInvitation = (userId: string) => {
     const applyData = (data: { success: boolean; message: string }) => {
-      if (data.success) toast.success(data.message);
+      if (data.success) {
+        toast.success(data.message);
+        getList();
+      }
     };
     sendRequest(
       { path: `/user/invitation/${userId}`, method: "put" },

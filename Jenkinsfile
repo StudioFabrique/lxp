@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Git Checkout') {
             steps {
-                git branch: 'lxpscrum-536-mettre-a-jour-la-liste-utilisateurs-une-fois-qu-un-ou-plusieurs-mails-d-activation-ont-ete-envoyes', credentialsId: 'cyril-token-lxp', url: 'https://github.com/StudioFabrique/lxp.git'
+                git branch: 'stage', credentialsId: 'cyril-token-lxp', url: 'https://github.com/StudioFabrique/lxp.git'
             }
         }
 
