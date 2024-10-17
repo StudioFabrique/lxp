@@ -16,11 +16,7 @@ const transporter = nodemailer.createTransport({
 
 export async function newUserMail(email: string, token: string) {
   try {
-    console.log(
-      process.env.EMAIL,
-      process.env.PASSWORD,
-      process.env.SMTP_EMAIL,
-    );
+    console.log(process.env.EMAIL, process.env.PASSWORD);
     if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
 
     const activationLink = `${process.env.FRONT_URL}/register?id=${token}`;
