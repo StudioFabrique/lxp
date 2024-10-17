@@ -16,6 +16,11 @@ const transporter = nodemailer.createTransport({
 
 export async function newUserMail(email: string, token: string) {
   try {
+    console.log(
+      process.env.EMAIL,
+      process.env.PASSWORD,
+      process.env.SMTP_EMAIL,
+    );
     if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
 
     const activationLink = `${process.env.FRONT_URL}/register?id=${token}`;
@@ -28,7 +33,7 @@ export async function newUserMail(email: string, token: string) {
     await transporter.verify();
 
     const result = await transporter.sendMail({
-      from: '"LXP - Administrateur" <martin@group-worker.com>',
+      from: '"LXP - Administrateur" <cponsan@fabriquenumerique.fr.fr>',
       to: destination,
       subject: "Activation du compte",
       html: `<b>Hello apprenant, pour activer votre compte veuillez cliquer sur le lien ci-dessous dans un délai de 24h</b><br/><a href=${activationLink}>Lien d'activation</a><br/><p>A bientôt !</p>`,
@@ -49,17 +54,3 @@ export async function newUserMail(email: string, token: string) {
     };
   }
 }
-
-// Helper function to check environment variables
-function checkEnvVariables() {
-  const requiredVars = ["SMTP", "EMAIL", "PASSWORD", "FRONT_URL"];
-  const missingVars = requiredVars.filter((varName) => !process.env[varName]);
-
-  if (missingVars.length > 0) {
-    console.error("Missing environment variables:", missingVars.join(", "));
-    throw new Error("Missing required environment variables");
-  }
-}
-
-// Call this function before using the email functionality
-checkEnvVariables();
