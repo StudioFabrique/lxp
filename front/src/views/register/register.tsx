@@ -3,6 +3,7 @@ import { Context } from "../../store/context.store";
 import FieldPassword from "../../components/UI/forms/field-password";
 import { regexPassword } from "../../utils/constantes";
 import { useSearchParams } from "react-router-dom";
+import { BASE_URL } from "../../config/urls";
 
 export default function RegisterHome() {
   const [password, setPassword] = useState("");
@@ -20,7 +21,7 @@ export default function RegisterHome() {
       p1: regexPassword.test(password),
       p2: regexPassword.test(password2),
     });
-    await fetch("http://localhost:5001/v1/user/activate", {
+    await fetch(`${BASE_URL}/user/activate`, {
       method: "post",
       body: JSON.stringify({
         token: searchParams.get("id") ?? "toto ken",
