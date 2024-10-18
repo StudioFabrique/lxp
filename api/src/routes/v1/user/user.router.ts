@@ -23,7 +23,12 @@ import httpGetUsersByRank from "../../../controllers/user/http-get-users-by-rank
 import multer from "multer";
 import userProfileRouter from "./profile/user-profile.router";
 import hobbyRouter from "./hobby/hobby.router";
-import { getUsersByRoleValidator } from "./user-validators";
+import {
+  getUsersByRoleValidator,
+  postPasswordValidator,
+  tokenValidator,
+  userIdValidator,
+} from "./user-validators";
 import { paginationValidator } from "../../../helpers/custom-validators";
 import httpGetUserLastParcours from "../../../controllers/user/http-get-user-last-parcours";
 import httpGetUserData from "../../../controllers/user/http-get-user-data";
@@ -223,16 +228,24 @@ userRouter.get(
   httpGetLastFeedbacks,
 );
 
-userRouter.post("/activate", activateAccount, httpPutPassword);
+//  met à jour le mot d'un passe d'un nouvel utilisateur
+userRouter.post(
+  "/activate",
+  postPasswordValidator,
+  activateAccount,
+  httpPutPassword,
+);
 
 userRouter.put(
   "/invitation/:userId",
+  userIdValidator,
   checkPermissions("user"),
   httpPutInvitation,
 );
 
 userRouter.post(
   "/check-invitation",
+  tokenValidator,
   activateAccount,
   httpPostCheckActivationToken,
 );

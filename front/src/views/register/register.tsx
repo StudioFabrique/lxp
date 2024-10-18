@@ -12,6 +12,7 @@ import FieldPassword from "../../components/UI/forms/field-password";
 import SubmitButton from "../../components/UI/submit-button";
 import useAccountActivation from "../../hooks/use-account-activation";
 import { Context } from "../../store/context.store";
+import { Loader } from "lucide-react";
 
 export default function RegisterHome() {
   const { chooseTheme } = useContext(Context);
@@ -58,10 +59,13 @@ export default function RegisterHome() {
             // Message si l'activation du compte est réussie
             <section className="flex flex-col place-items-center">
               <FadeWrapper>
-                <p>
-                  Votre compte a été activé, vous allez être redirigé
-                  automatiquement vers la page de connexion...
-                </p>
+                <span className="flex items center gap-x-2">
+                  <p>
+                    Votre compte a été activé, vous allez être redirigé
+                    automatiquement vers la page de connexion...
+                  </p>
+                  <Loader className="text-primary animate-spin" />
+                </span>
                 <Link className="text-xs text-primary underline" to="/">
                   Cliquez sur ce lien si vous n'êtes pas redirigé...
                 </Link>

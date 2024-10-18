@@ -40,6 +40,7 @@ export default async function putPassword(
 
     return updatedResult;
   } catch (error: any) {
+    console.log({ error });
     throw {
       statusCode: 500,
       message:
