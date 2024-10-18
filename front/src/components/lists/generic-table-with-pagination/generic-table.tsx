@@ -11,10 +11,10 @@ type TableProps<TData extends Record<string, unknown>> = {
   actionsItems?: GenericActionConfig[];
 };
 
-const GenericTable = <TData extends Record<string, unknown>>(
+const GenericTable = <TData extends Record<string, string>>(
   props: TableProps<TData>,
 ) => {
-  const { labels, filteredData } = useGenericTable<TData>(
+  const { labels, tableItems } = useGenericTable<TData>(
     props.idProperty,
     props.data,
     props.tableItems,
@@ -25,7 +25,7 @@ const GenericTable = <TData extends Record<string, unknown>>(
     <table>
       <GenericTableHead items={labels} />
       <tbody>
-        {filteredData.map((item) => (
+        {tableItems?.map((item) => (
           <GenericTableItem
             key={item.id}
             id={item.id}
