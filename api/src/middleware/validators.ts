@@ -9,7 +9,10 @@ import {
 import { badQuery } from "../utils/constantes";
 import { logger } from "../utils/logs/logger";
 import CustomRequest from "../utils/interfaces/express/custom-request";
-import { stringValidateGeneric } from "../helpers/custom-validators";
+import {
+  stringValidateGeneric,
+  stringValidateOptional,
+} from "../helpers/custom-validators";
 
 export const checkValidatorResult = (
   req: CustomRequest,
@@ -66,42 +69,28 @@ export const userValidator = (isFormData: boolean = false) => {
 
   const validationChain = [
     body(validatorSubject + ".email")
-      .exists()
-      .notEmpty()
       .isEmail()
       .trim()
-      .escape()
       .withMessage("firstname ou lastname non conforme"),
     body([validatorSubject + ".firstname", validatorSubject + ".lastname"])
-      .exists()
-      .notEmpty()
-      .isString()
       .trim()
-      .escape()
+      .custom(stringValidateGeneric)
       .withMessage("firstname ou lastname non conforme"),
     body(validatorSubject + ".nickname")
-      .optional()
-      .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage("nickname"),
     body(validatorSubject + ".description")
-      .optional()
-      .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage("description"),
     body(validatorSubject + ".address")
-      .optional()
-      .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage("address"),
     body(validatorSubject + ".city")
-      .optional()
-      .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage("city"),
     body(validatorSubject + ".postCode")
       .optional()
