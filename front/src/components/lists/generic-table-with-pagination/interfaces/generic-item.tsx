@@ -8,7 +8,7 @@ export interface GenericItemConfig {
 export interface GenericItem {
   id: string;
   data: Record<string, string>;
-  actions: GenericAction[];
+  actions?: GenericAction[];
 }
 
 export default GenericItem;
