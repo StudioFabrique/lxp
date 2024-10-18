@@ -2,8 +2,9 @@ import { Link } from "react-router-dom";
 import Can from "../../components/UI/can/can.component";
 import Header from "../../components/UI/header";
 import { groupHomeTableItems } from "./group-home-table-config";
-import { TableListActionConfig } from "../../components/lists/generic-table-list/interfaces/table-list-action";
 import TableList from "../../components/table/generic-table-list/table-list";
+import { TableListActionConfig } from "../../components/table/generic-table-list/interfaces/table-list-action";
+import { Pen, Trash2 } from "lucide-react";
 
 const GroupHome = () => {
   // usePagination here to get data
@@ -26,7 +27,20 @@ const GroupHome = () => {
   ];
 
   const actions: TableListActionConfig[] = [
-    { type: "button", property: "testing", onSuccessfulSubmit: () => {} },
+    {
+      property: "edit",
+      type: "link",
+      tooltip: "Modifier",
+      icon: Pen,
+      request: { path: "edit/[:id]", method: "get" },
+    },
+    {
+      property: "delete",
+      type: "button",
+      tooltip: "Supprimer",
+      icon: Trash2,
+      btnGhost: true,
+    },
   ];
 
   return (
@@ -50,4 +64,5 @@ const GroupHome = () => {
     </div>
   );
 };
+
 export default GroupHome;

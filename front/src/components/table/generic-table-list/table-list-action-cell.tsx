@@ -7,18 +7,19 @@ type TableListActionCellProps = TableListAction & { id: string };
 const TableListActionCell = (props: TableListActionCellProps) => {
   const { sendRequest, isLoading } = useHttp();
 
+  const path = props.request
+    ? props.request.path.replace("[:id]", props.id ?? "")
+    : null;
+
   const handleRequest = async (value?: string | boolean) => {
-    if (props.request) {
+    if (path) {
       const applyData = () => {
         props.onSuccessfulSubmit &&
           props.id &&
           props.onSuccessfulSubmit(props.id, value);
       };
 
-      await sendRequest(
-        { path: props.request.path.replace("[:id]", props.id ?? "") },
-        applyData,
-      );
+      await sendRequest({ path: path }, applyData);
     }
   };
 
@@ -45,11 +46,8 @@ const TableListActionCell = (props: TableListActionCellProps) => {
         />
       ) : null} */}
       <TableListSwitchInput
-        type={props.type}
-        inputValue={props.inputValue}
-        isLoading={isLoading}
-        url={props.request?.path}
-        icon={props.icon}
+        {...props}
+        linkUrl={path}
         onClick={handleClick}
         onToggle={handleToggle}
       />

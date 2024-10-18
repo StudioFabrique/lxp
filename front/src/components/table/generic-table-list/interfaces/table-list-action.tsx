@@ -6,8 +6,11 @@ export interface TableListActionConfig {
   type: TableListActionType;
   property: string;
   label?: string;
-  withConfirmationModal?: boolean;
+  title?: string;
+  tooltip?: string;
   icon?: LucideIcon;
+  btnGhost?: boolean;
+  withConfirmationModal?: boolean;
   request?: { path: string; method: string };
   onSuccessfulSubmit?: (id: string, value?: string | boolean) => void;
   onFailedSubmit?: (id: string, value?: string | boolean) => void;
