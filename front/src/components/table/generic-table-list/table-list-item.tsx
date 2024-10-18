@@ -19,10 +19,12 @@ const TableListItem = <TData extends Record<string, unknown>>(
       <td className="rounded-l-xl w-0" />
       <td>
         <div className="h-full flex flex-col justify-center">
-          <input type="checkbox" className="checkbox" />
+          <input
+            type="checkbox"
+            className="checkbox checkbox-sm checkbox-primary"
+          />
         </div>
       </td>
-      {/* add checkbox */}
       {dataEntries.map(([key, value]) => (
         <TableListCell key={key} property={key}>
           {value as ReactNode}

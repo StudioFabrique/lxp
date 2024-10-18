@@ -7,9 +7,11 @@ type SwitchComponentProps = {
   type: TableListActionType;
   isLoading?: boolean;
   inputValue?: string;
-  url?: string;
   icon?: LucideIcon;
-  buttonTitle?: string;
+  title?: string;
+  tooltip?: string;
+  btnGhost?: boolean;
+  linkUrl: string | null;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => Promise<void>;
   onToggle?: (event: ChangeEvent<HTMLInputElement>) => Promise<void>;
 };
@@ -20,18 +22,22 @@ const TableListSwitchInput = (props: SwitchComponentProps) => {
       return (
         <td>
           <button
-            className="btn btn-primary"
+            className={`btn btn-sm ${props.btnGhost && "btn-ghost"} btn-primary`}
             disabled={props.isLoading}
             onClick={props.onClick}
           >
-            {props.buttonTitle}
-            {props.icon && <props.icon />}
-            {!(props.buttonTitle && props.icon) && "Button"}
+            {props.title}
+            {props.icon && <props.icon className="w-5 h-5" />}
           </button>
         </td>
       );
     case "link":
-      return <Link to={props.url ?? "#"} />;
+      return (
+        <Link to={props.linkUrl ?? "#"}>
+          {props.title}
+          {props.icon && <props.icon className="w-5 h-5" />}
+        </Link>
+      );
     case "toggle":
       return (
         <td>

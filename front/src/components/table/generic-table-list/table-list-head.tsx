@@ -9,7 +9,10 @@ const TableListHead = (props: TableListHeadProps) => {
         <th />
         <th>
           <div className="h-full flex flex-col justify-center">
-            <input type="checkbox" className="checkbox" />
+            <input
+              type="checkbox"
+              className="checkbox checkbox-sm checkbox-primary"
+            />
           </div>
         </th>
         {props.items.map((item) => (
