@@ -32,6 +32,7 @@ const GroupHome = () => {
       type: "link",
       tooltip: "Modifier",
       icon: Pen,
+      additionnalClassname: "btn-ghost",
       request: { path: "edit/[:id]", method: "get" },
     },
     {
@@ -39,7 +40,7 @@ const GroupHome = () => {
       type: "button",
       tooltip: "Supprimer",
       icon: Trash2,
-      btnGhost: true,
+      additionnalClassname: "btn-ghost",
     },
   ];
 

@@ -45,12 +45,14 @@ const TableListActionCell = (props: TableListActionCellProps) => {
           onConfirm={handleClick}
         />
       ) : null} */}
-      <TableListSwitchInput
-        {...props}
-        linkUrl={path}
-        onClick={handleClick}
-        onToggle={handleToggle}
-      />
+      <td>
+        <TableListSwitchInput
+          {...props}
+          linkUrl={path}
+          onClick={handleClick}
+          onToggle={handleToggle}
+        />
+      </td>
     </>
   );
 };
