@@ -30,12 +30,12 @@ export default function FieldPassword(props: Props) {
 
   return (
     <>
-      <label htmlFor={props.name}>
+      <label className="flex flex-col gap-y-2" htmlFor={props.name}>
         <p>{props.label}</p>
         <span className="w-full flex gap-x-2 justify-start items-center relative">
           <div className={style}>
             <input
-              className="grow "
+              className="grow w-64"
               name={props.name}
               type={visibility ? "text" : "password"}
               value={props.value}
