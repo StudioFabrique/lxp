@@ -21,6 +21,8 @@ const GenericTable = <TData extends Record<string, string>>(
     props.actionsItems,
   );
 
+  console.log({ labels, tableItems });
+
   return (
     <table>
       <GenericTableHead items={labels} />

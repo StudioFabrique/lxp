@@ -32,9 +32,7 @@ export function generateTableItem(
 ): GenericItem {
   const entries = Object.entries(dataToTransform);
   const properties = itemsConfig.map((item) => item.property);
-  const filteredEntries = entries.filter(([key]) => {
-    properties.includes(key);
-  });
+  const filteredEntries = entries.filter(([key]) => properties.includes(key));
   const filteredData = Object.fromEntries(filteredEntries);
   const idEntry = entries.find(([key]) => key === idProperty);
   if (!idEntry) {
