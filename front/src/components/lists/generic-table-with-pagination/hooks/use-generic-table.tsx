@@ -33,12 +33,6 @@ function useGenericTable<TData extends Record<string, string>>(
     actionsItems,
   );
 
-  // for each items :
-  // - add the id
-  // - add data with selected properties
-  // - add actions (Array)
-  //
-
   const handleGenerateItems = useCallback(() => {
     setTableItems(null);
     data.forEach((d) => {
