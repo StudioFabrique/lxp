@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { GenericActionConfig } from "../interfaces/generic-action";
-import GenericItem from "../interfaces/generic-item";
+import GenericItem, { GenericItemConfig } from "../interfaces/generic-item";
+("../interfaces/generic-item");
 
 /**
  * Un hook personnalisé pour gérer une table générique
@@ -13,12 +15,33 @@ import GenericItem from "../interfaces/generic-item";
  * @returns actions - Les actions dans chaque lignes du tableau avec les données
  *
  */
-function useGenericTable<TData>(
+function useGenericTable<TData extends Record<string, unknown>>(
+  idProperty: string,
   data: TData[],
-  items: GenericItem[],
+  items: GenericItemConfig[],
   actionsItems?: GenericActionConfig[],
 ) {
-  return { labels, filteredData, actions };
+  const [filteredData, setFilteredData] = useState<GenericItem[]>();
+
+  const labels: GenericItemConfig[] = actionsItems
+    ? [
+        ...items.map((item) => ({
+          label: item.label,
+          property: item.property,
+        })),
+        ...actionsItems.map((item) => ({
+          label: item.label,
+          property: item.property,
+        })),
+      ]
+    : items.map((item) => ({
+        label: item.label,
+        property: item.property,
+      }));
+
+  console.log({ labels });
+
+  return { labels, filteredData };
 }
 
 export default useGenericTable;

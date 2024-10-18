@@ -8,7 +8,26 @@ import { GenericActionConfig } from "../../components/lists/generic-table-with-p
 const GroupHome = () => {
   // usePagination here to get data
 
-  const actions: GenericActionConfig[] = [];
+  const dataTest = [
+    {
+      _id: "hbdhj23223",
+      name: "name name",
+      test: "test1234",
+    },
+    {
+      _id: "ndddt6678",
+      name: "firstname test",
+      test: "test1234",
+    },
+  ];
+
+  const handleTest = () => {
+    console.log("test");
+  };
+
+  const actions: GenericActionConfig[] = [
+    { type: "button", property: "test", onSuccessfulSubmit: handleTest },
+  ];
 
   return (
     <div className="p-10">
@@ -23,9 +42,10 @@ const GroupHome = () => {
         </Can>
       </Header>
       <GenericTable
-        data={}
+        idProperty="_id"
+        data={dataTest}
         tableItems={groupHomeTableItems}
-        actions={actions}
+        actionsItems={actions}
       />
     </div>
   );

@@ -2,18 +2,20 @@ import GenericTableHead from "./generic-table-head";
 import GenericTableItem from "./generic-table-item";
 import useGenericTable from "./hooks/use-generic-table";
 import { GenericActionConfig } from "./interfaces/generic-action";
-import GenericItem from "./interfaces/generic-item";
+import { GenericItemConfig } from "./interfaces/generic-item";
 
-type TableProps<TData extends ArrayLike<string>> = {
+type TableProps<TData extends Record<string, unknown>> = {
+  idProperty: string;
   data: TData[];
-  tableItems: GenericItem[];
+  tableItems: GenericItemConfig[];
   actionsItems?: GenericActionConfig[];
 };
 
-const GenericTable = <TData extends ArrayLike<string>>(
+const GenericTable = <TData extends Record<string, unknown>>(
   props: TableProps<TData>,
 ) => {
-  const { labels, filteredData, actions } = useGenericTable<TData>(
+  const { labels, filteredData } = useGenericTable<TData>(
+    props.idProperty,
     props.data,
     props.tableItems,
     props.actionsItems,
@@ -21,10 +23,15 @@ const GenericTable = <TData extends ArrayLike<string>>(
 
   return (
     <table>
-      <GenericTableHead labels={labels} />
+      <GenericTableHead items={labels} />
       <tbody>
         {filteredData.map((item) => (
-          <GenericTableItem data={item} actions={actions} />
+          <GenericTableItem
+            key={item.id}
+            id={item.id}
+            data={item.data}
+            actions={item.actions}
+          />
         ))}
       </tbody>
     </table>
