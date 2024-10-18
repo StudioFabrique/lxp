@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
-import { GenericAction } from "./interfaces/generic-action";
+import GenericAction from "./interfaces/generic-action";
+import SwitchComponent from "./switch-component";
 
 type ActionCellProps = GenericAction;
 
@@ -9,10 +9,15 @@ const GenericActionCell = (props: ActionCellProps) => {
 
   const handleRequest = async () => {
     const applyData = () => {
-      props.onSuccessfulSubmit && props.onSuccessfulSubmit(props.data);
+      props.onSuccessfulSubmit &&
+        props.id &&
+        props.onSuccessfulSubmit(props.id, props.data);
     };
     if (props.request)
-      await sendRequest({ path: props.request.path }, applyData);
+      await sendRequest(
+        { path: props.request.path.replace("[:id]", props.id ?? "") },
+        applyData,
+      );
   };
 
   const handleClick = async () => {
@@ -23,47 +28,19 @@ const GenericActionCell = (props: ActionCellProps) => {
     await handleRequest();
   };
 
-  switch (props.type) {
-    case "button":
-      return (
-        <td>
-          <button
-            className="btn btn-primary"
-            disabled={isLoading}
-            onClick={handleClick}
-          >
-            Button
-          </button>
-        </td>
-      );
-    case "link":
-      return <Link to={props.request?.path ?? "#"} />;
-    case "toggle":
-      return (
-        <td>
-          <input
-            type="checkbox"
-            className="toggle toggle-primary"
-            disabled={isLoading}
-            checked={props.data.state}
-            onChange={handleToggle}
-          />
-        </td>
-      );
-    case "checkbox":
-      return (
-        <td>
-          <input
-            type="checkbox"
-            className="checkbox checkbox-primary"
-            checked={props.data.state}
-            onChange={handleToggle}
-          />
-        </td>
-      );
-    default:
-      return null;
-  }
+  return (
+    <div>
+      {/*  */}
+      <SwitchComponent
+        type={props.type}
+        inputValue={props.inputValue}
+        onClick={handleClick}
+        onToggle={handleToggle}
+        isLoading={isLoading}
+        url={props.request?.path}
+      />
+    </div>
+  );
 };
 
 export default GenericActionCell;

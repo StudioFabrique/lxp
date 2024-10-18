@@ -1,14 +1,14 @@
 import { PropsWithChildren, ReactNode } from "react";
 import GenericCell from "./generic-cell";
 import GenericActionCell from "./generic-action-cell";
-import { GenericAction } from "./interfaces/generic-action";
+import GenericAction from "./interfaces/generic-action";
 
 type ItemProps<TData extends ArrayLike<string>> = {
   data: TData;
-  actions: GenericAction[];
+  actions?: GenericAction[];
 };
 
-const GenericItem = <TData extends ArrayLike<string>>(
+const GenericTableItem = <TData extends ArrayLike<string>>(
   props: PropsWithChildren<ItemProps<TData>>,
 ) => {
   const dataEntries = Object.entries(props.data);
@@ -20,11 +20,9 @@ const GenericItem = <TData extends ArrayLike<string>>(
           {value as ReactNode}
         </GenericCell>
       ))}
-      {props.actions.map((action) => (
-        <GenericActionCell {...action} />
-      ))}
+      {props.actions?.map((action) => <GenericActionCell {...action} />)}
     </tr>
   );
 };
 
-export default GenericItem;
+export default GenericTableItem;
