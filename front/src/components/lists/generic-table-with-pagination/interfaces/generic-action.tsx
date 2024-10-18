@@ -1,17 +1,22 @@
-interface GenericActionData {
-  id: string;
-  property: string;
-  label?: string;
-  state?: boolean;
-}
-
-type ActionType = "button" | "link" | "toggle" | "checkbox";
+export type GenericActionType = "button" | "link" | "toggle" | "checkbox";
 // include list selecter type later
 
-export type GenericAction = {
-  data: GenericActionData;
-  type: ActionType;
+export interface GenericActionConfig<TData = void> {
+  property: string;
+  type: GenericActionType;
+  label?: string;
   request?: { path: string; method: string };
-  onSuccessfulSubmit?: (data: GenericActionData) => void;
-  onFailedSubmit?: (data: GenericActionData) => void;
-};
+  onSuccessfulSubmit?: (id: string, data?: TData) => void;
+  onFailedSubmit?: (id: string, data?: TData) => void;
+}
+
+interface GenericActionData<TData = void> {
+  id?: string;
+  data?: TData;
+  inputValue?: string;
+}
+
+type GenericAction<TData = void> = GenericActionConfig<TData> &
+  GenericActionData<TData>;
+
+export default GenericAction;
