@@ -9,7 +9,7 @@ export interface TableListActionConfig {
   title?: string;
   tooltip?: string;
   icon?: LucideIcon;
-  btnGhost?: boolean;
+  additionnalClassname?: string;
   withConfirmationModal?: boolean;
   request?: { path: string; method: string };
   onSuccessfulSubmit?: (id: string, value?: string | boolean) => void;
