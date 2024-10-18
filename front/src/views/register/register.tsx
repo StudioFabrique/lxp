@@ -22,17 +22,11 @@ export default function RegisterHome() {
   const [searchParams] = useSearchParams();
 
   const checkToken = useCallback(() => {
-    const applyData = (data: { success: boolean; message: string }) => {
-      if (data.success) setSuccess(true);
-    };
-    sendRequest(
-      {
-        path: "/user/check-invitation",
-        method: "post",
-        body: { token: searchParams.get("id") ?? "" },
-      },
-      applyData,
-    );
+    sendRequest({
+      path: "/user/check-invitation",
+      method: "post",
+      body: { token: searchParams.get("id") ?? "" },
+    });
   }, [searchParams, sendRequest]);
 
   const handleSubmit = async () => {
@@ -49,7 +43,7 @@ export default function RegisterHome() {
       headers: { "Content-Type": "application/json" },
     });
 
-    if (response.ok) nav("/");
+    if (response.ok) setSuccess(true);
   };
 
   const handleChangeP1 = (value: string) => {
@@ -67,11 +61,21 @@ export default function RegisterHome() {
     checkToken();
   }, [checkToken, chooseTheme]);
 
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (success) {
+      timer = setTimeout(() => {
+        nav("/");
+      }, 5000);
+    }
+    return () => clearTimeout(timer);
+  }, [nav, success]);
+
   return (
     <main className="flex flex-col gap-y-8 place-items-center p-2">
       <img className="w-96 h-auto" src={image} alt="logo de l'application" />
       <h1 className="text-3xl font-bold">Activation du compte</h1>
-
+      <pre>{success}</pre>
       {error.length > 0 ? (
         <section className="flex flex-col gap-y-8 justify-center items-center">
           <p className="border boder-error rounded-md shadow-md text-error p-4">
@@ -85,6 +89,7 @@ export default function RegisterHome() {
         <>
           <section className="flex flex-col items-start gap-y-4">
             <FieldPassword
+              label="Entrez votre mot de passe :"
               value={password}
               onSetValue={handleChangeP1}
               match={password === password2}
@@ -92,6 +97,7 @@ export default function RegisterHome() {
               name={password}
             />
             <FieldPassword
+              label="Confirmez votre mot de passe :"
               value={password2}
               onSetValue={handleChangeP2}
               match={password === password2}
@@ -116,12 +122,17 @@ export default function RegisterHome() {
               <li>- un caractère spécial</li>
             </ul>
           </section>
-          {/*         {success ? (
-   <section>
-     Vous allez être redirigé automatiquement vers la page de
-     connexion...
-   </section>
- ) : null} */}
+          {success ? (
+            <section className="flex flex-col place-items-center">
+              <p>
+                Votre compte a été activé, vous allez être redirigé
+                automatiquement vers la page de connexion...
+              </p>
+              <Link className="text-xs text-primary underline" to="/">
+                Cliquez sur ce lien si vous n'êtes pas redirigé...
+              </Link>
+            </section>
+          ) : null}
         </>
       )}
     </main>
