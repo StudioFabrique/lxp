@@ -40,6 +40,8 @@ const UserAddForm: FC<{
 
   const [hobbies, setHobbies] = useState<Array<Hobby>>([]);
 
+  const [sendEmail, setSendEmail] = useState(false);
+
   const { value: email } = useInput(
     (value: string) => regexMail.test(value),
     props.user?.email ?? "",
@@ -109,6 +111,7 @@ const UserAddForm: FC<{
       address: address.value.trim(),
       postCode: postCode.value.trim(),
       city: city.value.trim(),
+      invitationSent: sendEmail,
       phoneNumber: phoneNumber.value.trim(),
       birthDate,
       graduations,
@@ -158,6 +161,8 @@ const UserAddForm: FC<{
           <div className="grid grid-rows-1 gap-y-5">
             <TypeUtilisateur
               roleId={roleId}
+              sendEmail={sendEmail}
+              onSetSendEmail={setSendEmail}
               onSetRoleId={setRoleId}
               disabled={props.fieldsDisabled || props.editMode}
             />
