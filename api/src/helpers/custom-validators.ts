@@ -2,6 +2,7 @@ import { body, param, query } from "express-validator";
 import {
   regexDate,
   regexGeneric,
+  regexJwt,
   regexNumber,
   regexOptionalGeneric,
   regexPassword,
@@ -32,6 +33,10 @@ export function passwordValidateGeneric(value: string) {
 
 export function dateValidateGeneric(value: string) {
   return regexDate.test(value);
+}
+
+export function tokenValidateGeneric(value: string) {
+  return regexJwt.test(value);
 }
 
 export function videoUrlValidate(value: string) {
@@ -68,22 +73,22 @@ export const paginationValidator = [
     .withMessage("La propriété pour le tri de la liste est requise.")
     .isString()
     .withMessage(
-      "La propriété pour le tri du tableau doit être une chaîne de caractères"
+      "La propriété pour le tri du tableau doit être une chaîne de caractères",
     )
     .custom(stringValidateGeneric)
     .withMessage(
-      "La propriété pour le tri du tableau contient des caractères non autorisés."
+      "La propriété pour le tri du tableau contient des caractères non autorisés.",
     ),
   param("sdir")
     .notEmpty()
     .withMessage("La direction pour le tri de la liste est requise.")
     .isString()
     .withMessage(
-      "La direction pour le tri du tableau doit être une chaîne de caractères"
+      "La direction pour le tri du tableau doit être une chaîne de caractères",
     )
     .custom(stringValidateGeneric)
     .withMessage(
-      "La direction pour le tri du tableau contient des caractères non autorisés."
+      "La direction pour le tri du tableau contient des caractères non autorisés.",
     ),
   query("page")
     .notEmpty()
@@ -95,7 +100,7 @@ export const paginationValidator = [
     .withMessage("Le nombre d'éléments affichés par page est requis.")
     .isNumeric()
     .withMessage(
-      "Le nombre d'éléments affichés par page doit être un nombre entier."
+      "Le nombre d'éléments affichés par page doit être un nombre entier.",
     ),
   checkValidatorResult,
 ];
