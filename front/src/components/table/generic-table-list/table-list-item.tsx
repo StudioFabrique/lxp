@@ -15,7 +15,8 @@ const TableListItem = <TData extends Record<string, unknown>>(
   const dataEntries = Object.entries(props.data);
 
   return (
-    <tr className="">
+    <tr className="bg-primary-content">
+      <td className="rounded-l-xl w-0" />
       {/* add checkbox */}
       {dataEntries.map(([key, value]) => (
         <TableListCell key={key} property={key}>
@@ -25,6 +26,7 @@ const TableListItem = <TData extends Record<string, unknown>>(
       {props.actions?.map((action) => (
         <TableListActionCell key={action.property} {...action} id={props.id} />
       ))}
+      <td className="rounded-r-xl w-0" />
     </tr>
   );
 };

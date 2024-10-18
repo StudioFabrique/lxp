@@ -6,9 +6,13 @@ const TableListHead = (props: TableListHeadProps) => {
   return (
     <thead className="">
       <tr>
+        <th />
         {props.items.map((item) => (
-          <th key={item.property}>{item.label ?? ""}</th>
+          <th className="text-base-content font-bold" key={item.property}>
+            {item.label ?? ""}
+          </th>
         ))}
+        <th />
       </tr>
     </thead>
   );

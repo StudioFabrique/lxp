@@ -13,7 +13,7 @@ type CellProps = {
  *
  */
 const TableListCell = (props: PropsWithChildren<CellProps>) => {
-  return <td>{props.children}</td>;
+  return <td className="text-primary">{props.children}</td>;
 };
 
 export default TableListCell;
