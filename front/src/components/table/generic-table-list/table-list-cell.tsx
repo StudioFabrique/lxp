@@ -12,8 +12,8 @@ type CellProps = {
  * @param {React.ReactNode} props.children - Le contenu à afficher dans la cellule.
  *
  */
-const GenericCell = (props: PropsWithChildren<CellProps>) => {
+const TableListCell = (props: PropsWithChildren<CellProps>) => {
   return <td>{props.children}</td>;
 };
 
-export default GenericCell;
+export default TableListCell;

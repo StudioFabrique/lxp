@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
-import { GenericActionConfig } from "../interfaces/generic-action";
-import GenericItem, { GenericItemConfig } from "../interfaces/generic-item";
 import {
   constructLabels,
   generateTableActions,
   generateTableItem,
 } from "../services/generic-table-services";
+import TableListItem, {
+  TableListItemConfig,
+} from "../interfaces/table-list-item";
+import { TableListActionConfig } from "../interfaces/table-list-action";
 
 /**
  * Un hook personnalisé pour gérer une table générique
@@ -20,15 +22,15 @@ import {
  * @returns actions - Les actions dans chaque lignes du tableau avec les données
  *
  */
-function useGenericTable<TData extends Record<string, string>>(
+function useTableList<TData extends Record<string, string>>(
   idProperty: string,
   data: TData[],
-  itemsConfig: GenericItemConfig[],
-  actionsItems?: GenericActionConfig[],
+  itemsConfig: TableListItemConfig[],
+  actionsItems?: TableListActionConfig[],
 ) {
-  const [tableItems, setTableItems] = useState<GenericItem[] | null>(null);
+  const [tableItems, setTableItems] = useState<TableListItem[] | null>(null);
 
-  const labels: GenericItemConfig[] = constructLabels(
+  const labels: TableListItemConfig[] = constructLabels(
     itemsConfig,
     actionsItems,
   );
@@ -53,4 +55,4 @@ function useGenericTable<TData extends Record<string, string>>(
   return { labels, tableItems };
 }
 
-export default useGenericTable;
+export default useTableList;

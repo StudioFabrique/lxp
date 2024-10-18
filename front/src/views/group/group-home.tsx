@@ -1,32 +1,32 @@
 import { Link } from "react-router-dom";
 import Can from "../../components/UI/can/can.component";
 import Header from "../../components/UI/header";
-import GenericTable from "../../components/lists/generic-table-with-pagination/generic-table";
 import { groupHomeTableItems } from "./group-home-table-config";
-import { GenericActionConfig } from "../../components/lists/generic-table-with-pagination/interfaces/generic-action";
+import { TableListActionConfig } from "../../components/lists/generic-table-list/interfaces/table-list-action";
+import TableList from "../../components/table/generic-table-list/table-list";
 
 const GroupHome = () => {
   // usePagination here to get data
 
   const dataTest = [
     {
-      _id: "hbdhj23223",
+      _id: "1",
       name: "name name",
+      testField: "test",
       test: "test1234",
+      nbStudents: "1",
     },
     {
       _id: "ndddt6678",
       name: "firstname test",
+      testField: "test",
       test: "test1234",
+      nbStudents: "10",
     },
   ];
 
-  const handleTest = () => {
-    console.log("test");
-  };
-
-  const actions: GenericActionConfig[] = [
-    { type: "button", property: "test", onSuccessfulSubmit: handleTest },
+  const actions: TableListActionConfig[] = [
+    { type: "button", property: "testing", onSuccessfulSubmit: () => {} },
   ];
 
   return (
@@ -41,7 +41,7 @@ const GroupHome = () => {
           </Link>
         </Can>
       </Header>
-      <GenericTable
+      <TableList
         idProperty="_id"
         data={dataTest}
         tableItems={groupHomeTableItems}

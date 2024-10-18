@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import { GenericActionType } from "./interfaces/generic-action";
 import { LucideIcon } from "lucide-react";
 import { ChangeEvent, MouseEvent } from "react";
+import { TableListActionType } from "./interfaces/table-list-action";
 
 type SwitchComponentProps = {
-  type: GenericActionType;
+  type: TableListActionType;
   isLoading?: boolean;
   inputValue?: string;
   url?: string;
@@ -14,7 +14,7 @@ type SwitchComponentProps = {
   onToggle?: (event: ChangeEvent<HTMLInputElement>) => Promise<void>;
 };
 
-const SwitchComponent = (props: SwitchComponentProps) => {
+const TableListSwitchInput = (props: SwitchComponentProps) => {
   switch (props.type) {
     case "button":
       return (
@@ -60,4 +60,4 @@ const SwitchComponent = (props: SwitchComponentProps) => {
   }
 };
 
-export default SwitchComponent;
+export default TableListSwitchInput;
