@@ -1,27 +1,33 @@
 import useHttp from "../../../hooks/use-http";
-import GenericAction from "./interfaces/generic-action";
-import SwitchComponent from "./switch-component";
+import TableListAction from "./interfaces/table-list-action";
+import TableListSwitchInput from "./table-list-switch-input";
 
-type ActionCellProps = GenericAction & { id: string };
+type TableListActionCellProps = TableListAction & { id: string };
 
-const GenericActionCell = (props: ActionCellProps) => {
+const TableListActionCell = (props: TableListActionCellProps) => {
   const { sendRequest, isLoading } = useHttp();
 
   const handleRequest = async (value?: string | boolean) => {
-    const applyData = () => {
-      props.onSuccessfulSubmit &&
-        props.id &&
-        props.onSuccessfulSubmit(props.id, value);
-    };
-    if (props.request)
+    if (props.request) {
+      const applyData = () => {
+        props.onSuccessfulSubmit &&
+          props.id &&
+          props.onSuccessfulSubmit(props.id, value);
+      };
+
       await sendRequest(
         { path: props.request.path.replace("[:id]", props.id ?? "") },
         applyData,
       );
+    }
   };
 
   const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    await handleRequest(event.currentTarget.value);
+    if (props.request) {
+      await handleRequest(event.currentTarget.value);
+    } else if (props.onSuccessfulSubmit) {
+      props.onSuccessfulSubmit(props.id, event.currentTarget.value);
+    }
   };
 
   const handleToggle = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,7 +44,7 @@ const GenericActionCell = (props: ActionCellProps) => {
           onConfirm={handleClick}
         />
       ) : null} */}
-      <SwitchComponent
+      <TableListSwitchInput
         type={props.type}
         inputValue={props.inputValue}
         isLoading={isLoading}
@@ -51,4 +57,4 @@ const GenericActionCell = (props: ActionCellProps) => {
   );
 };
 
-export default GenericActionCell;
+export default TableListActionCell;

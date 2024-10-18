@@ -1,9 +1,9 @@
 import { LucideIcon } from "lucide-react";
 
-export type GenericActionType = "button" | "link" | "toggle" | "checkbox";
+export type TableListActionType = "button" | "link" | "toggle" | "checkbox";
 
-export interface GenericActionConfig {
-  type: GenericActionType;
+export interface TableListActionConfig {
+  type: TableListActionType;
   property: string;
   label?: string;
   withConfirmationModal?: boolean;
@@ -13,10 +13,10 @@ export interface GenericActionConfig {
   onFailedSubmit?: (id: string, value?: string | boolean) => void;
 }
 
-interface GenericActionData {
+interface TableListActionData {
   inputValue?: string;
 }
 
-type GenericAction = GenericActionConfig & GenericActionData;
+type TableListAction = TableListActionConfig & TableListActionData;
 
-export default GenericAction;
+export default TableListAction;

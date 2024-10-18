@@ -1,15 +1,15 @@
 import { PropsWithChildren, ReactNode } from "react";
-import GenericCell from "./generic-cell";
-import GenericActionCell from "./generic-action-cell";
-import GenericAction from "./interfaces/generic-action";
+import TableListAction from "./interfaces/table-list-action";
+import TableListCell from "./table-list-cell";
+import TableListActionCell from "./table-list-action-cell";
 
 type ItemProps<TData extends Record<string, unknown>> = {
   id: string;
   data: TData;
-  actions?: GenericAction[];
+  actions?: TableListAction[];
 };
 
-const GenericTableItem = <TData extends Record<string, unknown>>(
+const TableListItem = <TData extends Record<string, unknown>>(
   props: PropsWithChildren<ItemProps<TData>>,
 ) => {
   const dataEntries = Object.entries(props.data);
@@ -17,16 +17,17 @@ const GenericTableItem = <TData extends Record<string, unknown>>(
   return (
     <tr>
       {/* add checkbox */}
+
       {dataEntries.map(([key, value]) => (
-        <GenericCell key={key} property={key}>
+        <TableListCell key={key} property={key}>
           {value as ReactNode}
-        </GenericCell>
+        </TableListCell>
       ))}
       {props.actions?.map((action) => (
-        <GenericActionCell key={action.property} {...action} id={props.id} />
+        <TableListActionCell key={action.property} {...action} id={props.id} />
       ))}
     </tr>
   );
 };
 
-export default GenericTableItem;
+export default TableListItem;
