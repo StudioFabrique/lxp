@@ -15,8 +15,13 @@ const TableListItem = <TData extends Record<string, unknown>>(
   const dataEntries = Object.entries(props.data);
 
   return (
-    <tr className="bg-primary-content">
+    <tr className="bg-primary-content/50 hover:bg-primary-content">
       <td className="rounded-l-xl w-0" />
+      <td>
+        <div className="h-full flex flex-col justify-center">
+          <input type="checkbox" className="checkbox" />
+        </div>
+      </td>
       {/* add checkbox */}
       {dataEntries.map(([key, value]) => (
         <TableListCell key={key} property={key}>
