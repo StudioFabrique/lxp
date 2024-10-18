@@ -5,6 +5,7 @@ import { hash } from "bcrypt";
 import { randomUUID } from "crypto";
 import { newUserMail } from "../../services/mailer";
 import jwt from "jsonwebtoken";
+import { activationToken } from "../../helpers/activation-token";
 
 export default async function createUser(user: IUser, roleId: string) {
   try {
@@ -58,6 +59,16 @@ export default async function createUser(user: IUser, roleId: string) {
 
     if (firstRole.rank === 3)
       await prisma.student.create({ data: { idMdb: createdUser._id } });
+
+    if (user.invitationSent) {
+      const token = activationToken(createdUser._id, firstRole);
+      await newUserMail(createdUser.email, token);
+    }
+
+    await User.updateOne(
+      { _id: createdUser._id },
+      { $set: { invitationSent: true } },
+    );
 
     // Retourner l'utilisateur créé et le rang du rôle
     return { createdUser, role: firstRole.rank };
