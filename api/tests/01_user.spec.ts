@@ -4,6 +4,10 @@ import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import mongoConnect from "../src/utils/services/db/mongo-connect";
 import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import User from "../src/utils/interfaces/db/user";
+import Role from "../src/utils/interfaces/db/role";
 
 dotenv.config();
 
