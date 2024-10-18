@@ -1,5 +1,5 @@
-import GenericItem from "../../components/lists/generic-table-with-pagination/interfaces/generic-item";
+import { GenericItemConfig } from "../../components/lists/generic-table-with-pagination/interfaces/generic-item";
 
-export const groupHomeTableItems: GenericItem[] = [
+export const groupHomeTableItems: GenericItemConfig[] = [
   { property: "name", label: "Nom" },
 ];

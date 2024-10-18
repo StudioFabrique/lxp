@@ -1,22 +1,22 @@
-export type GenericActionType = "button" | "link" | "toggle" | "checkbox";
-// include list selecter type later
+import { LucideIcon } from "lucide-react";
 
-export interface GenericActionConfig<TData = void> {
-  property: string;
+export type GenericActionType = "button" | "link" | "toggle" | "checkbox";
+
+export interface GenericActionConfig {
   type: GenericActionType;
+  property: string;
   label?: string;
+  withConfirmationModal?: boolean;
+  icon?: LucideIcon;
   request?: { path: string; method: string };
-  onSuccessfulSubmit?: (id: string, data?: TData) => void;
-  onFailedSubmit?: (id: string, data?: TData) => void;
+  onSuccessfulSubmit?: (id: string, value?: string | boolean) => void;
+  onFailedSubmit?: (id: string, value?: string | boolean) => void;
 }
 
-interface GenericActionData<TData = void> {
-  id?: string;
-  data?: TData;
+interface GenericActionData {
   inputValue?: string;
 }
 
-type GenericAction<TData = void> = GenericActionConfig<TData> &
-  GenericActionData<TData>;
+type GenericAction = GenericActionConfig & GenericActionData;
 
 export default GenericAction;

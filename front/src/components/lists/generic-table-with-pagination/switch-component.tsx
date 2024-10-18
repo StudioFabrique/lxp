@@ -1,13 +1,17 @@
 import { Link } from "react-router-dom";
 import { GenericActionType } from "./interfaces/generic-action";
+import { LucideIcon } from "lucide-react";
+import { ChangeEvent, MouseEvent } from "react";
 
 type SwitchComponentProps = {
   type: GenericActionType;
   isLoading?: boolean;
   inputValue?: string;
   url?: string;
-  onClick?: () => Promise<void>;
-  onToggle?: () => Promise<void>;
+  icon?: LucideIcon;
+  buttonTitle?: string;
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => Promise<void>;
+  onToggle?: (event: ChangeEvent<HTMLInputElement>) => Promise<void>;
 };
 
 const SwitchComponent = (props: SwitchComponentProps) => {
@@ -20,7 +24,9 @@ const SwitchComponent = (props: SwitchComponentProps) => {
             disabled={props.isLoading}
             onClick={props.onClick}
           >
-            Button
+            {props.buttonTitle}
+            {props.icon && <props.icon />}
+            {!(props.buttonTitle && props.icon) && "Button"}
           </button>
         </td>
       );

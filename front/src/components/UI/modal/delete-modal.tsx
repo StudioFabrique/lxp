@@ -11,7 +11,7 @@ const DeleteModal: FC<{
   useEffect(() => {
     document.body.addEventListener(
       "keydown",
-      (e) => e.key === "Escape" && onCancel()
+      (e) => e.key === "Escape" && onCancel(),
     );
   });
 
