@@ -4,10 +4,12 @@ type TableListHeadProps = { items: TableListItemConfig[] };
 
 const TableListHead = (props: TableListHeadProps) => {
   return (
-    <thead>
-      {props.items.map((item) => (
-        <th key={item.property}>{item.label ?? ""}</th>
-      ))}
+    <thead className="">
+      <tr>
+        {props.items.map((item) => (
+          <th key={item.property}>{item.label ?? ""}</th>
+        ))}
+      </tr>
     </thead>
   );
 };
