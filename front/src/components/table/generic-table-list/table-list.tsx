@@ -21,10 +21,8 @@ const TableList = <TData extends Record<string, string>>(
     props.actionsItems,
   );
 
-  console.log({ labels, tableItems });
-
   return (
-    <table>
+    <table className="table w-full border-separate border-spacing-y-3">
       <TableListHead items={labels} />
       <tbody>
         {tableItems?.map((item) => (

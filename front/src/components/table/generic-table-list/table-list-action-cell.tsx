@@ -36,7 +36,7 @@ const TableListActionCell = (props: TableListActionCellProps) => {
   };
 
   return (
-    <div>
+    <>
       {/* {props.withConfirmationModal ? (
         <DeleteModal
           isLoading={isLoading}
@@ -53,7 +53,7 @@ const TableListActionCell = (props: TableListActionCellProps) => {
         onClick={handleClick}
         onToggle={handleToggle}
       />
-    </div>
+    </>
   );
 };
 

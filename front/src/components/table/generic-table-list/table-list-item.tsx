@@ -15,9 +15,8 @@ const TableListItem = <TData extends Record<string, unknown>>(
   const dataEntries = Object.entries(props.data);
 
   return (
-    <tr>
+    <tr className="">
       {/* add checkbox */}
-
       {dataEntries.map(([key, value]) => (
         <TableListCell key={key} property={key}>
           {value as ReactNode}
