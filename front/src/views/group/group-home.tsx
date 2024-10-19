@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 import Can from "../../components/UI/can/can.component";
 import Header from "../../components/UI/header";
 import { groupHomeTableItems } from "./group-home-table-config";
-import TableList from "../../components/table/generic-table-list/table-list";
-import { TableListActionConfig } from "../../components/table/generic-table-list/interfaces/table-list-action";
 import { Pen, Trash2 } from "lucide-react";
+import TableList from "../../components/table/table-list/table-list";
+import { TableListActionConfig } from "../../components/table/table-list/interfaces/table-list-action";
 
 const GroupHome = () => {
   // usePagination here to get data
@@ -28,6 +28,14 @@ const GroupHome = () => {
 
   const actions: TableListActionConfig[] = [
     {
+      property: "test",
+      type: "toggle",
+      label: "Actif",
+      icon: Trash2,
+      additionnalClassname: "",
+      onSuccessfulSubmit: () => {},
+    },
+    {
       property: "edit",
       type: "link",
       tooltip: "Modifier",
@@ -40,7 +48,8 @@ const GroupHome = () => {
       type: "button",
       tooltip: "Supprimer",
       icon: Trash2,
-      additionnalClassname: "btn-ghost",
+      additionnalClassname: "btn-ghost text-error",
+      onSuccessfulSubmit: () => {},
     },
   ];
 
@@ -61,6 +70,7 @@ const GroupHome = () => {
         data={dataTest}
         tableItems={groupHomeTableItems}
         actionsItems={actions}
+        style={{ showCheckbox: true }}
       />
     </div>
   );
