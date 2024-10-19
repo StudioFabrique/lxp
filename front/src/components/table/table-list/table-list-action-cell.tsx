@@ -45,14 +45,15 @@ const TableListActionCell = (props: TableListActionCellProps) => {
           onConfirm={handleClick}
         />
       ) : null} */}
-      <td>
+      <div className="tooltip flex items-center" data-tip={props.tooltip}>
         <TableListSwitchInput
           {...props}
           linkUrl={path}
           onClick={handleClick}
           onToggle={handleToggle}
+          isLoading={isLoading}
         />
-      </td>
+      </div>
     </>
   );
 };

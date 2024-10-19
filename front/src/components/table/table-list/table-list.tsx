@@ -9,6 +9,7 @@ type TableListProps<TData extends Record<string, unknown>> = {
   data: TData[];
   tableItems: TableListItemConfig[];
   actionsItems?: TableListActionConfig[];
+  style?: { showCheckbox?: boolean; showAvatar?: boolean };
 };
 
 const TableList = <TData extends Record<string, string>>(
@@ -23,7 +24,7 @@ const TableList = <TData extends Record<string, string>>(
 
   return (
     <table className="table w-full border-separate border-spacing-y-5">
-      <TableListHead items={labels} />
+      <TableListHead items={labels} style={props.style} />
       <tbody>
         {tableItems?.map((item) => (
           <TableListItem
@@ -31,6 +32,7 @@ const TableList = <TData extends Record<string, string>>(
             id={item.id}
             data={item.data}
             actions={item.actions}
+            style={props.style}
           />
         ))}
       </tbody>

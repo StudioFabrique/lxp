@@ -9,7 +9,6 @@ type SwitchComponentProps = {
   inputValue?: string;
   icon?: LucideIcon;
   title?: string;
-  tooltip?: string;
   btnGhost?: boolean;
   additionnalClassname?: string;
   linkUrl: string | null;
@@ -44,7 +43,7 @@ const TableListSwitchInput = (props: SwitchComponentProps) => {
       return (
         <input
           type="checkbox"
-          className={`toggle toggle-primary ${props.additionnalClassname}`}
+          className={`mx-2 toggle toggle-sm toggle-primary ${props.additionnalClassname}`}
           disabled={props.isLoading}
           checked={Boolean(props.inputValue)}
           onChange={props.onToggle}
@@ -54,7 +53,7 @@ const TableListSwitchInput = (props: SwitchComponentProps) => {
       return (
         <input
           type="checkbox"
-          className={`checkbox checkbox-primary ${props.additionnalClassname}`}
+          className={`checkbox checkbox-sm checkbox-primary ${props.additionnalClassname}`}
           checked={Boolean(props.inputValue)}
           onChange={props.onToggle}
         />

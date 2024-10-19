@@ -7,6 +7,7 @@ type ItemProps<TData extends Record<string, unknown>> = {
   id: string;
   data: TData;
   actions?: TableListAction[];
+  style?: { showCheckbox?: boolean; showAvatar?: boolean };
 };
 
 const TableListItem = <TData extends Record<string, unknown>>(
@@ -17,22 +18,30 @@ const TableListItem = <TData extends Record<string, unknown>>(
   return (
     <tr className="bg-primary-content/50 hover:bg-primary-content">
       <td className="rounded-l-xl w-0" />
-      <td>
-        <div className="h-full flex flex-col justify-center">
-          <input
-            type="checkbox"
-            className="checkbox checkbox-sm checkbox-primary"
-          />
-        </div>
-      </td>
+      {props.style?.showCheckbox ? (
+        <td className="px-0">
+          <div className="h-full flex flex-col justify-center">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-sm checkbox-primary"
+            />
+          </div>
+        </td>
+      ) : null}
       {dataEntries.map(([key, value]) => (
         <TableListCell key={key} property={key}>
           {value as ReactNode}
         </TableListCell>
       ))}
-      {props.actions?.map((action) => (
-        <TableListActionCell key={action.property} {...action} id={props.id} />
-      ))}
+      <td className="flex justify-end items-center gap-x-2 px-0">
+        {props.actions?.map((action) => (
+          <TableListActionCell
+            key={action.property}
+            {...action}
+            id={props.id}
+          />
+        ))}
+      </td>
       <td className="rounded-r-xl w-0" />
     </tr>
   );
