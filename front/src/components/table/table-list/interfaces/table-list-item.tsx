@@ -5,6 +5,8 @@ export interface TableListItemConfig {
   label?: string;
 }
 
+export type TableListItemLabels = TableListItemConfig & { isAction: boolean };
+
 export interface TableListItem {
   id: string;
   data: Record<string, string>;

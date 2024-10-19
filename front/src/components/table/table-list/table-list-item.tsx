@@ -33,7 +33,7 @@ const TableListItem = <TData extends Record<string, unknown>>(
           {value as ReactNode}
         </TableListCell>
       ))}
-      <td className="flex justify-end items-center gap-x-2 px-0">
+      <td className="flex justify-end items-center px-0">
         {props.actions?.map((action) => (
           <TableListActionCell
             key={action.property}

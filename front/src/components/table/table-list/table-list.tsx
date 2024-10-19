@@ -24,7 +24,7 @@ const TableList = <TData extends Record<string, string>>(
 
   return (
     <table className="table w-full border-separate border-spacing-y-5">
-      <TableListHead items={labels} style={props.style} />
+      <TableListHead labels={labels} style={props.style} />
       <tbody>
         {tableItems?.map((item) => (
           <TableListItem
