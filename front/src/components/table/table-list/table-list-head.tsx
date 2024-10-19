@@ -28,11 +28,11 @@ const TableListHead = (props: TableListHeadProps) => {
             </th>
           ) : null,
         )}
-        <th className="text-base-content font-bold flex items-center justify-end px-0">
+        <th className="text-base-content font-bold flex items-center justify-end px-0 gap-x-2">
           {props.labels.map((item) =>
             item.isAction ? (
               <div
-                className="w-14 flex justify-center items-center"
+                className="w-10 flex justify-center items-center"
                 key={item.property}
               >
                 {item.label ?? ""}
