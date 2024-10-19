@@ -39,6 +39,7 @@ const GroupHome = () => {
       property: "edit",
       type: "link",
       tooltip: "Modifier",
+      label: "Actions",
       icon: Pen,
       additionnalClassname: "btn-ghost",
       request: { path: "edit/[:id]", method: "get" },

@@ -1,7 +1,8 @@
-import { TableListItemConfig } from "./interfaces/table-list-item";
+import { Fragment } from "react/jsx-runtime";
+import { TableListItemLabels } from "./interfaces/table-list-item";
 
 type TableListHeadProps = {
-  items: TableListItemConfig[];
+  labels: TableListItemLabels[];
   style?: { showCheckbox?: boolean; showAvatar?: boolean };
 };
 
@@ -20,11 +21,25 @@ const TableListHead = (props: TableListHeadProps) => {
             </div>
           </th>
         ) : null}
-        {props.items.map((item) => (
-          <th className="text-base-content font-bold" key={item.property}>
-            {item.label ?? ""}
-          </th>
-        ))}
+        {props.labels.map((item) =>
+          !item.isAction ? (
+            <th className="text-base-content font-bold">
+              <Fragment key={item.property}>{item.label ?? ""}</Fragment>
+            </th>
+          ) : null,
+        )}
+        <th className="text-base-content font-bold flex items-center justify-end px-0">
+          {props.labels.map((item) =>
+            item.isAction ? (
+              <div
+                className="w-14 flex justify-center items-center"
+                key={item.property}
+              >
+                {item.label ?? ""}
+              </div>
+            ) : null,
+          )}
+        </th>
         <th className="px-0" />
       </tr>
     </thead>

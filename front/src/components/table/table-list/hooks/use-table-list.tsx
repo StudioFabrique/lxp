@@ -6,6 +6,7 @@ import {
 } from "../services/generic-table-services";
 import TableListItem, {
   TableListItemConfig,
+  TableListItemLabels,
 } from "../interfaces/table-list-item";
 import { TableListActionConfig } from "../interfaces/table-list-action";
 
@@ -30,7 +31,7 @@ function useTableList<TData extends Record<string, string>>(
 ) {
   const [tableItems, setTableItems] = useState<TableListItem[] | null>(null);
 
-  const labels: TableListItemConfig[] = constructLabels(
+  const labels: TableListItemLabels[] = constructLabels(
     itemsConfig,
     actionsItems,
   );

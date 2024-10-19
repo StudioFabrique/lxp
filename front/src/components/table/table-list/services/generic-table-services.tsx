@@ -1,35 +1,41 @@
-import GenericAction, {
-  GenericActionConfig,
-} from "../interfaces/generic-action";
-import GenericItem, { GenericItemConfig } from "../interfaces/generic-item";
+import TableListAction, {
+  TableListActionConfig,
+} from "../interfaces/table-list-action";
+import TableListItem, {
+  TableListItemConfig,
+  TableListItemLabels,
+} from "../interfaces/table-list-item";
 
 export function constructLabels(
-  items: GenericItemConfig[],
-  actionsItems?: GenericActionConfig[],
-) {
+  items: TableListItemConfig[],
+  actionsItems?: TableListActionConfig[],
+): TableListItemLabels[] {
   return actionsItems
     ? [
         ...items.map((item) => ({
           label: item.label,
           property: item.property,
+          isAction: false,
         })),
         ...actionsItems.map((item) => ({
           label: item.label,
           property: item.property,
+          isAction: true,
         })),
       ]
     : items.map((item) => ({
         label: item.label,
         property: item.property,
+        isAction: false,
       }));
 }
 
 export function generateTableItem(
   dataToTransform: Record<string, string>,
-  itemsConfig: GenericItemConfig[],
+  itemsConfig: TableListItemConfig[],
   idProperty: string,
-  actions?: GenericAction[],
-): GenericItem {
+  actions?: TableListAction[],
+): TableListItem {
   const entries = Object.entries(dataToTransform);
   const properties = itemsConfig.map((item) => item.property);
   const filteredEntries = entries.filter(([key]) => properties.includes(key));
@@ -45,10 +51,10 @@ export function generateTableItem(
 
 export function generateTableActions(
   dataToTransform: Record<string, string>,
-  actionsConfig: GenericActionConfig[],
-): GenericAction[] {
+  actionsConfig: TableListActionConfig[],
+): TableListAction[] {
   const entries = Object.entries(dataToTransform);
-  const actions: GenericAction[] = actionsConfig.map((action) => {
+  const actions: TableListAction[] = actionsConfig.map((action) => {
     const inputEntry = entries.find(([key]) => key === action.property);
     if (!inputEntry) {
       return action;
