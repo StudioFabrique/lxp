@@ -28,18 +28,9 @@ const GroupHome = () => {
 
   const actions: TableListActionConfig[] = [
     {
-      property: "test",
-      type: "toggle",
-      label: "Actif",
-      icon: Trash2,
-      additionnalClassname: "",
-      onSuccessfulSubmit: () => {},
-    },
-    {
       property: "edit",
       type: "link",
       tooltip: "Modifier",
-      label: "Actions",
       icon: Pen,
       additionnalClassname: "btn-ghost",
       request: { path: "edit/[:id]", method: "get" },

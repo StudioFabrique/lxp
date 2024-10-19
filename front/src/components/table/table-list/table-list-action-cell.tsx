@@ -46,7 +46,7 @@ const TableListActionCell = (props: TableListActionCellProps) => {
         />
       ) : null} */}
       <div
-        className="tooltip flex justify-center items-center w-14"
+        className="tooltip flex justify-center items-center w-10"
         data-tip={props.tooltip}
       >
         <TableListSwitchInput
