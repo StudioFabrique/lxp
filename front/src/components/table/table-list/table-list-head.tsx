@@ -23,8 +23,8 @@ const TableListHead = (props: TableListHeadProps) => {
         ) : null}
         {props.labels.map((item) =>
           !item.isAction ? (
-            <th className="text-base-content font-bold">
-              <Fragment key={item.property}>{item.label ?? ""}</Fragment>
+            <th key={item.property} className="text-base-content font-bold">
+              <Fragment>{item.label ?? ""}</Fragment>
             </th>
           ) : null,
         )}

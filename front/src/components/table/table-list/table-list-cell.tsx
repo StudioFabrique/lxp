@@ -13,7 +13,11 @@ type CellProps = {
  *
  */
 const TableListCell = (props: PropsWithChildren<CellProps>) => {
-  return <td className="text-primary whitespace-nowrap">{props.children}</td>;
+  return (
+    <td className="text-primary whitespace-nowrap capitalize">
+      {props.children}
+    </td>
+  );
 };
 
 export default TableListCell;

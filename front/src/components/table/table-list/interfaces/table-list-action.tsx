@@ -12,13 +12,13 @@ export interface TableListActionConfig {
   additionnalClassname?: string;
   withConfirmationModal?: boolean;
   request?: { path: string; method: string };
+  rbacObject?: string;
+  rbacAction?: string;
   onSuccessfulSubmit?: (id: string, value?: string | boolean) => void;
   onFailedSubmit?: (id: string, value?: string | boolean) => void;
 }
 
 interface TableListActionData {
-  rbacObject?: string;
-  rbacAction?: string;
   inputValue?: string;
 }
 

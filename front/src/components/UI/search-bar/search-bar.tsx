@@ -37,7 +37,7 @@ const SearchBar = ({
   };
 
   return (
-    <div className="flex justify-between items-center w-full">
+    <div className="flex justify-between items-center w-full overflow-auto">
       {title ? <h2 className="font-bold text-base-content">{title}</h2> : null}
 
       <div className="flex items-center gap-5">
