@@ -13,15 +13,15 @@ const GroupHome = () => {
     {
       _id: "1",
       name: "name name",
-      testField: "test",
-      test: "test1234",
+      description: "test",
+      formation: "test1234",
       nbStudents: "1",
     },
     {
       _id: "ndddt6678",
       name: "firstname test",
-      testField: "test",
-      test: "test1234",
+      description: "test",
+      formation: "test1234",
       nbStudents: "10",
     },
   ];

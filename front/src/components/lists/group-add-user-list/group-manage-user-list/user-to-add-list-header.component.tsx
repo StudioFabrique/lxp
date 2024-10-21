@@ -30,7 +30,7 @@ const UserToAddListHeader: FC<{
   };
 
   const handleClickFilterSelectorClose: MouseEventHandler<HTMLButtonElement> = (
-    event: MouseEvent<HTMLButtonElement>
+    event: MouseEvent<HTMLButtonElement>,
   ) => {
     const value = event.currentTarget.value;
     setSelectedFilter({
@@ -53,7 +53,7 @@ const UserToAddListHeader: FC<{
           onChange={(e) => setSelectAllUsers(e.currentTarget.checked)}
           checked={isAllUsersSelected}
           type="checkbox"
-          className="checkbox checkbox-sm"
+          className="checkbox checkbox-primary checkbox-sm"
         />
         <p>Sélection multiple</p>
       </span>
@@ -70,7 +70,7 @@ const UserToAddListHeader: FC<{
             <ul className="fixed mt-8">
               {filters
                 .filter(
-                  (filter) => filter.filterValue !== selectedFilter.filterValue
+                  (filter) => filter.filterValue !== selectedFilter.filterValue,
                 )
                 .map((filter) => (
                   <li key={filter.filterValue}>
