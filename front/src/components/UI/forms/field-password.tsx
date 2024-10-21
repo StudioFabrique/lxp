@@ -14,12 +14,13 @@ type Props = {
   name: string;
   match?: boolean;
   isValid: boolean;
-  onSetValue: (value: string) => void;
+  onSetValue: (field: "password" | "password2", value: string) => void;
 };
 
 export default function FieldPassword(props: Props) {
   const [visibility, setVisibility] = useState(false);
 
+  // Permet de switch le type du champ du formulaire entre "password" et "text"
   const handleVisibility = () => {
     setVisibility((prevState) => !prevState);
   };
@@ -39,7 +40,12 @@ export default function FieldPassword(props: Props) {
               name={props.name}
               type={visibility ? "text" : "password"}
               value={props.value}
-              onChange={(e) => props.onSetValue(e.currentTarget.value)}
+              onChange={(e) =>
+                props.onSetValue(
+                  props.name as "password" | "password2",
+                  e.currentTarget.value,
+                )
+              }
             />
             {/* Icône de visibilité */}
             {visibility ? (
