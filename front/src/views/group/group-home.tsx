@@ -66,7 +66,9 @@ const GroupHome = () => {
           actionsItems: actions,
           style: { showCheckbox: true },
         }}
-        // pagination={}
+        pagination={{
+          onSetItemsPerPage: () => {},
+        }}
       />
     </div>
   );
