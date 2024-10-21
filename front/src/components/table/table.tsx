@@ -3,6 +3,7 @@ import SearchBar, { SearchBarProps } from "../UI/search-bar/search-bar";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import TableList, { TableListProps } from "./table-list/table-list";
 import EllipsisIcon from "../UI/svg/ellipsis-icon";
+import TablePagination from "./table-pagination/table-pagination";
 
 type TableProps<TData extends Record<string, string>> = {
   list: TableListProps<TData>;
@@ -24,6 +25,7 @@ const Table = <TData extends Record<string, string>>(
         </button>
       </SearchBar>
       <TableList {...props.list} />
+      <TablePagination />
     </Wrapper>
   );
 };

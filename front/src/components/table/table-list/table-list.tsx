@@ -23,20 +23,22 @@ const TableList = <TData extends Record<string, string>>(
   );
 
   return (
-    <table className="table w-full border-separate border-spacing-y-5">
-      <TableListHead labels={labels} style={props.style} />
-      <tbody>
-        {tableItems?.map((item) => (
-          <TableListItem
-            key={item.id}
-            id={item.id}
-            data={item.data}
-            actions={item.actions}
-            style={props.style}
-          />
-        ))}
-      </tbody>
-    </table>
+    <div className="overflow-auto">
+      <table className="table w-full border-separate border-spacing-y-5 ">
+        <TableListHead labels={labels} style={props.style} />
+        <tbody>
+          {tableItems?.map((item) => (
+            <TableListItem
+              key={item.id}
+              id={item.id}
+              data={item.data}
+              actions={item.actions}
+              style={props.style}
+            />
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
