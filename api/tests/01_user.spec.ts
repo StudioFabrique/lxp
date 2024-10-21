@@ -5,9 +5,9 @@ import { PrismaClient } from "@prisma/client";
 import mongoConnect from "../src/utils/services/db/mongo-connect";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
 import User from "../src/utils/interfaces/db/user";
 import Role from "../src/utils/interfaces/db/role";
+import BlackListedToken from "../src/utils/interfaces/db/blacklisted-token";
 
 dotenv.config();
 
@@ -24,6 +24,7 @@ const MONGO_TEST_URL = process.env.MONGO_TEST_URL;
 
 describe("HTTP /user", () => {
   let authToken = {}; // Store the authentication token
+  let token = "";
 
   beforeAll(async () => {
     // Perform any setup before running the tests, such as logging in and obtaining the authentication token
@@ -34,6 +35,13 @@ describe("HTTP /user", () => {
       .send({ email: "admin@studio.eco", password: "Abcdef@123456" });
 
     authToken = loginResponse.headers["set-cookie"][0];
+    const role = await Role.findOne({ role: "admin" });
+    const user = await User.findOne({ email: "admin@studio.eco" });
+    token = jwt.sign(
+      { userId: user!._id, userRoles: [role] },
+      process.env.REGISTER_SECRET!,
+      { expiresIn: "7d" },
+    );
   });
 
   describe("Test POST /teacher", () => {
@@ -336,6 +344,70 @@ describe("HTTP /user", () => {
 
     test("It should respond 403 forbidden", async () => {
       await request(app).get("/v1/user/last-feedbacks/true").expect(403);
+    });
+  });
+
+  describe("Test /activate", () => {
+    test("It should respond 200 success", async () => {
+      await request(app)
+        .post("/v1/user/activate")
+        .send({ token: token, password: "Abcdef@123456" })
+        .expect(200);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/user/activate")
+        .send({ token: "", password: "Abcdef@123456" })
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/user/activate")
+        .send({ token, password: "" })
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/user/activate")
+        .send({ token, password: "Abcdef@123456" })
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/user/activate")
+        .send({ token: "<hacked ! />", password: "Abcdef@123456" })
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/user/activate")
+        .send({ token, password: "Abcdef@<hacked !/>" })
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      token = jwt.sign(
+        {
+          userId: "toto",
+          userRoles: new Role({
+            role: "toto",
+            label: "toto",
+            rank: 1,
+            isActive: true,
+          }),
+        },
+        process.env.REGISTER_SECRET!,
+        { expiresIn: "7d" },
+      );
+      await request(app)
+        .post("/v1/user/activate")
+        .send({ token, password: "Abcdef@123456" })
+        .expect(400);
     });
   });
 

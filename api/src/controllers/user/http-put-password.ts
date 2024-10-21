@@ -22,6 +22,7 @@ export default async function httpPutPassword(
       statusCode: error.statusCode ?? 500,
       message: error.message,
     };
+    console.log({ err });
     next(err);
   }
 }
