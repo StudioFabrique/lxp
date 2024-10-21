@@ -99,14 +99,14 @@ const GroupUserList: FC<{
           </div>
         </div>
       </div>
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center w-full">
         <GroupManageUserList
           onAddUsers={onAddUsers}
           usersToAdd={usersToAdd}
           onCloseDrawer={handleCloseDrawer}
         />
         <SearchBar
-          setFilter={setFilter}
+          onSetFilter={setFilter}
           placeholder="Rechercher un étudiant par nom ou prénom"
         />
       </div>

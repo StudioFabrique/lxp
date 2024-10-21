@@ -1,6 +1,6 @@
-import { GenericItemConfig } from "../../components/lists/generic-table-with-pagination/interfaces/generic-item";
+import { TableListItemConfig } from "../../components/table/table-list/interfaces/table-list-item";
 
-export const groupHomeTableItems: GenericItemConfig[] = [
+export const groupHomeTableItems: TableListItemConfig[] = [
   { property: "name", label: "Nom" },
   { property: "testField", label: "Prénom" },
   { property: "test", label: "Groupe" },

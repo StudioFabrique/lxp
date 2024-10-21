@@ -17,6 +17,8 @@ export interface TableListActionConfig {
 }
 
 interface TableListActionData {
+  rbacObject?: string;
+  rbacAction?: string;
   inputValue?: string;
 }
 

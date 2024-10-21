@@ -4,7 +4,7 @@ import { TableListItemConfig } from "./interfaces/table-list-item";
 import TableListHead from "./table-list-head";
 import TableListItem from "./table-list-item";
 
-type TableListProps<TData extends Record<string, unknown>> = {
+export type TableListProps<TData extends Record<string, unknown>> = {
   idProperty: string;
   data: TData[];
   tableItems: TableListItemConfig[];
