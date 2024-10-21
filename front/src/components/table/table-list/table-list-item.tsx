@@ -16,7 +16,7 @@ const TableListItem = <TData extends Record<string, unknown>>(
   const dataEntries = Object.entries(props.data);
 
   return (
-    <tr className="bg-primary-content/50 hover:bg-primary-content">
+    <tr className="bg-primary/10 hover:bg-secondary/10">
       <td className="rounded-l-xl w-0" />
       {props.style?.showCheckbox ? (
         <td className="px-0">

@@ -1,44 +1,62 @@
-import { Dispatch, FC, FormEvent, SetStateAction } from "react";
+import { Search } from "lucide-react";
+import {
+  Dispatch,
+  FormEvent,
+  PropsWithChildren,
+  SetStateAction,
+  useState,
+} from "react";
 
-const SearchBar: FC<{
-  placeholder: string;
-  setFilter: Dispatch<SetStateAction<string | undefined>>;
-}> = ({ placeholder, setFilter }) => {
+export type SearchBarProps = {
+  title?: string;
+  placeholder?: string;
+  onSubmit?: () => Promise<void>;
+  onSetFilter?: Dispatch<SetStateAction<string | undefined>>;
+};
+
+const SearchBar = ({
+  title,
+  placeholder,
+  onSetFilter,
+  onSubmit,
+  children,
+}: PropsWithChildren<SearchBarProps>) => {
+  const [isLoading, setLoading] = useState<boolean>(false);
+
   const handleChange = (event: FormEvent<HTMLInputElement>) => {
     event.preventDefault();
-    setFilter(event.currentTarget.value);
+    onSetFilter && onSetFilter(event.currentTarget.value);
   };
 
-  const handlePreventSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
+    if (!onSubmit) return;
     event.preventDefault();
+    setLoading(true);
+    await onSubmit();
+    setLoading(false);
   };
 
   return (
-    <form
-      className="flex items-center bg-secondary/10 w-[40%] gap-x-2 p-2 rounded-md"
-      onSubmit={handlePreventSubmit}
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="w-6 h-6"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-        />
-      </svg>
-      <input
-        type="text"
-        onInputCapture={handleChange}
-        className="bg-transparent focus:outline-none w-full text-sm"
-        placeholder={placeholder}
-      />
-    </form>
+    <div className="flex justify-between items-center w-full">
+      {title ? <h2 className="font-bold text-base-content">{title}</h2> : null}
+
+      <div className="flex items-center gap-5">
+        <form
+          className="flex items-center bg-secondary/10 w-[45vh] gap-x-2 p-2 rounded-md"
+          onSubmit={handleSubmit}
+        >
+          <Search />
+          <input
+            type="text"
+            onInputCapture={handleChange}
+            className="bg-transparent focus:outline-none w-full text-sm"
+            placeholder={placeholder}
+            disabled={isLoading}
+          />
+        </form>
+        <div className="flex items-center gap-2">{children}</div>
+      </div>
+    </div>
   );
 };
 

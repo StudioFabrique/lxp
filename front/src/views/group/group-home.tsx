@@ -3,8 +3,8 @@ import Can from "../../components/UI/can/can.component";
 import Header from "../../components/UI/header";
 import { groupHomeTableItems } from "./group-home-table-config";
 import { Pen, Trash2 } from "lucide-react";
-import TableList from "../../components/table/table-list/table-list";
 import { TableListActionConfig } from "../../components/table/table-list/interfaces/table-list-action";
+import Table from "../../components/table/table";
 
 const GroupHome = () => {
   // usePagination here to get data
@@ -46,7 +46,7 @@ const GroupHome = () => {
   ];
 
   return (
-    <div className="p-10">
+    <div className="flex flex-col gap-5 p-10">
       <Header
         title="Liste des groupes"
         description="Créer, modifier et supprimer des groupes"
@@ -57,12 +57,16 @@ const GroupHome = () => {
           </Link>
         </Can>
       </Header>
-      <TableList
-        idProperty="_id"
-        data={dataTest}
-        tableItems={groupHomeTableItems}
-        actionsItems={actions}
-        style={{ showCheckbox: true }}
+      <Table
+        searchBar={{ title: "Groupes", placeholder: "Rechercher un groupe" }}
+        list={{
+          idProperty: "_id",
+          data: dataTest,
+          tableItems: groupHomeTableItems,
+          actionsItems: actions,
+          style: { showCheckbox: true },
+        }}
+        // pagination={}
       />
     </div>
   );

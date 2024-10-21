@@ -1,4 +1,6 @@
+import { Fragment } from "react/jsx-runtime";
 import useHttp from "../../../hooks/use-http";
+import Can from "../../UI/can/can.component";
 import TableListAction from "./interfaces/table-list-action";
 import TableListSwitchInput from "./table-list-switch-input";
 
@@ -36,15 +38,15 @@ const TableListActionCell = (props: TableListActionCellProps) => {
     await handleRequest(value);
   };
 
-  return (
+  const cell = (
     <>
       {/* {props.withConfirmationModal ? (
-        <DeleteModal
-          isLoading={isLoading}
-          onCancel={() => {}}
-          onConfirm={handleClick}
-        />
-      ) : null} */}
+    <DeleteModal
+      isLoading={isLoading}
+      onCancel={() => {}}
+      onConfirm={handleClick}
+    />
+  ) : null} */}
       <div
         className="tooltip flex justify-center items-center w-10"
         data-tip={props.tooltip}
@@ -58,6 +60,12 @@ const TableListActionCell = (props: TableListActionCellProps) => {
         />
       </div>
     </>
+  );
+
+  return props.rbacObject && props.rbacAction ? (
+    <Can object={props.rbacObject} action={props.rbacAction} children={cell} />
+  ) : (
+    <Fragment children={cell} />
   );
 };
 
