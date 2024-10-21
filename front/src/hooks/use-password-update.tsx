@@ -5,7 +5,7 @@
  *   l'utilisateur en cas d'activation réussie.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { regexPassword } from "../utils/constantes";
@@ -14,8 +14,7 @@ import useHttp from "./use-http";
 type AccountActivation = {
   checkToken: () => void;
   error: string;
-  handleChangeP1: (value: string) => void;
-  handleChangeP2: (value: string) => void;
+  handleChange: (field: "password" | "password2", value: string) => void;
   handleSubmit: (event: React.FormEvent) => void;
   isValid: { p1: boolean; p2: boolean };
   password: string;
@@ -24,17 +23,55 @@ type AccountActivation = {
   submitLoader: boolean;
 };
 
+//  state utilisé avec useReducer
+type State = {
+  password: string;
+  password2: string;
+  isValid: { p1: boolean; p2: boolean };
+};
+
+//  actions utilisés pour le useReducer
+type Action =
+  | { type: "SET_PASSWORD"; payload: string }
+  | { type: "SET_PASSWORD2"; payload: string }
+  | { type: "VALIDATE_PASSWORDS"; payload: { p1: boolean; p2: boolean } };
+
+//  initialisation du state pour le useReducer
+const initialState: State = {
+  password: "",
+  password2: "",
+  isValid: { p1: true, p2: true },
+};
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case "SET_PASSWORD":
+      return {
+        ...state,
+        password: action.payload,
+        isValid: { ...state.isValid, p1: true },
+      };
+    case "SET_PASSWORD2":
+      return {
+        ...state,
+        password2: action.payload,
+        isValid: { ...state.isValid, p2: true },
+      };
+    case "VALIDATE_PASSWORDS":
+      return { ...state, isValid: action.payload };
+    default:
+      return state;
+  }
+};
+
 export default function useAccountActivation(token: string): AccountActivation {
   const { error, sendRequest } = useHttp();
-  const [password, setPassword] = useState("");
-  const [password2, setPassword2] = useState("");
-  const [isValid, setIsValid] = useState<{ p1: boolean; p2: boolean }>({
-    p1: true,
-    p2: true,
-  });
+
   const [success, setSuccess] = useState(false);
   const [submitLoader, setSubmitLoader] = useState(false);
   const nav = useNavigate();
+
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   /**
    * Vérifie la validité du token contenu dans le lien d'activation
@@ -50,7 +87,7 @@ export default function useAccountActivation(token: string): AccountActivation {
   /**
    * Soumet le nouveau mot de passe à l'API
    */
-  const submitData = () => {
+  const submitData = useCallback(() => {
     setSubmitLoader(true);
     const applyData = (data: { success: boolean; message: string }) => {
       if (data.success) setSuccess(true);
@@ -62,12 +99,12 @@ export default function useAccountActivation(token: string): AccountActivation {
         method: "post",
         body: {
           token,
-          password,
+          password: state.password,
         },
       },
       applyData,
     );
-  };
+  }, [state.password, sendRequest, token]);
 
   /**
    * Vérifie la validité des mots de passe saisis dans le formulaire
@@ -75,37 +112,30 @@ export default function useAccountActivation(token: string): AccountActivation {
    * @param event React.EventForm
    * @returns void
    */
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    setIsValid({
-      p1: regexPassword.test(password),
-      p2: regexPassword.test(password2),
+    const validPassword = regexPassword.test(state.password);
+    const validPassword2 = regexPassword.test(state.password2);
+    dispatch({
+      type: "VALIDATE_PASSWORDS",
+      payload: { p1: validPassword, p2: validPassword2 },
     });
-    if (
-      regexPassword.test(password) &&
-      regexPassword.test(password2) &&
-      password === password2
-    )
+
+    if (validPassword && validPassword2 && state.password === state.password2) {
       submitData();
-    else return;
+    }
   };
 
   /**
-   * Gère le changement de valeur du mot de passe
-   * @param value string
+   * Gère le changement de valeur des mots de passe
+   * @param field "password" | "password2" value string
    */
-  const handleChangeP1 = (value: string) => {
-    setIsValid({ ...isValid, p1: true });
-    setPassword(value);
-  };
-
-  /**
-   * Gère le changement de valeur du second mot de passe
-   * @param value string
-   */
-  const handleChangeP2 = (value: string) => {
-    setIsValid({ ...isValid, p2: true });
-    setPassword2(value);
+  const handleChange = (field: "password" | "password2", value: string) => {
+    if (field === "password") {
+      dispatch({ type: "SET_PASSWORD", payload: value });
+    } else {
+      dispatch({ type: "SET_PASSWORD2", payload: value });
+    }
   };
 
   // Gère l'affichage des erreurs HTTP
@@ -122,7 +152,7 @@ export default function useAccountActivation(token: string): AccountActivation {
     if (success) {
       timer = setTimeout(() => {
         nav("/");
-      }, 5000);
+      }, 3500);
     }
     return () => clearTimeout(timer);
   }, [nav, success]);
@@ -130,12 +160,11 @@ export default function useAccountActivation(token: string): AccountActivation {
   return {
     checkToken,
     error,
-    handleChangeP1,
-    handleChangeP2,
-    isValid,
+    handleChange,
     handleSubmit,
-    password,
-    password2,
+    isValid: state.isValid,
+    password: state.password,
+    password2: state.password2,
     success,
     submitLoader,
   };
