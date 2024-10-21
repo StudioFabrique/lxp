@@ -3,19 +3,21 @@ import { FC, useEffect, useState } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 import useHttp from "../../../../hooks/use-http";
 import Group from "../../../../utils/interfaces/group";
-import SelecterGroup from "../../../UI/selecter/selecter-group";
+import Selecter from "../../../UI/selecter/selecter";
+import Formation from "../../../../utils/interfaces/formation";
+import Parcours from "../../../../utils/interfaces/parcours";
 
 // type de données pour les listes
 type Item = {
-  id: number;
-  title: string;
+  id?: number;
+  value: string;
   formationId?: number;
 };
 
 const Details: FC<{
   group?: Group;
   onSelectParcours: (id: number) => void;
-  selectedParcoursId: number | null;
+  selectedParcoursId?: number;
 }> = ({ group, onSelectParcours, selectedParcoursId }) => {
   const { sendRequest } = useHttp();
 
@@ -44,8 +46,12 @@ const Details: FC<{
    */
   useEffect(() => {
     if (formationId !== undefined) {
-      const processData = (data: any) => {
-        setParcoursList(data.data);
+      const processData = (data: { data: Array<Parcours> }) => {
+        const parcoursItems = data.data.map((item) => ({
+          ...item,
+          value: item.title,
+        }));
+        setParcoursList(parcoursItems);
       };
       sendRequest(
         {
@@ -61,8 +67,12 @@ const Details: FC<{
    * requête pour récupérer la liste des formations dans la bdd
    */
   useEffect(() => {
-    const processData = (data: Array<Item>) => {
-      setFormations(data);
+    const processData = (data: Array<Formation>) => {
+      const formationsItems = data.map((item) => ({
+        ...item,
+        value: item.title,
+      }));
+      setFormations(formationsItems);
     };
     sendRequest(
       {
@@ -91,13 +101,13 @@ const Details: FC<{
           <h2 className="font-bold text-xl">Details</h2>
         </span>
         <div className="flex flex-col gap-y-8">
-          <SelecterGroup
+          <Selecter
             list={formations}
             title="Choisissez une formation"
             onSelectItem={handleFormation}
             id={formationId}
           />
-          <SelecterGroup
+          <Selecter
             list={parcoursList}
             title="Choisisez un parcours"
             onSelectItem={handleParcours}

@@ -21,6 +21,7 @@ const TableListHead = (props: TableListHeadProps) => {
             </div>
           </th>
         ) : null}
+
         {props.labels.map((item) =>
           !item.isAction ? (
             <th key={item.property} className="text-base-content font-bold">
@@ -28,6 +29,7 @@ const TableListHead = (props: TableListHeadProps) => {
             </th>
           ) : null,
         )}
+
         <th className="text-base-content font-bold flex items-center justify-end px-0 gap-x-2">
           {props.labels.map((item) =>
             item.isAction ? (

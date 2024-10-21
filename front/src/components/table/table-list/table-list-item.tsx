@@ -16,7 +16,7 @@ const TableListItem = <TData extends Record<string, unknown>>(
   const dataEntries = Object.entries(props.data);
 
   return (
-    <tr className="bg-primary/10 hover:bg-secondary/10">
+    <tr className="bg-secondary/10 hover:bg-secondary/10">
       <td className="rounded-l-xl w-0" />
       {props.style?.showCheckbox ? (
         <td className="px-0">
@@ -28,11 +28,13 @@ const TableListItem = <TData extends Record<string, unknown>>(
           </div>
         </td>
       ) : null}
+
       {dataEntries.map(([key, value]) => (
         <TableListCell key={key} property={key}>
           {value as ReactNode}
         </TableListCell>
       ))}
+
       <td className="flex justify-end items-center px-0 gap-x-2">
         {props.actions?.map((action) => (
           <TableListActionCell

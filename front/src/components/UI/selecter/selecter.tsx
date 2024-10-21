@@ -1,18 +1,25 @@
 import { FC, ChangeEvent } from "react";
 
 type Item = {
-  id: number;
-  title: string;
+  id?: number;
+  value: string;
 };
 
 type Props = {
   list: Array<Item>;
-  title: string;
-  id?: number | null;
+  title?: string;
+  id?: number;
   onSelectItem: (id: number) => void;
+  styleGhost?: boolean;
 };
 
-const SelecterGroup: FC<Props> = ({ list, title, id = 0, onSelectItem }) => {
+const Selecter: FC<Props> = ({
+  list,
+  title,
+  id = 0,
+  onSelectItem,
+  styleGhost,
+}) => {
   const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
     event.preventDefault();
     const id = parseInt(event.currentTarget.value);
@@ -25,21 +32,21 @@ const SelecterGroup: FC<Props> = ({ list, title, id = 0, onSelectItem }) => {
     <>
       {list ? (
         <select
-          className="w-full select select-sm border border-neutral/50 focus:outline-none"
+          className={`select select-sm ${styleGhost && "select-ghost bg-transparent focus:outline-none focus:text-base-300"}`}
           name="menu"
           id="menu"
-          value={id ?? 0}
+          value={id}
           onChange={handleChange}
         >
-          <option value={0}>{title}</option>
+          {title ? <option value={0}>{title}</option> : null}
 
           {list.map((item: Item) => (
             <option
-              className="capitalize text-xs"
+              className="capitalize text-xs text-base-300"
               key={item.id}
               value={item.id}
             >
-              {item.title}
+              {item.value}
             </option>
           ))}
         </select>
@@ -48,4 +55,4 @@ const SelecterGroup: FC<Props> = ({ list, title, id = 0, onSelectItem }) => {
   );
 };
 
-export default SelecterGroup;
+export default Selecter;
