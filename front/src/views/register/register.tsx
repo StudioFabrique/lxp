@@ -33,8 +33,11 @@ export default function RegisterHome() {
   //  Choisit un thème clair par défaut et vérifie la validité du lien d'activation
   useEffect(() => {
     chooseTheme("winter", "light");
+  }, [chooseTheme]);
+
+  useEffect(() => {
     checkToken();
-  }, [checkToken, chooseTheme, searchParams]);
+  }, [checkToken]);
 
   return (
     <main className="flex flex-col gap-y-8 place-items-center p-2">
