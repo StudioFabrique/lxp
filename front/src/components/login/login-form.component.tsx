@@ -14,10 +14,10 @@ const LoginForm: FC<{
   const [inputType, setInputType] = useState("password");
 
   const { value: email } = useInput((value: string) =>
-    regexMail.test(value.trim())
+    regexMail.test(value.trim()),
   );
   const { value: password } = useInput((value: string) =>
-    regexPassword.test(value.trim())
+    regexPassword.test(value.trim()),
   );
 
   //  test la validité du form via le custom hook useInput
@@ -92,7 +92,7 @@ const LoginForm: FC<{
       <p className={loginErrorClass}>{props.error}</p>
 
       <div className="flex justify-between items-center mt-3">
-        <Link to="#" className="ml-2 text-[8pt]">
+        <Link to="/reset-password" className="ml-2 text-[8pt]">
           Mot de passe oublié?
         </Link>
         {isLoadingButtonComponent}
