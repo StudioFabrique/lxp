@@ -148,6 +148,74 @@ describe("HTTP Course", () => {
         .expect(200);
     });
   });
+
+  describe("Test Reorder courses /reorder/:courseId", () => {
+    test("It should responde 200 success", async () => {
+      await request(app)
+        .post("/v1/course")
+        .send({ title: "Test 1", moduleId: 1 })
+        .set("Cookie", [`${authToken}`]);
+      await request(app)
+        .post("/v1/course")
+        .send({ title: "Test 2", moduleId: 1 })
+        .set("Cookie", [`${authToken}`]);
+      await request(app)
+        .post("/v1/course")
+        .send({ title: "Test 3", moduleId: 1 })
+        .set("Cookie", [`${authToken}`]);
+      await request(app)
+        .put("/v1/course/reorder/1")
+        .send([4, 3, 2])
+        .set("Cookie", [`${authToken}`])
+        .expect(200);
+      const courses = await prisma.course.findMany({
+        where: {
+          moduleId: 1,
+        },
+        orderBy: { id: "asc" },
+      });
+      const orders = courses.map((item) => item.order);
+      expect(orders).toEqual([2, 1, 0]);
+    });
+
+    test("It should respond 403 not authorized", async () => {
+      await request(app)
+        .put("/v1/course/reorder/1")
+        .send([4, 3, 2])
+        .expect(403);
+    });
+
+    test("It should response 400 bad request", async () => {
+      await request(app)
+        .put("/v1/course/reorder/toto")
+        .send([4, 3, 2])
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should response 404 not found", async () => {
+      await request(app)
+        .put("/v1/course/reorder")
+        .send([4, 3, 2])
+        .set("Cookie", [`${authToken}`])
+        .expect(404);
+    });
+
+    test("It should response 400 bad request", async () => {
+      await request(app)
+        .put("/v1/course/reorder/1")
+        .send(["toto", 3, 2])
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+
+    test("It should response 400 bad request", async () => {
+      await request(app)
+        .put("/v1/course/reorder/1")
+        .set("Cookie", [`${authToken}`])
+        .expect(400);
+    });
+  });
   afterAll(async () => {
     // Fermer la connexion à MongoDB
     await disconnect();

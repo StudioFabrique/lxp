@@ -56,7 +56,6 @@ export default function EditModuleHome() {
   const handleReorderCourses = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const applyData = (data: any) => {
-      console.log(data);
       fetchModule();
       setUpdating(false);
       setSuccess(true);
