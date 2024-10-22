@@ -1,15 +1,19 @@
 import useTableList from "./hooks/use-table-list";
 import { TableListActionConfig } from "./interfaces/table-list-action";
 import { TableListItemConfig } from "./interfaces/table-list-item";
-import TableListHead from "./table-list-head";
-import TableListItem from "./table-list-item";
+import Head from "./table-list-head";
+import Body from "./table-list-body";
 
 export type TableListProps<TData extends Record<string, unknown>> = {
   idProperty: string;
   data: TData[];
   tableItems: TableListItemConfig[];
   actionsItems?: TableListActionConfig[];
-  style?: { showCheckbox?: boolean; showAvatar?: boolean };
+  style?: {
+    emptyArrayMessage?: string;
+    showCheckbox?: boolean;
+    showAvatar?: boolean;
+  };
 };
 
 const TableList = <TData extends Record<string, string>>(
@@ -26,18 +30,8 @@ const TableList = <TData extends Record<string, string>>(
   return (
     <div className="overflow-auto">
       <table className="table w-full border-separate border-spacing-y-5 ">
-        <TableListHead labels={labels} style={props.style} />
-        <tbody>
-          {tableItems?.map((item) => (
-            <TableListItem
-              key={item.id}
-              id={item.id}
-              data={item.data}
-              actions={item.actions}
-              style={props.style}
-            />
-          ))}
-        </tbody>
+        <Head labels={labels} style={props.style} />
+        <Body tableItems={tableItems} style={props.style} />
       </table>
     </div>
   );
