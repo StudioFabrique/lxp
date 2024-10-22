@@ -39,8 +39,8 @@ const TableListItem = <TData extends Record<string, unknown>>(
         {props.actions?.map((action) => (
           <TableListActionCell
             key={action.property}
-            {...action}
             id={props.id}
+            {...action}
           />
         ))}
       </td>
