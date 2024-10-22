@@ -2,48 +2,48 @@ import express from "express";
 import { body, param, query } from "express-validator";
 import path from "path";
 
+import multer from "multer";
+import { headerImageMaxSize } from "../../../config/images-sizes";
+import httpGetAccomplishements from "../../../controllers/user/accomplishment/http-get-accomplishments";
+import httpGetLastFeedbacks from "../../../controllers/user/feedback/http-get-last-feedbacks";
+import httpGetLastFeedback from "../../../controllers/user/feedback/http-get-own-feedback";
+import httpCreateManyUser from "../../../controllers/user/http-create-many-users";
+import httpCreateUser from "../../../controllers/user/http-create-user";
+import httpDeleteUser from "../../../controllers/user/http-delete-user";
+import httpGetContacts from "../../../controllers/user/http-get-contacts";
+import httpGetUserData from "../../../controllers/user/http-get-user-data";
+import httpGetUserLastParcours from "../../../controllers/user/http-get-user-last-parcours";
+import httpGetUsersByGroup from "../../../controllers/user/http-get-users-by-group";
+import httpGetUsersByRank from "../../../controllers/user/http-get-users-by-rank";
+import httpGetUsersByRole from "../../../controllers/user/http-get-users-by-role";
+import httpGetUsersStats from "../../../controllers/user/http-get-users-stats";
+import httpPostCheckActivationToken from "../../../controllers/user/http-post-check-activation-token";
+import httpPutInvitation from "../../../controllers/user/http-put-invitation";
+import httpPutPassword from "../../../controllers/user/http-put-password";
+import httpSearchUser from "../../../controllers/user/http-search-user";
+import httpUpdateManyUsersStatus from "../../../controllers/user/http-update-many-users-status";
+import httpUpdateUser from "../../../controllers/user/http-update-user";
+import httpUpdateUserRoles from "../../../controllers/user/http-update-user-roles";
+import httpUpdateUserStatus from "../../../controllers/user/http-update-user-status";
+import { paginationValidator } from "../../../helpers/custom-validators";
+import activateAccount from "../../../middleware/activate-account";
+import checkPermissions from "../../../middleware/check-permissions";
+import { createFileUploadMiddleware } from "../../../middleware/fileUpload";
+import jsonParser from "../../../middleware/json-parser";
 import {
   getAllByRankValidator,
   manyUsersValidator,
   userValidator,
 } from "../../../middleware/validators";
-import httpCreateUser from "../../../controllers/user/http-create-user";
-import httpUpdateUserRoles from "../../../controllers/user/http-update-user-roles";
-import httpSearchUser from "../../../controllers/user/http-search-user";
-import httpGetUsersByRole from "../../../controllers/user/http-get-users-by-role";
-import httpGetUsersStats from "../../../controllers/user/http-get-users-stats";
-import httpUpdateUserStatus from "../../../controllers/user/http-update-user-status";
-import httpUpdateManyUsersStatus from "../../../controllers/user/http-update-many-users-status";
-import httpGetContacts from "../../../controllers/user/http-get-contacts";
-import postTeacherRouter from "./post-teacher";
-import httpCreateManyUser from "../../../controllers/user/http-create-many-users";
-import httpGetUsersByGroup from "../../../controllers/user/http-get-users-by-group";
-import checkPermissions from "../../../middleware/check-permissions";
-import httpGetUsersByRank from "../../../controllers/user/http-get-users-by-rank";
-import multer from "multer";
-import userProfileRouter from "./profile/user-profile.router";
 import hobbyRouter from "./hobby/hobby.router";
+import postTeacherRouter from "./post-teacher";
+import userProfileRouter from "./profile/user-profile.router";
 import {
   getUsersByRoleValidator,
   postPasswordValidator,
   tokenValidator,
   userIdValidator,
 } from "./user-validators";
-import { paginationValidator } from "../../../helpers/custom-validators";
-import httpGetUserLastParcours from "../../../controllers/user/http-get-user-last-parcours";
-import httpGetUserData from "../../../controllers/user/http-get-user-data";
-import httpGetAccomplishements from "../../../controllers/user/accomplishment/http-get-accomplishments";
-import httpGetLastFeedback from "../../../controllers/user/feedback/http-get-own-feedback";
-import httpGetLastFeedbacks from "../../../controllers/user/feedback/http-get-last-feedbacks";
-import { createFileUploadMiddleware } from "../../../middleware/fileUpload";
-import { headerImageMaxSize } from "../../../config/images-sizes";
-import jsonParser from "../../../middleware/json-parser";
-import httpDeleteUser from "../../../controllers/user/http-delete-user";
-import activateAccount from "../../../middleware/activate-account";
-import httpPutPassword from "../../../controllers/user/http-put-password";
-import httpUpdateUser from "../../../controllers/user/http-update-user";
-import httpPutInvitation from "../../../controllers/user/http-put-invitation";
-import httpPostCheckActivationToken from "../../../controllers/user/http-post-check-activation-token";
 
 const userRouter = express.Router();
 
@@ -236,6 +236,7 @@ userRouter.post(
   httpPutPassword,
 );
 
+// envoie un email d'activation à un utilisateur nouvellement créé'
 userRouter.put(
   "/invitation/:userId",
   userIdValidator,
@@ -243,6 +244,7 @@ userRouter.put(
   httpPutInvitation,
 );
 
+// vérifie la validité du lien d'activation de compte'
 userRouter.post(
   "/check-invitation",
   tokenValidator,
