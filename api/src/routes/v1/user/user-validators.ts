@@ -6,6 +6,10 @@ import {
 } from "../../../helpers/custom-validators";
 import { checkValidatorResult } from "../../../middleware/validators";
 
+export const postCheckEmailValidator = [
+  body("email").isEmail().withMessage("Adresse email non valide."),
+];
+
 export const userIdValidator = [
   param("userId")
     .isMongoId()
