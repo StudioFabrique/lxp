@@ -10,20 +10,20 @@ const GroupHome = () => {
   // usePagination here to get data
 
   const dataTest = [
-    // {
-    //   _id: "1",
-    //   name: "name name",
-    //   description: "test",
-    //   formation: "test1234",
-    //   nbStudents: "1",
-    // },
-    // {
-    //   _id: "ndddt6678",
-    //   name: "firstname test",
-    //   description: "test",
-    //   formation: "test1234",
-    //   nbStudents: "10",
-    // },
+    {
+      _id: "1",
+      name: "name name",
+      description: "test",
+      formation: "test1234",
+      nbStudents: "1",
+    },
+    {
+      _id: "ndddt6678",
+      name: "firstname test",
+      description: "test",
+      formation: "test1234",
+      nbStudents: "10",
+    },
   ];
 
   const actions: TableListActionConfig[] = [
