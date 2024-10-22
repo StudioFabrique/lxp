@@ -11,7 +11,7 @@ type TableListBodyProps = {
 };
 
 const TableListBody = (props: TableListBodyProps) => {
-  if (props.tableItems && props.tableItems.length > 0)
+  if (props.tableItems)
     return (
       <tbody>
         {props.tableItems?.map((item) => (
@@ -28,9 +28,13 @@ const TableListBody = (props: TableListBodyProps) => {
 
   return (
     <tbody>
-      <td />
-      <td />
-      <td className="text-nowrap">{props.style?.emptyArrayMessage ?? ""}</td>
+      <tr>
+        <td />
+        <td />
+        <td className="text-nowrap">
+          {props.style?.emptyArrayMessage ?? "Aucune données"}
+        </td>
+      </tr>
     </tbody>
   );
 };

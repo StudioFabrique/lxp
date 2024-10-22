@@ -11,6 +11,8 @@ const TableListHead = (props: TableListHeadProps) => {
     <thead>
       <tr>
         <th />
+
+        {/* La cellule header pour contenir la checkbox */}
         {props.style?.showCheckbox ? (
           <th className="pl-0 w-0">
             <div className="flex items-center">
@@ -22,6 +24,10 @@ const TableListHead = (props: TableListHeadProps) => {
           </th>
         ) : null}
 
+        {/* La cellule header vide pour contenir l'avatar */}
+        {props.style?.showAvatar ? <th /> : null}
+
+        {/* Les cellules header pour contenir les labels des propriétés  */}
         {props.labels.map((item) =>
           !item.isAction ? (
             <th key={item.property} className="text-base-content font-bold">
@@ -30,6 +36,7 @@ const TableListHead = (props: TableListHeadProps) => {
           ) : null,
         )}
 
+        {/* Les cellules header pour contenir les labels des actions  */}
         <th className="text-base-content font-bold flex items-center justify-end px-0 gap-x-2">
           {props.labels.map((item) =>
             item.isAction ? (
@@ -42,6 +49,7 @@ const TableListHead = (props: TableListHeadProps) => {
             ) : null,
           )}
         </th>
+
         <th className="px-0" />
       </tr>
     </thead>
