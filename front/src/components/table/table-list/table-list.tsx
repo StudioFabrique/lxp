@@ -15,6 +15,7 @@ export type TableListProps<TData extends Record<string, unknown>> = {
 const TableList = <TData extends Record<string, string>>(
   props: TableListProps<TData>,
 ) => {
+  // custom hook
   const { labels, tableItems } = useTableList<TData>(
     props.idProperty,
     props.data,

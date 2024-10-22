@@ -58,7 +58,11 @@ const GroupHome = () => {
         </Can>
       </Header>
       <Table
-        searchBar={{ title: "Groupes", placeholder: "Rechercher un groupe" }}
+        searchBar={{
+          title: "Groupes",
+          placeholder: "Rechercher un groupe",
+          actions: [],
+        }}
         list={{
           idProperty: "_id",
           data: dataTest,
