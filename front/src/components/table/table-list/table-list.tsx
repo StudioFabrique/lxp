@@ -6,8 +6,9 @@ import Body from "./table-list-body";
 
 export type TableListProps<TData extends Record<string, unknown>> = {
   idProperty: string;
+  avatar?: TableListItemConfig;
   data: TData[];
-  tableItems: TableListItemConfig[];
+  tableItemsConfig: TableListItemConfig[];
   actionsItems?: TableListActionConfig[];
   style?: {
     emptyArrayMessage?: string;
@@ -23,14 +24,20 @@ const TableList = <TData extends Record<string, string>>(
   const { labels, tableItems } = useTableList<TData>(
     props.idProperty,
     props.data,
-    props.tableItems,
+    props.tableItemsConfig,
     props.actionsItems,
+    props.avatar?.property,
   );
 
   return (
     <div className="overflow-auto">
       <table className="table w-full border-separate border-spacing-y-5 ">
-        <Head labels={labels} style={props.style} />
+        <Head
+          labels={labels}
+          avatar={props.avatar}
+          showCheckbox={props.style?.showCheckbox}
+          showAvatar={props.style?.showAvatar}
+        />
         <Body tableItems={tableItems} style={props.style} />
       </table>
     </div>

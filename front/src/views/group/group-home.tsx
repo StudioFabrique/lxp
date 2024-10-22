@@ -5,6 +5,7 @@ import { groupHomeTableItems } from "./group-home-table-config";
 import { Pen, Trash2 } from "lucide-react";
 import { TableListActionConfig } from "../../components/table/table-list/interfaces/table-list-action";
 import Table from "../../components/table/table";
+import TablePagination from "../../components/table/table-pagination/table-pagination";
 
 const GroupHome = () => {
   // usePagination here to get data
@@ -13,6 +14,7 @@ const GroupHome = () => {
     {
       _id: "1",
       name: "name name",
+      avatar: "",
       description: "test",
       formation: "test1234",
       nbStudents: "1",
@@ -20,6 +22,7 @@ const GroupHome = () => {
     {
       _id: "ndddt6678",
       name: "firstname test",
+      avatar: "",
       description: "test",
       formation: "test1234",
       nbStudents: "10",
@@ -65,18 +68,25 @@ const GroupHome = () => {
         }}
         list={{
           idProperty: "_id",
+          avatar: { property: "avatar" },
           data: dataTest,
-          tableItems: groupHomeTableItems,
+          tableItemsConfig: groupHomeTableItems,
           actionsItems: actions,
           style: {
             showCheckbox: true,
+            showAvatar: true,
             emptyArrayMessage: "Aucun groupe disponible",
           },
         }}
-        pagination={{
-          onSetItemsPerPage: () => {},
-        }}
-      />
+      >
+        {/* <TablePagination {...paginationProps} /> */}
+        <TablePagination
+          maxPage={5}
+          page={1}
+          itemsPerPage={5}
+          onSetItemsPerPage={() => {}}
+        />
+      </Table>
     </div>
   );
 };

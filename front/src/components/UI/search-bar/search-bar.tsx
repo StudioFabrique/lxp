@@ -37,10 +37,12 @@ const SearchBar = ({
   };
 
   return (
-    <div className="flex justify-between items-center w-full overflow-auto">
-      {title ? <h2 className="font-bold text-base-content">{title}</h2> : null}
+    <div className="flex flex-col lg:flex-row justify-between gap-5 items-center w-full">
+      {title ? (
+        <h2 className="text-lg font-bold text-base-content">{title}</h2>
+      ) : null}
 
-      <div className="flex items-center gap-5">
+      <div className="flex items-center justify-end gap-5 w-full">
         <form
           className="flex items-center bg-secondary/10 w-[45vh] gap-x-2 p-2 rounded-md"
           onSubmit={handleSubmit}

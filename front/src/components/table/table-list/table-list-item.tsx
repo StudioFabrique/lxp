@@ -2,11 +2,13 @@ import { PropsWithChildren, ReactNode } from "react";
 import TableListAction from "./interfaces/table-list-action";
 import TableListCell from "./table-list-cell";
 import TableListActionCell from "./table-list-action-cell";
+import { AvatarSmall } from "../../UI/avatar/avatar.component";
 
 type ItemProps<TData extends Record<string, unknown>> = {
   id: string;
   data: TData;
   actions?: TableListAction[];
+  avatar?: string;
   style?: { showCheckbox?: boolean; showAvatar?: boolean };
 };
 
@@ -18,6 +20,8 @@ const TableListItem = <TData extends Record<string, unknown>>(
   return (
     <tr className="bg-secondary/10 hover:bg-primary/20">
       <td className="rounded-l-xl w-0" />
+
+      {/* Affichage de la checkbox si activé */}
       {props.style?.showCheckbox ? (
         <td className="px-0">
           <div className="h-full flex flex-col justify-center">
@@ -26,6 +30,13 @@ const TableListItem = <TData extends Record<string, unknown>>(
               className="checkbox checkbox-sm checkbox-primary"
             />
           </div>
+        </td>
+      ) : null}
+
+      {/* Affichage d'un avatar si activé */}
+      {props.style?.showAvatar ? (
+        <td className="px-0 flex justify-center items-center">
+          <AvatarSmall url={props.avatar} />
         </td>
       ) : null}
 

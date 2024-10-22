@@ -28,6 +28,7 @@ function useTableList<TData extends Record<string, string>>(
   data: TData[],
   itemsConfig: TableListItemConfig[],
   actionsItems?: TableListActionConfig[],
+  avatarProperty?: string,
 ) {
   const [tableItems, setTableItems] = useState<TableListItem[] | null>(null);
 
@@ -44,10 +45,11 @@ function useTableList<TData extends Record<string, string>>(
         itemsConfig,
         idProperty,
         actionsItems ? generateTableActions(d, actionsItems) : undefined,
+        avatarProperty,
       );
       setTableItems((prevItems) => [...(prevItems ?? []), filteredData]);
     });
-  }, [data, actionsItems, idProperty, itemsConfig]);
+  }, [data, actionsItems, idProperty, itemsConfig, avatarProperty]);
 
   useEffect(() => {
     handleGenerateItems();

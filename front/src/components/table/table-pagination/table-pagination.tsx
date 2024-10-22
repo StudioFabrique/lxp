@@ -1,38 +1,38 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import Selecter from "../../UI/selecter/selecter";
+import DropdownSelector from "../../UI/dropdown-selector/dropdown-selector";
+import { SolarAltArrowDownBold } from "../../UI/svg/alt-arrow-icon";
 
 export type TablePaginationProps = {
+  page: number;
+  maxPage: number;
+  itemsPerPage: number;
   onSetItemsPerPage: (itemsPerPage: number) => void;
 };
 
 const TablePagination = (props: TablePaginationProps) => {
-  const itemsPerPageList = [
-    { id: 0, value: "5" },
-    { id: 1, value: "10" },
-    { id: 2, value: "15" },
-  ];
-
-  const handleSetItemsPerPage = (id: number) => {
-    const item = itemsPerPageList.find((item) => item.id == id);
-    if (item) props.onSetItemsPerPage(+item.value);
+  const handleSetItemsPerPage = (value: string) => {
+    if (value) props.onSetItemsPerPage(+value);
   };
+
+  // add a const with generated number list of page with a interval of 5 from the max page value
+  // example : [1,5, 10]
 
   return (
     <div className="flex items-center gap-10 rounded-lg justify-end w-full bg-primary p-1 text-base-100">
       <div className="flex items-center">
-        <span>Éléments par pages:</span>
-        <Selecter
-          list={itemsPerPageList}
-          onSelectItem={handleSetItemsPerPage}
-          id={0}
-          styleGhost
-        />
+        <span className="text-sm font-semibold">Éléments par pages:</span>
+        <DropdownSelector valueList={[5, 10, 15]}>
+          {props.itemsPerPage}
+          <SolarAltArrowDownBold />
+        </DropdownSelector>
       </div>
       <div className="join">
         <button className="join-item btn btn-sm btn-ghost">
           <ChevronLeft />
         </button>
-        <button className="join-item btn btn-sm btn-ghost">1 sur 5</button>
+        <DropdownSelector valueList={[1]}>
+          {`${props.page} sur ${props.maxPage}`}
+        </DropdownSelector>
         <button className="join-item btn btn-sm btn-ghost">
           <ChevronRight />
         </button>
