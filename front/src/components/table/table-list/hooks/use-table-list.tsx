@@ -3,7 +3,7 @@ import {
   constructLabels,
   generateTableActions,
   generateTableItem,
-} from "../services/generic-table-services";
+} from "../services/generic-table-service";
 import TableListItem, {
   TableListItemConfig,
   TableListItemLabels,

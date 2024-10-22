@@ -5,7 +5,7 @@ import TableList, { TableListProps } from "./table-list/table-list";
 import EllipsisIcon from "../UI/svg/ellipsis-icon";
 import { PropsWithChildren } from "react";
 
-type TableProps<TData extends Record<string, string>> = {
+type TableProps<TData> = {
   list: TableListProps<TData>;
   searchBar: SearchBarProps;
 };

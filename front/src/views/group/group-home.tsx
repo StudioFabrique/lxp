@@ -6,28 +6,13 @@ import { Pen, Trash2 } from "lucide-react";
 import { TableListActionConfig } from "../../components/table/table-list/interfaces/table-list-action";
 import Table from "../../components/table/table";
 import TablePagination from "../../components/table/table-pagination/table-pagination";
+import useTablePaginatedData from "../../components/table/table-pagination/hooks/use-table-paginated-data";
+import { SearchBarProps } from "../../components/UI/search-bar/search-bar";
+import { TableListProps } from "../../components/table/table-list/table-list";
+import Group from "../../utils/interfaces/group";
 
 const GroupHome = () => {
-  // usePagination here to get data
-
-  const dataTest = [
-    {
-      _id: "1",
-      name: "name name",
-      avatar: "",
-      description: "test",
-      formation: "test1234",
-      nbStudents: "1",
-    },
-    {
-      _id: "ndddt6678",
-      name: "firstname test",
-      avatar: "",
-      description: "test",
-      formation: "test1234",
-      nbStudents: "10",
-    },
-  ];
+  const { data, ...pagination } = useTablePaginatedData();
 
   const actions: TableListActionConfig[] = [
     {
@@ -48,6 +33,25 @@ const GroupHome = () => {
     },
   ];
 
+  const searchBarConfig: SearchBarProps = {
+    title: "Groupes",
+    placeholder: "Rechercher un groupe",
+    // actions: [],
+  };
+
+  const listConfig: TableListProps<Group> = {
+    idProperty: "_id",
+    avatar: { property: "avatar" },
+    data: data,
+    tableItemsConfig: groupHomeTableItems,
+    actionsItems: actions,
+    style: {
+      showCheckbox: true,
+      showAvatar: true,
+      emptyArrayMessage: "Aucun groupe disponible",
+    },
+  };
+
   return (
     <div className="flex flex-col gap-5 p-10">
       <Header
@@ -60,32 +64,8 @@ const GroupHome = () => {
           </Link>
         </Can>
       </Header>
-      <Table
-        searchBar={{
-          title: "Groupes",
-          placeholder: "Rechercher un groupe",
-          // actions: [],
-        }}
-        list={{
-          idProperty: "_id",
-          avatar: { property: "avatar" },
-          data: dataTest,
-          tableItemsConfig: groupHomeTableItems,
-          actionsItems: actions,
-          style: {
-            showCheckbox: true,
-            showAvatar: true,
-            emptyArrayMessage: "Aucun groupe disponible",
-          },
-        }}
-      >
-        {/* <TablePagination {...paginationProps} /> */}
-        <TablePagination
-          maxPage={5}
-          page={1}
-          itemsPerPage={5}
-          onSetItemsPerPage={() => {}}
-        />
+      <Table searchBar={searchBarConfig} list={listConfig}>
+        <TablePagination {...pagination} />
       </Table>
     </div>
   );
