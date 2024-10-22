@@ -40,10 +40,12 @@ import postTeacherRouter from "./post-teacher";
 import userProfileRouter from "./profile/user-profile.router";
 import {
   getUsersByRoleValidator,
+  postCheckEmailValidator,
   postPasswordValidator,
   tokenValidator,
   userIdValidator,
 } from "./user-validators";
+import httpPostCheckEmail from "../../../controllers/user/http-post-check-email";
 
 const userRouter = express.Router();
 
@@ -251,5 +253,8 @@ userRouter.post(
   activateAccount,
   httpPostCheckActivationToken,
 );
+
+//  vérification de l'existence d'un compte utilisateur
+userRouter.post("/check-email", postCheckEmailValidator, httpPostCheckEmail);
 
 export default userRouter;
