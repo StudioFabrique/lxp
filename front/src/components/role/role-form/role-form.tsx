@@ -28,7 +28,7 @@ const RoleCreateForm: FC<{
   const { defineRulesFor, fetchRoles, user } = useContext(Context);
   const { sendRequest, isLoading: isRequestLoading } = useHttp(true);
 
-  const [isActive, SetActive] = useState(false);
+  // const [isActive, SetActive] = useState(false);
 
   const [currentRoleType, setCurrentRoleType] = useState<number>(1);
 
@@ -36,12 +36,12 @@ const RoleCreateForm: FC<{
 
   const { value: name } = useInput(
     (value: string) => regexGeneric.test(value),
-    roleToEdit?.name ? roleToEdit.name : ""
+    roleToEdit?.name ? roleToEdit.name : "",
   );
 
   const { value: label } = useInput(
     (value: string) => regexGeneric.test(value),
-    roleToEdit?.label ? roleToEdit.label : ""
+    roleToEdit?.label ? roleToEdit.label : "",
   );
 
   const cancelForm = () => {
@@ -71,10 +71,10 @@ const RoleCreateForm: FC<{
               role: roleData.role,
               label: roleData.label,
               rank: roleData.rank,
-              isActive: roleData.isActive,
+              // isActive: roleData.isActive,
             };
           return role;
-        })
+        }),
       );
       cancelForm();
       fetchRoles(user!.roles[0]);
@@ -93,10 +93,10 @@ const RoleCreateForm: FC<{
             role: name.value,
             label: label.value,
             rank: currentRoleType,
-            isActive,
+            // isActive,
           },
         },
-        roleToEdit ? applyDataUpdate : applyDataCreate
+        roleToEdit ? applyDataUpdate : applyDataCreate,
       );
     else toast.error("Le formulaire n'est pas valide");
   };
@@ -107,10 +107,11 @@ const RoleCreateForm: FC<{
    */
   useEffect(() => {
     if (roleToEdit) {
-      SetActive(roleToEdit.isActive);
+      // SetActive(roleToEdit.isActive);
       setCurrentRoleType(roleToEdit.rank);
       nameInputRef.current?.focus();
-    } else SetActive(false);
+    }
+    // } else SetActive(false);
   }, [roleToEdit]);
 
   return (
@@ -150,7 +151,7 @@ const RoleCreateForm: FC<{
               name="label"
               id="label"
               className={setInputStyle(
-                label.hasError && label.value.length > 0
+                label.hasError && label.value.length > 0,
               )}
               onChange={label.valueChangeHandler}
               onBlur={label.valueBlurHandler}
@@ -168,7 +169,7 @@ const RoleCreateForm: FC<{
           </span>
         </div>
 
-        <span className="flex gap-x-1">
+        {/* <span className="flex gap-x-1">
           <p>Status</p>
           <input
             type="checkbox"
@@ -177,7 +178,7 @@ const RoleCreateForm: FC<{
             onChange={(e) => SetActive(e.currentTarget.checked)}
           />
           <p>{isActive ? "Actif" : "Inactif"}</p>
-        </span>
+        </span> */}
 
         <div className="flex justify-between">
           {isRequestLoading ? (

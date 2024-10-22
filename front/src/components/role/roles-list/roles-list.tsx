@@ -30,7 +30,7 @@ const RolesList: FC<{
       ) : roles.length > 0 ? (
         <table className="table grid">
           <thead className="">
-            <tr className="grid grid-cols-10">
+            <tr className="grid grid-cols-9">
               <th></th>
               <th>Rôle</th>
               <th className="col-span-2">Permissions</th>
@@ -38,7 +38,7 @@ const RolesList: FC<{
               <th>R</th>
               <th>U</th>
               <th>D</th>
-              <th></th>
+              {/* <th></th> */}
               <th></th>
             </tr>
           </thead>

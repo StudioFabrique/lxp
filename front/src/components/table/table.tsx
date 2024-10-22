@@ -19,9 +19,11 @@ const Table = <TData extends Record<string, string>>(
   return (
     <Wrapper>
       <SearchBar {...props.searchBar}>
+        {/* Refresh Button */}
         <button className="btn btn-sm btn-ghost">
           <RefreshCw />
         </button>
+        {/* Ellipse Actions Button */}
         <button className="btn btn-sm btn-ghost">
           <EllipsisIcon />
         </button>

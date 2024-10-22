@@ -11,7 +11,7 @@ export interface IRoleItem {
   role: string;
   label: string;
   rank: number;
-  isActive: boolean;
+  isActive?: boolean;
   permCount: {
     read: number;
     write: number;
@@ -25,7 +25,7 @@ export interface IRoleToEdit {
   name: string;
   label: string;
   rank: number;
-  isActive: boolean;
+  isActive?: boolean;
 }
 
 const Role = () => {
