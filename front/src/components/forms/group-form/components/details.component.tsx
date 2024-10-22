@@ -3,9 +3,9 @@ import { FC, useEffect, useState } from "react";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 import useHttp from "../../../../hooks/use-http";
 import Group from "../../../../utils/interfaces/group";
-import Selecter from "../../../UI/selecter/selecter";
 import Formation from "../../../../utils/interfaces/formation";
 import Parcours from "../../../../utils/interfaces/parcours";
+import SelecterWithId from "../../../UI/selecter/selecter-with-id";
 
 // type de données pour les listes
 type Item = {
@@ -101,13 +101,13 @@ const Details: FC<{
           <h2 className="font-bold text-xl">Details</h2>
         </span>
         <div className="flex flex-col gap-y-8">
-          <Selecter
+          <SelecterWithId
             list={formations}
             title="Choisissez une formation"
             onSelectItem={handleFormation}
             id={formationId}
           />
-          <Selecter
+          <SelecterWithId
             list={parcoursList}
             title="Choisisez un parcours"
             onSelectItem={handleParcours}

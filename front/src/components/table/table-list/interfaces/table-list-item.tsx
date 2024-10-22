@@ -11,6 +11,7 @@ export interface TableListItem {
   id: string;
   data: Record<string, string>;
   actions?: TableListAction[];
+  avatar?: string;
 }
 
 export default TableListItem;

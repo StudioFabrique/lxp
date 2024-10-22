@@ -1,9 +1,14 @@
 import { Fragment } from "react/jsx-runtime";
-import { TableListItemLabels } from "./interfaces/table-list-item";
+import {
+  TableListItemConfig,
+  TableListItemLabels,
+} from "./interfaces/table-list-item";
 
 type TableListHeadProps = {
   labels: TableListItemLabels[];
-  style?: { showCheckbox?: boolean; showAvatar?: boolean };
+  avatar?: TableListItemConfig;
+  showCheckbox?: boolean;
+  showAvatar?: boolean;
 };
 
 const TableListHead = (props: TableListHeadProps) => {
@@ -13,7 +18,7 @@ const TableListHead = (props: TableListHeadProps) => {
         <th />
 
         {/* La cellule header pour contenir la checkbox */}
-        {props.style?.showCheckbox ? (
+        {props.showCheckbox ? (
           <th className="pl-0 w-0">
             <div className="flex items-center">
               <input
@@ -25,7 +30,11 @@ const TableListHead = (props: TableListHeadProps) => {
         ) : null}
 
         {/* La cellule header vide pour contenir l'avatar */}
-        {props.style?.showAvatar ? <th /> : null}
+        {props.showAvatar ? (
+          <th className="flex justify-center items-center">
+            {props.avatar?.label}
+          </th>
+        ) : null}
 
         {/* Les cellules header pour contenir les labels des propriétés  */}
         {props.labels.map((item) =>

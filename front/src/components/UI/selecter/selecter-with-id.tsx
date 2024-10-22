@@ -13,7 +13,7 @@ type Props = {
   styleGhost?: boolean;
 };
 
-const Selecter: FC<Props> = ({
+const SelecterWithId: FC<Props> = ({
   list,
   title,
   id = 0,
@@ -55,4 +55,4 @@ const Selecter: FC<Props> = ({
   );
 };
 
-export default Selecter;
+export default SelecterWithId;

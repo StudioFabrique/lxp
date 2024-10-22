@@ -35,18 +35,21 @@ export function generateTableItem(
   itemsConfig: TableListItemConfig[],
   idProperty: string,
   actions?: TableListAction[],
+  avatarProperty?: string,
 ): TableListItem {
   const entries = Object.entries(dataToTransform);
   const properties = itemsConfig.map((item) => item.property);
   const filteredEntries = entries.filter(([key]) => properties.includes(key));
   const filteredData = Object.fromEntries(filteredEntries);
+  const avatarEntry = entries.find(([key]) => key === avatarProperty);
+  const avatar = avatarEntry ? avatarEntry[1] : undefined;
   const idEntry = entries.find(([key]) => key === idProperty);
   if (!idEntry) {
-    return { id: "1", data: filteredData, actions: actions };
+    return { id: "1", data: filteredData, actions: actions, avatar: avatar };
   }
   const id = idEntry[1];
 
-  return { id: id, data: filteredData, actions: actions };
+  return { id: id, data: filteredData, actions: actions, avatar: avatar };
 }
 
 export function generateTableActions(

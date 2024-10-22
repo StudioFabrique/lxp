@@ -11,21 +11,19 @@ type TableListBodyProps = {
 };
 
 const TableListBody = (props: TableListBodyProps) => {
+  // Si les données sont présentes, alors les items de
+  // tableaux sont affichés.
   if (props.tableItems)
     return (
       <tbody>
         {props.tableItems?.map((item) => (
-          <Item
-            key={item.id}
-            id={item.id}
-            data={item.data}
-            actions={item.actions}
-            style={props.style}
-          />
+          <Item key={item.id} {...item} style={props.style} />
         ))}
       </tbody>
     );
 
+  // Si aucune donnée, alors afficher un message dans
+  // le corps du tableau.
   return (
     <tbody>
       <tr>
