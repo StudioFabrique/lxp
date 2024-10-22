@@ -14,11 +14,6 @@ export default async function putPassword(
   password: string,
   token: string,
 ) {
-  const existingToken = await BlackListedToken.findOne({ token });
-
-  if (existingToken)
-    throw { statusCode: 406, message: "Ce lien n'est plus actif." };
-
   try {
     const existingUser = await User.findOne({
       _id: new mongoose.Types.ObjectId(userId),
@@ -37,6 +32,7 @@ export default async function putPassword(
     );
 
     await BlackListedToken.create({ token });
+    console.log(updatedResult);
 
     return updatedResult;
   } catch (error: any) {

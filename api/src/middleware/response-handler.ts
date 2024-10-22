@@ -7,7 +7,7 @@ export default function responseHandler(
   data: { statusCode: number; data?: any; message?: string },
   req: CustomRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   if (data) {
     const childLogger = logger.child({
@@ -20,7 +20,6 @@ export default function responseHandler(
       childLogger.error(message + "-" + data.message);
     } else if (data.statusCode < 400) {
       childLogger.info(message);
-      console.log(message);
       return res.status(data.statusCode).json(data.data);
     } else {
       childLogger.warn(message + "-" + data.message);
