@@ -1,39 +1,55 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import DropdownSelector from "../../UI/dropdown-selector/dropdown-selector";
 import { SolarAltArrowDownBold } from "../../UI/svg/alt-arrow-icon";
+import iterateNumberToArray from "../../../utils/iterate-number-to-array";
 
 export type TablePaginationProps = {
-  page: number;
-  maxPage: number;
+  currentPage: number | null;
+  maxPage: number | null;
   itemsPerPage: number;
+  onSetCurrentPage: (currentPage: number) => void;
   onSetItemsPerPage: (itemsPerPage: number) => void;
+  onSetPreviousPage: () => void;
+  onSetNextPage: () => void;
 };
 
 const TablePagination = (props: TablePaginationProps) => {
-  const handleSetItemsPerPage = (value: string) => {
-    if (value) props.onSetItemsPerPage(+value);
-  };
+  if (!props.currentPage || !props.maxPage) return null;
 
-  // add a const with generated number list of page with a interval of 5 from the max page value
-  // example : [1,5, 10]
+  // Génere un tableau qui contient une liste de nombres compté jusque
+  // le maximum de pages avec une incrémentation de 5
+  // exemple : [1, 5, 10, 15, 16]
+  const valueArray = iterateNumberToArray(props.maxPage, 5);
 
   return (
     <div className="flex items-center gap-10 rounded-lg justify-end w-full bg-primary p-1 text-base-100">
       <div className="flex items-center">
-        <span className="text-sm font-semibold">Éléments par pages:</span>
-        <DropdownSelector valueList={[5, 10, 15]}>
+        <span className="text-sm font-semibold">Éléments par page:</span>
+        <DropdownSelector
+          onSelect={props.onSetItemsPerPage}
+          valueList={[5, 10, 15]}
+        >
           {props.itemsPerPage}
           <SolarAltArrowDownBold />
         </DropdownSelector>
       </div>
       <div className="join">
-        <button className="join-item btn btn-sm btn-ghost">
+        <button
+          onClick={props.onSetPreviousPage}
+          className="join-item btn btn-sm btn-ghost"
+        >
           <ChevronLeft />
         </button>
-        <DropdownSelector valueList={[1]}>
-          {`${props.page} sur ${props.maxPage}`}
+        <DropdownSelector
+          onSelect={props.onSetCurrentPage}
+          valueList={valueArray}
+        >
+          {`${props.currentPage} sur ${props.maxPage}`}
         </DropdownSelector>
-        <button className="join-item btn btn-sm btn-ghost">
+        <button
+          onClick={props.onSetNextPage}
+          className="join-item btn btn-sm btn-ghost"
+        >
           <ChevronRight />
         </button>
       </div>

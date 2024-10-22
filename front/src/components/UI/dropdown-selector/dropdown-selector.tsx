@@ -9,11 +9,13 @@ import {
 type DropdownSelectorProps = {
   valueList: (string | number)[];
   emptyListMessage?: string;
+  onSelect: (value: number) => void;
 };
 
 const DropdownSelector = ({
   valueList,
   emptyListMessage,
+  onSelect,
   children,
 }: PropsWithChildren<DropdownSelectorProps>) => {
   const [isSelecterOpened, setSelecterOpenState] = useState<boolean>(false);
@@ -25,7 +27,7 @@ const DropdownSelector = ({
   };
 
   const handleSelect = (event: React.MouseEvent<HTMLLIElement>) => {
-    console.log({ value: event.currentTarget.value });
+    onSelect(event.currentTarget.value);
     setSelecterOpenState(false);
   };
 

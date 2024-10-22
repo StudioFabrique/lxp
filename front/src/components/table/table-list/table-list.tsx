@@ -4,7 +4,7 @@ import { TableListItemConfig } from "./interfaces/table-list-item";
 import Head from "./table-list-head";
 import Body from "./table-list-body";
 
-export type TableListProps<TData extends Record<string, unknown>> = {
+export type TableListProps<TData> = {
   idProperty: string;
   avatar?: TableListItemConfig;
   data: TData[];
