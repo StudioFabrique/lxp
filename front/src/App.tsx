@@ -61,11 +61,19 @@ const router = createBrowserRouter([
   },
   {
     path: "/register",
-    element: <RegisterHome />,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <RegisterHome />
+      </Suspense>
+    ),
   },
   {
     path: "/reset-password",
-    element: <ResetPassword />,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ResetPassword />
+      </Suspense>
+    ),
   },
 ]);
 
