@@ -41,6 +41,5 @@ export default async function putInvitation(userId: string) {
     { _id: existingUser._id },
     { $set: { invitationSent: true } },
   );
-  console.log({ updateResult });
   return updateResult;
 }

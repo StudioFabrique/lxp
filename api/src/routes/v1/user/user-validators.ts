@@ -8,9 +8,8 @@ import { checkValidatorResult } from "../../../middleware/validators";
 
 export const userIdValidator = [
   param("userId")
-    .notEmpty()
-    .withMessage("L'identifiant de l'utilisateur est requis.")
-    .custom(stringValidateGeneric),
+    .isMongoId()
+    .withMessage("L'identifiant de l'utilisateur est invalide."),
   checkValidatorResult,
 ];
 

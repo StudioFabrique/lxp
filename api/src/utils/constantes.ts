@@ -28,3 +28,5 @@ export const regexVideoUrl =
 export const regexRgba =
   /^rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(0(\.\d+)?|1(\.0+)?)\s*\)$/;
 export const regexJwt = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
+
+export const regexMongodbId = /^[0-9a-fA-F]{24}$/;
