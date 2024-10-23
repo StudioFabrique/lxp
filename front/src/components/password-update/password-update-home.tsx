@@ -14,7 +14,11 @@ import PasswordUpdateError from "../../components/password-update/password-updat
 import { Context } from "../../store/context.store";
 import usePasswordUpdate from "../../hooks/use-password-update";
 
-export default function PasswordUpdateHome() {
+type Props = {
+  message: string;
+};
+
+export default function PasswordUpdateHome(props: Props) {
   const { chooseTheme } = useContext(Context);
   const [searchParams] = useSearchParams();
   //  custom hook qui gère la logique du composant
@@ -51,10 +55,7 @@ export default function PasswordUpdateHome() {
           {success ? (
             // Message si l'activation du compte est réussie
             <section className="flex flex-col place-items-center">
-              <PasswordUpdateSuccess
-                message="Votre compte a été activé, vous allez être redirigé automatiquement vers la page de connexion..."
-                url="/"
-              />
+              <PasswordUpdateSuccess message={props.message} url="/" />
             </section>
           ) : (
             <section>
