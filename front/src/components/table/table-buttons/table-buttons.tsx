@@ -1,9 +1,10 @@
 import { RefreshCw } from "lucide-react";
-import EllipsisIcon from "../../UI/svg/ellipsis-icon";
+import ActionsDropdown from "../../UI/actions-dropdown/actions-dropdown";
 
 type TableButtonsProps = {
   isLoading: boolean;
   onRefreshData: () => void;
+  onDeleteUsers: () => void;
 };
 
 const TableButtons = (props: TableButtonsProps) => (
@@ -15,12 +16,16 @@ const TableButtons = (props: TableButtonsProps) => (
     >
       <RefreshCw />
     </button>
-    <button
-      disabled={props.isLoading}
-      className="btn btn-sm btn-ghost disabled:bg-transparent"
-    >
-      <EllipsisIcon />
-    </button>
+    <ActionsDropdown
+      actions={[
+        {
+          actionTitle: "Supprimer les utilisateurs selectionnés",
+          data: null,
+          onClick: props.onDeleteUsers,
+        },
+      ]}
+      isLoading={props.isLoading}
+    />
   </div>
 );
 

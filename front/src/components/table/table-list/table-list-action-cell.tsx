@@ -21,7 +21,10 @@ const TableListActionCell = (props: TableListActionCellProps) => {
           props.onSuccessfulSubmit(props.id, value);
       };
 
-      await sendRequest({ path: path }, applyData);
+      await sendRequest(
+        { path: path, method: props.request?.method },
+        applyData,
+      );
     }
   };
 

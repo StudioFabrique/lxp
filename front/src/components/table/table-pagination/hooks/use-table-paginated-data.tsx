@@ -7,7 +7,7 @@ function useTablePaginatedData<TData>(apiPath: string) {
   const [data, setData] = useState<TData[]>([]);
 
   const [currentPage, setCurrentPage] = useState<number | null>(1);
-  const [maxPage, setMaxPage] = useState<number | null>(50);
+  const [maxPage, setMaxPage] = useState<number | null>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(5);
 
   const handleSetItemsPerPage = (value: number) => {
@@ -32,9 +32,9 @@ function useTablePaginatedData<TData>(apiPath: string) {
   };
 
   const handleRequest = useCallback(async () => {
-    const applyData = (data: { list: TData[] }) => {
-      console.log(data);
-      setData(data.list);
+    const applyData = ({ total, list }: { total: number; list: TData[] }) => {
+      setMaxPage(Math.ceil(total / itemsPerPage));
+      setData(list);
     };
 
     await sendRequest(
@@ -43,13 +43,15 @@ function useTablePaginatedData<TData>(apiPath: string) {
     );
   }, [sendRequest, currentPage, apiPath, itemsPerPage]);
 
-  const refreshData = async () => {
-    await handleRequest();
-  };
-
   useEffect(() => {
     handleRequest();
   }, [handleRequest]);
+
+  useEffect(() => {
+    if (currentPage && currentPage > 1 && !(data.length > 0)) {
+      setCurrentPage(1);
+    }
+  }, [currentPage, data.length]);
 
   return {
     data,
@@ -61,7 +63,7 @@ function useTablePaginatedData<TData>(apiPath: string) {
     onSetCurrentPage: handleSetCurrentPage,
     onSetPreviousPage: handleSetPreviousPage,
     onSetNextPage: handleSetNextPage,
-    onRefreshData: refreshData,
+    onRefreshData: handleRequest,
   };
 }
 

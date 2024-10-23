@@ -15,8 +15,13 @@ const Table = <TData extends Record<string, string>>(
 
   return (
     <Wrapper additionalClassname="px-10 justify-between">
+      {/* top elements */}
       <SearchBar {...props.searchBar}>{topChild}</SearchBar>
+
+      {/* table in the middle */}
       <TableList {...props.list} />
+
+      {/* bottom elements */}
       <div>{bottomChild}</div>
     </Wrapper>
   );

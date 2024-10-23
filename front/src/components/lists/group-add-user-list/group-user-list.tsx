@@ -4,11 +4,10 @@ import User from "../../../utils/interfaces/user";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import GroupUserItem from "./group-user-item";
 import CsvImportUserList from "./csv-import-user/csv-import-user-list/csv-import-user-list.component";
-import LoadingIcon from "../../UI/svg/loading-icon.component";
-import ThreeDotIcon from "../../UI/svg/three-dot-icon.component";
 import useEagerLoadingList from "../../../hooks/use-eager-loading-list";
 import Pagination from "../../UI/pagination/pagination";
 import SearchBar from "../../UI/search-bar/search-bar";
+import ActionsDropdown from "../../UI/actions-dropdown/actions-dropdown";
 
 const GroupUserList: FC<{
   usersToAdd: User[];
@@ -75,36 +74,29 @@ const GroupUserList: FC<{
             onAddUsers={onAddUsers}
             usersAddedInTable={usersToAdd}
           />
-          <button type="button" className="btn btn-ghost px-2">
-            <LoadingIcon />
-          </button>
-          <button
-            type="button"
-            className="btn btn-ghost px-2"
-            onClick={handleToggleMenu}
-          >
-            <ThreeDotIcon />
-          </button>
-          <div
-            ref={menuDiv}
-            className="absolute whitespace-nowrap translate-y-12 invisible"
-          >
-            <button
-              type="button"
-              className="bg-secondary/80 p-2 rounded-lg"
-              onClick={handleDeleteUsersToAdd}
-            >
-              Supprimer les utilisateurs selectionnés
-            </button>
-          </div>
+          <ActionsDropdown
+            actions={[
+              {
+                actionTitle: "Supprimer les utilisateurs selectionnés",
+                data: null,
+                onClick: handleDeleteUsersToAdd,
+              },
+            ]}
+          />
         </div>
       </div>
       <div className="flex justify-between items-center w-full">
-        <GroupManageUserList
-          onAddUsers={onAddUsers}
-          usersToAdd={usersToAdd}
-          onCloseDrawer={handleCloseDrawer}
-        />
+        <div className="flex gap-5 items-center">
+          <GroupManageUserList
+            onAddUsers={onAddUsers}
+            usersToAdd={usersToAdd}
+            onCloseDrawer={handleCloseDrawer}
+          />
+          <p className="text-nowrap text-primary">
+            <span className="font-bold">{usersToAdd.length}</span> étudiants
+            dans le groupe
+          </p>
+        </div>
         <SearchBar
           onSetFilter={setFilter}
           placeholder="Rechercher un étudiant par nom ou prénom"
