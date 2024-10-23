@@ -37,19 +37,18 @@ export function generateTableItem(
   actions?: TableListAction[],
   avatarProperty?: string,
 ): TableListItem {
-  const entries = Object.entries(dataToTransform);
-  const properties = itemsConfig.map((item) => item.property);
-  const filteredEntries = entries.filter(([key]) => properties.includes(key));
-  const filteredData = Object.fromEntries(filteredEntries);
-  const avatarEntry = entries.find(([key]) => key === avatarProperty);
-  const avatar = avatarEntry ? avatarEntry[1] : undefined;
-  const idEntry = entries.find(([key]) => key === idProperty);
-  if (!idEntry) {
-    return { id: "1", data: filteredData, actions: actions, avatar: avatar };
-  }
-  const id = idEntry[1];
+  const id = dataToTransform[idProperty] || "1";
+  const avatar = avatarProperty ? dataToTransform[avatarProperty] : undefined;
 
-  return { id: id, data: filteredData, actions: actions, avatar: avatar };
+  // Create an ordered object based on itemsConfig
+  const orderedData: Record<string, string> = {};
+  itemsConfig.forEach((item) => {
+    if (Object.prototype.hasOwnProperty.call(dataToTransform, item.property)) {
+      orderedData[item.property] = dataToTransform[item.property];
+    }
+  });
+
+  return { id, data: orderedData, actions, avatar };
 }
 
 export function generateTableActions(

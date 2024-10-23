@@ -1,32 +1,10 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import useHttp from "../../../../hooks/use-http";
 
-function useTablePaginatedData() {
-  const [data, setData] = useState([
-    {
-      _id: "rsdgse412213",
-      name: "name name",
-      avatar: "",
-      description: "test",
-      formation: "test1234",
-      nbStudents: 1,
-      desc: "",
-      startDate: "",
-      endDate: "",
-      tags: [],
-    },
-    {
-      _id: "aadw5513awd",
-      name: "name name",
-      avatar: "",
-      description: "test",
-      formation: "test1234",
-      nbStudents: 1,
-      desc: "",
-      startDate: "",
-      endDate: "",
-      tags: [],
-    },
-  ]);
+function useTablePaginatedData<TData>(apiPath: string) {
+  const { sendRequest, isLoading } = useHttp();
+
+  const [data, setData] = useState<TData[]>([]);
 
   const [currentPage, setCurrentPage] = useState<number | null>(1);
   const [maxPage, setMaxPage] = useState<number | null>(50);
@@ -53,8 +31,29 @@ function useTablePaginatedData() {
     if (maxPage && newValue <= maxPage) setCurrentPage(newValue);
   };
 
+  const handleRequest = useCallback(async () => {
+    const applyData = (data: { list: TData[] }) => {
+      console.log(data);
+      setData(data.list);
+    };
+
+    await sendRequest(
+      { path: `${apiPath}/?page=${currentPage}&limit=${itemsPerPage}` },
+      applyData,
+    );
+  }, [sendRequest, currentPage, apiPath, itemsPerPage]);
+
+  const refreshData = async () => {
+    await handleRequest();
+  };
+
+  useEffect(() => {
+    handleRequest();
+  }, [handleRequest]);
+
   return {
     data,
+    isLoading,
     currentPage,
     maxPage,
     itemsPerPage,
@@ -62,6 +61,7 @@ function useTablePaginatedData() {
     onSetCurrentPage: handleSetCurrentPage,
     onSetPreviousPage: handleSetPreviousPage,
     onSetNextPage: handleSetNextPage,
+    onRefreshData: refreshData,
   };
 }
 
