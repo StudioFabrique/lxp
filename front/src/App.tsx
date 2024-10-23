@@ -17,11 +17,11 @@ const AdminLayout = lazy(
 );
 
 const RegisterHome = lazy(
-  async () => await import("./views/register/register"),
+  async () => await import("./views/register/register-home"),
 );
 
-const ResetPassword = lazy(
-  async () => await import("./views/reset-password/reset-password"),
+const ResetPasswordHome = lazy(
+  async () => await import("./views/reset-password/reset-password-home"),
 );
 
 const router = createBrowserRouter([
@@ -71,7 +71,7 @@ const router = createBrowserRouter([
     path: "/reset-password",
     element: (
       <Suspense fallback={<Loader />}>
-        <ResetPassword />
+        <ResetPasswordHome />
       </Suspense>
     ),
   },

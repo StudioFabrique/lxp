@@ -1,20 +1,20 @@
 /**
- *   Cette vue permet à un utilisateur de saisir un mot de passe pour son compte
- *   nouvellement créé.
- *   Accessible depuis un lien envoyé dans un courriel de vérification.
+ *  Ce Composant permet à un utilisateur de mettre à jour son mot de passe
+ *  dans le cas d'une activation de compte ou de réinitialisation du mot
+ *  de passe.
+ *  Accessible depuis un lien envoyé dans un courriel de vérification.
  */
 
 import { useContext, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import image from "../../assets/images/andria-2.png";
 import PasswordUpdateForm from "../../components/password-update/password-update-form";
 import PasswordUpdateSuccess from "../../components/password-update/password-update-success";
 
 import PasswordUpdateError from "../../components/password-update/password-update-error";
-import useAccountActivation from "../../hooks/use-password-update";
 import { Context } from "../../store/context.store";
+import usePasswordUpdate from "../../hooks/use-password-update";
 
-export default function RegisterHome() {
+export default function PasswordUpdateHome() {
   const { chooseTheme } = useContext(Context);
   const [searchParams] = useSearchParams();
   //  custom hook qui gère la logique du composant
@@ -28,7 +28,7 @@ export default function RegisterHome() {
     password2,
     success,
     submitLoader,
-  } = useAccountActivation(searchParams.get("id") ?? "");
+  } = usePasswordUpdate(searchParams.get("id") ?? "");
 
   //  Choisit un thème clair par défaut et vérifie la validité du lien d'activation
   useEffect(() => {
@@ -40,11 +40,7 @@ export default function RegisterHome() {
   }, [checkToken]);
 
   return (
-    <main className="flex flex-col gap-y-8 place-items-center p-2">
-      {/* Header de la page */}
-      <img className="w-96 h-auto" src={image} alt="logo de l'application" />
-      <h1 className="text-3xl font-bold">Activation du compte</h1>
-      {/* fin du header */}
+    <>
       {error.length > 0 ? (
         // Message d'erreur en cas de lien non valide
         <section className="flex flex-col gap-y-8 justify-center items-center">
@@ -75,6 +71,6 @@ export default function RegisterHome() {
           )}
         </>
       )}
-    </main>
+    </>
   );
 }
