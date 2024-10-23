@@ -24,6 +24,10 @@ const ResetPasswordHome = lazy(
   async () => await import("./views/reset-password/reset-password-home"),
 );
 
+const ResetPasswordUpdate = lazy(
+  async () => await import("./views/reset-password/reset-password-update"),
+);
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -72,6 +76,14 @@ const router = createBrowserRouter([
     element: (
       <Suspense fallback={<Loader />}>
         <ResetPasswordHome />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/reset-update",
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ResetPasswordUpdate />
       </Suspense>
     ),
   },

@@ -1,52 +1,23 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/**
+ *   Cette vue est la première étape pour réinitialiser le mot de passe
+ *   d'un utilisateur. Elle permet de vérifier que l'email de l'utilisateur
+ *   existe avant de lui envoyer un courriel contenant un lien de
+ *   pour réinitialiser le mot de passe.
+ */
 
-import { useContext, useEffect, useState } from "react";
-import { Context } from "../../store/context.store";
-import Field from "../../components/UI/forms/field";
-import useForm from "../../components/UI/forms/hooks/use-form";
-import Wrapper from "../../components/UI/wrapper/wrapper.component";
-import SubmitButton from "../../components/UI/submit-button";
-import useHttp from "../../hooks/use-http";
-import { z, ZodError } from "zod";
-import { validationErrors } from "../../helpers/validate";
+import { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import image from "../../assets/images/andria-2.png";
+import Field from "../../components/UI/forms/field";
+import SubmitButton from "../../components/UI/submit-button";
+import Wrapper from "../../components/UI/wrapper/wrapper.component";
+import { Context } from "../../store/context.store";
+import useResetPasswordHome from "./use-password-home";
 
 export default function ResetPasswordHome() {
   const { initTheme } = useContext(Context);
-  const { errors, values, onChangeValue, onValidationErrors } = useForm();
-  const { error, isLoading, sendRequest } = useHttp();
-  const [emailVerified, setEmailVerified] = useState(false);
-
-  const data = { values, errors, onChangeValue };
-
-  const handleCheckEmail = (event: React.FormEvent) => {
-    event.preventDefault();
-    const schema = z.object({
-      email: z
-        .string({ required_error: "L'adresse email est obligatoire" })
-        .email({ message: "Adresse email invalide." }),
-    });
-    try {
-      schema.parse(values);
-    } catch (error: any) {
-      if (error instanceof ZodError) {
-        const errors = validationErrors(error);
-        onValidationErrors(errors);
-      }
-    }
-    const applyData = (data: { success: boolean; message: string }) => {
-      if (data.success) setEmailVerified(true);
-    };
-    sendRequest(
-      {
-        path: "/user/check-email",
-        method: "post",
-        body: { email: values.email },
-      },
-      applyData,
-    );
-  };
+  const { data, emailVerified, error, handleCheckEmail, isLoading } =
+    useResetPasswordHome();
 
   useEffect(() => {
     initTheme();
