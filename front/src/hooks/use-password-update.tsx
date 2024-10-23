@@ -64,7 +64,7 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-export default function useAccountActivation(token: string): AccountActivation {
+export default function usePasswordUpdate(token: string): AccountActivation {
   const { error, sendRequest } = useHttp();
 
   const [success, setSuccess] = useState(false);
@@ -102,7 +102,7 @@ export default function useAccountActivation(token: string): AccountActivation {
           password: state.password,
         },
       },
-      applyData,
+      applyData
     );
   }, [state.password, sendRequest, token]);
 
