@@ -1,3 +1,4 @@
+import { getTemplate } from "../helpers/get-mail-template";
 import { badQuery, regexMail } from "../utils/constantes";
 import nodemailer from "nodemailer";
 
@@ -14,27 +15,29 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function newUserMail(email: string, token: string) {
+export async function sendPasswordEmail(
+  email: string,
+  token: string,
+  template: string,
+) {
   try {
     if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
-
-    const activationLink = `${process.env.FRONT_URL}register?id=${token}`;
     const destination =
       process.env.ENVIRONMENT === "development"
         ? process.env.SMTP_EMAIL
         : email;
-
     // Verify SMTP connection before sending
     await transporter.verify();
+
+    const message = getTemplate(template, token);
 
     const result = await transporter.sendMail({
       from: '"LXP - Administrateur"',
       to: destination,
       subject: "Activation du compte",
-      html: `<b>Hello apprenant, pour activer votre compte veuillez cliquer sur le lien ci-dessous dans un délai de 24h</b><br/><a href=${activationLink}>Lien d'activation</a><br/><p>A bientôt !</p>`,
+      html: message,
     });
 
-    console.log("Email sent: ", result.response);
     return result;
   } catch (error: any) {
     console.error("Error sending email:", error);
@@ -43,8 +46,7 @@ export async function newUserMail(email: string, token: string) {
     }
     throw {
       statusCode: 500,
-      message:
-        "Le mail d'activation de compte n'a pas pu être envoyé au destinataire",
+      message: "Le mail n'a pas pu être envoyé au destinataire",
       error: error.message,
     };
   }
