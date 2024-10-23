@@ -487,6 +487,33 @@ describe("HTTP /user", () => {
     });
   });
 
+  describe("Test /check-email", () => {
+    test("It should respond 200 success", async () => {
+      await request(app)
+        .post("/v1/user/check-email")
+        .send({ email: "admin@studio.eco" })
+        .expect(200);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app).post("/v1/user/check-email").expect(400);
+    });
+
+    test("It should respond 404 not found", async () => {
+      await request(app)
+        .post("/v1/user/check-email")
+        .send({ email: "zoubida3000@toto.fr" })
+        .expect(404);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/user/check-email")
+        .send({ email: "<hacker/>@toto.fr" })
+        .expect(400);
+    });
+  });
+
   afterAll(async () => {
     // Fermer la connexion à MongoDB
     await disconnect();
