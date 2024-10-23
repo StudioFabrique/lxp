@@ -31,7 +31,7 @@ const TableList = <TData extends Record<string, string>>(
 
   return (
     <div className="overflow-auto h-[60vh]">
-      <table className="table border-separate border-spacing-y-5 ">
+      <table className="table border-separate border-spacing-y-5">
         <Head
           labels={labels}
           avatar={props.avatar}

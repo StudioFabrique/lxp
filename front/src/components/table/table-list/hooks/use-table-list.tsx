@@ -39,6 +39,7 @@ function useTableList<TData extends Record<string, string>>(
 
   const handleGenerateItems = useCallback(() => {
     setTableItems(null);
+
     data.forEach((d) => {
       const filteredData = generateTableItem(
         d,
@@ -47,6 +48,7 @@ function useTableList<TData extends Record<string, string>>(
         actionsItems ? generateTableActions(d, actionsItems) : undefined,
         avatarProperty,
       );
+
       setTableItems((prevItems) => [...(prevItems ?? []), filteredData]);
     });
   }, [data, actionsItems, idProperty, itemsConfig, avatarProperty]);

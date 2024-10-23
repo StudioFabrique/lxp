@@ -14,10 +14,10 @@ const Table = <TData extends Record<string, string>>(
   const [topChild, bottomChild] = props.children as React.ReactNode[];
 
   return (
-    <Wrapper additionalClassname="px-10">
+    <Wrapper additionalClassname="px-10 justify-between">
       <SearchBar {...props.searchBar}>{topChild}</SearchBar>
       <TableList {...props.list} />
-      {bottomChild}
+      <div>{bottomChild}</div>
     </Wrapper>
   );
 };

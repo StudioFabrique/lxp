@@ -57,7 +57,7 @@ const GroupHome = () => {
   };
 
   return (
-    <div className="flex flex-col gap-5 p-10">
+    <div className="flex flex-col gap-5 p-10 h-screen">
       <Header
         title="Liste des groupes"
         description="Créer, modifier et supprimer des groupes"
