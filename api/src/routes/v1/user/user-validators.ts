@@ -7,7 +7,12 @@ import {
 import { checkValidatorResult } from "../../../middleware/validators";
 
 export const postCheckEmailValidator = [
-  body("email").isEmail().withMessage("Adresse email non valide."),
+  body("email")
+    .notEmpty()
+    .withMessage("L'adresse est email est obligatoire")
+    .isEmail()
+    .withMessage("Adresse email non valide."),
+  checkValidatorResult,
 ];
 
 export const userIdValidator = [

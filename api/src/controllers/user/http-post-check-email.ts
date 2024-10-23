@@ -8,6 +8,7 @@ export default async function httpPostCheckEmail(
 ) {
   try {
     const { email } = req.body;
+    console.log({ email });
     await postCheckEmail(email);
     const result = {
       statusCode: 200,
