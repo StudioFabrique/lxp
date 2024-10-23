@@ -6,8 +6,8 @@ de la propriété "invitationSent" si l'envoi a réussi.
 import jwt from "jsonwebtoken";
 import User from "../../utils/interfaces/db/user";
 import mongoose from "mongoose";
-import { newUserMail } from "../../services/mailer";
 import { activationToken } from "../../helpers/activation-token";
+import { sendPasswordEmail } from "../../services/mailer";
 
 export default async function putInvitation(userId: string) {
   // vérifie que l'utilisateur existe dans la bdd
@@ -22,12 +22,12 @@ export default async function putInvitation(userId: string) {
   const role = await existingUser.roles[0];
 
   // création d'un token contenant l'id et le rôle de l'utilisateur
-  const token = activationToken(userId, role);
+  const token = activationToken(userId, role, "7d");
 
   // si l'application fonctionne en mode développement ou production un email d'activation est envoyé à l'utilisateur
   if (process.env.ENVIRONMENT !== "test") {
     try {
-      await newUserMail(existingUser.email, token);
+      await sendPasswordEmail(existingUser.email, token, "activation");
     } catch (emailError: any) {
       throw {
         statusCode: 500,
