@@ -88,6 +88,10 @@ const StudentEvaluationView = React.lazy(
   () => import("../../views/teacher/student-evaluation"),
 );
 
+const CreateBlog = React.lazy(
+  () => import("../../views/lesson/edit/create-blog"),
+);
+
 const adminRoutes = [
   { index: true, element: <AdminHome /> },
   {
@@ -190,6 +194,10 @@ const adminRoutes = [
           {
             index: true,
             element: <EditLessonHome />,
+          },
+          {
+            path: "blog",
+            elsement: <CreateBlog />,
           },
         ],
       },
