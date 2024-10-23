@@ -15,7 +15,16 @@ type CellProps = {
 const TableListCell = (props: PropsWithChildren<CellProps>) => {
   return (
     <td className="text-primary font-semibold whitespace-nowrap capitalize">
-      {props.children}
+      <div
+        data-tip={
+          props.children && props.children?.toLocaleString().length > 10
+            ? props.children
+            : null
+        }
+        className="tooltip w-28 flex"
+      >
+        <p className="truncate">{props.children}</p>
+      </div>
     </td>
   );
 };

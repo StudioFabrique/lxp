@@ -7,9 +7,6 @@ import { TableListActionConfig } from "../../components/table/table-list/interfa
 import Table from "../../components/table/table";
 import TablePagination from "../../components/table/table-pagination/table-pagination";
 import useTablePaginatedData from "../../components/table/table-pagination/hooks/use-table-paginated-data";
-import { SearchBarProps } from "../../components/UI/search-bar/search-bar";
-import { TableListProps } from "../../components/table/table-list/table-list";
-import Group from "../../utils/interfaces/group";
 import TableButtons from "../../components/table/table-buttons/table-buttons";
 
 const GroupHome = () => {
@@ -23,7 +20,7 @@ const GroupHome = () => {
       tooltip: "Modifier",
       icon: Pen,
       additionnalClassname: "btn-ghost",
-      request: { path: "edit/[:id]", method: "get" },
+      request: { path: "edit/[:id]" },
     },
     {
       property: "delete",
@@ -31,33 +28,14 @@ const GroupHome = () => {
       tooltip: "Supprimer",
       icon: Trash2,
       additionnalClassname: "btn-ghost text-error",
+      request: { path: "/group/[:id]", method: "delete" },
       onSuccessfulSubmit: onRefreshData,
     },
   ];
 
-  const searchBarConfig: SearchBarProps = {
-    title: "Groupes",
-    placeholder: "Rechercher un groupe",
-    // actions: [],
-  };
-
-  const listConfig: TableListProps<Group> = {
-    idProperty: "_id",
-    avatar: { property: "avatar" },
-    data: data,
-    tableItemsConfig: groupHomeTableItems,
-    actionsItems: actions,
-    style: {
-      showCheckbox: true,
-      showAvatar: true,
-      emptyArrayMessage: isLoading
-        ? "Chargement des groupes..."
-        : "Aucun groupe disponible",
-    },
-  };
-
   return (
-    <div className="flex flex-col gap-5 p-10 h-screen">
+    <div className="flex flex-col gap-10 p-10 h-screen">
+      {/* Header de la liste des groupes */}
       <Header
         title="Liste des groupes"
         description="Créer, modifier et supprimer des groupes"
@@ -68,13 +46,35 @@ const GroupHome = () => {
           </Link>
         </Can>
       </Header>
-      <Table searchBar={searchBarConfig} list={listConfig}>
+
+      {/* Tableau liste des groupes */}
+      <Table
+        searchBar={{
+          title: "Groupes",
+          placeholder: "Rechercher un groupe",
+        }}
+        list={{
+          idProperty: "_id",
+          avatar: { property: "avatar" },
+          data: data,
+          tableItemsConfig: groupHomeTableItems,
+          actionsItems: actions,
+          style: {
+            showCheckbox: true,
+            showAvatar: true,
+            emptyArrayMessage: isLoading
+              ? "Chargement des groupes..."
+              : "Aucun groupe disponible",
+          },
+        }}
+      >
         {[
           // top
           <TableButtons
             key={0}
             isLoading={isLoading}
             onRefreshData={onRefreshData}
+            onDeleteUsers={onRefreshData}
           />,
           // bottom
           <TablePagination key={1} {...pagination} />,
