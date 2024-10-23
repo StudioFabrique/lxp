@@ -10,9 +10,11 @@ import useTablePaginatedData from "../../components/table/table-pagination/hooks
 import { SearchBarProps } from "../../components/UI/search-bar/search-bar";
 import { TableListProps } from "../../components/table/table-list/table-list";
 import Group from "../../utils/interfaces/group";
+import TableButtons from "../../components/table/table-buttons/table-buttons";
 
 const GroupHome = () => {
-  const { data, ...pagination } = useTablePaginatedData();
+  const { data, onRefreshData, isLoading, ...pagination } =
+    useTablePaginatedData("/group/student/name/asc");
 
   const actions: TableListActionConfig[] = [
     {
@@ -29,7 +31,7 @@ const GroupHome = () => {
       tooltip: "Supprimer",
       icon: Trash2,
       additionnalClassname: "btn-ghost text-error",
-      onSuccessfulSubmit: () => {},
+      onSuccessfulSubmit: onRefreshData,
     },
   ];
 
@@ -48,7 +50,9 @@ const GroupHome = () => {
     style: {
       showCheckbox: true,
       showAvatar: true,
-      emptyArrayMessage: "Aucun groupe disponible",
+      emptyArrayMessage: isLoading
+        ? "Chargement des groupes..."
+        : "Aucun groupe disponible",
     },
   };
 
@@ -65,7 +69,16 @@ const GroupHome = () => {
         </Can>
       </Header>
       <Table searchBar={searchBarConfig} list={listConfig}>
-        <TablePagination {...pagination} />
+        {[
+          // top
+          <TableButtons
+            key={0}
+            isLoading={isLoading}
+            onRefreshData={onRefreshData}
+          />,
+          // bottom
+          <TablePagination key={1} {...pagination} />,
+        ]}
       </Table>
     </div>
   );

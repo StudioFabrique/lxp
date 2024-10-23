@@ -30,15 +30,19 @@ const TableList = <TData extends Record<string, string>>(
   );
 
   return (
-    <div className="overflow-auto">
-      <table className="table w-full border-separate border-spacing-y-5 ">
+    <div className="overflow-auto h-[60vh]">
+      <table className="table border-separate border-spacing-y-5 ">
         <Head
           labels={labels}
           avatar={props.avatar}
           showCheckbox={props.style?.showCheckbox}
           showAvatar={props.style?.showAvatar}
         />
-        <Body tableItems={tableItems} style={props.style} />
+        <Body
+          tableItems={tableItems}
+          propertiesLength={labels.length}
+          style={props.style}
+        />
       </table>
     </div>
   );

@@ -2,7 +2,7 @@ import { TableListItemConfig } from "../../components/table/table-list/interface
 
 export const groupHomeTableItems: TableListItemConfig[] = [
   { property: "name", label: "Nom" },
-  { property: "description", label: "Description" },
+  { property: "desc", label: "Description" },
   { property: "formation", label: "Formation - Parcours" },
   { property: "nbStudents", label: "Nombre d'étudiants" },
 ];

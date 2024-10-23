@@ -13,9 +13,9 @@ type TableListHeadProps = {
 
 const TableListHead = (props: TableListHeadProps) => {
   return (
-    <thead>
+    <thead className="w-full">
       <tr>
-        <th />
+        <th className="p-0 w-0" />
 
         {/* La cellule header pour contenir la checkbox */}
         {props.showCheckbox ? (
