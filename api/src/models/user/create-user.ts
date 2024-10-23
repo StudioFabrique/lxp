@@ -3,9 +3,9 @@ import { prisma } from "../../utils/db";
 import Role from "../../utils/interfaces/db/role";
 import { hash } from "bcrypt";
 import { randomUUID } from "crypto";
-import { newUserMail } from "../../services/mailer";
 import jwt from "jsonwebtoken";
 import { activationToken } from "../../helpers/activation-token";
+import { sendPasswordEmail } from "../../services/mailer";
 
 export default async function createUser(user: IUser, roleId: string) {
   try {
@@ -61,8 +61,8 @@ export default async function createUser(user: IUser, roleId: string) {
       await prisma.student.create({ data: { idMdb: createdUser._id } });
 
     if (user.invitationSent) {
-      const token = activationToken(createdUser._id, firstRole);
-      await newUserMail(createdUser.email, token);
+      const token = activationToken(createdUser._id, firstRole, "7d");
+      await sendPasswordEmail(createdUser.email, token, "activation");
     }
 
     await User.updateOne(
