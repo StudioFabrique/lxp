@@ -14,8 +14,8 @@ import { useEffect } from "react";
 const GroupHome = () => {
   const { state } = useLocation();
 
-  const { data, onRefreshData, isLoading, ...pagination } =
-    useTablePaginatedData("/group/student/name/asc");
+  const { data, onRefreshData, isLoading, onSubmitSearchValue, ...pagination } =
+    useTablePaginatedData("/group/student", "/group/search/student");
 
   const actions: TableListActionConfig[] = [
     {
@@ -69,6 +69,7 @@ const GroupHome = () => {
         searchBar={{
           title: "Groupes",
           placeholder: "Rechercher un groupe",
+          onSubmitSearchValue: onSubmitSearchValue,
         }}
         list={{
           idProperty: "_id",
