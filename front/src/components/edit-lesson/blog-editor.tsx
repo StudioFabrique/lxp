@@ -20,7 +20,7 @@ const BlogEditor = forwardRef(
 
     return (
       <Editor
-        apiKey="w70jv8l75u5a3a78rtk72c9o279gxm5lelbhkfog9x2w3j1l"
+        apiKey={import.meta.env.VITE_TINY_KEY}
         onInit={handleInit}
         initialValue={props.content || initialValue}
         init={{
