@@ -30,7 +30,7 @@ const TableList = <TData extends Record<string, string>>(
   );
 
   return (
-    <div className="carousel carousel-vertical h-[60vh]">
+    <div className="carousel carousel-vertical h-[55vh]">
       <table className="table border-separate border-spacing-y-5">
         <Head
           labels={labels}
