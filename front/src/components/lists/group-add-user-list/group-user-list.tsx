@@ -42,17 +42,8 @@ const GroupUserList: FC<{
     "_id",
   );
 
-  const menuDiv: Ref<HTMLDivElement> = useRef(null);
-
-  const handleToggleMenu = () => {
-    menuDiv.current &&
-      (menuDiv.current.style.visibility =
-        menuDiv.current.style.visibility === "visible" ? "hidden" : "visible");
-  };
-
   const handleDeleteUsersToAdd = () => {
     getSelecteditems()?.forEach((selectedItem) => onDeleteUser(selectedItem));
-    handleToggleMenu();
   };
 
   const handleCloseDrawer = (id: string) => {
@@ -77,7 +68,7 @@ const GroupUserList: FC<{
           <ActionsDropdown
             actions={[
               {
-                actionTitle: "Supprimer les utilisateurs selectionnés",
+                actionTitle: "Supprimer les étudiants selectionnés",
                 data: null,
                 onClick: handleDeleteUsersToAdd,
               },
@@ -92,10 +83,14 @@ const GroupUserList: FC<{
             usersToAdd={usersToAdd}
             onCloseDrawer={handleCloseDrawer}
           />
-          <p className="text-nowrap text-primary">
-            <span className="font-bold">{usersToAdd.length}</span> étudiants
-            dans le groupe
-          </p>
+          {usersToAdd.length > 0 && (
+            <p className="text-nowrap text-primary">
+              <span className="font-bold">{usersToAdd.length}</span>
+              {usersToAdd.length > 1
+                ? " étudiants dans le groupe"
+                : " étudiant dans le groupe"}
+            </p>
+          )}
         </div>
         <SearchBar
           onSetFilter={setFilter}
@@ -144,7 +139,7 @@ const GroupUserList: FC<{
           <Pagination page={page} setPage={setPage} totalPages={totalPages} />
         </>
       ) : (
-        "Aucun utilisateurs"
+        "Aucun étudiants"
       )}
     </Wrapper>
   );

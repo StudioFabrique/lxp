@@ -20,13 +20,17 @@ const ActionsDropdown = <FuncDataT,>(
 
   return (
     <div className="dropdown dropdown-end">
-      <button
-        disabled={props.isLoading}
+      <div
+        tabIndex={0}
+        role="button"
         className="flex items-center btn btn-sm btn-ghost disabled:bg-transparent"
       >
         <EllipsisIcon />
-      </button>
-      <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 m-2 shadow">
+      </div>
+      <ul
+        tabIndex={0}
+        className="menu dropdown-content bg-base-100 rounded-box z-[1] p-2 m-2 shadow w-max whitespace-nowrap"
+      >
         {props.actions.map((act) => (
           <li key={act.actionTitle}>
             <button

@@ -1,10 +1,4 @@
-import {
-  PropsWithChildren,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { PropsWithChildren, useRef, useState } from "react";
 
 type DropdownSelectorProps = {
   valueList: (string | number)[];
@@ -27,30 +21,31 @@ const DropdownSelector = ({
   };
 
   const handleSelect = (event: React.MouseEvent<HTMLLIElement>) => {
-    console.log("test");
-    console.log(event.currentTarget.value);
     onSelect(event.currentTarget.value);
     setSelecterOpenState(false);
   };
 
   return (
     <div className="dropdown dropdown-top">
-      <button
+      <div
+        tabIndex={0}
+        role="button"
         onClick={handleClickButton}
         className="rounded-none btn btn-sm btn-ghost"
       >
         {children ?? "Select a value"}
-      </button>
+      </div>
 
       <ul
-        className="menu dropdown-content bg-primary rounded-box z-[1] w-52 p-2 m-2 shadow"
+        tabIndex={0}
+        className="menu dropdown-content bg-primary rounded-box z-[1] w-10 p-2 m-2 shadow"
         hidden={!isSelecterOpened}
         ref={dropdownRef}
       >
         {valueList.length > 0 ? (
           valueList.map((value) => (
             <li key={value} value={value} onClick={handleSelect}>
-              <button>{value}</button>
+              <button className="btn btn-ghost btn-sm px-0">{value}</button>
             </li>
           ))
         ) : (
