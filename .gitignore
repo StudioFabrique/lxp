@@ -12,3 +12,5 @@ node_modules
 **/.DS_Store
 /tmp
 /front/tmp/npm-cache/_cacache/content-v2/sha512/00/1d
+/api/tmp
+/front/tmp

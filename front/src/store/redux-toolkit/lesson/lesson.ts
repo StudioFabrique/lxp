@@ -1,91 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Lesson from "../../../utils/interfaces/lesson";
-import Activity from "../../../utils/interfaces/activity";
 
-interface LessonsType {
+type LessonState = {
   lesson: Lesson | null;
-  currentType: string;
-  blogEdition: number | null;
-  activityToDelete: Activity | null;
-}
+};
 
-const initialLessonsState: LessonsType = {
+const initialLessonsState: LessonState = {
   lesson: null,
-  currentType: "",
-  blogEdition: null,
-  activityToDelete: null,
 };
 
 const lessonSlice = createSlice({
   name: "lesson",
   initialState: initialLessonsState,
   reducers: {
-    initLesson(state, action) {
+    setLesson(state, action) {
       state.lesson = action.payload;
-    },
-    addActivity(state, action) {
-      if (state.lesson && state.lesson.activities !== undefined) {
-        state.lesson = {
-          ...state.lesson,
-          activities: [...state.lesson.activities, action.payload],
-        };
-      }
-    },
-    setActivityToDelete(state, action) {
-      state.activityToDelete = action.payload;
-    },
-    setCurrentType(state, action) {
-      state.currentType = action.payload;
-    },
-    setBlogEdition(state, action) {
-      state.blogEdition = action.payload;
-    },
-    updateActivity(state, action) {
-      const updatedActivity: Activity = action.payload;
-      if (state.lesson && state.lesson.activities !== undefined) {
-        const updatedActivities: Activity[] = state.lesson.activities.filter(
-          (item) => item.id !== updatedActivity.id
-        );
-        const updatedLesson: Lesson = {
-          ...state.lesson,
-          activities: [...updatedActivities, updatedActivity],
-        };
-        state.lesson = updatedLesson;
-      }
-    },
-    removeActivity(state, action) {
-      const activities = state.lesson?.activities?.filter(
-        (item) => item.id !== action.payload
-      );
-      if (state.lesson) {
-        state.lesson = { ...state.lesson, activities };
-      }
-      const reorderedActivities = state.lesson?.activities;
-
-      if (state.lesson && reorderedActivities !== undefined) {
-        state.lesson = {
-          ...state.lesson,
-          activities: reorderedActivities.map((item, index) => {
-            return {
-              ...item,
-              order: index + 1,
-            };
-          }),
-        };
-      }
-    },
-    setActivity(state, action) {
-      if (state.lesson) {
-        state.lesson = { ...state.lesson, activities: action.payload };
-      }
-    },
-    resetCurrentType(state) {
-      state.currentType = "";
-    },
-    resetLesson(state) {
-      state.lesson = null;
-      state.currentType = "";
-      state.blogEdition = null;
     },
   },
 });

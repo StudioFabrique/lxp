@@ -6,18 +6,25 @@ import CustomRequest from "../../utils/interfaces/express/custom-request";
 
 export default async function httpPostActivity(
   req: CustomRequest,
-  res: Response
+  res: Response,
 ) {
   try {
     const { lessonId } = req.params;
     const userId = req.auth?.userId;
-    const { value, order, type } = req.body;
+    const { title, description, value, order, type } = req.body;
 
     let response: any = {};
 
     switch (type) {
       case "text":
-        response = await postText(+lessonId, userId!, value, type, order);
+        response = await postText(
+          +lessonId,
+          userId!,
+          title,
+          description,
+          value,
+          type,
+        );
         break;
     }
     return res.status(201).json(response);

@@ -11,7 +11,7 @@ const activityTypes: ActivityType[] = getActivityTypes();
 export default function ActivityTypes({ onActivityType }: ActivityTypeProps) {
   return (
     <Wrapper>
-      <ul className="flex items-center gap-x-4">
+      <ul className="flex flex-wrap items-center gap-x-4 gap-y-2">
         {activityTypes.map((item) => (
           <li
             className="text-primary rounded-lg bg-secondary/20 hover:bg-primary hover:text-white cursor-pointer"
