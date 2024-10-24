@@ -28,9 +28,9 @@ const RolesList: FC<{
       {isLoading ? (
         <Loader />
       ) : roles.length > 0 ? (
-        <table className="table grid">
-          <thead className="">
-            <tr className="grid grid-cols-9">
+        <table className="table">
+          <thead>
+            <tr className="grid grid-cols-9 border-0">
               <th></th>
               <th>Rôle</th>
               <th className="col-span-2">Permissions</th>
@@ -38,7 +38,6 @@ const RolesList: FC<{
               <th>R</th>
               <th>U</th>
               <th>D</th>
-              {/* <th></th> */}
               <th></th>
             </tr>
           </thead>
