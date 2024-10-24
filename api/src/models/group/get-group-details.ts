@@ -34,7 +34,11 @@ export default async function getGroupDetails(groupId: string) {
     //   groupPrisma?.parcours && groupPrisma?.parcours.length > 0
     //     ? `${groupPrisma?.parcours[0].parcours.formation.title} - ${groupPrisma?.parcours[0].parcours.title}`
     //     : undefined,
-    formationId: groupPrisma?.parcours[0].parcours.formationId,
-    parcoursId: groupPrisma?.parcours[0].parcoursId,
+    formationId: groupPrisma?.parcours[0]
+      ? groupPrisma?.parcours[0].parcours.formationId
+      : null,
+    parcoursId: groupPrisma?.parcours[0]
+      ? groupPrisma?.parcours[0].parcoursId
+      : null,
   };
 }
