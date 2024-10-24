@@ -10,10 +10,8 @@ import ImageHeader from "../../../components/image-header";
 import toast from "react-hot-toast";
 import books from "../../../assets/images/bookshelf.jpg";
 import DocDuplicateIcon from "../../../components/UI/svg/doc-duplicate-icon";
-import HeaderButton from "./header-buttons";
 import { useDispatch, useSelector } from "react-redux";
 import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
-import Wrapper from "../../../components/UI/wrapper/wrapper.component";
 
 export default function LayoutEditLesson() {
   const dispatch = useDispatch();

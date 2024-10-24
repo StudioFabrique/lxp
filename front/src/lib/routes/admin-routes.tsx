@@ -195,10 +195,8 @@ const adminRoutes = [
             index: true,
             element: <EditLessonHome />,
           },
-          {
-            path: "blog",
-            elsement: <CreateBlog />,
-          },
+          { path: "edit-blog/:blogId", element: <CreateBlog /> },
+          { path: "blog", element: <CreateBlog /> },
         ],
       },
     ],

@@ -7,12 +7,14 @@ import { v4 as uuidv4 } from "uuid";
 export default async function postText(
   lessonId: number,
   userId: string,
+  title: string,
+  description: string,
   value: string,
   type: string,
-  order: number
 ) {
   const existingLesson = await prisma.lesson.findFirst({
     where: { id: lessonId },
+    select: { id: true, activities: true },
   });
 
   if (!existingLesson) {
@@ -44,20 +46,22 @@ export default async function postText(
         "..",
         "uploads",
         "activities",
-        fileName
+        fileName,
       ),
-      value
+      value,
     );
   } catch (error: any) {
     throw new Error(
-      "Le fichier n'a pas pu être enregistré, réessayez plus tard svp..."
+      "Le fichier n'a pas pu être enregistré, réessayez plus tard svp...",
     );
   }
 
   const createdActivity = await prisma.activity.create({
     data: {
+      title,
+      description,
       url: fileName,
-      order,
+      order: existingLesson.activities.length,
       type,
       lesson: {
         connect: {

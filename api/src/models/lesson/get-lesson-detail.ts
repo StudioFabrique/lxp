@@ -22,6 +22,7 @@ export default async function getLessonDetail(lessonId: number) {
           title: true,
           description: true,
         },
+        orderBy: { order: "asc" },
       },
     },
   })) as any;
