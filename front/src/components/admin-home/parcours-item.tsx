@@ -4,7 +4,6 @@ import Parcours from "../../utils/interfaces/parcours";
 
 import defaultImage from "../../assets/images/books.jpeg";
 import { Eye, Users } from "lucide-react";
-import { Link } from "react-router-dom";
 
 interface ParcoursItemProps {
   parcours: Parcours;
