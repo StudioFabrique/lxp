@@ -44,7 +44,7 @@ const SelecterWithId: FC<Props> = ({
             <option
               className="capitalize text-xs text-base-300"
               key={item.id}
-              value={item.id}
+              value={item.id ?? ""}
             >
               {item.value}
             </option>

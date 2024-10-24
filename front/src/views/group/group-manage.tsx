@@ -27,7 +27,6 @@ const GroupManage = () => {
         onAddUsers={onAddUsers}
         onUpdateUser={onUpdateUser}
         onDeleteUser={onDeleteUser}
-        isLoading={isLoading}
       />
     </div>
   );
