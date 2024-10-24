@@ -3,6 +3,7 @@ import TableListAction from "./interfaces/table-list-action";
 import TableListCell from "./table-list-cell";
 import TableListActionCell from "./table-list-action-cell";
 import { AvatarSmall } from "../../UI/avatar/avatar.component";
+import imageProfileReplacement from "../../../config/image-profile-replacement";
 
 type ItemProps<TData extends Record<string, unknown>> = {
   id: string;
@@ -18,7 +19,7 @@ const TableListItem = <TData extends Record<string, unknown>>(
   const dataEntries = Object.entries(props.data);
 
   return (
-    <tr className="bg-secondary/10 hover:bg-primary/20">
+    <tr className="h-16 bg-secondary/10 hover:bg-primary/20">
       <td className="rounded-l-xl w-0" />
 
       {/* Affichage de la checkbox si activé */}
@@ -35,8 +36,12 @@ const TableListItem = <TData extends Record<string, unknown>>(
 
       {/* Affichage d'un avatar si activé */}
       {props.style?.showAvatar ? (
-        <td className="px-0 flex justify-center items-center">
-          <AvatarSmall url={props.avatar} />
+        <td className="px-0">
+          <div className="flex justify-center items-center h-full">
+            {props.avatar ? (
+              <AvatarSmall url={`data:image/jpeg;base64,${props.avatar}`} />
+            ) : null}
+          </div>
         </td>
       ) : null}
 

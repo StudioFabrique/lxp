@@ -31,7 +31,7 @@ const TableListHead = (props: TableListHeadProps) => {
 
         {/* La cellule header vide pour contenir l'avatar */}
         {props.showAvatar ? (
-          <th className="flex justify-center items-center">
+          <th className="text-base-content text-center">
             {props.avatar?.label}
           </th>
         ) : null}
@@ -39,7 +39,7 @@ const TableListHead = (props: TableListHeadProps) => {
         {/* Les cellules header pour contenir les labels des propriétés  */}
         {props.labels.map((item) =>
           !item.isAction ? (
-            <th key={item.property} className="text-base-content font-bold">
+            <th key={item.property} className="text-base-content">
               <Fragment>{item.label ?? ""}</Fragment>
             </th>
           ) : null,
@@ -49,7 +49,7 @@ const TableListHead = (props: TableListHeadProps) => {
 
         {props.labels.map((item) =>
           item.isAction ? (
-            <th key={item.property} className="text-base-content font-bold">
+            <th key={item.property} className="text-base-content">
               <div
                 className="flex justify-center items-center"
                 key={item.property}

@@ -18,15 +18,15 @@ const GroupHome = () => {
     useTablePaginatedData("/group/student", "/group/search/student");
 
   const actions: TableListActionConfig[] = [
-    {
+    /*{
       property: "invite",
       additionnalClassname: "btn-success",
       label: "Inviter les utilisateurs",
       title: "Inviter",
       type: "button",
-      // request: { path: "/group/invite/[:id]", method: "post" },
-      // onSuccessfulSubmit: onRefreshData,
-    },
+      request: { path: "/group/invite/[:id]", method: "post" },
+      onSuccessfulSubmit: onRefreshData,
+    },*/
     {
       property: "edit",
       type: "link",
@@ -73,7 +73,7 @@ const GroupHome = () => {
         }}
         list={{
           idProperty: "_id",
-          avatar: { property: "avatar" },
+          avatar: { property: "image" },
           data: data,
           tableItemsConfig: groupHomeTableItems,
           actionsItems: actions,
