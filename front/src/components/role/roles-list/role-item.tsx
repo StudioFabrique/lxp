@@ -45,7 +45,7 @@ const RoleItem: FC<{
   };
 
   return (
-    <tr className="grid grid-cols-9 items-center bg-primary/80 text-primary-content rounded-xl">
+    <tr className="grid grid-cols-9 items-center bg-secondary/10 hover:bg-primary/20 text-primary rounded-xl border-0">
       <td className="flex items-center">
         <input
           type="checkbox"
@@ -72,17 +72,6 @@ const RoleItem: FC<{
       <td>{role.permCount.delete}</td>
       {role.role !== "admin" && (
         <>
-          {/* <td className="flex items-center">
-            <input
-              type="checkbox"
-              name="active"
-              id="active"
-              checked={role.isActive}
-              disabled
-              className="toggle toggle-sm toggle-primary disabled:opacity-100 disabled:toggle-primary disabled:cursor-default"
-            />
-          </td> */}
-
           <td className="flex gap-x-2">
             {isLoading ? (
               <span className="h-6 w-6 loading loading-spinner" />
@@ -91,13 +80,13 @@ const RoleItem: FC<{
                 <button
                   type="button"
                   onClick={handleEditRole}
-                  className="h-6 w-6"
+                  className="h-6 w-6 text-accent"
                 >
                   <EditIcon />
                 </button>
                 <button
                   type="button"
-                  className="h-6 w-6 stroke-red-600"
+                  className="h-6 w-6 text-error"
                   onClick={handleDeleteRole}
                 >
                   <DeleteIcon />
