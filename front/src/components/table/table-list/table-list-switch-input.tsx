@@ -21,7 +21,7 @@ const TableListSwitchInput = (props: SwitchComponentProps) => {
     case "button":
       return (
         <button
-          className={`btn btn-sm btn-primary ${props.additionnalClassname}`}
+          className={`btn btn-xs btn-primary ${props.additionnalClassname}`}
           disabled={props.isLoading}
           onClick={props.onClick}
         >
@@ -32,7 +32,7 @@ const TableListSwitchInput = (props: SwitchComponentProps) => {
     case "link":
       return (
         <Link
-          className={`btn btn-sm btn-primary ${props.additionnalClassname}`}
+          className={`btn btn-xs btn-primary ${props.additionnalClassname}`}
           to={props.linkUrl ?? "#"}
         >
           {props.title}

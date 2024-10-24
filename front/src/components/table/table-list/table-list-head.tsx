@@ -46,18 +46,19 @@ const TableListHead = (props: TableListHeadProps) => {
         )}
 
         {/* Les cellules header pour contenir les labels des actions  */}
-        <th className="text-base-content font-bold flex items-center justify-end px-0 gap-x-2">
-          {props.labels.map((item) =>
-            item.isAction ? (
+
+        {props.labels.map((item) =>
+          item.isAction ? (
+            <th className="text-base-content font-bold">
               <div
-                className="w-10 flex justify-center items-center"
+                className="flex justify-center items-center"
                 key={item.property}
               >
                 {item.label ?? ""}
               </div>
-            ) : null,
-          )}
-        </th>
+            </th>
+          ) : null,
+        )}
 
         <th className="px-0" />
       </tr>

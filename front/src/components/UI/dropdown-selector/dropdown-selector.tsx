@@ -38,7 +38,7 @@ const DropdownSelector = ({
 
       <ul
         tabIndex={0}
-        className="menu dropdown-content bg-primary rounded-box z-[1] w-10 p-2 m-2 shadow"
+        className="menu dropdown-content bg-primary rounded-box z-[1] w-10 p-2 mb-2 shadow"
         hidden={!isSelecterOpened}
         ref={dropdownRef}
       >
