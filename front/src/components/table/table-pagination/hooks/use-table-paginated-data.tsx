@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../../../hooks/use-http";
 
-function useTablePaginatedData<TData>(apiPath: string) {
+function useTablePaginatedData<TData>(
+  apiPath: string,
+  apiPathSearchValue?: string,
+) {
   const { sendRequest, isLoading } = useHttp();
 
   const [data, setData] = useState<TData[]>([]);
@@ -9,6 +12,7 @@ function useTablePaginatedData<TData>(apiPath: string) {
   const [currentPage, setCurrentPage] = useState<number | null>(1);
   const [maxPage, setMaxPage] = useState<number | null>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(5);
+  const [searchValue, setSearchValue] = useState<string | null>(null);
 
   const handleSetItemsPerPage = (value: number) => {
     console.log(value);
@@ -31,17 +35,33 @@ function useTablePaginatedData<TData>(apiPath: string) {
     if (maxPage && newValue <= maxPage) setCurrentPage(newValue);
   };
 
+  const handleSubmitSearchValue = (value: string) => {
+    setSearchValue(value.length > 0 ? value : null);
+  };
+
   const handleRequest = useCallback(async () => {
     const applyData = ({ total, list }: { total: number; list: TData[] }) => {
       setMaxPage(Math.ceil(total / itemsPerPage));
       setData(list);
     };
 
+    const path =
+      apiPathSearchValue && searchValue
+        ? `${apiPathSearchValue}/name/${searchValue}`
+        : apiPath;
+
     await sendRequest(
-      { path: `${apiPath}/?page=${currentPage}&limit=${itemsPerPage}` },
+      { path: `${path}/name/asc?page=${currentPage}&limit=${itemsPerPage}` },
       applyData,
     );
-  }, [sendRequest, currentPage, apiPath, itemsPerPage]);
+  }, [
+    sendRequest,
+    currentPage,
+    apiPath,
+    itemsPerPage,
+    apiPathSearchValue,
+    searchValue,
+  ]);
 
   useEffect(() => {
     handleRequest();
@@ -64,6 +84,7 @@ function useTablePaginatedData<TData>(apiPath: string) {
     onSetPreviousPage: handleSetPreviousPage,
     onSetNextPage: handleSetNextPage,
     onRefreshData: handleRequest,
+    onSubmitSearchValue: handleSubmitSearchValue,
   };
 }
 

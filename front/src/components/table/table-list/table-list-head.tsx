@@ -49,7 +49,7 @@ const TableListHead = (props: TableListHeadProps) => {
 
         {props.labels.map((item) =>
           item.isAction ? (
-            <th className="text-base-content font-bold">
+            <th key={item.property} className="text-base-content font-bold">
               <div
                 className="flex justify-center items-center"
                 key={item.property}
