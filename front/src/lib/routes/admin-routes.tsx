@@ -92,6 +92,8 @@ const CreateBlog = React.lazy(
   () => import("../../views/lesson/edit/create-blog"),
 );
 
+const EditBlog = React.lazy(() => import("../../views/lesson/edit/edit-blog"));
+
 const adminRoutes = [
   { index: true, element: <AdminHome /> },
   {
@@ -195,7 +197,7 @@ const adminRoutes = [
             index: true,
             element: <EditLessonHome />,
           },
-          { path: "edit-blog/:blogId", element: <CreateBlog /> },
+          { path: "edit-blog/:blogId", element: <EditBlog /> },
           { path: "blog", element: <CreateBlog /> },
         ],
       },
