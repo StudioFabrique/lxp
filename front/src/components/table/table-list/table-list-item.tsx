@@ -46,15 +46,9 @@ const TableListItem = <TData extends Record<string, unknown>>(
         </TableListCell>
       ))}
 
-      <td className="flex justify-end items-center px-0 gap-x-2">
-        {props.actions?.map((action) => (
-          <TableListActionCell
-            key={action.property}
-            id={props.id}
-            {...action}
-          />
-        ))}
-      </td>
+      {props.actions?.map((action) => (
+        <TableListActionCell key={action.property} id={props.id} {...action} />
+      ))}
       <td className="rounded-r-xl w-0" />
     </tr>
   );

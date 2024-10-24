@@ -42,7 +42,7 @@ const TableListActionCell = (props: TableListActionCellProps) => {
   };
 
   const cell = (
-    <>
+    <td className="px-2 w-0 gap-x-2">
       {/* {props.withConfirmationModal ? (
     <DeleteModal
       isLoading={isLoading}
@@ -50,19 +50,18 @@ const TableListActionCell = (props: TableListActionCellProps) => {
       onConfirm={handleClick}
     />
   ) : null} */}
-      <div
-        className="tooltip flex justify-center items-center w-10"
-        data-tip={props.tooltip}
-      >
-        <TableListSwitchInput
-          {...props}
-          linkUrl={path}
-          onClick={handleClick}
-          onToggle={handleToggle}
-          isLoading={isLoading}
-        />
+      <div className="flex justify-center">
+        <div className="tooltip flex" data-tip={props.tooltip}>
+          <TableListSwitchInput
+            {...props}
+            linkUrl={path}
+            onClick={handleClick}
+            onToggle={handleToggle}
+            isLoading={isLoading}
+          />
+        </div>
       </div>
-    </>
+    </td>
   );
 
   return props.rbacObject && props.rbacAction ? (

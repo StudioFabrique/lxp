@@ -19,6 +19,15 @@ const GroupHome = () => {
 
   const actions: TableListActionConfig[] = [
     {
+      property: "invite",
+      additionnalClassname: "btn-success",
+      label: "Inviter les utilisateurs",
+      title: "Inviter",
+      type: "button",
+      // request: { path: "/group/invite/[:id]", method: "post" },
+      // onSuccessfulSubmit: onRefreshData,
+    },
+    {
       property: "edit",
       type: "link",
       tooltip: "Modifier",
