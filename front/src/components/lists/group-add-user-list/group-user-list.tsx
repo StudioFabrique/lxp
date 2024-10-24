@@ -20,9 +20,14 @@ const GroupUserList: FC<{
   const usersToAddFiltered = useMemo(
     () =>
       usersToAdd &&
-      usersToAdd?.filter(
-        (item) => item.firstname === filter || item.lastname === filter,
-      ),
+      usersToAdd?.filter((item) => {
+        if (!filter) return true;
+        const searchTerm = filter.toLowerCase();
+        return (
+          item.firstname.toLowerCase().includes(searchTerm) ||
+          item.lastname.toLowerCase().includes(searchTerm)
+        );
+      }),
     [filter, usersToAdd],
   );
 
