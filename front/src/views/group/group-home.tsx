@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Can from "../../components/UI/can/can.component";
 import Header from "../../components/UI/header";
 import { groupHomeTableItems } from "./group-home-table-config";
@@ -8,8 +8,12 @@ import Table from "../../components/table/table";
 import TablePagination from "../../components/table/table-pagination/table-pagination";
 import useTablePaginatedData from "../../components/table/table-pagination/hooks/use-table-paginated-data";
 import TableButtons from "../../components/table/table-buttons/table-buttons";
+import toast from "react-hot-toast";
+import { useEffect } from "react";
 
 const GroupHome = () => {
+  const { state } = useLocation();
+
   const { data, onRefreshData, isLoading, ...pagination } =
     useTablePaginatedData("/group/student/name/asc");
 
@@ -32,6 +36,10 @@ const GroupHome = () => {
       onSuccessfulSubmit: onRefreshData,
     },
   ];
+
+  useEffect(() => {
+    if (state && state.toastFrom) toast.success(state.toastFrom);
+  }, [state]);
 
   return (
     <div className="flex flex-col gap-10 p-10 h-screen">
