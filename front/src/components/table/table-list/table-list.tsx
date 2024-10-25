@@ -17,6 +17,18 @@ export type TableListProps<TData> = {
   };
 };
 
+/**
+ * Représente un tableau avec des listes d'éléments configurables et des actions
+ * @template TData - Type générique des données du tableau
+ * @param props.idProperty - Propriété unique pour identifier chaque ligne
+ * @param props.avatar - Configuration de l'avatar (optionnel)
+ * @param props.data - Données à afficher dans le tableau
+ * @param props.tableItemsConfig - Configuration des colonnes du tableau
+ * @param props.actionsItems - Actions disponibles pour chaque ligne (optionnel)
+ * @param props.style - Options de style du tableau (optionnel)
+ *
+ * @component
+ */
 const TableList = <TData extends Record<string, string>>(
   props: TableListProps<TData>,
 ) => {

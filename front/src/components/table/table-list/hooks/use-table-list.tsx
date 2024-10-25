@@ -16,11 +16,11 @@ import { TableListActionConfig } from "../interfaces/table-list-action";
  * @template TData - Le type des données de la table (exemple: Group, User)
  * @param idProperty - La propriété de l'objet qui permet l'identification de l'id
  * @param data - Les données à afficher dans la table
- * @param items - Les éléments de configuration de la table
- * @param actionsItems -
+ * @param itemsConfig - Les éléments de configuration de la table
+ * @param actionsItems - Les éléments de configuration des actions de chaque élément
+ * @param avatarProperty - La propriété pour trouver l'avatar (optionnel)
  * @returns labels - Les labels des données dans l'entête du tableau
- * @returns filteredData - Les données filtrées en fonction
- * @returns actions - Les actions dans chaque lignes du tableau avec les données
+ * @returns tableItems - Les données filtrées en fonction de l'entrée de configuration
  *
  */
 function useTableList<TData extends Record<string, string>>(

@@ -11,6 +11,16 @@ import TableButtons from "../../components/table/table-buttons/table-buttons";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
 
+/**
+ * Composant GroupHome
+ *
+ * Affiche une liste de groupes avec des fonctionnalités pour créer,
+ * modifier et supprimer des groupes. Utilise un tableau paginé pour
+ * présenter les données, avec une barre de recherche intégrée.
+ * Gère les notifications toast pour informer l'utilisateur des actions.
+ *
+ * @component
+ */
 const GroupHome = () => {
   const { state } = useLocation();
 
@@ -46,12 +56,13 @@ const GroupHome = () => {
     },
   ];
 
+  // Si un message du state est présent, alors l'afficher dans un toaster
   useEffect(() => {
     if (state && state.toastFrom) toast.success(state.toastFrom);
   }, [state]);
 
   return (
-    <div className="flex flex-col gap-10 p-10 h-screen">
+    <div className="flex flex-col gap-10 p-10">
       {/* Header de la liste des groupes */}
       <Header
         title="Liste des groupes"

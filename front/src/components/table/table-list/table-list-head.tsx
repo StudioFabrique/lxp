@@ -11,6 +11,15 @@ type TableListHeadProps = {
   showAvatar?: boolean;
 };
 
+/**
+ * Composant représentant l'en-tête d'une table de données listant des éléments.
+ * @param props.labels - Labels à afficher pour chaque colonne
+ * @param props.avatar - Configuration de l'avatar (optionnel)
+ * @param props.showCheckbox - Afficher une checkbox (optionnel)
+ * @param props.showAvatar - Afficher un avatar (optionnel)
+
+ * @component
+ */
 const TableListHead = (props: TableListHeadProps) => {
   return (
     <thead className="w-full">
