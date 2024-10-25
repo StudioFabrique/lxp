@@ -11,7 +11,7 @@ export default async function httpPostActivity(
   try {
     const { lessonId } = req.params;
     const userId = req.auth?.userId;
-    const { title, description, value, order, type } = req.body;
+    const { title, description, value, type } = req.body;
 
     let response: any = {};
 

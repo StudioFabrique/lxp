@@ -25,7 +25,7 @@ export const BlogUpdate = ({ activity }: EditorProps) => {
   const { sendRequest, error, isLoading } = useHttp();
   const [value, setValue] = useState<string>("");
   const blogEdition = useSelector(
-    (state: any) => state.lesson.blogEdition
+    (state: any) => state.lesson.blogEdition,
   ) as number;
 
   /**
@@ -39,7 +39,7 @@ export const BlogUpdate = ({ activity }: EditorProps) => {
       value: newValue,
     });
   };
-  
+
  */
   /**
    * soumet les modifications apportées à une activité vers la bdd
@@ -68,7 +68,7 @@ export const BlogUpdate = ({ activity }: EditorProps) => {
             url: activity.url,
           },
         },
-        applyData
+        applyData,
       );
     };
     getData();

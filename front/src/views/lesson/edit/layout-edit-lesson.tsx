@@ -10,6 +10,7 @@ import ImageHeader from "../../../components/image-header";
 import toast from "react-hot-toast";
 import books from "../../../assets/images/bookshelf.jpg";
 import DocDuplicateIcon from "../../../components/UI/svg/doc-duplicate-icon";
+import HeaderButton from "./header-buttons";
 import { useDispatch, useSelector } from "react-redux";
 import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 
@@ -19,11 +20,12 @@ export default function LayoutEditLesson() {
   const { lessonId } = useParams();
   const { sendRequest, error } = useHttp();
   const [loading, setLoading] = useState(false);
-  console.log({ lesson });
+  const [activities] = useState<number[]>([1]);
+
   // retourne une leçon et la stock dans l'état partagé
   useEffect(() => {
     const applyData = (data: Lesson) => {
-      dispatch(lessonActions.setLesson(data));
+      dispatch(lessonActions.initLesson(data));
       setLoading(false);
     };
     setLoading(true);
@@ -44,39 +46,58 @@ export default function LayoutEditLesson() {
   }, [error]);
 
   // supprimer les éléments du state global lorsque le composant est "démonté"
-  // useEffect(() => {
-  //   return () => {
-  //     dispatch(lessonActions.resetCurrentType());
-  //     dispatch(lessonActions.resetLesson());
-  //   };
-  // }, [dispatch]);
+  useEffect(() => {
+    return () => {
+      dispatch(lessonActions.resetCurrentType());
+      dispatch(lessonActions.resetLesson());
+    };
+  }, [dispatch]);
 
   return (
-    <div className="py-2">
+    <div className="w-full h-full flex flex-col justify-start items-center py-2">
       {loading ? (
         <Loader />
       ) : (
-        <main className="w-full flex flex-col gap-y-4">
-          <FadeWrapper>
-            <div className="w-full h-full flex flex-col items-start gap-y-4">
-              <div className="w-full flex flex-col items-center gap-y-4">
-                {lesson ? (
-                  <ImageHeader
-                    title={lesson.course.title}
-                    subTitle={lesson.title}
-                    imageUrl={lesson.course.image ?? books}
-                  >
-                    <div className="w-10 h-10 text-white">
-                      <DocDuplicateIcon />
-                    </div>
-                    <></>
-                  </ImageHeader>
-                ) : null}
-              </div>
+        <FadeWrapper>
+          <div className="w-full h-full flex flex-col items-center gap-y-4">
+            <div className="w-full flex flex-col items-center gap-y-4">
+              {lesson &&
+              lesson !== undefined &&
+              lesson.title &&
+              lesson.course &&
+              lesson.course.title ? (
+                <ImageHeader
+                  title={lesson.course.title}
+                  subTitle={lesson.title}
+                  imageUrl={lesson.course.image ?? books}
+                >
+                  <div className="w-10 h-10 text-white">
+                    <DocDuplicateIcon />
+                  </div>
+                  <></>
+                </ImageHeader>
+              ) : null}
             </div>
-          </FadeWrapper>
-          <Outlet />
-        </main>
+            {lesson && lesson !== undefined ? (
+              <div className="w-full 2xl:w-4/6 mt-8 flex flex-col items-center">
+                <div className="w-full flex justify-end">
+                  <HeaderButton
+                    lessonId={+lessonId!}
+                    showPreview={activities.length > 0}
+                    //onPublish={() => {}}
+                  />
+                </div>
+                <h2 className="text-xl font-bold text-primary mb-2">
+                  Ajouter un bloc
+                </h2>
+
+                <Outlet />
+              </div>
+            ) : (
+              <Loader />
+            )}
+          </div>
+        </FadeWrapper>
       )}
     </div>
   );

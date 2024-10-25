@@ -19,6 +19,7 @@ import {
 } from "./activityValidator";
 import jsonParser from "../../../middleware/json-parser";
 import httpPutReorderActivities from "../../../controllers/activity/http-put-reorder-activities";
+import httpPostImage from "../../../controllers/activity/http-post-image";
 
 const activityRouter = express.Router();
 
@@ -29,14 +30,14 @@ activityRouter.put(
   uploadActivityVideo(),
   jsonParser,
   updateVideoValidator,
-  httpPutUpdateVideo
+  httpPutUpdateVideo,
 );
 // upload d'une image insérée dans un document de type texte
 activityRouter.post(
   "/blog-image",
   checkPermissions("lesson"),
   uploadActivityImage(),
-  httpPostBlogImage
+  httpPostBlogImage,
 );
 // création d'une activité de type video
 activityRouter.post(
@@ -46,7 +47,7 @@ activityRouter.post(
   jsonParser,
   lessonIdValidator,
   postVideoValidator,
-  httpPostVideo
+  httpPostVideo,
 );
 
 // enregistre une activité et l'attache à une lesson
@@ -58,14 +59,14 @@ activityRouter.put(
   checkPermissions("lesson"),
   activityIdValidator,
   updateActivityValidator,
-  httpUpdateActivity
+  httpUpdateActivity,
 );
 // supprime une activité et les ressources associées (fichiers md, images, etc...)
 activityRouter.delete(
   "/:activityId",
   checkPermissions("lesson"),
   activityIdValidator,
-  httpDeleteActivity
+  httpDeleteActivity,
 );
 // réorganise l'ordre des activités liées à une leçon
 activityRouter.put(
@@ -73,7 +74,15 @@ activityRouter.put(
   checkPermissions("lesson"),
   lessonIdValidator,
   putReorderActivitiesValidator,
-  httpPutReorderActivities
+  httpPutReorderActivities,
+);
+
+activityRouter.post(
+  "/image/:lessonId",
+  checkPermissions("lesson"),
+  uploadActivityImage(),
+  jsonParser,
+  httpPostImage,
 );
 
 export default activityRouter;

@@ -48,10 +48,50 @@ export default async function deleteActivity(activId: number) {
     existingActivity.url,
   );
 
-  //const fileContent = fs.readFileSync(filePath, "utf-8");
+  const fileContent = fs.readFileSync(filePath, "utf-8");
+
+  const filesUrls = extraireURLImages(fileContent);
+  let imageFiles = filesUrls.map((item: string) => extraireNomImage(item));
 
   try {
     await fs.promises.unlink(filePath);
+    const dirFiles = readdirSync(
+      path.join(__dirname, "..", "..", "..", "uploads", "activities", "images"),
+    );
+    console.log({ dirFiles });
+
+    if (imageFiles.length > 0) {
+      for (const elem of imageFiles) {
+        const imagePath = path.join(
+          __dirname,
+          "..",
+          "..",
+          "..",
+          "uploads",
+          "activities",
+          "images",
+          elem!,
+        );
+        const image = dirFiles.find((item) => item.includes(elem!));
+        console.log(image);
+        console.log(elem);
+
+        if (image) {
+          await fs.promises.unlink(
+            path.join(
+              __dirname,
+              "..",
+              "..",
+              "..",
+              "uploads",
+              "activities",
+              "images",
+              image,
+            ),
+          );
+        }
+      }
+    }
     await prisma.activity.delete({
       where: { id: activId },
     });
@@ -67,26 +107,26 @@ export default async function deleteActivity(activId: number) {
   return { message: "L'activité a été supprimée." };
 }
 
-// function extraireURLImages(texte: string): string[] {
-//   const regex = /!\[\]\((.*?)\)/g;
-//   const matches = texte.match(regex);
-//   if (matches) {
-//     return matches.map((match) => {
-//       const urlRegex = /\(([^)]+)\)/;
-//       const urlMatch = match.match(urlRegex);
-//       return urlMatch ? urlMatch[1] : "";
-//     });
-//   }
+function extraireURLImages(texte: string): string[] {
+  const regex = /!\[\]\((.*?)\)/g;
+  const matches = texte.match(regex);
+  if (matches) {
+    return matches.map((match) => {
+      const urlRegex = /\(([^)]+)\)/;
+      const urlMatch = match.match(urlRegex);
+      return urlMatch ? urlMatch[1] : "";
+    });
+  }
 
-//   return [];
-// }
+  return [];
+}
 
-// function extraireNomImage(url: string): string | null {
-//   const regex = /images\/(.*?)\./;
-//   const match = url.match(regex);
+function extraireNomImage(url: string): string | null {
+  const regex = /images\/(.*?)\./;
+  const match = url.match(regex);
 
-//   return match ? match[1] : null;
-// }
+  return match ? match[1] : null;
+}
 
 async function reorderActivities(lessonId: number) {
   const transaction = await prisma.$transaction(async (tx) => {

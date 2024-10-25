@@ -1,4 +1,6 @@
-import { useState, useCallback, useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +10,7 @@ import Lesson from "../../../utils/interfaces/lesson";
 
 const useLessonHome = () => {
   const { sendRequest, error, isLoading } = useHttp();
-  const lesson = useSelector((state: RootState) => state.lesson.lesson);
+  const lesson = useSelector((state: any) => state.lesson.lesson);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [success, setSuccess] = useState(false);
 
