@@ -3,12 +3,14 @@ import {
   TableListItemConfig,
   TableListItemLabels,
 } from "./interfaces/table-list-item";
+import { ChangeEvent } from "react";
 
 type TableListHeadProps = {
   labels: TableListItemLabels[];
   avatar?: TableListItemConfig;
-  showCheckbox?: boolean;
   showAvatar?: boolean;
+  isAllChecked?: boolean;
+  onCheckAll?: (checked: boolean) => void;
 };
 
 /**
@@ -21,18 +23,24 @@ type TableListHeadProps = {
  * @component
  */
 const TableListHead = (props: TableListHeadProps) => {
+  const handleChangeCheckbox = (event: ChangeEvent<HTMLInputElement>) => {
+    props.onCheckAll && props.onCheckAll(event.currentTarget.checked);
+  };
+
   return (
     <thead className="w-full">
       <tr>
         <th className="p-0 w-0" />
 
         {/* La cellule header pour contenir la checkbox */}
-        {props.showCheckbox ? (
+        {props.onCheckAll ? (
           <th className="pl-0 w-0">
             <div className="flex items-center">
               <input
                 type="checkbox"
                 className="checkbox checkbox-sm checkbox-primary"
+                checked={props.isAllChecked}
+                onChange={handleChangeCheckbox}
               />
             </div>
           </th>
