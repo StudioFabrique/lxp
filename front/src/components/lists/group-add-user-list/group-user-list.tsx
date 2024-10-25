@@ -1,14 +1,13 @@
-import { FC, Ref, useEffect, useMemo, useRef, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import GroupManageUserList from "./group-manage-user-list/group-manage-user-list";
 import User from "../../../utils/interfaces/user";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import GroupUserItem from "./group-user-item";
 import CsvImportUserList from "./csv-import-user/csv-import-user-list/csv-import-user-list.component";
-import LoadingIcon from "../../UI/svg/loading-icon.component";
-import ThreeDotIcon from "../../UI/svg/three-dot-icon.component";
 import useEagerLoadingList from "../../../hooks/use-eager-loading-list";
 import Pagination from "../../UI/pagination/pagination";
 import SearchBar from "../../UI/search-bar/search-bar";
+import ActionsDropdown from "../../UI/actions-dropdown/actions-dropdown";
 
 const GroupUserList: FC<{
   usersToAdd: User[];
@@ -21,9 +20,14 @@ const GroupUserList: FC<{
   const usersToAddFiltered = useMemo(
     () =>
       usersToAdd &&
-      usersToAdd?.filter(
-        (item) => item.firstname === filter || item.lastname === filter,
-      ),
+      usersToAdd?.filter((item) => {
+        if (!filter) return true;
+        const searchTerm = filter.toLowerCase();
+        return (
+          item.firstname.toLowerCase().includes(searchTerm) ||
+          item.lastname.toLowerCase().includes(searchTerm)
+        );
+      }),
     [filter, usersToAdd],
   );
 
@@ -43,17 +47,8 @@ const GroupUserList: FC<{
     "_id",
   );
 
-  const menuDiv: Ref<HTMLDivElement> = useRef(null);
-
-  const handleToggleMenu = () => {
-    menuDiv.current &&
-      (menuDiv.current.style.visibility =
-        menuDiv.current.style.visibility === "visible" ? "hidden" : "visible");
-  };
-
   const handleDeleteUsersToAdd = () => {
     getSelecteditems()?.forEach((selectedItem) => onDeleteUser(selectedItem));
-    handleToggleMenu();
   };
 
   const handleCloseDrawer = (id: string) => {
@@ -67,44 +62,43 @@ const GroupUserList: FC<{
   return (
     <Wrapper>
       <div className="flex justify-between items-center">
-        <h2 className="font-bold text-lg">Etudiants</h2>
+        <div>
+          <h2 className="font-bold text-lg">Etudiants</h2>
+        </div>
         <div className="flex gap-x-2 items-center">
           <CsvImportUserList
             onAddUsers={onAddUsers}
             usersAddedInTable={usersToAdd}
           />
-          <button type="button" className="btn btn-ghost px-2">
-            <LoadingIcon />
-          </button>
-          <button
-            type="button"
-            className="btn btn-ghost px-2"
-            onClick={handleToggleMenu}
-          >
-            <ThreeDotIcon />
-          </button>
-          <div
-            ref={menuDiv}
-            className="absolute whitespace-nowrap translate-y-12 invisible"
-          >
-            <button
-              type="button"
-              className="bg-secondary/80 p-2 rounded-lg"
-              onClick={handleDeleteUsersToAdd}
-            >
-              Supprimer les utilisateurs selectionnés
-            </button>
-          </div>
+          <ActionsDropdown
+            actions={[
+              {
+                actionTitle: "Supprimer les étudiants selectionnés",
+                data: null,
+                onClick: handleDeleteUsersToAdd,
+              },
+            ]}
+          />
         </div>
       </div>
-      <div className="flex justify-between items-center">
-        <GroupManageUserList
-          onAddUsers={onAddUsers}
-          usersToAdd={usersToAdd}
-          onCloseDrawer={handleCloseDrawer}
-        />
+      <div className="flex flex-col lg:flex-row gap-5 justify-between lg:items-center w-full">
+        <div className="flex gap-5 items-center">
+          <GroupManageUserList
+            onAddUsers={onAddUsers}
+            usersToAdd={usersToAdd}
+            onCloseDrawer={handleCloseDrawer}
+          />
+          {usersToAdd.length > 0 && (
+            <p className="text-nowrap text-primary">
+              <span className="font-bold">{usersToAdd.length}</span>
+              {usersToAdd.length > 1
+                ? " étudiants dans le groupe"
+                : " étudiant dans le groupe"}
+            </p>
+          )}
+        </div>
         <SearchBar
-          setFilter={setFilter}
+          onSetFilter={setFilter}
           placeholder="Rechercher un étudiant par nom ou prénom"
         />
       </div>
@@ -150,7 +144,7 @@ const GroupUserList: FC<{
           <Pagination page={page} setPage={setPage} totalPages={totalPages} />
         </>
       ) : (
-        "Aucun utilisateurs"
+        "Aucun étudiants"
       )}
     </Wrapper>
   );

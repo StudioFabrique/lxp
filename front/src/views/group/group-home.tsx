@@ -1,141 +1,119 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link, useLocation } from "react-router-dom";
-import { useCallback, useContext, useEffect, useState } from "react";
-import { Context } from "../../store/context.store";
-import Role from "../../utils/interfaces/role";
-import Tabs from "../../components/UI/tabs/tabs.component";
-import usePagination from "../../hooks/use-pagination";
-import { groupSearchOptions } from "../../config/search-options";
-import Search from "../../components/UI/search/search.component";
-import GroupList from "../../components/lists/group-list/group-list.component";
-import Pagination from "../../components/UI/pagination/pagination";
-import toast from "react-hot-toast";
-import useHttp from "../../hooks/use-http";
 import Can from "../../components/UI/can/can.component";
+import Header from "../../components/UI/header";
+import { groupHomeTableItems } from "./group-home-table-config";
+import { Pen, Trash2 } from "lucide-react";
+import { TableListActionConfig } from "../../components/table/table-list/interfaces/table-list-action";
+import Table from "../../components/table/table";
+import TablePagination from "../../components/table/table-pagination/table-pagination";
+import useTablePaginatedData from "../../components/table/table-pagination/hooks/use-table-paginated-data";
+import TableButtons from "../../components/table/table-buttons/table-buttons";
+import toast from "react-hot-toast";
+import { useEffect } from "react";
 
-export type GroupModalContent = {
-  isModalOpen?: boolean;
-  groupId?: string;
-  groupName?: string;
-  refresh?: boolean;
-};
-
+/**
+ * Composant GroupHome
+ *
+ * Affiche une liste de groupes avec des fonctionnalités pour créer,
+ * modifier et supprimer des groupes. Utilise un tableau paginé pour
+ * présenter les données, avec une barre de recherche intégrée.
+ * Gère les notifications toast pour informer l'utilisateur des actions.
+ *
+ * @component
+ */
 const GroupHome = () => {
-  const { user, roles } = useContext(Context);
-  const { sendRequest } = useHttp(true);
-  const [role, setRole] = useState<Role>(roles[0]);
+  const { state } = useLocation();
 
-  const {
-    allChecked,
-    page,
-    totalPages,
-    dataList,
-    getList,
-    sortData,
-    initPagination,
-    handlePageNumber,
-    setPath,
-    setAllChecked,
-    handleRowCheck,
-  } = usePagination("lastname", `/group/${user!.roles[0].role}`);
-  const { state: history } = useLocation();
+  const { data, onRefreshData, isLoading, onSubmitSearchValue, ...pagination } =
+    useTablePaginatedData("/group/student", "/group/search/student");
 
-  const handleRoleSwitch = useCallback(
-    (role: Role) => {
-      initPagination();
-      setRole(role);
-      setPath(`/group/${role.role}`);
+  const actions: TableListActionConfig[] = [
+    /*{
+      property: "invite",
+      additionnalClassname: "btn-success",
+      label: "Inviter les utilisateurs",
+      title: "Inviter",
+      type: "button",
+      request: { path: "/group/invite/[:id]", method: "post" },
+      onSuccessfulSubmit: onRefreshData,
+    },*/
+    {
+      property: "edit",
+      type: "link",
+      tooltip: "Modifier",
+      icon: Pen,
+      additionnalClassname: "btn-ghost",
+      request: { path: "edit/[:id]" },
+      rbacObject: "group",
+      rbacAction: "update",
     },
-    [initPagination, setPath]
-  );
+    {
+      property: "delete",
+      type: "button",
+      tooltip: "Supprimer",
+      icon: Trash2,
+      additionnalClassname: "btn-ghost text-error",
+      request: { path: "/group/[:id]", method: "delete" },
+      onSuccessfulSubmit: onRefreshData,
+      withConfirmationModal: true,
+      rbacObject: "group",
+      rbacAction: "delete",
+    },
+  ];
 
-  const handleSearchResult = (entityToSearch: string, searchValue: string) => {
-    initPagination();
-    setPath(`/group/search/${role.role}/${entityToSearch}/${searchValue}`);
-    getList();
-  };
-
-  const handleAllChecked = () => {
-    setAllChecked((prevAllchecked) => !prevAllchecked);
-  };
-
-  const handleUncheckAll = useCallback(() => {
-    setAllChecked(false);
-  }, [setAllChecked]);
-
-  const handleDeleteGroup = async (id: string) => {
-    const applyData = () => {
-      getList();
-      toast.success("Groupe supprimé avec succès");
-    };
-
-    await sendRequest({ path: `/group/${id}`, method: "delete" }, applyData);
-
-    return true;
-  };
-
+  // Si un message du state est présent, alors il s'affiche dans un toaster
   useEffect(() => {
-    if (history?.toastFrom) {
-      toast.success(history.toastFrom);
-    }
-  }, [history?.toastFrom]);
-
-  useEffect(() => {
-    setRole(roles[0]);
-  }, [roles]);
-
-  useEffect(() => {
-    if (role) {
-      getList();
-    }
-  }, [page, getList, role]);
-
-  useEffect(() => {
-    handleRoleSwitch(role);
-  }, [handleRoleSwitch, role]);
+    if (state && state.toastFrom) toast.success(state.toastFrom);
+  }, [state]);
 
   return (
-    <div className="flex flex-col py-5">
-      <div className="my-8 flex justify-center">
-        <div className="flex w-[80vw] flex-col gap-y-4">
-          <span className="flex justify-between">
-            <h2 className="text-4xl font-bold">Liste des groupes</h2>
-            <Can action="write" object="group">
-              <Link className="btn btn-primary" to="/admin/group/add">
-                Créer un groupe
-              </Link>
-            </Can>
-          </span>
-          {user && role ? (
-            <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />
-          ) : null}
-          <div className="flex items-center justify-end">
-            <div className="flex flex-col">
-              <Search
-                options={groupSearchOptions}
-                onSearch={handleSearchResult}
-              />
-            </div>
-          </div>
-          <GroupList
-            allChecked={allChecked}
-            role={role}
-            groupList={dataList}
-            onRowCheck={handleRowCheck}
-            onAllChecked={handleAllChecked}
-            onSorting={sortData}
-            onUncheckAll={handleUncheckAll}
-            onDeleteGroup={handleDeleteGroup}
-          />
-          {dataList.length > 0 ? (
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              setPage={handlePageNumber}
-            />
-          ) : null}
-        </div>
-      </div>
+    <div className="flex flex-col gap-10 p-10">
+      {/* Header de la liste des groupes */}
+      <Header
+        title="Liste des groupes"
+        description="Créer, modifier et supprimer des groupes"
+      >
+        <Can object="group" action="write">
+          <Link className="btn btn-primary" to="/admin/group/add">
+            Créer un groupe
+          </Link>
+        </Can>
+      </Header>
+
+      {/* Tableau liste des groupes */}
+      <Table
+        searchBar={{
+          title: "Groupes",
+          placeholder: "Rechercher un groupe",
+          onSubmitSearchValue: onSubmitSearchValue,
+        }}
+        list={{
+          idProperty: "_id",
+          avatar: { property: "image" },
+          data: data,
+          tableItemsConfig: groupHomeTableItems,
+          actionsItems: actions,
+          style: {
+            showCheckbox: true,
+            showAvatar: true,
+            emptyArrayMessage: isLoading
+              ? "Chargement des groupes..."
+              : "Aucun groupe disponible",
+          },
+        }}
+      >
+        {[
+          // top
+          <TableButtons
+            key={0}
+            isLoading={isLoading}
+            onRefreshData={onRefreshData}
+            onDeleteUsers={onRefreshData}
+          />,
+          // bottom
+          <TablePagination key={1} {...pagination} />,
+        ]}
+      </Table>
     </div>
   );
 };

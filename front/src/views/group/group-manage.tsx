@@ -1,6 +1,6 @@
 import GroupForm from "../../components/forms/group-form/group-form.component";
 import GroupUserList from "../../components/lists/group-add-user-list/group-user-list";
-import useGroupManage from "./use-group-manage";
+import useGroupManage from "./hooks/use-group-manage";
 
 const GroupManage = () => {
   const {
@@ -14,7 +14,7 @@ const GroupManage = () => {
   } = useGroupManage();
 
   return (
-    <div className="flex flex-col p-10 gap-y-10">
+    <div className="flex flex-col p-10 gap-10">
       <GroupForm
         title={existingGroup && "Modifier un groupe de formation"}
         group={existingGroup}
