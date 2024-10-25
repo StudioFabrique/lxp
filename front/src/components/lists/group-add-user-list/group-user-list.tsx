@@ -81,7 +81,7 @@ const GroupUserList: FC<{
           />
         </div>
       </div>
-      <div className="flex justify-between items-center w-full">
+      <div className="flex flex-col lg:flex-row gap-5 justify-between lg:items-center w-full">
         <div className="flex gap-5 items-center">
           <GroupManageUserList
             onAddUsers={onAddUsers}
