@@ -3,10 +3,14 @@ import useHttp from "../../../hooks/use-http";
 import Can from "../../UI/can/can.component";
 import TableListAction from "./interfaces/table-list-action";
 import TableListSwitchInput from "./table-list-switch-input";
+import DeleteModal from "../../UI/modal/delete-modal";
+import { useState } from "react";
 
 type TableListActionCellProps = TableListAction & { id: string };
 
 const TableListActionCell = (props: TableListActionCellProps) => {
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+
   const { sendRequest, isLoading } = useHttp();
 
   const path = props.request
@@ -28,11 +32,11 @@ const TableListActionCell = (props: TableListActionCellProps) => {
     }
   };
 
-  const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = async () => {
     if (props.request) {
-      await handleRequest(event.currentTarget.value);
+      await handleRequest();
     } else if (props.onSuccessfulSubmit) {
-      props.onSuccessfulSubmit(props.id, event.currentTarget.value);
+      props.onSuccessfulSubmit(props.id);
     }
   };
 
@@ -41,21 +45,27 @@ const TableListActionCell = (props: TableListActionCellProps) => {
     await handleRequest(value);
   };
 
+  const handleToggleModal = async () => {
+    setModalOpen((prevState) => !prevState);
+  };
+
   const cell = (
     <td className="px-2 w-0 gap-x-2">
-      {/* {props.withConfirmationModal ? (
-    <DeleteModal
-      isLoading={isLoading}
-      onCancel={() => {}}
-      onConfirm={handleClick}
-    />
-  ) : null} */}
+      {props.withConfirmationModal && isModalOpen ? (
+        <DeleteModal
+          isLoading={isLoading}
+          onCancel={handleToggleModal}
+          onConfirm={handleClick}
+        />
+      ) : null}
       <div className="flex justify-center">
         <div className="tooltip flex" data-tip={props.tooltip}>
           <TableListSwitchInput
             {...props}
             linkUrl={path}
-            onClick={handleClick}
+            onClick={
+              props.withConfirmationModal ? handleToggleModal : handleClick
+            }
             onToggle={handleToggle}
             isLoading={isLoading}
           />

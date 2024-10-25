@@ -44,6 +44,8 @@ const GroupHome = () => {
       icon: Pen,
       additionnalClassname: "btn-ghost",
       request: { path: "edit/[:id]" },
+      rbacObject: "group",
+      rbacAction: "update",
     },
     {
       property: "delete",
@@ -53,10 +55,13 @@ const GroupHome = () => {
       additionnalClassname: "btn-ghost text-error",
       request: { path: "/group/[:id]", method: "delete" },
       onSuccessfulSubmit: onRefreshData,
+      withConfirmationModal: true,
+      rbacObject: "group",
+      rbacAction: "delete",
     },
   ];
 
-  // Si un message du state est présent, alors l'afficher dans un toaster
+  // Si un message du state est présent, alors il s'affiche dans un toaster
   useEffect(() => {
     if (state && state.toastFrom) toast.success(state.toastFrom);
   }, [state]);
