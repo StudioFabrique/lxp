@@ -3,7 +3,6 @@ import TableListAction from "./interfaces/table-list-action";
 import TableListCell from "./table-list-cell";
 import TableListActionCell from "./table-list-action-cell";
 import { AvatarSmall } from "../../UI/avatar/avatar.component";
-import imageProfileReplacement from "../../../config/image-profile-replacement";
 
 type ItemProps<TData extends Record<string, unknown>> = {
   id: string;
