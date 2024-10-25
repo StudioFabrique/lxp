@@ -1,15 +1,18 @@
 import { Link, useLocation } from "react-router-dom";
 import Can from "../../components/UI/can/can.component";
 import Header from "../../components/UI/header";
-import { groupHomeTableItems } from "./group-home-table-config";
-import { Pen, Trash2 } from "lucide-react";
-import { TableListActionConfig } from "../../components/table/table-list/interfaces/table-list-action";
+import {
+  actionsConfig,
+  listConfig,
+  searchBarConfig,
+} from "./group-home-table-config";
 import Table from "../../components/table/table";
 import TablePagination from "../../components/table/table-pagination/table-pagination";
 import useTablePaginatedData from "../../components/table/table-pagination/hooks/use-table-paginated-data";
 import TableButtons from "../../components/table/table-buttons/table-buttons";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
+import useTableCheckbox from "../../components/table/table-list/hooks/use-table-checkbox";
 
 /**
  * Composant GroupHome
@@ -27,39 +30,7 @@ const GroupHome = () => {
   const { data, onRefreshData, isLoading, onSubmitSearchValue, ...pagination } =
     useTablePaginatedData("/group/student", "/group/search/student");
 
-  const actions: TableListActionConfig[] = [
-    /*{
-      property: "invite",
-      additionnalClassname: "btn-success",
-      label: "Inviter les utilisateurs",
-      title: "Inviter",
-      type: "button",
-      request: { path: "/group/invite/[:id]", method: "post" },
-      onSuccessfulSubmit: onRefreshData,
-    },*/
-    {
-      property: "edit",
-      type: "link",
-      tooltip: "Modifier",
-      icon: Pen,
-      additionnalClassname: "btn-ghost",
-      request: { path: "edit/[:id]" },
-      rbacObject: "group",
-      rbacAction: "update",
-    },
-    {
-      property: "delete",
-      type: "button",
-      tooltip: "Supprimer",
-      icon: Trash2,
-      additionnalClassname: "btn-ghost text-error",
-      request: { path: "/group/[:id]", method: "delete" },
-      onSuccessfulSubmit: onRefreshData,
-      withConfirmationModal: true,
-      rbacObject: "group",
-      rbacAction: "delete",
-    },
-  ];
+  const { idList, resetCheckbox, ...checkboxConfig } = useTableCheckbox(data);
 
   // Si un message du state est présent, alors il s'affiche dans un toaster
   useEffect(() => {
@@ -82,25 +53,9 @@ const GroupHome = () => {
 
       {/* Tableau liste des groupes */}
       <Table
-        searchBar={{
-          title: "Groupes",
-          placeholder: "Rechercher un groupe",
-          onSubmitSearchValue: onSubmitSearchValue,
-        }}
-        list={{
-          idProperty: "_id",
-          avatar: { property: "image" },
-          data: data,
-          tableItemsConfig: groupHomeTableItems,
-          actionsItems: actions,
-          style: {
-            showCheckbox: true,
-            showAvatar: true,
-            emptyArrayMessage: isLoading
-              ? "Chargement des groupes..."
-              : "Aucun groupe disponible",
-          },
-        }}
+        searchBarConfig={searchBarConfig(onSubmitSearchValue)}
+        listConfig={listConfig(data, isLoading, actionsConfig(onRefreshData))}
+        checkboxConfig={checkboxConfig}
       >
         {[
           // top

@@ -4,8 +4,13 @@ import TableList, { TableListProps } from "./table-list/table-list";
 import { PropsWithChildren } from "react";
 
 type TableProps<TData> = {
-  list: TableListProps<TData>;
-  searchBar: SearchBarProps;
+  listConfig: TableListProps<TData>;
+  searchBarConfig: SearchBarProps;
+  checkboxConfig?: {
+    isAllChecked?: boolean;
+    onCheck?: (id: string, checked: boolean) => void;
+    onCheckAll?: (checked: boolean) => void;
+  };
 };
 
 /**
@@ -32,10 +37,10 @@ const Table = <TData extends Record<string, string>>(
   return (
     <Wrapper additionalClassname="px-10 justify-between">
       {/* éléments du haut, avec les childrens à coté du composant SearchBar*/}
-      <SearchBar {...props.searchBar}>{topChild}</SearchBar>
+      <SearchBar {...props.searchBarConfig}>{topChild}</SearchBar>
 
       {/* tableau au milieu */}
-      <TableList {...props.list} />
+      <TableList {...props.listConfig} {...props.checkboxConfig} />
 
       {/* éléments children en bas du tableau */}
       <div>{bottomChild}</div>

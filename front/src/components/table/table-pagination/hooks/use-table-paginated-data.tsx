@@ -15,7 +15,6 @@ function useTablePaginatedData<TData>(
   const [searchValue, setSearchValue] = useState<string | null>(null);
 
   const handleSetItemsPerPage = (value: number) => {
-    console.log(value);
     setItemsPerPage(value);
   };
 
