@@ -1,8 +1,10 @@
 import { GripVertical, Pen, Trash2 } from "lucide-react";
-import { Link } from "react-router-dom";
-import Activity from "../../utils/interfaces/activity";
-import Can from "../UI/can/can.component";
-import BookIcon from "../UI/svg/book-icon";
+import { useNavigate } from "react-router-dom";
+import Activity from "../../../utils/interfaces/activity";
+import BookIcon from "../../UI/svg/book-icon";
+import Can from "../../UI/can/can.component";
+import { useDispatch } from "react-redux";
+import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 
 type Props = {
   activity: Activity;
@@ -15,6 +17,15 @@ export default function ActivityListItem({
   index,
   onDeleteActivity,
 }: Props) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleGoToActivity = () => {
+    console.log({ activity });
+    dispatch(lessonActions.setActivity(activity));
+    navigate(`edit-blog/${activity.id}`);
+  };
+
   return (
     <article className="flex justify-between items-center">
       <div className="flex items-center gap-x-4">
@@ -36,12 +47,12 @@ export default function ActivityListItem({
       </div>
       <span className="flex items-center gap-x-4">
         <Can action="update" object="lesson">
-          <Link
-            to={`/admin/course/edit/${activity.id}`}
+          <button
+            onClick={handleGoToActivity}
             className="hover:text-primary-focus transition-colors"
           >
             <Pen className="w-4 h-4 text-primary" />
-          </Link>
+          </button>
         </Can>
         <Can action="delete" object="lesson">
           <button

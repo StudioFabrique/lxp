@@ -1,3 +1,8 @@
+// Ce composant fournit une fonctionnalité de drag & drop pour réorganiser une liste d'activités
+// Il affiche les activités dans une liste qui peut être réorganisée en faisant glisser les éléments
+// Un minuteur est utilisé pour sauvegarder automatiquement le nouvel ordre après le glisser-déposer
+// Les activités peuvent aussi être supprimées individuellement
+
 import {
   Dispatch,
   SetStateAction,
@@ -11,9 +16,9 @@ import {
   Droppable,
   DropResult,
 } from "react-beautiful-dnd";
-import Activity from "../../utils/interfaces/activity";
-import Wrapper from "../UI/wrapper/wrapper.component";
 import ActivityListItem from "./activity-list-item";
+import Activity from "../../../utils/interfaces/activity";
+import Wrapper from "../../UI/wrapper/wrapper.component";
 
 type Props = {
   activities: Activity[];
@@ -33,7 +38,6 @@ export default function DNDAcitivities(props: Props) {
 
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
-
     const newActivities = Array.from(props.activities);
     const [movedActivity] = newActivities.splice(result.source.index, 1);
     newActivities.splice(result.destination.index, 0, movedActivity);
