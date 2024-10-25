@@ -30,7 +30,10 @@ const GroupHome = () => {
   const { data, onRefreshData, isLoading, onSubmitSearchValue, ...pagination } =
     useTablePaginatedData("/group/student", "/group/search/student");
 
-  const { idList, resetCheckbox, ...checkboxConfig } = useTableCheckbox(data);
+  const { idsList, resetCheckbox, ...checkboxConfig } = useTableCheckbox(
+    data,
+    "_id",
+  );
 
   // Si un message du state est présent, alors il s'affiche dans un toaster
   useEffect(() => {

@@ -67,3 +67,20 @@ export function generateTableActions(
   });
   return actions;
 }
+
+export function generateTableIdsFromData<TData>(
+  data: TData[],
+  idProperty: string,
+): string[] {
+  const ids: string[] = [];
+  for (const item in data) {
+    if (data[item][idProperty as keyof TData]) {
+      const currentId = data[item][idProperty as keyof TData];
+      if (currentId) {
+        ids.push(String(currentId));
+      }
+    }
+  }
+
+  return ids;
+}
