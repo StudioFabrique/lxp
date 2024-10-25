@@ -6,9 +6,10 @@ type TableListBodyProps = {
   propertiesLength: number;
   style?: {
     emptyArrayMessage?: string;
-    showCheckbox?: boolean;
     showAvatar?: boolean;
   };
+  isAllChecked?: boolean;
+  onCheck?: (id: string, checked: boolean) => void;
 };
 
 const TableListBody = (props: TableListBodyProps) => {
@@ -18,7 +19,13 @@ const TableListBody = (props: TableListBodyProps) => {
     return (
       <tbody>
         {props.tableItems.map((item) => (
-          <Item key={item.id} {...item} style={props.style} />
+          <Item
+            key={item.id}
+            {...item}
+            style={props.style}
+            isAllChecked={props.isAllChecked}
+            onCheck={props.onCheck}
+          />
         ))}
       </tbody>
     );

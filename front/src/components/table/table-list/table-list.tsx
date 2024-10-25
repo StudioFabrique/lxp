@@ -12,9 +12,11 @@ export type TableListProps<TData> = {
   actionsItems?: TableListActionConfig[];
   style?: {
     emptyArrayMessage?: string;
-    showCheckbox?: boolean;
     showAvatar?: boolean;
   };
+  isAllChecked?: boolean;
+  onCheck?: (id: string, checked: boolean) => void;
+  onCheckAll?: (checked: boolean) => void;
 };
 
 /**
@@ -47,13 +49,16 @@ const TableList = <TData extends Record<string, string>>(
         <Head
           labels={labels}
           avatar={props.avatar}
-          showCheckbox={props.style?.showCheckbox}
           showAvatar={props.style?.showAvatar}
+          isAllChecked={props.isAllChecked}
+          onCheckAll={props.onCheckAll}
         />
         <Body
           tableItems={tableItems}
           propertiesLength={labels.length}
           style={props.style}
+          isAllChecked={props.isAllChecked}
+          onCheck={props.onCheck}
         />
       </table>
     </div>
