@@ -8,7 +8,7 @@ interface ActionsDropdownItem<FuncDataT = void> {
 
 type ActionsDropdownProps<FuncDataT = void> = {
   actions: ActionsDropdownItem<FuncDataT>[];
-  isLoading?: boolean;
+  isDisabled?: boolean;
 };
 
 const ActionsDropdown = <FuncDataT,>(
@@ -34,7 +34,7 @@ const ActionsDropdown = <FuncDataT,>(
         {props.actions.map((act) => (
           <li key={act.actionTitle}>
             <button
-              disabled={props.isLoading}
+              disabled={props.isDisabled}
               onClick={() => handleClick(act.onClick, act.data)}
             >
               {act.actionTitle}

@@ -5,8 +5,6 @@ function useTableCheckbox<TData>(data: TData[], idProperty: string) {
   const [isAllChecked, setAllChecked] = useState<boolean>(false);
   const [idsList, setIdList] = useState<string[]>([]);
 
-  console.log({ idsList });
-
   const idsListFromData = generateTableIdsFromData(data, idProperty);
 
   const handleCheck = (id: string, checked: boolean) => {
@@ -41,7 +39,7 @@ function useTableCheckbox<TData>(data: TData[], idProperty: string) {
 
   return {
     idsList,
-    onResetCheckbox: handleResetCheckbox,
+    // onResetCheckbox: handleResetCheckbox,
     isAllChecked,
     onCheck: handleCheck,
     onCheckAll: handleCheckAll,

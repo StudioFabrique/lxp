@@ -3,11 +3,12 @@ import ActionsDropdown from "../../UI/actions-dropdown/actions-dropdown";
 
 type TableButtonsProps = {
   isLoading: boolean;
+  isDisabled: boolean;
   onRefreshData: () => void;
   onDeleteUsers: () => void;
 };
 
-const TableButtons = (props: TableButtonsProps) => (
+const TableActionsButtons = (props: TableButtonsProps) => (
   <div className="flex items-center">
     <button
       onClick={props.onRefreshData}
@@ -24,9 +25,9 @@ const TableButtons = (props: TableButtonsProps) => (
           onClick: props.onDeleteUsers,
         },
       ]}
-      isLoading={props.isLoading}
+      isDisabled={props.isLoading || props.isDisabled}
     />
   </div>
 );
 
-export default TableButtons;
+export default TableActionsButtons;
