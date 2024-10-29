@@ -17,55 +17,65 @@ import httpDeleteUserFromGroup from "../../controllers/group/http-delete-user-fr
 import httpGetGroupDetails from "../../controllers/group/http-get-group-details";
 import httpPutGroup from "../../controllers/group/http-put-group";
 import httpPutAddUsersGroup from "../../controllers/group/http-put-add-users-group";
+import httpDeleteManyGroups from "../../controllers/group/http-delete-many-groups";
 const groupRouter = Router();
 
-groupRouter.get("/:id", checkPermissions("group"), httpGetGroupDetails);
+// GET routes
+groupRouter.get(
+  "/search/:role/:entity/:value/:stype/:sdir",
+  checkPermissions(),
+  searchValidator,
+  httpSearchGroup,
+);
 
 groupRouter.get(
   "/:role/:stype/:sdir",
   checkPermissions(),
   getAllValidator,
-  httpGetAllGroups
+  httpGetAllGroups,
 );
 
-groupRouter.get(
-  "/search/:role/:entity/:value/:stype/:sdir",
-  checkPermissions(),
-  searchValidator,
-  httpSearchGroup
-);
+groupRouter.get("/:id", checkPermissions("group"), httpGetGroupDetails);
 
+// POST routes
 groupRouter.post(
   "/",
   checkPermissions("group"),
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
   groupValidator,
-  httpCreateGroup
+  httpCreateGroup,
 );
 
-/* groupRouter.put("/:id", validator, httpPutGroupUsers); */
+// PUT routes
+groupRouter.put(
+  "/addUsers/:id",
+  checkPermissions("group"),
+  httpPutAddUsersGroup,
+);
+
 groupRouter.put(
   "/:id",
   checkPermissions("group"),
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
   groupPutValidator,
-  httpPutGroup
+  httpPutGroup,
 );
 
-groupRouter.put(
-  "/addUsers/:id",
-  checkPermissions("group"),
-  httpPutAddUsersGroup
-);
-
-groupRouter.delete("/:id", checkPermissions("group"), httpDeleteGroup);
-
+// DELETE routes
 groupRouter.delete(
   "/user/:groupId/:userId",
   checkPermissions("group"),
-  httpDeleteUserFromGroup
+  httpDeleteUserFromGroup,
 );
+
+groupRouter.delete(
+  "/deleteMany",
+  checkPermissions("group"),
+  httpDeleteManyGroups,
+);
+
+groupRouter.delete("/:id", checkPermissions("group"), httpDeleteGroup);
 
 export default groupRouter;

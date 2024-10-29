@@ -28,13 +28,15 @@ const GroupUserItem: FC<{
       }`}
     >
       {onCheckRow && (
-        <td className="bg-transparent rounded-l-xl p-5">
-          <input
-            type="checkbox"
-            className="checkbox checkbox-primary mt-1"
-            onChange={() => onCheckRow(user._id)}
-            checked={user.isSelected}
-          />
+        <td className="bg-transparent rounded-l-xl pr-0">
+          <div className="flex justify-center items-center">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-primary mt-1"
+              onChange={() => onCheckRow(user._id)}
+              checked={user.isSelected}
+            />
+          </div>
         </td>
       )}
       <td
@@ -42,7 +44,11 @@ const GroupUserItem: FC<{
           onCheckRow ? "bg-transparent" : "bg-transparent rounded-l-xl p-2"
         }
       >
-        {user.avatar && <AvatarSmall url={user.avatar} />}
+        <div className="flex justify-center items-center">
+          {user.avatar && (
+            <AvatarSmall url={`data:image/jpeg;base64,${user.avatar}`} />
+          )}
+        </div>
       </td>
       <td className="bg-transparent">{user.firstname}</td>
       <td className="bg-transparent">{user.lastname}</td>

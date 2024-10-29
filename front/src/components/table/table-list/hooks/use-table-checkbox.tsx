@@ -1,26 +1,26 @@
 import { useEffect, useState } from "react";
+import { generateTableIdsFromData } from "../services/generic-table-service";
 
-function useTableCheckbox<TData>(data: TData) {
+function useTableCheckbox<TData>(data: TData[], idProperty: string) {
   const [isAllChecked, setAllChecked] = useState<boolean>(false);
+  const [idsList, setIdList] = useState<string[]>([]);
 
-  const [idList, setIdList] = useState<string[]>([]);
-
-  console.log({ idList });
+  const idsListFromData = generateTableIdsFromData(data, idProperty);
 
   const handleCheck = (id: string, checked: boolean) => {
     if (checked) {
-      const newList = [...idList, id];
+      const newList = [...idsList, id];
       // verifier doublons?
       setIdList(newList);
     } else {
-      const newList = idList.filter((item) => item !== id);
+      const newList = idsList.filter((item) => item !== id);
       setIdList(newList);
     }
   };
 
   const handleCheckAll = (checked: boolean) => {
     if (checked) {
-      // add all id
+      setIdList(idsListFromData);
     } else {
       setIdList([]);
     }
@@ -38,8 +38,8 @@ function useTableCheckbox<TData>(data: TData) {
   }, [data]);
 
   return {
-    idList,
-    onResetCheckbox: handleResetCheckbox,
+    idsList,
+    // onResetCheckbox: handleResetCheckbox,
     isAllChecked,
     onCheck: handleCheck,
     onCheckAll: handleCheckAll,

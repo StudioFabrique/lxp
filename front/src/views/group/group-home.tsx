@@ -9,10 +9,11 @@ import {
 import Table from "../../components/table/table";
 import TablePagination from "../../components/table/table-pagination/table-pagination";
 import useTablePaginatedData from "../../components/table/table-pagination/hooks/use-table-paginated-data";
-import TableButtons from "../../components/table/table-buttons/table-buttons";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
 import useTableCheckbox from "../../components/table/table-list/hooks/use-table-checkbox";
+import useGroupActions from "./hooks/use-group-actions";
+import TableActionsButtons from "../../components/table/table-buttons/table-actions-buttons";
 
 /**
  * Composant GroupHome
@@ -30,7 +31,9 @@ const GroupHome = () => {
   const { data, onRefreshData, isLoading, onSubmitSearchValue, ...pagination } =
     useTablePaginatedData("/group/student", "/group/search/student");
 
-  const { idList, resetCheckbox, ...checkboxConfig } = useTableCheckbox(data);
+  const { idsList, ...checkboxConfig } = useTableCheckbox(data, "_id");
+
+  const { onDeleteSelectedGroups } = useGroupActions(idsList, onRefreshData);
 
   // Si un message du state est présent, alors il s'affiche dans un toaster
   useEffect(() => {
@@ -51,7 +54,10 @@ const GroupHome = () => {
         </Can>
       </Header>
 
-      {/* Tableau liste des groupes */}
+      {/*
+       * Tableau generique utilisé pour la liste des groupes,
+       * utilisation du pattern composition
+       */}
       <Table
         searchBarConfig={searchBarConfig(onSubmitSearchValue)}
         listConfig={listConfig(data, isLoading, actionsConfig(onRefreshData))}
@@ -59,11 +65,12 @@ const GroupHome = () => {
       >
         {[
           // top
-          <TableButtons
+          <TableActionsButtons
             key={0}
             isLoading={isLoading}
+            isDisabled={!(idsList.length > 0)} // disabled si la liste a une longueur de 0
             onRefreshData={onRefreshData}
-            onDeleteUsers={onRefreshData}
+            onDeleteUsers={onDeleteSelectedGroups}
           />,
           // bottom
           <TablePagination key={1} {...pagination} />,
