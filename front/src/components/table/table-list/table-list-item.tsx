@@ -20,6 +20,18 @@ type ItemProps<TData extends Record<string, unknown>> = {
   onCheck?: (id: string, checked: boolean) => void;
 };
 
+/**
+ * Représente une ligne de données dans le composant TableList
+ *
+ * @param props Les propriétés du composant
+ * @param props.id L'identifiant unique de la ligne
+ * @param props.data Les données à afficher dans la ligne
+ * @param props.actions Les actions disponibles pour la ligne
+ * @param props.avatar L'URL de l'avatar à afficher
+ * @param props.style Les options de style de la ligne
+ * @param props.isAllChecked Si la checkbox est cochée ou non
+ * @param props.onCheck Appelé lors d'un changement de la case à cocher
+ */
 const TableListItem = <TData extends Record<string, unknown>>(
   props: PropsWithChildren<ItemProps<TData>>,
 ) => {
@@ -57,7 +69,7 @@ const TableListItem = <TData extends Record<string, unknown>>(
 
       {/* Affichage d'un avatar si activé */}
       {props.style?.showAvatar ? (
-        <td className="px-0">
+        <td className="pl-4 pr-1">
           <div className="flex justify-center items-center h-full">
             {props.avatar ? (
               <AvatarSmall url={`data:image/jpeg;base64,${props.avatar}`} />
