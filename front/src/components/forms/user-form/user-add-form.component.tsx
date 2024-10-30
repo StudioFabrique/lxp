@@ -125,10 +125,13 @@ const UserAddForm: FC<{
 
   useEffect(() => {
     if (props.user?.graduations) {
-      setGraduations(props.user?.graduations);
+      setGraduations(props.user.graduations);
     }
     if (props.user?.roles) {
-      setRoleId(props.user?.roles[0]._id);
+      setRoleId(props.user.roles[0]._id);
+    }
+    if (props.user?.birthDate) {
+      setBirthDate(props.user.birthDate);
     }
   }, [props.user]);
 
