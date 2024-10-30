@@ -35,6 +35,7 @@ export default async function createUser(user: IUser, roleId: string) {
       address: user.address?.toLowerCase(),
       city: user.city?.toLowerCase(),
       postCode: user.postCode?.toLowerCase(),
+      birthDate: user.birthDate,
       phoneNumber: user.phoneNumber?.toLowerCase(),
       password: await hash(randomUUID() + "@Sn99", 10),
       isActive: false,

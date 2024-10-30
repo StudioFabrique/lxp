@@ -28,11 +28,20 @@ import TableActionsButtons from "../../components/table/table-buttons/table-acti
 const GroupHome = () => {
   const { state } = useLocation();
 
-  const { data, onRefreshData, isLoading, onSubmitSearchValue, ...pagination } =
-    useTablePaginatedData("/group/student", "/group/search/student");
+  // custom hook gestion pagination
+  const {
+    data,
+    onRefreshData,
+    isLoading,
+    onSubmitSearchValue,
+    totalItems,
+    ...pagination
+  } = useTablePaginatedData("/group/student", "/group/search/student");
 
+  // custom hook gestion checkbox
   const { idsList, ...checkboxConfig } = useTableCheckbox(data, "_id");
 
+  // custom hook gestion actions groupées
   const { onDeleteSelectedGroups } = useGroupActions(idsList, onRefreshData);
 
   // Si un message du state est présent, alors il s'affiche dans un toaster
@@ -73,7 +82,11 @@ const GroupHome = () => {
             onDeleteUsers={onDeleteSelectedGroups}
           />,
           // bottom
-          <TablePagination key={1} {...pagination} />,
+          <TablePagination
+            key={1}
+            leftText={`Nombre de groupes : ${totalItems}`}
+            {...pagination}
+          />,
         ]}
       </Table>
     </div>

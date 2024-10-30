@@ -19,6 +19,7 @@ export default interface User {
   postCode?: string;
   city?: string;
   phoneNumber?: string;
+  birthDate?: Date;
   roles: Array<Role>;
   avatar?: string;
   createdAt?: Date;
