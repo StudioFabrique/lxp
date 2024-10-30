@@ -22,7 +22,15 @@ const CsvImportUserList: FC<{
 
   const handleImportCsv = (data: User[]) => {
     if (data) {
-      setUsersToImport(data);
+      // transform data here with a function
+      const nonEmptyEmails = data.filter((item) => item.email.length > 0);
+      const dataWithoutDuplicate = [
+        ...new Set(nonEmptyEmails.map((item) => item.email)),
+      ].map((email) => data.find((item) => item.email === email)!);
+      const filteredData = dataWithoutDuplicate.filter(
+        (item) => Object.keys(item).length > 0,
+      );
+      setUsersToImport(filteredData);
       setDrawerOpenState(true);
     } else {
       toast.error("problème d'importation des données");
