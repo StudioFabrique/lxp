@@ -125,10 +125,19 @@ const UserAddForm: FC<{
 
   useEffect(() => {
     if (props.user?.graduations) {
-      setGraduations(props.user?.graduations);
+      setGraduations(props.user.graduations);
     }
     if (props.user?.roles) {
-      setRoleId(props.user?.roles[0]._id);
+      setRoleId(props.user.roles[0]._id);
+    }
+    if (props.user?.birthDate) {
+      setBirthDate(props.user.birthDate);
+    }
+    if (props.user?.hobbies) {
+      setHobbies(props.user.hobbies);
+    }
+    if (props.user?.links) {
+      setLinks(props.user.links);
     }
   }, [props.user]);
 
@@ -140,7 +149,7 @@ const UserAddForm: FC<{
         disabled={props.fieldsDisabled}
       />
       <div className="flex flex-col gap-y-5">
-        <div className={`grid grid-cols-3 gap-x-5`}>
+        <div className="grid grid-cols-3 gap-x-5">
           <Informations
             lastname={lastname}
             firstname={firstname}
@@ -165,6 +174,7 @@ const UserAddForm: FC<{
               onSetSendEmail={setSendEmail}
               onSetRoleId={setRoleId}
               disabled={props.fieldsDisabled || props.editMode}
+              editMode={props.editMode}
             />
             <CentreInterets
               hobbies={hobbies}

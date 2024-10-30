@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../../../hooks/use-http";
 
+/**
+ * Custom hook pour gérer la pagination des tables avec des données provenant d'une API
+ * @param apiPath Chemin de l'API pour récupérer les données
+ * @param apiPathSearchValue Chemin de l'API pour la recherche (optionnel)
+ */
 function useTablePaginatedData<TData>(
   apiPath: string,
   apiPathSearchValue?: string,
@@ -13,6 +18,7 @@ function useTablePaginatedData<TData>(
   const [maxPage, setMaxPage] = useState<number | null>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(5);
   const [searchValue, setSearchValue] = useState<string | null>(null);
+  const [totalItems, setTotalItems] = useState<number>(0);
 
   const handleSetItemsPerPage = (value: number) => {
     setItemsPerPage(value);
@@ -38,9 +44,15 @@ function useTablePaginatedData<TData>(
     setSearchValue(value.length > 0 ? value : null);
   };
 
+  /**
+   * Gère la récupération des données avec la pagination depuis l'API
+   * Lance une nouvelle requête à chaque changement des paramètres
+   * (numéro de page, nombre d'éléments par page, recherche)
+   */
   const handleRequest = useCallback(async () => {
     const applyData = ({ total, list }: { total: number; list: TData[] }) => {
       setMaxPage(Math.ceil(total / itemsPerPage));
+      setTotalItems(total);
       setData(list);
     };
 
@@ -66,6 +78,10 @@ function useTablePaginatedData<TData>(
     handleRequest();
   }, [handleRequest]);
 
+  /**
+   * Réinitialise la page actuelle à 1 lorsque il n'y a plus de données
+   * sur la page actuelle supérieure à 1
+   */
   useEffect(() => {
     if (currentPage && currentPage > 1 && !(data.length > 0)) {
       setCurrentPage(1);
@@ -78,6 +94,7 @@ function useTablePaginatedData<TData>(
     currentPage,
     maxPage,
     itemsPerPage,
+    totalItems,
     onSetItemsPerPage: handleSetItemsPerPage,
     onSetCurrentPage: handleSetCurrentPage,
     onSetPreviousPage: handleSetPreviousPage,

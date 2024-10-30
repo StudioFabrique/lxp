@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import { generateTableIdsFromData } from "../services/generic-table-service";
 
+/**
+ * Custom hook useTable.
+ * Gère l'état des checkbox de chaque ligne et la checkbox "sélectionner tout"
+ *
+ * @param data: TData[] - Tableau contenant toutes les données
+ * @param idProperty: string - Propriété qui identifie de manière unique chaques lignes (ex: "id")
+ *
+ */
 function useTableCheckbox<TData>(data: TData[], idProperty: string) {
   const [isAllChecked, setAllChecked] = useState<boolean>(false);
   const [idsList, setIdList] = useState<string[]>([]);
@@ -10,7 +18,9 @@ function useTableCheckbox<TData>(data: TData[], idProperty: string) {
   const handleCheck = (id: string, checked: boolean) => {
     if (checked) {
       const newList = [...idsList, id];
-      // verifier doublons?
+
+      // verifier doublons ici? //
+
       setIdList(newList);
     } else {
       const newList = idsList.filter((item) => item !== id);
