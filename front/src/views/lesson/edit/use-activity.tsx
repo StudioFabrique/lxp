@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useState, useEffect, useCallback } from "react";
@@ -20,16 +21,16 @@ const useActivity = () => {
   const [success, setSuccess] = useState(false);
 
   const currentType = useSelector(
-    (state: any) => state.lesson.currentType,
+    (state: any) => state.lesson.currentType
   ) as string;
   const activities = useSelector(
-    (state: any) => state.lesson.lesson.activities,
+    (state: any) => state.lesson.lesson.activities
   ) as Activity[];
   const activityToDelete = useSelector(
-    (state: any) => state.lesson.activityToDelete,
+    (state: any) => state.lesson.activityToDelete
   ) as Activity;
   const blogEdition = useSelector(
-    (state: any) => state.lesson.blogEdition,
+    (state: any) => state.lesson.blogEdition
   ) as number;
 
   /**
@@ -55,7 +56,7 @@ const useActivity = () => {
             value: await fromHtmlToMarkdown(value),
           },
         },
-        applyData,
+        applyData
       );
     };
     getData();
@@ -85,7 +86,7 @@ const useActivity = () => {
         path: `/activity/${activityToDelete.id}`,
         method: "delete",
       },
-      applyData,
+      applyData
     );
   };
 
@@ -161,7 +162,7 @@ const useActivity = () => {
         method: "put",
         body: sortArray(activities, "order").map((item) => item.id),
       },
-      applyData,
+      applyData
     );
     setSubmit(false);
   }, [lessonId, activities, sendRequest]);

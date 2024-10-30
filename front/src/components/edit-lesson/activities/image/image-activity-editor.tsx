@@ -19,7 +19,7 @@ export default function ImageActivity() {
   const data = { values, errors, onChangeValue };
   const [image, setImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const { sendRequest, isLoading } = useHttp();
+  const { sendRequest } = useHttp();
 
   const classImage: React.CSSProperties = {
     backgroundImage: `url('${image ?? defaultImage}')`,
@@ -73,7 +73,7 @@ export default function ImageActivity() {
         method: "post",
         body: formData,
       },
-      applyData,
+      applyData
     );
   };
 
@@ -110,11 +110,19 @@ export default function ImageActivity() {
               maxSize={activityImageSize}
             />
 
-            <SubmitButton
-              label="Sauvegarder"
-              isLoading={false}
-              loadingLabel="En cours..."
-            />
+            <div className="flex justify-end items-center gap-x-2">
+              <button
+                className="btn btn-primary btn-outline"
+                onClick={onResetForm}
+              >
+                Réinitialiser
+              </button>
+              <SubmitButton
+                label="Sauvegarder"
+                isLoading={false}
+                loadingLabel="En cours..."
+              />
+            </div>
           </form>
         </span>
       </Wrapper>

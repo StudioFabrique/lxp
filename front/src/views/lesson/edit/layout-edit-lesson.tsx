@@ -33,7 +33,7 @@ export default function LayoutEditLesson() {
       {
         path: `/lesson/${lessonId}`,
       },
-      applyData,
+      applyData
     );
   }, [lessonId, dispatch, sendRequest]);
 
@@ -90,7 +90,6 @@ export default function LayoutEditLesson() {
                 <h2 className="text-xl font-bold text-primary mb-2">
                   Ajouter un bloc
                 </h2>
-
                 <Outlet />
               </div>
             ) : (
