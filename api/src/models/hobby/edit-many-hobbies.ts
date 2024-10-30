@@ -5,6 +5,8 @@ export default async function editManyHobbies(
   userId: string,
   hobbies: IHobby[],
 ) {
+  console.log({ hobbies });
+
   const hobbyUpdates = hobbies.map((hobby) => ({
     updateOne: {
       filter: { _id: hobby.id, user: userId },
