@@ -136,7 +136,9 @@ const UserAddForm: FC<{
     if (props.user?.hobbies) {
       setHobbies(props.user.hobbies);
     }
-    // if(props.user?.)
+    if (props.user?.links) {
+      setLinks(props.user.links);
+    }
   }, [props.user]);
 
   return (
