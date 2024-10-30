@@ -21,7 +21,7 @@ const TableListCell = (props: PropsWithChildren<CellProps>) => {
             ? props.children
             : null
         }
-        className="tooltip w-28 flex"
+        className="tooltip max-w-[18vw] flex"
       >
         <p className="truncate">{props.children}</p>
       </div>

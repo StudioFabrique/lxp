@@ -44,24 +44,22 @@ const TableList = <TData extends Record<string, string>>(
   );
 
   return (
-    <div className="carousel carousel-vertical">
-      <table className="table border-separate border-spacing-y-5">
-        <Head
-          labels={labels}
-          avatar={props.avatar}
-          showAvatar={props.style?.showAvatar}
-          isAllChecked={props.isAllChecked}
-          onCheckAll={props.onCheckAll}
-        />
-        <Body
-          tableItems={tableItems}
-          propertiesLength={labels.length}
-          style={props.style}
-          isAllChecked={props.isAllChecked}
-          onCheck={props.onCheck}
-        />
-      </table>
-    </div>
+    <table className="table border-separate border-spacing-y-5">
+      <Head
+        labels={labels}
+        avatar={props.avatar}
+        showAvatar={props.style?.showAvatar}
+        isAllChecked={props.isAllChecked}
+        onCheckAll={props.onCheckAll}
+      />
+      <Body
+        tableItems={tableItems}
+        propertiesLength={labels.length}
+        style={props.style}
+        isAllChecked={props.isAllChecked}
+        onCheck={props.onCheck}
+      />
+    </table>
   );
 };
 
