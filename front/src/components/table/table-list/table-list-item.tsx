@@ -38,7 +38,7 @@ const TableListItem = <TData extends Record<string, unknown>>(
   }, [props.isAllChecked]);
 
   return (
-    <tr className="h-16 bg-secondary/10 hover:bg-primary/20">
+    <tr className="h-14 bg-secondary/10 hover:bg-primary/20">
       <td className="rounded-l-xl w-0" />
 
       {/* Affichage de la checkbox si activé */}
