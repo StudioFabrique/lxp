@@ -140,7 +140,7 @@ const UserAddForm: FC<{
         disabled={props.fieldsDisabled}
       />
       <div className="flex flex-col gap-y-5">
-        <div className={`grid grid-cols-3 gap-x-5`}>
+        <div className="grid grid-cols-3 gap-x-5">
           <Informations
             lastname={lastname}
             firstname={firstname}
@@ -165,6 +165,7 @@ const UserAddForm: FC<{
               onSetSendEmail={setSendEmail}
               onSetRoleId={setRoleId}
               disabled={props.fieldsDisabled || props.editMode}
+              editMode={props.editMode}
             />
             <CentreInterets
               hobbies={hobbies}

@@ -16,7 +16,15 @@ const TypeUtilisateur: FC<{
   onSetSendEmail: Dispatch<SetStateAction<boolean>>;
   onSetRoleId: Dispatch<SetStateAction<string | null>>;
   disabled?: boolean;
-}> = ({ roleId, sendEmail, onSetSendEmail, onSetRoleId, disabled }) => {
+  editMode?: boolean;
+}> = ({
+  roleId,
+  sendEmail,
+  onSetSendEmail,
+  onSetRoleId,
+  disabled,
+  editMode,
+}) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { sendRequest, isLoading } = useHttp();
@@ -65,19 +73,21 @@ const TypeUtilisateur: FC<{
                 </span>
               ))}
             </div>
-            <label
-              className="flex place-items-center gap-x-2"
-              htmlFor="sendEmail"
-            >
-              <input
-                className="checkbox checkbox-primary"
-                type="checkbox"
-                name="emailSent"
-                checked={sendEmail}
-                onChange={() => onSetSendEmail((prevState) => !prevState)}
-              />
-              Envoyer un mail d'invitation
-            </label>
+            {!editMode ? (
+              <label
+                className="flex place-items-center gap-x-2"
+                htmlFor="sendEmail"
+              >
+                <input
+                  className="checkbox checkbox-primary"
+                  type="checkbox"
+                  name="emailSent"
+                  checked={sendEmail}
+                  onChange={() => onSetSendEmail((prevState) => !prevState)}
+                />
+                Envoyer un mail d'invitation
+              </label>
+            ) : null}
           </div>
         )}
       </div>
