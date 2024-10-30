@@ -133,6 +133,10 @@ const UserAddForm: FC<{
     if (props.user?.birthDate) {
       setBirthDate(props.user.birthDate);
     }
+    if (props.user?.hobbies) {
+      setHobbies(props.user.hobbies);
+    }
+    // if(props.user?.)
   }, [props.user]);
 
   return (
