@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Editor from "../markdown-editor/mark-down-editor";
 import { lessonActions } from "../../store/redux-toolkit/lesson/lesson";
 import Video from "./activities/video";
-import ImageActivity from "./activities/image/image-activity";
+import ImageActivity from "./activities/image/image-activity-editor";
 
 interface CurrentBlockProps {
   isSubmitting: boolean;
@@ -17,7 +17,7 @@ export default function CurrentBlock({
   const dispatch = useDispatch();
   const currentType = useSelector(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (state: any) => state.lesson.currentType,
+    (state: any) => state.lesson.currentType
   ) as string;
 
   const handleCancel = () => {

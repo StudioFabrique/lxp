@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import VideoPlayer from "../../UI/video-player";
 import { toast } from "react-hot-toast";
 import { ZodError } from "zod";
@@ -73,11 +73,12 @@ export default function VideoEditor({
 
   const handleOnChangeUrl = (event: ChangeEvent<HTMLInputElement>) => {
     setUrl(event.currentTarget.value);
-  };
-
-  const handleSelectExternalSource = () => {
     setVideo(url);
   };
+
+  const handleSelectExternalSource = useCallback(() => {
+    setVideo(url);
+  }, [url]);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -104,6 +105,10 @@ export default function VideoEditor({
       description,
     });
   }, [title, description, initValues]);
+
+  useEffect(() => {
+    handleSelectExternalSource();
+  }, [handleSelectExternalSource, url]);
 
   console.log({ propVideo });
 
@@ -158,12 +163,12 @@ export default function VideoEditor({
                     value={url}
                     onChange={handleOnChangeUrl}
                   />
-                  <button
+                  {/*                 <button
                     className="btn btn-sm btn-primary btn-outline"
                     onClick={handleSelectExternalSource}
                   >
                     Aperçu
-                  </button>
+                  </button>*/}
                 </div>
               )}
             </span>
