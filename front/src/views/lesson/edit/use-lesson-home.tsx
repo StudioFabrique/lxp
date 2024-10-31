@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { useCallback, useEffect, useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -13,22 +11,9 @@ const useLessonHome = () => {
   const lesson = useSelector((state: any) => state.lesson.lesson);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [success, setSuccess] = useState(false);
-
+  const [activityType, setActivityType] = useState("");
   const [createActivity, setCreateActivity] = useState(false);
   const nav = useNavigate();
-
-  const handleChooseActivity = (activityType: string) => {
-    if (!lesson?.id) return;
-
-    switch (activityType) {
-      case "text":
-        nav(`/admin/lesson/edit/${lesson.id}/blog`);
-        break;
-      default:
-        console.warn(`Activity type '${activityType}' not implemented`);
-        break;
-    }
-  };
 
   const getActivities = useCallback(() => {
     const applyData = (data: Lesson) => {
@@ -53,7 +38,7 @@ const useLessonHome = () => {
         method: "put",
         body: activitiesIds,
       },
-      applyData,
+      applyData
     );
   };
 
@@ -64,7 +49,7 @@ const useLessonHome = () => {
     };
     sendRequest(
       { path: `/activity/${activityId}`, method: "delete" },
-      applyData,
+      applyData
     );
   };
 
@@ -83,11 +68,12 @@ const useLessonHome = () => {
   return {
     isLoading,
     activities,
+    activityType,
     setActivities,
     success,
     createActivity,
     setCreateActivity,
-    handleChooseActivity,
+    setActivityType,
     handleReorderActivities,
     handleDeleteActivity,
   };

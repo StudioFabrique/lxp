@@ -44,7 +44,7 @@ const lessonSlice = createSlice({
       const updatedActivity: Activity = action.payload;
       if (state.lesson && state.lesson.activities !== undefined) {
         const updatedActivities: Activity[] = state.lesson.activities.filter(
-          (item) => item.id !== updatedActivity.id,
+          (item) => item.id !== updatedActivity.id
         );
         const updatedLesson: Lesson = {
           ...state.lesson,
@@ -55,7 +55,7 @@ const lessonSlice = createSlice({
     },
     removeActivity(state, action) {
       const activities = state.lesson?.activities?.filter(
-        (item) => item.id !== action.payload,
+        (item) => item.id !== action.payload
       );
       if (state.lesson) {
         state.lesson = { ...state.lesson, activities };

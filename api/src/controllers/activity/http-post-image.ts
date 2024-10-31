@@ -6,7 +6,7 @@ import { deleteTempUploadedFile } from "../../middleware/fileUpload";
 export default async function httpPostImage(
   req: CustomRequest,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     const { data } = req.body;
@@ -15,18 +15,17 @@ export default async function httpPostImage(
     const { lessonId } = req.params;
     if (file && userId) {
       const filename = file.filename;
-      await postImage(
+      const response = await postImage(
         +lessonId,
         userId,
         data.title,
         data.description,
-        filename,
+        filename
       );
       const result = {
         statusCode: 201,
         data: {
-          success: true,
-          message: "Activité enregistrée.",
+          ...response,
         },
       };
       next(result);

@@ -12,6 +12,7 @@ import { validationErrors } from "../../../../helpers/validate";
 import SubmitButton from "../../../UI/submit-button";
 import toast from "react-hot-toast";
 import useHttp from "../../../../hooks/use-http";
+import SuccessWithMessage from "../../../../utils/interfaces/success-with-message";
 
 export default function ImageActivity() {
   const { errors, values, onChangeValue, onValidationErrors, onResetForm } =
@@ -64,8 +65,10 @@ export default function ImageActivity() {
     const formData = new FormData();
     formData.append("data", JSON.stringify(values));
     formData.append("image", file);
-    const applyData = (data: { success: boolean; message: string }) => {
-      if (data.success) toast.success(data.message);
+    const applyData = (data: SuccessWithMessage) => {
+      if (data.success) {
+        toast.success(data.message);
+      }
     };
     sendRequest(
       {

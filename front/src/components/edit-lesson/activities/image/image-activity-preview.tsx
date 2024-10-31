@@ -1,3 +1,4 @@
+import { ACTIVITIES } from "../../../../config/urls";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 
 type Props = {
@@ -11,5 +12,11 @@ export default function ImageActivityPreview({
   description,
   url,
 }: Props) {
-  return <Wrapper></Wrapper>;
+  return (
+    <Wrapper>
+      <h2>{title}</h2>
+      <img src={`${ACTIVITIES}images/${url}`} />
+      <h3>{description}</h3>
+    </Wrapper>
+  );
 }
