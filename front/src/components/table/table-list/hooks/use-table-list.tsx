@@ -40,12 +40,12 @@ function useTableList<TData extends Record<string, string>>(
   const handleGenerateItems = useCallback(() => {
     setTableItems(null);
 
-    data.forEach((d) => {
+    data.forEach((item) => {
       const filteredData = generateTableItem(
-        d,
+        item,
         itemsConfig,
         idProperty,
-        actionsItems ? generateTableActions(d, actionsItems) : undefined,
+        actionsItems ? generateTableActions(item, actionsItems) : undefined,
         avatarProperty,
       );
 

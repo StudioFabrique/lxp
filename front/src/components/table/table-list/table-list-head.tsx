@@ -1,16 +1,17 @@
-import { Fragment } from "react/jsx-runtime";
 import {
   TableListItemConfig,
   TableListItemLabels,
 } from "./interfaces/table-list-item";
-import { ChangeEvent } from "react";
+import { ChangeEvent, MouseEvent } from "react";
 
 type TableListHeadProps = {
   labels: TableListItemLabels[];
   avatar?: TableListItemConfig;
   showAvatar?: boolean;
+  sortProperty?: string | null;
   isAllChecked?: boolean;
   onCheckAll?: (checked: boolean) => void;
+  onSortProperty?: (property: string) => void;
 };
 
 /**
@@ -25,6 +26,12 @@ type TableListHeadProps = {
 const TableListHead = (props: TableListHeadProps) => {
   const handleChangeCheckbox = (event: ChangeEvent<HTMLInputElement>) => {
     props.onCheckAll && props.onCheckAll(event.currentTarget.checked);
+  };
+
+  const handleClickSort = (event: MouseEvent<HTMLButtonElement>) => {
+    if (!props.onSortProperty) return;
+    const value = event.currentTarget.value;
+    props.onSortProperty(value);
   };
 
   return (
@@ -57,7 +64,13 @@ const TableListHead = (props: TableListHeadProps) => {
         {props.labels.map((item) =>
           !item.isAction ? (
             <th key={item.property} className="text-base-content">
-              <Fragment>{item.label ?? ""}</Fragment>
+              <button
+                type="button"
+                value={item.property}
+                onClick={item.sortAllowed ? handleClickSort : undefined}
+              >
+                {item.label ?? ""}
+              </button>
             </th>
           ) : null,
         )}

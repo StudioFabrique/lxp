@@ -15,8 +15,10 @@ export type TableListProps<TData> = {
     showAvatar?: boolean;
   };
   isAllChecked?: boolean;
+  sortProperty?: string | null;
   onCheck?: (id: string, checked: boolean) => void;
   onCheckAll?: (checked: boolean) => void;
+  onSortProperty?: (property: string) => void;
 };
 
 /**
@@ -50,7 +52,9 @@ const TableList = <TData extends Record<string, string>>(
         avatar={props.avatar}
         showAvatar={props.style?.showAvatar}
         isAllChecked={props.isAllChecked}
+        sortProperty={props.sortProperty}
         onCheckAll={props.onCheckAll}
+        onSortProperty={props.onSortProperty}
       />
       <Body
         tableItems={tableItems}

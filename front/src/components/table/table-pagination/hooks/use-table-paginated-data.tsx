@@ -19,6 +19,8 @@ function useTablePaginatedData<TData>(
   const [itemsPerPage, setItemsPerPage] = useState<number>(5);
   const [searchValue, setSearchValue] = useState<string | null>(null);
   const [totalItems, setTotalItems] = useState<number>(0);
+  const [sortProperty, setSortProperty] = useState<string | null>(null);
+  const [isAscDirection, setAscDirection] = useState<boolean>(true);
 
   const handleSetItemsPerPage = (value: number) => {
     setItemsPerPage(value);
@@ -38,6 +40,14 @@ function useTablePaginatedData<TData>(
     if (!currentPage) return;
     const newValue = currentPage + 1;
     if (maxPage && newValue <= maxPage) setCurrentPage(newValue);
+  };
+
+  const handleSortProperty = (property: string) => {
+    if (property === sortProperty) {
+      setAscDirection((prevDir) => !prevDir);
+    } else setAscDirection(true);
+
+    setSortProperty(property);
   };
 
   const handleSubmitSearchValue = (value: string) => {
@@ -61,8 +71,12 @@ function useTablePaginatedData<TData>(
         ? `${apiPathSearchValue}/name/${searchValue}`
         : apiPath;
 
+    const sortDirection = isAscDirection ? "asc" : "desc";
+
     await sendRequest(
-      { path: `${path}/name/asc?page=${currentPage}&limit=${itemsPerPage}` },
+      {
+        path: `${path}/${sortProperty}/${sortDirection}?page=${currentPage}&limit=${itemsPerPage}`,
+      },
       applyData,
     );
   }, [
@@ -72,6 +86,8 @@ function useTablePaginatedData<TData>(
     itemsPerPage,
     apiPathSearchValue,
     searchValue,
+    isAscDirection,
+    sortProperty,
   ]);
 
   useEffect(() => {
@@ -95,6 +111,8 @@ function useTablePaginatedData<TData>(
     maxPage,
     itemsPerPage,
     totalItems,
+    sortProperty,
+    onSortProperty: handleSortProperty,
     onSetItemsPerPage: handleSetItemsPerPage,
     onSetCurrentPage: handleSetCurrentPage,
     onSetPreviousPage: handleSetPreviousPage,

@@ -6,6 +6,13 @@ import TableListItem, {
   TableListItemLabels,
 } from "../interfaces/table-list-item";
 
+/**
+ * Construit les labels pour l'en-tête du tableau à partir de la configuration
+ *
+ * @param items - Les éléments de configuration de base du tableau
+ * @param actionsItems - Les éléments de configuration des actions (optionnel)
+ * @returns Un tableau de labels avec leurs propriétés
+ */
 export function constructLabels(
   items: TableListItemConfig[],
   actionsItems?: TableListActionConfig[],
@@ -16,6 +23,7 @@ export function constructLabels(
           label: item.label,
           property: item.property,
           isAction: false,
+          sortAllowed: item.sortAllowed,
         })),
         ...actionsItems.map((item) => ({
           label: item.label,
@@ -27,9 +35,20 @@ export function constructLabels(
         label: item.label,
         property: item.property,
         isAction: false,
+        sortAllowed: item.sortAllowed,
       }));
 }
 
+/**
+ * Génère un élément du tableau à partir des données et de la configuration
+ *
+ * @param dataToTransform - Les données brutes à transformer
+ * @param itemsConfig - La configuration des colonnes du tableau
+ * @param idProperty - La propriété servant d'identifiant
+ * @param actions - Les actions associées à la ligne (optionnel)
+ * @param avatarProperty - La propriété pour l'avatar (optionnel)
+ * @returns Un élément formaté pour le tableau
+ */
 export function generateTableItem(
   dataToTransform: Record<string, string>,
   itemsConfig: TableListItemConfig[],
@@ -51,6 +70,13 @@ export function generateTableItem(
   return { id, data: orderedData, actions, avatar };
 }
 
+/**
+ * Génère les actions du tableau à partir des données et de la configuration
+ *
+ * @param dataToTransform - Les données brutes à transformer
+ * @param actionsConfig - La configuration des actions
+ * @returns Un tableau d'actions formatées
+ */
 export function generateTableActions(
   dataToTransform: Record<string, string>,
   actionsConfig: TableListActionConfig[],
@@ -68,6 +94,13 @@ export function generateTableActions(
   return actions;
 }
 
+/**
+ * Extrait les IDs des données fournies
+ *
+ * @param data - Les données sources
+ * @param idProperty - La propriété servant d'identifiant
+ * @returns Un tableau des IDs extraits
+ */
 export function generateTableIdsFromData<TData>(
   data: TData[],
   idProperty: string,

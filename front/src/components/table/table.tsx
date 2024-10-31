@@ -8,15 +8,19 @@ type TableProps<TData> = {
   searchBarConfig: SearchBarProps;
   checkboxConfig?: {
     isAllChecked?: boolean;
-    onCheck?: (id: string, checked: boolean) => void;
-    onCheckAll?: (checked: boolean) => void;
+    onCheck: (id: string, checked: boolean) => void;
+    onCheckAll: (checked: boolean) => void;
+  };
+  sortConfig?: {
+    sortProperty?: string | null;
+    onSortProperty: (property: string) => void;
   };
 };
 
 /**
  * Composant Table
  *
- * Ce composant fournit une structure pour afficher des données sous forme de tableau,
+ * Représente un tableau avec des listes d'éléments configurables et des actions,
  * avec une barre de recherche en haut et des éléments supplémentaires en bas.
  *
  * @template TData - Type des données à afficher dans le tableau.
@@ -40,7 +44,11 @@ const Table = <TData extends Record<string, string>>(
       <SearchBar {...props.searchBarConfig}>{topChild}</SearchBar>
 
       {/* tableau au milieu */}
-      <TableList {...props.listConfig} {...props.checkboxConfig} />
+      <TableList
+        {...props.listConfig}
+        {...props.checkboxConfig}
+        {...props.sortConfig}
+      />
 
       {/* éléments children en bas du tableau */}
       <div>{bottomChild}</div>

@@ -5,8 +5,8 @@ import { TableListActionConfig } from "../../components/table/table-list/interfa
 import { TableListProps } from "../../components/table/table-list/table-list";
 
 export const groupHomeTableItems: TableListItemConfig[] = [
-  { property: "name", label: "Nom" },
-  { property: "desc", label: "Description" },
+  { property: "name", label: "Nom", sortAllowed: true },
+  { property: "desc", label: "Description", sortAllowed: true },
   { property: "formation", label: "Formation - Parcours" },
   { property: "nbStudents", label: "Nombre d'étudiants" },
 ];
