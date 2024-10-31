@@ -82,7 +82,10 @@ const GroupHome = () => {
             isLoading={isLoading}
             isDisabled={!(idsList.length > 0)} // disabled si la liste a une longueur de 0
             onRefreshData={onRefreshData}
-            onDeleteUsers={onDeleteSelectedGroups}
+            delete={{
+              actionTitle: "Supprimer les groupes selectionnés",
+              onDelete: onDeleteSelectedGroups,
+            }}
           />,
           // bottom
           <TablePagination
