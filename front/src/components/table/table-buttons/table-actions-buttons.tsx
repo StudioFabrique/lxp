@@ -5,7 +5,7 @@ type TableButtonsProps = {
   isLoading: boolean;
   isDisabled: boolean;
   onRefreshData: () => void;
-  onDeleteUsers: () => void;
+  delete: { actionTitle: string; onDelete: () => void };
 };
 
 const TableActionsButtons = (props: TableButtonsProps) => (
@@ -20,9 +20,9 @@ const TableActionsButtons = (props: TableButtonsProps) => (
     <ActionsDropdown
       actions={[
         {
-          actionTitle: "Supprimer les utilisateurs selectionnés",
+          actionTitle: props.delete.actionTitle,
           data: null,
-          onClick: props.onDeleteUsers,
+          onClick: props.delete.onDelete,
         },
       ]}
       isDisabled={props.isLoading || props.isDisabled}

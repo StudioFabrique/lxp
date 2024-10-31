@@ -31,10 +31,12 @@ const GroupHome = () => {
   // custom hook gestion pagination
   const {
     data,
-    onRefreshData,
     isLoading,
-    onSubmitSearchValue,
     totalItems,
+    sortProperty,
+    onRefreshData,
+    onSubmitSearchValue,
+    onSortProperty,
     ...pagination
   } = useTablePaginatedData("/group/student", "/group/search/student");
 
@@ -71,6 +73,7 @@ const GroupHome = () => {
         searchBarConfig={searchBarConfig(onSubmitSearchValue)}
         listConfig={listConfig(data, isLoading, actionsConfig(onRefreshData))}
         checkboxConfig={checkboxConfig}
+        sortConfig={{ onSortProperty, sortProperty }}
       >
         {[
           // top
@@ -79,7 +82,10 @@ const GroupHome = () => {
             isLoading={isLoading}
             isDisabled={!(idsList.length > 0)} // disabled si la liste a une longueur de 0
             onRefreshData={onRefreshData}
-            onDeleteUsers={onDeleteSelectedGroups}
+            delete={{
+              actionTitle: "Supprimer les groupes selectionnés",
+              onDelete: onDeleteSelectedGroups,
+            }}
           />,
           // bottom
           <TablePagination
