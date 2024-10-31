@@ -3,7 +3,7 @@ import User from "../../utils/interfaces/db/user";
 
 export default async function createManyHobbies(
   userId: string,
-  hobbies: IHobby[]
+  hobbies: IHobby[],
 ) {
   const hobbiesUpdatedWithUserId = hobbies.map((hobby) => {
     return { ...hobby, user: userId };

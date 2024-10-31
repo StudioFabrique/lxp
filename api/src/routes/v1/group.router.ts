@@ -3,7 +3,6 @@ import httpCreateGroup from "../../controllers/group/http-create-group";
 import httpGetAllGroups from "../../controllers/group/http-get-all-groups";
 import {
   getAllValidator,
-  groupPutValidator,
   groupValidator,
   searchValidator,
 } from "../../middleware/validators";
@@ -59,7 +58,7 @@ groupRouter.put(
   checkPermissions("group"),
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
-  groupPutValidator,
+  groupValidator,
   httpPutGroup,
 );
 

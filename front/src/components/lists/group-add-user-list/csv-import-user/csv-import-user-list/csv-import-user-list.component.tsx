@@ -24,9 +24,11 @@ const CsvImportUserList: FC<{
     if (data) {
       // transform data here with a function
       const nonEmptyEmails = data.filter((item) => item.email.length > 0);
+
       const dataWithoutDuplicate = [
         ...new Set(nonEmptyEmails.map((item) => item.email)),
       ].map((email) => data.find((item) => item.email === email)!);
+
       const filteredData = dataWithoutDuplicate.filter(
         (item) => Object.keys(item).length > 0,
       );
@@ -42,6 +44,19 @@ const CsvImportUserList: FC<{
       toast.error("aucun utilisateur sélectionné");
       return;
     }
+
+    selectedUsersToUpload.map((user) => {
+      if (user.birthDate) {
+        const [day, month, year] = (user.birthDate as unknown as string).split(
+          "/",
+        );
+        const date = `${year}-${month}-${day}`;
+        user.birthDate = new Date(date);
+      }
+
+      return user;
+    });
+
     const applyData = (data: any) => {
       setDrawerOpenState(false);
       onAddUsers(data.usersCreated);
