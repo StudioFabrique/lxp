@@ -3,6 +3,7 @@ import TableListAction from "./table-list-action";
 export interface TableListItemConfig {
   property: string;
   label?: string;
+  sortAllowed?: boolean;
 }
 
 export type TableListItemLabels = TableListItemConfig & { isAction: boolean };
