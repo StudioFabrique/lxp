@@ -24,8 +24,8 @@ export default async function deleteActivity(activId: number) {
             "uploads",
             "activities",
             "videos",
-            existingActivity.url,
-          ),
+            existingActivity.url
+          )
         );
       }
       await prisma.activity.delete({
@@ -38,15 +38,30 @@ export default async function deleteActivity(activId: number) {
     }
   }
 
-  const filePath = path.join(
-    __dirname,
-    "..",
-    "..",
-    "..",
-    "uploads",
-    "activities",
-    existingActivity.url,
-  );
+  let filePath = "";
+
+  if (existingActivity.type === "image") {
+    filePath = path.join(
+      __dirname,
+      "..",
+      "..",
+      "..",
+      "uploads",
+      "activities",
+      "images",
+      existingActivity.url
+    );
+  } else {
+    filePath = path.join(
+      __dirname,
+      "..",
+      "..",
+      "..",
+      "uploads",
+      "activities",
+      existingActivity.url
+    );
+  }
 
   const fileContent = fs.readFileSync(filePath, "utf-8");
 
@@ -56,7 +71,7 @@ export default async function deleteActivity(activId: number) {
   try {
     await fs.promises.unlink(filePath);
     const dirFiles = readdirSync(
-      path.join(__dirname, "..", "..", "..", "uploads", "activities", "images"),
+      path.join(__dirname, "..", "..", "..", "uploads", "activities", "images")
     );
     console.log({ dirFiles });
 
@@ -70,7 +85,7 @@ export default async function deleteActivity(activId: number) {
           "uploads",
           "activities",
           "images",
-          elem!,
+          elem!
         );
         const image = dirFiles.find((item) => item.includes(elem!));
         console.log(image);
@@ -86,8 +101,8 @@ export default async function deleteActivity(activId: number) {
               "uploads",
               "activities",
               "images",
-              image,
-            ),
+              image
+            )
           );
         }
       }
@@ -130,7 +145,7 @@ function extraireNomImage(url: string): string | null {
 
 async function reorderActivities(lessonId: number) {
   const transaction = await prisma.$transaction(async (tx) => {
-    let i = 1;
+    let i = 0;
     const existingActivities = await tx.activity.findMany({
       where: { lessonId },
     });

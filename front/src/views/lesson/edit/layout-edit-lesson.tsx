@@ -10,7 +10,6 @@ import ImageHeader from "../../../components/image-header";
 import toast from "react-hot-toast";
 import books from "../../../assets/images/bookshelf.jpg";
 import DocDuplicateIcon from "../../../components/UI/svg/doc-duplicate-icon";
-import HeaderButton from "./header-buttons";
 import { useDispatch, useSelector } from "react-redux";
 import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 
@@ -20,7 +19,6 @@ export default function LayoutEditLesson() {
   const { lessonId } = useParams();
   const { sendRequest, error } = useHttp();
   const [loading, setLoading] = useState(false);
-  const [activities] = useState<number[]>([1]);
 
   // retourne une leçon et la stock dans l'état partagé
   useEffect(() => {
@@ -80,16 +78,6 @@ export default function LayoutEditLesson() {
             </div>
             {lesson && lesson !== undefined ? (
               <div className="w-full 2xl:w-4/6 mt-8 flex flex-col items-center">
-                <div className="w-full flex justify-end">
-                  <HeaderButton
-                    lessonId={+lessonId!}
-                    showPreview={activities.length > 0}
-                    //onPublish={() => {}}
-                  />
-                </div>
-                <h2 className="text-xl font-bold text-primary mb-2">
-                  Ajouter un bloc
-                </h2>
                 <Outlet />
               </div>
             ) : (

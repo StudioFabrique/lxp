@@ -1,10 +1,11 @@
+import { Dispatch, SetStateAction } from "react";
 import { getActivityTypes } from "../../config/lessons-activity-types";
 import ActivityType from "../../utils/interfaces/activity-type";
 import Wrapper from "../UI/wrapper/wrapper.component";
 
-interface ActivityTypeProps {
-  onActivityType: (activityType: string) => void;
-}
+type ActivityTypeProps = {
+  onActivityType: Dispatch<SetStateAction<string>>;
+};
 
 const activityTypes: ActivityType[] = getActivityTypes();
 
