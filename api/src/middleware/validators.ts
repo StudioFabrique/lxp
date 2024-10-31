@@ -242,7 +242,8 @@ export const manyUsersValidator = [
     .isString()
     .toLowerCase()
     .trim()
-    .escape(),
+    .custom(stringValidateOptional)
+    .withMessage("description non conforme"),
   body("*.postCode").isPostalCode("FR").trim().escape(),
   body("*.phoneNumber").isNumeric(),
   /* body("*.birthDate").isDate({ format: "dd/mm/yyyy" }).toDate(), */
@@ -250,28 +251,23 @@ export const manyUsersValidator = [
 ];
 
 export const groupValidator = [
-  body(["data.group.name", "data.group.desc"])
+  body("data.group.name")
     .exists()
     .notEmpty()
     .isString()
     .trim()
     .custom(stringValidateGeneric)
-    .withMessage("titre (name) ou description (desc) non conforme"),
+    .withMessage("titre non conforme"),
+  body("data.group.desc")
+    .isString()
+    .toLowerCase()
+    .trim()
+    .custom(stringValidateOptional)
+    .withMessage("description non conforme"),
   body("data.users").isArray().withMessage("users n'est pas un Array"),
   body("data.users.*._id")
     .isString()
     .withMessage("les id du tableau users doivent être de type string"),
-  checkValidatorResult,
-];
-
-export const groupPutValidator = [
-  body(["data.group.name", "data.group.desc"])
-    .exists()
-    .notEmpty()
-    .isString()
-    .trim()
-    .custom(stringValidateGeneric)
-    .withMessage("titre (name) ou description (desc) non conforme"),
   checkValidatorResult,
 ];
 
