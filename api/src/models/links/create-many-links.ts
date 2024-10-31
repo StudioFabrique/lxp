@@ -3,6 +3,7 @@ import User from "../../utils/interfaces/db/user";
 
 export default async function createManyLinks(userId: string, links: ILink[]) {
   const linksUpdatedWithUserId = links.map((link) => {
+    delete link.id;
     return { ...link, user: userId };
   });
   const linksToAdd = await Link.insertMany(linksUpdatedWithUserId);
