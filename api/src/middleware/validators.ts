@@ -104,11 +104,13 @@ export const userValidator = (isFormData: boolean = false) => {
       .trim()
       .escape(),
     body(validatorSubject + ".links.*.url")
-      .isString()
       .trim()
-      .escape()
-      .withMessage("links.*.url"),
+      .isString()
+      .notEmpty()
+      .isURL()
+      .withMessage("URL de l'un des objects links incorrect"),
     body(validatorSubject + ".links.*.alias")
+      .optional()
       .isString()
       .trim()
       .escape()

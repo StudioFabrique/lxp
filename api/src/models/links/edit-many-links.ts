@@ -1,27 +1,43 @@
+import { ObjectId } from "mongoose";
 import Link, { ILink } from "../../utils/interfaces/db/link";
 import User from "../../utils/interfaces/db/user";
 
-export default async function editManyLinks(userId: string, links: ILink[]) {
-  const linkUpdates = links.map((link) => ({
-    updateOne: {
-      filter: { _id: link.id, user: userId },
-      update: { $set: link },
-      upsert: true,
-    },
-  }));
+export default async function editManyLinks(userId: ObjectId, links: ILink[]) {
+  try {
+    const user = await User.findById(userId);
 
-  const result = await Link.bulkWrite(linkUpdates);
+    const linkDocs = await Promise.all(
+      links.map(async (item) => {
+        delete item.id;
 
-  const updatedLinkIds = Object.values(result.upsertedIds).map((id) => id._id);
-  const existingLinkIds = links
-    .filter((link) => link.id)
-    .map((link) => link.id);
+        if (item._id) {
+          // If the link has an _id, attempt to update it
+          const updatedLink = await Link.findByIdAndUpdate(
+            item._id,
+            { ...item },
+            { new: true, upsert: true },
+          );
+          return updatedLink;
+        } else {
+          // If no _id, create a new link
+          const newLink = new Link({
+            ...item,
+            user: user,
+          });
+          return await newLink.save();
+        }
+      }),
+    );
 
-  await User.findByIdAndUpdate(userId, {
-    $addToSet: {
-      links: {
-        $each: [...updatedLinkIds, ...existingLinkIds],
-      },
-    },
-  });
+    const updatedUser = await User.findByIdAndUpdate(
+      user,
+      { links: linkDocs.map((item) => item._id) },
+      { new: true },
+    );
+
+    return updatedUser;
+  } catch (error) {
+    console.error("Error replacing or updating user links:", error);
+    throw error;
+  }
 }
