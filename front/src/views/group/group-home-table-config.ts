@@ -66,7 +66,7 @@ export const actionsConfig = (
   },
 ];
 
-export const listConfig = <TData>(
+export const tableListConfig = <TData>(
   data: TData,
   isLoading?: boolean,
   actionsConfig?: TableListActionConfig[],

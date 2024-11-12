@@ -3,7 +3,7 @@ import Can from "../../components/UI/can/can.component";
 import Header from "../../components/UI/header";
 import {
   actionsConfig,
-  listConfig,
+  tableListConfig,
   searchBarConfig,
 } from "./group-home-table-config";
 import Table from "../../components/table/table";
@@ -72,7 +72,11 @@ const GroupHome = () => {
        */}
       <Table
         searchBarConfig={searchBarConfig(onSubmitSearchValue)}
-        listConfig={listConfig(data, isLoading, actionsConfig(onRefreshData))}
+        tableListConfig={tableListConfig(
+          data,
+          isLoading,
+          actionsConfig(onRefreshData),
+        )}
         checkboxConfig={checkboxConfig}
         sortConfig={{ sortProperty, isAscDirection, onSortProperty }}
       >
