@@ -20,6 +20,7 @@ import {
 import jsonParser from "../../../middleware/json-parser";
 import httpPutReorderActivities from "../../../controllers/activity/http-put-reorder-activities";
 import httpPostImage from "../../../controllers/activity/http-post-image";
+import httpGetActivity from "../../../controllers/activity/http-get-activity";
 
 const activityRouter = express.Router();
 
@@ -84,6 +85,14 @@ activityRouter.post(
   uploadActivityImage(),
   jsonParser,
   httpPostImage
+);
+
+// récupère une activité
+activityRouter.get(
+  "/:activityId",
+  checkPermissions("lesson"),
+  activityIdValidator,
+  httpGetActivity
 );
 
 export default activityRouter;

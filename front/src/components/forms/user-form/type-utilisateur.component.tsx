@@ -1,14 +1,8 @@
-import {
-  ChangeEvent,
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import { useLocation, useNavigate } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
+import Role from "../../../utils/interfaces/role";
 
 const TypeUtilisateur: FC<{
   roleId: string | null;
@@ -50,7 +44,7 @@ const TypeUtilisateur: FC<{
         ) : (
           <div className="flex flex-col justify-between h-full">
             <div className="flex flex-col gap-y-4">
-              {roles.map((role: any) => (
+              {roles.map((role: Role) => (
                 <span key={role._id} className="flex gap-x-2">
                   <input
                     key={role._id}

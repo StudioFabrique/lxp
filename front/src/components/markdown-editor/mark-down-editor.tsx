@@ -2,33 +2,72 @@
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import QuillToolbar, { formats } from "./editor-toolbar";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import useHttp from "../../hooks/use-http";
 import { Loader2 } from "lucide-react";
+import Field from "../UI/forms/field";
+import FieldArea from "../UI/forms/field-area";
+import useForm from "../UI/forms/hooks/use-form";
+import { activiteMetaDataSchema } from "../../lib/validation/lesson/activite-video";
+import { ZodError } from "zod";
+import { validationErrors } from "../../helpers/validate";
+import { fromHtmlToMarkdown } from "../../helpers/html-parser";
 
-interface EditorProps {
+type Props = {
+  title?: string;
+  description?: string;
   content?: string;
   isSubmitting: boolean;
-  onSubmit: (value: any) => void;
+  onSubmit: (
+    description: string,
+    value: string,
+    title: string,
+    type: string
+  ) => void;
   onCancel: () => void;
-}
+};
 
-export const Editor = ({
-  content = "",
-  isSubmitting,
-  onSubmit,
-  onCancel,
-}: EditorProps) => {
-  const [value, setValue] = useState<string>(content);
+export const Editor = (props: Props) => {
+  console.log("toto", props.content);
+  const [value, setValue] = useState<string>("");
   const quillRef = useRef<any>(null);
   const { sendRequest } = useHttp();
+  const { errors, values, onChangeValue, onValidationErrors } = useForm({
+    title: "",
+    description: "",
+  });
+  const data = { values, errors, onChangeValue };
 
-  const handleSubmit = () => {
-    onSubmit(value);
+  useEffect(() => {
+    if (props.content) {
+      setValue(props.content);
+    }
+    if (props.title) {
+      onChangeValue("title", props.title);
+    }
+    if (props.description) {
+      onChangeValue("description", props.description);
+    }
+  }, [props.content, props.title, props.description, onChangeValue]);
+
+  const handleSubmit = async () => {
+    try {
+      activiteMetaDataSchema.parse(values);
+    } catch (error: any) {
+      if (error instanceof ZodError) {
+        const errors = validationErrors(error);
+        onValidationErrors(errors);
+        return;
+      }
+    }
+    props.onSubmit(
+      values.description,
+      await fromHtmlToMarkdown(value),
+      values.title,
+      "text"
+    );
   };
-
-  console.log(value);
 
   /**
    * valide l'upload d'image vers le serveur, et ajoute l'url de l'image dans le
@@ -88,8 +127,19 @@ export const Editor = ({
     };
   }, [imageHandler]);
 
+  console.log({ title: props.title, description: props.description, value });
+
   return (
-    <div className="my-8">
+    <div className="my-8 flex flex-col gap-y-4">
+      <Wrapper>
+        <span className="flex flex-col gap-y-2">
+          <h2 className="text-lg font-bold">Informations</h2>
+          <form className="flex flex-col gap-y-4">
+            <Field name="title" label="Titre *" data={data} />
+            <FieldArea name="description" data={data} label="Description *" />
+          </form>
+        </span>
+      </Wrapper>
       <Wrapper>
         <div className="text-editor text-black bg-white">
           <QuillToolbar />
@@ -108,16 +158,16 @@ export const Editor = ({
       <div className="flex justify-between mt-4">
         <button
           className="btn btn-sm btn-outline btn-primary"
-          onClick={onCancel}
+          onClick={props.onCancel}
         >
           Annuler
         </button>
         <button
           className="btn btn-sm btn-primary flex items-center gap-x-2"
-          disabled={isSubmitting}
+          disabled={props.isSubmitting}
           onClick={handleSubmit}
         >
-          {isSubmitting ? <Loader2 className="animate-spin" /> : null}
+          {props.isSubmitting ? <Loader2 className="animate-spin" /> : null}
           Valider
         </button>
       </div>

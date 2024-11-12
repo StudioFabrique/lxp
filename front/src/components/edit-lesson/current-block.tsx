@@ -7,7 +7,12 @@ type CurrentBlockProps = {
   isSubmitting: boolean;
   activityType: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSubmit: (value: any) => void;
+  onSubmit: (
+    description: string,
+    value: string,
+    title: string,
+    type: string
+  ) => void;
   setActivityType: Dispatch<SetStateAction<string>>;
 };
 

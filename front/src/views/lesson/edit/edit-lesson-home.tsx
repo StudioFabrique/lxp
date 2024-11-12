@@ -19,6 +19,7 @@ export default function EditLessonHome() {
     setActivityType,
     handleReorderActivities,
     handleDeleteActivity,
+    handleSubmit,
   } = useLessonHome();
 
   return (
@@ -61,7 +62,7 @@ export default function EditLessonHome() {
         >
           <CurrentBlock
             isSubmitting={isLoading}
-            onSubmit={() => {}}
+            onSubmit={handleSubmit}
             activityType={activityType}
             setActivityType={setActivityType}
           />

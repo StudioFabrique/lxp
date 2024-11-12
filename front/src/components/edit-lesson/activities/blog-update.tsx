@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import "react-quill/dist/quill.snow.css";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Activity from "../../../utils/interfaces/activity";
 import markdownit from "markdown-it";
 import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
@@ -14,19 +14,18 @@ import { fromHtmlToMarkdown } from "../../../helpers/html-parser";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import { ACTIVITIES } from "../../../config/urls";
 
-interface EditorProps {
+type Props = {
   activity: Activity;
-}
+  isEditing: boolean;
+  onSubmitted: (newValue: boolean) => void;
+};
 
 const md = markdownit();
 
-export const BlogUpdate = ({ activity }: EditorProps) => {
+export const BlogUpdate = ({ activity, isEditing, onSubmitted }: Props) => {
   const dispatch = useDispatch();
   const { sendRequest, error, isLoading } = useHttp();
   const [value, setValue] = useState<string>("");
-  const blogEdition = useSelector(
-    (state: any) => state.lesson.blogEdition,
-  ) as number;
 
   /**
    * trigger la mise à jour du document markdown en cours d'édition au niveau
@@ -45,6 +44,8 @@ export const BlogUpdate = ({ activity }: EditorProps) => {
    * soumet les modifications apportées à une activité vers la bdd
    */
   const handleUpdate = (newValue: string) => {
+    console.log("handleUpdate", newValue);
+
     const applyData = (data: {
       success: boolean;
       message: string;
@@ -52,9 +53,8 @@ export const BlogUpdate = ({ activity }: EditorProps) => {
     }) => {
       if (data.success) {
         toast.success(data.message);
-        dispatch(lessonActions.updateActivity(data.response));
+        onSubmitted(false);
       }
-      dispatch(lessonActions.setBlogEdition(null));
     };
     const getData = async () => {
       sendRequest(
@@ -64,11 +64,11 @@ export const BlogUpdate = ({ activity }: EditorProps) => {
           body: {
             value: await fromHtmlToMarkdown(newValue),
             type: activity.type,
-            order: activity.order,
-            url: activity.url,
+            title: activity.title,
+            description: activity.description,
           },
         },
-        applyData,
+        applyData
       );
     };
     getData();
@@ -78,15 +78,24 @@ export const BlogUpdate = ({ activity }: EditorProps) => {
    * récupère le contenu d'un fichier markdown depuis le serveur
    */
   useEffect(() => {
+    console.log("fetching markdown");
+    console.log("activity:", activity);
+
     if (activity && activity !== undefined) {
       fetch(`${ACTIVITIES}${activity.url}`)
-        .then((response: any) => response.text())
-        //.then((text) => md.render(text))
+        .then((response: any) => {
+          console.log("response status:", response.status);
+          return response.text();
+        })
         .then((mdContent: string) => {
+          console.log("mdContent", mdContent);
           setValue(mdContent);
+        })
+        .catch((error) => {
+          console.error("Fetch error:", error);
         });
     }
-  }, [activity, activity.url]);
+  }, [activity]);
 
   // gère les erreurs HTTP
   useEffect(() => {
@@ -103,17 +112,19 @@ export const BlogUpdate = ({ activity }: EditorProps) => {
     dispatch(lessonActions.setBlogEdition(null));
   };
 
+  console.log("bonjour les amis!", value, activity);
+
   return (
     <div className="w-full">
-      {blogEdition === activity.id ? (
-        <>
-          <Editor
-            content={md.render(value)}
-            isSubmitting={isLoading}
-            onSubmit={handleUpdate}
-            onCancel={handleCancelEdition}
-          />
-        </>
+      {isEditing ? (
+        <Editor
+          title={activity.title}
+          description={activity.description}
+          content={md.render(value)}
+          isSubmitting={isLoading}
+          onSubmit={handleUpdate}
+          onCancel={handleCancelEdition}
+        />
       ) : (
         <div className="w-full">
           <Wrapper>

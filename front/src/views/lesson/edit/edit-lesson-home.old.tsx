@@ -72,7 +72,10 @@ export default function EditLessonHomeOld() {
                         </Wrapper>
                         <div className="w-full flex justify-center">
                           {item.type === "text" ? (
-                            <BlogUpdate activity={item} />
+                            <BlogUpdate
+                              activity={item}
+                              isEditing={blogEdition === item.id}
+                            />
                           ) : null}
                           {item.type === "video" ? (
                             <Video activity={item} />
@@ -95,9 +98,7 @@ export default function EditLessonHomeOld() {
               </ul>
             ) : null}
           </>
-        ) : (
-          <CurrentBlock isSubmitting={isLoading} onSubmit={handleSubmit} />
-        )}
+        ) : null}
 
         {activityToDelete ? (
           <Modal

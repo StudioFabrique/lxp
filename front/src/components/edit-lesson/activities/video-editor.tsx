@@ -10,9 +10,9 @@ import useForm from "../../UI/forms/hooks/use-form";
 import Field from "../../UI/forms/field";
 import FieldArea from "../../UI/forms/field-area";
 import Wrapper from "../../UI/wrapper/wrapper.component";
-import { activiteVideo } from "../../../lib/validation/lesson/activite-video";
 import { validationErrors } from "../../../helpers/validate";
 import { Loader2 } from "lucide-react";
+import { activiteMetaDataSchema } from "../../../lib/validation/lesson/activite-video";
 
 interface VideoEditorProps {
   propVideo?: string;
@@ -83,7 +83,7 @@ export default function VideoEditor({
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      activiteVideo.parse(values);
+      activiteMetaDataSchema.parse(values);
     } catch (error: any) {
       if (error instanceof ZodError) {
         const errors = validationErrors(error);
