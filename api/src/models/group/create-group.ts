@@ -17,21 +17,19 @@ export default async function createGroup(
 
   await activateMultipleUsers(users);
 
-  const newGroup: IGroup = group;
-
-  newGroup.roles = await Role.find({ role: "student", rank: 3 });
+  group.roles = await Role.find({ role: "student", rank: 3 });
 
   const usersId = users.map((user) => user._id);
 
-  newGroup.users = await User.find({
+  group.users = await User.find({
     _id: { $in: usersId },
   });
 
   if (!!image) {
-    newGroup.image = image;
+    group.image = image;
   }
 
-  const createdGroup = await Group.create(newGroup);
+  const createdGroup = await Group.create(group);
 
   if (!createdGroup) {
     return null;
