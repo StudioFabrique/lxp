@@ -1,7 +1,10 @@
 import { PropsWithChildren } from "react";
+import { ValueAsLink } from "./interfaces/table-list-item";
+import { Link } from "react-router-dom";
 
 type CellProps = {
   property: string;
+  valuesAsLink: ValueAsLink[];
 };
 
 /**
@@ -13,6 +16,9 @@ type CellProps = {
  *
  */
 const TableListCell = (props: PropsWithChildren<CellProps>) => {
+  const valueAsLink = props.valuesAsLink.find(
+    (value) => value.property === props.property,
+  );
   return (
     <td className="text-primary font-semibold whitespace-nowrap capitalize">
       <div
@@ -23,7 +29,13 @@ const TableListCell = (props: PropsWithChildren<CellProps>) => {
         }
         className="tooltip max-w-[18vw] flex"
       >
-        <p className="truncate">{props.children}</p>
+        {valueAsLink ? (
+          <Link to={valueAsLink.link} className="hover:underline">
+            {props.children}
+          </Link>
+        ) : (
+          <p className="truncate">{props.children}</p>
+        )}
       </div>
     </td>
   );

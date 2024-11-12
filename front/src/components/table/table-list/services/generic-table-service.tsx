@@ -4,6 +4,7 @@ import TableListAction, {
 import TableListItem, {
   TableListItemConfig,
   TableListItemLabels,
+  ValueAsLink,
 } from "../interfaces/table-list-item";
 
 /**
@@ -61,15 +62,26 @@ export function generateTableItem(
 
   // Create an ordered object based on itemsConfig
   const orderedData: Record<string, string> = {};
+  const valuesAsLink: ValueAsLink[] = [];
   itemsConfig.forEach((item) => {
     if (Object.prototype.hasOwnProperty.call(dataToTransform, item.property)) {
       orderedData[item.property] = dataToTransform[item.property] || "-";
     } else {
       orderedData[item.property] = "-";
     }
+
+    if (item.valueAsLink) {
+      const valueFromIdentifier: string | null | undefined =
+        dataToTransform[item.valueAsLink.identifier];
+      if (valueFromIdentifier)
+        valuesAsLink.push({
+          property: item.property,
+          link: item.valueAsLink.link.replace("[:id]", valueFromIdentifier),
+        });
+    }
   });
 
-  return { id, data: orderedData, actions, avatar };
+  return { id, data: orderedData, actions, avatar, valuesAsLink };
 }
 
 /**
