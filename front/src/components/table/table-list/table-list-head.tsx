@@ -1,3 +1,4 @@
+import { SortAsc, SortDesc } from "lucide-react";
 import {
   TableListItemConfig,
   TableListItemLabels,
@@ -8,8 +9,9 @@ type TableListHeadProps = {
   labels: TableListItemLabels[];
   avatar?: TableListItemConfig;
   showAvatar?: boolean;
-  sortProperty?: string | null;
   isAllChecked?: boolean;
+  sortProperty?: string | null;
+  isAscDirection?: boolean;
   onCheckAll?: (checked: boolean) => void;
   onSortProperty?: (property: string) => void;
 };
@@ -24,6 +26,8 @@ type TableListHeadProps = {
  * @component
  */
 const TableListHead = (props: TableListHeadProps) => {
+  console.log(props.sortProperty);
+
   const handleChangeCheckbox = (event: ChangeEvent<HTMLInputElement>) => {
     props.onCheckAll && props.onCheckAll(event.currentTarget.checked);
   };
@@ -68,8 +72,16 @@ const TableListHead = (props: TableListHeadProps) => {
                 type="button"
                 value={item.property}
                 onClick={item.sortAllowed ? handleClickSort : undefined}
+                className="flex items-center gap-1"
               >
                 {item.label ?? ""}
+                {props.sortProperty === item.property ? (
+                  props.isAscDirection ? (
+                    <SortAsc />
+                  ) : (
+                    <SortDesc />
+                  )
+                ) : null}
               </button>
             </th>
           ) : null,

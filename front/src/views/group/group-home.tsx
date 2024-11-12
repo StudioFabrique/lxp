@@ -34,6 +34,7 @@ const GroupHome = () => {
     isLoading,
     totalItems,
     sortProperty,
+    isAscDirection,
     onRefreshData,
     onSubmitSearchValue,
     onSortProperty,
@@ -73,11 +74,11 @@ const GroupHome = () => {
         searchBarConfig={searchBarConfig(onSubmitSearchValue)}
         listConfig={listConfig(data, isLoading, actionsConfig(onRefreshData))}
         checkboxConfig={checkboxConfig}
-        sortConfig={{ onSortProperty, sortProperty }}
+        sortConfig={{ sortProperty, isAscDirection, onSortProperty }}
       >
         {/* Composants children en haut et en bas du tableau */}
         {[
-          // top
+          // haut du tableau, à côté de la barre de recherche
           <TableActionsButtons
             key={0}
             isLoading={isLoading}
@@ -88,7 +89,7 @@ const GroupHome = () => {
               onDelete: onDeleteSelectedGroups,
             }}
           />,
-          // bottom
+          // bas du tableau
           <TablePagination
             key={1}
             leftText={`Nombre de groupes : ${totalItems}`}

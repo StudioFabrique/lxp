@@ -13,6 +13,7 @@ type TableProps<TData> = {
   };
   sortConfig?: {
     sortProperty?: string | null;
+    isAscDirection?: boolean;
     onSortProperty: (property: string) => void;
   };
 };
