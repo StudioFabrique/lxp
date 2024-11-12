@@ -43,6 +43,8 @@ export default function LayoutEditLesson() {
     }
   }, [error]);
 
+  console.log({ lesson });
+
   // supprimer les éléments du state global lorsque le composant est "démonté"
   useEffect(() => {
     return () => {

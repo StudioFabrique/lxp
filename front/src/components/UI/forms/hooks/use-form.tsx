@@ -6,17 +6,20 @@ const useForm = (data = {}) => {
   const [values, setValues] = useState<Record<string, string>>(data);
   const [errors, setErrors] = useState<CustomError[]>([]);
 
-  const onChangeValue = (field: string, value: string) => {
-    if (errors && errors.length > 0) {
-      setErrors((prevErrors) =>
-        prevErrors.filter((error: CustomError) => error.type !== field)
-      );
-    }
-    setValues((prevValues) => ({
-      ...prevValues,
-      [field]: value,
-    }));
-  };
+  const onChangeValue = useCallback(
+    (field: string, value: string) => {
+      if (errors && errors.length > 0) {
+        setErrors((prevErrors) =>
+          prevErrors.filter((error: CustomError) => error.type !== field)
+        );
+      }
+      setValues((prevValues) => ({
+        ...prevValues,
+        [field]: value,
+      }));
+    },
+    [errors]
+  );
 
   const onValidationErrors = (data: CustomError[]) => {
     setErrors(data);

@@ -90,6 +90,10 @@ const StudentEvaluationView = React.lazy(
 
 const NewActivity = React.lazy(() => import("../../views/lesson/new-activity"));
 
+const PreviewActivity = React.lazy(
+  () => import("../../views/lesson/edit/preview-activity")
+);
+
 const adminRoutes = [
   { index: true, element: <AdminHome /> },
   {
@@ -196,6 +200,10 @@ const adminRoutes = [
           {
             path: "new-activity",
             element: <NewActivity />,
+          },
+          {
+            path: "preview/:activityId",
+            element: <PreviewActivity />,
           },
         ],
       },

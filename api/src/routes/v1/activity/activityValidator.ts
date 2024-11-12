@@ -17,17 +17,14 @@ export const activityIdValidator = [
 ];
 
 export const updateActivityValidator = [
-  body("url")
-    .notEmpty()
-    .withMessage("L'url de l'activité est requise.")
-    .isURL()
-    .withMessage("Format d'url non valide."),
-  body("order")
-    .notEmpty()
-    .withMessage("La propriété order est requise.")
-    .isNumeric()
-    .isInt()
-    .withMessage("La propriété order doit être un nombre entier."),
+  body("title")
+    .custom(stringValidateGeneric)
+    .withMessage("Le titre de la video contient des caractères non autorisés."),
+  body("description")
+    .custom(stringValidateGeneric)
+    .withMessage(
+      "La description de la video contient des caractères non autorisés."
+    ),
   checkValidatorResult,
 ];
 

@@ -23,7 +23,7 @@ export default function ActivityListItem({
   const handleGoToActivity = () => {
     console.log({ activity });
     dispatch(lessonActions.setActivity(activity));
-    navigate(`edit-blog/${activity.id}`);
+    navigate(`preview/${activity.id}`);
   };
 
   return (

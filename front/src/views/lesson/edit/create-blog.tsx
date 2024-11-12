@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import EditBlog from "../../../components/edit-lesson/blog/edit-blog";
 import useForm from "../../../components/UI/forms/hooks/use-form";
 import useEditBlog from "../../../hooks/use-edit-blog";
 import useHttp from "../../../hooks/use-http";
+import EditBlog from "../../../components/edit-lesson.new/blog/edit-blog";
 
 export default function CreateBlog() {
   const { sendRequest } = useHttp();
@@ -15,8 +15,7 @@ export default function CreateBlog() {
   const [submit, setSubmit] = useState(false);
   const navigate = useNavigate();
 
-  const { errors, values, onChangeValue, onValidationErrors, onResetForm } =
-    useForm();
+  const { errors, values, onChangeValue } = useForm();
   const data = { values, errors, onChangeValue };
   const [showPreview, setShowPreview] = useState(false);
   const { content, editorRef, log, markdown } = useEditBlog();
@@ -52,7 +51,7 @@ export default function CreateBlog() {
               order: 0,
             },
           },
-          applyData,
+          applyData
         );
     }
   }, [values, lessonId, markdown, navigate, sendRequest, submit]);
