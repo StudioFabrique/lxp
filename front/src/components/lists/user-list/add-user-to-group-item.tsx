@@ -17,7 +17,9 @@ const AddUserToGroupItem: FC<{
         />
       </td>
       <td className="bg-transparent">{toTitleCase(groupItem.name)}</td>
-      <td className="bg-transparent">{toTitleCase(groupItem.desc)}</td>
+      <td className="bg-transparent capitalize">
+        {groupItem.desc ?? "non renseignée"}
+      </td>
       <td className="bg-transparent text-center">-</td>
       <td className="bg-transparent">
         <ul>

@@ -4,7 +4,7 @@ import TableList, { TableListProps } from "./table-list/table-list";
 import { PropsWithChildren } from "react";
 
 type TableProps<TData> = {
-  listConfig: TableListProps<TData>;
+  tableListConfig: TableListProps<TData>;
   searchBarConfig: SearchBarProps;
   checkboxConfig?: {
     isAllChecked?: boolean;
@@ -13,6 +13,7 @@ type TableProps<TData> = {
   };
   sortConfig?: {
     sortProperty?: string | null;
+    isAscDirection?: boolean;
     onSortProperty: (property: string) => void;
   };
 };
@@ -45,7 +46,7 @@ const Table = <TData extends Record<string, string>>(
 
       {/* tableau au milieu */}
       <TableList
-        {...props.listConfig}
+        {...props.tableListConfig}
         {...props.checkboxConfig}
         {...props.sortConfig}
       />
