@@ -75,6 +75,7 @@ const GroupHome = () => {
         checkboxConfig={checkboxConfig}
         sortConfig={{ onSortProperty, sortProperty }}
       >
+        {/* Composants children en haut et en bas du tableau */}
         {[
           // top
           <TableActionsButtons
