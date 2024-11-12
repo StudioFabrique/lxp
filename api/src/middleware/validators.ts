@@ -252,6 +252,11 @@ export const manyUsersValidator = [
   checkValidatorResult,
 ];
 
+// Validator for a group object
+// - Name must exist, not be empty, be a string, and match generic string validation
+// - Description must be a string (lowercase), optional, and match optional string validation
+// - Users field must be an array
+// - Each user ID in the users array must be a string
 export const groupValidator = [
   body("data.group.name")
     .exists()
@@ -261,6 +266,7 @@ export const groupValidator = [
     .custom(stringValidateGeneric)
     .withMessage("titre non conforme"),
   body("data.group.desc")
+    .optional()
     .isString()
     .toLowerCase()
     .trim()
