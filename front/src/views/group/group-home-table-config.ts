@@ -5,9 +5,20 @@ import { TableListActionConfig } from "../../components/table/table-list/interfa
 import { TableListProps } from "../../components/table/table-list/table-list";
 
 export const groupHomeTableItems: TableListItemConfig[] = [
-  { property: "name", label: "Nom", sortAllowed: true },
+  {
+    property: "name",
+    label: "Nom",
+    sortAllowed: true,
+  },
   { property: "desc", label: "Description", sortAllowed: true },
-  { property: "formation", label: "Formation - Parcours" },
+  {
+    property: "formation",
+    label: "Formation - Parcours",
+    valueAsLink: {
+      identifier: "parcoursId",
+      link: "/admin/parcours/view/[:id]",
+    },
+  },
   { property: "nbStudents", label: "Nombre d'étudiants" },
 ];
 
@@ -62,7 +73,7 @@ export const listConfig = <TData>(
 ): TableListProps<Record<string, string>> => ({
   idProperty: "_id",
   avatar: { property: "image" },
-  data: data as unknown as Record<string, string>[],
+  data: data as Record<string, string>[],
   tableItemsConfig: groupHomeTableItems,
   actionsItems: actionsConfig,
   style: {

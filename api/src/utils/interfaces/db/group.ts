@@ -5,7 +5,7 @@ import { ITag } from "./tag";
 
 export interface IGroup extends Document {
   name: string;
-  desc: string;
+  desc?: string;
   users?: IUser["_id"];
   tags?: ITag["_id"];
   roles: IRole["_id"];
