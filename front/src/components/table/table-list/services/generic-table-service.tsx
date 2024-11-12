@@ -63,7 +63,9 @@ export function generateTableItem(
   const orderedData: Record<string, string> = {};
   itemsConfig.forEach((item) => {
     if (Object.prototype.hasOwnProperty.call(dataToTransform, item.property)) {
-      orderedData[item.property] = dataToTransform[item.property];
+      orderedData[item.property] = dataToTransform[item.property] || "-";
+    } else {
+      orderedData[item.property] = "-";
     }
   });
 
