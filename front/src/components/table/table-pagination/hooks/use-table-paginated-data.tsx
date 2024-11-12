@@ -112,6 +112,7 @@ function useTablePaginatedData<TData>(
     itemsPerPage,
     totalItems,
     sortProperty,
+    isAscDirection,
     onSortProperty: handleSortProperty,
     onSetItemsPerPage: handleSetItemsPerPage,
     onSetCurrentPage: handleSetCurrentPage,

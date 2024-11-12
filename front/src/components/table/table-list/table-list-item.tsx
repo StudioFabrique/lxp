@@ -9,11 +9,13 @@ import TableListAction from "./interfaces/table-list-action";
 import TableListCell from "./table-list-cell";
 import TableListActionCell from "./table-list-action-cell";
 import { AvatarSmall } from "../../UI/avatar/avatar.component";
+import { ValueAsLink } from "./interfaces/table-list-item";
 
 type ItemProps<TData extends Record<string, unknown>> = {
   id: string;
   data: TData;
   actions?: TableListAction[];
+  valuesAsLink: ValueAsLink[];
   avatar?: string;
   style?: { showAvatar?: boolean };
   isAllChecked?: boolean;
@@ -35,6 +37,8 @@ type ItemProps<TData extends Record<string, unknown>> = {
 const TableListItem = <TData extends Record<string, unknown>>(
   props: PropsWithChildren<ItemProps<TData>>,
 ) => {
+  console.log({ valuesAsLink: props.valuesAsLink });
+
   const [isChecked, setCheckedState] = useState<boolean>(false);
 
   const dataEntries = Object.entries(props.data);
@@ -53,7 +57,7 @@ const TableListItem = <TData extends Record<string, unknown>>(
     <tr className="h-14 bg-secondary/10 hover:bg-primary/20">
       <td className="rounded-l-xl w-0" />
 
-      {/* Affichage de la checkbox si activé */}
+      {/* Affichage de la cellule de checkbox si activé */}
       {props.onCheck ? (
         <td className="px-0">
           <div className="h-full flex flex-col justify-center">
@@ -67,7 +71,7 @@ const TableListItem = <TData extends Record<string, unknown>>(
         </td>
       ) : null}
 
-      {/* Affichage d'un avatar si activé */}
+      {/* Affichage d'une cellule d'un avatar si activé */}
       {props.style?.showAvatar ? (
         <td className="pl-4 pr-1">
           <div className="flex justify-center items-center h-full">
@@ -78,12 +82,18 @@ const TableListItem = <TData extends Record<string, unknown>>(
         </td>
       ) : null}
 
+      {/* Affichage des cellules avec valeurs */}
       {dataEntries.map(([key, value]) => (
-        <TableListCell key={key} property={key}>
+        <TableListCell
+          key={key}
+          property={key}
+          valuesAsLink={props.valuesAsLink}
+        >
           {value as ReactNode}
         </TableListCell>
       ))}
 
+      {/* Affichage des cellules d'actions */}
       {props.actions?.map((action) => (
         <TableListActionCell key={action.property} id={props.id} {...action} />
       ))}
