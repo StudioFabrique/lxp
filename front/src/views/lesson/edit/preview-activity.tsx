@@ -3,7 +3,7 @@
 import BlogUpdate from "../../../components/edit-lesson/activities/blog-update";
 import Activity from "../../../utils/interfaces/activity";
 import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
 import { displayDate } from "../../../helpers/dispaly-dates";
 
@@ -40,10 +40,10 @@ function PreviewActivity() {
           <article className="w-full flex justify-between items-center">
             <h1 className="text-xl font-bold">Mise à jour de l'activité</h1>
             <button
-              className="btn btn-primary"
+              className="btn btn-primary btn-sm"
               onClick={() => setIsEditing((prevState) => !prevState)}
             >
-              Retour
+              Annuler
             </button>
           </article>
           <article>
@@ -60,12 +60,9 @@ function PreviewActivity() {
         <section className="w-full flex flex-col gap-y-4 mb-4">
           <article className="w-full flex justify-between items-center">
             <h1 className="text-xl font-bold">Aperçu de l'activité</h1>
-            <button
-              className="btn btn-primary"
-              onClick={() => setIsEditing((prevState) => !prevState)}
-            >
-              Editer
-            </button>
+            <Link className="btn btn-primary btn-sm" to={".."}>
+              Retour
+            </Link>
           </article>
           <article className="flex items-center justify-between">
             <span>
@@ -83,6 +80,14 @@ function PreviewActivity() {
               onSubmitted={onSubmitted}
             />
           </article>
+          <div className="flex justify-end">
+            <button
+              className="btn btn-primary"
+              onClick={() => setIsEditing((prevState) => !prevState)}
+            >
+              Editer
+            </button>
+          </div>
         </section>
       ) : null}
     </main>

@@ -12,9 +12,9 @@ import useForm from "../UI/forms/hooks/use-form";
 import { activiteMetaDataSchema } from "../../lib/validation/lesson/activite-video";
 import { ZodError } from "zod";
 import { validationErrors } from "../../helpers/validate";
-import { fromHtmlToMarkdown } from "../../helpers/html-parser";
+import { toast } from "react-hot-toast";
 
-type Props = {
+type EditorProps = {
   title?: string;
   description?: string;
   content?: string;
@@ -28,106 +28,108 @@ type Props = {
   onCancel: () => void;
 };
 
-export const Editor = (props: Props) => {
-  console.log("toto", props.content);
-  const [value, setValue] = useState<string>("");
-  const quillRef = useRef<any>(null);
+export const Editor = ({
+  title,
+  description,
+  content: initialContent,
+  isSubmitting,
+  onSubmit,
+  onCancel,
+}: EditorProps) => {
+  const [editorContent, setEditorContent] = useState<string>("");
+  const quillRef = useRef<ReactQuill>(null);
   const { sendRequest } = useHttp();
-  const { errors, values, onChangeValue, onValidationErrors } = useForm({
-    title: "",
-    description: "",
-  });
-  const data = { values, errors, onChangeValue };
 
+  const { errors, values, onChangeValue, onValidationErrors } = useForm({
+    title: title && title !== undefined ? title : "",
+    description: description && description !== undefined ? description : "",
+  });
+
+  // Initialize editor content
   useEffect(() => {
-    if (props.content) {
-      setValue(props.content);
+    if (initialContent) {
+      setEditorContent(initialContent);
     }
-    if (props.title) {
-      onChangeValue("title", props.title);
+    if (title) {
+      onChangeValue("title", title);
     }
-    if (props.description) {
-      onChangeValue("description", props.description);
+    if (description) {
+      onChangeValue("description", description);
     }
-  }, [props.content, props.title, props.description, onChangeValue]);
+  }, [initialContent, title, description, onChangeValue]);
 
   const handleSubmit = async () => {
     try {
+      // Validate form data
       activiteMetaDataSchema.parse(values);
-    } catch (error: any) {
+
+      // Get clean HTML content from editor
+      const cleanHtml = quillRef.current?.getEditor().root.innerHTML || "";
+
+      // Submit form data
+      onSubmit(
+        values.description,
+        cleanHtml, // Send clean HTML instead of raw editor content
+        values.title,
+        "text"
+      );
+    } catch (error) {
       if (error instanceof ZodError) {
-        const errors = validationErrors(error);
-        onValidationErrors(errors);
-        return;
+        onValidationErrors(validationErrors(error));
+        toast.error("Veuillez remplir tous les champs obligatoires");
+      } else {
+        toast.error("Une erreur est survenue");
       }
     }
-    props.onSubmit(
-      values.description,
-      await fromHtmlToMarkdown(value),
-      values.title,
-      "text"
-    );
   };
 
-  /**
-   * valide l'upload d'image vers le serveur, et ajoute l'url de l'image dans le
-   * document markdown en cours d'édition
-   */
   const imageHandler = useCallback(async () => {
     const input = document.createElement("input");
-
     input.setAttribute("type", "file");
     input.setAttribute("accept", "image/*");
-    input.click();
+
     input.onchange = async () => {
-      const file: any = input && input.files ? input.files[0] : null;
+      const file = input.files?.[0];
+      if (!file) return;
+
       const formData = new FormData();
       formData.append("image", file);
-      const quillObj = quillRef.current;
-      const applyData = (res: any) => {
-        const data = res.response;
-        const range = quillRef.current.getEditor().getSelection();
-        quillObj.getEditor().insertEmbed(range.index, "image", data);
-      };
-      sendRequest(
-        {
+
+      try {
+        const response = await sendRequest({
           path: "/activity/blog-image",
           method: "post",
           body: formData,
-        },
-        applyData
-      );
+        });
 
-      /*       await UploadService.uploadFile(formData)
-        .then((res) => {
-          let data = get(res, "data.data.url");
-          const range = quillObj.getEditorSelection();
-          quillObj.getEditor().insertEmbed(range.index, "image", data);
-        })
-        .catch((err) => {
-          message.error("This is an error message");
-          return false;
-        }); */
+        if (response?.response && quillRef.current) {
+          const range = quillRef.current.getEditor().getSelection();
+          quillRef.current
+            .getEditor()
+            .insertEmbed(range?.index || 0, "image", response.response);
+        }
+      } catch (error) {
+        toast.error("Échec du téléchargement de l'image");
+      }
     };
+
+    input.click();
   }, [sendRequest]);
 
-  const modules = useMemo(() => {
-    return {
+  const modules = useMemo(
+    () => ({
       toolbar: {
         container: "#toolbar",
-        handlers: {
-          image: imageHandler,
-        },
+        handlers: { image: imageHandler },
       },
       history: {
         delay: 500,
         maxStack: 100,
         userOnly: true,
       },
-    };
-  }, [imageHandler]);
-
-  console.log({ title: props.title, description: props.description, value });
+    }),
+    [imageHandler]
+  );
 
   return (
     <div className="my-8 flex flex-col gap-y-4">
@@ -135,11 +137,20 @@ export const Editor = (props: Props) => {
         <span className="flex flex-col gap-y-2">
           <h2 className="text-lg font-bold">Informations</h2>
           <form className="flex flex-col gap-y-4">
-            <Field name="title" label="Titre *" data={data} />
-            <FieldArea name="description" data={data} label="Description *" />
+            <Field
+              name="title"
+              label="Titre *"
+              data={{ values, errors, onChangeValue }}
+            />
+            <FieldArea
+              name="description"
+              label="Description *"
+              data={{ values, errors, onChangeValue }}
+            />
           </form>
         </span>
       </Wrapper>
+
       <Wrapper>
         <div className="text-editor text-black bg-white">
           <QuillToolbar />
@@ -147,27 +158,30 @@ export const Editor = (props: Props) => {
             ref={quillRef}
             className="min-h-[50vh]"
             theme="snow"
-            value={value}
-            onChange={setValue}
-            placeholder={"Write something awesome..."}
+            value={editorContent}
+            onChange={setEditorContent}
+            placeholder="Écrivez quelque chose..."
             modules={modules}
             formats={formats}
           />
         </div>
       </Wrapper>
+
       <div className="flex justify-between mt-4">
         <button
+          type="button"
           className="btn btn-sm btn-outline btn-primary"
-          onClick={props.onCancel}
+          onClick={onCancel}
         >
           Annuler
         </button>
         <button
+          type="button"
           className="btn btn-sm btn-primary flex items-center gap-x-2"
-          disabled={props.isSubmitting}
+          disabled={isSubmitting}
           onClick={handleSubmit}
         >
-          {props.isSubmitting ? <Loader2 className="animate-spin" /> : null}
+          {isSubmitting && <Loader2 className="animate-spin" />}
           Valider
         </button>
       </div>
