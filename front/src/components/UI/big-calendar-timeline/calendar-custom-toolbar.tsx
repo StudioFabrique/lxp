@@ -1,3 +1,4 @@
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { View, ViewsProps } from "react-big-calendar";
 
 const customToolbarButtonStyles = {
@@ -7,6 +8,9 @@ const customToolbarButtonStyles = {
   borderRadius: "4px",
   margin: "0 4px",
   cursor: "pointer",
+  display: "flex",
+  gap: "10px",
+  alignItems: "center",
 };
 
 const navigationButtonColors = {
@@ -54,7 +58,7 @@ const CalendarCustomToolbar = (toolbar: ToolbarProps) => {
 
   return (
     <div className="rbc-toolbar">
-      <span className="rbc-btn-group">
+      <span className="rbc-btn-group" style={{ display: "flex" }}>
         <button
           type="button"
           onClick={goToBack}
@@ -63,6 +67,7 @@ const CalendarCustomToolbar = (toolbar: ToolbarProps) => {
             ...navigationButtonColors.back,
           }}
         >
+          <ArrowLeft />
           Semaine Précédente
         </button>
         <button
@@ -84,6 +89,7 @@ const CalendarCustomToolbar = (toolbar: ToolbarProps) => {
           }}
         >
           Semaine Suivante
+          <ArrowRight />
         </button>
       </span>
       <span className="rbc-toolbar-label">{toolbar.label}</span>
