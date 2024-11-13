@@ -1,8 +1,11 @@
-import { Request, Response } from "express";
-import postVideo from "../../models/activity/post-activity/post-video";
+import { Response } from "express";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
+import postActivityVideo from "../../models/activity/post-activity/post-activity-video";
 
-export default async function httpPostVideo(req: CustomRequest, res: Response) {
+export default async function httpPostActivityVideo(
+  req: CustomRequest,
+  res: Response
+) {
   try {
     const uploadedFile = req.file;
     const userId = req.auth?.userId;
@@ -14,7 +17,7 @@ export default async function httpPostVideo(req: CustomRequest, res: Response) {
         ? uploadedFile.filename
         : data.url;
 
-    const response = await postVideo(
+    const response = await postActivityVideo(
       +lessonId,
       userId!,
       data.title,

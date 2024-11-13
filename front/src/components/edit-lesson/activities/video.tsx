@@ -1,36 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useDispatch, useSelector } from "react-redux";
+
 import useHttp from "../../../hooks/use-http";
 import Activity from "../../../utils/interfaces/activity";
 import { useParams } from "react-router-dom";
 import VideoEditor from "./video-editor";
-import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 import toast from "react-hot-toast";
+import { useState } from "react";
 import VideoPlayer from "../../UI/video-player";
-import { useEffect, useState } from "react";
 
 interface VideoProps {
   activity?: Activity;
+  onCancel: () => void;
+  isEditing: boolean;
 }
 
-export default function Video({ activity }: VideoProps) {
-  const dispatch = useDispatch();
-  const order = useSelector(
-    (state: any) => state.lesson.lesson.activities.length + 1
-  ) as number;
-  const blogEdition = useSelector(
-    (state: any) => state.lesson.blogEdition
-  ) as number;
+function isValidYouTubeUrl(url: string) {
+  const pattern = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+  return pattern.test(url);
+}
+
+export default function Video({ activity, onCancel, isEditing }: VideoProps) {
   const { lessonId } = useParams();
-  const { sendRequest, error } = useHttp();
+  const { sendRequest } = useHttp();
   const [loading, setLoading] = useState(false);
 
-  const handleCancelNewVideo = () => {
-    dispatch(lessonActions.resetCurrentType());
-  };
-
   const handleCancelEditVideo = () => {
-    dispatch(lessonActions.setBlogEdition(null));
+    onCancel();
   };
 
   const handleSubmit = (value: {
@@ -44,113 +39,57 @@ export default function Video({ activity }: VideoProps) {
       "data",
       JSON.stringify({
         title: value.title,
-        description: value.description ?? "",
-        type: "video",
-        order,
-        url: value.fileValue ? "" : value.videoValue,
-      })
-    );
-    if (value.fileValue) {
-      fd.append("video", value.fileValue);
-    }
-    const applyData = (data: {
-      success: boolean;
-      message: string;
-      response: Activity;
-    }) => {
-      if (data.success) {
-        toast.success(data.message);
-        dispatch(lessonActions.addActivity(data.response));
-        dispatch(lessonActions.resetCurrentType());
-        setLoading(false);
-      }
-    };
-    setLoading(true);
-    sendRequest(
-      {
-        path: `/activity/video/${lessonId}`,
-        method: "post",
-        body: fd,
-      },
-      applyData
-    );
-  };
-
-  const handleUpdate = (value: {
-    videoValue: string;
-    fileValue: File | null;
-    title: string;
-    description: string | null;
-  }) => {
-    console.log({ value });
-
-    const fd = new FormData();
-    fd.append(
-      "data",
-      JSON.stringify({
-        id: activity!.id,
-        url: value.fileValue ? "" : value.videoValue,
-        title: value.title,
         description: value.description,
+        url: value.fileValue ? "" : value.videoValue,
       })
     );
     if (value.fileValue) {
       fd.append("video", value.fileValue);
+    }
+    if (value.videoValue && !value.fileValue) {
+      if (!isValidYouTubeUrl(value.videoValue)) {
+        toast.error("URL YouTube invalide");
+        setLoading(false);
+        return;
+      }
     }
     const applyData = (data: {
       success: boolean;
       message: string;
       response: Activity;
     }) => {
-      //console.log(data);
       if (data.success) {
         toast.success(data.message);
+        onCancel();
         setLoading(false);
       }
-      dispatch(lessonActions.updateActivity(data.response));
-      dispatch(lessonActions.setBlogEdition(null));
     };
     setLoading(true);
     sendRequest(
       {
-        path: "/activity/video",
-        method: "put",
+        path: `/activity/video/${activity?.id ?? lessonId}`,
+        method: activity ? "put" : "post",
         body: fd,
       },
       applyData
     );
+    setLoading(false);
+    onCancel();
   };
-
-  // affichage des erreurs HTTP
-  useEffect(() => {
-    if (error.length > 0) {
-      toast.error(error);
-      setLoading(false);
-    }
-  }, [error]);
 
   return (
     <main className="w-full flex justify-center mt-4">
-      {activity === undefined ? (
-        <VideoEditor
-          title={""}
-          description={""}
-          onSubmit={handleSubmit}
-          onCancel={handleCancelNewVideo}
-          loading={loading}
-        />
-      ) : null}
-      {activity !== undefined && blogEdition === activity.id ? (
+      {activity !== undefined && isEditing ? (
         <VideoEditor
           propVideo={activity.url}
           title={activity.title ?? ""}
           description={activity.description ?? ""}
           loading={loading}
-          onSubmit={handleUpdate}
+          onSubmit={handleSubmit}
           onCancel={handleCancelEditVideo}
         />
       ) : null}
-      {activity !== undefined && blogEdition !== activity.id ? (
+      {activity !== undefined && !isEditing ? (
         <VideoPlayer
           source={activity.url}
           title={activity.title!}
