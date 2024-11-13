@@ -21,7 +21,9 @@ export default function wCurrentBlock({
       {activityType ? (
         <>
           {activityType === "text" ? <Editor onCancel={handleCancel} /> : null}
-          {activityType === "video" ? <Video /> : null}
+          {activityType === "video" ? (
+            <Video onCancel={handleCancel} isEditing={true} />
+          ) : null}
           {activityType === "image" ? <ImageActivity /> : null}
         </>
       ) : null}

@@ -41,10 +41,10 @@ export default function VideoEditor({
   /*   const blogEdition = useSelector(
     (state: any) => state.lesson.blogEdition
   ) as number; */
-  const [origin, setOrigin] = useState("fileSystem");
+  const [origin, setOrigin] = useState("web");
   const [video, setVideo] = useState<string>(propVideo);
   const [file, setFile] = useState<File | null>(null);
-  const [url, setUrl] = useState<string>("");
+  const [url, setUrl] = useState<string>(propVideo);
   const { initValues, errors, values, onChangeValue, onValidationErrors } =
     useForm();
 

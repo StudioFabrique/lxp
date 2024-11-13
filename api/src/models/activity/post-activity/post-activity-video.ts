@@ -1,6 +1,6 @@
 import { prisma } from "../../../utils/db";
 
-export default async function postVideo(
+export default async function postActivityVideo(
   lessonId: number,
   userId: string,
   title: string,

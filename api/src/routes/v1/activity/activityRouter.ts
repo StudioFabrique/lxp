@@ -4,9 +4,9 @@ import checkPermissions from "../../../middleware/check-permissions";
 import { uploadActivityImage } from "../../../middleware/upload-activity-image";
 import httpPostBlogImage from "../../../controllers/activity/http-post-blog-image";
 import { uploadActivityVideo } from "../../../middleware/upload-activity-video";
-import httpPostVideo from "../../../controllers/activity/http-post-video";
+import httpPostVideo from "../../../controllers/activity/http-post-activity-video";
 import httpDeleteActivity from "../../../controllers/activity/http-delete-activity";
-import httpPutUpdateVideo from "../../../controllers/activity/http-put-update-video";
+import httpPutUpdateVideo from "../../../controllers/activity/http-put-activity-video";
 import { lessonIdValidator } from "../lesson/lesson-validator";
 import {
   activityIdValidator,
@@ -21,17 +21,20 @@ import httpPostImage from "../../../controllers/activity/http-post-image";
 import httpGetActivity from "../../../controllers/activity/http-get-activity";
 import httpPutActivityText from "../../../controllers/activity/http-put-activity-text";
 import httpPostActivityText from "../../../controllers/activity/http-post-activity-text";
+import httpPostActivityVideo from "../../../controllers/activity/http-post-activity-video";
+import httpPutActivityVideo from "../../../controllers/activity/http-put-activity-video";
 
 const activityRouter = express.Router();
 
 // mise à jour d'une activité de type vidéo
 activityRouter.put(
-  "/video",
+  "/video/:activityId",
   checkPermissions("lesson"),
+  activityIdValidator,
   uploadActivityVideo(),
   jsonParser,
   updateVideoValidator,
-  httpPutUpdateVideo
+  httpPutActivityVideo
 );
 // upload d'une image insérée dans un document de type texte
 activityRouter.post(
@@ -48,7 +51,7 @@ activityRouter.post(
   jsonParser,
   lessonIdValidator,
   postVideoValidator,
-  httpPostVideo
+  httpPostActivityVideo
 );
 
 // enregistre une activité et l'attache à une lesson
