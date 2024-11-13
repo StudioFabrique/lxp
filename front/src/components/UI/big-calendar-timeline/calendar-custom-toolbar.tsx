@@ -11,9 +11,9 @@ const customToolbarButtonStyles = {
 
 const navigationButtonColors = {
   back: {
-    backgroundColor: "#E74C3C",
+    backgroundColor: "#F08080", // Changed to lighter red
     ":hover": {
-      backgroundColor: "#C0392B",
+      backgroundColor: "#CD5C5C", // Changed to lighter hover red
     },
   },
   today: {
