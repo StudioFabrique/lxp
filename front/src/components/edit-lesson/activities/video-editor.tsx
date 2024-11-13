@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import VideoPlayer from "../../UI/video-player";
 import { toast } from "react-hot-toast";
 import { ZodError } from "zod";
@@ -10,9 +10,9 @@ import useForm from "../../UI/forms/hooks/use-form";
 import Field from "../../UI/forms/field";
 import FieldArea from "../../UI/forms/field-area";
 import Wrapper from "../../UI/wrapper/wrapper.component";
-import { activiteVideo } from "../../../lib/validation/lesson/activite-video";
 import { validationErrors } from "../../../helpers/validate";
 import { Loader2 } from "lucide-react";
+import { activiteMetaDataSchema } from "../../../lib/validation/lesson/activite-video";
 
 interface VideoEditorProps {
   propVideo?: string;
@@ -73,16 +73,17 @@ export default function VideoEditor({
 
   const handleOnChangeUrl = (event: ChangeEvent<HTMLInputElement>) => {
     setUrl(event.currentTarget.value);
-  };
-
-  const handleSelectExternalSource = () => {
     setVideo(url);
   };
+
+  const handleSelectExternalSource = useCallback(() => {
+    setVideo(url);
+  }, [url]);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      activiteVideo.parse(values);
+      activiteMetaDataSchema.parse(values);
     } catch (error: any) {
       if (error instanceof ZodError) {
         const errors = validationErrors(error);
@@ -104,6 +105,10 @@ export default function VideoEditor({
       description,
     });
   }, [title, description, initValues]);
+
+  useEffect(() => {
+    handleSelectExternalSource();
+  }, [handleSelectExternalSource, url]);
 
   console.log({ propVideo });
 
@@ -158,12 +163,12 @@ export default function VideoEditor({
                     value={url}
                     onChange={handleOnChangeUrl}
                   />
-                  <button
+                  {/*                 <button
                     className="btn btn-sm btn-primary btn-outline"
                     onClick={handleSelectExternalSource}
                   >
                     Aperçu
-                  </button>
+                  </button>*/}
                 </div>
               )}
             </span>

@@ -72,12 +72,12 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
               <td className="bg-transparent rounded-r-lg">
                 <div
                   className="w-6 h-6 text-error"
-                  aria-label="suppression du module"
+                  aria-label="suppression de la leçon"
                 >
                   <Can action="delete" object="lesson">
                     <div
                       className="tooltip tooltip-bottom flex-items-center"
-                      data-tip="Supprimer le module"
+                      data-tip="Supprimer la leçon"
                     >
                       <div onClick={() => onDelete(item.id!)}>
                         <DeleteIcon />
