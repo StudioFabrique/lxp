@@ -4,23 +4,13 @@ import ImageActivity from "./activities/image/image-activity-editor";
 import { Dispatch, SetStateAction } from "react";
 
 type CurrentBlockProps = {
-  isSubmitting: boolean;
   activityType: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSubmit: (
-    description: string,
-    value: string,
-    title: string,
-    type: string
-  ) => void;
   setActivityType: Dispatch<SetStateAction<string>>;
 };
 
-export default function CurrentBlock({
+export default function wCurrentBlock({
   activityType,
-  isSubmitting,
   setActivityType,
-  onSubmit,
 }: CurrentBlockProps) {
   const handleCancel = () => {
     setActivityType("");
@@ -30,13 +20,7 @@ export default function CurrentBlock({
     <>
       {activityType ? (
         <>
-          {activityType === "text" ? (
-            <Editor
-              onSubmit={onSubmit}
-              isSubmitting={isSubmitting}
-              onCancel={handleCancel}
-            />
-          ) : null}
+          {activityType === "text" ? <Editor onCancel={handleCancel} /> : null}
           {activityType === "video" ? <Video /> : null}
           {activityType === "image" ? <ImageActivity /> : null}
         </>

@@ -67,24 +67,75 @@ const useLessonHome = () => {
     );
   };
 
-  const handleSubmit = (
-    description: string,
-    value: string,
-    title: string,
-    type: string
-  ) => {
-    console.log(value);
+  const handleSubmit = (type: string, data: any) => {
+    if (type === "text") {
+      handleSubmitBlog(data);
+    }
+    if (type === "video") {
+      handleSubmitVideo(data);
+    }
+
+    getActivities();
+    setCreateActivity(false);
+    setActivityType("");
+  };
+
+  const handleSubmitBlog = (data: {
+    description: string;
+    value: string;
+    title: string;
+    type: string;
+  }) => {
     const applyData = (data: any) => {
       toast.success(data.message);
-      getActivities();
-      setCreateActivity(false);
-      setActivityType("");
     };
     sendRequest(
       {
         path: `/activity/${lesson.id}`,
         method: "post",
-        body: { description, value, title, type },
+        body: {
+          description: data.description,
+          value: data.value,
+          title: data.title,
+          type: data.type,
+        },
+      },
+      applyData
+    );
+  };
+
+  const handleSubmitVideo = (value: {
+    title: string;
+    description: string | null;
+    videoValue: string;
+    fileValue: File | null;
+  }) => {
+    const fd = new FormData();
+    fd.append(
+      "data",
+      JSON.stringify({
+        title: value.title,
+        description: value.description ?? "",
+        url: value.fileValue ? "" : value.videoValue,
+      })
+    );
+    if (value.fileValue) {
+      fd.append("video", value.fileValue);
+    }
+    const applyData = (data: {
+      success: boolean;
+      message: string;
+      response: Activity;
+    }) => {
+      if (data.success) {
+        toast.success(data.message);
+      }
+    };
+    sendRequest(
+      {
+        path: `/activity/video/${lesson.id}`,
+        method: "post",
+        body: fd,
       },
       applyData
     );
@@ -103,6 +154,12 @@ const useLessonHome = () => {
     }
     return () => clearTimeout(timer);
   }, [success]);
+
+  useEffect(() => {
+    if (activityType.length === 0) {
+      getActivities();
+    }
+  }, [activityType, getActivities]);
 
   return {
     isLoading,

@@ -17,8 +17,6 @@ export default async function httpPostVideo(req: CustomRequest, res: Response) {
     const response = await postVideo(
       +lessonId,
       userId!,
-      data.type,
-      data.order,
       data.title,
       data.description,
       url

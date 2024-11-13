@@ -110,8 +110,6 @@ export default function VideoEditor({
     handleSelectExternalSource();
   }, [handleSelectExternalSource, url]);
 
-  console.log({ propVideo });
-
   return (
     <main className="w-full flex flex-col gap-y-4">
       <Wrapper>
@@ -163,12 +161,6 @@ export default function VideoEditor({
                     value={url}
                     onChange={handleOnChangeUrl}
                   />
-                  {/*                 <button
-                    className="btn btn-sm btn-primary btn-outline"
-                    onClick={handleSelectExternalSource}
-                  >
-                    Aperçu
-                  </button>*/}
                 </div>
               )}
             </span>
@@ -195,7 +187,7 @@ export default function VideoEditor({
           onClick={handleSubmit}
         >
           {loading ? (
-            <span>
+            <span className="flex items-center gap-x-2">
               <Loader2 className="w-4 h-4 animate-spin" />
               <p>Sauvegarde en cours...</p>
             </span>
