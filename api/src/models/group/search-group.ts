@@ -69,6 +69,7 @@ async function searchGroup(
           select: {
             parcours: {
               select: {
+                parcoursId: true,
                 parcours: {
                   select: {
                     formation: { select: { title: true } },
@@ -87,6 +88,10 @@ async function searchGroup(
           formation:
             groupPrisma?.parcours && groupPrisma?.parcours.length > 0
               ? `${groupPrisma?.parcours[0].parcours.formation.title} - ${groupPrisma?.parcours[0].parcours.title}`
+              : null,
+          parcoursId:
+            groupPrisma?.parcours && groupPrisma?.parcours.length > 0
+              ? groupPrisma?.parcours[0].parcoursId
               : null,
         };
       }),
