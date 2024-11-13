@@ -64,12 +64,11 @@ export default async function createUser(user: IUser, roleId: string) {
     if (user.invitationSent) {
       const token = activationToken(createdUser._id, firstRole, "7d");
       await sendPasswordEmail(createdUser.email, token, "activation");
+      await User.updateOne(
+        { _id: createdUser._id },
+        { $set: { invitationSent: true } }
+      );
     }
-
-    await User.updateOne(
-      { _id: createdUser._id },
-      { $set: { invitationSent: true } },
-    );
 
     // Retourner l'utilisateur créé et le rang du rôle
     return { createdUser, role: firstRole.rank };

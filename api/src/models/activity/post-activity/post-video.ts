@@ -11,6 +11,7 @@ export default async function postVideo(
 ) {
   const existingLesson = await prisma.lesson.findFirst({
     where: { id: lessonId },
+    select: { id: true, activities: true },
   });
 
   if (!existingLesson) {
@@ -32,7 +33,7 @@ export default async function postVideo(
   const createdActivity = await prisma.activity.create({
     data: {
       type,
-      order,
+      order: existingLesson.activities.length,
       title,
       description,
       url,

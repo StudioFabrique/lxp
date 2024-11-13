@@ -21,6 +21,7 @@ RUN npm run generate
 COPY front/ front/
 
 COPY api/ api/
+COPY api/src/public/ api/dist/src/public
 COPY api/uploads/ api/dist/uploads
 RUN npm run deploy
 

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { regexGeneric, regexOptionalGeneric } from "../../../utils/constantes";
 
-export const activiteVideo = z.object({
+export const activiteMetaDataSchema = z.object({
   title: z
     .string({ required_error: "Un titre est requis pour le nouveau module" })
     .regex(regexGeneric, {

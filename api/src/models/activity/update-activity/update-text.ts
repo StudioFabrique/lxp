@@ -7,8 +7,8 @@ import { prisma } from "../../../utils/db";
 export default async function updateText(
   activityId: number,
   value: string,
-  url: string,
-  order: number
+  title: string,
+  description: string
 ) {
   const existingActivity = await prisma.activity.findFirst({
     where: { id: activityId },
@@ -21,6 +21,7 @@ export default async function updateText(
   const uniqueID: string = uuidv4();
   const fileName: string = uniqueID + new Date().getTime() + ".mdx";
 
+  console.log(existingActivity.url);
   console.log({ value });
 
   try {
@@ -37,22 +38,31 @@ export default async function updateText(
       ),
       value
     );
-
-    console.log({ existingActivity });
+    console.log({ fileName });
 
     const updatedActivity = await prisma.activity.update({
       where: { id: activityId },
       data: {
         ...existingActivity,
         url: fileName,
-        order,
+        title,
+        description,
       },
     });
 
     await fs.promises.unlink(
-      path.join(__dirname, "..", "..", "..", "..", "uploads", "activities", url)
+      path.join(
+        __dirname,
+        "..",
+        "..",
+        "..",
+        "..",
+        "uploads",
+        "activities",
+        existingActivity.url
+      )
     );
-    console.log("Fichier supprimé :", url);
+    console.log("Fichier supprimé :", existingActivity.url);
 
     return updatedActivity;
   } catch (error: any) {

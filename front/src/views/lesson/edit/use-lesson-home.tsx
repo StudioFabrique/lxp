@@ -1,33 +1,26 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
 import Activity from "../../../utils/interfaces/activity";
 import Lesson from "../../../utils/interfaces/lesson";
 
+/**
+ * Hook personnalisé pour gérer la logique de la page d'accueil des leçons
+ * Gère les activités, leur réorganisation et leur suppression
+ */
 const useLessonHome = () => {
-  const { sendRequest, error, isLoading } = useHttp();
-  const lesson = useSelector((state: RootState) => state.lesson.lesson);
+  const { sendRequest, isLoading } = useHttp();
+  const lesson = useSelector((state: any) => state.lesson.lesson);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [success, setSuccess] = useState(false);
-
+  const [activityType, setActivityType] = useState("");
   const [createActivity, setCreateActivity] = useState(false);
-  const nav = useNavigate();
 
-  const handleChooseActivity = (activityType: string) => {
-    if (!lesson?.id) return;
-
-    switch (activityType) {
-      case "text":
-        nav(`/admin/lesson/edit/${lesson.id}/blog`);
-        break;
-      default:
-        console.warn(`Activity type '${activityType}' not implemented`);
-        break;
-    }
-  };
-
+  /**
+   * Récupère la liste des activités pour une leçon donnée
+   */
   const getActivities = useCallback(() => {
     const applyData = (data: Lesson) => {
       setActivities(data.activities!);
@@ -37,6 +30,10 @@ const useLessonHome = () => {
     }
   }, [lesson, sendRequest]);
 
+  /**
+   * Gère la réorganisation des activités
+   * @param activitiesIds Tableau des IDs des activités dans leur nouvel ordre
+   */
   const handleReorderActivities = (activitiesIds: number[]) => {
     const applyData = (data: { success: boolean; message: string }) => {
       if (data.success) {
@@ -51,10 +48,14 @@ const useLessonHome = () => {
         method: "put",
         body: activitiesIds,
       },
-      applyData,
+      applyData
     );
   };
 
+  /**
+   * Supprime une activité spécifique
+   * @param activityId ID de l'activité à supprimer
+   */
   const handleDeleteActivity = (activityId: number) => {
     const applyData = (data: { message: string }) => {
       toast.success(data.message);
@@ -62,14 +63,39 @@ const useLessonHome = () => {
     };
     sendRequest(
       { path: `/activity/${activityId}`, method: "delete" },
-      applyData,
+      applyData
     );
   };
 
+  const handleSubmit = (
+    description: string,
+    value: string,
+    title: string,
+    type: string
+  ) => {
+    console.log(value);
+    const applyData = (data: any) => {
+      toast.success(data.message);
+      getActivities();
+      setCreateActivity(false);
+      setActivityType("");
+    };
+    sendRequest(
+      {
+        path: `/activity/${lesson.id}`,
+        method: "post",
+        body: { description, value, title, type },
+      },
+      applyData
+    );
+  };
+
+  // Charge les activités au montage du composant ou quand la leçon change
   useEffect(() => {
     getActivities();
   }, [getActivities]);
 
+  // Gère le message de succès qui disparaît après 5 secondes
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (success) {
@@ -81,13 +107,15 @@ const useLessonHome = () => {
   return {
     isLoading,
     activities,
+    activityType,
     setActivities,
     success,
     createActivity,
     setCreateActivity,
-    handleChooseActivity,
+    setActivityType,
     handleReorderActivities,
     handleDeleteActivity,
+    handleSubmit,
   };
 };
 
