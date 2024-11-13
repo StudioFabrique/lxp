@@ -25,14 +25,14 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
       {
         path: `/modules/image/${lastLesson.lesson.course.module.id}`,
       },
-      applyData
+      applyData,
     );
   }, [lastLesson.lesson.course.module.id, sendRequest]);
 
   return (
     <div className="flex gap-2">
       <ImageHeader
-        imageUrl={isLoading ? "" : image ?? "/images/parcours-default.webp"}
+        imageUrl={isLoading ? "" : (image ?? "/images/parcours-default.webp")}
         title={`Cours: ${lastLesson.lesson.course.title}`}
         subTitle={`Leçon: ${lastLesson.lesson.title}`}
         hidePublished
@@ -55,7 +55,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
                           src={skill.badge}
                           alt="illustration badge"
                         />
-                      )
+                      ),
                   )}
             </div>
           </div>,
