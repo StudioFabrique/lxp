@@ -7,8 +7,8 @@ import ResumeActivities from "../../components/student-home/resume-activities";
 import useHttp from "../../hooks/use-http";
 import LessonRead from "../../utils/interfaces/lesson-read";
 import RightSide from "../../components/student-home/right-side/right-side";
-import CalendarTimeline from "../../components/student-home/calendar-timeline";
 import ResumeParcours from "../../components/student-home/resume-parcours";
+import Timeline from "../../components/student-home/timeline";
 
 const StudentHome = () => {
   const { sendRequest } = useHttp();
@@ -49,7 +49,7 @@ const StudentHome = () => {
           ) : (
             <ResumeParcours />
           )}
-          <CalendarTimeline />
+          <Timeline />
         </div>
         <RightSide />
       </div>

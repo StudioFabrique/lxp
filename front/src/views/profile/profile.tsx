@@ -33,7 +33,7 @@ const Profile = () => {
   const buttonClassName = (tab: Tab) =>
     `btn ${currentTab === tab && "btn-secondary"}`;
 
-  const Render = () => {
+  const RenderTab = () => {
     switch (currentTab) {
       case Tab.Info:
         return (
@@ -143,7 +143,7 @@ const Profile = () => {
           </Can>
         )}
       </div>
-      <Render />
+      <RenderTab />
       {tabsWithForms && (
         <div className="flex justify-end">
           <Can object="default" action="update">
