@@ -51,7 +51,7 @@ export default function ActivityListItem({
             onClick={handleGoToActivity}
             className="hover:text-primary-focus transition-colors"
           >
-            <Pen className="w-4 h-4 text-primary" />
+            <Pen className="w-6 h-6 text-primary" />
           </button>
         </Can>
         <Can action="delete" object="lesson">
@@ -59,7 +59,7 @@ export default function ActivityListItem({
             onClick={() => onDeleteActivity(activity.id)}
             className="hover:text-error-focus transition-colors"
           >
-            <Trash2 className="w-4 h-4 text-error" />
+            <Trash2 className="w-6 h-6 text-error" />
           </button>
         </Can>
       </span>

@@ -6,6 +6,7 @@ export default async function httpUpdateActivity(req: Request, res: Response) {
   try {
     const { activityId } = req.params;
     const { value, url, order, title, description } = req.body;
+    console.log({ value });
 
     const response = await updateText(+activityId, value, title, description);
     return res.status(200).json({
