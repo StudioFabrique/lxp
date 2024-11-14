@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
-import BigCalendarTimeline from "../UI/big-calendar-timeline/big-calendar-timeline";
+import BigCalendarTimeline, {
+  Event,
+} from "../UI/big-calendar-timeline/big-calendar-timeline";
+import { useNavigate } from "react-router-dom";
 
 interface CourseFormatted {
+  id: number;
+  moduleId: number;
   title: string;
   moduleTitle: string;
   minDate: string;
@@ -11,9 +16,10 @@ interface CourseFormatted {
 
 const Timeline = () => {
   const { sendRequest } = useHttp();
+  const navigate = useNavigate();
 
   const [timelineData, setTimelineData] =
-    useState<{ title: string; start: Date; end: Date }[]>();
+    useState<{ id: number; title: string; start: Date; end: Date }[]>();
 
   const [datesSearchingRange, setDatesSearchingRange] = useState<{
     minDate: Date;
@@ -43,6 +49,13 @@ const Timeline = () => {
     }
   };
 
+  const handleDoubleClickEvent = (event: Event) => {
+    if (event.id && event.alternateId)
+      navigate(`/student/parcours/module/${event.alternateId}`, {
+        state: { lessonId: event.id },
+      });
+  };
+
   useEffect(() => {
     const applyData = (data: { data: CourseFormatted[] }) => {
       console.log({ data });
@@ -51,6 +64,8 @@ const Timeline = () => {
         data.data
           .filter((course) => course.minDate && course.maxDate)
           .map((course) => ({
+            id: course.id,
+            alternateId: course.moduleId,
             title: `${course.moduleTitle} - ${course.title}`,
             start: new Date(course.minDate),
             end: new Date(course.maxDate),
@@ -66,13 +81,15 @@ const Timeline = () => {
     );
   }, [sendRequest, datesSearchingRange]);
 
-  // const fixtures = [
-  //   {
-  //     title: "Introduction au HTML",
-  //     start: new Date(2024, 10, 11, 8, 30),
-  //     end: new Date(2024, 10, 11, 10, 30),
-  //   },
-  // ];
+  /*
+  const fixtures = [
+    {
+      title: "Introduction au HTML",
+      start: new Date(2024, 10, 11, 8, 30),
+      end: new Date(2024, 10, 11, 10, 30),
+    },
+  ];}
+  */
 
   return timelineData ? (
     <div className="flex flex-col gap-5">
@@ -82,6 +99,7 @@ const Timeline = () => {
       <BigCalendarTimeline
         data={timelineData}
         onRangeChange={handleRangeChange}
+        onDoubleClickEvent={handleDoubleClickEvent}
       />
     </div>
   ) : null;
