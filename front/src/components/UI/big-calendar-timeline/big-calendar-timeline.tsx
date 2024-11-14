@@ -1,6 +1,6 @@
 import moment from "moment/min/moment-with-locales";
 import "moment/locale/fr";
-import { Calendar, momentLocalizer, Views } from "react-big-calendar";
+import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import CalendarCustomToolbar from "./calendar-custom-toolbar";
 import { adjustScheduleToCurrentWeek } from "../../../utils/calendar-utils";
@@ -16,33 +16,44 @@ interface Event {
   gradient?: string;
 }
 
-const pastelColors = [
-  "#FF9AA2", // Soft red
-  "#B5EAD7", // Mint green
-  "#C7CEEA", // Periwinkle blue
-  "#FFDAC1", // Peach
-  "#FFB7B2", // Coral pink
-  "#E2F0CB", // Light lime
-];
-
-const softGradients = [
-  "linear-gradient(135deg, #FFE259, #FFA751)", // Warm yellow-orange
-  "linear-gradient(135deg, #00C6FB, #005BEA)", // Vibrant blue
-  "linear-gradient(135deg, #F093FB, #F5576C)", // Pink-red
-  "linear-gradient(135deg, #81FBB8, #28C76F)", // Fresh green
-  "linear-gradient(135deg, #FF9A9E, #FAD0C4)", // Soft coral
-  "linear-gradient(135deg, #A8EDEA, #C5D1EB)", // Aqua-blue
-];
-
-const getRandomStyle = () => {
-  const useGradient = Math.random() > 0.6; // Slightly less chance of gradient
-  if (useGradient) {
-    return softGradients[Math.floor(Math.random() * softGradients.length)];
-  }
-  return pastelColors[Math.floor(Math.random() * pastelColors.length)];
+type BigCalendarTimelineProps = {
+  data: Event[];
+  onRangeChange: (
+    range: { start: Date; end: Date } | Date[],
+    view?: View,
+  ) => void;
 };
 
-const BigCalendarTimeline = ({ data }: { data: Event[] }) => {
+const BigCalendarTimeline = ({
+  data,
+  onRangeChange,
+}: BigCalendarTimelineProps) => {
+  const pastelColors = [
+    "#FF9AA2", // Soft red
+    "#B5EAD7", // Mint green
+    "#C7CEEA", // Periwinkle blue
+    "#FFDAC1", // Peach
+    "#FFB7B2", // Coral pink
+    "#E2F0CB", // Light lime
+  ];
+
+  const softGradients = [
+    "linear-gradient(135deg, #FFE259, #FFA751)", // Warm yellow-orange
+    "linear-gradient(135deg, #00C6FB, #005BEA)", // Vibrant blue
+    "linear-gradient(135deg, #F093FB, #F5576C)", // Pink-red
+    "linear-gradient(135deg, #81FBB8, #28C76F)", // Fresh green
+    "linear-gradient(135deg, #FF9A9E, #FAD0C4)", // Soft coral
+    "linear-gradient(135deg, #A8EDEA, #C5D1EB)", // Aqua-blue
+  ];
+
+  const getRandomStyle = () => {
+    const useGradient = Math.random() > 0.6; // Slightly less chance of gradient
+    if (useGradient) {
+      return softGradients[Math.floor(Math.random() * softGradients.length)];
+    }
+    return pastelColors[Math.floor(Math.random() * pastelColors.length)];
+  };
+
   const dataAdjusted = adjustScheduleToCurrentWeek(data).map((event) => ({
     ...event,
     gradient: getRandomStyle(),
@@ -86,6 +97,7 @@ const BigCalendarTimeline = ({ data }: { data: Event[] }) => {
       })}
       step={60}
       timeslots={1}
+      onRangeChange={onRangeChange}
     />
   );
 };

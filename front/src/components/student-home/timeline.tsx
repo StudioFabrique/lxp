@@ -9,6 +9,36 @@ const Timeline = () => {
   const [timelineData, setTimelineData] =
     useState<{ title: string; start: Date; end: Date }[]>();
 
+  const [datesSearchingRange, setDatesSearchingRange] = useState<{
+    minDate: Date;
+    maxDate: Date;
+  }>({
+    minDate: new Date(
+      new Date().setDate(new Date().getDate() - new Date().getDay() + 1),
+    ),
+    maxDate: new Date(
+      new Date().setDate(new Date().getDate() - new Date().getDay() + 5),
+    ),
+  });
+
+  console.log({ datesSearchingRange });
+
+  const handleRangeChange = (
+    range:
+      | {
+          start: Date;
+          end: Date;
+        }
+      | Date[],
+  ) => {
+    if (Array.isArray(range)) {
+      setDatesSearchingRange({
+        minDate: range[0],
+        maxDate: range[range.length - 1],
+      });
+    }
+  };
+
   useEffect(() => {
     const applyData = (data: { data: Module[] }) => {
       setTimelineData(
@@ -22,8 +52,13 @@ const Timeline = () => {
       );
     };
 
-    sendRequest({ path: "/modules/timeline" }, applyData);
-  }, [sendRequest]);
+    sendRequest(
+      {
+        path: `/course/timeline?minDate=${datesSearchingRange.minDate}&maxDate=${datesSearchingRange.maxDate}`,
+      },
+      applyData,
+    );
+  }, [sendRequest, datesSearchingRange]);
 
   const fixtures = [
     {
@@ -133,7 +168,7 @@ const Timeline = () => {
       <h2 className="text-base-content font-bold text-xl">
         Mon emploi du temps
       </h2>
-      <BigCalendarTimeline data={fixtures} />
+      <BigCalendarTimeline data={fixtures} onRangeChange={handleRangeChange} />
     </div>
   ) : null;
 };
