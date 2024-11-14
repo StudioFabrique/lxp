@@ -1,101 +1,128 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+// Import des dépendances nécessaires
 import useHttp from "../../../hooks/use-http";
 import Activity from "../../../utils/interfaces/activity";
 import { useParams } from "react-router-dom";
 import VideoEditor from "./video-editor";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import VideoPlayer from "../../UI/video-player";
 
+// Interface définissant les props du composant Video
 interface VideoProps {
-  activity?: Activity;
-  onCancel: () => void;
-  isEditing: boolean;
+  activity?: Activity; // Activité vidéo optionnelle
+  onCancel: () => void; // Fonction appelée lors de l'annulation
+  isEditing: boolean; // État d'édition
 }
 
-function isValidYouTubeUrl(url: string) {
+// Fonction utilitaire pour valider les URLs YouTube
+const isValidYouTubeUrl = (url: string) => {
   const pattern = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
   return pattern.test(url);
-}
+};
 
 export default function Video({ activity, onCancel, isEditing }: VideoProps) {
+  // Récupération de l'ID de la leçon depuis les paramètres d'URL
   const { lessonId } = useParams();
   const { sendRequest } = useHttp();
   const [loading, setLoading] = useState(false);
 
-  const handleCancelEditVideo = () => {
-    onCancel();
-  };
-
-  const handleSubmit = (value: {
-    title: string;
-    description: string | null;
-    videoValue: string;
-    fileValue: File | null;
-  }) => {
-    const fd = new FormData();
-    fd.append(
-      "data",
-      JSON.stringify({
-        title: value.title,
-        description: value.description,
-        url: value.fileValue ? "" : value.videoValue,
-      })
-    );
-    if (value.fileValue) {
-      fd.append("video", value.fileValue);
-    }
-    if (value.videoValue && !value.fileValue) {
-      if (!isValidYouTubeUrl(value.videoValue)) {
+  // Gestionnaire de soumission du formulaire
+  const handleSubmit = useCallback(
+    async (value: {
+      title: string;
+      description: string | null;
+      videoValue: string;
+      fileValue: File | null;
+    }) => {
+      // Validation de l'URL YouTube si c'est une vidéo externe
+      if (
+        value.videoValue &&
+        !value.fileValue &&
+        !isValidYouTubeUrl(value.videoValue)
+      ) {
         toast.error("URL YouTube invalide");
-        setLoading(false);
         return;
       }
-    }
-    const applyData = (data: {
-      success: boolean;
-      message: string;
-      response: Activity;
-    }) => {
-      if (data.success) {
-        toast.success(data.message);
-        onCancel();
+
+      setLoading(true);
+
+      // Préparation des données à envoyer
+      const fd = new FormData();
+      fd.append(
+        "data",
+        JSON.stringify({
+          title: value.title,
+          description: value.description,
+          url: value.fileValue ? "" : value.videoValue,
+        })
+      );
+
+      // Ajout du fichier vidéo si présent
+      if (value.fileValue) {
+        fd.append("video", value.fileValue);
+      }
+
+      try {
+        // Envoi de la requête au serveur
+        const response = await sendRequest({
+          path: `/activity/video/${activity?.id ?? lessonId}`,
+          method: activity ? "put" : "post", // PUT si modification, POST si création
+          body: fd,
+        });
+
+        if (response.success) {
+          toast.success(response.message);
+          onCancel();
+        }
+      } catch (error) {
+        toast.error("Une erreur est survenue");
+      } finally {
         setLoading(false);
       }
-    };
-    setLoading(true);
-    sendRequest(
-      {
-        path: `/activity/video/${activity?.id ?? lessonId}`,
-        method: activity ? "put" : "post",
-        body: fd,
-      },
-      applyData
-    );
-    setLoading(false);
-    onCancel();
-  };
+    },
+    [activity, lessonId, onCancel, sendRequest]
+  );
 
-  return (
-    <main className="w-full flex justify-center mt-4">
-      {activity !== undefined && isEditing ? (
+  // Fonction pour rendre le contenu approprié selon le contexte
+  const renderContent = () => {
+    // Mode édition d'une activité existante
+    if (activity && isEditing) {
+      return (
         <VideoEditor
           propVideo={activity.url}
           title={activity.title ?? ""}
           description={activity.description ?? ""}
           loading={loading}
           onSubmit={handleSubmit}
-          onCancel={handleCancelEditVideo}
+          onCancel={onCancel}
         />
-      ) : null}
-      {activity !== undefined && !isEditing ? (
+      );
+    }
+
+    // Mode visualisation d'une activité existante
+    if (activity && !isEditing) {
+      return (
         <VideoPlayer
           source={activity.url}
           title={activity.title!}
           description={activity.description}
         />
-      ) : null}
-    </main>
+      );
+    }
+
+    // Mode création d'une nouvelle activité
+    return (
+      <VideoEditor
+        onSubmit={handleSubmit}
+        onCancel={onCancel}
+        loading={loading}
+      />
+    );
+  };
+
+  return (
+    <main className="w-full flex justify-center mt-4">{renderContent()}</main>
   );
 }

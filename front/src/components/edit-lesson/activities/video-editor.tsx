@@ -17,8 +17,8 @@ import { activiteMetaDataSchema } from "../../../lib/validation/lesson/activite-
 interface VideoEditorProps {
   propVideo?: string;
   loading: boolean;
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   onCancel: () => void;
   onSubmit: (value: {
     videoValue: string;

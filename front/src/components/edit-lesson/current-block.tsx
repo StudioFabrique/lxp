@@ -8,7 +8,7 @@ type CurrentBlockProps = {
   setActivityType: Dispatch<SetStateAction<string>>;
 };
 
-export default function wCurrentBlock({
+export default function CurrentBlock({
   activityType,
   setActivityType,
 }: CurrentBlockProps) {
