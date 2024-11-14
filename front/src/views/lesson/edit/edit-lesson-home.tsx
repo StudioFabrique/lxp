@@ -34,10 +34,9 @@ export default function EditLessonHome() {
           </div>
           <button
             className="btn btn-primary"
-            onClick={() => setCreateActivity(true)}
-            disabled={createActivity}
+            onClick={() => setCreateActivity((prevState) => !prevState)}
           >
-            Ajouter une activité
+            {createActivity ? "Annuler" : "Ajouter une activité"}
           </button>
         </article>
 
