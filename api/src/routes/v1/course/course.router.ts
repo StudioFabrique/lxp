@@ -42,6 +42,7 @@ import httpGetCoursesByModule from "../../../controllers/course/http-get-courses
 import httpPutReorderCourses from "../../../controllers/course/http-put-reorder-coursers";
 import httpGetMostReadCourses from "../../../controllers/course/http-get-most-read-courses";
 import { httpDeleteCourse } from "../../../controllers/course/http-delete-course";
+import httpGetCoursesTimeline from "../../../controllers/course/http-get-courses-timeline";
 
 const courseRouter = express.Router();
 
@@ -75,6 +76,12 @@ courseRouter.post("/", postCourseValidator, httpPostCourse);
 
 // retourne la liste de tous les cours
 courseRouter.get("/", httpGetCourses);
+
+courseRouter.get(
+  "/timeline",
+  // add validators here
+  httpGetCoursesTimeline,
+);
 
 courseRouter.get("/most-read", httpGetMostReadCourses);
 
