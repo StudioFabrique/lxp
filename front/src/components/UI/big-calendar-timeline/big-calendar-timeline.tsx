@@ -8,12 +8,15 @@ import { adjustScheduleToCurrentWeek } from "../../../utils/calendar-utils";
 moment.locale("fr");
 const localizer = momentLocalizer(moment);
 
-interface Event {
+export interface Event {
+  id: number;
+  alternateId?: number;
   title: string;
   start: Date;
   end: Date;
   color?: string;
   gradient?: string;
+  link?: string;
 }
 
 type BigCalendarTimelineProps = {
@@ -22,11 +25,13 @@ type BigCalendarTimelineProps = {
     range: { start: Date; end: Date } | Date[],
     view?: View,
   ) => void;
+  onDoubleClickEvent?: (event: Event) => void;
 };
 
 const BigCalendarTimeline = ({
   data,
   onRangeChange,
+  onDoubleClickEvent,
 }: BigCalendarTimelineProps) => {
   const pastelColors = [
     "#FF9AA2", // Soft red
@@ -98,6 +103,7 @@ const BigCalendarTimeline = ({
       step={60}
       timeslots={1}
       onRangeChange={onRangeChange}
+      onDoubleClickEvent={onDoubleClickEvent}
     />
   );
 };
