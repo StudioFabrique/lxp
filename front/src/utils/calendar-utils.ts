@@ -25,7 +25,6 @@ export const adjustScheduleToCurrentWeek = (
   data: LessonData[],
   timeConfig: TimeConfig = {},
 ): { title: string; start: Date; end: Date }[] => {
-  console.log({ data });
   const defaultConfig = {
     startTime: { hours: 8, minutes: 30 },
     endTime: { hours: 16, minutes: 30 },
@@ -37,23 +36,24 @@ export const adjustScheduleToCurrentWeek = (
 
   return data
     .map((item) => {
-      const minDate = item.start;
-      const maxDate = item.end;
+      const minDate = new Date(item.start);
+      const maxDate = new Date(item.end);
 
       // Créer les plages horaires pour chaque jour entre minDate et maxDate
       const events = [];
 
-      while (minDate <= maxDate) {
+      const currentDate = new Date(minDate);
+      while (currentDate <= maxDate) {
         // Ne considérer que les jours de semaine (lundi-vendredi)
-        if (minDate.getDay() !== 0 && minDate.getDay() !== 6) {
+        if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
           // Période du matin
-          const morningStart = new Date(minDate);
+          const morningStart = new Date(currentDate);
           morningStart.setHours(
             config.startTime.hours,
             config.startTime.minutes,
             0,
           );
-          const morningEnd = new Date(minDate);
+          const morningEnd = new Date(currentDate);
           morningEnd.setHours(
             config.breakStart.hours,
             config.breakStart.minutes,
@@ -67,13 +67,13 @@ export const adjustScheduleToCurrentWeek = (
           });
 
           // Période de l'après-midi
-          const afternoonStart = new Date(minDate);
+          const afternoonStart = new Date(currentDate);
           afternoonStart.setHours(
             config.breakEnd.hours,
             config.breakEnd.minutes,
             0,
           );
-          const afternoonEnd = new Date(minDate);
+          const afternoonEnd = new Date(currentDate);
           afternoonEnd.setHours(
             config.endTime.hours,
             config.endTime.minutes,
@@ -87,9 +87,8 @@ export const adjustScheduleToCurrentWeek = (
           });
         }
 
-        minDate.setDate(minDate.getDate() + 1);
+        currentDate.setDate(currentDate.getDate() + 1);
       }
-      console.log({ events });
 
       return events;
     })

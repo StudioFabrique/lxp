@@ -66,13 +66,15 @@ const Timeline = () => {
     );
   }, [sendRequest, datesSearchingRange]);
 
-  // const fixtures = [
-  //   {
-  //     title: "Introduction au HTML",
-  //     start: new Date(2024, 10, 11, 8, 30),
-  //     end: new Date(2024, 10, 11, 10, 30),
-  //   },
-  // ];
+  /*
+  const fixtures = [
+    {
+      title: "Introduction au HTML",
+      start: new Date(2024, 10, 11, 8, 30),
+      end: new Date(2024, 10, 11, 10, 30),
+    },
+  ];}
+  */
 
   return timelineData ? (
     <div className="flex flex-col gap-5">
