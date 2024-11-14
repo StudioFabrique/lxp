@@ -18,6 +18,7 @@ export default async function getCoursesTimeline(
       id: true,
       title: true,
       dates: true,
+      module: { select: { title: true } },
     },
     where: {
       module: {
@@ -62,6 +63,7 @@ export default async function getCoursesTimeline(
       ) {
         acc.push({
           id: course.id,
+          moduleTitle: course.module.title,
           title: course.title,
           minDate: date.minDate,
           maxDate: date.maxDate,

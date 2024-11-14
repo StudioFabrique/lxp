@@ -25,8 +25,6 @@ export default async function httpGetCoursesTimeline(
       data: response,
     });
   } catch (error: any) {
-    console.log({ error });
-
     return res
       .status(error.statusCode ?? 500)
       .json({ message: error.message ?? serverIssue });
