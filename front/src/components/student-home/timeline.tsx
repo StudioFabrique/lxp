@@ -27,8 +27,6 @@ const Timeline = () => {
     ),
   });
 
-  console.log({ datesSearchingRange });
-
   const handleRangeChange = (
     range:
       | {
@@ -47,6 +45,8 @@ const Timeline = () => {
 
   useEffect(() => {
     const applyData = (data: { data: CourseFormatted[] }) => {
+      console.log({ data });
+
       setTimelineData(
         data.data
           .filter((course) => course.minDate && course.maxDate)
