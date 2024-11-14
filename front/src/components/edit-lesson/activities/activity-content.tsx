@@ -1,5 +1,6 @@
 import Activity from "../../../utils/interfaces/activity";
 import BlogUpdate from "./blog-update";
+import ImageActivityPreview from "./image/image-activity-preview";
 import Video from "./video";
 
 const ActivityContent = ({
@@ -25,6 +26,15 @@ const ActivityContent = ({
   if (activity.type === "video") {
     return (
       <Video activity={activity} onCancel={onCancel} isEditing={isEditing} />
+    );
+  }
+  if (activity.type === "image") {
+    return (
+      <ImageActivityPreview
+        activity={activity}
+        isEditing={isEditing}
+        onCancel={onCancel}
+      />
     );
   }
   return null;

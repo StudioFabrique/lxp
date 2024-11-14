@@ -1,6 +1,6 @@
 import Editor from "../markdown-editor/mark-down-editor";
 import Video from "./activities/video";
-import ImageActivity from "./activities/image/image-activity-editor";
+import ImageActivityEditor from "./activities/image/image-activity-editor";
 import { Dispatch, SetStateAction } from "react";
 
 type CurrentBlockProps = {
@@ -24,7 +24,9 @@ export default function CurrentBlock({
           {activityType === "video" ? (
             <Video onCancel={handleCancel} isEditing={true} />
           ) : null}
-          {activityType === "image" ? <ImageActivity /> : null}
+          {activityType === "image" ? (
+            <ImageActivityEditor onCancel={handleCancel} />
+          ) : null}
         </>
       ) : null}
     </>
