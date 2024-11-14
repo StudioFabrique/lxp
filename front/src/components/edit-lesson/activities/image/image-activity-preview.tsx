@@ -1,22 +1,27 @@
 import { ACTIVITIES } from "../../../../config/urls";
+import Activity from "../../../../utils/interfaces/activity";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
+import ImageActivityEditor from "./image-activity-editor";
 
 type Props = {
-  title: string;
-  description: string;
-  url: string;
+  activity: Activity;
+  isEditing: boolean;
+  onCancel: () => void;
 };
 
 export default function ImageActivityPreview({
-  title,
-  description,
-  url,
+  activity,
+  isEditing,
+  onCancel,
 }: Props) {
   return (
-    <Wrapper>
-      <h2>{title}</h2>
-      <img src={`${ACTIVITIES}images/${url}`} />
-      <h3>{description}</h3>
-    </Wrapper>
+    <>
+      {isEditing ? (
+        <ImageActivityEditor activity={activity} onCancel={onCancel} />
+      ) : null}
+      <Wrapper>
+        <img src={`${ACTIVITIES}images/${activity.url}`} />
+      </Wrapper>
+    </>
   );
 }

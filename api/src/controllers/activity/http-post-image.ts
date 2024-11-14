@@ -25,7 +25,9 @@ export default async function httpPostImage(
       const result = {
         statusCode: 201,
         data: {
-          ...response,
+          success: true,
+          message: "Activité créée avec succès.",
+          response,
         },
       };
       next(result);

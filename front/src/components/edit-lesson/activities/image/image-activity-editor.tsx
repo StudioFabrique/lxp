@@ -13,14 +13,21 @@ import SubmitButton from "../../../UI/submit-button";
 import toast from "react-hot-toast";
 import useHttp from "../../../../hooks/use-http";
 import SuccessWithMessage from "../../../../utils/interfaces/success-with-message";
+import { useParams } from "react-router-dom";
 
-export default function ImageActivity() {
+type Props = {
+  activity?: Activity;
+  onCancel: () => void;
+};
+
+export default function ImageActivityEditor({ activity, onCancel }: Props) {
   const { errors, values, onChangeValue, onValidationErrors, onResetForm } =
-    useForm();
+    useForm({ activi });
   const data = { values, errors, onChangeValue };
   const [image, setImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const { sendRequest } = useHttp();
+  const { lessonId } = useParams();
 
   const classImage: React.CSSProperties = {
     backgroundImage: `url('${image ?? defaultImage}')`,
@@ -46,7 +53,6 @@ export default function ImageActivity() {
   });
 
   const handleSubmit = (event: React.FormEvent) => {
-    console.log({ file });
     event.preventDefault();
     try {
       imageActivitySchema.parse(values);
@@ -68,11 +74,12 @@ export default function ImageActivity() {
     const applyData = (data: SuccessWithMessage) => {
       if (data.success) {
         toast.success(data.message);
+        onCancel();
       }
     };
     sendRequest(
       {
-        path: `/activity/image/${1}`,
+        path: `/activity/image/${lessonId}`,
         method: "post",
         body: formData,
       },
