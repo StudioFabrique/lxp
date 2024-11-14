@@ -17,7 +17,7 @@ model Activity {
   url         String
   lessonId    Int
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   authorId    Int
   author      Admin    @relation(fields: [authorId], references: [id])
   lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
@@ -30,7 +30,7 @@ model Formation {
   code        String
   level       String
   createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
   modules     ModulesOnFormation[]
   parcours    Parcours[]
   tags        TagsOnFormation[]
@@ -48,7 +48,7 @@ model Parcours {
   image        Bytes?
   thumb        Bytes?
   createdAt    DateTime             @default(now())
-  updatedAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
   author       String
   visibility   Boolean              @default(false)
   adminId      Int
@@ -77,7 +77,7 @@ model Module {
   minDate     DateTime?
   maxDate     DateTime?
   createdAt   DateTime              @default(now())
-  updatedAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
   author      String
   adminId     Int
   bonusSkills BonusSkillsOnModule[]
@@ -94,7 +94,7 @@ model OpenBadge {
   image     Bytes
   url       String
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Tag {
@@ -102,7 +102,7 @@ model Tag {
   name       String            @unique
   color      String
   createdAt  DateTime          @default(now())
-  updatedAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
   lessons    Lesson[]
   courses    TagsOnCourse[]
   formations TagsOnFormation[]
@@ -113,7 +113,7 @@ model Skill {
   id          Int                @id @default(autoincrement())
   description String             @unique
   createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
   badge       String?
   parcours    SkillsOnParcours[]
 }
@@ -122,7 +122,7 @@ model BonusSkill {
   id          Int                   @id @default(autoincrement())
   description String
   createdAt   DateTime              @default(now())
-  updatedAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
   badge       String?
   parcoursId  Int
   parcours    Parcours              @relation(fields: [parcoursId], references: [id])
@@ -165,7 +165,7 @@ model Contact {
   name      String
   role      String
   createdAt DateTime             @default(now())
-  updatedAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
   courses   ContactsOnCourse[]
   modules   ContactsOnModule[]
   parcours  ContactsOnParcours[]
@@ -184,7 +184,7 @@ model Course {
   order        Int
   isPublished  Boolean              @default(false)
   createdAt    DateTime             @default(now())
-  updatedAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
   author       String
   adminId      Int
   bonusSkills  BonusSkillOnCourse[]
@@ -202,7 +202,7 @@ model Lesson {
   description String
   modalite    String
   createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
   author      String
   adminId     Int
   courseId    Int
@@ -221,7 +221,7 @@ model Objective {
   id          Int                  @id @default(autoincrement())
   description String
   createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
   parcoursId  Int
   parcours    Parcours             @relation(fields: [parcoursId], references: [id])
   courses     ObjectivesOnCourse[]

@@ -21,6 +21,8 @@ export default async function getLessonDetail(lessonId: number) {
           url: true,
           title: true,
           description: true,
+          createdAt: true,
+          updatedAt: true,
         },
         orderBy: { order: "asc" },
       },
