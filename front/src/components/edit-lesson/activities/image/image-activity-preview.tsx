@@ -6,22 +6,23 @@ import ImageActivityEditor from "./image-activity-editor";
 type Props = {
   activity: Activity;
   isEditing: boolean;
-  onCancel: () => void;
+  onSubmitted: (value: boolean) => void;
 };
 
 export default function ImageActivityPreview({
   activity,
   isEditing,
-  onCancel,
+  onSubmitted,
 }: Props) {
   return (
     <>
       {isEditing ? (
-        <ImageActivityEditor activity={activity} onCancel={onCancel} />
-      ) : null}
-      <Wrapper>
-        <img src={`${ACTIVITIES}images/${activity.url}`} />
-      </Wrapper>
+        <ImageActivityEditor activity={activity} onCancel={onSubmitted} />
+      ) : (
+        <Wrapper>
+          <img src={`${ACTIVITIES}images/${activity.url}`} />
+        </Wrapper>
+      )}
     </>
   );
 }

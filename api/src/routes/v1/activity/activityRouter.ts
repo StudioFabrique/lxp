@@ -23,6 +23,7 @@ import httpPutActivityText from "../../../controllers/activity/http-put-activity
 import httpPostActivityText from "../../../controllers/activity/http-post-activity-text";
 import httpPostActivityVideo from "../../../controllers/activity/http-post-activity-video";
 import httpPutActivityVideo from "../../../controllers/activity/http-put-activity-video";
+import httpPutImage from "../../../controllers/activity/http-put-image";
 
 const activityRouter = express.Router();
 
@@ -94,6 +95,16 @@ activityRouter.post(
   uploadActivityImage(),
   jsonParser,
   httpPostImage
+);
+
+// met à jour une activité de type image
+activityRouter.put(
+  "/image/:activityId",
+  checkPermissions("lesson"),
+  uploadActivityImage(),
+  jsonParser,
+  activityIdValidator,
+  httpPutImage
 );
 
 // récupère une activité

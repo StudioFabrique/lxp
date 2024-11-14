@@ -14,15 +14,17 @@ import toast from "react-hot-toast";
 import useHttp from "../../../../hooks/use-http";
 import SuccessWithMessage from "../../../../utils/interfaces/success-with-message";
 import { useParams } from "react-router-dom";
+import Activity from "../../../../utils/interfaces/activity";
+import { ACTIVITIES } from "../../../../config/urls";
 
 type Props = {
   activity?: Activity;
-  onCancel: () => void;
+  onCancel: (value: boolean) => void;
 };
 
 export default function ImageActivityEditor({ activity, onCancel }: Props) {
   const { errors, values, onChangeValue, onValidationErrors, onResetForm } =
-    useForm({ activi });
+    useForm();
   const data = { values, errors, onChangeValue };
   const [image, setImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -30,7 +32,9 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
   const { lessonId } = useParams();
 
   const classImage: React.CSSProperties = {
-    backgroundImage: `url('${image ?? defaultImage}')`,
+    backgroundImage: `url('${
+      image ?? (activity ? `${ACTIVITIES}images/${activity.url}` : defaultImage)
+    }')`,
     width: "100%",
     height: "100%",
     backgroundSize: "cover",
@@ -58,29 +62,30 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
       imageActivitySchema.parse(values);
     } catch (error: unknown) {
       if (error instanceof ZodError) {
-        console.log({ error });
         const errors = validationErrors(error);
         onValidationErrors(errors);
         return;
       }
     }
-    if (!file) {
+    if (!activity && !file) {
       toast.error("Un fichier est requis");
       return;
     }
     const formData = new FormData();
     formData.append("data", JSON.stringify(values));
-    formData.append("image", file);
+    if (file) {
+      formData.append("image", file);
+    }
     const applyData = (data: SuccessWithMessage) => {
       if (data.success) {
         toast.success(data.message);
-        onCancel();
+        onCancel(false);
       }
     };
     sendRequest(
       {
-        path: `/activity/image/${lessonId}`,
-        method: "post",
+        path: `/activity/image/${activity?.id ?? lessonId}`,
+        method: activity ? "put" : "post",
         body: formData,
       },
       applyData
@@ -98,6 +103,13 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
       reader.readAsDataURL(file);
     }
   }, [file]);
+
+  useEffect(() => {
+    if (activity) {
+      onChangeValue("title", activity.title!);
+      onChangeValue("description", activity.description!);
+    }
+  }, [activity, onChangeValue]);
 
   return (
     <div className="w-full h-[30rem] gap-8 grid grid-cols-1 2xl:grid-cols-2 p-6">

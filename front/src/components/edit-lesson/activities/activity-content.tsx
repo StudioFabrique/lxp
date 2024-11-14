@@ -33,7 +33,7 @@ const ActivityContent = ({
       <ImageActivityPreview
         activity={activity}
         isEditing={isEditing}
-        onCancel={onCancel}
+        onSubmitted={onSubmitted}
       />
     );
   }
