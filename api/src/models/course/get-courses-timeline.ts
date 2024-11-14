@@ -52,18 +52,24 @@ export default async function getCoursesTimeline(
   });
 
   const coursesFormatted = courses.reduce<any>((acc, course) => {
-    for (const date of course.dates) {
-      acc.push({
-        id: course.id,
-        title: course.title,
-        // minDate: date.minDate,
-        // maxDate: date.maxDate,
-      });
+    for (const date of course.dates as {
+      minDate: string;
+      maxDate: string;
+    }[]) {
+      if (
+        new Date(date.minDate) >= new Date(minDate) &&
+        new Date(date.maxDate) <= new Date(maxDate)
+      ) {
+        acc.push({
+          id: course.id,
+          title: course.title,
+          minDate: date.minDate,
+          maxDate: date.maxDate,
+        });
+      }
     }
     return acc;
   }, []);
 
-  console.log({ courses, coursesFormatted });
-
-  return courses;
+  return coursesFormatted;
 }

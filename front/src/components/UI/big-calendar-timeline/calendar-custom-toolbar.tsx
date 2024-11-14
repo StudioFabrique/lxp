@@ -92,7 +92,9 @@ const CalendarCustomToolbar = (toolbar: ToolbarProps) => {
           <ArrowRight />
         </button>
       </span>
-      <span className="rbc-toolbar-label">{toolbar.label}</span>
+      <span className="rbc-toolbar-label font-bold text-base-content">
+        {toolbar.label}
+      </span>
     </div>
   );
 };
