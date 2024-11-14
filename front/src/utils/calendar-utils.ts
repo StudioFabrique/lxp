@@ -2,55 +2,96 @@
  * Utilitaires pour React Big Calendar
  */
 
-/**
- * Obtient la date du lundi le plus récent
- * @returns {Date} Date du lundi le plus récent
- */
-const getLatestMonday = (): Date => {
-  const today = new Date();
-  const dayOfWeek = today.getDay();
-  const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-  const latestMonday = today;
-  latestMonday.setDate(today.getDate() - daysSinceMonday);
-  return latestMonday;
-};
+interface TimeConfig {
+  startTime?: { hours: number; minutes: number };
+  endTime?: { hours: number; minutes: number };
+  breakStart?: { hours: number; minutes: number };
+  breakEnd?: { hours: number; minutes: number };
+}
+
+interface LessonData {
+  title: string;
+  start: Date;
+  end: Date;
+}
 
 /**
- * Ajuste un tableau de leçons pour correspondre à la semaine en cours
- * @param {Array} lessons - Tableau d'objets leçons avec titre, date de début et de fin
- * @returns {Array} Tableau de leçons avec dates ajustées à la semaine courante
+ * Ajuste un tableau de leçons pour correspondre à la semaine en cours avec des horaires définis
+ * @param {Array} data - Tableau d'objets leçons contenant les dates min et max
+ * @param {Object} timeConfig - Configuration des horaires (optionnel)
+ * @returns {Array} Tableau de leçons avec dates et heures ajustées
  */
 export const adjustScheduleToCurrentWeek = (
-  data: { title: string; start: Date; end: Date }[],
+  data: LessonData[],
+  timeConfig: TimeConfig = {},
 ): { title: string; start: Date; end: Date }[] => {
-  const latestMonday = getLatestMonday();
+  console.log({ data });
+  const defaultConfig = {
+    startTime: { hours: 8, minutes: 30 },
+    endTime: { hours: 16, minutes: 30 },
+    breakStart: { hours: 12, minutes: 0 },
+    breakEnd: { hours: 13, minutes: 0 },
+  };
 
-  return data.map((item) => {
-    const lessonDayOfWeek = item.start.getDay();
+  const config = { ...defaultConfig, ...timeConfig };
 
-    // Calcule le nombre de jours depuis lundi (dimanche = 6 jours)
-    const daysFromMonday = lessonDayOfWeek === 0 ? 6 : lessonDayOfWeek - 1;
+  return data
+    .map((item) => {
+      const minDate = item.start;
+      const maxDate = item.end;
 
-    const adjustedStartDate = new Date(latestMonday);
+      // Créer les plages horaires pour chaque jour entre minDate et maxDate
+      const events = [];
 
-    // Ajuste la date de début au bon jour de la semaine
-    adjustedStartDate.setDate(latestMonday.getDate() + daysFromMonday);
-    adjustedStartDate.setHours(
-      item.start.getHours(),
-      item.start.getMinutes(),
-      item.start.getSeconds(),
-    );
-    const adjustedEndDate = new Date(adjustedStartDate);
-    adjustedEndDate.setHours(
-      item.end.getHours(),
-      item.end.getMinutes(),
-      item.end.getSeconds(),
-    );
+      while (minDate <= maxDate) {
+        // Ne considérer que les jours de semaine (lundi-vendredi)
+        if (minDate.getDay() !== 0 && minDate.getDay() !== 6) {
+          // Période du matin
+          const morningStart = new Date(minDate);
+          morningStart.setHours(
+            config.startTime.hours,
+            config.startTime.minutes,
+            0,
+          );
+          const morningEnd = new Date(minDate);
+          morningEnd.setHours(
+            config.breakStart.hours,
+            config.breakStart.minutes,
+            0,
+          );
 
-    return {
-      title: item.title,
-      start: adjustedStartDate,
-      end: adjustedEndDate,
-    };
-  });
+          events.push({
+            title: item.title,
+            start: morningStart,
+            end: morningEnd,
+          });
+
+          // Période de l'après-midi
+          const afternoonStart = new Date(minDate);
+          afternoonStart.setHours(
+            config.breakEnd.hours,
+            config.breakEnd.minutes,
+            0,
+          );
+          const afternoonEnd = new Date(minDate);
+          afternoonEnd.setHours(
+            config.endTime.hours,
+            config.endTime.minutes,
+            0,
+          );
+
+          events.push({
+            title: item.title,
+            start: afternoonStart,
+            end: afternoonEnd,
+          });
+        }
+
+        minDate.setDate(minDate.getDate() + 1);
+      }
+      console.log({ events });
+
+      return events;
+    })
+    .flat();
 };
