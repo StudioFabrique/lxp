@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { localeDate } from "../../helpers/locale-date";
 import Parcours from "../../utils/interfaces/parcours";
 import DeleteIcon from "../UI/svg/delete-icon.component";
@@ -14,15 +14,16 @@ import { truncateText } from "../../helpers/truncate-text";
 
 interface ParcoursCardProps {
   parcours: Parcours;
+  onDeleteParcours: (id: number) => void;
 }
 
-const ParcoursCard = ({ parcours }: ParcoursCardProps) => {
-  const nav = useNavigate();
+const ParcoursCard = (props: ParcoursCardProps) => {
+  const { parcours, onDeleteParcours } = props;
   const [image, setImage] = useState<string | null>(null);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleDeleteParcours = (_id: number) => {
-    nav(``);
+    onDeleteParcours(_id);
   };
 
   useEffect(() => {
