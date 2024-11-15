@@ -5,6 +5,8 @@ import BookIcon from "../../UI/svg/book-icon";
 import Can from "../../UI/can/can.component";
 import { useDispatch } from "react-redux";
 import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
+import { useMemo } from "react";
+import { displayDate } from "../../../helpers/dispaly-dates";
 
 type Props = {
   activity: Activity;
@@ -19,6 +21,13 @@ export default function ActivityListItem({
 }: Props) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const date = useMemo(
+    () => displayDate(activity.createdAt, activity.updatedAt),
+    [activity.createdAt, activity.updatedAt]
+  );
+
+  console.log({ date });
 
   const handleGoToActivity = () => {
     console.log({ activity });
@@ -46,6 +55,7 @@ export default function ActivityListItem({
         </span>
       </div>
       <span className="flex items-center gap-x-4">
+        <p className="text-base-content/50 text-xs italic">{date}</p>
         <Can action="update" object="lesson">
           <button
             onClick={handleGoToActivity}

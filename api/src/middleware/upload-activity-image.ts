@@ -17,7 +17,6 @@ export const uploadActivityImage = () => {
         const uniqueID: string = uuidv4();
         const fileName: string = uniqueID + new Date().getTime();
         const ext = file.mimetype.split("/")[1];
-        console.log(file);
 
         cb(null, file.fieldname + "-" + fileName + "." + ext);
       } else {
@@ -29,7 +28,7 @@ export const uploadActivityImage = () => {
   return (req: Request, res: Response, next: NextFunction) => {
     const upload = multer({
       storage: storage,
-      limits: { fileSize: 1 * 1024 * 1024 },
+      limits: { fileSize: 10 * 1024 * 1024 },
     }).single("image");
 
     upload(req, res, function (err) {

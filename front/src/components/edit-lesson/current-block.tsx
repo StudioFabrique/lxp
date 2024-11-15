@@ -1,44 +1,27 @@
 import Editor from "../markdown-editor/mark-down-editor";
 import Video from "./activities/video";
-import ImageActivity from "./activities/image/image-activity-editor";
-import { Dispatch, SetStateAction } from "react";
+import ImageActivityEditor from "./activities/image/image-activity-editor";
 
 type CurrentBlockProps = {
-  isSubmitting: boolean;
   activityType: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSubmit: (
-    description: string,
-    value: string,
-    title: string,
-    type: string
-  ) => void;
-  setActivityType: Dispatch<SetStateAction<string>>;
+  onFinish: () => void;
 };
 
 export default function CurrentBlock({
   activityType,
-  isSubmitting,
-  setActivityType,
-  onSubmit,
+  onFinish,
 }: CurrentBlockProps) {
-  const handleCancel = () => {
-    setActivityType("");
-  };
-
   return (
     <>
       {activityType ? (
         <>
-          {activityType === "text" ? (
-            <Editor
-              onSubmit={onSubmit}
-              isSubmitting={isSubmitting}
-              onCancel={handleCancel}
-            />
+          {activityType === "text" ? <Editor onCancel={onFinish} /> : null}
+          {activityType === "video" ? (
+            <Video onCancel={onFinish} isEditing={true} />
           ) : null}
-          {activityType === "video" ? <Video /> : null}
-          {activityType === "image" ? <ImageActivity /> : null}
+          {activityType === "image" ? (
+            <ImageActivityEditor onCancel={onFinish} />
+          ) : null}
         </>
       ) : null}
     </>

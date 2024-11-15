@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import BlogUpdate from "../../../components/edit-lesson/activities/blog-update";
 import Activity from "../../../utils/interfaces/activity";
 import { useCallback, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
-import { displayDate } from "../../../helpers/dispaly-dates";
+import ActivityHeader from "../../../components/edit-lesson/activities/activity-header";
+import ActivityContent from "../../../components/edit-lesson/activities/activity-content";
+import ActivityMetadata from "../../../components/edit-lesson/activities/activity-metadata";
+import { useParams } from "react-router-dom";
 
 function PreviewActivity() {
   const { activityId } = useParams();
@@ -22,8 +21,15 @@ function PreviewActivity() {
     sendRequest({ path: `/activity/${activityId}` }, applyData);
   }, [activityId, sendRequest]);
 
-  const onSubmitted = (newValue: boolean) => {
+  const handleSubmitted = (newValue: boolean) => {
     setIsEditing(newValue);
+    getActivity();
+  };
+
+  const toggleEditing = () => setIsEditing((prev) => !prev);
+
+  const handleCancel = () => {
+    setIsEditing(false);
     getActivity();
   };
 
@@ -31,65 +37,46 @@ function PreviewActivity() {
     getActivity();
   }, [getActivity]);
 
-  console.log({ activity });
+  if (!activity) return null;
 
   return (
     <main className="w-full">
-      {activity && isEditing ? (
-        <section className="w-full flex flex-col gap-y-4 mb-4">
-          <article className="w-full flex justify-between items-center">
-            <h1 className="text-xl font-bold">Mise à jour de l'activité</h1>
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={() => setIsEditing((prevState) => !prevState)}
-            >
-              Annuler
-            </button>
-          </article>
-          <article>
-            {activity && activity.type === "text" ? (
-              <BlogUpdate
+      <section className="w-full flex flex-col gap-y-4 mb-4">
+        {isEditing ? (
+          <>
+            <ActivityHeader
+              title="Mise à jour de l'activité"
+              onCancel={handleCancel}
+            />
+            <article>
+              <ActivityContent
                 activity={activity}
                 isEditing={isEditing}
-                onSubmitted={onSubmitted}
+                onSubmitted={handleSubmitted}
+                onCancel={handleCancel}
               />
-            ) : null}
-          </article>
-        </section>
-      ) : activity ? (
-        <section className="w-full flex flex-col gap-y-4 mb-4">
-          <article className="w-full flex justify-between items-center">
-            <h1 className="text-xl font-bold">Aperçu de l'activité</h1>
-            <Link className="btn btn-primary btn-sm" to={".."}>
-              Retour
-            </Link>
-          </article>
-          <article className="flex items-center justify-between">
-            <span>
-              <h2 className="text-lg font-bold">{activity?.title}</h2>
-              <p className="text-sm text-gray-500">{activity?.description}</p>
-            </span>
-            <span className="text-xs italic opacity-50">
-              {displayDate(activity.createdAt, activity.updatedAt)}
-            </span>
-          </article>
-          <article>
-            <BlogUpdate
-              activity={activity}
-              isEditing={isEditing}
-              onSubmitted={onSubmitted}
-            />
-          </article>
-          <div className="flex justify-end">
-            <button
-              className="btn btn-primary"
-              onClick={() => setIsEditing((prevState) => !prevState)}
-            >
-              Editer
-            </button>
-          </div>
-        </section>
-      ) : null}
+            </article>
+          </>
+        ) : (
+          <>
+            <ActivityHeader title="Aperçu de l'activité" />
+            <ActivityMetadata activity={activity} />
+            <article>
+              <ActivityContent
+                activity={activity}
+                isEditing={isEditing}
+                onSubmitted={handleSubmitted}
+                onCancel={handleCancel}
+              />
+            </article>
+            <div className="flex justify-end">
+              <button className="btn btn-primary" onClick={toggleEditing}>
+                Editer
+              </button>
+            </div>
+          </>
+        )}
+      </section>
     </main>
   );
 }

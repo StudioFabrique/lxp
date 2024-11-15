@@ -2,7 +2,7 @@ import { prisma } from "../../../utils/db";
 import path from "path";
 import fs from "fs";
 
-export default async function updateVideo(
+export default async function putActivityVideo(
   activityId: number,
   title: string,
   description: string,

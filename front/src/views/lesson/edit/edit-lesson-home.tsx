@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+// Import des composants et icônes nécessaires
 import { CheckCircle, Loader2 } from "lucide-react";
 import Wrapper from "../../../components/UI/wrapper/wrapper.component";
 import useLessonHome from "./use-lesson-home";
@@ -8,6 +9,7 @@ import DNDAcitivities from "../../../components/edit-lesson/activities/dnd-activ
 import CurrentBlock from "../../../components/edit-lesson/current-block";
 
 export default function EditLessonHome() {
+  // Récupération des props et méthodes depuis le hook personnalisé useLessonHome
   const {
     isLoading,
     activities,
@@ -19,29 +21,32 @@ export default function EditLessonHome() {
     setActivityType,
     handleReorderActivities,
     handleDeleteActivity,
-    handleSubmit,
+    onFinish,
   } = useLessonHome();
 
   return (
     <main className="w-full">
+      {/* En-tête avec titre et bouton d'ajout d'activité */}
       <section className="w-full flex flex-col gap-y-4 mb-4">
         <article className="w-full flex justify-between items-center">
           <div className="flex items-center gap-x-4">
             <h1 className="text-xl font-bold">Activités</h1>
+            {/* Affichage du loader pendant le chargement */}
             {isLoading ? (
               <Loader2 className="text-primary animate-spin" />
             ) : null}
+            {/* Affichage de l'icône de succès */}
             {success ? <CheckCircle className="text-success" /> : null}
           </div>
           <button
             className="btn btn-primary"
-            onClick={() => setCreateActivity(true)}
-            disabled={createActivity}
+            onClick={() => setCreateActivity((prevState) => !prevState)}
           >
-            Ajouter une activité
+            {createActivity ? "Annuler" : "Ajouter une activité"}
           </button>
         </article>
 
+        {/* Affichage des types d'activités disponibles lors de la création */}
         {createActivity && activityType.length === 0 ? (
           <article>
             <ActivityTypes onActivityType={setActivityType} />
@@ -49,7 +54,9 @@ export default function EditLessonHome() {
         ) : null}
       </section>
 
+      {/* Zone principale de contenu */}
       {activityType.length !== 0 ? (
+        // Affichage du bloc d'édition de l'activité sélectionnée
         <article
           className={`
             transition-opacity duration-300
@@ -60,14 +67,10 @@ export default function EditLessonHome() {
             }
           `}
         >
-          <CurrentBlock
-            isSubmitting={isLoading}
-            onSubmit={handleSubmit}
-            activityType={activityType}
-            setActivityType={setActivityType}
-          />
+          <CurrentBlock activityType={activityType} onFinish={onFinish} />
         </article>
       ) : (
+        // Affichage de la liste des activités existantes
         <article>
           {activities.length > 0 ? (
             <DNDAcitivities
@@ -77,6 +80,7 @@ export default function EditLessonHome() {
               onDeleteActivity={handleDeleteActivity}
             />
           ) : (
+            // Message affiché quand il n'y a pas d'activités
             <Wrapper>
               <p>Aucune activités</p>
             </Wrapper>

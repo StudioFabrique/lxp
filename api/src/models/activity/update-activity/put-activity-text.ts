@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { prisma } from "../../../utils/db";
 
-export default async function updateText(
+export default async function putActivityText(
   activityId: number,
   value: string,
   title: string,
@@ -21,9 +21,6 @@ export default async function updateText(
   const uniqueID: string = uuidv4();
   const fileName: string = uniqueID + new Date().getTime() + ".mdx";
 
-  console.log(existingActivity.url);
-  console.log({ value });
-
   try {
     const file = fs.writeFileSync(
       path.join(
@@ -38,7 +35,6 @@ export default async function updateText(
       ),
       value
     );
-    console.log({ fileName });
 
     const updatedActivity = await prisma.activity.update({
       where: { id: activityId },
@@ -62,7 +58,6 @@ export default async function updateText(
         existingActivity.url
       )
     );
-    console.log("Fichier supprimé :", existingActivity.url);
 
     return updatedActivity;
   } catch (error: any) {
