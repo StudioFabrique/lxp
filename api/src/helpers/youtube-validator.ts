@@ -1,21 +1,30 @@
 export function validateYoutubeUrl(url: string): boolean {
-  // Vérifie si c'est une URL YouTube valide
+  // Base YouTube URL pattern
   const youtubeRegex =
-    /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[a-zA-Z0-9_-]+(\?[^?]*)?$/;
+    /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[a-zA-Z0-9_-]+/;
 
   if (!youtubeRegex.test(url)) {
     return false;
   }
 
-  // Vérifie qu'il n'y a pas de paramètres suspects
-  const suspiciousParams = ["videoplayback", "log_event", "watchtime"];
-  const urlParams = new URL(url).searchParams;
+  try {
+    const urlObj = new URL(url);
 
-  for (const param of suspiciousParams) {
-    if (urlParams.has(param)) {
+    // Must have video ID
+    if (!urlObj.searchParams.has("v") && !url.includes("youtu.be/")) {
       return false;
     }
-  }
 
-  return true;
+    // Check for suspicious parameters
+    const suspiciousParams = ["videoplayback", "log_event", "watchtime"];
+    for (const param of suspiciousParams) {
+      if (urlObj.searchParams.has(param)) {
+        return false;
+      }
+    }
+
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
