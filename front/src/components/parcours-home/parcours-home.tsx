@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { searchListParcours } from "../../helpers/parcours/search-list-parcours";
 import useHttp from "../../hooks/use-http";
 import toast from "react-hot-toast";
+import Modal from "../UI/modal/modal";
 
 interface ParcoursListProps {
   parcoursList: Parcours[];
@@ -35,6 +36,9 @@ const ParcoursList = (props: ParcoursListProps) => {
     setPage,
   } = useEagerLoadingList(props.parcoursList, "title", 15);
   const { error, isLoading, sendRequest } = useHttp();
+  const [parcoursToDelete, setParcoursToDelete] = useState<Parcours | null>(
+    null
+  );
 
   /**
    * permet de filtrer les objets affichés dans la liste, gère les propriétés nichées dans d'autres
@@ -50,11 +54,22 @@ const ParcoursList = (props: ParcoursListProps) => {
     resetFilters();
   };
 
-  const handleDeleteParcours = (id: number) => {
-    const applyData = (data: any) => {
-      console.log({ data });
+  const confirmParcoursToDelete = (parcours: Parcours) => {
+    setParcoursToDelete(parcours);
+  };
+
+  const handleDeleteParcours = () => {
+    const applyData = (data: { success: boolean; message: string }) => {
+      if (data.success) {
+        toast.success(data.message);
+        setParcoursToDelete(null);
+        setPage(1);
+      }
     };
-    sendRequest({ path: `/parcours/${id}`, method: "delete" }, applyData);
+    sendRequest(
+      { path: `/parcours/${parcoursToDelete!.id}`, method: "delete" },
+      applyData
+    );
   };
 
   useEffect(() => {
@@ -106,14 +121,14 @@ const ParcoursList = (props: ParcoursListProps) => {
                 onSorting={sortData}
                 direction={direction}
                 fieldSort={fieldSort}
-                onDeleteParcours={handleDeleteParcours}
+                onDeleteParcours={confirmParcoursToDelete}
                 loading={isLoading}
               />
             ) : (
               <ParcoursCardsList
                 parcoursList={list}
                 loading={isLoading}
-                onDeleteParcours={handleDeleteParcours}
+                onDeleteParcours={confirmParcoursToDelete}
               />
             )}
           </>
@@ -124,6 +139,19 @@ const ParcoursList = (props: ParcoursListProps) => {
           <Pagination page={page} totalPages={totalPages} setPage={setPage} />
         ) : null}
       </section>
+      {parcoursToDelete ? (
+        <Modal
+          onLeftClick={() => setParcoursToDelete(null)}
+          onRightClick={handleDeleteParcours}
+          title="Supprimer un parcours"
+          isSubmitting={false}
+          leftLabel="Annuler"
+          rightLabel="Confirmer"
+        >
+          Attention le parcours et les ressources qui lui sont associées seront
+          définitivement supprimés.
+        </Modal>
+      ) : null}
     </main>
   );
 };
