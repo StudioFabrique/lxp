@@ -11,7 +11,7 @@ import { displayDate } from "../../../helpers/dispaly-dates";
 type Props = {
   activity: Activity;
   index: number;
-  onDeleteActivity: (activityId: number) => void;
+  onDeleteActivity: (activity: Activity) => void;
 };
 
 export default function ActivityListItem({
@@ -66,7 +66,7 @@ export default function ActivityListItem({
         </Can>
         <Can action="delete" object="lesson">
           <button
-            onClick={() => onDeleteActivity(activity.id)}
+            onClick={() => onDeleteActivity(activity)}
             className="hover:text-error-focus transition-colors"
           >
             <Trash2 className="w-6 h-6 text-error" />
