@@ -19,12 +19,12 @@ async function httpDeleteParcoursById(req: CustomRequest, res: Response) {
     });
   } catch (error: any) {
     let returnedError = error;
-    if (error.status === 403) {
+    if (error.statusCode === 403) {
       returnedError = { ...returnedError, from: req.socket.remoteAddress };
       logger.error(returnedError);
     }
     return res
-      .status(returnedError.status ?? 500)
+      .status(returnedError.statusCode ?? 500)
       .json({ message: returnedError.message ?? serverIssue });
   }
 }
