@@ -4,16 +4,22 @@ import ParcoursCard from "./parcours-card";
 
 interface ParcoursCardsListProps {
   parcoursList: Parcours[];
+  onDeleteParcours: (id: number) => void;
+  loading: boolean;
 }
 
-const ParcoursCardsList = ({ parcoursList }: ParcoursCardsListProps) => {
+const ParcoursCardsList = (props: ParcoursCardsListProps) => {
+  const { parcoursList, onDeleteParcours } = props;
   return (
     <>
       {parcoursList && parcoursList.length > 0 ? (
         <CardListItem>
           {parcoursList.map((item) => (
             <li key={item.id}>
-              <ParcoursCard parcours={item} />
+              <ParcoursCard
+                parcours={item}
+                onDeleteParcours={onDeleteParcours}
+              />
             </li>
           ))}
         </CardListItem>

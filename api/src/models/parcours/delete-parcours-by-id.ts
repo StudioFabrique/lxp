@@ -7,13 +7,21 @@ async function deleteParcoursById(parcoursId: number, userId: string) {
     const transaction = await prisma.$transaction(async (tx) => {
       const parcours = await tx.parcours.findUnique({
         where: { id: parcoursId },
-        include: { tags: true },
+        include: { tags: true, modules: true },
       });
 
       if (!parcours) {
         throw {
           message: `Le parcours identifié par l'id : ${parcoursId} n'existe pas`,
-          status: 404,
+          statusCode: 404,
+        };
+      }
+
+      if (parcours.modules && parcours.modules.length > 0) {
+        throw {
+          message:
+            "Des modules sont liés à ce parcours, il ne peut donc pas être supprimé. Supprimez manuellement les modules avant de reessayer.",
+          statusCode: 400,
         };
       }
 
