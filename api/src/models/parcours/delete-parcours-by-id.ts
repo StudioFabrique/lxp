@@ -40,6 +40,7 @@ async function deleteParcoursById(parcoursId: number, userId: string) {
         where: { id: parcoursId, adminId: admin.id },
       });
     });
+    return true;
   } catch (error: any) {
     throw error;
   }
