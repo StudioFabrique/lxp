@@ -19,6 +19,7 @@ import {
 import ActivityListItem from "./activity-list-item";
 import Activity from "../../../utils/interfaces/activity";
 import Wrapper from "../../UI/wrapper/wrapper.component";
+import Modal from "../../UI/modal/modal";
 
 type Props = {
   activities: Activity[];
@@ -29,6 +30,9 @@ type Props = {
 
 export default function DNDAcitivities(props: Props) {
   const [submit, setSubmit] = useState(false);
+  const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
+    null
+  );
 
   const handleReorder = useCallback(() => {
     const activitiesIds = props.activities.map((item) => item.id);
@@ -45,6 +49,11 @@ export default function DNDAcitivities(props: Props) {
     setSubmit(true);
   };
 
+  const deleteActivity = () => {
+    props.onDeleteActivity(activityToDelete!.id!);
+    setActivityToDelete(null);
+  };
+
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (submit) {
@@ -56,45 +65,62 @@ export default function DNDAcitivities(props: Props) {
   }, [handleReorder, submit]);
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="activities">
-        {(provided) => (
-          <div
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-            className="flex flex-col gap-y-2"
-          >
-            {props.activities.length > 0 ? (
-              <>
-                {props.activities.map((activity, index) => (
-                  <Draggable
-                    key={activity.id}
-                    draggableId={activity.id!.toString()}
-                    index={index}
-                  >
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <Wrapper>
-                          <ActivityListItem
-                            activity={activity}
-                            index={index}
-                            onDeleteActivity={props.onDeleteActivity}
-                          />
-                        </Wrapper>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-              </>
-            ) : null}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
+    <>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="activities">
+          {(provided) => (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              className="flex flex-col gap-y-2"
+            >
+              {props.activities.length > 0 ? (
+                <>
+                  {props.activities.map((activity, index) => (
+                    <Draggable
+                      key={activity.id}
+                      draggableId={activity.id!.toString()}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <Wrapper>
+                            <ActivityListItem
+                              activity={activity}
+                              index={index}
+                              onDeleteActivity={() =>
+                                setActivityToDelete(activity)
+                              }
+                            />
+                          </Wrapper>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                </>
+              ) : null}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+      {activityToDelete ? (
+        <Modal
+          onLeftClick={() => setActivityToDelete(null)}
+          onRightClick={deleteActivity}
+          title="Supprimer une activité"
+          isSubmitting={false}
+          leftLabel="Annuler"
+          rightLabel="Confirmer"
+        >
+          Attention l'activité et les ressources qui lui sont associées seront
+          définitivement supprimées.
+        </Modal>
+      ) : null}
+    </>
   );
 }
