@@ -24,3 +24,12 @@ export default interface Course {
   isPublished: boolean;
   bonusSkills: Skill[];
 }
+
+export interface CourseTimeline {
+  id: number;
+  moduleId: number;
+  title: string;
+  moduleTitle: string;
+  minDate: string;
+  maxDate: string;
+}
