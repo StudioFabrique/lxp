@@ -28,6 +28,11 @@ function PreviewActivity() {
 
   const toggleEditing = () => setIsEditing((prev) => !prev);
 
+  const handleCancel = () => {
+    setIsEditing(false);
+    getActivity();
+  };
+
   useEffect(() => {
     getActivity();
   }, [getActivity]);
@@ -41,14 +46,14 @@ function PreviewActivity() {
           <>
             <ActivityHeader
               title="Mise à jour de l'activité"
-              onCancel={toggleEditing}
+              onCancel={handleCancel}
             />
             <article>
               <ActivityContent
                 activity={activity}
                 isEditing={isEditing}
                 onSubmitted={handleSubmitted}
-                onCancel={toggleEditing}
+                onCancel={handleCancel}
               />
             </article>
           </>
@@ -61,7 +66,7 @@ function PreviewActivity() {
                 activity={activity}
                 isEditing={isEditing}
                 onSubmitted={handleSubmitted}
-                onCancel={() => {}}
+                onCancel={handleCancel}
               />
             </article>
             <div className="flex justify-end">

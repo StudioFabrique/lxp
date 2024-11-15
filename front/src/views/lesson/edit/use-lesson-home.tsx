@@ -141,6 +141,12 @@ const useLessonHome = () => {
     );
   };
 
+  const onFinish = () => {
+    getActivities();
+    setCreateActivity(false);
+    setActivityType("");
+  };
+
   // Charge les activités au montage du composant ou quand la leçon change
   useEffect(() => {
     getActivities();
@@ -173,6 +179,7 @@ const useLessonHome = () => {
     handleReorderActivities,
     handleDeleteActivity,
     handleSubmit,
+    onFinish,
   };
 };
 
