@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
-import { serverIssue } from "../../../utils/constantes";
-import updateText from "../../../models/activity/update-activity/update-text";
+import { serverIssue } from "../../utils/constantes";
+import updateText from "../../models/activity/update-activity/put-activity-text";
 
-export default async function httpUpdateActivity(req: Request, res: Response) {
+export default async function httpPutActivityText(req: Request, res: Response) {
   try {
     const { activityId } = req.params;
-    const { value, url, order, title, description } = req.body;
-    console.log({ value });
+    const { value, title, description } = req.body;
 
     const response = await updateText(+activityId, value, title, description);
     return res.status(200).json({

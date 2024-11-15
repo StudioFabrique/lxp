@@ -1,10 +1,8 @@
 import { prisma } from "../../../utils/db";
 
-export default async function postVideo(
+export default async function postActivityVideo(
   lessonId: number,
   userId: string,
-  type: string,
-  order: number,
   title: string,
   description: string,
   url: string
@@ -32,7 +30,7 @@ export default async function postVideo(
 
   const createdActivity = await prisma.activity.create({
     data: {
-      type,
+      type: "video",
       order: existingLesson.activities.length,
       title,
       description,

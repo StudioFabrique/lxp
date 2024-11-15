@@ -1,49 +1,49 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-// Import des dépendances nécessaires
-import "react-quill/dist/quill.snow.css";
+// Import des dépendances nécessaires pour le composant
+import "react-quill/dist/quill.snow.css"; // Styles CSS pour l'éditeur React Quill
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import Activity from "../../../utils/interfaces/activity";
-import markdownit from "markdown-it";
-import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
-import Editor from "../../markdown-editor/mark-down-editor";
-import Markdown from "react-markdown";
-import useHttp from "../../../hooks/use-http";
-import toast from "react-hot-toast";
-import { fromHtmlToMarkdown } from "../../../helpers/html-parser";
-import Wrapper from "../../UI/wrapper/wrapper.component";
-import { ACTIVITIES } from "../../../config/urls";
+import Activity from "../../../utils/interfaces/activity"; // Interface définissant la structure d'une activité
+import markdownit from "markdown-it"; // Bibliothèque pour parser le markdown
+import Editor from "../../markdown-editor/mark-down-editor"; // Composant éditeur personnalisé
+import Markdown from "react-markdown"; // Composant pour rendre le markdown
+import toast from "react-hot-toast"; // Notifications toast
+import Wrapper from "../../UI/wrapper/wrapper.component"; // Composant wrapper UI
+import { ACTIVITIES } from "../../../config/urls"; // URLs de l'API
+import { useNavigate } from "react-router-dom"; // Hook de navigation
 
-// Définition des props du composant
+// Définition des props du composant BlogUpdate
 type Props = {
   activity: Activity; // L'activité à éditer/afficher
-  isEditing: boolean; // État d'édition
-  onSubmitted: (newValue: boolean) => void; // Callback après soumission
+  isEditing: boolean; // État d'édition (true = mode édition, false = mode lecture)
+  onSubmitted: (newValue: boolean) => void; // Callback appelé après la soumission réussie
 };
 
-// Initialisation de markdown-it pour le rendu markdown
+// Initialisation du parser markdown-it avec les options par défaut
 const md = markdownit();
 
-export const BlogUpdate = ({ activity, isEditing, onSubmitted }: Props) => {
-  const dispatch = useDispatch();
-  const { sendRequest, error, isLoading } = useHttp();
+export const BlogUpdate = ({ activity, isEditing }: Props) => {
+  // Hook de navigation pour la redirection
+  const navigate = useNavigate();
 
-  // État local pour stocker le contenu en markdown et HTML
+  // État local pour gérer le contenu de l'activité
   const [content, setContent] = useState({
-    markdown: "",
-    html: "",
+    markdown: "", // Contenu au format markdown
+    html: "", // Contenu au format HTML (utilisé par l'éditeur)
   });
 
-  // Effet pour charger le contenu markdown quand l'activité change
+  // Effet pour charger le contenu markdown initial de l'activité
   useEffect(() => {
     const fetchMarkdown = async () => {
+      // Vérifie si l'URL de l'activité existe
       if (!activity?.url) return;
 
       try {
+        // Récupère le contenu markdown depuis l'API
         const response = await fetch(`${ACTIVITIES}${activity.url}`);
         const mdContent = await response.text();
+        // Met à jour l'état avec le contenu markdown
         setContent((prev) => ({
           ...prev,
           markdown: mdContent,
@@ -55,72 +55,24 @@ export const BlogUpdate = ({ activity, isEditing, onSubmitted }: Props) => {
     };
 
     fetchMarkdown();
-  }, [activity]);
+  }, [activity]); // Se déclenche quand l'activité change
 
-  // Effet pour gérer les erreurs HTTP
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
-
-  // Gestionnaire de mise à jour du contenu
-  const handleUpdate = async (
-    description: string,
-    newValue: string,
-    title: string,
-    type: string
-  ) => {
-    try {
-      // Conversion du HTML en markdown
-      const convertedMarkdown = await fromHtmlToMarkdown(newValue);
-
-      // Envoi de la requête de mise à jour
-      const response = await sendRequest({
-        path: `/activity/${activity.id!}`,
-        method: "put",
-        body: {
-          value: convertedMarkdown,
-          type,
-          title,
-          description,
-        },
-      });
-
-      // Gestion de la réponse
-      if (response.success) {
-        toast.success(response.message);
-        onSubmitted(false);
-        setContent((prev) => ({
-          ...prev,
-          html: newValue,
-        }));
-      }
-    } catch (err) {
-      console.error("Error updating content:", err);
-      toast.error("Failed to update content");
-    }
-  };
-
-  // Gestionnaire d'annulation de l'édition
+  // Gestionnaire pour annuler l'édition et revenir à la page précédente
   const handleCancelEdition = () => {
-    dispatch(lessonActions.setBlogEdition(null));
+    navigate(-1);
   };
 
   return (
     <div className="w-full">
       {isEditing ? (
-        // Mode édition : affiche l'éditeur
+        // Mode édition : affiche l'éditeur WYSIWYG
         <Editor
-          title={activity.title}
-          description={activity.description}
+          activity={activity}
           content={content.html || md.render(content.markdown)}
-          isSubmitting={isLoading}
-          onSubmit={handleUpdate}
           onCancel={handleCancelEdition}
         />
       ) : (
-        // Mode lecture : affiche le contenu markdown
+        // Mode lecture : affiche le contenu markdown avec le style prose
         <div className="w-full">
           <Wrapper>
             <div className="p-4 flex justify-center">
