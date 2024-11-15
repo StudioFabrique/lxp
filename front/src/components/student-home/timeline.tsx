@@ -4,15 +4,7 @@ import BigCalendarTimeline, {
   Event,
 } from "../UI/big-calendar-timeline/big-calendar-timeline";
 import { useNavigate } from "react-router-dom";
-
-interface CourseFormatted {
-  id: number;
-  moduleId: number;
-  title: string;
-  moduleTitle: string;
-  minDate: string;
-  maxDate: string;
-}
+import { CourseTimeline } from "../../utils/interfaces/course";
 
 const Timeline = () => {
   const { sendRequest } = useHttp();
@@ -57,7 +49,7 @@ const Timeline = () => {
   };
 
   useEffect(() => {
-    const applyData = (data: { data: CourseFormatted[] }) => {
+    const applyData = (data: { data: CourseTimeline[] }) => {
       console.log({ data });
 
       setTimelineData(
