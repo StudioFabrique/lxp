@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -15,7 +16,12 @@ import useForm from "../../UI/forms/hooks/use-form";
 import UpdateModuleForm from "./update-module-form";
 import toast from "react-hot-toast";
 
+/**
+ * Composant principal pour la gestion des modules d'un parcours
+ * Permet d'afficher, créer, modifier et supprimer des modules
+ */
 const ModulesSection = () => {
+  // Hook personnalisé pour la gestion des formulaires
   const {
     values,
     onChangeValue,
@@ -24,22 +30,25 @@ const ModulesSection = () => {
     onValidationErrors,
     initValues,
   } = useForm();
+
   const dispatch = useDispatch();
   const { isLoading, sendRequest, error } = useHttp();
-  const [formationModules, setFormationModules] = useState<Module[]>([]);
+
+  // États locaux
+  const [formationModules, setFormationModules] = useState<Module[]>([]); // Modules de la formation
   const params = useParams();
   const parcoursId = params.id;
   const formationId = useSelector((state: any) => state.parcours.formation.id);
   const formRef = useRef<HTMLInputElement>(null);
-  const [toggleForm, setToggleForm] = useState(false);
-  const [newModule, setNewModule] = useState(false);
+  const [toggleForm, setToggleForm] = useState(false); // Contrôle l'affichage du formulaire
+  const [newModule, setNewModule] = useState(false); // Indique si on crée un nouveau module
   const parcoursModules = useSelector(
-    (state: any) => state.parcoursModules.modules,
+    (state: any) => state.parcoursModules.modules
   ) as Module[];
   const [moduleToEdit, setModuleToEdit] = useState<Module | null>(null);
 
   /**
-   * retourne les modules associés à la formation
+   * Récupère les modules associés à la formation depuis l'API
    */
   const getFormationModules = useCallback(() => {
     const applyData = (data: Module[]) => {
@@ -49,7 +58,7 @@ const ModulesSection = () => {
       {
         path: `/modules/formation/${formationId}`,
       },
-      applyData,
+      applyData
     );
   }, [formationId, sendRequest]);
 
@@ -57,12 +66,16 @@ const ModulesSection = () => {
     getFormationModules();
   }, [getFormationModules]);
 
+  /**
+   * Gère la soumission du formulaire de création d'un module
+   * @param formData Les données du formulaire
+   */
   const handleSubmitModule = (formData: FormData) => {
     const applyData = (data: any) => {
       setNewModule(false);
       setToggleForm(false);
       setFormationModules((prevData) =>
-        sortArray([...prevData, data.data], "id", false),
+        sortArray([...prevData, data.data], "id", false)
       );
       onResetForm();
     };
@@ -72,10 +85,14 @@ const ModulesSection = () => {
         method: "post",
         body: formData,
       },
-      applyData,
+      applyData
     );
   };
 
+  /**
+   * Gère la mise à jour d'un module existant
+   * @param formData Les données du formulaire
+   */
   const handleUpdateModule = (formData: FormData) => {
     const applyData = (data: any) => {
       const module = {
@@ -95,16 +112,15 @@ const ModulesSection = () => {
         method: "put",
         body: formData,
       },
-      applyData,
+      applyData
     );
   };
 
   /**
-   * efface une copie de module rattachée au parcours et toutes ses relations avec les compétences et les contacts
-   * @param id string
+   * Supprime un module du parcours
+   * @param id Identifiant du module à supprimer
    */
   const handleDeleteModule = (id: number) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const applyData = (_data: Module) => {
       dispatch(parcoursModulesSliceActions.removeModule(id));
     };
@@ -113,14 +129,13 @@ const ModulesSection = () => {
         path: `/modules/${id}`,
         method: "delete",
       },
-      applyData,
+      applyData
     );
   };
 
   /**
-   * enregistre une copie du module et la rattache au parcours
-   * et l'affiche dans la liste des modules du parcours
-   * @param id number
+   * Ajoute une copie d'un module de la formation au parcours
+   * @param id Identifiant du module à ajouter
    */
   const handleSelectModule = (id: number) => {
     const applyData = (data: any) => {
@@ -133,28 +148,34 @@ const ModulesSection = () => {
           path: `/modules/add-module/${parcoursId}/${module.id}`,
           method: "put",
         },
-        applyData,
+        applyData
       );
     }
   };
 
+  /**
+   * Active le formulaire de création de module
+   */
   const handleCreateModule = () => {
     setNewModule(true);
     setToggleForm(true);
   };
 
+  /**
+   * Prépare l'édition d'un module existant
+   * @param id Identifiant du module à éditer
+   */
   const handleModuleToEdit = (id: number) => {
-    console.log("id", id);
-
     const module = parcoursModules.find((item) => item.id === id);
-    //console.log("module", module);
-
     if (module) {
       setModuleToEdit(module);
     }
     setToggleForm(true);
   };
 
+  /**
+   * Annule l'édition ou la création en cours
+   */
   const handleCancel = () => {
     setNewModule(false);
     setModuleToEdit(null);
@@ -162,11 +183,12 @@ const ModulesSection = () => {
     onResetForm();
   };
 
+  // Met à jour l'état du formulaire dans le store Redux
   useEffect(() => {
     dispatch(parcoursModulesSliceActions.setIsFormOpen(toggleForm));
   }, [toggleForm, dispatch]);
 
-  // scroll jusqu'au premier champ du formulaire qd ce dernier est ouvert
+  // Gère le scroll automatique vers le formulaire
   useEffect(() => {
     let timer: any;
     if ((newModule || moduleToEdit) && formRef && formRef.current) {
@@ -187,22 +209,21 @@ const ModulesSection = () => {
     return () => clearTimeout(timer);
   }, [newModule, initValues, moduleToEdit]);
 
-  /**
-   * gestion des erreurs HTTP
-   */
+  // Gestion des erreurs HTTP avec toast notifications
   useEffect(() => {
     if (error.length > 0) {
       toast.error(error);
     }
   }, [error]);
 
-  console.log(parcoursModules);
-
   return (
     <div className="flex flex-col gap-y-8">
+      {/* Titre de la section */}
       <section>
         <h1 className="text-3xl font-extrabold">Modules</h1>
       </section>
+
+      {/* Grille des listes de modules */}
       <section>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <Wrapper>
@@ -229,6 +250,8 @@ const ModulesSection = () => {
           </Wrapper>
         </div>
       </section>
+
+      {/* Bouton de création de module */}
       <section>
         <div className="w-full flex justify-between">
           <button
@@ -241,6 +264,7 @@ const ModulesSection = () => {
         </div>
       </section>
 
+      {/* Formulaires conditionnels */}
       {toggleForm ? (
         <>
           {newModule ? (
