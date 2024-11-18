@@ -4,6 +4,7 @@ import { prisma } from "../../utils/db";
 async function deleteParcoursById(parcoursId: number, userId: string) {
   const admin = await getAdmin(userId);
   try {
+    let title = "";
     const transaction = await prisma.$transaction(async (tx) => {
       const parcours = await tx.parcours.findUnique({
         where: { id: parcoursId },
@@ -16,6 +17,8 @@ async function deleteParcoursById(parcoursId: number, userId: string) {
           statusCode: 404,
         };
       }
+
+      title = parcours.title;
 
       if (parcours.modules && parcours.modules.length > 0) {
         throw {
@@ -40,7 +43,7 @@ async function deleteParcoursById(parcoursId: number, userId: string) {
         where: { id: parcoursId, adminId: admin.id },
       });
     });
-    return true;
+    return title;
   } catch (error: any) {
     throw error;
   }
