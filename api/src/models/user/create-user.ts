@@ -3,8 +3,9 @@ import { prisma } from "../../utils/db";
 import Role from "../../utils/interfaces/db/role";
 import { hash } from "bcrypt";
 import { randomUUID } from "crypto";
-import { newUserMail } from "../../services/mailer";
 import jwt from "jsonwebtoken";
+import { activationToken } from "../../helpers/activation-token";
+import { sendPasswordEmail } from "../../services/mailer";
 
 export default async function createUser(user: IUser, roleId: string) {
   try {
@@ -34,6 +35,7 @@ export default async function createUser(user: IUser, roleId: string) {
       address: user.address?.toLowerCase(),
       city: user.city?.toLowerCase(),
       postCode: user.postCode?.toLowerCase(),
+      birthDate: user.birthDate,
       phoneNumber: user.phoneNumber?.toLowerCase(),
       password: await hash(randomUUID() + "@Sn99", 10),
       isActive: false,
@@ -58,6 +60,15 @@ export default async function createUser(user: IUser, roleId: string) {
 
     if (firstRole.rank === 3)
       await prisma.student.create({ data: { idMdb: createdUser._id } });
+
+    if (user.invitationSent) {
+      const token = activationToken(createdUser._id, firstRole, "7d");
+      await sendPasswordEmail(createdUser.email, token, "activation");
+      await User.updateOne(
+        { _id: createdUser._id },
+        { $set: { invitationSent: true } }
+      );
+    }
 
     // Retourner l'utilisateur créé et le rang du rôle
     return { createdUser, role: firstRole.rank };

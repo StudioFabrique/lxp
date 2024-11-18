@@ -7,6 +7,7 @@ import useLessonHTTP from "../../hooks/use-lesson-http";
 import toast from "react-hot-toast";
 import Modal from "../../components/UI/modal/modal";
 import Header from "../../components/UI/header";
+import { PlusCircle } from "lucide-react";
 
 export default function LessonHomePage() {
   const [lessonsList, setLessonsList] = useState<Lesson[] | null>(null);
@@ -62,24 +63,33 @@ export default function LessonHomePage() {
           description="Gérer toutes les leçons qui  vous sont attribuées."
         ></Header>
       </section>
-      {lessonsList && lessonsList.length > 0 ? (
-        <LessonHome lessonsList={lessonsList} onDelete={setDeletion} />
-      ) : (
-        <p className="w-5/6 text-primary">Aucune leçon trouvée.</p>
-      )}
-      {lessonToDelete ? (
-        <Modal
-          onLeftClick={() => setLessonToDelete(null)}
-          onRightClick={handleDeleteLesson}
-          title="Supprimer une leçon"
-          isSubmitting={isLoading}
-          leftLabel="Annuler"
-          rightLabel="Confirmer"
-        >
-          Attention la leçon et les ressources qui lui sont associées seront
-          définitivement supprimées.
-        </Modal>
-      ) : null}
+      <section className="w-5/6 flex justify-end">
+        <button className="btn btn-primary">
+          <PlusCircle /> Créer une leçon
+        </button>
+      </section>
+      <section className="w-5/6">
+        {lessonsList && lessonsList.length > 0 ? (
+          <LessonHome lessonsList={lessonsList} onDelete={setDeletion} />
+        ) : (
+          <p className="w-5/6 text-primary">Aucune leçon trouvée.</p>
+        )}
+      </section>
+      <section>
+        {lessonToDelete ? (
+          <Modal
+            onLeftClick={() => setLessonToDelete(null)}
+            onRightClick={handleDeleteLesson}
+            title="Supprimer une leçon"
+            isSubmitting={isLoading}
+            leftLabel="Annuler"
+            rightLabel="Confirmer"
+          >
+            Attention la leçon et les ressources qui lui sont associées seront
+            définitivement supprimées.
+          </Modal>
+        ) : null}
+      </section>
     </main>
   );
 }

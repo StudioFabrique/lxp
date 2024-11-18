@@ -20,6 +20,8 @@ const UserAdd = () => {
       formData.append("image", file);
     }
 
+    console.log({ dataValues: user });
+
     sendRequest(
       { method: "put", path: `/user/${id}`, body: formData },
       (data: any) => {

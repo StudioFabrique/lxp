@@ -95,7 +95,6 @@ const permDefs = {
     read: [
       "role",
       "tag",
-      "permission",
       "user",
       "group",
       "formation",
@@ -117,7 +116,6 @@ const permDefs = {
     write: [
       "role",
       "tag",
-      "permission",
       "group",
       "formation",
       "parcours",
@@ -138,7 +136,6 @@ const permDefs = {
     update: [
       "role",
       "tag",
-      "permission",
       "group",
       "formation",
       "parcours",
@@ -159,7 +156,6 @@ const permDefs = {
     delete: [
       "role",
       "tag",
-      "permission",
       "group",
       "formation",
       "parcours",

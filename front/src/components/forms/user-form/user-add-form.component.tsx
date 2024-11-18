@@ -40,6 +40,8 @@ const UserAddForm: FC<{
 
   const [hobbies, setHobbies] = useState<Array<Hobby>>([]);
 
+  const [sendEmail, setSendEmail] = useState(false);
+
   const { value: email } = useInput(
     (value: string) => regexMail.test(value),
     props.user?.email ?? "",
@@ -109,6 +111,7 @@ const UserAddForm: FC<{
       address: address.value.trim(),
       postCode: postCode.value.trim(),
       city: city.value.trim(),
+      invitationSent: sendEmail,
       phoneNumber: phoneNumber.value.trim(),
       birthDate,
       graduations,
@@ -122,10 +125,19 @@ const UserAddForm: FC<{
 
   useEffect(() => {
     if (props.user?.graduations) {
-      setGraduations(props.user?.graduations);
+      setGraduations(props.user.graduations);
     }
     if (props.user?.roles) {
-      setRoleId(props.user?.roles[0]._id);
+      setRoleId(props.user.roles[0]._id);
+    }
+    if (props.user?.birthDate) {
+      setBirthDate(props.user.birthDate);
+    }
+    if (props.user?.hobbies) {
+      setHobbies(props.user.hobbies);
+    }
+    if (props.user?.links) {
+      setLinks(props.user.links);
     }
   }, [props.user]);
 
@@ -137,7 +149,7 @@ const UserAddForm: FC<{
         disabled={props.fieldsDisabled}
       />
       <div className="flex flex-col gap-y-5">
-        <div className={`grid grid-cols-3 gap-x-5`}>
+        <div className="grid grid-cols-3 gap-x-5">
           <Informations
             lastname={lastname}
             firstname={firstname}
@@ -158,8 +170,11 @@ const UserAddForm: FC<{
           <div className="grid grid-rows-1 gap-y-5">
             <TypeUtilisateur
               roleId={roleId}
+              sendEmail={sendEmail}
+              onSetSendEmail={setSendEmail}
               onSetRoleId={setRoleId}
               disabled={props.fieldsDisabled || props.editMode}
+              editMode={props.editMode}
             />
             <CentreInterets
               hobbies={hobbies}

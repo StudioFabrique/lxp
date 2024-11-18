@@ -4,7 +4,7 @@ import Group from "../../utils/interfaces/db/group";
 
 export default async function getModulesTimeline(
   userIdMdb: string,
-  max?: number
+  max?: number,
 ) {
   const groupsWhereStudentIs = await Group.find({ users: userIdMdb });
 

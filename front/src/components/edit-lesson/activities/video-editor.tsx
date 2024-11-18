@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import VideoPlayer from "../../UI/video-player";
 import { toast } from "react-hot-toast";
 import { ZodError } from "zod";
@@ -10,15 +10,15 @@ import useForm from "../../UI/forms/hooks/use-form";
 import Field from "../../UI/forms/field";
 import FieldArea from "../../UI/forms/field-area";
 import Wrapper from "../../UI/wrapper/wrapper.component";
-import { activiteVideo } from "../../../lib/validation/lesson/activite-video";
 import { validationErrors } from "../../../helpers/validate";
 import { Loader2 } from "lucide-react";
+import { activiteMetaDataSchema } from "../../../lib/validation/lesson/activite-video";
 
 interface VideoEditorProps {
   propVideo?: string;
   loading: boolean;
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   onCancel: () => void;
   onSubmit: (value: {
     videoValue: string;
@@ -41,10 +41,10 @@ export default function VideoEditor({
   /*   const blogEdition = useSelector(
     (state: any) => state.lesson.blogEdition
   ) as number; */
-  const [origin, setOrigin] = useState("fileSystem");
+  const [origin, setOrigin] = useState("web");
   const [video, setVideo] = useState<string>(propVideo);
   const [file, setFile] = useState<File | null>(null);
-  const [url, setUrl] = useState<string>("");
+  const [url, setUrl] = useState<string>(propVideo);
   const { initValues, errors, values, onChangeValue, onValidationErrors } =
     useForm();
 
@@ -73,16 +73,17 @@ export default function VideoEditor({
 
   const handleOnChangeUrl = (event: ChangeEvent<HTMLInputElement>) => {
     setUrl(event.currentTarget.value);
-  };
-
-  const handleSelectExternalSource = () => {
     setVideo(url);
   };
+
+  const handleSelectExternalSource = useCallback(() => {
+    setVideo(url);
+  }, [url]);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      activiteVideo.parse(values);
+      activiteMetaDataSchema.parse(values);
     } catch (error: any) {
       if (error instanceof ZodError) {
         const errors = validationErrors(error);
@@ -105,7 +106,9 @@ export default function VideoEditor({
     });
   }, [title, description, initValues]);
 
-  console.log({ propVideo });
+  useEffect(() => {
+    handleSelectExternalSource();
+  }, [handleSelectExternalSource, url]);
 
   return (
     <main className="w-full flex flex-col gap-y-4">
@@ -158,12 +161,6 @@ export default function VideoEditor({
                     value={url}
                     onChange={handleOnChangeUrl}
                   />
-                  <button
-                    className="btn btn-sm btn-primary btn-outline"
-                    onClick={handleSelectExternalSource}
-                  >
-                    Aperçu
-                  </button>
                 </div>
               )}
             </span>
@@ -190,7 +187,7 @@ export default function VideoEditor({
           onClick={handleSubmit}
         >
           {loading ? (
-            <span>
+            <span className="flex items-center gap-x-2">
               <Loader2 className="w-4 h-4 animate-spin" />
               <p>Sauvegarde en cours...</p>
             </span>

@@ -1,7 +1,7 @@
-import CalendarTimeline from "../student-home/calendar-timeline";
+import Timeline from "../student-home/timeline";
 
 const Calendrier = () => {
-  return <CalendarTimeline />;
+  return <Timeline />;
 };
 
 export default Calendrier;

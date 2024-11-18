@@ -54,7 +54,7 @@ const FeelingFeedback = () => {
   }, [sendRequest]);
 
   return (
-    <div className="flex flex-col gap-4 bg-secondary text-secondary-content p-5 rounded-lg">
+    <div className="flex flex-col gap-4 bg-secondary text-base-100 p-5 rounded-lg">
       <span className="flex justify-between items-center">
         <p className="font-bold w-[70%]">
           Comment vous sentez-vous aujourd'hui ?

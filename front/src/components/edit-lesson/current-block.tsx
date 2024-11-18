@@ -1,40 +1,27 @@
-import { useDispatch, useSelector } from "react-redux";
 import Editor from "../markdown-editor/mark-down-editor";
-import { lessonActions } from "../../store/redux-toolkit/lesson/lesson";
 import Video from "./activities/video";
+import ImageActivityEditor from "./activities/image/image-activity-editor";
 
-interface CurrentBlockProps {
-  isSubmitting: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSubmit: (value: any) => void;
-}
+type CurrentBlockProps = {
+  activityType: string;
+  onFinish: () => void;
+};
 
 export default function CurrentBlock({
-  isSubmitting,
-  onSubmit,
+  activityType,
+  onFinish,
 }: CurrentBlockProps) {
-  const dispatch = useDispatch();
-  const currentType = useSelector(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (state: any) => state.lesson.currentType
-  ) as string;
-
-  const handleCancel = () => {
-    dispatch(lessonActions.resetCurrentType());
-  };
-
   return (
     <>
-      {currentType ? (
+      {activityType ? (
         <>
-          {currentType === "text" ? (
-            <Editor
-              onSubmit={onSubmit}
-              isSubmitting={isSubmitting}
-              onCancel={handleCancel}
-            />
+          {activityType === "text" ? <Editor onCancel={onFinish} /> : null}
+          {activityType === "video" ? (
+            <Video onCancel={onFinish} isEditing={true} />
           ) : null}
-          {currentType === "video" ? <Video /> : null}
+          {activityType === "image" ? (
+            <ImageActivityEditor onCancel={onFinish} />
+          ) : null}
         </>
       ) : null}
     </>

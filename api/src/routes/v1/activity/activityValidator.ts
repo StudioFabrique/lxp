@@ -17,17 +17,14 @@ export const activityIdValidator = [
 ];
 
 export const updateActivityValidator = [
-  body("url")
-    .notEmpty()
-    .withMessage("L'url de l'activité est requise.")
-    .isURL()
-    .withMessage("Format d'url non valide."),
-  body("order")
-    .notEmpty()
-    .withMessage("La propriété order est requise.")
-    .isNumeric()
-    .isInt()
-    .withMessage("La propriété order doit être un nombre entier."),
+  body("title")
+    .custom(stringValidateGeneric)
+    .withMessage("Le titre de la video contient des caractères non autorisés."),
+  body("description")
+    .custom(stringValidateGeneric)
+    .withMessage(
+      "La description de la video contient des caractères non autorisés."
+    ),
   checkValidatorResult,
 ];
 
@@ -58,19 +55,6 @@ export const updateVideoValidator = [
 ];
 
 export const postVideoValidator = [
-  body("data.type")
-    .notEmpty()
-    .withMessage("Le type de l'activité est requis.")
-    .isString()
-    .withMessage("Le type de l'activité doit être une chaîne de caractères.")
-    .custom(stringValidateGeneric)
-    .withMessage("Le type de l'activité contient des caractères invalides."),
-  body("data.order")
-    .notEmpty()
-    .withMessage("La propriété order est requise.")
-    .isNumeric()
-    .isInt()
-    .withMessage("La propriété order doit être un nombre entier."),
   body("data.title")
     .notEmpty()
     .withMessage("Le titre de la video est obligatoire.")
@@ -87,6 +71,12 @@ export const postVideoValidator = [
     .withMessage(
       "La description de la video contient des caractères non autorisés."
     ),
+  body("data.url")
+    .optional({ nullable: true })
+    .isString()
+    .withMessage("L'url fournie n'est pas une chaîne de caractères valide.")
+    .custom(videoUrlValidate)
+    .withMessage("L'url de la video contient des caractères non autorisés."),
   checkValidatorResult,
 ];
 

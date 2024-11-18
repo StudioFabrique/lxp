@@ -1,141 +1,106 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link, useLocation } from "react-router-dom";
-import { useCallback, useContext, useEffect, useState } from "react";
-import { Context } from "../../store/context.store";
-import Role from "../../utils/interfaces/role";
-import Tabs from "../../components/UI/tabs/tabs.component";
-import usePagination from "../../hooks/use-pagination";
-import { groupSearchOptions } from "../../config/search-options";
-import Search from "../../components/UI/search/search.component";
-import GroupList from "../../components/lists/group-list/group-list.component";
-import Pagination from "../../components/UI/pagination/pagination";
-import toast from "react-hot-toast";
-import useHttp from "../../hooks/use-http";
 import Can from "../../components/UI/can/can.component";
+import Header from "../../components/UI/header";
+import {
+  actionsConfig,
+  tableListConfig,
+  searchBarConfig,
+} from "./group-home-table-config";
+import Table from "../../components/table/table";
+import TablePagination from "../../components/table/table-pagination/table-pagination";
+import useTablePaginatedData from "../../components/table/table-pagination/hooks/use-table-paginated-data";
+import toast from "react-hot-toast";
+import { useEffect } from "react";
+import useTableCheckbox from "../../components/table/table-list/hooks/use-table-checkbox";
+import useGroupActions from "./hooks/use-group-actions";
+import TableActionsButtons from "../../components/table/table-buttons/table-actions-buttons";
 
-export type GroupModalContent = {
-  isModalOpen?: boolean;
-  groupId?: string;
-  groupName?: string;
-  refresh?: boolean;
-};
-
+/**
+ * Composant GroupHome
+ *
+ * Affiche une liste de groupes avec des fonctionnalités pour créer,
+ * modifier et supprimer des groupes. Utilise un tableau paginé pour
+ * présenter les données, avec une barre de recherche intégrée.
+ * Gère les notifications toast pour informer l'utilisateur des actions.
+ *
+ * @component
+ */
 const GroupHome = () => {
-  const { user, roles } = useContext(Context);
-  const { sendRequest } = useHttp(true);
-  const [role, setRole] = useState<Role>(roles[0]);
+  const { state } = useLocation();
 
+  // custom hook gestion pagination
   const {
-    allChecked,
-    page,
-    totalPages,
-    dataList,
-    getList,
-    sortData,
-    initPagination,
-    handlePageNumber,
-    setPath,
-    setAllChecked,
-    handleRowCheck,
-  } = usePagination("lastname", `/group/${user!.roles[0].role}`);
-  const { state: history } = useLocation();
+    data,
+    isLoading,
+    totalItems,
+    sortProperty,
+    isAscDirection,
+    onRefreshData,
+    onSubmitSearchValue,
+    onSortProperty,
+    ...pagination
+  } = useTablePaginatedData("/group/student", "/group/search/student");
 
-  const handleRoleSwitch = useCallback(
-    (role: Role) => {
-      initPagination();
-      setRole(role);
-      setPath(`/group/${role.role}`);
-    },
-    [initPagination, setPath]
-  );
+  // custom hook gestion checkbox
+  const { idsList, ...checkboxConfig } = useTableCheckbox(data, "_id");
 
-  const handleSearchResult = (entityToSearch: string, searchValue: string) => {
-    initPagination();
-    setPath(`/group/search/${role.role}/${entityToSearch}/${searchValue}`);
-    getList();
-  };
+  // custom hook gestion actions groupées
+  const { onDeleteSelectedGroups } = useGroupActions(idsList, onRefreshData);
 
-  const handleAllChecked = () => {
-    setAllChecked((prevAllchecked) => !prevAllchecked);
-  };
-
-  const handleUncheckAll = useCallback(() => {
-    setAllChecked(false);
-  }, [setAllChecked]);
-
-  const handleDeleteGroup = async (id: string) => {
-    const applyData = () => {
-      getList();
-      toast.success("Groupe supprimé avec succès");
-    };
-
-    await sendRequest({ path: `/group/${id}`, method: "delete" }, applyData);
-
-    return true;
-  };
-
+  // Si un message du state est présent, alors il s'affiche dans un toaster
   useEffect(() => {
-    if (history?.toastFrom) {
-      toast.success(history.toastFrom);
-    }
-  }, [history?.toastFrom]);
-
-  useEffect(() => {
-    setRole(roles[0]);
-  }, [roles]);
-
-  useEffect(() => {
-    if (role) {
-      getList();
-    }
-  }, [page, getList, role]);
-
-  useEffect(() => {
-    handleRoleSwitch(role);
-  }, [handleRoleSwitch, role]);
+    if (state && state.toastFrom) toast.success(state.toastFrom);
+  }, [state]);
 
   return (
-    <div className="flex flex-col py-5">
-      <div className="my-8 flex justify-center">
-        <div className="flex w-[80vw] flex-col gap-y-4">
-          <span className="flex justify-between">
-            <h2 className="text-4xl font-bold">Liste des groupes</h2>
-            <Can action="write" object="group">
-              <Link className="btn btn-primary" to="/admin/group/add">
-                Créer un groupe
-              </Link>
-            </Can>
-          </span>
-          {user && role ? (
-            <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />
-          ) : null}
-          <div className="flex items-center justify-end">
-            <div className="flex flex-col">
-              <Search
-                options={groupSearchOptions}
-                onSearch={handleSearchResult}
-              />
-            </div>
-          </div>
-          <GroupList
-            allChecked={allChecked}
-            role={role}
-            groupList={dataList}
-            onRowCheck={handleRowCheck}
-            onAllChecked={handleAllChecked}
-            onSorting={sortData}
-            onUncheckAll={handleUncheckAll}
-            onDeleteGroup={handleDeleteGroup}
-          />
-          {dataList.length > 0 ? (
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              setPage={handlePageNumber}
-            />
-          ) : null}
-        </div>
-      </div>
+    <div className="flex flex-col gap-10 p-10">
+      {/* Header de la liste des groupes */}
+      <Header
+        title="Liste des groupes"
+        description="Créer, modifier et supprimer des groupes"
+      >
+        <Can object="group" action="write">
+          <Link className="btn btn-primary" to="/admin/group/add">
+            Créer un groupe
+          </Link>
+        </Can>
+      </Header>
+
+      {/*
+       * Tableau generique utilisé pour la liste des groupes,
+       * utilisation du pattern composition
+       */}
+      <Table
+        searchBarConfig={searchBarConfig(onSubmitSearchValue)}
+        tableListConfig={tableListConfig(
+          data,
+          isLoading,
+          actionsConfig(onRefreshData),
+        )}
+        checkboxConfig={checkboxConfig}
+        sortConfig={{ sortProperty, isAscDirection, onSortProperty }}
+      >
+        {/* Composants children en haut et en bas du tableau */}
+        {[
+          // haut du tableau, à côté de la barre de recherche
+          <TableActionsButtons
+            key={0}
+            isLoading={isLoading}
+            isDisabled={!(idsList.length > 0)} // disabled si la liste a une longueur de 0
+            onRefreshData={onRefreshData}
+            delete={{
+              actionTitle: "Supprimer les groupes selectionnés",
+              onDelete: onDeleteSelectedGroups,
+            }}
+          />,
+          // bas du tableau
+          <TablePagination
+            key={1}
+            leftText={`Nombre de groupes : ${totalItems}`}
+            {...pagination}
+          />,
+        ]}
+      </Table>
     </div>
   );
 };

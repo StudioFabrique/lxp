@@ -4,16 +4,27 @@ import { prisma } from "../../utils/db";
 async function deleteParcoursById(parcoursId: number, userId: string) {
   const admin = await getAdmin(userId);
   try {
+    let title = "";
     const transaction = await prisma.$transaction(async (tx) => {
       const parcours = await tx.parcours.findUnique({
         where: { id: parcoursId },
-        include: { tags: true },
+        include: { tags: true, modules: true },
       });
 
       if (!parcours) {
         throw {
           message: `Le parcours identifié par l'id : ${parcoursId} n'existe pas`,
-          status: 404,
+          statusCode: 404,
+        };
+      }
+
+      title = parcours.title;
+
+      if (parcours.modules && parcours.modules.length > 0) {
+        throw {
+          message:
+            "Des modules sont liés à ce parcours, il ne peut donc pas être supprimé. Supprimez manuellement les modules avant de reessayer.",
+          statusCode: 400,
         };
       }
 
@@ -27,11 +38,20 @@ async function deleteParcoursById(parcoursId: number, userId: string) {
         where: { parcoursId: parcoursId },
       });
 
+      await tx.bonusSkill.deleteMany({
+        where: { parcoursId },
+      });
+
+      await tx.objective.deleteMany({
+        where: { parcoursId },
+      });
+
       // Supprimer le parcours
       const deletedParcours = await tx.parcours.delete({
         where: { id: parcoursId, adminId: admin.id },
       });
     });
+    return title;
   } catch (error: any) {
     throw error;
   }

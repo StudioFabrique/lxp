@@ -9,7 +9,10 @@ import {
 import { badQuery } from "../utils/constantes";
 import { logger } from "../utils/logs/logger";
 import CustomRequest from "../utils/interfaces/express/custom-request";
-import { stringValidateGeneric } from "../helpers/custom-validators";
+import {
+  stringValidateGeneric,
+  stringValidateOptional,
+} from "../helpers/custom-validators";
 
 export const checkValidatorResult = (
   req: CustomRequest,
@@ -66,42 +69,28 @@ export const userValidator = (isFormData: boolean = false) => {
 
   const validationChain = [
     body(validatorSubject + ".email")
-      .exists()
-      .notEmpty()
       .isEmail()
       .trim()
-      .escape()
       .withMessage("firstname ou lastname non conforme"),
     body([validatorSubject + ".firstname", validatorSubject + ".lastname"])
-      .exists()
-      .notEmpty()
-      .isString()
       .trim()
-      .escape()
+      .custom(stringValidateGeneric)
       .withMessage("firstname ou lastname non conforme"),
     body(validatorSubject + ".nickname")
-      .optional()
-      .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage("nickname"),
     body(validatorSubject + ".description")
-      .optional()
-      .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage("description"),
     body(validatorSubject + ".address")
-      .optional()
-      .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage("address"),
     body(validatorSubject + ".city")
-      .optional()
-      .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage("city"),
     body(validatorSubject + ".postCode")
       .optional()
@@ -115,11 +104,13 @@ export const userValidator = (isFormData: boolean = false) => {
       .trim()
       .escape(),
     body(validatorSubject + ".links.*.url")
-      .isString()
       .trim()
-      .escape()
-      .withMessage("links.*.url"),
+      .isString()
+      .notEmpty()
+      .isURL()
+      .withMessage("URL de l'un des objects links incorrect"),
     body(validatorSubject + ".links.*.alias")
+      .optional()
       .isString()
       .trim()
       .escape()
@@ -253,36 +244,38 @@ export const manyUsersValidator = [
     .isString()
     .toLowerCase()
     .trim()
-    .escape(),
+    .custom(stringValidateOptional)
+    .withMessage("description non conforme"),
   body("*.postCode").isPostalCode("FR").trim().escape(),
   body("*.phoneNumber").isNumeric(),
   /* body("*.birthDate").isDate({ format: "dd/mm/yyyy" }).toDate(), */
   checkValidatorResult,
 ];
 
+// Validator for a group object
+// - Name must exist, not be empty, be a string, and match generic string validation
+// - Description must be a string (lowercase), optional, and match optional string validation
+// - Users field must be an array
+// - Each user ID in the users array must be a string
 export const groupValidator = [
-  body(["data.group.name", "data.group.desc"])
+  body("data.group.name")
     .exists()
     .notEmpty()
     .isString()
     .trim()
     .custom(stringValidateGeneric)
-    .withMessage("titre (name) ou description (desc) non conforme"),
+    .withMessage("titre non conforme"),
+  body("data.group.desc")
+    .optional()
+    .isString()
+    .toLowerCase()
+    .trim()
+    .custom(stringValidateOptional)
+    .withMessage("description non conforme"),
   body("data.users").isArray().withMessage("users n'est pas un Array"),
   body("data.users.*._id")
     .isString()
     .withMessage("les id du tableau users doivent être de type string"),
-  checkValidatorResult,
-];
-
-export const groupPutValidator = [
-  body(["data.group.name", "data.group.desc"])
-    .exists()
-    .notEmpty()
-    .isString()
-    .trim()
-    .custom(stringValidateGeneric)
-    .withMessage("titre (name) ou description (desc) non conforme"),
   checkValidatorResult,
 ];
 

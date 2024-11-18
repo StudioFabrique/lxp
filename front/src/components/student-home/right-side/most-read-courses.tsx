@@ -30,12 +30,19 @@ const MostReadCourses = () => {
         courses?.map((course) => (
           <div
             key={course.id}
-            className="w-full flex justify-between gap-5 bg-primary text-primary-content rounded-lg p-2 px-4"
+            className="w-full flex justify-between gap-5 bg-primary text-primary-content rounded-lg p-2 px-4 cursor-default"
           >
-            <span className="flex flex-col w-full overflow-clip">
-              <p className="font-semibold truncate">{course.title}</p>
-              <p className="text-sm truncate">{`Module ${course.module.title}`}</p>
-            </span>
+            <div className="flex flex-col w-[70%]">
+              <span data-tip={`${course.title}`} className="tooltip flex">
+                <p className="font-semibold truncate">{course.title}</p>
+              </span>
+              <span
+                data-tip={`${course.module.title}`}
+                className="tooltip flex"
+              >
+                <p className="text-sm truncate">{`Module ${course.module.title}`}</p>
+              </span>
+            </div>
             <Link
               to={`/${currentRoute}/parcours/module/${course.module.id}`}
               state={{ lessonId: course.lessons[0].id }}

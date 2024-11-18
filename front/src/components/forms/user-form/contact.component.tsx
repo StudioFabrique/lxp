@@ -9,7 +9,15 @@ const Contact: FC<{
   birthDate: Date | null;
   onChangeDate: (date: Date | null) => void;
   disabled?: boolean;
-}> = ({ address, city, postCode, phone, onChangeDate, disabled }) => {
+}> = ({
+  address,
+  city,
+  postCode,
+  phone,
+  birthDate,
+  onChangeDate,
+  disabled,
+}) => {
   const handleChangeDate: ChangeEventHandler<HTMLInputElement> = (
     event: ChangeEvent<HTMLInputElement>,
   ) => {
@@ -30,6 +38,9 @@ const Contact: FC<{
           className="input input-sm input-bordered focus:outline-none w-full"
           type="date"
           onChange={handleChangeDate}
+          value={
+            birthDate ? new Date(birthDate).toISOString().split("T")[0] : ""
+          }
           autoComplete="off"
           disabled={disabled}
         />

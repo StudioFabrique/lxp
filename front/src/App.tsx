@@ -7,7 +7,6 @@ import studentRoutes from "./lib/routes/students-routes";
 import adminRoutes from "./lib/routes/admin-routes";
 import Loader from "./components/UI/loader";
 import Sidebar from "./components/UI/sidebar/sidebar";
-import RegisterHome from "./views/register/register";
 
 const StudentLayout = lazy(
   async () => await import("./views/student/student-layout.component"),
@@ -15,6 +14,18 @@ const StudentLayout = lazy(
 
 const AdminLayout = lazy(
   async () => await import("./views/admin/admin-layout.component"),
+);
+
+const RegisterHome = lazy(
+  async () => await import("./views/register/register-home"),
+);
+
+const ResetPasswordHome = lazy(
+  async () => await import("./views/reset-password/reset-password-home"),
+);
+
+const ResetPasswordUpdate = lazy(
+  async () => await import("./views/reset-password/reset-password-update"),
 );
 
 const router = createBrowserRouter([
@@ -54,7 +65,27 @@ const router = createBrowserRouter([
   },
   {
     path: "/register",
-    element: <RegisterHome />,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <RegisterHome />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/reset-password",
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ResetPasswordHome />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/reset-update",
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ResetPasswordUpdate />
+      </Suspense>
+    ),
   },
 ]);
 

@@ -34,7 +34,7 @@ const Informations: FC<{
           isDisabled={isLoading}
         />
         <FieldArea
-          label="Description du groupe *"
+          label="Description du groupe"
           name="desc"
           data={data}
           isDisabled={isLoading}
