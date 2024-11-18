@@ -3,6 +3,7 @@ import { regexGeneric } from "../../utils/constantes";
 import SubmitButton from "../UI/submit-button";
 
 interface NewCourseFormProps {
+  label: string;
   isLoading: boolean;
   onSubmit: (title: string) => void;
 }
@@ -36,7 +37,7 @@ const NewCourseForm = (props: NewCourseFormProps) => {
     <form onSubmit={handleSubmit}>
       <div className="flex flex-col gap-y-4">
         <label className="font-bold" htmlFor="title">
-          Titre du cours
+          {props.label}
         </label>
         <input
           className={setInputStyle(title.hasError)}
