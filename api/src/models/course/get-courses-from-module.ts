@@ -12,8 +12,20 @@ export default async function getCoursesFromModule(moduleId: number) {
     select: {
       id: true,
       title: true,
+      tags: {
+        select: {
+          tag: {
+            select: { id: true, name: true, color: true },
+          },
+        },
+      },
     },
   });
 
-  return courses;
+  const serializedCourses = courses.map((item) => ({
+    ...item,
+    tags: item.tags.map((tag) => ({ ...tag.tag })),
+  }));
+
+  return serializedCourses;
 }
