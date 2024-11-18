@@ -94,6 +94,10 @@ const PreviewActivity = React.lazy(
   () => import("../../views/lesson/edit/preview-activity")
 );
 
+const AddNewLesson = React.lazy(
+  () => import("../../views/lesson/add/add-new-lesson")
+);
+
 const adminRoutes = [
   { index: true, element: <AdminHome /> },
   {
@@ -206,6 +210,10 @@ const adminRoutes = [
             element: <PreviewActivity />,
           },
         ],
+      },
+      {
+        path: "add",
+        element: <AddNewLesson />,
       },
     ],
   },
