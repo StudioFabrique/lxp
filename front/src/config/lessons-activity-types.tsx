@@ -47,7 +47,7 @@ const activityTypes: ActivityType[] = [
   {
     icon: <PictureIcon />,
     label: "Image",
-    tooltip: "",
+    tooltip: "Téléverser une image avec des metadatas",
     type: "image",
   },
   {

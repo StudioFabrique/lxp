@@ -12,7 +12,7 @@ export default async function editManyGraduations(
     const graduationDocs = await Promise.all(
       graduations.map(async (item) => {
         delete item.id;
-        console.log({ gradItem: item });
+
         if (item._id) {
           // If the graduation has an _id, attempt to update it
           const updatedGraduation = await Graduation.findByIdAndUpdate(

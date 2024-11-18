@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { parcoursSearchOptions } from "../../config/search-options";
 import Parcours from "../../utils/interfaces/parcours";
 import Can from "../UI/can/can.component";
@@ -11,10 +12,14 @@ import { Link } from "react-router-dom";
 import AddIcon from "../UI/svg/add-icon";
 import ParcoursCardsList from "./parcours-cards-list";
 import ToggleList from "../UI/toggle-list";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { searchListParcours } from "../../helpers/parcours/search-list-parcours";
+import useHttp from "../../hooks/use-http";
+import toast from "react-hot-toast";
+import Modal from "../UI/modal/modal";
 
 interface ParcoursListProps {
+  onRefreshParcoursList: () => void;
   parcoursList: Parcours[];
 }
 
@@ -31,6 +36,10 @@ const ParcoursList = (props: ParcoursListProps) => {
     resetFilters,
     setPage,
   } = useEagerLoadingList(props.parcoursList, "title", 15);
+  const { error, isLoading, sendRequest } = useHttp();
+  const [parcoursToDelete, setParcoursToDelete] = useState<Parcours | null>(
+    null
+  );
 
   /**
    * permet de filtrer les objets affichés dans la liste, gère les propriétés nichées dans d'autres
@@ -45,6 +54,31 @@ const ParcoursList = (props: ParcoursListProps) => {
   const handleResetSearch = () => {
     resetFilters();
   };
+
+  const confirmParcoursToDelete = (parcours: Parcours) => {
+    setParcoursToDelete(parcours);
+  };
+
+  const handleDeleteParcours = () => {
+    const applyData = (data: { success: boolean; message: string }) => {
+      if (data.success) {
+        toast.success(data.message);
+        setParcoursToDelete(null);
+        setPage(1);
+        props.onRefreshParcoursList();
+      }
+    };
+    sendRequest(
+      { path: `/parcours/${parcoursToDelete!.id}`, method: "delete" },
+      applyData
+    );
+  };
+
+  useEffect(() => {
+    if (error.length > 0) {
+      toast.error(error);
+    }
+  }, [error]);
 
   return (
     <main className="w-5/6 flex flex-col items-center px-4 py-8 gap-8">
@@ -89,9 +123,15 @@ const ParcoursList = (props: ParcoursListProps) => {
                 onSorting={sortData}
                 direction={direction}
                 fieldSort={fieldSort}
+                onDeleteParcours={confirmParcoursToDelete}
+                loading={isLoading}
               />
             ) : (
-              <ParcoursCardsList parcoursList={list} />
+              <ParcoursCardsList
+                parcoursList={list}
+                loading={isLoading}
+                onDeleteParcours={confirmParcoursToDelete}
+              />
             )}
           </>
         ) : null}
@@ -101,6 +141,19 @@ const ParcoursList = (props: ParcoursListProps) => {
           <Pagination page={page} totalPages={totalPages} setPage={setPage} />
         ) : null}
       </section>
+      {parcoursToDelete ? (
+        <Modal
+          onLeftClick={() => setParcoursToDelete(null)}
+          onRightClick={handleDeleteParcours}
+          title="Supprimer un parcours"
+          isSubmitting={false}
+          leftLabel="Annuler"
+          rightLabel="Confirmer"
+        >
+          Attention le parcours et les ressources qui lui sont associées seront
+          définitivement supprimés.
+        </Modal>
+      ) : null}
     </main>
   );
 };

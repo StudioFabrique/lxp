@@ -1,21 +1,39 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+// Imports React et React Router
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
+// Imports des hooks personnalisés
 import useHttp from "../../../hooks/use-http";
+import useForm from "../../UI/forms/hooks/use-form";
+
+// Imports des composants
 import Wrapper from "../../UI/wrapper/wrapper.component";
+import ModuleList from "./module-list";
+import CreateModuleForm from "./create-module-form";
+import UpdateModuleForm from "./update-module-form";
+import Modal from "../../UI/modal/modal";
+
+// Imports des utilitaires et interfaces
 import Module from "../../../utils/interfaces/module";
+import { sortArray } from "../../../utils/sortArray";
+
+// Imports Redux
 import { useDispatch } from "react-redux";
 import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
-import ModuleList from "./module-list";
-import { sortArray } from "../../../utils/sortArray";
-import CreateModuleForm from "./create-module-form";
-import useForm from "../../UI/forms/hooks/use-form";
-import UpdateModuleForm from "./update-module-form";
+
+// Import des notifications
 import toast from "react-hot-toast";
 
+/**
+ * Composant principal pour la gestion des modules d'un parcours
+ * Permet d'afficher, créer, modifier et supprimer des modules
+ */
 const ModulesSection = () => {
+  // Hook personnalisé pour la gestion des formulaires
   const {
     values,
     onChangeValue,
@@ -24,22 +42,31 @@ const ModulesSection = () => {
     onValidationErrors,
     initValues,
   } = useForm();
+
+  // Hooks Redux et HTTP
   const dispatch = useDispatch();
   const { isLoading, sendRequest, error } = useHttp();
-  const [formationModules, setFormationModules] = useState<Module[]>([]);
+
+  // États locaux pour la gestion des modules
+  const [formationModules, setFormationModules] = useState<Module[]>([]); // Modules de la formation
+  const [toggleForm, setToggleForm] = useState(false); // Contrôle l'affichage du formulaire
+  const [newModule, setNewModule] = useState(false); // Indique si on crée un nouveau module
+  const [moduleToEdit, setModuleToEdit] = useState<Module | null>(null); // Module en cours d'édition
+  const [moduleToDelete, setModuleToDelete] = useState<number | null>(null); // ID du module à supprimer
+
+  // Références et paramètres
+  const formRef = useRef<HTMLInputElement>(null);
   const params = useParams();
   const parcoursId = params.id;
+
+  // Sélecteurs Redux
   const formationId = useSelector((state: any) => state.parcours.formation.id);
-  const formRef = useRef<HTMLInputElement>(null);
-  const [toggleForm, setToggleForm] = useState(false);
-  const [newModule, setNewModule] = useState(false);
   const parcoursModules = useSelector(
-    (state: any) => state.parcoursModules.modules,
+    (state: any) => state.parcoursModules.modules
   ) as Module[];
-  const [moduleToEdit, setModuleToEdit] = useState<Module | null>(null);
 
   /**
-   * retourne les modules associés à la formation
+   * Récupère les modules associés à la formation depuis l'API
    */
   const getFormationModules = useCallback(() => {
     const applyData = (data: Module[]) => {
@@ -49,20 +76,25 @@ const ModulesSection = () => {
       {
         path: `/modules/formation/${formationId}`,
       },
-      applyData,
+      applyData
     );
   }, [formationId, sendRequest]);
 
+  // Chargement initial des modules
   useEffect(() => {
     getFormationModules();
   }, [getFormationModules]);
 
+  /**
+   * Gère la soumission du formulaire de création d'un module
+   * @param formData Les données du formulaire
+   */
   const handleSubmitModule = (formData: FormData) => {
     const applyData = (data: any) => {
       setNewModule(false);
       setToggleForm(false);
       setFormationModules((prevData) =>
-        sortArray([...prevData, data.data], "id", false),
+        sortArray([...prevData, data.data], "id", false)
       );
       onResetForm();
     };
@@ -72,12 +104,17 @@ const ModulesSection = () => {
         method: "post",
         body: formData,
       },
-      applyData,
+      applyData
     );
   };
 
+  /**
+   * Gère la mise à jour d'un module existant
+   * @param formData Les données du formulaire
+   */
   const handleUpdateModule = (formData: FormData) => {
     const applyData = (data: any) => {
+      // Transformation des données reçues
       const module = {
         ...data.data,
         contacts: data.data.contacts.map((item: any) => item.contact),
@@ -95,32 +132,38 @@ const ModulesSection = () => {
         method: "put",
         body: formData,
       },
-      applyData,
+      applyData
     );
   };
 
   /**
-   * efface une copie de module rattachée au parcours et toutes ses relations avec les compétences et les contacts
-   * @param id string
+   * Marque un module pour suppression
+   * @param moduleId ID du module à supprimer
    */
-  const handleDeleteModule = (id: number) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const confirmModuleToDelete = (moduleId: number) => {
+    setModuleToDelete(moduleId);
+  };
+
+  /**
+   * Supprime un module du parcours
+   */
+  const handleDeleteModule = () => {
     const applyData = (_data: Module) => {
-      dispatch(parcoursModulesSliceActions.removeModule(id));
+      dispatch(parcoursModulesSliceActions.removeModule(moduleToDelete));
+      setModuleToDelete(null);
     };
     sendRequest(
       {
-        path: `/modules/${id}`,
+        path: `/modules/${moduleToDelete}`,
         method: "delete",
       },
-      applyData,
+      applyData
     );
   };
 
   /**
-   * enregistre une copie du module et la rattache au parcours
-   * et l'affiche dans la liste des modules du parcours
-   * @param id number
+   * Ajoute une copie d'un module de la formation au parcours
+   * @param id Identifiant du module à ajouter
    */
   const handleSelectModule = (id: number) => {
     const applyData = (data: any) => {
@@ -133,28 +176,34 @@ const ModulesSection = () => {
           path: `/modules/add-module/${parcoursId}/${module.id}`,
           method: "put",
         },
-        applyData,
+        applyData
       );
     }
   };
 
+  /**
+   * Active le formulaire de création de module
+   */
   const handleCreateModule = () => {
     setNewModule(true);
     setToggleForm(true);
   };
 
+  /**
+   * Prépare l'édition d'un module existant
+   * @param id Identifiant du module à éditer
+   */
   const handleModuleToEdit = (id: number) => {
-    console.log("id", id);
-
     const module = parcoursModules.find((item) => item.id === id);
-    //console.log("module", module);
-
     if (module) {
       setModuleToEdit(module);
     }
     setToggleForm(true);
   };
 
+  /**
+   * Annule l'édition ou la création en cours
+   */
   const handleCancel = () => {
     setNewModule(false);
     setModuleToEdit(null);
@@ -162,15 +211,17 @@ const ModulesSection = () => {
     onResetForm();
   };
 
+  // Effet pour mettre à jour l'état du formulaire dans le store Redux
   useEffect(() => {
     dispatch(parcoursModulesSliceActions.setIsFormOpen(toggleForm));
   }, [toggleForm, dispatch]);
 
-  // scroll jusqu'au premier champ du formulaire qd ce dernier est ouvert
+  // Effet pour gérer le scroll automatique vers le formulaire
   useEffect(() => {
     let timer: any;
     if ((newModule || moduleToEdit) && formRef && formRef.current) {
       if (moduleToEdit) {
+        // Initialisation des valeurs du formulaire pour l'édition
         initValues({
           title: moduleToEdit!.title,
           description: moduleToEdit!.description,
@@ -187,97 +238,120 @@ const ModulesSection = () => {
     return () => clearTimeout(timer);
   }, [newModule, initValues, moduleToEdit]);
 
-  /**
-   * gestion des erreurs HTTP
-   */
+  // Effet pour la gestion des erreurs HTTP avec toast notifications
   useEffect(() => {
     if (error.length > 0) {
       toast.error(error);
     }
   }, [error]);
 
-  console.log(parcoursModules);
-
   return (
-    <div className="flex flex-col gap-y-8">
-      <section>
-        <h1 className="text-3xl font-extrabold">Modules</h1>
-      </section>
-      <section>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <Wrapper>
-            <ModuleList
-              isSourceList={true}
-              isLoading={isLoading}
-              modules={formationModules}
-              label="Modules de la formation"
-              onEdit={() => {}}
-              onSelect={handleSelectModule}
-              onDelete={handleDeleteModule}
-            />
-          </Wrapper>
-          <Wrapper>
-            <ModuleList
-              isSourceList={false}
-              isLoading={isLoading}
-              modules={parcoursModules}
-              label="Modules du parcours"
-              onEdit={handleModuleToEdit}
-              onSelect={() => {}}
-              onDelete={handleDeleteModule}
-            />
-          </Wrapper>
-        </div>
-      </section>
-      <section>
-        <div className="w-full flex justify-between">
-          <button
-            className="btn btn-outline btn-primary"
-            onClick={handleCreateModule}
-            disabled={toggleForm}
-          >
-            Créer un module
-          </button>
-        </div>
-      </section>
+    <>
+      <div className="flex flex-col gap-y-8">
+        {/* Titre de la section */}
+        <section>
+          <h1 className="text-3xl font-extrabold">Modules</h1>
+        </section>
 
-      {toggleForm ? (
-        <>
-          {newModule ? (
+        {/* Grille des listes de modules */}
+        <section>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Liste des modules de la formation */}
             <Wrapper>
-              <CreateModuleForm
-                useForm={{
-                  values,
-                  onChangeValue,
-                  onValidationErrors,
-                  errors,
-                }}
+              <ModuleList
+                isSourceList={true}
                 isLoading={isLoading}
-                onCancel={handleCancel}
-                onSubmit={handleSubmitModule}
-                ref={formRef}
+                modules={formationModules}
+                label="Modules de la formation"
+                onEdit={() => {}}
+                onSelect={handleSelectModule}
+                onDelete={confirmModuleToDelete}
               />
             </Wrapper>
-          ) : (
+            {/* Liste des modules du parcours */}
             <Wrapper>
-              <UpdateModuleForm
-                useForm={{
-                  values,
-                  onChangeValue,
-                  onValidationErrors,
-                  errors,
-                }}
-                currentModule={moduleToEdit}
-                onSubmit={handleUpdateModule}
+              <ModuleList
+                isSourceList={false}
                 isLoading={isLoading}
-                ref={formRef}
-                onCancel={handleCancel}
+                modules={parcoursModules}
+                label="Modules du parcours"
+                onEdit={handleModuleToEdit}
+                onSelect={() => {}}
+                onDelete={confirmModuleToDelete}
               />
             </Wrapper>
-          )}
-        </>
+          </div>
+        </section>
+
+        {/* Bouton de création de module */}
+        <section>
+          <div className="w-full flex justify-between">
+            <button
+              className="btn btn-outline btn-primary"
+              onClick={handleCreateModule}
+              disabled={toggleForm}
+            >
+              Créer un module
+            </button>
+          </div>
+        </section>
+
+        {/* Formulaires conditionnels */}
+        {toggleForm ? (
+          <>
+            {/* Formulaire de création */}
+            {newModule ? (
+              <Wrapper>
+                <CreateModuleForm
+                  useForm={{
+                    values,
+                    onChangeValue,
+                    onValidationErrors,
+                    errors,
+                  }}
+                  isLoading={isLoading}
+                  onCancel={handleCancel}
+                  onSubmit={handleSubmitModule}
+                  ref={formRef}
+                />
+              </Wrapper>
+            ) : (
+              /* Formulaire de mise à jour */
+              <Wrapper>
+                <UpdateModuleForm
+                  useForm={{
+                    values,
+                    onChangeValue,
+                    onValidationErrors,
+                    errors,
+                  }}
+                  currentModule={moduleToEdit}
+                  onSubmit={handleUpdateModule}
+                  isLoading={isLoading}
+                  ref={formRef}
+                  onCancel={handleCancel}
+                />
+              </Wrapper>
+            )}
+          </>
+        ) : null}
+      </div>
+
+      {/* Modal de confirmation de suppression */}
+      {moduleToDelete ? (
+        <Modal
+          onLeftClick={() => setModuleToDelete(null)}
+          onRightClick={handleDeleteModule}
+          title="Supprimer un module"
+          isSubmitting={false}
+          leftLabel="Annuler"
+          rightLabel="Confirmer"
+        >
+          Attention le module et les ressources qui lui sont associées seront
+          définitivement supprimés.
+        </Modal>
       ) : null}
-    </div>
+    </>
   );
 };
 

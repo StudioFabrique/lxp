@@ -15,7 +15,6 @@ const GroupList: FC<{
   onDeleteGroup: (id: string) => Promise<boolean>;
 }> = ({
   allChecked,
-  role,
   groupList,
   showActions = true,
   onRowCheck,
@@ -30,7 +29,7 @@ const GroupList: FC<{
 
   useEffect(() => {
     onUncheckAll();
-  }, [role, onUncheckAll]);
+  }, [onUncheckAll]);
 
   const content = (
     <table className="table w-full">
@@ -77,7 +76,7 @@ const GroupList: FC<{
           >
             Nombre d'étudiants
           </th>
-          {showActions ? <th>Actions</th> : null}
+          {<th>Actions</th>}
         </tr>
       </thead>
       <tbody>

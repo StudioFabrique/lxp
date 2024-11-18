@@ -4,15 +4,16 @@ import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 
-export default async function postText(
+export default async function postActivityText(
   lessonId: number,
   userId: string,
-  value: string,
-  type: string,
-  order: number
+  title: string,
+  description: string,
+  value: string
 ) {
   const existingLesson = await prisma.lesson.findFirst({
     where: { id: lessonId },
+    select: { id: true, activities: true },
   });
 
   if (!existingLesson) {
@@ -56,9 +57,11 @@ export default async function postText(
 
   const createdActivity = await prisma.activity.create({
     data: {
+      title,
+      description,
       url: fileName,
-      order,
-      type,
+      order: existingLesson.activities.length,
+      type: "text",
       lesson: {
         connect: {
           id: lessonId,

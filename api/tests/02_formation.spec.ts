@@ -110,7 +110,6 @@ describe("HTTP Formation", () => {
       "test-image.png",
     );
     test("It should respond 403 forbidden", async () => {
-      console.log("test test test");
       const module = {
         formationId: 1,
         title: "Random title",

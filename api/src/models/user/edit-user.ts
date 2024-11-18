@@ -34,6 +34,7 @@ export default async function editUser(
         address: user.address?.toLowerCase(),
         city: user.city?.toLowerCase(),
         postCode: user.postCode?.toLowerCase(),
+        birthDate: user.birthDate,
         phoneNumber: user.phoneNumber?.toLowerCase(),
         avatar: user.avatar,
         roles: newRole,

@@ -2,6 +2,7 @@
 import { ChangeEvent, ChangeEventHandler, FC } from "react";
 import User from "../../../utils/interfaces/user";
 import { AvatarSmall } from "../../UI/avatar/avatar.component";
+import { Trash2 } from "lucide-react";
 
 const GroupUserItem: FC<{
   user: any;
@@ -22,18 +23,20 @@ const GroupUserItem: FC<{
 
   return (
     <tr
-      className={`bg-secondary/10 hover:bg-primary hover:text-primary-content rounded-lg ${
+      className={`bg-secondary/10 hover:bg-primary/20 hover:text-primary rounded-lg ${
         flex && "flex justify-between items-center"
       }`}
     >
       {onCheckRow && (
-        <td className="bg-transparent rounded-l-xl p-5">
-          <input
-            type="checkbox"
-            className="checkbox checkbox-primary mt-1"
-            onChange={() => onCheckRow(user._id)}
-            checked={user.isSelected}
-          />
+        <td className="bg-transparent rounded-l-xl pr-0">
+          <div className="flex justify-center items-center">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-primary mt-1"
+              onChange={() => onCheckRow(user._id)}
+              checked={user.isSelected}
+            />
+          </div>
         </td>
       )}
       <td
@@ -41,7 +44,11 @@ const GroupUserItem: FC<{
           onCheckRow ? "bg-transparent" : "bg-transparent rounded-l-xl p-2"
         }
       >
-        {user.avatar && <AvatarSmall url={user.avatar} />}
+        <div className="flex justify-center items-center">
+          {user.avatar && (
+            <AvatarSmall url={`data:image/jpeg;base64,${user.avatar}`} />
+          )}
+        </div>
       </td>
       <td className="bg-transparent">{user.firstname}</td>
       <td className="bg-transparent">{user.lastname}</td>
@@ -68,10 +75,11 @@ const GroupUserItem: FC<{
         <div className="w-full flex justify-center">
           <button
             type="button"
-            className="btn btn-ghost hover:btn-ghost"
+            className="tooltip btn btn-ghost hover:btn-ghost"
+            data-tip="Supprimer"
             onClick={() => onDeleteUser(user)}
           >
-            Supprimer
+            <Trash2 className="w-5 h-5 stroke-error" />
           </button>
         </div>
       </td>

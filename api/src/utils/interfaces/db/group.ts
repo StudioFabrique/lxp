@@ -5,7 +5,7 @@ import { ITag } from "./tag";
 
 export interface IGroup extends Document {
   name: string;
-  desc: string;
+  desc?: string;
   users?: IUser["_id"];
   tags?: ITag["_id"];
   roles: IRole["_id"];
@@ -18,7 +18,7 @@ export interface IGroup extends Document {
 const groupSchema: Schema = new Schema(
   {
     name: { type: String, required: true },
-    desc: { type: String, required: true },
+    desc: { type: String, required: false },
     users: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "User",
@@ -32,7 +32,7 @@ const groupSchema: Schema = new Schema(
     isActive: { type: Boolean, default: false },
     image: { type: Buffer, required: false },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Group = mongoose.model<IGroup>("Group", groupSchema);

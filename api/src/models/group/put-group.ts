@@ -12,9 +12,7 @@ export default async function putGroup(
 ) {
   // Find the group by id
   const groupToFind = await Group.findOne({ _id: id });
-  if (!groupToFind) {
-    return null;
-  }
+  if (!groupToFind) return null;
 
   await activateMultipleUsers(users);
 
@@ -33,10 +31,30 @@ export default async function putGroup(
       { $set: updateData },
     );
 
+    const existingPrismaGroup = await prisma.group.findFirst({
+      where: { idMdb: id },
+    });
+
+    if (!existingPrismaGroup) return null;
+
     if (parcoursId) {
-      await prisma.groupsOnParcours.updateMany({
-        where: { group: { idMdb: id } },
-        data: { parcoursId },
+      // First delete any existing relationship for this group
+      await prisma.groupsOnParcours.deleteMany({
+        where: {
+          groupId: existingPrismaGroup.id,
+        },
+      });
+
+      // Then create the new relationship
+      await prisma.groupsOnParcours.create({
+        data: {
+          group: {
+            connect: { id: existingPrismaGroup.id },
+          },
+          parcours: {
+            connect: { id: parcoursId },
+          },
+        },
       });
     }
 

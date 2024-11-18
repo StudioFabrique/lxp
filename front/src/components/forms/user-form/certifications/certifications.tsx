@@ -196,7 +196,7 @@ const Certifications: FC<{
           {/* List of certifications */}
           {graduations.map((graduation) => (
             <CertificationItem
-              key={graduation._id ? graduation.id : graduation._id}
+              key={graduation._id ? graduation._id : graduation.id}
               onDelete={handleDeleteGraduation}
               graduation={graduation}
               onSetEditMode={handleSetEditMode}

@@ -23,14 +23,17 @@ export default function activateAccount(
           const existingBlacklistedToken = await BlackListedToken.findOne({
             token,
           });
-          if (existingBlacklistedToken)
+          if (existingBlacklistedToken) {
+            console.log(existingBlacklistedToken);
             return res.status(400).json({ message });
+          }
           req.auth = { userId: data.userId, userRoles: data.userRoles };
         }
         next();
       },
     );
   } catch (error: any) {
+    console.log({ error });
     return res.status(error.statusCode ?? 500).json({ message: error.message });
   }
 }

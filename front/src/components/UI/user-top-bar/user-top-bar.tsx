@@ -7,10 +7,10 @@ const UserTopBar = () => {
         placeholder="Que voulez-vous apprendre ?"
         className="input input-secondary bg-secondary/20"
       />
-      <button className="btn btn-primary text-white">
+      <button className="btn btn-primary text-base-100">
         <Search />
       </button>
-      <button className="btn btn-primary text-white">
+      <button className="btn btn-primary text-base-100">
         <Bell />
       </button>
     </div>

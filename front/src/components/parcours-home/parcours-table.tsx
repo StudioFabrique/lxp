@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { localeDate } from "../../helpers/locale-date";
 import Parcours from "../../utils/interfaces/parcours";
@@ -16,15 +16,22 @@ interface ParcoursTableProps {
   fieldSort: string;
   direction: boolean;
   onSorting: (property: string) => void;
+  onDeleteParcours: (parcours: Parcours) => void;
+  loading: boolean;
 }
 
 const ParcoursTable = (props: ParcoursTableProps) => {
-  const { parcoursList, fieldSort, direction, onSorting } = props;
-  const nav = useNavigate();
+  const {
+    parcoursList,
+    fieldSort,
+    direction,
+    onSorting,
+    onDeleteParcours,
+    //loading,
+  } = props;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleDeleteParcours = (_id: number) => {
-    nav(``);
+  const handleDeleteParcours = (parcours: Parcours) => {
+    onDeleteParcours(parcours);
   };
 
   // contenu du tableau
@@ -103,7 +110,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                     >
                       <div
                         className="cursor-pointer"
-                        onClick={() => handleDeleteParcours(item.id!)}
+                        onClick={() => handleDeleteParcours(item)}
                       >
                         <DeleteIcon />
                       </div>

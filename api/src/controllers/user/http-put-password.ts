@@ -17,10 +17,12 @@ export default async function httpPutPassword(
     };
     next(result);
   } catch (error: any) {
+    console.log({ error });
     const err = {
       statusCode: error.statusCode ?? 500,
       message: error.message,
     };
+    console.log({ err });
     next(err);
   }
 }

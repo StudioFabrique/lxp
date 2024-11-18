@@ -32,32 +32,35 @@ async function getAllGroups(
 
   const groupsWithFormation = await Promise.all(
     groups.map(async (group) => {
-      {
-        const groupPrisma = await prisma.group.findFirst({
-          select: {
-            parcours: {
-              select: {
-                parcours: {
-                  select: {
-                    formation: { select: { title: true } },
-                    title: true,
-                  },
+      const groupPrisma = await prisma.group.findFirst({
+        select: {
+          parcours: {
+            select: {
+              parcoursId: true,
+              parcours: {
+                select: {
+                  formation: { select: { title: true } },
+                  title: true,
                 },
               },
             },
           },
-          where: { idMdb: group._id },
-        });
+        },
+        where: { idMdb: group._id },
+      });
 
-        return {
-          ...group,
-          nbStudents: group.users.length,
-          formation:
-            groupPrisma?.parcours && groupPrisma?.parcours.length > 0
-              ? `${groupPrisma?.parcours[0].parcours.formation.title} - ${groupPrisma?.parcours[0].parcours.title}`
-              : undefined,
-        };
-      }
+      return {
+        ...group,
+        nbStudents: group.users.length,
+        formation:
+          groupPrisma?.parcours && groupPrisma?.parcours.length > 0
+            ? `${groupPrisma?.parcours[0].parcours.formation.title} - ${groupPrisma?.parcours[0].parcours.title}`
+            : null,
+        parcoursId:
+          groupPrisma?.parcours && groupPrisma?.parcours.length > 0
+            ? groupPrisma?.parcours[0].parcoursId
+            : null,
+      };
     }),
   );
 

@@ -13,18 +13,19 @@ async function httpDeleteParcoursById(req: CustomRequest, res: Response) {
       throw { message: noAccess, status: 403 };
     }
     const { parcoursId } = req.params;
-    await deleteParcoursById(+parcoursId, userId);
+    const result = await deleteParcoursById(+parcoursId, userId);
     return res.status(200).json({
-      message: `Le parcours identifié par l'id : ${parcoursId} a bien été supprimé`,
+      message: `Le parcours ${result} a bien été supprimé`,
+      success: true,
     });
   } catch (error: any) {
     let returnedError = error;
-    if (error.status === 403) {
+    if (error.statusCode === 403) {
       returnedError = { ...returnedError, from: req.socket.remoteAddress };
       logger.error(returnedError);
     }
     return res
-      .status(returnedError.status ?? 500)
+      .status(returnedError.statusCode ?? 500)
       .json({ message: returnedError.message ?? serverIssue });
   }
 }

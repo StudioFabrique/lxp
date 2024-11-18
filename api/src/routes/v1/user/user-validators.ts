@@ -1,6 +1,31 @@
-import { query, param, body } from "express-validator";
-import { stringValidateGeneric } from "../../../helpers/custom-validators";
+import { body, param } from "express-validator";
+import {
+  passwordValidateGeneric,
+  stringValidateGeneric,
+  tokenValidateGeneric,
+} from "../../../helpers/custom-validators";
 import { checkValidatorResult } from "../../../middleware/validators";
+
+export const postCheckEmailValidator = [
+  body("email")
+    .notEmpty()
+    .withMessage("L'adresse est email est obligatoire")
+    .isEmail()
+    .withMessage("Adresse email non valide."),
+  checkValidatorResult,
+];
+
+export const userIdValidator = [
+  param("userId")
+    .isMongoId()
+    .withMessage("L'identifiant de l'utilisateur est invalide."),
+  checkValidatorResult,
+];
+
+export const tokenValidator = [
+  body("token").custom(tokenValidateGeneric),
+  checkValidatorResult,
+];
 
 export const getUsersByRoleValidator = [
   param("role")
@@ -17,10 +42,20 @@ export const updateManyUsersStatusValidator = [
   body()
     .isArray()
     .withMessage(
-      "Le corps de la requête doit contenir un tableau d'identifiants."
+      "Le corps de la requête doit contenir un tableau d'identifiants.",
     )
     .notEmpty()
     .withMessage(
-      "Le corps de la requête doit contenir un tableau d'identifiants."
+      "Le corps de la requête doit contenir un tableau d'identifiants.",
     ),
+];
+
+export const postPasswordValidator = [
+  body("token")
+    .custom(tokenValidateGeneric)
+    .withMessage("Le token contient des caractères non autorisés."),
+  body("password")
+    .custom(passwordValidateGeneric)
+    .withMessage("Le mot de passe n'est pas valide."),
+  checkValidatorResult,
 ];
