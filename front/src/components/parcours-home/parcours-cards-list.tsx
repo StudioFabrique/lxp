@@ -4,7 +4,7 @@ import ParcoursCard from "./parcours-card";
 
 interface ParcoursCardsListProps {
   parcoursList: Parcours[];
-  onDeleteParcours: (id: number) => void;
+  onDeleteParcours: (parcours: Parcours) => void;
   loading: boolean;
 }
 

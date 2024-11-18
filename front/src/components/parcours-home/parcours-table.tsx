@@ -16,7 +16,7 @@ interface ParcoursTableProps {
   fieldSort: string;
   direction: boolean;
   onSorting: (property: string) => void;
-  onDeleteParcours: (id: number) => void;
+  onDeleteParcours: (parcours: Parcours) => void;
   loading: boolean;
 }
 
@@ -30,8 +30,8 @@ const ParcoursTable = (props: ParcoursTableProps) => {
     //loading,
   } = props;
 
-  const handleDeleteParcours = (id: number) => {
-    onDeleteParcours(id);
+  const handleDeleteParcours = (parcours: Parcours) => {
+    onDeleteParcours(parcours);
   };
 
   // contenu du tableau
@@ -110,7 +110,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                     >
                       <div
                         className="cursor-pointer"
-                        onClick={() => handleDeleteParcours(item.id!)}
+                        onClick={() => handleDeleteParcours(item)}
                       >
                         <DeleteIcon />
                       </div>
