@@ -132,14 +132,14 @@ const AddCourse = () => {
             <div className="grid grid-rows-2 gap-8">
               <h1 className="text-2xl font-extrabold">Création d'un cours</h1>
               <h3>
-                Pour commencer, veulliez saisir les informations nécessaires
+                Pour commencer, veuillez saisir les informations nécessaires
                 pour créer le cours
               </h3>
 
               <Wrapper>
                 <div className="h-full flex flex-col justify-around gap-y-4">
-                  <div className="text-sm font-bold">
-                    Choisissez un parcours
+                  <div className="font-bold">
+                    Choisissez un parcours et un module
                   </div>
                   <div className="flex flex-col gap-y-8">
                     <Selecter
@@ -153,6 +153,7 @@ const AddCourse = () => {
                       onSelectItem={handleModuleId}
                     />
                     <NewCourseForm
+                      label="Titre du cours"
                       isLoading={isLoading}
                       onSubmit={handleSubmit}
                     />
