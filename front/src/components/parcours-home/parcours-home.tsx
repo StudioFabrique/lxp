@@ -19,6 +19,7 @@ import toast from "react-hot-toast";
 import Modal from "../UI/modal/modal";
 
 interface ParcoursListProps {
+  onRefreshParcoursList: () => void;
   parcoursList: Parcours[];
 }
 
@@ -64,6 +65,7 @@ const ParcoursList = (props: ParcoursListProps) => {
         toast.success(data.message);
         setParcoursToDelete(null);
         setPage(1);
+        props.onRefreshParcoursList();
       }
     };
     sendRequest(

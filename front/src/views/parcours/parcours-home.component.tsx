@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import useHttp from "../../hooks/use-http";
 import Parcours from "../../utils/interfaces/parcours";
@@ -22,10 +22,7 @@ const ParcoursHome = () => {
   );
   const { sendRequest, isLoading, error } = useHttp();
 
-  /**
-   * retourne la liste de tous les parcours pour les afficher à l'écran
-   */
-  useEffect(() => {
+  const getParcoursList = useCallback(() => {
     const applyData = (data: any) => {
       setParcoursList(sortArray(data, "id"));
     };
@@ -40,6 +37,13 @@ const ParcoursHome = () => {
     );
   }, [currentRoute, sendRequest]);
 
+  /**
+   * retourne la liste de tous les parcours pour les afficher à l'écran
+   */
+  useEffect(() => {
+    getParcoursList();
+  }, [currentRoute, getParcoursList]);
+
   // gestion des erreurs HTTP
   useEffect(() => {
     if (error.length > 0) toast.error(error);
@@ -53,7 +57,12 @@ const ParcoursHome = () => {
         </div>
       ) : (
         <>
-          {parcoursList ? <ParcoursList parcoursList={parcoursList} /> : null}
+          {parcoursList ? (
+            <ParcoursList
+              parcoursList={parcoursList}
+              onRefreshParcoursList={getParcoursList}
+            />
+          ) : null}
         </>
       )}
     </main>
