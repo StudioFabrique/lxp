@@ -43,6 +43,8 @@ import httpPutReorderCourses from "../../../controllers/course/http-put-reorder-
 import httpGetMostReadCourses from "../../../controllers/course/http-get-most-read-courses";
 import { httpDeleteCourse } from "../../../controllers/course/http-delete-course";
 import httpGetCoursesTimeline from "../../../controllers/course/http-get-courses-timeline";
+import httpGetCoursesFromModule from "../../../controllers/course/http-get-courses-from-module";
+import { moduleIdValidator } from "../modules/module-validators";
 
 const courseRouter = express.Router();
 
@@ -68,7 +70,7 @@ courseRouter.delete(
   "/delete-course/:courseId",
   checkPermissions("course"),
   courseIdValidator,
-  httpDeleteCourse,
+  httpDeleteCourse
 );
 
 // enregistre un nouveau cours en relation avec un module existant
@@ -80,7 +82,7 @@ courseRouter.get("/", httpGetCourses);
 courseRouter.get(
   "/timeline",
   // add validators here
-  httpGetCoursesTimeline,
+  httpGetCoursesTimeline
 );
 
 courseRouter.get("/most-read", httpGetMostReadCourses);
@@ -92,7 +94,14 @@ courseRouter.get("/:moduleId", httpGetCoursesByModule);
 courseRouter.get(
   "/infos/:courseId",
   courseIdValidator,
-  httpGetCourseInformations,
+  httpGetCourseInformations
+);
+
+// retourne la liste des cours associés à un module
+courseRouter.get(
+  "/select/:moduleId",
+  moduleIdValidator,
+  httpGetCoursesFromModule
 );
 
 // met à jour l'image d'en-tête d'un cours
@@ -100,7 +109,7 @@ courseRouter.put(
   "/image",
   // checkToken,
   upload.single("image"),
-  httpPutCourseImage,
+  httpPutCourseImage
 );
 
 // mise à jour des informations du cours
@@ -108,7 +117,7 @@ courseRouter.put(
   "/infos",
   checkToken,
   putCourseInformationsValidator,
-  httpPutCourseInformations,
+  httpPutCourseInformations
 );
 
 // met à jour la liste des tags associés à un cours
@@ -117,7 +126,7 @@ courseRouter.put(
   checkToken,
   idsArrayValidator,
   courseIdValidator,
-  httpPutCourseTags,
+  httpPutCourseTags
 );
 
 // mise à jour de la liste des contacts
@@ -126,7 +135,7 @@ courseRouter.put(
   checkToken,
   idsArrayValidator,
   courseIdValidator,
-  httpPutCourseContacts,
+  httpPutCourseContacts
 );
 
 // mise à jour du lien vers la classe virtuelle du cours
@@ -135,7 +144,7 @@ courseRouter.put(
   checkToken,
   courseIdValidator,
   virtualClassValidator,
-  httpPutCourseVirtualClass,
+  httpPutCourseVirtualClass
 );
 
 // retourne la liste des objectifs liés à un cours
@@ -143,7 +152,7 @@ courseRouter.get(
   "/objectives/:courseId",
   checkPermissions("course"),
   courseIdValidator,
-  httpGetCourseObjectives,
+  httpGetCourseObjectives
 );
 
 // met les objectifs du cours à jour dans la bdd
@@ -152,7 +161,7 @@ courseRouter.put(
   checkToken,
   courseIdValidator,
   idsArrayValidator,
-  httpPutCourseObjectives,
+  httpPutCourseObjectives
 );
 
 // enregistre un nouvel objectif et l'associe à un parcours puis à un cours
@@ -161,7 +170,7 @@ courseRouter.put(
   checkToken,
   courseIdValidator,
   putCourseNewObjectiveValidator,
-  httpPutCourseNewObjective,
+  httpPutCourseNewObjective
 );
 
 // retourne la liste des compétences associés à un cours et au module auquel le cours est rattaché
@@ -169,7 +178,7 @@ courseRouter.get(
   "/bonus-skills/:courseId",
   checkToken,
   courseIdValidator,
-  httpGetCourseSkills,
+  httpGetCourseSkills
 );
 
 // met la liste des compétences du cours à jour dans la bdd
@@ -178,7 +187,7 @@ courseRouter.put(
   checkToken,
   courseIdValidator,
   idsArrayValidator,
-  httpPutCourseBonusSkills,
+  httpPutCourseBonusSkills
 );
 
 // enregistre une nouvelle leçon et l'associe à un cours
@@ -187,7 +196,7 @@ courseRouter.put(
   checkToken,
   courseIdValidator,
   putCourseLessonValidator,
-  httpPutCourseLesson,
+  httpPutCourseLesson
 );
 
 // retourne le scénario et les lessons d'un cours
@@ -195,7 +204,7 @@ courseRouter.get(
   "/scenario/:courseId",
   checkToken,
   courseIdValidator,
-  httpGetCourseScenario,
+  httpGetCourseScenario
 );
 
 // dissocie une lesson d'un cours, si la lesson n'est associée qu'à un seul cours elle est définitivement supprimée
@@ -213,7 +222,7 @@ courseRouter.put(
   checkToken,
   courseIdValidator,
   idsArrayValidator,
-  httpPutManyLessons,
+  httpPutManyLessons
 );
 
 // ajoute une plage de dates au cours
@@ -222,7 +231,7 @@ courseRouter.put(
   checkToken,
   courseIdValidator,
   putCourseDatesValidator,
-  httpPutCourseDates,
+  httpPutCourseDates
 );
 
 // efface une plage de dates du cours
@@ -231,14 +240,14 @@ courseRouter.delete(
   checkToken,
   courseIdValidator,
   deleteCourseDatesValidator,
-  httpDeleteCourseDates,
+  httpDeleteCourseDates
 );
 
 // met à jour le statut publié / brouillon du cours
 courseRouter.put(
   "/publish/:courseId",
   courseIdValidator,
-  httpPutCourseIsPublished,
+  httpPutCourseIsPublished
 );
 
 // retourne la liste des plages de dates associées à un cours
@@ -246,7 +255,7 @@ courseRouter.get(
   "/dates/:courseId",
   checkPermissions("role"),
   courseIdValidator,
-  httpGetCourseDates,
+  httpGetCourseDates
 );
 
 // met à jour l'ordre des cours associés à un module
@@ -254,7 +263,7 @@ courseRouter.put(
   "/reorder/:moduleId",
   checkPermissions("course"),
   putReorderCoursesValidator,
-  httpPutReorderCourses,
+  httpPutReorderCourses
 );
 
 export default courseRouter;

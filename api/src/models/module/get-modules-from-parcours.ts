@@ -19,7 +19,6 @@ async function getModulesFromParcours(parcoursId: number) {
       select: {
         id: true,
         title: true,
-        description: true,
       },
     });
     return modules;
