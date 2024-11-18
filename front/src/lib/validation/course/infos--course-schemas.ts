@@ -12,5 +12,5 @@ export const infosCourseSchema = z.object({
     .regex(regexOptionalGeneric, {
       message: "La description du cours contient des caractères invalides",
     })
-    .optional(),
+    .nullish(),
 });
