@@ -14,7 +14,7 @@ import { truncateText } from "../../helpers/truncate-text";
 
 interface ParcoursCardProps {
   parcours: Parcours;
-  onDeleteParcours: (id: number) => void;
+  onDeleteParcours: (parcours: Parcours) => void;
 }
 
 const ParcoursCard = (props: ParcoursCardProps) => {
@@ -22,8 +22,8 @@ const ParcoursCard = (props: ParcoursCardProps) => {
   const [image, setImage] = useState<string | null>(null);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleDeleteParcours = (_id: number) => {
-    onDeleteParcours(_id);
+  const handleDeleteParcours = (parcours: Parcours) => {
+    onDeleteParcours(parcours);
   };
 
   useEffect(() => {
@@ -136,7 +136,7 @@ const ParcoursCard = (props: ParcoursCardProps) => {
               >
                 <button
                   className="btn btn-sm btn-outline btn-circle rounded-md btn-error"
-                  onClick={() => handleDeleteParcours(parcours.id!)}
+                  onClick={() => handleDeleteParcours(parcours)}
                 >
                   <div className="w-5 h-5">
                     <DeleteIcon />

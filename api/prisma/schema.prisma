@@ -55,16 +55,15 @@ model Parcours {
   formationId  Int
   virtualClass String?
   isPublished  Boolean              @default(false)
+  bonusSkills  BonusSkill[]
   contacts     ContactsOnParcours[]
   groups       GroupsOnParcours[]
   modules      ModulesOnParcours[]
+  objectives   Objective[]
   admin        Admin                @relation(fields: [adminId], references: [id])
   formation    Formation            @relation(fields: [formationId], references: [id])
   skills       SkillsOnParcours[]
   tags         TagsOnParcours[]
-  bonusSkills  BonusSkill[]
-
-  Objective Objective[]
 }
 
 model Module {
@@ -126,7 +125,7 @@ model BonusSkill {
   updatedAt   DateTime              @updatedAt
   badge       String?
   parcoursId  Int
-  parcours    Parcours              @relation(fields: [parcoursId], references: [id], onDelete: Cascade)
+  parcours    Parcours              @relation(fields: [parcoursId], references: [id])
   courses     BonusSkillOnCourse[]
   modules     BonusSkillsOnModule[]
 }
@@ -224,7 +223,7 @@ model Objective {
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
   parcoursId  Int
-  parcours    Parcours             @relation(fields: [parcoursId], references: [id], onDelete: Cascade)
+  parcours    Parcours             @relation(fields: [parcoursId], references: [id])
   courses     ObjectivesOnCourse[]
 }
 
@@ -325,7 +324,7 @@ model GroupsOnParcours {
   groupId    Int
   parcoursId Int
   group      Group    @relation(fields: [groupId], references: [id])
-  parcours   Parcours @relation(fields: [parcoursId], references: [id], onDelete: Cascade)
+  parcours   Parcours @relation(fields: [parcoursId], references: [id])
 
   @@id([groupId, parcoursId])
 }
