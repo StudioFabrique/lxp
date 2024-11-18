@@ -4,7 +4,18 @@ import Wrapper from "../../../components/UI/wrapper/wrapper.component";
 import Selecter from "../../../components/UI/selecter/selecter.component";
 import bgImage from "../../../assets/images/chaton.jpg";
 import NewCourseForm from "../../../components/edit-course/new-course-form";
+import useAddLesson from "./use-add-lesson";
+
 function AddNewLesson() {
+  const {
+    parcoursList,
+    modulesList,
+    courseList,
+    setParcoursId,
+    setModuleId,
+    setCourseId,
+  } = useAddLesson();
+
   // Image affichée sur la vue sous forme de background-image
   const classImage: React.CSSProperties = {
     backgroundImage: `url('${bgImage}')`,
@@ -35,19 +46,19 @@ function AddNewLesson() {
                 </div>
                 <div className="flex flex-col gap-y-8">
                   <Selecter
-                    list={[]}
+                    list={parcoursList}
                     title="Choisissez un parcours"
-                    onSelectItem={() => {}}
+                    onSelectItem={setParcoursId}
                   />
                   <Selecter
-                    list={[]}
+                    list={modulesList}
                     title="Choisisez un module"
-                    onSelectItem={() => {}}
+                    onSelectItem={setModuleId}
                   />
                   <Selecter
-                    list={[]}
+                    list={courseList}
                     title="Choisisez un cours"
-                    onSelectItem={() => {}}
+                    onSelectItem={setCourseId}
                   />
                   <NewCourseForm
                     label="Titre de la leçon"

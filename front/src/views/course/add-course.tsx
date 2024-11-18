@@ -88,7 +88,7 @@ const AddCourse = () => {
     };
     sendRequest(
       {
-        path: "/parcours",
+        path: "/parcours/select",
       },
       applyData
     );
