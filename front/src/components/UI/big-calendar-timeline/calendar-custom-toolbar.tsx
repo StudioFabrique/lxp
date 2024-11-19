@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { View, ViewsProps } from "react-big-calendar";
+import getDaisyuiThemeColor from "../../../utils/get-daisy-ui-theme-color";
 
 const customToolbarButtonStyles = {
   border: "none",
@@ -15,22 +16,13 @@ const customToolbarButtonStyles = {
 
 const navigationButtonColors = {
   back: {
-    backgroundColor: "#F08080", // Changed to lighter red
-    ":hover": {
-      backgroundColor: "#CD5C5C", // Changed to lighter hover red
-    },
+    backgroundColor: getDaisyuiThemeColor("primary"),
   },
   today: {
-    backgroundColor: "#3498DB",
-    ":hover": {
-      backgroundColor: "#2980B9",
-    },
+    backgroundColor: getDaisyuiThemeColor("accent"),
   },
   next: {
-    backgroundColor: "#2ECC71",
-    ":hover": {
-      backgroundColor: "#27AE60",
-    },
+    backgroundColor: getDaisyuiThemeColor("secondary"),
   },
 };
 
