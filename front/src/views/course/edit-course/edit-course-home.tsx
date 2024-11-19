@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
@@ -20,8 +20,11 @@ import { courseDatesActions } from "../../../store/redux-toolkit/course/course-d
 
 const EditCourseHome = () => {
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
   const { actualStep, finalStep, stepsList, updateStep, validateStep } =
     useSteps(stepsCourse);
+
+  const step = searchParams.get("step");
 
   /**
    * actualise le stepper et affiche le composant précédent
@@ -40,6 +43,10 @@ const EditCourseHome = () => {
   const handleUpdateStep = (id: number) => {
     validateStep(id, true);
   };
+
+  useEffect(() => {
+    if (step && +step >= 1 && +step <= 6) updateStep(+step);
+  }, [step, updateStep]);
 
   /**
    * reset les states globaux stockés en mémoire
