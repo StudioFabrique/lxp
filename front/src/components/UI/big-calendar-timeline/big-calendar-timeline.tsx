@@ -4,7 +4,7 @@ import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import CalendarCustomToolbar from "./calendar-custom-toolbar";
 import { adjustScheduleToCurrentWeek } from "../../../utils/calendar-utils";
-import { getRandomGradientColor } from "../../../utils/randomColor";
+import getDaisyuiBgThemeColor from "../../../utils/get-daisy-ui-theme-color";
 
 moment.locale("fr");
 const localizer = momentLocalizer(moment);
@@ -15,13 +15,17 @@ export interface Event {
   title: string;
   start: Date;
   end: Date;
-  color?: string;
-  gradient?: string;
   link?: string;
+}
+
+interface ColorEvent {
+  alternateId: number;
+  gradient: string;
 }
 
 type BigCalendarTimelineProps = {
   data: Event[];
+  colors?: ColorEvent[];
   onRangeChange: (
     range: { start: Date; end: Date } | Date[],
     view?: View,
@@ -31,13 +35,11 @@ type BigCalendarTimelineProps = {
 
 const BigCalendarTimeline = ({
   data,
+  colors,
   onRangeChange,
   onDoubleClickEvent,
 }: BigCalendarTimelineProps) => {
-  const dataAdjusted = adjustScheduleToCurrentWeek(data).map((event) => ({
-    ...event,
-    gradientColor: getRandomGradientColor(),
-  }));
+  const dataAdjusted = adjustScheduleToCurrentWeek(data);
 
   return (
     <Calendar
@@ -69,8 +71,10 @@ const BigCalendarTimeline = ({
       })}
       eventPropGetter={(event: Event) => ({
         style: {
-          background: event.gradient,
-          color: "#4a5568",
+          background: colors?.find(
+            (color) => color.alternateId === event.alternateId,
+          )?.gradient,
+          color: getDaisyuiBgThemeColor("base-100"),
         },
         className:
           "rounded-xl font-bold p-2 px-3 shadow-sm cursor-pointer transition-all duration-300 hover:-translate-y-[2px] hover:shadow-md hover:scale-[1.02] border border-gray-200",

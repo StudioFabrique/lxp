@@ -179,6 +179,7 @@ const ContextProvider: FC<Props> = (props) => {
       setTheme("light");
       localStorage.setItem("activeTheme", "light");
     }
+    window.location.href = "";
   };
 
   const defineRulesFor = useCallback(async () => {
