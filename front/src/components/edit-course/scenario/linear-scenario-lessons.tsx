@@ -231,7 +231,7 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
           onRightClick={handleDeleteLesson}
           title="Supprimer une leçon"
           isSubmitting={isLoading}
-          message="Attention la leçon et les ressources qui lui sont associées seront définitivement supprimées."
+          children="Attention la leçon et les ressources qui lui sont associées seront définitivement supprimées."
           leftLabel="Annuler"
           rightLabel="Confirmer"
         />
