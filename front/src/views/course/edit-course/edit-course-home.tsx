@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 import FadeWrapper from "../../../components/UI/fade-wrapper/fade-wrapper";
@@ -23,8 +23,7 @@ const EditCourseHome = () => {
   const [searchParams] = useSearchParams();
   const { actualStep, finalStep, stepsList, updateStep, validateStep } =
     useSteps(stepsCourse);
-
-  const step = searchParams.get("step");
+  const [step, setStep] = useState<string | null>(searchParams.get("step"));
 
   /**
    * actualise le stepper et affiche le composant précédent
@@ -45,7 +44,10 @@ const EditCourseHome = () => {
   };
 
   useEffect(() => {
-    if (step && +step >= 1 && +step <= 6) updateStep(+step);
+    if (step && +step >= 1 && +step <= 6) {
+      updateStep(+step);
+      setStep("0");
+    }
   }, [step, updateStep]);
 
   /**
