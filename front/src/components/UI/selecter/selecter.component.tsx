@@ -8,17 +8,17 @@ type Item = {
 type Props = {
   list: Array<Item>;
   title: string;
-  formation?: Item;
+  defaultItem?: Item;
   onSelectItem: (id: number) => void;
 };
 
 const Selecter: FC<Props> = ({
   list,
   title,
-  formation = { id: 0, title: "" },
+  defaultItem = { id: 0, title: "" },
   onSelectItem,
 }) => {
-  const [listItem, setListItem] = useState<number>(formation.id);
+  const [listItem, setListItem] = useState<number>(defaultItem.id);
 
   const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
     event.preventDefault();
