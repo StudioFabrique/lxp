@@ -7,6 +7,7 @@ import DeleteIcon from "../UI/svg/delete-icon.component";
 import EditIcon from "../UI/svg/edit-icon";
 import LessonsList from "../edit-course/scenario/lessons-list";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
+import { PlusCircle } from "lucide-react";
 
 interface LessonHomeProps {
   lessonsList: Lesson[];
@@ -25,6 +26,8 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
     //resetFilters,
     //setPage,
   } = useEagerLoadingList(lessonsList, "title", 1000);
+
+  //to={`/admin/lesson/edit/${item.id}`}
 
   const content = (
     <>
@@ -53,14 +56,32 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
               </td>
               <td className="bg-transparent">
                 <div className="w-6 h-6">
+                  <Can action="write" object="lesson">
+                    <div
+                      className="tooltip tooltip-bottom"
+                      data-tip="Activités"
+                    >
+                      <Link
+                        to={`/admin/lesson/edit/${item.id}`}
+                        className="text-secondary"
+                        aria-label="ajouter une activité"
+                      >
+                        <PlusCircle />
+                      </Link>
+                    </div>
+                  </Can>
+                </div>
+              </td>
+              <td className="bg-transparent">
+                <div className="w-6 h-6">
                   <Can action="update" object="lesson">
                     <div
                       className="tooltip tooltip-bottom"
                       data-tip="Modifier la leçon"
                     >
                       <Link
+                        to={`/admin/course/edit/${item.course.id}?step=4`}
                         className="text-secondary"
-                        to={`/admin/lesson/edit/${item.id}`}
                         aria-label="Editer la leçon"
                       >
                         <EditIcon />

@@ -87,7 +87,7 @@ export default function LessonHomePage() {
       </section>
 
       {/* Liste des leçons */}
-      <section className="w-5/6">
+      <section className="w-full flex justify-center">
         {lessonsList && lessonsList.length > 0 ? (
           <LessonHome lessonsList={lessonsList} onDelete={setDeletion} />
         ) : (
