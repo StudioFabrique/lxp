@@ -190,14 +190,14 @@ export const Editor = ({ activity, content, onCancel }: EditorProps) => {
       <div className="flex justify-between mt-4">
         <button
           type="button"
-          className="btn btn-sm btn-outline btn-primary"
+          className="btn btn-outline btn-primary"
           onClick={onCancel}
         >
           Annuler
         </button>
         <button
           type="button"
-          className="btn btn-sm btn-primary flex items-center gap-x-2"
+          className="btn btn-primary flex items-center gap-x-2"
           disabled={isLoading}
           onClick={handleSubmit}
         >
