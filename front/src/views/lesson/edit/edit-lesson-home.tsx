@@ -41,6 +41,7 @@ export default function EditLessonHome() {
           <button
             className="btn btn-primary"
             onClick={() => setCreateActivity((prevState) => !prevState)}
+            disabled={createActivity && activityType.length > 0}
           >
             {createActivity ? "Annuler" : "Ajouter une activité"}
           </button>
