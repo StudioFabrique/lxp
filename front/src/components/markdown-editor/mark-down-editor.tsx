@@ -36,11 +36,12 @@ type EditorProps = {
 export const Editor = ({ activity, content, onCancel }: EditorProps) => {
   // Récupération de la leçon depuis le store Redux
   const { lesson } = useSelector((state: any) => state.lesson);
+  const [isLoading, setIsLoading] = useState(false);
 
   // États et refs
   const [editorContent, setEditorContent] = useState<string>();
   const quillRef = useRef<ReactQuill>(null);
-  const { sendRequest, isLoading } = useHttp();
+  const { sendRequest } = useHttp();
 
   // Hook de formulaire personnalisé pour la gestion des champs
   const { errors, values, onChangeValue, onValidationErrors } = useForm();
@@ -71,6 +72,7 @@ export const Editor = ({ activity, content, onCancel }: EditorProps) => {
       const applyData = (_data: Activity) => {
         toast.success("Activité créée avec succès");
         onCancel();
+        setIsLoading(false);
       };
 
       // Envoi de la requête au serveur
@@ -92,6 +94,7 @@ export const Editor = ({ activity, content, onCancel }: EditorProps) => {
         toast.error("Veuillez remplir tous les champs obligatoires");
       } else {
         toast.error("Une erreur est survenue");
+        setIsLoading(false);
       }
     }
   };
@@ -122,7 +125,13 @@ export const Editor = ({ activity, content, onCancel }: EditorProps) => {
           const range = quillRef.current.getEditor().getSelection();
           quillRef.current
             .getEditor()
-            .insertEmbed(range?.index || 0, "image", response.response);
+            .insertEmbed(
+              range?.index || 0,
+              "image",
+              process.env.NODE_ENV === "development"
+                ? "http://localhost:5001/" + response.response
+                : response.response
+            );
         }
       } catch (error) {
         toast.error("Échec du téléchargement de l'image");
@@ -190,14 +199,14 @@ export const Editor = ({ activity, content, onCancel }: EditorProps) => {
       <div className="flex justify-between mt-4">
         <button
           type="button"
-          className="btn btn-outline btn-primary"
+          className="btn btn-sm btn-outline btn-primary"
           onClick={onCancel}
         >
           Annuler
         </button>
         <button
           type="button"
-          className="btn btn-primary flex items-center gap-x-2"
+          className="btn btn-sm btn-primary flex items-center gap-x-2"
           disabled={isLoading}
           onClick={handleSubmit}
         >

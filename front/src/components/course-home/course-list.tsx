@@ -1,12 +1,17 @@
+// Imports des dépendances React et React Router
 import { Link, useNavigate } from "react-router-dom";
 import Can from "../UI/can/can.component";
 import Header from "../UI/header";
 import { PlusCircle, RefreshCw } from "lucide-react";
 import Search from "../UI/search/search.component";
 import { useCallback, useEffect, useState } from "react";
+
+// Imports des hooks et utilitaires personnalisés
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import { searchListCourse } from "../../helpers/course/search-list-course";
 import { courseSearchOptions } from "../../config/search-options";
+
+// Imports des composants UI
 import ToggleList from "../UI/toggle-list";
 import CourseTable from "./course-table";
 import Pagination from "../UI/pagination/pagination";
@@ -15,14 +20,20 @@ import CourseCardsList from "./course-cards-list";
 import useDeleteCourse from "../../hooks/use-delete-course";
 import ModalDeleteCourse from "../UI/modal-delete-course";
 
+// Interface définissant les props du composant
 interface CourseListProps {
   coursesList: CustomCourse[];
   onRefreshCourses: () => void;
 }
 
 export default function CourseList(props: CourseListProps) {
+  // Hook de navigation
   const nav = useNavigate();
+
+  // État local pour gérer l'affichage en liste ou en cartes
   const [showList, setShowList] = useState(true);
+
+  // Hook personnalisé pour gérer le chargement et le tri de la liste
   const {
     list,
     sortData,
@@ -34,12 +45,14 @@ export default function CourseList(props: CourseListProps) {
     resetFilters,
     setPage,
   } = useEagerLoadingList(props.coursesList, "title", 15);
+
+  // Hook personnalisé pour gérer la suppression d'un cours
   const { showModal, handleShowModal, handleCloseModal, handleDeleteCourse } =
     useDeleteCourse<CustomCourse>(props.onRefreshCourses);
 
   /**
-   * navigue jusU'à la vue d'édition du cours identifié par son id
-   * @param id number
+   * Gère la navigation vers la page d'édition d'un cours
+   * @param id Identifiant du cours à éditer
    */
   const handleEditCourse = useCallback(
     (id: number) => {
@@ -49,20 +62,23 @@ export default function CourseList(props: CourseListProps) {
   );
 
   /**
-   * permet de filtrer les objets affichés dans la liste, gère les propriétés nichées dans d'autres
-   * @param entityToSearch string
-   * @param searchValue string
+   * Gère la recherche et le filtrage des cours
+   * @param entityToSearch Propriété sur laquelle effectuer la recherche
+   * @param searchValue Valeur recherchée
    */
   const handleSearchResult = (entityToSearch: string, searchValue: string) => {
     const filters = searchListCourse(entityToSearch, searchValue);
     getFilteredList(filters);
   };
 
+  /**
+   * Réinitialise les filtres de recherche
+   */
   const handleResetSearch = () => {
     resetFilters();
   };
 
-  // affiche la modal de confirmation de suppression du cours
+  // Affiche la modale de confirmation lors de la suppression d'un cours
   useEffect(() => {
     if (showModal) {
       (document.getElementById("my_modal_3") as HTMLFormElement).showModal();
@@ -71,6 +87,7 @@ export default function CourseList(props: CourseListProps) {
 
   return (
     <main className="w-full flex flex-col items-center px-4 py-8 gap-8">
+      {/* En-tête avec titre et bouton d'ajout */}
       <section className="w-full">
         <Header
           title="Liste des cours"
@@ -86,6 +103,8 @@ export default function CourseList(props: CourseListProps) {
           </Can>
         </Header>
       </section>
+
+      {/* Barre de recherche et bouton de réinitialisation */}
       <section className="w-full flex">
         <article className="w-full flex justify-end items-center gap-x-2">
           <Search
@@ -105,6 +124,8 @@ export default function CourseList(props: CourseListProps) {
           </div>
         </article>
       </section>
+
+      {/* Section principale avec la liste des cours */}
       <section className="w-full flex flex-col items-center">
         <article className="w-full flex justify-end items-center gap-x-4">
           <ToggleList showList={showList} onToggle={setShowList} />
@@ -129,11 +150,15 @@ export default function CourseList(props: CourseListProps) {
           </>
         ) : null}
       </section>
+
+      {/* Pagination */}
       <section className="w-full">
         {totalPages > 1 ? (
           <Pagination page={page} totalPages={totalPages} setPage={setPage} />
         ) : null}
       </section>
+
+      {/* Modal de confirmation de suppression */}
       {showModal ? (
         <ModalDeleteCourse
           courseId={showModal.id}
