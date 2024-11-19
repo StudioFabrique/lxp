@@ -45,7 +45,7 @@ export default function CourseList(props: CourseListProps) {
     (id: number) => {
       nav(`/admin/course/edit/${id}`);
     },
-    [nav],
+    [nav]
   );
 
   /**
@@ -70,7 +70,7 @@ export default function CourseList(props: CourseListProps) {
   }, [showModal]);
 
   return (
-    <main className="w-5/6 flex flex-col items-center px-4 py-8 gap-8">
+    <main className="w-full flex flex-col items-center px-4 py-8 gap-8">
       <section className="w-full">
         <Header
           title="Liste des cours"
@@ -105,7 +105,7 @@ export default function CourseList(props: CourseListProps) {
           </div>
         </article>
       </section>
-      <section className="w-full flex flex-col">
+      <section className="w-full flex flex-col items-center">
         <article className="w-full flex justify-end items-center gap-x-4">
           <ToggleList showList={showList} onToggle={setShowList} />
         </article>

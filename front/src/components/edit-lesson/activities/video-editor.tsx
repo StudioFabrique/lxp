@@ -175,14 +175,14 @@ export default function VideoEditor({
       </Wrapper>
       <section className="flex justify-between items-center gap-x-2">
         <button
-          className="btn btn-primary btn-sm btn-outline"
+          className="btn btn-primary btn-outline"
           disabled={loading}
           onClick={onCancel}
         >
           Annuler
         </button>
         <button
-          className="btn btn-primary btn-sm flex items-center gap-x-2"
+          className="btn btn-primary flex items-center gap-x-2"
           disabled={loading}
           onClick={handleSubmit}
         >
