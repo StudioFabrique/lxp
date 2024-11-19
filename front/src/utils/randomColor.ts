@@ -6,8 +6,13 @@ export function getRandomHexColor(): string {
   return "#" + "0".repeat(6 - hexColor.length) + hexColor;
 }
 
+/**
+ * Retourne aléatoirement soit une couleur pastel soit un gradient de couleur selon une probabilité.
+ * 60% de chance d'obtenir une couleur pastel et 40% de chance d'obtenir un gradient doux.
+ * @returns {string} Chaîne de caractères représentant la couleur au format CSS (code hex ou gradient)
+ */
 export function getRandomGradientColor(): string {
-  const useGradient = Math.random() > 0.6; // Slightly less chance of gradient
+  const useGradient = Math.random() > 0.6; // calculer la probabilité d'utiliser une couleur de type gradient
   if (useGradient) {
     return softGradients[Math.floor(Math.random() * softGradients.length)];
   }
