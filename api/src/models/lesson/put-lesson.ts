@@ -12,6 +12,15 @@ async function putLesson(lesson: Lesson) {
     throw error;
   }
 
+  const tag = await prisma.tag.findFirst({
+    where: { id: +lesson.tagId },
+  });
+
+  if (!tag) throw { statusCode: 404, message: "Le tag n'existe pas." };
+
+  if (!["hybride", "distancielle", "presentielle"].includes(lesson.modalite))
+    throw { statusCode: 400, message: "Modalité non reconnue." };
+
   const updatedLesson = await prisma.lesson.update({
     where: { id: +lesson.id },
     data: {
