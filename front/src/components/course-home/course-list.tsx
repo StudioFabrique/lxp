@@ -86,9 +86,9 @@ export default function CourseList(props: CourseListProps) {
   }, [showModal]);
 
   return (
-    <main className="w-full flex flex-col items-center px-4 py-8 gap-8">
+    <main className="w-full flex flex-col items-center py-8 gap-8">
       {/* En-tête avec titre et bouton d'ajout */}
-      <section className="w-full">
+      <section className="w-5/6 flex flex-col items-center">
         <Header
           title="Liste des cours"
           description="Liste des cours associés à un module."
@@ -105,7 +105,7 @@ export default function CourseList(props: CourseListProps) {
       </section>
 
       {/* Barre de recherche et bouton de réinitialisation */}
-      <section className="w-full flex">
+      <section className="w-5/6 flex justify-end">
         <article className="w-full flex justify-end items-center gap-x-2">
           <Search
             options={courseSearchOptions}
@@ -126,7 +126,7 @@ export default function CourseList(props: CourseListProps) {
       </section>
 
       {/* Section principale avec la liste des cours */}
-      <section className="w-full flex flex-col items-center">
+      <section className="w-5/6 flex flex-col items-center">
         <article className="w-full flex justify-end items-center gap-x-4">
           <ToggleList showList={showList} onToggle={setShowList} />
         </article>
