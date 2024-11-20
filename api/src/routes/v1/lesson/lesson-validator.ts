@@ -21,11 +21,13 @@ export const putLessonValidator = [
     .escape(),
   body("title")
     .notEmpty()
+    .isString()
     .withMessage("Un titre est requis pour la leçon")
     .custom(stringValidateGeneric)
     .withMessage("Le titre de la leçon contient des caractères non autorisés"),
   body("description")
     .notEmpty()
+    .isString()
     .withMessage("Une description est requise pour la leçon")
     .custom(stringValidateGeneric)
     .withMessage(
@@ -33,6 +35,7 @@ export const putLessonValidator = [
     ),
   body("modalite")
     .notEmpty()
+    .isString()
     .withMessage("Une modalité est requise pour la leçon")
     .custom(stringValidateGeneric)
     .withMessage(

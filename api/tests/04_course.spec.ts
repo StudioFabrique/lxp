@@ -44,7 +44,7 @@ describe("HTTP Course", () => {
       "..",
       "uploads",
       "tests",
-      "test-image.png",
+      "test-image.png"
     );
     const module = {
       formationId: 1,
@@ -165,7 +165,7 @@ describe("HTTP Course", () => {
         .set("Cookie", [`${authToken}`]);
       await request(app)
         .put("/v1/course/reorder/1")
-        .send([4, 3, 2])
+        .send([5, 4, 3, 2])
         .set("Cookie", [`${authToken}`])
         .expect(200);
       const courses = await prisma.course.findMany({
@@ -175,7 +175,7 @@ describe("HTTP Course", () => {
         orderBy: { id: "asc" },
       });
       const orders = courses.map((item) => item.order);
-      expect(orders).toEqual([2, 1, 0]);
+      expect(orders).toEqual([3, 2, 1, 0]);
     });
 
     test("It should respond 403 not authorized", async () => {

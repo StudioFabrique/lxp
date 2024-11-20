@@ -107,8 +107,10 @@ describe("HTTP Formation", () => {
       "..",
       "uploads",
       "tests",
-      "test-image.png",
+      "test-image.png"
     );
+    console.log("filePath", filePath);
+
     test("It should respond 403 forbidden", async () => {
       const module = {
         formationId: 1,

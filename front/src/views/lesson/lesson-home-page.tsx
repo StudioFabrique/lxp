@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import Lesson from "../../utils/interfaces/lesson";
 import useHttp from "../../hooks/use-http";
 import LessonHome from "../../components/lesson-home/lesson-home";
-import useLessonHTTP from "../../hooks/use-lesson-http";
 import toast from "react-hot-toast";
 import Modal from "../../components/UI/modal/modal";
 import Header from "../../components/UI/header";
@@ -20,8 +19,7 @@ export default function LessonHomePage() {
   const [lessonToDelete, setLessonToDelete] = useState<number | null>(null);
 
   // Hooks personnalisés pour les requêtes HTTP
-  const { sendRequest, isLoading } = useHttp();
-  const { deleteLesson } = useLessonHTTP();
+  const { sendRequest, error, isLoading } = useHttp();
 
   /**
    * Marque une leçon pour suppression
@@ -35,12 +33,17 @@ export default function LessonHomePage() {
    * Permet de supprimer une leçon définitivement ainsi que les activités associées
    */
   const handleDeleteLesson = async () => {
-    const data = await deleteLesson(lessonToDelete!);
-    if (data.success) {
-      toast.success(data.message);
-      setLessonToDelete(null);
-      fetchData();
-    }
+    const applyData = (data: { success: boolean; message: string }) => {
+      if (data.success) {
+        toast.success(data.message);
+        setLessonToDelete(null);
+        fetchData();
+      }
+    };
+    sendRequest(
+      { path: `/lesson/${lessonToDelete}`, method: "delete" },
+      applyData
+    );
   };
 
   /**
@@ -68,6 +71,14 @@ export default function LessonHomePage() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // Gestion des erreurs HTTP
+  useEffect(() => {
+    if (error.length > 0) {
+      toast.error(error);
+      if (lessonToDelete) setLessonToDelete(null);
+    }
+  }, [error, lessonToDelete]);
 
   return (
     <main className="w-full flex flex-col items-center py-8 gap-8">
