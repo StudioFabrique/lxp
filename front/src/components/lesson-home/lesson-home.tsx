@@ -1,3 +1,4 @@
+// Imports des dépendances externes
 import { Link } from "react-router-dom";
 import { localeDate, localeTime } from "../../helpers/locale-date";
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
@@ -7,13 +8,17 @@ import DeleteIcon from "../UI/svg/delete-icon.component";
 import EditIcon from "../UI/svg/edit-icon";
 import LessonsList from "../edit-course/scenario/lessons-list";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
+import { Activity } from "lucide-react";
 
+// Interface définissant les props du composant
 interface LessonHomeProps {
-  lessonsList: Lesson[];
-  onDelete: (id: number) => void;
+  lessonsList: Lesson[]; // Liste des leçons à afficher
+  onDelete: (id: number) => void; // Fonction de callback pour la suppression
 }
 
+// Composant principal pour l'affichage de la liste des leçons
 export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
+  // Utilisation du hook de chargement avec pagination et tri
   const {
     list,
     sortData,
@@ -26,6 +31,9 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
     //setPage,
   } = useEagerLoadingList(lessonsList, "title", 1000);
 
+  //to={`/admin/lesson/edit/${item.id}`}
+
+  // Contenu du tableau avec la liste des leçons
   const content = (
     <>
       {list && list.length > 0 ? (
@@ -35,22 +43,47 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
               className="text-xs lg:text-sm cursor-pointer hover:bg-secondary/20 hover:text-base-content"
               key={item.id}
             >
+              {/* Colonne du titre */}
               <td className="bg-transparent rounded-l-lg truncate">
                 {item.title}
               </td>
+              {/* Colonne du cours */}
               <td className="bg-transparent capitalize truncate">
                 {item.course ? item.course.title : "ND"}
               </td>
+              {/* Colonne de l'auteur */}
               <td className="bg-transparent capitalize truncate">
                 {item.author}
               </td>
+              {/* Colonne de la date de création */}
               <td className="bg-transparent truncate">
                 {localeDate(item.createdAt ?? "")} à{" "}
                 {localeTime(item.createdAt ?? "")}
               </td>
+              {/* Colonne de la date de mise à jour */}
               <td className="bg-transparent truncate">
                 {localeDate(item.updatedAt ?? "")}
               </td>
+              {/* Bouton pour accéder aux activités */}
+              <td className="bg-transparent">
+                <div className="w-6 h-6">
+                  <Can action="write" object="lesson">
+                    <div
+                      className="tooltip tooltip-bottom"
+                      data-tip="Activités"
+                    >
+                      <Link
+                        to={`/admin/lesson/edit/${item.id}`}
+                        className="text-secondary"
+                        aria-label="ajouter une activité"
+                      >
+                        <Activity />
+                      </Link>
+                    </div>
+                  </Can>
+                </div>
+              </td>
+              {/* Bouton d'édition */}
               <td className="bg-transparent">
                 <div className="w-6 h-6">
                   <Can action="update" object="lesson">
@@ -59,8 +92,8 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
                       data-tip="Modifier la leçon"
                     >
                       <Link
+                        to={`/admin/course/edit/${item.course.id}?step=4`}
                         className="text-secondary"
-                        to={`/admin/lesson/edit/${item.id}`}
                         aria-label="Editer la leçon"
                       >
                         <EditIcon />
@@ -69,6 +102,7 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
                   </Can>
                 </div>
               </td>
+              {/* Bouton de suppression */}
               <td className="bg-transparent rounded-r-lg">
                 <div
                   className="w-6 h-6 text-error"
@@ -93,11 +127,13 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
     </>
   );
 
+  // Rendu du composant
   return (
     <main className="w-5/6 flex flex-col items-center px-4 py-8 gap-8">
       <div className="w-full mt-16 min-h-[50%] flex justify-center items-center text-xs lg:text-sm">
         {lessonsList && LessonsList.length > 0 ? (
           <table className="table w-full border-separate border-spacing-y-2">
+            {/* En-tête du tableau avec les colonnes triables */}
             <thead>
               <tr>
                 <th
@@ -178,6 +214,7 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
                 <th></th>
               </tr>
             </thead>
+            {/* Corps du tableau avec la liste des leçons */}
             <tbody>{content}</tbody>
           </table>
         ) : (

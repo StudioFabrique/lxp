@@ -5,11 +5,7 @@ async function getModulesFromParcours(parcoursId: number) {
     const modulesIds = await tx.modulesOnParcours.findMany({
       where: { parcoursId },
     });
-    if (modulesIds.length === 0) {
-      const error = new Error("Aucun module associé au parcours");
-      (error as any).statusCode = 404;
-      throw error;
-    }
+
     const modules = await tx.module.findMany({
       where: {
         id: {
@@ -19,7 +15,6 @@ async function getModulesFromParcours(parcoursId: number) {
       select: {
         id: true,
         title: true,
-        description: true,
       },
     });
     return modules;

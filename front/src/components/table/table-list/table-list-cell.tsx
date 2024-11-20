@@ -30,7 +30,10 @@ const TableListCell = (props: PropsWithChildren<CellProps>) => {
         className="tooltip max-w-[18vw] flex"
       >
         {valueAsLink ? (
-          <Link to={valueAsLink.link} className="hover:underline">
+          <Link
+            to={valueAsLink.link}
+            className="hover:underline truncate w-full"
+          >
             {props.children}
           </Link>
         ) : (
