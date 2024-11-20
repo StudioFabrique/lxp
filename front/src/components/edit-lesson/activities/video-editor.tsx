@@ -14,13 +14,15 @@ import { validationErrors } from "../../../helpers/validate";
 import { Loader2 } from "lucide-react";
 import { activiteMetaDataSchema } from "../../../lib/validation/lesson/activite-video";
 
+// Props de l'éditeur vidéo
 interface VideoEditorProps {
-  propVideo?: string;
-  loading: boolean;
-  title?: string;
-  description?: string;
-  onCancel: () => void;
+  propVideo?: string; // URL de la vidéo existante (optionnel)
+  loading: boolean; // État de chargement
+  title?: string; // Titre existant (optionnel)
+  description?: string; // Description existante (optionnelle)
+  onCancel: () => void; // Fonction appelée à l'annulation
   onSubmit: (value: {
+    // Fonction appelée à la soumission
     videoValue: string;
     fileValue: File | null;
     title: string;
@@ -28,6 +30,7 @@ interface VideoEditorProps {
   }) => void;
 }
 
+// Taille maximale autorisée pour les fichiers vidéo
 const maxSize = activityVideoSize;
 
 export default function VideoEditor({
@@ -38,31 +41,43 @@ export default function VideoEditor({
   onCancel,
   onSubmit,
 }: VideoEditorProps) {
-  /*   const blogEdition = useSelector(
-    (state: any) => state.lesson.blogEdition
-  ) as number; */
-  const [origin, setOrigin] = useState("web");
-  const [video, setVideo] = useState<string>(propVideo);
-  const [file, setFile] = useState<File | null>(null);
-  const [url, setUrl] = useState<string>(propVideo);
+  // États locaux
+  const [origin, setOrigin] = useState("web"); // Source de la vidéo (web/fichier)
+  const [video, setVideo] = useState<string>(propVideo); // URL de la vidéo
+  const [file, setFile] = useState<File | null>(null); // Fichier vidéo sélectionné
+  const [url, setUrl] = useState<string>(propVideo); // URL externe saisie
+
+  // Hook personnalisé pour la gestion du formulaire
   const { initValues, errors, values, onChangeValue, onValidationErrors } =
     useForm();
 
   const data = { values, errors, onChangeValue };
 
+  const isValidUrl = (urlString: string): boolean => {
+    try {
+      new URL(urlString);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  // Gestion du changement de source (web/fichier)
   const handleOnChangeOrigin = (event: ChangeEvent<HTMLSelectElement>) => {
-    //handleReset();
     setOrigin(event.currentTarget.value);
   };
 
+  // Gestion de la sélection d'un fichier
   const handleSelectFile = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files && event.target.files[0];
     if (selectedFile) {
+      // Vérification du type de fichier
       if (!selectedFile.type.startsWith("video/")) {
         toast.error("Merci de choisir un fichier de type video.");
         setFile(null);
         return;
       }
+      // Vérification de la taille du fichier
       if (selectedFile.size > maxSize) {
         toast.error(maxSizeError(maxSize));
       }
@@ -71,19 +86,28 @@ export default function VideoEditor({
     }
   };
 
+  // Gestion du changement d'URL externe
   const handleOnChangeUrl = (event: ChangeEvent<HTMLInputElement>) => {
     setUrl(event.currentTarget.value);
     setVideo(url);
   };
 
+  // Mise à jour de la vidéo avec l'URL externe
   const handleSelectExternalSource = useCallback(() => {
     setVideo(url);
   }, [url]);
 
+  // Gestion de la soumission du formulaire
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     try {
+      // Validation des données du formulaire
       activiteMetaDataSchema.parse(values);
+      // Vérification de la validité de l'URL externe
+      if (origin === "web" && !isValidUrl(url)) {
+        toast.error("L'URL de la vidéo n'est pas valide.");
+        return;
+      }
     } catch (error: any) {
       if (error instanceof ZodError) {
         const errors = validationErrors(error);
@@ -91,6 +115,7 @@ export default function VideoEditor({
         return;
       }
     }
+    // Envoi des données
     onSubmit({
       title: values.title,
       description: values.description,
@@ -99,6 +124,7 @@ export default function VideoEditor({
     });
   };
 
+  // Initialisation des valeurs du formulaire
   useEffect(() => {
     initValues({
       title,
@@ -106,6 +132,7 @@ export default function VideoEditor({
     });
   }, [title, description, initValues]);
 
+  // Mise à jour de la vidéo quand l'URL change
   useEffect(() => {
     handleSelectExternalSource();
   }, [handleSelectExternalSource, url]);
@@ -114,6 +141,7 @@ export default function VideoEditor({
     <main className="w-full flex flex-col gap-y-4">
       <Wrapper>
         <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+          {/* Formulaire des métadonnées */}
           <article>
             <form className="flex flex-col gap-y-2">
               <Field
@@ -125,6 +153,7 @@ export default function VideoEditor({
               <FieldArea label="Description" name="description" data={data} />
             </form>
           </article>
+          {/* Sélection de la source vidéo */}
           <article className="flex flex-col gap-y-4 justify-center">
             <span className="flex items-center justify-between">
               <label className="text-primary" htmlFor="origin">
@@ -166,6 +195,7 @@ export default function VideoEditor({
             </span>
           </article>
         </section>
+        {/* Aperçu de la vidéo */}
         {video ? (
           <section className="w-full py-2 flex flex-col items-center gap-y-4">
             <h2 className="w-full">Aperçu de la vidéo</h2>
@@ -173,16 +203,17 @@ export default function VideoEditor({
           </section>
         ) : null}
       </Wrapper>
+      {/* Boutons d'action */}
       <section className="flex justify-between items-center gap-x-2">
         <button
-          className="btn btn-primary btn-sm btn-outline"
+          className="btn btn-primary btn-outline"
           disabled={loading}
           onClick={onCancel}
         >
           Annuler
         </button>
         <button
-          className="btn btn-primary btn-sm flex items-center gap-x-2"
+          className="btn btn-primary flex items-center gap-x-2"
           disabled={loading}
           onClick={handleSubmit}
         >

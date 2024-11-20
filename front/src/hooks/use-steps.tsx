@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import Step from "../utils/interfaces/step";
 import { sortArray } from "../utils/sortArray";
@@ -12,12 +12,15 @@ const useSteps = (steps: Array<Step>) => {
    * définit le step actuel pour afficher le composant correspondant dans la vue
    * @param id number
    */
-  const updateStep = (id: number) => {
-    const step = stepsList.find((item: Step) => item.id === id);
-    if (step) {
-      setActualStep(step);
-    }
-  };
+  const updateStep = useCallback(
+    (id: number) => {
+      const step = stepsList.find((item: Step) => item.id === id);
+      if (step) {
+        setActualStep(step);
+      }
+    },
+    [stepsList]
+  );
 
   /**
    * actualise les propriétés saved et isValid de l'étape correspondant à l'id envoyée

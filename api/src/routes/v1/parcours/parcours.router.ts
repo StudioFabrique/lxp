@@ -33,11 +33,19 @@ import { headerImageMaxSize } from "../../../config/images-sizes";
 import httpGetTeacherParcours from "../../../controllers/parcours/http-get-teacher-parcours";
 import httpGetRootAdminParcours from "../../../controllers/parcours/http-get-root-admin-parcours";
 import httpGetParcoursAsStudent from "../../../controllers/parcours/http-get-parcours-as-student";
+import httpGetSelectParcours from "../../../controllers/parcours/http-get-select-parcours";
 
 const parcoursRouter = express.Router();
 
 // retourne la liste de tous les parcours
 parcoursRouter.get("/", checkPermissions("parcours"), httpGetParcours);
+
+// retourne la liste des parcours simplifiée
+parcoursRouter.get(
+  "/select",
+  checkPermissions("parcours"),
+  httpGetSelectParcours
+);
 
 // enregistre un nouveau parcours
 parcoursRouter.post(

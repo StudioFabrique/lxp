@@ -131,19 +131,23 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
               label=""
               maxSize={activityImageSize}
             />
-
-            <div className="flex justify-end items-center gap-x-2">
+            <div className="flex justify-between items-center">
               <button
                 className="btn btn-primary btn-outline"
-                onClick={onResetForm}
+                onClick={() => onCancel(false)}
               >
-                Réinitialiser
+                Annuler
               </button>
-              <SubmitButton
-                label="Sauvegarder"
-                isLoading={false}
-                loadingLabel="En cours..."
-              />
+              <span className="flex justify-end items-center gap-x-2">
+                <button className="btn btn-secondary" onClick={onResetForm}>
+                  Réinitialiser
+                </button>
+                <SubmitButton
+                  label="Sauvegarder"
+                  isLoading={false}
+                  loadingLabel="En cours..."
+                />
+              </span>
             </div>
           </form>
         </span>
