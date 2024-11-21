@@ -37,8 +37,6 @@ type ItemProps<TData extends Record<string, unknown>> = {
 const TableListItem = <TData extends Record<string, unknown>>(
   props: PropsWithChildren<ItemProps<TData>>,
 ) => {
-  console.log({ valuesAsLink: props.valuesAsLink });
-
   const [isChecked, setCheckedState] = useState<boolean>(false);
 
   const dataEntries = Object.entries(props.data);
