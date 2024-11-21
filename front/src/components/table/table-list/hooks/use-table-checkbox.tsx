@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { generateTableIdsFromData } from "../services/generic-table-service";
-import Group from "../../../../utils/interfaces/group";
 
 /**
  * Custom hook useTable.
