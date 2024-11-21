@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import useTableCheckbox from "../../components/table/table-list/hooks/use-table-checkbox";
 import useGroupActions from "./hooks/use-group-actions";
 import TableActionsButtons from "../../components/table/table-buttons/table-actions-buttons";
+import Group from "../../utils/interfaces/group";
 
 /**
  * Composant GroupHome
@@ -39,10 +40,11 @@ const GroupHome = () => {
     onSubmitSearchValue,
     onSortProperty,
     ...pagination
-  } = useTablePaginatedData("/group/student", "/group/search/student");
+  } = useTablePaginatedData<Group>("/group/student", "/group/search/student");
 
   // custom hook gestion checkbox
-  const { idsList, ...checkboxConfig } = useTableCheckbox(data, "_id");
+  const { idsList, onRetreiveItemsByPropertyFromIdList, ...checkboxConfig } =
+    useTableCheckbox<Group>(data, "_id");
 
   // custom hook gestion actions groupées
   const { onDeleteSelectedGroups } = useGroupActions(idsList, onRefreshData);
@@ -92,6 +94,9 @@ const GroupHome = () => {
               actionTitle: "Supprimer les groupes selectionnés",
               onDelete: onDeleteSelectedGroups,
             }}
+            onRetreiveItemsByPropertyFromIdList={
+              onRetreiveItemsByPropertyFromIdList
+            }
           />,
           // bas du tableau
           <TablePagination
