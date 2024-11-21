@@ -39,7 +39,7 @@ const TablePagination = (props: TablePaginationProps) => {
         <div className="join">
           <button
             onClick={props.onSetPreviousPage}
-            className="join-item btn btn-sm btn-ghost"
+            className="join-item btn btn-sm btn-ghost disabled:btn-active"
             disabled={props.currentPage === 1}
           >
             <ChevronLeft />
