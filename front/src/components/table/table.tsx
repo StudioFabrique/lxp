@@ -40,7 +40,7 @@ const Table = <TData extends Record<string, string>>(
   const [topChild, bottomChild] = props.children as React.ReactNode[];
 
   return (
-    <Wrapper additionalClassname="px-10 justify-between">
+    <Wrapper additionalClassname="px-10">
       {/* éléments du haut, avec les childrens à coté du composant SearchBar*/}
       <SearchBar {...props.searchBarConfig}>{topChild}</SearchBar>
 
