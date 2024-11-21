@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { generateTableIdsFromData } from "../services/generic-table-service";
+import Group from "../../../../utils/interfaces/group";
 
 /**
  * Custom hook useTable.
@@ -42,6 +43,19 @@ function useTableCheckbox<TData>(data: TData[], idProperty: string) {
     setIdList([]);
   };
 
+  const handleRetreiveItemsByPropertyFromIdList = <K extends keyof TData>(
+    property: K,
+  ) => {
+    return data
+      .filter((item: TData) => {
+        const itemId = item[idProperty as keyof TData];
+        return idsList.includes(String(itemId));
+      })
+      .map((item: TData) => String(item[property]));
+  };
+
+  handleRetreiveItemsByPropertyFromIdList("name" as keyof Group);
+
   // Quand les données changent (dépendance data), alors il y a un refresh des checkbox
   useEffect(() => {
     handleResetCheckbox();
@@ -53,6 +67,8 @@ function useTableCheckbox<TData>(data: TData[], idProperty: string) {
     isAllChecked,
     onCheck: handleCheck,
     onCheckAll: handleCheckAll,
+    onRetreiveItemsByPropertyFromIdList:
+      handleRetreiveItemsByPropertyFromIdList,
   };
 }
 
