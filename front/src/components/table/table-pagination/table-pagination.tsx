@@ -40,6 +40,7 @@ const TablePagination = (props: TablePaginationProps) => {
           <button
             onClick={props.onSetPreviousPage}
             className="join-item btn btn-sm btn-ghost"
+            disabled={props.currentPage === 1}
           >
             <ChevronLeft />
           </button>
@@ -52,6 +53,7 @@ const TablePagination = (props: TablePaginationProps) => {
           <button
             onClick={props.onSetNextPage}
             className="join-item btn btn-sm btn-ghost"
+            disabled={props.currentPage === props.maxPage}
           >
             <ChevronRight />
           </button>
