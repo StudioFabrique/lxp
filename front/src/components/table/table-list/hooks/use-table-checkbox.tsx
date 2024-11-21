@@ -42,6 +42,17 @@ function useTableCheckbox<TData>(data: TData[], idProperty: string) {
     setIdList([]);
   };
 
+  const handleRetreiveItemsByPropertyFromIdList = <K extends keyof TData>(
+    property: K,
+  ) => {
+    return data
+      .filter((item: TData) => {
+        const itemId = item[idProperty as keyof TData];
+        return idsList.includes(String(itemId));
+      })
+      .map((item: TData) => String(item[property]));
+  };
+
   // Quand les données changent (dépendance data), alors il y a un refresh des checkbox
   useEffect(() => {
     handleResetCheckbox();
@@ -53,6 +64,8 @@ function useTableCheckbox<TData>(data: TData[], idProperty: string) {
     isAllChecked,
     onCheck: handleCheck,
     onCheckAll: handleCheckAll,
+    onRetreiveItemsByPropertyFromIdList:
+      handleRetreiveItemsByPropertyFromIdList,
   };
 }
 

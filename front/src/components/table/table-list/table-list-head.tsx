@@ -26,8 +26,6 @@ type TableListHeadProps = {
  * @component
  */
 const TableListHead = (props: TableListHeadProps) => {
-  console.log(props.sortProperty);
-
   const handleChangeCheckbox = (event: ChangeEvent<HTMLInputElement>) => {
     props.onCheckAll && props.onCheckAll(event.currentTarget.checked);
   };
@@ -88,7 +86,6 @@ const TableListHead = (props: TableListHeadProps) => {
         )}
 
         {/* Les cellules header pour contenir les labels des actions  */}
-
         {props.labels.map((item) =>
           item.isAction ? (
             <th key={item.property} className="text-base-content">
