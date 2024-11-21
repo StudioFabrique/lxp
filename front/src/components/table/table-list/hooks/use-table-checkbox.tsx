@@ -54,8 +54,6 @@ function useTableCheckbox<TData>(data: TData[], idProperty: string) {
       .map((item: TData) => String(item[property]));
   };
 
-  handleRetreiveItemsByPropertyFromIdList("name" as keyof Group);
-
   // Quand les données changent (dépendance data), alors il y a un refresh des checkbox
   useEffect(() => {
     handleResetCheckbox();
