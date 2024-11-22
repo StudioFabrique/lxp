@@ -17,7 +17,7 @@ type Item = {
 const Details: FC<{
   group?: Group;
   onSelectParcours: (id: number) => void;
-  selectedParcoursId?: number;
+  selectedParcoursId?: number | null;
 }> = ({ group, onSelectParcours, selectedParcoursId }) => {
   const { sendRequest } = useHttp();
 

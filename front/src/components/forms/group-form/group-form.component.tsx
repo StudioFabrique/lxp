@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC } from "react";
+import { FC, FormEvent } from "react";
 
 import Informations from "./components/informations.components";
 import Details from "./components/details.component";
@@ -30,8 +30,16 @@ const GroupForm: FC<{
     isFileNotRequired: props.isFileNotRequired,
   });
 
+  const handlePreventSubmitOnKey = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
+
   return (
-    <form className="flex flex-col gap-y-10" autoComplete="off">
+    <form
+      className="flex flex-col gap-y-10"
+      autoComplete="off"
+      onSubmit={handlePreventSubmitOnKey}
+    >
       <GroupsHeader
         onSubmit={onSubmit}
         title={props.title}
