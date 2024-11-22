@@ -38,7 +38,7 @@ const TableActionsModal: FC<{
             {descList ? (
               <ul className="py-2 flex flex-col gap-1">
                 {descList.map((item) => (
-                  <li>{item}</li>
+                  <li className="pl-2 opacity-80">{`- ${item}`}</li>
                 ))}
               </ul>
             ) : null}
