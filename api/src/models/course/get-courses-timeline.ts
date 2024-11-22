@@ -42,6 +42,28 @@ export default async function getCoursesTimeline(
               contactId: { in: formateurContacts.map((contact) => contact.id) },
             },
           },
+          module: {
+            contacts: {
+              some: {
+                contactId: {
+                  in: formateurContacts.map((contact) => contact.id),
+                },
+              },
+            },
+            parcours: {
+              some: {
+                parcours: {
+                  contacts: {
+                    some: {
+                      contactId: {
+                        in: formateurContacts.map((contact) => contact.id),
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
         {
           module: {
