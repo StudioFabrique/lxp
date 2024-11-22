@@ -3,6 +3,7 @@ import checkToken from "../../../middleware/check-token";
 import httpPutLesson from "../../../controllers/lesson/http-put-lesson";
 import {
   getLessonsByTagValidator,
+  lessonIdValidator,
   putLessonValidator,
   putReorderLessonsValidator,
 } from "./lesson-validator";
@@ -19,7 +20,12 @@ import httpGetLastLessonsRead from "../../../controllers/lesson/http-get-last-le
 const lessonRouter = express.Router();
 
 // met à jour une lesson
-lessonRouter.put("/update", checkToken, putLessonValidator, httpPutLesson);
+lessonRouter.put(
+  "/update",
+  checkPermissions("lesson"),
+  putLessonValidator,
+  httpPutLesson
+);
 
 // retourne la liste des leçons associées à un tag précis
 lessonRouter.get(
@@ -39,10 +45,20 @@ lessonRouter.get(
 );
 
 // retourne une leçon en particulier identifiée par son ID
-lessonRouter.get("/:lessonId", checkPermissions("lesson"), httpGetLessonDetail);
+lessonRouter.get(
+  "/:lessonId",
+  checkPermissions("lesson"),
+  lessonIdValidator,
+  httpGetLessonDetail
+);
 
 // supprime définitivement une leçon
-lessonRouter.delete("/:lessonId", checkPermissions("lesson"), httpDeleteLesson);
+lessonRouter.delete(
+  "/:lessonId",
+  checkPermissions("lesson"),
+  lessonIdValidator,
+  httpDeleteLesson
+);
 
 // modifiie l'ordre des leçons associées à un cours
 lessonRouter.put(
@@ -55,6 +71,7 @@ lessonRouter.put(
 lessonRouter.post(
   "/read/:lessonId",
   checkPermissions("lesson", "read"),
+  lessonIdValidator,
   httpPostBeginReadLesson
 );
 
@@ -62,6 +79,7 @@ lessonRouter.post(
 lessonRouter.put(
   "/read/:lessonId",
   checkPermissions("lesson", "read"),
+  lessonIdValidator,
   httpPutFinishReadLesson
 );
 
