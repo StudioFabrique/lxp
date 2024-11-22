@@ -32,11 +32,10 @@ const TableActionsButtons = (props: TableButtonsProps) => {
       {showModal ? (
         <TableActionsModal
           title="Confirmation de suppression"
-          desc="Les groupes suivants vont être supprimés :"
+          description={`${descList?.length} groupes vont être supprimés :`}
           descList={descList}
           onConfirm={props.delete.onDelete}
           onCancel={handleCloseModal}
-          isLoading={true}
         />
       ) : null}
       <div className="flex items-center">

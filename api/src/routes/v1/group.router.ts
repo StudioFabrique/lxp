@@ -2,6 +2,7 @@ import { Router } from "express";
 import httpCreateGroup from "../../controllers/group/http-create-group";
 import httpGetAllGroups from "../../controllers/group/http-get-all-groups";
 import {
+  checkValidatorResult,
   getAllValidator,
   groupValidator,
   searchValidator,
@@ -17,6 +18,7 @@ import httpGetGroupDetails from "../../controllers/group/http-get-group-details"
 import httpPutGroup from "../../controllers/group/http-put-group";
 import httpPutAddUsersGroup from "../../controllers/group/http-put-add-users-group";
 import httpDeleteManyGroups from "../../controllers/group/http-delete-many-groups";
+import { body, param, query } from "express-validator";
 const groupRouter = Router();
 
 // GET routes
@@ -34,7 +36,12 @@ groupRouter.get(
   httpGetAllGroups,
 );
 
-groupRouter.get("/:id", checkPermissions("group"), httpGetGroupDetails);
+groupRouter.get(
+  "/:id",
+  checkPermissions("group"),
+  param("id").isMongoId().withMessage("ID de groupe invalide"),
+  httpGetGroupDetails,
+);
 
 // POST routes
 groupRouter.post(
@@ -50,6 +57,15 @@ groupRouter.post(
 groupRouter.put(
   "/addUsers/:id",
   checkPermissions("group"),
+  jsonParser,
+  [
+    param("id").isMongoId().withMessage("ID de groupe invalide"),
+    body("usersId")
+      .isArray()
+      .withMessage("Le tableau d'identifiants utilisateurs est requis"),
+    body("usersId.*").isMongoId().withMessage("ID d'utilisateur invalide"),
+    checkValidatorResult,
+  ],
   httpPutAddUsersGroup,
 );
 
@@ -66,15 +82,32 @@ groupRouter.put(
 groupRouter.delete(
   "/user/:groupId/:userId",
   checkPermissions("group"),
+  [
+    param("groupId").isMongoId().withMessage("ID de groupe invalide"),
+    param("userId").isMongoId().withMessage("ID d'utilisateur invalide"),
+    checkValidatorResult,
+  ],
   httpDeleteUserFromGroup,
 );
 
 groupRouter.delete(
   "/deleteMany",
   checkPermissions("group"),
+  [
+    query("ids").isString().withMessage("IDs de groupes invalides"),
+    checkValidatorResult,
+  ],
   httpDeleteManyGroups,
 );
 
-groupRouter.delete("/:id", checkPermissions("group"), httpDeleteGroup);
+groupRouter.delete(
+  "/:id",
+  checkPermissions("group"),
+  [
+    param("id").isMongoId().withMessage("ID d'utilisateur invalide"),
+    checkValidatorResult,
+  ],
+  httpDeleteGroup,
+);
 
 export default groupRouter;
