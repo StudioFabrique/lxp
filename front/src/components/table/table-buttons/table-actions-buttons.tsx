@@ -32,7 +32,7 @@ const TableActionsButtons = (props: TableButtonsProps) => {
       {showModal ? (
         <TableActionsModal
           title="Confirmation de suppression"
-          desc="Les groupes suivants vont être supprimés :"
+          description="Les groupes suivants vont être supprimés :"
           descList={descList}
           onConfirm={props.delete.onDelete}
           onCancel={handleCloseModal}

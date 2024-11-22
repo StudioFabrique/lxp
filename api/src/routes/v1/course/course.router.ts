@@ -83,6 +83,7 @@ courseRouter.get("/", httpGetCourses);
 
 courseRouter.get(
   "/timeline",
+  checkPermissions("course"),
   [
     query("minDate")
       .exists()

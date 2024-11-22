@@ -1,5 +1,4 @@
 import { FC, useState } from "react";
-import toTitleCase from "../../../utils/toTitleCase";
 import Can from "../../UI/can/can.component";
 import Group from "../../../utils/interfaces/group";
 import { Link } from "react-router-dom";
