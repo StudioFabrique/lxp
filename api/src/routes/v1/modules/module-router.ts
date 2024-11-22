@@ -27,6 +27,7 @@ import httpDeleteFormationModule from "../../../controllers/module/http-delete-f
 import httpGetModuleDetail from "../../../controllers/module/http-get-module-detail";
 import httpGetModulesTimeline from "../../../controllers/module/http-get-modules-timeline";
 import httpGetModuleImage from "../../../controllers/module/http-get-module-image";
+import jsonParser from "../../../middleware/json-parser";
 
 const modules = Router();
 
@@ -40,13 +41,13 @@ modules.put(
   checkPermissions("module"),
   moduleIdValidator,
   parcoursIdValidator,
-  httpPutAddModule,
+  httpPutAddModule
 );
 modules.get(
   "/formation/:formationId",
   checkPermissions("module"),
   getModuleFormationValidator,
-  httpGetModuleFormation,
+  httpGetModuleFormation
 );
 
 modules.put(
@@ -54,60 +55,69 @@ modules.put(
   checkPermissions("module"),
   moduleIdFromBodyValidator,
   updateDatesModulesValidator,
-  httpUpdateDatesModule,
+  httpUpdateDatesModule
 );
 modules.put(
   "/calendar/duration",
   checkPermissions("module"),
   updateDurationValidator,
-  httpUpdateDurationModule,
+  httpUpdateDurationModule
 );
 modules.put(
   "/:parcoursId",
   checkPermissions("module"),
   parcoursIdValidator,
   idsArrayValidator,
-  httpParcoursModules,
+  httpParcoursModules
 );
 modules.delete(
   "/:moduleId",
   checkPermissions("module"),
   moduleIdValidator,
-  httpDeleteModule,
+  httpDeleteModule
 );
 modules.put(
   "/new-module",
   checkPermissions("module"),
   createFileUploadMiddleware(headerImageMaxSize),
-  httpPutModuleParcours,
+  jsonParser,
+  httpPutModuleParcours
 );
 modules.put(
   "/new-module/update",
   checkPermissions("module"),
   createFileUploadMiddleware(headerImageMaxSize),
-  httpPutModule,
+  jsonParser,
+  httpPutModule
 );
 // retourne la liste des modules assocués à un parcours
 modules.get(
   "/:parcoursId",
   checkPermissions("module"),
   getModulesFromParcoursValidator,
-  httpGetModulesFromParcours,
+  httpGetModulesFromParcours
 );
 
 // supprime définitvement un module attaché à une formation
 modules.delete(
   "/formation/:moduleId",
   checkPermissions("module"),
-  httpDeleteFormationModule,
+  moduleIdValidator,
+  httpDeleteFormationModule
 );
 // retourne les détails d'un module pour les afficher dans l'interface de gestion des modules
 modules.get(
   "/detail/:moduleId",
   checkPermissions("module"),
-  httpGetModuleDetail,
+  moduleIdValidator,
+  httpGetModuleDetail
 );
 
-modules.get("/image/:moduleId", checkPermissions("module"), httpGetModuleImage);
+modules.get(
+  "/image/:moduleId",
+  checkPermissions("module"),
+  moduleIdValidator,
+  httpGetModuleImage
+);
 
 export default modules;
