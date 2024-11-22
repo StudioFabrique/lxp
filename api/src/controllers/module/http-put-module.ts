@@ -6,7 +6,7 @@ import putModule from "../../models/module/putModule";
 import { deleteTempUploadedFile } from "../../middleware/fileUpload";
 
 async function httpPutModule(req: Request, res: Response) {
-  const module = JSON.parse(req.body.module);
+  const module = req.body.module;
   const uploadedFile: any = req.file;
 
   let thumb64: any;

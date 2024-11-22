@@ -9,7 +9,7 @@ import sharp from "sharp";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 
 async function httpPutModuleParcours(req: CustomRequest, res: Response) {
-  const { module } = req.body;
+  const module = req.body;
   const uploadedFile = req.file;
   const userId = req.auth?.userId;
 
