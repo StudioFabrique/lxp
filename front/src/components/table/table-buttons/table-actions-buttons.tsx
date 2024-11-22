@@ -36,7 +36,6 @@ const TableActionsButtons = (props: TableButtonsProps) => {
           descList={descList}
           onConfirm={props.delete.onDelete}
           onCancel={handleCloseModal}
-          isLoading={true}
         />
       ) : null}
       <div className="flex items-center">
