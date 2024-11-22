@@ -27,13 +27,58 @@ import httpDeleteFormationModule from "../../../controllers/module/http-delete-f
 import httpGetModuleDetail from "../../../controllers/module/http-get-module-detail";
 import httpGetModulesTimeline from "../../../controllers/module/http-get-modules-timeline";
 import httpGetModuleImage from "../../../controllers/module/http-get-module-image";
+import { checkValidatorResult } from "../../../middleware/validators";
+import { query } from "express-validator";
 
 const modules = Router();
 
 // retourne la liste de tous les modules
 modules.get("/", checkPermissions("module"), httpGetAllModules);
 
-modules.get("/timeline", checkPermissions("module"), httpGetModulesTimeline);
+modules.get(
+  "/timeline",
+  checkPermissions("module"),
+  [
+    query("minDate")
+      .exists()
+      .withMessage("minDate est requis")
+      .custom((value) => {
+        try {
+          if (!(value instanceof Date) && !isNaN(new Date(value).getTime())) {
+            return true;
+          }
+          return false;
+        } catch (e) {
+          return false;
+        }
+      })
+      .withMessage("minDate doit être une date de format ISO 8601"),
+
+    query("maxDate")
+      .exists()
+      .withMessage("maxDate est requis")
+      .custom((value) => {
+        try {
+          if (!(value instanceof Date) && !isNaN(new Date(value).getTime())) {
+            return true;
+          }
+          return false;
+        } catch (e) {
+          return false;
+        }
+      })
+      .withMessage("maxDate doit être une date de format ISO 8601")
+      .custom((maxDate, { req }) => {
+        const minDate = req.query?.minDate;
+        if (new Date(maxDate) <= new Date(minDate)) {
+          throw new Error("maxDate doit être plus grand que minDate");
+        }
+        return true;
+      }),
+    checkValidatorResult,
+  ],
+  httpGetModulesTimeline,
+);
 
 modules.put(
   "/add-module/:parcoursId/:moduleId",
