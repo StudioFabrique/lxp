@@ -63,7 +63,7 @@ export const actionsConfig = (
     withConfirmationModal: true,
     modal: {
       title: "Confirmation de suppression",
-      description: "Êtes-vous sûr de vouloir supprimer ce groupe",
+      description: "Êtes-vous sûr de vouloir supprimer ce groupe ?",
     },
     rbacObject: "group",
     rbacAction: "delete",
