@@ -7,6 +7,9 @@ import {
   stringValidateOptional,
 } from "../../../helpers/custom-validators";
 
+/**
+ * Valide l'identifiant du cours passé en paramètre
+ */
 export const courseIdValidator = [
   param("courseId")
     .notEmpty()
@@ -18,6 +21,9 @@ export const courseIdValidator = [
   checkValidatorResult,
 ];
 
+/**
+ * Valide les données lors de la création d'un nouveau cours
+ */
 export const postCourseValidator = [
   body("title")
     .notEmpty()
@@ -33,6 +39,9 @@ export const postCourseValidator = [
   checkValidatorResult,
 ];
 
+/**
+ * Valide les informations lors de la mise à jour d'un cours
+ */
 export const putCourseInformationsValidator = [
   body("id")
     .notEmpty()
@@ -57,6 +66,9 @@ export const putCourseInformationsValidator = [
   checkValidatorResult,
 ];
 
+/**
+ * Valide les données lors de l'ajout d'un nouvel objectif au cours
+ */
 export const putCourseNewObjectiveValidator = [
   body("description")
     .notEmpty()
@@ -68,6 +80,9 @@ export const putCourseNewObjectiveValidator = [
   checkValidatorResult,
 ];
 
+/**
+ * Valide les données lors de l'ajout d'une nouvelle leçon au cours
+ */
 export const putCourseLessonValidator = [
   body("title")
     .notEmpty()
@@ -96,6 +111,9 @@ export const putCourseLessonValidator = [
   checkValidatorResult,
 ];
 
+/**
+ * Valide l'identifiant de la leçon lors de sa suppression
+ */
 export const deleteCourseLessonValidator = [
   param("lessonId")
     .notEmpty()
@@ -107,6 +125,9 @@ export const deleteCourseLessonValidator = [
   checkValidatorResult,
 ];
 
+/**
+ * Valide les durées synchrone et asynchrone du cours
+ */
 export const putCourseDurationValidator = [
   body("synchroneDuration")
     .isInt()
@@ -121,6 +142,9 @@ export const putCourseDurationValidator = [
   checkValidatorResult,
 ];
 
+/**
+ * Valide les dates de début et de fin du cours
+ */
 export const putCourseDatesValidator = [
   body("minDate")
     .custom(dateValidateGeneric)
@@ -142,6 +166,9 @@ export const putCourseDatesValidator = [
   checkValidatorResult,
 ];
 
+/**
+ * Valide l'identifiant lors de la suppression d'une plage de dates
+ */
 export const deleteCourseDatesValidator = [
   param("datesId")
     .notEmpty()
@@ -153,6 +180,9 @@ export const deleteCourseDatesValidator = [
   checkValidatorResult,
 ];
 
+/**
+ * Valide les données lors de la réorganisation des cours dans un module
+ */
 export const putReorderCoursesValidator = [
   param("moduleId")
     .notEmpty()

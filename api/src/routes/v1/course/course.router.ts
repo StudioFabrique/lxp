@@ -1,6 +1,12 @@
+/**
+ * Fichier de configuration des routes pour la gestion des cours
+ * Ce router gère toutes les opérations CRUD liées aux cours
+ */
+
 import express from "express";
 import checkToken from "../../../middleware/check-token";
 
+// Import des contrôleurs pour la gestion des cours
 import httpPostCourse from "../../../controllers/course/http-post-course";
 import {
   courseIdValidator,
@@ -50,6 +56,10 @@ import { checkValidatorResult } from "../../../middleware/validators";
 
 const courseRouter = express.Router();
 
+/**
+ * Configuration du stockage des fichiers uploadés avec multer
+ * Les images sont stockées dans le dossier uploads
+ */
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(__dirname, "..", "..", "..", "..", "uploads"));
@@ -65,9 +75,15 @@ const storage = multer.diskStorage({
   },
 });
 
+// Configuration de multer avec une limite de taille de fichier de 1MB
 const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 
-//  supprime un cours d'un module
+// Routes pour la gestion des cours
+
+/**
+ * Route DELETE pour supprimer un cours d'un module
+ * Nécessite les permissions "course" et une validation de l'ID du cours
+ */
 courseRouter.delete(
   "/delete-course/:courseId",
   checkPermissions("course"),
@@ -75,12 +91,22 @@ courseRouter.delete(
   httpDeleteCourse,
 );
 
-// enregistre un nouveau cours en relation avec un module existant
+/**
+ * Route POST pour créer un nouveau cours
+ * Nécessite une validation des données du cours
+ */
 courseRouter.post("/", postCourseValidator, httpPostCourse);
 
-// retourne la liste de tous les cours
-courseRouter.get("/", httpGetCourses);
+/**
+ * Route GET pour récupérer tous les cours
+ * Nécessite les permissions "course"
+ */
+courseRouter.get("/", checkPermissions("course"), httpGetCourses);
 
+/**
+ * Route GET pour récupérer la timeline des cours
+ * TODO: Ajouter des validateurs
+ */
 courseRouter.get(
   "/timeline",
   checkPermissions("course"),
@@ -126,69 +152,110 @@ courseRouter.get(
   httpGetCoursesTimeline,
 );
 
-courseRouter.get("/most-read", httpGetMostReadCourses);
+/**
+ * Route GET pour récupérer les cours les plus lus
+ * Nécessite les permissions "course"
+ */
+courseRouter.get(
+  "/most-read",
+  checkPermissions("course"),
+  httpGetMostReadCourses
+);
 
-//retourne la liste des cours associés à un module
-courseRouter.get("/:moduleId", httpGetCoursesByModule);
+/**
+ * Route GET pour récupérer les cours d'un module spécifique
+ * Nécessite les permissions "course"
+ */
+courseRouter.get(
+  "/:moduleId",
+  checkPermissions("course"),
+  httpGetCoursesByModule
+);
 
-// retourne les informations d'un cours identifié par son ID
+/**
+ * Route GET pour récupérer les informations d'un cours spécifique
+ * Nécessite les permissions "course" et une validation de l'ID du cours
+ */
 courseRouter.get(
   "/infos/:courseId",
+  checkPermissions("course"),
   courseIdValidator,
   httpGetCourseInformations,
 );
 
-// retourne la liste des cours associés à un module
+/**
+ * Route GET pour récupérer la liste des cours d'un module
+ * Nécessite les permissions "course" et une validation de l'ID du module
+ */
 courseRouter.get(
   "/select/:moduleId",
+  checkPermissions("course"),
   moduleIdValidator,
   httpGetCoursesFromModule,
 );
 
-// met à jour l'image d'en-tête d'un cours
+/**
+ * Route PUT pour mettre à jour l'image d'un cours
+ * Nécessite les permissions "course" et gère l'upload de fichier
+ */
 courseRouter.put(
   "/image",
-  // checkToken,
+  checkPermissions("course"),
   upload.single("image"),
   httpPutCourseImage,
 );
 
-// mise à jour des informations du cours
+/**
+ * Route PUT pour mettre à jour les informations d'un cours
+ * Nécessite les permissions "course" et une validation des données
+ */
 courseRouter.put(
   "/infos",
-  checkToken,
+  checkPermissions("course"),
   putCourseInformationsValidator,
   httpPutCourseInformations,
 );
 
-// met à jour la liste des tags associés à un cours
+/**
+ * Route PUT pour mettre à jour les tags d'un cours
+ * Nécessite les permissions "course" et des validations
+ */
 courseRouter.put(
   "/tags/:courseId",
-  checkToken,
+  checkPermissions("course"),
   idsArrayValidator,
   courseIdValidator,
   httpPutCourseTags,
 );
 
-// mise à jour de la liste des contacts
+/**
+ * Route PUT pour mettre à jour les contacts d'un cours
+ * Nécessite les permissions "course" et des validations
+ */
 courseRouter.put(
   "/contacts/:courseId",
-  checkToken,
+  checkPermissions("course"),
   idsArrayValidator,
   courseIdValidator,
   httpPutCourseContacts,
 );
 
-// mise à jour du lien vers la classe virtuelle du cours
+/**
+ * Route PUT pour mettre à jour le lien de classe virtuelle
+ * Nécessite les permissions "course" et des validations
+ */
 courseRouter.put(
   "/virtual-class/:courseId",
-  checkToken,
+  checkPermissions("course"),
   courseIdValidator,
   virtualClassValidator,
   httpPutCourseVirtualClass,
 );
 
-// retourne la liste des objectifs liés à un cours
+/**
+ * Route GET pour récupérer les objectifs d'un cours
+ * Nécessite les permissions "course" et une validation de l'ID
+ */
 courseRouter.get(
   "/objectives/:courseId",
   checkPermissions("course"),
@@ -196,59 +263,77 @@ courseRouter.get(
   httpGetCourseObjectives,
 );
 
-// met les objectifs du cours à jour dans la bdd
+/**
+ * Route PUT pour mettre à jour les objectifs d'un cours
+ * Nécessite les permissions "course" et des validations
+ */
 courseRouter.put(
   "/objectives/:courseId",
-  checkToken,
+  checkPermissions("course"),
   courseIdValidator,
   idsArrayValidator,
   httpPutCourseObjectives,
 );
 
-// enregistre un nouvel objectif et l'associe à un parcours puis à un cours
+/**
+ * Route PUT pour ajouter un nouvel objectif à un cours
+ * Nécessite les permissions "course" et des validations
+ */
 courseRouter.put(
   "/new-objective/:courseId",
-  checkToken,
+  checkPermissions("course"),
   courseIdValidator,
   putCourseNewObjectiveValidator,
   httpPutCourseNewObjective,
 );
 
-// retourne la liste des compétences associés à un cours et au module auquel le cours est rattaché
+/**
+ * Route GET pour récupérer les compétences d'un cours
+ * Nécessite les permissions "course" et une validation de l'ID
+ */
 courseRouter.get(
-  "/bonus-skills/:courseId",
-  checkToken,
+  "/skills/:courseId",
+  checkPermissions("course"),
   courseIdValidator,
   httpGetCourseSkills,
 );
 
-// met la liste des compétences du cours à jour dans la bdd
+/**
+ * Route PUT pour mettre à jour les compétences bonus d'un cours
+ * Nécessite les permissions "course" et des validations
+ */
 courseRouter.put(
   "/bonus-skills/:courseId",
-  checkToken,
+  checkPermissions("course"),
   courseIdValidator,
   idsArrayValidator,
   httpPutCourseBonusSkills,
 );
 
-// enregistre une nouvelle leçon et l'associe à un cours
+/**
+ * Route PUT pour ajouter une nouvelle leçon à un cours
+ * Nécessite les permissions "course" et des validations
+ */
 courseRouter.put(
   "/new-lesson/:courseId",
-  checkToken,
+  checkPermissions("course"),
   courseIdValidator,
   putCourseLessonValidator,
   httpPutCourseLesson,
 );
 
-// retourne le scénario et les lessons d'un cours
+/**
+ * Route GET pour récupérer le scénario et les leçons d'un cours
+ * Nécessite les permissions "course" et une validation de l'ID
+ */
 courseRouter.get(
   "/scenario/:courseId",
-  checkToken,
+  checkPermissions("course"),
   courseIdValidator,
   httpGetCourseScenario,
 );
 
-// dissocie une lesson d'un cours, si la lesson n'est associée qu'à un seul cours elle est définitivement supprimée
+// Route commentée pour la suppression d'une leçon
 /* courseRouter.delete(
   "/delete-lesson/:courseId/:lessonId",
   checkToken,
@@ -257,19 +342,25 @@ courseRouter.get(
   httpDeleteCourseLesson
 ); */
 
-// associe une liste de leçons existante à un cours
+/**
+ * Route PUT pour associer plusieurs leçons à un cours
+ * Nécessite les permissions "course" et des validations
+ */
 courseRouter.put(
   "/lessons/:courseId",
-  checkToken,
+  checkPermissions("course"),
   courseIdValidator,
   idsArrayValidator,
   httpPutManyLessons,
 );
 
-// ajoute une plage de dates au cours
+/**
+ * Route PUT pour ajouter des dates à un cours
+ * Nécessite les permissions "course" et des validations
+ */
 courseRouter.put(
   "/dates/:courseId",
-  checkToken,
+  checkPermissions("course"),
   courseIdValidator,
   putCourseDatesValidator,
   httpPutCourseDates,
@@ -288,7 +379,8 @@ courseRouter.delete(
 courseRouter.put(
   "/publish/:courseId",
   courseIdValidator,
-  httpPutCourseIsPublished,
+  checkPermissions("course"),
+  httpPutCourseIsPublished
 );
 
 // retourne la liste des plages de dates associées à un cours
