@@ -233,7 +233,7 @@ const ModulesSection = () => {
         }, 100);
       }
       formRef.current!.scrollIntoView({ behavior: "smooth" });
-      formRef.current!.focus();
+      formRef.current!.click();
     }
     return () => clearTimeout(timer);
   }, [newModule, initValues, moduleToEdit]);
