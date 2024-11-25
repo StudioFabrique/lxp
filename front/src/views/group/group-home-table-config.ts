@@ -61,6 +61,10 @@ export const actionsConfig = (
     request: { path: "/group/[:id]", method: "delete" },
     onSuccessfulSubmit: onRefreshData,
     withConfirmationModal: true,
+    modal: {
+      title: "Confirmation de suppression",
+      description: "Êtes-vous sûr de vouloir supprimer ce groupe ?",
+    },
     rbacObject: "group",
     rbacAction: "delete",
   },

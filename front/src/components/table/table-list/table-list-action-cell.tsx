@@ -3,13 +3,13 @@ import useHttp from "../../../hooks/use-http";
 import Can from "../../UI/can/can.component";
 import TableListAction from "./interfaces/table-list-action";
 import TableListSwitchInput from "./table-list-switch-input";
-import DeleteModal from "../../UI/modal/delete-modal";
 import { useState } from "react";
+import TableActionsModal from "../table-buttons/table-actions-modal";
 
 type TableListActionCellProps = TableListAction & { id: string };
 
 const TableListActionCell = (props: TableListActionCellProps) => {
-  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const { sendRequest, isLoading } = useHttp();
 
@@ -46,29 +46,29 @@ const TableListActionCell = (props: TableListActionCellProps) => {
   };
 
   const handleToggleModal = async () => {
-    setModalOpen((prevState) => !prevState);
+    setShowModal((prevState) => !prevState);
   };
 
   const cell = (
     <td className="px-2 w-0 gap-x-2">
-      {props.withConfirmationModal && isModalOpen ? (
-        <DeleteModal
-          isLoading={isLoading}
-          onCancel={handleToggleModal}
+      {props.modal && showModal ? (
+        <TableActionsModal
+          {...props.modal}
           onConfirm={handleClick}
+          onCancel={handleToggleModal}
         />
       ) : null}
       <div className="flex justify-center">
         <div className="tooltip flex" data-tip={props.tooltip}>
-          <TableListSwitchInput
-            {...props}
-            linkUrl={path}
-            onClick={
-              props.withConfirmationModal ? handleToggleModal : handleClick
-            }
-            onToggle={handleToggle}
-            isLoading={isLoading}
-          />
+          {
+            <TableListSwitchInput
+              {...props}
+              linkUrl={path}
+              onClick={props.modal ? handleToggleModal : handleClick}
+              onToggle={handleToggle}
+              isLoading={isLoading}
+            />
+          }
         </div>
       </div>
     </td>

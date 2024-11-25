@@ -22,7 +22,7 @@ const ProgressBar = ({ courses }: ProgressBarProps) => {
             {course.lessons.map((lesson) => (
               <span
                 key={lesson.id}
-                className={`h-[70%] w-[15px]  ${
+                className={`h-[70%] w-full  ${
                   lesson.lessonsRead && lesson.lessonsRead?.length > 0
                     ? "bg-primary"
                     : "bg-primary/20"
