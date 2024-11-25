@@ -51,9 +51,30 @@ const Timeline = () => {
       | Date[],
   ) => {
     if (Array.isArray(range)) {
+      if (currentView === Views.DAY) {
+        const date = new Date(range[0]);
+        const startOfWeek = new Date(
+          date.setDate(date.getDate() - date.getDay() + 1),
+        );
+        const endOfWeek = new Date(
+          date.setDate(date.getDate() - date.getDay() + 5),
+        );
+        setDatesSearchingRange({
+          minDate: startOfWeek,
+          maxDate: endOfWeek,
+        });
+        return;
+      }
+      // semaine
       setDatesSearchingRange({
         minDate: range[0],
         maxDate: range[range.length - 1],
+      });
+    } else {
+      // mois
+      setDatesSearchingRange({
+        minDate: range.start,
+        maxDate: range.end,
       });
     }
   };
