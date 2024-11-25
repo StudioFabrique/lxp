@@ -9,18 +9,19 @@ datasource db {
 }
 
 model Activity {
-  id          Int      @id @default(autoincrement())
-  title       String?
-  description String?
-  type        String
-  order       Int
-  url         String
-  lessonId    Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  authorId    Int
-  author      Admin    @relation(fields: [authorId], references: [id])
-  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  id                 Int                @id @default(autoincrement())
+  title              String?
+  description        String?
+  type               String
+  order              Int
+  url                String
+  lessonId           Int
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  authorId           Int
+  author             Admin              @relation(fields: [authorId], references: [id])
+  lesson             Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  resourceActivities ResourceActivity[]
 }
 
 model Formation {
@@ -225,6 +226,14 @@ model Objective {
   parcoursId  Int
   parcours    Parcours             @relation(fields: [parcoursId], references: [id])
   courses     ObjectivesOnCourse[]
+}
+
+model ResourceActivity {
+  id         Int      @id @default(autoincrement())
+  label      String
+  url        String
+  activityId Int
+  activity   Activity @relation(fields: [activityId], references: [id])
 }
 
 model Accomplishment {
