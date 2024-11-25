@@ -3,7 +3,10 @@ import "moment/locale/fr";
 import { Calendar, momentLocalizer, View } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import CalendarCustomToolbar from "./calendar-custom-toolbar";
-import { adjustScheduleToCurrentWeek } from "../../../utils/calendar-utils";
+import {
+  adjustScheduleToCurrentWeek,
+  adjustScheduleToMonth,
+} from "../../../utils/calendar-utils";
 import getDaisyuiBgThemeColor from "../../../utils/get-daisy-ui-theme-color";
 import { Dispatch, SetStateAction } from "react";
 
@@ -44,7 +47,12 @@ const BigCalendarTimeline = ({
   onRangeChange,
   onDoubleClickEvent,
 }: BigCalendarTimelineProps) => {
-  const dataAdjusted = adjustScheduleToCurrentWeek(data);
+  const dataAdjusted =
+    view === "month"
+      ? adjustScheduleToMonth(data)
+      : adjustScheduleToCurrentWeek(data);
+
+  console.log({ dataAdjusted });
 
   return (
     <Calendar
@@ -62,8 +70,9 @@ const BigCalendarTimeline = ({
       components={{
         toolbar: CalendarCustomToolbar,
       }}
+      style={{ height: 600 }}
       formats={{
-        dayHeaderFormat: (date: Date) => moment(date).format("dddd DD"),
+        dayHeaderFormat: (date: Date) => moment(date).format("dddd DD MMMM"),
         timeGutterFormat: (date: Date) => moment(date).format("HH:mm"),
         dayFormat: (date: Date) =>
           moment(date)

@@ -1,5 +1,5 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { View, ViewsProps } from "react-big-calendar";
+import { View, Views, ViewsProps } from "react-big-calendar";
 import ActionsDropdown from "../actions-dropdown/actions-dropdown";
 
 interface ToolbarProps {
@@ -22,6 +22,10 @@ const CalendarCustomToolbar = (toolbar: ToolbarProps) => {
 
   const goToCurrent = () => {
     toolbar.onNavigate("TODAY");
+  };
+
+  const changeView = (data: View) => {
+    toolbar.onView(data);
   };
 
   return (
@@ -65,9 +69,13 @@ const CalendarCustomToolbar = (toolbar: ToolbarProps) => {
         </span>
         <ActionsDropdown
           actions={[
-            { actionTitle: "Vue jour", data: null, onClick: () => {} },
-            { actionTitle: "Vue semaine", data: null, onClick: () => {} },
-            { actionTitle: "Vue mois", data: null, onClick: () => {} },
+            { actionTitle: "Vue jour", data: Views.DAY, onClick: changeView },
+            {
+              actionTitle: "Vue semaine",
+              data: Views.WORK_WEEK,
+              onClick: changeView,
+            },
+            { actionTitle: "Vue mois", data: Views.MONTH, onClick: changeView },
           ]}
         />
       </div>
