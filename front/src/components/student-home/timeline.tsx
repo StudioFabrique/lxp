@@ -6,10 +6,12 @@ import BigCalendarTimeline, {
 import { useNavigate } from "react-router-dom";
 import { CourseTimeline } from "../../utils/interfaces/course";
 import { getRandomDaisyuiBgThemeColor } from "../../utils/get-daisy-ui-theme-color";
+import { View, Views } from "react-big-calendar";
 
 const Timeline = () => {
   const { sendRequest } = useHttp();
   const navigate = useNavigate();
+  const [currentView, setCurrentView] = useState<View>(Views.WORK_WEEK);
 
   const [timelineData, setTimelineData] = useState<
     {
@@ -117,6 +119,8 @@ const Timeline = () => {
         Mon emploi du temps
       </h2>
       <BigCalendarTimeline
+        view={currentView}
+        onSetView={setCurrentView}
         data={timelineData}
         colors={modulesColor}
         onRangeChange={handleRangeChange}

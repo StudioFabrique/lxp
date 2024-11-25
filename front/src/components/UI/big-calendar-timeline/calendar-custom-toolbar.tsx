@@ -1,30 +1,6 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { View, ViewsProps } from "react-big-calendar";
-import getDaisyuiThemeColor from "../../../utils/get-daisy-ui-theme-color";
-
-const customToolbarButtonStyles = {
-  border: "none",
-  color: "white",
-  padding: "8px 16px",
-  borderRadius: "4px",
-  margin: "0 4px",
-  cursor: "pointer",
-  display: "flex",
-  gap: "10px",
-  alignItems: "center",
-};
-
-const navigationButtonColors = {
-  back: {
-    backgroundColor: getDaisyuiThemeColor("primary"),
-  },
-  today: {
-    backgroundColor: getDaisyuiThemeColor("accent"),
-  },
-  next: {
-    backgroundColor: getDaisyuiThemeColor("secondary"),
-  },
-};
+import ActionsDropdown from "../actions-dropdown/actions-dropdown";
 
 interface ToolbarProps {
   onNavigate: (action: "PREV" | "NEXT" | "TODAY") => void;
@@ -49,44 +25,52 @@ const CalendarCustomToolbar = (toolbar: ToolbarProps) => {
   };
 
   return (
-    <div className="rbc-toolbar">
-      <span className="rbc-btn-group" style={{ display: "flex" }}>
+    <div className="flex flex-col lg:flex-row justify-between items-center gap-2 bg-base-200 p-4 rounded-lg shadow-lg">
+      <div className="flex flex-wrap gap-1 sm:gap-2 order-1 sm:order-1">
         <button
           type="button"
           onClick={goToBack}
-          style={{
-            ...customToolbarButtonStyles,
-            ...navigationButtonColors.back,
-          }}
+          className="btn btn-primary btn-sm gap-1 sm:gap-2 hover:scale-105 transition-transform"
         >
-          <ArrowLeft />
-          Semaine Précédente
+          <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+          {toolbar.view === "month"
+            ? "Précédent"
+            : toolbar.view === "day"
+              ? "Précédent"
+              : "Précédent"}
         </button>
         <button
           type="button"
           onClick={goToCurrent}
-          style={{
-            ...customToolbarButtonStyles,
-            ...navigationButtonColors.today,
-          }}
+          className="btn btn-accent btn-sm hover:scale-105 transition-transform"
         >
           Aujourd'hui
         </button>
         <button
           type="button"
           onClick={goToNext}
-          style={{
-            ...customToolbarButtonStyles,
-            ...navigationButtonColors.next,
-          }}
+          className="btn btn-secondary btn-sm gap-1 sm:gap-2 hover:scale-105 transition-transform"
         >
-          Semaine Suivante
-          <ArrowRight />
+          {toolbar.view === "month"
+            ? "Suivant"
+            : toolbar.view === "day"
+              ? "Suivant"
+              : "Suivant"}
+          <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
-      </span>
-      <span className="rbc-toolbar-label font-bold text-base-content">
-        {toolbar.label}
-      </span>
+      </div>
+      <div className="flex items-center gap-2 sm:gap-4 order-2 sm:order-2">
+        <span className="text-base font-bold text-base-content tracking-wide">
+          {toolbar.label}
+        </span>
+        <ActionsDropdown
+          actions={[
+            { actionTitle: "Vue jour", data: null, onClick: () => {} },
+            { actionTitle: "Vue semaine", data: null, onClick: () => {} },
+            { actionTitle: "Vue mois", data: null, onClick: () => {} },
+          ]}
+        />
+      </div>
     </div>
   );
 };
