@@ -51,6 +51,8 @@ import { httpDeleteCourse } from "../../../controllers/course/http-delete-course
 import httpGetCoursesTimeline from "../../../controllers/course/http-get-courses-timeline";
 import httpGetCoursesFromModule from "../../../controllers/course/http-get-courses-from-module";
 import { moduleIdValidator } from "../modules/module-validators";
+import { query } from "express-validator";
+import { checkValidatorResult } from "../../../middleware/validators";
 
 const courseRouter = express.Router();
 
@@ -86,7 +88,7 @@ courseRouter.delete(
   "/delete-course/:courseId",
   checkPermissions("course"),
   courseIdValidator,
-  httpDeleteCourse
+  httpDeleteCourse,
 );
 
 /**
@@ -107,8 +109,47 @@ courseRouter.get("/", checkPermissions("course"), httpGetCourses);
  */
 courseRouter.get(
   "/timeline",
-  // add validators here
-  httpGetCoursesTimeline
+  checkPermissions("course"),
+  [
+    query("minDate")
+      .exists()
+      .withMessage("minDate est requis")
+      .custom((value) => {
+        try {
+          if (!(value instanceof Date) && !isNaN(new Date(value).getTime())) {
+            return true;
+          }
+          return false;
+        } catch (e) {
+          return false;
+        }
+      })
+      .withMessage("minDate doit être une date de format ISO 8601"),
+
+    query("maxDate")
+      .exists()
+      .withMessage("maxDate est requis")
+      .custom((value) => {
+        try {
+          if (!(value instanceof Date) && !isNaN(new Date(value).getTime())) {
+            return true;
+          }
+          return false;
+        } catch (e) {
+          return false;
+        }
+      })
+      .withMessage("maxDate doit être une date de format ISO 8601")
+      .custom((maxDate, { req }) => {
+        const minDate = req.query?.minDate;
+        if (new Date(maxDate) <= new Date(minDate)) {
+          throw new Error("maxDate doit être plus grand que minDate");
+        }
+        return true;
+      }),
+    checkValidatorResult,
+  ],
+  httpGetCoursesTimeline,
 );
 
 /**
@@ -139,7 +180,7 @@ courseRouter.get(
   "/infos/:courseId",
   checkPermissions("course"),
   courseIdValidator,
-  httpGetCourseInformations
+  httpGetCourseInformations,
 );
 
 /**
@@ -150,7 +191,7 @@ courseRouter.get(
   "/select/:moduleId",
   checkPermissions("course"),
   moduleIdValidator,
-  httpGetCoursesFromModule
+  httpGetCoursesFromModule,
 );
 
 /**
@@ -161,7 +202,7 @@ courseRouter.put(
   "/image",
   checkPermissions("course"),
   upload.single("image"),
-  httpPutCourseImage
+  httpPutCourseImage,
 );
 
 /**
@@ -172,7 +213,7 @@ courseRouter.put(
   "/infos",
   checkPermissions("course"),
   putCourseInformationsValidator,
-  httpPutCourseInformations
+  httpPutCourseInformations,
 );
 
 /**
@@ -184,7 +225,7 @@ courseRouter.put(
   checkPermissions("course"),
   idsArrayValidator,
   courseIdValidator,
-  httpPutCourseTags
+  httpPutCourseTags,
 );
 
 /**
@@ -196,7 +237,7 @@ courseRouter.put(
   checkPermissions("course"),
   idsArrayValidator,
   courseIdValidator,
-  httpPutCourseContacts
+  httpPutCourseContacts,
 );
 
 /**
@@ -208,7 +249,7 @@ courseRouter.put(
   checkPermissions("course"),
   courseIdValidator,
   virtualClassValidator,
-  httpPutCourseVirtualClass
+  httpPutCourseVirtualClass,
 );
 
 /**
@@ -219,7 +260,7 @@ courseRouter.get(
   "/objectives/:courseId",
   checkPermissions("course"),
   courseIdValidator,
-  httpGetCourseObjectives
+  httpGetCourseObjectives,
 );
 
 /**
@@ -231,7 +272,7 @@ courseRouter.put(
   checkPermissions("course"),
   courseIdValidator,
   idsArrayValidator,
-  httpPutCourseObjectives
+  httpPutCourseObjectives,
 );
 
 /**
@@ -243,7 +284,7 @@ courseRouter.put(
   checkPermissions("course"),
   courseIdValidator,
   putCourseNewObjectiveValidator,
-  httpPutCourseNewObjective
+  httpPutCourseNewObjective,
 );
 
 /**
@@ -254,7 +295,7 @@ courseRouter.get(
   "/skills/:courseId",
   checkPermissions("course"),
   courseIdValidator,
-  httpGetCourseSkills
+  httpGetCourseSkills,
 );
 
 /**
@@ -266,7 +307,7 @@ courseRouter.put(
   checkPermissions("course"),
   courseIdValidator,
   idsArrayValidator,
-  httpPutCourseBonusSkills
+  httpPutCourseBonusSkills,
 );
 
 /**
@@ -278,7 +319,7 @@ courseRouter.put(
   checkPermissions("course"),
   courseIdValidator,
   putCourseLessonValidator,
-  httpPutCourseLesson
+  httpPutCourseLesson,
 );
 
 /**
@@ -289,7 +330,7 @@ courseRouter.get(
   "/scenario/:courseId",
   checkPermissions("course"),
   courseIdValidator,
-  httpGetCourseScenario
+  httpGetCourseScenario,
 );
 
 // Route commentée pour la suppression d'une leçon
@@ -310,7 +351,7 @@ courseRouter.put(
   checkPermissions("course"),
   courseIdValidator,
   idsArrayValidator,
-  httpPutManyLessons
+  httpPutManyLessons,
 );
 
 /**
@@ -322,7 +363,7 @@ courseRouter.put(
   checkPermissions("course"),
   courseIdValidator,
   putCourseDatesValidator,
-  httpPutCourseDates
+  httpPutCourseDates,
 );
 
 // efface une plage de dates du cours
@@ -331,7 +372,7 @@ courseRouter.delete(
   checkToken,
   courseIdValidator,
   deleteCourseDatesValidator,
-  httpDeleteCourseDates
+  httpDeleteCourseDates,
 );
 
 // met à jour le statut publié / brouillon du cours
@@ -347,7 +388,7 @@ courseRouter.get(
   "/dates/:courseId",
   checkPermissions("role"),
   courseIdValidator,
-  httpGetCourseDates
+  httpGetCourseDates,
 );
 
 // met à jour l'ordre des cours associés à un module
@@ -355,7 +396,7 @@ courseRouter.put(
   "/reorder/:moduleId",
   checkPermissions("course"),
   putReorderCoursesValidator,
-  httpPutReorderCourses
+  httpPutReorderCourses,
 );
 
 export default courseRouter;

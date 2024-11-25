@@ -6,11 +6,25 @@ export default async function getCoursesTimeline(
   minDate: string,
   maxDate: string,
 ) {
+  // Recherche des groupes contenant les étudiants
   const groupsWhereStudentIs = await Group.find({ users: userIdMdb });
-
   const groupIds: string[] = groupsWhereStudentIs.map((group) => group.id);
 
-  if (!(groupIds.length > 0)) return null;
+  // Recherche du formateur (dans le cas où l'utilisateur est un formateur)
+  const formateurContacts = await prisma.contact.findMany({
+    where: {
+      idMdb: userIdMdb,
+      courses: {
+        some: {
+          courseId: {
+            not: undefined,
+          },
+        },
+      },
+    },
+  });
+
+  if (!(groupIds.length > 0 || formateurContacts.length > 0)) return null;
 
   // Find courses in modules for those groups
   const courses = await prisma.course.findMany({
@@ -21,17 +35,38 @@ export default async function getCoursesTimeline(
       module: { select: { id: true, title: true } },
     },
     where: {
-      module: {
-        AND: [
-          {
-            minDate: {
-              lte: new Date(maxDate).toISOString(),
-            },
-            maxDate: {
-              gte: new Date(minDate).toISOString(),
+      OR: [
+        {
+          contacts: {
+            some: {
+              contactId: { in: formateurContacts.map((contact) => contact.id) },
             },
           },
-          {
+          module: {
+            contacts: {
+              some: {
+                contactId: {
+                  in: formateurContacts.map((contact) => contact.id),
+                },
+              },
+            },
+            parcours: {
+              some: {
+                parcours: {
+                  contacts: {
+                    some: {
+                      contactId: {
+                        in: formateurContacts.map((contact) => contact.id),
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          module: {
             parcours: {
               every: {
                 parcours: {
@@ -44,7 +79,15 @@ export default async function getCoursesTimeline(
               },
             },
           },
-        ],
+        },
+      ],
+      module: {
+        minDate: {
+          lte: new Date(maxDate).toISOString(),
+        },
+        maxDate: {
+          gte: new Date(minDate).toISOString(),
+        },
       },
     },
     orderBy: {

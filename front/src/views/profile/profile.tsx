@@ -82,18 +82,18 @@ const Profile = () => {
           >
             Information
           </button>
+          <Can object="parcours" action="read">
+            <button
+              type="button"
+              className={buttonClassName(Tab.Calendar)}
+              value="Calendar"
+              onClick={handleChangeTab}
+            >
+              Calendrier
+            </button>
+          </Can>
           {currentRoute[0] === "student" && (
             <>
-              <Can object="parcours" action="read">
-                <button
-                  type="button"
-                  className={buttonClassName(Tab.Calendar)}
-                  value="Calendar"
-                  onClick={handleChangeTab}
-                >
-                  Calendrier
-                </button>
-              </Can>
               <Can object="parcours" action="read">
                 <button
                   type="button"

@@ -123,7 +123,9 @@ const Timeline = () => {
         onDoubleClickEvent={handleDoubleClickEvent}
       />
     </div>
-  ) : null;
+  ) : (
+    <p className="pl-4">Aucune données du calendrier disponible</p>
+  );
 };
 
 export default Timeline;
