@@ -8,4 +8,5 @@ export default interface LessonRead {
   finishedAt?: Date;
   lesson: Lesson;
   student: User;
+  parcoursId?: number;
 }
