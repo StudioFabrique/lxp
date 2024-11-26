@@ -25,7 +25,7 @@ import httpPostActivityVideo from "../../../controllers/activity/http-post-activ
 import httpPutActivityVideo from "../../../controllers/activity/http-put-activity-video";
 import httpPutImage from "../../../controllers/activity/http-put-image";
 import { uploadActivityFiles } from "../../../middleware/upload-activity-file";
-import httpPostActivityResource from "../../../controllers/activity/http-activity-resource";
+import httpPostActivityResource from "../../../controllers/activity/http-post-activity-resource";
 
 const activityRouter = express.Router();
 
