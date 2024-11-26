@@ -1,0 +1,171 @@
+import { useMemo, useState } from "react";
+import useForm from "../../../../UI/forms/hooks/use-form";
+import useHttp from "../../../../../hooks/use-http";
+import toast from "react-hot-toast";
+import { regexGeneric } from "../../../../../utils/constantes";
+import { useParams } from "react-router-dom";
+
+// Type définissant la structure d'une ressource
+type Resource = {
+  name: string; // Nom de la ressource
+  file: File; // Fichier associé
+  hasError: boolean; // Indique si la ressource contient une erreur
+};
+
+// Types de fichiers autorisés pour l'upload
+const allowedMimeTypes = [
+  "application/pdf", // PDF
+  "application/vnd.ms-powerpoint", // PPT
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation", // PPTX
+  "text/plain", // TXT
+  "application/msword", // DOC
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // DOCX
+];
+
+/**
+ * Hook personnalisé pour gérer l'upload des ressources
+ * @param onCancel - Fonction appelée pour annuler l'upload
+ * @returns Objet contenant les fonctions et données nécessaires pour gérer l'upload
+ */
+const useUploadResources = (onCancel: (value: boolean) => void) => {
+  // État pour stocker la liste des fichiers
+  const [filesList, setFilesList] = useState<Resource[] | null>(null);
+
+  // Hook pour gérer le formulaire (validation, valeurs, etc.)
+  const { errors, values, onChangeValue } = useForm();
+  const data = { values, errors, onChangeValue };
+
+  // Hook pour les requêtes HTTP et récupération de l'ID de la leçon
+  const { isLoading, sendRequest, uploadProgress } = useHttp();
+  const { lessonId } = useParams();
+
+  // Mémoisation du nombre de fichiers pour éviter des re-renders inutiles
+  const filesNumber = useMemo(
+    () => filesList?.length ?? 0,
+    [filesList?.length]
+  );
+
+  /**
+   * Gère l'ajout d'un nouveau fichier à la liste
+   * Vérifie le type MIME et ajoute le fichier si valide
+   */
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      console.log(event.target.files[0].type);
+
+      // Vérification du type de fichier
+      if (allowedMimeTypes.includes(event.target.files[0].type)) {
+        const resource = [
+          ...(filesList ?? []),
+          {
+            name: values.name,
+            file: event.target.files[0],
+            hasError: !regexGeneric.test(values.name),
+          },
+        ];
+        setFilesList(resource);
+        // Réinitialisation du champ de fichier
+        event.target.value = "";
+        onChangeValue("name", "");
+      } else {
+        toast.error(
+          "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX"
+        );
+        return;
+      }
+    }
+  };
+
+  /**
+   * Supprime une ressource de la liste à l'index spécifié
+   */
+  const handleRemoveResource = (index: number) => {
+    setFilesList(filesList!.filter((_, i) => i !== index));
+  };
+
+  /**
+   * Réinitialise complètement le formulaire et la liste des fichiers
+   */
+  const resetFilesList = () => {
+    setFilesList(null);
+    onChangeValue("name", "");
+  };
+
+  /**
+   * Gère la soumission du formulaire
+   * Prépare les données et envoie la requête au serveur
+   */
+  const handleSubmit = () => {
+    const formData = new FormData();
+
+    // Ajout des fichiers au FormData avec validation du nom
+    filesList?.forEach((file) => {
+      if (regexGeneric.test(file.name)) {
+        formData.append("files", file.file);
+      } else {
+        toast.error("Le nom de la ressource n'est pas valide");
+        return;
+      }
+    });
+
+    // Callback après la requête réussie
+    const applyData = (data: { success: boolean; message: string }) => {
+      if (data.success) toast.success(data.message);
+      onCancel(false);
+    };
+
+    // Préparation des métadonnées des ressources
+    let resources: { label: string; filename: string }[] = [];
+    for (const item of filesList!) {
+      resources = [
+        ...resources,
+        { label: item.name, filename: item.file.name },
+      ];
+    }
+
+    // Ajout des métadonnées au FormData
+    formData.append("data", JSON.stringify(resources));
+
+    // Envoi de la requête POST au serveur
+    sendRequest(
+      {
+        path: `/activity/resource/${lessonId}`,
+        method: "post",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: formData,
+      },
+      applyData
+    );
+  };
+
+  /**
+   * Met à jour l'ordre des ressources dans la liste
+   */
+  const handleReorder = (
+    newList: {
+      name: string;
+      file: File;
+      hasError: boolean;
+    }[]
+  ) => {
+    setFilesList(newList);
+  };
+
+  // Retourne les fonctions et données nécessaires pour le composant
+  return {
+    data,
+    filesList,
+    filesNumber,
+    handleFileChange,
+    handleRemoveResource,
+    handleReorder,
+    handleSubmit,
+    isLoading,
+    resetFilesList,
+    uploadProgress,
+  };
+};
+
+export default useUploadResources;
