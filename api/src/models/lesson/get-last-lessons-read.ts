@@ -10,7 +10,7 @@ import Group from "../../utils/interfaces/db/group";
  */
 export default async function getLastLessonsRead(
   userIdMdb: string,
-  max?: number
+  max?: number,
 ) {
   const groupsWhereStudentIs = await Group.find({ users: userIdMdb });
 
@@ -45,7 +45,13 @@ export default async function getLastLessonsRead(
             select: {
               id: true,
               title: true,
-              module: { select: { id: true, title: true } },
+              module: {
+                select: {
+                  id: true,
+                  title: true,
+                  parcours: { select: { parcoursId: true } },
+                },
+              },
               bonusSkills: {
                 select: { bonusSkill: { select: { id: true, badge: true } } },
               },
@@ -88,7 +94,13 @@ export default async function getLastLessonsRead(
         course: {
           select: {
             title: true,
-            module: { select: { id: true, title: true } },
+            module: {
+              select: {
+                id: true,
+                title: true,
+                parcours: { select: { parcoursId: true } },
+              },
+            },
           },
         },
       },
@@ -97,7 +109,12 @@ export default async function getLastLessonsRead(
     if (!lesson) return null;
 
     const lessonReformated = {
-      lesson: { id: lesson?.id, title: lesson?.title, course: lesson?.course },
+      lesson: {
+        id: lesson?.id,
+        title: lesson?.title,
+        course: lesson?.course,
+        parcoursId: lesson.course.module.parcours[0].parcoursId,
+      },
     };
 
     return [lessonReformated];
@@ -112,7 +129,11 @@ export default async function getLastLessonsRead(
 
     return {
       ...lessonRead,
-      lesson: { ...lessonRead.lesson, course: { ...course, bonusSkills } },
+      lesson: {
+        ...lessonRead.lesson,
+        course: { ...course, bonusSkills },
+      },
+      parcoursId: lessonRead.lesson.course.module.parcours[0].parcoursId,
     };
   });
 
