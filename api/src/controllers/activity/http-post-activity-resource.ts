@@ -21,7 +21,10 @@ export default async function httpPostActivityResource(
     // Préparation de la réponse avec statut 201 (Created)
     const result = {
       statusCode: 201,
-      data: response,
+      data: {
+        success: true,
+        message: `Ressources téléversées avec succès (${response.result.count}).`,
+      },
     };
     next(result);
   } catch (error: any) {
