@@ -88,7 +88,7 @@ courseRouter.delete(
   "/delete-course/:courseId",
   checkPermissions("course"),
   courseIdValidator,
-  httpDeleteCourse,
+  httpDeleteCourse
 );
 
 /**
@@ -149,7 +149,7 @@ courseRouter.get(
       }),
     checkValidatorResult,
   ],
-  httpGetCoursesTimeline,
+  httpGetCoursesTimeline
 );
 
 /**
@@ -180,7 +180,7 @@ courseRouter.get(
   "/infos/:courseId",
   checkPermissions("course"),
   courseIdValidator,
-  httpGetCourseInformations,
+  httpGetCourseInformations
 );
 
 /**
@@ -191,7 +191,7 @@ courseRouter.get(
   "/select/:moduleId",
   checkPermissions("course"),
   moduleIdValidator,
-  httpGetCoursesFromModule,
+  httpGetCoursesFromModule
 );
 
 /**
@@ -202,7 +202,7 @@ courseRouter.put(
   "/image",
   checkPermissions("course"),
   upload.single("image"),
-  httpPutCourseImage,
+  httpPutCourseImage
 );
 
 /**
@@ -213,7 +213,7 @@ courseRouter.put(
   "/infos",
   checkPermissions("course"),
   putCourseInformationsValidator,
-  httpPutCourseInformations,
+  httpPutCourseInformations
 );
 
 /**
@@ -225,7 +225,7 @@ courseRouter.put(
   checkPermissions("course"),
   idsArrayValidator,
   courseIdValidator,
-  httpPutCourseTags,
+  httpPutCourseTags
 );
 
 /**
@@ -237,7 +237,7 @@ courseRouter.put(
   checkPermissions("course"),
   idsArrayValidator,
   courseIdValidator,
-  httpPutCourseContacts,
+  httpPutCourseContacts
 );
 
 /**
@@ -249,7 +249,7 @@ courseRouter.put(
   checkPermissions("course"),
   courseIdValidator,
   virtualClassValidator,
-  httpPutCourseVirtualClass,
+  httpPutCourseVirtualClass
 );
 
 /**
@@ -260,7 +260,7 @@ courseRouter.get(
   "/objectives/:courseId",
   checkPermissions("course"),
   courseIdValidator,
-  httpGetCourseObjectives,
+  httpGetCourseObjectives
 );
 
 /**
@@ -272,7 +272,7 @@ courseRouter.put(
   checkPermissions("course"),
   courseIdValidator,
   idsArrayValidator,
-  httpPutCourseObjectives,
+  httpPutCourseObjectives
 );
 
 /**
@@ -284,7 +284,7 @@ courseRouter.put(
   checkPermissions("course"),
   courseIdValidator,
   putCourseNewObjectiveValidator,
-  httpPutCourseNewObjective,
+  httpPutCourseNewObjective
 );
 
 /**
@@ -295,7 +295,15 @@ courseRouter.get(
   "/skills/:courseId",
   checkPermissions("course"),
   courseIdValidator,
-  httpGetCourseSkills,
+  httpGetCourseSkills
+);
+
+// retourne la liste des compétences associés à un cours et au module auquel le cours est rattaché
+courseRouter.get(
+  "/bonus-skills/:courseId",
+  checkToken,
+  courseIdValidator,
+  httpGetCourseSkills
 );
 
 /**
@@ -307,7 +315,7 @@ courseRouter.put(
   checkPermissions("course"),
   courseIdValidator,
   idsArrayValidator,
-  httpPutCourseBonusSkills,
+  httpPutCourseBonusSkills
 );
 
 /**
@@ -319,7 +327,7 @@ courseRouter.put(
   checkPermissions("course"),
   courseIdValidator,
   putCourseLessonValidator,
-  httpPutCourseLesson,
+  httpPutCourseLesson
 );
 
 /**
@@ -330,7 +338,7 @@ courseRouter.get(
   "/scenario/:courseId",
   checkPermissions("course"),
   courseIdValidator,
-  httpGetCourseScenario,
+  httpGetCourseScenario
 );
 
 // Route commentée pour la suppression d'une leçon
@@ -351,7 +359,7 @@ courseRouter.put(
   checkPermissions("course"),
   courseIdValidator,
   idsArrayValidator,
-  httpPutManyLessons,
+  httpPutManyLessons
 );
 
 /**
@@ -363,7 +371,7 @@ courseRouter.put(
   checkPermissions("course"),
   courseIdValidator,
   putCourseDatesValidator,
-  httpPutCourseDates,
+  httpPutCourseDates
 );
 
 // efface une plage de dates du cours
@@ -372,7 +380,7 @@ courseRouter.delete(
   checkToken,
   courseIdValidator,
   deleteCourseDatesValidator,
-  httpDeleteCourseDates,
+  httpDeleteCourseDates
 );
 
 // met à jour le statut publié / brouillon du cours
@@ -388,7 +396,7 @@ courseRouter.get(
   "/dates/:courseId",
   checkPermissions("role"),
   courseIdValidator,
-  httpGetCourseDates,
+  httpGetCourseDates
 );
 
 // met à jour l'ordre des cours associés à un module
@@ -396,7 +404,7 @@ courseRouter.put(
   "/reorder/:moduleId",
   checkPermissions("course"),
   putReorderCoursesValidator,
-  httpPutReorderCourses,
+  httpPutReorderCourses
 );
 
 export default courseRouter;
