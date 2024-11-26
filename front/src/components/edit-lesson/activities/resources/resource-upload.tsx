@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 import Field from "../../../UI/forms/field";
 import useForm from "../../../UI/forms/hooks/use-form";
-import SubmitButton from "../../../UI/submit-button";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 import SubWrapper from "../../../UI/sub-wrapper/sub-wrapper.component";
 import { FileText, Loader, Trash2 } from "lucide-react";
+import useHttp from "../../../../hooks/use-http";
+import { useParams } from "react-router-dom";
 
 type Props = {
   onCancel: (value: boolean) => void;
@@ -21,7 +23,9 @@ export default function ResourceUpload({ onCancel }: Props) {
   const [filesList, setFilesList] = useState<Resource[] | null>(null);
   const { errors, values, onChangeValue, onResetForm } = useForm();
   const data = { values, errors, onChangeValue };
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
+  const { sendRequest } = useHttp();
+  const { lessonId } = useParams();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -44,6 +48,37 @@ export default function ResourceUpload({ onCancel }: Props) {
     return convertedSize < 1024
       ? `${convertedSize.toFixed(2)} ko`
       : `${(convertedSize / 1024).toFixed(2)} mo`;
+  };
+
+  const handleSubmit = () => {
+    console.log(filesList);
+    const formData = new FormData();
+    filesList?.forEach((file) => {
+      formData.append("files", file.file);
+    });
+    console.log(formData);
+    const applyData = (data: any) => {
+      console.log({ data });
+    };
+    let resources: { label: string; filename: string }[] = [];
+    for (const item of filesList!) {
+      resources = [
+        ...resources,
+        { label: item.name, filename: item.file.name },
+      ];
+    }
+    formData.append("data", JSON.stringify(resources));
+    sendRequest(
+      {
+        path: `/activity/resource/${lessonId}`,
+        method: "post",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: formData,
+      },
+      applyData
+    );
   };
 
   useEffect(() => {
@@ -98,11 +133,9 @@ export default function ResourceUpload({ onCancel }: Props) {
               <button className="btn btn-secondary" onClick={onResetForm}>
                 Réinitialiser
               </button>
-              <SubmitButton
-                label="Sauvegarder"
-                isLoading={false}
-                loadingLabel="En cours..."
-              />
+              <button className="btn btn-primary" onClick={handleSubmit}>
+                Téléverser
+              </button>
             </span>
           </div>
         </Wrapper>
