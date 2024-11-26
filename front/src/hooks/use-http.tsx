@@ -8,11 +8,10 @@ import toast from "react-hot-toast";
 const useHttp = (invokeErrorToast?: boolean) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [downloadProgress, setDownloadProgress] = useState<number | null>(null);
   const { logout } = useContext(Context);
 
-  /** implémentation de l'intercepteur, une seule instance de l'intercepteur
-   *  est crée durant le cycle de vie de ce composant
-   */
   const axiosInstance = useMemo(() => {
     return axios.create({ withCredentials: true });
   }, []);
@@ -27,43 +26,34 @@ const useHttp = (invokeErrorToast?: boolean) => {
       }
     );
 
-    // gestion du rafraîchissement des tokens
     const responseInterceptor = axiosInstance.interceptors.response.use(
       (response) => {
         return response;
       },
-      async function (error) {
+      async (error) => {
         const originalRequest = error.config;
 
         if (
-          error.response.status === 403 &&
+          error.response?.status === 403 &&
           originalRequest.url === `${BASE_URL}/auth/refresh`
         ) {
           logout();
           return Promise.reject(error);
         }
 
-        /**
-         * ici on vérifie qu'en cas d'erreur 403 ce soit la première fois
-         * qu'on tente de rafraichir la requete. Si c'est la première
-         * tentative on notifie que la prochaine tentative ne sera plus
-         * la premiere fois.
-         * Si c'est la première fois on tente de refresh les tokens
-         */
-        if (error.response.status === 403 && !originalRequest._retry) {
+        if (error.response?.status === 403 && !originalRequest._retry) {
           originalRequest._retry = true;
 
           const res = await axiosInstance.get(`${BASE_URL}/auth/refresh`);
           if (res.status === 200) {
-            // si les tokens sont refresh avec succes on relance la
             return axiosInstance(originalRequest);
           }
         }
+
         return Promise.reject(error);
       }
     );
 
-    // nettoyage de la mémoire lors du démontage du composant
     return () => {
       axiosInstance.interceptors.request.eject(requestInterceptor);
       axiosInstance.interceptors.response.eject(responseInterceptor);
@@ -83,55 +73,91 @@ const useHttp = (invokeErrorToast?: boolean) => {
         body?: any;
         headers?: any;
         method?: "get" | "post" | "put" | "delete";
+        onUploadProgress?: (progress: number) => void;
+        onDownloadProgress?: (progress: number) => void;
       },
       applyData?: (data: any) => void
     ) => {
       setIsLoading(true);
       setError("");
       let response: any;
+
       try {
+        const config = {
+          headers: req.headers,
+          onUploadProgress: (event: import("axios").AxiosProgressEvent) => {
+            const progress = Math.round(
+              (event.loaded * 100) / (event.total ?? 0)
+            );
+            setUploadProgress(progress);
+            req.onUploadProgress?.(progress);
+          },
+          onDownloadProgress: (event: import("axios").AxiosProgressEvent) => {
+            const progress = Math.round(
+              (event.loaded * 100) / (event.total ?? 0)
+            );
+            setDownloadProgress(progress);
+            req.onDownloadProgress?.(progress);
+          },
+        };
+
         switch (req.method) {
           case "post":
             response = await axiosInstance.post(
               `${BASE_URL}${req.path}`,
               req.body,
-              {
-                headers: req.headers,
-              }
+              config
             );
             break;
           case "put":
             response = await axiosInstance.put(
               `${BASE_URL}${req.path}`,
               req.body,
-              {}
+              config
             );
             break;
           case "delete":
-            response = await axiosInstance.delete(`${BASE_URL}${req.path}`, {});
+            response = await axiosInstance.delete(
+              `${BASE_URL}${req.path}`,
+              config
+            );
             break;
           default:
-            response = await axiosInstance.get(`${BASE_URL}${req.path}`, {});
+            response = await axiosInstance.get(
+              `${BASE_URL}${req.path}`,
+              config
+            );
             break;
         }
+
         if (applyData) {
           applyData(response.data);
         } else {
           return response.data;
         }
       } catch (err: any) {
-        setError(err.response?.data.message ?? "erreur inconnue");
+        setError(err.response?.data.message ?? "Erreur inconnue");
 
         if (err.response?.status === 403) {
           logout();
         }
+      } finally {
+        setIsLoading(false);
+        setUploadProgress(null);
+        setDownloadProgress(null);
       }
-      setIsLoading(false);
     },
     [logout, axiosInstance]
   );
 
-  return { isLoading, error, sendRequest, axiosInstance };
+  return {
+    isLoading,
+    error,
+    sendRequest,
+    uploadProgress,
+    downloadProgress,
+    axiosInstance,
+  };
 };
 
 export default useHttp;
