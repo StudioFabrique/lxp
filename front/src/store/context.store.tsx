@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from "axios";
+
 import React, { FC, useCallback, useEffect, useState } from "react";
 
 import { themes } from "../config/themes";
@@ -17,12 +17,13 @@ type ContextType = {
   initTheme: () => void;
   toggleTheme: () => void;
   isLoggedIn: boolean;
-  login: (email: string, password: string) => void;
   logout: () => void;
   error: string;
+  setError: (error: string) => void;
   isLoading: boolean;
   handshake: () => void;
   user: User | null;
+  setUser: (user: User | null) => void;
   roles: Array<Role>;
   fetchRoles: (role: Role) => void;
   defineRulesFor: () => void;
@@ -39,12 +40,13 @@ export const Context = React.createContext<ContextType>({
   initTheme: () => {},
   toggleTheme: () => {},
   isLoggedIn: false,
-  login: () => {},
   logout: () => {},
   error: "",
+  setError: () => {},
   isLoading: false,
   handshake: () => {},
   user: null,
+  setUser: () => {},
   roles: Array<Role>(),
   fetchRoles: () => {},
   defineRulesFor: () => {},
@@ -72,30 +74,6 @@ const ContextProvider: FC<Props> = (props) => {
       withCredentials: true,
     });
   }, [axiosInstance]); */
-
-  const login = async (email: string, password: string) => {
-    setError("");
-    setIsLoading(true);
-    try {
-      const response = await axios.post(
-        `${BASE_URL}/auth/login/`,
-        {
-          email,
-          password,
-        },
-        { withCredentials: true },
-      );
-      setUser(response.data);
-    } catch (err: any) {
-      if (err.response?.status === 401 || err.response?.status === 403) {
-        setError("Identifiant ou mot de passe incorrect");
-        setIsLoading(false);
-        if (err.response?.status === 403) {
-          logout();
-        }
-      } else setError("Problème serveur, réessayez plus tard svp");
-    }
-  };
 
   const handshake = async () => {
     try {
@@ -168,7 +146,7 @@ const ContextProvider: FC<Props> = (props) => {
         document.querySelector("html")!.setAttribute("data-theme", themes.dark);
       }
     },
-    [theme],
+    [theme]
   );
 
   const toggleTheme = () => {
@@ -203,7 +181,7 @@ const ContextProvider: FC<Props> = (props) => {
 
       await sendRequest(
         { path: `/permission/${role.role}`, method: "get" },
-        applyData,
+        applyData
       );
     }
 
@@ -231,10 +209,10 @@ const ContextProvider: FC<Props> = (props) => {
         {
           path: "/auth/roles",
         },
-        applyData,
+        applyData
       );
     },
-    [sendRequest],
+    [sendRequest]
   );
 
   useEffect(() => {
@@ -246,7 +224,7 @@ const ContextProvider: FC<Props> = (props) => {
       .querySelector("html")!
       .setAttribute(
         "data-theme",
-        theme === "light" ? themes.light : themes.dark,
+        theme === "light" ? themes.light : themes.dark
       );
   }, [theme]);
 
@@ -261,7 +239,7 @@ const ContextProvider: FC<Props> = (props) => {
               userId: user._id,
             },
             withCredentials: true,
-          }),
+          })
         );
       }
     }
@@ -272,12 +250,13 @@ const ContextProvider: FC<Props> = (props) => {
     initTheme,
     toggleTheme,
     isLoggedIn,
-    login,
     logout,
     error,
+    setError,
     isLoading,
     handshake,
     user,
+    setUser,
     roles,
     fetchRoles,
     defineRulesFor,
