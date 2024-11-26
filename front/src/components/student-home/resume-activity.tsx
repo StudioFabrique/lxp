@@ -4,6 +4,7 @@ import { PlayCircleIcon } from "lucide-react";
 import LessonRead from "../../utils/interfaces/lesson-read";
 import useHttp from "../../hooks/use-http";
 import { useEffect, useState } from "react";
+import ParcoursStatistiques from "./parcours-statistiques";
 
 type ResumeActivityProps = {
   lastLesson: LessonRead;
@@ -71,24 +72,9 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
           </div>,
         ]}
       />
-      <div className="text-primary grid grid-rows-4 gap-2">
-        <span className="flex flex-col justify-center items-center bg-secondary text-secondary-content rounded-lg p-2">
-          <p>Diplôme</p>
-          <p className="font-bold text-lg">Bac +3</p>
-        </span>
-        <span className="flex flex-col justify-center items-center bg-secondary text-secondary-content rounded-lg p-2">
-          <p>Semaine</p>
-          <p className="font-bold text-lg">12</p>
-        </span>
-        <span className="flex flex-col justify-center items-center bg-secondary text-secondary-content rounded-lg p-2">
-          <p>Heure</p>
-          <p className="font-bold text-lg">457</p>
-        </span>
-        <span className="flex flex-col justify-center items-center bg-secondary text-secondary-content rounded-lg p-2">
-          <p>Modules</p>
-          <p className="font-bold text-lg">8</p>
-        </span>
-      </div>
+      {lastLesson.parcoursId ? (
+        <ParcoursStatistiques parcoursId={lastLesson.parcoursId} />
+      ) : null}
     </div>
   );
 };
