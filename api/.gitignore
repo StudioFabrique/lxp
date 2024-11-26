@@ -3,3 +3,5 @@ node_modules
 .env.local
 dist/
 logs/
+uploads/activities/files/*
+uploads/activities/images/*
