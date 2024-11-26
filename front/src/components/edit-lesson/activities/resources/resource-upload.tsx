@@ -6,6 +6,8 @@ import Wrapper from "../../../UI/wrapper/wrapper.component";
 import SubWrapper from "../../../UI/sub-wrapper/sub-wrapper.component";
 import { FileText, Loader, Trash2 } from "lucide-react";
 import useHttp from "../../../../hooks/use-http";
+import toast from "react-hot-toast";
+import { regexGeneric } from "../../../../utils/constantes";
 import { useParams } from "react-router-dom";
 
 type Props = {
@@ -16,28 +18,58 @@ type Props = {
 type Resource = {
   name: string;
   file: File;
+  hasError: boolean;
 };
 
 export default function ResourceUpload({ onCancel }: Props) {
   const ref = useRef<HTMLInputElement>(null);
   const [filesList, setFilesList] = useState<Resource[] | null>(null);
-  const { errors, values, onChangeValue, onResetForm } = useForm();
+  const { errors, values, onChangeValue } = useForm();
   const data = { values, errors, onChangeValue };
-  const [isLoading] = useState(false);
-  const { sendRequest } = useHttp();
+  const { isLoading, sendRequest } = useHttp();
   const { lessonId } = useParams();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       console.log(event.target.files[0].type);
-      const resource = [
-        ...(filesList ?? []),
-        { name: values.name, file: event.target.files[0] },
+
+      const allowedMimeTypes = [
+        "application/pdf",
+        "application/vnd.ms-powerpoint",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "text/plain",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       ];
-      setFilesList(resource);
+
+      if (allowedMimeTypes.includes(event.target.files[0].type)) {
+        const resource = [
+          ...(filesList ?? []),
+          {
+            name: values.name,
+            file: event.target.files[0],
+            hasError: !regexGeneric.test(values.name),
+          },
+        ];
+        setFilesList(resource);
+        // reset la valeur du fichier sélectionné
+        event.target.value = "";
+        onChangeValue("name", "");
+      } else {
+        toast.error(
+          "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX"
+        );
+        return;
+      }
     }
-    // reset la valeur du fichier sélectionné
-    event.target.value = "";
+  };
+
+  const handleRemoveResource = (index: number) => {
+    setFilesList(filesList!.filter((_, i) => i !== index));
+  };
+
+  const resetFilesList = () => {
+    setFilesList(null);
     onChangeValue("name", "");
   };
 
@@ -51,14 +83,18 @@ export default function ResourceUpload({ onCancel }: Props) {
   };
 
   const handleSubmit = () => {
-    console.log(filesList);
     const formData = new FormData();
     filesList?.forEach((file) => {
-      formData.append("files", file.file);
+      if (regexGeneric.test(file.name)) {
+        formData.append("files", file.file);
+      } else {
+        toast.error("Le nom de la ressource n'est pas valide");
+        return;
+      }
     });
-    console.log(formData);
-    const applyData = (data: any) => {
-      console.log({ data });
+    const applyData = (data: { success: boolean; message: string }) => {
+      if (data.success) toast.success(data.message);
+      onCancel(false);
     };
     let resources: { label: string; filename: string }[] = [];
     for (const item of filesList!) {
@@ -130,10 +166,14 @@ export default function ResourceUpload({ onCancel }: Props) {
               Annuler
             </button>
             <span className="flex justify-end items-center gap-x-4">
-              <button className="btn btn-secondary" onClick={onResetForm}>
+              <button className="btn btn-secondary" onClick={resetFilesList}>
                 Réinitialiser
               </button>
-              <button className="btn btn-primary" onClick={handleSubmit}>
+              <button
+                className="btn btn-primary"
+                onClick={handleSubmit}
+                disabled={!filesList || filesList?.length === 0 || isLoading}
+              >
                 Téléverser
               </button>
             </span>
@@ -144,20 +184,21 @@ export default function ResourceUpload({ onCancel }: Props) {
         <ul className="pl-8 flex flex-col items-center gap-y-2">
           {filesList?.map((resource, index) => (
             <li className="w-full" key={index}>
-              <SubWrapper>
+              <SubWrapper hasError={resource.hasError}>
                 <div className="w-full flex justify-between items-center text-xs">
                   <span className="w-full flex items-center">
                     <div className="w-1/6">
                       {isLoading ? <Loader /> : <FileText />}
                     </div>
                     <p className="w-2/6 truncate">{resource.name}</p>
-
                     <p className="w-2/6 truncate">{resource.file.name}</p>
                     <p className="w-1/6 truncate">
                       {displaySize(resource.file.size)}
                     </p>
                   </span>
-                  <Trash2 className="w-4 h-4 text-error cursor-pointer" />
+                  <button onClick={() => handleRemoveResource(index)}>
+                    <Trash2 className="w-4 h-4 text-error cursor-pointer" />
+                  </button>
                 </div>
               </SubWrapper>
             </li>

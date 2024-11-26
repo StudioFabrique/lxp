@@ -43,5 +43,3 @@ const StepItem: FC<Props> = ({ actualStepId, finalStep, stepItem }) => {
 };
 
 export default StepItem;
-
-/* "&#9773;" */
