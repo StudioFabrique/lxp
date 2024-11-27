@@ -2,7 +2,7 @@
 import { useDragAndDrop } from "../../../../../hooks/useDragAndDrop"; // Hook personnalisé pour gérer le drag & drop
 import { DndWrapper } from "../../../../UI/DndWrapper"; // Composant wrapper pour le drag & drop
 import ResourceItem from "./resource-item"; // Composant qui affiche un élément de ressource
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // Type définissant les props du composant
 type Props = {
@@ -13,6 +13,11 @@ type Props = {
     newList: { name: string; file: File; hasError: boolean }[]
   ) => void; // Fonction pour mettre à jour l'ordre
   uploadProgress: number | null; // Progression de l'upload
+};
+
+export type UploadProgressValuies = {
+  minUpload: number;
+  maxUpload: number;
 };
 
 /**
@@ -32,12 +37,38 @@ function ResourcesList({
     items: filesList, // Liste des éléments à réordonner
     onReorder, // Callback appelé après réordonnancement
   });
+  const [uploadProgressValues, setUploadProgressValues] = useState<
+    UploadProgressValuies[]
+  >([]);
+
+  const totalFilesSize = filesList.reduce(
+    (acc, file) => acc + file.file.size,
+    0
+  );
+
+  console.log({ totalFilesSize });
+  console.log(filesList.length);
 
   useEffect(() => {
-    if (uploadProgress && uploadProgress > 0) {
-      console.log("Upload progress:", uploadProgress);
-    }
-  }, [uploadProgress]);
+    console.log("calculating upload progress values");
+
+    let prevProgress = 0;
+    let values: UploadProgressValuies[] = [];
+    filesList.forEach((file) => {
+      const maxUpload = prevProgress + (file.file.size / totalFilesSize) * 100;
+      values = [
+        ...values,
+        {
+          minUpload: prevProgress,
+          maxUpload: maxUpload,
+        },
+      ];
+      prevProgress = maxUpload;
+    });
+    setUploadProgressValues(values);
+  }, [filesList, totalFilesSize]);
+
+  console.table(uploadProgressValues);
 
   return (
     <>
@@ -64,6 +95,9 @@ function ResourcesList({
             index={index} // Position dans la liste
             isLoading={isLoading} // État de chargement
             onRemove={handleRemoveResource} // Callback de suppression
+            uploadProgressValues={uploadProgressValues[index]}
+            uploadProgress={uploadProgress}
+            totalFiles={filesList.length}
           />
         )}
       />

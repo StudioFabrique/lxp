@@ -10,6 +10,8 @@ type Resource = {
   name: string; // Nom de la ressource
   file: File; // Fichier associé
   hasError: boolean; // Indique si la ressource contient une erreur
+  //minUpload: number; // Valeur en pourcentage à laquelle l'upload commence par rapport au pourcentage total de tous les fichiers
+  //maxUpload: number; // Valeur en pourcentage à laquelle l'upload se termine par rapport au pourcentage total de tous les fichiers
 };
 
 // Types de fichiers autorisés pour l'upload
@@ -51,8 +53,6 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
    */
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
-      console.log(event.target.files[0].type);
-
       // Vérification du type de fichier
       if (allowedMimeTypes.includes(event.target.files[0].type)) {
         const resource = [
