@@ -27,23 +27,38 @@ function ResourcesAction({
   handleSubmit,
   filesNumber,
   isLoading,
-}: Props) {
+  cancelUpload,
+}: Props & { cancelUpload: () => void }) {
+  const handleCancel = () => {
+    if (isLoading) {
+      const confirmCancel = window.confirm(
+        "Des téléversements de fichiers sont en cours, êtes-vous sûr de vouloir annuler ?"
+      );
+      if (confirmCancel) {
+        cancelUpload();
+      }
+    } else {
+      onCancel(false);
+    }
+  };
+
   return (
     // Wrapper principal pour contenir les boutons d'action
     <Wrapper>
       {/* Conteneur des boutons d'action avec flexbox pour l'alignement */}
       <div className="flex justify-between items-center">
         {/* Bouton d'annulation - Style outline */}
-        <button
-          className="btn btn-primary btn-outline"
-          onClick={() => onCancel(false)}
-        >
+        <button className="btn btn-primary btn-outline" onClick={handleCancel}>
           Annuler
         </button>
         {/* Groupe de boutons alignés à droite */}
         <span className="flex justify-end items-center gap-x-4">
           {/* Bouton de réinitialisation - Style secondaire */}
-          <button className="btn btn-secondary" onClick={resetFilesList}>
+          <button
+            className="btn btn-secondary"
+            onClick={resetFilesList}
+            disabled={isLoading}
+          >
             Réinitialiser
           </button>
           {/* Bouton de téléversement - Désactivé si aucun fichier ou si upload en cours */}

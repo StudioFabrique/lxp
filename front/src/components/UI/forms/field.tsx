@@ -20,8 +20,6 @@ const Field = (props: FieldProps) => {
   const { label, placeholder, name, isDisabled, fieldRef } = props;
   const type = props.type ?? "text";
 
-  console.log(props.data.values);
-
   const baseStyle =
     "input input-sm focus:outline-none disabled:cursor-default disabled:text-base-content";
 

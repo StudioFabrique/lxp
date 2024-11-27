@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Loader from "../../../components/UI/loader";
 import FadeWrapper from "../../../components/UI/fade-wrapper/fade-wrapper";
 import useHttp from "../../../hooks/use-http";
@@ -18,15 +18,12 @@ export default function LayoutEditLesson() {
   const lesson = useSelector((state: any) => state.lesson.lesson);
   const { lessonId } = useParams();
   const { sendRequest, error } = useHttp();
-  const [loading, setLoading] = useState(false);
 
   // retourne une leçon et la stock dans l'état partagé
   useEffect(() => {
     const applyData = (data: Lesson) => {
       dispatch(lessonActions.initLesson(data));
-      setLoading(false);
     };
-    setLoading(true);
     sendRequest(
       {
         path: `/lesson/${lessonId}`,
@@ -39,7 +36,6 @@ export default function LayoutEditLesson() {
   useEffect(() => {
     if (error.length > 0) {
       toast.error(error);
-      setLoading(false);
     }
   }, [error]);
 
@@ -55,39 +51,35 @@ export default function LayoutEditLesson() {
 
   return (
     <div className="w-full h-full flex flex-col justify-start items-center py-2">
-      {loading ? (
-        <Loader />
-      ) : (
-        <FadeWrapper>
-          <div className="w-full h-full flex flex-col items-center gap-y-4">
-            <div className="w-full flex flex-col items-center gap-y-4">
-              {lesson &&
-              lesson !== undefined &&
-              lesson.title &&
-              lesson.course &&
-              lesson.course.title ? (
-                <ImageHeader
-                  title={lesson.course.title}
-                  subTitle={lesson.title}
-                  imageUrl={lesson.course.image ?? books}
-                >
-                  <div className="w-10 h-10 text-white">
-                    <DocDuplicateIcon />
-                  </div>
-                  <></>
-                </ImageHeader>
-              ) : null}
-            </div>
-            {lesson && lesson !== undefined ? (
-              <div className="w-full 2xl:w-4/6 mt-8 flex flex-col items-center">
-                <Outlet />
-              </div>
-            ) : (
-              <Loader />
-            )}
+      <FadeWrapper>
+        <div className="w-full h-full flex flex-col items-center gap-y-4">
+          <div className="w-full flex flex-col items-center gap-y-4">
+            {lesson &&
+            lesson !== undefined &&
+            lesson.title &&
+            lesson.course &&
+            lesson.course.title ? (
+              <ImageHeader
+                title={lesson.course.title}
+                subTitle={lesson.title}
+                imageUrl={lesson.course.image ?? books}
+              >
+                <div className="w-10 h-10 text-white">
+                  <DocDuplicateIcon />
+                </div>
+                <></>
+              </ImageHeader>
+            ) : null}
           </div>
-        </FadeWrapper>
-      )}
+          {lesson && lesson !== undefined ? (
+            <div className="w-full 2xl:w-4/6 mt-8 flex flex-col items-center">
+              <Outlet />
+            </div>
+          ) : (
+            <Loader />
+          )}
+        </div>
+      </FadeWrapper>
     </div>
   );
 }
