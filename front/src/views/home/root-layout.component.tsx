@@ -1,29 +1,41 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext, useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { Context } from "../../store/context.store";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
+import { Socket } from "socket.io-client";
 import Login from "../../components/login/login.component";
 
 let initialState = true;
-let socket: any;
+let socket: Socket;
 
 const RootLayout = () => {
   const { user, fetchRoles, initTheme, isLoggedIn, handshake } =
     useContext(Context);
   const nav = useNavigate();
+  const location = useLocation();
+
+  console.log({ isLoggedIn, user });
 
   useEffect(() => {
-    if (isLoggedIn && user) {
+    console.log("hello toto");
+
+    if (isLoggedIn && user && user.roles) {
       fetchRoles(user!.roles[0]);
-      if (user && user.roles[0].rank < 3) {
-        nav("/admin");
-      } else if (user && user.roles[0].rank > 2) {
-        nav("/student");
+      console.log(location.pathname.split("/"));
+
+      if (location.pathname.split("/").length < 3) {
+        console.log("hello toto 2");
+
+        if (user && user.roles[0].rank < 3) {
+          nav("/admin");
+        } else if (user && user.roles[0].rank > 2) {
+          nav("/student");
+        }
       }
     }
-  }, [fetchRoles, nav, user, isLoggedIn]);
+  }, [fetchRoles, nav, user, isLoggedIn, location.pathname]);
 
   useEffect(() => {
     initTheme();
@@ -37,11 +49,17 @@ const RootLayout = () => {
     if (!isLoggedIn && socket !== undefined) {
       socket.disconnect();
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, nav]);
+
+  if (!isLoggedIn) {
+    return <Login />;
+  }
 
   return (
     <FadeWrapper>
-      <div className="w-full">{!isLoggedIn ? <Login /> : <Outlet />}</div>
+      <div className="w-full">
+        <Outlet />
+      </div>
     </FadeWrapper>
   );
 };
