@@ -233,7 +233,7 @@ model ResourceActivity {
   label      String
   url        String
   activityId Int
-  activity   Activity @relation(fields: [activityId], references: [id])
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
 }
 
 model Accomplishment {

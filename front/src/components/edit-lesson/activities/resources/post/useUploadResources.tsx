@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import useForm from "../../../../UI/forms/hooks/use-form";
 import useHttp from "../../../../../hooks/use-http";
 import toast from "react-hot-toast";
@@ -47,6 +47,10 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
     [filesList?.length]
   );
 
+  // Ajout d'un état pour le contrôleur d'annulation
+  const [abortController, setAbortController] =
+    useState<AbortController | null>(null);
+
   /**
    * Gère l'ajout d'un nouveau fichier à la liste
    * Vérifie le type MIME et ajoute le fichier si valide
@@ -86,16 +90,19 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
   /**
    * Réinitialise complètement le formulaire et la liste des fichiers
    */
-  const resetFilesList = () => {
+  const resetFilesList = useCallback(() => {
     setFilesList(null);
     onChangeValue("name", "");
-  };
+  }, [onChangeValue]);
 
   /**
    * Gère la soumission du formulaire
    * Prépare les données et envoie la requête au serveur
    */
   const handleSubmit = () => {
+    const controller = new AbortController();
+    setAbortController(controller);
+
     const formData = new FormData();
 
     // Ajout des fichiers au FormData avec validation du nom
@@ -135,6 +142,7 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
           "Content-Type": "multipart/form-data",
         },
         body: formData,
+        signal: controller.signal, // Ajout du signal pour l'annulation
       },
       applyData
     );
@@ -153,6 +161,15 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
     setFilesList(newList);
   };
 
+  // Fonction pour annuler la requête en cours
+  const cancelUpload = useCallback(() => {
+    if (abortController) {
+      abortController.abort();
+      resetFilesList();
+      onCancel(false);
+    }
+  }, [abortController, onCancel, resetFilesList]);
+
   // Retourne les fonctions et données nécessaires pour le composant
   return {
     data,
@@ -165,6 +182,7 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
     isLoading,
     resetFilesList,
     uploadProgress,
+    cancelUpload,
   };
 };
 

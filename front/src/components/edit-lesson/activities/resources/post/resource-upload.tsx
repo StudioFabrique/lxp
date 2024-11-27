@@ -27,6 +27,7 @@ export default function ResourceUpload({ onCancel }: Props) {
     isLoading, // État de chargement
     resetFilesList, // Réinitialisation de la liste des fichiers
     uploadProgress, // Progression de l'upload
+    cancelUpload, // Nouvelle fonction
   } = useUploadResources(onCancel);
 
   useEffect(() => {
@@ -64,6 +65,7 @@ export default function ResourceUpload({ onCancel }: Props) {
           filesNumber={filesNumber}
           handleSubmit={handleSubmit}
           isLoading={isLoading}
+          cancelUpload={cancelUpload}
         />
       </article>
       {/* Colonne de droite : liste des fichiers */}
