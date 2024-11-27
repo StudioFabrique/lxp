@@ -75,6 +75,7 @@ const useHttp = (invokeErrorToast?: boolean) => {
         method?: "get" | "post" | "put" | "delete";
         onUploadProgress?: (progress: number) => void;
         onDownloadProgress?: (progress: number) => void;
+        signal?: AbortSignal;
       },
       applyData?: (data: any) => void
     ) => {

@@ -43,7 +43,9 @@ function ResourceItem({
           {/* Zone de drag & drop et icône de statut */}
           <div className="w-1/6 flex gap-x-2 items-center">
             {/* Poignée pour le drag & drop */}
-            <GripVertical className="text-primary/50" />
+            <GripVertical
+              className={`${isLoading ? "text-primary/50" : "20"}`}
+            />
             {/* Affiche soit l'icône de chargement soit l'icône de fichier */}
             {isLoading ? (
               <FileUploadStatus
@@ -63,7 +65,7 @@ function ResourceItem({
           <p className="w-1/6 truncate">{displaySize(resource.file.size)}</p>
         </span>
         {/* Bouton permettant de supprimer la ressource */}
-        <button onClick={() => onRemove(index)}>
+        <button onClick={() => onRemove(index)} disabled={isLoading}>
           <Trash2 className="w-4 h-4 text-error cursor-pointer" />
         </button>
       </div>

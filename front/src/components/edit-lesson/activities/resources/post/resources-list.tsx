@@ -2,7 +2,7 @@
 import { useDragAndDrop } from "../../../../../hooks/useDragAndDrop"; // Hook personnalisé pour gérer le drag & drop
 import { DndWrapper } from "../../../../UI/DndWrapper"; // Composant wrapper pour le drag & drop
 import ResourceItem from "./resource-item"; // Composant qui affiche un élément de ressource
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 // Type définissant les props du composant
 type Props = {
@@ -37,38 +37,29 @@ function ResourcesList({
     items: filesList, // Liste des éléments à réordonner
     onReorder, // Callback appelé après réordonnancement
   });
-  const [uploadProgressValues, setUploadProgressValues] = useState<
-    UploadProgressValuies[]
-  >([]);
 
-  const totalFilesSize = filesList.reduce(
-    (acc, file) => acc + file.file.size,
-    0
-  );
+  const totalFilesSize = useMemo(() => {
+    return filesList.reduce((acc, file) => acc + file.file.size, 0);
+  }, [filesList]);
 
   console.log({ totalFilesSize });
   console.log(filesList.length);
 
-  useEffect(() => {
-    console.log("calculating upload progress values");
+  const uploadProgressValues = useMemo(() => {
+    if (!filesList.length || !totalFilesSize) return [];
 
-    let prevProgress = 0;
-    let values: UploadProgressValuies[] = [];
-    filesList.forEach((file) => {
-      const maxUpload = prevProgress + (file.file.size / totalFilesSize) * 100;
-      values = [
-        ...values,
-        {
-          minUpload: prevProgress,
-          maxUpload: maxUpload,
-        },
-      ];
-      prevProgress = maxUpload;
-    });
-    setUploadProgressValues(values);
+    return filesList.reduce((acc: UploadProgressValuies[], file, index) => {
+      const previousFilesSize = filesList
+        .slice(0, index)
+        .reduce((sum, f) => sum + f.file.size, 0);
+
+      const minUpload = (previousFilesSize / totalFilesSize) * 100;
+      const maxUpload =
+        ((previousFilesSize + file.file.size) / totalFilesSize) * 100;
+
+      return [...acc, { minUpload, maxUpload }];
+    }, []);
   }, [filesList, totalFilesSize]);
-
-  console.table(uploadProgressValues);
 
   return (
     <>
@@ -85,6 +76,7 @@ function ResourcesList({
         </div>
       ) : null}
       <DndWrapper
+        isLoading={isLoading}
         droppableId="resources" // ID unique pour la zone de drop
         items={filesList} // Liste des éléments à afficher
         onDragEnd={handleDragEnd} // Callback appelé quand un drag se termine
