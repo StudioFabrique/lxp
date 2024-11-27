@@ -1,43 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useContext, useState } from "react";
+import { useContext } from "react";
 
 import { Context } from "../../store/context.store";
 import LoginForm from "./login-form.component";
 import bgSide from "../../assets/images/BG-side.png";
 import logo from "../../assets/images/andria-2.png";
-import axios from "axios";
-import { BASE_URL } from "../../config/urls";
-import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const { error, setUser, setError, logout } = useContext(Context);
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
-  const login = async (email: string, password: string) => {
-    setError("");
-    setIsLoading(true);
-    try {
-      const response = await axios.post(
-        `${BASE_URL}/auth/login/`,
-        {
-          email,
-          password,
-        },
-        { withCredentials: true }
-      );
-      navigate("/" + response.data.roles[0].role);
-
-      setUser(response.data);
-    } catch (err: any) {
-      if (err.response?.status === 401 || err.response?.status === 403) {
-        setError("Identifiant ou mot de passe incorrect");
-        setIsLoading(false);
-        if (err.response?.status === 403) {
-          logout();
-        }
-      } else setError("Problème serveur, réessayez plus tard svp");
-    }
-  };
+  const { isLoading, error, login } = useContext(Context);
 
   const handleSubmit = (email: string, password: string) => {
     login(email, password);

@@ -1,8 +1,11 @@
 import { Outlet } from "react-router-dom";
 
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
+import useAuth from "../../hooks/use-auth";
 
 const AdminLayout = () => {
+  useAuth("admin");
+
   return (
     <div className="w-full">
       <FadeWrapper>
