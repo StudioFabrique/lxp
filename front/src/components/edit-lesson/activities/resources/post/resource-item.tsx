@@ -5,8 +5,8 @@ import { GripVertical, Trash2 } from "lucide-react";
 import SubWrapper from "../../../../UI/sub-wrapper/sub-wrapper.component";
 // Import de l'utilitaire de conversion de taille de fichier
 import { displaySize } from "../../../../../helpers/sizeUnitConversion";
-// Import de l'icône de chargement
-import { Loader } from "lucide-react";
+import { UploadProgressValuies } from "./resources-list";
+import FileUploadStatus from "../file-upload-status";
 
 /**
  * Type définissant les props du composant ResourceItem
@@ -16,6 +16,9 @@ type Props = {
   index: number; // Position dans la liste
   isLoading: boolean; // État de chargement
   onRemove: (index: number) => void; // Callback de suppression
+  uploadProgressValues: UploadProgressValuies;
+  uploadProgress: number | null;
+  totalFiles: number;
 };
 
 /**
@@ -23,7 +26,15 @@ type Props = {
  * Affiche une ressource individuelle dans la liste avec ses informations
  * Permet de la déplacer (drag & drop) et de la supprimer
  */
-function ResourceItem({ resource, index, isLoading, onRemove }: Props) {
+function ResourceItem({
+  resource,
+  index,
+  isLoading,
+  onRemove,
+  uploadProgressValues,
+  uploadProgress,
+  totalFiles,
+}: Props) {
   return (
     // Wrapper qui gère l'affichage des erreurs
     <SubWrapper hasError={resource.hasError}>
@@ -32,9 +43,19 @@ function ResourceItem({ resource, index, isLoading, onRemove }: Props) {
           {/* Zone de drag & drop et icône de statut */}
           <div className="w-1/6 flex gap-x-2 items-center">
             {/* Poignée pour le drag & drop */}
-            <GripVertical className="text-primary/50" />
+            <GripVertical
+              className={`${isLoading ? "text-primary/50" : "20"}`}
+            />
             {/* Affiche soit l'icône de chargement soit l'icône de fichier */}
-            {isLoading ? <Loader /> : <FileText className="text-info" />}
+            {isLoading ? (
+              <FileUploadStatus
+                {...uploadProgressValues}
+                uploadProgess={uploadProgress ?? 0}
+                totalFiles={totalFiles}
+              />
+            ) : (
+              <FileText className="text-info" />
+            )}
           </div>
           {/* Affichage du nom personnalisé de la ressource */}
           <p className="w-2/6 truncate">{resource.name}</p>
@@ -44,7 +65,7 @@ function ResourceItem({ resource, index, isLoading, onRemove }: Props) {
           <p className="w-1/6 truncate">{displaySize(resource.file.size)}</p>
         </span>
         {/* Bouton permettant de supprimer la ressource */}
-        <button onClick={() => onRemove(index)}>
+        <button onClick={() => onRemove(index)} disabled={isLoading}>
           <Trash2 className="w-4 h-4 text-error cursor-pointer" />
         </button>
       </div>

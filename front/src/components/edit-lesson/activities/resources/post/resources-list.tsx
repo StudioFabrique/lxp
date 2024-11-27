@@ -2,7 +2,7 @@
 import { useDragAndDrop } from "../../../../../hooks/useDragAndDrop"; // Hook personnalisé pour gérer le drag & drop
 import { DndWrapper } from "../../../../UI/DndWrapper"; // Composant wrapper pour le drag & drop
 import ResourceItem from "./resource-item"; // Composant qui affiche un élément de ressource
-import { useEffect } from "react";
+import { useMemo } from "react";
 
 // Type définissant les props du composant
 type Props = {
@@ -13,6 +13,11 @@ type Props = {
     newList: { name: string; file: File; hasError: boolean }[]
   ) => void; // Fonction pour mettre à jour l'ordre
   uploadProgress: number | null; // Progression de l'upload
+};
+
+export type UploadProgressValuies = {
+  minUpload: number;
+  maxUpload: number;
 };
 
 /**
@@ -33,11 +38,28 @@ function ResourcesList({
     onReorder, // Callback appelé après réordonnancement
   });
 
-  useEffect(() => {
-    if (uploadProgress && uploadProgress > 0) {
-      console.log("Upload progress:", uploadProgress);
-    }
-  }, [uploadProgress]);
+  const totalFilesSize = useMemo(() => {
+    return filesList.reduce((acc, file) => acc + file.file.size, 0);
+  }, [filesList]);
+
+  console.log({ totalFilesSize });
+  console.log(filesList.length);
+
+  const uploadProgressValues = useMemo(() => {
+    if (!filesList.length || !totalFilesSize) return [];
+
+    return filesList.reduce((acc: UploadProgressValuies[], file, index) => {
+      const previousFilesSize = filesList
+        .slice(0, index)
+        .reduce((sum, f) => sum + f.file.size, 0);
+
+      const minUpload = (previousFilesSize / totalFilesSize) * 100;
+      const maxUpload =
+        ((previousFilesSize + file.file.size) / totalFilesSize) * 100;
+
+      return [...acc, { minUpload, maxUpload }];
+    }, []);
+  }, [filesList, totalFilesSize]);
 
   return (
     <>
@@ -54,6 +76,7 @@ function ResourcesList({
         </div>
       ) : null}
       <DndWrapper
+        isLoading={isLoading}
         droppableId="resources" // ID unique pour la zone de drop
         items={filesList} // Liste des éléments à afficher
         onDragEnd={handleDragEnd} // Callback appelé quand un drag se termine
@@ -64,6 +87,9 @@ function ResourcesList({
             index={index} // Position dans la liste
             isLoading={isLoading} // État de chargement
             onRemove={handleRemoveResource} // Callback de suppression
+            uploadProgressValues={uploadProgressValues[index]}
+            uploadProgress={uploadProgress}
+            totalFiles={filesList.length}
           />
         )}
       />

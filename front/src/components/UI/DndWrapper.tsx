@@ -10,6 +10,7 @@ import { DndHandlers } from "../../utils/interfaces/dnd";
 interface DndWrapperProps<T> extends DndHandlers {
   droppableId: string; // ID unique de la zone de drop
   items: T[]; // Liste des éléments à rendre draggable
+  isLoading: boolean;
   renderItem: (item: T, index: number) => ReactNode; // Fonction de rendu pour chaque élément
 }
 
@@ -23,6 +24,7 @@ export function DndWrapper<T>({
   items,
   onDragEnd,
   renderItem,
+  isLoading,
 }: DndWrapperProps<T>) {
   return (
     // Contexte global du drag & drop
@@ -38,6 +40,7 @@ export function DndWrapper<T>({
             {/* Mapping sur chaque élément pour le rendre draggable */}
             {items.map((item, index) => (
               <Draggable
+                isDragDisabled={isLoading}
                 key={index}
                 draggableId={index.toString()}
                 index={index}
