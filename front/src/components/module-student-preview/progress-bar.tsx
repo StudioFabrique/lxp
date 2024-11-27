@@ -16,13 +16,13 @@ const ProgressBar = ({ courses }: ProgressBarProps) => {
       {courses.map((course) => (
         <div
           key={course.id}
-          className="bg-secondary/10 h-[80%] w-full rounded-lg"
+          className="bg-secondary/20 h-[80%] w-full rounded-lg"
         >
-          <div className="flex gap-x-2 h-full items-center px-5">
+          <div className="flex gap-x-2 h-full items-center px-2">
             {course.lessons.map((lesson) => (
               <span
                 key={lesson.id}
-                className={`h-[70%] w-[15px]  ${
+                className={`h-[70%] w-full  ${
                   lesson.lessonsRead && lesson.lessonsRead?.length > 0
                     ? "bg-primary"
                     : "bg-primary/20"

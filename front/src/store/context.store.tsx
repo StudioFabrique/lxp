@@ -83,7 +83,7 @@ const ContextProvider: FC<Props> = (props) => {
           email,
           password,
         },
-        { withCredentials: true },
+        { withCredentials: true }
       );
       setUser(response.data);
     } catch (err: any) {
@@ -168,7 +168,7 @@ const ContextProvider: FC<Props> = (props) => {
         document.querySelector("html")!.setAttribute("data-theme", themes.dark);
       }
     },
-    [theme],
+    [theme]
   );
 
   const toggleTheme = () => {
@@ -179,7 +179,6 @@ const ContextProvider: FC<Props> = (props) => {
       setTheme("light");
       localStorage.setItem("activeTheme", "light");
     }
-    window.location.href = "";
   };
 
   const defineRulesFor = useCallback(async () => {
@@ -204,7 +203,7 @@ const ContextProvider: FC<Props> = (props) => {
 
       await sendRequest(
         { path: `/permission/${role.role}`, method: "get" },
-        applyData,
+        applyData
       );
     }
 
@@ -232,10 +231,10 @@ const ContextProvider: FC<Props> = (props) => {
         {
           path: "/auth/roles",
         },
-        applyData,
+        applyData
       );
     },
-    [sendRequest],
+    [sendRequest]
   );
 
   useEffect(() => {
@@ -247,7 +246,7 @@ const ContextProvider: FC<Props> = (props) => {
       .querySelector("html")!
       .setAttribute(
         "data-theme",
-        theme === "light" ? themes.light : themes.dark,
+        theme === "light" ? themes.light : themes.dark
       );
   }, [theme]);
 
@@ -262,7 +261,7 @@ const ContextProvider: FC<Props> = (props) => {
               userId: user._id,
             },
             withCredentials: true,
-          }),
+          })
         );
       }
     }

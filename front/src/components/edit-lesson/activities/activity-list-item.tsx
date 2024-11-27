@@ -27,8 +27,6 @@ export default function ActivityListItem({
     [activity.createdAt, activity.updatedAt]
   );
 
-  console.log({ date });
-
   const handleGoToActivity = () => {
     console.log({ activity });
     dispatch(lessonActions.setActivity(activity));

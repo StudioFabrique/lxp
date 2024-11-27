@@ -5,13 +5,13 @@ import { convertMilisToWeeks } from "../../utils/dates";
 
 const QuickStatistiques = () => {
   const parcoursInfos = useSelector(
-    (state: any) => state.parcoursInformations.infos
+    (state: any) => state.parcoursInformations.infos,
   );
 
   const formation = useSelector((state: any) => state.parcours.formation);
 
   const modules = useSelector(
-    (state: any) => state.parcoursModules.modules
+    (state: any) => state.parcoursModules.modules,
   ) as Module[];
 
   const modulesHourSum = () => {
@@ -26,8 +26,8 @@ const QuickStatistiques = () => {
     const weeks = Math.floor(
       convertMilisToWeeks(
         new Date(parcoursInfos.endDate).getTime() -
-          new Date(parcoursInfos.startDate).getTime()
-      )
+          new Date(parcoursInfos.startDate).getTime(),
+      ),
     );
 
     return weeks;

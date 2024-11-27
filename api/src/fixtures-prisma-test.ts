@@ -317,9 +317,22 @@ async function createFormation() {
   }
 }
 
+async function createModules() {
+  await prisma.module.createMany({
+    data: [
+      { title: "Module 1", author: "test", adminId: 1 },
+      { title: "Module 2", author: "test", adminId: 1 },
+      { title: "Module 3", author: "test", adminId: 1 },
+    ],
+  });
+}
+
 async function createParcours() {
   try {
-    await prisma.parcours.create({
+    const modules = await prisma.module.findMany();
+    console.log({ modules });
+
+    const parcours = await prisma.parcours.create({
       data: {
         title: "Parcours Test 1",
         formation: {
@@ -331,39 +344,27 @@ async function createParcours() {
         admin: {
           connect: { id: 1 },
         },
+        modules: {
+          create: modules.map((m: any) => ({
+            module: { connect: { id: m.id } },
+          })),
+        },
+      },
+    });
+    await prisma.course.create({
+      data: {
+        title: "Course 1",
+        description: "Description 1",
+        moduleId: 1,
+        adminId: 1,
+        order: 0,
+        author: "jacques test",
       },
     });
   } catch (error: any) {
     console.log(error);
   }
 }
-
-/* async function createModules() {
-  const modules = modulesList.map((item: string) => ({
-    title: item,
-  }));
-  await prisma.module.createMany({
-    data: modules,
-  });
-}
-
-async function createModulesOnFormation() {
-  const modules = await prisma.module.findMany();
-  const newModules = await prisma.formation.update({
-    where: { id: 1 },
-    data: {
-      modules: {
-        create: modules.map((m: any) => {
-          return {
-            module: {
-              connect: { id: m.id },
-            },
-          };
-        }),
-      },
-    },
-  });
-} */
 
 async function loadFixtures() {
   await createTags();
@@ -372,8 +373,8 @@ async function loadFixtures() {
   await createFormation();
   await createSqlGroups();
   await createSqlContacts();
+  await createModules();
   await createParcours();
-  //await createModules();
   //await createModulesOnFormation();
   await disconnect();
 }

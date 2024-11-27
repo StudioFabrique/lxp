@@ -11,6 +11,7 @@ export interface TableListActionConfig {
   icon?: LucideIcon;
   additionnalClassname?: string;
   withConfirmationModal?: boolean;
+  modal?: { title?: string; description?: string };
   request?: { path: string; method?: "get" | "post" | "put" | "delete" };
   rbacObject?: string;
   rbacAction?: string;

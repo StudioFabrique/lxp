@@ -21,7 +21,7 @@ const CourseHome = () => {
       {
         path: "/course",
       },
-      applyData,
+      applyData
     );
   }, [sendRequest]);
 
@@ -33,7 +33,7 @@ const CourseHome = () => {
   }, [getCourses]);
 
   return (
-    <main className="w-full min-h-screen flex justify-center ">
+    <div>
       {isLoading ? (
         <div className="flex items-center">
           <Loader />
@@ -48,7 +48,7 @@ const CourseHome = () => {
           ) : null}
         </>
       )}
-    </main>
+    </div>
   );
 };
 

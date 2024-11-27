@@ -1,6 +1,7 @@
 import Editor from "../markdown-editor/mark-down-editor";
 import Video from "./activities/video";
 import ImageActivityEditor from "./activities/image/image-activity-editor";
+import ResourceUpload from "./activities/resources/post/resource-upload";
 
 type CurrentBlockProps = {
   activityType: string;
@@ -21,6 +22,9 @@ export default function CurrentBlock({
           ) : null}
           {activityType === "image" ? (
             <ImageActivityEditor onCancel={onFinish} />
+          ) : null}
+          {activityType === "resource" ? (
+            <ResourceUpload onCancel={onFinish} onResetForm={() => {}} />
           ) : null}
         </>
       ) : null}

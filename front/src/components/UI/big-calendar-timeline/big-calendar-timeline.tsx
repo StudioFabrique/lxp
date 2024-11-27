@@ -1,10 +1,11 @@
 import moment from "moment/min/moment-with-locales";
 import "moment/locale/fr";
-import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
+import { Calendar, momentLocalizer, View } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import CalendarCustomToolbar from "./calendar-custom-toolbar";
 import { adjustScheduleToCurrentWeek } from "../../../utils/calendar-utils";
 import getDaisyuiBgThemeColor from "../../../utils/get-daisy-ui-theme-color";
+import { Dispatch, SetStateAction } from "react";
 
 moment.locale("fr");
 const localizer = momentLocalizer(moment);
@@ -25,7 +26,9 @@ interface ColorEvent {
 
 type BigCalendarTimelineProps = {
   data: Event[];
+  view: View;
   colors?: ColorEvent[];
+  onSetView: Dispatch<SetStateAction<View>>;
   onRangeChange: (
     range: { start: Date; end: Date } | Date[],
     view?: View,
@@ -35,11 +38,15 @@ type BigCalendarTimelineProps = {
 
 const BigCalendarTimeline = ({
   data,
+  view,
   colors,
+  onSetView,
   onRangeChange,
   onDoubleClickEvent,
 }: BigCalendarTimelineProps) => {
   const dataAdjusted = adjustScheduleToCurrentWeek(data);
+
+  console.log({ view });
 
   return (
     <Calendar
@@ -48,16 +55,18 @@ const BigCalendarTimeline = ({
       events={dataAdjusted}
       startAccessor={(event: Event) => event.start}
       endAccessor={(event: Event) => event.end}
-      views={["work_week"]}
-      defaultView={Views.WORK_WEEK}
+      views={["month", "work_week", "day"]}
+      view={view}
+      onView={onSetView}
       className="h-[98%] bg-base-100 rounded-2xl shadow-2xl p-6 border-2 border-base-300 text-base-content"
       min={new Date(2025, 1, 0, 8, 0, 0)}
       max={new Date(2025, 1, 0, 18, 0, 0)}
       components={{
         toolbar: CalendarCustomToolbar,
       }}
+      style={{ height: view === "month" ? 600 : "" }}
       formats={{
-        dayHeaderFormat: (date: Date) => moment(date).format("dddd DD"),
+        dayHeaderFormat: (date: Date) => moment(date).format("dddd DD MMMM"),
         timeGutterFormat: (date: Date) => moment(date).format("HH:mm"),
         dayFormat: (date: Date) =>
           moment(date)
