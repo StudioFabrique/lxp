@@ -1,6 +1,7 @@
 import Activity from "../../../utils/interfaces/activity";
 import BlogUpdate from "./blog-update";
 import ImageActivityPreview from "./image/image-activity-preview";
+import ResourcePreview from "./resources/preview/resource-preview";
 import Video from "./video";
 
 const ActivityContent = ({
@@ -36,6 +37,10 @@ const ActivityContent = ({
         onSubmitted={onSubmitted}
       />
     );
+  }
+
+  if (activity.type === "resource") {
+    return <ResourcePreview activity={activity} />;
   }
   return null;
 };
