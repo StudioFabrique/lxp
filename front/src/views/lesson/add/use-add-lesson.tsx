@@ -203,8 +203,6 @@ const useAddLesson = () => {
   // Effet pour mettre à jour la liste des modules quand un parcours est sélectionné
   useEffect(() => {
     if (state.parcoursId) {
-      console.log("parcoursId", state.parcoursId);
-
       sendRequest({ path: `/modules/${state.parcoursId}` }, (data: Item[]) => {
         dispatch({ type: "SET_MODULES_LIST", payload: data });
       });
@@ -215,8 +213,6 @@ const useAddLesson = () => {
   // Effet pour mettre à jour la liste des cours quand un module est sélectionné
   useEffect(() => {
     if (state.moduleId) {
-      console.log("moduleId", state.moduleId);
-
       sendRequest(
         { path: `/course/select/${state.moduleId}` },
         (data: CourseItem[]) => {

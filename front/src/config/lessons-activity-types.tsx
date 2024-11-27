@@ -72,7 +72,7 @@ const activityTypes: ActivityType[] = [
     icon: <UploadIcon size={6} />,
     label: "Fichier",
     tooltip: "",
-    type: "fichier",
+    type: "resource",
   },
   {
     icon: <AddFolder />,

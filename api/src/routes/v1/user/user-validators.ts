@@ -6,6 +6,7 @@ import {
 } from "../../../helpers/custom-validators";
 import { checkValidatorResult } from "../../../middleware/validators";
 
+// Validateur pour vérifier le format d'une adresse email
 export const postCheckEmailValidator = [
   body("email")
     .notEmpty()
@@ -15,6 +16,7 @@ export const postCheckEmailValidator = [
   checkValidatorResult,
 ];
 
+// Validateur pour vérifier que l'ID utilisateur est un ID MongoDB valide
 export const userIdValidator = [
   param("userId")
     .isMongoId()
@@ -22,11 +24,13 @@ export const userIdValidator = [
   checkValidatorResult,
 ];
 
+// Validateur pour vérifier le format d'un token d'authentification
 export const tokenValidator = [
   body("token").custom(tokenValidateGeneric),
   checkValidatorResult,
 ];
 
+// Validateur pour vérifier le format du rôle utilisateur lors de la récupération d'utilisateurs par rôle
 export const getUsersByRoleValidator = [
   param("role")
     .notEmpty()
@@ -38,18 +42,38 @@ export const getUsersByRoleValidator = [
   checkValidatorResult,
 ];
 
+// Valide les données de la requête pour mettre à jour le status de plusieurs utilisateurs, à partir d'un tableau d'identifiants et d'un status boolean
 export const updateManyUsersStatusValidator = [
-  body()
+  body("usersIds").notEmpty(),
+  body("usersIds")
     .isArray()
     .withMessage(
-      "Le corps de la requête doit contenir un tableau d'identifiants.",
-    )
-    .notEmpty()
-    .withMessage(
-      "Le corps de la requête doit contenir un tableau d'identifiants.",
+      "Le corps de la requête doit contenir un tableau d'identifiants."
     ),
+  body("usersIds.*")
+    .isMongoId()
+    .withMessage(
+      "Chaque élément de usersIds doit être une chaîne de caractères."
+    ),
+  body("status")
+    .isString()
+    .custom(stringValidateGeneric)
+    .withMessage("Le status doit être une valeur booleenne."),
+  checkValidatorResult,
 ];
 
+// Mettre à jour le status d'un utilisateur
+export const updateUserStatusValidator = [
+  body("userId")
+    .isMongoId()
+    .withMessage("L'identifiant de l'utilisateur est invalide."),
+  body("status")
+    .isBoolean()
+    .withMessage("Le status doit être une valeur booleenne."),
+  checkValidatorResult,
+];
+
+// Validateur pour vérifier le format du token et du mot de passe lors d'une modification de mot de passe
 export const postPasswordValidator = [
   body("token")
     .custom(tokenValidateGeneric)

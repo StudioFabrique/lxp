@@ -6,10 +6,12 @@ import BigCalendarTimeline, {
 import { useNavigate } from "react-router-dom";
 import { CourseTimeline } from "../../utils/interfaces/course";
 import { getRandomDaisyuiBgThemeColor } from "../../utils/get-daisy-ui-theme-color";
+import { View, Views } from "react-big-calendar";
 
 const Timeline = () => {
   const { sendRequest } = useHttp();
   const navigate = useNavigate();
+  const [currentView, setCurrentView] = useState<View>(Views.WORK_WEEK);
 
   const [timelineData, setTimelineData] = useState<
     {
@@ -49,9 +51,30 @@ const Timeline = () => {
       | Date[],
   ) => {
     if (Array.isArray(range)) {
+      if (currentView === Views.DAY) {
+        const date = new Date(range[0]);
+        const startOfWeek = new Date(
+          date.setDate(date.getDate() - date.getDay() + 1),
+        );
+        const endOfWeek = new Date(
+          date.setDate(date.getDate() - date.getDay() + 5),
+        );
+        setDatesSearchingRange({
+          minDate: startOfWeek,
+          maxDate: endOfWeek,
+        });
+        return;
+      }
+      // semaine
       setDatesSearchingRange({
         minDate: range[0],
         maxDate: range[range.length - 1],
+      });
+    } else {
+      // mois
+      setDatesSearchingRange({
+        minDate: range.start,
+        maxDate: range.end,
       });
     }
   };
@@ -117,13 +140,17 @@ const Timeline = () => {
         Mon emploi du temps
       </h2>
       <BigCalendarTimeline
+        view={currentView}
+        onSetView={setCurrentView}
         data={timelineData}
         colors={modulesColor}
         onRangeChange={handleRangeChange}
         onDoubleClickEvent={handleDoubleClickEvent}
       />
     </div>
-  ) : null;
+  ) : (
+    <p className="pl-4">Aucune données du calendrier disponible</p>
+  );
 };
 
 export default Timeline;

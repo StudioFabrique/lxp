@@ -8,6 +8,8 @@ const DeleteModal: FC<{
   descriptionSubject?: string;
   error?: string;
 }> = ({ isLoading, onCancel, onConfirm, descriptionSubject, error }) => {
+  console.log(descriptionSubject);
+
   useEffect(() => {
     document.body.addEventListener(
       "keydown",
@@ -27,9 +29,7 @@ const DeleteModal: FC<{
                 </h3>
               </div>
               <p className="py-2">
-                {`Êtes-vous sûr de supprimer ${
-                  descriptionSubject ? descriptionSubject : "cet utilisateur"
-                } ?`}
+                {`Êtes-vous sûr de vouloir supprimer ${descriptionSubject} ?`}
               </p>
               <p className=" text-red-700 text-sm pb-2">
                 Attention: Cette opération ne peut pas être annulée

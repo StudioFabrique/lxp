@@ -95,7 +95,7 @@ export default function CourseTable({
   return (
     <>
       {coursesList && coursesList.length > 0 ? (
-        <div className="w-5/6">
+        <div className="w-full">
           <table className="table">
             <thead>
               <tr>
