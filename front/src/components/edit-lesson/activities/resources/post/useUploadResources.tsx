@@ -60,6 +60,7 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
     if (event.target.files && event.target.files.length > 0) {
       // Vérification du type de fichier
       let error = !regexGeneric.test(values.name);
+      console.log("hello");
 
       if (allowedMimeTypes.includes(event.target.files[0].type)) {
         filesList?.forEach((file) => {

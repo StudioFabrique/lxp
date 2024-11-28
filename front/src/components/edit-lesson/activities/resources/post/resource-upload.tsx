@@ -7,7 +7,7 @@ import ResourcesList from "./resources-list";
 
 type Props = {
   onCancel: (value: boolean) => void; // Fonction pour annuler l'upload
-  onResetForm: () => void; // Fonction pour réinitialiser le formulaire
+  onResetForm?: () => void; // Rendre optionnel avec ?
 };
 
 /**
@@ -72,7 +72,7 @@ export default function ResourceUpload({ onCancel }: Props) {
       </article>
       {/* Colonne de droite : liste des fichiers */}
       <article>
-        {filesList ? (
+        {filesList && filesList.length !== 0 ? (
           <ResourcesList
             filesList={filesList}
             handleRemoveResource={handleRemoveResource}
@@ -80,7 +80,11 @@ export default function ResourceUpload({ onCancel }: Props) {
             onReorder={handleReorder}
             uploadProgress={uploadProgress}
           />
-        ) : null}
+        ) : (
+          <div className="flex justify-center items-center h-full">
+            <p>Aucune ressource en attente de téléversement</p>
+          </div>
+        )}
       </article>
     </section>
   );

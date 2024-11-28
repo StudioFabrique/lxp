@@ -42,9 +42,6 @@ function ResourcesList({
     return filesList.reduce((acc, file) => acc + file.file.size, 0);
   }, [filesList]);
 
-  console.log({ totalFilesSize });
-  console.log(filesList.length);
-
   const uploadProgressValues = useMemo(() => {
     if (!filesList.length || !totalFilesSize) return [];
 

@@ -190,6 +190,8 @@ const ContextProvider: FC<Props> = (props) => {
     // perms should be of format
     // { 'read': ['Contact', 'Database']}
     for (const role of roles) {
+      console.log({ role });
+
       const applyData = (data: any) => {
         const permissions: any[] = data.data;
 

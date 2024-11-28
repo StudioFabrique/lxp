@@ -95,11 +95,13 @@ function PreviewActivity() {
                 onCancel={handleCancel}
               />
             </article>
-            <div className="flex justify-end">
-              <button className="btn btn-primary" onClick={toggleEditing}>
-                Editer
-              </button>
-            </div>
+            {activity.type !== "resource" ? (
+              <div className="flex justify-end">
+                <button className="btn btn-primary" onClick={toggleEditing}>
+                  Editer
+                </button>
+              </div>
+            ) : null}
           </>
         )}
       </section>

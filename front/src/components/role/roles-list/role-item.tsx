@@ -31,7 +31,7 @@ const RoleItem: FC<{
   const handleDeleteRole = () => {
     const applyData = () => {
       setRoles((roles) =>
-        roles.filter((currentRole) => role.role !== currentRole.role),
+        roles.filter((currentRole) => role.role !== currentRole.role)
       );
       fetchRoles(user!.roles[0]);
       defineRulesFor();
@@ -40,7 +40,7 @@ const RoleItem: FC<{
 
     sendRequest(
       { path: `/permission/role/${role.role}`, method: "delete" },
-      applyData,
+      applyData
     );
   };
 
