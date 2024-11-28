@@ -9,6 +9,7 @@ type Props = {
   handleSubmit: () => void; // Fonction pour soumettre le formulaire
   filesNumber: number; // Nombre de fichiers sélectionnés
   isLoading: boolean; // État de chargement
+  hasError: boolean; // Indicateur d'erreur
 };
 
 /**
@@ -20,6 +21,7 @@ type Props = {
  * @param handleSubmit - Fonction de soumission du formulaire
  * @param filesNumber - Nombre de fichiers sélectionnés
  * @param isLoading - État de chargement pendant l'upload
+ * @param hasError - Indicateur d'erreur
  */
 function ResourcesAction({
   onCancel,
@@ -28,6 +30,7 @@ function ResourcesAction({
   filesNumber,
   isLoading,
   cancelUpload,
+  hasError,
 }: Props & { cancelUpload: () => void }) {
   const handleCancel = () => {
     if (isLoading) {
@@ -65,7 +68,7 @@ function ResourcesAction({
           <button
             className="btn btn-primary"
             onClick={handleSubmit}
-            disabled={filesNumber === 0 || isLoading}
+            disabled={filesNumber === 0 || isLoading || hasError}
           >
             {/* Affichage conditionnel selon l'état de chargement */}
             {isLoading ? (
