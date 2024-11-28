@@ -65,7 +65,7 @@ const AdminHome = () => {
       {
         path: "/user/last-parcours",
       },
-      applyData,
+      applyData
     );
   }, [sendRequest]);
 

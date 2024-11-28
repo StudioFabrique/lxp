@@ -8,7 +8,7 @@ import useAuth from "../../hooks/use-auth";
 // Composant de mise en page pour l'espace administrateur
 const AdminLayout = () => {
   // Protection de la route avec le hook d'authentification
-  useAuth("admin");
+  //const { userRank } = useAuth("admin");
 
   return (
     // Conteneur principal
