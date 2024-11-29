@@ -51,6 +51,8 @@ function PreviewActivity() {
    * Annule les modifications et recharge les données
    */
   const handleCancel = () => {
+    console.log("cancel");
+
     setIsEditing(false);
     getActivity();
   };
