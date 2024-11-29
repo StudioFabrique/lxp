@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import useForm from "../../../../UI/forms/hooks/use-form";
 import useHttp from "../../../../../hooks/use-http";
 import toast from "react-hot-toast";
@@ -6,7 +6,7 @@ import { regexGeneric } from "../../../../../utils/constantes";
 import { useParams } from "react-router-dom";
 
 // Type définissant la structure d'une ressource
-type Resource = {
+export type Resource = {
   name: string; // Nom de la ressource
   file: File; // Fichier associé
   hasError: boolean; // Indique si la ressource contient une erreur
@@ -15,7 +15,7 @@ type Resource = {
 };
 
 // Types de fichiers autorisés pour l'upload
-const allowedMimeTypes = [
+export const allowedMimeTypes = [
   "application/pdf", // PDF
   "application/vnd.ms-powerpoint", // PPT
   "application/vnd.openxmlformats-officedocument.presentationml.presentation", // PPTX
@@ -40,6 +40,7 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
   // Hook pour les requêtes HTTP et récupération de l'ID de la leçon
   const { isLoading, sendRequest, uploadProgress } = useHttp();
   const { lessonId } = useParams();
+  const [hasError, setHasError] = useState(false);
 
   // Mémoisation du nombre de fichiers pour éviter des re-renders inutiles
   const filesNumber = useMemo(
@@ -58,13 +59,22 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       // Vérification du type de fichier
+      let error = !regexGeneric.test(values.name);
+      console.log("hello");
+
       if (allowedMimeTypes.includes(event.target.files[0].type)) {
+        filesList?.forEach((file) => {
+          if (file.file.name === event.target.files![0].name) {
+            error = true;
+            toast.error("Ce fichier se trouve déjà dans la liste");
+          }
+        });
         const resource = [
           ...(filesList ?? []),
           {
             name: values.name,
             file: event.target.files[0],
-            hasError: !regexGeneric.test(values.name),
+            hasError: error,
           },
         ];
         setFilesList(resource);
@@ -170,11 +180,19 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
     }
   }, [abortController, onCancel, resetFilesList]);
 
+  useEffect(() => {
+    setHasError(false);
+    filesList?.forEach((file) => {
+      if (file.hasError) setHasError(true);
+    });
+  }, [filesList]);
+
   // Retourne les fonctions et données nécessaires pour le composant
   return {
     data,
     filesList,
     filesNumber,
+    hasError,
     handleFileChange,
     handleRemoveResource,
     handleReorder,

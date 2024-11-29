@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // Import des dépendances nécessaires
 import { Outlet } from "react-router-dom";
 

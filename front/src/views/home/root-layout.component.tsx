@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Import des dépendances nécessaires
-import { useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect, useMemo } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 // Import des composants et du contexte
@@ -23,36 +23,37 @@ const RootLayout = () => {
 
   console.log({ isLoggedIn, user });
 
-  // Effet pour gérer la redirection selon le rôle de l'utilisateur
-  useEffect(() => {
-    if (isLoggedIn && user && user.roles) {
-      // Récupération des rôles de l'utilisateur
-      fetchRoles(user!.roles[0]);
-      console.log(location.pathname.split("/"));
+  // Mémorisation du rôle et du rang
+  const userRole = useMemo(() => user?.roles?.[0], [user?.roles]);
+  const userRank = useMemo(() => userRole?.rank, [userRole]);
 
-      // Redirection si l'utilisateur est à la racine
-      if (location.pathname.split("/").length < 3) {
-        // Redirection vers /admin pour les rangs < 3
-        if (user && user.roles[0].rank < 3) {
-          nav("/admin");
-        }
-        // Redirection vers /student pour les rangs > 2
-        else if (user && user.roles[0].rank > 2) {
-          nav("/student");
-        }
-      }
+  // Mémorisation de la logique de redirection
+  const handleRedirection = useCallback(() => {
+    if (!isLoggedIn || !userRank || location.pathname.split("/").length >= 3)
+      return;
+
+    if (userRank < 3) {
+      nav("/admin");
+    } else if (userRank > 2) {
+      nav("/student");
     }
-  }, [fetchRoles, nav, user, isLoggedIn, location.pathname]);
+  }, [isLoggedIn, userRank, location.pathname, nav]);
 
-  // Effet pour initialiser le thème et la connexion
+  // Effet pour la redirection et les rôles
+  useEffect(() => {
+    if (!isLoggedIn || !userRole) return;
+    fetchRoles(userRole);
+    handleRedirection();
+  }, [isLoggedIn, userRole, fetchRoles, handleRedirection]);
+
+  // Effet pour l'initialisation
   useEffect(() => {
     initTheme();
-    // Établissement de la connexion initiale
     if (!isLoggedIn && initialState) {
       initialState = false;
       handshake();
     }
-  }, [initTheme, isLoggedIn, handshake]);
+  }, [isLoggedIn, initTheme, handshake]);
 
   // Effet pour déconnecter le socket quand l'utilisateur se déconnecte
   useEffect(() => {
