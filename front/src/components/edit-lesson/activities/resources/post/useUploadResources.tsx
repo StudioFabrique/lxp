@@ -6,7 +6,7 @@ import { regexGeneric } from "../../../../../utils/constantes";
 import { useParams } from "react-router-dom";
 
 // Type définissant la structure d'une ressource
-type Resource = {
+export type Resource = {
   name: string; // Nom de la ressource
   file: File; // Fichier associé
   hasError: boolean; // Indique si la ressource contient une erreur
@@ -15,7 +15,7 @@ type Resource = {
 };
 
 // Types de fichiers autorisés pour l'upload
-const allowedMimeTypes = [
+export const allowedMimeTypes = [
   "application/pdf", // PDF
   "application/vnd.ms-powerpoint", // PPT
   "application/vnd.openxmlformats-officedocument.presentationml.presentation", // PPTX
