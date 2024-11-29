@@ -40,7 +40,7 @@ const ActivityContent = ({
   }
 
   if (activity.type === "resource") {
-    return <ResourcePreview activity={activity} />;
+    return <ResourcePreview activity={activity} onCancel={onCancel} />;
   }
   return null;
 };

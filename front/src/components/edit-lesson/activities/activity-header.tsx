@@ -10,11 +10,11 @@ const ActivityHeader = ({ title, onCancel }: Props) => {
     <article className="w-full flex justify-between items-center">
       <h1 className="text-xl font-bold">{title}</h1>
       {onCancel ? (
-        <button className="btn btn-primary btn-sm" onClick={onCancel}>
+        <button className="btn btn-primary" onClick={onCancel}>
           Annuler
         </button>
       ) : (
-        <Link className="btn btn-primary btn-sm" to="..">
+        <Link className="btn btn-primary" to="..">
           Retour
         </Link>
       )}

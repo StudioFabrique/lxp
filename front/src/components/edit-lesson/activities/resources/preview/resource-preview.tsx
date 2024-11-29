@@ -16,15 +16,20 @@ import useForm from "../../../../UI/forms/hooks/use-form";
 import { allowedMimeTypes, Resource } from "../post/useUploadResources";
 import { regexGeneric } from "../../../../../utils/constantes";
 import toast from "react-hot-toast";
+import useHttp from "../../../../../hooks/use-http";
+import ResourcesAction from "../post/resource-actions";
+import ResourcesList from "../post/resources-list";
 
 type Props = {
   activity: Activity;
+  onCancel: () => void;
 };
 
-function ResourcePreview({ activity }: Props) {
+function ResourcePreview({ activity, onCancel }: Props) {
   const [isAdding, setIsAdding] = useState(false);
   const { values, errors, onChangeValue } = useForm();
   const [uploadList, setUploadList] = useState<Resource[]>([]);
+  const { sendRequest } = useHttp();
 
   const handleDownload = (url: string) => {
     window.open(ACTIVITIES + "/files/" + url, "_blank");
@@ -111,6 +116,62 @@ function ResourcePreview({ activity }: Props) {
     }
   };
 
+  const handleAddResource = () => {
+    const formData = new FormData();
+
+    // Ajout des fichiers au FormData avec validation du nom
+    uploadList?.forEach((file) => {
+      if (regexGeneric.test(file.name)) {
+        formData.append("files", file.file);
+      } else {
+        toast.error("Le nom de la ressource n'est pas valide");
+        return;
+      }
+    });
+
+    // Callback après la requête réussie
+    const applyData = (data: { success: boolean; message: string }) => {
+      if (data.success) toast.success(data.message);
+      handleCancel();
+    };
+
+    // Préparation des métadonnées des ressources
+    let resources: { label: string; filename: string }[] = [];
+    for (const item of uploadList!) {
+      resources = [
+        ...resources,
+        { label: item.name, filename: item.file.name },
+      ];
+    }
+
+    // Ajout des métadonnées au FormData
+    formData.append("data", JSON.stringify(resources));
+
+    // Envoi de la requête POST au serveur
+    sendRequest(
+      {
+        path: `/activity/add-resource/${activity.id}`,
+        method: "put",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: formData,
+      },
+      applyData
+    );
+  };
+
+  const handleCancel = () => {
+    setIsAdding(false);
+    onCancel();
+  };
+
+  const handleRemoveFromUploadList = (indexToRemove: number) => {
+    setUploadList((prevState) =>
+      prevState.filter((_, index) => index !== indexToRemove)
+    );
+  };
+
   return (
     <div className="flex flex-col gap-y-4">
       <div className="flex justify-end">
@@ -120,20 +181,38 @@ function ResourcePreview({ activity }: Props) {
             onClick={() => setIsAdding((prevState) => !prevState)}
           >
             <>
-              <PlusCircle /> <p>Ajouter une ressource</p>
+              <PlusCircle className="w-4 h-4" /> <p>Ajouter une ressource</p>
             </>
           </button>
         )}
       </div>
 
       {isAdding ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2">
-          <ResourceForm
-            data={{
-              ...data,
-              errors: { name: data.errors.map((e) => e.message) },
-            }}
-            onFileChange={() => {}}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <span className="w-full flex flex-col gap-y-4">
+            <ResourceForm
+              data={{
+                ...data,
+                errors: { name: data.errors.map((e) => e.message) },
+              }}
+              onFileChange={handleFileChange}
+            />
+            <ResourcesAction
+              onCancel={handleCancel}
+              resetFilesList={() => setUploadList([])}
+              handleSubmit={handleAddResource}
+              filesNumber={uploadList.length}
+              isLoading={false}
+              hasError={false}
+              cancelUpload={() => {}}
+            />
+          </span>
+          <ResourcesList
+            filesList={uploadList}
+            handleRemoveResource={handleRemoveFromUploadList}
+            isLoading={false}
+            onReorder={() => {}}
+            uploadProgress={0}
           />
         </div>
       ) : null}
