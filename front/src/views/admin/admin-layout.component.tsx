@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // Import des dépendances nécessaires
 import { Outlet } from "react-router-dom";
 
@@ -8,7 +9,7 @@ import useAuth from "../../hooks/use-auth";
 // Composant de mise en page pour l'espace administrateur
 const AdminLayout = () => {
   // Protection de la route avec le hook d'authentification
-  //const { userRank } = useAuth("admin");
+  useAuth("admin");
 
   return (
     // Conteneur principal

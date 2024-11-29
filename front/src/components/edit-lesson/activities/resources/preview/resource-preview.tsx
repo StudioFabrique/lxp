@@ -12,7 +12,10 @@ import Wrapper from "../../../../UI/wrapper/wrapper.component";
 import { ACTIVITIES } from "../../../../../config/urls";
 import { useState } from "react";
 import ResourceForm from "../post/resource-form";
-import ResourceUpload from "../post/resource-upload";
+import useForm from "../../../../UI/forms/hooks/use-form";
+import { allowedMimeTypes, Resource } from "../post/useUploadResources";
+import { regexGeneric } from "../../../../../utils/constantes";
+import toast from "react-hot-toast";
 
 type Props = {
   activity: Activity;
@@ -20,10 +23,14 @@ type Props = {
 
 function ResourcePreview({ activity }: Props) {
   const [isAdding, setIsAdding] = useState(false);
+  const { values, errors, onChangeValue } = useForm();
+  const [uploadList, setUploadList] = useState<Resource[]>([]);
 
   const handleDownload = (url: string) => {
     window.open(ACTIVITIES + "/files/" + url, "_blank");
   };
+
+  const data = { values, errors, onChangeValue };
 
   const displayIcon = (url: string) => {
     const extension = url.split(".").pop();
@@ -55,6 +62,55 @@ function ResourcePreview({ activity }: Props) {
     }
   };
 
+  /**
+   * Gère l'ajout d'un nouveau fichier à la liste
+   * Vérifie le type MIME et ajoute le fichier si valide
+   */
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      // Vérification du type de fichier
+      let error = !regexGeneric.test(values.name);
+      console.log("hello");
+
+      if (allowedMimeTypes.includes(event.target.files[0].type)) {
+        uploadList?.forEach((file) => {
+          if (file.file.name === event.target.files![0].name) {
+            error = true;
+            toast.error("Ce fichier se trouve déjà dans la liste");
+          }
+        });
+        if (
+          activity.resourceActivities &&
+          activity.resourceActivities.length > 0
+        ) {
+          activity.resourceActivities.forEach((resource) => {
+            if (resource.label === values.name) {
+              error = true;
+              toast.error("Une ressource avec ce nom existe déjà");
+            }
+          });
+        }
+        const resource = [
+          ...(uploadList ?? []),
+          {
+            name: values.name,
+            file: event.target.files[0],
+            hasError: error,
+          },
+        ];
+        setUploadList(resource);
+        // Réinitialisation du champ de fichier
+        event.target.value = "";
+        onChangeValue("name", "");
+      } else {
+        toast.error(
+          "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX"
+        );
+        return;
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col gap-y-4">
       <div className="flex justify-end">
@@ -71,10 +127,15 @@ function ResourcePreview({ activity }: Props) {
       </div>
 
       {isAdding ? (
-        <ResourceUpload
-          onCancel={() => setIsAdding(false)}
-          onResetForm={() => {}}
-        />
+        <div className="grid grid-cols-1 lg:grid-cols-2">
+          <ResourceForm
+            data={{
+              ...data,
+              errors: { name: data.errors.map((e) => e.message) },
+            }}
+            onFileChange={() => {}}
+          />
+        </div>
       ) : null}
 
       <ul className="flex flex-col gap-y-2">

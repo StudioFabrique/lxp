@@ -3,7 +3,7 @@ import ActivityTypes from "./activity-types";
 export default function AddBlock({
   onActivityType,
 }: {
-  onActivityType: (activityType: string) => void;
+  onActivityType: React.Dispatch<React.SetStateAction<string>>;
 }) {
   return (
     <section className="flex flex-col items-start gap-y-4">
