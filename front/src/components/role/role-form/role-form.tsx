@@ -36,12 +36,12 @@ const RoleCreateForm: FC<{
 
   const { value: name } = useInput(
     (value: string) => regexGeneric.test(value),
-    roleToEdit?.name ? roleToEdit.name : "",
+    roleToEdit?.name ? roleToEdit.name : ""
   );
 
   const { value: label } = useInput(
     (value: string) => regexGeneric.test(value),
-    roleToEdit?.label ? roleToEdit.label : "",
+    roleToEdit?.label ? roleToEdit.label : ""
   );
 
   const cancelForm = () => {
@@ -74,7 +74,7 @@ const RoleCreateForm: FC<{
               // isActive: roleData.isActive,
             };
           return role;
-        }),
+        })
       );
       cancelForm();
       fetchRoles(user!.roles[0]);
@@ -96,7 +96,7 @@ const RoleCreateForm: FC<{
             // isActive,
           },
         },
-        roleToEdit ? applyDataUpdate : applyDataCreate,
+        roleToEdit ? applyDataUpdate : applyDataCreate
       );
     else toast.error("Le formulaire n'est pas valide");
   };
@@ -151,7 +151,7 @@ const RoleCreateForm: FC<{
               name="label"
               id="label"
               className={setInputStyle(
-                label.hasError && label.value.length > 0,
+                label.hasError && label.value.length > 0
               )}
               onChange={label.valueChangeHandler}
               onBlur={label.valueBlurHandler}

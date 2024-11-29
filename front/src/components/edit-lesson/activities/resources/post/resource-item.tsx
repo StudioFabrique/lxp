@@ -6,7 +6,7 @@ import SubWrapper from "../../../../UI/sub-wrapper/sub-wrapper.component";
 // Import de l'utilitaire de conversion de taille de fichier
 import { displaySize } from "../../../../../helpers/sizeUnitConversion";
 import { UploadProgressValuies } from "./resources-list";
-import FileUploadStatus from "../file-upload-status";
+import FileUploadStatus from "./file-upload-status";
 
 /**
  * Type définissant les props du composant ResourceItem

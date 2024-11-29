@@ -1,6 +1,5 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
-import ContextProvider from "./store/context.store";
 import RootLayout from "./views/home/root-layout.component";
 import { Suspense, lazy } from "react";
 import studentRoutes from "./lib/routes/students-routes";
@@ -8,6 +7,8 @@ import adminRoutes from "./lib/routes/admin-routes";
 import Loader from "./components/UI/loader";
 import Sidebar from "./components/UI/sidebar/sidebar";
 import Login from "./components/login/login.component";
+import { ThemeProvider } from "./store/theme-context";
+import ContextProvider from "./store/context.store";
 
 const StudentLayout = lazy(
   async () => await import("./views/student/student-layout.component")
@@ -101,7 +102,9 @@ const router = createBrowserRouter([
 function App() {
   return (
     <ContextProvider>
-      <RouterProvider router={router} />
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </ContextProvider>
   );
 }
