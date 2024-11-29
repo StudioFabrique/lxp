@@ -26,6 +26,7 @@ import httpPutActivityVideo from "../../../controllers/activity/http-put-activit
 import httpPutImage from "../../../controllers/activity/http-put-image";
 import { uploadActivityFiles } from "../../../middleware/upload-activity-file";
 import httpPostActivityResource from "../../../controllers/activity/http-post-activity-resource";
+import httpPutAddResource from "../../../controllers/activity/http-put-add-resource";
 
 const activityRouter = express.Router();
 
@@ -125,6 +126,15 @@ activityRouter.post(
   jsonParser,
   lessonIdValidator,
   httpPostActivityResource
+);
+
+activityRouter.put(
+  "/add-resource/:activityId",
+  checkPermissions("lesson"),
+  activityIdValidator,
+  uploadActivityFiles(),
+  jsonParser,
+  httpPutAddResource
 );
 
 export default activityRouter;
