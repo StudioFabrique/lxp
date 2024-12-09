@@ -12,6 +12,7 @@ import {
   activityIdValidator,
   postVideoValidator,
   putReorderActivitiesValidator,
+  resourceIdValidator,
   updateActivityValidator,
   updateVideoValidator,
 } from "./activityValidator";
@@ -29,6 +30,7 @@ import httpPostActivityResource from "../../../controllers/activity/http-post-ac
 import httpPutAddResource from "../../../controllers/activity/http-put-add-resource";
 import httpPutReorderResource from "../../../controllers/activity/http-put-reorder-resource";
 import httpGetResourceActivity from "../../../controllers/activity/http-get-resource-activity";
+import httpDeleteResource from "../../../controllers/activity/http-delete-resource";
 
 const activityRouter = express.Router();
 
@@ -152,6 +154,13 @@ activityRouter.get(
   checkPermissions("lesson"),
   activityIdValidator,
   httpGetResourceActivity
+);
+
+activityRouter.delete(
+  "/resource/:resourceId",
+  checkPermissions("lesson"),
+  resourceIdValidator,
+  httpDeleteResource
 );
 
 export default activityRouter;
