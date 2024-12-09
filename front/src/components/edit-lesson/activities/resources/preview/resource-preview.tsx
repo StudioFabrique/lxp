@@ -10,7 +10,7 @@ import {
 import Activity from "../../../../../utils/interfaces/activity";
 import Wrapper from "../../../../UI/wrapper/wrapper.component";
 import { ACTIVITIES } from "../../../../../config/urls";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import ResourceForm from "../post/resource-form";
 import useForm from "../../../../UI/forms/hooks/use-form";
 import { allowedMimeTypes, Resource } from "../post/useUploadResources";
@@ -19,6 +19,8 @@ import toast from "react-hot-toast";
 import useHttp from "../../../../../hooks/use-http";
 import ResourcesAction from "../post/resource-actions";
 import ResourcesList from "../post/resources-list";
+import { DndWrapper } from "../../../../UI/DndWrapper";
+import { useDragAndDrop } from "../../../../../hooks/useDragAndDrop";
 
 type Props = {
   activity: Activity;
@@ -30,6 +32,16 @@ function ResourcePreview({ activity, onCancel }: Props) {
   const { values, errors, onChangeValue } = useForm();
   const [uploadList, setUploadList] = useState<Resource[]>([]);
   const { isLoading, sendRequest, uploadProgress } = useHttp();
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleReorderResources = () => {
+    console.log("reorder");
+  };
+
+  const { submit, handleDragEnd } = useDragAndDrop({
+    items: activity.resourceActivities ?? [],
+    onReorder: handleReorderResources,
+  });
 
   const handleDownload = (url: string) => {
     window.open(ACTIVITIES + "/files/" + url, "_blank");
@@ -221,30 +233,36 @@ function ResourcePreview({ activity, onCancel }: Props) {
 
       <ul className="flex flex-col gap-y-2">
         {activity && activity.resourceActivities ? (
-          activity.resourceActivities.map((resource) => (
-            <li key={resource.id}>
-              <Wrapper>
-                <div className="grid grid-cols-4">
-                  <span className="col-span-1 flex gap-x-4 items-center">
-                    <GripVertical className="text-primary" />{" "}
-                    {displayIcon(resource.url)}
-                  </span>
-                  <span className="col-span-2">{resource.label}</span>
-                  <span className="col-span-1 flex gap-x-8 items-center justify-end">
-                    <button onClick={() => handleDownload(resource.url)}>
-                      <Download className="text-primary" />
-                    </button>
-                    <button>
-                      <Edit2Icon className="text-primary" />
-                    </button>
-                    <button>
-                      <Trash2 className="text-error" />
-                    </button>
-                  </span>
-                </div>
-              </Wrapper>
-            </li>
-          ))
+          <DndWrapper
+            droppableId="resources"
+            items={activity.resourceActivities}
+            isLoading={isLoading}
+            onDragEnd={handleDragEnd}
+            renderItem={(resource) => (
+              <li key={resource.id}>
+                <Wrapper>
+                  <div className="grid grid-cols-4">
+                    <span className="col-span-1 flex gap-x-4 items-center">
+                      <GripVertical className="text-primary" />{" "}
+                      {displayIcon(resource.url)}
+                    </span>
+                    <span className="col-span-2">{resource.label}</span>
+                    <span className="col-span-1 flex gap-x-8 items-center justify-end">
+                      <button onClick={() => handleDownload(resource.url)}>
+                        <Download className="text-primary" />
+                      </button>
+                      <button>
+                        <Edit2Icon className="text-primary" />
+                      </button>
+                      <button>
+                        <Trash2 className="text-error" />
+                      </button>
+                    </span>
+                  </div>
+                </Wrapper>
+              </li>
+            )}
+          />
         ) : (
           <p>Aucune ressource</p>
         )}
