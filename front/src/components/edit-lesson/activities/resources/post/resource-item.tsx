@@ -5,7 +5,7 @@ import { GripVertical, Trash2 } from "lucide-react";
 import SubWrapper from "../../../../UI/sub-wrapper/sub-wrapper.component";
 // Import de l'utilitaire de conversion de taille de fichier
 import { displaySize } from "../../../../../helpers/sizeUnitConversion";
-import { UploadProgressValuies } from "./resources-list";
+import { UploadProgressValues } from "./resources-list";
 import FileUploadStatus from "./file-upload-status";
 
 /**
@@ -16,7 +16,7 @@ type Props = {
   index: number; // Position dans la liste
   isLoading: boolean; // État de chargement
   onRemove: (index: number) => void; // Callback de suppression
-  uploadProgressValues: UploadProgressValuies;
+  uploadProgressValues: UploadProgressValues;
   uploadProgress: number | null;
   totalFiles: number;
 };
