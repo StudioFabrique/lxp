@@ -15,7 +15,7 @@ type Props = {
   uploadProgress: number | null; // Progression de l'upload
 };
 
-export type UploadProgressValuies = {
+export type UploadProgressValues = {
   minUpload: number;
   maxUpload: number;
 };
@@ -45,7 +45,7 @@ function ResourcesList({
   const uploadProgressValues = useMemo(() => {
     if (!filesList.length || !totalFilesSize) return [];
 
-    return filesList.reduce((acc: UploadProgressValuies[], file, index) => {
+    return filesList.reduce((acc: UploadProgressValues[], file, index) => {
       const previousFilesSize = filesList
         .slice(0, index)
         .reduce((sum, f) => sum + f.file.size, 0);
@@ -59,7 +59,7 @@ function ResourcesList({
   }, [filesList, totalFilesSize]);
 
   return (
-    <>
+    <div className="flex flex-col gap-y-2">
       {uploadProgress && uploadProgress > 0 ? (
         <div className="mb-4 w-full">
           <p className="w-full text-xs text-info flex justify-end">
@@ -90,7 +90,7 @@ function ResourcesList({
           />
         )}
       />
-    </>
+    </div>
   );
 }
 
