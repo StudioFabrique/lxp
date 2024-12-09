@@ -21,6 +21,8 @@ type Props = {
   onCancel: () => void;
 };
 
+let timer: NodeJS.Timeout | null = null;
+
 function ResourcePreview({ activity, onCancel }: Props) {
   const [resources, setResources] = useState<ActivityResource[]>([]);
   const [isAdding, setIsAdding] = useState(false);
@@ -36,15 +38,18 @@ function ResourcePreview({ activity, onCancel }: Props) {
   const handleReorderResources = useCallback(() => {
     const applyData = (data: { success: boolean; message: string }) => {
       if (data.success) toast.success(data.message);
+      if (timer) clearTimeout(timer);
     };
-    sendRequest(
-      {
-        path: `/activity/reorder-resource/${activity.id}`,
-        method: "put",
-        body: resources.map((resource) => resource.id),
-      },
-      applyData
-    );
+    timer = setTimeout(() => {
+      sendRequest(
+        {
+          path: `/activity/reorder-resource/${activity.id}`,
+          method: "put",
+          body: resources.map((resource) => resource.id),
+        },
+        applyData
+      );
+    }, 1000);
   }, [sendRequest, resources, activity.id]);
 
   const getResources = useCallback(() => {
@@ -205,6 +210,7 @@ function ResourcePreview({ activity, onCancel }: Props) {
   useEffect(() => {
     if (error.length > 0) toast.error(error);
     setSubmit(false);
+    if (timer) clearTimeout(timer);
   }, [error, setSubmit]);
 
   return (
