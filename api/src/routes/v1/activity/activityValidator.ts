@@ -16,6 +16,16 @@ export const activityIdValidator = [
   checkValidatorResult,
 ];
 
+export const resourceIdValidator = [
+  param("resourceId")
+    .notEmpty()
+    .withMessage("L'idientifiant de la ressource est requis.")
+    .isNumeric()
+    .isInt()
+    .withMessage("L'identifiant de la ressource doit être un nombre entier."),
+  checkValidatorResult,
+];
+
 export const updateActivityValidator = [
   body("title")
     .custom(stringValidateGeneric)
