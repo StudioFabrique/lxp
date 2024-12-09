@@ -231,6 +231,7 @@ model Objective {
 model ResourceActivity {
   id         Int      @id @default(autoincrement())
   label      String
+  order      Int
   url        String
   activityId Int
   activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
