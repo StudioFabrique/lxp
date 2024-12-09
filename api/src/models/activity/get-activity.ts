@@ -11,7 +11,6 @@ export default async function getActivity(activityId: number) {
       url: true,
       title: true,
       description: true,
-      resourceActivities: true,
       createdAt: true,
       updatedAt: true,
     },

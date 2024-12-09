@@ -51,9 +51,10 @@ export default async function putAddResource(req: CustomRequest) {
     where: { id: +activityId },
     data: {
       resourceActivities: {
-        create: newResources.map((resource) => ({
+        create: newResources.map((resource, index) => ({
           label: resource.label,
           url: resource.url,
+          order: index,
         })),
       },
     },

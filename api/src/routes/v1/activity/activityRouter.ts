@@ -27,6 +27,8 @@ import httpPutImage from "../../../controllers/activity/http-put-image";
 import { uploadActivityFiles } from "../../../middleware/upload-activity-file";
 import httpPostActivityResource from "../../../controllers/activity/http-post-activity-resource";
 import httpPutAddResource from "../../../controllers/activity/http-put-add-resource";
+import httpPutReorderResource from "../../../controllers/activity/http-put-reorder-resource";
+import httpGetResourceActivity from "../../../controllers/activity/http-get-resource-activity";
 
 const activityRouter = express.Router();
 
@@ -135,6 +137,21 @@ activityRouter.put(
   uploadActivityFiles(),
   jsonParser,
   httpPutAddResource
+);
+
+activityRouter.put(
+  "/reorder-resource/:activityId",
+  checkPermissions("lesson"),
+  activityIdValidator,
+  putReorderActivitiesValidator,
+  httpPutReorderResource
+);
+
+activityRouter.get(
+  "/resources/:activityId",
+  checkPermissions("lesson"),
+  activityIdValidator,
+  httpGetResourceActivity
 );
 
 export default activityRouter;
