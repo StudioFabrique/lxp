@@ -78,10 +78,11 @@ export default async function postActivityResource(req: CustomRequest) {
 
   // Enregistrement des ressources dans la base de données
   const result = await prisma.resourceActivity.createMany({
-    data: newResources.map((resource) => ({
+    data: newResources.map((resource, index) => ({
       label: resource.label,
       url: resource.url,
       activityId: newActivity.id,
+      order: index,
     })),
   });
 

@@ -13,5 +13,6 @@ export default interface Activity {
 export interface Resource {
   id: number;
   label: string;
+  order: number;
   url: string;
 }
