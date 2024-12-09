@@ -7,10 +7,12 @@ import {
   PlusCircle,
   Trash2,
 } from "lucide-react";
-import Activity from "../../../../../utils/interfaces/activity";
+import Activity, {
+  Resource as ActivityResource,
+} from "../../../../../utils/interfaces/activity";
 import Wrapper from "../../../../UI/wrapper/wrapper.component";
 import { ACTIVITIES } from "../../../../../config/urls";
-import { useState, useRef } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ResourceForm from "../post/resource-form";
 import useForm from "../../../../UI/forms/hooks/use-form";
 import { allowedMimeTypes, Resource } from "../post/useUploadResources";
@@ -28,24 +30,43 @@ type Props = {
 };
 
 function ResourcePreview({ activity, onCancel }: Props) {
+  const [resources, setResources] = useState<ActivityResource[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const { values, errors, onChangeValue } = useForm();
   const [uploadList, setUploadList] = useState<Resource[]>([]);
-  const { isLoading, sendRequest, uploadProgress } = useHttp();
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-  const handleReorderResources = () => {
-    console.log("reorder");
-  };
-
-  const { submit, handleDragEnd } = useDragAndDrop({
-    items: activity.resourceActivities ?? [],
-    onReorder: handleReorderResources,
+  const { error, isLoading, sendRequest, uploadProgress } = useHttp();
+  const { handleDragEnd, submit, setSubmit } = useDragAndDrop({
+    items: resources,
+    onReorder: setResources,
   });
+
+  const handleReorderResources = useCallback(() => {
+    const applyData = (data: { success: boolean; message: string }) => {
+      if (data.success) toast.success(data.message);
+    };
+    sendRequest(
+      {
+        path: `/activity/reorder-resource/${activity.id}`,
+        method: "put",
+        body: resources.map((resource) => resource.id),
+      },
+      applyData
+    );
+  }, [sendRequest, resources, activity.id]);
 
   const handleDownload = (url: string) => {
     window.open(ACTIVITIES + "/files/" + url, "_blank");
   };
+
+  const getResources = useCallback(() => {
+    const applyData = (data: {
+      success: boolean;
+      resources: ActivityResource[];
+    }) => {
+      if (data.success) setResources(data.resources);
+    };
+    sendRequest({ path: `/activity/resources/${activity.id}` }, applyData);
+  }, [activity.id, sendRequest]);
 
   const data = { values, errors, onChangeValue };
 
@@ -186,6 +207,22 @@ function ResourcePreview({ activity, onCancel }: Props) {
     );
   };
 
+  useEffect(() => {
+    getResources();
+  }, [getResources]);
+
+  useEffect(() => {
+    if (submit) {
+      handleReorderResources();
+      setSubmit(false);
+    }
+  }, [submit, handleReorderResources, setSubmit]);
+
+  useEffect(() => {
+    if (error.length > 0) toast.error(error);
+    setSubmit(false);
+  }, [error, setSubmit]);
+
   return (
     <div className="flex flex-col gap-y-4">
       <div className="flex justify-end">
@@ -232,10 +269,10 @@ function ResourcePreview({ activity, onCancel }: Props) {
       ) : null}
 
       <ul className="flex flex-col gap-y-2">
-        {activity && activity.resourceActivities ? (
+        {activity && resources ? (
           <DndWrapper
             droppableId="resources"
-            items={activity.resourceActivities}
+            items={resources}
             isLoading={isLoading}
             onDragEnd={handleDragEnd}
             renderItem={(resource) => (
