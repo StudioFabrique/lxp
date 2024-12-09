@@ -1,17 +1,7 @@
-import {
-  Download,
-  Edit2Icon,
-  Files,
-  FileText,
-  GripVertical,
-  PlusCircle,
-  Trash2,
-} from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import Activity, {
   Resource as ActivityResource,
 } from "../../../../../utils/interfaces/activity";
-import Wrapper from "../../../../UI/wrapper/wrapper.component";
-import { ACTIVITIES } from "../../../../../config/urls";
 import { useCallback, useEffect, useState } from "react";
 import ResourceForm from "../post/resource-form";
 import useForm from "../../../../UI/forms/hooks/use-form";
@@ -23,6 +13,8 @@ import ResourcesAction from "../post/resource-actions";
 import ResourcesList from "../post/resources-list";
 import { DndWrapper } from "../../../../UI/DndWrapper";
 import { useDragAndDrop } from "../../../../../hooks/useDragAndDrop";
+import ResourceItem from "./resource-item";
+import Modal from "../../../../UI/modal/modal";
 
 type Props = {
   activity: Activity;
@@ -39,6 +31,7 @@ function ResourcePreview({ activity, onCancel }: Props) {
     items: resources,
     onReorder: setResources,
   });
+  const [isDeleting, setIsDeleting] = useState<number | null>(null);
 
   const handleReorderResources = useCallback(() => {
     const applyData = (data: { success: boolean; message: string }) => {
@@ -54,10 +47,6 @@ function ResourcePreview({ activity, onCancel }: Props) {
     );
   }, [sendRequest, resources, activity.id]);
 
-  const handleDownload = (url: string) => {
-    window.open(ACTIVITIES + "/files/" + url, "_blank");
-  };
-
   const getResources = useCallback(() => {
     const applyData = (data: {
       success: boolean;
@@ -69,36 +58,6 @@ function ResourcePreview({ activity, onCancel }: Props) {
   }, [activity.id, sendRequest]);
 
   const data = { values, errors, onChangeValue };
-
-  const displayIcon = (url: string) => {
-    const extension = url.split(".").pop();
-    switch (extension) {
-      case "pdf":
-        return <Files className="text-info" />;
-      case "ppt":
-        return (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            className="lucide lucide-images text-info"
-          >
-            <path d="M18 22H4a2 2 0 0 1-2-2V6" />
-            <path d="m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18" />
-            <circle cx="12" cy="8" r="2" />
-            <rect width="16" height="16" x="6" y="2" rx="2" />
-          </svg>
-        );
-      default:
-        return <FileText className="text-info" />;
-    }
-  };
 
   /**
    * Gère l'ajout d'un nouveau fichier à la liste
@@ -168,6 +127,7 @@ function ResourcePreview({ activity, onCancel }: Props) {
       setUploadList([]);
       toast.success(data.message);
       handleCancel();
+      getResources();
     };
 
     // Préparation des métadonnées des ressources
@@ -205,6 +165,30 @@ function ResourcePreview({ activity, onCancel }: Props) {
     setUploadList((prevState) =>
       prevState.filter((_, index) => index !== indexToRemove)
     );
+  };
+
+  const handleSetResourceToDelete = (id: number) => {
+    setIsDeleting(id);
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleting(null);
+  };
+
+  const handleDeleteResource = () => {
+    if (isDeleting) {
+      const applyData = (data: { success: boolean; message: string }) => {
+        if (data.success) toast.success(data.message);
+        setIsDeleting(null);
+        setResources((prevState) =>
+          prevState.filter((resource) => resource.id !== isDeleting)
+        );
+      };
+      sendRequest(
+        { path: `/activity/resource/${isDeleting}`, method: "delete" },
+        applyData
+      );
+    }
   };
 
   useEffect(() => {
@@ -277,26 +261,10 @@ function ResourcePreview({ activity, onCancel }: Props) {
             onDragEnd={handleDragEnd}
             renderItem={(resource) => (
               <li key={resource.id}>
-                <Wrapper>
-                  <div className="grid grid-cols-4">
-                    <span className="col-span-1 flex gap-x-4 items-center">
-                      <GripVertical className="text-primary" />{" "}
-                      {displayIcon(resource.url)}
-                    </span>
-                    <span className="col-span-2">{resource.label}</span>
-                    <span className="col-span-1 flex gap-x-8 items-center justify-end">
-                      <button onClick={() => handleDownload(resource.url)}>
-                        <Download className="text-primary" />
-                      </button>
-                      <button>
-                        <Edit2Icon className="text-primary" />
-                      </button>
-                      <button>
-                        <Trash2 className="text-error" />
-                      </button>
-                    </span>
-                  </div>
-                </Wrapper>
+                <ResourceItem
+                  resource={resource}
+                  onDeleteResource={handleSetResourceToDelete}
+                />
               </li>
             )}
           />
@@ -304,6 +272,18 @@ function ResourcePreview({ activity, onCancel }: Props) {
           <p>Aucune ressource</p>
         )}
       </ul>
+      {isDeleting ? (
+        <Modal
+          onLeftClick={handleCancelDelete}
+          onRightClick={handleDeleteResource}
+          title="Supprimer une ressource"
+          isSubmitting={isLoading}
+          leftLabel="Annuler"
+          rightLabel="Confirmer"
+        >
+          Votre ressource sera supprimée de manière définitive, confirmer ?
+        </Modal>
+      ) : null}
     </div>
   );
 }
