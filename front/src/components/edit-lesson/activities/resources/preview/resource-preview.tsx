@@ -29,7 +29,7 @@ function ResourcePreview({ activity, onCancel }: Props) {
   const [isAdding, setIsAdding] = useState(false);
   const { values, errors, onChangeValue } = useForm();
   const [uploadList, setUploadList] = useState<Resource[]>([]);
-  const { sendRequest } = useHttp();
+  const { isLoading, sendRequest, uploadProgress } = useHttp();
 
   const handleDownload = (url: string) => {
     window.open(ACTIVITIES + "/files/" + url, "_blank");
@@ -132,6 +132,8 @@ function ResourcePreview({ activity, onCancel }: Props) {
     // Callback après la requête réussie
     const applyData = (data: { success: boolean; message: string }) => {
       if (data.success) toast.success(data.message);
+      setUploadList([]);
+      toast.success(data.message);
       handleCancel();
     };
 
@@ -202,7 +204,7 @@ function ResourcePreview({ activity, onCancel }: Props) {
               resetFilesList={() => setUploadList([])}
               handleSubmit={handleAddResource}
               filesNumber={uploadList.length}
-              isLoading={false}
+              isLoading={isLoading}
               hasError={false}
               cancelUpload={() => {}}
             />
@@ -210,9 +212,9 @@ function ResourcePreview({ activity, onCancel }: Props) {
           <ResourcesList
             filesList={uploadList}
             handleRemoveResource={handleRemoveFromUploadList}
-            isLoading={false}
+            isLoading={isLoading}
             onReorder={() => {}}
-            uploadProgress={0}
+            uploadProgress={uploadProgress}
           />
         </div>
       ) : null}

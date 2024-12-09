@@ -11,8 +11,9 @@ export default async function httpPutAddResource(
     await putAddResource(req);
     const result = {
       statusCode: 200,
-      message: "La nouvelle ressource a été créée avec succès.",
+      data: { message: "La nouvelle ressource a été créée avec succès." },
     };
+
     next(result);
   } catch (error: any) {
     const err = {
