@@ -17,6 +17,7 @@ import {
   activityIdValidator,
   postVideoValidator,
   putReorderActivitiesValidator,
+  putResourceValidator,
   resourceIdValidator,
   updateActivityValidator,
   updateVideoValidator,
@@ -40,6 +41,7 @@ import httpPutAddResource from "../../../controllers/activity/http-put-add-resou
 import httpPutReorderResource from "../../../controllers/activity/http-put-reorder-resource";
 import httpGetResourceActivity from "../../../controllers/activity/http-get-resource-activity";
 import httpDeleteResource from "../../../controllers/activity/http-delete-resource";
+import httpPutResource from "../../../controllers/activity/http-put-resource";
 
 const activityRouter = express.Router();
 
@@ -178,6 +180,17 @@ activityRouter.delete(
   checkPermissions("lesson"),
   resourceIdValidator,
   httpDeleteResource
+);
+
+// Route pour mettre à jour une ressource spécifique
+activityRouter.put(
+  "/resource/:resourceId",
+  checkPermissions("lesson"),
+  resourceIdValidator,
+  putResourceValidator,
+  uploadActivityFiles(),
+  jsonParser,
+  httpPutResource
 );
 
 export default activityRouter;
