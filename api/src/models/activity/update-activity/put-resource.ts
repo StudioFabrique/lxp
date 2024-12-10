@@ -12,8 +12,6 @@ export default async function putResource(req: CustomRequest) {
   // Extraction des données de la requête
   const { data } = req.body;
   const { resourceId } = req.params;
-  const uploadedFile = req.files as Express.Multer.File[];
-  const file = uploadedFile[0];
   const userId = req.auth?.userId;
 
   // Recherche de la ressource existante
@@ -41,26 +39,11 @@ export default async function putResource(req: CustomRequest) {
       statusCode: 406,
       message: "Vous n'êtes pas le propriétaire de cette ressource.",
     };
-
-  // Mise à jour de la ressource dans la base de données
   const updatedResource = await prisma.resourceActivity.update({
     where: { id: +resourceId },
-    data: { ...data, url: file ? file.filename : existingResource.url },
+    data: {
+      label: data.label,
+    },
   });
-
-  // Si un nouveau fichier a été uploadé, suppression de l'ancien fichier
-  if (file) {
-    const filePath = path.join(
-      __dirname,
-      "..",
-      "..",
-      "..",
-      "uploads",
-      "activities",
-      "files"
-    );
-    await fs.promises.unlink(`${filePath}/${file.filename}`);
-  }
-
   return updatedResource;
 }

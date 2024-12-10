@@ -8,6 +8,7 @@ import { DndWrapper } from "../../../../UI/DndWrapper";
 import ResourceItem from "./resource-item";
 import Modal from "../../../../UI/modal/modal";
 import useUpdateResources from "./use-update-resources";
+import ResourceUpdate from "./resource-update";
 
 // Props du composant
 type Props = {
@@ -35,8 +36,10 @@ function ResourcePreview({ activity, onCancel }: Props) {
     isAdding,
     isDeleting,
     isLoading,
+    isUpdating,
     resources,
     setIsAdding,
+    setIsUpdating,
     setUploadList,
     uploadList,
     uploadProgress,
@@ -50,7 +53,9 @@ function ResourcePreview({ activity, onCancel }: Props) {
         <p className="text-xs text-info italic">
           {isAdding
             ? ""
-            : "( Modifier l'ordre des ressources en déplaçant une ressource vers l'endroit souhaité grâce à un glisser/déposer )"}
+            : resources && resources.length > 1
+            ? "( Modifier l'ordre des ressources en déplaçant une ressource vers l'endroit souhaité grâce à un glisser/déposer )"
+            : ""}
         </p>
         {isAdding ? null : (
           <button
@@ -58,7 +63,8 @@ function ResourcePreview({ activity, onCancel }: Props) {
             onClick={() => setIsAdding((prevState) => !prevState)}
           >
             <>
-              <PlusCircle className="w-4 h-4" /> <p>Ajouter une ressource</p>
+              <PlusCircle className="w-4 h-4" />
+              <p>Ajouter des ressource</p>
             </>
           </button>
         )}
@@ -95,9 +101,11 @@ function ResourcePreview({ activity, onCancel }: Props) {
         </div>
       ) : null}
 
+      {isUpdating ? <ResourceUpdate resource={isUpdating} /> : null}
+
       {/* Liste des ressources existantes avec drag and drop */}
       <ul className="flex flex-col gap-y-2">
-        {activity && resources ? (
+        {activity && resources && resources.length > 0 ? (
           <DndWrapper
             droppableId="resources"
             items={resources}
@@ -108,12 +116,15 @@ function ResourcePreview({ activity, onCancel }: Props) {
                 <ResourceItem
                   resource={resource}
                   onDeleteResource={handleSetResourceToDelete}
+                  onUpdateResource={setIsUpdating}
                 />
               </li>
             )}
           />
         ) : (
-          <p>Aucune ressource</p>
+          <div className="text-center mt-4 text-info">
+            <p>Aucune ressource</p>
+          </div>
         )}
       </ul>
 
