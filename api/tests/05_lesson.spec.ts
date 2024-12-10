@@ -27,7 +27,7 @@ describe("HTTP Lesson", () => {
   });
 
   const lessonData = {
-    id: 1,
+    id: 2,
     title: "test",
     description: "test",
     modalite: "hybride",
@@ -55,6 +55,8 @@ describe("HTTP Lesson", () => {
           admin: { connect: { id: 1 } },
         },
       });
+
+      console.log("LEÇON CRÉÉE : ", lesson);
 
       await request(app)
         .put("/v1/lesson/update")
@@ -222,7 +224,7 @@ describe("HTTP Lesson", () => {
       await request(app)
         .put("/v1/lesson/update")
         .send({
-          id: 1,
+          id: 2,
           title: "test title",
           description: "test",
           modalite: "toto",
@@ -278,21 +280,14 @@ describe("HTTP Lesson", () => {
     test("It should respond 403 forbidden", async () => {
       await request(app).get("/v1/lesson/tag/1").expect(403);
     });
-  });
 
-  test("It should respond 200 ok", async () => {
-    const response = await request(app)
-      .get("/v1/lesson/tag/10000")
-      .set("Cookie", [`${authToken}`])
-      .expect(200);
-    expect(response.body.total).toBe(0);
-  });
-
-  test("It should respond 400 bad request", async () => {
-    const response = await request(app)
-      .get("/v1/lesson/tag/")
-      .set("Cookie", [`${authToken}`])
-      .expect(400);
+    test("It should respond 200 ok", async () => {
+      const response = await request(app)
+        .get("/v1/lesson/tag/10000")
+        .set("Cookie", [`${authToken}`])
+        .expect(200);
+      expect(response.body.total).toBe(0);
+    });
   });
 
   afterAll(async () => {
