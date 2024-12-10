@@ -1,25 +1,32 @@
 import express from "express";
+// Middleware d'authentification
 import checkToken from "../../../middleware/check-token";
+// Contrôleurs pour les opérations sur les leçons
 import httpPutLesson from "../../../controllers/lesson/http-put-lesson";
+// Validateurs pour les différentes routes
 import {
   getLessonsByTagValidator,
   lessonIdValidator,
   putLessonValidator,
   putReorderLessonsValidator,
 } from "./lesson-validator";
+// Contrôleurs pour les différentes opérations sur les leçons
 import httpGetLessonsByTag from "../../../controllers/lesson/http-get-lessons-by-tag";
+// Middleware de vérification des permissions
 import checkPermissions from "../../../middleware/check-permissions";
 import httpGetLessonsList from "../../../controllers/lesson/http-get-lessons-list";
 import httpGetLessonDetail from "../../../controllers/lesson/http-get-losson-detail";
 import httpDeleteLesson from "../../../controllers/lesson/http-delete-lesson";
 import httpPutReorderLessons from "../../../controllers/lesson/http-put-reorder-lessons";
+// Contrôleurs pour le suivi de lecture des leçons
 import httpPostBeginReadLesson from "../../../controllers/lesson/http-post-begin-read-lesson";
 import httpPutFinishReadLesson from "../../../controllers/lesson/http-put-finish-read-lesson";
 import httpGetLastLessonsRead from "../../../controllers/lesson/http-get-last-lessons-read";
 
+// Création du routeur Express pour les leçons
 const lessonRouter = express.Router();
 
-// met à jour une lesson
+// Route pour mettre à jour une leçon existante
 lessonRouter.put(
   "/update",
   checkPermissions("lesson"),
@@ -27,7 +34,7 @@ lessonRouter.put(
   httpPutLesson
 );
 
-// retourne la liste des leçons associées à un tag précis
+// Route pour obtenir toutes les leçons associées à un tag spécifique
 lessonRouter.get(
   "/tag/:tagId",
   checkPermissions("lesson"),
@@ -35,16 +42,17 @@ lessonRouter.get(
   httpGetLessonsByTag
 );
 
-// retourne la liste de toutes les leçons
+// Route pour obtenir la liste complète des leçons
 lessonRouter.get("/", checkPermissions("lesson"), httpGetLessonsList);
 
+// Route pour obtenir les dernières leçons lues par l'utilisateur
 lessonRouter.get(
   "/last-read",
   checkPermissions("lesson"),
   httpGetLastLessonsRead
 );
 
-// retourne une leçon en particulier identifiée par son ID
+// Route pour obtenir les détails d'une leçon spécifique
 lessonRouter.get(
   "/:lessonId",
   checkPermissions("lesson"),
@@ -52,7 +60,7 @@ lessonRouter.get(
   httpGetLessonDetail
 );
 
-// supprime définitivement une leçon
+// Route pour supprimer une leçon
 lessonRouter.delete(
   "/:lessonId",
   checkPermissions("lesson"),
@@ -60,7 +68,7 @@ lessonRouter.delete(
   httpDeleteLesson
 );
 
-// modifiie l'ordre des leçons associées à un cours
+// Route pour réorganiser l'ordre des leçons dans un cours
 lessonRouter.put(
   "/reorder/:courseId",
   checkPermissions("lesson"),
@@ -68,6 +76,7 @@ lessonRouter.put(
   httpPutReorderLessons
 );
 
+// Route pour marquer le début de lecture d'une leçon
 lessonRouter.post(
   "/read/:lessonId",
   checkPermissions("lesson", "read"),
@@ -75,7 +84,7 @@ lessonRouter.post(
   httpPostBeginReadLesson
 );
 
-// ajoute un "vu" à la leçon en ajoutant l'id de l'utilisateur connecté
+// Route pour marquer une leçon comme terminée
 lessonRouter.put(
   "/read/:lessonId",
   checkPermissions("lesson", "read"),

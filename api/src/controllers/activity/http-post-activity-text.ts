@@ -18,6 +18,8 @@ export default async function httpPostActivityText(
     response = await postText(+lessonId, userId!, title, description, value);
     return res.status(201).json(response);
   } catch (error: any) {
+    console.log({ error });
+
     return res
       .status(error.statusCode ?? 500)
       .json({ message: error.message ?? serverIssue });
