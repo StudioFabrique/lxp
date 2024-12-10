@@ -188,8 +188,6 @@ activityRouter.put(
   checkPermissions("lesson"),
   resourceIdValidator,
   putResourceValidator,
-  uploadActivityFiles(),
-  jsonParser,
   httpPutResource
 );
 

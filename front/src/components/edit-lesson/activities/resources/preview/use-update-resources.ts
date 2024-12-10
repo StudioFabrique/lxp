@@ -29,6 +29,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
     onReorder: setResources,
   });
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
+  const [isUpdating, setIsUpdating] = useState<ActivityResource | null>(null);
 
   const data = { values, errors, onChangeValue };
 
@@ -251,8 +252,10 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
     isAdding,
     isDeleting,
     isLoading,
+    isUpdating,
     resources,
     setIsAdding,
+    setIsUpdating,
     setUploadList,
     uploadList,
     uploadProgress,
