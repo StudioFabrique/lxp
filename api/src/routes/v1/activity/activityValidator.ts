@@ -107,3 +107,12 @@ export const putReorderActivitiesValidator = [
     ),
   checkValidatorResult,
 ];
+
+export const putResourceValidator = [
+  body("data.label")
+    .custom(stringValidateGeneric)
+    .withMessage(
+      "Le label de la ressource contient des caractères non autorisés."
+    ),
+  checkValidatorResult,
+];

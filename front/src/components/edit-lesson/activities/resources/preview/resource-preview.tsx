@@ -45,7 +45,13 @@ function ResourcePreview({ activity, onCancel }: Props) {
   return (
     <div className="flex flex-col gap-y-4">
       {/* Bouton d'ajout de ressource */}
-      <div className="flex justify-end">
+      <div className="flex justify-between items-end">
+        {/* Message d'aide pour modifier l'ordre des ressources */}
+        <p className="text-xs text-info italic">
+          {isAdding
+            ? ""
+            : "( Modifier l'ordre des ressources en déplaçant une ressource vers l'endroit souhaité grâce à un glisser/déposer )"}
+        </p>
         {isAdding ? null : (
           <button
             className="btn btn-primary flex items-center gap-x-2"
