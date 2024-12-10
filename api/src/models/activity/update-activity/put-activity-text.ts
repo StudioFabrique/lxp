@@ -15,7 +15,7 @@ export default async function putActivityText(
   });
   if (!existingActivity) {
     const error = new Error("L'activité n'existe pas.");
-    (error as any).stautsCode = 404;
+    (error as any).statusCode = 404;
     throw error;
   }
   const uniqueID: string = uuidv4();
