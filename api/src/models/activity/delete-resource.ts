@@ -1,3 +1,5 @@
+import path from "path";
+import fs from "fs";
 import { prisma } from "../../utils/db";
 
 export default async function deleteResource(
@@ -28,5 +30,19 @@ export default async function deleteResource(
   const deletedResource = await prisma.resourceActivity.delete({
     where: { id: resourceId },
   });
+
+  const filePath = path.join(
+    __dirname,
+    "..",
+    "..",
+    "..",
+    "uploads",
+    "activities",
+    "files"
+  );
+
+  // supprime le fichier
+  await fs.promises.unlink(`${filePath}/${deletedResource.url}`);
+
   return deletedResource;
 }
