@@ -13,51 +13,49 @@ const RolesList: FC<{
   setRoles: Dispatch<SetStateAction<IRoleItem[]>>;
   setRoleToEdit: Dispatch<SetStateAction<IRoleToEdit | null>>;
   setCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
-}> = ({ roles, isLoading, setRoles, setRoleToEdit, setCurrentRole }) => {
-  return (
-    <Wrapper>
-      <div className="flex justify-between">
-        <h2 className="font-bold text-xl">Gestion des rôles</h2>
-        <button type="button" className="flex gap-2">
-          <CSVDownloader data={transformRolesCsv(roles)} />
-          <span className="w-6 h-6">
-            <DownloadIcon />
-          </span>
-        </button>
-      </div>
-      {isLoading ? (
-        <Loader />
-      ) : roles.length > 0 ? (
-        <table className="table">
-          <thead>
-            <tr className="grid grid-cols-9 border-0">
-              <th></th>
-              <th>Rôle</th>
-              <th className="col-span-2">Permissions</th>
-              <th>C</th>
-              <th>R</th>
-              <th>U</th>
-              <th>D</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody className="flex flex-col h-[28em] overflow-y-auto gap-y-4">
-            {roles.map((role) => (
-              <RoleItem
-                key={role._id}
-                role={role}
-                setRoles={setRoles}
-                setRoleToEdit={setRoleToEdit}
-                setCurrentRole={setCurrentRole}
-              />
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p>Aucun rôles</p>
-      )}
-    </Wrapper>
-  );
-};
+}> = ({ roles, isLoading, setRoles, setRoleToEdit, setCurrentRole }) => (
+  <Wrapper>
+    <div className="flex justify-between">
+      <h2 className="font-bold text-xl">Gestion des rôles</h2>
+      <button type="button" className="flex gap-2">
+        <CSVDownloader data={transformRolesCsv(roles)} />
+        <span className="w-6 h-6">
+          <DownloadIcon />
+        </span>
+      </button>
+    </div>
+    {isLoading ? (
+      <Loader />
+    ) : roles.length > 0 ? (
+      <table className="table">
+        <thead>
+          <tr className="grid grid-cols-9 border-0">
+            <th></th>
+            <th>Rôle</th>
+            <th className="col-span-2">Permissions</th>
+            <th>C</th>
+            <th>R</th>
+            <th>U</th>
+            <th>D</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody className="flex flex-col h-[28em] overflow-y-auto gap-y-4">
+          {roles.map((role) => (
+            <RoleItem
+              key={role._id}
+              role={role}
+              setRoles={setRoles}
+              setRoleToEdit={setRoleToEdit}
+              setCurrentRole={setCurrentRole}
+            />
+          ))}
+        </tbody>
+      </table>
+    ) : (
+      <p>Aucun rôles</p>
+    )}
+  </Wrapper>
+);
 
 export default RolesList;

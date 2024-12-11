@@ -2,7 +2,7 @@ import Permission from "../../utils/interfaces/db/permission";
 import Role, { IRole } from "../../utils/interfaces/db/role";
 import { ressourcesRbacByRank } from "../../config/ressources-rbac";
 
-export default async function CreatePermission(
+export default async function createPermission(
   role: string,
   rank: number,
   action: "read" | "write" | "update" | "delete",

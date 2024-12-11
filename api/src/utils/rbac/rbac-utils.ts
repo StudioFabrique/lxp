@@ -73,8 +73,30 @@ export async function getRolesForUser(userId: string) {
     return [];
   }
   const roles = user.roles.map((role: IRole) => role.role);
-  console.log({ roles });
+
   return roles;
+}
+
+export async function getAllRoles() {
+  const roles = await Role.find({
+    role: { $not: { $regex: "^interface:" } },
+  }).populate("permissions");
+
+  return roles.map((role) => {
+    const permissions = role.permissions.map((perm) => perm.name);
+    return {
+      _id: role._id,
+      role: role.role,
+      label: role.label,
+      rank: role.rank,
+      permCount: {
+        read: permissions.filter((perm) => perm.startsWith("read:")).length,
+        write: permissions.filter((perm) => perm.startsWith("write:")).length,
+        update: permissions.filter((perm) => perm.startsWith("update:")).length,
+        delete: permissions.filter((perm) => perm.startsWith("delete:")).length,
+      },
+    };
+  });
 }
 
 /**
@@ -124,11 +146,15 @@ export async function removeRoleFromUser(userId: string, role: string) {
 export async function getAllPermissionsForRole(
   role: string,
 ): Promise<string[]> {
-  const permissions = await Permission.find({ roles: role }).select(
+  const roleDoc = await Role.findOne({ role: role });
+  if (!roleDoc) {
+    return [];
+  }
+
+  const permissions = await Permission.find({ roles: roleDoc._id }).select(
     "name -_id",
   );
   const permissionList = permissions.map((p) => p.name);
-  console.log({ permissions: permissionList });
   return permissionList;
 }
 

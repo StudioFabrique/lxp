@@ -3,12 +3,13 @@ import { serverIssue } from "../../utils/constantes";
 import Role from "../../utils/interfaces/db/role";
 import { ressourcesRbac } from "../../config/ressources-rbac";
 import Permission from "../../utils/interfaces/db/permission";
+import { getAllPermissionsForRole } from "../../utils/rbac/rbac-utils";
 
 export default async function httpGetRessources(req: Request, res: Response) {
   try {
     const role: string = req.params.role;
 
-    const permissions = await Permission.find({ role });
+    const permissions = await getAllPermissionsForRole(role);
 
     if (!permissions) {
       return res
@@ -31,6 +32,8 @@ export default async function httpGetRessources(req: Request, res: Response) {
 
     return res.status(200).json({ data: { permissions, ressources } });
   } catch (error) {
+    console.error({ error });
+
     return res.status(500).json({ message: serverIssue });
   }
 }

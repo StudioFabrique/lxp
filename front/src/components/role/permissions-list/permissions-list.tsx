@@ -4,68 +4,48 @@ import {
   FC,
   SetStateAction,
   useCallback,
+  useContext,
   useEffect,
   useState,
+  useMemo,
 } from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import { IRoleItem } from "../../../views/role/role";
 import RoleSelector from "./role-selector";
 import useHttp from "../../../hooks/use-http";
 import RessourcesByAction from "./ressources-by-action";
-import toast from "react-hot-toast";
-import { invokeSingleAnswerToast } from "../../UI/custom-toast/single-answer-toast";
+import { Context } from "../../../store/context.store";
 
 const PermissionsList: FC<{
   roles: IRoleItem[];
   currentRole: IRoleItem;
   setCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
 }> = ({ roles, currentRole, setCurrentRole }) => {
+  const { handshake } = useContext(Context);
   const { sendRequest, isLoading: isLoadingPermissions } = useHttp(true);
 
-  const [permissions, setPermissions] = useState([]);
+  const [permissions, setPermissions] = useState<string[]>([]);
   const [ressources, setRessources] = useState<{
     ressources: string[];
     roles: string[];
   } | null>(null);
 
-  const handleChangePermission = (
-    ressourceName: string,
-    checked: boolean,
-    action: string
-  ) => {
-    checked
-      ? setPermissions((oldPermissions: any) =>
-          oldPermissions.filter((permission: any) => {
-            if (permission.action === action)
-              return {
-                ...permission,
-                ressources: permission.ressources.push(ressourceName),
-              };
-            return permission;
-          })
-        )
-      : setPermissions((oldPermissions: any) => {
-          return oldPermissions.map((permission: any) => {
-            if (permission.action === action)
-              return {
-                ...permission,
-                ressources: permission.ressources.filter(
-                  (res: string) => ressourceName !== res
-                ),
-              };
-            return permission;
-          });
-        });
-  };
+  const handleChangePermission = useCallback(
+    (ressourceName: string, checked: boolean, action: string) => {
+      const permission = `${action}:${ressourceName}`;
 
-  const handleSubmitPermissions = () => {
-    const applyData = (data: any) => {
-      invokeSingleAnswerToast(
-        "Les permissions ont été mises à jour, recharger la page ?",
-        "Oui",
-        () => window.location.reload()
-      );
-      toast.success(data.message);
+      if (checked) {
+        setPermissions((prev) => [...prev, permission]);
+      } else {
+        setPermissions((prev) => prev.filter((p) => p !== permission));
+      }
+    },
+    [],
+  );
+
+  const handleSubmitPermissions = useCallback(() => {
+    const applyData = () => {
+      if (roles.some((role) => role.role === currentRole._id)) handshake();
     };
 
     sendRequest(
@@ -74,14 +54,10 @@ const PermissionsList: FC<{
         body: { permissions },
         method: "put",
       },
-      applyData
+      applyData,
     );
-  };
+  }, [currentRole._id, permissions, roles, handshake, sendRequest]);
 
-  /**
-   * Récupérer les permissions.
-   * Rafraichir les permissions lors de la modification d'un role du composant parent.
-   */
   const handleGetPermissions = useCallback(() => {
     const applyData = (data: any) => {
       setPermissions(data.data.permissions);
@@ -90,13 +66,34 @@ const PermissionsList: FC<{
 
     sendRequest(
       { path: `/permission/ressources/${currentRole.role}` },
-      applyData
+      applyData,
     );
   }, [currentRole, sendRequest]);
 
   useEffect(() => {
     handleGetPermissions();
   }, [handleGetPermissions]);
+
+  const ressourcesElements = useMemo(
+    () => (
+      <>
+        {ressources?.ressources.map((res) => (
+          <p
+            key={res}
+            className="bg-secondary/90 text-secondary-content p-2 rounded-lg capitalize"
+          >{`Gestion ${res}`}</p>
+        ))}
+        <hr className="border-black w-[105%]" />
+        {ressources?.roles.map((res) => (
+          <p
+            key={res}
+            className="bg-primary text-primary-content p-2 rounded-lg capitalize"
+          >{`Gestion ${res}`}</p>
+        ))}
+      </>
+    ),
+    [ressources],
+  );
 
   return (
     <Wrapper>
@@ -124,19 +121,7 @@ const PermissionsList: FC<{
             <p className="bg-primary text-primary-content p-2 rounded-lg text-center">
               Permissions
             </p>
-            {ressources?.ressources.map((res) => (
-              <p
-                key={res}
-                className="bg-secondary/90 text-secondary-content p-2 rounded-lg capitalize"
-              >{`Gestion ${res}`}</p>
-            ))}
-            <hr className="border-black w-[105%]" />
-            {ressources?.roles.map((res) => (
-              <p
-                key={res}
-                className="bg-primary text-primary-content p-2 rounded-lg capitalize"
-              >{`Gestion ${res}`}</p>
-            ))}
+            {ressourcesElements}
           </div>
           <span className="w-10" />
           <RessourcesByAction

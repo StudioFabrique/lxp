@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC } from "react";
 import PermissionItem from "./permission-item";
-import Loader from "../../UI/loader";
 
 const RessourcesByAction: FC<{
   action: "read" | "write" | "update" | "delete";
@@ -16,7 +15,7 @@ const RessourcesByAction: FC<{
   onChangePermission: (
     ressourceName: string,
     checked: boolean,
-    action: string
+    action: string,
   ) => void;
 }> = ({
   action,
@@ -27,11 +26,10 @@ const RessourcesByAction: FC<{
   ressources,
   onChangePermission,
 }) => {
-  const permissions = unfilteredPermissions.find(
-    (perm: any) => perm.action === action
+  const actionPermissions = unfilteredPermissions.filter((p) =>
+    p.startsWith(`${action}:`),
   );
 
-  if (!permissions) return <Loader />;
   return (
     <div className="flex flex-col gap-y-5 items-center w-full">
       <p className="bg-primary-focus text-secondary-content p-2 rounded-lg w-[95%] text-center font-bold">
@@ -41,10 +39,10 @@ const RessourcesByAction: FC<{
         <PermissionItem
           key={res}
           item={res}
-          color={i % 2 > 0} // boolean value
+          color={i % 2 > 0}
           roundedLeft={roundedLeft}
           roundedRight={roundedRight}
-          isDefaultChecked={permissions.ressources.includes(res)}
+          isDefaultChecked={actionPermissions.includes(`${action}:${res}`)}
           onChangePermission={(ressourceName, isChecked) =>
             onChangePermission(ressourceName, isChecked, action)
           }
@@ -55,8 +53,8 @@ const RessourcesByAction: FC<{
         <PermissionItem
           key={res}
           item={res}
-          color={i % 2 > 0} // boolean value
-          isDefaultChecked={permissions.ressources.includes(res)}
+          color={i % 2 > 0}
+          isDefaultChecked={actionPermissions.includes(`${action}:${res}`)}
           onChangePermission={(ressourceName, isChecked) =>
             onChangePermission(ressourceName, isChecked, action)
           }
