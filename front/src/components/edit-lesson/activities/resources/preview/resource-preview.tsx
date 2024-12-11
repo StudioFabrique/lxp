@@ -1,14 +1,12 @@
 // Import des dépendances nécessaires
 import { PlusCircle } from "lucide-react";
 import Activity from "../../../../../utils/interfaces/activity";
-import ResourceForm from "../post/resource-form";
-import ResourcesAction from "../post/resource-actions";
-import ResourcesList from "../post/resources-list";
 import { DndWrapper } from "../../../../UI/DndWrapper";
 import ResourceItem from "./resource-item";
 import Modal from "../../../../UI/modal/modal";
 import useUpdateResources from "./use-update-resources";
 import ResourceUpdate from "./resource-update";
+import CreateResource from "../CreateResource";
 
 // Props du composant
 type Props = {
@@ -32,7 +30,9 @@ function ResourcePreview({ activity, onCancel }: Props) {
     handleDragEnd,
     handleFileChange,
     handleRemoveFromUploadList,
+    handleReorder,
     handleSetResourceToDelete,
+    handleUpdateResource,
     isAdding,
     isDeleting,
     isLoading,
@@ -50,7 +50,7 @@ function ResourcePreview({ activity, onCancel }: Props) {
       {/* Bouton d'ajout de ressource */}
       <div className="flex justify-between items-end">
         {/* Message d'aide pour modifier l'ordre des ressources */}
-        <p className="text-xs text-info italic">
+        <p className="text-xs italic">
           {isAdding
             ? ""
             : resources && resources.length > 1
@@ -72,36 +72,19 @@ function ResourcePreview({ activity, onCancel }: Props) {
 
       {/* Formulaire d'ajout de ressource */}
       {isAdding ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <span className="w-full flex flex-col gap-y-4">
-            <ResourceForm
-              data={{
-                ...data,
-                errors: { name: data.errors.map((e) => e.message) },
-              }}
-              onFileChange={handleFileChange}
-            />
-            <ResourcesAction
-              onCancel={handleCancel}
-              resetFilesList={() => setUploadList([])}
-              handleSubmit={handleAddResource}
-              filesNumber={uploadList.length}
-              isLoading={isLoading}
-              hasError={false}
-              cancelUpload={() => {}}
-            />
-          </span>
-          <ResourcesList
-            filesList={uploadList}
-            handleRemoveResource={handleRemoveFromUploadList}
-            isLoading={isLoading}
-            onReorder={() => {}}
-            uploadProgress={uploadProgress}
-          />
-        </div>
+        <CreateResource
+          data={data}
+          handleFileChange={handleFileChange}
+          handleCancel={handleCancel}
+          handleAddResource={handleAddResource}
+          handleRemoveFromUploadList={handleRemoveFromUploadList}
+          onReorder={handleReorder}
+          uploadList={uploadList}
+          isLoading={isLoading}
+          uploadProgress={uploadProgress}
+          setUploadList={setUploadList}
+        />
       ) : null}
-
-      {isUpdating ? <ResourceUpdate resource={isUpdating} /> : null}
 
       {/* Liste des ressources existantes avec drag and drop */}
       <ul className="flex flex-col gap-y-2">
@@ -140,6 +123,14 @@ function ResourcePreview({ activity, onCancel }: Props) {
         >
           Votre ressource sera supprimée de manière définitive, confirmer ?
         </Modal>
+      ) : null}
+
+      {isUpdating ? (
+        <ResourceUpdate
+          resource={isUpdating}
+          onCancel={() => setIsUpdating(null)}
+          onSubmit={handleUpdateResource}
+        />
       ) : null}
     </div>
   );

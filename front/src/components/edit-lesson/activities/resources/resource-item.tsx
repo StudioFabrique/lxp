@@ -2,9 +2,9 @@
 import { FileText } from "lucide-react";
 import { GripVertical, Trash2 } from "lucide-react";
 // Import du composant wrapper personnalisé
-import SubWrapper from "../../../../UI/sub-wrapper/sub-wrapper.component";
+import SubWrapper from "../../../UI/sub-wrapper/sub-wrapper.component";
 // Import de l'utilitaire de conversion de taille de fichier
-import { displaySize } from "../../../../../helpers/sizeUnitConversion";
+import { displaySize } from "../../../../helpers/sizeUnitConversion";
 import { UploadProgressValues } from "./resources-list";
 import FileUploadStatus from "./file-upload-status";
 
