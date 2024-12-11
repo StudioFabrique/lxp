@@ -5,13 +5,14 @@ import PermissionItem from "./permission-item";
 const RessourcesByAction: FC<{
   action: "read" | "write" | "update" | "delete";
   title: string;
-  unfilteredPermissions: any;
+  unfilteredPermissions: string[];
   roundedLeft?: boolean;
   roundedRight?: boolean;
   ressources: {
     ressources: string[];
     roles: string[];
   } | null;
+  disabled?: boolean;
   onChangePermission: (
     ressourceName: string,
     checked: boolean,
@@ -24,10 +25,11 @@ const RessourcesByAction: FC<{
   roundedLeft,
   roundedRight,
   ressources,
+  disabled,
   onChangePermission,
 }) => {
-  const actionPermissions = unfilteredPermissions.filter((p) =>
-    p.startsWith(`${action}:`),
+  const actionPermissions = unfilteredPermissions.filter((perm) =>
+    perm.startsWith(`${action}:`),
   );
 
   return (
@@ -55,6 +57,7 @@ const RessourcesByAction: FC<{
           item={res}
           color={i % 2 > 0}
           isDefaultChecked={actionPermissions.includes(`${action}:${res}`)}
+          disabled={disabled}
           onChangePermission={(ressourceName, isChecked) =>
             onChangePermission(ressourceName, isChecked, action)
           }
