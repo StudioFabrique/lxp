@@ -1,6 +1,6 @@
 // Import des composants UI réutilisables
-import Field from "../../../../UI/forms/field";
-import Wrapper from "../../../../UI/wrapper/wrapper.component";
+import Field from "../../../UI/forms/field";
+import Wrapper from "../../../UI/wrapper/wrapper.component";
 
 // Type définissant les props du composant
 type props = {

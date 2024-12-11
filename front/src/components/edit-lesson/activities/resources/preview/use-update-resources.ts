@@ -1,3 +1,4 @@
+// Imports des hooks React et des dépendances nécessaires
 import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../../../../hooks/use-http";
 import Activity, {
@@ -7,39 +8,78 @@ import { useDragAndDrop } from "../../../../../hooks/useDragAndDrop";
 import useForm from "../../../../UI/forms/hooks/use-form";
 import toast from "react-hot-toast";
 import { regexGeneric } from "../../../../../utils/constantes";
-import { allowedMimeTypes, Resource } from "../post/useUploadResources";
+import { allowedMimeTypes, Resource } from "../useUploadResources";
 
 // Timer pour le debounce de la réorganisation des ressources
 let timer: NodeJS.Timeout | null = null;
 
 /**
  * Hook personnalisé pour gérer la mise à jour des ressources d'une activité
+ * Permet d'ajouter, supprimer, réorganiser et mettre à jour les ressources
  * @param activity - L'activité dont les ressources sont à gérer
  * @param onCancel - Fonction de callback appelée lors de l'annulation
  */
 const useUpdateResources = (activity: Activity, onCancel: () => void) => {
   // États pour gérer les ressources et leur manipulation
-  const [resources, setResources] = useState<ActivityResource[]>([]);
-  const [isAdding, setIsAdding] = useState(false);
-  const { values, errors, onChangeValue } = useForm();
-  const [uploadList, setUploadList] = useState<Resource[]>([]);
-  const { error, isLoading, sendRequest, uploadProgress } = useHttp();
+  const [resources, setResources] = useState<ActivityResource[]>([]); // Liste des ressources existantes
+  const [isAdding, setIsAdding] = useState(false); // État indiquant si on est en train d'ajouter une ressource
+  const { values, errors, onChangeValue } = useForm(); // Hook pour gérer le formulaire
+  const [uploadList, setUploadList] = useState<Resource[]>([]); // Liste des fichiers en attente d'upload
+  const { error, isLoading, sendRequest, uploadProgress } = useHttp(); // Hook pour les requêtes HTTP
   const { handleDragEnd, submit, setSubmit } = useDragAndDrop({
     items: resources,
     onReorder: setResources,
-  });
-  const [isDeleting, setIsDeleting] = useState<number | null>(null);
+  }); // Hook pour gérer le drag & drop
+  const [isDeleting, setIsDeleting] = useState<number | null>(null); // ID de la ressource en cours de suppression
+  const [isUpdating, setIsUpdating] = useState<ActivityResource | null>(null); // Ressource en cours de modification
 
+  // Regroupement des données du formulaire
   const data = { values, errors, onChangeValue };
 
   /**
+   * Met à jour le titre d'une ressource existante
+   * @param value - Nouveau titre de la ressource
+   * @param id - ID de la ressource à mettre à jour
+   */
+  const handleUpdateResource = (value: string, id: number) => {
+    const applyData = (data: {
+      success: boolean;
+      message: string;
+      data: ActivityResource;
+    }) => {
+      if (data.success) {
+        // Met à jour la ressource dans la liste locale
+        setResources((prevState) =>
+          prevState.map((resource) =>
+            resource.id === data.data.id ? data.data : resource
+          )
+        );
+      }
+      setIsUpdating(null);
+    };
+
+    // Envoie la requête de mise à jour
+    sendRequest(
+      {
+        path: `/activity/resource/${id}`,
+        method: "put",
+        body: { label: value },
+      },
+      applyData
+    );
+  };
+
+  /**
    * Gère la réorganisation des ressources avec un debounce
+   * Attend 1 seconde avant d'envoyer la requête pour éviter les appels multiples
    */
   const handleReorderResources = useCallback(() => {
     const applyData = (data: { success: boolean; message: string }) => {
       if (data.success) toast.success(data.message);
       if (timer) clearTimeout(timer);
     };
+
+    // Utilise un timer pour le debounce
     timer = setTimeout(() => {
       sendRequest(
         {
@@ -66,24 +106,25 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
   }, [activity.id, sendRequest]);
 
   /**
-   * Gère l'ajout d'un nouveau fichier à la liste
-   * Vérifie le type MIME et ajoute le fichier si valide
+   * Gère l'ajout d'un nouveau fichier à la liste d'upload
+   * Vérifie le type MIME et le nom du fichier avant l'ajout
+   * @param event - Événement de changement de fichier
    */
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
-      // Vérification du type de fichier
+      // Vérification du format du nom
       let error = !regexGeneric.test(values.name);
-      console.log("hello");
 
       if (allowedMimeTypes.includes(event.target.files[0].type)) {
-        // Vérifie si le fichier n'existe pas déjà dans la liste
+        // Vérifie les doublons dans la liste d'upload
         uploadList?.forEach((file) => {
           if (file.file.name === event.target.files![0].name) {
             error = true;
             toast.error("Ce fichier se trouve déjà dans la liste");
           }
         });
-        // Vérifie si une ressource avec le même nom n'existe pas déjà
+
+        // Vérifie les doublons avec les ressources existantes
         if (
           activity.resourceActivities &&
           activity.resourceActivities.length > 0
@@ -95,6 +136,8 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
             }
           });
         }
+
+        // Ajoute le fichier à la liste d'upload
         const resource = [
           ...(uploadList ?? []),
           {
@@ -104,7 +147,8 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
           },
         ];
         setUploadList(resource);
-        // Réinitialisation du champ de fichier
+
+        // Réinitialise le formulaire
         event.target.value = "";
         onChangeValue("name", "");
       } else {
@@ -118,12 +162,12 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
 
   /**
    * Gère l'ajout des ressources à l'activité
-   * Envoie les fichiers et leurs métadonnées au serveur
+   * Prépare et envoie les fichiers et leurs métadonnées au serveur
    */
   const handleAddResource = () => {
     const formData = new FormData();
 
-    // Ajout des fichiers au FormData avec validation du nom
+    // Ajoute les fichiers au FormData
     uploadList?.forEach((file) => {
       if (regexGeneric.test(file.name)) {
         formData.append("files", file.file);
@@ -133,7 +177,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
       }
     });
 
-    // Callback après la requête réussie
+    // Callback après succès de la requête
     const applyData = (data: { success: boolean; message: string }) => {
       if (data.success) toast.success(data.message);
       setUploadList([]);
@@ -142,7 +186,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
       getResources();
     };
 
-    // Préparation des métadonnées des ressources
+    // Prépare les métadonnées des ressources
     let resources: { label: string; filename: string }[] = [];
     for (const item of uploadList!) {
       resources = [
@@ -151,10 +195,10 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
       ];
     }
 
-    // Ajout des métadonnées au FormData
+    // Ajoute les métadonnées au FormData
     formData.append("data", JSON.stringify(resources));
 
-    // Envoi de la requête POST au serveur
+    // Envoie la requête d'upload
     sendRequest(
       {
         path: `/activity/add-resource/${activity.id}`,
@@ -170,6 +214,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
 
   /**
    * Gère l'annulation de l'ajout de ressources
+   * Réinitialise l'état et appelle le callback d'annulation
    */
   const handleCancel = () => {
     setIsAdding(false);
@@ -178,6 +223,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
 
   /**
    * Supprime un fichier de la liste d'upload
+   * @param indexToRemove - Index du fichier à supprimer
    */
   const handleRemoveFromUploadList = (indexToRemove: number) => {
     setUploadList((prevState) =>
@@ -187,6 +233,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
 
   /**
    * Marque une ressource pour suppression
+   * @param id - ID de la ressource à supprimer
    */
   const handleSetResourceToDelete = (id: number) => {
     setIsDeleting(id);
@@ -201,6 +248,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
 
   /**
    * Supprime définitivement une ressource
+   * Envoie une requête DELETE au serveur
    */
   const handleDeleteResource = () => {
     if (isDeleting) {
@@ -218,12 +266,28 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
     }
   };
 
+  /**
+   * Met à jour l'ordre des ressources dans la liste d'upload
+   * @param newList - Nouvelle liste ordonnée
+   */
+  const handleReorder = (
+    newList: {
+      name: string;
+      file: File;
+      hasError: boolean;
+    }[]
+  ) => {
+    setUploadList(newList);
+  };
+
+  // Effets secondaires
+
   // Charge les ressources au montage du composant
   useEffect(() => {
     getResources();
   }, [getResources]);
 
-  // Gère la réorganisation des ressources
+  // Gère la réorganisation des ressources quand submit change
   useEffect(() => {
     if (submit) {
       handleReorderResources();
@@ -231,13 +295,14 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
     }
   }, [submit, handleReorderResources, setSubmit]);
 
-  // Gère les erreurs
+  // Gère l'affichage des erreurs
   useEffect(() => {
     if (error.length > 0) toast.error(error);
     setSubmit(false);
     if (timer) clearTimeout(timer);
   }, [error, setSubmit]);
 
+  // Retourne les fonctions et états nécessaires
   return {
     data,
     handleAddResource,
@@ -247,12 +312,16 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
     handleDragEnd,
     handleFileChange,
     handleRemoveFromUploadList,
+    handleReorder,
     handleSetResourceToDelete,
+    handleUpdateResource,
     isAdding,
     isDeleting,
     isLoading,
+    isUpdating,
     resources,
     setIsAdding,
+    setIsUpdating,
     setUploadList,
     uploadList,
     uploadProgress,

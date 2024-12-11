@@ -9,13 +9,15 @@ import {
 import Wrapper from "../../../../UI/wrapper/wrapper.component";
 import { Resource } from "../../../../../utils/interfaces/activity";
 import { ACTIVITIES } from "../../../../../config/urls";
+import { Dispatch, SetStateAction } from "react";
 
 type Props = {
   resource: Resource;
   onDeleteResource: (id: number) => void;
+  onUpdateResource: Dispatch<SetStateAction<Resource | null>>;
 };
 
-function ResourceItem({ resource, onDeleteResource }: Props) {
+function ResourceItem({ resource, onDeleteResource, onUpdateResource }: Props) {
   const displayIcon = (url: string) => {
     const extension = url.split(".").pop();
     switch (extension) {
@@ -61,7 +63,7 @@ function ResourceItem({ resource, onDeleteResource }: Props) {
           <button onClick={() => handleDownload(resource.url)}>
             <Download className="text-primary" />
           </button>
-          <button>
+          <button onClick={() => onUpdateResource(resource)}>
             <Edit2Icon className="text-primary" />
           </button>
           <button onClick={() => onDeleteResource(resource.id)}>
