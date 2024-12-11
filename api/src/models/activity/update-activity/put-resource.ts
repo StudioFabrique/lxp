@@ -10,7 +10,7 @@ import fs from "fs";
  */
 export default async function putResource(req: CustomRequest) {
   // Extraction des données de la requête
-  const { data } = req.body;
+  const { label } = req.body;
   const { resourceId } = req.params;
   const userId = req.auth?.userId;
 
@@ -42,7 +42,7 @@ export default async function putResource(req: CustomRequest) {
   const updatedResource = await prisma.resourceActivity.update({
     where: { id: +resourceId },
     data: {
-      label: data.label,
+      label,
     },
   });
   return updatedResource;
