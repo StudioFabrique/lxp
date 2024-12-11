@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { serverIssue } from "../../utils/constantes";
-import CreatePermission from "../../models/permission/create-permission";
+import createPermission from "../../models/permission/create-permission";
 import Role from "../../utils/interfaces/db/role";
 
 export default async function httpPostRole(req: Request, res: Response) {

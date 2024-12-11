@@ -11,7 +11,6 @@ export interface IRoleItem {
   role: string;
   label: string;
   rank: number;
-  isActive?: boolean;
   permCount: {
     read: number;
     write: number;
@@ -34,29 +33,35 @@ const Role = () => {
   const { sendRequest, isLoading } = useHttp(true);
 
   const [isRolesInitialized, setIsRolesInitialized] = useState<boolean>(false);
-
   const [roles, setRoles] = useState<IRoleItem[]>([]);
-
   const [roleToEdit, setRoleToEdit] = useState<IRoleToEdit | null>(null);
-
   const [currentRole, setCurrentRole] = useState<IRoleItem>(roles[0]);
+
+  useEffect(() => {
+    if (!isRolesInitialized) {
+      sendRequest({ path: "/permission" }, (data) => {
+        setRoles(data.data);
+        setIsRolesInitialized(true);
+      });
+    }
+  }, [isRolesInitialized, sendRequest]);
 
   useEffect(() => {
     if (roles.length > 0) {
       setCurrentRole(roles[0]);
-      setIsRolesInitialized(true);
     }
-    if (!isRolesInitialized) {
-      sendRequest({ path: "/permission" }, (data) => setRoles(data.data));
-    }
-  }, [roles, isRolesInitialized, sendRequest]);
+  }, [roles]);
+
+  const handleNavigateBack = () => {
+    navigate(history.from);
+  };
 
   return (
     <>
       <div className="flex flex-col gap-y-5 p-10">
         {!!history?.from && (
           <button
-            onClick={() => navigate(history.from)}
+            onClick={handleNavigateBack}
             type="button"
             className="self-start"
           >
@@ -89,7 +94,7 @@ const Role = () => {
               />
             </div>
           </div>
-          {isRolesInitialized && (
+          {isRolesInitialized && currentRole && (
             <PermissionsList
               roles={roles}
               currentRole={currentRole}
