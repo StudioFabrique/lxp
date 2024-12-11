@@ -8,16 +8,14 @@ import {
   colors,
   domains,
   firstnames,
-  groupes,
   lastnames,
   tags,
 } from "./utils/fixtures/data/data";
 import Role from "./utils/interfaces/db/role";
-import Permission from "./utils/interfaces/db/permission";
-import Group, { IGroup } from "./utils/interfaces/db/group";
+import Permission, { IPermission } from "./utils/interfaces/db/permission";
 import Tag from "./utils/interfaces/db/tag";
 import User from "./utils/interfaces/db/user";
-import permDefs from "./fixtures-permissions";
+import { permDefsActions, permDefsInterface } from "./fixtures-permissions";
 import IConnectionInfos from "./utils/interfaces/db/connection-infos";
 import ConnectionInfos from "./utils/interfaces/db/connection-infos";
 dotenv.config();
@@ -48,7 +46,10 @@ function createMail(firstname: string, lastname: string, i: number) {
 let robotIndex = 1;
 
 async function createUser() {
-  let role = await Role.findOne({ role: "admin" });
+  const [roleAdmin, roleInterfaceAdmin] = await Promise.all([
+    Role.findOne({ role: "admin" }),
+    Role.findOne({ role: "interface:admin" }),
+  ]);
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const newUser = new User({
     firstname: "jacques",
@@ -59,14 +60,16 @@ async function createUser() {
     email: "admin@studio.eco",
     nickname: "studio",
     password: hash,
-    roles: [new Object(role!._id)],
+    roles: [roleAdmin!._id, roleInterfaceAdmin!._id],
     isActive: true,
-    //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
   await newUser.save();
   robotIndex++;
 
-  let role2 = await Role.findOne({ role: "teacher" });
+  const [roleTeacher, roleInterfaceTeacher] = await Promise.all([
+    Role.findOne({ role: "teacher" }),
+    Role.findOne({ role: "interface:teacher" }),
+  ]);
   const newTeacher = new User({
     firstname: "raymond",
     lastname: "dupont",
@@ -75,7 +78,7 @@ async function createUser() {
     city: "pau",
     email: "formateur@studio.eco",
     password: hash,
-    roles: [new Object(role2!._id)],
+    roles: [roleTeacher!._id, roleInterfaceTeacher!._id],
     isActive: true,
     //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
@@ -89,14 +92,18 @@ async function createUser() {
     city: "pau",
     email: "formateur2@studio.eco",
     password: hash,
-    roles: [new Object(role2!._id)],
+    roles: [new Object(roleTeacher!._id)],
     isActive: true,
     //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
   await newTeacher2.save();
   robotIndex++;
 
-  role = await Role.findOne({ role: "student" });
+  const [roleStudent, roleInterfaceStudent] = await Promise.all([
+    Role.findOne({ role: "student" }),
+    Role.findOne({ role: "interface:student" }),
+  ]);
+
   const newStudent = new User({
     firstname: "jacqueline",
     lastname: "fillipini",
@@ -105,7 +112,7 @@ async function createUser() {
     city: "pau",
     email: "apprenant@studio.eco",
     password: hash,
-    roles: [new Object(role!._id)],
+    roles: [roleStudent!._id, roleInterfaceStudent!._id],
     isActive: true,
     //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
@@ -118,7 +125,7 @@ async function createUser() {
     city: "pzu",
     email: "rssi@studio.eco",
     password: hash,
-    roles: [new Object(role!._id)],
+    roles: [roleStudent!._id, roleInterfaceStudent!._id],
     isActive: true,
   });
   await rssi.save();
@@ -144,7 +151,10 @@ async function createUser() {
 }
 
 async function createManyAdmins() {
-  const role = await Role.findOne({ role: "admin" });
+  const [role, roleInterface] = await Promise.all([
+    Role.findOne({ role: "admin" }),
+    Role.findOne({ role: "interface:admin" }),
+  ]);
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
   for (let i = 0; i < 5; i++) {
@@ -160,7 +170,7 @@ async function createManyAdmins() {
       address: addresses[i],
       postCode,
       city: cityName,
-      roles: [new Object(role!._id)],
+      roles: [role!._id, roleInterface!._id],
       isActive: true,
       //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });
@@ -170,22 +180,11 @@ async function createManyAdmins() {
   await User.bulkSave(userList);
 }
 
-async function createManyGroups() {
-  const role = await Role.findOne({ role: "student" });
-  const newGroups = Array<any>();
-  groupes.forEach((groupe) => {
-    const newGroup = new Group({
-      name: groupe,
-      desc: "Lorem Ipsum bla bla bla",
-      roles: [new Object(role!._id)],
-    });
-    newGroups.push(newGroup);
-  });
-  await Group.bulkSave(newGroups);
-}
-
 async function createManyTeachers() {
-  const role = await Role.findOne({ role: "teacher" });
+  const [role, roleInterface] = await Promise.all([
+    Role.findOne({ role: "teacher" }),
+    Role.findOne({ role: "interface:teacher" }),
+  ]);
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
   for (let i = 0; i < 5; i++) {
@@ -201,7 +200,7 @@ async function createManyTeachers() {
       address: addresses[i],
       postCode,
       city: cityName,
-      roles: [new Object(role!._id)],
+      roles: [role!._id, roleInterface!._id],
       isActive: true,
       //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });
@@ -238,59 +237,68 @@ async function createManyStudents() {
   await User.bulkSave(userList);
 }
 
-/* async function createManyCoach() {
-  const role = await Role.findOne({ role: "coach" });
-  const hash = await bcrypt.hash("Abcdef@123456", 10);
-  const userList = Array<any>();
-  for (let i = 0; i < 5; i++) {
-    const firstname = firstnames[getRandomNumber(0, 14)];
-    const city = cities[getRandomNumber(0, 9)];
-    const postCode = city.postcode;
-    const cityName = city.name;
-    const user = new User({
-      firstname: firstname.toLowerCase(),
-      lastname: "dupont",
-      email: createMail(firstname, lastnames[i], robotIndex),
-      password: hash,
-      address: addresses[i] || addresses[i - 50],
-      postCode,
-      city: cityName,
-      roles: [new Object(role!._id)],
-      isActive: getRandomNumber(0, 1) === 0,
-      //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
-    });
-    userList.push(user);
-    robotIndex++;
-  }
-  await User.bulkSave(userList);
-} */
-
 async function createRoles() {
-  const roles = [
-    { role: "admin", label: "admin", rank: 1, isActive: true },
+  // Roles d'interface
+  const interfaceRoles = [
+    { role: "interface:admin", label: "interface de l'admin", rank: 1 },
+    { role: "interface:teacher", label: "interface du formateur", rank: 2 },
+    { role: "interface:student", label: "interface de l'apprenant", rank: 3 },
+  ];
+
+  // Roles d'actions
+  const actionsRoles = [
+    { role: "admin", label: "admin", rank: 1 },
     { role: "teacher", label: "formateur", rank: 2 },
     { role: "student", label: "apprenant", rank: 3 },
   ];
   const dbRoles = Array<any>();
-  roles.forEach((role) => {
+  [...interfaceRoles, ...actionsRoles].forEach((role) => {
     dbRoles.push(new Role(role));
   });
   await Role.bulkSave(dbRoles);
 }
 
 async function createPermissions() {
-  const permissions = Array<any>();
-  const dbPermissions = Array<any>();
+  const bulkPermissions = new Map<string, IPermission>();
 
-  for (const [key, value] of Object.entries(permDefs)) {
-    for (const [itemKey, itemValue] of Object.entries(value)) {
-      permissions.push({ role: key, action: itemKey, ressources: itemValue });
+  for (const [roleName, value] of Object.entries({
+    ...permDefsInterface,
+    ...permDefsActions,
+  })) {
+    const role = await Role.findOne({ role: roleName });
+
+    if (!role) return;
+
+    for (const [action, ressources] of Object.entries(value)) {
+      for (const res of ressources) {
+        const permissionName = `${action}:${res}`;
+
+        if (!bulkPermissions.has(permissionName)) {
+          const existingPermission = await Permission.findOne({
+            name: permissionName,
+          });
+
+          if (existingPermission) {
+            existingPermission.roles = [role];
+            bulkPermissions.set(permissionName, existingPermission);
+          } else {
+            bulkPermissions.set(
+              permissionName,
+              new Permission({
+                roles: [role],
+                name: permissionName,
+              }),
+            );
+          }
+        } else {
+          const permission = bulkPermissions.get(permissionName)!;
+          permission.roles = [...permission.roles, role];
+        }
+      }
     }
   }
-  permissions.forEach((permissions) =>
-    dbPermissions.push(new Permission(permissions)),
-  );
-  await Permission.bulkSave(dbPermissions);
+
+  await Permission.bulkSave(Array.from(bulkPermissions.values()));
 }
 
 let tagsColors = Array<string>();

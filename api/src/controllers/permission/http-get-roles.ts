@@ -1,16 +1,14 @@
 import { Request, Response } from "express";
-import getRoles from "../../models/role/get-roles";
 
 export default async function httpGetAllPermissions(
   req: Request,
-  res: Response
+  res: Response,
 ) {
   try {
-    const roles = await getRoles();
-
-    return res
-      .status(200)
-      .json({ message: "les rôles ont bien été récupérés", data: roles });
+    // const roles = await getRoles();
+    // return res
+    //   .status(200)
+    //   .json({ message: "les rôles ont bien été récupérés", data: roles });
   } catch (error) {
     console.log(error);
 

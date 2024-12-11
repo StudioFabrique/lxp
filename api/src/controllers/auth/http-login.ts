@@ -10,6 +10,7 @@ import { setTokens } from "../../utils/services/auth/set-tokens";
 import { tokensMaxAge } from "../../config/config";
 import { validationResult } from "express-validator";
 import { logger } from "../../utils/logs/logger";
+import { getAllPermissionsForUser } from "../../utils/rbac/rbac-utils";
 
 async function httpLogin(req: Request, res: Response) {
   const { email, password } = req.body;
@@ -33,6 +34,7 @@ async function httpLogin(req: Request, res: Response) {
     et on créé des tokens qu'on retourne sous forme de cookies */
 
     const user = await userLogin(email, password);
+    const permissions = await getAllPermissionsForUser(user._id);
 
     if (user) {
       const accessToken = setTokens(user._id, user.roles);
@@ -56,7 +58,7 @@ async function httpLogin(req: Request, res: Response) {
           secure: process.env.NODE_ENV === "production" ? true : false,
         })
         .status(200)
-        .json(user);
+        .json({ ...user, permissions });
     }
     const error: any = {
       message: credentialsError,

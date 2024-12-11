@@ -1,4 +1,30 @@
-const permDefs = {
+export const permDefsInterface = {
+  "interface:admin": {
+    layout: ["admin", "teacher", "student"],
+    component: [
+      "hobbie",
+      "social-network",
+      "course",
+      "group",
+      "parcours",
+      "profile",
+      "user",
+      "role",
+      "course",
+      "profile",
+      "lesson",
+      "module",
+      "formation",
+    ],
+  },
+  "interface:teacher": {
+    layout: ["teacher", "student"],
+    component: ["calendar"],
+  },
+  "interface:student": { layout: ["student"], component: ["calendar"] },
+};
+
+export const permDefsActions = {
   admin: {
     read: [
       "role",
@@ -193,5 +219,3 @@ const permDefs = {
     delete: ["cursus"],
   },
 };
-
-export default permDefs;
