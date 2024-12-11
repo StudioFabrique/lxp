@@ -78,10 +78,11 @@ export default function checkPermissions(
        */
 
       for (const role of rolesToCheck) {
-        const authorization =
-          !ressource && roleFromParam
-            ? await _authorizeThisRole(role, actionDefined!, roleFromParam)
-            : await authorizeThisRole(role, actionDefined!, ressource!);
+        const authorization = await _authorizeThisRole(
+          role,
+          actionDefined!,
+          !ressource && roleFromParam ? roleFromParam : ressource!,
+        );
 
         if (authorization) {
           isRolesCorrect = true;
@@ -103,34 +104,17 @@ export default function checkPermissions(
   };
 }
 
-async function authorizeThisRole(
+async function _authorizeThisRole(
   role: IRole,
   action: string,
   ressource: string,
 ): Promise<boolean> {
   const permissionFound = await Permission.findOne({
-    role: role.role,
-    action: action,
+    roles: role._id,
+    name: `${action}:${ressource}`,
   });
 
-  if (permissionFound && permissionFound.ressources.includes(ressource)) {
-    return true;
-  }
-  youShallNotPass();
-  return false;
-}
-
-async function _authorizeThisRole(
-  role: IRole,
-  action: string,
-  roleFromParam: string,
-): Promise<boolean> {
-  const permissionFound = await Permission.findOne({
-    role: role.role,
-    action: action,
-  });
-
-  if (permissionFound && permissionFound.ressources.includes(roleFromParam)) {
+  if (permissionFound) {
     return true;
   }
   youShallNotPass();

@@ -2,12 +2,14 @@ import { Response } from "express";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import { noAccess, serverIssue } from "../../utils/constantes";
 import getUser from "../../models/user/get-user";
+import { getAllPermissionsForUser } from "../../utils/rbac/rbac-utils";
 
 async function httpHandshake(req: CustomRequest, res: Response) {
   if (req.auth && req.auth.userId !== null) {
     try {
       const user = await getUser(new Object(req.auth.userId));
       console.log({ user });
+      const permissions = await getAllPermissionsForUser(user._id);
 
       if (user && user.isActive) {
         return res.status(200).json({
@@ -18,6 +20,7 @@ async function httpHandshake(req: CustomRequest, res: Response) {
           createdAt: user.createdAt,
           firstname: user.firstname,
           lastname: user.lastname,
+          permissions,
         });
       }
       return res.status(403).json({ message: noAccess });
