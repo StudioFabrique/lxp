@@ -11,7 +11,7 @@ import { userSearchOptions } from "../../config/search-options";
 import Pagination from "../../components/UI/pagination/pagination";
 import usePagination from "../../hooks/use-pagination";
 import useHttp from "../../hooks/use-http";
-import { hasPermission } from "../../utils/hasPermission";
+import hasPermission from "../../utils/hasPermission";
 import Modal from "../../components/UI/modal/modal";
 import UserList from "../../components/lists/user-list/user-list.component";
 import DropdownActionsUser from "../../components/lists/user-list/dropdown-actions-user";
@@ -75,13 +75,14 @@ const UserHome = () => {
 
   const handleGroupRolesChange = async (updatedRoles: Array<Role>) => {
     const selectedDataList = dataList.filter(
-      (user: any) => user.isSelected === true
+      (user: any) => user.isSelected === true,
     );
     const updatedDataList = Array<string>();
 
     for (const selectedUser of selectedDataList) {
       if (
-        (await hasPermission("update", updatedRoles[0].role)) &&
+        user?.permissions &&
+        hasPermission(user?.permissions, "update", updatedRoles[0].role) &&
         updatedRoles[0].rank >= user!.roles[0].rank &&
         updatedRoles[0].rank === selectedUser!.roles[0].rank &&
         updatedRoles.length > 0
@@ -111,7 +112,7 @@ const UserHome = () => {
           method: "put",
           body: { usersToUpdate: updatedDataList, rolesId: updatedRolesIds },
         },
-        applyData
+        applyData,
       );
     }
   };
@@ -146,7 +147,7 @@ const UserHome = () => {
       {
         path: "/user/stats",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
 
@@ -166,7 +167,7 @@ const UserHome = () => {
         method: "put",
         body: { usersIds, status: value },
       },
-      applyData
+      applyData,
     );
   };
 
@@ -183,7 +184,7 @@ const UserHome = () => {
 
         const dataToChange = dataList.filter((user) => user._id !== id);
         setDataList(dataToChange);
-      }
+      },
     );
   };
 

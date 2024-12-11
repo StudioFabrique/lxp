@@ -33,7 +33,7 @@ type PayloadType = {
 
 const reducer: Reducer<Link[], { type: ActionType; payload: PayloadType }> = (
   links,
-  { type, payload }
+  { type, payload },
 ) => {
   switch (type) {
     case ActionType.add: {
@@ -69,7 +69,7 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
   };
 
   const handleAddLink: FormEventHandler<HTMLFormElement> = (
-    e: FormEvent<HTMLFormElement>
+    e: FormEvent<HTMLFormElement>,
   ) => {
     e.preventDefault();
     console.log("test");
@@ -96,7 +96,7 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
         body: { title: value, id: user?._id },
         method: "post",
       },
-      applyData
+      applyData,
     );
   };
 
@@ -140,7 +140,7 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
       </dialog>
       <div className="flex gap-5">
         <h3 className="text-lg font-semibold">Mes réseaux sociaux</h3>
-        <Can action="write" object="default">
+        <Can action="component" object="social-network">
           <button
             type="button"
             className="btn btn-sm btn-primary"
@@ -177,10 +177,10 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
                         className="input input-sm w-full"
                         value={link.url}
                       />
-                      <Can action="update" object="default">
+                      <Can action="update" object="social-network">
                         <EditIcon className="w-6 h-6 cursor-pointer" />
                       </Can>
-                      <Can action="delete" object="default">
+                      <Can action="delete" object="social-network">
                         <span className="w-6 h-6 cursor-pointer">
                           <DeleteIcon />
                         </span>
