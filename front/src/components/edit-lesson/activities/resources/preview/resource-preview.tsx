@@ -1,13 +1,12 @@
 // Import des dépendances nécessaires
 import { PlusCircle } from "lucide-react";
 import Activity from "../../../../../utils/interfaces/activity";
-import ResourceForm from "../post/resource-form";
-import ResourcesAction from "../post/resource-actions";
-import ResourcesList from "../post/resources-list";
 import { DndWrapper } from "../../../../UI/DndWrapper";
 import ResourceItem from "./resource-item";
 import Modal from "../../../../UI/modal/modal";
 import useUpdateResources from "./use-update-resources";
+import ResourceUpdate from "./resource-update";
+import CreateResource from "../CreateResource";
 
 // Props du composant
 type Props = {
@@ -31,12 +30,16 @@ function ResourcePreview({ activity, onCancel }: Props) {
     handleDragEnd,
     handleFileChange,
     handleRemoveFromUploadList,
+    handleReorder,
     handleSetResourceToDelete,
+    handleUpdateResource,
     isAdding,
     isDeleting,
     isLoading,
+    isUpdating,
     resources,
     setIsAdding,
+    setIsUpdating,
     setUploadList,
     uploadList,
     uploadProgress,
@@ -47,10 +50,12 @@ function ResourcePreview({ activity, onCancel }: Props) {
       {/* Bouton d'ajout de ressource */}
       <div className="flex justify-between items-end">
         {/* Message d'aide pour modifier l'ordre des ressources */}
-        <p className="text-xs text-info italic">
+        <p className="text-xs italic">
           {isAdding
             ? ""
-            : "( Modifier l'ordre des ressources en déplaçant une ressource vers l'endroit souhaité grâce à un glisser/déposer )"}
+            : resources && resources.length > 1
+            ? "( Modifier l'ordre des ressources en déplaçant une ressource vers l'endroit souhaité grâce à un glisser/déposer )"
+            : ""}
         </p>
         {isAdding ? null : (
           <button
@@ -58,7 +63,8 @@ function ResourcePreview({ activity, onCancel }: Props) {
             onClick={() => setIsAdding((prevState) => !prevState)}
           >
             <>
-              <PlusCircle className="w-4 h-4" /> <p>Ajouter une ressource</p>
+              <PlusCircle className="w-4 h-4" />
+              <p>Ajouter des ressource</p>
             </>
           </button>
         )}
@@ -66,38 +72,23 @@ function ResourcePreview({ activity, onCancel }: Props) {
 
       {/* Formulaire d'ajout de ressource */}
       {isAdding ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <span className="w-full flex flex-col gap-y-4">
-            <ResourceForm
-              data={{
-                ...data,
-                errors: { name: data.errors.map((e) => e.message) },
-              }}
-              onFileChange={handleFileChange}
-            />
-            <ResourcesAction
-              onCancel={handleCancel}
-              resetFilesList={() => setUploadList([])}
-              handleSubmit={handleAddResource}
-              filesNumber={uploadList.length}
-              isLoading={isLoading}
-              hasError={false}
-              cancelUpload={() => {}}
-            />
-          </span>
-          <ResourcesList
-            filesList={uploadList}
-            handleRemoveResource={handleRemoveFromUploadList}
-            isLoading={isLoading}
-            onReorder={() => {}}
-            uploadProgress={uploadProgress}
-          />
-        </div>
+        <CreateResource
+          data={data}
+          handleFileChange={handleFileChange}
+          handleCancel={handleCancel}
+          handleAddResource={handleAddResource}
+          handleRemoveFromUploadList={handleRemoveFromUploadList}
+          onReorder={handleReorder}
+          uploadList={uploadList}
+          isLoading={isLoading}
+          uploadProgress={uploadProgress}
+          setUploadList={setUploadList}
+        />
       ) : null}
 
       {/* Liste des ressources existantes avec drag and drop */}
       <ul className="flex flex-col gap-y-2">
-        {activity && resources ? (
+        {activity && resources && resources.length > 0 ? (
           <DndWrapper
             droppableId="resources"
             items={resources}
@@ -108,12 +99,15 @@ function ResourcePreview({ activity, onCancel }: Props) {
                 <ResourceItem
                   resource={resource}
                   onDeleteResource={handleSetResourceToDelete}
+                  onUpdateResource={setIsUpdating}
                 />
               </li>
             )}
           />
         ) : (
-          <p>Aucune ressource</p>
+          <div className="text-center mt-4 text-info">
+            <p>Aucune ressource</p>
+          </div>
         )}
       </ul>
 
@@ -129,6 +123,14 @@ function ResourcePreview({ activity, onCancel }: Props) {
         >
           Votre ressource sera supprimée de manière définitive, confirmer ?
         </Modal>
+      ) : null}
+
+      {isUpdating ? (
+        <ResourceUpdate
+          resource={isUpdating}
+          onCancel={() => setIsUpdating(null)}
+          onSubmit={handleUpdateResource}
+        />
       ) : null}
     </div>
   );
