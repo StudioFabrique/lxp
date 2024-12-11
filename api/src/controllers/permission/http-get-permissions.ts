@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { serverIssue } from "../../utils/constantes";
-import { getAllPermissionsForRole } from "../../utils/rbac/rbac-utils";
+import { getAllActionsPermissionsForRole } from "../../utils/rbac/rbac-utils";
 
 export default async function httpGetPermissions(req: Request, res: Response) {
   try {
     const role: string = req.params.role;
 
-    const permissions = await getAllPermissionsForRole(role);
+    const permissions = await getAllActionsPermissionsForRole(role);
 
     if (!permissions) {
       return res

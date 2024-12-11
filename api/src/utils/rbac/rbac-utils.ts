@@ -143,7 +143,7 @@ export async function removeRoleFromUser(userId: string, role: string) {
  * @param role - Le nom du rôle
  * @returns La liste des permissions du rôle
  */
-export async function getAllPermissionsForRole(
+export async function getAllActionsPermissionsForRole(
   role: string,
 ): Promise<string[]> {
   const roleDoc = await Role.findOne({ role: role });
@@ -151,9 +151,10 @@ export async function getAllPermissionsForRole(
     return [];
   }
 
-  const permissions = await Permission.find({ roles: roleDoc._id }).select(
-    "name -_id",
-  );
+  const permissions = await Permission.find({
+    roles: roleDoc._id,
+    name: { $not: { $regex: "^interface:" } },
+  }).select("name -_id");
   const permissionList = permissions.map((p) => p.name);
   return permissionList;
 }
