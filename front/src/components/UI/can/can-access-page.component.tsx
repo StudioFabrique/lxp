@@ -1,6 +1,7 @@
-import React, { ReactNode } from "react";
-import { casbinAuthorizer } from "../../../config/rbac";
+import React, { ReactNode, useContext } from "react";
+import { Context } from "../../../store/context.store";
 import NoAccessPage from "../../../views/errors/403.component";
+import hasPermission from "../../../utils/hasPermission";
 
 type Props = {
   children: ReactNode;
@@ -9,18 +10,15 @@ type Props = {
 };
 
 const CanAccessPage: React.FC<Props> = ({ children, action, subject }) => {
-  const [render, setRender] = React.useState(false);
+  const { user } = useContext(Context);
 
-  React.useEffect(() => {
-    (async function () {
-      if (casbinAuthorizer !== null && casbinAuthorizer !== undefined) {
-        const shouldRender = await casbinAuthorizer.can(action, subject);
-        setRender(shouldRender);
-      }
-    })();
-  }, [action, subject]);
-
-  if (render) return <>{children}</>;
+  if (
+    user &&
+    user.permissions &&
+    hasPermission(user.permissions, action, subject)
+  ) {
+    return <>{children}</>;
+  }
 
   return <NoAccessPage />;
 };
