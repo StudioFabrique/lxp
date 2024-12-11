@@ -6,6 +6,7 @@ const PermissionItem: FC<{
   color?: boolean;
   roundedLeft?: boolean;
   roundedRight?: boolean;
+  disabled?: boolean;
   onChangePermission: (ressourceName: string, checked: boolean) => void;
 }> = ({
   item,
@@ -13,10 +14,11 @@ const PermissionItem: FC<{
   color,
   roundedLeft,
   roundedRight,
+  disabled,
   onChangePermission,
 }) => {
   const handleCheck: ChangeEventHandler<HTMLInputElement> = (
-    e: ChangeEvent<HTMLInputElement>
+    e: ChangeEvent<HTMLInputElement>,
   ) => {
     onChangePermission(item, e.currentTarget.checked);
   };
@@ -33,7 +35,7 @@ const PermissionItem: FC<{
         type="checkbox"
         name="permCheck"
         id={item}
-        disabled={["role", "permission", "default"].includes(item)}
+        disabled={["role", "permission", "default"].includes(item) || disabled}
         className="checkbox checkbox-secondary/50 checkbox-sm rounded-sm border-2  disabled:cursor-default"
         checked={isDefaultChecked}
         onChange={handleCheck}

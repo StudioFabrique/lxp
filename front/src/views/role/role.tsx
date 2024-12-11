@@ -57,53 +57,48 @@ const Role = () => {
   };
 
   return (
-    <>
-      <div className="flex flex-col gap-y-5 p-10">
-        {!!history?.from && (
-          <button
-            onClick={handleNavigateBack}
-            type="button"
-            className="self-start"
-          >
-            Retour
-          </button>
-        )}
-        <h1 className="text-2xl font-semibold">
-          Controler des rôles et des accès
-        </h1>
-        <p>
-          Créer et gérer des rôles, les droits et les permissions des
-          utilisateurs
-        </p>
+    <div className="flex flex-col gap-y-5 p-10">
+      {!!history?.from && (
+        <button
+          onClick={handleNavigateBack}
+          type="button"
+          className="self-start"
+        >
+          Retour
+        </button>
+      )}
+      <h1 className="text-2xl font-semibold">
+        Controler des rôles et des accès
+      </h1>
+      <p>
+        Créer et gérer des rôles, les droits et les permissions des utilisateurs
+      </p>
 
-        <>
-          <div className="grid lg:grid-cols-3 gap-5">
-            <RoleForm
-              roleToEdit={roleToEdit}
-              setRoles={setRoles}
-              setRoleToEdit={setRoleToEdit}
-              setCurrentRole={setCurrentRole}
-            />
-            <div className="lg:col-span-2">
-              <RolesList
-                setRoleToEdit={setRoleToEdit}
-                roles={roles}
-                isLoading={isLoading}
-                setRoles={setRoles}
-                setCurrentRole={setCurrentRole}
-              />
-            </div>
-          </div>
-          {isRolesInitialized && currentRole && (
-            <PermissionsList
-              roles={roles}
-              currentRole={currentRole}
-              setCurrentRole={setCurrentRole}
-            />
-          )}
-        </>
+      <div className="grid lg:grid-cols-3 gap-5">
+        <RoleForm
+          roleToEdit={roleToEdit}
+          setRoles={setRoles}
+          setRoleToEdit={setRoleToEdit}
+          setCurrentRole={setCurrentRole}
+        />
+        <div className="lg:col-span-2">
+          <RolesList
+            setRoleToEdit={setRoleToEdit}
+            roles={roles}
+            isLoading={isLoading}
+            setRoles={setRoles}
+            setCurrentRole={setCurrentRole}
+          />
+        </div>
       </div>
-    </>
+      {isRolesInitialized && currentRole && (
+        <PermissionsList
+          roles={roles}
+          currentRole={currentRole}
+          setCurrentRole={setCurrentRole}
+        />
+      )}
+    </div>
   );
 };
 

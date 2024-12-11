@@ -113,49 +113,50 @@ const PermissionsList: FC<{
           Sauvegarder
         </button>
       </div>
-      {isLoadingPermissions ? (
-        <span className="loading loading-spinner" />
-      ) : (
-        <div className="flex justify-between">
-          <div className="flex flex-col gap-y-5 w-full">
-            <p className="bg-primary text-primary-content p-2 rounded-lg text-center">
-              Permissions
-            </p>
-            {ressourcesElements}
-          </div>
-          <span className="w-10" />
-          <RessourcesByAction
-            action="read"
-            title="Lecture"
-            ressources={ressources}
-            unfilteredPermissions={permissions}
-            onChangePermission={handleChangePermission}
-            roundedLeft
-          />
-          <RessourcesByAction
-            action="write"
-            title="Création"
-            ressources={ressources}
-            unfilteredPermissions={permissions}
-            onChangePermission={handleChangePermission}
-          />
-          <RessourcesByAction
-            action="update"
-            title="Édition"
-            ressources={ressources}
-            unfilteredPermissions={permissions}
-            onChangePermission={handleChangePermission}
-          />
-          <RessourcesByAction
-            action="delete"
-            title="Suppression"
-            ressources={ressources}
-            unfilteredPermissions={permissions}
-            onChangePermission={handleChangePermission}
-            roundedRight
-          />
+
+      <div className="flex justify-between">
+        <div className="flex flex-col gap-y-5 w-full">
+          <p className="bg-primary text-primary-content p-2 rounded-lg text-center">
+            Permissions
+          </p>
+          {ressourcesElements}
         </div>
-      )}
+        <span className="w-10" />
+        <RessourcesByAction
+          action="read"
+          title="Lecture"
+          ressources={ressources}
+          unfilteredPermissions={permissions}
+          onChangePermission={handleChangePermission}
+          disabled={isLoadingPermissions}
+          roundedLeft
+        />
+        <RessourcesByAction
+          action="write"
+          title="Création"
+          ressources={ressources}
+          unfilteredPermissions={permissions}
+          onChangePermission={handleChangePermission}
+          disabled={isLoadingPermissions}
+        />
+        <RessourcesByAction
+          action="update"
+          title="Édition"
+          ressources={ressources}
+          unfilteredPermissions={permissions}
+          onChangePermission={handleChangePermission}
+          disabled={isLoadingPermissions}
+        />
+        <RessourcesByAction
+          action="delete"
+          title="Suppression"
+          ressources={ressources}
+          unfilteredPermissions={permissions}
+          onChangePermission={handleChangePermission}
+          disabled={isLoadingPermissions}
+          roundedRight
+        />
+      </div>
     </Wrapper>
   );
 };
