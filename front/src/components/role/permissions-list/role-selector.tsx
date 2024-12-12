@@ -13,7 +13,7 @@ const RoleSelector: FC<{
   onSetCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
 }> = ({ roles, currentRole, onSetCurrentRole }) => {
   const handleSelect: ChangeEventHandler<HTMLSelectElement> = (
-    e: ChangeEvent<HTMLSelectElement>
+    e: ChangeEvent<HTMLSelectElement>,
   ) => {
     const newRole = roles.find((role) => e.currentTarget.value === role.role);
     onSetCurrentRole((previousRole) => newRole ?? previousRole);
@@ -21,7 +21,7 @@ const RoleSelector: FC<{
 
   return (
     <select
-      className="select select-sm border border-neutral/50 focus:outline-none"
+      className="select select-bordered select-sm w-48 focus:outline-none focus:border-primary"
       name="menu"
       id="menu"
       value={currentRole?.role}
@@ -30,7 +30,7 @@ const RoleSelector: FC<{
       {roles &&
         roles.map((item) => (
           <option
-            className="capitalize text-xs"
+            className="capitalize text-base-content"
             key={item._id}
             value={item.role}
           >

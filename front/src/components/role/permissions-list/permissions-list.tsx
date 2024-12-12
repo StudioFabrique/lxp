@@ -80,14 +80,14 @@ const PermissionsList: FC<{
         {ressources?.ressources.map((res) => (
           <p
             key={res}
-            className="bg-secondary/90 text-secondary-content p-2 rounded-lg capitalize"
+            className="bg-secondary text-secondary-content p-2 rounded-lg capitalize shadow-sm"
           >{`Gestion ${res}`}</p>
         ))}
-        <hr className="border-black w-[105%]" />
+        <hr className="border-accent w-full opacity-20" />
         {ressources?.roles.map((res) => (
           <p
             key={res}
-            className="bg-primary text-primary-content p-2 rounded-lg capitalize"
+            className="bg-accent text-accent-content p-2 rounded-lg capitalize shadow-sm"
           >{`Gestion ${res}`}</p>
         ))}
       </>
@@ -108,20 +108,19 @@ const PermissionsList: FC<{
         <button
           onClick={handleSubmitPermissions}
           type="button"
-          className="btn btn-primary"
+          className="btn btn-primary btn-sm"
         >
           Sauvegarder
         </button>
       </div>
 
-      <div className="flex justify-between">
+      <div className="flex gap-x-2">
         <div className="flex flex-col gap-y-5 w-full">
           <p className="bg-primary text-primary-content p-2 rounded-lg text-center">
             Permissions
           </p>
           {ressourcesElements}
         </div>
-        <span className="w-10" />
         <RessourcesByAction
           action="read"
           title="Lecture"

@@ -26,7 +26,7 @@ const PermissionItem: FC<{
   return (
     <span
       className={`h-full ${
-        color ? "bg-primary/65" : "bg-primary/50"
+        color ? "bg-base-200" : "bg-base-100"
       } p-2 w-full flex justify-center items-center ${
         roundedLeft && "rounded-l-lg"
       } ${roundedRight && "rounded-r-lg"}`}
@@ -36,7 +36,7 @@ const PermissionItem: FC<{
         name="permCheck"
         id={item}
         disabled={["role", "permission", "default"].includes(item) || disabled}
-        className="checkbox checkbox-secondary/50 checkbox-sm rounded-sm border-2  disabled:cursor-default"
+        className="checkbox checkbox-primary checkbox-sm rounded-sm border-2 disabled:opacity-50 disabled:cursor-not-allowed"
         checked={isDefaultChecked}
         onChange={handleCheck}
       />
