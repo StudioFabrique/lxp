@@ -1,3 +1,4 @@
+// Import des composants UI et des hooks nécessaires
 import Field from "../../../UI/forms/field";
 import FieldArea from "../../../UI/forms/field-area";
 import useForm from "../../../UI/forms/hooks/use-form";
@@ -17,32 +18,45 @@ import { useParams } from "react-router-dom";
 import Activity from "../../../../utils/interfaces/activity";
 import { ACTIVITIES } from "../../../../config/urls";
 
+// Props du composant
 type Props = {
-  activity?: Activity;
-  onCancel: (value: boolean) => void;
+  activity?: Activity; // L'activité à éditer (optionnelle)
+  onCancel: (value: boolean) => void; // Fonction appelée lors de l'annulation
 };
 
+/**
+ * Composant d'édition d'une activité de type image
+ * Permet de créer ou modifier une activité avec une image, un titre et une description
+ */
 export default function ImageActivityEditor({ activity, onCancel }: Props) {
+  // Gestion du formulaire avec le hook personnalisé useForm
   const { errors, values, onChangeValue, onValidationErrors, onResetForm } =
     useForm();
   const data = { values, errors, onChangeValue };
+
+  // États pour gérer l'image
   const [image, setImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+
+  // Hooks pour les requêtes HTTP et la navigation
   const { sendRequest } = useHttp();
   const { lessonId } = useParams();
 
+  // Style pour l'affichage de l'image
   const classImage: React.CSSProperties = {
     backgroundImage: `url('${
       image ?? (activity ? `${ACTIVITIES}images/${activity.url}` : defaultImage)
     }')`,
     width: "100%",
     height: "100%",
+    minHeight: "25rem",
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
     borderRadius: "0.75rem",
   };
 
+  // Schéma de validation Zod pour le formulaire
   const imageActivitySchema = z.object({
     title: z
       .string({ required_error: "Un titre est requis" })
@@ -56,6 +70,10 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
       }),
   });
 
+  /**
+   * Gère la soumission du formulaire
+   * Valide les données et envoie la requête au serveur
+   */
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     try {
@@ -92,7 +110,7 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
     );
   };
 
-  // affichage de la nouvelle image
+  // Effet pour afficher la prévisualisation de l'image sélectionnée
   useEffect(() => {
     if (file) {
       const reader = new FileReader();
@@ -104,6 +122,7 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
     }
   }, [file]);
 
+  // Effet pour initialiser le formulaire avec les données de l'activité existante
   useEffect(() => {
     if (activity) {
       onChangeValue("title", activity.title!);
@@ -118,19 +137,23 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
           <h2 className="text-lg font-bold">
             Informations à propos de l'image
           </h2>
-          <form
-            className="flex flex-col justify-around h-full"
-            onSubmit={handleSubmit}
-          >
+          <form className="flex flex-col gap-y-4" onSubmit={handleSubmit}>
             <span className="flex flex-col gap-y-4">
               <Field name="title" label="Titre *" data={data} />
               <FieldArea name="description" data={data} label="Description *" />
             </span>
-            <MemoizedImageFileUpload
-              onSetFile={setFile}
-              label=""
-              maxSize={activityImageSize}
-            />
+            <span className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
+              <MemoizedImageFileUpload
+                onSetFile={setFile}
+                label=""
+                maxSize={activityImageSize}
+              />
+              <div className="flex justify-end items-center">
+                <button className="btn btn-primary" type="button">
+                  Importer depuis la médiathèque
+                </button>
+              </div>
+            </span>
             <div className="flex justify-between items-center">
               <button
                 className="btn btn-primary btn-outline"
@@ -153,6 +176,7 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
         </span>
       </Wrapper>
       <div style={classImage}></div>
+      <div className="h-[1rem]" />
     </div>
   );
 }

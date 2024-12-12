@@ -20,6 +20,7 @@ type SuccessResponse = Response & { media: Media };
 const useCheckMedia = () => {
   const { error, isLoading, sendRequest } = useHttp();
   const [media, setMedia] = useState<Media | null>(null);
+  const [result, setResult] = useState<"no-media" | null>(null);
 
   const checkMedia = (fileName: string) => {
     const applyData = (data: Response | SuccessResponse) => {
@@ -27,6 +28,7 @@ const useCheckMedia = () => {
         setMedia(data.media);
       } else if (media) {
         setMedia(null);
+        setResult("no-media");
       }
     };
     sendRequest(
@@ -42,7 +44,7 @@ const useCheckMedia = () => {
     return () => setMedia(null);
   }, [error]);
 
-  return { error, isLoading, checkMedia };
+  return { error, isLoading, checkMedia, media, result };
 };
 
 export default useCheckMedia;
