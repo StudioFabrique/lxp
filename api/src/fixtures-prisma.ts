@@ -286,6 +286,7 @@ async function createSqlContacts() {
     await prisma.contact.createMany({
       data: contacts,
     });
+    0;
   } catch (error: any) {
     console.log(error.message);
   }
