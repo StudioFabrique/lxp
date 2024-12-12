@@ -225,7 +225,7 @@ async function createAdmins() {
   try {
     const roleId = await Role.find({ role: "admin" }, { _id: 1 });
     const usersId = await User.find({ roles: { $in: roleId } }, { _id: 1 });
-    console.log({ usersId });
+    console.log({ adminIds: usersId });
     const newAdmins = Array<any>();
     usersId.forEach((item) => newAdmins.push({ idMdb: item._id.toString() }));
     const storedAdminsIds = await prisma.admin.createMany({
@@ -241,7 +241,7 @@ async function createTeachers() {
   await mongoConnect();
   try {
     const roleId = await Role.find({ role: "teacher" }, { _id: 1 });
-    const usersId = await User.find({ roles: { $in: roleId }, _id: 1 });
+    const usersId = await User.find({ roles: { $in: roleId } }, { _id: 1 });
     console.log("formateurs", usersId);
 
     const newAdmins = Array<any>();
