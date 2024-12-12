@@ -1,4 +1,5 @@
 // Import des dépendances nécessaires
+
 import { ACTIVITIES } from "../../../../config/urls";
 import Activity from "../../../../utils/interfaces/activity";
 import ImageActivityEditor from "./image-activity-editor";
