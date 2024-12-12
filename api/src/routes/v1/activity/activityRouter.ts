@@ -42,6 +42,7 @@ import httpPutReorderResource from "../../../controllers/activity/http-put-reord
 import httpGetResourceActivity from "../../../controllers/activity/http-get-resource-activity";
 import httpDeleteResource from "../../../controllers/activity/http-delete-resource";
 import httpPutResource from "../../../controllers/activity/http-put-resource";
+import mediatheque from "../../../middleware/mediatheque";
 
 const activityRouter = express.Router();
 
@@ -115,6 +116,7 @@ activityRouter.post(
   "/image/:lessonId",
   checkPermissions("lesson"),
   uploadActivityImage(),
+  mediatheque,
   jsonParser,
   httpPostImage
 );
