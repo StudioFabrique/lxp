@@ -15,6 +15,7 @@ model Mediatheque {
   name      String
   authorId  Int
   size      Int
+  used      Int
   author    Admin    @relation(fields: [authorId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
