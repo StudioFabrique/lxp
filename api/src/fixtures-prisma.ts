@@ -224,7 +224,7 @@ async function createAdmins() {
   await mongoConnect();
   try {
     const roleId = await Role.find({ role: "admin" }, { _id: 1 });
-    const usersId = await User.find({ roles: roleId }, { _id: 1 });
+    const usersId = await User.find({ roles: { $in: roleId } }, { _id: 1 });
     console.log({ usersId });
     const newAdmins = Array<any>();
     usersId.forEach((item) => newAdmins.push({ idMdb: item._id.toString() }));
