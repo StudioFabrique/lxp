@@ -47,8 +47,8 @@ let robotIndex = 1;
 
 async function createUser() {
   const [roleAdmin, roleInterfaceAdmin] = await Promise.all([
-    Role.findOne({ role: "admin" }),
-    Role.findOne({ role: "interface:admin" }),
+    await Role.findOne({ role: "admin" }),
+    await Role.findOne({ role: "interface:admin" }),
   ]);
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const newUser = new User({
@@ -60,15 +60,15 @@ async function createUser() {
     email: "admin@studio.eco",
     nickname: "studio",
     password: hash,
-    roles: [roleAdmin!._id, roleInterfaceAdmin!._id],
+    roles: [new Object(roleAdmin!._id), new Object(roleInterfaceAdmin!._id)],
     isActive: true,
   });
   await newUser.save();
   robotIndex++;
 
   const [roleTeacher, roleInterfaceTeacher] = await Promise.all([
-    Role.findOne({ role: "teacher" }),
-    Role.findOne({ role: "interface:teacher" }),
+    await Role.findOne({ role: "teacher" }),
+    await Role.findOne({ role: "interface:teacher" }),
   ]);
   const newTeacher = new User({
     firstname: "raymond",
@@ -78,7 +78,10 @@ async function createUser() {
     city: "pau",
     email: "formateur@studio.eco",
     password: hash,
-    roles: [roleTeacher!._id, roleInterfaceTeacher!._id],
+    roles: [
+      new Object(roleTeacher!._id),
+      new Object(roleInterfaceTeacher!._id),
+    ],
     isActive: true,
     //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
@@ -100,8 +103,8 @@ async function createUser() {
   robotIndex++;
 
   const [roleStudent, roleInterfaceStudent] = await Promise.all([
-    Role.findOne({ role: "student" }),
-    Role.findOne({ role: "interface:student" }),
+    await Role.findOne({ role: "student" }),
+    await Role.findOne({ role: "interface:student" }),
   ]);
 
   const newStudent = new User({
@@ -112,7 +115,10 @@ async function createUser() {
     city: "pau",
     email: "apprenant@studio.eco",
     password: hash,
-    roles: [roleStudent!._id, roleInterfaceStudent!._id],
+    roles: [
+      new Object(roleStudent!._id),
+      new Object(roleInterfaceStudent!._id),
+    ],
     isActive: true,
     //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
@@ -125,7 +131,10 @@ async function createUser() {
     city: "pzu",
     email: "rssi@studio.eco",
     password: hash,
-    roles: [roleStudent!._id, roleInterfaceStudent!._id],
+    roles: [
+      new Object(roleStudent!._id),
+      new Object(roleInterfaceStudent!._id),
+    ],
     isActive: true,
   });
   await rssi.save();
@@ -152,8 +161,8 @@ async function createUser() {
 
 async function createManyAdmins() {
   const [role, roleInterface] = await Promise.all([
-    Role.findOne({ role: "admin" }),
-    Role.findOne({ role: "interface:admin" }),
+    await Role.findOne({ role: "admin" }),
+    await Role.findOne({ role: "interface:admin" }),
   ]);
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
@@ -170,7 +179,7 @@ async function createManyAdmins() {
       address: addresses[i],
       postCode,
       city: cityName,
-      roles: [role!._id, roleInterface!._id],
+      roles: [new Object(role!._id), new Object(roleInterface!._id)],
       isActive: true,
       //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });
@@ -182,8 +191,8 @@ async function createManyAdmins() {
 
 async function createManyTeachers() {
   const [role, roleInterface] = await Promise.all([
-    Role.findOne({ role: "teacher" }),
-    Role.findOne({ role: "interface:teacher" }),
+    await Role.findOne({ role: "teacher" }),
+    await Role.findOne({ role: "interface:teacher" }),
   ]);
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
@@ -200,7 +209,7 @@ async function createManyTeachers() {
       address: addresses[i],
       postCode,
       city: cityName,
-      roles: [role!._id, roleInterface!._id],
+      roles: [new Object(role!._id), new Object(roleInterface!._id)],
       isActive: true,
       //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });
@@ -211,7 +220,10 @@ async function createManyTeachers() {
 }
 
 async function createManyStudents() {
-  const role = await Role.findOne({ role: "student" });
+  const [role, roleInterface] = await Promise.all([
+    await Role.findOne({ role: "teacher" }),
+    await Role.findOne({ role: "interface:teacher" }),
+  ]);
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
   for (let i = 0; i < 5; i++) {
@@ -227,7 +239,7 @@ async function createManyStudents() {
       address: addresses[i] || addresses[i - 50],
       postCode,
       city: cityName,
-      roles: [new Object(role!._id)],
+      roles: [new Object(role!._id), new Object(roleInterface!._id)],
       isActive: true,
       //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });

@@ -2,6 +2,8 @@ import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
 
 async function createParcours(parcours: any, userId: string) {
+  console.log({ userId });
+
   const existingFormation = await prisma.formation.findFirst({
     where: { id: +parcours.formation },
   });
@@ -27,7 +29,7 @@ async function createParcours(parcours: any, userId: string) {
 
   const user = await User.findOne(
     { _id: userId },
-    { firstname: 1, lastname: 1 }
+    { firstname: 1, lastname: 1 },
   );
 
   if (!user) {
