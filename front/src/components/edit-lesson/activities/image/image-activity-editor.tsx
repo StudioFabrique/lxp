@@ -130,6 +130,18 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
     }
   }, [activity, onChangeValue]);
 
+  useEffect(() => {
+    const ecouteur = new BroadcastChannel("clipboardChannel");
+
+    const handleMessage = (event: MessageEvent) => {
+      setImage(event.data); // Met à jour la valeur avec le message reçu
+    };
+
+    ecouteur.addEventListener("message", handleMessage);
+
+    return () => ecouteur.close(); // Nettoie la chaîne lors du démonta])
+  }, []);
+
   return (
     <div className="w-full h-[30rem] gap-8 grid grid-cols-1 2xl:grid-cols-2 p-6">
       <Wrapper>

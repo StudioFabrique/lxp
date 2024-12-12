@@ -1,35 +1,28 @@
-import { useCallback, useEffect, useState } from "react";
-import useHttp from "../../hooks/use-http";
 import CardMedia from "../../components/mediatheque/card-media";
+import usePaginatedMediatheque from "../../hooks/use-paginated-mediatheque";
+import Media from "../../utils/interfaces/media";
 
 function MediathequeHomePage() {
-  const { sendRequest } = useHttp();
-  const [medias, setMedias] = useState([]);
-
-  const getData = useCallback(() => {
-    const applyData = (data: any) => {
-      setMedias(data.medias);
-    };
-    sendRequest(
-      {
-        path: "/media/images",
-      },
-      applyData
-    );
-  }, [sendRequest]);
-
-  useEffect(() => {
-    getData();
-  }, [getData]);
+  const {
+    list,
+    page,
+    perPage,
+    totalPages,
+    setPage,
+    setLimit,
+    setTotalPages,
+    setList,
+    setType,
+  } = usePaginatedMediatheque<Media>();
 
   return (
     <div>
       <h1>Mediathèque</h1>
-      {medias && medias.length > 0 ? (
+      {list && list.length > 0 ? (
         <ul className="flex flex-wrap gap-4">
-          {medias.map((media: any) => (
-            <li key={media.id}>
-              <CardMedia media={media} />
+          {(list as Media[]).map((item) => (
+            <li key={item.id}>
+              <CardMedia media={item} />
             </li>
           ))}
         </ul>
