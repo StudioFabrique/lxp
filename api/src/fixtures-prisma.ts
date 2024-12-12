@@ -241,7 +241,7 @@ async function createTeachers() {
   await mongoConnect();
   try {
     const roleId = await Role.find({ role: "teacher" }, { _id: 1 });
-    const usersId = await User.find({ roles: roleId }, { _id: 1 });
+    const usersId = await User.find({ roles: { $in: roleId }, _id: 1 });
     console.log("formateurs", usersId);
 
     const newAdmins = Array<any>();
@@ -273,7 +273,7 @@ async function createSqlContacts() {
   try {
     const roleId = await Role.find({ role: "teacher" }, { _id: 1 });
     const usersId = await User.find(
-      { roles: roleId },
+      { roles: { $in: roleId } },
       { _id: 1, firstname: 1, lastname: 1 },
     );
     const contacts = usersId.map((user: any) => {
