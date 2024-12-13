@@ -17,6 +17,7 @@ import SuccessWithMessage from "../../../../utils/interfaces/success-with-messag
 import { useParams } from "react-router-dom";
 import Activity from "../../../../utils/interfaces/activity";
 import { ACTIVITIES } from "../../../../config/urls";
+import DialogImages from "../../../mediatheque/dialog-images";
 
 // Props du composant
 type Props = {
@@ -37,7 +38,7 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
   // États pour gérer l'image
   const [image, setImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-
+  const [showDialog, setShowDialog] = useState<boolean>(false);
   // Hooks pour les requêtes HTTP et la navigation
   const { sendRequest } = useHttp();
   const { lessonId } = useParams();
@@ -135,6 +136,7 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
 
     const handleMessage = (event: MessageEvent) => {
       setImage(event.data); // Met à jour la valeur avec le message reçu
+      setShowDialog(false);
     };
 
     ecouteur.addEventListener("message", handleMessage);
@@ -154,14 +156,18 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
               <Field name="title" label="Titre *" data={data} />
               <FieldArea name="description" data={data} label="Description *" />
             </span>
-            <span className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
+            <span className="flex flex-col gap-y-4">
               <MemoizedImageFileUpload
                 onSetFile={setFile}
                 label=""
                 maxSize={activityImageSize}
               />
               <div className="flex justify-end items-center">
-                <button className="btn btn-primary" type="button">
+                <button
+                  className="btn btn-primary"
+                  type="button"
+                  onClick={() => setShowDialog(true)}
+                >
                   Importer depuis la médiathèque
                 </button>
               </div>
@@ -189,6 +195,9 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
       </Wrapper>
       <div style={classImage}></div>
       <div className="h-[1rem]" />
+      {showDialog ? (
+        <DialogImages onClose={() => setShowDialog(false)} />
+      ) : null}
     </div>
   );
 }

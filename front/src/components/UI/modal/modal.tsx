@@ -1,6 +1,19 @@
 import { FC, ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 
+/**
+ * Composant Modal réutilisable
+ * @param onLeftClick - Fonction appelée lors du clic sur le bouton gauche
+ * @param onRightClick - Fonction appelée lors du clic sur le bouton droit
+ * @param title - Titre de la modal
+ * @param children - Contenu de la modal
+ * @param leftLabel - Texte du bouton gauche (optionnel)
+ * @param rightLabel - Texte du bouton droit
+ * @param isSubmitting - État de chargement des boutons
+ * @param buttonsBothTopBottom - Affiche les boutons en haut et en bas de la modal
+ * @param modalBoxStyle - Style CSS personnalisé pour la boîte modale
+ * @param sendModalBottom - Place la modal en arrière-plan (z-index 0)
+ */
 const Modal: FC<{
   onLeftClick?: () => void;
   onRightClick: () => void;
@@ -11,8 +24,9 @@ const Modal: FC<{
   isSubmitting?: boolean;
   buttonsBothTopBottom?: boolean;
   modalBoxStyle?: string;
-  sendModalBottom?: boolean; // send a modal at z-index 0, useful when a drawer come at the top at the same time
+  sendModalBottom?: boolean;
 }> = (props) => {
+  // Définit la valeur par défaut de isSubmitting
   const isSubmitting =
     props.isSubmitting !== undefined ? props.isSubmitting : false;
 
@@ -22,9 +36,10 @@ const Modal: FC<{
       className={`modal modal-open ${props.sendModalBottom && "z-0"}`}
     >
       <div className={`modal-box ${props.modalBoxStyle}`}>
+        {/* Affiche les boutons en haut si buttonsBothTopBottom est true */}
         {props.buttonsBothTopBottom && (
           <div className="modal-action mb-4">
-            {/* if there is a button, it will close the modal */}
+            {/* Bouton gauche (optionnel) */}
             {props.leftLabel && (
               <button
                 className="btn btn-outline btn-primary"
@@ -33,6 +48,7 @@ const Modal: FC<{
                 {props.leftLabel}
               </button>
             )}
+            {/* Bouton droit avec indicateur de chargement */}
             {props.rightLabel && (
               <button
                 className="btn btn-warning flex items-center gap-x-2"
@@ -45,10 +61,13 @@ const Modal: FC<{
             )}
           </div>
         )}
+        {/* Titre de la modal */}
         <h3 className="font-bold text-lg">{props.title}</h3>
+        {/* Contenu de la modal */}
         {props.children}
+        {/* Boutons en bas de la modal */}
         <div className="modal-action">
-          {/* if there is a button, it will close the modal */}
+          {/* Bouton gauche (optionnel) */}
           {props.leftLabel && (
             <button
               className="btn btn-outline btn-primary"
@@ -57,6 +76,7 @@ const Modal: FC<{
               {props.leftLabel}
             </button>
           )}
+          {/* Bouton droit avec indicateur de chargement */}
           {props.rightLabel && (
             <button
               className="btn btn-warning flex items-center gap-x-2"
