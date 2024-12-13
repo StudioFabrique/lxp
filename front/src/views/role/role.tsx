@@ -26,13 +26,11 @@ const RolePage = () => {
   const {
     data,
     isLoading,
-    totalItems,
     sortProperty,
     isAscDirection,
     onRefreshData,
     onSubmitSearchValue,
     onSortProperty,
-    ...pagination
   } = useTablePaginatedData<Role>("/role", "/role/search");
 
   // custom hook gestion checkbox

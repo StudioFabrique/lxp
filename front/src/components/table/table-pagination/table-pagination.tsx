@@ -39,21 +39,21 @@ const TablePagination = (props: TablePaginationProps) => {
         <div className="join">
           <button
             onClick={props.onSetPreviousPage}
-            className="join-item btn btn-sm btn-ghost disabled:btn-active"
-            disabled={props.currentPage === 1}
+            className={`join-item btn btn-sm btn-ghost ${props.currentPage === 1 && "invisible"}`}
           >
             <ChevronLeft />
           </button>
-          <DropdownSelector
-            onSelect={props.onSetCurrentPage}
-            valueList={valueArray}
-          >
-            {`${props.currentPage} sur ${props.maxPage}`}
-          </DropdownSelector>
+          {!(props.maxPage === 1) && (
+            <DropdownSelector
+              onSelect={props.onSetCurrentPage}
+              valueList={valueArray}
+            >
+              {`${props.currentPage} sur ${props.maxPage}`}
+            </DropdownSelector>
+          )}
           <button
             onClick={props.onSetNextPage}
-            className="join-item btn btn-sm btn-ghost"
-            disabled={props.currentPage === props.maxPage}
+            className={`join-item btn btn-sm btn-ghost ${props.currentPage === props.maxPage && "invisible"}`}
           >
             <ChevronRight />
           </button>
