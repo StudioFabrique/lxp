@@ -19,6 +19,7 @@ export const postRoleValidator = [
     .notEmpty()
     .withMessage("Role absent")
     .toLowerCase()
+    .trim()
     .escape(),
   body("rank")
     .isNumeric()

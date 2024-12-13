@@ -189,6 +189,7 @@ export async function getAllPermissionsForUser(
  */
 export async function createOrUpdateRoleWithPermissions(
   roleName: string,
+  label: string,
   permissions: {
     resource: string;
     actions: Array<"read" | "write" | "update" | "delete">;
@@ -209,7 +210,7 @@ export async function createOrUpdateRoleWithPermissions(
 
     let role = await Role.findOne({ name: roleName });
     if (!role) {
-      role = new Role({ name: roleName });
+      role = new Role({ name: roleName, label: label });
       await role.save();
     }
 

@@ -37,12 +37,12 @@ export default async function createPermission(
     ressources: await ressources(),
   });
 
-  if (duplicateForAdmins)
-    for (const adminRole of duplicateForAdmins)
-      await Permission.updateMany(
-        { role: adminRole.role, action: action },
-        {
-          $push: { ressources: role },
-        },
-      );
+  // if (duplicateForAdmins)
+  //   for (const adminRole of duplicateForAdmins)
+  //     await Permission.updateMany(
+  //       { role: adminRole.role, action: action },
+  //       {
+  //         $push: { ressources: role },
+  //       },
+  //     );
 }

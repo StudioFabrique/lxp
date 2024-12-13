@@ -221,8 +221,8 @@ async function createManyTeachers() {
 
 async function createManyStudents() {
   const [role, roleInterface] = await Promise.all([
-    await Role.findOne({ role: "teacher" }),
-    await Role.findOne({ role: "interface:teacher" }),
+    await Role.findOne({ role: "student" }),
+    await Role.findOne({ role: "interface:student" }),
   ]);
   const hash = await bcrypt.hash("Abcdef@123456", 10);
   const userList = Array<any>();
