@@ -1,78 +1,54 @@
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-
-import useHttp from "../../hooks/use-http";
-import RolesList from "../../components/role/roles-list/roles-list";
 import RoleForm from "../../components/role/role-form/role-form";
-import PermissionsList from "../../components/role/permissions-list/permissions-list";
+import useTablePaginatedData from "../../components/table/table-pagination/hooks/use-table-paginated-data";
+import Role from "../../utils/interfaces/role";
+import useTableCheckbox from "../../components/table/table-list/hooks/use-table-checkbox";
+import Header from "../../components/UI/header";
+import Table from "../../components/table/table";
+import {
+  actionsConfig,
+  searchBarConfig,
+  tableListConfig,
+} from "./role-table-config";
+import TableActionsButtons from "../../components/table/table-buttons/table-actions-buttons";
+import useRoleActions from "./hooks/use-role-actions";
 
-export interface IRoleItem {
-  _id: string;
-  role: string;
-  label: string;
-  rank: number;
-  permCount: {
-    read: number;
-    write: number;
-    update: number;
-    delete: number;
-  };
-}
+/**
+ * Composant Role
+ *
+ * Affiche un formulaire et une liste de roles avec des fonctionnalités pour créer,
+ * modifier et supprimer des groupes. Utilise un tableau paginé pour
+ * présenter les données, avec une barre de recherche intégrée.
+ *
+ * @component
+ */
+const RolePage = () => {
+  // custom hook gestion pagination
+  const {
+    data,
+    isLoading,
+    totalItems,
+    sortProperty,
+    isAscDirection,
+    onRefreshData,
+    onSubmitSearchValue,
+    onSortProperty,
+    ...pagination
+  } = useTablePaginatedData<Role>("/role", "/role/search");
 
-export interface IRoleToEdit {
-  _id: string;
-  name: string;
-  label: string;
-  rank: number;
-  isActive?: boolean;
-}
+  // custom hook gestion checkbox
+  const { idsList, onRetreiveItemsByPropertyFromIdList, ...checkboxConfig } =
+    useTableCheckbox<Role>(data, "_id");
 
-const Role = () => {
-  const { state: history } = useLocation();
-  const navigate = useNavigate();
-  const { sendRequest, isLoading } = useHttp(true);
-
-  const [isRolesInitialized, setIsRolesInitialized] = useState<boolean>(false);
-  const [roles, setRoles] = useState<IRoleItem[]>([]);
-  const [roleToEdit, setRoleToEdit] = useState<IRoleToEdit | null>(null);
-  const [currentRole, setCurrentRole] = useState<IRoleItem>(roles[0]);
-
-  useEffect(() => {
-    if (!isRolesInitialized) {
-      sendRequest({ path: "/permission" }, (data) => {
-        setRoles(data.data);
-        setIsRolesInitialized(true);
-      });
-    }
-  }, [isRolesInitialized, sendRequest]);
-
-  useEffect(() => {
-    if (roles.length > 0) {
-      setCurrentRole(roles[0]);
-    }
-  }, [roles]);
-
-  const handleNavigateBack = () => {
-    navigate(history.from);
-  };
+  // custom hook gestion actions groupées
+  const { onDeleteSelectedRoles } = useRoleActions(idsList, onRefreshData);
 
   return (
     <div className="flex flex-col gap-y-5 p-10">
-      {!!history?.from && (
-        <button
-          onClick={handleNavigateBack}
-          type="button"
-          className="self-start"
-        >
-          Retour
-        </button>
-      )}
-      <h1 className="text-2xl font-semibold">
-        Controler des rôles et des accès
-      </h1>
-      <p>
-        Créer et gérer des rôles, les droits et les permissions des utilisateurs
-      </p>
+      {/* Header de la liste des groupes */}
+      <Header
+        title="Liste des groupes"
+        description="Créer, modifier et supprimer des groupes"
+      />
 
       <div className="grid lg:grid-cols-3 gap-5">
         <RoleForm
@@ -81,25 +57,42 @@ const Role = () => {
           setRoleToEdit={setRoleToEdit}
           setCurrentRole={setCurrentRole}
         />
-        <div className="lg:col-span-2">
-          <RolesList
-            setRoleToEdit={setRoleToEdit}
-            roles={roles}
-            isLoading={isLoading}
-            setRoles={setRoles}
-            setCurrentRole={setCurrentRole}
-          />
-        </div>
+
+        {/*
+         * Tableau generique utilisé pour la liste des groupes,
+         * utilisation du pattern composition
+         */}
+        <Table
+          searchBarConfig={searchBarConfig(onSubmitSearchValue)}
+          tableListConfig={tableListConfig(
+            data,
+            isLoading,
+            actionsConfig(onRefreshData),
+          )}
+          checkboxConfig={checkboxConfig}
+          sortConfig={{ sortProperty, isAscDirection, onSortProperty }}
+        >
+          {/* Composants children en haut et en bas du tableau */}
+          {[
+            // haut du tableau, à côté de la barre de recherche
+            <TableActionsButtons
+              key={0}
+              isLoading={isLoading}
+              isDisabled={!(idsList.length > 0)} // disabled si la liste a une longueur de 0
+              onRefreshData={onRefreshData}
+              delete={{
+                actionTitle: "Supprimer les roles selectionnés",
+                onDelete: onDeleteSelectedRoles,
+              }}
+              onRetreiveItemsByPropertyFromIdList={
+                onRetreiveItemsByPropertyFromIdList
+              }
+            />,
+          ]}
+        </Table>
       </div>
-      {isRolesInitialized && currentRole && (
-        <PermissionsList
-          roles={roles}
-          currentRole={currentRole}
-          setCurrentRole={setCurrentRole}
-        />
-      )}
     </div>
   );
 };
 
-export default Role;
+export default RolePage;

@@ -94,6 +94,7 @@ const GroupHome = () => {
               actionTitle: "Supprimer les groupes selectionnés",
               onDelete: onDeleteSelectedGroups,
             }}
+            retreiveItemsProperty="name"
             onRetreiveItemsByPropertyFromIdList={
               onRetreiveItemsByPropertyFromIdList
             }
