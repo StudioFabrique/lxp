@@ -13,6 +13,7 @@ export const permissionsList = [
   "lesson",
   "bonusSkill",
   "objective",
+  "mediatheque",
 ];
 
 // Permissions pour les rôles d'interface
@@ -33,4 +34,5 @@ export const componentPermissionsList = [
   "module",
   "formation",
   "calendar",
+  "mediatheque",
 ];

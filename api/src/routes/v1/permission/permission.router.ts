@@ -24,7 +24,7 @@ permissionRouter.get(
   "/ressources/:role",
   checkPermissions("role"),
   getPermissionsValidator,
-  httpGetRessources
+  httpGetRessources,
 );
 
 // Obtenir la liste des rôles existants avec le nombre de permissions associés à chaque type d'actions (crud)
@@ -33,9 +33,9 @@ permissionRouter.get("/", checkPermissions("role"), httpGetRoles);
 // Obtenir la liste des permissions associées à un rôle
 permissionRouter.get(
   "/:role",
-  checkToken,
+  checkPermissions("role"),
   getPermissionsValidator,
-  httpGetPermissions
+  httpGetPermissions,
 );
 
 // Créer un rôle ou copier un rôle avec ses permissions
@@ -43,14 +43,14 @@ permissionRouter.post(
   "/role",
   checkPermissions("role"),
   postRoleValidator,
-  httpPostRole
+  httpPostRole,
 );
 
 permissionRouter.delete(
   "/role/:role",
   checkPermissions("role"),
   deleteRoleValidator,
-  httpDeleteRole
+  httpDeleteRole,
 );
 
 // Modifier le nom du rôle ou/et modifier les permissions
@@ -58,7 +58,7 @@ permissionRouter.put(
   "/role/:id",
   checkPermissions("role"),
   putRoleValidator,
-  httpPutRole
+  httpPutRole,
 );
 
 export default permissionRouter;
