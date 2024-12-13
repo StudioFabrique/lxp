@@ -3,11 +3,18 @@ import ActionsDropdown from "../../UI/actions-dropdown/actions-dropdown";
 import TableActionsModal from "./table-actions-modal";
 import { useState } from "react";
 
+type Action<TData> = {
+  title: string;
+  description: string;
+  data?: TData;
+  onConfirm: () => Promise<void>;
+};
+
 type TableButtonsProps<TData> = {
   isLoading: boolean;
   isDisabled: boolean;
   onRefreshData: () => void;
-  delete: { actionTitle: string; onDelete: () => Promise<void> };
+  actions: Action<TData>[];
   retreiveItemsProperty?: keyof TData;
   onRetreiveItemsByPropertyFromIdList?: (property: keyof TData) => string[];
 };
@@ -19,23 +26,28 @@ const TableActionsButtons = <TData,>(props: TableButtonsProps<TData>) => {
     props.onRetreiveItemsByPropertyFromIdList(props.retreiveItemsProperty);
 
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [currentAction, setCurrentAction] = useState<Action<TData> | null>(
+    null,
+  );
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (action: Action<TData>) => {
+    setCurrentAction(action);
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
+    setCurrentAction(null);
   };
 
   return (
     <>
-      {showModal ? (
+      {showModal && currentAction ? (
         <TableActionsModal
-          title="Confirmation de suppression"
-          description={`${descList?.length} groupes vont être supprimés :`}
+          title={currentAction.title}
+          description={currentAction.description}
           descList={descList}
-          onConfirm={props.delete.onDelete}
+          onConfirm={currentAction.onConfirm}
           onCancel={handleCloseModal}
         />
       ) : null}
@@ -48,13 +60,11 @@ const TableActionsButtons = <TData,>(props: TableButtonsProps<TData>) => {
           <RefreshCw />
         </button>
         <ActionsDropdown
-          actions={[
-            {
-              actionTitle: props.delete.actionTitle,
-              data: null,
-              onClick: handleOpenModal,
-            },
-          ]}
+          actions={props.actions.map((action) => ({
+            actionTitle: action.title,
+            data: action.data,
+            onClick: () => handleOpenModal(action),
+          }))}
           isDisabled={props.isLoading || props.isDisabled}
         />
       </div>
