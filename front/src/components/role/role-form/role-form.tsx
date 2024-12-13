@@ -16,7 +16,6 @@ import { setInputStyle } from "../../../utils/formClasses";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
-import { IRoleItem, IRoleToEdit } from "../../../views/role/role";
 import useInput from "../../../hooks/use-input";
 import RoleTypeSelector from "./role-type-selector";
 import { Context } from "../../../store/context.store";

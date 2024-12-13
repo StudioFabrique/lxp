@@ -2,20 +2,21 @@ import { RefreshCw } from "lucide-react";
 import ActionsDropdown from "../../UI/actions-dropdown/actions-dropdown";
 import TableActionsModal from "./table-actions-modal";
 import { useState } from "react";
-import Group from "../../../utils/interfaces/group";
 
-type TableButtonsProps = {
+type TableButtonsProps<TData> = {
   isLoading: boolean;
   isDisabled: boolean;
   onRefreshData: () => void;
   delete: { actionTitle: string; onDelete: () => Promise<void> };
-  onRetreiveItemsByPropertyFromIdList?: (property: keyof Group) => string[];
+  retreiveItemsProperty?: keyof TData;
+  onRetreiveItemsByPropertyFromIdList?: (property: keyof TData) => string[];
 };
 
-const TableActionsButtons = (props: TableButtonsProps) => {
+const TableActionsButtons = <TData,>(props: TableButtonsProps<TData>) => {
   const descList =
     props.onRetreiveItemsByPropertyFromIdList &&
-    props.onRetreiveItemsByPropertyFromIdList("name");
+    props.retreiveItemsProperty &&
+    props.onRetreiveItemsByPropertyFromIdList(props.retreiveItemsProperty);
 
   const [showModal, setShowModal] = useState<boolean>(false);
 
