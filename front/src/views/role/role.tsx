@@ -31,7 +31,10 @@ const RolePage = () => {
     onRefreshData,
     onSubmitSearchValue,
     onSortProperty,
-  } = useTablePaginatedData<Role>("/role", "/role/search");
+  } = useTablePaginatedData<Role>("/role", "/role/search", {
+    disablePagination: true,
+    disableSort: true,
+  });
 
   // custom hook gestion checkbox
   const { idsList, onRetreiveItemsByPropertyFromIdList, ...checkboxConfig } =
@@ -48,13 +51,8 @@ const RolePage = () => {
         description="Créer, modifier et supprimer des groupes"
       />
 
-      <div className="grid lg:grid-cols-3 gap-5">
-        <RoleForm
-          roleToEdit={roleToEdit}
-          setRoles={setRoles}
-          setRoleToEdit={setRoleToEdit}
-          setCurrentRole={setCurrentRole}
-        />
+      <div className="grid gap-5">
+        <RoleForm onRefreshData={onRefreshData} />
 
         {/*
          * Tableau generique utilisé pour la liste des groupes,
@@ -78,10 +76,14 @@ const RolePage = () => {
               isLoading={isLoading}
               isDisabled={!(idsList.length > 0)} // disabled si la liste a une longueur de 0
               onRefreshData={onRefreshData}
-              delete={{
-                actionTitle: "Supprimer les roles selectionnés",
-                onDelete: onDeleteSelectedRoles,
-              }}
+              actions={[
+                {
+                  title: "Supprimer les rôles selectionnés",
+                  description: `${idsList.length} ${idsList.length > 1 ? "rôles vont être supprimés" : "rôle va être supprimé"}`,
+                  onConfirm: onDeleteSelectedRoles,
+                },
+              ]}
+              retreiveItemsProperty="role"
               onRetreiveItemsByPropertyFromIdList={
                 onRetreiveItemsByPropertyFromIdList
               }

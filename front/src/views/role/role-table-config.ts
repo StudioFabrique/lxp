@@ -13,11 +13,11 @@ export const roleTableItems: TableListItemConfig[] = [
   {
     property: "countRead",
     label: "Lire",
+    sortAllowed: true,
   },
   { property: "countWrite", label: "Créer", sortAllowed: true },
   { property: "countUpdate", label: "Modifier", sortAllowed: true },
   { property: "countDelete", label: "Supprimer", sortAllowed: true },
-  { property: "nbStudents", label: "Nombre d'étudiants", sortAllowed: true },
 ];
 
 export const searchBarConfig = (

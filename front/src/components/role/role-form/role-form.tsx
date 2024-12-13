@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Dispatch,
-  FC,
   Ref,
-  SetStateAction,
   useContext,
   useEffect,
   useRef,
@@ -20,12 +17,12 @@ import useInput from "../../../hooks/use-input";
 import RoleTypeSelector from "./role-type-selector";
 import { Context } from "../../../store/context.store";
 
-const RoleCreateForm: FC<{
-  roleToEdit: IRoleToEdit | null;
-  setRoles: Dispatch<SetStateAction<IRoleItem[]>>;
-  setRoleToEdit: Dispatch<SetStateAction<IRoleToEdit | null>>;
-  setCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
-}> = ({ roleToEdit, setRoles, setRoleToEdit, setCurrentRole }) => {
+type RoleFormProps = {
+  role?: any;
+  onRefreshData?: () => Promise<void>;
+};
+
+const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
   const { fetchRoles, user } = useContext(Context);
   const { sendRequest, isLoading: isRequestLoading } = useHttp(true);
 
@@ -35,87 +32,69 @@ const RoleCreateForm: FC<{
 
   const { value: name } = useInput(
     (value: string) => regexGeneric.test(value),
-    roleToEdit?.name ? roleToEdit.name : "",
+    role?.name || "",
   );
 
   const { value: label } = useInput(
     (value: string) => regexGeneric.test(value),
-    roleToEdit?.label ? roleToEdit.label : "",
+    role?.label || "",
   );
 
   const cancelForm = useCallback(() => {
-    setRoleToEdit(null);
     name.reset();
     label.reset();
     setCurrentRoleType(1);
-  }, [name, label, setRoleToEdit]);
+  }, [name, label]);
 
   const applyDataCreate = useCallback(
-    (data: any) => {
-      const newRole: IRoleItem = data.data;
-      setRoles((currentRoles) => [...currentRoles, newRole]);
-      setCurrentRole(newRole);
+    async (data: any) => {
       cancelForm();
       toast.success(data.message);
+      onRefreshData && (await onRefreshData());
     },
-    [cancelForm, setRoles, setCurrentRole],
+    [cancelForm, onRefreshData],
   );
 
   const applyDataUpdate = useCallback(
     (data: any) => {
-      setRoles((currentRoles) =>
-        currentRoles.map((role) => {
-          const roleData = data.data;
-          if (role._id === roleToEdit?._id)
-            return {
-              ...role,
-              role: roleData.role,
-              label: roleData.label,
-              rank: roleData.rank,
-            };
-          return role;
-        }),
-      );
       cancelForm();
       fetchRoles(user!.roles[0]);
       toast.success(data.message);
     },
-    [cancelForm, fetchRoles, roleToEdit, setRoles, user],
+    [cancelForm, fetchRoles, user],
   );
 
   const handleSubmitRole = useCallback(() => {
     if (name.isValid && label.isValid)
       sendRequest(
         {
-          path: roleToEdit
-            ? `/permission/role/${roleToEdit._id}`
-            : `/permission/role`,
-          method: roleToEdit ? "put" : "post",
+          path: role ? `/permission/role/${role._id}` : `/permission/role`,
+          method: role ? "put" : "post",
           body: {
             role: name.value,
             label: label.value,
             rank: currentRoleType,
           },
         },
-        roleToEdit ? applyDataUpdate : applyDataCreate,
+        role ? applyDataUpdate : applyDataCreate,
       );
     else toast.error("Le formulaire n'est pas valide");
   }, [
+    role,
     name,
     label,
     currentRoleType,
-    roleToEdit,
     sendRequest,
     applyDataCreate,
     applyDataUpdate,
   ]);
 
   useEffect(() => {
-    if (roleToEdit) {
-      setCurrentRoleType(roleToEdit.rank);
+    if (role) {
+      setCurrentRoleType(role.rank);
       nameInputRef.current?.focus();
     }
-  }, [roleToEdit]);
+  }, [role]);
 
   const formClassName = useMemo(() => "flex flex-col gap-y-10", []);
   const inputClassName = useMemo(
@@ -189,16 +168,7 @@ const RoleCreateForm: FC<{
               className="btn btn-sm btn-primary normal-case px-10"
               onClick={handleSubmitRole}
             >
-              {roleToEdit ? "Modifier" : "Ajouter"}
-            </button>
-          )}
-          {roleToEdit && (
-            <button
-              onClick={cancelForm}
-              type="button"
-              className="btn btn-sm normal-case px-10"
-            >
-              Annuler
+              {role ? "Modifier" : "Ajouter"}
             </button>
           )}
         </div>
@@ -207,4 +177,4 @@ const RoleCreateForm: FC<{
   );
 };
 
-export default RoleCreateForm;
+export default RoleForm;
