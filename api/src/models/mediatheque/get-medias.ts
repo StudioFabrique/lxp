@@ -32,6 +32,8 @@ export default async function getMedias(req: Request) {
     },
   });
 
+  const totalPages = Math.ceil(totalMedias / +limit!);
+
   // Calcul de l'offset pour la pagination
   const offset = getPagination(+page!, +limit!);
 
@@ -47,5 +49,6 @@ export default async function getMedias(req: Request) {
       createdAt: "desc", // Tri par date de création décroissante
     },
   });
-  return { medias, totalPages: totalMedias };
+
+  return { medias, totalPages: totalPages };
 }

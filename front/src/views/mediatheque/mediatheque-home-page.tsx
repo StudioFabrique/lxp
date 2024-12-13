@@ -19,7 +19,13 @@ function MediathequeHomePage() {
           ))}
         </ul>
       ) : null}
-      <Pagination />
+      <Pagination
+        page={page}
+        perPage={perPage}
+        totalPages={totalPages}
+        setPage={setPage}
+        setLimit={setLimit}
+      />
     </div>
   );
 }
