@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ACTIVITIES } from "../../config/urls";
 import { displaySize } from "../../helpers/sizeUnitConversion";
 import usePaginatedMediatheque from "../../hooks/use-paginated-mediatheque";
 import Media from "../../utils/interfaces/media";
+import Pagination from "../pagination";
 
 type Props = {
   onClose: () => void;
 };
 
 function DialogImages({ onClose }: Props) {
-  const { list } = usePaginatedMediatheque();
+  const { list, page, perPage, totalPages, setPage, setLimit } =
+    usePaginatedMediatheque();
   const [selectedImage, setSelectedImage] = useState<Media | null>(null);
   const channel = new BroadcastChannel("clipboardChannel");
 
@@ -32,6 +34,10 @@ function DialogImages({ onClose }: Props) {
     }
   };
 
+  useEffect(() => {
+    setLimit(6);
+  }, [setLimit]);
+
   return (
     <div className="modal modal-open" role="dialog">
       <div className="modal-box w-[40rem] min-h-[10rem] max-h-[35rem]">
@@ -39,7 +45,7 @@ function DialogImages({ onClose }: Props) {
           <h2 className="font-bold">Importer un fichier image</h2>
           {list.length > 0 ? (
             <>
-              <ul className="flex flex-wrap gap-4">
+              <ul className="flex flex-wrap gap-x-8 gap-y-4 justify-center">
                 {(list as Media[]).map((item) => (
                   <li className={getStyle(item)} key={item.id}>
                     <button
@@ -57,6 +63,15 @@ function DialogImages({ onClose }: Props) {
                   </li>
                 ))}
               </ul>
+              <div className="flex justify-center items-center gap-x-4 mt-4">
+                <Pagination
+                  page={page}
+                  perPage={perPage}
+                  totalPages={totalPages}
+                  setPage={setPage}
+                  setLimit={setLimit}
+                />
+              </div>
               <div className="flex justify-end items-center gap-x-4 mt-4">
                 <button
                   className="btn btn-primary btn-outline"
