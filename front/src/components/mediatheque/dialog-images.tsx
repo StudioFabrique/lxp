@@ -9,7 +9,7 @@ type Props = {
 };
 
 function DialogImages({ onClose }: Props) {
-  const { list, page } = usePaginatedMediatheque();
+  const { list } = usePaginatedMediatheque();
   const [selectedImage, setSelectedImage] = useState<Media | null>(null);
   const channel = new BroadcastChannel("clipboardChannel");
 
@@ -19,7 +19,7 @@ function DialogImages({ onClose }: Props) {
     if (selectedImage && item.id === selectedImage.id) {
       return baseStyle + " bg-primary text-white";
     }
-    return baseStyle;
+    return baseStyle + " hover:bg-secondary hover:text-white";
   };
 
   const handleCopyUrl = async () => {
