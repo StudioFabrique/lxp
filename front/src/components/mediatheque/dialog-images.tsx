@@ -23,7 +23,7 @@ function DialogImages({ onClose }: Props) {
   };
 
   const handleCopyUrl = async () => {
-    const valueToCopy = ACTIVITIES + "images/" + selectedImage!.url;
+    const valueToCopy = selectedImage!.url;
     try {
       await navigator.clipboard.writeText(valueToCopy);
       channel.postMessage(valueToCopy); // Envoie le message à tous les onglets
