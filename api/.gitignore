@@ -4,4 +4,6 @@ node_modules
 dist/
 logs/
 uploads/activities/files/*
+uploads/activities/videos/*
 uploads/activities/images/*
+
