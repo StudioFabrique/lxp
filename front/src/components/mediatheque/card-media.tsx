@@ -24,7 +24,7 @@ function CardMedia({ media }: Props) {
   };
 
   const handleCopyUrl = async () => {
-    const valueToCopy = ACTIVITIES + "images/" + media.url;
+    const valueToCopy = media.url;
     try {
       await navigator.clipboard.writeText(valueToCopy);
       channel.postMessage(valueToCopy); // Envoie le message à tous les onglets

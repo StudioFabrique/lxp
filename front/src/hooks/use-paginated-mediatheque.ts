@@ -51,7 +51,6 @@ const paginationReducer = <T>(
       // Mise à jour de la liste et retour à la première page
       return {
         ...state,
-        page: 1,
         list: action.payload.list,
         totalPages: action.payload.totalPages,
       };
