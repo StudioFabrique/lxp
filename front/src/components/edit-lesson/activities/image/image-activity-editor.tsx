@@ -42,11 +42,15 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
   // Hooks pour les requêtes HTTP et la navigation
   const { sendRequest } = useHttp();
   const { lessonId } = useParams();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   // Style pour l'affichage de l'image
   const classImage: React.CSSProperties = {
     backgroundImage: `url('${
-      image ?? (activity ? `${ACTIVITIES}images/${activity.url}` : defaultImage)
+      image ??
+      (activity
+        ? `${ACTIVITIES}images/${selectedImage ?? activity.url}`
+        : defaultImage)
     }')`,
     width: "100%",
     height: "100%",
@@ -89,6 +93,9 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
     if (!activity && !file) {
       toast.error("Un fichier est requis");
       return;
+    }
+    if (!file && selectedImage) {
+      values.url = selectedImage;
     }
     const formData = new FormData();
     formData.append("data", JSON.stringify(values));
@@ -135,7 +142,7 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
     const ecouteur = new BroadcastChannel("clipboardChannel");
 
     const handleMessage = (event: MessageEvent) => {
-      setImage(event.data); // Met à jour la valeur avec le message reçu
+      setSelectedImage(event.data); // Met à jour la valeur avec le message reçu
       setShowDialog(false);
     };
 
