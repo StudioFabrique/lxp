@@ -8,7 +8,7 @@ import useHttp from "../../../../hooks/use-http";
  */
 function useTablePaginatedData<TData>(
   apiPath: string,
-  searchOptions: { apiPathSearchValue?: string; searchProperty?: string },
+  searchOptions: { apiSearchPath?: string; searchProperty?: string },
   options?: { disablePagination: boolean; disableSort: boolean },
 ) {
   const { sendRequest, isLoading } = useHttp();
@@ -68,8 +68,8 @@ function useTablePaginatedData<TData>(
     };
 
     const path =
-      searchOptions.apiPathSearchValue && searchValue
-        ? `${searchOptions.apiPathSearchValue}/${searchOptions.searchProperty}/${searchValue}`
+      searchOptions.apiSearchPath && searchValue
+        ? `${searchOptions.apiSearchPath}/${searchOptions.searchProperty}/${searchValue}`
         : apiPath;
 
     const sortDirection = isAscDirection ? "asc" : "desc";
@@ -84,7 +84,8 @@ function useTablePaginatedData<TData>(
     );
   }, [
     sendRequest,
-    searchOptions,
+    searchOptions.apiSearchPath,
+    searchOptions.searchProperty,
     currentPage,
     apiPath,
     itemsPerPage,

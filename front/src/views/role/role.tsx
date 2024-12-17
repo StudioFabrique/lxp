@@ -31,10 +31,14 @@ const RolePage = () => {
     onRefreshData,
     onSubmitSearchValue,
     onSortProperty,
-  } = useTablePaginatedData<Role>("/role", "/role/search", {
-    disablePagination: true,
-    disableSort: true,
-  });
+  } = useTablePaginatedData<Role>(
+    "/role",
+    { apiSearchPath: "/role/search" },
+    {
+      disablePagination: true,
+      disableSort: true,
+    },
+  );
 
   // custom hook gestion checkbox
   const { idsList, onRetreiveItemsByPropertyFromIdList, ...checkboxConfig } =

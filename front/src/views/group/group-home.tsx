@@ -40,7 +40,10 @@ const GroupHome = () => {
     onSubmitSearchValue,
     onSortProperty,
     ...pagination
-  } = useTablePaginatedData<Group>("/group/student", "/group/search/student");
+  } = useTablePaginatedData<Group>("/group/student", {
+    apiSearchPath: "/group/search",
+    searchProperty: "student",
+  });
 
   // custom hook gestion checkbox
   const { idsList, onRetreiveItemsByPropertyFromIdList, ...checkboxConfig } =
