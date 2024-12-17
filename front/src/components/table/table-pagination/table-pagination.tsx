@@ -23,7 +23,7 @@ const TablePagination = (props: TablePaginationProps) => {
   const valueArray = iterateNumberToArray(props.maxPage, 5);
 
   return (
-    <div className="flex items-center gap-10 rounded-lg justify-between w-full bg-primary p-1 text-base-100">
+    <div className="flex items-center gap-10 rounded-lg justify-between w-full bg-primary p-1 text-primary-content">
       <p className="text-sm font-semibold px-4">{props.leftText}</p>
       <div className="flex gap-2">
         <div className="flex items-center">
