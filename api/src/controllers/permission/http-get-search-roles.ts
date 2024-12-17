@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
-import { getAllRoles } from "../../utils/rbac/rbac-utils";
+import { getAllRolesWithSearch } from "../../utils/rbac/rbac-utils";
 
-export default async function httpGetAllRoles(req: Request, res: Response) {
+export default async function httpGetSearchRoles(req: Request, res: Response) {
   try {
-    const roles = await getAllRoles();
+    const { searchValue } = req.params;
+
+    const roles = await getAllRolesWithSearch(searchValue);
     return res
       .status(200)
       .json({ message: "les rôles ont bien été récupérés", data: roles });
