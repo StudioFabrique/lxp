@@ -99,6 +99,39 @@ export async function getAllRoles() {
   });
 }
 
+export async function getAllRolesWithSearch(search: string) {
+  const query = {
+    role: { $not: { $regex: "^interface:" } },
+  };
+
+  // Construction de la query avec la valeur de recherche
+  // Recherche dans la propriété role mais aussi dans la propriété label
+  const queryWithSearch = {
+    ...query,
+    $or: [
+      { role: { $regex: search, $options: "i" } },
+      { label: { $regex: search, $options: "i" } },
+    ],
+  };
+  const roles = await Role.find(queryWithSearch).populate("permissions");
+
+  return roles.map((role) => {
+    const permissions = role.permissions.map((perm) => perm.name);
+    return {
+      _id: role._id,
+      role: role.role,
+      label: role.label,
+      rank: role.rank,
+      permCount: {
+        read: permissions.filter((perm) => perm.startsWith("read:")).length,
+        write: permissions.filter((perm) => perm.startsWith("write:")).length,
+        update: permissions.filter((perm) => perm.startsWith("update:")).length,
+        delete: permissions.filter((perm) => perm.startsWith("delete:")).length,
+      },
+    };
+  });
+}
+
 /**
  * Récupère la liste des utilisateurs ayant un rôle spécifique
  * @param role - Le rôle dont on veut récupérer les utilisateurs

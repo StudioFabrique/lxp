@@ -38,6 +38,13 @@ permissionRouter.get(
   httpGetPermissions,
 );
 
+// Recherche de rôles
+permissionRouter.get(
+  "/search/:searchValue",
+  checkPermissions("role"),
+  httpGetRoles,
+);
+
 // Créer un rôle ou copier un rôle avec ses permissions
 permissionRouter.post(
   "/role",
