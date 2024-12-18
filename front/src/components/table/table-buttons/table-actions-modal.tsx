@@ -6,9 +6,20 @@ const TableActionsModal: FC<{
   description?: string;
   descList?: string[];
   error?: string;
+  alertMessageBottom?: string;
+  rightButtonTitle: string;
   onCancel: () => void;
   onConfirm: () => Promise<void>;
-}> = ({ title, description, descList, error, onCancel, onConfirm }) => {
+}> = ({
+  title,
+  description,
+  descList,
+  error,
+  alertMessageBottom,
+  rightButtonTitle,
+  onCancel,
+  onConfirm,
+}) => {
   const [isLoading, setIsloading] = useState<boolean>(false);
 
   const handleConfirmAction = async () => {
@@ -44,9 +55,7 @@ const TableActionsModal: FC<{
                 ))}
               </ul>
             ) : null}
-            <p className="text-error text-sm pb-2">
-              Attention: Cette opération ne peut pas être annulée
-            </p>
+            <p className="text-error text-sm pb-2">{alertMessageBottom}</p>
             <div className="modal-action flex justify-between overflow-x-hidden">
               <button
                 className="btn btn-outline btn-primary btn-md"
@@ -58,7 +67,7 @@ const TableActionsModal: FC<{
                 className={`btn btn-primary btn-md ${isLoading && "loading"}`}
                 onClick={handleConfirmAction}
               >
-                Supprimer
+                {rightButtonTitle}
               </button>
             </div>
             {error && <p>{error}</p>}

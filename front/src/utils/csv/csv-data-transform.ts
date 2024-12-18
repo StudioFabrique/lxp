@@ -5,7 +5,6 @@ export function transformRolesCsv(roles: IRoleItem[]) {
     return {
       "nom du role": role.role,
       "label du role": role.label,
-      "Role actif": role.isActive,
       "nb permissions de lecture": role.permCount.read,
       "nb permissions d'écriture": role.permCount.write,
       "nb permissions d'édition": role.permCount.update,

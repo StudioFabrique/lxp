@@ -11,6 +11,9 @@ import {
 } from "./role-table-config";
 import TableActionsButtons from "../../components/table/table-buttons/table-actions-buttons";
 import useRoleActions from "./hooks/use-role-actions";
+import CSVDownloader from "../../components/UI/csv-downloader/csv-downloader";
+import { transformRolesCsv } from "../../utils/csv/csv-data-transform";
+import { Ref, useRef } from "react";
 
 /**
  * Composant Role
@@ -41,8 +44,12 @@ const RolePage = () => {
   );
 
   // custom hook gestion checkbox
-  const { idsList, onRetreiveItemsByPropertyFromIdList, ...checkboxConfig } =
-    useTableCheckbox<Role>(data, "_id");
+  const {
+    idsList,
+    onRetreiveItemsValuesByPropertyFromIdList,
+    onRetreiveItemsFromIdList,
+    ...checkboxConfig
+  } = useTableCheckbox<Role>(data, "_id");
 
   // custom hook gestion actions groupées
   const { onDeleteSelectedRoles } = useRoleActions(idsList, onRefreshData);
@@ -52,8 +59,13 @@ const RolePage = () => {
       {/* Header de la liste des groupes */}
       <Header title="Liste des rôles" />
 
-      <div className="grid gap-5">
-        <RoleForm onRefreshData={onRefreshData} />
+      <div className="grid grid-cols-2 gap-5">
+        <div className="h-fit">
+          <CSVDownloader
+            data={transformRolesCsv(onRetreiveItemsFromIdList())}
+          />
+          <RoleForm onRefreshData={onRefreshData} />
+        </div>
 
         {/*
          * Tableau generique utilisé pour la liste des groupes,
@@ -79,14 +91,23 @@ const RolePage = () => {
               onRefreshData={onRefreshData}
               actions={[
                 {
+                  title: "Exporter les rôles sélectionnés",
+                  description: "Exporter les rôles suivants en format csv",
+                  rightButtonTitle: "Exporter",
+                  onConfirm: async () => {},
+                },
+                {
                   title: "Supprimer les rôles selectionnés",
                   description: `${idsList.length} ${idsList.length > 1 ? "rôles vont être supprimés" : "rôle va être supprimé"}`,
+                  rightButtonTitle: "Confirmer",
+                  alertMessageBottom:
+                    "Attention: Cette opération ne peut pas être annulée",
                   onConfirm: onDeleteSelectedRoles,
                 },
               ]}
               retreiveItemsProperty="role"
-              onRetreiveItemsByPropertyFromIdList={
-                onRetreiveItemsByPropertyFromIdList
+              onRetreiveItemsValuesByPropertyFromIdList={
+                onRetreiveItemsValuesByPropertyFromIdList
               }
             />,
           ]}
