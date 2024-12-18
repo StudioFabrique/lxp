@@ -4,7 +4,7 @@ import { Library } from "lucide-react";
 // Composant Mediatheque qui affiche un lien vers la médiathèque dans la sidebar
 const Mediatheque = ({ currentRoute }: { currentRoute: string[] }) => {
   // Vérifie si la route actuelle correspond à la médiathèque
-  const isCurrentPathActive = currentRoute[1] === undefined;
+  const isCurrentPathActive = currentRoute[1] === "mediatheque";
 
   return (
     <li>

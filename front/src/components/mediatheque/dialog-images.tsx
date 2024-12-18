@@ -45,7 +45,7 @@ function DialogImages({ onClose }: Props) {
           <h2 className="font-bold">Importer un fichier image</h2>
           {list.length > 0 ? (
             <>
-              <ul className="flex flex-wrap gap-x-8 gap-y-4 justify-center">
+              <ul className="flex flex-wrap gap-x-8 gap-y-4 justify-start">
                 {(list as Media[]).map((item) => (
                   <li className={getStyle(item)} key={item.id}>
                     <button

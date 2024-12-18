@@ -42,13 +42,40 @@ export default async function putActivityImage(
   // Si un nouveau fichier est uploadé, utilise son nom
   // Sinon utilise l'URL de la médiathèque si fournie
   // Sinon conserve l'URL existante
-  const updatedActivity = await prisma.activity.update({
-    where: { id: activityId },
-    data: {
-      title,
-      description,
-      url: filename ?? url ?? existingActivity.url,
-    },
+
+  const transaction = await prisma.$transaction(async (tx) => {
+    if (existingActivity.url) {
+      const media = await tx.mediatheque.findFirst({
+        where: { url: existingActivity.url },
+      });
+      if (media) {
+        await tx.mediatheque.update({
+          where: { id: media.id },
+          data: { used: { decrement: 1 } },
+        });
+      }
+    }
+
+    await prisma.activity.update({
+      where: { id: activityId },
+      data: {
+        title,
+        description,
+        url: filename ?? url ?? existingActivity.url,
+      },
+    });
+
+    if (url) {
+      const media = await tx.mediatheque.findFirst({
+        where: { url },
+      });
+      if (media) {
+        await tx.mediatheque.update({
+          where: { id: media.id },
+          data: { used: { increment: 1 } },
+        });
+      }
+    }
   });
 
   /* TODO: Supprimer l'ancien fichier si un nouveau est uploadé
@@ -68,5 +95,5 @@ export default async function putActivityImage(
     );
   } */
 
-  return updatedActivity;
+  return transaction;
 }
