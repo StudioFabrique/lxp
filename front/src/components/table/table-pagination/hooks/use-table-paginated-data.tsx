@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import useHttp from "../../../../hooks/use-http";
 
 /**
@@ -109,8 +109,17 @@ function useTablePaginatedData<TData>(
     options?.disablePagination,
   ]);
 
+  /**
+   * Gère l'envoi des requêtes HTTP pour récupérer les données de la table
+   * Utilise un délai de 10ms pour éviter les requêtes répétés au rechargement de la page
+   * Nettoie le timeout lors du démontage du composant
+   */
   useEffect(() => {
-    handleRequest();
+    const timeout = setTimeout(() => {
+      handleRequest();
+    }, 10);
+
+    return () => clearTimeout(timeout);
   }, [handleRequest]);
 
   /**
