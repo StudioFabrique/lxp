@@ -4,6 +4,7 @@ import Formation from "./sidebar-parts/formation";
 import Group from "./sidebar-parts/group";
 import Home from "./sidebar-parts/home";
 import Lesson from "./sidebar-parts/lesson";
+import Mediatheque from "./sidebar-parts/mediatheque";
 import Module from "./sidebar-parts/module";
 import Parcours from "./sidebar-parts/parcours";
 import Roles from "./sidebar-parts/roles";
@@ -26,6 +27,8 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => (
     <Can action="write" object="role">
       <Roles currentRoute={currentRoute} />
     </Can>
+    <Mediatheque currentRoute={currentRoute} />
+
     {/* <Calendar interfaceType={interfaceType} />
     <Library interfaceType={interfaceType} />
     <Forum interfaceType={interfaceType} /> */}

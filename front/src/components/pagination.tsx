@@ -3,7 +3,6 @@ import { cloneElement, ReactElement, useMemo } from "react";
 
 // Props du composant de pagination
 type Props = {
-  totalElements: number;
   page: number; // Numéro de la page courante
   perPage: number; // Nombre d'éléments par page
   setLimit: (limit: number) => void; // Fonction pour modifier le nombre d'éléments par page
@@ -19,7 +18,6 @@ function Pagination({
   children,
   page,
   perPage,
-  totalElements,
   totalPages,
   setLimit,
   setPage,
