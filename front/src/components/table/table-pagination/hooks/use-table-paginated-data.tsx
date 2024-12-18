@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useMemo, useRef } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../../../hooks/use-http";
 
 /**
@@ -12,9 +12,9 @@ function useTablePaginatedData<TData>(
   options?: { disablePagination: boolean; disableSort: boolean },
 ) {
   const { sendRequest, isLoading } = useHttp();
-  const isFirstRender = useRef(true);
 
   const [data, setData] = useState<TData[]>([]);
+
   const [currentPage, setCurrentPage] = useState<number | null>(1);
   const [maxPage, setMaxPage] = useState<number | null>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(5);
@@ -23,108 +23,105 @@ function useTablePaginatedData<TData>(
   const [sortProperty, setSortProperty] = useState<string | null>(null);
   const [isAscDirection, setAscDirection] = useState<boolean>(true);
 
-  const handleSetItemsPerPage = useCallback((value: number) => {
+  const handleSetItemsPerPage = (value: number) => {
     setItemsPerPage(value);
-    setCurrentPage(1); // Reset to first page when changing items per page
-  }, []);
+  };
 
-  const handleSetCurrentPage = useCallback((value: number) => {
+  const handleSetCurrentPage = (value: number) => {
     setCurrentPage(value);
-  }, []);
+  };
 
-  const handleSetPreviousPage = useCallback(() => {
+  const handleSetPreviousPage = () => {
     if (!currentPage) return;
     const newValue = currentPage - 1;
     if (newValue > 0) setCurrentPage(newValue);
-  }, [currentPage]);
+  };
 
-  const handleSetNextPage = useCallback(() => {
+  const handleSetNextPage = () => {
     if (!currentPage) return;
     const newValue = currentPage + 1;
     if (maxPage && newValue <= maxPage) setCurrentPage(newValue);
-  }, [currentPage, maxPage]);
+  };
 
-  const handleSortProperty = useCallback(
-    (property: string) => {
-      if (property === sortProperty) {
-        setAscDirection((prevDir) => !prevDir);
-      } else {
-        setAscDirection(true);
-        setSortProperty(property);
-      }
-      setCurrentPage(1); // Reset to first page when sorting
-    },
-    [sortProperty],
-  );
+  const handleSortProperty = (property: string) => {
+    if (property === sortProperty) {
+      setAscDirection((prevDir) => !prevDir);
+    } else setAscDirection(true);
 
-  const handleSubmitSearchValue = useCallback((value: string) => {
+    setSortProperty(property);
+  };
+
+  const handleSubmitSearchValue = (value: string) => {
     setSearchValue(value.length > 0 ? value : null);
-    setCurrentPage(1); // Reset to first page when searching
-  }, []);
+  };
 
-  const applyDataPaginated = useCallback(
-    ({ total, list }: { total: number; list: TData[] }) => {
+  /**
+   * Gère la récupération des données avec la pagination depuis l'API
+   * Lance une nouvelle requête à chaque changement des paramètres
+   * (numéro de page, nombre d'éléments par page, recherche)
+   */
+  const handleRequest = useCallback(async () => {
+    const applyDataPaginated = ({
+      total,
+      list,
+    }: {
+      total: number;
+      list: TData[];
+    }) => {
       setMaxPage(Math.ceil(total / itemsPerPage));
       setTotalItems(total);
       setData(list);
-    },
-    [itemsPerPage],
-  );
+    };
 
-  const applyDataWithoutPagination = useCallback(
-    ({ data }: { data: TData[] }) => {
+    const applyDataWithoutPagination = ({ data }: { data: TData[] }) => {
       setData(data);
-    },
-    [],
-  );
+    };
 
-  const requestPath = useMemo(() => {
     const path =
       searchOptions.apiSearchEndpoint && searchValue
         ? `${searchOptions.apiSearchEndpoint}/${searchOptions.searchProperty}/${searchValue}`
         : apiEndpoint;
 
+    console.log({ path });
+
     const sortDirection = isAscDirection ? "asc" : "desc";
-
-    return options?.disableSort
-      ? path
-      : `${path}/${sortProperty}/${sortDirection}${options?.disablePagination ? "" : `?page=${currentPage}&limit=${itemsPerPage}`}`;
-  }, [
-    apiEndpoint,
-    currentPage,
-    isAscDirection,
-    itemsPerPage,
-    options,
-    searchOptions,
-    searchValue,
-    sortProperty,
-  ]);
-
-  const handleRequest = useCallback(async () => {
-    const applyData = options?.disablePagination
-      ? applyDataWithoutPagination
-      : applyDataPaginated;
 
     await sendRequest(
       {
-        path: requestPath,
+        path: options?.disablePagination
+          ? path
+          : `${path}/${sortProperty}/${sortDirection}${options?.disablePagination ? "" : `?page=${currentPage}&limit=${itemsPerPage}`}`,
       },
-      applyData,
+      options?.disablePagination
+        ? applyDataWithoutPagination
+        : applyDataPaginated,
     );
   }, [
-    requestPath,
-    options?.disablePagination,
-    applyDataPaginated,
-    applyDataWithoutPagination,
     sendRequest,
+    searchOptions.apiSearchEndpoint,
+    searchOptions.searchProperty,
+    currentPage,
+    apiEndpoint,
+    itemsPerPage,
+    searchValue,
+    isAscDirection,
+    sortProperty,
+    options?.disablePagination,
   ]);
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      handleRequest();
-      isFirstRender.current = false;
-    }
+    handleRequest();
   }, [handleRequest]);
+
+  /**
+   * Réinitialise la page actuelle à 1 lorsque il n'y a plus de données
+   * sur la page actuelle supérieure à 1
+   */
+  useEffect(() => {
+    if (currentPage && currentPage > 1 && !(data.length > 0)) {
+      setCurrentPage(1);
+    }
+  }, [currentPage, data.length]);
 
   return {
     data,
