@@ -16,7 +16,7 @@ function CardMedia({ media }: Props) {
     backgroundImage: `url(${ACTIVITIES + "images/" + media.url})`,
 
     width: "100%",
-    height: "9rem",
+    height: "15rem",
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
@@ -42,19 +42,19 @@ function CardMedia({ media }: Props) {
   }, [copied]);
 
   return (
-    <div className="card glass w-80 h-80">
+    <div className="card glass w-64 h-64">
       <figure style={classImage}>
         <span className="w-full h-full flex justify-end items-end p-2">
-          <button className="btn btn-sm btn-primary" onClick={handleCopyUrl}>
+          <button className="btn btn-xs btn-primary" onClick={handleCopyUrl}>
             <span className="flex gap-x-2 items-center">
               <p>Importer</p>
-              {copied && <CheckCircle className="w-4 h-4" />}
+              {copied && <CheckCircle className="w-3 h-3" />}
             </span>
           </button>
         </span>
       </figure>
-      <div className="card-body">
-        <h2 className="card-title flex justify-between">
+      <div className="card-body text-xs">
+        <h2 className="text-sm card-title flex justify-between">
           <p>Media :</p>
           <p className="capitalize text-end">{media.type}</p>
         </h2>
