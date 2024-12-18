@@ -4,6 +4,7 @@
 import { useCallback, useEffect, useReducer } from "react";
 
 import useHttp from "./use-http";
+import toast from "react-hot-toast";
 
 // Interface définissant la structure de l'état de pagination
 type PaginationState<T> = {
@@ -11,13 +12,13 @@ type PaginationState<T> = {
   perPage: number; // Nombre d'éléments par page
   totalPages: number; // Nombre total de pages
   list: T[]; // Liste des éléments de la page courante
-  type: "image" | "document"; // Type de média à afficher
+  type: "image" | "video" | "audio" | "document"; // Type de média à afficher
 };
 
 // État initial de la pagination
 const initialState = {
   page: 1,
-  perPage: 10,
+  perPage: 6,
   totalPages: 0,
   list: [],
   type: "image",
@@ -29,7 +30,7 @@ type PaginationAction<T> =
   | { type: "SET_LIMIT"; payload: number }
   | { type: "SET_TOTAL_PAGES"; payload: number }
   | { type: "SET_LIST"; payload: { list: T[]; totalPages: number } }
-  | { type: "SET_TYPE"; payload: "image" | "document" };
+  | { type: "SET_TYPE"; payload: "image" | "video" | "audio" | "document" };
 
 // Reducer pour gérer les différentes actions de pagination
 const paginationReducer = <T>(
@@ -66,7 +67,7 @@ const paginationReducer = <T>(
 
 // Hook principal de pagination
 const usePaginatedMediatheque = <T>() => {
-  const { sendRequest } = useHttp();
+  const { error, isLoading, sendRequest } = useHttp();
   const [state, dispatch] = useReducer(
     paginationReducer,
     initialState as PaginationState<T>
@@ -92,9 +93,12 @@ const usePaginatedMediatheque = <T>() => {
     });
   }, []);
 
-  const setType = useCallback((type: "image" | "document") => {
-    dispatch({ type: "SET_TYPE", payload: type });
-  }, []);
+  const setType = useCallback(
+    (type: "image" | "video" | "audio" | "document") => {
+      dispatch({ type: "SET_TYPE", payload: type });
+    },
+    []
+  );
 
   // Fonction pour récupérer la liste paginée depuis l'API
   const getPaginatedList = useCallback(() => {
@@ -114,17 +118,25 @@ const usePaginatedMediatheque = <T>() => {
     getPaginatedList();
   }, [getPaginatedList]);
 
+  useEffect(() => {
+    if (error.length > 0) {
+      toast.error(error);
+    }
+  }, [error]);
+
   // Retourne les valeurs et fonctions nécessaires pour utiliser la pagination
   return {
+    isLoading,
     list: state.list,
     page: state.page,
     perPage: state.perPage,
-    totalPages: state.totalPages,
-    setPage,
     setLimit,
-    setTotalPages,
     setList,
+    setPage,
+    setTotalPages,
     setType,
+    totalPages: state.totalPages,
+    type: state.type,
   };
 };
 
