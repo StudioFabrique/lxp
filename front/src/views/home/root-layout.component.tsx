@@ -21,8 +21,6 @@ const RootLayout = () => {
   const nav = useNavigate();
   const location = useLocation();
 
-  console.log({ isLoggedIn, user });
-
   // Mémorisation du rôle et du rang
   const userRole = useMemo(() => user?.roles?.[0], [user?.roles]);
   const userRank = useMemo(() => userRole?.rank, [userRole]);

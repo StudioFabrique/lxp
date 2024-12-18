@@ -22,6 +22,9 @@ import { body, param, query } from "express-validator";
 const groupRouter = Router();
 
 // GET routes
+// search/student/sasdfa/name/asc
+// search/student/test/name/desc?page=1&limit=5
+// search/:role/:entity/:value/:stype/:sdir
 groupRouter.get(
   "/search/:role/:entity/:value/:stype/:sdir",
   checkPermissions(),
