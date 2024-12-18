@@ -13,6 +13,7 @@ import { getPagination } from "../../utils/services/getPagination";
 export default async function getMedias(req: Request) {
   // Extraction des paramètres de pagination depuis la requête
   let { page, limit, type } = req.query;
+  const types = ["image", "document", "video", "audio"];
 
   // Valeurs par défaut si les paramètres ne sont pas fournis
   if (!page) {
@@ -21,7 +22,7 @@ export default async function getMedias(req: Request) {
   if (!limit) {
     limit = "10"; // 10 éléments par page par défaut
   }
-  if (!type || (type !== "image" && type !== "document")) {
+  if (!types.includes(type as string)) {
     type = "image"; // Type par défaut
   }
 
@@ -50,5 +51,5 @@ export default async function getMedias(req: Request) {
     },
   });
 
-  return { medias, totalPages: totalPages };
+  return { medias, totalPages: totalPages === 0 ? 1 : totalPages };
 }

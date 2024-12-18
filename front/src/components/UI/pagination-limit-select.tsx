@@ -12,9 +12,9 @@ function PaginationLimitSelect({ perPage, onChange }: Props) {
         onChange={onChange}
         value={perPage}
       >
-        <option>10</option>
-        <option>20</option>
-        <option>30</option>
+        <option>6</option>
+        <option>12</option>
+        <option>24</option>
       </select>
     </>
   );
