@@ -142,6 +142,7 @@ export const permDefsActions = {
     write: [
       "role",
       "tag",
+      "user",
       "group",
       "formation",
       "parcours",
@@ -162,6 +163,7 @@ export const permDefsActions = {
     update: [
       "role",
       "tag",
+      "user",
       "group",
       "formation",
       "parcours",
@@ -182,6 +184,7 @@ export const permDefsActions = {
     delete: [
       "role",
       "tag",
+      "user",
       "group",
       "formation",
       "parcours",

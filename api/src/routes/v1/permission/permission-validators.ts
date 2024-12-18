@@ -31,8 +31,8 @@ export const postRoleValidator = [
 ];
 
 export const deleteRoleValidator = [
-  param("role")
-    .isString()
+  param("roleId")
+    .isMongoId()
     .withMessage("Role invalide")
     .notEmpty()
     .withMessage("Role absent")

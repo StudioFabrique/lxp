@@ -62,7 +62,7 @@ permissionRouter.put(
 );
 
 permissionRouter.delete(
-  "/role/:role",
+  "/role/:roleId",
   checkPermissions("role"),
   deleteRoleValidator,
   httpDeleteRole,
