@@ -6,6 +6,8 @@ import { useState } from "react";
 type Action<TData> = {
   title: string;
   description: string;
+  rightButtonTitle: string;
+  alertMessageBottom?: string;
   data?: TData;
   onConfirm: () => Promise<void>;
 };
@@ -16,14 +18,18 @@ type TableButtonsProps<TData> = {
   onRefreshData: () => void;
   actions: Action<TData>[];
   retreiveItemsProperty?: keyof TData;
-  onRetreiveItemsByPropertyFromIdList?: (property: keyof TData) => string[];
+  onRetreiveItemsValuesByPropertyFromIdList?: (
+    property: keyof TData,
+  ) => string[];
 };
 
 const TableActionsButtons = <TData,>(props: TableButtonsProps<TData>) => {
   const descList =
-    props.onRetreiveItemsByPropertyFromIdList &&
+    props.onRetreiveItemsValuesByPropertyFromIdList &&
     props.retreiveItemsProperty &&
-    props.onRetreiveItemsByPropertyFromIdList(props.retreiveItemsProperty);
+    props.onRetreiveItemsValuesByPropertyFromIdList(
+      props.retreiveItemsProperty,
+    );
 
   const [showModal, setShowModal] = useState<boolean>(false);
   const [currentAction, setCurrentAction] = useState<Action<TData> | null>(
@@ -46,7 +52,9 @@ const TableActionsButtons = <TData,>(props: TableButtonsProps<TData>) => {
         <TableActionsModal
           title={currentAction.title}
           description={currentAction.description}
+          alertMessageBottom={currentAction.alertMessageBottom}
           descList={descList}
+          rightButtonTitle={currentAction.rightButtonTitle}
           onConfirm={currentAction.onConfirm}
           onCancel={handleCloseModal}
         />

@@ -47,7 +47,7 @@ export const actionsConfig = (
     tooltip: "Supprimer",
     icon: Trash2,
     additionnalClassname: "btn-ghost text-error",
-    request: { path: "/role/[:id]", method: "delete" },
+    request: { path: "/permission/role/[:id]", method: "delete" },
     onSuccessfulSubmit: onRefreshData,
     withConfirmationModal: true,
     modal: {

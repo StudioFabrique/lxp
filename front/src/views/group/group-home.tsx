@@ -46,8 +46,11 @@ const GroupHome = () => {
   });
 
   // custom hook gestion checkbox
-  const { idsList, onRetreiveItemsByPropertyFromIdList, ...checkboxConfig } =
-    useTableCheckbox<Group>(data, "_id");
+  const {
+    idsList,
+    onRetreiveItemsValuesByPropertyFromIdList,
+    ...checkboxConfig
+  } = useTableCheckbox<Group>(data, "_id");
 
   // custom hook gestion actions groupées
   const { onDeleteSelectedGroups } = useGroupActions(idsList, onRefreshData);
@@ -97,12 +100,13 @@ const GroupHome = () => {
               {
                 title: "Supprimer les groupes selectionnés",
                 description: `${idsList.length} ${idsList.length > 1 ? "groupes vont être supprimés" : "groupe va être supprimé"}`,
+                rightButtonTitle: "Supprimer",
                 onConfirm: onDeleteSelectedGroups,
               },
             ]}
             retreiveItemsProperty="name"
-            onRetreiveItemsByPropertyFromIdList={
-              onRetreiveItemsByPropertyFromIdList
+            onRetreiveItemsValuesByPropertyFromIdList={
+              onRetreiveItemsValuesByPropertyFromIdList
             }
           />,
           // bas du tableau

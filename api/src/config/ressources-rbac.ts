@@ -13,6 +13,8 @@ export const resourcesRbac = [
   "course",
   "lesson",
   "bonusSkill",
+  "objective",
+  "mediatheque",
 ];
 
 // Pour les actions write, update et delete pour teacher rank 2
@@ -62,8 +64,8 @@ export async function getPermissionsByRank(
 > {
   switch (rank) {
     case 1: {
-      const roles = await Role.find();
-      const roleNames = roles.map((role) => role.role);
+      // const roles = await Role.find();
+      // const roleNames = roles.map((role) => role.role);
       const resources: {
         resource: string;
         actions: ("read" | "write" | "update" | "delete")[];
@@ -78,12 +80,12 @@ export async function getPermissionsByRank(
       });
 
       // Add role resources
-      roleNames.forEach((resource) => {
-        resources.push({
-          resource,
-          actions: ["read", "write", "update", "delete"],
-        });
-      });
+      // roleNames.forEach((resource) => {
+      //   resources.push({
+      //     resource,
+      //     actions: ["read", "write", "update", "delete"],
+      //   });
+      // });
 
       return resources;
     }

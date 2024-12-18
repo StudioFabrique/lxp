@@ -2,7 +2,6 @@
 export const permissionsList = [
   "role",
   "permission",
-  "cursus",
   "tag",
   "user",
   "group",

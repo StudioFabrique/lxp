@@ -151,13 +151,15 @@ const UserItem: FC<{
               <Edit2Icon className="w-4 h-4" />
             </Link>
           </Can>
-          <Can action="delete" object={userItem.roles[0].role}>
-            <ButtonDelete
-              error={error}
-              isLoading={isUserDeleteLoading}
-              userItem={userItem}
-              onDelete={onDelete}
-            />
+          <Can action="delete" object="user">
+            <Can action="delete" object={userItem.roles[0].role}>
+              <ButtonDelete
+                error={error}
+                isLoading={isUserDeleteLoading}
+                userItem={userItem}
+                onDelete={onDelete}
+              />
+            </Can>
           </Can>
         </div>
       </td>

@@ -56,6 +56,7 @@ const TableListActionCell = (props: TableListActionCellProps) => {
           {...props.modal}
           onConfirm={handleClick}
           onCancel={handleToggleModal}
+          rightButtonTitle="Confirmer"
         />
       ) : null}
       <div className="flex justify-center">
