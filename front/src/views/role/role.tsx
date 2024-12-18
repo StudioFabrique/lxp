@@ -33,7 +33,7 @@ const RolePage = () => {
     onSortProperty,
   } = useTablePaginatedData<Role>(
     "/permission/role",
-    { apiSearchEndpoint: "/permission/role/search" },
+    { apiSearchEndpoint: "/permission/search", searchProperty: "role" },
     {
       disablePagination: true,
       disableSort: true,

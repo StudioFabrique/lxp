@@ -79,7 +79,7 @@ function useTablePaginatedData<TData>(
 
     const path =
       searchOptions.apiSearchEndpoint && searchValue
-        ? `${searchOptions.apiSearchEndpoint}/${searchOptions.searchProperty}/${searchValue}`
+        ? `${searchOptions.apiSearchEndpoint}/${searchOptions.searchProperty || null}/${searchValue}`
         : apiEndpoint;
 
     console.log({ path });
