@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import { serverIssue } from "../../utils/constantes";
 import Role from "../../utils/interfaces/db/role";
-import { ressourcesRbac } from "../../config/ressources-rbac";
-import Permission from "../../utils/interfaces/db/permission";
+import { resourcesRbac } from "../../config/ressources-rbac";
 import { getAllActionsPermissionsForRole } from "../../utils/rbac/rbac-utils";
 
 export default async function httpGetRessources(req: Request, res: Response) {
@@ -22,7 +21,7 @@ export default async function httpGetRessources(req: Request, res: Response) {
     });
 
     const ressources = {
-      ressources: ressourcesRbac,
+      ressources: resourcesRbac,
       roles: roles.map((role) => role.role),
     };
 

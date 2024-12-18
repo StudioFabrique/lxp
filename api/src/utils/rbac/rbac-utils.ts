@@ -105,7 +105,7 @@ export async function getAllRolesWithSearch(search: string) {
   };
 
   // Construction de la query avec la valeur de recherche
-  // Recherche dans la propriété role mais aussi dans la propriété label
+  // Recherche dans la propriété role mais aussi dans la propriété
   const queryWithSearch = {
     ...query,
     $or: [
@@ -223,11 +223,12 @@ export async function getAllPermissionsForUser(
 export async function createOrUpdateRoleWithPermissions(
   roleName: string,
   label: string,
+  rank: number,
   permissions: {
     resource: string;
     actions: Array<"read" | "write" | "update" | "delete">;
   }[],
-): Promise<void> {
+) {
   try {
     if (
       !permissions.every((permission) =>
@@ -241,9 +242,9 @@ export async function createOrUpdateRoleWithPermissions(
       permission.actions.map((action) => `${action}:${permission.resource}`),
     );
 
-    let role = await Role.findOne({ name: roleName });
+    let role = await Role.findOne({ role: roleName });
     if (!role) {
-      role = new Role({ name: roleName, label: label });
+      role = new Role({ role: roleName, label, rank });
       await role.save();
     }
 
@@ -254,6 +255,8 @@ export async function createOrUpdateRoleWithPermissions(
         { upsert: true },
       );
     }
+
+    return role;
   } catch (error) {
     console.error(`Error creating role ${roleName}:`, error);
     throw new Error(`Failed to create role with permissions`);
