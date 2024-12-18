@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { getAllRoles } from "../../utils/rbac/rbac-utils";
 
-export default async function httpGetAllRoles(req: Request, res: Response) {
+export default async function httpGetAllRoles(_req: Request, res: Response) {
   try {
     const roles = await getAllRoles();
     return res

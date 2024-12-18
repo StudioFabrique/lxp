@@ -41,8 +41,8 @@ const GroupHome = () => {
     onSortProperty,
     ...pagination
   } = useTablePaginatedData<Group>("/group/student", {
-    apiSearchPath: "/group/search",
-    searchProperty: "student",
+    apiSearchEndpoint: "/group/search/student",
+    searchProperty: "name",
   });
 
   // custom hook gestion checkbox
