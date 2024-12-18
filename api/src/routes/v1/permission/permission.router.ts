@@ -21,7 +21,7 @@ permissionRouter.get("/role", checkPermissions("role"), httpGetRoles);
 
 // Recherche de rôles
 permissionRouter.get(
-  "/role/search/:searchValue",
+  "/search/role/:searchValue/",
   checkPermissions("role"),
   httpGetSearchRoles,
 );
