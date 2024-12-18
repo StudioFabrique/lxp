@@ -63,7 +63,7 @@ const SearchBar = ({
   return (
     <div className="flex flex-col lg:flex-row justify-between gap-5 items-center w-full">
       {title ? (
-        <h2 className="text-lg font-bold text-base-content">{title}</h2>
+        <h2 className="text-lg font-bold text-base-content w-full">{title}</h2>
       ) : null}
 
       <div className="flex items-center justify-end gap-5 w-full">
