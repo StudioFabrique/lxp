@@ -50,10 +50,7 @@ const RolePage = () => {
   return (
     <div className="flex flex-col gap-y-5 p-10">
       {/* Header de la liste des groupes */}
-      <Header
-        title="Liste des groupes"
-        description="Créer, modifier et supprimer des groupes"
-      />
+      <Header title="Liste des rôles" />
 
       <div className="grid gap-5">
         <RoleForm onRefreshData={onRefreshData} />
