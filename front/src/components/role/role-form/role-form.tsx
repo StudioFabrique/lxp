@@ -119,7 +119,7 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
             </p>
           </span>
 
-          <span className="flex flex-col gap-y-1">
+          <span className="flex flex-col gap-y-1 w-[90%]">
             <p>Nom du rôle</p>
             <input
               ref={nameInputRef}
@@ -133,7 +133,7 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
             />
           </span>
 
-          <span className="flex flex-col gap-y-1">
+          <span className="flex flex-col gap-y-1 w-[90%]">
             <p>Label</p>
             <input
               name="label"
@@ -148,7 +148,7 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
             />
           </span>
 
-          <span className="flex flex-col gap-y-1">
+          <span className="flex flex-col gap-y-1 w-[90%]">
             <p>Modèle de rôle</p>
             <RoleTypeSelector
               currentRoleType={currentRoleType}

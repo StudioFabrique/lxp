@@ -11,8 +11,8 @@ import {
 } from "./role-table-config";
 import TableActionsButtons from "../../components/table/table-buttons/table-actions-buttons";
 import useRoleActions from "./hooks/use-role-actions";
-import CSVDownloader from "../../components/UI/csv-downloader/csv-downloader";
 import { transformRolesCsv } from "../../utils/csv/csv-data-transform";
+import CsvDownloaderWithRef from "../../components/UI/csv-downloader/csv-downloader-with-ref";
 import { Ref, useRef } from "react";
 
 /**
@@ -54,16 +54,22 @@ const RolePage = () => {
   // custom hook gestion actions groupées
   const { onDeleteSelectedRoles } = useRoleActions(idsList, onRefreshData);
 
+  const csvRef: Ref<HTMLButtonElement> = useRef(null);
+
   return (
     <div className="flex flex-col gap-y-5 p-10">
       {/* Header de la liste des groupes */}
       <Header title="Liste des rôles" />
 
-      <div className="grid grid-cols-2 gap-5">
-        <div className="h-fit">
-          <CSVDownloader
-            data={transformRolesCsv(onRetreiveItemsFromIdList())}
-          />
+      {/* Balise Csv caché */}
+      <CsvDownloaderWithRef
+        ref={csvRef}
+        className="hidden"
+        data={transformRolesCsv(onRetreiveItemsFromIdList())}
+      />
+
+      <div className="grid 2xl:grid-cols-2 gap-5">
+        <div className="h-fit w-fit 2xl:w-auto">
           <RoleForm onRefreshData={onRefreshData} />
         </div>
 
@@ -94,7 +100,9 @@ const RolePage = () => {
                   title: "Exporter les rôles sélectionnés",
                   description: "Exporter les rôles suivants en format csv",
                   rightButtonTitle: "Exporter",
-                  onConfirm: async () => {},
+                  onConfirm: async () => {
+                    csvRef.current?.click();
+                  },
                 },
                 {
                   title: "Supprimer les rôles selectionnés",
