@@ -70,6 +70,7 @@ activityRouter.post(
   "/video/:lessonId",
   checkPermissions("lesson"),
   uploadActivityVideo(),
+  mediatheque("video"),
   jsonParser,
   lessonIdValidator,
   postVideoValidator,
@@ -116,7 +117,7 @@ activityRouter.post(
   "/image/:lessonId",
   checkPermissions("lesson"),
   uploadActivityImage(),
-  mediatheque,
+  mediatheque("image"),
   jsonParser,
   httpPostImage
 );
@@ -126,6 +127,7 @@ activityRouter.put(
   "/image/:activityId",
   checkPermissions("lesson"),
   uploadActivityImage(),
+  mediatheque("image"),
   jsonParser,
   activityIdValidator,
   httpPutImage

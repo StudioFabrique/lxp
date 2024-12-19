@@ -1,27 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { ACTIVITIES } from "../../config/urls";
+import { cloneElement, ReactElement, useEffect, useState } from "react";
 import { displaySize } from "../../helpers/sizeUnitConversion";
-import { CheckCircle } from "lucide-react";
 import Media from "../../utils/interfaces/media";
+import { ClipboardCheck, Copy, Trash2 } from "lucide-react";
 
 type Props = {
   media: Media;
+  children: ReactElement;
 };
 
-function CardMedia({ media }: Props) {
+function CardMedia({ children, media }: Props) {
   const channel = new BroadcastChannel("clipboardChannel");
   const [copied, setCopied] = useState(false);
-
-  const classImage: React.CSSProperties = {
-    backgroundImage: `url(${ACTIVITIES + "images/" + media.url})`,
-
-    width: "100%",
-    height: "15rem",
-    backgroundSize: "cover",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "center",
-    position: "relative",
-  };
 
   const handleCopyUrl = async () => {
     const valueToCopy = media.url;
@@ -37,27 +26,14 @@ function CardMedia({ media }: Props) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setCopied(false);
-    }, 2000);
+    }, 5000);
     return () => clearTimeout(timer);
   }, [copied]);
 
   return (
-    <div className="card glass w-64 h-64">
-      <figure style={classImage}>
-        <span className="w-full h-full flex justify-end items-end p-2">
-          <button className="btn btn-xs btn-primary" onClick={handleCopyUrl}>
-            <span className="flex gap-x-2 items-center">
-              <p>Importer</p>
-              {copied && <CheckCircle className="w-3 h-3" />}
-            </span>
-          </button>
-        </span>
-      </figure>
+    <div className="card glass w-64">
+      {cloneElement(children, { handleCopyUrl, copied })}
       <div className="card-body text-xs">
-        <h2 className="text-sm card-title flex justify-between">
-          <p>Media :</p>
-          <p className="capitalize text-end">{media.type}</p>
-        </h2>
         <span className="flex justify-between">
           <p>Taille :</p>
           <p className="text-end">{displaySize(media.size)}</p>
@@ -67,7 +43,35 @@ function CardMedia({ media }: Props) {
           <p className="text-end">{media.used} fois</p>
         </span>
 
-        <div className="card-actions justify-end mt-2"></div>
+        <div className="card-actions justify-end mt-2">
+          <span className="flex items-center gap-x-4">
+            <div className="tooltip" data-tip={copied ? "Copié" : "Copier"}>
+              <button onClick={handleCopyUrl}>
+                {!copied ? (
+                  <Copy className="w-5 h-5 text-primary" />
+                ) : (
+                  <ClipboardCheck className="w-5 h-5 text-success" />
+                )}
+              </button>
+            </div>
+            <div
+              className="tooltip"
+              data-tip={
+                media.used > 0
+                  ? "Ce fichier est utilisé"
+                  : "Supprimer le fichier"
+              }
+            >
+              <button disabled={media.used > 0}>
+                <Trash2
+                  className={`w-5 h-5 ${
+                    media.used > 0 ? "text-gray-500" : "text-error"
+                  }`}
+                />
+              </button>
+            </div>
+          </span>
+        </div>
       </div>
     </div>
   );
