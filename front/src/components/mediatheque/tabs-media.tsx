@@ -2,6 +2,7 @@ import { FileIcon, ImageIcon, MusicIcon, VideoIcon } from "lucide-react";
 import ListImages from "./list-images";
 import Media from "../../utils/interfaces/media";
 import { ReactNode } from "react";
+import ListVideos from "./list-videos";
 
 // Props du composant TabsMedia
 type Props = {
@@ -27,7 +28,7 @@ function TabsMedia({ children, list, type, setType }: Props) {
       type: "video",
       label: "Vidéos",
       icon: <VideoIcon />,
-      component: empty,
+      component: <ListVideos videos={list} />,
     },
     {
       type: "audio",

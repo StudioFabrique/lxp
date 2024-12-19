@@ -64,7 +64,7 @@ const useEditImageActivity = (
         return;
       }
     }
-    if (!activity && !file) {
+    if (!activity && !file && !selectedImage) {
       toast.error("Un fichier est requis");
       return;
     }
