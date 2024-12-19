@@ -1,3 +1,4 @@
+// Import des icônes et composants nécessaires
 import { GripVertical, Pen, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Activity from "../../../utils/interfaces/activity";
@@ -8,12 +9,14 @@ import { lessonActions } from "../../../store/redux-toolkit/lesson/lesson";
 import { useMemo } from "react";
 import { displayDate } from "../../../helpers/dispaly-dates";
 
+// Définition des props du composant
 type Props = {
-  activity: Activity;
-  index: number;
-  onDeleteActivity: (activity: Activity) => void;
+  activity: Activity; // L'activité à afficher
+  index: number; // L'index de l'activité dans la liste
+  onDeleteActivity: (activity: Activity) => void; // Callback de suppression
 };
 
+// Composant qui affiche une activité dans la liste avec les options de modification/suppression
 export default function ActivityListItem({
   activity,
   index,
@@ -22,11 +25,13 @@ export default function ActivityListItem({
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Mémoisation de la date formatée pour éviter des re-rendus inutiles
   const date = useMemo(
     () => displayDate(activity.createdAt, activity.updatedAt),
     [activity.createdAt, activity.updatedAt]
   );
 
+  // Gestion de la navigation vers la page de prévisualisation de l'activité
   const handleGoToActivity = () => {
     console.log({ activity });
     dispatch(lessonActions.setActivity(activity));
@@ -35,6 +40,7 @@ export default function ActivityListItem({
 
   return (
     <article className="flex justify-between items-center">
+      {/* Partie gauche: icône de drag, icône de livre et informations de l'activité */}
       <div className="flex items-center gap-x-4">
         <GripVertical className="w-10 h-10 text-primary/50" />
         <div className="w-10 h-10 text-primary">
@@ -52,8 +58,10 @@ export default function ActivityListItem({
           </span>
         </span>
       </div>
+      {/* Partie droite: date et boutons d'action */}
       <span className="flex items-center gap-x-4">
         <p className="text-base-content/50 text-xs italic">{date}</p>
+        {/* Bouton de modification - visible selon les permissions */}
         <Can action="update" object="lesson">
           <button
             onClick={handleGoToActivity}
@@ -62,6 +70,7 @@ export default function ActivityListItem({
             <Pen className="w-6 h-6 text-primary" />
           </button>
         </Can>
+        {/* Bouton de suppression - visible selon les permissions */}
         <Can action="delete" object="lesson">
           <button
             onClick={() => onDeleteActivity(activity)}
