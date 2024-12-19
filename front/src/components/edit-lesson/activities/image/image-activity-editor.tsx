@@ -43,10 +43,11 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
    */
   const classImage: React.CSSProperties = {
     backgroundImage: `url('${
-      image ??
-      (activity
-        ? `${ACTIVITIES}images/${selectedImage ?? activity.url}`
-        : defaultImage)
+      image ?? selectedImage
+        ? `${ACTIVITIES}images/${selectedImage}`
+        : activity
+        ? `${ACTIVITIES}images/${activity.url}`
+        : defaultImage
     }')`,
     width: "100%",
     height: "100%",

@@ -126,6 +126,7 @@ activityRouter.put(
   "/image/:activityId",
   checkPermissions("lesson"),
   uploadActivityImage(),
+  mediatheque,
   jsonParser,
   activityIdValidator,
   httpPutImage
