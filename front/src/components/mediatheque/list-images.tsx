@@ -1,5 +1,6 @@
 import Media from "../../utils/interfaces/media";
 import CardMedia from "./card-media";
+import ImageCard from "./image-card";
 
 // Définition du type des props du composant
 type Props = {
@@ -18,7 +19,9 @@ function ListImages({ images }: Props) {
           {/* Mapping sur le tableau d'images pour créer les cartes */}
           {(images as Media[]).map((item) => (
             <li key={item.id}>
-              <CardMedia media={item} />
+              <CardMedia media={item}>
+                <ImageCard media={item} />
+              </CardMedia>
             </li>
           ))}
         </ul>
