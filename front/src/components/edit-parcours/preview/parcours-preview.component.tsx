@@ -31,7 +31,6 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
 
   const handlePublishParcours = () => {
     const validationsErrors = validateParcours();
-    console.log({ validationsErrors });
     if (validationsErrors && validationsErrors.length !== 0) {
       toast.error(Object.values(validationsErrors![0]).toString());
     } else {

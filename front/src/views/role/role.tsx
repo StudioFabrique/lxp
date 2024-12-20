@@ -58,8 +58,12 @@ const RolePage = () => {
 
   return (
     <div className="flex flex-col gap-y-5 p-10">
-      {/* Header de la liste des groupes */}
-      <Header title="Liste des rôles" />
+      {/* Header de la liste des rôles */}
+      <Header
+        title="Liste des rôles"
+        description="Créer et gérer des rôles, les droits et les permissions des
+    utilisateurs"
+      />
 
       {/* Balise Csv caché */}
       <CsvDownloaderWithRef
@@ -69,7 +73,7 @@ const RolePage = () => {
       />
 
       <div className="grid 2xl:grid-cols-2 gap-5">
-        <div className="h-fit w-fit 2xl:w-auto">
+        <div className="h-fit w-[70%] 2xl:w-auto">
           <RoleForm onRefreshData={onRefreshData} />
         </div>
 
