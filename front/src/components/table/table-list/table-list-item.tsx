@@ -52,7 +52,7 @@ const TableListItem = <TData extends Record<string, unknown>>(
   }, [props.isAllChecked]);
 
   return (
-    <tr className="bg-base-100 hover:bg-base-200 text-base-content rounded-xl">
+    <tr className="bg-base-100 hover:bg-base-100/60 text-base-content rounded-xl">
       <td className="rounded-l-xl w-0" />
 
       {/* Affichage de la cellule de checkbox si activé */}
