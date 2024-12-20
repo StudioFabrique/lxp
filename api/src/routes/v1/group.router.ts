@@ -19,6 +19,7 @@ import httpPutGroup from "../../controllers/group/http-put-group";
 import httpPutAddUsersGroup from "../../controllers/group/http-put-add-users-group";
 import httpDeleteManyGroups from "../../controllers/group/http-delete-many-groups";
 import { body, param, query } from "express-validator";
+import { regexStringManyMongoId } from "../../utils/constantes";
 const groupRouter = Router();
 
 // GET routes
@@ -97,7 +98,7 @@ groupRouter.delete(
   "/deleteMany",
   checkPermissions("group"),
   [
-    query("ids").isString().withMessage("IDs de groupes invalides"),
+    query("ids").isMongoId().withMessage("IDs de groupes invalides"),
     checkValidatorResult,
   ],
   httpDeleteManyGroups,
@@ -107,7 +108,9 @@ groupRouter.delete(
   "/:id",
   checkPermissions("group"),
   [
-    param("id").isMongoId().withMessage("ID d'utilisateur invalide"),
+    param("id")
+      .matches(regexStringManyMongoId)
+      .withMessage("ID d'utilisateur invalide - format incorrect"),
     checkValidatorResult,
   ],
   httpDeleteGroup,

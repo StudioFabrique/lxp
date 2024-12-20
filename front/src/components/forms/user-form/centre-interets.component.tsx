@@ -28,8 +28,6 @@ const CentreInterets: FC<{
         0 &&
       currentHobbyValue.length > 0
     ) {
-      console.log("adding");
-
       setHobbies((hobbies) => [...hobbies, { title: currentHobbyValue }]);
       setCurrentHobbyValue("");
     }

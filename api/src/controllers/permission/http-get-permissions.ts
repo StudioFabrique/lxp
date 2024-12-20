@@ -6,7 +6,10 @@ export default async function httpGetPermissions(req: Request, res: Response) {
   try {
     const role: string = req.params.role;
 
-    const permissions = await getAllActionsPermissionsForRole(role);
+    const permissions = await getAllActionsPermissionsForRole({
+      identifier: "role",
+      role,
+    });
 
     if (!permissions) {
       return res

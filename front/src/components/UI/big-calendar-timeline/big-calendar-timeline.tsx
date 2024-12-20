@@ -46,8 +46,6 @@ const BigCalendarTimeline = ({
 }: BigCalendarTimelineProps) => {
   const dataAdjusted = adjustScheduleToCurrentWeek(data);
 
-  console.log({ view });
-
   return (
     <Calendar
       culture="fr"

@@ -20,7 +20,7 @@ function useRoleActions(idsList: string[], onRefreshData: () => Promise<void>) {
 
     await sendRequest(
       {
-        path: `/permission/role/deleteMany/?ids=${queryIds}`,
+        path: `/permission/roles/?ids=${queryIds}`,
         method: "delete",
       },
       applyData,

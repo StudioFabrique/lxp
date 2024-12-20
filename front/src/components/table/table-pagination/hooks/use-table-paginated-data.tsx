@@ -82,8 +82,6 @@ function useTablePaginatedData<TData>(
         ? `${searchOptions.apiSearchEndpoint}/${searchOptions.searchProperty || null}/${searchValue}`
         : apiEndpoint;
 
-    console.log({ path });
-
     const sortDirection = isAscDirection ? "asc" : "desc";
 
     await sendRequest(

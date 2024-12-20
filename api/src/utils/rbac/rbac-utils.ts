@@ -146,7 +146,6 @@ export async function getUsersThatHaveRole(role: string) {
 
   const users = await User.find({ roles: foundRole._id });
   const userIds = users.map((user) => user._id.toString());
-  console.log({ users: userIds });
   return userIds;
 }
 
@@ -177,9 +176,13 @@ export async function removeRoleFromUser(userId: string, role: string) {
  * @returns La liste des permissions du rôle
  */
 export async function getAllActionsPermissionsForRole(
-  role: string,
+  role:
+    | { identifier: "_id"; _id: string }
+    | { identifier: "role"; role: string },
 ): Promise<string[]> {
-  const roleDoc = await Role.findOne({ role: role });
+  const roleDoc = await (role.identifier === "_id"
+    ? Role.findById(role._id)
+    : Role.findOne({ role: role }));
   if (!roleDoc) {
     return [];
   }

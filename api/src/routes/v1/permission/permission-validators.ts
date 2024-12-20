@@ -1,8 +1,9 @@
-import { body, param } from "express-validator";
+import { body, param, query } from "express-validator";
 import { checkValidatorResult } from "../../../middleware/validators";
+import { regexStringManyMongoId } from "../../../utils/constantes";
 
-export const getPermissionsValidator = [
-  param("role")
+export const getPermissionsValidator = (queryParam: "role" | "id") => [
+  param(queryParam)
     .isString()
     .withMessage("Role invalide")
     .notEmpty()
@@ -37,6 +38,14 @@ export const deleteRoleValidator = [
     .notEmpty()
     .withMessage("Role absent")
     .escape(),
+
+  checkValidatorResult,
+];
+
+export const deleteManyRolesValidator = [
+  query("ids")
+    .matches(regexStringManyMongoId)
+    .withMessage("IDs de roles invalides"),
 
   checkValidatorResult,
 ];

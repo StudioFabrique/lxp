@@ -32,7 +32,7 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
 
   const { value: name } = useInput(
     (value: string) => regexGeneric.test(value),
-    role?.name || "",
+    role?.role || "",
   );
 
   const { value: label } = useInput(

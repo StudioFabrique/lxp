@@ -75,7 +75,6 @@ const Hobbies: FC<{ initHobbies: Hobby[] }> = ({ initHobbies }) => {
     e: FormEvent<HTMLFormElement>,
   ) => {
     e.preventDefault();
-    console.log("test");
 
     const applyData = (data: any) => {
       const hobby = data.data;
