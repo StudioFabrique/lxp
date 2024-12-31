@@ -3,7 +3,7 @@ import useHttp from "../../../hooks/use-http";
 import Role from "../../../utils/interfaces/role";
 
 function useManagePermissions(id: string) {
-  const { sendRequest, isLoading } = useHttp();
+  const { sendRequest } = useHttp();
 
   const [permissions, setPermissions] = useState<{
     read: string[];
@@ -12,7 +12,7 @@ function useManagePermissions(id: string) {
     delete: string[];
   }>();
   const [ressources, setRessources] = useState<string[]>();
-  const [role, setRole] = useState<Role>();
+  const [role, setRole] = useState<Role | null>();
 
   const remainingRessources = useMemo(() => {
     if (!permissions || !ressources) return [];
@@ -64,14 +64,22 @@ function useManagePermissions(id: string) {
       setRole(data.role);
     };
 
-    await sendRequest({ path: `/permission/ressources/id/${id}` }, applyData);
+    try {
+      await sendRequest({ path: `/permission/ressources/id/${id}` }, applyData);
+    } catch (error: unknown) {
+      if (
+        (error as { response?: { status: number } }).response?.status === 404
+      ) {
+        setRole(null);
+      }
+    }
   }, [id, sendRequest]);
 
   useEffect(() => {
     handleGetPermissionsRequest();
   }, [handleGetPermissionsRequest]);
 
-  return { permissions, ressources, role, isLoading };
+  return { permissions, ressources, role };
 }
 
 export default useManagePermissions;
