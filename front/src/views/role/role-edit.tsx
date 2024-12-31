@@ -36,21 +36,25 @@ const RoleEdit = () => {
       </div>
       <div className="grid grid-cols-2 gap-10">
         <PermissionsListWithDrawer
+          drawerId="drawer-1"
           title="Peut lire"
           permissions={permissions?.read}
           ressources={remainingRessources?.read}
         />
         <PermissionsListWithDrawer
+          drawerId="drawer-2"
           title="Peut écrire"
           permissions={permissions?.write}
           ressources={remainingRessources?.write}
         />
         <PermissionsListWithDrawer
+          drawerId="drawer-3"
           title="Peut mettre à jour"
           permissions={permissions?.update}
           ressources={remainingRessources?.update}
         />
         <PermissionsListWithDrawer
+          drawerId="drawer-4"
           title="Peut supprimer"
           permissions={permissions?.delete}
           ressources={remainingRessources?.delete}

@@ -5,12 +5,14 @@ import PermissionDeleteItem from "./permission-delete-item";
 import PermissionAddItem from "./permission-add-item";
 
 type PermissionsListWithDrawerProps = {
+  drawerId: string;
   title: string;
   permissions?: string[];
   remainingRessources?: { name: string; description: string }[];
 };
 
 const PermissionsListWithDrawer = ({
+  drawerId,
   title,
   permissions,
   remainingRessources,
@@ -22,7 +24,7 @@ const PermissionsListWithDrawer = ({
           <p className="w-full text-secondary font-bold text-lg">{title}</p>
           <div className="flex gap-5 items-center">
             <RightSideDrawer
-              id="test"
+              id={drawerId}
               title={title}
               icon={<ListPlus className="w-5" />}
             >
