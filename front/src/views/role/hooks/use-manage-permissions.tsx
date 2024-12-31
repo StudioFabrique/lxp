@@ -24,14 +24,12 @@ function useManagePermissions(id: string) {
       delete: deletePerms,
     } = permissions;
 
-    const resources = {
-      read: ressources.filter((r) => !readPerms.includes(r)),
-      write: ressources.filter((r) => !writePerms.includes(r)),
-      update: ressources.filter((r) => !updatePerms.includes(r)),
-      delete: ressources.filter((r) => !deletePerms.includes(r)),
+    return {
+      read: ressources.filter((res) => !readPerms.includes(res)),
+      write: ressources.filter((res) => !writePerms.includes(res)),
+      update: ressources.filter((res) => !updatePerms.includes(res)),
+      delete: ressources.filter((res) => !deletePerms.includes(res)),
     };
-
-    return resources;
   }, [permissions, ressources]);
 
   const handleGetPermissionsRequest = useCallback(async () => {
@@ -79,7 +77,7 @@ function useManagePermissions(id: string) {
     handleGetPermissionsRequest();
   }, [handleGetPermissionsRequest]);
 
-  return { permissions, ressources, role };
+  return { permissions, ressources, remainingRessources, role };
 }
 
 export default useManagePermissions;

@@ -10,7 +10,8 @@ import { useEffect } from "react";
 const RoleEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { permissions, ressources, role } = useManagePermissions(id || "");
+  const { permissions, ressources, remainingRessources, role } =
+    useManagePermissions(id || "");
 
   useEffect(() => {
     if (role === null) {
