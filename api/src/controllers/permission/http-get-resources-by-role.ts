@@ -4,7 +4,7 @@ import Role from "../../utils/interfaces/db/role";
 import { resourcesRbac } from "../../config/ressources-rbac";
 import { getAllActionsPermissionsForRole } from "../../utils/rbac/rbac-utils";
 
-export default async function httpGetRessourcesByRole(
+export default async function httpGetResourcesByRole(
   req: Request,
   res: Response,
 ) {

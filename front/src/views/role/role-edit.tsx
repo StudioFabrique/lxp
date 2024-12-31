@@ -10,8 +10,14 @@ import { useEffect } from "react";
 const RoleEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { permissions, ressources, remainingRessources, role } =
-    useManagePermissions(id || "");
+  const {
+    permissions,
+    resources,
+    remainingResources,
+    role,
+    onAddPermission,
+    onDeletePermission,
+  } = useManagePermissions(id || "");
 
   useEffect(() => {
     if (role === null) {
@@ -39,25 +45,33 @@ const RoleEdit = () => {
           drawerId="drawer-1"
           title="Peut lire"
           permissions={permissions?.read}
-          ressources={remainingRessources?.read}
+          remainingResources={remainingResources?.read}
+          onAddPermission={onAddPermission}
+          onDeletePermission={onDeletePermission}
         />
         <PermissionsListWithDrawer
           drawerId="drawer-2"
           title="Peut écrire"
           permissions={permissions?.write}
-          ressources={remainingRessources?.write}
+          remainingResources={remainingResources?.write}
+          onAddPermission={onAddPermission}
+          onDeletePermission={onDeletePermission}
         />
         <PermissionsListWithDrawer
           drawerId="drawer-3"
           title="Peut mettre à jour"
           permissions={permissions?.update}
-          ressources={remainingRessources?.update}
+          remainingResources={remainingResources?.update}
+          onAddPermission={onAddPermission}
+          onDeletePermission={onDeletePermission}
         />
         <PermissionsListWithDrawer
           drawerId="drawer-4"
           title="Peut supprimer"
           permissions={permissions?.delete}
-          ressources={remainingRessources?.delete}
+          remainingResources={remainingResources?.delete}
+          onAddPermission={onAddPermission}
+          onDeletePermission={onDeletePermission}
         />
       </div>
     </div>

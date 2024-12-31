@@ -3,14 +3,19 @@ import { Shield, PlusCircle, HelpCircle } from "lucide-react";
 type PermissionItemProps = {
   name: string;
   description: string;
-  onDelete?: () => void;
+  onAddPermission: (name: string) => void;
+  onDeletePermission: (name: string) => void;
 };
 
 const PermissionAddItem = ({
   name,
   description,
-  onDelete,
+  onAddPermission,
 }: PermissionItemProps) => {
+  const handleAddPermission = () => {
+    onAddPermission(name);
+  };
+
   return (
     <div className="flex items-center justify-between px-2 py-1 rounded-md bg-base-100 text-base-content gap-2 hover:bg-base-100/60 transition-colors duration-200 cursor-pointer">
       <div className="flex items-center gap-1">
@@ -20,7 +25,11 @@ const PermissionAddItem = ({
           <HelpCircle className="w-4 h-4 stroke-base-content/60" />
         </div>
       </div>
-      <button onClick={onDelete} className="p-1" aria-label="Add permission">
+      <button
+        onClick={handleAddPermission}
+        className="p-1"
+        aria-label="Add permission"
+      >
         <PlusCircle className="w-4 stroke-success hover:stroke-success-content transition-all duration-200" />
       </button>
     </div>

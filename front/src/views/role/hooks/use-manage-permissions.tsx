@@ -11,12 +11,14 @@ function useManagePermissions(id: string) {
     update: string[];
     delete: string[];
   }>();
-  const [ressources, setRessources] =
+
+  const [resources, setResources] =
     useState<{ name: string; description: string }[]>();
+
   const [role, setRole] = useState<Role | null>();
 
-  const remainingRessources = useMemo(() => {
-    if (!permissions || !ressources) return undefined;
+  const remainingResources = useMemo(() => {
+    if (!permissions || !resources) return undefined;
 
     const {
       read: readPerms,
@@ -26,12 +28,12 @@ function useManagePermissions(id: string) {
     } = permissions;
 
     return {
-      read: ressources.filter((res) => !readPerms.includes(res.name)),
-      write: ressources.filter((res) => !writePerms.includes(res.name)),
-      update: ressources.filter((res) => !updatePerms.includes(res.name)),
-      delete: ressources.filter((res) => !deletePerms.includes(res.name)),
+      read: resources.filter((res) => !readPerms.includes(res.name)),
+      write: resources.filter((res) => !writePerms.includes(res.name)),
+      update: resources.filter((res) => !updatePerms.includes(res.name)),
+      delete: resources.filter((res) => !deletePerms.includes(res.name)),
     };
-  }, [permissions, ressources]);
+  }, [permissions, resources]);
 
   const handleGetPermissionsRequest = useCallback(async () => {
     const applyData = ({
@@ -62,7 +64,7 @@ function useManagePermissions(id: string) {
       };
 
       setPermissions(permissions);
-      setRessources(data.ressources.ressources);
+      setResources(data.ressources.ressources);
       setRole(data.role);
     };
 
@@ -77,11 +79,24 @@ function useManagePermissions(id: string) {
     }
   }, [id, sendRequest]);
 
+  const handleAddPermission = () => {};
+
+  const handleDeletePermission = () => {};
+
   useEffect(() => {
     handleGetPermissionsRequest();
   }, [handleGetPermissionsRequest]);
 
-  return { permissions, ressources, remainingRessources, role };
+  console.log({ permissions, resources, remainingResources, role });
+
+  return {
+    permissions,
+    resources,
+    remainingResources,
+    role,
+    onAddPermission: handleAddPermission,
+    onDeletePermission: handleDeletePermission,
+  };
 }
 
 export default useManagePermissions;
