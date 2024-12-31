@@ -11,11 +11,12 @@ function useManagePermissions(id: string) {
     update: string[];
     delete: string[];
   }>();
-  const [ressources, setRessources] = useState<string[]>();
+  const [ressources, setRessources] =
+    useState<{ name: string; description: string }[]>();
   const [role, setRole] = useState<Role | null>();
 
   const remainingRessources = useMemo(() => {
-    if (!permissions || !ressources) return [];
+    if (!permissions || !ressources) return undefined;
 
     const {
       read: readPerms,
@@ -25,10 +26,10 @@ function useManagePermissions(id: string) {
     } = permissions;
 
     return {
-      read: ressources.filter((res) => !readPerms.includes(res)),
-      write: ressources.filter((res) => !writePerms.includes(res)),
-      update: ressources.filter((res) => !updatePerms.includes(res)),
-      delete: ressources.filter((res) => !deletePerms.includes(res)),
+      read: ressources.filter((res) => !readPerms.includes(res.name)),
+      write: ressources.filter((res) => !writePerms.includes(res.name)),
+      update: ressources.filter((res) => !updatePerms.includes(res.name)),
+      delete: ressources.filter((res) => !deletePerms.includes(res.name)),
     };
   }, [permissions, ressources]);
 
@@ -38,7 +39,10 @@ function useManagePermissions(id: string) {
     }: {
       data: {
         permissions: string[];
-        ressources: { ressources: string[]; roles: string[] };
+        ressources: {
+          ressources: { name: string; description: string }[];
+          roles: string[];
+        };
         role: Role;
       };
     }) => {
