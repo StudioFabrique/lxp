@@ -5,28 +5,26 @@ import PermissionsListWithDrawer from "../../components/role/permissions/permiss
 import Loader from "../../components/UI/loader";
 import toTitleCase from "../../utils/toTitleCase";
 import RoleForm from "../../components/role/role-form/role-form";
+import { useEffect } from "react";
 
 const RoleEdit = () => {
-  const router = useNavigate();
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { permissions, ressources, role, isLoading } = useManagePermissions(
-    id || "",
-  );
+  const { permissions, ressources, role } = useManagePermissions(id || "");
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  useEffect(() => {
+    if (role === null) {
+      return navigate(-1);
+    }
+  }, [role, navigate]);
 
-  if (!role) {
-    return router(-1);
-  }
+  if (!role) return <Loader />;
 
   return (
     <div className="flex flex-col gap-y-5 p-10">
       {/* Header de la liste des rôles */}
       <Header
-        title="Liste des permissions du rôle"
-        description={`${toTitleCase(role.role)} (${toTitleCase(role.label)})`}
+        title={`Liste des permissions du rôle ${toTitleCase(role.role)} (${toTitleCase(role.label)})`}
       >
         <Link to="/admin/roles" className="btn btn-outline">
           Retour
