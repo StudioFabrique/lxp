@@ -1,6 +1,5 @@
 import { ListPlus } from "lucide-react";
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
-import Wrapper from "../../UI/wrapper/wrapper.component";
 import PermissionItem from "./permission-item";
 import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
 
