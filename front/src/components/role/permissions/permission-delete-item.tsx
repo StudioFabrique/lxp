@@ -5,7 +5,7 @@ type PermissionItemProps = {
   onDelete?: () => void;
 };
 
-const PermissionItem = ({ name, onDelete }: PermissionItemProps) => {
+const PermissionDeleteItem = ({ name, onDelete }: PermissionItemProps) => {
   return (
     <div className="flex items-center justify-between px-2 py-1 rounded-md bg-base-100 text-base-content gap-2 hover:bg-base-100/60 transition-colors duration-200 cursor-pointer">
       <div className="flex items-center gap-1">
@@ -19,4 +19,4 @@ const PermissionItem = ({ name, onDelete }: PermissionItemProps) => {
   );
 };
 
-export default PermissionItem;
+export default PermissionDeleteItem;
