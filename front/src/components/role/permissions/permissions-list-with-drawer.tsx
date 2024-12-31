@@ -1,18 +1,19 @@
 import { ListPlus } from "lucide-react";
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
-import PermissionItem from "./permission-item";
 import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
+import PermissionDeleteItem from "./permission-delete-item";
+import PermissionAddItem from "./permission-add-item";
 
 type PermissionsListWithDrawerProps = {
   title: string;
   permissions?: string[];
-  ressources?: { name: string; description: string }[];
+  ressourcesRemaining?: { name: string; description: string }[];
 };
 
 const PermissionsListWithDrawer = ({
   title,
   permissions,
-  ressources,
+  ressourcesRemaining,
 }: PermissionsListWithDrawerProps) => {
   return (
     <SubWrapper>
@@ -26,15 +27,24 @@ const PermissionsListWithDrawer = ({
               icon={<ListPlus className="w-5" />}
             >
               <div className="h-[80vh] w-[35rm] bg-black">
-                <div className="flex flex-col gap-y-5 items-center h-[85%]"></div>
-                <div className="flex flex-col gap-2"></div>
+                {ressourcesRemaining ? (
+                  ressourcesRemaining.map((res) => (
+                    <PermissionAddItem
+                      key={res.name}
+                      name={res.name}
+                      description={res.description}
+                    />
+                  ))
+                ) : (
+                  <p>Aucune permissions à ajouter</p>
+                )}
               </div>
             </RightSideDrawer>
           </div>
         </div>
         <div className="flex flex-wrap gap-3 p-2">
           {permissions?.map((item) => (
-            <PermissionItem key={item} name={item} />
+            <PermissionDeleteItem key={item} name={item} />
           ))}
         </div>
       </div>
