@@ -8,14 +8,18 @@ type PermissionsListWithDrawerProps = {
   drawerId: string;
   title: string;
   permissions?: string[];
-  remainingRessources?: { name: string; description: string }[];
+  remainingResources?: { name: string; description: string }[];
+  onAddPermission: (name: string) => void;
+  onDeletePermission: (name: string) => void;
 };
 
 const PermissionsListWithDrawer = ({
   drawerId,
   title,
   permissions,
-  remainingRessources,
+  remainingResources,
+  onAddPermission,
+  onDeletePermission,
 }: PermissionsListWithDrawerProps) => {
   return (
     <SubWrapper>
@@ -29,12 +33,14 @@ const PermissionsListWithDrawer = ({
               icon={<ListPlus className="w-5" />}
             >
               <div className="h-[80vh] w-[35rm] bg-black">
-                {remainingRessources ? (
-                  remainingRessources.map((res) => (
+                {remainingResources ? (
+                  remainingResources.map((res) => (
                     <PermissionAddItem
                       key={res.name}
                       name={res.name}
                       description={res.description}
+                      onAddPermission={onAddPermission}
+                      onDeletePermission={onDeletePermission}
                     />
                   ))
                 ) : (

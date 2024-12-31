@@ -14,8 +14,8 @@ import {
 import httpPutRole from "../../../controllers/permission/http-put-role";
 import httpGetSearchRoles from "../../../controllers/permission/http-get-search-roles";
 import httpDeleteManyRoles from "../../../controllers/permission/http-delete-many-roles";
-import httpGetRessourcesByRole from "../../../controllers/permission/http-get-ressources-by-role";
-import httpGetRessourcesById from "../../../controllers/permission/http-get-ressources-by-id";
+import httpGetResourcesByRole from "../../../controllers/permission/http-get-resources-by-role";
+import httpGetResourcesById from "../../../controllers/permission/http-get-resources-by-id";
 
 const permissionRouter = Router();
 
@@ -34,10 +34,10 @@ permissionRouter.get(
  * (renvoi un tableau combinant le nom de tous les rôles ainsi que toutes les ressources defs)
  **/
 permissionRouter.get(
-  "/ressources/role/:role",
+  "/resources/role/:role",
   checkPermissions("role"),
   getPermissionsValidator("role"),
-  httpGetRessourcesByRole,
+  httpGetResourcesByRole,
 );
 
 /**
@@ -45,10 +45,10 @@ permissionRouter.get(
  * (renvoi un tableau combinant le nom de tous les rôles ainsi que toutes les ressources defs)
  **/
 permissionRouter.get(
-  "/ressources/id/:id",
+  "/resources/id/:id",
   checkPermissions("role"),
   getPermissionsValidator("id"),
-  httpGetRessourcesById,
+  httpGetResourcesById,
 );
 
 // Obtenir la liste des permissions associées à un rôle
