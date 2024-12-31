@@ -7,13 +7,13 @@ import PermissionAddItem from "./permission-add-item";
 type PermissionsListWithDrawerProps = {
   title: string;
   permissions?: string[];
-  ressourcesRemaining?: { name: string; description: string }[];
+  remainingRessources?: { name: string; description: string }[];
 };
 
 const PermissionsListWithDrawer = ({
   title,
   permissions,
-  ressourcesRemaining,
+  remainingRessources,
 }: PermissionsListWithDrawerProps) => {
   return (
     <SubWrapper>
@@ -27,8 +27,8 @@ const PermissionsListWithDrawer = ({
               icon={<ListPlus className="w-5" />}
             >
               <div className="h-[80vh] w-[35rm] bg-black">
-                {ressourcesRemaining ? (
-                  ressourcesRemaining.map((res) => (
+                {remainingRessources ? (
+                  remainingRessources.map((res) => (
                     <PermissionAddItem
                       key={res.name}
                       name={res.name}
