@@ -6,7 +6,7 @@ import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
 type PermissionsListWithDrawerProps = {
   title: string;
   permissions?: string[];
-  ressources?: string[];
+  ressources?: { name: string; description: string }[];
 };
 
 const PermissionsListWithDrawer = ({

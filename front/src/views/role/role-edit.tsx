@@ -38,22 +38,22 @@ const RoleEdit = () => {
         <PermissionsListWithDrawer
           title="Peut lire"
           permissions={permissions?.read}
-          ressources={ressources}
+          ressources={remainingRessources?.read}
         />
         <PermissionsListWithDrawer
           title="Peut écrire"
-          permissions={permissions?.update}
-          ressources={ressources}
+          permissions={permissions?.write}
+          ressources={remainingRessources?.write}
         />
         <PermissionsListWithDrawer
           title="Peut mettre à jour"
           permissions={permissions?.update}
-          ressources={ressources}
+          ressources={remainingRessources?.update}
         />
         <PermissionsListWithDrawer
           title="Peut supprimer"
           permissions={permissions?.delete}
-          ressources={ressources}
+          ressources={remainingRessources?.delete}
         />
       </div>
     </div>
