@@ -109,57 +109,56 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
           className={formClassName}
           onSubmit={(e) => e.preventDefault()}
         >
-          <div className="flex flex-col gap-10">
-            <span className="flex flex-col gap-y-1">
-              <h2 className="font-bold text-xl">
-                {role ? "Modification du rôle" : "Création de rôles"}
-              </h2>
-              {!role && (
-                <p className="text-sm">
-                  Après avoir créé un rôle, vous pourrez lui ajouter des
-                  permissions
-                </p>
-              )}
+          <span className="flex flex-col gap-y-1">
+            <h2 className="font-bold text-xl">
+              {role ? "Modification du rôle" : "Création de rôles"}
+            </h2>
+            {!role && (
+              <p className="text-sm">
+                Après avoir créé un rôle, vous pourrez lui ajouter des
+                permissions
+              </p>
+            )}
+          </span>
+
+          <div className="flex flex-col sm:flex-row gap-10 w-full">
+            <span className="flex flex-col gap-y-1 w-full">
+              <p>Nom du rôle</p>
+              <input
+                ref={nameInputRef}
+                type="text"
+                name="name"
+                id="name"
+                className={inputClassName(
+                  name.hasError && name.value.length > 0,
+                )}
+                onChange={name.valueChangeHandler}
+                onBlur={name.valueBlurHandler}
+                value={name.value}
+              />
             </span>
 
-            <div className="flex gap-10 w-full">
-              <span className="flex flex-col gap-y-1 w-full">
-                <p>Nom du rôle</p>
-                <input
-                  ref={nameInputRef}
-                  type="text"
-                  name="name"
-                  id="name"
-                  className={inputClassName(
-                    name.hasError && name.value.length > 0,
-                  )}
-                  onChange={name.valueChangeHandler}
-                  onBlur={name.valueBlurHandler}
-                  value={name.value}
-                />
-              </span>
+            <span className="flex flex-col gap-y-1 w-full">
+              <p>Label</p>
+              <input
+                name="label"
+                id="label"
+                className={inputClassName(
+                  label.hasError && label.value.length > 0,
+                )}
+                onChange={label.valueChangeHandler}
+                onBlur={label.valueBlurHandler}
+                value={label.value}
+                maxLength={15}
+              />
+            </span>
 
-              <span className="flex flex-col gap-y-1 w-full">
-                <p>Label</p>
-                <input
-                  name="label"
-                  id="label"
-                  className={inputClassName(
-                    label.hasError && label.value.length > 0,
-                  )}
-                  onChange={label.valueChangeHandler}
-                  onBlur={label.valueBlurHandler}
-                  value={label.value}
-                  maxLength={15}
-                />
-              </span>
-            </div>
-
-            <span className="flex flex-col gap-y-1 w-[30em]">
+            <span className="flex flex-col gap-y-1 w-full">
               <p>Modèle de rôle</p>
               <RoleTypeSelector
                 currentRoleType={currentRoleType}
                 onSetCurrentRoleType={setCurrentRoleType}
+                editMode={role}
               />
             </span>
           </div>
