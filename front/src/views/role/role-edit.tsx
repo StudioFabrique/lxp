@@ -39,13 +39,13 @@ const RoleEdit = () => {
       <div className="w-[70%]">
         <RoleForm role={role} />
       </div>
-      <div className="grid grid-cols-2 gap-10">
+      <div className="grid xl:grid-cols-2 gap-10">
         {/* top left */}
-
         <PermissionsListWithDrawer
           drawerId="drawer-1"
           zIndex={40}
-          title="Peut lire"
+          title="Lecture"
+          descriptionTooltip="Permet de consulter et visualiser les ressources sans pouvoir les modifier. Cette permission est fondamentale pour accéder aux informations tout en préservant leur intégrité."
           permissions={permissions?.read}
           remainingResources={remainingResources?.read}
           onAddPermission={onAddPermission}
@@ -56,7 +56,8 @@ const RoleEdit = () => {
         <PermissionsListWithDrawer
           drawerId="drawer-2"
           zIndex={30}
-          title="Peut écrire"
+          title="Écriture"
+          descriptionTooltip="Autorise la création de nouvelles ressources dans le système. Cette permission est essentielle pour contribuer activement au contenu tout en respectant la structure établie."
           permissions={permissions?.write}
           remainingResources={remainingResources?.write}
           onAddPermission={onAddPermission}
@@ -67,7 +68,8 @@ const RoleEdit = () => {
         <PermissionsListWithDrawer
           drawerId="drawer-3"
           zIndex={20}
-          title="Peut mettre à jour"
+          title="Mise à jour"
+          descriptionTooltip="Permet de mettre à jour et d'améliorer les ressources existantes. Cette permission est cruciale pour maintenir les informations à jour et corriger les erreurs si nécessaire."
           permissions={permissions?.update}
           remainingResources={remainingResources?.update}
           onAddPermission={onAddPermission}
@@ -78,7 +80,8 @@ const RoleEdit = () => {
         <PermissionsListWithDrawer
           drawerId="drawer-4"
           zIndex={10}
-          title="Peut supprimer"
+          title="Suppression"
+          descriptionTooltip="Autorise la suppression des ressources du système. Cette permission doit être utilisée avec précaution car elle permet de retirer définitivement des éléments de la base de données."
           permissions={permissions?.delete}
           remainingResources={remainingResources?.delete}
           onAddPermission={onAddPermission}
