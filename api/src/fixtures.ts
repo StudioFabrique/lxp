@@ -272,6 +272,7 @@ async function createRoles() {
 
 async function createPermissions() {
   const bulkPermissions = new Map<string, IPermission>();
+  const bulkRoleUpdates = new Map<string, any>();
 
   for (const [roleName, value] of Object.entries({
     ...permDefsInterface,
@@ -280,6 +281,8 @@ async function createPermissions() {
     const role = await Role.findOne({ role: roleName });
 
     if (!role) return;
+
+    const rolePermissions = [];
 
     for (const [action, ressources] of Object.entries(value)) {
       for (const res of ressources) {
@@ -293,24 +296,33 @@ async function createPermissions() {
           if (existingPermission) {
             existingPermission.roles = [role];
             bulkPermissions.set(permissionName, existingPermission);
+            rolePermissions.push(existingPermission._id);
           } else {
-            bulkPermissions.set(
-              permissionName,
-              new Permission({
-                roles: [role],
-                name: permissionName,
-              }),
-            );
+            const newPermission = new Permission({
+              roles: [role],
+              name: permissionName,
+            });
+            bulkPermissions.set(permissionName, newPermission);
+            rolePermissions.push(newPermission._id);
           }
         } else {
           const permission = bulkPermissions.get(permissionName)!;
           permission.roles = [...permission.roles, role];
+          rolePermissions.push(permission._id);
         }
       }
     }
+
+    bulkRoleUpdates.set(role._id.toString(), {
+      updateOne: {
+        filter: { _id: role._id },
+        update: { $set: { permissions: rolePermissions } },
+      },
+    });
   }
 
   await Permission.bulkSave(Array.from(bulkPermissions.values()));
+  await Role.bulkWrite(Array.from(bulkRoleUpdates.values()));
 }
 
 let tagsColors = Array<string>();

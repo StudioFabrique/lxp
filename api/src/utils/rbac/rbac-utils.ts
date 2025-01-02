@@ -89,12 +89,13 @@ export async function getAllRoles() {
       role: role.role,
       label: role.label,
       rank: role.rank,
-      permCount: {
-        read: permissions.filter((perm) => perm.startsWith("read:")).length,
-        write: permissions.filter((perm) => perm.startsWith("write:")).length,
-        update: permissions.filter((perm) => perm.startsWith("update:")).length,
-        delete: permissions.filter((perm) => perm.startsWith("delete:")).length,
-      },
+      countRead: permissions.filter((perm) => perm.startsWith("read:")).length,
+      countWrite: permissions.filter((perm) => perm.startsWith("write:"))
+        .length,
+      countUpdate: permissions.filter((perm) => perm.startsWith("update:"))
+        .length,
+      countDelete: permissions.filter((perm) => perm.startsWith("delete:"))
+        .length,
     };
   });
 }
@@ -122,12 +123,13 @@ export async function getAllRolesWithSearch(search: string) {
       role: role.role,
       label: role.label,
       rank: role.rank,
-      permCount: {
-        read: permissions.filter((perm) => perm.startsWith("read:")).length,
-        write: permissions.filter((perm) => perm.startsWith("write:")).length,
-        update: permissions.filter((perm) => perm.startsWith("update:")).length,
-        delete: permissions.filter((perm) => perm.startsWith("delete:")).length,
-      },
+      countRead: permissions.filter((perm) => perm.startsWith("read:")).length,
+      countWrite: permissions.filter((perm) => perm.startsWith("write:"))
+        .length,
+      countUpdate: permissions.filter((perm) => perm.startsWith("update:"))
+        .length,
+      countDelete: permissions.filter((perm) => perm.startsWith("delete:"))
+        .length,
     };
   });
 }

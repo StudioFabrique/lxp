@@ -8,7 +8,6 @@ async function httpHandshake(req: CustomRequest, res: Response) {
   if (req.auth && req.auth.userId !== null) {
     try {
       const user = await getUser(new Object(req.auth.userId));
-      console.log({ user });
       const permissions = await getAllPermissionsForUser(user._id);
 
       if (user && user.isActive) {
