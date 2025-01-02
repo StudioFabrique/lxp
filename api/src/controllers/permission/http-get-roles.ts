@@ -4,7 +4,6 @@ import { getAllRoles } from "../../utils/rbac/rbac-utils";
 export default async function httpGetAllRoles(_req: Request, res: Response) {
   try {
     const roles = await getAllRoles();
-    console.log({ roles });
     return res
       .status(200)
       .json({ message: "les rôles ont bien été récupérés", data: roles });

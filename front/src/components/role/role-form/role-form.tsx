@@ -112,11 +112,14 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
         <div className="flex flex-col gap-y-5">
           <span className="flex flex-col gap-y-1">
             <h2 className="flex flex-col gap-y-4 font-bold text-xl">
-              Création de rôles
+              {role ? "Modification du rôle" : "Création de rôles"}
             </h2>
-            <p className="text-sm">
-              Après avoir créé un rôle, vous pourrez lui ajouter des permissions
-            </p>
+            {!role && (
+              <p className="text-sm">
+                Après avoir créé un rôle, vous pourrez lui ajouter des
+                permissions
+              </p>
+            )}
           </span>
 
           <span className="flex flex-col gap-y-1 w-[90%]">
