@@ -41,9 +41,10 @@ const RoleEdit = () => {
       </div>
       <div className="grid grid-cols-2 gap-10">
         {/* top left */}
+
         <PermissionsListWithDrawer
           drawerId="drawer-1"
-          zIndex={43}
+          zIndex={40}
           title="Peut lire"
           permissions={permissions?.read}
           remainingResources={remainingResources?.read}
@@ -54,7 +55,7 @@ const RoleEdit = () => {
         {/* top right */}
         <PermissionsListWithDrawer
           drawerId="drawer-2"
-          zIndex={42}
+          zIndex={30}
           title="Peut écrire"
           permissions={permissions?.write}
           remainingResources={remainingResources?.write}
@@ -65,7 +66,7 @@ const RoleEdit = () => {
         {/* bottom left */}
         <PermissionsListWithDrawer
           drawerId="drawer-3"
-          zIndex={41}
+          zIndex={20}
           title="Peut mettre à jour"
           permissions={permissions?.update}
           remainingResources={remainingResources?.update}
@@ -76,7 +77,7 @@ const RoleEdit = () => {
         {/* bottom right */}
         <PermissionsListWithDrawer
           drawerId="drawer-4"
-          zIndex={40}
+          zIndex={10}
           title="Peut supprimer"
           permissions={permissions?.delete}
           remainingResources={remainingResources?.delete}
