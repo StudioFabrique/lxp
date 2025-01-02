@@ -57,11 +57,10 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
 
   const applyDataUpdate = useCallback(
     (data: any) => {
-      cancelForm();
       fetchRoles(user!.roles[0]);
       toast.success(data.message);
     },
-    [cancelForm, fetchRoles, user],
+    [fetchRoles, user],
   );
 
   const handleSubmitRole = useCallback(() => {

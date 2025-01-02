@@ -52,19 +52,26 @@ export const deleteManyRolesValidator = [
 
 export const putRoleValidator = [
   param("id")
-    .isString()
+    .isMongoId()
     .withMessage("_id invalide")
     .notEmpty()
     .withMessage("_id absent")
     .escape(),
 
-  // body("role").isString().withMessage("Role invalide").escape(),
-  // body("description").isString().withMessage("Description invalide").escape(),
-
-  body("permissions.*.action")
+  body(["role", "label"])
     .isString()
-    .withMessage("L'action doit être une chaîne de caractère")
-    .notEmpty(),
+    .withMessage("Champ invalide")
+    .notEmpty()
+    .withMessage("Champ absent")
+    .toLowerCase()
+    .trim()
+    .escape(),
+
+  body("rank")
+    .isNumeric()
+    .withMessage("Rang invalide")
+    .notEmpty()
+    .withMessage("Rang absent"),
 
   checkValidatorResult,
 ];
