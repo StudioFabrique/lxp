@@ -88,10 +88,13 @@ function useManagePermissions(id: string) {
   };
 
   useEffect(() => {
-    handleGetPermissionsRequest();
+    const timeoutId = setTimeout(() => {
+      handleGetPermissionsRequest();
+    }, 20);
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [handleGetPermissionsRequest]);
-
-  console.log({ permissions, resources, remainingResources, role });
 
   return {
     permissions,
