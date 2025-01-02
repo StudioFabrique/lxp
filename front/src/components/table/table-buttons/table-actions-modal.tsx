@@ -51,12 +51,15 @@ const TableActionsModal: FC<{
             {descList ? (
               <ul className="py-2 flex flex-col gap-1">
                 {descList.map((item) => (
-                  <li className="pl-2 opacity-80 capitalize">{`- ${item}`}</li>
+                  <li
+                    key={item}
+                    className="pl-2 opacity-80 capitalize"
+                  >{`- ${item}`}</li>
                 ))}
               </ul>
             ) : null}
             <p className="text-error text-sm pb-2">{alertMessageBottom}</p>
-            <div className="modal-action flex justify-between overflow-x-hidden">
+            <div className="modal-action flex justify-between overflow-hidden">
               <button
                 className="btn btn-outline btn-primary btn-md"
                 onClick={onCancel}
