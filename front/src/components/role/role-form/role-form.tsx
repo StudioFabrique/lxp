@@ -102,80 +102,86 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
   );
 
   return (
-    <Wrapper>
-      <form
-        autoComplete="off"
-        className={formClassName}
-        onSubmit={(e) => e.preventDefault()}
-      >
-        <div className="flex flex-col gap-y-5">
-          <span className="flex flex-col gap-y-1">
-            <h2 className="flex flex-col gap-y-4 font-bold text-xl">
-              {role ? "Modification du rôle" : "Création de rôles"}
-            </h2>
-            {!role && (
-              <p className="text-sm">
-                Après avoir créé un rôle, vous pourrez lui ajouter des
-                permissions
-              </p>
-            )}
-          </span>
-
-          <span className="flex flex-col gap-y-1 w-[90%]">
-            <p>Nom du rôle</p>
-            <input
-              ref={nameInputRef}
-              type="text"
-              name="name"
-              id="name"
-              className={inputClassName(name.hasError && name.value.length > 0)}
-              onChange={name.valueChangeHandler}
-              onBlur={name.valueBlurHandler}
-              value={name.value}
-            />
-          </span>
-
-          <span className="flex flex-col gap-y-1 w-[90%]">
-            <p>Label</p>
-            <input
-              name="label"
-              id="label"
-              className={inputClassName(
-                label.hasError && label.value.length > 0,
+    <div className="h-fit">
+      <Wrapper>
+        <form
+          autoComplete="off"
+          className={formClassName}
+          onSubmit={(e) => e.preventDefault()}
+        >
+          <div className="flex flex-col gap-10">
+            <span className="flex flex-col gap-y-1">
+              <h2 className="font-bold text-xl">
+                {role ? "Modification du rôle" : "Création de rôles"}
+              </h2>
+              {!role && (
+                <p className="text-sm">
+                  Après avoir créé un rôle, vous pourrez lui ajouter des
+                  permissions
+                </p>
               )}
-              onChange={label.valueChangeHandler}
-              onBlur={label.valueBlurHandler}
-              value={label.value}
-              maxLength={15}
-            />
-          </span>
+            </span>
 
-          <span className="flex flex-col gap-y-1 w-[90%]">
-            <p>Modèle de rôle</p>
-            <RoleTypeSelector
-              currentRoleType={currentRoleType}
-              onSetCurrentRoleType={setCurrentRoleType}
-            />
-          </span>
-        </div>
+            <div className="flex gap-10 w-full">
+              <span className="flex flex-col gap-y-1 w-full">
+                <p>Nom du rôle</p>
+                <input
+                  ref={nameInputRef}
+                  type="text"
+                  name="name"
+                  id="name"
+                  className={inputClassName(
+                    name.hasError && name.value.length > 0,
+                  )}
+                  onChange={name.valueChangeHandler}
+                  onBlur={name.valueBlurHandler}
+                  value={name.value}
+                />
+              </span>
 
-        <div className="flex justify-between">
-          {isRequestLoading ? (
-            <button type="button" className="btn btn-sm px-10">
-              <span className="loading loading-spinner" />
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="btn btn-sm btn-primary normal-case px-10"
-              onClick={handleSubmitRole}
-            >
-              {role ? "Modifier" : "Ajouter"}
-            </button>
-          )}
-        </div>
-      </form>
-    </Wrapper>
+              <span className="flex flex-col gap-y-1 w-full">
+                <p>Label</p>
+                <input
+                  name="label"
+                  id="label"
+                  className={inputClassName(
+                    label.hasError && label.value.length > 0,
+                  )}
+                  onChange={label.valueChangeHandler}
+                  onBlur={label.valueBlurHandler}
+                  value={label.value}
+                  maxLength={15}
+                />
+              </span>
+            </div>
+
+            <span className="flex flex-col gap-y-1 w-[30em]">
+              <p>Modèle de rôle</p>
+              <RoleTypeSelector
+                currentRoleType={currentRoleType}
+                onSetCurrentRoleType={setCurrentRoleType}
+              />
+            </span>
+          </div>
+
+          <div className="flex justify-end">
+            {isRequestLoading ? (
+              <button type="button" className="btn btn-sm px-10">
+                <span className="loading loading-spinner" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-sm btn-primary normal-case px-10"
+                onClick={handleSubmitRole}
+              >
+                {role ? "Modifier" : "Ajouter"}
+              </button>
+            )}
+          </div>
+        </form>
+      </Wrapper>
+    </div>
   );
 };
 

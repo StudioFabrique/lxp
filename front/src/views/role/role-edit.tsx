@@ -36,9 +36,7 @@ const RoleEdit = () => {
           Retour
         </Link>
       </Header>
-      <div className="w-[70%]">
-        <RoleForm role={role} />
-      </div>
+      <RoleForm role={role} />
       <div className="grid xl:grid-cols-2 gap-10">
         {/* top left */}
         <PermissionsListWithDrawer
