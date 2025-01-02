@@ -1,4 +1,4 @@
-import { ListPlus } from "lucide-react";
+import { ListPlus, HelpCircle } from "lucide-react";
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
 import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
 import PermissionDeleteItem from "./permission-delete-item";
@@ -7,6 +7,7 @@ import PermissionAddItem from "./permission-add-item";
 type PermissionsListWithDrawerProps = {
   drawerId: string;
   title: string;
+  descriptionTooltip?: string;
   permissions?: string[];
   remainingResources?: { name: string; description: string }[];
   zIndex?: number;
@@ -17,6 +18,7 @@ type PermissionsListWithDrawerProps = {
 const PermissionsListWithDrawer = ({
   drawerId,
   title,
+  descriptionTooltip,
   permissions,
   remainingResources,
   zIndex = 40,
@@ -27,7 +29,17 @@ const PermissionsListWithDrawer = ({
     <SubWrapper>
       <div className="flex flex-col gap-6 p-4">
         <div className="flex justify-between items-center border-b border-base-content pb-3">
-          <p className="w-full text-secondary font-bold text-lg">{title}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-secondary font-bold text-lg">{title}</p>
+            {descriptionTooltip && (
+              <div
+                className="tooltip tooltip-right"
+                data-tip={descriptionTooltip}
+              >
+                <HelpCircle className="w-4 h-4 stroke-base-content/60" />
+              </div>
+            )}
+          </div>
           <div className="flex gap-5 items-center">
             <RightSideDrawer
               id={drawerId}
