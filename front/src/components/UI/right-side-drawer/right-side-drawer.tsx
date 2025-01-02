@@ -55,7 +55,7 @@ const RightSideDrawer: FC<Props> = ({
   }, [isOpen]);
 
   return (
-    <div className="h-full drawer drawer-end" style={{ zIndex }}>
+    <div className="h-full drawer drawer-end">
       <input
         id={id}
         type="checkbox"

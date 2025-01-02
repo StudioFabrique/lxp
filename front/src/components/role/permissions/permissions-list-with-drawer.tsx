@@ -19,7 +19,7 @@ const PermissionsListWithDrawer = ({
   title,
   permissions,
   remainingResources,
-  zIndex,
+  zIndex = 40,
   onAddPermission,
   onDeletePermission,
 }: PermissionsListWithDrawerProps) => {
