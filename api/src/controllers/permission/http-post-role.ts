@@ -17,6 +17,7 @@ export default async function httpPostRole(req: Request, res: Response) {
       role,
       label,
       rank,
+      undefined,
       await getPermissionsByRank(rank),
     );
 

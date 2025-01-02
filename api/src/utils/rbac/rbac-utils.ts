@@ -229,39 +229,74 @@ export async function createOrUpdateRoleWithPermissions(
   roleName: string,
   label: string,
   rank: number,
-  permissions: {
+  _id?: string,
+  permissions?: {
     resource: string;
     actions: Array<"read" | "write" | "update" | "delete">;
   }[],
 ) {
   try {
-    if (
-      !permissions.every((permission) =>
-        permissionsList.includes(permission.resource),
-      )
-    ) {
-      throw new Error("Invalid resource in permissions");
-    }
+    let formattedPermissions: string[] = [];
 
-    const formattedPermissions = permissions.flatMap((permission) =>
-      permission.actions.map((action) => `${action}:${permission.resource}`),
-    );
+    if (permissions !== undefined) {
+      if (
+        !permissions.every((permission) =>
+          permissionsList.includes(permission.resource),
+        )
+      ) {
+        throw new Error("Invalid resource in permissions");
+      }
 
-    let role = await Role.findOne({ role: roleName });
-    if (!role) {
-      role = new Role({ role: roleName, label, rank });
-      await role.save();
-    }
-
-    for (const permissionName of formattedPermissions) {
-      await Permission.findOneAndUpdate(
-        { name: permissionName },
-        { $addToSet: { roles: role._id } },
-        { upsert: true },
+      formattedPermissions = permissions.flatMap((permission) =>
+        permission.actions.map((action) => `${action}:${permission.resource}`),
       );
     }
 
-    return role;
+    let foundRole;
+    if (_id) {
+      foundRole = await Role.findById(_id);
+      if (foundRole) {
+        foundRole = await Role.findByIdAndUpdate(
+          _id,
+          { role: roleName, label, rank },
+          { new: true },
+        );
+      }
+    }
+
+    if (!foundRole) {
+      foundRole = new Role({ role: roleName, label, rank });
+      await foundRole.save();
+    }
+
+    // Only update permissions if they were provided
+    if (permissions !== undefined) {
+      // Remove existing role references from all permissions
+      await Permission.updateMany(
+        { roles: foundRole._id },
+        { $pull: { roles: foundRole._id } },
+      );
+
+      const permissionIds = [];
+      for (const permissionName of formattedPermissions) {
+        const permission = await Permission.findOneAndUpdate(
+          { name: permissionName },
+          { $addToSet: { roles: foundRole._id } },
+          { upsert: true, new: true },
+        );
+        permissionIds.push(permission._id);
+      }
+
+      const updatedRole = await Role.findOneAndUpdate(
+        { _id: foundRole._id },
+        { $set: { permissions: permissionIds } },
+        { new: true },
+      );
+
+      return updatedRole;
+    }
+
+    return foundRole;
   } catch (error) {
     console.error(`Error creating role ${roleName}:`, error);
     throw new Error(`Failed to create role with permissions`);
@@ -276,7 +311,7 @@ export async function createOrUpdateRoleWithPermissions(
  * @param components - Les composants à associer
  * @returns Promise<void>
  */
-export async function createOrUpdateRoleWithInterfacePermissions(
+export async function createOrUpdateInterfaceRoleWithPermissions(
   roleName: string,
   layouts?: string[],
   components?: string[],

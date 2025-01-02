@@ -11,9 +11,9 @@ import {
 } from "./role-table-config";
 import TableActionsButtons from "../../components/table/table-buttons/table-actions-buttons";
 import useRoleActions from "./hooks/use-role-actions";
-import { transformRolesCsv } from "../../utils/csv/csv-data-transform";
-import CsvDownloaderWithRef from "../../components/UI/csv-downloader/csv-downloader-with-ref";
-import { Ref, useRef } from "react";
+// import { transformRolesCsv } from "../../utils/csv/csv-data-transform";
+// import CsvDownloaderWithRef from "../../components/UI/csv-downloader/csv-downloader-with-ref";
+// import { Ref, useRef } from "react";
 
 /**
  * Composant Role
@@ -47,14 +47,14 @@ const RolePage = () => {
   const {
     idsList,
     onRetreiveItemsValuesByPropertyFromIdList,
-    onRetreiveItemsFromIdList,
+    // onRetreiveItemsFromIdList,
     ...checkboxConfig
   } = useTableCheckbox<Role>(data, "_id");
 
   // custom hook gestion actions groupées
   const { onDeleteSelectedRoles } = useRoleActions(idsList, onRefreshData);
 
-  const csvRef: Ref<HTMLButtonElement> = useRef(null);
+  // const csvRef: Ref<HTMLButtonElement> = useRef(null);
 
   return (
     <div className="flex flex-col gap-y-5 p-10">
@@ -66,11 +66,11 @@ const RolePage = () => {
       />
 
       {/* Balise Csv caché */}
-      <CsvDownloaderWithRef
+      {/* <CsvDownloaderWithRef
         ref={csvRef}
         className="hidden"
         data={transformRolesCsv(onRetreiveItemsFromIdList())}
-      />
+      /> */}
 
       <div className="grid 2xl:grid-cols-2 gap-5">
         <div className="h-fit w-[70%] 2xl:w-auto">
@@ -100,14 +100,14 @@ const RolePage = () => {
               isDisabled={!(idsList.length > 0)} // disabled si la liste a une longueur de 0
               onRefreshData={onRefreshData}
               actions={[
-                {
-                  title: "Exporter les rôles sélectionnés",
-                  description: "Exporter les rôles suivants en format csv",
-                  rightButtonTitle: "Exporter",
-                  onConfirm: async () => {
-                    csvRef.current?.click();
-                  },
-                },
+                // {
+                //   title: "Exporter les rôles sélectionnés",
+                //   description: "Exporter les rôles suivants en format csv",
+                //   rightButtonTitle: "Exporter",
+                //   onConfirm: async () => {
+                //     csvRef.current?.click();
+                //   },
+                // },
                 {
                   title: "Supprimer les rôles selectionnés",
                   description: `${idsList.length} ${idsList.length > 1 ? "rôles vont être supprimés" : "rôle va être supprimé"}`,
