@@ -8,6 +8,7 @@ type Props = {
   buttonTitle?: string;
   icon?: ReactNode;
   id?: string;
+  zIndex?: number;
   isOpen?: boolean;
   onCloseDrawer?: (id: string) => void;
 };
@@ -19,6 +20,7 @@ const RightSideDrawer: FC<Props> = ({
   buttonTitle,
   icon,
   id = "my-drawer-4",
+  zIndex = 50,
   isOpen,
   onCloseDrawer,
 }) => {
@@ -53,7 +55,7 @@ const RightSideDrawer: FC<Props> = ({
   }, [isOpen]);
 
   return (
-    <div className="h-full drawer drawer-end z-50">
+    <div className="h-full drawer drawer-end" style={{ zIndex }}>
       <input
         id={id}
         type="checkbox"
@@ -100,12 +102,16 @@ const RightSideDrawer: FC<Props> = ({
           </label>
         ) : null}
       </div>
-      <div className="drawer-side">
+      <div className="drawer-side" style={{ zIndex }}>
         <label
           htmlFor={!isOpen ? id : undefined}
           className="drawer-overlay fixed top-0 left-0 w-screen min-h-screen"
+          style={{ zIndex: zIndex - 1 }}
         />
-        <ul className="min-w-[30rem] block menu p-4 top-0 right-0 min-h-screen bg-base-200 text-base-content rounded-l-2xl overflow-auto">
+        <ul
+          className="min-w-[30rem] block menu p-4 top-0 right-0 min-h-screen bg-base-200 text-base-content rounded-l-2xl overflow-auto"
+          style={{ zIndex }}
+        >
           {/* Sidebar content here */}
           <div className="flex items-center gap-x-4">
             <div className="text-primary" onClick={handleCloseDrawer}>

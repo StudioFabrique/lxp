@@ -12,7 +12,6 @@ const RoleEdit = () => {
   const { id } = useParams<{ id: string }>();
   const {
     permissions,
-    resources,
     remainingResources,
     role,
     onAddPermission,
@@ -41,32 +40,43 @@ const RoleEdit = () => {
         <RoleForm role={role} />
       </div>
       <div className="grid grid-cols-2 gap-10">
+        {/* top left */}
         <PermissionsListWithDrawer
           drawerId="drawer-1"
+          zIndex={43}
           title="Peut lire"
           permissions={permissions?.read}
           remainingResources={remainingResources?.read}
           onAddPermission={onAddPermission}
           onDeletePermission={onDeletePermission}
         />
+
+        {/* top right */}
         <PermissionsListWithDrawer
           drawerId="drawer-2"
+          zIndex={42}
           title="Peut écrire"
           permissions={permissions?.write}
           remainingResources={remainingResources?.write}
           onAddPermission={onAddPermission}
           onDeletePermission={onDeletePermission}
         />
+
+        {/* bottom left */}
         <PermissionsListWithDrawer
           drawerId="drawer-3"
+          zIndex={41}
           title="Peut mettre à jour"
           permissions={permissions?.update}
           remainingResources={remainingResources?.update}
           onAddPermission={onAddPermission}
           onDeletePermission={onDeletePermission}
         />
+
+        {/* bottom right */}
         <PermissionsListWithDrawer
           drawerId="drawer-4"
+          zIndex={40}
           title="Peut supprimer"
           permissions={permissions?.delete}
           remainingResources={remainingResources?.delete}
