@@ -73,9 +73,7 @@ const RolePage = () => {
       /> */}
 
       <div className="grid 2xl:grid-cols-2 gap-5">
-        <div className="h-fit w-[70%] 2xl:w-auto">
-          <RoleForm onRefreshData={onRefreshData} />
-        </div>
+        <RoleForm onRefreshData={onRefreshData} />
 
         {/*
          * Tableau generique utilisé pour la liste des groupes,
