@@ -69,7 +69,7 @@ function useManagePermissions(id: string) {
     };
 
     try {
-      await sendRequest({ path: `/permission/ressources/id/${id}` }, applyData);
+      await sendRequest({ path: `/permission/resources/id/${id}` }, applyData);
     } catch (error: unknown) {
       if (
         (error as { response?: { status: number } }).response?.status === 404
@@ -79,9 +79,13 @@ function useManagePermissions(id: string) {
     }
   }, [id, sendRequest]);
 
-  const handleAddPermission = () => {};
+  const handleAddPermission = (name: string) => {
+    console.log({ name });
+  };
 
-  const handleDeletePermission = () => {};
+  const handleDeletePermission = (name: string) => {
+    console.log({ name });
+  };
 
   useEffect(() => {
     handleGetPermissionsRequest();

@@ -9,6 +9,7 @@ type PermissionsListWithDrawerProps = {
   title: string;
   permissions?: string[];
   remainingResources?: { name: string; description: string }[];
+  zIndex?: number;
   onAddPermission: (name: string) => void;
   onDeletePermission: (name: string) => void;
 };
@@ -18,6 +19,7 @@ const PermissionsListWithDrawer = ({
   title,
   permissions,
   remainingResources,
+  zIndex,
   onAddPermission,
   onDeletePermission,
 }: PermissionsListWithDrawerProps) => {
@@ -29,10 +31,11 @@ const PermissionsListWithDrawer = ({
           <div className="flex gap-5 items-center">
             <RightSideDrawer
               id={drawerId}
+              zIndex={zIndex}
               title={title}
               icon={<ListPlus className="w-5" />}
             >
-              <div className="h-[80vh] w-[35rm] bg-black">
+              <div className="flex flex-col gap-2 h-full overflow-y-scroll">
                 {remainingResources ? (
                   remainingResources.map((res) => (
                     <PermissionAddItem
