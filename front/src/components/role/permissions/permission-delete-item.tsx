@@ -2,10 +2,14 @@ import { Shield, MinusCircle } from "lucide-react";
 
 type PermissionItemProps = {
   name: string;
-  onDelete?: () => void;
+  onDeleteItem: (name: string) => void;
 };
 
-const PermissionDeleteItem = ({ name, onDelete }: PermissionItemProps) => {
+const PermissionDeleteItem = ({ name, onDeleteItem }: PermissionItemProps) => {
+  const handleClick = () => {
+    onDeleteItem(name);
+  };
+
   return (
     <div className="flex items-center justify-between px-2 py-1 rounded-md bg-base-100 text-base-content gap-2 hover:bg-base-100/60 transition-colors duration-200 cursor-pointer">
       <div className="flex items-center gap-1">
@@ -14,7 +18,11 @@ const PermissionDeleteItem = ({ name, onDelete }: PermissionItemProps) => {
           {name}
         </p>
       </div>
-      <button onClick={onDelete} className="p-1" aria-label="Delete permission">
+      <button
+        onClick={handleClick}
+        className="p-1"
+        aria-label="Delete permission"
+      >
         <MinusCircle className="w-4 stroke-error hover:stroke-error-content transition-all duration-200" />
       </button>
     </div>

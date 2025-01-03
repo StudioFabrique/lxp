@@ -8,7 +8,7 @@ type PermissionsListWithDrawerProps = {
   drawerId: string;
   title: string;
   descriptionTooltip?: string;
-  permissions?: string[];
+  permissions?: { name: string; description: string }[];
   remainingResources?: { name: string; description: string }[];
   zIndex?: number;
   onAddPermission: (name: string) => void;
@@ -48,26 +48,43 @@ const PermissionsListWithDrawer = ({
               icon={<ListPlus className="w-5" />}
             >
               <div className="flex flex-col gap-2 h-full overflow-y-scroll">
-                {remainingResources ? (
-                  remainingResources.map((res) => (
+                <div className="flex flex-col gap-2">
+                  <h3 className="font-bold">Permissions disponibles</h3>
+                  {remainingResources ? (
+                    remainingResources.map((res) => (
+                      <PermissionAddItem
+                        key={res.name}
+                        name={res.name}
+                        description={res.description}
+                        onAddPermission={onAddPermission}
+                      />
+                    ))
+                  ) : (
+                    <p>Aucune permissions à ajouter</p>
+                  )}
+                </div>
+                <div className="flex flex-col gap-2 mt-8">
+                  <h3 className="font-bold">Permissions actuelles</h3>
+                  {permissions?.map((res) => (
                     <PermissionAddItem
                       key={res.name}
                       name={res.name}
                       description={res.description}
-                      onAddPermission={onAddPermission}
-                      onDeletePermission={onDeletePermission}
+                      inactive
                     />
-                  ))
-                ) : (
-                  <p>Aucune permissions à ajouter</p>
-                )}
+                  ))}
+                </div>
               </div>
             </RightSideDrawer>
           </div>
         </div>
         <div className="flex flex-wrap gap-3 p-2">
           {permissions?.map((item) => (
-            <PermissionDeleteItem key={item} name={item} />
+            <PermissionDeleteItem
+              key={item.name}
+              name={item.name}
+              onDeleteItem={onDeletePermission}
+            />
           ))}
         </div>
       </div>
