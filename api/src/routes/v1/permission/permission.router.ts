@@ -10,12 +10,14 @@ import {
   getPermissionsValidator,
   postRoleValidator,
   putRoleValidator,
+  removePermissionValidator,
 } from "./permission-validators";
 import httpPutRole from "../../../controllers/permission/http-put-role";
 import httpGetSearchRoles from "../../../controllers/permission/http-get-search-roles";
 import httpDeleteManyRoles from "../../../controllers/permission/http-delete-many-roles";
 import httpGetResourcesByRole from "../../../controllers/permission/http-get-resources-by-role";
 import httpGetResourcesById from "../../../controllers/permission/http-get-resources-by-id";
+import httpRemovePermissionFromRole from "../../../controllers/permission/http-remove-permission-from-role";
 
 const permissionRouter = Router();
 
@@ -73,6 +75,14 @@ permissionRouter.put(
   checkPermissions("role"),
   putRoleValidator,
   httpPutRole,
+);
+
+// Supprimer une permission spécifique d'un rôle
+permissionRouter.delete(
+  "/role/:roleId/permission/:permission",
+  checkPermissions("role"),
+  removePermissionValidator,
+  httpRemovePermissionFromRole,
 );
 
 permissionRouter.delete(

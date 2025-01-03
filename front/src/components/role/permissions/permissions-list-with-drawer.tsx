@@ -8,8 +8,12 @@ type PermissionsListWithDrawerProps = {
   drawerId: string;
   title: string;
   descriptionTooltip?: string;
-  permissions?: { name: string; description: string }[];
-  remainingResources?: { name: string; description: string }[];
+  permissions?: { name: string; fullName: string; description: string }[];
+  remainingResources?: {
+    name: string;
+    fullName: string;
+    description: string;
+  }[];
   zIndex?: number;
   onAddPermission: (name: string) => void;
   onDeletePermission: (name: string) => void;
@@ -54,6 +58,7 @@ const PermissionsListWithDrawer = ({
                     <PermissionAddItem
                       key={res.name}
                       name={res.name}
+                      fullName={res.fullName}
                       description={res.description}
                       onAddPermission={onAddPermission}
                     />
@@ -71,6 +76,7 @@ const PermissionsListWithDrawer = ({
               <PermissionDeleteItem
                 key={item.name}
                 name={item.name}
+                fullName={item.fullName}
                 description={item.description}
                 onDeleteItem={onDeletePermission}
               />

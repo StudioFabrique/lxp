@@ -75,3 +75,20 @@ export const putRoleValidator = [
 
   checkValidatorResult,
 ];
+
+export const removePermissionValidator = [
+  param("roleId")
+    .isMongoId()
+    .withMessage("Role ID invalide")
+    .notEmpty()
+    .withMessage("Role ID absent")
+    .escape(),
+  param("permission")
+    .isString()
+    .withMessage("Permission invalide")
+    .notEmpty()
+    .withMessage("Permission absente")
+    .escape(),
+
+  checkValidatorResult,
+];
