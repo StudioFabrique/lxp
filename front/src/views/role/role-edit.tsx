@@ -27,16 +27,19 @@ const RoleEdit = () => {
   if (!role) return <Loader />;
 
   return (
-    <div className="flex flex-col gap-y-5 p-10">
+    <div className="flex flex-col gap-y-5 p-10 overflow-hidden">
       {/* Header de la liste des rôles */}
-      <Header
-        title={`Liste des permissions du rôle ${toTitleCase(role.role)} (${toTitleCase(role.label)})`}
-      >
+      <Header title={`Rôle ${toTitleCase(role.label)}`}>
         <Link to="/admin/roles" className="btn btn-outline">
           Retour
         </Link>
       </Header>
       <RoleForm role={role} />
+      <div className="h-5" />
+      <h3 className="font-semibold text-2xl">
+        Liste des permission du rôle
+        <span className="capitalize font-bold"> {role.label} </span>
+      </h3>
       <div className="grid xl:grid-cols-2 gap-10">
         {/* top left */}
         <PermissionsListWithDrawer

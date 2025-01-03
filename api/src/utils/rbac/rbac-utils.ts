@@ -258,6 +258,45 @@ export async function removePermissionFromRole(
 }
 
 /**
+ * Add a permission to a role
+ * @param roleId - ID of the role
+ * @param permissionName - Name of the permission to add
+ */
+export async function addPermissionToRole(
+  roleId: string,
+  permissionName: string,
+): Promise<void> {
+  try {
+    const role = await Role.findById(roleId);
+    if (!role) {
+      throw new Error("Role not found");
+    }
+
+    let permission = await Permission.findOne({ name: permissionName });
+    if (!permission) {
+      permission = new Permission({ name: permissionName });
+      await permission.save();
+    }
+
+    // Add permission to role
+    await Role.findByIdAndUpdate(roleId, {
+      $addToSet: { permissions: permission._id },
+    });
+
+    // Add role to permission
+    await Permission.findByIdAndUpdate(permission._id, {
+      $addToSet: { roles: roleId },
+    });
+  } catch (error) {
+    console.error(
+      `Error adding permission ${permissionName} to role ${roleId}:`,
+      error,
+    );
+    throw error;
+  }
+}
+
+/**
  * Crée un rôle avec des permissions spécifiques suivant le modèle RBAC
  * @param roleName - Le nom du rôle à créer
  * @param permissions - Les permissions à associer au rôle, sous forme de tableau d'objets
