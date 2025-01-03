@@ -3,7 +3,6 @@ import Permission from "../interfaces/db/permission";
 import Role, { IRole } from "../interfaces/db/role";
 import User from "../interfaces/db/user";
 import {
-  permissionsList,
   componentPermissionsList,
   layoutPermissionsList,
 } from "./config/permissions-list";
@@ -218,6 +217,44 @@ export async function getAllPermissionsForUser(
   const permissionList = Array.from(new Set(permissions.map((p) => p.name)));
 
   return permissionList;
+}
+
+/**
+ * Remove a permission from a role
+ * @param roleId - ID of the role
+ * @param permissionName - Name of the permission to remove
+ */
+export async function removePermissionFromRole(
+  roleId: string,
+  permissionName: string,
+): Promise<void> {
+  try {
+    const role = await Role.findById(roleId);
+    if (!role) {
+      throw new Error("Role not found");
+    }
+
+    const permission = await Permission.findOne({ name: permissionName });
+    if (!permission) {
+      throw new Error("Permission not found");
+    }
+
+    // Remove permission from role
+    await Role.findByIdAndUpdate(roleId, {
+      $pull: { permissions: permission._id },
+    });
+
+    // Remove role from permission
+    await Permission.findByIdAndUpdate(permission._id, {
+      $pull: { roles: roleId },
+    });
+  } catch (error) {
+    console.error(
+      `Error removing permission ${permissionName} from role ${roleId}:`,
+      error,
+    );
+    throw error;
+  }
 }
 
 /**

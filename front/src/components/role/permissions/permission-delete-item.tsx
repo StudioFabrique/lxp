@@ -3,12 +3,14 @@ import { useState, useRef, useEffect } from "react";
 
 type PermissionItemProps = {
   name: string;
+  fullName: string;
   description?: string;
   onDeleteItem: (name: string) => void;
 };
 
 const PermissionDeleteItem = ({
   name,
+  fullName,
   description,
   onDeleteItem,
 }: PermissionItemProps) => {
@@ -37,7 +39,7 @@ const PermissionDeleteItem = ({
 
   const handleConfirm = () => {
     setShowConfirm(false);
-    onDeleteItem(name);
+    onDeleteItem(fullName);
   };
 
   const handleCancel = () => {

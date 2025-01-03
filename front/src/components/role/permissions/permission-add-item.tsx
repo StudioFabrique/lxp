@@ -3,18 +3,20 @@ import { Shield, PlusCircle, HelpCircle } from "lucide-react";
 type PermissionItemProps = {
   name: string;
   description: string;
-  onAddPermission?: (name: string) => void;
+  fullName: string;
   inactive?: boolean;
+  onAddPermission?: (name: string) => void;
 };
 
 const PermissionAddItem = ({
   name,
   description,
-  onAddPermission,
+  fullName,
   inactive = false,
+  onAddPermission,
 }: PermissionItemProps) => {
   const handleAddPermission = () => {
-    onAddPermission && onAddPermission(name);
+    onAddPermission && onAddPermission(fullName);
   };
 
   return (

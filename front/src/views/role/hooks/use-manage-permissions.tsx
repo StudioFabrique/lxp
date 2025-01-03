@@ -6,14 +6,14 @@ function useManagePermissions(id: string) {
   const { sendRequest } = useHttp();
 
   const [permissions, setPermissions] = useState<{
-    read: { name: string; description: string }[];
-    write: { name: string; description: string }[];
-    update: { name: string; description: string }[];
-    delete: { name: string; description: string }[];
+    read: { name: string; fullName: string; description: string }[];
+    write: { name: string; fullName: string; description: string }[];
+    update: { name: string; fullName: string; description: string }[];
+    delete: { name: string; fullName: string; description: string }[];
   }>();
 
   const [resources, setResources] =
-    useState<{ name: string; description: string }[]>();
+    useState<{ name: string; fullName: string; description: string }[]>();
 
   const [role, setRole] = useState<Role | null>();
 
@@ -28,18 +28,18 @@ function useManagePermissions(id: string) {
     } = permissions;
 
     return {
-      read: resources.filter(
-        (res) => !readPerms.find((p) => p.name === res.name),
-      ),
-      write: resources.filter(
-        (res) => !writePerms.find((p) => p.name === res.name),
-      ),
-      update: resources.filter(
-        (res) => !updatePerms.find((p) => p.name === res.name),
-      ),
-      delete: resources.filter(
-        (res) => !deletePerms.find((p) => p.name === res.name),
-      ),
+      read: resources
+        .filter((res) => !readPerms.find((p) => p.name === res.name))
+        .map((r) => ({ ...r, fullName: `read:${r.name}` })),
+      write: resources
+        .filter((res) => !writePerms.find((p) => p.name === res.name))
+        .map((r) => ({ ...r, fullName: `write:${r.name}` })),
+      update: resources
+        .filter((res) => !updatePerms.find((p) => p.name === res.name))
+        .map((r) => ({ ...r, fullName: `update:${r.name}` })),
+      delete: resources
+        .filter((res) => !deletePerms.find((p) => p.name === res.name))
+        .map((r) => ({ ...r, fullName: `delete:${r.name}` })),
     };
   }, [permissions, resources]);
 
@@ -63,6 +63,7 @@ function useManagePermissions(id: string) {
             const name = p.split(":")[1];
             return {
               name,
+              fullName: p,
               description:
                 data.ressources.ressources.find((r) => r.name === name)
                   ?.description || "",
@@ -74,6 +75,7 @@ function useManagePermissions(id: string) {
             const name = p.split(":")[1];
             return {
               name,
+              fullName: p,
               description:
                 data.ressources.ressources.find((r) => r.name === name)
                   ?.description || "",
@@ -85,6 +87,7 @@ function useManagePermissions(id: string) {
             const name = p.split(":")[1];
             return {
               name,
+              fullName: p,
               description:
                 data.ressources.ressources.find((r) => r.name === name)
                   ?.description || "",
@@ -96,6 +99,7 @@ function useManagePermissions(id: string) {
             const name = p.split(":")[1];
             return {
               name,
+              fullName: p,
               description:
                 data.ressources.ressources.find((r) => r.name === name)
                   ?.description || "",
@@ -104,7 +108,12 @@ function useManagePermissions(id: string) {
       };
 
       setPermissions(permissions);
-      setResources(data.ressources.ressources);
+      setResources(
+        data.ressources.ressources.map((r) => ({
+          ...r,
+          fullName: r.name,
+        })),
+      );
       setRole(data.role);
     };
 
@@ -124,7 +133,17 @@ function useManagePermissions(id: string) {
   };
 
   const handleDeletePermission = (name: string) => {
-    console.log({ name });
+    const applyData = () => {
+      handleGetPermissionsRequest();
+    };
+
+    sendRequest(
+      {
+        path: `/permission/role/${id}/permission/${name}`,
+        method: "delete",
+      },
+      applyData,
+    );
   };
 
   useEffect(() => {
