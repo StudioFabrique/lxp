@@ -161,21 +161,19 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
                 editMode={role}
               />
             </span>
-
             <div className="w-full sm:w-auto">
-              {isRequestLoading ? (
-                <button type="button" className="btn btn-sm px-10 w-full">
-                  <span className="loading loading-spinner" />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="btn btn-sm btn-primary normal-case px-10 w-full"
-                  onClick={handleSubmitRole}
-                >
+              <button
+                type="button"
+                className="btn btn-sm btn-primary normal-case px-10 w-full"
+                onClick={handleSubmitRole}
+              >
+                <div className="flex items-center justify-center gap-2 min-w-[80px]">
                   {role ? "Modifier" : "Ajouter"}
-                </button>
-              )}
+                  {isRequestLoading && (
+                    <span className="loading loading-spinner" />
+                  )}
+                </div>
+              </button>
             </div>
           </div>
         </form>
