@@ -31,7 +31,7 @@ const RoleTypeSelector: FC<{
   };
 
   return roleTypes ? (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1 relative">
       <select
         className="w-full select select-sm border border-neutral/50 focus:outline-none"
         name="menu"
@@ -52,7 +52,7 @@ const RoleTypeSelector: FC<{
         ))}
       </select>
       {showAlertRoleType && editMode && (
-        <div className="w-64 text-xs text-error">
+        <div className="absolute top-full mt-2 bg-base-100 p-2 rounded-lg shadow-lg border border-error w-64 text-xs text-error">
           Le changement de modèle de rôle écrasera les permissions existantes
         </div>
       )}
