@@ -4,10 +4,10 @@ import { regexStringManyMongoId } from "../../../utils/constantes";
 
 export const getPermissionsValidator = (queryParam: "role" | "id") => [
   param(queryParam)
-    .isString()
-    .withMessage("Role invalide")
+    [queryParam === "id" ? "isMongoId" : "isString"]()
+    .withMessage(queryParam === "id" ? "ID invalide" : "Role invalide")
     .notEmpty()
-    .withMessage("Role absent")
+    .withMessage(queryParam === "id" ? "ID absent" : "Role absent")
     .escape(),
 
   checkValidatorResult,

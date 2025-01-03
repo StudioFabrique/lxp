@@ -90,7 +90,6 @@ export default function checkPermissions(
         req.auth = { userId: data.userId, userRoles: data.userRoles };
         next();
       } else {
-        console.log({ ressource, action, actionDefined });
         youShallNotPass();
         if (failedRedirectPath)
           res.redirect(failedRedirectPath.replace("[:userId]", data.userId));
