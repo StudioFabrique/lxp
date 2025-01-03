@@ -7,10 +7,15 @@ import useHttp from "../../../../hooks/use-http";
  * @param apiPathSearchValue Chemin de l'API pour la recherche (optionnel)
  */
 function useTablePaginatedData<TData>(
-  apiPath: string,
-  apiPathSearchValue?: string,
+  apiEndpoint: string,
+  searchOptions: { apiSearchEndpoint?: string; searchProperty?: string },
+  options?: {
+    disablePagination: boolean;
+    disableSort: boolean;
+    invokeErrorToast?: boolean;
+  },
 ) {
-  const { sendRequest, isLoading } = useHttp();
+  const { sendRequest, isLoading } = useHttp(options?.invokeErrorToast);
 
   const [data, setData] = useState<TData[]>([]);
 
@@ -60,38 +65,63 @@ function useTablePaginatedData<TData>(
    * (numéro de page, nombre d'éléments par page, recherche)
    */
   const handleRequest = useCallback(async () => {
-    const applyData = ({ total, list }: { total: number; list: TData[] }) => {
+    const applyDataPaginated = ({
+      total,
+      list,
+    }: {
+      total: number;
+      list: TData[];
+    }) => {
       setMaxPage(Math.ceil(total / itemsPerPage));
       setTotalItems(total);
       setData(list);
     };
 
+    const applyDataWithoutPagination = ({ data }: { data: TData[] }) => {
+      setData(data);
+    };
+
     const path =
-      apiPathSearchValue && searchValue
-        ? `${apiPathSearchValue}/name/${searchValue}`
-        : apiPath;
+      searchOptions.apiSearchEndpoint && searchValue
+        ? `${searchOptions.apiSearchEndpoint}/${searchOptions.searchProperty || null}/${searchValue}`
+        : apiEndpoint;
 
     const sortDirection = isAscDirection ? "asc" : "desc";
 
     await sendRequest(
       {
-        path: `${path}/${sortProperty}/${sortDirection}?page=${currentPage}&limit=${itemsPerPage}`,
+        path: options?.disablePagination
+          ? path
+          : `${path}/${sortProperty}/${sortDirection}${options?.disablePagination ? "" : `?page=${currentPage}&limit=${itemsPerPage}`}`,
       },
-      applyData,
+      options?.disablePagination
+        ? applyDataWithoutPagination
+        : applyDataPaginated,
     );
   }, [
     sendRequest,
+    searchOptions.apiSearchEndpoint,
+    searchOptions.searchProperty,
     currentPage,
-    apiPath,
+    apiEndpoint,
     itemsPerPage,
-    apiPathSearchValue,
     searchValue,
     isAscDirection,
     sortProperty,
+    options?.disablePagination,
   ]);
 
+  /**
+   * Gère l'envoi des requêtes HTTP pour récupérer les données de la table
+   * Utilise un délai de 10ms pour éviter les requêtes répétés au rechargement de la page
+   * Nettoie le timeout lors du démontage du composant
+   */
   useEffect(() => {
-    handleRequest();
+    const timeout = setTimeout(() => {
+      handleRequest();
+    }, 10);
+
+    return () => clearTimeout(timeout);
   }, [handleRequest]);
 
   /**

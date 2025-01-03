@@ -34,7 +34,7 @@ type PayloadType = {
 
 const reducer: Reducer<Hobby[], { type: ActionType; payload: PayloadType }> = (
   hobbies,
-  { type, payload }
+  { type, payload },
 ) => {
   switch (type) {
     case ActionType.add: {
@@ -72,10 +72,9 @@ const Hobbies: FC<{ initHobbies: Hobby[] }> = ({ initHobbies }) => {
   };
 
   const handleAddHobby: FormEventHandler<HTMLFormElement> = (
-    e: FormEvent<HTMLFormElement>
+    e: FormEvent<HTMLFormElement>,
   ) => {
     e.preventDefault();
-    console.log("test");
 
     const applyData = (data: any) => {
       const hobby = data.data;
@@ -98,7 +97,7 @@ const Hobbies: FC<{ initHobbies: Hobby[] }> = ({ initHobbies }) => {
         body: { title: value, id: user?._id },
         method: "post",
       },
-      applyData
+      applyData,
     );
   };
 
@@ -138,7 +137,7 @@ const Hobbies: FC<{ initHobbies: Hobby[] }> = ({ initHobbies }) => {
       </dialog>
       <div className="flex gap-5">
         <h3 className="text-lg font-semibold">Mes centres d'intérêts</h3>
-        <Can action="write" object="default">
+        <Can action="component" object="hobbie">
           <button
             type="button"
             className="btn btn-sm btn-primary"
@@ -161,10 +160,10 @@ const Hobbies: FC<{ initHobbies: Hobby[] }> = ({ initHobbies }) => {
                       </span>
                     ) : (
                       <span className="flex items-center">
-                        <Can action="update" object="default">
+                        <Can action="edit" object="hobbie">
                           <Edit className="h-5 cursor-pointer" />
                         </Can>
-                        <Can action="delete" object="default">
+                        <Can action="delete" object="hobbie">
                           <Delete
                             className="h-5 cursor-pointer"
                             onClick={() => handleDeleteHobby(hobby._id!)}

@@ -1,6 +1,6 @@
 import React, { ReactNode, useContext } from "react";
-import { casbinAuthorizer } from "../../../config/rbac";
 import { Context } from "../../../store/context.store";
+import hasPermission from "../../../utils/hasPermission";
 
 type Props = {
   children: ReactNode;
@@ -9,23 +9,17 @@ type Props = {
 };
 
 const Can: React.FC<Props> = ({ children, action, object }) => {
-  const { builtPerms } = useContext(Context);
-  const [render, setRender] = React.useState(true);
+  const { user } = useContext(Context);
 
-  React.useEffect(() => {
-    (async function () {
-      if (casbinAuthorizer) {
-        const shouldRender = await casbinAuthorizer.can(action, object);
-        setRender(shouldRender);
-      }
-    })();
-  }, [action, object, builtPerms]);
-
-  if (!render) {
-    return false;
+  if (
+    user &&
+    user.permissions &&
+    hasPermission(user.permissions, action, object)
+  ) {
+    return <>{children}</>;
   }
 
-  return <>{children}</>;
+  return null;
 };
 
 export default Can;

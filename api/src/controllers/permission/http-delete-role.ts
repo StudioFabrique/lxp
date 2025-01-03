@@ -8,21 +8,29 @@ import { serverIssue } from "../../utils/constantes";
  */
 export default async function httpDeleteRole(req: Request, res: Response) {
   try {
-    const roleToDelete: string = req.params.role;
+    const id: string = req.params.roleId;
 
     const roles: IRole[] = res.locals.roles; // récupérer le rôle défini dans le middleware précédent
 
     // empêcher un utilisateur de supprimer son propre rôle
     for (const role of roles) {
-      if (role.role === roleToDelete)
+      if (role._id === id)
         return res
           .status(400)
-          .json({ message: "Impossible de supprimer son propre rôle" });
+          .json({ message: "Impossible de supprimer ses propres rôle" });
     }
 
-    await Permission.deleteMany({ role: roleToDelete });
+    // vérifier si le rôle est protégé
+    const roleToDelete = await Role.findById(id);
+    if (roleToDelete?.isProtected) {
+      return res
+        .status(400)
+        .json({ message: "Impossible de supprimer un rôle protégé" });
+    }
 
-    await Role.deleteMany({ role: roleToDelete });
+    await Permission.updateMany({ roles: id }, { $pull: { roles: id } });
+
+    await Role.deleteOne({ _id: id });
 
     return res
       .status(200)

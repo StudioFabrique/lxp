@@ -32,4 +32,5 @@ export default interface User {
   connectionInfos?: Array<{ lastConnection: string; duration: number }>;
   parcours?: string;
   formation?: string;
+  permissions?: Array<string>;
 }

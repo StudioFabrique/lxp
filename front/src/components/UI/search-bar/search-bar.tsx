@@ -1,5 +1,12 @@
-import { Search } from "lucide-react";
-import { Dispatch, FormEvent, PropsWithChildren, SetStateAction } from "react";
+import { Search, X } from "lucide-react";
+import {
+  Dispatch,
+  FormEvent,
+  PropsWithChildren,
+  SetStateAction,
+  useRef,
+  useState,
+} from "react";
 
 export type SearchBarProps = {
   title?: string;
@@ -26,8 +33,12 @@ const SearchBar = ({
   onSubmitSearchValue,
   children,
 }: PropsWithChildren<SearchBarProps>) => {
+  const [searchValue, setSearchValue] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const handleChange = (event: FormEvent<HTMLInputElement>) => {
     event.preventDefault();
+    setSearchValue(event.currentTarget.value);
     onSetFilter && onSetFilter(event.currentTarget.value);
   };
 
@@ -39,10 +50,20 @@ const SearchBar = ({
     onSubmitSearchValue(input.value);
   };
 
+  const handleClear = () => {
+    setSearchValue("");
+    onSetFilter && onSetFilter("");
+    if (inputRef.current) {
+      inputRef.current.value = "";
+      inputRef.current.focus();
+    }
+    onSubmitSearchValue && onSubmitSearchValue("");
+  };
+
   return (
     <div className="flex flex-col lg:flex-row justify-between gap-5 items-center w-full">
       {title ? (
-        <h2 className="text-lg font-bold text-base-content">{title}</h2>
+        <h2 className="text-lg font-bold text-base-content w-full">{title}</h2>
       ) : null}
 
       <div className="flex items-center justify-end gap-5 w-full">
@@ -52,6 +73,7 @@ const SearchBar = ({
         >
           <Search />
           <input
+            ref={inputRef}
             id="search"
             name="search"
             type="text"
@@ -59,6 +81,15 @@ const SearchBar = ({
             className="bg-transparent focus:outline-none w-full text-sm"
             placeholder={placeholder}
           />
+          {searchValue && (
+            <button
+              type="button"
+              onClick={handleClear}
+              className="p-1 hover:bg-secondary/20 rounded-full"
+            >
+              <X size={16} />
+            </button>
+          )}
         </form>
         <div className="flex items-center gap-2">{children}</div>
       </div>

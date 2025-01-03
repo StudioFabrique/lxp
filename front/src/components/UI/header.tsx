@@ -6,7 +6,7 @@ import { ReactNode } from "react";
 
 interface HeaderProps {
   title: string;
-  description: string;
+  description?: string;
   children?: ReactNode;
 }
 

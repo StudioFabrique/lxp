@@ -13,7 +13,7 @@ const RoleItem: FC<{
   setRoleToEdit: Dispatch<SetStateAction<IRoleToEdit | null>>;
   setCurrentRole: Dispatch<SetStateAction<IRoleItem>>;
 }> = ({ role, setRoles, setRoleToEdit, setCurrentRole }) => {
-  const { defineRulesFor, fetchRoles, user } = useContext(Context);
+  const { fetchRoles, user } = useContext(Context);
 
   const { sendRequest, isLoading } = useHttp(true);
 
@@ -31,27 +31,26 @@ const RoleItem: FC<{
   const handleDeleteRole = () => {
     const applyData = () => {
       setRoles((roles) =>
-        roles.filter((currentRole) => role.role !== currentRole.role)
+        roles.filter((currentRole) => role.role !== currentRole.role),
       );
       fetchRoles(user!.roles[0]);
-      defineRulesFor();
       toast.success("Rôle supprimé avec succès");
     };
 
     sendRequest(
       { path: `/permission/role/${role.role}`, method: "delete" },
-      applyData
+      applyData,
     );
   };
 
   return (
-    <tr className="grid grid-cols-9 items-center bg-secondary/10 hover:bg-primary/20 text-primary rounded-xl border-0">
+    <tr className="grid grid-cols-9 items-center bg-base-100 hover:bg-base-200 text-base-content rounded-xl border-0">
       <td className="flex items-center">
         <input
           type="checkbox"
           name="active"
           id="active"
-          className="checkbox checkbox-sm checkbox-secondary"
+          className="checkbox checkbox-sm checkbox-primary"
         />
       </td>
       <td className="capitalize">
@@ -74,19 +73,19 @@ const RoleItem: FC<{
         <>
           <td className="flex gap-x-2">
             {isLoading ? (
-              <span className="h-6 w-6 loading loading-spinner" />
+              <span className="h-6 w-6 loading loading-spinner text-info" />
             ) : (
               <>
                 <button
                   type="button"
                   onClick={handleEditRole}
-                  className="h-6 w-6 text-accent"
+                  className="h-6 w-6 text-info hover:text-info-content"
                 >
                   <EditIcon />
                 </button>
                 <button
                   type="button"
-                  className="h-6 w-6 text-error"
+                  className="h-6 w-6 text-error hover:text-error-content"
                   onClick={handleDeleteRole}
                 >
                   <DeleteIcon />

@@ -9,7 +9,6 @@ import { BASE_URL, SOCKET_URL } from "../config/urls";
 import useHttp from "../hooks/use-http";
 import User from "../utils/interfaces/user";
 import Role from "../utils/interfaces/role";
-import { casbinAuthorizer } from "../config/rbac";
 import { Socket, io } from "socket.io-client";
 
 type ContextType = {
@@ -25,8 +24,6 @@ type ContextType = {
   user: User | null;
   roles: Array<Role>;
   fetchRoles: (role: Role) => void;
-  defineRulesFor: () => void;
-  builtPerms: Record<string, any> | undefined;
   //closeTab: () => void;
   socket: Socket | null;
   chooseTheme: (newTheme: string, mode: string) => void;
@@ -47,31 +44,21 @@ export const Context = React.createContext<ContextType>({
   user: null,
   roles: Array<Role>(),
   fetchRoles: () => {},
-  defineRulesFor: () => {},
-  builtPerms: {},
   //closeTab: () => {},
   socket: null,
   chooseTheme: () => {},
 });
 
 const ContextProvider: FC<Props> = (props) => {
+  const { axiosInstance, sendRequest } = useHttp();
+
   const [user, setUser] = useState<User | null>(null);
   const [theme, setTheme] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const { axiosInstance, sendRequest } = useHttp();
   const [roles, setRoles] = useState<Array<Role>>([]);
-  const [builtPerms, setBuiltPerms] = useState<
-    Record<string, any> | undefined
-  >();
   const [socket, setSocket] = useState<Socket | null>(null);
-
-  /*   const closeTab = useCallback(async () => {
-    await axiosInstance.get(`${BASE_URL}/auth/close`, {
-      withCredentials: true,
-    });
-  }, [axiosInstance]); */
 
   const login = async (email: string, password: string) => {
     setError("");
@@ -83,7 +70,7 @@ const ContextProvider: FC<Props> = (props) => {
           email,
           password,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setUser(response.data);
     } catch (err: any) {
@@ -168,7 +155,7 @@ const ContextProvider: FC<Props> = (props) => {
         document.querySelector("html")!.setAttribute("data-theme", themes.dark);
       }
     },
-    [theme]
+    [theme],
   );
 
   const toggleTheme = () => {
@@ -180,40 +167,6 @@ const ContextProvider: FC<Props> = (props) => {
       localStorage.setItem("activeTheme", "light");
     }
   };
-
-  const defineRulesFor = useCallback(async () => {
-    if (!roles) return;
-
-    // superUser roles definition
-    const builtPerms: Record<string, any> = {};
-
-    // perms should be of format
-    // { 'read': ['Contact', 'Database']}
-    for (const role of roles) {
-      console.log({ role });
-
-      const applyData = (data: any) => {
-        const permissions: any[] = data.data;
-
-        permissions.forEach((permission) => {
-          builtPerms[permission.action] = [
-            ...(builtPerms[permission.action] || []),
-            ...permission.ressources,
-          ];
-        });
-      };
-
-      await sendRequest(
-        { path: `/permission/${role.role}`, method: "get" },
-        applyData
-      );
-    }
-
-    if (builtPerms) {
-      casbinAuthorizer.setPermission(builtPerms);
-      setBuiltPerms(builtPerms);
-    }
-  }, [roles, sendRequest]);
 
   const fetchRoles = useCallback(
     (role: Role) => {
@@ -233,22 +186,18 @@ const ContextProvider: FC<Props> = (props) => {
         {
           path: "/auth/roles",
         },
-        applyData
+        applyData,
       );
     },
-    [sendRequest]
+    [sendRequest],
   );
-
-  useEffect(() => {
-    defineRulesFor();
-  }, [defineRulesFor, roles]);
 
   useEffect(() => {
     document
       .querySelector("html")!
       .setAttribute(
         "data-theme",
-        theme === "light" ? themes.light : themes.dark
+        theme === "light" ? themes.light : themes.dark,
       );
   }, [theme]);
 
@@ -263,7 +212,7 @@ const ContextProvider: FC<Props> = (props) => {
               userId: user._id,
             },
             withCredentials: true,
-          })
+          }),
         );
       }
     }
@@ -282,9 +231,6 @@ const ContextProvider: FC<Props> = (props) => {
     user,
     roles,
     fetchRoles,
-    defineRulesFor,
-    builtPerms,
-    //closeTab,
     socket,
     chooseTheme,
   };

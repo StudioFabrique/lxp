@@ -71,27 +71,26 @@ export default function checkPermissions(
 
       res.locals.roles = rolesToCheck;
 
-      let isRolesCorrect: boolean = false;
+      const allPermissions = await Promise.all(
+        rolesToCheck.map((role) =>
+          Permission.find({
+            roles: role._id,
+          }),
+        ),
+      );
 
-      /**
-       * Parcours tous les rôles de l'utilisateur actuel et si au moins l'un des roles est correct, renvoie true
-       */
+      const flattenedPermissions = allPermissions.flat();
 
-      for (const role of rolesToCheck) {
-        const authorization =
-          !ressource && roleFromParam
-            ? await _authorizeThisRole(role, actionDefined!, roleFromParam)
-            : await authorizeThisRole(role, actionDefined!, ressource!);
+      const requiredPermissionName = `${actionDefined!}:${!ressource && roleFromParam ? roleFromParam : ressource!}`;
+      const hasPermission = flattenedPermissions.some(
+        (permission) => permission.name === requiredPermissionName,
+      );
 
-        if (authorization) {
-          isRolesCorrect = true;
-        }
-      }
-
-      if (isRolesCorrect) {
+      if (hasPermission) {
         req.auth = { userId: data.userId, userRoles: data.userRoles };
         next();
       } else {
+        youShallNotPass();
         if (failedRedirectPath)
           res.redirect(failedRedirectPath.replace("[:userId]", data.userId));
         else
@@ -103,36 +102,26 @@ export default function checkPermissions(
   };
 }
 
-async function authorizeThisRole(
+/* async function _authorizeThisRole(
   role: IRole,
   action: string,
   ressource: string,
 ): Promise<boolean> {
-  const permissionFound = await Permission.findOne({
-    role: role.role,
-    action: action,
+  console.log({ role, action, ressource });
+
+  // Check all permissions for the role
+  const permissions = await Permission.find({
+    roles: role._id,
   });
 
-  if (permissionFound && permissionFound.ressources.includes(ressource)) {
+  // Check if any permission matches the required action and resource
+  const hasRequiredPermission = permissions.some(
+    (permission) => permission.name === `${action}:${ressource}`,
+  );
+
+  if (hasRequiredPermission) {
     return true;
   }
   youShallNotPass();
   return false;
-}
-
-async function _authorizeThisRole(
-  role: IRole,
-  action: string,
-  roleFromParam: string,
-): Promise<boolean> {
-  const permissionFound = await Permission.findOne({
-    role: role.role,
-    action: action,
-  });
-
-  if (permissionFound && permissionFound.ressources.includes(roleFromParam)) {
-    return true;
-  }
-  youShallNotPass();
-  return false;
-}
+} */

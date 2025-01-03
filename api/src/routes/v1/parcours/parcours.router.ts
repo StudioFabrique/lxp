@@ -44,7 +44,7 @@ parcoursRouter.get("/", checkPermissions("parcours"), httpGetParcours);
 parcoursRouter.get(
   "/select",
   checkPermissions("parcours"),
-  httpGetSelectParcours
+  httpGetSelectParcours,
 );
 
 // enregistre un nouveau parcours
@@ -52,7 +52,7 @@ parcoursRouter.post(
   "/",
   checkPermissions("parcours"),
   postParcoursValidator,
-  httpCreateParcours
+  httpCreateParcours,
 );
 
 // supprime un parcours de la base de données
@@ -60,7 +60,7 @@ parcoursRouter.delete(
   "/:parcoursId",
   checkPermissions("parcours"),
   parcoursByIdValidator,
-  httpDeleteParcoursById
+  httpDeleteParcoursById,
 );
 
 // retourne la liste des parcours associés à une formation
@@ -68,7 +68,7 @@ parcoursRouter.get(
   "/parcours-by-formation/:formationId",
   checkPermissions("parcours"),
   getParcoursByFormationValidator,
-  httpGetParcoursByFormation
+  httpGetParcoursByFormation,
 );
 
 // retourne les détails d'un parcours
@@ -76,43 +76,43 @@ parcoursRouter.get(
   "/parcours-by-id/:parcoursId",
   checkPermissions("parcours"),
   parcoursByIdValidator,
-  httpGetParcoursById
+  httpGetParcoursById,
 );
 parcoursRouter.get(
   "/parcours-as-student",
-  checkPermissions("default"),
-  httpGetParcoursAsStudent
+  checkPermissions("cursus"),
+  httpGetParcoursAsStudent,
 );
 parcoursRouter.put(
   "/update-infos",
   checkPermissions("parcours"),
   updateInfosValidator,
-  httpUpdateParcoursInfos
+  httpUpdateParcoursInfos,
 );
 parcoursRouter.put(
   "/update-dates",
   checkPermissions("parcours"),
   updateDatesValidator,
-  httpUpdateParcoursDates
+  httpUpdateParcoursDates,
 );
 parcoursRouter.put(
   "/update-tags",
   checkPermissions("parcours"),
   putParcoursTagsValidator,
-  httpPutParcoursTags
+  httpPutParcoursTags,
 );
 parcoursRouter.put(
   "/update-contacts",
   checkPermissions("parcours"),
   putParcoursContactsValidator,
-  httpPutParcoursContacts
+  httpPutParcoursContacts,
 );
 //parcoursRouter.use("/update-skills", putParcoursSkillsRouter);
 parcoursRouter.put(
   "/update-virtual-class",
   checkPermissions("parcours"),
   virtualClassValidator,
-  httpPutVirtualClass
+  httpPutVirtualClass,
 );
 parcoursRouter.put(
   "/update-objectives",
@@ -120,41 +120,41 @@ parcoursRouter.put(
   body("parcoursId").isNumeric().notEmpty().escape(),
   body("objectives").isArray().notEmpty(),
   body("objectives.*").isString().notEmpty(),
-  httpPutParcoursObjectives
+  httpPutParcoursObjectives,
 );
 parcoursRouter.put(
   "/reorder-objectives",
   checkPermissions("parcours"),
-  httpPutReorderObjectives
+  httpPutReorderObjectives,
 );
 parcoursRouter.put(
   "/update-image/:parcoursId",
   checkPermissions("parcours"),
   createFileUploadMiddleware(headerImageMaxSize),
   parcoursIdValidator,
-  httpUpdateImage
+  httpUpdateImage,
 );
 parcoursRouter.put(
   "/groups",
   checkPermissions("parcours"),
-  httpPutParcoursGroups
+  httpPutParcoursGroups,
 );
 parcoursRouter.put(
   "/publish/:parcoursId",
   checkPermissions("parcours"),
-  httpPublishParcours
+  httpPublishParcours,
 );
 // retourne la liste des trois derniers parcours enregistrés
 parcoursRouter.get(
   "/root-parcours",
   checkPermissions("parcours"),
-  httpGetRootAdminParcours
+  httpGetRootAdminParcours,
 );
 // retourne la liste des parcours auquel le formateur connecté est associé en tant que contact pour la vue home parcours
 parcoursRouter.get(
   "/teacher-parcours",
   checkPermissions("parcours"),
-  httpGetTeacherParcours
+  httpGetTeacherParcours,
 );
 
 export default parcoursRouter;
