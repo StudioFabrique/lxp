@@ -20,6 +20,14 @@ export default async function httpDeleteRole(req: Request, res: Response) {
           .json({ message: "Impossible de supprimer ses propres rôle" });
     }
 
+    // vérifier si le rôle est protégé
+    const roleToDelete = await Role.findById(id);
+    if (roleToDelete?.isProtected) {
+      return res
+        .status(400)
+        .json({ message: "Impossible de supprimer un rôle protégé" });
+    }
+
     await Permission.updateMany({ roles: id }, { $pull: { roles: id } });
 
     await Role.deleteOne({ _id: id });

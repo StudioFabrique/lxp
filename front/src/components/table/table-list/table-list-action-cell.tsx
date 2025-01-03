@@ -11,7 +11,7 @@ type TableListActionCellProps = TableListAction & { id: string };
 const TableListActionCell = (props: TableListActionCellProps) => {
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  const { sendRequest, isLoading } = useHttp();
+  const { sendRequest, isLoading } = useHttp(true);
 
   const path = props.request
     ? props.request.path.replace("[:id]", props.id ?? "")

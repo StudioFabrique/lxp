@@ -21,6 +21,18 @@ export default async function httpDeleteManyRoles(req: Request, res: Response) {
       }
     }
 
+    // Check for protected roles
+    const protectedRoles = await Role.find({
+      _id: { $in: rolesIds },
+      isProtected: true,
+    });
+
+    if (protectedRoles.length > 0) {
+      return res
+        .status(400)
+        .json({ message: "Impossible de supprimer des rôles protégés" });
+    }
+
     await Permission.updateMany(
       { roles: { $in: rolesIds } },
       { $pull: { roles: { $in: rolesIds } } },

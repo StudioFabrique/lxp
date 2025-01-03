@@ -89,6 +89,7 @@ export async function getAllRoles() {
       role: role.role,
       label: role.label,
       rank: role.rank,
+      isProtected: role.isProtected,
       countRead: permissions.filter((perm) => perm.startsWith("read:")).length,
       countWrite: permissions.filter((perm) => perm.startsWith("write:"))
         .length,
@@ -234,6 +235,10 @@ export async function removePermissionFromRole(
       throw new Error("Role not found");
     }
 
+    if (role.isProtected) {
+      throw new Error("Cannot modify permissions of a protected role");
+    }
+
     const permission = await Permission.findOne({ name: permissionName });
     if (!permission) {
       throw new Error("Permission not found");
@@ -270,6 +275,10 @@ export async function addPermissionToRole(
     const role = await Role.findById(roleId);
     if (!role) {
       throw new Error("Role not found");
+    }
+
+    if (role.isProtected) {
+      throw new Error("Cannot modify permissions of a protected role");
     }
 
     let permission = await Permission.findOne({ name: permissionName });
@@ -333,11 +342,19 @@ export async function createOrUpdateRoleWithPermissions(
     if (_id) {
       foundRole = await Role.findById(_id);
       if (foundRole) {
-        foundRole = await Role.findByIdAndUpdate(
-          _id,
-          { role: roleName, label, rank },
-          { new: true },
-        );
+        if (foundRole.isProtected) {
+          foundRole = await Role.findByIdAndUpdate(
+            _id,
+            { label },
+            { new: true },
+          );
+        } else {
+          foundRole = await Role.findByIdAndUpdate(
+            _id,
+            { role: roleName, label, rank },
+            { new: true },
+          );
+        }
       }
     }
 
@@ -346,8 +363,8 @@ export async function createOrUpdateRoleWithPermissions(
       await foundRole.save();
     }
 
-    // Only update permissions if they were provided
-    if (permissions !== undefined) {
+    // Only update permissions if they were provided and role is not protected
+    if (permissions !== undefined && !foundRole.isProtected) {
       // Remove existing role references from all permissions
       await Permission.updateMany(
         { roles: foundRole._id },

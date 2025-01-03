@@ -16,9 +16,10 @@ import toast from "react-hot-toast";
 import useInput from "../../../hooks/use-input";
 import RoleTypeSelector from "./role-type-selector";
 import { Context } from "../../../store/context.store";
+import Role from "../../../utils/interfaces/role";
 
 type RoleFormProps = {
-  role?: any;
+  role?: Role;
   allow2xlScreenFlexCol?: boolean;
   onRefreshData?: () => Promise<void>;
 };
@@ -100,7 +101,7 @@ const RoleForm = ({
     }
   }, [role]);
 
-  const formClassName = useMemo(() => "flex flex-col gap-y-10", []);
+  const formClassName = useMemo(() => "flex flex-col gap-y-5", []);
   const inputClassName = useMemo(
     () => (hasError: boolean) => setInputStyle(hasError),
     [],
@@ -116,7 +117,7 @@ const RoleForm = ({
         >
           <span className="flex flex-col gap-y-1">
             <h2 className="font-bold text-xl">
-              {role ? "Modification du rôle" : "Création de rôles"}
+              {role ? "Détails du rôle" : "Création de rôles"}
             </h2>
             {!role ? (
               <p className="text-sm">
@@ -146,6 +147,7 @@ const RoleForm = ({
                 onChange={name.valueChangeHandler}
                 onBlur={name.valueBlurHandler}
                 value={name.value}
+                disabled={role?.isProtected}
               />
             </span>
 
@@ -169,7 +171,8 @@ const RoleForm = ({
               <RoleTypeSelector
                 currentRoleType={currentRoleType}
                 onSetCurrentRoleType={setCurrentRoleType}
-                editMode={role}
+                editMode={Boolean(role)}
+                disabled={role?.isProtected}
               />
             </span>
             <div className="w-full sm:w-auto">

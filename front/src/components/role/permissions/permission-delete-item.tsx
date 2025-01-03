@@ -5,6 +5,7 @@ type PermissionItemProps = {
   name: string;
   fullName: string;
   description?: string;
+  inactive?: boolean;
   onDeleteItem: (name: string) => void;
 };
 
@@ -12,6 +13,7 @@ const PermissionDeleteItem = ({
   name,
   fullName,
   description,
+  inactive,
   onDeleteItem,
 }: PermissionItemProps) => {
   const [showConfirm, setShowConfirm] = useState(false);
@@ -34,6 +36,7 @@ const PermissionDeleteItem = ({
   }, []);
 
   const handleClick = () => {
+    if (inactive) return;
     setShowConfirm(true);
   };
 
@@ -47,7 +50,7 @@ const PermissionDeleteItem = ({
   };
 
   return (
-    <div className="group relative flex items-center justify-between px-2 py-1 rounded-md bg-base-100 text-base-content gap-2 hover:bg-base-100/60 transition-colors duration-200 cursor-pointer">
+    <div className="group relative flex items-center justify-between px-2 py-1 rounded-md bg-base-100 text-base-content gap-2 hover:bg-base-100/60 transition-colors duration-200 cursor-pointer h-8">
       <div className="flex items-center gap-1">
         <Shield className="w-4 h-4 stroke-warning" />
         <p className="font-medium text-sm text-base-content capitalize">
@@ -59,35 +62,37 @@ const PermissionDeleteItem = ({
           {description}
         </div>
       )}
-      <div className="relative">
-        <button
-          onClick={handleClick}
-          className="p-1"
-          aria-label="Delete permission"
-        >
-          <MinusCircle className="w-4 stroke-error hover:stroke-error-content transition-all duration-200" />
-        </button>
-
-        {showConfirm && (
-          <div
-            ref={confirmRef}
-            className="absolute z-20 bottom-full mb-2 bg-base-200 rounded-lg shadow-lg p-3 w-48 border border-base-300"
-          >
-            <p className="text-sm mb-3">Supprimer la permission "{name}" ?</p>
-            <div className="flex justify-end gap-2">
-              <button onClick={handleCancel} className="btn btn-ghost btn-xs">
-                Annuler
-              </button>
-              <button
-                onClick={handleConfirm}
-                className="btn btn-error btn-xs text-error-content"
-              >
-                Supprimer
-              </button>
+      <button
+        onClick={handleClick}
+        aria-label="Delete permission"
+        disabled={inactive}
+        hidden={inactive}
+      >
+        <MinusCircle className="w-4 transition-all duration-200" />
+      </button>
+      {!inactive && (
+        <div className="absolute">
+          {showConfirm && (
+            <div
+              ref={confirmRef}
+              className="absolute z-20 bottom-full mb-5 bg-base-200 rounded-lg shadow-lg p-3 w-48 border border-base-300"
+            >
+              <p className="text-sm mb-3">Supprimer la permission "{name}" ?</p>
+              <div className="flex justify-end gap-2">
+                <button onClick={handleCancel} className="btn btn-ghost btn-xs">
+                  Annuler
+                </button>
+                <button
+                  onClick={handleConfirm}
+                  className="btn btn-error btn-xs text-error-content"
+                >
+                  Supprimer
+                </button>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
