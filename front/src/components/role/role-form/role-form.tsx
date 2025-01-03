@@ -121,7 +121,7 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
             )}
           </span>
 
-          <div className="flex flex-col sm:flex-row gap-10 w-full">
+          <div className="flex flex-col sm:flex-row gap-10 w-full items-end">
             <span className="flex flex-col gap-y-1 w-full">
               <p>Nom du rôle</p>
               <input
@@ -161,22 +161,22 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
                 editMode={role}
               />
             </span>
-          </div>
 
-          <div className="flex justify-end">
-            {isRequestLoading ? (
-              <button type="button" className="btn btn-sm px-10">
-                <span className="loading loading-spinner" />
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="btn btn-sm btn-primary normal-case px-10"
-                onClick={handleSubmitRole}
-              >
-                {role ? "Modifier" : "Ajouter"}
-              </button>
-            )}
+            <div className="w-full sm:w-auto">
+              {isRequestLoading ? (
+                <button type="button" className="btn btn-sm px-10 w-full">
+                  <span className="loading loading-spinner" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-sm btn-primary normal-case px-10 w-full"
+                  onClick={handleSubmitRole}
+                >
+                  {role ? "Modifier" : "Ajouter"}
+                </button>
+              )}
+            </div>
           </div>
         </form>
       </Wrapper>

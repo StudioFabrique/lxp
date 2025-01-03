@@ -27,15 +27,13 @@ const RoleTypeSelector: FC<{
     const newRoleType = roleTypes.find(
       (roleType) => e.currentTarget.value === roleType.rank.toString(),
     );
-    onSetCurrentRoleType(
-      (previousRole: any) => newRoleType?.rank ?? previousRole,
-    );
+    onSetCurrentRoleType((previousRole) => newRoleType?.rank ?? previousRole);
   };
 
   return roleTypes ? (
     <div className="flex flex-col gap-1">
       <select
-        className="w-[60%] select select-sm border border-neutral/50 focus:outline-none"
+        className="w-full select select-sm border border-neutral/50 focus:outline-none"
         name="menu"
         id="menu"
         value={currentRoleType}
