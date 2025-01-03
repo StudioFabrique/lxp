@@ -13,6 +13,7 @@ export default async function putAddResource(req: CustomRequest) {
 
   const existingActivity = await prisma.activity.findFirst({
     where: { id: +activityId },
+    select: { id: true, authorId: true, resourceActivities: true },
   });
 
   if (!existingActivity)
@@ -54,7 +55,7 @@ export default async function putAddResource(req: CustomRequest) {
         create: newResources.map((resource, index) => ({
           label: resource.label,
           url: resource.url,
-          order: index,
+          order: existingActivity.resourceActivities.length + index,
         })),
       },
     },

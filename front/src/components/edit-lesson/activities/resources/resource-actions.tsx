@@ -1,6 +1,6 @@
 // Import des composants et icônes nécessaires
 import { Loader } from "lucide-react"; // Icône de chargement
-import Wrapper from "../../../../UI/wrapper/wrapper.component"; // Composant wrapper
+import Wrapper from "../../../UI/wrapper/wrapper.component"; // Composant wrapper
 
 // Type définissant les props du composant
 type Props = {

@@ -99,6 +99,10 @@ const AddNewLesson = React.lazy(
   () => import("../../views/lesson/add/add-new-lesson"),
 );
 
+const MediathequeHomePage = React.lazy(
+  () => import("../../views/mediatheque/mediatheque-home-page")
+);
+
 const adminRoutes = [
   { index: true, element: <AdminHome /> },
   {
@@ -243,6 +247,10 @@ const adminRoutes = [
   {
     path: "feedbacks",
     element: <FeedbacksHome />,
+  },
+  {
+    path: "mediatheque",
+    element: <MediathequeHomePage />,
   },
   { path: "*", element: <FeaturesList /> },
 ];
