@@ -1,4 +1,4 @@
-import { resourcesRbac } from "../../config/ressources-rbac";
+import { resourcesRbac } from "./config/ressources-rbac";
 import Permission from "../interfaces/db/permission";
 import Role, { IRole } from "../interfaces/db/role";
 import User from "../interfaces/db/user";

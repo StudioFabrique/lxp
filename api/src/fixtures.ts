@@ -15,7 +15,10 @@ import Role from "./utils/interfaces/db/role";
 import Permission, { IPermission } from "./utils/interfaces/db/permission";
 import Tag from "./utils/interfaces/db/tag";
 import User from "./utils/interfaces/db/user";
-import { permDefsActions, permDefsInterface } from "./fixtures-permissions";
+import {
+  permDefsActions,
+  permDefsInterface,
+} from "./utils/rbac/fixtures-permissions";
 import IConnectionInfos from "./utils/interfaces/db/connection-infos";
 import ConnectionInfos from "./utils/interfaces/db/connection-infos";
 dotenv.config();

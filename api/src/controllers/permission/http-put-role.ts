@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { serverIssue } from "../../utils/constantes";
 import { createOrUpdateRoleWithPermissions } from "../../utils/rbac/rbac-utils";
 import Role from "../../utils/interfaces/db/role";
-import { getPermissionsByRank } from "../../config/ressources-rbac";
+import { getPermissionsByRank } from "../../utils/rbac/config/ressources-rbac";
 
 /**
  * Mets à jour le nom d'un rôle ainsi que toutes ses permissions

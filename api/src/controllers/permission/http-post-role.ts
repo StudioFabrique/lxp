@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import { serverIssue } from "../../utils/constantes";
-import Role from "../../utils/interfaces/db/role";
 import { createOrUpdateRoleWithPermissions } from "../../utils/rbac/rbac-utils";
-import { getPermissionsByRank } from "../../config/ressources-rbac";
+import { getPermissionsByRank } from "../../utils/rbac/config/ressources-rbac";
 
 export default async function httpPostRole(req: Request, res: Response) {
   try {
