@@ -42,6 +42,7 @@ import httpPutReorderResource from "../../../controllers/activity/http-put-reord
 import httpGetResourceActivity from "../../../controllers/activity/http-get-resource-activity";
 import httpDeleteResource from "../../../controllers/activity/http-delete-resource";
 import httpPutResource from "../../../controllers/activity/http-put-resource";
+import mediatheque from "../../../middleware/mediatheque";
 
 const activityRouter = express.Router();
 
@@ -69,6 +70,7 @@ activityRouter.post(
   "/video/:lessonId",
   checkPermissions("lesson"),
   uploadActivityVideo(),
+  mediatheque("video"),
   jsonParser,
   lessonIdValidator,
   postVideoValidator,
@@ -115,6 +117,7 @@ activityRouter.post(
   "/image/:lessonId",
   checkPermissions("lesson"),
   uploadActivityImage(),
+  mediatheque("image"),
   jsonParser,
   httpPostImage
 );
@@ -124,6 +127,7 @@ activityRouter.put(
   "/image/:activityId",
   checkPermissions("lesson"),
   uploadActivityImage(),
+  mediatheque("image"),
   jsonParser,
   activityIdValidator,
   httpPutImage
@@ -188,8 +192,6 @@ activityRouter.put(
   checkPermissions("lesson"),
   resourceIdValidator,
   putResourceValidator,
-  uploadActivityFiles(),
-  jsonParser,
   httpPutResource
 );
 

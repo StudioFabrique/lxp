@@ -44,8 +44,8 @@ const ImageFileUpload: FC<{
   };
 
   return (
-    <div className="w-full flex flex-col gap-y-2">
-      <p>{label}</p>
+    <div className="w-full flex flex-col gap-y-2 justify-center">
+      {label.length > 0 ? <p>{label}</p> : null}
       <span className="flex w-full items-center">
         <p
           onClick={handleSetFile}

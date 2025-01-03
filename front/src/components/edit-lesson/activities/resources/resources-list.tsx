@@ -1,6 +1,6 @@
 // Import des hooks et composants nécessaires
-import { useDragAndDrop } from "../../../../../hooks/useDragAndDrop"; // Hook personnalisé pour gérer le drag & drop
-import { DndWrapper } from "../../../../UI/DndWrapper"; // Composant wrapper pour le drag & drop
+import { useDragAndDrop } from "../../../../hooks/useDragAndDrop"; // Hook personnalisé pour gérer le drag & drop
+import { DndWrapper } from "../../../UI/DndWrapper"; // Composant wrapper pour le drag & drop
 import ResourceItem from "./resource-item"; // Composant qui affiche un élément de ressource
 import { useMemo } from "react";
 
