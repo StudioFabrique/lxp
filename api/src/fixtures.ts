@@ -255,16 +255,31 @@ async function createManyStudents() {
 async function createRoles() {
   // Roles d'interface
   const interfaceRoles = [
-    { role: "interface:admin", label: "interface de l'admin", rank: 1 },
-    { role: "interface:teacher", label: "interface du formateur", rank: 2 },
-    { role: "interface:student", label: "interface de l'apprenant", rank: 3 },
+    {
+      role: "interface:admin",
+      label: "interface de l'admin",
+      rank: 1,
+      isProtected: true,
+    },
+    {
+      role: "interface:teacher",
+      label: "interface du formateur",
+      rank: 2,
+      isProtected: true,
+    },
+    {
+      role: "interface:student",
+      label: "interface de l'apprenant",
+      rank: 3,
+      isProtected: true,
+    },
   ];
 
   // Roles d'actions
   const actionsRoles = [
-    { role: "admin", label: "admin", rank: 1 },
-    { role: "teacher", label: "formateur", rank: 2 },
-    { role: "student", label: "apprenant", rank: 3 },
+    { role: "admin", label: "admin", rank: 1, isProtected: true },
+    { role: "teacher", label: "formateur", rank: 2, isProtected: true },
+    { role: "student", label: "apprenant", rank: 3, isProtected: true },
   ];
   const dbRoles = Array<any>();
   [...interfaceRoles, ...actionsRoles].forEach((role) => {

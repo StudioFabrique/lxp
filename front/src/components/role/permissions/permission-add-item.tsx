@@ -21,9 +21,9 @@ const PermissionAddItem = ({
 
   return (
     <div
-      className={`flex items-center justify-between px-2 py-1 rounded-md bg-base-100 text-base-content gap-2 transition-colors duration-200 ${
+      className={`flex items-center justify-between px-2 py-1 rounded-md bg-base-100 text-base-content gap-2 transition-colors duration-200 h-8 ${
         inactive
-          ? "bg-base-200/90 cursor-not-allowed"
+          ? "bg-base-200/90 cursor-not-allowed border border-base-300"
           : "hover:bg-base-100/60 cursor-pointer"
       }`}
     >

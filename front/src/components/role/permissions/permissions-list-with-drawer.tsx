@@ -15,6 +15,7 @@ type PermissionsListWithDrawerProps = {
     description: string;
   }[];
   zIndex?: number;
+  roleProtected?: boolean;
   onAddPermission: (name: string) => void;
   onDeletePermission: (name: string) => void;
 };
@@ -26,6 +27,7 @@ const PermissionsListWithDrawer = ({
   permissions,
   remainingResources,
   zIndex = 40,
+  roleProtected,
   onAddPermission,
   onDeletePermission,
 }: PermissionsListWithDrawerProps) => {
@@ -60,6 +62,7 @@ const PermissionsListWithDrawer = ({
                       name={res.name}
                       fullName={res.fullName}
                       description={res.description}
+                      inactive={roleProtected}
                       onAddPermission={onAddPermission}
                     />
                   ))
@@ -78,6 +81,7 @@ const PermissionsListWithDrawer = ({
                 name={item.name}
                 fullName={item.fullName}
                 description={item.description}
+                inactive={roleProtected}
                 onDeleteItem={onDeletePermission}
               />
             ))

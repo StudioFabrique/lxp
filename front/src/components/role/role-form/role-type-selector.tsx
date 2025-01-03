@@ -11,7 +11,8 @@ const RoleTypeSelector: FC<{
   currentRoleType: number;
   onSetCurrentRoleType: Dispatch<SetStateAction<number>>;
   editMode?: boolean;
-}> = ({ currentRoleType, onSetCurrentRoleType, editMode }) => {
+  disabled?: boolean;
+}> = ({ currentRoleType, onSetCurrentRoleType, editMode, disabled }) => {
   const [showAlertRoleType, setShowAlertRoleType] = useState<boolean>(false);
 
   const roleTypes = [
@@ -40,6 +41,7 @@ const RoleTypeSelector: FC<{
         onChange={handleSelect}
         onFocus={() => setShowAlertRoleType(true)}
         onBlur={() => setShowAlertRoleType(false)}
+        disabled={disabled}
       >
         {roleTypes.map((item) => (
           <option

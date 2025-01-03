@@ -9,9 +9,13 @@ import useHttp from "../../../../hooks/use-http";
 function useTablePaginatedData<TData>(
   apiEndpoint: string,
   searchOptions: { apiSearchEndpoint?: string; searchProperty?: string },
-  options?: { disablePagination: boolean; disableSort: boolean },
+  options?: {
+    disablePagination: boolean;
+    disableSort: boolean;
+    invokeErrorToast?: boolean;
+  },
 ) {
-  const { sendRequest, isLoading } = useHttp();
+  const { sendRequest, isLoading } = useHttp(options?.invokeErrorToast);
 
   const [data, setData] = useState<TData[]>([]);
 

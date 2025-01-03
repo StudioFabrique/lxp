@@ -29,13 +29,13 @@ const RoleEdit = () => {
   return (
     <div className="flex flex-col gap-y-5 p-10 overflow-hidden">
       {/* Header de la liste des rôles */}
-      <Header title={`Rôle ${toTitleCase(role.label)}`}>
+      <Header title={`Modification du rôle ${toTitleCase(role.label)}`}>
         <Link to="/admin/roles" className="btn btn-outline">
           Retour
         </Link>
       </Header>
       <RoleForm role={role} />
-      <div className="h-5" />
+      <div className="h-2" />
       <h3 className="font-semibold text-2xl">
         Liste des permission du rôle
         <span className="capitalize font-bold"> {role.label} </span>
@@ -49,6 +49,7 @@ const RoleEdit = () => {
           descriptionTooltip="Permet de consulter et visualiser les ressources sans pouvoir les modifier. Cette permission est fondamentale pour accéder aux informations tout en préservant leur intégrité."
           permissions={permissions?.read}
           remainingResources={remainingResources?.read}
+          roleProtected={role.isProtected}
           onAddPermission={onAddPermission}
           onDeletePermission={onDeletePermission}
         />
@@ -61,6 +62,7 @@ const RoleEdit = () => {
           descriptionTooltip="Autorise la création de nouvelles ressources dans le système. Cette permission est essentielle pour contribuer activement au contenu tout en respectant la structure établie."
           permissions={permissions?.write}
           remainingResources={remainingResources?.write}
+          roleProtected={role.isProtected}
           onAddPermission={onAddPermission}
           onDeletePermission={onDeletePermission}
         />
@@ -73,6 +75,7 @@ const RoleEdit = () => {
           descriptionTooltip="Permet de mettre à jour et d'améliorer les ressources existantes. Cette permission est cruciale pour maintenir les informations à jour et corriger les erreurs si nécessaire."
           permissions={permissions?.update}
           remainingResources={remainingResources?.update}
+          roleProtected={role.isProtected}
           onAddPermission={onAddPermission}
           onDeletePermission={onDeletePermission}
         />
@@ -85,6 +88,7 @@ const RoleEdit = () => {
           descriptionTooltip="Autorise la suppression des ressources du système. Cette permission doit être utilisée avec précaution car elle permet de retirer définitivement des éléments de la base de données."
           permissions={permissions?.delete}
           remainingResources={remainingResources?.delete}
+          roleProtected={role.isProtected}
           onAddPermission={onAddPermission}
           onDeletePermission={onDeletePermission}
         />

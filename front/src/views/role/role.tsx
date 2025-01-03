@@ -40,6 +40,7 @@ const RolePage = () => {
     {
       disablePagination: true,
       disableSort: true,
+      invokeErrorToast: true,
     },
   );
 
