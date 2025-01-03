@@ -19,7 +19,7 @@ import useRoleActions from "./hooks/use-role-actions";
  * Composant Role
  *
  * Affiche un formulaire et une liste de roles avec des fonctionnalités pour créer,
- * modifier et supprimer des groupes. Utilise un tableau paginé pour
+ * modifier et supprimer des rôles. Utilise un tableau paginé pour
  * présenter les données, avec une barre de recherche intégrée.
  *
  * @component
@@ -76,7 +76,7 @@ const RolePage = () => {
         <RoleForm allow2xlScreenFlexCol onRefreshData={onRefreshData} />
 
         {/*
-         * Tableau generique utilisé pour la liste des groupes,
+         * Tableau generique utilisé pour la liste des rôles,
          * utilisation du pattern composition
          */}
         <Table
@@ -98,14 +98,15 @@ const RolePage = () => {
               isDisabled={!(idsList.length > 0)} // disabled si la liste a une longueur de 0
               onRefreshData={onRefreshData}
               actions={[
-                // {
-                //   title: "Exporter les rôles sélectionnés",
-                //   description: "Exporter les rôles suivants en format csv",
-                //   rightButtonTitle: "Exporter",
-                //   onConfirm: async () => {
-                //     csvRef.current?.click();
-                //   },
-                // },
+                /* {
+                 *   title: "Exporter les rôles sélectionnés",
+                 *   description: "Exporter les rôles suivants en format csv",
+                 *   rightButtonTitle: "Exporter",
+                 *   onConfirm: async () => {
+                 *     csvRef.current?.click();
+                 *   },
+                 * },
+                 */
                 {
                   title: "Supprimer les rôles selectionnés",
                   description: `${idsList.length} ${idsList.length > 1 ? "rôles vont être supprimés" : "rôle va être supprimé"}`,

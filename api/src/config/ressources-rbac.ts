@@ -1,21 +1,74 @@
 // Toutes les ressources
 export const resourcesRbac = [
-  { name: "role", description: "Rôles et permissions des utilisateurs" },
-  { name: "permission", description: "Paramètres des permissions" },
-  { name: "tag", description: "Tags et catégories de contenu" },
-  { name: "user", description: "Comptes et profils utilisateurs" },
-  { name: "group", description: "Groupes et équipes d'utilisateurs" },
-  { name: "formation", description: "Formations" },
-  { name: "parcours", description: "Parcours pédagogiques" },
-  { name: "module", description: "Modules de cours" },
-  { name: "course", description: "Cours individuels" },
-  { name: "lesson", description: "Leçons de cours" },
+  {
+    name: "role",
+    description:
+      "Gestion des rôles et niveaux d'accès pour une expérience personnalisée",
+  },
+  {
+    name: "permission",
+    description:
+      "Configuration fine des droits d'accès pour une sécurité optimale",
+  },
+  {
+    name: "tag",
+    description:
+      "Organisation intelligente et classification intuitive des contenus pédagogiques",
+  },
+  {
+    name: "user",
+    description:
+      "Gestion avancée des profils apprenants et de leurs parcours individualisés",
+  },
+  {
+    name: "group",
+    description:
+      "Création et animation de communautés d'apprentissage collaboratives",
+  },
+  {
+    name: "formation",
+    description:
+      "Programmes complets de formation pour développer vos compétences",
+  },
+  {
+    name: "parcours",
+    description:
+      "Itinéraires pédagogiques personnalisés pour un apprentissage optimal",
+  },
+  {
+    name: "module",
+    description:
+      "Blocs d'apprentissage thématiques pour une progression structurée",
+  },
+  {
+    name: "course",
+    description: "Séquences pédagogiques interactives et engageantes",
+  },
+  {
+    name: "lesson",
+    description: "Contenus pédagogiques ciblés pour un apprentissage efficace",
+  },
   {
     name: "bonusSkill",
-    description: "Compétences et aptitudes additionnelles",
+    description:
+      "Compétences complémentaires pour enrichir le parcours d'apprentissage",
   },
-  { name: "objective", description: "Objectifs d'apprentissage" },
-  { name: "mediatheque", description: "Ressources de la médiathèque" },
+  {
+    name: "objective",
+    description:
+      "Définition et suivi personnalisé des objectifs d'apprentissage",
+  },
+  {
+    name: "mediatheque",
+    description:
+      "Centre de ressources multimédias pour approfondir vos connaissances",
+  },
+  // Ressource à retirer - sera remplacée par une meilleure implémentation du système de gestion de droits (role layout d'interface)
+  {
+    name: "cursus",
+    description:
+      "Espace personnel de suivi permettant de visualiser sa progression, gérer son profil et personnaliser son expérience d'apprentissage",
+  },
 ];
 
 // Pour les actions write, update et delete pour teacher rank 2
@@ -49,10 +102,21 @@ export const resourcesRbacByRank = {
   },
   // apprenant
   3: {
-    read: [],
-    write: [],
-    update: [],
-    delete: [],
+    read: [
+      "tag",
+      "user",
+      "group",
+      "formation",
+      "parcours",
+      "module",
+      "course",
+      "bonusSkill",
+      "lesson",
+      "cursus",
+    ],
+    write: ["cursus"],
+    update: ["cursus"],
+    delete: ["cursus"],
   },
   // autre
   4: [],

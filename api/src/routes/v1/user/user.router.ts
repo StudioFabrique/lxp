@@ -188,9 +188,9 @@ userRouter.get("/contacts", checkPermissions("user"), httpGetContacts);
 // Rechercher des groupes en fonctions d'une liste d'ids de groupes passé en body et populate les users
 userRouter.post("/group", checkPermissions("user"), httpGetUsersByGroup);
 
-userRouter.use("/profile", checkPermissions("default"), userProfileRouter);
+userRouter.use("/profile", checkPermissions("cursus"), userProfileRouter);
 
-userRouter.use("/hobby", checkPermissions("default"), hobbyRouter);
+userRouter.use("/hobby", checkPermissions("cursus"), hobbyRouter);
 
 // retourne les deux derniers parcours auquel l'utilisateur participe en tant que contact
 userRouter.get(
@@ -204,21 +204,21 @@ userRouter.get("/data/:userId", checkPermissions("user"), httpGetUserData);
 
 userRouter.get(
   "/own-feedback",
-  checkPermissions("default"),
+  checkPermissions("cursus"),
   httpGetLastFeedback,
 );
 
 // réceupère les accomplissements de tous les autres étudiants étant dans le même groupe que l'étudiant connnecté.
 userRouter.get(
   "/accomplishment",
-  checkPermissions("default"),
+  checkPermissions("cursus"),
   httpGetAccomplishements,
 );
 
 // retourne la liste des derniers feedbacks enregistrés
 userRouter.get(
   "/last-feedbacks/:notReviewed",
-  checkPermissions("default"),
+  checkPermissions("cursus"),
   httpGetLastFeedbacks,
 );
 

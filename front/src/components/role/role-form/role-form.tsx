@@ -118,10 +118,14 @@ const RoleForm = ({
             <h2 className="font-bold text-xl">
               {role ? "Modification du rôle" : "Création de rôles"}
             </h2>
-            {!role && (
+            {!role ? (
               <p className="text-sm">
                 Après avoir créé un rôle, vous pourrez lui ajouter des
                 permissions
+              </p>
+            ) : (
+              <p className="text-sm">
+                Vous pouvez modifier les informations du rôle
               </p>
             )}
           </span>

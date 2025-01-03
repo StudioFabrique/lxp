@@ -1,3 +1,4 @@
+import { resourcesRbac } from "../../config/ressources-rbac";
 import Permission from "../interfaces/db/permission";
 import Role, { IRole } from "../interfaces/db/role";
 import User from "../interfaces/db/user";
@@ -241,7 +242,7 @@ export async function createOrUpdateRoleWithPermissions(
     if (permissions !== undefined) {
       if (
         !permissions.every((permission) =>
-          permissionsList.includes(permission.resource),
+          resourcesRbac.map((r) => r.name).includes(permission.resource),
         )
       ) {
         throw new Error("Invalid resource in permissions");

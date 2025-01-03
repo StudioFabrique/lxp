@@ -6,10 +6,10 @@ function useManagePermissions(id: string) {
   const { sendRequest } = useHttp();
 
   const [permissions, setPermissions] = useState<{
-    read: string[];
-    write: string[];
-    update: string[];
-    delete: string[];
+    read: { name: string; description: string }[];
+    write: { name: string; description: string }[];
+    update: { name: string; description: string }[];
+    delete: { name: string; description: string }[];
   }>();
 
   const [resources, setResources] =
@@ -28,10 +28,18 @@ function useManagePermissions(id: string) {
     } = permissions;
 
     return {
-      read: resources.filter((res) => !readPerms.includes(res.name)),
-      write: resources.filter((res) => !writePerms.includes(res.name)),
-      update: resources.filter((res) => !updatePerms.includes(res.name)),
-      delete: resources.filter((res) => !deletePerms.includes(res.name)),
+      read: resources.filter(
+        (res) => !readPerms.find((p) => p.name === res.name),
+      ),
+      write: resources.filter(
+        (res) => !writePerms.find((p) => p.name === res.name),
+      ),
+      update: resources.filter(
+        (res) => !updatePerms.find((p) => p.name === res.name),
+      ),
+      delete: resources.filter(
+        (res) => !deletePerms.find((p) => p.name === res.name),
+      ),
     };
   }, [permissions, resources]);
 
@@ -51,16 +59,48 @@ function useManagePermissions(id: string) {
       const permissions = {
         read: data.permissions
           .filter((p: string) => p.startsWith("read:"))
-          .map((p: string) => p.split(":")[1]),
+          .map((p: string) => {
+            const name = p.split(":")[1];
+            return {
+              name,
+              description:
+                data.ressources.ressources.find((r) => r.name === name)
+                  ?.description || "",
+            };
+          }),
         write: data.permissions
           .filter((p: string) => p.startsWith("write:"))
-          .map((p: string) => p.split(":")[1]),
+          .map((p: string) => {
+            const name = p.split(":")[1];
+            return {
+              name,
+              description:
+                data.ressources.ressources.find((r) => r.name === name)
+                  ?.description || "",
+            };
+          }),
         update: data.permissions
           .filter((p: string) => p.startsWith("update:"))
-          .map((p: string) => p.split(":")[1]),
+          .map((p: string) => {
+            const name = p.split(":")[1];
+            return {
+              name,
+              description:
+                data.ressources.ressources.find((r) => r.name === name)
+                  ?.description || "",
+            };
+          }),
         delete: data.permissions
           .filter((p: string) => p.startsWith("delete:"))
-          .map((p: string) => p.split(":")[1]),
+          .map((p: string) => {
+            const name = p.split(":")[1];
+            return {
+              name,
+              description:
+                data.ressources.ressources.find((r) => r.name === name)
+                  ?.description || "",
+            };
+          }),
       };
 
       setPermissions(permissions);
