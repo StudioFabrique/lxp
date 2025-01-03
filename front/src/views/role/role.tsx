@@ -73,7 +73,7 @@ const RolePage = () => {
       /> */}
 
       <div className="grid 2xl:grid-cols-2 gap-5">
-        <RoleForm onRefreshData={onRefreshData} />
+        <RoleForm allow2xlScreenFlexCol onRefreshData={onRefreshData} />
 
         {/*
          * Tableau generique utilisé pour la liste des groupes,
