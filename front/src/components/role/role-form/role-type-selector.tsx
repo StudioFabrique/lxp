@@ -52,8 +52,9 @@ const RoleTypeSelector: FC<{
         ))}
       </select>
       {showAlertRoleType && editMode && (
-        <div className="absolute bottom-full mb-2 bg-base-100 p-2 rounded-lg shadow-lg border border-error w-64 text-xs text-error select-none">
-          Le changement de modèle de rôle écrasera les permissions existantes
+        <div className="absolute top-full mt-2 bg-base-100 p-2 rounded-lg shadow-lg border border-error w-64 text-xs text-error select-none">
+          La modification du modèle de rôle remplacera automatiquement les
+          permissions actuelles
         </div>
       )}
     </div>
