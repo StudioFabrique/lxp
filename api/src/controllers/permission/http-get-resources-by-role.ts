@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { serverIssue } from "../../utils/constantes";
 import Role from "../../utils/interfaces/db/role";
-import { resourcesRbac } from "../../config/ressources-rbac";
+import { resourcesRbac } from "../../utils/rbac/config/ressources-rbac";
 import { getAllActionsPermissionsForRole } from "../../utils/rbac/rbac-utils";
 
 export default async function httpGetResourcesByRole(
