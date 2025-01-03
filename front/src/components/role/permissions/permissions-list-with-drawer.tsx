@@ -47,45 +47,37 @@ const PermissionsListWithDrawer = ({
               title={title}
               icon={<ListPlus className="w-5" />}
             >
-              <div className="flex flex-col gap-2 h-full overflow-y-scroll">
-                <div className="flex flex-col gap-2">
-                  <h3 className="font-bold">Permissions disponibles</h3>
-                  {remainingResources ? (
-                    remainingResources.map((res) => (
-                      <PermissionAddItem
-                        key={res.name}
-                        name={res.name}
-                        description={res.description}
-                        onAddPermission={onAddPermission}
-                      />
-                    ))
-                  ) : (
-                    <p>Aucune permissions à ajouter</p>
-                  )}
-                </div>
-                <div className="flex flex-col gap-2 mt-8">
-                  <h3 className="font-bold">Permissions actuelles</h3>
-                  {permissions?.map((res) => (
+              <div className="flex flex-col gap-2 h-full overflow-x-hidden">
+                <h3 className="font-bold">Permissions disponibles</h3>
+                {remainingResources ? (
+                  remainingResources.map((res) => (
                     <PermissionAddItem
                       key={res.name}
                       name={res.name}
                       description={res.description}
-                      inactive
+                      onAddPermission={onAddPermission}
                     />
-                  ))}
-                </div>
+                  ))
+                ) : (
+                  <p>Aucune permissions à ajouter</p>
+                )}
               </div>
             </RightSideDrawer>
           </div>
         </div>
         <div className="flex flex-wrap gap-3 p-2">
-          {permissions?.map((item) => (
-            <PermissionDeleteItem
-              key={item.name}
-              name={item.name}
-              onDeleteItem={onDeletePermission}
-            />
-          ))}
+          {permissions && permissions.length > 0 ? (
+            permissions.map((item) => (
+              <PermissionDeleteItem
+                key={item.name}
+                name={item.name}
+                description={item.description}
+                onDeleteItem={onDeletePermission}
+              />
+            ))
+          ) : (
+            <p>Aucune permission affectée</p>
+          )}
         </div>
       </div>
     </SubWrapper>
