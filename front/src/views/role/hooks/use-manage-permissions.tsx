@@ -56,8 +56,6 @@ function useManagePermissions(id: string) {
         role: Role;
       };
     }) => {
-      console.log({ data });
-
       const permissions = {
         read: data.permissions
           .filter((p: string) => p.startsWith("read:"))
