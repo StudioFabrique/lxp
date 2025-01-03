@@ -1,15 +1,21 @@
-import { IRoleItem } from "../../views/role/role";
-
-export function transformRolesCsv(roles: IRoleItem[]) {
+export function transformRolesCsv(
+  roles: {
+    role: string;
+    label: string;
+    countRead?: number;
+    countWrite?: number;
+    countUpdate?: number;
+    countDelete?: number;
+  }[],
+) {
   return roles.map((role) => {
     return {
       "nom du role": role.role,
       "label du role": role.label,
-      "Role actif": role.isActive,
-      "nb permissions de lecture": role.permCount.read,
-      "nb permissions d'écriture": role.permCount.write,
-      "nb permissions d'édition": role.permCount.update,
-      "nb permissions de suppression": role.permCount.delete,
+      "nb permissions de lecture": role.countRead || 0,
+      "nb permissions d'écriture": role.countWrite || 0,
+      "nb permissions d'édition": role.countUpdate || 0,
+      "nb permissions de suppression": role.countDelete || 0,
     };
   });
 }

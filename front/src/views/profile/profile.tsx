@@ -82,7 +82,7 @@ const Profile = () => {
           >
             Information
           </button>
-          <Can object="parcours" action="read">
+          <Can action="component" object="calendar">
             <button
               type="button"
               className={buttonClassName(Tab.Calendar)}
@@ -132,29 +132,25 @@ const Profile = () => {
           </button>
         </div>
         {tabsWithForms && (
-          <Can object="default" action="update">
-            <button
-              type="button"
-              className="btn btn-sm justify-self-end"
-              onClick={() => formRef.current?.requestSubmit()}
-            >
-              Soumettre les changements
-            </button>
-          </Can>
+          <button
+            type="button"
+            className="btn btn-sm justify-self-end"
+            onClick={() => formRef.current?.requestSubmit()}
+          >
+            Soumettre les changements
+          </button>
         )}
       </div>
       <RenderTab />
       {tabsWithForms && (
         <div className="flex justify-end">
-          <Can object="default" action="update">
-            <button
-              type="button"
-              className="btn btn-sm justify-self-end"
-              onClick={() => formRef.current?.requestSubmit()}
-            >
-              Soumettre les changements
-            </button>
-          </Can>
+          <button
+            type="button"
+            className="btn btn-sm justify-self-end"
+            onClick={() => formRef.current?.requestSubmit()}
+          >
+            Soumettre les changements
+          </button>
         </div>
       )}
     </div>

@@ -19,7 +19,7 @@ const Portal = (props: PortalProps) => {
         <div className="fixed z-50 top-0 left-0 w-screen h-screen">
           {props.children}
         </div>,
-        ref.current
+        ref.current,
       )
     : null;
 };

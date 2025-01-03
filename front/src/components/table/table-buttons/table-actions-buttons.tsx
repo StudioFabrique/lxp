@@ -2,39 +2,60 @@ import { RefreshCw } from "lucide-react";
 import ActionsDropdown from "../../UI/actions-dropdown/actions-dropdown";
 import TableActionsModal from "./table-actions-modal";
 import { useState } from "react";
-import Group from "../../../utils/interfaces/group";
 
-type TableButtonsProps = {
+type Action<TData> = {
+  title: string;
+  description: string;
+  rightButtonTitle: string;
+  alertMessageBottom?: string;
+  data?: TData;
+  onConfirm: () => Promise<void>;
+};
+
+type TableButtonsProps<TData> = {
   isLoading: boolean;
   isDisabled: boolean;
   onRefreshData: () => void;
-  delete: { actionTitle: string; onDelete: () => Promise<void> };
-  onRetreiveItemsByPropertyFromIdList?: (property: keyof Group) => string[];
+  actions: Action<TData>[];
+  retreiveItemsProperty?: keyof TData;
+  onRetreiveItemsValuesByPropertyFromIdList?: (
+    property: keyof TData,
+  ) => string[];
 };
 
-const TableActionsButtons = (props: TableButtonsProps) => {
+const TableActionsButtons = <TData,>(props: TableButtonsProps<TData>) => {
   const descList =
-    props.onRetreiveItemsByPropertyFromIdList &&
-    props.onRetreiveItemsByPropertyFromIdList("name");
+    props.onRetreiveItemsValuesByPropertyFromIdList &&
+    props.retreiveItemsProperty &&
+    props.onRetreiveItemsValuesByPropertyFromIdList(
+      props.retreiveItemsProperty,
+    );
 
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [currentAction, setCurrentAction] = useState<Action<TData> | null>(
+    null,
+  );
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (action: Action<TData>) => {
+    setCurrentAction(action);
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
+    setCurrentAction(null);
   };
 
   return (
     <>
-      {showModal ? (
+      {showModal && currentAction ? (
         <TableActionsModal
-          title="Confirmation de suppression"
-          description={`${descList?.length} groupes vont être supprimés :`}
+          title={currentAction.title}
+          description={currentAction.description}
+          alertMessageBottom={currentAction.alertMessageBottom}
           descList={descList}
-          onConfirm={props.delete.onDelete}
+          rightButtonTitle={currentAction.rightButtonTitle}
+          onConfirm={currentAction.onConfirm}
           onCancel={handleCloseModal}
         />
       ) : null}
@@ -47,13 +68,11 @@ const TableActionsButtons = (props: TableButtonsProps) => {
           <RefreshCw />
         </button>
         <ActionsDropdown
-          actions={[
-            {
-              actionTitle: props.delete.actionTitle,
-              data: null,
-              onClick: handleOpenModal,
-            },
-          ]}
+          actions={props.actions.map((action) => ({
+            actionTitle: action.title,
+            data: action.data,
+            onClick: () => handleOpenModal(action),
+          }))}
           isDisabled={props.isLoading || props.isDisabled}
         />
       </div>

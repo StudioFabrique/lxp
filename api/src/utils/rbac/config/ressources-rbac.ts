@@ -1,0 +1,177 @@
+// Toutes les ressources
+export const resourcesRbac = [
+  {
+    name: "role",
+    description:
+      "Gestion des rôles et niveaux d'accès pour une expérience personnalisée",
+  },
+  {
+    name: "permission",
+    description:
+      "Configuration fine des droits d'accès pour une sécurité optimale",
+  },
+  {
+    name: "tag",
+    description:
+      "Organisation intelligente et classification intuitive des contenus pédagogiques",
+  },
+  {
+    name: "user",
+    description:
+      "Gestion avancée des profils apprenants et de leurs parcours individualisés",
+  },
+  {
+    name: "group",
+    description:
+      "Création et animation de communautés d'apprentissage collaboratives",
+  },
+  {
+    name: "formation",
+    description:
+      "Programmes complets de formation pour développer vos compétences",
+  },
+  {
+    name: "parcours",
+    description:
+      "Itinéraires pédagogiques personnalisés pour un apprentissage optimal",
+  },
+  {
+    name: "module",
+    description:
+      "Blocs d'apprentissage thématiques pour une progression structurée",
+  },
+  {
+    name: "course",
+    description: "Séquences pédagogiques interactives et engageantes",
+  },
+  {
+    name: "lesson",
+    description: "Contenus pédagogiques ciblés pour un apprentissage efficace",
+  },
+  {
+    name: "bonusSkill",
+    description:
+      "Compétences complémentaires pour enrichir le parcours d'apprentissage",
+  },
+  {
+    name: "objective",
+    description:
+      "Définition et suivi personnalisé des objectifs d'apprentissage",
+  },
+  {
+    name: "mediatheque",
+    description:
+      "Centre de ressources multimédias pour approfondir vos connaissances",
+  },
+  // Ressource à retirer - sera remplacée par une meilleure implémentation du système de gestion de droits (role layout d'interface)
+  {
+    name: "cursus",
+    description:
+      "Espace personnel de suivi permettant de visualiser sa progression, gérer son profil et personnaliser son expérience d'apprentissage",
+  },
+];
+
+// Pour les actions write, update et delete pour teacher rank 2
+// enlever certaines ressources du tableau
+const teacherResourcesRbac = resourcesRbac.filter(
+  (resource) => !["user", "permission"].includes(resource.name),
+);
+
+// Ressources (toutes permissions crud) sur les différents rôles template
+export const resourcesRbacByRank = {
+  // super administrateur ?
+  0: {
+    read: resourcesRbac.map((r) => r.name),
+    write: resourcesRbac.map((r) => r.name),
+    update: resourcesRbac.map((r) => r.name),
+    delete: resourcesRbac.map((r) => r.name),
+  },
+  // administrateur
+  1: {
+    read: resourcesRbac.map((r) => r.name),
+    write: resourcesRbac.map((r) => r.name),
+    update: resourcesRbac.map((r) => r.name),
+    delete: resourcesRbac.map((r) => r.name),
+  },
+  // formateur
+  2: {
+    read: resourcesRbac.map((r) => r.name),
+    write: teacherResourcesRbac.map((r) => r.name),
+    update: teacherResourcesRbac.map((r) => r.name),
+    delete: teacherResourcesRbac.map((r) => r.name),
+  },
+  // apprenant
+  3: {
+    read: [
+      "tag",
+      "user",
+      "group",
+      "formation",
+      "parcours",
+      "module",
+      "course",
+      "bonusSkill",
+      "lesson",
+      "cursus",
+    ],
+    write: ["cursus"],
+    update: ["cursus"],
+    delete: ["cursus"],
+  },
+  // autre
+  4: [],
+};
+
+export async function getPermissionsByRank(
+  rank: number,
+): Promise<
+  { resource: string; actions: ("read" | "write" | "update" | "delete")[] }[]
+> {
+  switch (rank) {
+    case 1: {
+      // const roles = await Role.find();
+      // const roleNames = roles.map((role) => role.role);
+      const resources: {
+        resource: string;
+        actions: ("read" | "write" | "update" | "delete")[];
+      }[] = [];
+
+      // Add regular resources
+      resourcesRbacByRank[rank].read.forEach((resource) => {
+        resources.push({
+          resource,
+          actions: ["read", "write", "update", "delete"],
+        });
+      });
+
+      // Add role resources
+      // roleNames.forEach((resource) => {
+      //   resources.push({
+      //     resource,
+      //     actions: ["read", "write", "update", "delete"],
+      //   });
+      // });
+
+      return resources;
+    }
+    case 2: {
+      return resourcesRbacByRank[rank].read.map((resource) => ({
+        resource,
+        actions: resourcesRbacByRank[rank].write.includes(resource)
+          ? ["read", "write", "update", "delete"]
+          : ["read"],
+      }));
+    }
+    case 3: {
+      return resourcesRbacByRank[rank].read.map((resource) => ({
+        resource,
+        actions: resourcesRbacByRank[rank].write.includes(resource)
+          ? ["read", "write", "update", "delete"]
+          : ["read"],
+      }));
+    }
+    case 4:
+    default:
+      return [];
+  }
+}

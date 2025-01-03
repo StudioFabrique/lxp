@@ -4,12 +4,17 @@ import {
   Dispatch,
   FC,
   SetStateAction,
+  useState,
 } from "react";
 
 const RoleTypeSelector: FC<{
   currentRoleType: number;
   onSetCurrentRoleType: Dispatch<SetStateAction<number>>;
-}> = ({ currentRoleType, onSetCurrentRoleType }) => {
+  editMode?: boolean;
+  disabled?: boolean;
+}> = ({ currentRoleType, onSetCurrentRoleType, editMode, disabled }) => {
+  const [showAlertRoleType, setShowAlertRoleType] = useState<boolean>(false);
+
   const roleTypes = [
     { name: "administrateur", rank: 1 },
     { name: "formateur", rank: 2 },
@@ -18,34 +23,43 @@ const RoleTypeSelector: FC<{
   ];
 
   const handleSelect: ChangeEventHandler<HTMLSelectElement> = (
-    e: ChangeEvent<HTMLSelectElement>
+    e: ChangeEvent<HTMLSelectElement>,
   ) => {
     const newRoleType = roleTypes.find(
-      (roleType) => e.currentTarget.value === roleType.rank.toString()
+      (roleType) => e.currentTarget.value === roleType.rank.toString(),
     );
-    onSetCurrentRoleType(
-      (previousRole: any) => newRoleType?.rank ?? previousRole
-    );
+    onSetCurrentRoleType((previousRole) => newRoleType?.rank ?? previousRole);
   };
 
   return roleTypes ? (
-    <select
-      className="w-[60%] select select-sm border border-neutral/50 focus:outline-none"
-      name="menu"
-      id="menu"
-      value={currentRoleType}
-      onChange={handleSelect}
-    >
-      {roleTypes.map((item) => (
-        <option
-          className="capitalize text-xs"
-          key={item.rank}
-          value={item.rank}
-        >
-          {item.name}
-        </option>
-      ))}
-    </select>
+    <div className="flex flex-col gap-1 relative">
+      <select
+        className="w-full select select-sm border border-neutral/50 focus:outline-none"
+        name="menu"
+        id="menu"
+        value={currentRoleType}
+        onChange={handleSelect}
+        onFocus={() => setShowAlertRoleType(true)}
+        onBlur={() => setShowAlertRoleType(false)}
+        disabled={disabled}
+      >
+        {roleTypes.map((item) => (
+          <option
+            className="capitalize text-xs"
+            key={item.rank}
+            value={item.rank}
+          >
+            {item.name}
+          </option>
+        ))}
+      </select>
+      {showAlertRoleType && editMode && (
+        <div className="absolute top-full mt-2 bg-base-100 p-2 rounded-lg shadow-lg border border-error w-64 text-xs text-error select-none">
+          La modification du modèle de rôle remplacera automatiquement les
+          permissions actuelles
+        </div>
+      )}
+    </div>
   ) : null;
 };
 

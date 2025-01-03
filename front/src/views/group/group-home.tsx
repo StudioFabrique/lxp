@@ -40,11 +40,17 @@ const GroupHome = () => {
     onSubmitSearchValue,
     onSortProperty,
     ...pagination
-  } = useTablePaginatedData<Group>("/group/student", "/group/search/student");
+  } = useTablePaginatedData<Group>("/group/student", {
+    apiSearchEndpoint: "/group/search/student",
+    searchProperty: "name",
+  });
 
   // custom hook gestion checkbox
-  const { idsList, onRetreiveItemsByPropertyFromIdList, ...checkboxConfig } =
-    useTableCheckbox<Group>(data, "_id");
+  const {
+    idsList,
+    onRetreiveItemsValuesByPropertyFromIdList,
+    ...checkboxConfig
+  } = useTableCheckbox<Group>(data, "_id");
 
   // custom hook gestion actions groupées
   const { onDeleteSelectedGroups } = useGroupActions(idsList, onRefreshData);
@@ -90,12 +96,17 @@ const GroupHome = () => {
             isLoading={isLoading}
             isDisabled={!(idsList.length > 0)} // disabled si la liste a une longueur de 0
             onRefreshData={onRefreshData}
-            delete={{
-              actionTitle: "Supprimer les groupes selectionnés",
-              onDelete: onDeleteSelectedGroups,
-            }}
-            onRetreiveItemsByPropertyFromIdList={
-              onRetreiveItemsByPropertyFromIdList
+            actions={[
+              {
+                title: "Supprimer les groupes selectionnés",
+                description: `${idsList.length} ${idsList.length > 1 ? "groupes vont être supprimés" : "groupe va être supprimé"}`,
+                rightButtonTitle: "Supprimer",
+                onConfirm: onDeleteSelectedGroups,
+              },
+            ]}
+            retreiveItemsProperty="name"
+            onRetreiveItemsValuesByPropertyFromIdList={
+              onRetreiveItemsValuesByPropertyFromIdList
             }
           />,
           // bas du tableau

@@ -20,7 +20,7 @@ const TableListCell = (props: PropsWithChildren<CellProps>) => {
     (value) => value.property === props.property,
   );
   return (
-    <td className="text-primary font-semibold whitespace-nowrap capitalize">
+    <td className="text-base-content font-semibold whitespace-nowrap capitalize">
       <div
         data-tip={
           props.children && props.children?.toLocaleString().length > 10

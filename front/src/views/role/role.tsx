@@ -1,105 +1,132 @@
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-
-import useHttp from "../../hooks/use-http";
-import RolesList from "../../components/role/roles-list/roles-list";
 import RoleForm from "../../components/role/role-form/role-form";
-import PermissionsList from "../../components/role/permissions-list/permissions-list";
+import useTablePaginatedData from "../../components/table/table-pagination/hooks/use-table-paginated-data";
+import Role from "../../utils/interfaces/role";
+import useTableCheckbox from "../../components/table/table-list/hooks/use-table-checkbox";
+import Header from "../../components/UI/header";
+import Table from "../../components/table/table";
+import {
+  actionsConfig,
+  searchBarConfig,
+  tableListConfig,
+} from "./role-table-config";
+import TableActionsButtons from "../../components/table/table-buttons/table-actions-buttons";
+import useRoleActions from "./hooks/use-role-actions";
+// import { transformRolesCsv } from "../../utils/csv/csv-data-transform";
+// import CsvDownloaderWithRef from "../../components/UI/csv-downloader/csv-downloader-with-ref";
+// import { Ref, useRef } from "react";
 
-export interface IRoleItem {
-  _id: string;
-  role: string;
-  label: string;
-  rank: number;
-  isActive?: boolean;
-  permCount: {
-    read: number;
-    write: number;
-    update: number;
-    delete: number;
-  };
-}
+/**
+ * Composant Role
+ *
+ * Affiche un formulaire et une liste de roles avec des fonctionnalités pour créer,
+ * modifier et supprimer des rôles. Utilise un tableau paginé pour
+ * présenter les données, avec une barre de recherche intégrée.
+ *
+ * @component
+ */
+const RolePage = () => {
+  // custom hook gestion pagination
+  const {
+    data,
+    isLoading,
+    sortProperty,
+    isAscDirection,
+    onRefreshData,
+    onSubmitSearchValue,
+    onSortProperty,
+  } = useTablePaginatedData<Role>(
+    "/permission/role",
+    { apiSearchEndpoint: "/permission/search", searchProperty: "role" },
+    {
+      disablePagination: true,
+      disableSort: true,
+      invokeErrorToast: true,
+    },
+  );
 
-export interface IRoleToEdit {
-  _id: string;
-  name: string;
-  label: string;
-  rank: number;
-  isActive?: boolean;
-}
+  // custom hook gestion checkbox
+  const {
+    idsList,
+    onRetreiveItemsValuesByPropertyFromIdList,
+    // onRetreiveItemsFromIdList,
+    ...checkboxConfig
+  } = useTableCheckbox<Role>(data, "_id");
 
-const Role = () => {
-  const { state: history } = useLocation();
-  const navigate = useNavigate();
-  const { sendRequest, isLoading } = useHttp(true);
+  // custom hook gestion actions groupées
+  const { onDeleteSelectedRoles } = useRoleActions(idsList, onRefreshData);
 
-  const [isRolesInitialized, setIsRolesInitialized] = useState<boolean>(false);
-
-  const [roles, setRoles] = useState<IRoleItem[]>([]);
-
-  const [roleToEdit, setRoleToEdit] = useState<IRoleToEdit | null>(null);
-
-  const [currentRole, setCurrentRole] = useState<IRoleItem>(roles[0]);
-
-  useEffect(() => {
-    if (roles.length > 0) {
-      setCurrentRole(roles[0]);
-      setIsRolesInitialized(true);
-    }
-    if (!isRolesInitialized) {
-      sendRequest({ path: "/permission" }, (data) => setRoles(data.data));
-    }
-  }, [roles, isRolesInitialized, sendRequest]);
+  // const csvRef: Ref<HTMLButtonElement> = useRef(null);
 
   return (
-    <>
-      <div className="flex flex-col gap-y-5 p-10">
-        {!!history?.from && (
-          <button
-            onClick={() => navigate(history.from)}
-            type="button"
-            className="self-start"
-          >
-            Retour
-          </button>
-        )}
-        <h1 className="text-2xl font-semibold">
-          Controler des rôles et des accès
-        </h1>
-        <p>
-          Créer et gérer des rôles, les droits et les permissions des
-          utilisateurs
-        </p>
+    <div className="flex flex-col gap-y-5 p-10">
+      {/* Header de la liste des rôles */}
+      <Header
+        title="Liste des rôles"
+        description="Créer et gérer des rôles, les droits et les permissions des
+    utilisateurs"
+      />
 
-        <>
-          <div className="grid lg:grid-cols-3 gap-5">
-            <RoleForm
-              roleToEdit={roleToEdit}
-              setRoles={setRoles}
-              setRoleToEdit={setRoleToEdit}
-              setCurrentRole={setCurrentRole}
-            />
-            <div className="lg:col-span-2">
-              <RolesList
-                setRoleToEdit={setRoleToEdit}
-                roles={roles}
-                isLoading={isLoading}
-                setRoles={setRoles}
-                setCurrentRole={setCurrentRole}
-              />
-            </div>
-          </div>
-          {isRolesInitialized && (
-            <PermissionsList
-              roles={roles}
-              currentRole={currentRole}
-              setCurrentRole={setCurrentRole}
-            />
+      {/* Balise Csv caché */}
+      {/* <CsvDownloaderWithRef
+        ref={csvRef}
+        className="hidden"
+        data={transformRolesCsv(onRetreiveItemsFromIdList())}
+      /> */}
+
+      <div className="grid 2xl:grid-cols-2 gap-5">
+        <RoleForm allow2xlScreenFlexCol onRefreshData={onRefreshData} />
+
+        {/*
+         * Tableau generique utilisé pour la liste des rôles,
+         * utilisation du pattern composition
+         */}
+        <Table
+          searchBarConfig={searchBarConfig(onSubmitSearchValue)}
+          tableListConfig={tableListConfig(
+            data,
+            isLoading,
+            actionsConfig(onRefreshData),
           )}
-        </>
+          checkboxConfig={checkboxConfig}
+          sortConfig={{ sortProperty, isAscDirection, onSortProperty }}
+        >
+          {/* Composants children en haut et en bas du tableau */}
+          {[
+            // haut du tableau, à côté de la barre de recherche
+            <TableActionsButtons
+              key={0}
+              isLoading={isLoading}
+              isDisabled={!(idsList.length > 0)} // disabled si la liste a une longueur de 0
+              onRefreshData={onRefreshData}
+              actions={[
+                /* {
+                 *   title: "Exporter les rôles sélectionnés",
+                 *   description: "Exporter les rôles suivants en format csv",
+                 *   rightButtonTitle: "Exporter",
+                 *   onConfirm: async () => {
+                 *     csvRef.current?.click();
+                 *   },
+                 * },
+                 */
+                {
+                  title: "Supprimer les rôles selectionnés",
+                  description: `${idsList.length} ${idsList.length > 1 ? "rôles vont être supprimés" : "rôle va être supprimé"}`,
+                  rightButtonTitle: "Confirmer",
+                  alertMessageBottom:
+                    "Attention: Cette opération ne peut pas être annulée",
+                  onConfirm: onDeleteSelectedRoles,
+                },
+              ]}
+              retreiveItemsProperty="role"
+              onRetreiveItemsValuesByPropertyFromIdList={
+                onRetreiveItemsValuesByPropertyFromIdList
+              }
+            />,
+          ]}
+        </Table>
       </div>
-    </>
+    </div>
   );
 };
 
-export default Role;
+export default RolePage;

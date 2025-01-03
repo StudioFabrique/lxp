@@ -42,7 +42,7 @@ function useTableCheckbox<TData>(data: TData[], idProperty: string) {
     setIdList([]);
   };
 
-  const handleRetreiveItemsByPropertyFromIdList = <K extends keyof TData>(
+  const handleRetreiveItemsValuesByPropertyFromIdList = <K extends keyof TData>(
     property: K,
   ) => {
     return data
@@ -51,6 +51,13 @@ function useTableCheckbox<TData>(data: TData[], idProperty: string) {
         return idsList.includes(String(itemId));
       })
       .map((item: TData) => String(item[property]));
+  };
+
+  const handleRetreiveItemsFromIdList = () => {
+    return data.filter((item: TData) => {
+      const itemId = item[idProperty as keyof TData];
+      return idsList.includes(String(itemId));
+    });
   };
 
   // Quand les données changent (dépendance data), alors il y a un refresh des checkbox
@@ -64,8 +71,9 @@ function useTableCheckbox<TData>(data: TData[], idProperty: string) {
     isAllChecked,
     onCheck: handleCheck,
     onCheckAll: handleCheckAll,
-    onRetreiveItemsByPropertyFromIdList:
-      handleRetreiveItemsByPropertyFromIdList,
+    onRetreiveItemsValuesByPropertyFromIdList:
+      handleRetreiveItemsValuesByPropertyFromIdList,
+    onRetreiveItemsFromIdList: handleRetreiveItemsFromIdList,
   };
 }
 

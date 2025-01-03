@@ -29,7 +29,7 @@ const TypeUtilisateur: FC<{
   };
 
   useEffect(() => {
-    sendRequest({ path: "/permission" }, (data) => setRoles(data.data));
+    sendRequest({ path: "/permission/role" }, (data) => setRoles(data.data));
   }, [sendRequest]);
 
   return (

@@ -35,7 +35,6 @@ const UserAdd = () => {
 
   const initUserData = useCallback(() => {
     const applyData = (data: { user: User }) => {
-      console.log({ data });
       setUser(data.user);
     };
 
