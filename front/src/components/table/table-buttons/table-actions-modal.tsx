@@ -40,7 +40,7 @@ const TableActionsModal: FC<{
   return (
     <Portal>
       <div className="relative left-0 top-0 w-screen h-screen bg-black/20 z-20">
-        <div className="absolute modal-open z-50 top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] min-w-[30rem]">
+        <div className="absolute z-50 top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] min-w-[30rem]">
           <div className="modal-box px-8 w-full">
             <div className="flex gap-x-2">
               <h3 className="font-bold pb-4 text-primary">

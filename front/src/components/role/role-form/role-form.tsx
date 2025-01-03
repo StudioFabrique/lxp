@@ -19,10 +19,15 @@ import { Context } from "../../../store/context.store";
 
 type RoleFormProps = {
   role?: any;
+  allow2xlScreenFlexCol?: boolean;
   onRefreshData?: () => Promise<void>;
 };
 
-const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
+const RoleForm = ({
+  role,
+  allow2xlScreenFlexCol,
+  onRefreshData,
+}: RoleFormProps) => {
   const { fetchRoles, user } = useContext(Context);
   const { sendRequest, isLoading: isRequestLoading } = useHttp(true);
 
@@ -121,7 +126,9 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
             )}
           </span>
 
-          <div className="flex flex-col sm:flex-row gap-10 w-full items-end">
+          <div
+            className={`flex flex-row ${allow2xlScreenFlexCol ? "2xl:flex-col" : ""} gap-10 w-full items-end`}
+          >
             <span className="flex flex-col gap-y-1 w-full">
               <p>Nom du rôle</p>
               <input
