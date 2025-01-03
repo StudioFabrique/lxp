@@ -18,6 +18,7 @@ import httpDeleteManyRoles from "../../../controllers/permission/http-delete-man
 import httpGetResourcesByRole from "../../../controllers/permission/http-get-resources-by-role";
 import httpGetResourcesById from "../../../controllers/permission/http-get-resources-by-id";
 import httpRemovePermissionFromRole from "../../../controllers/permission/http-remove-permission-from-role";
+import httpAddPermissionToRole from "../../../controllers/permission/http-add-permission-to-role";
 
 const permissionRouter = Router();
 
@@ -75,6 +76,14 @@ permissionRouter.put(
   checkPermissions("role"),
   putRoleValidator,
   httpPutRole,
+);
+
+// Ajouter une permission spécifique à un rôle
+permissionRouter.post(
+  "/role/:roleId/permission/:permission",
+  checkPermissions("role"),
+  removePermissionValidator,
+  httpAddPermissionToRole,
 );
 
 // Supprimer une permission spécifique d'un rôle

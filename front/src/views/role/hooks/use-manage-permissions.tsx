@@ -129,7 +129,17 @@ function useManagePermissions(id: string) {
   }, [id, sendRequest]);
 
   const handleAddPermission = (name: string) => {
-    console.log({ name });
+    const applyData = () => {
+      handleGetPermissionsRequest();
+    };
+
+    sendRequest(
+      {
+        path: `/permission/role/${id}/permission/${name}`,
+        method: "post",
+      },
+      applyData,
+    );
   };
 
   const handleDeletePermission = (name: string) => {
