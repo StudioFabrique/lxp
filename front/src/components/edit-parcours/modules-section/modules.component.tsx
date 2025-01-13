@@ -291,7 +291,7 @@ const ModulesSection = () => {
               onClick={handleCreateModule}
               disabled={toggleForm}
             >
-              Créer un module
+              Créer un nouveau module
             </button>
           </div>
         </section>
