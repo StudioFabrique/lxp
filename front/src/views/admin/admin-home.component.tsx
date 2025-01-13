@@ -4,10 +4,6 @@ import { Link } from "react-router-dom";
 import TeacherLastParcours from "../../components/admin-home/teacher-last-parcours";
 import Can from "../../components/UI/can/can.component";
 import LastParcours from "../../components/admin-home/last-parcours";
-import Wrapper from "../../components/UI/wrapper/wrapper.component";
-import StatsBar from "../../components/admin-home/stats-bar";
-import StatsDonut from "../../components/admin-home/stats-donut";
-import StatsLine from "../../components/admin-home/stats-line";
 import LastFeedback from "../../components/admin-home/last-feedback";
 import useHttp from "../../hooks/use-http";
 import Parcours from "../../utils/interfaces/parcours";
@@ -73,8 +69,6 @@ const AdminHome = () => {
     getParcours();
   }, [getParcours]);
 
-  console.log({ parcours });
-
   return (
     <main className="w-full flex flex-col gap-4">
       <section className="flex flex-col-reverse lg:flex-row justify-between items-start lg:items-center">
@@ -139,16 +133,16 @@ const AdminHome = () => {
             <LastParcours />
           </article>
           <article className="w-full grid grid-cols-1 xl:grid-cols-2 gap-4">
-            <Wrapper>
+            {/*<Wrapper>
               <div className="w-full h-full flex flex-col items-center xl:items:start">
                 <StatsBar />
                 <StatsDonut />
               </div>
-            </Wrapper>
+            </Wrapper>*/}
             <LastFeedback />
           </article>
         </span>
-        <article>
+        {/* <article>
           <ul className="w-full grid grid-cols-1 gap-4 place-items-center">
             <li className="w-fit lg:w-full">
               <Wrapper>
@@ -161,7 +155,7 @@ const AdminHome = () => {
               </Wrapper>
             </li>
           </ul>
-        </article>
+        </article> */}
       </section>
       <div>
         <section className="w-full flex flex-col xl:flex-row gap-x-4 gap-y-4">
