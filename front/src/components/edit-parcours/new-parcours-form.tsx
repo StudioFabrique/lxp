@@ -68,18 +68,18 @@ const NewParcoursForm: FC<Props> = ({ formations, onSubmit }) => {
     <>
       <div className="font-bold">
         <div className="flex flex-col gap-y-4">
-          <h3>Formation</h3>
+          <h3>créer un nouveau parcours</h3>
           <div className="flex flex-col gap-y-4">
             <Selecter
               list={formations}
-              title="Choisissez une formation"
+              title="A quelle formation souhaitez-vous attacher ce parcours ?"
               onSelectItem={handleFormation}
             />
             <Link
               className="text-xs underline font-normal pl-2"
               to="/admin/formation"
             >
-              Créer une nouvelle formation
+              Formation inexistante ? Créer une formation
             </Link>
           </div>
         </div>
@@ -90,7 +90,7 @@ const NewParcoursForm: FC<Props> = ({ formations, onSubmit }) => {
       >
         <div className="flex flex-col gap-y-4">
           <label className="font-bold" htmlFor="title">
-            Titre du parcours
+            Donner un nom au parcours
           </label>
           <input
             className={setInputStyle(title.hasError)}
@@ -103,7 +103,7 @@ const NewParcoursForm: FC<Props> = ({ formations, onSubmit }) => {
           />
         </div>
         <div className="w-full flex justify-end">
-          <button className="btn btn-primary">Commencer</button>
+          <button className="btn btn-primary">Créer</button>
         </div>
       </form>
     </>
