@@ -25,7 +25,7 @@ export default function StudentEvaluationView() {
       {
         path: "/evaluation/parcours",
       },
-      applyData,
+      applyData
     );
   }, [sendRequest]);
 
@@ -65,34 +65,12 @@ export default function StudentEvaluationView() {
           onClick={handleClick}
         >
           <div className="absolute w-full h-full bg-blue-500 text-white flex items-center justify-center [backface-visibility:hidden]">
-            list groupes
+            Disponible...
           </div>
           <div className="absolute w-full h-full bg-green-500 text-white flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)]">
-            list users
+            ...Bientôt
           </div>
         </div>
-      </div>
-      <div className="form-control">
-        <label htmlFor="type">
-          <input type="radio" name="radio-type" value="module" />
-          Module
-        </label>
-        <label htmlFor="type">
-          <input type="radio" name="radio-type" value="module" />
-          Cours
-        </label>
-        <label htmlFor="type">
-          <input type="radio" name="radio-type" value="module" />
-          Leçon
-        </label>
-        <label htmlFor="type">
-          <input type="radio" name="radio-type" value="module" />
-          Activité
-        </label>
-      </div>
-      <textarea placeholder="commentaires" />
-      <div>
-        <button className="btn btn-primary">enregistrer</button>
       </div>
     </main>
   );
