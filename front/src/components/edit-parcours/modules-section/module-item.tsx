@@ -27,10 +27,10 @@ const ModuleItem: FC<ModuleItemProps> = ({
   onDeleteModule,
 }) => {
   const parcoursTitle = useSelector(
-    (state: any) => state.parcoursInformations.infos.title,
+    (state: any) => state.parcoursInformations.infos.title
   );
   const isFormOpen = useSelector(
-    (state: any) => state.parcoursModules.isFormOpen,
+    (state: any) => state.parcoursModules.isFormOpen
   ) as boolean;
 
   const classImage: React.CSSProperties = {
@@ -86,7 +86,7 @@ const ModuleItem: FC<ModuleItemProps> = ({
             {fromSource ? (
               <div
                 className={selectStyle}
-                data-tip="Cliquez pour dupliquer"
+                data-tip="Intégrer ce module au parcours"
                 onClick={() => onSelect(module.id!)}
               >
                 <DuplicateIcon />
