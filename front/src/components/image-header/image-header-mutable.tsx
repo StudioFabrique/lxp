@@ -94,7 +94,7 @@ const ImageHeaderMutable: FC<Props> = ({
                 <div className="w-12 h-12 text-white">{children}</div>
                 <div>
                   <h1 className="text-xl text-white">
-                    {parentTitle} - {isPublished ? "(Publié)" : "(Brouillon)"}
+                    {parentTitle} {isPublished ? "" : "- Brouillon"}
                   </h1>
                   <h3 className="capitalise text-white">{title}</h3>
                 </div>

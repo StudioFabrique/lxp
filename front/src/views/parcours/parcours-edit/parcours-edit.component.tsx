@@ -47,7 +47,7 @@ const EditParcours = () => {
   const formation = useSelector((state: any) => state.parcours.formation);
   const { image, getParcours, isLoading, error } = useParcoursService();
   const modules = useSelector(
-    (state: any) => state.parcoursModules.modules,
+    (state: any) => state.parcoursModules.modules
   ) as Module[];
   const checkStep = useRef(true);
 
@@ -103,10 +103,10 @@ const EditParcours = () => {
           method: "put",
           body: formData,
         },
-        processData,
+        processData
       );
     },
-    [id, sendRequest],
+    [id, sendRequest]
   );
 
   /**
@@ -154,7 +154,7 @@ const EditParcours = () => {
                 title={infos.title}
                 onUpdateImage={updateImage}
                 parentTitle={formation.title}
-                isPublished
+                isPublished={infos.isPublished}
               >
                 <HeaderIcon />
               </ImageHeaderMutable>
