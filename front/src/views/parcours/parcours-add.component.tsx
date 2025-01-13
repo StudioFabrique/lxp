@@ -22,7 +22,8 @@ const AddParcours = () => {
   const [formations, setFormations] = useState<Array<Item>>([]);
   const [formation, setFormation] = useState<number | undefined>(undefined);
   const [parcoursList, setParcoursList] = useState<Array<Item>>([]);
-  const [parcours, setParcours] = useState<number | undefined>(undefined);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_parcours, setParcours] = useState<number | undefined>(undefined);
   const { sendRequest, error } = useHttp();
   const [isLoading, setIsLoading] = useState(false);
   const nav = useNavigate();
@@ -55,7 +56,7 @@ const AddParcours = () => {
       {
         path: "/formation",
       },
-      processData,
+      processData
     );
   }, [sendRequest]);
 
@@ -98,7 +99,7 @@ const AddParcours = () => {
         method: "post",
         body: { title, formation: formationId },
       },
-      processData,
+      processData
     );
     setIsLoading(false);
   };
@@ -115,7 +116,7 @@ const AddParcours = () => {
         {
           path: `/parcours/parcours-by-formation/${formation}`,
         },
-        processData,
+        processData
       );
     }
   }, [formation, sendRequest]);
@@ -133,7 +134,7 @@ const AddParcours = () => {
               ) : (
                 <div className="grid grid-rows-2 gap-8">
                   <h1 className="text-2xl font-extrabold">
-                    Création d'un parcours de formation
+                    Création d'un parcours
                   </h1>
 
                   <h3>
@@ -144,17 +145,17 @@ const AddParcours = () => {
                   <Wrapper>
                     <div className="h-full flex flex-col justify-around gap-y-4">
                       <div className="text-sm font-bold">
-                        Choisissez un modèle de parcours
+                        Créer un parcours à partir d'un modèle
                       </div>
                       <div className="flex flex-col gap-y-8">
                         <Selecter
                           list={formations}
-                          title="Choisissez une formation"
+                          title="Rechercher par formation"
                           onSelectItem={handleFormation}
                         />
                         <Selecter
                           list={parcoursList}
-                          title="Choisisez un parcours"
+                          title="Choisisez le parcours à dupliquer"
                           onSelectItem={handleParcours}
                         />
                       </div>
@@ -166,7 +167,7 @@ const AddParcours = () => {
                     </div>
                   </Wrapper>
 
-                  <h3>Ou créer un nouveau parcours</h3>
+                  <h3>Ou</h3>
                   <Wrapper>
                     <NewParcoursForm
                       formations={formations}
