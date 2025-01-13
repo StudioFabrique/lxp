@@ -262,7 +262,7 @@ const ModulesSection = () => {
                 isSourceList={true}
                 isLoading={isLoading}
                 modules={formationModules}
-                label="Modules de la formation"
+                label="Modules disponibles"
                 onEdit={() => {}}
                 onSelect={handleSelectModule}
                 onDelete={confirmModuleToDelete}
