@@ -7,7 +7,7 @@ export default async function getRootAdminParcours() {
       id: true,
       title: true,
       startDate: true,
-      visibility: true,
+      isPublished: true,
       formation: {
         select: { level: true },
       },
@@ -61,7 +61,7 @@ export default async function getRootAdminParcours() {
       students,
       duration,
       startDate: item.startDate,
-      visibility: item.visibility,
+      isPublished: item.isPublished,
     };
     result = [...result, parc];
   }
