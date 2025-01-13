@@ -18,20 +18,16 @@ const links = [
     label: "Créer un parcours",
   },
   {
-    path: "/admin/module",
-    label: "Interface modules",
+    path: "/admin/course/add",
+    label: "Créer un cours",
   },
   {
-    path: "/admin/course",
-    label: "Interface cours",
+    path: "/admin/lesson/Add",
+    label: "Créer une leçon",
   },
   {
-    path: "/admin/lesson",
-    label: "Interface leçons",
-  },
-  {
-    path: "/admin/user",
-    label: "Interface utilisateurs",
+    path: "/admin/user/add",
+    label: "Créer un utilisateur",
   },
   {
     path: "/admin/feedbacks",
