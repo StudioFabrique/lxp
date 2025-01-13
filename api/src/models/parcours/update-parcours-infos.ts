@@ -6,7 +6,7 @@ async function updateParcoursInfos(
   title: string,
   description: string,
   formation: number,
-  visibility: boolean,
+  isPublished: boolean,
   userId: string
 ) {
   const existingParcours = await prisma.parcours.findFirst({
@@ -38,7 +38,7 @@ async function updateParcoursInfos(
     data: {
       title: title,
       description: description,
-      visibility,
+      isPublished,
       formation: {
         connect: { id: formation },
       },

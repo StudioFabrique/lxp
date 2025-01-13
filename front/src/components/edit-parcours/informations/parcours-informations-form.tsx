@@ -26,8 +26,8 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
   const { sendRequest } = useHttp();
   const dispatch = useDispatch();
 
-  const [visibility, setVisibility] = useState<boolean>(
-    parcoursInfos.visibility
+  const [isPublished, setIsPublished] = useState<boolean>(
+    parcoursInfos.isPublished
   );
   const isInitialRender = useRef(true);
 
@@ -47,8 +47,8 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
     errors,
   };
 
-  const handleSetVisibility = () => {
-    setVisibility((prevState) => !prevState);
+  const handleSetIsPublished = () => {
+    setIsPublished((prevState) => !prevState);
     setSubmit(true);
   };
 
@@ -90,7 +90,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
           parcoursId,
           title: values.title,
           description: values.description,
-          visibility,
+          isPublished,
           formation: formation.id.toString(),
         },
       },
@@ -102,7 +102,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
     formation,
     sendRequest,
     parcoursId,
-    visibility,
+    isPublished,
   ]);
 
   /**
@@ -114,7 +114,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
         parcoursInformationsAction.updateParcoursInfos({
           title: values.title,
           description: values.description,
-          visibility,
+          isPublished,
         })
       );
       updateInfos();
@@ -132,7 +132,7 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
     updateInfos,
     submit,
     setSubmit,
-    visibility,
+    isPublished,
     values.title,
     values.description,
     dispatch,
@@ -164,14 +164,16 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
 
               <div className="form-control w-fit">
                 <label className="flex gap-x-4 cursor-pointer items-center label">
-                  <span className="font-bold">Visibilité</span>
+                  <span className="font-bold">Etat</span>
                   <input
                     type="checkbox"
                     className="toggle toggle-primary"
-                    checked={visibility ? visibility : false}
-                    onChange={handleSetVisibility}
+                    checked={isPublished ? isPublished : false}
+                    onChange={handleSetIsPublished}
                   />
-                  <p className="text-sm">{visibility ? "Visible" : "Caché"}</p>
+                  <p className="text-sm">
+                    {isPublished ? "Publié" : "Brouillon"}
+                  </p>
                 </label>
               </div>
             </form>

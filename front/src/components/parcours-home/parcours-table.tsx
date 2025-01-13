@@ -6,8 +6,6 @@ import Can from "../UI/can/can.component";
 import EditIcon from "../UI/svg/edit-icon";
 import DeleteIcon from "../UI/svg/delete-icon.component";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
-import EyeIcon from "../UI/svg/eye-icon";
-import EyeSlash from "../UI/svg/eyse-slash";
 import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 import { truncateText } from "../../helpers/truncate-text";
 
@@ -74,13 +72,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
               <td className="bg-transparent truncate">
                 {item.isPublished ? "Publié" : "Brouillon"}
               </td>
-              <td className="bg-transparent ">
-                <div className="flex justify-center items-center">
-                  <div className="w-6 h-6">
-                    {item.visibility ? <EyeIcon /> : <EyeSlash />}
-                  </div>
-                </div>
-              </td>
+
               <td className="bg-transparent">
                 <div className="w-6 h-6">
                   <Can action="update" object="parcours">
@@ -239,8 +231,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                   />
                 </div>
               </th>
-              <th>Statut</th>
-              <th>Visibilité</th>
+              <th>Etat</th>
               <th></th>
               <th></th>
               <th></th>
