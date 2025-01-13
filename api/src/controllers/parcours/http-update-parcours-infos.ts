@@ -12,15 +12,15 @@ async function httpUpdateParcoursInfos(req: CustomRequest, res: Response) {
     if (!userId) {
       throw { message: noAccess, status: 403 };
     }
-    let { parcoursId, title, description, formation, visibility } = req.body;
+    let { parcoursId, title, description, formation, isPublished } = req.body;
 
     await updateParcoursInfos(
       +parcoursId,
       title,
       description,
       +formation,
-      visibility,
-      userId,
+      isPublished,
+      userId
     );
 
     return res
