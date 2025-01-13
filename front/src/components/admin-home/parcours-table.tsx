@@ -3,7 +3,7 @@ import { localeDate } from "../../helpers/locale-date";
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import ParcoursSummary from "../../utils/interfaces/parcours-summary";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Can from "../UI/can/can.component";
 import { truncateText } from "../../helpers/truncate-text";
 
@@ -15,7 +15,7 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
   const { list, fieldSort, direction, sortData } = useEagerLoadingList(
     parcoursList,
     "title",
-    3,
+    3
   );
   const nav = useNavigate();
 
@@ -129,14 +129,14 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
               <th
                 className="cursor-pointer"
                 onClick={() => {
-                  sortData("visibility");
+                  sortData("isPublished");
                 }}
               >
                 <div className="flex items-center gap-x-2">
-                  <p>Visibilité</p>
+                  <p>Etat</p>
                   <SortColumnIcon
                     fieldSort={fieldSort}
-                    column="visibility"
+                    column="isPublished"
                     direction={direction}
                   />
                 </div>
@@ -164,7 +164,7 @@ export default function ParcoursTable({ parcoursList }: ParcoursTableProps) {
                   {localeDate(item.startDate)}
                 </td>
                 <td className="bg-transparent truncate">
-                  {item.visibility ? "Public" : "Caché"}
+                  {item.isPublished ? "Publié" : "Brouillon"}
                 </td>
                 <td className="bg-transparent rounded-r-lg truncate">
                   <Can action="update" object="parcours">
