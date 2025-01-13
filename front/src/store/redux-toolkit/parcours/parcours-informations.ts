@@ -10,6 +10,7 @@ const initialParcoursState = {
     endDate: "",
     virtualClass: "",
     visibility: false,
+    isPublished: false,
   },
   isValid: false,
   tagsIsValid: false,
@@ -28,6 +29,7 @@ const parcoursInformationsSlice = createSlice({
         title: infos.title,
         description: infos.description,
         visibility: infos.visibility,
+        isPublished: infos.isPublished,
       };
     },
     updateParcoursDates(state, action) {
@@ -48,6 +50,7 @@ const parcoursInformationsSlice = createSlice({
       state.isValid = false;
       state.tagsIsValid = false;
       state.contactsIsValid = false;
+      state.infos.isPublished = false;
     },
     isValid(state) {
       const infos = state.infos;

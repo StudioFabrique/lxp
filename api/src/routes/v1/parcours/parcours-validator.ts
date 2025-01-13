@@ -65,11 +65,11 @@ export const updateInfosValidator = [
     .notEmpty()
     .withMessage("Identifiant de formation absent")
     .escape(),
-  body("visibility")
+  body("isPublished")
     .notEmpty()
-    .withMessage("La visibilité du parcours est requise.")
+    .withMessage("L'état du parcours est requis.")
     .isBoolean()
-    .withMessage("La visibilité du parcours doit être une valeur booléenne."),
+    .withMessage("L'état du parcours doit être une valeur booléenne."),
   checkValidatorResult,
 ];
 
@@ -126,7 +126,7 @@ export const putParcoursContactsValidator = [
     .withMessage("Id nosql absent")
     .custom(stringValidateGeneric)
     .withMessage(
-      "Caractères non autorisés pour l'identifiant nosql du contact.",
+      "Caractères non autorisés pour l'identifiant nosql du contact."
     )
     .escape(),
   body("contacts.*.name")
