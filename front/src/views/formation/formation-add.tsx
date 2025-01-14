@@ -9,18 +9,22 @@ import { sortArray } from "../../utils/sortArray";
 import useForm from "../../components/UI/forms/hooks/use-form";
 import useTags from "../../hooks/use-tags";
 import FormationItem from "../../utils/interfaces/formation-item";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import FormationRncp from "../../components/formation-home/formation-rncp";
 
 export default function FormationAdd() {
   const [searchParams] = useSearchParams();
   const formationId = searchParams.get("formationId");
 
+  const [rncp, setRncp] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [rncpData, setRncpData] = useState<any>(null);
   const [tags, setTags] = useState<Tag[]>([]);
   const [formationsList, setFormationsList] = useState<FormationItem[]>([]);
   const { sendRequest, error } = useHttp();
   const [submitting, setSubmitting] = useState(false);
   const [formationToEdit, setFormationToEdit] = useState<FormationItem | null>(
-    null,
+    null
   );
 
   const {
@@ -54,7 +58,7 @@ export default function FormationAdd() {
       {
         path: "/tag",
       },
-      applyData,
+      applyData
     );
   }, [sendRequest]);
 
@@ -70,7 +74,7 @@ export default function FormationAdd() {
         setFormationToEdit(formation);
       }
     },
-    [formationsList],
+    [formationsList]
   );
 
   /**
@@ -86,7 +90,7 @@ export default function FormationAdd() {
     description: string,
     code: string,
     level: string,
-    tags: Tag[],
+    tags: Tag[]
   ) => {
     const applyData = (data: {
       success: boolean;
@@ -117,7 +121,7 @@ export default function FormationAdd() {
           tags: tags.map((item) => item.id),
         },
       },
-      applyData,
+      applyData
     );
   };
 
@@ -134,7 +138,7 @@ export default function FormationAdd() {
     description: string,
     code: string,
     level: string,
-    tags: Tag[],
+    tags: Tag[]
   ) => {
     const applyData = (data: {
       success: boolean;
@@ -144,7 +148,7 @@ export default function FormationAdd() {
       if (data.success) {
         toast.success(data.message);
         let updatedList = formationsList.filter(
-          (item) => item.id !== formationToEdit!.id,
+          (item) => item.id !== formationToEdit!.id
         );
         updatedList = sortArray([...updatedList, data.response], "id");
         setFormationsList(updatedList);
@@ -169,7 +173,7 @@ export default function FormationAdd() {
           },
         },
       },
-      applyData,
+      applyData
     );
   };
 
@@ -185,7 +189,7 @@ export default function FormationAdd() {
       {
         path: "/formation/list",
       },
-      applyData,
+      applyData
     );
   }, [sendRequest]);
 
@@ -221,10 +225,28 @@ export default function FormationAdd() {
     setSubmitting(false);
   }, [error]);
 
-  console.log(tags);
+  const fetchRncp = (rncp: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const applyData = (data: any) => {
+      setRncpData(data.response);
+    };
+    sendRequest({ path: `/formation/certification/${rncp}` }, applyData);
+  };
+
+  const handleRncp = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const rncp = event.currentTarget.value;
+    console.log({ rncp });
+
+    setRncp(rncp);
+    if (rncp.length === 5) {
+      fetchRncp(rncp);
+    }
+  };
 
   return (
     <main className="flex flex-col gap-2 mt-4">
+      <section></section>
+
       <section>
         <h1 className="pl-4 text-2xl font-extrabold">
           {formationToEdit
@@ -234,9 +256,37 @@ export default function FormationAdd() {
       </section>
 
       <section className="grid grid-cols-1 xl:grid-cols-2 gap-2 ">
-        <article className="p-4 h-fit">
-          <Wrapper>
-            {formationToEdit ? (
+        <article className="p-4 h-fit flex flex-col gap-4">
+          {!formationToEdit && !rncpData ? (
+            <>
+              <Wrapper>
+                <h2>Créer une formation à partir d'une certification RNCP</h2>
+                <input
+                  className="input focus:outline-none"
+                  type="text"
+                  placeholder="Code RNCP"
+                  value={rncp || ""}
+                  onChange={handleRncp}
+                />
+              </Wrapper>
+              <p className="p-2">ou créez en une manuellement</p>
+            </>
+          ) : !formationToEdit && rncpData ? (
+            <>
+              <FormationRncp formationRncp={rncpData} />
+              <button
+                className="text-primary underline"
+                onClick={() => {
+                  setRncp(null);
+                  setRncpData(null);
+                }}
+              >
+                Annuler
+              </button>
+            </>
+          ) : null}
+          {formationToEdit ? (
+            <Wrapper>
               <FormationAddForm
                 values={values}
                 onChangeValue={onChangeValue}
@@ -259,7 +309,9 @@ export default function FormationAdd() {
                 updatedTags={updatedTags}
                 handleSetCurrentTags={handleSetCurrentTags}
               />
-            ) : (
+            </Wrapper>
+          ) : !rncpData ? (
+            <Wrapper>
               <FormationAddForm
                 values={values}
                 onChangeValue={onChangeValue}
@@ -280,8 +332,8 @@ export default function FormationAdd() {
                 updatedTags={updatedTags}
                 handleSetCurrentTags={handleSetCurrentTags}
               />
-            )}
-          </Wrapper>
+            </Wrapper>
+          ) : null}
         </article>
         <article>
           <FormationsList
