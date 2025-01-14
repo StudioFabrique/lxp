@@ -141,7 +141,8 @@ const UserItem: FC<{
               </div>
             </Can>
           )}
-          <Can action="update" object={userItem.roles[0].role}>
+          <Can action="update" object="user">
+            {/* <Can action="update" object={userItem.roles[0].role}> */}
             <Link
               className="tooltip tooltip-bottom"
               data-tip="Mettre à jour les informations de l'utilisateur"
@@ -150,16 +151,17 @@ const UserItem: FC<{
             >
               <Edit2Icon className="w-4 h-4" />
             </Link>
+            {/* </Can> */}
           </Can>
           <Can action="delete" object="user">
-            <Can action="delete" object={userItem.roles[0].role}>
-              <ButtonDelete
-                error={error}
-                isLoading={isUserDeleteLoading}
-                userItem={userItem}
-                onDelete={onDelete}
-              />
-            </Can>
+            {/* <Can action="delete" object={userItem.roles[0].role}> */}
+            <ButtonDelete
+              error={error}
+              isLoading={isUserDeleteLoading}
+              userItem={userItem}
+              onDelete={onDelete}
+            />
+            {/* </Can> */}
           </Can>
         </div>
       </td>
