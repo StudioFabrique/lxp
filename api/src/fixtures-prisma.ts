@@ -296,7 +296,7 @@ async function createStudents() {
   try {
     const roleId = await Role.find({ role: "student" }, { _id: 1 });
     const usersId = await User.find(
-      { roles: roleId },
+      { roles: { $in: roleId } },
       { _id: 1, firstname: 1, lastname: 1 },
     );
     const students = usersId.map((user: any) => {
