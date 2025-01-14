@@ -1,7 +1,14 @@
 import { getAdmin } from "../../helpers/get-admin";
 import { prisma } from "../../utils/db";
 
+/**
+ * Récupère les détails d'un parcours par son ID
+ * @param parcoursId - L'ID du parcours à récupérer
+ * @param userId - L'ID de l'utilisateur qui fait la requête
+ * @returns Les détails du parcours avec les relations associées
+ */
 async function getParcoursById(parcoursId: number, userId: string) {
+  // Récupère le parcours avec toutes ses relations (formation, tags, contacts, etc.)
   const parcours = await prisma.parcours.findFirst({
     where: { id: parcoursId /* , adminId: admin.id */ },
     select: {
@@ -14,6 +21,7 @@ async function getParcoursById(parcoursId: number, userId: string) {
       virtualClass: true,
       isPublished: true,
       visibility: true,
+      // Sélectionne les informations de la formation associée
       formation: {
         select: {
           id: true,
@@ -26,9 +34,11 @@ async function getParcoursById(parcoursId: number, userId: string) {
           level: true,
         },
       },
+      // Sélectionne les tags associés au parcours
       tags: {
         select: { tag: { select: { id: true, name: true, color: true } } },
       },
+      // Sélectionne les contacts associés au parcours
       contacts: {
         select: {
           contact: {
@@ -36,9 +46,11 @@ async function getParcoursById(parcoursId: number, userId: string) {
           },
         },
       },
+      // Sélectionne les compétences requises et bonus
       skills: { include: { skill: true } },
       bonusSkills: { select: { id: true, description: true, badge: true } },
       objectives: { select: { id: true, description: true } },
+      // Sélectionne les modules avec leurs cours et leçons
       modules: {
         select: {
           module: {
@@ -72,6 +84,7 @@ async function getParcoursById(parcoursId: number, userId: string) {
           },
         },
       },
+      // Sélectionne les groupes associés
       groups: {
         select: {
           group: {
@@ -82,10 +95,12 @@ async function getParcoursById(parcoursId: number, userId: string) {
           },
         },
       },
+      // Sélectionne l'administrateur du parcours
       admin: { select: { id: true, idMdb: true } },
     },
   });
 
+  // Si le parcours n'existe pas, lance une erreur
   if (!parcours) {
     const error: any = {
       message: "Le parcours n'existe pas.",
@@ -96,10 +111,12 @@ async function getParcoursById(parcoursId: number, userId: string) {
 
   let result: any = parcours;
   if (parcours) {
+    // Convertit l'image en base64 si elle existe
     if (parcours.image instanceof Buffer) {
       const base64Image = parcours.image.toString("base64");
       result = { ...result, image: base64Image };
     }
+    // Convertit les miniatures des modules en base64 si elles existent
     if (parcours.modules) {
       const updatedModules = parcours.modules.map((item: any) => ({
         ...item,
