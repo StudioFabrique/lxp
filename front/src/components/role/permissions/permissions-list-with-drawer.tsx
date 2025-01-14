@@ -9,11 +9,17 @@ type PermissionsListWithDrawerProps = {
   drawerId: string;
   title: string;
   descriptionTooltip?: string;
-  permissions?: { name: string; fullName: string; description: string }[];
+  permissions?: {
+    name: string;
+    fullName: string;
+    description?: string;
+    isRole?: boolean;
+  }[];
   remainingResources?: {
     name: string;
     fullName: string;
-    description: string;
+    description?: string;
+    isRole?: boolean;
   }[];
   zIndex?: number;
   roleProtected?: boolean;
@@ -58,6 +64,7 @@ const PermissionsListWithDrawer = ({
                       name={res.name}
                       fullName={res.fullName}
                       description={res.description}
+                      isRole={res.isRole}
                       inactive={roleProtected}
                       onAddPermission={onAddPermission}
                     />
@@ -69,18 +76,52 @@ const PermissionsListWithDrawer = ({
             </RightSideDrawer>
           </div>
         </div>
-        <div className="flex flex-wrap gap-3 p-2">
+        <div className="flex flex-col gap-4 p-2">
           {permissions && permissions.length > 0 ? (
-            permissions.map((item) => (
-              <PermissionDeleteItem
-                key={item.name}
-                name={item.name}
-                fullName={item.fullName}
-                description={item.description}
-                inactive={roleProtected}
-                onDeleteItem={onDeletePermission}
-              />
-            ))
+            <>
+              {permissions.some((item) => !item.isRole) && (
+                <div className="flex flex-wrap gap-3">
+                  <div className="w-full flex items-center gap-2">
+                    <h4 className="font-semibold">Permissions</h4>
+                    {/* <QuestionMarkTooltip tooltipValue="" /> */}
+                  </div>
+                  {permissions
+                    .filter((item) => !item.isRole)
+                    .map((item) => (
+                      <PermissionDeleteItem
+                        key={item.name}
+                        name={item.name}
+                        fullName={item.fullName}
+                        description={item.description}
+                        isRole={item.isRole}
+                        inactive={roleProtected}
+                        onDeleteItem={onDeletePermission}
+                      />
+                    ))}
+                </div>
+              )}
+              {permissions.some((item) => item.isRole) && (
+                <div className="flex flex-wrap gap-3">
+                  <div className="w-full flex items-center gap-2">
+                    <h4 className="font-semibold">Rôles autorisés</h4>
+                    <QuestionMarkTooltip tooltipValue="Les permissions de rôle ici concernent les rôles sur lesquels ce role est autorisé à effectuer des actions." />
+                  </div>
+                  {permissions
+                    .filter((item) => item.isRole)
+                    .map((item) => (
+                      <PermissionDeleteItem
+                        key={item.name}
+                        name={item.name}
+                        fullName={item.fullName}
+                        description={item.description}
+                        isRole={item.isRole}
+                        inactive={roleProtected}
+                        onDeleteItem={onDeletePermission}
+                      />
+                    ))}
+                </div>
+              )}
+            </>
           ) : (
             <p>Aucune permission affectée</p>
           )}

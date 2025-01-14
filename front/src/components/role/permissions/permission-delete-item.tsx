@@ -1,10 +1,11 @@
-import { Shield, MinusCircle } from "lucide-react";
+import { Shield, MinusCircle, User } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 type PermissionItemProps = {
   name: string;
   fullName: string;
   description?: string;
+  isRole?: boolean;
   inactive?: boolean;
   onDeleteItem: (name: string) => void;
 };
@@ -13,6 +14,7 @@ const PermissionDeleteItem = ({
   name,
   fullName,
   description,
+  isRole,
   inactive,
   onDeleteItem,
 }: PermissionItemProps) => {
@@ -52,7 +54,11 @@ const PermissionDeleteItem = ({
   return (
     <div className="group relative flex items-center justify-between px-2 py-1 rounded-md bg-base-100 text-base-content gap-2 hover:bg-base-100/60 transition-colors duration-200 cursor-pointer h-8">
       <div className="flex items-center gap-1">
-        <Shield className="w-4 h-4 stroke-warning" />
+        {isRole ? (
+          <User className="w-4 h-4 stroke-info" />
+        ) : (
+          <Shield className="w-4 h-4 stroke-warning" />
+        )}
         <p className="font-medium text-sm text-base-content capitalize">
           {name}
         </p>

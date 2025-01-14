@@ -5,42 +5,42 @@ import Role from "../../../utils/interfaces/role";
 function useManagePermissions(id: string) {
   const { sendRequest } = useHttp();
 
-  const [permissions, setPermissions] = useState<{
-    read: { name: string; fullName: string; description: string }[];
-    write: { name: string; fullName: string; description: string }[];
-    update: { name: string; fullName: string; description: string }[];
-    delete: { name: string; fullName: string; description: string }[];
-  }>();
+  interface PermissionItem {
+    name: string;
+    fullName: string;
+    description?: string;
+    isRole?: boolean;
+  }
 
-  const [resources, setResources] =
-    useState<{ name: string; fullName: string; description: string }[]>();
+  type PermissionTypes = "read" | "write" | "update" | "delete";
+
+  type Permissions = Record<PermissionTypes, PermissionItem[]>;
+
+  const [permissions, setPermissions] = useState<Permissions>();
+
+  const [resources, setResources] = useState<PermissionItem[]>();
 
   const [role, setRole] = useState<Role | null>();
 
   const remainingResources = useMemo(() => {
     if (!permissions || !resources) return undefined;
 
-    const {
-      read: readPerms,
-      write: writePerms,
-      update: updatePerms,
-      delete: deletePerms,
-    } = permissions;
+    const permissionTypes: PermissionTypes[] = [
+      "read",
+      "write",
+      "update",
+      "delete",
+    ];
 
-    return {
-      read: resources
-        .filter((res) => !readPerms.find((p) => p.name === res.name))
-        .map((r) => ({ ...r, fullName: `read:${r.name}` })),
-      write: resources
-        .filter((res) => !writePerms.find((p) => p.name === res.name))
-        .map((r) => ({ ...r, fullName: `write:${r.name}` })),
-      update: resources
-        .filter((res) => !updatePerms.find((p) => p.name === res.name))
-        .map((r) => ({ ...r, fullName: `update:${r.name}` })),
-      delete: resources
-        .filter((res) => !deletePerms.find((p) => p.name === res.name))
-        .map((r) => ({ ...r, fullName: `delete:${r.name}` })),
-    };
+    return permissionTypes.reduce(
+      (acc, type) => ({
+        ...acc,
+        [type]: resources
+          .filter((res) => !permissions[type].find((p) => p.name === res.name))
+          .map((r) => ({ ...r, fullName: `${type}:${r.name}` })),
+      }),
+      {} as Permissions,
+    );
   }, [permissions, resources]);
 
   const handleGetPermissionsRequest = useCallback(async () => {
@@ -56,64 +56,55 @@ function useManagePermissions(id: string) {
         role: Role;
       };
     }) => {
-      const permissions = {
-        read: data.permissions
-          .filter((p: string) => p.startsWith("read:"))
-          .map((p: string) => {
-            const name = p.split(":")[1];
-            return {
-              name,
-              fullName: p,
-              description:
-                data.ressources.ressources.find((r) => r.name === name)
-                  ?.description || "",
-            };
-          }),
-        write: data.permissions
-          .filter((p: string) => p.startsWith("write:"))
-          .map((p: string) => {
-            const name = p.split(":")[1];
-            return {
-              name,
-              fullName: p,
-              description:
-                data.ressources.ressources.find((r) => r.name === name)
-                  ?.description || "",
-            };
-          }),
-        update: data.permissions
-          .filter((p: string) => p.startsWith("update:"))
-          .map((p: string) => {
-            const name = p.split(":")[1];
-            return {
-              name,
-              fullName: p,
-              description:
-                data.ressources.ressources.find((r) => r.name === name)
-                  ?.description || "",
-            };
-          }),
-        delete: data.permissions
-          .filter((p: string) => p.startsWith("delete:"))
-          .map((p: string) => {
-            const name = p.split(":")[1];
-            return {
-              name,
-              fullName: p,
-              description:
-                data.ressources.ressources.find((r) => r.name === name)
-                  ?.description || "",
-            };
-          }),
-      };
+      const permissionTypes: PermissionTypes[] = [
+        "read",
+        "write",
+        "update",
+        "delete",
+      ];
+
+      const permissions = permissionTypes.reduce(
+        (acc, type) => ({
+          ...acc,
+          [type]: data.permissions
+            .filter((p: string) => p.startsWith(`${type}:`))
+            .map((p: string) => {
+              const name = p.split(":")[1];
+              return {
+                name,
+                fullName: p,
+                description:
+                  data.ressources.ressources.find((r) => r.name === name)
+                    ?.description || "",
+                isRole:
+                  name === "everything"
+                    ? true
+                    : Boolean(data.ressources.roles.find((r) => r === name)),
+              };
+            }),
+        }),
+        {} as Permissions,
+      );
 
       setPermissions(permissions);
-      setResources(
-        data.ressources.ressources.map((r) => ({
+      setResources([
+        ...data.ressources.ressources.map((r) => ({
           ...r,
           fullName: r.name,
         })),
-      );
+        ...data.ressources.roles.map((r) => ({
+          name: r,
+          fullName: r,
+          isRole: true,
+        })),
+        {
+          name: "everything",
+          fullName: "everything",
+          description:
+            "Permet d'acceder a tous les roles en même temps (utilisé dans la liste d'utilisateur)",
+          isRole: true,
+        },
+      ]);
       setRole(data.role);
     };
 
