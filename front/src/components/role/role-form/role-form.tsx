@@ -17,6 +17,7 @@ import useInput from "../../../hooks/use-input";
 import RoleTypeSelector from "./role-type-selector";
 import { Context } from "../../../store/context.store";
 import Role from "../../../utils/interfaces/role";
+import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 
 type RoleFormProps = {
   role?: Role;
@@ -134,8 +135,11 @@ const RoleForm = ({
           <div
             className={`flex flex-row ${allow2xlScreenFlexCol ? "2xl:flex-col" : ""} gap-10 w-full items-end`}
           >
-            <span className="flex flex-col gap-y-1 w-full">
-              <p>Nom du rôle</p>
+            <div className="flex flex-col gap-y-1 w-full">
+              <div className="flex items-center gap-2">
+                <p>Nom du rôle</p>
+                <QuestionMarkTooltip tooltipValue="test" />
+              </div>
               <input
                 ref={nameInputRef}
                 type="text"
@@ -144,37 +148,44 @@ const RoleForm = ({
                 className={inputClassName(
                   name.hasError && name.value.length > 0,
                 )}
+                maxLength={20}
                 onChange={name.valueChangeHandler}
                 onBlur={name.valueBlurHandler}
                 value={name.value}
                 disabled={role?.isProtected}
               />
-            </span>
+            </div>
 
-            <span className="flex flex-col gap-y-1 w-full">
-              <p>Label</p>
+            <div className="flex flex-col gap-y-1 w-full">
+              <div className="flex items-center gap-2">
+                <p>Label</p>
+                <QuestionMarkTooltip tooltipValue="test" />
+              </div>
               <input
                 name="label"
                 id="label"
                 className={inputClassName(
                   label.hasError && label.value.length > 0,
                 )}
+                maxLength={20}
                 onChange={label.valueChangeHandler}
                 onBlur={label.valueBlurHandler}
                 value={label.value}
-                maxLength={15}
               />
-            </span>
+            </div>
 
-            <span className="flex flex-col gap-y-1 w-full">
-              <p>Modèle de rôle</p>
+            <div className="flex flex-col gap-y-1 w-full">
+              <div className="flex items-center gap-2">
+                <p>Modèle de rôle</p>
+                <QuestionMarkTooltip tooltipValue="test" />
+              </div>
               <RoleTypeSelector
                 currentRoleType={currentRoleType}
                 onSetCurrentRoleType={setCurrentRoleType}
                 editMode={Boolean(role)}
                 disabled={role?.isProtected}
               />
-            </span>
+            </div>
             <div className="w-full sm:w-auto">
               <button
                 type="button"

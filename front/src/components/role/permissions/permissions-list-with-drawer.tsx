@@ -1,8 +1,9 @@
-import { ListPlus, HelpCircle } from "lucide-react";
+import { ListPlus } from "lucide-react";
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
 import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
 import PermissionDeleteItem from "./permission-delete-item";
 import PermissionAddItem from "./permission-add-item";
+import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 
 type PermissionsListWithDrawerProps = {
   drawerId: string;
@@ -38,12 +39,7 @@ const PermissionsListWithDrawer = ({
           <div className="flex items-center gap-2">
             <p className="text-secondary font-bold text-lg">{title}</p>
             {descriptionTooltip && (
-              <div
-                className="tooltip tooltip-right"
-                data-tip={descriptionTooltip}
-              >
-                <HelpCircle className="w-4 h-4 stroke-base-content/60" />
-              </div>
+              <QuestionMarkTooltip tooltipValue={descriptionTooltip} />
             )}
           </div>
           <div className="flex gap-5 items-center">
