@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
@@ -12,16 +13,30 @@ import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
 import ButtonAdd from "../../UI/button-add/button-add";
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
 
+/**
+ * Composant qui gère l'affichage et la gestion de la liste des compétences
+ */
 const SkillsList = () => {
+  // Récupération de l'ID du parcours depuis l'URL
   const { id } = useParams();
+  // Récupération de la liste des compétences depuis le store Redux
   const skillList = useSelector((state: any) => state.parcoursSkills.skills);
   const dispatch = useDispatch();
+  // État local pour la compétence à mettre à jour
   const [itemToUpdate, setItemToUpdate] = useState<any | null>(null);
+  // État local pour gérer l'affichage du drawer
   const [activeDrawer, setActiveDrawer] = useState<string | undefined>("");
+  // État local pour le titre du drawer
   const [title, setTitle] = useState<string | undefined>("");
+  // Hook personnalisé pour les requêtes HTTP
   const { sendRequest, error } = useHttp();
 
+  /**
+   * Gère la suppression d'une compétence
+   * @param skillId ID de la compétence à supprimer
+   */
   const handleDeleteSkill = (skillId: number) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const processData = (_data: any) => {
       dispatch(parcoursSkillsAction.deleteSkill(skillId));
     };
@@ -34,12 +49,17 @@ const SkillsList = () => {
     );
   };
 
+  // Affiche les erreurs via toast si présentes
   useEffect(() => {
     if (error.length > 0) {
       toast.error(error);
     }
   }, [error]);
 
+  /**
+   * Ferme le drawer et réinitialise les états
+   * @param id ID du drawer à fermer
+   */
   const handleCloseDrawer = (id: string) => {
     document.getElementById(id)?.click();
     setTimeout(() => {
@@ -48,11 +68,18 @@ const SkillsList = () => {
     }, 500);
   };
 
+  /**
+   * Configure le drawer pour l'ajout d'une nouvelle compétence
+   */
   const handleAddSkill = () => {
     setTitle("Ajouter une nouvelle compétence");
     setActiveDrawer("badge-drawer");
   };
 
+  /**
+   * Configure le drawer pour la mise à jour d'une compétence
+   * @param id ID de la compétence à mettre à jour
+   */
   const handleUpdateSkill = (id: number) => {
     console.log(
       "update",
@@ -64,6 +91,10 @@ const SkillsList = () => {
     setTitle("Modifier la compétence");
   };
 
+  /**
+   * Gère la soumission du formulaire d'ajout de compétence
+   * @param value Données de la nouvelle compétence
+   */
   const handleSubmitAddSkill = (value: any) => {
     const skill = skillList.find(
       (item: any) => item.description === value.description
@@ -96,6 +127,10 @@ const SkillsList = () => {
     }
   };
 
+  /**
+   * Gère la soumission du formulaire de mise à jour d'une compétence
+   * @param skill Données de la compétence mise à jour
+   */
   const submitUpdateSkill = (skill: any) => {
     console.log("skill update", skill);
 
@@ -122,13 +157,15 @@ const SkillsList = () => {
     handleCloseDrawer("update-skill");
   };
 
+  // Ouvre le drawer quand activeDrawer change
   useEffect(() => {
     if (activeDrawer !== undefined) {
       document.getElementById(activeDrawer)?.click();
     }
   }, [activeDrawer]);
 
-  let content = (
+  // Contenu principal du composant
+  const content = (
     <>
       {skillList.length > 0 ? (
         <ul className="flex flex-col gap-y-4">
