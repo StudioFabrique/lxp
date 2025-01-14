@@ -77,7 +77,7 @@ const EditModuleCourse: React.FC<EditModuleCourseProps> = ({
                               </div>
                               <span className="flex flex-col justify-center items-start">
                                 <p className="text-base-content/50 text-xs">
-                                  Activité de type {item.type} {index + 1}
+                                  Cours n° {index + 1}
                                 </p>
                                 <p className="font-bold">{item.title}</p>
                               </span>
