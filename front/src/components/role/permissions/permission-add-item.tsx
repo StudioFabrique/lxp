@@ -1,9 +1,10 @@
-import { Shield, PlusCircle, HelpCircle } from "lucide-react";
+import { Shield, PlusCircle, HelpCircle, User } from "lucide-react";
 
 type PermissionItemProps = {
   name: string;
-  description: string;
+  description?: string;
   fullName: string;
+  isRole?: boolean;
   inactive?: boolean;
   onAddPermission?: (name: string) => void;
 };
@@ -12,7 +13,8 @@ const PermissionAddItem = ({
   name,
   description,
   fullName,
-  inactive = false,
+  isRole,
+  inactive,
   onAddPermission,
 }: PermissionItemProps) => {
   const handleAddPermission = () => {
@@ -28,9 +30,15 @@ const PermissionAddItem = ({
       }`}
     >
       <div className="flex items-center gap-2">
-        <Shield
-          className={`w-4 h-4 ${inactive ? "stroke-base-content/60" : "stroke-warning"}`}
-        />
+        {isRole ? (
+          <User
+            className={`w-4 h-4 ${inactive ? "stroke-base-content/60" : "stroke-info"}`}
+          />
+        ) : (
+          <Shield
+            className={`w-4 h-4 ${inactive ? "stroke-base-content/60" : "stroke-warning"}`}
+          />
+        )}
         <p
           className={`font-medium text-sm capitalize ${inactive ? "text-base-content/60" : "text-base-content"}`}
         >
