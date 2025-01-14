@@ -6,7 +6,7 @@ import { TableListProps } from "../../components/table/table-list/table-list";
 
 export const roleTableItems: TableListItemConfig[] = [
   {
-    property: "role",
+    property: "label",
     label: "Rôle",
     sortAllowed: true,
   },
