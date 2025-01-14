@@ -33,6 +33,7 @@ export default function StudentEvaluationView() {
 
   //const getStudents = () => {};
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleParcoursChange = (event: any) => {
     console.log(event.currentTarget.value);
     getGroups();
