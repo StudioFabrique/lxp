@@ -1,4 +1,4 @@
-// Toutes les ressources
+// Toutes les ressources de permissions
 export const resourcesRbac = [
   {
     name: "role",
@@ -69,6 +69,27 @@ export const resourcesRbac = [
     description:
       "Espace personnel de suivi permettant de visualiser sa progression, gérer son profil et personnaliser son expérience d'apprentissage",
   },
+];
+
+// Permissions pour les rôles d'interface
+export const layoutPermissionsList = ["admin", "teacher", "student"];
+
+export const componentPermissionsList = [
+  "hobbie",
+  "social-network",
+  "course",
+  "group",
+  "parcours",
+  "profile",
+  "user",
+  "role",
+  "course",
+  "profile",
+  "lesson",
+  "module",
+  "formation",
+  "calendar",
+  "mediatheque",
 ];
 
 // Pour les actions write, update et delete pour teacher rank 2

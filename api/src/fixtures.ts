@@ -18,7 +18,7 @@ import User from "./utils/interfaces/db/user";
 import {
   permDefsActions,
   permDefsInterface,
-} from "./utils/rbac/fixtures-permissions";
+} from "./utils/rbac/config/fixtures-permissions";
 import IConnectionInfos from "./utils/interfaces/db/connection-infos";
 import ConnectionInfos from "./utils/interfaces/db/connection-infos";
 dotenv.config();
