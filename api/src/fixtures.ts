@@ -277,8 +277,13 @@ async function createRoles() {
 
   // Roles d'actions
   const actionsRoles = [
-    { role: "admin", label: "admin", rank: 1, isProtected: true },
-    { role: "teacher", label: "formateur", rank: 2, isProtected: true },
+    { role: "admin", label: "administrateur", rank: 1, isProtected: true },
+    {
+      role: "teacher",
+      label: "équipe pédagogique",
+      rank: 2,
+      isProtected: true,
+    },
     { role: "student", label: "apprenant", rank: 3, isProtected: true },
   ];
   const dbRoles = Array<any>();
