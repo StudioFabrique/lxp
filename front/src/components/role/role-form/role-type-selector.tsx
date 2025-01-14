@@ -17,7 +17,7 @@ const RoleTypeSelector: FC<{
 
   const roleTypes = [
     { name: "administrateur", rank: 1 },
-    { name: "formateur", rank: 2 },
+    { name: "équipe pédagogique", rank: 2 },
     { name: "apprenant", rank: 3 },
     { name: "visiteur", rank: 4 },
   ];
@@ -34,7 +34,7 @@ const RoleTypeSelector: FC<{
   return roleTypes ? (
     <div className="flex flex-col gap-1 relative">
       <select
-        className="w-full select select-sm border border-neutral/50 focus:outline-none"
+        className="w-full select select-sm border border-neutral/50 focus:outline-none capitalize"
         name="menu"
         id="menu"
         value={currentRoleType}
@@ -44,11 +44,7 @@ const RoleTypeSelector: FC<{
         disabled={disabled}
       >
         {roleTypes.map((item) => (
-          <option
-            className="capitalize text-xs"
-            key={item.rank}
-            value={item.rank}
-          >
+          <option key={item.rank} value={item.rank}>
             {item.name}
           </option>
         ))}

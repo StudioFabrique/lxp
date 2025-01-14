@@ -138,7 +138,7 @@ const RoleForm = ({
             <div className="flex flex-col gap-y-1 w-full">
               <div className="flex items-center gap-2">
                 <p>Nom du rôle</p>
-                <QuestionMarkTooltip tooltipValue="test" />
+                <QuestionMarkTooltip tooltipValue="Nom technique utilisé principalement pour des opérations interne par l'application" />
               </div>
               <input
                 ref={nameInputRef}
@@ -159,7 +159,7 @@ const RoleForm = ({
             <div className="flex flex-col gap-y-1 w-full">
               <div className="flex items-center gap-2">
                 <p>Label</p>
-                <QuestionMarkTooltip tooltipValue="test" />
+                <QuestionMarkTooltip tooltipValue="Nom du rôle visible pour les utilisateurs de l'application" />
               </div>
               <input
                 name="label"
@@ -177,7 +177,7 @@ const RoleForm = ({
             <div className="flex flex-col gap-y-1 w-full">
               <div className="flex items-center gap-2">
                 <p>Modèle de rôle</p>
-                <QuestionMarkTooltip tooltipValue="test" />
+                <QuestionMarkTooltip tooltipValue="Affecte un modèle de permissions prédéfénis au rôle actuel" />
               </div>
               <RoleTypeSelector
                 currentRoleType={currentRoleType}
