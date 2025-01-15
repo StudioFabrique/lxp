@@ -23,7 +23,7 @@ export default async function httpDeleteRole(req: Request, res: Response) {
 
     // vérifier si le rôle est protégé
     const roleToDelete = await Role.findById(id);
-    if (roleToDelete?.isProtected) {
+    if (roleToDelete && roleToDelete?.protection >= 1) {
       return res
         .status(400)
         .json({ message: "Impossible de supprimer un rôle protégé" });
