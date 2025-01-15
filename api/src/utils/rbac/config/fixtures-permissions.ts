@@ -103,7 +103,6 @@ export const permDefsActions = {
   },
   teacher: {
     read: [
-      "role",
       "tag",
       "user",
       "group",
@@ -119,7 +118,6 @@ export const permDefsActions = {
       "everything",
     ],
     write: [
-      "role",
       "tag",
       "user",
       "group",
@@ -135,7 +133,6 @@ export const permDefsActions = {
       "everything",
     ],
     update: [
-      "role",
       "tag",
       "user",
       "group",
@@ -151,7 +148,6 @@ export const permDefsActions = {
       "everything",
     ],
     delete: [
-      "role",
       "tag",
       "user",
       "group",

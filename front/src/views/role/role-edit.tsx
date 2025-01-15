@@ -49,7 +49,7 @@ const RoleEdit = () => {
           descriptionTooltip="Permet de consulter et visualiser les ressources sans pouvoir les modifier. Cette permission est fondamentale pour accéder aux informations tout en préservant leur intégrité."
           permissions={permissions?.read}
           remainingResources={remainingResources?.read}
-          roleProtected={role.isProtected}
+          roleProtection={role.protection}
           onAddPermission={onAddPermission}
           onDeletePermission={onDeletePermission}
         />
@@ -62,7 +62,7 @@ const RoleEdit = () => {
           descriptionTooltip="Autorise la création de nouvelles ressources dans le système. Cette permission est essentielle pour contribuer activement au contenu tout en respectant la structure établie."
           permissions={permissions?.write}
           remainingResources={remainingResources?.write}
-          roleProtected={role.isProtected}
+          roleProtection={role.protection}
           onAddPermission={onAddPermission}
           onDeletePermission={onDeletePermission}
         />
@@ -75,7 +75,7 @@ const RoleEdit = () => {
           descriptionTooltip="Permet de mettre à jour et d'améliorer les ressources existantes. Cette permission est cruciale pour maintenir les informations à jour et corriger les erreurs si nécessaire."
           permissions={permissions?.update}
           remainingResources={remainingResources?.update}
-          roleProtected={role.isProtected}
+          roleProtection={role.protection}
           onAddPermission={onAddPermission}
           onDeletePermission={onDeletePermission}
         />
@@ -88,7 +88,7 @@ const RoleEdit = () => {
           descriptionTooltip="Autorise la suppression des ressources du système. Cette permission doit être utilisée avec précaution car elle permet de retirer définitivement des éléments de la base de données."
           permissions={permissions?.delete}
           remainingResources={remainingResources?.delete}
-          roleProtected={role.isProtected}
+          roleProtection={role.protection}
           onAddPermission={onAddPermission}
           onDeletePermission={onDeletePermission}
         />

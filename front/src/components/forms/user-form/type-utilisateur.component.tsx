@@ -46,12 +46,12 @@ const TypeUtilisateur: FC<{
         </button>
       </div>
 
-      <div className="flex flex-col gap-y-5 h-[15em] overflow-y-auto">
+      <div className="flex flex-col gap-y-5 h-[15em]">
         {isLoading ? (
           <p>Chargement des roles...</p>
         ) : (
-          <div className="flex flex-col justify-between h-full">
-            <div className="flex flex-col gap-y-4">
+          <div className="flex flex-col justify-between h-full gap-5">
+            <div className="flex flex-col gap-y-4 overflow-y-auto">
               {roles.map((role: Role) => (
                 <span key={role._id} className="flex gap-x-2">
                   <input

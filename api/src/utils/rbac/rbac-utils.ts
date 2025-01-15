@@ -89,7 +89,7 @@ export async function getAllRoles() {
       role: role.role,
       label: role.label,
       rank: role.rank,
-      isProtected: role.isProtected,
+      protection: role.protection,
       countRead: permissions.filter((perm) => perm.startsWith("read:")).length,
       countWrite: permissions.filter((perm) => perm.startsWith("write:"))
         .length,
@@ -235,7 +235,7 @@ export async function removePermissionFromRole(
       throw new Error("Role not found");
     }
 
-    if (role.isProtected) {
+    if (role.protection === 2) {
       throw new Error("Cannot modify permissions of a protected role");
     }
 
@@ -277,7 +277,7 @@ export async function addPermissionToRole(
       throw new Error("Role not found");
     }
 
-    if (role.isProtected) {
+    if (role.protection === 2) {
       throw new Error("Cannot modify permissions of a protected role");
     }
 
@@ -342,7 +342,7 @@ export async function createOrUpdateRoleWithPermissions(
     if (_id) {
       foundRole = await Role.findById(_id);
       if (foundRole) {
-        if (foundRole.isProtected) {
+        if (foundRole.protection >= 1) {
           foundRole = await Role.findByIdAndUpdate(
             _id,
             { label },
@@ -364,7 +364,7 @@ export async function createOrUpdateRoleWithPermissions(
     }
 
     // Only update permissions if they were provided and role is not protected
-    if (permissions !== undefined && !foundRole.isProtected) {
+    if (permissions !== undefined && foundRole.protection !== 2) {
       // Remove existing role references from all permissions
       await Permission.updateMany(
         { roles: foundRole._id },

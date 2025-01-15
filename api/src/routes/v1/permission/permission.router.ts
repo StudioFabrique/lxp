@@ -94,6 +94,7 @@ permissionRouter.delete(
   httpRemovePermissionFromRole,
 );
 
+// Supprimer un rôle spécifique
 permissionRouter.delete(
   "/role/:roleId",
   checkPermissions("role"),
@@ -101,6 +102,7 @@ permissionRouter.delete(
   httpDeleteRole,
 );
 
+// Supprimer des rôles spécifiques
 permissionRouter.delete(
   "/roles",
   checkPermissions("role"),

@@ -1,4 +1,3 @@
-import Can from "../can/can.component";
 import Course from "./sidebar-parts/course";
 import Formation from "./sidebar-parts/formation";
 import Group from "./sidebar-parts/group";
@@ -24,9 +23,7 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => (
     <Lesson currentRoute={currentRoute} />
     <User currentRoute={currentRoute} />
     <Group currentRoute={currentRoute} />
-    <Can action="write" object="role">
-      <Roles currentRoute={currentRoute} />
-    </Can>
+    <Roles currentRoute={currentRoute} />
     <Mediatheque currentRoute={currentRoute} />
 
     {/* <Calendar interfaceType={interfaceType} />

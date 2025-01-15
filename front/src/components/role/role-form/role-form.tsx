@@ -152,7 +152,7 @@ const RoleForm = ({
                 onChange={name.valueChangeHandler}
                 onBlur={name.valueBlurHandler}
                 value={name.value}
-                disabled={role?.isProtected}
+                disabled={role && role.protection >= 1}
               />
             </div>
 
@@ -183,7 +183,7 @@ const RoleForm = ({
                 currentRoleType={currentRoleType}
                 onSetCurrentRoleType={setCurrentRoleType}
                 editMode={Boolean(role)}
-                disabled={role?.isProtected}
+                disabled={role && role.protection >= 1}
               />
             </div>
             <div className="w-full sm:w-auto">
