@@ -16,6 +16,13 @@ export default async function getRncpData(rncp: string) {
 
   // Récupération et parsing des données
   const data: any = await response.json();
+  console.log({ data });
+
+  if (data.length === 0)
+    throw {
+      statusCode: 404,
+      message: "Aucune donnée n'a été renvoyée par l'API Apprentissage.",
+    };
 
   // Extraction des informations pertinentes
   const title = data[0].intitule.rncp; // Titre de la certification
