@@ -3,5 +3,5 @@ export default interface Role {
   role: string;
   label: string;
   rank: number;
-  isProtected: boolean;
+  protection: number;
 }

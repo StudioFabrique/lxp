@@ -259,32 +259,36 @@ async function createRoles() {
       role: "interface:admin",
       label: "interface de l'admin",
       rank: 1,
-      isProtected: true,
+      protection: 2,
     },
     {
       role: "interface:teacher",
       label: "interface du formateur",
       rank: 2,
-      isProtected: true,
+      protection: 2,
     },
     {
       role: "interface:student",
       label: "interface de l'apprenant",
       rank: 3,
-      isProtected: true,
+      protection: 2,
     },
   ];
 
   // Roles d'actions
   const actionsRoles = [
-    { role: "admin", label: "administrateur", rank: 1, isProtected: true },
+    // protection 2, le nom du role, son modèle et rank ainsi que ses permissions ne peuvent pas être modifiés
+    // seul le label est modifiable
+    { role: "admin", label: "administrateur", rank: 1, protection: 2 },
+    // protection 1, le nom du role, son modèle et rank ne peuvent pas être modifiés
+    // seul le label et ses permissions sont modifiables
     {
       role: "teacher",
       label: "équipe pédagogique",
       rank: 2,
-      isProtected: true,
+      protection: 1,
     },
-    { role: "student", label: "apprenant", rank: 3, isProtected: true },
+    { role: "student", label: "apprenant", rank: 3, protection: 1 },
   ];
   const dbRoles = Array<any>();
   [...interfaceRoles, ...actionsRoles].forEach((role) => {
