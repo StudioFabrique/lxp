@@ -1,10 +1,11 @@
 import User, { IUser } from "../../utils/interfaces/db/user";
 import Role from "../../utils/interfaces/db/role";
+import { sendUpdatedUserEmail } from "../../services/mailer";
 
 export default async function editUser(
   userId: string,
   user: IUser,
-  roleId: string,
+  roleId: string
 ) {
   try {
     // Vérifier si l'utilisateur existe
@@ -39,8 +40,10 @@ export default async function editUser(
         avatar: user.avatar,
         roles: newRole,
       },
-      { new: true },
+      { new: true }
     );
+
+    await sendUpdatedUserEmail(userToUpdate.email);
 
     if (!updatedUser) {
       throw {
