@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Permission from "../../utils/interfaces/db/permission";
 import Role, { IRole } from "../../utils/interfaces/db/role";
 import { serverIssue } from "../../utils/constantes";
+import mongoose from "mongoose";
 
 /**
  * Supprime un rôle ainsi que toutes ses permissions
@@ -26,6 +27,28 @@ export default async function httpDeleteRole(req: Request, res: Response) {
       return res
         .status(400)
         .json({ message: "Impossible de supprimer un rôle protégé" });
+    }
+
+    // vérifier si le rôle est associé à 1 ou plus d'un utilisateur
+    const userWithRole = await Role.aggregate([
+      {
+        $match: { _id: new mongoose.Types.ObjectId(id) },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "roles",
+          as: "usersWithRole",
+        },
+      },
+    ]);
+
+    if (userWithRole[0]?.usersWithRole?.length > 0) {
+      return res.status(400).json({
+        message:
+          "Impossible de supprimer un rôle associé à plus d'un utilisateur",
+      });
     }
 
     await Permission.updateMany({ roles: id }, { $pull: { roles: id } });
