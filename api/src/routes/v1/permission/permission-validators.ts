@@ -19,6 +19,8 @@ export const postRoleValidator = [
     .withMessage("Role invalide")
     .notEmpty()
     .withMessage("Role absent")
+    .custom((value) => !value.includes(":"))
+    .withMessage("Le role ne peut pas contenir le caractère ':'")
     .toLowerCase()
     .trim()
     .escape(),
@@ -60,9 +62,11 @@ export const putRoleValidator = [
 
   body(["role", "label"])
     .isString()
-    .withMessage("Champ invalide")
+    .withMessage("Role invalide")
     .notEmpty()
-    .withMessage("Champ absent")
+    .withMessage("Role absent")
+    .custom((value) => !value.includes(":"))
+    .withMessage("Le role ne peut pas contenir le caractère ':'")
     .toLowerCase()
     .trim()
     .escape(),

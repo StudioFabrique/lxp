@@ -30,7 +30,7 @@ export default async function httpDeleteRole(req: Request, res: Response) {
     }
 
     // vérifier si le rôle est associé à 1 ou plus d'un utilisateur
-    const userWithRole = await Role.aggregate([
+    const usersWithRole = await Role.aggregate([
       {
         $match: { _id: new mongoose.Types.ObjectId(id) },
       },
@@ -44,7 +44,7 @@ export default async function httpDeleteRole(req: Request, res: Response) {
       },
     ]);
 
-    if (userWithRole[0]?.usersWithRole?.length > 0) {
+    if (usersWithRole[0]?.usersWithRole?.length > 0) {
       return res.status(400).json({
         message:
           "Impossible de supprimer un rôle associé à plus d'un utilisateur",
