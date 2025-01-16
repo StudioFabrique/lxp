@@ -23,7 +23,7 @@ export default async function httpPostRole(req: Request, res: Response) {
     );
 
     if (!createdRole) {
-      return res.status(400).json({ message: "Le rôle existe déjà" });
+      throw new Error("Erreur lors de la création du rôle");
     }
 
     const adminRole = await Role.findOne({ role: "admin" });
@@ -46,9 +46,11 @@ export default async function httpPostRole(req: Request, res: Response) {
     );
 
     return res.status(201).send({ message: "Rôle créé avec succès" });
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
 
-    return res.status(500).json({ message: serverIssue });
+    return res
+      .status(error.statusCode ?? 500)
+      .json({ message: error.message ?? serverIssue });
   }
 }
