@@ -1,4 +1,4 @@
-import { Shield, PlusCircle, HelpCircle, User } from "lucide-react";
+import { Shield, PlusCircle, User } from "lucide-react";
 import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 
 type PermissionItemProps = {
