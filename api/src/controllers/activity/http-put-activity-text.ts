@@ -25,8 +25,6 @@ export default async function httpPutActivityText(req: Request, res: Response) {
       response,
     });
   } catch (error: any) {
-    console.log({ error });
-
     // En cas d'erreur, retourne le code d'erreur approprié ou 500 par défaut
     return res
       .status(error.statusCode ?? 500)
