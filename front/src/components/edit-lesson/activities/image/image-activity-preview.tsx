@@ -28,7 +28,7 @@ export default function ImageActivityPreview({
         <ImageActivityEditor activity={activity} onCancel={onSubmitted} />
       ) : (
         // Mode affichage: affiche l'image depuis le serveur
-        <img src={`${ACTIVITIES}images/${activity.url}`} />
+        <div className="w-full flex justify-center"><img className="w-96 h-auto rounded-lg shadow-lg border border-primary/50" src={`${ACTIVITIES}images/${activity.url}`} /></div>
       )}
     </>
   );

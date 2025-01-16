@@ -43,11 +43,7 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
    */
   const classImage: React.CSSProperties = {
     backgroundImage: `url('${
-      image ?? selectedImage
-        ? `${ACTIVITIES}images/${selectedImage}`
-        : activity
-        ? `${ACTIVITIES}images/${activity.url}`
-        : defaultImage
+      selectedImage ? `${ACTIVITIES}images/${selectedImage}` : image ? image : activity?.url ? `${ACTIVITIES}images/${activity.url}` : defaultImage
     }')`,
     width: "100%",
     height: "100%",
@@ -107,7 +103,7 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
           </form>
         </span>
       </Wrapper>
-      <div style={classImage}></div>
+      <div className="flex justify-center"><div style={classImage}></div></div>
       <div className="h-[1rem]" />
       {showDialog ? (
         <DialogImages onClose={() => setShowDialog(false)} />
