@@ -23,7 +23,7 @@ const AddParcours = () => {
   const [formation, setFormation] = useState<number | undefined>(undefined);
   const [parcoursList, setParcoursList] = useState<Array<Item>>([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_parcours, setParcours] = useState<number | undefined>(undefined);
+  const [parcours, setParcours] = useState<number | undefined>(undefined);
   const { sendRequest, error } = useHttp();
   const [isLoading, setIsLoading] = useState(false);
   const nav = useNavigate();
@@ -104,6 +104,23 @@ const AddParcours = () => {
     setIsLoading(false);
   };
 
+
+  const handleDuplicateParcours = () => {
+    const applyData = (data: { success:true,parcoursId: number } ) => { 
+      console.log({data});
+      
+      if (data.success) {
+        toast.success("Parcours dupliqué avec succès");
+        nav(`/admin/parcours/edit/${data.parcoursId}`);
+      }
+    }
+    sendRequest({
+      path: `/parcours/duplicate/${parcours!}`,
+      method: "post",
+    },applyData)
+}
+
+
   /**
    * requête qui retourne la liste des parcours liés à la formation sélectionnée
    */
@@ -160,8 +177,8 @@ const AddParcours = () => {
                         />
                       </div>
                       <div className="w-full flex justify-end mt-4">
-                        <button className="btn btn-primary" type="button">
-                          Commencer
+                        <button className="btn btn-primary" type="button" onClick={handleDuplicateParcours}>
+                          Créer
                         </button>
                       </div>
                     </div>
