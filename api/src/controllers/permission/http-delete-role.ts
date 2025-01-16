@@ -69,6 +69,24 @@ export default async function httpDeleteRole(req: Request, res: Response) {
 
     await Permission.updateMany({ roles: id }, { $pull: { roles: id } });
 
+    const permissionsToRemove = await Permission.find({
+      name: {
+        $in: [
+          `write:${roleToDelete.role}`,
+          `read:${roleToDelete.role}`,
+          `delete:${roleToDelete.role}`,
+          `update:${roleToDelete.role}`,
+        ],
+      },
+    }).select("_id");
+
+    await Role.updateMany(
+      { role: { $not: /^interface:/ } },
+      {
+        $pull: { permissions: { $in: permissionsToRemove.map((p) => p._id) } },
+      },
+    );
+
     await Role.deleteOne({ _id: id });
 
     return res
