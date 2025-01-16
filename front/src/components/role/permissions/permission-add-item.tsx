@@ -1,4 +1,5 @@
-import { Shield, PlusCircle, HelpCircle, User } from "lucide-react";
+import { Shield, PlusCircle, User } from "lucide-react";
+import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 
 type PermissionItemProps = {
   name: string;
@@ -44,11 +45,7 @@ const PermissionAddItem = ({
         >
           {name}
         </p>
-        <div className="tooltip tooltip-right" data-tip={description}>
-          <HelpCircle
-            className={`w-4 h-4 ${inactive ? "stroke-base-content/60" : "stroke-base-content/60"}`}
-          />
-        </div>
+        <QuestionMarkTooltip tooltipValue={description} />
       </div>
       <button
         onClick={handleAddPermission}
