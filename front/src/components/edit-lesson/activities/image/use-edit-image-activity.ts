@@ -102,6 +102,7 @@ const useEditImageActivity = (
       reader.onloadend = () => {
         const imageString = reader.result as string;
         setImage(imageString);
+        setSelectedImage(null);
       };
       reader.readAsDataURL(file);
     }
