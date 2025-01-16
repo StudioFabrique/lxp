@@ -321,80 +321,89 @@ export async function createOrUpdateRoleWithPermissions(
     actions: Array<"read" | "write" | "update" | "delete">;
   }[],
 ) {
-  try {
-    let formattedPermissions: string[] = [];
+  let formattedPermissions: string[] = [];
 
-    if (permissions !== undefined) {
-      if (
-        !permissions.every((permission) =>
-          resourcesRbac.map((r) => r.name).includes(permission.resource),
-        )
-      ) {
-        throw new Error("Invalid resource in permissions");
-      }
-
-      formattedPermissions = permissions.flatMap((permission) =>
-        permission.actions.map((action) => `${action}:${permission.resource}`),
-      );
-    }
-
-    let foundRole;
-    if (_id) {
-      foundRole = await Role.findById(_id);
-      if (foundRole) {
-        if (foundRole.protection >= 1) {
-          foundRole = await Role.findByIdAndUpdate(
-            _id,
-            { label },
-            { new: true },
-          );
-        } else {
-          foundRole = await Role.findByIdAndUpdate(
-            _id,
-            { role: roleName, label, rank },
-            { new: true },
-          );
-        }
-      }
-    }
-
-    if (!foundRole) {
-      foundRole = new Role({ role: roleName, label, rank });
-      await foundRole.save();
-    }
-
-    // Only update permissions if they were provided and role is not protected
-    if (permissions !== undefined && foundRole.protection !== 2) {
-      // Remove existing role references from all permissions
-      await Permission.updateMany(
-        { roles: foundRole._id },
-        { $pull: { roles: foundRole._id } },
-      );
-
-      const permissionIds = [];
-      for (const permissionName of formattedPermissions) {
-        const permission = await Permission.findOneAndUpdate(
-          { name: permissionName },
-          { $addToSet: { roles: foundRole._id } },
-          { upsert: true, new: true },
-        );
-        permissionIds.push(permission._id);
-      }
-
-      const updatedRole = await Role.findOneAndUpdate(
-        { _id: foundRole._id },
-        { $set: { permissions: permissionIds } },
-        { new: true },
-      );
-
-      return updatedRole;
-    }
-
-    return foundRole;
-  } catch (error) {
-    console.error(`Error creating role ${roleName}:`, error);
-    throw new Error(`Failed to create role with permissions`);
+  if (resourcesRbac.flatMap((res) => res.name).includes(roleName)) {
+    const error = new Error(
+      "Le nom du rôle est déjà utilisé par une permission",
+    ) as any;
+    error.statusCode = 409;
+    throw error;
   }
+
+  // Check if role name already exists
+  const existingRole = await Role.findOne({ role: roleName });
+  if (existingRole && (!_id || existingRole._id.toString() !== _id)) {
+    const error = new Error("Le nom du rôle existe déjà") as any;
+    error.statusCode = 409;
+    throw error;
+  }
+
+  if (permissions !== undefined) {
+    if (
+      !permissions.every((permission) =>
+        resourcesRbac.map((r) => r.name).includes(permission.resource),
+      )
+    ) {
+      const error = new Error("Ressource invalide dans les permissions") as any;
+      error.statusCode = 400;
+      throw error;
+    }
+
+    formattedPermissions = permissions.flatMap((permission) =>
+      permission.actions.map((action) => `${action}:${permission.resource}`),
+    );
+  }
+
+  let foundRole;
+  if (_id) {
+    foundRole = await Role.findById(_id);
+    if (foundRole) {
+      if (foundRole.protection >= 1) {
+        foundRole = await Role.findByIdAndUpdate(_id, { label }, { new: true });
+      } else {
+        foundRole = await Role.findByIdAndUpdate(
+          _id,
+          { role: roleName, label, rank },
+          { new: true },
+        );
+      }
+    }
+  }
+
+  if (!foundRole) {
+    foundRole = new Role({ role: roleName, label, rank });
+    await foundRole.save();
+  }
+
+  // Only update permissions if they were provided and role is not protected
+  if (permissions !== undefined && foundRole.protection !== 2) {
+    // Remove existing role references from all permissions
+    await Permission.updateMany(
+      { roles: foundRole._id },
+      { $pull: { roles: foundRole._id } },
+    );
+
+    const permissionIds = [];
+    for (const permissionName of formattedPermissions) {
+      const permission = await Permission.findOneAndUpdate(
+        { name: permissionName },
+        { $addToSet: { roles: foundRole._id } },
+        { upsert: true, new: true },
+      );
+      permissionIds.push(permission._id);
+    }
+
+    const updatedRole = await Role.findOneAndUpdate(
+      { _id: foundRole._id },
+      { $set: { permissions: permissionIds } },
+      { new: true },
+    );
+
+    return updatedRole;
+  }
+
+  return foundRole;
 }
 
 /**

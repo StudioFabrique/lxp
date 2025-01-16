@@ -1,7 +1,7 @@
 import { HelpCircle } from "lucide-react";
 
 type QuestionMarkTooltipProps = {
-  tooltipValue: string;
+  tooltipValue?: string;
 };
 
 const QuestionMarkTooltip = ({ tooltipValue }: QuestionMarkTooltipProps) => (
