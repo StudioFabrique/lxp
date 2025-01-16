@@ -58,6 +58,19 @@ export default async function httpDeleteManyRoles(req: Request, res: Response) {
       });
     }
 
+    await Permission.deleteMany({
+      name: {
+        $in: roles
+          .map((role) => [
+            `write:${role.role}`,
+            `read:${role.role}`,
+            `delete:${role.role}`,
+            `update:${role.role}`,
+          ])
+          .flat(),
+      },
+    });
+
     await Permission.updateMany(
       { roles: { $in: rolesIds } },
       { $pull: { roles: { $in: rolesIds } } },

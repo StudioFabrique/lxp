@@ -23,11 +23,16 @@ export default async function httpDeleteRole(req: Request, res: Response) {
 
     // vérifier si le rôle est protégé
     const roleToDelete = await Role.findById(id);
-    if (roleToDelete && roleToDelete?.protection >= 1) {
+
+    if (!roleToDelete)
+      return res
+        .status(404)
+        .json({ message: "Le rôle demandé pour la suppression n'existe pas" });
+
+    if (roleToDelete.protection >= 1)
       return res
         .status(400)
         .json({ message: "Impossible de supprimer un rôle protégé" });
-    }
 
     // vérifier si le rôle est associé à 1 ou plus d'un utilisateur
     const usersWithRole = await Role.aggregate([
@@ -50,6 +55,17 @@ export default async function httpDeleteRole(req: Request, res: Response) {
           "Impossible de supprimer un rôle associé à plus d'un utilisateur",
       });
     }
+
+    await Permission.deleteMany({
+      name: {
+        $in: [
+          `write:${roleToDelete.role}`,
+          `read:${roleToDelete.role}`,
+          `delete:${roleToDelete.role}`,
+          `update:${roleToDelete.role}`,
+        ],
+      },
+    });
 
     await Permission.updateMany({ roles: id }, { $pull: { roles: id } });
 
