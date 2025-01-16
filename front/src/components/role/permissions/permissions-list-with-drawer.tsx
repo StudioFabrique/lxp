@@ -55,7 +55,7 @@ const PermissionsListWithDrawer = ({
               title={title}
               icon={<ListPlus className="w-5" />}
             >
-              <div className="flex flex-col gap-2 overflow-x-hidden h-[85vh] w-[95%]">
+              <div className="flex flex-col gap-2 overflow-x-hidden h-[85vh]">
                 <h3 className="font-bold">Permissions disponibles</h3>
                 {remainingResources?.length ? (
                   remainingResources.map((res) => (
