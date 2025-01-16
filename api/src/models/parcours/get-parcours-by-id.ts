@@ -1,4 +1,3 @@
-import { getAdmin } from "../../helpers/get-admin";
 import { prisma } from "../../utils/db";
 
 /**

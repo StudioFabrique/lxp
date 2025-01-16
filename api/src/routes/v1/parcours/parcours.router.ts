@@ -34,6 +34,7 @@ import httpGetTeacherParcours from "../../../controllers/parcours/http-get-teach
 import httpGetRootAdminParcours from "../../../controllers/parcours/http-get-root-admin-parcours";
 import httpGetParcoursAsStudent from "../../../controllers/parcours/http-get-parcours-as-student";
 import httpGetSelectParcours from "../../../controllers/parcours/http-get-select-parcours";
+import httpPostDuplicateParcours from "../../../controllers/parcours/http-post-duplicate-parcours";
 
 const parcoursRouter = express.Router();
 
@@ -156,5 +157,11 @@ parcoursRouter.get(
   checkPermissions("parcours"),
   httpGetTeacherParcours,
 );
+// duplique un parcours et les données associées dans le but de créer un nouveau parcours rapidement
+parcoursRouter.post(
+  "/duplicate/:parcoursId",
+  checkPermissions("parcours"),
+  httpPostDuplicateParcours,
+)
 
 export default parcoursRouter;

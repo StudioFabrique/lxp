@@ -68,7 +68,7 @@ const NewParcoursForm: FC<Props> = ({ formations, onSubmit }) => {
     <>
       <div className="font-bold">
         <div className="flex flex-col gap-y-4">
-          <h3>créer un nouveau parcours</h3>
+          <h3>Créer un nouveau parcours</h3>
           <div className="flex flex-col gap-y-4">
             <Selecter
               list={formations}
