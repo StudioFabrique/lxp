@@ -59,7 +59,7 @@ const Pagination: FC<{
       </p>
       {/* Boutons de navigation (affichés uniquement s'il y a plus d'une page) */}
       {totalPages && totalPages > 1 ? (
-        <div className="btn-group gap-x-4">
+        <div className="btn-group flex gap-x-4">
           <button
             className="btn btn-primary btn-sm"
             onClick={goToFistPage}
