@@ -10,6 +10,8 @@ import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import Loader from "../../components/UI/loader";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import Selecter from "../../components/UI/selecter/selecter.component";
+import QuestionMarkTooltip from "../../components/UI/question-mark-tooltip/question-mark-tooltip";
+import { HelpCircle } from "lucide-react";
 
 // type de données pour les listes
 type Item = {
@@ -104,22 +106,23 @@ const AddParcours = () => {
     setIsLoading(false);
   };
 
-
   const handleDuplicateParcours = () => {
-    const applyData = (data: { success:true,parcoursId: number } ) => { 
-      console.log({data});
-      
+    const applyData = (data: { success: true; parcoursId: number }) => {
+      console.log({ data });
+
       if (data.success) {
         toast.success("Parcours dupliqué avec succès");
         nav(`/admin/parcours/edit/${data.parcoursId}`);
       }
-    }
-    sendRequest({
-      path: `/parcours/duplicate/${parcours!}`,
-      method: "post",
-    },applyData)
-}
-
+    };
+    sendRequest(
+      {
+        path: `/parcours/duplicate/${parcours!}`,
+        method: "post",
+      },
+      applyData
+    );
+  };
 
   /**
    * requête qui retourne la liste des parcours liés à la formation sélectionnée
@@ -165,19 +168,34 @@ const AddParcours = () => {
                         Créer un parcours à partir d'un modèle
                       </div>
                       <div className="flex flex-col gap-y-8">
-                        <Selecter
-                          list={formations}
-                          title="Rechercher par formation"
-                          onSelectItem={handleFormation}
-                        />
-                        <Selecter
-                          list={parcoursList}
-                          title="Choisisez le parcours à dupliquer"
-                          onSelectItem={handleParcours}
-                        />
+                        <span className="w-full flex items-center gap-x-4">
+                          <Selecter
+                            list={formations}
+                            title="Rechercher par formation"
+                            onSelectItem={handleFormation}
+                          />
+                          <QuestionMarkTooltip tooltipValue="Chosissez une formation pour obtenir une liste de parcours dans le menu déroulant ci-dessous">
+                            <HelpCircle className="w-6 h-6 text-info" />
+                          </QuestionMarkTooltip>
+                        </span>
+
+                        <span className="w-full flex items-center gap-x-4">
+                          <Selecter
+                            list={parcoursList}
+                            title="Choisisez le parcours à dupliquer"
+                            onSelectItem={handleParcours}
+                          />
+                          <QuestionMarkTooltip tooltipValue="Les compétences, objectifs, ressources pédagogiques, modules, cours, leçons et activités associés au parcours choisi seront également dupliqués lors de l'opération.">
+                            <HelpCircle className="w-6 h-6 text-info" />
+                          </QuestionMarkTooltip>
+                        </span>
                       </div>
                       <div className="w-full flex justify-end mt-4">
-                        <button className="btn btn-primary" type="button" onClick={handleDuplicateParcours}>
+                        <button
+                          className="btn btn-primary"
+                          type="button"
+                          onClick={handleDuplicateParcours}
+                        >
                           Créer
                         </button>
                       </div>
