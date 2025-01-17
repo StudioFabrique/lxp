@@ -33,7 +33,7 @@ interface FormationAddFormProps {
     description: string,
     level: string,
     code: string,
-    tags: Tag[],
+    tags: Tag[]
   ) => void;
   onCancel?: () => void;
   onNewTags: (newTags: Tag[]) => void;
@@ -82,11 +82,15 @@ export default function FormationAddForm({
   const [newTags, setNewTags] = useState<Tag[]>([]);
   const [saving, setSaving] = useState(false);
   const [tagError, setTagError] = useState(false);
-
+  const [level, setLevel] = useState<string>("");
   const data = {
     values,
     onChangeValue,
     errors,
+  };
+
+  const handleChangeLevel = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setLevel(event.currentTarget.value);
   };
 
   /**
@@ -95,7 +99,7 @@ export default function FormationAddForm({
    */
   const handleSubmit = (tags: Tag[]) => {
     // envoi des données saisies vers le composant parent pour les soumettre au backend
-    onSubmit(values.title, values.description, values.code, values.level, tags);
+    onSubmit(values.title, values.description, values.code, level, tags);
   };
 
   /**
@@ -114,9 +118,11 @@ export default function FormationAddForm({
       return;
     }
 
+    const newValues = { ...values, level };
+
     //validation du formulaire
     try {
-      postFormationSchema.parse(values);
+      postFormationSchema.parse(newValues);
     } catch (error: any) {
       if (error instanceof ZodError) {
         const errors = validationErrors(error);
@@ -155,7 +161,7 @@ export default function FormationAddForm({
           tags: newTags.map((item) => ({ name: item.name, color: item.color })),
         },
       },
-      applyData,
+      applyData
     );
   };
 
@@ -206,7 +212,11 @@ export default function FormationAddForm({
     return () => console.log("unmounting");
   }, []);
 
-  console.log({ tagError });
+  let options: string[] = [];
+
+  for (let i = 1; i <= 8; i++) {
+    options = [...options, `${i}`];
+  }
 
   return (
     <>
@@ -227,12 +237,19 @@ export default function FormationAddForm({
           placeholder="Exemple : 35357"
         />
 
-        <Field
-          data={data}
-          name="level"
-          placeholder="Exemple : Niveau III"
-          label="Niveau"
-        />
+        <div className="flex flex-col gap-y-2 w-full">
+          <label>Niveau</label>
+          <select
+            className="select select-bordered focus:outline-none"
+            onChange={handleChangeLevel}
+          >
+            {options.map((option) => (
+              <option key={option} value={option}>
+                Niveau {option}
+              </option>
+            ))}
+          </select>
+        </div>
       </form>
 
       <AddTag

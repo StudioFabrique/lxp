@@ -14,10 +14,9 @@ export default function AddTag(props: AddTagProps) {
     props.onSubmit(event);
   };
 
-  const style = `input input-sm focus:outline-none ${props.error ? "input-error" : ""}`;
-
-  console.log("error : ", props.error);
-  console.log({ style });
+  const style = `input input-sm focus:outline-none ${
+    props.error ? "input-error" : ""
+  }`;
 
   return (
     <form className="flex flex-col gap-y-2" onSubmit={handleTagSubmit}>
