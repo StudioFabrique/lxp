@@ -4,35 +4,20 @@ export const themes = {
 };
 
 export const lightThemes = [
-  "acid",
   "autumn",
   "bumblebee",
-  "cmyk",
-  "cupcake",
   "corporate",
-  "emerald",
-  "fantasy",
-  "garden",
-  "lemonade",
-  "light",
+  "cupcake",
   "lofi",
-  "pastel",
-  "retro",
-  "valentine",
   "winter",
   "wireframe",
 ];
 
 export const darkThemes = [
-  "aqua",
-  "black",
   "business",
   "coffee",
-  "dark",
   "dracula",
   "forest",
-  "halloween",
-  "luxury",
   "night",
   "synthwave",
 ];
