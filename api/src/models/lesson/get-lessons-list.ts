@@ -1,6 +1,11 @@
 import { prisma } from "../../utils/db";
 
+/**
+ * Récupère la liste complète des leçons avec leurs informations associées
+ * @returns Une liste de leçons avec leurs détails (titre, modalité, tag, cours, etc.)
+ */
 export default async function getLessonsList() {
+  // Récupération des leçons depuis la base de données avec une sélection précise des champs
   const existingLessons = await prisma.lesson.findMany({
     select: {
       id: true,
@@ -21,10 +26,39 @@ export default async function getLessonsList() {
         select: {
           id: true,
           title: true,
+          module: {
+            select: {
+              parcours: {
+                select: {
+                  parcours: {
+                    select: {
+                      title: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       },
     },
   });
 
-  return existingLessons;
+  // Transformation des données pour simplifier la structure du parcours
+  const lessons = existingLessons.map((lesson) => {
+    return {
+      ...lesson,
+      course: {
+        ...lesson.course,
+        module: {
+          parcours: {
+            // On prend le titre du premier parcours associé
+            title: lesson.course.module.parcours[0].parcours.title,
+          },
+        },
+      },
+    };
+  });
+
+  return lessons;
 }

@@ -1,9 +1,20 @@
+// Import des types Express nécessaires
 import { Request, Response } from "express";
+// Import de la fonction du modèle pour récupérer la liste des leçons
 import getLessonsList from "../../models/lesson/get-lessons-list";
 
+/**
+ * Contrôleur HTTP pour récupérer la liste de toutes les leçons
+ * @param req - Requête Express
+ * @param res - Réponse Express
+ * @returns Réponse JSON contenant la liste des leçons ou un message d'erreur
+ */
 export default async function httpGetLessonsList(req: Request, res: Response) {
   try {
+    // Récupération de la liste des leçons via le modèle
     const response = await getLessonsList();
+
+    // Retourne une réponse réussie avec les données
     return res.status(200).json({
       success: true,
       message:
@@ -11,6 +22,7 @@ export default async function httpGetLessonsList(req: Request, res: Response) {
       lessons: response,
     });
   } catch (error: any) {
+    // En cas d'erreur, retourne un statut 500 avec le message d'erreur
     return res.status(500).json({ message: error.message });
   }
 }
