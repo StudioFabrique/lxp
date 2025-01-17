@@ -1,3 +1,4 @@
+// Imports des dépendances externes
 import { useCallback, useEffect, useState } from "react";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import FormationAddForm from "../../components/formation-home/formation-add-form";
@@ -9,20 +10,24 @@ import { sortArray } from "../../utils/sortArray";
 import useForm from "../../components/UI/forms/hooks/use-form";
 import useTags from "../../hooks/use-tags";
 import FormationItem from "../../utils/interfaces/formation-item";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
+// Composant principal pour l'ajout/édition d'une formation
 export default function FormationAdd() {
+  // Récupération des paramètres de l'URL
   const [searchParams] = useSearchParams();
   const formationId = searchParams.get("formationId");
 
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [formationsList, setFormationsList] = useState<FormationItem[]>([]);
-  const { sendRequest, error } = useHttp();
-  const [submitting, setSubmitting] = useState(false);
-  const [formationToEdit, setFormationToEdit] = useState<FormationItem | null>(
-    null,
+  // États locaux
+  const [tags, setTags] = useState<Tag[]>([]); // Liste des tags disponibles
+  const [formationsList, setFormationsList] = useState<FormationItem[]>([]); // Liste des formations
+  const { sendRequest, error } = useHttp(); // Hook pour les requêtes HTTP
+  const [submitting, setSubmitting] = useState(false); // État de soumission du formulaire
+  const [formationToEdit, setFormationToEdit] = useState<FormationItem | null>( // Formation en cours d'édition
+    null
   );
 
+  // Hooks personnalisés pour la gestion du formulaire et des tags
   const {
     values,
     onChangeValue,
@@ -31,6 +36,7 @@ export default function FormationAdd() {
     initValues,
     onValidationErrors,
   } = useForm();
+
   const {
     tag,
     currentTags,
@@ -44,7 +50,7 @@ export default function FormationAdd() {
   } = useTags(tags);
 
   /**
-   * retourne la liste des tags enregistrés dans la base de données
+   * Récupère la liste des tags depuis l'API
    */
   const getTags = useCallback(() => {
     const applyData = (data: Tag[]) => {
@@ -54,14 +60,13 @@ export default function FormationAdd() {
       {
         path: "/tag",
       },
-      applyData,
+      applyData
     );
   }, [sendRequest]);
 
   /**
-   * active le mode mise à jour de la formation, remplit le formulaire avec
-   * les données de la formation à éditer
-   * @param id number
+   * Sélectionne une formation pour l'édition
+   * @param id Identifiant de la formation à éditer
    */
   const handleSelectFormation = useCallback(
     (id: number) => {
@@ -70,34 +75,26 @@ export default function FormationAdd() {
         setFormationToEdit(formation);
       }
     },
-    [formationsList],
+    [formationsList]
   );
 
   /**
-   * Enregistrement d'une nouvelle formation dans la base de données
-   * @param title string
-   * @param description string
-   * @param level string
-   * @param code string
-   * @param tags Tag[]
+   * Gère la création d'une nouvelle formation
    */
   const handleSubmit = (
     title: string,
     description: string,
     code: string,
     level: string,
-    tags: Tag[],
+    tags: Tag[]
   ) => {
     const applyData = (data: {
       success: boolean;
       message: string;
       response: FormationItem;
     }) => {
-      console.log(data.response);
-
       if (data.success) {
         toast.success(data.message);
-        console.log(data.response);
         setFormationsList((prevState) => [...prevState, data.response]);
       }
       setSubmitting(false);
@@ -117,24 +114,19 @@ export default function FormationAdd() {
           tags: tags.map((item) => item.id),
         },
       },
-      applyData,
+      applyData
     );
   };
 
   /**
-   * Mise à jour des données d'une formation
-   * @param title string
-   * @param description string
-   * @param code string
-   * @param level string
-   * @param tags Tag[]
+   * Gère la mise à jour d'une formation existante
    */
   const handleUpdate = (
     title: string,
     description: string,
     code: string,
     level: string,
-    tags: Tag[],
+    tags: Tag[]
   ) => {
     const applyData = (data: {
       success: boolean;
@@ -144,7 +136,7 @@ export default function FormationAdd() {
       if (data.success) {
         toast.success(data.message);
         let updatedList = formationsList.filter(
-          (item) => item.id !== formationToEdit!.id,
+          (item) => item.id !== formationToEdit!.id
         );
         updatedList = sortArray([...updatedList, data.response], "id");
         setFormationsList(updatedList);
@@ -169,10 +161,13 @@ export default function FormationAdd() {
           },
         },
       },
-      applyData,
+      applyData
     );
   };
 
+  /**
+   * Récupère la liste des formations depuis l'API
+   */
   const getFormationsList = useCallback(() => {
     const applyData = (data: {
       success: boolean;
@@ -185,19 +180,25 @@ export default function FormationAdd() {
       {
         path: "/formation/list",
       },
-      applyData,
+      applyData
     );
   }, [sendRequest]);
 
+  /**
+   * Ajoute de nouveaux tags à la liste existante
+   */
   const handleNewTags = (newTags: Tag[]) => {
     setTags((prevState) => [...prevState, ...newTags]);
   };
 
+  /**
+   * Annule l'édition en cours
+   */
   const handleCancel = () => {
     setFormationToEdit(null);
   };
 
-  // exécution des fonctions qui retournent la liste des tags et des formations au montage du composant
+  // Effet pour charger les données initiales
   useEffect(() => {
     getTags();
     getFormationsList();
@@ -207,13 +208,13 @@ export default function FormationAdd() {
     };
   }, [getTags, getFormationsList]);
 
+  // Effet pour gérer la sélection d'une formation via l'URL
   useEffect(() => {
-    console.log("formation id", formationId);
     if (formationId && !isNaN(+formationId))
       handleSelectFormation(+formationId);
   }, [formationId, handleSelectFormation]);
 
-  // gestion des erreurs HTTP
+  // Effet pour gérer les erreurs HTTP
   useEffect(() => {
     if (error.length > 0) {
       toast.error(error);
@@ -221,8 +222,7 @@ export default function FormationAdd() {
     setSubmitting(false);
   }, [error]);
 
-  console.log(tags);
-
+  // Rendu du composant
   return (
     <main className="flex flex-col gap-2 mt-4">
       <section>
