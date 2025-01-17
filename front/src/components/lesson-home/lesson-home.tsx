@@ -170,16 +170,11 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
                     />
                   </div>
                 </th>
-                <th
-                  className="cursor-pointer"
-                  onClick={() => {
-                    sortData("parcours");
-                  }}
-                >
+                <th className="cursor-pointer" onClick={() => {}}>
                   <div className="flex items-center gap-x-2">
                     <p>Parcours</p>
                     <SortColumnIcon
-                      fieldSort={fieldSort}
+                      fieldSort={""}
                       column="parcours"
                       direction={direction}
                     />
