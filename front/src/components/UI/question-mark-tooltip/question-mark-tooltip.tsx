@@ -2,11 +2,19 @@ import { HelpCircle } from "lucide-react";
 
 type QuestionMarkTooltipProps = {
   tooltipValue?: string;
+  children?: React.ReactNode;
 };
 
-const QuestionMarkTooltip = ({ tooltipValue }: QuestionMarkTooltipProps) => (
+const QuestionMarkTooltip = ({
+  children,
+  tooltipValue,
+}: QuestionMarkTooltipProps) => (
   <div className="tooltip tooltip-right" data-tip={tooltipValue}>
-    <HelpCircle className="w-4 h-4 stroke-base-content/60" />
+    {children ? (
+      children
+    ) : (
+      <HelpCircle className="w-4 h-4 stroke-base-content/60" />
+    )}
   </div>
 );
 
