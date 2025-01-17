@@ -30,7 +30,7 @@ export default function ThemeSelect({
       >
         {themesList.map((theme: string) => (
           <option key={theme} value={theme}>
-            {theme}
+            {theme === "lofi" ? "daltonien" : theme}
           </option>
         ))}
       </select>
