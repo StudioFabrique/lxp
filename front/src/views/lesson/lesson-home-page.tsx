@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 
-import Lesson from "../../utils/interfaces/lesson";
 import useHttp from "../../hooks/use-http";
 import LessonHome from "../../components/lesson-home/lesson-home";
 import toast from "react-hot-toast";
@@ -8,6 +7,7 @@ import Modal from "../../components/UI/modal/modal";
 import Header from "../../components/UI/header";
 import { PlusCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import Lesson from "../../utils/interfaces/lesson";
 
 /**
  * Page principale de gestion des leçons

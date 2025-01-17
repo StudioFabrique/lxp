@@ -51,6 +51,10 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
               <td className="bg-transparent capitalize truncate">
                 {item.course ? item.course.title : "ND"}
               </td>
+              {/* Colonne du parcours */}
+              <td className="bg-transparent capitalize truncate">
+                {item.course.module.parcours.title}
+              </td>
               {/* Colonne de l'auteur */}
               <td className="bg-transparent capitalize truncate">
                 {item.author}
@@ -162,6 +166,21 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
                     <SortColumnIcon
                       fieldSort={fieldSort}
                       column="courses"
+                      direction={direction}
+                    />
+                  </div>
+                </th>
+                <th
+                  className="cursor-pointer"
+                  onClick={() => {
+                    sortData("parcours");
+                  }}
+                >
+                  <div className="flex items-center gap-x-2">
+                    <p>Parcours</p>
+                    <SortColumnIcon
+                      fieldSort={fieldSort}
+                      column="parcours"
                       direction={direction}
                     />
                   </div>
