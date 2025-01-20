@@ -3,46 +3,53 @@ import { useCallback, useEffect, useState } from "react";
 import { getPagination } from "../utils/get-pagination";
 import { sortArray } from "../utils/sortArray";
 
+/**
+ * Hook personnalisé pour gérer une liste avec chargement immédiat, pagination, tri et sélection
+ * @param initialList - Liste initiale des éléments à afficher
+ * @param defaultSort - Champ de tri par défaut
+ * @param defaultLimit - Nombre d'éléments par page (défaut: 15)
+ * @param idProperty - Propriété utilisée comme identifiant unique ('id' ou '_id')
+ */
 const useEagerLoadingList = (
   initialList: Array<any>,
   defaultSort: string,
   defaultLimit = 15,
-  idProperty: "id" | "_id" = "id",
+  idProperty: "id" | "_id" = "id"
 ) => {
-  const [list, setList] = useState<Array<any> | null>(initialList); // liste temporaire des objets à afficher
-  const [page, setPage] = useState(1); //  numéro de la page affichée
-  const [limit, setLimit] = useState(defaultLimit); // quantité d'objets à afficher
-  const [totalPages, setTotalPages] = useState(0);
-  const [allChecked, setAllChecked] = useState(false);
-  const [fieldSort, setFieldSort] = useState<string>(defaultSort);
-  const [direction, setDirection] = useState<boolean>(true);
+  // États pour gérer la liste et ses propriétés
+  const [list, setList] = useState<Array<any> | null>(initialList); // Liste temporaire des objets à afficher
+  const [page, setPage] = useState(1); // Numéro de la page courante
+  const [limit, setLimit] = useState(defaultLimit); // Nombre d'éléments par page
+  const [totalPages, setTotalPages] = useState(0); // Nombre total de pages
+  const [allChecked, setAllChecked] = useState(false); // État de sélection globale
+  const [fieldSort, setFieldSort] = useState<string>(defaultSort); // Champ de tri actuel
+  const [direction, setDirection] = useState<boolean>(true); // Direction du tri (true = ascendant)
 
   /**
-   * gère le cochage décochage d'une row individuelle
-   * @param id number
+   * Gère la sélection/désélection d'un élément individuel
+   * @param id - Identifiant de l'élément à basculer
    */
   const handleRowCheck = (id: any) => {
     setList((prevList: any) =>
       prevList.map((item: any) =>
         item[idProperty] === id
           ? { ...item, isSelected: !item.isSelected }
-          : item,
-      ),
+          : item
+      )
     );
   };
 
   /**
-   * retourne la liste des objets qui ont la propriété isSelected égale à true
-   * @returns Array<any>
+   * Retourne la liste des éléments sélectionnés
+   * @returns Array des éléments avec isSelected = true
    */
   const getSelecteditems = () => {
     return list?.filter((item: any) => item.isSelected);
   };
 
   /**
-   * filtre la liste d'objets, ici "property" est utilisée dans le
-   * cas ou la propriété du champà recherche ne soir pas une chaîne
-   * de caractères mais pas exemple un booleen
+   * Filtre la liste selon les critères spécifiés
+   * @param filters - Objet contenant les critères de filtrage
    */
   const getFilteredList = useCallback(
     (filters: { field: string; property: string; value: string }) => {
@@ -52,44 +59,49 @@ const useEagerLoadingList = (
         filteredList = filteredList.filter((item: any) =>
           item[filters.field][filters.property]
             .toLowerCase()
-            .includes(filters.value),
+            .includes(filters.value)
         );
       } else {
         filteredList = filteredList.filter((item: any) =>
-          item[filters.field].toLowerCase().includes(filters.value),
+          item[filters.field].toLowerCase().includes(filters.value)
         );
       }
 
       setList(filteredList);
     },
-    [initialList],
+    [initialList]
   );
 
   /**
-   * extraction des différentes valeurs de la liste d'objets par propriété
+   * Extrait les valeurs uniques pour un champ donné
+   * @param field - Nom du champ pour lequel extraire les valeurs
+   * @returns Array des valeurs uniques
    */
   const getFieldValues = useCallback(
     (field: string) => {
       const values = Array<string>();
       initialList?.forEach((item: any) => {
-        // si la valeur n'est pas déja présente dans le tableau on l'y ajoute
         if (!values.includes(item[field])) {
           values.push(item[field]);
         }
       });
       return values;
     },
-    [initialList],
+    [initialList]
   );
 
   /**
-   * réinitialise le state "list" avec la valeur de "initialList" et uncheck toutes les checkboxes de la liste
+   * Réinitialise les filtres et la sélection
    */
   const resetFilters = useCallback(() => {
     setAllChecked(false);
     setList(initialList);
   }, [initialList]);
 
+  /**
+   * Gère le tri des données
+   * @param column - Colonne sur laquelle effectuer le tri
+   */
   const sortData = (column: string) => {
     if (column === fieldSort) {
       setDirection((prevDirection) => !prevDirection);
@@ -99,9 +111,7 @@ const useEagerLoadingList = (
     }
   };
 
-  /**
-   * tri les colonnes du tableau quand l'utilisateur clique sur le nom d'une colonne
-   */
+  // Effect pour le tri des données
   useEffect(() => {
     setList((prevList: any) => {
       if (prevList && prevList.length !== 0) {
@@ -112,15 +122,14 @@ const useEagerLoadingList = (
     });
   }, [fieldSort, direction]);
 
-  /**
-   * modifie le contenu de la liste des objets à afficher en fonction des action de l'utlisateur (changement de page)
-   */
+  // Effect pour la pagination
   useEffect(() => {
     setAllChecked(false);
     const offset = getPagination(page, limit);
     setList(initialList.slice(offset, offset + limit));
   }, [initialList, limit, page]);
 
+  // Effect pour calculer le nombre total de pages
   useEffect(() => {
     const pages =
       initialList.length % limit === 0
@@ -129,12 +138,10 @@ const useEagerLoadingList = (
     setTotalPages(pages);
   }, [limit, initialList]);
 
-  /**
-   * gère le cochage / décochage de toutes les rows de la liste
-   */
+  // Effect pour la sélection globale
   useEffect(() => {
     setList((prevList: any) =>
-      prevList.map((item: any) => ({ ...item, isSelected: allChecked })),
+      prevList.map((item: any) => ({ ...item, isSelected: allChecked }))
     );
   }, [allChecked]);
 

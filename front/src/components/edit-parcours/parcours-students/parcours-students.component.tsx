@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
-import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
@@ -17,28 +17,74 @@ import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import ButtonAdd from "../../UI/button-add/button-add";
 import toast from "react-hot-toast";
 
+// Interface définissant la structure d'un groupe d'étudiants
+export type GroupList = {
+  _id: string;
+  name: string;
+  desc: string;
+  formation: string;
+  nbStudents: number;
+  users: string[];
+  isActive: boolean;
+  isSelected: boolean;
+};
+
+/**
+ * Composant qui gère l'affichage et la gestion des étudiants d'un parcours
+ * Les étudiants sont regroupés par groupes qui peuvent être ajoutés ou supprimés du parcours
+ */
 const ParcoursStudents = () => {
+  const [fetchedGroups, setFetchedGroups] = useState<GroupList[]>([]);
   const dispatch = useDispatch();
+  // Récupère la liste des groupes depuis le store Redux
   const groups = useSelector(
     (state: any) => state.parcoursGroups.groups
   ) as Group[];
   const { sendRequest } = useHttp();
+  // État local pour stocker la liste des étudiants
   const [students, setStudents] = useState<User[] | null>(null);
+  // Récupère l'id du parcours depuis l'URL
   const { id } = useParams();
+  // Récupère les IDs des groupes depuis le store Redux
   const groupsIds = useSelector(
     (state: any) => state.parcoursGroups.groupsIds
   ) as string[];
+  // Référence pour gérer le premier rendu du composant
   const isInitialRender = useRef(true);
 
-  // Gère l'ouverture et la fermeture du drawer
+  /**
+   * Gère l'ouverture et la fermeture du drawer latéral
+   * Charge la liste des groupes d'étudiants à la première ouverture du drawer
+   * @param id - L'identifiant du drawer à ouvrir/fermer
+   */
   const handleDrawer = (id: string) => {
+    if (fetchedGroups.length === 0) fetchGroups();
     document.getElementById(id)?.click();
   };
+
+  /**
+   * Charge la liste des groupes d'étudiants à la première ouverture du drawer
+   */
+  const fetchGroups = useCallback(() => {
+    const applyData = (data: {
+      success: true;
+      message: string;
+      data: GroupList[];
+    }) => {
+      if (data.success) {
+        setFetchedGroups(
+          data.data.map((item) => ({ ...item, isSelected: false }))
+        );
+      }
+    };
+    sendRequest({ path: "/group/student" }, applyData);
+  }, [sendRequest]);
 
   // envoie une requête pour récupérer la liste des étudiants appartenants aux groupes et une requête pour mettre la liste des groupes attachés au parcours à jour
   useEffect(() => {
     let timer: any;
     if (groups) {
+      // Fonction qui met à jour la liste des étudiants avec leurs groupes respectifs
       const applyData = (data: any) => {
         let updatedStudents = Array<User>();
         data.forEach((item: any) => {
@@ -50,6 +96,7 @@ const ParcoursStudents = () => {
         });
         setStudents(updatedStudents);
       };
+      // Requête pour récupérer les étudiants des groupes
       sendRequest(
         {
           path: `/user/group`,
@@ -58,9 +105,11 @@ const ParcoursStudents = () => {
         },
         applyData
       );
+      // Fonction appelée après la mise à jour des groupes du parcours
       const processData = (_data: any) => {
         toast.success("Le parcours a été mis à jour");
       };
+      // Timer pour l'auto-sauvegarde des modifications
       timer = setTimeout(() => {
         if (!isInitialRender.current) {
           sendRequest(
@@ -104,13 +153,16 @@ const ParcoursStudents = () => {
     }
   }, [groupsIds, dispatch, sendRequest]);
 
-  // gère l'ouvertude du drawer pour ajouter des groupes au parcours
+  /**
+   * Gère l'ouverture du drawer pour ajouter des groupes au parcours
+   */
   const handleAddGroup = () => {
     handleDrawer("add-group");
   };
 
   return (
     <div className="flex flex-col gap-y-8">
+      {/* Section du drawer pour l'ajout de groupes */}
       <section>
         <RightSideDrawer
           visible={false}
@@ -118,13 +170,26 @@ const ParcoursStudents = () => {
           title="Ajouter un groupe"
           onCloseDrawer={handleDrawer}
         >
-          <GroupsList onCancel={handleDrawer} />
+          <div className="flex flex-col gap-y-12">
+            <GroupsList onCancel={handleDrawer} groups={fetchedGroups} />
+            <span className="flex items-center gap-x-4">
+              <p className="text-sm text-info">
+                Votre groupe ne se trouve pas dans la liste ?
+              </p>
+              <Link className="underline" to="/" target="_blank">
+                Créez-en un nouveau :)
+              </Link>
+            </span>
+          </div>
         </RightSideDrawer>
       </section>
+      {/* Titre de la page */}
       <section>
         <h1 className="text-3xl font-extrabold capitalize">étudiants</h1>
       </section>
+      {/* Affichage conditionnel selon la présence ou non de groupes */}
       {!groups || groups.length === 0 ? (
+        // Si aucun groupe n'est présent, affiche un bouton pour en ajouter
         <section>
           <Wrapper>
             <article className="w-full flex flex-col items-center">
@@ -140,6 +205,7 @@ const ParcoursStudents = () => {
           </Wrapper>
         </section>
       ) : (
+        // Si des groupes sont présents, affiche la liste des étudiants
         <>
           <section>
             <Wrapper>
