@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, FormEvent } from "react";
+import { FC, FormEvent, useEffect } from "react";
 
 import Informations from "./components/informations.components";
 import Details from "./components/details.component";
@@ -15,6 +15,7 @@ const GroupForm: FC<{
   isFileNotRequired?: boolean;
   gridType?: "cols" | "rows";
   hideCancelButton?: boolean;
+  fromParcours?: string;
 }> = (props) => {
   const {
     errors,
@@ -33,6 +34,12 @@ const GroupForm: FC<{
   const handlePreventSubmitOnKey = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
+
+  useEffect(() => {
+    if (props.fromParcours) {
+      onSelectParcours(+props.fromParcours);
+    }
+  }, [props.fromParcours, onSelectParcours]);
 
   return (
     <form
@@ -56,11 +63,20 @@ const GroupForm: FC<{
           errors={errors}
           onSetFile={onSetFile}
         />
-        <Details
-          group={props.group}
-          onSelectParcours={onSelectParcours}
-          selectedParcoursId={parcoursId}
-        />
+        {!props.fromParcours ? (
+          <Details
+            group={props.group}
+            onSelectParcours={onSelectParcours}
+            selectedParcoursId={parcoursId}
+          />
+        ) : (
+          <div className="h-full flex items-center justify-center">
+            <p className="text-info">
+              Le groupe sera automatiquement attaché au parcours de formation
+              que vous étiez en train de créer.
+            </p>
+          </div>
+        )}
       </div>
     </form>
   );
