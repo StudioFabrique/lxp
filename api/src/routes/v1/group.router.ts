@@ -20,7 +20,11 @@ import httpPutAddUsersGroup from "../../controllers/group/http-put-add-users-gro
 import httpDeleteManyGroups from "../../controllers/group/http-delete-many-groups";
 import { body, param, query } from "express-validator";
 import { regexStringManyMongoId } from "../../utils/constantes";
+import httpGetStudentGroups from "../../controllers/group/http-get-student-groups";
 const groupRouter = Router();
+
+// Retourne la liste des groupes d'étudiants avec des informations minimales destinées à être affichées dans un tableau
+groupRouter.get("/student", checkPermissions("group"), httpGetStudentGroups);
 
 // GET routes
 // search/student/sasdfa/name/asc
@@ -30,21 +34,21 @@ groupRouter.get(
   "/search/:role/:entity/:value/:stype/:sdir",
   checkPermissions(),
   searchValidator,
-  httpSearchGroup,
+  httpSearchGroup
 );
 
 groupRouter.get(
   "/:role/:stype/:sdir",
   checkPermissions(),
   getAllValidator,
-  httpGetAllGroups,
+  httpGetAllGroups
 );
 
 groupRouter.get(
   "/:id",
   checkPermissions("group"),
   param("id").isMongoId().withMessage("ID de groupe invalide"),
-  httpGetGroupDetails,
+  httpGetGroupDetails
 );
 
 // POST routes
@@ -54,7 +58,7 @@ groupRouter.post(
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
   groupValidator,
-  httpCreateGroup,
+  httpCreateGroup
 );
 
 // PUT routes
@@ -70,7 +74,7 @@ groupRouter.put(
     body("usersId.*").isMongoId().withMessage("ID d'utilisateur invalide"),
     checkValidatorResult,
   ],
-  httpPutAddUsersGroup,
+  httpPutAddUsersGroup
 );
 
 groupRouter.put(
@@ -79,7 +83,7 @@ groupRouter.put(
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
   groupValidator,
-  httpPutGroup,
+  httpPutGroup
 );
 
 // DELETE routes
@@ -91,7 +95,7 @@ groupRouter.delete(
     param("userId").isMongoId().withMessage("ID d'utilisateur invalide"),
     checkValidatorResult,
   ],
-  httpDeleteUserFromGroup,
+  httpDeleteUserFromGroup
 );
 
 groupRouter.delete(
@@ -101,7 +105,7 @@ groupRouter.delete(
     query("ids").isMongoId().withMessage("IDs de groupes invalides"),
     checkValidatorResult,
   ],
-  httpDeleteManyGroups,
+  httpDeleteManyGroups
 );
 
 groupRouter.delete(
@@ -113,7 +117,7 @@ groupRouter.delete(
       .withMessage("ID d'utilisateur invalide - format incorrect"),
     checkValidatorResult,
   ],
-  httpDeleteGroup,
+  httpDeleteGroup
 );
 
 export default groupRouter;
