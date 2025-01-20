@@ -1,21 +1,7 @@
 export const permDefsInterface = {
   "interface:admin": {
     layout: ["admin", "teacher", "student"],
-    component: [
-      "hobbie",
-      "social-network",
-      "course",
-      "group",
-      "parcours",
-      "profile",
-      "user",
-      "role",
-      "course",
-      "profile",
-      "lesson",
-      "module",
-      "formation",
-    ],
+    component: ["calendar"],
   },
   "interface:teacher": {
     layout: ["teacher", "student"],
