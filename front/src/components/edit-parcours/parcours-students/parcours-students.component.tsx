@@ -16,6 +16,7 @@ import { parcoursGroupsAction } from "../../../store/redux-toolkit/parcours/parc
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import ButtonAdd from "../../UI/button-add/button-add";
 import toast from "react-hot-toast";
+import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 
 // Interface définissant la structure d'un groupe d'étudiants
 export type GroupList = {
@@ -172,13 +173,20 @@ const ParcoursStudents = () => {
         >
           <div className="flex flex-col gap-y-12">
             <GroupsList onCancel={handleDrawer} groups={fetchedGroups} />
-            <span className="flex items-center gap-x-4">
-              <p className="text-sm text-info">
+            <span className="flex items-center gap-x-2 text-xs">
+              <p className="text-info">
                 Votre groupe ne se trouve pas dans la liste ?
               </p>
-              <Link className="underline" to="/" target="_blank">
+              <Link
+                className="underline"
+                to={`/admin/group/add?parcours=${id}`}
+              >
                 Créez-en un nouveau :)
               </Link>
+              <QuestionMarkTooltip
+                tooltipPosition="left"
+                tooltipValue="Vous pouvez créer un groupe d'étudiants en suivant ce lien. Une fois la création du groupe terminée, vous serez redirigé vers cette vue."
+              />
             </span>
           </div>
         </RightSideDrawer>
