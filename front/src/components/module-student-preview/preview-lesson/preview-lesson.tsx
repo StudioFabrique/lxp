@@ -5,6 +5,7 @@ import Lesson from "../../../utils/interfaces/lesson";
 import ActivityPreview from "./activity";
 import Module from "../../../utils/interfaces/module";
 import LessonRead from "../../../utils/interfaces/lesson-read";
+import EvaluateContentButton from "../../UI/evaluate-content-button";
 
 type PreviewLessonProps = {
   selectedLesson: Lesson;
@@ -24,11 +25,7 @@ const PreviewLesson = ({
 
   const switchToNextLesson = () => {
     selectedLesson &&
-      setSelectedLesson(
-        lessons[
-          lessons.indexOf(selectedLesson) + 1 ?? lessons.indexOf(selectedLesson)
-        ]
-      );
+      setSelectedLesson(lessons[lessons.indexOf(selectedLesson) + 1]);
   };
 
   const handleFinishReadLesson = () => {
@@ -45,7 +42,7 @@ const PreviewLesson = ({
               lesson.lessonsRead?.push(data.data);
 
             return lesson;
-          })
+          }),
         );
 
         return previousModule;
@@ -56,7 +53,7 @@ const PreviewLesson = ({
 
     sendRequest(
       { path: `/lesson/read/${selectedLesson.id}`, method: "put" },
-      applyData
+      applyData,
     );
   };
 
@@ -74,7 +71,7 @@ const PreviewLesson = ({
     if (selectedLesson.lessonsRead && !(selectedLesson.lessonsRead?.length > 0))
       sendRequest(
         { path: `/lesson/read/${selectedLesson.id}`, method: "post" },
-        applyData
+        applyData,
       );
   }, [selectedLesson.id, selectedLesson.lessonsRead, sendRequest]);
 
@@ -89,17 +86,20 @@ const PreviewLesson = ({
       ) : (
         <p>Aucune activités</p>
       )}
-      <button
-        className="btn btn-primary text-white self-end"
-        onClick={handleFinishReadLesson}
-      >
-        {selectedLesson.lessonsRead &&
-        selectedLesson.lessonsRead?.filter(
-          (lessonRead) => !!lessonRead.finishedAt
-        ).length > 0
-          ? "Leçon Suivante"
-          : "Marquer comme terminé"}
-      </button>
+      <div className="flex justify-end gap-5">
+        <EvaluateContentButton sendEvaluation={() => {}} />
+        <button
+          className="btn btn-primary text-white self-end"
+          onClick={handleFinishReadLesson}
+        >
+          {selectedLesson.lessonsRead &&
+          selectedLesson.lessonsRead?.filter(
+            (lessonRead) => !!lessonRead.finishedAt,
+          ).length > 0
+            ? "Leçon Suivante"
+            : "Marquer comme terminé"}
+        </button>
+      </div>
     </div>
   );
 };
