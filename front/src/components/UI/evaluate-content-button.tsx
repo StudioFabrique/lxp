@@ -7,6 +7,7 @@ type EvaluateContentButton = {
   sendEvaluation: (note: number) => void;
 };
 
+// Bouton accompagné d'une modal pour envoyer une note de 1 à 5 à l'aide d'étoiles
 const EvaluateContentButton = ({
   note,
   sendEvaluation,
@@ -36,6 +37,7 @@ const EvaluateContentButton = ({
           rightLabel="Confirmer"
           onLeftClick={handleSwitchModalState}
           onRightClick={handleEvaluateContent}
+          modalBoxStyle="flex flex-col gap-2"
         >
           <div className="flex gap-2">
             {[1, 2, 3, 4, 5].map((rating) => (
@@ -48,6 +50,12 @@ const EvaluateContentButton = ({
               />
             ))}
           </div>
+          {note ? (
+            <div>
+              Vous avez déjà évalué ce contenu, vous pouvez mettre à jour votre
+              note
+            </div>
+          ) : null}
         </Modal>
       ) : null}
       <button className="btn btn-outline" onClick={handleSwitchModalState}>

@@ -87,7 +87,7 @@ const PreviewLesson = ({
         <p>Aucune activités</p>
       )}
       <div className="flex justify-end gap-5">
-        <EvaluateContentButton sendEvaluation={() => {}} />
+        <EvaluateContentButton note={1} sendEvaluation={() => {}} />
         <button
           className="btn btn-primary text-white self-end"
           onClick={handleFinishReadLesson}
