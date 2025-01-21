@@ -1,11 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
-import { Context } from "../../../store/context.store";
 import { useNavigate } from "react-router-dom";
 import { View, Views, Event } from "react-big-calendar";
 import { CourseTimeline } from "../../../utils/interfaces/course";
-import { getRandomDaisyuiBgThemeColor } from "../../../utils/get-daisy-ui-theme-color";
 
+// Interface définissant la structure d'un événement dans la timeline
 interface TimelineEvent extends Event {
   id: number;
   title: string;
@@ -16,13 +15,15 @@ interface TimelineEvent extends Event {
 
 const useTimeline = () => {
   const { sendRequest } = useHttp();
-  const { roles } = useContext(Context);
+
   const navigate = useNavigate();
+
+  // États pour gérer la vue et les filtres
   const [currentView, setCurrentView] = useState<View>(Views.WORK_WEEK);
   const [showAllCourses, setShowAllCourses] = useState<boolean>(false);
-
   const [timelineData, setTimelineData] = useState<TimelineEvent[]>();
 
+  // État pour la plage de dates à rechercher (par défaut: semaine courante)
   const [datesSearchingRange, setDatesSearchingRange] = useState<{
     minDate: Date;
     maxDate: Date;
@@ -35,13 +36,15 @@ const useTimeline = () => {
     ),
   });
 
-  const [modulesColor, setModulesColor] = useState<
-    {
-      alternateId: number;
-      gradient: string;
-    }[]
-  >();
+  // État pour stocker les couleurs associées à chaque module
+  // const [modulesColor, setModulesColor] = useState<
+  //   {
+  //     alternateId: number;
+  //     color: string;
+  //   }[]
+  // >();
 
+  // Gère le changement de plage de dates dans le calendrier
   const handleRangeChange = (
     range:
       | {
@@ -77,6 +80,7 @@ const useTimeline = () => {
     }
   };
 
+  // Navigation vers le module lors d'un double-clic sur un événement
   const handleDoubleClickEvent = (event: Event) => {
     const timelineEvent = event as TimelineEvent;
     if (timelineEvent.id && timelineEvent.alternateId)
@@ -85,6 +89,7 @@ const useTimeline = () => {
       });
   };
 
+  // Effet pour charger les données de la timeline
   useEffect(() => {
     const applyData = (data: { data: CourseTimeline[] }) => {
       const responseData = data.data
@@ -108,36 +113,36 @@ const useTimeline = () => {
     );
   }, [sendRequest, datesSearchingRange, showAllCourses]);
 
-  useEffect(() => {
-    const colors = timelineData?.map((item) => {
-      const color = getRandomDaisyuiBgThemeColor();
+  // Effet pour gérer les couleurs des modules
+  // useEffect(() => {
+  //   const colors = timelineData?.map((item) => {
+  //     const color = getRandomDaisyuiBgThemeColor();
 
-      return {
-        alternateId: item.alternateId,
-        gradient: color,
-      };
-    });
-    if (colors) {
-      setModulesColor((prevModules) => {
-        const newColors = colors.filter(
-          (color) =>
-            !prevModules?.some(
-              (module) => module.alternateId === color.alternateId,
-            ),
-        );
-        return [...(prevModules || []), ...newColors];
-      });
-    }
-  }, [timelineData]);
+  //     return {
+  //       alternateId: item.alternateId,
+  //       color,
+  //     };
+  //   });
+  //   if (colors) {
+  //     setModulesColor((prevModules) => {
+  //       const newColors = colors.filter(
+  //         (color) =>
+  //           !prevModules?.some(
+  //             (module) => module.alternateId === color.alternateId,
+  //           ),
+  //       );
+  //       return [...(prevModules || []), ...newColors];
+  //     });
+  //   }
+  // }, [timelineData]);
 
   return {
-    roles,
     currentView,
     setCurrentView,
     showAllCourses,
     setShowAllCourses,
     timelineData,
-    modulesColor,
+    // modulesColor,
     handleRangeChange,
     handleDoubleClickEvent,
   };

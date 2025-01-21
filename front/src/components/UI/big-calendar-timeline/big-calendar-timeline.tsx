@@ -4,7 +4,6 @@ import { Calendar, momentLocalizer, View } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import CalendarCustomToolbar from "./calendar-custom-toolbar";
 import { adjustScheduleToCurrentWeek } from "../../../utils/calendar-utils";
-import getDaisyuiBgThemeColor from "../../../utils/get-daisy-ui-theme-color";
 import { Dispatch, SetStateAction } from "react";
 
 moment.locale("fr");
@@ -19,15 +18,15 @@ export interface Event {
   link?: string;
 }
 
-interface ColorEvent {
-  alternateId: number;
-  gradient: string;
-}
+// interface ColorEvent {
+//   alternateId: number;
+//   color: string;
+// }
 
 type BigCalendarTimelineProps = {
   data: Event[];
   view: View;
-  colors?: ColorEvent[];
+  // colors?: ColorEvent[];
   onSetView: Dispatch<SetStateAction<View>>;
   onRangeChange: (
     range: { start: Date; end: Date } | Date[],
@@ -39,7 +38,7 @@ type BigCalendarTimelineProps = {
 const BigCalendarTimeline = ({
   data,
   view,
-  colors,
+  // colors,
   onSetView,
   onRangeChange,
   onDoubleClickEvent,
@@ -76,16 +75,18 @@ const BigCalendarTimeline = ({
       slotPropGetter={() => ({
         className: "border-base-300 text-sm font-inter p-3",
       })}
-      eventPropGetter={(event: Event) => ({
-        style: {
-          background: colors?.find(
-            (color) => color.alternateId === event.alternateId,
-          )?.gradient,
-          color: getDaisyuiBgThemeColor("base-100"),
-        },
-        className:
-          "rounded-xl font-bold p-2 px-3 shadow-sm cursor-pointer transition-all duration-300 hover:-translate-y-[2px] hover:shadow-md hover:scale-[1.02] border border-gray-200",
-      })}
+      eventPropGetter={
+        (/*event: Event*/) => ({
+          // style: {
+          //   background: colors?.find(
+          //     (color) => color.alternateId === event.alternateId,
+          //   )?.color,
+          //   color: getDaisyuiBgThemeColor("base-100"),
+          // },
+          className:
+            "rounded-xl font-bold p-2 px-3 shadow-sm cursor-pointer transition-all duration-300 hover:-translate-y-[2px] hover:shadow-md hover:scale-[1.02] border border-gray-200",
+        })
+      }
       step={60}
       timeslots={1}
       onRangeChange={onRangeChange}
