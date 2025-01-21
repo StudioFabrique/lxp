@@ -5,10 +5,15 @@ export default async function getCoursesTimeline(
   userIdMdb: string,
   minDate: string,
   maxDate: string,
+  /**
+   * allCourses - Si l'utilisateur est un admin, lui laisser le choix d'afficher tous les cours
+   * ou ceux pour lesquels il est affecté en tant que formateur s'il est formateur.
+   */
+  showAllCourses?: boolean,
 ) {
   // Recherche des groupes contenant les étudiants
   const groupsWhereStudentIs = await Group.find({ users: userIdMdb });
-  const groupIds: string[] = groupsWhereStudentIs.map((group) => group.id);
+  const groupsIds: string[] = groupsWhereStudentIs.map((group) => group.id);
 
   // Recherche du formateur (dans le cas où l'utilisateur est un formateur)
   const formateurContacts = await prisma.contact.findMany({
@@ -24,9 +29,18 @@ export default async function getCoursesTimeline(
     },
   });
 
-  if (!(groupIds.length > 0 || formateurContacts.length > 0)) return null;
+  const admins = await prisma.admin.findMany({
+    where: {
+      idMdb: userIdMdb,
+    },
+  });
 
-  // Find courses in modules for those groups
+  if (
+    !(groupsIds.length > 0 || formateurContacts.length > 0 || admins.length > 0)
+  )
+    return null;
+
+  // Trouver les cours dans les modules pour ces groupes
   const courses = await prisma.course.findMany({
     select: {
       id: true,
@@ -36,23 +50,29 @@ export default async function getCoursesTimeline(
     },
     where: {
       OR: [
-        {
-          contacts: {
-            some: {
-              contactId: { in: formateurContacts.map((contact) => contact.id) },
-            },
-          },
-          module: {
-            contacts: {
-              some: {
-                contactId: {
-                  in: formateurContacts.map((contact) => contact.id),
+        ...(admins.length > 0 && showAllCourses
+          ? [
+              {
+                module: {
+                  minDate: {
+                    lte: new Date(maxDate).toISOString(),
+                  },
+                  maxDate: {
+                    gte: new Date(minDate).toISOString(),
+                  },
                 },
               },
-            },
-            parcours: {
-              some: {
-                parcours: {
+            ]
+          : [
+              {
+                contacts: {
+                  some: {
+                    contactId: {
+                      in: formateurContacts.map((contact) => contact.id),
+                    },
+                  },
+                },
+                module: {
                   contacts: {
                     some: {
                       contactId: {
@@ -60,26 +80,39 @@ export default async function getCoursesTimeline(
                       },
                     },
                   },
-                },
-              },
-            },
-          },
-        },
-        {
-          module: {
-            parcours: {
-              every: {
-                parcours: {
-                  groups: {
+                  parcours: {
                     some: {
-                      group: { idMdb: { in: groupIds } },
+                      parcours: {
+                        contacts: {
+                          some: {
+                            contactId: {
+                              in: formateurContacts.map(
+                                (contact) => contact.id,
+                              ),
+                            },
+                          },
+                        },
+                      },
                     },
                   },
                 },
               },
-            },
-          },
-        },
+              {
+                module: {
+                  parcours: {
+                    every: {
+                      parcours: {
+                        groups: {
+                          some: {
+                            group: { idMdb: { in: groupsIds } },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            ]),
       ],
       module: {
         minDate: {

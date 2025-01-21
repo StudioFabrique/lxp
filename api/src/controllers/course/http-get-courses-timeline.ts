@@ -8,7 +8,7 @@ export default async function httpGetCoursesTimeline(
   res: Response,
 ) {
   const userId = req.auth?.userId;
-  const { minDate, maxDate } = req.query;
+  const { minDate, maxDate, showAllCourses } = req.query;
 
   if (!(userId && minDate && maxDate)) {
     return res.status(404).json({ message: badQuery });
@@ -19,6 +19,7 @@ export default async function httpGetCoursesTimeline(
       userId,
       minDate as string,
       maxDate as string,
+      showAllCourses === "true",
     );
     return res.status(200).json({
       message: "La timeline des cours a bien été récupérée",

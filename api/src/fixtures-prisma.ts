@@ -246,10 +246,6 @@ async function createTeachers() {
 
     const newAdmins = Array<any>();
     usersId.forEach((item) => newAdmins.push({ idMdb: item._id.toString() }));
-    await prisma.teacher.createMany({
-      data: newAdmins,
-      skipDuplicates: true,
-    });
     await prisma.admin.createMany({
       data: newAdmins,
       skipDuplicates: true,
