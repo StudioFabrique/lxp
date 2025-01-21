@@ -68,8 +68,8 @@ const LayoutEditModule = React.lazy(
 const EditModuleHome = React.lazy(
   () => import("../../views/module/edit/edit-module-home"),
 );
-const ModuleViewFromParcours = React.lazy(
-  () => import("../../views/module/module-student-preview"),
+const CoursesPreview = React.lazy(
+  () => import("../../views/courses-preview/courses-preview"),
 );
 const FeaturesList = React.lazy(
   () => import("../../views/features-list/features-list"),
@@ -100,7 +100,7 @@ const AddNewLesson = React.lazy(
 );
 
 const MediathequeHomePage = React.lazy(
-  () => import("../../views/mediatheque/mediatheque-home-page")
+  () => import("../../views/mediatheque/mediatheque-home-page"),
 );
 
 const adminRoutes = [
@@ -146,7 +146,7 @@ const adminRoutes = [
       { path: "créer-un-parcours", element: <ParcoursAdd /> },
       { path: "edit/:id/", element: <EditParcours /> },
       { path: "view/:id", element: <ParcoursView /> },
-      { path: "module/:moduleId", element: <ModuleViewFromParcours /> },
+      { path: "module/:moduleId", element: <CoursesPreview /> },
     ],
   },
   {
