@@ -9,9 +9,9 @@ import ModuleData from "../../components/lessons-preview/module-data/module-data
 import LessonsPreviewWrapper from "../../components/lessons-preview/lessons-preview-wrapper";
 
 /**
- * Aperçu de tous les cours d'un module destiné à l'apprenant
+ * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
  */
-const CoursesPreview = () => {
+const LessonsPreview = () => {
   // custom hook
   const {
     moduleData,
@@ -47,4 +47,4 @@ const CoursesPreview = () => {
   );
 };
 
-export default CoursesPreview;
+export default LessonsPreview;
