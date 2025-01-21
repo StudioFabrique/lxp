@@ -1,5 +1,5 @@
-import Contact from "../../utils/interfaces/contact";
-import Wrapper from "../UI/wrapper/wrapper.component";
+import Contact from "../../../utils/interfaces/contact";
+import Wrapper from "../../UI/wrapper/wrapper.component";
 
 type ContactsProps = {
   contacts: Contact[];
