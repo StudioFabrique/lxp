@@ -15,10 +15,10 @@ const LessonsPreview = () => {
   // custom hook
   const {
     moduleData,
-    setModuleData,
+    isLoading,
+    onFinishReadLesson,
     selectedLesson,
     setSelectedLesson,
-    isLoading,
   } = useCoursesPreview();
 
   return isLoading || !moduleData ? (
@@ -37,9 +37,7 @@ const LessonsPreview = () => {
         <PreviewLesson
           key="previewLesson"
           selectedLesson={selectedLesson as Lesson}
-          lessons={moduleData.courses.flatMap((course) => course.lessons)}
-          setSelectedLesson={setSelectedLesson}
-          setModuleData={setModuleData}
+          onFinishReadLesson={onFinishReadLesson}
         />,
         <ModuleData key="moduleData" moduleData={moduleData} />,
       ]}
