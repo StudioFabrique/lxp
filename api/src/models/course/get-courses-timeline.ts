@@ -11,8 +11,6 @@ export default async function getCoursesTimeline(
    */
   showAllCourses?: boolean,
 ) {
-  console.log({ minDate, maxDate });
-
   // Recherche des groupes contenant les étudiants
   const groupsWhereStudentIs = await Group.find({ users: userIdMdb });
   const groupsIds: string[] = groupsWhereStudentIs.map((group) => group.id);

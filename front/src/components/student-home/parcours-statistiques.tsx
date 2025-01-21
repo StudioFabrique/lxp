@@ -20,9 +20,7 @@ const ParcoursStatistiques = ({ parcoursId }: { parcoursId: number }) => {
   const [stats, setStats] = useState<ParcoursStats>();
 
   useEffect(() => {
-    console.log({ parcoursId });
     const applyData = (data: { data: ParcoursStats }) => {
-      console.log({ stats: data.data });
       setStats(data.data);
     };
 
