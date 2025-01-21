@@ -12,6 +12,9 @@ import PreviewSkills from "../../preview/preview-skills";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import useValidateParcours from "../../../views/parcours/parcours-edit/hooks/use-validate-parcours";
 import useHttp from "../../../hooks/use-http";
+import { useCallback, useEffect, useState } from "react";
+import User from "../../../utils/interfaces/user";
+import Group from "../../../utils/interfaces/group";
 
 interface ParcoursPreviewProps {
   onEdit: (id: number) => void;
@@ -20,14 +23,18 @@ interface ParcoursPreviewProps {
 const ParcoursPreview = (props: ParcoursPreviewProps) => {
   const { id } = useParams();
   const objectives = useSelector(
-    (state: any) => state.parcoursObjectives.objectives,
+    (state: any) => state.parcoursObjectives.objectives
   ) as Objective[];
   const skills = useSelector(
-    (state: any) => state.parcoursSkills.skills,
+    (state: any) => state.parcoursSkills.skills
   ) as Skill[];
   const { validateParcours } = useValidateParcours();
   const nav = useNavigate();
   const { sendRequest } = useHttp();
+  const groups = useSelector(
+    (state: any) => state.parcoursGroups.groups
+  ) as Group[];
+  const [students, setStudents] = useState<User[] | null>(null);
 
   const handlePublishParcours = () => {
     const validationsErrors = validateParcours();
@@ -47,10 +54,39 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
           path: `/parcours/publish/${id}`,
           method: "put",
         },
-        applyData,
+        applyData
       );
     }
   };
+
+  const getStudents = useCallback(() => {
+    const applyData = (data: any) => {
+      let updatedStudents = Array<User>();
+      data.forEach((item: any) => {
+        const updatedItem = item.users.map((user: any) => ({
+          ...user,
+          group: { _id: item._id, name: item.name },
+        }));
+        updatedStudents = [...updatedStudents, ...updatedItem];
+      });
+      setStudents(updatedStudents);
+    };
+
+    sendRequest(
+      {
+        path: `/user/group`,
+        method: "post",
+        body: groups.map((item) => item._id),
+      },
+      applyData
+    );
+  }, [groups, sendRequest]);
+
+  useEffect(() => {
+    if (groups) {
+      getStudents();
+    }
+  }, [groups, getStudents]);
 
   return (
     /* En tête de l'aperçu */
@@ -76,12 +112,14 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
       </section>
       {/* étudiants rattachés au parcours */}
       <section>
-        <ParcoursPreviewStudent onEdit={props.onEdit} />
+        {students ? (
+          <ParcoursPreviewStudent onEdit={props.onEdit} students={students} />
+        ) : null}
       </section>
       <section className="w-full flex justify-between">
         <button
           className="btn btn-primary btn-outline"
-          onClick={() => props.onEdit(5)}
+          onClick={() => props.onEdit(6)}
         >
           Retour
         </button>
