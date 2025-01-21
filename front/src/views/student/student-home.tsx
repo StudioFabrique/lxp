@@ -8,7 +8,7 @@ import useHttp from "../../hooks/use-http";
 import LessonRead from "../../utils/interfaces/lesson-read";
 import RightSide from "../../components/student-home/right-side/right-side";
 import ResumeParcours from "../../components/student-home/resume-parcours";
-import Timeline from "../../components/student-home/timeline";
+import Timeline from "../../components/student-home/timeline/timeline";
 
 const StudentHome = () => {
   const { sendRequest } = useHttp();
