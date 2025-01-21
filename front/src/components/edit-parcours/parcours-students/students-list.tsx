@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import useEagerLoadingList from "../../../hooks/use-eager-loading-list";
 import User from "../../../utils/interfaces/user";
