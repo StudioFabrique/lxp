@@ -11,6 +11,8 @@ export default async function getCoursesTimeline(
    */
   showAllCourses?: boolean,
 ) {
+  console.log({ minDate, maxDate });
+
   // Recherche des groupes contenant les étudiants
   const groupsWhereStudentIs = await Group.find({ users: userIdMdb });
   const groupsIds: string[] = groupsWhereStudentIs.map((group) => group.id);
@@ -115,12 +117,17 @@ export default async function getCoursesTimeline(
             ]),
       ],
       module: {
-        minDate: {
-          lte: new Date(maxDate).toISOString(),
-        },
-        maxDate: {
-          gte: new Date(minDate).toISOString(),
-        },
+        // Adjusted logic to check for overlap
+        OR: [
+          {
+            minDate: {
+              lte: new Date(maxDate).toISOString(),
+            },
+            maxDate: {
+              gte: new Date(minDate).toISOString(),
+            },
+          },
+        ],
       },
     },
     orderBy: {
@@ -133,9 +140,10 @@ export default async function getCoursesTimeline(
       minDate: string;
       maxDate: string;
     }[]) {
+      // Adjusted to include overlapping ranges
       if (
-        new Date(date.minDate) >= new Date(minDate) &&
-        new Date(date.maxDate) <= new Date(maxDate)
+        new Date(date.minDate) <= new Date(maxDate) &&
+        new Date(date.maxDate) >= new Date(minDate)
       ) {
         acc.push({
           id: course.id,
