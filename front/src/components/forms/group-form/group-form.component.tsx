@@ -6,6 +6,7 @@ import Details from "./components/details.component";
 import GroupsHeader from "../../groups-header/groups-header.component";
 import Group from "../../../utils/interfaces/group";
 import useGroupForm from "./use-group-form";
+import FromParcoursWarning from "./components/from-parcours-warning";
 
 const GroupForm: FC<{
   onSubmitForm: (data: any, file: File) => void;
@@ -70,12 +71,7 @@ const GroupForm: FC<{
             selectedParcoursId={parcoursId}
           />
         ) : (
-          <div className="h-full flex items-center justify-center">
-            <p className="text-info">
-              Le groupe sera automatiquement attaché au parcours de formation
-              que vous étiez en train de créer.
-            </p>
-          </div>
+          <FromParcoursWarning parcoursId={parcoursId!} />
         )}
       </div>
     </form>
