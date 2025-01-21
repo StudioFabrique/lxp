@@ -68,8 +68,8 @@ const LayoutEditModule = React.lazy(
 const EditModuleHome = React.lazy(
   () => import("../../views/module/edit/edit-module-home"),
 );
-const CoursesPreview = React.lazy(
-  () => import("../../views/courses-preview/courses-preview"),
+const LessonsPreview = React.lazy(
+  () => import("../../views/lessons-preview/lessons-preview"),
 );
 const FeaturesList = React.lazy(
   () => import("../../views/features-list/features-list"),
@@ -146,7 +146,7 @@ const adminRoutes = [
       { path: "créer-un-parcours", element: <ParcoursAdd /> },
       { path: "edit/:id/", element: <EditParcours /> },
       { path: "view/:id", element: <ParcoursView /> },
-      { path: "module/:moduleId", element: <CoursesPreview /> },
+      { path: "module/:moduleId", element: <LessonsPreview /> },
     ],
   },
   {

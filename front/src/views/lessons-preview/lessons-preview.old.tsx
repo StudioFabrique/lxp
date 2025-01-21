@@ -1,52 +1,28 @@
 import ImageHeader from "../../components/image-header";
 import HeaderMenu from "../../components/UI/header-menu";
-import { useLocation, useParams } from "react-router-dom";
-import { Fragment, useEffect, useState } from "react";
-import useHttp from "../../hooks/use-http";
-import Progression from "../../components/module-student-preview/progression/progression";
+import { Fragment } from "react";
+import Progression from "../../components/lessons-preview/progression/progression";
 import Loader from "../../components/UI/loader";
-import ProgressBar from "../../components/module-student-preview/progress-bar";
-import Objectifs from "../../components/module-student-preview/objectifs";
-import Contacts from "../../components/module-student-preview/contacts";
-import Module from "../../utils/interfaces/module";
-import PreviewLesson from "../../components/module-student-preview/preview-lesson/preview-lesson";
+import ProgressBar from "../../components/lessons-preview/progress-bar";
+import Objectifs from "../../components/lessons-preview/module-data/objectifs";
+import Contacts from "../../components/lessons-preview/module-data/contacts";
+import PreviewLesson from "../../components/lessons-preview/preview-lesson/preview-lesson";
 import Lesson from "../../utils/interfaces/lesson";
-import Tags from "../../components/module-student-preview/tags";
+import Tags from "../../components/lessons-preview/module-data/tags";
+import useCoursesPreview from "./hooks/use-lessons-preview";
 
 /**
  * Aperçu de tous les cours d'un module destiné à l'apprenant
  */
 const CoursesPreview = () => {
-  const { state } = useLocation();
-  const { sendRequest, isLoading } = useHttp(true);
-  const { moduleId } = useParams();
-
-  const [moduleData, setModuleData] = useState<Module | null>(null);
-
-  const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>();
-
-  useEffect(() => {
-    const applyData = (data: { data: Module }) => {
-      setModuleData(data.data);
-
-      if (state?.lessonId) {
-        const lessonToSelect = data.data.courses
-          .map((course) => {
-            return course.lessons.find(
-              (lesson) => lesson.id === state.lessonId,
-            );
-          })
-          .filter((course) => course !== undefined)[0];
-
-        setSelectedLesson(lessonToSelect);
-      }
-    };
-
-    sendRequest(
-      { path: `/modules/detail/${moduleId}`, method: "get" },
-      applyData,
-    );
-  }, [moduleId, sendRequest, state?.lessonId]);
+  // custom hook
+  const {
+    moduleData,
+    setModuleData,
+    selectedLesson,
+    setSelectedLesson,
+    isLoading,
+  } = useCoursesPreview();
 
   return isLoading ? (
     <Loader />

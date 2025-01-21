@@ -36,7 +36,11 @@ const TableListBody = (props: TableListBodyProps) => {
     <tbody>
       <tr>
         <td />
-        <td colSpan={props.propertiesLength} className="text-nowrap">
+        <td
+          colSpan={props.propertiesLength}
+          className="text-nowrap text-center text-secondary"
+          style={{ verticalAlign: "middle" }}
+        >
           {props.style?.emptyArrayMessage ?? "Aucune données"}
         </td>
       </tr>

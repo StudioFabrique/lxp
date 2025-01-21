@@ -13,8 +13,8 @@ const ParcoursLayout = React.lazy(
 const ParcoursView = React.lazy(
   () => import("../../views/parcours/parcours-view"),
 );
-const CoursesPreview = React.lazy(
-  () => import("../../views/courses-preview/courses-preview"),
+const LessonsPreview = React.lazy(
+  () => import("../../views/lessons-preview/lessons-preview"),
 );
 const FeaturesList = React.lazy(
   () => import("../../views/features-list/features-list"),
@@ -32,7 +32,7 @@ const studentRoutes = [
     children: [
       { index: true, element: <ParcoursHome /> },
       { path: "view/:id", element: <ParcoursView /> },
-      { path: "module/:moduleId", element: <CoursesPreview /> },
+      { path: "module/:moduleId", element: <LessonsPreview /> },
     ],
   },
   { path: "profil", element: <UserProfile /> },
