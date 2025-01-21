@@ -8,6 +8,9 @@ import Pagination from "../UI/pagination/pagination";
 import ModuleTable from "./module-table";
 import ModuleCardList from "./modules-card-list";
 import { stepsParcours } from "../../config/steps/steps-parcours";
+import Can from "../UI/can/can.component";
+import { Link } from "react-router-dom";
+import AddIcon from "../UI/svg/add-icon";
 
 interface ModuleHomeListProps {
   modulesList: Module[];
@@ -51,8 +54,19 @@ const ModuleHomeList = ({
       <section className="w-full">
         <Header
           title="Liste des modules"
-          description="Gérer tous les modules qui sont créer au sein de l'application."
-        ></Header>
+          description="Gérer tous les modules qui sont créés au sein de l'application."
+        >
+          <Can action="write" object="module">
+            <Link className="btn btn-primary" to="add">
+              <div className="flex gap-x-2 items-center">
+                <div className="w-8 h-8">
+                  <AddIcon />
+                </div>
+                <p>Créer un module</p>
+              </div>
+            </Link>
+          </Can>
+        </Header>
       </section>
       <section className="w-full flex flex-col">
         <article className="w-full flex justify-end items-center gap-x-4">
