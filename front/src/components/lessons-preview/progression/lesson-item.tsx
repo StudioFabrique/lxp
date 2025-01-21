@@ -19,16 +19,9 @@ const LessonItem = ({
   const isLessonSelected = selectedLesson?.id === lesson.id;
 
   const handleBeginReadLesson = () => {
-    const applyData = () => {
-      setSelectedLesson(
-        selectedLesson && isLessonSelected ? undefined : lesson
-      );
-    };
+    setSelectedLesson(selectedLesson && isLessonSelected ? undefined : lesson);
 
-    sendRequest(
-      { path: `/lesson/read/${lesson.id}`, method: "post" },
-      applyData
-    );
+    sendRequest({ path: `/lesson/read/${lesson.id}`, method: "post" });
   };
 
   return (

@@ -1,55 +1,92 @@
-// Imports nécessaires pour la gestion des routes et des états
 import { useLocation, useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
 import { useEffect, useState } from "react";
 import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
+import LessonRead from "../../../utils/interfaces/lesson-read";
 
-// Hook personnalisé pour gérer l'aperçu des leçons
 const useLessonsPreview = () => {
   const { sendRequest, isLoading } = useHttp(true);
-
-  // Récupération des paramètres d'URL
   const { state: stateFromUrl } = useLocation();
   const { moduleId } = useParams();
-
-  // Stockage des données du module et de la leçon sélectionnée
   const [moduleData, setModuleData] = useState<Module | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>();
 
-  useEffect(() => {
-    // Fonction pour traiter les données reçues de l'API
-    const applyData = (data: { data: Module }) => {
-      setModuleData(data.data);
+  const lessons = moduleData?.courses.flatMap((course) => course.lessons) || [];
 
-      // Si un ID de leçon est présent dans l'URL, sélectionner la leçon correspondante
-      if (stateFromUrl?.lessonId) {
-        const lessonToSelect = data.data.courses
-          .map((course) => {
-            return course.lessons.find(
-              (lesson) => lesson.id === stateFromUrl.lessonId,
-            );
-          })
-          .filter((course) => course !== undefined)[0];
+  const switchToNextLesson = () => {
+    if (selectedLesson) {
+      setSelectedLesson(lessons[lessons.indexOf(selectedLesson) + 1]);
+    }
+  };
 
-        setSelectedLesson(lessonToSelect);
-      }
+  const handleFinishReadLesson = () => {
+    const updateModuleData = (data: { data: LessonRead }) => {
+      setModuleData((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          courses: prev.courses.map((course) => ({
+            ...course,
+            lessons: course.lessons.map((lesson) => {
+              if (
+                lesson.id === selectedLesson?.id &&
+                lesson.lessonsRead?.length === 0
+              ) {
+                return { ...lesson, lessonsRead: [data.data] };
+              }
+              return lesson;
+            }),
+          })),
+        };
+      });
+      switchToNextLesson();
     };
 
-    // Requête HTTP pour récupérer les détails du module
+    sendRequest(
+      { path: `/lesson/read/${selectedLesson?.id}`, method: "put" },
+      updateModuleData,
+    );
+  };
+
+  useEffect(() => {
+    if (!selectedLesson?.id) return;
+    sendRequest({ path: `/lesson/${selectedLesson.id}` }, (data: Lesson) =>
+      setSelectedLesson(data),
+    );
+  }, [selectedLesson?.id, sendRequest]);
+
+  useEffect(() => {
+    if (selectedLesson?.lessonsRead?.length === 0) {
+      sendRequest({
+        path: `/lesson/read/${selectedLesson.id}`,
+        method: "post",
+      });
+    }
+  }, [selectedLesson?.id, selectedLesson?.lessonsRead, sendRequest]);
+
+  useEffect(() => {
     sendRequest(
       { path: `/modules/detail/${moduleId}`, method: "get" },
-      applyData,
+      ({ data }: { data: Module }) => {
+        setModuleData(data);
+        if (stateFromUrl?.lessonId) {
+          const lessonToSelect = data.courses
+            .flatMap((course) => course.lessons)
+            .find((lesson) => lesson.id === stateFromUrl.lessonId);
+          setSelectedLesson(lessonToSelect);
+        }
+      },
     );
   }, [moduleId, sendRequest, stateFromUrl?.lessonId]);
 
-  // Retourne les états et fonctions nécessaires
   return {
     moduleData,
     selectedLesson,
+    isLoading,
     setModuleData,
     setSelectedLesson,
-    isLoading,
+    onFinishReadLesson: handleFinishReadLesson,
   };
 };
 

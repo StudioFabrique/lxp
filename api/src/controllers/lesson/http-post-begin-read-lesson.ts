@@ -5,7 +5,7 @@ import postBeginReadLesson from "../../models/lesson/post-begin-read-lesson";
 
 export default async function httpPostBeginReadLesson(
   req: CustomRequest,
-  res: Response
+  res: Response,
 ) {
   const userId = req.auth?.userId;
 
@@ -19,7 +19,11 @@ export default async function httpPostBeginReadLesson(
     const response = await postBeginReadLesson(+lessonId, userId);
 
     if (!response) {
-      return res.status(404).json({ message: "Leçon non trouvé" });
+      return res
+        .status(404)
+        .json({
+          message: "Problème lors de la requête de confirmation de lecture",
+        });
     }
 
     return res.status(201).json({
