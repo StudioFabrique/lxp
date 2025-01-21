@@ -31,11 +31,13 @@ const Calendrier = () => {
   );
 
   const datesParcours = {
-    startDate: new Date(parcoursInfos.startDate),
-    endDate: new Date(parcoursInfos.endDate),
+    startDate: parcoursInfos?.startDate ? new Date(parcoursInfos.startDate) : new Date(),
+    endDate: parcoursInfos?.endDate ? new Date(parcoursInfos.endDate) : new Date(),
   };
 
   useEffect(() => {
+    if (!modules || modules.length === 0) return;
+    
     dispatch(
       parcoursModulesSliceActions.updateCurrentParcoursModule(
         !currentModule ? modules[0].id : currentModule.id,
@@ -49,6 +51,15 @@ const Calendrier = () => {
     };
   }, [dispatch]);
 
+  if (!modules || !parcoursInfos) {
+    return (
+      <div className="flex flex-col gap-y-5">
+        <h1 className="text-2xl">Calendrier</h1>
+        <p>Chargement...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-y-5">
       <h1 className="text-2xl">Calendrier</h1>
@@ -60,21 +71,19 @@ const Calendrier = () => {
         <Calendar
           className="col-span-2 bg-white rounded-lg p-5"
           localizer={localizer}
-          events={modules.map((module) => {
-            return {
-              start: new Date(module.minDate!).toISOString(),
-              end: new Date(module.maxDate!).toISOString(),
-              title: module.title,
-              // color: getRandomHexColor(),
-            };
-          })}
-          onDoubleClickEvent={(event) =>
-            dispatch(
-              parcoursModulesSliceActions.updateCurrentParcoursModule(
-                modules.filter((module) => module.title === event.title)[0].id,
-              ),
-            )
-          }
+          events={modules.map((module) => ({
+            start: module.minDate ? new Date(module.minDate) : datesParcours.startDate,
+            end: module.maxDate ? new Date(module.maxDate) : datesParcours.endDate,
+            title: module.title || 'Sans titre',
+          }))}
+          onDoubleClickEvent={(event) => {
+            const selectedModule = modules.find((module) => module.title === event.title);
+            if (selectedModule) {
+              dispatch(
+                parcoursModulesSliceActions.updateCurrentParcoursModule(selectedModule.id)
+              );
+            }
+          }}
         />
       </div>
       <div className="grid grid-cols-3 max-md:grid-cols-1 max-md:gap-y-5 gap-x-5">
