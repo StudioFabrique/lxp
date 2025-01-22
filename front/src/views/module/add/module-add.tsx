@@ -16,6 +16,7 @@ function ModuleAdd() {
     parcours,
     handleFormation,
     handleParcours,
+    handleSubmit,
     contacts,
     isLoading,
     skills,
@@ -24,6 +25,11 @@ function ModuleAdd() {
     setCurrentContacts,
     setCurrentSkills,
   } = useModuleAdd();
+
+  const handleForm = (event: React.FormEvent) => {
+    event.preventDefault();
+    handleSubmit();
+  };
 
   return (
     <main className="w-full min-h-screen flex flex-col items-center px-4 py-8 gap-8">
@@ -61,7 +67,7 @@ function ModuleAdd() {
       {formation ? (
         <section className="w-full grid grid-cols-2 gap-8">
           <Wrapper>
-            <form onSubmit={() => {}}>
+            <form onSubmit={handleForm}>
               <ModuleMetadatas data={data} onSetFile={setFile} />
               <div className="flex justify-end mt-4 items-center">
                 <button className="btn btn-secondary mr-4">

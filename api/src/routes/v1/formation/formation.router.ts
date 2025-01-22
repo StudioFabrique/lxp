@@ -16,6 +16,7 @@ import {
 } from "./formation-validators";
 import httpGetAllFormations from "../../../controllers/formation/http-get-all-formations";
 import httpPutFormation from "../../../controllers/formation/http-put-formation";
+
 const formationRouter = express.Router();
 
 const storage = multer.diskStorage({
