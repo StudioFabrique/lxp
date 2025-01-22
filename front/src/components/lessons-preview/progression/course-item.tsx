@@ -23,9 +23,16 @@ const CourseItem = ({
       0,
     ) / course.lessons.length;
 
+  const handleToggleCourseTab = () => {
+    setCourseOpen(!isCourseOpen);
+  };
+
   // Ouvre la barre litteral lorsqu'une leçon a été selectionné par un autre moyen (clic sur le bouton "Leçon Suivante")
   useEffect(() => {
-    if (selectedLesson && course.lessons.includes(selectedLesson)) {
+    if (
+      selectedLesson &&
+      course.lessons.some((lesson) => lesson.id === selectedLesson.id)
+    ) {
       setCourseOpen(true);
     } else {
       setCourseOpen(false);
@@ -36,7 +43,7 @@ const CourseItem = ({
     <div className="flex flex-col w-full">
       <div
         className="flex flex-col w-full cursor-pointer"
-        onClick={() => setCourseOpen(!isCourseOpen)}
+        onClick={handleToggleCourseTab}
       >
         <div className="bg-secondary/80 p-4 rounded-xl flex flex-col gap-2">
           {/* Titre du cours + tooltip */}

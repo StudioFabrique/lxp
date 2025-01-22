@@ -26,11 +26,13 @@ const Progression = ({
     coursesWithLessons.reduce(
       (sum, course) =>
         sum +
-        course.lessons.reduce(
-          (sum, lesson) => sum + (lesson?.lessonsRead?.length || 0),
-          0,
-        ) /
-          course.lessons.length,
+        Math.min(
+          course.lessons.reduce(
+            (sum, lesson) => sum + (lesson?.lessonsRead?.length || 0),
+            0,
+          ) / course.lessons.length,
+          1,
+        ),
       0,
     ) / coursesWithLessons.length;
 

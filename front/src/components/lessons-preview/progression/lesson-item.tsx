@@ -2,7 +2,6 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import Lesson from "../../../utils/interfaces/lesson";
 import { Dispatch, SetStateAction } from "react";
 import useHttp from "../../../hooks/use-http";
-import Loader from "../../UI/loader";
 
 type LessonItemProps = {
   lesson: Lesson;
@@ -10,21 +9,25 @@ type LessonItemProps = {
   setSelectedLesson: Dispatch<SetStateAction<Lesson | undefined>>;
 };
 
+// Composant représentant un élément de leçon individuel
 const LessonItem = ({
   lesson,
   selectedLesson,
   setSelectedLesson,
 }: LessonItemProps) => {
-  const { sendRequest, isLoading } = useHttp();
+  const { sendRequest } = useHttp();
+  // Vérifie si cette leçon est actuellement sélectionnée
   const isLessonSelected = selectedLesson?.id === lesson.id;
 
+  // Gestionnaire pour commencer/arrêter la lecture d'une leçon
   const handleBeginReadLesson = () => {
     setSelectedLesson(selectedLesson && isLessonSelected ? undefined : lesson);
-
+    // Envoie une requête pour marquer la leçon comme lue
     sendRequest({ path: `/lesson/read/${lesson.id}`, method: "post" });
   };
 
   return (
+    // Conteneur principal avec style conditionnel basé sur la sélection
     <div
       onClick={handleBeginReadLesson}
       className={`flex items-center justify-between rounded-xl p-2 w-full cursor-pointer ${
@@ -35,9 +38,8 @@ const LessonItem = ({
     >
       <p className="max-h-14 overflow-clip">{lesson.title}</p>
       <div>
-        {isLoading ? (
-          <Loader />
-        ) : lesson.lessonsRead && lesson.lessonsRead?.length > 0 ? (
+        {/* Affiche une coche si la leçon est lue, ou une flèche sinon */}
+        {lesson.lessonsRead && lesson.lessonsRead?.length > 0 ? (
           <CheckCircle2
             className={`w-5 h-5 stroke-green-400
             }`}

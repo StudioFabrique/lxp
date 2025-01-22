@@ -10,30 +10,34 @@ type PreviewLessonProps = {
 const PreviewLesson = ({
   selectedLesson,
   onFinishReadLesson,
-}: PreviewLessonProps) => (
-  <div className="flex flex-col gap-4">
-    {selectedLesson?.activities && selectedLesson?.activities.length > 0 ? (
-      selectedLesson?.activities?.map((activity) => (
-        <ActivityPreview key={activity.id} activity={activity} />
-      ))
-    ) : (
-      <p>Aucune activités</p>
-    )}
-    <div className="flex justify-end gap-5">
-      <EvaluateContentButton note={1} sendEvaluation={() => {}} />
-      <button
-        className="btn btn-primary text-white self-end"
-        onClick={onFinishReadLesson}
-      >
-        {selectedLesson.lessonsRead &&
-        selectedLesson.lessonsRead?.filter(
-          (lessonRead) => !!lessonRead.finishedAt,
-        ).length > 0
-          ? "Leçon Suivante"
-          : "Marquer comme terminé"}
-      </button>
+}: PreviewLessonProps) => {
+  const hasActivities =
+    selectedLesson.activities?.length && selectedLesson.activities?.length > 0;
+  const isLessonCompleted = selectedLesson.lessonsRead?.some(
+    (lessonRead) => lessonRead.finishedAt,
+  );
+
+  return (
+    <div className="flex flex-col gap-4">
+      {hasActivities ? (
+        selectedLesson.activities?.map((activity) => (
+          <ActivityPreview key={activity.id} activity={activity} />
+        ))
+      ) : (
+        <p>Aucune activités</p>
+      )}
+
+      <div className="flex justify-end gap-5">
+        <EvaluateContentButton note={1} sendEvaluation={() => {}} />
+        <button
+          className="btn btn-primary text-white self-end"
+          onClick={onFinishReadLesson}
+        >
+          {isLessonCompleted ? "Leçon Suivante" : "Marquer comme terminé"}
+        </button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default PreviewLesson;
