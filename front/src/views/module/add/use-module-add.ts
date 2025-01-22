@@ -4,6 +4,10 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Contact from "../../../utils/interfaces/contact";
 import Skill from "../../../utils/interfaces/skill";
+import { moduleCreateSchema } from "../../../lib/validation/module-create-schema";
+import { ZodError } from "zod";
+import useForm from "../../../components/UI/forms/hooks/use-form";
+import { validationErrors } from "../../../helpers/validate";
 
 // type de données pour les listes
 export type Item = {
@@ -12,6 +16,25 @@ export type Item = {
   formationId?: number;
 };
 
+/**
+ * Hook qui gère la logique de création d'un module
+ * @returns un objet avec les propriétés suivantes :
+ * - file : le fichier selectionné
+ * - setFile : fonction pour mettre à jour le fichier selectionné
+ * - formationsList : la liste des formations
+ * - parcoursList : la liste des parcours liés à la formation selectionnée
+ * - formation : l'id de la formation selectionnée
+ * - parcours : l'id du parcours selectionné
+ * - handleFormation : fonction pour mettre à jour la formation selectionnée
+ * - handleParcours : fonction pour mettre à jour le parcours selectionné
+ * - contacts : la liste des contacts du parcours selectionné
+ * - skills : la liste des compétences du parcours selectionné
+ * - isLoading : un booléen qui indique si une requête est en cours
+ * - currentContacts : la liste des contacts actuellement selectionnés
+ * - setCurrentContacts : fonction pour mettre à jour la liste des contacts actuellement selectionnés
+ * - currentSkills : la liste des compétences actuellement selectionnées
+ * - setCurrentSkills : fonction pour mettre à jour la liste des compétences actuellement selectionnées
+ */
 const useModuleAdd = () => {
   const { isLoading, error, sendRequest } = useHttp();
   const nav = useNavigate();
@@ -21,12 +44,41 @@ const useModuleAdd = () => {
   const [parcours, setParcours] = useState<number | undefined>(undefined);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [currentContacts, setCurrentContacts] = useState<Contact[]>([]);
+  const [currentSkills, setCurrentSkills] = useState<Skill[]>([]);
+  const [file, setFile] = useState<File | null>(null);
+  const { errors, values, onChangeValue, onValidationErrors } = useForm();
 
-  useEffect(() => {
-    if (error.length > 0) {
-      toast.error(error);
+  const data = { values, errors, onChangeValue };
+
+  const handleValidateModule = (values: any) => {
+    try {
+      moduleCreateSchema.parse(values);
+      return true;
+    } catch (error: unknown) {
+      if (error instanceof ZodError) {
+        onValidationErrors(validationErrors(error));
+        return false;
+      }
     }
-  }, [error]);
+  };
+
+  const handleSubmit = (data: any) => {
+    if (!handleValidateModule(data)) return;
+    const formData = new FormData();
+    const module = { ...values, formationId: formation };
+    if (parcours) {
+      const updatedModule = {
+        ...module,
+        parcoursId: parcours,
+        contacts: currentContacts.map((item) => item.id),
+        bonusSkillsIds: currentSkills.map((item) => item.id),
+      };
+      formData.append("module", JSON.stringify(updatedModule));
+    } else formData.append("module", JSON.stringify(module));
+    if (file) formData.append("image", file);
+    // TODO : envoyer la requête
+  };
 
   /**
    * sélection d'un formation
@@ -44,7 +96,21 @@ const useModuleAdd = () => {
     setParcours(id);
   };
 
-  const fetchParcoursSkillsContacts = useCallback(() => {}, []);
+  /**
+   * fonction pour récupérer la liste des compétences et des contacts liés au parcours selectionné
+   */
+  const fetchParcoursSkillsContacts = useCallback(() => {
+    const applyData = (data: any) => {
+      setContacts(data.contacts);
+      setSkills(data.skills);
+    };
+    sendRequest(
+      {
+        path: `/parcours/skills-contacts/${parcours}`,
+      },
+      applyData
+    );
+  }, [parcours, sendRequest]);
 
   /**
    * requête pour récupérer la liste des formations dans la bdd
@@ -78,13 +144,36 @@ const useModuleAdd = () => {
     }
   }, [formation, sendRequest]);
 
+  useEffect(() => {
+    if (parcours !== undefined) {
+      fetchParcoursSkillsContacts();
+    }
+  }, [fetchParcoursSkillsContacts, parcours]);
+
+  useEffect(() => {
+    if (error.length > 0) {
+      toast.error(error);
+    }
+  }, [error]);
+
   return {
+    data,
+    file,
+    setFile,
     formationsList,
     parcoursList,
     formation,
     parcours,
     handleFormation,
+    handleValidateModule,
     handleParcours,
+    contacts,
+    skills,
+    isLoading,
+    currentContacts,
+    setCurrentContacts,
+    currentSkills,
+    setCurrentSkills,
   };
 };
 
