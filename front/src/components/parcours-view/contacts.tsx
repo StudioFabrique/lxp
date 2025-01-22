@@ -5,7 +5,7 @@ import Contact from "../../utils/interfaces/contact";
 
 const Contacts = () => {
   const contacts = useSelector(
-    (state: any) => state.parcoursContacts.currentContacts
+    (state: any) => state.parcoursContacts.currentContacts,
   ) as Contact[];
 
   const contactsList =
@@ -25,7 +25,9 @@ const Contacts = () => {
 
   return (
     <Wrapper>
-      <h2 className="text-xl font-bold text-primary">Ressources & Contacts</h2>
+      <h2 className="text-xl font-bold text-primary">
+        Ressources pédagogiques
+      </h2>
       <div className="flex flex-col gap-y-5 overflow-y-auto h-[60vh]">
         {contactsList}
       </div>

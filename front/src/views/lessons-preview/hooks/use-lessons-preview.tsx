@@ -18,8 +18,19 @@ const useLessonsPreview = () => {
 
   // Fonction pour passer à la leçon suivante
   const switchToNextLesson = () => {
-    if (selectedLesson) {
-      setSelectedLesson(lessons[lessons.indexOf(selectedLesson) + 1]);
+    if (selectedLesson && lessons.length > 0) {
+      const currentIndex = lessons.findIndex(
+        (lesson) => lesson.id === selectedLesson.id,
+      );
+      if (currentIndex !== -1 && currentIndex + 1 < lessons.length) {
+        const nextLesson = lessons[currentIndex + 1];
+        setSelectedLesson({
+          ...nextLesson,
+          lessonsRead: nextLesson.lessonsRead,
+        });
+      } else {
+        setSelectedLesson(undefined);
+      }
     }
   };
 
@@ -57,22 +68,21 @@ const useLessonsPreview = () => {
   // useEffect pour charger les détails d'une leçon sélectionnée
   useEffect(() => {
     const applyData = (data: Lesson) => {
-      setSelectedLesson(data);
+      // Marquer le début de lecture d'une leçon
+      if (data.lessonsRead) {
+        setSelectedLesson({ ...data });
+      }
+      if (data?.lessonsRead && data?.lessonsRead?.length === 0) {
+        sendRequest({
+          path: `/lesson/read/${data.id}`,
+          method: "post",
+        });
+      }
     };
 
     if (!selectedLesson?.id) return;
     sendRequest({ path: `/lesson/${selectedLesson.id}` }, applyData);
   }, [selectedLesson?.id, sendRequest]);
-
-  // useEffect pour marquer le début de lecture d'une leçon
-  useEffect(() => {
-    if (selectedLesson?.lessonsRead?.length === 0) {
-      sendRequest({
-        path: `/lesson/read/${selectedLesson.id}`,
-        method: "post",
-      });
-    }
-  }, [selectedLesson?.id, selectedLesson?.lessonsRead, sendRequest]);
 
   // useEffect pour charger les données initiales du module
   useEffect(() => {
@@ -82,7 +92,12 @@ const useLessonsPreview = () => {
         const lessonToSelect = data.courses
           .flatMap((course) => course.lessons)
           .find((lesson) => lesson.id === stateFromUrl.lessonId);
-        setSelectedLesson(lessonToSelect);
+        if (lessonToSelect) {
+          setSelectedLesson({
+            ...lessonToSelect,
+            lessonsRead: lessonToSelect.lessonsRead,
+          });
+        }
       }
     };
 
