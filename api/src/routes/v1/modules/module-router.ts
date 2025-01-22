@@ -1,4 +1,5 @@
 import { Router } from "express";
+import path from "path";
 
 import httpGetModuleFormation from "../../../controllers/module/http-get-modules-formation";
 import httpParcoursModules from "../../../controllers/module/http-parcours-modules";
@@ -30,8 +31,27 @@ import httpGetModuleImage from "../../../controllers/module/http-get-module-imag
 import { checkValidatorResult } from "../../../middleware/validators";
 import { query } from "express-validator";
 import jsonParser from "../../../middleware/json-parser";
+import multer from "multer";
+import httpPostModuleFromScratch from "../../../controllers/module/http-post-module-from-scratch";
 
 const modules = Router();
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "..", "..", "..", "uploads"));
+  },
+  filename: function (req, file, cb) {
+    if (file.mimetype.startsWith("image")) {
+      const newFileName =
+        Date.now() + "-" + Math.round(Math.random() * 1e9) + file.originalname;
+      cb(null, file.fieldname + "-" + newFileName);
+    } else {
+      return;
+    }
+  },
+});
+
+const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 
 // retourne la liste de tous les modules
 modules.get("/", checkPermissions("module"), httpGetAllModules);
@@ -78,7 +98,7 @@ modules.get(
       }),
     checkValidatorResult,
   ],
-  httpGetModulesTimeline,
+  httpGetModulesTimeline
 );
 
 modules.put(
@@ -163,6 +183,14 @@ modules.get(
   checkPermissions("module"),
   moduleIdValidator,
   httpGetModuleImage
+);
+
+modules.post(
+  "/new-module",
+  checkPermissions("formation"),
+  upload.single("image"),
+  jsonParser,
+  httpPostModuleFromScratch
 );
 
 export default modules;

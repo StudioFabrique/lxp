@@ -63,21 +63,38 @@ const useModuleAdd = () => {
     }
   };
 
-  const handleSubmit = (data: any) => {
-    if (!handleValidateModule(data)) return;
+  const handleSubmit = () => {
+    if (!handleValidateModule(data.values)) return;
     const formData = new FormData();
-    const module = { ...values, formationId: formation };
+    const module = {
+      ...data.values,
+      formationId: formation,
+      duration: +data.values.duration,
+    };
     if (parcours) {
       const updatedModule = {
         ...module,
         parcoursId: parcours,
-        contacts: currentContacts.map((item) => item.id),
+        contactsIds: currentContacts.map((item) => item.id),
         bonusSkillsIds: currentSkills.map((item) => item.id),
       };
       formData.append("module", JSON.stringify(updatedModule));
     } else formData.append("module", JSON.stringify(module));
     if (file) formData.append("image", file);
-    // TODO : envoyer la requête
+    const applyData = (data: any) => {
+      if (data.success) {
+        toast.success(data.message);
+        nav("/admin/module");
+      }
+    };
+    sendRequest(
+      {
+        path: "/modules/new-module",
+        method: "post",
+        body: formData,
+      },
+      applyData
+    );
   };
 
   /**
@@ -167,6 +184,7 @@ const useModuleAdd = () => {
     handleFormation,
     handleValidateModule,
     handleParcours,
+    handleSubmit,
     contacts,
     skills,
     isLoading,
