@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { regexGeneric, regexOptionalGeneric } from "../../../utils/constantes";
+import { regexGeneric, regexOptionalGeneric } from "../../utils/constantes";
 
 export const moduleCreateSchema = z.object({
   title: z

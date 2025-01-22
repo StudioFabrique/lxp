@@ -3,6 +3,7 @@ import React, { ReactNode, useEffect, useMemo, useState } from "react";
 
 import RightSideDrawer from "../UI/right-side-drawer/right-side-drawer";
 import ButtonAdd from "../UI/button-add/button-add";
+import SubWrapper from "../UI/sub-wrapper/sub-wrapper.component";
 
 interface InheritedItemsProps {
   children: ReactNode[];
@@ -36,7 +37,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
     let updatedItems = currentItems;
     ids.forEach((item: any) => {
       const foundItem = props.initialList.find(
-        (element: any) => element.id === item,
+        (element: any) => element.id === item
       );
       if (foundItem) {
         updatedItems = [...updatedItems, foundItem];
@@ -97,11 +98,14 @@ const InheritedItems = (props: InheritedItemsProps) => {
           <>
             {React.cloneElement(props.children[0] as React.ReactElement, {
               list: currentItems,
+              property: props.property,
               onRemoveItem: handleRemoveItem,
             })}
           </>
         ) : (
-          <p>Aucun élément sélectionné</p>
+          <SubWrapper>
+            <p className="text-xs">Aucun objet ajouté</p>
+          </SubWrapper>
         )}
       </div>
       <RightSideDrawer
