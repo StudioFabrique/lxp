@@ -1,20 +1,28 @@
+import { Dispatch, SetStateAction } from "react";
 import Field from "../../../components/UI/forms/field";
 import FieldArea from "../../../components/UI/forms/field-area";
 import FieldNumber from "../../../components/UI/forms/field-number";
-import MemoizedImageFileUpload from "../../../components/UI/image-file-upload/image-file-upload";
-import Wrapper from "../../../components/UI/wrapper/wrapper.component";
-import { headerImageMaxSize } from "../../../config/images-sizes";
+import useImageUpload from "../../../hooks/use-image-upload";
+import CustomError from "../../../utils/interfaces/custom-error";
+import ModuleUploadImage from "./module-upload-image";
 
 type Props = {
-  data: any;
+  data: {
+    values: Record<string, string>;
+    onChangeValue: (field: string, value: string) => void;
+    errors: CustomError[];
+  };
+  onSetFile: Dispatch<SetStateAction<File | null>>;
 };
 
-function ModuleMetadatas({ data }: Props) {
-  // affiche une image en background d'une div de manière dynamique
+function ModuleMetadatas({ data, onSetFile }: Props) {
+  const { image, handleFileChange } = useImageUpload(5000000, onSetFile);
+
+  // affiche un aperçu de l'image choisie pour le module ou une image en background de div de manière dynamique
   const classImage: React.CSSProperties = {
-    backgroundImage: `url("https://picsum.photos/200/300")`,
+    backgroundImage: `url(${image ? image : "https://picsum.photos/200/300"})`,
     width: "100px",
-    height: "100%",
+    height: "75px",
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
@@ -23,45 +31,39 @@ function ModuleMetadatas({ data }: Props) {
   };
 
   return (
-    <Wrapper>
-      <article className="flex flex-col gap-y-4">
-        {/* titre */}
+    <article className="flex flex-col gap-y-4">
+      {/* titre */}
 
-        <div>
-          <Field
-            label="Titre du module *"
-            name="title"
-            placeholder="Ex : Javascript"
-            data={data}
-          />
-        </div>
-
-        {/* description */}
-
-        <FieldArea label="Description" name="description" data={data} />
-
-        {/* duration */}
-
-        <FieldNumber
-          label="Durée du module en heures *"
-          name="duration"
-          placeholder="Ex : 12"
-          min={0}
+      <div>
+        <Field
+          label="Titre du module *"
+          name="title"
+          placeholder="Ex : Javascript"
           data={data}
         />
+      </div>
 
-        {/* image du module */}
+      {/* description */}
 
-        <div className="w-full flex gap-x-4 items-center">
-          <MemoizedImageFileUpload
-            maxSize={headerImageMaxSize}
-            label="Choisir une nouvelle image *"
-            onSetFile={() => {}}
-          />
-          <span style={classImage} />
-        </div>
-      </article>
-    </Wrapper>
+      <FieldArea label="Description" name="description" data={data} />
+
+      {/* duration */}
+
+      <FieldNumber
+        label="Durée du module en heures *"
+        name="duration"
+        placeholder="Ex : 12"
+        min={0}
+        data={data}
+      />
+
+      {/* image du module */}
+
+      <div className="w-full h-full flex gap-x-4 items-center">
+        <ModuleUploadImage onSetFile={handleFileChange} />
+        <span style={classImage} />
+      </div>
+    </article>
   );
 }
 
