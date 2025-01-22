@@ -20,13 +20,14 @@ const ActionsDropdown = <FuncDataT,>(
 
   return (
     <div className="dropdown dropdown-end">
-      <div
+      <button
         tabIndex={0}
         role="button"
         className="flex items-center btn btn-sm btn-ghost disabled:bg-transparent"
+        disabled={props.isDisabled}
       >
         <EllipsisIcon />
-      </div>
+      </button>
       <ul
         tabIndex={0}
         className="menu dropdown-content bg-base-100 rounded-box z-20 p-2 m-2 shadow w-max whitespace-nowrap gap-2"

@@ -15,13 +15,13 @@ const LessonsPreview = () => {
   // custom hook
   const {
     moduleData,
-    isLoading,
+    // isLoading,
     onFinishReadLesson,
     selectedLesson,
     setSelectedLesson,
   } = useCoursesPreview();
 
-  return isLoading || !moduleData ? (
+  return !moduleData ? (
     <Loader />
   ) : (
     <LessonsPreviewWrapper selectedLesson={selectedLesson}>

@@ -20,7 +20,7 @@ const CourseItem = ({
   const courseProgress =
     course.lessons.reduce(
       (sum, lesson) => sum + (lesson?.lessonsRead?.length || 0),
-      0
+      0,
     ) / course.lessons.length;
 
   // Ouvre la barre litteral lorsqu'une leçon a été selectionné par un autre moyen (clic sur le bouton "Leçon Suivante")
@@ -69,8 +69,12 @@ const CourseItem = ({
       </div>
       <motion.div
         className="bg-secondary/20 -mt-2 rounded-b-xl overflow-y-auto"
+        initial={{ maxHeight: 0 }}
+        style={{
+          height: isCourseOpen ? "auto" : 0,
+          visibility: isCourseOpen ? "visible" : "hidden",
+        }}
         animate={{
-          display: isCourseOpen ? "block" : "none",
           maxHeight: isCourseOpen ? 280 : 0,
         }}
       >

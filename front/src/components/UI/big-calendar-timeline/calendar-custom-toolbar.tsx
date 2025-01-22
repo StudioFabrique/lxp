@@ -34,7 +34,7 @@ const CalendarCustomToolbar = (toolbar: ToolbarProps) => {
         <button
           type="button"
           onClick={goToBack}
-          className="btn btn-primary btn-sm gap-1 sm:gap-2 hover:scale-105 transition-transform"
+          className="btn btn-primary text-base-200 btn-sm gap-1 sm:gap-2 hover:scale-105 transition-transform"
         >
           <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           {toolbar.view === "month"
@@ -46,14 +46,14 @@ const CalendarCustomToolbar = (toolbar: ToolbarProps) => {
         <button
           type="button"
           onClick={goToCurrent}
-          className="btn btn-accent btn-sm hover:scale-105 transition-transform"
+          className="btn btn-accent text-base-200 btn-sm hover:scale-105 transition-transform"
         >
           Aujourd'hui
         </button>
         <button
           type="button"
           onClick={goToNext}
-          className="btn btn-secondary btn-sm gap-1 sm:gap-2 hover:scale-105 transition-transform"
+          className="btn btn-secondary text-base-200 btn-sm gap-1 sm:gap-2 hover:scale-105 transition-transform"
         >
           {toolbar.view === "month"
             ? "Suivant"
