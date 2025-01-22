@@ -5,6 +5,7 @@ import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
 
+// Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
 const useLessonsPreview = () => {
   const { sendRequest, isLoading } = useHttp(true);
   const { state: stateFromUrl } = useLocation();
@@ -12,16 +13,20 @@ const useLessonsPreview = () => {
   const [moduleData, setModuleData] = useState<Module | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>();
 
+  // Récupération de toutes les leçons à partir des cours du module
   const lessons = moduleData?.courses.flatMap((course) => course.lessons) || [];
 
+  // Fonction pour passer à la leçon suivante
   const switchToNextLesson = () => {
     if (selectedLesson) {
       setSelectedLesson(lessons[lessons.indexOf(selectedLesson) + 1]);
     }
   };
 
+  // Handler pour marquer une leçon comme terminée
   const handleFinishReadLesson = () => {
-    const updateModuleData = (data: { data: LessonRead }) => {
+    // Fonction de mise à jour des données du module
+    const applyData = (data: { data: LessonRead }) => {
       setModuleData((prev) => {
         if (!prev) return prev;
         return {
@@ -45,17 +50,21 @@ const useLessonsPreview = () => {
 
     sendRequest(
       { path: `/lesson/read/${selectedLesson?.id}`, method: "put" },
-      updateModuleData,
+      applyData,
     );
   };
 
+  // useEffect pour charger les détails d'une leçon sélectionnée
   useEffect(() => {
+    const applyData = (data: Lesson) => {
+      setSelectedLesson(data);
+    };
+
     if (!selectedLesson?.id) return;
-    sendRequest({ path: `/lesson/${selectedLesson.id}` }, (data: Lesson) =>
-      setSelectedLesson(data),
-    );
+    sendRequest({ path: `/lesson/${selectedLesson.id}` }, applyData);
   }, [selectedLesson?.id, sendRequest]);
 
+  // useEffect pour marquer le début de lecture d'une leçon
   useEffect(() => {
     if (selectedLesson?.lessonsRead?.length === 0) {
       sendRequest({
@@ -65,21 +74,25 @@ const useLessonsPreview = () => {
     }
   }, [selectedLesson?.id, selectedLesson?.lessonsRead, sendRequest]);
 
+  // useEffect pour charger les données initiales du module
   useEffect(() => {
+    const applyData = ({ data }: { data: Module }) => {
+      setModuleData(data);
+      if (stateFromUrl?.lessonId) {
+        const lessonToSelect = data.courses
+          .flatMap((course) => course.lessons)
+          .find((lesson) => lesson.id === stateFromUrl.lessonId);
+        setSelectedLesson(lessonToSelect);
+      }
+    };
+
     sendRequest(
       { path: `/modules/detail/${moduleId}`, method: "get" },
-      ({ data }: { data: Module }) => {
-        setModuleData(data);
-        if (stateFromUrl?.lessonId) {
-          const lessonToSelect = data.courses
-            .flatMap((course) => course.lessons)
-            .find((lesson) => lesson.id === stateFromUrl.lessonId);
-          setSelectedLesson(lessonToSelect);
-        }
-      },
+      applyData,
     );
   }, [moduleId, sendRequest, stateFromUrl?.lessonId]);
 
+  // Retourne les données et fonctions nécessaires
   return {
     moduleData,
     selectedLesson,
