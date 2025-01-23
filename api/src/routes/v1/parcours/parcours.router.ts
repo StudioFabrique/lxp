@@ -8,6 +8,7 @@ import httpPutVirtualClass from "../../../controllers/parcours/http-put-virtual-
 import httpPutParcoursObjectives from "../../../controllers/parcours/http-put-parcours-objectives";
 import httpPutReorderObjectives from "../../../controllers/parcours/http-put-reorder-objectives";
 import {
+  formationIdValidator,
   getParcoursByFormationValidator,
   parcoursByIdValidator,
   parcoursIdValidator,
@@ -36,6 +37,7 @@ import httpGetParcoursAsStudent from "../../../controllers/parcours/http-get-par
 import httpGetSelectParcours from "../../../controllers/parcours/http-get-select-parcours";
 import httpPostDuplicateParcours from "../../../controllers/parcours/http-post-duplicate-parcours";
 import httpGetParcoursSkillsContacts from "../../../controllers/parcours/http-get-parcours-skills-contacts";
+import httpGetParcoursListFromFormation from "../../../controllers/parcours/http-get-parcours-list-from-formation";
 
 const parcoursRouter = express.Router();
 
@@ -168,9 +170,17 @@ parcoursRouter.post(
 // retourne la liste des contacts et des compétences associés à un parcours
 parcoursRouter.get(
   "/skills-contacts/:parcoursId",
-  //checkPermissions("parcours"),
+  checkPermissions("parcours"),
   parcoursIdValidator,
   httpGetParcoursSkillsContacts
+);
+
+// retourne la liste simplifiée des parcours associés à une formation
+parcoursRouter.get(
+  "/parcours-from-formation/:formationId",
+  checkPermissions("parcours"),
+  formationIdValidator,
+  httpGetParcoursListFromFormation
 );
 
 export default parcoursRouter;
