@@ -1,4 +1,4 @@
-import { CSSProperties, Dispatch, SetStateAction } from "react";
+import { CSSProperties } from "react";
 import Course from "../../../utils/interfaces/course";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import CourseItem from "./course-item";
@@ -8,7 +8,7 @@ import Lesson from "../../../utils/interfaces/lesson";
 type ProgressionProps = {
   courses: Course[];
   selectedLesson: Lesson | undefined;
-  setSelectedLesson: Dispatch<SetStateAction<Lesson | undefined>>;
+  setSelectedLesson: (lesson: Lesson | undefined) => void;
 };
 
 const Progression = ({
@@ -28,7 +28,10 @@ const Progression = ({
         sum +
         Math.min(
           course.lessons.reduce(
-            (sum, lesson) => sum + (lesson?.lessonsRead?.length || 0),
+            (sum, lesson) =>
+              sum +
+              (lesson?.lessonsRead?.filter((lesson) => lesson.finishedAt)
+                .length || 0),
             0,
           ) / course.lessons.length,
           1,

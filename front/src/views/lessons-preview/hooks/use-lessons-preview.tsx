@@ -1,6 +1,6 @@
 import { useLocation, useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
@@ -16,6 +16,26 @@ const useLessonsPreview = () => {
   // Récupération de toutes les leçons à partir des cours du module
   const lessons = moduleData?.courses.flatMap((course) => course.lessons) || [];
 
+  const initiateLesson = useCallback(
+    (lessonId: number) => {
+      sendRequest({
+        path: `/lesson/read/${lessonId}`,
+        method: "post",
+      });
+    },
+    [sendRequest],
+  );
+
+  const handleLessonSelection = useCallback(
+    (lesson: Lesson | undefined) => {
+      setSelectedLesson(lesson);
+      if (lesson?.id) {
+        initiateLesson(lesson.id);
+      }
+    },
+    [initiateLesson],
+  );
+
   // Fonction pour passer à la leçon suivante
   const switchToNextLesson = () => {
     if (selectedLesson && lessons.length > 0) {
@@ -24,18 +44,15 @@ const useLessonsPreview = () => {
       );
       if (currentIndex !== -1 && currentIndex + 1 < lessons.length) {
         const nextLesson = lessons[currentIndex + 1];
-        setSelectedLesson({
-          ...nextLesson,
-          lessonsRead: nextLesson.lessonsRead,
-        });
+        handleLessonSelection(nextLesson); // Utiliser la nouvelle fonction
       } else {
-        setSelectedLesson(undefined);
+        handleLessonSelection(undefined);
       }
     }
   };
 
   // Handler pour marquer une leçon comme terminée
-  const handleFinishReadLesson = () => {
+  const handleFinishReadLesson = (showNextLesson: boolean) => {
     // Fonction de mise à jour des données du module
     const applyData = (data: { data: LessonRead }) => {
       setModuleData((prev) => {
@@ -56,7 +73,8 @@ const useLessonsPreview = () => {
           })),
         };
       });
-      switchToNextLesson();
+      // Afficher la prochaine leçon si showNextLesson est true
+      showNextLesson && switchToNextLesson();
     };
 
     sendRequest(
@@ -93,10 +111,7 @@ const useLessonsPreview = () => {
           .flatMap((course) => course.lessons)
           .find((lesson) => lesson.id === stateFromUrl.lessonId);
         if (lessonToSelect) {
-          setSelectedLesson({
-            ...lessonToSelect,
-            lessonsRead: lessonToSelect.lessonsRead,
-          });
+          handleLessonSelection(lessonToSelect); // Utiliser la nouvelle fonction
         }
       }
     };
@@ -105,7 +120,7 @@ const useLessonsPreview = () => {
       { path: `/modules/detail/${moduleId}`, method: "get" },
       applyData,
     );
-  }, [moduleId, sendRequest, stateFromUrl?.lessonId]);
+  }, [moduleId, sendRequest, stateFromUrl?.lessonId, handleLessonSelection]);
 
   // Retourne les données et fonctions nécessaires
   return {
@@ -113,7 +128,7 @@ const useLessonsPreview = () => {
     selectedLesson,
     isLoading,
     setModuleData,
-    setSelectedLesson,
+    setSelectedLesson: handleLessonSelection,
     onFinishReadLesson: handleFinishReadLesson,
   };
 };
