@@ -9,7 +9,7 @@ type PreviewLessonProps = {
 };
 
 // Composant pour prévisualiser une leçon avec ses activités
-const PreviewLesson = ({
+const LessonReader = ({
   selectedLesson,
   onFinishReadLesson,
 }: PreviewLessonProps) => {
@@ -46,7 +46,9 @@ const PreviewLesson = ({
 
       {/* Boutons d'évaluation et de navigation */}
       <div className="flex justify-end gap-5">
-        {isLessonAlreadyCompleted ? (
+        {isLessonAlreadyCompleted &&
+        selectedLesson.activities &&
+        selectedLesson.activities?.length > 0 ? (
           <EvaluateContentButton note={1} sendEvaluation={() => {}} />
         ) : null}
         <button
@@ -62,4 +64,4 @@ const PreviewLesson = ({
   );
 };
 
-export default PreviewLesson;
+export default LessonReader;

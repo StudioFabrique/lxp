@@ -1,7 +1,7 @@
 import Progression from "../../components/lessons-preview/progression/progression";
 import Loader from "../../components/UI/loader";
 import ProgressBar from "../../components/lessons-preview/progress-bar";
-import PreviewLesson from "../../components/lessons-preview/preview-lesson/preview-lesson";
+import LessonReader from "../../components/lessons-preview/preview-lesson/lesson-reader";
 import Lesson from "../../utils/interfaces/lesson";
 import useCoursesPreview from "./hooks/use-lessons-preview";
 import LessonsPreviewHeader from "../../components/lessons-preview/lessons-preview-header";
@@ -38,14 +38,14 @@ const LessonsPreview = () => {
         // La barre de progression du cours
         <ProgressBar key="top-progress-bar" courses={moduleData.courses} />,
         // La prévisualisation de la leçon
-        <PreviewLesson
-          key="previewLesson"
+        <LessonReader
+          key="lesson-reader"
           selectedLesson={selectedLesson as Lesson}
           onFinishReadLesson={onFinishReadLesson}
         />,
         /* Dans le cas où aucune leçon n'est affiché,
            les informations complémentaires du cours sont affichés */
-        <ModuleData key="moduleData" moduleData={moduleData} />,
+        <ModuleData key="module-data" moduleData={moduleData} />,
       ]}
     </LessonsPreviewWrapper>
   );
