@@ -8,12 +8,26 @@ import { moduleCreateSchema } from "../../../lib/validation/module-create-schema
 import { ZodError } from "zod";
 import useForm from "../../../components/UI/forms/hooks/use-form";
 import { validationErrors } from "../../../helpers/validate";
+import SuccessWithMessage from "../../../utils/interfaces/success-with-message";
 
 // type de données pour les listes
 export type Item = {
   id: number;
   title: string;
   formationId?: number;
+};
+
+type ModuleForm = {
+  title: string;
+  description?: string;
+  duration: number;
+};
+
+type SkillsContacts = {
+  success: boolean;
+  message: string;
+  contacts: [{ id: number; idMdb: string; name: string; role: string }];
+  skills: [{ id: number; description: string }];
 };
 
 /**
@@ -51,20 +65,35 @@ const useModuleAdd = () => {
 
   const data = { values, errors, onChangeValue };
 
-  const handleValidateModule = (values: any) => {
+  /**
+   * fonction pour valider le formulaire de création d'un module
+   * @param values les valeurs du formulaire
+   * @returns true si le formulaire est valide, false sinon
+   */
+  const handleValidateModule = (values: ModuleForm) => {
     try {
       moduleCreateSchema.parse(values);
       return true;
     } catch (error: unknown) {
       if (error instanceof ZodError) {
         onValidationErrors(validationErrors(error));
+        console.log({ error });
+
         return false;
       }
     }
   };
 
+  /**
+   * fonction pour envoyer la requête de création d'un module
+   */
   const handleSubmit = () => {
-    if (!handleValidateModule(data.values)) return;
+    const values = {
+      ...data.values,
+      // conversion de la chaîne de caractères "duration" en nombre pour respecter le schéma de validation
+      duration: +data.values.duration,
+    } as ModuleForm;
+    if (!handleValidateModule(values)) return;
     const formData = new FormData();
     const module = {
       ...data.values,
@@ -81,7 +110,7 @@ const useModuleAdd = () => {
       formData.append("module", JSON.stringify(updatedModule));
     } else formData.append("module", JSON.stringify(module));
     if (file) formData.append("image", file);
-    const applyData = (data: any) => {
+    const applyData = (data: SuccessWithMessage) => {
       if (data.success) {
         toast.success(data.message);
         nav("/admin/module");
@@ -98,7 +127,7 @@ const useModuleAdd = () => {
   };
 
   /**
-   * sélection d'un formation
+   * fonction pour mettre à jour la formation selectionnée
    * @param id number
    */
   const handleFormation = (id: number) => {
@@ -106,7 +135,7 @@ const useModuleAdd = () => {
   };
 
   /**
-   * sélection d'un parcours lié à la formation sélectionnée
+   * fonction pour mettre à jour le parcours selectionné
    * @param id number
    */
   const handleParcours = (id: number) => {
@@ -117,7 +146,7 @@ const useModuleAdd = () => {
    * fonction pour récupérer la liste des compétences et des contacts liés au parcours selectionné
    */
   const fetchParcoursSkillsContacts = useCallback(() => {
-    const applyData = (data: any) => {
+    const applyData = (data: SkillsContacts) => {
       setContacts(data.contacts);
       setSkills(data.skills);
     };
@@ -149,12 +178,12 @@ const useModuleAdd = () => {
    */
   useEffect(() => {
     if (formation !== undefined) {
-      const processData = (data: any) => {
-        setParcoursList(data.data);
+      const processData = (data: Item[]) => {
+        setParcoursList(data);
       };
       sendRequest(
         {
-          path: `/parcours/parcours-by-formation/${formation}`,
+          path: `/parcours/parcours-from-formation/${formation}`,
         },
         processData
       );
