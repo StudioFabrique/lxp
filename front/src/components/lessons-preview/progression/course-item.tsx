@@ -1,6 +1,6 @@
 import { ArrowDown, ArrowRight } from "lucide-react";
 import Course from "../../../utils/interfaces/course";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import LessonItem from "./lesson-item";
 import Lesson from "../../../utils/interfaces/lesson";
@@ -8,7 +8,7 @@ import Lesson from "../../../utils/interfaces/lesson";
 type CourseItemProps = {
   course: Course;
   selectedLesson: Lesson | undefined;
-  setSelectedLesson: Dispatch<SetStateAction<Lesson | undefined>>;
+  setSelectedLesson: (lesson: Lesson | undefined) => void;
 };
 
 const CourseItem = ({
