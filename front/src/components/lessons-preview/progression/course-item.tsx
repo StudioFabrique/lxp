@@ -19,7 +19,10 @@ const CourseItem = ({
   const [isCourseOpen, setCourseOpen] = useState(false);
   const courseProgress =
     course.lessons.reduce(
-      (sum, lesson) => sum + (lesson?.lessonsRead?.length || 0),
+      (sum, lesson) =>
+        sum +
+        (lesson?.lessonsRead?.filter((lesson) => lesson.finishedAt).length ||
+          0),
       0,
     ) / course.lessons.length;
 
