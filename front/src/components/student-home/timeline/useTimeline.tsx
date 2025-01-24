@@ -9,6 +9,7 @@ interface TimelineEvent extends Event {
   id: number;
   title: string;
   alternateId: number;
+  firstLessonId: number;
   start: Date;
   end: Date;
 }
@@ -85,7 +86,7 @@ const useTimeline = () => {
     const timelineEvent = event as TimelineEvent;
     if (timelineEvent.id && timelineEvent.alternateId)
       navigate(`/student/parcours/module/${timelineEvent.alternateId}`, {
-        state: { lessonId: timelineEvent.id },
+        state: { lessonId: timelineEvent.firstLessonId },
       });
   };
 
@@ -97,6 +98,7 @@ const useTimeline = () => {
         .map((course) => ({
           id: course.id,
           alternateId: course.moduleId,
+          firstLessonId: course.firstLessonId,
           title: `${course.moduleTitle} - ${course.title}`,
           start: new Date(course.minDate),
           end: new Date(course.maxDate),
