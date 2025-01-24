@@ -28,6 +28,7 @@ export default interface Course {
 export interface CourseTimeline {
   id: number;
   moduleId: number;
+  firstLessonId: number;
   title: string;
   moduleTitle: string;
   minDate: string;

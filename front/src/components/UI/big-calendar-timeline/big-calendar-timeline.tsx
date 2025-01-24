@@ -12,6 +12,7 @@ const localizer = momentLocalizer(moment);
 export interface Event {
   id: number;
   alternateId?: number;
+  firstLessonId: number;
   title: string;
   start: Date;
   end: Date;

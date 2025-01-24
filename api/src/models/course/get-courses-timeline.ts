@@ -47,6 +47,12 @@ export default async function getCoursesTimeline(
       title: true,
       dates: true,
       module: { select: { id: true, title: true } },
+      lessons: {
+        select: {
+          id: true,
+        },
+        take: 1,
+      },
     },
     where: {
       OR: [
@@ -150,6 +156,7 @@ export default async function getCoursesTimeline(
           title: course.title,
           minDate: date.minDate,
           maxDate: date.maxDate,
+          firstLessonId: course.lessons[0]?.id,
         });
       }
     }
