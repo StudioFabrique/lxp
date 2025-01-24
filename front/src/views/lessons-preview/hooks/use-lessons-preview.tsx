@@ -1,6 +1,6 @@
 import { useLocation, useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
@@ -14,7 +14,10 @@ const useLessonsPreview = () => {
   const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>();
 
   // Récupération de toutes les leçons à partir des cours du module
-  const lessons = moduleData?.courses.flatMap((course) => course.lessons) || [];
+  const lessons = useMemo(
+    () => moduleData?.courses.flatMap((course) => course.lessons) || [],
+    [moduleData?.courses],
+  );
 
   const initiateLesson = useCallback(
     (lessonId: number) => {
@@ -87,8 +90,15 @@ const useLessonsPreview = () => {
   useEffect(() => {
     const applyData = async (data: Lesson) => {
       // Marquer le début de lecture d'une leçon
-      setSelectedLesson(data);
-      if (data?.lessonsRead && data?.lessonsRead?.length === 0) {
+      const lessonInModule = lessons.find((lesson) => lesson.id === data.id);
+      setSelectedLesson({
+        ...data,
+        lessonsRead: lessonInModule?.lessonsRead || [],
+      });
+      if (
+        lessonInModule?.lessonsRead &&
+        lessonInModule.lessonsRead.length === 0
+      ) {
         await sendRequest({
           path: `/lesson/read/${data.id}`,
           method: "post",
@@ -98,7 +108,7 @@ const useLessonsPreview = () => {
 
     if (!selectedLesson?.id) return;
     sendRequest({ path: `/lesson/${selectedLesson.id}` }, applyData);
-  }, [selectedLesson?.id, sendRequest]);
+  }, [selectedLesson?.id, lessons, sendRequest]);
 
   // useEffect pour charger les données initiales du module
   useEffect(() => {

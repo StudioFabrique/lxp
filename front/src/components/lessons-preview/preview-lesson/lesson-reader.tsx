@@ -20,6 +20,11 @@ const LessonReader = ({
   const [isLessonAlreadyCompleted, setIsLessonAlreadyCompleted] =
     useState(false);
 
+  const handleClickNextLesson = () => {
+    onFinishReadLesson(isLessonAlreadyCompleted);
+    setIsLessonAlreadyCompleted(true);
+  };
+
   useEffect(() => {
     setIsLessonAlreadyCompleted(
       Boolean(
@@ -27,11 +32,6 @@ const LessonReader = ({
       ),
     );
   }, [selectedLesson.lessonsRead]);
-
-  const handleClickNextLesson = () => {
-    onFinishReadLesson(isLessonAlreadyCompleted);
-    setIsLessonAlreadyCompleted(true);
-  };
 
   return (
     <div className="flex flex-col gap-4">
