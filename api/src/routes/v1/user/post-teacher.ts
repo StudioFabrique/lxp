@@ -77,7 +77,7 @@ postTeacherRouter.post(
     .trim()
     .isString()
     .withMessage("Le numéro de téléphone doit être une chaîne de caractères.")
-    .custom(stringValidateGeneric)
+    .custom(stringValidateOptional)
     .withMessage(
       "Le numéro de téléphone contient des caractères non autorisés."
     )
