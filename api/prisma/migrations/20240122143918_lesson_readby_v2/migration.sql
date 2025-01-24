@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Lesson" ALTER COLUMN "readBy" SET DATA TYPE TEXT[];
