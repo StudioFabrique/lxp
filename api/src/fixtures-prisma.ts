@@ -270,13 +270,15 @@ async function createSqlContacts() {
     const roleId = await Role.find({ role: "teacher" }, { _id: 1 });
     const usersId = await User.find(
       { roles: { $in: roleId } },
-      { _id: 1, firstname: 1, lastname: 1 },
+      { _id: 1, firstname: 1, lastname: 1, phoneNumber: 1, email: 1 }
     );
     const contacts = usersId.map((user: any) => {
       return {
         idMdb: user._id,
         role: "formateur",
         name: `${user.firstname} ${user.lastname}`,
+        email: user.email,
+        phone: user.phoneNumber,
       };
     });
     await prisma.contact.createMany({
@@ -293,7 +295,7 @@ async function createStudents() {
     const roleId = await Role.find({ role: "student" }, { _id: 1 });
     const usersId = await User.find(
       { roles: { $in: roleId } },
-      { _id: 1, firstname: 1, lastname: 1 },
+      { _id: 1, firstname: 1, lastname: 1 }
     );
     const students = usersId.map((user: any) => {
       return { idMdb: user._id };

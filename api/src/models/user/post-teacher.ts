@@ -31,7 +31,7 @@ async function postTeacher(teacher: IUser) {
   if (newTeacher) {
     const updatedTeacher = await User.findOne(
       { _id: newTeacher._id },
-      { _id: 1, firstname: 1, lastname: 1 }
+      { _id: 1, firstname: 1, lastname: 1, phoneNumber: 1, email: 1 }
     ).populate("roles", { label: 1 });
     if (updatedTeacher) {
       const contact = await prisma.contact.create({
@@ -39,6 +39,8 @@ async function postTeacher(teacher: IUser) {
           idMdb: updatedTeacher._id,
           name: `${updatedTeacher.lastname} ${updatedTeacher.firstname}`,
           role: updatedTeacher.roles[0].label,
+          phone: updatedTeacher.phoneNumber,
+          email: updatedTeacher.email,
         },
       });
       return contact;

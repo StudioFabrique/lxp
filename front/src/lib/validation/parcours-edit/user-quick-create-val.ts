@@ -43,9 +43,8 @@ export const userQuickCreateSchema = z.object({
     })
     .optional(),
   phoneNumber: z
-    .string()
-    .regex(regexOptionalGeneric, {
+    .string({ required_error: "Le numéro de téléphone est obligatoire" })
+    .regex(regexGeneric, {
       message: "Le numéro de téléphone contient des caractères invalides",
-    })
-    .optional(),
+    }),
 });
