@@ -1,6 +1,5 @@
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import Lesson from "../../../utils/interfaces/lesson";
-import useHttp from "../../../hooks/use-http";
 
 type LessonItemProps = {
   lesson: Lesson;
@@ -14,10 +13,10 @@ const LessonItem = ({
   selectedLesson,
   setSelectedLesson,
 }: LessonItemProps) => {
-  const { sendRequest } = useHttp();
   // Vérifie si cette leçon est actuellement sélectionnée
   const isLessonSelected = selectedLesson?.id === lesson.id;
 
+  // Vérifie si cette leçon a déjà été lue entièrement et finie
   const isLessonRead =
     lesson.lessonsRead &&
     lesson.lessonsRead?.some((lessonRead) => lessonRead.finishedAt);
@@ -25,8 +24,6 @@ const LessonItem = ({
   // Gestionnaire pour commencer/arrêter la lecture d'une leçon
   const handleBeginReadLesson = () => {
     setSelectedLesson(isLessonSelected ? undefined : lesson);
-    // Envoie une requête pour marquer la leçon comme lue
-    sendRequest({ path: `/lesson/read/${lesson.id}`, method: "post" });
   };
 
   return (

@@ -85,13 +85,11 @@ const useLessonsPreview = () => {
 
   // useEffect pour charger les détails d'une leçon sélectionnée
   useEffect(() => {
-    const applyData = (data: Lesson) => {
+    const applyData = async (data: Lesson) => {
       // Marquer le début de lecture d'une leçon
-      if (data.lessonsRead) {
-        setSelectedLesson({ ...data });
-      }
+      setSelectedLesson(data);
       if (data?.lessonsRead && data?.lessonsRead?.length === 0) {
-        sendRequest({
+        await sendRequest({
           path: `/lesson/read/${data.id}`,
           method: "post",
         });
