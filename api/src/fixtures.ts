@@ -61,6 +61,7 @@ async function createUser() {
     postCode: "64000",
     city: "pau",
     email: "admin@studio.eco",
+    phoneNumber: "06 06 06 06 06",
     nickname: "studio",
     password: hash,
     roles: [new Object(roleAdmin!._id), new Object(roleInterfaceAdmin!._id)],
@@ -80,6 +81,7 @@ async function createUser() {
     postCode: "64000",
     city: "pau",
     email: "formateur@studio.eco",
+    phoneNumber: "06 06 06 06 06",
     password: hash,
     roles: [
       new Object(roleTeacher!._id),
@@ -97,6 +99,7 @@ async function createUser() {
     postCode: "64000",
     city: "pau",
     email: "formateur2@studio.eco",
+    phoneNumber: "06 06 06 06 06",
     password: hash,
     roles: [new Object(roleTeacher!._id)],
     isActive: true,
@@ -117,6 +120,7 @@ async function createUser() {
     postCode: "64000",
     city: "pau",
     email: "apprenant@studio.eco",
+    phoneNumber: "06 06 06 06 06",
     password: hash,
     roles: [
       new Object(roleStudent!._id),
@@ -133,6 +137,7 @@ async function createUser() {
     postCode: "64000",
     city: "pzu",
     email: "rssi@studio.eco",
+    phoneNumber: "06 06 06 06 06",
     password: hash,
     roles: [
       new Object(roleStudent!._id),
@@ -157,7 +162,7 @@ async function createUser() {
   const infosIds = newInfos.map((item) => item._id);
   await User.findOneAndUpdate(
     { _id: createdStudent._id },
-    { connectionInfos: infosIds },
+    { connectionInfos: infosIds }
   );
   robotIndex++;
 }
@@ -179,6 +184,7 @@ async function createManyAdmins() {
       lastname: lastnames[i].toLowerCase(),
       email: createMail(firstname, lastnames[i], robotIndex).toLowerCase(),
       password: hash,
+      phoneNumber: "06 06 06 06 06",
       address: addresses[i],
       postCode,
       city: cityName,
@@ -212,6 +218,7 @@ async function createManyTeachers() {
       address: addresses[i],
       postCode,
       city: cityName,
+      phoneNumber: "06 06 06 06 06",
       roles: [new Object(role!._id), new Object(roleInterface!._id)],
       isActive: true,
       //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
@@ -242,6 +249,7 @@ async function createManyStudents() {
       address: addresses[i] || addresses[i - 50],
       postCode,
       city: cityName,
+      phoneNumber: "06 06 06 06 06",
       roles: [new Object(role!._id), new Object(roleInterface!._id)],
       isActive: true,
       //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
