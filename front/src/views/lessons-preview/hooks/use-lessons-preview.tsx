@@ -88,22 +88,13 @@ const useLessonsPreview = () => {
 
   // useEffect pour charger les détails d'une leçon sélectionnée
   useEffect(() => {
-    const applyData = async (data: Lesson) => {
+    const applyData = (data: Lesson) => {
       // Marquer le début de lecture d'une leçon
       const lessonInModule = lessons.find((lesson) => lesson.id === data.id);
       setSelectedLesson({
         ...data,
         lessonsRead: lessonInModule?.lessonsRead || [],
       });
-      if (
-        lessonInModule?.lessonsRead &&
-        lessonInModule.lessonsRead.length === 0
-      ) {
-        await sendRequest({
-          path: `/lesson/read/${data.id}`,
-          method: "post",
-        });
-      }
     };
 
     if (!selectedLesson?.id) return;
@@ -115,11 +106,12 @@ const useLessonsPreview = () => {
     const applyData = ({ data }: { data: Module }) => {
       setModuleData(data);
       if (stateFromUrl?.lessonId) {
+        // selectionner la leçon selectionnée depuis le state de l'url
         const lessonToSelect = data.courses
           .flatMap((course) => course.lessons)
-          .find((lesson) => lesson.id === stateFromUrl.lessonId);
+          .find((lesson) => lesson.id === stateFromUrl?.lessonId);
         if (lessonToSelect) {
-          handleLessonSelection(lessonToSelect); // Utiliser la nouvelle fonction
+          handleLessonSelection(lessonToSelect);
         }
       }
     };

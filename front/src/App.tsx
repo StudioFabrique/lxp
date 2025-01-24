@@ -11,23 +11,23 @@ import { ThemeProvider } from "./store/theme-context";
 import ContextProvider from "./store/context.store";
 
 const StudentLayout = lazy(
-  async () => await import("./views/student/student-layout.component")
+  async () => await import("./views/student/student-layout.component"),
 );
 
 const AdminLayout = lazy(
-  async () => await import("./views/admin/admin-layout.component")
+  async () => await import("./views/admin/admin-layout.component"),
 );
 
 const RegisterHome = lazy(
-  async () => await import("./views/register/register-home")
+  async () => await import("./views/register/register-home"),
 );
 
 const ResetPasswordHome = lazy(
-  async () => await import("./views/reset-password/reset-password-home")
+  async () => await import("./views/reset-password/reset-password-home"),
 );
 
 const ResetPasswordUpdate = lazy(
-  async () => await import("./views/reset-password/reset-password-update")
+  async () => await import("./views/reset-password/reset-password-update"),
 );
 
 const router = createBrowserRouter([
