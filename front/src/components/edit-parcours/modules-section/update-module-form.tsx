@@ -45,16 +45,16 @@ const UpdateModuleForm = React.forwardRef<
   const currentModule = props.currentModule;
 
   const listeContacts = useSelector(
-    (state: any) => state.parcoursContacts.currentContacts,
+    (state: any) => state.parcoursContacts.currentContacts
   ) as Contact[];
   const listeSkills = useSelector(
-    (state: any) => state.parcoursSkills.skills,
+    (state: any) => state.parcoursSkills.skills
   ) as Skill[];
   const [teachers, setTeachers] = useState<Contact[] | null>(
-    currentModule?.contacts ?? [],
+    currentModule?.contacts ?? []
   );
   const [skills, setSkills] = useState<Skill[] | null>(
-    currentModule?.bonusSkills ?? [],
+    currentModule?.bonusSkills ?? []
   );
 
   // prop passée aux différents champs du formulaire
@@ -140,12 +140,11 @@ const UpdateModuleForm = React.forwardRef<
       contacts: teachers?.map((teacher) => teacher.id),
       bonusSkills: skills?.map((skill) => skill.id),
     };
-    console.log({ module });
+
+    console.log(JSON.stringify(module));
 
     formData.append("module", JSON.stringify(module));
     if (image) {
-      console.log("image spotted !");
-
       formData.append("image", image);
     }
     props.onSubmit(formData);

@@ -12,6 +12,9 @@ import {
   getModulesFromParcoursValidator,
   moduleIdFromBodyValidator,
   moduleIdValidator,
+  postModuleFromScratchValidator,
+  putModuleParcoursValidator,
+  putModuleValidator,
   updateDatesModulesValidator,
   updateDurationValidator,
 } from "./module-validators";
@@ -146,6 +149,7 @@ modules.put(
   checkPermissions("module"),
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
+  putModuleParcoursValidator,
   httpPutModuleParcours
 );
 modules.put(
@@ -153,6 +157,7 @@ modules.put(
   checkPermissions("module"),
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
+  putModuleValidator,
   httpPutModule
 );
 // retourne la liste des modules assocués à un parcours
@@ -187,9 +192,10 @@ modules.get(
 
 modules.post(
   "/new-module",
-  checkPermissions("formation"),
+  checkPermissions("module"),
   upload.single("image"),
   jsonParser,
+  postModuleFromScratchValidator,
   httpPostModuleFromScratch
 );
 
