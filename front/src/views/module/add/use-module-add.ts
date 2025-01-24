@@ -107,6 +107,8 @@ const useModuleAdd = () => {
         contactsIds: currentContacts.map((item) => item.id),
         bonusSkillsIds: currentSkills.map((item) => item.id),
       };
+      console.log(JSON.stringify(updatedModule));
+
       formData.append("module", JSON.stringify(updatedModule));
     } else formData.append("module", JSON.stringify(module));
     if (file) formData.append("image", file);
