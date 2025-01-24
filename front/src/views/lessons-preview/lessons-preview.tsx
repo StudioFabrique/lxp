@@ -1,5 +1,4 @@
 import Progression from "../../components/lessons-preview/progression/progression";
-import Loader from "../../components/UI/loader";
 import ProgressBar from "../../components/lessons-preview/progress-bar";
 import LessonReader from "../../components/lessons-preview/preview-lesson/lesson-reader";
 import Lesson from "../../utils/interfaces/lesson";
@@ -7,22 +6,18 @@ import useCoursesPreview from "./hooks/use-lessons-preview";
 import LessonsPreviewHeader from "../../components/lessons-preview/lessons-preview-header";
 import ModuleData from "../../components/lessons-preview/module-data/module-data";
 import LessonsPreviewWrapper from "../../components/lessons-preview/lessons-preview-wrapper";
+import LessonsPreviewSkeleton from "./lessons-preview-skeleton";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
  */
 const LessonsPreview = () => {
   // custom hook
-  const {
-    moduleData,
-    // isLoading,
-    onFinishReadLesson,
-    selectedLesson,
-    setSelectedLesson,
-  } = useCoursesPreview();
+  const { moduleData, onFinishReadLesson, selectedLesson, setSelectedLesson } =
+    useCoursesPreview();
 
   return !moduleData ? (
-    <Loader />
+    <LessonsPreviewSkeleton />
   ) : (
     <LessonsPreviewWrapper selectedLesson={selectedLesson}>
       {[

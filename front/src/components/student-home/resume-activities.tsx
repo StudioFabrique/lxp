@@ -54,7 +54,7 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                               src={skill.badge}
                               alt="illustration badge"
                             />
-                          )
+                          ),
                       )}
                   </div>
                 </div>
