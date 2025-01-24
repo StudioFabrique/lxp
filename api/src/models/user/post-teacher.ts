@@ -39,7 +39,10 @@ async function postTeacher(teacher: IUser) {
           idMdb: updatedTeacher._id,
           name: `${updatedTeacher.lastname} ${updatedTeacher.firstname}`,
           role: updatedTeacher.roles[0].label,
-          phone: updatedTeacher.phoneNumber,
+          phone:
+            updatedTeacher.phoneNumber && updatedTeacher.phoneNumber?.length > 0
+              ? updatedTeacher.phoneNumber
+              : "Non Renseigné",
           email: updatedTeacher.email,
         },
       });
