@@ -18,6 +18,10 @@ const links = [
     label: "Créer un parcours",
   },
   {
+    path: "/admin/module/add",
+    label: "Créer un module",
+  },
+  {
     path: "/admin/course/add",
     label: "Créer un cours",
   },
