@@ -75,7 +75,7 @@ const UserHome = () => {
 
   const handleGroupRolesChange = async (updatedRoles: Array<Role>) => {
     const selectedDataList = dataList.filter(
-      (user: any) => user.isSelected === true,
+      (user: any) => user.isSelected === true
     );
     const updatedDataList = Array<string>();
 
@@ -112,7 +112,7 @@ const UserHome = () => {
           method: "put",
           body: { usersToUpdate: updatedDataList, rolesId: updatedRolesIds },
         },
-        applyData,
+        applyData
       );
     }
   };
@@ -147,7 +147,7 @@ const UserHome = () => {
       {
         path: "/user/stats",
       },
-      applyData,
+      applyData
     );
   }, [sendRequest]);
 
@@ -167,7 +167,7 @@ const UserHome = () => {
         method: "put",
         body: { usersIds, status: value },
       },
-      applyData,
+      applyData
     );
   };
 
@@ -184,7 +184,7 @@ const UserHome = () => {
 
         const dataToChange = dataList.filter((user) => user._id !== id);
         setDataList(dataToChange);
-      },
+      }
     );
   };
 

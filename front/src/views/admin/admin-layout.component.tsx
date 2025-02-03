@@ -4,12 +4,10 @@ import { Outlet } from "react-router-dom";
 
 // Import des composants et hooks personnalisés
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
-import useAuth from "../../hooks/use-auth";
 
 // Composant de mise en page pour l'espace administrateur
 const AdminLayout = () => {
   // Protection de la route avec le hook d'authentification
-  useAuth("admin");
 
   return (
     // Conteneur principal
