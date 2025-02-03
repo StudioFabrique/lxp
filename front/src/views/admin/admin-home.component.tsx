@@ -48,6 +48,8 @@ const AdminHome = () => {
   const { sendRequest, isLoading } = useHttp();
   const [parcours, setParcours] = useState<Parcours[] | null>(null);
 
+  console.log("home admin refreshing");
+
   // retourne les deux parcours auquel l'utilisateur est associé en tant que contact
   const getParcours = useCallback(() => {
     const applyData = (data: {
