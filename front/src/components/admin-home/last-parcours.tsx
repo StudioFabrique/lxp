@@ -11,7 +11,6 @@ export default function LastParcours() {
 
   const getParcours = useCallback(() => {
     const applyData = (data: ParcoursSummary[]) => {
-      console.log(data);
       setParcours(data);
     };
     sendRequest(
