@@ -35,8 +35,8 @@ const RatingPanel = ({
               onClick={() => handleStarClick(rating)}
               className={`cursor-pointer transition-all duration-200 hover:scale-110 ${
                 rating <= selectedStars
-                  ? "fill-yellow-400 scale-105"
-                  : "stroke-gray-400"
+                  ? "fill-yellow-400 scale-105 stroke-1"
+                  : "stroke-gray-400 stroke-1 hover:stroke-1"
               }`}
             />
           ))}
