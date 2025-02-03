@@ -11,13 +11,12 @@ import Login from "../../components/login/login.component";
 
 // Variables globales pour le state initial et le socket
 let initialState = true;
-let socket: Socket;
+let socket: Socket | undefined;
 
 // Composant principal de mise en page racine
 const RootLayout = () => {
   // Récupération du contexte et des hooks de navigation
-  const { user, fetchRoles, initTheme, isLoggedIn, handshake } =
-    useContext(Context);
+  const { user, initTheme, isLoggedIn, handshake } = useContext(Context);
   const nav = useNavigate();
   const location = useLocation();
 
@@ -40,9 +39,9 @@ const RootLayout = () => {
   // Effet pour la redirection et les rôles
   useEffect(() => {
     if (!isLoggedIn || !userRole) return;
-    fetchRoles(userRole);
+    //fetchRoles(userRole);
     handleRedirection();
-  }, [isLoggedIn, userRole, fetchRoles, handleRedirection]);
+  }, [isLoggedIn, userRole, handleRedirection]);
 
   // Effet pour l'initialisation
   useEffect(() => {
@@ -55,7 +54,7 @@ const RootLayout = () => {
 
   // Effet pour déconnecter le socket quand l'utilisateur se déconnecte
   useEffect(() => {
-    if (!isLoggedIn && socket !== undefined) {
+    if (!isLoggedIn && socket) {
       socket.disconnect();
     }
   }, [isLoggedIn, nav]);
