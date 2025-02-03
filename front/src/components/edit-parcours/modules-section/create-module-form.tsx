@@ -8,7 +8,7 @@ import Field from "../../UI/forms/field";
 import MemoizedImageFileUpload from "../../UI/image-file-upload/image-file-upload";
 import { headerImageMaxSize } from "../../../config/images-sizes";
 import { compressImage } from "../../../helpers/compress-image";
-import { moduleCreateSchema } from "../../../lib/validation/module-create-schema";
+import { moduleCreateSchema } from "../../../lib/validation/parcours-edit/module-create-schema";
 import { validationErrors } from "../../../helpers/validate";
 import FieldArea from "../../UI/forms/field-area";
 import CustomError from "../../../utils/interfaces/custom-error";

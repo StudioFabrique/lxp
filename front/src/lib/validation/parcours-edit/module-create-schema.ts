@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { regexGeneric, regexOptionalGeneric } from "../../utils/constantes";
+import { regexGeneric, regexOptionalGeneric } from "../../../utils/constantes";
 
 export const moduleCreateSchema = z.object({
   title: z
@@ -13,7 +13,5 @@ export const moduleCreateSchema = z.object({
       message: "La description du module contient des caractères invalides",
     })
     .optional(),
-  duration: z
-    .number({ required_error: "La durée du module est requise" })
-    .min(1, { message: "La durée du module doit être supérieure à 0" }),
 });
+
