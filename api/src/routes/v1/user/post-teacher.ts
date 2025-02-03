@@ -9,7 +9,7 @@ import {
 } from "../../../helpers/custom-validators";
 import checkPermissions from "../../../middleware/check-permissions";
 
-const postTeacherRouter = express.Router();
+const  postTeacherRouter = express.Router();
 
 postTeacherRouter.post(
   "/",

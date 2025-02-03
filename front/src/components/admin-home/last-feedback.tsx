@@ -47,7 +47,6 @@ export default function LastFeedback() {
         setFeedbacks((prevState) => [...prevState, feedback]);
       });
       mySocket.on("response-feedback-reviewed", (feedbackId: string) => {
-        console.log("notif received");
         setFeedbacks((prevState) =>
           prevState.map((feedback) => {
             if (feedback._id === feedbackId) {
