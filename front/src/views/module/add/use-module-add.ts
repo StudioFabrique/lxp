@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Contact from "../../../utils/interfaces/contact";
 import Skill from "../../../utils/interfaces/skill";
-import { moduleCreateSchema } from "../../../lib/validation/module-create-schema";
+import { moduleCreateSchema } from "../../../lib/validation/parcours-edit/module-create-schema";
 import { ZodError } from "zod";
 import useForm from "../../../components/UI/forms/hooks/use-form";
 import { validationErrors } from "../../../helpers/validate";
