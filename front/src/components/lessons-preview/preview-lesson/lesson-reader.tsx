@@ -45,12 +45,14 @@ const LessonReader = ({
       )}
 
       {/* Boutons d'évaluation et de navigation */}
-      <div className="flex justify-end gap-5">
-        {isLessonAlreadyCompleted &&
-        selectedLesson.activities &&
-        selectedLesson.activities?.length > 0 ? (
-          <EvaluateContentButton note={1} sendEvaluation={() => {}} />
-        ) : null}
+      <div className="w-full flex justify-end">
+        <div className="w-full flex justify-center">
+          {isLessonAlreadyCompleted &&
+          selectedLesson.activities &&
+          selectedLesson.activities?.length > 0 ? (
+            <EvaluateContentButton note={1} sendEvaluation={() => {}} />
+          ) : null}
+        </div>
         <button
           className="btn btn-primary text-white self-end"
           onClick={handleClickNextLesson}

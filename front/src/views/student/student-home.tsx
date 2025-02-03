@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../store/context.store";
 import UserTopBar from "../../components/UI/user-top-bar/user-top-bar";
-import Notifications from "../../components/student-home/notifications";
 import ResumeActivity from "../../components/student-home/resume-activity";
 import ResumeActivities from "../../components/student-home/resume-activities";
 import useHttp from "../../hooks/use-http";
@@ -40,7 +39,7 @@ const StudentHome = () => {
       </div>
       <div className="grid gap-10 xl:grid-cols-4 xl:gap-0">
         <div className="flex flex-col gap-5 xl:col-span-3">
-          <Notifications />
+          {/* <Notifications /> */}
           {lastLessons && lastLessons?.length > 0 ? (
             <>
               <ResumeActivity lastLesson={lastLessons[0]} />
