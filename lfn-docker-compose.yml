@@ -74,3 +74,4 @@ services:
       - FROM=${FROM}
       - REGISTER_SECRET=${REGISTER_SECRET}
       - FRONT_URL=${FRONT_URL}
+      - PORT=${PORT}
