@@ -67,8 +67,8 @@ const BigCalendarTimeline = ({
             <FadeWrapper>
               <div className="card w-full h-full">
                 <div className="card-body p-2 flex-row items-center gap-3">
-                  <div className="w-3 h-3 bg-primary rounded-full animate-pulse shadow-md flex-shrink-0" />
-                  <h3 className="card-title text-secondary text-sm truncate m-0">
+                  <div className="w-3 h-3 bg-secondary rounded-full animate-pulse shadow-md flex-shrink-0" />
+                  <h3 className="card-title text-primary text-sm truncate m-0">
                     {event.title}
                   </h3>
                 </div>
