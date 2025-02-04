@@ -80,7 +80,7 @@ pipeline {
 
         stage('Docker Deploy to dev') {
             steps {
-                withCredentials([file(credentialsId: 'lxp-env-file', variable: 'ENV_FILE')]) {
+                withCredentials([file(credentialsId: '.env-infa', variable: 'ENV_FILE')]) {
                     script {
                         // Read the contents of the environment file
                         def envContent = readFile("${ENV_FILE}")
@@ -91,19 +91,19 @@ pipeline {
                 script {
                     withDockerRegistry(credentialsId: 'docker-registry', toolName: 'docker') {
                         // Arrêter tous les conteneurs et s'assurer qu'ils sont bien arrêtés
-                        sh 'docker compose down'
+                        sh 'docker compose -f infa-docker-compose.yml down'
 
                         // Ensuite, supprimer le réseau
-                        sh 'docker network rm lxp_network || true'
+                        sh 'docker network rm lxp_infa || true'
 
                         // Supprimer l'image si elle existe
                         sh 'docker image rm studio/lxp:latest || true'
 
                         // Créer un nouveau réseau
-                        sh 'docker network create lxp_network || true'
+                        sh 'docker network create lxp_infa || true'
 
                         // Démarrer les services
-                        sh 'docker compose up -d'
+                        sh 'docker compose -f infa-docker-compose.yml up -d'
 
                         // Nettoyer le système
                         sh 'docker system prune -f --all'
