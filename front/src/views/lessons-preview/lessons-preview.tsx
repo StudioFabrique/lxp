@@ -2,7 +2,7 @@ import Progression from "../../components/lessons-preview/progression/progressio
 import ProgressBar from "../../components/lessons-preview/progress-bar";
 import LessonReader from "../../components/lessons-preview/preview-lesson/lesson-reader";
 import Lesson from "../../utils/interfaces/lesson";
-import useCoursesPreview from "./hooks/use-lessons-preview";
+import useLessonsPreview from "./hooks/use-lessons-preview";
 import LessonsPreviewHeader from "../../components/lessons-preview/lessons-preview-header";
 import ModuleData from "../../components/lessons-preview/module-data/module-data";
 import LessonsPreviewWrapper from "../../components/lessons-preview/lessons-preview-wrapper";
@@ -14,7 +14,7 @@ import LessonsPreviewSkeleton from "./lessons-preview-skeleton";
 const LessonsPreview = () => {
   // custom hook
   const { moduleData, onFinishReadLesson, selectedLesson, setSelectedLesson } =
-    useCoursesPreview();
+    useLessonsPreview();
 
   return !moduleData ? (
     <LessonsPreviewSkeleton />

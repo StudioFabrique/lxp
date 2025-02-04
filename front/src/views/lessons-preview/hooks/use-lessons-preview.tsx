@@ -56,6 +56,12 @@ const useLessonsPreview = () => {
 
   // Handler pour marquer une leçon comme terminée
   const handleFinishReadLesson = (showNextLesson: boolean) => {
+    // Afficher directement la prochaine leçon si showNextLesson est true
+    if (showNextLesson) {
+      switchToNextLesson();
+      return;
+    }
+
     // Fonction de mise à jour des données du module
     const applyData = (data: { data: LessonRead }) => {
       setModuleData((prev) => {
@@ -65,19 +71,17 @@ const useLessonsPreview = () => {
           courses: prev.courses.map((course) => ({
             ...course,
             lessons: course.lessons.map((lesson) => {
-              if (
-                lesson.id === selectedLesson?.id &&
-                lesson.lessonsRead?.length === 0
-              ) {
-                return { ...lesson, lessonsRead: [data.data] };
+              if (lesson.id === selectedLesson?.id) {
+                return {
+                  ...lesson,
+                  lessonsRead: [...(lesson.lessonsRead || []), data.data],
+                };
               }
               return lesson;
             }),
           })),
         };
       });
-      // Afficher la prochaine leçon si showNextLesson est true
-      showNextLesson && switchToNextLesson();
     };
 
     sendRequest(
