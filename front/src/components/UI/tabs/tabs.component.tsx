@@ -1,5 +1,4 @@
 import { FC } from "react";
-import toTitleCase from "../../../utils/toTitleCase";
 import Role from "../../../utils/interfaces/role";
 import Can from "../can/can.component";
 
@@ -13,12 +12,12 @@ const Tabs: FC<{
       <li
         className={
           role.role === item.role
-            ? "tab tab-lifted tab-active font-bold"
-            : "tab tab-lifted"
+            ? "tab tab-lifted tab-active font-bold capitalize"
+            : "tab tab-lifted capitalize"
         }
         onClick={() => onRoleSwitch(item)}
       >
-        {`${toTitleCase(item.label)}s`}
+        {item.label}
       </li>
     );
   };
