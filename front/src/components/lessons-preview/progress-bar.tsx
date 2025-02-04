@@ -28,7 +28,7 @@ const ProgressBar = ({ courses }: ProgressBarProps) => {
               <span
                 key={lesson.id}
                 className={`h-[70%] w-full  ${
-                  lesson.lessonsRead && lesson.lessonsRead?.length > 0
+                  lesson.lessonsRead?.some((read) => Boolean(read.finishedAt))
                     ? "bg-primary"
                     : "bg-primary/20"
                 }`}

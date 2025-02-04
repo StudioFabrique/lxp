@@ -68,9 +68,6 @@ const BigCalendarTimeline = ({
               <div className="flex items-center gap-2 h-full w-full bg-gradient-to-r from-primary/20 to-secondary/20 px-3 rounded-lg">
                 <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                 <h3 className="font-bold text-base truncate">{event.title}</h3>
-                <span className="text-sm font-medium">
-                  {moment(event.start).format("HH:mm")}
-                </span>
               </div>
             </FadeWrapper>
           );
