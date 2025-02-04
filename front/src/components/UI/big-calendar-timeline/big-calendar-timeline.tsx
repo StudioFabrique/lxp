@@ -65,9 +65,13 @@ const BigCalendarTimeline = ({
         event: ({ event }) => {
           return (
             <FadeWrapper>
-              <div className="flex items-center gap-2 h-full w-full bg-gradient-to-r from-primary/20 to-secondary/20 px-3 rounded-lg">
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                <h3 className="font-bold text-base truncate">{event.title}</h3>
+              <div className="card w-full h-full">
+                <div className="card-body p-2 flex-row items-center gap-3">
+                  <div className="w-3 h-3 bg-primary rounded-full animate-pulse shadow-md flex-shrink-0" />
+                  <h3 className="card-title text-secondary text-sm truncate m-0">
+                    {event.title}
+                  </h3>
+                </div>
               </div>
             </FadeWrapper>
           );
@@ -83,22 +87,21 @@ const BigCalendarTimeline = ({
             .replace(/^\w/, (c) => c.toUpperCase()),
         dayRangeHeaderFormat: (range) =>
           `Semaine du ${moment(range.start).format("DD MMMM")} au ${moment(range.end).format("DD MMMM")}`,
+        eventTimeRangeFormat: () => "",
       }}
       slotPropGetter={() => ({
         className: "border-base-300 text-sm font-inter p-3",
       })}
-      eventPropGetter={
-        (/*event: Event*/) => ({
-          // style: {
-          //   background: colors?.find(
-          //     (color) => color.alternateId === event.alternateId,
-          //   )?.color,
-          //   color: getDaisyuiBgThemeColor("base-100"),
-          // },
-          className:
-            "rounded-xl font-bold p-2 px-3 shadow-sm cursor-pointer transition-all duration-300 hover:-translate-y-[2px] hover:shadow-md hover:scale-[1.02] border border-gray-200",
-        })
-      }
+      eventPropGetter={() => ({
+        style: {
+          background: "white",
+          color: "inherit",
+          borderRadius: "12px",
+          border: "1px solid black",
+        },
+        className:
+          "transition-all duration-300 hover:-translate-y-1 hover:shadow-xl",
+      })}
       step={60}
       timeslots={1}
       onRangeChange={onRangeChange}
