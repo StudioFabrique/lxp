@@ -85,7 +85,7 @@ pipeline {
                         // Read the contents of the environment file
                         def envContent = readFile("${ENV_FILE}")
                         // Write the contents to .env file in the workspace
-                        writeFile file: '.env', text: envContent
+                        writeFile file: '.env-infa', text: envContent
                     }
                 }
                 script {
@@ -103,7 +103,7 @@ pipeline {
                         sh 'docker network create lxp_infa || true'
 
                         // Démarrer les services
-                        sh 'docker compose -f infa-docker-compose.yml up -d'
+                        sh 'docker compose -f infa-docker-compose.yml --env-file=.env-infa up -d'
 
                         // Nettoyer le système
                         sh 'docker system prune -f --all'
