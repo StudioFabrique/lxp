@@ -66,3 +66,17 @@
 Une fois les secrets générés il n'y a plus qu'à push la branche 'stage' du dépôt et à patienter.
 Une fois le déploiement terminé sans erreur, pour vérifier que l'application fonctionne tapez dans le terminal du VPS : docker ps
 Pour installer un jeu de données fictives tapez : docker exec -it lxp-api npm run fixtures
+
+# Migration
+
+Créer le fichier de migration :
+
+- npx prisma migrate dev --create-only --name nom_migration
+- npx prisma migrate deploy
+
+Si problème de synchronisation entre le modèle et la base de données :
+
+- npx prisma migrate resolve --applied "nom_complet_de_la_derniere_migration"
+- npx prisma migrate dev --create-only --name empty-migration
+
+- exécuter les deux commandes pour créer le fichier de migration

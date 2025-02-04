@@ -32,7 +32,7 @@ const CreateModuleForm = React.forwardRef<
   const { values, onChangeValue, errors, onValidationErrors } = props.useForm;
 
   const formationId = useSelector(
-    (state: any) => state.parcours.formation.id,
+    (state: any) => state.parcours.formation.id
   ) as number;
 
   const [image, setImage] = useState<File | null>(null);

@@ -54,6 +54,11 @@ export default async function createUser(user: IUser, roleId: string) {
           idMdb: createdUser._id,
           name: `${createdUser.lastname} ${createdUser.firstname}`,
           role: firstRole.label,
+          phone:
+            createdUser.phoneNumber && createdUser.phoneNumber?.length > 0
+              ? createdUser.phoneNumber
+              : "Non Renseigné",
+          email: createdUser.email,
         },
       });
     }
