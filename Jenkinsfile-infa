@@ -80,7 +80,7 @@ pipeline {
 
         stage('Docker Deploy to dev') {
             steps {
-                withCredentials([file(credentialsId: 'env-infa', variable: 'ENV_FILE')]) {
+                withCredentials([file(credentialsId: 'infa-env', variable: 'ENV_FILE')]) {
                     script {
                         // Read the contents of the environment file
                         def envContent = readFile("${ENV_FILE}")
