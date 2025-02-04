@@ -1,4 +1,5 @@
 import { Star } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 type RatingPanelProps = {
   selectedStars: number;
@@ -23,8 +24,50 @@ const RatingPanel = ({
   note,
   onClose,
 }: RatingPanelProps) => {
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // Surveillance des événements suivants :
+  // Action de l'utilisateur :
+  // - Scroll
+  // - Click à l'exterieur du composant
+  // - Appuie sur la touche "Escape" (échap en clavier français)
+  // Ensuite, fermeture automatique du composant
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        panelRef.current &&
+        !panelRef.current.contains(event.target as Node)
+      ) {
+        onClose();
+      }
+    };
+
+    const handleScroll = () => {
+      onClose();
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("scroll", handleScroll);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [onClose]);
+
   return (
-    <div className="absolute top-0 transform -translate-y-full card w-64 bg-white border-2 border-primary shadow-2xl z-50 rounded-lg">
+    <div
+      ref={panelRef}
+      className="absolute left-[-30%] top-0 transform -translate-y-full card w-64 bg-white border-[1px] border-primary shadow-2xl z-50 rounded-lg"
+    >
       <div className="card-body p-6">
         <h3 className="text-lg font-semibold mb-2">Votre évaluation</h3>
         <div className="flex gap-2 my-3 justify-center">
