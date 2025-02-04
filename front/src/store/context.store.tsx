@@ -174,7 +174,7 @@ const ContextProvider: FC<Props> = (props) => {
         const newRole = {
           _id: "0",
           role: "everything",
-          label: "Tou",
+          label: "Tous les rôles",
           rank: role.rank,
           protection: 0,
         };
