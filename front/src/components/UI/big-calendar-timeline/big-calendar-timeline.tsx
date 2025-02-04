@@ -4,8 +4,8 @@ import { Calendar, momentLocalizer, View } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import CalendarCustomToolbar from "./calendar-custom-toolbar";
 import { adjustScheduleToCurrentWeek } from "../../../utils/calendar-utils";
-import getDaisyuiBgThemeColor from "../../../utils/get-daisy-ui-theme-color";
 import { Dispatch, SetStateAction } from "react";
+import FadeWrapper from "../fade-wrapper/fade-wrapper";
 
 moment.locale("fr");
 const localizer = momentLocalizer(moment);
@@ -13,21 +13,22 @@ const localizer = momentLocalizer(moment);
 export interface Event {
   id: number;
   alternateId?: number;
+  firstLessonId: number;
   title: string;
   start: Date;
   end: Date;
   link?: string;
 }
 
-interface ColorEvent {
-  alternateId: number;
-  gradient: string;
-}
+// interface ColorEvent {
+//   alternateId: number;
+//   color: string;
+// }
 
 type BigCalendarTimelineProps = {
   data: Event[];
   view: View;
-  colors?: ColorEvent[];
+  // colors?: ColorEvent[];
   onSetView: Dispatch<SetStateAction<View>>;
   onRangeChange: (
     range: { start: Date; end: Date } | Date[],
@@ -39,7 +40,7 @@ type BigCalendarTimelineProps = {
 const BigCalendarTimeline = ({
   data,
   view,
-  colors,
+  // colors,
   onSetView,
   onRangeChange,
   onDoubleClickEvent,
@@ -56,11 +57,25 @@ const BigCalendarTimeline = ({
       views={["month", "work_week", "day"]}
       view={view}
       onView={onSetView}
-      className="h-[98%] bg-base-100 rounded-2xl shadow-2xl p-6 border-2 border-base-300 text-base-content"
+      className="rbc-calendar bg-base-100 rounded-2xl shadow-xl p-6 border-2 border-base-content/20 text-base-content hover:border-base-content/30 transition-colors"
       min={new Date(2025, 1, 0, 8, 0, 0)}
       max={new Date(2025, 1, 0, 18, 0, 0)}
       components={{
         toolbar: CalendarCustomToolbar,
+        event: ({ event }) => {
+          return (
+            <FadeWrapper>
+              <div className="card w-full h-full">
+                <div className="card-body p-2 flex-row items-center gap-3">
+                  <div className="w-3 h-3 bg-secondary rounded-full animate-pulse shadow-md flex-shrink-0" />
+                  <h3 className="card-title text-primary text-sm truncate m-0">
+                    {event.title}
+                  </h3>
+                </div>
+              </div>
+            </FadeWrapper>
+          );
+        },
       }}
       style={{ height: view === "month" ? 600 : "" }}
       formats={{
@@ -72,19 +87,20 @@ const BigCalendarTimeline = ({
             .replace(/^\w/, (c) => c.toUpperCase()),
         dayRangeHeaderFormat: (range) =>
           `Semaine du ${moment(range.start).format("DD MMMM")} au ${moment(range.end).format("DD MMMM")}`,
+        eventTimeRangeFormat: () => "",
       }}
       slotPropGetter={() => ({
         className: "border-base-300 text-sm font-inter p-3",
       })}
-      eventPropGetter={(event: Event) => ({
+      eventPropGetter={() => ({
         style: {
-          background: colors?.find(
-            (color) => color.alternateId === event.alternateId,
-          )?.gradient,
-          color: getDaisyuiBgThemeColor("base-100"),
+          background: "white",
+          color: "inherit",
+          borderRadius: "12px",
+          border: "1px solid black",
         },
         className:
-          "rounded-xl font-bold p-2 px-3 shadow-sm cursor-pointer transition-all duration-300 hover:-translate-y-[2px] hover:shadow-md hover:scale-[1.02] border border-gray-200",
+          "transition-all duration-300 hover:-translate-y-1 hover:shadow-xl",
       })}
       step={60}
       timeslots={1}

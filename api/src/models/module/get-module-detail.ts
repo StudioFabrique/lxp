@@ -4,7 +4,6 @@ export default async function getModuleDetail(
   moduleId: number,
   userMongoId: string,
 ) {
-  console.log(moduleId);
   const existingModule = await prisma.module.findFirst({
     where: { id: moduleId },
     select: {
@@ -23,7 +22,13 @@ export default async function getModuleDetail(
           id: true,
           title: true,
           description: true,
-          lessons: { include: { lessonsRead: { include: { student: true } } } },
+          lessons: {
+            include: {
+              lessonsRead: {
+                where: { student: { idMdb: userMongoId } },
+              },
+            },
+          },
         },
       },
     },
@@ -33,19 +38,6 @@ export default async function getModuleDetail(
     const error: any = { message: "Le module n'existe pas.", statusCode: 404 };
     throw error;
   }
-
-  const courses = existingModule.courses.map((course) => {
-    course.lessons = course.lessons.map((lesson) => {
-      lesson.lessonsRead = lesson.lessonsRead.filter(
-        (lessonRead) =>
-          lessonRead.student.idMdb === userMongoId && lessonRead.finishedAt,
-      );
-
-      return lesson;
-    });
-
-    return course;
-  });
 
   const result = {
     id: existingModule.id,
@@ -58,7 +50,7 @@ export default async function getModuleDetail(
     parcours: existingModule.parcours[0].parcours.title,
     bonusSkills: existingModule.bonusSkills.map((item) => item.bonusSkill),
     contacts: existingModule.contacts.map((item) => item.contact),
-    courses: courses,
+    courses: existingModule.courses,
   };
 
   return result;

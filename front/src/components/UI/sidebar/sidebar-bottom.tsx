@@ -1,5 +1,5 @@
 import { LogOutIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ModeToggle from "../mode-toggle";
 import { useContext } from "react";
 import { Context } from "../../../store/context.store";
@@ -7,11 +7,16 @@ import imageProfileReplacement from "../../../config/image-profile-replacement";
 
 type SharedSideBarProps = {
   interfaceType: string;
-  onLogout: () => void;
 };
 
-const SidebarBottom = ({ interfaceType, onLogout }: SharedSideBarProps) => {
-  const { user } = useContext(Context);
+const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
+  const { user, logout } = useContext(Context);
+  const navigate = useNavigate();
+
+  const handleClickLogout = () => {
+    logout();
+    navigate("/", { replace: true });
+  };
 
   return (
     <ul className="flex flex-col gap-4 items-center">
@@ -48,7 +53,7 @@ const SidebarBottom = ({ interfaceType, onLogout }: SharedSideBarProps) => {
         <div
           className="tooltip tooltip-right w-6 h-6 cursor-pointer"
           data-tip="Déconnexion"
-          onClick={() => onLogout()}
+          onClick={handleClickLogout}
         >
           <LogOutIcon />
         </div>

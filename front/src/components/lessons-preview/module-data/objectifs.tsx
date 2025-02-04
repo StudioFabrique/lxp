@@ -1,5 +1,5 @@
-import Objective from "../../utils/interfaces/objective";
-import Wrapper from "../UI/wrapper/wrapper.component";
+import Objective from "../../../utils/interfaces/objective";
+import Wrapper from "../../UI/wrapper/wrapper.component";
 
 type ObjectifsProps = {
   objectives: Objective[];

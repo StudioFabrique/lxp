@@ -142,8 +142,10 @@ courseRouter.get(
       .withMessage("maxDate doit être une date de format ISO 8601")
       .custom((maxDate, { req }) => {
         const minDate = req.query?.minDate;
-        if (new Date(maxDate) <= new Date(minDate)) {
-          throw new Error("maxDate doit être plus grand que minDate");
+        if (new Date(maxDate) < new Date(minDate)) {
+          throw new Error(
+            "maxDate doit être plus grand que minDate ou égal à MinDate",
+          );
         }
         return true;
       }),

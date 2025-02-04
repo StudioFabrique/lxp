@@ -8,16 +8,16 @@ export const roleTableItems: TableListItemConfig[] = [
   {
     property: "label",
     label: "Rôle",
-    sortAllowed: true,
+    sortAllowed: false,
   },
   {
     property: "countRead",
     label: "Lire",
-    sortAllowed: true,
+    sortAllowed: false,
   },
-  { property: "countWrite", label: "Créer", sortAllowed: true },
-  { property: "countUpdate", label: "Modifier", sortAllowed: true },
-  { property: "countDelete", label: "Supprimer", sortAllowed: true },
+  { property: "countWrite", label: "Créer", sortAllowed: false },
+  { property: "countUpdate", label: "Modifier", sortAllowed: false },
+  { property: "countDelete", label: "Supprimer", sortAllowed: false },
 ];
 
 export const searchBarConfig = (
