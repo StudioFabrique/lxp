@@ -2,8 +2,8 @@ import { ListPlus } from "lucide-react";
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
 import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
 import PermissionDeleteItem from "./permission-delete-item";
-import PermissionAddItem from "./permission-add-item";
 import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
+import RemainingResourcesList from "./remaining-resources-list";
 
 type PermissionsListWithDrawerProps = {
   drawerId: string;
@@ -55,24 +55,11 @@ const PermissionsListWithDrawer = ({
               title={title}
               icon={<ListPlus className="w-5" />}
             >
-              <div className="flex flex-col gap-2 overflow-x-hidden h-[85vh]">
-                <h3 className="font-bold">Permissions disponibles</h3>
-                {remainingResources?.length ? (
-                  remainingResources.map((res) => (
-                    <PermissionAddItem
-                      key={res.name}
-                      name={res.name}
-                      fullName={res.fullName}
-                      description={res.description}
-                      isRole={res.isRole}
-                      inactive={roleProtection >= 2}
-                      onAddPermission={onAddPermission}
-                    />
-                  ))
-                ) : (
-                  <p>Aucune permissions à ajouter</p>
-                )}
-              </div>
+              <RemainingResourcesList
+                remainingResources={remainingResources}
+                roleProtection={roleProtection}
+                onAddPermission={onAddPermission}
+              />
             </RightSideDrawer>
           </div>
         </div>

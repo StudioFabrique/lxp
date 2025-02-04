@@ -1,6 +1,6 @@
 import { ArrowDown, ArrowRight } from "lucide-react";
 import Course from "../../../utils/interfaces/course";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import LessonItem from "./lesson-item";
 import Lesson from "../../../utils/interfaces/lesson";
@@ -8,7 +8,7 @@ import Lesson from "../../../utils/interfaces/lesson";
 type CourseItemProps = {
   course: Course;
   selectedLesson: Lesson | undefined;
-  setSelectedLesson: Dispatch<SetStateAction<Lesson | undefined>>;
+  setSelectedLesson: (lesson: Lesson | undefined) => void;
 };
 
 const CourseItem = ({
@@ -19,13 +19,23 @@ const CourseItem = ({
   const [isCourseOpen, setCourseOpen] = useState(false);
   const courseProgress =
     course.lessons.reduce(
-      (sum, lesson) => sum + (lesson?.lessonsRead?.length || 0),
-      0
+      (sum, lesson) =>
+        sum +
+        (lesson?.lessonsRead?.filter((lesson) => lesson.finishedAt).length ||
+          0),
+      0,
     ) / course.lessons.length;
+
+  const handleToggleCourseTab = () => {
+    setCourseOpen(!isCourseOpen);
+  };
 
   // Ouvre la barre litteral lorsqu'une leçon a été selectionné par un autre moyen (clic sur le bouton "Leçon Suivante")
   useEffect(() => {
-    if (selectedLesson && course.lessons.includes(selectedLesson)) {
+    if (
+      selectedLesson &&
+      course.lessons.some((lesson) => lesson.id === selectedLesson.id)
+    ) {
       setCourseOpen(true);
     } else {
       setCourseOpen(false);
@@ -36,7 +46,7 @@ const CourseItem = ({
     <div className="flex flex-col w-full">
       <div
         className="flex flex-col w-full cursor-pointer"
-        onClick={() => setCourseOpen(!isCourseOpen)}
+        onClick={handleToggleCourseTab}
       >
         <div className="bg-secondary/80 p-4 rounded-xl flex flex-col gap-2">
           {/* Titre du cours + tooltip */}
@@ -69,8 +79,12 @@ const CourseItem = ({
       </div>
       <motion.div
         className="bg-secondary/20 -mt-2 rounded-b-xl overflow-y-auto"
+        initial={{ maxHeight: 0 }}
+        style={{
+          height: isCourseOpen ? "auto" : 0,
+          visibility: isCourseOpen ? "visible" : "hidden",
+        }}
         animate={{
-          display: isCourseOpen ? "block" : "none",
           maxHeight: isCourseOpen ? 280 : 0,
         }}
       >

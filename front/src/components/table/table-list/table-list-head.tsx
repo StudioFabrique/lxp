@@ -7,6 +7,7 @@ import { ChangeEvent, MouseEvent } from "react";
 
 type TableListHeadProps = {
   labels: TableListItemLabels[];
+  itemsLength: number;
   avatar?: TableListItemConfig;
   showAvatar?: boolean;
   isAllChecked?: boolean;
@@ -42,7 +43,7 @@ const TableListHead = (props: TableListHeadProps) => {
         <th className="p-0 w-0" />
 
         {/* La cellule header pour contenir la checkbox */}
-        {props.onCheckAll ? (
+        {props.onCheckAll && props.itemsLength > 0 ? (
           <th className="pl-0 w-0">
             <div className="flex items-center">
               <input

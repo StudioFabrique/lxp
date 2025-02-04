@@ -4,7 +4,7 @@ import { PlayCircleIcon } from "lucide-react";
 import useHttp from "../../hooks/use-http";
 import { useEffect, useState } from "react";
 import Parcours from "../../utils/interfaces/parcours";
-import ParcoursStatistiques from "./parcours-statistiques";
+import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
 
 /* type ResumeParcoursProps = {
   parcours?: Parcours;

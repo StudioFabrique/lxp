@@ -50,6 +50,7 @@ const TableList = <TData extends Record<string, string>>(
     <table className="table border-separate border-spacing-y-5">
       <Head
         labels={labels}
+        itemsLength={tableItems?.length || 0}
         avatar={props.avatar}
         showAvatar={props.style?.showAvatar}
         isAllChecked={props.isAllChecked}

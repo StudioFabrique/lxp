@@ -47,6 +47,12 @@ export default async function getCoursesTimeline(
       title: true,
       dates: true,
       module: { select: { id: true, title: true } },
+      lessons: {
+        select: {
+          id: true,
+        },
+        take: 1,
+      },
     },
     where: {
       OR: [
@@ -115,12 +121,17 @@ export default async function getCoursesTimeline(
             ]),
       ],
       module: {
-        minDate: {
-          lte: new Date(maxDate).toISOString(),
-        },
-        maxDate: {
-          gte: new Date(minDate).toISOString(),
-        },
+        // Adjusted logic to check for overlap
+        OR: [
+          {
+            minDate: {
+              lte: new Date(maxDate).toISOString(),
+            },
+            maxDate: {
+              gte: new Date(minDate).toISOString(),
+            },
+          },
+        ],
       },
     },
     orderBy: {
@@ -133,9 +144,10 @@ export default async function getCoursesTimeline(
       minDate: string;
       maxDate: string;
     }[]) {
+      // Adjusted to include overlapping ranges
       if (
-        new Date(date.minDate) >= new Date(minDate) &&
-        new Date(date.maxDate) <= new Date(maxDate)
+        new Date(date.minDate) <= new Date(maxDate) &&
+        new Date(date.maxDate) >= new Date(minDate)
       ) {
         acc.push({
           id: course.id,
@@ -144,6 +156,7 @@ export default async function getCoursesTimeline(
           title: course.title,
           minDate: date.minDate,
           maxDate: date.maxDate,
+          firstLessonId: course.lessons[0]?.id,
         });
       }
     }

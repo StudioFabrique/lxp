@@ -6,7 +6,7 @@ import getLastLessonsRead from "../../models/lesson/get-last-lessons-read";
 
 export default async function httpGetLastLessonsRead(
   req: CustomRequest,
-  res: Response
+  res: Response,
 ) {
   const userId = req.auth?.userId;
 
@@ -18,7 +18,9 @@ export default async function httpGetLastLessonsRead(
     const response = await getLastLessonsRead(userId, 4);
 
     if (!response) {
-      return res.status(404).json({ message: "Leçon non trouvé" });
+      return res
+        .status(404)
+        .json({ message: "Dernières leçons lus non trouvés" });
     }
 
     return res.status(201).json({

@@ -12,6 +12,7 @@ interface TimeConfig {
 interface LessonData {
   id: number;
   alternateId?: number;
+  firstLessonId: number;
   title: string;
   start: Date;
   end: Date;
@@ -26,7 +27,7 @@ interface LessonData {
 export const adjustScheduleToCurrentWeek = (
   data: LessonData[],
   timeConfig: TimeConfig = {},
-): { id: number; title: string; start: Date; end: Date }[] => {
+): LessonData[] => {
   const defaultConfig = {
     startTime: { hours: 8, minutes: 30 },
     endTime: { hours: 16, minutes: 30 },
@@ -65,6 +66,7 @@ export const adjustScheduleToCurrentWeek = (
           events.push({
             id: item.id,
             alternateId: item.alternateId,
+            firstLessonId: item.firstLessonId,
             title: item.title,
             start: morningStart,
             end: morningEnd,
@@ -87,6 +89,7 @@ export const adjustScheduleToCurrentWeek = (
           events.push({
             id: item.id,
             alternateId: item.alternateId,
+            firstLessonId: item.firstLessonId,
             title: item.title,
             start: afternoonStart,
             end: afternoonEnd,

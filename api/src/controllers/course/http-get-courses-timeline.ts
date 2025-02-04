@@ -19,7 +19,7 @@ export default async function httpGetCoursesTimeline(
       userId,
       minDate as string,
       maxDate as string,
-      showAllCourses === "true",
+      showAllCourses === "true", // transformation en valeur booléenne
     );
     return res.status(200).json({
       message: "La timeline des cours a bien été récupérée",

@@ -1,5 +1,5 @@
-import Tag from "../../utils/interfaces/tag";
-import Wrapper from "../UI/wrapper/wrapper.component";
+import Tag from "../../../utils/interfaces/tag";
+import Wrapper from "../../UI/wrapper/wrapper.component";
 
 type TagsProps = {
   tags: Tag[];

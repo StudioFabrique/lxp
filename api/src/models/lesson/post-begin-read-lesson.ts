@@ -2,7 +2,7 @@ import { prisma } from "../../utils/db";
 
 export default async function postBeginReadLesson(
   lessonId: number,
-  userIdMdb: string
+  userIdMdb: string,
 ) {
   const student = await prisma.student.findFirst({
     where: { idMdb: userIdMdb },
@@ -31,6 +31,11 @@ export default async function postBeginReadLesson(
   if (!lessonRead) {
     return null;
   }
+
+  console.info(
+    "Nouvelle entrée de création de confirmation de lecture étudiant",
+    { lessonRead },
+  );
 
   return lessonRead;
 }

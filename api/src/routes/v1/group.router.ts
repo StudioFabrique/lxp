@@ -34,21 +34,21 @@ groupRouter.get(
   "/search/:role/:entity/:value/:stype/:sdir",
   checkPermissions(),
   searchValidator,
-  httpSearchGroup
+  httpSearchGroup,
 );
 
 groupRouter.get(
   "/:role/:stype/:sdir",
   checkPermissions(),
   getAllValidator,
-  httpGetAllGroups
+  httpGetAllGroups,
 );
 
 groupRouter.get(
   "/:id",
   checkPermissions("group"),
   param("id").isMongoId().withMessage("ID de groupe invalide"),
-  httpGetGroupDetails
+  httpGetGroupDetails,
 );
 
 // POST routes
@@ -58,7 +58,7 @@ groupRouter.post(
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
   groupValidator,
-  httpCreateGroup
+  httpCreateGroup,
 );
 
 // PUT routes
@@ -74,7 +74,7 @@ groupRouter.put(
     body("usersId.*").isMongoId().withMessage("ID d'utilisateur invalide"),
     checkValidatorResult,
   ],
-  httpPutAddUsersGroup
+  httpPutAddUsersGroup,
 );
 
 groupRouter.put(
@@ -83,7 +83,7 @@ groupRouter.put(
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
   groupValidator,
-  httpPutGroup
+  httpPutGroup,
 );
 
 // DELETE routes
@@ -95,29 +95,29 @@ groupRouter.delete(
     param("userId").isMongoId().withMessage("ID d'utilisateur invalide"),
     checkValidatorResult,
   ],
-  httpDeleteUserFromGroup
+  httpDeleteUserFromGroup,
 );
 
 groupRouter.delete(
   "/deleteMany",
   checkPermissions("group"),
   [
-    query("ids").isMongoId().withMessage("IDs de groupes invalides"),
+    query("ids")
+      .matches(regexStringManyMongoId)
+      .withMessage("IDs de groupes invalides"),
     checkValidatorResult,
   ],
-  httpDeleteManyGroups
+  httpDeleteManyGroups,
 );
 
 groupRouter.delete(
   "/:id",
   checkPermissions("group"),
   [
-    param("id")
-      .matches(regexStringManyMongoId)
-      .withMessage("ID d'utilisateur invalide - format incorrect"),
+    param("id").isMongoId().withMessage("ID de groupe invalide"),
     checkValidatorResult,
   ],
-  httpDeleteGroup
+  httpDeleteGroup,
 );
 
 export default groupRouter;

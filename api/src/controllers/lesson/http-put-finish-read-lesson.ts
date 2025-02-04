@@ -5,7 +5,7 @@ import putFinishReadLesson from "../../models/lesson/put-finish-read-lesson";
 
 export default async function httpPutFinishReadLesson(
   req: CustomRequest,
-  res: Response
+  res: Response,
 ) {
   const userId = req.auth?.userId;
 
@@ -19,7 +19,11 @@ export default async function httpPutFinishReadLesson(
     const response = await putFinishReadLesson(+lessonId, userId);
 
     if (!response) {
-      return res.status(404).json({ message: "Leçon non trouvé" });
+      return res
+        .status(404)
+        .json({
+          message: "Problème lors de la requête de confirmation de lecture",
+        });
     }
 
     return res.status(201).json({

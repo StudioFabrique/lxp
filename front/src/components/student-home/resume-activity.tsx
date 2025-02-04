@@ -4,7 +4,7 @@ import { PlayCircleIcon } from "lucide-react";
 import LessonRead from "../../utils/interfaces/lesson-read";
 import useHttp from "../../hooks/use-http";
 import { useEffect, useState } from "react";
-import ParcoursStatistiques from "./parcours-statistiques";
+import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
 
 type ResumeActivityProps = {
   lastLesson: LessonRead;

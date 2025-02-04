@@ -31,7 +31,9 @@ const StudentAccomplishments = () => {
         {isLoading ? (
           <Loader />
         ) : accomplishments && accomplishments?.length > 0 ? (
-          accomplishments.map((item) => <Item accomplishment={item} />)
+          accomplishments.map((item) => (
+            <Item key={item.id} accomplishment={item} />
+          ))
         ) : (
           <p>Aucun feedback</p>
         )}
