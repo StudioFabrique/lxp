@@ -66,7 +66,7 @@ const RatingPanel = ({
   return (
     <div
       ref={panelRef}
-      className="absolute left-[-30%] top-0 transform -translate-y-full card w-64 bg-white border-[1px] border-primary shadow-2xl z-50 rounded-lg"
+      className="absolute left-[-30%] top-0 transform -translate-y-full card w-64 bg-base-100 border-[1px] border-primary shadow-2xl z-50 rounded-lg"
     >
       <div className="card-body p-6">
         <h3 className="text-lg font-semibold mb-2">Votre évaluation</h3>
@@ -78,15 +78,15 @@ const RatingPanel = ({
               onClick={() => handleStarClick(rating)}
               className={`cursor-pointer transition-all duration-200 hover:scale-110 ${
                 rating <= selectedStars
-                  ? "fill-yellow-400 scale-105 stroke-1"
-                  : "stroke-gray-400 stroke-1 hover:stroke-1"
+                  ? "fill-primary scale-105 stroke-1"
+                  : "stroke-base-content/50 stroke-1 hover:stroke-1"
               }`}
             />
           ))}
         </div>
 
         {note && (
-          <div className="text-sm text-gray-600 border-l-4 border-primary-light p-2 bg-base-200 rounded">
+          <div className="text-sm text-base-content/70 border-l-4 border-primary/50 p-2 bg-base-200 rounded">
             Vous avez déjà évalué ce contenu, vous pouvez mettre à jour votre
             note
           </div>
