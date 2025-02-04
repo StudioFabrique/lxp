@@ -17,7 +17,7 @@ services:
   db-pg:
     image: postgres:latest
     restart: always
-    container_name: lxp-prisma
+    container_name: infa-prisma
     volumes:
       - pg:/var/lib/postgresql/data
     networks:
@@ -31,7 +31,7 @@ services:
   db-mongo:
     image: mongo:latest
     restart: always
-    container_name: lxp-mongo
+    container_name: infa-mongo
     volumes:
       - mongo:/data/db
     networks:
@@ -52,7 +52,7 @@ services:
     networks:
       - lxp_infa
     restart: always
-    container_name: lxp-api
+    container_name: infa-api
     ports:
       - "6001:6001"
     links:
