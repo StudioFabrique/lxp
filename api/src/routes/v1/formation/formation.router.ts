@@ -7,7 +7,7 @@ import path from "path";
 import httpPostModule from "../../../controllers/formation/http-post-module";
 import checkPermissions from "../../../middleware/check-permissions";
 import jsonParser from "../../../middleware/json-parser";
-import { stringValidateGeneric } from "../../../helpers/custom-validators";
+import { stringValidateGeneric, stringValidateOptional } from "../../../helpers/custom-validators";
 import httpPostFormation from "../../../controllers/formation/http-post-formation";
 import {
   fomrationIdValidator,
@@ -16,6 +16,7 @@ import {
 } from "./formation-validators";
 import httpGetAllFormations from "../../../controllers/formation/http-get-all-formations";
 import httpPutFormation from "../../../controllers/formation/http-put-formation";
+
 const formationRouter = express.Router();
 
 const storage = multer.diskStorage({
@@ -49,12 +50,11 @@ export const validationModule = [
     .custom(stringValidateGeneric)
     .withMessage("Le titre du module contient des caractères invalides."),
   body("module.description")
-    .notEmpty()
-    .withMessage("La description du module est requise.")
+    .optional()
     .isString()
     .withMessage("La description du module doit être une chaîne de caractères.")
-    .custom(stringValidateGeneric)
-    .withMessage("La description du module contient des caractères"),
+    .custom(stringValidateOptional)
+    .withMessage("La description du module contient des caractères non autorisés."),
 ];
 
 formationRouter.get("/", checkPermissions("formation"), httpGetFormation);

@@ -70,7 +70,7 @@ const ContextProvider: FC<Props> = (props) => {
           email,
           password,
         },
-        { withCredentials: true },
+        { withCredentials: true }
       );
       setUser(response.data);
     } catch (err: any) {
@@ -155,7 +155,7 @@ const ContextProvider: FC<Props> = (props) => {
         document.querySelector("html")!.setAttribute("data-theme", themes.dark);
       }
     },
-    [theme],
+    [theme]
   );
 
   const toggleTheme = () => {
@@ -176,6 +176,7 @@ const ContextProvider: FC<Props> = (props) => {
           role: "everything",
           label: "Tou",
           rank: role.rank,
+          protection: 0,
         };
         let updatedRoles = Array<Role>();
         updatedRoles = [...updatedRoles, newRole];
@@ -186,10 +187,10 @@ const ContextProvider: FC<Props> = (props) => {
         {
           path: "/auth/roles",
         },
-        applyData,
+        applyData
       );
     },
-    [sendRequest],
+    [sendRequest]
   );
 
   useEffect(() => {
@@ -197,12 +198,13 @@ const ContextProvider: FC<Props> = (props) => {
       .querySelector("html")!
       .setAttribute(
         "data-theme",
-        theme === "light" ? themes.light : themes.dark,
+        theme === "light" ? themes.light : themes.dark
       );
   }, [theme]);
 
   useEffect(() => {
     if (user) {
+      fetchRoles(user.roles[0]);
       setIsLoggedIn(true);
       setIsLoading(false);
       if (!socket) {
@@ -212,11 +214,11 @@ const ContextProvider: FC<Props> = (props) => {
               userId: user._id,
             },
             withCredentials: true,
-          }),
+          })
         );
       }
     }
-  }, [user, socket]);
+  }, [user, fetchRoles, socket]);
 
   const contextValue = {
     theme,

@@ -18,6 +18,10 @@ const links = [
     label: "Créer un parcours",
   },
   {
+    path: "/admin/module/add",
+    label: "Créer un module",
+  },
+  {
     path: "/admin/course/add",
     label: "Créer un cours",
   },
@@ -43,6 +47,8 @@ const AdminHome = () => {
   const { user } = useContext(Context);
   const { sendRequest, isLoading } = useHttp();
   const [parcours, setParcours] = useState<Parcours[] | null>(null);
+
+  console.log("home admin refreshing");
 
   // retourne les deux parcours auquel l'utilisateur est associé en tant que contact
   const getParcours = useCallback(() => {

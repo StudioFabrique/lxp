@@ -1,6 +1,8 @@
+// Import des modules nécessaires
 import express from "express";
 import { body } from "express-validator";
 
+// Import des contrôleurs pour la gestion des parcours
 import httpGetParcours from "../../../controllers/parcours/http-get-parcours";
 import httpDeleteParcoursById from "../../../controllers/parcours/http-delete-parcours-by-id";
 import httpCreateParcours from "../../../controllers/parcours/http-create-parcours";
@@ -8,6 +10,7 @@ import httpPutVirtualClass from "../../../controllers/parcours/http-put-virtual-
 import httpPutParcoursObjectives from "../../../controllers/parcours/http-put-parcours-objectives";
 import httpPutReorderObjectives from "../../../controllers/parcours/http-put-reorder-objectives";
 import {
+  formationIdValidator,
   getParcoursByFormationValidator,
   parcoursByIdValidator,
   parcoursIdValidator,
@@ -35,133 +38,179 @@ import httpGetRootAdminParcours from "../../../controllers/parcours/http-get-roo
 import httpGetParcoursAsStudent from "../../../controllers/parcours/http-get-parcours-as-student";
 import httpGetSelectParcours from "../../../controllers/parcours/http-get-select-parcours";
 import httpPostDuplicateParcours from "../../../controllers/parcours/http-post-duplicate-parcours";
+import httpGetParcoursSkillsContacts from "../../../controllers/parcours/http-get-parcours-skills-contacts";
+import httpGetParcoursListFromFormation from "../../../controllers/parcours/http-get-parcours-list-from-formation";
 
+// Création du routeur Express pour les parcours
 const parcoursRouter = express.Router();
 
-// retourne la liste de tous les parcours
+// Route GET pour récupérer la liste complète des parcours
 parcoursRouter.get("/", checkPermissions("parcours"), httpGetParcours);
 
-// retourne la liste des parcours simplifiée
+// Route GET pour récupérer une liste simplifiée des parcours
 parcoursRouter.get(
   "/select",
   checkPermissions("parcours"),
-  httpGetSelectParcours,
+  httpGetSelectParcours
 );
 
-// enregistre un nouveau parcours
+// Route POST pour créer un nouveau parcours
 parcoursRouter.post(
   "/",
   checkPermissions("parcours"),
   postParcoursValidator,
-  httpCreateParcours,
+  httpCreateParcours
 );
 
-// supprime un parcours de la base de données
+// Route DELETE pour supprimer un parcours spécifique
 parcoursRouter.delete(
   "/:parcoursId",
   checkPermissions("parcours"),
   parcoursByIdValidator,
-  httpDeleteParcoursById,
+  httpDeleteParcoursById
 );
 
-// retourne la liste des parcours associés à une formation
+// Route GET pour récupérer les parcours associés à une formation
 parcoursRouter.get(
   "/parcours-by-formation/:formationId",
   checkPermissions("parcours"),
   getParcoursByFormationValidator,
-  httpGetParcoursByFormation,
+  httpGetParcoursByFormation
 );
 
-// retourne les détails d'un parcours
+// Route GET pour récupérer les détails d'un parcours spécifique
 parcoursRouter.get(
   "/parcours-by-id/:parcoursId",
   checkPermissions("parcours"),
   parcoursByIdValidator,
-  httpGetParcoursById,
+  httpGetParcoursById
 );
+
+// Route GET pour récupérer les parcours d'un étudiant
 parcoursRouter.get(
   "/parcours-as-student",
   checkPermissions("cursus"),
-  httpGetParcoursAsStudent,
+  httpGetParcoursAsStudent
 );
+
+// Route PUT pour mettre à jour les informations générales d'un parcours
 parcoursRouter.put(
   "/update-infos",
   checkPermissions("parcours"),
   updateInfosValidator,
-  httpUpdateParcoursInfos,
+  httpUpdateParcoursInfos
 );
+
+// Route PUT pour mettre à jour les dates d'un parcours
 parcoursRouter.put(
   "/update-dates",
   checkPermissions("parcours"),
   updateDatesValidator,
-  httpUpdateParcoursDates,
+  httpUpdateParcoursDates
 );
+
+// Route PUT pour mettre à jour les tags d'un parcours
 parcoursRouter.put(
   "/update-tags",
   checkPermissions("parcours"),
   putParcoursTagsValidator,
-  httpPutParcoursTags,
+  httpPutParcoursTags
 );
+
+// Route PUT pour mettre à jour les contacts d'un parcours
 parcoursRouter.put(
   "/update-contacts",
   checkPermissions("parcours"),
   putParcoursContactsValidator,
-  httpPutParcoursContacts,
+  httpPutParcoursContacts
 );
+
+// Route commentée pour la mise à jour des compétences
 //parcoursRouter.use("/update-skills", putParcoursSkillsRouter);
+
+// Route PUT pour mettre à jour la classe virtuelle d'un parcours
 parcoursRouter.put(
   "/update-virtual-class",
   checkPermissions("parcours"),
   virtualClassValidator,
-  httpPutVirtualClass,
+  httpPutVirtualClass
 );
+
+// Route PUT pour mettre à jour les objectifs d'un parcours
 parcoursRouter.put(
   "/update-objectives",
   checkPermissions("parcours"),
   body("parcoursId").isNumeric().notEmpty().escape(),
   body("objectives").isArray().notEmpty(),
   body("objectives.*").isString().notEmpty(),
-  httpPutParcoursObjectives,
+  httpPutParcoursObjectives
 );
+
+// Route PUT pour réorganiser les objectifs d'un parcours
 parcoursRouter.put(
   "/reorder-objectives",
   checkPermissions("parcours"),
-  httpPutReorderObjectives,
+  httpPutReorderObjectives
 );
+
+// Route PUT pour mettre à jour l'image d'un parcours
 parcoursRouter.put(
   "/update-image/:parcoursId",
   checkPermissions("parcours"),
   createFileUploadMiddleware(headerImageMaxSize),
   parcoursIdValidator,
-  httpUpdateImage,
+  httpUpdateImage
 );
+
+// Route PUT pour mettre à jour les groupes d'un parcours
 parcoursRouter.put(
   "/groups",
   checkPermissions("parcours"),
-  httpPutParcoursGroups,
+  httpPutParcoursGroups
 );
+
+// Route PUT pour publier un parcours
 parcoursRouter.put(
   "/publish/:parcoursId",
   checkPermissions("parcours"),
-  httpPublishParcours,
+  httpPublishParcours
 );
-// retourne la liste des trois derniers parcours enregistrés
+
+// Route GET pour récupérer les trois derniers parcours (admin root)
 parcoursRouter.get(
   "/root-parcours",
   checkPermissions("parcours"),
-  httpGetRootAdminParcours,
+  httpGetRootAdminParcours
 );
-// retourne la liste des parcours auquel le formateur connecté est associé en tant que contact pour la vue home parcours
+
+// Route GET pour récupérer les parcours d'un formateur
 parcoursRouter.get(
   "/teacher-parcours",
   checkPermissions("parcours"),
-  httpGetTeacherParcours,
+  httpGetTeacherParcours
 );
-// duplique un parcours et les données associées dans le but de créer un nouveau parcours rapidement
+
+// Route POST pour dupliquer un parcours existant
 parcoursRouter.post(
   "/duplicate/:parcoursId",
   checkPermissions("parcours"),
-  httpPostDuplicateParcours,
-)
+  httpPostDuplicateParcours
+);
+
+// Route GET pour récupérer les contacts et compétences d'un parcours
+parcoursRouter.get(
+  "/skills-contacts/:parcoursId",
+  checkPermissions("parcours"),
+  parcoursIdValidator,
+  httpGetParcoursSkillsContacts
+);
+
+// Route GET pour récupérer une liste simplifiée des parcours d'une formation
+parcoursRouter.get(
+  "/parcours-from-formation/:formationId",
+  checkPermissions("parcours"),
+  formationIdValidator,
+  httpGetParcoursListFromFormation
+);
 
 export default parcoursRouter;
