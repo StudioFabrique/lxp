@@ -62,9 +62,8 @@ services:
       - db-pg
       - db-mongo
     environment:
-      - DATABASE_URL=${DEV_DATABASE_URL}
-      - MONGO_LOCAL_URL=${DEV_MONGO_LOCAL_URL}
-      - FIXTURES_MONGO_URL=${FIXTURES_MONGO_URL}
+      - DATABASE_URL=${DATABASE_URL}
+      - MONGO_LOCAL_URL=${MONGO_LOCAL_URL}
       - SECRET=${SECRET}
       - EMAIL=${EMAIL}
       - PASSWORD=${PASSWORD}
