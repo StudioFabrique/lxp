@@ -9,6 +9,7 @@ node_modules
 
 .env.local
 .env
+.env-lxp
 .env-infa
 .env-lfn
 **/.DS_Store
