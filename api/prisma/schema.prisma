@@ -40,8 +40,8 @@ model Activity {
 model Formation {
   id          Int                  @id @default(autoincrement())
   title       String               @unique
-  description String
-  code        String
+  description String?
+  code        String?
   level       String
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
