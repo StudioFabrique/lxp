@@ -162,20 +162,22 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
                 <SubWrapper>{formation.level}</SubWrapper>
               </div>
 
-              <div className="form-control w-fit">
-                <label className="flex gap-x-4 cursor-pointer items-center label">
-                  <span className="font-bold">Etat</span>
-                  <input
-                    type="checkbox"
-                    className="toggle toggle-primary"
-                    checked={isPublished ? isPublished : false}
-                    onChange={handleSetIsPublished}
-                  />
-                  <p className="text-sm">
-                    {isPublished ? "Publié" : "Brouillon"}
-                  </p>
-                </label>
-              </div>
+              {isPublished ? (
+                <div className="form-control w-fit">
+                  <label className="flex gap-x-4 cursor-pointer items-center label">
+                    <span className="font-bold">Etat</span>
+                    <input
+                      type="checkbox"
+                      className="toggle toggle-primary"
+                      checked={isPublished ? isPublished : false}
+                      onChange={handleSetIsPublished}
+                    />
+                    <p className="text-sm">
+                      {isPublished ? "Publié" : "Brouillon"}
+                    </p>
+                  </label>
+                </div>
+              ) : null}
             </form>
           </>
         ) : null}
