@@ -19,10 +19,15 @@ export const moduleUpdateSchema = z.object({
     .regex(regexOptionalGeneric, {
       message: "La description du module contient des caractères invalides",
     })
-    .optional(),
+    .optional()
+    .nullable(),
   duration: z
     .string({ required_error: "Une durée en heure est obligatoire" })
     .regex(regexNumber, {
       message: "La durée du parcours doit être un nombre entier",
+    })
+    .transform((val) => parseInt(val))
+    .refine((val) => val > 0, {
+      message: "La durée doit être supérieure à zéro",
     }),
 });

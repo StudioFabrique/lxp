@@ -14,7 +14,6 @@ import { deleteTempUploadedFile } from "../../middleware/fileUpload";
  */
 async function httpPutModule(req: Request, res: Response) {
   // Récupération des données du module et du fichier uploadé
-  console.log(req.body.module);
 
   const module = req.body.module;
   const uploadedFile: any = req.file;
