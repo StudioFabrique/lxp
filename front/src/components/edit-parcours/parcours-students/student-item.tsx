@@ -15,8 +15,7 @@ interface StudentItemProps {
  */
 const StudentItem = (props: StudentItemProps) => {
   // Destructuration des données de l'étudiant depuis les props
-  const { avatar, email, lastname, firstname, group, createdAt } =
-    props.studentItem;
+  const { email, lastname, firstname, group, createdAt } = props.studentItem;
 
   // Récupération du titre de la formation depuis le store Redux
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,7 +25,7 @@ const StudentItem = (props: StudentItemProps) => {
     <>
       {/* Avatar de l'étudiant */}
       <td className="bg-transparent">
-        <AvatarSmall url={avatar!} />
+        <AvatarSmall user={props.studentItem} />
       </td>
       {/* Prénom de l'étudiant */}
       <td className="bg-transparent capitalize">{firstname}</td>

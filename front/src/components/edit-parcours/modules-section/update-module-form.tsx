@@ -132,13 +132,14 @@ const UpdateModuleForm = React.forwardRef<
     const formData = new FormData();
     const module = {
       ...values,
+      description: values.description ? values.description : "",
       formationId,
       id: +currentModule.id,
       duration: values.duration,
       minDate: currentModule ? currentModule.minDate : parcoursInfos.startDate,
       maxDate: currentModule ? currentModule.maxDate : parcoursInfos.endDate,
-      contacts: teachers?.map((teacher) => teacher.id),
-      bonusSkills: skills?.map((skill) => skill.id),
+      contactsIds: teachers?.map((teacher) => teacher.id),
+      bonusSkillsIds: skills?.map((skill) => skill.id),
     };
 
     console.log(JSON.stringify(module));
