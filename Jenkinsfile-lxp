@@ -85,25 +85,25 @@ pipeline {
                         // Read the contents of the environment file
                         def envContent = readFile("${ENV_FILE}")
                         // Write the contents to .env file in the workspace
-                        writeFile file: '.env', text: envContent
+                        writeFile file: '.env-lxp', text: envContent
                     }
                 }
                 script {
                     withDockerRegistry(credentialsId: 'docker-registry', toolName: 'docker') {
                         // Arrêter tous les conteneurs et s'assurer qu'ils sont bien arrêtés
-                        sh 'docker compose -f lfn-docker-compose.yml down'
+                        sh 'docker compose -f lxp-docker-compose.yml down'
 
                         // Ensuite, supprimer le réseau
-                        sh 'docker network rm lxp_lfn || true'
+                        sh 'docker network rm lxp_lxp || true'
 
                         // Supprimer l'image si elle existe
                         sh 'docker image rm studio/lxp:latest || true'
 
                         // Créer un nouveau réseau
-                        sh 'docker network create lxp_lfn || true'
+                        sh 'docker network create lxp_lxp || true'
 
                         // Démarrer les services
-                        sh 'docker compose -f lfn-docker-compose.yml up -d'
+                        sh 'docker compose -f lxp-docker-compose.yml --env-file=.env-lxp up -d'
 
                         // Nettoyer le système
                         sh 'docker system prune -f --all'
