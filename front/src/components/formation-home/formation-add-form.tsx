@@ -82,15 +82,21 @@ export default function FormationAddForm({
   const [newTags, setNewTags] = useState<Tag[]>([]);
   const [saving, setSaving] = useState(false);
   const [tagError, setTagError] = useState(false);
-  const [level, setLevel] = useState<string>("");
+
   const data = {
     values,
     onChangeValue,
     errors,
   };
 
+  let levelStyle = "select select-bordered focus:outline-none";
+
+  levelStyle = data.errors.find((item) => item.type === "level")
+    ? levelStyle + " select-error"
+    : levelStyle;
+
   const handleChangeLevel = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setLevel(event.currentTarget.value);
+    data.onChangeValue("level", event.currentTarget.value);
   };
 
   /**
@@ -99,7 +105,7 @@ export default function FormationAddForm({
    */
   const handleSubmit = (tags: Tag[]) => {
     // envoi des données saisies vers le composant parent pour les soumettre au backend
-    onSubmit(values.title, values.description, values.code, level, tags);
+    onSubmit(values.title, values.description, values.code, values.level, tags);
   };
 
   /**
@@ -118,7 +124,11 @@ export default function FormationAddForm({
       return;
     }
 
-    const newValues = { ...values, level };
+    console.log({ values });
+
+    const newValues = {
+      ...values,
+    };
 
     //validation du formulaire
     try {
@@ -178,8 +188,8 @@ export default function FormationAddForm({
       initValues({
         id: formation.id,
         title: formation.title,
-        description: formation.description,
-        code: formation.code,
+        description: formation.description ?? "",
+        code: formation.code ?? "",
         level: formation.level,
       });
 
@@ -223,7 +233,7 @@ export default function FormationAddForm({
       <form className="flex flex-col gap-y-4">
         <Field
           placeholder="Nom de la formation"
-          label="Formation"
+          label="Formation *"
           data={data}
           name="title"
         />
@@ -238,11 +248,19 @@ export default function FormationAddForm({
         />
 
         <div className="flex flex-col gap-y-2 w-full">
-          <label>Niveau</label>
+          <label>Niveau *</label>
           <select
-            className="select select-bordered focus:outline-none"
+            className={levelStyle}
             onChange={handleChangeLevel}
+            value={
+              formation?.level ?? data.values["level"] !== undefined
+                ? data.values["level"]
+                : ""
+            }
           >
+            <option value="" disabled>
+              Sélectionnez un niveau
+            </option>
             {options.map((option) => (
               <option key={option} value={option}>
                 Niveau {option}

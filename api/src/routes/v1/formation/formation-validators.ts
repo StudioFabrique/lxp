@@ -4,6 +4,7 @@ import { checkValidatorResult } from "../../../middleware/validators";
 import {
   numberValidateGeneric,
   stringValidateGeneric,
+  stringValidateOptional,
 } from "../../../helpers/custom-validators";
 import { regexNumber } from "../../../utils/constantes";
 
@@ -31,11 +32,10 @@ export const postFormationValidator = [
   // Valider le champ 'description'
   body("description")
     .trim()
-    .notEmpty()
-    .withMessage('Le champ "description" ne peut pas être vide')
+    .optional()
     .isString()
     .withMessage('Le champ "description" doit être une chaîne de caractères')
-    .custom(stringValidateGeneric)
+    .custom(stringValidateOptional)
     .withMessage(
       "La description de la formation contient des caractères non autorisés."
     ),
@@ -55,11 +55,10 @@ export const postFormationValidator = [
   // Valider le champ 'code'
   body("code")
     .trim()
-    .notEmpty()
-    .withMessage('Le champ "code" ne peut pas être vide')
+    .optional()
     .isString()
     .withMessage('Le champ "code" doit être une chaîne de caractères')
-    .custom(stringValidateGeneric)
+    .custom(stringValidateOptional)
     .withMessage(
       "Le code de la formation contient des caractères non autorisés."
     ),
@@ -95,11 +94,10 @@ export const putFormationValidator = [
   // Valider le champ 'description'
   body("formation.description")
     .trim()
-    .notEmpty()
-    .withMessage('Le champ "description" ne peut pas être vide')
+    .optional()
     .isString()
     .withMessage('Le champ "description" doit être une chaîne de caractères')
-    .custom(stringValidateGeneric)
+    .custom(stringValidateOptional)
     .withMessage(
       "La description de la formation contient des caractères non autorisés."
     ),
@@ -119,11 +117,10 @@ export const putFormationValidator = [
   // Valider le champ 'code'
   body("formation.code")
     .trim()
-    .notEmpty()
-    .withMessage('Le champ "code" ne peut pas être vide')
+    .optional()
     .isString()
     .withMessage('Le champ "code" doit être une chaîne de caractères')
-    .custom(stringValidateGeneric)
+    .custom(stringValidateOptional)
     .withMessage(
       "Le code de la formation contient des caractères non autorisés."
     ),

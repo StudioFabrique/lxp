@@ -319,8 +319,8 @@ async function createFormation() {
         title: "Développeur Web",
         description:
           "Toutes les compétences pour développer des applications web et web mobile",
-        code: "007",
-        level: "bac + 2",
+        code: "1234",
+        level: "3",
       },
       /*{
         title: "Poubelle",
