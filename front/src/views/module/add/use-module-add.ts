@@ -98,8 +98,13 @@ const useModuleAdd = () => {
     const module = {
       ...data.values,
       formationId: formation,
-      duration: +data.values.duration,
+      duration:
+        +data.values.duration === 0 || isNaN(+data.values.duration)
+          ? 1
+          : +data.values.duration,
     };
+    console.log({ module });
+
     if (parcours) {
       const updatedModule = {
         ...module,
@@ -107,7 +112,6 @@ const useModuleAdd = () => {
         contactsIds: currentContacts.map((item) => item.id),
         bonusSkillsIds: currentSkills.map((item) => item.id),
       };
-      console.log(JSON.stringify(updatedModule));
 
       formData.append("module", JSON.stringify(updatedModule));
     } else formData.append("module", JSON.stringify(module));

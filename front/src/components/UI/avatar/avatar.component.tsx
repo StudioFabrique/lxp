@@ -1,16 +1,20 @@
 import { FC } from "react";
+import User from "../../../utils/interfaces/user";
 
-export const AvatarSmall: FC<{ url?: string }> = ({ url = "" }) => {
-  if (url === undefined || url.length === 0) {
-    const robotIndex = Math.floor(Math.random() * 10) + 1;
-    url = `https://robohash.org/${robotIndex}?set=set2&size=24x24`;
-  }
-
+export const AvatarSmall: FC<{ user: User }> = ({ user }) => {
   return (
-    <div className="avatar">
-      <div className="h-7 rounded-full">
-        <img src={url} alt="avatar" />
-      </div>
-    </div>
+    <>
+      {!user.avatar || user.avatar === undefined || user.avatar === "" ? (
+        <p className="text-xs flex justify-center items-center p-4 w-6 h-6 rounded-full bg-accent text-base-200">
+          {(user.firstname[0] + user.lastname[0]).trim().toUpperCase()}
+        </p>
+      ) : (
+        <img
+          src={user.avatar}
+          alt="avatar"
+          className="w-8 h-8 rounded-full object-cover"
+        />
+      )}
+    </>
   );
 };

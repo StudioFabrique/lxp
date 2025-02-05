@@ -19,7 +19,7 @@ const StudentsListTable = (props: StudentsListTableProps) => {
       <table className="table w-full border-separate border-spacing-y-2">
         <thead>
           <tr>
-            <th>Avatar</th>
+            <th></th>
             <th
               className="cursor-pointer"
               onClick={() => {
