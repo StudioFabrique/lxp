@@ -31,7 +31,7 @@ async function putModule(module: any, thumb: any, image: any) {
         thumb: thumb !== undefined ? thumb : existingModule.thumb,
         duration: +module.duration,
         contacts: {
-          create: module.contacts.map((id: number) => {
+          create: module.contactsIds.map((id: number) => {
             return {
               contact: {
                 connect: { id },
@@ -40,7 +40,7 @@ async function putModule(module: any, thumb: any, image: any) {
           }),
         },
         bonusSkills: {
-          create: module.bonusSkills.map((id: number) => {
+          create: module.bonusSkillsIds.map((id: number) => {
             return {
               bonusSkill: {
                 connect: { id },

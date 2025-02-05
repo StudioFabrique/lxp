@@ -45,7 +45,7 @@ const UserItem: FC<{
         method: "put",
         body: { userId: userItem._id, value: userItem.isActive },
       },
-      applyData,
+      applyData
     );
   };
 
@@ -60,15 +60,7 @@ const UserItem: FC<{
         />
       </td>
       <td className="bg-transparent">
-        {userItem.avatar ? (
-          <AvatarSmall url={`data:image/jpeg;base64,${userItem.avatar}`} />
-        ) : (
-          <p className="text-xs flex justify-center items-center p-4 w-6 h-6 rounded-full bg-accent text-base-200">
-            {(userItem.firstname[0] + userItem.lastname[0])
-              .trim()
-              .toUpperCase()}
-          </p>
-        )}
+        <AvatarSmall user={userItem} />
       </td>
       <td className="bg-transparent capitalize">{userItem.firstname}</td>
       <td className="bg-transparent capitalize">{userItem.lastname}</td>
