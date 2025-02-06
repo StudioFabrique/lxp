@@ -2,6 +2,7 @@ import Lesson from "../../../utils/interfaces/lesson";
 import ActivityPreview from "./activity";
 import EvaluateContentButton from "../../UI/evaluate-content-button";
 import { useState, useEffect } from "react";
+import FeedbacksButton from "../../UI/feedbacks/feedbacks-button";
 
 type PreviewLessonProps = {
   selectedLesson: Lesson;
@@ -45,7 +46,7 @@ const LessonReader = ({
       )}
 
       {/* Boutons d'évaluation et de navigation */}
-      <div className="w-full flex justify-end">
+      <div className="flex justify-end items-center mt-4 pb-16">
         <div className="w-full flex justify-center">
           {isLessonAlreadyCompleted &&
           selectedLesson.activities &&
@@ -53,14 +54,19 @@ const LessonReader = ({
             <EvaluateContentButton note={1} sendEvaluation={() => {}} />
           ) : null}
         </div>
-        <button
-          className="btn btn-primary text-white self-end"
-          onClick={handleClickNextLesson}
-        >
-          {isLessonAlreadyCompleted
-            ? "Leçon Suivante"
-            : "Marquer comme terminé"}
-        </button>
+        <div className="relative">
+          <FeedbacksButton
+            title={
+              isLessonAlreadyCompleted
+                ? "Leçon Suivante"
+                : "Marquer comme terminé"
+            }
+            className="btn btn-primary text-white self-end"
+            feedbackType="thumbUp"
+            enableAnimationOnClick={!isLessonAlreadyCompleted}
+            onClick={handleClickNextLesson}
+          />
+        </div>
       </div>
     </div>
   );
