@@ -9,12 +9,14 @@ import Objective from "../../../utils/interfaces/objective";
 import PreviewObjectives from "../../preview/preview-objectives";
 import Skill from "../../../utils/interfaces/skill";
 import PreviewSkills from "../../preview/preview-skills";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useValidateParcours from "../../../views/parcours/parcours-edit/hooks/use-validate-parcours";
 import useHttp from "../../../hooks/use-http";
 import { useCallback, useEffect, useState } from "react";
 import User from "../../../utils/interfaces/user";
 import Group from "../../../utils/interfaces/group";
+import { useDispatch } from "react-redux";
+import { parcoursInformationsAction } from "../../../store/redux-toolkit/parcours/parcours-informations";
 
 interface ParcoursPreviewProps {
   onEdit: (id: number) => void;
@@ -35,24 +37,25 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
     (state: any) => state.parcoursGroups.groups
   ) as Group[];
   const [students, setStudents] = useState<User[] | null>(null);
+  const dispatch = useDispatch();
 
-  const handlePublishParcours = () => {
+  const handlePublishParcours = (value: boolean) => {
     const validationsErrors = validateParcours();
     if (validationsErrors && validationsErrors.length !== 0) {
       toast.error(Object.values(validationsErrors![0]).toString());
     } else {
+      dispatch(parcoursInformationsAction.publish(value));
       const applyData = (data: { success: boolean; message: string }) => {
         if (data.success) {
           toast.success(data.message);
-          setTimeout(() => {
-            nav("/admin/parcours");
-          }, 500);
+          nav("/admin/parcours");
         }
       };
       sendRequest(
         {
           path: `/parcours/publish/${id}`,
           method: "put",
+          body: { isPublished: value },
         },
         applyData
       );
@@ -123,14 +126,20 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
         >
           Retour
         </button>
-        <div className="flex gap-x-4 items-center">
-          <Link className="btn btn-secondary" to="..">
-            Sauvegarder le brouillon
-          </Link>
-          <button className="btn btn-primary" onClick={handlePublishParcours}>
+        <span className="flex gap-x-4 items-center">
+          <button
+            className="btn btn-secondary"
+            onClick={() => handlePublishParcours(false)}
+          >
+            Sauvegarder comme brouillon
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={() => handlePublishParcours(true)}
+          >
             Publier
           </button>
-        </div>
+        </span>
       </section>
     </div>
   );

@@ -11,6 +11,7 @@ import Search from "../../UI/search/search.component";
 import { userInGroupSearchOptions } from "../../../config/search-options";
 import RefreshIcon from "../../UI/svg/refresh-icon.component";
 import StudentsListTable from "./students-list-table";
+import { UserX } from "lucide-react";
 
 interface StudentsListProps {
   initalList: User[];
@@ -46,12 +47,14 @@ const StudentsList = (props: StudentsListProps) => {
 
   const setStyle = (_id: string) => {
     return _id === filter
-      ? "btn btn-sm rounded-full btn-accent"
-      : "btn btn-sm rounded-full btn-info";
+      ? "btn btn-sm btn-outline rounded-full btn-accent"
+      : "btn btn-sm btn-outline rounded-full btn-info";
   };
 
   const removeBtn = (
-    <button className="btn btn-xs btn-error btn-circle lowercase">x</button>
+    <button className="">
+      <UserX className="w-4 h-4" />
+    </button>
   );
 
   const handleRemoveGroup = (_id: string) => {
@@ -71,20 +74,23 @@ const StudentsList = (props: StudentsListProps) => {
   return (
     <>
       <article className="w-full flex justify-between items-center">
-        <ul className="flex gap-x-2">
-          {groups.map((group) => (
-            <li className={setStyle(group._id!)} key={group._id}>
-              <span className="flex items-center gap-x-4">
-                <p onClick={() => handleFilterGroups(group._id!)}>
-                  {group.name}
-                </p>
-                <div onClick={() => handleRemoveGroup(group._id!)}>
-                  {removeBtn}
-                </div>
-              </span>
-            </li>
-          ))}
-        </ul>
+        <div className="flex items-center gap-x-2">
+          <h4 className="">Groupes :</h4>
+          <ul className="flex gap-x-2">
+            {groups.map((group) => (
+              <li className={setStyle(group._id!)} key={group._id}>
+                <span className="flex items-center gap-x-4">
+                  <b onClick={() => handleFilterGroups(group._id!)}>
+                    {group.name}
+                  </b>
+                  <div onClick={() => handleRemoveGroup(group._id!)}>
+                    {removeBtn}
+                  </div>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
         <div className="flex gap-x-2 items-center">
           <Search options={userInGroupSearchOptions} onSearch={handleSearch} />
           <div
