@@ -48,7 +48,7 @@ const EvaluateContentButton = ({
           onClose={handleTogglePanel}
         />
       )}
-      <button className="btn btn-outline mt-4" onClick={handleTogglePanel}>
+      <button className="btn btn-outline" onClick={handleTogglePanel}>
         Évaluer ce contenu
       </button>
     </div>
