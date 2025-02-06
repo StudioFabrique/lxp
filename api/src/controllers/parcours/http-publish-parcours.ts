@@ -4,12 +4,17 @@ import putPublishParcours from "../../models/parcours/put-publish-parcours";
 
 async function httpPublishParcours(req: Request, res: Response) {
   const { parcoursId } = req.params;
-
+  const { isPublished } = req.body;
   try {
-    const response = await putPublishParcours(+parcoursId);
+    const response = await putPublishParcours(+parcoursId, isPublished);
     return res
       .status(201)
-      .json({ success: true, message: "Le parcours a été publié" });
+      .json({
+        success: true,
+        message: isPublished
+          ? "Le parcours a été publié"
+          : "Le parcours est maintenant sauvegardé en tant que brouillon",
+      });
   } catch (error: any) {
     return res
       .status(error.statusCode ?? 500)

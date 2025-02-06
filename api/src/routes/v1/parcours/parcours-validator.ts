@@ -65,11 +65,6 @@ export const updateInfosValidator = [
     .notEmpty()
     .withMessage("Identifiant de formation absent")
     .escape(),
-  body("isPublished")
-    .notEmpty()
-    .withMessage("L'état du parcours est requis.")
-    .isBoolean()
-    .withMessage("L'état du parcours doit être une valeur booléenne."),
   checkValidatorResult,
 ];
 

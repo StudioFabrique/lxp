@@ -17,7 +17,7 @@ const ButtonAdd: FC<Props> = ({
   outline = false,
   onClickEvent,
 }) => {
-  let style = "btn btn-primary flex gap-x-2 capitalize";
+  let style = "btn btn-primary flex gap-x-2";
 
   const setStyle = () => {
     if (small) {
