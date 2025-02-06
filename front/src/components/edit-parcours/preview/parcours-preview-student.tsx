@@ -29,7 +29,7 @@ const ParcoursPreviewStudent = (props: ParcoursPreviewStudentProps) => {
         <div className="flex items-center">
           <span className="w-full flex justify-between items-center">
             <span className="flex flex-col gap-y-2">
-              <h2 className="text-xl font-bold">Groupes</h2>
+              <h2 className="text-xl font-bold">Apprenants</h2>
               <ul className="flex gap-x-2">
                 {groups.map((item: Group) => (
                   <li

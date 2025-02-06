@@ -203,7 +203,7 @@ async function createAdmins() {
   await mongoConnect();
   try {
     const roleId = await Role.find({ role: "admin" }, { _id: 1 });
-    const usersId = await User.find({ roles: roleId }, { _id: 1 });
+    const usersId = await User.find({ roles: { $in: roleId } }, { _id: 1 });
     console.log({ usersId });
     const newAdmins = Array<any>();
     usersId.forEach((item) => newAdmins.push({ idMdb: item._id.toString() }));
@@ -220,7 +220,7 @@ async function createTeachers() {
   await mongoConnect();
   try {
     const roleId = await Role.find({ role: "teacher" }, { _id: 1 });
-    const usersId = await User.find({ roles: roleId }, { _id: 1 });
+    const usersId = await User.find({ roles: { $in: roleId } }, { _id: 1 });
     console.log("formateurs", usersId);
 
     const newAdmins = Array<any>();
@@ -248,19 +248,22 @@ async function createSqlContacts() {
   try {
     const roleId = await Role.find({ role: "teacher" }, { _id: 1 });
     const usersId = await User.find(
-      { roles: roleId },
-      { _id: 1, firstname: 1, lastname: 1 }
+      { roles: { $in: roleId } },
+      { _id: 1, firstname: 1, lastname: 1, phoneNumber: 1, email: 1 }
     );
     const contacts = usersId.map((user: any) => {
       return {
         idMdb: user._id,
         role: "formateur",
         name: `${user.firstname} ${user.lastname}`,
+        email: user.email,
+        phone: user.phoneNumber,
       };
     });
     await prisma.contact.createMany({
       data: contacts,
     });
+    0;
   } catch (error: any) {
     console.log(error.message);
   }
@@ -276,14 +279,14 @@ async function createFormation() {
         description:
           "Toutes les compétences pour développer des applications web et web mobile",
         code: "007",
-        level: "bac + 2",
+        level: "2",
       },
       {
         title: "Concepteur Développeur d'Application",
         description:
           "Toutes les compétences pour concevoir et développer des applications.",
         code: "014",
-        level: "bac + 3",
+        level: "3",
       },
     ];
     await prisma.formation.create({

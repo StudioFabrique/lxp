@@ -40,6 +40,12 @@ const parcoursInformationsSlice = createSlice({
         endDate: dates.endDate,
       };
     },
+    publish(state, action) {
+      state.infos = {
+        ...state.infos,
+        isPublished: action.payload,
+      };
+    },
     reset(state) {
       state.infos.title = "";
       state.infos.description = "";

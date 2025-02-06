@@ -47,7 +47,7 @@ async function createUser() {
     await Role.findOne({ role: "admin" }),
     await Role.findOne({ role: "interface:admin" }),
   ]);
-  const hash = await bcrypt.hash("InfaRulz@123456", 10);
+  const hash = await bcrypt.hash("Infa64@123456", 10);
   const newUser = new User({
     firstname: "ND",
     lastname: "ND",
