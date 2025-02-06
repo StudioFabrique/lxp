@@ -30,7 +30,7 @@ export const uploadActivityImage = () => {
   return (req: CustomRequest, res: Response, next: NextFunction) => {
     const upload = multer({
       storage: storage,
-      limits: { fileSize: 10 * 1024 * 1024 },
+      limits: { fileSize: 50 * 1024 * 1024 * 1024 },
     }).single("image");
 
     upload(req, res, function (err) {
