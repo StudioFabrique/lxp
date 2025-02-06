@@ -1,4 +1,4 @@
-import Chat from "./chat";
+// import Chat from "./chat";
 import StudentAccomplishments from "./feedback-apprenant/student-accomplishments";
 import FeelingFeedback from "./feeling-feedback";
 import MostReadCourses from "./most-read-courses";
@@ -9,7 +9,7 @@ const RightSide = () => {
       <FeelingFeedback />
       <StudentAccomplishments />
       <MostReadCourses />
-      <Chat />
+      {/* <Chat /> */}
     </div>
   );
 };
