@@ -193,7 +193,7 @@ const ParcoursStudents = () => {
       </section>
       {/* Titre de la page */}
       <section>
-        <h1 className="text-3xl font-extrabold capitalize">étudiants</h1>
+        <h1 className="text-3xl font-extrabold">Groupe d'apprenants</h1>
       </section>
       {/* Affichage conditionnel selon la présence ou non de groupes */}
       {!groups || groups.length === 0 ? (
@@ -206,7 +206,7 @@ const ParcoursStudents = () => {
                   className="btn btn-primary"
                   onClick={() => handleDrawer("add-group")}
                 >
-                  Ajouter un groupe
+                  Ajouter un groupe d'apprenants
                 </button>
               </div>
             </article>
@@ -220,7 +220,7 @@ const ParcoursStudents = () => {
               <StudentsList initalList={students ?? []} />
               <div className="mt-2">
                 <ButtonAdd
-                  label="Ajouter un groupe"
+                  label="Ajouter un groupe d'apprenants"
                   outline={true}
                   onClickEvent={handleAddGroup}
                 />

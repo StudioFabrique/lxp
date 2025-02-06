@@ -1,6 +1,6 @@
 import { prisma } from "../../utils/db";
 
-async function putPublishParcours(parcoursId: number) {
+async function putPublishParcours(parcoursId: number, isPublished: boolean) {
   const existingParcours = await prisma.parcours.findFirst({
     where: { id: parcoursId },
   });
@@ -13,7 +13,7 @@ async function putPublishParcours(parcoursId: number) {
   const publishedParcours = await prisma.parcours.update({
     where: { id: parcoursId },
     data: {
-      isPublished: true,
+      isPublished,
     },
   });
   return publishedParcours;

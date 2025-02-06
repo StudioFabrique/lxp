@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useRef } from "react";
 import { ZodError } from "zod";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
@@ -26,9 +26,6 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
   const { sendRequest } = useHttp();
   const dispatch = useDispatch();
 
-  const [isPublished, setIsPublished] = useState<boolean>(
-    parcoursInfos.isPublished
-  );
   const isInitialRender = useRef(true);
 
   const {
@@ -45,11 +42,6 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
     values,
     onChangeValue,
     errors,
-  };
-
-  const handleSetIsPublished = () => {
-    setIsPublished((prevState) => !prevState);
-    setSubmit(true);
   };
 
   /**
@@ -90,20 +82,12 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
           parcoursId,
           title: values.title,
           description: values.description,
-          isPublished,
           formation: formation.id.toString(),
         },
       },
       processData
     );
-  }, [
-    values,
-    onValidationErrors,
-    formation,
-    sendRequest,
-    parcoursId,
-    isPublished,
-  ]);
+  }, [values, onValidationErrors, formation, sendRequest, parcoursId]);
 
   /**
    * déclenchement avec un délai configuré dans le fichier auto-submit-timer.ts de l'envoi d'une requête http pour la mise à jour des informations du parcours
@@ -114,7 +98,6 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
         parcoursInformationsAction.updateParcoursInfos({
           title: values.title,
           description: values.description,
-          isPublished,
         })
       );
       updateInfos();
@@ -132,7 +115,6 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
     updateInfos,
     submit,
     setSubmit,
-    isPublished,
     values.title,
     values.description,
     dispatch,
@@ -161,23 +143,6 @@ const ParcoursInformationsForm: FC<Props> = ({ parcoursId = "12" }) => {
                 <h2 className="font-bold">Niveau du parcours</h2>
                 <SubWrapper>{formation.level}</SubWrapper>
               </div>
-
-              {isPublished ? (
-                <div className="form-control w-fit">
-                  <label className="flex gap-x-4 cursor-pointer items-center label">
-                    <span className="font-bold">Etat</span>
-                    <input
-                      type="checkbox"
-                      className="toggle toggle-primary"
-                      checked={isPublished ? isPublished : false}
-                      onChange={handleSetIsPublished}
-                    />
-                    <p className="text-sm">
-                      {isPublished ? "Publié" : "Brouillon"}
-                    </p>
-                  </label>
-                </div>
-              ) : null}
             </form>
           </>
         ) : null}
