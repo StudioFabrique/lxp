@@ -6,7 +6,7 @@ import Activity from "../../../utils/interfaces/activity";
 import { useParams } from "react-router-dom";
 import VideoEditor from "./video-editor";
 import toast from "react-hot-toast";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import VideoPlayer from "../../UI/video-player";
 
 // Interface définissant les props du composant Video
@@ -25,7 +25,7 @@ const isValidYouTubeUrl = (url: string) => {
 export default function Video({ activity, onCancel, isEditing }: VideoProps) {
   // Récupération de l'ID de la leçon depuis les paramètres d'URL
   const { lessonId } = useParams();
-  const { sendRequest } = useHttp();
+  const { sendRequest, error } = useHttp();
   const [loading, setLoading] = useState(false);
 
   // Gestionnaire de soumission du formulaire
@@ -63,24 +63,20 @@ export default function Video({ activity, onCancel, isEditing }: VideoProps) {
       if (value.fileValue) {
         fd.append("video", value.fileValue);
       }
-
-      try {
-        // Envoi de la requête au serveur
-        const response = await sendRequest({
+      const applyData = (data: { success: boolean; message: string }) => {
+        if (data.success) {
+          toast.success(data.message);
+          onCancel();
+        }
+      };
+      sendRequest(
+        {
           path: `/activity/video/${activity?.id ?? lessonId}`,
           method: activity ? "put" : "post", // PUT si modification, POST si création
           body: fd,
-        });
-
-        if (response.success) {
-          toast.success(response.message);
-          onCancel();
-        }
-      } catch (error) {
-        toast.error("Une erreur est survenue");
-      } finally {
-        setLoading(false);
-      }
+        },
+        applyData
+      );
     },
     [activity, lessonId, onCancel, sendRequest]
   );
@@ -121,6 +117,10 @@ export default function Video({ activity, onCancel, isEditing }: VideoProps) {
       />
     );
   };
+
+  useEffect(() => {
+    if (error.length > 0) toast.error(error);
+  }, [error]);
 
   return (
     <main className="w-full flex justify-center mt-4">{renderContent()}</main>
