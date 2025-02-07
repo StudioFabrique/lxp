@@ -69,8 +69,7 @@ const EditModuleHome = React.lazy(
   () => import("../../views/module/edit/edit-module-home")
 );
 const LessonsPreview = React.lazy(
-  () => import("../../views/lessons-preview/lessons-preview"),
-
+  () => import("../../views/lessons-preview/lessons-preview")
 );
 const FeaturesList = React.lazy(
   () => import("../../views/features-list/features-list")
@@ -90,8 +89,6 @@ const StudentEvaluationView = React.lazy(
   () => import("../../views/teacher/student-evaluation")
 );
 
-const NewActivity = React.lazy(() => import("../../views/lesson/new-activity"));
-
 const PreviewActivity = React.lazy(
   () => import("../../views/lesson/edit/preview-activity")
 );
@@ -101,10 +98,14 @@ const AddNewLesson = React.lazy(
 );
 
 const MediathequeHomePage = React.lazy(
-  () => import("../../views/mediatheque/mediatheque-home-page"),
+  () => import("../../views/mediatheque/mediatheque-home-page")
 );
 
 const ModuleAdd = React.lazy(() => import("../../views/module/add/module-add"));
+
+const EditLesson = React.lazy(
+  () => import("../../views/lesson/edit/edit-lesson")
+);
 
 const adminRoutes = [
   { index: true, element: <AdminHome /> },
@@ -217,10 +218,6 @@ const adminRoutes = [
             element: <EditLessonHome />,
           },
           {
-            path: "new-activity",
-            element: <NewActivity />,
-          },
-          {
             path: "preview/:activityId",
             element: <PreviewActivity />,
           },
@@ -229,6 +226,10 @@ const adminRoutes = [
       {
         path: "add",
         element: <AddNewLesson />,
+      },
+      {
+        path: "edit-lesson/:lessonId",
+        element: <EditLesson />,
       },
     ],
   },
