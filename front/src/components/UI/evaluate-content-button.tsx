@@ -1,7 +1,7 @@
 import { useState } from "react";
 import RatingPanel from "./rating-panel";
 
-type EvaluateContentButton = {
+type EvaluateContentButtonProps = {
   note?: number;
   sendEvaluation: (note: number) => void;
 };
@@ -14,7 +14,7 @@ type EvaluateContentButton = {
 const EvaluateContentButton = ({
   note,
   sendEvaluation,
-}: EvaluateContentButton) => {
+}: EvaluateContentButtonProps) => {
   // État pour gérer l'ouverture/fermeture du panneau
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false);
 
