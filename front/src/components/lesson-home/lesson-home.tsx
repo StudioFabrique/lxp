@@ -96,7 +96,7 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
                       data-tip="Modifier la leçon"
                     >
                       <Link
-                        to={`/admin/course/edit/${item.course.id}?step=4`}
+                        to={`/admin/lesson/edit-lesson/${item.id}`}
                         className="text-secondary"
                         aria-label="Editer la leçon"
                       >

@@ -1,25 +1,36 @@
 import { useParams } from "react-router-dom";
 import Lesson from "../../../utils/interfaces/lesson";
 import useHttp from "../../../hooks/use-http";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import LessonForm from "../../../components/edit-course/scenario/lesson-form";
-import useAddLesson from "../add/use-add-lesson";
+import toast from "react-hot-toast";
 
 function EditLesson() {
   const { lessonId } = useParams<{ lessonId: string }>();
   const { sendRequest, error, isLoading } = useHttp();
   const [lesson, setLesson] = useState<Lesson | null>(null);
+  const formRef = useRef<HTMLInputElement>(null);
 
   const getLesson = useCallback(() => {
     const applyData = (data: Lesson) => {
       console.log(data);
+      setLesson(data);
+      toast.success("Leçon récupérée avec succès");
     };
-    sendRequest({ path: `/lessons/${lessonId}` }, applyData);
+    sendRequest({ path: `/lesson/${lessonId}` }, applyData);
   }, [lessonId, sendRequest]);
 
   useEffect(() => {
-    getLesson;
+    console.log("hello les nazes");
+
+    getLesson();
   }, [getLesson]);
+
+  useEffect(() => {
+    console.log("toto");
+
+    if (error.length > 0) toast.error(error);
+  }, [error]);
 
   return (
     <main className="w-full">
@@ -31,15 +42,21 @@ function EditLesson() {
         </article>
       </section>
       <section>
-        <LessonForm
-          {...lesson}
-          tags={[]}
-          onSetTag={() => {}}
-          onSetMode={() => {}}
-          isLoading={isLoading}
-          onSubmitLesson={() => {}}
-          children={<></>}
-        />
+        {lesson ? (
+          <LessonForm
+            ref={formRef}
+            {...lesson}
+            tags={[]}
+            onSetTag={() => {}}
+            onSetMode={() => {}}
+            isLoading={isLoading}
+            onSubmitLesson={() => {}}
+            children={<></>}
+            mode={lesson.modalite}
+          />
+        ) : (
+          <></>
+        )}
       </section>
     </main>
   );

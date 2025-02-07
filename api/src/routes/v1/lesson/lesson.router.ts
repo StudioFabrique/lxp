@@ -60,6 +60,8 @@ lessonRouter.get(
   httpGetLessonDetail
 );
 
+lessonRouter.get("/lesson/:lessonId", checkToken, httpGetLessonDetail);
+
 // Route pour supprimer une leçon
 lessonRouter.delete(
   "/:lessonId",
