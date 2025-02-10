@@ -109,7 +109,7 @@ const RoleForm = ({
   );
 
   return (
-    <div className="h-fit">
+    <div className="h-full">
       <Wrapper>
         <form
           autoComplete="off"

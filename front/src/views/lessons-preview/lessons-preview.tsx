@@ -8,7 +8,8 @@ import ModuleData from "../../components/lessons-preview/module-data/module-data
 import LessonsPreviewWrapper from "../../components/lessons-preview/lessons-preview-wrapper";
 import LessonsPreviewSkeleton from "./lessons-preview-skeleton";
 import FeedbacksButton from "../../components/UI/feedbacks/feedbacks-button";
-import Modal from "../../components/UI/modal/modal";
+import { useState } from "react";
+import LessonCompletionModal from "../../components/lessons-preview/lesson-completion-modal";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
@@ -19,15 +20,36 @@ const LessonsPreview = () => {
     moduleData,
     onCompleteLesson,
     selectedLesson,
-    isLessonAlreadyCompleted,
+    isLessonCompleted,
     setSelectedLesson,
     onRateContent,
   } = useLessonsPreview();
+
+  const [showModal, setShowModal] = useState<boolean>(false);
+
+  const handleToggleModalDisplaying = () => {
+    setTimeout(() => {
+      setShowModal((prev) => !prev);
+    }, 1000);
+  };
+
+  const handleClickModalRightButton = () => {
+    onCompleteLesson(true);
+    handleToggleModalDisplaying();
+  };
 
   return !moduleData ? (
     <LessonsPreviewSkeleton />
   ) : (
     <>
+      {/* Modal to include here */}
+      {showModal ? (
+        <LessonCompletionModal
+          onRateContent={onRateContent}
+          onClickModalRightButton={handleClickModalRightButton}
+        />
+      ) : null}
+
       <LessonsPreviewWrapper selectedLesson={selectedLesson}>
         {[
           // * Header
@@ -51,14 +73,17 @@ const LessonsPreview = () => {
             {/* Bouton pour terminer la leçon afin d'afficher une modal */}
             <FeedbacksButton
               title={
-                isLessonAlreadyCompleted
-                  ? "Leçon Suivante"
-                  : "Marquer comme terminé"
+                isLessonCompleted ? "Leçon Suivante" : "Marquer comme terminé"
               }
               className="btn btn-primary text-nowrap"
               feedbackType="thumbUp"
-              enableAnimationOnClick={!isLessonAlreadyCompleted}
-              onClick={onCompleteLesson}
+              enableAnimationOnClick={!isLessonCompleted}
+              disabled={showModal}
+              onClick={
+                isLessonCompleted
+                  ? onCompleteLesson
+                  : handleToggleModalDisplaying
+              }
             />
           </LessonReader>,
           /* Dans le cas où aucune leçon n'est affiché,

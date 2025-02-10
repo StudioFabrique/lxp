@@ -27,10 +27,10 @@ const starsRewardProperties = (starCount: number = 5) => ({
   id: "thumb-up",
   type: "emoji",
   config: {
-    emoji: ["⭐"],
+    emoji: ["⭐", starCount > 2 ? ["🥳", "☺️"] : ["😭", "😭"]],
     spread: 100,
     startVelocity: 20,
-    elementCount: starCount,
+    elementCount: starCount * 3,
     decay: 0.95,
     rotate: false,
     lifetime: 100,
@@ -65,24 +65,24 @@ const getRewardProperties = (rewardType: RewardType, elementCount?: number) => {
   }
 };
 
-type TFunction = (...args: unknown[]) => void;
-
-type FeedbackButtonProps<TFunc extends TFunction> = {
+type FeedbackButtonProps<TFunc extends () => void> = {
   title: string;
   className?: HTMLAttributes<HTMLButtonElement>["className"];
   feedbackType: RewardType;
   elementCount?: number; // Seulement lorsque feedbackType === ""
   enableAnimationOnClick: boolean;
+  disabled?: boolean;
   onClick: TFunc;
 };
 
 // Bouton avec un trigger onClick et une animation de feedback au click
-const FeedbacksButton = <TFunc extends (...args: unknown[]) => void>({
+const FeedbacksButton = <TFunc extends () => void>({
   title,
   className,
   feedbackType,
   elementCount,
   enableAnimationOnClick,
+  disabled,
   onClick,
 }: FeedbackButtonProps<TFunc>) => {
   const rewardProperties = getRewardProperties(feedbackType, elementCount);
@@ -104,7 +104,11 @@ const FeedbacksButton = <TFunc extends (...args: unknown[]) => void>({
         id={rewardProperties.id}
         className="absolute -translate-x-1/2 bottom-full"
       />
-      <button {...{ className }} disabled={isAnimating} onClick={handleClick}>
+      <button
+        {...{ className }}
+        disabled={isAnimating || disabled}
+        onClick={handleClick}
+      >
         {title}
       </button>
     </div>

@@ -11,9 +11,9 @@ type EvaluateContentButtonProps = {
  * @param note - Note existante (optionnelle)
  * @param sendEvaluation - Fonction appelée pour envoyer l'évaluation
  */
-const EvaluateContentButton = ({
+const RatingPanelButton = ({
   note,
-  onRateContent,
+  // onRateContent,
 }: EvaluateContentButtonProps) => {
   // État pour gérer l'ouverture/fermeture du panneau
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false);
@@ -30,16 +30,16 @@ const EvaluateContentButton = ({
     setIsPanelOpen(false);
   };
 
-  // Envoie l'évaluation et ferme le panneau après un délai
+  // Envoie l'évaluation
   const handleRatingContent = () => {
-    onSendRating(selectedStars);
+    // onRateContent(selectedStars);
     setTimeout(() => {
       handleClosePanel();
     }, 1000);
   };
 
   // Met à jour le nombre d'étoiles sélectionnées
-  const handleStarClick = (rating: number) => {
+  const handleSelectStarRate = (rating: number) => {
     setSelectedStars(rating);
   };
 
@@ -47,8 +47,8 @@ const EvaluateContentButton = ({
     <div className="relative">
       <RatingPanel
         selectedStars={selectedStars}
-        handleStarClick={handleStarClick}
-        onRateContent={onRateContent}
+        onSelectStarRate={handleSelectStarRate}
+        onRateContent={handleRatingContent}
         note={note}
         isOpen={isPanelOpen}
         onClose={handleClosePanel}
@@ -60,4 +60,4 @@ const EvaluateContentButton = ({
   );
 };
 
-export default EvaluateContentButton;
+export default RatingPanelButton;

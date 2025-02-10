@@ -16,8 +16,7 @@ const useLessonsPreview = () => {
   const [lessonRating, setLessonRating] = useState<LessonRating>();
 
   // Vérifie si la leçon a déjà été complétée
-  const [isLessonAlreadyCompleted, setIsLessonAlreadyCompleted] =
-    useState(false);
+  const [isLessonCompleted, setIsLessonCompleted] = useState(false);
 
   // Récupération de toutes les leçons à partir des cours du module
   const lessons = useMemo(
@@ -61,14 +60,14 @@ const useLessonsPreview = () => {
   };
 
   // Handler pour marquer une leçon comme terminée
-  const handleCompleteLesson = () => {
+  const handleCompleteLesson = (skipToNextLesson?: boolean) => {
     // Afficher directement la prochaine leçon si showNextLesson est true
-    if (isLessonAlreadyCompleted) {
+    if (isLessonCompleted) {
       switchToNextLesson();
       return;
     }
 
-    setIsLessonAlreadyCompleted(true);
+    setIsLessonCompleted(true);
 
     // Fonction de mise à jour des données du module
     const applyData = (data: { data: LessonRead }) => {
@@ -96,6 +95,8 @@ const useLessonsPreview = () => {
       { path: `/lesson/read/${selectedLesson?.id}`, method: "put" },
       applyData,
     );
+
+    skipToNextLesson && switchToNextLesson();
   };
 
   // Récupération initiale d'une note déjà attribuée à un cours
@@ -107,7 +108,9 @@ const useLessonsPreview = () => {
 
   // Évaluer le cours en tant que apprenant
   const handleRateContent = (rating: number) => {
+    console.log("start rating...");
     const applyData = (data: LessonRating) => {
+      console.log({ data });
       setLessonRating(data);
     };
 
@@ -158,7 +161,7 @@ const useLessonsPreview = () => {
   }, [moduleId, sendRequest, stateFromUrl?.lessonId, handleLessonSelection]);
 
   useEffect(() => {
-    setIsLessonAlreadyCompleted(
+    setIsLessonCompleted(
       Boolean(
         selectedLesson?.lessonsRead?.some(
           (lessonRead) => lessonRead.finishedAt,
@@ -174,7 +177,7 @@ const useLessonsPreview = () => {
     lessonRating,
     isLoading,
     setModuleData,
-    isLessonAlreadyCompleted,
+    isLessonCompleted,
     setSelectedLesson: handleLessonSelection,
     onCompleteLesson: handleCompleteLesson,
     onRateContent: handleRateContent,

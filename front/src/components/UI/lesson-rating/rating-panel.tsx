@@ -1,10 +1,10 @@
-import { Star } from "lucide-react";
 import { useEffect, useRef } from "react";
-import FeedbacksButton from "./feedbacks/feedbacks-button";
+import FeedbacksButton from "../feedbacks/feedbacks-button";
+import RatingWithStars from "./rating-with-stars";
 
 type RatingPanelProps = {
   selectedStars: number;
-  handleStarClick: (rating: number) => void;
+  onSelectStarRate: (rating: number) => void;
   onRateContent: () => void;
   note?: number;
   isOpen?: boolean;
@@ -21,7 +21,7 @@ type RatingPanelProps = {
  */
 const RatingPanel = ({
   selectedStars,
-  handleStarClick,
+  onSelectStarRate,
   onRateContent,
   note,
   isOpen,
@@ -75,20 +75,10 @@ const RatingPanel = ({
     >
       <div className="card-body p-6">
         <h3 className="text-lg font-semibold mb-2">Votre évaluation</h3>
-        <div className="flex gap-2 my-3 justify-center">
-          {[1, 2, 3, 4, 5].map((item) => (
-            <Star
-              size={24}
-              key={item}
-              onClick={() => handleStarClick(item)}
-              className={`cursor-pointer transition-all duration-200 hover:scale-110 ${
-                item <= selectedStars
-                  ? "fill-primary scale-105 stroke-1"
-                  : "stroke-base-content/50 stroke-1 hover:stroke-1"
-              }`}
-            />
-          ))}
-        </div>
+        <RatingWithStars
+          selectedStars={selectedStars}
+          onSelectStarRate={onSelectStarRate}
+        />
 
         {note && (
           <div className="text-sm text-base-content/70 border-l-4 border-primary/50 p-2 bg-base-200 rounded">

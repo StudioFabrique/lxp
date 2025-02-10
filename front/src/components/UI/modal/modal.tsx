@@ -16,11 +16,11 @@ import { Loader2 } from "lucide-react";
  */
 const Modal: FC<{
   onLeftClick?: () => void;
-  onRightClick: () => void;
+  onRightClick?: () => void;
   title: string;
   children: ReactNode;
   leftLabel?: string;
-  rightLabel: string;
+  rightLabel?: string;
   isSubmitting?: boolean;
   buttonsBothTopBottom?: boolean;
   modalBoxStyle?: string;
@@ -49,7 +49,7 @@ const Modal: FC<{
               </button>
             )}
             {/* Bouton droit avec indicateur de chargement */}
-            {props.rightLabel && (
+            {props.onRightClick && (
               <button
                 className="btn btn-warning flex items-center gap-x-2"
                 disabled={isSubmitting}
@@ -68,7 +68,7 @@ const Modal: FC<{
         {/* Boutons en bas de la modal */}
         <div className="modal-action">
           {/* Bouton gauche (optionnel) */}
-          {props.leftLabel && (
+          {props.onLeftClick && (
             <button
               className="btn btn-outline btn-primary"
               onClick={props.onLeftClick}
@@ -77,7 +77,7 @@ const Modal: FC<{
             </button>
           )}
           {/* Bouton droit avec indicateur de chargement */}
-          {props.rightLabel && (
+          {props.onRightClick && (
             <button
               className="btn btn-warning flex items-center gap-x-2"
               disabled={isSubmitting}

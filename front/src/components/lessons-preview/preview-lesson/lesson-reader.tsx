@@ -1,10 +1,11 @@
 import Lesson from "../../../utils/interfaces/lesson";
+import RatingPanelButton from "../../UI/lesson-rating/rating-panel-button";
 import ActivityPreview from "./activity";
-import EvaluateContentButton from "../../UI/evaluate-content-button";
 import { PropsWithChildren } from "react";
 
 type PreviewLessonProps = {
   selectedLesson: Lesson;
+  currentLessonRating?: number;
   isLessonAlreadyCompleted: boolean;
   onRateContent: (rating: number) => void;
 };
@@ -12,6 +13,7 @@ type PreviewLessonProps = {
 // Composant pour prévisualiser une leçon avec ses activités
 const LessonReader = ({
   selectedLesson,
+  currentLessonRating,
   isLessonAlreadyCompleted,
   onRateContent,
   children,
@@ -25,8 +27,12 @@ const LessonReader = ({
       <div className="w-full flex justify-end pr-10">
         {isLessonAlreadyCompleted &&
         selectedLesson.activities &&
+        currentLessonRating &&
         selectedLesson.activities?.length > 0 ? (
-          <EvaluateContentButton note={1} onRateContent={onRateContent} />
+          <RatingPanelButton
+            note={currentLessonRating}
+            onRateContent={onRateContent}
+          />
         ) : null}
       </div>
 
