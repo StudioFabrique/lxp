@@ -3,7 +3,7 @@ import RatingPanel from "./rating-panel";
 
 type EvaluateContentButtonProps = {
   note?: number;
-  sendEvaluation: (note: number) => void;
+  onRateContent: (note: number) => void;
 };
 
 /**
@@ -13,7 +13,7 @@ type EvaluateContentButtonProps = {
  */
 const EvaluateContentButton = ({
   note,
-  sendEvaluation,
+  onRateContent,
 }: EvaluateContentButtonProps) => {
   // État pour gérer l'ouverture/fermeture du panneau
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false);
@@ -21,15 +21,21 @@ const EvaluateContentButton = ({
   // État pour stocker le nombre d'étoiles sélectionnées
   const [selectedStars, setSelectedStars] = useState<number>(note || 3);
 
-  // Bascule l'affichage du panneau
-  const handleTogglePanel = () => {
-    setIsPanelOpen((prevState) => !prevState);
+  const handleOpenPanel = () => {
+    setIsPanelOpen(true);
   };
 
-  // Envoie l'évaluation et ferme le panneau
-  const handleEvaluateContent = () => {
-    sendEvaluation(selectedStars);
-    handleTogglePanel();
+  // ferme l'affichage du panneau
+  const handleClosePanel = () => {
+    setIsPanelOpen(false);
+  };
+
+  // Envoie l'évaluation et ferme le panneau après un délai
+  const handleRatingContent = () => {
+    onSendRating(selectedStars);
+    setTimeout(() => {
+      handleClosePanel();
+    }, 1000);
   };
 
   // Met à jour le nombre d'étoiles sélectionnées
@@ -39,16 +45,15 @@ const EvaluateContentButton = ({
 
   return (
     <div className="relative">
-      {isPanelOpen && (
-        <RatingPanel
-          selectedStars={selectedStars}
-          handleStarClick={handleStarClick}
-          handleEvaluateContent={handleEvaluateContent}
-          note={note}
-          onClose={handleTogglePanel}
-        />
-      )}
-      <button className="btn btn-outline" onClick={handleTogglePanel}>
+      <RatingPanel
+        selectedStars={selectedStars}
+        handleStarClick={handleStarClick}
+        onRateContent={onRateContent}
+        note={note}
+        isOpen={isPanelOpen}
+        onClose={handleClosePanel}
+      />
+      <button className="btn btn-outline" onClick={handleOpenPanel}>
         Évaluer ce contenu
       </button>
     </div>
