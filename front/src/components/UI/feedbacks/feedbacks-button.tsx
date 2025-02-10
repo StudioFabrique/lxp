@@ -23,6 +23,20 @@ const thumbsRewardProperties = {
 //   },
 // };
 
+const starsRewardProperties = (starCount: number = 5) => ({
+  id: "thumb-up",
+  type: "emoji",
+  config: {
+    emoji: ["⭐"],
+    spread: 100,
+    startVelocity: 20,
+    elementCount: starCount,
+    decay: 0.95,
+    rotate: false,
+    lifetime: 100,
+  },
+});
+
 const confettiRewardProperties = {
   id: "thumb-up",
   type: "confetti",
@@ -35,14 +49,16 @@ const balloonsRewardProperties = {
   config: undefined,
 };
 
-const getRewardProperties = (
-  rewardType: "thumbUp" | "confetti" | "balloons",
-) => {
+type RewardType = "thumbUp" | "confetti" | "balloons" | "stars";
+
+const getRewardProperties = (rewardType: RewardType, elementCount?: number) => {
   switch (rewardType) {
     case "thumbUp":
       return thumbsRewardProperties;
     case "balloons":
       return balloonsRewardProperties;
+    case "stars":
+      return starsRewardProperties(elementCount);
     case "confetti":
     default:
       return confettiRewardProperties;
@@ -54,7 +70,8 @@ type TFunction = (...args: unknown[]) => void;
 type FeedbackButtonProps<TFunc extends TFunction> = {
   title: string;
   className?: HTMLAttributes<HTMLButtonElement>["className"];
-  feedbackType: "thumbUp" | "confetti" | "balloons";
+  feedbackType: RewardType;
+  elementCount?: number; // Seulement lorsque feedbackType === ""
   enableAnimationOnClick: boolean;
   onClick: TFunc;
 };
@@ -64,12 +81,13 @@ const FeedbacksButton = <TFunc extends (...args: unknown[]) => void>({
   title,
   className,
   feedbackType,
+  elementCount,
   enableAnimationOnClick,
   onClick,
 }: FeedbackButtonProps<TFunc>) => {
-  const rewardProperties = getRewardProperties(feedbackType);
+  const rewardProperties = getRewardProperties(feedbackType, elementCount);
 
-  const { reward } = useReward(
+  const { reward, isAnimating } = useReward(
     rewardProperties.id,
     rewardProperties.type as "emoji" | "confetti" | "balloons",
     rewardProperties.config,
@@ -84,9 +102,9 @@ const FeedbacksButton = <TFunc extends (...args: unknown[]) => void>({
     <div className="relative">
       <span
         id={rewardProperties.id}
-        className="absolute left-1/2 -translate-x-1/2 bottom-full"
+        className="absolute -translate-x-1/2 bottom-full"
       />
-      <button {...{ className }} onClick={handleClick}>
+      <button {...{ className }} disabled={isAnimating} onClick={handleClick}>
         {title}
       </button>
     </div>

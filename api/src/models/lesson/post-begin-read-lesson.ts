@@ -32,10 +32,5 @@ export default async function postBeginReadLesson(
     return null;
   }
 
-  console.info(
-    "Nouvelle entrée de création de confirmation de lecture étudiant",
-    { lessonRead },
-  );
-
   return lessonRead;
 }

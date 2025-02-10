@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
+import LessonRating from "../../../utils/interfaces/lesson-rating";
 
 // Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
 const useLessonsPreview = () => {
@@ -11,7 +12,12 @@ const useLessonsPreview = () => {
   const { state: stateFromUrl } = useLocation();
   const { moduleId } = useParams();
   const [moduleData, setModuleData] = useState<Module | null>(null);
-  const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>();
+  const [selectedLesson, setSelectedLesson] = useState<Lesson>();
+  const [lessonRating, setLessonRating] = useState<LessonRating>();
+
+  // Vérifie si la leçon a déjà été complétée
+  const [isLessonAlreadyCompleted, setIsLessonAlreadyCompleted] =
+    useState(false);
 
   // Récupération de toutes les leçons à partir des cours du module
   const lessons = useMemo(
@@ -55,12 +61,14 @@ const useLessonsPreview = () => {
   };
 
   // Handler pour marquer une leçon comme terminée
-  const handleFinishReadLesson = (showNextLesson: boolean) => {
+  const handleCompleteLesson = () => {
     // Afficher directement la prochaine leçon si showNextLesson est true
-    if (showNextLesson) {
+    if (isLessonAlreadyCompleted) {
       switchToNextLesson();
       return;
     }
+
+    setIsLessonAlreadyCompleted(true);
 
     // Fonction de mise à jour des données du module
     const applyData = (data: { data: LessonRead }) => {
@@ -88,6 +96,29 @@ const useLessonsPreview = () => {
       { path: `/lesson/read/${selectedLesson?.id}`, method: "put" },
       applyData,
     );
+  };
+
+  // Récupération initiale d'une note déjà attribuée à un cours
+  // const handleInitGetLessonRating = useCallback(() => {
+  //   const applyData = (data: LessonRating) => {};
+
+  //   // If selectedLesson, already read with at least a activity
+  // }, []);
+
+  // Évaluer le cours en tant que apprenant
+  const handleRateContent = (rating: number) => {
+    const applyData = (data: LessonRating) => {
+      setLessonRating(data);
+    };
+
+    selectedLesson?.id &&
+      sendRequest(
+        {
+          path: `/lesson/rate/${selectedLesson?.id}`,
+          body: { rating: rating },
+        },
+        applyData,
+      );
   };
 
   // useEffect pour charger les détails d'une leçon sélectionnée
@@ -126,14 +157,27 @@ const useLessonsPreview = () => {
     );
   }, [moduleId, sendRequest, stateFromUrl?.lessonId, handleLessonSelection]);
 
+  useEffect(() => {
+    setIsLessonAlreadyCompleted(
+      Boolean(
+        selectedLesson?.lessonsRead?.some(
+          (lessonRead) => lessonRead.finishedAt,
+        ),
+      ),
+    );
+  }, [selectedLesson?.lessonsRead]);
+
   // Retourne les données et fonctions nécessaires
   return {
     moduleData,
     selectedLesson,
+    lessonRating,
     isLoading,
     setModuleData,
+    isLessonAlreadyCompleted,
     setSelectedLesson: handleLessonSelection,
-    onFinishReadLesson: handleFinishReadLesson,
+    onCompleteLesson: handleCompleteLesson,
+    onRateContent: handleRateContent,
   };
 };
 

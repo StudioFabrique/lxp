@@ -1,11 +1,13 @@
 import { Star } from "lucide-react";
 import { useEffect, useRef } from "react";
+import FeedbacksButton from "./feedbacks/feedbacks-button";
 
 type RatingPanelProps = {
   selectedStars: number;
   handleStarClick: (rating: number) => void;
-  handleEvaluateContent: () => void;
+  onRateContent: () => void;
   note?: number;
+  isOpen?: boolean;
   onClose: () => void;
 };
 
@@ -20,8 +22,9 @@ type RatingPanelProps = {
 const RatingPanel = ({
   selectedStars,
   handleStarClick,
-  handleEvaluateContent,
+  onRateContent,
   note,
+  isOpen,
   onClose,
 }: RatingPanelProps) => {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -63,6 +66,8 @@ const RatingPanel = ({
     };
   }, [onClose]);
 
+  if (!isOpen) return null;
+
   return (
     <div
       ref={panelRef}
@@ -71,13 +76,13 @@ const RatingPanel = ({
       <div className="card-body p-6">
         <h3 className="text-lg font-semibold mb-2">Votre évaluation</h3>
         <div className="flex gap-2 my-3 justify-center">
-          {[1, 2, 3, 4, 5].map((rating) => (
+          {[1, 2, 3, 4, 5].map((item) => (
             <Star
               size={24}
-              key={rating}
-              onClick={() => handleStarClick(rating)}
+              key={item}
+              onClick={() => handleStarClick(item)}
               className={`cursor-pointer transition-all duration-200 hover:scale-110 ${
-                rating <= selectedStars
+                item <= selectedStars
                   ? "fill-primary scale-105 stroke-1"
                   : "stroke-base-content/50 stroke-1 hover:stroke-1"
               }`}
@@ -99,12 +104,14 @@ const RatingPanel = ({
           >
             Annuler
           </button>
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={handleEvaluateContent}
-          >
-            Confirmer
-          </button>
+          <FeedbacksButton
+            title="Évaluer ce contenu"
+            className="btn btn-primary btn-sm text-nowrap"
+            feedbackType="stars"
+            elementCount={selectedStars}
+            enableAnimationOnClick
+            onClick={onRateContent}
+          />
         </div>
       </div>
     </div>
