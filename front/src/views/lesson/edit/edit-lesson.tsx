@@ -4,6 +4,7 @@ import useHttp from "../../../hooks/use-http";
 import { useCallback, useEffect, useRef, useState } from "react";
 import LessonForm from "../../../components/edit-course/scenario/lesson-form";
 import toast from "react-hot-toast";
+import useEditLesson from "../../../hooks/use-edit-lesson";
 
 function EditLesson() {
   const { lessonId } = useParams<{ lessonId: string }>();
@@ -11,14 +12,26 @@ function EditLesson() {
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const formRef = useRef<HTMLInputElement>(null);
 
+  const {
+    title,
+    description,
+    mode,
+    setMode,
+    tag,
+    setTag,
+    tagsList,
+    setLessonValues,
+  } = useEditLesson();
+
   const getLesson = useCallback(() => {
-    const applyData = (data: Lesson) => {
+    const applyData = (data: { success: boolean; lesson: Lesson }) => {
       console.log(data);
-      setLesson(data);
+      setLesson(data.lesson);
       toast.success("Leçon récupérée avec succès");
+      setLessonValues(data.lesson);
     };
-    sendRequest({ path: `/lesson/${lessonId}` }, applyData);
-  }, [lessonId, sendRequest]);
+    sendRequest({ path: `/lesson/edit/${lessonId}` }, applyData);
+  }, [lessonId, sendRequest, setLessonValues]);
 
   useEffect(() => {
     console.log("hello les nazes");
@@ -45,15 +58,18 @@ function EditLesson() {
         {lesson ? (
           <LessonForm
             ref={formRef}
-            {...lesson}
-            tags={[]}
-            onSetTag={() => {}}
-            onSetMode={() => {}}
+            title={title}
+            description={description}
+            mode={mode}
+            tag={tag}
             isLoading={isLoading}
+            onSetTag={setTag}
+            tags={tagsList}
+            onSetMode={setMode}
             onSubmitLesson={() => {}}
-            children={<></>}
-            mode={lesson.modalite}
-          />
+          >
+            <p>toto</p>
+          </LessonForm>
         ) : (
           <></>
         )}
