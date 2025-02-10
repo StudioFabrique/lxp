@@ -22,6 +22,7 @@ import httpPutReorderLessons from "../../../controllers/lesson/http-put-reorder-
 import httpPostBeginReadLesson from "../../../controllers/lesson/http-post-begin-read-lesson";
 import httpPutFinishReadLesson from "../../../controllers/lesson/http-put-finish-read-lesson";
 import httpGetLastLessonsRead from "../../../controllers/lesson/http-get-last-lessons-read";
+import httpGetOneLesson from "../../../controllers/lesson/http-get-one-lesson";
 
 // Création du routeur Express pour les leçons
 const lessonRouter = express.Router();
@@ -92,6 +93,13 @@ lessonRouter.put(
   checkPermissions("lesson", "read"),
   lessonIdValidator,
   httpPutFinishReadLesson
+);
+
+lessonRouter.get(
+  "/edit/:lessonId",
+  checkPermissions("lesson"),
+  lessonIdValidator,
+  httpGetOneLesson
 );
 
 export default lessonRouter;
