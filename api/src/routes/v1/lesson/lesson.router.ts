@@ -25,6 +25,7 @@ import httpPutFinishReadLesson from "../../../controllers/lesson/http-put-finish
 import httpGetLastLessonsRead from "../../../controllers/lesson/http-get-last-lessons-read";
 import httpGetLessonRating from "../../../controllers/lesson/http-get-lesson-rating";
 import httpPostRateLesson from "../../../controllers/lesson/http-post-rate-lesson";
+import httpPutRateLesson from "../../../controllers/lesson/http-put-rate-lesson";
 
 // Création du routeur Express pour les leçons
 const lessonRouter = express.Router();
@@ -95,9 +96,9 @@ lessonRouter.get(
 );
 
 lessonRouter.put(
-  "/rate/:rateId",
+  "/rate/:lessonId",
   checkPermissions("lesson", "read"),
-  // httpGetLessonRating,
+  httpPutRateLesson,
 );
 
 // Route pour attribuer un avis sous forme de note pour une leçon
