@@ -23,8 +23,8 @@ import httpPutReorderLessons from "../../../controllers/lesson/http-put-reorder-
 import httpPostBeginReadLesson from "../../../controllers/lesson/http-post-begin-read-lesson";
 import httpPutFinishReadLesson from "../../../controllers/lesson/http-put-finish-read-lesson";
 import httpGetLastLessonsRead from "../../../controllers/lesson/http-get-last-lessons-read";
-import httpPostRateLesson from "../../../controllers/lesson/http-post-begin-read-lesson";
 import httpGetLessonRating from "../../../controllers/lesson/http-get-lesson-rating";
+import httpPostRateLesson from "../../../controllers/lesson/http-post-rate-lesson";
 
 // Création du routeur Express pour les leçons
 const lessonRouter = express.Router();

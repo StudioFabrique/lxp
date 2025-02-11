@@ -6,7 +6,7 @@ import FeedbacksButton from "../UI/feedbacks/feedbacks-button";
 
 type LessonCompletionModal = {
   onRateContent: (rating: number) => void;
-  onClickModalRightButton: () => void;
+  onClickModalRightButton?: () => void;
 };
 
 const LessonCompletionModal = ({

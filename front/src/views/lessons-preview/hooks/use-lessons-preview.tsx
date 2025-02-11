@@ -114,11 +114,12 @@ const useLessonsPreview = () => {
       setLessonRating(data);
     };
 
-    selectedLesson?.id &&
+    if (selectedLesson?.id)
       sendRequest(
         {
+          method: "post",
           path: `/lesson/rate/${selectedLesson?.id}`,
-          body: { rating: rating },
+          body: { rate: rating },
         },
         applyData,
       );
