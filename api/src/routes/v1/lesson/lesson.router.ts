@@ -90,6 +90,7 @@ lessonRouter.post(
 lessonRouter.get(
   "/rate/:lessonId",
   checkPermissions("lesson", "read"),
+  lessonIdValidator,
   httpGetLessonRating,
 );
 

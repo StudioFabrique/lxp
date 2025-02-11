@@ -14,7 +14,6 @@ type PreviewLessonProps = {
 const LessonReader = ({
   selectedLesson,
   currentLessonRating,
-  isLessonAlreadyCompleted,
   onRateContent,
   children,
 }: PropsWithChildren<PreviewLessonProps>) => {
@@ -25,8 +24,7 @@ const LessonReader = ({
     <div className="flex flex-col gap-4">
       {/* Bouton de notation */}
       <div className="w-full flex justify-end pr-10">
-        {isLessonAlreadyCompleted &&
-        selectedLesson.activities &&
+        {selectedLesson.activities &&
         currentLessonRating &&
         selectedLesson.activities?.length > 0 ? (
           <RatingPanelButton
