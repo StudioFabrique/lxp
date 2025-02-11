@@ -15,7 +15,7 @@ const LessonsPreviewWrapper = ({
     children as React.ReactNode[];
 
   return (
-    <div className="px-8 p-4">
+    <div className="px-8 p-4 w-full overflow-hidden">
       {header}
 
       <div className="mt-5 max-xl:flex max-xl:flex-col-reverse xl:grid xl:grid-cols-4 gap-5 w-full">

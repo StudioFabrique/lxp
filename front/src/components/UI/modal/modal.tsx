@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Minimize2 } from "lucide-react";
 
 /**
  * Composant Modal réutilisable
@@ -16,11 +16,12 @@ import { Loader2 } from "lucide-react";
  */
 const Modal: FC<{
   onLeftClick?: () => void;
-  onRightClick: () => void;
+  onRightClick?: () => void;
+  onMinimizeClick?: () => void;
   title: string;
   children: ReactNode;
   leftLabel?: string;
-  rightLabel: string;
+  rightLabel?: string;
   isSubmitting?: boolean;
   buttonsBothTopBottom?: boolean;
   modalBoxStyle?: string;
@@ -49,7 +50,7 @@ const Modal: FC<{
               </button>
             )}
             {/* Bouton droit avec indicateur de chargement */}
-            {props.rightLabel && (
+            {props.onRightClick && (
               <button
                 className="btn btn-warning flex items-center gap-x-2"
                 disabled={isSubmitting}
@@ -61,14 +62,21 @@ const Modal: FC<{
             )}
           </div>
         )}
-        {/* Titre de la modal */}
-        <h3 className="font-bold text-lg">{props.title}</h3>
+        <div className="flex justify-between">
+          {/* Titre de la modal */}
+          <h3 className="font-bold text-lg">{props.title}</h3>
+          {props.onMinimizeClick && (
+            <button className="btn" onClick={props.onMinimizeClick}>
+              <Minimize2 />
+            </button>
+          )}
+        </div>
         {/* Contenu de la modal */}
         {props.children}
         {/* Boutons en bas de la modal */}
         <div className="modal-action">
           {/* Bouton gauche (optionnel) */}
-          {props.leftLabel && (
+          {props.onLeftClick && (
             <button
               className="btn btn-outline btn-primary"
               onClick={props.onLeftClick}
@@ -77,7 +85,7 @@ const Modal: FC<{
             </button>
           )}
           {/* Bouton droit avec indicateur de chargement */}
-          {props.rightLabel && (
+          {props.onRightClick && (
             <button
               className="btn btn-warning flex items-center gap-x-2"
               disabled={isSubmitting}

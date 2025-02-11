@@ -9,7 +9,7 @@ export default async function postBeginReadLesson(
   });
 
   if (!student) {
-    return null;
+    return [];
   }
 
   const existingLessonRead = await prisma.lessonRead.findFirst({
@@ -31,11 +31,6 @@ export default async function postBeginReadLesson(
   if (!lessonRead) {
     return null;
   }
-
-  console.info(
-    "Nouvelle entrée de création de confirmation de lecture étudiant",
-    { lessonRead },
-  );
 
   return lessonRead;
 }

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
+import LessonRating from "../../../utils/interfaces/lesson-rating";
 
 // Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
 const useLessonsPreview = () => {
@@ -11,7 +12,11 @@ const useLessonsPreview = () => {
   const { state: stateFromUrl } = useLocation();
   const { moduleId } = useParams();
   const [moduleData, setModuleData] = useState<Module | null>(null);
-  const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>();
+  const [selectedLesson, setSelectedLesson] = useState<Lesson>();
+  const [lessonRating, setLessonRating] = useState<LessonRating>();
+
+  // Vérifie si la leçon a déjà été complétée
+  const [isLessonCompleted, setIsLessonCompleted] = useState(false);
 
   // Récupération de toutes les leçons à partir des cours du module
   const lessons = useMemo(
@@ -55,12 +60,15 @@ const useLessonsPreview = () => {
   };
 
   // Handler pour marquer une leçon comme terminée
-  const handleFinishReadLesson = (showNextLesson: boolean) => {
+  const handleCompleteLesson = (skipToNextLesson?: boolean) => {
     // Afficher directement la prochaine leçon si showNextLesson est true
-    if (showNextLesson) {
+    if (isLessonCompleted) {
+      setLessonRating(undefined);
       switchToNextLesson();
       return;
     }
+
+    setIsLessonCompleted(true);
 
     // Fonction de mise à jour des données du module
     const applyData = (data: { data: LessonRead }) => {
@@ -88,6 +96,69 @@ const useLessonsPreview = () => {
       { path: `/lesson/read/${selectedLesson?.id}`, method: "put" },
       applyData,
     );
+
+    if (skipToNextLesson) {
+      switchToNextLesson();
+      setLessonRating(undefined);
+    }
+  };
+
+  // Récupération initiale d'une note déjà attribuée à une leçon
+  const handleInitGetLessonRating = useCallback(() => {
+    const applyData = (data: { data: LessonRating }) => {
+      setLessonRating(data.data);
+    };
+
+    // If selectedLesson, already read with at least a activity
+    if (
+      selectedLesson &&
+      selectedLesson.activities &&
+      selectedLesson.activities?.length > 1 &&
+      selectedLesson.lessonsRead &&
+      selectedLesson.lessonsRead[0]?.finishedAt
+    ) {
+      sendRequest(
+        { path: `/lesson/rate/${selectedLesson.id}`, method: "get" },
+        applyData,
+      );
+    }
+  }, [selectedLesson, sendRequest]);
+
+  // Évaluer le cours en tant que apprenant
+  const handleRateContent = (rating: number) => {
+    const applyData = (data: { data: LessonRating }) => {
+      setLessonRating(data.data);
+    };
+
+    if (selectedLesson?.id)
+      sendRequest(
+        {
+          method: "post",
+          path: `/lesson/rate/${selectedLesson?.id}`,
+          body: { rate: rating },
+        },
+        applyData,
+      );
+  };
+
+  // Évaluer le cours en tant que apprenant
+  const handleEditRateContent = (rating: number) => {
+    console.log({ rating });
+
+    const applyData = (data: { data: LessonRating }) => {
+      console.log({ data });
+      setLessonRating(data.data);
+    };
+
+    if (selectedLesson?.id)
+      sendRequest(
+        {
+          method: "put",
+          path: `/lesson/rate/${selectedLesson?.id}`,
+          body: { rate: rating },
+        },
+        applyData,
+      );
   };
 
   // useEffect pour charger les détails d'une leçon sélectionnée
@@ -126,14 +197,32 @@ const useLessonsPreview = () => {
     );
   }, [moduleId, sendRequest, stateFromUrl?.lessonId, handleLessonSelection]);
 
+  useEffect(() => {
+    setIsLessonCompleted(
+      Boolean(
+        selectedLesson?.lessonsRead?.some(
+          (lessonRead) => lessonRead.finishedAt,
+        ),
+      ),
+    );
+  }, [selectedLesson?.lessonsRead]);
+
+  useEffect(() => {
+    handleInitGetLessonRating();
+  }, [handleInitGetLessonRating]);
+
   // Retourne les données et fonctions nécessaires
   return {
     moduleData,
     selectedLesson,
+    lessonRating,
     isLoading,
     setModuleData,
+    isLessonCompleted,
     setSelectedLesson: handleLessonSelection,
-    onFinishReadLesson: handleFinishReadLesson,
+    onCompleteLesson: handleCompleteLesson,
+    onRateContent: handleRateContent,
+    onEditRateContent: handleEditRateContent,
   };
 };
 

@@ -8,6 +8,7 @@ import User from "../../../../utils/interfaces/user";
 import Search from "../../../UI/search/search.component";
 import UserToAddListHeader from "./user-to-add-list-header.component";
 import GroupManageUserItem from "./group-manage-user-item/group-manage-user-item.component";
+import { UserPlus } from "lucide-react";
 
 const GroupManageUserList: FC<{
   usersToAdd: User[];
@@ -136,6 +137,9 @@ const GroupManageUserList: FC<{
       onCloseDrawer={handleCloseDrawer}
       visible={drawerOptions?.visible}
       isOpen={drawerOptions?.isOpen}
+      buttonTitle="Ajouter des étudiants"
+      icon={<UserPlus />}
+      buttonClassname="drawer-button btn btn-primary text-nowrap"
     >
       <div className="h-[80vh] w-[35rm]">
         <div className="flex flex-col gap-y-5 items-center h-[85%]">

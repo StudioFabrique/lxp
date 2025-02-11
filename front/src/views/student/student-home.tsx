@@ -30,7 +30,7 @@ const StudentHome = () => {
           <h1 className="text-3xl font-bold capitalize ">{`Bonjour, ${user?.firstname} ${user?.lastname} !`}</h1>
           <p>
             Bienvenue dans votre espace. Commencez votre apprentissage ou
-            reprenez là où vous avez arrêté
+            reprenez là où vous vous êtes arrêté.
           </p>
         </span>
         <span>

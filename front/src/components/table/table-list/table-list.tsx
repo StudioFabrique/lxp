@@ -3,6 +3,7 @@ import { TableListActionConfig } from "./interfaces/table-list-action";
 import { TableListItemConfig } from "./interfaces/table-list-item";
 import Head from "./table-list-head";
 import Body from "./table-list-body";
+import { Link } from "react-router-dom";
 
 export type TableListProps<TData> = {
   idProperty: string;
@@ -11,7 +12,7 @@ export type TableListProps<TData> = {
   tableItemsConfig: TableListItemConfig[];
   actionsItems?: TableListActionConfig[];
   style?: {
-    emptyArrayMessage?: string;
+    emptyArrayMessage?: { message?: string; linkTo?: string };
     showAvatar?: boolean;
   };
   isAllChecked?: boolean;
@@ -46,11 +47,12 @@ const TableList = <TData extends Record<string, string>>(
     props.avatar?.property,
   );
 
-  return (
+  const itemsLength = tableItems?.length || 0;
+
+  return itemsLength > 0 ? (
     <table className="table border-separate border-spacing-y-5">
       <Head
         labels={labels}
-        itemsLength={tableItems?.length || 0}
         avatar={props.avatar}
         showAvatar={props.style?.showAvatar}
         isAllChecked={props.isAllChecked}
@@ -59,14 +61,23 @@ const TableList = <TData extends Record<string, string>>(
         onCheckAll={props.onCheckAll}
         onSortProperty={props.onSortProperty}
       />
+
       <Body
         tableItems={tableItems}
-        propertiesLength={labels.length}
         style={props.style}
         isAllChecked={props.isAllChecked}
         onCheck={props.onCheck}
       />
     </table>
+  ) : props.style?.emptyArrayMessage?.linkTo ? (
+    <Link
+      className="text-secondary hover:underline hover:text-primary"
+      to={props.style.emptyArrayMessage.linkTo}
+    >
+      {props.style.emptyArrayMessage?.message}
+    </Link>
+  ) : (
+    <p className="text-secondary">{props.style?.emptyArrayMessage?.message}</p>
   );
 };
 
