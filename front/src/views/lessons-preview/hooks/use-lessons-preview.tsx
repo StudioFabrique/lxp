@@ -141,6 +141,23 @@ const useLessonsPreview = () => {
       );
   };
 
+  // Évaluer le cours en tant que apprenant
+  const handleEditRateContent = (rating: number) => {
+    const applyData = (data: { data: LessonRating }) => {
+      setLessonRating(data.data);
+    };
+
+    if (selectedLesson?.id)
+      sendRequest(
+        {
+          method: "put",
+          path: `/lesson/rate/${selectedLesson?.id}`,
+          body: { rate: rating },
+        },
+        applyData,
+      );
+  };
+
   // useEffect pour charger les détails d'une leçon sélectionnée
   useEffect(() => {
     const applyData = (data: Lesson) => {

@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Minimize2 } from "lucide-react";
 
 /**
  * Composant Modal réutilisable
@@ -17,6 +17,7 @@ import { Loader2 } from "lucide-react";
 const Modal: FC<{
   onLeftClick?: () => void;
   onRightClick?: () => void;
+  onMinimizeClick?: () => void;
   title: string;
   children: ReactNode;
   leftLabel?: string;
@@ -61,8 +62,15 @@ const Modal: FC<{
             )}
           </div>
         )}
-        {/* Titre de la modal */}
-        <h3 className="font-bold text-lg">{props.title}</h3>
+        <div className="flex justify-between">
+          {/* Titre de la modal */}
+          <h3 className="font-bold text-lg">{props.title}</h3>
+          {props.onMinimizeClick && (
+            <button className="btn" onClick={props.onMinimizeClick}>
+              <Minimize2 />
+            </button>
+          )}
+        </div>
         {/* Contenu de la modal */}
         {props.children}
         {/* Boutons en bas de la modal */}
