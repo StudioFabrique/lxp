@@ -104,27 +104,30 @@ const useLessonsPreview = () => {
   };
 
   // Récupération initiale d'une note déjà attribuée à une leçon
-  // const handleInitGetLessonRating = useCallback(() => {
-  //   const applyData = (data: LessonRating) => {};
+  const handleInitGetLessonRating = useCallback(() => {
+    const applyData = (data: { data: LessonRating }) => {
+      setLessonRating(data.data);
+    };
 
-  //   // If selectedLesson, already read with at least a activity
-  //   if (
-  //     selectedLesson &&
-  //     selectedLesson.activities &&
-  //     selectedLesson.activities?.length > 1 &&
-  //     selectedLesson.lessonsRead &&
-  //     selectedLesson.lessonsRead[0].finishedAt
-  //   ) {
-  //     sendRequest({ path: `/lesson/rate/${selectedLesson.id}`, method: "get" });
-  //   }
-  // }, [selectedLesson, sendRequest]);
+    // If selectedLesson, already read with at least a activity
+    if (
+      selectedLesson &&
+      selectedLesson.activities &&
+      selectedLesson.activities?.length > 1 &&
+      selectedLesson.lessonsRead &&
+      selectedLesson.lessonsRead[0]?.finishedAt
+    ) {
+      sendRequest(
+        { path: `/lesson/rate/${selectedLesson.id}`, method: "get" },
+        applyData,
+      );
+    }
+  }, [selectedLesson, sendRequest]);
 
   // Évaluer le cours en tant que apprenant
   const handleRateContent = (rating: number) => {
-    console.log("start rating...");
-    const applyData = (data: LessonRating) => {
-      console.log({ data });
-      setLessonRating(data);
+    const applyData = (data: { data: LessonRating }) => {
+      setLessonRating(data.data);
     };
 
     if (selectedLesson?.id)
@@ -183,6 +186,10 @@ const useLessonsPreview = () => {
       ),
     );
   }, [selectedLesson?.lessonsRead]);
+
+  useEffect(() => {
+    handleInitGetLessonRating();
+  }, [handleInitGetLessonRating]);
 
   // Retourne les données et fonctions nécessaires
   return {

@@ -71,6 +71,7 @@ const LessonsPreview = () => {
             key="lesson-reader"
             selectedLesson={selectedLesson as Lesson}
             isLessonAlreadyCompleted
+            currentLessonRating={lessonRating?.rating}
             onRateContent={onRateContent}
           >
             {/* Bouton pour terminer la leçon afin d'afficher une modal */}
