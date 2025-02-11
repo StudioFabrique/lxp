@@ -9,7 +9,7 @@ export default async function postBeginReadLesson(
   });
 
   if (!student) {
-    return null;
+    return [];
   }
 
   const existingLessonRead = await prisma.lessonRead.findFirst({
