@@ -31,7 +31,7 @@ const LessonsPreview = () => {
   const handleToggleModalDisplaying = () => {
     setTimeout(() => {
       setShowModal((prev) => !prev);
-    }, 1000);
+    }, 800);
   };
 
   const handleClickModalRightButton = () => {
@@ -50,6 +50,7 @@ const LessonsPreview = () => {
           // Le bouton handler onClickModalRightButton n'est affiché seulement si
           // l'objet lessonRating est non null
           onClickModalRightButton={lessonRating && handleClickModalRightButton}
+          onClickMinimizeButton={handleToggleModalDisplaying}
         />
       ) : null}
 

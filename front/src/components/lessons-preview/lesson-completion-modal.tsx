@@ -7,11 +7,13 @@ import FeedbacksButton from "../UI/feedbacks/feedbacks-button";
 type LessonCompletionModal = {
   onRateContent: (rating: number) => void;
   onClickModalRightButton?: () => void;
+  onClickMinimizeButton?: () => void;
 };
 
 const LessonCompletionModal = ({
   onRateContent,
   onClickModalRightButton,
+  onClickMinimizeButton,
 }: LessonCompletionModal) => {
   const [selectedStars, setSelectedStars] = useState<number>(3);
 
@@ -30,6 +32,7 @@ const LessonCompletionModal = ({
         title="Leçon terminée !"
         rightLabel="Leçon suivante"
         onRightClick={onClickModalRightButton}
+        onMinimizeClick={onClickMinimizeButton}
       >
         <div className="flex flex-col items-center gap-20 p-20 overflow-hidden">
           <h3 className="text-lg font-semibold mb-2">Votre évaluation</h3>
