@@ -27,6 +27,7 @@ export default async function httpPostRateLesson(
 
     return res.status(201).json({
       message: "La notation a bien été prise en compte",
+      data: response,
     });
   } catch (error: any) {
     return res

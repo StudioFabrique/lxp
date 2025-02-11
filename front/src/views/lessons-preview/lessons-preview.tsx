@@ -18,6 +18,7 @@ const LessonsPreview = () => {
   // custom hook
   const {
     moduleData,
+    lessonRating,
     onCompleteLesson,
     selectedLesson,
     isLessonCompleted,
@@ -35,7 +36,7 @@ const LessonsPreview = () => {
 
   const handleClickModalRightButton = () => {
     onCompleteLesson(true);
-    handleToggleModalDisplaying();
+    setShowModal((prev) => !prev);
   };
 
   return !moduleData ? (
@@ -46,7 +47,9 @@ const LessonsPreview = () => {
       {showModal ? (
         <LessonCompletionModal
           onRateContent={onRateContent}
-          onClickModalRightButton={handleClickModalRightButton}
+          // Le bouton handler onClickModalRightButton n'est affiché seulement si
+          // l'objet lessonRating est non null
+          onClickModalRightButton={lessonRating && handleClickModalRightButton}
         />
       ) : null}
 

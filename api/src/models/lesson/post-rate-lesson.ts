@@ -13,7 +13,7 @@ export default async function postRateLesson(
     return null;
   }
 
-  const existingLessonRating = await prisma.lessonRating.findMany({
+  const existingLessonRating = await prisma.lessonRating.findFirst({
     where: { lessonId, studentId: student.id },
   });
 
@@ -21,7 +21,7 @@ export default async function postRateLesson(
 
   // Créer une nouvelle notation lessonRating
   const lessonRating = await prisma.lessonRating.create({
-    data: { lessonId, studentId: student.id, rating },
+    data: { lessonId, studentId: student.id, rating: +rating },
   });
 
   return lessonRating;
