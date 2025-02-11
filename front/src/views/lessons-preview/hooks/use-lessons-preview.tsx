@@ -63,6 +63,7 @@ const useLessonsPreview = () => {
   const handleCompleteLesson = (skipToNextLesson?: boolean) => {
     // Afficher directement la prochaine leçon si showNextLesson est true
     if (isLessonCompleted) {
+      setLessonRating(undefined);
       switchToNextLesson();
       return;
     }
@@ -96,15 +97,27 @@ const useLessonsPreview = () => {
       applyData,
     );
 
-    skipToNextLesson && switchToNextLesson();
+    if (skipToNextLesson) {
+      switchToNextLesson();
+      setLessonRating(undefined);
+    }
   };
 
-  // Récupération initiale d'une note déjà attribuée à un cours
+  // Récupération initiale d'une note déjà attribuée à une leçon
   // const handleInitGetLessonRating = useCallback(() => {
   //   const applyData = (data: LessonRating) => {};
 
   //   // If selectedLesson, already read with at least a activity
-  // }, []);
+  //   if (
+  //     selectedLesson &&
+  //     selectedLesson.activities &&
+  //     selectedLesson.activities?.length > 1 &&
+  //     selectedLesson.lessonsRead &&
+  //     selectedLesson.lessonsRead[0].finishedAt
+  //   ) {
+  //     sendRequest({ path: `/lesson/rate/${selectedLesson.id}`, method: "get" });
+  //   }
+  // }, [selectedLesson, sendRequest]);
 
   // Évaluer le cours en tant que apprenant
   const handleRateContent = (rating: number) => {
