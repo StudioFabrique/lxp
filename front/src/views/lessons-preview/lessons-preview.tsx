@@ -24,6 +24,7 @@ const LessonsPreview = () => {
     isLessonCompleted,
     setSelectedLesson,
     onRateContent,
+    onEditRateContent,
   } = useLessonsPreview();
 
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -46,7 +47,9 @@ const LessonsPreview = () => {
       {/* Modal to include here */}
       {showModal ? (
         <LessonCompletionModal
-          onRateContent={onRateContent}
+          onRateContent={
+            lessonRating?.rating ? onEditRateContent : onRateContent
+          }
           // Le bouton handler onClickModalRightButton n'est affiché seulement si
           // l'objet lessonRating est non null
           onClickModalRightButton={lessonRating && handleClickModalRightButton}
@@ -73,7 +76,7 @@ const LessonsPreview = () => {
             selectedLesson={selectedLesson as Lesson}
             isLessonAlreadyCompleted
             currentLessonRating={lessonRating?.rating}
-            onRateContent={onRateContent}
+            onRateContent={onEditRateContent}
           >
             {/* Bouton pour terminer la leçon afin d'afficher une modal */}
             <FeedbacksButton

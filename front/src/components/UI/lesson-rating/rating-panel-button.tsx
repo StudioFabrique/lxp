@@ -13,7 +13,7 @@ type EvaluateContentButtonProps = {
  */
 const RatingPanelButton = ({
   note,
-  // onRateContent,
+  onRateContent,
 }: EvaluateContentButtonProps) => {
   // État pour gérer l'ouverture/fermeture du panneau
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false);
@@ -32,7 +32,7 @@ const RatingPanelButton = ({
 
   // Envoie l'évaluation
   const handleRatingContent = () => {
-    // onRateContent(selectedStars);
+    onRateContent(selectedStars);
     setTimeout(() => {
       handleClosePanel();
     }, 1000);
