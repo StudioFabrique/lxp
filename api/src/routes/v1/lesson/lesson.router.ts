@@ -23,6 +23,7 @@ import httpPutReorderLessons from "../../../controllers/lesson/http-put-reorder-
 import httpPostBeginReadLesson from "../../../controllers/lesson/http-post-begin-read-lesson";
 import httpPutFinishReadLesson from "../../../controllers/lesson/http-put-finish-read-lesson";
 import httpGetLastLessonsRead from "../../../controllers/lesson/http-get-last-lessons-read";
+import httpGetOneLesson from "../../../controllers/lesson/http-get-one-lesson";
 import httpGetLessonRating from "../../../controllers/lesson/http-get-lesson-rating";
 import httpPostRateLesson from "../../../controllers/lesson/http-post-rate-lesson";
 import httpPutRateLesson from "../../../controllers/lesson/http-put-rate-lesson";
@@ -63,6 +64,8 @@ lessonRouter.get(
   lessonIdValidator,
   httpGetLessonDetail,
 );
+
+lessonRouter.get("/lesson/:lessonId", checkToken, httpGetLessonDetail);
 
 // Route pour supprimer une leçon
 lessonRouter.delete(
@@ -115,6 +118,13 @@ lessonRouter.put(
   checkPermissions("lesson", "read"),
   lessonIdValidator,
   httpPutFinishReadLesson,
+);
+
+lessonRouter.get(
+  "/edit/:lessonId",
+  checkPermissions("lesson"),
+  lessonIdValidator,
+  httpGetOneLesson
 );
 
 export default lessonRouter;
