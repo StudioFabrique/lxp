@@ -78,22 +78,5 @@ export default async function putActivityImage(
     }
   });
 
-  /* TODO: Supprimer l'ancien fichier si un nouveau est uploadé
-  if (filename) {
-    await fs.promises.unlink(
-      path.join(
-        __dirname,
-        "..",
-        "..",
-        "..",
-        "..",
-        "uploads",
-        "activities",
-        "images",
-        oldFilename
-      )
-    );
-  } */
-
   return transaction;
 }

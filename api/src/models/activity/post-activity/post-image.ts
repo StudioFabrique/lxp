@@ -40,18 +40,31 @@ export default async function postImage(
       message: "Aucune source d'image n'a été fournie.",
     };
 
-  // Crée la nouvelle activité
-  const newActivity = await prisma.activity.create({
-    data: {
-      title,
-      description,
-      lessonId,
-      type: "image",
-      url: filename ?? url ?? "", // Utilise le nom du fichier ou l'URL
-      order: existingLesson.activities.length, // Place l'activité à la fin
-      authorId: existingUser.id,
-    },
-  });
+  const transaction = await prisma.$transaction(async (tx) => {
+    // Crée la nouvelle activité
 
-  return newActivity;
+    const newActivity = await tx.activity.create({
+      data: {
+        title,
+        description,
+        lessonId,
+        type: "image",
+        url: filename ?? url ?? "", // Utilise le nom du fichier ou l'URL
+        order: existingLesson.activities.length, // Place l'activité à la fin
+        authorId: existingUser.id,
+      },
+    });
+    if (url) {
+      const media = await tx.mediatheque.findFirst({
+        where: { url },
+      });
+      if (media) {
+        await tx.mediatheque.update({
+          where: { id: media.id, type: "image" },
+          data: { used: { increment: 1 } },
+        });
+      }
+    }
+  });
+  return;
 }
