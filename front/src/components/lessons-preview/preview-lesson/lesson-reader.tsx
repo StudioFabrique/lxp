@@ -23,16 +23,16 @@ const LessonReader = ({
   return (
     <div className="flex flex-col gap-4">
       {/* Bouton de notation */}
-      <div className="w-full flex justify-end">
-        {selectedLesson.activities &&
-        currentLessonRating &&
-        selectedLesson.activities?.length > 0 ? (
+      {selectedLesson.activities &&
+      currentLessonRating &&
+      selectedLesson.activities?.length > 0 ? (
+        <div className="w-full flex justify-end">
           <RatingPanelButton
             note={currentLessonRating}
             onRateContent={onRateContent}
           />
-        ) : null}
-      </div>
+        </div>
+      ) : null}
 
       {/* Affiche les activités si elles existent, sinon affiche un message */}
       {hasActivities ? (
@@ -40,7 +40,7 @@ const LessonReader = ({
           <ActivityPreview key={activity.id} activity={activity} />
         ))
       ) : (
-        <p>Aucune activités</p>
+        <p>La leçon selectionnée ne contient aucune activité</p>
       )}
 
       {/* Boutons de navigation */}

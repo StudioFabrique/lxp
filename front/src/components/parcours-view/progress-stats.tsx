@@ -24,7 +24,7 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
           <div className="grid grid-cols-4 gap-10">
             {modules
               ?.filter((_x, i) => i < 4)
-              .map((module, i) => {
+              .map((module) => {
                 const moduleProgress =
                   (module.courses.length > 0
                     ? module.courses.reduce(
@@ -47,7 +47,7 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
 
                 return (
                   <div
-                    className="flex flex-col justify-center gap-2 items-center text-primary-content font-bold tooltip tooltip-bottom bg-primary rounded-xl p-4"
+                    className="flex flex-col justify-center gap-2 items-center text-primary-content font-bold tooltip tooltip-bottom bg-primary rounded-xl p-4 py-6"
                     data-tip={module.title}
                     key={module.id}
                   >
@@ -57,7 +57,7 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
                     >
                       {`${Math.round(moduleProgress)} %`}
                     </p>
-                    <p>Module</p>
+                    <p className="text-secondary-content">Module</p>
                     <p className="truncate w-40 ">{module.title}</p>
                   </div>
                 );

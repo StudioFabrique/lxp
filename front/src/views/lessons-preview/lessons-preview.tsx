@@ -10,6 +10,7 @@ import LessonsPreviewSkeleton from "./lessons-preview-skeleton";
 import FeedbacksButton from "../../components/UI/feedbacks/feedbacks-button";
 import { useState } from "react";
 import LessonCompletionModal from "../../components/lessons-preview/lesson-completion-modal";
+import Can from "../../components/UI/can/can.component";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
@@ -69,7 +70,9 @@ const LessonsPreview = () => {
             setSelectedLesson={setSelectedLesson}
           />,
           // * La barre de progression du cours
-          <ProgressBar key="top-progress-bar" courses={moduleData.courses} />,
+          <Can action="component" object="progression">
+            <ProgressBar key="top-progress-bar" courses={moduleData.courses} />
+          </Can>,
           // * La prévisualisation de la leçon
           <LessonReader
             key="lesson-reader"
