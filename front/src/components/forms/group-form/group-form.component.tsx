@@ -56,7 +56,7 @@ const GroupForm: FC<{
       <div
         className={`grid ${
           props.gridType === "rows" ? "grid-rows-2" : "grid-cols-2"
-        } max-md:grid-cols-1 gap-5`}
+        } max-lg:grid-cols-1 gap-5`}
       >
         <Informations
           values={values}
