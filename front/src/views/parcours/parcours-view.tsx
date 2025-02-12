@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useHttp from "../../hooks/use-http";
 import { Fragment, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -28,12 +28,15 @@ import ProgressModulesStats from "../../components/parcours-view/progress-stats"
 import HeaderMenu from "../../components/UI/header-menu";
 import ImageHeader from "../../components/image-header";
 import Can from "../../components/UI/can/can.component";
+import Module from "../../utils/interfaces/module";
 
 let initialState = true;
 
 const ParcoursView = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { sendRequest, error } = useHttp();
+  const { pathname } = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [image, setImage] = useState<string>();
@@ -41,6 +44,26 @@ const ParcoursView = () => {
   const parcoursInfos = useSelector(
     (state: any) => state.parcoursInformations.infos,
   );
+  const modules = useSelector(
+    (state: { parcoursModules: { modules: Module[] } }) =>
+      state.parcoursModules.modules,
+  );
+
+  const currentRoute = pathname.split("/").slice(1) ?? [];
+
+  const handleClickResume = () => {
+    const resumeModuleId =
+      modules.find((module) =>
+        module.courses?.some((course) =>
+          course.lessons?.some(
+            (lesson) =>
+              !lesson.lessonsRead?.length || !lesson.lessonsRead[0]?.finishedAt,
+          ),
+        ),
+      )?.id || modules[0].id;
+
+    navigate(`/${currentRoute[0]}/parcours/module/${resumeModuleId}`);
+  };
 
   /**
    * télécharge les données du parcours depuis la bdd et initialise les différentes propriétés du parcours
@@ -159,17 +182,19 @@ const ParcoursView = () => {
               subTitle={parcours.formation?.title}
               children={[
                 <Fragment key="fragment" />,
-                <Can object="cursus" action="read">
-                  <HeaderMenu key="header" />
+                <Can key="header" object="cursus" action="read">
+                  <HeaderMenu key="header" onClickResume={handleClickResume} />
                 </Can>,
               ]}
+              hidePublished
             />
           </div>
 
           <div className="mt-5 flex flex-col gap-y-5">
+            <QuickStatistiques />
             <Can object="cursus" action="read">
-              <ProgressModulesStats />
-              <Contenu />
+              <ProgressModulesStats modules={modules} />
+              <Contenu modules={modules} />
             </Can>
             <div className="grid lg:grid-cols-3 gap-x-5 gap-y-5">
               <div className="grid grid-rows-2 gap-y-5">
@@ -188,7 +213,6 @@ const ParcoursView = () => {
               <Competences />
               <Objectifs />
             </div>
-            <QuickStatistiques />
           </div>
         </FadeWrapper>
       ) : (

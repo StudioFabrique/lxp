@@ -21,12 +21,15 @@ const SearchModal: FC<{
   const { sendRequest, isLoading } = useHttp(true);
 
   const [searchValue, setSearchValue] = useState<string>("");
-  const [searchResultsData, setSearchResultsData] = useState<any>(null);
+  const [searchResultsData, setSearchResultsData] = useState<Record<
+    string,
+    string
+  > | null>(null);
 
   const inputRef: Ref<HTMLInputElement> = useRef(null);
 
   const onSubmitSearch = async () => {
-    const applyData = (data: any) => {
+    const applyData = (data: Record<string, string>) => {
       console.log({ SearchDataObject: data });
       setSearchResultsData(data);
     };
@@ -60,20 +63,24 @@ const SearchModal: FC<{
           </span>
           <span className="flex justify-center gap-4">
             <input
+              disabled
+              placeholder="Recherche intelligente. Fonctionnalité bientôt disponible."
               autoComplete="off"
               ref={inputRef}
               type="text"
               name="search_input"
               id="input_1"
-              className="input input-bordered input-sm w-full"
+              className="input input-bordered input-sm w-full placeholder:text-primary"
               value={searchValue}
-              onKeyDown={(e) => e.key === "Enter" && onSubmitSearch()}
+              // fonctionnalité à rétablir dès que elastic search est mis en place
+              // onKeyDown={(e) => e.key === "Enter" && onSubmitSearch()}
               onChange={(e) => setSearchValue(e.currentTarget.value)}
             />
             <button
               type="button"
               onClick={onSubmitSearch}
               className="btn btn-primary btn-sm py-1"
+              disabled
             >
               <MagnifyIcon />
             </button>

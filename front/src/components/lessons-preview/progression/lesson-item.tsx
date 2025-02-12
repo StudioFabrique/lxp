@@ -36,7 +36,8 @@ const LessonItem = ({
           : "bg-primary/60 text-primary-content"
       }`}
     >
-      <p className="max-h-14 overflow-clip">{lesson.title}</p>
+      <p className="max-h-14 truncate">{lesson.title}</p>
+
       <div>
         {/* Affiche une coche si la leçon est lue, ou une flèche sinon */}
         {isLessonRead ? (
