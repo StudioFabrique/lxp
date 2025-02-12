@@ -21,7 +21,7 @@ import Awards from "../../components/parcours-view/awards";
 import Contacts from "../../components/parcours-view/contacts";
 import Competences from "../../components/parcours-view/competences";
 import Objectifs from "../../components/parcours-view/objectifs";
-import QuickStatistiques from "../../components/parcours-view/quick-statistiques";
+import QuickStatistiques from "../../components/parcours-view/quick-statistiques/quick-statistiques";
 import { parcoursModulesSliceActions } from "../../store/redux-toolkit/parcours/parcours-modules";
 import { useSelector } from "react-redux";
 import ProgressModulesStats from "../../components/parcours-view/progress-stats";
@@ -195,8 +195,10 @@ const ParcoursView = () => {
 
           <div className="mt-5 flex flex-col gap-y-5">
             <QuickStatistiques />
-            <Can object="cursus" action="read">
+            <Can action="component" object="progression">
               <ProgressModulesStats modules={modules} />
+            </Can>
+            <Can object="cursus" action="read">
               <Contenu modules={modules} />
             </Can>
             <div className="grid lg:grid-cols-3 gap-x-5 gap-y-5">

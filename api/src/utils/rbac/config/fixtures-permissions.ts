@@ -9,7 +9,7 @@ export const permDefsInterface = {
   },
   "interface:student": {
     layout: ["student"],
-    component: ["calendar", "start-lesson-button"],
+    component: ["calendar", "start-lesson-button", "progression"],
   },
 };
 

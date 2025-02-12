@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { CalendarIcon } from "lucide-react";
 
 const Calendar = ({ currentRoute }: { currentRoute: string[] }) => {
-  const isCurrentPathActive = currentRoute[1] === "calendar";
+  const isCurrentPathActive = currentRoute[1] === "calendrier";
 
   return (
     <li>

@@ -6,6 +6,7 @@ import Markdown from "react-markdown";
 import { ACTIVITIES, ACTIVITIES_VIDEOS } from "../../../config/urls";
 import BaseReactPlayer from "react-player";
 import Wrapper from "../../UI/wrapper/wrapper.component";
+import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
 
 type ActivityProps = {
   activity: Activity;
@@ -45,18 +46,23 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
   switch (activity.type) {
     case "text":
       return (
-        <Wrapper>
-          <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 max-w-none">
-            {value}
-          </Markdown>
+        <Wrapper additionalClassname="bg-secondary/5">
+          <FadeWrapper>
+            <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 max-w-none">
+              {value}
+            </Markdown>
+          </FadeWrapper>
         </Wrapper>
       );
     case "video":
       return (
         <Wrapper>
-          <div className="flex justify-center rounded-xl">
-            <BaseReactPlayer url={videoUrl} controls />
-          </div>
+          <FadeWrapper>
+            <div className="flex flex-col gap-2">
+              <h3 className="text-base-content font-bold text-2xl">Vidéo</h3>
+              <BaseReactPlayer url={videoUrl} controls />
+            </div>
+          </FadeWrapper>
         </Wrapper>
       );
     default:
