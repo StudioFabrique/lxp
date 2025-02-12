@@ -1,18 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useNavigate } from "react-router-dom";
-import Wrapper from "../UI/wrapper/wrapper.component";
-import RightArrowIcon from "../UI/svg/right-arrow-icon";
-import { useSelector } from "react-redux";
 import Module from "../../utils/interfaces/module";
+import Wrapper from "../UI/wrapper/wrapper.component";
 import { CSSProperties } from "react";
 
-const ProgressModulesStats = () => {
-  const navigate = useNavigate();
+type ProgressModulesStatsProps = {
+  modules: Module[];
+};
 
-  const modules = useSelector(
-    (state: any) => state.parcoursModules.modules
-  ) as Module[];
-
+const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
   const radialStyle = (value: number) => {
     return {
       "--value": value,
@@ -29,7 +24,7 @@ const ProgressModulesStats = () => {
           <div className="grid grid-cols-4 gap-10">
             {modules
               ?.filter((_x, i) => i < 4)
-              .map((module, i) => {
+              .map((module) => {
                 const moduleProgress =
                   (module.courses.length > 0
                     ? module.courses.reduce(
@@ -43,16 +38,16 @@ const ProgressModulesStats = () => {
                                   lesson.lessonsRead[0].finishedAt
                                     ? 1
                                     : 0),
-                                0
+                                0,
                               ) / course.lessons.length
                             : 0),
-                        0
+                        0,
                       ) / module.courses.length
                     : 0) * 100;
 
                 return (
                   <div
-                    className="flex flex-col justify-center gap-2 items-center text-primary-content font-bold tooltip tooltip-bottom bg-primary rounded-xl p-4"
+                    className="flex flex-col justify-center gap-2 items-center text-primary-content font-bold tooltip tooltip-bottom bg-primary rounded-xl p-4 py-6"
                     data-tip={module.title}
                     key={module.id}
                   >
@@ -62,7 +57,7 @@ const ProgressModulesStats = () => {
                     >
                       {`${Math.round(moduleProgress)} %`}
                     </p>
-                    <p>Module</p>
+                    <p className="text-secondary-content">Module</p>
                     <p className="truncate w-40 ">{module.title}</p>
                   </div>
                 );
@@ -70,12 +65,12 @@ const ProgressModulesStats = () => {
             {/* modules with progress */}
           </div>
         </div>
-        <div
+        {/* <div
           onClick={() => navigate("statistiques")}
           className="self-end w-10 stroke-primary"
         >
           <RightArrowIcon />
-        </div>
+        </div> */}
       </div>
     </Wrapper>
   );

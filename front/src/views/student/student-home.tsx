@@ -48,7 +48,10 @@ const StudentHome = () => {
           ) : (
             <ResumeParcours />
           )}
-          <Timeline />
+          <Timeline
+            title="Mon emploi du temps pour aujourd'hui"
+            viewType="day"
+          />
         </div>
         <RightSide />
       </div>

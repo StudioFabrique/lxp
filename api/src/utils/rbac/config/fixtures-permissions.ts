@@ -7,7 +7,10 @@ export const permDefsInterface = {
     layout: ["teacher", "student"],
     component: ["calendar"],
   },
-  "interface:student": { layout: ["student"], component: ["calendar"] },
+  "interface:student": {
+    layout: ["student"],
+    component: ["calendar", "start-lesson-button", "progression"],
+  },
 };
 
 export const permDefsActions = {

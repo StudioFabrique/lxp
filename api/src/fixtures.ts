@@ -162,7 +162,7 @@ async function createUser() {
   const infosIds = newInfos.map((item) => item._id);
   await User.findOneAndUpdate(
     { _id: createdStudent._id },
-    { connectionInfos: infosIds }
+    { connectionInfos: infosIds },
   );
   robotIndex++;
 }

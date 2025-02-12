@@ -11,7 +11,9 @@ const useLessonsPreview = () => {
   const { sendRequest, isLoading } = useHttp(true);
   const { state: stateFromUrl } = useLocation();
   const { moduleId } = useParams();
-  const [moduleData, setModuleData] = useState<Module | null>(null);
+  const [moduleData, setModuleData] = useState<
+    (Module & { parcours: string; parcoursId: number }) | null
+  >(null);
   const [selectedLesson, setSelectedLesson] = useState<Lesson>();
   const [lessonRating, setLessonRating] = useState<LessonRating>();
 
@@ -178,7 +180,11 @@ const useLessonsPreview = () => {
 
   // useEffect pour charger les données initiales du module
   useEffect(() => {
-    const applyData = ({ data }: { data: Module }) => {
+    const applyData = ({
+      data,
+    }: {
+      data: Module & { parcours: string; parcoursId: number };
+    }) => {
       setModuleData(data);
       if (stateFromUrl?.lessonId) {
         // selectionner la leçon selectionnée depuis le state de l'url

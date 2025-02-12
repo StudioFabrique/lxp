@@ -63,7 +63,7 @@ const PermissionsListWithDrawer = ({
             </RightSideDrawer>
           </div>
         </div>
-        <div className="flex flex-col gap-4 p-2">
+        <div className="flex flex-col gap-10 p-2">
           {permissions && permissions.length > 0 ? (
             <>
               {permissions.some((item) => !item.isRole) && (

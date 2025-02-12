@@ -3,7 +3,11 @@ node_modules
 .env.local
 dist/
 logs/
+uploads/activities/*
 uploads/activities/files/*
 uploads/activities/videos/*
 uploads/activities/images/*
 
+!uploads/activities/files
+!uploads/activities/videos
+!uploads/activities/images

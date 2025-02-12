@@ -24,9 +24,9 @@ const ParcoursStatistiques = ({ parcoursId }: { parcoursId: number }) => {
     const applyData = (data: { data: ParcoursStats }) => {
       const parcoursStats = data.data;
       setStats([
-        { title: "Diplôme", value: parcoursStats?.diplome },
-        { title: "Semaine", value: String(parcoursStats?.totalWeeks) },
-        { title: "Heure", value: String(parcoursStats?.totalHours) },
+        { title: "Diplôme", value: `Bac +${parcoursStats?.diplome}` },
+        { title: "Semaines", value: String(parcoursStats?.totalWeeks) },
+        { title: "Heures", value: String(parcoursStats?.totalHours) },
         { title: "Modules", value: String(parcoursStats?.totalModules) },
       ]);
     };

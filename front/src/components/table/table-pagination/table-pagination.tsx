@@ -23,10 +23,12 @@ const TablePagination = (props: TablePaginationProps) => {
   const valueArray = iterateNumberToArray(props.maxPage, 5);
 
   return (
-    <div className="flex items-center gap-10 rounded-lg justify-between w-full bg-primary p-1 text-primary-content">
-      <p className="text-sm font-semibold px-4">{props.leftText}</p>
-      <div className="flex gap-2">
-        <div className="flex items-center">
+    <div className="flex lg:flex-row flex-col gap-5 lg:gap-10 rounded-lg justify-between w-full bg-primary p-1 py-5 lg:py-1 text-primary-content">
+      <div className="flex justify-center lg:justify-start items-center lg:flex-row w-full">
+        <p className="text-sm font-semibold px-4">{props.leftText}</p>
+      </div>
+      <div className="flex flex-col lg:flex-row gap-5 w-full">
+        <div className="flex items-center justify-center w-full">
           <span className="text-sm font-semibold">Éléments par page:</span>
           <DropdownSelector
             onSelect={props.onSetItemsPerPage}
@@ -36,7 +38,7 @@ const TablePagination = (props: TablePaginationProps) => {
             <SolarAltArrowDownBold />
           </DropdownSelector>
         </div>
-        <div className="join">
+        <div className="join justify-center lg:justify-end w-full">
           <button
             onClick={props.onSetPreviousPage}
             className={`join-item btn btn-sm btn-ghost ${props.currentPage === 1 && "invisible"}`}

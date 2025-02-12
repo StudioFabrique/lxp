@@ -100,7 +100,7 @@ export const userValidator = (isFormData: boolean = false) => {
       .withMessage("postCode non conforme"),
     body(validatorSubject + ".phoneNumber", "Numéro de téléphone incorrect")
       .optional()
-      .custom(customPhoneNumberValidation)
+      .isString()
       .trim()
       .escape(),
     body(validatorSubject + ".links.*.url")
@@ -194,7 +194,7 @@ export const userProfileValidator = (isFormData: boolean = false) => {
       .withMessage("postCode non conforme"),
     body(validatorSubject + ".phoneNumber", "Numéro de téléphone incorrect")
       .optional()
-      .custom(customPhoneNumberValidation)
+      .isString()
       .trim()
       .escape(),
     body(validatorSubject + ".links.*.url")
@@ -247,7 +247,7 @@ export const manyUsersValidator = [
     .custom(stringValidateOptional)
     .withMessage("description non conforme"),
   body("*.postCode").isPostalCode("FR").trim().escape(),
-  body("*.phoneNumber").isNumeric(),
+  body("*.phoneNumber").isString(),
   /* body("*.birthDate").isDate({ format: "dd/mm/yyyy" }).toDate(), */
   checkValidatorResult,
 ];

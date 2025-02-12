@@ -3,6 +3,7 @@ import Course from "../../../utils/interfaces/course";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import CourseItem from "./course-item";
 import Lesson from "../../../utils/interfaces/lesson";
+import Can from "../../UI/can/can.component";
 
 // Type definition pour les props du composant
 type ProgressionProps = {
@@ -50,21 +51,23 @@ const Progression = ({
     <Wrapper>
       {/* En-tête avec le titre et l'indicateur de progression */}
       <div className="flex justify-between">
-        <h2 className="text-xl font-bold w-28 text-primary">
-          Progression du module
-        </h2>
-        {courses.length > 0 && (
-          <span
-            className="radial-progress text-secondary"
-            style={radialStyle(moduleProgress)}
-          >
-            <p>{Math.round(moduleProgress * 100)}%</p>
+        <Can action="component" object="progression">
+          <h2 className="text-xl font-bold w-28 text-primary">
+            Progression du module
+          </h2>
+          {courses.length > 0 && (
             <span
-              className="absolute radial-progress text-primary/40"
-              style={radialStyle(1)}
-            />
-          </span>
-        )}
+              className="radial-progress text-secondary"
+              style={radialStyle(moduleProgress)}
+            >
+              <p>{Math.round(moduleProgress * 100)}%</p>
+              <span
+                className="absolute radial-progress text-primary/40"
+                style={radialStyle(1)}
+              />
+            </span>
+          )}
+        </Can>
       </div>
       {/* Liste des cours */}
       <div className="flex flex-col items-center gap-5">

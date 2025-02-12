@@ -10,6 +10,7 @@ import LessonsPreviewSkeleton from "./lessons-preview-skeleton";
 import FeedbacksButton from "../../components/UI/feedbacks/feedbacks-button";
 import { useState } from "react";
 import LessonCompletionModal from "../../components/lessons-preview/lesson-completion-modal";
+import Can from "../../components/UI/can/can.component";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
@@ -69,7 +70,9 @@ const LessonsPreview = () => {
             setSelectedLesson={setSelectedLesson}
           />,
           // * La barre de progression du cours
-          <ProgressBar key="top-progress-bar" courses={moduleData.courses} />,
+          <Can action="component" object="progression">
+            <ProgressBar key="top-progress-bar" courses={moduleData.courses} />
+          </Can>,
           // * La prévisualisation de la leçon
           <LessonReader
             key="lesson-reader"
@@ -79,20 +82,22 @@ const LessonsPreview = () => {
             onRateContent={onEditRateContent}
           >
             {/* Bouton pour terminer la leçon afin d'afficher une modal */}
-            <FeedbacksButton
-              title={
-                isLessonCompleted ? "Leçon Suivante" : "Marquer comme terminé"
-              }
-              className="btn btn-primary text-nowrap"
-              feedbackType="thumbUp"
-              enableAnimationOnClick={!isLessonCompleted}
-              disabled={showModal}
-              onClick={
-                isLessonCompleted
-                  ? onCompleteLesson
-                  : handleToggleModalDisplaying
-              }
-            />
+            <Can action="component" object="progression">
+              <FeedbacksButton
+                title={
+                  isLessonCompleted ? "Leçon Suivante" : "Marquer comme terminé"
+                }
+                className="btn btn-primary text-nowrap"
+                feedbackType="thumbUp"
+                enableAnimationOnClick={!isLessonCompleted}
+                disabled={showModal}
+                onClick={
+                  isLessonCompleted
+                    ? onCompleteLesson
+                    : handleToggleModalDisplaying
+                }
+              />
+            </Can>
           </LessonReader>,
           /* Dans le cas où aucune leçon n'est affiché,
            les informations complémentaires du cours sont affichés */
