@@ -1,4 +1,5 @@
 import { prisma } from "../../utils/db";
+import User from "../../utils/interfaces/db/user";
 
 /**
  * Récupère les détails d'un parcours par son ID
@@ -125,6 +126,14 @@ async function getParcoursById(parcoursId: number, userId: string) {
         },
       }));
       result = { ...result, modules: updatedModules };
+      // récupère la liste des utilisateurs de chaque groupe afin de faire la somme du nombre d'etudiants présents
+      if (parcours.groups.length > 0) {
+        const usersCount = await User.count({
+          group: { $in: parcours.groups.map((g: any) => g.group.idMdb) },
+        });
+        result = { ...result, studentCount: usersCount };
+        console.log({ usersCount });
+      }
       return result;
     }
     return parcours;
