@@ -1,40 +1,39 @@
 import Lesson from "../../../utils/interfaces/lesson";
+import RatingPanelButton from "../../UI/lesson-rating/rating-panel-button";
 import ActivityPreview from "./activity";
-import EvaluateContentButton from "../../UI/evaluate-content-button";
-import { useState, useEffect } from "react";
+import { PropsWithChildren } from "react";
 
 type PreviewLessonProps = {
   selectedLesson: Lesson;
-  onFinishReadLesson: (showNextLesson: boolean) => void;
+  currentLessonRating?: number;
+  isLessonAlreadyCompleted: boolean;
+  onRateContent: (rating: number) => void;
 };
 
 // Composant pour prévisualiser une leçon avec ses activités
 const LessonReader = ({
   selectedLesson,
-  onFinishReadLesson,
-}: PreviewLessonProps) => {
+  currentLessonRating,
+  onRateContent,
+  children,
+}: PropsWithChildren<PreviewLessonProps>) => {
   // Vérifie s'il y a des activités dans la leçon
   const hasActivities = Boolean(selectedLesson.activities?.length);
 
-  // Vérifie si la leçon a déjà été complétée
-  const [isLessonAlreadyCompleted, setIsLessonAlreadyCompleted] =
-    useState(false);
-
-  const handleClickNextLesson = () => {
-    onFinishReadLesson(isLessonAlreadyCompleted);
-    setIsLessonAlreadyCompleted(true);
-  };
-
-  useEffect(() => {
-    setIsLessonAlreadyCompleted(
-      Boolean(
-        selectedLesson.lessonsRead?.some((lessonRead) => lessonRead.finishedAt),
-      ),
-    );
-  }, [selectedLesson.lessonsRead]);
-
   return (
     <div className="flex flex-col gap-4">
+      {/* Bouton de notation */}
+      <div className="w-full flex justify-end pr-10">
+        {selectedLesson.activities &&
+        currentLessonRating &&
+        selectedLesson.activities?.length > 0 ? (
+          <RatingPanelButton
+            note={currentLessonRating}
+            onRateContent={onRateContent}
+          />
+        ) : null}
+      </div>
+
       {/* Affiche les activités si elles existent, sinon affiche un message */}
       {hasActivities ? (
         selectedLesson.activities?.map((activity) => (
@@ -44,23 +43,9 @@ const LessonReader = ({
         <p>Aucune activités</p>
       )}
 
-      {/* Boutons d'évaluation et de navigation */}
-      <div className="w-full flex justify-end">
-        <div className="w-full flex justify-center">
-          {isLessonAlreadyCompleted &&
-          selectedLesson.activities &&
-          selectedLesson.activities?.length > 0 ? (
-            <EvaluateContentButton note={1} sendEvaluation={() => {}} />
-          ) : null}
-        </div>
-        <button
-          className="btn btn-primary text-white self-end"
-          onClick={handleClickNextLesson}
-        >
-          {isLessonAlreadyCompleted
-            ? "Leçon Suivante"
-            : "Marquer comme terminé"}
-        </button>
+      {/* Boutons de navigation */}
+      <div className="flex justify-end items-center mt-4 pb-16">
+        <div className="mr-10">{children}</div>
       </div>
     </div>
   );

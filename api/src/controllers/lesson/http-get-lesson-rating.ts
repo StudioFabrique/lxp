@@ -1,9 +1,9 @@
 import { Response } from "express";
+import getLessonRating from "../../models/lesson/get-lesson-rating";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import { badQuery, serverIssue } from "../../utils/constantes";
-import postBeginReadLesson from "../../models/lesson/post-begin-read-lesson";
 
-export default async function httpPostBeginReadLesson(
+export default async function httpGetLessonRating(
   req: CustomRequest,
   res: Response,
 ) {
@@ -16,16 +16,11 @@ export default async function httpPostBeginReadLesson(
   try {
     const { lessonId } = req.params;
 
-    const response = await postBeginReadLesson(+lessonId, userId);
+    const lessonRating = await getLessonRating(+lessonId, userId);
 
-    if (!response) {
-      return res.status(404).json({
-        message: "Problème lors de la requête de confirmation de lecture",
-      });
-    }
-
-    return res.status(201).json({
-      message: "La leçon a bien été marqué comme lu",
+    res.json({
+      message: "La notation de la leçon a bien été récupéré.",
+      data: lessonRating,
     });
   } catch (error: any) {
     return res

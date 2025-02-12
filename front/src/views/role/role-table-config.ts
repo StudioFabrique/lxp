@@ -69,8 +69,10 @@ export const tableListConfig = <TData>(
   tableItemsConfig: roleTableItems,
   actionsItems: actionsConfig,
   style: {
-    emptyArrayMessage: isLoading
-      ? "Chargement des rôles..."
-      : "Aucun rôle créé",
+    emptyArrayMessage: {
+      message: isLoading
+        ? "Chargement des rôles..."
+        : "Aucun rôle créé. Cliquez ici pour en créer un.",
+    },
   },
 });

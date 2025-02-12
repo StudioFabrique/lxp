@@ -1,11 +1,13 @@
-import { Star } from "lucide-react";
 import { useEffect, useRef } from "react";
+import FeedbacksButton from "../feedbacks/feedbacks-button";
+import RatingWithStars from "./rating-with-stars";
 
 type RatingPanelProps = {
   selectedStars: number;
-  handleStarClick: (rating: number) => void;
-  handleEvaluateContent: () => void;
+  onSelectStarRate: (rating: number) => void;
+  onRateContent: () => void;
   note?: number;
+  isOpen?: boolean;
   onClose: () => void;
 };
 
@@ -19,9 +21,10 @@ type RatingPanelProps = {
  */
 const RatingPanel = ({
   selectedStars,
-  handleStarClick,
-  handleEvaluateContent,
+  onSelectStarRate,
+  onRateContent,
   note,
+  isOpen,
   onClose,
 }: RatingPanelProps) => {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -63,27 +66,19 @@ const RatingPanel = ({
     };
   }, [onClose]);
 
+  if (!isOpen) return null;
+
   return (
     <div
       ref={panelRef}
-      className="absolute left-[-30%] top-0 transform -translate-y-full card w-64 bg-base-100 border-[1px] border-primary shadow-2xl z-50 rounded-lg"
+      className="absolute left-[-30%] -bottom-4 transform translate-y-full card w-64 bg-base-100 border-[1px] border-primary shadow-2xl z-50 rounded-lg"
     >
       <div className="card-body p-6">
         <h3 className="text-lg font-semibold mb-2">Votre évaluation</h3>
-        <div className="flex gap-2 my-3 justify-center">
-          {[1, 2, 3, 4, 5].map((rating) => (
-            <Star
-              size={24}
-              key={rating}
-              onClick={() => handleStarClick(rating)}
-              className={`cursor-pointer transition-all duration-200 hover:scale-110 ${
-                rating <= selectedStars
-                  ? "fill-primary scale-105 stroke-1"
-                  : "stroke-base-content/50 stroke-1 hover:stroke-1"
-              }`}
-            />
-          ))}
-        </div>
+        <RatingWithStars
+          selectedStars={selectedStars}
+          onSelectStarRate={onSelectStarRate}
+        />
 
         {note && (
           <div className="text-sm text-base-content/70 border-l-4 border-primary/50 p-2 bg-base-200 rounded">
@@ -99,12 +94,14 @@ const RatingPanel = ({
           >
             Annuler
           </button>
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={handleEvaluateContent}
-          >
-            Confirmer
-          </button>
+          <FeedbacksButton
+            title="Évaluer ce contenu"
+            className="btn btn-primary btn-sm text-nowrap"
+            feedbackType="stars"
+            elementCount={selectedStars}
+            enableAnimationOnClick
+            onClick={onRateContent}
+          />
         </div>
       </div>
     </div>
