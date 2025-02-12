@@ -4,10 +4,16 @@ import Module from "../../../utils/interfaces/module";
 import { convertMilisToWeeks } from "../../../utils/dates";
 import QuickStatItem from "./quick-stat-item";
 
-const QuickStatistiques = () => {
+type QuickStatistiquesProps = {
+  studentCount?: number;
+};
+
+const QuickStatistiques = ({ studentCount }: QuickStatistiquesProps) => {
   const parcoursInfos = useSelector(
     (state: any) => state.parcoursInformations.infos,
   );
+
+  console.log({ parcoursInfos });
 
   const formation = useSelector((state: any) => state.parcours.formation);
 
@@ -41,7 +47,7 @@ const QuickStatistiques = () => {
   return (
     <div className="flex justify-center gap-y-5 gap-x-10 text-primary-content">
       <QuickStatItem title="Diplôme" item={`Bac +${formation?.level}`} />
-      <QuickStatItem title="Étudiants" item={19} />
+      <QuickStatItem title="Étudiants" item={studentCount || "-"} />
       <QuickStatItem title="Semaines" item={parcoursWeeks()} />
       <QuickStatItem title="Heures" item={modulesHourSum()} />
     </div>

@@ -49,6 +49,7 @@ const ParcoursView = () => {
     (state: { parcoursModules: { modules: Module[] } }) =>
       state.parcoursModules.modules,
   );
+  const [studentCount, setStudentCount] = useState<number>();
 
   const currentRoute = pathname.split("/").slice(1) ?? [];
 
@@ -70,7 +71,8 @@ const ParcoursView = () => {
    * télécharge les données du parcours depuis la bdd et initialise les différentes propriétés du parcours
    */
   useEffect(() => {
-    const processData = (data: Parcours) => {
+    const processData = (data: Parcours & { studentCount?: number }) => {
+      setStudentCount(data.studentCount);
       // mets en mémoire l'id du parcours pour le rendre disponible aux éléments de la vue
       dispatch(parcoursAction.setParcoursId(data.id));
       dispatch(
@@ -194,7 +196,7 @@ const ParcoursView = () => {
           </div>
 
           <div className="mt-5 flex flex-col gap-y-5">
-            <QuickStatistiques />
+            <QuickStatistiques studentCount={studentCount} />
             <Can action="component" object="progression">
               <ProgressModulesStats modules={modules} />
             </Can>
