@@ -51,25 +51,27 @@ const TableList = <TData extends Record<string, string>>(
   const itemsLength = tableItems?.length || 0;
 
   return itemsLength > 0 ? (
-    <table className="table border-separate border-spacing-y-5">
-      <Head
-        labels={labels}
-        avatar={props.avatar}
-        showAvatar={props.style?.showAvatar}
-        isAllChecked={props.isAllChecked}
-        sortProperty={props.sortProperty}
-        isAscDirection={props.isAscDirection}
-        onCheckAll={props.onCheckAll}
-        onSortProperty={props.onSortProperty}
-      />
+    <div className="w-full overflow-x-auto">
+      <table className="table border-separate border-spacing-y-5">
+        <Head
+          labels={labels}
+          avatar={props.avatar}
+          showAvatar={props.style?.showAvatar}
+          isAllChecked={props.isAllChecked}
+          sortProperty={props.sortProperty}
+          isAscDirection={props.isAscDirection}
+          onCheckAll={props.onCheckAll}
+          onSortProperty={props.onSortProperty}
+        />
 
-      <Body
-        tableItems={tableItems}
-        style={props.style}
-        isAllChecked={props.isAllChecked}
-        onCheck={props.onCheck}
-      />
-    </table>
+        <Body
+          tableItems={tableItems}
+          style={props.style}
+          isAllChecked={props.isAllChecked}
+          onCheck={props.onCheck}
+        />
+      </table>
+    </div>
   ) : (
     <FadeWrapper>
       <TableEmpty {...props.style?.emptyArrayMessage} />
