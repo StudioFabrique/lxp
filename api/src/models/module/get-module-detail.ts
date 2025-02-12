@@ -14,7 +14,9 @@ export default async function getModuleDetail(
       duration: true,
       minDate: true,
       maxDate: true,
-      parcours: { select: { parcours: { select: { title: true } } } },
+      parcours: {
+        select: { parcours: { select: { title: true } }, parcoursId: true },
+      },
       bonusSkills: { select: { bonusSkill: true } },
       contacts: { select: { contact: true } },
       courses: {
@@ -48,6 +50,7 @@ export default async function getModuleDetail(
     minDate: existingModule.minDate,
     maxDate: existingModule.maxDate,
     parcours: existingModule.parcours[0].parcours.title,
+    parcoursId: existingModule.parcours[0].parcoursId,
     bonusSkills: existingModule.bonusSkills.map((item) => item.bonusSkill),
     contacts: existingModule.contacts.map((item) => item.contact),
     courses: existingModule.courses,

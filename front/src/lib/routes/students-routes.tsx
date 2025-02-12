@@ -10,6 +10,9 @@ const StudentHome = React.lazy(
 const ParcoursLayout = React.lazy(
   () => import("../../views/parcours/parcours-layout.component"),
 );
+const CalendarHome = React.lazy(
+  () => import("../../views/calendar/calendar-home"),
+);
 const ParcoursView = React.lazy(
   () => import("../../views/parcours/parcours-view"),
 );
@@ -35,6 +38,7 @@ const studentRoutes = [
       { path: "module/:moduleId", element: <LessonsPreview /> },
     ],
   },
+  { path: "calendrier", element: <CalendarHome /> },
   { path: "profil", element: <UserProfile /> },
   { path: "*", element: <FeaturesList /> },
 ];

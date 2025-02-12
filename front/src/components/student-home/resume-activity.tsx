@@ -1,10 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
 import ImageHeader from "../image-header";
-import { PlayCircleIcon } from "lucide-react";
+import { ComponentIcon, FileEditIcon, PlayCircleIcon } from "lucide-react";
 import LessonRead from "../../utils/interfaces/lesson-read";
 import useHttp from "../../hooks/use-http";
 import { useEffect, useState } from "react";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
+import Can from "../UI/can/can.component";
+import CourseIcon from "../UI/svg/course-icon";
 
 type ResumeActivityProps = {
   lastLesson: LessonRead;
@@ -34,15 +36,24 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
     <div className="flex gap-2">
       <ImageHeader
         imageUrl={isLoading ? "" : (image ?? "/images/parcours-default.webp")}
-        title={`Cours: ${lastLesson.lesson.course.title}`}
-        subTitle={`Leçon: ${lastLesson.lesson.title}`}
+        title={`${lastLesson.lesson.title}`}
+        titleIcon={<FileEditIcon className="stroke-white" />}
+        subTitle={`${lastLesson.lesson.course.title}`}
+        subTitleIcon={
+          <div className="text-white w-6">
+            <CourseIcon />
+          </div>
+        }
         hidePublished
         children={[
           <div
             key="title-and-badges"
-            className="absolute md:-top-[230%] -top-[160%] flex justify-between w-[95%] overflow-x-hidden"
+            className="absolute md:-top-[200%] -top-[160%] flex justify-between w-[95%] overflow-x-hidden"
           >
-            <p className="text-white">{`Module: ${lastLesson.lesson.course.module.title}`}</p>
+            <div className="flex gap-2">
+              <p className="text-white">{`${lastLesson.lesson.course.module.title}`}</p>
+              <ComponentIcon className="stroke-white" />
+            </div>
             <div className="flex gap-1">
               {lastLesson.lesson.course.bonusSkills &&
                 lastLesson.lesson.course.bonusSkills
@@ -61,14 +72,16 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
             </div>
           </div>,
           <div key="link" className="p-5 w-full flex justify-end">
-            <Link
-              to={`/${currentRoute}/parcours/module/${lastLesson.lesson.course.module.id}`}
-              state={{ lessonId: lastLesson.lesson.id }}
-              className="z-20 btn btn-primary text-white flex"
-            >
-              <PlayCircleIcon />
-              <p>{lastLesson.beganAt ? "Reprendre" : "Démarrer"}</p>
-            </Link>
+            <Can action="component" object="start-lesson-button">
+              <Link
+                to={`/${currentRoute}/parcours/module/${lastLesson.lesson.course.module.id}`}
+                state={{ lessonId: lastLesson.lesson.id }}
+                className="z-20 btn btn-primary text-white flex"
+              >
+                <PlayCircleIcon />
+                <p>{lastLesson.beganAt ? "Reprendre" : "Démarrer"}</p>
+              </Link>
+            </Can>
           </div>,
         ]}
       />

@@ -1,9 +1,18 @@
 // Import des composants et du hook personnalisé
+import { View } from "react-big-calendar";
 import BigCalendarTimeline from "../../UI/big-calendar-timeline/big-calendar-timeline";
 import RadioSelectTimeline from "./radio-select-timeline";
 import useTimeline from "./useTimeline";
 
-const Timeline = () => {
+type TimelineProps = {
+  title?: string;
+  viewType?: View;
+};
+
+const Timeline = ({
+  title = "Mon emploi du temps",
+  viewType = "work_week",
+}: TimelineProps) => {
   // Utilisation du hook personnalisé pour gérer l'état et la logique du calendrier
   const {
     currentView,
@@ -14,13 +23,11 @@ const Timeline = () => {
     // modulesColor,
     handleRangeChange,
     handleDoubleClickEvent,
-  } = useTimeline();
+  } = useTimeline(viewType);
 
   return timelineData ? (
     <div className="flex flex-col gap-5">
-      <h2 className="text-base-content font-bold text-xl">
-        Mon emploi du temps
-      </h2>
+      <h2 className="text-base-content font-bold text-xl">{title}</h2>
 
       <RadioSelectTimeline
         showAllCourses={showAllCourses}

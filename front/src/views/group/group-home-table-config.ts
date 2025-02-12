@@ -83,9 +83,10 @@ export const tableListConfig = <TData>(
   style: {
     showAvatar: true,
     emptyArrayMessage: {
-      message: isLoading
-        ? "Chargement des groupes..."
-        : "Aucun groupe disponible. Cliquez ici pour en créer un.",
+      message: isLoading ? "Chargement des groupes..." : undefined,
+      linkableMessage: isLoading
+        ? undefined
+        : "Cliquez ici pour créer votre premier groupe",
       linkTo: "add",
     },
   },

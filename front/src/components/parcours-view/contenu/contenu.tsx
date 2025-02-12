@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useSelector } from "react-redux";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import ContenuItem from "./contenu-item";
 import Module from "../../../utils/interfaces/module";
@@ -10,15 +8,15 @@ import Can from "../../UI/can/can.component";
 import { Link, useParams } from "react-router-dom";
 import EditIcon from "../../UI/svg/edit-icon";
 
-const Contenu = () => {
-  const modules = useSelector(
-    (state: any) => state.parcoursModules.modules
-  ) as Module[];
+type ContenuProps = {
+  modules: Module[];
+};
 
+const Contenu = ({ modules }: ContenuProps) => {
   const { id: parcoursId } = useParams();
 
   const [selectedModule, setSelectedModule] = useState<Module | null>(
-    modules ? modules[0] : null
+    modules ? modules[0] : null,
   );
 
   const contentsList =
