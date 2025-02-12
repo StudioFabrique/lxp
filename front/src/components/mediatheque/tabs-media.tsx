@@ -3,12 +3,13 @@ import ListImages from "./list-images";
 import Media from "../../utils/interfaces/media";
 import { ReactNode } from "react";
 import ListVideos from "./list-videos";
+import ListResources from "./list-resources";
 
 // Props du composant TabsMedia
 type Props = {
   list: Media[]; // Liste des médias à afficher
   type: string; // Type de média sélectionné
-  setType: (type: "image" | "video" | "audio" | "document") => void; // Fonction pour changer le type de media
+  setType: (type: "image" | "video" | "audio" | "resource") => void; // Fonction pour changer le type de media
   children: ReactNode; // Composants enfants (pagination)
 };
 
@@ -37,10 +38,10 @@ function TabsMedia({ children, list, type, setType }: Props) {
       component: empty,
     },
     {
-      type: "document",
-      label: "Documents",
+      type: "resource",
+      label: "Ressources",
       icon: <FileIcon />,
-      component: empty,
+      component: <ListResources resources={list} />,
     },
   ];
 
@@ -54,7 +55,7 @@ function TabsMedia({ children, list, type, setType }: Props) {
             role="tab"
             className={`tab ${type === media.type ? "tab-active" : ""}`}
             onClick={() =>
-              setType(media.type as "image" | "video" | "audio" | "document")
+              setType(media.type as "image" | "video" | "audio" | "resource")
             }
           >
             {/* Contenu de l'onglet avec icône et label */}

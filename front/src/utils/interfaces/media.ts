@@ -1,7 +1,7 @@
 export default interface Media {
   id: number;
   url: string;
-  originalName: string;
+  name: string;
   type: string;
   size: number;
   used: number;

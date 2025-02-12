@@ -48,18 +48,45 @@ export default async function putAddResource(req: CustomRequest) {
     }
   }
 
-  const updatedActivity = await prisma.activity.update({
-    where: { id: +activityId },
-    data: {
-      resourceActivities: {
-        create: newResources.map((resource, index) => ({
-          label: resource.label,
-          url: resource.url,
-          order: existingActivity.resourceActivities.length + index,
-        })),
+  const transaction = await prisma.$transaction(async (tx) => {
+    const updatedActivity = await prisma.activity.update({
+      where: { id: +activityId },
+      data: {
+        resourceActivities: {
+          create: newResources.map((resource, index) => ({
+            label: resource.label,
+            url: resource.url,
+            order: existingActivity.resourceActivities.length + index,
+          })),
+        },
       },
-    },
+    });
+
+    console.log({ data });
+
+    for (const resource of data) {
+      const file = uploadedFiles.find(
+        (file) => file.originalname === resource.filename
+      );
+
+      if (file) {
+        console.log("step");
+
+        await tx.mediatheque.create({
+          data: {
+            type: "resource",
+            name: resource.filename,
+            url: file.filename,
+            size: file.size,
+            used: 1,
+            author: {
+              connect: { id: existingAuthor.id },
+            },
+          },
+        });
+      }
+    }
   });
 
-  return updatedActivity;
+  return;
 }
