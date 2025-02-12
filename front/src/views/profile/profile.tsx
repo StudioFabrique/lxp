@@ -131,15 +131,15 @@ const Profile = () => {
             Préférences
           </button>
         </div>
-        {tabsWithForms && (
+        {/* {tabsWithForms && (
           <button
             type="button"
-            className="btn btn-sm justify-self-end"
+            className="btn btn-sm w-fit"
             onClick={() => formRef.current?.requestSubmit()}
           >
             Soumettre les changements
           </button>
-        )}
+        )} */}
       </div>
       <RenderTab />
       {tabsWithForms && (
