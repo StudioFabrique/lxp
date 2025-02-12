@@ -1,12 +1,18 @@
 import { useState } from "react";
 import BellIcon from "./svg/bell-icon";
-import CameraIcon from "./svg/camera-icon";
 import GroupIcon from "./svg/group-icon";
 import MagnifyIcon from "./svg/magnify-icon";
 import PlayIcon from "./svg/play-icon";
 import SearchModal from "../search-modal/search-modal";
+import Can from "./can/can.component";
+import { Link, useLocation } from "react-router-dom";
 
-const HeaderMenu = () => {
+type HeaderMenuProps = {
+  onClickResume?: () => void;
+};
+
+const HeaderMenu = ({ onClickResume }: HeaderMenuProps) => {
+  const location = useLocation();
   const [isModalOpen, setModalState] = useState(false);
 
   return (
@@ -27,19 +33,32 @@ const HeaderMenu = () => {
           </div>
           <span className="flex-1" />
           <div className="self-end flex flex-col gap-4">
-            <button type="button" className="btn btn-primary btn-sm py-1">
+            {/* <button type="button" className="btn btn-primary btn-sm py-1">
               <CameraIcon />
-            </button>
-            <button type="button" className="btn btn-primary btn-sm py-1">
-              <GroupIcon />
-            </button>
+            </button> */}
+            <Can action="write" object="group">
+              <Link
+                to={`/${location.pathname.split("/")[1]}/group`}
+                className="btn btn-primary btn-sm py-1"
+              >
+                <GroupIcon />
+              </Link>
+            </Can>
           </div>
-          <button type="button" className="btn btn-primary self-end">
-            <span className="w-5 h-5">
-              <PlayIcon />
-            </span>
-            <p className="normal-case">Reprendre le cours</p>
-          </button>
+          {onClickResume ? (
+            <Can action="component" object="start-lesson-button">
+              <button
+                onClick={onClickResume}
+                type="button"
+                className="btn btn-primary self-end"
+              >
+                <span className="w-5 h-5">
+                  <PlayIcon />
+                </span>
+                <p className="normal-case">Reprendre le cours</p>
+              </button>
+            </Can>
+          ) : null}
         </div>
       </div>
     </>

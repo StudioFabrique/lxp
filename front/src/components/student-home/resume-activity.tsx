@@ -5,6 +5,7 @@ import LessonRead from "../../utils/interfaces/lesson-read";
 import useHttp from "../../hooks/use-http";
 import { useEffect, useState } from "react";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
+import Can from "../UI/can/can.component";
 
 type ResumeActivityProps = {
   lastLesson: LessonRead;
@@ -61,14 +62,16 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
             </div>
           </div>,
           <div key="link" className="p-5 w-full flex justify-end">
-            <Link
-              to={`/${currentRoute}/parcours/module/${lastLesson.lesson.course.module.id}`}
-              state={{ lessonId: lastLesson.lesson.id }}
-              className="z-20 btn btn-primary text-white flex"
-            >
-              <PlayCircleIcon />
-              <p>{lastLesson.beganAt ? "Reprendre" : "Démarrer"}</p>
-            </Link>
+            <Can action="component" object="start-lesson-button">
+              <Link
+                to={`/${currentRoute}/parcours/module/${lastLesson.lesson.course.module.id}`}
+                state={{ lessonId: lastLesson.lesson.id }}
+                className="z-20 btn btn-primary text-white flex"
+              >
+                <PlayCircleIcon />
+                <p>{lastLesson.beganAt ? "Reprendre" : "Démarrer"}</p>
+              </Link>
+            </Can>
           </div>,
         ]}
       />

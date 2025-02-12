@@ -1,18 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useNavigate } from "react-router-dom";
-import Wrapper from "../UI/wrapper/wrapper.component";
-import RightArrowIcon from "../UI/svg/right-arrow-icon";
-import { useSelector } from "react-redux";
 import Module from "../../utils/interfaces/module";
+import Wrapper from "../UI/wrapper/wrapper.component";
 import { CSSProperties } from "react";
 
-const ProgressModulesStats = () => {
-  const navigate = useNavigate();
+type ProgressModulesStatsProps = {
+  modules: Module[];
+};
 
-  const modules = useSelector(
-    (state: any) => state.parcoursModules.modules
-  ) as Module[];
-
+const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
   const radialStyle = (value: number) => {
     return {
       "--value": value,
@@ -43,10 +38,10 @@ const ProgressModulesStats = () => {
                                   lesson.lessonsRead[0].finishedAt
                                     ? 1
                                     : 0),
-                                0
+                                0,
                               ) / course.lessons.length
                             : 0),
-                        0
+                        0,
                       ) / module.courses.length
                     : 0) * 100;
 
@@ -70,12 +65,12 @@ const ProgressModulesStats = () => {
             {/* modules with progress */}
           </div>
         </div>
-        <div
+        {/* <div
           onClick={() => navigate("statistiques")}
           className="self-end w-10 stroke-primary"
         >
           <RightArrowIcon />
-        </div>
+        </div> */}
       </div>
     </Wrapper>
   );

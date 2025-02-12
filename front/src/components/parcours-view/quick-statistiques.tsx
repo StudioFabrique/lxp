@@ -23,6 +23,10 @@ const QuickStatistiques = () => {
   };
 
   const parcoursWeeks = () => {
+    if (!parcoursInfos?.endDate || !parcoursInfos?.startDate) {
+      return 0;
+    }
+
     const weeks = Math.floor(
       convertMilisToWeeks(
         new Date(parcoursInfos.endDate).getTime() -
@@ -30,11 +34,11 @@ const QuickStatistiques = () => {
       ),
     );
 
-    return weeks;
+    return weeks || 0;
   };
 
   return (
-    <div className="grid lg:grid-cols-5 gap-y-5 gap-x-10 mt-5 text-primary-content">
+    <div className="grid lg:grid-cols-5 gap-y-5 gap-x-10 text-primary-content">
       <div className="flex flex-col gap-y-5 items-center bg-secondary p-10 rounded-lg">
         <p className="font-bold text-xl">Diplôme</p>
         <p className="font-bold text-4xl whitespace-nowrap">
