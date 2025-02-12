@@ -14,13 +14,13 @@ interface TimelineEvent extends Event {
   end: Date;
 }
 
-const useTimeline = () => {
+const useTimeline = (view: View) => {
   const { sendRequest } = useHttp();
 
   const navigate = useNavigate();
 
   // États pour gérer la vue et les filtres
-  const [currentView, setCurrentView] = useState<View>(Views.WORK_WEEK);
+  const [currentView, setCurrentView] = useState<View>(view);
   const [showAllCourses, setShowAllCourses] = useState<boolean>(false);
   const [timelineData, setTimelineData] = useState<TimelineEvent[]>();
 

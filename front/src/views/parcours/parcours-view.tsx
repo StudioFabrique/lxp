@@ -29,6 +29,7 @@ import HeaderMenu from "../../components/UI/header-menu";
 import ImageHeader from "../../components/image-header";
 import Can from "../../components/UI/can/can.component";
 import Module from "../../utils/interfaces/module";
+import { BookMarkedIcon, RocketIcon } from "lucide-react";
 
 let initialState = true;
 
@@ -179,7 +180,9 @@ const ParcoursView = () => {
             <ImageHeader
               imageUrl={image ?? "/images/parcours-default.webp"}
               title={parcoursInfos.title}
+              titleIcon={<RocketIcon className="stroke-white" />}
               subTitle={parcours.formation?.title}
+              subTitleIcon={<BookMarkedIcon className="stroke-white" />}
               children={[
                 <Fragment key="fragment" />,
                 <Can key="header" object="cursus" action="read">
