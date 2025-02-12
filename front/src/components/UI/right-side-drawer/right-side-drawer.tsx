@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, ReactNode, useEffect, useRef } from "react";
+import { FC, HTMLAttributes, ReactNode, useEffect, useRef } from "react";
 
 type Props = {
   children: ReactNode;
@@ -10,6 +10,7 @@ type Props = {
   id?: string;
   zIndex?: number;
   isOpen?: boolean;
+  buttonClassname?: HTMLAttributes<HTMLButtonElement>["className"];
   onCloseDrawer?: (id: string) => void;
 };
 
@@ -18,6 +19,7 @@ const RightSideDrawer: FC<Props> = ({
   visible = true,
   title,
   buttonTitle,
+  buttonClassname,
   icon,
   id = "my-drawer-4",
   zIndex = 50,
@@ -26,8 +28,9 @@ const RightSideDrawer: FC<Props> = ({
 }) => {
   const checkboxRef = useRef<HTMLInputElement | null>(null);
 
-  const btnStyle =
-    buttonTitle !== undefined
+  const btnStyle = buttonClassname
+    ? buttonClassname
+    : buttonTitle !== undefined
       ? "drawer-button btn btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary focus:outline-none"
       : "drawer-button btn btn-square btn-sm bg-primary border-none text-base-100 hover:brightness-75 hover:bg-primary focus:outline-none";
 
@@ -85,7 +88,7 @@ const RightSideDrawer: FC<Props> = ({
                     />
                   </svg>
                 )}
-                <p>{buttonTitle}</p>
+                {buttonTitle}
               </div>
             ) : (
               (icon ?? (
