@@ -7,7 +7,7 @@ export type TableEmptyProps = {
 };
 
 const TableEmpty = (props: TableEmptyProps) => (
-  <div className="flex flex-col gap-5 items-center">
+  <div className="flex flex-col gap-5 items-center py-10 text-lg">
     {props.message ? <p className="text-secondary">{props.message}</p> : null}
     {props.linkTo && props.linkableMessage ? (
       <Link
