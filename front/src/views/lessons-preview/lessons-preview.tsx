@@ -82,20 +82,22 @@ const LessonsPreview = () => {
             onRateContent={onEditRateContent}
           >
             {/* Bouton pour terminer la leçon afin d'afficher une modal */}
-            <FeedbacksButton
-              title={
-                isLessonCompleted ? "Leçon Suivante" : "Marquer comme terminé"
-              }
-              className="btn btn-primary text-nowrap"
-              feedbackType="thumbUp"
-              enableAnimationOnClick={!isLessonCompleted}
-              disabled={showModal}
-              onClick={
-                isLessonCompleted
-                  ? onCompleteLesson
-                  : handleToggleModalDisplaying
-              }
-            />
+            <Can action="component" object="progression">
+              <FeedbacksButton
+                title={
+                  isLessonCompleted ? "Leçon Suivante" : "Marquer comme terminé"
+                }
+                className="btn btn-primary text-nowrap"
+                feedbackType="thumbUp"
+                enableAnimationOnClick={!isLessonCompleted}
+                disabled={showModal}
+                onClick={
+                  isLessonCompleted
+                    ? onCompleteLesson
+                    : handleToggleModalDisplaying
+                }
+              />
+            </Can>
           </LessonReader>,
           /* Dans le cas où aucune leçon n'est affiché,
            les informations complémentaires du cours sont affichés */
