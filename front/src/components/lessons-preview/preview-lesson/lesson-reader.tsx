@@ -23,7 +23,7 @@ const LessonReader = ({
   return (
     <div className="flex flex-col gap-4">
       {/* Bouton de notation */}
-      <div className="w-full flex justify-end pr-10">
+      <div className="w-full flex justify-end">
         {selectedLesson.activities &&
         currentLessonRating &&
         selectedLesson.activities?.length > 0 ? (

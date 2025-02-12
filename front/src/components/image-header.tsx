@@ -5,11 +5,13 @@ import { Link } from "react-router-dom";
 interface ImageHeaderProps {
   imageUrl: string;
   title: string;
+  titleIcon?: ReactNode;
   subTitle: string;
+  subTitleIcon?: ReactNode;
   subTitleLinkTo?: string;
   isPublished?: boolean;
   hidePublished?: boolean;
-  children?: ReactNode[]; // composant contenant une icône svg
+  children?: ReactNode[];
 }
 
 const ImageHeader = (props: ImageHeaderProps) => {
@@ -31,26 +33,34 @@ const ImageHeader = (props: ImageHeaderProps) => {
         <div className="w-full flex gap-x-2 px-4 py-5 items-end justify-between font-bold absolute z-10 bottom-2 left-2">
           <span className="flex gap-x-2 items-center">
             <div>{props.children[0]}</div>
-            <div className="flex flex-col">
-              {props.subTitleLinkTo ? (
-                <Link
-                  className="capitalise text-white hover:underline hover:text-primary"
-                  to={props.subTitleLinkTo}
-                >
-                  {props.subTitle}
-                </Link>
-              ) : (
-                <h3 className="capitalise text-white">{props.subTitle}</h3>
-              )}
+            <div className="flex flex-col gap-1">
+              {props.subTitle ? (
+                <div className="flex gap-2">
+                  {props.subTitleLinkTo ? (
+                    <Link
+                      className="capitalise text-white hover:underline hover:text-primary truncate max-w-[500px]"
+                      to={props.subTitleLinkTo}
+                    >
+                      {props.subTitle}
+                    </Link>
+                  ) : (
+                    <h3 className="capitalise text-white truncate max-w-[500px]">
+                      {props.subTitle}
+                    </h3>
+                  )}
+                  {props.subTitleIcon}
+                </div>
+              ) : null}
 
               {props.title ? (
                 <div className="flex gap-2">
                   <CornerDownRight className="stroke-white" />
-                  <h1 className="text-xl text-white">
+                  <h1 className="text-xl text-white truncate max-w-[550px]">
                     {props.title}
                     {!props.hidePublished &&
                       (props.isPublished ? "-(Publié)" : "-(Brouillon)")}
                   </h1>
+                  {props.titleIcon}
                 </div>
               ) : null}
             </div>
