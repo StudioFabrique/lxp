@@ -1,18 +1,15 @@
-import { useParams } from "react-router-dom";
-import Lesson from "../../../utils/interfaces/lesson";
-import useHttp from "../../../hooks/use-http";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import LessonForm from "../../../components/edit-course/scenario/lesson-form";
-import toast from "react-hot-toast";
 import useEditLesson from "../../../hooks/use-edit-lesson";
+import Wrapper from "../../../components/UI/wrapper/wrapper.component";
+import { Loader2 } from "lucide-react";
 
 function EditLesson() {
-  const { lessonId } = useParams<{ lessonId: string }>();
-  const { sendRequest, error, isLoading } = useHttp();
-  const [lesson, setLesson] = useState<Lesson | null>(null);
   const formRef = useRef<HTMLInputElement>(null);
 
   const {
+    lesson,
+    isLoading,
     title,
     description,
     mode,
@@ -21,32 +18,11 @@ function EditLesson() {
     setTag,
     tagsList,
     setLessonValues,
+    handleUpdateLesson,
   } = useEditLesson();
 
-  const getLesson = useCallback(() => {
-    const applyData = (data: { success: boolean; lesson: Lesson }) => {
-      console.log(data);
-      setLesson(data.lesson);
-      toast.success("Leçon récupérée avec succès");
-      setLessonValues(data.lesson);
-    };
-    sendRequest({ path: `/lesson/edit/${lessonId}` }, applyData);
-  }, [lessonId, sendRequest, setLessonValues]);
-
-  useEffect(() => {
-    console.log("hello les nazes");
-
-    getLesson();
-  }, [getLesson]);
-
-  useEffect(() => {
-    console.log("toto");
-
-    if (error.length > 0) toast.error(error);
-  }, [error]);
-
   return (
-    <main className="w-full">
+    <main className="w-full p-2">
       <section className="w-full flex flex-col gap-y-4 mb-4">
         <article className="w-full flex justify-between items-center">
           <div className="flex items-center gap-x-4">
@@ -54,25 +30,40 @@ function EditLesson() {
           </div>
         </article>
       </section>
-      <section>
+      <section className="w-full lg:w-[40rem]">
         {lesson ? (
-          <LessonForm
-            ref={formRef}
-            title={title}
-            description={description}
-            mode={mode}
-            tag={tag}
-            isLoading={isLoading}
-            onSetTag={setTag}
-            tags={tagsList}
-            onSetMode={setMode}
-            onSubmitLesson={() => {}}
-          >
-            <p>toto</p>
-          </LessonForm>
-        ) : (
-          <></>
-        )}
+          <Wrapper>
+            <LessonForm
+              ref={formRef}
+              title={title}
+              description={description}
+              mode={mode}
+              tag={tag}
+              isLoading={isLoading}
+              onSetTag={setTag}
+              tags={tagsList}
+              onSetMode={setMode}
+              onSubmitLesson={() => {}}
+            >
+              <div className="flex justify-end items-center gap-x-4">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setLessonValues(lesson)}
+                >
+                  Réinitialiser
+                </button>
+                <button
+                  className="btn btn-primary flex items-center gap-x-2"
+                  onClick={handleUpdateLesson}
+                  disabled={isLoading}
+                >
+                  {isLoading ? <Loader2 className="animate spin" /> : null}
+                  Mettre à jour la leçon
+                </button>
+              </div>
+            </LessonForm>
+          </Wrapper>
+        ) : null}
       </section>
     </main>
   );
