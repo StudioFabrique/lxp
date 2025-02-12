@@ -146,6 +146,7 @@ activityRouter.post(
   "/resource/:lessonId",
   checkPermissions("lesson"),
   uploadActivityFiles(),
+  mediatheque("image"),
   jsonParser,
   lessonIdValidator,
   httpPostActivityResource
