@@ -7,9 +7,6 @@ import { uploadActivityImage } from "../../../middleware/upload-activity-image";
 import httpPostBlogImage from "../../../controllers/activity/http-post-blog-image";
 // Middleware pour l'upload de vidéos
 import { uploadActivityVideo } from "../../../middleware/upload-activity-video";
-import httpPostVideo from "../../../controllers/activity/http-post-activity-video";
-import httpDeleteActivity from "../../../controllers/activity/http-delete-activity";
-import httpPutUpdateVideo from "../../../controllers/activity/http-put-activity-video";
 // Validateurs pour les leçons
 import { lessonIdValidator } from "../lesson/lesson-validator";
 // Validateurs pour les activités
@@ -43,6 +40,7 @@ import httpGetResourceActivity from "../../../controllers/activity/http-get-reso
 import httpDeleteResource from "../../../controllers/activity/http-delete-resource";
 import httpPutResource from "../../../controllers/activity/http-put-resource";
 import mediatheque from "../../../middleware/mediatheque";
+import httpDeleteActivity from "../../../controllers/activity/http-delete-activity";
 
 const activityRouter = express.Router();
 
@@ -62,6 +60,7 @@ activityRouter.post(
   "/blog-image",
   checkPermissions("lesson"),
   uploadActivityImage(),
+  mediatheque("image"),
   httpPostBlogImage
 );
 
@@ -181,7 +180,7 @@ activityRouter.get(
 
 // Route pour supprimer une ressource spécifique
 activityRouter.delete(
-  "/resource/:resourceId",
+  "/activity-resource/:resourceId",
   checkPermissions("lesson"),
   resourceIdValidator,
   httpDeleteResource
@@ -194,6 +193,13 @@ activityRouter.put(
   resourceIdValidator,
   putResourceValidator,
   httpPutResource
+);
+
+activityRouter.delete(
+  "/:type/:activityId",
+  checkPermissions("lesson"),
+  activityIdValidator,
+  httpDeleteActivity
 );
 
 export default activityRouter;

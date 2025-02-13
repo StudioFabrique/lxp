@@ -12,7 +12,7 @@ type PaginationState<T> = {
   perPage: number; // Nombre d'éléments par page
   totalPages: number; // Nombre total de pages
   list: T[]; // Liste des éléments de la page courante
-  type: "image" | "video" | "audio" | "document"; // Type de média à afficher
+  type: "image" | "video" | "audio" | "resource"; // Type de média à afficher
 };
 
 // État initial de la pagination
@@ -30,7 +30,7 @@ type PaginationAction<T> =
   | { type: "SET_LIMIT"; payload: number }
   | { type: "SET_TOTAL_PAGES"; payload: number }
   | { type: "SET_LIST"; payload: { list: T[]; totalPages: number } }
-  | { type: "SET_TYPE"; payload: "image" | "video" | "audio" | "document" };
+  | { type: "SET_TYPE"; payload: "image" | "video" | "audio" | "resource" };
 
 // Reducer pour gérer les différentes actions de pagination
 const paginationReducer = <T>(
@@ -94,7 +94,7 @@ const usePaginatedMediatheque = <T>() => {
   }, []);
 
   const setType = useCallback(
-    (type: "image" | "video" | "audio" | "document") => {
+    (type: "image" | "video" | "audio" | "resource") => {
       dispatch({ type: "SET_TYPE", payload: type });
     },
     []

@@ -13,7 +13,7 @@ import { getPagination } from "../../utils/services/getPagination";
 export default async function getMedias(req: Request) {
   // Extraction des paramètres de pagination depuis la requête
   let { page, limit, type } = req.query;
-  const types = ["image", "document", "video", "audio"];
+  const types = ["image", "resource", "video", "audio"];
 
   // Valeurs par défaut si les paramètres ne sont pas fournis
   if (!page) {
@@ -29,7 +29,7 @@ export default async function getMedias(req: Request) {
   // Retourne le nombre total de médias de type "image"
   const totalMedias = await prisma.mediatheque.count({
     where: {
-      type: type as "image" | "document",
+      type: type as "image" | "resource",
     },
   });
 
@@ -42,7 +42,7 @@ export default async function getMedias(req: Request) {
   // avec pagination et tri par date de création décroissante
   const medias = await prisma.mediatheque.findMany({
     where: {
-      type: type as "image" | "document", // Filtre uniquement les médias de type image
+      type: type as "image" | "resource", // Filtre uniquement les médias de type image
     },
     skip: offset, // Nombre d'éléments à sauter (pagination)
     take: +limit!, // Nombre d'éléments à retourner
