@@ -38,7 +38,7 @@ function ResourceItem({
   return (
     // Wrapper qui gère l'affichage des erreurs
     <SubWrapper hasError={resource.hasError}>
-      <div className="w-full flex justify-between items-center text-xs">
+      <div className="w-full flex justify-between items-center text-xs pr-4">
         <span className="w-full flex items-center">
           {/* Zone de drag & drop et icône de statut */}
           <div className="w-1/6 flex gap-x-2 items-center">
