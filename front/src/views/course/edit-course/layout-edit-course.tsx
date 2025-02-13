@@ -70,8 +70,8 @@ const LayoutCourseEdit = () => {
             <div className="w-full flex flex-col items-center gap-y-8">
               {course && course.title && course.module.title ? (
                 <ImageHeader
-                  title={course.module.title}
-                  subTitle={course.title}
+                  title={course.title}
+                  subTitle={course.module.title}
                   imageUrl={course.module.image ?? defaultImage}
                 >
                   <div className="w-12 h-12 text-white">
