@@ -48,7 +48,7 @@ const QuickStatistiques = ({ studentCount }: QuickStatistiquesProps) => {
     <div className="grid grid-cols-2 lg:flex justify-between gap-5 text-primary-content">
       <QuickStatItem title="Diplôme" item={`Bac +${formation?.level}`} />
       <QuickStatItem title="Étudiants" item={studentCount || "-"} />
-      <QuickStatItem title="Modules" item={modules.length} />
+      <QuickStatItem title="Modules" item={modules.length || 0} />
       <QuickStatItem title="Semaines" item={parcoursWeeks()} />
       <QuickStatItem title="Heures" item={modulesHourSum()} />
     </div>
