@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import ImageHeader from "../image-header";
-import { PlayCircleIcon } from "lucide-react";
+import { BookMarkedIcon, List, PlayCircleIcon, RocketIcon } from "lucide-react";
 import useHttp from "../../hooks/use-http";
 import { useEffect, useState } from "react";
 import Parcours from "../../utils/interfaces/parcours";
@@ -38,23 +38,38 @@ const ResumeParcours = (/* { parcours }: ResumeParcoursProps */) => {
             ? `data:image/jpeg;base64,${parcours?.thumb}`
             : "/images/parcours-default.webp"
         }
-        title={parcours ? `Parcours: ${parcours.title}` : ""}
-        subTitle={parcours ? `Formation: ${parcours.formation.title}` : ""}
+        title={parcours ? `${parcours.title}` : ""}
+        titleIcon={<RocketIcon className="stroke-white" />}
+        subTitle={parcours ? `${parcours.formation.title}` : ""}
+        subTitleIcon={<BookMarkedIcon className="stroke-white" />}
         hidePublished
         children={[
-          <div key="link" className="p-5 w-full flex justify-center">
+          <div
+            key="title-and-badges"
+            className="absolute md:-top-[200%] -top-[160%] flex justify-between w-[95%] overflow-x-hidden"
+          />,
+          <div key="link" className="p-5 w-full flex justify-end">
             {parcours ? (
-              <Link
-                to={
-                  parcours
-                    ? `/${currentRoute}/parcours/view/${parcours.id}`
-                    : `/${currentRoute}/parcours`
-                }
-                className="z-20 btn btn-primary text-white flex"
-              >
-                <PlayCircleIcon />
-                <p>Accéder</p>
-              </Link>
+              <div className="flex flex-col h-[31vh] justify-between gap-5">
+                <Link
+                  to={`/${currentRoute}/parcours`}
+                  className="z-20 btn btn-sm"
+                >
+                  <List />
+                  <p>Accéder à la liste des autres parcours</p>
+                </Link>
+                <Link
+                  to={
+                    parcours
+                      ? `/${currentRoute}/parcours/view/${parcours.id}`
+                      : `/${currentRoute}/parcours`
+                  }
+                  className="z-20 btn btn-primary text-white"
+                >
+                  <PlayCircleIcon />
+                  <p>Accéder au parcours</p>
+                </Link>
+              </div>
             ) : (
               <p className="text-white text-4xl text-center">
                 Votre formation sera bientôt disponible dans votre espace
