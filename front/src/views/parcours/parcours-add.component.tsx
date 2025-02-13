@@ -193,7 +193,7 @@ const AddParcours = () => {
                           className="btn btn-primary"
                           type="button"
                           onClick={handleDuplicateParcours}
-                          //disabled={parcours === undefined || !formation}
+                          disabled={parcours === undefined || !formation}
                         >
                           Créer
                         </button>
