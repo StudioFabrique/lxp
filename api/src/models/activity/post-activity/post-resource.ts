@@ -63,28 +63,54 @@ export default async function postActivityResource(req: CustomRequest) {
     }
   }
 
-  // Création d'une nouvelle activité de type ressource
-  const newActivity = await prisma.activity.create({
-    data: {
-      title: "Ressources",
-      description: `Ressources pour la leçon ${existingLesson.title}`,
-      lessonId: +lessonId,
-      type: "resource",
-      order: existingLesson.activities.length,
-      url: "",
-      authorId: existingAuthor.id,
-    },
-  });
+  let result: any = {};
 
-  // Enregistrement des ressources dans la base de données
-  const result = await prisma.resourceActivity.createMany({
-    data: newResources.map((resource, index) => ({
-      label: resource.label,
-      url: resource.url,
-      activityId: newActivity.id,
-      order: index,
-    })),
-  });
+  const transaction = await prisma.$transaction(async (tx) => {
+    // Création d'une nouvelle activité de type ressource
+    const newActivity = await tx.activity.create({
+      data: {
+        title: "Ressources",
+        description: `Ressources pour la leçon ${existingLesson.title}`,
+        lessonId: +lessonId,
+        type: "resource",
+        order: existingLesson.activities.length,
+        url: "",
+        authorId: existingAuthor.id,
+      },
+    });
 
+    // Enregistrement des ressources dans la base de données
+    result = await tx.resourceActivity.createMany({
+      data: newResources.map((resource, index) => ({
+        label: resource.label,
+        url: resource.url,
+        activityId: newActivity.id,
+        order: index,
+      })),
+    });
+
+    for (const resource of data) {
+      const file = uploadedFiles.find(
+        (file) => file.originalname === resource.filename
+      );
+
+      if (file) {
+        console.log("step");
+
+        await tx.mediatheque.create({
+          data: {
+            type: "resource",
+            name: resource.filename,
+            url: file.filename,
+            size: file.size,
+            used: 1,
+            author: {
+              connect: { id: existingAuthor.id },
+            },
+          },
+        });
+      }
+    }
+  });
   return { result };
 }

@@ -1,0 +1,163 @@
+import fs, { readdirSync } from "fs";
+import path from "path";
+
+import { prisma } from "../../../utils/db";
+
+export default async function deleteActivity(activityId: number, type: string) {
+  const existingActivity = await prisma.activity.findFirst({
+    where: { id: activityId },
+    select: {
+      type: true,
+      url: true,
+      resourceActivities: {
+        select: {
+          url: true,
+        },
+      },
+    },
+  });
+
+  console.log({ type });
+
+  if (!existingActivity)
+    throw { statusCode: 404, message: "L'activité n'existe pas" };
+
+  await prisma.$transaction(async (tx) => {
+    await tx.activity.delete({
+      where: { id: activityId },
+    });
+
+    // Gestion des activités de type vidéo (fichier viédo ou lien externe)
+    if (type === "video" && existingActivity.url.startsWith("https://")) return;
+
+    // Gestion des activités de type texte (fichier markdown)
+    if (type === "text") {
+      const filePath = path.join(
+        __dirname,
+        "..",
+        "..",
+        "..",
+        "..",
+        "uploads",
+        "activities",
+        existingActivity.url
+      );
+
+      // Lecture du contenu du fichier pour les autres types d'activités
+      const fileContent = fs.readFileSync(filePath, "utf-8");
+
+      // Extraction des URLs d'images du contenu
+      const filesUrls = extraireURLImages(fileContent);
+      let imageFiles = filesUrls.map((item: string) => extraireNomImage(item));
+
+      try {
+        const dirFiles = readdirSync(
+          path.join(
+            __dirname,
+            "..",
+            "..",
+            "..",
+            "..",
+            "uploads",
+            "activities",
+            "images"
+          )
+        );
+
+        // Supprime les images associées si elles existent
+        if (imageFiles.length > 0) {
+          for (const elem of imageFiles) {
+            const imagePath = path.join(
+              __dirname,
+              "..",
+              "..",
+              "..",
+              "uploads",
+              "activities",
+              "images",
+              elem!
+            );
+            const image = dirFiles.find((item) => item.includes(elem!));
+            if (image) {
+              await tx.mediatheque.updateMany({
+                where: { url: image },
+                data: {
+                  used: {
+                    decrement: 1,
+                  },
+                },
+              });
+            }
+          }
+        }
+
+        await fs.promises.unlink(filePath);
+        return;
+      } catch (error) {
+        console.log({ error });
+
+        throw {
+          statusCode: 500,
+          message: "Erreur lors de la suppression du fichier",
+        };
+      }
+    }
+
+    if (type === "resource") {
+      if (existingActivity.resourceActivities.length > 0) {
+        for (const resource of existingActivity.resourceActivities) {
+          await tx.mediatheque.updateMany({
+            where: { url: resource.url },
+            data: {
+              used: {
+                decrement: 1,
+              },
+            },
+          });
+        }
+      }
+      return;
+    }
+
+    // Mise à jour de la médiathèque (décrémentation du compteur d'utilisation)
+    await tx.mediatheque.updateMany({
+      where: { url: existingActivity.url },
+      data: {
+        used: {
+          decrement: 1,
+        },
+      },
+    });
+
+    return;
+  });
+}
+
+/**
+ * Gestion des images qui se trouvent dans l'activité de type texte
+ * @param texte
+ * @returns
+ */
+function extraireURLImages(texte: string): string[] {
+  const regex = /!\[\]\((.*?)\)/g;
+  const matches = texte.match(regex);
+  if (matches) {
+    return matches.map((match) => {
+      const urlRegex = /\(([^)]+)\)/;
+      const urlMatch = match.match(urlRegex);
+      return urlMatch ? urlMatch[1] : "";
+    });
+  }
+  return [];
+}
+
+/**
+ * Extrait le nom de l'image à partir de son URL
+ * @param url - L'URL de l'image
+ * @returns Le nom de l'image ou null si non trouvé
+ */
+function extraireNomImage(url: string): string | null {
+  const regex = /images\/(.*?)\./;
+  const match = url.match(regex);
+  return match ? match[1] : null;
+}

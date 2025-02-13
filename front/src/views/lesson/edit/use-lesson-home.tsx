@@ -57,12 +57,14 @@ const useLessonHome = () => {
    * @param activityId ID de l'activité à supprimer
    */
   const handleDeleteActivity = (activityId: number) => {
+    const activity = activities.find((item) => item.id === activityId);
+    if (!activity) return;
     const applyData = (data: { message: string }) => {
       toast.success(data.message);
       getActivities();
     };
     sendRequest(
-      { path: `/activity/${activityId}`, method: "delete" },
+      { path: `/activity/${activity.type}/${activityId}`, method: "delete" },
       applyData
     );
   };

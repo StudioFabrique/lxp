@@ -31,18 +31,5 @@ export default async function deleteResource(
     where: { id: resourceId },
   });
 
-  const filePath = path.join(
-    __dirname,
-    "..",
-    "..",
-    "..",
-    "uploads",
-    "activities",
-    "files"
-  );
-
-  // supprime le fichier
-  await fs.promises.unlink(`${filePath}/${deletedResource.url}`);
-
   return deletedResource;
 }
