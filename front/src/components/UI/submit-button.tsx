@@ -5,23 +5,23 @@ interface SubmitButtonProps {
   label: string;
   loadingLabel: string;
   isLoading: boolean;
+  disabled: boolean;
 }
 
 const SubmitButton = (props: SubmitButtonProps) => {
-  const baseStyle =
-    "btn btn-primary border-none focus:outline-none active:outline-none";
-
-  const style = props.isLoading ? baseStyle + "  flex pl-8" : baseStyle;
-
   return (
     <>
       {props.isLoading ? (
-        <button className={style} disabled={props.isLoading}>
+        <button className="btn btn-primary" disabled={props.isLoading}>
           <span className="loading loading-spinner"></span>
           <p className="flex-1">{props.loadingLabel}</p>
         </button>
       ) : (
-        <button className={style} type="submit">
+        <button
+          className="btn btn-primary"
+          type="submit"
+          disabled={!props.disabled}
+        >
           {props.children ? <>{props.children}</> : null}
 
           {props.label}

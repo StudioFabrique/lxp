@@ -3,6 +3,7 @@ import { regexGeneric } from "../../utils/constantes";
 import SubmitButton from "../UI/submit-button";
 
 interface NewCourseFormProps {
+  moduleAndParcours: boolean;
   label: string;
   isLoading: boolean;
   onSubmit: (title: string) => void;
@@ -10,6 +11,8 @@ interface NewCourseFormProps {
 
 const NewCourseForm = (props: NewCourseFormProps) => {
   const { value: title } = useInput((value) => regexGeneric.test(value));
+
+  console.log(props.moduleAndParcours);
 
   /**
    * définit le style du champ formulaire en fonction de sa validité
@@ -51,6 +54,7 @@ const NewCourseForm = (props: NewCourseFormProps) => {
       </div>
       <div className="w-full flex justify-end mt-4">
         <SubmitButton
+          disabled={props.moduleAndParcours && title.isValid}
           label="Enregistrement"
           loadingLabel="Enregistrement en Cours"
           isLoading={props.isLoading}
