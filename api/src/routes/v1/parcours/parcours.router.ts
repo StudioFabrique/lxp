@@ -194,6 +194,7 @@ parcoursRouter.get(
 parcoursRouter.post(
   "/duplicate/:parcoursId",
   checkPermissions("parcours"),
+  parcoursIdValidator,
   httpPostDuplicateParcours
 );
 
