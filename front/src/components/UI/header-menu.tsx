@@ -8,10 +8,14 @@ import Can from "./can/can.component";
 import { Link, useLocation } from "react-router-dom";
 
 type HeaderMenuProps = {
+  hideResumeCourseButton?: boolean;
   onClickResume?: () => void;
 };
 
-const HeaderMenu = ({ onClickResume }: HeaderMenuProps) => {
+const HeaderMenu = ({
+  hideResumeCourseButton,
+  onClickResume,
+}: HeaderMenuProps) => {
   const location = useLocation();
   const [isModalOpen, setModalState] = useState(false);
 
@@ -46,18 +50,20 @@ const HeaderMenu = ({ onClickResume }: HeaderMenuProps) => {
             </Can>
           </div>
           {onClickResume ? (
-            <Can action="component" object="start-lesson-button">
-              <button
-                onClick={onClickResume}
-                type="button"
-                className="btn btn-primary self-end"
-              >
-                <span className="w-5 h-5">
-                  <PlayIcon />
-                </span>
-                <p className="normal-case">Reprendre le cours</p>
-              </button>
-            </Can>
+            hideResumeCourseButton ? null : (
+              <Can action="component" object="start-lesson-button">
+                <button
+                  onClick={onClickResume}
+                  type="button"
+                  className="btn btn-primary self-end"
+                >
+                  <span className="w-5 h-5">
+                    <PlayIcon />
+                  </span>
+                  <p className="normal-case">Reprendre le cours</p>
+                </button>
+              </Can>
+            )
           ) : null}
         </div>
       </div>

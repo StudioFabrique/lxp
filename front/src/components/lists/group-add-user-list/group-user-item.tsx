@@ -45,9 +45,7 @@ const GroupUserItem: FC<{
         }
       >
         <div className="flex justify-center items-center">
-          {user.avatar && (
-            <AvatarSmall url={`data:image/jpeg;base64,${user.avatar}`} />
-          )}
+          {user.avatar && <AvatarSmall user={user} />}
         </div>
       </td>
       <td className="bg-transparent">{user.firstname}</td>

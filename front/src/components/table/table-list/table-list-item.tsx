@@ -74,7 +74,13 @@ const TableListItem = <TData extends Record<string, unknown>>(
         <td className="pl-4 pr-1">
           <div className="flex justify-center items-center h-full">
             {props.avatar ? (
-              <AvatarSmall url={`data:image/jpeg;base64,${props.avatar}`} />
+              <AvatarSmall
+                user={{
+                  avatar: `data:image/jpeg;base64,${props.avatar}`,
+                  firstname: "",
+                  lastname: "",
+                }}
+              />
             ) : null}
           </div>
         </td>

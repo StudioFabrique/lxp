@@ -10,10 +10,21 @@ export default async function deleteGroup(groupId: string) {
 
     await User.updateMany(
       { _id: group?.users },
-      { $unset: { group: groupId } }
+      { $unset: { group: groupId } },
     );
 
-    await prisma.group.deleteMany({ where: { idMdb: groupId } });
+    await prisma.$transaction([
+      prisma.groupsOnParcours.deleteMany({
+        where: {
+          group: { idMdb: groupId },
+        },
+      }),
+      prisma.group.deleteMany({
+        where: {
+          idMdb: groupId,
+        },
+      }),
+    ]);
 
     return group ?? [];
   } catch (error) {

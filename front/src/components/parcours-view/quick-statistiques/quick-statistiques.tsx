@@ -13,8 +13,6 @@ const QuickStatistiques = ({ studentCount }: QuickStatistiquesProps) => {
     (state: any) => state.parcoursInformations.infos,
   );
 
-  console.log({ parcoursInfos });
-
   const formation = useSelector((state: any) => state.parcours.formation);
 
   const modules = useSelector(

@@ -6,6 +6,7 @@ import Loader from "../../components/UI/loader";
 import toTitleCase from "../../utils/toTitleCase";
 import RoleForm from "../../components/role/role-form/role-form";
 import { useEffect } from "react";
+import { ListRestartIcon } from "lucide-react";
 
 const RoleEdit = () => {
   const navigate = useNavigate();
@@ -92,6 +93,10 @@ const RoleEdit = () => {
           onAddPermission={onAddPermission}
           onDeletePermission={onDeletePermission}
         />
+        <button className="btn btn-primary w-fit btn-sm" disabled>
+          <ListRestartIcon />
+          Réinitialiser toutes les permissions pour ce rôle
+        </button>
       </div>
     </div>
   );
