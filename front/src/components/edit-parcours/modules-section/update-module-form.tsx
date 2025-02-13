@@ -206,12 +206,12 @@ const UpdateModuleForm = React.forwardRef<
           {/* liste des contacts */}
 
           <div className="flex flex-col gap-y-4">
-            <label htmlFor="teachers">Formateurs du module</label>
+            <label htmlFor="teachers">Ressources pédagogiques</label>
             <MemoizedItemsList
               itemsList={listeContacts}
               selectedProp={currentModule ? currentModule.contacts : []}
               propertyToSearch="name"
-              placeHolder="Rechercher un formateur de module"
+              placeHolder="Rechercher une ressource pédagogique"
               onUpdateItems={handleUpdateTeachers}
             />
           </div>

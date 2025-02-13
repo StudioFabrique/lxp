@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
@@ -58,7 +59,7 @@ const ParcoursPreviewInfos = (props: ParcoursPreviewInfosProps) => {
           {/* Colonne #2 */}
           <article className="flex flex-col gap-y-8">
             <Wrapper>
-              <h2 className="text-xl font-bold">Ressources et contacts</h2>
+              <h2 className="text-xl font-bold">Ressources pédagogiques</h2>
               <ContactsList contactsList={contacts} />
             </Wrapper>
             <Wrapper>

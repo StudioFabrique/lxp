@@ -30,34 +30,34 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
     const parcours = useSelector((state: any) => state.parcours);
     const { value: title } = useInput(
       (value) => regexGeneric.test(value),
-      currentModule?.title || "",
+      currentModule?.title || ""
     );
     const { value: duration } = useInput(
       (value) => regexNumber.test(value),
-      currentModule?.duration || null,
+      currentModule?.duration || null
     );
     const { value: description } = useInput(
       (value) => regexOptionalGeneric.test(value),
-      currentModule?.description || "",
+      currentModule?.description || ""
     );
     const [image, setImage] = useState<File | null>(null);
     /*     const [thumb, setThumb] = useState<string | null>(
       currentModule?.thumb ?? null
     ); */
     const listeContacts = useSelector(
-      (state: any) => state.parcoursContacts.currentContacts,
+      (state: any) => state.parcoursContacts.currentContacts
     ) as Contact[];
     const listeSkills = useSelector(
-      (state: any) => state.parcoursSkills.skills,
+      (state: any) => state.parcoursSkills.skills
     ) as Skill[];
     const [teachers, setTeachers] = useState<Contact[] | null>(
-      currentModule?.contacts ?? [],
+      currentModule?.contacts ?? []
     );
     const [skills, setSkills] = useState<Skill[] | null>(
-      currentModule?.bonusSkills ?? [],
+      currentModule?.bonusSkills ?? []
     );
     const parcoursInfos = useSelector(
-      (state: any) => state.parcoursInformations.infos,
+      (state: any) => state.parcoursInformations.infos
     );
 
     /**
@@ -256,12 +256,12 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
             {/* liste des contacts */}
 
             <div className="flex flex-col gap-y-4">
-              <label htmlFor="teachers">Formateurs du module</label>
+              <label htmlFor="teachers">Ressources pédagogiques</label>
               <MemoizedItemsList
                 itemsList={listeContacts}
                 selectedProp={currentModule ? currentModule.contacts : []}
                 propertyToSearch="name"
-                placeHolder="Rechercher un formateur de module"
+                placeHolder="Rechercher une ressource pédagogique"
                 onUpdateItems={handleUpdateTeachers}
               />
             </div>
@@ -305,7 +305,7 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
         </div>
       </form>
     );
-  },
+  }
 );
 
 export default ModuleForm;
