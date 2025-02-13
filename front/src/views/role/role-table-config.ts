@@ -62,6 +62,7 @@ export const actionsConfig = (
 export const tableListConfig = <TData>(
   data: TData,
   isLoading?: boolean,
+  isSearching?: boolean,
   actionsConfig?: TableListActionConfig[],
 ): TableListProps<Record<string, string>> => ({
   idProperty: "_id",
@@ -70,7 +71,11 @@ export const tableListConfig = <TData>(
   actionsItems: actionsConfig,
   style: {
     emptyArrayMessage: {
-      message: isLoading ? "Chargement des rôles..." : "Aucun rôle créé.",
+      message: isLoading
+        ? "Chargement des rôles..."
+        : isSearching
+          ? "Aucun role ne correspond à votre recherche"
+          : "Aucun rôle créé",
     },
   },
 });
