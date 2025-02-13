@@ -13,7 +13,6 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { parcoursModulesSliceActions } from "../../../store/redux-toolkit/parcours/parcours-modules";
 import CalendarDatesForm from "./forms/calendar-dates-form";
-import CalendarDurationForm from "./forms/calendar-duration-form";
 
 const localizer = momentLocalizer(moment);
 
@@ -31,13 +30,17 @@ const Calendrier = () => {
   );
 
   const datesParcours = {
-    startDate: parcoursInfos?.startDate ? new Date(parcoursInfos.startDate) : new Date(),
-    endDate: parcoursInfos?.endDate ? new Date(parcoursInfos.endDate) : new Date(),
+    startDate: parcoursInfos?.startDate
+      ? new Date(parcoursInfos.startDate)
+      : new Date(),
+    endDate: parcoursInfos?.endDate
+      ? new Date(parcoursInfos.endDate)
+      : new Date(),
   };
 
   useEffect(() => {
     if (!modules || modules.length === 0) return;
-    
+
     dispatch(
       parcoursModulesSliceActions.updateCurrentParcoursModule(
         !currentModule ? modules[0].id : currentModule.id,
@@ -72,24 +75,33 @@ const Calendrier = () => {
           className="col-span-2 bg-white rounded-lg p-5"
           localizer={localizer}
           events={modules.map((module) => ({
-            start: module.minDate ? new Date(module.minDate) : datesParcours.startDate,
-            end: module.maxDate ? new Date(module.maxDate) : datesParcours.endDate,
-            title: module.title || 'Sans titre',
+            start: module.minDate
+              ? new Date(module.minDate)
+              : datesParcours.startDate,
+            end: module.maxDate
+              ? new Date(module.maxDate)
+              : datesParcours.endDate,
+            title: module.title || "Sans titre",
           }))}
           onDoubleClickEvent={(event) => {
-            const selectedModule = modules.find((module) => module.title === event.title);
+            const selectedModule = modules.find(
+              (module) => module.title === event.title,
+            );
             if (selectedModule) {
               dispatch(
-                parcoursModulesSliceActions.updateCurrentParcoursModule(selectedModule.id)
+                parcoursModulesSliceActions.updateCurrentParcoursModule(
+                  selectedModule.id,
+                ),
               );
             }
           }}
         />
       </div>
-      <div className="grid grid-cols-3 max-md:grid-cols-1 max-md:gap-y-5 gap-x-5">
+      <div className="grid grid-cols-2">
         <div />
-        <CalendarDatesForm datesParcours={datesParcours} />
-        <CalendarDurationForm />
+        <div className="-ml-[30%] w-[130%]">
+          <CalendarDatesForm datesParcours={datesParcours} />
+        </div>
       </div>
     </div>
   );

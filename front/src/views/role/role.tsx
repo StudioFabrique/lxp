@@ -28,6 +28,7 @@ const RolePage = () => {
   // custom hook gestion pagination
   const {
     data,
+    searchValue,
     isLoading,
     sortProperty,
     isAscDirection,
@@ -85,6 +86,7 @@ const RolePage = () => {
           tableListConfig={tableListConfig(
             data,
             isLoading,
+            Boolean(searchValue),
             actionsConfig(onRefreshData),
           )}
           checkboxConfig={checkboxConfig}

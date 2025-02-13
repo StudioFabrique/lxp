@@ -73,6 +73,7 @@ export const actionsConfig = (
 export const tableListConfig = <TData>(
   data: TData,
   isLoading?: boolean,
+  isSearching?: boolean,
   actionsConfig?: TableListActionConfig[],
 ): TableListProps<Record<string, string>> => ({
   idProperty: "_id",
@@ -83,10 +84,15 @@ export const tableListConfig = <TData>(
   style: {
     showAvatar: true,
     emptyArrayMessage: {
-      message: isLoading ? "Chargement des groupes..." : undefined,
-      linkableMessage: isLoading
-        ? undefined
-        : "Cliquez ici pour créer votre premier groupe",
+      message: isLoading
+        ? "Chargement des groupes..."
+        : isSearching
+          ? "Aucun groupe ne correspond à votre recherche"
+          : undefined,
+      linkableMessage:
+        isLoading || isSearching
+          ? undefined
+          : "Cliquez ici pour créer votre premier groupe",
       linkTo: "add",
     },
   },
