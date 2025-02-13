@@ -1,17 +1,34 @@
-import { Request, Response } from "express";
-import { serverIssue } from "../../utils/constantes";
-import deleteActivity from "../../models/activity/delete-activity";
+import { Request, Response, NextFunction } from "express";
+import deletaActivity from "../../models/activity/delete-activity/delete-activity";
 
-export default async function httpDeleteActivity(req: Request, res: Response) {
+/**
+ * HTTP handler for deleting an activity.
+ *
+ * @param req - Express request object containing the activity ID in params
+ * @param res - Express response object
+ * @param next - Express next middleware function
+ *
+ * @throws Will throw and pass error to next() if deletion fails
+ *
+ * @returns Promise<void> - Calls next() with success message or error
+ */
+export default async function httpDeleteImage(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
-    const { activityId } = req.params;
-    const response = await deleteActivity(+activityId);
-    return res.status(200).json(response);
-  } catch (error: any) {
-    console.log({ error });
+    const { activityId, type } = req.params;
 
-    return res
-      .status(error.statusCode ?? 500)
-      .json({ message: error.message ?? serverIssue });
+    await deletaActivity(+activityId, type);
+    next({
+      statusCode: 200,
+      data: { message: `L'activité de type ${type} a bien été supprimée.` },
+    });
+  } catch (error: any) {
+    next({
+      statusCode: error.statusCode ?? 500,
+      message: error.message,
+    });
   }
 }
