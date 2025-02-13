@@ -57,10 +57,10 @@ const NewParcoursForm: FC<Props> = ({ formations, onSubmit }) => {
       if (formationId !== undefined && formationId > 0) {
         onSubmit({ title: title.value, formationId });
       } else {
-        toast.error("Veuillez sélectionner une formation svp");
+        toast.error("Sélectionnez une formation");
       }
     } else {
-      toast.error("Veuillez donner un titre à votre parcours svp");
+      toast.error("Donnez un titre à votre parcours");
     }
   };
 
