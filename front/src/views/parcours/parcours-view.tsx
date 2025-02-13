@@ -188,7 +188,11 @@ const ParcoursView = () => {
               children={[
                 <Fragment key="fragment" />,
                 <Can key="header" object="cursus" action="read">
-                  <HeaderMenu key="header" onClickResume={handleClickResume} />
+                  <HeaderMenu
+                    key="header"
+                    onClickResume={handleClickResume}
+                    hideResumeCourseButton={!(modules?.length > 0)}
+                  />
                 </Can>,
               ]}
               hidePublished
@@ -197,9 +201,11 @@ const ParcoursView = () => {
 
           <div className="mt-5 flex flex-col gap-y-5">
             <QuickStatistiques studentCount={studentCount} />
-            <Can action="component" object="progression">
-              <ProgressModulesStats modules={modules} />
-            </Can>
+            {modules?.length > 0 ? (
+              <Can action="component" object="progression">
+                <ProgressModulesStats modules={modules} />
+              </Can>
+            ) : null}
             <Can object="cursus" action="read">
               <Contenu modules={modules} />
             </Can>

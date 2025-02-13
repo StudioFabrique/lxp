@@ -11,6 +11,7 @@ import {
 export type SearchBarProps = {
   title?: string;
   placeholder?: string;
+  additionalClassname?: string;
   onSubmitSearchValue?: (value: string) => void;
   onSetFilter?: Dispatch<SetStateAction<string | undefined>>;
 };
@@ -29,6 +30,7 @@ export type SearchBarProps = {
 const SearchBar = ({
   title,
   placeholder,
+  additionalClassname,
   onSetFilter,
   onSubmitSearchValue,
   children,
@@ -61,7 +63,9 @@ const SearchBar = ({
   };
 
   return (
-    <div className="flex flex-col lg:flex-row justify-between gap-5 items-center w-full">
+    <div
+      className={`flex flex-col lg:flex-row justify-between gap-5 items-center w-full ${additionalClassname}`}
+    >
       {title ? (
         <h2 className="text-lg font-bold text-base-content w-full">{title}</h2>
       ) : null}
