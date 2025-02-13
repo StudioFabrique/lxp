@@ -33,7 +33,6 @@ export default function ActivityListItem({
 
   // Gestion de la navigation vers la page de prévisualisation de l'activité
   const handleGoToActivity = () => {
-    console.log({ activity });
     dispatch(lessonActions.setActivity(activity));
     navigate(`preview/${activity.id}`);
   };
@@ -49,7 +48,11 @@ export default function ActivityListItem({
         <span className="flex flex-col justify-center items-start">
           <p className="text-base-content/50 text-xs">
             Activité n°{index + 1} -{" "}
-            {activity.type === "text" ? "blog" : activity.type}
+            {activity.type === "text"
+              ? "blog"
+              : activity.type === "resource"
+              ? "ressource(s)"
+              : activity.type}
           </p>
           <span className="flex gap-x-2">
             <p className="font-bold">{activity.title}</p>
