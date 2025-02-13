@@ -71,7 +71,7 @@ const ResumeParcours = (/* { parcours }: ResumeParcoursProps */) => {
                 </Link>
               </div>
             ) : (
-              <p className="text-white text-4xl text-center opacity-95">
+              <p className="text-white text-4xl text-center opacity-95 select-none">
                 Votre formation sera bientôt disponible dans votre espace
               </p>
             )}
