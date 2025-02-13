@@ -136,6 +136,7 @@ function useTablePaginatedData<TData>(
 
   return {
     data,
+    searchValue,
     isLoading,
     currentPage,
     maxPage,
