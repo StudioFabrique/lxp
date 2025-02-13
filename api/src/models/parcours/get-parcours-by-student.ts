@@ -9,7 +9,7 @@ async function getParcoursByStudent(studentId: string) {
   const parcoursList = await prisma.parcours.findMany({
     where: {
       isPublished: true,
-      visibility: true,
+      // visibility: true,
       groups: { some: { group: { idMdb: { in: groupIds } } } },
     },
     select: {

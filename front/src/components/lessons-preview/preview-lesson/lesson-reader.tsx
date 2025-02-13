@@ -55,9 +55,7 @@ const LessonReader = ({
       )}
 
       {/* Boutons de navigation */}
-      <div className="flex justify-end items-center mt-4 pb-16">
-        <div className="mr-10">{children}</div>
-      </div>
+      <div className="flex justify-end items-center my-5">{children}</div>
     </div>
   );
 };

@@ -32,6 +32,7 @@ const GroupHome = () => {
   // custom hook gestion pagination
   const {
     data,
+    searchValue,
     isLoading,
     totalItems,
     sortProperty,
@@ -83,6 +84,7 @@ const GroupHome = () => {
         tableListConfig={tableListConfig(
           data,
           isLoading,
+          Boolean(searchValue),
           actionsConfig(onRefreshData),
         )}
         checkboxConfig={checkboxConfig}
