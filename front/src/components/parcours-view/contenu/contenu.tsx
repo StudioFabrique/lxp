@@ -43,7 +43,7 @@ const Contenu = ({ modules }: ContenuProps) => {
           </h2>
           <Can action="update" object="parcours">
             <Link
-              to={`/admin/parcours/edit/${parcoursId}`}
+              to={`/admin/parcours/edit/${parcoursId}?step=${4}`}
               className="btn btn-primary "
             >
               <span className="h-5 w-5">
