@@ -5,8 +5,7 @@ import DatePicker from "../date-picker";
 import { useDispatch } from "react-redux";
 import { parcoursModulesSliceActions } from "../../../../store/redux-toolkit/parcours/parcours-modules";
 import useHttp from "../../../../hooks/use-http";
-import useProgressBar from "../../../../hooks/use-progress-bar";
-import ProgressBarWrapper from "../../../UI/progress-bar-wrapper/progress-bar-wrapper";
+import Wrapper from "../../../UI/wrapper/wrapper.component";
 
 const CalendarDatesForm: FC<{
   datesParcours: { startDate: Date; endDate: Date };
@@ -27,8 +26,6 @@ const CalendarDatesForm: FC<{
       ? new Date(currentModule.maxDate).toISOString().split("T")[0]
       : "",
   });
-
-  const progressBar = useProgressBar(true);
 
   const setInitDates = useCallback(() => {
     setDatesModule({
@@ -70,13 +67,9 @@ const CalendarDatesForm: FC<{
       );
     }
     setError(null);
-    progressBar.handlePrepareRequest(
-      datesParcours.startDate.getTime() + datesParcours.endDate.getTime(),
-    );
   };
 
   const handleSubmit = useCallback(() => {
-    progressBar.setFetchResultType("loading");
     const applyData = () => {
       dispatch(
         parcoursModulesSliceActions.updateParcoursModule({
@@ -87,8 +80,9 @@ const CalendarDatesForm: FC<{
           moduleId: currentModule.id,
         }),
       );
-      progressBar.setFetchResultType("success");
     };
+
+    if (error) return;
 
     sendRequest(
       {
@@ -102,14 +96,12 @@ const CalendarDatesForm: FC<{
       },
       applyData,
     );
-
-    progressBar.handleStopRequest();
   }, [
     currentModule?.id,
     datesModule.maxDate,
     datesModule.minDate,
+    error,
     dispatch,
-    progressBar,
     sendRequest,
   ]);
 
@@ -117,52 +109,46 @@ const CalendarDatesForm: FC<{
     setInitDates();
   }, [setInitDates]);
 
-  useEffect(() => {
-    if (progressBar.canSendRequestNow) {
-      handleSubmit();
-    }
-  }, [progressBar.canSendRequestNow, handleSubmit]);
-
   return (
-    <ProgressBarWrapper loader={progressBar.loader}>
+    <Wrapper>
       {currentModule && (
-        <form className="flex flex-col gap-y-5">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+          className="flex flex-col gap-y-5"
+        >
           <span className="flex gap-x-2">
-            <h3>Dates de module</h3>
-            {progressBar.componentFetchType()}
+            <h3 className="font-bold">Dates de module</h3>
           </span>
 
-          <div className="flex flex-col lg:flex-row gap-y-5 gap-x-10 justify-between px-5">
-            <span className="flex">
-              <DatePicker
-                id="date1"
-                label="Début"
-                date={datesModule.minDate}
-                disabled={
-                  progressBar.loader.loadingRate > 0 &&
-                  progressBar.loader.loadingRate < 1.2
-                }
-                onSubmitDate={handleSetDates}
-              />
-            </span>
+          <div className="flex flex-col lg:flex-row gap-y-5 gap-x-14 justify-end px-5">
+            <DatePicker
+              id="date1"
+              label="Début"
+              date={datesModule.minDate}
+              onSubmitDate={handleSetDates}
+            />
 
-            <span className="flex items-center">
-              <DatePicker
-                id="date2"
-                label="Fin"
-                date={datesModule.maxDate}
-                disabled={
-                  progressBar.loader.loadingRate > 0 &&
-                  progressBar.loader.loadingRate < 1.2
-                }
-                onSubmitDate={handleSetDates}
-              />
-            </span>
+            <DatePicker
+              id="date2"
+              label="Fin"
+              date={datesModule.maxDate}
+              onSubmitDate={handleSetDates}
+            />
           </div>
           <p className="text-error">{error}</p>
+          <button
+            disabled={Boolean(error)}
+            type="submit"
+            className="btn btn-sm w-fit btn-primary self-end"
+          >
+            Confirmer les dates
+          </button>
         </form>
       )}
-    </ProgressBarWrapper>
+    </Wrapper>
   );
 };
 
