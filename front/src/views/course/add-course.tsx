@@ -153,6 +153,7 @@ const AddCourse = () => {
                       onSelectItem={handleModuleId}
                     />
                     <NewCourseForm
+                      moduleAndParcours={parcoursId && moduleId ? true : false}
                       label="Titre du cours"
                       isLoading={isLoading}
                       onSubmit={handleSubmit}
