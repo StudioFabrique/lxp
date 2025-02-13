@@ -1,7 +1,9 @@
 import { FC } from "react";
 import User from "../../../utils/interfaces/user";
 
-export const AvatarSmall: FC<{ user: User }> = ({ user }) => {
+export const AvatarSmall: FC<{
+  user: Partial<User> & { firstname: string; lastname: string };
+}> = ({ user }) => {
   return (
     <>
       {!user.avatar || user.avatar === undefined || user.avatar === "" ? (
