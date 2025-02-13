@@ -132,7 +132,7 @@ const CalendarDatesForm: FC<{
             {progressBar.componentFetchType()}
           </span>
 
-          <div className="flex flex-col gap-y-5">
+          <div className="flex flex-col lg:flex-row gap-y-5 gap-x-10 justify-between px-5">
             <span className="flex">
               <DatePicker
                 id="date1"
