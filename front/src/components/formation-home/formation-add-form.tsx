@@ -117,15 +117,6 @@ export default function FormationAddForm({
 
     setTagError(false);
 
-    // vérification qu'au moins un tag est présent dans la liste des tags
-    if (currentTags.length === 0) {
-      setTagError(true);
-      toast.error("Au moins un tag est requis pour enregistrer la formation.");
-      return;
-    }
-
-    console.log({ values });
-
     const newValues = {
       ...values,
     };
@@ -139,6 +130,13 @@ export default function FormationAddForm({
         onValidationErrors(errors);
         return;
       }
+    }
+
+    // vérification qu'au moins un tag est présent dans la liste des tags
+    if (currentTags.length === 0) {
+      setTagError(true);
+      toast.error("Au moins un tag est requis pour enregistrer la formation.");
+      return;
     }
 
     // on filtre les tags qui n'existent pas dans la base de données
