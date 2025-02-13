@@ -103,7 +103,12 @@ const NewParcoursForm: FC<Props> = ({ formations, onSubmit }) => {
           />
         </div>
         <div className="w-full flex justify-end">
-          <button className="btn btn-primary">Créer</button>
+          <button
+            className="btn btn-primary"
+            disabled={!formationId || !title.isValid}
+          >
+            Créer
+          </button>
         </div>
       </form>
     </>
