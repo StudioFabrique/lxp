@@ -38,8 +38,8 @@ const ResumeParcours = (/* { parcours }: ResumeParcoursProps */) => {
             ? `data:image/jpeg;base64,${parcours?.thumb}`
             : "/images/parcours-default.webp"
         }
-        title={parcours ? `Formation: ${parcours.formation.title}` : ""}
-        subTitle={parcours ? `Parcours: ${parcours.title}` : ""}
+        title={parcours ? `Parcours: ${parcours.title}` : ""}
+        subTitle={parcours ? `Formation: ${parcours.formation.title}` : ""}
         hidePublished
         children={[
           <div key="link" className="p-5 w-full flex justify-center">
