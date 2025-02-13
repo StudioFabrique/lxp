@@ -82,7 +82,7 @@ const GroupUserList: FC<{
         </div>
       </div>
       <div className="flex flex-col lg:flex-row gap-5 justify-between lg:items-center w-full">
-        <div className="flex flex-col gap-5 items-center">
+        <div className="flex flex-col gap-5">
           <GroupManageUserList
             onAddUsers={onAddUsers}
             usersToAdd={usersToAdd}
@@ -98,8 +98,9 @@ const GroupUserList: FC<{
           )}
         </div>
         <SearchBar
-          onSetFilter={setFilter}
           placeholder="Rechercher un étudiant par nom ou prénom"
+          additionalClassname="self-end"
+          onSetFilter={setFilter}
         />
       </div>
 
