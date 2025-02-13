@@ -108,8 +108,6 @@ const AddParcours = () => {
 
   const handleDuplicateParcours = () => {
     const applyData = (data: { success: true; parcoursId: number }) => {
-      console.log({ data });
-
       if (data.success) {
         toast.success("Parcours dupliqué avec succès");
         nav(`/admin/parcours/edit/${data.parcoursId}`);
@@ -195,6 +193,7 @@ const AddParcours = () => {
                           className="btn btn-primary"
                           type="button"
                           onClick={handleDuplicateParcours}
+                          //disabled={parcours === undefined || !formation}
                         >
                           Créer
                         </button>
