@@ -21,7 +21,16 @@ export default async function deleteManyGroups(groupsIds: string[]) {
       );
     }
 
-    await prisma.group.deleteMany({ where: { idMdb: { in: groupsIds } } });
+    await prisma.$transaction([
+      prisma.groupsOnParcours.deleteMany({
+        where: {
+          group: { idMdb: { in: groupsIds } },
+        },
+      }),
+      prisma.group.deleteMany({
+        where: { idMdb: { in: groupsIds } },
+      }),
+    ]);
 
     return groups ?? [];
   } catch (error) {
