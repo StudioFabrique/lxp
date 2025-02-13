@@ -50,7 +50,7 @@ const ResumeParcours = (/* { parcours }: ResumeParcoursProps */) => {
           />,
           <div key="link" className="p-5 w-full flex justify-end">
             {parcours ? (
-              <div className="flex flex-col h-[31vh] justify-between gap-5">
+              <div className="flex flex-col h-[17.5em] justify-between gap-5">
                 <Link
                   to={`/${currentRoute}/parcours`}
                   className="z-20 btn btn-sm"
