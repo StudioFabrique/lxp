@@ -31,8 +31,17 @@ export default async function deleteLesson(userId: string, lessonId: number) {
     throw error;
   }
 
-  const deletedLesson = await prisma.lesson.delete({
-    where: { id: lessonId },
-  });
+  const deleteResources = await prisma.$transaction([
+    prisma.lessonRead.deleteMany({
+      where: { lessonId: lessonId },
+    }),
+    prisma.lessonRating.deleteMany({
+      where: { lessonId: lessonId },
+    }),
+    prisma.lesson.delete({
+      where: { id: lessonId },
+    }),
+  ]);
+
   return deleteLesson;
 }
