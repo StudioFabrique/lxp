@@ -5,21 +5,44 @@ import PaginationLimitSelect from "../../components/UI/pagination-limit-select";
 import usePaginatedMediatheque from "../../hooks/use-paginated-mediatheque";
 import Media from "../../utils/interfaces/media";
 
+/**
+ * Composant principal de la page d'accueil de la médiathèque
+ * Gère l'affichage et la pagination des médias
+ */
 function MediathequeHomePage() {
-  const { list, page, perPage, setLimit, setPage, totalPages, type, setType } =
-    usePaginatedMediatheque<Media>();
+  // Utilisation du hook personnalisé pour gérer la pagination et le filtrage des médias
+  const {
+    list, // Liste des médias
+    page, // Page courante
+    perPage, // Nombre d'éléments par page
+    setLimit, // Fonction pour modifier le nombre d'éléments par page
+    setPage, // Fonction pour changer de page
+    totalPages, // Nombre total de pages
+    type, // Type de média sélectionné
+    setType, // Fonction pour modifier le type de média
+    setSort, // Fonction pour modifier le tri
+  } = usePaginatedMediatheque<Media>();
 
   return (
     <main className="w-full min-h-screen flex flex-col items-center py-8 gap-8">
-      {/* En-tête de la page */}
+      {/* Section d'en-tête avec titre et description */}
       <section className="w-5/6 flex flex-col items-center">
         <Header
           title="Mediathèque"
           description="Gérez toutes les ressources utilisées dans l'application."
         ></Header>
       </section>
+
+      {/* Section principale avec les onglets et la pagination */}
       <section className="w-5/6 flex-1 flex flex-col items-center gap-y-2">
-        <TabsMedia type={type} list={list as Media[]} setType={setType}>
+        {/* Composant d'onglets pour filtrer les médias */}
+        <TabsMedia
+          type={type}
+          list={list as Media[]}
+          setType={setType}
+          setSort={setSort}
+        >
+          {/* Conteneur pour la pagination */}
           <div className="flex-1 flex flex-col items-center mt-4">
             <Pagination
               page={page}
@@ -28,6 +51,7 @@ function MediathequeHomePage() {
               setPage={setPage}
               setLimit={setLimit}
             >
+              {/* Sélecteur du nombre d'éléments par page */}
               <PaginationLimitSelect />
             </Pagination>
           </div>

@@ -6,13 +6,18 @@ import MediaFilterSelect from "./media-filter-select";
 // Définition du type des props du composant
 type Props = {
   images: Media[]; // Tableau d'objets Media
+  onSort: (sort: "createdAt" | "size" | "used") => void; // Fonction pour changer le critère de tri
 };
 
 // Composant ListImages qui affiche une grille d'images
-function ListImages({ images }: Props) {
+function ListImages({ images, onSort }: Props) {
   return (
     <>
-      <MediaFilterSelect onChange={() => {}} />
+      <div className="flex gap-x-4 items-center justify-end w-5/6">
+        <h2>Trier par</h2>
+        {/* Sélecteur pour changer le critère de tri */}
+        <MediaFilterSelect onChange={onSort} />
+      </div>
       {/*Container principal avec flex pour centrer le contenu}*/}
       <div className="flex-1 flex flex-col justify-around items-center gap-y-4">
         {/* Affiche la grille uniquement s'il y a des images */}

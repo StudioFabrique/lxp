@@ -12,8 +12,9 @@ import { getPagination } from "../../utils/services/getPagination";
  */
 export default async function getMedias(req: Request) {
   // Extraction des paramètres de pagination depuis la requête
-  let { page, limit, type } = req.query;
+  let { page, limit, type, sort } = req.query;
   const types = ["image", "resource", "video", "audio"];
+  const sorts = ["createdAt", "size", "used"];
 
   // Valeurs par défaut si les paramètres ne sont pas fournis
   if (!page) {
@@ -25,11 +26,14 @@ export default async function getMedias(req: Request) {
   if (!types.includes(type as string)) {
     type = "image"; // Type par défaut
   }
+  if (!sorts.includes(sort as string)) {
+    sort = "createdAt"; // Tri par défaut
+  }
 
   // Retourne le nombre total de médias de type "image"
   const totalMedias = await prisma.mediatheque.count({
     where: {
-      type: type as "image" | "resource",
+      type: type as "image" | "resource" | "video" | "audio", // Filtre uniquement les médias de type image
     },
   });
 
@@ -47,7 +51,7 @@ export default async function getMedias(req: Request) {
     skip: offset, // Nombre d'éléments à sauter (pagination)
     take: +limit!, // Nombre d'éléments à retourner
     orderBy: {
-      createdAt: "desc", // Tri par date de création décroissante
+      [sort as string]: "desc", // Tri par date de création décroissante
     },
   });
 
