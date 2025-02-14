@@ -30,7 +30,7 @@ function TabsMedia({ children, list, type, setType, setSort }: Props) {
       type: "video",
       label: "Vidéos",
       icon: <VideoIcon />,
-      component: <ListVideos videos={list} />,
+      component: <ListVideos videos={list} onSort={setSort} />,
     },
     {
       type: "audio",
