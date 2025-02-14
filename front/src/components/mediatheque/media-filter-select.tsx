@@ -1,11 +1,11 @@
 type Props = {
-  onChange: (value: string) => void;
+  onChange: (sort: "createdAt" | "size" | "used") => void;
 };
 
 const options = [
   { value: "createdAt", label: "Date de création" },
   { value: "size", label: "Taille" },
-  { value: "updatedAt", label: "Dernières modification" },
+  { value: "used", label: "Nombre d'utilisations" },
 ];
 
 /**
@@ -23,7 +23,7 @@ const options = [
 function MediaFilterSelect({ onChange }: Props) {
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     console.log(event.currentTarget.value);
-    onChange(event.currentTarget.value);
+    onChange(event.currentTarget.value as "createdAt" | "size" | "used");
   };
 
   return (
