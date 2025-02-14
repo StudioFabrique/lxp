@@ -112,13 +112,7 @@ const useLessonsPreview = () => {
     };
 
     // If selectedLesson, already read with at least a activity
-    if (
-      selectedLesson &&
-      selectedLesson.activities &&
-      selectedLesson.activities?.length > 1 &&
-      selectedLesson.lessonsRead &&
-      selectedLesson.lessonsRead[0]?.finishedAt
-    ) {
+    if (selectedLesson) {
       sendRequest(
         { path: `/lesson/rate/${selectedLesson.id}`, method: "get" },
         applyData,
