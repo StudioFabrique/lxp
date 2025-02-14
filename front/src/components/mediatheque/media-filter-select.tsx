@@ -1,12 +1,7 @@
 type Props = {
+  options: { value: string; label: string }[];
   onChange: (sort: "createdAt" | "size" | "used") => void;
 };
-
-const options = [
-  { value: "createdAt", label: "Date de création" },
-  { value: "size", label: "Taille" },
-  { value: "used", label: "Nombre d'utilisations" },
-];
 
 /**
  * A select component for filtering media content
@@ -20,7 +15,7 @@ const options = [
  * <MediaFilterSelect onChange={(value) => console.log(value)} />
  * ```
  */
-function MediaFilterSelect({ onChange }: Props) {
+function MediaFilterSelect({ options, onChange }: Props) {
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     console.log(event.currentTarget.value);
     onChange(event.currentTarget.value as "createdAt" | "size" | "used");

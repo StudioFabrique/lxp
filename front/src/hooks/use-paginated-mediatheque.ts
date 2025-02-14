@@ -18,7 +18,7 @@ type PaginationState<T> = {
   totalPages: number; // Nombre total de pages disponibles
   list: T[]; // Liste des éléments de la page courante
   type: "image" | "video" | "audio" | "resource"; // Type de média à afficher
-  sort: "createdAt" | "size" | "used"; // Critère de tri des médias
+  sort: "createdAt" | "size" | "used" | "name"; // Critère de tri des médias
 };
 
 /**
@@ -43,7 +43,7 @@ type PaginationAction<T> =
   | { type: "SET_TOTAL_PAGES"; payload: number }
   | { type: "SET_LIST"; payload: { list: T[]; totalPages: number } }
   | { type: "SET_TYPE"; payload: "image" | "video" | "audio" | "resource" }
-  | { type: "SET_SORT"; payload: "createdAt" | "size" | "used" };
+  | { type: "SET_SORT"; payload: "createdAt" | "size" | "used" | "name" };
 
 /**
  * Reducer qui gère les différentes actions de pagination
@@ -113,9 +113,12 @@ const usePaginatedMediatheque = <T>() => {
     []
   );
 
-  const setSort = useCallback((sort: "createdAt" | "size" | "used") => {
-    dispatch({ type: "SET_SORT", payload: sort });
-  }, []);
+  const setSort = useCallback(
+    (sort: "createdAt" | "size" | "used" | "name") => {
+      dispatch({ type: "SET_SORT", payload: sort });
+    },
+    []
+  );
 
   /**
    * Fonction qui récupère la liste paginée depuis l'API
