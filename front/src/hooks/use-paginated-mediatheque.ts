@@ -1,38 +1,54 @@
-// Hook personnalisé pour gérer la pagination des médias (images et documents)
-// Utilise useReducer pour gérer l'état de la pagination
+/**
+ * Hook personnalisé pour gérer la pagination des médias (images, vidéos, audios et ressources)
+ * Utilise useReducer pour gérer l'état de la pagination de manière efficace
+ * Permet de gérer le chargement, le tri et le filtrage des médias par type
+ */
 
 import { useCallback, useEffect, useReducer } from "react";
-
 import useHttp from "./use-http";
 import toast from "react-hot-toast";
 
-// Interface définissant la structure de l'état de pagination
+/**
+ * Interface définissant la structure de l'état de pagination
+ * @template T Type générique représentant le type des éléments de la liste
+ */
 type PaginationState<T> = {
-  page: number; // Page courante
-  perPage: number; // Nombre d'éléments par page
-  totalPages: number; // Nombre total de pages
+  page: number; // Numéro de la page courante
+  perPage: number; // Nombre d'éléments affichés par page
+  totalPages: number; // Nombre total de pages disponibles
   list: T[]; // Liste des éléments de la page courante
   type: "image" | "video" | "audio" | "resource"; // Type de média à afficher
+  sort: "createdAt" | "size" | "used"; // Critère de tri des médias
 };
 
-// État initial de la pagination
+/**
+ * État initial de la pagination avec les valeurs par défaut
+ */
 const initialState = {
   page: 1,
-  perPage: 6,
+  perPage: 6, // Affiche 6 éléments par page par défaut
   totalPages: 0,
   list: [],
-  type: "image",
+  type: "image", // Type par défaut : image
+  sort: "createdAt", // Tri par défaut : date de création
 };
 
-// Types d'actions possibles pour le reducer
+/**
+ * Types d'actions possibles pour le reducer
+ * Définit toutes les modifications possibles de l'état
+ */
 type PaginationAction<T> =
   | { type: "SET_PAGE"; payload: number }
   | { type: "SET_LIMIT"; payload: number }
   | { type: "SET_TOTAL_PAGES"; payload: number }
   | { type: "SET_LIST"; payload: { list: T[]; totalPages: number } }
-  | { type: "SET_TYPE"; payload: "image" | "video" | "audio" | "resource" };
+  | { type: "SET_TYPE"; payload: "image" | "video" | "audio" | "resource" }
+  | { type: "SET_SORT"; payload: "createdAt" | "size" | "used" };
 
-// Reducer pour gérer les différentes actions de pagination
+/**
+ * Reducer qui gère les différentes actions de pagination
+ * @template T Type générique des éléments de la liste
+ */
 const paginationReducer = <T>(
   state: PaginationState<T>,
   action: PaginationAction<T>
@@ -40,32 +56,29 @@ const paginationReducer = <T>(
   switch (action.type) {
     case "SET_PAGE":
       return { ...state, page: action.payload };
-
     case "SET_LIMIT":
-      // Retour à la première page lors du changement de limite
-      return { ...state, page: 1, perPage: action.payload };
-
+      return { ...state, page: 1, perPage: action.payload }; // Reset à la page 1
     case "SET_TOTAL_PAGES":
       return { ...state, totalPages: action.payload };
-
     case "SET_LIST":
-      // Mise à jour de la liste et retour à la première page
       return {
         ...state,
         list: action.payload.list,
         totalPages: action.payload.totalPages,
       };
-
     case "SET_TYPE":
-      // Changement du type de média et retour à la première page
-      return { ...state, page: 1, type: action.payload };
-
+      return { ...state, page: 1, type: action.payload }; // Reset à la page 1
+    case "SET_SORT":
+      return { ...state, page: 1, sort: action.payload }; // Reset à la page 1
     default:
       return state;
   }
 };
 
-// Hook principal de pagination
+/**
+ * Hook principal qui gère la pagination des médias
+ * @template T Type générique des éléments de la liste
+ */
 const usePaginatedMediatheque = <T>() => {
   const { error, isLoading, sendRequest } = useHttp();
   const [state, dispatch] = useReducer(
@@ -73,7 +86,7 @@ const usePaginatedMediatheque = <T>() => {
     initialState as PaginationState<T>
   );
 
-  // Fonctions de mise à jour de l'état mémorisées avec useCallback
+  // Fonctions mémorisées pour mettre à jour l'état
   const setPage = useCallback((page: number) => {
     dispatch({ type: "SET_PAGE", payload: page });
   }, []);
@@ -100,31 +113,39 @@ const usePaginatedMediatheque = <T>() => {
     []
   );
 
-  // Fonction pour récupérer la liste paginée depuis l'API
+  const setSort = useCallback((sort: "createdAt" | "size" | "used") => {
+    dispatch({ type: "SET_SORT", payload: sort });
+  }, []);
+
+  /**
+   * Fonction qui récupère la liste paginée depuis l'API
+   * Construit l'URL avec les paramètres de pagination actuels
+   */
   const getPaginatedList = useCallback(() => {
     const applyData = (data: { medias: T[]; totalPages: number }) => {
       setList(data.medias, data.totalPages);
     };
     sendRequest(
       {
-        path: `/media?page=${state.page}&limit=${state.perPage}&type=${state.type}`,
+        path: `/media?page=${state.page}&limit=${state.perPage}&type=${state.type}&sort=${state.sort}`,
       },
       applyData
     );
-  }, [sendRequest, setList, state.page, state.perPage, state.type]);
+  }, [sendRequest, setList, state.page, state.perPage, state.sort, state.type]);
 
-  // Effet pour charger la liste à chaque changement des dépendances
+  // Charge la liste quand les paramètres de pagination changent
   useEffect(() => {
     getPaginatedList();
   }, [getPaginatedList]);
 
+  // Affiche les erreurs avec toast
   useEffect(() => {
     if (error.length > 0) {
       toast.error(error);
     }
   }, [error]);
 
-  // Retourne les valeurs et fonctions nécessaires pour utiliser la pagination
+  // Expose les valeurs et fonctions nécessaires
   return {
     isLoading,
     list: state.list,
@@ -135,6 +156,7 @@ const usePaginatedMediatheque = <T>() => {
     setPage,
     setTotalPages,
     setType,
+    setSort,
     totalPages: state.totalPages,
     type: state.type,
   };

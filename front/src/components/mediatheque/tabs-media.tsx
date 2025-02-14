@@ -10,10 +10,11 @@ type Props = {
   list: Media[]; // Liste des médias à afficher
   type: string; // Type de média sélectionné
   setType: (type: "image" | "video" | "audio" | "resource") => void; // Fonction pour changer le type de media
+  setSort: (sort: "createdAt" | "size" | "used") => void; // Fonction pour changer le critère de tri
   children: ReactNode; // Composants enfants (pagination)
 };
 
-function TabsMedia({ children, list, type, setType }: Props) {
+function TabsMedia({ children, list, type, setType, setSort }: Props) {
   // Message affiché quand aucun fichier n'est trouvé
   const empty = <p>Aucun fichier de ce type n'a été trouvé.</p>;
 
@@ -23,7 +24,7 @@ function TabsMedia({ children, list, type, setType }: Props) {
       type: "image",
       label: "Images",
       icon: <ImageIcon />,
-      component: <ListImages images={list} />,
+      component: <ListImages images={list} onSort={setSort} />,
     },
     {
       type: "video",
