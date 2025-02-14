@@ -13,7 +13,7 @@ type Props = {
 function ListImages({ images, onSort }: Props) {
   return (
     <>
-      <div className="flex gap-x-4 items-center justify-end w-5/6">
+      <div className="flex gap-x-4 items-center justify-end w-4/6">
         <h2>Trier par</h2>
         {/* Sélecteur pour changer le critère de tri */}
         <MediaFilterSelect onChange={onSort} />
@@ -23,7 +23,7 @@ function ListImages({ images, onSort }: Props) {
         {/* Affiche la grille uniquement s'il y a des images */}
         {images && images.length > 0 ? (
           // Grille responsive de 3 colonnes avec espacement
-          <ul className="grid grid-cols-3 gap-8">
+          <ul className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-8">
             {/* Mapping sur le tableau d'images pour créer les cartes */}
             {(images as Media[]).map((item) => (
               <li key={item.id}>
