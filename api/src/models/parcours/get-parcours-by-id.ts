@@ -41,9 +41,7 @@ async function getParcoursById(parcoursId: number, userId: string) {
       // Sélectionne les contacts associés au parcours
       contacts: {
         select: {
-          contact: {
-            select: { id: true, idMdb: true, name: true, role: true },
-          },
+          contact: true,
         },
       },
       // Sélectionne les compétences requises et bonus

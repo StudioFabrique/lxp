@@ -5,3 +5,7 @@ export default interface Contact {
   role: string;
   isSelected?: boolean;
 }
+
+export interface ContactWithMail extends Contact {
+  email: string;
+}
