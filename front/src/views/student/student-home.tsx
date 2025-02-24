@@ -37,8 +37,8 @@ const StudentHome = () => {
         </span>
         <UserTopBar />
       </div>
-      <div className="grid gap-10 xl:grid-cols-4 xl:gap-0">
-        <div className="flex flex-col gap-5 xl:col-span-3">
+      <div className="grid gap-10 xl:grid-cols-3 xl:gap-0">
+        <div className="flex flex-col gap-5 xl:col-span-2">
           {/* <Notifications /> */}
           {lastLessons && lastLessons?.length > 0 ? (
             <>
