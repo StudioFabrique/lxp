@@ -28,7 +28,7 @@ export default function LayoutEditLesson() {
       {
         path: `/lesson/${lessonId}`,
       },
-      applyData
+      applyData,
     );
   }, [lessonId, dispatch, sendRequest]);
 
@@ -60,8 +60,8 @@ export default function LayoutEditLesson() {
             lesson.course &&
             lesson.course.title ? (
               <ImageHeader
-                title={lesson.course.title}
-                subTitle={lesson.title}
+                title={lesson.title}
+                subTitle={lesson.course.title}
                 imageUrl={lesson.course.image ?? books}
               >
                 <div className="w-10 h-10 text-white">

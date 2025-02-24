@@ -65,6 +65,16 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
           </FadeWrapper>
         </Wrapper>
       );
+    case "image":
+      return (
+        <Wrapper>
+          <FadeWrapper>
+            <div className="flex flex-col gap-2">
+              <img src={`${ACTIVITIES}images/${activity.url}`} alt="Image" />
+            </div>
+          </FadeWrapper>
+        </Wrapper>
+      );
     default:
       return undefined;
   }

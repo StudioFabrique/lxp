@@ -5,9 +5,11 @@ import ResumeActivity from "../../components/student-home/resume-activity";
 import ResumeActivities from "../../components/student-home/resume-activities";
 import useHttp from "../../hooks/use-http";
 import LessonRead from "../../utils/interfaces/lesson-read";
-import RightSide from "../../components/student-home/right-side/right-side";
 import ResumeParcours from "../../components/student-home/resume-parcours";
 import Timeline from "../../components/student-home/timeline/timeline";
+import FeelingFeedback from "../../components/student-home/right-side/feeling-feedback";
+import StudentAccomplishments from "../../components/student-home/right-side/feedback-apprenant/student-accomplishments";
+import MostReadCourses from "../../components/student-home/right-side/most-read-courses";
 
 const StudentHome = () => {
   const { sendRequest } = useHttp();
@@ -51,7 +53,12 @@ const StudentHome = () => {
             viewType="day"
           />
         </div>
-        <RightSide />
+        <div className="flex flex-col xl:px-10 gap-5">
+          <FeelingFeedback />
+          <StudentAccomplishments />
+          <MostReadCourses />
+          {/* <Chat /> */}
+        </div>
       </div>
     </div>
   );
