@@ -1,22 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import Wrapper from "../UI/wrapper/wrapper.component";
-import Contact from "../../utils/interfaces/contact";
+import { ContactWithMail } from "../../utils/interfaces/contact";
 
 const Contacts = () => {
   const contacts = useSelector(
-    (state: any) => state.parcoursContacts.currentContacts,
-  ) as Contact[];
+    (state: any) => state.parcoursContacts.currentContacts
+  ) as ContactWithMail[];
 
   const contactsList =
     contacts.length > 0 ? (
       contacts.map((contact) => (
         <div
           key={contact.id}
-          className="flex justify-between bg-secondary p-4 rounded-lg text-secondary-content"
+          className="flex flex-col bg-secondary p-4 rounded-lg text-secondary-content"
         >
-          <p className="capitalize">{contact.name}</p>
-          <p className="font-bold capitalize">{contact.role}</p>
+          <span className="flex justify-between items-center">
+            <p className="capitalize font-bold">{contact.name}</p>
+            <p className="capitalize text-xs">{contact.role}</p>
+          </span>
+          <p className="text-xs underline">
+            {contact.email ?? "Non renseigné"}
+          </p>
         </div>
       ))
     ) : (
