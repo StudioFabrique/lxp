@@ -35,7 +35,10 @@ async function sendActivationEmail(email: string, token: string) {
     await transporter.verify();
     const result = await transporter.sendMail({
       from: '"Activation du compte admin" <cponsan@fabriquenumerique.fr>',
-      to: email,
+      to:
+        process.env.ENVIRONMENT === "production"
+          ? email
+          : "cponsan@fabriquenumerique.fr",
       subject: "Activation du compte",
       html: message,
     });
