@@ -90,6 +90,7 @@ async function createUser(username: string) {
     password: hash,
     roles: [new Object(roleAdmin!._id), new Object(roleInterfaceAdmin!._id)],
     isActive: true,
+    invitationSent: true,
   });
 
   console.log("Admin created:", newUser);
