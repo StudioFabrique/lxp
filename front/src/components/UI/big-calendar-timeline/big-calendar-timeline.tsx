@@ -3,8 +3,11 @@ import "moment/locale/fr";
 import { Calendar, momentLocalizer, View } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import CalendarCustomToolbar from "./calendar-custom-toolbar";
-import { adjustScheduleToCurrentWeek } from "../../../utils/calendar-utils";
-import { Dispatch, SetStateAction } from "react";
+import {
+  adjustScheduleToCurrentWeek,
+  getColorByAlternateId,
+} from "../../../utils/calendar-utils";
+import { Dispatch, PropsWithChildren, SetStateAction } from "react";
 import FadeWrapper from "../fade-wrapper/fade-wrapper";
 
 moment.locale("fr");
@@ -28,7 +31,6 @@ export interface Event {
 type BigCalendarTimelineProps = {
   data: Event[];
   view: View;
-  // colors?: ColorEvent[];
   onSetView: Dispatch<SetStateAction<View>>;
   onRangeChange: (
     range: { start: Date; end: Date } | Date[],
@@ -40,7 +42,6 @@ type BigCalendarTimelineProps = {
 const BigCalendarTimeline = ({
   data,
   view,
-  // colors,
   onSetView,
   onRangeChange,
   onDoubleClickEvent,
@@ -57,25 +58,23 @@ const BigCalendarTimeline = ({
       views={["month", "work_week", "day"]}
       view={view}
       onView={onSetView}
-      className="rbc-calendar bg-base-100 rounded-2xl shadow-xl p-6 border-2 border-base-content/20 text-base-content hover:border-base-content/30 transition-colors"
+      className="rbc-calendar bg-base-100 rounded-2xl shadow-xl p-6 border-2 border-base-content/30 hover:border-base-content/50 transition-colors"
       min={new Date(2025, 1, 0, 8, 0, 0)}
       max={new Date(2025, 1, 0, 18, 0, 0)}
       components={{
         toolbar: CalendarCustomToolbar,
-        event: ({ event }) => {
-          return (
-            <FadeWrapper>
-              <div className="card w-full h-full">
-                <div className="card-body p-2 flex-row items-center gap-3">
-                  <div className="w-3 h-3 bg-secondary rounded-full animate-pulse shadow-md flex-shrink-0" />
-                  <h3 className="card-title text-primary text-sm truncate m-0">
-                    {event.title}
-                  </h3>
-                </div>
-              </div>
-            </FadeWrapper>
-          );
-        },
+        eventContainerWrapper: ({ children }: PropsWithChildren) => (
+          <FadeWrapper>{children}</FadeWrapper>
+        ),
+        event: ({ event }) => (
+          <div className="card w-full h-full bg-black">
+            <div className="card-body p-2 flex-row items-center gap-3">
+              <h3 className="card-title text-primary text-sm text-wrap truncate">
+                {event.title}
+              </h3>
+            </div>
+          </div>
+        ),
       }}
       style={{ height: view === "month" ? 600 : "" }}
       formats={{
@@ -92,16 +91,18 @@ const BigCalendarTimeline = ({
       slotPropGetter={() => ({
         className: "border-base-300 text-sm font-inter p-3",
       })}
-      eventPropGetter={() => ({
-        style: {
-          background: "white",
-          color: "inherit",
-          borderRadius: "12px",
-          border: "1px solid black",
-        },
-        className:
-          "transition-all duration-300 hover:-translate-y-1 hover:shadow-xl",
-      })}
+      eventPropGetter={(event) => {
+        console.log({ color: getColorByAlternateId(event.alternateId ?? 1) });
+
+        return {
+          style: {
+            background: "transparent",
+            border: "0px",
+          },
+          className:
+            "transition-all duration-300 hover:-translate-y-1 hover:shadow-xl",
+        };
+      }}
       step={60}
       timeslots={1}
       onRangeChange={onRangeChange}
