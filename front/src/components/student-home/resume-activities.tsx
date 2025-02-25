@@ -64,7 +64,7 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                       <p>{`${(item.lesson.order ?? 0) + 1}/${
                         item.lesson.course.lessons.length
                       }`}</p>
-                      <p className="truncate overflow-clip w-[60vw] lg:w-[14vw]">
+                      <p className="truncate overflow-clip w-[60vw] lg:w-[10vw]">
                         {item.lesson.title}
                       </p>
                     </span>
