@@ -139,10 +139,7 @@ const useLessonsPreview = () => {
 
   // Évaluer le cours en tant que apprenant
   const handleEditRateContent = (rating: number) => {
-    console.log({ rating });
-
     const applyData = (data: { data: LessonRating }) => {
-      console.log({ data });
       setLessonRating(data.data);
     };
 
