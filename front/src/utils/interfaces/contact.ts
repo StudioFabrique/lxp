@@ -8,4 +8,5 @@ export default interface Contact {
 
 export interface ContactWithMail extends Contact {
   email: string;
+  phone: string;
 }
