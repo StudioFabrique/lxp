@@ -36,6 +36,7 @@ const ImageHeader = (props: ImageHeaderProps) => {
             <div className="flex flex-col gap-1">
               {props.subTitle ? (
                 <div className="flex gap-2">
+                  {props.subTitleIcon}
                   {props.subTitleLinkTo ? (
                     <Link
                       className="capitalise text-white hover:underline hover:text-primary truncate max-w-[500px]"
@@ -48,19 +49,18 @@ const ImageHeader = (props: ImageHeaderProps) => {
                       {props.subTitle}
                     </h3>
                   )}
-                  {props.subTitleIcon}
                 </div>
               ) : null}
 
               {props.title ? (
                 <div className="flex gap-2">
                   <CornerDownRight className="stroke-white" />
+                  {props.titleIcon}
                   <h1 className="text-xl text-white truncate max-w-[550px]">
                     {props.title}
                     {!props.hidePublished &&
                       (props.isPublished ? "-(Publié)" : "-(Brouillon)")}
                   </h1>
-                  {props.titleIcon}
                 </div>
               ) : null}
             </div>
