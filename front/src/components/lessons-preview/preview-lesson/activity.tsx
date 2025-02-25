@@ -48,7 +48,7 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
       return (
         <Wrapper additionalClassname="bg-secondary/5">
           <FadeWrapper>
-            <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 max-w-none">
+            <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 max-w-[95%]">
               {value}
             </Markdown>
           </FadeWrapper>
