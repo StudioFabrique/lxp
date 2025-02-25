@@ -104,19 +104,20 @@ export const adjustScheduleToCurrentWeek = (
     .flat();
 };
 
-export const getColorByAlternateId = (alternateId: number): string => {
-  // Define color order based on daisyui theme colors
+export const getColorByAlternateId = (
+  alternateId: number,
+): { bgColor: string; textColor: string } => {
   const colorOrder = [
-    "primary",
-    "secondary",
-    "accent",
-    "neutral",
-    "base-100",
-    "info",
-    "success",
-    "warning",
-    "error",
-    "ghost",
+    { bgColor: "bg-primary", textColor: "text-base-100" },
+    { bgColor: "bg-secondary", textColor: "text-base-100" },
+    { bgColor: "bg-accent", textColor: "text-base-100" },
+    { bgColor: "bg-neutral", textColor: "text-base-100" },
+    { bgColor: "bg-info", textColor: "text-base-100" },
+    { bgColor: "bg-success", textColor: "text-base-100" },
+    { bgColor: "bg-warning", textColor: "text-neutral" },
+    { bgColor: "bg-error", textColor: "text-base-100" },
+    { bgColor: "bg-base-300", textColor: "text-neutral" },
+    { bgColor: "bg-neutral-content", textColor: "text-neutral" },
   ];
 
   // If number > 10, get last digit

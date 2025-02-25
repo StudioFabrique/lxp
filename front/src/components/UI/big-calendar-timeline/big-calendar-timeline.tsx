@@ -66,15 +66,23 @@ const BigCalendarTimeline = ({
         eventContainerWrapper: ({ children }: PropsWithChildren) => (
           <FadeWrapper>{children}</FadeWrapper>
         ),
-        event: ({ event }) => (
-          <div className="card w-full h-full bg-black">
-            <div className="card-body p-2 flex-row items-center gap-3">
-              <h3 className="card-title text-primary text-sm text-wrap truncate">
-                {event.title}
-              </h3>
+        event: ({ event }) => {
+          const colors = event.alternateId
+            ? getColorByAlternateId(event.alternateId)
+            : { bgColor: "bg-primary", textColor: "text-base-100" };
+
+          return (
+            <div className={`card w-full h-full ${colors.bgColor}`}>
+              <div className="card-body p-2 flex-row items-center gap-3">
+                <h3
+                  className={`card-title ${colors.textColor} text-sm text-wrap text-center truncate`}
+                >
+                  {event.title}
+                </h3>
+              </div>
             </div>
-          </div>
-        ),
+          );
+        },
       }}
       style={{ height: view === "month" ? 600 : "" }}
       formats={{
