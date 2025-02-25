@@ -75,7 +75,7 @@ const ContactsWithDrawer = (props: ContactsWithDrawerProps) => {
 
   return (
     <>
-      {initialContacts && initialContacts.length > 0 ? (
+      {initialContacts ? (
         <InheritedItems
           drawerId="add-contacts"
           drawerTitle="Ajouter des Contacts"
