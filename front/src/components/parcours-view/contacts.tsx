@@ -2,8 +2,12 @@
 import { useSelector } from "react-redux";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import { ContactWithMail } from "../../utils/interfaces/contact";
+import { useContext } from "react";
+import { Context } from "../../store/context.store";
+import { Mail, Phone } from "lucide-react";
 
 const Contacts = () => {
+  const { user } = useContext(Context);
   const contacts = useSelector(
     (state: any) => state.parcoursContacts.currentContacts
   ) as ContactWithMail[];
@@ -19,9 +23,17 @@ const Contacts = () => {
             <p className="capitalize font-bold">{contact.name}</p>
             <p className="capitalize text-xs">{contact.role}</p>
           </span>
-          <p className="text-xs underline">
-            {contact.email ?? "Non renseigné"}
-          </p>
+          <span className="text-xs flex flex-col items-start opacity-80">
+            <p className="flex gap-x-2 items-center">
+              <Mail className="w-3 h-3" /> {contact.email ?? "Non renseigné"}
+            </p>
+            {user && user.roles[0].rank < 3 ? (
+              <div className="flex items-center gap-x-2">
+                <Phone className="w-3 h-3" />
+                <p>{contact.phone ?? "Non renseigné"}</p>
+              </div>
+            ) : null}
+          </span>
         </div>
       ))
     ) : (
