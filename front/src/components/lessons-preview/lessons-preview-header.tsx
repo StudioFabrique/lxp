@@ -4,6 +4,7 @@ import HeaderMenu from "../UI/header-menu";
 import Module from "../../utils/interfaces/module";
 import { useLocation } from "react-router-dom";
 import { ComponentIcon, RocketIcon } from "lucide-react";
+import defaultImage from "../../assets/images/module-default.jpg";
 
 type LessonsPreviewHeaderProps = {
   moduleData: Module & { parcours: string; parcoursId: number };
@@ -15,7 +16,11 @@ const LessonsPreviewHeader = ({ moduleData }: LessonsPreviewHeaderProps) => {
 
   return (
     <ImageHeader
-      imageUrl={`data:image/jpeg;base64,${moduleData.image}`}
+      imageUrl={
+        moduleData.image
+          ? `data:image/jpeg;base64,${moduleData.image}`
+          : defaultImage
+      }
       title={moduleData.title}
       titleIcon={<ComponentIcon className="stroke-white" />}
       subTitle={moduleData.parcours}
