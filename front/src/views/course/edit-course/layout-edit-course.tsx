@@ -11,9 +11,9 @@ import { courseInfosAction } from "../../../store/redux-toolkit/course/course-in
 import formatCourseFromHttp from "../../../helpers/course/course-infos-from-http";
 import Loader from "../../../components/UI/loader";
 import ImageHeader from "../../../components/image-header";
-import BookIcon from "../../../components/UI/svg/book-icon";
 import Course from "../../../utils/interfaces/course";
 import defaultImage from "../../../assets/images/module-default.jpg";
+import CourseIcon from "../../../components/UI/svg/course-icon";
 
 const LayoutCourseEdit = () => {
   const { sendRequest, error } = useHttp();
@@ -21,7 +21,7 @@ const LayoutCourseEdit = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const course = useSelector(
-    (state: any) => state.courseInfos.course,
+    (state: any) => state.courseInfos.course
   ) as Course;
 
   /**
@@ -41,7 +41,7 @@ const LayoutCourseEdit = () => {
       {
         path: `/course/infos/${courseId}`,
       },
-      applyData,
+      applyData
     );
     return () => {
       dispatch(courseInfosAction.resetCourse());
@@ -75,7 +75,7 @@ const LayoutCourseEdit = () => {
                   imageUrl={course.module.image ?? defaultImage}
                 >
                   <div className="w-12 h-12 text-white">
-                    <BookIcon />
+                    <CourseIcon />
                   </div>
                   <></>
                 </ImageHeader>
