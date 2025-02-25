@@ -103,3 +103,28 @@ export const adjustScheduleToCurrentWeek = (
     })
     .flat();
 };
+
+export const getColorByAlternateId = (alternateId: number): string => {
+  // Define color order based on daisyui theme colors
+  const colorOrder = [
+    "primary",
+    "secondary",
+    "accent",
+    "neutral",
+    "base-100",
+    "info",
+    "success",
+    "warning",
+    "error",
+    "ghost",
+  ];
+
+  // If number > 10, get last digit
+  const normalizedNumber =
+    alternateId > 10 ? Number(alternateId.toString().slice(-1)) : alternateId;
+
+  // Get array index (subtract 1 since input starts at 1)
+  const colorIndex = normalizedNumber === 0 ? 9 : normalizedNumber - 1;
+
+  return colorOrder[colorIndex];
+};
