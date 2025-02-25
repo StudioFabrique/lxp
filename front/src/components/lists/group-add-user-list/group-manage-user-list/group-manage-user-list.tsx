@@ -176,7 +176,7 @@ const GroupManageUserList: FC<{
               </div>
             ) : (
               <p className="text-center">
-                Aucun utilisateurs éligibles à être ajouté
+                Aucun utilisateur éligible à être ajouté
               </p>
             )}
             {/* BOTTOM */}

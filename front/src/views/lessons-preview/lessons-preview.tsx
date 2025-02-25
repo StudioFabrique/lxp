@@ -70,8 +70,8 @@ const LessonsPreview = () => {
             setSelectedLesson={setSelectedLesson}
           />,
           // * La barre de progression du cours
-          <Can action="component" object="progression">
-            <ProgressBar key="top-progress-bar" courses={moduleData.courses} />
+          <Can key="top-progress-bar" action="component" object="progression">
+            <ProgressBar courses={moduleData.courses} />
           </Can>,
           // * La prévisualisation de la leçon
           <LessonReader
