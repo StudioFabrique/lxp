@@ -15,20 +15,22 @@ const User = ({ currentRoute }: { currentRoute: string[] }) => {
       onMouseLeave={() => setIsHover(false)}
     >
       <div className="flex items-center">
-        <Link
-          to={`/${currentRoute[0]}/user`}
-          className="tooltip tooltip-top w-6 h-6 z-10"
-          data-tip="Utilisateurs"
-        >
-          <div className="flex hover justify-center items-center">
-            <UserIcon className="z-10 pointer-events-none" />
-            <span
-              className={`absolute p-5 rounded-lg hover:bg-primary/50 ${
-                isCurrentPathActive && "bg-primary/50"
-              }`}
-            />
-          </div>
-        </Link>
+        <Can action="read" object="user">
+          <Link
+            to={`/${currentRoute[0]}/user`}
+            className="tooltip tooltip-top w-6 h-6 z-10"
+            data-tip="Utilisateurs"
+          >
+            <div className="flex hover justify-center items-center">
+              <UserIcon className="z-10 pointer-events-none" />
+              <span
+                className={`absolute p-5 rounded-lg hover:bg-primary/50 ${
+                  isCurrentPathActive && "bg-primary/50"
+                }`}
+              />
+            </div>
+          </Link>
+        </Can>
 
         <MotionSidebarWrapper isHover={isHover}>
           <Can action="write" object="user">

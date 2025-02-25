@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, FormEvent, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import DatePicker from "../date-picker";
 import { useDispatch } from "react-redux";
 import { parcoursModulesSliceActions } from "../../../../store/redux-toolkit/parcours/parcours-modules";
 import useHttp from "../../../../hooks/use-http";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
+import toast from "react-hot-toast";
 
 const CalendarDatesForm: FC<{
   datesParcours: { startDate: Date; endDate: Date };
@@ -13,6 +14,7 @@ const CalendarDatesForm: FC<{
   const dispatch = useDispatch();
   const { sendRequest } = useHttp(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAllowedToEdit, setIsAllowedToEdit] = useState(false);
 
   const currentModule = useSelector(
     (state: any) => state.parcoursModules.currentModule,
@@ -69,7 +71,8 @@ const CalendarDatesForm: FC<{
     setError(null);
   };
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const applyData = () => {
       dispatch(
         parcoursModulesSliceActions.updateParcoursModule({
@@ -80,6 +83,8 @@ const CalendarDatesForm: FC<{
           moduleId: currentModule.id,
         }),
       );
+      setIsAllowedToEdit(false);
+      toast.success("Dates du module mises à jour");
     };
 
     if (error) return;
@@ -96,14 +101,11 @@ const CalendarDatesForm: FC<{
       },
       applyData,
     );
-  }, [
-    currentModule?.id,
-    datesModule.maxDate,
-    datesModule.minDate,
-    error,
-    dispatch,
-    sendRequest,
-  ]);
+  };
+
+  const onAllowEdit = () => {
+    setIsAllowedToEdit(true);
+  };
 
   useEffect(() => {
     setInitDates();
@@ -112,15 +114,16 @@ const CalendarDatesForm: FC<{
   return (
     <Wrapper>
       {currentModule && (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSubmit();
-          }}
-          className="flex flex-col gap-y-5"
-        >
-          <span className="flex gap-x-2">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-y-5">
+          <span className="flex gap-x-2 justify-between">
             <h3 className="font-bold">Dates de module</h3>
+            <button
+              className="btn btn-xs"
+              disabled={isAllowedToEdit}
+              onClick={onAllowEdit}
+            >
+              Modifier
+            </button>
           </span>
 
           <div className="flex flex-col lg:flex-row gap-y-5 gap-x-14 justify-end px-5">
@@ -128,6 +131,7 @@ const CalendarDatesForm: FC<{
               id="date1"
               label="Début"
               date={datesModule.minDate}
+              disabled={!isAllowedToEdit}
               onSubmitDate={handleSetDates}
             />
 
@@ -135,17 +139,20 @@ const CalendarDatesForm: FC<{
               id="date2"
               label="Fin"
               date={datesModule.maxDate}
+              disabled={!isAllowedToEdit}
               onSubmitDate={handleSetDates}
             />
           </div>
           <p className="text-error">{error}</p>
-          <button
-            disabled={Boolean(error)}
-            type="submit"
-            className="btn btn-sm w-fit btn-primary self-end"
-          >
-            Confirmer les dates
-          </button>
+          {isAllowedToEdit ? (
+            <button
+              disabled={Boolean(error)}
+              type="submit"
+              className="btn btn-sm w-fit btn-primary self-end"
+            >
+              Confirmer les dates
+            </button>
+          ) : null}
         </form>
       )}
     </Wrapper>

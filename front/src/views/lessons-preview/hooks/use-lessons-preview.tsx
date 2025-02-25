@@ -38,6 +38,7 @@ const useLessonsPreview = () => {
 
   const handleLessonSelection = useCallback(
     (lesson: Lesson | undefined) => {
+      setLessonRating(undefined);
       setSelectedLesson(lesson);
       if (lesson?.id) {
         initiateLesson(lesson.id);
@@ -48,6 +49,7 @@ const useLessonsPreview = () => {
 
   // Fonction pour passer à la leçon suivante
   const switchToNextLesson = () => {
+    setLessonRating(undefined);
     if (selectedLesson && lessons.length > 0) {
       const currentIndex = lessons.findIndex(
         (lesson) => lesson.id === selectedLesson.id,
@@ -65,7 +67,6 @@ const useLessonsPreview = () => {
   const handleCompleteLesson = (skipToNextLesson?: boolean) => {
     // Afficher directement la prochaine leçon si showNextLesson est true
     if (isLessonCompleted) {
-      setLessonRating(undefined);
       switchToNextLesson();
       return;
     }
@@ -101,7 +102,6 @@ const useLessonsPreview = () => {
 
     if (skipToNextLesson) {
       switchToNextLesson();
-      setLessonRating(undefined);
     }
   };
 
@@ -112,13 +112,7 @@ const useLessonsPreview = () => {
     };
 
     // If selectedLesson, already read with at least a activity
-    if (
-      selectedLesson &&
-      selectedLesson.activities &&
-      selectedLesson.activities?.length > 1 &&
-      selectedLesson.lessonsRead &&
-      selectedLesson.lessonsRead[0]?.finishedAt
-    ) {
+    if (selectedLesson) {
       sendRequest(
         { path: `/lesson/rate/${selectedLesson.id}`, method: "get" },
         applyData,
@@ -145,10 +139,7 @@ const useLessonsPreview = () => {
 
   // Évaluer le cours en tant que apprenant
   const handleEditRateContent = (rating: number) => {
-    console.log({ rating });
-
     const applyData = (data: { data: LessonRating }) => {
-      console.log({ data });
       setLessonRating(data.data);
     };
 

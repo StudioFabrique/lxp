@@ -54,8 +54,7 @@ export default function EditModuleHome() {
 
   // met à jour l'ordre dans lequel les cours sont affichés dans la bdd
   const handleReorderCourses = useCallback(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const applyData = (data: any) => {
+    const applyData = () => {
       fetchModule();
       setUpdating(false);
       setSuccess(true);

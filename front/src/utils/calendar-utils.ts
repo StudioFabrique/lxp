@@ -103,3 +103,29 @@ export const adjustScheduleToCurrentWeek = (
     })
     .flat();
 };
+
+export const getColorByAlternateId = (
+  alternateId: number,
+): { bgColor: string; textColor: string } => {
+  const colorOrder = [
+    { bgColor: "bg-primary", textColor: "text-base-100" },
+    { bgColor: "bg-secondary", textColor: "text-base-100" },
+    { bgColor: "bg-accent", textColor: "text-base-100" },
+    { bgColor: "bg-neutral", textColor: "text-base-100" },
+    { bgColor: "bg-info", textColor: "text-base-100" },
+    { bgColor: "bg-success", textColor: "text-base-100" },
+    { bgColor: "bg-warning", textColor: "text-neutral" },
+    { bgColor: "bg-error", textColor: "text-base-100" },
+    { bgColor: "bg-base-300", textColor: "text-neutral" },
+    { bgColor: "bg-neutral-content", textColor: "text-neutral" },
+  ];
+
+  // If number > 10, get last digit
+  const normalizedNumber =
+    alternateId > 10 ? Number(alternateId.toString().slice(-1)) : alternateId;
+
+  // Get array index (subtract 1 since input starts at 1)
+  const colorIndex = normalizedNumber === 0 ? 9 : normalizedNumber - 1;
+
+  return colorOrder[colorIndex];
+};

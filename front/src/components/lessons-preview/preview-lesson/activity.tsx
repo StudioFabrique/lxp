@@ -48,7 +48,7 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
       return (
         <Wrapper additionalClassname="bg-secondary/5">
           <FadeWrapper>
-            <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 max-w-none">
+            <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 max-w-[95%]">
               {value}
             </Markdown>
           </FadeWrapper>
@@ -61,6 +61,16 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
             <div className="flex flex-col gap-2">
               <h3 className="text-base-content font-bold text-2xl">Vidéo</h3>
               <BaseReactPlayer url={videoUrl} controls />
+            </div>
+          </FadeWrapper>
+        </Wrapper>
+      );
+    case "image":
+      return (
+        <Wrapper>
+          <FadeWrapper>
+            <div className="flex flex-col gap-2">
+              <img src={`${ACTIVITIES}images/${activity.url}`} alt="Image" />
             </div>
           </FadeWrapper>
         </Wrapper>
