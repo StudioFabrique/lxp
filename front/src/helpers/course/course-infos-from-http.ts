@@ -10,6 +10,9 @@ import { sortArray } from "../../utils/sortArray";
 export default function courseInfosFromHttp(course: any) {
   let updatedData = {
     ...course,
+    virtualClass: course.virtualClass
+      ? course.virtualClass
+      : course.module.parcours[0].parcours.virtualClass ?? "",
     module: {
       ...course.module,
       contacts: course.module.contacts.map((item: any) => item.contact),
