@@ -55,20 +55,20 @@ const BigCalendarTimeline = ({
       views={["month", "work_week", "day"]}
       view={view}
       onView={onSetView}
-      className="rbc-calendar bg-base-100 rounded-2xl shadow-xl p-6 border-2 border-base-content/30 hover:border-base-content/50 transition-colors"
+      className="rbc-calendar bg-secondary-content text-white rounded-2xl shadow-xl p-6 border-2 border-base-content/30 hover:border-base-content/50 transition-colors"
       min={new Date(2025, 1, 0, 8, 0, 0)}
       max={new Date(2025, 1, 0, 18, 0, 0)}
       components={{
         toolbar: CalendarCustomToolbar,
+        event: CalendarCustomEvent,
         eventContainerWrapper: ({ children }: PropsWithChildren) => (
           <FadeWrapper>{children}</FadeWrapper>
         ),
         timeGutterWrapper: ({ children }: PropsWithChildren) => (
           <div className="font-bold">{children}</div>
         ),
-        event: CalendarCustomEvent,
       }}
-      style={{ height: view === "month" ? 600 : "" }}
+      style={{ height: view === "month" ? 1000 : "" }}
       formats={{
         dayHeaderFormat: (date: Date) => moment(date).format("dddd DD MMMM"),
         timeGutterFormat: (date: Date) => moment(date).format("HH:mm"),
@@ -80,9 +80,7 @@ const BigCalendarTimeline = ({
           `Semaine du ${moment(range.start).format("DD MMMM")} au ${moment(range.end).format("DD MMMM")}`,
         eventTimeRangeFormat: () => "",
       }}
-      eventPropGetter={(event) => {
-        console.log({ color: getColorByAlternateId(event.alternateId ?? 1) });
-
+      eventPropGetter={() => {
         return {
           style: {
             background: "transparent",

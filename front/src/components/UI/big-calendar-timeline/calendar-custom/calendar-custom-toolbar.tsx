@@ -63,10 +63,8 @@ const CalendarCustomToolbar = (toolbar: ToolbarProps) => {
           <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
       </div>
-      <div className="flex items-center gap-2 sm:gap-4 order-2 sm:order-2">
-        <span className="text-base font-bold text-base-content tracking-wide">
-          {toolbar.label}
-        </span>
+      <div className="flex font-bold text-base-content items-center gap-2 sm:gap-4 order-2 sm:order-2">
+        <span className="text-base tracking-wide">{toolbar.label}</span>
         <ActionsDropdown
           actions={[
             { actionTitle: "Vue jour", data: Views.DAY, onClick: changeView },
