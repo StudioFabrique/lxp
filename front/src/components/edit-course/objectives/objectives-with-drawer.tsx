@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Objective from "../../../utils/interfaces/objective";
 import { sortArray } from "../../../utils/sortArray";
 import InheritedItems from "../../inherited-items/inherited-items";
@@ -16,6 +17,7 @@ interface ObjectivesWithDrawerProps {
 const ObjectivesWithDrawer = (props: ObjectivesWithDrawerProps) => {
   return (
     <InheritedItems
+      buttonLabel="Sélectionner des objectifs"
       drawerId="add-objectives"
       drawerTitle="Ajouter des Objectifs"
       loading={props.loading}

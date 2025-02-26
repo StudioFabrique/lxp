@@ -6,6 +6,7 @@ import ButtonAdd from "../UI/button-add/button-add";
 import SubWrapper from "../UI/sub-wrapper/sub-wrapper.component";
 
 interface InheritedItemsProps {
+  buttonLabel?: string;
   children: ReactNode[];
   drawerId: string;
   drawerTitle: string;
@@ -86,7 +87,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
           <h2 className="text-xl font-bold">{props.title}</h2>
         ) : null}
         <ButtonAdd
-          label="Ajouter"
+          label={props.buttonLabel ?? "Sélectionner"}
           small={true}
           loading={props.loading}
           isDisabled={isDisabled}
