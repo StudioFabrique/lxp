@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 
 interface ObjectivesFormProps {
@@ -44,7 +45,7 @@ const ObjectivesForm = React.forwardRef<HTMLInputElement, ObjectivesFormProps>(
         </div>
       </form>
     );
-  },
+  }
 );
 
 export default ObjectivesForm;
