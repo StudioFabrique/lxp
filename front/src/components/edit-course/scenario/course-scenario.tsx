@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import Wrapper from "../../UI/wrapper/wrapper.component";
-import TypeScenario from "./type-scenario";
-import {
-  branchingScenario,
-  linearScenario,
-} from "../../../config/scenario-description";
+
 import { useDispatch } from "react-redux";
 import { courseScenarioActions } from "../../../store/redux-toolkit/course/course-scenario";
 import LinearScenarioLessons from "./linear-scenario-lessons";
@@ -34,11 +30,6 @@ const CourseScenario = () => {
   ) as boolean;
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false); // déclenche l'affichage d'un icone check-circle dans le composant qui affiche la liste des leçons pour signifier le succes d'une maj de la liste
-
-  // switch entre les différents types de scénarios
-  const handleChangeScenario = () => {
-    dispatch(courseScenarioActions.setScenario(!scenario));
-  };
 
   /**
    * associent plussieurs leçons à un cours dans la bdd
@@ -137,26 +128,6 @@ const CourseScenario = () => {
 
   return (
     <main className="w-full flex flex-col gap-y-8">
-      <h1 className="text-xl font-bold">Scénario</h1>
-      <Wrapper>
-        <section className="flex flex-col gap-y-4">
-          <h2 className="text-xl font-bold">Type de scénario</h2>
-          <article className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <TypeScenario
-              scenario={scenario}
-              label="Scénario Linéaire (par défaut)"
-              description={linearScenario}
-              onChangeScenario={handleChangeScenario}
-            />
-            <TypeScenario
-              scenario={!scenario}
-              label="Scénario à embranchements (bientôt)"
-              description={branchingScenario}
-              onChangeScenario={handleChangeScenario}
-            />
-          </article>
-        </section>
-      </Wrapper>
       <Wrapper>
         {scenario ? (
           <>
