@@ -141,11 +141,18 @@ const CourseObjectives = () => {
             />
             <div className="w-full flex justify-start">
               {!toggleForm ? (
-                <ButtonAdd
-                  label="Créer un nouvel objectif"
-                  onClickEvent={() => setToggleForm((prevState) => !prevState)}
-                  outline={true}
-                />
+                <div
+                  className="tooltip tooltip-right"
+                  data-tip="Vous pouvez créer un nouvel objectif d’apprentissage pour ce cours."
+                >
+                  <ButtonAdd
+                    label="Créer un nouvel objectif"
+                    onClickEvent={() =>
+                      setToggleForm((prevState) => !prevState)
+                    }
+                    outline={true}
+                  />
+                </div>
               ) : null}
             </div>
           </Wrapper>
