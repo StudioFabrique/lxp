@@ -2,6 +2,7 @@ import { useCallback, useMemo } from "react";
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import Objective from "../../utils/interfaces/objective";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
+import CreateNewObjective from "../edit-course/objectives/create-new-objective";
 
 interface NotSelectedObjectivesProps {
   tooltip?: string;
@@ -121,6 +122,7 @@ const NotSelectedObjectives = (props: NotSelectedObjectivesProps) => {
       ) : (
         <p>Tous les objectifs ont déja été ajoutés</p>
       )}
+      <CreateNewObjective />
     </>
   );
 };
