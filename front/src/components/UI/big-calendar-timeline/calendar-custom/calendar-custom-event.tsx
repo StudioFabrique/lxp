@@ -9,13 +9,14 @@ const CalendarCustomEvent = ({ event }: { event: LessonData }) => {
     : { bgColor: "bg-primary", textColor: "text-base-100" };
 
   return (
-    <div className={`card w-full h-full ${colors.bgColor}`}>
-      <div className="card-body p-2 flex-row items-center gap-3">
+    <div className={`card text-xs w-full h-full ${colors.bgColor}`}>
+      <div className="card-body p-2 flex-col gap-3">
         <h3
-          className={`card-title ${colors.textColor} text-sm text-wrap text-center truncate`}
+          className={`card-title ${colors.textColor} text-sm text-wrap text-left truncate`}
         >
-          {event.title}
+          {event.parcoursTitle}
         </h3>
+        <span>{event.title}</span>
       </div>
     </div>
   );

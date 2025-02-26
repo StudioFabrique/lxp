@@ -46,7 +46,19 @@ export default async function getCoursesTimeline(
       id: true,
       title: true,
       dates: true,
-      module: { select: { id: true, title: true } },
+      module: {
+        select: {
+          id: true,
+          title: true,
+          parcours: {
+            select: {
+              parcours: {
+                select: { title: true, formation: { select: { title: true } } },
+              },
+            },
+          },
+        },
+      },
       lessons: {
         select: {
           id: true,
@@ -157,6 +169,8 @@ export default async function getCoursesTimeline(
           minDate: date.minDate,
           maxDate: date.maxDate,
           firstLessonId: course.lessons[0]?.id,
+          parcoursTitle: course.module.parcours[0].parcours.title,
+          formationTitle: course.module.parcours[0].parcours.formation.title,
         });
       }
     }

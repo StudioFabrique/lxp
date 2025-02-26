@@ -16,6 +16,8 @@ export interface LessonData {
   title: string;
   start: Date;
   end: Date;
+  parcoursTitle?: string;
+  formationTitle?: string;
 }
 
 /**
@@ -93,6 +95,8 @@ export const adjustScheduleToCurrentWeek = (
             title: item.title,
             start: afternoonStart,
             end: afternoonEnd,
+            parcoursTitle: item.parcoursTitle,
+            formationTitle: item.formationTitle,
           });
         }
 
