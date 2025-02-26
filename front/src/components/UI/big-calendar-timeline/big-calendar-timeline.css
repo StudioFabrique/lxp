@@ -4,7 +4,19 @@
 }
 
 .rbc-timeslot-group {
-    border: 0px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    min-height: 40px;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+    color: #2c3e50;
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.03),
+        0 1px 2px rgba(255, 255, 255, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(3px);
+    position: relative;
+    overflow: hidden;
 }
 
 .rbc-day-slot .rbc-time-slot {
@@ -14,6 +26,10 @@
 .rbc-row {
     height: 0;
     border: 0px;
+}
+
+.rbc-button-link {
+    color: white;
 }
 
 .rbc-current-time-indicator {
@@ -38,12 +54,44 @@
     padding: 20px;
     height: 60px;
     border: 0px;
+    background: linear-gradient(135deg, #6e8efb 0%, #4a6efd 100%);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.rbc-header:last-child {
+    border-top-right-radius: 15px;
+}
+
+.rbc-day-bg {
+    transition: all 0.3s ease;
+    padding: 5px;
+}
+
+.rbc-day-bg:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+    border-color: #e0e0e0;
+}
+
+.rbc-month-row {
+    background: linear-gradient(to right, #f8f9fa, #ffffff);
+}
+
+.rbc-date-cell {
+    padding: 8px;
+    font-weight: 500;
+    color: #495057;
 }
 
 .rbc-today {
-    background-color: transparent;
+    background: transparent;
+    color: black;
+    position: relative;
 }
 
-.rbc-events-container {
-    background-color: transparent;
+.rbc-row-segment {
+    margin-top: 40px;
 }
