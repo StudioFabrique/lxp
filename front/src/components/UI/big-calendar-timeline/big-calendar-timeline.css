@@ -95,3 +95,9 @@
 .rbc-row-segment {
     margin-top: 40px;
 }
+
+.rbc-calendar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}

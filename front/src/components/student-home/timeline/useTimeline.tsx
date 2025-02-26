@@ -3,6 +3,7 @@ import useHttp from "../../../hooks/use-http";
 import { useLocation, useNavigate } from "react-router-dom";
 import { View, Views, Event } from "react-big-calendar";
 import { CourseTimeline } from "../../../utils/interfaces/course";
+import Parcours from "../../../utils/interfaces/parcours";
 
 // Interface définissant la structure d'un événement dans la timeline
 interface TimelineEvent extends Event {
@@ -12,6 +13,9 @@ interface TimelineEvent extends Event {
   firstLessonId: number;
   start: Date;
   end: Date;
+  parcours?: Parcours;
+  parcoursTitle?: string;
+  formationTitle?: string;
 }
 
 const useTimeline = (view: View) => {
@@ -97,6 +101,8 @@ const useTimeline = (view: View) => {
           title: `${course.moduleTitle} - ${course.title}`,
           start: new Date(course.minDate),
           end: new Date(course.maxDate),
+          parcoursTitle: course.parcoursTitle,
+          formationTitle: course.formationTitle,
         }));
 
       setTimelineData(responseData);

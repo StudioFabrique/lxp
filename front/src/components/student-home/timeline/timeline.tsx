@@ -37,7 +37,6 @@ const Timeline = ({
         view={currentView}
         onSetView={setCurrentView}
         data={timelineData}
-        // colors={modulesColor}
         onRangeChange={handleRangeChange}
         onDoubleClickEvent={handleDoubleClickEvent}
       />

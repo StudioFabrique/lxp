@@ -4,10 +4,7 @@ import moment from "moment/min/moment-with-locales";
 import "moment/locale/fr";
 import { Calendar, momentLocalizer, View } from "react-big-calendar";
 import CalendarCustomToolbar from "./calendar-custom/calendar-custom-toolbar";
-import {
-  adjustScheduleToCurrentWeek,
-  getColorByAlternateId,
-} from "../../../utils/calendar-utils";
+import { adjustScheduleToCurrentWeek } from "../../../utils/calendar-utils";
 import { Dispatch, PropsWithChildren, SetStateAction } from "react";
 import FadeWrapper from "../fade-wrapper/fade-wrapper";
 import CalendarCustomEvent from "./calendar-custom/calendar-custom-event";
