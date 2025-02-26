@@ -121,14 +121,15 @@ const LessonsInDrawer = (props: LessonsInDrawerProps) => {
   return (
     <RightSideDrawer
       id="add-lessons"
-      title="Ajouter des leçons"
+      title="Ajouter du contenu de cours"
       visible={false}
       onCloseDrawer={handleCloseDrawer}
     >
       <div className="flex flex-col gap-y-2">
         <span className="flex flex-col gap-y-4">
-          <label htmlFor="tag">
-            Saisissez un nom de tag pour trouver les leçons qui lui sont associé
+          <label className="text-xs text-primary" htmlFor="tag">
+            Saisissez un nom de tag pour trouver des contenus qui lui sont
+            associé
           </label>
           <SearchDropdown
             addItem={handleSearchTag}
@@ -153,7 +154,7 @@ const LessonsInDrawer = (props: LessonsInDrawerProps) => {
             onCloseDrawer={() => {}}
           />
         ) : (
-          <p>Aucune leçon trouvée</p>
+          <p>Aucun contenu trouvé</p>
         )}
       </div>
     </RightSideDrawer>

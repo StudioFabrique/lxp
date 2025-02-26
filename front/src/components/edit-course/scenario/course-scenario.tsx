@@ -161,9 +161,11 @@ const CourseScenario = () => {
         {scenario ? (
           <>
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl mb-8 font-bold">Créer des leçons</h2>
+              <h2 className="text-xl mb-8 font-bold">
+                Créer du contenu de cours
+              </h2>
               <ButtonAdd
-                label="Ajouter des leçons"
+                label="Ajouter du contenu"
                 onClickEvent={() =>
                   document.getElementById("add-lessons")?.click()
                 }

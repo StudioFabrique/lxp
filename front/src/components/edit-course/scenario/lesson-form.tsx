@@ -83,7 +83,7 @@ const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
       >
         <div className="flex flex-col gap-y-4">
           <label className="font-bold" htmlFor="title">
-            Titre de la leçon *
+            Titre du contenu *
           </label>
           <input
             className={setInputStyle(title.hasError)}
@@ -179,7 +179,7 @@ const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
         {props.children}
       </form>
     );
-  },
+  }
 );
 
 export default LessonForm;
