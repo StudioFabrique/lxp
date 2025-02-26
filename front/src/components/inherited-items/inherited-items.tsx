@@ -6,6 +6,7 @@ import ButtonAdd from "../UI/button-add/button-add";
 import SubWrapper from "../UI/sub-wrapper/sub-wrapper.component";
 
 interface InheritedItemsProps {
+  tooltip?: string;
   buttonLabel?: string;
   children: ReactNode[];
   drawerId: string;
@@ -84,7 +85,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
     <section className="w-full flex flex-col gap-y-8">
       <div className="flex items-center justify-between">
         {props.title ? (
-          <h2 className="text-xl font-bold">{props.title}</h2>
+          <h2 className="text-xl font-bold p-2">{props.title}</h2>
         ) : null}
         <ButtonAdd
           label={props.buttonLabel ?? "Sélectionner"}
@@ -119,6 +120,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
           list: notSelected,
           onAddItems: handleAddItem,
           onCloseDrawer: handleCloseDrawer,
+          tooltip: props.tooltip,
         })}
       </RightSideDrawer>
     </section>

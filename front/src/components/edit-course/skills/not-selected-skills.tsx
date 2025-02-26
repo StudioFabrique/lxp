@@ -5,6 +5,7 @@ import Skill from "../../../utils/interfaces/skill";
 import TrophyIcon from "../../UI/svg/trophy-icon.component";
 
 interface NotSelectedSkillsProps {
+  tooltip?: string;
   list?: Skill[];
   onAddItems?: (ids: number[]) => void;
   onCloseDrawer?: (id: string) => void;
@@ -30,70 +31,75 @@ const NotSelectedSkills = (props: NotSelectedSkillsProps) => {
 
   const table = useMemo(() => {
     return (
-      <table className="table w-full border-separate border-spacing-y-2">
-        <thead>
-          <tr>
-            <th>
-              <input
-                className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
-                type="checkbox"
-                checked={allChecked}
-                onChange={handleAllChecked}
-              />
-            </th>
-            <th>Badge</th>
-            <th
-              className="cursor-pointer"
-              onClick={() => {
-                sortData("description");
-              }}
-            >
-              <div className="flex items-center gap-x-2">
-                <p>Description</p>
-                <SortColumnIcon
-                  fieldSort={fieldSort}
-                  column="description"
-                  direction={direction}
+      <>
+        {props.tooltip ? (
+          <h2 className="text-xs text-primary">{props.tooltip}</h2>
+        ) : null}
+        <table className="table w-full border-separate border-spacing-y-2">
+          <thead>
+            <tr>
+              <th>
+                <input
+                  className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
+                  type="checkbox"
+                  checked={allChecked}
+                  onChange={handleAllChecked}
                 />
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {list &&
-            list.map((item: Skill) => (
-              <tr
-                className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content"
-                key={item.id}
+              </th>
+              <th>Badge</th>
+              <th
+                className="cursor-pointer"
+                onClick={() => {
+                  sortData("description");
+                }}
               >
-                <td>
-                  <input
-                    className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
-                    type="checkbox"
-                    checked={
-                      item.isSelected !== undefined ? item.isSelected : false
-                    }
-                    onChange={() => handleRowCheck(item.id)}
+                <div className="flex items-center gap-x-2">
+                  <p>Description</p>
+                  <SortColumnIcon
+                    fieldSort={fieldSort}
+                    column="description"
+                    direction={direction}
                   />
-                </td>
-                <td>
-                  <div className="avatar">
-                    {item.badge ? (
-                      <div className="w-8 h-8">
-                        <img src={item.badge} alt={item.description} />
-                      </div>
-                    ) : (
-                      <div className="w-6 h-6 text-primary">
-                        <TrophyIcon />
-                      </div>
-                    )}
-                  </div>
-                </td>
-                <td>{item.description}</td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {list &&
+              list.map((item: Skill) => (
+                <tr
+                  className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content"
+                  key={item.id}
+                >
+                  <td>
+                    <input
+                      className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
+                      type="checkbox"
+                      checked={
+                        item.isSelected !== undefined ? item.isSelected : false
+                      }
+                      onChange={() => handleRowCheck(item.id)}
+                    />
+                  </td>
+                  <td>
+                    <div className="avatar">
+                      {item.badge ? (
+                        <div className="w-8 h-8">
+                          <img src={item.badge} alt={item.description} />
+                        </div>
+                      ) : (
+                        <div className="w-6 h-6 text-primary">
+                          <TrophyIcon />
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                  <td>{item.description}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </>
     );
   }, [
     allChecked,

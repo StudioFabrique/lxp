@@ -17,8 +17,10 @@ interface SkillsWithDrawerProps {
 const SkillsWithDrawer = (props: SkillsWithDrawerProps) => {
   return (
     <InheritedItems
+      tooltip="Associer un des objectifs du parcours à votre cours"
+      buttonLabel="Sélectionner des compétences"
       drawerId="add-skills"
-      drawerTitle="Ajouter des Compétences"
+      drawerTitle="Sélectionner des compétences"
       loading={props.loading}
       initialList={sortArray(props.initialList, "createdAt", false)}
       selectedItems={props.currentItems}
