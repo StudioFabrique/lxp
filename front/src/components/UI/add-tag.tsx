@@ -14,12 +14,16 @@ export default function AddTag(props: AddTagProps) {
     props.onSubmit(event);
   };
 
-  const style = `input input-sm focus:outline-none ${
+  const style = `input input-sm focus:outline-none w-full ${
     props.error ? "input-error" : ""
   }`;
 
   return (
-    <form className="flex flex-col gap-y-2" onSubmit={handleTagSubmit}>
+    <form
+      className="flex flex-col items-start w-full gap-y-2 tooltip tooltip-top"
+      data-tip="Les tags aident à trouver du contenu par mots clés."
+      onSubmit={handleTagSubmit}
+    >
       <label>Tags</label>
       <input
         className={style}
