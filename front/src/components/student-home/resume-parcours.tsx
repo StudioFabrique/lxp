@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Parcours from "../../utils/interfaces/parcours";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
 import defaultImage from "../../assets/images/module-default.jpg";
+import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
 
 /* type ResumeParcoursProps = {
   parcours?: Parcours;
@@ -72,9 +73,11 @@ const ResumeParcours = (/* { parcours }: ResumeParcoursProps */) => {
                 </Link>
               </div>
             ) : (
-              <p className="text-white text-4xl text-center opacity-95 select-none">
-                Votre formation sera bientôt disponible dans votre espace
-              </p>
+              <FadeWrapper>
+                <p className="text-white text-4xl text-center opacity-95 select-none">
+                  Votre formation sera bientôt disponible dans votre espace
+                </p>
+              </FadeWrapper>
             )}
           </div>,
         ]}
