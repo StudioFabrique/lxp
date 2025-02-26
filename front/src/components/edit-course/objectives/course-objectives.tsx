@@ -25,10 +25,10 @@ const CourseObjectives = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const courseObjectives = useSelector(
-    (state: any) => state.courseObjectives.courseObjectives,
+    (state: any) => state.courseObjectives.courseObjectives
   ) as Objective[];
   const parcoursObjectives = useSelector(
-    (state: any) => state.courseObjectives.parcoursObjectives,
+    (state: any) => state.courseObjectives.parcoursObjectives
   ) as Objective[];
   const [toggleForm, setToggleForm] = useState(false);
   const formRef = useRef<HTMLInputElement>(null);
@@ -61,7 +61,7 @@ const CourseObjectives = () => {
         method: "put",
         body: { description: value },
       },
-      applyData,
+      applyData
     );
   };
 
@@ -90,7 +90,7 @@ const CourseObjectives = () => {
             method: "put",
             body: courseObjectives.map((item) => item.id),
           },
-          applyData,
+          applyData
         );
         setSubmit(false);
       }
@@ -106,14 +106,14 @@ const CourseObjectives = () => {
   useEffect(() => {
     const applyData = (data: any) => {
       dispatch(
-        courseObjectivesActions.initData(courseObjectivesFromHttp(data)),
+        courseObjectivesActions.initData(courseObjectivesFromHttp(data))
       );
     };
     sendRequest(
       {
         path: `/course/objectives/${courseId}`,
       },
-      applyData,
+      applyData
     );
   }, [courseId, dispatch, sendRequest]);
 
@@ -127,7 +127,7 @@ const CourseObjectives = () => {
 
   return (
     <div className="w-full flex flex-col gap-y-8">
-      <h2 className="text-3xl font-extrabold">Objectifs</h2>
+      <h2 className="text-3xl font-extrabold">Objectifs d’apprentissage</h2>
       <div className="w-full">
         {courseObjectives && parcoursObjectives ? (
           <Wrapper>
