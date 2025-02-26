@@ -17,9 +17,10 @@ interface ObjectivesWithDrawerProps {
 const ObjectivesWithDrawer = (props: ObjectivesWithDrawerProps) => {
   return (
     <InheritedItems
+      tooltip="Associer un des objectifs du parcours à votre cours"
       buttonLabel="Sélectionner des objectifs"
       drawerId="add-objectives"
-      drawerTitle="Ajouter des Objectifs"
+      drawerTitle="Sélectionner des objectifs"
       loading={props.loading}
       initialList={sortArray(props.initialList, "createdAt", false)}
       selectedItems={props.currentItems}

@@ -14,9 +14,10 @@ import Objective from "../../../utils/interfaces/objective";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import useInput from "../../../hooks/use-input";
 import { regexGeneric } from "../../../utils/constantes";
-import ButtonAdd from "../../UI/button-add/button-add";
 import ObjectivesForm from "./objectives-form";
 import { courseObjectivesActions } from "../../../store/redux-toolkit/course/course-objectives";
+import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
+import { Info } from "lucide-react";
 
 const CourseObjectives = () => {
   const { courseId } = useParams();
@@ -132,6 +133,7 @@ const CourseObjectives = () => {
         {courseObjectives && parcoursObjectives ? (
           <Wrapper>
             <ObjectivesWithDrawer
+              tooltip="Utiliser ce bouton pour associer un des objectifs du parcours à votre cours"
               loading={loading}
               initialList={parcoursObjectives}
               currentItems={courseObjectives}
@@ -141,17 +143,16 @@ const CourseObjectives = () => {
             />
             <div className="w-full flex justify-start">
               {!toggleForm ? (
-                <div
-                  className="tooltip tooltip-right"
-                  data-tip="Vous pouvez créer un nouvel objectif d’apprentissage pour ce cours."
-                >
-                  <ButtonAdd
-                    label="Créer un nouvel objectif"
-                    onClickEvent={() =>
-                      setToggleForm((prevState) => !prevState)
-                    }
-                    outline={true}
-                  />
+                <div className="flex items-center gap-x-2 pl-2">
+                  <button
+                    className="text-primary text-xs underline"
+                    onClick={() => setToggleForm((prevState) => !prevState)}
+                  >
+                    Créer un nouvel objectif
+                  </button>
+                  <QuestionMarkTooltip tooltipValue="Vous pouvez créer un nouvel objectif d’apprentissage pour ce cours.">
+                    <Info className="w-4 h-4 text-primary" />
+                  </QuestionMarkTooltip>
                 </div>
               ) : null}
             </div>
