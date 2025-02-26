@@ -40,7 +40,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
   return (
     <div className="flex gap-2">
       <ImageHeader
-        imageUrl={isLoading ? "" : image}
+        imageUrl={isLoading ? "" : (image ?? "")}
         title={`${lastLesson.lesson.title}`}
         titleIcon={<FileEditIcon className="stroke-white" />}
         subTitle={`${lastLesson.lesson.course.title}`}

@@ -20,7 +20,6 @@ const Timeline = ({
     showAllCourses,
     setShowAllCourses,
     timelineData,
-    // modulesColor,
     handleRangeChange,
     handleDoubleClickEvent,
   } = useTimeline(viewType);

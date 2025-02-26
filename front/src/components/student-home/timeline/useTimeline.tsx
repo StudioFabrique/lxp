@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { View, Views, Event } from "react-big-calendar";
 import { CourseTimeline } from "../../../utils/interfaces/course";
 
@@ -16,6 +16,7 @@ interface TimelineEvent extends Event {
 
 const useTimeline = (view: View) => {
   const { sendRequest } = useHttp();
+  const { pathname } = useLocation();
 
   const navigate = useNavigate();
 
@@ -36,14 +37,6 @@ const useTimeline = (view: View) => {
       new Date().setDate(new Date().getDate() - new Date().getDay() + 5),
     ),
   });
-
-  // État pour stocker les couleurs associées à chaque module
-  // const [modulesColor, setModulesColor] = useState<
-  //   {
-  //     alternateId: number;
-  //     color: string;
-  //   }[]
-  // >();
 
   // Gère le changement de plage de dates dans le calendrier
   const handleRangeChange = (
@@ -84,8 +77,10 @@ const useTimeline = (view: View) => {
   // Navigation vers le module lors d'un double-clic sur un événement
   const handleDoubleClickEvent = (event: Event) => {
     const timelineEvent = event as TimelineEvent;
+    const route = pathname.split("/")[1];
+
     if (timelineEvent.id && timelineEvent.alternateId)
-      navigate(`/student/parcours/module/${timelineEvent.alternateId}`, {
+      navigate(`/${route}/parcours/module/${timelineEvent.alternateId}`, {
         state: { lessonId: timelineEvent.firstLessonId },
       });
   };
@@ -115,36 +110,12 @@ const useTimeline = (view: View) => {
     );
   }, [sendRequest, datesSearchingRange, showAllCourses]);
 
-  // Effet pour gérer les couleurs des modules
-  // useEffect(() => {
-  //   const colors = timelineData?.map((item) => {
-  //     const color = getRandomDaisyuiBgThemeColor();
-
-  //     return {
-  //       alternateId: item.alternateId,
-  //       color,
-  //     };
-  //   });
-  //   if (colors) {
-  //     setModulesColor((prevModules) => {
-  //       const newColors = colors.filter(
-  //         (color) =>
-  //           !prevModules?.some(
-  //             (module) => module.alternateId === color.alternateId,
-  //           ),
-  //       );
-  //       return [...(prevModules || []), ...newColors];
-  //     });
-  //   }
-  // }, [timelineData]);
-
   return {
     currentView,
     setCurrentView,
     showAllCourses,
     setShowAllCourses,
     timelineData,
-    // modulesColor,
     handleRangeChange,
     handleDoubleClickEvent,
   };

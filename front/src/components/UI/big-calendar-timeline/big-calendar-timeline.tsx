@@ -1,19 +1,21 @@
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import "./big-calendar-timeline.css";
 import moment from "moment/min/moment-with-locales";
 import "moment/locale/fr";
 import { Calendar, momentLocalizer, View } from "react-big-calendar";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import CalendarCustomToolbar from "./calendar-custom-toolbar";
+import CalendarCustomToolbar from "./calendar-custom/calendar-custom-toolbar";
 import {
   adjustScheduleToCurrentWeek,
   getColorByAlternateId,
 } from "../../../utils/calendar-utils";
 import { Dispatch, PropsWithChildren, SetStateAction } from "react";
 import FadeWrapper from "../fade-wrapper/fade-wrapper";
+import CalendarCustomEvent from "./calendar-custom/calendar-custom-event";
 
 moment.locale("fr");
 const localizer = momentLocalizer(moment);
 
-export interface Event {
+export type Event = {
   id: number;
   alternateId?: number;
   firstLessonId: number;
@@ -21,12 +23,7 @@ export interface Event {
   start: Date;
   end: Date;
   link?: string;
-}
-
-// interface ColorEvent {
-//   alternateId: number;
-//   color: string;
-// }
+};
 
 type BigCalendarTimelineProps = {
   data: Event[];
@@ -66,23 +63,10 @@ const BigCalendarTimeline = ({
         eventContainerWrapper: ({ children }: PropsWithChildren) => (
           <FadeWrapper>{children}</FadeWrapper>
         ),
-        event: ({ event }) => {
-          const colors = event.alternateId
-            ? getColorByAlternateId(event.alternateId)
-            : { bgColor: "bg-primary", textColor: "text-base-100" };
-
-          return (
-            <div className={`card w-full h-full ${colors.bgColor}`}>
-              <div className="card-body p-2 flex-row items-center gap-3">
-                <h3
-                  className={`card-title ${colors.textColor} text-sm text-wrap text-center truncate`}
-                >
-                  {event.title}
-                </h3>
-              </div>
-            </div>
-          );
-        },
+        timeGutterWrapper: ({ children }: PropsWithChildren) => (
+          <div className="font-bold">{children}</div>
+        ),
+        event: CalendarCustomEvent,
       }}
       style={{ height: view === "month" ? 600 : "" }}
       formats={{
@@ -96,9 +80,6 @@ const BigCalendarTimeline = ({
           `Semaine du ${moment(range.start).format("DD MMMM")} au ${moment(range.end).format("DD MMMM")}`,
         eventTimeRangeFormat: () => "",
       }}
-      slotPropGetter={() => ({
-        className: "border-base-300 text-sm font-inter p-3",
-      })}
       eventPropGetter={(event) => {
         console.log({ color: getColorByAlternateId(event.alternateId ?? 1) });
 

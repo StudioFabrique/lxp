@@ -9,7 +9,7 @@ interface TimeConfig {
   breakEnd?: { hours: number; minutes: number };
 }
 
-interface LessonData {
+export interface LessonData {
   id: number;
   alternateId?: number;
   firstLessonId: number;

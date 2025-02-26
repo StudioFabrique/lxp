@@ -1,6 +1,6 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { View, Views, ViewsProps } from "react-big-calendar";
-import ActionsDropdown from "../actions-dropdown/actions-dropdown";
+import ActionsDropdown from "../../actions-dropdown/actions-dropdown";
 
 interface ToolbarProps {
   onNavigate: (action: "PREV" | "NEXT" | "TODAY") => void;
