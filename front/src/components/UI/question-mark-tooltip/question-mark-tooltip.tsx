@@ -24,7 +24,7 @@ const QuestionMarkTooltip = ({
   tooltipPosition = "right",
 }: QuestionMarkTooltipProps) => {
   // Construit la classe CSS pour la position de l'infobulle
-  const position = "tooltip tooltip-" + tooltipPosition;
+  const position = "tooltip tooltip-info tooltip-" + tooltipPosition;
 
   return (
     <div className={position} data-tip={tooltipValue}>
