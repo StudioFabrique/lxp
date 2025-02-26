@@ -133,7 +133,6 @@ const CourseObjectives = () => {
         {courseObjectives && parcoursObjectives ? (
           <Wrapper>
             <ObjectivesWithDrawer
-              tooltip="Utiliser ce bouton pour associer un des objectifs du parcours à votre cours"
               loading={loading}
               initialList={parcoursObjectives}
               currentItems={courseObjectives}

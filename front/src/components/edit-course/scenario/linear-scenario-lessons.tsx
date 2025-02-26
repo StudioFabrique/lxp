@@ -181,7 +181,7 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
                 Annuler
               </button>
               <SubmitButton
-                label="Mettre à jour la leçon"
+                label="Mettre à jour le contenu"
                 loadingLabel="Mise à jour en cours"
                 isLoading={isLoading}
               >
@@ -206,7 +206,7 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
           >
             <div>
               <SubmitButton
-                label="Ajouter la leçon"
+                label="Créer un nouveau contenu"
                 loadingLabel="Ajout en cours"
                 isLoading={isLoading}
               >
@@ -229,9 +229,9 @@ const LinearScenarioLessons = (props: LinearScenarioLessonsProps) => {
         <Modal
           onLeftClick={() => setLessonToDelete(null)}
           onRightClick={handleDeleteLesson}
-          title="Supprimer une leçon"
+          title="Supprimer un contenu"
           isSubmitting={isLoading}
-          children="Attention la leçon et les ressources qui lui sont associées seront définitivement supprimées."
+          children="Attention le contenu et les ressources qui lui sont associées seront définitivement supprimées."
           leftLabel="Annuler"
           rightLabel="Confirmer"
         />

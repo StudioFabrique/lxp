@@ -109,6 +109,7 @@ const NotSelectedSkills = (props: NotSelectedSkillsProps) => {
     handleRowCheck,
     list,
     sortData,
+    props.tooltip,
   ]);
 
   const handleAddItems = () => {

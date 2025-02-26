@@ -129,7 +129,7 @@ const LessonsTable = (props: LessonsTableProps) => {
           </div>
         </>
       ) : (
-        <p>Toutes les leçons ont déja été ajoutées</p>
+        <p>Tous les contenus ont déja été ajoutés</p>
       )}
     </>
   );

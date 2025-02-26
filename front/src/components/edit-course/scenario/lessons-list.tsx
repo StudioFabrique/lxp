@@ -39,7 +39,7 @@ const LessonsList = (props: LessonsListProps) => {
         <section className="flex items-center gap-x-2">
           <h2 className="font-bold text-xl mb-8">
             <span className="flex items-center gap-x-2">
-              <p>Liste des Leçons</p>
+              <p>Contenu de cours</p>
               {props.loading ? (
                 <Loader2 className="w-4 h-4 text-primary animate animate-spin" />
               ) : null}
@@ -50,7 +50,7 @@ const LessonsList = (props: LessonsListProps) => {
             {props.lessonsList && props.lessonsList.length > 0 ? (
               <p className="text-sm font-normal">{` ${props.lessonsList.length} leçon(s)`}</p>
             ) : (
-              <p className="text-sm font-normal">aucune leçon</p>
+              <p className="text-sm font-normal">Aucun contenu</p>
             )}
           </h2>
         </section>
