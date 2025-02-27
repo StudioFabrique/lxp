@@ -1,4 +1,7 @@
-// Import des composants et du hook personnalisé
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import "./big-calendar-month.css";
+import "./big-calendar-timeline.css";
+
 import { View } from "react-big-calendar";
 import BigCalendarTimeline from "../../UI/big-calendar-timeline/big-calendar-timeline";
 import RadioSelectTimeline from "./radio-select-timeline";
@@ -25,7 +28,7 @@ const Timeline = ({
   } = useTimeline(viewType);
 
   return timelineData ? (
-    <div className="flex flex-col gap-5">
+    <div data-view={currentView} className="flex flex-col gap-5">
       <h2 className="text-base-content font-bold text-xl">{title}</h2>
 
       <RadioSelectTimeline
