@@ -9,6 +9,8 @@ interface NotSelectedObjectivesProps {
   list?: Objective[];
   onAddItems?: (ids: number[]) => void;
   onCloseDrawer?: (id: string) => void;
+  onSubmitNewObjective: (value: string) => void;
+  loading: boolean;
 }
 
 const NotSelectedObjectives = (props: NotSelectedObjectivesProps) => {
@@ -20,7 +22,7 @@ const NotSelectedObjectives = (props: NotSelectedObjectivesProps) => {
     setAllChecked,
     handleRowCheck,
     sortData,
-  } = useEagerLoadingList(props.list!, "name");
+  } = useEagerLoadingList(props.list!, "name", 100);
 
   /**
    * gère le coche / décochage de toutes les checkboxes
@@ -122,7 +124,10 @@ const NotSelectedObjectives = (props: NotSelectedObjectivesProps) => {
       ) : (
         <p>Tous les objectifs ont déja été ajoutés</p>
       )}
-      <CreateNewObjective />
+      <CreateNewObjective
+        onSubmit={props.onSubmitNewObjective}
+        isLoading={props.loading}
+      />
     </>
   );
 };
