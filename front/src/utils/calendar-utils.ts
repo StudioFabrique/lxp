@@ -72,6 +72,8 @@ export const adjustScheduleToCurrentWeek = (
             title: item.title,
             start: morningStart,
             end: morningEnd,
+            parcoursTitle: item.parcoursTitle,
+            formationTitle: item.formationTitle,
           });
 
           // Période de l'après-midi
