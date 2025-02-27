@@ -2,12 +2,15 @@ import { useCallback, useMemo } from "react";
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import Objective from "../../utils/interfaces/objective";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
+import CreateNewObjective from "../edit-course/objectives/create-new-objective";
 
 interface NotSelectedObjectivesProps {
   tooltip?: string;
   list?: Objective[];
   onAddItems?: (ids: number[]) => void;
   onCloseDrawer?: (id: string) => void;
+  onSubmitNewObjective: (value: string) => void;
+  loading: boolean;
 }
 
 const NotSelectedObjectives = (props: NotSelectedObjectivesProps) => {
@@ -19,7 +22,7 @@ const NotSelectedObjectives = (props: NotSelectedObjectivesProps) => {
     setAllChecked,
     handleRowCheck,
     sortData,
-  } = useEagerLoadingList(props.list!, "name");
+  } = useEagerLoadingList(props.list!, "name", 100);
 
   /**
    * gère le coche / décochage de toutes les checkboxes
@@ -121,6 +124,10 @@ const NotSelectedObjectives = (props: NotSelectedObjectivesProps) => {
       ) : (
         <p>Tous les objectifs ont déja été ajoutés</p>
       )}
+      <CreateNewObjective
+        onSubmit={props.onSubmitNewObjective}
+        isLoading={props.loading}
+      />
     </>
   );
 };

@@ -30,6 +30,11 @@ async function getCourseObjectives(courseId: number) {
     (error as any).statusCode = 404;
     throw error;
   }
+  console.log(
+    "NB OBJECTIFS : ",
+    objectives.objectives.length +
+      objectives.module.parcours[0].parcours.objectives.length
+  );
 
   return objectives;
 }
