@@ -3,23 +3,41 @@ import {
   LessonData,
 } from "../../../../utils/calendar-utils";
 
-const CalendarCustomEvent = ({ event }: { event: LessonData }) => {
-  const colors = event.alternateId
-    ? getColorByAlternateId(event.alternateId)
-    : { bgColor: "bg-primary", textColor: "text-base-100" };
+const makeCustomEvent =
+  (isMonth: boolean) =>
+  ({ event }: { event: LessonData }) => {
+    const colors = event.alternateId
+      ? getColorByAlternateId(event.alternateId)
+      : { bgColor: "bg-primary", textColor: "text-base-100" };
 
-  return (
-    <div className={`card text-xs w-full h-full ${colors.bgColor}`}>
-      <div className="card-body p-2 flex-col gap-3">
-        <h3
-          className={`card-title ${colors.textColor} text-sm text-wrap text-left truncate`}
+    if (isMonth) {
+      return (
+        <div
+          className={`badge ${colors.bgColor} ${colors.textColor} text-[8px] truncate max-w-full`}
         >
-          {event.parcoursTitle}
-        </h3>
-        <span>{event.title}</span>
-      </div>
-    </div>
-  );
-};
+          {event.title}
+        </div>
+      );
+    }
 
-export default CalendarCustomEvent;
+    return (
+      <div className={`card w-full h-full ${colors.bgColor}`}>
+        <div className="card-body p-2 gap-3">
+          {event.parcoursTitle ? (
+            <h3
+              className={`card-title ${colors.textColor} text-sm text-wrap truncate`}
+            >
+              {event.parcoursTitle}
+            </h3>
+          ) : null}
+          <span
+            className={`${event.parcoursTitle ? "text-xs" : "text-sm"} text-wrap truncate`}
+          >
+            {event.title}
+          </span>
+        </div>
+      </div>
+    );
+  };
+
+export default makeCustomEvent;

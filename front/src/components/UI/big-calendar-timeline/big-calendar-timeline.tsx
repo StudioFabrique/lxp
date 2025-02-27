@@ -1,13 +1,13 @@
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import "./big-calendar-timeline.css";
+import { useEffect } from "react";
 import moment from "moment/min/moment-with-locales";
 import "moment/locale/fr";
 import { Calendar, momentLocalizer, View } from "react-big-calendar";
 import CalendarCustomToolbar from "./calendar-custom/calendar-custom-toolbar";
 import { adjustScheduleToCurrentWeek } from "../../../utils/calendar-utils";
-import { Dispatch, PropsWithChildren, SetStateAction } from "react";
+import { Dispatch, PropsWithChildren, SetStateAction, useMemo } from "react";
 import FadeWrapper from "../fade-wrapper/fade-wrapper";
-import CalendarCustomEvent from "./calendar-custom/calendar-custom-event";
+import makeCustomEvent from "./calendar-custom/calendar-custom-event";
 
 moment.locale("fr");
 const localizer = momentLocalizer(moment);
@@ -41,6 +41,18 @@ const BigCalendarTimeline = ({
   onDoubleClickEvent,
 }: BigCalendarTimelineProps) => {
   const dataAdjusted = adjustScheduleToCurrentWeek(data);
+  const CustomEvent = useMemo(() => makeCustomEvent(view === "month"), [view]);
+
+  useEffect(() => {
+    const loadStyles = async () => {
+      if (view === "month") {
+        await import("./big-calendar-month.css");
+      } else {
+        await import("./big-calendar-timeline.css");
+      }
+    };
+    loadStyles();
+  }, [view]);
 
   return (
     <Calendar
@@ -52,20 +64,29 @@ const BigCalendarTimeline = ({
       views={["month", "work_week", "day"]}
       view={view}
       onView={onSetView}
-      className="rbc-calendar bg-secondary-content text-white rounded-2xl shadow-xl p-6 border-2 border-base-content/30 hover:border-base-content/50 transition-colors"
+      className={`rbc-calendar bg-secondary-content text-white rounded-2xl shadow-xl p-6 border-2 border-base-content/30 hover:border-base-content/50 transition-colors`}
       min={new Date(2025, 1, 0, 8, 0, 0)}
       max={new Date(2025, 1, 0, 18, 0, 0)}
       components={{
         toolbar: CalendarCustomToolbar,
-        event: CalendarCustomEvent,
+        event: CustomEvent,
         eventContainerWrapper: ({ children }: PropsWithChildren) => (
           <FadeWrapper>{children}</FadeWrapper>
         ),
         timeGutterWrapper: ({ children }: PropsWithChildren) => (
           <div className="font-bold">{children}</div>
         ),
+        month: {
+          dateHeader: (props) => (
+            <div>
+              <button type="button" onClick={props.onDrillDown}>
+                {props.label}
+              </button>
+            </div>
+          ),
+        },
       }}
-      style={{ height: view === "month" ? 1000 : "" }}
+      style={{ height: view === "month" ? 800 : "" }}
       formats={{
         dayHeaderFormat: (date: Date) => moment(date).format("dddd DD MMMM"),
         timeGutterFormat: (date: Date) => moment(date).format("HH:mm"),
@@ -82,6 +103,10 @@ const BigCalendarTimeline = ({
           style: {
             background: "transparent",
             border: "0px",
+            fontSize: "0.875rem",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           },
           className:
             "transition-all duration-300 hover:-translate-y-1 hover:shadow-xl",

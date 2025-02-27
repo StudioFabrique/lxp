@@ -4,17 +4,15 @@
 }
 
 .rbc-timeslot-group {
-    border: 1px solid rgba(0, 0, 0, 0.1);
     min-height: 40px;
     display: flex;
     flex-direction: column;
-    background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
-    color: #2c3e50;
+    background: linear-gradient(145deg, #f9f9f9 0%, #f4f4f4 100%);
+    color: #1a1a1a;
     box-shadow:
-        inset 0 2px 4px rgba(0, 0, 0, 0.03),
-        0 1px 2px rgba(255, 255, 255, 0.2);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(3px);
+        inset 0 1px 3px rgba(0, 0, 0, 0.02),
+        0 2px 4px rgba(0, 0, 0, 0.03);
+    backdrop-filter: blur(5px);
     position: relative;
     overflow: hidden;
 }
@@ -24,8 +22,7 @@
 }
 
 .rbc-row {
-    height: 0;
-    border: 0px;
+    height: 0px;
 }
 
 .rbc-button-link {
@@ -64,6 +61,10 @@
     border-top-right-radius: 15px;
 }
 
+.rbc-header:first-child {
+    border-top-left-radius: 15px;
+}
+
 .rbc-day-bg {
     transition: all 0.3s ease;
     padding: 5px;
@@ -78,6 +79,7 @@
 
 .rbc-month-row {
     background: linear-gradient(to right, #f8f9fa, #ffffff);
+    min-height: 100px;
 }
 
 .rbc-date-cell {
@@ -93,7 +95,7 @@
 }
 
 .rbc-row-segment {
-    margin-top: 40px;
+    margin-top: 25px;
 }
 
 .rbc-calendar {
