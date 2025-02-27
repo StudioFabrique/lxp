@@ -9,13 +9,15 @@ interface TimeConfig {
   breakEnd?: { hours: number; minutes: number };
 }
 
-interface LessonData {
+export interface LessonData {
   id: number;
   alternateId?: number;
   firstLessonId: number;
   title: string;
   start: Date;
   end: Date;
+  parcoursTitle?: string;
+  formationTitle?: string;
 }
 
 /**
@@ -26,7 +28,8 @@ interface LessonData {
  */
 export const adjustScheduleToCurrentWeek = (
   data: LessonData[],
-  timeConfig: TimeConfig = {},
+  timeConfig?: TimeConfig,
+  isMonthView?: boolean,
 ): LessonData[] => {
   const defaultConfig = {
     startTime: { hours: 8, minutes: 30 },
@@ -49,51 +52,78 @@ export const adjustScheduleToCurrentWeek = (
       while (currentDate <= maxDate) {
         // Ne considérer que les jours de semaine (lundi-vendredi)
         if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
-          // Période du matin
-          const morningStart = new Date(currentDate);
-          morningStart.setHours(
-            config.startTime.hours,
-            config.startTime.minutes,
-            0,
-          );
-          const morningEnd = new Date(currentDate);
-          morningEnd.setHours(
-            config.breakStart.hours,
-            config.breakStart.minutes,
-            0,
-          );
+          if (isMonthView) {
+            // Pour la vue mensuelle, on n'affiche qu'un événement par jour
+            const dayStart = new Date(currentDate);
+            dayStart.setHours(
+              config.startTime.hours,
+              config.startTime.minutes,
+              0,
+            );
+            const dayEnd = new Date(currentDate);
+            dayEnd.setHours(config.endTime.hours, config.endTime.minutes, 0);
 
-          events.push({
-            id: item.id,
-            alternateId: item.alternateId,
-            firstLessonId: item.firstLessonId,
-            title: item.title,
-            start: morningStart,
-            end: morningEnd,
-          });
+            events.push({
+              id: item.id,
+              alternateId: item.alternateId,
+              firstLessonId: item.firstLessonId,
+              title: item.title,
+              start: dayStart,
+              end: dayEnd,
+              parcoursTitle: item.parcoursTitle,
+              formationTitle: item.formationTitle,
+            });
+          } else {
+            // Période du matin
+            const morningStart = new Date(currentDate);
+            morningStart.setHours(
+              config.startTime.hours,
+              config.startTime.minutes,
+              0,
+            );
+            const morningEnd = new Date(currentDate);
+            morningEnd.setHours(
+              config.breakStart.hours,
+              config.breakStart.minutes,
+              0,
+            );
 
-          // Période de l'après-midi
-          const afternoonStart = new Date(currentDate);
-          afternoonStart.setHours(
-            config.breakEnd.hours,
-            config.breakEnd.minutes,
-            0,
-          );
-          const afternoonEnd = new Date(currentDate);
-          afternoonEnd.setHours(
-            config.endTime.hours,
-            config.endTime.minutes,
-            0,
-          );
+            events.push({
+              id: item.id,
+              alternateId: item.alternateId,
+              firstLessonId: item.firstLessonId,
+              title: item.title,
+              start: morningStart,
+              end: morningEnd,
+              parcoursTitle: item.parcoursTitle,
+              formationTitle: item.formationTitle,
+            });
 
-          events.push({
-            id: item.id,
-            alternateId: item.alternateId,
-            firstLessonId: item.firstLessonId,
-            title: item.title,
-            start: afternoonStart,
-            end: afternoonEnd,
-          });
+            // Période de l'après-midi
+            const afternoonStart = new Date(currentDate);
+            afternoonStart.setHours(
+              config.breakEnd.hours,
+              config.breakEnd.minutes,
+              0,
+            );
+            const afternoonEnd = new Date(currentDate);
+            afternoonEnd.setHours(
+              config.endTime.hours,
+              config.endTime.minutes,
+              0,
+            );
+
+            events.push({
+              id: item.id,
+              alternateId: item.alternateId,
+              firstLessonId: item.firstLessonId,
+              title: item.title,
+              start: afternoonStart,
+              end: afternoonEnd,
+              parcoursTitle: item.parcoursTitle,
+              formationTitle: item.formationTitle,
+            });
+          }
         }
 
         currentDate.setDate(currentDate.getDate() + 1);

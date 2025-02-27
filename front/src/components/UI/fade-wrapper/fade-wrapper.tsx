@@ -1,10 +1,8 @@
-import React, { FC } from "react";
+import { PropsWithChildren } from "react";
 
 import styles from "./fade-wrapper.module.scss";
 
-type Props = { children: React.ReactNode };
-
-const FadeWrapper: FC<Props> = (props) => {
+const FadeWrapper = (props: PropsWithChildren) => {
   return <div className={styles.content}>{props.children}</div>;
 };
 

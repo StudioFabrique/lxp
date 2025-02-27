@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
 import Can from "../UI/can/can.component";
 import CourseIcon from "../UI/svg/course-icon";
+import defaultImage from "../../assets/images/module-default.jpg";
 
 type ResumeActivityProps = {
   lastLesson: LessonRead;
@@ -21,7 +22,11 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
 
   useEffect(() => {
     const applyData = (data: { data: { image: string } }) => {
-      setImage(`data:image/jpeg;base64,${data.data.image}`);
+      setImage(
+        data.data.image
+          ? `data:image/jpeg;base64,${data.data.image}`
+          : defaultImage,
+      );
     };
 
     sendRequest(
@@ -35,7 +40,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
   return (
     <div className="flex gap-2">
       <ImageHeader
-        imageUrl={isLoading ? "" : (image ?? "/images/parcours-default.webp")}
+        imageUrl={isLoading ? "" : (image ?? "")}
         title={`${lastLesson.lesson.title}`}
         titleIcon={<FileEditIcon className="stroke-white" />}
         subTitle={`${lastLesson.lesson.course.title}`}

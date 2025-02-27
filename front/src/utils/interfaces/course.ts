@@ -33,4 +33,6 @@ export interface CourseTimeline {
   moduleTitle: string;
   minDate: string;
   maxDate: string;
+  parcoursTitle?: string;
+  formationTitle?: string;
 }

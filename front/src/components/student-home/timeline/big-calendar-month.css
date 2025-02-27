@@ -1,0 +1,16 @@
+[data-view="month"] .rbc-month-row {
+    background: linear-gradient(to right, #f8f9fa, #ffffff);
+    min-height: 100px;
+}
+
+[data-view="month"] .rbc-date-cell {
+    padding: 8px;
+    font-weight: 500;
+    color: #495057;
+}
+
+[data-view="month"] .rbc-today {
+    background: transparent;
+    color: black;
+    position: relative;
+}

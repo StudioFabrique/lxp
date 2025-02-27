@@ -1,19 +1,16 @@
 import moment from "moment/min/moment-with-locales";
 import "moment/locale/fr";
 import { Calendar, momentLocalizer, View } from "react-big-calendar";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import CalendarCustomToolbar from "./calendar-custom-toolbar";
-import {
-  adjustScheduleToCurrentWeek,
-  getColorByAlternateId,
-} from "../../../utils/calendar-utils";
-import { Dispatch, PropsWithChildren, SetStateAction } from "react";
+import CalendarCustomToolbar from "./calendar-custom/calendar-custom-toolbar";
+import { adjustScheduleToCurrentWeek } from "../../../utils/calendar-utils";
+import { Dispatch, PropsWithChildren, SetStateAction, useMemo } from "react";
 import FadeWrapper from "../fade-wrapper/fade-wrapper";
+import makeCustomEvent from "./calendar-custom/calendar-custom-event";
 
 moment.locale("fr");
 const localizer = momentLocalizer(moment);
 
-export interface Event {
+export type Event = {
   id: number;
   alternateId?: number;
   firstLessonId: number;
@@ -21,12 +18,7 @@ export interface Event {
   start: Date;
   end: Date;
   link?: string;
-}
-
-// interface ColorEvent {
-//   alternateId: number;
-//   color: string;
-// }
+};
 
 type BigCalendarTimelineProps = {
   data: Event[];
@@ -46,7 +38,12 @@ const BigCalendarTimeline = ({
   onRangeChange,
   onDoubleClickEvent,
 }: BigCalendarTimelineProps) => {
-  const dataAdjusted = adjustScheduleToCurrentWeek(data);
+  const dataAdjusted = adjustScheduleToCurrentWeek(
+    data,
+    undefined,
+    view === "month",
+  );
+  const CustomEvent = useMemo(() => makeCustomEvent(view === "month"), [view]);
 
   return (
     <Calendar
@@ -58,33 +55,29 @@ const BigCalendarTimeline = ({
       views={["month", "work_week", "day"]}
       view={view}
       onView={onSetView}
-      className="rbc-calendar bg-base-100 rounded-2xl shadow-xl p-6 border-2 border-base-content/30 hover:border-base-content/50 transition-colors"
+      className={`bg-transparent text-base rounded-2xl shadow-xl p-6 transition-colors`}
       min={new Date(2025, 1, 0, 8, 0, 0)}
       max={new Date(2025, 1, 0, 18, 0, 0)}
       components={{
         toolbar: CalendarCustomToolbar,
+        event: CustomEvent,
         eventContainerWrapper: ({ children }: PropsWithChildren) => (
           <FadeWrapper>{children}</FadeWrapper>
         ),
-        event: ({ event }) => {
-          const colors = event.alternateId
-            ? getColorByAlternateId(event.alternateId)
-            : { bgColor: "bg-primary", textColor: "text-base-100" };
-
-          return (
-            <div className={`card w-full h-full ${colors.bgColor}`}>
-              <div className="card-body p-2 flex-row items-center gap-3">
-                <h3
-                  className={`card-title ${colors.textColor} text-sm text-wrap text-center truncate`}
-                >
-                  {event.title}
-                </h3>
-              </div>
+        timeGutterWrapper: ({ children }: PropsWithChildren) => (
+          <div className="font-bold">{children}</div>
+        ),
+        month: {
+          dateHeader: (props) => (
+            <div>
+              <button type="button" onClick={props.onDrillDown}>
+                {props.label}
+              </button>
             </div>
-          );
+          ),
         },
       }}
-      style={{ height: view === "month" ? 600 : "" }}
+      style={{ height: view === "month" ? 800 : "" }}
       formats={{
         dayHeaderFormat: (date: Date) => moment(date).format("dddd DD MMMM"),
         timeGutterFormat: (date: Date) => moment(date).format("HH:mm"),
@@ -96,16 +89,15 @@ const BigCalendarTimeline = ({
           `Semaine du ${moment(range.start).format("DD MMMM")} au ${moment(range.end).format("DD MMMM")}`,
         eventTimeRangeFormat: () => "",
       }}
-      slotPropGetter={() => ({
-        className: "border-base-300 text-sm font-inter p-3",
-      })}
-      eventPropGetter={(event) => {
-        console.log({ color: getColorByAlternateId(event.alternateId ?? 1) });
-
+      eventPropGetter={() => {
         return {
           style: {
             background: "transparent",
             border: "0px",
+            fontSize: "0.875rem",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           },
           className:
             "transition-all duration-300 hover:-translate-y-1 hover:shadow-xl",
