@@ -4,7 +4,7 @@ import { prisma } from "../../utils/db";
 async function putObjective(objective: Objective) {
   try {
     const exisitingObjective = await prisma.objective.findFirst({
-      where: { id: objective.id },
+      where: { id: +objective.id },
     });
 
     if (!objective) {
@@ -16,7 +16,7 @@ async function putObjective(objective: Objective) {
     }
 
     const updatedObjective = await prisma.objective.update({
-      where: { id: objective.id },
+      where: { id: +objective.id },
       data: { description: objective.description },
       select: { id: true, description: true },
     });

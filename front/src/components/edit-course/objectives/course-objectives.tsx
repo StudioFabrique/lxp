@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -12,12 +12,7 @@ import courseObjectivesFromHttp from "../../../helpers/course/course-objectives-
 import ObjectivesWithDrawer from "./objectives-with-drawer";
 import Objective from "../../../utils/interfaces/objective";
 import { autoSubmitTimer } from "../../../config/auto-submit-timer";
-import useInput from "../../../hooks/use-input";
-import { regexGeneric } from "../../../utils/constantes";
-import ObjectivesForm from "./objectives-form";
 import { courseObjectivesActions } from "../../../store/redux-toolkit/course/course-objectives";
-import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
-import { Info } from "lucide-react";
 
 const CourseObjectives = () => {
   const { courseId } = useParams();
@@ -25,15 +20,13 @@ const CourseObjectives = () => {
   const { sendRequest, error } = useHttp();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const [loadingNewObjective, setLoadingNewObjective] = useState(false);
   const courseObjectives = useSelector(
     (state: any) => state.courseObjectives.courseObjectives
   ) as Objective[];
   const parcoursObjectives = useSelector(
     (state: any) => state.courseObjectives.parcoursObjectives
   ) as Objective[];
-  const [toggleForm, setToggleForm] = useState(false);
-  const formRef = useRef<HTMLInputElement>(null);
-  const { value: newObjective } = useInput((value) => regexGeneric.test(value));
 
   /**
    * met la liste des objectifs du cours à jour dans le state global
@@ -50,10 +43,10 @@ const CourseObjectives = () => {
    * @param value string
    */
   const handleSubmitNewObjective = (value: string) => {
+    setLoadingNewObjective(true);
     const applyData = (data: any) => {
       dispatch(courseObjectivesActions.updateCoursesObjectives(data.data));
-      newObjective.reset();
-      setToggleForm(false);
+      setLoadingNewObjective(false);
       document.getElementById("add-objectives")?.click();
     };
     sendRequest(
@@ -64,14 +57,6 @@ const CourseObjectives = () => {
       },
       applyData
     );
-  };
-
-  /**
-   * reset le formulaire et annule son affichage
-   */
-  const handleCancelForm = () => {
-    newObjective.reset();
-    setToggleForm(false);
   };
 
   /**
@@ -123,6 +108,7 @@ const CourseObjectives = () => {
     if (error.length > 0) {
       toast.error(error);
       setLoading(false);
+      setLoadingNewObjective(false);
     }
   }, [error]);
 
@@ -136,38 +122,15 @@ const CourseObjectives = () => {
               loading={loading}
               initialList={parcoursObjectives}
               currentItems={courseObjectives}
-              isDisabled={toggleForm}
+              isDisabled={false}
               property="description"
               onSubmit={handleUpdateObjectives}
+              onSubmitNewObjective={handleSubmitNewObjective}
+              loadingNewObjective={loadingNewObjective}
             />
-            <div className="w-full flex justify-start">
-              {!toggleForm ? (
-                <div className="flex items-center gap-x-2 pl-2">
-                  <button
-                    className="text-primary text-xs underline"
-                    onClick={() => setToggleForm((prevState) => !prevState)}
-                  >
-                    Créer un nouvel objectif
-                  </button>
-                  <QuestionMarkTooltip tooltipValue="Vous pouvez créer un nouvel objectif d’apprentissage pour ce cours.">
-                    <Info className="w-4 h-4 text-primary" />
-                  </QuestionMarkTooltip>
-                </div>
-              ) : null}
-            </div>
           </Wrapper>
         ) : null}
       </div>
-      {toggleForm ? (
-        <Wrapper>
-          <ObjectivesForm
-            newObjective={newObjective}
-            ref={formRef}
-            onSubmit={handleSubmitNewObjective}
-            onCancel={handleCancelForm}
-          />
-        </Wrapper>
-      ) : null}
     </div>
   );
 };
