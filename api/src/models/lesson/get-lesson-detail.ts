@@ -23,6 +23,7 @@ export default async function getLessonDetail(lessonId: number) {
           description: true,
           createdAt: true,
           updatedAt: true,
+          resourceActivities: true,
         },
         orderBy: { order: "asc" },
       },
