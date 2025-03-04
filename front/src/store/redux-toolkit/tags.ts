@@ -56,6 +56,9 @@ const tagsSlice = createSlice({
         );
       }
     },
+    addNewCurrentTags(state, action) {
+      state.currentTags = [...state.currentTags, ...action.payload];
+    },
     resetFilteredItems(state) {
       state.filteredItems = [];
     },
