@@ -98,7 +98,7 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
       return (
         <Wrapper>
           <FadeWrapper>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col items-center gap-4">
               <h3 className="text-base-content font-bold text-2xl">
                 Resources
               </h3>
