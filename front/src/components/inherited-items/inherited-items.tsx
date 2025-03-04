@@ -81,8 +81,10 @@ const InheritedItems = (props: InheritedItemsProps) => {
     setCurrentItems(props.selectedItems);
   }, [props.selectedItems]);
 
+  console.log("CHILDREN :", props.children);
+
   return (
-    <section className="w-full flex flex-col gap-y-8">
+    <section className="w-full flex flex-col">
       <div className="flex items-center justify-between">
         {props.title ? (
           <h2 className="text-xl font-bold p-2">{props.title}</h2>
@@ -95,7 +97,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
           onClickEvent={() => handleCloseDrawer(props.drawerId)}
         />
       </div>
-      <div className="w-full flex flex-col gap-y-4">
+      <div className="w-full flex flex-col gap-y-4 mt-4">
         {currentItems.length ? (
           <>
             {React.cloneElement(props.children[0] as React.ReactElement, {
