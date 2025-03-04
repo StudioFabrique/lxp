@@ -16,9 +16,9 @@ import useHttp from "../../../hooks/use-http";
 import VirtualClass from "../../virtual-class";
 import useInput from "../../../hooks/use-input";
 import { regexUrl } from "../../../utils/constantes";
-import TagsWithDrawer from "../../inherited-items/tags-with-drawer";
 import ContactsWithDrawer from "../../inherited-items/contacts-with-drawer";
 import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
+import CourseTags from "./course-tags";
 
 const CourseInfos = () => {
   const { courseId } = useParams();
@@ -212,13 +212,7 @@ const CourseInfos = () => {
             />
           </Wrapper>
           <Wrapper>
-            <TagsWithDrawer
-              loading={loadingTags}
-              initialList={tags}
-              currentItems={currentTags}
-              property="name"
-              onSubmit={handleUpdateTags}
-            />
+            <CourseTags onSubmit={handleUpdateTags} loading={loadingTags} />
           </Wrapper>
         </div>
       </div>
