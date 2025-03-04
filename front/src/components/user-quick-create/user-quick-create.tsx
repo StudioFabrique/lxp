@@ -124,7 +124,7 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
             />
 
             <Field
-              label="Numéro de téléphone *"
+              label="Numéro de téléphone"
               name="phoneNumber"
               placeholder="01 02 03 04 05"
               data={data}

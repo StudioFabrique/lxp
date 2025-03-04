@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
 import EditIcon from "../../UI/svg/edit-icon";
@@ -12,7 +13,7 @@ interface CoursePreviewInfosProps {
 
 const CoursePreviewInfos = (props: CoursePreviewInfosProps) => {
   const course = useSelector(
-    (state: any) => state.courseInfos.course,
+    (state: any) => state.courseInfos.course
   ) as Course;
 
   return (
@@ -52,7 +53,7 @@ const CoursePreviewInfos = (props: CoursePreviewInfosProps) => {
           {/* Colonne #2 */}
           <article className="flex flex-col gap-y-8">
             <Wrapper>
-              <h2 className="text-xl font-bold">Ressources et contacts</h2>
+              <h2 className="text-xl font-bold">Ressources pédagogiques</h2>
               <ContactsList contactsList={course.contacts} />
             </Wrapper>
             <Wrapper>
