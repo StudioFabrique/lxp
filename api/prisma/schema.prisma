@@ -261,6 +261,7 @@ model Accomplishment {
   description          String
   accomplishedAt       DateTime @default(now())
   hasBeenCongratulated Boolean  @default(false)
+  showToOtherStudent   Boolean  @default(false)
   studentId            Int
   student              Student  @relation(fields: [studentId], references: [id])
 }

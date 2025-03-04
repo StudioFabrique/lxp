@@ -24,5 +24,7 @@ export default async function postRateLesson(
     data: { lessonId, studentId: student.id, rating: +rating },
   });
 
+  // here, create a feedback entry
+
   return lessonRating;
 }
