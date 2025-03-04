@@ -9,6 +9,9 @@ import { autoSubmitTimer } from "../../../config/auto-submit-timer";
 import useHttp from "../../../hooks/use-http";
 import ParcoursTagsSelecter from "./parcours-tags-selecter";
 import SearchTag from "./search-tag";
+import CreateNewTag from "./create-new-tags";
+import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
+import { HelpCircle } from "lucide-react";
 
 // Interface définissant les props du composant
 interface TagsWithDrawerProps {
@@ -46,8 +49,8 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
    */
   const handleUpdateTags = useCallback(
     (tags: Tag[]) => {
-      setSubmit(true);
       dispatch(tagsAction.setCurrentTags(tags));
+      setSubmit(true);
     },
     [dispatch]
   );
@@ -111,9 +114,9 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
   // 1. Les tags actuels et les tags de la formation
   // 2. La liste complète des tags disponibles avec recherche
   return (
-    <div className="flex flex-col gap-y-4 h-full">
+    <div className="flex flex-col justify-between gap-y-4 h-full">
       {/* Section des tags actuels */}
-      <span className="flex-1">
+      <span className="h-full flex-1">
         <InheritedItems
           drawerId="add-tags"
           drawerTitle="Ajouter des Tags"
@@ -134,34 +137,45 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
       </span>
 
       {/* Section de tous les tags disponibles */}
-      <span className="flex flex-col items-start gap-x-8 h-fit mt-4">
-        <InheritedItems
-          drawerId="all-tags"
-          buttonLabel="Liste des tags disponibles"
-          drawerTitle="Ajouter des Tags"
-          loading={props.loading}
-          initialList={filteredTags}
-          selectedItems={currentTags}
-          property="name"
-          onSubmit={handleUpdateTags}
-        >
-          {/* Affichage d'un fragment car on ne souhaite pas afficher la liste des tags sélectionnés en double */}
-          <></>
-          <ParcoursTagsSelecter>
-            <>
+      <div>
+        <span className="flex flex-col items-start justify-end gap-x-8 gap-y-2 h-fit mt-4">
+          <InheritedItems
+            drawerId="all-tags"
+            buttonLabel="Liste des tous les tags dispnibles"
+            drawerTitle="Ajouter des Tags"
+            loading={props.loading}
+            initialList={filteredTags}
+            selectedItems={currentTags}
+            property="name"
+            onSubmit={handleUpdateTags}
+            visibleList={false}
+          >
+            <></>
+            <ParcoursTagsSelecter>
               <h2 className="text-xl font-semibold">Tous les tags</h2>
-              <SearchTag
-                searchTerm={searchTerm}
-                onSetSearchTerm={setSearchTerm}
-              />
-            </>
-          </ParcoursTagsSelecter>
-        </InheritedItems>
-
-        <button className="pl-2 text-xs text-primary underline">
-          ou Créer des nouveaux tags
-        </button>
-      </span>
+              <span className="flex gap-x-4 items-center">
+                <SearchTag
+                  searchTerm={searchTerm}
+                  onSetSearchTerm={setSearchTerm}
+                />
+                <QuestionMarkTooltip
+                  tooltipValue="Les tags aident à trouver du contenu par mots clés."
+                  tooltipPosition="left"
+                >
+                  <HelpCircle className="w-6 h-6 text-primary" />
+                </QuestionMarkTooltip>
+              </span>
+            </ParcoursTagsSelecter>
+          </InheritedItems>
+          <button
+            className="pl-2 text-xs text-primary underline"
+            onClick={() => document.getElementById("create-tags")?.click()}
+          >
+            ou Créer des nouveaux tags
+          </button>
+        </span>
+        <CreateNewTag onSubmit={setSubmit} />
+      </div>
     </div>
   );
 };

@@ -20,8 +20,7 @@ export default function AddTag(props: AddTagProps) {
 
   return (
     <form
-      className="flex flex-col items-start w-full gap-y-2 tooltip tooltip-top"
-      data-tip="Les tags aident à trouver du contenu par mots clés."
+      className="flex flex-col items-start w-full gap-y-2"
       onSubmit={handleTagSubmit}
     >
       <label>Tags</label>
