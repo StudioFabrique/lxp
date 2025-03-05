@@ -1,4 +1,6 @@
 import React, { ChangeEvent } from "react";
+import QuestionMarkTooltip from "./question-mark-tooltip/question-mark-tooltip";
+import { HelpCircle } from "lucide-react";
 
 interface AddTagProps {
   tag: string;
@@ -24,13 +26,21 @@ export default function AddTag(props: AddTagProps) {
       onSubmit={handleTagSubmit}
     >
       <label>Tags</label>
-      <input
-        className={style}
-        type="text"
-        placeholder={props.placeholder ?? ""}
-        value={props.tag}
-        onChange={props.onChangeValue}
-      />
+      <span className="flex items-center gap-x-2 w-full">
+        <input
+          className={style}
+          type="text"
+          placeholder={props.placeholder ?? ""}
+          value={props.tag}
+          onChange={props.onChangeValue}
+        />
+        <QuestionMarkTooltip
+          tooltipValue="Les tags aident à trouver du contenu par mots clés."
+          tooltipPosition="left"
+        >
+          <HelpCircle className="w-6 h-6 text-primary" />
+        </QuestionMarkTooltip>
+      </span>
       <p className="text-xs text-secondary pl-1">
         Appuyer sur la touche "Entrée" après avoir saisi un nom de tag pour
         l'ajouter à la liste.
