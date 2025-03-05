@@ -182,6 +182,7 @@ export default function FormationAddForm({
   };
 
   useEffect(() => {
+    onResetForm();
     if (formation !== undefined) {
       initValues({
         id: formation.id,
@@ -193,7 +194,7 @@ export default function FormationAddForm({
 
       handleSetCurrentTags(formation.tags!);
     }
-  }, [formation, handleSetCurrentTags, initValues]);
+  }, [formation, handleSetCurrentTags, onResetForm, initValues]);
 
   /**
    * Réinitialise le state tagError qd l'utilisateur ajoute un tag à la formation
@@ -278,7 +279,7 @@ export default function FormationAddForm({
 
       <TagsList tagsList={currentTags} onRemove={handleRemoveTag} />
 
-      <div className="w-full flex justify-between">
+      <div className="w-full flex justify-between 2xl:w-3/6">
         <button className="btn btn-outline btn-primary" onClick={handleCancel}>
           Annuler
         </button>

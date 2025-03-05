@@ -42,10 +42,10 @@ const useForm = (data = {}) => {
   /**
    * Réinitialise le formulaire (valeurs et erreurs)
    */
-  const onResetForm = () => {
+  const onResetForm = useCallback(() => {
     setValues({});
     setErrors([]);
-  };
+  }, []);
 
   /**
    * Initialise les valeurs du formulaire
