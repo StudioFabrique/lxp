@@ -8,7 +8,7 @@ interface TagsListProps {
 
 export default function TagsList(props: TagsListProps) {
   return (
-    <ul className="flex flex-wrap">
+    <ul className="flex flex-wrap gap-2">
       {props.tagsList.map((item) => (
         <li
           key={item.id}
