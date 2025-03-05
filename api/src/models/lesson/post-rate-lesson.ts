@@ -1,4 +1,5 @@
 import { prisma } from "../../utils/db";
+import User from "../../utils/interfaces/db/user";
 
 export default async function postRateLesson(
   lessonId: number,
@@ -9,9 +10,15 @@ export default async function postRateLesson(
     where: { idMdb: userIdMdb },
   });
 
-  if (!student) {
-    return null;
+  const studentData = await User.findById(student?.idMdb);
+
+  if (!student || !studentData) {
+    return [];
   }
+
+  const lesson = await prisma.lesson.findFirst({ where: { id: lessonId } });
+
+  if (!lesson) return null;
 
   const existingLessonRating = await prisma.lessonRating.findFirst({
     where: { lessonId, studentId: student.id },
@@ -19,12 +26,18 @@ export default async function postRateLesson(
 
   if (existingLessonRating) return null;
 
-  // Créer une nouvelle notation lessonRating
-  const lessonRating = await prisma.lessonRating.create({
-    data: { lessonId, studentId: student.id, rating: +rating },
-  });
+  const transactionResult = await prisma.$transaction([
+    prisma.lessonRating.create({
+      data: { lessonId, studentId: student.id, rating: +rating },
+    }),
+    prisma.accomplishment.create({
+      data: {
+        name: `${studentData.firstname} ${studentData.lastname}`,
+        description: `vient d'attribuer une note de ${rating} sur 5 à la leçon ${lesson.title}`,
+        student: { connect: { id: student.id } },
+      },
+    }),
+  ]);
 
-  // here, create a feedback entry
-
-  return lessonRating;
+  return transactionResult[0];
 }

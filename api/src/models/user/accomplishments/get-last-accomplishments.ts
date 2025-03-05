@@ -12,6 +12,7 @@ export default async function getLastAccomplishments(studentMdbId: string) {
         idMdb: { in: studentsIdsMdbInSameGroup, not: studentMdbId },
       },
       hasBeenCongratulated: false,
+      showToOtherStudent: true,
     },
     select: {
       id: true,

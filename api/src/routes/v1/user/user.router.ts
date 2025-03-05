@@ -48,6 +48,7 @@ import {
   userIdValidator,
 } from "./user-validators";
 import httpPostCheckEmail from "../../../controllers/user/http-post-check-email";
+import httpGetConnectedStudentAccomplishements from "../../../controllers/user/accomplishment/http-get-connected-student-accomplishments";
 
 const userRouter = express.Router();
 
@@ -208,11 +209,18 @@ userRouter.get(
   httpGetLastFeedback,
 );
 
-// réceupère les accomplissements de tous les autres étudiants étant dans le même groupe que l'étudiant connnecté.
+// récupère les accomplissements de tous les autres étudiants étant dans le même groupe que l'étudiant connnecté.
 userRouter.get(
   "/accomplishment",
   checkPermissions("cursus"),
   httpGetAccomplishements,
+);
+
+// récupère les accomplissements de l'étudiant connnecté.
+userRouter.get(
+  "/my-accomplishment",
+  checkPermissions("cursus"),
+  httpGetConnectedStudentAccomplishements,
 );
 
 // retourne la liste des derniers feedbacks enregistrés

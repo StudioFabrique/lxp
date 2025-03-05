@@ -39,9 +39,10 @@ export default async function putFinishReadLesson(
         name: `${studentData.firstname} ${studentData.lastname}`,
         description: `vient de terminer la leçon ${lessonRead.lesson.title}`,
         student: { connect: { id: student.id } },
+        showToOtherStudent: true,
       },
     }),
   ]);
 
-  return transactionResult?.[0];
+  return transactionResult[0];
 }
