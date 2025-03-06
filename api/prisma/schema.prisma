@@ -18,7 +18,7 @@ model Mediatheque {
   used      Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  author    Admin    @relation(fields: [authorId], references: [id])
+  author    Admin    @relation(fields: [authorId], onDelete: SetDefault, references: [id])
 }
 
 model Activity {
@@ -32,7 +32,7 @@ model Activity {
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
   authorId           Int
-  author             Admin              @relation(fields: [authorId], references: [id])
+  author             Admin              @relation(fields: [authorId], onDelete: SetDefault, references: [id])
   lesson             Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   resourceActivities ResourceActivity[]
 }
@@ -74,7 +74,7 @@ model Parcours {
   groups       GroupsOnParcours[]
   modules      ModulesOnParcours[]
   objectives   Objective[]
-  admin        Admin                @relation(fields: [adminId], references: [id])
+  admin        Admin                @relation(fields: [adminId], onDelete: SetDefault, references: [id])
   formation    Formation            @relation(fields: [formationId], references: [id])
   skills       SkillsOnParcours[]
   tags         TagsOnParcours[]
@@ -97,7 +97,7 @@ model Module {
   bonusSkills BonusSkillsOnModule[]
   contacts    ContactsOnModule[]
   courses     Course[]
-  admin       Admin                 @relation(fields: [adminId], references: [id])
+  admin       Admin                 @relation(fields: [adminId], onDelete: SetDefault, references: [id])
   formations  ModulesOnFormation[]
   parcours    ModulesOnParcours[]
 }
@@ -207,7 +207,7 @@ model Course {
   adminId      Int
   bonusSkills  BonusSkillOnCourse[]
   contacts     ContactsOnCourse[]
-  admin        Admin                @relation(fields: [adminId], references: [id])
+  admin        Admin                @relation(fields: [adminId], onDelete: SetDefault, references: [id])
   module       Module               @relation(fields: [moduleId], references: [id])
   lessons      Lesson[]
   objectives   ObjectivesOnCourse[]
@@ -229,7 +229,7 @@ model Lesson {
   isPublished  Boolean        @default(false)
   visibility   Boolean        @default(false)
   activities   Activity[]
-  admin        Admin          @relation(fields: [adminId], references: [id])
+  admin        Admin          @relation(fields: [adminId], onDelete: SetDefault, references: [id])
   course       Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
   tag          Tag            @relation(fields: [tagId], references: [id])
   lessonsRead  LessonRead[]
