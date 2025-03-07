@@ -48,7 +48,7 @@ import {
   userIdValidator,
 } from "./user-validators";
 import httpPostCheckEmail from "../../../controllers/user/http-post-check-email";
-import httpGetConnectedStudentAccomplishements from "../../../controllers/user/accomplishment/http-get-connected-student-accomplishments";
+import httpGetConnectedStudentParcoursWithAccomplishements from "../../../controllers/user/accomplishment/http-get-connected-student-parcours-with-accomplishments";
 
 const userRouter = express.Router();
 
@@ -220,7 +220,7 @@ userRouter.get(
 userRouter.get(
   "/my-accomplishment",
   checkPermissions("cursus"),
-  httpGetConnectedStudentAccomplishements,
+  httpGetConnectedStudentParcoursWithAccomplishements,
 );
 
 // retourne la liste des derniers feedbacks enregistrés

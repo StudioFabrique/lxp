@@ -3,14 +3,7 @@ import { useEffect, useState } from "react";
 import useHttp from "../../../../hooks/use-http";
 import Loader from "../../../UI/loader";
 import Item from "./item";
-import User from "../../../../utils/interfaces/user";
-
-export interface Accomplishment {
-  description: string;
-  id: number;
-  name: string;
-  student: User;
-}
+import { Accomplishment } from "../../../../utils/interfaces/accomplishment";
 
 const StudentAccomplishments = () => {
   const { sendRequest, isLoading } = useHttp();

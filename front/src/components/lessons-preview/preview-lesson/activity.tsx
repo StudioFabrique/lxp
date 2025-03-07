@@ -75,7 +75,7 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
       );
     case "video":
       return (
-        <Wrapper>
+        <Wrapper additionalClassname="bg-secondary/5">
           <FadeWrapper>
             <div className="flex flex-col gap-2">
               <h3 className="text-base-content font-bold text-2xl">Vidéo</h3>
@@ -86,7 +86,7 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
       );
     case "image":
       return (
-        <Wrapper>
+        <Wrapper additionalClassname="bg-secondary/5">
           <FadeWrapper>
             <div className="flex flex-col gap-2">
               <img src={`${ACTIVITIES}images/${activity.url}`} alt="Image" />
@@ -96,7 +96,7 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
       );
     case "resource":
       return (
-        <Wrapper>
+        <Wrapper additionalClassname="bg-secondary/5">
           <FadeWrapper>
             <div className="flex flex-col items-center gap-4">
               <h3 className="text-base-content font-bold text-2xl">

@@ -1,8 +1,7 @@
 import { Response } from "express";
 import CustomRequest from "../../../utils/interfaces/express/custom-request";
 import { noAccess, serverIssue } from "../../../utils/constantes";
-import getLastAccomplishments from "../../../models/user/accomplishments/get-last-accomplishments";
-import getStudentAccomplishments from "../../../models/user/accomplishments/get-student-accomplishments";
+import getStudentParcoursWithAccomplishments from "../../../models/user/accomplishments/get-student-parcours-with-accomplishments";
 
 /**
  * Retourner les accomplissements de l'étudiant connecté
@@ -10,7 +9,7 @@ import getStudentAccomplishments from "../../../models/user/accomplishments/get-
  * @param res
  * @returns
  */
-export default async function httpGetConnectedStudentAccomplishements(
+export default async function httpGetConnectedStudentParcoursWithAccomplishements(
   req: CustomRequest,
   res: Response,
 ) {
@@ -21,7 +20,7 @@ export default async function httpGetConnectedStudentAccomplishements(
 
     const { userId } = req.auth;
 
-    const response = await getStudentAccomplishments(userId);
+    const response = await getStudentParcoursWithAccomplishments(userId);
 
     return res.status(200).json({ data: response });
   } catch (error) {

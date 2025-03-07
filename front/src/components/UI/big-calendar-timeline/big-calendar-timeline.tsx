@@ -1,3 +1,6 @@
+import "./big-calendar-month.css";
+import "./big-calendar-timeline.css";
+
 import moment from "moment/min/moment-with-locales";
 import "moment/locale/fr";
 import { Calendar, momentLocalizer, View } from "react-big-calendar";
