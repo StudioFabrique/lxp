@@ -18,7 +18,11 @@ export default async function putFinishReadLesson(
 
   const lessonRead = await prisma.lessonRead.findFirst({
     where: { lessonId, student },
-    select: { id: true, finishedAt: true, lesson: { select: { title: true } } },
+    select: {
+      id: true,
+      finishedAt: true,
+      lesson: { select: { title: true, courseId: true } },
+    },
   });
 
   if (!lessonRead) {
@@ -39,6 +43,7 @@ export default async function putFinishReadLesson(
         name: `${studentData.firstname} ${studentData.lastname}`,
         description: `vient de terminer la leçon ${lessonRead.lesson.title}`,
         student: { connect: { id: student.id } },
+        course: { connect: { id: lessonRead.lesson.courseId } },
         showToOtherStudent: true,
       },
     }),

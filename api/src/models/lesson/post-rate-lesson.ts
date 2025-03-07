@@ -16,12 +16,16 @@ export default async function postRateLesson(
     return [];
   }
 
-  const lesson = await prisma.lesson.findFirst({ where: { id: lessonId } });
+  const lesson = await prisma.lesson.findFirst({
+    where: { id: lessonId },
+    select: { courseId: true, title: true },
+  });
 
   if (!lesson) return null;
 
   const existingLessonRating = await prisma.lessonRating.findFirst({
     where: { lessonId, studentId: student.id },
+    select: { id: true },
   });
 
   if (existingLessonRating) return null;
@@ -35,6 +39,7 @@ export default async function postRateLesson(
         name: `${studentData.firstname} ${studentData.lastname}`,
         description: `vient d'attribuer une note de ${rating} sur 5 à la leçon ${lesson.title}`,
         student: { connect: { id: student.id } },
+        course: { connect: { id: lesson.courseId } },
       },
     }),
   ]);

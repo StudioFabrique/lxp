@@ -1,12 +1,12 @@
 import { MouseEvent, Ref, useEffect, useRef, useState } from "react";
 import Information from "../../components/user-profile/information/information";
-import Parcours from "../../components/user-profile/parcours";
 import Awards from "../../components/user-profile/awards/awards";
 import Account from "../../components/user-profile/account/account";
 import Can from "../../components/UI/can/can.component";
 import { useLocation } from "react-router-dom";
 import Settings from "../../components/profile-home/settings";
 import Calendrier from "../../components/user-profile/calendrier";
+import ParcoursAccomplishment from "../../components/user-profile/parcours-accomplishment/parcours-accomplishment";
 
 enum Tab {
   Info,
@@ -45,7 +45,7 @@ const Profile = () => {
       case Tab.Calendar:
         return <Calendrier />;
       case Tab.Evals:
-        return <Parcours />;
+        return <ParcoursAccomplishment />;
       case Tab.Awards:
         return <Awards />;
       case Tab.Account:
