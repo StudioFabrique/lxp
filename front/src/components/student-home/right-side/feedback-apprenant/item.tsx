@@ -29,7 +29,7 @@ const Item = ({ accomplishment }: { accomplishment: Accomplishment }) => {
     <div className="flex justify-between gap-2 items-center w-full bg-primary text-primary-content rounded-lg p-2 md:p-3">
       <div className="flex gap-2 md:gap-4 flex-1 min-w-0">
         {/* <img
-          className="rounded-lg h-[40px] w-[40px] md:h-[48px] md:w-[48px] object-cover flex-shrink-0"
+          className="rounded-lg h-[40px] w-[40px] md:h-[48px] md:w-[48px] object-cover shrink-0"
           src={`data:image/jpeg;base64,${imageProfileReplacement}`}
           alt="User Avatar"
         /> */}
@@ -44,7 +44,7 @@ const Item = ({ accomplishment }: { accomplishment: Accomplishment }) => {
         type="button"
         onTap={handleTap}
         animate={animate}
-        className="p-2 bg-secondary/70 text-primary-content rounded-lg flex-shrink-0"
+        className="p-2 bg-secondary/70 text-primary-content rounded-lg shrink-0"
       >
         <PartyPopperIcon />
       </motion.button>
