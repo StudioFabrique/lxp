@@ -23,10 +23,10 @@ const RoleTypeSelector: FC<{
   ];
 
   const handleSelect: ChangeEventHandler<HTMLSelectElement> = (
-    e: ChangeEvent<HTMLSelectElement>,
+    e: ChangeEvent<HTMLSelectElement>
   ) => {
     const newRoleType = roleTypes.find(
-      (roleType) => e.currentTarget.value === roleType.rank.toString(),
+      (roleType) => e.currentTarget.value === roleType.rank.toString()
     );
     onSetCurrentRoleType((previousRole) => newRoleType?.rank ?? previousRole);
   };

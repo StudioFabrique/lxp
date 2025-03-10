@@ -1,15 +1,15 @@
 export const themes = {
-  light: "winter",
+  light: "nord",
   dark: "night",
 };
 
 export const lightThemes = [
   "autumn",
-  "bumblebee",
+  "winter",
   "corporate",
   "cupcake",
   "lofi",
-  "winter",
+  "nord",
   "wireframe",
 ];
 

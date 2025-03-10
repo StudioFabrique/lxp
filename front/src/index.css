@@ -1,3 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: "winter" --default, "autumn", "nord", "corporate", "cupcake", "lofi",
+    "wireframe", "business", "coffee", "dracula", "forest", "night", "synthwave";
+}
+@plugin '@tailwindcss/typography';

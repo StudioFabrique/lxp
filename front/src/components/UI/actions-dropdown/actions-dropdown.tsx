@@ -30,7 +30,7 @@ const ActionsDropdown = <FuncDataT,>(
       </button>
       <ul
         tabIndex={0}
-        className="menu dropdown-content bg-base-100 rounded-box z-20 p-2 m-2 shadow w-max whitespace-nowrap gap-2"
+        className="menu dropdown-content bg-base-100 rounded-box z-20 p-2 m-2 shadow-sm w-max whitespace-nowrap gap-2"
       >
         {props.actions.map((act) => (
           <li key={act.actionTitle}>

@@ -72,7 +72,7 @@ const SearchDropdown: FC<Props> = ({
         {isOpen ? (
           <ul
             tabIndex={0}
-            className="dropdown-content menu p-1 shadow bg-base-100 rounded-box w-full mt-4 z-50"
+            className="dropdown-content menu p-1 shadow-sm bg-base-100 rounded-box w-full mt-4 z-50"
           >
             {filteredItems.map((item: any) => (
               <li
