@@ -17,7 +17,7 @@
     "audit": "^0.0.6",
     "axios": "^1.6.2",
     "browser-image-compression": "^2.0.2",
-    "daisyui": "^4.12.22",
+    "daisyui": "^5.0.0",
     "dompurify": "^3.1.7",
     "framer-motion": "^10.16.4",
     "lucide-react": "^0.302.0",
