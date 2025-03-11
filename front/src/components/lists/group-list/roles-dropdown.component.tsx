@@ -45,7 +45,7 @@ const RolesDropdown: FC<{
       {showDropdown ? (
         <ul
           tabIndex={0}
-          className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+          className="dropdown-content menu p-2 shadow-sm bg-base-100 rounded-box w-52"
         >
           {roles.map((role) => (
             <>

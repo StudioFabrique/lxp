@@ -64,7 +64,7 @@ const PermissionDeleteItem = ({
         </p>
       </div>
       {description && !showConfirm && (
-        <div className="z-10 absolute invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 top-full mt-2 left-0 bg-neutral text-neutral-content px-3 py-2 rounded text-sm whitespace-normal shadow-lg w-64">
+        <div className="z-10 absolute invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 top-full mt-2 left-0 bg-neutral text-neutral-content px-3 py-2 rounded-sm text-sm whitespace-normal shadow-lg w-64">
           {description}
         </div>
       )}

@@ -68,7 +68,7 @@ const DropdownActionsUser: FC<Props> = ({
         {showDropDown ? (
           <ul
             tabIndex={0}
-            className="dropdown-content menu p-1 shadow bg-base-100 rounded-box w-48 mt-4"
+            className="dropdown-content menu p-1 shadow-sm bg-base-100 rounded-box w-48 mt-4"
           >
             <Can action="update" object={roleTab.role}>
               <li onClick={handleAddUserToGroup}>
