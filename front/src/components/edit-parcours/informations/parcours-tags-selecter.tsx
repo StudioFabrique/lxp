@@ -24,7 +24,7 @@ const ParcoursTagsSelecter = (props: Props) => {
   };
 
   return (
-    <div className="w-[30rem] flex flex-col gap-y-4">
+    <div className="w-[35rem] flex flex-col gap-y-4">
       {props.children ? props.children : null}
       {props.list && props.list.length > 0 ? (
         <TagsList list={props.list} onAddTag={handleAddTag} />

@@ -112,7 +112,7 @@ const RightSideDrawer: FC<Props> = ({
           style={{ zIndex: zIndex - 1 }}
         />
         <ul
-          className="min-w-[30rem] block menu p-4 top-0 right-0 min-h-screen bg-base-200 text-base-content rounded-l-2xl overflow-auto"
+          className="min-w-[35rem] block menu py-4 mx-4 top-0 right-0 min-h-screen bg-base-200 text-base-content rounded-l-2xl overflow-auto"
           style={{ zIndex }}
         >
           {/* Sidebar content here */}

@@ -12,7 +12,7 @@ function TagsList(props: Props) {
   return (
     <div className="flex flex-col gap-y-4">
       <Wrapper>
-        <ul className="w-[30rem] flex flex-wrap gap-2">
+        <ul className="w-[34rem] flex flex-wrap gap-2">
           {sortArray(props.list, "name").map((tag) => (
             <div key={tag.id} onClick={() => props.onAddTag(tag.id)}>
               <TagItem tag={tag} noIcon={true} />
