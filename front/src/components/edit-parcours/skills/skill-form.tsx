@@ -36,7 +36,7 @@ const SkillForm: FC<Props> = ({ skill, onSubmit, onCloseDrawer }) => {
   };
 
   // test la validité du formulaire
-  let formIsValid = description.isValid;
+  const formIsValid = description.isValid;
 
   // définit le style du champ du formulaire en fonction de sa validité
   const style = "textarea focus:outline-none bg-secondary/20";

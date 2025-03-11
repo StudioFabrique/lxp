@@ -54,7 +54,7 @@ const Informations: FC<{
         <label>Pseudo</label>
         <input
           className={setInputStyle(
-            nickname.hasError && nickname.value.length > 0,
+            nickname.hasError && nickname.value.length > 0
           )}
           type="text"
           onChange={nickname.valueChangeHandler}

@@ -11,7 +11,7 @@ import parcoursRouter from "./parcours/parcours.router";
 import skillsRouter from "./skills.router";
 import tagRouter from "./tags/tag.router";
 import formationRouter from "./formation/formation.router";
-import objectiveRouter from "./objective.router";
+import objectiveRouter from "./objective/objective.router";
 import moduleRouter from "./modules/module-router";
 import bonusSkillRouter from "./bonus-skill.router";
 

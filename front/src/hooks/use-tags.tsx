@@ -39,10 +39,8 @@ const useTags = (initialTags: Tag[]) => {
 
   const handleRemoveTag = (id: number) => {
     console.log({ id, currentTags });
-    console.log({ notSelected });
 
     setCurrentTags((prevState) => prevState.filter((item) => item.id !== id));
-    console.log({ currentTags });
   };
 
   const handleCheckTags = () => {
@@ -70,8 +68,6 @@ const useTags = (initialTags: Tag[]) => {
 
   const handleSetCurrentTags = useCallback(
     (ids: number[]) => {
-      console.log({ ids });
-
       setCurrentTags(initialTags.filter((item) => ids.includes(item.id)));
     },
     [initialTags]

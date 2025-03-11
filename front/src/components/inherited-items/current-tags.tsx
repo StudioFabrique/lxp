@@ -22,7 +22,7 @@ const CurrentTags = (props: CurrentTagsProps) => {
         </ul>
       ) : (
         <SubWrapper>
-          <p className="text-xs">Aucun tag sélectionné</p>
+          <p className="text-xs mb-2">Aucun tag sélectionné</p>
         </SubWrapper>
       )}
     </>

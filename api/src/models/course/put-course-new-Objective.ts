@@ -35,9 +35,8 @@ async function putCourseNewObjective(courseId: number, objective: Objective) {
     newObjective = await tx.objective.create({
       data: { ...objective, parcoursId },
     });
-    return newObjective;
 
-    /*     const updatedCourse = await tx.course.update({
+    const updatedCourse = await tx.course.update({
       where: { id: courseId },
       data: {
         objectives: {
@@ -49,7 +48,7 @@ async function putCourseNewObjective(courseId: number, objective: Objective) {
         },
       },
     });
-    return newObjective; */
+    return newObjective;
   });
 
   return transaction;

@@ -6,6 +6,7 @@ import ButtonAdd from "../UI/button-add/button-add";
 import SubWrapper from "../UI/sub-wrapper/sub-wrapper.component";
 
 interface InheritedItemsProps {
+  visibleList?: boolean;
   tooltip?: string;
   buttonLabel?: string;
   children: ReactNode[];
@@ -21,6 +22,10 @@ interface InheritedItemsProps {
 }
 
 const InheritedItems = (props: InheritedItemsProps) => {
+  const visibleList = useMemo(() => {
+    return props.visibleList !== undefined ? props.visibleList : true;
+  }, [props.visibleList]);
+
   const handleCloseDrawer = (id: string) => {
     document.getElementById(id)?.click();
   };
@@ -82,7 +87,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
   }, [props.selectedItems]);
 
   return (
-    <section className="w-full flex flex-col gap-y-8">
+    <section className="w-full flex flex-col">
       <div className="flex items-center justify-between">
         {props.title ? (
           <h2 className="text-xl font-bold p-2">{props.title}</h2>
@@ -95,7 +100,7 @@ const InheritedItems = (props: InheritedItemsProps) => {
           onClickEvent={() => handleCloseDrawer(props.drawerId)}
         />
       </div>
-      <div className="w-full flex flex-col gap-y-4">
+      <div className="w-full flex flex-col gap-y-4 mt-4">
         {currentItems.length ? (
           <>
             {React.cloneElement(props.children[0] as React.ReactElement, {
@@ -104,11 +109,11 @@ const InheritedItems = (props: InheritedItemsProps) => {
               onRemoveItem: handleRemoveItem,
             })}
           </>
-        ) : (
+        ) : visibleList ? (
           <SubWrapper>
             <p className="text-xs">Aucun objet ajouté</p>
           </SubWrapper>
-        )}
+        ) : null}
       </div>
       <RightSideDrawer
         title={props.drawerTitle}
