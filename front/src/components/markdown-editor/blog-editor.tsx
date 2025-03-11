@@ -92,7 +92,7 @@ const BlogEditor = forwardRef(
       <Editor
         onInit={handleInit}
         initialValue={props.content || initialValue}
-        apiKey="b84dqku1gt27ks3ilswsa2rhnl2pio95ge1obf5orx62nwf7"
+        apiKey={import.meta.env.VITE_TINY_KEY}
         init={{
           language: "fr_FR",
           base_url: "http://localhost:3200/tinymce",
