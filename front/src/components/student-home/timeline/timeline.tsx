@@ -1,6 +1,4 @@
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import "./big-calendar-month.css";
-import "./big-calendar-timeline.css";
 
 import { View } from "react-big-calendar";
 import BigCalendarTimeline from "../../UI/big-calendar-timeline/big-calendar-timeline";
