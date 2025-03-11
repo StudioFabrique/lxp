@@ -7,6 +7,7 @@ import LastParcours from "../../components/admin-home/last-parcours";
 import LastFeedback from "../../components/admin-home/last-feedback";
 import useHttp from "../../hooks/use-http";
 import Parcours from "../../utils/interfaces/parcours";
+import TeacherLessonsQualityStats from "../../components/admin-home/teacher-lessons-quality-stats/teacher-lessons-quality-stats";
 
 const links = [
   {
@@ -48,8 +49,6 @@ const AdminHome = () => {
   const { sendRequest, isLoading } = useHttp();
   const [parcours, setParcours] = useState<Parcours[] | null>(null);
 
-  console.log("home admin refreshing");
-
   // retourne les deux parcours auquel l'utilisateur est associé en tant que contact
   const getParcours = useCallback(() => {
     const applyData = (data: {
@@ -63,7 +62,7 @@ const AdminHome = () => {
       {
         path: "/user/last-parcours",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
 
@@ -134,7 +133,7 @@ const AdminHome = () => {
             ) : null}
             <LastParcours />
           </article>
-          <article className="w-full grid grid-cols-1 xl:grid-cols-2 gap-4">
+          <article className="w-full grid grid-cols-1 xl:grid-cols-3 gap-4">
             {/*<Wrapper>
               <div className="w-full h-full flex flex-col items-center xl:items:start">
                 <StatsBar />
@@ -142,6 +141,9 @@ const AdminHome = () => {
               </div>
             </Wrapper>*/}
             <LastFeedback />
+            {/* <Can action="component" object="lessons-quality-stats"> */}
+            <TeacherLessonsQualityStats />
+            {/* </Can> */}
           </article>
         </span>
         {/* <article>

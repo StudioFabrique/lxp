@@ -85,7 +85,7 @@ const BlogEditor = forwardRef(
           return "error";
         }
       },
-      [sendRequest]
+      [sendRequest],
     );
 
     return (
@@ -95,9 +95,9 @@ const BlogEditor = forwardRef(
         apiKey={import.meta.env.VITE_TINY_KEY}
         init={{
           language: "fr_FR",
-          base_url: "http://localhost:3200/tinymce",
+          // base_url: "http://localhost:3200/tinymce",
+          // language_url: "http://localhost:3200/tinymce/langs/fr_FR/fr_FR.js", // Simplified path
           placeholder: "Commencez à éditer le contenu de l'activité ...",
-          language_url: "http://localhost:3200/tinymce/langs/fr_FR/fr_FR.js", // Simplified path
           height: 1000,
           menubar: true,
           plugins: [
@@ -134,7 +134,7 @@ const BlogEditor = forwardRef(
         }}
       />
     );
-  }
+  },
 );
 
 BlogEditor.displayName = "BlogEditor";
