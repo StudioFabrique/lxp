@@ -19,15 +19,15 @@ const DatesForm = (props: DatesFormProps) => {
   const [cumulDurations, setCumulDurations] = useState<number>(0);
   const { value: synchrone } = useInput(
     (value) => regexGeneric.test(value),
-    "0",
+    "0"
   );
   const { value: asynchrone } = useInput(
     (value) => regexGeneric.test(value),
-    "0",
+    "0"
   );
   const { value: startDate } = useInput(
     (value) => regexGeneric.test(value),
-    "",
+    ""
   );
   const { value: endDate } = useInput((value) => regexGeneric.test(value), "");
 
@@ -99,12 +99,16 @@ const DatesForm = (props: DatesFormProps) => {
     }
     if (!testDates()) {
       toast.error(
-        "La date de fin ne doit pas être antérieure à la date de début.",
+        "La date de fin ne doit pas être antérieure à la date de début."
       );
       return false;
     } else if (!testModuleDates()) {
       toast.error(
-        `Les dates saisies doivent se situer entre le ${localeDate(props.module.minDate!)} et le ${localeDate(props.module.maxDate!)}, ce qui correspond à la plage de dates du module.`,
+        `Les dates saisies doivent se situer entre le ${localeDate(
+          props.module.minDate!
+        )} et le ${localeDate(
+          props.module.maxDate!
+        )}, ce qui correspond à la plage de dates du module.`
       );
       return false;
     } else if (
@@ -112,7 +116,7 @@ const DatesForm = (props: DatesFormProps) => {
       props.module.duration
     ) {
       toast.error(
-        "Le cumul des durées du cours ne doit pas être supérieur à la durée totale du module.",
+        "Le cumul des durées du cours ne doit pas être supérieur à la durée totale du module."
       );
       return false;
     }

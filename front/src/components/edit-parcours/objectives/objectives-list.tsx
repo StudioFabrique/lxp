@@ -59,14 +59,21 @@ const ObjectivesList = () => {
 
   const submitUpdateObjective = (objective: Objective) => {
     setItemToUpdate(null);
-    const applyData = (data: any) => {
-      dispatch(parcoursObjectivesAction.editObjective(data.data));
+    const applyData = (data: {
+      success: boolean;
+      message: string;
+      data: Objective;
+    }) => {
+      if (data.success) {
+        toast.success(data.message);
+        dispatch(parcoursObjectivesAction.editObjective(data.data));
+      }
     };
     sendRequest(
       {
         path: "/objective",
         method: "put",
-        body: objective,
+        body: { ...objective },
       },
       applyData
     );

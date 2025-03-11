@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeEvent, ChangeEventHandler, FC } from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 
@@ -19,7 +20,7 @@ const Contact: FC<{
   disabled,
 }) => {
   const handleChangeDate: ChangeEventHandler<HTMLInputElement> = (
-    event: ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement>
   ) => {
     onChangeDate(event.currentTarget.valueAsDate);
   };
@@ -49,7 +50,7 @@ const Contact: FC<{
         <label>Adresse</label>
         <input
           className={setInputStyle(
-            address.hasError && address.value.length > 0,
+            address.hasError && address.value.length > 0
           )}
           type="text"
           onChange={address.valueChangeHandler}
@@ -75,7 +76,7 @@ const Contact: FC<{
         <label>Code Postal</label>
         <input
           className={setInputStyle(
-            postCode.hasError && postCode.value.length > 0,
+            postCode.hasError && postCode.value.length > 0
           )}
           type="text"
           onChange={postCode.valueChangeHandler}

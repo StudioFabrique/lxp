@@ -45,6 +45,8 @@ export default async function createUser(user: IUser, roleId: string) {
 
     // Gérer les créations Prisma en fonction du rôle
     if (firstRole.rank === 1 || firstRole.rank === 2) {
+      console.log("addinng admin");
+
       await prisma.admin.create({ data: { idMdb: createdUser._id } });
     }
 
