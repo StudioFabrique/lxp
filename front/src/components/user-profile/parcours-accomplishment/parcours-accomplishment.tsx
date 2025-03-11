@@ -20,7 +20,7 @@ const ParcoursAccomplishment = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h3 className="text-xl font-bold text-primary">Mon parcours</h3>
+      <h3 className="text-xl font-bold">Mon parcours</h3>
       <Wrapper>
         {isLoading ? (
           <Loader />

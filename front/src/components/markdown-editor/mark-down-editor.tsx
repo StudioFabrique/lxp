@@ -86,7 +86,7 @@ export const Editor = ({ activity, content, onCancel }: EditorProps) => {
             title: values.title,
           },
         },
-        applyData
+        applyData,
       );
     } catch (error) {
       if (error instanceof ZodError) {
@@ -130,7 +130,7 @@ export const Editor = ({ activity, content, onCancel }: EditorProps) => {
               "image",
               process.env.NODE_ENV === "development"
                 ? "http://localhost:5001/" + response.response
-                : response.response
+                : response.response,
             );
         }
       } catch (error) {
@@ -154,7 +154,7 @@ export const Editor = ({ activity, content, onCancel }: EditorProps) => {
         userOnly: true,
       },
     }),
-    [imageHandler]
+    [imageHandler],
   );
 
   return (
