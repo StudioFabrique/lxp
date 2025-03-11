@@ -133,40 +133,43 @@ const LessonForm = React.forwardRef<HTMLInputElement, LessonFormProps>(
           <h2>Modalité</h2>
           <span className="w-full grid grid-cols-3 gap-4">
             <label
-              className="w-full flex gap-x-4 items-center input"
-              htmlFor="mode"
+              className="w-full flex gap-x-4 items-center border border-neutral-300/50 bg-base-300/50 rounded-md p-2"
+              htmlFor="mode-presentiel"
             >
               <input
+                className="radio radio-sm focus:outline-none"
                 type="radio"
                 name="mode"
-                value="presentielle"
-                checked={props.mode === "presentielle"}
+                value="presentiel"
+                checked={props.mode === "presentiel"}
                 onChange={(e) => handleModeChange(e)}
               />
-              Presentielle
+              Presentiel
             </label>
 
             <label
-              className="w-full flex gap-x-4 items-center input"
-              htmlFor="mode"
+              className="w-full flex gap-x-4 items-center border border-neutral-300/50 bg-base-300/50 rounded-md p-2"
+              htmlFor="mode-distanciel"
             >
               <input
+                className="radio radio-sm focus:outline-none"
                 type="radio"
-                name="mode"
-                value="distancielle"
-                checked={props.mode === "distancielle"}
+                name="mode-distanciel"
+                value="distanciel"
+                checked={props.mode === "distanciel"}
                 onChange={(e) => handleModeChange(e)}
               />
-              Distancielle
+              Distanciel
             </label>
 
             <label
-              className="w-full flex gap-x-4 items-center input"
-              htmlFor="mode"
+              className="w-full flex gap-x-4 items-center border border-neutral-300/50 bg-base-300/50 rounded-md p-2"
+              htmlFor="mode-hybride"
             >
               <input
+                className="radio radio-sm focus:outline-none"
                 type="radio"
-                name="mode"
+                name="mode-hybride"
                 value="hybride"
                 checked={props.mode === "hybride"}
                 onChange={(e) => handleModeChange(e)}

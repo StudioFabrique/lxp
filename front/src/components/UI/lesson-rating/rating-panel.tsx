@@ -81,7 +81,7 @@ const RatingPanel = ({
         />
 
         {note && (
-          <div className="text-sm text-base-content/70 border-l-4 border-primary/50 p-2 bg-base-200 rounded">
+          <div className="text-sm text-base-content/70 border-l-4 border-primary/50 p-2 bg-base-200 rounded-sm">
             Vous avez déjà évalué ce contenu, vous pouvez mettre à jour votre
             note
           </div>

@@ -26,10 +26,7 @@ export const ThemeProvider: FC<{ children: React.ReactNode }> = ({
 
     if (lightTheme) {
       themes.light = lightTheme;
-    } else {
-      localStorage.setItem("lightTheme", "winter");
     }
-
     if (darkTheme) {
       themes.dark = darkTheme;
     } else {

@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import DocumentIcon from "../components/UI/svg/document-icon";
-import QuestionCircleIcon from "../components/UI/svg/question-circle-icon";
+//import QuestionCircleIcon from "../components/UI/svg/question-circle-icon";
 import PlayCircleIcon from "../components/UI/svg/play-circle-icon";
-import DiaporamaIcon from "../components/UI/svg/diaporama-icon";
-import AudioIcon from "../components/UI/svg/audio-icon";
+//import DiaporamaIcon from "../components/UI/svg/diaporama-icon";
+//import AudioIcon from "../components/UI/svg/audio-icon";
 import PictureIcon from "../components/UI/svg/picture-icon";
-import CursorArrowRippleIcon from "../components/UI/svg/cursor-arrow-ripple-icon";
-import MapIcon from "../components/UI/svg/map-icon";
-import DegreeIcon from "../components/UI/svg/degree-icon";
+//import CursorArrowRippleIcon from "../components/UI/svg/cursor-arrow-ripple-icon";
+//import MapIcon from "../components/UI/svg/map-icon";
+//import DegreeIcon from "../components/UI/svg/degree-icon";
 import UploadIcon from "../components/UI/svg/upload-icon.component";
-import AddFolder from "../components/UI/svg/add-folder-icon";
+//import AddFolder from "../components/UI/svg/add-folder-icon";
 import ActivityType from "../utils/interfaces/activity-type";
 
 const activityTypes: ActivityType[] = [
@@ -20,7 +20,7 @@ const activityTypes: ActivityType[] = [
     tooltip: "Insérez un document écrit",
     type: "text",
   },
-  {
+  /*{
     icon: <QuestionCircleIcon />,
     label: "Questions",
     tooltip: "",
@@ -31,26 +31,26 @@ const activityTypes: ActivityType[] = [
     label: "Diaporama",
     tooltip: "",
     type: "diaporama",
-  },
+  },*/
   {
     icon: <PlayCircleIcon />,
     label: "Video",
     tooltip: "Insérez une video",
     type: "video",
   },
-  {
+  /*{
     icon: <AudioIcon />,
     label: "Audio",
     tooltip: "",
     type: "audio",
-  },
+  },*/
   {
     icon: <PictureIcon />,
     label: "Image",
     tooltip: "Téléverser une image avec des metadatas",
     type: "image",
   },
-  {
+  /* {
     icon: <CursorArrowRippleIcon />,
     label: "Hotspot",
     tooltip: "",
@@ -67,19 +67,19 @@ const activityTypes: ActivityType[] = [
     label: "Evaluation",
     tooltip: "",
     type: "evaluation",
-  },
+  },*/
   {
     icon: <UploadIcon size={6} />,
     label: "Fichier",
     tooltip: "",
     type: "resource",
   },
-  {
+  /* {
     icon: <AddFolder />,
     label: "Espace Dépôt",
     tooltip: "",
     type: "espace-depot",
-  },
+  },*/
 ];
 
 function linksWithIds(tab: ActivityType[]) {
