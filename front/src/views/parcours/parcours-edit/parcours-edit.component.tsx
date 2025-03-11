@@ -223,7 +223,7 @@ const EditParcours = () => {
                 )}
                 {actualStep.id !== stepsList.length ? (
                   <button
-                    className="btn btn-primary z-50"
+                    className="btn btn-primary z-20"
                     onClick={() => handleUpdateStep(actualStep.id)}
                   >
                     Etape suivante
