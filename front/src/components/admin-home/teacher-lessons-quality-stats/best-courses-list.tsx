@@ -7,13 +7,13 @@ type BesCoursesListProps = {
 
 const BestLessonsList = ({ coursesRating }: BesCoursesListProps) => {
   return (
-    <div className="flex flex-col gap-2 p-2 w-full">
-      <h3 className="font-bold text-base-100">Meilleurs cours</h3>
-
+    <div className="flex flex-col gap-4 p-2 w-full">
       {coursesRating && coursesRating?.length > 0 ? (
         coursesRating.map((item) => (
           <BestCourseItem
-            key={item.courseId}
+            key={item.firstLessonId}
+            firstLessonId={item.firstLessonId}
+            moduleId={item.moduleId}
             title={item.courseTitle}
             rating={item.rating}
           />
@@ -21,6 +21,10 @@ const BestLessonsList = ({ coursesRating }: BesCoursesListProps) => {
       ) : (
         <span className="text-base-300">Aucun cours n'a encore été noté</span>
       )}
+
+      <button className="btn btn-sm btn-secondary text-base-100 self-end">
+        Afficher plus
+      </button>
     </div>
   );
 };

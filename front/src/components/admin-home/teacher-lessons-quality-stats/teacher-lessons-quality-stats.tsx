@@ -19,7 +19,7 @@ const TeacherLessonsQualityStats = () => {
 
   return (
     <div className="flex flex-col gap-2 w-[40%]">
-      <h2 className="font-bold">Qualité des cours</h2>
+      <h2 className="font-bold">Classement des meilleurs cours</h2>
       <div className="bg-primary flex justify-between w-full h-full p-5 rounded-lg">
         {/* <LessonsQualityRadialProgress value={70} /> */}
         <BestLessonsStatsList coursesRating={stats?.coursesRating} />

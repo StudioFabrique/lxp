@@ -4,7 +4,8 @@ export default interface LessonsQualityStats {
 }
 
 export type CourseQualityRating = {
-  courseId: number;
+  firstLessonId: number;
+  moduleId: number;
   courseTitle: string;
   rating: number;
 };

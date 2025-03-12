@@ -76,8 +76,7 @@ const AdminHome = () => {
         <article className="w-full">
           <span className="w-full flex flex-1 flex-col gap-y-2">
             <h2 className="w-full text-3xl font-extrabold capitalize">
-              Bonjour, {user?.roles[0].label} {user?.firstname} {user?.lastname}{" "}
-              !
+              Bonjour, {user?.firstname} {user?.lastname} !
             </h2>
             <p>
               Bienvenue dans votre panneau d'administration, l'outil central
@@ -140,10 +139,12 @@ const AdminHome = () => {
                 <StatsDonut />
               </div>
             </Wrapper>*/}
-            <LastFeedback />
-            {/* <Can action="component" object="lessons-quality-stats"> */}
-            <TeacherLessonsQualityStats />
-            {/* </Can> */}
+            <Can action="component" object="last-feedback">
+              <LastFeedback />
+            </Can>
+            <Can action="component" object="lessons-rating-stats">
+              <TeacherLessonsQualityStats />
+            </Can>
           </article>
         </span>
         {/* <article>
