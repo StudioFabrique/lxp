@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
@@ -51,7 +51,7 @@ import { LinkNode } from "@lexical/link";
 import { CodeNode } from "@lexical/code";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import "./styles.css";
-import useHttp from "../../../hooks/use-http";
+import useHttp from "../../../../hooks/use-http";
 
 const placeholder = "Enter some rich text...";
 
@@ -204,9 +204,21 @@ const IMAGE_TRANSFORMERS: TextMatchTransformer[] = [
 
 const MARKDOWN_TRANSFORMERS = [...IMAGE_TRANSFORMERS, ...TRANSFORMERS];
 
-function EditorContentManager() {
+type EditorContentManagerProps = {
+  content: string;
+  onCancel: () => void;
+  onSubmit: (value: string) => void;
+};
+
+function EditorContentManager({
+  content,
+  onCancel,
+  onSubmit,
+}: EditorContentManagerProps) {
   const [editor] = useLexicalComposerContext();
-  const [markdown, setMarkdown] = useState("");
+  const [markdown, setMarkdown] = useState(content ?? "");
+
+  const hasContent: boolean = markdown.length > 0;
 
   const loadMarkdownFile = async (file: File) => {
     try {
@@ -276,18 +288,34 @@ function EditorContentManager() {
   }, [editor]);
 
   return (
-    <div className="flex justify-end mt-8">
-      <button className="btn btn-primary">Sauvegarder</button>
+    <div className="flex gap-x-4 justify-end items-center p-2">
+      <button
+        className="btn btn-primary btn-outline"
+        disabled={!hasContent}
+        onClick={onCancel}
+      >
+        Retour
+      </button>
+      <button
+        className="btn btn-primary"
+        disabled={!hasContent}
+        onClick={() => onSubmit(markdown)}
+      >
+        Enregistrer
+      </button>
     </div>
   );
 }
 
 type EditorProps = {
-  onSubmit: () => void;
+  content: string;
+  onCancel: () => void;
+  onSubmit: (value: string) => void;
 };
 
-export default function Editor({ onSubmit }: EditorProps) {
+export default function Editor({ content, onCancel, onSubmit }: EditorProps) {
   const { sendRequest } = useHttp();
+
   const uploadImage = useCallback(
     async (blobInfo: any, _progress: any) => {
       try {
@@ -311,6 +339,7 @@ export default function Editor({ onSubmit }: EditorProps) {
     },
     [sendRequest]
   );
+
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div className="editor-container">
@@ -332,7 +361,11 @@ export default function Editor({ onSubmit }: EditorProps) {
           <AutoFocusPlugin />
           <ImagePlugin />
           <MarkdownShortcutPlugin transformers={MARKDOWN_TRANSFORMERS} />
-          <EditorContentManager />
+          <EditorContentManager
+            onSubmit={onSubmit}
+            content={content}
+            onCancel={onCancel}
+          />
         </div>
       </div>
     </LexicalComposer>
