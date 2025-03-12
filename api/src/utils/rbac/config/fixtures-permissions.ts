@@ -93,6 +93,8 @@ export const permDefsActions = {
   teacher: {
     read: [
       "tag",
+      "objective",
+      "role",
       "user",
       "group",
       "formation",

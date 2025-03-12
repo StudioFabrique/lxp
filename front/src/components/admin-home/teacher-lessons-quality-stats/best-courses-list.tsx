@@ -21,10 +21,6 @@ const BestLessonsList = ({ coursesRating }: BesCoursesListProps) => {
       ) : (
         <span className="text-base-300">Aucun cours n'a encore été noté</span>
       )}
-
-      <button className="btn btn-sm btn-secondary text-base-100 self-end">
-        Afficher plus
-      </button>
     </div>
   );
 };

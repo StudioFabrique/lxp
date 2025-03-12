@@ -27,6 +27,7 @@ export default async function getBestRatedCourses(userId: string) {
   const courses = await prisma.course.findMany({
     where: {
       adminId: admin.id,
+      lessons: { some: { lessonRating: { some: { rating: { gt: 0 } } } } },
     },
     take: 4,
     include: {
