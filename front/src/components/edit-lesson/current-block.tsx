@@ -1,7 +1,7 @@
-import Editor from "../markdown-editor/mark-down-editor";
 import Video from "./activities/video";
 import ImageActivityEditor from "./activities/image/image-activity-editor";
 import ResourceUpload from "./activities/resources/resource-upload";
+import BlogEditor from "./activities/text-editor/blog-editor";
 
 type CurrentBlockProps = {
   activityType: string;
@@ -16,7 +16,7 @@ export default function CurrentBlock({
     <>
       {activityType ? (
         <>
-          {activityType === "text" ? <Editor onCancel={onFinish} /> : null}
+          {activityType === "text" ? <BlogEditor onCancel={onFinish} /> : null}
           {activityType === "video" ? (
             <Video onCancel={onFinish} isEditing={true} />
           ) : null}

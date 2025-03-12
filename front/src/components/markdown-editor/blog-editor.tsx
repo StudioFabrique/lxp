@@ -4,7 +4,7 @@
 import { ForwardedRef, forwardRef, useCallback } from "react";
 
 import useHttp from "../../hooks/use-http";
-import Editor from "../edit-lesson/text-editor/editor";
+import Editor from "../edit-lesson/activities/text-editor/editor";
 
 type Props = {
   content: string;

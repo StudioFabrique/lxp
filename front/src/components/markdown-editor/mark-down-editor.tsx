@@ -125,7 +125,7 @@ export const Editor = ({ activity, content, onCancel }: EditorProps) => {
       {/* Éditeur de texte riche */}
       <Wrapper>
         <div className="text-editor text-black bg-white">
-          <Editor onSubmit={() => {}} />
+          <Editor />
         </div>
       </Wrapper>
 
