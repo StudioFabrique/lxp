@@ -133,7 +133,7 @@ const AdminHome = () => {
             ) : null}
             <LastParcours />
           </article>
-          <article className="w-full grid grid-cols-1 xl:grid-cols-3 gap-4">
+          <article className="w-full flex flex-col xl:flex-row gap-4">
             {/*<Wrapper>
               <div className="w-full h-full flex flex-col items-center xl:items:start">
                 <StatsBar />
