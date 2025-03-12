@@ -31,6 +31,9 @@ export default async function getBestRatedCourses(userId: string) {
     take: 4,
     include: {
       lessons: {
+        orderBy: {
+          order: "asc",
+        },
         include: {
           lessonRating: true,
         },
@@ -48,7 +51,8 @@ export default async function getBestRatedCourses(userId: string) {
         ? ratings.reduce((a, b) => a + b, 0) / ratings.length
         : 0;
     return {
-      courseId: course.id,
+      firstLessonId: course.lessons[0]?.id,
+      moduleId: course.moduleId,
       courseTitle: course.title,
       rating: avg,
     };
