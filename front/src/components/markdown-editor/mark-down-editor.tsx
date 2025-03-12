@@ -22,7 +22,6 @@ import useForm from "../UI/forms/hooks/use-form";
 import { activiteMetaDataSchema } from "../../lib/validation/lesson/activite-video";
 import { validationErrors } from "../../helpers/validate";
 import Activity from "../../utils/interfaces/activity";
-import BlogEditor from "./blog-editor";
 import TurndownService from "turndown";
 
 // Définition des props du composant Editor
@@ -89,7 +88,7 @@ export const Editor = ({ activity, content, onCancel }: EditorProps) => {
             title: values.title,
           },
         },
-        applyData,
+        applyData
       );
     } catch (error) {
       if (error instanceof ZodError) {
@@ -101,49 +100,6 @@ export const Editor = ({ activity, content, onCancel }: EditorProps) => {
       }
     }
   };
-
-  // Gestionnaire pour l'upload d'images
-  /*  const imageHandler = useCallback(async () => {
-    const input = document.createElement("input");
-    input.setAttribute("type", "file");
-    input.setAttribute("accept", "image/*");
-
-    input.onchange = async () => {
-      const file = input.files?.[0];
-      if (!file) return;
-
-      const formData = new FormData();
-      formData.append("image", file);
-
-      try {
-        // Upload de l'image
-        const response = await sendRequest({
-          path: "/activity/blog-image",
-          method: "post",
-          body: formData,
-        });
-
-        // Insertion de l'image dans l'éditeur
-        if (response?.response && tinyRef.current) {
-          const range = tinyRef.current.getEditor().getSelection();
-          tinyRef.current
-            .getEditor()
-            .insertEmbed(
-              range?.index || 0,
-              "image",
-              process.env.NODE_ENV === "development"
-                ? "http://localhost:5001/" + response.response
-                : response.response,
-            );
-        }
-      } catch (error) {
-        toast.error("Échec du téléchargement de l'image");
-      }
-    };
-
-    input.click();
-  }, [sendRequest]);
-  */
 
   return (
     <div className="my-8 flex flex-col gap-y-4">
@@ -169,7 +125,7 @@ export const Editor = ({ activity, content, onCancel }: EditorProps) => {
       {/* Éditeur de texte riche */}
       <Wrapper>
         <div className="text-editor text-black bg-white">
-          <BlogEditor ref={tinyRef} content={editorContent || ""} />
+          <Editor onSubmit={() => {}} />
         </div>
       </Wrapper>
 
