@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Editor } from "@tinymce/tinymce-react";
+
 import { ForwardedRef, forwardRef, useCallback } from "react";
-import { Editor as TinyMCEEditor } from "tinymce";
+
 import useHttp from "../../hooks/use-http";
+import Editor from "../edit-lesson/activities/text-editor/editor";
 
 type Props = {
   content: string;
@@ -64,76 +65,7 @@ const BlogEditor = forwardRef(
       input.click();
     }, [sendRequest]);*/
 
-    const uploadImage = useCallback(
-      async (blobInfo: any, _progress: any) => {
-        try {
-          const formData = new FormData();
-          formData.append("image", blobInfo.blob(), blobInfo.filename());
-
-          const response = await sendRequest({
-            path: "/activity/blog-image",
-            method: "post",
-            body: formData,
-          });
-          console.log({ response });
-
-          const imageUrl = "http://localhost:5001" + response.response;
-
-          return imageUrl;
-        } catch (error) {
-          console.error("Erreur upload image:", error);
-          return "error";
-        }
-      },
-      [sendRequest]
-    );
-
-    return (
-      <Editor
-        onInit={handleInit}
-        initialValue={props.content || initialValue}
-        apiKey={import.meta.env.VITE_TINY_KEY}
-        init={{
-          language: "fr_FR",
-          base_url: "http://localhost:3200/tinymce",
-          placeholder: "Commencez à éditer le contenu de l'activité ...",
-          language_url: "http://localhost:3200/tinymce/langs/fr_FR/fr_FR.js", // Simplified path
-          height: 1000,
-          menubar: true,
-          plugins: [
-            "anchor",
-            "autolink",
-            "charmap",
-            "codesample",
-            "emoticons",
-            "image",
-            "link",
-            "lists",
-            "media",
-            "searchreplace",
-            "table",
-            "visualblocks",
-            "wordcount",
-            "linkchecker",
-          ].join(" "),
-          toolbar: [
-            "undo redo",
-            "blocks fontfamily fontsize",
-            "bold italic underline strikethrough",
-            "link image",
-            "align lineheight",
-            "numlist bullist indent outdent",
-            "emoticons charmap",
-            "removeformat",
-          ].join(" | "),
-          content_style:
-            "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-          images_upload_handler: uploadImage,
-          skin: "oxide",
-          content_css: "default",
-        }}
-      />
-    );
+    return <Editor />;
   }
 );
 

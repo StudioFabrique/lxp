@@ -154,7 +154,7 @@ const useLessonHome = () => {
     getActivities();
   }, [getActivities]);
 
-  // Gère le message de succès qui disparaît après 5 secondes
+  // Gère le message de succès : disparaît après 5 secondes
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (success) {
