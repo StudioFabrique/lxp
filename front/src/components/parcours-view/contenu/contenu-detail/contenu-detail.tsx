@@ -8,7 +8,10 @@ import Course from "../../../../utils/interfaces/course";
 import EditIcon from "../../../UI/svg/edit-icon";
 import { Link, useLocation } from "react-router-dom";
 
-const ContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
+const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
+  parcoursId,
+  moduleId,
+}) => {
   const { sendRequest, isLoading } = useHttp(true);
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
@@ -27,7 +30,7 @@ const ContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
       {
         path: `/course/${moduleId}`,
       },
-      applyData
+      applyData,
     );
   }, [sendRequest, moduleId]);
 
@@ -72,6 +75,7 @@ const ContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
         <Can action="write" object="course">
           <Link
             to="/admin/course/add"
+            state={{ parcoursId, moduleId }}
             className="btn btn-primary btn-sm normal-case"
           >
             Ajouter un cours

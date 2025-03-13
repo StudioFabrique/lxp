@@ -8,7 +8,7 @@ import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import Selecter from "../../components/UI/selecter/selecter.component";
 import NewCourseForm from "../../components/edit-course/new-course-form";
 import bgImage from "../../assets/images/new-parcours-default.jpg";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 // type de données pour les listes
 type Item = {
@@ -20,10 +20,15 @@ type Item = {
 
 const AddCourse = () => {
   const { sendRequest, error } = useHttp();
+  const location = useLocation();
   const [parcoursList, setParcoursList] = useState<Item[]>([]);
-  const [parcoursId, setParcoursId] = useState<number | null>(null);
+  const [parcoursId, setParcoursId] = useState<number | null>(
+    location.state?.parcoursId,
+  );
   const [modulesList, setModulesList] = useState<Item[]>([]);
-  const [moduleId, setModuleId] = useState<number | null>(null);
+  const [moduleId, setModuleId] = useState<number | null>(
+    location.state?.moduleId,
+  );
   const [isLoading, setIsLoading] = useState(false);
   const nav = useNavigate();
 
@@ -74,7 +79,7 @@ const AddCourse = () => {
           method: "post",
           body: { title, moduleId },
         },
-        applyData
+        applyData,
       );
     }
   };
@@ -90,7 +95,7 @@ const AddCourse = () => {
       {
         path: "/parcours/select",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
 
@@ -109,7 +114,7 @@ const AddCourse = () => {
         {
           path: `/modules/${parcoursId}`,
         },
-        applyData
+        applyData,
       );
     }
   }, [parcoursId, sendRequest]);
@@ -143,11 +148,13 @@ const AddCourse = () => {
                   </div>
                   <div className="flex flex-col gap-y-8">
                     <Selecter
+                      defaultItem={{ id: parcoursId ?? 0, title: "" }}
                       list={parcoursList}
                       title="Choisissez un parcours"
                       onSelectItem={handleParcours}
                     />
                     <Selecter
+                      defaultItem={{ id: moduleId ?? 0, title: "" }}
                       list={modulesList}
                       title="Choisisez un module"
                       onSelectItem={handleModuleId}
