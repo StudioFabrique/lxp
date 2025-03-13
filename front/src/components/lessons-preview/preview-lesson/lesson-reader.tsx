@@ -38,7 +38,7 @@ const LessonReader = ({
         <Can action="write" object="lesson">
           <Link
             to={`/admin/lesson/edit/${selectedLesson.id}`}
-            className="btn btn-primary btn-sm"
+            className="btn btn-primary text-base-100 btn-sm"
           >
             <EditIcon />
           </Link>
