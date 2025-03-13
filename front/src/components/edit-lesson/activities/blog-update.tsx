@@ -4,13 +4,12 @@
 // Import des dépendances nécessaires pour le composant
 import { useEffect, useState } from "react";
 import Activity from "../../../utils/interfaces/activity"; // Interface définissant la structure d'une activité
-import markdownit from "markdown-it"; // Bibliothèque pour parser le markdown
-import Editor from "../../markdown-editor/mark-down-editor"; // Composant éditeur personnalisé
 import toast from "react-hot-toast"; // Notifications toast
 import Wrapper from "../../UI/wrapper/wrapper.component"; // Composant wrapper UI
 import { ACTIVITIES } from "../../../config/urls"; // URLs de l'API
 import { useNavigate } from "react-router-dom"; // Hook de navigation
 import { marked } from "marked";
+import BlogEditor from "./text-editor/blog-editor";
 
 // Définition des props du composant BlogUpdate
 type Props = {
@@ -18,9 +17,6 @@ type Props = {
   isEditing: boolean; // État d'édition (true = mode édition, false = mode lecture)
   onSubmitted: (newValue: boolean) => void; // Callback appelé après la soumission réussie
 };
-
-// Initialisation du parser markdown-it avec les options par défaut
-const md = markdownit();
 
 export const BlogUpdate = ({ activity, isEditing }: Props) => {
   // Hook de navigation pour la redirection
@@ -64,14 +60,15 @@ export const BlogUpdate = ({ activity, isEditing }: Props) => {
   };
 
   console.log({ content });
+  console.log("toto");
 
   return (
     <div className="w-full">
       {isEditing ? (
         // Mode édition : affiche l'éditeur WYSIWYG
-        <Editor
+        <BlogEditor
           activity={activity}
-          content={content.html || md.render(content.markdown)}
+          content={content.markdown}
           onCancel={handleCancelEdition}
         />
       ) : (
