@@ -84,10 +84,7 @@ const LessonsPreview = () => {
             {/* Bouton pour terminer la leçon afin d'afficher une modal */}
             <Can action="component" object="progression">
               <FeedbacksButton
-                title={
-                  isLessonCompleted ? "Leçon Suivante" : "Marquer comme terminé"
-                }
-                className="btn btn-primary text-nowrap"
+                className="btn btn-primary text-nowrap text-base-100"
                 feedbackType="thumbUp"
                 enableAnimationOnClick={!isLessonCompleted}
                 disabled={showModal}
@@ -96,7 +93,9 @@ const LessonsPreview = () => {
                     ? onCompleteLesson
                     : handleToggleModalDisplaying
                 }
-              />
+              >
+                {isLessonCompleted ? "Leçon Suivante" : "Marquer comme terminé"}
+              </FeedbacksButton>
             </Can>
           </LessonReader>,
           /* Dans le cas où aucune leçon n'est affiché,

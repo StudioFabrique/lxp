@@ -1,18 +1,13 @@
-import { motion, useCycle } from "framer-motion";
 import { PartyPopperIcon } from "lucide-react";
 import { useContext } from "react";
 import { Context } from "../../../../store/context.store";
 import { Accomplishment } from "../../../../utils/interfaces/accomplishment";
+import FeedbacksButton from "../../../UI/feedbacks/feedbacks-button";
 
 const Item = ({ accomplishment }: { accomplishment: Accomplishment }) => {
   const { socket, user } = useContext(Context);
 
-  const [animate, cycle] = useCycle(
-    { scale: 1.0, opacity: 1 },
-    { scale: 1.5, opacity: 0 },
-  );
-
-  const handleTap = () => {
+  const handleClick = () => {
     if (!socket) return;
     const idMdbUserFrom = user?._id;
 
@@ -21,8 +16,6 @@ const Item = ({ accomplishment }: { accomplishment: Accomplishment }) => {
       accomplishmentId: accomplishment.id,
       idMdbUserFrom,
     });
-
-    cycle(1);
   };
 
   return (
@@ -35,14 +28,14 @@ const Item = ({ accomplishment }: { accomplishment: Accomplishment }) => {
           </p>
         </span>
       </div>
-      <motion.button
-        type="button"
-        onTap={handleTap}
-        animate={animate}
-        className="p-2 bg-secondary/70 text-primary-content rounded-lg shrink-0"
+      <FeedbacksButton
+        className="btn btn-primary btn-sm text-nowrap"
+        feedbackType="confetti"
+        enableAnimationOnClick
+        onClick={handleClick}
       >
         <PartyPopperIcon />
-      </motion.button>
+      </FeedbacksButton>
     </div>
   );
 };
