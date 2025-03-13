@@ -288,15 +288,20 @@ function EditorContentManager({
     });
   }, [editor]);
 
+  const handleCancel = () => {
+    if (markdown.length > 0) {
+      alert(
+        "Attention tous les changements non sauvegardés seront perdus. Êtes-vous sûr de vouloir annuler ?"
+      );
+    }
+    onCancel();
+  };
+
   return (
     <>
       <div className="divider" />
       <div className="flex gap-x-4 justify-end items-center p-2">
-        <button
-          className="btn btn-primary btn-outline"
-          disabled={!hasContent}
-          onClick={onCancel}
-        >
+        <button className="btn btn-primary btn-outline" onClick={handleCancel}>
           Retour
         </button>
         <button
