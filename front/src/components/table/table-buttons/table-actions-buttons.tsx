@@ -24,6 +24,8 @@ type TableButtonsProps<TData> = {
 };
 
 const TableActionsButtons = <TData,>(props: TableButtonsProps<TData>) => {
+  const [isModalLoading, setIsModalLoading] = useState<boolean>(false);
+
   const descList =
     props.onRetreiveItemsValuesByPropertyFromIdList &&
     props.retreiveItemsProperty &&
@@ -35,6 +37,17 @@ const TableActionsButtons = <TData,>(props: TableButtonsProps<TData>) => {
   const [currentAction, setCurrentAction] = useState<Action<TData> | null>(
     null,
   );
+
+  const handleConfirmAction = async () => {
+    if (!currentAction) return;
+
+    setIsModalLoading(true);
+
+    await currentAction.onConfirm();
+
+    setIsModalLoading(false);
+    setShowModal(false);
+  };
 
   const handleOpenModal = (action: Action<TData>) => {
     setCurrentAction(action);
@@ -48,16 +61,20 @@ const TableActionsButtons = <TData,>(props: TableButtonsProps<TData>) => {
 
   return (
     <>
-      {showModal && currentAction ? (
+      {currentAction ? (
         <TableActionsModal
-          title={currentAction.title}
-          description={currentAction.description}
-          alertMessageBottom={currentAction.alertMessageBottom}
+          {...currentAction}
           descList={descList}
-          rightButtonTitle={currentAction.rightButtonTitle}
-          onConfirm={currentAction.onConfirm}
+          isOpen={showModal}
           onCancel={handleCloseModal}
-        />
+        >
+          <button
+            className={`btn btn-error btn-md text-warning ${isModalLoading && "loading"}`}
+            onClick={handleConfirmAction}
+          >
+            Confirmer
+          </button>
+        </TableActionsModal>
       ) : null}
       <div className="flex items-center">
         <button

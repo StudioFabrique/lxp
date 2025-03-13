@@ -53,6 +53,7 @@ import httpGetCoursesFromModule from "../../../controllers/course/http-get-cours
 import { moduleIdValidator } from "../modules/module-validators";
 import { query } from "express-validator";
 import { checkValidatorResult } from "../../../middleware/validators";
+import httpGetBestRatedCourses from "../../../controllers/course/http-get-best-rated-courses";
 
 const courseRouter = express.Router();
 
@@ -168,6 +169,12 @@ courseRouter.get(
   "/most-read",
   checkPermissions("course"),
   httpGetMostReadCourses,
+);
+
+courseRouter.get(
+  "/best-rated",
+  checkPermissions("course"),
+  httpGetBestRatedCourses,
 );
 
 /**

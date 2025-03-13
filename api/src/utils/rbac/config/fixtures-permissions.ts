@@ -5,7 +5,7 @@ export const permDefsInterface = {
   },
   "interface:teacher": {
     layout: ["teacher", "student"],
-    component: ["calendar"],
+    component: ["calendar", "lessons-rating-stats", "last-feedback"],
   },
   "interface:student": {
     layout: ["student"],
@@ -93,6 +93,8 @@ export const permDefsActions = {
   teacher: {
     read: [
       "tag",
+      "objective",
+      "role",
       "user",
       "group",
       "formation",

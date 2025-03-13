@@ -1,35 +1,25 @@
-import { FC, useEffect, useState } from "react";
-import Portal from "../../UI/portal/portal";
+import { PropsWithChildren, useEffect } from "react";
 
-const TableActionsModal: FC<{
+type TableActionsModalProps = {
   title?: string;
   description?: string;
   descList?: string[];
   error?: string;
   alertMessageBottom?: string;
-  rightButtonTitle: string;
+  isOpen: boolean;
   onCancel: () => void;
-  onConfirm: () => Promise<void>;
-}> = ({
+};
+
+const TableActionsModal = ({
+  children,
   title,
   description,
   descList,
   error,
   alertMessageBottom,
-  rightButtonTitle,
+  isOpen,
   onCancel,
-  onConfirm,
-}) => {
-  const [isLoading, setIsloading] = useState<boolean>(false);
-
-  const handleConfirmAction = async () => {
-    setIsloading(true);
-    await onConfirm();
-    setIsloading(false);
-    // after completed request, close the modal with onCancel
-    onCancel();
-  };
-
+}: PropsWithChildren<TableActionsModalProps>) => {
   useEffect(() => {
     document.body.addEventListener(
       "keydown",
@@ -38,46 +28,37 @@ const TableActionsModal: FC<{
   });
 
   return (
-    <Portal>
-      <div className="relative left-0 top-0 w-screen h-screen bg-black/20 z-20">
-        <div className="absolute z-50 top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] min-w-[30rem]">
-          <div className="modal-box px-8 w-full">
-            <div className="flex gap-x-2">
-              <h3 className="font-bold pb-4 text-primary">
-                {title || "Confirmation"}
-              </h3>
-            </div>
-            <p className="text-secondary">{description}</p>
-            {descList ? (
-              <ul className="py-2 flex flex-col gap-1">
-                {descList.map((item) => (
-                  <li
-                    key={item}
-                    className="pl-2 opacity-80 capitalize"
-                  >{`- ${item}`}</li>
-                ))}
-              </ul>
-            ) : null}
-            <p className="text-error text-sm pb-2">{alertMessageBottom}</p>
-            <div className="modal-action flex justify-between overflow-hidden">
-              <button
-                className="btn btn-outline btn-primary btn-md"
-                onClick={onCancel}
-              >
-                Annuler
-              </button>
-              <button
-                className={`btn btn-primary btn-md ${isLoading && "loading"}`}
-                onClick={handleConfirmAction}
-              >
-                {rightButtonTitle}
-              </button>
-            </div>
-            {error && <p>{error}</p>}
-          </div>
+    <dialog id="modal1" className="modal bg-black/50" open={isOpen}>
+      <div className="modal-box px-8 w-full">
+        <div className="flex gap-x-2">
+          <h3 className="font-bold pb-4 text-primary">
+            {title || "Confirmation"}
+          </h3>
         </div>
+        <p className="text-secondary">{description}</p>
+        {descList ? (
+          <ul className="py-2 flex flex-col gap-1">
+            {descList.map((item) => (
+              <li
+                key={item}
+                className="pl-2 opacity-80 capitalize"
+              >{`- ${item}`}</li>
+            ))}
+          </ul>
+        ) : null}
+        <p className="text-error text-sm pb-2">{alertMessageBottom}</p>
+        <div className="modal-action flex justify-end overflow-hidden">
+          <button
+            className="btn btn-outline btn-primary btn-md"
+            onClick={onCancel}
+          >
+            Annuler
+          </button>
+          {children}
+        </div>
+        {error && <p>{error}</p>}
       </div>
-    </Portal>
+    </dialog>
   );
 };
 

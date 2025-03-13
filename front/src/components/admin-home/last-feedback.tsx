@@ -24,7 +24,7 @@ export default function LastFeedback() {
       {
         path: "/user/last-feedbacks/false",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
 
@@ -53,7 +53,7 @@ export default function LastFeedback() {
               return { ...feedback, hasBeenReviewed: true };
             }
             return feedback;
-          })
+          }),
         );
       });
     }
@@ -64,7 +64,7 @@ export default function LastFeedback() {
   }, [getLastFeedback]);
 
   return (
-    <div className="flex flex-col gap-y-2">
+    <div className="flex flex-col gap-y-2 w-full">
       <h2 className="font-bold">Derniers feedbacks des apprenants</h2>
       {feedbacks.length > 0 ? (
         <ul className="flex flex-col gap-y-2">
