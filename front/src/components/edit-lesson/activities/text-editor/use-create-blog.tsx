@@ -6,10 +6,16 @@ import useForm from "../../../UI/forms/hooks/use-form";
 import useHttp from "../../../../hooks/use-http";
 import { ZodError } from "zod";
 import { validationErrors } from "../../../../helpers/validate";
+import { useEffect } from "react";
 
-const useCreateBlog = (lessonId: string, activity: Activity | null) => {
+const useCreateBlog = (
+  lessonId: string,
+  activity: Activity | null,
+  onCancel: () => void
+) => {
   // Hook de formulaire personnalisé pour la gestion des champs
-  const { errors, values, onChangeValue, onValidationErrors } = useForm();
+  const { errors, values, onChangeValue, onValidationErrors, initValues } =
+    useForm();
   const { sendRequest, isLoading } = useHttp();
 
   const handleSubmit = async (value: string) => {
@@ -18,6 +24,7 @@ const useCreateBlog = (lessonId: string, activity: Activity | null) => {
 
       const applyData = (_data: Activity) => {
         toast.success("Activité créée avec succès");
+        onCancel();
       };
 
       // Envoi de la requête au serveur
@@ -43,6 +50,15 @@ const useCreateBlog = (lessonId: string, activity: Activity | null) => {
     }
   };
 
+  useEffect(() => {
+    if (activity) {
+      initValues({
+        title: activity.title,
+        description: activity.description,
+      });
+    }
+  }, [activity, initValues]);
+
   return {
     errors,
     values,
@@ -50,6 +66,7 @@ const useCreateBlog = (lessonId: string, activity: Activity | null) => {
     onValidationErrors,
     handleSubmit,
     isLoading,
+    initValues,
   };
 };
 export default useCreateBlog;

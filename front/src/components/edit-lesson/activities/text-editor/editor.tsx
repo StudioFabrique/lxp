@@ -215,48 +215,49 @@ function EditorContentManager({
   onCancel,
   onSubmit,
 }: EditorContentManagerProps) {
+  console.log("Initial content:", content);
+
   const [editor] = useLexicalComposerContext();
   const [markdown, setMarkdown] = useState(content ?? "");
 
   const hasContent: boolean = markdown.length > 0;
 
-  const loadMarkdownFile = async (file: File) => {
-    try {
-      const content = await file.text();
-      console.log("Contenu du fichier markdown:", content);
+  const loadMarkdownFile = useCallback(() => {
+    // Extraire les images du contenu markdown
+    const imageMatches = [...content.matchAll(/!\[(.*?)\]\((.*?)\)/g)];
+    const images = imageMatches.map((match) => ({
+      alt: match[1] || "",
+      src: match[2],
+    }));
 
-      // Extraire les images du contenu markdown
-      const imageMatches = [...content.matchAll(/!\[(.*?)\]\((.*?)\)/g)];
-      const images = imageMatches.map((match) => ({
-        alt: match[1] || "",
-        src: match[2],
-      }));
-
-      // Charger d'abord le contenu sans les images
-      let processedContent = content;
-      for (const img of imageMatches) {
-        processedContent = processedContent.replace(img[0], "");
-      }
-
-      editor.update(() => {
-        const root = $getRoot();
-        root.clear();
-
-        // Convertir le markdown en nœuds Lexical
-        $convertFromMarkdownString(processedContent, MARKDOWN_TRANSFORMERS);
-
-        // Ajouter les images manuellement
-        for (const img of images) {
-          editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
-            src: img.src,
-            altText: img.alt,
-          });
-        }
-      });
-    } catch (error) {
-      console.error("Error loading markdown file:", error);
+    // Charger d'abord le contenu sans les images
+    let processedContent = content;
+    for (const img of imageMatches) {
+      processedContent = processedContent.replace(img[0], "");
     }
-  };
+
+    editor.update(() => {
+      const root = $getRoot();
+      root.clear();
+
+      // Convertir le markdown en nœuds Lexical
+      $convertFromMarkdownString(processedContent, MARKDOWN_TRANSFORMERS);
+
+      // Ajouter les images manuellement
+      for (const img of images) {
+        editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
+          src: img.src,
+          altText: img.alt,
+        });
+      }
+    });
+  }, [content, editor]);
+
+  useEffect(() => {
+    if (content) {
+      loadMarkdownFile();
+    }
+  }, [content, loadMarkdownFile]);
 
   useEffect(() => {
     return editor.registerUpdateListener(({ editorState }) => {
@@ -288,22 +289,25 @@ function EditorContentManager({
   }, [editor]);
 
   return (
-    <div className="flex gap-x-4 justify-end items-center p-2">
-      <button
-        className="btn btn-primary btn-outline"
-        disabled={!hasContent}
-        onClick={onCancel}
-      >
-        Retour
-      </button>
-      <button
-        className="btn btn-primary"
-        disabled={!hasContent}
-        onClick={() => onSubmit(markdown)}
-      >
-        Enregistrer
-      </button>
-    </div>
+    <>
+      <div className="divider" />
+      <div className="flex gap-x-4 justify-end items-center p-2">
+        <button
+          className="btn btn-primary btn-outline"
+          disabled={!hasContent}
+          onClick={onCancel}
+        >
+          Retour
+        </button>
+        <button
+          className="btn btn-primary"
+          disabled={!hasContent}
+          onClick={() => onSubmit(markdown)}
+        >
+          Enregistrer
+        </button>
+      </div>
+    </>
   );
 }
 
