@@ -32,7 +32,7 @@ const LessonItem = ({
       onClick={handleBeginReadLesson}
       className={`flex items-center justify-between rounded-xl p-2 w-full cursor-pointer ${
         isLessonSelected
-          ? "bg-primary text-primary-content"
+          ? "bg-primary text-base-100"
           : "bg-primary/60 text-primary-content"
       }`}
     >

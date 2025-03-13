@@ -8,7 +8,7 @@ import DeleteIcon from "../UI/svg/delete-icon.component";
 import EditIcon from "../UI/svg/edit-icon";
 import LessonsList from "../edit-course/scenario/lessons-list";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
-import { Activity } from "lucide-react";
+import { Activity, Eye } from "lucide-react";
 
 // Interface définissant les props du composant
 interface LessonHomeProps {
@@ -82,6 +82,27 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
                         aria-label="ajouter une activité"
                       >
                         <Activity />
+                      </Link>
+                    </div>
+                  </Can>
+                </div>
+              </td>
+              {/* Bouton de l'aperçu */}
+              <td className="bg-transparent">
+                <div
+                  className="w-6 h-6 text-secondary"
+                  aria-label="aperçu de la leçon"
+                >
+                  <Can action="read" object="lesson">
+                    <div
+                      className="tooltip tooltip-bottom flex-items-center"
+                      data-tip="Aperçu de la leçon"
+                    >
+                      <Link
+                        to={`/admin/parcours/module/${item.course.module.id}`}
+                        state={{ lessonId: item.id }}
+                      >
+                        <Eye />
                       </Link>
                     </div>
                   </Can>
