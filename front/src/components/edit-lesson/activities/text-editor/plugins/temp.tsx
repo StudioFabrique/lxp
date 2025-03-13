@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
@@ -7,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { mergeRegister } from "@lexical/utils";
 import {
@@ -21,9 +18,11 @@ import {
   SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
   $createParagraphNode,
+  $getRoot,
 } from "lexical";
 import { $setBlocksType } from "@lexical/selection";
 import { $createHeadingNode, HeadingTagType } from "@lexical/rich-text";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { INSERT_IMAGE_COMMAND } from "../nodes/ImageNode";
 
 const LowPriority = 1;
@@ -43,11 +42,7 @@ function Divider() {
   return <div className="divider" />;
 }
 
-interface ToolbarPluginProps {
-  uploadImage?: (blobInfo: any, progress: any) => Promise<string>;
-}
-
-const ToolbarPlugin = ({ uploadImage }: ToolbarPluginProps) => {
+export default function ToolbarPlugin() {
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef(null);
   const [canUndo, setCanUndo] = useState(false);
@@ -87,46 +82,22 @@ const ToolbarPlugin = ({ uploadImage }: ToolbarPluginProps) => {
     setBlockType(newBlockType);
   };
 
-  const insertImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const insertImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     const file = files?.[0];
 
     if (file) {
-      if (uploadImage) {
-        try {
-          // Créer un blobInfo compatible avec la fonction uploadImage
-          const blobInfo = {
-            blob: () => file,
-            filename: () => file.name,
-          };
-
-          // Appeler la fonction uploadImage pour envoyer l'image au serveur
-          const imageUrl = await uploadImage(blobInfo, null);
-
-          // Insérer l'image avec l'URL retournée par le serveur
-          if (imageUrl && imageUrl !== "error") {
-            editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
-              src: imageUrl,
-              altText: file.name || "Image",
-            });
-          }
-        } catch (error) {
-          console.error("Erreur lors de l'upload de l'image:", error);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result;
+        if (typeof result === "string") {
+          editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
+            src: result,
+            altText: file.name || "Image",
+          });
         }
-      } else {
-        // Fallback au comportement original si uploadImage n'est pas fourni
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const result = e.target?.result;
-          if (typeof result === "string") {
-            editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
-              src: result,
-              altText: file.name || "Image",
-            });
-          }
-        };
-        reader.readAsDataURL(file);
-      }
+      };
+      reader.readAsDataURL(file);
     }
     e.target.value = "";
   };
@@ -148,7 +119,7 @@ const ToolbarPlugin = ({ uploadImage }: ToolbarPluginProps) => {
       const elementKey = element?.getKey();
 
       if (elementKey !== null) {
-        const elementDOM = editor.getElementByKey(elementKey!);
+        const elementDOM = editor.getElementByKey(elementKey);
         if (elementDOM !== null) {
           const type = elementDOM?.nodeName.toLowerCase();
           setBlockType(type);
@@ -192,10 +163,7 @@ const ToolbarPlugin = ({ uploadImage }: ToolbarPluginProps) => {
   }, [editor, $updateToolbar]);
 
   return (
-    <div
-      className="toolbar flex mb-1 bg-white p-1 rounded-t-lg"
-      ref={toolbarRef}
-    >
+    <div className="toolbar" ref={toolbarRef}>
       <button
         disabled={!canUndo}
         onClick={() => {
@@ -324,6 +292,4 @@ const ToolbarPlugin = ({ uploadImage }: ToolbarPluginProps) => {
       />
     </div>
   );
-};
-
-export default ToolbarPlugin;
+}
