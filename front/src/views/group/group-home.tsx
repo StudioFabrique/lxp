@@ -69,7 +69,7 @@ const GroupHome = () => {
         description="Créer, modifier et supprimer des groupes"
       >
         <Can object="group" action="write">
-          <Link className="btn btn-primary" to="/admin/group/add">
+          <Link className="btn btn-primary text-base-100" to="/admin/group/add">
             Créer un groupe
           </Link>
         </Can>

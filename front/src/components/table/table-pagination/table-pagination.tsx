@@ -20,7 +20,7 @@ const TablePagination = (props: TablePaginationProps) => {
   // Génere un tableau qui contient une liste de nombres compté jusque
   // le maximum de pages avec une incrémentation de 5
   // exemple : [1, 5, 10, 15, 16]
-  const valueArray = iterateNumberToArray(props.maxPage, 5);
+  const pageValueArray = iterateNumberToArray(props.maxPage, 5);
 
   return (
     <div className="flex lg:flex-row flex-col gap-5 lg:gap-10 rounded-lg justify-between w-full bg-primary p-1 py-5 lg:py-1 text-base-100">
@@ -45,14 +45,14 @@ const TablePagination = (props: TablePaginationProps) => {
           >
             <ChevronLeft />
           </button>
-          {!(props.maxPage === 1) && (
+          {!(props.maxPage === 1) ? (
             <DropdownSelector
               onSelect={props.onSetCurrentPage}
-              valueList={valueArray}
+              valueList={pageValueArray}
             >
               {`${props.currentPage} sur ${props.maxPage}`}
             </DropdownSelector>
-          )}
+          ) : null}
           <button
             onClick={props.onSetNextPage}
             className={`join-item btn btn-sm btn-ghost ${props.currentPage === props.maxPage && "invisible"}`}
