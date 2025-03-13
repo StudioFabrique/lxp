@@ -13,7 +13,7 @@ const ParcoursStatistiquesItem = ({
       data-tip={value}
     >
       <p className="text-sm">{title}</p>
-      <p className="w-24 text-base truncate">{value}</p>
+      <p className="w-24 text-base truncate text-center">{value}</p>
     </div>
   );
 };

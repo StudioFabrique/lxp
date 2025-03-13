@@ -25,7 +25,7 @@ const TeacherLessonsQualityStats = () => {
         {/* <LessonsQualityRadialProgress value={70} /> */}
         <BestLessonsStatsList coursesRating={stats?.coursesRating} />
         <Link
-          to="/admin/courses-stats"
+          to="/admin/course/stats"
           className="btn btn-sm btn-secondary text-base-100 self-end"
         >
           Afficher plus
