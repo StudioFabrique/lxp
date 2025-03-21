@@ -52,7 +52,6 @@ import { CodeNode } from "@lexical/code";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import "./styles.css";
 import useHttp from "../../../../hooks/use-http";
-import { url } from "../../../../config/urls";
 
 const placeholder = "Enter some rich text...";
 
@@ -338,7 +337,10 @@ export default function Editor({ content, onCancel, onSubmit }: EditorProps) {
           body: formData,
         });
 
-        const imageUrl = url + response.response;
+        const imageUrl =
+          process.env.NODE_ENV === "development"
+            ? "http://localhost:5001/" + response.response
+            : response.response;
 
         return imageUrl;
       } catch (error) {
