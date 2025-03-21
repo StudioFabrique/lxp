@@ -1,4 +1,4 @@
-export const url =
+const url =
   process.env.NODE_ENV === "development" ? "http://localhost:5001/" : "/";
 
 export const BASE_URL = url + "v1";
