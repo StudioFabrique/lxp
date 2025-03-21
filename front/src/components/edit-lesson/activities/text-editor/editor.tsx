@@ -339,7 +339,7 @@ export default function Editor({ content, onCancel, onSubmit }: EditorProps) {
 
         const imageUrl =
           process.env.NODE_ENV === "development"
-            ? "http://localhost:5001/" + response.response
+            ? "http://localhost:5001" + response.response
             : response.response;
 
         return imageUrl;
