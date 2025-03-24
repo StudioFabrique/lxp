@@ -33,6 +33,12 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
 
   const nameInputRef: Ref<HTMLInputElement> = useRef(null);
 
+  const formClassName = useMemo(() => "flex flex-col gap-y-5", []);
+  const inputClassName = useMemo(
+    () => (hasError: boolean) => setInputStyle(hasError),
+    [],
+  );
+
   const { value: name } = useInput(
     (value: string) => regexGeneric.test(value),
     role?.role || "",
@@ -66,6 +72,14 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
     [fetchRoles, user],
   );
 
+  const handleMouseEnterFillLabel = () => {
+    console.log("test");
+    if (role || label.value.length > 0) return;
+    label.valueChangeHandler({
+      currentTarget: { value: name.value },
+    } as React.ChangeEvent<HTMLInputElement>);
+  };
+
   const handleSubmitRole = useCallback(() => {
     if (name.isValid && label.isValid)
       sendRequest(
@@ -97,12 +111,6 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
       nameInputRef.current?.focus();
     }
   }, [role]);
-
-  const formClassName = useMemo(() => "flex flex-col gap-y-5", []);
-  const inputClassName = useMemo(
-    () => (hasError: boolean) => setInputStyle(hasError),
-    [],
-  );
 
   return (
     <div className="flex flex-col gap-5">
@@ -161,6 +169,7 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
                     label.hasError && label.value.length > 0,
                   )}
                   maxLength={50}
+                  onClick={handleMouseEnterFillLabel}
                   onChange={label.valueChangeHandler}
                   onBlur={label.valueBlurHandler}
                   value={label.value}

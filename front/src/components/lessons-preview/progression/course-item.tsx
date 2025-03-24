@@ -19,14 +19,15 @@ const CourseItem = ({
   setSelectedLesson,
 }: CourseItemProps) => {
   const [isCourseOpen, setCourseOpen] = useState(false);
-  const courseProgress =
+  const courseProgress = (
     course.lessons.reduce(
       (sum, lesson) =>
         sum +
         (lesson?.lessonsRead?.filter((lesson) => lesson.finishedAt).length ||
           0),
       0,
-    ) / course.lessons.length;
+    ) / course.lessons.length
+  ).toString();
 
   const handleToggleCourseTab = () => {
     setCourseOpen(!isCourseOpen);

@@ -1,7 +1,10 @@
 import { PropsWithChildren } from "react";
 import Lesson from "../../utils/interfaces/lesson";
 
-type LessonsPreviewWrapperProps = { selectedLesson?: Lesson };
+type LessonsPreviewWrapperProps = {
+  selectedLesson?: Lesson;
+  isPanelClosed?: boolean;
+};
 
 /**
  * Ce composant sert de conteneur (wrapper) structurel pour le composant LessonsPreview.
@@ -9,6 +12,7 @@ type LessonsPreviewWrapperProps = { selectedLesson?: Lesson };
  */
 const LessonsPreviewWrapper = ({
   selectedLesson,
+  isPanelClosed,
   children,
 }: PropsWithChildren<LessonsPreviewWrapperProps>) => {
   const [header, progessionSide, topProgressBar, previewLesson, moduleData] =
@@ -19,8 +23,10 @@ const LessonsPreviewWrapper = ({
       {header}
 
       <div className="mt-5 max-xl:flex max-xl:flex-col-reverse xl:grid xl:grid-cols-4 gap-5 w-full">
-        {progessionSide}
-        <div className="flex flex-col gap-5 xl:col-span-3">
+        {isPanelClosed ? null : progessionSide}
+        <div
+          className={`flex flex-col gap-5 ${isPanelClosed ? "xl:col-span-4" : "xl:col-span-3"}`}
+        >
           {topProgressBar}
           {selectedLesson ? previewLesson : moduleData}
         </div>

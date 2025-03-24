@@ -29,6 +29,7 @@ const LessonsPreview = () => {
   } = useLessonsPreview();
 
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [isPanelClosed, setPanelClosed] = useState<boolean>(false);
 
   const handleToggleModalDisplaying = () => {
     setTimeout(() => {
@@ -58,7 +59,10 @@ const LessonsPreview = () => {
         />
       ) : null}
 
-      <LessonsPreviewWrapper selectedLesson={selectedLesson}>
+      <LessonsPreviewWrapper
+        selectedLesson={selectedLesson}
+        isPanelClosed={isPanelClosed}
+      >
         {[
           // * Header
           <LessonsPreviewHeader key="header" moduleData={moduleData} />,
@@ -68,6 +72,7 @@ const LessonsPreview = () => {
             courses={moduleData.courses}
             selectedLesson={selectedLesson}
             setSelectedLesson={setSelectedLesson}
+            setPanelClosed={setPanelClosed}
           />,
           // * La barre de progression du cours
           <Can key="top-progress-bar" action="component" object="progression">

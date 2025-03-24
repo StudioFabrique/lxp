@@ -22,7 +22,6 @@ import {
   Tractor,
   Turtle,
 } from "lucide-react";
-import Wrapper from "../../UI/wrapper/wrapper.component";
 import { PropsWithChildren } from "react";
 import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
 
@@ -82,9 +81,9 @@ const NoActivityPlaceholder = ({ children }: PropsWithChildren) => {
   };
 
   return (
-    <div className="items-center bg-secondary/5 p-10 rounded-lg">
+    <div className="bg-secondary/5 p-10 rounded-lg">
       <FadeWrapper>
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-10 items-center">
           {showLucideIcon()}
           <p className="text-2xl font-bold text-primary">Aucune activité</p>
           {children}

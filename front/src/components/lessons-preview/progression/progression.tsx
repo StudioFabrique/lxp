@@ -1,21 +1,24 @@
-import { CSSProperties } from "react";
+import { CSSProperties, Dispatch, SetStateAction } from "react";
 import Course from "../../../utils/interfaces/course";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import CourseItem from "./course-item";
 import Lesson from "../../../utils/interfaces/lesson";
 import Can from "../../UI/can/can.component";
+import { PanelLeftClose } from "lucide-react";
 
 // Type definition pour les props du composant
 type ProgressionProps = {
   courses: Course[];
   selectedLesson: Lesson | undefined;
   setSelectedLesson: (lesson: Lesson | undefined) => void;
+  setPanelClosed: Dispatch<SetStateAction<boolean>>;
 };
 
 const Progression = ({
   courses,
   selectedLesson,
   setSelectedLesson,
+  setPanelClosed,
 }: ProgressionProps) => {
   // Filtre les cours qui ont des leçons
   const coursesWithLessons = courses.filter(
@@ -47,11 +50,22 @@ const Progression = ({
     } as CSSProperties;
   };
 
+  const handleClosePanel = () => {
+    setPanelClosed(true);
+  };
+
   return (
     <Wrapper>
+      <button
+        onClick={handleClosePanel}
+        className="btn btn-sm w-fit hover:bg-primary hover:text-base-100 absolute right-0 top-0"
+      >
+        <PanelLeftClose className="w-6 h-6" />
+      </button>
+
       {/* En-tête avec le titre et l'indicateur de progression */}
-      <div className="flex justify-between">
-        <Can action="component" object="progression">
+      <Can action="component" object="progression">
+        <div className="flex justify-between">
           <h2 className="text-xl font-bold w-28 text-primary">
             Progression du module
           </h2>
@@ -67,8 +81,8 @@ const Progression = ({
               />
             </span>
           )}
-        </Can>
-      </div>
+        </div>
+      </Can>
       {/* Liste des cours */}
       <div className="flex flex-col items-center gap-5">
         {courses.length > 0 ? (
