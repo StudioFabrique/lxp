@@ -3,8 +3,9 @@ import Lesson from "../../../utils/interfaces/lesson";
 import RatingPanelButton from "../../UI/lesson-rating/rating-panel-button";
 import ActivityPreview from "./activity";
 import { PropsWithChildren } from "react";
-import { EditIcon } from "lucide-react";
+import { ListPlus, LucidePlus } from "lucide-react";
 import Can from "../../UI/can/can.component";
+import NoActivityPlaceholder from "./no-activity-placeholder";
 
 type PreviewLessonProps = {
   selectedLesson: Lesson;
@@ -35,14 +36,17 @@ const LessonReader = ({
             onRateContent={onRateContent}
           />
         ) : null}
-        <Can action="write" object="lesson">
-          <Link
-            to={`/admin/lesson/edit/${selectedLesson.id}`}
-            className="btn btn-primary text-base-100 btn-sm"
-          >
-            <EditIcon />
-          </Link>
-        </Can>
+        {hasActivities ? (
+          <Can action="write" object="lesson">
+            <Link
+              to={`/admin/lesson/edit/${selectedLesson.id}`}
+              className="btn btn-sm"
+            >
+              <ListPlus />
+              Ajouter des activités supplémentaires
+            </Link>
+          </Can>
+        ) : null}
       </div>
 
       {/* Affiche les activités si elles existent, sinon affiche un message */}
@@ -51,7 +55,17 @@ const LessonReader = ({
           <ActivityPreview key={activity.id} activity={activity} />
         ))
       ) : (
-        <p>La leçon selectionnée ne contient aucune activité</p>
+        <NoActivityPlaceholder>
+          <Can action="write" object="lesson">
+            <Link
+              to={`/admin/lesson/edit/${selectedLesson.id}`}
+              className="btn"
+            >
+              <LucidePlus />
+              Ajouter
+            </Link>
+          </Can>
+        </NoActivityPlaceholder>
       )}
 
       {/* Boutons de navigation */}

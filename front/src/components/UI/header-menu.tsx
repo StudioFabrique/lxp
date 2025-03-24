@@ -27,11 +27,14 @@ const HeaderMenu = ({
           <div className="flex justify-end gap-4">
             <button
               onClick={() => setModalState(true)}
-              className="btn btn-primary btn-sm py-1"
+              className="btn btn-primary btn-sm text-base-100 py-1"
             >
               <MagnifyIcon />
             </button>
-            <button type="button" className="btn btn-primary btn-sm py-1">
+            <button
+              type="button"
+              className="btn btn-primary btn-sm text-base-100 py-1"
+            >
               <BellIcon />
             </button>
           </div>
@@ -43,7 +46,7 @@ const HeaderMenu = ({
             <Can action="write" object="group">
               <Link
                 to={`/${location.pathname.split("/")[1]}/group`}
-                className="btn btn-primary btn-sm py-1"
+                className="btn btn-primary btn-sm text-base-100 py-1"
               >
                 <GroupIcon />
               </Link>
@@ -55,7 +58,7 @@ const HeaderMenu = ({
                 <button
                   onClick={onClickResume}
                   type="button"
-                  className="btn btn-primary self-end"
+                  className="btn btn-primary  text-base-100 self-end"
                 >
                   <span className="w-5 h-5">
                     <PlayIcon />

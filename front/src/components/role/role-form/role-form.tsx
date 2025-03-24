@@ -25,11 +25,7 @@ type RoleFormProps = {
   onRefreshData?: () => Promise<void>;
 };
 
-const RoleForm = ({
-  role,
-  allow2xlScreenFlexCol,
-  onRefreshData,
-}: RoleFormProps) => {
+const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
   const { fetchRoles, user } = useContext(Context);
   const { sendRequest, isLoading: isRequestLoading } = useHttp(true);
 
@@ -109,100 +105,98 @@ const RoleForm = ({
   );
 
   return (
-    <div className="h-full">
-      <Wrapper>
-        <form
-          autoComplete="off"
-          className={formClassName}
-          onSubmit={(e) => e.preventDefault()}
-        >
-          <span className="flex flex-col gap-y-1">
-            <h2 className="font-bold text-xl">
-              {role ? "Détails du rôle" : "Création de rôles"}
-            </h2>
-            {!role ? (
-              <p className="text-sm">
-                Après avoir créé un rôle, vous pourrez lui ajouter des
-                permissions
-              </p>
-            ) : (
-              <p className="text-sm">
-                Vous pouvez modifier les informations du rôle
-              </p>
-            )}
-          </span>
-
-          <div
-            className={`flex flex-row ${allow2xlScreenFlexCol ? "2xl:flex-col" : ""} gap-10 w-full items-end`}
+    <div className="flex flex-col gap-5">
+      <span className="flex flex-col gap-y-1">
+        <h2 className="font-bold text-xl">
+          {role ? "Détails du rôle" : "Création de rôles"}
+        </h2>
+        {!role ? (
+          <p className="text-sm">
+            Après avoir créé un rôle, vous pourrez lui ajouter des permissions
+          </p>
+        ) : (
+          <p className="text-sm">
+            Vous pouvez modifier les informations du rôle
+          </p>
+        )}
+      </span>
+      <div className="h-full">
+        <Wrapper>
+          <form
+            autoComplete="off"
+            className={formClassName}
+            onSubmit={(e) => e.preventDefault()}
           >
-            <div className="flex flex-col gap-y-1 w-full">
-              <div className="flex items-center gap-2">
-                <p>Nom du rôle</p>
-                <QuestionMarkTooltip tooltipValue="Nom technique utilisé principalement pour des opérations interne par l'application" />
-              </div>
-              <input
-                ref={nameInputRef}
-                type="text"
-                name="name"
-                id="name"
-                className={inputClassName(
-                  name.hasError && name.value.length > 0,
-                )}
-                maxLength={20}
-                onChange={name.valueChangeHandler}
-                onBlur={name.valueBlurHandler}
-                value={name.value}
-                disabled={role && role.protection >= 1}
-              />
-            </div>
-
-            <div className="flex flex-col gap-y-1 w-full">
-              <div className="flex items-center gap-2">
-                <p>Label</p>
-                <QuestionMarkTooltip tooltipValue="Nom du rôle visible pour les utilisateurs de l'application" />
-              </div>
-              <input
-                name="label"
-                id="label"
-                className={inputClassName(
-                  label.hasError && label.value.length > 0,
-                )}
-                maxLength={20}
-                onChange={label.valueChangeHandler}
-                onBlur={label.valueBlurHandler}
-                value={label.value}
-              />
-            </div>
-
-            <div className="flex flex-col gap-y-1 w-full">
-              <div className="flex items-center gap-2">
-                <p>Modèle de rôle</p>
-                <QuestionMarkTooltip tooltipValue="Affecte un modèle de permissions prédéfénis au rôle actuel" />
-              </div>
-              <RoleTypeSelector
-                currentRoleType={currentRoleType}
-                onSetCurrentRoleType={setCurrentRoleType}
-                editMode={Boolean(role)}
-                disabled={role && role.protection >= 1}
-              />
-            </div>
-            <div className="w-full sm:w-auto">
-              <button
-                type="button"
-                className="btn btn-sm btn-primary normal-case px-10 w-full"
-                onClick={handleSubmitRole}
-              >
-                <div className="flex items-center justify-center gap-2 min-w-[80px]">
-                  {role ? "Modifier" : "Ajouter"}
-                  {isRequestLoading && (
-                    <span className="loading loading-spinner" />
-                  )}
+            <div className="flex flex-row gap-10 w-full items-end">
+              <div className="flex flex-col gap-y-1 w-full">
+                <div className="flex items-center gap-2">
+                  <p>Nom du rôle</p>
+                  <QuestionMarkTooltip tooltipValue="Nom technique utilisé principalement pour des opérations interne par l'application" />
                 </div>
-              </button>
+                <input
+                  ref={nameInputRef}
+                  type="text"
+                  name="name"
+                  id="name"
+                  className={inputClassName(
+                    name.hasError && name.value.length > 0,
+                  )}
+                  maxLength={50}
+                  onChange={name.valueChangeHandler}
+                  onBlur={name.valueBlurHandler}
+                  value={name.value}
+                  disabled={role && role.protection >= 1}
+                />
+              </div>
+
+              <div className="flex flex-col gap-y-1 w-full">
+                <div className="flex items-center gap-2">
+                  <p>Label</p>
+                  <QuestionMarkTooltip tooltipValue="Nom du rôle visible pour les utilisateurs de l'application" />
+                </div>
+                <input
+                  name="label"
+                  id="label"
+                  className={inputClassName(
+                    label.hasError && label.value.length > 0,
+                  )}
+                  maxLength={50}
+                  onChange={label.valueChangeHandler}
+                  onBlur={label.valueBlurHandler}
+                  value={label.value}
+                />
+              </div>
+
+              <div className="flex flex-col gap-y-1 w-full">
+                <div className="flex items-center gap-2">
+                  <p>Modèle de rôle</p>
+                  <QuestionMarkTooltip tooltipValue="Affecte un modèle de permissions prédéfénis au rôle actuel" />
+                </div>
+                <RoleTypeSelector
+                  currentRoleType={currentRoleType}
+                  onSetCurrentRoleType={setCurrentRoleType}
+                  editMode={Boolean(role)}
+                  disabled={role && role.protection >= 1}
+                />
+              </div>
+              <div className="w-full sm:w-auto">
+                <button
+                  type="button"
+                  className="btn btn-sm btn-primary text-base-100 normal-case px-10 w-full"
+                  onClick={handleSubmitRole}
+                >
+                  <div className="flex items-center justify-center gap-2 min-w-[80px]">
+                    {role ? "Valider" : "Ajouter"}
+                    {isRequestLoading && (
+                      <span className="loading loading-spinner" />
+                    )}
+                  </div>
+                </button>
+              </div>
             </div>
-          </div>
-        </form>
-      </Wrapper>
+          </form>
+        </Wrapper>
+      </div>
     </div>
   );
 };
