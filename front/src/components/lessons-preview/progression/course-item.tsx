@@ -60,8 +60,21 @@ const CourseItem = ({
                 className="w-full h-10 tooltip tooltip-right absolute"
               />
             </div>
-            <div className="truncate">
-              <h3 className="text-secondary-content/80">{course.title}</h3>
+            <div className="flex justify-between">
+              <div className="truncate">
+                <h3 className="text-secondary-content/80">{course.title}</h3>
+              </div>
+
+              <Can action="write" object="lesson">
+                <div className="tooltip" data-tip="Ajouter une leçon">
+                  <Link
+                    to="/admin/lesson/add"
+                    // state={{ parcoursId, moduleId, courseId }}
+                  >
+                    <ListPlus className="stroke-base-100 w-7 h-7 hover:bg-primary px-1 rounded-lg" />
+                  </Link>
+                </div>
+              </Can>
             </div>
           </div>
           <div className="flex justify-between gap-5">
@@ -102,20 +115,8 @@ const CourseItem = ({
               />
             ))
           ) : (
-            <Can action="component" object="progression">
-              <p>Aucune leçon</p>
-            </Can>
+            <p>Aucune leçon</p>
           )}
-          <Can action="write" object="lesson">
-            <Link
-              className="btn btn-sm self-start"
-              to="/admin/lesson/add"
-              // state={{ parcoursId, moduleId, courseId }}
-            >
-              <ListPlus />
-              Ajouter
-            </Link>
-          </Can>
         </div>
       </motion.div>
     </div>

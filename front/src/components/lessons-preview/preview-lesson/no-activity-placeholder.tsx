@@ -22,12 +22,13 @@ import {
   Tractor,
   Turtle,
 } from "lucide-react";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useMemo } from "react";
 import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
 
 const NoActivityPlaceholder = ({ children }: PropsWithChildren) => {
-  const showLucideIcon = () => {
-    const iconClassName = "w-40 h-40 text-primary";
+  const iconClassName = "w-40 h-40 text-primary";
+
+  const randomIcon = useMemo(() => {
     const randomNumber = Math.floor(Math.random() * 21);
 
     switch (randomNumber) {
@@ -78,13 +79,13 @@ const NoActivityPlaceholder = ({ children }: PropsWithChildren) => {
       default:
         return <BoomBox className={iconClassName} />;
     }
-  };
+  }, []);
 
   return (
     <div className="bg-secondary/5 p-10 rounded-lg">
       <FadeWrapper>
         <div className="flex flex-col gap-10 items-center">
-          {showLucideIcon()}
+          {randomIcon}
           <p className="text-2xl font-bold text-primary">Aucune activité</p>
           {children}
         </div>

@@ -62,6 +62,7 @@ const LessonsPreview = () => {
       <LessonsPreviewWrapper
         selectedLesson={selectedLesson}
         isPanelClosed={isPanelClosed}
+        setPanelClosed={setPanelClosed}
       >
         {[
           // * Header
@@ -72,7 +73,6 @@ const LessonsPreview = () => {
             courses={moduleData.courses}
             selectedLesson={selectedLesson}
             setSelectedLesson={setSelectedLesson}
-            setPanelClosed={setPanelClosed}
           />,
           // * La barre de progression du cours
           <Can key="top-progress-bar" action="component" object="progression">

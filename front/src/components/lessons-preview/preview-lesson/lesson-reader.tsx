@@ -37,13 +37,15 @@ const LessonReader = ({
       ) : null}
 
       {hasActivities ? (
-        <Link
-          to={`/admin/lesson/edit/${selectedLesson.id}`}
-          className="btn btn-sm btn-primary text-base-100 self-end"
-        >
-          <Edit />
-          Modifier
-        </Link>
+        <Can action="create" object="lesson">
+          <Link
+            to={`/admin/lesson/edit/${selectedLesson.id}`}
+            className="btn btn-sm btn-primary text-base-100 self-end"
+          >
+            <Edit />
+            Modifier
+          </Link>
+        </Can>
       ) : null}
 
       {/* Affiche les activités si elles existent, sinon affiche un message */}
