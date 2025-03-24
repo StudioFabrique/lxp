@@ -1,9 +1,11 @@
-import { ArrowDown, ArrowRight } from "lucide-react";
+import { ArrowDown, ArrowRight, ListPlus } from "lucide-react";
 import Course from "../../../utils/interfaces/course";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import LessonItem from "./lesson-item";
 import Lesson from "../../../utils/interfaces/lesson";
+import Can from "../../UI/can/can.component";
+import { Link } from "react-router-dom";
 
 type CourseItemProps = {
   course: Course;
@@ -99,8 +101,20 @@ const CourseItem = ({
               />
             ))
           ) : (
-            <p>Aucune leçons</p>
+            <Can action="component" object="progression">
+              <p>Aucune leçon</p>
+            </Can>
           )}
+          <Can action="write" object="lesson">
+            <Link
+              className="btn btn-sm self-start"
+              to="/admin/lesson/add"
+              // state={{ parcoursId, moduleId, courseId }}
+            >
+              <ListPlus />
+              Ajouter
+            </Link>
+          </Can>
         </div>
       </motion.div>
     </div>

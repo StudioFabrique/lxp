@@ -30,7 +30,7 @@ const LessonItem = ({
     // Conteneur principal avec style conditionnel basé sur la sélection
     <div
       onClick={handleBeginReadLesson}
-      className={`flex items-center justify-between rounded-xl p-2 w-full cursor-pointer ${
+      className={`flex items-center justify-between gap-1 rounded-xl p-2 w-full cursor-pointer ${
         isLessonSelected
           ? "bg-primary text-base-100"
           : "bg-primary/60 text-primary-content"
