@@ -5,6 +5,7 @@ async function getCoursesByModule(moduleId: number) {
     where: {
       moduleId,
     },
+
     select: {
       id: true,
       title: true,
@@ -31,6 +32,9 @@ async function getCoursesByModule(moduleId: number) {
       updatedAt: true,
       isPublished: true,
       visibility: true,
+    },
+    orderBy: {
+      createdAt: "asc",
     },
   });
 
