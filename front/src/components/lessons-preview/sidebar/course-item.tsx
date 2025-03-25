@@ -79,15 +79,15 @@ const CourseItem = ({
                 onClick={handleClickMenu}
                 className="dropdown dropdown-right"
               >
-                <button className="flex">
+                <button className="flex cursor-pointer">
                   <MoreVertical className="stroke-secondary-content w-7 h-7 hover:bg-primary/20 px-1 rounded-lg transition-colors" />
                 </button>
 
-                <div className="dropdown-content menu translate-x-5 -translate-y-3 bg-secondary/80 rounded-lg z-50 w-60 backdrop-blur-sm border border-primary/30">
+                <div className="dropdown-content menu translate-x-5 -translate-y-3 bg-base-300/80 text-base-content rounded-lg z-50 w-60 backdrop-blur-sm border border-primary/20">
                   <Can action="update" object="course">
                     <Link
                       to={`/admin/course/edit/${course.id}`}
-                      className="flex items-center px-4 py-3 text-sm text-secondary-content hover:bg-primary/20 transition-all first:rounded-t-lg"
+                      className="cursor-default flex items-center px-4 py-3 text-sm hover:bg-primary/20 transition-all first:rounded-t-lg"
                     >
                       <Edit className="w-4 h-4 mr-3" />
                       Modifier le cours
@@ -96,14 +96,14 @@ const CourseItem = ({
 
                   <Link
                     to="/admin/lesson/add"
-                    className="flex items-center px-4 py-3 text-sm text-secondary-content hover:bg-primary/20 transition-all"
+                    className="cursor-default flex items-center px-4 py-3 text-sm hover:bg-primary/20 transition-all"
                   >
                     <ListPlus className="w-4 h-4 mr-3" />
                     Ajouter une leçon
                   </Link>
 
                   <Can action="delete" object="course">
-                    <button className="flex items-center w-full px-4 py-3 text-sm text-error hover:bg-error/10 transition-all last:rounded-b-lg">
+                    <button className="cursor-default flex items-center w-full px-4 py-3 text-sm text-error hover:bg-error/10 transition-all last:rounded-b-lg">
                       <Trash className="w-4 h-4 mr-3" />
                       Supprimer le cours
                     </button>
