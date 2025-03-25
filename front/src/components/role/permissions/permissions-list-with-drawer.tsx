@@ -5,6 +5,7 @@ import PermissionDeleteItem from "./permission-delete-item";
 import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
 import RemainingResourcesList from "./remaining-resources-list";
 
+// Type définissant les props du composant - permet de gérer l'affichage et la manipulation des permissions
 type PermissionsListWithDrawerProps = {
   drawerId: string;
   title: string;
@@ -27,6 +28,7 @@ type PermissionsListWithDrawerProps = {
   onDeletePermission: (name: string) => void;
 };
 
+// Composant principal pour afficher la liste des permissions avec un tiroir latéral
 const PermissionsListWithDrawer = ({
   drawerId,
   title,
@@ -41,6 +43,7 @@ const PermissionsListWithDrawer = ({
   return (
     <SubWrapper>
       <div className="flex flex-col gap-6 p-4">
+        {/* En-tête avec titre et bouton d'ajout */}
         <div className="flex justify-between items-center border-b border-base-content pb-3">
           <div className="flex items-center gap-2">
             <p className="text-secondary font-bold text-lg">{title}</p>
@@ -63,6 +66,7 @@ const PermissionsListWithDrawer = ({
             </RightSideDrawer>
           </div>
         </div>
+        {/* Liste des permissions */}
         <div className="flex flex-col gap-10 p-2">
           {permissions && permissions.length > 0 ? (
             <>
@@ -87,7 +91,7 @@ const PermissionsListWithDrawer = ({
                     ))}
                 </div>
               )}
-              {permissions.some((item) => item.isRole) && (
+              {/* {permissions.some((item) => item.isRole) && (
                 <div className="flex flex-wrap gap-3">
                   <div className="w-full flex items-center gap-2">
                     <h4 className="font-semibold">Rôles autorisés</h4>
@@ -107,7 +111,7 @@ const PermissionsListWithDrawer = ({
                       />
                     ))}
                 </div>
-              )}
+              )} */}
             </>
           ) : (
             <p>Aucune permission affectée</p>
