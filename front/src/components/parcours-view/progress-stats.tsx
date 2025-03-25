@@ -58,7 +58,7 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
                       {`${Math.round(moduleProgress)} %`}
                     </p>
                     <p className="text-secondary-content">Module</p>
-                    <p className="truncate w-40 ">{module.title}</p>
+                    <p className="truncate w-40 text-center">{module.title}</p>
                   </div>
                 );
               })}

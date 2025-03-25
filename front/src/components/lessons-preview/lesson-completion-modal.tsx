@@ -41,13 +41,14 @@ const LessonCompletionModal = ({
             onSelectStarRate={handleSelectStarRate}
           />
           <FeedbacksButton
-            title="Évaluer ce contenu"
-            className="btn btn-primary btn-sm text-nowrap"
+            className="btn btn-primary text-base-100 btn-sm text-nowrap"
             feedbackType="stars"
             elementCount={selectedStars}
             enableAnimationOnClick
             onClick={handleRateContent}
-          />
+          >
+            Évaluer ce contenu
+          </FeedbacksButton>
         </div>
       </Modal>
     </>

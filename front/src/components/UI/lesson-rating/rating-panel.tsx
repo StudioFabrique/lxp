@@ -95,13 +95,14 @@ const RatingPanel = ({
             Annuler
           </button>
           <FeedbacksButton
-            title="Évaluer ce contenu"
             className="btn btn-primary btn-sm text-nowrap"
             feedbackType="stars"
             elementCount={selectedStars}
             enableAnimationOnClick
             onClick={onRateContent}
-          />
+          >
+            Évaluer ce contenu
+          </FeedbacksButton>
         </div>
       </div>
     </div>

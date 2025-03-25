@@ -1,5 +1,6 @@
 import PermissionAddItem from "./permission-add-item";
 
+// Type définissant la structure d'une ressource (permission ou rôle)
 type Resource = {
   name: string;
   fullName: string;
@@ -13,6 +14,7 @@ type RemainingResourcesListProps = {
   onAddPermission: (name: string) => void;
 };
 
+// Composant affichant la liste des permissions et rôles disponibles
 const RemainingResourcesList = ({
   remainingResources,
   roleProtection,
@@ -20,6 +22,7 @@ const RemainingResourcesList = ({
 }: RemainingResourcesListProps) => {
   return (
     <div className="flex flex-col gap-5 overflow-x-hidden h-[85vh]">
+      {/* Affichage des permissions si il en existe */}
       {remainingResources?.some((res) => !res.isRole) && (
         <div className="flex flex-col gap-2">
           <h3 className="font-bold">Permissions disponibles</h3>
@@ -39,7 +42,8 @@ const RemainingResourcesList = ({
         </div>
       )}
 
-      {remainingResources?.some((res) => res.isRole) && (
+      {/* Affichage des permissions de type rôles si il en existe */}
+      {/* {remainingResources?.some((res) => res.isRole) && (
         <div className="flex flex-col gap-2">
           <h3 className="font-bold">Rôles autorisés disponibles</h3>
           {remainingResources
@@ -56,8 +60,9 @@ const RemainingResourcesList = ({
               />
             ))}
         </div>
-      )}
+      )} */}
 
+      {/* Message si aucune permission n'est disponible */}
       {!remainingResources?.length && <p>Aucune permissions à ajouter</p>}
     </div>
   );

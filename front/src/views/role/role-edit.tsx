@@ -19,6 +19,10 @@ const RoleEdit = () => {
     onDeletePermission,
   } = useManagePermissions(id || "");
 
+  const onClickPreviousPage = () => {
+    navigate(-1);
+  };
+
   useEffect(() => {
     if (role === null) {
       return navigate(-1);
@@ -93,11 +97,20 @@ const RoleEdit = () => {
           onAddPermission={onAddPermission}
           onDeletePermission={onDeletePermission}
         />
+      </div>
+      <span className="flex justify-between w-full">
         <button className="btn btn-primary w-fit btn-sm" disabled>
           <ListRestartIcon />
           Réinitialiser toutes les permissions pour ce rôle
         </button>
-      </div>
+        <button
+          type="button"
+          className="btn btn-primary text-base-100"
+          onClick={onClickPreviousPage}
+        >
+          Valider
+        </button>
+      </span>
     </div>
   );
 };

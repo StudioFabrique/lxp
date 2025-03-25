@@ -44,12 +44,12 @@ const Contenu = ({ modules }: ContenuProps) => {
           <Can action="update" object="parcours">
             <Link
               to={`/admin/parcours/edit/${parcoursId}?step=${4}`}
-              className="btn btn-primary "
+              className="btn btn-primary text-base-100"
             >
               <span className="h-5 w-5">
                 <EditIcon />
               </span>
-              <p className="normal-case">Modifier</p>
+              Modifier
             </Link>
           </Can>
         </span>
@@ -58,7 +58,10 @@ const Contenu = ({ modules }: ContenuProps) => {
           {modules?.length > 0 && (
             <div className="flex flex-col gap-y-4">
               <ContenuDetailHeader imageModuleHeader={selectedModule?.thumb} />
-              <ContenuDetail moduleId={selectedModule?.id ?? 0} />
+              <ContenuDetail
+                parcoursId={Number(parcoursId)}
+                moduleId={selectedModule?.id ?? 0}
+              />
             </div>
           )}
         </div>

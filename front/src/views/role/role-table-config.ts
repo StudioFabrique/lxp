@@ -23,7 +23,7 @@ export const roleTableItems: TableListItemConfig[] = [
 export const searchBarConfig = (
   onSubmitSearchValue: (value: string) => void,
 ): SearchBarProps => ({
-  title: "Gestion des rôles",
+  title: "",
   placeholder: "Rechercher un rôle",
   onSubmitSearchValue: onSubmitSearchValue,
 });
