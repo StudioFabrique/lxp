@@ -62,13 +62,13 @@ const CourseItem = ({
         className="flex flex-col w-full cursor-pointer"
         onClick={handleToggleCourseTab}
       >
-        <div className="bg-secondary/80 p-4 rounded-xl">
+        <div className="flex flex-col gap-1 bg-secondary/80 p-4 rounded-xl">
           {/* Titre du cours + tooltip */}
 
           <div className="flex justify-between items-center gap-1">
             <span
               data-tip={`Titre : ${course.title}`}
-              className="flex items-center h-12 tooltip tooltip-right capitalize min-w-0"
+              className="flex items-center tooltip tooltip-right capitalize min-w-0"
             >
               <h3 className="text-secondary-content/80 capitalize truncate">
                 {course.title}
@@ -79,34 +79,32 @@ const CourseItem = ({
                 onClick={handleClickMenu}
                 className="dropdown dropdown-right"
               >
-                <div className="tooltip" data-tip="Options">
-                  <button>
-                    <MoreVertical className="stroke-secondary-content w-7 h-7 hover:bg-primary/20 px-1 rounded-lg transition-colors" />
-                  </button>
-                </div>
+                <button className="flex">
+                  <MoreVertical className="stroke-secondary-content w-7 h-7 hover:bg-primary/20 px-1 rounded-lg transition-colors" />
+                </button>
 
-                <div className="dropdown-content menu bg-secondary/95 rounded-md shadow-xl z-50 w-56 border border-primary/20">
+                <div className="dropdown-content menu translate-x-5 -translate-y-3 bg-secondary/80 rounded-lg z-50 w-60 backdrop-blur-sm border border-primary/30">
                   <Can action="update" object="course">
                     <Link
                       to={`/admin/course/edit/${course.id}`}
-                      className="block px-4 py-2 text-sm text-secondary-content hover:bg-primary/10 transition-colors"
+                      className="flex items-center px-4 py-3 text-sm text-secondary-content hover:bg-primary/20 transition-all first:rounded-t-lg"
                     >
-                      <Edit className="inline-block w-4 h-4 mr-2" />
+                      <Edit className="w-4 h-4 mr-3" />
                       Modifier le cours
                     </Link>
                   </Can>
 
                   <Link
                     to="/admin/lesson/add"
-                    className="block px-4 py-2 text-sm text-secondary-content hover:bg-primary/10 transition-colors"
+                    className="flex items-center px-4 py-3 text-sm text-secondary-content hover:bg-primary/20 transition-all"
                   >
-                    <ListPlus className="inline-block w-4 h-4 mr-2" />
+                    <ListPlus className="w-4 h-4 mr-3" />
                     Ajouter une leçon
                   </Link>
 
                   <Can action="delete" object="course">
-                    <button className="block w-full text-left px-4 py-2 text-sm text-error hover:bg-error/10 transition-colors">
-                      <Trash className="inline-block w-4 h-4 mr-2" />
+                    <button className="flex items-center w-full px-4 py-3 text-sm text-error hover:bg-error/10 transition-all last:rounded-b-lg">
+                      <Trash className="w-4 h-4 mr-3" />
                       Supprimer le cours
                     </button>
                   </Can>
