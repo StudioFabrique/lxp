@@ -23,7 +23,7 @@ const ImportBadges: FC<Props> = ({ onSubmit }) => {
   };
 
   const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const files = event.target.files;
 
@@ -56,10 +56,7 @@ const ImportBadges: FC<Props> = ({ onSubmit }) => {
 
   return (
     <>
-      <div
-        className="w-fit flex flex-col justify-center items-center border border-primary rounded-xl"
-        onClick={handleLabelClick}
-      >
+      <div className="w-full" onClick={handleLabelClick}>
         <button
           className="btn btn-sm btn-primary flex items-center"
           type="button"

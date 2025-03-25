@@ -16,8 +16,6 @@ type ActivityProps = {
 /* const md = markdownit(); */
 
 const ActivityPreview = ({ activity }: ActivityProps) => {
-  console.log({ activity });
-
   const [value, setValue] = useState<string>("");
   const [url, setUrl] = useState("");
 
@@ -109,7 +107,7 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
                     <a
                       key={pdf.id}
                       href={pdf.url}
-                      className="btn btn-primary flex items-center gap-2"
+                      className="btn btn-primary text-base-100 flex items-center gap-2"
                       target="_blank"
                     >
                       <File />
