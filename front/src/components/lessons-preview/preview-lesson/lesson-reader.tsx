@@ -3,7 +3,7 @@ import Lesson from "../../../utils/interfaces/lesson";
 import RatingPanelButton from "../../UI/lesson-rating/rating-panel-button";
 import ActivityPreview from "./activity";
 import { PropsWithChildren } from "react";
-import { Edit, LucidePlus } from "lucide-react";
+import { LucidePlus } from "lucide-react";
 import Can from "../../UI/can/can.component";
 import NoActivityPlaceholder from "./no-activity-placeholder";
 
@@ -12,6 +12,8 @@ type PreviewLessonProps = {
   currentLessonRating?: number;
   isLessonAlreadyCompleted: boolean;
   onRateContent: (rating: number) => void;
+  // Vérifie s'il y a des activités dans la leçon
+  lessonHasActivities: boolean;
 };
 
 // Composant pour prévisualiser une leçon avec ses activités
@@ -19,15 +21,13 @@ const LessonReader = ({
   selectedLesson,
   currentLessonRating,
   onRateContent,
+  lessonHasActivities,
   children,
 }: PropsWithChildren<PreviewLessonProps>) => {
-  // Vérifie s'il y a des activités dans la leçon
-  const hasActivities = Boolean(selectedLesson.activities?.length);
-
   return (
     <div className="flex flex-col gap-4">
       {/* Bouton de notation */}
-      {currentLessonRating && hasActivities ? (
+      {currentLessonRating && lessonHasActivities ? (
         <div className="w-full flex justify-end">
           <RatingPanelButton
             note={currentLessonRating}
@@ -36,20 +36,8 @@ const LessonReader = ({
         </div>
       ) : null}
 
-      {hasActivities ? (
-        <Can action="create" object="lesson">
-          <Link
-            to={`/admin/lesson/edit/${selectedLesson.id}`}
-            className="btn btn-sm btn-primary text-base-100 self-end"
-          >
-            <Edit />
-            Modifier
-          </Link>
-        </Can>
-      ) : null}
-
       {/* Affiche les activités si elles existent, sinon affiche un message */}
-      {hasActivities ? (
+      {lessonHasActivities ? (
         selectedLesson.activities?.map((activity) => (
           <ActivityPreview key={activity.id} activity={activity} />
         ))

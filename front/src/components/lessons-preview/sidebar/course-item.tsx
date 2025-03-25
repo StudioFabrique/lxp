@@ -88,10 +88,12 @@ const CourseItem = ({
             )}
           </div>
         </div>
-        <progress
-          className="w-full progress progress-primary bg-secondary -mt-[8px] rounded-b-full"
-          value={courseProgress}
-        />
+        <Can action="component" object="progression">
+          <progress
+            className="w-full progress progress-primary bg-secondary -mt-[8px] rounded-b-full"
+            value={courseProgress}
+          />
+        </Can>
       </div>
       <motion.div
         className="bg-secondary/20 -mt-2 rounded-b-xl overflow-y-auto"
