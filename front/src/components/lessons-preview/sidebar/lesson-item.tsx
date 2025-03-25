@@ -42,7 +42,7 @@ const LessonItem = ({
         {/* Affiche une coche si la leçon est lue, ou une flèche sinon */}
         {isLessonRead ? (
           <Check
-            className={`w-5 h-5 p-1 bg-success rounded-full stroke-success-content stroke-3`}
+            className={`w-5 h-5 p-1 rounded-full stroke-3 ${isLessonSelected ? "bg-info stroke-info-content" : "bg-success stroke-success-content"}`}
           />
         ) : (
           <ArrowRight />
