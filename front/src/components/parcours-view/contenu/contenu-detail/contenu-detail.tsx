@@ -76,7 +76,7 @@ const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
           <Link
             to="/admin/course/add"
             state={{ parcoursId, moduleId }}
-            className="btn btn-primary btn-sm normal-case"
+            className="btn btn-primary btn-sm text-base-100"
           >
             Ajouter un cours
           </Link>

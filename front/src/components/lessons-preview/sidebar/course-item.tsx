@@ -51,7 +51,7 @@ const CourseItem = ({
         className="flex flex-col w-full cursor-pointer"
         onClick={handleToggleCourseTab}
       >
-        <div className="bg-secondary/80 p-4 rounded-xl flex flex-col gap-2">
+        <div className="bg-secondary/80 p-4 rounded-xl flex flex-col gap-4">
           {/* Titre du cours + tooltip */}
           <div className="capitalize">
             <div className="relative">
@@ -60,7 +60,7 @@ const CourseItem = ({
                 className="w-full h-10 tooltip tooltip-right absolute"
               />
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between items-center">
               <div className="truncate">
                 <h3 className="text-secondary-content/80">{course.title}</h3>
               </div>

@@ -1,4 +1,4 @@
-import Progression from "../../components/lessons-preview/progression/progression";
+import SidebarCoursesList from "../../components/lessons-preview/sidebar/sidebar-courses-list";
 import ProgressBar from "../../components/lessons-preview/progress-bar";
 import LessonReader from "../../components/lessons-preview/preview-lesson/lesson-reader";
 import Lesson from "../../utils/interfaces/lesson";
@@ -11,6 +11,7 @@ import FeedbacksButton from "../../components/UI/feedbacks/feedbacks-button";
 import { useState } from "react";
 import LessonCompletionModal from "../../components/lessons-preview/lesson-completion-modal";
 import Can from "../../components/UI/can/can.component";
+import CreateCourseItem from "../../components/lessons-preview/sidebar/create-course-item";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
@@ -68,12 +69,19 @@ const LessonsPreview = () => {
           // * Header
           <LessonsPreviewHeader key="header" moduleData={moduleData} />,
           // * Le composant affichant la liste des cours avec la progression des cours
-          <Progression
+          <SidebarCoursesList
             key="progession-side"
             courses={moduleData.courses}
             selectedLesson={selectedLesson}
             setSelectedLesson={setSelectedLesson}
-          />,
+          >
+            <Can action="write" object="course">
+              <CreateCourseItem
+                parcoursId={moduleData.parcoursId}
+                moduleId={moduleData.id ?? 0}
+              />
+            </Can>
+          </SidebarCoursesList>,
           // * La barre de progression du cours
           <Can key="top-progress-bar" action="component" object="progression">
             <ProgressBar courses={moduleData.courses} />

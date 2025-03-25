@@ -1,4 +1,4 @@
-import { CSSProperties } from "react";
+import { CSSProperties, PropsWithChildren } from "react";
 import Course from "../../../utils/interfaces/course";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import CourseItem from "./course-item";
@@ -6,17 +6,18 @@ import Lesson from "../../../utils/interfaces/lesson";
 import Can from "../../UI/can/can.component";
 
 // Type definition pour les props du composant
-type ProgressionProps = {
+type SidebarCoursesListProps = {
   courses: Course[];
   selectedLesson: Lesson | undefined;
   setSelectedLesson: (lesson: Lesson | undefined) => void;
 };
 
-const Progression = ({
+const SidebarCoursesList = ({
   courses,
   selectedLesson,
   setSelectedLesson,
-}: ProgressionProps) => {
+  children,
+}: PropsWithChildren<SidebarCoursesListProps>) => {
   // Filtre les cours qui ont des leçons
   const coursesWithLessons = courses.filter(
     (course) => course.lessons.length > 0,
@@ -81,11 +82,14 @@ const Progression = ({
             />
           ))
         ) : (
-          <p>Aucun cours</p>
+          <Can action="component" object="progression">
+            <p>Aucun cours</p>
+          </Can>
         )}
+        {children}
       </div>
     </Wrapper>
   );
 };
 
-export default Progression;
+export default SidebarCoursesList;
