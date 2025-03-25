@@ -43,21 +43,19 @@ const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
             lessonId: course.lessons.length > 0 ? course.lessons[0].id : null,
           }}
           key={course?.id}
-          className="flex justify-between gap-5 items-center bg-secondary text-secondary-content p-4 rounded-lg"
+          className="flex justify-between items-center bg-secondary text-secondary-content p-4 rounded-lg"
         >
-          <span className="w-14 h-14 mx-4">
+          <span className="w-14 h-14 flex-shrink-0">
             <BookIcon />
           </span>
-          <div className="flex flex-col items-center w-full px-2">
-            <p className="self-start">{`Cours ${i + 1}`}</p>
-            <div className="flex justify-between w-full">
-              <p className="self-start text-xl font-bold">{course.title}</p>
-            </div>
+          <div className="flex flex-col truncate w-full px-4">
+            <span className="truncate">{`Cours ${i + 1}`}</span>
+            <span className="text-xl font-bold truncate">{course.title}</span>
           </div>
           <Can action="update" object="course">
             <Link
               to={`/${currentRoute[0]}/course/edit/${course.id}`}
-              className="h-8 w-8"
+              className="h-8 w-8 flex-shrink-0"
             >
               <EditIcon />
             </Link>

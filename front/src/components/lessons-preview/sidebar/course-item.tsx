@@ -74,25 +74,28 @@ const CourseItem = ({
                 {course.title}
               </h3>
             </span>
+            <Can action="write" object="course">
+              <div
+                onClick={handleClickMenu}
+                className="dropdown dropdown-right"
+              >
+                <div className="tooltip" data-tip="Options">
+                  <button>
+                    <MoreVertical className="stroke-secondary-content w-7 h-7 hover:bg-primary/20 px-1 rounded-lg transition-colors" />
+                  </button>
+                </div>
 
-            <div onClick={handleClickMenu} className="dropdown dropdown-right">
-              <div className="tooltip" data-tip="Options">
-                <button>
-                  <MoreVertical className="stroke-secondary-content w-7 h-7 hover:bg-primary/20 px-1 rounded-lg transition-colors" />
-                </button>
-              </div>
+                <div className="dropdown-content menu bg-secondary/95 rounded-md shadow-xl z-50 w-56 border border-primary/20">
+                  <Can action="update" object="course">
+                    <Link
+                      to={`/admin/course/edit/${course.id}`}
+                      className="block px-4 py-2 text-sm text-secondary-content hover:bg-primary/10 transition-colors"
+                    >
+                      <Edit className="inline-block w-4 h-4 mr-2" />
+                      Modifier le cours
+                    </Link>
+                  </Can>
 
-              <div className="dropdown-content menu bg-secondary/95 rounded-md shadow-xl z-50 w-56 border border-primary/20">
-                <Can action="update" object="lesson">
-                  <Link
-                    to={`/admin/course/edit/${course.id}`}
-                    className="block px-4 py-2 text-sm text-secondary-content hover:bg-primary/10 transition-colors"
-                  >
-                    <Edit className="inline-block w-4 h-4 mr-2" />
-                    Modifier le cours
-                  </Link>
-                </Can>
-                <Can action="write" object="lesson">
                   <Link
                     to="/admin/lesson/add"
                     className="block px-4 py-2 text-sm text-secondary-content hover:bg-primary/10 transition-colors"
@@ -100,15 +103,16 @@ const CourseItem = ({
                     <ListPlus className="inline-block w-4 h-4 mr-2" />
                     Ajouter une leçon
                   </Link>
-                </Can>
-                <Can action="delete" object="lesson">
-                  <button className="block w-full text-left px-4 py-2 text-sm text-error hover:bg-error/10 transition-colors">
-                    <Trash className="inline-block w-4 h-4 mr-2" />
-                    Supprimer le cours
-                  </button>
-                </Can>
+
+                  <Can action="delete" object="course">
+                    <button className="block w-full text-left px-4 py-2 text-sm text-error hover:bg-error/10 transition-colors">
+                      <Trash className="inline-block w-4 h-4 mr-2" />
+                      Supprimer le cours
+                    </button>
+                  </Can>
+                </div>
               </div>
-            </div>
+            </Can>
           </div>
 
           <div className="flex justify-between items-center gap-5 p-1 min-w-0">
