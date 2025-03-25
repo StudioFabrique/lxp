@@ -83,7 +83,7 @@ const LessonsPreviewWrapper = ({
                   <Link
                     to={`/admin/lesson/edit-lesson/${selectedLesson.id}`}
                     className="btn w-fit hover:bg-primary hover:text-base-100 tooltip tooltip-left"
-                    data-tip="Modifier les informations"
+                    data-tip="Modifier les informations de la leçon actuelle"
                   >
                     <Edit className="w-6 h-6" />
                   </Link>
