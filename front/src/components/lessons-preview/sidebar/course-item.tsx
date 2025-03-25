@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowRight, ListPlus } from "lucide-react";
+import { ArrowDown, ArrowRight, Edit, ListPlus } from "lucide-react";
 import Course from "../../../utils/interfaces/course";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -60,21 +60,33 @@ const CourseItem = ({
                 className="w-full h-10 tooltip tooltip-right absolute"
               />
             </div>
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center gap-1">
               <div className="truncate">
                 <h3 className="text-secondary-content/80">{course.title}</h3>
               </div>
 
-              <Can action="write" object="lesson">
-                <div className="tooltip" data-tip="Ajouter une leçon">
-                  <Link
-                    to="/admin/lesson/add"
-                    // state={{ parcoursId, moduleId, courseId }}
+              <div className="flex gap-2">
+                <Can action="update" object="lesson">
+                  <div
+                    className="tooltip"
+                    data-tip="Modifier les informations du cours"
                   >
-                    <ListPlus className="stroke-base-100 w-7 h-7 hover:bg-primary px-1 rounded-lg" />
-                  </Link>
-                </div>
-              </Can>
+                    <Link to={`/admin/course/edit/${course.id}`}>
+                      <Edit className="stroke-base-100 w-7 h-7 hover:bg-primary px-1 rounded-lg" />
+                    </Link>
+                  </div>
+                </Can>
+                <Can action="write" object="lesson">
+                  <div className="tooltip" data-tip="Ajouter une leçon">
+                    <Link
+                      to="/admin/lesson/add"
+                      // state={{ parcoursId, moduleId, courseId }}
+                    >
+                      <ListPlus className="stroke-base-100 w-7 h-7 hover:bg-primary px-1 rounded-lg" />
+                    </Link>
+                  </div>
+                </Can>
+              </div>
             </div>
           </div>
           <div className="flex justify-between gap-5">
