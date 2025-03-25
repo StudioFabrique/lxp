@@ -51,7 +51,7 @@ const CourseItem = ({
         className="flex flex-col w-full cursor-pointer"
         onClick={handleToggleCourseTab}
       >
-        <div className="bg-secondary/80 p-4 rounded-xl flex flex-col gap-4">
+        <div className="bg-secondary/80 p-4 rounded-xl flex flex-col">
           {/* Titre du cours + tooltip */}
 
           <div className="flex justify-between items-center gap-1 min-w-0">

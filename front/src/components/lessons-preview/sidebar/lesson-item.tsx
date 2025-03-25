@@ -1,4 +1,4 @@
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Check, CheckCircle2 } from "lucide-react";
 import Lesson from "../../../utils/interfaces/lesson";
 
 type LessonItemProps = {
@@ -30,7 +30,7 @@ const LessonItem = ({
     // Conteneur principal avec style conditionnel basé sur la sélection
     <div
       onClick={handleBeginReadLesson}
-      className={`flex items-center justify-between gap-1 rounded-xl p-2 w-full cursor-pointer ${
+      className={`flex items-center justify-between gap-1 rounded-xl p-4 w-full cursor-pointer ${
         isLessonSelected
           ? "bg-primary text-base-100"
           : "bg-primary/60 text-primary-content"
@@ -41,9 +41,8 @@ const LessonItem = ({
       <div>
         {/* Affiche une coche si la leçon est lue, ou une flèche sinon */}
         {isLessonRead ? (
-          <CheckCircle2
-            className={`w-5 h-5 stroke-green-400
-            }`}
+          <Check
+            className={`w-5 h-5 p-1 bg-success rounded-full stroke-success-content stroke-3`}
           />
         ) : (
           <ArrowRight />
