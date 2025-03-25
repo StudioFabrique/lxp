@@ -1,4 +1,4 @@
-import { ArrowRight, Check, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import Lesson from "../../../utils/interfaces/lesson";
 
 type LessonItemProps = {

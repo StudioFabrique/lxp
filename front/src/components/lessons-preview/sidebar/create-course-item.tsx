@@ -51,7 +51,7 @@ const CreateCourseItem = ({ moduleId, parcoursId }: CreateCourseItemProps) => {
     <div className="flex flex-col w-full">
       <div className="flex flex-col w-full cursor-pointer">
         <motion.div
-          className="bg-secondary/80 rounded-lg flex flex-col gap-4"
+          className="bg-secondary/80 rounded-xl flex flex-col gap-4"
           initial={{ scale: 0.95, padding: 0 }}
           animate={{
             scale: 1,
@@ -83,7 +83,7 @@ const CreateCourseItem = ({ moduleId, parcoursId }: CreateCourseItemProps) => {
             ) : (
               <button
                 onClick={handleClickAdd}
-                className="btn btn-primary text-base-100 w-full flex justify-between items-center gap-2"
+                className="btn btn-primary rounded-xl text-base-100 w-full flex justify-between items-center gap-2"
               >
                 Ajouter un cours
                 <Plus />
