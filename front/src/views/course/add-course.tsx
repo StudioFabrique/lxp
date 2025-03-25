@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../hooks/use-http";
 
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
@@ -65,24 +65,27 @@ const AddCourse = () => {
    * enregistre le cours dans la bdd
    * @param title string
    */
-  const handleSubmit = (title: string) => {
-    if (moduleId) {
-      setIsLoading(true);
-      const applyData = (data: any) => {
-        setIsLoading(false);
-        toast.success(data.message);
-        nav(`/admin/course/edit/${data.course.id}`);
-      };
-      sendRequest(
-        {
-          path: "/course",
-          method: "post",
-          body: { title, moduleId },
-        },
-        applyData,
-      );
-    }
-  };
+  const handleSubmit = useCallback(
+    (title: string) => {
+      if (moduleId) {
+        setIsLoading(true);
+        const applyData = (data: any) => {
+          setIsLoading(false);
+          toast.success(data.message);
+          nav(`/admin/course/edit/${data.course.id}`, { replace: true });
+        };
+        sendRequest(
+          {
+            path: "/course",
+            method: "post",
+            body: { title, moduleId },
+          },
+          applyData,
+        );
+      }
+    },
+    [moduleId, nav, sendRequest],
+  );
 
   /**
    * récupération de la liste des parcours
@@ -128,6 +131,22 @@ const AddCourse = () => {
       setIsLoading(false);
     }
   }, [error]);
+
+  /**
+   * Submit automatique du cours si les state passées au router
+   * sont complets (moduleId, courseId et courseTitle)
+   */
+  useEffect(() => {
+    const retreivedCourseTitle = location.state?.courseTitle as string;
+    if (
+      retreivedCourseTitle &&
+      retreivedCourseTitle.length > 0 &&
+      parcoursId &&
+      moduleId
+    ) {
+      handleSubmit(retreivedCourseTitle);
+    }
+  }, [handleSubmit, location.state?.courseTitle, moduleId, parcoursId]);
 
   return (
     <FadeWrapper>

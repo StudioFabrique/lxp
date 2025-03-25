@@ -1,5 +1,5 @@
 import { Check, Plus } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState, useRef, useEffect, ChangeEvent } from "react";
 import { motion } from "framer-motion";
 
@@ -9,7 +9,7 @@ const CreateCourseItem = ({ moduleId, parcoursId }: CreateCourseItemProps) => {
   const [title, setTitle] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
+  const linkRef = useRef<HTMLAnchorElement>(null);
 
   const handleClickAdd = () => {
     setIsEditing(true);
@@ -28,7 +28,7 @@ const CreateCourseItem = ({ moduleId, parcoursId }: CreateCourseItemProps) => {
       setIsEditing(false);
     }
     if (e.key === "Enter") {
-      navigate("/admin/course/add", { state: { parcoursId, moduleId } });
+      linkRef.current?.click();
     }
   };
 
@@ -63,8 +63,9 @@ const CreateCourseItem = ({ moduleId, parcoursId }: CreateCourseItemProps) => {
                   className="input input-sm input-bordered w-[80%] max-h-10 text-secondary-content font-semibold text-sm"
                 />
                 <Link
+                  ref={linkRef}
                   to="/admin/course/add"
-                  state={{ parcoursId, moduleId }}
+                  state={{ parcoursId, moduleId, courseTitle: title }}
                   className="btn btn-primary btn-sm tooltip tooltip-right"
                   data-tip="Valider"
                 >
