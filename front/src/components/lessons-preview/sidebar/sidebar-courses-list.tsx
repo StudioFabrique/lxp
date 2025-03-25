@@ -4,6 +4,7 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import CourseItem from "./course-item";
 import Lesson from "../../../utils/interfaces/lesson";
 import Can from "../../UI/can/can.component";
+import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
 
 // Type definition pour les props du composant
 type SidebarCoursesListProps = {
@@ -57,16 +58,18 @@ const SidebarCoursesList = ({
             Progression du module
           </h2>
           {courses.length > 0 && (
-            <span
-              className="radial-progress text-secondary"
-              style={radialStyle(moduleProgress)}
-            >
-              <p>{Math.round(moduleProgress * 100)}%</p>
+            <FadeWrapper>
               <span
-                className="absolute radial-progress text-primary/40"
-                style={radialStyle(1)}
-              />
-            </span>
+                className="radial-progress text-secondary self-end"
+                style={radialStyle(moduleProgress)}
+              >
+                <p>{Math.round(moduleProgress * 100)}%</p>
+                <span
+                  className="absolute radial-progress text-primary/40"
+                  style={radialStyle(1)}
+                />
+              </span>
+            </FadeWrapper>
           )}
         </div>
       </Can>

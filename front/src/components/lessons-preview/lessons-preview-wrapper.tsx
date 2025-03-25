@@ -1,12 +1,20 @@
 import { Dispatch, PropsWithChildren, SetStateAction } from "react";
 import Lesson from "../../utils/interfaces/lesson";
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import {
+  ClipboardList,
+  Edit,
+  PanelLeftClose,
+  PanelLeftOpen,
+} from "lucide-react";
 import { motion } from "framer-motion";
+import Can from "../UI/can/can.component";
+import { Link } from "react-router-dom";
 
 type LessonsPreviewWrapperProps = {
   selectedLesson?: Lesson;
   isPanelClosed?: boolean;
   setPanelClosed: Dispatch<SetStateAction<boolean>>;
+  lessonHasActivities: boolean;
 };
 
 /**
@@ -17,6 +25,7 @@ const LessonsPreviewWrapper = ({
   selectedLesson,
   isPanelClosed = false,
   setPanelClosed,
+  lessonHasActivities,
   children,
 }: PropsWithChildren<LessonsPreviewWrapperProps>) => {
   const [header, progessionSide, topProgressBar, previewLesson, moduleData] =
@@ -44,30 +53,52 @@ const LessonsPreviewWrapper = ({
         <div
           className={`flex flex-col gap-5 ${isPanelClosed ? "xl:col-span-4" : "xl:col-span-3"}`}
         >
-          <div className="flex gap-5">
-            <button
-              onClick={handleTogglePanel}
-              className="btn w-fit hover:bg-primary hover:text-base-100"
+          <div className="flex items-center gap-5">
+            <div
+              data-tip={
+                isPanelClosed
+                  ? "Agrandir le panneau latéral"
+                  : "Réduire le panneau latéral"
+              }
+              className="tooltip tooltip-right"
             >
-              {isPanelClosed ? (
-                <div
-                  data-tip="Agrandir le panneau latéral"
-                  className="tooltip tooltip-right"
-                >
+              <button
+                onClick={handleTogglePanel}
+                className="btn w-fit hover:bg-primary hover:text-base-100"
+              >
+                {isPanelClosed ? (
                   <PanelLeftOpen className="w-6 h-6" />
-                </div>
-              ) : (
-                <div
-                  data-tip="Réduire le panneau latéral"
-                  className="tooltip tooltip-right"
-                >
+                ) : (
                   <PanelLeftClose className="w-6 h-6" />
-                </div>
-              )}
-            </button>
+                )}
+              </button>
+            </div>
             <span className="w-full bg-secondary/20 rounded-lg h-full px-2">
               {topProgressBar}
             </span>
+
+            <Can action="write" object="lesson">
+              {selectedLesson ? (
+                <>
+                  <Link
+                    to={`/admin/lesson/edit-lesson/${selectedLesson.id}`}
+                    className="btn w-fit hover:bg-primary hover:text-base-100 tooltip tooltip-left"
+                    data-tip="Modifier les informations"
+                  >
+                    <Edit className="w-6 h-6" />
+                  </Link>
+                  {lessonHasActivities ? (
+                    <Link
+                      to={`/admin/lesson/edit/${selectedLesson.id}`}
+                      className="btn w-fit hover:bg-primary hover:text-base-100 tooltip tooltip-left"
+                      data-tip="Modifier les activités"
+                    >
+                      <ClipboardList className="w-6 h-6" />
+                    </Link>
+                  ) : null}
+                </>
+              ) : null}
+            </Can>
           </div>
 
           {selectedLesson ? previewLesson : moduleData}

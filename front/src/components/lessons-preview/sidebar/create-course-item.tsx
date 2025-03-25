@@ -1,21 +1,24 @@
 import { Check, Plus } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect, ChangeEvent } from "react";
 import { motion } from "framer-motion";
 
 type CreateCourseItemProps = { parcoursId: number; moduleId: number };
 
 const CreateCourseItem = ({ moduleId, parcoursId }: CreateCourseItemProps) => {
+  const navigate = useNavigate();
   const [title, setTitle] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const linkRef = useRef<HTMLAnchorElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const handleClickAdd = () => {
     setIsEditing(true);
   };
 
-  const handleInputBlur = () => {
+  const handleInputBlur = (e: React.FocusEvent) => {
+    // Prevent blur if clicking the check button
+    if (buttonRef.current?.contains(e.relatedTarget as Node)) return;
     setIsEditing(false);
   };
 
@@ -28,8 +31,14 @@ const CreateCourseItem = ({ moduleId, parcoursId }: CreateCourseItemProps) => {
       setIsEditing(false);
     }
     if (e.key === "Enter") {
-      linkRef.current?.click();
+      buttonRef.current?.click();
     }
+  };
+
+  const handleClickNavigate = () => {
+    navigate("/admin/course/add", {
+      state: { parcoursId, moduleId, courseTitle: title },
+    });
   };
 
   useEffect(() => {
@@ -60,22 +69,21 @@ const CreateCourseItem = ({ moduleId, parcoursId }: CreateCourseItemProps) => {
                   onChange={handleChangeInput}
                   onBlur={handleInputBlur}
                   onKeyDown={handleKeyDown}
-                  className="input input-sm input-bordered w-[80%] max-h-10 text-secondary-content font-semibold text-sm"
+                  className="input input-sm input-bordered w-[80%] max-h-10 text-base font-semibold"
                 />
-                <Link
-                  ref={linkRef}
-                  to="/admin/course/add"
-                  state={{ parcoursId, moduleId, courseTitle: title }}
+                <button
+                  ref={buttonRef}
+                  onClick={handleClickNavigate}
                   className="btn btn-primary btn-sm tooltip tooltip-right"
                   data-tip="Valider"
                 >
                   <Check className="stroke-base-100 w-5 h-5" />
-                </Link>
+                </button>
               </>
             ) : (
               <button
                 onClick={handleClickAdd}
-                className="btn btn-ghost text-base-100 w-full flex justify-between items-center gap-2"
+                className="btn btn-primary text-base-100 w-full flex justify-between items-center gap-2"
               >
                 Ajouter un cours
                 <Plus />

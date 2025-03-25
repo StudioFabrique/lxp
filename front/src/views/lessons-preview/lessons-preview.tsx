@@ -32,6 +32,10 @@ const LessonsPreview = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isPanelClosed, setPanelClosed] = useState<boolean>(false);
 
+  const selectedLessonHasActivities = selectedLesson
+    ? Boolean(selectedLesson.activities?.length)
+    : false;
+
   const handleToggleModalDisplaying = () => {
     setTimeout(() => {
       setShowModal((prev) => !prev);
@@ -64,6 +68,7 @@ const LessonsPreview = () => {
         selectedLesson={selectedLesson}
         isPanelClosed={isPanelClosed}
         setPanelClosed={setPanelClosed}
+        lessonHasActivities={selectedLessonHasActivities}
       >
         {[
           // * Header
@@ -93,6 +98,7 @@ const LessonsPreview = () => {
             isLessonAlreadyCompleted
             currentLessonRating={lessonRating?.rating}
             onRateContent={onEditRateContent}
+            lessonHasActivities={selectedLessonHasActivities}
           >
             {/* Bouton pour terminer la leçon afin d'afficher une modal */}
             <Can action="component" object="progression">
