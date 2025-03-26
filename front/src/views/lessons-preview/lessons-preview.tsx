@@ -8,7 +8,7 @@ import ModuleData from "../../components/lessons-preview/module-data/module-data
 import LessonsPreviewWrapper from "../../components/lessons-preview/lessons-preview-wrapper";
 import LessonsPreviewSkeleton from "./lessons-preview-skeleton";
 import FeedbacksButton from "../../components/UI/feedbacks/feedbacks-button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LessonCompletionModal from "../../components/lessons-preview/lesson-completion-modal";
 import Can from "../../components/UI/can/can.component";
 import CreateCourseItem from "../../components/lessons-preview/sidebar/create-course-item";
@@ -17,6 +17,8 @@ import CreateCourseItem from "../../components/lessons-preview/sidebar/create-co
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
  */
 const LessonsPreview = () => {
+  const STORAGE_KEY = "lessons-preview-panel-closed";
+
   // custom hook
   const {
     moduleData,
@@ -31,6 +33,17 @@ const LessonsPreview = () => {
 
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isPanelClosed, setPanelClosed] = useState<boolean>(false);
+
+  useEffect(() => {
+    const savedState = localStorage.getItem(STORAGE_KEY);
+    if (savedState) {
+      setPanelClosed(JSON.parse(savedState));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(isPanelClosed));
+  }, [isPanelClosed]);
 
   const selectedLessonHasActivities = selectedLesson
     ? Boolean(selectedLesson.activities?.length)
@@ -65,10 +78,10 @@ const LessonsPreview = () => {
       ) : null}
 
       <LessonsPreviewWrapper
+        parcoursId={moduleData.parcoursId}
         selectedLesson={selectedLesson}
         isPanelClosed={isPanelClosed}
         setPanelClosed={setPanelClosed}
-        lessonHasActivities={selectedLessonHasActivities}
       >
         {[
           // * Header

@@ -1,5 +1,7 @@
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Edit, Edit3 } from "lucide-react";
 import Lesson from "../../../utils/interfaces/lesson";
+import { Link } from "react-router-dom";
+import Can from "../../UI/can/can.component";
 
 type LessonItemProps = {
   lesson: Lesson;
@@ -36,7 +38,17 @@ const LessonItem = ({
           : "bg-primary/60 text-primary-content"
       }`}
     >
-      <p className="max-h-14 truncate">{lesson.title}</p>
+      <span className="flex gap-1 items-center min-w-0">
+        <p className="max-h-14 truncate">{lesson.title}</p>
+        <Can action="update" object="lesson">
+          <Link
+            to={`/admin/lesson/edit-lesson/${lesson.id}`}
+            className="btn btn-sm px-2 btn-ghost w-fit hover:bg-primary hover:text-base-100"
+          >
+            <Edit3 className="w-4 h-4" />
+          </Link>
+        </Can>
+      </span>
 
       <div>
         {/* Affiche une coche si la leçon est lue, ou une flèche sinon */}

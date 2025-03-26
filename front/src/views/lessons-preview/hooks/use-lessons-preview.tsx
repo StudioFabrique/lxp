@@ -1,4 +1,4 @@
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Module from "../../../utils/interfaces/module";
@@ -10,6 +10,7 @@ import LessonRating from "../../../utils/interfaces/lesson-rating";
 const useLessonsPreview = () => {
   const { sendRequest, isLoading } = useHttp(true);
   const { state: stateFromUrl } = useLocation();
+  const navigate = useNavigate();
   const { moduleId } = useParams();
   const [moduleData, setModuleData] = useState<
     (Module & { parcours: string; parcoursId: number }) | null
@@ -40,11 +41,18 @@ const useLessonsPreview = () => {
     (lesson: Lesson | undefined) => {
       setLessonRating(undefined);
       setSelectedLesson(lesson);
+
+      // Update the URL state
+      navigate(".", {
+        replace: true, // This replaces the current history entry instead of adding a new one
+        state: { lessonId: lesson?.id }, // Set to undefined when no lesson is selected
+      });
+
       if (lesson?.id) {
         initiateLesson(lesson.id);
       }
     },
-    [initiateLesson],
+    [initiateLesson, navigate],
   );
 
   // Fonction pour passer à la leçon suivante
