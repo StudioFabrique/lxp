@@ -39,7 +39,11 @@ const LessonReader = ({
       {/* Affiche les activités si elles existent, sinon affiche un message */}
       {lessonHasActivities ? (
         selectedLesson.activities?.map((activity) => (
-          <ActivityPreview key={activity.id} activity={activity} />
+          <ActivityPreview
+            key={activity.id}
+            lessonId={selectedLesson.id ?? 0}
+            activity={activity}
+          />
         ))
       ) : (
         <NoActivityPlaceholder></NoActivityPlaceholder>
