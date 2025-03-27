@@ -2,6 +2,7 @@
 import { useEffect, useReducer } from "react";
 import useHttp from "../../../hooks/use-http";
 import useInput from "../../../hooks/use-input";
+import { useLocation } from "react-router-dom";
 
 // Imports des constantes et interfaces
 import { regexGeneric, regexOptionalGeneric } from "../../../utils/constantes";
@@ -120,13 +121,33 @@ const useAddLesson = () => {
   const [state, dispatch] = useReducer(lessonReducer, initialState);
   const { error, sendRequest } = useHttp();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { value: title, newProps: newTitle } = useInput((value) =>
-    regexGeneric.test(value)
+    regexGeneric.test(value),
   );
   const { value: description, newProps: newDescription } = useInput((value) =>
-    regexOptionalGeneric.test(value)
+    regexOptionalGeneric.test(value),
   );
+
+  useEffect(() => {
+    if (location.state) {
+      const { parcoursId, moduleId, courseId } = location.state;
+      const applyData = (data: CourseItem[]) => {
+        dispatch({ type: "SET_COURSE_LIST", payload: data });
+        const course = data.find((item) => item.id === courseId);
+        if (course) {
+          dispatch({ type: "SET_TAGS", payload: course.tags });
+        }
+        dispatch({ type: "SET_PARCOURS_ID", payload: parcoursId });
+        dispatch({ type: "SET_MODULE_ID", payload: moduleId });
+        dispatch({ type: "SET_COURSE_ID", payload: courseId });
+        handleStep(true);
+      };
+
+      sendRequest({ path: `/course/select/${moduleId}` }, applyData);
+    }
+  }, [location.state, sendRequest]);
 
   /**
    * Gère la soumission du formulaire pour créer une nouvelle leçon
@@ -137,7 +158,10 @@ const useAddLesson = () => {
     const applyData = (data: Lesson) => {
       toast.success(`La leçon ${data.title} a été créée avec succès`);
       dispatch({ type: "SET_LOADING", payload: false });
-      navigate("..");
+      navigate(
+        location.state ? `/admin/parcours/module/${state.moduleId}` : "..",
+        { state: { lessonId: data.id } },
+      );
     };
 
     // Envoi de la requête
@@ -153,7 +177,7 @@ const useAddLesson = () => {
           modalite: state.mode,
         },
       },
-      applyData
+      applyData,
     );
   };
 
@@ -165,7 +189,7 @@ const useAddLesson = () => {
    */
   const getItem = <T extends { id: number | null }>(
     id: number | null,
-    list: T[]
+    list: T[],
   ): T | undefined => {
     if (id) {
       const item = list.find((element: T) => element.id === id);
@@ -206,7 +230,6 @@ const useAddLesson = () => {
       sendRequest({ path: `/modules/${state.parcoursId}` }, (data: Item[]) => {
         dispatch({ type: "SET_MODULES_LIST", payload: data });
       });
-      dispatch({ type: "SET_MODULE_ID", payload: null }); // Reset du module sélectionné
     }
   }, [state.parcoursId, sendRequest]);
 
@@ -217,7 +240,7 @@ const useAddLesson = () => {
         { path: `/course/select/${state.moduleId}` },
         (data: CourseItem[]) => {
           dispatch({ type: "SET_COURSE_LIST", payload: data });
-        }
+        },
       );
     } else {
       // Reset des cours si aucun module n'est sélectionné
@@ -230,7 +253,7 @@ const useAddLesson = () => {
   useEffect(() => {
     if (state.courseId) {
       const course = state.courseList.find(
-        (item) => item.id === state.courseId
+        (item) => item.id === state.courseId,
       );
       if (course) dispatch({ type: "SET_TAGS", payload: course.tags });
     }

@@ -91,6 +91,8 @@ const LessonsPreview = () => {
           <SidebarCoursesList
             key="progession-side"
             courses={moduleData.courses}
+            parcoursId={moduleData.parcoursId}
+            moduleId={moduleData.id ?? 0}
             selectedLesson={selectedLesson}
             setSelectedLesson={setSelectedLesson}
             onDeleteCourse={onDeleteCourse}
