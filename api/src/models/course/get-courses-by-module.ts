@@ -26,7 +26,14 @@ async function getCoursesByModule(moduleId: number) {
           },
         },
       },
-      lessons: { select: { id: true } },
+      lessons: {
+        select: {
+          id: true,
+        },
+        orderBy: {
+          order: "asc",
+        },
+      },
       author: true,
       createdAt: true,
       updatedAt: true,
@@ -34,7 +41,7 @@ async function getCoursesByModule(moduleId: number) {
       visibility: true,
     },
     orderBy: {
-      createdAt: "asc",
+      order: "asc",
     },
   });
 

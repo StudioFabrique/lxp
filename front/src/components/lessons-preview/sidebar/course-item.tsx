@@ -204,6 +204,7 @@ const CourseItem = ({
                 <LessonItem
                   key={lesson.id}
                   lesson={lesson}
+                  moduleId={moduleId}
                   selectedLesson={selectedLesson}
                   setSelectedLesson={setSelectedLesson}
                 />

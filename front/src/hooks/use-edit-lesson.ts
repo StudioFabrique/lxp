@@ -5,7 +5,7 @@ import useInput from "./use-input";
 import Tag from "../utils/interfaces/tag";
 import useHttp from "./use-http";
 import toast from "react-hot-toast";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 
 /**
  * Hook personnalisé pour gérer l'édition d'une leçon
@@ -17,13 +17,14 @@ const useEditLesson = () => {
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const { sendRequest, error, isLoading } = useHttp();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Initialisation des champs de formulaire avec validation
   const { value: title, newProps: newTitle } = useInput((value) =>
-    regexGeneric.test(value)
+    regexGeneric.test(value),
   );
   const { value: description, newProps: newDescription } = useInput((value) =>
-    regexOptionalGeneric.test(value)
+    regexOptionalGeneric.test(value),
   );
   const [mode, setMode] = useState<string>("hybride");
   const [tag, setTag] = useState<Tag | null>(null);
@@ -41,7 +42,7 @@ const useEditLesson = () => {
       setMode(lesson.modalite);
       setTagsList(lesson.course.tags);
     },
-    [newTitle, newDescription]
+    [newTitle, newDescription],
   );
 
   /**
@@ -49,11 +50,17 @@ const useEditLesson = () => {
    * Envoie les données au serveur et redirige vers la liste des leçons
    */
   const handleUpdateLesson = () => {
-    const applyData = (data: Lesson) => {
-      console.log({ data });
-      navigate(`/admin/lesson`);
+    const applyData = (/*data: Lesson*/) => {
+      if (location.state?.moduleId) {
+        navigate(`/admin/parcours/module/${location.state.moduleId}`, {
+          state: { lessonId: Number(lessonId) },
+        });
+      } else {
+        navigate(`/admin/lesson`);
+      }
       toast.success("Leçon mise à jour");
     };
+
     sendRequest(
       {
         path: `/lesson/update`,
@@ -66,7 +73,7 @@ const useEditLesson = () => {
           modalite: mode,
         },
       },
-      applyData
+      applyData,
     );
   };
 
