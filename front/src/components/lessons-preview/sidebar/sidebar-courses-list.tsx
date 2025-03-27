@@ -9,6 +9,8 @@ import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
 // Type definition pour les props du composant
 type SidebarCoursesListProps = {
   courses: Course[];
+  parcoursId: number;
+  moduleId: number;
   selectedLesson: Lesson | undefined;
   setSelectedLesson: (lesson: Lesson | undefined) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
@@ -16,6 +18,8 @@ type SidebarCoursesListProps = {
 
 const SidebarCoursesList = ({
   courses,
+  parcoursId,
+  moduleId,
   selectedLesson,
   setSelectedLesson,
   onDeleteCourse,
@@ -87,6 +91,8 @@ const SidebarCoursesList = ({
             <CourseItem
               key={course.id}
               course={course}
+              parcoursId={parcoursId}
+              moduleId={moduleId}
               selectedLesson={selectedLesson}
               setSelectedLesson={setSelectedLesson}
               onDeleteCourse={onDeleteCourse}

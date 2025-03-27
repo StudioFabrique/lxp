@@ -17,6 +17,8 @@ import TableActionsModal from "../../table/table-buttons/table-actions-modal";
 
 type CourseItemProps = {
   course: Course;
+  parcoursId: number;
+  moduleId: number;
   selectedLesson: Lesson | undefined;
   setSelectedLesson: (lesson: Lesson | undefined) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
@@ -24,6 +26,8 @@ type CourseItemProps = {
 
 const CourseItem = ({
   course,
+  parcoursId,
+  moduleId,
   selectedLesson,
   setSelectedLesson,
   onDeleteCourse,
@@ -133,6 +137,11 @@ const CourseItem = ({
 
                     <Link
                       to="/admin/lesson/add"
+                      state={{
+                        parcoursId,
+                        moduleId,
+                        courseId: course.id,
+                      }}
                       className="cursor-default flex items-center px-4 py-3 text-sm hover:bg-primary/20 transition-all"
                     >
                       <ListPlus className="w-4 h-4 mr-3" />
