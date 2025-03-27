@@ -67,8 +67,10 @@ async function getParcoursById(parcoursId: number, userId: string) {
                 },
               },
               courses: {
+                orderBy: { order: "asc" },
                 select: {
                   lessons: {
+                    orderBy: { order: "asc" },
                     select: {
                       lessonsRead: {
                         where: { student: { idMdb: userId } },

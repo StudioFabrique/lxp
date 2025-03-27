@@ -19,6 +19,8 @@ const useLessonsPreview = () => {
   const [selectedLesson, setSelectedLesson] = useState<Lesson>();
   const [lessonRating, setLessonRating] = useState<LessonRating>();
 
+  console.log({ stateFromUrl });
+
   // Vérifie si la leçon a déjà été complétée
   const [isLessonCompleted, setIsLessonCompleted] = useState(false);
 
