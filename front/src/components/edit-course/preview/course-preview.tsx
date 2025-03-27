@@ -23,16 +23,16 @@ interface CoursePreviewProps {
 const CoursePreview = (props: CoursePreviewProps) => {
   const { courseId } = useParams();
   const objectives = useSelector(
-    (state: any) => state.courseObjectives.courseObjectives
+    (state: any) => state.courseObjectives.courseObjectives,
   ) as Objective[];
   const skills = useSelector(
-    (state: any) => state.courseSkills.courseSkills
+    (state: any) => state.courseSkills.courseSkills,
   ) as Skill[];
   const lessons = useSelector(
-    (state: any) => state.courseScenario.courseLessons
+    (state: any) => state.courseScenario.courseLessons,
   ) as Lesson[];
   const dates = useSelector(
-    (state: any) => state.courseDates.courseDates
+    (state: any) => state.courseDates.courseDates,
   ) as CourseDates[];
   const { sendRequest, error } = useHttp();
   const nav = useNavigate();
@@ -50,6 +50,7 @@ const CoursePreview = (props: CoursePreviewProps) => {
     } else {
       const applyData = (data: { success: boolean; message: string }) => {
         if (data.success) {
+          console.log({ data });
           toast.success(data.message);
           setTimeout(() => {
             nav("/admin/course");
@@ -61,7 +62,7 @@ const CoursePreview = (props: CoursePreviewProps) => {
           path: `/course/publish/${courseId}`,
           method: "put",
         },
-        applyData
+        applyData,
       );
     }
   };

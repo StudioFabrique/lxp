@@ -5,6 +5,7 @@ import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
 import LessonRating from "../../../utils/interfaces/lesson-rating";
+import toast from "react-hot-toast";
 
 // Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
 const useLessonsPreview = () => {
@@ -162,23 +163,22 @@ const useLessonsPreview = () => {
       );
   };
 
-  // useEffect pour charger les détails d'une leçon sélectionnée
-  useEffect(() => {
-    const applyData = (data: Lesson) => {
-      // Marquer le début de lecture d'une leçon
-      const lessonInModule = lessons.find((lesson) => lesson.id === data.id);
-      setSelectedLesson({
-        ...data,
-        lessonsRead: lessonInModule?.lessonsRead || [],
-      });
+  const handleDeleteCourse = async (courseId: number) => {
+    const applyData = (data: { success: boolean; message: string }) => {
+      if (data.success) {
+        toast.success(data.message);
+        handleLessonSelection(undefined);
+        fetchData();
+      }
     };
 
-    if (!selectedLesson?.id) return;
-    sendRequest({ path: `/lesson/${selectedLesson.id}` }, applyData);
-  }, [selectedLesson?.id, lessons, sendRequest]);
+    await sendRequest(
+      { path: `/course/delete-course/${courseId}`, method: "delete" },
+      applyData,
+    );
+  };
 
-  // useEffect pour charger les données initiales du module
-  useEffect(() => {
+  const fetchData = useCallback(() => {
     const applyData = ({
       data,
     }: {
@@ -201,6 +201,26 @@ const useLessonsPreview = () => {
       applyData,
     );
   }, [moduleId, sendRequest, stateFromUrl?.lessonId, handleLessonSelection]);
+
+  // useEffect pour charger les détails d'une leçon sélectionnée
+  useEffect(() => {
+    const applyData = (data: Lesson) => {
+      // Marquer le début de lecture d'une leçon
+      const lessonInModule = lessons.find((lesson) => lesson.id === data.id);
+      setSelectedLesson({
+        ...data,
+        lessonsRead: lessonInModule?.lessonsRead || [],
+      });
+    };
+
+    if (!selectedLesson?.id) return;
+    sendRequest({ path: `/lesson/${selectedLesson.id}` }, applyData);
+  }, [selectedLesson?.id, lessons, sendRequest]);
+
+  // useEffect pour charger les données initiales du module
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   useEffect(() => {
     setIsLessonCompleted(
@@ -228,6 +248,7 @@ const useLessonsPreview = () => {
     onCompleteLesson: handleCompleteLesson,
     onRateContent: handleRateContent,
     onEditRateContent: handleEditRateContent,
+    onDeleteCourse: handleDeleteCourse,
   };
 };
 

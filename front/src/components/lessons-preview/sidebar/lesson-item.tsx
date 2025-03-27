@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Edit, Edit3 } from "lucide-react";
+import { ArrowRight, Check, Edit3 } from "lucide-react";
 import Lesson from "../../../utils/interfaces/lesson";
 import { Link } from "react-router-dom";
 import Can from "../../UI/can/can.component";
