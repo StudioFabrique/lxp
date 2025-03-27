@@ -22,6 +22,8 @@ interface CoursePreviewProps {
 
 const CoursePreview = (props: CoursePreviewProps) => {
   const { courseId } = useParams();
+  const moduleId = useSelector((state: any) => state.courseInfos).course.module
+    .id;
   const objectives = useSelector(
     (state: any) => state.courseObjectives.courseObjectives,
   ) as Objective[];
@@ -50,10 +52,11 @@ const CoursePreview = (props: CoursePreviewProps) => {
     } else {
       const applyData = (data: { success: boolean; message: string }) => {
         if (data.success) {
-          console.log({ data });
           toast.success(data.message);
           setTimeout(() => {
-            nav("/admin/course");
+            nav(`/admin/parcours/module/${moduleId}`, {
+              state: { lessonId: lessons[0].id },
+            });
           }, 500);
         }
       };

@@ -35,8 +35,6 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
   ) as Tag[];
   const dispatch = useDispatch();
 
-  console.log({ currentTags });
-
   // États locaux
   const [submit, setSubmit] = useState<boolean>(false);
   const isInitialRender = useRef(true);
