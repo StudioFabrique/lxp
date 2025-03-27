@@ -11,12 +11,14 @@ type SidebarCoursesListProps = {
   courses: Course[];
   selectedLesson: Lesson | undefined;
   setSelectedLesson: (lesson: Lesson | undefined) => void;
+  onDeleteCourse: (courseId: number) => Promise<void>;
 };
 
 const SidebarCoursesList = ({
   courses,
   selectedLesson,
   setSelectedLesson,
+  onDeleteCourse,
   children,
 }: PropsWithChildren<SidebarCoursesListProps>) => {
   // Filtre les cours qui ont des leçons
@@ -87,6 +89,7 @@ const SidebarCoursesList = ({
               course={course}
               selectedLesson={selectedLesson}
               setSelectedLesson={setSelectedLesson}
+              onDeleteCourse={onDeleteCourse}
             />
           ))
         ) : (

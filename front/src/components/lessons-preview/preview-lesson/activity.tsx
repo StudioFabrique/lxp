@@ -9,6 +9,7 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
 import { Edit3, File } from "lucide-react";
 import { Link } from "react-router-dom";
+import Can from "../../UI/can/can.component";
 
 type ActivityProps = {
   lessonId: number;
@@ -108,13 +109,15 @@ const ActivityPreview = ({ lessonId, activity }: ActivityProps) => {
 
     return (
       <Wrapper additionalClassname="bg-secondary/5 relative px-4">
-        <Link
-          to={`/admin/lesson/edit/${lessonId}/preview/${activity.id}`}
-          data-tip="Modifier l'activité"
-          className="btn btn-xs btn-ghost absolute top-4 right-4 tooltip tooltip-left"
-        >
-          <Edit3 className="w-5 h-5" />
-        </Link>
+        <Can action="update" object="lesson">
+          <Link
+            to={`/admin/lesson/edit/${lessonId}/preview/${activity.id}`}
+            data-tip="Modifier l'activité"
+            className="btn btn-xs btn-ghost absolute top-4 right-4 tooltip tooltip-left"
+          >
+            <Edit3 className="w-5 h-5" />
+          </Link>
+        </Can>
         <FadeWrapper>{content}</FadeWrapper>
       </Wrapper>
     );

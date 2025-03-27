@@ -29,6 +29,7 @@ const LessonsPreview = () => {
     setSelectedLesson,
     onRateContent,
     onEditRateContent,
+    onDeleteCourse,
   } = useLessonsPreview();
 
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -92,6 +93,7 @@ const LessonsPreview = () => {
             courses={moduleData.courses}
             selectedLesson={selectedLesson}
             setSelectedLesson={setSelectedLesson}
+            onDeleteCourse={onDeleteCourse}
           >
             <Can action="write" object="course">
               <CreateCourseItem
@@ -129,7 +131,10 @@ const LessonsPreview = () => {
                 {isLessonCompleted ? "Leçon Suivante" : "Marquer comme terminé"}
               </FeedbacksButton>
             </Can>
+
+            {/* Le lecteur de leçons */}
           </LessonReader>,
+
           /* Dans le cas où aucune leçon n'est affiché,
            les informations complémentaires du cours sont affichés */
           <ModuleData key="module-data" moduleData={moduleData} />,
