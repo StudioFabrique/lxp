@@ -25,7 +25,7 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
   const dispatch = useDispatch();
   const { sendRequest, error } = useHttp();
   const [visibility, setVisibility] = useState<boolean | null>(
-    props.visibility
+    props.visibility,
   );
 
   const {
@@ -80,7 +80,7 @@ const CourseInfosForm = (props: CourseInfosFormProps) => {
           visibility: visibility === undefined || !visibility ? false : true,
         },
       },
-      applyData
+      applyData,
     );
   }, [
     dispatch,

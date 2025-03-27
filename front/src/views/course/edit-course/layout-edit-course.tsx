@@ -14,6 +14,8 @@ import ImageHeader from "../../../components/image-header";
 import Course from "../../../utils/interfaces/course";
 import defaultImage from "../../../assets/images/module-default.jpg";
 import CourseIcon from "../../../components/UI/svg/course-icon";
+import { tagsAction } from "../../../store/redux-toolkit/tags";
+import Tag from "../../../utils/interfaces/tag";
 
 const LayoutCourseEdit = () => {
   const { sendRequest, error } = useHttp();
@@ -21,7 +23,7 @@ const LayoutCourseEdit = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const course = useSelector(
-    (state: any) => state.courseInfos.course
+    (state: any) => state.courseInfos.course,
   ) as Course;
 
   /**
@@ -33,13 +35,18 @@ const LayoutCourseEdit = () => {
       setLoading(false);
       const loadedCourse = formatCourseFromHttp(data);
       dispatch(courseInfosAction.setCourse(loadedCourse));
+      dispatch(
+        tagsAction.setCurrentTags(
+          data.tags.map((tag: { tag: Tag }) => tag.tag),
+        ),
+      );
     };
     setLoading(true);
     sendRequest(
       {
         path: `/course/infos/${courseId}`,
       },
-      applyData
+      applyData,
     );
     return () => {
       dispatch(courseInfosAction.resetCourse());
@@ -55,8 +62,6 @@ const LayoutCourseEdit = () => {
       toast.error(error);
     }
   }, [error]);
-
-  console.log({ course });
 
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-2 py-2">
