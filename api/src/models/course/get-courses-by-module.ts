@@ -4,6 +4,8 @@ async function getCoursesByModule(moduleId: number) {
   const courses = await prisma.course.findMany({
     where: {
       moduleId,
+      isPublished: true,
+      visibility: true,
     },
 
     select: {
