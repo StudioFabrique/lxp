@@ -198,10 +198,7 @@ const useLessonsPreview = () => {
       }
     };
 
-    sendRequest(
-      { path: `/modules/detail/${moduleId}`, method: "get" },
-      applyData,
-    );
+    sendRequest({ path: `/modules/detail/limited/${moduleId}` }, applyData);
   }, [moduleId, sendRequest, stateFromUrl?.lessonId, handleLessonSelection]);
 
   // useEffect pour charger les détails d'une leçon sélectionnée
