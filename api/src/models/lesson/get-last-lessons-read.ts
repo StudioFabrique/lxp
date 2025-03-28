@@ -82,8 +82,8 @@ export default async function getLastLessonsRead(
   if (lessons && !(lessons?.length > 0)) {
     const lesson = await prisma.lesson.findFirst({
       where: {
-        isPublished: true,
-        visibility: true,
+        // isPublished: true,
+        // visibility: true,
         lessonsRead: { every: { NOT: { student: { idMdb: userIdMdb } } } },
         course: {
           isPublished: true,
