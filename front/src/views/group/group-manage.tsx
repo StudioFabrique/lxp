@@ -18,7 +18,7 @@ const GroupManage = () => {
   } = useGroupManage();
 
   return (
-    <div className="flex flex-col p-10 gap-10">
+    <>
       <GroupForm
         title={existingGroup && "Modifier un groupe de formation"}
         group={existingGroup}
@@ -33,7 +33,7 @@ const GroupManage = () => {
         onUpdateUser={onUpdateUser}
         onDeleteUser={onDeleteUser}
       />
-    </div>
+    </>
   );
 };
 
