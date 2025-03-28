@@ -22,8 +22,8 @@ export default async function getLastLessonsRead(
     where: {
       student: { idMdb: userIdMdb },
       lesson: {
-        isPublished: true,
-        visibility: true,
+        // isPublished: true,
+        // visibility: true,
         course: {
           isPublished: true,
           visibility: true,
@@ -32,7 +32,6 @@ export default async function getLastLessonsRead(
               every: {
                 parcours: {
                   isPublished: true,
-                  visibility: true,
                   groups: { some: { group: { idMdb: { in: groupIds } } } },
                 },
               },
