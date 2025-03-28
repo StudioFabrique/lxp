@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Edit3 } from "lucide-react";
+import { ArrowUpRight, Check, Edit3 } from "lucide-react";
 import Lesson from "../../../utils/interfaces/lesson";
 import { Link } from "react-router-dom";
 import Can from "../../UI/can/can.component";
@@ -35,20 +35,23 @@ const LessonItem = ({
     // Conteneur principal avec style conditionnel basé sur la sélection
     <div
       onClick={handleBeginReadLesson}
-      className={`flex items-center justify-between gap-1 rounded-xl p-4 w-full cursor-pointer ${
+      className={`flex items-center justify-between gap-1 rounded-xl px-4 h-14 w-full cursor-pointer hover:bg-primary/80 group ${
         isLessonSelected
           ? "bg-primary text-base-100"
           : "bg-primary/60 text-primary-content"
       }`}
     >
       <motion.span
-        className="flex gap-1 items-center min-w-0"
+        className="flex gap-1 items-center min-w-0 tooltip tooltip-bottom"
         animate={{
           x: isLessonSelected && !isLessonRead ? 10 : 0,
         }}
         transition={{ duration: 0.3 }}
+        data-tip={lesson.title}
       >
-        <p className="max-h-14 truncate">{lesson.title}</p>
+        <p className="max-h-14 truncate" data-tip={lesson.title}>
+          {lesson.title}
+        </p>
         <Can action="update" object="lesson">
           <Link
             to={`/admin/lesson/edit-lesson/${lesson.id}`}
@@ -61,7 +64,7 @@ const LessonItem = ({
         </Can>
       </motion.span>
 
-      <div>
+      <div className="flex h-full items-center py-3">
         {/* Affiche une coche si la leçon est lue, ou une flèche sinon */}
         {isLessonRead ? (
           <Check
@@ -69,13 +72,9 @@ const LessonItem = ({
           />
         ) : (
           !isLessonSelected && (
-            <motion.div
-              initial={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              <ArrowRight />
-            </motion.div>
+            <div className="self-start opacity-0 group-hover:opacity-100 group-hover:animate-pulse">
+              <ArrowUpRight className="w-4 h-4" />
+            </div>
           )
         )}
       </div>

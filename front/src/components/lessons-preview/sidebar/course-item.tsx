@@ -2,6 +2,7 @@ import {
   ArrowDown,
   ArrowRight,
   Edit,
+  EyeOff,
   ListPlus,
   MoreVertical,
   Trash,
@@ -98,7 +99,16 @@ const CourseItem = ({
           Confirmer
         </button>
       </TableActionsModal>
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full relative">
+        {!course.isPublished || !course.visibility ? (
+          <div
+            className="badge badge-primary absolute -top-3 -left-3 tooltip tooltip-right"
+            data-tip={`Le cours est ${!course.visibility ? "invisible" : ""} ${!course.visibility && !course.isPublished ? "et" : ""} ${!course.isPublished ? "non publié" : ""}`}
+          >
+            <EyeOff className="w-4 h-4 stroke-base-100" />
+          </div>
+        ) : null}
+
         <div
           className="flex flex-col w-full cursor-pointer"
           onClick={handleToggleCourseTab}
