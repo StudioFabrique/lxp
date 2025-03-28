@@ -44,7 +44,7 @@ const LessonItem = ({
       <motion.span
         className="flex gap-1 items-center min-w-0"
         animate={{
-          x: isLessonSelected ? 10 : 0,
+          x: isLessonSelected && !isLessonRead ? 10 : 0,
         }}
         transition={{ duration: 0.3 }}
       >
