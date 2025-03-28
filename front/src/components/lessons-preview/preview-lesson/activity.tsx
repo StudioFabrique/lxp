@@ -66,7 +66,7 @@ const ActivityPreview = ({ lessonId, activity }: ActivityProps) => {
   const renderContent = () => {
     const contentMap = {
       text: (
-        <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 max-w-[95%]">
+        <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 max-w-[92%]">
           {value}
         </Markdown>
       ),
