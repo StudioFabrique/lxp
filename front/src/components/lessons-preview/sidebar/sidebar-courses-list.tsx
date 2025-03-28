@@ -9,14 +9,20 @@ import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
 // Type definition pour les props du composant
 type SidebarCoursesListProps = {
   courses: Course[];
+  parcoursId: number;
+  moduleId: number;
   selectedLesson: Lesson | undefined;
   setSelectedLesson: (lesson: Lesson | undefined) => void;
+  onDeleteCourse: (courseId: number) => Promise<void>;
 };
 
 const SidebarCoursesList = ({
   courses,
+  parcoursId,
+  moduleId,
   selectedLesson,
   setSelectedLesson,
+  onDeleteCourse,
   children,
 }: PropsWithChildren<SidebarCoursesListProps>) => {
   // Filtre les cours qui ont des leçons
@@ -54,23 +60,33 @@ const SidebarCoursesList = ({
       {/* En-tête avec le titre et l'indicateur de progression */}
       <Can action="component" object="progression">
         <div className="flex justify-between">
-          <h2 className="text-xl font-bold w-28 text-primary">
-            Progression du module
-          </h2>
-          {courses.length > 0 && (
-            <FadeWrapper>
-              <span
-                className="radial-progress text-secondary self-end"
-                style={radialStyle(moduleProgress)}
-              >
-                <p>{Math.round(moduleProgress * 100)}%</p>
+          {courses.length > 0 ? (
+            <>
+              <h2 className="text-xl font-bold w-28 text-primary">
+                Progression du module
+              </h2>
+
+              <FadeWrapper>
                 <span
-                  className="absolute radial-progress text-primary/40"
-                  style={radialStyle(1)}
-                />
-              </span>
-            </FadeWrapper>
-          )}
+                  className="radial-progress text-secondary self-end"
+                  style={radialStyle(
+                    !isNaN(moduleProgress) ? moduleProgress : 0,
+                  )}
+                >
+                  <p>
+                    {!isNaN(moduleProgress)
+                      ? Math.round(moduleProgress * 100)
+                      : 0}
+                    %
+                  </p>
+                  <span
+                    className="absolute radial-progress text-primary/40"
+                    style={radialStyle(1)}
+                  />
+                </span>
+              </FadeWrapper>
+            </>
+          ) : null}
         </div>
       </Can>
       {/* Liste des cours */}
@@ -80,13 +96,18 @@ const SidebarCoursesList = ({
             <CourseItem
               key={course.id}
               course={course}
+              parcoursId={parcoursId}
+              moduleId={moduleId}
               selectedLesson={selectedLesson}
               setSelectedLesson={setSelectedLesson}
+              onDeleteCourse={onDeleteCourse}
             />
           ))
         ) : (
           <Can action="component" object="progression">
-            <p>Aucun cours</p>
+            <p className="text-lg font-bold text-primary">
+              Aucun cours disponible
+            </p>
           </Can>
         )}
         {children}

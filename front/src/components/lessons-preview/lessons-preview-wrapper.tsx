@@ -1,20 +1,15 @@
 import { Dispatch, PropsWithChildren, SetStateAction } from "react";
 import Lesson from "../../utils/interfaces/lesson";
-import {
-  ClipboardList,
-  Edit,
-  PanelLeftClose,
-  PanelLeftOpen,
-} from "lucide-react";
+import { Edit, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { motion } from "framer-motion";
-import Can from "../UI/can/can.component";
 import { Link } from "react-router-dom";
+import Can from "../UI/can/can.component";
 
 type LessonsPreviewWrapperProps = {
+  parcoursId: number;
   selectedLesson?: Lesson;
   isPanelClosed?: boolean;
   setPanelClosed: Dispatch<SetStateAction<boolean>>;
-  lessonHasActivities: boolean;
 };
 
 /**
@@ -22,10 +17,10 @@ type LessonsPreviewWrapperProps = {
  * Il encapsule la logique de présentation et la mise en page des aperçus de leçons.
  */
 const LessonsPreviewWrapper = ({
+  parcoursId,
   selectedLesson,
   isPanelClosed = false,
   setPanelClosed,
-  lessonHasActivities,
   children,
 }: PropsWithChildren<LessonsPreviewWrapperProps>) => {
   const [header, progessionSide, topProgressBar, previewLesson, moduleData] =
@@ -76,28 +71,14 @@ const LessonsPreviewWrapper = ({
             <span className="w-full bg-secondary/20 rounded-lg h-full px-2">
               {topProgressBar}
             </span>
-
-            <Can action="write" object="lesson">
-              {selectedLesson ? (
-                <>
-                  <Link
-                    to={`/admin/lesson/edit-lesson/${selectedLesson.id}`}
-                    className="btn w-fit hover:bg-primary hover:text-base-100 tooltip tooltip-left"
-                    data-tip="Modifier les informations"
-                  >
-                    <Edit className="w-6 h-6" />
-                  </Link>
-                  {lessonHasActivities ? (
-                    <Link
-                      to={`/admin/lesson/edit/${selectedLesson.id}`}
-                      className="btn w-fit hover:bg-primary hover:text-base-100 tooltip tooltip-left"
-                      data-tip="Modifier les activités"
-                    >
-                      <ClipboardList className="w-6 h-6" />
-                    </Link>
-                  ) : null}
-                </>
-              ) : null}
+            <Can action="update" object="module">
+              <Link
+                to={`/admin/parcours/edit/${parcoursId}?step=4`}
+                className="btn w-fit hover:bg-primary hover:text-base-100"
+              >
+                <Edit className="w-5 h-5" />
+                Modifier le module
+              </Link>
             </Can>
           </div>
 

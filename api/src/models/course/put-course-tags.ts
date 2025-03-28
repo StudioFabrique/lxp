@@ -16,7 +16,7 @@ async function putCourseTags(courseId: number, tags: number[]) {
       where: { courseId },
     });
 
-    const upadtedCourse = await tx.course.update({
+    const updatedCourse = await tx.course.update({
       where: { id: courseId },
       data: {
         tags: {

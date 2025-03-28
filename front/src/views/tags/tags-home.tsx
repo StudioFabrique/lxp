@@ -5,28 +5,28 @@ import {
   actionsConfig,
   tableListConfig,
   searchBarConfig,
-} from "./group-home-table-config";
+} from "./tags-home-table-config";
 import Table from "../../components/table/table";
 import TablePagination from "../../components/table/table-pagination/table-pagination";
 import useTablePaginatedData from "../../components/table/table-pagination/hooks/use-table-paginated-data";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
 import useTableCheckbox from "../../components/table/table-list/hooks/use-table-checkbox";
-import useGroupActions from "./hooks/use-group-actions";
+import useTagActions from "./hooks/use-tags-actions";
 import TableActionsButtons from "../../components/table/table-buttons/table-actions-buttons";
-import Group from "../../utils/interfaces/group";
+import Tag from "../../utils/interfaces/tag";
 
 /**
- * Composant GroupHome
+ * Composant TagsHome
  *
- * Affiche une liste de groupes avec des fonctionnalités pour créer,
- * modifier et supprimer des groupes. Utilise un tableau paginé pour
+ * Affiche une liste de tags avec des fonctionnalités pour créer,
+ * modifier et supprimer des tags. Utilise un tableau paginé pour
  * présenter les données, avec une barre de recherche intégrée.
  * Gère les notifications toast pour informer l'utilisateur des actions.
  *
  * @component
  */
-const GroupHome = () => {
+const TagsHome = () => {
   const { state } = useLocation();
 
   // custom hook gestion pagination
@@ -41,8 +41,8 @@ const GroupHome = () => {
     onSubmitSearchValue,
     onSortProperty,
     ...pagination
-  } = useTablePaginatedData<Group>("/group/student", {
-    apiSearchEndpoint: "/group/search/student",
+  } = useTablePaginatedData<Tag>("/tags/student", {
+    apiSearchEndpoint: "/tags/search/student",
     searchProperty: "name",
   });
 
@@ -51,10 +51,10 @@ const GroupHome = () => {
     idsList,
     onRetreiveItemsValuesByPropertyFromIdList,
     ...checkboxConfig
-  } = useTableCheckbox<Group>(data, "_id");
+  } = useTableCheckbox<Tag>(data, "_id");
 
   // custom hook gestion actions groupées
-  const { onDeleteSelectedGroups } = useGroupActions(idsList, onRefreshData);
+  const { onDeleteSelectedTags } = useTagActions(idsList, onRefreshData);
 
   // Si un message du state est présent, alors il s'affiche dans un toaster
   useEffect(() => {
@@ -63,20 +63,20 @@ const GroupHome = () => {
 
   return (
     <>
-      {/* Header de la liste des groupes */}
+      {/* Header de la liste des tags */}
       <Header
-        title="Liste des groupes"
-        description="Créer, modifier et supprimer des groupes"
+        title="Liste des tags"
+        description="Créer, modifier et supprimer des tags"
       >
-        <Can object="group" action="write">
-          <Link className="btn btn-primary text-base-100" to="/admin/group/add">
-            Créer un groupe
+        <Can object="tag" action="write">
+          <Link className="btn btn-primary text-base-100" to="/admin/tags/add">
+            Créer un tag
           </Link>
         </Can>
       </Header>
 
       {/*
-       * Tableau generique utilisé pour la liste des groupes,
+       * Tableau generique utilisé pour la liste des tags,
        * utilisation du pattern composition
        */}
       <Table
@@ -100,10 +100,10 @@ const GroupHome = () => {
             onRefreshData={onRefreshData}
             actions={[
               {
-                title: "Supprimer les groupes selectionnés",
-                description: `${idsList.length} ${idsList.length > 1 ? "groupes vont être supprimés" : "groupe va être supprimé"}`,
+                title: "Supprimer les tags selectionnés",
+                description: `${idsList.length} ${idsList.length > 1 ? "tags vont être supprimés" : "tag va être supprimé"}`,
                 rightButtonTitle: "Supprimer",
-                onConfirm: onDeleteSelectedGroups,
+                onConfirm: onDeleteSelectedTags,
               },
             ]}
             retreiveItemsProperty="name"
@@ -114,7 +114,7 @@ const GroupHome = () => {
           // bas du tableau
           <TablePagination
             key={1}
-            leftText={`Nombre de groupes : ${totalItems}`}
+            leftText={`Nombre de tags : ${totalItems}`}
             {...pagination}
           />,
         ]}
@@ -123,4 +123,4 @@ const GroupHome = () => {
   );
 };
 
-export default GroupHome;
+export default TagsHome;
