@@ -61,6 +61,15 @@ const LessonsPreview = () => {
     setShowModal((prev) => !prev);
   };
 
+  useEffect(() => {
+    if (selectedLesson) {
+      window.scrollTo({
+        top: 100,
+        behavior: "smooth",
+      });
+    }
+  }, [selectedLesson]);
+
   return !moduleData ? (
     <LessonsPreviewSkeleton />
   ) : (
