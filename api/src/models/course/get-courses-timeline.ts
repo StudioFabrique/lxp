@@ -69,10 +69,16 @@ export default async function getCoursesTimeline(
         select: {
           id: true,
         },
+        where: {
+          isPublished: true,
+          visibility: true,
+        },
         take: 1,
       },
     },
     where: {
+      isPublished: true,
+      visibility: true,
       OR: [
         ...(admins.length > 0 && showAllCourses
           ? [
@@ -107,6 +113,7 @@ export default async function getCoursesTimeline(
                   parcours: {
                     some: {
                       parcours: {
+                        isPublished: true,
                         contacts: {
                           some: {
                             contactId: {
@@ -126,6 +133,7 @@ export default async function getCoursesTimeline(
                   parcours: {
                     every: {
                       parcours: {
+                        isPublished: true,
                         groups: {
                           some: {
                             group: { idMdb: { in: groupsIds } },
