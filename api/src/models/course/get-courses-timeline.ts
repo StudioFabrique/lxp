@@ -69,10 +69,6 @@ export default async function getCoursesTimeline(
         select: {
           id: true,
         },
-        where: {
-          isPublished: true,
-          visibility: true,
-        },
         take: 1,
       },
     },
