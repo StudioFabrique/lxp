@@ -37,11 +37,11 @@ export default async function getLimitedModuleDetail(
           visibility: true,
           isPublished: true,
           lessons: {
-            where: isTeacher
-              ? undefined
-              : {
-                  AND: [{ visibility: true }, { isPublished: true }],
-                },
+            // where: isTeacher
+            //   ? undefined
+            //   : {
+            //       AND: [{ visibility: true }, { isPublished: true }],
+            //     },
             include: {
               lessonsRead: {
                 where: { student: { idMdb: userMongoId } },

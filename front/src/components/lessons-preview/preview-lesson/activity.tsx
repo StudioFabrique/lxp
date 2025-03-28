@@ -113,7 +113,7 @@ const ActivityPreview = ({ lessonId, activity }: ActivityProps) => {
           <Link
             to={`/admin/lesson/edit/${lessonId}/preview/${activity.id}`}
             data-tip="Modifier l'activité"
-            className="btn btn-xs btn-ghost absolute top-4 right-4 tooltip tooltip-left"
+            className="btn btn-xs btn-ghost absolute top-2 right-0 tooltip tooltip-left"
           >
             <Edit3 className="w-5 h-5" />
           </Link>
