@@ -19,6 +19,8 @@ const ParcoursView = React.lazy(
 const LessonsPreview = React.lazy(
   () => import("../../views/lessons-preview/lessons-preview"),
 );
+const TagsLayout = React.lazy(() => import("../../views/tags/tags-layout"));
+const TagsHome = React.lazy(() => import("../../views/tags/tags-home"));
 const FeaturesList = React.lazy(
   () => import("../../views/features-list/features-list"),
 );
@@ -39,6 +41,14 @@ const studentRoutes = [
     ],
   },
   { path: "calendrier", element: <CalendarHome /> },
+  {
+    path: "tags",
+    element: <TagsLayout />,
+    children: [
+      { index: true, element: <TagsHome /> },
+      // { path: ":tagsId", element: <TagsManage /> },
+    ],
+  },
   { path: "profil", element: <UserProfile /> },
   { path: "*", element: <FeaturesList /> },
 ];

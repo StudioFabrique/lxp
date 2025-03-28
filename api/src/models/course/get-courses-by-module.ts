@@ -4,7 +4,10 @@ async function getCoursesByModule(moduleId: number) {
   const courses = await prisma.course.findMany({
     where: {
       moduleId,
+      isPublished: true,
+      visibility: true,
     },
+
     select: {
       id: true,
       title: true,
@@ -25,12 +28,22 @@ async function getCoursesByModule(moduleId: number) {
           },
         },
       },
-      lessons: { select: { id: true } },
+      lessons: {
+        select: {
+          id: true,
+        },
+        orderBy: {
+          order: "asc",
+        },
+      },
       author: true,
       createdAt: true,
       updatedAt: true,
       isPublished: true,
       visibility: true,
+    },
+    orderBy: {
+      order: "asc",
     },
   });
 

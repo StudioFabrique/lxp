@@ -28,10 +28,10 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
   // Récupération des données du state Redux
   const formation = useSelector((state: any) => state.parcours.formation);
   const currentTags = useSelector(
-    (state: any) => state.tags.currentTags
+    (state: any) => state.tags.currentTags,
   ) as Tag[];
   const initialTags = useSelector(
-    (state: any) => state.tags.initialTags
+    (state: any) => state.tags.initialTags,
   ) as Tag[];
   const dispatch = useDispatch();
 
@@ -52,7 +52,7 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
       dispatch(tagsAction.setCurrentTags(tags));
       setSubmit(true);
     },
-    [dispatch]
+    [dispatch],
   );
 
   /**
@@ -82,7 +82,7 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
         {
           path: "/tag",
         },
-        processData
+        processData,
       );
     }
   }, [dispatch, sendRequest]);
@@ -104,8 +104,8 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
     if (searchTerm.length > 0)
       setFilteredTags(
         initialTags?.filter((item) =>
-          item.name.toLocaleLowerCase().includes(searchTerm.toLowerCase())
-        )
+          item.name.toLocaleLowerCase().includes(searchTerm.toLowerCase()),
+        ),
       );
     else setFilteredTags(initialTags);
   }, [searchTerm, initialTags]);

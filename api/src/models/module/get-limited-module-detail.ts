@@ -1,9 +1,14 @@
 import { prisma } from "../../utils/db";
 
-export default async function getModuleDetail(
+export default async function getLimitedModuleDetail(
   moduleId: number,
   userMongoId: string,
 ) {
+  // First check if user is admin/teacher
+  const isTeacher = await prisma.admin.findFirst({
+    where: { idMdb: userMongoId },
+  });
+
   const existingModule = await prisma.module.findFirst({
     where: { id: moduleId },
     select: {
@@ -20,11 +25,23 @@ export default async function getModuleDetail(
       bonusSkills: { select: { bonusSkill: true } },
       contacts: { select: { contact: true } },
       courses: {
+        where: isTeacher
+          ? undefined
+          : {
+              AND: [{ visibility: true }, { isPublished: true }],
+            },
         select: {
           id: true,
           title: true,
           description: true,
+          visibility: true,
+          isPublished: true,
           lessons: {
+            // where: isTeacher
+            //   ? undefined
+            //   : {
+            //       AND: [{ visibility: true }, { isPublished: true }],
+            //     },
             include: {
               lessonsRead: {
                 where: { student: { idMdb: userMongoId } },

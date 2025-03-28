@@ -26,20 +26,27 @@ const LessonReader = ({
 }: PropsWithChildren<PreviewLessonProps>) => {
   return (
     <div className="flex flex-col gap-4">
-      {/* Bouton de notation */}
-      {currentLessonRating && lessonHasActivities ? (
-        <div className="w-full flex justify-end">
+      <div className="w-full flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-primary">
+          {selectedLesson.title}
+        </h1>
+        {/* Bouton de notation */}
+        {currentLessonRating && lessonHasActivities ? (
           <RatingPanelButton
             note={currentLessonRating}
             onRateContent={onRateContent}
           />
-        </div>
-      ) : null}
+        ) : null}
+      </div>
 
       {/* Affiche les activités si elles existent, sinon affiche un message */}
       {lessonHasActivities ? (
         selectedLesson.activities?.map((activity) => (
-          <ActivityPreview key={activity.id} activity={activity} />
+          <ActivityPreview
+            key={activity.id}
+            lessonId={selectedLesson.id ?? 0}
+            activity={activity}
+          />
         ))
       ) : (
         <NoActivityPlaceholder></NoActivityPlaceholder>
