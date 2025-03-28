@@ -63,7 +63,7 @@ const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
         </Link>
       ))
     ) : (
-      <p>Aucun cours</p>
+      <p className="ml-4">Aucun cours publié</p>
     );
 
   return (
