@@ -119,9 +119,7 @@ const CourseItem = ({
           className="flex flex-col w-full cursor-pointer"
           onClick={handleToggleCourseTab}
         >
-          <div
-            className={`flex flex-col gap-1 bg-secondary/80 p-4 rounded-xl ${isCourseOpen ? "rounded-b-none" : null}`}
-          >
+          <div className={`flex flex-col gap-1 bg-secondary/80 p-4 rounded-lg`}>
             <div className="flex justify-between items-center gap-1">
               <span
                 data-tip={`Titre : ${course.title}`}
@@ -168,7 +166,7 @@ const CourseItem = ({
           </Can>
         </div>
         <motion.div
-          className="bg-secondary/20 rounded-b-xl overflow-y-auto"
+          className="bg-secondary/20 rounded-b-xl overflow-y-auto -mt-2"
           initial={{ maxHeight: 0 }}
           style={{
             height: isCourseOpen ? "auto" : 0,
