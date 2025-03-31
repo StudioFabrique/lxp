@@ -48,10 +48,7 @@ const StudentHome = () => {
           ) : (
             <ResumeParcours />
           )}
-          <Timeline
-            title="Mon emploi du temps pour aujourd'hui"
-            viewType="day"
-          />
+          <Timeline title="Mon emploi du temps" viewType="day" />
         </div>
         <div className="flex flex-col xl:px-10 gap-5">
           <FeelingFeedback />

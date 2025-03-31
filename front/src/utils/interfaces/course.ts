@@ -25,6 +25,7 @@ export default interface Course {
   isPublished: boolean;
   bonusSkills: Skill[];
   accomplishments?: Accomplishment[];
+  order?: number;
 }
 
 export interface CourseTimeline {

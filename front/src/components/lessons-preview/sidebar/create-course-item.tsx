@@ -44,6 +44,10 @@ const CreateCourseItem = ({ moduleId, parcoursId }: CreateCourseItemProps) => {
   useEffect(() => {
     if (isEditing) {
       inputRef.current?.focus();
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: "smooth",
+      });
     }
   }, [isEditing]);
 
@@ -51,7 +55,7 @@ const CreateCourseItem = ({ moduleId, parcoursId }: CreateCourseItemProps) => {
     <div className="flex flex-col w-full">
       <div className="flex flex-col w-full cursor-pointer">
         <motion.div
-          className="bg-secondary/80 rounded-xl flex flex-col gap-4"
+          className="bg-success rounded-xl flex flex-col gap-4"
           initial={{ scale: 0.95, padding: 0 }}
           animate={{
             scale: 1,
@@ -61,29 +65,34 @@ const CreateCourseItem = ({ moduleId, parcoursId }: CreateCourseItemProps) => {
         >
           <div className="flex justify-between items-center gap-5">
             {isEditing ? (
-              <>
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={title}
-                  onChange={handleChangeInput}
-                  onBlur={handleInputBlur}
-                  onKeyDown={handleKeyDown}
-                  className="input input-sm input-bordered w-[80%] max-h-10 text-base font-semibold"
-                />
-                <button
-                  ref={buttonRef}
-                  onClick={handleClickNavigate}
-                  className="btn btn-primary btn-sm tooltip tooltip-right"
-                  data-tip="Valider"
-                >
-                  <Check className="stroke-base-100 w-5 h-5" />
-                </button>
-              </>
+              <div className="flex flex-col gap-4">
+                <span className="flex gap-4">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={title}
+                    onChange={handleChangeInput}
+                    onBlur={handleInputBlur}
+                    onKeyDown={handleKeyDown}
+                    className="input input-sm input-bordered w-[80%] max-h-10 text-base font-semibold"
+                  />
+                  <button
+                    ref={buttonRef}
+                    onClick={handleClickNavigate}
+                    className="btn btn-primary btn-sm tooltip tooltip-right"
+                    data-tip="Valider"
+                  >
+                    <Check className="stroke-base-100 w-5 h-5" />
+                  </button>
+                </span>
+                <span className="text-sm font-light italic text-success-content">
+                  Vous allez être redirigé vers la page de création de cours
+                </span>
+              </div>
             ) : (
               <button
                 onClick={handleClickAdd}
-                className="btn btn-primary rounded-xl text-base-100 w-full flex justify-between items-center gap-2"
+                className="btn btn-success rounded-xl text-base-100 w-full flex justify-between items-center gap-2"
               >
                 Ajouter un cours
                 <Plus />

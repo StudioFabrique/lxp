@@ -1,6 +1,8 @@
 import { ArrowUpRightIcon } from "lucide-react";
 import LessonRead from "../../utils/interfaces/lesson-read";
 import { Link, useLocation } from "react-router-dom";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+import { useState } from "react";
 
 type ResumeActivitiesProps = {
   lastLessons: LessonRead[];
@@ -9,6 +11,17 @@ type ResumeActivitiesProps = {
 const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
+  const [isHovered, setIsHovered] = useState(false);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springX = useSpring(mouseX, { stiffness: 500, damping: 50 });
+  const springY = useSpring(mouseY, { stiffness: 500, damping: 50 });
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    mouseX.set(e.clientX - rect.left);
+    mouseY.set(e.clientY - rect.top);
+  };
 
   if (lastLessons.length > 0)
     return (
@@ -32,54 +45,68 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
 
             return (
               <div
-                key={item.id}
-                className={`flex flex-col justify-between p-5 bg-secondary/70 text-secondary-content rounded-lg gap-4`}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                onMouseMove={handleMouseMove}
+                className="group"
               >
-                <div
-                  className="w-full text-left"
-                  /* data-tip={`Module: ${item.lesson.course.module.title} => Cours: ${item.lesson.course.title}`} */
+                <motion.span
+                  className="absolute w-36 h-14 bg-primary/50 invisible group-hover:visible"
+                  initial={{ scale: 0 }}
+                  style={{
+                    x: springX,
+                    y: springY,
+                  }}
+                  animate={{
+                    scale: isHovered ? 1 : 0,
+                  }}
+                  transition={{ duration: 0.3 }}
+                />
+                <Link
+                  key={item.id}
+                  to={`/${currentRoute}/parcours/module/${item.lesson.course.module.id}`}
+                  state={{ lessonId: item.lesson.id }}
+                  className="flex flex-col justify-between p-5 bg-secondary/10 backdrop-blur-2xl rounded-lg gap-4 hover:bg-secondary/20 transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
                 >
-                  <p className="font-semibold truncate overflow-clip">{`Module: ${item.lesson.course.module.title}`}</p>
-                  <p className="truncate overflow-clip">{`Cours: ${item.lesson.course.title}`}</p>
+                  <div className="w-full text-left">
+                    <p className="font-bold truncate overflow-clip text-primary">{`Module: ${item.lesson.course.module.title}`}</p>
+                    <p className="truncate font-medium overflow-clip text-sm">{`Cours ${(item.lesson.course.order ?? 0) + 1}: ${item.lesson.course.title}`}</p>
 
-                  <div className="flex gap-1 overflow-x-hidden">
-                    {item.lesson.course.bonusSkills
-                      .filter((skill) => skill.badge)
-                      .map(
-                        (skill, i) =>
-                          i < 5 && (
-                            <img
-                              key={skill.id}
-                              className="w-16 h-16 p-2"
-                              src={skill.badge}
-                              alt="illustration badge"
-                            />
-                          ),
-                      )}
+                    <div className="flex gap-1 overflow-x-hidden">
+                      {item.lesson.course.bonusSkills
+                        .filter((skill) => skill.badge)
+                        .map(
+                          (skill, i) =>
+                            i < 5 && (
+                              <img
+                                key={skill.id}
+                                className="w-16 h-16 p-2"
+                                src={skill.badge}
+                                alt="illustration badge"
+                              />
+                            ),
+                        )}
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <span className="flex justify-between">
-                    <span className="flex gap-x-4 capitalize">
-                      <p>{`${(item.lesson.order ?? 0) + 1}/${
-                        item.lesson.course.lessons.length
-                      }`}</p>
-                      <p className="truncate overflow-clip w-[60vw] lg:w-[10vw]">
-                        {item.lesson.title}
-                      </p>
-                    </span>
-                    <Link
-                      to={`/${currentRoute}/parcours/module/${item.lesson.course.module.id}`}
-                      state={{ lessonId: item.lesson.id }}
-                    >
+                  <div>
+                    <span className="flex justify-between">
+                      <span className="flex gap-x-4 capitalize">
+                        <p>{`${(item.lesson.order ?? 0) + 1}/${
+                          item.lesson.course.lessons.length
+                        }`}</p>
+                        <p className="truncate overflow-clip w-[60vw] lg:w-[10vw]">
+                          {item.lesson.title}
+                        </p>
+                      </span>
+
                       <ArrowUpRightIcon />
-                    </Link>
-                  </span>
-                  <progress
-                    className="progress progress-primary bg-secondary/80"
-                    value={progressCalculation}
-                  />
-                </div>
+                    </span>
+                    <progress
+                      className="progress [&::-moz-progress-bar]:bg-gradient-to-r [&::-moz-progress-bar]:from-primary/90 [&::-moz-progress-bar]:to-info/60 [&::-webkit-progress-value]:bg-gradient-to-r [&::-webkit-progress-value]:from-primary/90 [&::-webkit-progress-value]:to-info/50"
+                      value={progressCalculation}
+                    />
+                  </div>
+                </Link>
               </div>
             );
           })}
