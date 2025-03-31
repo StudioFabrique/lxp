@@ -89,12 +89,12 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                     </div>
                   </div>
                   <div>
-                    <span className="flex justify-between">
-                      <span className="flex gap-x-4 capitalize">
+                    <span className="flex justify-between w-full">
+                      <span className="flex gap-x-4 capitalize items-center text-sm min-w-0">
                         <p>{`${(item.lesson.order ?? 0) + 1}/${
                           item.lesson.course.lessons.length
                         }`}</p>
-                        <p className="truncate overflow-clip w-[60vw] lg:w-[10vw]">
+                        <p className="truncate overflow-clip min-w-0">
                           {item.lesson.title}
                         </p>
                       </span>

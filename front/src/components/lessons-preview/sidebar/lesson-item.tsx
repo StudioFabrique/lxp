@@ -54,10 +54,10 @@ const LessonItem = ({
     <div
       ref={lessonRef}
       onClick={handleBeginReadLesson}
-      className={`flex items-center justify-between gap-1 rounded-xl px-4 h-14 w-full cursor-pointer hover:bg-info/90 group ${
+      className={`flex items-center justify-between gap-1 rounded-xl px-4 h-14 w-full cursor-pointer group ${
         isLessonSelected
-          ? "bg-info text-base-100"
-          : "bg-primary text-primary-content"
+          ? "bg-info text-base-100 hover:bg-info/80"
+          : "bg-primary text-primary-content hover:bg-primary/80"
       }`}
     >
       <motion.span
