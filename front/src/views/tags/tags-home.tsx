@@ -15,6 +15,7 @@ import useTableCheckbox from "../../components/table/table-list/hooks/use-table-
 import useTagActions from "./hooks/use-tags-actions";
 import TableActionsButtons from "../../components/table/table-buttons/table-actions-buttons";
 import Tag from "../../utils/interfaces/tag";
+import { PlusCircle } from "lucide-react";
 
 /**
  * Composant TagsHome
@@ -70,7 +71,8 @@ const TagsHome = () => {
       >
         <Can object="tag" action="write">
           <Link className="btn btn-primary text-base-100" to="/admin/tags/add">
-            Créer un tag
+            <PlusCircle />
+            Créer un nouveau tag
           </Link>
         </Can>
       </Header>
