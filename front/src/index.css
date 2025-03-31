@@ -1,6 +1,54 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: "winter" --default, "autumn", "nord", "corporate", "cupcake", "lofi",
-    "wireframe", "business", "coffee", "dracula", "forest", "night", "synthwave";
+    themes:
+        "winter" --default,
+        "autumn",
+        "nord",
+        "corporate",
+        "cupcake",
+        "lofi",
+        "business",
+        "coffee",
+        "dracula",
+        "forest",
+        "night",
+        "synthwave",
+        "lightwitch";
 }
+
+@plugin "daisyui/theme" {
+    name: "lightwitch";
+    default: false;
+    prefersdark: false;
+    color-scheme: "light";
+    --color-base-100: oklch(97% 0.014 308.299);
+    --color-base-200: oklch(94% 0.033 307.174);
+    --color-base-300: oklch(90% 0.063 306.703);
+    --color-base-content: oklch(38% 0.176 304.987);
+    --color-primary: oklch(70% 0.183 293.541);
+    --color-primary-content: oklch(28% 0.141 291.089);
+    --color-secondary: oklch(67% 0.182 276.935);
+    --color-secondary-content: oklch(25% 0.09 281.288);
+    --color-accent: oklch(0% 0 0);
+    --color-accent-content: oklch(100% 0 0);
+    --color-neutral: oklch(49% 0.265 301.924);
+    --color-neutral-content: oklch(97% 0.014 308.299);
+    --color-info: oklch(78% 0.154 211.53);
+    --color-info-content: oklch(30% 0.056 229.695);
+    --color-success: oklch(77% 0.152 181.912);
+    --color-success-content: oklch(27% 0.046 192.524);
+    --color-warning: oklch(85% 0.199 91.936);
+    --color-warning-content: oklch(28% 0.066 53.813);
+    --color-error: oklch(71% 0.194 13.428);
+    --color-error-content: oklch(27% 0.105 12.094);
+    --radius-selector: 0rem;
+    --radius-field: 0.25rem;
+    --radius-box: 0.25rem;
+    --size-selector: 0.25rem;
+    --size-field: 0.25rem;
+    --border: 1px;
+    --depth: 1;
+    --noise: 0;
+}
+
 @plugin '@tailwindcss/typography';
