@@ -8,6 +8,7 @@ import { useEffect, useRef } from "react";
 type LessonItemProps = {
   lesson: Lesson;
   moduleId: number;
+  lessonsOrders: number[];
   selectedLesson: Lesson | undefined;
   setSelectedLesson: (lesson: Lesson | undefined) => void;
 };
@@ -16,6 +17,7 @@ type LessonItemProps = {
 const LessonItem = ({
   lesson,
   moduleId,
+  lessonsOrders,
   selectedLesson,
   setSelectedLesson,
 }: LessonItemProps) => {
@@ -34,13 +36,18 @@ const LessonItem = ({
   };
 
   useEffect(() => {
-    if (isLessonSelected && lessonRef.current) {
-      lessonRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-      });
+    if (isLessonSelected) {
+      if (
+        lessonRef.current &&
+        selectedLesson?.order !== Math.min(...lessonsOrders)
+      ) {
+        lessonRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+      }
     }
-  }, [isLessonSelected]);
+  }, [isLessonSelected, lessonsOrders, selectedLesson]);
 
   return (
     // Conteneur principal avec style conditionnel basé sur la sélection
