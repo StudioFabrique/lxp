@@ -227,6 +227,7 @@ const useLessonsPreview = () => {
       setSelectedLesson({
         ...data,
         lessonsRead: lessonInModule?.lessonsRead || [],
+        order: lessonInModule?.order,
       });
     };
 
