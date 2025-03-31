@@ -108,7 +108,7 @@ const CourseItem = ({
       <div className="flex flex-col w-full relative">
         {!course.isPublished || !course.visibility ? (
           <div
-            className="badge badge-info absolute -top-3 -left-3 tooltip tooltip-right tooltip-info"
+            className="badge badge-info absolute -top-3 -left-3 tooltip tooltip-right tooltip-info z-[15]"
             data-tip={`Le cours est ${!course.visibility ? "invisible" : ""} ${!course.visibility && !course.isPublished ? "et" : ""} ${!course.isPublished ? "non publié" : ""}`}
           >
             <EyeOff className="w-4 h-4 stroke-base-100" />
