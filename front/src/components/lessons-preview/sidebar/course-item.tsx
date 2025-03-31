@@ -160,7 +160,7 @@ const CourseItem = ({
           </div>
           <Can action="component" object="progression">
             <progress
-              className="w-full progress progress-primary bg-secondary -mt-[8px] rounded-b-full"
+              className="w-full progress progress-primary bg-secondary rounded-b-full -mt-[8px] z-10"
               value={courseProgress}
             />
           </Can>
