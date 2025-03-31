@@ -166,6 +166,23 @@ const useLessonsPreview = () => {
       );
   };
 
+  const handleEnableCourse = async (courseId: number, visibility: boolean) => {
+    const applyData = (data: { success: boolean; message: string }) => {
+      if (data.success) {
+        toast.success(data.message);
+        fetchData();
+      }
+    };
+
+    await sendRequest(
+      {
+        path: `/course/enable-course/${courseId}?visibility=${visibility}`,
+        method: "put",
+      },
+      applyData,
+    );
+  };
+
   const handleDeleteCourse = async (courseId: number) => {
     const applyData = (data: { success: boolean; message: string }) => {
       if (data.success) {
@@ -248,6 +265,7 @@ const useLessonsPreview = () => {
     onCompleteLesson: handleCompleteLesson,
     onRateContent: handleRateContent,
     onEditRateContent: handleEditRateContent,
+    onEnableCourse: handleEnableCourse,
     onDeleteCourse: handleDeleteCourse,
   };
 };

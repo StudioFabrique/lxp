@@ -30,6 +30,7 @@ const LessonsPreview = () => {
     onRateContent,
     onEditRateContent,
     onDeleteCourse,
+    onEnableCourse,
   } = useLessonsPreview();
 
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -105,6 +106,7 @@ const LessonsPreview = () => {
             selectedLesson={selectedLesson}
             setSelectedLesson={setSelectedLesson}
             onDeleteCourse={onDeleteCourse}
+            onEnableCourse={onEnableCourse}
           >
             <Can action="write" object="course">
               <CreateCourseItem
