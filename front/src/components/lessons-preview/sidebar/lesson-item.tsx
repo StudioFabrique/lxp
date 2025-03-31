@@ -3,6 +3,7 @@ import Lesson from "../../../utils/interfaces/lesson";
 import { Link } from "react-router-dom";
 import Can from "../../UI/can/can.component";
 import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 
 type LessonItemProps = {
   lesson: Lesson;
@@ -20,6 +21,7 @@ const LessonItem = ({
 }: LessonItemProps) => {
   // Vérifie si cette leçon est actuellement sélectionnée
   const isLessonSelected = selectedLesson?.id === lesson.id;
+  const lessonRef = useRef<HTMLDivElement>(null);
 
   // Vérifie si cette leçon a déjà été lue entièrement et finie
   const isLessonRead =
@@ -31,9 +33,19 @@ const LessonItem = ({
     setSelectedLesson(isLessonSelected ? undefined : lesson);
   };
 
+  useEffect(() => {
+    if (isLessonSelected && lessonRef.current) {
+      lessonRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  }, [isLessonSelected]);
+
   return (
     // Conteneur principal avec style conditionnel basé sur la sélection
     <div
+      ref={lessonRef}
       onClick={handleBeginReadLesson}
       className={`flex items-center justify-between gap-1 rounded-xl px-4 h-14 w-full cursor-pointer hover:bg-primary/80 group ${
         isLessonSelected
