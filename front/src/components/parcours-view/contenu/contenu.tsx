@@ -57,7 +57,10 @@ const Contenu = ({ modules }: ContenuProps) => {
           <div className="flex flex-col gap-y-5">{contentsList}</div>
           {modules?.length > 0 && (
             <div className="flex flex-col gap-y-4">
-              <ContenuDetailHeader imageModuleHeader={selectedModule?.thumb} />
+              <ContenuDetailHeader
+                imageModuleHeader={selectedModule?.thumb}
+                title={selectedModule?.title}
+              />
               <ContenuDetail
                 parcoursId={Number(parcoursId)}
                 moduleId={selectedModule?.id ?? 0}
