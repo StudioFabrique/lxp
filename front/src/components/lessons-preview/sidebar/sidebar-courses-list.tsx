@@ -14,6 +14,7 @@ type SidebarCoursesListProps = {
   selectedLesson: Lesson | undefined;
   setSelectedLesson: (lesson: Lesson | undefined) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
+  onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
 };
 
 const SidebarCoursesList = ({
@@ -23,6 +24,7 @@ const SidebarCoursesList = ({
   selectedLesson,
   setSelectedLesson,
   onDeleteCourse,
+  onEnableCourse,
   children,
 }: PropsWithChildren<SidebarCoursesListProps>) => {
   // Filtre les cours qui ont des leçons
@@ -101,6 +103,7 @@ const SidebarCoursesList = ({
               selectedLesson={selectedLesson}
               setSelectedLesson={setSelectedLesson}
               onDeleteCourse={onDeleteCourse}
+              onEnableCourse={onEnableCourse}
             />
           ))
         ) : (
