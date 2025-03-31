@@ -48,7 +48,7 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 onMouseMove={handleMouseMove}
-                className="group relative overflow-hidden rounded-xl hover:scale-105 transition-transform duration-200"
+                className="group relative overflow-hidden rounded-xl hover:scale-101 transition-transform duration-200"
               >
                 <motion.span
                   className="absolute w-36 h-14 bg-primary/50 invisible group-hover:visible"
