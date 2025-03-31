@@ -36,9 +36,9 @@ const Contenu = ({ modules }: ContenuProps) => {
 
   return (
     <Wrapper>
-      <div className="flex flex-col gap-y-10">
+      <div className="flex flex-col gap-y-6">
         <span className="flex justify-between">
-          <h2 className="text-xl font-bold text-primary">
+          <h2 className="text-2xl font-bold text-primary">
             Contenu du parcours
           </h2>
           <Can action="update" object="parcours">
