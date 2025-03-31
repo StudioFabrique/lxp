@@ -50,6 +50,7 @@ export default async function getLastLessonsRead(
             select: {
               id: true,
               title: true,
+              order: true,
               module: {
                 select: {
                   id: true,
@@ -113,6 +114,9 @@ export default async function getLastLessonsRead(
             },
           },
         },
+      },
+      orderBy: {
+        order: "asc",
       },
     });
 

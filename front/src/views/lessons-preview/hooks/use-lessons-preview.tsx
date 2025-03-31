@@ -61,6 +61,7 @@ const useLessonsPreview = () => {
   // Fonction pour passer à la leçon suivante
   const switchToNextLesson = () => {
     setLessonRating(undefined);
+
     if (selectedLesson && lessons.length > 0) {
       const currentIndex = lessons.findIndex(
         (lesson) => lesson.id === selectedLesson.id,
