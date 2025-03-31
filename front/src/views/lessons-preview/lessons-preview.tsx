@@ -8,7 +8,6 @@ import ModuleData from "../../components/lessons-preview/module-data/module-data
 import LessonsPreviewWrapper from "../../components/lessons-preview/lessons-preview-wrapper";
 import LessonsPreviewSkeleton from "./lessons-preview-skeleton";
 import FeedbacksButton from "../../components/UI/feedbacks/feedbacks-button";
-import { useState, useEffect } from "react";
 import LessonCompletionModal from "../../components/lessons-preview/lesson-completion-modal";
 import Can from "../../components/UI/can/can.component";
 import CreateCourseItem from "../../components/lessons-preview/sidebar/create-course-item";
@@ -17,8 +16,6 @@ import CreateCourseItem from "../../components/lessons-preview/sidebar/create-co
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
  */
 const LessonsPreview = () => {
-  const STORAGE_KEY = "lessons-preview-panel-closed";
-
   // custom hook
   const {
     moduleData,
@@ -31,45 +28,13 @@ const LessonsPreview = () => {
     onEditRateContent,
     onDeleteCourse,
     onEnableCourse,
+    showModal,
+    isPanelClosed,
+    selectedLessonHasActivities,
+    setPanelClosed,
+    onToggleModalDisplaying,
+    onClickModalRightButton,
   } = useLessonsPreview();
-
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [isPanelClosed, setPanelClosed] = useState<boolean>(false);
-
-  useEffect(() => {
-    const savedState = localStorage.getItem(STORAGE_KEY);
-    if (savedState) {
-      setPanelClosed(JSON.parse(savedState));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(isPanelClosed));
-  }, [isPanelClosed]);
-
-  const selectedLessonHasActivities = selectedLesson
-    ? Boolean(selectedLesson.activities?.length)
-    : false;
-
-  const handleToggleModalDisplaying = () => {
-    setTimeout(() => {
-      setShowModal((prev) => !prev);
-    }, 800);
-  };
-
-  const handleClickModalRightButton = () => {
-    onCompleteLesson(true);
-    setShowModal((prev) => !prev);
-  };
-
-  useEffect(() => {
-    if (selectedLesson) {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    }
-  }, [selectedLesson]);
 
   return !moduleData ? (
     <LessonsPreviewSkeleton />
@@ -83,8 +48,8 @@ const LessonsPreview = () => {
           }
           // Le bouton handler onClickModalRightButton n'est affiché seulement si
           // l'objet lessonRating est non null
-          onClickModalRightButton={lessonRating && handleClickModalRightButton}
-          onClickMinimizeButton={handleToggleModalDisplaying}
+          onClickModalRightButton={lessonRating && onClickModalRightButton}
+          onClickMinimizeButton={onToggleModalDisplaying}
         />
       ) : null}
 
@@ -136,9 +101,7 @@ const LessonsPreview = () => {
                 enableAnimationOnClick={!isLessonCompleted}
                 disabled={showModal}
                 onClick={
-                  isLessonCompleted
-                    ? onCompleteLesson
-                    : handleToggleModalDisplaying
+                  isLessonCompleted ? onCompleteLesson : onToggleModalDisplaying
                 }
               >
                 {isLessonCompleted ? "Leçon Suivante" : "Marquer comme terminé"}
