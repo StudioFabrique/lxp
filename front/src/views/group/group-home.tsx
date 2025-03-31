@@ -15,6 +15,7 @@ import useTableCheckbox from "../../components/table/table-list/hooks/use-table-
 import useGroupActions from "./hooks/use-group-actions";
 import TableActionsButtons from "../../components/table/table-buttons/table-actions-buttons";
 import Group from "../../utils/interfaces/group";
+import { PlusCircle } from "lucide-react";
 
 /**
  * Composant GroupHome
@@ -70,7 +71,8 @@ const GroupHome = () => {
       >
         <Can object="group" action="write">
           <Link className="btn btn-primary text-base-100" to="/admin/group/add">
-            Créer un groupe
+            <PlusCircle />
+            Créer un nouveau groupe
           </Link>
         </Can>
       </Header>
