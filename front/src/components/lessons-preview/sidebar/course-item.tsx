@@ -116,10 +116,10 @@ const CourseItem = ({
         ) : null}
 
         <div
-          className="flex flex-col w-full cursor-pointer"
+          className="flex flex-col w-full cursor-pointer z-10 bg-secondary rounded-lg"
           onClick={handleToggleCourseTab}
         >
-          <div className={`flex flex-col gap-1 bg-secondary/80 p-4 rounded-lg`}>
+          <div className={`flex flex-col gap-1 p-4`}>
             <div className="flex justify-between items-center gap-1">
               <span
                 data-tip={`Titre : ${course.title}`}
@@ -160,7 +160,7 @@ const CourseItem = ({
           </div>
           <Can action="component" object="progression">
             <progress
-              className="w-full progress progress-primary bg-secondary rounded-b-full -mt-[8px] z-10"
+              className="w-full progress progress-primary bg-secondary rounded-b-full -mt-[8px]"
               value={courseProgress}
             />
           </Can>
