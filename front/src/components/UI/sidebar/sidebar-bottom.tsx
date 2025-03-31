@@ -2,8 +2,8 @@ import { LogOutIcon } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import ModeToggle from "../mode-toggle";
 import { useContext } from "react";
-import { Context } from "../../../store/context.store";
 import imageProfileReplacement from "../../../config/image-profile-replacement";
+import { Context } from "../../../store/context.store";
 
 type SharedSideBarProps = {
   interfaceType: string;

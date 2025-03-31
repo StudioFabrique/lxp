@@ -1,9 +1,9 @@
 import { useContext } from "react";
 
-import { Context } from "../../store/context.store";
 import LoginForm from "./login-form.component";
 import bgSide from "../../assets/images/BG-side.png";
 import logo from "../../assets/images/andria-2.png";
+import { Context } from "../../store/context.store";
 
 const Login = () => {
   const { isLoading, error, login } = useContext(Context);
