@@ -48,7 +48,7 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 onMouseMove={handleMouseMove}
-                className="group"
+                className="group relative overflow-hidden rounded-xl hover:scale-105 transition-transform duration-200"
               >
                 <motion.span
                   className="absolute w-36 h-14 bg-primary/50 invisible group-hover:visible"
@@ -66,7 +66,7 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                   key={item.id}
                   to={`/${currentRoute}/parcours/module/${item.lesson.course.module.id}`}
                   state={{ lessonId: item.lesson.id }}
-                  className="flex flex-col justify-between p-5 bg-secondary/10 backdrop-blur-2xl rounded-lg gap-4 hover:bg-secondary/20 transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
+                  className="flex flex-col justify-between p-5 bg-secondary/10 backdrop-blur-2xl gap-4 hover:bg-secondary/20"
                 >
                   <div className="w-full text-left">
                     <p className="font-bold truncate overflow-clip text-primary">{`Module: ${item.lesson.course.module.title}`}</p>
