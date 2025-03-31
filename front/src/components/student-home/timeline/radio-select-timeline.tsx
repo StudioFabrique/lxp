@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import { Context } from "../../../store/context.store";
 import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
+import { Context } from "../../../store/context.store";
 
 type RadioSelectTimelineProps = {
   showAllCourses: boolean;

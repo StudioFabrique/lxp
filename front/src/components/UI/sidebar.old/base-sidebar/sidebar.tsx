@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 
 import { useContext } from "react";
-import { Context } from "../../../../store/context.store";
 import SharedSideBar from "./shared-sidebar";
 import SidebarParcours from "../sidebar-parcours";
 import { useLocation } from "react-router-dom";
@@ -10,6 +9,7 @@ import SidebarWrapper from "./sidebar-wrapper";
 import SidebarUser from "../sidebar-user";
 import SidebarGroup from "../sidebar-group";
 import SidebarProfile from "../sidebar-profile";
+import { Context } from "../../../../store/context.store";
 
 const Sidebar = () => {
   const { pathname } = useLocation();

@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import { darkThemes, lightThemes } from "../../config/themes";
 import Wrapper from "../UI/wrapper/wrapper.component";
-import { Context } from "../../store/context.store";
 import ThemeSelect from "./theme-select";
+import { Context } from "../../store/context.store";
 
 export default function Settings() {
   const { chooseTheme } = useContext(Context);
