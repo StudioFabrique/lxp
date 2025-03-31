@@ -166,7 +166,7 @@ const CourseItem = ({
           </Can>
         </div>
         <motion.div
-          className="bg-secondary/20 rounded-b-xl overflow-y-auto -mt-2"
+          className="bg-secondary/20 rounded-b-xl overflow-y-auto -mt-2 pt-2"
           initial={{ maxHeight: 0 }}
           style={{
             height: isCourseOpen ? "auto" : 0,
