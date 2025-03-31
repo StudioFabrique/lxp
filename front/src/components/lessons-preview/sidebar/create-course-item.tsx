@@ -45,7 +45,7 @@ const CreateCourseItem = ({ moduleId, parcoursId }: CreateCourseItemProps) => {
     if (isEditing) {
       inputRef.current?.focus();
       window.scrollTo({
-        top: document.documentElement.scrollHeight,
+        top: inputRef.current?.offsetTop,
         behavior: "smooth",
       });
     }
