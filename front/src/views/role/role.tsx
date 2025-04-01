@@ -39,6 +39,7 @@ const RolePage = () => {
     "/permission/role",
     { apiSearchEndpoint: "/permission/search", searchProperty: "role" },
     {
+      apiDataPropertyToRetreive: "data",
       disablePagination: true,
       disableSort: true,
       invokeErrorToast: true,

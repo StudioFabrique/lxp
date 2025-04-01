@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { PropsWithChildren } from "react";
 import { Loader2, Minimize2 } from "lucide-react";
 
 /**
@@ -14,19 +14,21 @@ import { Loader2, Minimize2 } from "lucide-react";
  * @param modalBoxStyle - Style CSS personnalisé pour la boîte modale
  * @param sendModalBottom - Place la modal en arrière-plan (z-index 0)
  */
-const Modal: FC<{
+
+type ModalProps = {
   onLeftClick?: () => void;
   onRightClick?: () => void;
   onMinimizeClick?: () => void;
   title: string;
-  children: ReactNode;
   leftLabel?: string;
   rightLabel?: string;
   isSubmitting?: boolean;
   buttonsBothTopBottom?: boolean;
   modalBoxStyle?: string;
   sendModalBottom?: boolean;
-}> = (props) => {
+};
+
+const Modal = (props: PropsWithChildren<ModalProps>) => {
   // Définit la valeur par défaut de isSubmitting
   const isSubmitting =
     props.isSubmitting !== undefined ? props.isSubmitting : false;

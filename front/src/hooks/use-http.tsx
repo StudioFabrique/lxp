@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import { Context } from "../store/context.store";
 import { BASE_URL } from "../config/urls";
 import toast from "react-hot-toast";
+import { Context } from "../store/context.store";
 
 const useHttp = (invokeErrorToast?: boolean) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +23,7 @@ const useHttp = (invokeErrorToast?: boolean) => {
       },
       (error) => {
         return Promise.reject(error);
-      }
+      },
     );
 
     const responseInterceptor = axiosInstance.interceptors.response.use(
@@ -51,7 +51,7 @@ const useHttp = (invokeErrorToast?: boolean) => {
         }
 
         return Promise.reject(error);
-      }
+      },
     );
 
     return () => {
@@ -77,7 +77,7 @@ const useHttp = (invokeErrorToast?: boolean) => {
         onDownloadProgress?: (progress: number) => void;
         signal?: AbortSignal;
       },
-      applyData?: (data: any) => void
+      applyData?: (data: any) => void,
     ) => {
       setIsLoading(true);
       setError("");
@@ -88,14 +88,14 @@ const useHttp = (invokeErrorToast?: boolean) => {
           headers: req.headers,
           onUploadProgress: (event: import("axios").AxiosProgressEvent) => {
             const progress = Math.round(
-              (event.loaded * 100) / (event.total ?? 0)
+              (event.loaded * 100) / (event.total ?? 0),
             );
             setUploadProgress(progress);
             req.onUploadProgress?.(progress);
           },
           onDownloadProgress: (event: import("axios").AxiosProgressEvent) => {
             const progress = Math.round(
-              (event.loaded * 100) / (event.total ?? 0)
+              (event.loaded * 100) / (event.total ?? 0),
             );
             setDownloadProgress(progress);
             req.onDownloadProgress?.(progress);
@@ -107,26 +107,26 @@ const useHttp = (invokeErrorToast?: boolean) => {
             response = await axiosInstance.post(
               `${BASE_URL}${req.path}`,
               req.body,
-              config
+              config,
             );
             break;
           case "put":
             response = await axiosInstance.put(
               `${BASE_URL}${req.path}`,
               req.body,
-              config
+              config,
             );
             break;
           case "delete":
             response = await axiosInstance.delete(
               `${BASE_URL}${req.path}`,
-              config
+              config,
             );
             break;
           default:
             response = await axiosInstance.get(
               `${BASE_URL}${req.path}`,
-              config
+              config,
             );
             break;
         }
@@ -148,7 +148,7 @@ const useHttp = (invokeErrorToast?: boolean) => {
         setDownloadProgress(null);
       }
     },
-    [logout, axiosInstance]
+    [logout, axiosInstance],
   );
 
   return {

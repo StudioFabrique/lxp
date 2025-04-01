@@ -2,9 +2,9 @@ import { Dispatch, FC, Ref, SetStateAction, useContext } from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import Field from "../../UI/forms/field";
 import CustomError from "../../../utils/interfaces/custom-error";
-import { Context } from "../../../store/context.store";
 import ProfileImageFileUpload from "../../UI/image-file-upload/profile-image-file-upload";
 import { avatarImageMaxSize } from "../../../config/images-sizes";
+import { Context } from "../../../store/context.store";
 
 type FormProps = {
   values: Record<string, string>;

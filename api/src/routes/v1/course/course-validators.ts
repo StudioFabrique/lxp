@@ -21,6 +21,22 @@ export const courseIdValidator = [
   checkValidatorResult,
 ];
 
+export const courseIdAndVisibilityValidator = [
+  param("courseId")
+    .notEmpty()
+    .withMessage("L'identifiant du cours est requis")
+    .isNumeric()
+    .withMessage("L'identifiant du cours doit être un nombre")
+    .trim()
+    .escape(),
+  query("visibility")
+    .notEmpty()
+    .withMessage("visibility est requis")
+    .isBoolean()
+    .withMessage("visibility doit être de type boolean"),
+  checkValidatorResult,
+];
+
 /**
  * Valide les données lors de la création d'un nouveau cours
  */
@@ -75,7 +91,7 @@ export const putCourseNewObjectiveValidator = [
     .withMessage("Une description est requise pour l'objectif")
     .custom(stringValidateGeneric)
     .withMessage(
-      "La description de l'objectif contient des caractères non autorisés"
+      "La description de l'objectif contient des caractères non autorisés",
     ),
   checkValidatorResult,
 ];
@@ -89,19 +105,19 @@ export const putCourseLessonValidator = [
     .withMessage("Un titre est requis pour la leçon")
     .custom(stringValidateGeneric)
     .withMessage("Le titre de la leçon contient des caractères non autorisés"),
-  body("description") /* 
+  body("description") /*
     .notEmpty()
     .withMessage("Une description est requise pour la leçon") */
     .custom(stringValidateOptional)
     .withMessage(
-      "La description de la leçon contient des caractères non autorisés"
+      "La description de la leçon contient des caractères non autorisés",
     ),
   body("modalite")
     .notEmpty()
     .withMessage("Une modalité est requise pour la leçon")
     .isString()
     .withMessage(
-      "La modalité de la leçon contient des caractères non autorisés"
+      "La modalité de la leçon contient des caractères non autorisés",
     ),
   body("tagId")
     .notEmpty()
@@ -198,11 +214,11 @@ export const putReorderCoursesValidator = [
   body("*")
     .notEmpty()
     .withMessage(
-      "Le tableau d'identifiants doit contenir une ou plusieurs valeurs."
+      "Le tableau d'identifiants doit contenir une ou plusieurs valeurs.",
     )
     .isNumeric()
     .withMessage(
-      "Le tableau d'identifiants doit contenir des nombres entiers uniquement."
+      "Le tableau d'identifiants doit contenir des nombres entiers uniquement.",
     ),
   checkValidatorResult,
 ];

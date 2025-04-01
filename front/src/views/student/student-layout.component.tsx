@@ -3,13 +3,13 @@ import { useContext, useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 
 // Import des composants et utilitaires personnalisés
-import { Context } from "../../store/context.store";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import toast from "react-hot-toast";
 import { PartyPopperIcon } from "lucide-react";
 import toTitleCase from "../../utils/toTitleCase";
 import PortalConfetti from "../../components/UI/portal/portal-confetti";
 import useAuth from "../../hooks/use-auth";
+import { Context } from "../../store/context.store";
 
 // Composant de mise en page pour l'espace étudiant
 const StudentLayout = () => {

@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import { Context } from "../../store/context.store";
 import UserTopBar from "../../components/UI/user-top-bar/user-top-bar";
 import ResumeActivity from "../../components/student-home/resume-activity";
 import ResumeActivities from "../../components/student-home/resume-activities";
@@ -10,6 +9,7 @@ import Timeline from "../../components/student-home/timeline/timeline";
 import FeelingFeedback from "../../components/student-home/right-side/feeling-feedback";
 import StudentAccomplishments from "../../components/student-home/right-side/feedback-apprenant/student-accomplishments";
 import MostReadCourses from "../../components/student-home/right-side/most-read-courses";
+import { Context } from "../../store/context.store";
 
 const StudentHome = () => {
   const { sendRequest } = useHttp();
@@ -48,10 +48,7 @@ const StudentHome = () => {
           ) : (
             <ResumeParcours />
           )}
-          <Timeline
-            title="Mon emploi du temps pour aujourd'hui"
-            viewType="day"
-          />
+          <Timeline title="Mon emploi du temps" viewType="day" />
         </div>
         <div className="flex flex-col xl:px-10 gap-5">
           <FeelingFeedback />

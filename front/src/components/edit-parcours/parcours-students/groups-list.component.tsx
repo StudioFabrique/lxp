@@ -1,6 +1,5 @@
 // Import des dépendances nécessaires
 import { useContext } from "react";
-import { Context } from "../../../store/context.store";
 
 import Pagination from "../../UI/pagination/pagination";
 import Group from "../../../utils/interfaces/group";
@@ -9,6 +8,7 @@ import { parcoursGroupsAction } from "../../../store/redux-toolkit/parcours/parc
 import StudentGroupList from "./student-group-list";
 import useEagerLoadingList from "../../../hooks/use-eager-loading-list";
 import { GroupList } from "./parcours-students.component";
+import { Context } from "../../../store/context.store";
 
 // Interface définissant les props du composant
 interface GroupsListProps {

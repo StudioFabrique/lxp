@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
-import { Context } from "../store/context.store";
 import { useNavigate } from "react-router-dom";
+import { Context } from "../store/context.store";
 
 const useAuth = (role: string) => {
   const { user } = useContext(Context);

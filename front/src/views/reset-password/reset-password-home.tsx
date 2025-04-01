@@ -11,8 +11,8 @@ import image from "../../assets/images/andria-2.png";
 import Field from "../../components/UI/forms/field";
 import SubmitButton from "../../components/UI/submit-button";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
-import { Context } from "../../store/context.store";
 import useResetPasswordHome from "./use-password-home";
+import { Context } from "../../store/context.store";
 
 export default function ResetPasswordHome() {
   const { initTheme } = useContext(Context);

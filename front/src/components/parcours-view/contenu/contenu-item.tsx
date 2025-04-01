@@ -29,12 +29,15 @@ const ContenuItem: FC<{
           selectedModuleId === module.id
             ? "bg-primary text-primary-content"
             : "bg-secondary text-secondary-content"
-        } hover:bg-primary/70 hover:text-primary-content`}
+        } hover:bg-primary/90 hover:cursor-pointer select-none hover:text-primary-content `}
       >
         <p className="self-start">{`Module ${iterationCount}`}</p>
         <div className="flex justify-between w-full">
           <p className="self-start text-xl font-semibold">{module.title}</p>
-          <Link className="self-end w-6" to={`../module/${module.id}`}>
+          <Link
+            className="btn btn-sm btn-ghost self-end"
+            to={`../module/${module.id}`}
+          >
             <ArrowRightCircle />
           </Link>
         </div>

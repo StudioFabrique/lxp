@@ -1,8 +1,8 @@
 import React, { FC, useContext, useState } from "react";
 import Role from "../../../utils/interfaces/role";
-import { Context } from "../../../store/context.store";
 import Can from "../../UI/can/can.component";
 import { hasRole } from "../../../utils/hasRole";
+import { Context } from "../../../store/context.store";
 
 const RoleSelect: FC<{
   roleTab: Role;
@@ -18,7 +18,7 @@ const RoleSelect: FC<{
   const handleSetNewRoles = (newRole: Role) => {
     if (newRoles.find((role) => role._id === newRole._id)) {
       const updatedNewRoles = newRoles.filter(
-        (role) => role._id !== newRole._id
+        (role) => role._id !== newRole._id,
       );
       setNewRoles(updatedNewRoles);
     } else {

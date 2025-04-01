@@ -26,7 +26,7 @@ export default function VerticalBars({
 }: VerticalChartsProps) {
   // Tronquer les noms de catégories trop longs
   const truncatedCategories = categories.map((category) =>
-    category.length > 10 ? category.slice(0, 10) + "..." : category
+    category.length > 10 ? category.slice(0, 10) + "..." : category,
   );
 
   const { theme } = useContext(Context);
