@@ -7,19 +7,9 @@ import { TableListProps } from "../../components/table/table-list/table-list";
 export const tagsHomeTableItems: TableListItemConfig[] = [
   {
     property: "name",
-    label: "Nom",
-    sortAllowed: true,
+    label: "Titre",
+    // sortAllowed: true,
   },
-  { property: "desc", label: "Description", sortAllowed: true },
-  {
-    property: "formation",
-    label: "Formation - Parcours",
-    valueAsLink: {
-      identifier: "parcoursId",
-      link: "/admin/parcours/view/[:id]",
-    },
-  },
-  { property: "nbStudents", label: "Nombre d'étudiants" },
 ];
 
 export const searchBarConfig = (
@@ -40,7 +30,7 @@ export const actionsConfig = (
     icon: Pen,
     additionnalClassname: "btn-ghost",
     request: { path: "edit/[:id]" },
-    rbacObject: "tags",
+    rbacObject: "tag",
     rbacAction: "update",
   },
   {
@@ -56,7 +46,7 @@ export const actionsConfig = (
       title: "Confirmation de suppression",
       description: "Êtes-vous sûr de vouloir supprimer ce tag ?",
     },
-    rbacObject: "tags",
+    rbacObject: "tag",
     rbacAction: "delete",
   },
 ];
@@ -67,7 +57,7 @@ export const tableListConfig = <TData>(
   isSearching?: boolean,
   actionsConfig?: TableListActionConfig[],
 ): TableListProps<Record<string, string>> => ({
-  idProperty: "_id",
+  idProperty: "id",
   avatar: { property: "image" },
   data: data as Record<string, string>[],
   tableItemsConfig: tagsHomeTableItems,

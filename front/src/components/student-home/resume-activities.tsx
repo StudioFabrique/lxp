@@ -45,6 +45,7 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
 
             return (
               <div
+                key={item.id}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 onMouseMove={handleMouseMove}
