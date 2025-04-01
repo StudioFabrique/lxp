@@ -1,4 +1,4 @@
-import { useState, forwardRef, ChangeEvent } from "react";
+import { useState, forwardRef, ChangeEvent, useMemo } from "react";
 import TagsList from "../../components/formation-home/tags-list";
 import AddTag from "../../components/UI/add-tag";
 import useTags from "../../hooks/use-tags";
@@ -11,8 +11,10 @@ const TagsHomeAdding = forwardRef<
   TagsHomeAddingProps
 >((props, ref) => {
   const [tagError, setTagError] = useState<boolean>(false);
+  const initialTags = useMemo(() => [], []);
+
   const { currentTags, tag, handleOnChange, handleTagSubmit, handleRemoveTag } =
-    useTags([]);
+    useTags(initialTags);
 
   // here manage the tagError state while validate input regex
   const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
