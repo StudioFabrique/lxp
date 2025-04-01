@@ -84,7 +84,7 @@ export const tableListConfig = <TData>(
         isLoading || isSearching
           ? undefined
           : "Cliquez ici pour créer votre premier tag",
-      linkTo: "add",
+      linkTo: "?openModal=true",
     },
   },
 });
