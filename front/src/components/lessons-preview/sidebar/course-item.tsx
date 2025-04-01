@@ -1,20 +1,12 @@
-import {
-  ArrowDown,
-  ArrowRight,
-  Edit,
-  EyeOff,
-  ListPlus,
-  MoreVertical,
-  Trash,
-} from "lucide-react";
+import { ArrowDown, ArrowRight, EyeOff } from "lucide-react";
 import Course from "../../../utils/interfaces/course";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import LessonItem from "./lesson-item";
 import Lesson from "../../../utils/interfaces/lesson";
 import Can from "../../UI/can/can.component";
-import { Link } from "react-router-dom";
-import TableActionsModal from "../../table/table-buttons/table-actions-modal";
+import CourseActionsModal from "./course-actions-modal";
+import CourseActions from "./course-actions";
 
 type CourseItemProps = {
   course: Course;
@@ -23,6 +15,7 @@ type CourseItemProps = {
   selectedLesson: Lesson | undefined;
   setSelectedLesson: (lesson: Lesson | undefined) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
+  onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
 };
 
 const CourseItem = ({
@@ -32,9 +25,13 @@ const CourseItem = ({
   selectedLesson,
   setSelectedLesson,
   onDeleteCourse,
+  onEnableCourse,
 }: CourseItemProps) => {
   const [isCourseOpen, setCourseOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [modalType, setModalType] = useState<"visibility" | "delete">(
+    "visibility",
+  );
   const [isModalLoading, setIsModalLoading] = useState(false);
 
   const courseProgress = (
@@ -55,8 +52,12 @@ const CourseItem = ({
     e.stopPropagation();
   };
 
-  const handleOpenModal = (e: React.MouseEvent) => {
+  const handleOpenModal = (
+    e: React.MouseEvent,
+    modalType: "visibility" | "delete",
+  ) => {
     e.stopPropagation();
+    setModalType(modalType);
     setShowModal(true);
   };
 
@@ -67,7 +68,14 @@ const CourseItem = ({
 
   const handleConfirmAction = async () => {
     setIsModalLoading(true);
-    await onDeleteCourse(course.id);
+    switch (modalType) {
+      case "delete":
+        await onDeleteCourse(course.id);
+        break;
+      case "visibility":
+        await onEnableCourse(course.id, !course.visibility);
+        break;
+    }
     handleCloseModal();
   };
 
@@ -84,25 +92,23 @@ const CourseItem = ({
 
   return (
     <>
-      <TableActionsModal
-        isOpen={showModal}
+      <CourseActionsModal
+        title={modalType === "visibility" ? "Visibilité" : "Supprimer le cours"}
+        description={
+          modalType === "visibility"
+            ? `Êtes-vous sûr de vouloir  ${course.visibility ? "cacher" : "rendre visible"} ce cours ?`
+            : "Êtes-vous sûr de vouloir supprimer ce cours ainsi que les leçons associés ?"
+        }
+        showModal={showModal}
+        isModalLoading={isModalLoading}
+        course={course}
         onCancel={handleCloseModal}
-        title="Supprimer le cours"
-        description="Êtes-vous sûr de vouloir supprimer ce cours ainsi que les leçons associés ?"
-        descList={[course.title]}
-        alertMessageBottom="Cette action est irréversible."
-      >
-        <button
-          className={`btn btn-error btn-md text-warning ${isModalLoading && "loading"}`}
-          onClick={handleConfirmAction}
-        >
-          Confirmer
-        </button>
-      </TableActionsModal>
+        onConfirm={handleConfirmAction}
+      />
       <div className="flex flex-col w-full relative">
         {!course.isPublished || !course.visibility ? (
           <div
-            className="badge badge-primary absolute -top-3 -left-3 tooltip tooltip-right"
+            className="badge badge-info absolute -top-3 -left-3 tooltip tooltip-right tooltip-info z-[15]"
             data-tip={`Le cours est ${!course.visibility ? "invisible" : ""} ${!course.visibility && !course.isPublished ? "et" : ""} ${!course.isPublished ? "non publié" : ""}`}
           >
             <EyeOff className="w-4 h-4 stroke-base-100" />
@@ -110,14 +116,10 @@ const CourseItem = ({
         ) : null}
 
         <div
-          className="flex flex-col w-full cursor-pointer"
+          className="flex flex-col w-full cursor-pointer z-10 bg-secondary rounded-lg"
           onClick={handleToggleCourseTab}
         >
-          <div
-            className={`flex flex-col gap-1 bg-secondary/80 p-4 rounded-xl ${isCourseOpen ? "rounded-b-none" : null}`}
-          >
-            {/* Titre du cours + tooltip */}
-
+          <div className={`flex flex-col gap-1 p-4`}>
             <div className="flex justify-between items-center gap-1">
               <span
                 data-tip={`Titre : ${course.title}`}
@@ -128,49 +130,13 @@ const CourseItem = ({
                 </h3>
               </span>
               <Can action="write" object="course">
-                <div
-                  onClick={handleClickMenu}
-                  className="dropdown dropdown-right z-10"
-                >
-                  <button className="flex cursor-pointer">
-                    <MoreVertical className="stroke-secondary-content w-7 h-7 hover:bg-primary/20 px-1 rounded-lg transition-colors" />
-                  </button>
-
-                  <div className="dropdown-content menu translate-x-5 -translate-y-3 bg-base-300/80 text-base-content rounded-lg w-60 backdrop-blur-sm border border-primary/20">
-                    <Can action="update" object="course">
-                      <Link
-                        to={`/admin/course/edit/${course.id}`}
-                        className="cursor-default flex items-center px-4 py-3 text-sm hover:bg-primary/20 transition-all first:rounded-t-lg"
-                      >
-                        <Edit className="w-4 h-4 mr-3" />
-                        Modifier le cours
-                      </Link>
-                    </Can>
-
-                    <Link
-                      to="/admin/lesson/add"
-                      state={{
-                        parcoursId,
-                        moduleId,
-                        courseId: course.id,
-                      }}
-                      className="cursor-default flex items-center px-4 py-3 text-sm hover:bg-primary/20 transition-all"
-                    >
-                      <ListPlus className="w-4 h-4 mr-3" />
-                      Ajouter une leçon
-                    </Link>
-
-                    <Can action="delete" object="course">
-                      <button
-                        onClick={handleOpenModal}
-                        className="cursor-default flex items-center w-full px-4 py-3 text-sm text-error hover:bg-error/10 transition-all last:rounded-b-lg"
-                      >
-                        <Trash className="w-4 h-4 mr-3" />
-                        Supprimer le cours
-                      </button>
-                    </Can>
-                  </div>
-                </div>
+                <CourseActions
+                  course={course}
+                  parcoursId={parcoursId}
+                  moduleId={moduleId}
+                  onOpenModal={handleOpenModal}
+                  onClickMenu={handleClickMenu}
+                />
               </Can>
             </div>
 
@@ -194,13 +160,13 @@ const CourseItem = ({
           </div>
           <Can action="component" object="progression">
             <progress
-              className="w-full progress progress-primary bg-secondary -mt-[8px] rounded-b-full"
+              className="w-full progress progress-primary bg-secondary rounded-b-full -mt-[8px]"
               value={courseProgress}
             />
           </Can>
         </div>
         <motion.div
-          className="bg-secondary/20 rounded-b-xl overflow-y-auto"
+          className="bg-secondary/20 rounded-b-xl overflow-y-auto -mt-2 pt-2"
           initial={{ maxHeight: 0 }}
           style={{
             height: isCourseOpen ? "auto" : 0,
@@ -216,6 +182,9 @@ const CourseItem = ({
                 <LessonItem
                   key={lesson.id}
                   lesson={lesson}
+                  lessonsOrders={course.lessons.map(
+                    (lesson) => lesson.order ?? 0,
+                  )}
                   moduleId={moduleId}
                   selectedLesson={selectedLesson}
                   setSelectedLesson={setSelectedLesson}

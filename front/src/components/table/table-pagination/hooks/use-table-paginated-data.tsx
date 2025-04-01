@@ -10,6 +10,7 @@ function useTablePaginatedData<TData>(
   apiEndpoint: string,
   searchOptions: { apiSearchEndpoint?: string; searchProperty?: string },
   options?: {
+    apiDataPropertyToRetreive?: string;
     disablePagination: boolean;
     disableSort: boolean;
     invokeErrorToast?: boolean;
@@ -77,9 +78,18 @@ function useTablePaginatedData<TData>(
       setData(list);
     };
 
-    const applyDataWithoutPagination = ({ data }: { data: TData[] }) => {
-      setData(data);
-    };
+    const applyDataWithoutPagination = options?.apiDataPropertyToRetreive
+      ? (data: Record<string, unknown>) => {
+          if (options.apiDataPropertyToRetreive) {
+            const retrievedData = data[
+              options.apiDataPropertyToRetreive
+            ] as TData[];
+            setData(retrievedData);
+          }
+        }
+      : (data: TData[]) => {
+          setData(data);
+        };
 
     const path =
       searchOptions.apiSearchEndpoint && searchValue
@@ -108,6 +118,7 @@ function useTablePaginatedData<TData>(
     searchValue,
     isAscDirection,
     sortProperty,
+    options?.apiDataPropertyToRetreive,
     options?.disablePagination,
   ]);
 

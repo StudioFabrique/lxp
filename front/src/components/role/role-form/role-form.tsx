@@ -15,9 +15,9 @@ import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
 import useInput from "../../../hooks/use-input";
 import RoleTypeSelector from "./role-type-selector";
-import { Context } from "../../../store/context.store";
 import Role from "../../../utils/interfaces/role";
 import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
+import { Context } from "../../../store/context.store";
 
 type RoleFormProps = {
   role?: Role;

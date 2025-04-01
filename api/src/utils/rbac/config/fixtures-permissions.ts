@@ -167,8 +167,8 @@ export const permDefsActions = {
       "lesson",
       "cursus",
     ],
-    write: ["cursus"],
-    update: ["cursus"],
-    delete: ["cursus"],
+    write: ["cursus", "tag"],
+    update: ["cursus", "tag"],
+    delete: ["cursus", "tag"],
   },
 };

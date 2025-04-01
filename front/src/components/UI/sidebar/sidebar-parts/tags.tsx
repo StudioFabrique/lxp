@@ -32,7 +32,7 @@ const Tags = ({ currentRoute }: { currentRoute: string[] }) => {
 
         <MotionSidebarWrapper isHover={isHover}>
           <Can action="write" object="tag">
-            <Link to={`/${currentRoute[0]}/tags/add`}>
+            <Link to={`/${currentRoute[0]}/tags?openModal=true`}>
               <div
                 className="tooltip tooltip-top w-6 h-6"
                 data-tip="Création d'un nouveau tag"

@@ -18,8 +18,9 @@ const useLessonsPreview = () => {
   >(null);
   const [selectedLesson, setSelectedLesson] = useState<Lesson>();
   const [lessonRating, setLessonRating] = useState<LessonRating>();
-
-  console.log({ stateFromUrl });
+  const STORAGE_KEY = "lessons-preview-panel-closed";
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [isPanelClosed, setPanelClosed] = useState<boolean>(false);
 
   // Vérifie si la leçon a déjà été complétée
   const [isLessonCompleted, setIsLessonCompleted] = useState(false);
@@ -29,6 +30,22 @@ const useLessonsPreview = () => {
     () => moduleData?.courses.flatMap((course) => course.lessons) || [],
     [moduleData?.courses],
   );
+
+  const selectedLessonHasActivities = selectedLesson
+    ? Boolean(selectedLesson.activities?.length)
+    : false;
+
+  // Modal management
+  const handleToggleModalDisplaying = () => {
+    setTimeout(() => {
+      setShowModal((prev) => !prev);
+    }, 800);
+  };
+
+  const handleClickModalRightButton = () => {
+    handleCompleteLesson(true);
+    setShowModal((prev) => !prev);
+  };
 
   const initiateLesson = useCallback(
     (lessonId: number) => {
@@ -61,6 +78,7 @@ const useLessonsPreview = () => {
   // Fonction pour passer à la leçon suivante
   const switchToNextLesson = () => {
     setLessonRating(undefined);
+
     if (selectedLesson && lessons.length > 0) {
       const currentIndex = lessons.findIndex(
         (lesson) => lesson.id === selectedLesson.id,
@@ -165,6 +183,23 @@ const useLessonsPreview = () => {
       );
   };
 
+  const handleEnableCourse = async (courseId: number, visibility: boolean) => {
+    const applyData = (data: { success: boolean; message: string }) => {
+      if (data.success) {
+        toast.success(data.message);
+        fetchData();
+      }
+    };
+
+    await sendRequest(
+      {
+        path: `/course/enable-course/${courseId}?visibility=${visibility}`,
+        method: "put",
+      },
+      applyData,
+    );
+  };
+
   const handleDeleteCourse = async (courseId: number) => {
     const applyData = (data: { success: boolean; message: string }) => {
       if (data.success) {
@@ -201,6 +236,28 @@ const useLessonsPreview = () => {
     sendRequest({ path: `/modules/detail/limited/${moduleId}` }, applyData);
   }, [moduleId, sendRequest, stateFromUrl?.lessonId, handleLessonSelection]);
 
+  // Panel closed state management
+  useEffect(() => {
+    const savedState = localStorage.getItem(STORAGE_KEY);
+    if (savedState) {
+      setPanelClosed(JSON.parse(savedState));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(isPanelClosed));
+  }, [isPanelClosed]);
+
+  // Scroll management
+  useEffect(() => {
+    if (selectedLesson) {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  }, [selectedLesson]);
+
   // useEffect pour charger les détails d'une leçon sélectionnée
   useEffect(() => {
     const applyData = (data: Lesson) => {
@@ -209,6 +266,7 @@ const useLessonsPreview = () => {
       setSelectedLesson({
         ...data,
         lessonsRead: lessonInModule?.lessonsRead || [],
+        order: lessonInModule?.order,
       });
     };
 
@@ -243,10 +301,17 @@ const useLessonsPreview = () => {
     isLoading,
     setModuleData,
     isLessonCompleted,
+    showModal,
+    isPanelClosed,
+    selectedLessonHasActivities,
+    setPanelClosed,
+    onToggleModalDisplaying: handleToggleModalDisplaying,
+    onClickModalRightButton: handleClickModalRightButton,
     setSelectedLesson: handleLessonSelection,
     onCompleteLesson: handleCompleteLesson,
     onRateContent: handleRateContent,
     onEditRateContent: handleEditRateContent,
+    onEnableCourse: handleEnableCourse,
     onDeleteCourse: handleDeleteCourse,
   };
 };

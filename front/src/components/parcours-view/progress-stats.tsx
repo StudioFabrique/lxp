@@ -18,7 +18,7 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
     <Wrapper>
       <div className="flex flex-col justify-between">
         <div className="flex gap-10 items-center">
-          <h2 className="text-2xl w-44 font-bold text-primary">
+          <h2 className="text-2xl w-48 font-bold text-primary">
             Votre avancement dans le parcours
           </h2>
           <div className="grid grid-cols-4 gap-10">

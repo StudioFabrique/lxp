@@ -36,9 +36,9 @@ const Contenu = ({ modules }: ContenuProps) => {
 
   return (
     <Wrapper>
-      <div className="flex flex-col gap-y-10">
+      <div className="flex flex-col gap-y-6">
         <span className="flex justify-between">
-          <h2 className="text-xl font-bold text-primary">
+          <h2 className="text-2xl font-bold text-primary">
             Contenu du parcours
           </h2>
           <Can action="update" object="parcours">
@@ -57,7 +57,10 @@ const Contenu = ({ modules }: ContenuProps) => {
           <div className="flex flex-col gap-y-5">{contentsList}</div>
           {modules?.length > 0 && (
             <div className="flex flex-col gap-y-4">
-              <ContenuDetailHeader imageModuleHeader={selectedModule?.thumb} />
+              <ContenuDetailHeader
+                imageModuleHeader={selectedModule?.thumb}
+                title={selectedModule?.title}
+              />
               <ContenuDetail
                 parcoursId={Number(parcoursId)}
                 moduleId={selectedModule?.id ?? 0}

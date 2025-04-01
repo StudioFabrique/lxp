@@ -9,6 +9,7 @@ import checkToken from "../../../middleware/check-token";
 // Import des contrôleurs pour la gestion des cours
 import httpPostCourse from "../../../controllers/course/http-post-course";
 import {
+  courseIdAndVisibilityValidator,
   courseIdValidator,
   deleteCourseDatesValidator,
   postCourseValidator,
@@ -54,6 +55,7 @@ import { moduleIdValidator } from "../modules/module-validators";
 import { query } from "express-validator";
 import { checkValidatorResult } from "../../../middleware/validators";
 import httpGetBestRatedCourses from "../../../controllers/course/http-get-best-rated-courses";
+import { httpEnableCourse } from "../../../controllers/course/http-enable-course";
 
 const courseRouter = express.Router();
 
@@ -90,6 +92,17 @@ courseRouter.delete(
   checkPermissions("course"),
   courseIdValidator,
   httpDeleteCourse,
+);
+
+/**
+ * Route PUT pour rendre visible un cours
+ * Nécessite les permissions "course" et une validation de l'ID du cours
+ */
+courseRouter.put(
+  "/enable-course/:courseId",
+  checkPermissions("course"),
+  courseIdAndVisibilityValidator,
+  httpEnableCourse,
 );
 
 /**

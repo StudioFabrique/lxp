@@ -1,5 +1,7 @@
 import toast from "react-hot-toast";
 import useHttp from "../../../hooks/use-http";
+import { useNavigate } from "react-router-dom";
+import Tag from "../../../utils/interfaces/tag";
 
 /**
  * Custom hook pour gérer les actions groupées sur les tags :
@@ -9,7 +11,25 @@ import useHttp from "../../../hooks/use-http";
  * @param onRefreshData - Fonction pour rafraîchir les données après une action
  */
 function useTagsActions(idsList: string[], onRefreshData: () => Promise<void>) {
-  const { sendRequest } = useHttp(true);
+  const { sendRequest, isLoading } = useHttp(true);
+  const navigate = useNavigate();
+
+  const handleCreateTags = async (tags: Tag[]) => {
+    const applyData = () => {
+      toast.success("Le tag a été créé avec succès");
+      onRefreshData();
+      navigate(".", { replace: true });
+    };
+
+    await sendRequest(
+      {
+        path: "/tags",
+        method: "post",
+        body: { tags },
+      },
+      applyData,
+    );
+  };
 
   const handleDeleteSelectedTags = async () => {
     const applyData = () => {
@@ -24,7 +44,11 @@ function useTagsActions(idsList: string[], onRefreshData: () => Promise<void>) {
     );
   };
 
-  return { onDeleteSelectedTags: handleDeleteSelectedTags };
+  return {
+    isSubmitting: isLoading,
+    onCreateTags: handleCreateTags,
+    onDeleteSelectedTags: handleDeleteSelectedTags,
+  };
 }
 
 export default useTagsActions;

@@ -22,8 +22,8 @@ export default async function getLastLessonsRead(
     where: {
       student: { idMdb: userIdMdb },
       lesson: {
-        isPublished: true,
-        visibility: true,
+        // isPublished: true,
+        // visibility: true,
         course: {
           isPublished: true,
           visibility: true,
@@ -32,7 +32,6 @@ export default async function getLastLessonsRead(
               every: {
                 parcours: {
                   isPublished: true,
-                  visibility: true,
                   groups: { some: { group: { idMdb: { in: groupIds } } } },
                 },
               },
@@ -51,6 +50,7 @@ export default async function getLastLessonsRead(
             select: {
               id: true,
               title: true,
+              order: true,
               module: {
                 select: {
                   id: true,
@@ -83,8 +83,8 @@ export default async function getLastLessonsRead(
   if (lessons && !(lessons?.length > 0)) {
     const lesson = await prisma.lesson.findFirst({
       where: {
-        isPublished: true,
-        visibility: true,
+        // isPublished: true,
+        // visibility: true,
         lessonsRead: { every: { NOT: { student: { idMdb: userIdMdb } } } },
         course: {
           isPublished: true,
@@ -114,6 +114,9 @@ export default async function getLastLessonsRead(
             },
           },
         },
+      },
+      orderBy: {
+        order: "asc",
       },
     });
 

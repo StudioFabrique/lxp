@@ -11,8 +11,8 @@ import PasswordUpdateForm from "../../components/password-update/password-update
 import PasswordUpdateSuccess from "../../components/password-update/password-update-success";
 
 import PasswordUpdateError from "../../components/password-update/password-update-error";
-import { Context } from "../../store/context.store";
 import usePasswordUpdate from "../../hooks/use-password-update";
+import { Context } from "../../store/context.store";
 
 type Props = {
   message: string;
