@@ -32,14 +32,33 @@ export default async function getPaginateSearchTags(
         take: limit,
         orderBy,
         where,
+        include: {
+          _count: {
+            select: {
+              lessons: true,
+              courses: true,
+              formations: true,
+              parcours: true,
+            },
+          },
+        },
       }),
       prisma.tag.count({
         where,
       }),
     ]);
 
+    const tagsWithUsage = tags.map((tag) => ({
+      ...tag,
+      totalUses:
+        tag._count.lessons +
+        tag._count.courses +
+        tag._count.formations +
+        tag._count.parcours,
+    }));
+
     return {
-      list: tags,
+      list: tagsWithUsage,
       total,
     };
   } catch (error) {
