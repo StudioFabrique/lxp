@@ -5,6 +5,7 @@ import TableListAction from "./interfaces/table-list-action";
 import TableListSwitchInput from "./table-list-switch-input";
 import { useState } from "react";
 import TableActionsModal from "../table-buttons/table-actions-modal";
+import toast from "react-hot-toast";
 
 type TableListActionCellProps = TableListAction & { id: string };
 
@@ -29,7 +30,8 @@ const TableListActionCell = (props: TableListActionCellProps) => {
 
   const handleRequest = async (value?: string | boolean) => {
     if (path) {
-      const applyData = () => {
+      const applyData = (data: { message?: string }) => {
+        if (data.message) toast.success(data.message);
         props.onSuccessfulSubmit &&
           props.id &&
           props.onSuccessfulSubmit(props.id, value);
