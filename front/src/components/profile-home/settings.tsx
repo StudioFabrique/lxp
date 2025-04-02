@@ -3,6 +3,8 @@ import { darkThemes, lightThemes } from "../../config/themes";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import ThemeSelect from "./theme-select";
 import { Context } from "../../store/context.store";
+import Can from "../UI/can/can.component";
+import CompanyPictureUpload from "./company-picture-upload";
 
 export default function Settings() {
   const { chooseTheme } = useContext(Context);
@@ -28,6 +30,9 @@ export default function Settings() {
           onThemeChange={handleChange}
         />
       </Wrapper>
+      <Can action="component" object="company-picture-upload">
+        <CompanyPictureUpload />
+      </Can>
     </section>
   );
 }
