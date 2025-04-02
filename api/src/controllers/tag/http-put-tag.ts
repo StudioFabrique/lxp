@@ -1,14 +1,16 @@
 import { Request, Response } from "express";
 import { serverIssue } from "../../utils/constantes";
-import deleteTag from "../../models/tag/delete-tag";
+import putTag from "../../models/tag/put-tag";
 
-export default async function httpDeleteTag(req: Request, res: Response) {
+export default async function httpPutTag(req: Request, res: Response) {
   try {
     const { id } = req.params;
-    await deleteTag(+id);
+    const { name } = req.body;
+
+    await putTag(+id, name);
     return res
       .status(201)
-      .json({ message: "Le tag a été supprimé avec succès" });
+      .json({ message: "Le tag a été modifié avec succès" });
   } catch (error: any) {
     return res.status(500).json({ message: serverIssue });
   }

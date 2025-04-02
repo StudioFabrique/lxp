@@ -1,9 +1,4 @@
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Can from "../../components/UI/can/can.component";
 import Header from "../../components/UI/header";
 import {
@@ -14,7 +9,6 @@ import {
 import Table from "../../components/table/table";
 import TablePagination from "../../components/table/table-pagination/table-pagination";
 import useTablePaginatedData from "../../components/table/table-pagination/hooks/use-table-paginated-data";
-import toast from "react-hot-toast";
 import { useEffect, useRef, useState } from "react";
 import useTableCheckbox from "../../components/table/table-list/hooks/use-table-checkbox";
 import useTagActions from "./hooks/use-tags-actions";
@@ -23,6 +17,7 @@ import Tag from "../../utils/interfaces/tag";
 import { PlusCircle } from "lucide-react";
 import Modal from "../../components/UI/modal/modal";
 import TagsHomeAdding from "./tags-home-adding";
+import TagsHomeEditing from "./tags-home-editing";
 
 /**
  * Composant TagsHome
@@ -35,9 +30,9 @@ import TagsHomeAdding from "./tags-home-adding";
  * @component
  */
 const TagsHome = () => {
-  const { state } = useLocation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const editId = searchParams.get("editId");
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
 
   const modalButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -71,23 +66,17 @@ const TagsHome = () => {
   } = useTableCheckbox<Tag>(data, "id");
 
   // custom hook gestion actions groupées
-  const { isSubmitting, onCreateTags, onDeleteSelectedTags } = useTagActions(
-    idsList,
-    onRefreshData,
-  );
+  const { isSubmitting, onCreateTags, onEditTag, onDeleteSelectedTags } =
+    useTagActions(idsList, onRefreshData);
 
   const handleDismissModal = () => {
+    setModalOpen(false);
     navigate(".", { replace: true });
   };
 
-  const handleClickCreateTags = async () => {
+  const handleClickConfirmModal = async () => {
     modalButtonRef.current?.click();
   };
-
-  // Si un message du state est présent, alors il s'affiche dans un toaster
-  useEffect(() => {
-    if (state && state.toastFrom) toast.success(state.toastFrom);
-  }, [state]);
 
   useEffect(() => {
     const openModal = searchParams.get("openModal");
@@ -103,14 +92,25 @@ const TagsHome = () => {
     <>
       {isModalOpen ? (
         <Modal
-          title="Création des tags"
+          title={editId ? "Modification du tag" : "Création des tags"}
           leftLabel="Annuler"
           onLeftClick={handleDismissModal}
           rightLabel="Valider"
-          onRightClick={handleClickCreateTags}
+          onRightClick={handleClickConfirmModal}
           isSubmitting={isSubmitting}
         >
-          <TagsHomeAdding ref={modalButtonRef} onSubmitAllTags={onCreateTags} />
+          {editId ? (
+            <TagsHomeEditing
+              ref={modalButtonRef}
+              tag={data.find((item) => item.id === +editId) as Tag}
+              onSubmitTag={onEditTag}
+            />
+          ) : (
+            <TagsHomeAdding
+              ref={modalButtonRef}
+              onSubmitAllTags={onCreateTags}
+            />
+          )}
         </Modal>
       ) : null}
       {/* Header de la liste des tags */}
