@@ -7,6 +7,7 @@ import Mediatheque from "./sidebar-parts/mediatheque";
 import Module from "./sidebar-parts/module";
 import Parcours from "./sidebar-parts/parcours";
 import Roles from "./sidebar-parts/roles";
+import Tags from "./sidebar-parts/tags";
 import User from "./sidebar-parts/user";
 
 type SharedSideBarProps = {
@@ -25,7 +26,7 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => (
     <Group currentRoute={currentRoute} />
     <Roles currentRoute={currentRoute} />
     <Mediatheque currentRoute={currentRoute} />
-
+    <Tags currentRoute={currentRoute} />
     {/* <Calendar interfaceType={interfaceType} />
     <Library interfaceType={interfaceType} />
     <Forum interfaceType={interfaceType} /> */}

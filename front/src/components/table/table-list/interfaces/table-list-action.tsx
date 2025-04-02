@@ -15,7 +15,10 @@ export interface TableListActionConfig {
   request?: { path: string; method?: "get" | "post" | "put" | "delete" };
   rbacObject?: string;
   rbacAction?: string;
-  onSuccessfulSubmit?: (id: string, value?: string | boolean) => void;
+  onSuccessfulSubmit?: (
+    id: string,
+    value?: string | boolean | { message: string },
+  ) => void;
   onFailedSubmit?: (id: string, value?: string | boolean) => void;
 }
 

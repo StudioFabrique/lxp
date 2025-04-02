@@ -9,7 +9,7 @@ export default async function httpDeleteGroup(req: Request, res: Response) {
     await deleteGroup(groupId);
 
     return res.status(201).json({
-      message: "Groupe supprimé",
+      message: "Le groupe a été supprimé avec succès",
     });
   } catch (error) {
     return res.status(500).json({ message: serverIssue });

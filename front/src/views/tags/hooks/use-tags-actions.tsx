@@ -15,6 +15,11 @@ function useTagsActions(idsList: string[], onRefreshData: () => Promise<void>) {
   const navigate = useNavigate();
 
   const handleCreateTags = async (tags: Tag[]) => {
+    const tagsWithoutId = tags.map(({ name, color }) => ({
+      name,
+      color,
+    }));
+
     const applyData = () => {
       toast.success("Le tag a été créé avec succès");
       onRefreshData();
@@ -23,9 +28,9 @@ function useTagsActions(idsList: string[], onRefreshData: () => Promise<void>) {
 
     await sendRequest(
       {
-        path: "/tags",
+        path: "/tag",
         method: "post",
-        body: { tags },
+        body: { tags: tagsWithoutId },
       },
       applyData,
     );
