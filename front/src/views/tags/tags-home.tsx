@@ -49,14 +49,10 @@ const TagsHome = () => {
     onSubmitSearchValue,
     onSortProperty,
     ...pagination
-  } = useTablePaginatedData<Tag>(
-    "/tag",
-    {
-      apiSearchEndpoint: "/tag",
-      // searchProperty: "name",
-    },
-    { disablePagination: true, disableSort: true },
-  );
+  } = useTablePaginatedData<Tag>("/tag/paginate", {
+    apiSearchEndpoint: "/tag/paginate-search",
+    searchProperty: "name",
+  });
 
   // custom hook gestion checkbox
   const {
