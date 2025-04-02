@@ -8,7 +8,7 @@ export const tagsHomeTableItems: TableListItemConfig[] = [
   {
     property: "name",
     label: "Titre",
-    // sortAllowed: true,
+    sortAllowed: true,
   },
 ];
 
@@ -29,7 +29,7 @@ export const actionsConfig = (
     tooltip: "Modifier",
     icon: Pen,
     additionnalClassname: "btn-ghost",
-    request: { path: "edit/[:id]" },
+    request: { path: ".?openModal=true&editId=[:id]" },
     rbacObject: "tag",
     rbacAction: "update",
   },

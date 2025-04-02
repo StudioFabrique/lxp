@@ -4,7 +4,7 @@ import AddTag from "../../components/UI/add-tag";
 import useTags from "../../hooks/use-tags";
 import Tag from "../../utils/interfaces/tag";
 
-type TagsHomeAddingProps = { onSubmitAllTags: (tags: Tag[]) => Promise<void> };
+type TagsHomeAddingProps = { onSubmitAllTags: (tags: Tag[]) => void };
 
 const TagsHomeAdding = forwardRef<
   HTMLButtonElement | null,

@@ -43,3 +43,13 @@ export const tagIdValidator = [
   param("id").isNumeric().withMessage("L'id du tag est invalide."),
   checkValidatorResult,
 ];
+
+export const tagPutValidator = [
+  param("id").isNumeric().withMessage("L'id du tag est invalide."),
+  body("name")
+    .notEmpty()
+    .withMessage("Le nom du tag est obligatoire.")
+    .custom(stringValidateGeneric)
+    .withMessage("Le nom d'un tag contient des caractères non autorisés."),
+  checkValidatorResult,
+];
