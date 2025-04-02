@@ -1,15 +1,16 @@
 import { prisma } from "../../utils/db";
 
 export default async function postManyTags(
-  tags: [{ name: string; color: string }]
+  tags: [{ name: string; color: string }],
 ) {
+  console.log({ tags });
   let tmpTags = Array<any>();
 
   const existingTags = await prisma.tag.findMany();
   for (const tag of tags) {
     if (
       !existingTags.find(
-        (item) => item.name.toLowerCase() === tag.name.toLowerCase()
+        (item) => item.name.toLowerCase() === tag.name.toLowerCase(),
       )
     ) {
       tmpTags = [...tmpTags, tag];
