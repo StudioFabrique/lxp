@@ -22,13 +22,17 @@ function useTablePaginatedData<TData>(
 
   const [currentPage, setCurrentPage] = useState<number | null>(1);
   const [maxPage, setMaxPage] = useState<number | null>(1);
-  const [itemsPerPage, setItemsPerPage] = useState<number>(5);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(() => {
+    const stored = localStorage.getItem("itemsPerPage");
+    return stored ? parseInt(stored) : 5;
+  });
   const [searchValue, setSearchValue] = useState<string | null>(null);
   const [totalItems, setTotalItems] = useState<number>(0);
   const [sortProperty, setSortProperty] = useState<string | null>(null);
   const [isAscDirection, setAscDirection] = useState<boolean>(true);
 
   const handleSetItemsPerPage = (value: number) => {
+    localStorage.setItem("itemsPerPage", value.toString());
     setItemsPerPage(value);
   };
 

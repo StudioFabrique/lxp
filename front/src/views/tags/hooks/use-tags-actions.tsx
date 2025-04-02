@@ -61,7 +61,7 @@ function useTagsActions(idsList: string[], onRefreshData: () => Promise<void>) {
     const queryIds = idsList.join(",");
 
     await sendRequest(
-      { path: `/tags/deleteMany/?ids=${queryIds}`, method: "delete" },
+      { path: `/tag/deleteMany/?ids=${queryIds}`, method: "delete" },
       applyData,
     );
   };
