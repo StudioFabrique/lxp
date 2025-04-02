@@ -63,7 +63,6 @@ export const tableListConfig = <TData>(
   tableItemsConfig: tagsHomeTableItems,
   actionsItems: actionsConfig,
   style: {
-    showAvatar: true,
     emptyArrayMessage: {
       message: isLoading
         ? "Chargement des tags..."
