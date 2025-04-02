@@ -4,6 +4,8 @@ import AddTag from "../../components/UI/add-tag";
 import useTags from "../../hooks/use-tags";
 import Tag from "../../utils/interfaces/tag";
 
+import toast from "react-hot-toast";
+
 type TagsHomeAddingProps = { onSubmitAllTags: (tags: Tag[]) => void };
 
 const TagsHomeAdding = forwardRef<
@@ -29,7 +31,11 @@ const TagsHomeAdding = forwardRef<
   };
 
   const handleSubmitAllTags = () => {
-    props.onSubmitAllTags(currentTags);
+    if (currentTags.length > 0) {
+      props.onSubmitAllTags(currentTags);
+    } else {
+      toast("Aucun tag n'a été ajouté");
+    }
   };
 
   return (

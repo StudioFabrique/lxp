@@ -10,6 +10,17 @@ export const tagsHomeTableItems: TableListItemConfig[] = [
     label: "Titre",
     sortAllowed: true,
   },
+  {
+    property: "totalUses",
+    label: "No. d'utilisation",
+    sortAllowed: false,
+  },
+  {
+    property: "parcours",
+    label: "Parcours",
+    sortAllowed: false,
+    valueAsLink: { link: "", identifier: "" },
+  },
 ];
 
 export const searchBarConfig = (
