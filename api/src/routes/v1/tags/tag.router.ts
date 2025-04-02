@@ -13,6 +13,10 @@ import httpDeleteTag from "../../../controllers/tag/http-delete-tag";
 import httpPutTag from "../../../controllers/tag/http-put-tag";
 import httpGetPaginateTags from "../../../controllers/tag/http-get-paginate-tags";
 import httpGetPaginateSearchTags from "../../../controllers/tag/http-get-paginate-search-tags";
+import httpDeleteManyTags from "../../../controllers/tag/http-delete-many-tags";
+import { regexStringManyNumberId } from "../../../utils/constantes";
+import { checkValidatorResult } from "../../../middleware/validators";
+import { query } from "express-validator";
 
 const tagRouter = express.Router();
 
@@ -47,10 +51,23 @@ tagRouter.put("/:id", checkPermissions("tag"), tagPutValidator, httpPutTag);
 
 // Supprime un tag
 tagRouter.delete(
-  "/:id",
+  "/deleteSingle/:id",
   checkPermissions("tag"),
   tagIdValidator,
   httpDeleteTag,
+);
+
+// Suppression multiple de tags
+tagRouter.delete(
+  "/deleteMany",
+  [
+    query("ids")
+      .matches(regexStringManyNumberId)
+      .withMessage("IDs de tags invalides"),
+    checkValidatorResult,
+  ],
+  checkPermissions("tag"),
+  httpDeleteManyTags,
 );
 
 export default tagRouter;

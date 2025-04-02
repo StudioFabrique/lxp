@@ -39,7 +39,7 @@ export const actionsConfig = (
     tooltip: "Supprimer",
     icon: Trash2,
     additionnalClassname: "btn-ghost text-error",
-    request: { path: "/tag/[:id]", method: "delete" },
+    request: { path: "/tag/deleteSingle/[:id]", method: "delete" },
     onSuccessfulSubmit: onRefreshData,
     withConfirmationModal: true,
     modal: {
