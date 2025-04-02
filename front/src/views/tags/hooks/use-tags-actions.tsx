@@ -14,7 +14,7 @@ function useTagsActions(idsList: string[], onRefreshData: () => Promise<void>) {
   const { sendRequest, isLoading } = useHttp(true);
   const navigate = useNavigate();
 
-  const handleCreateTags = async (tags: Tag[]) => {
+  const handleCreateTags = (tags: Tag[]) => {
     const tagsWithoutId = tags.map(({ name, color }) => ({
       name,
       color,
@@ -26,11 +26,28 @@ function useTagsActions(idsList: string[], onRefreshData: () => Promise<void>) {
       navigate(".", { replace: true });
     };
 
-    await sendRequest(
+    sendRequest(
       {
         path: "/tag",
         method: "post",
         body: { tags: tagsWithoutId },
+      },
+      applyData,
+    );
+  };
+
+  const handleEditTag = (id: number, name: string) => {
+    const applyData = () => {
+      toast.success("Le tag a été modifié avec succès");
+      onRefreshData();
+      navigate(".", { replace: true });
+    };
+
+    sendRequest(
+      {
+        path: `/tag/${id}`,
+        method: "put",
+        body: { name },
       },
       applyData,
     );
@@ -52,6 +69,7 @@ function useTagsActions(idsList: string[], onRefreshData: () => Promise<void>) {
   return {
     isSubmitting: isLoading,
     onCreateTags: handleCreateTags,
+    onEditTag: handleEditTag,
     onDeleteSelectedTags: handleDeleteSelectedTags,
   };
 }
