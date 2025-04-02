@@ -25,8 +25,8 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => (
     <User currentRoute={currentRoute} />
     <Group currentRoute={currentRoute} />
     <Roles currentRoute={currentRoute} />
-    <Mediatheque currentRoute={currentRoute} />
     <Tags currentRoute={currentRoute} />
+    <Mediatheque currentRoute={currentRoute} />
     {/* <Calendar interfaceType={interfaceType} />
     <Library interfaceType={interfaceType} />
     <Forum interfaceType={interfaceType} /> */}
