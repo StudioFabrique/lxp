@@ -79,3 +79,40 @@ export const getPaginateTagsValidator = [
 
   checkValidatorResult,
 ];
+
+export const getPaginateSearchTagsValidator = [
+  // Path parameters validation
+  param("entity")
+    .isString()
+    .matches(/^(name|color)$/)
+    .withMessage("L'entité de recherche doit être 'name' ou 'color'"),
+
+  param("value")
+    .isString()
+    .notEmpty()
+    .withMessage("La valeur de recherche ne peut pas être vide")
+    .toLowerCase(),
+
+  param("stype")
+    .isString()
+    .matches(/^(name|color|createdAt|updatedAt|null)$/)
+    .withMessage(
+      "Le type de tri doit être 'name', 'color', 'createdAt', 'updatedAt' ou 'null'",
+    ),
+
+  param("sdir")
+    .isString()
+    .matches(/^(asc|desc)$/)
+    .withMessage("La direction du tri doit être 'asc' ou 'desc'"),
+
+  // Query parameters validation
+  query("page")
+    .isInt({ min: 1 })
+    .withMessage("Le numéro de page doit être un nombre entier positif"),
+
+  query("limit")
+    .isInt({ min: 1, max: 15 })
+    .withMessage("La limite doit être un nombre entier entre 1 et 100"),
+
+  checkValidatorResult,
+];
