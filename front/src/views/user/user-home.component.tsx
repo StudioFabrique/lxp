@@ -20,6 +20,7 @@ import Can from "../../components/UI/can/can.component";
 import RefreshIcon from "../../components/UI/svg/refresh-icon.component";
 import Header from "../../components/UI/header";
 import { Context } from "../../store/context.store";
+import toast from "react-hot-toast";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
@@ -44,7 +45,7 @@ const UserHome = () => {
     setDataList,
     sendInvitation,
   } = usePagination("lastname", "/user/everything");
-  const { isLoading, sendRequest, error } = useHttp();
+  const { isLoading, sendRequest, error } = useHttp(true);
 
   const handleRoleSwitch = (role: Role) => {
     initPagination();
@@ -172,19 +173,22 @@ const UserHome = () => {
   };
 
   const handleDeleteUser = (id: string) => {
+    const applyData = ({ message }: { message: string }) => {
+      if (error) {
+        return;
+      }
+
+      toast.success(message);
+      const dataToChange = dataList.filter((user) => user._id !== id);
+      setDataList(dataToChange);
+    };
+
     sendRequest(
       {
         path: `/user/${id}`,
         method: "delete",
       },
-      (data) => {
-        if (!data || error) {
-          return;
-        }
-
-        const dataToChange = dataList.filter((user) => user._id !== id);
-        setDataList(dataToChange);
-      },
+      applyData,
     );
   };
 

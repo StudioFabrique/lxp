@@ -8,6 +8,8 @@ export default async function httpPostManyTags(req: Request, res: Response) {
     const response = await postManyTags(tags);
     return res.status(201).json(response);
   } catch (error: any) {
+    console.log({ error });
+
     return res.status(500).json({ message: serverIssue });
   }
 }

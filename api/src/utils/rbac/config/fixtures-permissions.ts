@@ -156,7 +156,6 @@ export const permDefsActions = {
   },
   student: {
     read: [
-      "tag",
       "user",
       "group",
       "formation",
@@ -167,8 +166,8 @@ export const permDefsActions = {
       "lesson",
       "cursus",
     ],
-    write: ["cursus", "tag"],
-    update: ["cursus", "tag"],
-    delete: ["cursus", "tag"],
+    write: ["cursus"],
+    update: ["cursus"],
+    delete: ["cursus"],
   },
 };

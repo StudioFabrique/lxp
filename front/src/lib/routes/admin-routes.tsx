@@ -110,6 +110,9 @@ const EditLesson = React.lazy(
   () => import("../../views/lesson/edit/edit-lesson"),
 );
 
+const TagsLayout = React.lazy(() => import("../../views/tags/tags-layout"));
+const TagsHome = React.lazy(() => import("../../views/tags/tags-home"));
+
 const adminRoutes = [
   { index: true, element: <AdminHome /> },
   {
@@ -266,6 +269,14 @@ const adminRoutes = [
   {
     path: "mediatheque",
     element: <MediathequeHomePage />,
+  },
+  {
+    path: "tags",
+    element: <TagsLayout />,
+    children: [
+      { index: true, element: <TagsHome /> },
+      // { path: ":tagsId", element: <TagsManage /> },
+    ],
   },
   { path: "*", element: <FeaturesList /> },
 ];
