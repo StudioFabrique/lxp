@@ -21,7 +21,7 @@ function useTagsActions(idsList: string[], onRefreshData: () => Promise<void>) {
     }));
 
     const applyData = () => {
-      toast.success("Le tag a été créé avec succès");
+      toast.success("Les tags ont été créés avec succès");
       onRefreshData();
       navigate(".", { replace: true });
     };
