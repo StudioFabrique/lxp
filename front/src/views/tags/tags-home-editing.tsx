@@ -3,7 +3,7 @@ import Tag from "../../utils/interfaces/tag";
 
 type TagsHomeEditingProps = {
   tag: Tag;
-  onSubmitTag: (id: number, name: string) => Promise<void>;
+  onSubmitTag: (id: number, name: string) => void;
 };
 
 const TagsHomeEditing = forwardRef<
@@ -25,18 +25,22 @@ const TagsHomeEditing = forwardRef<
     setTagName(e.currentTarget.value);
   };
 
-  const handleSubmitTag = () => {
-    props.onSubmitTag(0, "");
+  const handleSubmitTag = (e: React.FormEvent) => {
+    e.preventDefault();
+    props.onSubmitTag(props.tag.id, tagName);
   };
 
   return (
-    <form className="flex flex-col gap-4 py-5 px-1">
+    <form
+      onSubmit={handleSubmitTag}
+      className="flex flex-col items-center gap-4 py-5 px-1"
+    >
       <input
         className={`input ${tagError && "input-error"}`}
         value={tagName}
         onChange={handleChangeValue}
       />
-      <button ref={ref} className="hidden" onClick={handleSubmitTag} />
+      <button type="submit" ref={ref} className="hidden" />
     </form>
   );
 });

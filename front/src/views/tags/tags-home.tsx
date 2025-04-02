@@ -66,16 +66,15 @@ const TagsHome = () => {
   } = useTableCheckbox<Tag>(data, "id");
 
   // custom hook gestion actions groupées
-  const { isSubmitting, onCreateTags, onDeleteSelectedTags } = useTagActions(
-    idsList,
-    onRefreshData,
-  );
+  const { isSubmitting, onCreateTags, onEditTag, onDeleteSelectedTags } =
+    useTagActions(idsList, onRefreshData);
 
   const handleDismissModal = () => {
+    setModalOpen(false);
     navigate(".", { replace: true });
   };
 
-  const handleClickCreateTags = async () => {
+  const handleClickConfirmModal = async () => {
     modalButtonRef.current?.click();
   };
 
@@ -97,13 +96,14 @@ const TagsHome = () => {
           leftLabel="Annuler"
           onLeftClick={handleDismissModal}
           rightLabel="Valider"
-          onRightClick={editId ? () => {} : handleClickCreateTags}
+          onRightClick={handleClickConfirmModal}
           isSubmitting={isSubmitting}
         >
           {editId ? (
             <TagsHomeEditing
+              ref={modalButtonRef}
               tag={data.find((item) => item.id === +editId) as Tag}
-              onSubmitTag={(id: number, name: string) => {}}
+              onSubmitTag={onEditTag}
             />
           ) : (
             <TagsHomeAdding

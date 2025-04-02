@@ -8,7 +8,7 @@ export const tagsHomeTableItems: TableListItemConfig[] = [
   {
     property: "name",
     label: "Titre",
-    // sortAllowed: true,
+    sortAllowed: true,
   },
 ];
 
