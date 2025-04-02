@@ -1,4 +1,4 @@
-import { body, param } from "express-validator";
+import { body, param, query } from "express-validator";
 import { checkValidatorResult } from "../../../middleware/validators";
 import {
   rgbaValidator,
@@ -51,5 +51,31 @@ export const tagPutValidator = [
     .withMessage("Le nom du tag est obligatoire.")
     .custom(stringValidateGeneric)
     .withMessage("Le nom d'un tag contient des caractères non autorisés."),
+  checkValidatorResult,
+];
+
+export const getPaginateTagsValidator = [
+  // Path parameters validation
+  param("stype")
+    .isString()
+    .matches(/^(name|color|createdAt|updatedAt|null)$/)
+    .withMessage(
+      "Le type de tri doit être 'name', 'color', 'createdAt', 'updatedAt' ou 'null'",
+    ),
+
+  param("sdir")
+    .isString()
+    .matches(/^(asc|desc)$/)
+    .withMessage("La direction du tri doit être 'asc' ou 'desc'"),
+
+  // Query parameters validation
+  query("page")
+    .isInt({ min: 1 })
+    .withMessage("Le numéro de page doit être un nombre entier positif"),
+
+  query("limit")
+    .isInt({ min: 1, max: 15 })
+    .withMessage("La limite doit être un nombre entier entre 1 et 100"),
+
   checkValidatorResult,
 ];
