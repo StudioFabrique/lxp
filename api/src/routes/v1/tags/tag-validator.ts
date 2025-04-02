@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import { checkValidatorResult } from "../../../middleware/validators";
 import {
   rgbaValidator,
@@ -19,7 +19,7 @@ export const postManyTagsValidator = [
           !("color" in item)
         ) {
           throw new Error(
-            'Chaque élément du tableau doit être un objet avec les champs "name" et "color"'
+            'Chaque élément du tableau doit être un objet avec les champs "name" et "color"',
           );
         }
       }
@@ -35,5 +35,11 @@ export const postManyTagsValidator = [
     .withMessage("La couleur du tag est obligatoire.")
     .custom(rgbaValidator)
     .withMessage("Une couleur d'un tag contient des caractères non autorisés."),
+  checkValidatorResult,
+];
+
+// Validateur pour vérifier que l'ID utilisateur est un ID MongoDB valide
+export const tagIdValidator = [
+  param("id").isNumeric().withMessage("L'id du tag est invalide."),
   checkValidatorResult,
 ];

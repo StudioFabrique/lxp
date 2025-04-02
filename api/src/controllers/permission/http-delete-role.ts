@@ -91,7 +91,7 @@ export default async function httpDeleteRole(req: Request, res: Response) {
 
     return res
       .status(200)
-      .json({ message: "suppression effectué avec succès" });
+      .json({ message: "Le rôle a été supprimé avec succès" });
   } catch (error) {
     console.log(error);
 

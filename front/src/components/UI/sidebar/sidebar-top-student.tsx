@@ -1,7 +1,6 @@
 import Parcours from "./sidebar-parts/parcours";
 import Home from "./sidebar-parts/home";
 import Calendar from "./sidebar-parts/calendar";
-import Tags from "./sidebar-parts/tags";
 
 type SharedSideBarProps = {
   currentRoute: string[];
@@ -12,7 +11,6 @@ const SidebarTopStudent = ({ currentRoute }: SharedSideBarProps) => (
     <Home currentRoute={currentRoute} />
     <Parcours currentRoute={currentRoute} />
     <Calendar currentRoute={currentRoute} />
-    <Tags currentRoute={currentRoute} />
   </ul>
 );
 
