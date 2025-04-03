@@ -19,5 +19,4 @@ export const darkThemes = [
   "forest",
   "night",
   "synthwave",
-  "Warm friendly",
 ];
