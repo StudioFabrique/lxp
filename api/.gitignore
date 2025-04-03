@@ -15,3 +15,5 @@ uploads/activities/images/*
 !uploads/activities/videos/.gitkeep
 !uploads/activities/images
 !uploads/activities/images/.gitkeep
+!uploads/activities/company/.gitkeep
+!uploads/activities/company
