@@ -7,6 +7,7 @@ uploads/activities/*
 uploads/activities/files/*
 uploads/activities/videos/*
 uploads/activities/images/*
+uploads/company/*
 
 # keep folders
 !uploads/activities/files
@@ -15,5 +16,5 @@ uploads/activities/images/*
 !uploads/activities/videos/.gitkeep
 !uploads/activities/images
 !uploads/activities/images/.gitkeep
-!uploads/activities/company/.gitkeep
-!uploads/activities/company
+!uploads/company
+!uploads/company/.gitkeep
