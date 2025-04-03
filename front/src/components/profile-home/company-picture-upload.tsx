@@ -50,7 +50,7 @@ const CompanyPictureUpload = () => {
             onSetTemporaryAvatar={setTemporaryAvatar}
             maxSize={avatarImageMaxSize}
           >
-            Ajouter un Logo
+            Ajouter le Logo
           </ProfileImageFileUpload>
           <p className="text-sm text-gray-600">
             Formats acceptés : .jpg, .jpeg, .png
