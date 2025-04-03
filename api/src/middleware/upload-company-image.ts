@@ -12,9 +12,9 @@ export const uploadCompanyLogo = () => {
       if (file.mimetype.startsWith("image")) {
         const ext = file.mimetype.split("/")[1];
 
-        if (ext !== "jpeg" && ext !== "jpg") {
+        if (ext !== "jpeg" && ext !== "jpg" && ext !== "png") {
           cb(
-            new Error("L'extension n'est pas au format .jpeg"),
+            new Error("L'extension n'est pas au format .jpeg, .jpg ou .png"),
             "company-logo.jpeg",
           );
           return;
@@ -40,7 +40,7 @@ export const uploadCompanyLogo = () => {
 
         // Check file extension
         const ext = file.mimetype.split("/")[1];
-        if (ext !== "jpeg" && ext !== "jpg") {
+        if (ext !== "jpeg" && ext !== "jpg" && ext !== "png") {
           cb(null, false);
           return;
         }
