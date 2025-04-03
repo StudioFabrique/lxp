@@ -8,6 +8,10 @@ uploads/activities/files/*
 uploads/activities/videos/*
 uploads/activities/images/*
 
+# keep folders
 !uploads/activities/files
+!uploads/activities/files/.gitkeep
 !uploads/activities/videos
+!uploads/activities/videos/.gitkeep
 !uploads/activities/images
+!uploads/activities/images/.gitkeep
