@@ -44,14 +44,18 @@ const CompanyPictureUpload = () => {
         <p className="text-base-content text-lg font-medium">
           Téléverser un nouveau logo de l'organisme de formation
         </p>
-        <ProfileImageFileUpload
-          temporaryAvatar={temporaryAvatar}
-          onSetTemporaryAvatar={setTemporaryAvatar}
-          maxSize={avatarImageMaxSize}
-        />
-        <p className="ml-2 text-sm text-gray-600">
-          Formats acceptés : .jpg, .jpeg, .png
-        </p>
+        <span className="ml-2 flex flex-col gap-2">
+          <ProfileImageFileUpload
+            temporaryAvatar={temporaryAvatar}
+            onSetTemporaryAvatar={setTemporaryAvatar}
+            maxSize={avatarImageMaxSize}
+          >
+            Ajouter un Logo
+          </ProfileImageFileUpload>
+          <p className="text-sm text-gray-600">
+            Formats acceptés : .jpg, .jpeg, .png
+          </p>
+        </span>
       </div>
     </div>
   );
