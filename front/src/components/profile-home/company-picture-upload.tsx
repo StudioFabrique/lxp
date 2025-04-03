@@ -3,6 +3,7 @@ import useHttp from "../../hooks/use-http";
 import ProfileImageFileUpload from "../UI/image-file-upload/profile-image-file-upload";
 import { useCallback, useEffect, useState } from "react";
 import { avatarImageMaxSize } from "../../config/images-sizes";
+import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
 
 const CompanyPictureUpload = () => {
   const { sendRequest } = useHttp(true);
@@ -52,9 +53,24 @@ const CompanyPictureUpload = () => {
           >
             Ajouter le Logo
           </ProfileImageFileUpload>
-          <p className="text-sm text-gray-600">
-            Formats acceptés : .jpg, .jpeg, .png
-          </p>
+          {!temporaryAvatar.file ? (
+            <p className="text-sm text-gray-600">
+              Formats acceptés : .jpg, .jpeg, .png
+            </p>
+          ) : (
+            <FadeWrapper>
+              <p className="text-success">
+                Le nouveau logo sera affiché au prochain rechargement complet de
+                la page
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="btn btn-ghost btn-sm mt-2"
+              >
+                Recharger la page
+              </button>
+            </FadeWrapper>
+          )}
         </span>
       </div>
     </div>
