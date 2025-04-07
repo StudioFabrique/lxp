@@ -41,6 +41,22 @@ export default async function getPaginateSearchTags(
               parcours: true,
             },
           },
+          formations: {
+            select: {
+              formation: {
+                select: {
+                  id: true,
+                  title: true,
+                  parcours: {
+                    select: {
+                      id: true,
+                      title: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       }),
       prisma.tag.count({
@@ -55,6 +71,7 @@ export default async function getPaginateSearchTags(
         tag._count.courses +
         tag._count.formations +
         tag._count.parcours,
+      parcours: tag.formations.flatMap((f) => f.formation.parcours),
     }));
 
     return {
