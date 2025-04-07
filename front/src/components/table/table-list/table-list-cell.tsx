@@ -19,15 +19,14 @@ const TableListCell = (props: PropsWithChildren<CellProps>) => {
   const valueAsLink = props.valuesAsLink.find(
     (value) => value.property === props.property,
   );
+
+  const activeTooltip =
+    props.children && props.children?.toLocaleString().length > 10;
   return (
     <td className="text-base-content font-semibold whitespace-nowrap capitalize">
       <div
-        data-tip={
-          props.children && props.children?.toLocaleString().length > 10
-            ? props.children
-            : null
-        }
-        className="tooltip max-w-[18vw] flex"
+        data-tip={activeTooltip ? props.children : null}
+        className={`${activeTooltip && "tooltip"} max-w-[18vw] flex`}
       >
         {valueAsLink ? (
           <Link to={valueAsLink.link} className="hover:underline truncate">

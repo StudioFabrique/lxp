@@ -10,6 +10,7 @@ function useTablePaginatedData<TData>(
   apiEndpoint: string,
   searchOptions: { apiSearchEndpoint?: string; searchProperty?: string },
   options?: {
+    apiDataPropertyToRetreive?: string;
     disablePagination: boolean;
     disableSort: boolean;
     invokeErrorToast?: boolean;
@@ -21,13 +22,17 @@ function useTablePaginatedData<TData>(
 
   const [currentPage, setCurrentPage] = useState<number | null>(1);
   const [maxPage, setMaxPage] = useState<number | null>(1);
-  const [itemsPerPage, setItemsPerPage] = useState<number>(5);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(() => {
+    const stored = localStorage.getItem("itemsPerPage");
+    return stored ? parseInt(stored) : 5;
+  });
   const [searchValue, setSearchValue] = useState<string | null>(null);
   const [totalItems, setTotalItems] = useState<number>(0);
   const [sortProperty, setSortProperty] = useState<string | null>(null);
   const [isAscDirection, setAscDirection] = useState<boolean>(true);
 
   const handleSetItemsPerPage = (value: number) => {
+    localStorage.setItem("itemsPerPage", value.toString());
     setItemsPerPage(value);
   };
 
@@ -77,9 +82,18 @@ function useTablePaginatedData<TData>(
       setData(list);
     };
 
-    const applyDataWithoutPagination = ({ data }: { data: TData[] }) => {
-      setData(data);
-    };
+    const applyDataWithoutPagination = options?.apiDataPropertyToRetreive
+      ? (data: Record<string, unknown>) => {
+          if (options.apiDataPropertyToRetreive) {
+            const retrievedData = data[
+              options.apiDataPropertyToRetreive
+            ] as TData[];
+            setData(retrievedData);
+          }
+        }
+      : (data: TData[]) => {
+          setData(data);
+        };
 
     const path =
       searchOptions.apiSearchEndpoint && searchValue
@@ -108,6 +122,7 @@ function useTablePaginatedData<TData>(
     searchValue,
     isAscDirection,
     sortProperty,
+    options?.apiDataPropertyToRetreive,
     options?.disablePagination,
   ]);
 

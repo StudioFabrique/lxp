@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useContext, useEffect, useState } from "react";
-import { Context } from "../../store/context.store";
 import { Link } from "react-router-dom";
 
 import Role from "../../utils/interfaces/role";
@@ -20,6 +19,8 @@ import UsersStats from "../../utils/interfaces/users-stats";
 import Can from "../../components/UI/can/can.component";
 import RefreshIcon from "../../components/UI/svg/refresh-icon.component";
 import Header from "../../components/UI/header";
+import { Context } from "../../store/context.store";
+import toast from "react-hot-toast";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
@@ -44,7 +45,7 @@ const UserHome = () => {
     setDataList,
     sendInvitation,
   } = usePagination("lastname", "/user/everything");
-  const { isLoading, sendRequest, error } = useHttp();
+  const { isLoading, sendRequest, error } = useHttp(true);
 
   const handleRoleSwitch = (role: Role) => {
     initPagination();
@@ -75,7 +76,7 @@ const UserHome = () => {
 
   const handleGroupRolesChange = async (updatedRoles: Array<Role>) => {
     const selectedDataList = dataList.filter(
-      (user: any) => user.isSelected === true
+      (user: any) => user.isSelected === true,
     );
     const updatedDataList = Array<string>();
 
@@ -112,7 +113,7 @@ const UserHome = () => {
           method: "put",
           body: { usersToUpdate: updatedDataList, rolesId: updatedRolesIds },
         },
-        applyData
+        applyData,
       );
     }
   };
@@ -147,7 +148,7 @@ const UserHome = () => {
       {
         path: "/user/stats",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
 
@@ -167,24 +168,27 @@ const UserHome = () => {
         method: "put",
         body: { usersIds, status: value },
       },
-      applyData
+      applyData,
     );
   };
 
   const handleDeleteUser = (id: string) => {
+    const applyData = ({ message }: { message: string }) => {
+      if (error) {
+        return;
+      }
+
+      toast.success(message);
+      const dataToChange = dataList.filter((user) => user._id !== id);
+      setDataList(dataToChange);
+    };
+
     sendRequest(
       {
         path: `/user/${id}`,
         method: "delete",
       },
-      (data) => {
-        if (!data || error) {
-          return;
-        }
-
-        const dataToChange = dataList.filter((user) => user._id !== id);
-        setDataList(dataToChange);
-      }
+      applyData,
     );
   };
 

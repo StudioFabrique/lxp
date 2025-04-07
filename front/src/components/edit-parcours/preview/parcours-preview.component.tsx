@@ -25,16 +25,16 @@ interface ParcoursPreviewProps {
 const ParcoursPreview = (props: ParcoursPreviewProps) => {
   const { id } = useParams();
   const objectives = useSelector(
-    (state: any) => state.parcoursObjectives.objectives
+    (state: any) => state.parcoursObjectives.objectives,
   ) as Objective[];
   const skills = useSelector(
-    (state: any) => state.parcoursSkills.skills
+    (state: any) => state.parcoursSkills.skills,
   ) as Skill[];
   const { validateParcours } = useValidateParcours();
   const nav = useNavigate();
   const { sendRequest } = useHttp();
   const groups = useSelector(
-    (state: any) => state.parcoursGroups.groups
+    (state: any) => state.parcoursGroups.groups,
   ) as Group[];
   const [students, setStudents] = useState<User[] | null>(null);
   const dispatch = useDispatch();
@@ -48,7 +48,7 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
       const applyData = (data: { success: boolean; message: string }) => {
         if (data.success) {
           toast.success(data.message);
-          nav("/admin/parcours");
+          nav(`/admin/parcours/view/${id}`);
         }
       };
       sendRequest(
@@ -57,7 +57,7 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
           method: "put",
           body: { isPublished: value },
         },
-        applyData
+        applyData,
       );
     }
   };
@@ -81,7 +81,7 @@ const ParcoursPreview = (props: ParcoursPreviewProps) => {
         method: "post",
         body: groups.map((item) => item._id),
       },
-      applyData
+      applyData,
     );
   }, [groups, sendRequest]);
 

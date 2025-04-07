@@ -1,16 +1,15 @@
 export const themes = {
-  light: "winter",
+  light: "nord",
   dark: "night",
 };
 
 export const lightThemes = [
   "autumn",
-  "bumblebee",
   "corporate",
   "cupcake",
   "lofi",
-  "winter",
-  "wireframe",
+  "nord",
+  "lightwitch",
 ];
 
 export const darkThemes = [
@@ -20,4 +19,5 @@ export const darkThemes = [
   "forest",
   "night",
   "synthwave",
+  "Warm friendly",
 ];

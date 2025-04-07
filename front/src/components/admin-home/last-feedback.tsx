@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import AvatarCard from "../UI/avatar-card";
-import { Context } from "../../store/context.store";
 import StudentFeedback from "../../utils/interfaces/student-feedback";
 import imageProfileReplacement from "../../config/image-profile-replacement";
 import { Socket } from "socket.io-client";
 import useHttp from "../../hooks/use-http";
 import Wrapper from "../UI/wrapper/wrapper.component";
+import { Context } from "../../store/context.store";
 
 export default function LastFeedback() {
   const { socket } = useContext(Context);
@@ -24,7 +24,7 @@ export default function LastFeedback() {
       {
         path: "/user/last-feedbacks/false",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
 
@@ -53,7 +53,7 @@ export default function LastFeedback() {
               return { ...feedback, hasBeenReviewed: true };
             }
             return feedback;
-          })
+          }),
         );
       });
     }
@@ -64,7 +64,7 @@ export default function LastFeedback() {
   }, [getLastFeedback]);
 
   return (
-    <div className="flex flex-col gap-y-2">
+    <div className="flex flex-col gap-y-2 w-full">
       <h2 className="font-bold">Derniers feedbacks des apprenants</h2>
       {feedbacks.length > 0 ? (
         <ul className="flex flex-col gap-y-2">

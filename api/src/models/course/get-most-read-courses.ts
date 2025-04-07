@@ -11,7 +11,7 @@ import Group from "../../utils/interfaces/db/group";
  */
 export default async function getMostReadCourses(
   userIdMdb: string,
-  max?: number
+  max?: number,
 ) {
   const groupsWhereStudentIs = await Group.find({ users: userIdMdb });
 
@@ -28,6 +28,9 @@ export default async function getMostReadCourses(
   JOIN "GroupsOnParcours" gp ON p.id = gp."parcoursId"
   JOIN "Group" g ON gp."groupId" = g.id
   WHERE g."idMdb" = ANY(${groupIds})
+  AND c."isPublished" = true
+  AND c."visibility" = true
+  AND p."isPublished" = true
   GROUP BY c.id, c.title, c."moduleId", m.title
   ORDER BY lessonReadCount
   LIMIT ${max}`;
@@ -56,7 +59,7 @@ export default async function getMostReadCourses(
         lessons: [{ id: lessonId }],
         ...courseReformated,
       };
-    })
+    }),
   );
 
   return coursesReformated;

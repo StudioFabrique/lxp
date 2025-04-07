@@ -8,7 +8,7 @@ import Loader from "./components/UI/loader";
 import Sidebar from "./components/UI/sidebar/sidebar";
 import Login from "./components/login/login.component";
 import { ThemeProvider } from "./store/theme-context";
-import ContextProvider from "./store/context.store";
+import ContextProvider from "./store/contextProvider.store";
 
 const StudentLayout = lazy(
   async () => await import("./views/student/student-layout.component"),

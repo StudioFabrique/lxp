@@ -1,3 +1,4 @@
+import { Accomplishment } from "./accomplishment";
 import Contact from "./contact";
 import CourseDates from "./course-dates";
 import Lesson from "./lesson";
@@ -23,6 +24,8 @@ export default interface Course {
   dates: CourseDates[];
   isPublished: boolean;
   bonusSkills: Skill[];
+  accomplishments?: Accomplishment[];
+  order?: number;
 }
 
 export interface CourseTimeline {

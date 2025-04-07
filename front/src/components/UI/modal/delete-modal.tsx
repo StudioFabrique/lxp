@@ -8,12 +8,10 @@ const DeleteModal: FC<{
   descriptionSubject?: string;
   error?: string;
 }> = ({ isLoading, onCancel, onConfirm, descriptionSubject, error }) => {
-  console.log(descriptionSubject);
-
   useEffect(() => {
     document.body.addEventListener(
       "keydown",
-      (e) => e.key === "Escape" && onCancel()
+      (e) => e.key === "Escape" && onCancel(),
     );
   });
 
@@ -31,7 +29,7 @@ const DeleteModal: FC<{
               <p className="py-2">
                 {`Êtes-vous sûr de vouloir supprimer ${descriptionSubject} ?`}
               </p>
-              <p className=" text-warning text-sm pb-2">
+              <p className="text-warning text-sm pb-2">
                 Attention: Cette opération ne peut pas être annulée
               </p>
               <div className="modal-action flex justify-between">

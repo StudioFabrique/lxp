@@ -8,7 +8,10 @@ import Course from "../../../../utils/interfaces/course";
 import EditIcon from "../../../UI/svg/edit-icon";
 import { Link, useLocation } from "react-router-dom";
 
-const ContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
+const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
+  parcoursId,
+  moduleId,
+}) => {
   const { sendRequest, isLoading } = useHttp(true);
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];
@@ -27,7 +30,7 @@ const ContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
       {
         path: `/course/${moduleId}`,
       },
-      applyData
+      applyData,
     );
   }, [sendRequest, moduleId]);
 
@@ -42,19 +45,17 @@ const ContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
           key={course?.id}
           className="flex justify-between items-center bg-secondary text-secondary-content p-4 rounded-lg"
         >
-          <span className="w-14 h-14 mx-4">
+          <span className="w-14 h-14 flex-shrink-0">
             <BookIcon />
           </span>
-          <div className="flex flex-col items-center w-full px-2">
-            <p className="self-start">{`Cours ${i + 1}`}</p>
-            <div className="flex justify-between w-full">
-              <p className="self-start text-xl font-bold">{course.title}</p>
-            </div>
+          <div className="flex flex-col truncate w-full px-4">
+            <span className="truncate">{`Cours ${i + 1}`}</span>
+            <span className="text-xl font-bold truncate">{course.title}</span>
           </div>
           <Can action="update" object="course">
             <Link
               to={`/${currentRoute[0]}/course/edit/${course.id}`}
-              className="h-8 w-8"
+              className="h-8 w-8 flex-shrink-0"
             >
               <EditIcon />
             </Link>
@@ -62,7 +63,7 @@ const ContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
         </Link>
       ))
     ) : (
-      <p>Aucun cours</p>
+      <p className="ml-4">Aucun cours publié</p>
     );
 
   return (
@@ -72,7 +73,8 @@ const ContenuDetail: FC<{ moduleId: number }> = ({ moduleId }) => {
         <Can action="write" object="course">
           <Link
             to="/admin/course/add"
-            className="btn btn-primary btn-sm normal-case"
+            state={{ parcoursId, moduleId }}
+            className="btn btn-primary btn-sm text-base-100"
           >
             Ajouter un cours
           </Link>

@@ -1,4 +1,4 @@
-import { Pen, Trash2 } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
 import { TableListItemConfig } from "../../components/table/table-list/interfaces/table-list-item";
 import { SearchBarProps } from "../../components/UI/search-bar/search-bar";
 import { TableListActionConfig } from "../../components/table/table-list/interfaces/table-list-action";
@@ -23,7 +23,7 @@ export const roleTableItems: TableListItemConfig[] = [
 export const searchBarConfig = (
   onSubmitSearchValue: (value: string) => void,
 ): SearchBarProps => ({
-  title: "Gestion des rôles",
+  title: "",
   placeholder: "Rechercher un rôle",
   onSubmitSearchValue: onSubmitSearchValue,
 });
@@ -35,7 +35,7 @@ export const actionsConfig = (
     property: "edit",
     type: "link",
     tooltip: "Modifier",
-    icon: Pen,
+    icon: Edit,
     additionnalClassname: "btn-ghost",
     request: { path: "edit/[:id]" },
     rbacObject: "role",

@@ -18,8 +18,8 @@ import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
 import Loader from "../../UI/loader";
 import Can from "../../UI/can/can.component";
-import { Context } from "../../../store/context.store";
 import { Delete, Edit, PlusCircle } from "lucide-react";
+import { Context } from "../../../store/context.store";
 
 enum ActionType {
   add,

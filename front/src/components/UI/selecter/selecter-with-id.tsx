@@ -32,7 +32,10 @@ const SelecterWithId: FC<Props> = ({
     <>
       {list ? (
         <select
-          className={`select select-sm ${styleGhost && "select-ghost bg-transparent focus:outline-none focus:text-base-300"}`}
+          className={`select select-sm ${
+            styleGhost &&
+            "select-ghost bg-transparent focus:outline-none focus:text-base-300"
+          }`}
           name="menu"
           id="menu"
           value={id}

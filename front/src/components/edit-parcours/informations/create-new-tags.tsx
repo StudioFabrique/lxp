@@ -9,8 +9,6 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import useHttp from "../../../hooks/use-http";
 import { tagsAction } from "../../../store/redux-toolkit/tags";
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
-import QuestionMarkTooltip from "../../UI/question-mark-tooltip/question-mark-tooltip";
-import { HelpCircle } from "lucide-react";
 
 type Props = {
   onSubmit: Dispatch<SetStateAction<boolean>>;
@@ -65,21 +63,13 @@ function CreateNewTag(props: Props) {
     <RightSideDrawer id="create-tags" visible={false} title="Créer des tags">
       <Wrapper>
         <span className="w-[30rem] flex flex-col gap-y-4">
-          <div className="flex gap-x-4 items-center">
-            <AddTag
-              tag={tag}
-              error={false}
-              placeholder="Exemple : artisanal, technologie, industriel"
-              onChangeValue={handleOnChange}
-              onSubmit={handleTagSubmit}
-            />
-            <QuestionMarkTooltip
-              tooltipValue="Les tags aident à trouver du contenu par mots clés."
-              tooltipPosition="left"
-            >
-              <HelpCircle className="w-6 h-6 text-primary" />
-            </QuestionMarkTooltip>
-          </div>
+          <AddTag
+            tag={tag}
+            error={false}
+            placeholder="Exemple : artisanal, technologie, industriel"
+            onChangeValue={handleOnChange}
+            onSubmit={handleTagSubmit}
+          />
           <TagsList tagsList={currentTags} onRemove={handleRemoveTag} />
           <div className="flex justify-between items-center mt-4">
             <button

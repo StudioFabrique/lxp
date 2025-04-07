@@ -39,6 +39,7 @@ const studentRoutes = [
     ],
   },
   { path: "calendrier", element: <CalendarHome /> },
+
   { path: "profil", element: <UserProfile /> },
   { path: "*", element: <FeaturesList /> },
 ];

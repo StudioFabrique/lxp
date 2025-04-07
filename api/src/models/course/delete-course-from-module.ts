@@ -30,10 +30,32 @@ export default async function deleteCourse(
       };
   }
 
-  //  suppression du cours et de ses relations
-  await prisma.course.delete({
-    where: {
-      id: courseId,
-    },
-  });
+  // supression des évaluations des notations de leçons, des leçons lues, des leçons
+  // et du cours dans la base de données
+  await prisma.$transaction([
+    prisma.lessonRating.deleteMany({
+      where: {
+        lesson: {
+          courseId: courseId,
+        },
+      },
+    }),
+    prisma.lessonRead.deleteMany({
+      where: {
+        lesson: {
+          courseId: courseId,
+        },
+      },
+    }),
+    prisma.lesson.deleteMany({
+      where: {
+        courseId: courseId,
+      },
+    }),
+    prisma.course.delete({
+      where: {
+        id: courseId,
+      },
+    }),
+  ]);
 }

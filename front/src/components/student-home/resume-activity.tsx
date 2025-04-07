@@ -41,9 +41,9 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
     <div className="flex gap-2">
       <ImageHeader
         imageUrl={isLoading ? "" : (image ?? "")}
-        title={`${lastLesson.lesson.title}`}
+        title={`Leçon ${(lastLesson.lesson.order ?? 0) + 1}: ${lastLesson.lesson.title}`}
         titleIcon={<FileEditIcon className="stroke-white" />}
-        subTitle={`${lastLesson.lesson.course.title}`}
+        subTitle={`Cours ${(lastLesson.lesson.course.order ?? 0) + 1}: ${lastLesson.lesson.course.title}`}
         subTitleIcon={
           <div className="text-white w-6">
             <CourseIcon />
@@ -76,8 +76,8 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
                   )}
             </div>
           </div>,
-          <div key="link" className="p-5 w-full flex justify-end">
-            <Can action="component" object="start-lesson-button">
+          <Can key="link" action="component" object="start-lesson-button">
+            <div className="p-5 w-full flex justify-end">
               <Link
                 to={`/${currentRoute}/parcours/module/${lastLesson.lesson.course.module.id}`}
                 state={{ lessonId: lastLesson.lesson.id }}
@@ -86,8 +86,8 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
                 <PlayCircleIcon />
                 <p>{lastLesson.beganAt ? "Reprendre" : "Démarrer"}</p>
               </Link>
-            </Can>
-          </div>,
+            </div>
+          </Can>,
         ]}
       />
       {lastLesson.parcoursId ? (
