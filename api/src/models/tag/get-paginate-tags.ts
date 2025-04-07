@@ -28,12 +28,18 @@ export default async function getPaginateTags(
               parcours: true,
             },
           },
-          parcours: {
+          formations: {
             select: {
-              parcours: {
+              formation: {
                 select: {
                   id: true,
                   title: true,
+                  parcours: {
+                    select: {
+                      id: true,
+                      title: true,
+                    },
+                  },
                 },
               },
             },
@@ -50,17 +56,7 @@ export default async function getPaginateTags(
         tag._count.courses +
         tag._count.formations +
         tag._count.parcours,
-      parcours: [
-        { id: 1, name: "Default" },
-        { id: 2, name: "Beginner" },
-        { id: 3, name: "Intermediate" },
-        { id: 4, name: "Advanced" },
-        { id: 5, name: "Expert" },
-        ...tag.parcours.map((p) => ({
-          id: p.parcours.id,
-          name: p.parcours.title,
-        })),
-      ],
+      parcours: tag.formations.flatMap((f) => f.formation.parcours),
     }));
 
     return {
