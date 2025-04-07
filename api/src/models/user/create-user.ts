@@ -3,7 +3,6 @@ import { prisma } from "../../utils/db";
 import Role from "../../utils/interfaces/db/role";
 import { hash } from "bcrypt";
 import { randomUUID } from "crypto";
-import jwt from "jsonwebtoken";
 import { activationToken } from "../../helpers/activation-token";
 import { sendPasswordEmail } from "../../services/mailer";
 
