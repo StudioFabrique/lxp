@@ -28,6 +28,16 @@ export default async function getPaginateTags(
               parcours: true,
             },
           },
+          parcours: {
+            select: {
+              parcours: {
+                select: {
+                  id: true,
+                  title: true,
+                },
+              },
+            },
+          },
         },
       }),
       prisma.tag.count(),
@@ -40,6 +50,17 @@ export default async function getPaginateTags(
         tag._count.courses +
         tag._count.formations +
         tag._count.parcours,
+      parcours: [
+        { id: 1, name: "Default" },
+        { id: 2, name: "Beginner" },
+        { id: 3, name: "Intermediate" },
+        { id: 4, name: "Advanced" },
+        { id: 5, name: "Expert" },
+        ...tag.parcours.map((p) => ({
+          id: p.parcours.id,
+          name: p.parcours.title,
+        })),
+      ],
     }));
 
     return {
