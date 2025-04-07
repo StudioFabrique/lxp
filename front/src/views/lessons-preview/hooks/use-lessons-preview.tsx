@@ -1,21 +1,26 @@
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
 import LessonRating from "../../../utils/interfaces/lesson-rating";
+import toast from "react-hot-toast";
 
 // Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
 const useLessonsPreview = () => {
   const { sendRequest, isLoading } = useHttp(true);
   const { state: stateFromUrl } = useLocation();
+  const navigate = useNavigate();
   const { moduleId } = useParams();
   const [moduleData, setModuleData] = useState<
     (Module & { parcours: string; parcoursId: number }) | null
   >(null);
   const [selectedLesson, setSelectedLesson] = useState<Lesson>();
   const [lessonRating, setLessonRating] = useState<LessonRating>();
+  const STORAGE_KEY = "lessons-preview-panel-closed";
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [isPanelClosed, setPanelClosed] = useState<boolean>(false);
 
   // Vérifie si la leçon a déjà été complétée
   const [isLessonCompleted, setIsLessonCompleted] = useState(false);
@@ -25,6 +30,22 @@ const useLessonsPreview = () => {
     () => moduleData?.courses.flatMap((course) => course.lessons) || [],
     [moduleData?.courses],
   );
+
+  const selectedLessonHasActivities = selectedLesson
+    ? Boolean(selectedLesson.activities?.length)
+    : false;
+
+  // Modal management
+  const handleToggleModalDisplaying = () => {
+    setTimeout(() => {
+      setShowModal((prev) => !prev);
+    }, 800);
+  };
+
+  const handleClickModalRightButton = () => {
+    handleCompleteLesson(true);
+    setShowModal((prev) => !prev);
+  };
 
   const initiateLesson = useCallback(
     (lessonId: number) => {
@@ -40,16 +61,24 @@ const useLessonsPreview = () => {
     (lesson: Lesson | undefined) => {
       setLessonRating(undefined);
       setSelectedLesson(lesson);
+
+      // Update the URL state
+      navigate(".", {
+        replace: true, // This replaces the current history entry instead of adding a new one
+        state: { lessonId: lesson?.id }, // Set to undefined when no lesson is selected
+      });
+
       if (lesson?.id) {
         initiateLesson(lesson.id);
       }
     },
-    [initiateLesson],
+    [initiateLesson, navigate],
   );
 
   // Fonction pour passer à la leçon suivante
   const switchToNextLesson = () => {
     setLessonRating(undefined);
+
     if (selectedLesson && lessons.length > 0) {
       const currentIndex = lessons.findIndex(
         (lesson) => lesson.id === selectedLesson.id,
@@ -154,23 +183,39 @@ const useLessonsPreview = () => {
       );
   };
 
-  // useEffect pour charger les détails d'une leçon sélectionnée
-  useEffect(() => {
-    const applyData = (data: Lesson) => {
-      // Marquer le début de lecture d'une leçon
-      const lessonInModule = lessons.find((lesson) => lesson.id === data.id);
-      setSelectedLesson({
-        ...data,
-        lessonsRead: lessonInModule?.lessonsRead || [],
-      });
+  const handleEnableCourse = async (courseId: number, visibility: boolean) => {
+    const applyData = (data: { success: boolean; message: string }) => {
+      if (data.success) {
+        toast.success(data.message);
+        fetchData();
+      }
     };
 
-    if (!selectedLesson?.id) return;
-    sendRequest({ path: `/lesson/${selectedLesson.id}` }, applyData);
-  }, [selectedLesson?.id, lessons, sendRequest]);
+    await sendRequest(
+      {
+        path: `/course/enable-course/${courseId}?visibility=${visibility}`,
+        method: "put",
+      },
+      applyData,
+    );
+  };
 
-  // useEffect pour charger les données initiales du module
-  useEffect(() => {
+  const handleDeleteCourse = async (courseId: number) => {
+    const applyData = (data: { success: boolean; message: string }) => {
+      if (data.success) {
+        toast.success(data.message);
+        handleLessonSelection(undefined);
+        fetchData();
+      }
+    };
+
+    await sendRequest(
+      { path: `/course/delete-course/${courseId}`, method: "delete" },
+      applyData,
+    );
+  };
+
+  const fetchData = useCallback(() => {
     const applyData = ({
       data,
     }: {
@@ -188,11 +233,51 @@ const useLessonsPreview = () => {
       }
     };
 
-    sendRequest(
-      { path: `/modules/detail/${moduleId}`, method: "get" },
-      applyData,
-    );
+    sendRequest({ path: `/modules/detail/limited/${moduleId}` }, applyData);
   }, [moduleId, sendRequest, stateFromUrl?.lessonId, handleLessonSelection]);
+
+  // Panel closed state management
+  useEffect(() => {
+    const savedState = localStorage.getItem(STORAGE_KEY);
+    if (savedState) {
+      setPanelClosed(JSON.parse(savedState));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(isPanelClosed));
+  }, [isPanelClosed]);
+
+  // Scroll management
+  useEffect(() => {
+    if (selectedLesson) {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  }, [selectedLesson]);
+
+  // useEffect pour charger les détails d'une leçon sélectionnée
+  useEffect(() => {
+    const applyData = (data: Lesson) => {
+      // Marquer le début de lecture d'une leçon
+      const lessonInModule = lessons.find((lesson) => lesson.id === data.id);
+      setSelectedLesson({
+        ...data,
+        lessonsRead: lessonInModule?.lessonsRead || [],
+        order: lessonInModule?.order,
+      });
+    };
+
+    if (!selectedLesson?.id) return;
+    sendRequest({ path: `/lesson/${selectedLesson.id}` }, applyData);
+  }, [selectedLesson?.id, lessons, sendRequest]);
+
+  // useEffect pour charger les données initiales du module
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   useEffect(() => {
     setIsLessonCompleted(
@@ -216,10 +301,18 @@ const useLessonsPreview = () => {
     isLoading,
     setModuleData,
     isLessonCompleted,
+    showModal,
+    isPanelClosed,
+    selectedLessonHasActivities,
+    setPanelClosed,
+    onToggleModalDisplaying: handleToggleModalDisplaying,
+    onClickModalRightButton: handleClickModalRightButton,
     setSelectedLesson: handleLessonSelection,
     onCompleteLesson: handleCompleteLesson,
     onRateContent: handleRateContent,
     onEditRateContent: handleEditRateContent,
+    onEnableCourse: handleEnableCourse,
+    onDeleteCourse: handleDeleteCourse,
   };
 };
 

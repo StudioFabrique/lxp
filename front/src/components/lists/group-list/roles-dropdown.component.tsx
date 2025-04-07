@@ -1,9 +1,9 @@
 import { FC, useContext, useState } from "react";
-import { Context } from "../../../store/context.store";
 import Role from "../../../utils/interfaces/role";
 import { hasRole } from "../../../utils/hasRole";
 import { Link } from "react-router-dom";
 import { sortArray } from "../../../utils/sortArray";
+import { Context } from "../../../store/context.store";
 
 const RolesDropdown: FC<{
   groupId: string;
@@ -22,7 +22,7 @@ const RolesDropdown: FC<{
   const handleSetNewRoles = (newRole: Role) => {
     if (newRoles.find((role) => role._id === newRole._id)) {
       const updatedNewRoles = newRoles.filter(
-        (role) => role._id !== newRole._id
+        (role) => role._id !== newRole._id,
       );
       setNewRoles(updatedNewRoles);
     } else {
@@ -45,7 +45,7 @@ const RolesDropdown: FC<{
       {showDropdown ? (
         <ul
           tabIndex={0}
-          className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+          className="dropdown-content menu p-2 shadow-sm bg-base-100 rounded-box w-52"
         >
           {roles.map((role) => (
             <>

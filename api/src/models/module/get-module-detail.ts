@@ -30,7 +30,13 @@ export default async function getModuleDetail(
                 where: { student: { idMdb: userMongoId } },
               },
             },
+            orderBy: {
+              order: "asc",
+            },
           },
+        },
+        orderBy: {
+          order: "asc",
         },
       },
     },

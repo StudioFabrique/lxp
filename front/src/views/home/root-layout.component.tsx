@@ -4,10 +4,10 @@ import { useCallback, useContext, useEffect, useMemo } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 // Import des composants et du contexte
-import { Context } from "../../store/context.store";
 import FadeWrapper from "../../components/UI/fade-wrapper/fade-wrapper";
 import { Socket } from "socket.io-client";
 import Login from "../../components/login/login.component";
+import { Context } from "../../store/context.store";
 
 // Variables globales pour le state initial et le socket
 let initialState = true;

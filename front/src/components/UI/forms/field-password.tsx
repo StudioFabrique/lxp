@@ -43,7 +43,7 @@ export default function FieldPassword(props: Props) {
               onChange={(e) =>
                 props.onSetValue(
                   props.name as "password" | "password2",
-                  e.currentTarget.value,
+                  e.currentTarget.value
                 )
               }
             />

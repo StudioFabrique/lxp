@@ -58,7 +58,7 @@ const SelectDropdown = ({ onSelectItem }: SelectDropdownProps) => {
           {list && list.length > 0 ? (
             <ul
               tabIndex={0}
-              className="dropdown-content menu p-1 shadow bg-base-100 rounded-box w-full mt-4 z-50"
+              className="dropdown-content menu p-1 shadow-sm bg-base-100 rounded-box w-full mt-4 z-50"
             >
               {list.map((item) => (
                 <li key={item.id} onClick={() => handleSelectItem(item.id)}>

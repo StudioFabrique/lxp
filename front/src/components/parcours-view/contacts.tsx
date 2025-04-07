@@ -3,13 +3,13 @@ import { useSelector } from "react-redux";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import { ContactWithMail } from "../../utils/interfaces/contact";
 import { useContext } from "react";
-import { Context } from "../../store/context.store";
 import { Mail, Phone } from "lucide-react";
+import { Context } from "../../store/context.store";
 
 const Contacts = () => {
   const { user } = useContext(Context);
   const contacts = useSelector(
-    (state: any) => state.parcoursContacts.currentContacts
+    (state: any) => state.parcoursContacts.currentContacts,
   ) as ContactWithMail[];
 
   const contactsList =

@@ -6,8 +6,8 @@ import nodemailer from "nodemailer";
 // Configuration du transporteur SMTP pour l'envoi d'emails
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP,
-  port: 465,
-  secure: true,
+  port: +process.env.SMTP_PORT!,
+  secure: false,
   auth: {
     user: process.env.EMAIL,
     pass: process.env.PASSWORD,
@@ -46,7 +46,7 @@ export async function sendPasswordEmail(
 
     // Envoi de l'email
     const result = await transporter.sendMail({
-      from: '"LXP - Administrateur"',
+      from: process.env.FROM,
       to: destination,
       subject: "Activation du compte",
       html: message,

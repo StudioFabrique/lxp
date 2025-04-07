@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import useHttp from "../../../hooks/use-http";
 import Activity from "../../../utils/interfaces/activity";
 import Lesson from "../../../utils/interfaces/lesson";
+import { useSearchParams } from "react-router-dom";
 
 /**
  * Hook personnalisé pour gérer la logique de la page d'accueil des leçons
@@ -17,6 +18,7 @@ const useLessonHome = () => {
   const [success, setSuccess] = useState(false);
   const [activityType, setActivityType] = useState("");
   const [createActivity, setCreateActivity] = useState(false);
+  const [searchParams] = useSearchParams();
 
   /**
    * Récupère la liste des activités pour une leçon donnée
@@ -48,7 +50,7 @@ const useLessonHome = () => {
         method: "put",
         body: activitiesIds,
       },
-      applyData
+      applyData,
     );
   };
 
@@ -65,7 +67,7 @@ const useLessonHome = () => {
     };
     sendRequest(
       { path: `/activity/${activity.type}/${activityId}`, method: "delete" },
-      applyData
+      applyData,
     );
   };
 
@@ -102,7 +104,7 @@ const useLessonHome = () => {
           type: data.type,
         },
       },
-      applyData
+      applyData,
     );
   };
 
@@ -119,7 +121,7 @@ const useLessonHome = () => {
         title: value.title,
         description: value.description ?? "",
         url: value.fileValue ? "" : value.videoValue,
-      })
+      }),
     );
     if (value.fileValue) {
       fd.append("video", value.fileValue);
@@ -139,7 +141,7 @@ const useLessonHome = () => {
         method: "post",
         body: fd,
       },
-      applyData
+      applyData,
     );
   };
 
@@ -154,7 +156,7 @@ const useLessonHome = () => {
     getActivities();
   }, [getActivities]);
 
-  // Gère le message de succès qui disparaît après 5 secondes
+  // Gère le message de succès : disparaît après 5 secondes
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (success) {
@@ -168,6 +170,13 @@ const useLessonHome = () => {
       getActivities();
     }
   }, [activityType, getActivities]);
+
+  useEffect(() => {
+    const type = searchParams.get("type");
+    if (type) {
+      setActivityType(type);
+    }
+  }, [searchParams]);
 
   return {
     isLoading,

@@ -1,4 +1,4 @@
-import { PropsWithChildren, useRef, useState } from "react";
+import { PropsWithChildren, useState } from "react";
 
 type DropdownSelectorProps = {
   valueList: (string | number)[];
@@ -14,8 +14,6 @@ const DropdownSelector = ({
 }: PropsWithChildren<DropdownSelectorProps>) => {
   const [isSelecterOpened, setSelecterOpenState] = useState<boolean>(false);
 
-  const dropdownRef = useRef<HTMLUListElement>(null);
-
   const handleClickButton = () => {
     setSelecterOpenState(true);
   };
@@ -27,20 +25,19 @@ const DropdownSelector = ({
 
   return (
     <div className="dropdown dropdown-top">
-      <div
-        tabIndex={0}
+      <button
+        // tabIndex={0}
         role="button"
         onClick={handleClickButton}
         className="rounded-none btn btn-sm btn-ghost"
       >
         {children ?? "Select a value"}
-      </div>
+      </button>
 
       <ul
         tabIndex={0}
-        className="menu dropdown-content bg-secondary rounded-box z-[1] w-10 p-2 mb-2 shadow"
+        className="menu dropdown-content bg-secondary rounded-box z-50 w-10 p-2 mb-2 shadow-sm"
         hidden={!isSelecterOpened}
-        ref={dropdownRef}
       >
         {valueList.length > 0 ? (
           valueList.map((value) => (

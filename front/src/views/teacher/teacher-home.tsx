@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { Context } from "../../store/context.store";
 import { Socket } from "socket.io-client";
+import { Context } from "../../store/context.store";
 
 export default function TeacherHome() {
   const { socket } = useContext(Context);

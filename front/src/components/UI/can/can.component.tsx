@@ -1,6 +1,6 @@
 import React, { ReactNode, useContext } from "react";
-import { Context } from "../../../store/context.store";
 import hasPermission from "../../../utils/hasPermission";
+import { Context } from "../../../store/context.store";
 
 type Props = {
   children: ReactNode;

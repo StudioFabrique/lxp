@@ -39,6 +39,7 @@ const RolePage = () => {
     "/permission/role",
     { apiSearchEndpoint: "/permission/search", searchProperty: "role" },
     {
+      apiDataPropertyToRetreive: "data",
       disablePagination: true,
       disableSort: true,
       invokeErrorToast: true,
@@ -74,9 +75,7 @@ const RolePage = () => {
         data={transformRolesCsv(onRetreiveItemsFromIdList())}
       /> */}
 
-      <div className="grid 2xl:grid-cols-2 gap-5">
-        <RoleForm allow2xlScreenFlexCol onRefreshData={onRefreshData} />
-
+      <div className="flex flex-col gap-10">
         {/*
          * Tableau generique utilisé pour la liste des rôles,
          * utilisation du pattern composition
@@ -126,6 +125,8 @@ const RolePage = () => {
             />,
           ]}
         </Table>
+
+        <RoleForm allow2xlScreenFlexCol onRefreshData={onRefreshData} />
       </div>
     </div>
   );

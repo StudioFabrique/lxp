@@ -23,6 +23,8 @@ export const regexOptionalGeneric =
 
 export const regexStringManyMongoId = /^[a-f\d]{24}(,[a-f\d]{24})*$/;
 
+export const regexStringManyNumberId = /^[0-9]{1,}(,[0-9]{1,})*$/;
+
 export const regexUrl = /^https?:\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/;
 export const regexDate = /^\d{4}-\d{2}-\d{2}$/;
 export const regexVideoUrl =

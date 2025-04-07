@@ -4,7 +4,8 @@ import defaultImage from "../../../../assets/images/module-default.jpg";
 
 const ContenuDetailHeader: FC<{
   imageModuleHeader: any;
-}> = ({ imageModuleHeader }) => {
+  title?: string;
+}> = ({ imageModuleHeader, title }) => {
   const classImage: React.CSSProperties = {
     backgroundImage: `url(${imageModuleHeader ? "data:image/jpeg;base64," + imageModuleHeader : defaultImage})`,
     width: "100%",
@@ -17,7 +18,9 @@ const ContenuDetailHeader: FC<{
 
   return (
     <div>
-      <div className="flex p-5" style={classImage} />
+      <div className="flex flex-col justify-end p-5" style={classImage}>
+        <p className="text-white text-xl font-bold">{title}</p>
+      </div>
     </div>
   );
 };

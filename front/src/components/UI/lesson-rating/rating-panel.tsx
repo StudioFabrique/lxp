@@ -81,7 +81,7 @@ const RatingPanel = ({
         />
 
         {note && (
-          <div className="text-sm text-base-content/70 border-l-4 border-primary/50 p-2 bg-base-200 rounded">
+          <div className="text-sm text-base-content/70 border-l-4 border-primary/50 p-2 bg-base-200 rounded-sm">
             Vous avez déjà évalué ce contenu, vous pouvez mettre à jour votre
             note
           </div>
@@ -95,13 +95,14 @@ const RatingPanel = ({
             Annuler
           </button>
           <FeedbacksButton
-            title="Évaluer ce contenu"
-            className="btn btn-primary btn-sm text-nowrap"
+            className="btn btn-primary btn-sm text-base-100 text-nowrap"
             feedbackType="stars"
             elementCount={selectedStars}
             enableAnimationOnClick
             onClick={onRateContent}
-          />
+          >
+            Évaluer ce contenu
+          </FeedbacksButton>
         </div>
       </div>
     </div>

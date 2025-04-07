@@ -1,5 +1,4 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Context } from "../../store/context.store";
 import { Link } from "react-router-dom";
 import TeacherLastParcours from "../../components/admin-home/teacher-last-parcours";
 import Can from "../../components/UI/can/can.component";
@@ -7,6 +6,8 @@ import LastParcours from "../../components/admin-home/last-parcours";
 import LastFeedback from "../../components/admin-home/last-feedback";
 import useHttp from "../../hooks/use-http";
 import Parcours from "../../utils/interfaces/parcours";
+import TeacherLessonsQualityStats from "../../components/admin-home/teacher-lessons-quality-stats/teacher-lessons-quality-stats";
+import { Context } from "../../store/context.store";
 
 const links = [
   {
@@ -48,8 +49,6 @@ const AdminHome = () => {
   const { sendRequest, isLoading } = useHttp();
   const [parcours, setParcours] = useState<Parcours[] | null>(null);
 
-  console.log("home admin refreshing");
-
   // retourne les deux parcours auquel l'utilisateur est associé en tant que contact
   const getParcours = useCallback(() => {
     const applyData = (data: {
@@ -63,7 +62,7 @@ const AdminHome = () => {
       {
         path: "/user/last-parcours",
       },
-      applyData
+      applyData,
     );
   }, [sendRequest]);
 
@@ -77,8 +76,7 @@ const AdminHome = () => {
         <article className="w-full">
           <span className="w-full flex flex-1 flex-col gap-y-2">
             <h2 className="w-full text-3xl font-extrabold capitalize">
-              Bonjour, {user?.roles[0].label} {user?.firstname} {user?.lastname}{" "}
-              !
+              Bonjour, {user?.firstname} {user?.lastname} !
             </h2>
             <p>
               Bienvenue dans votre panneau d'administration, l'outil central
@@ -134,14 +132,19 @@ const AdminHome = () => {
             ) : null}
             <LastParcours />
           </article>
-          <article className="w-full grid grid-cols-1 xl:grid-cols-2 gap-4">
+          <article className="w-full flex flex-col xl:flex-row gap-4">
             {/*<Wrapper>
               <div className="w-full h-full flex flex-col items-center xl:items:start">
                 <StatsBar />
                 <StatsDonut />
               </div>
             </Wrapper>*/}
-            <LastFeedback />
+            <Can action="component" object="last-feedback">
+              <LastFeedback />
+            </Can>
+            <Can action="component" object="lessons-rating-stats">
+              <TeacherLessonsQualityStats />
+            </Can>
           </article>
         </span>
         {/* <article>

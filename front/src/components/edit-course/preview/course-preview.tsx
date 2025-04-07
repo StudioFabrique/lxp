@@ -22,17 +22,19 @@ interface CoursePreviewProps {
 
 const CoursePreview = (props: CoursePreviewProps) => {
   const { courseId } = useParams();
+  const moduleId = useSelector((state: any) => state.courseInfos).course.module
+    .id;
   const objectives = useSelector(
-    (state: any) => state.courseObjectives.courseObjectives
+    (state: any) => state.courseObjectives.courseObjectives,
   ) as Objective[];
   const skills = useSelector(
-    (state: any) => state.courseSkills.courseSkills
+    (state: any) => state.courseSkills.courseSkills,
   ) as Skill[];
   const lessons = useSelector(
-    (state: any) => state.courseScenario.courseLessons
+    (state: any) => state.courseScenario.courseLessons,
   ) as Lesson[];
   const dates = useSelector(
-    (state: any) => state.courseDates.courseDates
+    (state: any) => state.courseDates.courseDates,
   ) as CourseDates[];
   const { sendRequest, error } = useHttp();
   const nav = useNavigate();
@@ -52,7 +54,9 @@ const CoursePreview = (props: CoursePreviewProps) => {
         if (data.success) {
           toast.success(data.message);
           setTimeout(() => {
-            nav("/admin/course");
+            nav(`/admin/parcours/module/${moduleId}`, {
+              state: { lessonId: lessons[0].id },
+            });
           }, 500);
         }
       };
@@ -61,7 +65,7 @@ const CoursePreview = (props: CoursePreviewProps) => {
           path: `/course/publish/${courseId}`,
           method: "put",
         },
-        applyData
+        applyData,
       );
     }
   };

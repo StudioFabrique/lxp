@@ -15,6 +15,7 @@ import useTableCheckbox from "../../components/table/table-list/hooks/use-table-
 import useGroupActions from "./hooks/use-group-actions";
 import TableActionsButtons from "../../components/table/table-buttons/table-actions-buttons";
 import Group from "../../utils/interfaces/group";
+import { PlusCircle } from "lucide-react";
 
 /**
  * Composant GroupHome
@@ -62,15 +63,16 @@ const GroupHome = () => {
   }, [state]);
 
   return (
-    <div className="flex flex-col gap-10 p-10">
+    <>
       {/* Header de la liste des groupes */}
       <Header
         title="Liste des groupes"
         description="Créer, modifier et supprimer des groupes"
       >
         <Can object="group" action="write">
-          <Link className="btn btn-primary" to="/admin/group/add">
-            Créer un groupe
+          <Link className="btn btn-primary text-base-100" to="/admin/group/add">
+            <PlusCircle />
+            Créer un nouveau groupe
           </Link>
         </Can>
       </Header>
@@ -119,7 +121,7 @@ const GroupHome = () => {
           />,
         ]}
       </Table>
-    </div>
+    </>
   );
 };
 

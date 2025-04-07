@@ -1,4 +1,4 @@
-import Progression from "../../components/lessons-preview/progression/progression";
+import SidebarCoursesList from "../../components/lessons-preview/sidebar/sidebar-courses-list";
 import ProgressBar from "../../components/lessons-preview/progress-bar";
 import LessonReader from "../../components/lessons-preview/preview-lesson/lesson-reader";
 import Lesson from "../../utils/interfaces/lesson";
@@ -8,9 +8,9 @@ import ModuleData from "../../components/lessons-preview/module-data/module-data
 import LessonsPreviewWrapper from "../../components/lessons-preview/lessons-preview-wrapper";
 import LessonsPreviewSkeleton from "./lessons-preview-skeleton";
 import FeedbacksButton from "../../components/UI/feedbacks/feedbacks-button";
-import { useState } from "react";
 import LessonCompletionModal from "../../components/lessons-preview/lesson-completion-modal";
 import Can from "../../components/UI/can/can.component";
+import CreateCourseItem from "../../components/lessons-preview/sidebar/create-course-item";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
@@ -26,20 +26,15 @@ const LessonsPreview = () => {
     setSelectedLesson,
     onRateContent,
     onEditRateContent,
+    onDeleteCourse,
+    onEnableCourse,
+    showModal,
+    isPanelClosed,
+    selectedLessonHasActivities,
+    setPanelClosed,
+    onToggleModalDisplaying,
+    onClickModalRightButton,
   } = useLessonsPreview();
-
-  const [showModal, setShowModal] = useState<boolean>(false);
-
-  const handleToggleModalDisplaying = () => {
-    setTimeout(() => {
-      setShowModal((prev) => !prev);
-    }, 800);
-  };
-
-  const handleClickModalRightButton = () => {
-    onCompleteLesson(true);
-    setShowModal((prev) => !prev);
-  };
 
   return !moduleData ? (
     <LessonsPreviewSkeleton />
@@ -53,22 +48,38 @@ const LessonsPreview = () => {
           }
           // Le bouton handler onClickModalRightButton n'est affiché seulement si
           // l'objet lessonRating est non null
-          onClickModalRightButton={lessonRating && handleClickModalRightButton}
-          onClickMinimizeButton={handleToggleModalDisplaying}
+          onClickModalRightButton={lessonRating && onClickModalRightButton}
+          onClickMinimizeButton={onToggleModalDisplaying}
         />
       ) : null}
 
-      <LessonsPreviewWrapper selectedLesson={selectedLesson}>
+      <LessonsPreviewWrapper
+        parcoursId={moduleData.parcoursId}
+        selectedLesson={selectedLesson}
+        isPanelClosed={isPanelClosed}
+        setPanelClosed={setPanelClosed}
+      >
         {[
           // * Header
           <LessonsPreviewHeader key="header" moduleData={moduleData} />,
           // * Le composant affichant la liste des cours avec la progression des cours
-          <Progression
+          <SidebarCoursesList
             key="progession-side"
             courses={moduleData.courses}
+            parcoursId={moduleData.parcoursId}
+            moduleId={moduleData.id ?? 0}
             selectedLesson={selectedLesson}
             setSelectedLesson={setSelectedLesson}
-          />,
+            onDeleteCourse={onDeleteCourse}
+            onEnableCourse={onEnableCourse}
+          >
+            <Can action="write" object="course">
+              <CreateCourseItem
+                parcoursId={moduleData.parcoursId}
+                moduleId={moduleData.id ?? 0}
+              />
+            </Can>
+          </SidebarCoursesList>,
           // * La barre de progression du cours
           <Can key="top-progress-bar" action="component" object="progression">
             <ProgressBar courses={moduleData.courses} />
@@ -80,25 +91,26 @@ const LessonsPreview = () => {
             isLessonAlreadyCompleted
             currentLessonRating={lessonRating?.rating}
             onRateContent={onEditRateContent}
+            lessonHasActivities={selectedLessonHasActivities}
           >
             {/* Bouton pour terminer la leçon afin d'afficher une modal */}
             <Can action="component" object="progression">
               <FeedbacksButton
-                title={
-                  isLessonCompleted ? "Leçon Suivante" : "Marquer comme terminé"
-                }
-                className="btn btn-primary text-nowrap"
+                className="btn btn-primary text-nowrap text-base-100"
                 feedbackType="thumbUp"
                 enableAnimationOnClick={!isLessonCompleted}
                 disabled={showModal}
                 onClick={
-                  isLessonCompleted
-                    ? onCompleteLesson
-                    : handleToggleModalDisplaying
+                  isLessonCompleted ? onCompleteLesson : onToggleModalDisplaying
                 }
-              />
+              >
+                {isLessonCompleted ? "Leçon Suivante" : "Marquer comme terminé"}
+              </FeedbacksButton>
             </Can>
+
+            {/* Le lecteur de leçons */}
           </LessonReader>,
+
           /* Dans le cas où aucune leçon n'est affiché,
            les informations complémentaires du cours sont affichés */
           <ModuleData key="module-data" moduleData={moduleData} />,

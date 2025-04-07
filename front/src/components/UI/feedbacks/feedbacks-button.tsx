@@ -1,4 +1,4 @@
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, PropsWithChildren } from "react";
 import { useReward } from "react-rewards";
 
 const thumbsRewardProperties = {
@@ -66,7 +66,6 @@ const getRewardProperties = (rewardType: RewardType, elementCount?: number) => {
 };
 
 type FeedbackButtonProps<TFunc extends () => void> = {
-  title: string;
   className?: HTMLAttributes<HTMLButtonElement>["className"];
   feedbackType: RewardType;
   elementCount?: number; // Seulement lorsque feedbackType === ""
@@ -77,14 +76,14 @@ type FeedbackButtonProps<TFunc extends () => void> = {
 
 // Bouton avec un trigger onClick et une animation de feedback au click
 const FeedbacksButton = <TFunc extends () => void>({
-  title,
+  children,
   className,
   feedbackType,
   elementCount,
   enableAnimationOnClick,
   disabled,
   onClick,
-}: FeedbackButtonProps<TFunc>) => {
+}: PropsWithChildren<FeedbackButtonProps<TFunc>>) => {
   const rewardProperties = getRewardProperties(feedbackType, elementCount);
 
   const { reward, isAnimating } = useReward(
@@ -109,7 +108,7 @@ const FeedbacksButton = <TFunc extends () => void>({
         disabled={isAnimating || disabled}
         onClick={handleClick}
       >
-        {title}
+        {children}
       </button>
     </div>
   );
