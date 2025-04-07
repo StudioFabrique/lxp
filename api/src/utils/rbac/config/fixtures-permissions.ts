@@ -1,7 +1,7 @@
 export const permDefsInterface = {
   "interface:admin": {
     layout: ["admin", "teacher", "student"],
-    component: ["calendar"],
+    component: ["calendar", "company-picture-upload"],
   },
   "interface:teacher": {
     layout: ["teacher", "student"],

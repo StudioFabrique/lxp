@@ -1,17 +1,16 @@
-import {
-  ChangeEvent,
-  PropsWithChildren,
-  ReactNode,
-  useEffect,
-  useState,
-} from "react";
+import { PropsWithChildren, ReactNode } from "react";
 import TableListAction from "./interfaces/table-list-action";
-import TableListCell from "./table-list-cell";
-import TableListActionCell from "./table-list-action-cell";
-import { AvatarSmall } from "../../UI/avatar/avatar.component";
-import { ValueAsLink } from "./interfaces/table-list-item";
+import TableListCell from "./cell-type/table-list-cell";
+import TableListActionCell from "./cell-type/table-list-action-cell";
+import {
+  CustomModuleComponent,
+  DataItem,
+  ValueAsLink,
+} from "./interfaces/table-list-item";
+import TableListAvatarCell from "./cell-type/table-list-avatar-cell";
+import TableListCheckboxCell from "./cell-type/table-list-checkbox-cell";
 
-type ItemProps<TData extends Record<string, unknown>> = {
+type ItemProps<TData extends Record<string, DataItem>> = {
   id: string;
   data: TData;
   actions?: TableListAction[];
@@ -20,6 +19,9 @@ type ItemProps<TData extends Record<string, unknown>> = {
   style?: { showAvatar?: boolean };
   isAllChecked?: boolean;
   onCheck?: (id: string, checked: boolean) => void;
+
+  // child components custom modules
+  customCellComponents?: CustomModuleComponent[];
 };
 
 /**
@@ -34,22 +36,10 @@ type ItemProps<TData extends Record<string, unknown>> = {
  * @param props.isAllChecked Si la checkbox est cochée ou non
  * @param props.onCheck Appelé lors d'un changement de la case à cocher
  */
-const TableListItem = <TData extends Record<string, unknown>>(
+const TableListItem = <TData extends Record<string, DataItem>>(
   props: PropsWithChildren<ItemProps<TData>>,
 ) => {
-  const [isChecked, setCheckedState] = useState<boolean>(false);
-
   const dataEntries = Object.entries(props.data);
-
-  const handleChangeCheckbox = (event: ChangeEvent<HTMLInputElement>) => {
-    const checked = event.currentTarget.checked;
-    props.onCheck && props.onCheck(props.id, checked);
-    setCheckedState(checked);
-  };
-
-  useEffect(() => {
-    setCheckedState(props.isAllChecked ?? false);
-  }, [props.isAllChecked]);
 
   return (
     <tr className="bg-base-100 hover:bg-base-100/60 text-base-content rounded-xl">
@@ -57,45 +47,39 @@ const TableListItem = <TData extends Record<string, unknown>>(
 
       {/* Affichage de la cellule de checkbox si activé */}
       {props.onCheck ? (
-        <td className="px-0">
-          <div className="h-full flex flex-col justify-center">
-            <input
-              type="checkbox"
-              className="checkbox checkbox-sm checkbox-primary"
-              onChange={handleChangeCheckbox}
-              checked={isChecked}
-            />
-          </div>
-        </td>
+        <TableListCheckboxCell
+          id={props.id}
+          isAllChecked={props.isAllChecked}
+          onCheck={props.onCheck}
+        />
       ) : null}
 
       {/* Affichage d'une cellule d'un avatar si activé */}
       {props.style?.showAvatar ? (
-        <td className="pl-4 pr-1">
-          <div className="flex justify-center items-center h-full">
-            {props.avatar ? (
-              <AvatarSmall
-                user={{
-                  avatar: `data:image/jpeg;base64,${props.avatar}`,
-                  firstname: "",
-                  lastname: "",
-                }}
-              />
-            ) : null}
-          </div>
-        </td>
+        <TableListAvatarCell avatar={props.avatar} />
       ) : null}
 
       {/* Affichage des cellules avec valeurs */}
-      {dataEntries.map(([key, value]) => (
-        <TableListCell
-          key={key}
-          property={key}
-          valuesAsLink={props.valuesAsLink}
-        >
-          {value as ReactNode}
-        </TableListCell>
-      ))}
+      {dataEntries.map(([key, cell]) =>
+        !props.customCellComponents || cell.type === "text" ? (
+          <TableListCell
+            key={key}
+            property={key}
+            valuesAsLink={props.valuesAsLink}
+          >
+            {cell.value as ReactNode}
+          </TableListCell>
+        ) : (
+          (() => {
+            const CustomComponent = props.customCellComponents.find(
+              (comp) => comp.type === cell.type,
+            )?.component;
+            return CustomComponent ? (
+              <CustomComponent data={cell.value} />
+            ) : null;
+          })()
+        ),
+      )}
 
       {/* Affichage des cellules d'actions */}
       {props.actions?.map((action) => (
