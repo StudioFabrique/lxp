@@ -1,5 +1,5 @@
 import { PropsWithChildren } from "react";
-import { ValueAsLink } from "./interfaces/table-list-item";
+import { ValueAsLink } from "../interfaces/table-list-item";
 import { Link } from "react-router-dom";
 
 type CellProps = {
