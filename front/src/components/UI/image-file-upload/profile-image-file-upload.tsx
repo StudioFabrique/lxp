@@ -1,7 +1,14 @@
 import toast from "react-hot-toast";
 import imageProfileReplacement from "../../../config/image-profile-replacement";
 import { maxSizeError } from "../../../helpers/max-size-error";
-import { ChangeEvent, Dispatch, Ref, SetStateAction, useRef } from "react";
+import {
+  ChangeEvent,
+  Dispatch,
+  PropsWithChildren,
+  Ref,
+  SetStateAction,
+  useRef,
+} from "react";
 import { EditIcon } from "lucide-react";
 
 type ProfileImageFileUploadProps = {
@@ -20,7 +27,8 @@ const ProfileImageFileUpload = ({
   onSetTemporaryAvatar,
   maxSize,
   existingAvatar,
-}: ProfileImageFileUploadProps) => {
+  children,
+}: PropsWithChildren<ProfileImageFileUploadProps>) => {
   const fileUploadRef: Ref<HTMLInputElement> = useRef(null);
 
   const onClickChangeAvatar = () => {
@@ -57,17 +65,21 @@ const ProfileImageFileUpload = ({
       onClick={onClickChangeAvatar}
       className="btn btn-primary text-white p-0 rounded-lg h-[60px] w-[60px]"
     >
-      <img
-        className="h-[58px] w-[58px] rounded-lg border-2 border-primary object-cover"
-        src={
-          temporaryAvatar.url
-            ? temporaryAvatar.url
-            : `data:image/jpeg;base64,${
-                existingAvatar ?? imageProfileReplacement
-              }`
-        }
-        alt="User Avatar"
-      />
+      {temporaryAvatar.url || !children ? (
+        <img
+          className="h-[58px] w-[58px] rounded-lg border-2 border-primary object-cover"
+          src={
+            temporaryAvatar.url
+              ? temporaryAvatar.url
+              : `data:image/jpeg;base64,${
+                  existingAvatar ?? imageProfileReplacement
+                }`
+          }
+          alt="User Avatar"
+        />
+      ) : (
+        children
+      )}
       <span className="flex justify-end items-end p-1 absolute h-[56px] w-[56px] rounded-lg backdrop-blur-[2px] opacity-0 hover:opacity-100">
         <EditIcon className="text-primary-content stroke-[3px]" />
       </span>
