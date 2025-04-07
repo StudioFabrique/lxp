@@ -42,7 +42,7 @@ export async function sendPasswordEmail(
     await transporter.verify();
 
     // Récupération du template HTML correspondant
-    const message = getTemplate(template, token);
+    const message = getTemplate(template, token, email);
 
     // Envoi de l'email
     const result = await transporter.sendMail({
