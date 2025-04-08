@@ -30,6 +30,8 @@ import restrictedSearchRouter from "./search/restricted-search.router";
 import statsRouter from "./stats.router";
 import evaluationRouter from "./evaluation/evaluation.router";
 import mediaRouter from "./mediatheque/mediatheque.router";
+import { uploadCompanyLogo } from "../../middleware/upload-company-image";
+import httpPostCompanyLogo from "../../controllers/http-post-company-logo";
 
 // Création du routeur principal pour l'API v1
 const v1Router = express.Router();
@@ -64,5 +66,12 @@ v1Router.use("/media", mediaRouter);
  */
 v1Router.use("/search", searchRouter); // recherche en tant que admin
 v1Router.use("/restrictedSearch", restrictedSearchRouter); // recherche en tant qu'utilisateur normal
+
+v1Router.post(
+  "/company-logo",
+  checkPermissions("formation"),
+  uploadCompanyLogo(),
+  httpPostCompanyLogo,
+);
 
 export default v1Router;

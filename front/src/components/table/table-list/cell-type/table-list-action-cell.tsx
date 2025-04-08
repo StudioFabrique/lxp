@@ -1,10 +1,10 @@
 import { Fragment } from "react/jsx-runtime";
-import useHttp from "../../../hooks/use-http";
-import Can from "../../UI/can/can.component";
-import TableListAction from "./interfaces/table-list-action";
-import TableListSwitchInput from "./table-list-switch-input";
+import useHttp from "../../../../hooks/use-http";
+import Can from "../../../UI/can/can.component";
+import TableListAction from "../interfaces/table-list-action";
+import TableListSwitchInput from "../table-list-switch-input";
 import { useState } from "react";
-import TableActionsModal from "../table-buttons/table-actions-modal";
+import TableActionsModal from "../../table-buttons/table-actions-modal";
 import toast from "react-hot-toast";
 
 type TableListActionCellProps = TableListAction & { id: string };

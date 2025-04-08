@@ -26,7 +26,7 @@ export default function FieldPassword(props: Props) {
   };
 
   const baseStyle =
-    "w-fit input input-bordered focus:outline-none flex items-center gap-2";
+    "w-full input input-bordered focus:outline-none flex items-center gap-2";
   const style = `${baseStyle}${!props.isValid ? " input-error" : ""}`;
 
   return (
@@ -43,7 +43,7 @@ export default function FieldPassword(props: Props) {
               onChange={(e) =>
                 props.onSetValue(
                   props.name as "password" | "password2",
-                  e.currentTarget.value
+                  e.currentTarget.value,
                 )
               }
             />
