@@ -1,13 +1,14 @@
-// import { Sidebar } from "../Sidebar";
-// import { ContentItemMenu } from "../menus/ContentItemMenu";
 import { EditorContent } from "@tiptap/react";
 import { useRef } from "react";
 import { useBlockEditor } from "../../hooks/useBlockEditor";
 import { EditorHeader } from "./components/EditorHeader";
 import { TextMenu } from "../menus/TextMenu";
-// import { useSidebar } from "../../hooks/useSidebar";
+import { NewLineMenu } from "../menus/NewLineMenu/NewLineMenu";
 import { LinkMenu } from "../menus/LinkMenu";
-import { ContentItemMenu } from "../menus";
+// import { Sidebar } from "../Sidebar";
+// import { ContentItemMenu } from "../menus/ContentItemMenu";
+// import { useSidebar } from "../../hooks/useSidebar";
+// import { ContentItemMenu } from "../menus";
 
 type BlockEditorProps = {
   onCloseEditor: () => void;
@@ -38,8 +39,9 @@ export const BlockEditor = ({ onCloseEditor }: BlockEditorProps) => {
           // toggleSidebar={leftSidebar.toggle}
         />
         <EditorContent editor={editor} className="flex-1 overflow-y-auto" />
-        <ContentItemMenu editor={editor} isEditable={true} />
+        {/* <ContentItemMenu editor={editor} isEditable={true} /> */}
         <LinkMenu editor={editor} appendTo={menuContainerRef} />
+        <NewLineMenu editor={editor} />
         <TextMenu editor={editor} />
       </div>
     </div>
