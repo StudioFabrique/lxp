@@ -112,8 +112,15 @@ const RightSideDrawer: FC<Props> = ({
           style={{ zIndex: zIndex - 1 }}
         />
         <ul
-          className="min-w-[35rem] block menu py-4 mx-4 top-0 right-0 min-h-screen bg-base-200 text-base-content rounded-l-2xl overflow-auto"
-          style={{ zIndex }}
+          className="min-w-[35rem] block menu py-4 pl-4 top-0 min-h-screen bg-base-200 text-base-content rounded-l-2xl overflow-auto"
+          style={{
+            zIndex,
+            scrollbarWidth: "none", // Firefox
+            msOverflowStyle: "none", // IE/Edge
+            scrollbarGutter: "stable", // Force une stabilité de mise en page
+            right: 0, // Assure un positionnement correct contre le bord droit
+            marginRight: 0, // Élimine toute marge à droite
+          }}
         >
           {/* Sidebar content here */}
           <div className="flex items-center gap-x-4">

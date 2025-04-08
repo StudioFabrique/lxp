@@ -1,18 +1,28 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-    themes:
-        "nord" --default,
-        "autumn",
-        "corporate",
-        "cupcake",
-        "lofi",
-        "business",
-        "coffee",
-        "dracula",
-        "forest",
-        "night",
-        "synthwave",
-        "nord";
+  exclude: rootscrollgutter;
+  themes: "nord" --default, "autumn", "corporate", "cupcake", "lofi", "nord",
+    "wireframe", "business", "coffee", "dracula", "forest", "night", "synthwave";
+}
+@plugin '@tailwindcss/typography';
+
+/* Masquer la scrollbar sur webkit (Chrome, Safari, Edge moderne) */
+.drawer-side > ul::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  background: transparent;
+
 }
 
-@plugin '@tailwindcss/typography';
+/* Désactiver la réservation d'espace pour la scrollbar */
+.drawer-side > ul {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scrollbar-gutter: stable;
+}
+
+/* Pour éviter les problèmes de positionnement */
+.drawer-side {
+  scrollbar-gutter: auto !important;
+  overflow: visible;
+}
