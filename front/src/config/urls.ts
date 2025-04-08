@@ -11,3 +11,5 @@ export const ACTIVITIES = url + "activities/";
 export const SOCKET_URL = url;
 
 export const ACTIVITIES_VIDEOS = url + "activities/videos/";
+
+export const COMPANY_LOGO = url + "company/company-logo.jpeg";

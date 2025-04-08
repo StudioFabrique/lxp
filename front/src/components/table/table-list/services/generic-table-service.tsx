@@ -2,6 +2,7 @@ import TableListAction, {
   TableListActionConfig,
 } from "../interfaces/table-list-action";
 import TableListItem, {
+  DataItem,
   TableListItemConfig,
   TableListItemLabels,
   ValueAsLink,
@@ -61,13 +62,21 @@ export function generateTableItem(
   const avatar = avatarProperty ? dataToTransform[avatarProperty] : undefined;
 
   // Create an ordered object based on itemsConfig
-  const orderedData: Record<string, string> = {};
+  const orderedData: Record<string, DataItem> = {};
   const valuesAsLink: ValueAsLink[] = [];
   itemsConfig.forEach((item) => {
     if (Object.prototype.hasOwnProperty.call(dataToTransform, item.property)) {
-      orderedData[item.property] = dataToTransform[item.property] || "-";
+      // Dans le cas la propriété existe
+      orderedData[item.property] = {
+        type: item.type ?? "text",
+        value: dataToTransform[item.property] || "-",
+      };
     } else {
-      orderedData[item.property] = "-";
+      // Dans le cas la propriété n'existe pas
+      orderedData[item.property] = {
+        type: "text",
+        value: "-",
+      };
     }
 
     if (item.valueAsLink) {
@@ -81,7 +90,13 @@ export function generateTableItem(
     }
   });
 
-  return { id, data: orderedData, actions, avatar, valuesAsLink };
+  return {
+    id,
+    data: orderedData,
+    actions,
+    avatar,
+    valuesAsLink,
+  };
 }
 
 /**

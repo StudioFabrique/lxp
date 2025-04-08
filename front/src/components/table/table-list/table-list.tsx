@@ -1,6 +1,9 @@
 import useTableList from "./hooks/use-table-list";
 import { TableListActionConfig } from "./interfaces/table-list-action";
-import { TableListItemConfig } from "./interfaces/table-list-item";
+import {
+  CustomModuleComponent,
+  TableListItemConfig,
+} from "./interfaces/table-list-item";
 import Head from "./table-list-head";
 import Body from "./table-list-body";
 import TableEmpty, { TableEmptyProps } from "./table-empty";
@@ -22,6 +25,9 @@ export type TableListProps<TData> = {
   onCheck?: (id: string, checked: boolean) => void;
   onCheckAll?: (checked: boolean) => void;
   onSortProperty?: (property: string) => void;
+
+  // child components custom modules
+  customCellComponents?: CustomModuleComponent[];
 };
 
 /**
@@ -69,6 +75,7 @@ const TableList = <TData extends Record<string, string>>(
           style={props.style}
           isAllChecked={props.isAllChecked}
           onCheck={props.onCheck}
+          customCellComponents={props.customCellComponents}
         />
       </table>
     </div>

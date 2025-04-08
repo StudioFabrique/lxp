@@ -3,8 +3,12 @@ import { TableListItemConfig } from "../../components/table/table-list/interface
 import { SearchBarProps } from "../../components/UI/search-bar/search-bar";
 import { TableListActionConfig } from "../../components/table/table-list/interfaces/table-list-action";
 import { TableListProps } from "../../components/table/table-list/table-list";
+import WrappedParcoursCell from "./custom-cell-components/wrapped-parcours-cell";
+import { ComponentType } from "react";
 
-export const tagsHomeTableItems: TableListItemConfig[] = [
+type DataType = "text" | "list";
+
+export const tagsHomeTableItems: TableListItemConfig<DataType>[] = [
   {
     property: "name",
     label: "Titre",
@@ -17,9 +21,9 @@ export const tagsHomeTableItems: TableListItemConfig[] = [
   },
   {
     property: "parcours",
+    type: "list",
     label: "Parcours",
     sortAllowed: false,
-    valueAsLink: { link: "", identifier: "" },
   },
 ];
 
@@ -87,4 +91,10 @@ export const tableListConfig = <TData>(
       linkTo: "?openModal=true",
     },
   },
+  customCellComponents: [
+    {
+      type: "list",
+      component: WrappedParcoursCell as ComponentType<{ data: unknown }>,
+    },
+  ],
 });

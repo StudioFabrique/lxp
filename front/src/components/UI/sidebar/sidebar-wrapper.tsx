@@ -1,18 +1,35 @@
-import { ReactNode, useContext } from "react";
+import { ReactNode, useContext, useState, useEffect } from "react";
 import { Context } from "../../../store/context.store";
-// import logo from "./logo.png";
+import { COMPANY_LOGO } from "../../../config/urls";
 
 const SidebarWrapper = ({ children }: { children: ReactNode }) => {
   const { theme } = useContext(Context);
+  const [companyLogo, setCompanyLogo] = useState<string | null>(COMPANY_LOGO);
+
+  useEffect(() => {
+    // Check if image exists
+    const img = new Image();
+    img.src = COMPANY_LOGO;
+
+    img.onload = () => {
+      setCompanyLogo(COMPANY_LOGO);
+    };
+
+    img.onerror = () => {
+      setCompanyLogo(null);
+    };
+  }, []);
 
   return (
     <nav className="w-24 h-screen fixed p-4 z-10 flex flex-col gap-2">
-      {/* <div className="w-full bg-slate-100 rounded-lg">
-        <img
-          className="h-full w-full object-contain rounded-lg border-slate-700 border-2 p-1"
-          src={logo}
-        />
-      </div> */}
+      {companyLogo ? (
+        <div className="w-full bg-slate-100 rounded-lg">
+          <img
+            className="h-full w-full object-contain rounded-lg border-slate-700 border-2 p-1"
+            src={companyLogo}
+          />
+        </div>
+      ) : null}
       <div
         className={`flex flex-col gap-y-4 p-4 pt-6 rounded-lg h-full relative ${
           theme === "dark"
