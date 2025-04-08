@@ -16,6 +16,7 @@
     "@lexical/react": "^0.27.2",
     "@reduxjs/toolkit": "^1.9.7",
     "@tinymce/tinymce-react": "^5.1.1",
+    "@tiptap/react": "^2.11.7",
     "@wcj/html-to-markdown": "^2.1.1",
     "audit": "^0.0.6",
     "axios": "^1.6.2",

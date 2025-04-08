@@ -3,12 +3,12 @@ import { Link } from "react-router-dom";
 import Lesson from "../../../utils/interfaces/lesson";
 interface AddActivityButtonProps {
   selectedLesson: Lesson;
-  // handleClickShowTipTapEditor: () => void;
+  onClickShowTipTapEditor: () => void;
 }
 
 const ActivityCreationOptionsButtons = ({
   selectedLesson,
-  // handleClickShowTipTapEditor,
+  onClickShowTipTapEditor,
 }: AddActivityButtonProps) => {
   return (
     <div className="bg-secondary/5 p-10 rounded-lg flex justify-center">
@@ -18,17 +18,17 @@ const ActivityCreationOptionsButtons = ({
           Ajouter une activité
         </div>
         <div className="absolute flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          {/* <button
+          <button
             className="btn btn-primary text-base-100"
-            onClick={handleClickShowTipTapEditor}
+            onClick={onClickShowTipTapEditor}
           >
-            Texte avec l'éditeur de code intégré (expérimental)
-          </button> */}
+            Texte
+          </button>
           <Link
             to={`/admin/lesson/edit/${selectedLesson.id}?type=text`}
             className="btn btn-primary text-base-100"
           >
-            Texte
+            Texte (Ancienne version)
           </Link>
           <Link
             to={`/admin/lesson/edit/${selectedLesson.id}?type=video`}
