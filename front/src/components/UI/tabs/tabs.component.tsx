@@ -9,27 +9,27 @@ const Tabs: FC<{
 }> = ({ role, roles, onRoleSwitch }) => {
   const setContent = (item: Role) => {
     return (
-      <li
+      <span
         className={
           role.role === item.role
-            ? "tab tab-lifted tab-active font-bold capitalize"
-            : "tab tab-lifted capitalize"
+            ? "tab tab-active font-bold capitalize"
+            : "tab capitalize"
         }
         onClick={() => onRoleSwitch(item)}
       >
         {item.label}
-      </li>
+      </span>
     );
   };
 
   return (
-    <ul className="flex gap-x-1">
+    <div role="tablist" className="tabs tabs-border text-primary">
       {roles.map((role) => (
         <Can key={role._id} action="read" object={role.role}>
           {setContent(role)}
         </Can>
       ))}
-    </ul>
+    </div>
   );
 };
 export default Tabs;

@@ -4,23 +4,20 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Role from "../../utils/interfaces/role";
-import Tabs from "../../components/UI/tabs/tabs.component";
-import SearchUser from "../../components/UI/search/search.component";
-import { userSearchOptions } from "../../config/search-options";
 import Pagination from "../../components/UI/pagination/pagination";
 import usePagination from "../../hooks/use-pagination";
 import useHttp from "../../hooks/use-http";
 import hasPermission from "../../utils/hasPermission";
 import Modal from "../../components/UI/modal/modal";
 import UserList from "../../components/lists/user-list/user-list.component";
-import DropdownActionsUser from "../../components/lists/user-list/dropdown-actions-user";
 import UsersListStats from "../../components/lists/user-list/users-list-stats";
 import UsersStats from "../../utils/interfaces/users-stats";
 import Can from "../../components/UI/can/can.component";
-import RefreshIcon from "../../components/UI/svg/refresh-icon.component";
 import Header from "../../components/UI/header";
 import { Context } from "../../store/context.store";
 import toast from "react-hot-toast";
+import UserRolesTabs from "../../components/user-list/user-roles-tabs";
+import { userSearchOptions } from "../../config/search-options";
 
 const UserHome = () => {
   const { user, roles } = useContext(Context);
@@ -76,7 +73,7 @@ const UserHome = () => {
 
   const handleGroupRolesChange = async (updatedRoles: Array<Role>) => {
     const selectedDataList = dataList.filter(
-      (user: any) => user.isSelected === true,
+      (user: any) => user.isSelected === true
     );
     const updatedDataList = Array<string>();
 
@@ -113,7 +110,7 @@ const UserHome = () => {
           method: "put",
           body: { usersToUpdate: updatedDataList, rolesId: updatedRolesIds },
         },
-        applyData,
+        applyData
       );
     }
   };
@@ -148,7 +145,7 @@ const UserHome = () => {
       {
         path: "/user/stats",
       },
-      applyData,
+      applyData
     );
   }, [sendRequest]);
 
@@ -168,7 +165,7 @@ const UserHome = () => {
         method: "put",
         body: { usersIds, status: value },
       },
-      applyData,
+      applyData
     );
   };
 
@@ -188,13 +185,13 @@ const UserHome = () => {
         path: `/user/${id}`,
         method: "delete",
       },
-      applyData,
+      applyData
     );
   };
 
   return (
-    <>
-      <div className="w-full flex flex-col items-center p-10 gap-8">
+    <main className="w-9/12">
+      <section className="w-full h-full flex flex-col items-center px-4 py-8 gap-y-16">
         <Header
           title="Liste d'utilisateurs"
           description="Créez, modifiez et supprimez des comptes, assignez des rôles et des permissions, et mettez à jour vos utilisateurs"
@@ -207,58 +204,48 @@ const UserHome = () => {
         </Header>
 
         <UsersListStats stats={stats} isLoading={isLoading} />
-        <div className="flex flex-col gap-y-8">
-          {user && role ? (
-            <Tabs role={role} roles={roles} onRoleSwitch={handleRoleSwitch} />
-          ) : null}
-          <div className="flex justify-end items-center">
-            <div className="flex items-center gap-x-2">
-              <SearchUser
-                options={userSearchOptions}
-                onSearch={handleSearchResult}
-              />
-              <div className="text-primary" onClick={handleRefreshDataList}>
-                <RefreshIcon size={6} />
-              </div>
-              {!role ? null : (
-                <Can action="update" object={role.role}>
-                  <DropdownActionsUser
-                    itemsList={dataList}
-                    roleTab={role}
-                    onGroupRolesChange={handleGroupRolesChange}
-                    onUpdateManyStatus={handleUpdateManyStatus}
-                  />
-                </Can>
-              )}
-            </div>
-          </div>
-          <div className="w-full">
-            <UserList
-              isLoading={isLoading}
-              allChecked={allChecked}
-              page={page}
-              role={role}
-              userList={dataList}
-              onRowCheck={handleRowCheck}
-              onAllChecked={handleAllChecked}
-              onSorting={sortData}
-              onUncheckAll={handleUncheckALL}
-              sdir={sdir}
-              stype={stype}
-              onDelete={handleDeleteUser}
-              error={error}
-              sendInvitation={sendInvitation}
-            />
-            {dataList.length > 0 ? (
-              <Pagination
+
+        <div className="w-full">
+          <UserRolesTabs
+            user={user}
+            role={role}
+            roles={roles}
+            handleRoleSwitch={handleRoleSwitch}
+            handleSearchResult={handleSearchResult}
+            handleRefreshDataList={handleRefreshDataList}
+            handleGroupRolesChange={handleGroupRolesChange}
+            handleUpdateManyStatus={handleUpdateManyStatus}
+            dataList={dataList}
+            userSearchOptions={userSearchOptions}
+          >
+            <div className="w-full">
+              <UserList
+                isLoading={isLoading}
+                allChecked={allChecked}
                 page={page}
-                totalPages={totalPages}
-                setPage={handlePageNumber}
+                role={role}
+                userList={dataList}
+                onRowCheck={handleRowCheck}
+                onAllChecked={handleAllChecked}
+                onSorting={sortData}
+                onUncheckAll={handleUncheckALL}
+                sdir={sdir}
+                stype={stype}
+                onDelete={handleDeleteUser}
+                error={error}
+                sendInvitation={sendInvitation}
               />
-            ) : null}
-          </div>
+              {dataList.length > 0 ? (
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  setPage={handlePageNumber}
+                />
+              ) : null}
+            </div>
+          </UserRolesTabs>
         </div>
-      </div>
+      </section>
       <>
         {showErrorModal ? (
           <Modal
@@ -270,7 +257,7 @@ const UserHome = () => {
           </Modal>
         ) : null}
       </>
-    </>
+    </main>
   );
 };
 

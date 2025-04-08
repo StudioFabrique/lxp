@@ -49,7 +49,7 @@ const DropdownActionsUser: FC<Props> = ({
     <>
       <div className="dropdown dropdown-bottom dropdown-end flex gap-y-4 w-64 z-50">
         <button
-          className="btn btn-outline btn-sm border-none text-primary"
+          className="btn btn-outline btn-sm btn-circle border-none text-primary"
           onClick={() => setShowDropDown(true)}
         >
           <svg

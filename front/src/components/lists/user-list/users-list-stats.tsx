@@ -11,9 +11,9 @@ const UsersListStats: FC<Props> = ({ stats, isLoading }) => {
   return (
     <>
       {isLoading ? (
-        <span className="loading loading-bars loading-lg text(primary"></span>
+        <span className="loading loading-bars loading-lg text-primary"></span>
       ) : stats !== null && stats.length > 0 ? (
-        <ul className="w-4/6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-8">
+        <ul className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-16">
           {stats.map((item: UsersStats) => (
             <li key={item.stat}>
               <span className="w-[12rem] h-[12rem] flex flex-col font-bold text-primary justify-evenly items-center bg-secondary/20 rounded-lg p-4">
