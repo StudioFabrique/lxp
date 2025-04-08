@@ -20,6 +20,7 @@ type Props = {
   handleUpdateManyStatus: (value: string) => void;
   dataList: Array<User>;
   userSearchOptions: SearchOption[];
+  isLoading: boolean;
 };
 
 export default function UserRolesTabs(props: Props) {
@@ -39,7 +40,12 @@ export default function UserRolesTabs(props: Props) {
             onSearch={props.handleSearchResult}
           />
           <button
-            className="btn btn-outline btn-sm btn-circle border-none text-primary"
+            className={`${
+              props.isLoading
+                ? "btn btn-outline btn-sm btn-circle border-none text-primary animate-spin"
+                : "btn btn-outline btn-sm btn-circle border-none text-primary"
+            }`}
+            disabled={props.isLoading}
             onClick={props.handleRefreshDataList}
           >
             <RefreshIcon size={6} />

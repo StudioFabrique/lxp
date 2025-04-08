@@ -1,30 +1,33 @@
 import { FC } from "react";
-
 import UsersStats from "../../../utils/interfaces/users-stats";
 
+// Props type definition for the component
 type Props = {
   stats: Array<UsersStats> | null;
-  isLoading: boolean;
 };
 
-const UsersListStats: FC<Props> = ({ stats, isLoading }) => {
+/**
+ * UsersListStats Component
+ * Displays a grid of user statistics cards
+ * Each card shows a stat label and its corresponding value
+ * Responsive layout: 1 column on mobile, 2 on md, 3 on lg, and 5 on 2xl screens
+ */
+const UsersListStats: FC<Props> = ({ stats }) => {
   return (
-    <>
-      {isLoading ? (
-        <span className="loading loading-bars loading-lg text-primary"></span>
-      ) : stats !== null && stats.length > 0 ? (
-        <ul className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-16">
-          {stats.map((item: UsersStats) => (
+    <ul className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-16">
+      {/* Render stats cards only if stats array is not null */}
+      {stats
+        ? stats.map((item: UsersStats) => (
             <li key={item.stat}>
+              {/* Stat card with label and value */}
               <span className="w-[12rem] h-[12rem] flex flex-col font-bold text-primary justify-evenly items-center bg-secondary/20 rounded-lg p-4">
                 <p className="md:text:md lg:text-md xl:text-md">{item.stat}</p>
                 <p className="text-5xl lg:text-6xl xl:text-6xl">{item.value}</p>
               </span>
             </li>
-          ))}
-        </ul>
-      ) : null}
-    </>
+          ))
+        : null}
+    </ul>
   );
 };
 

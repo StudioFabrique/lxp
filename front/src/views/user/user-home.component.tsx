@@ -203,10 +203,11 @@ const UserHome = () => {
           </Can>
         </Header>
 
-        <UsersListStats stats={stats} isLoading={isLoading} />
+        <UsersListStats stats={stats} />
 
         <div className="w-full">
           <UserRolesTabs
+            isLoading={isLoading}
             user={user}
             role={role}
             roles={roles}

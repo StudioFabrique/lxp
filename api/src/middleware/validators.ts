@@ -17,7 +17,7 @@ import {
 export const checkValidatorResult = (
   req: CustomRequest,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const checkValues = validationResult(req);
 
@@ -27,7 +27,6 @@ export const checkValidatorResult = (
       from: req.socket.remoteAddress,
       status: 400,
     };
-    console.log({ errors: checkValues.array() });
     logger.info(error);
     return res.status(400).json({ message: badQuery });
   }

@@ -24,7 +24,7 @@ const UserAdd = () => {
           toast.success(data.message);
           return navigate("/admin/user");
         }
-      },
+      }
     );
   };
 
@@ -35,13 +35,13 @@ const UserAdd = () => {
   }, [error]);
 
   return (
-    <div className="p-10">
+    <main className="w-9/12">
       <UserAddForm
         onSubmitForm={handleSubmit}
         error={error}
         isLoading={isLoading}
       />
-    </div>
+    </main>
   );
 };
 
