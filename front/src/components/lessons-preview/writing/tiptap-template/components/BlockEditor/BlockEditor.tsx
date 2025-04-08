@@ -5,12 +5,17 @@ import { useRef } from "react";
 import { useBlockEditor } from "../../hooks/useBlockEditor";
 import { EditorHeader } from "./components/EditorHeader";
 import { TextMenu } from "../menus/TextMenu";
-import { useSidebar } from "../../hooks/useSidebar";
+// import { useSidebar } from "../../hooks/useSidebar";
 import { LinkMenu } from "../menus/LinkMenu";
+import { ContentItemMenu } from "../menus";
 
-export const BlockEditor = () => {
+type BlockEditorProps = {
+  onCloseEditor: () => void;
+};
+
+export const BlockEditor = ({ onCloseEditor }: BlockEditorProps) => {
   const menuContainerRef = useRef(null);
-  const leftSidebar = useSidebar();
+  // const leftSidebar = useSidebar();
   const { editor } = useBlockEditor();
 
   if (!editor) {
@@ -28,11 +33,12 @@ export const BlockEditor = () => {
       <div className="relative flex flex-col flex-1 h-full overflow-hidden">
         <EditorHeader
           editor={editor}
-          isSidebarOpen={leftSidebar.isOpen}
-          toggleSidebar={leftSidebar.toggle}
+          onCloseEditor={onCloseEditor}
+          // isSidebarOpen={leftSidebar.isOpen}
+          // toggleSidebar={leftSidebar.toggle}
         />
         <EditorContent editor={editor} className="flex-1 overflow-y-auto" />
-        {/* <ContentItemMenu editor={editor} isEditable={true} /> */}
+        <ContentItemMenu editor={editor} isEditable={true} />
         <LinkMenu editor={editor} appendTo={menuContainerRef} />
         <TextMenu editor={editor} />
       </div>

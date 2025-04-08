@@ -6,15 +6,17 @@ import { Toolbar } from "../../ui/Toolbar";
 import { Icon } from "../../ui/Icon";
 
 export type EditorHeaderProps = {
-  isSidebarOpen?: boolean;
-  toggleSidebar?: () => void;
   editor: Editor;
+  onCloseEditor: () => void;
+  // isSidebarOpen?: boolean;
+  // toggleSidebar?: () => void;
 };
 
 export const EditorHeader = ({
   editor,
-  isSidebarOpen,
-  toggleSidebar,
+  onCloseEditor,
+  // isSidebarOpen,
+  // toggleSidebar,
 }: EditorHeaderProps) => {
   const { characters, words } = useEditorState({
     editor,
@@ -38,21 +40,31 @@ export const EditorHeader = ({
   return (
     <div className="flex items-center justify-between py-2 px-3 border-b border-neutral-200">
       <div className="flex items-center gap-1.5">
-        <Toolbar.Button
+        {/* <Toolbar.Button
           tooltip={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
           onClick={toggleSidebar}
           active={isSidebarOpen}
         >
           <Icon name={isSidebarOpen ? "PanelLeftClose" : "PanelLeft"} />
-        </Toolbar.Button>
+        </Toolbar.Button> */}
+
         <Toolbar.Button
-          tooltip={editor.isEditable ? "Disable editing" : "Enable editing"}
+          tooltip={
+            editor.isEditable
+              ? "Désactiver le mode edition"
+              : "Activer le mode édition"
+          }
           onClick={toggleEditable}
         >
-          <Icon name={editor.isEditable ? "PenOff" : "Pen"} />
+          <Icon name={editor.isEditable ? "Lock" : "Pen"} />
         </Toolbar.Button>
       </div>
-      <EditorInfo characters={characters} words={words} />
+      <div className="flex gap-1.5">
+        <EditorInfo characters={characters} words={words} />
+        <Toolbar.Button tooltip="Fermer l'éditeur" onClick={onCloseEditor}>
+          <Icon name="X" />
+        </Toolbar.Button>
+      </div>
     </div>
   );
 };

@@ -14,7 +14,8 @@ export const useBlockEditor = () => {
     },
     editorProps: {
       attributes: {
-        class: "min-h-full",
+        class:
+          "prose min-h-[12vh] m-1 max-w-full p-1 focus:outline-none hover:ring-2 hover:ring-primary/20 transition-all duration-200",
       },
     },
   });
