@@ -73,12 +73,12 @@ const Search: FC<{
   };
 
   return (
-    <form className="join" onSubmit={handleSubmit}>
+    <form className="min-w-[30rem] join" onSubmit={handleSubmit}>
       <div>
-        <div>
+        <div className="w-full">
           {entityToSearch !== "isActive" ? (
             <input
-              className="input input-sm md:input-md input-bordered focus:outline-none join-item"
+              className="w-full input input-sm md:input-md input-bordered focus:outline-none join-item"
               type={searchType}
               id="searchtype"
               placeholder="Recherche..."
@@ -89,7 +89,7 @@ const Search: FC<{
           ) : (
             <div>
               <select
-                className="select select-sm md:select-md select-bordered focus:outline-none join-item"
+                className="w-full select select-sm md:select-md focus:outline-none join-item"
                 id="isactive"
                 onChange={handleSwitchValueChange}
               >

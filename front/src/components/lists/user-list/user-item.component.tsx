@@ -52,12 +52,14 @@ const UserItem: FC<{
   return (
     <>
       <td className="bg-transparent rounded-l-xl">
-        <input
-          className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
-          type="checkbox"
-          checked={userItem.isSelected}
-          onChange={() => onRowCheck(userItem._id)}
-        />
+        {role !== "everything" ? (
+          <input
+            className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
+            type="checkbox"
+            checked={userItem.isSelected}
+            onChange={() => onRowCheck(userItem._id)}
+          />
+        ) : null}
       </td>
       <td className="bg-transparent">
         <AvatarSmall user={userItem} />
@@ -78,8 +80,8 @@ const UserItem: FC<{
         <span className="tooltip tooltip-bottom" data-tip={userItem.parcours}>
           {userItem.formation ? truncateText(userItem.parcours, 20) : "ND"}
         </span>
-      </td>
-      {role === "everything" ? <td>{userItem.roles[0].label} </td> : null}
+      </td>{" "}
+      <td>{userItem.roles[0].label} </td>
       <td className="bg-transparent">{userItem.createdAt}</td>
       <td className="bg-transparent">
         {isLoading ? (
