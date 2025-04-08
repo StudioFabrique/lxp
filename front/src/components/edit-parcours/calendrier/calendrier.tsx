@@ -66,9 +66,6 @@ const Calendrier = () => {
   return (
     <div className="flex flex-col gap-y-5">
       <h1 className="text-2xl">Calendrier</h1>
-      <p className="text-sm text-slate-400 pl-2">
-        {`Dates du parcours : ${datesParcours.startDate.toLocaleDateString("fr-FR")} au ${datesParcours.endDate.toLocaleDateString("fr-FR")}`}
-      </p>
       <div className="grid grid-cols-3 gap-x-5 min-h-[60vh]">
         <ModulesListCalendrier modules={modules} />
         <Calendar
@@ -97,9 +94,10 @@ const Calendrier = () => {
           }}
         />
       </div>
-      <div className="grid grid-cols-2">
+      <div className="grid grid-cols-3 mt-4">
         <div />
-        <div className="-ml-[30%] w-[130%]">
+        <div className="col-span-2 flex flex-col gap-4 bg-base-200 rounded-lg p-4">
+          <span className="text-base font-bold">{`Dates du parcours : ${datesParcours.startDate.toLocaleDateString("fr-FR")} au ${datesParcours.endDate.toLocaleDateString("fr-FR")}`}</span>
           <CalendarDatesForm datesParcours={datesParcours} />
         </div>
       </div>

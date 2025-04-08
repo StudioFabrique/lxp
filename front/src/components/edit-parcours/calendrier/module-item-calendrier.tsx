@@ -60,8 +60,32 @@ const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
               alt="module preview"
             />
           </span>
-          <p className="truncate w-full">{module.title}</p>
-          <p className="whitespace-nowrap">{module.duration} H</p>
+          <div className="flex flex-col w-full gap-3">
+            <h3 className="font-medium truncate">{module.title}</h3>
+            <div className="space-y-2">
+              <p className="text-sm opacity-80 flex items-center gap-2">
+                <span className="font-medium">Du </span>
+                {module.minDate ? (
+                  new Date(module.minDate).toLocaleDateString("fr-FR")
+                ) : (
+                  <span className="italic">Non définie</span>
+                )}
+              </p>
+              <p className="text-sm opacity-80 flex items-center gap-2">
+                <span className="font-medium">jusqu'au</span>
+                {module.maxDate ? (
+                  new Date(module.maxDate).toLocaleDateString("fr-FR")
+                ) : (
+                  <span className="italic">Non définie</span>
+                )}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col items-end gap-4">
+            <p className="whitespace-nowrap badge badge-neutral">
+              {module.duration} H
+            </p>
+          </div>
         </div>
       ) : null}
     </>
