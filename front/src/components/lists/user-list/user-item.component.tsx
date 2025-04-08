@@ -35,6 +35,8 @@ const UserItem: FC<{
   };
 
   const updateStatus = () => {
+    console.log("updateStatus", userItem.isActive);
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const applyData = (_data: any) => {
       console.log("Mise à jour réussie !");
