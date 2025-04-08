@@ -50,7 +50,7 @@ const LessonReader = ({
       </div>
 
       {/* Affiche les activités si elles existent, sinon affiche un message */}
-      {lessonHasActivities ? (
+      {lessonHasActivities || showTipTapEditor ? (
         selectedLesson.activities?.map((activity) => (
           <ActivityPreview
             key={activity.id}
