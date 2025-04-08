@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { useBlockEditor } from "../../hooks/useBlockEditor";
 import { EditorHeader } from "./components/EditorHeader";
 import { TextMenu } from "../menus/TextMenu";
-import { NewLineMenu } from "../menus/NewLineMenu/NewLineMenu";
+import { SlashContentMenu } from "../menus/SlashContentMenu/SlashContentMenu";
 import { LinkMenu } from "../menus/LinkMenu";
 // import { Sidebar } from "../Sidebar";
 // import { ContentItemMenu } from "../menus/ContentItemMenu";
@@ -41,7 +41,7 @@ export const BlockEditor = ({ onCloseEditor }: BlockEditorProps) => {
         <EditorContent editor={editor} className="flex-1 overflow-y-auto" />
         {/* <ContentItemMenu editor={editor} isEditable={true} /> */}
         <LinkMenu editor={editor} appendTo={menuContainerRef} />
-        <NewLineMenu editor={editor} />
+        <SlashContentMenu editor={editor} />
         <TextMenu editor={editor} />
       </div>
     </div>
