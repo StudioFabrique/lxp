@@ -9,7 +9,7 @@ export type TextMenuProps = {
   editor: Editor;
 };
 
-export const NewLineMenu = ({ editor }: TextMenuProps) => {
+export const SlashContentMenu = ({ editor }: TextMenuProps) => {
   return (
     <FloatingMenu
       tippyOptions={{
