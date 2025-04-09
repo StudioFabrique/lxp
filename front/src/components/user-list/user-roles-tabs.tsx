@@ -25,41 +25,45 @@ type Props = {
 
 export default function UserRolesTabs(props: Props) {
   return (
-    <div className="flex flex-col items-start gap-y-8">
-      {props.user && props.role ? (
-        <Tabs
-          role={props.role}
-          roles={props.roles}
-          onRoleSwitch={props.handleRoleSwitch}
-        />
-      ) : null}
-      <div className="flex  justify-end w-full">
-        <div className="w-[30rem] flex justify-end items-center gap-x-2">
-          <SearchUser
-            options={props.userSearchOptions}
-            onSearch={props.handleSearchResult}
-          />
-          <button
-            className={`${
-              props.isLoading
-                ? "btn btn-outline btn-sm btn-circle border-none text-primary animate-spin"
-                : "btn btn-outline btn-sm btn-circle border-none text-primary"
-            }`}
-            disabled={props.isLoading}
-            onClick={props.handleRefreshDataList}
-          >
-            <RefreshIcon size={6} />
-          </button>
-          {!props.role ? null : (
-            <Can action="update" object={props.role.role}>
-              <DropdownActionsUser
-                itemsList={props.dataList}
-                roleTab={props.role}
-                onGroupRolesChange={props.handleGroupRolesChange}
-                onUpdateManyStatus={props.handleUpdateManyStatus}
-              />
-            </Can>
-          )}
+    <div className="w-full flex flex-col items-center gap-y-8 mt-4">
+      <div className="w-full flex justify-between items-start gap-y-8">
+        <div className="w-4/6">
+          {props.user && props.role ? (
+            <Tabs
+              role={props.role}
+              roles={props.roles}
+              onRoleSwitch={props.handleRoleSwitch}
+            />
+          ) : null}
+        </div>
+        <div className="flex justify-end w-2/6">
+          <div className="w-[30rem] flex justify-end items-center gap-x-2">
+            <SearchUser
+              options={props.userSearchOptions}
+              onSearch={props.handleSearchResult}
+            />
+            <button
+              className={`${
+                props.isLoading
+                  ? "btn btn-outline btn-sm btn-circle border-none text-primary animate-spin"
+                  : "btn btn-outline btn-sm btn-circle border-none text-primary"
+              }`}
+              disabled={props.isLoading}
+              onClick={props.handleRefreshDataList}
+            >
+              <RefreshIcon size={6} />
+            </button>
+            {!props.role ? null : (
+              <Can action="update" object={props.role.role}>
+                <DropdownActionsUser
+                  itemsList={props.dataList}
+                  roleTab={props.role}
+                  onGroupRolesChange={props.handleGroupRolesChange}
+                  onUpdateManyStatus={props.handleUpdateManyStatus}
+                />
+              </Can>
+            )}
+          </div>
         </div>
       </div>
       {props.children}

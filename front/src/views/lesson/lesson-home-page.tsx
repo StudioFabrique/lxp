@@ -87,14 +87,14 @@ export default function LessonHomePage() {
         <Header
           title="Liste des leçons"
           description="Gérer toutes les leçons qui  vous sont attribuées."
-        ></Header>
-      </section>
-
-      {/* Bouton de création de leçon */}
-      <section className="w-5/6 flex justify-end">
-        <Link className="btn btn-primary" to="add">
-          <PlusCircle /> Créer une leçon
-        </Link>
+        >
+          {/* Bouton de création de leçon */}
+          <section className="w-5/6 flex justify-end">
+            <Link className="btn btn-primary" to="add">
+              <PlusCircle /> Créer une leçon
+            </Link>
+          </section>
+        </Header>
       </section>
 
       {/* Liste des leçons */}

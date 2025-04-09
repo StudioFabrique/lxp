@@ -2,7 +2,7 @@
  * En tête pour les interfaces qui listent les groupes, les users, les parcours, etc...
  */
 
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 
 interface HeaderProps {
   title: string;
@@ -11,11 +11,19 @@ interface HeaderProps {
 }
 
 const Header = (props: HeaderProps) => {
+  const baseStyle = useMemo(() => {
+    return props.children
+      ? "w-full flex-1 flex justify-between items-center p-4 rounded-lg bg-secondary/20 mr-8"
+      : "w-full flex-1 flex items-start p-4 rounded-lg bg-secondary/20";
+  }, [props.children]);
+
   return (
-    <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-y-8">
-      <div className="w-full flex flex-col items-start">
-        <h2 className="text-4xl text-base-content font-bold">{props.title}</h2>
-        <p className="mt-2">{props.description}</p>
+    <div className={baseStyle}>
+      <div className="">
+        <h2 className="flex-1 text-xl text-base-content font-extrabold">
+          {props.title}
+        </h2>
+        <p className="mt-2 text-xs">{props.description}</p>
       </div>
       <div className="flex justify-end items-center">{props.children}</div>
     </div>
