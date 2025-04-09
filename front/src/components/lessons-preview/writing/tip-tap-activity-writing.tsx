@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from "react";
-import TipTapEditor from "./tiptap-template/tiptap-editor";
+import TiptapSimpleEditor from "./tiptap-simple-editor/tiptap-simple-editor";
 
 type TipTapActivityWritingProps = {
   onCloseTipTapEditor: () => void;
@@ -8,7 +8,6 @@ type TipTapActivityWritingProps = {
 const TipTapActivityWriting = ({
   onCloseTipTapEditor,
 }: TipTapActivityWritingProps) => {
-  // const extensions = [Document, Text, Paragraph];
   const [title, setTitle] = useState<string>();
 
   const titleHasError = !(title && title.length > 0); /*|| !title incorrect*/
@@ -19,7 +18,7 @@ const TipTapActivityWriting = ({
 
   return (
     <div className="mt-4 flex flex-col">
-      <TipTapEditor onCloseEditor={onCloseTipTapEditor} />
+      <TiptapSimpleEditor onCloseEditor={onCloseTipTapEditor} />
 
       {/* bottom menu */}
       <div className="mt-5 flex justify-between gap-5 bg-base-200 shadow-lg rounded-lg py-2 px-4">

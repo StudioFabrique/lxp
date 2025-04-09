@@ -1,6 +1,7 @@
 import { ReactNode, useContext, useState, useEffect } from "react";
 import { Context } from "../../../store/context.store";
 import { COMPANY_LOGO } from "../../../config/urls";
+import newLogo from "../../../assets/images/new-logo.svg";
 
 const SidebarWrapper = ({ children }: { children: ReactNode }) => {
   const { theme } = useContext(Context);
@@ -39,6 +40,7 @@ const SidebarWrapper = ({ children }: { children: ReactNode }) => {
       >
         <div className="h-full flex flex-col justify-between">{children}</div>
       </div>
+      <img src={newLogo} />
     </nav>
   );
 };
