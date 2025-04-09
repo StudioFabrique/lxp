@@ -24,12 +24,12 @@ const ActivityCreationOptionsButtons = ({
           >
             Texte
           </button>
-          <Link
+          {/* <Link
             to={`/admin/lesson/edit/${selectedLesson.id}?type=text`}
             className="btn btn-primary text-base-100"
           >
             Texte (Ancienne version)
-          </Link>
+          </Link> */}
           <Link
             to={`/admin/lesson/edit/${selectedLesson.id}?type=video`}
             className="btn btn-primary text-base-100"

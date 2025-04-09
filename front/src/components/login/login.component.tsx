@@ -2,7 +2,8 @@ import { useContext } from "react";
 
 import LoginForm from "./login-form.component";
 import bgSide from "../../assets/images/BG-side.png";
-import logo from "../../assets/images/andria-2.png";
+// import logo from "../../assets/images/andria-2.png";
+import newLogo from "../../assets/images/new-logo.svg";
 import { Context } from "../../store/context.store";
 
 const Login = () => {
@@ -15,7 +16,7 @@ const Login = () => {
     <div className="w-full h-screen flex flex-row justify-between items font-inter text-pink bg-linear-to-b from-[#76284e] to-[#202237]">
       <div className="w-[73.5%] flex flex-col text-pink-900 justify-between bg-white rounded-r-[50px] p-20 pl-15 max-sm:p-2">
         <div className="text-[14pt] font-bold flex flex-col">
-          <img className="w-48 h-auto" src={logo} alt="logo lxp" />
+          <img className="w-48 h-auto" src={newLogo} alt="logo lxp" />
         </div>
         <LoginForm
           onSubmit={handleSubmit}
