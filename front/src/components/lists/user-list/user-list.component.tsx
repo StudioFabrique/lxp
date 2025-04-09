@@ -19,6 +19,7 @@ const UserList: FC<{
   isLoading: boolean;
   error?: string;
   sendInvitation: (userId: string) => void;
+  onToggleStatus: (id: string, value: boolean) => void;
 }> = ({
   allChecked,
   page,
@@ -34,6 +35,7 @@ const UserList: FC<{
   isLoading,
   error,
   sendInvitation,
+  onToggleStatus,
 }) => {
   const handleAllChecked = () => {
     onAllChecked();
@@ -199,6 +201,7 @@ const UserList: FC<{
                 isUserDeleteLoading={isLoading}
                 error={error}
                 sendInvitation={sendInvitation}
+                onToggleStatus={onToggleStatus}
               />
             }
           </tr>
