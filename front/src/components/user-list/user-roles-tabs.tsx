@@ -18,7 +18,7 @@ type Props = {
   handleRefreshDataList: () => void;
   handleGroupRolesChange: (updatedRoles: Array<Role>) => void;
   handleUpdateManyStatus: (value: string) => void;
-  dataList: Array<User>;
+  dataList: User[];
   userSearchOptions: SearchOption[];
   isLoading: boolean;
 };
