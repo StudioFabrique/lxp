@@ -1,7 +1,7 @@
 import "./MenuBar.scss";
 import type { Editor } from "@tiptap/react";
 
-import { Fragment, memo } from "react";
+import { Fragment, memo, useRef } from "react";
 
 import MenuItem from "./MenuItem.jsx";
 import { ContentTypePicker } from "./dropdowns/ContentTypePicker.js";
@@ -18,7 +18,9 @@ const MemoContentTypePicker = memo(ContentTypePicker);
 
 export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
   const menuTextOptions = useMenuTextTypes(editor);
-  const menuContentOptions = useMenuContentTypes(editor);
+
+  const inputFileRef = useRef<HTMLInputElement>(null);
+  const menuContentOptions = useMenuContentTypes(editor, inputFileRef);
 
   return (
     <div className="editor__header px-4 flex justify-between items-center bg-base-200 border-base-content border-2 rounded-t-xl">
@@ -40,6 +42,13 @@ export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
         icon="close-large-line"
         title="Fermer l'éditeur"
         action={onCloseEditor}
+      />
+
+      <input
+        ref={inputFileRef}
+        className="hidden"
+        type="file"
+        accept="image/*"
       />
     </div>
   );
