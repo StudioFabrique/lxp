@@ -15,7 +15,7 @@ export default function MenuItem({
 }) {
   return (
     <button
-      className={`menu-item${isActive && isActive() ? " is-active bg-secondary fill-secondary-content" : ""} fill-base-content hover:bg-secondary hover:fill-secondary-content`}
+      className={`menu-item${isActive && isActive() ? " is-active bg-secondary fill-secondary-content" : ""} fill-base-content hover:bg-base-300`}
       onClick={action}
       title={title}
     >
