@@ -34,3 +34,7 @@ export default interface User {
   formation?: string;
   permissions?: Array<string>;
 }
+
+export interface UserSelection extends User {
+  isSelected: boolean;
+}

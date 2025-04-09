@@ -14,7 +14,7 @@ type Props = {
  */
 const UsersListStats: FC<Props> = ({ stats }) => {
   return (
-    <ul className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-16">
+    <ul className="flex flex-wrap justify-evenly items-center gap-4 w-full">
       {/* Render stats cards only if stats array is not null */}
       {stats
         ? stats.map((item: UsersStats) => (

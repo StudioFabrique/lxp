@@ -1,193 +1,45 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useCallback, useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import Role from "../../utils/interfaces/role";
 import Pagination from "../../components/UI/pagination/pagination";
-import usePagination from "../../hooks/use-pagination";
-import useHttp from "../../hooks/use-http";
-import hasPermission from "../../utils/hasPermission";
 import Modal from "../../components/UI/modal/modal";
 import UserList from "../../components/lists/user-list/user-list.component";
 import UsersListStats from "../../components/lists/user-list/users-list-stats";
-import UsersStats from "../../utils/interfaces/users-stats";
 import Can from "../../components/UI/can/can.component";
 import Header from "../../components/UI/header";
-import { Context } from "../../store/context.store";
-import toast from "react-hot-toast";
 import UserRolesTabs from "../../components/user-list/user-roles-tabs";
 import { userSearchOptions } from "../../config/search-options";
+import useUser from "../../components/user-list/use-user";
 
 const UserHome = () => {
-  const { user, roles } = useContext(Context);
-  const [showErrorModal, setShowErrorModal] = useState(false);
-  const [role, setRole] = useState<Role>(roles[0]);
-  const [isSearchActive, setIsSearchActive] = useState(false);
-  const [stats, setStats] = useState<Array<UsersStats> | null>(null);
   const {
+    user,
+    role,
+    stats,
+    isLoading,
+    roles,
+    handleRoleSwitch,
+    handleSearchResult,
+    handleRefreshDataList,
+    handleGroupRolesChange,
+    handleUpdateManyStatus,
+    dataList,
     allChecked,
     page,
-    totalPages,
-    dataList,
-    stype,
-    sdir,
-    getList,
-    sortData,
-    initPagination,
-    handlePageNumber,
-    setPath,
     handleRowCheck,
-    setAllChecked,
-    setDataList,
+    handleAllChecked,
+    sortData,
+    handleUncheckALL,
+    sdir,
+    stype,
+    handlePageNumber,
+    error,
+    handleDeleteUser,
     sendInvitation,
-  } = usePagination("lastname", "/user/everything");
-  const { isLoading, sendRequest, error } = useHttp(true);
-
-  const handleRoleSwitch = (role: Role) => {
-    initPagination();
-    if (isSearchActive) {
-      handleCloseSearch();
-    }
-    setRole(role);
-    setIsSearchActive(false);
-    setPath(`/user/${role.role}`);
-  };
-
-  const handleAllChecked = () => {
-    setAllChecked((prevAllchecked) => !prevAllchecked);
-  };
-
-  const handleUncheckALL = useCallback(() => {
-    setAllChecked(false);
-  }, [setAllChecked]);
-
-  const handleSearchResult = (entityToSearch: string, searchValue: string) => {
-    initPagination();
-    setPath(`/user/search/${role.role}/${entityToSearch}/${searchValue}`);
-    getList();
-    setIsSearchActive(true);
-  };
-
-  const handleCloseSearch = () => {};
-
-  const handleGroupRolesChange = async (updatedRoles: Array<Role>) => {
-    const selectedDataList = dataList.filter(
-      (user: any) => user.isSelected === true
-    );
-    const updatedDataList = Array<string>();
-
-    for (const selectedUser of selectedDataList) {
-      if (
-        user?.permissions &&
-        hasPermission(user?.permissions, "update", updatedRoles[0].role) &&
-        updatedRoles[0].rank >= user!.roles[0].rank &&
-        updatedRoles[0].rank === selectedUser!.roles[0].rank &&
-        updatedRoles.length > 0
-      ) {
-        updatedDataList.push(selectedUser._id);
-      }
-    }
-    if (
-      selectedDataList.length > updatedDataList.length ||
-      updatedRoles.length < 1
-    ) {
-      setShowErrorModal(true);
-      return;
-    }
-
-    const updatedRolesIds = updatedRoles.map((role: Role) => role._id);
-
-    const applyData = (_data: any) => {
-      initPagination();
-      getList();
-      handleUncheckALL();
-    };
-    if (updatedDataList.length > 0) {
-      sendRequest(
-        {
-          path: "/user/user-roles",
-          method: "put",
-          body: { usersToUpdate: updatedDataList, rolesId: updatedRolesIds },
-        },
-        applyData
-      );
-    }
-  };
-
-  const setErrorModal = () => {
-    setShowErrorModal((prevState) => !prevState);
-  };
-
-  const handleRefreshDataList = () => {
-    setIsSearchActive(false);
-    setPath(`/user/${role.role}`);
-    handleUncheckALL();
-    getList();
-    handleGetUsersStats();
-  };
-
-  useEffect(() => {
-    setRole(roles[0]);
-  }, [roles]);
-
-  useEffect(() => {
-    if (role) {
-      getList();
-    }
-  }, [page, getList, role]);
-
-  const handleGetUsersStats = useCallback(() => {
-    const applyData = (data: Array<UsersStats>) => {
-      setStats(data);
-    };
-    sendRequest(
-      {
-        path: "/user/stats",
-      },
-      applyData
-    );
-  }, [sendRequest]);
-
-  useEffect(() => {
-    handleGetUsersStats();
-  }, [handleGetUsersStats]);
-
-  const handleUpdateManyStatus = (value: string) => {
-    const applyData = (_data: any) => {
-      handleRefreshDataList();
-    };
-    const usersToUpdate = dataList.filter((item) => item.isSelected);
-    const usersIds = usersToUpdate.map((item) => item._id);
-    sendRequest(
-      {
-        path: "/user/update-many-status",
-        method: "put",
-        body: { usersIds, status: value },
-      },
-      applyData
-    );
-  };
-
-  const handleDeleteUser = (id: string) => {
-    const applyData = ({ message }: { message: string }) => {
-      if (error) {
-        return;
-      }
-
-      toast.success(message);
-      const dataToChange = dataList.filter((user) => user._id !== id);
-      setDataList(dataToChange);
-    };
-
-    sendRequest(
-      {
-        path: `/user/${id}`,
-        method: "delete",
-      },
-      applyData
-    );
-  };
+    showErrorModal,
+    setErrorModal,
+    totalPages,
+    updateStatus,
+  } = useUser();
 
   return (
     <main className="w-9/12">
@@ -235,6 +87,7 @@ const UserHome = () => {
                 onDelete={handleDeleteUser}
                 error={error}
                 sendInvitation={sendInvitation}
+                onToggleStatus={updateStatus}
               />
               {dataList.length > 0 ? (
                 <Pagination
