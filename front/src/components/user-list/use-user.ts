@@ -63,6 +63,8 @@ const useUser = () => {
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [stats, setStats] = useState<UsersStats[] | null>(null);
 
+  console.log({ roles });
+
   // Pagination hook provides list manipulation and invitation capabilities
   const {
     allChecked,
@@ -262,11 +264,10 @@ const useUser = () => {
    */
   const handleDeleteUser = (id: string) => {
     const applyData = ({ message }: { message: string }) => {
-      if (error) {
-        return;
-      }
-
       toast.success(message);
+
+      handleGetUsersStats();
+
       // Update local state to remove deleted user
       const dataToChange = dataList.filter((user) => user._id !== id);
       setDataList(dataToChange);

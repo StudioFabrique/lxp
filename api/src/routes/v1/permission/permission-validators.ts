@@ -1,6 +1,7 @@
 import { body, param, query } from "express-validator";
 import { checkValidatorResult } from "../../../middleware/validators";
 import { regexStringManyMongoId } from "../../../utils/constantes";
+import { stringValidateGeneric } from "../../../helpers/custom-validators";
 
 export const getPermissionsValidator = (queryParam: "role" | "id") => [
   param(queryParam)
@@ -23,7 +24,8 @@ export const postRoleValidator = [
     .withMessage("Le role ne peut pas contenir le caractère ':'")
     .toLowerCase()
     .trim()
-    .escape(),
+    .custom(stringValidateGeneric)
+    .withMessage("Le role ne peut pas contenir de caractères spéciaux"),
   body("rank")
     .isNumeric()
     .withMessage("Rang invalide")

@@ -18,7 +18,14 @@ async function getUsersStats() {
     {
       stat: "Total Groupes",
       value: totalGroups,
+    } /*    {
+      stat: "Total Diplômés",
+      value: totalDiplomed,
     },
+    {
+      stat: "Total Actifs",
+      value: totalActive,
+    },*/,
   ];
 }
 

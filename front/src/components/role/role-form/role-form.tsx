@@ -26,7 +26,7 @@ type RoleFormProps = {
 };
 
 const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
-  const { fetchRoles, user } = useContext(Context);
+  const { fetchRoles, user, handshake } = useContext(Context);
   const { sendRequest, isLoading: isRequestLoading } = useHttp(true);
 
   const [currentRoleType, setCurrentRoleType] = useState<number>(1);
@@ -36,17 +36,17 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
   const formClassName = useMemo(() => "flex flex-col gap-y-5", []);
   const inputClassName = useMemo(
     () => (hasError: boolean) => setInputStyle(hasError),
-    [],
+    []
   );
 
   const { value: name } = useInput(
     (value: string) => regexGeneric.test(value),
-    role?.role || "",
+    role?.role || ""
   );
 
   const { value: label } = useInput(
     (value: string) => regexGeneric.test(value),
-    role?.label || "",
+    role?.label || ""
   );
 
   const cancelForm = useCallback(() => {
@@ -60,8 +60,9 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
       cancelForm();
       toast.success(data.message);
       onRefreshData && (await onRefreshData());
+      handshake();
     },
-    [cancelForm, onRefreshData],
+    [cancelForm, onRefreshData, handshake]
   );
 
   const applyDataUpdate = useCallback(
@@ -69,7 +70,7 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
       fetchRoles(user!.roles[0]);
       toast.success(data.message);
     },
-    [fetchRoles, user],
+    [fetchRoles, user]
   );
 
   const handleMouseEnterFillLabel = () => {
@@ -92,7 +93,7 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
             rank: currentRoleType,
           },
         },
-        role ? applyDataUpdate : applyDataCreate,
+        role ? applyDataUpdate : applyDataCreate
       );
     else toast.error("Le formulaire n'est pas valide");
   }, [
@@ -147,7 +148,7 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
                   name="name"
                   id="name"
                   className={inputClassName(
-                    name.hasError && name.value.length > 0,
+                    name.hasError && name.value.length > 0
                   )}
                   maxLength={50}
                   onChange={name.valueChangeHandler}
@@ -166,7 +167,7 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
                   name="label"
                   id="label"
                   className={inputClassName(
-                    label.hasError && label.value.length > 0,
+                    label.hasError && label.value.length > 0
                   )}
                   maxLength={50}
                   onClick={handleMouseEnterFillLabel}
@@ -179,7 +180,7 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
               <div className="flex flex-col gap-y-1 w-full">
                 <div className="flex items-center gap-2">
                   <p>Modèle de rôle</p>
-                  <QuestionMarkTooltip tooltipValue="Affecte un modèle de permissions prédéfénis au rôle actuel" />
+                  <QuestionMarkTooltip tooltipValue="Affecte un modèle de permissions prédéfénies au rôle actuel" />
                 </div>
                 <RoleTypeSelector
                   currentRoleType={currentRoleType}
