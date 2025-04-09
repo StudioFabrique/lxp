@@ -23,7 +23,7 @@ export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
   const menuContentOptions = useMenuContentTypes(editor, inputFileRef);
 
   return (
-    <div className="editor__header px-4 flex justify-between items-center bg-base-200 border-base-content border-2 rounded-t-xl">
+    <div className="editor__header px-4 flex justify-between items-center bg-base-200 border-primary/50 border-[1px] rounded-t-xl">
       <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus" />
 
       <div className="flex items-center flex-auto flex-wrap">
