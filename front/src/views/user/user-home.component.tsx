@@ -9,6 +9,7 @@ import Header from "../../components/UI/header";
 import UserRolesTabs from "../../components/user-list/user-roles-tabs";
 import { userSearchOptions } from "../../config/search-options";
 import useUser from "../../components/user-list/use-user";
+import Wrapper from "../../components/UI/wrapper/wrapper.component";
 
 const UserHome = () => {
   const {
@@ -49,56 +50,62 @@ const UserHome = () => {
           description="Créez, modifiez et supprimez des comptes, assignez des rôles et des permissions, et mettez à jour vos utilisateurs"
         >
           <Can action="write" object="user">
-            <Link className="btn btn-primary" to="/admin/user/add">
+            <Link
+              className="btn btn-primary text-base-100"
+              to="/admin/user/add"
+            >
               Créer un utilisateur
             </Link>
           </Can>
         </Header>
 
-        <UsersListStats stats={stats} />
-
         <div className="w-full">
-          <UserRolesTabs
-            isLoading={isLoading}
-            user={user}
-            role={role}
-            roles={roles}
-            handleRoleSwitch={handleRoleSwitch}
-            handleSearchResult={handleSearchResult}
-            handleRefreshDataList={handleRefreshDataList}
-            handleGroupRolesChange={handleGroupRolesChange}
-            handleUpdateManyStatus={handleUpdateManyStatus}
-            dataList={dataList}
-            userSearchOptions={userSearchOptions}
-          >
-            <div className="w-full">
-              <UserList
-                isLoading={isLoading}
-                allChecked={allChecked}
-                page={page}
-                role={role}
-                userList={dataList}
-                onRowCheck={handleRowCheck}
-                onAllChecked={handleAllChecked}
-                onSorting={sortData}
-                onUncheckAll={handleUncheckALL}
-                sdir={sdir}
-                stype={stype}
-                onDelete={handleDeleteUser}
-                error={error}
-                sendInvitation={sendInvitation}
-                onToggleStatus={updateStatus}
-              />
-              {dataList.length > 0 ? (
-                <Pagination
-                  page={page}
-                  totalPages={totalPages}
-                  setPage={handlePageNumber}
-                />
-              ) : null}
-            </div>
-          </UserRolesTabs>
+          <UsersListStats stats={stats} />
         </div>
+        <Wrapper>
+          <div className="w-full">
+            <UserRolesTabs
+              isLoading={isLoading}
+              user={user}
+              role={role}
+              roles={roles}
+              handleRoleSwitch={handleRoleSwitch}
+              handleSearchResult={handleSearchResult}
+              handleRefreshDataList={handleRefreshDataList}
+              handleGroupRolesChange={handleGroupRolesChange}
+              handleUpdateManyStatus={handleUpdateManyStatus}
+              dataList={dataList}
+              userSearchOptions={userSearchOptions}
+            >
+              <div className="w-full">
+                <UserList
+                  isLoading={isLoading}
+                  allChecked={allChecked}
+                  page={page}
+                  role={role}
+                  userList={dataList}
+                  onRowCheck={handleRowCheck}
+                  onAllChecked={handleAllChecked}
+                  onSorting={sortData}
+                  onUncheckAll={handleUncheckALL}
+                  sdir={sdir}
+                  stype={stype}
+                  onDelete={handleDeleteUser}
+                  error={error}
+                  sendInvitation={sendInvitation}
+                  onToggleStatus={updateStatus}
+                />
+                {dataList.length > 0 ? (
+                  <Pagination
+                    page={page}
+                    totalPages={totalPages}
+                    setPage={handlePageNumber}
+                  />
+                ) : null}
+              </div>
+            </UserRolesTabs>
+          </div>
+        </Wrapper>
       </section>
       <>
         {showErrorModal ? (

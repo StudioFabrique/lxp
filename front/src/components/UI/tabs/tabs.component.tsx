@@ -12,8 +12,8 @@ const Tabs: FC<{
       <span
         className={
           role.role === item.role
-            ? "tab tab-active font-bold capitalize"
-            : "tab capitalize"
+            ? "tab tab-active font-bold capitalize text-xs"
+            : "tab capitalize text-xs"
         }
         onClick={() => onRoleSwitch(item)}
       >
