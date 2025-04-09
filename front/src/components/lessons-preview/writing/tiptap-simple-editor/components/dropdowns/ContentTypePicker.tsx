@@ -56,10 +56,9 @@ export const ContentTypePicker = ({
         >
           <Icon
             name={
-              fixedIcon
-                ? fixedIcon
-                : (activeItem?.type === "option" && activeItem.icon) ||
-                  "Pilcrow"
+              (activeItem?.type === "option" && activeItem.icon) ||
+              fixedIcon ||
+              "Pilcrow"
             }
           />
           <Icon name="ChevronDown" className="w-2 h-2" />

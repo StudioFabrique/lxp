@@ -1,7 +1,44 @@
 import { Editor, useEditorState } from "@tiptap/react";
 import { ContentPickerOptions } from "../dropdowns/ContentTypePicker";
+import { useCallback, useEffect, useState } from "react";
 
-export const useMenuContentTypes = (editor: Editor) => {
+export const useMenuContentTypes = (
+  editor: Editor,
+  imageInputRef: React.RefObject<HTMLInputElement>,
+) => {
+  const [imageFile, setImageFile] = useState<File>();
+  // const [imageUrl, setImageUrl] = useState<string>();
+
+  const handleImageUpload = useCallback(() => {
+    if (imageFile) {
+      console.log({ imageFile });
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const url = e.target?.result as string;
+        // setImageUrl(url);
+        editor.chain().focus().setImage({ src: url }).run();
+      };
+      reader.readAsDataURL(imageFile);
+    }
+  }, [editor, imageFile]);
+
+  useEffect(() => {
+    handleImageUpload();
+  }, [handleImageUpload]);
+
+  useEffect(() => {
+    const current = imageInputRef.current;
+    const handleChange = () => {
+      if (!current?.files) return;
+      setImageFile(current.files[0]);
+    };
+
+    current?.addEventListener("change", handleChange);
+    return () => {
+      current?.removeEventListener("change", handleChange);
+    };
+  }, [imageInputRef]);
+
   return useEditorState({
     editor,
     selector: (ctx): ContentPickerOptions => [
@@ -12,7 +49,7 @@ export const useMenuContentTypes = (editor: Editor) => {
       },
       {
         icon: "PictureInPicture",
-        onClick: () => {},
+        onClick: () => imageInputRef.current?.click(),
         id: "picture",
         disabled: () => !ctx.editor.can().toggleBulletList(),
         isActive: () => ctx.editor.isActive("picture"),
@@ -21,10 +58,15 @@ export const useMenuContentTypes = (editor: Editor) => {
       },
       {
         icon: "Table",
-        onClick: () => {},
+        onClick: () =>
+          ctx.editor
+            .chain()
+            .focus()
+            .insertTable({ rows: 3, cols: 3, withHeaderRow: false })
+            .run(),
         id: "table",
         disabled: () => false,
-        isActive: () => false,
+        isActive: () => editor.isActive("table"),
         label: "Tableau",
         type: "option",
       },

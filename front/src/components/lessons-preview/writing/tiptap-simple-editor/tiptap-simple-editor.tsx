@@ -2,6 +2,11 @@ import CharacterCount from "@tiptap/extension-character-count";
 import Highlight from "@tiptap/extension-highlight";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
+import Table from "@tiptap/extension-table";
+import TableCell from "@tiptap/extension-table-cell";
+import TableHeader from "@tiptap/extension-table-header";
+import TableRow from "@tiptap/extension-table-row";
+import Image from "@tiptap/extension-image";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import "./index.scss";
@@ -24,6 +29,16 @@ export default function TiptapSimpleEditor({
       CharacterCount.configure({
         limit: 10000,
       }),
+      Table.configure({
+        resizable: true,
+        // HTMLAttributes: {
+        //   class: "my-custom-class",
+        // },
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
+      Image,
     ],
     editorProps: {
       attributes: {
