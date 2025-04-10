@@ -13,21 +13,34 @@ import { FontFamily } from "@tiptap/extension-font-family";
 import { Color } from "@tiptap/extension-color";
 import Link from "@tiptap/extension-link";
 import Youtube from "@tiptap/extension-youtube";
-import { EditorContent, useEditor } from "@tiptap/react";
+import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import "./index.scss";
 
 import MenuBar from "./components/MenuBar";
-import { useRef } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { LinkMenu } from "./components/LinkMenu";
 
 type TiptapSimpleEditorProps = {
-  onCloseEditor: () => void;
+  editorRef: React.MutableRefObject<Editor | null>;
+  initialValue?: string;
+  isEditingActivity: boolean;
+  setEditingActivity: Dispatch<SetStateAction<boolean>>;
+  onCloseEditor?: () => void;
 };
 
 export default function TiptapSimpleEditor({
+  editorRef,
+  initialValue,
+  isEditingActivity,
+  setEditingActivity,
   onCloseEditor,
 }: TiptapSimpleEditorProps) {
+  const handleCloseEditor = () => {
+    onCloseEditor && onCloseEditor();
+    setEditingActivity(false);
+  };
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure(),
@@ -56,6 +69,8 @@ export default function TiptapSimpleEditor({
       Link,
       Youtube,
     ],
+    content: initialValue,
+    editable: isEditingActivity,
     editorProps: {
       attributes: {
         class:
@@ -66,11 +81,21 @@ export default function TiptapSimpleEditor({
 
   const menuContainerRef = useRef(null);
 
+  useEffect(() => {
+    if (editor) {
+      editorRef.current = editor;
+    }
+  }, [editor, editorRef]);
+
   return (
     <div className="editor" ref={menuContainerRef}>
-      {editor && <MenuBar editor={editor} onCloseEditor={onCloseEditor} />}
+      {isEditingActivity && editor && (
+        <MenuBar editor={editor} onCloseEditor={handleCloseEditor} />
+      )}
       <EditorContent className="editor__content" editor={editor} />
-      {editor && <LinkMenu editor={editor} appendTo={menuContainerRef} />}
+      {isEditingActivity && editor && (
+        <LinkMenu editor={editor} appendTo={menuContainerRef} />
+      )}
     </div>
   );
 }

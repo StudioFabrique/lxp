@@ -5,7 +5,7 @@ import { PropsWithChildren, useState } from "react";
 import Can from "../../UI/can/can.component";
 import NoActivityPlaceholder from "./no-activity-placeholder";
 import ActivityCreationOptionsButtons from "../writing/activity-creation-options-buttons";
-import TipTapActivityWriting from "../writing/tip-tap-activity-writing";
+import TipTapActivityWriting from "../writing/tip-tap-activity";
 
 type PreviewLessonProps = {
   selectedLesson: Lesson;
@@ -33,6 +33,8 @@ const LessonReader = ({
   const handleCloseTipTapEditor = () => {
     setShowTipTapEditor(false);
   };
+
+  if (!selectedLesson.id) return null;
 
   return (
     <div className="flex flex-col gap-4">
@@ -65,6 +67,8 @@ const LessonReader = ({
       <Can action="write" object="lesson">
         {showTipTapEditor ? (
           <TipTapActivityWriting
+            lessonId={selectedLesson.id}
+            isNewActivity
             onCloseTipTapEditor={handleCloseTipTapEditor}
           />
         ) : (
