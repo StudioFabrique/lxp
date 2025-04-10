@@ -2,7 +2,6 @@
 import "./video-style.css";
 import { useEffect, useState } from "react";
 import Activity, { Resource } from "../../../utils/interfaces/activity";
-import Markdown from "react-markdown";
 import { ACTIVITIES, ACTIVITIES_VIDEOS } from "../../../config/urls";
 import BaseReactPlayer from "react-player";
 import Wrapper from "../../UI/wrapper/wrapper.component";
