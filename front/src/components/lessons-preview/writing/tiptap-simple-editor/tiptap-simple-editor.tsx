@@ -12,6 +12,7 @@ import TextStyle from "@tiptap/extension-text-style";
 import { FontFamily } from "@tiptap/extension-font-family";
 import { Color } from "@tiptap/extension-color";
 import Link from "@tiptap/extension-link";
+import Youtube from "@tiptap/extension-youtube";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import "./index.scss";
@@ -53,6 +54,10 @@ export default function TiptapSimpleEditor({
       Color,
       FontFamily,
       Link,
+      Youtube.configure({
+        controls: false,
+        nocookie: true,
+      }),
     ],
     editorProps: {
       attributes: {
@@ -64,15 +69,11 @@ export default function TiptapSimpleEditor({
 
   const menuContainerRef = useRef(null);
 
-  if (!editor) {
-    return null;
-  }
-
   return (
     <div className="editor" ref={menuContainerRef}>
       {editor && <MenuBar editor={editor} onCloseEditor={onCloseEditor} />}
       <EditorContent className="editor__content" editor={editor} />
-      <LinkMenu editor={editor} appendTo={menuContainerRef} />
+      {editor && <LinkMenu editor={editor} appendTo={menuContainerRef} />}
     </div>
   );
 }

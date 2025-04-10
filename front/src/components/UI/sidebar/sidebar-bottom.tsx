@@ -4,6 +4,7 @@ import ModeToggle from "../mode-toggle";
 import { useContext } from "react";
 import imageProfileReplacement from "../../../config/image-profile-replacement";
 import { Context } from "../../../store/context.store";
+import Questionnaire from "./questionnaire";
 
 type SharedSideBarProps = {
   interfaceType: string;
@@ -42,6 +43,13 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
           />
         </Link>
       </li>
+      <li
+        className="tooltip tooltip-right mb-1"
+        data-tip="Questionnaire Bêta-Testeurs"
+      >
+        <Questionnaire />
+      </li>
+
       <li
         className="tooltip tooltip-right mb-1"
         data-tip="Mode Clair / Mode Sombre"
