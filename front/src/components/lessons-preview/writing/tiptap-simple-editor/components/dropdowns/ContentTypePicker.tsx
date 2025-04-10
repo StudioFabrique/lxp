@@ -29,6 +29,7 @@ export type ContentPickerOptions = Array<
 export type ContentTypePickerProps = {
   options: ContentPickerOptions;
   fixedIcon?: keyof typeof icons;
+  isLoading?: boolean;
 };
 
 const isOption = (
@@ -41,6 +42,7 @@ const isCategory = (
 export const ContentTypePicker = ({
   options,
   fixedIcon,
+  isLoading,
 }: ContentTypePickerProps) => {
   const activeItem = useMemo(
     () =>
@@ -54,14 +56,20 @@ export const ContentTypePicker = ({
         <Toolbar.Button
           active={activeItem?.id !== "paragraph" && !!activeItem?.type}
         >
-          <Icon
-            name={
-              (activeItem?.type === "option" && activeItem.icon) ||
-              fixedIcon ||
-              "Pilcrow"
-            }
-          />
-          <Icon name="ChevronDown" className="w-2 h-2" />
+          {isLoading ? (
+            <Icon name="Loader2" className="animate-spin" />
+          ) : (
+            <>
+              <Icon
+                name={
+                  (activeItem?.type === "option" && activeItem.icon) ||
+                  fixedIcon ||
+                  "Pilcrow"
+                }
+              />
+              <Icon name="ChevronDown" className="w-2 h-2" />
+            </>
+          )}
         </Toolbar.Button>
       </Dropdown.Trigger>
       <Dropdown.Content asChild>
