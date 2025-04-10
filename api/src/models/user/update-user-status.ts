@@ -31,7 +31,7 @@ async function updateUserStatus(ownId: string, userId: string, value: boolean) {
   }
 
   // Verify the user's email has been confirmed before activation
-  if (!userToUpdate.emailVerified)
+  if (!userToUpdate.emailVerified && !userToUpdate.isActive)
     throw {
       message:
         "Vous ne pouvez pas activer le compte d'un utilisateur dont l'email n'a pas encore été vérifié.",

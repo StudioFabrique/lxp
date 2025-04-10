@@ -32,10 +32,14 @@ const DropdownActionsUser: FC<Props> = ({
     document.getElementById("add-user-to-group")?.click();
   };
 
+  const anyItemSelected = useMemo(() => {
+    return itemsList.some((item) => item.isSelected);
+  }, [itemsList]);
+
   const dropDownStyle = useMemo(() => {
     return itemsList.some((item) => item.isSelected)
-      ? ""
-      : "text-base-content/50";
+      ? "btn btn-ghost text-left"
+      : "btn btn-ghost text-left text-base-content/50";
   }, [itemsList]);
 
   const handleUpdateManyStatus = (value: string) => {
@@ -64,58 +68,63 @@ const DropdownActionsUser: FC<Props> = ({
           </svg>
         </button>
         {showDropDown ? (
-          <ul
-            tabIndex={0}
-            className="dropdown-content menu p-1 shadow-sm bg-base-100 rounded-box w-48 mt-4"
-          >
+          <div className="dropdown-content menu p-1 shadow-sm bg-base-100 rounded-box w-48 mt-4">
             <Can action="update" object={roleTab.role}>
-              <li onClick={handleAddUserToGroup}>
-                <p className={dropDownStyle}>Ajouter à un groupe</p>
-              </li>
+              <button
+                className={dropDownStyle}
+                onClick={handleAddUserToGroup}
+                disabled={!anyItemSelected}
+              >
+                Ajouter à un groupe
+              </button>
             </Can>
 
             <Can action="update" object={roleTab.role}>
-              <li onClick={handleAddRoleToUser}>
-                <p className={dropDownStyle}>Ajouter un rôle</p>
-              </li>
+              <button
+                className={dropDownStyle}
+                disabled={!anyItemSelected}
+                onClick={handleAddRoleToUser}
+              >
+                Ajouter un rôle
+              </button>
             </Can>
 
             <Can action="update" object={roleTab.role}>
-              <li>
-                <p
-                  className={dropDownStyle}
-                  onClick={() => handleUpdateManyStatus("actif")}
-                >
-                  Activer
-                </p>
-              </li>
+              <button
+                className={dropDownStyle}
+                onClick={() => handleUpdateManyStatus("actif")}
+                disabled={!anyItemSelected}
+              >
+                Activer
+              </button>
             </Can>
 
             <Can action="update" object={roleTab.role}>
-              <li>
-                <p
-                  className={dropDownStyle}
-                  onClick={() => handleUpdateManyStatus("inactif")}
-                >
-                  Désactiver
-                </p>
-              </li>
+              <button
+                className={dropDownStyle}
+                onClick={() => handleUpdateManyStatus("inactif")}
+                disabled={!anyItemSelected}
+              >
+                Désactiver
+              </button>
             </Can>
 
             <Can action="write" object={roleTab.role}>
-              <li>
-                <p className={dropDownStyle}>Supprimer</p>
-              </li>
+              <button className={dropDownStyle} disabled={!anyItemSelected}>
+                Supprimer
+              </button>
             </Can>
 
             <Can action="update" object={roleTab.role}>
-              <li>
-                <p className={dropDownStyle} onClick={onSendManyInvitations}>
-                  Envoyer une invitation
-                </p>
-              </li>
+              <button
+                className={dropDownStyle}
+                onClick={onSendManyInvitations}
+                disabled={!anyItemSelected}
+              >
+                Envoyer une invitation
+              </button>
             </Can>
-          </ul>
+          </div>
         ) : null}
       </div>
       {roleTab ? (
