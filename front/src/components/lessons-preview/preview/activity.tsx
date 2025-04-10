@@ -10,6 +10,7 @@ import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
 import { Edit3, File } from "lucide-react";
 import { Link } from "react-router-dom";
 import Can from "../../UI/can/can.component";
+import TipTapActivity from "../writing/tip-tap-activity";
 
 type ActivityProps = {
   lessonId: number;
@@ -65,11 +66,11 @@ const ActivityPreview = ({ lessonId, activity }: ActivityProps) => {
 
   const renderContent = () => {
     const contentMap = {
-      text: (
-        <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 max-w-[92%]">
-          {value}
-        </Markdown>
-      ),
+      text:
+        // <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 max-w-[92%]">
+        //   {value}
+        // </Markdown>
+        value ? <TipTapActivity lessonId={lessonId} value={value} /> : null,
       video: (
         <div className="flex flex-col gap-2">
           <h3 className="text-base-content font-bold text-2xl">Vidéo</h3>
