@@ -1,10 +1,11 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { Eye, EyeOff, Pencil, Trash2 } from "lucide-react";
 
 import { localeDate } from "../../helpers/locale-date";
 import Can from "../UI/can/can.component";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
 import CustomCourse from "./interfaces/custom-course";
+import TableRowWrapper from "../UI/table-row-wrapper";
 
 interface CourseTableProps {
   coursesList: CustomCourse[];
@@ -13,6 +14,7 @@ interface CourseTableProps {
   onSorting: (property: string) => void;
   onEditCourse: (id: number) => void;
   onDeleteCourse: (course: CustomCourse) => void;
+  children: React.ReactNode;
 }
 
 export default function CourseTable({
@@ -22,71 +24,70 @@ export default function CourseTable({
   onSorting,
   onEditCourse,
   onDeleteCourse,
+  children,
 }: CourseTableProps) {
   const content = useMemo(() => {
     return (
       <>
         {coursesList?.map((course) => (
-          <tr
-            className="cursor-pointer hover:bg-secondary/20 hover:text-base-content"
-            key={course.id}
-            onClick={() => {}}
-          >
-            <td>{course.title}</td>
-            <td>{course.module}</td>
-            <td>{course.parcours}</td>
-            <td>{localeDate(course.createdAt!)}</td>
-            <td>{localeDate(course.updatedAt!)}</td>
-            <td>{course.author}</td>
-            <td>{course.isPublished ? "Publié" : "Brouillon"}</td>
-            <td>
-              <div className="flex justify-center">
-                {course.visibility ? (
-                  <Eye
-                    className="w-6 h-6"
-                    aria-label="le cours est visible par les apprenants"
-                  />
-                ) : (
-                  <EyeOff
-                    className="w-6 h-6"
-                    aria-label="le cours n'est pas visible par les apprenants"
-                  />
-                )}
-              </div>
-            </td>
-            <td>
-              {/*   <Can action="update" object="cours"> */}
+          <TableRowWrapper>
+            <React.Fragment key={course.id}>
+              <td>{course.title}</td>
+              <td>{course.module}</td>
+              <td>{course.parcours}</td>
+              <td>{localeDate(course.createdAt!)}</td>
+              <td>{localeDate(course.updatedAt!)}</td>
+              <td>{course.author}</td>
+              <td>{course.isPublished ? "Publié" : "Brouillon"}</td>
+              <td>
+                <div className="flex justify-center">
+                  {course.visibility ? (
+                    <Eye
+                      className="w-6 h-6"
+                      aria-label="le cours est visible par les apprenants"
+                    />
+                  ) : (
+                    <EyeOff
+                      className="w-6 h-6"
+                      aria-label="le cours n'est pas visible par les apprenants"
+                    />
+                  )}
+                </div>
+              </td>
+              <td>
+                {/*   <Can action="update" object="cours"> */}
 
-              <div
-                className="tooltip tooltip-bottom"
-                data-tip="Modifier le cours."
-              >
-                <Pencil
-                  className="w-6 h-6 text-primary"
-                  aria-label="éditer le cours"
-                  onClick={() => onEditCourse(course.id!)}
-                />
-              </div>
-
-              {/*    </Can> */}
-            </td>
-            <td>
-              <Can action="delete" object="course">
                 <div
                   className="tooltip tooltip-bottom"
-                  data-tip="Supprimer le cours définitivement."
-                  onClick={() => {
-                    onDeleteCourse(course);
-                  }}
+                  data-tip="Modifier le cours."
                 >
-                  <Trash2
-                    className="w-6 h-6 text-error"
-                    aria-label="supprimer le cours"
+                  <Pencil
+                    className="w-6 h-6 text-primary"
+                    aria-label="éditer le cours"
+                    onClick={() => onEditCourse(course.id!)}
                   />
                 </div>
-              </Can>
-            </td>
-          </tr>
+
+                {/*    </Can> */}
+              </td>
+              <td>
+                <Can action="delete" object="course">
+                  <div
+                    className="tooltip tooltip-bottom"
+                    data-tip="Supprimer le cours définitivement."
+                    onClick={() => {
+                      onDeleteCourse(course);
+                    }}
+                  >
+                    <Trash2
+                      className="w-6 h-6 text-error"
+                      aria-label="supprimer le cours"
+                    />
+                  </div>
+                </Can>
+              </td>
+            </React.Fragment>
+          </TableRowWrapper>
         ))}
       </>
     );
@@ -94,6 +95,7 @@ export default function CourseTable({
 
   return (
     <>
+      {children}
       {coursesList && coursesList.length > 0 ? (
         <div className="w-full">
           <table className="table">
