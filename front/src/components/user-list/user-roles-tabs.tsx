@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import User from "../../utils/interfaces/user";
+import User, { UserSelection } from "../../utils/interfaces/user";
 import Role from "../../utils/interfaces/role";
 import Tabs from "../UI/tabs/tabs.component";
 import RefreshIcon from "../UI/svg/refresh-icon.component";
@@ -18,9 +18,10 @@ type Props = {
   handleRefreshDataList: () => void;
   handleGroupRolesChange: (updatedRoles: Array<Role>) => void;
   handleUpdateManyStatus: (value: string) => void;
-  dataList: User[];
+  dataList: UserSelection[];
   userSearchOptions: SearchOption[];
   isLoading: boolean;
+  onSendManyInvitations: () => void;
 };
 
 export default function UserRolesTabs(props: Props) {
@@ -60,6 +61,7 @@ export default function UserRolesTabs(props: Props) {
                   roleTab={props.role}
                   onGroupRolesChange={props.handleGroupRolesChange}
                   onUpdateManyStatus={props.handleUpdateManyStatus}
+                  onSendManyInvitations={props.onSendManyInvitations}
                 />
               </Can>
             )}

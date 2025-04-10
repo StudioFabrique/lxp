@@ -10,6 +10,7 @@ type Props = {
   roleTab: Role;
   onGroupRolesChange: (updatedRoles: Array<Role>) => void;
   onUpdateManyStatus: (value: string) => void;
+  onSendManyInvitations: () => void;
 };
 
 const DropdownActionsUser: FC<Props> = ({
@@ -17,6 +18,7 @@ const DropdownActionsUser: FC<Props> = ({
   roleTab,
   onGroupRolesChange,
   onUpdateManyStatus,
+  onSendManyInvitations,
 }) => {
   const [showDropDown, setShowDropDown] = useState(false);
 
@@ -108,7 +110,9 @@ const DropdownActionsUser: FC<Props> = ({
 
             <Can action="update" object={roleTab.role}>
               <li>
-                <p className={dropDownStyle}>Envoyer une invitation</p>
+                <p className={dropDownStyle} onClick={onSendManyInvitations}>
+                  Envoyer une invitation
+                </p>
               </li>
             </Can>
           </ul>
