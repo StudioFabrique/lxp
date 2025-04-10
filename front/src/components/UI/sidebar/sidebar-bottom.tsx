@@ -21,10 +21,10 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
 
   return (
     <ul className="flex flex-col gap-4 items-center">
-      <li className="left-[14px]">
+      <li>
         <Link
           to={`/${interfaceType}/profil`}
-          className="text-white p-0 rounded-lg h-[35px] w-[35px] tooltip tooltip-right"
+          className="text-white rounded-lg h-[35px] w-[35px] tooltip tooltip-right"
           data-tip={`${
             user?.firstname &&
             user?.firstname.charAt(0).toUpperCase() + user?.firstname.slice(1)
@@ -44,16 +44,13 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
         </Link>
       </li>
       <li
-        className="tooltip tooltip-right mb-1"
+        className="tooltip tooltip-right"
         data-tip="Questionnaire Bêta-Testeurs"
       >
         <Questionnaire />
       </li>
 
-      <li
-        className="tooltip tooltip-right mb-1"
-        data-tip="Mode Clair / Mode Sombre"
-      >
+      <li className="tooltip tooltip-right" data-tip="Mode Clair / Mode Sombre">
         <ModeToggle />
       </li>
 
