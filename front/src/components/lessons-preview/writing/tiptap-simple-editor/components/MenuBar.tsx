@@ -18,6 +18,7 @@ import { Icon } from "./ui/Icon.js";
 import { Surface } from "./ui/Surface.js";
 import { FontFamilyPicker } from "./FontFamilyPicker.js";
 import { EditLinkPopover } from "./EditLinkPopover.js";
+import { EditYoutubeLinkPopover } from "./EditYoutubeLinkPopover.js";
 
 type MenuBarProps = {
   editor: Editor;
@@ -44,6 +45,7 @@ export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
     <Toolbar.Wrapper className="h-fit flex justify-between px-2">
       <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus" />
       <EditLinkPopover onSetLink={commands.onLink} />
+      <EditYoutubeLinkPopover onSetLink={commands.onYoutubeLink} />
       <MemoContentTypePicker options={menuTextOptions} />
       <MemoContentTypePicker
         options={menuAlignTextOptions}

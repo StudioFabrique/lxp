@@ -54,10 +54,7 @@ export default function TiptapSimpleEditor({
       Color,
       FontFamily,
       Link,
-      Youtube.configure({
-        controls: false,
-        nocookie: true,
-      }),
+      Youtube,
     ],
     editorProps: {
       attributes: {
