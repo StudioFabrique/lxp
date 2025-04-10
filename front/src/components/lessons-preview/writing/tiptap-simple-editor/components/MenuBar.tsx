@@ -10,15 +10,25 @@ import { items } from "./MenuBarItems.js";
 import { useMenuContentTypes } from "./hooks/useMenuContentTypes.js";
 import { useMenuAlignTextTypes } from "./hooks/useMenuAlignTextTypes.js";
 import { ColorPicker } from "./Colorpicker/Colorpicker.js";
-import { useTextmenuCommands } from "./hooks/useTextMenuCommands.js";
+import { useTextmenuStates } from "./hooks/useTextmenuStates.js";
+import { useTextmenuCommands } from "./hooks/useTextmenuCommands.js";
+import * as Popover from "@radix-ui/react-popover";
+import { Toolbar } from "./ui/Toolbar.js";
+import { Icon } from "./ui/Icon.js";
+import { Surface } from "./ui/Surface.js";
+import { FontSizePicker } from "./FontSizePicker.js";
+import { FontFamilyPicker } from "./FontFamilyPicker.js";
 
 type MenuBarProps = {
   editor: Editor;
   onCloseEditor: () => void;
 };
 
+const MemoButton = memo(Toolbar.Button);
 const MemoContentTypePicker = memo(ContentTypePicker);
 const MemoColorPicker = memo(ColorPicker);
+const MemoFontFamilyPicker = memo(FontFamilyPicker);
+const MemoFontSizePicker = memo(FontSizePicker);
 
 export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
   const inputFileRef = useRef<HTMLInputElement>(null);
@@ -31,30 +41,66 @@ export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
   const states = useTextmenuStates(editor);
 
   return (
-    <div className="editor__header px-4 flex justify-between items-center bg-base-200 border-primary/50 border-[1px] rounded-t-xl">
+    <Toolbar.Wrapper className="h-fit flex justify-between px-2">
       <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus" />
 
-      <div className="flex items-center flex-auto flex-wrap">
-        <MemoContentTypePicker options={menuTextOptions} />
-        <MemoContentTypePicker
-          options={menuAlignTextOptions}
-          fixedIcon="AlignLeft"
-        />
-        <MemoColorPicker
-          color={states.currentHighlight}
-          onChange={commands.onChangeHighlight}
-          onClear={commands.onClearHighlight}
-        />
-        {items(editor).map((item, index) => (
-          <Fragment key={index}>
-            {item.type === "divider" ? (
-              <span className="divider" />
-            ) : (
-              <MenuItem {...item} />
-            )}
-          </Fragment>
-        ))}
-      </div>
+      <MemoContentTypePicker options={menuTextOptions} />
+      <MemoContentTypePicker
+        options={menuAlignTextOptions}
+        fixedIcon="AlignLeft"
+      />
+      <MemoFontFamilyPicker
+        onChange={commands.onSetFont}
+        value={states.currentFont || ""}
+      />
+      <MemoFontSizePicker
+        onChange={commands.onSetFontSize}
+        value={states.currentSize || ""}
+      />
+      <Popover.Root>
+        <Popover.Trigger asChild>
+          <MemoButton
+            active={!!states.currentHighlight}
+            tooltip="Highlight text"
+          >
+            <Icon name="Highlighter" />
+          </MemoButton>
+        </Popover.Trigger>
+        <Popover.Content side="top" sideOffset={8} asChild>
+          <Surface className="p-1">
+            <MemoColorPicker
+              color={states.currentHighlight}
+              onChange={commands.onChangeHighlight}
+              onClear={commands.onClearHighlight}
+            />
+          </Surface>
+        </Popover.Content>
+      </Popover.Root>
+      <Popover.Root>
+        <Popover.Trigger asChild>
+          <MemoButton active={!!states.currentColor} tooltip="Text color">
+            <Icon name="Palette" />
+          </MemoButton>
+        </Popover.Trigger>
+        <Popover.Content side="top" sideOffset={8} asChild>
+          <Surface className="p-1">
+            <MemoColorPicker
+              color={states.currentColor}
+              onChange={commands.onChangeColor}
+              onClear={commands.onClearColor}
+            />
+          </Surface>
+        </Popover.Content>
+      </Popover.Root>
+      {items(editor).map((item, index) => (
+        <Fragment key={index}>
+          {item.type === "divider" ? (
+            <span className="divider" />
+          ) : (
+            <MenuItem {...item} />
+          )}
+        </Fragment>
+      ))}
       <MenuItem
         icon="close-large-line"
         title="Fermer l'éditeur"
@@ -67,6 +113,6 @@ export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
         type="file"
         accept="image/*"
       />
-    </div>
+    </Toolbar.Wrapper>
   );
 }

@@ -8,6 +8,9 @@ import TableHeader from "@tiptap/extension-table-header";
 import TableRow from "@tiptap/extension-table-row";
 import Image from "@tiptap/extension-image";
 import TextAlign from "@tiptap/extension-text-align";
+import TextStyle from "@tiptap/extension-text-style";
+import { FontFamily } from "@tiptap/extension-font-family";
+import { Color } from "@tiptap/extension-color";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import "./index.scss";
@@ -43,6 +46,9 @@ export default function TiptapSimpleEditor({
       TableHeader,
       TableCell,
       Image,
+      TextStyle,
+      Color,
+      FontFamily,
     ],
     editorProps: {
       attributes: {
