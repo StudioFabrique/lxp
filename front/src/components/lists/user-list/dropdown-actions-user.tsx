@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import Role from "../../../utils/interfaces/role";
 import Can from "../../UI/can/can.component";
 import AddRoleDrawer from "./add-role-drawer.component";
@@ -21,24 +21,20 @@ const DropdownActionsUser: FC<Props> = ({
   const [showDropDown, setShowDropDown] = useState(false);
 
   const handleAddRoleToUser = () => {
-    if (!setDropDownStyle()) {
-      setShowDropDown(false);
-      document.getElementById("add-role")?.click();
-    }
+    setShowDropDown(false);
+    document.getElementById("add-role")?.click();
   };
 
   const handleAddUserToGroup = () => {
-    if (!setDropDownStyle()) {
-      setShowDropDown(false);
-      document.getElementById("add-user-to-group")?.click();
-    }
+    setShowDropDown(false);
+    document.getElementById("add-user-to-group")?.click();
   };
 
-  const setDropDownStyle = () => {
+  const dropDownStyle = useMemo(() => {
     return itemsList.some((item) => item.isSelected)
       ? ""
       : "text-base-content/50";
-  };
+  }, [itemsList]);
 
   const handleUpdateManyStatus = (value: string) => {
     onUpdateManyStatus(value);
@@ -72,20 +68,20 @@ const DropdownActionsUser: FC<Props> = ({
           >
             <Can action="update" object={roleTab.role}>
               <li onClick={handleAddUserToGroup}>
-                <p className={setDropDownStyle()}>Ajouter à un groupe</p>
+                <p className={dropDownStyle}>Ajouter à un groupe</p>
               </li>
             </Can>
 
             <Can action="update" object={roleTab.role}>
               <li onClick={handleAddRoleToUser}>
-                <p className={setDropDownStyle()}>Ajouter un rôle</p>
+                <p className={dropDownStyle}>Ajouter un rôle</p>
               </li>
             </Can>
 
             <Can action="update" object={roleTab.role}>
               <li>
                 <p
-                  className={setDropDownStyle()}
+                  className={dropDownStyle}
                   onClick={() => handleUpdateManyStatus("actif")}
                 >
                   Activer
@@ -96,7 +92,7 @@ const DropdownActionsUser: FC<Props> = ({
             <Can action="update" object={roleTab.role}>
               <li>
                 <p
-                  className={setDropDownStyle()}
+                  className={dropDownStyle}
                   onClick={() => handleUpdateManyStatus("inactif")}
                 >
                   Désactiver
@@ -106,7 +102,13 @@ const DropdownActionsUser: FC<Props> = ({
 
             <Can action="write" object={roleTab.role}>
               <li>
-                <p className={setDropDownStyle()}>Supprimer</p>
+                <p className={dropDownStyle}>Supprimer</p>
+              </li>
+            </Can>
+
+            <Can action="update" object={roleTab.role}>
+              <li>
+                <p className={dropDownStyle}>Envoyer une invitation</p>
               </li>
             </Can>
           </ul>
