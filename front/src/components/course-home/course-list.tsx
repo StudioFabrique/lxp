@@ -19,6 +19,8 @@ import CustomCourse from "./interfaces/custom-course";
 import CourseCardsList from "./course-cards-list";
 import useDeleteCourse from "../../hooks/use-delete-course";
 import ModalDeleteCourse from "../UI/modal-delete-course";
+import SearchAndRefresh from "../UI/search-and-refresh";
+import Wrapper from "../UI/wrapper/wrapper.component";
 
 // Interface définissant les props du composant
 interface CourseListProps {
@@ -105,25 +107,16 @@ export default function CourseList(props: CourseListProps) {
       </section>
 
       {/* Barre de recherche et bouton de réinitialisation */}
-      <section className="w-5/6 flex justify-end">
-        <article className="w-full flex justify-end items-center gap-x-2">
-          <Search
-            options={courseSearchOptions}
-            placeholder="Filtrer"
+      {!showList ? (
+        <section className="w-5/6 flex justify-end">
+          <SearchAndRefresh
+            searchOptions={courseSearchOptions}
             onSearch={handleSearchResult}
+            onResetInput={handleResetSearch}
+            placeholder="Filtrer"
           />
-          <div
-            className="tooltip tooltip-left"
-            data-tip="Réinitialise les options de recherche."
-          >
-            <RefreshCw
-              className="text-primary cursor-pointer hover:animate-pulse"
-              aria-label="réinitialise les options de recherche"
-              onClick={handleResetSearch}
-            />
-          </div>
-        </article>
-      </section>
+        </section>
+      ) : null}
 
       {/* Section principale avec la liste des cours */}
       <section className="w-5/6 flex flex-col items-center">
@@ -131,23 +124,32 @@ export default function CourseList(props: CourseListProps) {
           <ToggleList showList={showList} onToggle={setShowList} />
         </article>
         {list ? (
-          <>
+          <div className="mt-8 w-full flex flex-col gap-y-8">
             {showList ? (
-              <CourseTable
-                coursesList={list}
-                onSorting={sortData}
-                direction={direction}
-                fieldSort={fieldSort}
-                onEditCourse={handleEditCourse}
-                onDeleteCourse={handleShowModal}
-              />
+              <Wrapper>
+                <CourseTable
+                  coursesList={list}
+                  onSorting={sortData}
+                  direction={direction}
+                  fieldSort={fieldSort}
+                  onEditCourse={handleEditCourse}
+                  onDeleteCourse={handleShowModal}
+                >
+                  <SearchAndRefresh
+                    searchOptions={courseSearchOptions}
+                    onSearch={handleSearchResult}
+                    onResetInput={handleResetSearch}
+                    placeholder="Filtrer"
+                  />
+                </CourseTable>
+              </Wrapper>
             ) : (
               <CourseCardsList
                 courseList={list}
                 onDeleteCourse={handleShowModal}
               />
             )}
-          </>
+          </div>
         ) : null}
       </section>
 
