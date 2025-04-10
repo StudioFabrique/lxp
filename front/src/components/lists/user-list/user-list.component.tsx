@@ -52,14 +52,13 @@ const UserList: FC<{
       <thead>
         <tr>
           <th>
-            {role.role !== "everything" ? (
-              <input
-                className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
-                type="checkbox"
-                checked={allChecked}
-                onChange={handleAllChecked}
-              />
-            ) : null}
+            <input
+              className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
+              type="checkbox"
+              checked={allChecked}
+              onChange={handleAllChecked}
+              disabled={role.role === "everything"}
+            />
           </th>
           <th>Avatar</th>
           <th

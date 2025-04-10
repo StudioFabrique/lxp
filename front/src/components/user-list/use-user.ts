@@ -282,11 +282,17 @@ const useUser = () => {
     );
   };
 
-  // Updatus an user status (active or non active )
-  const updateStatus = (id: string, value: boolean) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const applyData = (_data: string) => {
-      handleRefreshDataList();
+  // Update an user status (active or non active )
+  const updateStatus = (id: string) => {
+    const user = dataList.find((user) => user._id === id);
+    if (!user) toast.error("Utilisateur introuvable");
+    const value = !user.isActive;
+
+    const applyData = (data: { success: boolean; message: string }) => {
+      if (data.success) {
+        toast.success(data.message);
+        handleRefreshDataList();
+      }
     };
     sendRequest(
       {
