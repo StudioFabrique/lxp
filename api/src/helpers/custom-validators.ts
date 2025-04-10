@@ -7,7 +7,6 @@ import {
   regexOptionalGeneric,
   regexPassword,
   regexRgba,
-  regexVideoUrl,
 } from "../utils/constantes";
 import { checkValidatorResult } from "../middleware/validators";
 import { validateYoutubeUrl } from "./youtube-validator";

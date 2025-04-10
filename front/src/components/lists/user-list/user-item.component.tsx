@@ -18,6 +18,7 @@ const UserItem: FC<{
   isUserDeleteLoading: boolean;
   error?: string;
   sendInvitation: (userId: string) => void;
+  onToggleStatus: (id: string, value: boolean) => void;
 }> = ({
   role,
   userItem,
@@ -26,8 +27,9 @@ const UserItem: FC<{
   error,
   onDelete,
   sendInvitation,
+  onToggleStatus,
 }) => {
-  const { isLoading, sendRequest } = useHttp();
+  const { isLoading } = useHttp();
 
   const handleToggleStatus = () => {
     userItem.isActive = !userItem.isActive;
@@ -35,29 +37,20 @@ const UserItem: FC<{
   };
 
   const updateStatus = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const applyData = (_data: any) => {
-      console.log("Mise à jour réussie !");
-    };
-    sendRequest(
-      {
-        path: "/user/update-user-status",
-        method: "put",
-        body: { userId: userItem._id, value: userItem.isActive },
-      },
-      applyData
-    );
+    onToggleStatus(userItem._id, userItem.isActive);
   };
 
   return (
     <>
       <td className="bg-transparent rounded-l-xl">
-        <input
-          className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
-          type="checkbox"
-          checked={userItem.isSelected}
-          onChange={() => onRowCheck(userItem._id)}
-        />
+        {role !== "everything" ? (
+          <input
+            className="my-auto checkbox checkbox-sm rounded-md checkbox-primary"
+            type="checkbox"
+            checked={userItem.isSelected}
+            onChange={() => onRowCheck(userItem._id)}
+          />
+        ) : null}
       </td>
       <td className="bg-transparent">
         <AvatarSmall user={userItem} />
@@ -78,8 +71,8 @@ const UserItem: FC<{
         <span className="tooltip tooltip-bottom" data-tip={userItem.parcours}>
           {userItem.formation ? truncateText(userItem.parcours, 20) : "ND"}
         </span>
-      </td>
-      {role === "everything" ? <td>{userItem.roles[0].label} </td> : null}
+      </td>{" "}
+      <td>{userItem.roles[0].label} </td>
       <td className="bg-transparent">{userItem.createdAt}</td>
       <td className="bg-transparent">
         {isLoading ? (

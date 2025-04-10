@@ -67,7 +67,7 @@ export const updateUserStatusValidator = [
   body("userId")
     .isMongoId()
     .withMessage("L'identifiant de l'utilisateur est invalide."),
-  body("status")
+  body("value")
     .isBoolean()
     .withMessage("Le status doit être une valeur booleenne."),
   checkValidatorResult,
