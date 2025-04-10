@@ -40,6 +40,7 @@ const UserHome = () => {
     setErrorModal,
     totalPages,
     updateStatus,
+    handleManyInvitations,
   } = useUser();
 
   return (
@@ -75,6 +76,7 @@ const UserHome = () => {
               handleUpdateManyStatus={handleUpdateManyStatus}
               dataList={dataList}
               userSearchOptions={userSearchOptions}
+              onSendManyInvitations={handleManyInvitations}
             >
               <div className="w-full">
                 <UserList
