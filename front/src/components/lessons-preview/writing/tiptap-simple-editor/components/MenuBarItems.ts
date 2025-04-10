@@ -25,12 +25,12 @@ export const items = (editor: Editor) => [
   //   action: () => editor.chain().focus().toggleCode().run(),
   //   isActive: () => editor.isActive("code"),
   // },
-  {
-    icon: "mark-pen-line",
-    title: "Highlight",
-    action: () => editor.chain().focus().toggleHighlight().run(),
-    isActive: () => editor.isActive("highlight"),
-  },
+  // {
+  //   icon: "mark-pen-line",
+  //   title: "Highlight",
+  //   action: () => editor.chain().focus().toggleHighlight().run(),
+  //   isActive: () => editor.isActive("highlight"),
+  // },
   {
     type: "divider",
   },

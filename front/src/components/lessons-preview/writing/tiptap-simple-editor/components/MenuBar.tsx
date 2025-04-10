@@ -16,8 +16,8 @@ import * as Popover from "@radix-ui/react-popover";
 import { Toolbar } from "./ui/Toolbar.js";
 import { Icon } from "./ui/Icon.js";
 import { Surface } from "./ui/Surface.js";
-import { FontSizePicker } from "./FontSizePicker.js";
 import { FontFamilyPicker } from "./FontFamilyPicker.js";
+import { EditLinkPopover } from "./EditLinkPopover.js";
 
 type MenuBarProps = {
   editor: Editor;
@@ -28,7 +28,7 @@ const MemoButton = memo(Toolbar.Button);
 const MemoContentTypePicker = memo(ContentTypePicker);
 const MemoColorPicker = memo(ColorPicker);
 const MemoFontFamilyPicker = memo(FontFamilyPicker);
-const MemoFontSizePicker = memo(FontSizePicker);
+// const MemoFontSizePicker = memo(FontSizePicker);
 
 export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
   const inputFileRef = useRef<HTMLInputElement>(null);
@@ -43,7 +43,7 @@ export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
   return (
     <Toolbar.Wrapper className="h-fit flex justify-between px-2">
       <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus" />
-
+      <EditLinkPopover onSetLink={commands.onLink} />
       <MemoContentTypePicker options={menuTextOptions} />
       <MemoContentTypePicker
         options={menuAlignTextOptions}
@@ -53,10 +53,11 @@ export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
         onChange={commands.onSetFont}
         value={states.currentFont || ""}
       />
-      <MemoFontSizePicker
+      {/* <MemoFontSizePicker
         onChange={commands.onSetFontSize}
         value={states.currentSize || ""}
-      />
+      /> */}
+
       <Popover.Root>
         <Popover.Trigger asChild>
           <MemoButton
