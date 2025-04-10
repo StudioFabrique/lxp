@@ -5,7 +5,7 @@ const UpdateUserStatus: FC<{
   onToggleStatus: () => void;
 }> = ({ isActive, onToggleStatus }) => {
   return (
-    <label className="label cursor-pointer flex gap-x-4">
+    <label className="label cursor-pointer flex justify-between items-center gap-x-4">
       <span className="label-text">{isActive ? "Actif" : "Inactif"}</span>
       <input
         type="checkbox"
