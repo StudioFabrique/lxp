@@ -13,7 +13,7 @@ export const EditYoutubeLinkPopover = ({
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
-        <Toolbar.Button tooltip="Insérer un vidéo Youtube">
+        <Toolbar.Button tooltip="Insérer une vidéo Youtube">
           <Icon name="Youtube" />
         </Toolbar.Button>
       </Popover.Trigger>

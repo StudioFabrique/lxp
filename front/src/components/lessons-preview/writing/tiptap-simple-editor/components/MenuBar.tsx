@@ -33,7 +33,10 @@ const MemoFontFamilyPicker = memo(FontFamilyPicker);
 
 export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
   const inputFileRef = useRef<HTMLInputElement>(null);
-  const menuContentOptions = useMenuContentTypes(editor, inputFileRef);
+  const { menuContentOptions, isImageUploadPending } = useMenuContentTypes(
+    editor,
+    inputFileRef,
+  );
 
   const menuTextOptions = useMenuTextTypes(editor);
 
@@ -46,7 +49,10 @@ export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
       <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus" />
       <EditLinkPopover onSetLink={commands.onLink} />
       <EditYoutubeLinkPopover onSetLink={commands.onYoutubeLink} />
-      <MemoContentTypePicker options={menuTextOptions} />
+      <MemoContentTypePicker
+        options={menuTextOptions}
+        isLoading={isImageUploadPending}
+      />
       <MemoContentTypePicker
         options={menuAlignTextOptions}
         fixedIcon="AlignLeft"
