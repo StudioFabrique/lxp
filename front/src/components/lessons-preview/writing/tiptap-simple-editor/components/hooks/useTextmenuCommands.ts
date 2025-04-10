@@ -161,6 +161,30 @@ export const useTextmenuCommands = (editor: Editor) => {
     [editor],
   );
 
+  const onYoutubeLink = useCallback(
+    (url: string, size: "small" | "medium" | "large" = "small") => {
+      const dimensions = (() => {
+        switch (size) {
+          case "small":
+            return { width: 320, height: 180 };
+          case "medium":
+            return { width: 480, height: 270 };
+          case "large":
+            return { width: 640, height: 480 };
+          default:
+            return { width: 480, height: 270 };
+        }
+      })();
+
+      editor.commands.setYoutubeVideo({
+        src: url,
+        width: dimensions.width,
+        height: dimensions.height,
+      });
+    },
+    [editor],
+  );
+
   const onSetFont = useCallback(
     (font: string) => {
       if (!font || font.length === 0) {
@@ -210,5 +234,6 @@ export const useTextmenuCommands = (editor: Editor) => {
     onTone,
     onTranslate,
     onLink,
+    onYoutubeLink,
   };
 };

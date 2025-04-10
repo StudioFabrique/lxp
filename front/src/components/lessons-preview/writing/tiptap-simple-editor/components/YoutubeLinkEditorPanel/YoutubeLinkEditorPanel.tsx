@@ -2,23 +2,19 @@ import { useState, useCallback, useMemo } from "react";
 import { Surface } from "../ui/Surface";
 import { Icon } from "../ui/Icon";
 import { Button } from "../ui/Button";
-import { Toggle } from "../ui/Toggle";
 
-export type LinkEditorPanelProps = {
+export type YoutubeLinkEditorPanelProps = {
   initialUrl?: string;
   initialOpenInNewTab?: boolean;
-  onSetLink: (url: string, openInNewTab?: boolean) => void;
+  onSetLink: (url: string, size?: "small" | "medium" | "large") => void;
 };
 
-export const useLinkEditorState = ({
+export const useYoutubeLinkEditorState = ({
   initialUrl,
-  initialOpenInNewTab,
   onSetLink,
-}: LinkEditorPanelProps) => {
+}: YoutubeLinkEditorPanelProps) => {
   const [url, setUrl] = useState(initialUrl || "");
-  const [openInNewTab, setOpenInNewTab] = useState(
-    initialOpenInNewTab || false,
-  );
+  const [size, setSize] = useState<"small" | "medium" | "large">("small");
 
   const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(event.target.value);
@@ -30,29 +26,29 @@ export const useLinkEditorState = ({
     (e: React.FormEvent) => {
       e.preventDefault();
       if (isValidUrl) {
-        onSetLink(url, openInNewTab);
+        onSetLink(url, size);
       }
     },
-    [url, isValidUrl, openInNewTab, onSetLink],
+    [url, isValidUrl, onSetLink, size],
   );
 
   return {
     url,
     setUrl,
-    openInNewTab,
-    setOpenInNewTab,
+    size,
+    setSize,
     onChange,
     handleSubmit,
     isValidUrl,
   };
 };
 
-export const LinkEditorPanel = ({
+export const YoutubeLinkEditorPanel = ({
   onSetLink,
   initialOpenInNewTab,
   initialUrl,
-}: LinkEditorPanelProps) => {
-  const state = useLinkEditorState({
+}: YoutubeLinkEditorPanelProps) => {
+  const state = useYoutubeLinkEditorState({
     onSetLink,
     initialOpenInNewTab,
     initialUrl,
@@ -66,7 +62,7 @@ export const LinkEditorPanel = ({
           <input
             type="url"
             className="flex-1 bg-transparent outline-none min-w-[12rem] text-black text-sm dark:text-white"
-            placeholder="URL du lien"
+            placeholder="URL de la vidéo"
             value={state.url}
             onChange={state.onChange}
           />
@@ -77,17 +73,31 @@ export const LinkEditorPanel = ({
           type="submit"
           disabled={!state.isValidUrl}
         >
-          Insérer le lien
+          Insérer la vidéo
         </Button>
       </form>
-      <div className="mt-3">
-        <label className="flex items-center justify-start gap-2 text-sm font-semibold cursor-pointer select-none text-neutral-500 dark:text-neutral-400">
-          Ouvrir dans un nouvel onglet
-          <Toggle
-            active={state.openInNewTab}
-            onChange={state.setOpenInNewTab}
-          />
-        </label>
+      <div className="flex gap-2 mt-3">
+        <Button
+          variant={state.size === "small" ? "primary" : "secondary"}
+          buttonSize="small"
+          onClick={() => state.setSize("small")}
+        >
+          Petit
+        </Button>
+        <Button
+          variant={state.size === "medium" ? "primary" : "secondary"}
+          buttonSize="small"
+          onClick={() => state.setSize("medium")}
+        >
+          Moyen
+        </Button>
+        <Button
+          variant={state.size === "large" ? "primary" : "secondary"}
+          buttonSize="small"
+          onClick={() => state.setSize("large")}
+        >
+          Grand
+        </Button>
       </div>
     </Surface>
   );

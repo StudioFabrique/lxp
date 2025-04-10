@@ -3,7 +3,7 @@ import { memo } from "react";
 import { cn } from "../../utils";
 
 export type IconProps = {
-  name: string;
+  name: keyof typeof icons;
   className?: string;
   strokeWidth?: number;
 };
