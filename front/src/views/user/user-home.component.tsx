@@ -59,9 +59,8 @@ const UserHome = () => {
           </Can>
         </Header>
 
-        <div className="w-full">
-          <UsersListStats stats={stats} />
-        </div>
+        <UsersListStats stats={stats} />
+
         <Wrapper>
           <div className="w-full">
             <UserRolesTabs
