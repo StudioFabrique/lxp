@@ -1,1 +1,1 @@
-export const autoSubmitTimer = 1000;
+export const autoSubmitTimer = 2000;

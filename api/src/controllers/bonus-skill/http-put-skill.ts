@@ -8,7 +8,7 @@ async function httpPutBonusSkill(req: Request, res: Response) {
   const result = validationResult(req);
 
   if (!result.isEmpty()) {
-    return res.status(403).json({ message: badQuery });
+    return res.status(400).json({ message: badQuery });
   }
 
   try {

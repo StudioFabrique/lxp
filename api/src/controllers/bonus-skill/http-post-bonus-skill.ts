@@ -13,6 +13,8 @@ async function httpPostBonusSkill(req: Request, res: Response) {
 
   try {
     const { parcoursId, skill } = req.body;
+    console.log("TOTO SKILL", skill);
+
     const response = await postBonusSkill(parseInt(parcoursId), skill);
     return res.status(201).json({ success: true, skill: response });
   } catch (error: any) {
