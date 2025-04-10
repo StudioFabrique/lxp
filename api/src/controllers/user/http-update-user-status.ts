@@ -1,23 +1,62 @@
-import { Request, Response } from "express";
+/**
+ * HTTP Controller: Update User Status
+ *
+ * This controller handles the API endpoint for updating a user's active status.
+ * It validates the requested status value and passes the request to the appropriate service.
+ *
+ * @file http-update-user-status.ts
+ * @endpoint PUT /user/update-user-status
+ * @request body.userId - ID of the user to update
+ * @request body.value - Boolean value indicating the new status (true = active, false = inactive)
+ * @response 201 - Success message when the user is updated successfully
+ * @response 400 - Bad request if the value is not a boolean
+ * @response 500 - Server error if the update process fails
+ */
+
+import { Response, NextFunction } from "express";
 import { badQuery, serverIssue } from "../../utils/constantes";
 import updateUserStatus from "../../models/user/update-user-status";
+import CustomRequest from "../../utils/interfaces/express/custom-request";
 
-async function httpUpdateUserStatus(req: Request, res: Response) {
+async function httpUpdateUserStatus(
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) {
   try {
+    // Extract user ID and new status value from request body
     const { userId, value } = req.body;
-    const updatedUser = await updateUserStatus(userId, value);
 
+    // Validate that the status value is a boolean
     if (value !== true && value !== false) {
       throw { message: badQuery, satusCode: 400 };
     }
 
-    return res
-      .status(201)
-      .json({ message: "Utilisateur mis à jour avec succès." });
+    // Call the service function to update the user's status
+    // Pass the authenticated user's ID, target user ID, and new status value
+    const updatedUser = await updateUserStatus(
+      req.auth?.userId ?? "",
+      userId,
+      value
+    );
+    // Construct success message based on the updated user's status
+    next({
+      statusCode: 201,
+      data: {
+        success: true,
+        // Construct success message based on the new user status
+        message: `Le compte de l'utilisateur ${updatedUser?.email} a été ${
+          value ? "activé" : "désactivé"
+        }.`,
+      },
+    });
   } catch (error: any) {
-    return res
-      .status(error.statusCode ?? 500)
-      .json({ message: error.message ?? serverIssue });
+    // Return appropriate error response
+    // Use the error's status code if available, otherwise default to 500
+    next({
+      statusCode: error.statusCode ?? 500,
+      message: error.message,
+    });
   }
 }
 
