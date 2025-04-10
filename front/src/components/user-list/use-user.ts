@@ -298,8 +298,28 @@ const useUser = () => {
     );
   };
 
+  const handleManyInvitations = () => {
+    const userIds = dataList
+      .filter((user) => user.isSelected)
+      .map((user) => user._id);
+
+    const applyData = (data: { message: string }) => {
+      toast.success(data.message);
+      handleRefreshDataList();
+    };
+    sendRequest(
+      {
+        path: "/user/invitations",
+        method: "post",
+        body: { userIds },
+      },
+      applyData
+    );
+  };
+
   // Return all properties and methods needed by components using this hook
   return {
+    handleManyInvitations,
     user,
     role,
     roles,
