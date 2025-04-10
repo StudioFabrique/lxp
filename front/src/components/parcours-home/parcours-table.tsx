@@ -8,6 +8,9 @@ import DeleteIcon from "../UI/svg/delete-icon.component";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
 import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 import { truncateText } from "../../helpers/truncate-text";
+import Wrapper from "../UI/wrapper/wrapper.component";
+import React from "react";
+import TableRowWrapper from "../UI/table-row-wrapper";
 
 interface ParcoursTableProps {
   parcoursList: Parcours[];
@@ -16,6 +19,7 @@ interface ParcoursTableProps {
   onSorting: (property: string) => void;
   onDeleteParcours: (parcours: Parcours) => void;
   loading: boolean;
+  children: React.ReactNode;
 }
 
 const ParcoursTable = (props: ParcoursTableProps) => {
@@ -38,97 +42,95 @@ const ParcoursTable = (props: ParcoursTableProps) => {
       {parcoursList && parcoursList.length > 0 ? (
         <>
           {parcoursList.map((item: Parcours) => (
-            <tr
-              className="text-xs lg:text-sm hover:bg-secondary/20 hover:text-base-content"
-              key={item.id}
-            >
-              <td className="bg-transparent rounded-l-lg">
-                <p className="tooltip tooltip-bottom" data-tip={item.title}>
-                  {truncateText(item.title, 20)}
-                </p>
-              </td>
-              <td className="bg-transparent">
-                <p
-                  className="tooltip tooltip-bottom"
-                  data-tip={item.formation.title}
-                >
-                  {truncateText(item.formation.title, 20)}
-                </p>
-              </td>
-              <td className="bg-transparent truncate">
-                {item.formation.level}
-              </td>
-              <td className="bg-transparent truncate">
-                {localeDate(item.createdAt!)}
-              </td>
-              <td className="bg-transparent truncate">
-                {localeDate(item.updatedAt!)}
-              </td>
-              <td className="bg-transparent capitalize">
-                <p className="tooltip tooltip-bottom" data-tip={item.author}>
-                  {truncateText(item.author, 20)}
-                </p>
-              </td>
-              <td className="bg-transparent truncate">
-                {item.isPublished ? "Publié" : "Brouillon"}
-              </td>
-
-              <td className="bg-transparent">
-                <div className="w-6 h-6">
-                  <Can action="update" object="parcours">
-                    <div
-                      className="tooltip tooltip-bottom"
-                      data-tip="Modifier le parcours"
-                    >
-                      <Link
-                        to={`edit/${item.id}`}
-                        aria-label="modifier le parcours"
-                      >
-                        <EditIcon />
-                      </Link>
-                    </div>
-                  </Can>
-                </div>
-              </td>
-              <td className="bg-transparent">
-                <div
-                  className="w-6 h-6 text-error"
-                  aria-label="suppression du parcours"
-                >
-                  <Can action="delete" object="parcours">
-                    <div
-                      className="tooltip tooltip-bottom flex-items-center"
-                      data-tip="Supprimer le parcours"
-                    >
+            <TableRowWrapper>
+              <React.Fragment key={item.id}>
+                <td className="bg-transparent rounded-l-lg">
+                  <p className="tooltip tooltip-bottom" data-tip={item.title}>
+                    {truncateText(item.title, 20)}
+                  </p>
+                </td>
+                <td className="bg-transparent">
+                  <p
+                    className="tooltip tooltip-bottom"
+                    data-tip={item.formation.title}
+                  >
+                    {truncateText(item.formation.title, 20)}
+                  </p>
+                </td>
+                <td className="bg-transparent truncate">
+                  {item.formation.level}
+                </td>
+                <td className="bg-transparent truncate">
+                  {localeDate(item.createdAt!)}
+                </td>
+                <td className="bg-transparent truncate">
+                  {localeDate(item.updatedAt!)}
+                </td>
+                <td className="bg-transparent capitalize">
+                  <p className="tooltip tooltip-bottom" data-tip={item.author}>
+                    {truncateText(item.author, 20)}
+                  </p>
+                </td>
+                <td className="bg-transparent truncate">
+                  {item.isPublished ? "Publié" : "Brouillon"}
+                </td>
+                <td className="bg-transparent">
+                  <div className="w-6 h-6">
+                    <Can action="update" object="parcours">
                       <div
-                        className="cursor-pointer"
-                        onClick={() => handleDeleteParcours(item)}
+                        className="tooltip tooltip-bottom"
+                        data-tip="Modifier le parcours"
                       >
-                        <DeleteIcon />
+                        <Link
+                          to={`edit/${item.id}`}
+                          aria-label="modifier le parcours"
+                        >
+                          <EditIcon />
+                        </Link>
                       </div>
-                    </div>
-                  </Can>
-                </div>
-              </td>
-              <td className="bg-transparent rounded-r-lg">
-                <div className="w-6 h-6">
-                  <Can action="read" object="parcours">
-                    <div
-                      className="tooltip tooltip-bottom"
-                      data-tip="Aperçu du parcours"
-                    >
-                      <Link
-                        className="text-primary"
-                        to={`view/${item.id}`}
-                        aria-label="Aperçu du parcours"
+                    </Can>
+                  </div>
+                </td>
+                <td className="bg-transparent">
+                  <div
+                    className="w-6 h-6 text-error"
+                    aria-label="suppression du parcours"
+                  >
+                    <Can action="delete" object="parcours">
+                      <div
+                        className="tooltip tooltip-bottom flex-items-center"
+                        data-tip="Supprimer le parcours"
                       >
-                        <ArrowTopRightIcon />
-                      </Link>
-                    </div>
-                  </Can>
-                </div>
-              </td>
-            </tr>
+                        <div
+                          className="cursor-pointer"
+                          onClick={() => handleDeleteParcours(item)}
+                        >
+                          <DeleteIcon />
+                        </div>
+                      </div>
+                    </Can>
+                  </div>
+                </td>
+                <td className="bg-transparent rounded-r-lg">
+                  <div className="w-6 h-6">
+                    <Can action="read" object="parcours">
+                      <div
+                        className="tooltip tooltip-bottom"
+                        data-tip="Aperçu du parcours"
+                      >
+                        <Link
+                          className="text-primary"
+                          to={`view/${item.id}`}
+                          aria-label="Aperçu du parcours"
+                        >
+                          <ArrowTopRightIcon />
+                        </Link>
+                      </div>
+                    </Can>
+                  </div>
+                </td>
+              </React.Fragment>
+            </TableRowWrapper>
           ))}
         </>
       ) : null}
@@ -136,113 +138,116 @@ const ParcoursTable = (props: ParcoursTableProps) => {
   );
 
   return (
-    <div className="w-full min-h-[50%] flex justify-center items-center text-xs lg:text-sm">
-      {parcoursList && parcoursList.length > 0 ? (
-        <table className="table w-full border-separate border-spacing-y-2">
-          <thead>
-            <tr>
-              <th
-                className="cursor-pointer"
-                onClick={() => {
-                  onSorting("title");
-                }}
-              >
-                <div className="flex items-center gap-x-2">
-                  <p>Titre</p>
-                  <SortColumnIcon
-                    fieldSort={fieldSort}
-                    column="title"
-                    direction={direction}
-                  />
-                </div>
-              </th>
-              <th
-                className="cursor-pointer"
-                onClick={() => {
-                  onSorting("formation");
-                }}
-              >
-                <div className="flex items-center gap-x-2">
-                  <p>Formation</p>
-                  <SortColumnIcon
-                    fieldSort={fieldSort}
-                    column="formation"
-                    direction={direction}
-                  />
-                </div>
-              </th>
-              <th
-                className="cursor-pointer"
-                onClick={() => {
-                  onSorting("level");
-                }}
-              >
-                <div className="flex items-center gap-x-2">
-                  <p>Niveau</p>
-                  <SortColumnIcon
-                    fieldSort={fieldSort}
-                    column="level"
-                    direction={direction}
-                  />
-                </div>
-              </th>
-              <th
-                className="cursor-pointer"
-                onClick={() => {
-                  onSorting("createdAt");
-                }}
-              >
-                <div className="flex items-center gap-x-2">
-                  <p>Date de création</p>
-                  <SortColumnIcon
-                    fieldSort={fieldSort}
-                    column="createdAt"
-                    direction={direction}
-                  />
-                </div>
-              </th>
-              <th
-                className="cursor-pointer"
-                onClick={() => {
-                  onSorting("updatedAt");
-                }}
-              >
-                <div className="flex items-center gap-x-2">
-                  <p>Dernière màj</p>
-                  <SortColumnIcon
-                    fieldSort={fieldSort}
-                    column="updatedAt"
-                    direction={direction}
-                  />
-                </div>
-              </th>
-              <th
-                className="cursor-pointer"
-                onClick={() => {
-                  onSorting("author");
-                }}
-              >
-                <div className="flex items-center gap-x-2">
-                  <p>Auteur</p>
-                  <SortColumnIcon
-                    fieldSort={fieldSort}
-                    column="author"
-                    direction={direction}
-                  />
-                </div>
-              </th>
-              <th>Etat</th>
-              <th></th>
-              <th></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>{content}</tbody>
-        </table>
-      ) : (
-        <p>Aucun parcours trouvé</p>
-      )}
-    </div>
+    <Wrapper>
+      {props.children}
+      <div className="w-full min-h-[50%] flex justify-center items-center text-xs lg:text-sm">
+        {parcoursList && parcoursList.length > 0 ? (
+          <table className="min-w-full table border-separate border-spacing-y-2">
+            <thead>
+              <tr>
+                <th
+                  className="cursor-pointer"
+                  onClick={() => {
+                    onSorting("title");
+                  }}
+                >
+                  <div className="flex items-center gap-x-2">
+                    <p>Titre</p>
+                    <SortColumnIcon
+                      fieldSort={fieldSort}
+                      column="title"
+                      direction={direction}
+                    />
+                  </div>
+                </th>
+                <th
+                  className="cursor-pointer"
+                  onClick={() => {
+                    onSorting("formation");
+                  }}
+                >
+                  <div className="flex items-center gap-x-2">
+                    <p>Formation</p>
+                    <SortColumnIcon
+                      fieldSort={fieldSort}
+                      column="formation"
+                      direction={direction}
+                    />
+                  </div>
+                </th>
+                <th
+                  className="cursor-pointer"
+                  onClick={() => {
+                    onSorting("level");
+                  }}
+                >
+                  <div className="flex items-center gap-x-2">
+                    <p>Niveau</p>
+                    <SortColumnIcon
+                      fieldSort={fieldSort}
+                      column="level"
+                      direction={direction}
+                    />
+                  </div>
+                </th>
+                <th
+                  className="cursor-pointer"
+                  onClick={() => {
+                    onSorting("createdAt");
+                  }}
+                >
+                  <div className="flex items-center gap-x-2">
+                    <p>Date de création</p>
+                    <SortColumnIcon
+                      fieldSort={fieldSort}
+                      column="createdAt"
+                      direction={direction}
+                    />
+                  </div>
+                </th>
+                <th
+                  className="cursor-pointer"
+                  onClick={() => {
+                    onSorting("updatedAt");
+                  }}
+                >
+                  <div className="flex items-center gap-x-2">
+                    <p>Dernière màj</p>
+                    <SortColumnIcon
+                      fieldSort={fieldSort}
+                      column="updatedAt"
+                      direction={direction}
+                    />
+                  </div>
+                </th>
+                <th
+                  className="cursor-pointer"
+                  onClick={() => {
+                    onSorting("author");
+                  }}
+                >
+                  <div className="flex items-center gap-x-2">
+                    <p>Auteur</p>
+                    <SortColumnIcon
+                      fieldSort={fieldSort}
+                      column="author"
+                      direction={direction}
+                    />
+                  </div>
+                </th>
+                <th>Etat</th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>{content}</tbody>
+          </table>
+        ) : (
+          <p>Aucun parcours trouvé</p>
+        )}
+      </div>
+    </Wrapper>
   );
 };
 
