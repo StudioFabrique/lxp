@@ -45,7 +45,7 @@ const UserHome = () => {
 
   return (
     <main className="w-9/12">
-      <section className="w-full h-full flex flex-col items-center px-4 py-8 gap-y-8">
+      <section className="w-full h-full flex flex-col items-center py-8 gap-y-8">
         <Header
           title="Liste d'utilisateurs"
           description="Créez, modifiez et supprimez des comptes, assignez des rôles et des permissions, et mettez à jour vos utilisateurs"

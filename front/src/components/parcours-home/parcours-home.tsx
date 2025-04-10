@@ -3,8 +3,6 @@ import { parcoursSearchOptions } from "../../config/search-options";
 import Parcours from "../../utils/interfaces/parcours";
 import Can from "../UI/can/can.component";
 import Header from "../UI/header";
-import Search from "../UI/search/search.component";
-import RefreshIcon from "../UI/svg/refresh-icon.component";
 import ParcoursTable from "./parcours-table";
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import Pagination from "../UI/pagination/pagination";

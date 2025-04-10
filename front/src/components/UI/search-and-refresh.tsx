@@ -20,6 +20,7 @@ export default function SearchAndRefresh(props: Props) {
       <button
         className="btn btn-outline btn-sm btn-circle border-none text-primary"
         onClick={props.onResetInput}
+        aria-label="réinitialise la recherche"
       >
         <RefreshIcon size={8} />
       </button>
