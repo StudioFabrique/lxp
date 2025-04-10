@@ -7,7 +7,7 @@ import nodemailer from "nodemailer";
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP,
   port: +process.env.SMTP_PORT!,
-  secure: process.env.ENVIRONMENT === "production" ? false : true,
+  secure: +process.env.SMTP_PORT! === 465,
   auth: {
     user: process.env.EMAIL,
     pass: process.env.PASSWORD,
@@ -89,7 +89,7 @@ export async function sendUpdatedUserEmail(email: string) {
 
     // Envoi de l'email
     const result = await transporter.sendMail({
-      from: '"LXP - Administrateur"',
+      from: process.env.FROM,
       to: destination,
       subject: "Modification du compte",
       html: message,

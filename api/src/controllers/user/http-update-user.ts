@@ -9,9 +9,15 @@ import editManyGraduations from "../../models/graduation/edit-many-graduations";
 import editManyLinks from "../../models/links/edit-many-links";
 import editManyHobbies from "../../models/hobby/edit-many-hobbies";
 
+/**
+ * HTTP handler for updating user information including their profile, graduations, links, and hobbies
+ * @param req Express request object containing user data and file upload
+ * @param res Express response object
+ */
 export default async function httpUpdateUser(req: Request, res: Response) {
   const { id } = req.params;
   let userDataRequest = req.body.data.user;
+  // Extract related data from the request
   const graduationsDataRequest: IGraduation[] | undefined =
     userDataRequest.graduations;
   const linksDataRequest: ILink[] | undefined = userDataRequest.links;
@@ -20,30 +26,36 @@ export default async function httpUpdateUser(req: Request, res: Response) {
   const uploadedFile = req.file;
 
   try {
+    // Handle avatar file upload if present
     if (uploadedFile) {
       const avatar = await fs.promises.readFile(uploadedFile.path);
       userDataRequest = { ...userDataRequest, avatar };
     }
 
+    // Validate required data
     if (!graduationsDataRequest || !linksDataRequest || !hobbiesDataRequest) {
       return res.status(404).send({ message: badQuery });
     }
 
+    // Update user basic information
     const userResponse = await editUser(id, userDataRequest, roleId);
 
+    // Update user's associated data
     await editManyGraduations(
       userResponse!.updatedUser._id,
-      graduationsDataRequest,
+      graduationsDataRequest
     );
 
     await editManyLinks(userResponse!.updatedUser._id, linksDataRequest);
 
     await editManyHobbies(userResponse!.updatedUser._id, hobbiesDataRequest);
 
+    // Clean up uploaded file after processing
     if (uploadedFile) {
       await fs.promises.unlink(uploadedFile.path);
     }
 
+    // Send success response
     return res.status(201).json({
       success: true,
       message: "L'utilisateur a été modifié avec succès.",
