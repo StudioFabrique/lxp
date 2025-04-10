@@ -11,11 +11,14 @@ import TextAlign from "@tiptap/extension-text-align";
 import TextStyle from "@tiptap/extension-text-style";
 import { FontFamily } from "@tiptap/extension-font-family";
 import { Color } from "@tiptap/extension-color";
+import Link from "@tiptap/extension-link";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import "./index.scss";
 
 import MenuBar from "./components/MenuBar";
+import { useRef } from "react";
+import { LinkMenu } from "./components/LinkMenu";
 
 type TiptapSimpleEditorProps = {
   onCloseEditor: () => void;
@@ -30,7 +33,7 @@ export default function TiptapSimpleEditor({
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
-      Highlight,
+      Highlight.configure({ multicolor: true }),
       TaskList,
       TaskItem,
       CharacterCount.configure({
@@ -49,6 +52,7 @@ export default function TiptapSimpleEditor({
       TextStyle,
       Color,
       FontFamily,
+      Link,
     ],
     editorProps: {
       attributes: {
@@ -58,10 +62,17 @@ export default function TiptapSimpleEditor({
     },
   });
 
+  const menuContainerRef = useRef(null);
+
+  if (!editor) {
+    return null;
+  }
+
   return (
-    <div className="editor">
+    <div className="editor" ref={menuContainerRef}>
       {editor && <MenuBar editor={editor} onCloseEditor={onCloseEditor} />}
       <EditorContent className="editor__content" editor={editor} />
+      <LinkMenu editor={editor} appendTo={menuContainerRef} />
     </div>
   );
 }
