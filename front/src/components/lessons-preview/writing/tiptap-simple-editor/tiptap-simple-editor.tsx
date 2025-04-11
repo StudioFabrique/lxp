@@ -76,7 +76,7 @@ export default function TiptapSimpleEditor({
     editorProps: {
       attributes: {
         class:
-          "prose min-h-[12vh] m-1 max-w-full p-1 focus:outline-none hover:ring-2 hover:ring-primary/20 transition-all duration-200",
+          "prose min-h-[12vh] m-1 w-[80%] p-1 focus:outline-none hover:ring-2 hover:ring-primary/20 transition-all duration-200",
       },
     },
   });
@@ -90,21 +90,24 @@ export default function TiptapSimpleEditor({
   }, [editor, editorRef]);
 
   return (
-    <div className="editor" ref={menuContainerRef}>
+    <div className="editor relative" ref={menuContainerRef}>
       {isEditingActivity && editor && (
         <MenuBar editor={editor} onCloseEditor={handleCloseEditor} />
       )}
-      {/* <span className="relative"> */}
       <EditorContent className="editor__content" editor={editor} />
-      <Can action="update" object="lesson">
-        <button
-          className="btn btn-xs px-1 btn-ghost absolute top-2 right-2 tooltip tooltip-left"
-          data-tip="Modifier l'activité"
-        >
-          <Edit className="w-5 h-5" />
-        </button>
-      </Can>
-      {/* </span> */}
+
+      {!isEditingActivity && (
+        <div>
+          <Can action="update" object="lesson">
+            <button
+              className="btn btn-xs px-1 btn-ghost absolute top-4 right-4 tooltip tooltip-left"
+              data-tip="Modifier l'activité"
+            >
+              <Edit className="w-5 h-5" />
+            </button>
+          </Can>
+        </div>
+      )}
       {isEditingActivity && editor && (
         <LinkMenu editor={editor} appendTo={menuContainerRef} />
       )}

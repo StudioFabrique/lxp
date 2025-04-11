@@ -18,6 +18,7 @@ import CreateCourseItem from "../../components/lessons-preview/sidebar/create-co
 const LessonsPreview = () => {
   // custom hook
   const {
+    fetchData,
     moduleData,
     lessonRating,
     onCompleteLesson,
@@ -92,6 +93,7 @@ const LessonsPreview = () => {
             currentLessonRating={lessonRating?.rating}
             onRateContent={onEditRateContent}
             lessonHasActivities={selectedLessonHasActivities}
+            onRefreshAllData={fetchData}
           >
             {/* Bouton pour terminer la leçon afin d'afficher une modal */}
             <Can action="component" object="progression">

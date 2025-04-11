@@ -9,6 +9,7 @@ type TipTapActivityProps = {
   value?: string;
   isNewActivity?: boolean;
   onCloseTipTapEditor?: () => void;
+  onRefreshAllData?: () => void;
 };
 
 const TipTapActivity = ({
@@ -16,6 +17,7 @@ const TipTapActivity = ({
   value,
   isNewActivity = false,
   onCloseTipTapEditor,
+  onRefreshAllData,
 }: TipTapActivityProps) => {
   const { sendRequest } = useHttp();
 
@@ -36,6 +38,7 @@ const TipTapActivity = ({
     const applyData = () => {
       toast.success("Activité créée avec succès");
       onCloseTipTapEditor && onCloseTipTapEditor();
+      onRefreshAllData && onRefreshAllData();
     };
 
     const value = editorRef.current?.getHTML();
@@ -55,7 +58,7 @@ const TipTapActivity = ({
   };
 
   return (
-    <div className="mt-4 flex flex-col">
+    <div className="mt-4 w-[100%]">
       <TiptapSimpleEditor
         editorRef={editorRef}
         initialValue={value}

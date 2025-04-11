@@ -108,20 +108,7 @@ const ActivityPreview = ({ lessonId, activity }: ActivityProps) => {
 
     if (!content) return undefined;
 
-    return (
-      <>
-        {/* <Can action="update" object="lesson">
-          <Link
-            to={`/admin/lesson/edit/${lessonId}/preview/${activity.id}`}
-            data-tip="Modifier l'activité"
-            className="btn btn-xs px-1 btn-ghost absolute top-2 right-2 tooltip tooltip-left"
-          >
-            <Edit3 className="w-5 h-5" />
-          </Link>
-        </Can> */}
-        {content}
-      </>
-    );
+    return <>{content}</>;
   };
 
   return renderContent();
