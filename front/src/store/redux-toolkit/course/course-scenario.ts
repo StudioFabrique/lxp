@@ -60,7 +60,7 @@ const courseScenarioSlice = createSlice({
             (item) => item.id !== action.payload.id
           );
           updatedLessons = [...updatedLessons, action.payload];
-          state.courseLessons = sortArray(updatedLessons, "order", false);
+          state.courseLessons = sortArray(updatedLessons, "order", true);
         }
       }
     },
