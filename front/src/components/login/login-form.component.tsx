@@ -48,22 +48,22 @@ const LoginForm: FC<{
   //  définit le bouton à afficher en fonction du statut de la requête de connexion
   const isLoadingButtonComponent =
     props.isLoading && props.error.length === 0 ? (
-      <button className="btn normal-case bg-pink-900 p-3 rounded-md pr-6 pl-6 text-white text-[8pt]">
+      <button className="btn normal-case bg-blue-700 p-3 rounded-md pr-6 pl-6 text-white text-[8pt]">
         <span className="loading loading-spinner loading-xs"></span>
         Connexion...
       </button>
     ) : (
-      <button className="btn normal-case bg-pink-900 p-3 rounded-md pr-6 pl-6 text-white text-[8pt]">
+      <button className="btn normal-case bg-blue-700 p-3 rounded-md pr-6 pl-6 text-white text-[8pt]">
         Je me connecte
       </button>
     );
 
   return (
     <form className="w-[70%] flex flex-col gap-y-4" onSubmit={submitHandler}>
-      <p className="text-[14pt] font-bold">Se connecter</p>
+      <p className="text-[14pt] text-blue-700 font-bold">Se connecter</p>
       {/* input 1 */}
       <input
-        className="rounded-xs bg-pink-900/10 outline-pink-900/20 p-[20px] pl-[30px] w-full placeholder:text-purple-discrete"
+        className="rounded-xs bg-blue-100 outline-blue-900/20 p-[20px] pl-[30px] w-full placeholder:text-blue-300"
         name="email"
         type="text"
         value={email.value}
@@ -76,7 +76,7 @@ const LoginForm: FC<{
         <span className="w-full relative">
           <input
             name="password"
-            className="rounded-xs bg-pink-900/10 outline-pink-900/20 p-[20px] pl-[30px] w-full placeholder:text-purple-discrete"
+            className="rounded-xs bg-blue-100 outline-blue-900/20 p-[20px] pl-[30px] w-full placeholder:text-blue-300"
             type={inputType}
             placeholder="Mot de passe"
             onBlur={password.valueBlurHandler}
@@ -92,7 +92,7 @@ const LoginForm: FC<{
       <p className={loginErrorClass}>{props.error}</p>
 
       <div className="flex justify-between items-center mt-3">
-        <Link to="/reset-password" className="ml-2 text-[8pt]">
+        <Link to="/reset-password" className="ml-2 text-blue-400 text-[8pt]">
           Mot de passe oublié?
         </Link>
         {isLoadingButtonComponent}

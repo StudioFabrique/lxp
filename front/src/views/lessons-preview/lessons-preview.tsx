@@ -1,6 +1,6 @@
 import SidebarCoursesList from "../../components/lessons-preview/sidebar/sidebar-courses-list";
 import ProgressBar from "../../components/lessons-preview/progress-bar";
-import LessonReader from "../../components/lessons-preview/preview-lesson/lesson-reader";
+import LessonReader from "../../components/lessons-preview/preview/lesson-reader";
 import Lesson from "../../utils/interfaces/lesson";
 import useLessonsPreview from "./hooks/use-lessons-preview";
 import LessonsPreviewHeader from "../../components/lessons-preview/lessons-preview-header";
@@ -18,6 +18,7 @@ import CreateCourseItem from "../../components/lessons-preview/sidebar/create-co
 const LessonsPreview = () => {
   // custom hook
   const {
+    fetchData,
     moduleData,
     lessonRating,
     onCompleteLesson,
@@ -92,6 +93,7 @@ const LessonsPreview = () => {
             currentLessonRating={lessonRating?.rating}
             onRateContent={onEditRateContent}
             lessonHasActivities={selectedLessonHasActivities}
+            onRefreshAllData={fetchData}
           >
             {/* Bouton pour terminer la leçon afin d'afficher une modal */}
             <Can action="component" object="progression">

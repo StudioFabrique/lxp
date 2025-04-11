@@ -116,7 +116,7 @@ const CourseItem = ({
         ) : null}
 
         <div
-          className="flex flex-col w-full cursor-pointer z-10 bg-secondary rounded-lg"
+          className="flex flex-col w-full cursor-pointer bg-secondary rounded-lg"
           onClick={handleToggleCourseTab}
         >
           <div className={`flex flex-col gap-1 p-4`}>

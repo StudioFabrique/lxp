@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction } from "react";
+import { Dispatch, FC, SetStateAction, useMemo } from "react";
 import Module from "../../../utils/interfaces/module";
 import { getMonth } from "../../../utils/dates";
 import { ArrowRightCircle } from "lucide-react";
@@ -10,10 +10,13 @@ const ContenuItem: FC<{
   selectedModuleId: number | undefined;
   setSelectedModule: Dispatch<SetStateAction<Module | null>>;
 }> = ({ module, iterationCount, selectedModuleId, setSelectedModule }) => {
-  const minDate: { day: number; month: string } = {
-    day: new Date(module.minDate!).getDay(),
-    month: getMonth(new Date(module.minDate!).getMonth()).substring(0, 4),
-  };
+  const minDate: { day: number; month: string } = useMemo(
+    () => ({
+      day: new Date(module.minDate!).getDate(),
+      month: getMonth(new Date(module.minDate!).getMonth()).substring(0, 4),
+    }),
+    [module.minDate],
+  );
 
   return (
     <div

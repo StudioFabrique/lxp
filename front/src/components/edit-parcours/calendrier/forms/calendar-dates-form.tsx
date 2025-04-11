@@ -116,7 +116,9 @@ const CalendarDatesForm: FC<{
       {currentModule && (
         <form onSubmit={handleSubmit} className="flex flex-col gap-y-5">
           <span className="flex gap-x-2 justify-between">
-            <h3 className="font-bold">Dates de module</h3>
+            <h3 className="font-semibold text-lg text-primary">
+              Dates du module
+            </h3>
             <button
               className="btn btn-xs"
               disabled={isAllowedToEdit}

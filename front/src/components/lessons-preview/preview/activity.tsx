@@ -2,14 +2,15 @@
 import "./video-style.css";
 import { useEffect, useState } from "react";
 import Activity, { Resource } from "../../../utils/interfaces/activity";
-import Markdown from "react-markdown";
 import { ACTIVITIES, ACTIVITIES_VIDEOS } from "../../../config/urls";
 import BaseReactPlayer from "react-player";
-import Wrapper from "../../UI/wrapper/wrapper.component";
-import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
-import { Edit3, File } from "lucide-react";
-import { Link } from "react-router-dom";
-import Can from "../../UI/can/can.component";
+import TipTapActivity from "../writing/tip-tap-activity";
+import { File } from "lucide-react";
+// import Wrapper from "../../UI/wrapper/wrapper.component";
+// import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
+// import { Edit3, File } from "lucide-react";
+// import { Link } from "react-router-dom";
+// import Can from "../../UI/can/can.component";
 
 type ActivityProps = {
   lessonId: number;
@@ -65,11 +66,11 @@ const ActivityPreview = ({ lessonId, activity }: ActivityProps) => {
 
   const renderContent = () => {
     const contentMap = {
-      text: (
-        <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 max-w-[92%]">
-          {value}
-        </Markdown>
-      ),
+      text:
+        // <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 max-w-[92%]">
+        //   {value}
+        // </Markdown>
+        value ? <TipTapActivity lessonId={lessonId} value={value} /> : null,
       video: (
         <div className="flex flex-col gap-2">
           <h3 className="text-base-content font-bold text-2xl">Vidéo</h3>
@@ -107,20 +108,7 @@ const ActivityPreview = ({ lessonId, activity }: ActivityProps) => {
 
     if (!content) return undefined;
 
-    return (
-      <Wrapper additionalClassname="bg-secondary/5 relative px-4">
-        <Can action="update" object="lesson">
-          <Link
-            to={`/admin/lesson/edit/${lessonId}/preview/${activity.id}`}
-            data-tip="Modifier l'activité"
-            className="btn btn-xs px-1 btn-ghost absolute top-2 right-2 tooltip tooltip-left"
-          >
-            <Edit3 className="w-5 h-5" />
-          </Link>
-        </Can>
-        <FadeWrapper>{content}</FadeWrapper>
-      </Wrapper>
-    );
+    return <>{content}</>;
   };
 
   return renderContent();
