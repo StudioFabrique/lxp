@@ -67,6 +67,16 @@ export const items = (editor: Editor) => [
   {
     type: "divider",
   },
+
+  {
+    icon: "bard-line",
+    title: "Générer avec IA (disponible bientôt)",
+    disabled: true,
+    color: "info",
+  },
+  { type: "divider" },
+  { type: "divider" },
+  { type: "divider" },
   {
     icon: "arrow-go-back-line",
     title: "Undo",
@@ -77,4 +87,5 @@ export const items = (editor: Editor) => [
     title: "Redo",
     action: () => editor.chain().focus().redo().run(),
   },
+  { type: "divider" },
 ];
