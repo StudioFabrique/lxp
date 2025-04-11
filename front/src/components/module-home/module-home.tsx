@@ -11,6 +11,7 @@ import { stepsParcours } from "../../config/steps/steps-parcours";
 import Can from "../UI/can/can.component";
 import { Link } from "react-router-dom";
 import AddIcon from "../UI/svg/add-icon";
+import Wrapper from "../UI/wrapper/wrapper.component";
 
 interface ModuleHomeListProps {
   modulesList: Module[];
@@ -68,21 +69,23 @@ const ModuleHomeList = ({
           </Can>
         </Header>
       </section>
-      <section className="w-full flex flex-col">
+      <section className="w-full flex flex-col gap-y-8">
         <article className="w-full flex justify-end items-center gap-x-4">
           <ToggleList showList={showList} onToggle={setShowList} />
         </article>
         {list ? (
           <>
             {showList ? (
-              <ModuleTable
-                modulesList={list}
-                onSorting={sortData}
-                direction={direction}
-                fieldSort={fieldSort}
-                stepId={stepId}
-                onDelete={handleConfirmDeleteModule}
-              />
+              <Wrapper>
+                <ModuleTable
+                  modulesList={list}
+                  onSorting={sortData}
+                  direction={direction}
+                  fieldSort={fieldSort}
+                  stepId={stepId}
+                  onDelete={handleConfirmDeleteModule}
+                />
+              </Wrapper>
             ) : (
               <ModuleCardList
                 stepId={stepId}

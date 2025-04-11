@@ -2,8 +2,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import Can from "../UI/can/can.component";
 import Header from "../UI/header";
-import { PlusCircle, RefreshCw } from "lucide-react";
-import Search from "../UI/search/search.component";
+import { PlusCircle } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 // Imports des hooks et utilitaires personnalisés

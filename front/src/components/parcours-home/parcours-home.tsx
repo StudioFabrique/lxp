@@ -80,7 +80,7 @@ const ParcoursList = (props: ParcoursListProps) => {
   }, [error]);
 
   return (
-    <main className="w-5/6 flex flex-col items-center px-4 py-8 gap-8">
+    <main className="w-9/12 flex flex-col items-center px-4 py-8 gap-8">
       <section className="w-full">
         <Header
           title="Liste des parcours"
