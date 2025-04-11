@@ -94,7 +94,10 @@ export default function TiptapSimpleEditor({
       {isEditingActivity && editor && (
         <MenuBar editor={editor} onCloseEditor={handleCloseEditor} />
       )}
-      <EditorContent className="editor__content" editor={editor} />
+      <EditorContent
+        className={`editor__content${isEditingActivity ? "" : " py-10"}`}
+        editor={editor}
+      />
 
       {!isEditingActivity && (
         <div>

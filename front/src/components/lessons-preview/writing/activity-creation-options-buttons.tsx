@@ -29,7 +29,7 @@ const ActivityCreationOptionsButtons = ({
             Ajouter une activité
           </div>
         ) : (
-          <div className="absolute flex gap-2 transition-opacity">
+          <div className="flex gap-2 transition-opacity">
             <button
               className="btn btn-primary text-base-100"
               onClick={onClickShowTipTapEditor}
