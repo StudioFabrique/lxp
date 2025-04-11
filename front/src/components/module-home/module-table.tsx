@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link } from "react-router-dom";
 import { localeDate } from "../../helpers/locale-date";
 import Can from "../UI/can/can.component";
@@ -6,6 +7,8 @@ import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 import DeleteIcon from "../UI/svg/delete-icon.component";
 import { truncateText } from "../../helpers/truncate-text";
 import { Eye } from "lucide-react";
+import TableRowWrapper from "../UI/table-row-wrapper";
+import React from "react";
 
 interface ModuleTableProps {
   modulesList: any[];
@@ -21,7 +24,6 @@ const ModuleTable = ({
   fieldSort,
   direction,
   onSorting,
-  stepId,
   onDelete,
 }: ModuleTableProps) => {
   console.log({ modulesList });
@@ -31,115 +33,119 @@ const ModuleTable = ({
       {modulesList && modulesList.length > 0 ? (
         <>
           {modulesList.map((item: any) => (
-            <tr
-              className="text-xs lg:text-sm cursor-pointer hover:bg-secondary/20 hover:text-base-content"
-              key={item.id}
-            >
-              <td className="bg-transparent rounded-l-lg max-w-[150px]">
-                <span className="tooltip tooltip-bottom" data-tip={item.title}>
-                  {truncateText(item.title, 20)}
-                </span>
-              </td>
-              <td className="bg-transparent capitalize max-w-[100px]">
-                <div>
+            <TableRowWrapper>
+              <React.Fragment key={item.id}>
+                <td className="bg-transparent rounded-l-lg max-w-[150px]">
                   <span
                     className="tooltip tooltip-bottom"
-                    data-tip={item.author}
+                    data-tip={item.title}
                   >
-                    {truncateText(item.author, 15)}
+                    {truncateText(item.title, 20)}
                   </span>
-                </div>
-              </td>
-              <td className="bg-transparent max-w-[150px]">
-                <span
-                  className="tooltip tooltip-bottom text"
-                  data-tip={item.formation || "ND"}
-                >
-                  {truncateText(item.formation, 20)}
-                </span>
-              </td>
-              <td className="bg-transparent max-w-[150px]">
-                <span
-                  className="tooltip tooltip-bottom"
-                  data-tip={item.parcours}
-                >
-                  {truncateText(item.parcours, 20)}
-                </span>
-              </td>
-              <td className="bg-transparent">{localeDate(item.createdAt!)}</td>
-              <td className="bg-transparent">
-                {localeDate(item.updatedAt!)}
-              </td>{" "}
-              <td className="bg-transparent">
-                <div className="w-6 h-6">
-                  <Can action="read" object="module">
-                    <div>
-                      {item.parcoursId ? (
-                        <Link
-                          className="text-secondary tooltip tooltip-bottom"
-                          data-tip="Voir le module"
-                          to={`/admin/module/edit/${item.id}`}
-                          aria-label="Voir les détails du module"
-                        >
-                          <Eye />
-                        </Link>
-                      ) : (
-                        <div
-                          className="text-base-content/50 tooltip tooltip-bottom"
-                          data-tip="Vous ne pouvez pas modifier un module
-                            attaché à une formation"
-                        >
-                          <Eye />
-                        </div>
-                      )}
-                    </div>
-                  </Can>
-                </div>
-              </td>
-              <td className="bg-transparent">
-                <div className="w-6 h-6">
-                  <Can action="update" object="module">
-                    <div>
-                      {item.parcoursId ? (
-                        <Link
-                          className="text-secondary tooltip tooltip-bottom"
-                          data-tip="Modifier le module"
-                          to={`/admin/parcours/edit/${item.parcoursId}?step=4`}
-                          aria-label="Editer le module"
-                        >
-                          <ArrowTopRightIcon />
-                        </Link>
-                      ) : (
-                        <div
-                          className="text-base-content/50 tooltip tooltip-bottom"
-                          data-tip="Vous ne pouvez pas modifier un module
-                            attaché à une formation"
-                        >
-                          <ArrowTopRightIcon />
-                        </div>
-                      )}
-                    </div>
-                  </Can>
-                </div>
-              </td>
-              <td className="bg-transparent rounded-r-lg">
-                <div
-                  className="w-6 h-6 text-error"
-                  aria-label="suppression du module"
-                >
-                  <Can action="delete" object="module">
-                    <div
-                      className="tooltip tooltip-bottom flex-items-center"
-                      data-tip="Supprimer le module"
+                </td>
+                <td className="bg-transparent capitalize max-w-[100px]">
+                  <div>
+                    <span
+                      className="tooltip tooltip-bottom"
+                      data-tip={item.author}
                     >
-                      <div onClick={() => onDelete(item.id)}>
-                        <DeleteIcon />
+                      {truncateText(item.author, 15)}
+                    </span>
+                  </div>
+                </td>
+                <td className="bg-transparent max-w-[150px]">
+                  <span
+                    className="tooltip tooltip-bottom text"
+                    data-tip={item.formation || "ND"}
+                  >
+                    {truncateText(item.formation, 20)}
+                  </span>
+                </td>
+                <td className="bg-transparent max-w-[150px]">
+                  <span
+                    className="tooltip tooltip-bottom"
+                    data-tip={item.parcours}
+                  >
+                    {truncateText(item.parcours, 20)}
+                  </span>
+                </td>
+                <td className="bg-transparent">
+                  {localeDate(item.createdAt!)}
+                </td>
+                <td className="bg-transparent">
+                  {localeDate(item.updatedAt!)}
+                </td>{" "}
+                <td className="bg-transparent">
+                  <div className="w-6 h-6">
+                    <Can action="read" object="module">
+                      <div>
+                        {item.parcoursId ? (
+                          <Link
+                            className="text-secondary tooltip tooltip-bottom"
+                            data-tip="Voir le module"
+                            to={`/admin/module/edit/${item.id}`}
+                            aria-label="Voir les détails du module"
+                          >
+                            <Eye />
+                          </Link>
+                        ) : (
+                          <div
+                            className="text-base-content/50 tooltip tooltip-bottom"
+                            data-tip="Vous ne pouvez pas modifier un module
+                            attaché à une formation"
+                          >
+                            <Eye />
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  </Can>
-                </div>
-              </td>
-            </tr>
+                    </Can>
+                  </div>
+                </td>
+                <td className="bg-transparent">
+                  <div className="w-6 h-6">
+                    <Can action="update" object="module">
+                      <div>
+                        {item.parcoursId ? (
+                          <Link
+                            className="text-secondary tooltip tooltip-bottom"
+                            data-tip="Modifier le module"
+                            to={`/admin/parcours/edit/${item.parcoursId}?step=4`}
+                            aria-label="Editer le module"
+                          >
+                            <ArrowTopRightIcon />
+                          </Link>
+                        ) : (
+                          <div
+                            className="text-base-content/50 tooltip tooltip-bottom"
+                            data-tip="Vous ne pouvez pas modifier un module
+                            attaché à une formation"
+                          >
+                            <ArrowTopRightIcon />
+                          </div>
+                        )}
+                      </div>
+                    </Can>
+                  </div>
+                </td>
+                <td className="bg-transparent rounded-r-lg">
+                  <div
+                    className="w-6 h-6 text-error"
+                    aria-label="suppression du module"
+                  >
+                    <Can action="delete" object="module">
+                      <div
+                        className="tooltip tooltip-bottom flex-items-center"
+                        data-tip="Supprimer le module"
+                      >
+                        <div onClick={() => onDelete(item.id)}>
+                          <DeleteIcon />
+                        </div>
+                      </div>
+                    </Can>
+                  </div>
+                </td>
+              </React.Fragment>
+            </TableRowWrapper>
           ))}
         </>
       ) : null}
