@@ -6,12 +6,14 @@ const Questionnaire = () => {
   const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
-    const hasClosedQuestionnaire = localStorage.getItem(
-      "hasClosedQuestionnaire",
-    );
-    if (!hasClosedQuestionnaire) {
-      setShowTooltip(true);
-    }
+    setTimeout(() => {
+      const hasClosedQuestionnaire = localStorage.getItem(
+        "hasClosedQuestionnaire",
+      );
+      if (!hasClosedQuestionnaire) {
+        setShowTooltip(true);
+      }
+    }, 30000);
   }, []);
 
   const handleClose = () => {
@@ -21,9 +23,9 @@ const Questionnaire = () => {
 
   return (
     <>
-      {showTooltip && (
+      {/* {showTooltip && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[50]" />
-      )}
+      )} */}
       <div className="relative z-50">
         <motion.a
           href="https://forms.gle/joWqE48La7S6NqCK8"
@@ -59,7 +61,7 @@ const Questionnaire = () => {
               duration: 0.5,
               ease: "easeOut",
             }}
-            className="absolute left-full flex flex-col w-[20vw] bottom-0 ml-10 bg-base-100 p-4 rounded-xl shadow-lg border border-base-300"
+            className="absolute left-full flex flex-col w-[25vw] bottom-0 ml-10 bg-base-100 p-4 rounded-xl shadow-lg border border-base-300"
           >
             <motion.p
               initial={{ y: 20, opacity: 0 }}
@@ -71,17 +73,30 @@ const Questionnaire = () => {
               }}
               className="text-base-content font-medium mb-3"
             >
-              Donnez votre avis sur la version bêta de ANDRIA à tout moment
-              depuis ce formulaire
+              Merci de donnez votre avis sur la version bêta de l'application
+              ANDRIA à tout moment depuis ce formulaire
             </motion.p>
-            <motion.button
-              whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
-              whileTap={{ scale: 0.95, transition: { duration: 0.1 } }}
-              onClick={handleClose}
-              className="btn btn-primary text-base-100 btn-sm self-end"
-            >
-              D'accord
-            </motion.button>
+            <div className="flex gap-2 justify-between">
+              <motion.a
+                whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+                whileTap={{ scale: 0.95, transition: { duration: 0.1 } }}
+                onClick={handleClose}
+                className="btn btn-primary text-base-100 btn-sm"
+                href="https://forms.gle/joWqE48La7S6NqCK8"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Donner mon avis maintenant
+              </motion.a>
+              <motion.button
+                whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+                whileTap={{ scale: 0.95, transition: { duration: 0.1 } }}
+                onClick={handleClose}
+                className="btn btn-secondary text-secondary-content btn-sm"
+              >
+                Fermer
+              </motion.button>
+            </div>
           </motion.div>
         )}
       </div>
