@@ -20,6 +20,8 @@ import "./index.scss";
 import MenuBar from "./components/MenuBar";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { LinkMenu } from "./components/LinkMenu";
+import Can from "../../../UI/can/can.component";
+import { Edit } from "lucide-react";
 
 type TiptapSimpleEditorProps = {
   editorRef: React.MutableRefObject<Editor | null>;
@@ -92,7 +94,17 @@ export default function TiptapSimpleEditor({
       {isEditingActivity && editor && (
         <MenuBar editor={editor} onCloseEditor={handleCloseEditor} />
       )}
+      {/* <span className="relative"> */}
       <EditorContent className="editor__content" editor={editor} />
+      <Can action="update" object="lesson">
+        <button
+          className="btn btn-xs px-1 btn-ghost absolute top-2 right-2 tooltip tooltip-left"
+          data-tip="Modifier l'activité"
+        >
+          <Edit className="w-5 h-5" />
+        </button>
+      </Can>
+      {/* </span> */}
       {isEditingActivity && editor && (
         <LinkMenu editor={editor} appendTo={menuContainerRef} />
       )}

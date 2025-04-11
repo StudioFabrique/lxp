@@ -110,6 +110,7 @@ export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
           )}
         </Fragment>
       ))}
+
       <MenuItem
         icon="close-large-line"
         title="Fermer l'éditeur"

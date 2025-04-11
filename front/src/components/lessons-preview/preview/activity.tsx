@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import Activity, { Resource } from "../../../utils/interfaces/activity";
 import { ACTIVITIES, ACTIVITIES_VIDEOS } from "../../../config/urls";
 import BaseReactPlayer from "react-player";
-import Wrapper from "../../UI/wrapper/wrapper.component";
-import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
-import { Edit3, File } from "lucide-react";
-import { Link } from "react-router-dom";
-import Can from "../../UI/can/can.component";
 import TipTapActivity from "../writing/tip-tap-activity";
+import { File } from "lucide-react";
+// import Wrapper from "../../UI/wrapper/wrapper.component";
+// import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
+// import { Edit3, File } from "lucide-react";
+// import { Link } from "react-router-dom";
+// import Can from "../../UI/can/can.component";
 
 type ActivityProps = {
   lessonId: number;
@@ -108,8 +109,8 @@ const ActivityPreview = ({ lessonId, activity }: ActivityProps) => {
     if (!content) return undefined;
 
     return (
-      <Wrapper additionalClassname="bg-secondary/5 relative px-4">
-        <Can action="update" object="lesson">
+      <>
+        {/* <Can action="update" object="lesson">
           <Link
             to={`/admin/lesson/edit/${lessonId}/preview/${activity.id}`}
             data-tip="Modifier l'activité"
@@ -117,9 +118,9 @@ const ActivityPreview = ({ lessonId, activity }: ActivityProps) => {
           >
             <Edit3 className="w-5 h-5" />
           </Link>
-        </Can>
-        <FadeWrapper>{content}</FadeWrapper>
-      </Wrapper>
+        </Can> */}
+        {content}
+      </>
     );
   };
 
