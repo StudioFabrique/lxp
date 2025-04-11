@@ -36,7 +36,7 @@ export default function PasswordUpdateHome(props: Props) {
 
   //  Choisit un thème clair par défaut et vérifie la validité du lien d'activation
   useEffect(() => {
-    chooseTheme("winter", "light");
+    chooseTheme("nord", "light");
   }, [chooseTheme]);
 
   useEffect(() => {
