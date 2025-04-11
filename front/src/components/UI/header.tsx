@@ -12,10 +12,12 @@ interface HeaderProps {
 
 const Header = (props: HeaderProps) => {
   return (
-    <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-y-8">
-      <div className="w-full flex flex-col items-start">
-        <h2 className="text-4xl text-base-content font-bold">{props.title}</h2>
-        <p className="mt-2">{props.description}</p>
+    <div className="w-full flex-1 flex items-center justify-between p-4 rounded-lg bg-secondary/20">
+      <div>
+        <h2 className="flex-1 text-xl text-base-content font-extrabold">
+          {props.title}
+        </h2>
+        <p className="mt-2 text-xs">{props.description}</p>
       </div>
       <div className="flex justify-end items-center">{props.children}</div>
     </div>

@@ -3,8 +3,6 @@ import { parcoursSearchOptions } from "../../config/search-options";
 import Parcours from "../../utils/interfaces/parcours";
 import Can from "../UI/can/can.component";
 import Header from "../UI/header";
-import Search from "../UI/search/search.component";
-import RefreshIcon from "../UI/svg/refresh-icon.component";
 import ParcoursTable from "./parcours-table";
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import Pagination from "../UI/pagination/pagination";
@@ -17,6 +15,7 @@ import { searchListParcours } from "../../helpers/parcours/search-list-parcours"
 import useHttp from "../../hooks/use-http";
 import toast from "react-hot-toast";
 import Modal from "../UI/modal/modal";
+import SearchAndRefresh from "../UI/search-and-refresh";
 
 interface ParcoursListProps {
   onRefreshParcoursList: () => void;
@@ -81,14 +80,14 @@ const ParcoursList = (props: ParcoursListProps) => {
   }, [error]);
 
   return (
-    <main className="w-5/6 flex flex-col items-center px-4 py-8 gap-8">
+    <main className="w-9/12 flex flex-col items-center px-4 py-8 gap-8">
       <section className="w-full">
         <Header
           title="Liste des parcours"
           description="Gérer tous les parcours qui vous sont attribués."
         >
           <Can action="write" object="parcours">
-            <Link className="btn btn-primary" to="créer-un-parcours">
+            <Link className="btn btn-primary btn-soft" to="créer-un-parcours">
               <div className="flex gap-x-2 items-center">
                 <div className="w-8 h-8">
                   <AddIcon />
@@ -99,22 +98,19 @@ const ParcoursList = (props: ParcoursListProps) => {
           </Can>
         </Header>
       </section>
-      <section className="w-full flex">
-        <article className="w-full flex justify-end items-center gap-x-2">
-          <Search
-            options={parcoursSearchOptions}
-            placeholder="Filtrer"
-            onSearch={handleSearchResult}
-          />
-          <div className="text-primary" onClick={handleResetSearch}>
-            <RefreshIcon size={8} />
-          </div>
-        </article>
-      </section>
-      <section className="w-full flex flex-col">
+
+      <section className="w-full flex flex-col gap-y-4">
         <article className="w-full flex justify-end items-center gap-x-4">
           <ToggleList showList={showList} onToggle={setShowList} />
         </article>
+        {!showList ? (
+          <SearchAndRefresh
+            searchOptions={parcoursSearchOptions}
+            onSearch={handleSearchResult}
+            onResetInput={handleResetSearch}
+            placeholder="Filtrer"
+          />
+        ) : null}
         {list ? (
           <>
             {showList ? (
@@ -125,7 +121,14 @@ const ParcoursList = (props: ParcoursListProps) => {
                 fieldSort={fieldSort}
                 onDeleteParcours={confirmParcoursToDelete}
                 loading={isLoading}
-              />
+              >
+                <SearchAndRefresh
+                  searchOptions={parcoursSearchOptions}
+                  onSearch={handleSearchResult}
+                  onResetInput={handleResetSearch}
+                  placeholder="Filtrer"
+                />
+              </ParcoursTable>
             ) : (
               <ParcoursCardsList
                 parcoursList={list}
@@ -136,11 +139,13 @@ const ParcoursList = (props: ParcoursListProps) => {
           </>
         ) : null}
       </section>
+
       <section className="w-full">
         {totalPages > 1 ? (
           <Pagination page={page} totalPages={totalPages} setPage={setPage} />
         ) : null}
       </section>
+
       {parcoursToDelete ? (
         <Modal
           onLeftClick={() => setParcoursToDelete(null)}

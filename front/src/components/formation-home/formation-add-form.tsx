@@ -279,7 +279,7 @@ export default function FormationAddForm({
 
       <TagsList tagsList={currentTags} onRemove={handleRemoveTag} />
 
-      <div className="w-full flex justify-between 2xl:w-3/6">
+      <div className="w-full flex justify-end gap-x-4">
         <button className="btn btn-outline btn-primary" onClick={handleCancel}>
           Annuler
         </button>

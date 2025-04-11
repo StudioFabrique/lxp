@@ -19,6 +19,7 @@ const UserList: FC<{
   isLoading: boolean;
   error?: string;
   sendInvitation: (userId: string) => void;
+  onToggleStatus: (id: string, value: boolean) => void;
 }> = ({
   allChecked,
   page,
@@ -34,6 +35,7 @@ const UserList: FC<{
   isLoading,
   error,
   sendInvitation,
+  onToggleStatus,
 }) => {
   const handleAllChecked = () => {
     onAllChecked();
@@ -43,8 +45,10 @@ const UserList: FC<{
     onUncheckAll();
   }, [role, page, onUncheckAll]);
 
+  console.log({ role });
+
   const content = (
-    <table className="table w-full border-separate border-spacing-y-2">
+    <table className="min-w-full table border-separate border-spacing-y-2">
       <thead>
         <tr>
           <th>
@@ -53,6 +57,7 @@ const UserList: FC<{
               type="checkbox"
               checked={allChecked}
               onChange={handleAllChecked}
+              disabled={role.role === "everything"}
             />
           </th>
           <th>Avatar</th>
@@ -131,7 +136,7 @@ const UserList: FC<{
               />
             </div>
           </th>
-          {role.role === "everything" ? <th>Role</th> : null}
+          <th>Role</th>
           <th
             className="cursor-pointer"
             onClick={() => {
@@ -183,7 +188,7 @@ const UserList: FC<{
       <tbody>
         {userList.map((item: any) => (
           <tr
-            className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content"
+            className="min-w-full bg-secondary/10 hover:bg-secondary/20 hover:text-base-content"
             key={item._id}
           >
             {
@@ -195,6 +200,7 @@ const UserList: FC<{
                 isUserDeleteLoading={isLoading}
                 error={error}
                 sendInvitation={sendInvitation}
+                onToggleStatus={onToggleStatus}
               />
             }
           </tr>
@@ -204,7 +210,7 @@ const UserList: FC<{
   );
 
   return (
-    <div className="flex flex-col gap-y-4">
+    <div className="flex-1 flex flex-col gap-y-4">
       <>{userList.length > 0 ? <>{content}</> : <p>Rien à afficher</p>}</>
     </div>
   );

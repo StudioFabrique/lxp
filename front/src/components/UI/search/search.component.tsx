@@ -73,12 +73,12 @@ const Search: FC<{
   };
 
   return (
-    <form className="join" onSubmit={handleSubmit}>
+    <form className="w-fit flex" onSubmit={handleSubmit}>
       <div>
-        <div>
+        <div className="w-full">
           {entityToSearch !== "isActive" ? (
             <input
-              className="input input-sm md:input-md input-bordered focus:outline-none join-item"
+              className="w-48 input input-sm md:input-md input-bordered focus:outline-none rounded-r-none"
               type={searchType}
               id="searchtype"
               placeholder="Recherche..."
@@ -89,7 +89,7 @@ const Search: FC<{
           ) : (
             <div>
               <select
-                className="select select-sm md:select-md select-bordered focus:outline-none join-item"
+                className="select select-sm md:select-md w-48 focus:outline-none rounded-none"
                 id="isactive"
                 onChange={handleSwitchValueChange}
               >
@@ -101,7 +101,7 @@ const Search: FC<{
         </div>
       </div>
       <select
-        className="select select-sm md:select-md select-bordered join-item font-normal"
+        className="select select-sm md:select-md select-bordered w-32 font-normal rounded-none focus:outline-none"
         id="typetosearch"
         onChange={handleTypeToSearchChange}
       >
@@ -111,7 +111,7 @@ const Search: FC<{
         {optionsList}
       </select>
       <button
-        className="btn btn-sm md:btn-md btn-primary join-item capitalize"
+        className="btn btn-sm md:btn-md btn-primary rounded-l-none capitalize"
         type="submit"
       >
         {props.placeholder ? (
