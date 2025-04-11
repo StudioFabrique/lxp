@@ -14,7 +14,7 @@ export default function MenuItem({
   title?: string;
   action?: () => void;
   isActive?: (() => boolean) | null;
-  color?: "info";
+  color?: string;
   disabled?: boolean;
 }) {
   return (

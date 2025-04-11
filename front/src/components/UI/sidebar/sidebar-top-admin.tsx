@@ -5,6 +5,7 @@ import Home from "./sidebar-parts/home";
 import Lesson from "./sidebar-parts/lesson";
 import Mediatheque from "./sidebar-parts/mediatheque";
 import Module from "./sidebar-parts/module";
+import MotionSidebarWrapper from "./sidebar-parts/motion-sidebar-wrapper";
 import Parcours from "./sidebar-parts/parcours";
 import Roles from "./sidebar-parts/roles";
 import Tags from "./sidebar-parts/tags";
@@ -17,7 +18,7 @@ type SharedSideBarProps = {
 };
 
 const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
-  const [showMore, setShowMore] = useState(false);
+  const [isHover, setIsHover] = useState(false);
   const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
@@ -48,25 +49,26 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
   ];
 
   return (
-    <ul className={`flex flex-col gap-${showAll ? 6 : 4} items-center`}>
+    <ul className={`flex flex-col gap-6 items-center`}>
       <Home key="home" currentRoute={currentRoute} />
-      {showAll
-        ? [...initialItems, ...moreItems]
-        : showMore
-          ? moreItems
-          : initialItems}
-      {!showAll && (
-        <button
-          className="btn btn-circle btn-ghost tooltip tooltip-right"
-          data-tip={
-            showMore ? "Revenir aux vues précédentes" : "Afficher plus de vues"
-          }
-          onClick={() => setShowMore(!showMore)}
-        >
-          <Plus
-            className={`transition-transform ${showMore ? "rotate-45" : ""}`}
-          />
-        </button>
+      {showAll ? (
+        [...initialItems, ...moreItems]
+      ) : (
+        <>
+          {initialItems}
+          <li
+            onMouseOver={() => setIsHover(true)}
+            onMouseLeave={() => setIsHover(false)}
+          >
+            <div className="flex items-center">
+              <Plus />
+
+              <MotionSidebarWrapper isHover={isHover}>
+                {moreItems}
+              </MotionSidebarWrapper>
+            </div>
+          </li>
+        </>
       )}
     </ul>
   );

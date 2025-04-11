@@ -19,10 +19,14 @@ export default async function createUser(user: IUser, roleId: string) {
     }
 
     // Vérifier si le rôle existe
-    const firstRole = await Role.findOne({ _id: roleId });
-    if (!firstRole) {
+    const role = await Role.findOne({ _id: roleId });
+    if (!role) {
       throw { statusCode: 404, message: "Le rôle n'existe pas." };
     }
+
+    const interfaceRole = await Role.findOne({
+      rank: role.rank,
+    });
 
     // Créer un nouvel utilisateur dans MongoDB
     const createdUser = await User.create({
@@ -39,22 +43,22 @@ export default async function createUser(user: IUser, roleId: string) {
       password: await hash(randomUUID() + "@Sn99", 10),
       isActive: false,
       avatar: user.avatar,
-      roles: firstRole,
+      roles: [role, interfaceRole],
     });
 
     // Gérer les créations Prisma en fonction du rôle
-    if (firstRole.rank === 1 || firstRole.rank === 2) {
-      console.log("addinng admin");
+    if (role.rank === 1 || role.rank === 2) {
+      console.log("adding admin");
 
       await prisma.admin.create({ data: { idMdb: createdUser._id } });
     }
 
-    if (firstRole.rank === 2) {
+    if (role.rank === 2) {
       await prisma.contact.create({
         data: {
           idMdb: createdUser._id,
           name: `${createdUser.lastname} ${createdUser.firstname}`,
-          role: firstRole.label,
+          role: role.label,
           phone:
             createdUser.phoneNumber && createdUser.phoneNumber?.length > 0
               ? createdUser.phoneNumber
@@ -64,20 +68,20 @@ export default async function createUser(user: IUser, roleId: string) {
       });
     }
 
-    if (firstRole.rank === 3)
+    if (role.rank === 3)
       await prisma.student.create({ data: { idMdb: createdUser._id } });
 
     if (user.invitationSent) {
-      const token = activationToken(createdUser._id, firstRole, "7d");
+      const token = activationToken(createdUser._id, role, "7d");
       await sendPasswordEmail(createdUser.email, token, "activation");
       await User.updateOne(
         { _id: createdUser._id },
-        { $set: { invitationSent: true } }
+        { $set: { invitationSent: true } },
       );
     }
 
     // Retourner l'utilisateur créé et le rang du rôle
-    return { createdUser, role: firstRole.rank };
+    return { createdUser, role: role.rank };
   } catch (error: any) {
     throw error;
   }

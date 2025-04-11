@@ -24,9 +24,7 @@ const MotionSidebarWrapper = ({
         theme === "dark" ? "text-white bg-slate-500" : "text-white bg-slate-800"
       }`}
     >
-      <div className="flex gap-x-5 h-11 items-center ml-14 mr-4">
-        {children}
-      </div>
+      <ul className="flex gap-x-5 h-11 items-center ml-14 mr-4">{children}</ul>
     </motion.div>
   );
 };
