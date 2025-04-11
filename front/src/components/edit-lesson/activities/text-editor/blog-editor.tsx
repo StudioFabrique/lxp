@@ -19,7 +19,7 @@ function BlogEditor({ activity, content, onCancel }: EditorProps) {
   const { errors, values, onChangeValue, handleSubmit } = useCreateBlog(
     lesson.id,
     activity ?? null,
-    onCancel
+    onCancel,
   );
 
   return (

@@ -295,6 +295,7 @@ const useLessonsPreview = () => {
 
   // Retourne les données et fonctions nécessaires
   return {
+    fetchData,
     moduleData,
     selectedLesson,
     lessonRating,

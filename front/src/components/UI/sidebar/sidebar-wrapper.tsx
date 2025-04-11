@@ -1,8 +1,16 @@
 import { ReactNode, useContext, useState, useEffect } from "react";
 import { Context } from "../../../store/context.store";
 import { COMPANY_LOGO } from "../../../config/urls";
+import newLogo from "../../../assets/images/new-logo.svg";
+import SidebarBottom from "./sidebar-bottom";
 
-const SidebarWrapper = ({ children }: { children: ReactNode }) => {
+const SidebarWrapper = ({
+  children,
+  interfaceType,
+}: {
+  children: ReactNode;
+  interfaceType: string;
+}) => {
   const { theme } = useContext(Context);
   const [companyLogo, setCompanyLogo] = useState<string | null>(COMPANY_LOGO);
 
@@ -31,14 +39,16 @@ const SidebarWrapper = ({ children }: { children: ReactNode }) => {
         </div>
       ) : null}
       <div
-        className={`flex flex-col gap-y-4 p-4 pt-6 rounded-lg h-full relative ${
+        className={`flex flex-col justify-between gap-y-4 p-4 pt-6 rounded-lg h-full relative ${
           theme === "dark"
             ? "text-white bg-slate-500"
             : "text-white bg-slate-800"
         }`}
       >
-        <div className="h-full flex flex-col justify-between">{children}</div>
+        {children}
+        <SidebarBottom interfaceType={interfaceType} />
       </div>
+      <img src={newLogo} />
     </nav>
   );
 };
