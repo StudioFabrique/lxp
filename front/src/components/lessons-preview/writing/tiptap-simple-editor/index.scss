@@ -86,11 +86,11 @@
 .editor {
     background-color: #fff;
     /* border: 3px solid #0d0d0d; */
+    padding: 10px;
     border-radius: 0.75rem;
     /* color: #0d0d0d; */
     display: flex;
     flex-direction: column;
-    max-height: 26rem;
 
     &__header {
         /* background: #0d0d0d; */
@@ -105,8 +105,10 @@
 
     &__content {
         flex: 1 1 auto;
-        overflow-x: hidden;
-        overflow-y: auto;
+        display: flex;
+        justify-content: center;
+        /* overflow-x: hidden;
+        overflow-y: auto; */
         -webkit-overflow-scrolling: touch;
     }
 

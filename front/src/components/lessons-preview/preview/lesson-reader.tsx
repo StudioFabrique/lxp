@@ -12,6 +12,7 @@ type PreviewLessonProps = {
   currentLessonRating?: number;
   isLessonAlreadyCompleted: boolean;
   onRateContent: (rating: number) => void;
+  onRefreshAllData?: () => void;
   // Vérifie s'il y a des activités dans la leçon
   lessonHasActivities: boolean;
 };
@@ -21,6 +22,7 @@ const LessonReader = ({
   selectedLesson,
   currentLessonRating,
   onRateContent,
+  onRefreshAllData,
   lessonHasActivities,
   children,
 }: PropsWithChildren<PreviewLessonProps>) => {
@@ -70,6 +72,7 @@ const LessonReader = ({
             lessonId={selectedLesson.id}
             isNewActivity
             onCloseTipTapEditor={handleCloseTipTapEditor}
+            onRefreshAllData={onRefreshAllData}
           />
         ) : (
           <ActivityCreationOptionsButtons
