@@ -18,7 +18,7 @@ async function putLesson(lesson: Lesson) {
 
   if (!tag) throw { statusCode: 404, message: "Le tag n'existe pas." };
 
-  if (!["hybride", "distancielle", "presentielle"].includes(lesson.modalite))
+  if (!["hybride", "distanciel", "presentiel"].includes(lesson.modalite))
     throw { statusCode: 400, message: "Modalité non reconnue." };
 
   const updatedLesson = await prisma.lesson.update({
