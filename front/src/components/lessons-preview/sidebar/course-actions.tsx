@@ -30,7 +30,7 @@ const CourseActions = ({
   };
 
   return (
-    <div onClick={onClickMenu} className="dropdown dropdown-right z-10">
+    <div onClick={onClickMenu} className="dropdown dropdown-right z-[9]">
       <button className="flex cursor-pointer">
         <MoreVertical className="stroke-secondary-content w-7 h-7 hover:bg-primary/20 px-1 rounded-lg transition-colors" />
       </button>
