@@ -76,7 +76,7 @@ export default function TiptapSimpleEditor({
     editorProps: {
       attributes: {
         class:
-          "prose min-h-[12vh] m-1 w-[80%] p-1 focus:outline-none hover:ring-2 hover:ring-primary/20 transition-all duration-200",
+          "prose min-h-[12vh] m-1 w-[80%] p-1 focus:outline-none  transition-all duration-200",
       },
     },
   });
@@ -95,7 +95,8 @@ export default function TiptapSimpleEditor({
         <MenuBar editor={editor} onCloseEditor={handleCloseEditor} />
       )}
       <EditorContent
-        className={`editor__content${isEditingActivity ? "" : " py-10"}`}
+        className={`editor__content${isEditingActivity ? " cursor-text" : " py-10"}`}
+        onClick={() => editor?.commands.focus()}
         editor={editor}
       />
 
