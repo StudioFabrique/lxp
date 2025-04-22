@@ -76,7 +76,7 @@ export default function TiptapSimpleEditor({
     editorProps: {
       attributes: {
         class:
-          "prose min-h-[12vh] m-1 w-[80%] p-1 focus:outline-none  transition-all duration-200",
+          "prose min-h-[12vh] m-1 w-[100%] max-w-[50%] p-1 focus:outline-none transition-all duration-200",
       },
     },
   });
