@@ -91,32 +91,36 @@ export default function TiptapSimpleEditor({
   }, [editor, editorRef]);
 
   return (
-    <div className="editor relative" ref={menuContainerRef}>
-      {isEditingActivity && editor && (
-        <MenuBar editor={editor} onCloseEditor={handleCloseEditor} />
-      )}
-      <EditorContent
-        className={`editor__content${isEditingActivity ? " cursor-text" : " py-10"}`}
-        onClick={() => editor?.commands.focus()}
-        editor={editor}
-      />
+    <>
+      <div className="editor relative" ref={menuContainerRef}>
+        {editor ? (
+          <MenuBar
+            shouldHide={!isEditingActivity}
+            editor={editor}
+            onCloseEditor={handleCloseEditor}
+          />
+        ) : null}
+        <EditorContent
+          className={`editor__content${isEditingActivity ? " cursor-text" : " py-10"}`}
+          onClick={() => editor?.commands.focus()}
+          editor={editor}
+        />
 
-      {!isEditingActivity && (
-        <div>
-          <Can action="update" object="lesson">
-            <button
-              className="btn btn-xs px-1 btn-ghost absolute top-4 right-4 tooltip tooltip-left"
-              data-tip="Modifier l'activité"
-              onClick={() => setEditingActivity(true)}
-            >
-              <Edit className="w-5 h-5" />
-            </button>
-          </Can>
-        </div>
-      )}
-      {isEditingActivity && editor && (
-        <LinkMenu editor={editor} appendTo={menuContainerRef} />
-      )}
-    </div>
+        {!isEditingActivity && (
+          <div>
+            <Can action="update" object="lesson">
+              <button
+                className="btn btn-xs px-1 btn-ghost absolute top-4 right-4 tooltip tooltip-left"
+                data-tip="Modifier l'activité"
+                onClick={() => setEditingActivity(true)}
+              >
+                <Edit className="w-5 h-5" />
+              </button>
+            </Can>
+          </div>
+        )}
+      </div>
+      {editor ? <LinkMenu editor={editor} appendTo={menuContainerRef} /> : null}
+    </>
   );
 }

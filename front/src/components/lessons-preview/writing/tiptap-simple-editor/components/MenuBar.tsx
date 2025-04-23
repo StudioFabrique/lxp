@@ -22,6 +22,7 @@ import { EditYoutubeLinkPopover } from "./EditYoutubeLinkPopover.js";
 
 type MenuBarProps = {
   editor: Editor;
+  shouldHide?: boolean;
   onCloseEditor: () => void;
 };
 
@@ -31,7 +32,11 @@ const MemoColorPicker = memo(ColorPicker);
 const MemoFontFamilyPicker = memo(FontFamilyPicker);
 // const MemoFontSizePicker = memo(FontSizePicker);
 
-export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
+export default function MenuBar({
+  editor,
+  shouldHide = false,
+  onCloseEditor,
+}: MenuBarProps) {
   const inputFileRef = useRef<HTMLInputElement>(null);
   const { menuContentOptions, isImageUploadPending } = useMenuContentTypes(
     editor,
@@ -45,7 +50,10 @@ export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
   const states = useTextmenuStates(editor);
 
   return (
-    <Toolbar.Wrapper className="h-fit flex justify-between px-2">
+    <Toolbar.Wrapper
+      hidden={shouldHide}
+      className="h-fit flex justify-between px-2"
+    >
       <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus" />
       <EditLinkPopover onSetLink={commands.onLink} />
       <EditYoutubeLinkPopover onSetLink={commands.onYoutubeLink} />
