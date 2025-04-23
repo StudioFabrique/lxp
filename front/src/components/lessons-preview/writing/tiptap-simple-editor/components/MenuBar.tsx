@@ -1,7 +1,7 @@
 import "./MenuBar.scss";
 import type { Editor } from "@tiptap/react";
 
-import { Fragment, memo, useRef } from "react";
+import { Fragment, memo, useRef, useState, useEffect, useMemo } from "react";
 
 import MenuItem from "./MenuItem.jsx";
 import { ContentTypePicker } from "./dropdowns/ContentTypePicker.js";
@@ -37,6 +37,51 @@ export default function MenuBar({
   shouldHide = false,
   onCloseEditor,
 }: MenuBarProps) {
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const toolbarPositionRef = useRef<{ top: number; left: number } | null>(null);
+  const [scrollY, setScrollY] = useState(0);
+
+  // Initialize toolbar position ref
+  useEffect(() => {
+    if (toolbarRef.current && !toolbarPositionRef.current) {
+      const rect = toolbarRef.current.getBoundingClientRect();
+      toolbarPositionRef.current = {
+        top: rect.top + window.scrollY,
+        left: rect.left + window.scrollX,
+      };
+    }
+  }, []);
+
+  // Set up scroll and resize event listeners
+  useEffect(() => {
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrollY(window.scrollY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // Calculate if toolbar should be fixed using useMemo
+  const isToolbarFixed = useMemo(() => {
+    if (!toolbarPositionRef.current) return false;
+
+    const originalTop = toolbarPositionRef.current.top;
+    return scrollY > originalTop - 10;
+  }, [scrollY]);
+
+  console.log({ isToolbarFixed });
+
   const inputFileRef = useRef<HTMLInputElement>(null);
   const { menuContentOptions, isImageUploadPending } = useMenuContentTypes(
     editor,
@@ -51,8 +96,9 @@ export default function MenuBar({
 
   return (
     <Toolbar.Wrapper
+      ref={toolbarRef}
       hidden={shouldHide}
-      className="h-fit flex justify-between px-2"
+      className={`h-fit w-fit self-center ${isToolbarFixed ? "fixed top-2 z-50" : "relative"} flex justify-between px-2`}
     >
       <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus" />
       <EditLinkPopover onSetLink={commands.onLink} />

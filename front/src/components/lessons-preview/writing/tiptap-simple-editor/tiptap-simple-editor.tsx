@@ -92,6 +92,7 @@ export default function TiptapSimpleEditor({
 
   return (
     <>
+      {isEditingActivity ? <hr className="pb-5" /> : null}
       <div className="editor relative" ref={menuContainerRef}>
         {editor ? (
           <MenuBar
@@ -110,7 +111,7 @@ export default function TiptapSimpleEditor({
           <div>
             <Can action="update" object="lesson">
               <button
-                className="btn btn-xs px-1 btn-ghost absolute top-4 right-4 tooltip tooltip-left"
+                className="btn btn-ghost absolute top-4 right-4 tooltip tooltip-left"
                 data-tip="Modifier l'activité"
                 onClick={() => setEditingActivity(true)}
               >
