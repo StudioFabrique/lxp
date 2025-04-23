@@ -29,37 +29,40 @@ const ActivityCreationOptionsButtons = ({
             Ajouter une activité
           </div>
         ) : (
-          <div className="flex gap-2 transition-opacity">
-            <button
-              className="btn btn-primary text-base-100"
-              onClick={onClickShowTipTapEditor}
-            >
-              Texte
-            </button>
-            {/* <Link
+          <div className="flex flex-col gap-2 items-center">
+            <p>Créer une activité de type :</p>
+            <div className="flex gap-2 transition-opacity">
+              <button
+                className="btn btn-primary text-base-100"
+                onClick={onClickShowTipTapEditor}
+              >
+                Texte
+              </button>
+              {/* <Link
             to={`/admin/lesson/edit/${selectedLesson.id}?type=text`}
             className="btn btn-primary text-base-100"
           >
             Texte (Ancienne version)
           </Link> */}
-            <Link
-              to={`/admin/lesson/edit/${selectedLesson.id}?type=video`}
-              className="btn btn-primary text-base-100"
-            >
-              Vidéo
-            </Link>
-            <Link
-              to={`/admin/lesson/edit/${selectedLesson.id}?type=image`}
-              className="btn btn-primary text-base-100"
-            >
-              Image
-            </Link>
-            <Link
-              to={`/admin/lesson/edit/${selectedLesson.id}?type=resource`}
-              className="btn btn-primary text-base-100"
-            >
-              Fichier
-            </Link>
+              <Link
+                to={`/admin/lesson/edit/${selectedLesson.id}?type=video`}
+                className="btn btn-primary text-base-100"
+              >
+                Vidéo
+              </Link>
+              <Link
+                to={`/admin/lesson/edit/${selectedLesson.id}?type=image`}
+                className="btn btn-primary text-base-100"
+              >
+                Image
+              </Link>
+              <Link
+                to={`/admin/lesson/edit/${selectedLesson.id}?type=resource`}
+                className="btn btn-primary text-base-100"
+              >
+                Fichier
+              </Link>
+            </div>
           </div>
         )}
       </div>
