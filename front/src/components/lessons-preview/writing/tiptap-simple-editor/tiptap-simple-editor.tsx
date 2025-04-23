@@ -107,6 +107,7 @@ export default function TiptapSimpleEditor({
             <button
               className="btn btn-xs px-1 btn-ghost absolute top-4 right-4 tooltip tooltip-left"
               data-tip="Modifier l'activité"
+              onClick={() => setEditingActivity(true)}
             >
               <Edit className="w-5 h-5" />
             </button>
