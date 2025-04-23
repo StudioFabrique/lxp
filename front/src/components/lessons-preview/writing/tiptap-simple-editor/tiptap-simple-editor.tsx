@@ -86,6 +86,7 @@ export default function TiptapSimpleEditor({
   useEffect(() => {
     if (editor) {
       editorRef.current = editor;
+      editorRef.current.commands.focus();
     }
   }, [editor, editorRef]);
 
