@@ -76,12 +76,12 @@ const Questionnaire = () => {
               Merci de donnez votre avis sur la version bêta de l'application
               ANDRIA à tout moment depuis ce formulaire
             </motion.p>
-            <div className="flex gap-2 justify-between">
+            <div className="flex flex-wrap gap-2 justify-between">
               <motion.a
                 whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
                 whileTap={{ scale: 0.95, transition: { duration: 0.1 } }}
                 onClick={handleClose}
-                className="btn btn-primary text-base-100 btn-sm"
+                className="btn btn-primary text-base-100 btn-sm whitespace-pre-wrap w-fit"
                 href="https://forms.gle/joWqE48La7S6NqCK8"
                 target="_blank"
                 rel="noopener noreferrer"
