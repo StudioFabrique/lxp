@@ -10,7 +10,6 @@ import { LinkPreviewPanel } from "../LinkPreviewPanel";
 interface MenuProps {
   editor: Editor;
   appendTo?: React.RefObject<unknown>;
-  shouldHide?: boolean;
 }
 
 export const LinkMenu = ({ editor, appendTo }: MenuProps): JSX.Element => {
