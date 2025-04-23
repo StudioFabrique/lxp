@@ -92,7 +92,7 @@ export default function TiptapSimpleEditor({
 
   return (
     <>
-      {isEditingActivity ? <hr className="pb-5" /> : null}
+      {isEditingActivity ? <hr className="border-primary/20 pb-5" /> : null}
       <div className="editor relative" ref={menuContainerRef}>
         {editor ? (
           <MenuBar
