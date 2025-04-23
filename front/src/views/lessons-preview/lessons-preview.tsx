@@ -59,6 +59,7 @@ const LessonsPreview = () => {
         selectedLesson={selectedLesson}
         isPanelClosed={isPanelClosed}
         setPanelClosed={setPanelClosed}
+        setSelectedLesson={setSelectedLesson}
       >
         {[
           // * Header

@@ -1,6 +1,6 @@
 import { Dispatch, PropsWithChildren, SetStateAction } from "react";
 import Lesson from "../../utils/interfaces/lesson";
-import { Edit, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { Edit, PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Can from "../UI/can/can.component";
@@ -10,6 +10,7 @@ type LessonsPreviewWrapperProps = {
   selectedLesson?: Lesson;
   isPanelClosed?: boolean;
   setPanelClosed: Dispatch<SetStateAction<boolean>>;
+  setSelectedLesson: (lesson: Lesson | undefined) => void;
 };
 
 /**
@@ -21,6 +22,7 @@ const LessonsPreviewWrapper = ({
   selectedLesson,
   isPanelClosed = false,
   setPanelClosed,
+  setSelectedLesson,
   children,
 }: PropsWithChildren<LessonsPreviewWrapperProps>) => {
   const [header, progessionSide, topProgressBar, previewLesson, moduleData] =
@@ -80,6 +82,16 @@ const LessonsPreviewWrapper = ({
                 Modifier le module
               </Link>
             </Can>
+            {selectedLesson ? (
+              <button
+                className="btn hover:bg-primary hover:text-base-100 tooltip tooltip-left"
+                aria-label="Fermer"
+                data-tip="Fermer la leçon"
+                onClick={() => setSelectedLesson(undefined)}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            ) : null}
           </div>
 
           {selectedLesson ? previewLesson : moduleData}
