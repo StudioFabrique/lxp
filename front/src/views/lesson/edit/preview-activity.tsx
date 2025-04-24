@@ -1,5 +1,5 @@
 // Import des composants et hooks nécessaires
-import Activity from "../../../utils/interfaces/activity";
+import type { Activity } from "../../../utils/interfaces/activity";
 import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 import ActivityHeader from "../../../components/edit-lesson/activities/activity-header";

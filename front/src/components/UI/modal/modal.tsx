@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 import { Loader2, Minimize2 } from "lucide-react";
 
 /**
@@ -68,7 +68,10 @@ const Modal = (props: PropsWithChildren<ModalProps>) => {
           {/* Titre de la modal */}
           <h3 className="font-bold text-lg">{props.title}</h3>
           {props.onMinimizeClick && (
-            <button className="btn" onClick={props.onMinimizeClick}>
+            <button
+              className="btn btn-sm btn-ghost"
+              onClick={props.onMinimizeClick}
+            >
               <Minimize2 />
             </button>
           )}

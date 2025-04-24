@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import "./video-style.css";
 import { useEffect, useState } from "react";
-import Activity, { Resource } from "../../../utils/interfaces/activity";
+import type { Activity, Resource } from "../../../utils/interfaces/activity";
 import { ACTIVITIES, ACTIVITIES_VIDEOS } from "../../../config/urls";
 import BaseReactPlayer from "react-player";
 import TipTapActivity from "../writing/tip-tap-activity";
@@ -56,7 +56,7 @@ const ActivityPreview = ({ lessonId, activity }: ActivityProps) => {
   useEffect(() => {
     if (activity && activity !== undefined) {
       fetch(`${ACTIVITIES}${activity.url}`)
-        .then((response: any) => response.text())
+        .then((response) => response.text())
         //.then((text) => md.render(text))
         .then((mdContent: string) => {
           setValue(mdContent);
@@ -79,7 +79,7 @@ const ActivityPreview = ({ lessonId, activity }: ActivityProps) => {
       ),
       image: (
         <div className="flex flex-col gap-2">
-          <img src={`${ACTIVITIES}images/${activity.url}`} alt="Image" />
+          <img src={`${ACTIVITIES}images/${activity.url}`} alt="activity" />
         </div>
       ),
       resource: (
@@ -94,6 +94,7 @@ const ActivityPreview = ({ lessonId, activity }: ActivityProps) => {
                   href={pdf.url}
                   className="btn btn-primary text-base-100 flex items-center gap-2"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   <File />
                   <span>{pdf.label}</span>

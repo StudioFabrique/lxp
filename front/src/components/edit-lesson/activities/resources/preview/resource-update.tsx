@@ -1,6 +1,6 @@
 // Import des dépendances nécessaires
 import { useEffect } from "react";
-import { Resource } from "../../../../../utils/interfaces/activity";
+import type { Resource } from "../../../../../utils/interfaces/activity";
 import Field from "../../../../UI/forms/field";
 import useForm from "../../../../UI/forms/hooks/use-form";
 import { z, ZodError } from "zod"; // Pour la validation des données

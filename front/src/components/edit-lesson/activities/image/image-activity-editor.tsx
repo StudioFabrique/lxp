@@ -5,7 +5,7 @@ import defaultImage from "../../../../assets/images/bookshelf.jpg";
 import { activityImageSize } from "../../../../config/images-sizes";
 import MemoizedImageFileUpload from "../../../UI/image-file-upload/image-file-upload";
 import SubmitButton from "../../../UI/submit-button";
-import Activity from "../../../../utils/interfaces/activity";
+import type { Activity } from "../../../../utils/interfaces/activity";
 import { ACTIVITIES } from "../../../../config/urls";
 import DialogImages from "../../../mediatheque/dialog-images";
 import useEditImageActivity from "./use-edit-image-activity";
@@ -43,7 +43,13 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
    */
   const classImage: React.CSSProperties = {
     backgroundImage: `url('${
-      selectedImage ? `${ACTIVITIES}images/${selectedImage}` : image ? image : activity?.url ? `${ACTIVITIES}images/${activity.url}` : defaultImage
+      selectedImage
+        ? `${ACTIVITIES}images/${selectedImage}`
+        : image
+          ? image
+          : activity?.url
+            ? `${ACTIVITIES}images/${activity.url}`
+            : defaultImage
     }')`,
     width: "100%",
     height: "100%",
@@ -103,7 +109,9 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
           </form>
         </span>
       </Wrapper>
-      <div className="flex justify-center"><div style={classImage}></div></div>
+      <div className="flex justify-center">
+        <div style={classImage}></div>
+      </div>
       <div className="h-[1rem]" />
       {showDialog ? (
         <DialogImages onClose={() => setShowDialog(false)} />

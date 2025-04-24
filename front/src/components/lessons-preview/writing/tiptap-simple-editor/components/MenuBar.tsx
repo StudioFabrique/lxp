@@ -24,6 +24,7 @@ type MenuBarProps = {
   editor: Editor;
   shouldHide?: boolean;
   onCloseEditor: () => void;
+  onSave?: () => void;
 };
 
 const MemoButton = memo(Toolbar.Button);
@@ -36,6 +37,7 @@ export default function MenuBar({
   editor,
   shouldHide = false,
   onCloseEditor,
+  onSave,
 }: MenuBarProps) {
   const toolbarRef = useRef<HTMLDivElement>(null);
   const toolbarPositionRef = useRef<{ top: number; left: number } | null>(null);
@@ -79,8 +81,6 @@ export default function MenuBar({
     const originalTop = toolbarPositionRef.current.top;
     return scrollY > originalTop - 10;
   }, [scrollY]);
-
-  console.log({ isToolbarFixed });
 
   const inputFileRef = useRef<HTMLInputElement>(null);
   const { menuContentOptions, isImageUploadPending } = useMenuContentTypes(
@@ -155,8 +155,8 @@ export default function MenuBar({
           </Surface>
         </Popover.Content>
       </Popover.Root>
-      {items(editor).map((item, index) => (
-        <Fragment key={index}>
+      {items(editor).map((item) => (
+        <Fragment key={item.title || `divider-${Math.random()}`}>
           {item.type === "divider" ? (
             <span className="divider" />
           ) : (
@@ -164,6 +164,10 @@ export default function MenuBar({
           )}
         </Fragment>
       ))}
+
+      {onSave ? (
+        <MenuItem icon="save-line" title="Enregistrer" action={onSave} />
+      ) : null}
 
       <MenuItem
         icon="close-large-line"

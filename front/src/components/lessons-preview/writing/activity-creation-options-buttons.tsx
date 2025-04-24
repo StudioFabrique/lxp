@@ -1,6 +1,6 @@
 import { LucidePlus } from "lucide-react";
 import { Link } from "react-router-dom";
-import Lesson from "../../../utils/interfaces/lesson";
+import type Lesson from "../../../utils/interfaces/lesson";
 import { useState } from "react";
 interface AddActivityButtonProps {
   selectedLesson: Lesson;

@@ -13,12 +13,12 @@ import { FontFamily } from "@tiptap/extension-font-family";
 import { Color } from "@tiptap/extension-color";
 import Link from "@tiptap/extension-link";
 import Youtube from "@tiptap/extension-youtube";
-import { Editor, EditorContent, useEditor } from "@tiptap/react";
+import { type Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import "./index.scss";
 
 import MenuBar from "./components/MenuBar";
-import { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useRef } from "react";
 import { LinkMenu } from "./components/LinkMenu";
 import Can from "../../../UI/can/can.component";
 import { Edit } from "lucide-react";
@@ -29,6 +29,7 @@ type TiptapSimpleEditorProps = {
   isEditingActivity: boolean;
   setEditingActivity: Dispatch<SetStateAction<boolean>>;
   onCloseEditor?: () => void;
+  onSave?: () => void;
 };
 
 export default function TiptapSimpleEditor({
@@ -37,9 +38,10 @@ export default function TiptapSimpleEditor({
   isEditingActivity,
   setEditingActivity,
   onCloseEditor,
+  onSave,
 }: TiptapSimpleEditorProps) {
   const handleCloseEditor = () => {
-    onCloseEditor && onCloseEditor();
+    onCloseEditor?.();
     setEditingActivity(false);
   };
 
@@ -99,6 +101,7 @@ export default function TiptapSimpleEditor({
             shouldHide={!isEditingActivity}
             editor={editor}
             onCloseEditor={handleCloseEditor}
+            onSave={onSave}
           />
         ) : null}
         <EditorContent
@@ -111,6 +114,7 @@ export default function TiptapSimpleEditor({
           <div>
             <Can action="update" object="lesson">
               <button
+                type="button"
                 className="btn btn-ghost absolute top-4 right-4 tooltip tooltip-left"
                 data-tip="Modifier l'activité"
                 onClick={() => setEditingActivity(true)}
