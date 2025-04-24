@@ -6,6 +6,7 @@ import Can from "../UI/can/can.component";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
 import CustomCourse from "./interfaces/custom-course";
 import TableRowWrapper from "../UI/table-row-wrapper";
+import ElementNotFound from "../UI/element-not-found";
 
 interface CourseTableProps {
   coursesList: CustomCourse[];
@@ -54,9 +55,7 @@ export default function CourseTable({
                   )}
                 </div>
               </td>
-              <td>
-                {/*   <Can action="update" object="cours"> */}
-
+              <td className="flex items-center gap-x-2 rounded-r-lg">
                 <div
                   className="tooltip tooltip-bottom"
                   data-tip="Modifier le cours."
@@ -67,10 +66,6 @@ export default function CourseTable({
                     onClick={() => onEditCourse(course.id!)}
                   />
                 </div>
-
-                {/*    </Can> */}
-              </td>
-              <td>
                 <Can action="delete" object="course">
                   <div
                     className="tooltip tooltip-bottom"
@@ -85,6 +80,7 @@ export default function CourseTable({
                     />
                   </div>
                 </Can>
+                {/*    </Can> */}
               </td>
             </React.Fragment>
           </TableRowWrapper>
@@ -98,9 +94,9 @@ export default function CourseTable({
       {children}
       {coursesList && coursesList.length > 0 ? (
         <div className="w-full">
-          <table className="table">
+          <TableRowWrapper>
             <thead>
-              <tr>
+              <tr className="text-xs xl:text-sm">
                 <th
                   className="cursor-pointer"
                   onClick={() => {
@@ -222,16 +218,13 @@ export default function CourseTable({
                   </div>
                 </th>
                 <th></th>
-                <th></th>
               </tr>
             </thead>
             <tbody>{content}</tbody>
-          </table>
+          </TableRowWrapper>
         </div>
       ) : (
-        <p className="flex justify-center">
-          Aucun cours n'a été créé à ce jour
-        </p>
+        <ElementNotFound message="Aucun cours trouvé." />
       )}
     </>
   );

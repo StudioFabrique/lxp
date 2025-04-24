@@ -1,5 +1,6 @@
 import Parcours from "../../utils/interfaces/parcours";
 import CardListItem from "../UI/card-list-item";
+import ElementNotFound from "../UI/element-not-found";
 import ParcoursCard from "./parcours-card";
 
 interface ParcoursCardsListProps {
@@ -24,7 +25,7 @@ const ParcoursCardsList = (props: ParcoursCardsListProps) => {
           ))}
         </CardListItem>
       ) : (
-        <p>Aucun parcours trouvé.</p>
+        <ElementNotFound message="Aucun parcours trouvé." />
       )}
     </>
   );
