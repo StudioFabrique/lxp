@@ -166,7 +166,12 @@ export default function MenuBar({
       ))}
 
       {onSave ? (
-        <MenuItem icon="save-line" title="Enregistrer" action={onSave} />
+        <MenuItem
+          icon="save-line"
+          title="Enregistrer"
+          action={onSave}
+          disabled={!editor.getText().trim()}
+        />
       ) : null}
 
       <MenuItem
