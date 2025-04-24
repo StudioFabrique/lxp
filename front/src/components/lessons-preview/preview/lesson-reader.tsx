@@ -29,6 +29,8 @@ const LessonReader = ({
   children,
 }: PropsWithChildren<PreviewLessonProps>) => {
   const [showTipTapEditor, setShowTipTapEditor] = useState<boolean>(false);
+  const [isAnyActivityBeingEdited, setIsAnyActivityBeingEdited] =
+    useState<boolean>(false);
 
   const handleClickShowTipTapEditor = () => {
     setShowTipTapEditor(true);
@@ -36,6 +38,7 @@ const LessonReader = ({
 
   const handleCloseTipTapEditor = () => {
     setShowTipTapEditor(false);
+    setIsAnyActivityBeingEdited(false);
   };
 
   if (!selectedLesson.id) return null;
@@ -71,6 +74,8 @@ const LessonReader = ({
             key={activity.id}
             lessonId={selectedLesson.id ?? 0}
             activity={activity}
+            isAnyActivityBeingEdited={isAnyActivityBeingEdited}
+            onActivityEditChange={setIsAnyActivityBeingEdited}
           />
         ))
       ) : (
@@ -84,11 +89,14 @@ const LessonReader = ({
             isNewActivity
             onCloseTipTapEditor={handleCloseTipTapEditor}
             onRefreshAllData={onRefreshAllData}
+            isAnyActivityBeingEdited={isAnyActivityBeingEdited}
+            onActivityEditChange={setIsAnyActivityBeingEdited}
           />
         ) : (
           <ActivityCreationOptionsButtons
             onClickShowTipTapEditor={handleClickShowTipTapEditor}
             selectedLesson={selectedLesson}
+            isDisabled={isAnyActivityBeingEdited}
           />
         )}
       </Can>

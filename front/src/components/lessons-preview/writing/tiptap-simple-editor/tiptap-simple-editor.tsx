@@ -26,6 +26,7 @@ import { Edit } from "lucide-react";
 type TiptapSimpleEditorProps = {
   editorRef: React.MutableRefObject<Editor | null>;
   initialValue?: string;
+  disableEditButton?: boolean;
   isEditingActivity: boolean;
   setEditingActivity: Dispatch<SetStateAction<boolean>>;
   onCloseEditor?: () => void;
@@ -35,6 +36,7 @@ type TiptapSimpleEditorProps = {
 export default function TiptapSimpleEditor({
   editorRef,
   initialValue,
+  disableEditButton,
   isEditingActivity,
   setEditingActivity,
   onCloseEditor,
@@ -118,6 +120,7 @@ export default function TiptapSimpleEditor({
                 className="btn btn-ghost absolute top-4 right-4 tooltip tooltip-left"
                 data-tip="Modifier l'activité"
                 onClick={() => setEditingActivity(true)}
+                disabled={disableEditButton}
               >
                 <Edit className="w-5 h-5" />
               </button>
