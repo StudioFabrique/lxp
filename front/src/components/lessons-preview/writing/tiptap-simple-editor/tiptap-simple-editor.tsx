@@ -94,6 +94,12 @@ export default function TiptapSimpleEditor({
     }
   }, [editor, editorRef]);
 
+  useEffect(() => {
+    if (editor) {
+      editor.setEditable(isEditingActivity);
+    }
+  }, [editor, isEditingActivity]);
+
   return (
     <>
       {isEditingActivity ? <hr className="border-primary/20 pb-5" /> : null}
