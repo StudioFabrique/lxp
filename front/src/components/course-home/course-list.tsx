@@ -1,8 +1,5 @@
 // Imports des dépendances React et React Router
-import { Link, useNavigate } from "react-router-dom";
-import Can from "../UI/can/can.component";
-import Header from "../UI/header";
-import { PlusCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 
 // Imports des hooks et utilitaires personnalisés
@@ -20,6 +17,8 @@ import useDeleteCourse from "../../hooks/use-delete-course";
 import ModalDeleteCourse from "../UI/modal-delete-course";
 import SearchAndRefresh from "../UI/search-and-refresh";
 import Wrapper from "../UI/wrapper/wrapper.component";
+import ListHeader from "../UI/list-header";
+import CourseHeader from "./course-header";
 
 // Interface définissant les props du composant
 interface CourseListProps {
@@ -87,23 +86,9 @@ export default function CourseList(props: CourseListProps) {
   }, [showModal]);
 
   return (
-    <main className="w-full flex flex-col items-center py-8 gap-8">
+    <ListHeader>
       {/* En-tête avec titre et bouton d'ajout */}
-      <section className="w-5/6 flex flex-col items-center">
-        <Header
-          title="Liste des cours"
-          description="Liste des cours associés à un module."
-        >
-          <Can action="write" object="course">
-            <Link className="btn btn-primary" to="add">
-              <div className="flex gap-x-2 items-center">
-                <PlusCircle className="w-8 h-8" />
-                <p>Créer un cours</p>
-              </div>
-            </Link>
-          </Can>
-        </Header>
-      </section>
+      <CourseHeader />
 
       {/* Barre de recherche et bouton de réinitialisation */}
       {!showList ? (
@@ -118,12 +103,12 @@ export default function CourseList(props: CourseListProps) {
       ) : null}
 
       {/* Section principale avec la liste des cours */}
-      <section className="w-5/6 flex flex-col items-center">
+      <section className="w-full flex flex-col gap-y-4">
         <article className="w-full flex justify-end items-center gap-x-4">
           <ToggleList showList={showList} onToggle={setShowList} />
         </article>
         {list ? (
-          <div className="mt-8 w-full flex flex-col gap-y-8">
+          <>
             {showList ? (
               <Wrapper>
                 <CourseTable
@@ -148,7 +133,7 @@ export default function CourseList(props: CourseListProps) {
                 onDeleteCourse={handleShowModal}
               />
             )}
-          </div>
+          </>
         ) : null}
       </section>
 
@@ -170,6 +155,6 @@ export default function CourseList(props: CourseListProps) {
           onCloseModal={handleCloseModal}
         />
       ) : null}
-    </main>
+    </ListHeader>
   );
 }

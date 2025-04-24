@@ -10,6 +10,7 @@ import { Eye } from "lucide-react";
 import TableRowWrapper from "../UI/table-row-wrapper";
 import React from "react";
 import TableWrapper from "../UI/table-wrapper";
+import ElementNotFound from "../UI/element-not-found";
 
 interface ModuleTableProps {
   modulesList: any[];
@@ -252,7 +253,7 @@ const ModuleTable = ({
           <tbody>{content}</tbody>
         </TableWrapper>
       ) : (
-        <p>Aucun parcours trouvé</p>
+        <ElementNotFound message="Aucun module trouvé." />
       )}
     </div>
   );
