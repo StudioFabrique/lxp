@@ -13,15 +13,20 @@ import { FontFamily } from "@tiptap/extension-font-family";
 import { Color } from "@tiptap/extension-color";
 import Link from "@tiptap/extension-link";
 import Youtube from "@tiptap/extension-youtube";
+import { all, createLowlight } from "lowlight";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { type Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import "./index.scss";
+import "highlight.js/styles/github.css";
 
 import MenuBar from "./components/MenuBar";
 import { type Dispatch, type SetStateAction, useEffect, useRef } from "react";
 import { LinkMenu } from "./components/LinkMenu";
 import Can from "../../../UI/can/can.component";
 import { Edit } from "lucide-react";
+
+const lowlight = createLowlight(all);
 
 type TiptapSimpleEditorProps = {
   editorRef: React.MutableRefObject<Editor | null>;
@@ -49,7 +54,7 @@ export default function TiptapSimpleEditor({
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure(),
+      StarterKit.configure({ codeBlock: false }),
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
@@ -64,6 +69,10 @@ export default function TiptapSimpleEditor({
         // HTMLAttributes: {
         //   class: "my-custom-class",
         // },
+      }),
+      CodeBlockLowlight.configure({
+        lowlight,
+        defaultLanguage: "bash",
       }),
       TableRow,
       TableHeader,
