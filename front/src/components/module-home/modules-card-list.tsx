@@ -1,4 +1,5 @@
 import CardListItem from "../UI/card-list-item";
+import ElementNotFound from "../UI/element-not-found";
 import ModuleCard from "./module-card";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -24,7 +25,7 @@ const ModuleCardList = ({
           ))}
         </CardListItem>
       ) : (
-        <p>Aucun module trouvé</p>
+        <ElementNotFound message="Aucun module trouvé." />
       )}
     </>
   );

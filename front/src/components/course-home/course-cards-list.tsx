@@ -1,4 +1,5 @@
 import CardListItem from "../UI/card-list-item";
+import ElementNotFound from "../UI/element-not-found";
 import CourseCard from "./course-card";
 import CustomCourse from "./interfaces/custom-course";
 
@@ -22,7 +23,7 @@ export default function CourseCardsList({
           ))}
         </CardListItem>
       ) : (
-        <p>Aucun cours n'a été trouvé.</p>
+        <ElementNotFound message="Aucun cours trouvé." />
       )}
     </>
   );
