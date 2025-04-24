@@ -76,7 +76,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                 <td className="bg-transparent truncate">
                   {item.isPublished ? "Publié" : "Brouillon"}
                 </td>
-                <td className="bg-transparent flex items-center gap-x-2 rounded-r-lg">
+                <td className="bg-transparent flex items-center gap-x-2 justify-around rounded-r-lg">
                   <div className="w-6 h-6">
                     <Can action="update" object="parcours">
                       <div

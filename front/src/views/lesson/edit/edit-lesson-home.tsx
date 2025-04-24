@@ -7,6 +7,7 @@ import useLessonHome from "./use-lesson-home";
 import ActivityTypes from "../../../components/edit-lesson/activity-types";
 import DNDAcitivities from "../../../components/edit-lesson/activities/dnd-activities";
 import CurrentBlock from "../../../components/edit-lesson/current-block";
+import ElementNotFound from "../../../components/UI/element-not-found";
 
 export default function EditLessonHome() {
   // Récupération des props et méthodes depuis le hook personnalisé useLessonHome
@@ -83,7 +84,7 @@ export default function EditLessonHome() {
           ) : (
             // Message affiché quand il n'y a pas d'activités
             <Wrapper>
-              <p>Aucune activités</p>
+              <ElementNotFound message="Aucune activité trouvée." />
             </Wrapper>
           )}
         </article>
