@@ -20,6 +20,7 @@ const useParcoursService = () => {
   const getParcours = useCallback(
     (parcoursId: number) => {
       const processData = (data: any) => {
+        const parentTags = data.formation.tags.map((item: any) => item.tag);
         dispatch(parcoursAction.setParcoursId(data.id));
         dispatch(
           parcoursInformationsAction.updateParcoursInfos({
@@ -44,12 +45,9 @@ const useParcoursService = () => {
             tagsAction.setCurrentTags(data.tags.map((item: any) => item.tag))
           );
         } else {
-          dispatch(
-            tagsAction.setCurrentTags(
-              data.formation.tags.map((item: any) => item.tag)
-            )
-          );
+          dispatch(tagsAction.setCurrentTags(parentTags));
         }
+        dispatch(tagsAction.setParentTags(parentTags));
         if (data.virtualClass) {
           dispatch(
             parcoursInformationsAction.setVirtualClass(data.virtualClass)

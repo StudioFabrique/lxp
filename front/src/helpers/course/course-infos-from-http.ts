@@ -8,6 +8,8 @@ import { sortArray } from "../../utils/sortArray";
  * @returns Course
  */
 export default function courseInfosFromHttp(course: any) {
+  console.log("COURSE :", course);
+
   let updatedData = {
     ...course,
     virtualClass: course.virtualClass
