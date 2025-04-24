@@ -13,12 +13,12 @@ import { FontFamily } from "@tiptap/extension-font-family";
 import { Color } from "@tiptap/extension-color";
 import Link from "@tiptap/extension-link";
 import Youtube from "@tiptap/extension-youtube";
-import { Editor, EditorContent, useEditor } from "@tiptap/react";
+import { type Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import "./index.scss";
 
 import MenuBar from "./components/MenuBar";
-import { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useRef } from "react";
 import { LinkMenu } from "./components/LinkMenu";
 import Can from "../../../UI/can/can.component";
 import { Edit } from "lucide-react";
@@ -26,20 +26,24 @@ import { Edit } from "lucide-react";
 type TiptapSimpleEditorProps = {
   editorRef: React.MutableRefObject<Editor | null>;
   initialValue?: string;
+  disableEditButton?: boolean;
   isEditingActivity: boolean;
   setEditingActivity: Dispatch<SetStateAction<boolean>>;
   onCloseEditor?: () => void;
+  onSave?: () => void;
 };
 
 export default function TiptapSimpleEditor({
   editorRef,
   initialValue,
+  disableEditButton,
   isEditingActivity,
   setEditingActivity,
   onCloseEditor,
+  onSave,
 }: TiptapSimpleEditorProps) {
   const handleCloseEditor = () => {
-    onCloseEditor && onCloseEditor();
+    onCloseEditor?.();
     setEditingActivity(false);
   };
 
@@ -76,7 +80,7 @@ export default function TiptapSimpleEditor({
     editorProps: {
       attributes: {
         class:
-          "prose min-h-[12vh] m-1 w-[80%] p-1 focus:outline-none hover:ring-2 hover:ring-primary/20 transition-all duration-200",
+          "prose min-h-[12vh] m-1 w-[100%] max-w-[50%] py-5 focus:outline-none transition-all duration-200",
       },
     },
   });
@@ -86,34 +90,51 @@ export default function TiptapSimpleEditor({
   useEffect(() => {
     if (editor) {
       editorRef.current = editor;
+      editorRef.current.commands.focus();
     }
   }, [editor, editorRef]);
 
-  return (
-    <div className="editor relative" ref={menuContainerRef}>
-      {isEditingActivity && editor && (
-        <MenuBar editor={editor} onCloseEditor={handleCloseEditor} />
-      )}
-      <EditorContent
-        className={`editor__content${isEditingActivity ? "" : " py-10"}`}
-        editor={editor}
-      />
+  useEffect(() => {
+    if (editor) {
+      editor.setEditable(isEditingActivity);
+    }
+  }, [editor, isEditingActivity]);
 
-      {!isEditingActivity && (
-        <div>
-          <Can action="update" object="lesson">
-            <button
-              className="btn btn-xs px-1 btn-ghost absolute top-4 right-4 tooltip tooltip-left"
-              data-tip="Modifier l'activité"
-            >
-              <Edit className="w-5 h-5" />
-            </button>
-          </Can>
-        </div>
-      )}
-      {isEditingActivity && editor && (
-        <LinkMenu editor={editor} appendTo={menuContainerRef} />
-      )}
-    </div>
+  return (
+    <>
+      {isEditingActivity ? <hr className="border-primary/20 pb-5" /> : null}
+      <div className="editor relative" ref={menuContainerRef}>
+        {editor ? (
+          <MenuBar
+            shouldHide={!isEditingActivity}
+            editor={editor}
+            onCloseEditor={handleCloseEditor}
+            onSave={onSave}
+          />
+        ) : null}
+        <EditorContent
+          className={`editor__content${isEditingActivity ? " cursor-text" : " py-10"}`}
+          onClick={() => editor?.commands.focus()}
+          editor={editor}
+        />
+
+        {!isEditingActivity && (
+          <div>
+            <Can action="update" object="lesson">
+              <button
+                type="button"
+                className="btn btn-ghost absolute top-4 right-4 tooltip tooltip-left"
+                data-tip="Modifier l'activité"
+                onClick={() => setEditingActivity(true)}
+                disabled={disableEditButton}
+              >
+                <Edit className="w-5 h-5" />
+              </button>
+            </Can>
+          </div>
+        )}
+      </div>
+      {editor ? <LinkMenu editor={editor} appendTo={menuContainerRef} /> : null}
+    </>
   );
 }

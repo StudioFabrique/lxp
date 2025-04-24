@@ -2,7 +2,7 @@ import { Dispatch, FC, SetStateAction, useMemo } from "react";
 import Module from "../../../utils/interfaces/module";
 import { getMonth } from "../../../utils/dates";
 import { ArrowRightCircle } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const ContenuItem: FC<{
   module: Module;
@@ -18,10 +18,13 @@ const ContenuItem: FC<{
     [module.minDate],
   );
 
+  const navigate = useNavigate();
+
   return (
     <div
       className="flex gap-x-4 items-center"
       onClick={() => setSelectedModule(module)}
+      onDoubleClick={() => navigate(`../module/${module.id}`)}
     >
       <div className="flex flex-col items-center justify-center bg-secondary text-secondary-content p-4 w-24 h-full rounded-lg">
         <p className="font-bold text-2xl">{minDate.day}</p>

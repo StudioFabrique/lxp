@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
-import Activity from "../../../../utils/interfaces/activity";
+import type { Activity } from "../../../../utils/interfaces/activity";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
 import BlogForm from "./blog-form";
 import useCreateBlog from "./use-create-blog";

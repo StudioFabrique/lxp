@@ -1,25 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import "./video-style.css";
 import { useEffect, useState } from "react";
-import Activity, { Resource } from "../../../utils/interfaces/activity";
+import type { Activity, Resource } from "../../../utils/interfaces/activity";
 import { ACTIVITIES, ACTIVITIES_VIDEOS } from "../../../config/urls";
 import BaseReactPlayer from "react-player";
 import TipTapActivity from "../writing/tip-tap-activity";
 import { File } from "lucide-react";
-// import Wrapper from "../../UI/wrapper/wrapper.component";
-// import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
-// import { Edit3, File } from "lucide-react";
-// import { Link } from "react-router-dom";
-// import Can from "../../UI/can/can.component";
 
 type ActivityProps = {
   lessonId: number;
   activity: Activity;
+  isAnyActivityBeingEdited?: boolean;
+  onActivityEditChange?: (isEditing: boolean) => void;
 };
 
 /* const md = markdownit(); */
 
-const ActivityPreview = ({ lessonId, activity }: ActivityProps) => {
+const ActivityPreview = ({
+  lessonId,
+  activity,
+  isAnyActivityBeingEdited = false,
+  onActivityEditChange,
+}: ActivityProps) => {
   const [value, setValue] = useState<string>("");
   const [url, setUrl] = useState("");
 
@@ -56,7 +58,7 @@ const ActivityPreview = ({ lessonId, activity }: ActivityProps) => {
   useEffect(() => {
     if (activity && activity !== undefined) {
       fetch(`${ACTIVITIES}${activity.url}`)
-        .then((response: any) => response.text())
+        .then((response) => response.text())
         //.then((text) => md.render(text))
         .then((mdContent: string) => {
           setValue(mdContent);
@@ -70,7 +72,18 @@ const ActivityPreview = ({ lessonId, activity }: ActivityProps) => {
         // <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 max-w-[92%]">
         //   {value}
         // </Markdown>
-        value ? <TipTapActivity lessonId={lessonId} value={value} /> : null,
+        value ? (
+          <TipTapActivity
+            lessonId={lessonId}
+            activity={{
+              id: activity.id,
+              title: activity.title,
+              content: value,
+            }}
+            isAnyActivityBeingEdited={isAnyActivityBeingEdited}
+            onActivityEditChange={onActivityEditChange}
+          />
+        ) : null,
       video: (
         <div className="flex flex-col gap-2">
           <h3 className="text-base-content font-bold text-2xl">Vidéo</h3>
@@ -79,7 +92,7 @@ const ActivityPreview = ({ lessonId, activity }: ActivityProps) => {
       ),
       image: (
         <div className="flex flex-col gap-2">
-          <img src={`${ACTIVITIES}images/${activity.url}`} alt="Image" />
+          <img src={`${ACTIVITIES}images/${activity.url}`} alt="activity" />
         </div>
       ),
       resource: (
@@ -94,6 +107,7 @@ const ActivityPreview = ({ lessonId, activity }: ActivityProps) => {
                   href={pdf.url}
                   className="btn btn-primary text-base-100 flex items-center gap-2"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   <File />
                   <span>{pdf.label}</span>

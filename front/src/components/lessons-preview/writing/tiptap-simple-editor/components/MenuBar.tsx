@@ -1,7 +1,7 @@
 import "./MenuBar.scss";
 import type { Editor } from "@tiptap/react";
 
-import { Fragment, memo, useRef } from "react";
+import { Fragment, memo, useRef, useState, useEffect, useMemo } from "react";
 
 import MenuItem from "./MenuItem.jsx";
 import { ContentTypePicker } from "./dropdowns/ContentTypePicker.js";
@@ -22,7 +22,9 @@ import { EditYoutubeLinkPopover } from "./EditYoutubeLinkPopover.js";
 
 type MenuBarProps = {
   editor: Editor;
+  shouldHide?: boolean;
   onCloseEditor: () => void;
+  onSave?: () => void;
 };
 
 const MemoButton = memo(Toolbar.Button);
@@ -31,7 +33,55 @@ const MemoColorPicker = memo(ColorPicker);
 const MemoFontFamilyPicker = memo(FontFamilyPicker);
 // const MemoFontSizePicker = memo(FontSizePicker);
 
-export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
+export default function MenuBar({
+  editor,
+  shouldHide = false,
+  onCloseEditor,
+  onSave,
+}: MenuBarProps) {
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const toolbarPositionRef = useRef<{ top: number; left: number } | null>(null);
+  const [scrollY, setScrollY] = useState(0);
+
+  // Initialize toolbar position ref
+  useEffect(() => {
+    if (toolbarRef.current && !toolbarPositionRef.current) {
+      const rect = toolbarRef.current.getBoundingClientRect();
+      toolbarPositionRef.current = {
+        top: rect.top + window.scrollY,
+        left: rect.left + window.scrollX,
+      };
+    }
+  }, []);
+
+  // Set up scroll and resize event listeners
+  useEffect(() => {
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrollY(window.scrollY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // Calculate if toolbar should be fixed using useMemo
+  const isToolbarFixed = useMemo(() => {
+    if (!toolbarPositionRef.current) return false;
+
+    const originalTop = toolbarPositionRef.current.top;
+    return scrollY > originalTop - 10;
+  }, [scrollY]);
+
   const inputFileRef = useRef<HTMLInputElement>(null);
   const { menuContentOptions, isImageUploadPending } = useMenuContentTypes(
     editor,
@@ -45,7 +95,11 @@ export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
   const states = useTextmenuStates(editor);
 
   return (
-    <Toolbar.Wrapper className="h-fit flex justify-between px-2">
+    <Toolbar.Wrapper
+      ref={toolbarRef}
+      hidden={shouldHide}
+      className={`h-fit w-fit self-center ${isToolbarFixed ? "fixed top-2 z-50" : "relative"} flex justify-between px-2`}
+    >
       <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus" />
       <EditLinkPopover onSetLink={commands.onLink} />
       <EditYoutubeLinkPopover onSetLink={commands.onYoutubeLink} />
@@ -101,8 +155,8 @@ export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
           </Surface>
         </Popover.Content>
       </Popover.Root>
-      {items(editor).map((item, index) => (
-        <Fragment key={index}>
+      {items(editor).map((item) => (
+        <Fragment key={item.title || `divider-${Math.random()}`}>
           {item.type === "divider" ? (
             <span className="divider" />
           ) : (
@@ -110,6 +164,15 @@ export default function MenuBar({ editor, onCloseEditor }: MenuBarProps) {
           )}
         </Fragment>
       ))}
+
+      {onSave ? (
+        <MenuItem
+          icon="save-line"
+          title="Enregistrer"
+          action={onSave}
+          disabled={!editor.getText().trim()}
+        />
+      ) : null}
 
       <MenuItem
         icon="close-large-line"

@@ -1,7 +1,8 @@
 // Imports des hooks React et des dépendances nécessaires
 import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../../../../hooks/use-http";
-import Activity, {
+import type {
+  Activity,
   Resource as ActivityResource,
 } from "../../../../../utils/interfaces/activity";
 import { useDragAndDrop } from "../../../../../hooks/useDragAndDrop";
@@ -51,8 +52,8 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
         // Met à jour la ressource dans la liste locale
         setResources((prevState) =>
           prevState.map((resource) =>
-            resource.id === data.data.id ? data.data : resource
-          )
+            resource.id === data.data.id ? data.data : resource,
+          ),
         );
       }
       setIsUpdating(null);
@@ -65,7 +66,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
         method: "put",
         body: { label: value },
       },
-      applyData
+      applyData,
     );
   };
 
@@ -87,7 +88,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
           method: "put",
           body: resources.map((resource) => resource.id),
         },
-        applyData
+        applyData,
       );
     }, 1000);
   }, [sendRequest, resources, activity.id]);
@@ -153,7 +154,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
         onChangeValue("name", "");
       } else {
         toast.error(
-          "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX"
+          "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX",
         );
         return;
       }
@@ -208,7 +209,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
         },
         body: formData,
       },
-      applyData
+      applyData,
     );
   };
 
@@ -227,7 +228,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
    */
   const handleRemoveFromUploadList = (indexToRemove: number) => {
     setUploadList((prevState) =>
-      prevState.filter((_, index) => index !== indexToRemove)
+      prevState.filter((_, index) => index !== indexToRemove),
     );
   };
 
@@ -256,12 +257,12 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
         if (data.success) toast.success(data.message);
         setIsDeleting(null);
         setResources((prevState) =>
-          prevState.filter((resource) => resource.id !== isDeleting)
+          prevState.filter((resource) => resource.id !== isDeleting),
         );
       };
       sendRequest(
         { path: `/activity/resource/${isDeleting}`, method: "delete" },
-        applyData
+        applyData,
       );
     }
   };
@@ -275,7 +276,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
       name: string;
       file: File;
       hasError: boolean;
-    }[]
+    }[],
   ) => {
     setUploadList(newList);
   };

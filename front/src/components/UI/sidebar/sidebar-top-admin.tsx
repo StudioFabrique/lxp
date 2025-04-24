@@ -24,7 +24,7 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
   useEffect(() => {
     const checkScreenHeight = () => {
       const screenHeight = window.innerHeight;
-      setShowAll(screenHeight > 900);
+      setShowAll(screenHeight > 850);
     };
 
     checkScreenHeight();
@@ -38,11 +38,11 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
     <Module key="module" currentRoute={currentRoute} />,
     <Course key="course" currentRoute={currentRoute} />,
     <Lesson key="lesson" currentRoute={currentRoute} />,
-    <User key="user" currentRoute={currentRoute} />,
-    <Group key="group" currentRoute={currentRoute} />,
   ];
 
-  const moreItems = [
+  const moreItems = (showAll?: boolean) => [
+    <User preventHovering={showAll} key="user" currentRoute={currentRoute} />,
+    <Group preventHovering={showAll} key="group" currentRoute={currentRoute} />,
     <Roles key="roles" currentRoute={currentRoute} />,
     <Tags key="tags" currentRoute={currentRoute} />,
     <Mediatheque key="mediatheque" currentRoute={currentRoute} />,
@@ -52,7 +52,7 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
     <ul className={`flex flex-col gap-6 items-center`}>
       <Home key="home" currentRoute={currentRoute} />
       {showAll ? (
-        [...initialItems, ...moreItems]
+        [...initialItems, ...moreItems(false)]
       ) : (
         <>
           {initialItems}
@@ -64,7 +64,7 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
               <Plus />
 
               <MotionSidebarWrapper isHover={isHover}>
-                {moreItems}
+                {moreItems(true)}
               </MotionSidebarWrapper>
             </div>
           </li>
