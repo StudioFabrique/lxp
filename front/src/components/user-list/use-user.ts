@@ -148,8 +148,8 @@ const useUser = () => {
       if (
         user?.permissions &&
         hasPermission(user?.permissions, "update", updatedRoles[0].role) &&
-        updatedRoles[0].rank >= user!.roles[0].rank &&
-        updatedRoles[0].rank === selectedUser!.roles[0].rank &&
+        ((user!.roles[0].rank > 2 && updatedRoles[0].rank > 2) ||
+          (user!.roles[0].rank <= 2 && updatedRoles[0].rank <= 2)) &&
         updatedRoles.length > 0
       ) {
         updatedDataList.push(selectedUser._id);
