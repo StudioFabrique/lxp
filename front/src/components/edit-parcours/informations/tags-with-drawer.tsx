@@ -17,6 +17,7 @@ import { HelpCircle } from "lucide-react";
 interface TagsWithDrawerProps {
   loading: boolean;
   onSubmit: (items: any[]) => void;
+  tags: Tag[];
 }
 
 /**
@@ -26,12 +27,12 @@ interface TagsWithDrawerProps {
  */
 const TagsWithDrawer = (props: TagsWithDrawerProps) => {
   // Récupération des données du state Redux
-  const formation = useSelector((state: any) => state.parcours.formation);
+  //const parent = useSelector((state: any) => state.parcours.formation);
   const currentTags = useSelector(
-    (state: any) => state.tags.currentTags,
+    (state: any) => state.tags.currentTags
   ) as Tag[];
   const initialTags = useSelector(
-    (state: any) => state.tags.initialTags,
+    (state: any) => state.tags.initialTags
   ) as Tag[];
   const dispatch = useDispatch();
 
@@ -39,7 +40,7 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
   const [submit, setSubmit] = useState<boolean>(false);
   const isInitialRender = useRef(true);
   const { sendRequest } = useHttp();
-  const [formationTags, setFormationTags] = useState<Tag[]>([]);
+  const [parentTags] = useState<Tag[]>(props.tags);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredTags, setFilteredTags] = useState<Tag[]>([]);
 
@@ -52,7 +53,7 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
       dispatch(tagsAction.setCurrentTags(tags));
       setSubmit(true);
     },
-    [dispatch],
+    [dispatch]
   );
 
   /**
@@ -82,7 +83,7 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
         {
           path: "/tag",
         },
-        processData,
+        processData
       );
     }
   }, [dispatch, sendRequest]);
@@ -91,11 +92,11 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
    * Effect pour mettre à jour les tags de la formation
    * quand la formation change
    */
-  useEffect(() => {
-    if (formation) {
-      setFormationTags(formation.tags.map((item: any) => item.tag));
+  /*  useEffect(() => {
+    if (parent) {
+      setParentTags(parent.tags.map((item: any) => item.tag));
     }
-  }, [formation]);
+  }, [formation]);*/
 
   /**
    * Effect pour filtrer les tags en fonction du terme de recherche
@@ -104,8 +105,8 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
     if (searchTerm.length > 0)
       setFilteredTags(
         initialTags?.filter((item) =>
-          item.name.toLocaleLowerCase().includes(searchTerm.toLowerCase()),
-        ),
+          item.name.toLocaleLowerCase().includes(searchTerm.toLowerCase())
+        )
       );
     else setFilteredTags(initialTags);
   }, [searchTerm, initialTags]);
@@ -122,7 +123,7 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
           drawerTitle="Ajouter des Tags"
           title="Tags"
           loading={props.loading}
-          initialList={formationTags}
+          initialList={parentTags}
           selectedItems={currentTags}
           property="name"
           onSubmit={handleUpdateTags}
@@ -141,7 +142,7 @@ const TagsWithDrawer = (props: TagsWithDrawerProps) => {
         <span className="flex flex-col items-start justify-end gap-x-8 gap-y-2 h-fit mt-4">
           <InheritedItems
             drawerId="all-tags"
-            buttonLabel="Liste des tous les tags dispnibles"
+            buttonLabel="Liste des tous les tags disponibles"
             drawerTitle="Ajouter des Tags"
             loading={props.loading}
             initialList={filteredTags}
