@@ -7,6 +7,7 @@ import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.co
 import CustomCourse from "./interfaces/custom-course";
 import TableRowWrapper from "../UI/table-row-wrapper";
 import ElementNotFound from "../UI/element-not-found";
+import TableWrapper from "../UI/table-wrapper";
 
 interface CourseTableProps {
   coursesList: CustomCourse[];
@@ -55,7 +56,7 @@ export default function CourseTable({
                   )}
                 </div>
               </td>
-              <td className="flex items-center gap-x-2 rounded-r-lg">
+              <td className="flex items-center gap-x-2 justify-around rounded-r-lg">
                 <div
                   className="tooltip tooltip-bottom"
                   data-tip="Modifier le cours."
@@ -94,7 +95,7 @@ export default function CourseTable({
       {children}
       {coursesList && coursesList.length > 0 ? (
         <div className="w-full">
-          <TableRowWrapper>
+          <TableWrapper>
             <thead>
               <tr className="text-xs xl:text-sm">
                 <th
@@ -221,7 +222,7 @@ export default function CourseTable({
               </tr>
             </thead>
             <tbody>{content}</tbody>
-          </TableRowWrapper>
+          </TableWrapper>
         </div>
       ) : (
         <ElementNotFound message="Aucun cours trouvé." />

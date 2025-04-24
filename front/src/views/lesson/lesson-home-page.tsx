@@ -4,10 +4,11 @@ import useHttp from "../../hooks/use-http";
 import LessonHome from "../../components/lesson-home/lesson-home";
 import toast from "react-hot-toast";
 import Modal from "../../components/UI/modal/modal";
-import Header from "../../components/UI/header";
-import { PlusCircle } from "lucide-react";
-import { Link } from "react-router-dom";
 import Lesson from "../../utils/interfaces/lesson";
+import ListHeader from "../../components/UI/list-header";
+import LessonHeader from "../../components/lesson-home/lesson-header";
+import ElementNotFound from "../../components/UI/element-not-found";
+import Wrapper from "../../components/UI/wrapper/wrapper.component";
 
 /**
  * Page principale de gestion des leçons
@@ -81,47 +82,39 @@ export default function LessonHomePage() {
   }, [error, lessonToDelete]);
 
   return (
-    <main className="w-full flex flex-col items-center py-8 gap-8">
-      {/* En-tête de la page */}
-      <section className="w-5/6 flex flex-col items-center">
-        <Header
-          title="Liste des leçons"
-          description="Gérer toutes les leçons qui  vous sont attribuées."
-        >
-          {/* Bouton de création de leçon */}
-          <section className="w-5/6 flex justify-end">
-            <Link className="btn btn-primary" to="add">
-              <PlusCircle /> Créer une leçon
-            </Link>
-          </section>
-        </Header>
-      </section>
+    <main className="min-h-screen w-full flex justify-center">
+      <ListHeader>
+        {/* En-tête de la page */}
+        <LessonHeader />
 
-      {/* Liste des leçons */}
-      <section className="w-full flex justify-center">
-        {lessonsList && lessonsList.length > 0 ? (
-          <LessonHome lessonsList={lessonsList} onDelete={setDeletion} />
-        ) : (
-          <p className="w-5/6 text-primary">Aucune leçon trouvée.</p>
-        )}
-      </section>
+        {/* Liste des leçons */}
+        <section className="w-full">
+          {lessonsList && lessonsList.length > 0 ? (
+            <Wrapper>
+              <LessonHome lessonsList={lessonsList} onDelete={setDeletion} />
+            </Wrapper>
+          ) : (
+            <ElementNotFound message={"Aucune leçon trouvée."} />
+          )}
+        </section>
 
-      {/* Modal de confirmation de suppression */}
-      <section>
-        {lessonToDelete ? (
-          <Modal
-            onLeftClick={() => setLessonToDelete(null)}
-            onRightClick={handleDeleteLesson}
-            title="Supprimer une leçon"
-            isSubmitting={isLoading}
-            leftLabel="Annuler"
-            rightLabel="Confirmer"
-          >
-            Attention la leçon et les ressources qui lui sont associées seront
-            définitivement supprimées.
-          </Modal>
-        ) : null}
-      </section>
+        {/* Modal de confirmation de suppression */}
+        <section>
+          {lessonToDelete ? (
+            <Modal
+              onLeftClick={() => setLessonToDelete(null)}
+              onRightClick={handleDeleteLesson}
+              title="Supprimer une leçon"
+              isSubmitting={isLoading}
+              leftLabel="Annuler"
+              rightLabel="Confirmer"
+            >
+              Attention la leçon et les ressources qui lui sont associées seront
+              définitivement supprimées.
+            </Modal>
+          ) : null}
+        </section>
+      </ListHeader>
     </main>
   );
 }
