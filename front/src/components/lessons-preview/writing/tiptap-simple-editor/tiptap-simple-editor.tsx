@@ -15,7 +15,12 @@ import Link from "@tiptap/extension-link";
 import Youtube from "@tiptap/extension-youtube";
 import { all, createLowlight } from "lowlight";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import { type Editor, EditorContent, useEditor } from "@tiptap/react";
+import {
+  type Editor,
+  EditorContent,
+  ReactNodeViewRenderer,
+  useEditor,
+} from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import "./index.scss";
 import "highlight.js/styles/github.css";
@@ -25,6 +30,7 @@ import { type Dispatch, type SetStateAction, useEffect, useRef } from "react";
 import { LinkMenu } from "./components/LinkMenu";
 import Can from "../../../UI/can/can.component";
 import { Edit } from "lucide-react";
+import CodeBlockWithCopy from "./extensions/CodeBlockWithCopy/CodeBlockWithCopy";
 
 const lowlight = createLowlight(all);
 
@@ -70,10 +76,11 @@ export default function TiptapSimpleEditor({
         //   class: "my-custom-class",
         // },
       }),
-      CodeBlockLowlight.configure({
-        lowlight,
-        defaultLanguage: "bash",
-      }),
+      CodeBlockLowlight.extend({
+        addNodeView() {
+          return ReactNodeViewRenderer(CodeBlockWithCopy);
+        },
+      }).configure({ lowlight }),
       TableRow,
       TableHeader,
       TableCell,
