@@ -23,7 +23,7 @@ const LayoutCourseEdit = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const course = useSelector(
-    (state: any) => state.courseInfos.course,
+    (state: any) => state.courseInfos.course
   ) as Course;
 
   /**
@@ -36,17 +36,16 @@ const LayoutCourseEdit = () => {
       const loadedCourse = formatCourseFromHttp(data);
       dispatch(courseInfosAction.setCourse(loadedCourse));
       dispatch(
-        tagsAction.setCurrentTags(
-          data.tags.map((tag: { tag: Tag }) => tag.tag),
-        ),
+        tagsAction.setCurrentTags(data.tags.map((tag: { tag: Tag }) => tag.tag))
       );
+      dispatch(tagsAction.setParentTags(loadedCourse.module.parcours.tags));
     };
     setLoading(true);
     sendRequest(
       {
         path: `/course/infos/${courseId}`,
       },
-      applyData,
+      applyData
     );
     return () => {
       dispatch(courseInfosAction.resetCourse());
