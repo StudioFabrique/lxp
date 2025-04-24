@@ -21,7 +21,7 @@ import useForm from "../UI/forms/hooks/use-form";
 // Import des utilitaires et interfaces
 import { activiteMetaDataSchema } from "../../lib/validation/lesson/activite-video";
 import { validationErrors } from "../../helpers/validate";
-import Activity from "../../utils/interfaces/activity";
+import type { Activity } from "../../utils/interfaces/activity";
 import TurndownService from "turndown";
 
 // Définition des props du composant Editor
@@ -88,7 +88,7 @@ export const Editor = ({ activity, content, onCancel }: EditorProps) => {
             title: values.title,
           },
         },
-        applyData
+        applyData,
       );
     } catch (error) {
       if (error instanceof ZodError) {

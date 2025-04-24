@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { lessonActions } from "../../store/redux-toolkit/lesson/lesson";
-import Activity from "../../utils/interfaces/activity";
+import type { Activity } from "../../utils/interfaces/activity";
 
 interface ActionsBtnsGroupProps {
   activity: Activity;

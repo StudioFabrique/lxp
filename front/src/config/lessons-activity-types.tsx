@@ -11,7 +11,7 @@ import PictureIcon from "../components/UI/svg/picture-icon";
 //import DegreeIcon from "../components/UI/svg/degree-icon";
 import UploadIcon from "../components/UI/svg/upload-icon.component";
 //import AddFolder from "../components/UI/svg/add-folder-icon";
-import ActivityType from "../utils/interfaces/activity-type";
+import type ActivityType from "../utils/interfaces/activity-type";
 
 const activityTypes: ActivityType[] = [
   {

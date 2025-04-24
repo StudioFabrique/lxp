@@ -1,7 +1,7 @@
-import Activity from "./activity";
-import Course from "./course";
-import LessonRead from "./lesson-read";
-import Tag from "./tag";
+import type Activity from "./activity";
+import type Course from "./course";
+import type LessonRead from "./lesson-read";
+import type Tag from "./tag";
 
 export default interface Lesson {
   id?: number;
