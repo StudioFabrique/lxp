@@ -6,6 +6,8 @@ import Can from "../../UI/can/can.component";
 import NoActivityPlaceholder from "./no-activity-placeholder";
 import ActivityCreationOptionsButtons from "../writing/activity-creation-options-buttons";
 import TipTapActivityWriting from "../writing/tip-tap-activity";
+import { Link } from "react-router-dom";
+import { LayoutGrid } from "lucide-react";
 
 type PreviewLessonProps = {
   selectedLesson: Lesson;
@@ -44,6 +46,15 @@ const LessonReader = ({
         <h1 className="text-2xl font-bold text-primary">
           {selectedLesson.title}
         </h1>
+        <Can action="update" object="lesson">
+          <Link
+            to={`/admin/lesson/edit/${selectedLesson.id}`}
+            className="btn btn-ghost top-4 right-4 tooltip tooltip-left"
+            data-tip="Réorganiser/Supprimer des activités"
+          >
+            <LayoutGrid className="w-5 h-5" />
+          </Link>
+        </Can>
         {/* Bouton de notation */}
         {currentLessonRating && lessonHasActivities ? (
           <RatingPanelButton
