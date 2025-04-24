@@ -77,7 +77,7 @@ const ModuleTable = ({
                 <td className="bg-transparent">
                   {localeDate(item.updatedAt!)}
                 </td>
-                <td className="bg-transparent flex items-center gap-x-2 rounded-r-lg">
+                <td className="bg-transparent flex items-center justify-around gap-x-2 rounded-r-lg">
                   <div className="w-6 h-6">
                     <Can action="read" object="module">
                       <div>
@@ -239,7 +239,7 @@ const ModuleTable = ({
                   onSorting("updatedAt");
                 }}
               >
-                <div className="flex items-center gap-x-2">
+                <div className="flex items-center justify-around gap-x-2">
                   <p>Dernière màj</p>
                   <SortColumnIcon
                     fieldSort={fieldSort}
