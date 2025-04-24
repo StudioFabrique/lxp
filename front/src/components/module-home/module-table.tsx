@@ -9,6 +9,7 @@ import { truncateText } from "../../helpers/truncate-text";
 import { Eye } from "lucide-react";
 import TableRowWrapper from "../UI/table-row-wrapper";
 import React from "react";
+import TableWrapper from "../UI/table-wrapper";
 
 interface ModuleTableProps {
   modulesList: any[];
@@ -74,8 +75,8 @@ const ModuleTable = ({
                 </td>
                 <td className="bg-transparent">
                   {localeDate(item.updatedAt!)}
-                </td>{" "}
-                <td className="bg-transparent">
+                </td>
+                <td className="bg-transparent flex items-center gap-x-2 rounded-r-lg">
                   <div className="w-6 h-6">
                     <Can action="read" object="module">
                       <div>
@@ -100,8 +101,6 @@ const ModuleTable = ({
                       </div>
                     </Can>
                   </div>
-                </td>
-                <td className="bg-transparent">
                   <div className="w-6 h-6">
                     <Can action="update" object="module">
                       <div>
@@ -126,8 +125,6 @@ const ModuleTable = ({
                       </div>
                     </Can>
                   </div>
-                </td>
-                <td className="bg-transparent rounded-r-lg">
                   <div
                     className="w-6 h-6 text-error"
                     aria-label="suppression du module"
@@ -157,9 +154,9 @@ const ModuleTable = ({
   return (
     <div className="w-full min-h-[50%] flex justify-center items-center text-xs lg:text-sm">
       {modulesList && modulesList.length > 0 ? (
-        <table className="table w-full border-separate border-spacing-y-2">
+        <TableWrapper>
           <thead>
-            <tr>
+            <tr className="text-xs xl:text-sm">
               <th
                 className="cursor-pointer"
                 onClick={() => {
@@ -250,11 +247,10 @@ const ModuleTable = ({
                   />
                 </div>
               </th>
-              <th></th>
             </tr>
           </thead>
           <tbody>{content}</tbody>
-        </table>
+        </TableWrapper>
       ) : (
         <p>Aucun parcours trouvé</p>
       )}
