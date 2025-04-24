@@ -41,12 +41,10 @@ const CourseInfos = () => {
   const currentContacts = useSelector(
     (state: any) => state.courseInfos.course.contacts
   ) as Contact[];
-  const tags = useSelector(
-    (state: any) => state.courseInfos.course.module.parcours.tags
-  ) as Tag[];
   const currentTags = useSelector(
-    (state: any) => state.courseInfos.course.tags
+    (state: any) => state.tags.currentTags
   ) as Tag[];
+  const tags = useSelector((state: any) => state.tags.parentTags) as Tag[];
   const visibility = useSelector(
     (state: any) => state.courseInfos.course.visibility
   ) as boolean;
@@ -57,6 +55,8 @@ const CourseInfos = () => {
   const [submitTags, setSubmitTags] = useState<boolean>(false);
   const [submitContacts, setSubmitContacts] = useState<boolean>(false);
   const [submitVirtualClass, setSubmitVirtualClass] = useState<boolean>(false);
+
+  console.log("TAGS :", currentTags);
 
   /**
    * récupère la liste des tags du composant enfant
@@ -212,7 +212,11 @@ const CourseInfos = () => {
             />
           </Wrapper>
           <Wrapper>
-            <CourseTags onSubmit={handleUpdateTags} loading={loadingTags} />
+            <CourseTags
+              onSubmit={handleUpdateTags}
+              loading={loadingTags}
+              tags={tags}
+            />
           </Wrapper>
         </div>
       </div>

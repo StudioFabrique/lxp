@@ -8,6 +8,7 @@ const initialTagsState = {
   notSelectedTags: Array<Tag>(),
   filteredItems: Array<Tag>(),
   initialTags: Array<Tag>(),
+  parentTags: Array<Tag>(),
 };
 
 const tagsSlice = createSlice({
@@ -15,10 +16,15 @@ const tagsSlice = createSlice({
   initialState: initialTagsState,
   reducers: {
     initTags(state, action) {
+      console.log("INIT TAGS :", action.payload);
+
       state.initialTags = action.payload;
     },
     setCurrentTags(state, action) {
       state.currentTags = sortArray(action.payload, "name");
+    },
+    setParentTags(state, action) {
+      state.parentTags = action.payload;
     },
     setNotSelectedTags(state) {
       const currentTags = state.currentTags;
@@ -67,6 +73,7 @@ const tagsSlice = createSlice({
       state.notSelectedTags = [];
       state.filteredItems = [];
       state.initialTags = [];
+      state.parentTags = [];
     },
   },
 });
