@@ -1,7 +1,7 @@
 // Import des dépendances nécessaires
 
 import { ACTIVITIES } from "../../../../config/urls";
-import Activity from "../../../../utils/interfaces/activity";
+import type { Activity } from "../../../../utils/interfaces/activity";
 import ImageActivityEditor from "./image-activity-editor";
 
 // Définition des props du composant
@@ -28,7 +28,12 @@ export default function ImageActivityPreview({
         <ImageActivityEditor activity={activity} onCancel={onSubmitted} />
       ) : (
         // Mode affichage: affiche l'image depuis le serveur
-        <div className="w-full flex justify-center"><img className="w-96 h-auto rounded-lg shadow-lg border border-primary/50" src={`${ACTIVITIES}images/${activity.url}`} /></div>
+        <div className="w-full flex justify-center">
+          <img
+            className="w-96 h-auto rounded-lg shadow-lg border border-primary/50"
+            src={`${ACTIVITIES}images/${activity.url}`}
+          />
+        </div>
       )}
     </>
   );

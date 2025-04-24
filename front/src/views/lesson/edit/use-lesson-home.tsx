@@ -3,8 +3,8 @@ import { useState, useCallback, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import useHttp from "../../../hooks/use-http";
-import Activity from "../../../utils/interfaces/activity";
-import Lesson from "../../../utils/interfaces/lesson";
+import type { Activity } from "../../../utils/interfaces/activity";
+import type Lesson from "../../../utils/interfaces/lesson";
 import { useSearchParams } from "react-router-dom";
 
 /**

@@ -17,7 +17,7 @@ import {
   DropResult,
 } from "react-beautiful-dnd";
 import ActivityListItem from "./activity-list-item";
-import Activity from "../../../utils/interfaces/activity";
+import type { Activity } from "../../../utils/interfaces/activity";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import Modal from "../../UI/modal/modal";
 
@@ -31,7 +31,7 @@ type Props = {
 export default function DNDAcitivities(props: Props) {
   const [submit, setSubmit] = useState(false);
   const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
-    null
+    null,
   );
 
   const handleReorder = useCallback(() => {

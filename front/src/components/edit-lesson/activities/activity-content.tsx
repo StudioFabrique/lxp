@@ -1,4 +1,4 @@
-import Activity from "../../../utils/interfaces/activity";
+import type { Activity } from "../../../utils/interfaces/activity";
 import BlogUpdate from "./blog-update";
 import ImageActivityPreview from "./image/image-activity-preview";
 import ResourcePreview from "./resources/preview/resource-preview";

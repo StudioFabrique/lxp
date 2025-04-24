@@ -2,7 +2,7 @@
 
 // Import des dépendances nécessaires
 import useHttp from "../../../hooks/use-http";
-import Activity from "../../../utils/interfaces/activity";
+import type { Activity } from "../../../utils/interfaces/activity";
 import { useParams } from "react-router-dom";
 import VideoEditor from "./video-editor";
 import toast from "react-hot-toast";
@@ -56,7 +56,7 @@ export default function Video({ activity, onCancel, isEditing }: VideoProps) {
           title: value.title,
           description: value.description,
           url: value.fileValue ? "" : value.videoValue,
-        })
+        }),
       );
 
       // Ajout du fichier vidéo si présent
@@ -75,10 +75,10 @@ export default function Video({ activity, onCancel, isEditing }: VideoProps) {
           method: activity ? "put" : "post", // PUT si modification, POST si création
           body: fd,
         },
-        applyData
+        applyData,
       );
     },
-    [activity, lessonId, onCancel, sendRequest]
+    [activity, lessonId, onCancel, sendRequest],
   );
 
   // Fonction pour rendre le contenu approprié selon le contexte

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import toast from "react-hot-toast";
 import { activiteMetaDataSchema } from "../../../../lib/validation/lesson/activite-video";
-import Activity from "../../../../utils/interfaces/activity";
+import type { Activity } from "../../../../utils/interfaces/activity";
 import useForm from "../../../UI/forms/hooks/use-form";
 import useHttp from "../../../../hooks/use-http";
 import { ZodError } from "zod";
@@ -11,7 +11,7 @@ import { useEffect } from "react";
 const useCreateBlog = (
   lessonId: string,
   activity: Activity | null,
-  onCancel: () => void
+  onCancel: () => void,
 ) => {
   // Hook de formulaire personnalisé pour la gestion des champs
   const { errors, values, onChangeValue, onValidationErrors, initValues } =
@@ -38,7 +38,7 @@ const useCreateBlog = (
             title: values.title,
           },
         },
-        applyData
+        applyData,
       );
     } catch (error) {
       if (error instanceof ZodError) {

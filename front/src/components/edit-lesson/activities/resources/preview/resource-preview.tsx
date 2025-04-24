@@ -1,6 +1,6 @@
 // Import des dépendances nécessaires
 import { PlusCircle } from "lucide-react";
-import Activity from "../../../../../utils/interfaces/activity";
+import type { Activity } from "../../../../../utils/interfaces/activity";
 import { DndWrapper } from "../../../../UI/DndWrapper";
 import ResourceItem from "./resource-item";
 import Modal from "../../../../UI/modal/modal";
@@ -54,8 +54,8 @@ function ResourcePreview({ activity, onCancel }: Props) {
           {isAdding
             ? ""
             : resources && resources.length > 1
-            ? "( Modifier l'ordre des ressources en déplaçant une ressource vers l'endroit souhaité grâce à un glisser/déposer )"
-            : ""}
+              ? "( Modifier l'ordre des ressources en déplaçant une ressource vers l'endroit souhaité grâce à un glisser/déposer )"
+              : ""}
         </p>
         {isAdding ? null : (
           <button

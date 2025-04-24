@@ -5,7 +5,13 @@ import { useState } from "react";
 import MotionSidebarWrapper from "./motion-sidebar-wrapper";
 import GroupIcon from "../../svg/group-icon";
 
-const Group = ({ currentRoute }: { currentRoute: string[] }) => {
+const Group = ({
+  currentRoute,
+  preventHovering,
+}: {
+  currentRoute: string[];
+  preventHovering?: boolean;
+}) => {
   const [isHover, setIsHover] = useState(false);
   const isCurrentPathActive = currentRoute[1] === "group";
 
@@ -34,7 +40,7 @@ const Group = ({ currentRoute }: { currentRoute: string[] }) => {
               </Link>
             </Can>
 
-            <MotionSidebarWrapper isHover={isHover}>
+            <MotionSidebarWrapper isHover={isHover && !preventHovering}>
               <Can action="write" object="group">
                 <Link to={`/${currentRoute[0]}/group/add`}>
                   <div

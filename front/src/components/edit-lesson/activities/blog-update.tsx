@@ -3,7 +3,7 @@
 
 // Import des dépendances nécessaires pour le composant
 import { useEffect, useState } from "react";
-import Activity from "../../../utils/interfaces/activity"; // Interface définissant la structure d'une activité
+import type { Activity } from "../../../utils/interfaces/activity"; // Interface définissant la structure d'une activité
 import toast from "react-hot-toast"; // Notifications toast
 import Wrapper from "../../UI/wrapper/wrapper.component"; // Composant wrapper UI
 import { ACTIVITIES } from "../../../config/urls"; // URLs de l'API

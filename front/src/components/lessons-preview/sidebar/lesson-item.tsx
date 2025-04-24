@@ -32,7 +32,7 @@ const LessonItem = ({
 
   // Gestionnaire pour commencer/arrêter la lecture d'une leçon
   const handleBeginReadLesson = () => {
-    setSelectedLesson(isLessonSelected ? undefined : lesson);
+    if (!isLessonSelected) setSelectedLesson(lesson);
   };
 
   useEffect(() => {

@@ -5,7 +5,13 @@ import { useState } from "react";
 import MotionSidebarWrapper from "./motion-sidebar-wrapper";
 import { UserIcon } from "lucide-react";
 
-const User = ({ currentRoute }: { currentRoute: string[] }) => {
+const User = ({
+  currentRoute,
+  preventHovering,
+}: {
+  currentRoute: string[];
+  preventHovering?: boolean;
+}) => {
   const [isHover, setIsHover] = useState(false);
   const isCurrentPathActive = currentRoute[1] === "user";
 
@@ -32,7 +38,7 @@ const User = ({ currentRoute }: { currentRoute: string[] }) => {
           </Link>
         </Can>
 
-        <MotionSidebarWrapper isHover={isHover}>
+        <MotionSidebarWrapper isHover={isHover && !preventHovering}>
           <Can action="write" object="user">
             <Link to={`/${currentRoute[0]}/user/add`}>
               <div

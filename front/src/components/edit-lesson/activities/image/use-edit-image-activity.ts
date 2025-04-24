@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import useForm from "../../../UI/forms/hooks/use-form";
 import useHttp from "../../../../hooks/use-http";
 import { useParams } from "react-router-dom";
-import Activity from "../../../../utils/interfaces/activity";
+import type { Activity } from "../../../../utils/interfaces/activity";
 import { regexGeneric } from "../../../../utils/constantes";
 import { z, ZodError } from "zod";
 import { validationErrors } from "../../../../helpers/validate";
 import toast from "react-hot-toast";
-import SuccessWithMessage from "../../../../utils/interfaces/success-with-message";
+import type SuccessWithMessage from "../../../../utils/interfaces/success-with-message";
 
 /**
  * Hook personnalisé pour gérer l'édition d'une activité de type image
@@ -17,7 +17,7 @@ import SuccessWithMessage from "../../../../utils/interfaces/success-with-messag
  */
 const useEditImageActivity = (
   activity: Activity | undefined,
-  onCancel: (value: boolean) => void
+  onCancel: (value: boolean) => void,
 ) => {
   // Initialisation du formulaire avec le hook useForm
   const { errors, values, onChangeValue, onValidationErrors, onResetForm } =
@@ -88,7 +88,7 @@ const useEditImageActivity = (
         method: activity ? "put" : "post",
         body: formData,
       },
-      applyData
+      applyData,
     );
   };
 
