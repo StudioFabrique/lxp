@@ -11,6 +11,7 @@ import { truncateText } from "../../helpers/truncate-text";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import React from "react";
 import TableRowWrapper from "../UI/table-row-wrapper";
+import TableWrapper from "../UI/table-wrapper";
 
 interface ParcoursTableProps {
   parcoursList: Parcours[];
@@ -74,7 +75,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                 <td className="bg-transparent truncate">
                   {item.isPublished ? "Publié" : "Brouillon"}
                 </td>
-                <td className="bg-transparent">
+                <td className="bg-transparent flex items-center gap-x-2 rounded-r-lg">
                   <div className="w-6 h-6">
                     <Can action="update" object="parcours">
                       <div
@@ -90,8 +91,6 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                       </div>
                     </Can>
                   </div>
-                </td>
-                <td className="bg-transparent">
                   <div
                     className="w-6 h-6 text-error"
                     aria-label="suppression du parcours"
@@ -110,8 +109,6 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                       </div>
                     </Can>
                   </div>
-                </td>
-                <td className="bg-transparent rounded-r-lg">
                   <div className="w-6 h-6">
                     <Can action="read" object="parcours">
                       <div
@@ -142,9 +139,9 @@ const ParcoursTable = (props: ParcoursTableProps) => {
       {props.children}
       <div className="w-full min-h-[50%] flex justify-center items-center text-xs lg:text-sm">
         {parcoursList && parcoursList.length > 0 ? (
-          <table className="min-w-full table border-separate border-spacing-y-2">
+          <TableWrapper>
             <thead>
-              <tr>
+              <tr className="text-xs xl:text-sm">
                 <th
                   className="cursor-pointer"
                   onClick={() => {
@@ -237,12 +234,10 @@ const ParcoursTable = (props: ParcoursTableProps) => {
                 </th>
                 <th>Etat</th>
                 <th></th>
-                <th></th>
-                <th></th>
               </tr>
             </thead>
             <tbody>{content}</tbody>
-          </table>
+          </TableWrapper>
         ) : (
           <p>Aucun parcours trouvé</p>
         )}

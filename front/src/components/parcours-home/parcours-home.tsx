@@ -1,13 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { parcoursSearchOptions } from "../../config/search-options";
 import Parcours from "../../utils/interfaces/parcours";
-import Can from "../UI/can/can.component";
-import Header from "../UI/header";
 import ParcoursTable from "./parcours-table";
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import Pagination from "../UI/pagination/pagination";
-import { Link } from "react-router-dom";
-import AddIcon from "../UI/svg/add-icon";
 import ParcoursCardsList from "./parcours-cards-list";
 import ToggleList from "../UI/toggle-list";
 import { useEffect, useState } from "react";
@@ -16,6 +12,8 @@ import useHttp from "../../hooks/use-http";
 import toast from "react-hot-toast";
 import Modal from "../UI/modal/modal";
 import SearchAndRefresh from "../UI/search-and-refresh";
+import ParcoursHeader from "./parcours-header";
+import ListHeader from "../UI/list-header";
 
 interface ParcoursListProps {
   onRefreshParcoursList: () => void;
@@ -80,24 +78,8 @@ const ParcoursList = (props: ParcoursListProps) => {
   }, [error]);
 
   return (
-    <main className="w-9/12 flex flex-col items-center px-4 py-8 gap-8">
-      <section className="w-full">
-        <Header
-          title="Liste des parcours"
-          description="Gérer tous les parcours qui vous sont attribués."
-        >
-          <Can action="write" object="parcours">
-            <Link className="btn btn-primary btn-soft" to="créer-un-parcours">
-              <div className="flex gap-x-2 items-center">
-                <div className="w-8 h-8">
-                  <AddIcon />
-                </div>
-                <p>Créer un parcours</p>
-              </div>
-            </Link>
-          </Can>
-        </Header>
-      </section>
+    <ListHeader>
+      <ParcoursHeader />
 
       <section className="w-full flex flex-col gap-y-4">
         <article className="w-full flex justify-end items-center gap-x-4">
@@ -159,7 +141,7 @@ const ParcoursList = (props: ParcoursListProps) => {
           définitivement supprimés.
         </Modal>
       ) : null}
-    </main>
+    </ListHeader>
   );
 };
 
