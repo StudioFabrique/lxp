@@ -1,3 +1,19 @@
+/**
+ * UserHome - A component that displays the users management page
+ *
+ * This component provides a complete user management interface with features like:
+ * - Listing users with filtering by role
+ * - User creation, deletion and status management
+ * - Role assignment and bulk operations
+ * - Pagination and sorting capabilities
+ * - Search functionality
+ * - Sending invitations to users
+ *
+ * @example
+ * ```tsx
+ * <UserHome />
+ * ```
+ */
 import { Link } from "react-router-dom";
 
 import Pagination from "../../components/UI/pagination/pagination";
@@ -12,6 +28,7 @@ import useUser from "../../components/user-list/use-user";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
 
 const UserHome = () => {
+  // Custom hook to handle all user management logic and state
   const {
     user,
     role,
@@ -46,10 +63,12 @@ const UserHome = () => {
   return (
     <main className="w-9/12">
       <section className="w-full h-full flex flex-col items-center py-8 gap-y-8">
+        {/* Page header with title, description and action button */}
         <Header
           title="Liste d'utilisateurs"
           description="Créez, modifiez et supprimez des comptes, assignez des rôles et des permissions, et mettez à jour vos utilisateurs"
         >
+          {/* Permission check - only users with 'write' permission on 'user' can see this button */}
           <Can action="write" object="user">
             <Link
               className="btn btn-primary text-base-100"
@@ -60,10 +79,13 @@ const UserHome = () => {
           </Can>
         </Header>
 
+        {/* Statistics panel showing user counts by status */}
         <UsersListStats stats={stats} />
 
+        {/* Main content wrapper */}
         <Wrapper>
           <div className="w-full">
+            {/* Role-based tabs for filtering users */}
             <UserRolesTabs
               isLoading={isLoading}
               user={user}
@@ -79,6 +101,7 @@ const UserHome = () => {
               onSendManyInvitations={handleManyInvitations}
             >
               <div className="w-full">
+                {/* User listing table with sorting, selection and action capabilities */}
                 <UserList
                   isLoading={isLoading}
                   allChecked={allChecked}
@@ -96,6 +119,7 @@ const UserHome = () => {
                   sendInvitation={sendInvitation}
                   onToggleStatus={updateStatus}
                 />
+                {/* Pagination controls - only shown when there are users to display */}
                 {dataList.length > 0 ? (
                   <Pagination
                     page={page}
@@ -108,6 +132,7 @@ const UserHome = () => {
           </div>
         </Wrapper>
       </section>
+      {/* Error modal - displayed when bulk operations fail */}
       <>
         {showErrorModal ? (
           <Modal
