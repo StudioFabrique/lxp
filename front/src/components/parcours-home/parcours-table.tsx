@@ -12,6 +12,7 @@ import Wrapper from "../UI/wrapper/wrapper.component";
 import React from "react";
 import TableRowWrapper from "../UI/table-row-wrapper";
 import TableWrapper from "../UI/table-wrapper";
+import ElementNotFound from "../UI/element-not-found";
 
 interface ParcoursTableProps {
   parcoursList: Parcours[];
@@ -239,7 +240,7 @@ const ParcoursTable = (props: ParcoursTableProps) => {
             <tbody>{content}</tbody>
           </TableWrapper>
         ) : (
-          <p>Aucun parcours trouvé</p>
+          <ElementNotFound message="Aucun parcours trouvé." />
         )}
       </div>
     </Wrapper>
