@@ -2,16 +2,14 @@
 import { useMemo, useState } from "react";
 import useEagerLoadingList from "../../hooks/use-eager-loading-list";
 import Module from "../../utils/interfaces/module";
-import Header from "../UI/header";
 import ToggleList from "../UI/toggle-list";
 import Pagination from "../UI/pagination/pagination";
 import ModuleTable from "./module-table";
 import ModuleCardList from "./modules-card-list";
 import { stepsParcours } from "../../config/steps/steps-parcours";
-import Can from "../UI/can/can.component";
-import { Link } from "react-router-dom";
-import AddIcon from "../UI/svg/add-icon";
 import Wrapper from "../UI/wrapper/wrapper.component";
+import ListHeader from "../UI/list-header";
+import ModuleHeader from "./module-header";
 
 interface ModuleHomeListProps {
   modulesList: Module[];
@@ -51,24 +49,8 @@ const ModuleHomeList = ({
   };
 
   return (
-    <main className="w-5/6 flex flex-col items-center px-4 py-8 gap-8">
-      <section className="w-full">
-        <Header
-          title="Liste des modules"
-          description="Gérer tous les modules qui sont créés au sein de l'application."
-        >
-          <Can action="write" object="module">
-            <Link className="btn btn-primary" to="add">
-              <div className="flex gap-x-2 items-center">
-                <div className="w-8 h-8">
-                  <AddIcon />
-                </div>
-                <p>Créer un module</p>
-              </div>
-            </Link>
-          </Can>
-        </Header>
-      </section>
+    <ListHeader>
+      <ModuleHeader />
       <section className="w-full flex flex-col gap-y-8">
         <article className="w-full flex justify-end items-center gap-x-4">
           <ToggleList showList={showList} onToggle={setShowList} />
@@ -101,7 +83,7 @@ const ModuleHomeList = ({
           <Pagination page={page} totalPages={totalPages} setPage={setPage} />
         ) : null}
       </section>
-    </main>
+    </ListHeader>
   );
 };
 
