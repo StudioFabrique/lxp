@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC } from "react";
+import { Dispatch, FC } from "react";
 import { Link } from "react-router-dom";
 
 import Can from "../../UI/can/can.component";
 import { AvatarSmall } from "../../UI/avatar/avatar.component";
 import useHttp from "../../../hooks/use-http";
 import UpdateUserStatus from "../../UI/update-user-status/update-user-status.component";
-import ButtonDelete from "../../UI/button-delete/button-delete.component";
-import { CheckCircle, Edit2Icon, ScrollText } from "lucide-react";
+import { CheckCircle, Edit2Icon, ScrollText, Trash2Icon } from "lucide-react";
 import { truncateText } from "../../../helpers/truncate-text";
 import Role from "../../../utils/interfaces/role";
 
@@ -15,7 +14,7 @@ const UserItem: FC<{
   userItem: any;
   role: Role;
   onRowCheck: (id: string) => void;
-  onDelete: (id: string) => void;
+  onDelete: Dispatch<React.SetStateAction<string | null>>;
   isUserDeleteLoading: boolean;
   error?: string;
   sendInvitation: (userId: string) => void;
@@ -24,8 +23,6 @@ const UserItem: FC<{
   role,
   userItem,
   onRowCheck,
-  isUserDeleteLoading,
-  error,
   onDelete,
   sendInvitation,
   onToggleStatus,
@@ -118,7 +115,7 @@ const UserItem: FC<{
           {userItem.roles[0].rank > 2 ? (
             <Can action="read" object={"user"}>
               <Link
-                className="tooltip tooltip-bottom"
+                className="tooltip tooltip-bottom btn btn-circle btn-ghost"
                 data-tip="Voir les informations de l'utilisateur"
                 aria-label="visualiser les informations de l'utilisateur"
                 to={`/admin/teacher/student/${userItem._id}`}
@@ -129,7 +126,7 @@ const UserItem: FC<{
           ) : (
             <Can action="read" object={"user"}>
               <div
-                className="tooltip tooltip-bottom"
+                className="tooltip tooltip-bottom btn btn-circle btn-ghost"
                 data-tip="Voir les informations de l'utilisateur"
                 aria-label="visualiser les informations de l'utilisateur"
               >
@@ -140,7 +137,7 @@ const UserItem: FC<{
           <Can action="update" object="user">
             {/* <Can action="update" object={userItem.roles[0].role}> */}
             <Link
-              className="tooltip tooltip-bottom"
+              className="tooltip tooltip-bottom btn btn-circle btn-ghost"
               data-tip="Mettre à jour les informations de l'utilisateur"
               aria-label="Mettre à jour les informations de l'utilisateur"
               to={`edit/${userItem._id}`}
@@ -151,12 +148,13 @@ const UserItem: FC<{
           </Can>
           <Can action="delete" object="user">
             {/* <Can action="delete" object={userItem.roles[0].role}> */}
-            <ButtonDelete
-              error={error}
-              isLoading={isUserDeleteLoading}
-              userItem={userItem}
-              onDelete={onDelete}
-            />
+            <button
+              className="btn btn-circle btn-ghost"
+              disabled={isLoading}
+              onClick={() => onDelete(userItem._id)}
+            >
+              <Trash2Icon className="w-4 h-4 text-error" />
+            </button>
             {/* </Can> */}
           </Can>
         </div>

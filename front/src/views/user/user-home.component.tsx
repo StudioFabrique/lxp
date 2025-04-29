@@ -41,6 +41,8 @@ const UserHome = () => {
     totalPages,
     updateStatus,
     handleManyInvitations,
+    setUserToDelete,
+    userToDelete,
   } = useUser();
 
   return (
@@ -91,7 +93,7 @@ const UserHome = () => {
                   onUncheckAll={handleUncheckALL}
                   sdir={sdir}
                   stype={stype}
-                  onDelete={handleDeleteUser}
+                  onDelete={setUserToDelete}
                   error={error}
                   sendInvitation={sendInvitation}
                   onToggleStatus={updateStatus}
@@ -116,6 +118,22 @@ const UserHome = () => {
             onRightClick={setErrorModal}
           >
             <p>Un ou plusieurs utilisateurs ne peuvent pas être mis à jour.</p>
+          </Modal>
+        ) : null}
+      </>
+      <>
+        {userToDelete ? (
+          <Modal
+            title="Confirmation de suppression"
+            leftLabel="Annuler"
+            rightLabel="Supprimer"
+            onLeftClick={() => setUserToDelete(null)}
+            onRightClick={handleDeleteUser}
+          >
+            <p>
+              Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action
+              est irréversible.
+            </p>
           </Modal>
         ) : null}
       </>
