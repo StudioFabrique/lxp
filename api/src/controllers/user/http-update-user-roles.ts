@@ -1,26 +1,55 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { badQuery, serverIssue } from "../../utils/constantes";
 import { validationResult } from "express-validator";
 import updateUserRoles from "../../models/user/update-user-roles";
 
-async function httpUpdateUserRoles(req: Request, res: Response) {
+/**
+ * HTTP controller to update roles for multiple users
+ *
+ * This function handles the request to update roles for one or more users.
+ * It validates the incoming request, processes the role updates, and passes
+ * the result to the next middleware.
+ *
+ * @param {Request} req - Express request object containing:
+ *   - body.usersToUpdate - Array of user IDs to update
+ *   - body.rolesId - Array of role IDs to assign to the users
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ *
+ * @returns {void} Calls next middleware with result or error
+ */
+async function httpUpdateUserRoles(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
+    // Validate request using express-validator
     const result = validationResult(req);
 
+    // If validation fails, return 400 Bad Request
     if (!result.isEmpty()) {
       return res.status(400).json({ message: badQuery });
     }
 
+    // Extract user IDs and role IDs from request body
     const { usersToUpdate, rolesId } = req.body;
+
+    // Call service function to update user roles
     const updatedUsers = await updateUserRoles(usersToUpdate, rolesId);
-    if (!updatedUsers) {
-      return res.status(418).json({ message: badQuery });
-    }
-    return res
-      .status(201)
-      .json({ message: "Roles des utilisateurs mis à jour avec succès." });
-  } catch (err) {
-    return res.status(500).json({ message: serverIssue + err });
+
+    // Pass successful result to next middleware
+    next({
+      statusCode: 200,
+      message: "Roles des utilisateurs mis à jour avec succès.",
+      data: updatedUsers,
+    });
+  } catch (err: any) {
+    // Handle errors and pass to error middleware
+    next({
+      statusCode: err.statusCode ?? 500,
+      message: err.message ?? serverIssue,
+    });
   }
 }
 
