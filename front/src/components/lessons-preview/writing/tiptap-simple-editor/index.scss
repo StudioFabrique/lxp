@@ -216,3 +216,13 @@
     user-select: none;
     white-space: nowrap;
 }
+
+.image-small {
+    max-width: 200px;
+}
+.image-medium {
+    max-width: 500px;
+}
+.image-large {
+    max-width: 100%;
+}
