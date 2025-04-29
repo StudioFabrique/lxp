@@ -62,6 +62,7 @@ const useUser = () => {
   const [role, setRole] = useState<Role>(roles[0]);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [stats, setStats] = useState<UsersStats[] | null>(null);
+  const [userToDelete, setUserToDelete] = useState<string | null>(null);
 
   // Pagination hook provides list manipulation and invitation capabilities
   const {
@@ -265,20 +266,20 @@ const useUser = () => {
    * Deletes a specific user by ID
    * @param id - The ID of the user to delete
    */
-  const handleDeleteUser = (id: string) => {
+  const handleDeleteUser = () => {
     const applyData = ({ message }: { message: string }) => {
       toast.success(message);
-
       handleGetUsersStats();
 
       // Update local state to remove deleted user
-      const dataToChange = dataList.filter((user) => user._id !== id);
+      const dataToChange = dataList.filter((user) => user._id !== userToDelete);
+      setUserToDelete(null);
       setDataList(dataToChange);
     };
 
     sendRequest(
       {
-        path: `/user/${id}`,
+        path: `/user/${userToDelete}`,
         method: "delete",
       },
       applyData
@@ -326,6 +327,10 @@ const useUser = () => {
     );
   };
 
+  useEffect(() => {
+    if (error.length > 0 && userToDelete) setUserToDelete(null);
+  }, [error, userToDelete]);
+
   // Return all properties and methods needed by components using this hook
   return {
     handleManyInvitations,
@@ -357,6 +362,8 @@ const useUser = () => {
     error,
     sendInvitation,
     updateStatus,
+    userToDelete,
+    setUserToDelete,
   };
 };
 
