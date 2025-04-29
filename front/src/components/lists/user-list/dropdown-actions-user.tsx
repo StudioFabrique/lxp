@@ -85,7 +85,7 @@ const DropdownActionsUser: FC<Props> = ({
                 disabled={!anyItemSelected}
                 onClick={handleAddRoleToUser}
               >
-                Ajouter un rôle
+                Modifier les rôles
               </button>
             </Can>
 
