@@ -44,7 +44,7 @@ type TiptapSimpleEditorProps = {
   onSave?: () => void;
 };
 
-export default function TiptapSimpleEditor({
+export default function TiptapEditor({
   editorRef,
   initialValue,
   disableEditButton,
@@ -119,7 +119,10 @@ export default function TiptapSimpleEditor({
   return (
     <>
       {isEditingActivity ? <hr className="border-primary/20 pb-5" /> : null}
-      <div className="editor relative" ref={menuContainerRef}>
+      <div
+        className="editor relative transition-all duration-700 hover:bg-primary/10"
+        ref={menuContainerRef}
+      >
         {editor ? (
           <MenuBar
             shouldHide={!isEditingActivity}
