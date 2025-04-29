@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { FC, useCallback, useEffect, useMemo } from "react";
+import React, { Dispatch, FC, useCallback, useEffect, useMemo } from "react";
 import Role from "../../../utils/interfaces/role";
 import UserItem from "./user-item.component";
 import SortColumnIcon from "../../UI/sort-column-icon.component/sort-column-icon.component";
@@ -18,7 +18,7 @@ const UserList: FC<{
   onAllChecked: () => void;
   onSorting: (column: string) => void;
   onUncheckAll: () => void;
-  onDelete: (id: string) => void;
+  onDelete: Dispatch<React.SetStateAction<string | null>>;
   isLoading: boolean;
   error?: string;
   sendInvitation: (userId: string) => void;
