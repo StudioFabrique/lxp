@@ -9,10 +9,11 @@ import UpdateUserStatus from "../../UI/update-user-status/update-user-status.com
 import ButtonDelete from "../../UI/button-delete/button-delete.component";
 import { CheckCircle, Edit2Icon, ScrollText } from "lucide-react";
 import { truncateText } from "../../../helpers/truncate-text";
+import Role from "../../../utils/interfaces/role";
 
 const UserItem: FC<{
   userItem: any;
-  role: string;
+  role: Role;
   onRowCheck: (id: string) => void;
   onDelete: (id: string) => void;
   isUserDeleteLoading: boolean;
@@ -47,7 +48,7 @@ const UserItem: FC<{
           type="checkbox"
           checked={userItem.isSelected}
           onChange={() => onRowCheck(userItem._id)}
-          disabled={role === "everything"}
+          disabled={role.role === "everything"}
         />
       </td>
       <td className="bg-transparent">
@@ -60,17 +61,29 @@ const UserItem: FC<{
           {truncateText(userItem.email, 20)}
         </span>
       </td>
-      <td className="bg-transparent text-center capitalize">
-        <span className="tooltip tooltip-bottom" data-tip={userItem.formation}>
-          {userItem.formation ? truncateText(userItem.formation, 20) : "ND"}
-        </span>
-      </td>
-      <td className="bg-transparent text-center">
-        <span className="tooltip tooltip-bottom" data-tip={userItem.parcours}>
-          {userItem.formation ? truncateText(userItem.parcours, 20) : "ND"}
-        </span>
-      </td>
-      <td>{userItem.roles[0].label} </td>
+      {role.role == "everything" || role.rank < 3 ? null : (
+        <>
+          {" "}
+          <td className="bg-transparent text-center capitalize">
+            <span
+              className="tooltip tooltip-bottom"
+              data-tip={userItem.formation}
+            >
+              {userItem.formation ? truncateText(userItem.formation, 20) : "ND"}
+            </span>
+          </td>
+          <td className="bg-transparent text-center">
+            <span
+              className="tooltip tooltip-bottom"
+              data-tip={userItem.parcours}
+            >
+              {userItem.formation ? truncateText(userItem.parcours, 20) : "ND"}
+            </span>
+          </td>
+        </>
+      )}
+
+      {role.role == "everything" ? <td>{userItem.roles[0].label} </td> : null}
       <td className="bg-transparent">{userItem.createdAt}</td>
       <td className="bg-transparent">
         {isLoading ? (
@@ -84,7 +97,7 @@ const UserItem: FC<{
           />
         )}
       </td>
-      <td className="mx-auto w-full">
+      <td className="mx-auto">
         {!userItem.invitationSent ? (
           <button
             className="btn btn-accent btn-xs"
@@ -93,7 +106,7 @@ const UserItem: FC<{
             Inviter
           </button>
         ) : !userItem.emailVerified ? (
-          <button className="btn btn-accent btn-xs" disabled>
+          <button className="btn btn-accent btn-xs whitespace-nowrap" disabled>
             En cours...
           </button>
         ) : (

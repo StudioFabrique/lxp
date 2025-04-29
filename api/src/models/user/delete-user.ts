@@ -5,7 +5,9 @@ export default async function deleteUser(userId: string, connectedId: string) {
   console.log({ userId, connectedId });
 
   if (userId === connectedId)
-    throw new Error("Vous ne pouvez pas vous supprimer vous même");
+    throw new Error(
+      "Vous ne pouvez pas supprimer votre propre compte utilisateur."
+    );
 
   try {
     await prisma.student.deleteMany({ where: { idMdb: userId } });
