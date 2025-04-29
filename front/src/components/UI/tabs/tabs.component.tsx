@@ -51,7 +51,10 @@ const Tabs: FC<{
   }, [roles]);
 
   return (
-    <div role="tablist" className="tabs tabs-border text-primary">
+    <div
+      role="tablist"
+      className="w-5/6 tabs tabs-border text-primary flex flex-wrap"
+    >
       {/* Map through sorted roles and render tabs with permission checks */}
       {sortedRoles.map((role) => (
         <Can key={role._id} action="read" object={role.role}>
