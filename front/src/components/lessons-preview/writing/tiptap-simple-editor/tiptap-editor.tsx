@@ -6,7 +6,7 @@ import Table from "@tiptap/extension-table";
 import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
 import TableRow from "@tiptap/extension-table-row";
-import Image from "@tiptap/extension-image";
+
 import TextAlign from "@tiptap/extension-text-align";
 import TextStyle from "@tiptap/extension-text-style";
 import { FontFamily } from "@tiptap/extension-font-family";
@@ -31,6 +31,7 @@ import { LinkMenu } from "./components/LinkMenu";
 import Can from "../../../UI/can/can.component";
 import { Edit } from "lucide-react";
 import CodeBlockWithCopy from "./extensions/CodeBlockWithCopy/CodeBlockWithCopy";
+import { ResizableImage } from "./extensions/ResizableImage";
 
 const lowlight = createLowlight(all);
 
@@ -84,7 +85,7 @@ export default function TiptapEditor({
       TableRow,
       TableHeader,
       TableCell,
-      Image,
+      ResizableImage,
       TextStyle,
       Color,
       FontFamily,

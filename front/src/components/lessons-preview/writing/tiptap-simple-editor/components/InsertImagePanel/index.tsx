@@ -1,1 +1,1 @@
-export * from "./YoutubeLinkEditorPanel";
+export * from "./InsertImagePanel";

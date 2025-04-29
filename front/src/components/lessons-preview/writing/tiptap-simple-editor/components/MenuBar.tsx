@@ -19,6 +19,7 @@ import { Surface } from "./ui/Surface.js";
 import { FontFamilyPicker } from "./FontFamilyPicker.js";
 import { EditLinkPopover } from "./EditLinkPopover.js";
 import { EditYoutubeLinkPopover } from "./EditYoutubeLinkPopover.js";
+import { InsertImagePopover } from "./InsertImagePopover.js";
 
 type MenuBarProps = {
   editor: Editor;
@@ -83,10 +84,12 @@ export default function MenuBar({
   }, [scrollY]);
 
   const inputFileRef = useRef<HTMLInputElement>(null);
-  const { menuContentOptions, isImageUploadPending } = useMenuContentTypes(
-    editor,
-    inputFileRef,
-  );
+  const {
+    menuContentOptions,
+    isImageUploadPending,
+    onSetImageSize,
+    onImageUploadFromURL,
+  } = useMenuContentTypes(editor, inputFileRef);
 
   const menuTextOptions = useMenuTextTypes(editor);
 
@@ -101,6 +104,12 @@ export default function MenuBar({
       className={`h-fit w-fit self-center ${isToolbarFixed ? "fixed top-2 z-50" : "relative"} flex justify-between px-2`}
     >
       <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus">
+        <InsertImagePopover
+          title="Image"
+          onSetLink={onImageUploadFromURL}
+          onClickButton={() => inputFileRef.current?.click()}
+          onSetImageSize={onSetImageSize}
+        />
         <EditLinkPopover title="Lien" onSetLink={commands.onLink} />
         <EditYoutubeLinkPopover
           title="Youtube"

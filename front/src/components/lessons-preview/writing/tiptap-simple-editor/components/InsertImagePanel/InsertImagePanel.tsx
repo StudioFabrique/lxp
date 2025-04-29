@@ -1,18 +1,26 @@
-import { useState, useCallback, useMemo } from "react";
+import {
+  useState,
+  useCallback,
+  useMemo,
+  useEffect,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import { Surface } from "../ui/Surface";
-import { Icon } from "../ui/Icon";
 import { Button } from "../ui/Button";
+import { Icon } from "../ui/Icon";
 
-export type YoutubeLinkEditorPanelProps = {
+export type InsertImagePanelProps = {
   initialUrl?: string;
-  initialOpenInNewTab?: boolean;
   onSetLink: (url: string, size?: "small" | "medium" | "large") => void;
+  onClickButton?: () => void;
+  onSetImageSize?: Dispatch<SetStateAction<"small" | "medium" | "large">>;
 };
 
-export const useYoutubeLinkEditorState = ({
+export const useInsertImageState = ({
   initialUrl,
   onSetLink,
-}: YoutubeLinkEditorPanelProps) => {
+}: InsertImagePanelProps) => {
   const [url, setUrl] = useState(initialUrl || "");
   const [size, setSize] = useState<"small" | "medium" | "large">("small");
 
@@ -43,39 +51,58 @@ export const useYoutubeLinkEditorState = ({
   };
 };
 
-export const YoutubeLinkEditorPanel = ({
+export const InsertImagePanel = ({
   onSetLink,
-  initialOpenInNewTab,
   initialUrl,
-}: YoutubeLinkEditorPanelProps) => {
-  const state = useYoutubeLinkEditorState({
+  onClickButton,
+  onSetImageSize,
+}: InsertImagePanelProps) => {
+  const state = useInsertImageState({
     onSetLink,
-    initialOpenInNewTab,
     initialUrl,
   });
 
+  useEffect(() => {
+    onSetImageSize?.(state.size);
+  }, [state.size, onSetImageSize]);
+
   return (
-    <Surface className="p-2">
+    <Surface className="flex flex-col p-2">
       <form onSubmit={state.handleSubmit} className="flex items-center gap-2">
         <label className="flex items-center gap-2 p-2 rounded-lg bg-neutral-100 dark:bg-neutral-900 cursor-text">
-          <Icon name="Link" className="flex-none text-black dark:text-white" />
+          <Icon name="Image" className="flex-none text-black dark:text-white" />
           <input
             type="url"
             className="flex-1 bg-transparent outline-none min-w-[12rem] text-black text-sm dark:text-white"
-            placeholder="URL de la vidéo"
+            placeholder="URL de l'image"
             value={state.url}
             onChange={state.onChange}
           />
         </label>
+
         <Button
           variant="primary"
           buttonSize="small"
           type="submit"
           disabled={!state.isValidUrl}
         >
-          Insérer la vidéo
+          Insérer l'image
         </Button>
       </form>
+      <div className="flex items-center gap-2 my-2">
+        <hr className="border-base-content/20 w-full" />
+        OU
+        <hr className="border-base-content/20 w-full" />
+      </div>
+
+      <Button
+        onClick={onClickButton}
+        variant="primary"
+        buttonSize="small"
+        type="button"
+      >
+        Téléverser une image depuis mon ordinateur
+      </Button>
       <div className="flex gap-2 mt-3">
         <Button
           variant={state.size === "small" ? "primary" : "secondary"}
