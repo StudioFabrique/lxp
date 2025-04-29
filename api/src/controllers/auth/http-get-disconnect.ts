@@ -7,12 +7,21 @@ export default async function httpGetDisconnect(
   req: CustomRequest,
   res: Response
 ) {
-  const user = await User.findOne({ _id: req.auth?.userId }).populate("roles");
+  try {
+    const user = await User.findOne({ _id: req.auth?.userId }).populate(
+      "roles"
+    );
 
-  if (user && user.roles[0].rank > 2) {
-    const connInfos = await ConnectionInfos.findOne({
-      _id: user.connectionInfos![user.connectionInfos!.length - 1],
+    if (user && user.roles[0].rank > 2) {
+      const connInfos = await ConnectionInfos.findOne({
+        _id: user.connectionInfos![user.connectionInfos!.length - 1],
+      });
+    }
+    return res.status(200).json({ message: "Déconnecté(e)." });
+  } catch (error) {
+    console.log({ error });
+    return res.status(500).json({
+      message: "Erreur lors de la déconnexion.",
     });
   }
-  return res.status(200).json({ message: "Déconnecté(e)." });
 }

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useState } from "react";
-import { Trash2Icon } from "lucide-react";
+import { Loader2, Trash2Icon } from "lucide-react";
 import Modal from "../modal/modal";
 
 const ButtonDelete: FC<{
@@ -53,8 +53,12 @@ const ButtonDelete: FC<{
           </div>
         </Modal>
       )}
-      <button type="button" onClick={handleShowModal}>
-        <Trash2Icon className="w-4 h-4 text-error" />
+      <button type="button" disabled={isLoading} onClick={handleShowModal}>
+        {isLoading ? (
+          <Loader2 className="animate-spin w-4 h-4" />
+        ) : (
+          <Trash2Icon />
+        )}
       </button>
     </>
   );
