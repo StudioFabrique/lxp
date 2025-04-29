@@ -118,7 +118,7 @@ export default function TiptapEditor({
 
   return (
     <>
-      {isEditingActivity ? <hr className="border-primary/20 pb-5" /> : null}
+      {isEditingActivity ? <hr className="border-primary/10 pb-5" /> : null}
       <div
         className="editor relative transition-all duration-700 hover:bg-primary/10"
         ref={menuContainerRef}
