@@ -63,8 +63,6 @@ const useUser = () => {
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [stats, setStats] = useState<UsersStats[] | null>(null);
 
-  console.log({ roles });
-
   // Pagination hook provides list manipulation and invitation capabilities
   const {
     allChecked,
@@ -145,13 +143,18 @@ const useUser = () => {
 
     // Check permissions for each selected user
     for (const selectedUser of selectedDataList) {
+      console.log("user role : ", selectedUser!.roles[0].rank);
+      console.log("updated role : ", updatedRoles[0].rank);
+
       if (
         user?.permissions &&
         hasPermission(user?.permissions, "update", updatedRoles[0].role) &&
-        updatedRoles[0].rank >= user!.roles[0].rank &&
-        updatedRoles[0].rank === selectedUser!.roles[0].rank &&
+        ((selectedUser!.roles[0].rank > 2 && updatedRoles[0].rank > 2) ||
+          (selectedUser!.roles[0].rank <= 2 && updatedRoles[0].rank <= 2)) &&
         updatedRoles.length > 0
       ) {
+        console.log("TOTO");
+
         updatedDataList.push(selectedUser._id);
       }
     }
