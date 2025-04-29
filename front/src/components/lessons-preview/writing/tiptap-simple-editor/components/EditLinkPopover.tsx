@@ -13,7 +13,7 @@ export const EditLinkPopover = ({ title, onSetLink }: EditLinkPopoverProps) => {
       <Popover.Trigger asChild>
         <button
           type="button"
-          className="flex items-center gap-3.5 p-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 text-left bg-transparent w-full rounded hover:bg-neutral-100 hover:text-neutral-800 dark:hover:bg-neutral-900 dark:hover:text-neutral-200"
+          className="flex items-center gap-3.5 p-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 text-left bg-transparent w-full max-w-max rounded hover:bg-neutral-100 hover:text-neutral-800 dark:hover:bg-neutral-900 dark:hover:text-neutral-200"
         >
           <Icon name="Link" />
           {title}
