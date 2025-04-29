@@ -100,9 +100,13 @@ export default function MenuBar({
       hidden={shouldHide}
       className={`h-fit w-fit self-center ${isToolbarFixed ? "fixed top-2 z-50" : "relative"} flex justify-between px-2`}
     >
-      <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus" />
-      <EditLinkPopover onSetLink={commands.onLink} />
-      <EditYoutubeLinkPopover onSetLink={commands.onYoutubeLink} />
+      <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus">
+        <EditLinkPopover title="Lien" onSetLink={commands.onLink} />
+        <EditYoutubeLinkPopover
+          title="Youtube"
+          onSetLink={commands.onYoutubeLink}
+        />
+      </MemoContentTypePicker>
       <MemoContentTypePicker
         options={menuTextOptions}
         isLoading={isImageUploadPending}
