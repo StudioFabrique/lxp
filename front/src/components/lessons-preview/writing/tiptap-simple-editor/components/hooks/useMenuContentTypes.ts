@@ -1,5 +1,5 @@
-import { Editor, useEditorState } from "@tiptap/react";
-import { ContentPickerOptions } from "../dropdowns/ContentTypePicker";
+import { type Editor, useEditorState } from "@tiptap/react";
+import type { ContentPickerOptions } from "../dropdowns/ContentTypePicker";
 import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../../../../../hooks/use-http";
 
@@ -10,6 +10,9 @@ export const useMenuContentTypes = (
   const { sendRequest } = useHttp();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isImageUploadPending, setIsLoading] = useState<boolean>(false);
+  const [imageSize, setImageSize] = useState<"small" | "medium" | "large">(
+    "small",
+  );
 
   const handleImageUpload = useCallback(async () => {
     if (imageFile) {
@@ -26,13 +29,35 @@ export const useMenuContentTypes = (
 
       const imageUrl =
         process.env.NODE_ENV === "development"
-          ? "http://localhost:5001" + response.response
+          ? `http://localhost:5001${response.response}`
           : response.response;
 
       setIsLoading(false);
-      editor.chain().focus().setImage({ src: imageUrl }).run();
+      editor.commands.insertContent({
+        type: "image",
+        attrs: {
+          src: imageUrl,
+          size: imageSize,
+        },
+      });
     }
-  }, [editor, imageFile, sendRequest]);
+  }, [editor, imageFile, imageSize, sendRequest]);
+
+  const handleImageUploadFromURL = useCallback(
+    async (url: string) => {
+      setIsLoading(true);
+
+      setIsLoading(false);
+      editor.commands.insertContent({
+        type: "image",
+        attrs: {
+          src: url,
+          size: imageSize,
+        },
+      });
+    },
+    [editor, imageSize],
+  );
 
   useEffect(() => {
     handleImageUpload();
@@ -61,15 +86,6 @@ export const useMenuContentTypes = (
           id: "insert",
         },
         {
-          icon: "PictureInPicture",
-          onClick: () => imageInputRef.current?.click(),
-          id: "picture",
-          disabled: () => !ctx.editor.can().toggleBulletList(),
-          isActive: () => ctx.editor.isActive("picture"),
-          label: "Image",
-          type: "option",
-        },
-        {
           icon: "Table",
           onClick: () =>
             ctx.editor
@@ -86,5 +102,7 @@ export const useMenuContentTypes = (
       ],
     }),
     isImageUploadPending,
+    onImageUploadFromURL: handleImageUploadFromURL,
+    onSetImageSize: setImageSize,
   };
 };

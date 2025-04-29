@@ -64,7 +64,7 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
               <Plus />
 
               <MotionSidebarWrapper isHover={isHover}>
-                {moreItems(true)}
+                <div className="flex gap-5">{moreItems(true)}</div>
               </MotionSidebarWrapper>
             </div>
           </li>

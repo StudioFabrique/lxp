@@ -6,10 +6,10 @@ import {
   useEffect,
 } from "react";
 import type { Editor } from "@tiptap/react";
-import TiptapSimpleEditor from "./tiptap-simple-editor/tiptap-simple-editor";
 import toast from "react-hot-toast";
 import useHttp from "../../../hooks/use-http";
 import Modal from "../../UI/modal/modal";
+import TiptapEditor from "./tiptap-simple-editor/tiptap-editor";
 
 type Activity = {
   id: number;
@@ -131,7 +131,7 @@ const TipTapActivity = ({
         </Modal>
       ) : null}
       <div className="mt-4 w-[100%]">
-        <TiptapSimpleEditor
+        <TiptapEditor
           editorRef={editorRef}
           initialValue={activity?.content}
           isEditingActivity={isEditingActivity}

@@ -6,22 +6,34 @@ import Table from "@tiptap/extension-table";
 import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
 import TableRow from "@tiptap/extension-table-row";
-import Image from "@tiptap/extension-image";
+
 import TextAlign from "@tiptap/extension-text-align";
 import TextStyle from "@tiptap/extension-text-style";
 import { FontFamily } from "@tiptap/extension-font-family";
 import { Color } from "@tiptap/extension-color";
 import Link from "@tiptap/extension-link";
 import Youtube from "@tiptap/extension-youtube";
-import { type Editor, EditorContent, useEditor } from "@tiptap/react";
+import { all, createLowlight } from "lowlight";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import {
+  type Editor,
+  EditorContent,
+  ReactNodeViewRenderer,
+  useEditor,
+} from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import "./index.scss";
+import "highlight.js/styles/github.css";
 
 import MenuBar from "./components/MenuBar";
 import { type Dispatch, type SetStateAction, useEffect, useRef } from "react";
 import { LinkMenu } from "./components/LinkMenu";
 import Can from "../../../UI/can/can.component";
 import { Edit } from "lucide-react";
+import CodeBlockWithCopy from "./extensions/CodeBlockWithCopy/CodeBlockWithCopy";
+import { ResizableImage } from "./extensions/ResizableImage";
+
+const lowlight = createLowlight(all);
 
 type TiptapSimpleEditorProps = {
   editorRef: React.MutableRefObject<Editor | null>;
@@ -33,7 +45,7 @@ type TiptapSimpleEditorProps = {
   onSave?: () => void;
 };
 
-export default function TiptapSimpleEditor({
+export default function TiptapEditor({
   editorRef,
   initialValue,
   disableEditButton,
@@ -49,7 +61,7 @@ export default function TiptapSimpleEditor({
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure(),
+      StarterKit.configure({ codeBlock: false }),
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
@@ -65,10 +77,15 @@ export default function TiptapSimpleEditor({
         //   class: "my-custom-class",
         // },
       }),
+      CodeBlockLowlight.extend({
+        addNodeView() {
+          return ReactNodeViewRenderer(CodeBlockWithCopy);
+        },
+      }).configure({ lowlight }),
       TableRow,
       TableHeader,
       TableCell,
-      Image,
+      ResizableImage,
       TextStyle,
       Color,
       FontFamily,
@@ -102,8 +119,11 @@ export default function TiptapSimpleEditor({
 
   return (
     <>
-      {isEditingActivity ? <hr className="border-primary/20 pb-5" /> : null}
-      <div className="editor relative" ref={menuContainerRef}>
+      {isEditingActivity ? <hr className="border-primary/10 pb-5" /> : null}
+      <div
+        className="editor relative transition-all duration-700 hover:bg-primary/10"
+        ref={menuContainerRef}
+      >
         {editor ? (
           <MenuBar
             shouldHide={!isEditingActivity}

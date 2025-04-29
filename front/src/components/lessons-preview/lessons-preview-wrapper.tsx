@@ -1,5 +1,5 @@
-import { Dispatch, PropsWithChildren, SetStateAction } from "react";
-import Lesson from "../../utils/interfaces/lesson";
+import type { Dispatch, PropsWithChildren, SetStateAction } from "react";
+import type Lesson from "../../utils/interfaces/lesson";
 import { Edit, PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -60,6 +60,7 @@ const LessonsPreviewWrapper = ({
               className="tooltip tooltip-right"
             >
               <button
+                type="button"
                 onClick={handleTogglePanel}
                 className="btn w-fit hover:bg-primary hover:text-base-100"
               >
@@ -84,6 +85,7 @@ const LessonsPreviewWrapper = ({
             </Can>
             {selectedLesson ? (
               <button
+                type="button"
                 className="btn hover:bg-primary hover:text-base-100 tooltip tooltip-left"
                 aria-label="Fermer"
                 data-tip="Fermer la leçon"
