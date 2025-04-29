@@ -1,11 +1,13 @@
-import { Response } from "express";
+import { Response, NextFunction } from "express";
 import { badQuery } from "../../utils/constantes";
 import deleteUser from "../../models/user/delete-user";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { stat } from "fs";
 
 export default async function httpDeleteUser(
   req: CustomRequest,
   res: Response,
+  next: NextFunction
 ) {
   const { id } = req.params;
 
@@ -16,12 +18,25 @@ export default async function httpDeleteUser(
   }
 
   try {
-    await deleteUser(id, userId);
+    console.log("1");
 
-    return res
-      .status(201)
-      .json({ message: "L'utilisateur a été supprimé avec succès" });
-  } catch (e: any) {
-    return res.status(500).json({ message: e.message });
+    await deleteUser(id, userId);
+    console.log("2");
+
+    next({
+      statusCode: 200,
+      data: {
+        success: true,
+        message: "L'utilisateur a été supprimé avec succès",
+      },
+    });
+  } catch (error: any) {
+    console.log({ error });
+
+    next({
+      statusCode: error.statusCode ?? 500,
+      message:
+        error.message ?? "Erreur lors de la suppression de l'utilisateur",
+    });
   }
 }
