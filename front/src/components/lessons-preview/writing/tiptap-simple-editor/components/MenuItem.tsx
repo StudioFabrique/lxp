@@ -26,7 +26,12 @@ export default function MenuItem({
       title={title}
       disabled={disabled}
     >
-      <svg className="remix">
+      <svg
+        className="remix"
+        aria-hidden="true"
+        role="img"
+        aria-label={title || "Icon"}
+      >
         <use xlinkHref={`${remixiconUrl}#ri-${icon}`} />
       </svg>
     </button>
