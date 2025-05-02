@@ -22,7 +22,7 @@ import {
   Tractor,
   Turtle,
 } from "lucide-react";
-import { PropsWithChildren, useMemo } from "react";
+import { type PropsWithChildren, useMemo } from "react";
 import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
 
 const NoActivityPlaceholder = ({ children }: PropsWithChildren) => {
