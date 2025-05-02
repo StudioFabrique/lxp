@@ -12,7 +12,6 @@ export default function MenuItem({
 }: {
   icon?: string;
   title?: string;
-  showTitle?: boolean;
   action?: () => void;
   isActive?: (() => boolean) | null;
   color?: string;
@@ -27,7 +26,12 @@ export default function MenuItem({
       title={title}
       disabled={disabled}
     >
-      <svg className="remix">
+      <svg
+        className="remix"
+        aria-hidden="true"
+        role="img"
+        aria-label={title || "Icon"}
+      >
         <use xlinkHref={`${remixiconUrl}#ri-${icon}`} />
       </svg>
     </button>

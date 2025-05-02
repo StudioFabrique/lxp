@@ -120,7 +120,6 @@ export default function TiptapEditor({
 
   return (
     <>
-      {isEditingActivity ? <hr className="border-primary/10 pb-5" /> : null}
       <div
         className={`editor relative transition-all duration-700 hover:bg-primary/10 ${isEditingActivity ? "py-20 bg-primary/20 hover:bg-primary/20" : ""}`}
         ref={menuContainerRef}
@@ -133,7 +132,7 @@ export default function TiptapEditor({
           />
         ) : null}
         <EditorContent
-          className={`editor__content${isEditingActivity ? " cursor-text" : " py-10"}`}
+          className={`editor__content${isEditingActivity ? " cursor-text mt-5" : " mt-5"}`}
           onClick={() => editor?.commands.focus()}
           editor={editor}
         />
@@ -141,7 +140,7 @@ export default function TiptapEditor({
         <Can action="update" object="lesson">
           <button
             type="button"
-            className="btn btn-ghost absolute top-4 right-4 tooltip tooltip-left "
+            className="btn btn-ghost absolute top-4 right-4 tooltip tooltip-left"
             data-tip="Modifier l'activité"
             onClick={() => setEditingActivity(true)}
             disabled={disableEditButton}
