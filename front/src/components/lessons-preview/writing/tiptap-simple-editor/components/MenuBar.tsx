@@ -183,7 +183,6 @@ export default function MenuBar({
           icon="save-line"
           title="Enregistrer"
           action={onSave}
-          showTitle
           disabled={!editor.getText().trim()}
         />
       ) : null}
