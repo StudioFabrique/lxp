@@ -1,5 +1,5 @@
 import { ArrowUpRightIcon } from "lucide-react";
-import LessonRead from "../../utils/interfaces/lesson-read";
+import type LessonRead from "../../utils/interfaces/lesson-read";
 import { Link, useLocation } from "react-router-dom";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useState } from "react";
@@ -52,16 +52,18 @@ const ResumeActivities = ({ lastLessons }: ResumeActivitiesProps) => {
                 className="group relative overflow-hidden rounded-xl hover:scale-101 transition-transform duration-200"
               >
                 <motion.span
-                  className="absolute w-36 h-14 bg-primary/50 invisible group-hover:visible"
+                  className="absolute w-36 h-14 bg-primary/50 invisible group-hover:visible rounded-full blur-xl opacity-70"
                   initial={{ scale: 0 }}
                   style={{
                     x: springX,
                     y: springY,
+                    translateX: "-50%",
+                    translateY: "-50%",
                   }}
                   animate={{
                     scale: isHovered ? 1 : 0,
                   }}
-                  transition={{ duration: 0.3 }}
+                  transition={{ duration: 0.5 }}
                 />
                 <Link
                   key={item.id}
