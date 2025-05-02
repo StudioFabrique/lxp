@@ -14,7 +14,7 @@ import { useEffect } from "react";
 import useTableCheckbox from "../../components/table/table-list/hooks/use-table-checkbox";
 import useGroupActions from "./hooks/use-group-actions";
 import TableActionsButtons from "../../components/table/table-buttons/table-actions-buttons";
-import Group from "../../utils/interfaces/group";
+import type Group from "../../utils/interfaces/group";
 import { PlusCircle } from "lucide-react";
 
 /**
@@ -59,7 +59,7 @@ const GroupHome = () => {
 
   // Si un message du state est présent, alors il s'affiche dans un toaster
   useEffect(() => {
-    if (state && state.toastFrom) toast.success(state.toastFrom);
+    if (state?.toastFrom) toast.success(state.toastFrom);
   }, [state]);
 
   return (
