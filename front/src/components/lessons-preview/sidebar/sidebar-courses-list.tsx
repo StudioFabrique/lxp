@@ -1,8 +1,8 @@
-import { CSSProperties, PropsWithChildren } from "react";
-import Course from "../../../utils/interfaces/course";
+import type { CSSProperties, PropsWithChildren } from "react";
+import type Course from "../../../utils/interfaces/course";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import CourseItem from "./course-item";
-import Lesson from "../../../utils/interfaces/lesson";
+import type Lesson from "../../../utils/interfaces/lesson";
 import Can from "../../UI/can/can.component";
 import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
 
@@ -72,11 +72,11 @@ const SidebarCoursesList = ({
                 <span
                   className="radial-progress text-secondary self-end"
                   style={radialStyle(
-                    !isNaN(moduleProgress) ? moduleProgress : 0,
+                    !Number.isNaN(moduleProgress) ? moduleProgress : 0,
                   )}
                 >
                   <p>
-                    {!isNaN(moduleProgress)
+                    {!Number.isNaN(moduleProgress)
                       ? Math.round(moduleProgress * 100)
                       : 0}
                     %
