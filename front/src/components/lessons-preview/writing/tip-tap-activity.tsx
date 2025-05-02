@@ -78,6 +78,7 @@ const TipTapActivity = ({
       setShowModal(false);
       onCloseTipTapEditor?.();
       onRefreshAllData?.();
+      setEditingActivity(false);
     };
 
     const value = editorRef.current?.getHTML();

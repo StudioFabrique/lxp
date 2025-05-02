@@ -32,6 +32,7 @@ import Can from "../../../UI/can/can.component";
 import { Edit } from "lucide-react";
 import CodeBlockWithCopy from "./extensions/CodeBlockWithCopy/CodeBlockWithCopy";
 import { ResizableImage } from "./extensions/ResizableImage";
+import SaveButton from "./components/SaveButton";
 
 const lowlight = createLowlight(all);
 
@@ -129,7 +130,6 @@ export default function TiptapEditor({
             shouldHide={!isEditingActivity}
             editor={editor}
             onCloseEditor={handleCloseEditor}
-            onSave={onSave}
           />
         ) : null}
         <EditorContent
@@ -154,7 +154,8 @@ export default function TiptapEditor({
           </div>
         )}
       </div>
-      {editor ? <LinkMenu editor={editor} appendTo={menuContainerRef} /> : null}
+      {editor && <LinkMenu editor={editor} appendTo={menuContainerRef} />}
+      {onSave && isEditingActivity && <SaveButton onSave={onSave} />}
     </>
   );
 }
