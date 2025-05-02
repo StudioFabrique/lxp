@@ -68,6 +68,19 @@ const TipTapActivity = ({
     onActivityEditChange?.(isEditingActivity);
   }, [isEditingActivity, onActivityEditChange]);
 
+  // wait 200ms, then scroll to bottom if activity is created
+  useEffect(() => {
+    if (isNewActivity && isEditingActivity) {
+      console.log("scrolling");
+      setTimeout(() => {
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
+      }, 200);
+    }
+  }, [isNewActivity, isEditingActivity]);
+
   const handleSubmitSave = (e: FormEvent) => {
     e.preventDefault();
     // save as file

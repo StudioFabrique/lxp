@@ -5,11 +5,11 @@ type SaveButtonProps = {
 const SaveButton = ({ onSave }: SaveButtonProps) => {
   return (
     <button
-      className="btn fixed bottom-0 right-0 m-10"
+      className="btn btn-primary text-base-100 fixed bottom-0 right-0 my-5 mx-20 z-10"
       type="button"
       onClick={onSave}
     >
-      Sauvegarder
+      Sauvegarder l'activité
     </button>
   );
 };
