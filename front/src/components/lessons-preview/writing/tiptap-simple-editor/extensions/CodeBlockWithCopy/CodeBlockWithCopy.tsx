@@ -3,12 +3,15 @@ import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
 import { Check, Copy } from "lucide-react"; // Icons for UI
 import classes from "./code-block-with-copy.module.css"; // CSS file for styling
 
-function CodeBlockWithCopy({ node }) {
+function CodeBlockWithCopy({ node, getPos, editor }) {
   const [copied, setCopied] = useState(false);
 
   // Function to copy code content
   const copyToClipboard = async () => {
-    const codeContent = node.content.text || ""; // Fetch code content properly
+    // Get the actual text content from the editor's state
+    const from = getPos() + 1; // +1 to skip the node start position
+    const to = from + node.content.size;
+    const codeContent = editor.state.doc.textBetween(from, to, "\n");
 
     if (codeContent) {
       await navigator.clipboard.writeText(codeContent);

@@ -3,7 +3,7 @@ import UserTopBar from "../../components/UI/user-top-bar/user-top-bar";
 import ResumeActivity from "../../components/student-home/resume-activity";
 import ResumeActivities from "../../components/student-home/resume-activities";
 import useHttp from "../../hooks/use-http";
-import LessonRead from "../../utils/interfaces/lesson-read";
+import type LessonRead from "../../utils/interfaces/lesson-read";
 import ResumeParcours from "../../components/student-home/resume-parcours";
 import Timeline from "../../components/student-home/timeline/timeline";
 import FeelingFeedback from "../../components/student-home/right-side/feeling-feedback";
