@@ -118,8 +118,9 @@ const CourseItem = ({
         <div
           className="flex flex-col w-full cursor-pointer bg-secondary rounded-lg"
           onClick={handleToggleCourseTab}
+          onKeyDown={handleToggleCourseTab}
         >
-          <div className={`flex flex-col gap-1 p-4`}>
+          <div className="flex flex-col gap-1 p-4">
             <div className="flex justify-between items-center gap-1">
               <span
                 data-tip={`Titre : ${course.title}`}

@@ -3,14 +3,7 @@ export const themes = {
   dark: "night",
 };
 
-export const lightThemes = [
-  "autumn",
-  "corporate",
-  "cupcake",
-  "lofi",
-  "nord",
-  "lightwitch",
-];
+export const lightThemes = ["autumn", "corporate", "cupcake", "lofi", "nord"];
 
 export const darkThemes = [
   "business",

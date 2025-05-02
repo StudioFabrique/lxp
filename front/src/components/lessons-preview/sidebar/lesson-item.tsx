@@ -26,9 +26,9 @@ const LessonItem = ({
   const lessonRef = useRef<HTMLDivElement>(null);
 
   // Vérifie si cette leçon a déjà été lue entièrement et finie
-  const isLessonRead =
-    lesson.lessonsRead &&
-    lesson.lessonsRead?.some((lessonRead) => lessonRead.finishedAt);
+  const isLessonRead = lesson.lessonsRead?.some(
+    (lessonRead) => lessonRead.finishedAt,
+  );
 
   // Gestionnaire pour commencer/arrêter la lecture d'une leçon
   const handleBeginReadLesson = () => {
@@ -54,6 +54,7 @@ const LessonItem = ({
     <div
       ref={lessonRef}
       onClick={handleBeginReadLesson}
+      onKeyDown={handleBeginReadLesson}
       className={`flex items-center justify-between gap-1 rounded-xl px-4 h-14 w-full cursor-pointer group ${
         isLessonSelected
           ? "bg-accent text-accent-content hover:bg-accent/80"
