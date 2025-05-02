@@ -12,7 +12,6 @@ export default function MenuItem({
 }: {
   icon?: string;
   title?: string;
-  showTitle?: boolean;
   action?: () => void;
   isActive?: (() => boolean) | null;
   color?: string;
