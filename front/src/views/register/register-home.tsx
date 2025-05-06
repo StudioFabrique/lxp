@@ -3,7 +3,7 @@
  *   nouvellement créé.
  */
 
-import image from "../../assets/images/andria-2.png";
+import image from "../../assets/images/new-logo.svg";
 import PasswordUpdateHome from "../../components/password-update/password-update-home";
 
 export default function RegisterHome() {
