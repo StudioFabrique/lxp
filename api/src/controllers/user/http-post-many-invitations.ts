@@ -31,7 +31,7 @@ export default async function httpPostManyInvitations(
     const message =
       result === 0
         ? "Aucune invitation n'a été envoyée, tous les comptes utilisateurs sont déjà activés."
-        : `${result} invitations ont été envoyées`;
+        : `${result} invitation(s) ont été envoyée(s)`;
 
     // Pass success response to next middleware
     next({
