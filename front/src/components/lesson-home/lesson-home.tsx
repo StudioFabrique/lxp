@@ -12,7 +12,6 @@ import { Activity, Eye } from "lucide-react";
 import TableRowWrapper from "../UI/table-row-wrapper";
 import TableWrapper from "../UI/table-wrapper";
 import ElementNotFound from "../UI/element-not-found";
-import React from "react";
 
 // Interface définissant les props du composant
 interface LessonHomeProps {
@@ -43,102 +42,100 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
       {list && list.length > 0 ? (
         <>
           {list.map((item: Lesson) => (
-            <TableRowWrapper>
-              <React.Fragment key={item.id}>
-                {/* Colonne du titre */}
-                <td className="bg-transparent rounded-l-lg truncate">
-                  {item.title}
-                </td>
-                {/* Colonne du cours */}
-                <td className="bg-transparent capitalize truncate">
-                  {item.course ? item.course.title : "ND"}
-                </td>
-                {/* Colonne du parcours */}
-                <td className="bg-transparent capitalize truncate">
-                  {item.course.module.parcours.title}
-                </td>
-                {/* Colonne de l'auteur */}
-                <td className="bg-transparent capitalize truncate">
-                  {item.author}
-                </td>
-                {/* Colonne de la date de création */}
-                <td className="bg-transparent truncate">
-                  {localeDate(item.createdAt ?? "")} à{" "}
-                  {localeTime(item.createdAt ?? "")}
-                </td>
-                {/* Colonne de la date de mise à jour */}
-                <td className="bg-transparent truncate">
-                  {localeDate(item.updatedAt ?? "")}
-                </td>
+            <TableRowWrapper key={item.id}>
+              {/* Colonne du titre */}
+              <td className="bg-transparent rounded-l-lg truncate">
+                {item.title}
+              </td>
+              {/* Colonne du cours */}
+              <td className="bg-transparent capitalize truncate">
+                {item.course ? item.course.title : "ND"}
+              </td>
+              {/* Colonne du parcours */}
+              <td className="bg-transparent capitalize truncate">
+                {item.course.module.parcours.title}
+              </td>
+              {/* Colonne de l'auteur */}
+              <td className="bg-transparent capitalize truncate">
+                {item.author}
+              </td>
+              {/* Colonne de la date de création */}
+              <td className="bg-transparent truncate">
+                {localeDate(item.createdAt ?? "")} à{" "}
+                {localeTime(item.createdAt ?? "")}
+              </td>
+              {/* Colonne de la date de mise à jour */}
+              <td className="bg-transparent truncate">
+                {localeDate(item.updatedAt ?? "")}
+              </td>
 
-                <td className="bg-transparent flex items-center gap-x-2 justify-around rounded-r-lg">
-                  <div
-                    className="w-6 h-6 text-secondary"
-                    aria-label="aperçu de la leçon"
-                  >
-                    <Can action="read" object="lesson">
-                      <div
-                        className="tooltip tooltip-bottom flex-items-center"
-                        data-tip="Aperçu de la leçon"
+              <td className="bg-transparent flex items-center gap-x-2 justify-around rounded-r-lg">
+                <div
+                  className="w-6 h-6 text-secondary"
+                  aria-label="aperçu de la leçon"
+                >
+                  <Can action="read" object="lesson">
+                    <div
+                      className="tooltip tooltip-bottom flex-items-center"
+                      data-tip="Aperçu de la leçon"
+                    >
+                      <Link
+                        to={`/admin/parcours/module/${item.course.module.id}`}
+                        state={{ lessonId: item.id }}
                       >
-                        <Link
-                          to={`/admin/parcours/module/${item.course.module.id}`}
-                          state={{ lessonId: item.id }}
-                        >
-                          <Eye />
-                        </Link>
-                      </div>
-                    </Can>
-                  </div>
-                  <div className="w-6 h-6">
-                    <Can action="write" object="lesson">
-                      <div
-                        className="tooltip tooltip-bottom"
-                        data-tip="Activités"
+                        <Eye />
+                      </Link>
+                    </div>
+                  </Can>
+                </div>
+                <div className="w-6 h-6">
+                  <Can action="write" object="lesson">
+                    <div
+                      className="tooltip tooltip-bottom"
+                      data-tip="Activités"
+                    >
+                      <Link
+                        to={`/admin/lesson/edit/${item.id}`}
+                        className="text-secondary"
+                        aria-label="ajouter une activité"
                       >
-                        <Link
-                          to={`/admin/lesson/edit/${item.id}`}
-                          className="text-secondary"
-                          aria-label="ajouter une activité"
-                        >
-                          <Activity />
-                        </Link>
+                        <Activity />
+                      </Link>
+                    </div>
+                  </Can>
+                </div>
+                <div
+                  className="w-6 h-6 text-error"
+                  aria-label="suppression de la leçon"
+                >
+                  <Can action="delete" object="lesson">
+                    <div
+                      className="tooltip tooltip-bottom flex-items-center"
+                      data-tip="Supprimer la leçon"
+                    >
+                      <div onClick={() => onDelete(item.id!)}>
+                        <DeleteIcon />
                       </div>
-                    </Can>
-                  </div>
-                  <div
-                    className="w-6 h-6 text-error"
-                    aria-label="suppression de la leçon"
-                  >
-                    <Can action="delete" object="lesson">
-                      <div
-                        className="tooltip tooltip-bottom flex-items-center"
-                        data-tip="Supprimer la leçon"
+                    </div>
+                  </Can>
+                </div>
+                <div className="w-6 h-6">
+                  <Can action="update" object="lesson">
+                    <div
+                      className="tooltip tooltip-bottom"
+                      data-tip="Modifier la leçon"
+                    >
+                      <Link
+                        to={`/admin/lesson/edit-lesson/${item.id}`}
+                        className="text-secondary"
+                        aria-label="Editer la leçon"
                       >
-                        <div onClick={() => onDelete(item.id!)}>
-                          <DeleteIcon />
-                        </div>
-                      </div>
-                    </Can>
-                  </div>
-                  <div className="w-6 h-6">
-                    <Can action="update" object="lesson">
-                      <div
-                        className="tooltip tooltip-bottom"
-                        data-tip="Modifier la leçon"
-                      >
-                        <Link
-                          to={`/admin/lesson/edit-lesson/${item.id}`}
-                          className="text-secondary"
-                          aria-label="Editer la leçon"
-                        >
-                          <EditIcon />
-                        </Link>
-                      </div>
-                    </Can>
-                  </div>
-                </td>
-              </React.Fragment>
+                        <EditIcon />
+                      </Link>
+                    </div>
+                  </Can>
+                </div>
+              </td>
             </TableRowWrapper>
           ))}
         </>

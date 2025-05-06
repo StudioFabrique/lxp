@@ -32,58 +32,56 @@ export default function CourseTable({
     return (
       <>
         {coursesList?.map((course) => (
-          <TableRowWrapper>
-            <React.Fragment key={course.id}>
-              <td>{course.title}</td>
-              <td>{course.module}</td>
-              <td>{course.parcours}</td>
-              <td>{localeDate(course.createdAt!)}</td>
-              <td>{localeDate(course.updatedAt!)}</td>
-              <td>{course.author}</td>
-              <td>{course.isPublished ? "Publié" : "Brouillon"}</td>
-              <td>
-                <div className="flex justify-center">
-                  {course.visibility ? (
-                    <Eye
-                      className="w-6 h-6"
-                      aria-label="le cours est visible par les apprenants"
-                    />
-                  ) : (
-                    <EyeOff
-                      className="w-6 h-6"
-                      aria-label="le cours n'est pas visible par les apprenants"
-                    />
-                  )}
-                </div>
-              </td>
-              <td className="flex items-center gap-x-2 justify-around rounded-r-lg">
+          <TableRowWrapper key={course.id}>
+            <td>{course.title}</td>
+            <td>{course.module}</td>
+            <td>{course.parcours}</td>
+            <td>{localeDate(course.createdAt!)}</td>
+            <td>{localeDate(course.updatedAt!)}</td>
+            <td>{course.author}</td>
+            <td>{course.isPublished ? "Publié" : "Brouillon"}</td>
+            <td>
+              <div className="flex justify-center">
+                {course.visibility ? (
+                  <Eye
+                    className="w-6 h-6"
+                    aria-label="le cours est visible par les apprenants"
+                  />
+                ) : (
+                  <EyeOff
+                    className="w-6 h-6"
+                    aria-label="le cours n'est pas visible par les apprenants"
+                  />
+                )}
+              </div>
+            </td>
+            <td className="flex items-center gap-x-2 justify-around rounded-r-lg">
+              <div
+                className="tooltip tooltip-bottom"
+                data-tip="Modifier le cours."
+              >
+                <Pencil
+                  className="w-6 h-6 text-primary"
+                  aria-label="éditer le cours"
+                  onClick={() => onEditCourse(course.id!)}
+                />
+              </div>
+              <Can action="delete" object="course">
                 <div
                   className="tooltip tooltip-bottom"
-                  data-tip="Modifier le cours."
+                  data-tip="Supprimer le cours définitivement."
+                  onClick={() => {
+                    onDeleteCourse(course);
+                  }}
                 >
-                  <Pencil
-                    className="w-6 h-6 text-primary"
-                    aria-label="éditer le cours"
-                    onClick={() => onEditCourse(course.id!)}
+                  <Trash2
+                    className="w-6 h-6 text-error"
+                    aria-label="supprimer le cours"
                   />
                 </div>
-                <Can action="delete" object="course">
-                  <div
-                    className="tooltip tooltip-bottom"
-                    data-tip="Supprimer le cours définitivement."
-                    onClick={() => {
-                      onDeleteCourse(course);
-                    }}
-                  >
-                    <Trash2
-                      className="w-6 h-6 text-error"
-                      aria-label="supprimer le cours"
-                    />
-                  </div>
-                </Can>
-                {/*    </Can> */}
-              </td>
-            </React.Fragment>
+              </Can>
+              {/*    </Can> */}
+            </td>
           </TableRowWrapper>
         ))}
       </>
