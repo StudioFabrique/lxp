@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * @file useUser.ts
  * @description Custom hook for user management operations in the application.
@@ -63,6 +64,7 @@ const useUser = () => {
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [stats, setStats] = useState<UsersStats[] | null>(null);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Pagination hook provides list manipulation and invitation capabilities
   const {
@@ -84,7 +86,7 @@ const useUser = () => {
   } = usePagination("lastname", "/user/everything");
 
   // HTTP request hook for API communication
-  const { isLoading, sendRequest, error } = useHttp(true);
+  const { isLoading, sendRequest, error } = useHttp(false);
 
   /**
    * Switches the current role filter and resets pagination and search
@@ -275,8 +277,10 @@ const useUser = () => {
       const dataToChange = dataList.filter((user) => user._id !== userToDelete);
       setUserToDelete(null);
       setDataList(dataToChange);
+      setIsDeleting(false);
     };
 
+    setIsDeleting(true);
     sendRequest(
       {
         path: `/user/${userToDelete}`,
@@ -328,42 +332,48 @@ const useUser = () => {
   };
 
   useEffect(() => {
-    if (error.length > 0 && userToDelete) setUserToDelete(null);
-  }, [error, userToDelete]);
+    if (error.length > 0) {
+      toast.error(error);
+      setShowErrorModal(false);
+      setIsDeleting(false);
+      setUserToDelete(null);
+    }
+  }, [error]);
 
   // Return all properties and methods needed by components using this hook
   return {
+    allChecked,
+    dataList,
+    error,
+    handleAllChecked,
+    handleDeleteUser,
+    handleGroupRolesChange,
     handleManyInvitations,
-    user,
+    handlePageNumber,
+    handleRefreshDataList,
+    handleRoleSwitch,
+    handleRowCheck,
+    handleSearchResult,
+    handleUncheckALL,
+    handleUpdateManyStatus,
+    isDeleting,
+    isLoading,
+    isSearchActive,
+    page,
     role,
     roles,
-    dataList,
-    page,
-    stats,
-    showErrorModal,
-    handleRoleSwitch,
-    handleSearchResult,
-    handleGroupRolesChange,
-    handleUpdateManyStatus,
-    handleDeleteUser,
-    handleRefreshDataList,
-    setErrorModal,
-    isSearchActive,
-    handleAllChecked,
-    allChecked,
-    handleRowCheck,
-    totalPages,
-    handlePageNumber,
-    sortData,
-    stype,
     sdir,
-    isLoading,
-    handleUncheckALL,
-    error,
     sendInvitation,
-    updateStatus,
-    userToDelete,
+    setErrorModal,
     setUserToDelete,
+    showErrorModal,
+    sortData,
+    stats,
+    stype,
+    totalPages,
+    updateStatus,
+    user,
+    userToDelete,
   };
 };
 

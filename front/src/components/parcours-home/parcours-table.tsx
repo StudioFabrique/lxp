@@ -44,90 +44,88 @@ const ParcoursTable = (props: ParcoursTableProps) => {
       {parcoursList && parcoursList.length > 0 ? (
         <>
           {parcoursList.map((item: Parcours) => (
-            <TableRowWrapper>
-              <React.Fragment key={item.id}>
-                <td className="bg-transparent rounded-l-lg">
-                  <p className="tooltip tooltip-bottom" data-tip={item.title}>
-                    {truncateText(item.title, 20)}
-                  </p>
-                </td>
-                <td className="bg-transparent">
-                  <p
-                    className="tooltip tooltip-bottom"
-                    data-tip={item.formation.title}
-                  >
-                    {truncateText(item.formation.title, 20)}
-                  </p>
-                </td>
-                <td className="bg-transparent truncate">
-                  {item.formation.level}
-                </td>
-                <td className="bg-transparent truncate">
-                  {localeDate(item.createdAt!)}
-                </td>
-                <td className="bg-transparent truncate">
-                  {localeDate(item.updatedAt!)}
-                </td>
-                <td className="bg-transparent capitalize">
-                  <p className="tooltip tooltip-bottom" data-tip={item.author}>
-                    {truncateText(item.author, 20)}
-                  </p>
-                </td>
-                <td className="bg-transparent truncate">
-                  {item.isPublished ? "Publié" : "Brouillon"}
-                </td>
-                <td className="bg-transparent flex items-center gap-x-2 justify-around rounded-r-lg">
-                  <div className="w-6 h-6">
-                    <Can action="update" object="parcours">
-                      <div
-                        className="tooltip tooltip-bottom"
-                        data-tip="Modifier le parcours"
+            <TableRowWrapper key={item.id}>
+              <td className="bg-transparent rounded-l-lg">
+                <p className="tooltip tooltip-bottom" data-tip={item.title}>
+                  {truncateText(item.title, 20)}
+                </p>
+              </td>
+              <td className="bg-transparent">
+                <p
+                  className="tooltip tooltip-bottom"
+                  data-tip={item.formation.title}
+                >
+                  {truncateText(item.formation.title, 20)}
+                </p>
+              </td>
+              <td className="bg-transparent truncate">
+                {item.formation.level}
+              </td>
+              <td className="bg-transparent truncate">
+                {localeDate(item.createdAt!)}
+              </td>
+              <td className="bg-transparent truncate">
+                {localeDate(item.updatedAt!)}
+              </td>
+              <td className="bg-transparent capitalize">
+                <p className="tooltip tooltip-bottom" data-tip={item.author}>
+                  {truncateText(item.author, 20)}
+                </p>
+              </td>
+              <td className="bg-transparent truncate">
+                {item.isPublished ? "Publié" : "Brouillon"}
+              </td>
+              <td className="bg-transparent flex items-center gap-x-2 justify-around rounded-r-lg">
+                <div className="w-6 h-6">
+                  <Can action="update" object="parcours">
+                    <div
+                      className="tooltip tooltip-bottom"
+                      data-tip="Modifier le parcours"
+                    >
+                      <Link
+                        to={`edit/${item.id}`}
+                        aria-label="modifier le parcours"
                       >
-                        <Link
-                          to={`edit/${item.id}`}
-                          aria-label="modifier le parcours"
-                        >
-                          <EditIcon />
-                        </Link>
-                      </div>
-                    </Can>
-                  </div>
-                  <div
-                    className="w-6 h-6 text-error"
-                    aria-label="suppression du parcours"
-                  >
-                    <Can action="delete" object="parcours">
+                        <EditIcon />
+                      </Link>
+                    </div>
+                  </Can>
+                </div>
+                <div
+                  className="w-6 h-6 text-error"
+                  aria-label="suppression du parcours"
+                >
+                  <Can action="delete" object="parcours">
+                    <div
+                      className="tooltip tooltip-bottom flex-items-center"
+                      data-tip="Supprimer le parcours"
+                    >
                       <div
-                        className="tooltip tooltip-bottom flex-items-center"
-                        data-tip="Supprimer le parcours"
+                        className="cursor-pointer"
+                        onClick={() => handleDeleteParcours(item)}
                       >
-                        <div
-                          className="cursor-pointer"
-                          onClick={() => handleDeleteParcours(item)}
-                        >
-                          <DeleteIcon />
-                        </div>
+                        <DeleteIcon />
                       </div>
-                    </Can>
-                  </div>
-                  <div className="w-6 h-6">
-                    <Can action="read" object="parcours">
-                      <div
-                        className="tooltip tooltip-bottom"
-                        data-tip="Aperçu du parcours"
+                    </div>
+                  </Can>
+                </div>
+                <div className="w-6 h-6">
+                  <Can action="read" object="parcours">
+                    <div
+                      className="tooltip tooltip-bottom"
+                      data-tip="Aperçu du parcours"
+                    >
+                      <Link
+                        className="text-primary"
+                        to={`view/${item.id}`}
+                        aria-label="Aperçu du parcours"
                       >
-                        <Link
-                          className="text-primary"
-                          to={`view/${item.id}`}
-                          aria-label="Aperçu du parcours"
-                        >
-                          <ArrowTopRightIcon />
-                        </Link>
-                      </div>
-                    </Can>
-                  </div>
-                </td>
-              </React.Fragment>
+                        <ArrowTopRightIcon />
+                      </Link>
+                    </div>
+                  </Can>
+                </div>
+              </td>
             </TableRowWrapper>
           ))}
         </>

@@ -48,6 +48,8 @@ const UserList: FC<{
     onUncheckAll();
   }, [role, page, onUncheckAll]);
 
+  console.log({ userList });
+
   const content = useMemo(() => {
     return (
       <>
@@ -195,21 +197,17 @@ const UserList: FC<{
             </thead>
             <tbody>
               {userList.map((item: any) => (
-                <TableRowWrapper>
-                  <React.Fragment key={item.id}>
-                    {
-                      <UserItem
-                        role={role}
-                        onDelete={onDelete}
-                        userItem={item}
-                        onRowCheck={onRowCheck}
-                        isUserDeleteLoading={isLoading}
-                        error={error}
-                        sendInvitation={sendInvitation}
-                        onToggleStatus={onToggleStatus}
-                      />
-                    }
-                  </React.Fragment>
+                <TableRowWrapper key={item._id}>
+                  <UserItem
+                    role={role}
+                    onDelete={onDelete}
+                    userItem={item}
+                    onRowCheck={onRowCheck}
+                    isUserDeleteLoading={isLoading}
+                    error={error}
+                    sendInvitation={sendInvitation}
+                    onToggleStatus={onToggleStatus}
+                  />
                 </TableRowWrapper>
               ))}
             </tbody>
