@@ -87,7 +87,7 @@ async function createUser() {
       new Object(roleTeacher!._id),
       new Object(roleInterfaceTeacher!._id),
     ],
-    isActive: true,
+    isActive: false,
     //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
   await newTeacher.save();
@@ -102,7 +102,7 @@ async function createUser() {
     phoneNumber: "06 06 06 06 06",
     password: hash,
     roles: [new Object(roleTeacher!._id)],
-    isActive: true,
+    isActive: false,
     //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
   await newTeacher2.save();
@@ -126,7 +126,7 @@ async function createUser() {
       new Object(roleStudent!._id),
       new Object(roleInterfaceStudent!._id),
     ],
-    isActive: true,
+    isActive: false,
     //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
   const createdStudent = await newStudent.save();
@@ -143,7 +143,7 @@ async function createUser() {
       new Object(roleStudent!._id),
       new Object(roleInterfaceStudent!._id),
     ],
-    isActive: true,
+    isActive: false,
   });
   await rssi.save();
   const dates = createConnectionInfos();
@@ -162,7 +162,7 @@ async function createUser() {
   const infosIds = newInfos.map((item) => item._id);
   await User.findOneAndUpdate(
     { _id: createdStudent._id },
-    { connectionInfos: infosIds },
+    { connectionInfos: infosIds }
   );
   robotIndex++;
 }
@@ -189,7 +189,7 @@ async function createManyAdmins() {
       postCode,
       city: cityName,
       roles: [new Object(role!._id), new Object(roleInterface!._id)],
-      isActive: true,
+      isActive: false,
       //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });
     userList.push(user);
@@ -220,7 +220,7 @@ async function createManyTeachers() {
       city: cityName,
       phoneNumber: "06 06 06 06 06",
       roles: [new Object(role!._id), new Object(roleInterface!._id)],
-      isActive: true,
+      isActive: false,
       //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });
     userList.push(user);
@@ -251,7 +251,7 @@ async function createManyStudents() {
       city: cityName,
       phoneNumber: "06 06 06 06 06",
       roles: [new Object(role!._id), new Object(roleInterface!._id)],
-      isActive: true,
+      isActive: false,
       //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
     });
     userList.push(user);
