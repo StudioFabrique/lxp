@@ -18,10 +18,7 @@ export default async function httpDeleteUser(
   }
 
   try {
-    console.log("1");
-
     await deleteUser(id, userId);
-    console.log("2");
 
     next({
       statusCode: 200,

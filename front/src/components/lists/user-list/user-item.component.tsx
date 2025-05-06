@@ -60,7 +60,6 @@ const UserItem: FC<{
       </td>
       {role.role == "everything" || role.rank < 3 ? null : (
         <>
-          {" "}
           <td className="bg-transparent text-center capitalize">
             <span
               className="tooltip tooltip-bottom"

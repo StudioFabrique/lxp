@@ -23,6 +23,7 @@ const UserHome = () => {
     handleRefreshDataList,
     handleGroupRolesChange,
     handleUpdateManyStatus,
+    isDeleting,
     dataList,
     allChecked,
     page,
@@ -44,6 +45,9 @@ const UserHome = () => {
     setUserToDelete,
     userToDelete,
   } = useUser();
+
+  console.log({ isDeleting });
+  console.log({ userToDelete });
 
   return (
     <main className="w-fit">
@@ -125,6 +129,7 @@ const UserHome = () => {
         {userToDelete ? (
           <Modal
             title="Confirmation de suppression"
+            isSubmitting={isDeleting}
             leftLabel="Annuler"
             rightLabel="Supprimer"
             onLeftClick={() => setUserToDelete(null)}
