@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+
+   tools {
+        nodejs 'NodeJS-22'
+    }
+    environment {
+        //SCANNER_HOME = tool 'sonar-scanner'
+        //SONAR_TOKEN = credentials('sonar-token')
+        //SONAR_HOST_URL = 'http://51.15.183.215:9000/'
+
+        HOST = credentials('FNP_HOST')
+        USER = credentials('FNP_USER')
+        SSH_CRED = credentials('FNP_SSH')
+        TARGET = credentials('FNP_TARGET')
+        BRANCH_NAME = "${env.GIT_BRANCH.split('/').last()}"
+        
+    }
+
+    stages {
+        stage("Checkout") {
+            steps {
+                checkout scm
+                script {
+                    echo "Checked out branch: ${BRANCH_NAME}"
+                }
+            }
+        }
+
+        stage("Build App") {
+            steps {
+                script {
+                    echo "Building application..."
+                    sh 'npm run install'
+                    sh 'npm run generate'
+                    sh 'npm run deploy'
+                }
+            }
+        }
+    }}
