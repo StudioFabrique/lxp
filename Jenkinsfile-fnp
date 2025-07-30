@@ -44,7 +44,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([file(credentialsId: 'FNP_ENV', variable: 'envFile')]) {
-                        echo "🔧 Setting environment variables from ${FNP_ENV}..."
+                        echo "🔧 Setting environment variables from ${envFile}..."
                         
                         // Inject .env in workspace
                         def envContent = readFile(envFile)
@@ -58,9 +58,14 @@ pipeline {
                         echo "🔎 Pinging ${HOST}..."
                         sh "ping -c 4 ${HOST}"
 
+                        // Nettoyage distant
+                        sh """
+                            ssh -i ${SSH_CRED} -p ${PORT} -o StrictHostKeyChecking=no ${USER}@${HOST} 'rm -rf /home/${USER}/${TARGET}/*'
+                        """
+
                         // Copier le dossier compilé et .env
                         sh """
-                        scp -v -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r ./api/dist ${USER}@${HOST}:/home/${USER}/${TARGET}/
+                            scp -v -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r ./api/dist ${USER}@${HOST}:/home/${USER}/${TARGET}/
                         """
 
                         echo "✅ Deployment to FNP completed successfully!"
