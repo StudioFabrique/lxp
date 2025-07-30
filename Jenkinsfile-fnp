@@ -83,7 +83,7 @@ pipeline {
 
 
                         sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/dist && npm install --production'
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/dist && npm install --omit=dev'
                         """
 
                         echo "✅ Deployment to FNP completed successfully!"
