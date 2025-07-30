@@ -35,8 +35,6 @@ pipeline {
                     sh 'npm run install'
                     sh 'npm run generate'
                     sh 'npm run deploy'
-                    sh """cp ./api/docker-compose.yml ./${TARGET}
-                    """
                 }
             }
         }
@@ -68,6 +66,10 @@ pipeline {
                         // Copier le dossier compilé et .env
                         sh """
                             scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r ./api/dist ${USER}@${HOST}:/home/${USER}/${TARGET}/
+                        """
+
+                                                sh """
+                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} docker-compose.yml ${USER}@${HOST}:/home/${USER}/${TARGET}/
                         """
 
                         sh """
