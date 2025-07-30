@@ -71,7 +71,7 @@ pipeline {
                         """
 
                         sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/ && docker-compose down && docker-compose up -d'
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/ && docker compose down || true && docker compose up -d'
                         """
 
                         echo "✅ Deployment to FNP completed successfully!"
