@@ -49,7 +49,7 @@ pipeline {
                         // Inject .env in workspace
                         def envContent = readFile(envFile)
                         writeFile file: './api/dist/.env', text: envContent // si .env doit être dans dist
-
+                        
                         echo "📡 Deploying to FNP..."
                         echo "🔍 Host: ${HOST}"
                         echo "👤 User: ${USER}"
@@ -69,6 +69,10 @@ pipeline {
                         """
 
                         sh """
+                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r ./api/prisma ${USER}@${HOST}:/home/${USER}/${TARGET}/dist/
+                        """
+
+                        sh """
                             scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} docker-compose.yml ${USER}@${HOST}:/home/${USER}/${TARGET}/
                         """
                         
@@ -78,13 +82,15 @@ pipeline {
 
 
                         sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/ && docker compose down && docker compose up -d'
-                        """
-
-
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/dist && npm install --omit=dev'
-                        """
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} << 'EOF'
+                                set -e
+                                cd /home/${USER}/${TARGET}/dist
+                                npm ci --omit=dev
+                                npx prisma generate
+                                docker network create lxp_network || true
+                                docker compose down || true
+                                docker compose up -d --build
+                                pm2 restart /home/${USER}/${TARGET}/dist/server.js
 
                         echo "✅ Deployment to FNP completed successfully!"
                     }
