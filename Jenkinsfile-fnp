@@ -73,17 +73,17 @@ pipeline {
                         """
                         
                         sh """
-                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} package.json ${USER}@${HOST}:/home/${USER}/${TARGET}/dist/
+                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ./api/package.json ${USER}@${HOST}:/home/${USER}/${TARGET}/dist/
                         """
 
 
                         sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/ && docker compose down || true && docker compose up -d'
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/ && docker compose down || true && docker compose up -d'
                         """
 
 
                         sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/dist && npm install --production'
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/dist && npm install --production'
                         """
 
                         echo "✅ Deployment to FNP completed successfully!"
