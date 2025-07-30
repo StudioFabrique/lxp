@@ -78,12 +78,12 @@ pipeline {
 
 
                         sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/ && docker compose down || true && docker compose up -d'
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/ && docker compose down && docker compose up -d'
                         """
 
 
                         sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/dist && npm install --omit=dev'
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/dist && npm install --omit=dev'
                         """
 
                         echo "✅ Deployment to FNP completed successfully!"
