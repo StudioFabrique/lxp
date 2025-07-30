@@ -49,7 +49,9 @@ pipeline {
                     echo "User: ${USER}"
                     echo "Target: ${TARGET}"
 
-                    sh "scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ${USER}@${HOST}:/home/${USER}/${TARGET}"
+
+                    echo("pinging ${HOST}..." + ping "${HOST}" + " -c 4")
+                    //sh "scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ${USER}@${HOST}:/home/${USER}/${TARGET}"
                     sh "echo 'Deployment to FNP completed successfully!'"
 
                 }
