@@ -68,8 +68,12 @@ pipeline {
                             scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r ./api/dist ${USER}@${HOST}:/home/${USER}/${TARGET}/
                         """
 
-                                                sh """
+                        sh """
                             scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} docker-compose.yml ${USER}@${HOST}:/home/${USER}/${TARGET}/
+                        """
+
+                        sh """
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ${USER}@${HOST} 'docker network create lxp_network || true'
                         """
 
                         sh """
