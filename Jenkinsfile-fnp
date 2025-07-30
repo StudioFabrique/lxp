@@ -39,29 +39,31 @@ pipeline {
             }
         }
 
-        stage("Deploy to FNP") {
-            steps {
-                script {
-                    withCredentials([file(credentialsId: 'envFile', variable: 'FNP_ENV')]) {
-                        echo "Setting environment variables from ${FNP_ENV}..."
-                        def envContent = readFile(FNP_ENV)
-                        writeFile file: '.env', text: envContent
-                        sh "scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r .env ${USER}@${HOST}:/home/${USER}/${TARGET}/dist/"
-                                            echo "Deploying to FNP..."
+    stage("Deploy to FNP") {
+    steps {
+        script {
+        withCredentials([file(credentialsId: 'envFile', variable: 'FNP_ENV')]) {
+            echo "🔧 Setting environment variables from ${FNP_ENV}..."
+            
+            // Inject .env in workspace
+            def envContent = readFile(FNP_ENV)
+            writeFile file: './api/dist/.env', text: envContent // si .env doit être dans dist
 
-                        echo "Deployment details:"
-                        echo "Host: ${HOST}"
-                        echo "User: ${USER}"
-                        echo "Target: ${TARGET}"
+            echo "📡 Deploying to FNP..."
+            echo "🔍 Host: ${HOST}"
+            echo "👤 User: ${USER}"
+            echo "📁 Target: ${TARGET}"
 
+            echo "🔎 Pinging ${HOST}..."
+            sh "ping -c 4 ${HOST}"
 
-                        echo("pinging ${HOST}...")
-                        sh "ping -c 4 ${HOST}"
-                        sh "scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r ./api/dist ${USER}@${HOST}:/home/${USER}/${TARGET}"
-                        sh "echo 'Deployment to FNP completed successfully!'"
-                    }
-                }
+            // Copier le dossier compilé et .env
+            sh """
+            scp -v -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r ./api/dist ${USER}@${HOST}:/home/${USER}/${TARGET}/
+            """
+
+            echo "✅ Deployment to FNP completed successfully!"
             }
         }
-    }}
-      
+    }
+}   
