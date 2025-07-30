@@ -38,15 +38,16 @@ pipeline {
                 }
             }
         }
+    }
 
     stage("Deploy to FNP") {
         steps {
             script {
-                withCredentials([file(credentialsId: 'envFile', variable: 'FNP_ENV')]) {
+                withCredentials([file(credentialsId: 'FNP_ENV', variable: 'envFile')]) {
                     echo "🔧 Setting environment variables from ${FNP_ENV}..."
                     
                     // Inject .env in workspace
-                    def envContent = readFile(FNP_ENV)
+                    def envContent = readFile(envFile)
                     writeFile file: './api/dist/.env', text: envContent // si .env doit être dans dist
 
                     echo "📡 Deploying to FNP..."
@@ -67,5 +68,6 @@ pipeline {
             }
         }
     }
-    }}
+}
+
 
