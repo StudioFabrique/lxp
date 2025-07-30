@@ -43,7 +43,7 @@ pipeline {
             steps {
                 script {
                     echo "Deploying to FNP..."
-                    sh "scp -i StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ${USER}@${HOST}:/home/${USER}/${TARGET}"
+                    sh "scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ${USER}@${HOST}:/home/${USER}/${TARGET}"
                     sh "echo 'Deployment to FNP completed successfully!'"
                 }
             }
