@@ -52,9 +52,17 @@ pipeline {
 
                     echo("pinging ${HOST}...")
                     sh "ping -c 4 ${HOST}"
-                    sh "scp -v -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r ./api/dist ${USER}@${HOST}:/home/${USER}/${TARGET}"
+                    sh "scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r ./api/dist ${USER}@${HOST}:/home/${USER}/${TARGET}"
                     sh "echo 'Deployment to FNP completed successfully!'"
+                }
 
+                script {
+                    withCredentials([file(credentialsId: 'envFile', variable: 'FNP_ENV')]) {
+                        echo "Setting environment variables from ${FNP_ENV}..."
+                        def envContent = readFile(FNP_ENV)
+                        writeFile file: '.env', text: envContent
+                      "scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r .env ${USER}@${HOST}:/home/${USER}/${TARGET}/dist/"
+                    }
                 }
             }
         }
