@@ -36,10 +36,10 @@ io.use((socket, next) => {
 mongoInit();
 
 async function mongoInit() {
+  console.log("Connecting to MongoDB...");
   await mongoConnect();
   server.listen(PORT);
- 
-  
+
   console.log(`Serveur démarré sur le port: ${PORT}`);
   socket(io);
 }
