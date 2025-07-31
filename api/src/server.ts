@@ -17,7 +17,7 @@ process.env.ENVIRONMENT === "production"
   : console.log("Development mode");
 
 const origins =
-  process.env.NODE_ENV === "development"
+  process.env.ENVIRONMENT === "production"
     ? []
     : [
         "http://localhost:5173",
