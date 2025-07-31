@@ -1,42 +1,26 @@
-import mongoose from "mongoose";
-import dotenv from "dotenv";
 import path from "path";
-import fs from "fs";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
+
+dotenv.config({ path: path.join(__dirname, "..", "..", "..", "..", ".env") });
+//dotenv.config();
 //dotenv.config({ path: ".env.local", override: true });
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
 
 mongoose.connection.once("open", () => {
-  console.log("MongoDB connection established successfully");
-  console.log("Running in environment:", process.env.ENVIRONMENT);
+  console.log("MongoDB connection ready!");
+  console.log("ENVIRONMENT", process.env.NODE_ENV);
+  console.log("ENVIRONMENT", MONGO_URL);
 });
 
 mongoose.connection.on("error", (err) => {
   console.error(err);
 });
 
-function loadEnvFile() {
-  const possiblePaths = [
-    ".env",
-    "./api/.env",
-    "./api/dist/.env",
-    path.join(__dirname, ".env"),
-    path.join(__dirname, "../.env"),
-    path.join(process.cwd(), ".env"),
-    path.join(process.cwd(), "api/.env"),
-  ];
-
-  for (const envPath of possiblePaths) {
-    if (fs.existsSync(envPath)) {
-      console.log(`Loading .env from: ${envPath}`);
-      dotenv.config({ path: envPath });
-      return envPath;
-    }
-  }
-}
-
 async function mongoConnect() {
-  loadEnvFile();
+  console.log(MONGO_URL);
+
   await mongoose.connect(MONGO_URL!);
 }
 
