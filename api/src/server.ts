@@ -12,7 +12,7 @@ let server!: any;
 
 server = http.createServer(app);
 
-process.env.NODE_ENV === "production"
+process.env.ENVIRONMENT === "production"
   ? console.log("Production mode")
   : console.log("Development mode");
 
