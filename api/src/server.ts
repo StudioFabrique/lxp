@@ -36,6 +36,7 @@ io.use((socket, next) => {
 mongoInit();
 
 async function mongoInit() {
+  console.log("Current working directory:", process.cwd());
   console.log("Connecting to MongoDB...");
   await mongoConnect();
   server.listen(PORT);
