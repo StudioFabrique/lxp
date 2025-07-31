@@ -82,7 +82,9 @@ pipeline {
 
 
                         sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} "bash -l -c '
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} << 'EOF'
+                                set -e
+                                source ~/.bashrc || true
                                 cd /home/${USER}/${TARGET}/dist
                                 npm ci --omit=dev
                                 npx prisma generate
@@ -90,7 +92,7 @@ pipeline {
                                 docker compose down || true
                                 docker compose up -d --build
                                 pm2 restart /home/${USER}/${TARGET}/dist/server.js
-                            '"
+                            EOF
                         """
 
                         echo "✅ Deployment to FNP completed successfully!"
