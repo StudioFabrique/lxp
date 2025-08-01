@@ -85,7 +85,7 @@ pipeline {
         """
 
                         sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} << 'EOF'
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} << EOF
                                 cd /home/${USER}/${TARGET}/dist
                                 npm ci --omit=dev
                                 npx prisma generate
