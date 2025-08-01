@@ -85,14 +85,27 @@ pipeline {
         """
 
                         sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} << EOF
-                                cd /home/${USER}/${TARGET}/dist
-                                npm ci --omit=dev
-                                npx prisma generate
-                                docker network create lxp_network || true
-                                docker compose down || true
-                                docker compose up -d --build
-                            EOF
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/dist && npm ci --omit=dev'
+                        """
+                        
+                        sh """
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/dist && npx prisma generate'
+                        """
+                        
+                        sh """
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker network create lxp_network || true'
+                        """
+                        
+                        sh """
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker compose down || true && docker compose up -d --build'
+                        """
+
+                        sh """
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker network create lxp_network || true'
+                        """
+
+                        sh """
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'pm2 restart /home/${USER}/${TARGET}/dist/server.js'
                         """
 
                         echo "✅ Deployment to FNP completed successfully!"
