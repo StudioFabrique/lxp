@@ -105,7 +105,7 @@ pipeline {
                         """
 
                         sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'pm2 restart /home/${USER}/${TARGET}/dist/server.js'
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker compose down || true && docker compose up -d --build'
                         """
 
                         echo "✅ Deployment to FNP completed successfully!"
