@@ -54,12 +54,12 @@ pipeline {
 
             steps {
                 withCredentials([
-                    file(credentialsId: 'TOTO_ENV', variable: 'ENV_FILE'),
-                    string(credentialsId: 'TOTO_HOST', variable: 'HOST'),
-                    string(credentialsId: 'TOTO_USER', variable: 'USER'),
-                    string(credentialsId: 'TOTO_PORT', variable: 'PORT'),
-                    string(credentialsId: 'TOTO_TARGET', variable: 'TARGET'),
-                    sshUserPrivateKey(credentialsId: 'TOTO_SSH', keyFileVariable: 'SSH_CRED')
+                    file(credentialsId: 'INFA_ENV', variable: 'ENV_FILE'),
+                    string(credentialsId: 'INFA_HOST', variable: 'HOST'),
+                    string(credentialsId: 'INFA_USER', variable: 'USER'),
+                    string(credentialsId: 'INFA_PORT', variable: 'PORT'),
+                    string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
+                    sshUserPrivateKey(credentialsId: 'INFA_SSH', keyFileVariable: 'SSH_CRED')
                 ]) {
                     sh '''
                         echo "🔧 Setting environment variables from $ENV_FILE..."
