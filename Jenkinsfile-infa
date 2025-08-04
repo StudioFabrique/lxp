@@ -3,10 +3,9 @@ pipeline {
 
    tools {
         nodejs 'NodeJS-22'
-        SCANNER_HOME = tool 'SonarQube Scanner'
     }
     environment {
-        //SCANNER_HOME = tool 'SonarQube Scanner'
+        SCANNER_HOME = tool 'SonarQube Scanner'
         //SONAR_TOKEN = credentials('SONAR-JENKINS-TOKEN')
         //SONAR_QUBE_HOST = 'http://192.168.10.101:9000/'
 
