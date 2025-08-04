@@ -71,7 +71,10 @@ pipeline {
                         echo "🔎 Pinging $HOST..."
 
                         ping -c 4 $HOST
-                                scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/dist $USER@$HOST:/home/$USER/$TARGET/
+                    '''
+                    
+                    sh '''
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/dist $USER@$HOST:/home/$USER/$TARGET/
                     '''
 
                     sh '''
