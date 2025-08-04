@@ -67,131 +67,68 @@ pipeline {
                     string(credentialsId: 'INFA_USER', variable: 'USER'),
                     string(credentialsId: 'INFA_PORT', variable: 'PORT'),
                     string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
-                    sshUserPrivateKey(credentialsId: 'INFA_SSH', keyFileVariable: 'SSH_CRED')
+                    sshUserPrivateKey(credentialsId: 'TOTO_SSH', keyFileVariable: 'SSH_CRED')
                 ]) {
-                    sh '''
-                    echo "🔧 Setting environment variables from $ENV_FILE..."
-                    
-                    # Inject .env in workspace
-                    cp $ENV_FILE ./api/dist/.env
+                    sh """
+                        echo "🔧 Setting environment variables from $ENV_FILE..."
+                        
+                        # Inject .env in workspace
+                        cp $ENV_FILE ./api/dist/.env
 
-                    echo "📡 Deploying to FNP..."
-                    echo "🔎 Pinging $HOST..."
-                    ping -c 4 $HOST
+                        echo "📡 Deploying to FNP..."
+                        echo "🔎 Pinging $HOST..."
+
+                        ping -c 4 $HOST
+                                scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r ./api/dist ${USER}@${HOST}:/home/${USER}/${TARGET}/
+                    """
 
                     sh """
-                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r ./api/dist ${USER}@${HOST}:/home/${USER}/${TARGET}/
-                        """
+                        scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r ./api/prisma ${USER}@${HOST}:/home/${USER}/${TARGET}/dist/
+                    """
 
-                        sh """
-                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r ./api/prisma ${USER}@${HOST}:/home/${USER}/${TARGET}/dist/
-                        """
+                    sh """
+                        scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} docker-compose.yml ${USER}@${HOST}:/home/${USER}/${TARGET}/
+                    """
+                    
+                    sh """
+                        scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ./api/package.json ${USER}@${HOST}:/home/${USER}/${TARGET}/dist/
+                    """
 
-                        sh """
-                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} docker-compose.yml ${USER}@${HOST}:/home/${USER}/${TARGET}/
-                        """
-                        
-                        sh """
-                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ./api/package.json ${USER}@${HOST}:/home/${USER}/${TARGET}/dist/
-                        """
+                    sh """
+                        scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ./api/package-lock.json ${USER}@${HOST}:/home/${USER}/${TARGET}/dist/
+                    """
 
-                        sh """
-                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ./api/package-lock.json ${USER}@${HOST}:/home/${USER}/${TARGET}/dist/
-                        """
+                    sh """
+                        ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/dist && npm ci --omit=dev'
+                    """
+                    
+                    sh """
+                        ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/dist && npx prisma generate'
+                    """
+                    
+                    sh """
+                        ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker network create lxp_network || true'
+                    """
+                    
+                    sh """
+                        ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker compose down || true && docker compose up -d'
+                    """
 
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/dist && npm ci --omit=dev'
-                        """
-                        
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/dist && npx prisma generate'
-                        """
-                        
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker network create lxp_network || true'
-                        """
-                        
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker compose down || true && docker compose up -d'
-                        """
+                    sh """
+                        ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker image prune -f'
+                    """
 
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker image prune -f'
-                        """
-
-                        echo "✅ Deployment to INFA completed successfully!"
-        '''
+                    echo "✅ Deployment to INFA completed successfully!"
+        
                 }
-}
+            }
+        }
 
-            /*steps {
-                script {
-                    withCredentials([file(credentialsId: 'TOTO_ENV', variable: 'envFile')]) {
-                        echo "🔧 Setting environment variables from ${envFile}..."
-                        
-                        // Inject .env in workspace
-                        def envContent = readFile(envFile)
-                        writeFile file: './api/dist/.env', text: envContent // si .env doit être dans dist
-                        
-                        echo "📡 Deploying to FNP..."
-                        echo "🔍 Host: ${HOST}"
-                        echo "👤 User: ${USER}"
-                        echo "📁 Target: ${TARGET}"
-
-                        echo "🔎 Pinging ${HOST}..."
-                        sh "ping -c 4 ${HOST}"
-
-                        // Nettoyage distant
-                        
-                        sh """
-                            ssh -i ${SSH_CRED} -p ${PORT} -o StrictHostKeyChecking=no ${USER}@${HOST} 'rm -rf /home/${USER}/${TARGET}/*'
-                        """
-                        
-                        // Copier le dossier compilé et .env
-                        sh """
-                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r ./api/dist ${USER}@${HOST}:/home/${USER}/${TARGET}/
-                        """
-
-                        sh """
-                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r ./api/prisma ${USER}@${HOST}:/home/${USER}/${TARGET}/dist/
-                        """
-
-                        sh """
-                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} docker-compose.yml ${USER}@${HOST}:/home/${USER}/${TARGET}/
-                        """
-                        
-                        sh """
-                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ./api/package.json ${USER}@${HOST}:/home/${USER}/${TARGET}/dist/
-                        """
-
-                        sh """
-                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ./api/package-lock.json ${USER}@${HOST}:/home/${USER}/${TARGET}/dist/
-                        """
-
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/dist && npm ci --omit=dev'
-                        """
-                        
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/dist && npx prisma generate'
-                        """
-                        
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker network create lxp_network || true'
-                        """
-                        
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker compose down || true && docker compose up -d'
-                        """
-
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker image prune -f'
-                        """
-
-                        echo "✅ Deployment to INFA completed successfully!"
-                    }
-                }
-            }*/
+        post {
+            always {
+                echo "Cleaning up..."
+                sh "rm -rf ./api/dist"
+            }
         }
     }
 }
