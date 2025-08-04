@@ -5,15 +5,15 @@ pipeline {
         nodejs 'NodeJS-22'
     }
     environment {
-        SCANNER_HOME = tool 'SonarQube Scanner'
-        SONAR_TOKEN = credentials('SONAR-JENKINS-TOKEN')
-        SONAR_QUBE_HOST = 'http://192.168.10.101:9000/'
+        //SCANNER_HOME = tool 'SonarQube Scanner'
+        //SONAR_TOKEN = credentials('SONAR-JENKINS-TOKEN')
+        //SONAR_QUBE_HOST = 'http://192.168.10.101:9000/'
 
         HOST = credentials('INFA_HOST')
         USER = credentials('INFA_USER')
         SSH_CRED = credentials('INFA_SSH')
         TARGET = credentials('INFA_TARGET')
-        BRANCH_NAME = "${env.GIT_BRANCH.split('/').last()}"
+        //BRANCH_NAME = "${env.GIT_BRANCH.split('/').last()}"
         PORT = credentials('INFA_PORT')
         
     }
@@ -23,12 +23,31 @@ pipeline {
             steps {
                 checkout scm
                 script {
-                    echo "Checked out branch: ${BRANCH_NAME}"
+                def branchName = env.GIT_BRANCH?.split('/')?.last()
+                echo "Checked out branch: ${branchName}"
                 }
             }
         }
 
         stage("Sonar Qube") {
+            steps {
+                withCredentials([
+                    string(credentialsId: "SCANNER_HOME", variable: "SCANNER_HOME"),
+                    string(credentialsId: "SONAR_TOKEN", variable: "SONAR_TOKEN"),
+                    string(credentialsId: "SONAR_QUBE_HOST", variable: "SONAR_QUBE_HOST")
+                ]) {
+                    sh """
+                        ${SCANNER_HOME}/bin/sonar-scanner \
+                        -Dsonar.projectKey=lxp  \
+                        -Dsonar.projectName=lxp \
+                        -Dsonar.host.url=${SONAR_QUBE_HOST} \
+                        -Dsonar.login=${SONAR_TOKEN}
+                    """
+                }
+            }
+        }
+
+        /*stage("Sonar Qube") {
             steps {
                 sh """
                     ${SCANNER_HOME}/bin/sonar-scanner \
@@ -38,7 +57,7 @@ pipeline {
                     -Dsonar.login=${SONAR_TOKEN}
                 """
             }
-        }
+        }*/
 
         stage("Build App") {
             steps {
