@@ -7,15 +7,7 @@ pipeline {
     environment {
         SCANNER_HOME = tool 'SonarQube Scanner'
         //SONAR_TOKEN = credentials('SONAR-JENKINS-TOKEN')
-        //SONAR_QUBE_HOST = 'http://192.168.10.101:9000/'
-
-        HOST = credentials('INFA_HOST')
-        USER = credentials('INFA_USER')
-        SSH_CRED = credentials('INFA_SSH')
-        TARGET = credentials('INFA_TARGET')
-        //BRANCH_NAME = "${env.GIT_BRANCH.split('/').last()}"
-        PORT = credentials('INFA_PORT')
-        
+        //SONAR_QUBE_HOST = 'http://192.168.10.101:9000/'        
     }
 
     stages {
