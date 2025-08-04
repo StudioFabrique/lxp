@@ -3,14 +3,8 @@ import { prisma } from "../utils/db";
 import CustomRequest from "../utils/interfaces/express/custom-request";
 
 export default function mediatheque(type: string) {
-  console.log("type", type);
-
   return async (req: CustomRequest, res: Response, next: NextFunction) => {
-    console.log("HELLO MIDDLEWARE");
-
     if (req.file) {
-      console.log("FILE SPOTTED");
-
       try {
         const user = await prisma.admin.findFirst({
           where: {

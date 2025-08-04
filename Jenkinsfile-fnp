@@ -57,16 +57,16 @@ pipeline {
         }
     
 
-        stage("Deploying to INFA") {
+        stage("Deploying to FNP") {
 
             steps {
                 withCredentials([
-                    file(credentialsId: 'INFA_ENV', variable: 'ENV_FILE'),
-                    string(credentialsId: 'INFA_HOST', variable: 'HOST'),
-                    string(credentialsId: 'INFA_USER', variable: 'USER'),
-                    string(credentialsId: 'INFA_PORT', variable: 'PORT'),
-                    string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
-                    sshUserPrivateKey(credentialsId: 'INFA_SSH', keyFileVariable: 'SSH_CRED')
+                    file(credentialsId: 'FNP_ENV', variable: 'ENV_FILE'),
+                    string(credentialsId: 'FNP_HOST', variable: 'HOST'),
+                    string(credentialsId: 'FNP_USER', variable: 'USER'),
+                    string(credentialsId: 'FNP_PORT', variable: 'PORT'),
+                    string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
+                    sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
                 ]) {
                     sh '''
                         echo "🔧 Setting environment variables from $ENV_FILE..."
@@ -89,7 +89,7 @@ pipeline {
                     '''
 
                     sh '''
-                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT docker-compose.yml $USER@$HOST:/home/$USER/$TARGET/dist/
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT docker-compose.yml $USER@$HOST:/home/$USER/$TARGET/
                     '''
 
                     sh '''
@@ -109,22 +109,22 @@ pipeline {
                     '''
 
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist && docker network create lxp_network || true"
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET && docker network create lxp_network || true"
                     '''
 
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist && docker compose down || true && docker compose up -d"
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET && docker compose down || true && docker compose up -d"
                     '''
 
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "docker image prune -f"
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET && docker image prune -f"
                     '''
 
                     sh '''
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "pm2 restart /home/$USER/$TARGET/dist/src/server.js"
                     '''
 
-                    echo "✅ Deployment to INFA completed successfully!"
+                    echo "✅ Deployment to FNP completed successfully!"
         
                 }
             }

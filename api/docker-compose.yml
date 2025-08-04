@@ -28,6 +28,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
   db-mongo:
     image: mongo:latest
+
     restart: always
     container_name: lxp-mongo
     volumes:
