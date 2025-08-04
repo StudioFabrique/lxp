@@ -5,17 +5,7 @@ pipeline {
         nodejs 'NodeJS-22'
     }
     environment {
-        //SCANNER_HOME = tool 'sonar-scanner'
-        //SONAR_TOKEN = credentials('sonar-token')
-        //SONAR_HOST_URL = 'http://51.15.183.215:9000/'
-
-        HOST = credentials('FNP_HOST')
-        USER = credentials('FNP_USER')
-        SSH_CRED = credentials('FNP_SSH')
-        TARGET = credentials('FNP_TARGET')
-        BRANCH_NAME = "${env.GIT_BRANCH.split('/').last()}"
-        PORT = credentials('FNP_PORT')
-        
+        SCANNER_HOME = tool 'SonarQube Scanner'      
     }
 
     stages {
@@ -23,7 +13,34 @@ pipeline {
             steps {
                 checkout scm
                 script {
-                    echo "Checked out branch: ${BRANCH_NAME}"
+                def branchName = env.GIT_BRANCH?.split('/')?.last()
+                echo "Checked out branch: ${branchName}"
+                }
+            }
+        }
+
+        // docker manquant
+        /*stage('Tests backend') {
+            steps {
+                sh 'npm -g i dotenv-cli'
+                sh 'mkdir api/src/uploads || true'
+                sh 'npm run test'
+            }
+        }*/
+
+        stage("Sonar Qube") {
+            steps {
+                withCredentials([
+                    string(credentialsId: "SONAR-JENKINS-TOKEN", variable: "SONAR_TOKEN"),
+                    string(credentialsId: "SONAR_QUBE_HOST", variable: "SONAR_QUBE_HOST")
+                ]) {
+                    sh '''
+                        ${SCANNER_HOME}/bin/sonar-scanner \
+                        -Dsonar.projectKey=lxp  \
+                        -Dsonar.projectName=lxp \
+                        -Dsonar.host.url=$SONAR_QUBE_HOST \
+                        -Dsonar.login=$SONAR_TOKEN
+                    '''
                 }
             }
         }
@@ -40,76 +57,75 @@ pipeline {
         }
     
 
-        stage("Deploy to FNP") {
+        stage("Deploying to FNP") {
+
             steps {
-                script {
-                    withCredentials([file(credentialsId: 'FNP_ENV', variable: 'envFile')]) {
-                        echo "🔧 Setting environment variables from ${envFile}..."
+                withCredentials([
+                    file(credentialsId: 'FNP_ENV', variable: 'ENV_FILE'),
+                    string(credentialsId: 'FNP_HOST', variable: 'HOST'),
+                    string(credentialsId: 'FNP_USER', variable: 'USER'),
+                    string(credentialsId: 'FNP_PORT', variable: 'PORT'),
+                    string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
+                    sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
+                ]) {
+                    sh '''
+                        echo "🔧 Setting environment variables from $ENV_FILE..."
                         
-                        // Inject .env in workspace
-                        def envContent = readFile(envFile)
-                        writeFile file: './api/dist/.env', text: envContent // si .env doit être dans dist
-                        
+                        # Inject .env in workspace
+                        cp $ENV_FILE ./api/dist/.env
+
                         echo "📡 Deploying to FNP..."
-                        echo "🔍 Host: ${HOST}"
-                        echo "👤 User: ${USER}"
-                        echo "📁 Target: ${TARGET}"
+                        echo "🔎 Pinging $HOST..."
 
-                        echo "🔎 Pinging ${HOST}..."
-                        sh "ping -c 4 ${HOST}"
+                        ping -c 4 $HOST
+                    '''
+                    
+                    sh '''
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/dist $USER@$HOST:/home/$USER/$TARGET/
+                    '''
 
-                        // Nettoyage distant
-                        sh """
-                            ssh -i ${SSH_CRED} -p ${PORT} -o StrictHostKeyChecking=no ${USER}@${HOST} 'rm -rf /home/${USER}/${TARGET}/*'
-                        """
+                    sh '''
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/prisma $USER@$HOST:/home/$USER/$TARGET/dist/
+                    '''
 
-                        // Copier le dossier compilé et .env
-                        sh """
-                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r ./api/dist ${USER}@${HOST}:/home/${USER}/${TARGET}/
-                        """
+                    sh '''
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT docker-compose.yml $USER@$HOST:/home/$USER/$TARGET/
+                    '''
 
-                        sh """
-                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r ./api/prisma ${USER}@${HOST}:/home/${USER}/${TARGET}/dist/
-                        """
+                    sh '''
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT ./api/package.json $USER@$HOST:/home/$USER/$TARGET/dist/
+                    '''
 
-                        sh """
-                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} docker-compose.yml ${USER}@${HOST}:/home/${USER}/${TARGET}/
-                        """
-                        
-                        sh """
-                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ./api/package.json ${USER}@${HOST}:/home/${USER}/${TARGET}/dist/
-                        """
+                    sh '''
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT ./api/package-lock.json $USER@$HOST:/home/$USER/$TARGET/dist/
+                    '''
 
-                        sh """
-                            scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ./api/package-lock.json ${USER}@${HOST}:/home/${USER}/${TARGET}/dist/
-        """
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist && npm ci --omit=dev"
+                    '''
 
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/dist && npm ci --omit=dev'
-                        """
-                        
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/dist && npx prisma generate'
-                        """
-                        
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker network create lxp_network || true'
-                        """
-                        
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker compose down || true && docker compose up -d --build'
-                        """
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist && npx prisma generate"  
+                    '''
 
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker network create lxp_network || true'
-                        """
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET && docker network create lxp_network || true"
+                    '''
 
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker compose down || true && docker compose up -d --build'
-                        """
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET && docker compose down || true && docker compose up -d"
+                    '''
 
-                        echo "✅ Deployment to FNP completed successfully!"
-                    }
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET && docker image prune -f"
+                    '''
+
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "pm2 restart /home/$USER/$TARGET/dist/src/server.js"
+                    '''
+
+                    echo "✅ Deployment to FNP completed successfully!"
+        
                 }
             }
         }
