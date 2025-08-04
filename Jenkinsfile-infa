@@ -5,9 +5,9 @@ pipeline {
         nodejs 'NodeJS-22'
     }
     environment {
-        //SCANNER_HOME = tool 'sonar-scanner'
-        //SONAR_TOKEN = credentials('sonar-token')
-        //SONAR_HOST_URL = 'http://51.15.183.215:9000/'
+        SCANNER_HOME = tool 'SonarQube Scanner'
+        SONAR_TOKEN = credentials('SONAR-JENKINS-TOKEN')
+        SONAR_QUBE_HOST = 'http://192.168.10.101:9000/'
 
         HOST = credentials('INFA_HOST')
         USER = credentials('INFA_USER')
@@ -26,6 +26,19 @@ pipeline {
                     echo "Checked out branch: ${BRANCH_NAME}"
                 }
             }
+        }
+
+        stage("Sonar Qube") {
+            steps {
+                sh """
+                    ${SCANNER_HOME}/bin/sonar-scanner \
+                    -Dsonar.projectKey=lxp  \
+                    -Dsonar.projectName=lxp \
+                    -Dsonar.host.url=${SONAR_QUBE_HOST} \
+                    -Dsonar.login=${SONAR_TOKEN}
+                """
+            }
+
         }
 
         stage("Build App") {
