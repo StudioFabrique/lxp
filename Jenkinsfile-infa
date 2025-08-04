@@ -38,7 +38,6 @@ pipeline {
                     -Dsonar.login=${SONAR_TOKEN}
                 """
             }
-
         }
 
         stage("Build App") {
@@ -72,10 +71,11 @@ pipeline {
                         sh "ping -c 4 ${HOST}"
 
                         // Nettoyage distant
+                        /*
                         sh """
                             ssh -i ${SSH_CRED} -p ${PORT} -o StrictHostKeyChecking=no ${USER}@${HOST} 'rm -rf /home/${USER}/${TARGET}/*'
                         """
-
+                        */
                         // Copier le dossier compilé et .env
                         sh """
                             scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} -r ./api/dist ${USER}@${HOST}:/home/${USER}/${TARGET}/
@@ -95,7 +95,7 @@ pipeline {
 
                         sh """
                             scp -o StrictHostKeyChecking=no -i ${SSH_CRED} -P ${PORT} ./api/package-lock.json ${USER}@${HOST}:/home/${USER}/${TARGET}/dist/
-        """
+                        """
 
                         sh """
                             ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET}/dist && npm ci --omit=dev'
@@ -110,15 +110,11 @@ pipeline {
                         """
                         
                         sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker compose down || true && docker compose up -d --build'
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker compose down || true && docker compose up -d'
                         """
 
                         sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker network create lxp_network || true'
-                        """
-
-                        sh """
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker compose down || true && docker compose up -d --build'
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_CRED} -p ${PORT} ${USER}@${HOST} 'cd /home/${USER}/${TARGET} && docker image prune -f'
                         """
 
                         echo "✅ Deployment to INFA completed successfully!"
