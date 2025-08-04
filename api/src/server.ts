@@ -12,8 +12,12 @@ let server!: any;
 
 server = http.createServer(app);
 
+process.env.ENVIRONMENT === "production"
+  ? console.log("Production mode")
+  : console.log("Development mode");
+
 const origins =
-  process.env.NODE_ENV === "production"
+  process.env.ENVIRONMENT === "production"
     ? []
     : [
         "http://localhost:5173",
@@ -36,10 +40,10 @@ io.use((socket, next) => {
 mongoInit();
 
 async function mongoInit() {
+  console.log("Connecting to MongoDB...");
   await mongoConnect();
   server.listen(PORT);
- 
-  
+
   console.log(`Serveur démarré sur le port: ${PORT}`);
   socket(io);
 }
