@@ -67,8 +67,7 @@ pipeline {
                     string(credentialsId: 'INFA_USER', variable: 'USER'),
                     string(credentialsId: 'INFA_PORT', variable: 'PORT'),
                     string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
-                    string(credentialsId: 'INFA_SSH', variable: 'SSH_CRED'),
-                    sshUserPrivateKey(credentialsId: 'SSH_CRED', keyFileVariable: 'SSH_KEY')
+                    sshUserPrivateKey(credentialsId: 'INFA_SSH', keyFileVariable: 'SSH_CRED')
                 ]) {
                     sh '''
                     echo "🔧 Setting environment variables from $ENV_FILE..."
