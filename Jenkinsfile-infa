@@ -27,13 +27,13 @@ pipeline {
                     string(credentialsId: "SONAR-JENKINS-TOKEN", variable: "SONAR_TOKEN"),
                     string(credentialsId: "SONAR_QUBE_HOST", variable: "SONAR_QUBE_HOST")
                 ]) {
-                    sh """
+                    sh '''
                         ${SCANNER_HOME}/bin/sonar-scanner \
                         -Dsonar.projectKey=lxp  \
                         -Dsonar.projectName=lxp \
                         -Dsonar.host.url=$SONAR_QUBE_HOST \
                         -Dsonar.login=$SONAR_TOKEN
-                    """
+                    '''
                 }
             }
         }
@@ -54,14 +54,14 @@ pipeline {
 
             steps {
                 withCredentials([
-                    file(credentialsId: 'INFA_ENV', variable: 'ENV_FILE'),
-                    string(credentialsId: 'INFA_HOST', variable: 'HOST'),
-                    string(credentialsId: 'INFA_USER', variable: 'USER'),
-                    string(credentialsId: 'INFA_PORT', variable: 'PORT'),
-                    string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
-                    sshUserPrivateKey(credentialsId: 'INFA_SSH', keyFileVariable: 'SSH_CRED')
+                    file(credentialsId: 'TOTO_ENV', variable: 'ENV_FILE'),
+                    string(credentialsId: 'TOTO_HOST', variable: 'HOST'),
+                    string(credentialsId: 'TOTO_USER', variable: 'USER'),
+                    string(credentialsId: 'TOTO_PORT', variable: 'PORT'),
+                    string(credentialsId: 'TOTO_TARGET', variable: 'TARGET'),
+                    sshUserPrivateKey(credentialsId: 'TOTO_SSH', keyFileVariable: 'SSH_CRED')
                 ]) {
-                    sh """
+                    sh '''
                         echo "🔧 Setting environment variables from $ENV_FILE..."
                         
                         # Inject .env in workspace
@@ -72,43 +72,43 @@ pipeline {
 
                         ping -c 4 $HOST
                                 scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/dist $USER@$HOST:/home/$USER/$TARGET/
-                    """
+                    '''
 
-                    sh """
+                    sh '''
                         scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/prisma $USER@$HOST:/home/$USER/$TARGET/dist/
-                    """
+                    '''
 
-                    sh """
+                    sh '''
                         scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT docker-compose.yml $USER@$HOST:/home/$USER/$TARGET/
-                    """
-                    
-                    sh """
+                    '''
+
+                    sh '''
                         scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT ./api/package.json $USER@$HOST:/home/$USER/$TARGET/dist/
-                    """
+                    '''
 
-                    sh """
+                    sh '''
                         scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT ./api/package-lock.json $USER@$HOST:/home/$USER/$TARGET/dist/
-                    """
+                    '''
 
-                    sh """
+                    sh '''
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST 'cd /home/$USER/$TARGET/dist && npm ci --omit=dev'
-                    """
-                    
-                    sh """
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST 'cd /home/$USER/$TARGET/dist && npx prisma generate'
-                    """
-                    
-                    sh """
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST 'cd /home/$USER/$TARGET && docker network create lxp_network || true'
-                    """
-                    
-                    sh """
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST 'cd /home/$USER/$TARGET && docker compose down || true && docker compose up -d'
-                    """
+                    '''
 
-                    sh """
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST 'cd /home/$USER/$TARGET/dist && npx prisma generate'
+                    '''
+
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST 'cd /home/$USER/$TARGET && docker network create lxp_network || true'
+                    '''
+
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST 'cd /home/$USER/$TARGET && docker compose down || true && docker compose up -d'
+                    '''
+
+                    sh '''
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST 'cd /home/$USER/$TARGET && docker image prune -f'
-                    """
+                    '''
 
                     echo "✅ Deployment to INFA completed successfully!"
         
