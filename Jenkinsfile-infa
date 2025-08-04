@@ -62,7 +62,7 @@ pipeline {
 
             steps {
                 withCredentials([
-                    file(credentialsId: 'TOTO_ENV', variable: 'ENV_FILE'),
+                    file(credentialsId: 'INFA_ENV', variable: 'ENV_FILE'),
                     string(credentialsId: 'INFA_HOST', variable: 'HOST'),
                     string(credentialsId: 'INFA_USER', variable: 'USER'),
                     string(credentialsId: 'INFA_PORT', variable: 'PORT'),
