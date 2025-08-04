@@ -3,6 +3,7 @@ pipeline {
 
    tools {
         nodejs 'NodeJS-22'
+        SCANNER_HOME = tool 'SonarQube Scanner'
     }
     environment {
         //SCANNER_HOME = tool 'SonarQube Scanner'
@@ -32,8 +33,7 @@ pipeline {
         stage("Sonar Qube") {
             steps {
                 withCredentials([
-                    string(credentialsId: "SCANNER_HOME", variable: "SCANNER_HOME"),
-                    string(credentialsId: "SONAR_TOKEN", variable: "SONAR_TOKEN"),
+                    string(credentialsId: "SONAR-JENKINS-TOKEN", variable: "SONAR_TOKEN"),
                     string(credentialsId: "SONAR_QUBE_HOST", variable: "SONAR_QUBE_HOST")
                 ]) {
                     sh """
