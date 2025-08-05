@@ -16,61 +16,60 @@ export const fomrationIdValidator = [
     .withMessage("L'identifiant doit être un nombre."),
 ];
 
-export const postFormationValidator = [
+export const postFormationValidator =
   // Valider le champ 'title'
-  body("title")
-    .trim()
-    .isString()
-    .withMessage('Le champ "title" doit être une chaîne de caractères')
-    .custom(stringValidateGeneric)
-    .withMessage(
-      "Le titre de la formation contient des caractères non autorisés."
-    ),
+  [
+    body("title")
+      .trim()
+      .isString()
+      .withMessage('Le champ "title" doit être une chaîne de caractères')
+      .custom(stringValidateGeneric)
+      .withMessage(
+        "Le titre de la formation contient des caractères non autorisés."
+      ),
 
-  // Valider le champ 'description'
-  body("description")
-    .trim()
-    .optional()
-    .isString()
-    .withMessage('Le champ "description" doit être une chaîne de caractères')
-    .custom(stringValidateOptional)
-    .withMessage(
-      "La description de la formation contient des caractères non autorisés."
-    ),
+    // Valider le champ 'description'
+    body("description")
+      .trim()
+      .isString()
+      .withMessage('Le champ "description" doit être une chaîne de caractères')
+      .custom(stringValidateOptional)
+      .withMessage(
+        "La description de la formation contient des caractères non autorisés."
+      )
+      .optional(),
 
-  // Valider le champ 'level'
-  body("level")
-    .trim()
-    .isString()
-    .withMessage('Le champ "level" doit être une chaîne de caractères')
-    .custom(stringValidateGeneric)
-    .withMessage(
-      "Le niveau de la formation contient des caractères non autorisés."
-    ),
+    // Valider le champ 'level'
+    body("level")
+      .trim()
+      .isString()
+      .withMessage('Le champ "level" doit être une chaîne de caractères')
+      .custom(stringValidateGeneric)
+      .withMessage(
+        "Le niveau de la formation contient des caractères non autorisés."
+      ),
 
-  // Valider le champ 'code'
-  body("code")
-    .trim()
-    .optional()
-    .isString()
-    .withMessage('Le champ "code" doit être une chaîne de caractères')
-    .custom(stringValidateOptional)
-    .withMessage(
-      "Le code de la formation contient des caractères non autorisés."
-    ),
+    // Valider le champ 'code'
+    body("code")
+      .trim()
+      .isString()
+      .withMessage('Le champ "code" doit être une chaîne de caractères')
+      .custom(stringValidateOptional)
+      .withMessage(
+        "Le code de la formation contient des caractères non autorisés."
+      )
+      .optional(),
 
-  // Valider le champ 'tags'
-  body("tags")
-    .isArray()
-    .withMessage('Le champ "tags" doit être un tableau')
-    .custom((tags: any) => {
-      if (!tags.every((tag: any) => typeof tag === "number")) {
-        throw new Error('Chaque élément du tableau "tags" doit être un nombre');
-      }
-      return true;
-    }),
-  checkValidatorResult,
-];
+    // Valider le champ 'tags'
+    body("tags")
+      .isArray()
+      .withMessage("Un tableau est requis")
+      .notEmpty()
+      .withMessage("Le tableau ne peut pas être vide"),
+    body("tags.*")
+      .isNumeric()
+      .withMessage("Chaque tag doit être un nombre entier"),
+  ];
 
 export const putFormationValidator = [
   // Valider le champ 'title'
@@ -132,4 +131,40 @@ export const putFormationValidator = [
       return true;
     }),
   checkValidatorResult,
+];
+
+export const createFormationValidation = [
+  body("title")
+    .notEmpty()
+    .withMessage("Le titre est requis")
+    .isString()
+    .withMessage("Le titre doit être une chaîne de caractères"),
+
+  body("description")
+    .notEmpty()
+    .withMessage("La description est requise")
+    .isString()
+    .withMessage("La description doit être une chaîne de caractères"),
+
+  body("code")
+    .notEmpty()
+    .withMessage("Le code est requis")
+    .isString()
+    .withMessage("Le code doit être une chaîne de caractères"),
+
+  body("level")
+    .notEmpty()
+    .withMessage("Le niveau est requis")
+    .isString()
+    .withMessage("Le niveau doit être une chaîne de caractères"),
+
+  body("tags")
+    .isArray({ min: 1 })
+    .withMessage("Les tags doivent être un tableau non vide")
+    .custom((tags) => {
+      if (!tags.every((tag: any) => Number.isInteger(tag))) {
+        throw new Error("Les tags doivent être des entiers");
+      }
+      return true;
+    }),
 ];
