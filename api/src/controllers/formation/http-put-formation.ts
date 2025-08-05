@@ -13,8 +13,6 @@ export default async function httpPutFormation(req: Request, res: Response) {
       response,
     });
   } catch (error: any) {
-    console.log(error.message);
-
     return res
       .status(error.statusCode ?? 500)
       .json({ message: error.message ?? serverIssue });

@@ -41,13 +41,9 @@ const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 
 export const validationModule = [
   body("module.formationId")
-    .notEmpty()
-    .withMessage("L'identifiant de la formation est requis.")
     .isInt()
     .withMessage("L'identifiant de la formation doit être un nombre entier."),
   body("module.title")
-    .notEmpty()
-    .withMessage("Le titre du module est requis.")
     .isString()
     .withMessage("Le titre du module doit être une chaîne de caractères.")
     .custom(stringValidateGeneric)
@@ -66,9 +62,13 @@ formationRouter.get("/", checkPermissions("formation"), httpGetFormation);
 formationRouter.put(
   "/update-tags",
   checkPermissions("formation"),
-  body("formationId").isNumeric().notEmpty().escape(),
-  body("tags").isArray().notEmpty(),
-  body("tags.*").isNumeric().notEmpty().escape(),
+  body("formationId")
+    .isNumeric()
+    .withMessage("L'identifiant de la formation doit être un nombre entier"),
+  body("tags").isArray().withMessage("Un tableau est requis"),
+  body("tags.*")
+    .isNumeric()
+    .withMessage("Chaque tag doit être un nombre entier"),
   httpPutFormationTags
 );
 formationRouter.post(

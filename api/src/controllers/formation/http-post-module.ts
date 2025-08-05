@@ -14,7 +14,9 @@ async function httpPostModule(req: CustomRequest, res: Response) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     await deleteTempUploadedFile(req);
-    return res.status(400).json({ message: "Requête non valide." });
+    console.log("Validation errors:", errors.array());
+
+    return res.status(400).json(errors.array());
   }
 
   try {
