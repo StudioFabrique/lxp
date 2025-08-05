@@ -64,7 +64,7 @@ export const postFormationValidator =
     body("tags")
       .isArray()
       .withMessage("Un tableau est requis")
-      .notEmpty()
+      .custom((arr) => Array.isArray(arr) && arr.length > 0)
       .withMessage("Le tableau ne peut pas être vide"),
     body("tags.*")
       .isNumeric()
