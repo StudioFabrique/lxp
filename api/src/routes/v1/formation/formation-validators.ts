@@ -20,8 +20,6 @@ export const postFormationValidator = [
   // Valider le champ 'title'
   body("title")
     .trim()
-    .notEmpty()
-    .withMessage('Le champ "title" ne peut pas être vide')
     .isString()
     .withMessage('Le champ "title" doit être une chaîne de caractères')
     .custom(stringValidateGeneric)
@@ -43,8 +41,6 @@ export const postFormationValidator = [
   // Valider le champ 'level'
   body("level")
     .trim()
-    .notEmpty()
-    .withMessage('Le champ "level" ne peut pas être vide')
     .isString()
     .withMessage('Le champ "level" doit être une chaîne de caractères')
     .custom(stringValidateGeneric)
@@ -67,8 +63,6 @@ export const postFormationValidator = [
   body("tags")
     .isArray()
     .withMessage('Le champ "tags" doit être un tableau')
-    .notEmpty()
-    .withMessage('Le champ "tags" ne peut pas être vide')
     .custom((tags: any) => {
       if (!tags.every((tag: any) => typeof tag === "number")) {
         throw new Error('Chaque élément du tableau "tags" doit être un nombre');

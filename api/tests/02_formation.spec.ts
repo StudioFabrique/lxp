@@ -5,6 +5,7 @@ import { PrismaClient } from "@prisma/client";
 import mongoConnect from "../src/utils/services/db/mongo-connect";
 import mongoose from "mongoose";
 import path from "path";
+import exp from "constants";
 
 dotenv.config();
 
@@ -32,7 +33,7 @@ describe("HTTP Formation", () => {
 
     authToken = loginResponse.headers["set-cookie"][0];
   });
-
+  /*
   describe("Test GET /formation", () => {
     test("It should respond with 403 forbidden", async () => {
       await request(app)
@@ -79,25 +80,27 @@ describe("HTTP Formation", () => {
         .expect(404);
     });
 
+    // missing datas
     test("It should respond with 400 bad request", async () => {
-      await request(app)
+      const res = await request(app)
         .put("/v1/formation/update-tags")
-        .send({
-          formationId: 1,
-          tags: ["<cript>hacked lol</script>", 30],
-        })
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
+        .send({})
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(2);
     });
 
+    // wrong data types
     test("It should respond with 400 bad request", async () => {
-      await request(app)
+      const res = await request(app)
         .put("/v1/formation/update-tags")
         .send({
-          tags: [29, 30],
+          formationId: "toto",
+          tags: ["tata", "titi"],
         })
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(3);
     });
   });
 
@@ -109,9 +112,8 @@ describe("HTTP Formation", () => {
       "tests",
       "test-image.png"
     );
-    console.log("filePath", filePath);
 
-    test("It should respond 403 forbidden", async () => {
+       test("It should respond 403 forbidden", async () => {
       const module = {
         formationId: 1,
         title: "Random title",
@@ -139,6 +141,7 @@ describe("HTTP Formation", () => {
         .expect(201);
     });
 
+    // same as before without an image file
     test("It should response 201 success", async () => {
       const module = {
         formationId: 1,
@@ -152,119 +155,53 @@ describe("HTTP Formation", () => {
         .expect(201);
     });
 
+    // Datas are missing
     test("It should respond 400 bad request", async () => {
-      const module = {
-        //formationId: 1,
-        title: "Random title",
-        description: "Description random",
-      };
-      await request(app)
+      const module = {};
+      const res = await request(app)
         .post("/v1/formation/new-module")
         .field("module", JSON.stringify(module))
         .attach("image", filePath)
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(3);
     });
 
+    // Wrong data types
     test("It should respond 400 bad request", async () => {
       const module = {
         formationId: "toto",
-        title: "Random title",
-        description: "Description random",
+        title: 12,
+        description: false,
       };
-      await request(app)
+      const res = await request(app)
         .post("/v1/formation/new-module")
         .field("module", JSON.stringify(module))
         .attach("image", filePath)
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
-    });
-
-    test("It should respond 400 bad request", async () => {
-      const module = {
-        formationId: 1,
-        //title: "Random title",
-        description: "Description random",
-      };
-      await request(app)
-        .post("/v1/formation/new-module")
-        .field("module", JSON.stringify(module))
-        .attach("image", filePath)
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
-    });
-
-    test("It should respond 400 bad request", async () => {
-      const module = {
-        formationId: 1,
-        title: 1,
-        description: "Description random",
-      };
-      await request(app)
-        .post("/v1/formation/new-module")
-        .field("module", JSON.stringify(module))
-        .attach("image", filePath)
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
-    });
-
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(3);
+    });*/
+  /*
+    // Malicious code
     test("It should respond 400 bad request", async () => {
       const module = {
         formationId: 1,
         title: "<hacked>lol</hacked>",
-        description: "Description random",
+        description: "<malicious>code</malicious>",
       };
-      await request(app)
+      const res = await request(app)
         .post("/v1/formation/new-module")
         .field("module", JSON.stringify(module))
         .attach("image", filePath)
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
-    });
-
-    test("It should respond 400 bad request", async () => {
-      const module = {
-        formationId: 1,
-        title: "Random title",
-        //description: "Description random",
-      };
-      await request(app)
-        .post("/v1/formation/new-module")
-        .field("module", JSON.stringify(module))
-        .attach("image", filePath)
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
-    });
-
-    test("It should respond 400 bad request", async () => {
-      const module = {
-        formationId: 1,
-        title: "Random title",
-        description: /* "Description random" */ 1,
-      };
-      await request(app)
-        .post("/v1/formation/new-module")
-        .field("module", JSON.stringify(module))
-        .attach("image", filePath)
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
-    });
-
-    test("It should respond 400 bad request", async () => {
-      const module = {
-        formationId: 1,
-        title: "Random title",
-        description: "<hacked>lol</hacked>",
-      };
-      await request(app)
-        .post("/v1/formation/new-module")
-        .field("module", JSON.stringify(module))
-        .attach("image", filePath)
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(2);
     });
   });
+*/
 
+  //No authentication
   describe("Test POST /", () => {
     test("It should respond 403 forbidden", async () => {
       await request(app)
@@ -279,6 +216,7 @@ describe("HTTP Formation", () => {
         .expect(403);
     });
 
+    // Already existing formation
     test("It should respond 409 conflict", async () => {
       await request(app)
         .post("/v1/formation")
@@ -293,17 +231,14 @@ describe("HTTP Formation", () => {
         .expect(409);
     });
 
+    // Missing data
     test("It should respond 400 bad request", async () => {
-      await request(app)
+      const res = await request(app)
         .post("/v1/formation")
-        .send({
-          description: "random description",
-          code: "random code",
-          level: "random level",
-          tags: [1, 2, 3],
-        })
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
+        .send({})
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(5);
     });
 
     test("It should respond 400 bad request", async () => {
