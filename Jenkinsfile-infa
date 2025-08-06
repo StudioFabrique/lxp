@@ -26,6 +26,7 @@ pipeline {
                 sh 'mkdir api/uploads || true'
                 sh 'npm run test'
                 sh 'npm run docker:down'
+                sh 'docker stop $(docker ps -q) || true'
             }
         }
 
