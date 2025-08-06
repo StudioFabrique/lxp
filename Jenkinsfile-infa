@@ -25,6 +25,7 @@ pipeline {
                 sh 'npm -g i dotenv-cli'
                 sh 'mkdir api/uploads || true'
                 sh 'npm run test'
+                sh 'npm run docker:down'
             }
         }
 
