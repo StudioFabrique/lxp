@@ -433,12 +433,9 @@ describe("HTTP Formation", () => {
       expect(res.body.errors).toHaveLength(5);
     });
   });
-
   afterAll(async () => {
-    afterAll(async () => {
-      await disconnect();
-      await prisma.$disconnect();
-      console.log("Closed DB connections");
-    });
+    await disconnect();
+    await prisma.$disconnect();
+    console.log("Closed DB connections");
   });
 });
