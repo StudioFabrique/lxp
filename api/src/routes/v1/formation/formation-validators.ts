@@ -20,7 +20,6 @@ export const postFormationValidator =
   // Valider le champ 'title'
   [
     body("title")
-      .trim()
       .isString()
       .withMessage('Le champ "title" doit être une chaîne de caractères')
       .custom(stringValidateGeneric)
@@ -30,7 +29,6 @@ export const postFormationValidator =
 
     // Valider le champ 'description'
     body("description")
-      .trim()
       .isString()
       .withMessage('Le champ "description" doit être une chaîne de caractères')
       .custom(stringValidateOptional)
@@ -41,7 +39,6 @@ export const postFormationValidator =
 
     // Valider le champ 'level'
     body("level")
-      .trim()
       .isString()
       .withMessage('Le champ "level" doit être une chaîne de caractères')
       .custom(stringValidateGeneric)
@@ -51,7 +48,6 @@ export const postFormationValidator =
 
     // Valider le champ 'code'
     body("code")
-      .trim()
       .isString()
       .withMessage('Le champ "code" doit être une chaîne de caractères')
       .custom(stringValidateOptional)
@@ -74,9 +70,6 @@ export const postFormationValidator =
 export const putFormationValidator = [
   // Valider le champ 'title'
   body("formation.title")
-    .trim()
-    .notEmpty()
-    .withMessage('Le champ "title" ne peut pas être vide')
     .isString()
     .withMessage('Le champ "title" doit être une chaîne de caractères')
     .custom(stringValidateGeneric)
@@ -86,7 +79,6 @@ export const putFormationValidator = [
 
   // Valider le champ 'description'
   body("formation.description")
-    .trim()
     .optional()
     .isString()
     .withMessage('Le champ "description" doit être une chaîne de caractères')
@@ -97,9 +89,6 @@ export const putFormationValidator = [
 
   // Valider le champ 'level'
   body("formation.level")
-    .trim()
-    .notEmpty()
-    .withMessage('Le champ "level" ne peut pas être vide')
     .isString()
     .withMessage('Le champ "level" doit être une chaîne de caractères')
     .custom(stringValidateGeneric)
@@ -109,28 +98,26 @@ export const putFormationValidator = [
 
   // Valider le champ 'code'
   body("formation.code")
-    .trim()
     .optional()
     .isString()
     .withMessage('Le champ "code" doit être une chaîne de caractères')
     .custom(stringValidateOptional)
     .withMessage(
       "Le code de la formation contient des caractères non autorisés."
-    ),
+    )
+    .withMessage("Le tableau ne peut pas être vide"),
 
   // Valider le champ 'tags'
   body("formation.tags")
     .isArray()
     .withMessage('Le champ "tags" doit être un tableau')
-    .notEmpty()
-    .withMessage('Le champ "tags" ne peut pas être vide')
-    .custom((tags: any) => {
-      if (!tags.every((tag: any) => typeof tag === "number")) {
-        throw new Error('Chaque élément du tableau "tags" doit être un nombre');
-      }
-      return true;
-    }),
-  checkValidatorResult,
+    .custom((arr) => Array.isArray(arr) && arr.length > 0)
+    .withMessage("Le tableau ne peut pas être vide"),
+
+  // Valider chaque tag dans le tableau 'tags'
+  body("formation.tags.*")
+    .isNumeric()
+    .withMessage("Chaque tag doit être un nombre entier"),
 ];
 
 export const createFormationValidation = [

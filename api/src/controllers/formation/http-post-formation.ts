@@ -11,7 +11,7 @@ export default async function httpPostFormation(
 ) {
   const result = validationResult(req);
   if (!result.isEmpty()) {
-    console.log("Validation errors:", result.array());
+    //console.log("Validation errors:", result.array());
 
     return res.status(400).json({ errors: result.array() });
   }

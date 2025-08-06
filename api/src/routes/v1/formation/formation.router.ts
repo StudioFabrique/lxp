@@ -59,6 +59,7 @@ export const validationModule = [
 ];
 
 formationRouter.get("/", checkPermissions("formation"), httpGetFormation);
+
 formationRouter.put(
   "/update-tags",
   checkPermissions("formation"),
@@ -71,6 +72,7 @@ formationRouter.put(
     .withMessage("Chaque tag doit être un nombre entier"),
   httpPutFormationTags
 );
+
 formationRouter.post(
   "/new-module",
   checkPermissions("formation"),
