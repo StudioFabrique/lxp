@@ -13,7 +13,7 @@ const prisma = new PrismaClient();
 // Méthode pour fermer la connexion
 const disconnect = async () => {
   if (mongoose.connection.readyState !== 0) {
-    await mongoose.connection.close();
+    await mongoose.disconnect();
   }
 };
 
@@ -435,7 +435,10 @@ describe("HTTP Formation", () => {
   });
 
   afterAll(async () => {
-    // Fermer la connexion à MongoDB
-    await disconnect();
+    afterAll(async () => {
+      await disconnect();
+      await prisma.$disconnect();
+      console.log("Closed DB connections");
+    });
   });
 });
