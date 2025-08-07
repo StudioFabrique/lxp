@@ -38,6 +38,11 @@ pipeline {
                 sh 'mkdir api/uploads || true'
                 sh 'npm run test'
             }  
+            post {
+                always {
+                    sh 'docker volume prune --all --force || true'
+                }
+            }
         }
 
         stage("Sonar Qube") {
