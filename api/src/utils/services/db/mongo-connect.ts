@@ -19,7 +19,8 @@ mongoose.connection.on("error", (err) => {
 
 export default async function mongoConnect() {
   try {
-    if (!process.env.MONGO_LOCAL_URL) throw new Error("Missing MONGO_TEST_URL");
+    if (!process.env.MONGO_LOCAL_URL)
+      throw new Error("Missing MONGO_LOCAL_URL");
     await mongoose.connect(process.env.MONGO_LOCAL_URL);
     console.log("✅ MongoDB connecté");
   } catch (err) {
