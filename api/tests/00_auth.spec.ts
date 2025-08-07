@@ -1,0 +1,266 @@
+import request from "supertest";
+import dotenv from "dotenv";
+import { PrismaClient } from "@prisma/client";
+import mongoose from "mongoose";
+import mongoConnect from "../src/utils/services/db/mongo-connect";
+import app from "../src/app";
+
+dotenv.config();
+
+const prisma = new PrismaClient();
+
+/**
+ * Helper method to disconnect from MongoDB
+ * Ensures proper cleanup of database connections
+ */
+const disconnect = async (): Promise<void> => {
+  if (mongoose.connection.readyState !== 0) {
+    await mongoose.disconnect();
+  }
+};
+
+const MONGO_TEST_URL = process.env.MONGO_TEST_URL;
+
+/**
+ * Authentication API Test Suite
+ *
+ * This test suite covers all authentication-related endpoints including:
+ * - User login/logout
+ * - Token refresh
+ * - Authentication handshake
+ * - Role verification
+ *
+ * Test Structure:
+ * - beforeAll: Sets up database connection and obtains authentication tokens
+ * - Each describe block: Tests a specific endpoint with various scenarios
+ * - afterAll: Cleans up database connections
+ */
+describe("HTTP auth", () => {
+  let authToken = {}; // Authentication token for authorized requests
+  let refreshToken = {}; // Refresh token for token renewal
+
+  /**
+   * Test setup - runs before all tests
+   * Establishes database connection and obtains authentication tokens
+   * for use in subsequent tests
+   */
+  beforeAll(async () => {
+    // Connect to MongoDB test database
+    await mongoConnect();
+
+    // Login with admin credentials to obtain authentication tokens
+    const loginResponse = await request(app)
+      .post("/v1/auth/login")
+      .send({ email: "admin@studio.eco", password: "Abcdef@123456" });
+
+    // Extract auth and refresh tokens from response cookies
+    authToken = loginResponse.headers["set-cookie"][0];
+    refreshToken = loginResponse.headers["set-cookie"][1];
+  });
+
+  /**
+   * POST /auth/login endpoint tests
+   * Tests various login scenarios including success and failure cases
+   */
+  describe("Test POST /auth/login", () => {
+    /**
+     * Test successful login with valid credentials
+     * Should return 200 status code and set authentication cookies
+     */
+    test("It should respond with 200 success", async () => {
+      await request(app)
+        .post("/v1/auth/login")
+        .send({
+          email: "admin@studio.eco",
+          password: "Abcdef@123456",
+        })
+        .expect(200);
+    });
+
+    /**
+     * Test login failure when email is missing
+     * Should return 401 unauthorized
+     */
+    test("It should respond with 401 unauthorized when email is missing", async () => {
+      await request(app)
+        .post("/v1/auth/login")
+        .send({
+          // email: "admin@studio.eco", // Intentionally omitted
+          password: "Abcdef@123456",
+        })
+        .expect(401);
+    });
+
+    /**
+     * Test login failure with malicious email input
+     * Should return 401 unauthorized and not be vulnerable to injection
+     */
+    test("It should respond with 401 unauthorized for malicious email", async () => {
+      await request(app)
+        .post("/v1/auth/login")
+        .send({
+          email: "<hacked>lol</hacked>",
+          password: "Abcdef@123456",
+        })
+        .expect(401);
+    });
+
+    /**
+     * Test login failure with invalid email domain
+     * Should return 401 unauthorized
+     */
+    test("It should respond with 401 unauthorized for invalid email", async () => {
+      await request(app)
+        .post("/v1/auth/login")
+        .send({
+          email: "admin@studio.ecor", // Invalid domain
+          password: "Abcdef@123456",
+        })
+        .expect(401);
+    });
+
+    /**
+     * Test login failure when password is missing
+     * Should return 401 unauthorized
+     */
+    test("It should respond with 401 unauthorized when password is missing", async () => {
+      await request(app)
+        .post("/v1/auth/login")
+        .send({
+          email: "admin@studio.eco",
+          // password: "Abcdef@123456", // Intentionally omitted
+        })
+        .expect(401);
+    });
+
+    /**
+     * Test login failure with incorrect password
+     * Should return 401 unauthorized
+     */
+    test("It should respond with 401 unauthorized for wrong password", async () => {
+      await request(app)
+        .post("/v1/auth/login")
+        .send({
+          email: "admin@studio.eco",
+          password: "Abcdef@1234567", // Incorrect password
+        })
+        .expect(401);
+    });
+
+    /**
+     * Test login failure with malicious password input
+     * Should return 401 unauthorized and not be vulnerable to injection
+     */
+    test("It should respond with 401 unauthorized for malicious password", async () => {
+      await request(app)
+        .post("/v1/auth/login")
+        .send({
+          email: "admin@studio.eco",
+          password: "<hacked>lol</hacked>",
+        })
+        .expect(401);
+    });
+  });
+
+  /**
+   * GET /auth/handshake endpoint tests
+   * Tests authentication verification endpoint
+   */
+  describe("Test GET /auth/handshake", () => {
+    /**
+     * Test successful handshake with valid authentication token
+     * Should return 200 status code confirming valid authentication
+     */
+    test("It should respond 200 success with valid auth token", async () => {
+      await request(app)
+        .get("/v1/auth/handshake")
+        .set("Cookie", [`${authToken}`])
+        .expect(200);
+    });
+
+    /**
+     * Test handshake failure without authentication token
+     * Should return 403 forbidden
+     */
+    test("It should respond 403 forbidden without auth token", async () => {
+      await request(app).get("/v1/auth/handshake").expect(403);
+    });
+  });
+
+  /**
+   * GET /auth/refresh endpoint tests
+   * Tests token refresh functionality
+   */
+  describe("Test GET /auth/refresh", () => {
+    /**
+     * Test successful token refresh with valid refresh token
+     * Should return 200 status code and new authentication tokens
+     */
+    test("It should respond 200 success with valid refresh token", async () => {
+      await request(app)
+        .get("/v1/auth/refresh")
+        .set("Cookie", [`${refreshToken}`])
+        .expect(200);
+    });
+
+    /**
+     * Test token refresh failure without refresh token
+     * Should return 403 forbidden
+     */
+    test("It should respond 403 forbidden without refresh token", async () => {
+      await request(app).get("/v1/auth/refresh").expect(403);
+    });
+  });
+
+  /**
+   * GET /auth/logout endpoint tests
+   * Tests user logout functionality
+   */
+  describe("Test GET /auth/logout", () => {
+    /**
+     * Test successful logout
+     * Should return 200 status code and clear authentication cookies
+     * Note: Logout should work regardless of authentication state
+     */
+    test("It should respond 200 success", async () => {
+      await request(app).get("/v1/auth/logout").expect(200);
+    });
+  });
+
+  /**
+   * GET /auth/roles endpoint tests
+   * Tests user role retrieval functionality
+   */
+  describe("Test GET /auth/roles", () => {
+    /**
+     * Test successful role retrieval with valid authentication
+     * Should return 200 status code and user roles
+     */
+    test("It should respond 200 success with valid auth token", async () => {
+      await request(app)
+        .get("/v1/auth/roles")
+        .set("Cookie", [`${authToken}`])
+        .expect(200);
+    });
+
+    /**
+     * Test role retrieval failure without authentication
+     * Should return 403 forbidden when no auth token is provided
+     */
+    test("It should respond 403 forbidden without auth token", async () => {
+      await request(app)
+        .get("/v1/auth/roles")
+        // .set("Cookie", [`${authToken}`]) // Intentionally commented out
+        .expect(403);
+    });
+  });
+
+  /**
+   * Test cleanup - runs after all tests
+   * Ensures proper cleanup of database connections to prevent memory leaks
+   */
+  afterAll(async () => {
+    // Close MongoDB connection
+    await disconnect();
+  });
+});
