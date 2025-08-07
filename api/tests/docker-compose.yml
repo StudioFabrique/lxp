@@ -10,9 +10,19 @@ services:
       POSTGRES_USER: prisma
       POSTGRES_PASSWORD: prisma
       POSTGRES_DB: tests
+    healthcheck:
+      test: ["CMD", "pg_isready -U prisma -d tests"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   mongo:
     image: mongo:latest
     restart: always
     container_name: tests-mongo
     ports:
       - "26000:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
