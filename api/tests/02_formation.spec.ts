@@ -31,7 +31,14 @@ describe("HTTP Formation", () => {
     authToken = loginResponse.headers["set-cookie"][0];
   });
 
-  // No azuthentication
+  // tests/02_formation.spec.ts
+  describe("Formation tests", () => {
+    test("should pass", () => {
+      expect(true).toBe(true);
+    });
+  });
+
+  // No authentication
   describe("Test GET /formation", () => {
     test("It should respond with 403 forbidden", async () => {
       await request(app)
@@ -135,6 +142,7 @@ describe("HTTP Formation", () => {
    * If the formationId does not exist, it responds with a 404 status code.
    * If the module already exists, it responds with a 409 status code.
    */
+
   describe("Test POST /new-module", () => {
     const filePath = path.join(
       __dirname,

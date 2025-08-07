@@ -29,8 +29,7 @@ pipeline {
             post {
                 always {
                     // Cette partie sera exécutée même si les tests échouent
-                    sh 'npm run docker:down'
-                    sh 'docker stop $(docker ps -q) || true'
+                    sh 'npm run test:cleanup'
                     echo "Tests completed, Docker containers stopped."
                 }
             }
