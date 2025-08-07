@@ -5,7 +5,7 @@ import { Response, NextFunction } from "express";
 export default async function httpPutPassword(
   req: CustomRequest,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     const userId = req.auth?.userId;
@@ -17,12 +17,10 @@ export default async function httpPutPassword(
     };
     next(result);
   } catch (error: any) {
-    console.log({ error });
     const err = {
       statusCode: error.statusCode ?? 500,
       message: error.message,
     };
-    console.log({ err });
     next(err);
   }
 }

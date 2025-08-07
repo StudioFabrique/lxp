@@ -8,7 +8,7 @@ import CustomRequest from "../utils/interfaces/express/custom-request";
 export default function activateAccount(
   req: CustomRequest,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     const message = "Ce lien n'est plus valide.";
@@ -24,16 +24,14 @@ export default function activateAccount(
             token,
           });
           if (existingBlacklistedToken) {
-            console.log(existingBlacklistedToken);
             return res.status(400).json({ message });
           }
           req.auth = { userId: data.userId, userRoles: data.userRoles };
         }
         next();
-      },
+      }
     );
   } catch (error: any) {
-    console.log({ error });
     return res.status(error.statusCode ?? 500).json({ message: error.message });
   }
 }

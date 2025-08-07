@@ -50,6 +50,7 @@ import {
 import httpPostCheckEmail from "../../../controllers/user/http-post-check-email";
 import httpGetConnectedStudentParcoursWithAccomplishements from "../../../controllers/user/accomplishment/http-get-connected-student-parcours-with-accomplishments";
 import httpPostManyInvitations from "../../../controllers/user/http-post-many-invitations";
+import checkValidation from "../../../middleware/check-validation";
 
 const userRouter = express.Router();
 
@@ -256,7 +257,11 @@ userRouter.post(
 );
 
 //  vérification de l'existence d'un compte utilisateur
-userRouter.post("/check-email", postCheckEmailValidator, httpPostCheckEmail);
+userRouter.post(
+  "/check-email",
+  checkValidation(postCheckEmailValidator),
+  httpPostCheckEmail
+);
 
 // Send activations emails to multiple users
 userRouter.post(
