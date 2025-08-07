@@ -38,13 +38,6 @@ pipeline {
                 sh 'mkdir api/uploads || true'
                 sh 'npm run test'
             }  
-            post {
-                always {
-                    // Cette partie sera exécutée même si les tests échouent
-                    sh 'npm run test:cleanup'
-                    echo "Tests completed, Docker containers stopped."
-                }
-            }
         }
 
         stage("Sonar Qube") {
