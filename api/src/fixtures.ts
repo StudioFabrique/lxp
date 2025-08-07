@@ -87,7 +87,7 @@ async function createUser() {
       new Object(roleTeacher!._id),
       new Object(roleInterfaceTeacher!._id),
     ],
-    isActive: false,
+    isActive: true,
     //avatar: `https://robohash.org/${robotIndex}?set=set2&size=24x24`,
   });
   await newTeacher.save();

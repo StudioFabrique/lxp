@@ -8,8 +8,6 @@ async function httpPostTeacher(req: Request, res: Response) {
   const result: any = validationResult(req);
 
   if (!result.isEmpty()) {
-    console.log(result.errors);
-
     return res.status(400).json({ message: badQuery });
   }
 

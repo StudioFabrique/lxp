@@ -59,7 +59,6 @@ export const updateManyUsersStatusValidator = [
     .isString()
     .custom(stringValidateGeneric)
     .withMessage("Le status doit être une valeur booleenne."),
-  checkValidatorResult,
 ];
 
 // Mettre à jour le status d'un utilisateur
