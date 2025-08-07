@@ -22,7 +22,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^8.2.2",
-    "unimported": "^1.31.1"
+    "concurrently": "^8.2.2"
   }
 }

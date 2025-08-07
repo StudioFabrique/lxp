@@ -1,21 +1,28 @@
-# Set the version of docker compose to use
-version: "3.9"
-
 # The containers that compose the project
 services:
   db:
     image: postgres:latest
     restart: always
-    container_name: integration-tests-prisma
+    container_name: tests-prisma
     ports:
       - "5433:5432"
     environment:
       POSTGRES_USER: prisma
       POSTGRES_PASSWORD: prisma
       POSTGRES_DB: tests
+    healthcheck:
+      test: ["CMD", "pg_isready -U prisma -d tests"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   mongo:
     image: mongo:latest
     restart: always
-    container_name: integration-tests-mongo
+    container_name: tests-mongo
     ports:
       - "26000:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
