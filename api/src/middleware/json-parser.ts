@@ -10,7 +10,6 @@ export default async function jsonParser(
   res: Response,
   next: NextFunction
 ) {
-  console.log({ body: req.body });
   if (req.body.module && req.body.module !== undefined) {
     const module = JSON.parse(req.body.module);
     req.body.module = module;

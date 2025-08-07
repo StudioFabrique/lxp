@@ -4,8 +4,6 @@ import path from "path";
 import { v4 as uuidv4 } from "uuid";
 
 export const uploadActivityFiles = () => {
-  console.log("hello");
-
   const storage = multer.diskStorage({
     destination: function (req, files, cb) {
       cb(
