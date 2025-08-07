@@ -47,7 +47,9 @@ export default function checkPermissions(
         case "POST":
           actionDefined = "write";
           break;
-        case "PUT" || "PATCH":
+        // will do the same thing
+        case "PATCH":
+        case "PUT":
           actionDefined = "update";
           break;
         case "DELETE":
