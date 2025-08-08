@@ -5,6 +5,7 @@ import getUsersByRank from "../../models/user/get-users-by-rank";
 
 async function httpGetUsersByRank(req: Request, res: Response) {
   const result = validationResult(req);
+  console.log("dans le cul lulu");
 
   const { rank, stype, sdir } = req.params;
   const { page, limit } = req.query;

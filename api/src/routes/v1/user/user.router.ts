@@ -85,12 +85,11 @@ userRouter.put(
   httpUpdateUserStatus
 );
 
-// TODO: VALIDATORS
 userRouter.get("/stats", checkPermissions("user"), httpGetUsersStats);
 
 //  récupération de la liste des utilisateurs en fonction de leur rôle principal
 userRouter.get(
-  "/:role/:stype/:sdir",
+  "/list/:role/:stype/:sdir",
   checkPermissions("user"),
   getUsersByRoleValidator,
   paginationValidator,

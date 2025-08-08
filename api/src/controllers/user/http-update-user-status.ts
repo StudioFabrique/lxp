@@ -17,6 +17,7 @@ import { Response, NextFunction } from "express";
 import { badQuery, serverIssue } from "../../utils/constantes";
 import updateUserStatus from "../../models/user/update-user-status";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { validationResult } from "express-validator";
 
 async function httpUpdateUserStatus(
   req: CustomRequest,
@@ -24,13 +25,14 @@ async function httpUpdateUserStatus(
   next: NextFunction
 ) {
   try {
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      return res.status(400).json({ errors: result.array() });
+    }
+
     // Extract user ID and new status value from request body
     const { userId, value } = req.body;
-
-    // Validate that the status value is a boolean
-    if (value !== true && value !== false) {
-      throw { message: badQuery, satusCode: 400 };
-    }
 
     // Call the service function to update the user's status
     // Pass the authenticated user's ID, target user ID, and new status value

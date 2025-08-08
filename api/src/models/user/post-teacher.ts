@@ -11,9 +11,10 @@ async function postTeacher(teacher: IUser) {
 
   // vérification de la disponibilité de l'adresse email
   if (existingUser) {
-    throw new Error(
-      `L'utilisateur avec l'email : ${teacher.email} existe déjà`
-    );
+    throw {
+      statusCode: 409,
+      message: `L'utilisateur avec l'email : ${teacher.email} existe déjà`,
+    };
   }
 
   // enregistrement du contact dans la base de données Mongodb
@@ -23,6 +24,8 @@ async function postTeacher(teacher: IUser) {
   const newTeacher = await User.create({
     ...teacher,
     password,
+    // test in progress
+    isActive: teacher.isActive ?? false,
     roles: [new Object(fetchedRole!._id)],
   });
 
@@ -46,7 +49,11 @@ async function postTeacher(teacher: IUser) {
       return contact;
     }
   } else {
-    return false;
+    throw {
+      statusCode: 500,
+      message:
+        "Erreur lors de la création de l'utilisateur, veuillez reessayer",
+    };
   }
 }
 

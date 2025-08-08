@@ -8,8 +8,10 @@ async function getUsersByRole(
   limit: number,
   role: string,
   stype: string,
-  sdir: string,
+  sdir: string
 ) {
+  console.log(page, limit, role, stype, sdir);
+
   const dir = sdir === "asc" ? 1 : -1;
   let fetchedRoles;
 
@@ -20,7 +22,7 @@ async function getUsersByRole(
   }
 
   if (!fetchedRoles) {
-    return false;
+    throw { statusCode: 400, message: "Aucun rôle trouvé." };
   }
 
   const groupsSql = await prisma.group.findMany({
@@ -91,7 +93,7 @@ async function getUsersByRole(
       createdAt: 1,
       emailVerified: 1,
       invitationSent: 1,
-    },
+    }
   )
     .populate("group")
     .populate("roles", { _id: 1, role: 1, label: 1, rank: 1 })
@@ -106,13 +108,13 @@ async function getUsersByRole(
       parcours:
         user.group && user.group.length > 0
           ? groupsData.find(
-              (item) => user.group[0]._id.toString() === item.groupId,
+              (item) => user.group[0]._id.toString() === item.groupId
             ).parcours
           : "ND",
       formation:
         user.group && user.group.length > 0
           ? groupsData.find(
-              (item) => user.group[0]._id.toString() === item.groupId,
+              (item) => user.group[0]._id.toString() === item.groupId
             ).formation
           : "ND",
       avatar: user.avatar ? user.avatar.toString("base64") : null,
