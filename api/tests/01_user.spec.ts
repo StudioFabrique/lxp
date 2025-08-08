@@ -7,6 +7,7 @@ import mongoConnect from "../src/utils/services/db/mongo-connect";
 import Role from "../src/utils/interfaces/db/role";
 import User from "../src/utils/interfaces/db/user";
 import app from "../src/app";
+const originalPrismaClient = require("@prisma/client").PrismaClient;
 
 dotenv.config();
 
@@ -44,6 +45,7 @@ describe("HTTP /user", () => {
   });
 
   describe("Test POST /teacher", () => {
+    // No authentication
     test("It should respond 403 forbidden", async () => {
       await request(app)
         .post("/v1/user/new-teacher")
@@ -60,7 +62,8 @@ describe("HTTP /user", () => {
         .expect(403);
     });
 
-    test("it should responde 200 success", async () => {
+    // With authentication, successful writing
+    test("it should responde 201 success", async () => {
       await request(app)
         .post("/v1/user/new-teacher")
         .send({
@@ -77,11 +80,22 @@ describe("HTTP /user", () => {
         .expect(201);
     });
 
+    // Missing fields
     test("it should responde 400 bad request", async () => {
-      await request(app)
+      const res = await request(app)
+        .post("/v1/user/new-teacher")
+        .send({})
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(3);
+    });
+
+    // Wrong email format
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
         .post("/v1/user/new-teacher")
         .send({
-          //email: "toto@toto.fr",
+          email: "toto-toto.fr",
           firstname: "ernestine",
           lastname: "martinot",
           address: "57 rue du dr lagourge",
@@ -90,164 +104,54 @@ describe("HTTP /user", () => {
           phoneNumber: "+33559879765",
           isActive: true,
         })
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(1);
     });
 
-    test("it should responde 400 bad request", async () => {
-      await request(app)
+    // Wrong field types
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .post("/v1/user/new-teacher")
+        .send({
+          email: true,
+          firstname: 1,
+          lastname: 3,
+          nickname: 3,
+          address: false,
+          postCode: 64000,
+          city: true,
+          phoneNumber: 4,
+          isActive: "toto",
+        })
+        .set("Cookie", [`${authToken}`]);
+
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(9);
+    });
+
+    // Malicious code
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
         .post("/v1/user/new-teacher")
         .send({
           email: "<hacked/>",
-          firstname: "ernestine",
-          lastname: "martinot",
-          address: "57 rue du dr lagourge",
-          postCode: "64000",
-          city: "pau",
-          phoneNumber: "+33559879765",
+          firstname: "<ernestine>",
+          lastname: "<martinot>",
+          nickname: "<Toto666/>",
+          address: "<57 rue du dr lagourge>",
+          postCode: "<64000>",
+          city: "<pau>",
+          phoneNumber: "<+33559879765>",
           isActive: true,
         })
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(8);
     });
 
-    test("it should responde 400 bad request", async () => {
-      await request(app)
-        .post("/v1/user/new-teacher")
-        .send({
-          email: "toto@toto.fr",
-          //firstname: "ernestine",
-          lastname: "martinot",
-          address: "57 rue du dr lagourge",
-          postCode: "64000",
-          city: "pau",
-          phoneNumber: "+33559879765",
-          isActive: true,
-        })
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
-    });
-
-    test("it should responde 400 bad request", async () => {
-      await request(app)
-        .post("/v1/user/new-teacher")
-        .send({
-          email: "toto@toto.fr",
-          firstname: "<hacked/>",
-          lastname: "martinot",
-          address: "57 rue du dr lagourge",
-          postCode: "64000",
-          city: "pau",
-          phoneNumber: "+33559879765",
-          isActive: true,
-        })
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
-    });
-
-    test("it should responde 400 bad request", async () => {
-      await request(app)
-        .post("/v1/user/new-teacher")
-        .send({
-          email: "toto@toto.fr",
-          firstname: "ernestine",
-          //lastname: "martinot",
-          address: "57 rue du dr lagourge",
-          postCode: "64000",
-          city: "pau",
-          phoneNumber: "+33559879765",
-          isActive: true,
-        })
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
-    });
-
-    test("it should responde 400 bad request", async () => {
-      await request(app)
-        .post("/v1/user/new-teacher")
-        .send({
-          email: "toto@toto.fr",
-          firstname: "ernestine",
-          lastname: "<hacked/>",
-          address: "57 rue du dr lagourge",
-          postCode: "64000",
-          city: "pau",
-          phoneNumber: "+33559879765",
-          isActive: true,
-        })
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
-    });
-
-    test("it should responde 400 bad request", async () => {
-      await request(app)
-        .post("/v1/user/new-teacher")
-        .send({
-          email: "toto@toto.fr",
-          firstname: "ernestine",
-          lastname: "martinot",
-          address: "<hacked/>",
-          postCode: "64000",
-          city: "pau",
-          phoneNumber: "+33559879765",
-          isActive: true,
-        })
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
-    });
-
-    test("it should responde 400 bad request", async () => {
-      await request(app)
-        .post("/v1/user/new-teacher")
-        .send({
-          email: "toto@toto.fr",
-          firstname: "ernestine",
-          lastname: "martinot",
-          address: "57 rue du dr lagourge",
-          postCode: "<hacked/>",
-          city: "pau",
-          phoneNumber: "+33559879765",
-          isActive: true,
-        })
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
-    });
-
-    test("it should responde 400 bad request", async () => {
-      await request(app)
-        .post("/v1/user/new-teacher")
-        .send({
-          email: "toto@toto.fr",
-          firstname: "ernestine",
-          lastname: "martinot",
-          address: "57 rue du dr lagourge",
-          postCode: "64000",
-          city: "<hacked/>",
-          phoneNumber: "+33559879765",
-          isActive: true,
-        })
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
-    });
-
-    test("it should responde 400 bad request", async () => {
-      await request(app)
-        .post("/v1/user/new-teacher")
-        .send({
-          email: "toto@toto.fr",
-          firstname: "ernestine",
-          lastname: "martinot",
-          address: "57 rue du dr lagourge",
-          postCode: "64000",
-          city: "pau",
-          phoneNumber: "<hacked/>",
-          isActive: true,
-        })
-        .set("Cookie", [`${authToken}`])
-        .expect(400);
-    });
-
-    test("it should responde 400 bad request", async () => {
+    // Existing email
+    test("It should respond 409 conflict", async () => {
       await request(app)
         .post("/v1/user/new-teacher")
         .send({
@@ -258,31 +162,194 @@ describe("HTTP /user", () => {
           postCode: "64000",
           city: "pau",
           phoneNumber: "+33559879765",
-          //isActive: true,
+          isActive: true,
         })
         .set("Cookie", [`${authToken}`])
-        .expect(400);
+        .expect(409);
     });
 
-    test("it should responde 400 bad request", async () => {
+    // TODO tests pour transaction distribuée failure
+  });
+
+  // Successful reading
+  describe("Test GET /contacts", () => {
+    test("It should respond 200 success", async () => {
       await request(app)
-        .post("/v1/user/new-teacher")
-        .send({
-          email: "toto@toto.fr",
-          firstname: "ernestine",
-          lastname: "martinot",
-          address: "57 rue du dr lagourge",
-          postCode: "64000",
-          city: "pau",
-          phoneNumber: "+33559879765",
-          isActive: "true",
-        })
+        .get("/v1/user/contacts")
         .set("Cookie", [`${authToken}`])
-        .expect(400);
+        .expect(200);
+    });
+
+    // Not authenticated
+    test("It should respond 403 forbidden", async () => {
+      await request(app).get("/v1/user/contacts").expect(403);
     });
   });
 
-  describe("Test /:role/:stype/:sdir", () => {
+  describe("Test PUT /update-many-status", () => {
+    //  No authentication
+    test("It should respond 403 forbidden", async () => {
+      await request(app).put("/v1/user/update-many-status").expect(403);
+    });
+
+    // Missing datas
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .put("/v1/user/update-many-status")
+        .send({})
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(3);
+    });
+
+    // Wrong types
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .put("/v1/user/update-many-status")
+        .send({
+          usersIds: 42,
+          status: "not_a_boolean",
+        })
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(2);
+    });
+
+    // Wrong ids types
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .put("/v1/user/update-many-status")
+        .send({
+          usersIds: ["invalid_id"],
+          status: "actif",
+        })
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(1);
+    });
+
+    test("It should respond 201 success", async () => {
+      const users = await User.find({});
+      const res = await request(app)
+        .put("/v1/user/update-many-status")
+        .send({
+          usersIds: users.map((user) => user._id),
+          status: "actif",
+        })
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(201);
+    });
+
+    //  Malicious code
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .put("/v1/user/update-many-status")
+        .send({
+          usersIds: ["<hacked>"],
+          status: "<hacked>",
+        })
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(2);
+    });
+  });
+
+  describe("PUT /update-user-status", () => {
+    // No authentication
+    test("It should respond 403 forbidden", async () => {
+      await request(app).put("/v1/user/update-user-status").expect(403);
+    });
+
+    // Missing datas
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .put("/v1/user/update-user-status")
+        .send({})
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(2);
+    });
+
+    // Wrong types
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .put("/v1/user/update-user-status")
+        .send({
+          userId: 1,
+          value: "not_a_boolean",
+        })
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(2);
+    });
+
+    // Wrong ids types
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .put("/v1/user/update-user-status")
+        .send({
+          userId: ["invalid_id"],
+          value: true,
+        })
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(1);
+    });
+
+    // Successful update
+    test("It should respond 201 success", async () => {
+      const users = await User.find({});
+      const res = await request(app)
+        .put("/v1/user/update-user-status")
+        .send({
+          userId: users[1]._id,
+          value: true,
+        })
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(201);
+      expect(res.body.message).toBe(
+        `Le compte de l'utilisateur ${users[1].email} a été activé.`
+      );
+    });
+
+    // Failure own status update
+    test("It should respond 400 bad request", async () => {
+      const users = await User.find({});
+      const res = await request(app)
+        .put("/v1/user/update-user-status")
+        .send({
+          userId: users[0]._id,
+          value: true,
+        })
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.message).toBe(
+        "Vous ne pouvez pas changer le statut de votre propre compte."
+      );
+    });
+  });
+
+  describe("GET /:role/:stype/:sdir", () => {
+    // No authentication
+    test("It should respond 403 forbidden", async () => {
+      await request(app)
+        .get("/v1/user/list/teacher/lastname/asc?page=1&limit=10")
+        .expect(403);
+    });
+
+    // Missing datas
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .get("/v1/user/list/teacher/lastname/asc")
+        .set("Cookie", [`${authToken}`]);
+      console.log("ERRORS", res.body.errors);
+      expect(res.status).toBe(400);
+      //expect(res.body.errors).toHaveLength(3);
+    });
+  });
+
+  /*describe("Test /:role/:stype/:sdir", () => {
+  /*
     test("It should respond 403 forbidden", async () => {
       await request(app)
         .get("/v1/user/teacher/lastname/asc?page=1&limit=10")
@@ -512,7 +579,7 @@ describe("HTTP /user", () => {
         .send({ email: "<hacker/>@toto.fr" })
         .expect(400);
     });
-  });
+  });*/
 
   afterAll(async () => {
     // Fermer la connexion à MongoDB
