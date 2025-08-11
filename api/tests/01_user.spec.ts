@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import request from "supertest";
 import mongoConnect from "../src/utils/services/db/mongo-connect";
 import Role from "../src/utils/interfaces/db/role";
-import User from "../src/utils/interfaces/db/user";
+import User, { IUser } from "../src/utils/interfaces/db/user";
 import app from "../src/app";
 const originalPrismaClient = require("@prisma/client").PrismaClient;
 
@@ -342,9 +342,191 @@ describe("HTTP /user", () => {
       const res = await request(app)
         .get("/v1/user/list/teacher/lastname/asc")
         .set("Cookie", [`${authToken}`]);
-      console.log("ERRORS", res.body.errors);
       expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(2);
       //expect(res.body.errors).toHaveLength(3);
+    });
+
+    // Wrong types
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .get("/v1/user/list/teacher/lastname/asc?page=toto&limit=false")
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(2);
+    });
+
+    // Malicious code
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .get(
+          "/v1/user/list/teacher/lastname/asc?page=<hacker/>>&limit=<hacker/>"
+        )
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(2);
+    });
+
+    // Not role found
+    test("It should respond 404 not found", async () => {
+      const res = await request(app)
+        .get("/v1/user/list/toto/lastname/asc?page=1&limit=10")
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe("Aucun rôle trouvé.");
+    });
+  });
+
+  describe("PUT /user-roles", () => {
+    // No authentication
+    test("It should respond 403 forbidden", async () => {
+      await request(app).put("/v1/user/user-roles").expect(403);
+    });
+
+    // No datas in the request body
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .put("/v1/user/user-roles")
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(4);
+    });
+
+    // Empty lists in the request body
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .put("/v1/user/user-roles")
+        .send({ usersToUpdate: [], rolesId: [] })
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(2);
+    });
+
+    // Wrong types for arrays elements
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .put("/v1/user/user-roles")
+        .send({
+          usersToUpdate: [1, 2, 3],
+          rolesId: ["not_a_mongo_id"],
+        })
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(4);
+    });
+
+    // Malicious code in arrays
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .put("/v1/user/user-roles")
+        .send({
+          usersToUpdate: ["<hacked/>"],
+          rolesId: ["<hacked/>"],
+        })
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(2);
+    });
+
+    // Successful update
+    test("It should respond 200 success", async () => {
+      const studentRole = await Role.findOne({ role: "student" }, { _id: 1 });
+      const students = await User.find({ roles: { $in: studentRole } });
+
+      const res = await request(app)
+        .put("/v1/user/user-roles")
+        .send({
+          usersToUpdate: students.map((user: any) => user._id),
+          rolesId: [studentRole!._id],
+        })
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(200);
+    });
+
+    // Unauthorized role for user - a student cant become an admin
+    test("It should respond 400 bad request", async () => {
+      const studentRole = await Role.findOne({ role: "student" }, { _id: 1 });
+      const adminRole = await Role.findOne({ role: "admin" }, { _id: 1 });
+      const students = await User.find({ roles: { $in: studentRole } });
+
+      const res = await request(app)
+        .put("/v1/user/user-roles")
+        .send({
+          usersToUpdate: students.map((user: any) => user._id),
+          rolesId: [adminRole!._id],
+        })
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.message).toBe(
+        "Un ou plusieurs utilisateurs ne peuvent pas être mis à jour."
+      );
+    });
+
+    // Unauthorized role for user - an admin cant become a student
+    test("It should respond 400 bad request", async () => {
+      const studentRole = await Role.findOne({ role: "student" }, { _id: 1 });
+      const adminRole = await Role.findOne({ role: "admin" }, { _id: 1 });
+      const admins = await User.find({ roles: { $in: adminRole } });
+
+      const res = await request(app)
+        .put("/v1/user/user-roles")
+        .send({
+          usersToUpdate: admins.map((user: any) => user._id),
+          rolesId: [studentRole!._id],
+        })
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.message).toBe(
+        "Un ou plusieurs utilisateurs ne peuvent pas être mis à jour."
+      );
+    });
+
+    // Role not found
+    test("It should responde 404 not found", async () => {
+      const studentRole = await Role.findOne({ role: "student" }, { _id: 1 });
+      const users = await User.find({ roles: { $in: studentRole } });
+      const nonExistingRole = users![0]._id;
+      const res = await request(app)
+        .put("/v1/user/user-roles")
+        .send({
+          usersToUpdate: users.map((user: any) => user._id),
+          rolesId: [nonExistingRole!],
+        })
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe("Aucun rôle trouvé avec les ID fournis.");
+    });
+
+    // Some users not found
+    test("It should responde 404 not found", async () => {
+      const studentRole = await Role.findOne({ role: "student" }, { _id: 1 });
+      let users = (await User.find(
+        { roles: { $in: studentRole } },
+        { _id: 1 }
+      )) as { _id: string }[];
+
+      users = [...users, { _id: studentRole!._id }];
+
+      const res = await request(app)
+        .put("/v1/user/user-roles")
+        .send({
+          usersToUpdate: users.map((user: any) => user._id),
+          rolesId: [studentRole!._id],
+        })
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe(
+        "Un ou plusieurs utilisateurs n'existent pas."
+      );
+    });
+  });
+
+  describe("GET / /search/:role/:entity/:value/:stype/:sdir", () => {
+    // No authentication
+    test("It should respond 403 forbidden", async () => {
+      await request(app)
+        .get("/v1/user/search/teacher/value/lastname/asc?page=1&limit=10")
+        .expect(403);
     });
   });
 
