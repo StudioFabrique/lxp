@@ -1,3 +1,3 @@
 export function getPagination(page: number, limit: number) {
-  return (page - 1) * limit;
+  return (Math.abs(page) - 1) * Math.abs(limit);
 }

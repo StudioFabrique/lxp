@@ -25,7 +25,10 @@ import httpUpdateManyUsersStatus from "../../../controllers/user/http-update-man
 import httpUpdateUser from "../../../controllers/user/http-update-user";
 import httpUpdateUserRoles from "../../../controllers/user/http-update-user-roles";
 import httpUpdateUserStatus from "../../../controllers/user/http-update-user-status";
-import { paginationValidator } from "../../../helpers/custom-validators";
+import {
+  paginationValidator,
+  stringValidateGeneric,
+} from "../../../helpers/custom-validators";
 import activateAccount from "../../../middleware/activate-account";
 import checkPermissions from "../../../middleware/check-permissions";
 import { createFileUploadMiddleware } from "../../../middleware/fileUpload";
@@ -110,26 +113,24 @@ userRouter.put(
   // validators
   body("usersToUpdate")
     .isArray()
-    .notEmpty()
+    .withMessage("Un tableau d'identifiants d'utilisateurs est requis.")
+    .custom((arr) => Array.isArray(arr) && arr.length > 0)
     .withMessage("Le tableau studentsToUpdate ne peut pas être vide."),
   body("usersToUpdate.*")
-    .isString()
+    .isMongoId()
     .withMessage(
-      "Chaque élément de studentsToUpdate doit être une chaîne de caractères."
-    )
-    .trim()
-    .escape(),
+      "Chaque élément de studentsToUpdate doit être un identifiant MongoDB valide."
+    ),
   body("rolesId")
     .isArray()
-    .notEmpty()
+    .withMessage("Un tableau d'identifiants de rôles est requis.")
+    .custom((arr) => Array.isArray(arr) && arr.length > 0)
     .withMessage("Le tableau rolesId ne peut pas être vide."),
   body("rolesId.*")
-    .isString()
+    .isMongoId()
     .withMessage(
-      "Chaque élément de rolesId doit être une chaîne de caractères."
-    )
-    .trim()
-    .escape(),
+      "Chaque élément de rolesId doit être un identifiant MongoDB valide."
+    ),
   httpUpdateUserRoles
 );
 
@@ -171,15 +172,24 @@ userRouter.get(
   "/search/:role/:entity/:value/:stype/:sdir",
   checkPermissions("user"),
   //  validators
-  param("search").isString().notEmpty().trim().escape(),
-  param("role").isString().notEmpty().trim().escape(),
-  param("entity").isString().notEmpty().trim().escape(),
-  param("value").isString().notEmpty().trim().escape(),
-  param("stype").isString().notEmpty().trim().escape(),
-  param("sdir").isString().notEmpty().trim().escape(),
-  query("page").notEmpty().trim().escape().isInt(),
-  query("limit").notEmpty().trim().escape().isInt(),
-
+  paginationValidator,
+  param("role")
+    .isString()
+    .withMessage("Le paramètre 'role' est requis.")
+    .custom(stringValidateGeneric)
+    .withMessage("Le paramètre 'role' contient des caractères non autorisés."),
+  param("entity")
+    .isString()
+    .withMessage("Le paramètre 'entity' est requis.")
+    .custom(stringValidateGeneric)
+    .withMessage(
+      "Le paramètre 'entity' contient des caractères non autorisés."
+    ),
+  param("value")
+    .isString()
+    .withMessage("Le paramètre 'value' est requis.")
+    .custom(stringValidateGeneric)
+    .withMessage("Le paramètre 'value' contient des caractères non autorisés."),
   httpSearchUser
 );
 

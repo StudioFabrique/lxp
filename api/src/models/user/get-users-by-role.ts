@@ -10,8 +10,6 @@ async function getUsersByRole(
   stype: string,
   sdir: string
 ) {
-  console.log(page, limit, role, stype, sdir);
-
   const dir = sdir === "asc" ? 1 : -1;
   let fetchedRoles;
 
@@ -21,8 +19,12 @@ async function getUsersByRole(
     fetchedRoles = await Role.find({ role: role }, { _id: 1 });
   }
 
-  if (!fetchedRoles) {
-    throw { statusCode: 400, message: "Aucun rôle trouvé." };
+  console.log({ fetchedRoles });
+
+  if (fetchedRoles === undefined || fetchedRoles.length === 0) {
+    console.log("Aucun rôle trouvé.");
+
+    throw { statusCode: 404, message: "Aucun rôle trouvé." };
   }
 
   const groupsSql = await prisma.group.findMany({

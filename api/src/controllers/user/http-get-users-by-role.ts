@@ -8,7 +8,7 @@ async function httpGetUsersByRole(req: CustomRequest, res: Response) {
   const result = validationResult(req);
 
   if (!result.isEmpty()) {
-    return res.status(400).json({ message: badQuery });
+    return res.status(400).json({ errors: result.array() });
   }
 
   try {
@@ -32,11 +32,9 @@ async function httpGetUsersByRole(req: CustomRequest, res: Response) {
 
     return res.status(200).json({ total: result!.total, list: result!.users });
   } catch (err: any) {
-    console.log("ERROR", err);
-
     return res
       .status(err.statusCode ?? 500)
-      .json({ message: serverIssue + err });
+      .json({ message: err.message ?? serverIssue });
   }
 }
 
