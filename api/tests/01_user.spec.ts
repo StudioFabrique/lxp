@@ -667,7 +667,36 @@ describe("HTTP /user", () => {
         .get("/v1/user/data/999999999999999999999999")
         .set("Cookie", [`${teacherToken}`]);
       expect(res.status).toBe(404);
-      expect(res.body.message).toBe("L'utilisateur n'existe pas.");
+      expect(res.body.message).toBe("L'apprenant n'existe pas.");
+    });
+
+    // User exists but is not a student
+    test("It should respond 404 not found", async () => {
+      const teacher = await User.findOne({ email: "formateur@studio.eco" })
+        .select("_id")
+        .lean();
+      const res = await request(app)
+        .get(`/v1/user/data/${teacher!._id}`)
+        .set("Cookie", [`${teacherToken}`]);
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe("L'apprenant n'existe pas.");
+    });
+  });
+
+  describe("GET /own-feedback", () => {
+    // No authentication
+    test("It should respond 403 forbidden", async () => {
+      await request(app).get("/v1/user/own-feedback").expect(403);
+    });
+
+    // Successful reading
+    test("It should respond 200 success", async () => {
+      const res = await request(app)
+        .get("/v1/user/own-feedback")
+        .set("Cookie", [`${teacherToken}`]);
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("feedbacks");
+      expect(res.body.feedbacks).toHaveLength(0);
     });
   });
 
