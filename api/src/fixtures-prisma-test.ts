@@ -332,6 +332,7 @@ async function createModules() {
 
 async function createParcours() {
   try {
+    const contacts = await prisma.contact.findMany({});
     const modules = await prisma.module.findMany();
     console.log({ modules });
 
@@ -351,6 +352,16 @@ async function createParcours() {
           create: modules.map((m: any) => ({
             module: { connect: { id: m.id } },
           })),
+        },
+        contacts: {
+          create: [
+            {
+              contact: { connect: { id: contacts[0].id } },
+            },
+            {
+              contact: { connect: { id: contacts[1].id } },
+            },
+          ],
         },
       },
     });
