@@ -25,6 +25,8 @@ const MONGO_TEST_URL = process.env.MONGO_TEST_URL;
 describe("HTTP /user", () => {
   let authToken = {}; // Store the authentication token
   let token = "";
+  let teacherToken = "";
+  let studentId = "";
 
   beforeAll(async () => {
     // Perform any setup before running the tests, such as logging in and obtaining the authentication token
@@ -42,6 +44,14 @@ describe("HTTP /user", () => {
       process.env.REGISTER_SECRET!,
       { expiresIn: "7d" }
     );
+
+    const teacherLogin = await request(app)
+      .post("/v1/auth/login")
+      .send({ email: "formateur@studio.eco", password: "Abcdef@123456" });
+    teacherToken = teacherLogin.headers["set-cookie"][0];
+
+    const student = await User.findOne({ email: "apprenant@studio.eco" });
+    studentId = student?._id.toString();
   });
 
   describe("Test POST /teacher", () => {
@@ -525,8 +535,139 @@ describe("HTTP /user", () => {
     // No authentication
     test("It should respond 403 forbidden", async () => {
       await request(app)
-        .get("/v1/user/search/teacher/value/lastname/asc?page=1&limit=10")
+        .get(
+          "/v1/user/search/teacher/firstname/value/lastname/asc?page=1&limit=10"
+        )
         .expect(403);
+    });
+
+    // No datas
+    test("It should respond 404 not found", async () => {
+      await request(app).get("/v1/user/search/?page=1&limit=10").expect(404);
+    });
+
+    // Wrong types
+    test("It should respond 200 success", async () => {
+      await request(app)
+        .get(
+          "/v1/user/search/teacher/firstname/value/lastname/asc?page=toto&limit=tata"
+        )
+        .set("Cookie", [`${authToken}`])
+        .expect(200);
+    });
+
+    // No data to retrieve
+    test("It should respond 200 success", async () => {
+      const res = await request(app)
+        .get(
+          `/v1/user/search/teacher/firstname/toto/lastname/asc?page=1&limit=10`
+        )
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(200);
+      expect(res.body.total).toBe(0);
+      expect(res.body.list).toHaveLength(0);
+    });
+
+    // Found data
+    test("It should respond 200 success", async () => {
+      const res = await request(app)
+        .get(
+          `/v1/user/search/teacher/firstname/raymond/lastname/asc?page=1&limit=10`
+        )
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(200);
+      expect(res.body.total).toBeGreaterThan(0);
+      expect(res.body.list).toHaveLength(2);
+    });
+
+    // Role not found
+    test("It should respond 404 not found", async () => {
+      const res = await request(app)
+        .get(
+          `/v1/user/search/toto/firstname/raymond/lastname/asc?page=1&limit=10`
+        )
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe("Le rôle n'existe pas.");
+    });
+
+    // Malicious code
+    test("It should responde 400 bad request", async () => {
+      const res = await request(app)
+        .get(
+          "/v1/user/search/teacher/firstname/<hacked lol/>/lastname/asc?page=1&limit=10"
+        )
+        .set("Cookie", [`${authToken}`]);
+
+      expect(res.status).toBe(404);
+    });
+  });
+
+  describe("GET /last-parcours", () => {
+    // No authentication
+    test("It should respond 403 forbidden", async () => {
+      await request(app).get("/V1/user/last-parcours").expect(403);
+    });
+
+    // User is not a teacher
+    test("It should respond 404 not found", async () => {
+      const res = await request(app)
+        .get("/V1/user/last-parcours")
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe(
+        "L'utilisateur n'existe pas dans la liste des contacts."
+      );
+    });
+
+    // Successful reading
+    test("It should respond 200 success", async () => {
+      const res = await request(app)
+        .get("/V1/user/last-parcours")
+        .set("Cookie", [`${teacherToken}`]);
+      expect(res.status).toBe(200);
+
+      expect(res.body.message).toBe("");
+      expect(res.body.response).toHaveLength(1);
+      expect(res.body.response[0].title).toBe("Parcours Test 1");
+    });
+  });
+
+  describe("GET /data/:userId", () => {
+    // No authentication
+    test("It should respond 403 forbidden", async () => {
+      await request(app).get("/v1/user/data/1").expect(403);
+    });
+
+    // Successful reading
+    test("It should respond 200 success", async () => {
+      const res = await request(app)
+        .get(`/v1/user/data/${studentId}`)
+        .set("Cookie", [`${teacherToken}`]);
+      console.log("RES", res.body);
+      expect(res.status).toBe(200);
+      expect(res.body.user.connectionInfos).toHaveLength(14);
+      expect(res.body).toHaveProperty("parcours");
+      expect(res.body).toHaveProperty("parcoursCompletion");
+    });
+
+    // Wrong userId format
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .get("/v1/user/data/invalid_user_id")
+        .set("Cookie", [`${teacherToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(1);
+      expect(res.body.errors[0].msg).toBe("Identifiant d'utilisateur invalide");
+    });
+
+    // User not found
+    test("It should respond 404 not found", async () => {
+      const res = await request(app)
+        .get("/v1/user/data/999999999999999999999999")
+        .set("Cookie", [`${teacherToken}`]);
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe("L'utilisateur n'existe pas.");
     });
   });
 

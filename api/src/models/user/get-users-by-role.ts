@@ -19,11 +19,7 @@ async function getUsersByRole(
     fetchedRoles = await Role.find({ role: role }, { _id: 1 });
   }
 
-  console.log({ fetchedRoles });
-
   if (fetchedRoles === undefined || fetchedRoles.length === 0) {
-    console.log("Aucun rôle trouvé.");
-
     throw { statusCode: 404, message: "Aucun rôle trouvé." };
   }
 

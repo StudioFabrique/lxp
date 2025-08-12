@@ -212,7 +212,12 @@ userRouter.get(
 );
 
 // retourne les informations d'un utilisateur ainsi que ses rôles et son temps de connexion
-userRouter.get("/data/:userId", checkPermissions("user"), httpGetUserData);
+userRouter.get(
+  "/data/:userId",
+  checkPermissions("user"),
+  param("userId").isMongoId().withMessage("Identifiant d'utilisateur invalide"),
+  httpGetUserData
+);
 
 userRouter.get(
   "/own-feedback",
