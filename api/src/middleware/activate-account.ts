@@ -13,7 +13,7 @@ export default function activateAccount(
   try {
     const message = "Ce lien n'est plus valide.";
     const { token } = req.body;
-    if (!token) throw { satusCode: 400, message: badQuery };
+    if (!token) throw { satusCode: 400, message: "badQuery" };
     jwt.verify(
       token,
       process.env.REGISTER_SECRET!,

@@ -22,8 +22,6 @@ export default async function getUserData(userId: string) {
     .populate("roles")
     .lean()) as IUser;
 
-  console.log({ user });
-
   if (!user || user.roles[0].role !== "student") {
     throw { message: "L'apprenant n'existe pas.", statusCode: 404 };
   }
