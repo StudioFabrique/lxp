@@ -737,52 +737,83 @@ describe("HTTP /user", () => {
   });
 
   describe("Test /activate", () => {
-    // Successful activation
-    test("It should respond 200 success", async () => {
-      await request(app)
-        .post("/v1/user/activate")
-        .send({ token: token, password: "Abcdef@123456" })
-        .expect(200);
-    });
-
     // No datas
     test("It should respond 400 bad request", async () => {
       const res = await request(app)
         .post("/v1/user/activate")
         .send({})
         .expect(400);
-      console.log(res.body);
+      expect(res.body.message).toBe("Un token est requis");
+    });
 
+    // Invalid token
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .post("/v1/user/activate")
+        .send({ token: 10, password: false });
+      expect(res.status).toBe(401);
+      expect(res.body.message).toBe("Ce lien n'est plus valide.");
+    });
+
+    // Invalid password
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .post("/v1/user/activate")
+        .send({ token, password: false });
+      expect(res.status).toBe(400);
       expect(res.body.errors).toHaveLength(2);
     });
 
+    // Malicious code
     test("It should respond 400 bad request", async () => {
-      await request(app)
+      const res = await request(app)
         .post("/v1/user/activate")
-        .send({ token, password: "" })
-        .expect(400);
+        .send({ token, password: "<hacked/>" });
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(1);
     });
 
+    // Successful activation
+    test("It should respond 200 success", async () => {
+      await request(app)
+        .post("/v1/user/activate")
+        .send({ token, password: "Abcdef@123456" })
+        .expect(200);
+    });
+
+    // Blacklisted token
     test("It should respond 400 bad request", async () => {
       await request(app)
         .post("/v1/user/activate")
         .send({ token, password: "Abcdef@123456" })
         .expect(400);
     });
+  });
 
-    test("It should respond 400 bad request", async () => {
-      await request(app)
-        .post("/v1/user/activate")
-        .send({ token: "<hacked ! />", password: "Abcdef@123456" })
-        .expect(400);
+  describe("PUT /user/invitation/:userId", () => {
+    // No authentication
+    test("It should respond 403 forbidden", async () => {
+      await request(app).put("/v1/user/invitation/123").expect(403);
     });
 
-    test("It should respond 400 bad request", async () => {
+    // Successful invitation
+    test("It should respond 200 success", async () => {
       await request(app)
-        .post("/v1/user/activate")
-        .send({ token, password: "Abcdef@<hacked !/>" })
-        .expect(400);
+        .put("/v1/user/invitation/" + studentId)
+        .set("Cookie", [`${authToken}`])
+        .expect(200);
     });
+
+    // Invalid userId
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .put("/v1/user/invitation/invalid")
+        .set("Cookie", [`${authToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(1);
+    });
+
+    // Not
   });
 
   /*describe("Test /:role/:stype/:sdir", () => {

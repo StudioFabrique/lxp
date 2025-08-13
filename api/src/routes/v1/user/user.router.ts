@@ -252,8 +252,8 @@ userRouter.get(
 //  met à jour le mot d'un passe d'un nouvel utilisateur
 userRouter.post(
   "/activate",
-  postPasswordValidator,
   activateAccount,
+  postPasswordValidator,
   httpPutPassword
 );
 

@@ -12,13 +12,18 @@ export default function activateAccount(
 ) {
   try {
     const message = "Ce lien n'est plus valide.";
-    const { token } = req.body;
-    if (!token) throw { satusCode: 400, message: "badQuery" };
+    const { token, password } = req.body;
+
+    if (!token) throw { statusCode: 400, message: "Un token est requis" };
     jwt.verify(
-      token,
+      token.toString(),
       process.env.REGISTER_SECRET!,
       async (err: any, data: any) => {
-        if (err) throw { statusCode: 401, message };
+        if (err) {
+          // Send error response directly
+          return res.status(401).json({ message });
+        }
+
         if (data) {
           const existingBlacklistedToken = await BlackListedToken.findOne({
             token,
