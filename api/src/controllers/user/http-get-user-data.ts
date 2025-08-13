@@ -15,8 +15,6 @@ export default async function httpGetUserData(req: Request, res: Response) {
     const response = await getUserData(userId);
     return res.status(200).json(response);
   } catch (error: any) {
-    console.log({ error });
-
     return res
       .status(error.statusCode ?? 500)
       .json({ message: error.message ?? serverIssue });

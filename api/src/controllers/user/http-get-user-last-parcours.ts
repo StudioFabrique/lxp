@@ -8,8 +8,6 @@ export default async function httpGetUserLastParcours(
   res: Response
 ) {
   try {
-    console.log(req.auth?.userId);
-
     const response = await getUserLastParcours(req.auth!.userId);
     return res.status(200).json({
       success: true,
@@ -17,8 +15,6 @@ export default async function httpGetUserLastParcours(
       response,
     });
   } catch (error: any) {
-    console.log("ERROR", error);
-
     return res
       .status(error.statusCode ?? 500)
       .json({ message: error.message ?? serverIssue });

@@ -1,3 +1,4 @@
+import { validationResult } from "express-validator";
 import putPassword from "../../models/user/put-password";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import { Response, NextFunction } from "express";
@@ -8,6 +9,11 @@ export default async function httpPutPassword(
   next: NextFunction
 ) {
   try {
+    const isValid = validationResult(req);
+
+    if (!isValid.isEmpty())
+      return res.status(400).json({ errors: isValid.array() });
+
     const userId = req.auth?.userId;
     const { password, token } = req.body;
     await putPassword(userId!, password, token);

@@ -27,6 +27,7 @@ describe("HTTP /user", () => {
   let token = "";
   let teacherToken = "";
   let studentId = "";
+  let studentToken = "";
 
   beforeAll(async () => {
     // Perform any setup before running the tests, such as logging in and obtaining the authentication token
@@ -238,6 +239,7 @@ describe("HTTP /user", () => {
       expect(res.body.errors).toHaveLength(1);
     });
 
+    // Successful update
     test("It should respond 201 success", async () => {
       const users = await User.find({});
       const res = await request(app)
@@ -644,7 +646,6 @@ describe("HTTP /user", () => {
       const res = await request(app)
         .get(`/v1/user/data/${studentId}`)
         .set("Cookie", [`${teacherToken}`]);
-      console.log("RES", res.body);
       expect(res.status).toBe(200);
       expect(res.body.user.connectionInfos).toHaveLength(14);
       expect(res.body).toHaveProperty("parcours");
@@ -691,12 +692,96 @@ describe("HTTP /user", () => {
 
     // Successful reading
     test("It should respond 200 success", async () => {
+      const studentLogin = await request(app)
+        .post("/v1/auth/login")
+        .send({ email: "apprenant@studio.eco", password: "Abcdef@123456" });
+      studentToken = studentLogin.headers["set-cookie"][0];
+
+      await request(app).put("/v1/user/update-user-status").send({
+        userId: studentId,
+        value: true,
+      });
+
       const res = await request(app)
         .get("/v1/user/own-feedback")
-        .set("Cookie", [`${teacherToken}`]);
+        .set("Cookie", [`${studentToken}`]);
       expect(res.status).toBe(200);
-      expect(res.body).toHaveProperty("feedbacks");
-      expect(res.body.feedbacks).toHaveLength(0);
+
+      expect(res.body).toHaveProperty("data");
+      expect(res.body.data).toBe(null);
+    });
+  });
+
+  describe("GET /last-feedbacks/:notReviewed", () => {
+    // No authentication
+    test("It should respond 403 forbidden", async () => {
+      await request(app).get("/v1/user/last-feedbacks/true").expect(403);
+    });
+
+    // Successful reading
+    test("It should respond 200 success", async () => {
+      await request(app)
+        .get("/v1/user/last-feedbacks/true")
+        .set("Cookie", [`${teacherToken}`])
+        .expect(200);
+    });
+
+    // Wrong data types
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .get("/v1/user/last-feedbacks/invalid")
+        .set("Cookie", [`${teacherToken}`]);
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toHaveLength(1);
+    });
+  });
+
+  describe("Test /activate", () => {
+    // Successful activation
+    test("It should respond 200 success", async () => {
+      await request(app)
+        .post("/v1/user/activate")
+        .send({ token: token, password: "Abcdef@123456" })
+        .expect(200);
+    });
+
+    // No datas
+    test("It should respond 400 bad request", async () => {
+      const res = await request(app)
+        .post("/v1/user/activate")
+        .send({})
+        .expect(400);
+      console.log(res.body);
+
+      expect(res.body.errors).toHaveLength(2);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/user/activate")
+        .send({ token, password: "" })
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/user/activate")
+        .send({ token, password: "Abcdef@123456" })
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/user/activate")
+        .send({ token: "<hacked ! />", password: "Abcdef@123456" })
+        .expect(400);
+    });
+
+    test("It should respond 400 bad request", async () => {
+      await request(app)
+        .post("/v1/user/activate")
+        .send({ token, password: "Abcdef@<hacked !/>" })
+        .expect(400);
     });
   });
 

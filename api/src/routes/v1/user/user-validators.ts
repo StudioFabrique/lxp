@@ -84,5 +84,4 @@ export const postPasswordValidator = [
   body("password")
     .custom(passwordValidateGeneric)
     .withMessage("Le mot de passe n'est pas valide."),
-  checkValidatorResult,
 ];

@@ -243,6 +243,9 @@ userRouter.get(
 userRouter.get(
   "/last-feedbacks/:notReviewed",
   checkPermissions("cursus"),
+  param("notReviewed")
+    .isBoolean()
+    .withMessage("Le paramètre 'notReviewed' doit être un booléen."),
   httpGetLastFeedbacks
 );
 
