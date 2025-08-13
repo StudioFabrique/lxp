@@ -7,7 +7,7 @@ export default function responseHandler(
   data: { statusCode: number; data?: any; message?: string },
   req: CustomRequest,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   if (data) {
     const childLogger = logger.child({

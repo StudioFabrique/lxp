@@ -21,7 +21,6 @@ export const userIdValidator = [
   param("userId")
     .isMongoId()
     .withMessage("L'identifiant de l'utilisateur est invalide."),
-  checkValidatorResult,
 ];
 
 // Validateur pour vérifier le format d'un token d'authentification
@@ -79,9 +78,13 @@ export const updateUserStatusValidator = [
 // Validateur pour vérifier le format du token et du mot de passe lors d'une modification de mot de passe
 export const postPasswordValidator = [
   body("token")
+    .isString()
+    .withMessage("Une chaîne de caractères est requise.")
     .custom(tokenValidateGeneric)
     .withMessage("Le token contient des caractères non autorisés."),
   body("password")
+    .isString()
+    .withMessage("Le mot de passe est requis.")
     .custom(passwordValidateGeneric)
     .withMessage("Le mot de passe n'est pas valide."),
 ];
