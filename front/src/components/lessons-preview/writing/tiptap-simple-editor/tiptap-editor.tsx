@@ -155,7 +155,12 @@ export default function TiptapEditor({
           </button>
         </Can>
 
-        {onSave && isEditingActivity && <SaveButton onSave={onSave} />}
+        {onSave &&
+          isEditingActivity &&
+          editorRef.current &&
+          editorRef.current.getText()?.length > 0 && (
+            <SaveButton onSave={onSave} />
+          )}
       </div>
       {editor && <LinkMenu editor={editor} appendTo={menuContainerRef} />}
     </>
