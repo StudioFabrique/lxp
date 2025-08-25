@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { IUser } from "./user";
+import type { IUser } from "./user";
 
 export interface IStudentFeedback extends Document {
   feelingLevel: string;
@@ -48,7 +48,7 @@ const studentFeedbackSchema: Schema = new Schema({
 
 const StudentFeedback = mongoose.model<IStudentFeedback>(
   "StudentFeedback",
-  studentFeedbackSchema
+  studentFeedbackSchema,
 );
 
 export default StudentFeedback;
