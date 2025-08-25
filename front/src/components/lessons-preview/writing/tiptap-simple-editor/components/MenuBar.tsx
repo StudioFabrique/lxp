@@ -1,7 +1,15 @@
 import "./MenuBar.scss";
 import type { Editor } from "@tiptap/react";
 
-import { Fragment, memo, useRef, useState, useEffect, useMemo } from "react";
+import {
+  Fragment,
+  memo,
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 
 import MenuItem from "./MenuItem.jsx";
 import { ContentTypePicker } from "./dropdowns/ContentTypePicker.js";
@@ -44,9 +52,9 @@ export default function MenuBar({
   const toolbarPositionRef = useRef<{ top: number; left: number } | null>(null);
   const [scrollY, setScrollY] = useState(0);
 
-  // Initialize toolbar position ref
-  useEffect(() => {
-    if (toolbarRef.current && !toolbarPositionRef.current) {
+  // Function to update toolbar position
+  const updateToolbarPosition = useCallback(() => {
+    if (toolbarRef.current) {
       const rect = toolbarRef.current.getBoundingClientRect();
       toolbarPositionRef.current = {
         top: rect.top + window.scrollY,
@@ -54,6 +62,18 @@ export default function MenuBar({
       };
     }
   }, []);
+
+  // Initialize and update toolbar position when shouldHide changes
+  useEffect(() => {
+    if (toolbarRef.current && !shouldHide) {
+      // Add a small delay to ensure layout transitions have completed
+      const timer = setTimeout(() => {
+        updateToolbarPosition();
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [shouldHide, updateToolbarPosition]);
 
   // Set up scroll and resize event listeners
   useEffect(() => {
@@ -68,20 +88,48 @@ export default function MenuBar({
       }
     };
 
+    const handleResize = () => {
+      // Recalculate position on window resize
+      updateToolbarPosition();
+    };
+
     window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleResize, { passive: true });
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [updateToolbarPosition]);
+
+  // Set up ResizeObserver to detect layout changes that affect toolbar position
+  useEffect(() => {
+    if (!toolbarRef.current) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateToolbarPosition();
+    });
+
+    resizeObserver.observe(toolbarRef.current);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [updateToolbarPosition]);
 
   // Calculate if toolbar should be fixed using useMemo
   const isToolbarFixed = useMemo(() => {
-    if (!toolbarPositionRef.current) return false;
+    if (!toolbarPositionRef.current) {
+      // Fallback: try to calculate position immediately if not available
+      if (toolbarRef.current) {
+        updateToolbarPosition();
+      }
+      return false;
+    }
 
     const originalTop = toolbarPositionRef.current.top;
     return scrollY > originalTop - 10;
-  }, [scrollY]);
+  }, [scrollY, updateToolbarPosition]);
 
   const inputFileRef = useRef<HTMLInputElement>(null);
   const {
@@ -101,7 +149,9 @@ export default function MenuBar({
     <Toolbar.Wrapper
       ref={toolbarRef}
       hidden={shouldHide}
-      className={`h-fit w-fit self-center ${isToolbarFixed ? "fixed top-2 z-50" : "relative"} flex justify-between px-2`}
+      className={`h-fit w-fit self-center ${
+        isToolbarFixed ? "fixed top-2 z-50" : "relative"
+      } flex justify-between px-2`}
     >
       <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus">
         <InsertImagePopover
