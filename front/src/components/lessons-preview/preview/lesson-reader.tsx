@@ -71,14 +71,21 @@ const LessonReader = ({
 
       {/* Affiche les activités si elles existent, sinon affiche un message */}
       {lessonHasActivities || showTipTapEditor ? (
-        selectedLesson.activities?.map((activity) => (
-          <ActivityPreview
-            key={activity.id}
-            lessonId={selectedLesson.id ?? 0}
-            activity={activity}
-            isAnyActivityBeingEdited={isAnyActivityBeingEdited}
-            onActivityEditChange={setIsAnyActivityBeingEdited}
-          />
+        selectedLesson.activities?.map((activity, i) => (
+          <>
+            {i >= 1 && <hr className="w-[80%] self-center border-primary" />}
+            <div className="flex justify-center text-primary capitalize">
+              {activity.title}
+            </div>
+
+            <ActivityPreview
+              key={activity.id}
+              lessonId={selectedLesson.id ?? 0}
+              activity={activity}
+              isAnyActivityBeingEdited={isAnyActivityBeingEdited}
+              onActivityEditChange={setIsAnyActivityBeingEdited}
+            />
+          </>
         ))
       ) : (
         <NoActivityPlaceholder />

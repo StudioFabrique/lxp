@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { type Document, Schema } from "mongoose";
 
 export interface IConnectionInfos extends Document {
   lastConnection: Date;
@@ -21,7 +21,7 @@ const connectionInfosSchema: Schema = new Schema({
 
 const ConnectionInfos = mongoose.model<IConnectionInfos>(
   "ConnectionInfos",
-  connectionInfosSchema
+  connectionInfosSchema,
 );
 
 export default ConnectionInfos;
