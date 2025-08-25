@@ -121,7 +121,9 @@ export default function TiptapEditor({
   return (
     <>
       <div
-        className={`editor relative transition-all duration-700 hover:bg-primary/10 ${isEditingActivity ? "py-20 bg-primary/20 hover:bg-primary/20" : ""}`}
+        className={`editor relative transition-all duration-700 hover:bg-primary/10 ${
+          isEditingActivity ? "py-20 bg-primary/20 hover:bg-primary/20" : ""
+        }`}
         ref={menuContainerRef}
       >
         {editor ? (
@@ -132,7 +134,9 @@ export default function TiptapEditor({
           />
         ) : null}
         <EditorContent
-          className={`editor__content${isEditingActivity ? " cursor-text mt-5" : " mt-5"}`}
+          className={`editor__content${
+            isEditingActivity ? " cursor-text mt-5" : " mt-5"
+          }`}
           onClick={() => editor?.commands.focus()}
           editor={editor}
         />
