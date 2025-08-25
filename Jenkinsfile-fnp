@@ -112,15 +112,15 @@ pipeline {
                     '''
 
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET && docker network create lxp_network || true"
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGE/dist/ && docker network create lxp_network || true"
                     '''
 
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET && docker compose down || true && docker compose up -d"
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker compose down || true && docker compose up -d"
                     '''
 
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET && docker image prune -f"
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker image prune -f"
                     '''
 
                     sh '''
