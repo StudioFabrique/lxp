@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import DocumentIcon from "../components/UI/svg/document-icon";
+// import DocumentIcon from "../components/UI/svg/document-icon";
 //import QuestionCircleIcon from "../components/UI/svg/question-circle-icon";
 import PlayCircleIcon from "../components/UI/svg/play-circle-icon";
 //import DiaporamaIcon from "../components/UI/svg/diaporama-icon";
@@ -14,12 +14,12 @@ import UploadIcon from "../components/UI/svg/upload-icon.component";
 import type ActivityType from "../utils/interfaces/activity-type";
 
 const activityTypes: ActivityType[] = [
-  {
-    icon: <DocumentIcon />,
-    label: "Texte",
-    tooltip: "Insérez un document écrit",
-    type: "text",
-  },
+  // {
+  //   icon: <DocumentIcon />,
+  //   label: "Texte",
+  //   tooltip: "Insérez un document écrit",
+  //   type: "text",
+  // },
   /*{
     icon: <QuestionCircleIcon />,
     label: "Questions",
