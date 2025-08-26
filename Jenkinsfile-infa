@@ -28,7 +28,7 @@ pipeline {
                     sh 'npm run deploy'
                 }
             }
-        }
+        }    
 
         stage('Tests backend') {
             steps {
@@ -60,8 +60,6 @@ pipeline {
             }
         }
 
-    
-
         stage("Deploying to INFA") {
 
             steps {
@@ -79,7 +77,7 @@ pipeline {
                         # Inject .env in workspace
                         cp $ENV_FILE ./api/dist/.env
 
-                        echo "📡 Deploying to FNP..."
+                        echo "📡 Deploying to INFA..."
                         echo "🔎 Pinging $HOST..."
 
                         ping -c 4 $HOST
@@ -110,28 +108,66 @@ pipeline {
                     '''
 
                     sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGE/dist/ && docker network create lxp_network || true"
+                    '''
+
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker compose down || true && docker compose up -d"
+                    '''        
+                }
+            }
+        }
+
+        stage('Run Prisma migrations (DDL)') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'INFA_MIGRATOR_PG_URL', variable: 'MIGRATOR_PG_URL'),
+                    string(credentialsId: 'INFA_HOST', variable: 'HOST'),
+                    string(credentialsId: 'INFA_USER', variable: 'USER'),
+                    string(credentialsId: 'INFA_PORT', variable: 'PORT'),
+                    string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
+                    sshUserPrivateKey(credentialsId: 'INFA_SSH', keyFileVariable: 'SSH_CRED')
+                    ]) {
+
+                sh '''
+                    ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "
+                    set -eu
+                    cd /home/$USER/$TARGET/dist
+                    # Optionnel: attendre que Postgres soit prêt
+                    # until pg_isready -h 127.0.0.1 -p 5432 -U postgres >/dev/null 2>&1; do sleep 2; done
+
+                    # Migration avec user DDL (least privilege respecté)
+                    DATABASE_URL=\\"$MIGRATOR_PG_URL\\" npx prisma migrate deploy
+                    "
+                '''
+                }
+            }
+        }
+
+        stage("Starting app") {
+            steps {
+                withCredentials([
+                    file(credentialsId: 'INFA_ENV', variable: 'ENV_FILE'),
+                    string(credentialsId: 'INFA_HOST', variable: 'HOST'),
+                    string(credentialsId: 'INFA_USER', variable: 'USER'),
+                    string(credentialsId: 'INFA_PORT', variable: 'PORT'),
+                    string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
+                    sshUserPrivateKey(credentialsId: 'INFA_SSH', keyFileVariable: 'SSH_CRED')
+                ]) {
+                    sh '''
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist && npx prisma generate"  
                     '''
 
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist && docker network create lxp_network || true"
-                    '''
-
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist && docker compose down || true && docker compose up -d"
-                    '''
-
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "docker image prune -f"
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker image prune -f"
                     '''
 
                     sh '''
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "pm2 restart /home/$USER/$TARGET/dist/src/server.js"
                     '''
 
-                    echo "✅ Deployment to INFA completed successfully!"
-        
-                }
+                    echo "✅ Deployment to INFA completed successfully!"   
+                }             
             }
         }
     }
