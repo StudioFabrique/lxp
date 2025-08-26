@@ -135,6 +135,8 @@ pipeline {
                     string(credentialsId: 'FNP_HOST', variable: 'HOST'),
                     string(credentialsId: 'FNP_USER', variable: 'USER'),
                     string(credentialsId: 'FNP_PORT', variable: 'PORT'),
+                    string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
+                    sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
                     ]) {
 
                 sh '''
