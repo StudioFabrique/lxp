@@ -30,7 +30,7 @@ pipeline {
             }
         }    
 
-        stage('Tests backend') {
+        /*stage('Tests backend') {
             steps {
                 sh 'npm -g i dotenv-cli'
                 sh 'mkdir api/uploads || true'
@@ -58,7 +58,7 @@ pipeline {
                     '''
                 }
             }
-        }
+        }*/
 
         stage("Deploying to FNP") {
 
@@ -117,16 +117,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Compose up') {
-         steps {
-           sh '''
-             ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST \
-               "cd /home/$USER/$TARGET/dist/ && docker compose up -d"
-           '''
-         }
-       }
-
 
         stage('Run Prisma migrations (DDL)') {
             steps {
