@@ -17,7 +17,7 @@ type Props = {
 const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
   const [isActive, setIsActive] = useState(true);
   const { errors, values, onChangeValue, onValidationErrors, onResetForm } =
-    useForm();
+    useForm({}, userQuickCreateSchema);
 
   // détermine si le compte de l'utilisateur sera activé dès sa création
   const handleToggleIsActive = () => {
@@ -50,6 +50,8 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
     onResetForm();
     onCloseDrawer("new-contact");
   };
+
+  console.log("creation d'un contact");
 
   //console.log("data :", values);
 
@@ -137,11 +139,6 @@ const UserQuickCreate = ({ onSubmitUser, onCloseDrawer }: Props) => {
             à la validation du formulaire
           </p>
           <div className="w-full flex flex-col items-center gap-x-2 pr-2">
-            {errors && errors.length > 0 ? (
-              <p className="w-full text-left pl-2 font-bold text-error">
-                {errors[0].message}
-              </p>
-            ) : null}
             <DrawerFormButtons onCancel={handleCancel} />
           </div>
         </div>
