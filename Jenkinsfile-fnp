@@ -122,7 +122,7 @@ pipeline {
          steps {
            sh '''
              ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST \
-               "cd /home/$USER/$TARGET && docker compose up -d"
+               "cd /home/$USER/$TARGET/dist/ && docker compose up -d"
            '''
          }
        }
