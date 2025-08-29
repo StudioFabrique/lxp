@@ -1,7 +1,7 @@
 import type Lesson from "../../../utils/interfaces/lesson";
 import RatingPanelButton from "../../UI/lesson-rating/rating-panel-button";
 import ActivityPreview from "./activity";
-import { type PropsWithChildren, useState } from "react";
+import { Fragment, type PropsWithChildren, useState } from "react";
 import Can from "../../UI/can/can.component";
 import NoActivityPlaceholder from "./no-activity-placeholder";
 import ActivityCreationOptionsButtons from "../writing/activity-creation-options-buttons";
@@ -71,14 +71,20 @@ const LessonReader = ({
 
       {/* Affiche les activités si elles existent, sinon affiche un message */}
       {lessonHasActivities || showTipTapEditor ? (
-        selectedLesson.activities?.map((activity) => (
-          <ActivityPreview
-            key={activity.id}
-            lessonId={selectedLesson.id ?? 0}
-            activity={activity}
-            isAnyActivityBeingEdited={isAnyActivityBeingEdited}
-            onActivityEditChange={setIsAnyActivityBeingEdited}
-          />
+        selectedLesson.activities?.map((activity, i) => (
+          <Fragment key={activity.id}>
+            {i >= 1 && <hr className="w-[80%] self-center border-primary" />}
+            <div className="flex justify-center text-primary capitalize">
+              {activity.title}
+            </div>
+
+            <ActivityPreview
+              lessonId={selectedLesson.id ?? 0}
+              activity={activity}
+              isAnyActivityBeingEdited={isAnyActivityBeingEdited}
+              onActivityEditChange={setIsAnyActivityBeingEdited}
+            />
+          </Fragment>
         ))
       ) : (
         <NoActivityPlaceholder />

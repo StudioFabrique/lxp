@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema, model } from "mongoose";
+import mongoose, { type Document, Schema, model } from "mongoose";
 import { IRole } from "./role";
 import { IUser } from "./user";
 import { ITag } from "./tag";
