@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import User from "./utils/interfaces/db/user";
 import Role from "./utils/interfaces/db/role";
 import Group from "./utils/interfaces/db/group";
+import StudentFeedback from "./utils/interfaces/db/student-feedback";
 
 const MONGO_URL = process.env.MONGO_LOCAL_URL;
 
@@ -332,6 +333,7 @@ async function createModules() {
 
 async function createParcours() {
   try {
+    const contacts = await prisma.contact.findMany({});
     const modules = await prisma.module.findMany();
     console.log({ modules });
 
@@ -352,6 +354,16 @@ async function createParcours() {
             module: { connect: { id: m.id } },
           })),
         },
+        contacts: {
+          create: [
+            {
+              contact: { connect: { id: contacts[0].id } },
+            },
+            {
+              contact: { connect: { id: contacts[1].id } },
+            },
+          ],
+        },
       },
     });
     await prisma.course.create({
@@ -363,6 +375,22 @@ async function createParcours() {
         order: 0,
         author: "jacques test",
       },
+    });
+  } catch (error: any) {
+    console.log(error);
+  }
+}
+
+async function addFeedback() {
+  try {
+    const student = await User.findOne(
+      { email: "apprenant@studio.eco" },
+      { _id: 1 }
+    );
+    const feedback = await StudentFeedback.create({
+      user: student!._id,
+      content: "Ceci est un retour d'expérience.",
+      rating: 5,
     });
   } catch (error: any) {
     console.log(error);

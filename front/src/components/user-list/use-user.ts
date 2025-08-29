@@ -83,7 +83,7 @@ const useUser = () => {
     setAllChecked,
     setDataList,
     sendInvitation,
-  } = usePagination("lastname", "/user/everything");
+  } = usePagination("lastname", "/user/list/everything");
 
   // HTTP request hook for API communication
   const { isLoading, sendRequest, error } = useHttp(false);
@@ -100,7 +100,7 @@ const useUser = () => {
     }
     setRole(role);
     setIsSearchActive(false);
-    setPath(`/user/${role.role}`);
+    setPath(`/user/list/${role.role}`);
   };
 
   /**
@@ -156,8 +156,6 @@ const useUser = () => {
           (selectedUser!.roles[0].rank <= 2 && updatedRoles[0].rank <= 2)) &&
         updatedRoles.length > 0
       ) {
-        console.log("TOTO");
-
         updatedDataList.push(selectedUser._id);
       }
     }
@@ -206,7 +204,7 @@ const useUser = () => {
    */
   const handleRefreshDataList = () => {
     setIsSearchActive(false);
-    setPath(`/user/${role.role}`);
+    setPath(`/user/list/${role.role}`);
     handleUncheckALL();
     getList();
     handleGetUsersStats();

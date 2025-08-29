@@ -42,7 +42,8 @@ const userSchema: Schema = new Schema(
     description: { type: String, required: false },
     password: { type: String, require: true },
     avatar: { type: Buffer, required: false },
-    isActive: { type: Boolean, required: true },
+    // test in progress, previously : isActive: { type: Boolean, required: true },
+    isActive: { type: Boolean, default: false },
     nickname: { type: String, required: false },
     address: { type: String, required: false },
     postCode: { type: String, required: false },
@@ -94,7 +95,7 @@ const userSchema: Schema = new Schema(
       },
     ],
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 const User = mongoose.model<IUser>("User", userSchema);

@@ -25,7 +25,10 @@ import httpUpdateManyUsersStatus from "../../../controllers/user/http-update-man
 import httpUpdateUser from "../../../controllers/user/http-update-user";
 import httpUpdateUserRoles from "../../../controllers/user/http-update-user-roles";
 import httpUpdateUserStatus from "../../../controllers/user/http-update-user-status";
-import { paginationValidator } from "../../../helpers/custom-validators";
+import {
+  paginationValidator,
+  stringValidateGeneric,
+} from "../../../helpers/custom-validators";
 import activateAccount from "../../../middleware/activate-account";
 import checkPermissions from "../../../middleware/check-permissions";
 import { createFileUploadMiddleware } from "../../../middleware/fileUpload";
@@ -50,6 +53,7 @@ import {
 import httpPostCheckEmail from "../../../controllers/user/http-post-check-email";
 import httpGetConnectedStudentParcoursWithAccomplishements from "../../../controllers/user/accomplishment/http-get-connected-student-parcours-with-accomplishments";
 import httpPostManyInvitations from "../../../controllers/user/http-post-many-invitations";
+import checkValidation from "../../../middleware/check-validation";
 
 const userRouter = express.Router();
 
@@ -84,12 +88,11 @@ userRouter.put(
   httpUpdateUserStatus
 );
 
-// TODO: VALIDATORS
 userRouter.get("/stats", checkPermissions("user"), httpGetUsersStats);
 
 //  récupération de la liste des utilisateurs en fonction de leur rôle principal
 userRouter.get(
-  "/:role/:stype/:sdir",
+  "/list/:role/:stype/:sdir",
   checkPermissions("user"),
   getUsersByRoleValidator,
   paginationValidator,
@@ -110,26 +113,24 @@ userRouter.put(
   // validators
   body("usersToUpdate")
     .isArray()
-    .notEmpty()
+    .withMessage("Un tableau d'identifiants d'utilisateurs est requis.")
+    .custom((arr) => Array.isArray(arr) && arr.length > 0)
     .withMessage("Le tableau studentsToUpdate ne peut pas être vide."),
   body("usersToUpdate.*")
-    .isString()
+    .isMongoId()
     .withMessage(
-      "Chaque élément de studentsToUpdate doit être une chaîne de caractères."
-    )
-    .trim()
-    .escape(),
+      "Chaque élément de studentsToUpdate doit être un identifiant MongoDB valide."
+    ),
   body("rolesId")
     .isArray()
-    .notEmpty()
+    .withMessage("Un tableau d'identifiants de rôles est requis.")
+    .custom((arr) => Array.isArray(arr) && arr.length > 0)
     .withMessage("Le tableau rolesId ne peut pas être vide."),
   body("rolesId.*")
-    .isString()
+    .isMongoId()
     .withMessage(
-      "Chaque élément de rolesId doit être une chaîne de caractères."
-    )
-    .trim()
-    .escape(),
+      "Chaque élément de rolesId doit être un identifiant MongoDB valide."
+    ),
   httpUpdateUserRoles
 );
 
@@ -171,15 +172,24 @@ userRouter.get(
   "/search/:role/:entity/:value/:stype/:sdir",
   checkPermissions("user"),
   //  validators
-  param("search").isString().notEmpty().trim().escape(),
-  param("role").isString().notEmpty().trim().escape(),
-  param("entity").isString().notEmpty().trim().escape(),
-  param("value").isString().notEmpty().trim().escape(),
-  param("stype").isString().notEmpty().trim().escape(),
-  param("sdir").isString().notEmpty().trim().escape(),
-  query("page").notEmpty().trim().escape().isInt(),
-  query("limit").notEmpty().trim().escape().isInt(),
-
+  paginationValidator,
+  param("role")
+    .isString()
+    .withMessage("Le paramètre 'role' est requis.")
+    .custom(stringValidateGeneric)
+    .withMessage("Le paramètre 'role' contient des caractères non autorisés."),
+  param("entity")
+    .isString()
+    .withMessage("Le paramètre 'entity' est requis.")
+    .custom(stringValidateGeneric)
+    .withMessage(
+      "Le paramètre 'entity' contient des caractères non autorisés."
+    ),
+  param("value")
+    .isString()
+    .withMessage("Le paramètre 'value' est requis.")
+    .custom(stringValidateGeneric)
+    .withMessage("Le paramètre 'value' contient des caractères non autorisés."),
   httpSearchUser
 );
 
@@ -202,7 +212,12 @@ userRouter.get(
 );
 
 // retourne les informations d'un utilisateur ainsi que ses rôles et son temps de connexion
-userRouter.get("/data/:userId", checkPermissions("user"), httpGetUserData);
+userRouter.get(
+  "/data/:userId",
+  checkPermissions("user"),
+  param("userId").isMongoId().withMessage("Identifiant d'utilisateur invalide"),
+  httpGetUserData
+);
 
 userRouter.get(
   "/own-feedback",
@@ -228,14 +243,17 @@ userRouter.get(
 userRouter.get(
   "/last-feedbacks/:notReviewed",
   checkPermissions("cursus"),
+  param("notReviewed")
+    .isBoolean()
+    .withMessage("Le paramètre 'notReviewed' doit être un booléen."),
   httpGetLastFeedbacks
 );
 
 //  met à jour le mot d'un passe d'un nouvel utilisateur
 userRouter.post(
   "/activate",
-  postPasswordValidator,
   activateAccount,
+  postPasswordValidator,
   httpPutPassword
 );
 
@@ -256,7 +274,11 @@ userRouter.post(
 );
 
 //  vérification de l'existence d'un compte utilisateur
-userRouter.post("/check-email", postCheckEmailValidator, httpPostCheckEmail);
+userRouter.post(
+  "/check-email",
+  checkValidation(postCheckEmailValidator),
+  httpPostCheckEmail
+);
 
 // Send activations emails to multiple users
 userRouter.post(

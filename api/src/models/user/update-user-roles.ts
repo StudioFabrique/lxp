@@ -18,6 +18,14 @@ async function updateUserRoles(
   }
 
   let roles = await Role.find({ _id: rolesId });
+  {
+    if (!roles || roles.length === 0) {
+      throw {
+        message: "Aucun rôle trouvé avec les ID fournis.",
+        statusCode: 404,
+      };
+    }
+  }
 
   //  on vérifie que les étuduants à modifier existent bien
   if (actualUsers.length !== usersToUpdate.length) {

@@ -4,11 +4,10 @@ import postCheckEmail from "../../models/user/post-check-email";
 export default async function httpPostCheckEmail(
   req: Request,
   _res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     const { email } = req.body;
-    console.log({ email });
     await postCheckEmail(email);
     const result = {
       statusCode: 200,

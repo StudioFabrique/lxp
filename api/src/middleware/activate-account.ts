@@ -8,32 +8,35 @@ import CustomRequest from "../utils/interfaces/express/custom-request";
 export default function activateAccount(
   req: CustomRequest,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     const message = "Ce lien n'est plus valide.";
-    const { token } = req.body;
-    if (!token) throw { satusCode: 400, message: badQuery };
+    const { token, password } = req.body;
+
+    if (!token) throw { statusCode: 400, message: "Un token est requis" };
     jwt.verify(
-      token,
+      token.toString(),
       process.env.REGISTER_SECRET!,
       async (err: any, data: any) => {
-        if (err) throw { statusCode: 401, message };
+        if (err) {
+          // Send error response directly
+          return res.status(401).json({ message });
+        }
+
         if (data) {
           const existingBlacklistedToken = await BlackListedToken.findOne({
             token,
           });
           if (existingBlacklistedToken) {
-            console.log(existingBlacklistedToken);
             return res.status(400).json({ message });
           }
           req.auth = { userId: data.userId, userRoles: data.userRoles };
         }
         next();
-      },
+      }
     );
   } catch (error: any) {
-    console.log({ error });
     return res.status(error.statusCode ?? 500).json({ message: error.message });
   }
 }

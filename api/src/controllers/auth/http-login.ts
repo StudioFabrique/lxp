@@ -73,7 +73,6 @@ async function httpLogin(req: Request, res: Response) {
 
       childLogger.info(error);
     }
-    console.log("ERREUR", error.message);
     return res
       .status(error.status ?? 500)
       .json({ message: error.message ?? serverIssue });

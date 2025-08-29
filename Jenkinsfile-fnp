@@ -19,14 +19,29 @@ pipeline {
             }
         }
 
-        // docker manquant
-        /*stage('Tests backend') {
+        stage("Build App") {
+            steps {
+                script {
+                    echo "Building application..."
+                    sh 'npm run install'
+                    sh 'npm run generate'
+                    sh 'npm run deploy'
+                }
+            }
+        }    
+
+        stage('Tests backend') {
             steps {
                 sh 'npm -g i dotenv-cli'
-                sh 'mkdir api/src/uploads || true'
+                sh 'mkdir api/uploads || true'
                 sh 'npm run test'
+            }  
+            post {
+                always {
+                    sh 'docker volume prune --all --force || true'
+                }
             }
-        }*/
+        }
 
         stage("Sonar Qube") {
             steps {
@@ -44,18 +59,6 @@ pipeline {
                 }
             }
         }
-
-        stage("Build App") {
-            steps {
-                script {
-                    echo "Building application..."
-                    sh 'npm run install'
-                    sh 'npm run generate'
-                    sh 'npm run deploy'
-                }
-            }
-        }
-    
 
         stage("Deploying to FNP") {
 
@@ -89,7 +92,7 @@ pipeline {
                     '''
 
                     sh '''
-                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT docker-compose.yml $USER@$HOST:/home/$USER/$TARGET/
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT docker-compose.yml $USER@$HOST:/home/$USER/$TARGET/dist/
                     '''
 
                     sh '''
@@ -105,28 +108,66 @@ pipeline {
                     '''
 
                     sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGE/dist/ && docker network create lxp_network || true"
+                    '''
+
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker compose down || true && docker compose up -d"
+                    '''        
+                }
+            }
+        }
+
+        stage('Run Prisma migrations (DDL)') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'FNP_MIGRATOR_PG_URL', variable: 'MIGRATOR_PG_URL'),
+                    string(credentialsId: 'FNP_HOST', variable: 'HOST'),
+                    string(credentialsId: 'FNP_USER', variable: 'USER'),
+                    string(credentialsId: 'FNP_PORT', variable: 'PORT'),
+                    string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
+                    sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
+                    ]) {
+
+                sh '''
+                    ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "
+                    set -eu
+                    cd /home/$USER/$TARGET/dist
+                    # Optionnel: attendre que Postgres soit prêt
+                    # until pg_isready -h 127.0.0.1 -p 5432 -U postgres >/dev/null 2>&1; do sleep 2; done
+
+                    # Migration avec user DDL (least privilege respecté)
+                    DATABASE_URL=\\"$MIGRATOR_PG_URL\\" npx prisma migrate deploy
+                    "
+                '''
+                }
+            }
+        }
+
+        stage("Starting app") {
+            steps {
+                withCredentials([
+                    file(credentialsId: 'FNP_ENV', variable: 'ENV_FILE'),
+                    string(credentialsId: 'FNP_HOST', variable: 'HOST'),
+                    string(credentialsId: 'FNP_USER', variable: 'USER'),
+                    string(credentialsId: 'FNP_PORT', variable: 'PORT'),
+                    string(credentialsId: 'FNP_TARGET', variable: 'TARGET'),
+                    sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
+                ]) {
+                    sh '''
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist && npx prisma generate"  
                     '''
 
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET && docker network create lxp_network || true"
-                    '''
-
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET && docker compose down || true && docker compose up -d"
-                    '''
-
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET && docker image prune -f"
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker image prune -f"
                     '''
 
                     sh '''
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "pm2 restart /home/$USER/$TARGET/dist/src/server.js"
                     '''
 
-                    echo "✅ Deployment to FNP completed successfully!"
-        
-                }
+                    echo "✅ Deployment to FNP completed successfully!"   
+                }             
             }
         }
     }

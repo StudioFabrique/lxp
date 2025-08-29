@@ -1,45 +1,54 @@
 /**
-Envoi d'un email d'activation et mise à jour
-de la propriété "invitationSent" si l'envoi a réussi.
-*/
+ * Sends an activation email to a user and updates the "invitationSent" property if the email was sent successfully.
+ *
+ * This function performs the following steps:
+ * 1. Checks if the user exists in the database.
+ * 2. Retrieves the user's role.
+ * 3. Generates an activation token containing the user's ID and role.
+ * 4. Sends an activation email (unless running in test environment).
+ * 5. Updates the "invitationSent" property in the database if the email was sent.
+ *
+ * @param userId - The ID of the user to send the invitation to.
+ * @returns The result of the update operation on the user document.
+ * @throws { statusCode: 404 } if the user does not exist.
+ * @throws { statusCode: 500 } if the activation email could not be sent.
+ */
 
-import jwt from "jsonwebtoken";
 import User from "../../utils/interfaces/db/user";
 import mongoose from "mongoose";
 import { activationToken } from "../../helpers/activation-token";
 import { sendPasswordEmail } from "../../services/mailer";
 
 export default async function putInvitation(userId: string) {
-  // vérifie que l'utilisateur existe dans la bdd
+  // Check if the user exists in the database
   const existingUser = await User.findOne({
     _id: new mongoose.Types.ObjectId(userId),
   });
 
-  if (!existingUser)
-    throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
+  if (!existingUser) throw { statusCode: 404, message: "User does not exist." };
 
-  // récupère le rôle de l'utilisateur
+  // Retrieve the user's role (assumes the first role is the main one)
   const role = await existingUser.roles[0];
 
-  // création d'un token contenant l'id et le rôle de l'utilisateur
+  // Generate an activation token containing the user's ID and role
   const token = activationToken(userId, role, "7d");
 
-  // si l'application fonctionne en mode développement ou production un email d'activation est envoyé à l'utilisateur
+  // Send activation email if not in test environment
   if (process.env.ENVIRONMENT !== "test") {
     try {
       await sendPasswordEmail(existingUser.email, token, "activation");
     } catch (emailError: any) {
       throw {
         statusCode: 500,
-        message: "Le mail d'activation n'a pas pu être envoyé.",
+        message: "Activation email could not be sent.",
       };
     }
   }
 
-  // si le mail a été envoyé sans erreur de la part du serveur, la propriété invitationSent est mise à jour dans la BDD
+  // Update the "invitationSent" property in the database if the email was sent successfully
   const updateResult = await User.updateOne(
     { _id: existingUser._id },
-    { $set: { invitationSent: true } },
+    { $set: { invitationSent: true } }
   );
   return updateResult;
 }
