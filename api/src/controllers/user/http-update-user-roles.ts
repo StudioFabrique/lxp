@@ -29,7 +29,7 @@ async function httpUpdateUserRoles(
 
     // If validation fails, return 400 Bad Request
     if (!result.isEmpty()) {
-      return res.status(400).json({ message: badQuery });
+      return res.status(400).json({ errors: result.array() });
     }
 
     // Extract user IDs and role IDs from request body
@@ -41,7 +41,7 @@ async function httpUpdateUserRoles(
     // Pass successful result to next middleware
     next({
       statusCode: 200,
-      message: "Roles des utilisateurs mis à jour avec succès.",
+      message: "Rôles des utilisateurs mis à jour avec succès.",
       data: updatedUsers,
     });
   } catch (err: any) {

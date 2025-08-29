@@ -1,13 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useCallback } from "react";
 import CustomError from "../../../../utils/interfaces/custom-error";
+import { ZodError } from "zod";
 
 /**
  * Hook personnalisé pour gérer les formulaires
  * @param data - Données initiales du formulaire (optionnel)
  * @returns Un objet contenant les valeurs, erreurs et fonctions de gestion du formulaire
  */
-const useForm = (data = {}) => {
+const useForm = (data = {}, schema?: any) => {
+  console.log({ schema });
+
   // État pour stocker les valeurs des champs du formulaire
   const [values, setValues] = useState<Record<string, string>>(data);
   // État pour stocker les erreurs de validation
@@ -19,17 +22,34 @@ const useForm = (data = {}) => {
    */
   const onChangeValue = useCallback(
     (field: string, value: string) => {
-      if (errors && errors.length > 0) {
-        setErrors((prevErrors) =>
-          prevErrors.filter((error: CustomError) => error.type !== field)
-        );
-      }
+      console.log("toutes les erreurs ", errors);
+      if (errors.length > 0)
+        setErrors((prevErrors) => [
+          ...prevErrors.filter((e: CustomError) => e.type !== field),
+        ]);
       setValues((prevValues) => ({
         ...prevValues,
         [field]: value,
       }));
+      if (schema) {
+        console.log("schéma trouvé");
+
+        try {
+          schema.shape[field].parse(value);
+        } catch (error) {
+          if (error instanceof ZodError) {
+            console.log("bla bla bvla");
+
+            setErrors((prevErrors) => [
+              ...prevErrors,
+              { type: field, message: error.errors[0].message },
+            ]);
+            console.log({ errors });
+          }
+        }
+      }
     },
-    [errors]
+    [errors, schema]
   );
 
   /**
@@ -37,6 +57,7 @@ const useForm = (data = {}) => {
    */
   const onValidationErrors = (data: CustomError[]) => {
     setErrors(data);
+    console.log("toto error ", errors);
   };
 
   /**

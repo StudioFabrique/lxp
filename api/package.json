@@ -10,7 +10,7 @@
     "test:setup": "npm run docker:up && npm run wait-for-db && dotenv -e .env.test -- npx prisma migrate deploy && dotenv -e .env.test -- npm run reset-mongo && dotenv -e .env.test -- npx ts-node src/fixtures-prisma-test",
     "test:run": "echo '🚀 Starting Jest...' && dotenv -e .env.test -- jest --clearCache && dotenv -e .env.test -- jest",
     "test:cleanup": "npm run docker:down",
-    "test": "npm run test:setup && npm run test:run && npm run test:cleanup",
+    "test": "npm run test:cleanup && npm run test:setup && npm run test:run && npm run test:cleanup",
     "build": "tsc --project ./",
     "start:dev": "NODE_ENV=development nodemon src/server.ts",
     "start:prod": "NODE_ENV=production node dist/src/server.js",

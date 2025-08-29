@@ -4,19 +4,16 @@ import { regexGeneric, regexOptionalGeneric } from "../../../utils/constantes";
 export const userQuickCreateSchema = z.object({
   lastname: z
     .string({ required_error: "Le nom est obligatoire" })
-    .min(2, { message: "Le nom doit avoir deux caractères au minimum" })
     .regex(regexGeneric, {
       message: "Le nom contient des caractères invalides",
     }),
   firstname: z
     .string({ required_error: "Le prénom est obligatoire" })
-    .min(2, { message: "Le prénom doit avoir deux caractères au minimum" })
     .regex(regexGeneric, {
       message: "Le prénom contient des caractères invalides",
     }),
   email: z
     .string({ required_error: "L'adresse email est obligatoire" })
-    .min(1, { message: "Une adresse email est requise." })
     .email({ message: "Adresse email invalide." }),
   nickname: z
     .string()
@@ -46,5 +43,6 @@ export const userQuickCreateSchema = z.object({
     .string({ required_error: "Le numéro de téléphone est obligatoire" })
     .regex(regexOptionalGeneric, {
       message: "Le numéro de téléphone contient des caractères invalides",
-    }).optional(),
+    })
+    .optional(),
 });

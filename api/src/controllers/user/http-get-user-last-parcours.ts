@@ -8,15 +8,6 @@ export default async function httpGetUserLastParcours(
   res: Response
 ) {
   try {
-    const userId = req.auth?.userId;
-    if (!userId) {
-      const error: any = {
-        message:
-          "L'utilisateur n'a pas accès à cette ressource ou n'existe pas.",
-        statusCode: 400,
-      };
-      throw error;
-    }
     const response = await getUserLastParcours(req.auth!.userId);
     return res.status(200).json({
       success: true,

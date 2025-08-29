@@ -1,9 +1,15 @@
 import { Request, Response } from "express";
 import { serverIssue } from "../../utils/constantes";
 import getUserData from "../../models/user/get-user-data";
+import { validationResult } from "express-validator";
 
 export default async function httpGetUserData(req: Request, res: Response) {
   try {
+    const result = validationResult(req);
+
+    if (!result.isEmpty())
+      return res.status(400).json({ errors: result.array() });
+
     const { userId } = req.params;
 
     const response = await getUserData(userId);

@@ -12,7 +12,7 @@ import BlackListedToken from "../../utils/interfaces/db/blacklisted-token";
 export default async function putPassword(
   userId: string,
   password: string,
-  token: string,
+  token: string
 ) {
   try {
     const existingUser = await User.findOne({
@@ -28,15 +28,13 @@ export default async function putPassword(
       { _id: existingUser._id },
       {
         $set: { password: hashedPassword, isActive: true, emailVerified: true },
-      },
+      }
     );
 
     await BlackListedToken.create({ token });
-    console.log(updatedResult);
 
     return updatedResult;
   } catch (error: any) {
-    console.log({ error });
     throw {
       statusCode: 500,
       message:

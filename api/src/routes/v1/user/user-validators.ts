@@ -21,7 +21,6 @@ export const userIdValidator = [
   param("userId")
     .isMongoId()
     .withMessage("L'identifiant de l'utilisateur est invalide."),
-  checkValidatorResult,
 ];
 
 // Validateur pour vérifier le format d'un token d'authentification
@@ -44,7 +43,6 @@ export const getUsersByRoleValidator = [
 
 // Valide les données de la requête pour mettre à jour le status de plusieurs utilisateurs, à partir d'un tableau d'identifiants et d'un status boolean
 export const updateManyUsersStatusValidator = [
-  body("usersIds").notEmpty(),
   body("usersIds")
     .isArray()
     .withMessage(
@@ -57,9 +55,14 @@ export const updateManyUsersStatusValidator = [
     ),
   body("status")
     .isString()
-    .custom(stringValidateGeneric)
-    .withMessage("Le status doit être une valeur booleenne."),
-  checkValidatorResult,
+    .withMessage("Le status doit être une chaine de caractères.")
+    .custom((value) => {
+      const validStatuses = ["actif", "inactif"];
+      if (!validStatuses.includes(value)) {
+        throw new Error("Le status doit être 'actif' ou 'inactif'.");
+      }
+      return true;
+    }),
 ];
 
 // Mettre à jour le status d'un utilisateur
@@ -70,16 +73,18 @@ export const updateUserStatusValidator = [
   body("value")
     .isBoolean()
     .withMessage("Le status doit être une valeur booleenne."),
-  checkValidatorResult,
 ];
 
 // Validateur pour vérifier le format du token et du mot de passe lors d'une modification de mot de passe
 export const postPasswordValidator = [
   body("token")
+    .isString()
+    .withMessage("Une chaîne de caractères est requise.")
     .custom(tokenValidateGeneric)
     .withMessage("Le token contient des caractères non autorisés."),
   body("password")
+    .isString()
+    .withMessage("Le mot de passe est requis.")
     .custom(passwordValidateGeneric)
     .withMessage("Le mot de passe n'est pas valide."),
-  checkValidatorResult,
 ];

@@ -45,6 +45,12 @@ const Field = (props: FieldProps) => {
           props.data.onChangeValue(name, event.currentTarget.value)
         }
       />
+
+      {props.data.errors.find((item) => item.type === name) ? (
+        <p className="text-error text-xs">
+          {props.data.errors.find((item) => item.type === name)?.message}
+        </p>
+      ) : null}
     </div>
   );
 };

@@ -79,8 +79,6 @@ export const isBoolean = (value: any) => {
 
 export const paginationValidator = [
   param("stype")
-    .notEmpty()
-    .withMessage("La propriété pour le tri de la liste est requise.")
     .isString()
     .withMessage(
       "La propriété pour le tri du tableau doit être une chaîne de caractères"
@@ -90,29 +88,25 @@ export const paginationValidator = [
       "La propriété pour le tri du tableau contient des caractères non autorisés."
     ),
   param("sdir")
-    .notEmpty()
-    .withMessage("La direction pour le tri de la liste est requise.")
     .isString()
     .withMessage(
       "La direction pour le tri du tableau doit être une chaîne de caractères"
     )
-    .custom(stringValidateGeneric)
+    .custom((value) => {
+      const availableSdir = ["asc", "desc"];
+      return availableSdir.includes(value);
+    })
     .withMessage(
       "La direction pour le tri du tableau contient des caractères non autorisés."
     ),
   query("page")
-    .notEmpty()
-    .withMessage("Le numéro de la page est reqyus.")
     .isNumeric()
     .withMessage("Le numéro de la page doit être un nombre entier."),
   query("limit")
-    .notEmpty()
-    .withMessage("Le nombre d'éléments affichés par page est requis.")
     .isNumeric()
     .withMessage(
       "Le nombre d'éléments affichés par page doit être un nombre entier."
     ),
-  checkValidatorResult,
 ];
 
 export const updateVideoValidator = [
