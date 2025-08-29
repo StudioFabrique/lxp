@@ -68,7 +68,7 @@ const userSchema: Schema = new Schema(
       required: true,
     },
     group: {
-      type: [mongoose.Schema.Types.ObjectId],
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Group",
       required: false,
     },

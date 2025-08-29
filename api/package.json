@@ -17,6 +17,7 @@
     "reset-mongo": "npx ts-node src/fixtures.ts",
     "reset-prisma": "npx prisma migrate deploy && npx ts-node src/fixtures-prisma.ts",
     "fixtures": "npm run reset-mongo && npm run reset-prisma",
+    "fixtures-test": "npx prisma migrate deploy && npx ts-node fixtures-test.ts",
     "elastic-search": "npx ts-node src/elastic-search/generate-indices/generate-all-indices.ts",
     "prisma-generate": "npx prisma generate",
     "test:debug": "dotenv -e .env.test -- jest --verbose --no-cache --runInBand",
