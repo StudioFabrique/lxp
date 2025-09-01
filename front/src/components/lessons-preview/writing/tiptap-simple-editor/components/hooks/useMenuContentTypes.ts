@@ -1,8 +1,4 @@
-import {
-  type Editor,
-  EditorStateSnapshot,
-  useEditorState,
-} from "@tiptap/react";
+import { type Editor, useEditorState } from "@tiptap/react";
 import type { ContentPickerOptions } from "../dropdowns/ContentTypePicker";
 import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../../../../../hooks/use-http";
@@ -76,11 +72,6 @@ export const useMenuContentTypes = (
     [editor, imageSize]
   );
 
-  const handleInsertTable = (ctx: EditorStateSnapshot<Editor>) => {
-    // insert a table
-    ctx.editor.commands.insertTable({ rows: 3, cols: 3, withHeaderRow: false });
-  };
-
   useEffect(() => {
     handleImageUpload();
   }, [handleImageUpload]);
@@ -101,21 +92,26 @@ export const useMenuContentTypes = (
   return {
     menuContentOptions: useEditorState({
       editor,
-      selector: (ctx): ContentPickerOptions => [
-        {
-          type: "category",
-          label: "Insertion",
-          id: "insert",
-        },
-        {
-          icon: "Table",
-          onClick: () => handleInsertTable(ctx),
-          id: "table",
-          disabled: () => false,
-          isActive: () => editor.isActive("table"),
-          label: "Tableau",
-          type: "option",
-        },
+      selector: (/*ctx*/): ContentPickerOptions => [
+        // {
+        //   type: "category",
+        //   label: "Insertion",
+        //   id: "insert",
+        // },
+        // {
+        //   icon: "Table",
+        //   onClick: () =>
+        //     ctx.editor.commands.insertTable({
+        //       rows: 3,
+        //       cols: 3,
+        //       withHeaderRow: true,
+        //     }),
+        //   id: "table",
+        //   disabled: () => false,
+        //   isActive: () => editor.isActive("table"),
+        //   label: "Tableau",
+        //   type: "option",
+        // },
       ],
     }),
     isImageUploadPending,

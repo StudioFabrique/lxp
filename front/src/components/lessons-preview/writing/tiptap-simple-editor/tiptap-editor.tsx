@@ -33,6 +33,8 @@ import { Edit } from "lucide-react";
 import CodeBlockWithCopy from "./extensions/CodeBlockWithCopy/CodeBlockWithCopy";
 import { ResizableImage } from "./extensions/ResizableImage";
 import SaveButton from "./components/SaveButton";
+import { TableBubbleMenu } from "./components/TableBubbleMenu";
+import { TableKeyboardShortcuts } from "./extensions/TableKeyboardShortcuts";
 
 const lowlight = createLowlight(all);
 
@@ -74,9 +76,10 @@ export default function TiptapEditor({
       }),
       Table.configure({
         resizable: true,
-        // HTMLAttributes: {
-        //   class: "my-custom-class",
-        // },
+        HTMLAttributes: {
+          class: "tiptap-table",
+        },
+        allowTableNodeSelection: true,
       }),
       CodeBlockLowlight.extend({
         addNodeView() {
@@ -92,6 +95,7 @@ export default function TiptapEditor({
       FontFamily,
       Link,
       Youtube,
+      TableKeyboardShortcuts,
     ],
     content: initialValue,
     editable: isEditingActivity,
@@ -163,6 +167,7 @@ export default function TiptapEditor({
           )}
       </div>
       {editor && <LinkMenu editor={editor} appendTo={menuContainerRef} />}
+      {editor && editor.isEditable && <TableBubbleMenu editor={editor} />}
     </>
   );
 }

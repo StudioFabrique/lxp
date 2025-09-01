@@ -4,70 +4,70 @@ import { useCallback } from "react";
 export const useTextmenuCommands = (editor: Editor) => {
   const onBold = useCallback(
     () => editor.chain().focus().toggleBold().run(),
-    [editor],
+    [editor]
   );
   const onItalic = useCallback(
     () => editor.chain().focus().toggleItalic().run(),
-    [editor],
+    [editor]
   );
   const onStrike = useCallback(
     () => editor.chain().focus().toggleStrike().run(),
-    [editor],
+    [editor]
   );
-  const onUnderline = useCallback(
-    () => editor.chain().focus().toggleUnderline().run(),
-    [editor],
-  );
+  // const onUnderline = useCallback(
+  //   () => editor.chain().focus().toggleUnderline().run(),
+  //   [editor],
+  // );
   const onCode = useCallback(
     () => editor.chain().focus().toggleCode().run(),
-    [editor],
+    [editor]
   );
   const onCodeBlock = useCallback(
     () => editor.chain().focus().toggleCodeBlock().run(),
-    [editor],
+    [editor]
   );
 
-  const onSubscript = useCallback(
-    () => editor.chain().focus().toggleSubscript().run(),
-    [editor],
-  );
-  const onSuperscript = useCallback(
-    () => editor.chain().focus().toggleSuperscript().run(),
-    [editor],
-  );
+  // const onSubscript = useCallback(
+  //   () => editor.chain().focus().toggleSubscript().run(),
+  //   [editor],
+  // );
+  // const onSuperscript = useCallback(
+  //   () => editor.chain().focus().toggleSuperscript().run(),
+  //   [editor],
+  // );
   const onAlignLeft = useCallback(
     () => editor.chain().focus().setTextAlign("left").run(),
-    [editor],
+    [editor]
   );
   const onAlignCenter = useCallback(
     () => editor.chain().focus().setTextAlign("center").run(),
-    [editor],
+    [editor]
   );
   const onAlignRight = useCallback(
     () => editor.chain().focus().setTextAlign("right").run(),
-    [editor],
+    [editor]
   );
   const onAlignJustify = useCallback(
     () => editor.chain().focus().setTextAlign("justify").run(),
-    [editor],
+    [editor]
   );
 
   const onChangeColor = useCallback(
     (color: string) => editor.chain().setColor(color).run(),
-    [editor],
+    [editor]
   );
   const onClearColor = useCallback(
     () => editor.chain().focus().unsetColor().run(),
-    [editor],
+    [editor]
   );
 
   const onChangeHighlight = useCallback(
     (color: string) => editor.chain().setHighlight({ color }).run(),
-    [editor],
+    [editor]
   );
   const onClearHighlight = useCallback(
     () => editor.chain().focus().unsetHighlight().run(),
-    [editor],
+    [editor]
   );
 
   const onSimplify = useCallback(
@@ -77,7 +77,7 @@ export const useTextmenuCommands = (editor: Editor) => {
         .focus()
         // .aiSimplify({ stream: true, format: "rich-text" })
         .run(),
-    [editor],
+    [editor]
   );
   const onEmojify = useCallback(
     () =>
@@ -86,7 +86,7 @@ export const useTextmenuCommands = (editor: Editor) => {
         .focus()
         // .aiEmojify({ stream: true, format: "rich-text" })
         .run(),
-    [editor],
+    [editor]
   );
   const onCompleteSentence = useCallback(
     () =>
@@ -95,7 +95,7 @@ export const useTextmenuCommands = (editor: Editor) => {
         .focus()
         // .aiComplete({ stream: true, format: "rich-text" })
         .run(),
-    [editor],
+    [editor]
   );
   const onFixSpelling = useCallback(
     () =>
@@ -104,7 +104,7 @@ export const useTextmenuCommands = (editor: Editor) => {
         .focus()
         // .aiFixSpellingAndGrammar({ stream: true, format: "rich-text" })
         .run(),
-    [editor],
+    [editor]
   );
   const onMakeLonger = useCallback(
     () =>
@@ -113,7 +113,7 @@ export const useTextmenuCommands = (editor: Editor) => {
         .focus()
         // .aiExtend({ stream: true, format: "rich-text" })
         .run(),
-    [editor],
+    [editor]
   );
   const onMakeShorter = useCallback(
     () =>
@@ -122,7 +122,7 @@ export const useTextmenuCommands = (editor: Editor) => {
         .focus()
         // .aiShorten({ stream: true, format: "rich-text" })
         .run(),
-    [editor],
+    [editor]
   );
   const onTldr = useCallback(
     () =>
@@ -131,7 +131,7 @@ export const useTextmenuCommands = (editor: Editor) => {
         .focus()
         // .aiTldr({ stream: true, format: "rich-text" })
         .run(),
-    [editor],
+    [editor]
   );
   const onTone = useCallback(
     (/*tone: string*/) =>
@@ -140,7 +140,7 @@ export const useTextmenuCommands = (editor: Editor) => {
         .focus()
         // .aiAdjustTone(tone, { stream: true, format: "rich-text" })
         .run(),
-    [editor],
+    [editor]
   );
   const onTranslate = useCallback(
     (/* language: Language */) =>
@@ -149,7 +149,7 @@ export const useTextmenuCommands = (editor: Editor) => {
         .focus()
         // .aiTranslate(language, { stream: true, format: "rich-text" })
         .run(),
-    [editor],
+    [editor]
   );
   const onLink = useCallback(
     (url: string, inNewTab?: boolean) =>
@@ -158,7 +158,7 @@ export const useTextmenuCommands = (editor: Editor) => {
         .focus()
         .setLink({ href: url, target: inNewTab ? "_blank" : "" })
         .run(),
-    [editor],
+    [editor]
   );
 
   const onYoutubeLink = useCallback(
@@ -182,7 +182,7 @@ export const useTextmenuCommands = (editor: Editor) => {
         height: dimensions.height,
       });
     },
-    [editor],
+    [editor]
   );
 
   const onSetFont = useCallback(
@@ -192,28 +192,95 @@ export const useTextmenuCommands = (editor: Editor) => {
       }
       return editor.chain().focus().setFontFamily(font).run();
     },
-    [editor],
+    [editor]
   );
 
-  const onSetFontSize = useCallback(
-    (fontSize: string) => {
-      if (!fontSize || fontSize.length === 0) {
-        return editor.chain().focus().unsetFontSize().run();
-      }
-      return editor.chain().focus().setFontSize(fontSize).run();
-    },
-    [editor],
+  // const onSetFontSize = useCallback(
+  //   (fontSize: string) => {
+  //     if (!fontSize || fontSize.length === 0) {
+  //       return editor.chain().focus().unsetFontSize().run();
+  //     }
+  //     return editor.chain().focus().setFontSize(fontSize).run();
+  //   },
+  //   [editor],
+  // );
+
+  // Table commands
+  const onInsertTable = useCallback(
+    (rows: number, cols: number, withHeaderRow: boolean = true) =>
+      editor.chain().focus().insertTable({ rows, cols, withHeaderRow }).run(),
+    [editor]
+  );
+
+  const onAddColumnBefore = useCallback(
+    () => editor.chain().focus().addColumnBefore().run(),
+    [editor]
+  );
+
+  const onAddColumnAfter = useCallback(
+    () => editor.chain().focus().addColumnAfter().run(),
+    [editor]
+  );
+
+  const onDeleteColumn = useCallback(
+    () => editor.chain().focus().deleteColumn().run(),
+    [editor]
+  );
+
+  const onAddRowBefore = useCallback(
+    () => editor.chain().focus().addRowBefore().run(),
+    [editor]
+  );
+
+  const onAddRowAfter = useCallback(
+    () => editor.chain().focus().addRowAfter().run(),
+    [editor]
+  );
+
+  const onDeleteRow = useCallback(
+    () => editor.chain().focus().deleteRow().run(),
+    [editor]
+  );
+
+  const onDeleteTable = useCallback(
+    () => editor.chain().focus().deleteTable().run(),
+    [editor]
+  );
+
+  const onMergeCells = useCallback(
+    () => editor.chain().focus().mergeCells().run(),
+    [editor]
+  );
+
+  const onSplitCell = useCallback(
+    () => editor.chain().focus().splitCell().run(),
+    [editor]
+  );
+
+  const onToggleHeaderColumn = useCallback(
+    () => editor.chain().focus().toggleHeaderColumn().run(),
+    [editor]
+  );
+
+  const onToggleHeaderRow = useCallback(
+    () => editor.chain().focus().toggleHeaderRow().run(),
+    [editor]
+  );
+
+  const onToggleHeaderCell = useCallback(
+    () => editor.chain().focus().toggleHeaderCell().run(),
+    [editor]
   );
 
   return {
     onBold,
     onItalic,
     onStrike,
-    onUnderline,
+    // onUnderline,
     onCode,
     onCodeBlock,
-    onSubscript,
-    onSuperscript,
+    // onSubscript,
+    // onSuperscript,
     onAlignLeft,
     onAlignCenter,
     onAlignRight,
@@ -223,7 +290,7 @@ export const useTextmenuCommands = (editor: Editor) => {
     onChangeHighlight,
     onClearHighlight,
     onSetFont,
-    onSetFontSize,
+    // onSetFontSize,
     onSimplify,
     onEmojify,
     onCompleteSentence,
@@ -235,5 +302,19 @@ export const useTextmenuCommands = (editor: Editor) => {
     onTranslate,
     onLink,
     onYoutubeLink,
+    // Table commands
+    onInsertTable,
+    onAddColumnBefore,
+    onAddColumnAfter,
+    onDeleteColumn,
+    onAddRowBefore,
+    onAddRowAfter,
+    onDeleteRow,
+    onDeleteTable,
+    onMergeCells,
+    onSplitCell,
+    onToggleHeaderColumn,
+    onToggleHeaderRow,
+    onToggleHeaderCell,
   };
 };
