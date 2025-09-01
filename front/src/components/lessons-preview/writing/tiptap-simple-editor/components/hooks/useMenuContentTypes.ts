@@ -1,4 +1,8 @@
-import { type Editor, useEditorState } from "@tiptap/react";
+import {
+  type Editor,
+  EditorStateSnapshot,
+  useEditorState,
+} from "@tiptap/react";
 import type { ContentPickerOptions } from "../dropdowns/ContentTypePicker";
 import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../../../../../hooks/use-http";
@@ -72,6 +76,11 @@ export const useMenuContentTypes = (
     [editor, imageSize]
   );
 
+  const handleInsertTable = (ctx: EditorStateSnapshot<Editor>) => {
+    // insert a table
+    ctx.editor.commands.insertTable({ rows: 3, cols: 3, withHeaderRow: false });
+  };
+
   useEffect(() => {
     handleImageUpload();
   }, [handleImageUpload]);
@@ -100,12 +109,7 @@ export const useMenuContentTypes = (
         },
         {
           icon: "Table",
-          onClick: () =>
-            ctx.editor
-              .chain()
-              .focus()
-              .insertTable({ rows: 3, cols: 3, withHeaderRow: false })
-              .run(),
+          onClick: () => handleInsertTable(ctx),
           id: "table",
           disabled: () => false,
           isActive: () => editor.isActive("table"),
