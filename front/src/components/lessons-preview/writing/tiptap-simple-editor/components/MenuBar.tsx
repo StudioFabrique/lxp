@@ -28,6 +28,7 @@ import { FontFamilyPicker } from "./FontFamilyPicker.js";
 import { EditLinkPopover } from "./EditLinkPopover.js";
 import { EditYoutubeLinkPopover } from "./EditYoutubeLinkPopover.js";
 import { InsertImagePopover } from "./InsertImagePopover.js";
+import { TableInsertPopover } from "./TableInsertPopover.js";
 
 type MenuBarProps = {
   editor: Editor;
@@ -165,7 +166,9 @@ export default function MenuBar({
           title="Youtube"
           onSetLink={commands.onYoutubeLink}
         />
+        <TableInsertPopover editor={editor} title="Tableau" />
       </MemoContentTypePicker>
+
       <MemoContentTypePicker
         options={menuTextOptions}
         isLoading={isImageUploadPending}
@@ -178,10 +181,6 @@ export default function MenuBar({
         onChange={commands.onSetFont}
         value={states.currentFont || ""}
       />
-      {/* <MemoFontSizePicker
-        onChange={commands.onSetFontSize}
-        value={states.currentSize || ""}
-      /> */}
 
       {/* Color Picker for Text Color */}
       <Popover.Root>
