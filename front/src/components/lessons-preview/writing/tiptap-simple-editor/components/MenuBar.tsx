@@ -183,11 +183,30 @@ export default function MenuBar({
         value={states.currentSize || ""}
       /> */}
 
+      {/* Color Picker for Text Color */}
+      <Popover.Root>
+        <Popover.Trigger asChild>
+          <MemoButton active={!!states.currentColor} tooltip="Couleur du texte">
+            <Icon name="Palette" />
+          </MemoButton>
+        </Popover.Trigger>
+        <Popover.Content side="top" sideOffset={8} asChild>
+          <Surface className="p-1">
+            <MemoColorPicker
+              color={states.currentColor}
+              onChange={commands.onChangeColor}
+              onClear={commands.onClearColor}
+            />
+          </Surface>
+        </Popover.Content>
+      </Popover.Root>
+
+      {/* Color Picker for Highlight Color */}
       <Popover.Root>
         <Popover.Trigger asChild>
           <MemoButton
             active={!!states.currentHighlight}
-            tooltip="Highlight text"
+            tooltip="Surbrillance du texte"
           >
             <Icon name="Highlighter" />
           </MemoButton>
@@ -202,22 +221,7 @@ export default function MenuBar({
           </Surface>
         </Popover.Content>
       </Popover.Root>
-      <Popover.Root>
-        <Popover.Trigger asChild>
-          <MemoButton active={!!states.currentColor} tooltip="Text color">
-            <Icon name="Palette" />
-          </MemoButton>
-        </Popover.Trigger>
-        <Popover.Content side="top" sideOffset={8} asChild>
-          <Surface className="p-1">
-            <MemoColorPicker
-              color={states.currentColor}
-              onChange={commands.onChangeColor}
-              onClear={commands.onClearColor}
-            />
-          </Surface>
-        </Popover.Content>
-      </Popover.Root>
+
       {items(editor).map((item) => (
         <Fragment key={item.title || `divider-${Math.random()}`}>
           {item.type === "divider" ? (
