@@ -27,7 +27,11 @@ const ActivityCreationOptionsButtons = ({
           <button
             onClick={handleShowButtons}
             onKeyDown={handleShowButtons}
-            className={`btn ${isDisabled ? "cursor-not-allowed tooltip" : "btn-primary text-base-100"}`}
+            className={`btn ${
+              isDisabled
+                ? "cursor-not-allowed tooltip"
+                : "btn-primary text-base-100"
+            }`}
             type="button"
             data-tip="Une activité est déja en cours d'édition"
           >
@@ -46,27 +50,27 @@ const ActivityCreationOptionsButtons = ({
               >
                 Texte
               </button>
-              {/* <Link
-            to={`/admin/lesson/edit/${selectedLesson.id}?type=text`}
-            className="btn btn-primary text-base-100"
-          >
-            Texte (Ancienne version)
-          </Link> */}
               <Link
                 to={`/admin/lesson/edit/${selectedLesson.id}?type=video`}
-                className={`btn ${isDisabled ? "btn-disabled" : "btn-primary text-base-100"}`}
+                className={`btn ${
+                  isDisabled ? "btn-disabled" : "btn-primary text-base-100"
+                }`}
               >
                 Vidéo
               </Link>
               <Link
                 to={`/admin/lesson/edit/${selectedLesson.id}?type=image`}
-                className={`btn ${isDisabled ? "btn-disabled" : "btn-primary text-base-100"}`}
+                className={`btn ${
+                  isDisabled ? "btn-disabled" : "btn-primary text-base-100"
+                }`}
               >
                 Image
               </Link>
               <Link
                 to={`/admin/lesson/edit/${selectedLesson.id}?type=resource`}
-                className={`btn ${isDisabled ? "btn-disabled" : "btn-primary text-base-100"}`}
+                className={`btn ${
+                  isDisabled ? "btn-disabled" : "btn-primary text-base-100"
+                }`}
               >
                 Fichier
               </Link>
