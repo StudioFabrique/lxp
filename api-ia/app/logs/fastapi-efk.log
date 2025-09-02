@@ -1,0 +1,12 @@
+2025-09-01 11:45:32,362 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2025-09-01 11:45:35,820 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2025-09-01 13:05:44,764 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('query', 'request'), 'msg': 'Field required', 'input': None}] FROM: None
+2025-09-01 13:07:16,172 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('query', 'request'), 'msg': 'Field required', 'input': None}] FROM: None
+2025-09-01 13:07:18,527 - CMV_GATEWAY - WARNING - [{'type': 'missing', 'loc': ('query', 'request'), 'msg': 'Field required', 'input': None}] FROM: None
+2025-09-01 16:05:59,466 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2025-09-01 16:06:00,508 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2025-09-01 16:16:29,088 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2025-09-01 16:16:31,012 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2025-09-01 16:17:00,828 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2025-09-01 16:17:01,589 - CMV_GATEWAY - WARNING - Not Found FROM: None
+2025-09-01 16:17:02,246 - CMV_GATEWAY - WARNING - Not Found FROM: None

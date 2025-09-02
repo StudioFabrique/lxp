@@ -32,6 +32,8 @@ import evaluationRouter from "./evaluation/evaluation.router";
 import mediaRouter from "./mediatheque/mediatheque.router";
 import { uploadCompanyLogo } from "../../middleware/upload-company-image";
 import httpPostCompanyLogo from "../../controllers/http-post-company-logo";
+import chatbotRouter from "./chatbot/chatbot.router";
+import checkToken from "../../middleware/check-token";
 
 // Création du routeur principal pour l'API v1
 const v1Router = express.Router();
@@ -71,7 +73,9 @@ v1Router.post(
   "/company-logo",
   checkPermissions("formation"),
   uploadCompanyLogo(),
-  httpPostCompanyLogo,
+  httpPostCompanyLogo
 );
+
+v1Router.use("/chatbot", chatbotRouter);
 
 export default v1Router;
