@@ -16,13 +16,11 @@ const AutosaveIndicator = ({
       <div className="flex items-center gap-3">
         <Save className="w-5 h-5 text-blue-600" />
         <div className="flex flex-col">
-          <span className="text-sm font-medium text-blue-800">
-            Contenu restauré depuis la sauvegarde automatique
-          </span>
           {lastSaveTime && (
             <span className="text-xs text-blue-600 flex items-center gap-1 mt-1">
               <Clock className="w-3 h-3" />
-              Dernière sauvegarde : {lastSaveTime.toLocaleTimeString()}
+              Dernière sauvegarde automatique :
+              {lastSaveTime.toLocaleTimeString()}
             </span>
           )}
         </div>
