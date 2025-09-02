@@ -23,13 +23,13 @@ const useChatbot = () => {
   const { sendRequest, isLoading } = useHttp();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    setDialog((prevState) => [...prevState, values.prompt]);
     e.preventDefault();
     onValidateForm();
 
     const applyData = (data: string) => {
       console.log({ data });
-      setDialog((prevState) => [...prevState, data]);
+      setDialog((prevState) => [...prevState, values.prompt, data]);
+      onResetForm();
     };
     sendRequest(
       {
@@ -45,6 +45,7 @@ const useChatbot = () => {
   };
 
   return {
+    isLoading,
     errors,
     values,
     onChangeValue,

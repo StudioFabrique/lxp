@@ -2,24 +2,19 @@ import { Send } from "lucide-react";
 import chatbot from "../../assets/images/chatbot.png";
 import FieldArea from "../UI/forms/field-area";
 import useChatbot from "./hooks/useChatbot";
+import Wrapper from "../UI/wrapper/wrapper.component";
 
 export default function DrawerChatbot() {
-  const {
-    errors,
-    values,
-    onChangeValue,
-    onValidationErrors,
-    onResetForm,
-    dialog,
-    setDialog,
-    handleSubmit,
-  } = useChatbot();
+  const { errors, values, onChangeValue, dialog, handleSubmit, isLoading } =
+    useChatbot();
 
   const data = { values, errors, onChangeValue };
 
+  console.log({ dialog });
+
   return (
     <>
-      <div className="drawer drawer-end z-1000">
+      <div className="drawer drawer-end z-1000 max-w-screen">
         <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content">
           {/* Page content here */}
@@ -57,9 +52,9 @@ export default function DrawerChatbot() {
             className="drawer-overlay"
           ></label>
 
-          <div className="menu bg-base-200 text-base-content min-h-full w-[30rem] flex flex-col justify-between items-center p-4">
-            <div className="text-center">
-              {/* Sidebar content here */}
+          <div className="menu bg-base-200 text-base-content min-h-full w-[30rem] flex flex-col p-4">
+            {/* Header fixe */}
+            <div className="flex-shrink-0 text-center">
               <h2 className="text-4xl font-bold">Une question ?</h2>
               <div>
                 <img src={chatbot} alt="Chatbot" width={300} />
@@ -69,29 +64,47 @@ export default function DrawerChatbot() {
                 (Advanced Learning Automated Answer)
               </p>
             </div>
-            <div className="w-full">
-              <ul>
-                {dialog.map((message, index) => (
-                  <li key={index}>{message}</li>
-                ))}
-              </ul>
-              <form onSubmit={handleSubmit}>
-                <FieldArea
-                  label="Votre question :"
-                  placeholder="Posez votre question ici..."
-                  name="prompt"
-                  data={data}
-                />
-                <div className="text-right p-4">
-                  <button
-                    className="w-8 h-8 btn btn-circle btn-primary"
-                    type="submit"
-                    aria-label="soumettre le prompt à l'api"
-                  >
-                    <Send className="text-base-content-200" />
-                  </button>
+
+            {/* Zone de chat avec scroll */}
+            <div className="flex-1 flex flex-col mt-8 min-h-0">
+              <div className="flex-1 overflow-y-auto">
+                <ul className="space-y-4 pb-4">
+                  {/* Chat messages */}
+                  {dialog.map((message, index) => (
+                    <Wrapper key={index}>
+                      <li className="w-full">{message}</li>
+                    </Wrapper>
+                  ))}
+                </ul>
+                {isLoading && (
+                  <div className="p-4">
+                    <p>ALAA est en train de vous répondre...</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Formulaire fixe en bas */}
+              {!isLoading && (
+                <div className="flex-shrink-0 border-t border-base-300 pt-4 mt-4">
+                  <form onSubmit={handleSubmit}>
+                    <FieldArea
+                      label="Posez votre question :"
+                      placeholder="Posez votre question ici..."
+                      name="prompt"
+                      data={data}
+                    />
+                    <div className="text-right p-4">
+                      <button
+                        className="w-8 h-8 btn btn-circle btn-primary"
+                        type="submit"
+                        aria-label="soumettre le prompt à l'api"
+                      >
+                        <Send className="text-base-content-200" />
+                      </button>
+                    </div>
+                  </form>
                 </div>
-              </form>
+              )}
             </div>
           </div>
         </div>
