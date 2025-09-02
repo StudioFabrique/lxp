@@ -8,8 +8,10 @@ import {
 import type { Editor } from "@tiptap/react";
 import toast from "react-hot-toast";
 import useHttp from "../../../hooks/use-http";
+import { useAutosave } from "../../../hooks/use-autosave";
 import Modal from "../../UI/modal/modal";
 import TiptapEditor from "./tiptap-simple-editor/tiptap-editor";
+import AutosaveIndicator from "./autosave-indicator";
 
 type Activity = {
   id: number;
@@ -38,19 +40,77 @@ const TipTapActivity = ({
 }: TipTapActivityProps) => {
   const { sendRequest } = useHttp(true);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [showAutosaveIndicator, setShowAutosaveIndicator] =
+    useState<boolean>(false);
 
   const [isEditingActivity, setEditingActivity] =
     useState<boolean>(isNewActivity);
 
   const [title, setTitle] = useState<string>(activity?.title || "");
+  const [editorContent, setEditorContent] = useState<string>(
+    activity?.content || ""
+  );
 
   const editorRef = useRef<Editor | null>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
 
-  const titleHasError = !(title && title.length > 0); /*|| !title incorrect*/
+  // Hook d'autosave
+  const { lastAutosaveTime, restoreAutosavedContent, clearStorage } =
+    useAutosave({
+      title,
+      content: editorContent,
+      lessonId,
+      activityId: activity?.id,
+      isNewActivity,
+    });
+
+  const titleHasError = !(title && title.length > 0);
 
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.currentTarget.value);
+  };
+
+  // Fonction pour mettre à jour le contenu de l'éditeur
+  const updateEditorContent = (content: string) => {
+    setEditorContent(content);
+  };
+
+  // Effet pour restaurer le contenu autosauvegardé au chargement
+  useEffect(() => {
+    if (isNewActivity && !activity) {
+      const autosavedData = restoreAutosavedContent();
+      if (autosavedData.wasRestored) {
+        setTitle(autosavedData.title);
+        setEditorContent(autosavedData.content);
+        setShowAutosaveIndicator(true);
+        toast("Contenu restauré depuis la sauvegarde automatique", {
+          duration: 3000,
+        });
+      }
+    }
+  }, [isNewActivity, activity, restoreAutosavedContent]);
+
+  // Effet pour cacher l'indicateur d'autosave après un délai
+  useEffect(() => {
+    if (showAutosaveIndicator) {
+      const timer = setTimeout(() => {
+        setShowAutosaveIndicator(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [showAutosaveIndicator]);
+
+  // Fonction pour fermer l'éditeur avec nettoyage optionnel de l'autosave
+  const handleCloseEditor = () => {
+    if (isNewActivity && (title.trim() || editorContent.trim())) {
+      // Pour une nouvelle activité, garder l'autosave si il y a du contenu
+      // L'utilisateur peut vouloir revenir à son travail plus tard
+    } else {
+      // Pour les activités existantes, nettoyer l'autosave à la fermeture
+      clearStorage();
+    }
+    onCloseTipTapEditor?.();
+    setEditingActivity(false);
   };
 
   useEffect(() => {
@@ -86,8 +146,10 @@ const TipTapActivity = ({
     // save as file
     const applyData = () => {
       toast.success(
-        `Activité ${isNewActivity ? "créée" : "modifiée"} avec succès`,
+        `Activité ${isNewActivity ? "créée" : "modifiée"} avec succès`
       );
+      // Nettoie l'autosave après sauvegarde réussie
+      clearStorage();
       setShowModal(false);
       onCloseTipTapEditor?.();
       onRefreshAllData?.();
@@ -106,7 +168,7 @@ const TipTapActivity = ({
           title,
         },
       },
-      applyData,
+      applyData
     );
   };
 
@@ -144,15 +206,23 @@ const TipTapActivity = ({
           </form>
         </Modal>
       ) : null}
+
+      {/* Indicateur d'autosave */}
+      <AutosaveIndicator
+        isVisible={showAutosaveIndicator}
+        lastSaveTime={lastAutosaveTime}
+      />
+
       <div className="mt-4 w-[100%]">
         <TiptapEditor
           editorRef={editorRef}
-          initialValue={activity?.content}
+          initialValue={editorContent || activity?.content}
           isEditingActivity={isEditingActivity}
           disableEditButton={isAnyActivityBeingEdited}
-          onCloseEditor={onCloseTipTapEditor}
+          onCloseEditor={handleCloseEditor}
           setEditingActivity={setEditingActivity}
           onSave={() => setShowModal(true)}
+          onContentChange={updateEditorContent}
         />
       </div>
     </>
