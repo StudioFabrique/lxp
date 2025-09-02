@@ -55,10 +55,41 @@ const useForm = (data = {}, schema?: any) => {
   /**
    * Met à jour les erreurs de validation
    */
-  const onValidationErrors = (data: CustomError[]) => {
+  const onValidationErrors = useCallback((data: CustomError[]) => {
     setErrors(data);
-    console.log("toto error ", errors);
+  }, []);
+
+  const validationErrors = (error: any) => {
+    console.log(error);
+
+    let validationErrors = Array<CustomError>();
+    for (const item of error.issues) {
+      const customError: CustomError = {
+        type: item.path[0] as string,
+        message: item.message,
+      };
+      validationErrors = [...validationErrors, customError];
+    }
+
+    return validationErrors;
   };
+
+  const onValidateForm = useCallback(() => {
+    if (schema) {
+      try {
+        schema.parse(values);
+        setErrors([]);
+      } catch (error) {
+        if (error instanceof ZodError) {
+          console.log({ error });
+          const errors = validationErrors(error);
+          onValidationErrors(errors);
+          return;
+        }
+        setErrors([]);
+      }
+    }
+  }, [schema, values, onValidationErrors]);
 
   /**
    * Réinitialise le formulaire (valeurs et erreurs)
@@ -106,6 +137,7 @@ const useForm = (data = {}, schema?: any) => {
     onChangeValue,
     onResetForm,
     initValues,
+    onValidateForm,
   };
 };
 
