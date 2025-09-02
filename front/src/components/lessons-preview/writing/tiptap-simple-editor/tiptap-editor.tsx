@@ -46,6 +46,7 @@ type TiptapSimpleEditorProps = {
   setEditingActivity: Dispatch<SetStateAction<boolean>>;
   onCloseEditor?: () => void;
   onSave?: () => void;
+  onContentChange?: (content: string) => void;
 };
 
 export default function TiptapEditor({
@@ -56,6 +57,7 @@ export default function TiptapEditor({
   setEditingActivity,
   onCloseEditor,
   onSave,
+  onContentChange,
 }: TiptapSimpleEditorProps) {
   const handleCloseEditor = () => {
     onCloseEditor?.();
@@ -105,6 +107,12 @@ export default function TiptapEditor({
           "prose min-h-[12vh] m-1 w-[100%] max-w-[50%] py-5 focus:outline-none transition-all duration-200",
       },
     },
+    onUpdate: ({ editor }) => {
+      // Appelle onContentChange lors de la mise à jour du contenu
+      if (onContentChange && isEditingActivity) {
+        onContentChange(editor.getHTML());
+      }
+    },
   });
 
   const menuContainerRef = useRef(null);
@@ -121,6 +129,17 @@ export default function TiptapEditor({
       editor.setEditable(isEditingActivity);
     }
   }, [editor, isEditingActivity]);
+
+  // Effet pour mettre à jour le contenu de l'éditeur lorsque initialValue change
+  useEffect(() => {
+    if (
+      editor &&
+      initialValue !== undefined &&
+      editor.getHTML() !== initialValue
+    ) {
+      editor.commands.setContent(initialValue);
+    }
+  }, [editor, initialValue]);
 
   return (
     <>
