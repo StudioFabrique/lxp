@@ -68,22 +68,18 @@ const ActivityPreview = ({
 
   const renderContent = () => {
     const contentMap = {
-      text:
-        // <Markdown className="prose prose-h1:text-primary prose-h1:text-center prose-a:text-center prose-img:max-w-4/6 prose-img:text-center prose-p:text-justify prose-ul:ml-8 max-w-[92%]">
-        //   {value}
-        // </Markdown>
-        value ? (
-          <TipTapActivity
-            lessonId={lessonId}
-            activity={{
-              id: activity.id,
-              title: activity.title,
-              content: value,
-            }}
-            isAnyActivityBeingEdited={isAnyActivityBeingEdited}
-            onActivityEditChange={onActivityEditChange}
-          />
-        ) : null,
+      text: value ? (
+        <TipTapActivity
+          lessonId={lessonId}
+          activity={{
+            id: activity.id,
+            title: activity.title,
+            content: value,
+          }}
+          isAnyActivityBeingEdited={isAnyActivityBeingEdited}
+          onActivityEditChange={onActivityEditChange}
+        />
+      ) : null,
       video: (
         <div className="flex flex-col gap-2">
           <h3 className="text-base-content font-bold text-2xl">Vidéo</h3>
@@ -97,7 +93,6 @@ const ActivityPreview = ({
       ),
       resource: (
         <div className="flex flex-col items-center gap-4">
-          <h3 className="text-base-content font-bold text-2xl">Resources</h3>
           <div className="flex flex-col gap-2">
             {pdfUrls
               .sort((a, b) => a.order - b.order)

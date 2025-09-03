@@ -1,7 +1,7 @@
 import type Lesson from "../../../utils/interfaces/lesson";
 import RatingPanelButton from "../../UI/lesson-rating/rating-panel-button";
 import ActivityPreview from "./activity";
-import { Fragment, type PropsWithChildren, useState } from "react";
+import { type PropsWithChildren, useState } from "react";
 import Can from "../../UI/can/can.component";
 import NoActivityPlaceholder from "./no-activity-placeholder";
 import ActivityCreationOptionsButtons from "../writing/activity-creation-options-buttons";
@@ -46,9 +46,7 @@ const LessonReader = ({
   return (
     <div className="flex flex-col gap-4">
       <div className="w-full flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-primary">
-          {selectedLesson.title}
-        </h1>
+        <h1 className="text-2xl font-bold text-primary">Activités</h1>
         {selectedLesson.activities && selectedLesson.activities?.length > 0 && (
           <Can action="update" object="lesson">
             <Link
@@ -71,20 +69,25 @@ const LessonReader = ({
 
       {/* Affiche les activités si elles existent, sinon affiche un message */}
       {lessonHasActivities || showTipTapEditor ? (
-        selectedLesson.activities?.map((activity, i) => (
-          <Fragment key={activity.id}>
-            {i >= 1 && <hr className="w-[80%] self-center border-primary" />}
-            <div className="flex justify-center text-primary capitalize">
+        selectedLesson.activities?.map((activity) => (
+          <div
+            className="collapse collapse-arrow bg-base-100 border border-base-300"
+            key={activity.id}
+          >
+            <input type="radio" name="my-accordion-2" checked />
+            <div className="collapse-title font-semibold text-primary capitalize">
               {activity.title}
             </div>
 
-            <ActivityPreview
-              lessonId={selectedLesson.id ?? 0}
-              activity={activity}
-              isAnyActivityBeingEdited={isAnyActivityBeingEdited}
-              onActivityEditChange={setIsAnyActivityBeingEdited}
-            />
-          </Fragment>
+            <div className="collapse-content">
+              <ActivityPreview
+                lessonId={selectedLesson.id ?? 0}
+                activity={activity}
+                isAnyActivityBeingEdited={isAnyActivityBeingEdited}
+                onActivityEditChange={setIsAnyActivityBeingEdited}
+              />
+            </div>
+          </div>
         ))
       ) : (
         <NoActivityPlaceholder />

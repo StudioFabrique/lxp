@@ -33,10 +33,10 @@ export type ContentTypePickerProps = {
 };
 
 const isOption = (
-  option: ContentTypePickerOption | ContentTypePickerCategory,
+  option: ContentTypePickerOption | ContentTypePickerCategory
 ): option is ContentTypePickerOption => option.type === "option";
 const isCategory = (
-  option: ContentTypePickerOption | ContentTypePickerCategory,
+  option: ContentTypePickerOption | ContentTypePickerCategory
 ): option is ContentTypePickerCategory => option.type === "category";
 
 export const ContentTypePicker = ({
@@ -48,7 +48,7 @@ export const ContentTypePicker = ({
   const activeItem = useMemo(
     () =>
       options.find((option) => option.type === "option" && option.isActive()),
-    [options],
+    [options]
   );
 
   return (
@@ -74,7 +74,7 @@ export const ContentTypePicker = ({
         </Toolbar.Button>
       </Dropdown.Trigger>
       <Dropdown.Content asChild>
-        <Surface className="flex flex-col gap-1 px-2 py-4">
+        <Surface className="flex flex-col gap-1 px-2 py-4 my-5">
           {options.map((option) => {
             if (isOption(option)) {
               return (
