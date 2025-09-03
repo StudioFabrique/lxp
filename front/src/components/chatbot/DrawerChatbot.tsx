@@ -2,19 +2,30 @@ import { Send } from "lucide-react";
 import chatbot from "../../assets/images/chatbot.png";
 import FieldArea from "../UI/forms/field-area";
 import useChatbot from "./hooks/useChatbot";
-import Wrapper from "../UI/wrapper/wrapper.component";
+import ReactMarkdown from "react-markdown";
+import { useContext, useEffect, useRef } from "react";
+import { Context } from "../../store/context.store";
+import AvatarChatbot from "./AvatarChatbot";
 
 export default function DrawerChatbot() {
   const { errors, values, onChangeValue, dialog, handleSubmit, isLoading } =
     useChatbot();
 
   const data = { values, errors, onChangeValue };
+  const { user } = useContext(Context);
+  const ref = useRef<HTMLDivElement>(null);
 
   console.log({ dialog });
 
+  useEffect(() => {
+    if (ref && ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [ref, dialog]);
+
   return (
     <>
-      <div className="drawer drawer-end z-1000 max-w-screen">
+      <div className="drawer drawer-end z-1000 max-w-screen p-4">
         <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content">
           {/* Page content here */}
@@ -52,59 +63,106 @@ export default function DrawerChatbot() {
             className="drawer-overlay"
           ></label>
 
-          <div className="menu bg-base-200 text-base-content min-h-full w-[30rem] flex flex-col p-4">
+          <div className="bg-base-200 text-base-content w-[40rem] min-h-full flex flex-col p-4">
             {/* Header fixe */}
             <div className="flex-shrink-0 text-center">
-              <h2 className="text-4xl font-bold">Une question ?</h2>
-              <div>
-                <img src={chatbot} alt="Chatbot" width={300} />
+              <h2 className="text-2xl font-bold">Une question ?</h2>
+              <div className="flex justify-center">
+                <img src={chatbot} alt="Chatbot" width={200} />
               </div>
-              <h3 className="text-2xl font-bold">A.L.A.A. répond</h3>
+              <h3 className="text-xl font-bold">A.L.A.A. répond</h3>
               <p className="text-xs mt-2">
                 (Advanced Learning Automated Answer)
               </p>
             </div>
 
             {/* Zone de chat avec scroll */}
-            <div className="flex-1 flex flex-col mt-8 min-h-0">
-              <div className="flex-1 overflow-y-auto">
-                <ul className="space-y-4 pb-4">
+            <div className="flex-1 flex flex-col mt-4 justify-between">
+              <div className="flex-1 overflow-y-auto max-h-[31rem]">
+                <div className="space-y-2">
                   {/* Chat messages */}
                   {dialog.map((message, index) => (
-                    <Wrapper key={index}>
-                      <li className="w-full">{message}</li>
-                    </Wrapper>
+                    <div
+                      ref={index === dialog.length - 1 ? ref : null}
+                      key={index}
+                      className={`chat ${
+                        message.origin === "user" ? "chat-start" : "chat-end"
+                      } max-w-[40rem]`}
+                    >
+                      <p className="chat-header">
+                        {message.origin === "user"
+                          ? "Votre question :"
+                          : "ALAA a répondu :"}
+                      </p>
+                      <div className="chat-image avatar">
+                        <AvatarChatbot message={message} user={user} />
+                      </div>
+
+                      <div className="chat-bubble chat-bubble-secondary text-base-200 max-w-[40rem]">
+                        <div className="prose prose-sm !max-w-none [&>*]:!flex-col [&>ol]:!flex [&>ol]:!flex-col [&>ul]:!flex [&>ul]:!flex-col">
+                          <ReactMarkdown
+                            components={{
+                              ol: ({ children, ...props }) => (
+                                <ol {...props} className="flex flex-col">
+                                  {children}
+                                </ol>
+                              ),
+                              ul: ({ children, ...props }) => (
+                                <ul {...props} className="flex flex-col">
+                                  {children}
+                                </ul>
+                              ),
+                              li: ({ children, ...props }) => (
+                                <li {...props} className="block">
+                                  {children}
+                                </li>
+                              ),
+                            }}
+                          >
+                            {message.message}
+                          </ReactMarkdown>
+                        </div>
+                      </div>
+                    </div>
                   ))}
-                </ul>
+                </div>
                 {isLoading && (
-                  <div className="p-4">
-                    <p>ALAA est en train de vous répondre...</p>
+                  <div className="chat chat-end">
+                    <div className="chat-image avatar">
+                      <div className="w-10 rounded-full">
+                        <img
+                          alt="Tailwind CSS chat bubble component"
+                          src={chatbot}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="chat-bubble text-xs">
+                      ALAA est en train de vous répondre...
+                    </div>
                   </div>
                 )}
               </div>
 
-              {/* Formulaire fixe en bas */}
-              {!isLoading && (
-                <div className="flex-shrink-0 border-t border-base-300 pt-4 mt-4">
-                  <form onSubmit={handleSubmit}>
-                    <FieldArea
-                      label="Posez votre question :"
-                      placeholder="Posez votre question ici..."
-                      name="prompt"
-                      data={data}
-                    />
-                    <div className="text-right p-4">
-                      <button
-                        className="w-8 h-8 btn btn-circle btn-primary"
-                        type="submit"
-                        aria-label="soumettre le prompt à l'api"
-                      >
-                        <Send className="text-base-content-200" />
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              )}
+              <div className="flex-shrink-0 pt-4 my-4">
+                <form onSubmit={handleSubmit}>
+                  <FieldArea
+                    placeholder="Posez votre question ici..."
+                    name="prompt"
+                    data={data}
+                  />
+                  <div className="text-right p-4">
+                    <button
+                      className="w-8 h-8 btn btn-circle btn-primary"
+                      type="submit"
+                      aria-label="soumettre le prompt à l'api"
+                      disabled={isLoading}
+                    >
+                      <Send className="text-base-content-200" />
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         </div>

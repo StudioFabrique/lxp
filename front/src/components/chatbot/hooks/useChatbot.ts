@@ -3,6 +3,12 @@ import useForm from "../../UI/forms/hooks/use-form";
 import { useState } from "react";
 import useHttp from "../../../hooks/use-http";
 
+type ChatbotValues = {
+  origin: "user" | "bot";
+  message: string;
+  date: Date;
+};
+
 const useChatbot = () => {
   const promptSchema = z
     .string()
@@ -18,19 +24,29 @@ const useChatbot = () => {
     onValidateForm,
   } = useForm({}, promptSchema);
 
-  const [dialog, setDialog] = useState<string[]>([]);
+  const [dialog, setDialog] = useState<ChatbotValues[]>([]);
 
   const { sendRequest, isLoading } = useHttp();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     onValidateForm();
+    setDialog((prevState) => [
+      ...prevState,
+      { origin: "user", message: values.prompt, date: new Date() },
+    ]);
 
-    const applyData = (data: string) => {
-      console.log({ data });
-      setDialog((prevState) => [...prevState, values.prompt, data]);
+    const applyData = async (data: string) => {
+      // Solution plus robuste pour éviter les sauts de ligne
+      const processedText = data;
+
+      setDialog((prevState) => [
+        ...prevState,
+        { origin: "bot", message: processedText, date: new Date() },
+      ]);
       onResetForm();
     };
+
     sendRequest(
       {
         path: "/chatbot/prompt",

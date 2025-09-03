@@ -1,5 +1,9 @@
 const url =
-  process.env.NODE_ENV === "development" ? "https://localhost:5001/" : "/";
+  process.env.NODE_ENV === "development"
+    ? import.meta.env.VITE_HTTPS_ENABLED === "true"
+      ? "https://localhost:5001/"
+      : "http://localhost:5001/"
+    : "/";
 
 export const BASE_URL = url + "v1";
 
