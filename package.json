@@ -16,7 +16,8 @@
     "deploy": "npm run build --prefix api && npm run build --prefix front",
     "generate": "npm run prisma-generate --prefix api",
     "start": "npm run start:prod --prefix api",
-    "fixtures": "npm run fixtures --prefix api"
+    "fixtures": "npm run fixtures --prefix api",
+    "dev": "./dev.sh"
   },
   "keywords": [],
   "author": "",
