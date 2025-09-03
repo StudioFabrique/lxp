@@ -224,7 +224,7 @@ export default function MenuBar({
       {items(editor).map((item) => (
         <Fragment key={item.title || `divider-${Math.random()}`}>
           {item.type === "divider" ? (
-            <span className="divider" />
+            <span className="divider invisible" />
           ) : (
             <MenuItem {...item} />
           )}

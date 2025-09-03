@@ -143,14 +143,7 @@ export default function TiptapEditor({
 
   return (
     <>
-      <div
-        className={`editor relative transition-all duration-700 hover:bg-primary/10 ${
-          isEditingActivity
-            ? "pb-5 pt-20 bg-primary/20 hover:bg-primary/20"
-            : ""
-        }`}
-        ref={menuContainerRef}
-      >
+      <div className={`editor relative`} ref={menuContainerRef}>
         {editor ? (
           <MenuBar
             shouldHide={!isEditingActivity}
