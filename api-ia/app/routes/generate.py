@@ -47,4 +47,4 @@ async def stream_response(request: Request, data: Annotated[GenerateRequest, Bod
             if token := event.choices[0].delta.content:
                 yield token
 
-    return StreamingResponse(generate_stream(), media_type="text/plain")
+    return StreamingResponse(generate_stream(), media_type="text/markdown")
