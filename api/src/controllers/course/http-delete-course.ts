@@ -5,8 +5,8 @@ import CustomRequest from "../../utils/interfaces/express/custom-request";
 
 export async function httpDeleteCourse(
   req: CustomRequest,
-  res: Response,
-  next: NextFunction,
+  _res: Response,
+  next: NextFunction
 ) {
   try {
     //  récupération de l'identifiant du cours à supprimer dans les paramètres d'url
