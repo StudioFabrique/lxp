@@ -57,6 +57,6 @@ export default async function httpPostPrompt(
     }
   } catch (error) {
     console.error("Streaming error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json(error);
   }
 }
