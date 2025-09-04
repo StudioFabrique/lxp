@@ -115,7 +115,9 @@ async function getUsersByRole(
               (item) => user.group[0]._id.toString() === item.groupId
             ).formation
           : "ND",
-      avatar: user.avatar ? user.avatar.toString("base64") : null,
+      avatar: user.avatar
+        ? "data:image/jpeg;base64," + user.avatar.toString("base64")
+        : null,
     };
   });
   return { total, users };
