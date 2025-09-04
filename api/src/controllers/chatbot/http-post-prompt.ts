@@ -31,7 +31,7 @@ export default async function httpPostPrompt(
       fetchOptions.dispatcher = fastApiAgent;
     }
 
-    const response = await fetch(`${fastApiUrl}/generate/`, fetchOptions);
+    const response = await fetch(`${fastApiUrl}/chatbot/`, fetchOptions);
     if (!response.ok) {
       return res.status(response.status).json({ error: "FastAPI error" });
     }
