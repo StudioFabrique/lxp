@@ -98,7 +98,7 @@ export default function DrawerChatbot() {
                         <AvatarChatbot message={message} user={user} />
                       </div>
 
-                      <div className="chat-bubble chat-bubble-secondary text-base-200 max-w-[40rem]">
+                      <div className="chat-bubble text-base-200 max-w-[40rem]">
                         <div className="prose prose-sm !max-w-none [&>*]:!flex-col [&>ol]:!flex [&>ol]:!flex-col [&>ul]:!flex [&>ul]:!flex-col">
                           <ReactMarkdown
                             components={{

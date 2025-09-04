@@ -49,7 +49,7 @@ const useChatbot = () => {
 
     sendRequest(
       {
-        path: "/chatbot/toto",
+        path: "/chatbot/prompt",
         method: "post",
         body: JSON.stringify(values),
         headers: {
