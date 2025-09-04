@@ -44,96 +44,91 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
           {list.map((item: Lesson) => (
             <TableRowWrapper key={item.id}>
               {/* Colonne du titre */}
-              <td className="bg-transparent rounded-l-lg truncate">
-                {item.title}
-              </td>
+              <td className="bg-transparent rounded-l-lg">{item.title}</td>
               {/* Colonne du cours */}
-              <td className="bg-transparent capitalize truncate">
+              <td className="bg-transparent capitalize">
                 {item.course ? item.course.title : "ND"}
               </td>
               {/* Colonne du parcours */}
-              <td className="bg-transparent capitalize truncate">
+              <td className="bg-transparent capitalize">
                 {item.course.module.parcours.title}
               </td>
               {/* Colonne de l'auteur */}
-              <td className="bg-transparent capitalize truncate">
-                {item.author}
-              </td>
+              <td className="bg-transparent capitalize">{item.author}</td>
               {/* Colonne de la date de création */}
-              <td className="bg-transparent truncate">
+              <td className="bg-transparent">
                 {localeDate(item.createdAt ?? "")} à{" "}
                 {localeTime(item.createdAt ?? "")}
               </td>
               {/* Colonne de la date de mise à jour */}
-              <td className="bg-transparent truncate">
+              <td className="bg-transparent">
                 {localeDate(item.updatedAt ?? "")}
               </td>
 
-              <td className="bg-transparent flex items-center gap-x-2 justify-around rounded-r-lg">
-                <div
-                  className="w-6 h-6 text-secondary"
-                  aria-label="aperçu de la leçon"
-                >
-                  <Can action="read" object="lesson">
-                    <div
-                      className="tooltip tooltip-bottom flex-items-center"
-                      data-tip="Aperçu de la leçon"
-                    >
-                      <Link
-                        to={`/admin/parcours/module/${item.course.module.id}`}
-                        state={{ lessonId: item.id }}
+              <td className="bg-transparent rounded-r-lg p-2 align-middle">
+                <div className="flex items-center gap-x-4 justify-center">
+                  <div className="" aria-label="aperçu de la leçon">
+                    <Can action="read" object="lesson">
+                      <div
+                        className="tooltip tooltip-bottom flex-items-center"
+                        data-tip="Aperçu de la leçon"
                       >
-                        <Eye />
-                      </Link>
-                    </div>
-                  </Can>
-                </div>
-                <div className="w-6 h-6">
-                  <Can action="write" object="lesson">
-                    <div
-                      className="tooltip tooltip-bottom"
-                      data-tip="Activités"
-                    >
-                      <Link
-                        to={`/admin/lesson/edit/${item.id}`}
-                        className="text-secondary"
-                        aria-label="ajouter une activité"
-                      >
-                        <Activity />
-                      </Link>
-                    </div>
-                  </Can>
-                </div>
-                <div
-                  className="w-6 h-6 text-error"
-                  aria-label="suppression de la leçon"
-                >
-                  <Can action="delete" object="lesson">
-                    <div
-                      className="tooltip tooltip-bottom flex-items-center"
-                      data-tip="Supprimer la leçon"
-                    >
-                      <div onClick={() => onDelete(item.id!)}>
-                        <DeleteIcon />
+                        <Link
+                          to={`/admin/parcours/module/${item.course.module.id}`}
+                          state={{ lessonId: item.id }}
+                        >
+                          <Eye />
+                        </Link>
                       </div>
-                    </div>
-                  </Can>
-                </div>
-                <div className="w-6 h-6">
-                  <Can action="update" object="lesson">
-                    <div
-                      className="tooltip tooltip-bottom"
-                      data-tip="Modifier la leçon"
-                    >
-                      <Link
-                        to={`/admin/lesson/edit-lesson/${item.id}`}
-                        className="text-secondary"
-                        aria-label="Editer la leçon"
+                    </Can>
+                  </div>
+                  <div className="w-6 h-6">
+                    <Can action="write" object="lesson">
+                      <div
+                        className="tooltip tooltip-bottom"
+                        data-tip="Activités"
                       >
-                        <EditIcon />
-                      </Link>
-                    </div>
-                  </Can>
+                        <Link
+                          to={`/admin/lesson/edit/${item.id}`}
+                          className="text-secondary"
+                          aria-label="ajouter une activité"
+                        >
+                          <Activity />
+                        </Link>
+                      </div>
+                    </Can>
+                  </div>
+                  <div
+                    className="w-6 h-6 text-error"
+                    aria-label="suppression de la leçon"
+                  >
+                    <Can action="delete" object="lesson">
+                      <div
+                        className="tooltip tooltip-bottom flex-items-center"
+                        data-tip="Supprimer la leçon"
+                      >
+                        <div onClick={() => onDelete(item.id!)}>
+                          <DeleteIcon />
+                        </div>
+                      </div>
+                    </Can>
+                  </div>
+                  <div className="w-6 h-6">
+                    <Can action="update" object="lesson">
+                      <div
+                        className="tooltip tooltip-bottom"
+                        data-tip="Modifier la leçon"
+                      >
+                        <Link
+                          to={`/admin/lesson/edit-lesson/${item.id}`}
+                          className="text-secondary"
+                          aria-label="Editer la leçon"
+                        >
+                          <EditIcon />
+                        </Link>
+                      </div>
+                    </Can>
+                  </div>
                 </div>
               </td>
             </TableRowWrapper>
