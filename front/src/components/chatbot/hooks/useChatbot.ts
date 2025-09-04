@@ -1,6 +1,6 @@
 import z from "zod";
 import useForm from "../../UI/forms/hooks/use-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 
 type ChatbotValues = {
@@ -26,7 +26,7 @@ const useChatbot = () => {
 
   const [dialog, setDialog] = useState<ChatbotValues[]>([]);
 
-  const { sendRequest, isLoading } = useHttp();
+  const { sendRequest, error, isLoading } = useHttp();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +49,7 @@ const useChatbot = () => {
 
     sendRequest(
       {
-        path: "/chatbot/prompt",
+        path: "/chatbot/toto",
         method: "post",
         body: JSON.stringify(values),
         headers: {
@@ -59,6 +59,21 @@ const useChatbot = () => {
       applyData
     );
   };
+
+  useEffect(() => {
+    if (error && error.length > 0) {
+      console.error("Chatbot error:", error);
+      setDialog((prevState) => [
+        ...prevState,
+        {
+          origin: "bot",
+          message:
+            "ALAA ne peut pas vous répondre pour l'instant, réessayez un peu plus tard.",
+          date: new Date(),
+        },
+      ]);
+    }
+  }, [error]);
 
   return {
     isLoading,
