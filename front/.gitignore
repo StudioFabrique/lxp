@@ -25,3 +25,8 @@ dist-ssr
 *.sln
 *.sw?
 tmp/
+
+certs/
+.env
+.env.local
+.env.*.local
