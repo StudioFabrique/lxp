@@ -27,6 +27,7 @@ type TipTapActivityProps = {
   onCloseTipTapEditor?: () => void;
   onRefreshAllData?: () => void;
   onActivityEditChange?: (isEditing: boolean) => void;
+  onDeleteActivity?: (activityId: number) => void;
 };
 
 const TipTapActivity = ({
@@ -37,9 +38,11 @@ const TipTapActivity = ({
   onCloseTipTapEditor,
   onRefreshAllData,
   onActivityEditChange,
+  onDeleteActivity,
 }: TipTapActivityProps) => {
   const { sendRequest } = useHttp(true);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [showAutosaveIndicator, setShowAutosaveIndicator] =
     useState<boolean>(false);
 
@@ -188,6 +191,32 @@ const TipTapActivity = ({
     );
   };
 
+  const handleDeleteActivity = () => {
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteActivity = () => {
+    if (!activity?.id) return;
+
+    // Suppression instantanée dans le front
+    setShowDeleteModal(false);
+    onDeleteActivity?.(activity.id);
+    toast.success("Activité supprimée");
+
+    // Appel au backend en arrière-plan sans bloquer l'interface
+    const applyData = () => {
+      // Backend confirmé - pas besoin d'action supplémentaire
+    };
+
+    sendRequest(
+      {
+        path: `/activity/text/${activity.id}`,
+        method: "delete",
+      },
+      applyData
+    );
+  };
+
   return (
     <>
       {showModal ? (
@@ -223,6 +252,35 @@ const TipTapActivity = ({
         </Modal>
       ) : null}
 
+      {showDeleteModal ? (
+        <Modal
+          title="Supprimer l'activité"
+          leftLabel="Annuler"
+          onMinimizeClick={() => setShowDeleteModal(false)}
+        >
+          <div className="flex flex-col gap-4 items-center pt-10 px-5">
+            <p className="text-center">
+              Êtes-vous sûr de vouloir supprimer cette activité ? Cette action
+              est irréversible.
+            </p>
+            <div className="flex gap-4">
+              <button
+                className="btn btn-sm btn-ghost"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                Annuler
+              </button>
+              <button
+                className="btn btn-sm btn-error"
+                onClick={confirmDeleteActivity}
+              >
+                Supprimer
+              </button>
+            </div>
+          </div>
+        </Modal>
+      ) : null}
+
       {/* Indicateur d'autosave */}
       <AutosaveIndicator
         isVisible={showAutosaveIndicator}
@@ -239,6 +297,7 @@ const TipTapActivity = ({
           setEditingActivity={setEditingActivity}
           onSave={() => setShowModal(true)}
           onContentChange={updateEditorContent}
+          onDeleteActivity={!isNewActivity ? handleDeleteActivity : undefined}
         />
       </div>
     </>

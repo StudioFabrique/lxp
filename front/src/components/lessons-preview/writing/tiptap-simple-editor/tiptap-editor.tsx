@@ -35,7 +35,7 @@ import {
 } from "react";
 import { LinkMenu } from "./components/LinkMenu";
 import Can from "../../../UI/can/can.component";
-import { Edit } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
 import CodeBlockWithCopy from "./extensions/CodeBlockWithCopy/CodeBlockWithCopy";
 import { ResizableImage } from "./extensions/ResizableImage";
 import SaveButton from "./components/SaveButton";
@@ -53,6 +53,7 @@ type TiptapSimpleEditorProps = {
   onCloseEditor?: () => void;
   onSave?: () => void;
   onContentChange?: (content: string) => void;
+  onDeleteActivity?: () => void;
 };
 
 export default function TiptapEditor({
@@ -64,6 +65,7 @@ export default function TiptapEditor({
   onCloseEditor,
   onSave,
   onContentChange,
+  onDeleteActivity,
 }: TiptapSimpleEditorProps) {
   const handleCloseEditor = () => {
     onCloseEditor?.();
@@ -209,11 +211,26 @@ export default function TiptapEditor({
           editor={editor}
         />
 
+        {onDeleteActivity && (
+          <Can action="delete" object="lesson">
+            <button
+              type="button"
+              className="btn btn-ghost absolute top-4 right-4 tooltip tooltip-left"
+              data-tip="Supprimer l'activité"
+              onClick={onDeleteActivity}
+            >
+              <Trash2 className="w-5 h-5 text-error" />
+            </button>
+          </Can>
+        )}
+
         <Can action="update" object="lesson">
           <button
             ref={editButtonRef}
             type="button"
-            className="btn btn-ghost absolute top-4 right-4 tooltip tooltip-left"
+            className={`btn btn-ghost absolute top-4 tooltip tooltip-left ${
+              onDeleteActivity ? "right-16" : "right-4"
+            }`}
             data-tip="Modifier l'activité"
             onClick={() => setEditingActivity(true)}
             disabled={disableEditButton}

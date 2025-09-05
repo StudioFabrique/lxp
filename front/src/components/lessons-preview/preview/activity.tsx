@@ -5,13 +5,17 @@ import type { Activity, Resource } from "../../../utils/interfaces/activity";
 import { ACTIVITIES, ACTIVITIES_VIDEOS } from "../../../config/urls";
 import BaseReactPlayer from "react-player";
 import TipTapActivity from "../writing/tip-tap-activity";
+import ActivityWrapper from "./activity-wrapper";
 import { File } from "lucide-react";
+import useHttp from "../../../hooks/use-http";
+import toast from "react-hot-toast";
 
 type ActivityProps = {
   lessonId: number;
   activity: Activity;
   isAnyActivityBeingEdited?: boolean;
   onActivityEditChange?: (isEditing: boolean) => void;
+  onDeleteActivity?: (activityId: number) => void;
 };
 
 /* const md = markdownit(); */
@@ -21,12 +25,35 @@ const ActivityPreview = ({
   activity,
   isAnyActivityBeingEdited = false,
   onActivityEditChange,
+  onDeleteActivity,
 }: ActivityProps) => {
+  const { sendRequest } = useHttp(true);
   const [value, setValue] = useState<string>("");
   const [url, setUrl] = useState("");
 
   // case when a activity contains a set of pdf files
   const [pdfUrls, setPdfUrls] = useState<Resource[]>([]);
+
+  const handleDeleteActivity = () => {
+    if (!activity?.id) return;
+
+    // Suppression instantanée dans le front
+    onDeleteActivity?.(activity.id);
+    toast.success("Activité supprimée");
+
+    // Appel au backend en arrière-plan
+    const applyData = () => {
+      // Backend confirmé - pas besoin d'action supplémentaire
+    };
+
+    sendRequest(
+      {
+        path: `/activity/${activity.type}/${activity.id}`,
+        method: "delete",
+      },
+      applyData
+    );
+  };
 
   useEffect(() => {
     if (activity.url !== undefined) {
@@ -78,38 +105,56 @@ const ActivityPreview = ({
           }}
           isAnyActivityBeingEdited={isAnyActivityBeingEdited}
           onActivityEditChange={onActivityEditChange}
+          onDeleteActivity={onDeleteActivity}
         />
       ) : null,
       video: (
-        <div className="flex flex-col gap-2">
-          <h3 className="text-base-content font-bold text-2xl">Vidéo</h3>
-          <BaseReactPlayer url={url} controls />
-        </div>
+        <ActivityWrapper
+          activity={activity}
+          onDeleteActivity={handleDeleteActivity}
+          showEditButton={false}
+        >
+          <div className="flex flex-col items-center gap-2">
+            <BaseReactPlayer url={url} controls />
+          </div>
+        </ActivityWrapper>
       ),
       image: (
-        <div className="flex flex-col gap-2">
-          <img src={`${ACTIVITIES}images/${activity.url}`} alt="activity" />
-        </div>
+        <ActivityWrapper
+          activity={activity}
+          onDeleteActivity={handleDeleteActivity}
+          showEditButton={false}
+        >
+          <div className="flex flex-col gap-2">
+            <img src={`${ACTIVITIES}images/${activity.url}`} alt="activity" />
+          </div>
+        </ActivityWrapper>
       ),
       resource: (
-        <div className="flex flex-col items-center gap-4">
-          <div className="flex flex-col gap-2">
-            {pdfUrls
-              .sort((a, b) => a.order - b.order)
-              .map((pdf) => (
-                <a
-                  key={pdf.id}
-                  href={pdf.url}
-                  className="btn btn-primary text-base-100 flex items-center gap-2"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <File />
-                  <span>{pdf.label}</span>
-                </a>
-              ))}
+        <ActivityWrapper
+          activity={activity}
+          onDeleteActivity={handleDeleteActivity}
+          showEditButton={false}
+        >
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-col gap-2">
+              {pdfUrls
+                .sort((a, b) => a.order - b.order)
+                .map((pdf) => (
+                  <a
+                    key={pdf.id}
+                    href={pdf.url}
+                    className="btn btn-primary text-base-100 flex items-center gap-2"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <File />
+                    <span>{pdf.label}</span>
+                  </a>
+                ))}
+            </div>
           </div>
-        </div>
+        </ActivityWrapper>
       ),
     };
 

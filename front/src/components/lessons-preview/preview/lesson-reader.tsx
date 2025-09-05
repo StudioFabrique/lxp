@@ -108,6 +108,31 @@ const LessonReader = ({
     setIsAnyActivityBeingEdited(false);
   };
 
+  const handleDeleteActivity = (activityId: number) => {
+    const activity = activities.find((item) => item.id === activityId);
+    if (!activity) return;
+
+    // Suppression instantanée dans le front
+    const updatedActivities = activities.filter(
+      (item) => item.id !== activityId
+    );
+    setActivities(updatedActivities);
+    toast.success("Activité supprimée");
+
+    // Appel au backend en arrière-plan
+    const applyData = () => {
+      // Backend confirmé - rafraîchir les données pour s'assurer de la synchronisation
+      if (onRefreshAllData) {
+        onRefreshAllData();
+      }
+    };
+
+    sendRequest(
+      { path: `/activity/${activity.type}/${activityId}`, method: "delete" },
+      applyData
+    );
+  };
+
   const handleAccordionToggle = (activityId: number) => {
     // Si une activité est en cours d'édition ou en mode réorganisation, empêcher le changement d'accordéon
     if (isAnyActivityBeingEdited || isReorderMode) {
@@ -262,6 +287,7 @@ const LessonReader = ({
                   activity={activity}
                   isAnyActivityBeingEdited={isAnyActivityBeingEdited}
                   onActivityEditChange={setIsAnyActivityBeingEdited}
+                  onDeleteActivity={handleDeleteActivity}
                 />
               </div>
             </div>
