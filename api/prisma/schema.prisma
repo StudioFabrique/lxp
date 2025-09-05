@@ -8,6 +8,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// MODELS ALPHABETICALLY SORTED
+
 model Accomplishment {
   id                   Int      @id @default(autoincrement())
   name                 String
@@ -47,7 +49,26 @@ model Admin {
   medias     Mediatheque[]
   modules    Module[]
   parcours   Parcours[]
+  bonusActivities  BonusActivity[]
+  resources  Resource[]
 }
+
+model BonusActivity {  
+  id                 Int                @id @default(autoincrement())
+  title              String?
+  description        String?
+  type               String
+  order              Int
+  url                String
+  lessonId           Int
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  authorId           Int
+  author             String              
+  admin             Admin              @relation(fields: [adminId], references: [id], onDelete: SetDefault)
+  adminId Int
+  resource  Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  }
 
 model BonusSkill {
   id          Int                   @id @default(autoincrement())
@@ -185,15 +206,15 @@ model Lesson {
   updatedAt    DateTime       @updatedAt
   author       String
   adminId      Int
-  courseId     Int?
+  courseId     Int
   tagId        Int
   order        Int
   isPublished  Boolean        @default(false)
   visibility   Boolean        @default(false)
   activities   Activity[]
   admin        Admin          @relation(fields: [adminId], references: [id], onDelete: SetDefault)
-  course       Course?        @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  tags         TagsOnLesson[]
+  course       Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  tag          Tag            @relation(fields: [tagId], references: [id])
   lessonRating LessonRating[]
   lessonsRead  LessonRead[]
 }
@@ -327,6 +348,18 @@ model Parcours {
   tags         TagsOnParcours[]
 }
 
+model Resource {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  author      String
+  adminId     Int
+  admin      Admin                @relation(fields: [adminId], references: [id], onDelete: SetDefault)
+  tags       TagsOnResources[]
+}
+
 model ResourceActivity {
   id         Int      @id @default(autoincrement())
   label      String
@@ -334,6 +367,7 @@ model ResourceActivity {
   url        String
   activityId Int
   activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  bonusActivities BonusActivity[]
 }
 
 model Skill {
@@ -368,10 +402,11 @@ model Tag {
   color      String
   createdAt  DateTime          @default(now())
   updatedAt  DateTime          @updatedAt
-  lessons    TagsOnLesson[]
+  lessons    Lesson[]
   courses    TagsOnCourse[]
   formations TagsOnFormation[]
   parcours   TagsOnParcours[]
+  resources  TagsOnResources[]
 }
 
 model TagsOnCourse {
@@ -392,15 +427,6 @@ model TagsOnFormation {
   @@id([tagId, formationId])
 }
 
-model TagsOnLesson {
-  tagId    Int
-  lessonId Int
-  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  tag      Tag    @relation(fields: [tagId], references: [id])
-
-  @@id([tagId, lessonId])
-}
-
 model TagsOnParcours {
   tagId      Int
   parcoursId Int
@@ -408,6 +434,15 @@ model TagsOnParcours {
   tag        Tag      @relation(fields: [tagId], references: [id])
 
   @@id([tagId, parcoursId])
+}
+
+model TagsOnResources {
+  tagId      Int
+  resourceId Int
+  resource   Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  tag        Tag      @relation(fields: [tagId], references: [id])
+
+  @@id([tagId, resourceId])
 }
 
 model Teacher {
