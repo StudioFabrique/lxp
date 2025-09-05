@@ -40,35 +40,36 @@ model Activity {
 }
 
 model Admin {
-  id         Int           @id @default(autoincrement())
-  idMdb      String
-  activities Activity[]
-  courses    Course[]
-  formation  Formation[]
-  lessons    Lesson[]
-  medias     Mediatheque[]
-  modules    Module[]
-  parcours   Parcours[]
-  bonusActivities  BonusActivity[]
-  resources  Resource[]
+  id              Int             @id @default(autoincrement())
+  idMdb           String
+  activities      Activity[]
+  courses         Course[]
+  formation       Formation[]
+  lessons         Lesson[]
+  medias          Mediatheque[]
+  modules         Module[]
+  parcours        Parcours[]
+  bonusActivities BonusActivity[]
+  resources       Resource[]
 }
 
-model BonusActivity {  
-  id                 Int                @id @default(autoincrement())
-  title              String?
-  description        String?
-  type               String
-  order              Int
-  url                String
-  lessonId           Int
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
-  authorId           Int
-  author             String              
-  admin             Admin              @relation(fields: [adminId], references: [id], onDelete: SetDefault)
-  adminId Int
-  resource  Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
-  }
+model BonusActivity {
+  id          Int      @id @default(autoincrement())
+  title       String?
+  description String?
+  type        String
+  order       Int
+  url         String
+  lessonId    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  authorId    Int
+  author      String
+  admin       Admin    @relation(fields: [adminId], references: [id], onDelete: SetDefault)
+  adminId     Int
+  resource    Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  resourceId  Int
+}
 
 model BonusSkill {
   id          Int                   @id @default(autoincrement())
@@ -349,15 +350,16 @@ model Parcours {
 }
 
 model Resource {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  author      String
-  adminId     Int
-  admin      Admin                @relation(fields: [adminId], references: [id], onDelete: SetDefault)
-  tags       TagsOnResources[]
+  id              Int               @id @default(autoincrement())
+  title           String
+  description     String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  author          String
+  adminId         Int
+  admin           Admin             @relation(fields: [adminId], references: [id], onDelete: SetDefault)
+  tags            TagsOnResources[]
+  bonusActivities BonusActivity[]
 }
 
 model ResourceActivity {
@@ -367,7 +369,6 @@ model ResourceActivity {
   url        String
   activityId Int
   activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  bonusActivities BonusActivity[]
 }
 
 model Skill {

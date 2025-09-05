@@ -112,6 +112,9 @@ const EditLesson = React.lazy(
 
 const TagsLayout = React.lazy(() => import("../../views/tags/tags-layout"));
 const TagsHome = React.lazy(() => import("../../views/tags/tags-home"));
+const ResourcesHome = React.lazy(
+  () => import("../../views/resources/resources-home")
+);
 
 const adminRoutes = [
   { index: true, element: <AdminHome /> },
@@ -280,6 +283,10 @@ const adminRoutes = [
       { index: true, element: <TagsHome /> },
       // { path: ":tagsId", element: <TagsManage /> },
     ],
+  },
+  {
+    path: "resources",
+    element: <ResourcesHome />,
   },
   { path: "*", element: <FeaturesList /> },
 ];
