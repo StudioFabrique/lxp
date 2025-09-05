@@ -9,20 +9,16 @@ export default function ResourcesListCard({ resourcesList }: Props) {
   return (
     <>
       {resourcesList && resourcesList.length > 0 ? (
-        <ul>
+        <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-4 text-lg font-semibold">
           {resourcesList.map((resource) => (
-            <li
+            <span
               key={resource.id}
-              className="border border-gray-300 rounded-md p-4 mb-4"
+              className="w-full border border-primary/50 rounded-md p-4 mb-4 h-[8rem] flex justify-center items-center hover:scale-[1.02] transition-transform cursor-pointer"
             >
-              <h3 className="text-lg font-semibold">{resource.title}</h3>
-              <p className="text-sm text-gray-600">By {resource.author}</p>
-              <p className="text-sm text-gray-500">
-                Created at: {new Date(resource.createdAt).toLocaleDateString()}
-              </p>
-            </li>
+              <h3>{resource.title}</h3>
+            </span>
           ))}
-        </ul>
+        </div>
       ) : (
         <ElementNotFound message="Aucune ressource supplémentaire trouvée" />
       )}

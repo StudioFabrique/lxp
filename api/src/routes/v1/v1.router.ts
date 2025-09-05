@@ -32,6 +32,7 @@ import evaluationRouter from "./evaluation/evaluation.router";
 import mediaRouter from "./mediatheque/mediatheque.router";
 import { uploadCompanyLogo } from "../../middleware/upload-company-image";
 import httpPostCompanyLogo from "../../controllers/http-post-company-logo";
+import resourcesRouter from "./resources/resources.router";
 
 // Création du routeur principal pour l'API v1
 const v1Router = express.Router();
@@ -60,6 +61,7 @@ v1Router.use("/activity", activityRouter);
 v1Router.use("/stats", statsRouter);
 v1Router.use("/evaluation", evaluationRouter);
 v1Router.use("/media", mediaRouter);
+v1Router.use("/resources", resourcesRouter);
 
 /**
  * Routes de recherche dédié à elastic search :
@@ -71,7 +73,7 @@ v1Router.post(
   "/company-logo",
   checkPermissions("formation"),
   uploadCompanyLogo(),
-  httpPostCompanyLogo,
+  httpPostCompanyLogo
 );
 
 export default v1Router;
