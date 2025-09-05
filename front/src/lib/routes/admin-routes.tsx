@@ -111,7 +111,24 @@ const EditLesson = React.lazy(
 );
 
 const TagsLayout = React.lazy(() => import("../../views/tags/tags-layout"));
+
 const TagsHome = React.lazy(() => import("../../views/tags/tags-home"));
+
+const ResourcesLayout = React.lazy(
+  () => import("../../views/resources/resources-layout")
+);
+
+const ResourcesHome = React.lazy(
+  () => import("../../views/resources/resources-home")
+);
+
+const ResourcesAdd = React.lazy(
+  () => import("../../views/resources/resources-add")
+);
+
+const ResourcesEdit = React.lazy(
+  () => import("../../views/resources/resources-edit")
+);
 
 const adminRoutes = [
   { index: true, element: <AdminHome /> },
@@ -279,6 +296,15 @@ const adminRoutes = [
     children: [
       { index: true, element: <TagsHome /> },
       // { path: ":tagsId", element: <TagsManage /> },
+    ],
+  },
+  {
+    path: "resources",
+    element: <ResourcesLayout />,
+    children: [
+      { index: true, element: <ResourcesHome /> },
+      { path: "add", element: <ResourcesAdd /> },
+      { path: "edit/:resourceId", element: <ResourcesEdit /> },
     ],
   },
   { path: "*", element: <FeaturesList /> },
