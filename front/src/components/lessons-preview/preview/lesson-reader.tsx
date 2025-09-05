@@ -197,11 +197,6 @@ const LessonReader = ({
             <button
               onClick={handleToggleReorderMode}
               className="btn tooltip tooltip-left flex items-center gap-2"
-              data-tip={
-                isReorderMode
-                  ? "Terminer la réorganisation"
-                  : "Réorganiser les activités"
-              }
             >
               {isReorderMode ? (
                 <>
@@ -307,11 +302,11 @@ const LessonReader = ({
             isAnyActivityBeingEdited={isAnyActivityBeingEdited}
             onActivityEditChange={setIsAnyActivityBeingEdited}
           />
-        ) : (
+        ) : isReorderMode ? null : (
           <ActivityCreationOptionsButtons
             onClickShowTipTapEditor={handleClickShowTipTapEditor}
             selectedLesson={selectedLesson}
-            isDisabled={isAnyActivityBeingEdited || isReorderMode}
+            isDisabled={isAnyActivityBeingEdited}
           />
         )}
       </Can>
