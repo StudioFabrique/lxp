@@ -212,7 +212,7 @@ const LessonReader = ({
             isLoading={false}
             renderItem={(activity, index) => (
               <div className="card bg-base-100 border border-secondary/20 rounded-box p-4">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 text-primary">
                   <div className="flex flex-col">
                     <span className="text-sm text-base-content/60">
                       {index + 1}
@@ -247,10 +247,12 @@ const LessonReader = ({
                   isAnyActivityBeingEdited && openAccordionId !== activity.id
                 }
               />
+
               <div
-                className="collapse-title font-semibold text-primary capitalize cursor-pointer"
+                className="collapse-title font-semibold text-primary capitalize cursor-pointer flex items-center gap-3"
                 onClick={() => handleAccordionToggle(activity.id)}
               >
+                {activityIconType(activity.type)}
                 {activity.title}
               </div>
 
