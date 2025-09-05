@@ -65,7 +65,7 @@ export default function MenuBar({
       hidden={shouldHide}
       className={`h-fit w-fit self-center justify-between px-2 transition-all duration-300 ease-in-out ${
         isSticky
-          ? "fixed top-4 transform z-50 shadow-lg rounded-lg border bg-white dark:bg-gray-800"
+          ? "fixed top-4 transform z-50 shadow-lg rounded-lg border backdrop-blur-[2px]"
           : "sticky top-0"
       }`}
     >
