@@ -151,9 +151,19 @@ const TipTapActivity = ({
       // Nettoie l'autosave après sauvegarde réussie
       clearStorage();
       setShowModal(false);
-      onCloseTipTapEditor?.();
-      onRefreshAllData?.();
-      setEditingActivity(false);
+
+      // Pour les nouvelles activités, fermer l'éditeur et rafraîchir
+      if (isNewActivity) {
+        onCloseTipTapEditor?.();
+        onRefreshAllData?.();
+      } else {
+        // Pour les activités existantes, juste sortir du mode édition
+        setEditingActivity(false);
+        // Rafraîchir les données après un petit délai pour éviter les conflits d'état
+        setTimeout(() => {
+          onRefreshAllData?.();
+        }, 100);
+      }
     };
 
     const value = editorRef.current?.getHTML();

@@ -26,7 +26,13 @@ import "./index.scss";
 import "highlight.js/styles/github.css";
 
 import MenuBar from "./components/MenuBar";
-import { type Dispatch, type SetStateAction, useEffect, useRef } from "react";
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { LinkMenu } from "./components/LinkMenu";
 import Can from "../../../UI/can/can.component";
 import { Edit } from "lucide-react";
@@ -63,6 +69,9 @@ export default function TiptapEditor({
     onCloseEditor?.();
     setEditingActivity(false);
   };
+
+  const [isMenuBarSticky, setIsMenuBarSticky] = useState(false);
+  const editButtonRef = useRef<HTMLButtonElement>(null);
 
   const editor = useEditor({
     extensions: [
@@ -141,6 +150,46 @@ export default function TiptapEditor({
     }
   }, [editor, initialValue]);
 
+  // Effet pour détecter quand le bouton edit sort de la vue et rendre la menu bar sticky
+  useEffect(() => {
+    if (!isEditingActivity || !editButtonRef.current) return;
+
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          if (!editButtonRef.current) return;
+
+          const editButtonRect = editButtonRef.current.getBoundingClientRect();
+          const editButtonBottom = editButtonRect.bottom;
+
+          // Si le bas du bouton edit est en dessous du haut de la fenêtre (donc hors de vue)
+          // alors rendre la menu bar sticky
+          setIsMenuBarSticky(editButtonBottom < 0);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    // Vérifier immédiatement la position
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isEditingActivity]);
+
+  // Réinitialiser l'état sticky quand on quitte le mode édition
+  useEffect(() => {
+    if (!isEditingActivity) {
+      setIsMenuBarSticky(false);
+    }
+  }, [isEditingActivity]);
+
   return (
     <>
       <div className={`editor relative`} ref={menuContainerRef}>
@@ -149,6 +198,7 @@ export default function TiptapEditor({
             shouldHide={!isEditingActivity}
             editor={editor}
             onCloseEditor={handleCloseEditor}
+            isSticky={isMenuBarSticky}
           />
         ) : null}
         <EditorContent
@@ -161,6 +211,7 @@ export default function TiptapEditor({
 
         <Can action="update" object="lesson">
           <button
+            ref={editButtonRef}
             type="button"
             className="btn btn-ghost absolute top-4 right-4 tooltip tooltip-left"
             data-tip="Modifier l'activité"
