@@ -7,6 +7,7 @@ import Mediatheque from "./sidebar-parts/mediatheque";
 import Module from "./sidebar-parts/module";
 import MotionSidebarWrapper from "./sidebar-parts/motion-sidebar-wrapper";
 import Parcours from "./sidebar-parts/parcours";
+import Resources from "./sidebar-parts/resources";
 import Roles from "./sidebar-parts/roles";
 import Tags from "./sidebar-parts/tags";
 import User from "./sidebar-parts/user";
@@ -46,6 +47,7 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
     <Roles key="roles" currentRoute={currentRoute} />,
     <Tags key="tags" currentRoute={currentRoute} />,
     <Mediatheque key="mediatheque" currentRoute={currentRoute} />,
+    <Resources key="resources" currentRoute={currentRoute} />,
   ];
 
   return (
