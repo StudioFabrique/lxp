@@ -166,6 +166,12 @@ const TipTapActivity = ({
       }
     };
 
+    // enlever les espaces inutiles à la fin sur le texte
+    const trimmedText = editorRef.current?.getText()?.trim();
+    // Recréer le HTML avec le texte nettoyé
+    if (trimmedText && editorRef.current) {
+      editorRef.current.commands.setContent(trimmedText);
+    }
     const value = editorRef.current?.getHTML();
 
     sendRequest(
@@ -175,7 +181,7 @@ const TipTapActivity = ({
         body: {
           description: "description",
           value,
-          title,
+          title: title.trim(),
         },
       },
       applyData
