@@ -43,7 +43,9 @@ const ActivityCreationOptionsButtons = ({
             <p>Créer une activité de type :</p>
             <div className="flex gap-2 transition-opacity">
               <button
-                className="btn btn-primary text-base-100"
+                className={`btn ${
+                  isDisabled ? "btn-disabled" : "btn-primary text-base-100"
+                }`}
                 onClick={onClickShowTipTapEditor}
                 onKeyDown={onClickShowTipTapEditor}
                 type="button"
