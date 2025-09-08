@@ -1,11 +1,16 @@
-import { Response } from "express";
+import { Response, NextFunction } from "express";
 
 import { noAccess, serverIssue } from "../../utils/constantes";
 import deleteParcoursById from "../../models/parcours/delete-parcours-by-id";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import { logger } from "../../utils/logs/logger";
+import { stat } from "fs";
 
-async function httpDeleteParcoursById(req: CustomRequest, res: Response) {
+async function httpDeleteParcoursById(
+  req: CustomRequest,
+  _res: Response,
+  next: NextFunction
+) {
   try {
     const userId = req.auth?.userId;
 
@@ -13,20 +18,22 @@ async function httpDeleteParcoursById(req: CustomRequest, res: Response) {
       throw { message: noAccess, status: 403 };
     }
     const { parcoursId } = req.params;
-    const result = await deleteParcoursById(+parcoursId, userId);
-    return res.status(200).json({
-      message: `Le parcours ${result} a bien été supprimé`,
-      success: true,
-    });
+    console.log({ parcoursId });
+
+    const response = await deleteParcoursById(+parcoursId, userId);
+    const result = {
+      statusCode: 200,
+      data: {
+        success: true,
+        message: `Le parcours ${response} a été supprimé avec succès.`,
+      },
+    };
+    next(result);
   } catch (error: any) {
-    let returnedError = error;
-    if (error.statusCode === 403) {
-      returnedError = { ...returnedError, from: req.socket.remoteAddress };
-      logger.error(returnedError);
-    }
-    return res
-      .status(returnedError.statusCode ?? 500)
-      .json({ message: returnedError.message ?? serverIssue });
+    next({
+      statusCode: error.statusCode ?? 500,
+      message: error.message ?? serverIssue,
+    });
   }
 }
 

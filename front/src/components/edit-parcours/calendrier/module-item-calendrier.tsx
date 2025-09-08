@@ -9,7 +9,7 @@ import defaultModuleThumb from "../../../assets/images/module-default-thumb.png"
 
 const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
   const currentModule: Module | null = useSelector(
-    (state: any) => state.parcoursModules.currentModule,
+    (state: any) => state.parcoursModules.currentModule
   );
   const dispatch = useDispatch();
   const [isSelected, setIsSelected] = useState(false);
@@ -22,7 +22,7 @@ const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
 
   const handleClick = () => {
     dispatch(
-      parcoursModulesSliceActions.updateCurrentParcoursModule(module.id),
+      parcoursModulesSliceActions.updateCurrentParcoursModule(module.id)
     );
   };
 
@@ -53,7 +53,7 @@ const ModuleItemCalendrier: FC<{ module: Module }> = ({ module }) => {
             />
           </span>
           <div className="flex flex-col w-full gap-2">
-            <h3 className="font-medium truncate text-sm">{module.title}</h3>
+            <h3 className="font-medium max-w-54 text-sm">{module.title}</h3>
             <div className="space-y-1">
               <p className="text-xs opacity-80 flex items-center gap-1">
                 <span className="font-medium">Du </span>
