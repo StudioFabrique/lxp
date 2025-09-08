@@ -18,6 +18,18 @@ async function deleteParcoursById(parcoursId: number, userId: string) {
         };
       }
 
+      const existingAuthor = await tx.admin.findFirst({
+        where: {
+          id: parcours.adminId,
+        },
+      });
+      // retourne une erreur si l'utilisateur n'est pas l'auteur du parcours
+      if (existingAuthor?.idMdb !== userId)
+        throw {
+          statusCode: 406,
+          message: "Vous n'êtes pas autorisé à supprimer ce parcours.",
+        };
+
       title = parcours.title;
 
       if (parcours.modules && parcours.modules.length > 0) {
@@ -53,6 +65,8 @@ async function deleteParcoursById(parcoursId: number, userId: string) {
     });
     return title;
   } catch (error: any) {
+    console.log({ error });
+
     throw error;
   }
 }
