@@ -177,12 +177,26 @@ const TipTapActivity = ({
       }
     };
 
-    // enlever les espaces inutiles à la fin sur le texte
-    // const trimmedText = editorRef.current?.getText()?.trim();
-    // // Recréer le HTML avec le texte nettoyé
-    // if (trimmedText && editorRef.current) {
-    //   editorRef.current.commands.setContent(trimmedText);
-    // }
+    // Supprimer les espaces/paragraphes vides au début et à la fin tout en préservant la mise en forme
+    let htmlContent = editorRef.current?.getHTML() || "";
+
+    // Supprimer les paragraphes vides au début
+    htmlContent = htmlContent.replace(
+      /^(<p><\/p>|<p>\s*<\/p>|<p><br><\/p>)+/,
+      ""
+    );
+
+    // Supprimer les paragraphes vides à la fin
+    htmlContent = htmlContent.replace(
+      /(<p><\/p>|<p>\s*<\/p>|<p><br><\/p>)+$/,
+      ""
+    );
+
+    // Mettre à jour le contenu de l'éditeur avec le HTML nettoyé
+    if (htmlContent !== editorRef.current?.getHTML()) {
+      editorRef.current?.commands.setContent(htmlContent);
+    }
+
     const value = editorRef.current?.getHTML();
 
     sendRequest(
