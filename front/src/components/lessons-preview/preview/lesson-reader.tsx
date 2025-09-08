@@ -9,6 +9,7 @@ import {
   useCallback,
 } from "react";
 import Can from "../../UI/can/can.component";
+import Modal from "../../UI/modal/modal";
 import NoActivityPlaceholder from "./no-activity-placeholder";
 import ActivityCreationOptionsButtons from "../writing/activity-creation-options-buttons";
 import TipTapActivityWriting from "../writing/tip-tap-activity";
@@ -20,11 +21,12 @@ import {
   Text,
   Youtube,
   Image,
-  ActivityIcon,
   List,
+  FileSpreadsheet,
 } from "lucide-react";
 import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
+import ActivityActionsMenu from "./activity-actions-menu";
 
 type PreviewLessonProps = {
   selectedLesson: Lesson;
@@ -48,10 +50,21 @@ const LessonReader = ({
   const [showTipTapEditor, setShowTipTapEditor] = useState<boolean>(false);
   const [isAnyActivityBeingEdited, setIsAnyActivityBeingEdited] =
     useState<boolean>(false);
+  const [editingActivityId, setEditingActivityId] = useState<number | null>(
+    null
+  );
   const [openAccordionId, setOpenAccordionId] = useState<number | null>(null);
   const [isReorderMode, setIsReorderMode] = useState<boolean>(false);
   const [activities, setActivities] = useState<Activity[]>([]);
-  const { sendRequest } = useHttp();
+  const [deletingActivityId, setDeletingActivityId] = useState<number | null>(
+    null
+  );
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
+    null
+  );
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const { sendRequest, error } = useHttp();
 
   const activityIconType = (type: Activity["type"]) => {
     switch (type) {
@@ -62,9 +75,9 @@ const LessonReader = ({
       case "image":
         return <Image className="w-5 h-5" />;
       case "resource":
-        return <ActivityIcon className="w-5 h-5" />;
+        return <FileSpreadsheet className="w-5 h-5" />;
       default:
-        return <ActivityIcon className="w-5 h-5" />;
+        return <FileSpreadsheet className="w-5 h-5" />;
     }
   };
 
@@ -100,45 +113,92 @@ const LessonReader = ({
   );
 
   const handleClickShowTipTapEditor = () => {
+    // Si une activité est en cours d'édition, la fermer automatiquement
+    if (editingActivityId !== null) {
+      setEditingActivityId(null);
+    }
+    // isAnyActivityBeingEdited sera automatiquement mis à jour via l'effet useEffect
     setShowTipTapEditor(true);
   };
 
   const handleCloseTipTapEditor = () => {
     setShowTipTapEditor(false);
-    setIsAnyActivityBeingEdited(false);
+    // isAnyActivityBeingEdited sera automatiquement mis à jour via l'effet useEffect
   };
 
-  const handleDeleteActivity = (activityId: number) => {
-    const activity = activities.find((item) => item.id === activityId);
-    if (!activity) return;
+  const handleDeleteActivity = useCallback(
+    (activityId: number) => {
+      const activity = activities.find((item) => item.id === activityId);
+      if (!activity) return;
 
-    // Suppression instantanée dans le front
-    const updatedActivities = activities.filter(
-      (item) => item.id !== activityId
-    );
-    setActivities(updatedActivities);
-    toast.success("Activité supprimée");
-
-    // Appel au backend en arrière-plan
-    const applyData = () => {
-      // Backend confirmé - rafraîchir les données pour s'assurer de la synchronisation
-      if (onRefreshAllData) {
-        onRefreshAllData();
+      // Empêcher les appels multiples
+      if (deletingActivityId === activityId) {
+        console.log("Suppression déjà en cours pour cette activité");
+        return;
       }
-    };
 
-    sendRequest(
-      { path: `/activity/${activity.type}/${activityId}`, method: "delete" },
-      applyData
-    );
-  };
+      setDeletingActivityId(activityId);
+
+      // Appel au backend avec gestion d'erreur
+      const applyData = () => {
+        // Suppression réussie - retirer de l'état local
+        const updatedActivities = activities.filter(
+          (item) => item.id !== activityId
+        );
+        setActivities(updatedActivities);
+        setDeletingActivityId(null);
+        toast.success("Activité supprimée");
+
+        // Backend confirmé - rafraîchir les données pour s'assurer de la synchronisation
+        if (onRefreshAllData) {
+          onRefreshAllData();
+        }
+      };
+
+      sendRequest(
+        { path: `/activity/${activity.type}/${activityId}`, method: "delete" },
+        applyData
+      );
+    },
+    [activities, deletingActivityId, sendRequest, onRefreshAllData]
+  );
+
+  const handleEditActivity = useCallback(
+    (activity: Activity) => {
+      // Gérer l'édition pour tous les types d'activités
+      if (["text", "video", "image", "resource"].includes(activity.type)) {
+        // Fermer l'éditeur de création si il est ouvert
+        if (showTipTapEditor) {
+          setShowTipTapEditor(false);
+        }
+        // Ouvrir l'activité dans l'accordéon si elle n'est pas déjà ouverte
+        setOpenAccordionId(activity.id);
+        // Signaler que cette activité doit être éditée
+        setEditingActivityId(activity.id);
+      } else {
+        console.log(
+          "Édition non implémentée pour ce type d'activité:",
+          activity.type
+        );
+      }
+    },
+    [showTipTapEditor]
+  );
+
+  const handleOpenDeleteModal = useCallback((activity: Activity) => {
+    setActivityToDelete(activity);
+    setShowDeleteModal(true);
+  }, []);
+
+  const handleConfirmDelete = useCallback(() => {
+    if (activityToDelete?.id) {
+      handleDeleteActivity(activityToDelete.id);
+    }
+    setShowDeleteModal(false);
+    setActivityToDelete(null);
+  }, [activityToDelete, handleDeleteActivity]);
 
   const handleAccordionToggle = (activityId: number) => {
-    // Si une activité est en cours d'édition ou en mode réorganisation, empêcher le changement d'accordéon
-    if (isAnyActivityBeingEdited || isReorderMode) {
-      return;
-    }
-
     // Toggle: si l'accordéon est déjà ouvert, le fermer, sinon l'ouvrir
     setOpenAccordionId(openAccordionId === activityId ? null : activityId);
   };
@@ -148,7 +208,15 @@ const LessonReader = ({
     if (selectedLesson.activities) {
       setActivities([...selectedLesson.activities]);
     }
-  }, [selectedLesson.activities]);
+  }, [selectedLesson]);
+
+  // Gérer les erreurs de suppression
+  useEffect(() => {
+    if (error) {
+      setDeletingActivityId(null); // Réinitialiser l'état de suppression en cas d'erreur
+      toast.error("Erreur lors de la suppression de l'activité");
+    }
+  }, [error]);
 
   // Envoyer la réorganisation quand submit change
   useEffect(() => {
@@ -173,6 +241,12 @@ const LessonReader = ({
     }
   }, [selectedLesson.activities, isReorderMode]);
 
+  // Gérer automatiquement isAnyActivityBeingEdited basé sur editingActivityId et showTipTapEditor
+  useEffect(() => {
+    const isEditing = editingActivityId !== null || showTipTapEditor;
+    setIsAnyActivityBeingEdited(isEditing);
+  }, [editingActivityId, showTipTapEditor]);
+
   const handleToggleReorderMode = () => {
     setIsReorderMode(!isReorderMode);
     if (!isReorderMode) {
@@ -189,131 +263,189 @@ const LessonReader = ({
   if (!selectedLesson.id) return null;
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="w-full flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-primary">Activités</h1>
-        {selectedLesson.activities && selectedLesson.activities?.length > 0 && (
-          <Can action="update" object="lesson">
-            <button
-              onClick={handleToggleReorderMode}
-              className="btn tooltip tooltip-left flex items-center gap-2"
-            >
-              {isReorderMode ? (
-                <>
-                  <Check className="w-5 h-5 text-success" />
-                  Terminer la réorganisation
-                </>
-              ) : (
-                <>
-                  <List className="w-5 h-5" />
-                  Réorganiser les activités
-                </>
-              )}
-            </button>
-          </Can>
-        )}
-        {/* Bouton de notation */}
-        {currentLessonRating && lessonHasActivities ? (
-          <RatingPanelButton
-            note={currentLessonRating}
-            onRateContent={onRateContent}
-          />
-        ) : null}
-      </div>
-
-      {/* Affiche les activités si elles existent, sinon affiche un message */}
-      {lessonHasActivities || showTipTapEditor ? (
-        isReorderMode ? (
-          // Mode réorganisation avec drag and drop
-          <DndWrapper
-            droppableId="activities-reorder"
-            items={activities}
-            onDragEnd={handleDragEnd}
-            isLoading={false}
-            renderItem={(activity, index) => (
-              <div className="card bg-base-100 border border-secondary/20 rounded-box p-4">
-                <div className="flex items-center gap-3 text-primary">
-                  <div className="flex flex-col">
-                    <span className="text-sm text-base-content/60">
-                      {index + 1}
-                    </span>
-                  </div>
-                  {activityIconType(activity.type)}
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-primary capitalize">
-                      {activity.title}
-                    </h3>
-                  </div>
-                  <div className="cursor-grab active:cursor-grabbing">
-                    <LayoutGrid className="w-5 h-5 text-base-content/50" />
-                  </div>
-                </div>
-              </div>
-            )}
-          />
-        ) : (
-          // Mode normal avec accordéons
-          selectedLesson.activities?.map((activity) => (
-            <div
-              className="collapse collapse-arrow bg-base-100 border border-secondary/20 rounded-box"
-              key={activity.id}
-            >
-              <input
-                type="checkbox"
-                name="my-accordion-2"
-                checked={openAccordionId === activity.id}
-                onChange={() => handleAccordionToggle(activity.id)}
-                disabled={
-                  isAnyActivityBeingEdited && openAccordionId !== activity.id
-                }
-              />
-
-              <div
-                className="collapse-title font-semibold text-primary capitalize cursor-pointer flex items-center gap-3"
-                onClick={() => handleAccordionToggle(activity.id)}
+    <>
+      {showDeleteModal && activityToDelete && (
+        <Modal
+          title="Supprimer l'activité"
+          leftLabel="Annuler"
+          onMinimizeClick={() => {
+            setShowDeleteModal(false);
+            setActivityToDelete(null);
+          }}
+        >
+          <div className="flex flex-col gap-4 items-center pt-10 px-5">
+            <p className="text-center">
+              Êtes-vous sûr de vouloir supprimer l'activité "
+              {activityToDelete.title}" ? Cette action est irréversible.
+            </p>
+            <div className="flex gap-4">
+              <button
+                className="btn btn-sm btn-ghost"
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setActivityToDelete(null);
+                }}
               >
-                {activityIconType(activity.type)}
-                {activity.title}
-              </div>
-
-              <div className="collapse-content">
-                <ActivityPreview
-                  lessonId={selectedLesson.id ?? 0}
-                  activity={activity}
-                  isAnyActivityBeingEdited={isAnyActivityBeingEdited}
-                  onActivityEditChange={setIsAnyActivityBeingEdited}
-                  onDeleteActivity={handleDeleteActivity}
-                />
-              </div>
+                Annuler
+              </button>
+              <button
+                className="btn btn-sm btn-error text-base-100"
+                onClick={handleConfirmDelete}
+              >
+                Supprimer
+              </button>
             </div>
-          ))
-        )
-      ) : (
-        <NoActivityPlaceholder />
+          </div>
+        </Modal>
       )}
 
-      <Can action="write" object="lesson">
-        {showTipTapEditor ? (
-          <TipTapActivityWriting
-            lessonId={selectedLesson.id}
-            isNewActivity
-            onCloseTipTapEditor={handleCloseTipTapEditor}
-            onRefreshAllData={onRefreshAllData}
-            isAnyActivityBeingEdited={isAnyActivityBeingEdited}
-            onActivityEditChange={setIsAnyActivityBeingEdited}
-          />
-        ) : isReorderMode ? null : (
-          <ActivityCreationOptionsButtons
-            onClickShowTipTapEditor={handleClickShowTipTapEditor}
-            selectedLesson={selectedLesson}
-            isDisabled={isAnyActivityBeingEdited}
-          />
-        )}
-      </Can>
+      <div className="flex flex-col gap-5">
+        <div className="w-full flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-primary">Activités</h1>
+          {selectedLesson.activities &&
+            selectedLesson.activities?.length > 0 && (
+              <Can action="update" object="lesson">
+                <button
+                  onClick={handleToggleReorderMode}
+                  className="btn tooltip tooltip-left flex items-center gap-2"
+                >
+                  {isReorderMode ? (
+                    <>
+                      <Check className="w-5 h-5 text-success" />
+                      Terminer la réorganisation
+                    </>
+                  ) : (
+                    <>
+                      <List className="w-5 h-5" />
+                      Réorganiser les activités
+                    </>
+                  )}
+                </button>
+              </Can>
+            )}
+          {/* Bouton de notation */}
+          {currentLessonRating && lessonHasActivities ? (
+            <RatingPanelButton
+              note={currentLessonRating}
+              onRateContent={onRateContent}
+            />
+          ) : null}
+        </div>
 
-      {/* Boutons de navigation */}
-      <div className="flex justify-end items-center my-5">{children}</div>
-    </div>
+        {/* Affiche les activités si elles existent, sinon affiche un message */}
+        {lessonHasActivities || showTipTapEditor ? (
+          isReorderMode ? (
+            // Mode réorganisation avec drag and drop
+            <DndWrapper
+              droppableId="activities-reorder"
+              items={activities}
+              onDragEnd={handleDragEnd}
+              isLoading={false}
+              renderItem={(activity, index) => (
+                <div className="card bg-base-100 border border-secondary/20 rounded-box p-4">
+                  <div className="flex items-center gap-3 text-primary">
+                    <div className="flex flex-col">
+                      <span className="text-sm text-base-content/60">
+                        {index + 1}
+                      </span>
+                    </div>
+                    {activityIconType(activity.type)}
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-primary capitalize">
+                        {activity.title}
+                      </h3>
+                    </div>
+                    <div className="cursor-grab active:cursor-grabbing">
+                      <LayoutGrid className="w-5 h-5 text-base-content/50" />
+                    </div>
+                  </div>
+                </div>
+              )}
+            />
+          ) : (
+            // Mode normal avec accordéons
+            selectedLesson.activities?.map((activity) => (
+              <div
+                className="collapse collapse-arrow bg-base-100 border border-secondary/20 rounded-box relative"
+                key={activity.id}
+              >
+                <input
+                  type="checkbox"
+                  name="my-accordion-2"
+                  checked={openAccordionId === activity.id}
+                  onChange={() => handleAccordionToggle(activity.id)}
+                />
+
+                <div className="collapse-title font-semibold text-primary capitalize cursor-pointer flex items-center gap-3">
+                  {activityIconType(activity.type)}
+                  {activity.title}
+                </div>
+
+                {/* Menu d'actions positionné en absolu sur le collapse */}
+                <ActivityActionsMenu
+                  activity={activity}
+                  setOpenMenuId={setOpenMenuId}
+                  openMenuId={openMenuId}
+                  handleEditActivity={handleEditActivity}
+                  handleOpenDeleteModal={handleOpenDeleteModal}
+                />
+
+                <div className="collapse-content">
+                  <ActivityPreview
+                    lessonId={selectedLesson.id ?? 0}
+                    activity={activity}
+                    onActivityEditChange={(isEditing) => {
+                      if (!isEditing) {
+                        if (editingActivityId === activity.id) {
+                          setEditingActivityId(null);
+                        }
+                      }
+                    }}
+                    onRefreshAllData={onRefreshAllData}
+                    shouldEdit={editingActivityId === activity.id}
+                    forceStopEdit={
+                      (editingActivityId !== null &&
+                        editingActivityId !== activity.id) ||
+                      showTipTapEditor
+                    }
+                  />
+                </div>
+              </div>
+            ))
+          )
+        ) : (
+          <NoActivityPlaceholder>
+            <ActivityCreationOptionsButtons
+              variant="no-activity"
+              onClickShowTipTapEditor={handleClickShowTipTapEditor}
+              selectedLesson={selectedLesson}
+              isDisabled={isAnyActivityBeingEdited}
+            />
+          </NoActivityPlaceholder>
+        )}
+
+        <Can action="write" object="lesson">
+          {showTipTapEditor ? (
+            <TipTapActivityWriting
+              lessonId={selectedLesson.id}
+              isNewActivity
+              onCloseTipTapEditor={handleCloseTipTapEditor}
+              onRefreshAllData={onRefreshAllData}
+              onActivityEditChange={setIsAnyActivityBeingEdited}
+            />
+          ) : isReorderMode || !lessonHasActivities ? null : (
+            <ActivityCreationOptionsButtons
+              onClickShowTipTapEditor={handleClickShowTipTapEditor}
+              selectedLesson={selectedLesson}
+              isDisabled={isAnyActivityBeingEdited}
+            />
+          )}
+        </Can>
+
+        {/* Boutons de navigation */}
+        <div className="flex justify-end items-center my-5">{children}</div>
+      </div>
+    </>
   );
 };
 

@@ -5,55 +5,33 @@ import type { Activity, Resource } from "../../../utils/interfaces/activity";
 import { ACTIVITIES, ACTIVITIES_VIDEOS } from "../../../config/urls";
 import BaseReactPlayer from "react-player";
 import TipTapActivity from "../writing/tip-tap-activity";
-import ActivityWrapper from "./activity-wrapper";
+import VideoActivityEditing from "../writing/video-activity-editing";
+import ImageActivityEditing from "../writing/image-activity-editing";
+import ResourceActivityEditing from "../writing/resource-activity-editing";
 import { File } from "lucide-react";
-import useHttp from "../../../hooks/use-http";
-import toast from "react-hot-toast";
 
 type ActivityProps = {
   lessonId: number;
   activity: Activity;
-  isAnyActivityBeingEdited?: boolean;
   onActivityEditChange?: (isEditing: boolean) => void;
-  onDeleteActivity?: (activityId: number) => void;
+  onRefreshAllData?: () => void;
+  shouldEdit?: boolean;
+  forceStopEdit?: boolean;
 };
-
-/* const md = markdownit(); */
 
 const ActivityPreview = ({
   lessonId,
   activity,
-  isAnyActivityBeingEdited = false,
   onActivityEditChange,
-  onDeleteActivity,
+  onRefreshAllData,
+  shouldEdit = false,
+  forceStopEdit = false,
 }: ActivityProps) => {
-  const { sendRequest } = useHttp(true);
   const [value, setValue] = useState<string>("");
   const [url, setUrl] = useState("");
 
   // case when a activity contains a set of pdf files
   const [pdfUrls, setPdfUrls] = useState<Resource[]>([]);
-
-  const handleDeleteActivity = () => {
-    if (!activity?.id) return;
-
-    // Suppression instantanée dans le front
-    onDeleteActivity?.(activity.id);
-    toast.success("Activité supprimée");
-
-    // Appel au backend en arrière-plan
-    const applyData = () => {
-      // Backend confirmé - pas besoin d'action supplémentaire
-    };
-
-    sendRequest(
-      {
-        path: `/activity/${activity.type}/${activity.id}`,
-        method: "delete",
-      },
-      applyData
-    );
-  };
 
   useEffect(() => {
     if (activity.url !== undefined) {
@@ -94,8 +72,9 @@ const ActivityPreview = ({
   }, [activity, activity.url]);
 
   const renderContent = () => {
-    const contentMap = {
-      text: value ? (
+    // Pour le texte, on utilise toujours TipTapActivity qui gère déjà l'édition
+    if (activity.type === "text") {
+      return value ? (
         <TipTapActivity
           lessonId={lessonId}
           activity={{
@@ -103,66 +82,97 @@ const ActivityPreview = ({
             title: activity.title,
             content: value,
           }}
-          isAnyActivityBeingEdited={isAnyActivityBeingEdited}
           onActivityEditChange={onActivityEditChange}
-          onDeleteActivity={onDeleteActivity}
+          shouldStartEdit={shouldEdit}
+          forceStopEdit={forceStopEdit}
         />
-      ) : null,
-      video: (
-        <ActivityWrapper
-          activity={activity}
-          onDeleteActivity={handleDeleteActivity}
-          showEditButton={false}
-        >
-          <div className="flex flex-col items-center gap-2">
-            <BaseReactPlayer url={url} controls />
-          </div>
-        </ActivityWrapper>
-      ),
-      image: (
-        <ActivityWrapper
-          activity={activity}
-          onDeleteActivity={handleDeleteActivity}
-          showEditButton={false}
-        >
-          <div className="flex flex-col gap-2">
-            <img src={`${ACTIVITIES}images/${activity.url}`} alt="activity" />
-          </div>
-        </ActivityWrapper>
-      ),
-      resource: (
-        <ActivityWrapper
-          activity={activity}
-          onDeleteActivity={handleDeleteActivity}
-          showEditButton={false}
-        >
-          <div className="flex flex-col items-center gap-4">
-            <div className="flex flex-col gap-2">
-              {pdfUrls
-                .sort((a, b) => a.order - b.order)
-                .map((pdf) => (
-                  <a
-                    key={pdf.id}
-                    href={pdf.url}
-                    className="btn btn-primary text-base-100 flex items-center gap-2"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <File />
-                    <span>{pdf.label}</span>
-                  </a>
-                ))}
-            </div>
-          </div>
-        </ActivityWrapper>
-      ),
+      ) : null;
+    }
+
+    // Pour les autres types, on affiche le contenu normal ou l'éditeur
+    const renderEditingComponent = () => {
+      switch (activity.type) {
+        case "video":
+          return (
+            <VideoActivityEditing
+              activity={activity}
+              onRefreshAllData={onRefreshAllData}
+              onActivityEditChange={onActivityEditChange}
+              shouldStartEdit={shouldEdit}
+              forceStopEdit={forceStopEdit}
+            />
+          );
+        case "image":
+          return (
+            <ImageActivityEditing
+              activity={activity}
+              onRefreshAllData={onRefreshAllData}
+              onActivityEditChange={onActivityEditChange}
+              shouldStartEdit={shouldEdit}
+              forceStopEdit={forceStopEdit}
+            />
+          );
+        case "resource":
+          return (
+            <ResourceActivityEditing
+              activity={activity}
+              onRefreshAllData={onRefreshAllData}
+              onActivityEditChange={onActivityEditChange}
+              shouldStartEdit={shouldEdit}
+              forceStopEdit={forceStopEdit}
+            />
+          );
+        default:
+          return null;
+      }
     };
 
-    const content = contentMap[activity.type as keyof typeof contentMap];
+    const renderPreviewComponent = () => {
+      switch (activity.type) {
+        case "video":
+          return (
+            <div className="flex flex-col items-center gap-2">
+              <BaseReactPlayer url={url} controls />
+            </div>
+          );
+        case "image":
+          return (
+            <div className="flex flex-col gap-2">
+              <img src={`${ACTIVITIES}images/${activity.url}`} alt="activity" />
+            </div>
+          );
+        case "resource":
+          return (
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex flex-col gap-2">
+                {pdfUrls
+                  .sort((a, b) => a.order - b.order)
+                  .map((pdf) => (
+                    <a
+                      key={pdf.url}
+                      href={`${ACTIVITIES}files/${pdf.url}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-outline btn-sm flex items-center gap-2"
+                    >
+                      <File />
+                      <span>{pdf.label}</span>
+                    </a>
+                  ))}
+              </div>
+            </div>
+          );
+        default:
+          return null;
+      }
+    };
 
-    if (!content) return undefined;
-
-    return <>{content}</>;
+    return (
+      <>
+        {renderPreviewComponent()}
+        {renderEditingComponent()}
+      </>
+    );
   };
 
   return renderContent();
