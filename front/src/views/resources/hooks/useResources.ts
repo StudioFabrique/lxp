@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
-import useHttp from "../../../hooks/use-http";
+import usePagination from "../../../hooks/use-pagination";
 
 export type ResourceListItem = {
   id: string;
@@ -9,11 +8,7 @@ export type ResourceListItem = {
 };
 
 const useResources = () => {
-  const [resourcesList, setResourcesList] = useState<ResourceListItem[]>([]);
-  const { sendRequest, isLoading } = useHttp();
-
   const {
-    allChecked,
     page,
     totalPages,
     dataList,
@@ -23,13 +18,27 @@ const useResources = () => {
     sortData,
     initPagination,
     handlePageNumber,
-    setPath,
-    handleRowCheck,
-    setAllChecked,
     setDataList,
-    sendInvitation,
+    setPerPage,
+    setPage,
+    perPage,
   } = usePagination("title", "/resources");
 
-  
+  return {
+    page,
+    totalPages,
+    dataList,
+    stype,
+    sdir,
+    getList,
+    sortData,
+    initPagination,
+    handlePageNumber,
+    setDataList,
+    setPerPage,
+    setPage,
+    perPage,
+  };
+};
 
 export default useResources;

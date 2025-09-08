@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 
 export default function ResourcesLayout() {
   return (
-    <div>
+    <div className="flex-1">
       <Outlet />
     </div>
   );

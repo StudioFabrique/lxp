@@ -4,6 +4,10 @@ import checkPermissions from "../../../middleware/check-permissions";
 
 const resourcesRouter = Router();
 
-resourcesRouter.get("/", checkPermissions("lesson"), httpGetResourcesList);
+resourcesRouter.get(
+  "/:stype/:sdir",
+  checkPermissions("lesson"),
+  httpGetResourcesList
+);
 
 export default resourcesRouter;
