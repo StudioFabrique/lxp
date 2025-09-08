@@ -33,7 +33,7 @@ export default function CourseTable({
       <>
         {coursesList?.map((course) => (
           <TableRowWrapper key={course.id}>
-            <td>{course.title}</td>
+            <td className="bg-transparent rounded-l-lg">{course.title}</td>
             <td>{course.module}</td>
             <td>{course.parcours}</td>
             <td>{localeDate(course.createdAt!)}</td>
@@ -55,32 +55,33 @@ export default function CourseTable({
                 )}
               </div>
             </td>
-            <td className="flex items-center gap-x-2 justify-around rounded-r-lg">
-              <div
-                className="tooltip tooltip-bottom"
-                data-tip="Modifier le cours."
-              >
-                <Pencil
-                  className="w-6 h-6 text-primary"
-                  aria-label="éditer le cours"
-                  onClick={() => onEditCourse(course.id!)}
-                />
-              </div>
-              <Can action="delete" object="course">
+            <td className="rounded-r-lg bg-transparent p-2 align-middle">
+              <div className="flex items-center gap-x-4 justify-center">
                 <div
                   className="tooltip tooltip-bottom"
-                  data-tip="Supprimer le cours définitivement."
-                  onClick={() => {
-                    onDeleteCourse(course);
-                  }}
+                  data-tip="Modifier le cours."
                 >
-                  <Trash2
-                    className="w-6 h-6 text-error"
-                    aria-label="supprimer le cours"
+                  <Pencil
+                    className="w-6 h-6 text-primary"
+                    aria-label="éditer le cours"
+                    onClick={() => onEditCourse(course.id!)}
                   />
                 </div>
-              </Can>
-              {/*    </Can> */}
+                <Can action="delete" object="course">
+                  <div
+                    className="tooltip tooltip-bottom"
+                    data-tip="Supprimer le cours définitivement."
+                    onClick={() => {
+                      onDeleteCourse(course);
+                    }}
+                  >
+                    <Trash2
+                      className="w-6 h-6 text-error"
+                      aria-label="supprimer le cours"
+                    />
+                  </div>
+                </Can>
+              </div>
             </td>
           </TableRowWrapper>
         ))}

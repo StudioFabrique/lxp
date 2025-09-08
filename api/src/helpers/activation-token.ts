@@ -7,8 +7,12 @@ export const activationToken = (
   expire: string
 ) => {
   // création d'un token contenant l'id et le rôle de l'utilisateur
-  const token = jwt.sign({ userId: userId, userRoles: [role] }, "toto", {
-    expiresIn: "1h",
-  });
+  const token = jwt.sign(
+    { userId: userId, userRoles: [role] },
+    process.env.REGISTER_SECRET!,
+    {
+      expiresIn: expire,
+    }
+  );
   return token;
 };
