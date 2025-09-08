@@ -18,4 +18,5 @@ uploads/company/*
 !uploads/activities/images/.gitkeep
 !uploads/company
 !uploads/company/.gitkeep
+
 certs/

@@ -17,3 +17,4 @@ node_modules
 /front/tmp/npm-cache/_cacache/content-v2/sha512/00/1d
 /api/tmp
 /front/tmp
+certs/
