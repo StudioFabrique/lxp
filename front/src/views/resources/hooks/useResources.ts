@@ -12,23 +12,24 @@ const useResources = () => {
   const [resourcesList, setResourcesList] = useState<ResourceListItem[]>([]);
   const { sendRequest, isLoading } = useHttp();
 
-  const getResources = useCallback(() => {
-    const applyData = (data: ResourceListItem[]) => {
-      setResourcesList(data);
-    };
-    sendRequest(
-      {
-        path: "/resources",
-      },
-      applyData
-    );
-  }, [sendRequest]);
+  const {
+    allChecked,
+    page,
+    totalPages,
+    dataList,
+    stype,
+    sdir,
+    getList,
+    sortData,
+    initPagination,
+    handlePageNumber,
+    setPath,
+    handleRowCheck,
+    setAllChecked,
+    setDataList,
+    sendInvitation,
+  } = usePagination("title", "/resources");
 
-  useEffect(() => {
-    getResources();
-  }, [getResources]);
-
-  return { resourcesList, isLoading };
-};
+  
 
 export default useResources;
