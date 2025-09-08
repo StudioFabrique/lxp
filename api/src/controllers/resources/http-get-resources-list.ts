@@ -4,14 +4,17 @@ import getResourcesList from "../../models/resources/get-resources-list";
 
 export default async function httpGetResourcesList(
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) {
   try {
-    const resources = await getResourcesList();
+    const { stype, sdir } = req.params;
+    const { page = 1, limit = 10 } = req.query;
+
+    const resources = await getResourcesList(stype, sdir, +page, +limit);
     next({
       statusCode: 200,
-      data: resources,
+      data: { total: resources.totaltResources, list: resources.resources },
     });
   } catch (error) {
     next({
