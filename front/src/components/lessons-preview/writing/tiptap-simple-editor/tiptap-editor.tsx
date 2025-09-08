@@ -35,7 +35,7 @@ import {
 } from "react";
 import { LinkMenu } from "./components/LinkMenu";
 import Can from "../../../UI/can/can.component";
-import { Edit, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import CodeBlockWithCopy from "./extensions/CodeBlockWithCopy/CodeBlockWithCopy";
 import { ResizableImage } from "./extensions/ResizableImage";
 import SaveButton from "./components/SaveButton";
@@ -47,7 +47,6 @@ const lowlight = createLowlight(all);
 type TiptapSimpleEditorProps = {
   editorRef: React.MutableRefObject<Editor | null>;
   initialValue?: string;
-  disableEditButton?: boolean;
   isEditingActivity: boolean;
   setEditingActivity: Dispatch<SetStateAction<boolean>>;
   onCloseEditor?: () => void;
@@ -59,7 +58,6 @@ type TiptapSimpleEditorProps = {
 export default function TiptapEditor({
   editorRef,
   initialValue,
-  disableEditButton,
   isEditingActivity,
   setEditingActivity,
   onCloseEditor,
@@ -73,7 +71,6 @@ export default function TiptapEditor({
   };
 
   const [isMenuBarSticky, setIsMenuBarSticky] = useState(false);
-  const editButtonRef = useRef<HTMLButtonElement>(null);
 
   const editor = useEditor({
     extensions: [
@@ -126,7 +123,7 @@ export default function TiptapEditor({
     },
   });
 
-  const menuContainerRef = useRef(null);
+  const menuContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (editor) {
@@ -152,23 +149,24 @@ export default function TiptapEditor({
     }
   }, [editor, initialValue]);
 
-  // Effet pour détecter quand le bouton edit sort de la vue et rendre la menu bar sticky
+  // Effet pour détecter quand le composant sort de la vue et rendre la menu bar sticky
   useEffect(() => {
-    if (!isEditingActivity || !editButtonRef.current) return;
+    if (!isEditingActivity || !menuContainerRef.current) return;
 
     let ticking = false;
 
     const handleScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
-          if (!editButtonRef.current) return;
+          if (!menuContainerRef.current) return;
 
-          const editButtonRect = editButtonRef.current.getBoundingClientRect();
-          const editButtonBottom = editButtonRect.bottom;
+          const containerRect =
+            menuContainerRef.current.getBoundingClientRect();
+          const containerTop = containerRect.top;
 
-          // Si le bas du bouton edit est en dessous du haut de la fenêtre (donc hors de vue)
+          // Si le haut du composant est en dessous du haut de la fenêtre (donc hors de vue)
           // alors rendre la menu bar sticky
-          setIsMenuBarSticky(editButtonBottom < 0);
+          setIsMenuBarSticky(containerTop < 0);
           ticking = false;
         });
         ticking = true;
@@ -184,7 +182,6 @@ export default function TiptapEditor({
       window.removeEventListener("scroll", handleScroll);
     };
   }, [isEditingActivity]);
-
   // Réinitialiser l'état sticky quand on quitte le mode édition
   useEffect(() => {
     if (!isEditingActivity) {
@@ -223,21 +220,6 @@ export default function TiptapEditor({
             </button>
           </Can>
         )}
-
-        <Can action="update" object="lesson">
-          <button
-            ref={editButtonRef}
-            type="button"
-            className={`btn btn-ghost absolute top-4 tooltip tooltip-left ${
-              onDeleteActivity ? "right-16" : "right-4"
-            }`}
-            data-tip="Modifier l'activité"
-            onClick={() => setEditingActivity(true)}
-            disabled={disableEditButton}
-          >
-            <Edit className="w-5 h-5" />
-          </button>
-        </Can>
 
         {onSave &&
           isEditingActivity &&

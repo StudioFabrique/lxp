@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useCallback, useState } from "react";
 import { Edit, Trash2 } from "lucide-react";
 import Can from "../../UI/can/can.component";
 import Modal from "../../UI/modal/modal";
@@ -25,12 +25,12 @@ const ActivityWrapper = ({
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = useCallback(() => {
     if (onDeleteActivity && activity.id) {
       onDeleteActivity(activity.id);
     }
     setShowDeleteModal(false);
-  };
+  }, [activity.id, onDeleteActivity]);
 
   const handleEdit = () => {
     if (onEditActivity) {
