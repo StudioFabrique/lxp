@@ -382,14 +382,15 @@ const LessonReader = ({
                 </div>
 
                 {/* Menu d'actions positionné en absolu sur le collapse */}
-                <ActivityActionsMenu
-                  activity={activity}
-                  setOpenMenuId={setOpenMenuId}
-                  openMenuId={openMenuId}
-                  handleEditActivity={handleEditActivity}
-                  handleOpenDeleteModal={handleOpenDeleteModal}
-                />
-
+                {openAccordionId === activity.id && (
+                  <ActivityActionsMenu
+                    activity={activity}
+                    setOpenMenuId={setOpenMenuId}
+                    openMenuId={openMenuId}
+                    handleEditActivity={handleEditActivity}
+                    handleOpenDeleteModal={handleOpenDeleteModal}
+                  />
+                )}
                 <div className="collapse-content">
                   <ActivityPreview
                     lessonId={selectedLesson.id ?? 0}
