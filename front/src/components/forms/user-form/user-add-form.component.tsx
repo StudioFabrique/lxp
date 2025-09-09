@@ -173,7 +173,6 @@ const UserAddForm: FC<{
               sendEmail={sendEmail}
               onSetSendEmail={setSendEmail}
               onSetRoleId={setRoleId}
-              disabled={props.fieldsDisabled || props.editMode}
               editMode={props.editMode}
             />
             <CentreInterets
