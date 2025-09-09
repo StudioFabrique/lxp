@@ -9,16 +9,8 @@ const TypeUtilisateur: FC<{
   sendEmail: boolean;
   onSetSendEmail: Dispatch<SetStateAction<boolean>>;
   onSetRoleId: Dispatch<SetStateAction<string | null>>;
-  disabled?: boolean;
   editMode?: boolean;
-}> = ({
-  roleId,
-  sendEmail,
-  onSetSendEmail,
-  onSetRoleId,
-  disabled,
-  editMode,
-}) => {
+}> = ({ roleId, sendEmail, onSetSendEmail, onSetRoleId, editMode }) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { sendRequest, isLoading } = useHttp();
@@ -61,7 +53,6 @@ const TypeUtilisateur: FC<{
                     className="radio radio-primary"
                     onChange={() => handleCheck(role._id)}
                     checked={roleId === role._id}
-                    disabled={disabled}
                   />
                   <label htmlFor="etudiant">{role.label}</label>
                 </span>
