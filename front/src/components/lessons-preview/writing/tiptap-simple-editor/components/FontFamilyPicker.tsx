@@ -49,7 +49,7 @@ export const FontFamilyPicker = ({
 
   const selectFont = useCallback(
     (font: string) => () => onChange(font),
-    [onChange],
+    [onChange]
   );
 
   return (
