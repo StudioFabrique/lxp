@@ -57,7 +57,7 @@ function getRandomNumber(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-let tagsColors = Array<string>();
+const tagsColors = Array<string>();
 
 function setTagsColors() {
   let leftColors = colors;
@@ -70,12 +70,20 @@ function setTagsColors() {
   }
 }
 
+export const getNewTags = (value: string, count: number) => {
+  return {
+    id: count + 1,
+    name: value.trim(),
+    color: colors[getRandomNumber(0, 16)],
+  };
+};
+
 export default function createTag() {
   const tab = Array<Tag>();
   setTagsColors();
   let index = 0;
-  tags.forEach((tag: any) => {
-    tab.push({ id: index, name: tag, color: `${tagsColors[index]}` });
+  tags.forEach((tag: unknown) => {
+    tab.push({ id: index, name: tag as string, color: `${tagsColors[index]}` });
     index++;
   });
 
