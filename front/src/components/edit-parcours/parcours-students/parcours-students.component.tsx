@@ -72,6 +72,8 @@ const ParcoursStudents = () => {
       message: string;
       data: GroupList[];
     }) => {
+      console.log({ data });
+
       if (data.success) {
         setFetchedGroups(
           data.data.map((item) => ({ ...item, isSelected: false }))
