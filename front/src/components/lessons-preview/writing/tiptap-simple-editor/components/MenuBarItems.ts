@@ -3,19 +3,19 @@ import type { Editor } from "@tiptap/react";
 export const items = (editor: Editor) => [
   {
     icon: "bold",
-    title: "Bold",
+    title: "Gras",
     action: () => editor.chain().focus().toggleBold().run(),
     isActive: () => editor.isActive("bold"),
   },
   {
     icon: "italic",
-    title: "Italic",
+    title: "Italique",
     action: () => editor.chain().focus().toggleItalic().run(),
     isActive: () => editor.isActive("italic"),
   },
   {
     icon: "strikethrough",
-    title: "Strike",
+    title: "Barré",
     action: () => editor.chain().focus().toggleStrike().run(),
     isActive: () => editor.isActive("strike"),
   },
@@ -36,7 +36,7 @@ export const items = (editor: Editor) => [
   },
   {
     icon: "code-box-line",
-    title: "Code Block",
+    title: "Bloc de code",
     action: () => editor.chain().focus().toggleCodeBlock().run(),
     isActive: () => editor.isActive("codeBlock"),
   },
@@ -48,7 +48,7 @@ export const items = (editor: Editor) => [
   // },
   {
     icon: "separator",
-    title: "Horizontal Rule",
+    title: "Règle horizontale",
     action: () => editor.chain().focus().setHorizontalRule().run(),
   },
   {
@@ -56,12 +56,12 @@ export const items = (editor: Editor) => [
   },
   {
     icon: "text-wrap",
-    title: "Hard Break",
+    title: "Saut de ligne",
     action: () => editor.chain().focus().setHardBreak().run(),
   },
   {
     icon: "format-clear",
-    title: "Clear Format",
+    title: "Effacer le format",
     action: () => editor.chain().focus().clearNodes().unsetAllMarks().run(),
   },
   {
@@ -79,12 +79,12 @@ export const items = (editor: Editor) => [
   { type: "divider" },
   {
     icon: "arrow-go-back-line",
-    title: "Undo",
+    title: "Annuler",
     action: () => editor.chain().focus().undo().run(),
   },
   {
     icon: "arrow-go-forward-line",
-    title: "Redo",
+    title: "Rétablir",
     action: () => editor.chain().focus().redo().run(),
   },
   { type: "divider" },

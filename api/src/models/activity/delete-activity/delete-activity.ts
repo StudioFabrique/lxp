@@ -23,6 +23,15 @@ export default async function deleteActivity(activityId: number, type: string) {
     throw { statusCode: 404, message: "L'activité n'existe pas" };
 
   await prisma.$transaction(async (tx) => {
+    const activityToDelete = await tx.activity.findUnique({
+      where: { id: activityId },
+    });
+
+    if (!activityToDelete) {
+      console.log(`Activity ${activityId} already deleted, skipping...`);
+      return;
+    }
+
     await tx.activity.delete({
       where: { id: activityId },
     });

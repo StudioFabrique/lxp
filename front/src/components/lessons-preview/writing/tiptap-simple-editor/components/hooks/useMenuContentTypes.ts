@@ -5,13 +5,13 @@ import useHttp from "../../../../../../hooks/use-http";
 
 export const useMenuContentTypes = (
   editor: Editor,
-  imageInputRef: React.RefObject<HTMLInputElement>,
+  imageInputRef: React.RefObject<HTMLInputElement>
 ) => {
   const { sendRequest } = useHttp();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isImageUploadPending, setIsLoading] = useState<boolean>(false);
   const [imageSize, setImageSize] = useState<"small" | "medium" | "large">(
-    "small",
+    "small"
   );
 
   const handleImageUpload = useCallback(async () => {
@@ -37,9 +37,15 @@ export const useMenuContentTypes = (
         type: "image",
         attrs: {
           src: imageUrl,
-          size: imageSize,
+          width:
+            imageSize === "small" ? 100 : imageSize === "medium" ? 200 : 300,
+          height:
+            imageSize === "small" ? 100 : imageSize === "medium" ? 200 : 300,
         },
       });
+
+      // add a line below the image
+      editor.commands.enter();
     }
   }, [editor, imageFile, imageSize, sendRequest]);
 
@@ -48,15 +54,22 @@ export const useMenuContentTypes = (
       setIsLoading(true);
 
       setIsLoading(false);
+      // insert the image
       editor.commands.insertContent({
         type: "image",
         attrs: {
           src: url,
-          size: imageSize,
+          width:
+            imageSize === "small" ? 100 : imageSize === "medium" ? 200 : 300,
+          height:
+            imageSize === "small" ? 100 : imageSize === "medium" ? 200 : 300,
         },
       });
+
+      // add a line below the image
+      editor.commands.enter();
     },
-    [editor, imageSize],
+    [editor, imageSize]
   );
 
   useEffect(() => {
@@ -79,26 +92,26 @@ export const useMenuContentTypes = (
   return {
     menuContentOptions: useEditorState({
       editor,
-      selector: (ctx): ContentPickerOptions => [
-        {
-          type: "category",
-          label: "Insertion",
-          id: "insert",
-        },
-        {
-          icon: "Table",
-          onClick: () =>
-            ctx.editor
-              .chain()
-              .focus()
-              .insertTable({ rows: 3, cols: 3, withHeaderRow: false })
-              .run(),
-          id: "table",
-          disabled: () => false,
-          isActive: () => editor.isActive("table"),
-          label: "Tableau",
-          type: "option",
-        },
+      selector: (/*ctx*/): ContentPickerOptions => [
+        // {
+        //   type: "category",
+        //   label: "Insertion",
+        //   id: "insert",
+        // },
+        // {
+        //   icon: "Table",
+        //   onClick: () =>
+        //     ctx.editor.commands.insertTable({
+        //       rows: 3,
+        //       cols: 3,
+        //       withHeaderRow: true,
+        //     }),
+        //   id: "table",
+        //   disabled: () => false,
+        //   isActive: () => editor.isActive("table"),
+        //   label: "Tableau",
+        //   type: "option",
+        // },
       ],
     }),
     isImageUploadPending,

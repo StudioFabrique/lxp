@@ -86,8 +86,11 @@ const NoActivityPlaceholder = ({ children }: PropsWithChildren) => {
       <FadeWrapper>
         <div className="flex flex-col gap-10 items-center">
           {randomIcon}
-          <p className="text-2xl font-bold text-primary">Aucune activité</p>
-          {children}
+          {children ? (
+            children
+          ) : (
+            <p className="text-2xl font-bold text-primary">Aucune activité</p>
+          )}
         </div>
       </FadeWrapper>
     </div>

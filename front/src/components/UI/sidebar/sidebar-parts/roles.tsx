@@ -13,7 +13,7 @@ const Roles = ({ currentRoute }: { currentRoute: string[] }) => {
           <Can action="read" object="user">
             <Link
               to={`/${currentRoute[0]}/roles`}
-              className="tooltip w-6 h-6 z-10"
+              className="tooltip tooltip-right w-6 h-6 z-10"
               data-tip="Roles et permissions"
             >
               <div className="flex hover justify-center items-center">

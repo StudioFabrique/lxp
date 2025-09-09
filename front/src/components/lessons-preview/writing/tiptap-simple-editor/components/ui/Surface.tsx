@@ -9,13 +9,13 @@ export type SurfaceProps = HTMLProps<HTMLDivElement> & {
 export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(
   (
     { children, className, withShadow = true, withBorder = true, ...props },
-    ref,
+    ref
   ) => {
     const surfaceClass = cn(
       className,
-      "bg-base-100 text-base rounded-lg z-50",
+      "bg-secondary/40 text-base rounded-xl z-50",
       withShadow ? "shadow-sm" : "",
-      withBorder ? "border border-secondary/40" : "",
+      withBorder ? "border border-secondary/40" : ""
     );
 
     return (
@@ -23,7 +23,7 @@ export const Surface = forwardRef<HTMLDivElement, SurfaceProps>(
         {children}
       </div>
     );
-  },
+  }
 );
 
 Surface.displayName = "Surface";

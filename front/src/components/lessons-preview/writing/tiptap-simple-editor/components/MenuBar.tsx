@@ -1,15 +1,7 @@
 import "./MenuBar.scss";
 import type { Editor } from "@tiptap/react";
 
-import {
-  Fragment,
-  memo,
-  useRef,
-  useState,
-  useEffect,
-  useMemo,
-  useCallback,
-} from "react";
+import { Fragment, memo, useRef } from "react";
 
 import MenuItem from "./MenuItem.jsx";
 import { ContentTypePicker } from "./dropdowns/ContentTypePicker.js";
@@ -28,12 +20,14 @@ import { FontFamilyPicker } from "./FontFamilyPicker.js";
 import { EditLinkPopover } from "./EditLinkPopover.js";
 import { EditYoutubeLinkPopover } from "./EditYoutubeLinkPopover.js";
 import { InsertImagePopover } from "./InsertImagePopover.js";
+import { TableInsertPopover } from "./TableInsertPopover.js";
 
 type MenuBarProps = {
   editor: Editor;
   shouldHide?: boolean;
   onCloseEditor: () => void;
   onSave?: () => void;
+  isSticky?: boolean;
 };
 
 const MemoButton = memo(Toolbar.Button);
@@ -47,89 +41,9 @@ export default function MenuBar({
   shouldHide = false,
   onCloseEditor,
   onSave,
+  isSticky = false,
 }: MenuBarProps) {
   const toolbarRef = useRef<HTMLDivElement>(null);
-  const toolbarPositionRef = useRef<{ top: number; left: number } | null>(null);
-  const [scrollY, setScrollY] = useState(0);
-
-  // Function to update toolbar position
-  const updateToolbarPosition = useCallback(() => {
-    if (toolbarRef.current) {
-      const rect = toolbarRef.current.getBoundingClientRect();
-      toolbarPositionRef.current = {
-        top: rect.top + window.scrollY,
-        left: rect.left + window.scrollX,
-      };
-    }
-  }, []);
-
-  // Initialize and update toolbar position when shouldHide changes
-  useEffect(() => {
-    if (toolbarRef.current && !shouldHide) {
-      // Add a small delay to ensure layout transitions have completed
-      const timer = setTimeout(() => {
-        updateToolbarPosition();
-      }, 100);
-
-      return () => clearTimeout(timer);
-    }
-  }, [shouldHide, updateToolbarPosition]);
-
-  // Set up scroll and resize event listeners
-  useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setScrollY(window.scrollY);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    const handleResize = () => {
-      // Recalculate position on window resize
-      updateToolbarPosition();
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", handleResize, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [updateToolbarPosition]);
-
-  // Set up ResizeObserver to detect layout changes that affect toolbar position
-  useEffect(() => {
-    if (!toolbarRef.current) return;
-
-    const resizeObserver = new ResizeObserver(() => {
-      updateToolbarPosition();
-    });
-
-    resizeObserver.observe(toolbarRef.current);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [updateToolbarPosition]);
-
-  // Calculate if toolbar should be fixed using useMemo
-  const isToolbarFixed = useMemo(() => {
-    if (!toolbarPositionRef.current) {
-      // Fallback: try to calculate position immediately if not available
-      if (toolbarRef.current) {
-        updateToolbarPosition();
-      }
-      return false;
-    }
-
-    const originalTop = toolbarPositionRef.current.top;
-    return scrollY > originalTop - 10;
-  }, [scrollY, updateToolbarPosition]);
 
   const inputFileRef = useRef<HTMLInputElement>(null);
   const {
@@ -149,9 +63,11 @@ export default function MenuBar({
     <Toolbar.Wrapper
       ref={toolbarRef}
       hidden={shouldHide}
-      className={`h-fit w-fit self-center ${
-        isToolbarFixed ? "fixed top-2 z-50" : "relative"
-      } flex justify-between px-2`}
+      className={`h-fit w-fit self-center justify-between px-2 transition-all duration-300 ease-in-out ${
+        isSticky
+          ? "fixed top-4 transform z-50 shadow-lg rounded-lg border backdrop-blur-[2px]"
+          : "sticky top-0"
+      }`}
     >
       <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus">
         <InsertImagePopover
@@ -165,7 +81,9 @@ export default function MenuBar({
           title="Youtube"
           onSetLink={commands.onYoutubeLink}
         />
+        <TableInsertPopover editor={editor} title="Tableau" />
       </MemoContentTypePicker>
+
       <MemoContentTypePicker
         options={menuTextOptions}
         isLoading={isImageUploadPending}
@@ -178,10 +96,6 @@ export default function MenuBar({
         onChange={commands.onSetFont}
         value={states.currentFont || ""}
       />
-      {/* <MemoFontSizePicker
-        onChange={commands.onSetFontSize}
-        value={states.currentSize || ""}
-      /> */}
 
       {/* Color Picker for Text Color */}
       <Popover.Root>
@@ -225,7 +139,7 @@ export default function MenuBar({
       {items(editor).map((item) => (
         <Fragment key={item.title || `divider-${Math.random()}`}>
           {item.type === "divider" ? (
-            <span className="divider" />
+            <span className="divider invisible" />
           ) : (
             <MenuItem {...item} />
           )}
