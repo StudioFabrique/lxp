@@ -77,6 +77,15 @@ export async function sendUpdatedUserEmail(email: string) {
 
     // Si la variable d'environnement n'est pas définie, log dans la console et un return
     if (!process.env.SMTP_EMAIL) {
+      //si en prod, on lance une erreur
+      if (process.env.ENVIRONMENT === "production") {
+        throw {
+          statusCode: 500,
+          message: "La variable d'environnement SMTP_EMAIL n'est pas définie.",
+        };
+      }
+
+      // si en développement, on log l'erreur
       console.error(
         "La variable d'environnement SMTP_EMAIL n'est pas définie."
       );
