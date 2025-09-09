@@ -41,22 +41,23 @@ export default async function deleteUser(userId: string, connectedId: string) {
       where: { idMdb: userId },
     });
 
-    if (!prismaUser)
-      throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
+    // if (!prismaUser)
+    //   throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
 
     // Delete from Prisma admin table
-    await prisma.admin.deleteMany({ where: { idMdb: userId } });
+    if (prismaUser) await prisma.admin.deleteMany({ where: { idMdb: userId } });
   } else {
     // Get student from Prisma database
     prismaUser = await prisma.student.findFirst({
       where: { idMdb: userId },
     });
 
-    if (!prismaUser)
-      throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
+    // if (!prismaUser)
+    //   throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
 
     // Delete from Prisma student table
-    await prisma.student.deleteMany({ where: { idMdb: userId } });
+    if (prismaUser)
+      await prisma.student.deleteMany({ where: { idMdb: userId } });
   }
 
   try {

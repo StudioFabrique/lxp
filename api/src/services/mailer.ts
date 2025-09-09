@@ -75,6 +75,14 @@ export async function sendUpdatedUserEmail(email: string) {
     // Vérification du format de l'email
     if (!regexMail.test(email)) throw { statusCode: 400, message: badQuery };
 
+    // Si la variable d'environnement n'est pas définie, log dans la console et un return
+    if (!process.env.SMTP_EMAIL) {
+      console.error(
+        "La variable d'environnement SMTP_EMAIL n'est pas définie."
+      );
+      return;
+    }
+
     // En développement, rediriger vers une adresse email de test
     const destination =
       process.env.ENVIRONMENT === "development"

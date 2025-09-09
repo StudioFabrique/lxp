@@ -12,7 +12,7 @@ export const AvatarSmall: FC<{
         </p>
       ) : (
         <img
-          src={user.avatar}
+          src={"data:image/jpeg;base64," + user.avatar}
           alt="avatar"
           className="w-8 h-8 rounded-full object-cover"
         />
