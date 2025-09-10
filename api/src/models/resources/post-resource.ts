@@ -16,7 +16,8 @@ export default async function postResource(
   userId: string,
   title: string,
   description: string,
-  tags: string[]
+  tags: string[],
+  filename: string | null
 ) {
   const existingResource = await prisma.resource.findFirst({
     where: { title },
@@ -67,6 +68,7 @@ export default async function postResource(
       description,
       admin: { connect: { id: existingAuthor.id } },
       author: mongoUser.firstname + " " + mongoUser.lastname,
+      imageUrl: filename,
       tags: {
         create: tagsToAdd.map((tag) => {
           return { tag: { connect: { id: tag.id } } };
