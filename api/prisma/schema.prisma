@@ -357,6 +357,7 @@ model Resource {
   updatedAt       DateTime          @updatedAt
   author          String
   adminId         Int
+  imageUrl        String?
   admin           Admin             @relation(fields: [adminId], references: [id], onDelete: SetDefault)
   tags            TagsOnResources[]
   bonusActivities BonusActivity[]
