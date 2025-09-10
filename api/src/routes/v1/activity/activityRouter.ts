@@ -15,6 +15,7 @@ import {
 // Validateurs pour les activités
 import {
   activityIdValidator,
+  idValidator,
   postVideoValidator,
   putReorderActivitiesValidator,
   putResourceValidator,
@@ -90,9 +91,9 @@ activityRouter.post(
 
 // Route pour mettre à jour une activité de type texte existante
 activityRouter.put(
-  "/text/:activityId",
+  "/text/:id",
   checkPermissions("lesson"),
-  activityIdValidator,
+  idValidator,
   updateActivityValidator,
   httpPutActivityText
 );
