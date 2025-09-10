@@ -36,7 +36,7 @@ export default function ResourceAdd() {
   const [tags, setTags] = useState<Tag[]>([]);
   const [tagError, setTagError] = useState(false);
 
-  const handleToto = (e: React.FormEvent) => {
+  const handleSubmitForm = (e: React.FormEvent) => {
     e.preventDefault();
     if (!onValidateForm()) return;
     const formData = new FormData();
@@ -48,10 +48,15 @@ export default function ResourceAdd() {
     formData.append("data", JSON.stringify(resource));
 
     if (file) formData.append("image", file);
+
     const applyData = (data: SuccessWithMessage) => {
       if (data.success) {
         toast.success(data.message);
       }
+      onResetForm();
+      setFile(null);
+      setTags([]);
+      setTagError(false);
     };
     sendRequest(
       {
@@ -61,30 +66,6 @@ export default function ResourceAdd() {
       },
       applyData
     );
-  };
-
-  const handleSubmitForm = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (onValidateForm() && tags.length > 0) {
-      const applyData = (data: { success: boolean; message: string }) => {
-        if (data.success) toast.success(data.message);
-      };
-      sendRequest(
-        {
-          path: "/resources",
-          method: "post",
-          body: { ...values, tags: tags.map((tag) => tag.name) },
-        },
-        applyData
-      );
-      onResetForm();
-      setTags([]);
-    }
-    if (tags.length === 0) {
-      toast.error("Veuillez ajouter au moins un tag");
-      setTagError(true);
-    }
   };
 
   useEffect(() => {
@@ -101,7 +82,7 @@ export default function ResourceAdd() {
               <Wrapper>
                 <ResourceForm
                   data={data}
-                  onSubmit={handleToto}
+                  onSubmit={handleSubmitForm}
                   isLoading={isLoading}
                   tags={tags}
                   setTags={setTags}

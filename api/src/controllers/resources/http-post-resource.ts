@@ -2,20 +2,36 @@ import { Response, NextFunction } from "express";
 import { serverIssue } from "../../utils/constantes";
 import postResource from "../../models/resources/post-resource";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { validationResult } from "express-validator";
 
 export default async function httpPostResource(
   req: CustomRequest,
-  _res: Response,
+  res: Response,
   next: NextFunction
 ) {
   try {
-    const userId = req.auth?.userId;
-    const { title, description, tags } = req.body;
+    const result = validationResult(req);
 
-    const result = await postResource(userId!, title, description, tags);
+    if (!result.isEmpty())
+      return res.status(400).json({ errors: result.array() });
+
+    const userId = req.auth?.userId;
+    const { data } = req.body;
+    const { title, description, tags } = data;
+    const file = req.file;
+
+    const filename = file ? file.filename : null;
+
+    const response = await postResource(
+      userId!,
+      title,
+      description,
+      tags,
+      filename ?? null
+    );
     next({
       statusCode: 201,
-      data: result,
+      data: response,
     });
   } catch (error: any) {
     console.log({ error });
