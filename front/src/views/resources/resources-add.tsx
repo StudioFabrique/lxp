@@ -39,9 +39,16 @@ export default function ResourceAdd() {
   const [tagError, setTagError] = useState(false);
   const [showTipTapEditor, setShowTipTapEditor] = useState<boolean>(false);
   const [resource, setResource] = useState<Resource | null>(null);
+  const [isAnyActivityBeingEdited, setIsAnyActivityBeingEdited] =
+    useState<boolean>(false);
 
   const handleClickShowTipTapEditor = () => {
     setShowTipTapEditor(true);
+  };
+
+  const handleCloseTipTapEditor = () => {
+    setShowTipTapEditor(false);
+    setIsAnyActivityBeingEdited(false);
   };
 
   const handleSubmitForm = (e: React.FormEvent) => {
@@ -111,18 +118,18 @@ export default function ResourceAdd() {
               {resource && showTipTapEditor ? (
                 <TipTapActivity
                   parentId={resource.id}
-                  isNewActivity={true}
-                  onCloseTipTapEditor={() => {}}
+                  isNewActivity
+                  onCloseTipTapEditor={handleCloseTipTapEditor}
                   onRefreshAllData={() => {}}
-                  isAnyActivityBeingEdited={false}
-                  onActivityEditChange={() => {}}
+                  isAnyActivityBeingEdited={isAnyActivityBeingEdited}
+                  onActivityEditChange={setIsAnyActivityBeingEdited}
                   parent="resource"
                 />
               ) : resource ? (
                 <ActivityCreationOptionsButtons
                   onClickShowTipTapEditor={handleClickShowTipTapEditor}
                   selectedLesson={resource!}
-                  isDisabled={false}
+                  isDisabled={isAnyActivityBeingEdited}
                 />
               ) : null}
             </Can>
