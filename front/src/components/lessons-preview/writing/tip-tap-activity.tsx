@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import useHttp from "../../../hooks/use-http";
 import Modal from "../../UI/modal/modal";
 import TiptapEditor from "./tiptap-simple-editor/tiptap-editor";
+import { BonusActivity } from "../../../utils/interfaces/resource";
 
 type Activity = {
   id: number;
@@ -26,6 +27,7 @@ type TipTapActivityProps = {
   onCloseTipTapEditor?: () => void;
   onRefreshAllData?: () => void;
   onActivityEditChange?: (isEditing: boolean) => void;
+  onActivityCreated?: (newActivity: BonusActivity) => void;
 };
 
 const TipTapActivity = ({
@@ -37,6 +39,7 @@ const TipTapActivity = ({
   onCloseTipTapEditor,
   onRefreshAllData,
   onActivityEditChange,
+  onActivityCreated,
 }: TipTapActivityProps) => {
   const { sendRequest } = useHttp(true);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -86,7 +89,7 @@ const TipTapActivity = ({
   const handleSubmitSave = (e: FormEvent) => {
     e.preventDefault();
     // save as file
-    const applyData = () => {
+    const applyData = (data: BonusActivity | Activity) => {
       toast.success(
         `Activité ${isNewActivity ? "créée" : "modifiée"} avec succès`
       );
@@ -94,6 +97,9 @@ const TipTapActivity = ({
       onCloseTipTapEditor?.();
       onRefreshAllData?.();
       setEditingActivity(false);
+      if (onActivityCreated && isNewActivity) {
+        onActivityCreated(data as BonusActivity);
+      }
     };
 
     const value = editorRef.current?.getHTML();

@@ -5,15 +5,16 @@ export default interface Resource {
   title: string;
   description: string;
   tags: Tag[];
-  bonusActivities: bonusActivity[];
+  bonusActivities: BonusActivity[];
   imageUrl: string | null;
   createdAt: string;
   updatedAt: string;
 }
 
-interface bonusActivity {
+export interface BonusActivity {
   id: number;
   title: string;
+  type: "text" | "video" | "fichier" | "image";
   description: string;
   url: string;
   order: number;
