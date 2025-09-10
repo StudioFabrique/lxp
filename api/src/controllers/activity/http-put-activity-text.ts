@@ -11,12 +11,12 @@ import updateText from "../../models/activity/update-activity/put-activity-text"
 export default async function httpPutActivityText(req: Request, res: Response) {
   try {
     // Récupération de l'ID de l'activité depuis les paramètres de l'URL
-    const { activityId } = req.params;
+    const { id } = req.params;
     // Récupération des données à mettre à jour depuis le corps de la requête
-    const { value, title, description } = req.body;
+    const { value, title, description, parent } = req.body;
 
     // Appel au modèle pour effectuer la mise à jour
-    const response = await updateText(+activityId, value, title, description);
+    const response = await updateText(+id, value, title, description, parent);
 
     // Retourne une réponse de succès
     return res.status(200).json({
