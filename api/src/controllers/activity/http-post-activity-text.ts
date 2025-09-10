@@ -15,8 +15,6 @@ export default async function httpPostActivityText(
 
     let response: any = {};
 
-    console.log("PARENT ID ET REQ BODY", parentId, req.body);
-
     response = await postText(
       +parentId,
       userId!,

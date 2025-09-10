@@ -13,7 +13,9 @@ import toast from "react-hot-toast";
 import Can from "../../components/UI/can/can.component";
 import ActivityCreationOptionsButtons from "../../components/lessons-preview/writing/activity-creation-options-buttons";
 import TipTapActivity from "../../components/lessons-preview/writing/tip-tap-activity";
-import Resource from "../../utils/interfaces/resource";
+import Resource, { BonusActivity } from "../../utils/interfaces/resource";
+import SubWrapper from "../../components/UI/sub-wrapper/sub-wrapper.component";
+import BonusActivityItem from "../../components/resources-add/BonusActivityItem";
 
 const schema = z.object({
   title: z
@@ -71,7 +73,7 @@ export default function ResourceAdd() {
     }) => {
       if (data.success) {
         toast.success(data.message);
-        setResource(data.resource);
+        setResource({ ...data.resource, bonusActivities: [] });
       }
       setTagError(false);
     };
@@ -85,9 +87,23 @@ export default function ResourceAdd() {
     );
   };
 
+  const handleActivityCreated = (newActivity: BonusActivity) => {
+    console.log("activity created", newActivity);
+
+    setResource((prevResource) => {
+      if (!prevResource) return prevResource;
+      return {
+        ...prevResource,
+        bonusActivities: [...prevResource.bonusActivities, newActivity],
+      };
+    });
+  };
+
   useEffect(() => {
     if (error.length > 0) toast.error(error);
   }, [error]);
+
+  console.log({ resource });
 
   return (
     <main className="min-h-screen w-full flex flex-col items-center">
@@ -110,7 +126,21 @@ export default function ResourceAdd() {
               </Wrapper>
             </article>
             <article>
-              <Wrapper>content</Wrapper>
+              <Wrapper>
+                {resource &&
+                resource.bonusActivities &&
+                resource.bonusActivities.length > 0 ? (
+                  <ul>
+                    {resource.bonusActivities.map((activity) => (
+                      <li key={activity.id} className="mb-2">
+                        <SubWrapper>
+                          <BonusActivityItem activity={activity} />
+                        </SubWrapper>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </Wrapper>
             </article>
           </section>
           <section className="flex-1 flex flex-col gap-4">
@@ -124,6 +154,7 @@ export default function ResourceAdd() {
                   isAnyActivityBeingEdited={isAnyActivityBeingEdited}
                   onActivityEditChange={setIsAnyActivityBeingEdited}
                   parent="resource"
+                  onActivityCreated={handleActivityCreated}
                 />
               ) : resource ? (
                 <ActivityCreationOptionsButtons
