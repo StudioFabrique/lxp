@@ -79,14 +79,16 @@ const useForm = (data = {}, schema?: any) => {
       try {
         schema.parse(values);
         setErrors([]);
+        return true;
       } catch (error) {
         if (error instanceof ZodError) {
           console.log({ error });
           const errors = validationErrors(error);
           onValidationErrors(errors);
-          return;
+          return false;
         }
         setErrors([]);
+        return false;
       }
     }
   }, [schema, values, onValidationErrors]);
