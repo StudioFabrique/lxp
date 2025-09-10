@@ -12,6 +12,13 @@ import TagsList from "../../components/formation-home/tags-list";
 import QuestionMarkTooltip from "../../components/UI/question-mark-tooltip/question-mark-tooltip";
 import { HelpCircle } from "lucide-react";
 import useHttp from "../../hooks/use-http";
+<<<<<<< Updated upstream
+=======
+import { regexGeneric } from "../../utils/constantes";
+import ResourceForm from "../../components/resources-add/ResourceForm";
+import toast from "react-hot-toast";
+import SuccessWithMessage from "../../utils/interfaces/success-with-message";
+>>>>>>> Stashed changes
 
 const schema = z.object({
   title: z
@@ -25,6 +32,7 @@ const schema = z.object({
 let i = 0;
 
 export default function ResourceAdd() {
+<<<<<<< Updated upstream
   const {
     errors,
     values,
@@ -33,6 +41,11 @@ export default function ResourceAdd() {
     onResetForm,
     onValidateForm,
   } = useForm({}, schema);
+=======
+  const [file, setFile] = useState<File | null>(null);
+  const { errors, values, onChangeValue, onResetForm, onValidateForm } =
+    useForm({}, schema);
+>>>>>>> Stashed changes
 
   const data = { values, errors, onChangeValue };
   const { sendRequest, isLoading, error } = useHttp();
@@ -77,6 +90,33 @@ export default function ResourceAdd() {
     setTags((prev) => prev.filter((tag) => tag.id !== id));
   };
 
+  const handleToto = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!onValidateForm()) return;
+    const formData = new FormData();
+    const resource = {
+      ...data.values,
+      tags: tags.map((tag) => tag.name),
+    };
+
+    formData.append("data", JSON.stringify(resource));
+
+    if (file) formData.append("image", file);
+    const applyData = (data: SuccessWithMessage) => {
+      if (data.success) {
+        toast.success(data.message);
+      }
+    };
+    sendRequest(
+      {
+        path: "/resources",
+        method: "post",
+        body: formData,
+      },
+      applyData
+    );
+  };
+
   const handleSubmitForm = (e: React.FormEvent) => {
     e.preventDefault();
     onValidateForm();
@@ -102,6 +142,7 @@ export default function ResourceAdd() {
           <section className="w-2/6 h-full flex flex-col gap-4">
             <article className="flex-1">
               <Wrapper>
+<<<<<<< Updated upstream
                 <h2 className="text-lg font-bold">Ressource</h2>
                 <form
                   className="flex flex-col gap-y-4"
@@ -153,6 +194,18 @@ export default function ResourceAdd() {
                     <button className="btn btn-primary">Ajouter</button>
                   </div>
                 </form>
+=======
+                <ResourceForm
+                  data={data}
+                  onSubmit={handleToto}
+                  isLoading={isLoading}
+                  tags={tags}
+                  setTags={setTags}
+                  tagError={tagError}
+                  onTagError={setTagError}
+                  onSetFile={setFile}
+                />
+>>>>>>> Stashed changes
               </Wrapper>
             </article>
             <article>

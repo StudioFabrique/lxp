@@ -60,7 +60,11 @@ function ModuleMetadatas({ data, onSetFile }: Props) {
       {/* image du module */}
 
       <div className="w-full h-full flex gap-x-4 items-center">
+<<<<<<< Updated upstream
         <ModuleUploadImage onSetFile={handleFileChange} />
+=======
+        <FormUploadImage onSetFile={handleFileChange} />
+>>>>>>> Stashed changes
         <span style={classImage} />
       </div>
     </article>
