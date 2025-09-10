@@ -74,12 +74,13 @@ const ActivityPreview = ({
         // </Markdown>
         value ? (
           <TipTapActivity
-            lessonId={lessonId}
+            parentId={lessonId}
             activity={{
               id: activity.id,
               title: activity.title,
               content: value,
             }}
+            parent="lesson"
             isAnyActivityBeingEdited={isAnyActivityBeingEdited}
             onActivityEditChange={onActivityEditChange}
           />

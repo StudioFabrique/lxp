@@ -10,7 +10,10 @@ import useHttp from "../../hooks/use-http";
 import { regexGeneric } from "../../utils/constantes";
 import ResourceForm from "../../components/resources-add/ResourceForm";
 import toast from "react-hot-toast";
-import SuccessWithMessage from "../../utils/interfaces/success-with-message";
+import Can from "../../components/UI/can/can.component";
+import ActivityCreationOptionsButtons from "../../components/lessons-preview/writing/activity-creation-options-buttons";
+import TipTapActivity from "../../components/lessons-preview/writing/tip-tap-activity";
+import Resource from "../../utils/interfaces/resource";
 
 const schema = z.object({
   title: z
@@ -27,14 +30,19 @@ const schema = z.object({
 
 export default function ResourceAdd() {
   const [file, setFile] = useState<File | null>(null);
-  const { errors, values, onChangeValue, onResetForm, onValidateForm } =
-    useForm({}, schema);
+  const { errors, values, onChangeValue, onValidateForm } = useForm({}, schema);
 
   const data = { values, errors, onChangeValue };
   const { sendRequest, isLoading, error } = useHttp();
 
   const [tags, setTags] = useState<Tag[]>([]);
   const [tagError, setTagError] = useState(false);
+  const [showTipTapEditor, setShowTipTapEditor] = useState<boolean>(false);
+  const [resource, setResource] = useState<Resource | null>(null);
+
+  const handleClickShowTipTapEditor = () => {
+    setShowTipTapEditor(true);
+  };
 
   const handleSubmitForm = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,13 +57,15 @@ export default function ResourceAdd() {
 
     if (file) formData.append("image", file);
 
-    const applyData = (data: SuccessWithMessage) => {
+    const applyData = (data: {
+      success: boolean;
+      message: string;
+      resource: Resource;
+    }) => {
       if (data.success) {
         toast.success(data.message);
+        setResource(data.resource);
       }
-      onResetForm();
-      setFile(null);
-      setTags([]);
       setTagError(false);
     };
     sendRequest(
@@ -93,10 +103,30 @@ export default function ResourceAdd() {
               </Wrapper>
             </article>
             <article>
-              <Wrapper>articles</Wrapper>
+              <Wrapper>content</Wrapper>
             </article>
           </section>
-          <section>Preview</section>
+          <section className="flex-1 flex flex-col gap-4">
+            <Can action="write" object="lesson">
+              {resource && showTipTapEditor ? (
+                <TipTapActivity
+                  parentId={resource.id}
+                  isNewActivity={true}
+                  onCloseTipTapEditor={() => {}}
+                  onRefreshAllData={() => {}}
+                  isAnyActivityBeingEdited={false}
+                  onActivityEditChange={() => {}}
+                  parent="resource"
+                />
+              ) : resource ? (
+                <ActivityCreationOptionsButtons
+                  onClickShowTipTapEditor={handleClickShowTipTapEditor}
+                  selectedLesson={resource!}
+                  isDisabled={false}
+                />
+              ) : null}
+            </Can>
+          </section>
         </div>
       </ListHeader>
     </main>

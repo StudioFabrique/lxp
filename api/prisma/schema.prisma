@@ -60,11 +60,8 @@ model BonusActivity {
   type        String
   order       Int
   url         String
-  lessonId    Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  authorId    Int
-  author      String
   admin       Admin    @relation(fields: [adminId], references: [id], onDelete: SetDefault)
   adminId     Int
   resource    Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
