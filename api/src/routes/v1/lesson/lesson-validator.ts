@@ -11,6 +11,15 @@ export const lessonIdValidator = [
     .withMessage("L'identifiant de la leçon doit être un nombre entier."),
 ];
 
+export const parentIdValidator = [
+  param("parentId")
+    .notEmpty()
+    .withMessage("L'idientifiant du parent est requis.")
+    .isNumeric()
+    .isInt()
+    .withMessage("L'identifiant du parent doit être un nombre entier."),
+];
+
 export const lessonRateValidator = [
   body("rate")
     .notEmpty()
@@ -43,7 +52,7 @@ export const putLessonValidator = [
     .withMessage("Une description est requise pour la leçon")
     .custom(stringValidateGeneric)
     .withMessage(
-      "La description de la leçon contient des caractères non autorisés",
+      "La description de la leçon contient des caractères non autorisés"
     ),
   body("modalite")
     .notEmpty()
@@ -51,7 +60,7 @@ export const putLessonValidator = [
     .withMessage("Une modalité est requise pour la leçon")
     .custom(stringValidateGeneric)
     .withMessage(
-      "La modalité de la leçon contient des caractères non autorisés",
+      "La modalité de la leçon contient des caractères non autorisés"
     ),
   body("tagId")
     .notEmpty()
@@ -87,11 +96,11 @@ export const putReorderLessonsValidator = [
   body("*")
     .notEmpty()
     .withMessage(
-      "Le tableau d'identifiants doit contenir une ou plusieurs valeurs.",
+      "Le tableau d'identifiants doit contenir une ou plusieurs valeurs."
     )
     .isNumeric()
     .withMessage(
-      "Le tableau d'identifiants doit contenir des nombres entiers uniquement.",
+      "Le tableau d'identifiants doit contenir des nombres entiers uniquement."
     ),
   checkValidatorResult,
 ];
