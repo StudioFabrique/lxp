@@ -18,20 +18,22 @@ type Activity = {
 };
 
 type TipTapActivityProps = {
-  lessonId: number;
+  parentId: number;
   activity?: Activity;
   isNewActivity?: boolean;
   isAnyActivityBeingEdited?: boolean;
+  parent: "lesson" | "resource";
   onCloseTipTapEditor?: () => void;
   onRefreshAllData?: () => void;
   onActivityEditChange?: (isEditing: boolean) => void;
 };
 
 const TipTapActivity = ({
-  lessonId,
+  parentId,
   activity,
   isNewActivity = false,
   isAnyActivityBeingEdited = false,
+  parent,
   onCloseTipTapEditor,
   onRefreshAllData,
   onActivityEditChange,
@@ -86,7 +88,7 @@ const TipTapActivity = ({
     // save as file
     const applyData = () => {
       toast.success(
-        `Activité ${isNewActivity ? "créée" : "modifiée"} avec succès`,
+        `Activité ${isNewActivity ? "créée" : "modifiée"} avec succès`
       );
       setShowModal(false);
       onCloseTipTapEditor?.();
@@ -98,15 +100,16 @@ const TipTapActivity = ({
 
     sendRequest(
       {
-        path: `/activity/text/${isNewActivity ? lessonId : activity?.id}`,
+        path: `/activity/text/${isNewActivity ? parentId : activity?.id}`,
         method: isNewActivity ? "post" : "put",
         body: {
           description: "description",
           value,
           title,
+          parent,
         },
       },
-      applyData,
+      applyData
     );
   };
 

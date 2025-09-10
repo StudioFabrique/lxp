@@ -2,13 +2,16 @@ import { LucidePlus } from "lucide-react";
 import { Link } from "react-router-dom";
 import type Lesson from "../../../utils/interfaces/lesson";
 import { useState } from "react";
+import Resource from "../../../utils/interfaces/resource";
 interface AddActivityButtonProps {
-  selectedLesson: Lesson;
+  parent?: "lesson" | "resource";
+  selectedLesson: Lesson | Resource; // Resource is equivalent to Lesson in the concept but serves a different purpose. Do not mistake with the resource type activity;
   onClickShowTipTapEditor: () => void;
   isDisabled?: boolean;
 }
 
 const ActivityCreationOptionsButtons = ({
+  parent = "lesson",
   selectedLesson,
   onClickShowTipTapEditor,
   isDisabled = false,
@@ -27,7 +30,11 @@ const ActivityCreationOptionsButtons = ({
           <button
             onClick={handleShowButtons}
             onKeyDown={handleShowButtons}
-            className={`btn ${isDisabled ? "cursor-not-allowed tooltip" : "btn-primary text-base-100"}`}
+            className={`btn ${
+              isDisabled
+                ? "cursor-not-allowed tooltip"
+                : "btn-primary text-base-100"
+            }`}
             type="button"
             data-tip="Une activité est déja en cours d'édition"
           >
@@ -47,26 +54,38 @@ const ActivityCreationOptionsButtons = ({
                 Texte
               </button>
               {/* <Link
-            to={`/admin/lesson/edit/${selectedLesson.id}?type=text`}
+            to={`/admin/${parent === "lesson"?"lesson":"resource"}/edit/${selectedLesson.id}?type=text`}
             className="btn btn-primary text-base-100"
           >
             Texte (Ancienne version)
           </Link> */}
               <Link
-                to={`/admin/lesson/edit/${selectedLesson.id}?type=video`}
-                className={`btn ${isDisabled ? "btn-disabled" : "btn-primary text-base-100"}`}
+                to={`/admin/${
+                  parent === "lesson" ? "lesson" : "resource"
+                }/edit/${selectedLesson.id}?type=video`}
+                className={`btn ${
+                  isDisabled ? "btn-disabled" : "btn-primary text-base-100"
+                }`}
               >
                 Vidéo
               </Link>
               <Link
-                to={`/admin/lesson/edit/${selectedLesson.id}?type=image`}
-                className={`btn ${isDisabled ? "btn-disabled" : "btn-primary text-base-100"}`}
+                to={`/admin/${
+                  parent === "lesson" ? "lesson" : "resource"
+                }/edit/${selectedLesson.id}?type=image`}
+                className={`btn ${
+                  isDisabled ? "btn-disabled" : "btn-primary text-base-100"
+                }`}
               >
                 Image
               </Link>
               <Link
-                to={`/admin/lesson/edit/${selectedLesson.id}?type=resource`}
-                className={`btn ${isDisabled ? "btn-disabled" : "btn-primary text-base-100"}`}
+                to={`/admin/${
+                  parent === "lesson" ? "lesson" : "resource"
+                }/edit/${selectedLesson.id}?type=resource`}
+                className={`btn ${
+                  isDisabled ? "btn-disabled" : "btn-primary text-base-100"
+                }`}
               >
                 Fichier
               </Link>

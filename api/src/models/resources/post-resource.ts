@@ -62,7 +62,7 @@ export default async function postResource(
 
   const tagsToAdd = [...existingTagIds, ...newlyCreatedTags];
 
-  await prisma.resource.create({
+  const createdResource = await prisma.resource.create({
     data: {
       title,
       description,
@@ -76,5 +76,9 @@ export default async function postResource(
       },
     },
   });
-  return { message: "Ressource créée avec succès", success: true };
+  return {
+    message: "Ressource créée avec succès",
+    success: true,
+    resource: createdResource,
+  };
 }
