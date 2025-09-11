@@ -54,18 +54,19 @@ model Admin {
 }
 
 model BonusActivity {
-  id          Int      @id @default(autoincrement())
-  title       String?
-  description String?
-  type        String
-  order       Int
-  url         String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  admin       Admin    @relation(fields: [adminId], references: [id], onDelete: SetDefault)
-  adminId     Int
-  resource    Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
-  resourceId  Int
+  id                      Int                     @id @default(autoincrement())
+  title                   String?
+  description             String?
+  type                    String
+  order                   Int
+  url                     String
+  createdAt               DateTime                @default(now())
+  updatedAt               DateTime                @updatedAt
+  admin                   Admin                   @relation(fields: [adminId], references: [id], onDelete: SetDefault)
+  adminId                 Int
+  resource                Resource                @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  resourceId              Int
+  resourceBonusActivities ResourceBonusActivity[]
 }
 
 model BonusSkill {
@@ -367,6 +368,15 @@ model ResourceActivity {
   url        String
   activityId Int
   activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+}
+
+model ResourceBonusActivity {
+  id              Int           @id @default(autoincrement())
+  label           String
+  order           Int
+  url             String
+  bonusActivityId Int
+  bonusActivity   BonusActivity @relation(fields: [bonusActivityId], references: [id], onDelete: Cascade)
 }
 
 model Skill {
