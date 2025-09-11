@@ -6,7 +6,12 @@ async function getUsersByGroup(groupsIds: string[]) {
     (item: string) => new mongoose.Types.ObjectId(item)
   );
 
-  const group = await Group.find({ _id: { $in: ids } }).populate("users", {});
+  const group = await Group.find({ _id: { $in: ids } }).populate("users", {
+    _id: 1,
+    firstname: 1,
+    lastname: 1,
+    avatar: 1,
+  });
 
   if (!group) {
     const error = { message: "Groupe inexistant", statusCode: 404 };

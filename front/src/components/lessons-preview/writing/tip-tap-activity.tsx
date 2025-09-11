@@ -11,6 +11,7 @@ import useHttp from "../../../hooks/use-http";
 import { useAutosave } from "../../../hooks/use-autosave";
 import Modal from "../../UI/modal/modal";
 import TiptapEditor from "./tiptap-simple-editor/tiptap-editor";
+import { BonusActivity } from "../../../utils/interfaces/resource";
 import AutosaveIndicator from "./autosave-indicator";
 
 type Activity = {
@@ -20,20 +21,22 @@ type Activity = {
 };
 
 type TipTapActivityProps = {
-  lessonId: number;
+  parentId: number;
   activity?: Activity;
   isNewActivity?: boolean;
-  onCloseTipTapEditor?: () => void;
+  parent: "lesson" | "resource";
   onRefreshAllData?: () => void;
   onActivityEditChange?: (isEditing: boolean) => void;
+  onCloseTipTapEditor?: () => void;
   shouldStartEdit?: boolean;
   forceStopEdit?: boolean;
 };
 
 const TipTapActivity = ({
-  lessonId,
+  parentId,
   activity,
   isNewActivity = false,
+  parent,
   onCloseTipTapEditor,
   onRefreshAllData,
   onActivityEditChange,
@@ -125,14 +128,16 @@ const TipTapActivity = ({
   };
 
   useEffect(() => {
+    let timer: NodeJS.Timeout;
     // Add a small delay to ensure DOM is fully rendered before focusing
     if (showModal) {
-      setTimeout(() => {
+      timer = setTimeout(() => {
         if (titleInputRef.current) {
           titleInputRef.current.focus();
         }
       }, 100);
     }
+    return () => clearTimeout(timer);
   }, [showModal]);
 
   useEffect(() => {
@@ -141,21 +146,23 @@ const TipTapActivity = ({
 
   // wait 200ms, then scroll to bottom if activity is created
   useEffect(() => {
+    let timer: NodeJS.Timeout;
     if (isNewActivity && isEditingActivity) {
       console.log("scrolling");
-      setTimeout(() => {
+      timer = setTimeout(() => {
         window.scrollTo({
           top: document.body.scrollHeight,
           behavior: "smooth",
         });
       }, 200);
     }
+    return () => clearTimeout(timer);
   }, [isNewActivity, isEditingActivity]);
 
   const handleSubmitSave = (e: FormEvent) => {
     e.preventDefault();
     // save as file
-    const applyData = () => {
+    const applyData = (data: BonusActivity | Activity) => {
       toast.success(
         `Activité ${isNewActivity ? "créée" : "modifiée"} avec succès`
       );
@@ -201,17 +208,20 @@ const TipTapActivity = ({
 
     sendRequest(
       {
-        path: `/activity/text/${isNewActivity ? lessonId : activity?.id}`,
+        path: `/activity/text/${isNewActivity ? parentId : activity?.id}`,
         method: isNewActivity ? "post" : "put",
         body: {
           description: "description",
           value,
+          parent,
           title: title.trim(),
         },
       },
       applyData
     );
   };
+
+  console.log({ isEditingActivity, isAnyActivityBeingEdited, isNewActivity });
 
   return (
     <>

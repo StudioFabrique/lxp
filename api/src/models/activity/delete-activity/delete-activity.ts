@@ -2,27 +2,44 @@ import fs, { readdirSync } from "fs";
 import path from "path";
 
 import { prisma } from "../../../utils/db";
+import {
+  Activity,
+  BonusActivity,
+  ResourceActivity,
+  ResourceBonusActivity,
+} from "@prisma/client";
 
-export default async function deleteActivity(activityId: number, type: string) {
-  const existingActivity = await prisma.activity.findFirst({
-    where: { id: activityId },
-    select: {
-      type: true,
-      url: true,
-      resourceActivities: {
-        select: {
-          url: true,
-        },
+export default async function deleteActivity(
+  activityId: number,
+  type: string,
+  parent = "lesson"
+) {
+  let existingActivity: Activity | BonusActivity | null = null;
+
+  if (parent === "lesson")
+    existingActivity = await prisma.activity.findFirst({
+      where: { id: activityId },
+      include: {
+        resourceActivities: true,
       },
-    },
-  });
-
-  console.log({ type });
+    });
+  else
+    existingActivity = await prisma.bonusActivity.findFirst({
+      where: { id: activityId },
+      include: {
+        resourceBonusActivities: true,
+      },
+    });
 
   if (!existingActivity)
     throw { statusCode: 404, message: "L'activité n'existe pas" };
 
   await prisma.$transaction(async (tx) => {
+
+    parent === "lesson"
+      ? await tx.activity.delete({ where: { id: activityId } })
+      : await tx.bonusActivity.delete({ where: { id: activityId } });
+
     const activityToDelete = await tx.activity.findUnique({
       where: { id: activityId },
     });
@@ -113,17 +130,22 @@ export default async function deleteActivity(activityId: number, type: string) {
     }
 
     if (type === "resource") {
-      if (existingActivity.resourceActivities.length > 0) {
-        for (const resource of existingActivity.resourceActivities) {
-          await tx.mediatheque.updateMany({
-            where: { url: resource.url },
-            data: {
-              used: {
-                decrement: 1,
-              },
-            },
-          });
-        }
+      if (parent === "lesson") {
+        await updateMediatheque(
+          (
+            existingActivity as Activity & {
+              resourceActivities: ResourceActivity[];
+            }
+          ).resourceActivities
+        );
+      } else {
+        await updateMediatheque(
+          (
+            existingActivity as BonusActivity & {
+              resourceBonusActivities: ResourceBonusActivity[];
+            }
+          ).resourceBonusActivities
+        );
       }
       return;
     }
@@ -169,4 +191,19 @@ function extraireNomImage(url: string): string | null {
   const regex = /images\/(.*?)\./;
   const match = url.match(regex);
   return match ? match[1] : null;
+}
+
+async function updateMediatheque(
+  resource: ResourceActivity[] | ResourceBonusActivity[]
+) {
+  for (const res of resource) {
+    await prisma.mediatheque.updateMany({
+      where: { url: res.url },
+      data: {
+        used: {
+          decrement: 1,
+        },
+      },
+    });
+  }
 }
