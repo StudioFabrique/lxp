@@ -15,6 +15,8 @@ export default async function httpPutActivityText(req: Request, res: Response) {
     // Récupération des données à mettre à jour depuis le corps de la requête
     const { value, title, description, parent } = req.body;
 
+    console.log({ parent });
+
     // Appel au modèle pour effectuer la mise à jour
     const response = await updateText(+id, value, title, description, parent);
 

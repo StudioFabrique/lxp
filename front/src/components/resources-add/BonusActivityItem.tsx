@@ -5,9 +5,14 @@ import { EditIcon, TextInitial, Trash2, Video } from "lucide-react";
 type Props = {
   activity: BonusActivity;
   onDelete: Dispatch<SetStateAction<BonusActivity | null>>;
+  onEdit: Dispatch<SetStateAction<BonusActivity | null>>;
 };
 
-export default function BonusActivityItem({ activity, onDelete }: Props) {
+export default function BonusActivityItem({
+  activity,
+  onEdit,
+  onDelete,
+}: Props) {
   let icon: JSX.Element;
 
   const iconStyle = "w-4 h-4 text-primary";
@@ -38,11 +43,19 @@ export default function BonusActivityItem({ activity, onDelete }: Props) {
         {activity.title}
       </h3>
       <div className={style + " flex items-center gap-2"}>
-        <EditIcon className="w-4 h-4 text-primary" />
+        <button
+          className="cursor-pointer"
+          title="Éditer l'activité"
+          onClick={() => onEdit(activity)}
+          aria-label="Éditer l'activité"
+        >
+          <EditIcon className="w-4 h-4 text-primary" />
+        </button>
         <button
           className="cursor-pointer"
           onClick={() => onDelete(activity)}
           title="Supprimer l'activité"
+          aria-label="Supprimer l'activité"
         >
           <Trash2 className="w-4 h-4 text-error" />
         </button>
