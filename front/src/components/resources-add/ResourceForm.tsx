@@ -40,20 +40,23 @@ export default function ResourceForm({
   const [inputTag, setInputTag] = useState<string>("");
   const { handleFileChange } = useImageUpload(5000000, onSetFile);
 
+  const getSoftColor = () => {
+    // Plage entre 40 et 180 pour chaque composante
+    const min = 40,
+      max = 180;
+    const r = Math.floor(Math.random() * (max - min) + min);
+    const g = Math.floor(Math.random() * (max - min) + min);
+    const b = Math.floor(Math.random() * (max - min) + min);
+    return `rgb(${r}, ${g}, ${b})`;
+  };
+
   const style = tagError
     ? "input input-sm input-error focus:outline-none w-full"
     : "input input-sm focus:outline-none w-full";
 
   const handleSubmit = () => {
     // Génère une couleur RGB aléatoire
-    const color =
-      "rgb(" +
-      Math.floor(Math.random() * 256) +
-      "," +
-      Math.floor(Math.random() * 256) +
-      "," +
-      Math.floor(Math.random() * 256) +
-      ")";
+    const color = getSoftColor();
 
     const result = {
       name: inputTag,
