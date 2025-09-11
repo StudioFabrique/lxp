@@ -35,9 +35,23 @@ export default async function deleteActivity(
     throw { statusCode: 404, message: "L'activité n'existe pas" };
 
   await prisma.$transaction(async (tx) => {
+
     parent === "lesson"
       ? await tx.activity.delete({ where: { id: activityId } })
       : await tx.bonusActivity.delete({ where: { id: activityId } });
+
+    const activityToDelete = await tx.activity.findUnique({
+      where: { id: activityId },
+    });
+
+    if (!activityToDelete) {
+      console.log(`Activity ${activityId} already deleted, skipping...`);
+      return;
+    }
+
+    await tx.activity.delete({
+      where: { id: activityId },
+    });
 
     // Gestion des activités de type vidéo (fichier viédo ou lien externe)
     if (type === "video" && existingActivity.url.startsWith("https://")) return;

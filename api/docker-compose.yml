@@ -2,7 +2,7 @@ name: lxp-api
 
 networks:
   lxp_network:
-    external: true
+    driver: bridge
 
 volumes:
   pg:
