@@ -43,6 +43,7 @@ const TipTapActivity = ({
 }: TipTapActivityProps) => {
   const { sendRequest } = useHttp(true);
   const [showModal, setShowModal] = useState<boolean>(false);
+  console.log({ parent });
 
   const [isEditingActivity, setEditingActivity] =
     useState<boolean>(isNewActivity);
@@ -59,14 +60,16 @@ const TipTapActivity = ({
   };
 
   useEffect(() => {
+    let timer: NodeJS.Timeout;
     // Add a small delay to ensure DOM is fully rendered before focusing
     if (showModal) {
-      setTimeout(() => {
+      timer = setTimeout(() => {
         if (titleInputRef.current) {
           titleInputRef.current.focus();
         }
       }, 100);
     }
+    return () => clearTimeout(timer);
   }, [showModal]);
 
   useEffect(() => {
@@ -75,15 +78,17 @@ const TipTapActivity = ({
 
   // wait 200ms, then scroll to bottom if activity is created
   useEffect(() => {
+    let timer: NodeJS.Timeout;
     if (isNewActivity && isEditingActivity) {
       console.log("scrolling");
-      setTimeout(() => {
+      timer = setTimeout(() => {
         window.scrollTo({
           top: document.body.scrollHeight,
           behavior: "smooth",
         });
       }, 200);
     }
+    return () => clearTimeout(timer);
   }, [isNewActivity, isEditingActivity]);
 
   const handleSubmitSave = (e: FormEvent) => {
@@ -91,7 +96,9 @@ const TipTapActivity = ({
     // save as file
     const applyData = (data: BonusActivity | Activity) => {
       toast.success(
-        `Activité ${isNewActivity ? "créée" : "modifiée"} avec succès`
+        `Activité ${
+          isAnyActivityBeingEdited ? "créée" : "modifiée"
+        } avec succès`
       );
       setShowModal(false);
       onCloseTipTapEditor?.();
@@ -118,6 +125,8 @@ const TipTapActivity = ({
       applyData
     );
   };
+
+  console.log({ isEditingActivity, isAnyActivityBeingEdited, isNewActivity });
 
   return (
     <>
