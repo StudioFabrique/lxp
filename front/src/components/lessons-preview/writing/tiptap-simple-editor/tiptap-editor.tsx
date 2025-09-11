@@ -26,39 +26,51 @@ import "./index.scss";
 import "highlight.js/styles/github.css";
 
 import MenuBar from "./components/MenuBar";
-import { type Dispatch, type SetStateAction, useEffect, useRef } from "react";
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { LinkMenu } from "./components/LinkMenu";
 import Can from "../../../UI/can/can.component";
-import { Edit } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import CodeBlockWithCopy from "./extensions/CodeBlockWithCopy/CodeBlockWithCopy";
 import { ResizableImage } from "./extensions/ResizableImage";
 import SaveButton from "./components/SaveButton";
+import { TableBubbleMenu } from "./components/TableBubbleMenu";
+import { TableKeyboardShortcuts } from "./extensions/TableKeyboardShortcuts";
 
 const lowlight = createLowlight(all);
 
 type TiptapSimpleEditorProps = {
   editorRef: React.MutableRefObject<Editor | null>;
   initialValue?: string;
-  disableEditButton?: boolean;
   isEditingActivity: boolean;
   setEditingActivity: Dispatch<SetStateAction<boolean>>;
   onCloseEditor?: () => void;
   onSave?: () => void;
+  onContentChange?: (content: string) => void;
+  onDeleteActivity?: () => void;
 };
 
 export default function TiptapEditor({
   editorRef,
   initialValue,
-  disableEditButton,
   isEditingActivity,
   setEditingActivity,
   onCloseEditor,
   onSave,
+  onContentChange,
+  onDeleteActivity,
 }: TiptapSimpleEditorProps) {
   const handleCloseEditor = () => {
     onCloseEditor?.();
     setEditingActivity(false);
   };
+
+  const [isMenuBarSticky, setIsMenuBarSticky] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -74,9 +86,10 @@ export default function TiptapEditor({
       }),
       Table.configure({
         resizable: true,
-        // HTMLAttributes: {
-        //   class: "my-custom-class",
-        // },
+        HTMLAttributes: {
+          class: "tiptap-table",
+        },
+        allowTableNodeSelection: true,
       }),
       CodeBlockLowlight.extend({
         addNodeView() {
@@ -92,6 +105,7 @@ export default function TiptapEditor({
       FontFamily,
       Link,
       Youtube,
+      TableKeyboardShortcuts,
     ],
     content: initialValue,
     editable: isEditingActivity,
@@ -101,9 +115,15 @@ export default function TiptapEditor({
           "prose min-h-[12vh] m-1 w-[100%] max-w-[50%] py-5 focus:outline-none transition-all duration-200",
       },
     },
+    onUpdate: ({ editor }) => {
+      // Appelle onContentChange lors de la mise à jour du contenu
+      if (onContentChange && isEditingActivity) {
+        onContentChange(editor.getHTML());
+      }
+    },
   });
 
-  const menuContainerRef = useRef(null);
+  const menuContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (editor) {
@@ -118,21 +138,66 @@ export default function TiptapEditor({
     }
   }, [editor, isEditingActivity]);
 
+  // Effet pour mettre à jour le contenu de l'éditeur lorsque initialValue change
+  useEffect(() => {
+    if (
+      editor &&
+      initialValue !== undefined &&
+      editor.getHTML() !== initialValue
+    ) {
+      editor.commands.setContent(initialValue);
+    }
+  }, [editor, initialValue]);
+
+  // Effet pour détecter quand le composant sort de la vue et rendre la menu bar sticky
+  useEffect(() => {
+    if (!isEditingActivity || !menuContainerRef.current) return;
+
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          if (!menuContainerRef.current) return;
+
+          const containerRect =
+            menuContainerRef.current.getBoundingClientRect();
+          const containerTop = containerRect.top;
+
+          // Si le haut du composant est en dessous du haut de la fenêtre (donc hors de vue)
+          // alors rendre la menu bar sticky
+          setIsMenuBarSticky(containerTop < 0);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    // Vérifier immédiatement la position
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isEditingActivity]);
+  // Réinitialiser l'état sticky quand on quitte le mode édition
+  useEffect(() => {
+    if (!isEditingActivity) {
+      setIsMenuBarSticky(false);
+    }
+  }, [isEditingActivity]);
+
   return (
     <>
-      <div
-        className={`editor relative transition-all duration-700 hover:bg-primary/10 ${
-          isEditingActivity
-            ? "pb-5 pt-20 bg-primary/20 hover:bg-primary/20"
-            : ""
-        }`}
-        ref={menuContainerRef}
-      >
+      <div className={`editor relative`} ref={menuContainerRef}>
         {editor ? (
           <MenuBar
             shouldHide={!isEditingActivity}
             editor={editor}
             onCloseEditor={handleCloseEditor}
+            isSticky={isMenuBarSticky}
           />
         ) : null}
         <EditorContent
@@ -143,17 +208,18 @@ export default function TiptapEditor({
           editor={editor}
         />
 
-        <Can action="update" object="lesson">
-          <button
-            type="button"
-            className="btn btn-ghost absolute top-4 right-4 tooltip tooltip-left"
-            data-tip="Modifier l'activité"
-            onClick={() => setEditingActivity(true)}
-            disabled={disableEditButton}
-          >
-            <Edit className="w-5 h-5" />
-          </button>
-        </Can>
+        {onDeleteActivity && (
+          <Can action="delete" object="lesson">
+            <button
+              type="button"
+              className="btn btn-ghost absolute top-4 right-4 tooltip tooltip-left"
+              data-tip="Supprimer l'activité"
+              onClick={onDeleteActivity}
+            >
+              <Trash2 className="w-5 h-5 text-error" />
+            </button>
+          </Can>
+        )}
 
         {onSave &&
           isEditingActivity &&
@@ -163,6 +229,7 @@ export default function TiptapEditor({
           )}
       </div>
       {editor && <LinkMenu editor={editor} appendTo={menuContainerRef} />}
+      {editor && editor.isEditable && <TableBubbleMenu editor={editor} />}
     </>
   );
 }
