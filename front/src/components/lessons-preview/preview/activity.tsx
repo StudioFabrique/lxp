@@ -6,10 +6,11 @@ import { ACTIVITIES, ACTIVITIES_VIDEOS } from "../../../config/urls";
 import BaseReactPlayer from "react-player";
 import TipTapActivity from "../writing/tip-tap-activity";
 import { File } from "lucide-react";
+import { BonusActivity } from "../../../utils/interfaces/resource";
 
 type ActivityProps = {
   lessonId: number;
-  activity: Activity;
+  activity: Activity | BonusActivity;
   isAnyActivityBeingEdited?: boolean;
   onActivityEditChange?: (isEditing: boolean) => void;
 };
@@ -24,6 +25,8 @@ const ActivityPreview = ({
 }: ActivityProps) => {
   const [value, setValue] = useState<string>("");
   const [url, setUrl] = useState("");
+
+  const parent = "resourceId" in activity ? "resource" : "lesson";
 
   // case when a activity contains a set of pdf files
   const [pdfUrls, setPdfUrls] = useState<Resource[]>([]);
@@ -50,7 +53,7 @@ const ActivityPreview = ({
 
       setPdfUrls(resources);
     }
-  }, [activity.resourceActivities, activity.type]);
+  }, [activity, activity.type]);
 
   /**
    * récupère le contenu d'un fichier markdown depuis le serveur
@@ -80,7 +83,7 @@ const ActivityPreview = ({
               title: activity.title,
               content: value,
             }}
-            parent="lesson"
+            parent={parent}
             isAnyActivityBeingEdited={isAnyActivityBeingEdited}
             onActivityEditChange={onActivityEditChange}
           />

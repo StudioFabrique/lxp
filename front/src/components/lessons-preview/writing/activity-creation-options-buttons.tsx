@@ -8,6 +8,7 @@ interface AddActivityButtonProps {
   selectedLesson: Lesson | Resource; // Resource is equivalent to Lesson in the concept but serves a different purpose. Do not mistake with the resource type activity;
   onClickShowTipTapEditor: () => void;
   isDisabled?: boolean;
+  bgColor?: string;
 }
 
 const ActivityCreationOptionsButtons = ({
@@ -15,6 +16,7 @@ const ActivityCreationOptionsButtons = ({
   selectedLesson,
   onClickShowTipTapEditor,
   isDisabled = false,
+  bgColor = "bg-secondary/5",
 }: AddActivityButtonProps) => {
   const [showButtons, setShowButtons] = useState<boolean>(false);
 
@@ -24,7 +26,7 @@ const ActivityCreationOptionsButtons = ({
   };
 
   return (
-    <div className="bg-secondary/5 p-10 rounded-lg flex justify-center">
+    <div className={`${bgColor} p-10 rounded-lg flex justify-center`}>
       <div className="flex flex-col items-center w-fit">
         {!showButtons ? (
           <button

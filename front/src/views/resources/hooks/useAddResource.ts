@@ -34,6 +34,9 @@ export default function useAddResource() {
     useState<boolean>(false);
   const [activityToDelete, setActivityToDelete] =
     useState<BonusActivity | null>(null);
+  const [previewActivity, setPreviewActivity] = useState<BonusActivity | null>(
+    null
+  );
 
   useEffect(() => {
     if (error.length > 0) toast.error(error);
@@ -85,6 +88,7 @@ export default function useAddResource() {
         bonusActivities: [...prevResource.bonusActivities, newActivity],
       };
     });
+    setPreviewActivity(newActivity);
   };
 
   const handleDeleteActivity = () => {
@@ -106,6 +110,9 @@ export default function useAddResource() {
         }
         setActivityToDelete(null);
       }
+      setPreviewActivity(
+        resource!.bonusActivities[resource!.bonusActivities.length - 1] ?? null
+      );
     };
     sendRequest(
       {
@@ -148,5 +155,7 @@ export default function useAddResource() {
     handleDeleteActivity,
     activityToDelete,
     setActivityToDelete,
+    previewActivity,
+    setPreviewActivity,
   };
 }
