@@ -200,7 +200,7 @@ activityRouter.put(
 );
 
 activityRouter.delete(
-  "/:type/:activityId",
+  "/:type/:activityId/:parent",
   checkPermissions("lesson"),
   activityIdValidator,
   httpDeleteActivity

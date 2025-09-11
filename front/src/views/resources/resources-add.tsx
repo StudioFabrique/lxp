@@ -1,93 +1,35 @@
-import z from "zod";
 import ResourcesAddHeader from "../../components/resources-add/ResourcesAddHeader";
-import useForm from "../../components/UI/forms/hooks/use-form";
 import ListHeader from "../../components/UI/list-header";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
-import { useEffect, useState } from "react";
-import Tag from "../../utils/interfaces/tag";
-
-import useHttp from "../../hooks/use-http";
-import { regexGeneric } from "../../utils/constantes";
 import ResourceForm from "../../components/resources-add/ResourceForm";
-import toast from "react-hot-toast";
 import Can from "../../components/UI/can/can.component";
 import ActivityCreationOptionsButtons from "../../components/lessons-preview/writing/activity-creation-options-buttons";
 import TipTapActivity from "../../components/lessons-preview/writing/tip-tap-activity";
-import Resource from "../../utils/interfaces/resource";
-
-const schema = z.object({
-  title: z
-    .string({ required_error: "Le titre est requis." })
-    .regex(regexGeneric, {
-      message: "Le titre contient des caractères non autorisés.",
-    }),
-  description: z
-    .string({ required_error: "La description est requise." })
-    .regex(regexGeneric, {
-      message: "La description contient des caractères non autorisés.",
-    }),
-});
+import BonusActivityItem from "../../components/resources-add/BonusActivityItem";
+import useAddResource from "./hooks/useAddResource";
+import Modal from "../../components/UI/modal/modal";
 
 export default function ResourceAdd() {
-  const [file, setFile] = useState<File | null>(null);
-  const { errors, values, onChangeValue, onValidateForm } = useForm({}, schema);
-
-  const data = { values, errors, onChangeValue };
-  const { sendRequest, isLoading, error } = useHttp();
-
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [tagError, setTagError] = useState(false);
-  const [showTipTapEditor, setShowTipTapEditor] = useState<boolean>(false);
-  const [resource, setResource] = useState<Resource | null>(null);
-  const [isAnyActivityBeingEdited, setIsAnyActivityBeingEdited] =
-    useState<boolean>(false);
-
-  const handleClickShowTipTapEditor = () => {
-    setShowTipTapEditor(true);
-  };
-
-  const handleCloseTipTapEditor = () => {
-    setShowTipTapEditor(false);
-    setIsAnyActivityBeingEdited(false);
-  };
-
-  const handleSubmitForm = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!onValidateForm()) return;
-    const formData = new FormData();
-    const resource = {
-      ...data.values,
-      tags: tags.map((tag) => tag.name),
-    };
-
-    formData.append("data", JSON.stringify(resource));
-
-    if (file) formData.append("image", file);
-
-    const applyData = (data: {
-      success: boolean;
-      message: string;
-      resource: Resource;
-    }) => {
-      if (data.success) {
-        toast.success(data.message);
-        setResource(data.resource);
-      }
-      setTagError(false);
-    };
-    sendRequest(
-      {
-        path: "/resources",
-        method: "post",
-        body: formData,
-      },
-      applyData
-    );
-  };
-
-  useEffect(() => {
-    if (error.length > 0) toast.error(error);
-  }, [error]);
+  const {
+    setFile,
+    data,
+    isLoading,
+    tags,
+    setTags,
+    tagError,
+    setTagError,
+    showTipTapEditor,
+    resource,
+    isAnyActivityBeingEdited,
+    setIsAnyActivityBeingEdited,
+    handleClickShowTipTapEditor,
+    handleCloseTipTapEditor,
+    handleSubmitForm,
+    handleActivityCreated,
+    handleDeleteActivity,
+    activityToDelete,
+    setActivityToDelete,
+  } = useAddResource();
 
   return (
     <main className="min-h-screen w-full flex flex-col items-center">
@@ -110,7 +52,22 @@ export default function ResourceAdd() {
               </Wrapper>
             </article>
             <article>
-              <Wrapper>content</Wrapper>
+              <Wrapper>
+                {resource &&
+                resource.bonusActivities &&
+                resource.bonusActivities.length > 0 ? (
+                  <ul>
+                    {resource.bonusActivities.map((activity) => (
+                      <li key={activity.id} className="mb-2 w-full">
+                        <BonusActivityItem
+                          activity={activity}
+                          onDelete={setActivityToDelete}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </Wrapper>
             </article>
           </section>
           <section className="flex-1 flex flex-col gap-4">
@@ -124,6 +81,7 @@ export default function ResourceAdd() {
                   isAnyActivityBeingEdited={isAnyActivityBeingEdited}
                   onActivityEditChange={setIsAnyActivityBeingEdited}
                   parent="resource"
+                  onActivityCreated={handleActivityCreated}
                 />
               ) : resource ? (
                 <ActivityCreationOptionsButtons
@@ -135,6 +93,18 @@ export default function ResourceAdd() {
             </Can>
           </section>
         </div>
+        {activityToDelete ? (
+          <Modal
+            onLeftClick={() => setActivityToDelete(null)}
+            onRightClick={handleDeleteActivity}
+            title="Supprimer une activité"
+            isSubmitting={isLoading}
+            leftLabel="Annuler"
+            rightLabel="Confirmer"
+          >
+            Attention l'activité sera supprimée définitivement.
+          </Modal>
+        ) : null}
       </ListHeader>
     </main>
   );

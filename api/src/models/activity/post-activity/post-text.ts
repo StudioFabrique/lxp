@@ -13,8 +13,6 @@ export default async function postActivityText(
   value: string,
   parent: "lesson" | "resource"
 ) {
-  console.log({ parentId, userId, title, description, value, parent });
-
   let existingLesson: any = null;
   let existingResource: any = null;
 
@@ -71,7 +69,7 @@ export default async function postActivityText(
       data: {
         title,
         description,
-        order: existingLesson ? existingLesson.activities.length : 0,
+        order: existingLesson.activities.length,
         type: "text",
         lesson: {
           connect: { id: existingLesson!.id },
@@ -89,7 +87,7 @@ export default async function postActivityText(
       data: {
         title,
         description,
-        order: existingResource ? existingResource.bonusActivities.length : 0,
+        order: existingResource.bonusActivities.length,
         type: "text",
         resource: {
           connect: { id: existingResource!.id },
