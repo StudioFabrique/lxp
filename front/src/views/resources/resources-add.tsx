@@ -8,6 +8,8 @@ import TipTapActivity from "../../components/lessons-preview/writing/tip-tap-act
 import BonusActivityItem from "../../components/resources-add/BonusActivityItem";
 import useAddResource from "./hooks/useAddResource";
 import Modal from "../../components/UI/modal/modal";
+import ElementNotFound from "../../components/UI/element-not-found";
+import ActivityPreview from "../../components/lessons-preview/preview/activity";
 
 export default function ResourceAdd() {
   const {
@@ -29,6 +31,8 @@ export default function ResourceAdd() {
     handleDeleteActivity,
     activityToDelete,
     setActivityToDelete,
+    previewActivity,
+    setPreviewActivity,
   } = useAddResource();
 
   return (
@@ -62,11 +66,16 @@ export default function ResourceAdd() {
                         <BonusActivityItem
                           activity={activity}
                           onDelete={setActivityToDelete}
+                          onEdit={setPreviewActivity}
                         />
                       </li>
                     ))}
                   </ul>
-                ) : null}
+                ) : (
+                  <div className="text-xs">
+                    <ElementNotFound message="Aucune activité liée à cette ressource pour le moment. Vous pourrez en ajouter une fois que vous aurez enregistré la ressource." />
+                  </div>
+                )}
               </Wrapper>
             </article>
           </section>
@@ -75,7 +84,7 @@ export default function ResourceAdd() {
               {resource && showTipTapEditor ? (
                 <TipTapActivity
                   parentId={resource.id}
-                  isNewActivity
+                  isNewActivity={true}
                   onCloseTipTapEditor={handleCloseTipTapEditor}
                   onRefreshAllData={() => {}}
                   isAnyActivityBeingEdited={isAnyActivityBeingEdited}
@@ -84,12 +93,30 @@ export default function ResourceAdd() {
                   onActivityCreated={handleActivityCreated}
                 />
               ) : resource ? (
-                <ActivityCreationOptionsButtons
-                  onClickShowTipTapEditor={handleClickShowTipTapEditor}
-                  selectedLesson={resource!}
-                  isDisabled={isAnyActivityBeingEdited}
-                />
-              ) : null}
+                <>
+                  {previewActivity ? (
+                    <>
+                      <div className="flex justify-center text-primary capitalize">
+                        {previewActivity.title}
+                      </div>
+                      <ActivityPreview
+                        lessonId={resource.id ?? 0}
+                        activity={previewActivity}
+                        isAnyActivityBeingEdited={isAnyActivityBeingEdited}
+                        onActivityEditChange={setIsAnyActivityBeingEdited}
+                      />
+                    </>
+                  ) : null}
+                  <ActivityCreationOptionsButtons
+                    bgColor="bg-secondary/20"
+                    onClickShowTipTapEditor={handleClickShowTipTapEditor}
+                    selectedLesson={resource!}
+                    isDisabled={isAnyActivityBeingEdited}
+                  />
+                </>
+              ) : (
+                <ElementNotFound message="Enregistrez la ressource pour ajouter des activités bonus." />
+              )}
             </Can>
           </section>
         </div>
