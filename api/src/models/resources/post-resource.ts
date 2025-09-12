@@ -1,16 +1,7 @@
 import { mongo } from "mongoose";
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
-
-const getSoftColor = () => {
-  // Plage entre 40 et 180 pour chaque composante
-  const min = 40,
-    max = 180;
-  const r = Math.floor(Math.random() * (max - min) + min);
-  const g = Math.floor(Math.random() * (max - min) + min);
-  const b = Math.floor(Math.random() * (max - min) + min);
-  return `rgb(${r}, ${g}, ${b})`;
-};
+import { getSoftColor } from "../../helpers/getSoftColors";
 
 export default async function postResource(
   userId: string,
@@ -52,9 +43,11 @@ export default async function postResource(
     color: getSoftColor(),
   }));
 
-  await prisma.tag.createMany({
-    data: newTags,
-  });
+  if (newTags.length > 0) {
+    await prisma.tag.createMany({
+      data: newTags,
+    });
+  }
 
   const newlyCreatedTags = await prisma.tag.findMany({
     where: { name: { in: remainingTags } },

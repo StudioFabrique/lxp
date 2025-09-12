@@ -26,7 +26,6 @@ type TipTapActivityProps = {
   onActivityEditChange?: (isEditing: boolean) => void;
   shouldStartEdit?: boolean;
   forceStopEdit?: boolean;
-  onActivityCreated?: (newActivity: Activity) => void;
 };
 
 const TipTapActivity = ({
@@ -39,7 +38,6 @@ const TipTapActivity = ({
   onActivityEditChange,
   shouldStartEdit = false,
   forceStopEdit = false,
-  onActivityCreated,
 }: TipTapActivityProps) => {
   const { sendRequest } = useHttp(true);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -156,14 +154,13 @@ const TipTapActivity = ({
   const handleSubmitSave = (e: FormEvent) => {
     e.preventDefault();
     // save as file
-    const applyData = (data: Activity) => {
+    const applyData = () => {
       toast.success(
         `Activité ${isNewActivity ? "créée" : "modifiée"} avec succès`
       );
       // Nettoie l'autosave après sauvegarde réussie
       clearStorage();
       setShowModal(false);
-      if (parent === "resource") onActivityCreated?.(data);
 
       // Pour les nouvelles activités, fermer l'éditeur et rafraîchir
       if (isNewActivity) {
