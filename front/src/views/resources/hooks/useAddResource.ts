@@ -3,9 +3,10 @@ import useForm from "../../../components/UI/forms/hooks/use-form";
 import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
 import Tag from "../../../utils/interfaces/tag";
-import Resource, { BonusActivity } from "../../../utils/interfaces/resource";
 import { regexGeneric } from "../../../utils/constantes";
 import z from "zod";
+import { Activity } from "../../../utils/interfaces/activity";
+import Resource from "../../../utils/interfaces/resource";
 
 const schema = z.object({
   title: z
@@ -32,11 +33,10 @@ export default function useAddResource() {
   const [resource, setResource] = useState<Resource | null>(null);
   const [isAnyActivityBeingEdited, setIsAnyActivityBeingEdited] =
     useState<boolean>(false);
-  const [activityToDelete, setActivityToDelete] =
-    useState<BonusActivity | null>(null);
-  const [previewActivity, setPreviewActivity] = useState<BonusActivity | null>(
+  const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
     null
   );
+  const [previewActivity, setPreviewActivity] = useState<Activity | null>(null);
 
   useEffect(() => {
     if (error.length > 0) toast.error(error);
@@ -66,7 +66,7 @@ export default function useAddResource() {
     }) => {
       if (data.success) {
         toast.success(data.message);
-        setResource({ ...data.resource, bonusActivities: [] });
+        setResource({ ...data.resource, activities: [] });
       }
       setTagError(false);
     };
@@ -80,12 +80,12 @@ export default function useAddResource() {
     );
   };
 
-  const handleActivityCreated = (newActivity: BonusActivity) => {
+  const handleActivityCreated = (newActivity: Activity) => {
     setResource((prevResource) => {
       if (!prevResource) return prevResource;
       return {
         ...prevResource,
-        bonusActivities: [...prevResource.bonusActivities, newActivity],
+        activities: [...prevResource.activities, newActivity],
       };
     });
     setPreviewActivity(newActivity);
@@ -102,7 +102,7 @@ export default function useAddResource() {
             if (!prevResource) return prevResource;
             return {
               ...prevResource,
-              bonusActivities: prevResource.bonusActivities.filter(
+              bonusActivities: prevResource.activities.filter(
                 (a) => a.id !== activityToDelete!.id
               ),
             };
@@ -111,7 +111,7 @@ export default function useAddResource() {
         setActivityToDelete(null);
       }
       setPreviewActivity(
-        resource!.bonusActivities[resource!.bonusActivities.length - 1] ?? null
+        resource!.activities[resource!.activities.length - 1] ?? null
       );
     };
     sendRequest(
