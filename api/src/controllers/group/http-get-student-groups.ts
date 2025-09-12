@@ -8,8 +8,8 @@ import getStudentGroups from "../../models/group/get-student-groups";
  * @param next - Fonction suivante dans le middleware
  */
 export default async function httpGetStudentGroups(
-  _req: Request,
-  _res: Response,
+  req: Request,
+  res: Response,
   next: NextFunction
 ) {
   try {

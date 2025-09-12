@@ -10,7 +10,6 @@ const TagItem: FC<{ tag: Tag; noIcon?: boolean }> = ({
     "btn btn-sm px-4 py-1 font-bold rounded-lg flex border-none items-center gap-x-4 hover:brightness-125";
 
   if (noIcon) tagClass += " no-animation";
-  console.log({ tag });
 
   const tagStyle: React.CSSProperties = {
     backgroundColor: tag.color,
@@ -20,11 +19,7 @@ const TagItem: FC<{ tag: Tag; noIcon?: boolean }> = ({
 
   return (
     <div>
-      <button
-        className={tagClass}
-        type="button"
-        style={{ backgroundColor: tag.color }}
-      >
+      <button className={tagClass} type="button" style={tagStyle}>
         <p>{`#${tag.name}`}</p>
         {noIcon ? null : (
           <svg

@@ -4,7 +4,7 @@ import FieldArea from "../../../components/UI/forms/field-area";
 import FieldNumber from "../../../components/UI/forms/field-number";
 import useImageUpload from "../../../hooks/use-image-upload";
 import CustomError from "../../../utils/interfaces/custom-error";
-import FormUploadImage from "../../../components/UI/form-upload-image";
+import ModuleUploadImage from "./module-upload-image";
 
 type Props = {
   data: {
@@ -60,7 +60,7 @@ function ModuleMetadatas({ data, onSetFile }: Props) {
       {/* image du module */}
 
       <div className="w-full h-full flex gap-x-4 items-center">
-        <FormUploadImage onSetFile={handleFileChange} />
+        <ModuleUploadImage onSetFile={handleFileChange} />
         <span style={classImage} />
       </div>
     </article>
