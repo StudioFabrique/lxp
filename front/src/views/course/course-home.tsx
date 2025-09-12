@@ -33,7 +33,7 @@ const CourseHome = () => {
   }, [getCourses]);
 
   return (
-    <main className="min-h-screen w-full flex justify-center">
+    <main className="min-h-screen flex justify-center">
       {isLoading ? (
         <div className="flex items-center">
           <Loader />

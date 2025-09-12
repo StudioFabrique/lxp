@@ -19,7 +19,7 @@ import { deleteTempUploadedFile } from "../../middleware/fileUpload";
  */
 export default async function httpPostImage(
   req: CustomRequest,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) {
   try {

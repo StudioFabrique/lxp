@@ -43,11 +43,8 @@ export default async function getStudentGroups() {
     const group = groups.find(
       (item) => item._id.toString() === prismaGroup.idMdb
     );
-    console.log("STEP 1");
 
     if (group) {
-      console.log("STEP 2");
-
       returnedGroups = [
         ...returnedGroups,
         {

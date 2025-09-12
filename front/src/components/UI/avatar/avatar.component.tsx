@@ -4,6 +4,8 @@ import User from "../../../utils/interfaces/user";
 export const AvatarSmall: FC<{
   user: Partial<User> & { firstname: string; lastname: string };
 }> = ({ user }) => {
+  console.log(user);
+
   return (
     <>
       {!user.avatar || user.avatar === undefined || user.avatar === "" ? (

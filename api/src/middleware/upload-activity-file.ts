@@ -69,7 +69,7 @@ export const uploadActivityFiles = () => {
         }
         if (err.code === "LIMIT_FILE_COUNT") {
           return res.status(400).json({
-            message: "Trop de fichiers envoyés (maximum 10).",
+            message: "Trop de fichiers envoyés (maximum 10.",
           });
         }
         return res.status(400).json({
