@@ -4,9 +4,10 @@ import checkPermissions from "../../../middleware/check-permissions";
 import httpPostResource from "../../../controllers/resources/http-post-resource";
 import { uploadActivityImage } from "../../../middleware/upload-activity-image";
 import mediatheque from "../../../middleware/mediatheque";
-import { json } from "body-parser";
 import jsonParser from "../../../middleware/json-parser";
 import { postResourceValidator } from "./resources-validators";
+import httpGetResourceDetails from "../../../controllers/resources/http-get-resource-details";
+import httpPutResource from "../../../controllers/resources/http-put-resource";
 
 const resourcesRouter = Router();
 
@@ -24,6 +25,21 @@ resourcesRouter.post(
   jsonParser,
   postResourceValidator,
   httpPostResource
+);
+
+resourcesRouter.get(
+  "/:resourceId",
+  checkPermissions("lesson"),
+  httpGetResourceDetails
+);
+
+resourcesRouter.put(
+  "/:resourceId",
+  checkPermissions("lesson"),
+  uploadActivityImage(),
+  mediatheque("image"),
+  jsonParser,
+  httpPutResource
 );
 
 export default resourcesRouter;

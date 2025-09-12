@@ -3,9 +3,17 @@ import ResourcesHeader from "../../components/resources-home/ResourcesHeader";
 import ResourcesListCard from "../../components/resources-home/ResourcesListCard";
 import ListHeader from "../../components/UI/list-header";
 import ToggleList from "../../components/UI/toggle-list";
-import useResources from "./hooks/useResources";
+
 import ResourcesListTable from "../../components/resources-home/ResourcesListTable";
 import Pagination from "../../components/pagination";
+import usePagination from "../../hooks/use-pagination";
+
+export type ResourceListItem = {
+  id: string;
+  title: string;
+  author: string;
+  createdAt: string;
+};
 
 export default function ResourcesHome() {
   const [showList, setShowList] = useState(true);
@@ -14,13 +22,13 @@ export default function ResourcesHome() {
     page,
     totalPages,
     dataList,
-    perPage,
     stype,
     sdir,
     sortData,
     setPerPage,
     setPage,
-  } = useResources();
+    perPage,
+  } = usePagination("title", "/resources");
 
   const handleToggleList = (value: boolean) => {
     setShowList(value);

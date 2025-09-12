@@ -6,10 +6,10 @@ import Can from "../../components/UI/can/can.component";
 import ActivityCreationOptionsButtons from "../../components/lessons-preview/writing/activity-creation-options-buttons";
 import TipTapActivity from "../../components/lessons-preview/writing/tip-tap-activity";
 import BonusActivityItem from "../../components/resources-add/BonusActivityItem";
-import useAddResource from "./hooks/useAddResource";
 import Modal from "../../components/UI/modal/modal";
 import ElementNotFound from "../../components/UI/element-not-found";
 import ActivityPreview from "../../components/lessons-preview/preview/activity";
+import useResource from "./hooks/useResource";
 
 export default function ResourceAdd() {
   const {
@@ -27,13 +27,12 @@ export default function ResourceAdd() {
     handleClickShowTipTapEditor,
     handleCloseTipTapEditor,
     handleSubmitForm,
-    handleActivityCreated,
     handleDeleteActivity,
     activityToDelete,
     setActivityToDelete,
     previewActivity,
     setPreviewActivity,
-  } = useAddResource();
+  } = useResource();
 
   return (
     <main className="min-h-screen w-full flex flex-col items-center">
@@ -89,14 +88,10 @@ export default function ResourceAdd() {
                   onRefreshAllData={() => {}}
                   onActivityEditChange={setIsAnyActivityBeingEdited}
                   parent="resource"
-                  onActivityCreated={(newActivity) =>
-                    handleActivityCreated(newActivity)
-                  }
                 />
               ) : resource ? (
                 <>
                   <ActivityCreationOptionsButtons
-                    //bgColor="bg-secondary/20"
                     selectedLesson={resource}
                     onClickShowTipTapEditor={handleClickShowTipTapEditor}
                     isDisabled={isAnyActivityBeingEdited}
