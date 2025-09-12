@@ -9,20 +9,13 @@ export default async function httpPostActivityText(
   res: Response
 ) {
   try {
-    const { parentId } = req.params;
+    const { lessonId } = req.params;
     const userId = req.auth?.userId;
-    const { title, description, value, parent } = req.body;
+    const { title, description, value } = req.body;
 
     let response: any = {};
 
-    response = await postText(
-      +parentId,
-      userId!,
-      title,
-      description,
-      value,
-      parent
-    );
+    response = await postText(+lessonId, userId!, title, description, value);
     return res.status(201).json(response);
   } catch (error: any) {
     console.log({ error });

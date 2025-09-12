@@ -8,14 +8,10 @@ import httpPostBlogImage from "../../../controllers/activity/http-post-blog-imag
 // Middleware pour l'upload de vidéos
 import { uploadActivityVideo } from "../../../middleware/upload-activity-video";
 // Validateurs pour les leçons
-import {
-  lessonIdValidator,
-  parentIdValidator,
-} from "../lesson/lesson-validator";
+import { lessonIdValidator } from "../lesson/lesson-validator";
 // Validateurs pour les activités
 import {
   activityIdValidator,
-  idValidator,
   postVideoValidator,
   putReorderActivitiesValidator,
   putResourceValidator,
@@ -82,18 +78,18 @@ activityRouter.post(
 
 // Route pour créer une activité de type texte et l'associer à une leçon
 activityRouter.post(
-  "/text/:parentId",
+  "/text/:lessonId",
   checkPermissions("lesson"),
-  parentIdValidator,
+  lessonIdValidator,
   updateActivityValidator,
   httpPostActivityText
 );
 
 // Route pour mettre à jour une activité de type texte existante
 activityRouter.put(
-  "/text/:id",
+  "/text/:activityId",
   checkPermissions("lesson"),
-  idValidator,
+  activityIdValidator,
   updateActivityValidator,
   httpPutActivityText
 );
@@ -200,7 +196,7 @@ activityRouter.put(
 );
 
 activityRouter.delete(
-  "/:type/:activityId/:parent",
+  "/:type/:activityId",
   checkPermissions("lesson"),
   activityIdValidator,
   httpDeleteActivity
