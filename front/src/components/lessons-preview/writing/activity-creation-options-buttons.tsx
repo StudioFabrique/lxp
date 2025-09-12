@@ -2,23 +2,18 @@ import { LucidePlus } from "lucide-react";
 import { Link } from "react-router-dom";
 import type Lesson from "../../../utils/interfaces/lesson";
 import { useState } from "react";
-import Resource from "../../../utils/interfaces/resource";
 interface AddActivityButtonProps {
-  parent?: "lesson" | "resource";
-  selectedLesson: Lesson | Resource; // Resource is equivalent to Lesson in the concept but serves a different purpose. Do not mistake with the resource type activity;
   variant?: "no-activity" | "with-activity";
+  selectedLesson: Lesson;
   onClickShowTipTapEditor: () => void;
   isDisabled?: boolean;
-  bgColor?: string;
 }
 
 const ActivityCreationOptionsButtons = ({
-  parent = "lesson",
   variant = "with-activity",
   selectedLesson,
   onClickShowTipTapEditor,
   isDisabled = false,
-  bgColor = "bg-secondary/5",
 }: AddActivityButtonProps) => {
   const [showButtons, setShowButtons] = useState<boolean>(false);
 
@@ -70,16 +65,8 @@ const ActivityCreationOptionsButtons = ({
               >
                 Texte
               </button>
-              {/* <Link
-            to={`/admin/${parent === "lesson"?"lesson":"resource"}/edit/${selectedLesson.id}?type=text`}
-            className="btn btn-primary text-base-100"
-          >
-            Texte (Ancienne version)
-          </Link> */}
               <Link
-                to={`/admin/${
-                  parent === "lesson" ? "lesson" : "resource"
-                }/edit/${selectedLesson.id}?type=video`}
+                to={`/admin/lesson/edit/${selectedLesson.id}?type=video`}
                 className={`btn ${
                   isDisabled ? "btn-disabled" : "btn-primary text-base-100"
                 }`}
@@ -87,9 +74,7 @@ const ActivityCreationOptionsButtons = ({
                 Vidéo
               </Link>
               <Link
-                to={`/admin/${
-                  parent === "lesson" ? "lesson" : "resource"
-                }/edit/${selectedLesson.id}?type=image`}
+                to={`/admin/lesson/edit/${selectedLesson.id}?type=image`}
                 className={`btn ${
                   isDisabled ? "btn-disabled" : "btn-primary text-base-100"
                 }`}
@@ -97,9 +82,7 @@ const ActivityCreationOptionsButtons = ({
                 Image
               </Link>
               <Link
-                to={`/admin/${
-                  parent === "lesson" ? "lesson" : "resource"
-                }/edit/${selectedLesson.id}?type=resource`}
+                to={`/admin/lesson/edit/${selectedLesson.id}?type=resource`}
                 className={`btn ${
                   isDisabled ? "btn-disabled" : "btn-primary text-base-100"
                 }`}

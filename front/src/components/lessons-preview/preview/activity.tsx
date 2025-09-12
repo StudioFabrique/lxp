@@ -9,12 +9,10 @@ import VideoActivityEditing from "../writing/video-activity-editing";
 import ImageActivityEditing from "../writing/image-activity-editing";
 import ResourceActivityEditing from "../writing/resource-activity-editing";
 import { File } from "lucide-react";
-import { BonusActivity } from "../../../utils/interfaces/resource";
 
 type ActivityProps = {
   lessonId: number;
-  activity: Activity | BonusActivity;
-  isAnyActivityBeingEdited?: boolean;
+  activity: Activity;
   onActivityEditChange?: (isEditing: boolean) => void;
   onRefreshAllData?: () => void;
   shouldEdit?: boolean;
@@ -31,8 +29,6 @@ const ActivityPreview = ({
 }: ActivityProps) => {
   const [value, setValue] = useState<string>("");
   const [url, setUrl] = useState("");
-
-  const parent = "resourceId" in activity ? "resource" : "lesson";
 
   // case when a activity contains a set of pdf files
   const [pdfUrls, setPdfUrls] = useState<Resource[]>([]);
@@ -59,7 +55,7 @@ const ActivityPreview = ({
 
       setPdfUrls(resources);
     }
-  }, [activity, activity.type]);
+  }, [activity.resourceActivities, activity.type]);
 
   /**
    * récupère le contenu d'un fichier markdown depuis le serveur
@@ -92,7 +88,6 @@ const ActivityPreview = ({
         />
       ) : null;
     }
-  }
 
     // Pour les autres types, on affiche le contenu normal ou l'éditeur
     const renderEditingComponent = () => {

@@ -14,21 +14,16 @@ import deletaActivity from "../../models/activity/delete-activity/delete-activit
  */
 export default async function httpDeleteImage(
   req: Request,
-  _res: Response,
+  res: Response,
   next: NextFunction
 ) {
   try {
-    const { activityId, type, parent } = req.params;
+    const { activityId, type } = req.params;
 
-    console.log({ activityId, type, parent });
-
-    await deletaActivity(+activityId, type, parent);
+    await deletaActivity(+activityId, type);
     next({
       statusCode: 200,
-      data: {
-        success: true,
-        message: `L'activité de type ${type} a bien été supprimée.`,
-      },
+      data: { message: `L'activité de type ${type} a bien été supprimée.` },
     });
   } catch (error: any) {
     next({

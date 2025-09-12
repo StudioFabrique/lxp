@@ -6,16 +6,6 @@ import {
   videoUrlValidate,
 } from "../../../helpers/custom-validators";
 
-export const idValidator = [
-  param("id")
-    .notEmpty()
-    .withMessage("L'idientifiant de l'activité est requis.")
-    .isNumeric()
-    .isInt()
-    .withMessage("L'identifiant de l'activité doit être un nombre entier."),
-  checkValidatorResult,
-];
-
 export const activityIdValidator = [
   param("activityId")
     .notEmpty()
