@@ -15,11 +15,12 @@ export const regexMail =
 export const regexPassword =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-!@#\$%\^&\*])(?=.{8,})/;
 export const regexNumber = /^[0-9]*$/;
+
 export const regexGeneric =
-  /^[a-zA-Z0-9\s,.'\-+éÉàÀè?çîÎ!âÂôÔêÊûÛ:ùÙœŒ()']{1,}$/;
+  /^[a-zA-Z0-9\s,.'’‘"\-+éÉàÀè?çîÎ!âÂôÔêÊûÛ:ùÙœŒ()]{1,}$/;
 
 export const regexOptionalGeneric =
-  /^[a-zA-Z0-9\s,.'\-+éÉàÀè?çîÎ!âÂôÔêÊûÛ:ùÙœŒ()']{0,}$/;
+  /^[a-zA-Z0-9\s,.'’‘"\-+éÉàÀè?çîÎ!âÂôÔêÊûÛ:ùÙœŒ()]{0,}$/;
 
 export const regexStringManyMongoId = /^[a-f\d]{24}(,[a-f\d]{24})*$/;
 
