@@ -2,9 +2,10 @@ import { LucidePlus } from "lucide-react";
 import { Link } from "react-router-dom";
 import type Lesson from "../../../utils/interfaces/lesson";
 import { useState } from "react";
+import Resource from "../../../utils/interfaces/resource";
 interface AddActivityButtonProps {
   variant?: "no-activity" | "with-activity";
-  selectedLesson: Lesson;
+  selectedLesson: Lesson | Resource;
   onClickShowTipTapEditor: () => void;
   isDisabled?: boolean;
 }

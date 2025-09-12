@@ -4,14 +4,14 @@ type AutosaveData = {
   title: string;
   content: string;
   timestamp: number;
-  lessonId: number;
+  parentId: number;
   activityId?: number;
 };
 
 type UseAutosaveOptions = {
   title: string;
   content: string;
-  lessonId: number;
+  parentId: number;
   activityId?: number;
   delay?: number;
   isNewActivity?: boolean;
@@ -39,7 +39,7 @@ function debounce<T extends (...args: AutosaveData[]) => void>(
 export const useAutosave = ({
   title,
   content,
-  lessonId,
+  parentId,
   activityId,
   delay = 2000,
   isNewActivity = false,
@@ -52,10 +52,10 @@ export const useAutosave = ({
   // Génère une clé unique pour l'activité
   const getStorageKey = useCallback(() => {
     if (isNewActivity) {
-      return `autosave_new_activity_${lessonId}`;
+      return `autosave_new_activity_${parentId}`;
     }
-    return `autosave_activity_${activityId || "new"}_${lessonId}`;
-  }, [activityId, isNewActivity, lessonId]);
+    return `autosave_activity_${activityId || "new"}_${parentId}`;
+  }, [activityId, isNewActivity, parentId]);
 
   // Sauvegarde les données dans le localStorage
   const saveToStorage = (data: AutosaveData) => {
@@ -76,7 +76,7 @@ export const useAutosave = ({
         const data = JSON.parse(stored) as AutosaveData;
         // Vérifie que les données correspondent à la même leçon et activité
         if (
-          data.lessonId === lessonId &&
+          data.parentId === parentId &&
           (isNewActivity || data.activityId === activityId)
         ) {
           return data;
@@ -90,7 +90,7 @@ export const useAutosave = ({
       );
       return null;
     }
-  }, [getStorageKey, lessonId, activityId, isNewActivity]);
+  }, [getStorageKey, parentId, activityId, isNewActivity]);
 
   // Supprime les données du localStorage
   const clearStorage = () => {
@@ -180,13 +180,13 @@ export const useAutosave = ({
         title,
         content,
         timestamp: Date.now(),
-        lessonId,
+        parentId,
         activityId,
       };
 
       debouncedSave(autosaveData);
     }
-  }, [title, content, lessonId, activityId, debouncedSave]);
+  }, [title, content, parentId, activityId, debouncedSave]);
 
   // Nettoie le debounce lors du démontage du composant
   useEffect(() => {

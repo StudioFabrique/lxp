@@ -12,26 +12,26 @@ import { useAutosave } from "../../../hooks/use-autosave";
 import Modal from "../../UI/modal/modal";
 import TiptapEditor from "./tiptap-simple-editor/tiptap-editor";
 import AutosaveIndicator from "./autosave-indicator";
+import { Activity } from "../../../utils/interfaces/activity";
 
-type Activity = {
-  id: number;
-  content: string;
-  title?: string;
-};
+type ActivityWithContent = Activity & { content: string };
 
 type TipTapActivityProps = {
-  lessonId: number;
-  activity?: Activity;
+  parent?: "resource" | "lesson";
+  parentId: number;
+  activity?: ActivityWithContent;
   isNewActivity?: boolean;
   onCloseTipTapEditor?: () => void;
   onRefreshAllData?: () => void;
   onActivityEditChange?: (isEditing: boolean) => void;
   shouldStartEdit?: boolean;
   forceStopEdit?: boolean;
+  onActivityCreated?: (newActivity: Activity) => void;
 };
 
 const TipTapActivity = ({
-  lessonId,
+  parent = "lesson",
+  parentId,
   activity,
   isNewActivity = false,
   onCloseTipTapEditor,
@@ -39,6 +39,7 @@ const TipTapActivity = ({
   onActivityEditChange,
   shouldStartEdit = false,
   forceStopEdit = false,
+  onActivityCreated,
 }: TipTapActivityProps) => {
   const { sendRequest } = useHttp(true);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -61,7 +62,7 @@ const TipTapActivity = ({
     useAutosave({
       title,
       content: editorContent,
-      lessonId,
+      parentId,
       activityId: activity?.id,
       isNewActivity,
     });
@@ -155,13 +156,14 @@ const TipTapActivity = ({
   const handleSubmitSave = (e: FormEvent) => {
     e.preventDefault();
     // save as file
-    const applyData = () => {
+    const applyData = (data: Activity) => {
       toast.success(
         `Activité ${isNewActivity ? "créée" : "modifiée"} avec succès`
       );
       // Nettoie l'autosave après sauvegarde réussie
       clearStorage();
       setShowModal(false);
+      if (parent === "resource") onActivityCreated?.(data);
 
       // Pour les nouvelles activités, fermer l'éditeur et rafraîchir
       if (isNewActivity) {
@@ -198,15 +200,17 @@ const TipTapActivity = ({
     }
 
     const value = editorRef.current?.getHTML();
+    console.log({ isNewActivity, parent, parentId });
 
     sendRequest(
       {
-        path: `/activity/text/${isNewActivity ? lessonId : activity?.id}`,
+        path: `/activity/text/${isNewActivity ? parentId : activity?.id}`,
         method: isNewActivity ? "post" : "put",
         body: {
           description: "description",
           value,
           title: title.trim(),
+          parent,
         },
       },
       applyData

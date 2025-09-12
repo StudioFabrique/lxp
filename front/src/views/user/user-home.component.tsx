@@ -47,7 +47,7 @@ const UserHome = () => {
   } = useUser();
 
   console.log({ isDeleting });
-  console.log({ userToDelete });
+  console.log({ dataList });
 
   return (
     <main className="w-fit">
