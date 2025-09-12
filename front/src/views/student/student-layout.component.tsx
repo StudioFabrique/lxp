@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { PartyPopperIcon } from "lucide-react";
 import toTitleCase from "../../utils/toTitleCase";
 import PortalConfetti from "../../components/UI/portal/portal-confetti";
-//import useAuth from "../../hooks/use-auth";
+import useAuth from "../../hooks/use-auth";
 import { Context } from "../../store/context.store";
 
 // Composant de mise en page pour l'espace étudiant
@@ -18,7 +18,7 @@ const StudentLayout = () => {
   const [showConfetti, setShowConfetti] = useState(false);
 
   // Protection de la route avec le hook d'authentification
-  //useAuth("student");
+  useAuth("student");
 
   // Gestion des félicitations en temps réel via websocket
   useEffect(() => {

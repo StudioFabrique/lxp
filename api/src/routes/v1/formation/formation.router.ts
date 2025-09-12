@@ -49,13 +49,13 @@ export const validationModule = [
     .custom(stringValidateGeneric)
     .withMessage("Le titre du module contient des caractères invalides."),
   body("module.description")
+    .optional()
     .isString()
     .withMessage("La description du module doit être une chaîne de caractères.")
     .custom(stringValidateOptional)
     .withMessage(
       "La description du module contient des caractères non autorisés."
-    )
-    .optional(),
+    ),
 ];
 
 formationRouter.get("/", checkPermissions("formation"), httpGetFormation);
