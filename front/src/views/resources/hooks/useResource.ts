@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useForm from "../../../components/UI/forms/hooks/use-form";
 import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
@@ -7,6 +7,7 @@ import { regexGeneric } from "../../../utils/constantes";
 import z from "zod";
 import { Activity } from "../../../utils/interfaces/activity";
 import Resource from "../../../utils/interfaces/resource";
+import { useParams } from "react-router-dom";
 
 const schema = z.object({
   title: z
@@ -21,9 +22,13 @@ const schema = z.object({
     }),
 });
 
-export default function useAddResource() {
+export default function useResource() {
+  const { resourceId } = useParams();
   const [file, setFile] = useState<File | null>(null);
-  const { errors, values, onChangeValue, onValidateForm } = useForm({}, schema);
+  const { errors, values, onChangeValue, onValidateForm, initValues } = useForm(
+    {},
+    schema
+  );
   const data = { values, errors, onChangeValue };
   const { sendRequest, isLoading, error } = useHttp();
 
@@ -37,10 +42,6 @@ export default function useAddResource() {
     null
   );
   const [previewActivity, setPreviewActivity] = useState<Activity | null>(null);
-
-  useEffect(() => {
-    if (error.length > 0) toast.error(error);
-  }, [error]);
 
   const handleClickShowTipTapEditor = () => setShowTipTapEditor(true);
   const handleCloseTipTapEditor = () => {
@@ -72,8 +73,8 @@ export default function useAddResource() {
     };
     sendRequest(
       {
-        path: "/resources",
-        method: "post",
+        path: `/resources${resourceId ? `/${resourceId}` : ""}`,
+        method: resourceId ? "put" : "post",
         body: formData,
       },
       applyData
@@ -92,8 +93,6 @@ export default function useAddResource() {
   };
 
   const handleDeleteActivity = () => {
-    console.log({ activityToDelete });
-
     const applyData = (data: { success: boolean; message: string }) => {
       if (data.success) {
         toast.success(data.message);
@@ -124,6 +123,25 @@ export default function useAddResource() {
       applyData
     );
   };
+
+  const getDetails = useCallback(() => {
+    const applyData = (data: {
+      success: boolean;
+      resourceDetails: Resource;
+    }) => {
+      console.log("data", data);
+      setResource(data.resourceDetails);
+      setTags(data.resourceDetails.tags || []);
+      initValues(data.resourceDetails);
+    };
+    sendRequest({ path: `/resources/${resourceId}`, method: "get" }, applyData);
+  }, [sendRequest, resourceId, initValues]);
+
+  useEffect(() => {
+    console.log("useeffect triggered");
+
+    getDetails();
+  }, [getDetails]);
 
   useEffect(() => {
     if (error.length > 0) toast.error(error);
