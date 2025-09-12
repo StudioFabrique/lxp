@@ -58,10 +58,10 @@ export default function ResourceAdd() {
             <article>
               <Wrapper>
                 {resource &&
-                resource.bonusActivities &&
-                resource.bonusActivities.length > 0 ? (
+                resource.activities &&
+                resource.activities.length > 0 ? (
                   <ul>
-                    {resource.bonusActivities.map((activity) => (
+                    {resource.activities.map((activity) => (
                       <li key={activity.id} className="mb-2 w-full">
                         <BonusActivityItem
                           activity={activity}
@@ -87,13 +87,20 @@ export default function ResourceAdd() {
                   isNewActivity={true}
                   onCloseTipTapEditor={handleCloseTipTapEditor}
                   onRefreshAllData={() => {}}
-                  isAnyActivityBeingEdited={isAnyActivityBeingEdited}
                   onActivityEditChange={setIsAnyActivityBeingEdited}
                   parent="resource"
-                  onActivityCreated={handleActivityCreated}
+                  onActivityCreated={(newActivity) =>
+                    handleActivityCreated(newActivity)
+                  }
                 />
               ) : resource ? (
                 <>
+                  <ActivityCreationOptionsButtons
+                    //bgColor="bg-secondary/20"
+                    selectedLesson={resource}
+                    onClickShowTipTapEditor={handleClickShowTipTapEditor}
+                    isDisabled={isAnyActivityBeingEdited}
+                  />
                   {previewActivity ? (
                     <>
                       <div className="flex justify-center text-primary capitalize">
@@ -102,17 +109,10 @@ export default function ResourceAdd() {
                       <ActivityPreview
                         lessonId={resource.id ?? 0}
                         activity={previewActivity}
-                        isAnyActivityBeingEdited={isAnyActivityBeingEdited}
                         onActivityEditChange={setIsAnyActivityBeingEdited}
                       />
                     </>
                   ) : null}
-                  <ActivityCreationOptionsButtons
-                    bgColor="bg-secondary/20"
-                    onClickShowTipTapEditor={handleClickShowTipTapEditor}
-                    selectedLesson={resource!}
-                    isDisabled={isAnyActivityBeingEdited}
-                  />
                 </>
               ) : (
                 <ElementNotFound message="Enregistrez la ressource pour ajouter des activités bonus." />

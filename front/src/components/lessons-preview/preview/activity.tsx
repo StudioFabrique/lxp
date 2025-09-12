@@ -76,7 +76,7 @@ const ActivityPreview = ({
     if (activity.type === "text") {
       return value ? (
         <TipTapActivity
-          lessonId={lessonId}
+          parentId={lessonId}
           activity={{
             id: activity.id,
             title: activity.title,
