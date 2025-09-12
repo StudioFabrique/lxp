@@ -32,6 +32,7 @@ import evaluationRouter from "./evaluation/evaluation.router";
 import mediaRouter from "./mediatheque/mediatheque.router";
 import { uploadCompanyLogo } from "../../middleware/upload-company-image";
 import httpPostCompanyLogo from "../../controllers/http-post-company-logo";
+import resourcesRouter from "./resources/resources.router";
 import chatbotRouter from "./chatbot/chatbot.router";
 import checkToken from "../../middleware/check-token";
 
@@ -62,6 +63,7 @@ v1Router.use("/activity", activityRouter);
 v1Router.use("/stats", statsRouter);
 v1Router.use("/evaluation", evaluationRouter);
 v1Router.use("/media", mediaRouter);
+v1Router.use("/resources", resourcesRouter);
 
 /**
  * Routes de recherche dédié à elastic search :

@@ -11,7 +11,7 @@ type Props = {
  * @prop {function} onSetFile - fonction à appeler lorsque l'utilisateur a choisi un fichier
  */
 
-export default function ModuleUploadImage({ onSetFile }: Props) {
+export default function FormUploadImage({ onSetFile }: Props) {
   return (
     <input
       type="file"

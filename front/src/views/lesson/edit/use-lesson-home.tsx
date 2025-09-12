@@ -50,7 +50,7 @@ const useLessonHome = () => {
         method: "put",
         body: activitiesIds,
       },
-      applyData,
+      applyData
     );
   };
 
@@ -66,8 +66,11 @@ const useLessonHome = () => {
       getActivities();
     };
     sendRequest(
-      { path: `/activity/${activity.type}/${activityId}`, method: "delete" },
-      applyData,
+      {
+        path: `/activity/${activity.type}/${activityId}/lesson`,
+        method: "delete",
+      },
+      applyData
     );
   };
 
@@ -104,7 +107,7 @@ const useLessonHome = () => {
           type: data.type,
         },
       },
-      applyData,
+      applyData
     );
   };
 
@@ -121,7 +124,7 @@ const useLessonHome = () => {
         title: value.title,
         description: value.description ?? "",
         url: value.fileValue ? "" : value.videoValue,
-      }),
+      })
     );
     if (value.fileValue) {
       fd.append("video", value.fileValue);
@@ -141,7 +144,7 @@ const useLessonHome = () => {
         method: "post",
         body: fd,
       },
-      applyData,
+      applyData
     );
   };
 

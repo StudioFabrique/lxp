@@ -428,7 +428,7 @@ const LessonReader = ({
         <Can action="write" object="lesson">
           {showTipTapEditor ? (
             <TipTapActivityWriting
-              lessonId={selectedLesson.id}
+              parentId={selectedLesson.id}
               isNewActivity
               onCloseTipTapEditor={handleCloseTipTapEditor}
               onRefreshAllData={onRefreshAllData}
