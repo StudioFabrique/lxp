@@ -15,9 +15,9 @@ export default function ResourcesListCard({ resourcesList }: Props) {
           {resourcesList.map((resource) => (
             <span
               key={resource.id}
-              className="w-full border border-primary/50 rounded-md p-4 mb-4 h-[16rem] flex flex-col justify-between items-center hover:scale-[1.02] transition-transform cursor-pointer"
+              className="w-full border border-primary/50 rounded-md p-4 mb-4 h-[12rem] flex flex-col justify-between items-center hover:scale-[1.02] transition-transform cursor-pointer"
             >
-              <span className="flex flex-col">
+              <span className="flex items-center justify-center h-full">
                 <h3>{resource.title}</h3>
                 <div className="flex-1" />
               </span>
