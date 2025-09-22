@@ -42,7 +42,7 @@ export default function ResourcesHome() {
           <ToggleList showList={showList} onToggle={handleToggleList} />
         </article>
 
-        <section className="toto w-full">
+        <section className="w-full">
           {showList ? (
             <ResourcesListTable
               resourcesList={dataList}

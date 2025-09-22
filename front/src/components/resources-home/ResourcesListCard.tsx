@@ -1,7 +1,7 @@
 import { Edit, Trash2 } from "lucide-react";
-import { ResourceListItem } from "../../views/resources/hooks/useResources";
 import ElementNotFound from "../UI/element-not-found";
 import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
+import { ResourceListItem } from "../../views/resources/resources-home";
 
 type Props = {
   resourcesList: ResourceListItem[];
@@ -17,7 +17,7 @@ export default function ResourcesListCard({ resourcesList }: Props) {
               key={resource.id}
               className="w-full border border-primary/50 rounded-md p-4 mb-4 h-[12rem] flex flex-col justify-between items-center hover:scale-[1.02] transition-transform cursor-pointer"
             >
-              <span className="flex flex-col">
+              <span className="flex items-center justify-center h-full">
                 <h3>{resource.title}</h3>
                 <div className="flex-1" />
               </span>
