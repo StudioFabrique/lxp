@@ -23,7 +23,6 @@ pipeline {
             steps {
                 script {
                     echo "Building application..."
-                    sh 'npm cache clean --force'
                     sh 'npm run install'
                     sh 'npm run generate'
                     sh 'npm run deploy'
@@ -35,13 +34,6 @@ pipeline {
             steps {
                 sh 'npm -g i dotenv-cli'
                 sh 'mkdir api/uploads || true'
-                sh '''
-                    cd api
-                    npm cache clean --force
-                    rm -rf node_modules package-lock.json
-                    npm install
-                    
-                '''
                 sh 'npm run test'
             }  
             post {
