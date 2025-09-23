@@ -40,15 +40,21 @@ export default async function httpUpdateUser(req: Request, res: Response) {
     // Update user basic information
     const userResponse = await editUser(id, userDataRequest, roleId);
 
+    if (userResponse === null)
+      throw {
+        message: "La mise à jour de l'utilisateur a échoué.",
+        statusCode: 500,
+      };
+
     // Update user's associated data
     await editManyGraduations(
-      userResponse!.updatedUser._id,
+      userResponse!.updatedUser!._id,
       graduationsDataRequest
     );
 
-    await editManyLinks(userResponse!.updatedUser._id, linksDataRequest);
+    await editManyLinks(userResponse!.updatedUser!._id, linksDataRequest);
 
-    await editManyHobbies(userResponse!.updatedUser._id, hobbiesDataRequest);
+    await editManyHobbies(userResponse!.updatedUser!._id, hobbiesDataRequest);
 
     // Clean up uploaded file after processing
     if (uploadedFile) {

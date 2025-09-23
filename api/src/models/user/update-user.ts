@@ -1,6 +1,11 @@
 import User, { IUser } from "../../utils/interfaces/db/user";
 
 export default async function updateUser(_id: string, user: IUser) {
+  const existingUser = await User.findOne({ _id }).populate("roles");
+
+  if (!existingUser)
+    throw { message: "L'utilisateur n'existe pas.", statusCode: 404 };
+
   // isolate some properties of user to prevent security risk
   delete user._id;
   const {

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import { UserCheck } from "lucide-react";
+import { ShieldUser } from "lucide-react";
 import Can from "../../can/can.component";
 
 const Roles = ({ currentRoute }: { currentRoute: string[] }) => {
@@ -17,7 +17,7 @@ const Roles = ({ currentRoute }: { currentRoute: string[] }) => {
               data-tip="Roles et permissions"
             >
               <div className="flex hover justify-center items-center">
-                <UserCheck />
+                <ShieldUser />
                 <span
                   className={`absolute p-5 rounded-lg hover:bg-primary/50 ${
                     isCurrentPathActive && "bg-primary/50"
