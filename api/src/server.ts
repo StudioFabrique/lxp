@@ -7,7 +7,7 @@ import mongoConnect from "./utils/services/db/mongo-connect";
 import app from "./app";
 import { socket } from "./socket/socket";
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 7001;
 const HTTPS_ENABLED = process.env.HTTPS_ENABLED === "true";
 const MTLS_TO_FASTAPI = process.env.MTLS_TO_FASTAPI === "true";
 
