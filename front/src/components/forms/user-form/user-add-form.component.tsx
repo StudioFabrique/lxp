@@ -28,6 +28,8 @@ const UserAddForm: FC<{
   fieldsDisabled?: boolean;
   editMode?: boolean;
 }> = (props) => {
+  const styleEditMode = props.editMode ? "grid-cols-2" : "grid-cols-3";
+
   const [graduations, setGraduations] = useState<Array<Graduation>>([]);
 
   const [birthDate, setBirthDate] = useState<Date | null>(null);
@@ -96,7 +98,6 @@ const UserAddForm: FC<{
       toast.error(
         "Certains champs du formulaire sont manquants ou mal remplis."
       );
-
       return;
     } else if (!props.editMode && (!roleId || (roleId && roleId?.length < 1))) {
       toast.error("Veuillez choisir un rôle svp ...");
@@ -147,9 +148,10 @@ const UserAddForm: FC<{
         title={props.editMode ? "Modifier un utilisateur" : undefined}
         onSubmit={handleSubmit}
         disabled={props.fieldsDisabled}
+        isLoading={props.isLoading}
       />
       <div className="flex flex-col gap-y-5">
-        <div className="grid grid-cols-3 gap-x-5">
+        <div className={`grid gap-x-5 ${styleEditMode}`}>
           <Informations
             lastname={lastname}
             firstname={firstname}
@@ -168,25 +170,29 @@ const UserAddForm: FC<{
             disabled={props.fieldsDisabled}
           />
           <div className="grid grid-rows-1 gap-y-5">
-            <TypeUtilisateur
-              roleId={roleId}
-              sendEmail={sendEmail}
-              onSetSendEmail={setSendEmail}
-              onSetRoleId={setRoleId}
-              editMode={props.editMode}
-            />
-            <CentreInterets
-              hobbies={hobbies}
-              setHobbies={setHobbies}
+            {props.editMode ? null : (
+              <TypeUtilisateur
+                roleId={roleId}
+                sendEmail={sendEmail}
+                onSetSendEmail={setSendEmail}
+                onSetRoleId={setRoleId}
+                editMode={props.editMode}
+              />
+            )}
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-x-5">
+          <CentreInterets
+            hobbies={hobbies}
+            setHobbies={setHobbies}
+            disabled={props.fieldsDisabled}
+          />
+          <div className="col-span-2">
+            <Presentation
+              description={description}
               disabled={props.fieldsDisabled}
             />
           </div>
-        </div>
-        <div>
-          <Presentation
-            description={description}
-            disabled={props.fieldsDisabled}
-          />
         </div>
         <div className={`grid grid-cols-3 gap-x-5`}>
           <div className="col-span-2">

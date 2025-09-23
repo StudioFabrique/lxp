@@ -1,3 +1,4 @@
+import { Loader2 } from "lucide-react";
 import { FC } from "react";
 import { Link } from "react-router-dom";
 
@@ -5,7 +6,8 @@ const UserFormHeader: FC<{
   onSubmit: () => void;
   title?: string;
   disabled?: boolean;
-}> = ({ onSubmit, title, disabled }) => {
+  isLoading?: boolean;
+}> = ({ onSubmit, title, disabled, isLoading = false }) => {
   const handleClick = () => {
     onSubmit();
   };
@@ -24,10 +26,17 @@ const UserFormHeader: FC<{
         <button
           onClick={handleClick}
           type="button"
-          className="btn btn-primary md:w-32 normal-case"
-          disabled={disabled}
+          className="btn btn-primary normal-case"
+          disabled={disabled || isLoading}
         >
-          Sauvegarder
+          {isLoading ? (
+            <span className="flex items-center gap-x-2">
+              <Loader2 className="animate-spin mr-2 h-4 w-4" />
+              <p>Sauvegarde en cours...</p>
+            </span>
+          ) : (
+            "Sauvegarder"
+          )}
         </button>
       </div>
     </div>

@@ -20,7 +20,7 @@ const CentreInterets: FC<{
   const [currentHobbyValue, setCurrentHobbyValue] = useState("");
 
   const handleAddHobby: KeyboardEventHandler<HTMLInputElement> = (
-    event: KeyboardEvent<HTMLInputElement>,
+    event: KeyboardEvent<HTMLInputElement>
   ) => {
     if (
       event.code === "Enter" &&
@@ -38,7 +38,7 @@ const CentreInterets: FC<{
   };
 
   const handleChangeInput: ChangeEventHandler<HTMLInputElement> = (
-    event: ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement>
   ) => {
     setCurrentHobbyValue(event.currentTarget.value);
   };
@@ -46,7 +46,12 @@ const CentreInterets: FC<{
   return (
     <Wrapper>
       <div className="flex flex-col gap-y-2">
-        <p className="text-xl font-bold">Centre d'intérêts</p>
+        <label
+          htmlFor="hobby"
+          className="text-xl font-bold flex flex-col gap-y-2"
+        >
+          Centres d'intérêt
+        </label>
         <input
           onKeyDown={handleAddHobby}
           onChange={handleChangeInput}
@@ -54,7 +59,11 @@ const CentreInterets: FC<{
           className="input"
           value={currentHobbyValue}
           disabled={disabled}
+          name="hobby"
         />
+        <p className="text-xs text-info pl-1">
+          Appuyer sur Entrée pour ajouter un centre d'intérêt
+        </p>
       </div>
       <div className="flex gap-x-5 gap-y-2 flex-wrap overflow-y-auto">
         {hobbies.map((hobby) => (
