@@ -35,6 +35,13 @@ pipeline {
             steps {
                 sh 'npm -g i dotenv-cli'
                 sh 'mkdir api/uploads || true'
+                sh '''
+                    cd api
+                    npm cache clean --force
+                    rm -rf node_modules package-lock.json
+                    npm install
+                    
+                '''
                 sh 'npm run test'
             }  
             post {
