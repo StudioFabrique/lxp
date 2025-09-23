@@ -26,9 +26,10 @@ const TypeUtilisateur: FC<{
 
   return (
     <Wrapper>
-      <div className="flex justify-between">
+      <div className="flex justify-between h-fit items-center">
         <h2 className="font-bold text-xl">Type d'utilisateur</h2>
         <button
+          className="btn btn-accent btn-sm normal-case"
           type="button"
           onClick={() =>
             navigate("/admin/roles", { state: { from: pathname } })
@@ -38,7 +39,7 @@ const TypeUtilisateur: FC<{
         </button>
       </div>
 
-      <div className="flex flex-col gap-y-5 h-[15em]">
+      <div className="flex flex-col gap-y-5">
         {isLoading ? (
           <p>Chargement des roles...</p>
         ) : (
@@ -59,19 +60,22 @@ const TypeUtilisateur: FC<{
               ))}
             </div>
             {!editMode ? (
-              <label
-                className="flex place-items-center gap-x-2"
-                htmlFor="sendEmail"
-              >
-                <input
-                  className="checkbox checkbox-primary"
-                  type="checkbox"
-                  name="emailSent"
-                  checked={sendEmail}
-                  onChange={() => onSetSendEmail((prevState) => !prevState)}
-                />
-                Envoyer un mail d'invitation
-              </label>
+              <>
+                <div className="divider" />
+                <label
+                  className="flex place-items-center gap-x-2"
+                  htmlFor="sendEmail"
+                >
+                  <input
+                    className="checkbox checkbox-primary"
+                    type="checkbox"
+                    name="emailSent"
+                    checked={sendEmail}
+                    onChange={() => onSetSendEmail((prevState) => !prevState)}
+                  />
+                  Envoyer un mail d'invitation
+                </label>
+              </>
             ) : null}
           </div>
         )}
