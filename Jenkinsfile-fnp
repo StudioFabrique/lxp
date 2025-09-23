@@ -32,6 +32,7 @@ pipeline {
 
         stage('Tests backend') {
             steps {
+                sh 'npm cache clean --force'
                 sh 'npm -g i dotenv-cli'
                 sh 'mkdir api/uploads || true'
                 sh 'npm run test'
