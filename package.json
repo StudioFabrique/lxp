@@ -23,7 +23,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^8.2.2",
-    "jest-util": "^30.0.5"
+    "concurrently": "^8.2.2"
   }
 }

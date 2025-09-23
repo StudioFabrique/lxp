@@ -65,6 +65,7 @@
     "@types/supertest": "^2.0.12",
     "@types/uuid": "^9.0.7",
     "jest": "^30.0.5",
+    "jest-util": "^30.0.5",
     "pg": "^8.16.3",
     "prisma": "^5.1.0",
     "supertest": "^7.1.4",
