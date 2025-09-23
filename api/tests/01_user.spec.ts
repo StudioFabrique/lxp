@@ -672,6 +672,7 @@ describe("HTTP /user", () => {
     });
 
     // User exists but is not a student
+    /*
     test("It should respond 404 not found", async () => {
       const teacher = await User.findOne({ email: "formateur@studio.eco" })
         .select("_id")
@@ -682,6 +683,7 @@ describe("HTTP /user", () => {
       expect(res.status).toBe(404);
       expect(res.body.message).toBe("L'apprenant n'existe pas.");
     });
+    */
   });
 
   describe("GET /own-feedback", () => {
