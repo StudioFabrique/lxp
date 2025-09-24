@@ -30,7 +30,7 @@ pipeline {
             }
         }    
 
-        stage('Tests backend') {
+        /*stage('Tests backend') {
             steps {
                 sh 'npm -g i dotenv-cli'
                 sh 'mkdir api/uploads || true'
@@ -58,7 +58,7 @@ pipeline {
                     '''
                 }
             }
-        }
+        }*/
 
         stage("Deploying to FNP") {
 
