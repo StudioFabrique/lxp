@@ -18,11 +18,11 @@ const useTags = (initialTags: Tag[]) => {
   const handleTagSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     const exisitingTag = notSelected.find(
-      (item) => item.name.toLowerCase() === tag.toLowerCase(),
+      (item) => item.name.toLowerCase() === tag.toLowerCase()
     );
     if (!exisitingTag) {
       const exisitingCurrentTag = currentTags.find(
-        (item) => item.name.toLowerCase() === tag.toLowerCase(),
+        (item) => item.name.toLowerCase() === tag.toLowerCase()
       );
       if (!exisitingCurrentTag) {
         setCurrentTags((prevState) => [
@@ -60,7 +60,7 @@ const useTags = (initialTags: Tag[]) => {
     let updatedTags = currentTags;
     newTags.forEach((item) => {
       updatedTags = updatedTags.filter(
-        (elem) => elem.name.toLowerCase() !== item.name.toLowerCase(),
+        (elem) => elem.name.toLowerCase() !== item.name.toLowerCase()
       );
     });
     return [...updatedTags, ...newTags];
@@ -70,7 +70,7 @@ const useTags = (initialTags: Tag[]) => {
     (ids: number[]) => {
       setCurrentTags(initialTags.filter((item) => ids.includes(item.id)));
     },
-    [initialTags],
+    [initialTags]
   );
 
   useEffect(() => {

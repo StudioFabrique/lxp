@@ -59,10 +59,11 @@ bonusSkillRouter.delete(
 bonusSkillRouter.put(
   "/",
   checkPermissions("bonusSkill"),
-  body("parcoursId")
+  body("skill").notEmpty(),
+  body("skill.id")
     .isNumeric()
     .notEmpty()
-    .withMessage("Identifiant de parcours absent"),
+    .withMessage("Identifiant de compétence absent"),
   body("skill.description")
     .isString()
     .notEmpty()
