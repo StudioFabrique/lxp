@@ -14,6 +14,7 @@
  *
  * @returns {Promise<void>} Resolves when user is successfully deleted
  */
+
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
 
@@ -35,7 +36,7 @@ export default async function deleteUser(userId: string, connectedId: string) {
   let prismaUser: any;
 
   // Handle admin users (rank <= 2) differently from regular users
-  if (userToDelete.roles.rank <= 2) {
+  if (userToDelete.roles[0].rank <= 2) {
     // Get admin from Prisma database
     prismaUser = await prisma.admin.findFirst({
       where: { idMdb: userId },
@@ -45,15 +46,14 @@ export default async function deleteUser(userId: string, connectedId: string) {
     //   throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
 
     // Delete from Prisma admin table
-    if (prismaUser) await prisma.admin.deleteMany({ where: { idMdb: userId } });
+    if (prismaUser) {
+      await prisma.admin.deleteMany({ where: { idMdb: userId } });
+    }
   } else {
     // Get student from Prisma database
     prismaUser = await prisma.student.findFirst({
       where: { idMdb: userId },
     });
-
-    // if (!prismaUser)
-    //   throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
 
     // Delete from Prisma student table
     if (prismaUser)

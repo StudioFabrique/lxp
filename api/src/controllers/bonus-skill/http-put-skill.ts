@@ -13,13 +13,17 @@ async function httpPutBonusSkill(req: Request, res: Response) {
 
   try {
     const { skill } = req.body;
-    console.log({ skill });
-
-    await putBonusSkill(skill);
+    const response = await putBonusSkill(skill);
     return res
       .status(201)
-      .json({ success: true, message: "La compétence a été mise à jour" });
+      .json({
+        success: true,
+        message: "La compétence a été mise à jour",
+        updatedSkill: response,
+      });
   } catch (error: any) {
+    console.log("ERROR :", error);
+
     return res.status(500).json({ success: false, message: error.message });
   }
 }
