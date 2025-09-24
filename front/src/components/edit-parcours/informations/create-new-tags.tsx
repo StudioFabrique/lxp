@@ -38,25 +38,49 @@ function CreateNewTag(props: Props) {
     resetTags,
   } = useTags(initialTags);
 
-  const handleSubmitNewTags = () => {
-    const tmpTags = handleCheckTags();
+  const handleSubmitNewTags = async () => {
+    try {
+      const tmpTags = handleCheckTags();
 
-    const applyData = (data: Tag[]) => {
-      dispatch(tagsAction.initTags([...initialTags, ...data]));
-      dispatch(tagsAction.addNewCurrentTags(data));
-      props.onSubmit(true);
-      handleCancel();
-    };
-    sendRequest(
-      {
-        path: "/tag",
-        method: "post",
-        body: {
-          tags: tmpTags.map((item) => ({ name: item.name, color: item.color })),
+      console.log("=== DEBUG CREATE TAGS ===");
+      console.log("Environment:", process.env.NODE_ENV);
+      console.log("Current tags:", currentTags);
+      console.log("Tmp tags:", tmpTags);
+      console.log("Initial tags:", initialTags);
+
+      if (!tmpTags || tmpTags.length === 0) {
+        console.error("Aucun tag à créer");
+        return;
+      }
+
+      const payload = {
+        tags: tmpTags.map((item) => {
+          console.log("Processing tag:", item);
+          return { name: item.name, color: item.color };
+        }),
+      };
+
+      console.log("Final payload:", payload);
+      console.log("=== END DEBUG ===");
+
+      const applyData = (data: Tag[]) => {
+        dispatch(tagsAction.initTags([...initialTags, ...data]));
+        dispatch(tagsAction.addNewCurrentTags(data));
+        props.onSubmit(true);
+        handleCancel();
+      };
+
+      sendRequest(
+        {
+          path: "/tag",
+          method: "post",
+          body: payload,
         },
-      },
-      applyData
-    );
+        applyData
+      );
+    } catch (error) {
+      console.error("Error in handleSubmitNewTags:", error);
+    }
   };
 
   return (
