@@ -45,6 +45,9 @@ const useTags = (initialTags: Tag[]) => {
 
   const handleCheckTags = () => {
     let tags = Array<Tag>();
+
+    console.log({ currentTags, initialTags });
+
     currentTags.forEach((item) => {
       if (!initialTags.find((elem) => elem.id === item.id))
         tags = [...tags, item];

@@ -7,8 +7,7 @@ const url =
 
 export const BASE_URL = url + "v1";
 
-export const DOWNLOAD_URL =
-  process.env.NODE_ENV === "development" ? url : "//localhost:5001";
+export const DOWNLOAD_URL = process.env.NODE_ENV === "development" ? url : "/";
 
 export const ACTIVITIES = url + "activities/";
 
