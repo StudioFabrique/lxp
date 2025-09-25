@@ -43,14 +43,18 @@ const useTags = (initialTags: Tag[]) => {
     setCurrentTags((prevState) => prevState.filter((item) => item.id !== id));
   };
 
-  const handleCheckTags = () => {
+  const handleCheckTags = useCallback(() => {
     let tags = Array<Tag>();
     currentTags.forEach((item) => {
-      if (!initialTags.find((elem) => elem.id === item.id))
+      if (
+        !initialTags.find(
+          (elem) => elem.name.toLowerCase() === item.name.toLowerCase()
+        )
+      )
         tags = [...tags, item];
     });
     return tags;
-  };
+  }, [currentTags, initialTags]);
 
   const resetTags = () => {
     setCurrentTags([]);

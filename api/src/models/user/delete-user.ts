@@ -35,46 +35,51 @@ export default async function deleteUser(userId: string, connectedId: string) {
 
   let prismaUser: any;
 
-  // Handle admin users (rank <= 2) differently from regular users
-  if (userToDelete.roles[0].rank <= 2) {
-    // Get admin from Prisma database
-    prismaUser = await prisma.admin.findFirst({
-      where: { idMdb: userId },
-    });
+  const transaction = await prisma.$transaction(async (tx) => {
+    // Handle admin users (rank <= 2) differently from regular users
+    if (userToDelete.roles[0].rank <= 2) {
+      // Get admin from Prisma database
+      prismaUser = await tx.admin.findFirst({
+        where: { idMdb: userId },
+      });
 
-    // if (!prismaUser)
-    //   throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
+      if (prismaUser) {
+        await tx.admin.deleteMany({ where: { idMdb: userId } });
+      }
 
-    // Delete from Prisma admin table
-    if (prismaUser) {
-      await prisma.admin.deleteMany({ where: { idMdb: userId } });
-    }
-  } else {
-    // Get student from Prisma database
-    prismaUser = await prisma.student.findFirst({
-      where: { idMdb: userId },
-    });
+      const prismaContact = await tx.contact.findFirst({
+        where: { idMdb: userId },
+      });
 
-    // Delete from Prisma student table
-    if (prismaUser)
-      await prisma.student.deleteMany({ where: { idMdb: userId } });
-  }
-
-  try {
-    // Delete user from MongoDB
-    await User.deleteOne().where({ _id: userId });
-  } catch (error) {
-    // If MongoDB deletion fails, restore the user in Prisma
-    if (userToDelete.roles.rank <= 2) {
-      await prisma.admin.create({ data: prismaUser });
+      if (prismaContact) {
+        try {
+          await tx.contact.deleteMany({ where: { idMdb: userId } });
+        } catch (error) {
+          throw {
+            statusCode: 500,
+            message:
+              "Une erreur est survenue lors de la suppression de la ressource pédagogique. Vérifiez qu'il ne soit pas lié à du contenu pédagogique.",
+          };
+        }
+      }
     } else {
-      await prisma.student.create({ data: prismaUser });
+      // Get student from Prisma database
+      prismaUser = await tx.student.findFirst({
+        where: { idMdb: userId },
+      });
+      // Delete from Prisma student table
+      if (prismaUser) await tx.student.deleteMany({ where: { idMdb: userId } });
     }
 
-    throw {
-      statusCode: 500,
-      message:
-        "Une erreur est survenue lors de la suppression de l'utilisateur.",
-    };
-  }
+    try {
+      // Delete user from MongoDB
+      await User.deleteOne().where({ _id: userId });
+    } catch (error) {
+      throw {
+        statusCode: 500,
+        message:
+          "Une erreur est survenue lors de la suppression de l'utilisateur.",
+      };
+    }
+  });
 }
