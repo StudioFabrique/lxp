@@ -3,10 +3,12 @@ import Role from "../../../utils/interfaces/role";
 import Can from "../../UI/can/can.component";
 import AddRoleDrawer from "./add-role-drawer.component";
 import AddUserToGroupDrawer from "./add-user-to-group-drawer.component";
+import User from "../../../utils/interfaces/user";
 
 type Props = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   itemsList: Array<any>;
+  userToUpdate?: User;
   roleTab: Role;
   onGroupRolesChange: (updatedRoles: Array<Role>) => void;
   onUpdateManyStatus: (value: string) => void;
@@ -14,6 +16,7 @@ type Props = {
 };
 
 const DropdownActionsUser: FC<Props> = ({
+  userToUpdate,
   itemsList,
   roleTab,
   onGroupRolesChange,
@@ -130,6 +133,7 @@ const DropdownActionsUser: FC<Props> = ({
       {roleTab ? (
         <>
           <AddRoleDrawer
+            userToUpdate={userToUpdate}
             roleTab={roleTab}
             onGroupRolesChange={onGroupRolesChange}
           />

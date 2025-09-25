@@ -23,6 +23,8 @@ async function httpUpdateUserRoles(
   res: Response,
   next: NextFunction
 ) {
+  console.log("HELLO UPDATE USER ROLES");
+
   try {
     // Validate request using express-validator
     const result = validationResult(req);
@@ -36,13 +38,12 @@ async function httpUpdateUserRoles(
     const { usersToUpdate, rolesId } = req.body;
 
     // Call service function to update user roles
-    const updatedUsers = await updateUserRoles(usersToUpdate, rolesId);
+    await updateUserRoles(usersToUpdate, rolesId);
 
     // Pass successful result to next middleware
     next({
       statusCode: 200,
       message: "Rôles des utilisateurs mis à jour avec succès.",
-      data: updatedUsers,
     });
   } catch (err: any) {
     // Handle errors and pass to error middleware

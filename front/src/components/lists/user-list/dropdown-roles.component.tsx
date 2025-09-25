@@ -24,14 +24,19 @@ import Role from "../../../utils/interfaces/role";
 import { hasRole } from "../../../utils/hasRole";
 import { DrawerContext } from "../../../store/drawer.store";
 import { Context } from "../../../store/context.store";
+import User from "../../../utils/interfaces/user";
 
 const DropDownRoles: FC<{
+  userToUpdate?: User;
   roleTab: Role;
   drawerId: string;
   onGroupRolesChange: (updatedRoles: Array<Role>) => void;
 }> = (props) => {
   // State to track selected roles for bulk assignment
   const [newRoles, setNewRoles] = useState<Array<Role>>([]);
+
+  console.log("NEW ROLES", newRoles);
+  console.log("ROLE TAB", props.userToUpdate?.roles);
 
   // Access global roles and drawer state from context
   const { roles } = useContext(Context);
@@ -84,7 +89,7 @@ const DropDownRoles: FC<{
             {/* Filter roles based on compatibility:
                 - Exclude system roles (everything)
                 - Exclude interface roles
-                - Group by rank (admin vs regular users) */}
+                - Group by rank (admin & teacher vs regular users) */}
             {role.role !== "everything" &&
             !role.role.startsWith("interface") &&
             ((role.rank > 2 && props.roleTab.rank > 2) ||

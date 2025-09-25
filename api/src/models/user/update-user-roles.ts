@@ -54,6 +54,10 @@ async function updateUserRoles(
     }
   }
 
+  for (const actualUser of actualUsers) {
+    console.log("ACTUAL USER ROLES", actualUser.roles);
+  }
+
   //  on met les rôles des apprenants à jour
   const bulkUpdate = usersToUpdate.map((student: string) => {
     return {
@@ -62,7 +66,7 @@ async function updateUserRoles(
           _id: student,
         },
         update: {
-          roles: roles,
+          roles,
         },
       },
     };
