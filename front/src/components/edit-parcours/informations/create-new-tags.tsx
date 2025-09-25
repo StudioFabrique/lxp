@@ -4,7 +4,7 @@ import useTags from "../../../hooks/use-tags";
 import TagsList from "../../formation-home/tags-list";
 import AddTag from "../../UI/add-tag";
 import Tag from "../../../utils/interfaces/tag";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import useHttp from "../../../hooks/use-http";
 import { tagsAction } from "../../../store/redux-toolkit/tags";
@@ -21,6 +21,8 @@ function CreateNewTag(props: Props) {
   const dispatch = useDispatch();
 
   const { sendRequest } = useHttp();
+
+  const [showNoTagMessage, setShowNoTagMessage] = useState(false);
 
   const handleCancel = () => {
     document.getElementById("create-tags")?.click();
@@ -45,11 +47,12 @@ function CreateNewTag(props: Props) {
       console.log("=== DEBUG CREATE TAGS ===");
       console.log("Environment:", process.env.NODE_ENV);
       console.log("Current tags:", currentTags);
-      console.log("Tmp tags:", tmpTags);
+      //console.log("Tmp tags:", tmpTags);
       console.log("Initial tags:", initialTags);
 
       if (!tmpTags || tmpTags.length === 0) {
         console.error("Aucun tag à créer");
+        setShowNoTagMessage(true);
         return;
       }
 
@@ -83,6 +86,11 @@ function CreateNewTag(props: Props) {
     }
   };
 
+  useEffect(() => {
+    const tmpTags = handleCheckTags();
+    setShowNoTagMessage(tmpTags.length === 0 && currentTags.length > 0);
+  }, [currentTags, handleCheckTags]);
+
   return (
     <RightSideDrawer id="create-tags" visible={false} title="Créer des tags">
       <Wrapper>
@@ -95,6 +103,11 @@ function CreateNewTag(props: Props) {
             onSubmit={handleTagSubmit}
           />
           <TagsList tagsList={currentTags} onRemove={handleRemoveTag} />
+          {showNoTagMessage && (
+            <p className="text-info text-xs pl-2">
+              Les tags saisis existent déjà.
+            </p>
+          )}
           <div className="flex justify-between items-center mt-4">
             <button
               className="btn btn-outline btn-primary"
@@ -102,7 +115,11 @@ function CreateNewTag(props: Props) {
             >
               Annuler
             </button>
-            <button className="btn btn-primary" onClick={handleSubmitNewTags}>
+            <button
+              className="btn btn-primary"
+              onClick={handleSubmitNewTags}
+              disabled={showNoTagMessage}
+            >
               Créer les nouveaux tags
             </button>
           </div>
