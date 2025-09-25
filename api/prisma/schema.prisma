@@ -134,8 +134,8 @@ model ContactsOnModule {
 model ContactsOnParcours {
   parcoursId Int
   contactId  Int
-  contact    Contact  @relation(fields: [contactId], references: [id])
-  parcours   Parcours @relation(fields: [parcoursId], references: [id])
+  contact    Contact  @relation(fields: [contactId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  parcours   Parcours @relation(fields: [parcoursId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   @@id([parcoursId, contactId])
 }

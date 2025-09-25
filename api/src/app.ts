@@ -37,6 +37,7 @@ app
             "https://www.youtube.com",
           ],
           childSrc: ["'self'", "youtube.com", "www.youtube.com"],
+          workerSrc: ["'self'", "blob:"],
         },
       },
       crossOriginEmbedderPolicy: false,

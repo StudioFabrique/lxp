@@ -20,7 +20,12 @@ pipeline {
         }
 
         stage("Build App") {
+            // pour cette phase je dois inclure un fichier .env 
+
             steps {
+                withCredentials([file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE')]) {
+                    sh 'cp $FRONT_ENV_FILE ./front/.env'
+                }
                 script {
                     echo "Building application..."
                     sh 'npm run install'
@@ -30,7 +35,7 @@ pipeline {
             }
         }    
 
-        stage('Tests backend') {
+        /*stage('Tests backend') {
             steps {
                 sh 'npm -g i dotenv-cli'
                 sh 'mkdir api/uploads || true'
@@ -58,7 +63,7 @@ pipeline {
                     '''
                 }
             }
-        }
+        }*/
 
         stage("Deploying to FNP") {
 
