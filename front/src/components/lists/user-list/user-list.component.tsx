@@ -146,22 +146,8 @@ const UserList: FC<{
                     </th>
                   </>
                 )}
-                {role.role == "everything" ? <th>Role</th> : null}
-                <th
-                  className="cursor-pointer"
-                  onClick={() => {
-                    onSorting("createdAt");
-                  }}
-                >
-                  <div className="flex items-center gap-x-2">
-                    <p>Ajouté le</p>
-                    <SortColumnIcon
-                      fieldSort={stype}
-                      column="createdAt"
-                      direction={sdir}
-                    />
-                  </div>
-                </th>
+
+                <th>Role(s)</th>
                 <th
                   className="cursor-pointer"
                   onClick={() => {

@@ -79,8 +79,13 @@ const UserItem: FC<{
         </>
       )}
 
-      {role.role == "everything" ? <td>{userItem.roles[0].label} </td> : null}
-      <td className="bg-transparent">{userItem.createdAt}</td>
+      <td>
+        {userItem.roles
+          .map((role: Role) =>
+            !role.role.startsWith("interface") ? role.label : null
+          )
+          .join(!role.role.startsWith("everything") ? ", " : "")}
+      </td>
       <td className="bg-transparent">
         {isLoading ? (
           <div className="flex justify-center items-center">
