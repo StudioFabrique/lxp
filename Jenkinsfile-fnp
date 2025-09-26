@@ -26,6 +26,7 @@ pipeline {
                 withCredentials([file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE')]) {
                     sh '''
                     ls -la ./front || true
+                    cat ./front/.env || true
                     '''
                 }
                 script {
