@@ -48,8 +48,7 @@ const LessonReader = ({
   children,
 }: PropsWithChildren<PreviewLessonProps>) => {
   const [showTipTapEditor, setShowTipTapEditor] = useState<boolean>(false);
-  const [isAnyActivityBeingEdited, setIsAnyActivityBeingEdited] =
-    useState<boolean>(false);
+
   const [editingActivityId, setEditingActivityId] = useState<number | null>(
     null
   );
@@ -241,12 +240,6 @@ const LessonReader = ({
     }
   }, [selectedLesson.activities, isReorderMode]);
 
-  // Gérer automatiquement isAnyActivityBeingEdited basé sur editingActivityId et showTipTapEditor
-  useEffect(() => {
-    const isEditing = editingActivityId !== null || showTipTapEditor;
-    setIsAnyActivityBeingEdited(isEditing);
-  }, [editingActivityId, showTipTapEditor]);
-
   const handleToggleReorderMode = () => {
     setIsReorderMode(!isReorderMode);
     if (!isReorderMode) {
@@ -420,7 +413,7 @@ const LessonReader = ({
               variant="no-activity"
               onClickShowTipTapEditor={handleClickShowTipTapEditor}
               selectedLesson={selectedLesson}
-              isDisabled={isAnyActivityBeingEdited}
+              isDisabled={Boolean(editingActivityId)}
             />
           </NoActivityPlaceholder>
         )}
@@ -432,13 +425,12 @@ const LessonReader = ({
               isNewActivity
               onCloseTipTapEditor={handleCloseTipTapEditor}
               onRefreshAllData={onRefreshAllData}
-              onActivityEditChange={setIsAnyActivityBeingEdited}
             />
           ) : isReorderMode || !lessonHasActivities ? null : (
             <ActivityCreationOptionsButtons
               onClickShowTipTapEditor={handleClickShowTipTapEditor}
               selectedLesson={selectedLesson}
-              isDisabled={isAnyActivityBeingEdited}
+              isDisabled={Boolean(editingActivityId)}
             />
           )}
         </Can>
