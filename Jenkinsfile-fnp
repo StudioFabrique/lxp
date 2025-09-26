@@ -24,6 +24,7 @@ pipeline {
 
             steps {
                 withCredentials([file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE')]) {
+                    sh 'chmod 755 ./front || mkdir -p ./front'
                     sh 'cp $FRONT_ENV_FILE ./front/.env'
                 }
                 script {
@@ -35,7 +36,7 @@ pipeline {
             }
         }    
 
-        /*stage('Tests backend') {
+        stage('Tests backend') {
             steps {
                 sh 'npm -g i dotenv-cli'
                 sh 'mkdir api/uploads || true'
@@ -63,7 +64,7 @@ pipeline {
                     '''
                 }
             }
-        }*/
+        }
 
         stage("Deploying to FNP") {
 
