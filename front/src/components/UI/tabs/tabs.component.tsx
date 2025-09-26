@@ -35,12 +35,18 @@ const Tabs: FC<{
       <span
         className={
           role.role === item.role
-            ? "tab tab-active font-bold capitalize text-xs" // Active tab styling
-            : "tab capitalize text-xs" // Inactive tab styling
+            ? "tab tab-active font-bold text-xs" // Remove capitalize from active
+            : "tab text-xs" // Remove capitalize from inactive
         }
+        style={{ textTransform: "capitalize" }} // Apply capitalize via inline style to the base text only
         onClick={() => onRoleSwitch(item)}
       >
-        {item.label}
+        <span style={{ textTransform: "capitalize" }}>
+          {item.label.split(" ").length === 1 ? item.label : item.label}
+        </span>
+        {item.label.split(" ").length === 1 && (
+          <span style={{ textTransform: "none" }}>(s)</span>
+        )}
       </span>
     );
   };
