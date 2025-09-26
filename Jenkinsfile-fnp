@@ -25,13 +25,7 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE')]) {
                     sh '''
-                        # Créer le dossier s'il n'existe pas, puis corriger les permissions
-                        mkdir -p ./front
-                        chmod 755 ./front
-                        
-                        # Copier le fichier et s'assurer qu'il a les bonnes permissions
-                        cp $FRONT_ENV_FILE ./front/.env
-                        chmod 644 ./front/.env
+                    ls -la ./front || true
                     '''
                 }
                 script {
