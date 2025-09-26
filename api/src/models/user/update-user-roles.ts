@@ -1,5 +1,6 @@
 import Role from "../../utils/interfaces/db/role";
 import User from "../../utils/interfaces/db/user";
+import { prisma } from "../../utils/db";
 
 /**
  * Updates roles for multiple users with proper authorization checks
@@ -40,6 +41,24 @@ async function updateUserRoles(
       };
     }
   }
+
+  if (roles.some((role) => role.rank == 2))
+    await prisma.contact.createMany({
+      data: actualUsers.map((user) => ({
+        idMdb: user._id.toString(),
+        name: `${user.firstname} ${user.lastname}`,
+        role: "équipe pédagogique",
+        email: user.email,
+      })),
+      skipDuplicates: true,
+    });
+  else
+    await prisma.contact.deleteMany({
+      where: {
+        idMdb: { in: actualUsers.map((user) => user._id.toString()) },
+        role: "équipe pédagogique",
+      },
+    });
 
   // Generate interface role names for additional role lookup
   const tmp = roles.map((role) => `interface:${role.role}`);
