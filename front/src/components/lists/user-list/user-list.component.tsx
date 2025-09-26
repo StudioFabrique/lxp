@@ -48,8 +48,6 @@ const UserList: FC<{
     onUncheckAll();
   }, [role, page, onUncheckAll]);
 
-  console.log({ userList });
-
   const content = useMemo(() => {
     return (
       <>
@@ -147,7 +145,7 @@ const UserList: FC<{
                   </>
                 )}
 
-                <th>Role(s)</th>
+                <th>Rôle(s)</th>
                 <th
                   className="cursor-pointer"
                   onClick={() => {
@@ -181,7 +179,7 @@ const UserList: FC<{
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="text-xs">
               {userList.map((item: any) => (
                 <TableRowWrapper key={item._id}>
                   <UserItem

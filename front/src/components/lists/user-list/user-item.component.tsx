@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Dispatch, FC } from "react";
+import { Dispatch, FC, useMemo } from "react";
 import { Link } from "react-router-dom";
 
 import Can from "../../UI/can/can.component";
@@ -36,6 +36,19 @@ const UserItem: FC<{
   const updateStatus = () => {
     onToggleStatus(userItem._id, userItem.isActive);
   };
+
+  const userRolesList: string = useMemo(() => {
+    let tmp: string = "";
+    for (let i = 0; i < userItem.roles.length; i++) {
+      if (userItem.roles[i].role.startsWith("interface:")) break;
+      if (i !== 0) tmp = `${tmp}, ${userItem.roles[i].label}`;
+      else
+        tmp = `${userItem.roles[i].label
+          .charAt(0)
+          .toUpperCase()}${userItem.roles[i].label.slice(1)}`;
+    }
+    return tmp;
+  }, [userItem.roles]);
 
   return (
     <>
@@ -80,11 +93,11 @@ const UserItem: FC<{
       )}
 
       <td>
-        {userItem.roles
-          .map((role: Role) =>
-            !role.role.startsWith("interface") ? role.label : null
-          )
-          .join(!role.role.startsWith("everything") ? ", " : "")}
+        {userRolesList && userRolesList.length > 0 ? (
+          <span className="tooltip tooltip-bottom">{userRolesList}</span>
+        ) : (
+          "ND"
+        )}
       </td>
       <td className="bg-transparent">
         {isLoading ? (
