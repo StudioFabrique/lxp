@@ -57,6 +57,7 @@ export default function UserRolesTabs(props: Props) {
             {!props.role ? null : (
               <Can action="update" object={props.role.role}>
                 <DropdownActionsUser
+                  userToUpdate={props.user ?? undefined}
                   itemsList={props.dataList}
                   roleTab={props.role}
                   onGroupRolesChange={props.handleGroupRolesChange}
