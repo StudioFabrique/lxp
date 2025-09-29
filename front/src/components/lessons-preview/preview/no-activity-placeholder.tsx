@@ -1,6 +1,6 @@
 import {
-  Baby,
-  Banana,
+  Rocket,
+  Star,
   Bed,
   BoomBox,
   Candy,
@@ -47,11 +47,11 @@ const NoActivityPlaceholder = ({ children }: PropsWithChildren) => {
       case 6:
         return <BoomBox className={iconClassName} />;
       case 7:
-        return <Baby className={iconClassName} />;
+        return <Rocket className={iconClassName} />;
       case 8:
         return <Gamepad2 className={iconClassName} />;
       case 9:
-        return <Banana className={iconClassName} />;
+        return <Star className={iconClassName} />;
       case 10:
         return <Candy className={iconClassName} />;
       case 11:

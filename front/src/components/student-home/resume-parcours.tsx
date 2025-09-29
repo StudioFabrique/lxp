@@ -28,7 +28,7 @@ const ResumeParcours = (/* { parcours }: ResumeParcoursProps */) => {
       {
         path: `/parcours/parcours-as-student`,
       },
-      applyData,
+      applyData
     );
   }, [sendRequest]);
 

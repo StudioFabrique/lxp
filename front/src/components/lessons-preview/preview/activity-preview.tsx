@@ -68,6 +68,19 @@ const ActivityPreview = ({
 
   const renderPreviewComponent = () => {
     switch (activity.type) {
+      case "text":
+        return (
+          <TipTapActivity
+            parentId={lessonId}
+            activity={{
+              ...activity,
+              content: value,
+            }}
+            onActivityEditChange={onActivityEditChange}
+            shouldStartEdit={shouldEdit}
+            forceStopEdit={forceStopEdit}
+          />
+        );
       case "video":
         return (
           <div className="flex flex-col items-center gap-2">
@@ -106,23 +119,7 @@ const ActivityPreview = ({
     }
   };
 
-  return (
-    <>
-      {activity.type === "text" && value && (
-        <TipTapActivity
-          parentId={lessonId}
-          activity={{
-            ...activity,
-            content: value,
-          }}
-          onActivityEditChange={onActivityEditChange}
-          shouldStartEdit={shouldEdit}
-          forceStopEdit={forceStopEdit}
-        />
-      )}
-      {renderPreviewComponent()}
-    </>
-  );
+  return <div className="mt-5">{renderPreviewComponent()}</div>;
 };
 
 export default ActivityPreview;

@@ -1,6 +1,5 @@
 import type { CSSProperties, PropsWithChildren } from "react";
 import type Course from "../../../utils/interfaces/course";
-import Wrapper from "../../UI/wrapper/wrapper.component";
 import CourseItem from "./course-item";
 import type Lesson from "../../../utils/interfaces/lesson";
 import Can from "../../UI/can/can.component";
@@ -59,7 +58,7 @@ const SidebarCoursesList = ({
   };
 
   return (
-    <Wrapper>
+    <div className="border-1 rounded-lg p-5 border-secondary/20">
       {/* En-tête avec le titre et l'indicateur de progression */}
       <Can action="component" object="progression">
         <div className="flex justify-between">
@@ -117,7 +116,7 @@ const SidebarCoursesList = ({
         )}
         {children[0]}
       </div>
-    </Wrapper>
+    </div>
   );
 };
 

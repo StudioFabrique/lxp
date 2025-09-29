@@ -6,6 +6,7 @@ import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
 import LessonRating from "../../../utils/interfaces/lesson-rating";
 import toast from "react-hot-toast";
+import { Activity } from "../../../utils/interfaces/activity";
 
 // Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
 const useLessonsPreview = () => {
@@ -17,7 +18,7 @@ const useLessonsPreview = () => {
     (Module & { parcours: string; parcoursId: number }) | null
   >(null);
   const [selectedLesson, setSelectedLesson] = useState<Lesson>();
-  const [selectedActivityId, setSelectedActivityId] = useState<number | null>(
+  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(
     null
   );
   const [lessonRating, setLessonRating] = useState<LessonRating>();
@@ -218,8 +219,8 @@ const useLessonsPreview = () => {
     );
   };
 
-  const handleSelectActivityId = (activityId: number) => {
-    setSelectedActivityId(activityId);
+  const handleSelectActivityId = (activity: Activity) => {
+    setSelectedActivity(activity);
   };
 
   const fetchData = useCallback(() => {
@@ -275,7 +276,8 @@ const useLessonsPreview = () => {
         lessonsRead: lessonInModule?.lessonsRead || [],
         order: lessonInModule?.order,
       });
-      setSelectedActivityId(data.activities?.[0]?.id || null);
+      console.log(lessonInModule?.activities);
+      setSelectedActivity(data?.activities?.[0]);
     };
 
     if (!selectedLesson?.id) return;
@@ -304,7 +306,7 @@ const useLessonsPreview = () => {
     fetchData,
     moduleData,
     selectedLesson,
-    selectedActivityId,
+    selectedActivity,
     lessonRating,
     isLoading,
     setModuleData,

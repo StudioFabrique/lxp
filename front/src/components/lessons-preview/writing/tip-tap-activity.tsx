@@ -255,7 +255,7 @@ const TipTapActivity = ({
         lastSaveTime={lastAutosaveTime}
       />
 
-      <div className="mt-4 w-[100%] bg-base-200 rounded-lg p-4">
+      <div className="w-[100%] bg-base-200 rounded-lg p-4">
         <TiptapEditor
           editorRef={editorRef}
           initialValue={editorContent || activity?.content}

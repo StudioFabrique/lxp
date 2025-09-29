@@ -1,11 +1,9 @@
 import { useState } from "react";
-import BellIcon from "./svg/bell-icon";
 import GroupIcon from "./svg/group-icon";
-import MagnifyIcon from "./svg/magnify-icon";
-import PlayIcon from "./svg/play-icon";
 import SearchModal from "../search-modal/search-modal";
 import Can from "./can/can.component";
 import { Link, useLocation } from "react-router-dom";
+import { PlayCircleIcon } from "lucide-react";
 
 type HeaderMenuProps = {
   hideResumeCourseButton?: boolean;
@@ -24,20 +22,6 @@ const HeaderMenu = ({
       <SearchModal isModalOpen={isModalOpen} setModalState={setModalState} />
       <div className="absolute flex justify-end w-full h-full p-5 px-10">
         <div className="flex flex-col gap-4 justify-between z-20">
-          <div className="flex justify-end gap-4">
-            <button
-              onClick={() => setModalState(true)}
-              className="btn btn-primary btn-sm text-base-100 py-1"
-            >
-              <MagnifyIcon />
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary btn-sm text-base-100 py-1"
-            >
-              <BellIcon />
-            </button>
-          </div>
           <span className="flex-1" />
           <div className="self-end flex flex-col gap-4">
             {/* <button type="button" className="btn btn-primary btn-sm py-1">
@@ -58,12 +42,12 @@ const HeaderMenu = ({
                 <button
                   onClick={onClickResume}
                   type="button"
-                  className="btn btn-primary  text-base-100 self-end"
+                  className="btn btn-primary text-base-100 gap-2 self-end"
                 >
                   <span className="w-5 h-5">
-                    <PlayIcon />
+                    <PlayCircleIcon />
                   </span>
-                  <p className="normal-case">Reprendre le cours</p>
+                  <p className="normal-case">Reprendre</p>
                 </button>
               </Can>
             )
