@@ -25,7 +25,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
       setImage(
         data.data.image
           ? `data:image/jpeg;base64,${data.data.image}`
-          : defaultImage,
+          : defaultImage
       );
     };
 
@@ -33,17 +33,21 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
       {
         path: `/modules/image/${lastLesson.lesson.course.module.id}`,
       },
-      applyData,
+      applyData
     );
   }, [lastLesson.lesson.course.module.id, sendRequest]);
 
   return (
     <div className="flex gap-2">
       <ImageHeader
-        imageUrl={isLoading ? "" : (image ?? "")}
-        title={`Leçon ${(lastLesson.lesson.order ?? 0) + 1}: ${lastLesson.lesson.title}`}
+        imageUrl={isLoading ? "" : image ?? ""}
+        title={`Leçon ${(lastLesson.lesson.order ?? 0) + 1}: ${
+          lastLesson.lesson.title
+        }`}
         titleIcon={<FileEditIcon className="stroke-white" />}
-        subTitle={`Cours ${(lastLesson.lesson.course.order ?? 0) + 1}: ${lastLesson.lesson.course.title}`}
+        subTitle={`Cours ${(lastLesson.lesson.course.order ?? 0) + 1}: ${
+          lastLesson.lesson.course.title
+        }`}
         subTitleIcon={
           <div className="text-white w-6">
             <CourseIcon />
@@ -72,7 +76,7 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
                           src={skill.badge}
                           alt="illustration badge"
                         />
-                      ),
+                      )
                   )}
             </div>
           </div>,

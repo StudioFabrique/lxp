@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import SubWrapper from "../../../UI/sub-wrapper/sub-wrapper.component";
 import Can from "../../../UI/can/can.component";
 import BookIcon from "../../../UI/svg/book-icon";
 import useHttp from "../../../../hooks/use-http";
@@ -30,7 +29,7 @@ const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
       {
         path: `/course/${moduleId}`,
       },
-      applyData,
+      applyData
     );
   }, [sendRequest, moduleId]);
 
@@ -43,19 +42,19 @@ const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
             lessonId: course.lessons.length > 0 ? course.lessons[0].id : null,
           }}
           key={course?.id}
-          className="flex justify-between items-center bg-secondary text-secondary-content p-4 rounded-lg"
+          className="flex justify-between items-center bg-primary hover:bg-primary/80 text-base-100 p-4 rounded-lg"
         >
-          <span className="w-14 h-14 flex-shrink-0">
+          <span className="w-12 h-12 flex-shrink-0">
             <BookIcon />
           </span>
           <div className="flex flex-col truncate w-full px-4">
             <span className="truncate">{`Cours ${i + 1}`}</span>
-            <span className="text-xl font-bold truncate">{course.title}</span>
+            <span className="text-sm font-bold truncate">{course.title}</span>
           </div>
           <Can action="update" object="course">
             <Link
               to={`/${currentRoute[0]}/course/edit/${course.id}`}
-              className="h-8 w-8 flex-shrink-0"
+              className="h-6 w-6 flex-shrink-0"
             >
               <EditIcon />
             </Link>
@@ -67,7 +66,7 @@ const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
     );
 
   return (
-    <SubWrapper>
+    <div className="flex flex-col gap-y-4 mt-5">
       <span className="flex justify-between">
         <h2 className="text-xl font-bold text-primary">Contenu du module</h2>
         <Can action="write" object="course">
@@ -80,8 +79,8 @@ const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
           </Link>
         </Can>
       </span>
-      <div className="flex flex-col gap-y-5">{contentsList}</div>
-    </SubWrapper>
+      <div className="flex flex-col gap-y-2">{contentsList}</div>
+    </div>
   );
 };
 

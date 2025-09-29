@@ -7,7 +7,11 @@ const ContenuDetailHeader: FC<{
   title?: string;
 }> = ({ imageModuleHeader, title }) => {
   const classImage: React.CSSProperties = {
-    backgroundImage: `url(${imageModuleHeader ? "data:image/jpeg;base64," + imageModuleHeader : defaultImage})`,
+    backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0)), ${
+      imageModuleHeader
+        ? "url('data:image/jpeg;base64," + imageModuleHeader + "')"
+        : `url(${defaultImage})`
+    }`,
     width: "100%",
     height: "12rem",
     backgroundSize: "cover",
@@ -19,7 +23,7 @@ const ContenuDetailHeader: FC<{
   return (
     <div>
       <div className="flex flex-col justify-end p-5" style={classImage}>
-        <p className="text-white text-xl font-bold">{title}</p>
+        <p className="text-base-100 text-xl font-bold">{title}</p>
       </div>
     </div>
   );

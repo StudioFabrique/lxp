@@ -2,7 +2,6 @@ import { Check, Ellipsis } from "lucide-react";
 import Lesson from "../../../utils/interfaces/lesson";
 import { Link } from "react-router-dom";
 import Can from "../../UI/can/can.component";
-import { motion } from "framer-motion";
 import { PropsWithChildren, useEffect, useRef } from "react";
 
 type LessonItemProps = {
@@ -57,19 +56,13 @@ const LessonItem = ({
         ref={lessonRef}
         onClick={handleBeginReadLesson}
         onKeyDown={handleBeginReadLesson}
-        className={`flex items-center justify-between gap-1 rounded-xl px-4 h-14 w-full cursor-pointer group ${
+        className={`flex items-center justify-between gap-1 rounded-xl px-4 h-10 w-full cursor-pointer group ${
           isLessonSelected
             ? "bg-accent text-accent-content hover:bg-accent/80"
-            : "bg-primary text-primary-content hover:bg-primary/80"
+            : "bg-primary text-base-100 hover:bg-primary/80"
         }`}
       >
-        <motion.span
-          className="flex gap-1 justify-between items-center min-w-0 w-full"
-          animate={{
-            x: isLessonSelected && !isLessonRead ? 10 : 0,
-          }}
-          transition={{ duration: 0.3 }}
-        >
+        <span className="flex gap-1 justify-between items-center min-w-0 w-full">
           <p className="max-h-14 truncate text-sm" data-tip={lesson.title}>
             {lesson.title}
           </p>
@@ -83,7 +76,7 @@ const LessonItem = ({
               <Ellipsis className="w-4 h-4" />
             </Link>
           </Can>
-        </motion.span>
+        </span>
 
         {/* Affiche une coche si la leçon est lue, ou une flèche sinon */}
         {isLessonRead && (

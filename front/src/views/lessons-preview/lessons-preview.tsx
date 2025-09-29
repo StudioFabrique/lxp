@@ -13,11 +13,18 @@ import Can from "../../components/UI/can/can.component";
 import CreateCourseItem from "../../components/lessons-preview/sidebar/create-course-item";
 import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 import ActivityList from "../../components/lessons-preview/sidebar/activity-list";
+import NoActivityPlaceholder from "../../components/lessons-preview/preview/no-activity-placeholder";
+import Header from "../../components/UI/header";
+import { Link } from "react-router-dom";
+import { PlusCircle } from "lucide-react";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
  */
 const LessonsPreview = () => {
+  // récupération de la premiere valeur de l'url pour déterminer le role de l'utilisateur connecté
+  const firstPathSegment = window.location.pathname.split("/")[1];
+
   // custom hook
   const {
     fetchData,
@@ -25,7 +32,7 @@ const LessonsPreview = () => {
     lessonRating,
     onCompleteLesson,
     selectedLesson,
-    selectedActivityId,
+    selectedActivity,
     onSelectActivityId,
     isLessonCompleted,
     setSelectedLesson,
@@ -42,7 +49,27 @@ const LessonsPreview = () => {
   } = useLessonsPreview();
 
   return (
-    <ViewWrapper>
+    <ViewWrapper className="flex flex-col gap-6">
+      {/* Header de la liste des groupes */}
+      <Header
+        title="Contenu du module"
+        description={
+          firstPathSegment === "student"
+            ? "Parcourir les leçons et les activités pour valider vos compétences"
+            : "Créer, modifier et supprimer des leçons et des activités"
+        }
+      >
+        <Can object="lesson" action="update">
+          <Link
+            className="btn btn-primary text-base-100"
+            to="/admin/lesson/add"
+          >
+            <PlusCircle />
+            Modifier le module
+          </Link>
+        </Can>
+      </Header>
+
       {!moduleData ? (
         <LessonsPreviewSkeleton />
       ) : (
@@ -92,7 +119,7 @@ const LessonsPreview = () => {
                   <ActivityList
                     key="activity-list"
                     activities={selectedLesson?.activities}
-                    selectedActivityId={selectedActivityId}
+                    selectedActivity={selectedActivity}
                     onSelectActivity={onSelectActivityId}
                   />,
                 ]}
@@ -106,36 +133,41 @@ const LessonsPreview = () => {
                 <ProgressBar courses={moduleData.courses} />
               </Can>,
               // * La prévisualisation de la leçon
-              <LessonReader
-                key="lesson-reader"
-                selectedLesson={selectedLesson as Lesson}
-                isLessonAlreadyCompleted
-                currentLessonRating={lessonRating?.rating}
-                onRateContent={onEditRateContent}
-                lessonHasActivities={selectedLessonHasActivities}
-                onRefreshAllData={fetchData}
-              >
-                {/* Bouton pour terminer la leçon afin d'afficher une modal */}
-                <Can action="component" object="progression">
-                  <FeedbacksButton
-                    className="btn btn-primary text-nowrap text-base-100"
-                    feedbackType="thumbUp"
-                    enableAnimationOnClick={!isLessonCompleted}
-                    disabled={showModal}
-                    onClick={
-                      isLessonCompleted
-                        ? onCompleteLesson
-                        : onToggleModalDisplaying
-                    }
-                  >
-                    {isLessonCompleted
-                      ? "Leçon Suivante"
-                      : "Marquer comme terminé"}
-                  </FeedbacksButton>
-                </Can>
+              selectedActivity ? (
+                <LessonReader
+                  key="lesson-reader"
+                  selectedLesson={selectedLesson as Lesson}
+                  selectedActivity={selectedActivity}
+                  isLessonAlreadyCompleted
+                  currentLessonRating={lessonRating?.rating}
+                  onRateContent={onEditRateContent}
+                  lessonHasActivities={selectedLessonHasActivities}
+                  onRefreshAllData={fetchData}
+                >
+                  {/* Bouton pour terminer la leçon afin d'afficher une modal */}
+                  <Can action="component" object="progression">
+                    <FeedbacksButton
+                      className="btn btn-primary text-nowrap text-base-100"
+                      feedbackType="thumbUp"
+                      enableAnimationOnClick={!isLessonCompleted}
+                      disabled={showModal}
+                      onClick={
+                        isLessonCompleted
+                          ? onCompleteLesson
+                          : onToggleModalDisplaying
+                      }
+                    >
+                      {isLessonCompleted
+                        ? "Leçon Suivante"
+                        : "Marquer comme terminé"}
+                    </FeedbacksButton>
+                  </Can>
 
-                {/* Le lecteur de leçons */}
-              </LessonReader>,
+                  {/* Le lecteur de leçons */}
+                </LessonReader>
+              ) : (
+                <NoActivityPlaceholder />
+              ),
 
               /* Dans le cas où aucune leçon n'est affiché,
               les informations complémentaires du cours sont affichés */

@@ -16,12 +16,12 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
 
   return (
     <Wrapper>
-      <div className="flex flex-col justify-between">
+      <div className="flex flex-col gap-5 justify-between">
+        <h2 className="text-2xl font-bold text-primary">
+          Votre avancement dans le parcours
+        </h2>
         <div className="flex gap-10 items-center">
-          <h2 className="text-2xl w-48 font-bold text-primary">
-            Votre avancement dans le parcours
-          </h2>
-          <div className="grid grid-cols-4 gap-10">
+          <div className="grid grid-cols-4 gap-5">
             {modules
               ?.filter((_x, i) => i < 4)
               .map((module) => {
@@ -38,39 +38,37 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
                                   lesson.lessonsRead[0].finishedAt
                                     ? 1
                                     : 0),
-                                0,
+                                0
                               ) / course.lessons.length
                             : 0),
-                        0,
+                        0
                       ) / module.courses.length
                     : 0) * 100;
 
                 return (
                   <div
-                    className="flex flex-col justify-center gap-2 items-center text-primary-content font-bold tooltip tooltip-bottom bg-primary rounded-xl p-4 py-6"
+                    className="flex flex-col justify-between gap-2 text-primary-content font-bold tooltip tooltip-bottom border-1 border-primary rounded-xl p-4 py-4 w-full"
                     data-tip={module.title}
                     key={module.id}
                   >
-                    <p
-                      className="radial-progress"
+                    <div className="flex items-center justify-between">
+                      <p className="w-[70%]">{module.title}</p>
+                      <p className="text-3xl text-primary">{`${Math.round(
+                        moduleProgress
+                      )} %`}</p>
+                    </div>
+
+                    <progress
+                      className="progress progress-primary w-full"
+                      value={Math.round(moduleProgress)}
+                      max="100"
                       style={radialStyle(moduleProgress)}
-                    >
-                      {`${Math.round(moduleProgress)} %`}
-                    </p>
-                    <p className="text-secondary-content">Module</p>
-                    <p className="truncate w-40 text-center">{module.title}</p>
+                    />
                   </div>
                 );
               })}
-            {/* modules with progress */}
           </div>
         </div>
-        {/* <div
-          onClick={() => navigate("statistiques")}
-          className="self-end w-10 stroke-primary"
-        >
-          <RightArrowIcon />
-        </div> */}
       </div>
     </Wrapper>
   );

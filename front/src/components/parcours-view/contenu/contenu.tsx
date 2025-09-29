@@ -16,7 +16,7 @@ const Contenu = ({ modules }: ContenuProps) => {
   const { id: parcoursId } = useParams();
 
   const [selectedModule, setSelectedModule] = useState<Module | null>(
-    modules ? modules[0] : null,
+    modules ? modules[0] : null
   );
 
   const contentsList =
@@ -54,7 +54,7 @@ const Contenu = ({ modules }: ContenuProps) => {
           </Can>
         </span>
         <div className="grid lg:grid-cols-2 gap-x-10 gap-y-5">
-          <div className="flex flex-col gap-y-5">{contentsList}</div>
+          <div className="flex flex-col gap-y-2">{contentsList}</div>
           {modules?.length > 0 && (
             <div className="flex flex-col gap-y-4">
               <ContenuDetailHeader
