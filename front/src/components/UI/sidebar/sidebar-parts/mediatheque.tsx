@@ -11,7 +11,7 @@ const Mediatheque = ({ currentRoute }: { currentRoute: string[] }) => {
       {/* Lien vers la page médiathèque */}
       <Link to={`/${currentRoute[0]}/mediatheque`}>
         {/* Tooltip qui apparaît au survol */}
-        <div className="tooltip tooltip-right w-6 h-6" data-tip="Mediatheque">
+        <div className="tooltip w-6 h-6" data-tip="Mediatheque">
           {/* Container pour l'icône et l'effet de survol */}
           <div className="flex hover justify-center items-center">
             {/* Icône de la médiathèque */}
