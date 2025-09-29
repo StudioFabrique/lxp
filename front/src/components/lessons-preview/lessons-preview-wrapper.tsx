@@ -33,7 +33,7 @@ const LessonsPreviewWrapper = ({
   };
 
   return (
-    <div className="px-8 p-4 w-full overflow-hidden">
+    <div className="w-full overflow-hidden">
       {header}
 
       <div className="mt-5 max-lg:flex max-lg:flex-col-reverse lg:grid lg:grid-cols-4 gap-5 w-full">
@@ -48,7 +48,9 @@ const LessonsPreviewWrapper = ({
           </motion.div>
         )}
         <div
-          className={`flex flex-col gap-5 ${isPanelClosed ? "lg:col-span-4" : "lg:col-span-3"}`}
+          className={`flex flex-col gap-5 ${
+            isPanelClosed ? "lg:col-span-4" : "lg:col-span-3"
+          }`}
         >
           <div className="flex items-center gap-5">
             <div

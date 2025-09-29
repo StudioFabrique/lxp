@@ -93,9 +93,6 @@ const TipTapActivity = ({
         setTitle(autosavedData.title);
         setEditorContent(autosavedData.content);
         setShowAutosaveIndicator(true);
-        toast("Contenu restauré depuis la sauvegarde automatique", {
-          duration: 3000,
-        });
       }
     }
   }, [isNewActivity, activity, restoreAutosavedContent]);
