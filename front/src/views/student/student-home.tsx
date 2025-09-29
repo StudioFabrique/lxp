@@ -10,6 +10,7 @@ import FeelingFeedback from "../../components/student-home/right-side/feeling-fe
 import StudentAccomplishments from "../../components/student-home/right-side/feedback-apprenant/student-accomplishments";
 import MostReadCourses from "../../components/student-home/right-side/most-read-courses";
 import { Context } from "../../store/context.store";
+import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 
 const StudentHome = () => {
   const { sendRequest } = useHttp();
@@ -26,7 +27,7 @@ const StudentHome = () => {
   }, [sendRequest]);
 
   return (
-    <div className="m-6 flex flex-col gap-6">
+    <ViewWrapper className="flex flex-col gap-6">
       <div className="flex w-full flex-col-reverse justify-between lg:flex-row">
         <span className="mt-5">
           <h1 className="text-3xl font-bold capitalize ">{`Bonjour, ${user?.firstname} ${user?.lastname} !`}</h1>
@@ -57,7 +58,7 @@ const StudentHome = () => {
           {/* <Chat /> */}
         </div>
       </div>
-    </div>
+    </ViewWrapper>
   );
 };
 
