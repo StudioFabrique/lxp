@@ -17,6 +17,9 @@ const useLessonsPreview = () => {
     (Module & { parcours: string; parcoursId: number }) | null
   >(null);
   const [selectedLesson, setSelectedLesson] = useState<Lesson>();
+  const [selectedActivityId, setSelectedActivityId] = useState<number | null>(
+    null
+  );
   const [lessonRating, setLessonRating] = useState<LessonRating>();
   const STORAGE_KEY = "lessons-preview-panel-closed";
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -28,7 +31,7 @@ const useLessonsPreview = () => {
   // Récupération de toutes les leçons à partir des cours du module
   const lessons = useMemo(
     () => moduleData?.courses.flatMap((course) => course.lessons) || [],
-    [moduleData?.courses],
+    [moduleData?.courses]
   );
 
   const selectedLessonHasActivities = selectedLesson
@@ -54,7 +57,7 @@ const useLessonsPreview = () => {
         method: "post",
       });
     },
-    [sendRequest],
+    [sendRequest]
   );
 
   const handleLessonSelection = useCallback(
@@ -72,7 +75,7 @@ const useLessonsPreview = () => {
         initiateLesson(lesson.id);
       }
     },
-    [initiateLesson, navigate],
+    [initiateLesson, navigate]
   );
 
   // Fonction pour passer à la leçon suivante
@@ -81,7 +84,7 @@ const useLessonsPreview = () => {
 
     if (selectedLesson && lessons.length > 0) {
       const currentIndex = lessons.findIndex(
-        (lesson) => lesson.id === selectedLesson.id,
+        (lesson) => lesson.id === selectedLesson.id
       );
       if (currentIndex !== -1 && currentIndex + 1 < lessons.length) {
         const nextLesson = lessons[currentIndex + 1];
@@ -126,7 +129,7 @@ const useLessonsPreview = () => {
 
     sendRequest(
       { path: `/lesson/read/${selectedLesson?.id}`, method: "put" },
-      applyData,
+      applyData
     );
 
     if (skipToNextLesson) {
@@ -144,7 +147,7 @@ const useLessonsPreview = () => {
     if (selectedLesson) {
       sendRequest(
         { path: `/lesson/rate/${selectedLesson.id}`, method: "get" },
-        applyData,
+        applyData
       );
     }
   }, [selectedLesson, sendRequest]);
@@ -162,7 +165,7 @@ const useLessonsPreview = () => {
           path: `/lesson/rate/${selectedLesson?.id}`,
           body: { rate: rating },
         },
-        applyData,
+        applyData
       );
   };
 
@@ -179,7 +182,7 @@ const useLessonsPreview = () => {
           path: `/lesson/rate/${selectedLesson?.id}`,
           body: { rate: rating },
         },
-        applyData,
+        applyData
       );
   };
 
@@ -196,7 +199,7 @@ const useLessonsPreview = () => {
         path: `/course/enable-course/${courseId}?visibility=${visibility}`,
         method: "put",
       },
-      applyData,
+      applyData
     );
   };
 
@@ -211,8 +214,12 @@ const useLessonsPreview = () => {
 
     await sendRequest(
       { path: `/course/delete-course/${courseId}`, method: "delete" },
-      applyData,
+      applyData
     );
+  };
+
+  const handleSelectActivityId = (activityId: number) => {
+    setSelectedActivityId(activityId);
   };
 
   const fetchData = useCallback(() => {
@@ -268,6 +275,7 @@ const useLessonsPreview = () => {
         lessonsRead: lessonInModule?.lessonsRead || [],
         order: lessonInModule?.order,
       });
+      setSelectedActivityId(data.activities?.[0]?.id || null);
     };
 
     if (!selectedLesson?.id) return;
@@ -282,10 +290,8 @@ const useLessonsPreview = () => {
   useEffect(() => {
     setIsLessonCompleted(
       Boolean(
-        selectedLesson?.lessonsRead?.some(
-          (lessonRead) => lessonRead.finishedAt,
-        ),
-      ),
+        selectedLesson?.lessonsRead?.some((lessonRead) => lessonRead.finishedAt)
+      )
     );
   }, [selectedLesson?.lessonsRead]);
 
@@ -298,6 +304,7 @@ const useLessonsPreview = () => {
     fetchData,
     moduleData,
     selectedLesson,
+    selectedActivityId,
     lessonRating,
     isLoading,
     setModuleData,
@@ -306,6 +313,7 @@ const useLessonsPreview = () => {
     isPanelClosed,
     selectedLessonHasActivities,
     setPanelClosed,
+    onSelectActivityId: handleSelectActivityId,
     onToggleModalDisplaying: handleToggleModalDisplaying,
     onClickModalRightButton: handleClickModalRightButton,
     setSelectedLesson: handleLessonSelection,

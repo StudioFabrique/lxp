@@ -15,6 +15,7 @@ type SidebarCoursesListProps = {
   setSelectedLesson: (lesson: Lesson | undefined) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
+  children: React.ReactNode[];
 };
 
 const SidebarCoursesList = ({
@@ -29,7 +30,7 @@ const SidebarCoursesList = ({
 }: PropsWithChildren<SidebarCoursesListProps>) => {
   // Filtre les cours qui ont des leçons
   const coursesWithLessons = courses.filter(
-    (course) => course.lessons.length > 0,
+    (course) => course.lessons.length > 0
   );
 
   // Calcule le pourcentage global de progression du module
@@ -43,11 +44,11 @@ const SidebarCoursesList = ({
               sum +
               (lesson?.lessonsRead?.filter((lesson) => lesson.finishedAt)
                 .length || 0),
-            0,
+            0
           ) / course.lessons.length,
-          1,
+          1
         ),
-      0,
+      0
     ) / coursesWithLessons.length;
 
   // Fonction utilitaire pour générer le style du cercle de progression
@@ -72,7 +73,7 @@ const SidebarCoursesList = ({
                 <span
                   className="radial-progress text-secondary self-end"
                   style={radialStyle(
-                    !Number.isNaN(moduleProgress) ? moduleProgress : 0,
+                    !Number.isNaN(moduleProgress) ? moduleProgress : 0
                   )}
                 >
                   <p>
@@ -104,6 +105,7 @@ const SidebarCoursesList = ({
               setSelectedLesson={setSelectedLesson}
               onDeleteCourse={onDeleteCourse}
               onEnableCourse={onEnableCourse}
+              children={children[1]}
             />
           ))
         ) : (
@@ -113,7 +115,7 @@ const SidebarCoursesList = ({
             </p>
           </Can>
         )}
-        {children}
+        {children[0]}
       </div>
     </Wrapper>
   );
