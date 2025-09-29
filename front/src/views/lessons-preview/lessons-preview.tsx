@@ -12,6 +12,7 @@ import LessonCompletionModal from "../../components/lessons-preview/lesson-compl
 import Can from "../../components/UI/can/can.component";
 import CreateCourseItem from "../../components/lessons-preview/sidebar/create-course-item";
 import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
+import ActivityList from "../../components/lessons-preview/sidebar/activity-list";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
@@ -24,6 +25,8 @@ const LessonsPreview = () => {
     lessonRating,
     onCompleteLesson,
     selectedLesson,
+    selectedActivityId,
+    onSelectActivityId,
     isLessonCompleted,
     setSelectedLesson,
     onRateContent,
@@ -77,14 +80,23 @@ const LessonsPreview = () => {
                 setSelectedLesson={setSelectedLesson}
                 onDeleteCourse={onDeleteCourse}
                 onEnableCourse={onEnableCourse}
-              >
-                <Can action="write" object="course">
-                  <CreateCourseItem
-                    parcoursId={moduleData.parcoursId}
-                    moduleId={moduleData.id ?? 0}
-                  />
-                </Can>
-              </SidebarCoursesList>,
+                children={[
+                  // Bouton pour créer un nouveau cours
+                  <Can key="create-course" action="write" object="course">
+                    <CreateCourseItem
+                      parcoursId={moduleData.parcoursId}
+                      moduleId={moduleData.id ?? 0}
+                    />
+                  </Can>,
+                  // Liste des activités
+                  <ActivityList
+                    key="activity-list"
+                    activities={selectedLesson?.activities}
+                    selectedActivityId={selectedActivityId}
+                    onSelectActivity={onSelectActivityId}
+                  />,
+                ]}
+              />,
               // * La barre de progression du cours
               <Can
                 key="top-progress-bar"

@@ -15,18 +15,11 @@ import ActivityCreationOptionsButtons from "../writing/activity-creation-options
 import TipTapActivityWriting from "../writing/tip-tap-activity";
 import { DndWrapper } from "../../UI/DndWrapper";
 import { useDragAndDrop } from "../../../hooks/useDragAndDrop";
-import {
-  LayoutGrid,
-  Check,
-  Text,
-  Youtube,
-  Image,
-  List,
-  FileSpreadsheet,
-} from "lucide-react";
+import { LayoutGrid, Check, List } from "lucide-react";
 import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
 import ActivityActionsMenu from "./activity-actions-menu";
+import activityIconType from "../../../utils/activity-icon-type";
 
 type PreviewLessonProps = {
   selectedLesson: Lesson;
@@ -64,21 +57,6 @@ const LessonReader = ({
   );
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const { sendRequest, error } = useHttp();
-
-  const activityIconType = (type: Activity["type"]) => {
-    switch (type) {
-      case "text":
-        return <Text className="w-5 h-5" />;
-      case "video":
-        return <Youtube className="w-5 h-5" />;
-      case "image":
-        return <Image className="w-5 h-5" />;
-      case "resource":
-        return <FileSpreadsheet className="w-5 h-5" />;
-      default:
-        return <FileSpreadsheet className="w-5 h-5" />;
-    }
-  };
 
   // Hook pour gérer le drag and drop
   const { handleDragEnd, submit, setSubmit } = useDragAndDrop({
