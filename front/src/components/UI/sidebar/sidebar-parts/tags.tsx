@@ -8,7 +8,7 @@ const Tags = ({ currentRoute }: { currentRoute: string[] }) => {
     <li>
       <Link
         to={`/${currentRoute[0]}/tags`}
-        className="tooltip tooltip-right w-6 h-6 z-10"
+        className="tooltip w-6 h-6 z-10"
         data-tip="Tags"
       >
         <div className="flex hover justify-center items-center">
