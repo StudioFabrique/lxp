@@ -19,6 +19,7 @@ import ImageHeader from "../../components/image-header";
 import Can from "../../components/UI/can/can.component";
 import { BookMarkedIcon, RocketIcon } from "lucide-react";
 import useParcoursView from "./hooks/use-parcours-view";
+import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 
 const ParcoursView = () => {
   const {
@@ -40,16 +41,16 @@ const ParcoursView = () => {
         module.courses?.some((course) =>
           course.lessons?.some(
             (lesson) =>
-              !lesson.lessonsRead?.length || !lesson.lessonsRead[0]?.finishedAt,
-          ),
-        ),
+              !lesson.lessonsRead?.length || !lesson.lessonsRead[0]?.finishedAt
+          )
+        )
       )?.id || modules[0].id;
 
     navigate(`/${currentRoute[0]}/parcours/module/${resumeModuleId}`);
   };
 
   return (
-    <div className="px-8 p-4">
+    <ViewWrapper>
       {isLoading ? (
         <Loader />
       ) : error.length === 0 ? (
@@ -107,7 +108,7 @@ const ParcoursView = () => {
       ) : (
         <Error404 />
       )}
-    </div>
+    </ViewWrapper>
   );
 };
 
