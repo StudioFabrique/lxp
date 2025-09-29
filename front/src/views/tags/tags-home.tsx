@@ -132,7 +132,7 @@ const TagsHome = () => {
           data,
           isLoading,
           Boolean(searchValue),
-          actionsConfig(onRefreshData),
+          actionsConfig(onRefreshData)
         )}
         checkboxConfig={checkboxConfig}
         sortConfig={{ sortProperty, isAscDirection, onSortProperty }}
@@ -148,7 +148,11 @@ const TagsHome = () => {
             actions={[
               {
                 title: "Supprimer les tags selectionnés",
-                description: `${idsList.length} ${idsList.length > 1 ? "tags vont être supprimés" : "tag va être supprimé"}`,
+                description: `${idsList.length} ${
+                  idsList.length > 1
+                    ? "tags vont être supprimés"
+                    : "tag va être supprimé"
+                }`,
                 rightButtonTitle: "Supprimer",
                 onConfirm: onDeleteSelectedTags,
               },

@@ -7,6 +7,7 @@ import { useLocation } from "react-router-dom";
 import Settings from "../../components/profile-home/settings";
 import Calendrier from "../../components/user-profile/calendrier";
 import ParcoursAccomplishment from "../../components/user-profile/parcours-accomplishment/parcours-accomplishment";
+import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 
 enum Tab {
   Info,
@@ -70,7 +71,7 @@ const Profile = () => {
   }, [state?.refreshId, state?.tab, state?.editMode]);
 
   return (
-    <div className="flex flex-col gap-5 p-10">
+    <ViewWrapper className="flex flex-col gap-6">
       <h2 className="font-bold text-xl">Mon profil</h2>
       <div className="flex flex-col xl:flex-row justify-between gap-5">
         <div className="flex flex-col lg:flex-row gap-5">
@@ -153,7 +154,7 @@ const Profile = () => {
           </button>
         </div>
       )}
-    </div>
+    </ViewWrapper>
   );
 };
 

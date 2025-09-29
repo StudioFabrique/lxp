@@ -11,6 +11,7 @@ import {
 } from "./role-table-config";
 import TableActionsButtons from "../../components/table/table-buttons/table-actions-buttons";
 import useRoleActions from "./hooks/use-role-actions";
+import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 // import { transformRolesCsv } from "../../utils/csv/csv-data-transform";
 // import CsvDownloaderWithRef from "../../components/UI/csv-downloader/csv-downloader-with-ref";
 // import { Ref, useRef } from "react";
@@ -43,7 +44,7 @@ const RolePage = () => {
       disablePagination: true,
       disableSort: true,
       invokeErrorToast: true,
-    },
+    }
   );
 
   // custom hook gestion checkbox
@@ -60,7 +61,7 @@ const RolePage = () => {
   // const csvRef: Ref<HTMLButtonElement> = useRef(null);
 
   return (
-    <div className="flex flex-col gap-y-5 p-10">
+    <ViewWrapper className="flex flex-col gap-6">
       {/* Header de la liste des rôles */}
       <Header
         title="Liste des rôles"
@@ -86,7 +87,7 @@ const RolePage = () => {
             data,
             isLoading,
             Boolean(searchValue),
-            actionsConfig(onRefreshData),
+            actionsConfig(onRefreshData)
           )}
           checkboxConfig={checkboxConfig}
           sortConfig={{ sortProperty, isAscDirection, onSortProperty }}
@@ -111,7 +112,11 @@ const RolePage = () => {
                  */
                 {
                   title: "Supprimer les rôles selectionnés",
-                  description: `${idsList.length} ${idsList.length > 1 ? "rôles vont être supprimés" : "rôle va être supprimé"}`,
+                  description: `${idsList.length} ${
+                    idsList.length > 1
+                      ? "rôles vont être supprimés"
+                      : "rôle va être supprimé"
+                  }`,
                   rightButtonTitle: "Confirmer",
                   alertMessageBottom:
                     "Attention: Cette opération ne peut pas être annulée",
@@ -128,7 +133,7 @@ const RolePage = () => {
 
         <RoleForm allow2xlScreenFlexCol onRefreshData={onRefreshData} />
       </div>
-    </div>
+    </ViewWrapper>
   );
 };
 
