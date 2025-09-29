@@ -89,10 +89,13 @@ const TipTapActivity = ({
   useEffect(() => {
     if (isNewActivity && !activity) {
       const autosavedData = restoreAutosavedContent();
+      const autoSavedContentLength =
+        autosavedData?.content.replace(/<[^>]+>/g, "").length || 0;
+
       if (autosavedData.wasRestored) {
         setTitle(autosavedData.title);
         setEditorContent(autosavedData.content);
-        setShowAutosaveIndicator(true);
+        autoSavedContentLength > 0 && setShowAutosaveIndicator(true);
       }
     }
   }, [isNewActivity, activity, restoreAutosavedContent]);

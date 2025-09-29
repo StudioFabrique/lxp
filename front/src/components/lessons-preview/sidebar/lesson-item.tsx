@@ -1,4 +1,4 @@
-import { ArrowUpRight, Check, Edit3 } from "lucide-react";
+import { Check, Ellipsis } from "lucide-react";
 import Lesson from "../../../utils/interfaces/lesson";
 import { Link } from "react-router-dom";
 import Can from "../../UI/can/can.component";
@@ -27,7 +27,7 @@ const LessonItem = ({
 
   // Vérifie si cette leçon a déjà été lue entièrement et finie
   const isLessonRead = lesson.lessonsRead?.some(
-    (lessonRead) => lessonRead.finishedAt,
+    (lessonRead) => lessonRead.finishedAt
   );
 
   // Gestionnaire pour commencer/arrêter la lecture d'une leçon
@@ -62,13 +62,13 @@ const LessonItem = ({
       }`}
     >
       <motion.span
-        className="flex gap-1 items-center min-w-0"
+        className="flex gap-1 justify-between items-center min-w-0 w-full"
         animate={{
           x: isLessonSelected && !isLessonRead ? 10 : 0,
         }}
         transition={{ duration: 0.3 }}
       >
-        <p className="max-h-14 truncate" data-tip={lesson.title}>
+        <p className="max-h-14 truncate text-sm" data-tip={lesson.title}>
           {lesson.title}
         </p>
         <Can action="update" object="lesson">
@@ -78,25 +78,21 @@ const LessonItem = ({
             className="btn btn-sm px-2 btn-ghost w-fit hover:bg-transparent hover:text-base-100"
             onClick={(e) => e.stopPropagation()}
           >
-            <Edit3 className="w-4 h-4" />
+            <Ellipsis className="w-4 h-4" />
           </Link>
         </Can>
       </motion.span>
 
-      <div className="flex h-full items-center py-3">
-        {/* Affiche une coche si la leçon est lue, ou une flèche sinon */}
-        {isLessonRead ? (
-          <Check
-            className={`w-5 h-5 p-1 rounded-full stroke-3 ${isLessonSelected ? "bg-secondary stroke-secondary-content" : "bg-success stroke-success-content"}`}
-          />
-        ) : (
-          !isLessonSelected && (
-            <div className="self-start opacity-0 group-hover:opacity-100 group-hover:animate-pulse">
-              <ArrowUpRight className="w-4 h-4" />
-            </div>
-          )
-        )}
-      </div>
+      {/* Affiche une coche si la leçon est lue, ou une flèche sinon */}
+      {isLessonRead && (
+        <Check
+          className={`w-5 h-5 p-1 rounded-full stroke-3 ${
+            isLessonSelected
+              ? "bg-secondary stroke-secondary-content"
+              : "bg-success stroke-success-content"
+          }`}
+        />
+      )}
     </div>
   );
 };
