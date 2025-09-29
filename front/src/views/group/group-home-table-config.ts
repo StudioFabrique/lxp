@@ -10,7 +10,7 @@ export const groupHomeTableItems: TableListItemConfig[] = [
     label: "Nom",
     sortAllowed: true,
   },
-  { property: "desc", label: "Description", sortAllowed: true },
+  // { property: "desc", label: "Description", sortAllowed: true },
   {
     property: "formation",
     label: "Formation - Parcours",
@@ -23,7 +23,7 @@ export const groupHomeTableItems: TableListItemConfig[] = [
 ];
 
 export const searchBarConfig = (
-  onSubmitSearchValue: (value: string) => void,
+  onSubmitSearchValue: (value: string) => void
 ): SearchBarProps => ({
   title: "Groupes",
   placeholder: "Rechercher un groupe",
@@ -31,7 +31,7 @@ export const searchBarConfig = (
 });
 
 export const actionsConfig = (
-  onRefreshData: () => Promise<void>,
+  onRefreshData: () => Promise<void>
 ): TableListActionConfig[] => [
   /*{
     property: "invite",
@@ -74,7 +74,7 @@ export const tableListConfig = <TData>(
   data: TData,
   isLoading?: boolean,
   isSearching?: boolean,
-  actionsConfig?: TableListActionConfig[],
+  actionsConfig?: TableListActionConfig[]
 ): TableListProps<Record<string, string>> => ({
   idProperty: "_id",
   avatar: { property: "image" },
@@ -87,8 +87,8 @@ export const tableListConfig = <TData>(
       message: isLoading
         ? "Chargement des groupes..."
         : isSearching
-          ? "Aucun groupe ne correspond à votre recherche"
-          : undefined,
+        ? "Aucun groupe ne correspond à votre recherche"
+        : undefined,
       linkableMessage:
         isLoading || isSearching
           ? undefined

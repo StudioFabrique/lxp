@@ -7,6 +7,7 @@ import toTitleCase from "../../utils/toTitleCase";
 import RoleForm from "../../components/role/role-form/role-form";
 import { useEffect } from "react";
 import { ListRestartIcon } from "lucide-react";
+import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 
 const RoleEdit = () => {
   const navigate = useNavigate();
@@ -32,16 +33,19 @@ const RoleEdit = () => {
   if (!role) return <Loader />;
 
   return (
-    <div className="flex flex-col gap-y-5 p-10 overflow-hidden">
+    <ViewWrapper className="flex flex-col gap-6">
       {/* Header de la liste des rôles */}
-      <Header title={`Modification du rôle ${toTitleCase(role.label)}`}>
+      <Header
+        title={`Modification du rôle ${toTitleCase(role.label)}`}
+        description="Modifiez les détails du rôle ci-dessous"
+      >
         <Link to="/admin/roles" className="btn btn-outline">
           Retour
         </Link>
       </Header>
       <RoleForm role={role} />
       <div className="h-2" />
-      <h3 className="font-semibold text-2xl">
+      <h3 className="font-semibold text-2xl ml-2">
         Liste des permission du rôle
         <span className="capitalize font-bold"> {role.label} </span>
       </h3>
@@ -111,7 +115,7 @@ const RoleEdit = () => {
           Valider
         </button>
       </span>
-    </div>
+    </ViewWrapper>
   );
 };
 

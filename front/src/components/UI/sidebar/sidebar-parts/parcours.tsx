@@ -17,7 +17,7 @@ const Parcours = ({ currentRoute }: { currentRoute: string[] }) => {
       <div className="flex items-center">
         <Link
           to={`/${currentRoute[0]}/parcours`}
-          className="tooltip tooltip-top w-6 h-6 z-10"
+          className="tooltip w-6 h-6 z-10"
           data-tip="Parcours"
         >
           <div className="flex hover justify-center items-center">
@@ -34,7 +34,7 @@ const Parcours = ({ currentRoute }: { currentRoute: string[] }) => {
           <Can action="write" object="parcours">
             <Link to={`/${currentRoute[0]}/parcours/créer-un-parcours`}>
               <div
-                className="tooltip tooltip-top w-6 h-6"
+                className="tooltip w-6 h-6"
                 data-tip="Création d'un nouveau parcours"
               >
                 <AddIcon />
