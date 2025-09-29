@@ -8,7 +8,7 @@ import TipTapActivity from "../../components/lessons-preview/writing/tip-tap-act
 import BonusActivityItem from "../../components/resources-add/BonusActivityItem";
 import Modal from "../../components/UI/modal/modal";
 import ElementNotFound from "../../components/UI/element-not-found";
-import ActivityPreview from "../../components/lessons-preview/preview/activity";
+import ActivityPreview from "../../components/lessons-preview/preview/activity-preview";
 import useResource from "./hooks/useResource";
 
 export default function ResourceAdd() {

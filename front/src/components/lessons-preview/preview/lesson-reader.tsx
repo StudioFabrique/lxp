@@ -1,7 +1,7 @@
 import type Lesson from "../../../utils/interfaces/lesson";
 import { Activity } from "../../../utils/interfaces/activity";
 import RatingPanelButton from "../../UI/lesson-rating/rating-panel-button";
-import ActivityPreview from "./activity";
+import ActivityPreview from "./activity-preview";
 import {
   type PropsWithChildren,
   useState,
@@ -116,13 +116,11 @@ const LessonReader = ({
     if (editingActivityId !== null) {
       setEditingActivityId(null);
     }
-    // isAnyActivityBeingEdited sera automatiquement mis à jour via l'effet useEffect
     setShowTipTapEditor(true);
   };
 
   const handleCloseTipTapEditor = () => {
     setShowTipTapEditor(false);
-    // isAnyActivityBeingEdited sera automatiquement mis à jour via l'effet useEffect
   };
 
   const handleDeleteActivity = useCallback(
@@ -395,7 +393,6 @@ const LessonReader = ({
                         }
                       }
                     }}
-                    onRefreshAllData={onRefreshAllData}
                     shouldEdit={editingActivityId === activity.id}
                     forceStopEdit={
                       (editingActivityId !== null &&
