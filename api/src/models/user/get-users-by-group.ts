@@ -1,5 +1,6 @@
 import Group from "../../utils/interfaces/db/group";
 import mongoose from "mongoose";
+import { IUser } from "../../utils/interfaces/db/user";
 
 async function getUsersByGroup(groupsIds: string[]) {
   const ids = groupsIds.map(
@@ -11,6 +12,7 @@ async function getUsersByGroup(groupsIds: string[]) {
     firstname: 1,
     lastname: 1,
     avatar: 1,
+    createdAt: 1,
   });
 
   if (!group) {
@@ -26,7 +28,9 @@ async function getUsersByGroup(groupsIds: string[]) {
           name: item.name,
           users: item.users.map((user: any) => ({
             ...user.toObject(),
-            avatar: user.avatar ? user.avatar.toString("base64") : null,
+            avatar: user.avatar
+              ? "data:image/jpeg;base64," + user.avatar.toString("base64")
+              : null,
           })),
         },
       ];
