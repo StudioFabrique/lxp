@@ -8,9 +8,7 @@ import {
   useEffect,
   useCallback,
 } from "react";
-import Can from "../../UI/can/can.component";
 import Modal from "../../UI/modal/modal";
-import TipTapActivityWriting from "../writing/tip-tap-activity";
 import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
 import ActivityActionsMenu from "./activity-actions-menu";
@@ -49,10 +47,6 @@ const LessonReader = ({
   );
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const { sendRequest, error } = useHttp();
-
-  const handleCloseTipTapEditor = () => {
-    setShowTipTapEditor(false);
-  };
 
   const handleDeleteActivity = useCallback(
     (activityId: number) => {
@@ -206,15 +200,6 @@ const LessonReader = ({
             activity={selectedActivity}
           />
         </div>
-
-        <Can action="write" object="lesson">
-          <TipTapActivityWriting
-            parentId={selectedLesson.id}
-            isNewActivity
-            onCloseTipTapEditor={handleCloseTipTapEditor}
-            onRefreshAllData={onRefreshAllData}
-          />
-        </Can>
 
         {/* Boutons de navigation */}
         <div className="flex justify-end items-center my-5">{children}</div>

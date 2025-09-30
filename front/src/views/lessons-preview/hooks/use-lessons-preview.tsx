@@ -29,6 +29,9 @@ const useLessonsPreview = () => {
   // Vérifie si la leçon a déjà été complétée
   const [isLessonCompleted, setIsLessonCompleted] = useState(false);
 
+  // Vérifie si le mode de création d'activité est actif
+  const [isCreatingActivity, setIsCreatingActivity] = useState(false);
+
   // Récupération de toutes les leçons à partir des cours du module
   const lessons = useMemo(
     () => moduleData?.courses.flatMap((course) => course.lessons) || [],
@@ -63,6 +66,7 @@ const useLessonsPreview = () => {
 
   const handleLessonSelection = useCallback(
     (lesson: Lesson | undefined) => {
+      setIsCreatingActivity(false);
       setLessonRating(undefined);
       setSelectedLesson(lesson);
 
@@ -220,7 +224,13 @@ const useLessonsPreview = () => {
   };
 
   const handleSelectActivityId = (activity: Activity) => {
+    setIsCreatingActivity(false);
     setSelectedActivity(activity);
+  };
+
+  const handleCreateActivity = () => {
+    setIsCreatingActivity(true);
+    setSelectedActivity(null);
   };
 
   const fetchData = useCallback(() => {
@@ -314,6 +324,7 @@ const useLessonsPreview = () => {
     showModal,
     isPanelClosed,
     selectedLessonHasActivities,
+    isCreatingActivity,
     setPanelClosed,
     onSelectActivityId: handleSelectActivityId,
     onToggleModalDisplaying: handleToggleModalDisplaying,
@@ -324,6 +335,7 @@ const useLessonsPreview = () => {
     onEditRateContent: handleEditRateContent,
     onEnableCourse: handleEnableCourse,
     onDeleteCourse: handleDeleteCourse,
+    onCreateActivity: handleCreateActivity,
   };
 };
 

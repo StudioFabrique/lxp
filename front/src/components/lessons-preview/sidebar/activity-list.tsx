@@ -8,12 +8,14 @@ type ActivityListProps = {
   activities?: Activity[];
   selectedActivity?: Activity | null;
   onSelectActivity: (activity: Activity) => void;
+  onCreateActivity?: () => void;
 };
 
 export default function ActivityList({
   activities,
   selectedActivity,
   onSelectActivity,
+  onCreateActivity,
 }: ActivityListProps) {
   return (
     <FadeWrapper>
@@ -34,14 +36,19 @@ export default function ActivityList({
             </span>
           </button>
         ))}
-        <Can action="update" object="lesson">
-          <span className="px-4 w-full">
-            <button className="btn btn-outline btn-secondary hover:text-base-100 btn-sm h-fit text-[10px] mt-2 w-full">
-              <Plus className="w-4 h-6" />
-              Ajouter une activité
-            </button>
-          </span>
-        </Can>
+        {onCreateActivity && (
+          <Can action="update" object="lesson">
+            <span className="px-4 w-full">
+              <button
+                className="btn btn-outline btn-secondary hover:text-base-100 btn-sm h-fit text-[10px] mt-2 w-full"
+                onClick={onCreateActivity}
+              >
+                <Plus className="w-4 h-6" />
+                Ajouter une activité
+              </button>
+            </span>
+          </Can>
+        )}
       </div>
     </FadeWrapper>
   );

@@ -17,6 +17,7 @@ import NoActivityPlaceholder from "../../components/lessons-preview/preview/no-a
 import Header from "../../components/UI/header";
 import { Link } from "react-router-dom";
 import { PlusCircle } from "lucide-react";
+import TipTapActivity from "../../components/lessons-preview/writing/tip-tap-activity";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
@@ -35,6 +36,7 @@ const LessonsPreview = () => {
     selectedActivity,
     onSelectActivityId,
     isLessonCompleted,
+    isCreatingActivity,
     setSelectedLesson,
     onRateContent,
     onEditRateContent,
@@ -46,6 +48,7 @@ const LessonsPreview = () => {
     setPanelClosed,
     onToggleModalDisplaying,
     onClickModalRightButton,
+    onCreateActivity,
   } = useLessonsPreview();
 
   return (
@@ -121,6 +124,7 @@ const LessonsPreview = () => {
                     activities={selectedLesson?.activities}
                     selectedActivity={selectedActivity}
                     onSelectActivity={onSelectActivityId}
+                    onCreateActivity={onCreateActivity}
                   />,
                 ]}
               />,
@@ -133,7 +137,16 @@ const LessonsPreview = () => {
                 <ProgressBar courses={moduleData.courses} />
               </Can>,
               // * La prévisualisation de la leçon
-              selectedActivity ? (
+              selectedLesson?.id && isCreatingActivity ? (
+                <Can action="write" object="lesson">
+                  <TipTapActivity
+                    parentId={selectedLesson.id}
+                    isNewActivity
+                    // onCloseTipTapEditor={handleCloseTipTapEditor}
+                    // onRefreshAllData={onRefreshAllData}
+                  />
+                </Can>
+              ) : selectedActivity ? (
                 <LessonReader
                   key="lesson-reader"
                   selectedLesson={selectedLesson as Lesson}
