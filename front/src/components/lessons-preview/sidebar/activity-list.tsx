@@ -28,7 +28,7 @@ export default function ActivityList({
           >
             {activityIconType(activity.type, 4)}
             <span
-              className={`truncate max-w-[180px] block ${
+              className={`truncate max-w-[90%] ${
                 selectedActivity?.id === activity.id && "underline"
               }`}
             >
