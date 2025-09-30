@@ -39,11 +39,6 @@ const LessonReader = ({
 }: PropsWithChildren<PreviewLessonProps>) => {
   const [showTipTapEditor, setShowTipTapEditor] = useState<boolean>(false);
 
-  // const [editingActivityId, setEditingActivityId] = useState<number | null>(
-  //   null
-  // );
-  // const [openAccordionId, setOpenAccordionId] = useState<number | null>(null);
-  // const [isReorderMode, setIsReorderMode] = useState<boolean>(false);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [deletingActivityId, setDeletingActivityId] = useState<number | null>(
     null
