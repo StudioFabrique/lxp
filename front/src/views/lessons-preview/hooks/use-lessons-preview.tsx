@@ -257,14 +257,14 @@ const useLessonsPreview = () => {
   }, [isPanelClosed]);
 
   // Scroll management
-  useEffect(() => {
-    if (selectedLesson) {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    }
-  }, [selectedLesson]);
+  // useEffect(() => {
+  //   if (selectedLesson) {
+  //     window.scrollTo({
+  //       top: 0,
+  //       behavior: "smooth",
+  //     });
+  //   }
+  // }, [selectedLesson]);
 
   // useEffect pour charger les détails d'une leçon sélectionnée
   useEffect(() => {
