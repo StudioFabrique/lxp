@@ -49,6 +49,7 @@ const LessonsPreview = () => {
     onToggleModalDisplaying,
     onClickModalRightButton,
     onCreateActivity,
+    onCloseTextEditor,
   } = useLessonsPreview();
 
   return (
@@ -142,8 +143,8 @@ const LessonsPreview = () => {
                   <TipTapActivity
                     parentId={selectedLesson.id}
                     isNewActivity
-                    // onCloseTipTapEditor={handleCloseTipTapEditor}
-                    // onRefreshAllData={onRefreshAllData}
+                    onCloseTipTapEditor={onCloseTextEditor}
+                    onRefreshAllData={fetchData}
                   />
                 </Can>
               ) : selectedActivity ? (
