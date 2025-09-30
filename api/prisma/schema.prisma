@@ -40,7 +40,7 @@ model Activity {
 }
 
 model Admin {
-  id              Int             @id @default(autoincrement())
+  id              Int              @id @default(autoincrement())
   idMdb           String
   activities      Activity[]
   courses         Course[]
@@ -51,6 +51,7 @@ model Admin {
   parcours        Parcours[]
   bonusActivities BonusActivity[]
   resources       Resource[]
+  moduleMetadatas ModuleMetadata[]
 }
 
 model BonusActivity {
@@ -70,15 +71,15 @@ model BonusActivity {
 }
 
 model BonusSkill {
-  id          Int                   @id @default(autoincrement())
+  id          Int                           @id @default(autoincrement())
   description String
-  createdAt   DateTime              @default(now())
-  updatedAt   DateTime              @updatedAt
+  createdAt   DateTime                      @default(now())
+  updatedAt   DateTime                      @updatedAt
   badge       String?
   parcoursId  Int
-  parcours    Parcours              @relation(fields: [parcoursId], references: [id])
+  parcours    Parcours                      @relation(fields: [parcoursId], references: [id])
   courses     BonusSkillOnCourse[]
-  modules     BonusSkillsOnModule[]
+  modules     BonusSkillsOnModuleMetadata[]
 }
 
 model BonusSkillOnCourse {
@@ -90,26 +91,26 @@ model BonusSkillOnCourse {
   @@id([bonusSkillId, courseId])
 }
 
-model BonusSkillsOnModule {
-  bonusSkillId Int
-  moduleId     Int
-  bonusSkill   BonusSkill @relation(fields: [bonusSkillId], references: [id])
-  module       Module     @relation(fields: [moduleId], references: [id])
+model BonusSkillsOnModuleMetadata {
+  bonusSkillId     Int
+  moduleMetadataId Int
+  bonusSkill       BonusSkill     @relation(fields: [bonusSkillId], references: [id])
+  module           ModuleMetadata @relation(fields: [moduleMetadataId], references: [id])
 
-  @@id([bonusSkillId, moduleId])
+  @@id([bonusSkillId, moduleMetadataId])
 }
 
 model Contact {
-  id        Int                  @id @default(autoincrement())
-  idMdb     String               @unique
+  id        Int                        @id @default(autoincrement())
+  idMdb     String                     @unique
   name      String
   role      String
   email     String?
-  phone     String?              @default("Non renseigné")
-  createdAt DateTime             @default(now())
-  updatedAt DateTime             @updatedAt
+  phone     String?                    @default("Non renseigné")
+  createdAt DateTime                   @default(now())
+  updatedAt DateTime                   @updatedAt
   courses   ContactsOnCourse[]
-  modules   ContactsOnModule[]
+  modules   ContactsOnModuleMetadata[]
   parcours  ContactsOnParcours[]
 }
 
@@ -122,11 +123,11 @@ model ContactsOnCourse {
   @@id([contactId, courseId])
 }
 
-model ContactsOnModule {
+model ContactsOnModuleMetadata {
   contactId Int
   moduleId  Int
-  contact   Contact @relation(fields: [contactId], references: [id])
-  module    Module  @relation(fields: [moduleId], references: [id])
+  contact   Contact        @relation(fields: [contactId], references: [id])
+  module    ModuleMetadata @relation(fields: [moduleId], references: [id])
 
   @@id([contactId, moduleId])
 }
@@ -145,7 +146,6 @@ model Course {
   title           String
   description     String?
   image           Bytes?
-  moduleId        Int
   virtualClass    String?
   visibility      Boolean?
   scenario        Boolean              @default(true)
@@ -160,7 +160,8 @@ model Course {
   bonusSkills     BonusSkillOnCourse[]
   contacts        ContactsOnCourse[]
   admin           Admin                @relation(fields: [adminId], references: [id], onDelete: SetDefault)
-  module          Module               @relation(fields: [moduleId], references: [id])
+  moduleId        Int
+  module          ModuleMetadata       @relation(fields: [moduleId], references: [id])
   lessons         Lesson[]
   objectives      ObjectivesOnCourse[]
   tags            TagsOnCourse[]
@@ -252,25 +253,37 @@ model Mediatheque {
 }
 
 model Module {
-  id          Int                   @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   title       String
   description String?
   image       Bytes?
   thumb       Bytes?
+
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+  author     String
+  adminId    Int
+  admin      Admin                @relation(fields: [adminId], references: [id], onDelete: SetDefault)
+  formations ModulesOnFormation[]
+  metadatas  ModuleMetadata[]
+}
+
+model ModuleMetadata {
+  id          Int                           @id @default(autoincrement())
   duration    Int?
   rating      Float?
   minDate     DateTime?
   maxDate     DateTime?
-  createdAt   DateTime              @default(now())
-  updatedAt   DateTime              @updatedAt
-  author      String
+  moduleId    Int
+  module      Module                        @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  createdAt   DateTime                      @default(now())
+  updatedAt   DateTime                      @updatedAt
   adminId     Int
-  bonusSkills BonusSkillsOnModule[]
-  contacts    ContactsOnModule[]
+  parcours    ModuleMetadataOnParcours[]
+  contacts    ContactsOnModuleMetadata[]
+  admin       Admin                         @relation(fields: [adminId], references: [id], onDelete: SetDefault)
   courses     Course[]
-  admin       Admin                 @relation(fields: [adminId], references: [id], onDelete: SetDefault)
-  formations  ModulesOnFormation[]
-  parcours    ModulesOnParcours[]
+  bonusSkills BonusSkillsOnModuleMetadata[]
 }
 
 model ModulesOnFormation {
@@ -282,11 +295,11 @@ model ModulesOnFormation {
   @@id([moduleId, formationId])
 }
 
-model ModulesOnParcours {
-  moduleId   Int
-  parcoursId Int
-  module     Module   @relation(fields: [moduleId], references: [id])
-  parcours   Parcours @relation(fields: [parcoursId], references: [id])
+model ModuleMetadataOnParcours {
+  moduleId       Int
+  parcoursId     Int
+  moduleMetadata ModuleMetadata @relation(fields: [moduleId], references: [id])
+  parcours       Parcours       @relation(fields: [parcoursId], references: [id])
 
   @@id([moduleId, parcoursId])
 }
@@ -320,31 +333,31 @@ model OpenBadge {
 }
 
 model Parcours {
-  id           Int                  @id @default(autoincrement())
-  title        String               @unique
+  id           Int                        @id @default(autoincrement())
+  title        String                     @unique
   description  String?
-  startDate    DateTime?            @default(dbgenerated("date_trunc('day'::text, (now() + '1 day'::interval))"))
-  endDate      DateTime?            @default(dbgenerated("date_trunc('day'::text, (now() + '2 mons'::interval))"))
+  startDate    DateTime?                  @default(dbgenerated("date_trunc('day'::text, (now() + '1 day'::interval))"))
+  endDate      DateTime?                  @default(dbgenerated("date_trunc('day'::text, (now() + '2 mons'::interval))"))
   degree       String?
   image        Bytes?
   thumb        Bytes?
-  createdAt    DateTime             @default(now())
-  updatedAt    DateTime             @updatedAt
+  createdAt    DateTime                   @default(now())
+  updatedAt    DateTime                   @updatedAt
   author       String
-  visibility   Boolean              @default(false)
+  visibility   Boolean                    @default(false)
   adminId      Int
   formationId  Int
   virtualClass String?
-  isPublished  Boolean              @default(false)
+  isPublished  Boolean                    @default(false)
   bonusSkills  BonusSkill[]
   contacts     ContactsOnParcours[]
   groups       GroupsOnParcours[]
-  modules      ModulesOnParcours[]
   objectives   Objective[]
-  admin        Admin                @relation(fields: [adminId], references: [id], onDelete: SetDefault)
-  formation    Formation            @relation(fields: [formationId], references: [id])
+  admin        Admin                      @relation(fields: [adminId], references: [id], onDelete: SetDefault)
+  formation    Formation                  @relation(fields: [formationId], references: [id])
   skills       SkillsOnParcours[]
   tags         TagsOnParcours[]
+  modules      ModuleMetadataOnParcours[]
 }
 
 model Resource {

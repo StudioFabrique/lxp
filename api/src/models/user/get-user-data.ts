@@ -112,7 +112,7 @@ export default async function getUserData(userId: string) {
         select: {
           modules: {
             select: {
-              module: {
+              moduleMetadata: {
                 select: {
                   courses: {
                     select: {

@@ -51,15 +51,12 @@ async function getParcoursById(parcoursId: number, userId: string) {
       // Sélectionne les modules avec leurs cours et leçons
       modules: {
         select: {
-          module: {
+          moduleMetadata: {
             select: {
               id: true,
-              title: true,
-              description: true,
               duration: true,
               minDate: true,
               maxDate: true,
-              thumb: true,
               contacts: { select: { contact: true } },
               bonusSkills: {
                 select: {
