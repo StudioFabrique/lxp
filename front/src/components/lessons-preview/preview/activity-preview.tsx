@@ -68,6 +68,11 @@ const ActivityPreview = ({
     }
   }, [activity, activity.url]);
 
+  useEffect(() => {
+    // Reset value when activity changes
+    setValue("");
+  }, [activity.id, activity.type]);
+
   const renderPreviewComponent = () => {
     switch (activity.type) {
       case "text":
