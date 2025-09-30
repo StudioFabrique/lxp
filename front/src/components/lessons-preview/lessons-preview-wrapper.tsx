@@ -58,7 +58,7 @@ const LessonsPreviewWrapper = ({
             )}
           </button>
         </div>
-        <span className="w-full bg-secondary/20 rounded-lg h-full px-2 border-1 border-secondary/20 flex items-center">
+        <span className="w-full bg-secondary/20 rounded-lg h-10 px-2 border-1 border-secondary/20 flex items-center">
           {topProgressBar}
         </span>
         <Can action="update" object="module">

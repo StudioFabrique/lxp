@@ -177,7 +177,7 @@ const LessonReader = ({
       )}
 
       <div className="flex flex-col gap-5">
-        <div className="w-full flex justify-between items-center">
+        <div className="w-full flex justify-end items-center">
           {/* Bouton de notation */}
           {currentLessonRating && lessonHasActivities ? (
             <RatingPanelButton
