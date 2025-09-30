@@ -16,7 +16,7 @@ import ActivityList from "../../components/lessons-preview/sidebar/activity-list
 import NoActivityPlaceholder from "../../components/lessons-preview/preview/no-activity-placeholder";
 import Header from "../../components/UI/header";
 import { Link } from "react-router-dom";
-import { PlusCircle } from "lucide-react";
+import { PenBox } from "lucide-react";
 import TipTapActivity from "../../components/lessons-preview/writing/tip-tap-activity";
 
 /**
@@ -65,10 +65,10 @@ const LessonsPreview = () => {
       >
         <Can object="lesson" action="update">
           <Link
-            className="btn btn-primary text-base-100"
+            className="btn btn-primary text-base-100 gap-2"
             to="/admin/lesson/add"
           >
-            <PlusCircle />
+            <PenBox />
             Modifier le module
           </Link>
         </Can>
@@ -139,7 +139,7 @@ const LessonsPreview = () => {
               </Can>,
               // * La prévisualisation de la leçon
               selectedLesson?.id && isCreatingActivity ? (
-                <Can action="write" object="lesson">
+                <Can key="tip-tap-activity" action="write" object="lesson">
                   <TipTapActivity
                     parentId={selectedLesson.id}
                     isNewActivity
@@ -180,7 +180,7 @@ const LessonsPreview = () => {
                   {/* Le lecteur de leçons */}
                 </LessonReader>
               ) : (
-                <NoActivityPlaceholder />
+                <NoActivityPlaceholder key="no-activity-placeholder" />
               ),
 
               /* Dans le cas où aucune leçon n'est affiché,

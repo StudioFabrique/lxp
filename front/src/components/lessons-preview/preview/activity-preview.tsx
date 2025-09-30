@@ -25,8 +25,6 @@ const ActivityPreview = ({
   const [value, setValue] = useState<string>("");
   const [url, setUrl] = useState("");
 
-  console.log("activity in preview : ", activity);
-
   // case when a activity contains a set of pdf files
   const [pdfUrls, setPdfUrls] = useState<Resource[]>([]);
 

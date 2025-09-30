@@ -56,8 +56,8 @@ export const FontFamilyPicker = ({
     <Dropdown.Root>
       <Dropdown.Trigger asChild>
         <Toolbar.Button active={!!currentValue?.value}>
-          {currentFontLabel}
-          <Icon name="ChevronDown" className="w-2 h-2" />
+          <span className="text-base-content">{currentFontLabel}</span>
+          <Icon name="ChevronDown" className="w-2 h-2 text-base-content" />
         </Toolbar.Button>
       </Dropdown.Trigger>
       <Dropdown.Content asChild>
