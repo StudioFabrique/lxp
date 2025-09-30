@@ -79,16 +79,12 @@ export default async function postDuplicateParcours(
       // Select all modules and their nested relationships
       modules: {
         select: {
-          module: {
+          moduleMetadata: {
             select: {
               // Module basic information
-              title: true,
-              description: true,
-              image: true,
-              thumb: true,
+
               duration: true,
               rating: true,
-              author: true,
               admin: {
                 select: {
                   id: true,
@@ -111,6 +107,15 @@ export default async function postDuplicateParcours(
                       id: true,
                     },
                   },
+                },
+              },
+              module: {
+                select: {
+                  id: true,
+                  title: true,
+                  description: true,
+                  image: true,
+                  thumb: true,
                 },
               },
               // Courses within modules
@@ -146,11 +151,6 @@ export default async function postDuplicateParcours(
                           id: true,
                         },
                       },
-                    },
-                  },
-                  module: {
-                    select: {
-                      id: true,
                     },
                   },
                   objectives: {
@@ -311,31 +311,28 @@ export default async function postDuplicateParcours(
       // Create modules with all their nested relationships
       modules: {
         create: existingParcours.modules.map((module) => ({
-          module: {
+          moduleMetadata: {
             create: {
-              // Module basic information
-              title: module.module.title,
-              description: module.module.description,
-              image: module.module.image ?? undefined,
-              thumb: module.module.thumb ?? undefined,
-              duration: module.module.duration,
-              rating: module.module.rating,
-              author: module.module.author,
+              duration: module.moduleMetadata.duration,
+              rating: module.moduleMetadata.rating,
               admin: {
                 connect: {
-                  id: module.module.admin.id,
+                  id: module.moduleMetadata.admin.id,
                 },
+              },
+              module: {
+                connect: { id: module.moduleMetadata.module.id },
               },
               // Module relationships
               bonusSkills: {
-                create: module.module.bonusSkills.map((skill) => ({
+                create: module.moduleMetadata.bonusSkills.map((skill) => ({
                   bonusSkill: {
                     connect: { id: skill.bonusSkill.id },
                   },
                 })),
               },
               contacts: {
-                create: module.module.contacts.map((contact) => ({
+                create: module.moduleMetadata.contacts.map((contact) => ({
                   contact: {
                     connect: { id: contact.contact.id },
                   },
@@ -343,7 +340,7 @@ export default async function postDuplicateParcours(
               },
               // Create courses within modules
               courses: {
-                create: module.module.courses.map((course) => ({
+                create: module.moduleMetadata.courses.map((course) => ({
                   title: course.title,
                   description: course.description,
                   image: course.image ?? undefined,

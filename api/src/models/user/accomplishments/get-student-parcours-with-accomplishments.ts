@@ -1,7 +1,7 @@
 import { prisma } from "../../../utils/db";
 
 export default async function getStudentParcoursWithAccomplishments(
-  studentMdbId: string,
+  studentMdbId: string
 ) {
   // return a parcours instead of accomplishment
 
@@ -9,7 +9,7 @@ export default async function getStudentParcoursWithAccomplishments(
     where: {
       modules: {
         some: {
-          module: {
+          moduleMetadata: {
             courses: {
               some: {
                 accomplishments: { some: { student: { idMdb: studentMdbId } } },
@@ -24,10 +24,10 @@ export default async function getStudentParcoursWithAccomplishments(
       title: true,
       modules: {
         select: {
-          module: {
+          moduleMetadata: {
             select: {
               id: true,
-              title: true,
+              module: { select: { title: true } },
               courses: {
                 select: {
                   id: true,
@@ -52,9 +52,9 @@ export default async function getStudentParcoursWithAccomplishments(
     id: parcours.id,
     title: parcours.title,
     modules: parcours.modules.map((mod) => ({
-      id: mod.module.id,
-      title: mod.module.title,
-      courses: mod.module.courses.map((course) => ({
+      id: mod.moduleMetadata.id,
+      title: mod.moduleMetadata.module.title,
+      courses: mod.moduleMetadata.courses.map((course) => ({
         id: course.id,
         title: course.title,
         accomplishments: course.accomplishments,
