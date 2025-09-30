@@ -26,7 +26,7 @@ export const ColorPicker = ({ color, onChange, onClear }: ColorPickerProps) => {
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setColorInputValue(event.target.value);
     },
-    [],
+    []
   );
 
   const handleColorChange = useCallback(() => {
@@ -48,13 +48,13 @@ export const ColorPicker = ({ color, onChange, onClear }: ColorPickerProps) => {
   return (
     <div className="flex flex-col gap-2">
       <HexColorPicker
-        className="w-full"
+        className="w-full text-base-content"
         color={color || ""}
         onChange={onChange}
       />
       <input
         type="text"
-        className="w-full p-2 text-black bg-white border rounded dark:bg-black dark:text-white border-neutral-200 dark:border-neutral-800 focus:outline-1 focus:ring-0 focus:outline-neutral-300 dark:focus:outline-neutral-700"
+        className="w-full p-2 bg-white text-base-content border rounded border-neutral-200 focus:outline-1 focus:ring-0 focus:outline-neutral-300 dark:focus:outline-neutral-700"
         placeholder="#000000"
         value={colorInputValue}
         onChange={handleColorUpdate}
@@ -70,7 +70,7 @@ export const ColorPicker = ({ color, onChange, onClear }: ColorPickerProps) => {
           />
         ))}
         <Toolbar.Button tooltip="Reset color to default" onClick={onClear}>
-          <Icon name="Undo" />
+          <Icon className="text-base-content" name="Undo" />
         </Toolbar.Button>
       </div>
     </div>

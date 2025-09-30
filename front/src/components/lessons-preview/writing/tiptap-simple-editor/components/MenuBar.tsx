@@ -90,7 +90,7 @@ export default function MenuBar({
       />
       <MemoContentTypePicker
         options={menuAlignTextOptions}
-        fixedIcon="AlignLeft"
+        fixedIcon="TextAlignCenter"
       />
       <MemoFontFamilyPicker
         onChange={commands.onSetFont}

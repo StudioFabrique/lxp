@@ -62,13 +62,14 @@ export const ContentTypePicker = ({
           ) : (
             <>
               <Icon
+                className="text-base-content"
                 name={
                   (activeItem?.type === "option" && activeItem.icon) ||
                   fixedIcon ||
                   "Pilcrow"
                 }
               />
-              <Icon name="ChevronDown" className="w-2 h-2" />
+              <Icon name="ChevronDown" className="w-2 h-2 text-base-content" />
             </>
           )}
         </Toolbar.Button>
@@ -83,8 +84,11 @@ export const ContentTypePicker = ({
                   onClick={option.onClick}
                   isActive={option.isActive()}
                 >
-                  <Icon name={option.icon} className="w-4 h-4 mr-1" />
-                  {option.label}
+                  <Icon
+                    name={option.icon}
+                    className="w-4 h-4 mr-1 text-base-content"
+                  />
+                  <span className="text-base-content">{option.label}</span>
                 </DropdownButton>
               );
             } else if (isCategory(option)) {
