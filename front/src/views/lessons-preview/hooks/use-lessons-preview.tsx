@@ -230,7 +230,10 @@ const useLessonsPreview = () => {
 
   const handleCreateActivity = () => {
     setIsCreatingActivity(true);
-    setSelectedActivity(null);
+  };
+
+  const handleCloseTextEditor = () => {
+    setIsCreatingActivity(false);
   };
 
   const fetchData = useCallback(() => {
@@ -266,16 +269,6 @@ const useLessonsPreview = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(isPanelClosed));
   }, [isPanelClosed]);
 
-  // Scroll management
-  // useEffect(() => {
-  //   if (selectedLesson) {
-  //     window.scrollTo({
-  //       top: 0,
-  //       behavior: "smooth",
-  //     });
-  //   }
-  // }, [selectedLesson]);
-
   // useEffect pour charger les détails d'une leçon sélectionnée
   useEffect(() => {
     const applyData = (data: Lesson) => {
@@ -286,7 +279,6 @@ const useLessonsPreview = () => {
         lessonsRead: lessonInModule?.lessonsRead || [],
         order: lessonInModule?.order,
       });
-      console.log(lessonInModule?.activities);
       setSelectedActivity(data?.activities?.[0]);
     };
 
@@ -336,6 +328,7 @@ const useLessonsPreview = () => {
     onEnableCourse: handleEnableCourse,
     onDeleteCourse: handleDeleteCourse,
     onCreateActivity: handleCreateActivity,
+    onCloseTextEditor: handleCloseTextEditor,
   };
 };
 
