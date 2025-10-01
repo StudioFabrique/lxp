@@ -5,9 +5,14 @@ async function httpGetModuleFormation(req: Request, res: Response) {
   try {
     const { formationId } = req.params;
 
+    console.log("FORMATION ID", formationId);
+
     const modulesIdList = await prisma.modulesOnFormation.findMany({
       where: { formationId: +formationId },
     });
+
+    console.log("MODULES ID LIST", modulesIdList);
+
     const modules = await prisma.module.findMany({
       where: {
         id: { in: modulesIdList.map((item: any) => item.moduleId) },
@@ -20,7 +25,7 @@ async function httpGetModuleFormation(req: Request, res: Response) {
       },
     });
 
-    //console.log({ modules });
+    console.log({ modules });
 
     const result = modules.map((module) => ({
       ...module,
@@ -29,6 +34,8 @@ async function httpGetModuleFormation(req: Request, res: Response) {
 
     return res.status(200).json(result);
   } catch (error: any) {
+    console.log("ERROR", error);
+
     return res.status(500).json({ message: error.message });
   }
 }

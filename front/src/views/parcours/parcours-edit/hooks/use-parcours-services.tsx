@@ -82,11 +82,11 @@ const useParcoursService = () => {
             parcoursModulesSliceActions.setModules(
               data.modules.map((item: any) => {
                 return {
-                  ...item.module,
-                  contacts: item.module.contacts.map(
+                  ...item,
+                  contacts: item.contacts.map(
                     (itemContact: any) => itemContact.contact
                   ),
-                  bonusSkills: item.module.bonusSkills.map(
+                  bonusSkills: item.bonusSkills.map(
                     (itemBonusSkills: any) => itemBonusSkills.bonusSkill
                   ),
                 };
