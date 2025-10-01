@@ -75,6 +75,9 @@ async function getParcoursById(parcoursId: number, userId: string) {
               },
             },
           },
+          module: {
+            select: { id: true, title: true, description: true, thumb: true },
+          },
         },
       },
       // Sélectionne les groupes associés
