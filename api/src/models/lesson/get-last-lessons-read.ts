@@ -10,7 +10,7 @@ import Group from "../../utils/interfaces/db/group";
  */
 export default async function getLastLessonsRead(
   userIdMdb: string,
-  max?: number,
+  max?: number
 ) {
   const groupsWhereStudentIs = await Group.find({ users: userIdMdb });
 
@@ -29,12 +29,8 @@ export default async function getLastLessonsRead(
           visibility: true,
           module: {
             parcours: {
-              every: {
-                parcours: {
-                  isPublished: true,
-                  groups: { some: { group: { idMdb: { in: groupIds } } } },
-                },
-              },
+              isPublished: true,
+              groups: { some: { group: { idMdb: { in: groupIds } } } },
             },
           },
         },
@@ -54,8 +50,8 @@ export default async function getLastLessonsRead(
               module: {
                 select: {
                   id: true,
-                  title: true,
-                  parcours: { select: { parcoursId: true } },
+                  module: { select: { title: true } },
+                  parcours: { select: { id: true } },
                 },
               },
               bonusSkills: {
@@ -91,12 +87,8 @@ export default async function getLastLessonsRead(
           visibility: true,
           module: {
             parcours: {
-              every: {
-                parcours: {
-                  isPublished: true,
-                  groups: { some: { group: { idMdb: { in: groupIds } } } },
-                },
-              },
+              isPublished: true,
+              groups: { some: { group: { idMdb: { in: groupIds } } } },
             },
           },
         },
@@ -108,8 +100,8 @@ export default async function getLastLessonsRead(
             module: {
               select: {
                 id: true,
-                title: true,
-                parcours: { select: { parcoursId: true } },
+                module: { select: { title: true } },
+                parcours: { select: { id: true } },
               },
             },
           },
@@ -127,7 +119,7 @@ export default async function getLastLessonsRead(
         id: lesson?.id,
         title: lesson?.title,
         course: lesson?.course,
-        parcoursId: lesson.course.module.parcours[0].parcoursId,
+        parcoursId: lesson.course.module.parcours.id,
       },
     };
 
@@ -147,7 +139,7 @@ export default async function getLastLessonsRead(
         ...lessonRead.lesson,
         course: { ...course, bonusSkills },
       },
-      parcoursId: lessonRead.lesson.course.module.parcours[0].parcoursId,
+      parcoursId: lessonRead.lesson.course.module.parcours.id,
     };
   });
 
