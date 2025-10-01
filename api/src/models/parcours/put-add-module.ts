@@ -10,7 +10,7 @@ async function putAddModule(
   const existingParcours = await prisma.parcours.findFirst({
     where: { id: parcoursId },
   });
-  const existingModule = await prisma.module.findFirst({
+  const existingModule = await prisma.moduleMetadata.findFirst({
     where: { id: moduleId },
   });
 
@@ -43,19 +43,17 @@ async function putAddModule(
   let newModule: any = {};
 
   const transaction = await prisma.$transaction(async (tx) => {
-    newModule = await tx.module.create({
+    newModule = await tx.moduleMetadata.create({
       data: {
-        title: existingModule.title,
-        description: existingModule.description,
-        image: existingModule.image,
-        thumb: existingModule.thumb,
         duration: existingModule.duration,
         minDate: new Date(existingParcours.startDate!),
         maxDate: new Date(existingParcours.endDate!),
-        author,
         adminId: existingAdmin.id,
+        moduleId: existingModule.id,
+        parcoursId: existingParcours.id,
       },
     });
+    /*
     const updatedParcours = await tx.parcours.update({
       where: { id: parcoursId },
       data: {
@@ -68,6 +66,7 @@ async function putAddModule(
         },
       },
     });
+*/
 
     console.log({ newModule });
   });

@@ -24,10 +24,8 @@ async function getCourseInformations(courseId: number) {
       module: {
         select: {
           id: true,
-          title: true,
           minDate: true,
           maxDate: true,
-          image: true,
           duration: true,
           contacts: {
             select: {
@@ -40,33 +38,37 @@ async function getCourseInformations(courseId: number) {
               },
             },
           },
+          module: {
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              image: true,
+            },
+          },
           parcours: {
             select: {
-              parcours: {
+              id: true,
+              title: true,
+              virtualClass: true,
+              formation: {
                 select: {
                   id: true,
                   title: true,
-                  virtualClass: true,
-                  formation: {
-                    select: {
-                      id: true,
-                      title: true,
-                      tags: {
-                        select: {
-                          tag: true,
-                        },
-                      },
-                    },
-                  },
                   tags: {
                     select: {
-                      tag: {
-                        select: {
-                          id: true,
-                          color: true,
-                          name: true,
-                        },
-                      },
+                      tag: true,
+                    },
+                  },
+                },
+              },
+              tags: {
+                select: {
+                  tag: {
+                    select: {
+                      id: true,
+                      color: true,
+                      name: true,
                     },
                   },
                 },
@@ -78,15 +80,11 @@ async function getCourseInformations(courseId: number) {
     },
   });
 
-  if (!course) {
-    const error = new Error("Le cours n'existe pas");
-    (error as any).statusCode = 404;
-    throw error;
-  }
+  if (!course) throw { message: "Le cours n'existe pas.", statusCode: 404 };
 
   if (course) {
-    if (course.module.image instanceof Buffer) {
-      const base64Image = course.module.image.toString("base64");
+    if (course.module.module.image instanceof Buffer) {
+      const base64Image = course.module.module.image.toString("base64");
       const result = {
         ...course,
         module: { ...course.module, image: base64Image },

@@ -2,25 +2,25 @@ import { prisma } from "../../utils/db";
 
 export default async function getLimitedModuleDetail(
   moduleId: number,
-  userMongoId: string,
+  userMongoId: string
 ) {
   // First check if user is admin/teacher
   const isTeacher = await prisma.admin.findFirst({
     where: { idMdb: userMongoId },
   });
 
-  const existingModule = await prisma.module.findFirst({
+  const existingModule = await prisma.moduleMetadata.findFirst({
     where: { id: moduleId },
     select: {
       id: true,
-      title: true,
-      description: true,
-      image: true,
       duration: true,
       minDate: true,
       maxDate: true,
+      module: {
+        select: { title: true, description: true, image: true, id: true },
+      },
       parcours: {
-        select: { parcours: { select: { title: true } }, parcoursId: true },
+        select: { title: true, id: true },
       },
       bonusSkills: { select: { bonusSkill: true } },
       contacts: { select: { contact: true } },
@@ -66,14 +66,14 @@ export default async function getLimitedModuleDetail(
 
   const result = {
     id: existingModule.id,
-    title: existingModule.title,
-    description: existingModule.description,
-    image: existingModule.image?.toString("base64") ?? null,
+    title: existingModule.module.title,
+    description: existingModule.module.description,
+    image: existingModule.module.image?.toString("base64") ?? null,
     duration: existingModule.duration,
     minDate: existingModule.minDate,
     maxDate: existingModule.maxDate,
-    parcours: existingModule.parcours[0].parcours.title,
-    parcoursId: existingModule.parcours[0].parcoursId,
+    parcours: existingModule.parcours.title,
+    parcoursId: existingModule.parcours.id,
     bonusSkills: existingModule.bonusSkills.map((item) => item.bonusSkill),
     contacts: existingModule.contacts.map((item) => item.contact),
     courses: existingModule.courses,

@@ -2,7 +2,7 @@ import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
 
 async function postCourse(userId: string, course: any) {
-  const existingModule = await prisma.module.findFirst({
+  const existingModule = await prisma.moduleMetadata.findFirst({
     where: { id: course.moduleId },
     select: { courses: true },
   });

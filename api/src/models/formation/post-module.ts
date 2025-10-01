@@ -5,7 +5,7 @@ async function postModule(
   moduleToAdd: any,
   thumb: any,
   image: any,
-  userId: string,
+  userId: string
 ) {
   const existingParcours = await prisma.formation.findFirst({
     where: { id: moduleToAdd.formationId },
@@ -53,7 +53,6 @@ async function postModule(
       data: {
         title: moduleToAdd.title,
         description: moduleToAdd.description,
-        duration: +moduleToAdd.duration,
         image,
         thumb,
         author,

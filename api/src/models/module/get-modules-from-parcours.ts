@@ -1,28 +1,14 @@
 import { prisma } from "../../utils/db";
 
 async function getModulesFromParcours(parcoursId: number) {
-  const transaction = await prisma.$transaction(async (tx) => {
-    const modulesIds = await tx.modulesOnParcours.findMany({
-      where: { parcoursId },
-    });
-
-    const modules = await tx.module.findMany({
-      where: {
-        id: {
-          in: modulesIds.map((module) => module.moduleId),
-        },
-      },
-      select: {
-        id: true,
-        title: true,
-      },
-    });
-    return modules;
+  const existingParcours = await prisma.parcours.findUnique({
+    where: { id: +parcoursId },
+    select: {
+      modules: true,
+    },
   });
 
-  //console.log({ transaction });
-
-  return transaction;
+  return existingParcours?.modules ?? [];
 }
 
 export default getModulesFromParcours;
