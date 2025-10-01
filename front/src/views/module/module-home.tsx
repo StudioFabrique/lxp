@@ -21,9 +21,7 @@ const ModuleHome = () => {
       console.log({ data });
       const updatedModules = data.response.map((item: any) => ({
         ...item,
-        formation: item.formation ?? "ND",
-        parcours: item.parcours ? item.parcours.title : "ND",
-        parcoursId: item.parcours ? item.parcours.id : null,
+        formation: item.formation,
       }));
       setModules(updatedModules);
     };
@@ -31,7 +29,7 @@ const ModuleHome = () => {
       {
         path: "/modules",
       },
-      applyData,
+      applyData
     );
   }, [sendRequest]);
 
@@ -59,7 +57,7 @@ const ModuleHome = () => {
         path: `/modules/formation/${moduleToDelete.id}`,
         method: "delete",
       },
-      applyData,
+      applyData
     );
   }, [sendRequest, getModules, moduleToDelete, modules]);
 
