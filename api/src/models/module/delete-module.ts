@@ -28,7 +28,7 @@ async function deleteModule(moduleId: number) {
     await tx.bonusSkillsOnModuleMetadata.deleteMany({
       where: { moduleId },
     });
-    deletedModule = await tx.module.delete({
+    deletedModule = await tx.moduleMetadata.delete({
       where: { id: moduleId },
     });
   });
