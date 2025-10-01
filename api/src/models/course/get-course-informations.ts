@@ -82,18 +82,22 @@ async function getCourseInformations(courseId: number) {
 
   if (!course) throw { message: "Le cours n'existe pas.", statusCode: 404 };
 
-  if (course) {
-    if (course.module.module.image instanceof Buffer) {
-      const base64Image = course.module.module.image.toString("base64");
-      const result = {
-        ...course,
-        module: { ...course.module, image: base64Image },
-      };
-      return result;
-    }
-  }
+  const { module: moduleNested, ...courseWithoutModule } = course.module;
 
-  return course;
+  let image: any = moduleNested.image;
+
+  if (image instanceof Buffer) {
+    image = image.toString("base64");
+  }
+  return {
+    ...course,
+    module: {
+      ...courseWithoutModule,
+      title: moduleNested.title,
+      description: moduleNested.description,
+      image: image,
+    },
+  };
 }
 
 export default getCourseInformations;
