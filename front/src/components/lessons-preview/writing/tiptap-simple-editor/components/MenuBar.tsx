@@ -101,7 +101,7 @@ export default function MenuBar({
       <Popover.Root>
         <Popover.Trigger asChild>
           <MemoButton active={!!states.currentColor} tooltip="Couleur du texte">
-            <Icon name="Palette" />
+            <Icon name="Palette" className="text-base-content" />
           </MemoButton>
         </Popover.Trigger>
         <Popover.Content side="top" sideOffset={8} asChild>
@@ -122,7 +122,7 @@ export default function MenuBar({
             active={!!states.currentHighlight}
             tooltip="Surbrillance du texte"
           >
-            <Icon name="Highlighter" />
+            <Icon name="Highlighter" className="text-base-content" />
           </MemoButton>
         </Popover.Trigger>
         <Popover.Content side="top" sideOffset={8} asChild>

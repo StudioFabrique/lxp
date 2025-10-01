@@ -236,6 +236,11 @@ const useLessonsPreview = () => {
     setIsCreatingActivity(false);
   };
 
+  const handleActivityCreated = (activity: Activity) => {
+    // Sélectionner automatiquement l'activité créée
+    setSelectedActivity(activity);
+  };
+
   const fetchData = useCallback(() => {
     const applyData = ({
       data,
@@ -329,6 +334,7 @@ const useLessonsPreview = () => {
     onDeleteCourse: handleDeleteCourse,
     onCreateActivity: handleCreateActivity,
     onCloseTextEditor: handleCloseTextEditor,
+    onActivityCreated: handleActivityCreated,
   };
 };
 

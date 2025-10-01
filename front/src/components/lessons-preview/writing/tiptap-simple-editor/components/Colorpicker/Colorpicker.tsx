@@ -54,7 +54,7 @@ export const ColorPicker = ({ color, onChange, onClear }: ColorPickerProps) => {
       />
       <input
         type="text"
-        className="w-full p-2 bg-white text-base-content border rounded border-neutral-200 focus:outline-1 focus:ring-0 focus:outline-neutral-300 dark:focus:outline-neutral-700"
+        className="w-full p-2 bg-white text-base-content border rounded border-neutral-200 focus:outline-1 focus:ring-0 focus:outline-neutral-300"
         placeholder="#000000"
         value={colorInputValue}
         onChange={handleColorUpdate}
