@@ -13,11 +13,7 @@ async function getCourseObjectives(courseId: number) {
         select: {
           parcours: {
             select: {
-              parcours: {
-                select: {
-                  objectives: true,
-                },
-              },
+              objectives: true,
             },
           },
         },
@@ -25,16 +21,7 @@ async function getCourseObjectives(courseId: number) {
     },
   });
 
-  if (!objectives) {
-    const error = new Error("Le cours n'existe pas");
-    (error as any).statusCode = 404;
-    throw error;
-  }
-  console.log(
-    "NB OBJECTIFS : ",
-    objectives.objectives.length +
-      objectives.module.parcours[0].parcours.objectives.length
-  );
+  if (!objectives) throw { message: "Le cours n'existe pas.", statusCode: 404 };
 
   return objectives;
 }

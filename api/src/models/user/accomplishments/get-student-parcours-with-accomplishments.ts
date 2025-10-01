@@ -9,11 +9,9 @@ export default async function getStudentParcoursWithAccomplishments(
     where: {
       modules: {
         some: {
-          moduleMetadata: {
-            courses: {
-              some: {
-                accomplishments: { some: { student: { idMdb: studentMdbId } } },
-              },
+          courses: {
+            some: {
+              accomplishments: { some: { student: { idMdb: studentMdbId } } },
             },
           },
         },
@@ -24,21 +22,17 @@ export default async function getStudentParcoursWithAccomplishments(
       title: true,
       modules: {
         select: {
-          moduleMetadata: {
+          id: true,
+          module: { select: { title: true } },
+          courses: {
             select: {
               id: true,
-              module: { select: { title: true } },
-              courses: {
+              title: true,
+              accomplishments: {
                 select: {
                   id: true,
-                  title: true,
-                  accomplishments: {
-                    select: {
-                      id: true,
-                      description: true,
-                      accomplishedAt: true,
-                    },
-                  },
+                  description: true,
+                  accomplishedAt: true,
                 },
               },
             },
@@ -52,9 +46,9 @@ export default async function getStudentParcoursWithAccomplishments(
     id: parcours.id,
     title: parcours.title,
     modules: parcours.modules.map((mod) => ({
-      id: mod.moduleMetadata.id,
-      title: mod.moduleMetadata.module.title,
-      courses: mod.moduleMetadata.courses.map((course) => ({
+      id: mod.id,
+      title: mod.module.title,
+      courses: mod.courses.map((course) => ({
         id: course.id,
         title: course.title,
         accomplishments: course.accomplishments,

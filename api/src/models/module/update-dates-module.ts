@@ -6,15 +6,15 @@ export default async function updateDatesModule(
   maxDate: string
 ) {
   const datesParcours = (
-    await prisma.module.findUnique({
+    await prisma.moduleMetadata.findUnique({
       where: { id: +moduleId },
       select: {
         parcours: {
-          select: { parcours: { select: { startDate: true, endDate: true } } },
+          select: { startDate: true, endDate: true },
         },
       },
     })
-  )?.parcours[0].parcours;
+  )?.parcours;
 
   if (!datesParcours || !datesParcours.startDate || !datesParcours.endDate) {
     return null;
@@ -31,7 +31,7 @@ export default async function updateDatesModule(
     return null;
   } */
 
-  const response = await prisma.module.update({
+  const response = await prisma.moduleMetadata.update({
     where: { id: +moduleId },
     data: { minDate: minDateTime, maxDate: maxDateTime },
   });

@@ -1,7 +1,7 @@
 import { prisma } from "../../utils/db";
 
 async function deleteModule(moduleId: number) {
-  const existingModule = await prisma.module.findFirst({
+  const existingModule = await prisma.moduleMetadata.findFirst({
     where: { id: moduleId },
     select: { courses: true },
   });
@@ -22,16 +22,12 @@ async function deleteModule(moduleId: number) {
   let deletedModule = {};
 
   const transaction = await prisma.$transaction(async (tx) => {
-    await tx.contactsOnModule.deleteMany({
+    await tx.contactsOnModuleMetadata.deleteMany({
       where: { moduleId },
     });
-    await tx.bonusSkillsOnModule.deleteMany({
+    await tx.bonusSkillsOnModuleMetadata.deleteMany({
       where: { moduleId },
     });
-    await tx.modulesOnParcours.deleteMany({
-      where: { moduleId },
-    });
-
     deletedModule = await tx.module.delete({
       where: { id: moduleId },
     });

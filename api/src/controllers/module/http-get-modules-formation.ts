@@ -16,10 +16,7 @@ async function httpGetModuleFormation(req: Request, res: Response) {
         id: true,
         title: true,
         description: true,
-        duration: true,
         thumb: true,
-        contacts: true,
-        bonusSkills: true,
       },
     });
 

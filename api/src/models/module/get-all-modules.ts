@@ -19,22 +19,6 @@ export default async function getAllModules() {
           },
         },
       },
-      parcours: {
-        select: {
-          parcours: {
-            select: {
-              id: true,
-              title: true,
-            },
-          },
-        },
-      },
-      courses: {
-        select: {
-          id: true,
-          title: true,
-        },
-      },
     },
   });
 
@@ -43,18 +27,6 @@ export default async function getAllModules() {
       return {
         ...item,
         formation: item.formations[0].formation.title,
-        formations: null,
-        parcours: null,
-      };
-    }
-    if (item.parcours.length > 0) {
-      return {
-        ...item,
-        parcours: {
-          id: item.parcours[0].parcours.id,
-          title: item.parcours[0].parcours.title,
-        },
-        courses: item.courses.map((item) => item),
       };
     }
   });

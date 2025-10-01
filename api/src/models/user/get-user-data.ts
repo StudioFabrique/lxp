@@ -112,14 +112,10 @@ export default async function getUserData(userId: string) {
         select: {
           modules: {
             select: {
-              moduleMetadata: {
+              courses: {
                 select: {
-                  courses: {
-                    select: {
-                      lessons: {
-                        select: { id: true }, // Only need lesson IDs
-                      },
-                    },
+                  lessons: {
+                    select: { id: true }, // Only need lesson IDs
                   },
                 },
               },

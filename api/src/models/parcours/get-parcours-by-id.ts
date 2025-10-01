@@ -51,29 +51,25 @@ async function getParcoursById(parcoursId: number, userId: string) {
       // Sélectionne les modules avec leurs cours et leçons
       modules: {
         select: {
-          moduleMetadata: {
+          id: true,
+          duration: true,
+          minDate: true,
+          maxDate: true,
+          contacts: { select: { contact: true } },
+          bonusSkills: {
             select: {
-              id: true,
-              duration: true,
-              minDate: true,
-              maxDate: true,
-              contacts: { select: { contact: true } },
-              bonusSkills: {
-                select: {
-                  bonusSkill: { select: { id: true, description: true } },
-                },
-              },
-              courses: {
+              bonusSkill: { select: { id: true, description: true } },
+            },
+          },
+          courses: {
+            orderBy: { order: "asc" },
+            select: {
+              lessons: {
                 orderBy: { order: "asc" },
                 select: {
-                  lessons: {
-                    orderBy: { order: "asc" },
-                    select: {
-                      lessonsRead: {
-                        where: { student: { idMdb: userId } },
-                        select: { id: true, finishedAt: true },
-                      },
-                    },
+                  lessonsRead: {
+                    where: { student: { idMdb: userId } },
+                    select: { id: true, finishedAt: true },
                   },
                 },
               },

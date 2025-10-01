@@ -14,21 +14,17 @@ async function putModule(module: any, thumb: any, image: any) {
   let updatedModule: any;
 
   const transaction = await prisma.$transaction(async (tx) => {
-    await tx.contactsOnModule.deleteMany({
+    await tx.contactsOnModuleMetadata.deleteMany({
       where: { moduleId: module.id },
     });
 
-    await tx.bonusSkillsOnModule.deleteMany({
+    await tx.bonusSkillsOnModuleMetadata.deleteMany({
       where: { moduleId: module.id },
     });
 
-    updatedModule = await tx.module.update({
+    updatedModule = await tx.moduleMetadata.update({
       where: { id: module.id },
       data: {
-        title: module.title,
-        description: module.description,
-        image: image !== undefined ? image : existingModule.image,
-        thumb: thumb !== undefined ? thumb : existingModule.thumb,
         duration: +module.duration,
         contacts: {
           create: module.contactsIds.map((id: number) => {
@@ -51,10 +47,6 @@ async function putModule(module: any, thumb: any, image: any) {
       },
       select: {
         id: true,
-        title: true,
-        description: true,
-        duration: true,
-        thumb: true,
         minDate: true,
         maxDate: true,
         contacts: {
