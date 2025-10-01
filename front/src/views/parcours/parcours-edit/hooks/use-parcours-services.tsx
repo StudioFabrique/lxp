@@ -83,6 +83,8 @@ const useParcoursService = () => {
               data.modules.map((item: any) => {
                 return {
                   ...item,
+                  title: item.module.title,
+                  thumb: item.module.thumb,
                   contacts: item.contacts.map(
                     (itemContact: any) => itemContact.contact
                   ),

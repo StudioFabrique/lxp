@@ -11,25 +11,20 @@ async function httpGetModuleFormation(req: Request, res: Response) {
       where: { formationId: +formationId },
     });
 
-    console.log("MODULES ID LIST", modulesIdList);
-
-    const modules = await prisma.module.findMany({
-      where: {
-        id: { in: modulesIdList.map((item: any) => item.moduleId) },
-      },
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        thumb: true,
+    const toto = await prisma.modulesOnFormation.findMany({
+      where: { formationId: +formationId },
+      include: {
+        module: {
+          select: { id: true, title: true, description: true, thumb: true },
+        },
       },
     });
 
-    console.log({ modules });
+    console.log("MODULES ID LIST", modulesIdList);
 
-    const result = modules.map((module) => ({
-      ...module,
-      thumb: module.thumb?.toString("base64") ?? null,
+    const result = toto.map((item) => ({
+      ...item.module,
+      thumb: item.module.thumb?.toString("base64") ?? null,
     }));
 
     return res.status(200).json(result);
