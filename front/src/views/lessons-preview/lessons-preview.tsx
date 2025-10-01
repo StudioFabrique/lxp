@@ -50,6 +50,7 @@ const LessonsPreview = () => {
     onClickModalRightButton,
     onCreateActivity,
     onCloseTextEditor,
+    onActivityCreated,
   } = useLessonsPreview();
 
   return (
@@ -145,6 +146,7 @@ const LessonsPreview = () => {
                     isNewActivity
                     onCloseTipTapEditor={onCloseTextEditor}
                     onRefreshAllData={fetchData}
+                    onActivityCreated={onActivityCreated}
                   />
                 </Can>
               ) : selectedActivity ? (

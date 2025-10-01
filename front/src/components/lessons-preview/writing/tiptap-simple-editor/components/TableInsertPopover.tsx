@@ -87,16 +87,16 @@ export const TableInsertPopover = ({
       <Popover.Trigger asChild>
         <button
           type="button"
-          className="flex items-center gap-3.5 p-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 text-left bg-transparent w-full max-w-max rounded hover:bg-neutral-100 hover:text-neutral-800 dark:hover:bg-neutral-900 dark:hover:text-neutral-200"
+          className="flex items-center gap-3.5 p-1.5 text-sm font-medium text-left bg-transparent w-full max-w-max rounded"
         >
-          <Icon name="Table" className="w-4 h-4" />
-          {title}
+          <Icon name="Table" className="w-4 h-4 text-base-content" />
+          <span className="text-base-content">{title}</span>
         </button>
       </Popover.Trigger>
       <Popover.Content side="bottom" align="start" sideOffset={8} asChild>
         <Surface className="p-4 w-80">
           <div className="space-y-4">
-            <div className="text-sm font-medium text-gray-700">
+            <div className="text-sm font-medium text-base-content">
               {getSelectionText()}
             </div>
 
@@ -120,7 +120,7 @@ export const TableInsertPopover = ({
             </div>
 
             <div className="space-y-2">
-              <div className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+              <div className="text-xs font-medium text-base-content uppercase tracking-wide">
                 Tableaux prédéfinis
               </div>
               <div className="flex flex-wrap gap-2">

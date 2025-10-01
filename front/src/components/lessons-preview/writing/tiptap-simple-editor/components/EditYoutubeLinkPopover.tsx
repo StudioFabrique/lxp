@@ -15,9 +15,9 @@ export const EditYoutubeLinkPopover = ({
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
-        <Toolbar.Button className="flex items-center gap-3 p-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 text-left bg-transparent w-full rounded hover:bg-neutral-100 hover:text-neutral-800 dark:hover:bg-neutral-900 dark:hover:text-neutral-200">
-          <Icon name="Youtube" />
-          {title}
+        <Toolbar.Button className="flex items-center gap-3 p-1.5 text-sm font-medium text-left bg-transparent w-full rounded">
+          <Icon className="text-base-content" name="Youtube" />
+          <span className="text-base-content">{title}</span>
         </Toolbar.Button>
       </Popover.Trigger>
       <Popover.Content>

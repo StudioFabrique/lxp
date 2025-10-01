@@ -88,7 +88,7 @@ export const TableSizeSelector = ({
       <Popover.Content side="bottom" sideOffset={8} asChild>
         <Surface className="p-4 w-fit">
           <div className="space-y-3">
-            <div className="text-sm font-medium text-gray-700">
+            <div className="text-sm font-medium text-base-content">
               {getSelectionText()}
             </div>
             <div

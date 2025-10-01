@@ -2,6 +2,8 @@ import type Lesson from "../../../utils/interfaces/lesson";
 import { Activity } from "../../../utils/interfaces/activity";
 import RatingPanelButton from "../../UI/lesson-rating/rating-panel-button";
 import ActivityPreview from "./activity-preview";
+import TipTapActivity from "../writing/tip-tap-activity";
+import { ACTIVITIES } from "../../../config/urls";
 import {
   type PropsWithChildren,
   useState,
@@ -36,6 +38,8 @@ const LessonReader = ({
   children,
 }: PropsWithChildren<PreviewLessonProps>) => {
   const [showTipTapEditor, setShowTipTapEditor] = useState<boolean>(false);
+  const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
+  const [activityContent, setActivityContent] = useState<string>("");
 
   const [activities, setActivities] = useState<Activity[]>([]);
   const [deletingActivityId, setDeletingActivityId] = useState<number | null>(
@@ -89,6 +93,8 @@ const LessonReader = ({
     (activity: Activity) => {
       // Gérer l'édition pour tous les types d'activités
       if (["text", "video", "image", "resource"].includes(activity.type)) {
+        // Passer en mode édition pour cette activité
+        setEditingActivity(activity);
         // Fermer l'éditeur de création si il est ouvert
         if (showTipTapEditor) {
           setShowTipTapEditor(false);
@@ -115,6 +121,17 @@ const LessonReader = ({
     setShowDeleteModal(false);
     setActivityToDelete(null);
   }, [activityToDelete, handleDeleteActivity]);
+
+  // Effet pour récupérer le contenu de l'activité en cours d'édition
+  useEffect(() => {
+    if (editingActivity?.type === "text" && editingActivity.url) {
+      fetch(`${ACTIVITIES}${editingActivity.url}`)
+        .then((response) => response.text())
+        .then((content: string) => {
+          setActivityContent(content);
+        });
+    }
+  }, [editingActivity]);
 
   // Initialiser les activités depuis la prop
   useEffect(() => {
@@ -195,10 +212,31 @@ const LessonReader = ({
             />
           </div>
 
-          <ActivityPreview
-            lessonId={selectedLesson.id ?? 0}
-            activity={selectedActivity}
-          />
+          {/* Afficher l'éditeur TipTap si l'activité est en cours d'édition */}
+          {editingActivity?.id === selectedActivity.id ? (
+            <div className="mt-4">
+              <TipTapActivity
+                parentId={selectedLesson.id ?? 0}
+                activity={{
+                  ...selectedActivity,
+                  content: activityContent
+                }}
+                isNewActivity={false}
+                shouldStartEdit={true}
+                onRefreshAllData={onRefreshAllData}
+                onActivityEditChange={(isEditing) => {
+                  if (!isEditing) {
+                    setEditingActivity(null);
+                  }
+                }}
+              />
+            </div>
+          ) : (
+            <ActivityPreview
+              lessonId={selectedLesson.id ?? 0}
+              activity={selectedActivity}
+            />
+          )}
         </div>
 
         {/* Boutons de navigation */}

@@ -1,6 +1,5 @@
 import {
   type ChangeEvent,
-  type FormEvent,
   useRef,
   useState,
   useEffect,
@@ -9,7 +8,6 @@ import type { Editor } from "@tiptap/react";
 import toast from "react-hot-toast";
 import useHttp from "../../../hooks/use-http";
 import { useAutosave } from "../../../hooks/use-autosave";
-import Modal from "../../UI/modal/modal";
 import TiptapEditor from "./tiptap-simple-editor/tiptap-editor";
 import AutosaveIndicator from "./autosave-indicator";
 import { Activity } from "../../../utils/interfaces/activity";
@@ -26,6 +24,7 @@ type TipTapActivityProps = {
   onActivityEditChange?: (isEditing: boolean) => void;
   shouldStartEdit?: boolean;
   forceStopEdit?: boolean;
+  onActivityCreated?: (activity: Activity) => void;
 };
 
 const TipTapActivity = ({
@@ -38,11 +37,12 @@ const TipTapActivity = ({
   onActivityEditChange,
   shouldStartEdit = false,
   forceStopEdit = false,
+  onActivityCreated,
 }: TipTapActivityProps) => {
   const { sendRequest } = useHttp(true);
-  const [showModal, setShowModal] = useState<boolean>(false);
   const [showAutosaveIndicator, setShowAutosaveIndicator] =
     useState<boolean>(false);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   const [isEditingActivity, setEditingActivity] =
     useState<boolean>(isNewActivity);
@@ -53,7 +53,6 @@ const TipTapActivity = ({
   );
 
   const editorRef = useRef<Editor | null>(null);
-  const titleInputRef = useRef<HTMLInputElement>(null);
 
   // Hook d'autosave
   const { lastAutosaveTime, restoreAutosavedContent, clearStorage } =
@@ -123,16 +122,7 @@ const TipTapActivity = ({
     setEditingActivity(false);
   };
 
-  useEffect(() => {
-    // Add a small delay to ensure DOM is fully rendered before focusing
-    if (showModal) {
-      setTimeout(() => {
-        if (titleInputRef.current) {
-          titleInputRef.current.focus();
-        }
-      }, 100);
-    }
-  }, [showModal]);
+
 
   useEffect(() => {
     onActivityEditChange?.(isEditingActivity);
@@ -151,19 +141,24 @@ const TipTapActivity = ({
     }
   }, [isNewActivity, isEditingActivity]);
 
-  const handleSubmitSave = (e: FormEvent) => {
-    e.preventDefault();
-    // save as file
-    const applyData = () => {
+  const handleSave = () => {
+    if (!title.trim() || isSaving) return;
+    
+    setIsSaving(true);
+    
+    const applyData = (response: any) => {
       toast.success(
         `Activité ${isNewActivity ? "créée" : "modifiée"} avec succès`
       );
       // Nettoie l'autosave après sauvegarde réussie
       clearStorage();
-      setShowModal(false);
+      setIsSaving(false);
 
       // Pour les nouvelles activités, fermer l'éditeur et rafraîchir
       if (isNewActivity) {
+        if (response?.data && onActivityCreated) {
+          onActivityCreated(response.data);
+        }
         onCloseTipTapEditor?.();
         onRefreshAllData?.();
       } else {
@@ -211,44 +206,13 @@ const TipTapActivity = ({
         },
       },
       applyData
-    );
+    ).catch(() => {
+      setIsSaving(false);
+    });
   };
 
   return (
     <>
-      {showModal ? (
-        <Modal
-          title="Sauvegarder l'activité"
-          leftLabel="Annuler"
-          onMinimizeClick={() => setShowModal(false)}
-        >
-          <form
-            onSubmit={handleSubmitSave}
-            className="flex gap-4 items-center pt-10 px-5"
-          >
-            <label className="label" htmlFor="activity-title">
-              Titre de l'activité
-            </label>
-            <input
-              id="activity-title"
-              ref={titleInputRef}
-              value={title}
-              onChange={onChangeTitle}
-              type="text"
-              className="input input-sm input-bordered"
-              placeholder="obligatoire"
-            />
-            <button
-              type="submit"
-              className="btn btn-sm btn-success"
-              disabled={titleHasError}
-            >
-              {isNewActivity ? "Créer" : "Modifier"}
-            </button>
-          </form>
-        </Modal>
-      ) : null}
-
       {/* Indicateur d'autosave */}
       <AutosaveIndicator
         isVisible={showAutosaveIndicator}
@@ -256,13 +220,43 @@ const TipTapActivity = ({
       />
 
       <div className="w-[100%] bg-base-200 rounded-lg p-4">
+        {/* Input titre */}
+        {isEditingActivity && (
+          <div className="mb-4 flex gap-4 items-center">
+            <label className="label min-w-fit" htmlFor="activity-title">
+              Titre de l'activité :
+            </label>
+            <input
+              id="activity-title"
+              value={title}
+              onChange={onChangeTitle}
+              type="text"
+              className="input input-sm input-bordered flex-1"
+              placeholder="Saisissez le titre de l'activité"
+              autoFocus={isNewActivity}
+            />
+            <button
+              type="button"
+              onClick={handleSave}
+              className={`btn btn-sm ${isSaving ? 'btn-disabled' : 'btn-success'} text-base-100`}
+              disabled={titleHasError || isSaving}
+            >
+              {isSaving ? (
+                <span className="loading loading-spinner loading-xs"></span>
+              ) : (
+                isNewActivity ? "Créer" : "Sauvegarder"
+              )}
+            </button>
+          </div>
+        )}
+
         <TiptapEditor
           editorRef={editorRef}
           initialValue={editorContent || activity?.content}
           isEditingActivity={isEditingActivity}
           onCloseEditor={handleCloseEditor}
           setEditingActivity={setEditingActivity}
-          onSave={() => setShowModal(true)}
+          onSave={handleSave}
           onContentChange={updateEditorContent}
         />
       </div>
