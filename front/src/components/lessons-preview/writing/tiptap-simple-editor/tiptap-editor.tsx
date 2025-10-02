@@ -97,7 +97,7 @@ export default function TiptapEditor({
     editorProps: {
       attributes: {
         class:
-          "prose min-h-[12vh] m-1 max-w-[70%] py-5 focus:outline-none transition-all duration-200",
+          "prose min-h-[12vh] m-1 w-[70%] py-5 focus:outline-none transition-all duration-200",
       },
     },
     onUpdate: ({ editor }) => {
