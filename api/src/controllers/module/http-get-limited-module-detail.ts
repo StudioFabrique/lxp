@@ -5,7 +5,7 @@ import getLimitedModuleDetail from "../../models/module/get-limited-module-detai
 
 export default async function httpGetLimitedModuleDetail(
   req: CustomRequest,
-  res: Response,
+  res: Response
 ) {
   const userId = req.auth?.userId;
 
@@ -15,7 +15,6 @@ export default async function httpGetLimitedModuleDetail(
 
   try {
     const { moduleId } = req.params;
-    console.log("controller module id :", moduleId);
     const response = await getLimitedModuleDetail(+moduleId, userId);
     return res.status(200).json({
       message: "Les détails du module ont bien étés récupérés",
