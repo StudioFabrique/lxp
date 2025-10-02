@@ -219,31 +219,31 @@ const TipTapActivity = ({
         lastSaveTime={lastAutosaveTime}
       />
 
-      <div className="w-[100%] bg-base-200 rounded-lg p-4">
-        {isEditingActivity && (
-          <div className="mb-4 flex gap-4 items-center">
-            {/* Input titre */}
-            <label className="label min-w-fit" htmlFor="activity-title">
-              Titre de l'activité :
-            </label>
-            <input
-              id="activity-title"
-              value={title}
-              onChange={onChangeTitle}
-              type="text"
-              className="input input-sm input-bordered flex-1"
-              placeholder="Saisissez le titre de l'activité"
-              autoFocus={isNewActivity}
-            />
-            <button
-              className="btn btn-sm btn-primary text-base-100"
-              onClick={handleCloseEditor}
-            >
-              Annuler
-            </button>
-          </div>
-        )}
+      {isEditingActivity && (
+        <div className="py-4 flex gap-4 items-center">
+          {/* Input titre */}
+          <label className="label min-w-fit" htmlFor="activity-title">
+            Titre de l'activité :
+          </label>
+          <input
+            id="activity-title"
+            value={title}
+            onChange={onChangeTitle}
+            type="text"
+            className="input input-sm input-bordered flex-1"
+            placeholder="Saisissez le titre de l'activité"
+            autoFocus={isNewActivity}
+          />
+          <button
+            className="btn btn-sm btn-primary text-base-100"
+            onClick={handleCloseEditor}
+          >
+            Annuler
+          </button>
+        </div>
+      )}
 
+      <div className="w-[100%] bg-base-200 rounded-lg p-4">
         <TiptapEditor
           editorRef={editorRef}
           initialValue={editorContent || activity?.content}
