@@ -8,6 +8,7 @@ import editUser from "../../models/user/edit-user";
 import editManyGraduations from "../../models/graduation/edit-many-graduations";
 import editManyLinks from "../../models/links/edit-many-links";
 import editManyHobbies from "../../models/hobby/edit-many-hobbies";
+import { validationResult } from "express-validator";
 
 /**
  * HTTP handler for updating user information including their profile, graduations, links, and hobbies
@@ -22,7 +23,7 @@ export default async function httpUpdateUser(req: Request, res: Response) {
     userDataRequest.graduations;
   const linksDataRequest: ILink[] | undefined = userDataRequest.links;
   const hobbiesDataRequest: IHobby[] | undefined = userDataRequest.hobbies;
-  const { roleId } = userDataRequest;
+
   const uploadedFile = req.file;
 
   try {
@@ -38,7 +39,7 @@ export default async function httpUpdateUser(req: Request, res: Response) {
     }
 
     // Update user basic information
-    const userResponse = await editUser(id, userDataRequest, roleId);
+    const userResponse = await editUser(id, userDataRequest);
 
     if (userResponse === null)
       throw {
