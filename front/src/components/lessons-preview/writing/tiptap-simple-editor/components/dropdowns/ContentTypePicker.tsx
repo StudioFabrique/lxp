@@ -58,7 +58,7 @@ export const ContentTypePicker = ({
           active={activeItem?.id !== "paragraph" && !!activeItem?.type}
         >
           {isLoading ? (
-            <Icon name="Loader2" className="animate-spin" />
+            <Icon name="Loader" className="animate-spin" />
           ) : (
             <>
               <Icon
