@@ -82,7 +82,10 @@ const LessonReader = ({
       };
 
       sendRequest(
-        { path: `/activity/${activity.type}/${activityId}`, method: "delete" },
+        {
+          path: `/activity/${activity.type}/${activityId}/lesson`,
+          method: "delete",
+        },
         applyData
       );
     },
