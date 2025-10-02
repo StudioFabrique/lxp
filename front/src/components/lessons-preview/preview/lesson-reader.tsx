@@ -93,6 +93,8 @@ const LessonReader = ({
     (activity: Activity) => {
       // Gérer l'édition pour tous les types d'activités
       if (["text", "video", "image", "resource"].includes(activity.type)) {
+        // Réinitialiser le contenu avant de passer en mode édition
+        setActivityContent("");
         // Passer en mode édition pour cette activité
         setEditingActivity(activity);
         // Fermer l'éditeur de création si il est ouvert
@@ -132,6 +134,15 @@ const LessonReader = ({
         });
     }
   }, [editingActivity]);
+
+  // Réinitialiser l'état d'édition quand selectedActivity change
+  useEffect(() => {
+    // Si on change d'activité sélectionnée, sortir du mode édition
+    if (editingActivity && editingActivity.id !== selectedActivity.id) {
+      setEditingActivity(null);
+      setActivityContent("");
+    }
+  }, [selectedActivity.id, editingActivity]);
 
   // Initialiser les activités depuis la prop
   useEffect(() => {
@@ -209,6 +220,7 @@ const LessonReader = ({
               openMenuId={openMenuId}
               handleEditActivity={handleEditActivity}
               handleOpenDeleteModal={handleOpenDeleteModal}
+              disabled={editingActivity?.id === selectedActivity.id}
             />
           </div>
 
@@ -219,7 +231,7 @@ const LessonReader = ({
                 parentId={selectedLesson.id ?? 0}
                 activity={{
                   ...selectedActivity,
-                  content: activityContent
+                  content: activityContent,
                 }}
                 isNewActivity={false}
                 shouldStartEdit={true}

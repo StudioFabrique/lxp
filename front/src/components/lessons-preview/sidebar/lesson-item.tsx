@@ -1,4 +1,4 @@
-import { Check, Ellipsis, MoreVertical, Edit, Trash2, Edit3 } from "lucide-react";
+import { Check, Edit, Trash2, Edit3, EllipsisIcon } from "lucide-react";
 import Lesson from "../../../utils/interfaces/lesson";
 import { Link } from "react-router-dom";
 import Can from "../../UI/can/can.component";
@@ -79,8 +79,6 @@ const LessonItem = ({
             {lesson.title}
           </p>
           <div className="flex items-center gap-1">
-            
-            
             <Can action="update" object="lesson">
               <div className="relative">
                 <button
@@ -88,12 +86,15 @@ const LessonItem = ({
                   className="btn btn-sm px-2 btn-ghost w-fit hover:bg-transparent hover:text-base-100"
                   onClick={handleMenuClick}
                 >
-                  <MoreVertical className="w-4 h-4" />
+                  <EllipsisIcon className="w-4 h-4" />
                 </button>
-                
+
                 {isMenuOpen && (
                   <>
-                    <div className="fixed inset-0 z-10" onClick={() => setIsMenuOpen(false)} />
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setIsMenuOpen(false)}
+                    />
                     <div className="absolute right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg min-w-[10rem] py-1 z-20">
                       <button
                         type="button"
@@ -119,7 +120,7 @@ const LessonItem = ({
                           onClick={(e) => e.stopPropagation()}
                         >
                           <Edit3 className="w-4 h-4" />
-                          <span >Éditer les détails</span>
+                          <span>Éditer les détails</span>
                         </Link>
                       </Can>
                       <button

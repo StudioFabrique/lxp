@@ -25,8 +25,6 @@ import { TableInsertPopover } from "./TableInsertPopover.js";
 type MenuBarProps = {
   editor: Editor;
   shouldHide?: boolean;
-  onCloseEditor: () => void;
-  onSave?: () => void;
   isSticky?: boolean;
 };
 
@@ -39,8 +37,6 @@ const MemoFontFamilyPicker = memo(FontFamilyPicker);
 export default function MenuBar({
   editor,
   shouldHide = false,
-  onCloseEditor,
-  onSave,
   isSticky = false,
 }: MenuBarProps) {
   const toolbarRef = useRef<HTMLDivElement>(null);
@@ -63,10 +59,8 @@ export default function MenuBar({
     <Toolbar.Wrapper
       ref={toolbarRef}
       hidden={shouldHide}
-      className={`h-fit w-fit self-center justify-between px-2 transition-all duration-300 ease-in-out ${
-        isSticky
-          ? "fixed top-4 transform z-50 shadow-lg rounded-lg border backdrop-blur-[2px]"
-          : "sticky top-0"
+      className={`self-center h-14 justify-between px-2 transition-all duration-300 ease-in-out border-none shadow-none rounded-none  backdrop-blur-[2px] flex-wrap ${
+        isSticky ? "fixed top-4 transform shadow-lg rounded-lg border" : ""
       }`}
     >
       <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus">
@@ -139,27 +133,12 @@ export default function MenuBar({
       {items(editor).map((item) => (
         <Fragment key={item.title || `divider-${Math.random()}`}>
           {item.type === "divider" ? (
-            <span className="divider invisible" />
+            <span className="w-1 invisible" />
           ) : (
             <MenuItem {...item} />
           )}
         </Fragment>
       ))}
-
-      {onSave ? (
-        <MenuItem
-          icon="save-line"
-          title="Enregistrer"
-          action={onSave}
-          disabled={!editor.getText().trim()}
-        />
-      ) : null}
-
-      <MenuItem
-        icon="close-large-line"
-        title="Fermer l'éditeur"
-        action={onCloseEditor}
-      />
 
       <input
         ref={inputFileRef}

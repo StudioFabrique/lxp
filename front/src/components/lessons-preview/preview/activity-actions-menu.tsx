@@ -9,16 +9,19 @@ type ActivityActionsMenuProps = {
   openMenuId: number | null;
   handleEditActivity: (activity: Activity) => void;
   handleOpenDeleteModal: (activity: Activity) => void;
+  disabled?: boolean;
 };
 
 const ActivityActionsMenu = ({
   activity,
   handleEditActivity,
   handleOpenDeleteModal,
+  disabled = false,
 }: ActivityActionsMenuProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleClick = () => {
+    if (disabled) return;
     setIsOpen(!isOpen);
   };
 
@@ -29,6 +32,7 @@ const ActivityActionsMenu = ({
           type="button"
           className="btn btn-ghost btn-sm hover:bg-base-200"
           onClick={handleClick}
+          disabled={disabled}
         >
           <MoreVertical className="w-4 h-4" />
         </button>
