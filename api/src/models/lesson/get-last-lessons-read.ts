@@ -118,7 +118,13 @@ export default async function getLastLessonsRead(
       lesson: {
         id: lesson?.id,
         title: lesson?.title,
-        course: lesson?.course,
+        course: {
+          ...lesson?.course,
+          module: {
+            ...lesson.course.module,
+            title: lesson.course.module.module.title,
+          },
+        },
         parcoursId: lesson.course.module.parcours.id,
       },
     };
@@ -126,6 +132,8 @@ export default async function getLastLessonsRead(
     return [lessonReformated];
   }
 
+  // ne s'exécute pas tous le temps, à vérifier plus tard si ça sert vraiment
+  // permet d'ajouter le badge des compétences bonus
   const lessonsReformatedWithSkillBadge = lessons?.map((lessonRead) => {
     const { course } = lessonRead.lesson;
 
@@ -137,7 +145,11 @@ export default async function getLastLessonsRead(
       ...lessonRead,
       lesson: {
         ...lessonRead.lesson,
-        course: { ...course, bonusSkills },
+        course: {
+          ...course,
+          module: { ...course.module, title: course.module.module.title },
+          bonusSkills,
+        },
       },
       parcoursId: lessonRead.lesson.course.module.parcours.id,
     };
