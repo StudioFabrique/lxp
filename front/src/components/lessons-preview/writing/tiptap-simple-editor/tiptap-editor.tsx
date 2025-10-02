@@ -26,13 +26,7 @@ import "./index.scss";
 import "highlight.js/styles/github.css";
 
 import MenuBar from "./components/MenuBar";
-import {
-  type Dispatch,
-  type SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 import { LinkMenu } from "./components/LinkMenu";
 import Can from "../../../UI/can/can.component";
 import { Trash2 } from "lucide-react";
@@ -48,8 +42,6 @@ type TiptapSimpleEditorProps = {
   editorRef: React.MutableRefObject<Editor | null>;
   initialValue?: string;
   isEditingActivity: boolean;
-  setEditingActivity: Dispatch<SetStateAction<boolean>>;
-  onCloseEditor?: () => void;
   onSave?: () => void;
   onContentChange?: (content: string) => void;
   onDeleteActivity?: () => void;
@@ -59,17 +51,10 @@ export default function TiptapEditor({
   editorRef,
   initialValue,
   isEditingActivity,
-  setEditingActivity,
-  onCloseEditor,
   onSave,
   onContentChange,
   onDeleteActivity,
 }: TiptapSimpleEditorProps) {
-  const handleCloseEditor = () => {
-    onCloseEditor?.();
-    setEditingActivity(false);
-  };
-
   const [isMenuBarSticky, setIsMenuBarSticky] = useState(false);
 
   const editor = useEditor({
@@ -196,7 +181,6 @@ export default function TiptapEditor({
           <MenuBar
             shouldHide={!isEditingActivity}
             editor={editor}
-            onCloseEditor={handleCloseEditor}
             isSticky={isMenuBarSticky}
           />
         ) : null}

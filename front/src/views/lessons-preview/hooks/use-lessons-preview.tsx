@@ -32,6 +32,10 @@ const useLessonsPreview = () => {
   // Vérifie si le mode de création d'activité est actif
   const [isCreatingActivity, setIsCreatingActivity] = useState(false);
 
+  // Référence pour savoir si on doit préserver l'activité sélectionnée
+  const [preserveSelectedActivity, setPreserveSelectedActivity] =
+    useState(false);
+
   // Récupération de toutes les leçons à partir des cours du module
   const lessons = useMemo(
     () => moduleData?.courses.flatMap((course) => course.lessons) || [],
@@ -237,8 +241,34 @@ const useLessonsPreview = () => {
   };
 
   const handleActivityCreated = (activity: Activity) => {
-    // Sélectionner automatiquement l'activité créée
-    setSelectedActivity(activity);
+    // Désactiver le mode création
+    setIsCreatingActivity(false);
+
+    // Recharger directement les détails de la leçon pour avoir la liste à jour des activités
+    if (selectedLesson?.id) {
+      const applyData = (data: Lesson) => {
+        // Mettre à jour UNIQUEMENT les activités dans selectedLesson existant
+        // sans changer l'objet pour ne pas déclencher le useEffect
+        setSelectedLesson((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            activities: data.activities, // Mise à jour de la liste d'activités
+          };
+        });
+
+        // Sélectionner l'activité créée
+        const createdActivity = data.activities?.find(
+          (act) => act.id === activity.id
+        );
+
+        if (createdActivity) {
+          setSelectedActivity(createdActivity);
+        }
+      };
+
+      sendRequest({ path: `/lesson/${selectedLesson.id}` }, applyData);
+    }
   };
 
   const fetchData = useCallback(() => {
@@ -284,12 +314,19 @@ const useLessonsPreview = () => {
         lessonsRead: lessonInModule?.lessonsRead || [],
         order: lessonInModule?.order,
       });
-      setSelectedActivity(data?.activities?.[0]);
+
+      // Ne réinitialiser selectedActivity que si on ne doit pas la préserver
+      if (!preserveSelectedActivity) {
+        setSelectedActivity(data?.activities?.[0]);
+      } else {
+        // Réinitialiser le flag après avoir préservé l'activité
+        setPreserveSelectedActivity(false);
+      }
     };
 
     if (!selectedLesson?.id) return;
     sendRequest({ path: `/lesson/${selectedLesson.id}` }, applyData);
-  }, [selectedLesson?.id, lessons, sendRequest]);
+  }, [selectedLesson?.id, lessons, sendRequest, preserveSelectedActivity]);
 
   // useEffect pour charger les données initiales du module
   useEffect(() => {

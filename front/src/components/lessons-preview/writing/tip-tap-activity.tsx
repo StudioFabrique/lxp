@@ -1,9 +1,4 @@
-import {
-  type ChangeEvent,
-  useRef,
-  useState,
-  useEffect,
-} from "react";
+import { type ChangeEvent, useRef, useState, useEffect } from "react";
 import type { Editor } from "@tiptap/react";
 import toast from "react-hot-toast";
 import useHttp from "../../../hooks/use-http";
@@ -44,8 +39,9 @@ const TipTapActivity = ({
     useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  const [isEditingActivity, setEditingActivity] =
-    useState<boolean>(isNewActivity);
+  const [isEditingActivity, setEditingActivity] = useState<boolean>(
+    isNewActivity || shouldStartEdit
+  );
 
   const [title, setTitle] = useState<string>(activity?.title || "");
   const [editorContent, setEditorContent] = useState<string>(
@@ -64,13 +60,11 @@ const TipTapActivity = ({
       isNewActivity,
     });
 
-  const titleHasError = !(title && title.length > 0);
-
   // Effet pour gérer l'édition depuis l'extérieur
   useEffect(() => {
     if (shouldStartEdit && !isEditingActivity) {
       setEditingActivity(true);
-    } else if (forceStopEdit && isEditingActivity && !shouldStartEdit) {
+    } else if (forceStopEdit && isEditingActivity) {
       setEditingActivity(false);
     }
   }, [shouldStartEdit, forceStopEdit, isEditingActivity]);
@@ -99,6 +93,14 @@ const TipTapActivity = ({
     }
   }, [isNewActivity, activity, restoreAutosavedContent]);
 
+  // Effet pour mettre à jour le titre et le contenu quand l'activité change
+  useEffect(() => {
+    if (activity && !isNewActivity) {
+      setTitle(activity.title || "");
+      setEditorContent(activity.content || "");
+    }
+  }, [activity, isNewActivity]);
+
   // Effet pour cacher l'indicateur d'autosave après un délai
   useEffect(() => {
     if (showAutosaveIndicator) {
@@ -122,8 +124,6 @@ const TipTapActivity = ({
     setEditingActivity(false);
   };
 
-
-
   useEffect(() => {
     onActivityEditChange?.(isEditingActivity);
   }, [isEditingActivity, onActivityEditChange]);
@@ -143,10 +143,10 @@ const TipTapActivity = ({
 
   const handleSave = () => {
     if (!title.trim() || isSaving) return;
-    
+
     setIsSaving(true);
-    
-    const applyData = (response: any) => {
+
+    const applyData = (response: { data: Activity }) => {
       toast.success(
         `Activité ${isNewActivity ? "créée" : "modifiée"} avec succès`
       );
@@ -220,9 +220,9 @@ const TipTapActivity = ({
       />
 
       <div className="w-[100%] bg-base-200 rounded-lg p-4">
-        {/* Input titre */}
         {isEditingActivity && (
           <div className="mb-4 flex gap-4 items-center">
+            {/* Input titre */}
             <label className="label min-w-fit" htmlFor="activity-title">
               Titre de l'activité :
             </label>
@@ -236,16 +236,10 @@ const TipTapActivity = ({
               autoFocus={isNewActivity}
             />
             <button
-              type="button"
-              onClick={handleSave}
-              className={`btn btn-sm ${isSaving ? 'btn-disabled' : 'btn-success'} text-base-100`}
-              disabled={titleHasError || isSaving}
+              className="btn btn-sm btn-primary text-base-100"
+              onClick={handleCloseEditor}
             >
-              {isSaving ? (
-                <span className="loading loading-spinner loading-xs"></span>
-              ) : (
-                isNewActivity ? "Créer" : "Sauvegarder"
-              )}
+              Annuler
             </button>
           </div>
         )}
@@ -254,8 +248,6 @@ const TipTapActivity = ({
           editorRef={editorRef}
           initialValue={editorContent || activity?.content}
           isEditingActivity={isEditingActivity}
-          onCloseEditor={handleCloseEditor}
-          setEditingActivity={setEditingActivity}
           onSave={handleSave}
           onContentChange={updateEditorContent}
         />
