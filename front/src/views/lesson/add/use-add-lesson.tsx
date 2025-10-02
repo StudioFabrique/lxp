@@ -124,10 +124,10 @@ const useAddLesson = () => {
   const location = useLocation();
 
   const { value: title, newProps: newTitle } = useInput((value) =>
-    regexGeneric.test(value),
+    regexGeneric.test(value)
   );
   const { value: description, newProps: newDescription } = useInput((value) =>
-    regexOptionalGeneric.test(value),
+    regexOptionalGeneric.test(value)
   );
 
   useEffect(() => {
@@ -160,7 +160,7 @@ const useAddLesson = () => {
       dispatch({ type: "SET_LOADING", payload: false });
       navigate(
         location.state ? `/admin/parcours/module/${state.moduleId}` : "..",
-        { state: { lessonId: data.id } },
+        { state: { lessonId: data.id } }
       );
     };
 
@@ -177,7 +177,7 @@ const useAddLesson = () => {
           modalite: state.mode,
         },
       },
-      applyData,
+      applyData
     );
   };
 
@@ -189,7 +189,7 @@ const useAddLesson = () => {
    */
   const getItem = <T extends { id: number | null }>(
     id: number | null,
-    list: T[],
+    list: T[]
   ): T | undefined => {
     if (id) {
       const item = list.find((element: T) => element.id === id);
@@ -228,6 +228,8 @@ const useAddLesson = () => {
   useEffect(() => {
     if (state.parcoursId) {
       sendRequest({ path: `/modules/${state.parcoursId}` }, (data: Item[]) => {
+        console.log({ data });
+
         dispatch({ type: "SET_MODULES_LIST", payload: data });
       });
     }
@@ -240,7 +242,7 @@ const useAddLesson = () => {
         { path: `/course/select/${state.moduleId}` },
         (data: CourseItem[]) => {
           dispatch({ type: "SET_COURSE_LIST", payload: data });
-        },
+        }
       );
     } else {
       // Reset des cours si aucun module n'est sélectionné
@@ -253,7 +255,7 @@ const useAddLesson = () => {
   useEffect(() => {
     if (state.courseId) {
       const course = state.courseList.find(
-        (item) => item.id === state.courseId,
+        (item) => item.id === state.courseId
       );
       if (course) dispatch({ type: "SET_TAGS", payload: course.tags });
     }
