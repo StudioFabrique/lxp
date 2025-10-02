@@ -11,7 +11,7 @@ export const useMenuAlignTextTypes = (editor: Editor) => {
         id: "text alignement",
       },
       {
-        icon: "AlignLeft",
+        icon: "TextAlignStart",
         onClick: () => ctx.editor.chain().focus().setTextAlign("left").run(),
         id: "align-left",
         disabled: () => !ctx.editor.can().setTextAlign("left"),
@@ -20,7 +20,7 @@ export const useMenuAlignTextTypes = (editor: Editor) => {
         type: "option",
       },
       {
-        icon: "AlignCenter",
+        icon: "TextAlignCenter",
         onClick: () => ctx.editor.chain().focus().setTextAlign("center").run(),
         id: "align-center",
         disabled: () => !ctx.editor.can().setTextAlign("center"),
@@ -29,7 +29,7 @@ export const useMenuAlignTextTypes = (editor: Editor) => {
         type: "option",
       },
       {
-        icon: "AlignRight",
+        icon: "TextAlignEnd",
         onClick: () => ctx.editor.chain().focus().setTextAlign("right").run(),
         id: "align-right",
         disabled: () => !ctx.editor.can().setTextAlign("right"),
@@ -38,7 +38,7 @@ export const useMenuAlignTextTypes = (editor: Editor) => {
         type: "option",
       },
       {
-        icon: "AlignJustify",
+        icon: "TextAlignJustify",
         onClick: () => ctx.editor.chain().focus().setTextAlign("justify").run(),
         id: "align-justify",
         disabled: () => !ctx.editor.can().setTextAlign("justify"),
