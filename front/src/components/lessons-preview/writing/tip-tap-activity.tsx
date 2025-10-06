@@ -1,15 +1,14 @@
 import { type ChangeEvent, useState } from "react";
 import toast from "react-hot-toast";
-import useAutosave from "./hooks/useAutosave";
 import AutosaveIndicator from "./autosave-indicator";
 import TiptapEditor from "../../UI/tiptap-editor/tiptapEditor";
+import useAutosave from "./hooks/useAutosave";
 
 type Props = {
   mode: "read" | "create" | "edit";
   id?: number;
   title?: string;
   content?: string;
-  autosaveEnabled?: boolean;
   onSave: (
     id: number | undefined,
     title: string,
@@ -20,6 +19,7 @@ type Props = {
 
 /**
  * Composant contenant l'éditeur de texte Tiptap ainsi que la logique de création/modification/lecture d'une activité
+ * @param mode Le mode actuel de l'activité selectionnée ("read", "create" ou "edit")
  * @param id L'id (number, optionnel)
  * @param title Le titre (si déjà existant) qui est affiché dans la zone de texte au dessus de l'éditeur de texte (string, optionnel)
  * @param content Le contenu (si déjà existant) à passer à l’éditeur de texte (string, optionnel)
@@ -28,7 +28,7 @@ type Props = {
  * @param onClose Fonction qui se déclenche lorsque l'utilisateur ferme ce composant
  */
 const TiptapActivity = ({
-  mode,
+  mode = "read",
   id,
   title,
   content,
@@ -80,34 +80,34 @@ const TiptapActivity = ({
   return (
     <>
       {/* Indicateur d'autosave */}
-      {mode === "create" && (
-        <AutosaveIndicator
-          isVisible={showAutosaveIndicator}
-          lastSaveTime={lastAutosaveTime}
-        />
-      )}
+      <AutosaveIndicator
+        isVisible={mode === "create" && showAutosaveIndicator}
+        lastSaveTime={lastAutosaveTime}
+      />
 
-      <div className="py-4 flex gap-4 items-center">
-        {/* Input titre */}
-        <label className="label min-w-fit" htmlFor="activity-title">
-          Titre de l'activité :
-        </label>
-        <input
-          id="activity-title"
-          value={title}
-          onChange={handleChangeTitle}
-          type="text"
-          className="input input-sm input-bordered flex-1"
-          placeholder="Saisissez le titre de l'activité"
-          autoFocus
-        />
-        <button
-          className="btn btn-sm btn-primary text-base-100"
-          onClick={handleCloseEditor}
-        >
-          Annuler
-        </button>
-      </div>
+      {mode !== "read" && (
+        <div className="py-4 flex gap-4 items-center">
+          {/* Input titre */}
+          <label className="label min-w-fit" htmlFor="activity-title">
+            Titre de l'activité :
+          </label>
+          <input
+            id="activity-title"
+            value={title}
+            onChange={handleChangeTitle}
+            type="text"
+            className="input input-sm input-bordered flex-1"
+            placeholder="Saisissez le titre de l'activité"
+            autoFocus
+          />
+          <button
+            className="btn btn-sm btn-primary text-base-100"
+            onClick={handleCloseEditor}
+          >
+            Annuler
+          </button>
+        </div>
+      )}
 
       <div className="w-[100%] bg-base-200 rounded-lg p-4">
         <TiptapEditor

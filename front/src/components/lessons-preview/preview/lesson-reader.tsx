@@ -2,7 +2,6 @@ import type Lesson from "../../../utils/interfaces/lesson";
 import { Activity } from "../../../utils/interfaces/activity";
 import RatingPanelButton from "../../UI/lesson-rating/rating-panel-button";
 import ActivityPreview from "./activity-preview";
-import TipTapActivity from "../writing.old/tip-tap-activity";
 import { ACTIVITIES } from "../../../config/urls";
 import {
   type PropsWithChildren,
@@ -15,6 +14,7 @@ import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
 import ActivityActionsMenu from "./activity-actions-menu";
 import activityIconType from "../../../utils/activity-icon-type";
+import TiptapActivity from "../writing/tip-tap-activity";
 
 type PreviewLessonProps = {
   selectedLesson: Lesson;
@@ -227,22 +227,18 @@ const LessonReader = ({
             />
           </div>
 
-          {/* Afficher l'éditeur TipTap si l'activité est en cours d'édition */}
+          {/* Afficher l'éditeur TipTap */}
           {editingActivity?.id === selectedActivity.id ? (
             <div className="mt-4">
-              <TipTapActivity
-                parentId={selectedLesson.id ?? 0}
-                activity={{
-                  ...selectedActivity,
-                  content: activityContent,
-                }}
-                isNewActivity={false}
-                shouldStartEdit={true}
-                onRefreshAllData={onRefreshAllData}
-                onActivityEditChange={(isEditing) => {
-                  if (!isEditing) {
-                    setEditingActivity(null);
-                  }
+              <TiptapActivity
+                mode="read"
+                id={}
+                title={selectedActivity.title}
+                content={activityContent}
+                onClose={() => {}}
+                onSave={async () => {
+                  // test
+                  return false;
                 }}
               />
             </div>

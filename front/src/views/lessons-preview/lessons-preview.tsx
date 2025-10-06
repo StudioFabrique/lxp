@@ -17,7 +17,6 @@ import NoActivityPlaceholder from "../../components/lessons-preview/preview/no-a
 import Header from "../../components/UI/header";
 import { Link } from "react-router-dom";
 import { PenBox } from "lucide-react";
-import TipTapActivity from "../../components/lessons-preview/writing.old/tip-tap-activity";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
@@ -138,16 +137,7 @@ const LessonsPreview = () => {
                 <ProgressBar courses={moduleData.courses} />
               </Can>,
               // * La prévisualisation de la leçon
-              selectedLesson?.id && isCreatingActivity ? (
-                <Can key="tip-tap-activity" action="write" object="lesson">
-                  <TipTapActivity
-                    parentId={selectedLesson.id}
-                    isNewActivity
-                    onCloseTipTapEditor={onCloseTextEditor}
-                    onRefreshAllData={fetchData}
-                  />
-                </Can>
-              ) : selectedActivity ? (
+              selectedActivity ? (
                 <LessonReader
                   key="lesson-reader"
                   selectedLesson={selectedLesson as Lesson}
