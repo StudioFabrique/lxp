@@ -2,7 +2,7 @@ import type Lesson from "../../../utils/interfaces/lesson";
 import { Activity } from "../../../utils/interfaces/activity";
 import RatingPanelButton from "../../UI/lesson-rating/rating-panel-button";
 import ActivityPreview from "./activity-preview";
-import TipTapActivity from "../writing/tip-tap-activity";
+import TipTapActivity from "../writing.old/tip-tap-activity";
 import { ACTIVITIES } from "../../../config/urls";
 import {
   type PropsWithChildren,

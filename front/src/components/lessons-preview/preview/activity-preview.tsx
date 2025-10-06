@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import type { Activity, Resource } from "../../../utils/interfaces/activity";
 import { ACTIVITIES, ACTIVITIES_VIDEOS } from "../../../config/urls";
 import BaseReactPlayer from "react-player";
-import TipTapActivity from "../writing/tip-tap-activity";
+import TipTapActivity from "../writing.old/tip-tap-activity";
 import { File } from "lucide-react";
 
 type ActivityProps = {
