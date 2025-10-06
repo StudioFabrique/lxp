@@ -1,7 +1,7 @@
 import "./MenuBar.scss";
 import type { Editor } from "@tiptap/react";
 
-import { Fragment, memo, useRef } from "react";
+import { memo, useRef } from "react";
 
 import MenuItem from "./MenuItem.jsx";
 import { ContentTypePicker } from "./dropdowns/ContentTypePicker.js";
@@ -131,13 +131,7 @@ export default function MenuBar({
       </Popover.Root>
 
       {items(editor).map((item) => (
-        <Fragment key={item.title || `divider-${Math.random()}`}>
-          {item.type === "divider justify-start" ? (
-            <span className="w-1 invisible" />
-          ) : (
-            <MenuItem {...item} />
-          )}
-        </Fragment>
+        <MenuItem {...item} />
       ))}
 
       <input

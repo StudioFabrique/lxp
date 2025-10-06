@@ -56,7 +56,9 @@ export const FontFamilyPicker = ({
     <Dropdown.Root>
       <Dropdown.Trigger asChild>
         <Toolbar.Button active={!!currentValue?.value}>
-          <span className="text-base-content">{currentFontLabel}</span>
+          <span className="text-base-content select-none">
+            {currentFontLabel}
+          </span>
           <Icon name="ChevronDown" className="w-2 h-2 text-base-content" />
         </Toolbar.Button>
       </Dropdown.Trigger>
@@ -74,7 +76,12 @@ export const FontFamilyPicker = ({
                   onClick={selectFont(font.value)}
                   key={`${font.label}_${font.value}`}
                 >
-                  <span style={{ fontFamily: font.value }}>{font.label}</span>
+                  <span
+                    className="select-none"
+                    style={{ fontFamily: font.value }}
+                  >
+                    {font.label}
+                  </span>
                 </DropdownButton>
               ))}
             </div>
