@@ -3,9 +3,9 @@ import type { Editor } from "@tiptap/react";
 import toast from "react-hot-toast";
 import useHttp from "../../../hooks/use-http";
 import { useAutosave } from "../../../hooks/use-autosave";
-import TiptapEditor from "./tiptap-simple-editor/tiptap-editor";
 import AutosaveIndicator from "./autosave-indicator";
 import { Activity } from "../../../utils/interfaces/activity";
+import TiptapEditor from "./tiptap-editor/tiptap-editor";
 
 type ActivityWithContent = Activity & { content: string };
 

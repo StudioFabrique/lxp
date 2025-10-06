@@ -31,9 +31,7 @@ export const items = (editor: Editor) => [
   //   action: () => editor.chain().focus().toggleHighlight().run(),
   //   isActive: () => editor.isActive("highlight"),
   // },
-  {
-    type: "divider",
-  },
+
   {
     icon: "code-box-line",
     title: "Bloc de code",
@@ -52,9 +50,6 @@ export const items = (editor: Editor) => [
     action: () => editor.chain().focus().setHorizontalRule().run(),
   },
   {
-    type: "divider",
-  },
-  {
     icon: "text-wrap",
     title: "Saut de ligne",
     action: () => editor.chain().focus().setHardBreak().run(),
@@ -65,18 +60,11 @@ export const items = (editor: Editor) => [
     action: () => editor.chain().focus().clearNodes().unsetAllMarks().run(),
   },
   {
-    type: "divider",
-  },
-
-  {
     icon: "bard-line",
     title: "Générer avec IA (disponible bientôt)",
     disabled: true,
     color: "info",
   },
-  { type: "divider" },
-  { type: "divider" },
-  { type: "divider" },
   {
     icon: "arrow-go-back-line",
     title: "Annuler",
@@ -87,5 +75,4 @@ export const items = (editor: Editor) => [
     title: "Rétablir",
     action: () => editor.chain().focus().redo().run(),
   },
-  { type: "divider" },
 ];
