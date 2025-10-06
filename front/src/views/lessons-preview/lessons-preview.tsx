@@ -17,7 +17,7 @@ import NoActivityPlaceholder from "../../components/lessons-preview/preview/no-a
 import Header from "../../components/UI/header";
 import { Link } from "react-router-dom";
 import { PenBox } from "lucide-react";
-import TipTapActivity from "../../components/lessons-preview/writing/tip-tap-activity";
+import TipTapActivity from "../../components/lessons-preview/writing.old/tip-tap-activity";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
