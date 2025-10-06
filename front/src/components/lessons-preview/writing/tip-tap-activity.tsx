@@ -5,7 +5,7 @@ import useHttp from "../../../hooks/use-http";
 import { useAutosave } from "../../../hooks/use-autosave";
 import AutosaveIndicator from "./autosave-indicator";
 import { Activity } from "../../../utils/interfaces/activity";
-import TiptapEditor from "./tiptap-editor/tiptap-editor";
+import TiptapEditor from "./tiptap-editor.old/tiptap-editor";
 
 type ActivityWithContent = Activity & { content: string };
 
