@@ -20,7 +20,7 @@ export const EditYoutubeLinkPopover = ({
           <span className="text-base-content">{title}</span>
         </Toolbar.Button>
       </Popover.Trigger>
-      <Popover.Content>
+      <Popover.Content className="absolute left-[4.2rem] -top-10">
         <YoutubeLinkEditorPanel onSetLink={onSetLink} />
       </Popover.Content>
     </Popover.Root>

@@ -19,7 +19,7 @@ export const EditLinkPopover = ({ title, onSetLink }: EditLinkPopoverProps) => {
           <span className="text-base-content">{title}</span>
         </button>
       </Popover.Trigger>
-      <Popover.Content>
+      <Popover.Content className="absolute left-20 -top-10">
         <LinkEditorPanel onSetLink={onSetLink} />
       </Popover.Content>
     </Popover.Root>

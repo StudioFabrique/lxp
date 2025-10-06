@@ -37,7 +37,7 @@ export const useInsertImageState = ({
         onSetLink(url, size);
       }
     },
-    [url, isValidUrl, onSetLink, size],
+    [url, isValidUrl, onSetLink, size]
   );
 
   return {
@@ -69,7 +69,7 @@ export const InsertImagePanel = ({
   return (
     <Surface className="flex flex-col p-2">
       <form onSubmit={state.handleSubmit} className="flex items-center gap-2">
-        <label className="flex items-center gap-2 p-2 rounded-lg bg-neutral-100 dark:bg-neutral-900 cursor-text">
+        <label className="flex items-center gap-2 p-2 rounded-lg bg-neutral-100/20 cursor-text">
           <Icon name="Image" className="flex-none text-black dark:text-white" />
           <input
             type="url"
@@ -91,7 +91,7 @@ export const InsertImagePanel = ({
       </form>
       <div className="flex items-center gap-2 my-2">
         <hr className="border-base-content/20 w-full" />
-        OU
+        <span className="text-base-content">OU</span>
         <hr className="border-base-content/20 w-full" />
       </div>
 

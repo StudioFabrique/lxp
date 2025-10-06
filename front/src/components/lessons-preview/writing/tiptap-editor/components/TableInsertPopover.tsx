@@ -93,7 +93,11 @@ export const TableInsertPopover = ({
           <span className="text-base-content">{title}</span>
         </button>
       </Popover.Trigger>
-      <Popover.Content side="bottom" align="start" sideOffset={8} asChild>
+      <Popover.Content
+        className="absolute left-[4.6rem] -top-10"
+        sideOffset={10}
+        asChild
+      >
         <Surface className="p-4 w-80">
           <div className="space-y-4">
             <div className="text-sm font-medium text-base-content">
