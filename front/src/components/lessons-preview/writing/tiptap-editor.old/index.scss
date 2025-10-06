@@ -1,0 +1,429 @@
+/* Basic editor styles */
+.tiptap {
+  > * + * {
+    margin-top: 0.75em;
+  }
+
+  ul,
+  ol {
+    padding: 0 1rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.1;
+  }
+
+  code {
+    background-color: var(--purple-light);
+    border-radius: 0.4rem;
+    color: var(--black);
+    font-size: 0.85rem;
+    padding: 0.25em 0.3em;
+  }
+
+  pre {
+    background: none;
+    border-radius: 0.5rem;
+    color: #fff;
+    font-family: "JetBrainsMono", monospace;
+    padding: 0.75rem 1rem;
+
+    code {
+      background: none;
+      color: inherit;
+      font-size: 0.8rem;
+      padding: 0;
+    }
+  }
+
+  mark {
+    background-color: #faf594;
+  }
+
+  img {
+    height: auto;
+    max-width: 100%;
+  }
+
+  hr {
+    margin: 1rem 0;
+  }
+
+  blockquote {
+    border-left: 2px solid rgba(#0d0d0d, 0.1);
+    padding-left: 1rem;
+  }
+
+  hr {
+    border: none;
+    border-top: 2px solid rgba(#0d0d0d, 0.1);
+    margin: 2rem 0;
+  }
+
+  ul[data-type="taskList"] {
+    list-style: none;
+    padding: 0;
+
+    li {
+      align-items: center;
+      display: flex;
+
+      > label {
+        flex: 0 0 auto;
+        margin-right: 0.5rem;
+        user-select: none;
+      }
+
+      > div {
+        flex: 1 1 auto;
+      }
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5em 0;
+    table-layout: fixed;
+    overflow: hidden;
+
+    th,
+    td {
+      border: 1px solid #616161;
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+  }
+}
+
+.editor {
+  /* background-color: #fff; */
+  /* border: 3px solid #0d0d0d; */
+  border-radius: 0.75rem;
+  /* color: #0d0d0d; */
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    background: transparent;
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+  }
+
+  &__content {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+    /* overflow-x: hidden;
+        overflow-y: auto; */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  &__footer {
+    align-items: center;
+    border-top: 3px solid #0d0d0d;
+    color: #0d0d0d;
+    display: flex;
+    flex: 0 0 auto;
+    font-size: 12px;
+    flex-wrap: wrap;
+    font-weight: 600;
+    justify-content: space-between;
+    padding: 0.25rem 0.75rem;
+    white-space: nowrap;
+  }
+
+  /* Some information about the status */
+  &__status {
+    align-items: center;
+    border-radius: 5px;
+    display: flex;
+
+    &::before {
+      background: rgba(#0d0d0d, 0.5);
+      border-radius: 50%;
+      content: " ";
+      display: inline-block;
+      flex: 0 0 auto;
+      height: 0.5rem;
+      margin-right: 0.5rem;
+      width: 0.5rem;
+    }
+
+    &--connecting::before {
+      background: #616161;
+    }
+
+    &--connected::before {
+      background: #b9f18d;
+    }
+  }
+
+  &__name {
+    button {
+      background: none;
+      border: none;
+      border-radius: 0.4rem;
+      color: #0d0d0d;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+
+      &:hover {
+        background-color: #0d0d0d;
+        color: #fff;
+      }
+    }
+  }
+}
+
+/* Give a remote user a caret */
+.collaboration-cursor__caret {
+  border-left: 1px solid #0d0d0d;
+  border-right: 1px solid #0d0d0d;
+  margin-left: -1px;
+  margin-right: -1px;
+  pointer-events: none;
+  position: relative;
+  word-break: normal;
+}
+
+/* Render the username above the caret */
+.collaboration-cursor__label {
+  border-radius: 3px 3px 3px 0;
+  color: #0d0d0d;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  left: -1px;
+  line-height: normal;
+  padding: 0.1rem 0.3rem;
+  position: absolute;
+  top: -1.4em;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.image-small {
+  max-width: 200px;
+}
+.image-medium {
+  max-width: 500px;
+}
+.image-large {
+  max-width: 100%;
+}
+
+/* Table styles */
+.tiptap {
+  table {
+    border-collapse: collapse;
+    margin: 1rem 0;
+    overflow: hidden;
+    table-layout: fixed;
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    td,
+    th {
+      border: 1px solid #e5e7eb;
+      box-sizing: border-box;
+      min-width: 80px;
+      padding: 8px 12px;
+      position: relative;
+      vertical-align: top;
+      transition: background-color 0.2s ease;
+
+      > * {
+        margin-bottom: 0;
+      }
+
+      &:hover {
+        background-color: rgba(59, 130, 246, 0.05);
+      }
+    }
+
+    th {
+      background-color: #f8fafc;
+      font-weight: 600;
+      text-align: left;
+      color: #374151;
+      border-bottom: 2px solid #d1d5db;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #f9fafb;
+    }
+
+    tbody tr:hover {
+      background-color: rgba(59, 130, 246, 0.05);
+    }
+
+    .selectedCell:after {
+      background: rgba(59, 130, 246, 0.2);
+      content: "";
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      pointer-events: none;
+      position: absolute;
+      z-index: 2;
+      border: 2px solid #3b82f6;
+    }
+
+    .column-resize-handle {
+      background-color: #3b82f6;
+      bottom: -2px;
+      position: absolute;
+      right: -2px;
+      top: 0;
+      width: 4px;
+      cursor: col-resize;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+    &:hover .column-resize-handle {
+      opacity: 0.5;
+    }
+
+    p {
+      margin: 0;
+      padding: 0;
+    }
+
+    .tableWrapper {
+      overflow-x: auto;
+      padding: 1rem 0;
+    }
+
+    .resize-cursor {
+      cursor: ew-resize;
+      cursor: col-resize;
+    }
+
+    // Style pour les cellules d'en-tête de colonne
+    &.with-header-column th:first-child,
+    &.with-header-column td:first-child {
+      background-color: #f8fafc;
+      font-weight: 600;
+      border-right: 2px solid #d1d5db;
+    }
+
+    // Styles pour les tableaux avec bordures plus prononcées
+    &.table-bordered {
+      border: 2px solid #d1d5db;
+
+      td,
+      th {
+        border: 1px solid #d1d5db;
+      }
+    }
+
+    // Style pour lignes alternées
+    &.table-striped {
+      tbody tr:nth-child(even) {
+        background-color: #f3f4f6;
+      }
+
+      tbody tr:nth-child(odd) {
+        background-color: white;
+      }
+    }
+
+    // Style compact
+    &.table-compact {
+      td,
+      th {
+        padding: 4px 8px;
+        font-size: 0.875rem;
+      }
+    }
+
+    // Style pour tableau avec en-tête de colonne étendu
+    &.with-header-column {
+      td:first-child,
+      th:first-child {
+        background-color: #f8fafc;
+        font-weight: 600;
+        border-right: 2px solid #d1d5db;
+      }
+    }
+
+    // Style pour la sélection multiple de cellules
+    .ProseMirror-selectednode {
+      outline: 2px solid #3b82f6;
+      outline-offset: 1px;
+    }
+
+    // Amélioration des cellules sélectionnées
+    .ProseMirror-cellselection {
+      background-color: rgba(59, 130, 246, 0.1) !important;
+    }
+
+    // Style pour les cellules lors du glisser-déposer
+    .ProseMirror-gapcursor {
+      display: none;
+    }
+
+    // Animation pour les nouvelles lignes/colonnes
+    @keyframes fadeInTable {
+      from {
+        opacity: 0;
+        transform: scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    tr:last-child,
+    th:last-child,
+    td:last-child {
+      animation: fadeInTable 0.2s ease-out;
+    }
+  }
+
+  // Styles pour le sélecteur de taille de tableau
+  .table-size-selector {
+    .table-grid {
+      display: grid;
+      gap: 1px;
+      padding: 8px;
+      background-color: #f3f4f6;
+      border-radius: 4px;
+    }
+
+    .table-cell {
+      width: 16px;
+      height: 16px;
+      border: 1px solid #d1d5db;
+      background-color: white;
+      cursor: pointer;
+      transition: all 0.1s ease;
+
+      &:hover,
+      &.highlighted {
+        background-color: #3b82f6;
+        border-color: #2563eb;
+      }
+    }
+  }
+}
