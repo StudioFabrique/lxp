@@ -167,6 +167,7 @@ export default function TiptapEditor({
       window.removeEventListener("scroll", handleScroll);
     };
   }, [isEditingActivity]);
+
   // Réinitialiser l'état sticky quand on quitte le mode édition
   useEffect(() => {
     if (!isEditingActivity) {

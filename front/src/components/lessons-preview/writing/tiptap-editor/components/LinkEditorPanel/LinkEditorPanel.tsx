@@ -17,7 +17,7 @@ export const useLinkEditorState = ({
 }: LinkEditorPanelProps) => {
   const [url, setUrl] = useState(initialUrl || "");
   const [openInNewTab, setOpenInNewTab] = useState(
-    initialOpenInNewTab || false,
+    initialOpenInNewTab || false
   );
 
   const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,7 +33,7 @@ export const useLinkEditorState = ({
         onSetLink(url, openInNewTab);
       }
     },
-    [url, isValidUrl, openInNewTab, onSetLink],
+    [url, isValidUrl, openInNewTab, onSetLink]
   );
 
   return {
@@ -61,7 +61,7 @@ export const LinkEditorPanel = ({
   return (
     <Surface className="p-2">
       <form onSubmit={state.handleSubmit} className="flex items-center gap-2">
-        <label className="flex items-center gap-2 p-2 rounded-lg bg-neutral-100 dark:bg-neutral-900 cursor-text">
+        <label className="flex items-center gap-2 p-2 rounded-lg bg-neutral-100/20 cursor-text">
           <Icon name="Link" className="flex-none text-black dark:text-white" />
           <input
             type="url"
@@ -81,7 +81,7 @@ export const LinkEditorPanel = ({
         </Button>
       </form>
       <div className="mt-3">
-        <label className="flex items-center justify-start gap-2 text-sm font-semibold cursor-pointer select-none text-neutral-500 dark:text-neutral-400">
+        <label className="flex items-center justify-start gap-2 text-sm font-semibold cursor-pointer select-none text-base-content">
           Ouvrir dans un nouvel onglet
           <Toggle
             active={state.openInNewTab}

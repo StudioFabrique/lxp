@@ -41,7 +41,7 @@ export const InsertImagePopover = ({
           <span className="text-base-content">{title}</span>
         </Toolbar.Button>
       </Popover.Trigger>
-      <Popover.Content>
+      <Popover.Content className="absolute left-[4.6rem] -top-10">
         <InsertImagePanel
           onSetLink={handleSetLink}
           onSetImageSize={onSetImageSize}

@@ -99,7 +99,7 @@ export default function MenuBar({
           </MemoButton>
         </Popover.Trigger>
         <Popover.Content side="top" sideOffset={8} asChild>
-          <Surface className="p-1">
+          <Surface className="p-4 mt-3">
             <MemoColorPicker
               color={states.currentColor}
               onChange={commands.onChangeColor}
@@ -120,7 +120,7 @@ export default function MenuBar({
           </MemoButton>
         </Popover.Trigger>
         <Popover.Content side="top" sideOffset={8} asChild>
-          <Surface className="p-1">
+          <Surface className="p-4 mt-3">
             <MemoColorPicker
               color={states.currentHighlight}
               onChange={commands.onChangeHighlight}
