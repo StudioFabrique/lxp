@@ -50,7 +50,6 @@ const LessonsPreview = () => {
     onClickModalRightButton,
     onCreateActivity,
     onCloseTextEditor,
-    onActivityCreated,
   } = useLessonsPreview();
 
   return (
@@ -67,7 +66,7 @@ const LessonsPreview = () => {
         <Can object="lesson" action="update">
           <Link
             className="btn btn-primary text-base-100 gap-2"
-            to="/admin/lesson/add"
+            to={`/admin/parcours/edit/${moduleData?.parcoursId}?step=4`}
           >
             <PenBox />
             Modifier le module
@@ -146,7 +145,6 @@ const LessonsPreview = () => {
                     isNewActivity
                     onCloseTipTapEditor={onCloseTextEditor}
                     onRefreshAllData={fetchData}
-                    onActivityCreated={onActivityCreated}
                   />
                 </Can>
               ) : selectedActivity ? (

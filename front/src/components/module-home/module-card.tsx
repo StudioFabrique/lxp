@@ -7,6 +7,7 @@ import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
 import DeleteIcon from "../UI/svg/delete-icon.component";
 import defaultImage from "../../assets/images/module-default-thumb.png";
 import { Eye } from "lucide-react";
+import bgImageGradient from "../../utils/bg-image-gradient";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ModuleCardProps {
@@ -19,7 +20,9 @@ const ModuleCard = ({ stepId, module, onDelete }: ModuleCardProps) => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
 
   const classImage: React.CSSProperties = {
-    backgroundImage: `url('${module.thumb ? `data:image/jpeg;base64,${module.thumb}` : defaultImage}')`,
+    backgroundImage: bgImageGradient(
+      module.thumb ? `data:image/jpeg;base64,${module.thumb}` : defaultImage
+    ),
     width: "100%",
     height: "9rem",
     backgroundSize: "cover",

@@ -2,6 +2,7 @@ import { notValidModuleTooltip } from "../../../lib/not-valid-module";
 import Module from "../../../utils/interfaces/module";
 import ToolTipWarning from "../../UI/tooltip-warning/tooltip-warning";
 import defaultImage from "../../../assets/images/module-default-thumb.png";
+import bgImageGradient from "../../../utils/bg-image-gradient";
 
 interface PreviewModuleItemProps {
   module: Module;
@@ -11,7 +12,11 @@ const PreviewModuleItem = (props: PreviewModuleItemProps) => {
   const { module } = props;
 
   const classImage: React.CSSProperties = {
-    backgroundImage: `url(${props.module.thumb ? "data:image/jpeg;base64," + props.module.thumb : defaultImage})`,
+    backgroundImage: bgImageGradient(
+      props.module.thumb
+        ? "data:image/jpeg;base64," + props.module.thumb
+        : defaultImage
+    ),
     width: "100%",
     minHeight: "9rem",
     backgroundSize: "cover",
@@ -30,7 +35,7 @@ const PreviewModuleItem = (props: PreviewModuleItemProps) => {
   }
 
   const dates = `Du ${new Date(
-    module.minDate!,
+    module.minDate!
   ).toLocaleDateString()} au ${new Date(module.maxDate!).toLocaleDateString()}`;
 
   const text =

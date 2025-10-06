@@ -19,7 +19,6 @@ type TipTapActivityProps = {
   onActivityEditChange?: (isEditing: boolean) => void;
   shouldStartEdit?: boolean;
   forceStopEdit?: boolean;
-  onActivityCreated?: (activity: Activity) => void;
 };
 
 const TipTapActivity = ({
@@ -32,7 +31,6 @@ const TipTapActivity = ({
   onActivityEditChange,
   shouldStartEdit = false,
   forceStopEdit = false,
-  onActivityCreated,
 }: TipTapActivityProps) => {
   const { sendRequest } = useHttp(true);
   const [showAutosaveIndicator, setShowAutosaveIndicator] =
@@ -150,25 +148,20 @@ const TipTapActivity = ({
       toast.success(
         `Activité ${isNewActivity ? "créée" : "modifiée"} avec succès`
       );
+      console.log({ response });
       // Nettoie l'autosave après sauvegarde réussie
       clearStorage();
       setIsSaving(false);
 
-      // Pour les nouvelles activités, fermer l'éditeur et rafraîchir
+      // Pour les nouvelles activités, fermer l'éditeur
       if (isNewActivity) {
-        if (response?.data && onActivityCreated) {
-          onActivityCreated(response.data);
-        }
         onCloseTipTapEditor?.();
-        onRefreshAllData?.();
       } else {
         // Pour les activités existantes, juste sortir du mode édition
         setEditingActivity(false);
-        // Rafraîchir les données après un petit délai pour éviter les conflits d'état
-        setTimeout(() => {
-          onRefreshAllData?.();
-        }, 100);
       }
+
+      onRefreshAllData?.();
     };
 
     // Supprimer les espaces/paragraphes vides au début et à la fin tout en préservant la mise en forme

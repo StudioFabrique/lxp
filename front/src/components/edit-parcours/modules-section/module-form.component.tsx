@@ -16,6 +16,7 @@ import { defaultModuleThumb } from "../../../lib/defautltModuleThumb";
 import MemoizedItemsList from "../../items-list.component";
 import { headerImageMaxSize } from "../../../config/images-sizes";
 import MemoizedImageFileUpload from "../../UI/image-file-upload/image-file-upload";
+import bgImageGradient from "../../../utils/bg-image-gradient";
 
 interface ModuleFormProps {
   isLoading: boolean;
@@ -101,9 +102,9 @@ const ModuleForm = React.forwardRef<HTMLInputElement, ModuleFormProps>(
     };
 
     const classImage: React.CSSProperties = {
-      backgroundImage: `url('${
+      backgroundImage: bgImageGradient(
         currentModule ? currentModule.thumb : defaultModuleThumb
-      }')`,
+      ),
       width: "100px",
       height: "100%",
       backgroundSize: "cover",
