@@ -11,6 +11,7 @@ import React, { FC, ReactNode, useEffect, useRef, useState } from "react";
 import ImageFileUpload from "./image-file-upload";
 import { compressImage } from "../../helpers/compress-image";
 import { headerImageMaxSize } from "../../config/images-sizes";
+import bgImageGradient from "../../utils/bg-image-gradient";
 
 type Props = {
   image?: string;
@@ -53,7 +54,7 @@ const ImageHeaderMutable: FC<Props> = ({
   console.log(image);
 
   const classImage: React.CSSProperties = {
-    backgroundImage: `url('${bgImage}')`,
+    backgroundImage: bgImageGradient(bgImage),
     width: "100%",
     height: "20rem",
     backgroundSize: "cover",

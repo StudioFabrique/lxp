@@ -59,7 +59,7 @@ export default function MenuBar({
     <Toolbar.Wrapper
       ref={toolbarRef}
       hidden={shouldHide}
-      className={`self-center min-h-14 justify-between px-2 transition-all duration-300 ease-in-out border-none shadow-none rounded-none  backdrop-blur-[2px] flex-wrap ${
+      className={`self-center min-h-14 max-h-max justify-between px-2 transition-all duration-300 ease-in-out border-none shadow-none rounded-none backdrop-blur-[2px] flex-wrap ${
         isSticky ? "fixed top-4 transform shadow-lg rounded-lg border" : ""
       }`}
     >
@@ -132,7 +132,7 @@ export default function MenuBar({
 
       {items(editor).map((item) => (
         <Fragment key={item.title || `divider-${Math.random()}`}>
-          {item.type === "divider" ? (
+          {item.type === "divider justify-start" ? (
             <span className="w-1 invisible" />
           ) : (
             <MenuItem {...item} />

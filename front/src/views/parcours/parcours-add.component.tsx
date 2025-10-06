@@ -12,6 +12,7 @@ import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import Selecter from "../../components/UI/selecter/selecter.component";
 import QuestionMarkTooltip from "../../components/UI/question-mark-tooltip/question-mark-tooltip";
 import { HelpCircle } from "lucide-react";
+import bgImageGradient from "../../utils/bg-image-gradient";
 
 // type de données pour les listes
 type Item = {
@@ -31,7 +32,7 @@ const AddParcours = () => {
   const nav = useNavigate();
 
   const classImage: React.CSSProperties = {
-    backgroundImage: `url('${bgImage}')`,
+    backgroundImage: bgImageGradient(bgImage),
     width: "100%",
     minHeight: "20rem",
     maxHeight: "100%",

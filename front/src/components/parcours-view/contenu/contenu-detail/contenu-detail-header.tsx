@@ -1,17 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC } from "react";
 import defaultImage from "../../../../assets/images/module-default.jpg";
+import bgImageGradient from "../../../../utils/bg-image-gradient";
 
 const ContenuDetailHeader: FC<{
   imageModuleHeader: any;
   title?: string;
 }> = ({ imageModuleHeader, title }) => {
   const classImage: React.CSSProperties = {
-    backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0)), ${
+    backgroundImage: bgImageGradient(
       imageModuleHeader
-        ? "url('data:image/jpeg;base64," + imageModuleHeader + "')"
-        : `url(${defaultImage})`
-    }`,
+        ? `data:image/jpeg;base64,${imageModuleHeader}`
+        : defaultImage
+    ),
     width: "100%",
     height: "12rem",
     backgroundSize: "cover",

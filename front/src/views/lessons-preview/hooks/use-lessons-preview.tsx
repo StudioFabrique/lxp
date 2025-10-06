@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
@@ -17,6 +17,11 @@ const useLessonsPreview = () => {
   const [moduleData, setModuleData] = useState<
     (Module & { parcours: string; parcoursId: number }) | null
   >(null);
+  // ID de la leçon actuellement sélectionnée (pour déclencher le chargement)
+  const [selectedLessonId, setSelectedLessonId] = useState<
+    number | undefined
+  >();
+
   const [selectedLesson, setSelectedLesson] = useState<Lesson>();
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(
     null
@@ -32,15 +37,24 @@ const useLessonsPreview = () => {
   // Vérifie si le mode de création d'activité est actif
   const [isCreatingActivity, setIsCreatingActivity] = useState(false);
 
-  // Référence pour savoir si on doit préserver l'activité sélectionnée
-  const [preserveSelectedActivity, setPreserveSelectedActivity] =
-    useState(false);
+  // ID de l'activité à sélectionner après le rechargement
+  const [activityIdToSelect, setActivityIdToSelect] = useState<number | null>(
+    null
+  );
 
   // Récupération de toutes les leçons à partir des cours du module
   const lessons = useMemo(
     () => moduleData?.courses.flatMap((course) => course.lessons) || [],
     [moduleData?.courses]
   );
+
+  // Ref pour garder une référence à jour de lessons sans causer de re-renders
+  const lessonsRef = useRef(lessons);
+
+  // Mettre à jour la ref quand lessons change
+  useEffect(() => {
+    lessonsRef.current = lessons;
+  }, [lessons]);
 
   const selectedLessonHasActivities = selectedLesson
     ? Boolean(selectedLesson.activities?.length)
@@ -72,15 +86,30 @@ const useLessonsPreview = () => {
     (lesson: Lesson | undefined) => {
       setIsCreatingActivity(false);
       setLessonRating(undefined);
-      setSelectedLesson(lesson);
 
-      // Update the URL state
-      navigate(".", {
-        replace: true, // This replaces the current history entry instead of adding a new one
-        state: { lessonId: lesson?.id }, // Set to undefined when no lesson is selected
-      });
+      // Si lesson est undefined, on réinitialise tout
+      if (!lesson) {
+        setSelectedLessonId(undefined);
+        setSelectedLesson(undefined);
+        setSelectedActivity(null);
+        navigate(".", {
+          replace: true,
+          state: { lessonId: undefined },
+        });
+        return;
+      }
 
+      // Si on a un lesson ID
       if (lesson?.id) {
+        // Mettre à jour l'ID de la leçon sélectionnée pour déclencher le fetch
+        setSelectedLessonId(lesson.id);
+
+        // Update the URL state
+        navigate(".", {
+          replace: true,
+          state: { lessonId: lesson?.id },
+        });
+
         initiateLesson(lesson.id);
       }
     },
@@ -240,37 +269,6 @@ const useLessonsPreview = () => {
     setIsCreatingActivity(false);
   };
 
-  const handleActivityCreated = (activity: Activity) => {
-    // Désactiver le mode création
-    setIsCreatingActivity(false);
-
-    // Recharger directement les détails de la leçon pour avoir la liste à jour des activités
-    if (selectedLesson?.id) {
-      const applyData = (data: Lesson) => {
-        // Mettre à jour UNIQUEMENT les activités dans selectedLesson existant
-        // sans changer l'objet pour ne pas déclencher le useEffect
-        setSelectedLesson((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            activities: data.activities, // Mise à jour de la liste d'activités
-          };
-        });
-
-        // Sélectionner l'activité créée
-        const createdActivity = data.activities?.find(
-          (act) => act.id === activity.id
-        );
-
-        if (createdActivity) {
-          setSelectedActivity(createdActivity);
-        }
-      };
-
-      sendRequest({ path: `/lesson/${selectedLesson.id}` }, applyData);
-    }
-  };
-
   const fetchData = useCallback(() => {
     const applyData = ({
       data,
@@ -278,6 +276,7 @@ const useLessonsPreview = () => {
       data: Module & { parcours: string; parcoursId: number };
     }) => {
       setModuleData(data);
+
       if (stateFromUrl?.lessonId) {
         // selectionner la leçon selectionnée depuis le state de l'url
         const lessonToSelect = data.courses
@@ -308,25 +307,48 @@ const useLessonsPreview = () => {
   useEffect(() => {
     const applyData = (data: Lesson) => {
       // Marquer le début de lecture d'une leçon
-      const lessonInModule = lessons.find((lesson) => lesson.id === data.id);
+      // Utiliser lessonsRef.current pour avoir toujours la valeur à jour sans dépendance
+      const lessonInModule = lessonsRef.current.find(
+        (lesson) => lesson.id === data.id
+      );
+
+      // Mettre à jour selectedLesson avec les données complètes
       setSelectedLesson({
         ...data,
         lessonsRead: lessonInModule?.lessonsRead || [],
         order: lessonInModule?.order,
       });
 
-      // Ne réinitialiser selectedActivity que si on ne doit pas la préserver
-      if (!preserveSelectedActivity) {
-        setSelectedActivity(data?.activities?.[0]);
+      // Si on a un ID d'activité spécifique à sélectionner
+      if (activityIdToSelect !== null) {
+        console.log("🎯 Looking for activity ID:", activityIdToSelect);
+        console.log(
+          "🎯 Available activities:",
+          data?.activities?.map((a) => ({ id: a.id, title: a.title }))
+        );
+        const targetActivity = data?.activities?.find(
+          (act) => act.id === activityIdToSelect
+        );
+        if (targetActivity) {
+          console.log("✅ Found and selecting:", targetActivity.title);
+          setSelectedActivity(targetActivity);
+        } else {
+          console.log("❌ Activity not found, selecting first");
+          // Si l'activité n'existe plus, sélectionner la première
+          setSelectedActivity(data?.activities?.[0] || null);
+        }
+        // Réinitialiser l'ID après avoir sélectionné l'activité
+        setActivityIdToSelect(null);
       } else {
-        // Réinitialiser le flag après avoir préservé l'activité
-        setPreserveSelectedActivity(false);
+        // Comportement par défaut : sélectionner la première activité
+        setSelectedActivity(data?.activities?.[0] || null);
       }
     };
 
-    if (!selectedLesson?.id) return;
-    sendRequest({ path: `/lesson/${selectedLesson.id}` }, applyData);
-  }, [selectedLesson?.id, lessons, sendRequest, preserveSelectedActivity]);
+    if (!selectedLessonId) return;
+    sendRequest({ path: `/lesson/${selectedLessonId}` }, applyData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedLessonId, sendRequest, activityIdToSelect]);
 
   // useEffect pour charger les données initiales du module
   useEffect(() => {
@@ -371,7 +393,6 @@ const useLessonsPreview = () => {
     onDeleteCourse: handleDeleteCourse,
     onCreateActivity: handleCreateActivity,
     onCloseTextEditor: handleCloseTextEditor,
-    onActivityCreated: handleActivityCreated,
   };
 };
 
