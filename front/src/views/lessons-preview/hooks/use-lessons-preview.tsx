@@ -1,13 +1,6 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useRef,
-  useReducer,
-} from "react";
+import { useCallback, useEffect, useState, useReducer } from "react";
 import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
@@ -21,59 +14,24 @@ import {
 
 // Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
 const useLessonsPreview = () => {
+  // Params et states de la route active
+  // ------------
+  const { moduleId } = useParams();
+  const { state: stateFromUrl } = useLocation();
+  // ------------
+  const navigate = useNavigate();
+
   const [state, dispatch] = useReducer(
     lessonsPreviewReducer,
     initialLessonsPreviewState
   );
 
   const { sendRequest, isLoading } = useHttp(true);
-  const { state: stateFromUrl } = useLocation();
-  const navigate = useNavigate();
-  const { moduleId } = useParams();
-  const [moduleData, setModuleData] = useState<
-    (Module & { parcours: string; parcoursId: number }) | null
-  >(null);
-  // ID de la leçon actuellement sélectionnée (pour déclencher le chargement)
-  const [selectedLessonId, setSelectedLessonId] = useState<
-    number | undefined
-  >();
 
-  const [selectedLesson, setSelectedLesson] = useState<Lesson>();
-  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(
-    null
-  );
-  const [lessonRating, setLessonRating] = useState<LessonRating>();
-  const [showModal, setShowModal] = useState<boolean>(false);
   const [isPanelClosed, setPanelClosed] = useState<boolean>(false);
 
   // Vérifie si la leçon a déjà été complétée
   const [isLessonCompleted, setIsLessonCompleted] = useState(false);
-
-  // Vérifie si le mode de création d'activité est actif
-  const [isCreatingActivity, setIsCreatingActivity] = useState(false);
-
-  // ID de l'activité à sélectionner après le rechargement
-  const [activityIdToSelect, setActivityIdToSelect] = useState<number | null>(
-    null
-  );
-
-  // Récupération de toutes les leçons à partir des cours du module
-  const lessons = useMemo(
-    () => moduleData?.courses.flatMap((course) => course.lessons) || [],
-    [moduleData?.courses]
-  );
-
-  // Ref pour garder une référence à jour de lessons sans causer de re-renders
-  const lessonsRef = useRef(lessons);
-
-  // Mettre à jour la ref quand lessons change
-  useEffect(() => {
-    lessonsRef.current = lessons;
-  }, [lessons]);
-
-  const selectedLessonHasActivities = selectedLesson
-    ? Boolean(selectedLesson.activities?.length)
-    : false;
 
   // Modal management
   const handleToggleModalDisplaying = () => {
@@ -83,7 +41,7 @@ const useLessonsPreview = () => {
   };
 
   const handleClickModalRightButton = () => {
-    handleCompleteLesson(true);
+    handleCompleteLesson();
     setShowModal((prev) => !prev);
   };
 
@@ -97,113 +55,46 @@ const useLessonsPreview = () => {
     [sendRequest]
   );
 
-  const handleLessonSelection = useCallback(
-    (lesson: Lesson | undefined) => {
-      setIsCreatingActivity(false);
-      setLessonRating(undefined);
-
-      // Si lesson est undefined, on réinitialise tout
-      if (!lesson) {
-        setSelectedLessonId(undefined);
-        setSelectedLesson(undefined);
-        setSelectedActivity(null);
-        navigate(".", {
-          replace: true,
-          state: { lessonId: undefined },
-        });
-        return;
-      }
-
-      // Si on a un lesson ID
-      if (lesson?.id) {
-        // Mettre à jour l'ID de la leçon sélectionnée pour déclencher le fetch
-        setSelectedLessonId(lesson.id);
-
-        // Update the URL state
-        navigate(".", {
-          replace: true,
-          state: { lessonId: lesson?.id },
-        });
-
-        initiateLesson(lesson.id);
-      }
-    },
-    [initiateLesson, navigate]
-  );
-
-  // Fonction pour passer à la leçon suivante
-  const switchToNextLesson = () => {
-    setLessonRating(undefined);
-
-    if (selectedLesson && lessons.length > 0) {
-      const currentIndex = lessons.findIndex(
-        (lesson) => lesson.id === selectedLesson.id
-      );
-      if (currentIndex !== -1 && currentIndex + 1 < lessons.length) {
-        const nextLesson = lessons[currentIndex + 1];
-        handleLessonSelection(nextLesson); // Utiliser la nouvelle fonction
-      } else {
-        handleLessonSelection(undefined);
-      }
-    }
-  };
-
   // Handler pour marquer une leçon comme terminée
-  const handleCompleteLesson = (skipToNextLesson?: boolean) => {
-    // Afficher directement la prochaine leçon si showNextLesson est true
-    if (isLessonCompleted) {
-      switchToNextLesson();
-      return;
-    }
-
-    setIsLessonCompleted(true);
-
+  const handleCompleteLesson = () => {
     // Fonction de mise à jour des données du module
-    const applyData = (data: { data: LessonRead }) => {
-      setModuleData((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          courses: prev.courses.map((course) => ({
-            ...course,
-            lessons: course.lessons.map((lesson) => {
-              if (lesson.id === selectedLesson?.id) {
-                return {
-                  ...lesson,
-                  lessonsRead: [...(lesson.lessonsRead || []), data.data],
-                };
-              }
-              return lesson;
-            }),
-          })),
-        };
-      });
+    const applyData = ({ data: lessonRead }: { data: LessonRead }) => {
+      if (state.selectedLesson)
+        dispatch({
+          type: "mark_lesson_as_read",
+          lesson: state.selectedLesson,
+          lessonRead,
+        });
+      setIsLessonCompleted(true);
     };
 
-    sendRequest(
-      { path: `/lesson/read/${selectedLesson?.id}`, method: "put" },
-      applyData
-    );
-
-    if (skipToNextLesson) {
-      switchToNextLesson();
-    }
-  };
-
-  // Récupération initiale d'une note déjà attribuée à une leçon
-  const handleInitGetLessonRating = useCallback(() => {
-    const applyData = (data: { data: LessonRating }) => {
-      setLessonRating(data.data);
-    };
-
-    // If selectedLesson, already read with at least a activity
-    if (selectedLesson) {
+    if (state.selectedLesson)
       sendRequest(
-        { path: `/lesson/rate/${selectedLesson.id}`, method: "get" },
+        { path: `/lesson/read/${state.selectedLesson.id}`, method: "put" },
         applyData
       );
-    }
-  }, [selectedLesson, sendRequest]);
+  };
+
+  // Effet pour récupérer le contenu de l'activité en cours d'édition
+  useEffect(() => {
+    /*if (editingActivity?.type === "text" && editingActivity.url) {
+      fetch(`${ACTIVITIES}${editingActivity.url}`)
+        .then((response) => response.text())
+        .then((content: string) => {
+          setActivityContent(content);
+        });
+    } */
+  }, []);
+
+  const handleDeleteActivity = useCallback((activity: Activity) => {
+    /* sendRequest(
+      {
+        path: `/activity/${activity.type}/${activityId}/lesson`,
+        method: "delete",
+      },
+      applyData
+    ); */
+  }, []);
 
   // Évaluer le cours en tant que apprenant
   const handleRateContent = (rating: number) => {
@@ -260,8 +151,6 @@ const useLessonsPreview = () => {
     const applyData = (data: { success: boolean; message: string }) => {
       if (data.success) {
         toast.success(data.message);
-        handleLessonSelection(undefined);
-        fetchData();
       }
     };
 
@@ -271,26 +160,9 @@ const useLessonsPreview = () => {
     );
   };
 
-  const handleSelectActivityId = (activity: Activity) => {
-    setIsCreatingActivity(false);
-    setSelectedActivity(activity);
-  };
-
-  const handleCreateActivity = () => {
-    setIsCreatingActivity(true);
-  };
-
-  const handleCloseTextEditor = () => {
-    setIsCreatingActivity(false);
-  };
-
   const fetchData = useCallback(() => {
-    const applyData = ({
-      data,
-    }: {
-      data: Module & { parcours: string; parcoursId: number };
-    }) => {
-      setModuleData(data);
+    const applyData = ({ data }: { data: Module }) => {
+      dispatch({ type: "update_module_data", module: data });
 
       if (stateFromUrl?.lessonId) {
         // selectionner la leçon selectionnée depuis le state de l'url
@@ -298,104 +170,42 @@ const useLessonsPreview = () => {
           .flatMap((course) => course.lessons)
           .find((lesson) => lesson.id === stateFromUrl?.lessonId);
         if (lessonToSelect) {
-          handleLessonSelection(lessonToSelect);
+          dispatch({ type: "select_lesson", lesson: lessonToSelect });
         }
       }
     };
 
     sendRequest({ path: `/modules/detail/limited/${moduleId}` }, applyData);
-  }, [moduleId, sendRequest, stateFromUrl?.lessonId, handleLessonSelection]);
+  }, [moduleId, sendRequest, stateFromUrl?.lessonId]);
 
   // useEffect pour charger les détails d'une leçon sélectionnée
   useEffect(() => {
-    const applyData = (data: Lesson) => {
-      // Marquer le début de lecture d'une leçon
-      // Utiliser lessonsRef.current pour avoir toujours la valeur à jour sans dépendance
-      const lessonInModule = lessonsRef.current.find(
-        (lesson) => lesson.id === data.id
-      );
-
+    const applyData = (lesson: Lesson) => {
       // Mettre à jour selectedLesson avec les données complètes
-      setSelectedLesson({
-        ...data,
-        lessonsRead: lessonInModule?.lessonsRead || [],
-        order: lessonInModule?.order,
-      });
-
-      // Si on a un ID d'activité spécifique à sélectionner
-      if (activityIdToSelect !== null) {
-        console.log("🎯 Looking for activity ID:", activityIdToSelect);
-        console.log(
-          "🎯 Available activities:",
-          data?.activities?.map((a) => ({ id: a.id, title: a.title }))
-        );
-        const targetActivity = data?.activities?.find(
-          (act) => act.id === activityIdToSelect
-        );
-        if (targetActivity) {
-          console.log("✅ Found and selecting:", targetActivity.title);
-          setSelectedActivity(targetActivity);
-        } else {
-          console.log("❌ Activity not found, selecting first");
-          // Si l'activité n'existe plus, sélectionner la première
-          setSelectedActivity(data?.activities?.[0] || null);
-        }
-        // Réinitialiser l'ID après avoir sélectionné l'activité
-        setActivityIdToSelect(null);
-      } else {
-        // Comportement par défaut : sélectionner la première activité
-        setSelectedActivity(data?.activities?.[0] || null);
-      }
+      dispatch({ type: "select_lesson", lesson });
     };
 
-    if (!selectedLessonId) return;
-    sendRequest({ path: `/lesson/${selectedLessonId}` }, applyData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedLessonId, sendRequest, activityIdToSelect]);
+    if (!state.selectedLesson?.id) return;
+    sendRequest({ path: `/lesson/${state.selectedLesson.id}` }, applyData);
+  }, [state.selectedLesson?.id, sendRequest]);
 
   // useEffect pour charger les données initiales du module
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  useEffect(() => {
-    setIsLessonCompleted(
-      Boolean(
-        selectedLesson?.lessonsRead?.some((lessonRead) => lessonRead.finishedAt)
-      )
-    );
-  }, [selectedLesson?.lessonsRead]);
-
-  useEffect(() => {
-    handleInitGetLessonRating();
-  }, [handleInitGetLessonRating]);
-
   // Retourne les données et fonctions nécessaires
   return {
-    fetchData,
-    moduleData,
-    selectedLesson,
-    selectedActivity,
-    lessonRating,
+    state,
+    dispatch,
     isLoading,
-    setModuleData,
-    isLessonCompleted,
-    showModal,
     isPanelClosed,
-    selectedLessonHasActivities,
-    isCreatingActivity,
-    setPanelClosed,
-    onSelectActivityId: handleSelectActivityId,
-    onToggleModalDisplaying: handleToggleModalDisplaying,
-    onClickModalRightButton: handleClickModalRightButton,
-    setSelectedLesson: handleLessonSelection,
+    fetchData,
     onCompleteLesson: handleCompleteLesson,
     onRateContent: handleRateContent,
-    onEditRateContent: handleEditRateContent,
     onEnableCourse: handleEnableCourse,
     onDeleteCourse: handleDeleteCourse,
-    onCreateActivity: handleCreateActivity,
-    onCloseTextEditor: handleCloseTextEditor,
+    onDeleteActivity: handleDeleteActivity,
   };
 };
 

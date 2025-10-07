@@ -1,7 +1,6 @@
 import SidebarCoursesList from "../../components/lessons-preview/sidebar/sidebar-courses-list";
 import ProgressBar from "../../components/lessons-preview/progress-bar";
 import LessonReader from "../../components/lessons-preview/preview/lesson-reader";
-import type Lesson from "../../utils/interfaces/lesson";
 import useLessonsPreview from "./hooks/use-lessons-preview";
 import LessonsPreviewHeader from "../../components/lessons-preview/lessons-preview-header";
 import ModuleData from "../../components/lessons-preview/module-data/module-data";
@@ -27,32 +26,38 @@ const LessonsPreview = () => {
 
   // custom hook
   const {
-    fetchData,
-    moduleData,
-    lessonRating,
+    state: {
+      isPanelClosed,
+      modalVisibility,
+      mode,
+      textActivityContent,
+      module,
+      selectedActivity,
+      selectedLesson,
+    },
+    dispatch,
     onCompleteLesson,
-    selectedLesson,
-    selectedActivity,
-    onSelectActivityId,
-    isLessonCompleted,
-    isCreatingActivity,
-    setSelectedLesson,
     onRateContent,
-    onEditRateContent,
-    onDeleteCourse,
     onEnableCourse,
-    showModal,
-    isPanelClosed,
-    selectedLessonHasActivities,
-    setPanelClosed,
-    onToggleModalDisplaying,
-    onClickModalRightButton,
-    onCreateActivity,
-    onCloseTextEditor,
+    onDeleteCourse,
+    onDeleteActivity,
   } = useLessonsPreview();
 
   return (
     <ViewWrapper className="flex flex-col gap-6">
+      {/* Modal to include here */}
+      {modalVisibility === "lessonCompletionModal" && (
+        <LessonCompletionModal
+          onRateContent={onRateContent}
+          // onClickModalRightButton={lessonRating && onClickModalRightButton}
+          onClickMinimizeButton={() =>
+            dispatch({
+              type: "set_modal_visibility",
+              modalVisibility: "none",
+            })
+          }
+        />
+      )}
       {/* Header de la liste des groupes */}
       <Header
         title="Contenu du module"
@@ -65,7 +70,7 @@ const LessonsPreview = () => {
         <Can object="lesson" action="update">
           <Link
             className="btn btn-primary text-base-100 gap-2"
-            to={`/admin/parcours/edit/${moduleData?.parcoursId}?step=4`}
+            to={`/admin/parcours/edit/${module?.parcoursId}?step=4`}
           >
             <PenBox />
             Modifier le module
@@ -73,112 +78,100 @@ const LessonsPreview = () => {
         </Can>
       </Header>
 
-      {!moduleData ? (
-        <LessonsPreviewSkeleton />
-      ) : (
-        <>
-          {/* Modal to include here */}
-          {showModal ? (
-            <LessonCompletionModal
-              onRateContent={
-                lessonRating?.rating ? onEditRateContent : onRateContent
+      {module && module.parcoursId && module.id ? (
+        <LessonsPreviewWrapper
+          parcoursId={module.parcoursId}
+          selectedLesson={selectedLesson}
+          isPanelClosed={isPanelClosed}
+          onTogglePanel={() => dispatch({ type: "toggle_panel_visibility" })}
+          setSelectedLesson={(lesson) =>
+            dispatch({ type: "select_lesson", lesson })
+          }
+        >
+          {[
+            // * Header
+            <LessonsPreviewHeader key="header" moduleData={module} />,
+            // * Le composant affichant la liste des cours avec la progression des cours
+            <SidebarCoursesList
+              key="progession-side"
+              courses={module.courses}
+              parcoursId={module.parcoursId}
+              moduleId={module.id}
+              selectedLesson={selectedLesson}
+              setSelectedLesson={(lesson) =>
+                dispatch({ type: "select_lesson", lesson })
               }
-              // Le bouton handler onClickModalRightButton n'est affiché seulement si
-              // l'objet lessonRating est non null
-              onClickModalRightButton={lessonRating && onClickModalRightButton}
-              onClickMinimizeButton={onToggleModalDisplaying}
-            />
-          ) : null}
-
-          <LessonsPreviewWrapper
-            parcoursId={moduleData.parcoursId}
-            selectedLesson={selectedLesson}
-            isPanelClosed={isPanelClosed}
-            setPanelClosed={setPanelClosed}
-            setSelectedLesson={setSelectedLesson}
-          >
-            {[
-              // * Header
-              <LessonsPreviewHeader key="header" moduleData={moduleData} />,
-              // * Le composant affichant la liste des cours avec la progression des cours
-              <SidebarCoursesList
-                key="progession-side"
-                courses={moduleData.courses}
-                parcoursId={moduleData.parcoursId}
-                moduleId={moduleData.id ?? 0}
-                selectedLesson={selectedLesson}
-                setSelectedLesson={setSelectedLesson}
-                onDeleteCourse={onDeleteCourse}
-                onEnableCourse={onEnableCourse}
-                children={[
-                  // Bouton pour créer un nouveau cours
-                  <Can key="create-course" action="write" object="course">
-                    <CreateCourseItem
-                      parcoursId={moduleData.parcoursId}
-                      moduleId={moduleData.id ?? 0}
-                    />
-                  </Can>,
-                  // Liste des activités
-                  <ActivityList
-                    key="activity-list"
-                    activities={selectedLesson?.activities}
-                    selectedActivity={selectedActivity}
-                    onSelectActivity={onSelectActivityId}
-                    onCreateActivity={onCreateActivity}
-                  />,
-                ]}
-              />,
-              // * La barre de progression du cours
-              <Can
-                key="top-progress-bar"
-                action="component"
-                object="progression"
-              >
-                <ProgressBar courses={moduleData.courses} />
-              </Can>,
-              // * La prévisualisation de la leçon
-              selectedActivity ? (
-                <LessonReader
-                  key="lesson-reader"
-                  selectedLesson={selectedLesson as Lesson}
+              onDeleteCourse={onDeleteCourse}
+              onEnableCourse={onEnableCourse}
+              children={[
+                // Bouton pour créer un nouveau cours
+                <Can key="create-course" action="write" object="course">
+                  <CreateCourseItem
+                    parcoursId={module.parcoursId}
+                    moduleId={module.id || 0}
+                  />
+                </Can>,
+                // Liste des activités
+                <ActivityList
+                  key="activity-list"
+                  activities={selectedLesson?.activities}
                   selectedActivity={selectedActivity}
-                  isLessonAlreadyCompleted
-                  currentLessonRating={lessonRating?.rating}
-                  onRateContent={onEditRateContent}
-                  lessonHasActivities={selectedLessonHasActivities}
-                  onRefreshAllData={fetchData}
-                >
-                  {/* Bouton pour terminer la leçon afin d'afficher une modal */}
-                  <Can action="component" object="progression">
-                    <FeedbacksButton
-                      className="btn btn-primary text-nowrap text-base-100"
-                      feedbackType="thumbUp"
-                      enableAnimationOnClick={!isLessonCompleted}
-                      disabled={showModal}
-                      onClick={
-                        isLessonCompleted
-                          ? onCompleteLesson
-                          : onToggleModalDisplaying
-                      }
-                    >
-                      {isLessonCompleted
-                        ? "Leçon Suivante"
-                        : "Marquer comme terminé"}
-                    </FeedbacksButton>
-                  </Can>
+                  onSelectActivity={(activity) =>
+                    dispatch({ type: "select_activity", activity })
+                  }
+                  onClickCreateActivity={() =>
+                    dispatch({
+                      type: "select_mode",
+                      mode: "write",
+                    })
+                  }
+                />,
+              ]}
+            />,
+            // * La barre de progression du cours
+            <Can key="top-progress-bar" action="component" object="progression">
+              <ProgressBar courses={module.courses} />
+            </Can>,
+            // * La prévisualisation de la leçon
+            selectedActivity ? (
+              <LessonReader
+                key="lesson-reader"
+                textActivityContent={textActivityContent}
+                onRateActivity={onRateContent}
+                onDeleteActivity={onDeleteActivity}
+              >
+                {/* Bouton pour terminer la leçon afin d'afficher une modal */}
+                <Can action="component" object="progression">
+                  <FeedbacksButton
+                    className="btn btn-primary text-nowrap text-base-100"
+                    feedbackType="thumbUp"
+                    enableAnimationOnClick={!isLessonCompleted}
+                    disabled={modalVisibility !== "none"}
+                    onClick={
+                      isLessonCompleted
+                        ? onCompleteLesson
+                        : onToggleModalDisplaying
+                    }
+                  >
+                    {isLessonCompleted
+                      ? "Leçon Suivante"
+                      : "Marquer comme terminé"}
+                  </FeedbacksButton>
+                </Can>
 
-                  {/* Le lecteur de leçons */}
-                </LessonReader>
-              ) : (
-                <NoActivityPlaceholder key="no-activity-placeholder" />
-              ),
+                {/* Le lecteur de leçons */}
+              </LessonReader>
+            ) : (
+              <NoActivityPlaceholder key="no-activity-placeholder" />
+            ),
 
-              /* Dans le cas où aucune leçon n'est affiché,
+            /* Dans le cas où aucune leçon n'est affiché,
               les informations complémentaires du cours sont affichés */
-              <ModuleData key="module-data" moduleData={moduleData} />,
-            ]}
-          </LessonsPreviewWrapper>
-        </>
+            <ModuleData key="module-data" moduleData={module} />,
+          ]}
+        </LessonsPreviewWrapper>
+      ) : (
+        <LessonsPreviewSkeleton />
       )}
     </ViewWrapper>
   );

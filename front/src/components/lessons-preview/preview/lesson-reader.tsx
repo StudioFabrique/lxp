@@ -1,163 +1,34 @@
-import type Lesson from "../../../utils/interfaces/lesson";
 import { Activity } from "../../../utils/interfaces/activity";
 import RatingPanelButton from "../../UI/lesson-rating/rating-panel-button";
 import ActivityPreview from "./activity-preview";
-import { ACTIVITIES } from "../../../config/urls";
-import {
-  type PropsWithChildren,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
+import { type PropsWithChildren, useState, useCallback } from "react";
 import Modal from "../../UI/modal/modal";
-import useHttp from "../../../hooks/use-http";
-import toast from "react-hot-toast";
 import ActivityActionsMenu from "./activity-actions-menu";
 import activityIconType from "../../../utils/activity-icon-type";
 import TiptapActivity from "../writing/tip-tap-activity";
 
 type PreviewLessonProps = {
-  selectedLesson: Lesson;
-  selectedActivity: Activity;
-  currentLessonRating?: number;
-  onRateContent: (rating: number) => void;
-  // Vérifie s'il y a des activités dans la leçon
-  lessonHasActivities: boolean;
+  textActivityContent?: string;
+  onRateActivity: (rating: number) => void;
+  onDeleteActivity: (activity: Activity) => void;
 };
 
 // Composant pour prévisualiser une leçon avec ses activités
 const LessonReader = ({
-  selectedLesson,
-  selectedActivity,
-  currentLessonRating,
-  onRateContent,
-  lessonHasActivities,
+  onRateActivity,
+  onDeleteActivity,
   children,
 }: PropsWithChildren<PreviewLessonProps>) => {
-  const [showTipTapEditor, setShowTipTapEditor] = useState<boolean>(false);
-  const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
-  const [activityContent, setActivityContent] = useState<string>("");
-
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [deletingActivityId, setDeletingActivityId] = useState<number | null>(
-    null
-  );
-  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
     null
   );
-  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
-  const { sendRequest, error } = useHttp();
-
-  const handleDeleteActivity = useCallback(
-    (activityId: number) => {
-      const activity = activities.find((item) => item.id === activityId);
-      if (!activity) return;
-
-      // Empêcher les appels multiples
-      if (deletingActivityId === activityId) {
-        console.log("Suppression déjà en cours pour cette activité");
-        return;
-      }
-
-      setDeletingActivityId(activityId);
-
-      // Appel au backend avec gestion d'erreur
-      const applyData = () => {
-        // Suppression réussie - retirer de l'état local
-        const updatedActivities = activities.filter(
-          (item) => item.id !== activityId
-        );
-        setActivities(updatedActivities);
-        setDeletingActivityId(null);
-        toast.success("Activité supprimée");
-
-        // Backend confirmé - rafraîchir les données pour s'assurer de la synchronisation
-        if (onRefreshAllData) {
-          onRefreshAllData();
-        }
-      };
-
-      sendRequest(
-        {
-          path: `/activity/${activity.type}/${activityId}/lesson`,
-          method: "delete",
-        },
-        applyData
-      );
-    },
-    [activities, deletingActivityId, sendRequest, onRefreshAllData]
-  );
-
-  const handleEditActivity = useCallback(
-    (activity: Activity) => {
-      // Gérer l'édition pour tous les types d'activités
-      if (["text", "video", "image", "resource"].includes(activity.type)) {
-        // Réinitialiser le contenu avant de passer en mode édition
-        setActivityContent("");
-        // Passer en mode édition pour cette activité
-        setEditingActivity(activity);
-        // Fermer l'éditeur de création si il est ouvert
-        if (showTipTapEditor) {
-          setShowTipTapEditor(false);
-        }
-      } else {
-        console.log(
-          "Édition non implémentée pour ce type d'activité:",
-          activity.type
-        );
-      }
-    },
-    [showTipTapEditor]
-  );
-
-  const handleOpenDeleteModal = useCallback((activity: Activity) => {
-    setActivityToDelete(activity);
-    setShowDeleteModal(true);
-  }, []);
 
   const handleConfirmDelete = useCallback(() => {
     if (activityToDelete?.id) {
-      handleDeleteActivity(activityToDelete.id);
+      onDeleteActivity(activityToDelete);
     }
-    setShowDeleteModal(false);
     setActivityToDelete(null);
-  }, [activityToDelete, handleDeleteActivity]);
-
-  // Effet pour récupérer le contenu de l'activité en cours d'édition
-  useEffect(() => {
-    if (editingActivity?.type === "text" && editingActivity.url) {
-      fetch(`${ACTIVITIES}${editingActivity.url}`)
-        .then((response) => response.text())
-        .then((content: string) => {
-          setActivityContent(content);
-        });
-    }
-  }, [editingActivity]);
-
-  // Réinitialiser l'état d'édition quand selectedActivity change
-  useEffect(() => {
-    // Si on change d'activité sélectionnée, sortir du mode édition
-    if (editingActivity && editingActivity.id !== selectedActivity.id) {
-      setEditingActivity(null);
-      setActivityContent("");
-    }
-  }, [selectedActivity.id, editingActivity]);
-
-  // Initialiser les activités depuis la prop
-  useEffect(() => {
-    if (selectedLesson.activities) {
-      setActivities([...selectedLesson.activities]);
-    }
-  }, [selectedLesson]);
-
-  // Gérer les erreurs de suppression
-  useEffect(() => {
-    if (error) {
-      setDeletingActivityId(null); // Réinitialiser l'état de suppression en cas d'erreur
-      toast.error("Erreur lors de la suppression de l'activité");
-    }
-  }, [error]);
+  }, [activityToDelete, onDeleteActivity]);
 
   if (!selectedLesson.id) return null;
 
@@ -204,7 +75,7 @@ const LessonReader = ({
           {currentLessonRating && lessonHasActivities ? (
             <RatingPanelButton
               note={currentLessonRating}
-              onRateContent={onRateContent}
+              onRateContent={onRateActivity}
             />
           ) : null}
         </div>
@@ -216,8 +87,6 @@ const LessonReader = ({
             {selectedActivity.title}
             <ActivityActionsMenu
               activity={selectedActivity}
-              setOpenMenuId={setOpenMenuId}
-              openMenuId={openMenuId}
               handleEditActivity={handleEditActivity}
               handleOpenDeleteModal={handleOpenDeleteModal}
               disabled={editingActivity?.id === selectedActivity.id}
@@ -231,7 +100,7 @@ const LessonReader = ({
                 mode="read"
                 id={selectedActivity.id}
                 title={selectedActivity.title}
-                content={activityContent}
+                content={textActivityContent}
                 onClose={() => {}}
                 onSave={async () => {
                   // test
