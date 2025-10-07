@@ -1,5 +1,6 @@
-import type Activity from "./activity";
+import type { Activity } from "./activity";
 import type Course from "./course";
+import LessonRating from "./lesson-rating";
 import type LessonRead from "./lesson-read";
 import type Tag from "./tag";
 
@@ -18,4 +19,5 @@ export default interface Lesson {
   activities?: Activity[];
   order?: number;
   lessonsRead?: LessonRead[];
+  lessonRating: LessonRating;
 }

@@ -1,4 +1,4 @@
-import type { Dispatch, PropsWithChildren, SetStateAction } from "react";
+import type { PropsWithChildren } from "react";
 import type Lesson from "../../utils/interfaces/lesson";
 import {
   Edit,
@@ -14,7 +14,7 @@ type LessonsPreviewWrapperProps = {
   parcoursId: number;
   selectedLesson?: Lesson;
   isPanelClosed?: boolean;
-  setPanelClosed: Dispatch<SetStateAction<boolean>>;
+  onTogglePanel: () => void;
   setSelectedLesson: (lesson: Lesson | undefined) => void;
 };
 
@@ -26,16 +26,12 @@ const LessonsPreviewWrapper = ({
   parcoursId,
   selectedLesson,
   isPanelClosed = false,
-  setPanelClosed,
+  onTogglePanel,
   setSelectedLesson,
   children,
 }: PropsWithChildren<LessonsPreviewWrapperProps>) => {
   const [header, progessionSide, topProgressBar, previewLesson, moduleData] =
     children as React.ReactNode[];
-
-  const handleTogglePanel = () => {
-    setPanelClosed(!isPanelClosed);
-  };
 
   return (
     <div className="w-full overflow-hidden">
@@ -48,7 +44,7 @@ const LessonsPreviewWrapper = ({
         >
           <button
             type="button"
-            onClick={handleTogglePanel}
+            onClick={onTogglePanel}
             className="btn w-fit hover:bg-primary hover:text-base-100 border-secondary/20"
           >
             {isPanelClosed ? (
