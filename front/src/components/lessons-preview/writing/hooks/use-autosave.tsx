@@ -7,7 +7,7 @@ type AutosaveData = {
   activityId?: number;
 };
 
-type UseAutosaveOptions = {
+type Props = {
   title?: string;
   content: string;
   activityId?: number;
@@ -40,7 +40,7 @@ export default function useAutosave({
   activityId,
   setEditorTitle,
   setEditorContent,
-}: UseAutosaveOptions) {
+}: Props) {
   const [hasAutosavedContent, setHasAutosavedContent] =
     useState<boolean>(false);
   const [lastAutosaveTime, setLastAutosaveTime] = useState<Date | null>(null);

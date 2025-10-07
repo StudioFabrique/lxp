@@ -1,8 +1,8 @@
+import useAutosave from "./hooks/use-autosave";
 import { type ChangeEvent, useState } from "react";
 import toast from "react-hot-toast";
 import AutosaveIndicator from "./autosave-indicator";
 import TiptapEditor from "../../UI/tiptap-editor/tiptapEditor";
-import useAutosave from "./hooks/useAutosave";
 
 type Props = {
   mode: "read" | "create" | "edit";

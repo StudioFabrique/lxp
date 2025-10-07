@@ -20,9 +20,7 @@ type PreviewLessonProps = {
   selectedLesson: Lesson;
   selectedActivity: Activity;
   currentLessonRating?: number;
-  isLessonAlreadyCompleted: boolean;
   onRateContent: (rating: number) => void;
-  onRefreshAllData?: () => void;
   // Vérifie s'il y a des activités dans la leçon
   lessonHasActivities: boolean;
 };
@@ -33,7 +31,6 @@ const LessonReader = ({
   selectedActivity,
   currentLessonRating,
   onRateContent,
-  onRefreshAllData,
   lessonHasActivities,
   children,
 }: PropsWithChildren<PreviewLessonProps>) => {
@@ -227,12 +224,12 @@ const LessonReader = ({
             />
           </div>
 
-          {/* Afficher l'éditeur TipTap */}
-          {editingActivity?.id === selectedActivity.id ? (
+          {/* Afficher l'éditeur TipTap si le type de l'activité est "text" */}
+          {editingActivity?.type === "text" ? (
             <div className="mt-4">
               <TiptapActivity
                 mode="read"
-                id={}
+                id={selectedActivity.id}
                 title={selectedActivity.title}
                 content={activityContent}
                 onClose={() => {}}
@@ -243,10 +240,8 @@ const LessonReader = ({
               />
             </div>
           ) : (
-            <ActivityPreview
-              lessonId={selectedLesson.id ?? 0}
-              activity={selectedActivity}
-            />
+            /* Sinon afficher l'activité d'un autre type "video", "image" ou "resources" */
+            <ActivityPreview activity={selectedActivity} />
           )}
         </div>
 

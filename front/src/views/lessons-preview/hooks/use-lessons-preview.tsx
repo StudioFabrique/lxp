@@ -1,15 +1,31 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
-import { useCallback, useEffect, useMemo, useState, useRef } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+  useReducer,
+} from "react";
 import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
 import LessonRating from "../../../utils/interfaces/lesson-rating";
 import toast from "react-hot-toast";
 import { Activity } from "../../../utils/interfaces/activity";
+import {
+  initialLessonsPreviewState,
+  lessonsPreviewReducer,
+} from "../store/lessons-preview-reducer";
 
 // Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
 const useLessonsPreview = () => {
+  const [state, dispatch] = useReducer(
+    lessonsPreviewReducer,
+    initialLessonsPreviewState
+  );
+
   const { sendRequest, isLoading } = useHttp(true);
   const { state: stateFromUrl } = useLocation();
   const navigate = useNavigate();
@@ -27,7 +43,6 @@ const useLessonsPreview = () => {
     null
   );
   const [lessonRating, setLessonRating] = useState<LessonRating>();
-  const STORAGE_KEY = "lessons-preview-panel-closed";
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isPanelClosed, setPanelClosed] = useState<boolean>(false);
 
@@ -290,18 +305,6 @@ const useLessonsPreview = () => {
 
     sendRequest({ path: `/modules/detail/limited/${moduleId}` }, applyData);
   }, [moduleId, sendRequest, stateFromUrl?.lessonId, handleLessonSelection]);
-
-  // Panel closed state management
-  useEffect(() => {
-    const savedState = localStorage.getItem(STORAGE_KEY);
-    if (savedState) {
-      setPanelClosed(JSON.parse(savedState));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(isPanelClosed));
-  }, [isPanelClosed]);
 
   // useEffect pour charger les détails d'une leçon sélectionnée
   useEffect(() => {
