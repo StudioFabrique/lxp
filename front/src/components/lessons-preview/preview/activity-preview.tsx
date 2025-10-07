@@ -4,25 +4,18 @@ import { useEffect, useState } from "react";
 import type { Activity, Resource } from "../../../utils/interfaces/activity";
 import { ACTIVITIES, ACTIVITIES_VIDEOS } from "../../../config/urls";
 import BaseReactPlayer from "react-player";
-import TipTapActivity from "../writing.old/tip-tap-activity";
 import { File } from "lucide-react";
 
 type ActivityProps = {
-  lessonId: number;
   activity: Activity;
-  onActivityEditChange?: (isEditing: boolean) => void;
-  shouldEdit?: boolean;
-  forceStopEdit?: boolean;
 };
 
-const ActivityPreview = ({
-  lessonId,
-  activity,
-  onActivityEditChange,
-  shouldEdit = false,
-  forceStopEdit = false,
-}: ActivityProps) => {
-  const [value, setValue] = useState<string>("");
+/**
+ * Preview des activités de type video, image et ressources contenant des fichiers (PDF, powerpoint...)
+ * @param param0
+ * @returns
+ */
+const ActivityPreview = ({ activity }: ActivityProps) => {
   const [url, setUrl] = useState("");
 
   // case when a activity contains a set of pdf files
@@ -52,40 +45,8 @@ const ActivityPreview = ({
     }
   }, [activity.resourceActivities, activity.type]);
 
-  /**
-   * récupère le contenu d'un fichier markdown depuis le serveur
-   */
-  useEffect(() => {
-    if (activity.type === "text" && activity.url) {
-      fetch(`${ACTIVITIES}${activity.url}`)
-        .then((response) => response.text())
-        //.then((text) => md.render(text))
-        .then((mdContent: string) => {
-          setValue(mdContent);
-        });
-    }
-  }, [activity, activity.url]);
-
-  useEffect(() => {
-    // Reset value when activity changes
-    setValue("");
-  }, [activity.id, activity.type]);
-
   const renderPreviewComponent = () => {
     switch (activity.type) {
-      case "text":
-        return (
-          <TipTapActivity
-            parentId={lessonId}
-            activity={{
-              ...activity,
-              content: value,
-            }}
-            onActivityEditChange={onActivityEditChange}
-            shouldStartEdit={shouldEdit}
-            forceStopEdit={forceStopEdit}
-          />
-        );
       case "video":
         return (
           <div className="flex flex-col items-center gap-2">
