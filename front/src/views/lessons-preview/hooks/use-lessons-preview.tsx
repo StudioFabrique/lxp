@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
-import { useCallback, useEffect, useState, useReducer } from "react";
+import { useCallback, useEffect, useReducer } from "react";
 import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
@@ -28,23 +28,6 @@ const useLessonsPreview = () => {
 
   const { sendRequest, isLoading } = useHttp(true);
 
-  const [isPanelClosed, setPanelClosed] = useState<boolean>(false);
-
-  // Vérifie si la leçon a déjà été complétée
-  const [isLessonCompleted, setIsLessonCompleted] = useState(false);
-
-  // Modal management
-  const handleToggleModalDisplaying = () => {
-    setTimeout(() => {
-      setShowModal((prev) => !prev);
-    }, 800);
-  };
-
-  const handleClickModalRightButton = () => {
-    handleCompleteLesson();
-    setShowModal((prev) => !prev);
-  };
-
   const initiateLesson = useCallback(
     (lessonId: number) => {
       sendRequest({
@@ -65,7 +48,6 @@ const useLessonsPreview = () => {
           lesson: state.selectedLesson,
           lessonRead,
         });
-      setIsLessonCompleted(true);
     };
 
     if (state.selectedLesson)
@@ -102,6 +84,7 @@ const useLessonsPreview = () => {
       setLessonRating(data.data);
     };
 
+    // Create
     if (selectedLesson?.id)
       sendRequest(
         {
@@ -111,14 +94,8 @@ const useLessonsPreview = () => {
         },
         applyData
       );
-  };
 
-  // Évaluer le cours en tant que apprenant
-  const handleEditRateContent = (rating: number) => {
-    const applyData = (data: { data: LessonRating }) => {
-      setLessonRating(data.data);
-    };
-
+    // Edit
     if (selectedLesson?.id)
       sendRequest(
         {
@@ -134,7 +111,7 @@ const useLessonsPreview = () => {
     const applyData = (data: { success: boolean; message: string }) => {
       if (data.success) {
         toast.success(data.message);
-        fetchData();
+        fetchModuleData();
       }
     };
 
@@ -160,12 +137,12 @@ const useLessonsPreview = () => {
     );
   };
 
-  const fetchData = useCallback(() => {
-    const applyData = ({ data }: { data: Module }) => {
+  const fetchModuleData = useCallback(() => {
+    const applyData = ({ data }: { data: Module & { parcours: string } }) => {
       dispatch({ type: "update_module_data", module: data });
 
+      // selectionner la leçon selectionnée depuis le state de l'url
       if (stateFromUrl?.lessonId) {
-        // selectionner la leçon selectionnée depuis le state de l'url
         const lessonToSelect = data.courses
           .flatMap((course) => course.lessons)
           .find((lesson) => lesson.id === stateFromUrl?.lessonId);
@@ -191,16 +168,15 @@ const useLessonsPreview = () => {
 
   // useEffect pour charger les données initiales du module
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    fetchModuleData();
+  }, [fetchModuleData]);
 
   // Retourne les données et fonctions nécessaires
   return {
     state,
     dispatch,
     isLoading,
-    isPanelClosed,
-    fetchData,
+    fetchModuleData,
     onCompleteLesson: handleCompleteLesson,
     onRateContent: handleRateContent,
     onEnableCourse: handleEnableCourse,
