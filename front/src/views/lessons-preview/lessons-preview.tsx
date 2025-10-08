@@ -136,11 +136,12 @@ const LessonsPreview = () => {
               <ProgressBar courses={module.courses} />
             </Can>,
             // * La prévisualisation de la leçon
-            selectedActivity ? (
+            selectedLesson ? (
               <LessonReader
                 key="lesson-reader"
                 mode={mode}
                 selectedActivity={selectedActivity}
+                selectedLesson={selectedLesson}
                 showDeleteModal={modalVisibility === "deletionModal"}
                 onOpenDeleteModal={() =>
                   dispatch({
@@ -160,6 +161,9 @@ const LessonsPreview = () => {
                 textActivityContent={textActivityContent}
                 onRateActivity={onRateContent}
                 onDeleteActivity={onDeleteActivity}
+                onCloseTextEditor={() =>
+                  dispatch({ type: "select_lesson", lesson: selectedLesson })
+                }
               >
                 {/* Bouton pour terminer la leçon afin d'afficher une modal */}
                 <Can action="component" object="progression">

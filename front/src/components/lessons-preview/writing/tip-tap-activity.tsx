@@ -1,14 +1,16 @@
 import useAutosave from "./hooks/use-autosave";
-import { type ChangeEvent, useState } from "react";
+import { type ChangeEvent } from "react";
 import toast from "react-hot-toast";
 import AutosaveIndicator from "./autosave-indicator";
 import TiptapEditor from "../../UI/tiptap-editor/tiptapEditor";
 
 type Props = {
-  mode: "read" | "create" | "edit";
+  mode: "read" | "write" | "edit";
   id?: number;
   title?: string;
   content?: string;
+  onEditTitle: (title: string) => void;
+  onEditContent: (content: string) => void;
   onSave: (
     id: number | undefined,
     title: string,
@@ -32,30 +34,29 @@ const TiptapActivity = ({
   id,
   title,
   content,
+  onEditTitle,
+  onEditContent,
   onSave,
   onClose,
 }: Props) => {
-  const [editorTitle, setEditorTitle] = useState<string>(title || "");
-  const [editorContent, setEditorContent] = useState<string>(content || "");
-
   // Hook d'autosave
   const { lastAutosaveTime, showAutosaveIndicator, clearStorage } = useAutosave(
     {
-      title: editorTitle,
-      content: editorContent,
+      title,
+      content,
       activityId: id,
-      setEditorContent,
-      setEditorTitle,
+      onEditTitle,
+      onEditContent,
     }
   );
 
   const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
-    setEditorTitle(e.currentTarget.value);
+    onEditTitle(e.currentTarget.value);
   };
 
   // Fonction pour mettre à jour le contenu de l'éditeur
   const handleUpdateEditorContent = (content: string) => {
-    setEditorContent(content);
+    onEditContent(content);
   };
 
   // Fonction pour fermer l'éditeur
@@ -65,23 +66,28 @@ const TiptapActivity = ({
 
   const handleSave = async () => {
     // Si le titre est manquant, avertir l'utilisateur via un toast
-    if (!(editorTitle.length > 0)) {
+    if (!title || !(title?.length > 0)) {
       toast.error("Le titre est obligatoire");
       return;
     }
 
+    if (!content || !(content?.length > 0)) {
+      toast.error("Le contenu est obligatoire");
+      return;
+    }
+
     // Sauvegarder l'activité, et si la sauvegarde réussi, effacer la sauvegarde locale pour l'autosave et fermer l'éditeur
-    if (await onSave(id, editorTitle, editorContent)) {
+    if (await onSave(id, title, content)) {
       clearStorage();
       onClose?.();
     }
   };
 
   return (
-    <>
+    <div className="flex flex-col gap-2">
       {/* Indicateur d'autosave */}
       <AutosaveIndicator
-        isVisible={mode === "create" && showAutosaveIndicator}
+        isVisible={mode === "write" && showAutosaveIndicator}
         lastSaveTime={lastAutosaveTime}
       />
 
@@ -100,24 +106,26 @@ const TiptapActivity = ({
             placeholder="Saisissez le titre de l'activité"
             autoFocus
           />
-          <button
-            className="btn btn-sm btn-primary text-base-100"
-            onClick={handleCloseEditor}
-          >
-            Annuler
-          </button>
         </div>
       )}
 
       <div className="w-[100%] bg-base-200 rounded-lg p-4">
         <TiptapEditor
           mode={mode}
-          initialValue={editorContent}
+          initialValue={content}
           onSave={handleSave}
           onContentChange={handleUpdateEditorContent}
         />
       </div>
-    </>
+      {mode !== "read" && (
+        <button
+          className="btn btn-sm btn-error text-base-100 self-end"
+          onClick={handleCloseEditor}
+        >
+          Annuler
+        </button>
+      )}
+    </div>
   );
 };
 

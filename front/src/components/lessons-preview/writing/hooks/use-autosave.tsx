@@ -2,17 +2,17 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 type AutosaveData = {
   title?: string;
-  content: string;
+  content?: string;
   timestamp: number;
   activityId?: number;
 };
 
 type Props = {
   title?: string;
-  content: string;
+  content?: string;
   activityId?: number;
-  setEditorTitle: React.Dispatch<React.SetStateAction<string>>;
-  setEditorContent: React.Dispatch<React.SetStateAction<string>>;
+  onEditTitle: (title: string) => void;
+  onEditContent: (content: string) => void;
 };
 
 // Fonction debounce personnalisée
@@ -38,8 +38,8 @@ export default function useAutosave({
   title,
   content,
   activityId,
-  setEditorTitle,
-  setEditorContent,
+  onEditTitle,
+  onEditContent,
 }: Props) {
   const [hasAutosavedContent, setHasAutosavedContent] =
     useState<boolean>(false);
@@ -163,14 +163,14 @@ export default function useAutosave({
   useEffect(() => {
     const autosavedData = restoreAutosavedContent();
     const autoSavedContentLength =
-      autosavedData?.content.replace(/<[^>]+>/g, "").length || 0;
+      autosavedData?.content?.replace(/<[^>]+>/g, "").length || 0;
 
     if (autosavedData.wasRestored) {
-      setEditorTitle(autosavedData.title || "");
-      setEditorContent(autosavedData.content);
+      onEditTitle(autosavedData.title || "");
+      onEditContent(autosavedData.content || "");
       autoSavedContentLength > 0 && setShowAutosaveIndicator(true);
     }
-  }, [restoreAutosavedContent, setEditorContent, setEditorTitle]);
+  }, [restoreAutosavedContent, onEditTitle, onEditContent]);
 
   // Effet pour cacher l'indicateur d'autosave après un délai
   useEffect(() => {
@@ -191,7 +191,7 @@ export default function useAutosave({
     }
 
     // Ne sauvegarde que si il y a du contenu ou un titre
-    if (title?.trim() || content.trim()) {
+    if (title?.trim() || content?.trim()) {
       const autosaveData: AutosaveData = {
         title,
         content,

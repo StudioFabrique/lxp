@@ -131,7 +131,7 @@ export default function MenuBar({
       </Popover.Root>
 
       {items(editor).map((item) => (
-        <MenuItem {...item} />
+        <MenuItem key={item.title} {...item} />
       ))}
 
       <input

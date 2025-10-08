@@ -97,12 +97,14 @@ export function lessonsPreviewReducer(
 
     // Lesson
     case "select_lesson": {
-      // Selectionne la leçon dont les détails ont été chargés, et selectionne la première activité de la leçon (si existante)
+      // Selectionne la leçon dont les détails ont été chargés, et selectionne la première activité de la leçon (si existante).
+      // Le mode est basculé sur "read" automatiquement.
       const selectedActivity =
         action.lesson?.activities?.[0] && action.lesson?.activities[0];
 
       return {
         ...state,
+        mode: "read",
         selectedLesson: action.lesson,
         selectedActivity,
       };
@@ -194,9 +196,21 @@ export function lessonsPreviewReducer(
       };
     }
 
+    case "update_activity_content":
+      return { ...state, textActivityContent: action.content };
+
     // Miscellaneous
-    case "select_mode":
-      return { ...state, mode: action.mode };
+    case "select_mode": {
+      // Selectionner un mode pour l'editeur de texte. Si le mode
+      // est "write", alors déselectionner l'activité actuelle.
+      const selectedActivity =
+        action.mode === "write" ? undefined : state.selectedActivity;
+      return {
+        ...state,
+        mode: action.mode,
+        selectedActivity,
+      };
+    }
 
     case "toggle_panel_visibility":
       localStorage.setItem(STORAGE_KEY, JSON.stringify(!state.isPanelClosed));
