@@ -13,7 +13,7 @@ import useTiptapEditor from "./useTiptapEditor";
 import { useRef } from "react";
 
 type TiptapSimpleEditorProps = {
-  mode: "read" | "create" | "edit";
+  mode: "read" | "write" | "edit";
   initialValue?: string;
   onSave?: () => void;
   onContentChange?: (content: string) => void;

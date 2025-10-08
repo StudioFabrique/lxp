@@ -1,35 +1,44 @@
 import { Activity } from "../../../utils/interfaces/activity";
-// import RatingPanelButton from "../../UI/lesson-rating/rating-panel-button";
+import RatingPanelButton from "../../UI/lesson-rating/rating-panel-button";
 import ActivityPreview from "./activity-preview";
 import { type PropsWithChildren, useCallback } from "react";
 import Modal from "../../UI/modal/modal";
 import ActivityActionsMenu from "./activity-actions-menu";
 import activityIconType from "../../../utils/activity-icon-type";
 import TiptapActivity from "../writing/tip-tap-activity";
+import Lesson from "../../../utils/interfaces/lesson";
 
 type PreviewLessonProps = {
   mode: "read" | "edit" | "write";
-  selectedActivity: Activity;
+  selectedLesson: Lesson;
+  selectedActivity?: Activity;
   textActivityContent?: string;
   showDeleteModal: boolean;
+  onEditTitle: (title: string) => void;
+  onEditContent: (content: string) => void;
   onRateActivity: (mode: "create" | "edit", rating: number) => void;
   onEditActivity: () => void;
   onOpenDeleteModal: () => void;
   onCloseDeleteModal: () => void;
   onDeleteActivity: () => void;
+  onCloseTextEditor: () => void;
 };
 
 // Composant pour prévisualiser une leçon avec ses activités
 const LessonReader = ({
   mode,
+  selectedLesson,
   selectedActivity,
   textActivityContent,
   showDeleteModal,
-  // onRateActivity,
+  onEditContent,
+  onEditTitle,
+  onRateActivity,
   onEditActivity,
   onOpenDeleteModal,
   onCloseDeleteModal,
   onDeleteActivity,
+  onCloseTextEditor,
   children,
 }: PropsWithChildren<PreviewLessonProps>) => {
   const handleConfirmDelete = useCallback(() => {
@@ -38,7 +47,7 @@ const LessonReader = ({
 
   return (
     <>
-      {showDeleteModal && (
+      {showDeleteModal && selectedActivity && (
         <Modal
           title="Supprimer l'activité"
           leftLabel="Annuler"
@@ -72,38 +81,41 @@ const LessonReader = ({
       )}
 
       <div className="flex flex-col gap-5">
-        {/* <div className="w-full flex justify-end items-center">
-          Bouton de notation
-          {currentLessonRating ? (
+        <div className="w-full flex justify-end items-center">
+          {selectedLesson.lessonRating ? (
             <RatingPanelButton
-              note={currentLessonRating}
+              note={selectedLesson.lessonRating.rating}
               onRateContent={onRateActivity}
             />
           ) : null}
-        </div> */}
+        </div>
 
         {/* Rendu de l'activité */}
         <div className="bg-base-100 border border-secondary/20 rounded-box p-4 mb-4">
-          <div className="font-semibold text-primary capitalize flex justify-between items-center gap-3">
-            {activityIconType(selectedActivity.type)}
-            {selectedActivity.title}
-            <ActivityActionsMenu
-              activity={selectedActivity}
-              onEditActivity={onEditActivity}
-              onOpenDeleteModal={onOpenDeleteModal}
-              disabled={mode !== "read"}
-            />
-          </div>
+          {selectedActivity && (
+            <div className="font-semibold text-primary capitalize flex justify-between items-center gap-3">
+              {activityIconType(selectedActivity.type)}
+              {selectedActivity.title}
+              <ActivityActionsMenu
+                activity={selectedActivity}
+                onEditActivity={onEditActivity}
+                onOpenDeleteModal={onOpenDeleteModal}
+                disabled={mode !== "read"}
+              />
+            </div>
+          )}
 
           {/* Afficher l'éditeur TipTap si le type de l'activité est "text" */}
-          {selectedActivity?.type === "text" ? (
+          {selectedActivity?.type === "text" || mode === "write" ? (
             <div className="mt-4">
               <TiptapActivity
-                mode="read"
-                id={selectedActivity.id}
-                title={selectedActivity.title}
+                mode={mode}
+                id={selectedActivity?.id}
+                title={selectedActivity?.title}
                 content={textActivityContent}
-                onClose={() => {}}
+                onEditTitle={onEditTitle}
+                onEditContent={onEditContent}
+                onClose={onCloseTextEditor}
                 onSave={async () => {
                   // test
                   return false;

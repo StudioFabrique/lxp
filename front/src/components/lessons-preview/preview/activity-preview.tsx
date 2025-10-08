@@ -7,13 +7,11 @@ import BaseReactPlayer from "react-player";
 import { File } from "lucide-react";
 
 type ActivityProps = {
-  activity: Activity;
+  activity?: Activity;
 };
 
 /**
  * Preview des activités de type video, image et ressources contenant des fichiers (PDF, powerpoint...)
- * @param param0
- * @returns
  */
 const ActivityPreview = ({ activity }: ActivityProps) => {
   const [url, setUrl] = useState("");
@@ -22,18 +20,18 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
   const [pdfUrls, setPdfUrls] = useState<Resource[]>([]);
 
   useEffect(() => {
-    if (activity.url !== undefined) {
+    if (activity?.url) {
       if (activity.url.startsWith("http")) {
         setUrl(activity.url);
       } else {
         setUrl(ACTIVITIES_VIDEOS + activity.url);
       }
     }
-  }, [activity.url]);
+  }, [activity?.url]);
 
   // Récupération et formatage des ressources pdf
   useEffect(() => {
-    if (activity.type === "resource" && activity.resourceActivities) {
+    if (activity?.type === "resource" && activity.resourceActivities) {
       const resources = activity.resourceActivities.map((act) => ({
         ...act,
         url: act.url.startsWith("http")
@@ -43,10 +41,10 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
 
       setPdfUrls(resources);
     }
-  }, [activity.resourceActivities, activity.type]);
+  }, [activity?.resourceActivities, activity?.type]);
 
   const renderPreviewComponent = () => {
-    switch (activity.type) {
+    switch (activity?.type) {
       case "video":
         return (
           <div className="flex flex-col items-center gap-2">
