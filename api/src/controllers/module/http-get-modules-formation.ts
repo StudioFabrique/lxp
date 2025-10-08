@@ -5,8 +5,6 @@ async function httpGetModuleFormation(req: Request, res: Response) {
   try {
     const { formationId } = req.params;
 
-    console.log("FORMATION ID", formationId);
-
     const modulesIdList = await prisma.modulesOnFormation.findMany({
       where: { formationId: +formationId },
     });
@@ -20,8 +18,6 @@ async function httpGetModuleFormation(req: Request, res: Response) {
       },
     });
 
-    console.log("MODULES ID LIST", modulesIdList);
-
     const result = toto.map((item) => ({
       ...item.module,
       thumb: item.module.thumb?.toString("base64") ?? null,
@@ -29,8 +25,6 @@ async function httpGetModuleFormation(req: Request, res: Response) {
 
     return res.status(200).json(result);
   } catch (error: any) {
-    console.log("ERROR", error);
-
     return res.status(500).json({ message: error.message });
   }
 }

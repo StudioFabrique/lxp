@@ -4,7 +4,9 @@ async function getModulesFromParcours(parcoursId: number) {
   const existingParcours = await prisma.parcours.findUnique({
     where: { id: +parcoursId },
     select: {
-      modules: { select: { id: true, module: { select: { title: true } } } },
+      modules: {
+        select: { id: true, module: { select: { title: true, thumb: true } } },
+      },
     },
   });
 
@@ -15,6 +17,7 @@ async function getModulesFromParcours(parcoursId: number) {
     existingParcours?.modules.map((mod) => ({
       id: mod.id,
       title: mod.module.title,
+      thumb: mod.module.thumb?.toString("base64") ?? null,
     })) ?? [];
 
   return modules;
