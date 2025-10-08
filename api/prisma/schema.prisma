@@ -78,17 +78,7 @@ model BonusSkill {
   badge       String?
   parcoursId  Int
   parcours    Parcours                      @relation(fields: [parcoursId], references: [id])
-  courses     BonusSkillOnCourse[]
   modules     BonusSkillsOnModuleMetadata[]
-}
-
-model BonusSkillOnCourse {
-  bonusSkillId Int
-  courseId     Int
-  bonusSkill   BonusSkill @relation(fields: [bonusSkillId], references: [id])
-  course       Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
-  @@id([bonusSkillId, courseId])
 }
 
 model BonusSkillsOnModuleMetadata {
@@ -142,28 +132,26 @@ model ContactsOnParcours {
 }
 
 model Course {
-  id              Int                  @id @default(autoincrement())
+  id              Int                @id @default(autoincrement())
   title           String
   description     String?
   image           Bytes?
   virtualClass    String?
   visibility      Boolean?
-  scenario        Boolean              @default(true)
+  scenario        Boolean            @default(true)
   dates           Json[]
   order           Int
-  isPublished     Boolean              @default(false)
-  createdAt       DateTime             @default(now())
-  updatedAt       DateTime             @updatedAt
+  isPublished     Boolean            @default(false)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
   author          String
   adminId         Int
   accomplishments Accomplishment[]
-  bonusSkills     BonusSkillOnCourse[]
   contacts        ContactsOnCourse[]
-  admin           Admin                @relation(fields: [adminId], references: [id], onDelete: SetDefault)
+  admin           Admin              @relation(fields: [adminId], references: [id], onDelete: SetDefault)
   moduleId        Int
-  module          ModuleMetadata       @relation(fields: [moduleId], references: [id])
+  module          ModuleMetadata     @relation(fields: [moduleId], references: [id])
   lessons         Lesson[]
-  objectives      ObjectivesOnCourse[]
   tags            TagsOnCourse[]
 }
 
@@ -297,22 +285,12 @@ model ModulesOnFormation {
 }
 
 model Objective {
-  id          Int                  @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   description String
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   parcoursId  Int
-  parcours    Parcours             @relation(fields: [parcoursId], references: [id])
-  courses     ObjectivesOnCourse[]
-}
-
-model ObjectivesOnCourse {
-  objectiveId Int
-  courseId    Int
-  course      Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  objective   Objective @relation(fields: [objectiveId], references: [id])
-
-  @@id([objectiveId, courseId])
+  parcours    Parcours @relation(fields: [parcoursId], references: [id])
 }
 
 model OpenBadge {
