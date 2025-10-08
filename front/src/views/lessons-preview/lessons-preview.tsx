@@ -35,6 +35,8 @@ const LessonsPreview = () => {
       selectedActivity,
       selectedLesson,
     },
+    isLessonCompleted,
+    // fetchModuleData,
     dispatch,
     onCompleteLesson,
     onRateContent,
@@ -48,8 +50,9 @@ const LessonsPreview = () => {
       {/* Modal to include here */}
       {modalVisibility === "lessonCompletionModal" && (
         <LessonCompletionModal
+          isLessonCompleted={isLessonCompleted}
           onRateContent={onRateContent}
-          // onClickModalRightButton={lessonRating && onClickModalRightButton}
+          onClickNextLesson={() => dispatch({ type: "go_to_next_lesson" })}
           onClickMinimizeButton={() =>
             dispatch({
               type: "set_modal_visibility",
@@ -136,6 +139,24 @@ const LessonsPreview = () => {
             selectedActivity ? (
               <LessonReader
                 key="lesson-reader"
+                mode={mode}
+                selectedActivity={selectedActivity}
+                showDeleteModal={modalVisibility === "deletionModal"}
+                onOpenDeleteModal={() =>
+                  dispatch({
+                    type: "set_modal_visibility",
+                    modalVisibility: "deletionModal",
+                  })
+                }
+                onCloseDeleteModal={() =>
+                  dispatch({
+                    type: "set_modal_visibility",
+                    modalVisibility: "none",
+                  })
+                }
+                onEditActivity={() =>
+                  dispatch({ type: "select_mode", mode: "edit" })
+                }
                 textActivityContent={textActivityContent}
                 onRateActivity={onRateContent}
                 onDeleteActivity={onDeleteActivity}
@@ -145,18 +166,10 @@ const LessonsPreview = () => {
                   <FeedbacksButton
                     className="btn btn-primary text-nowrap text-base-100"
                     feedbackType="thumbUp"
-                    enableAnimationOnClick={!isLessonCompleted}
+                    isLessonCompleted={isLessonCompleted}
                     disabled={modalVisibility !== "none"}
-                    onClick={
-                      isLessonCompleted
-                        ? onCompleteLesson
-                        : onToggleModalDisplaying
-                    }
-                  >
-                    {isLessonCompleted
-                      ? "Leçon Suivante"
-                      : "Marquer comme terminé"}
-                  </FeedbacksButton>
+                    onClick={onCompleteLesson}
+                  />
                 </Can>
 
                 {/* Le lecteur de leçons */}

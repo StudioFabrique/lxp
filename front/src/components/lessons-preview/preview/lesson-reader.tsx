@@ -1,59 +1,61 @@
 import { Activity } from "../../../utils/interfaces/activity";
-import RatingPanelButton from "../../UI/lesson-rating/rating-panel-button";
+// import RatingPanelButton from "../../UI/lesson-rating/rating-panel-button";
 import ActivityPreview from "./activity-preview";
-import { type PropsWithChildren, useState, useCallback } from "react";
+import { type PropsWithChildren, useCallback } from "react";
 import Modal from "../../UI/modal/modal";
 import ActivityActionsMenu from "./activity-actions-menu";
 import activityIconType from "../../../utils/activity-icon-type";
 import TiptapActivity from "../writing/tip-tap-activity";
 
 type PreviewLessonProps = {
+  mode: "read" | "edit" | "write";
+  selectedActivity: Activity;
   textActivityContent?: string;
-  onRateActivity: (rating: number) => void;
-  onDeleteActivity: (activity: Activity) => void;
+  showDeleteModal: boolean;
+  onRateActivity: (mode: "create" | "edit", rating: number) => void;
+  onEditActivity: () => void;
+  onOpenDeleteModal: () => void;
+  onCloseDeleteModal: () => void;
+  onDeleteActivity: () => void;
 };
 
 // Composant pour prévisualiser une leçon avec ses activités
 const LessonReader = ({
-  onRateActivity,
+  mode,
+  selectedActivity,
+  textActivityContent,
+  showDeleteModal,
+  // onRateActivity,
+  onEditActivity,
+  onOpenDeleteModal,
+  onCloseDeleteModal,
   onDeleteActivity,
   children,
 }: PropsWithChildren<PreviewLessonProps>) => {
-  const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
-    null
-  );
-
   const handleConfirmDelete = useCallback(() => {
-    if (activityToDelete?.id) {
-      onDeleteActivity(activityToDelete);
-    }
-    setActivityToDelete(null);
-  }, [activityToDelete, onDeleteActivity]);
-
-  if (!selectedLesson.id) return null;
+    onDeleteActivity();
+  }, [onDeleteActivity]);
 
   return (
     <>
-      {showDeleteModal && activityToDelete && (
+      {showDeleteModal && (
         <Modal
           title="Supprimer l'activité"
           leftLabel="Annuler"
           onMinimizeClick={() => {
-            setShowDeleteModal(false);
-            setActivityToDelete(null);
+            onCloseDeleteModal();
           }}
         >
           <div className="flex flex-col gap-4 items-center pt-10 px-5">
             <p className="text-center">
               Êtes-vous sûr de vouloir supprimer l'activité "
-              {activityToDelete.title}" ? Cette action est irréversible.
+              {selectedActivity.title}" ? Cette action est irréversible.
             </p>
             <div className="flex gap-4">
               <button
                 className="btn btn-sm btn-ghost"
                 onClick={() => {
-                  setShowDeleteModal(false);
-                  setActivityToDelete(null);
+                  onCloseDeleteModal();
                 }}
               >
                 Annuler
@@ -70,15 +72,15 @@ const LessonReader = ({
       )}
 
       <div className="flex flex-col gap-5">
-        <div className="w-full flex justify-end items-center">
-          {/* Bouton de notation */}
-          {currentLessonRating && lessonHasActivities ? (
+        {/* <div className="w-full flex justify-end items-center">
+          Bouton de notation
+          {currentLessonRating ? (
             <RatingPanelButton
               note={currentLessonRating}
               onRateContent={onRateActivity}
             />
           ) : null}
-        </div>
+        </div> */}
 
         {/* Rendu de l'activité */}
         <div className="bg-base-100 border border-secondary/20 rounded-box p-4 mb-4">
@@ -87,14 +89,14 @@ const LessonReader = ({
             {selectedActivity.title}
             <ActivityActionsMenu
               activity={selectedActivity}
-              handleEditActivity={handleEditActivity}
-              handleOpenDeleteModal={handleOpenDeleteModal}
-              disabled={editingActivity?.id === selectedActivity.id}
+              onEditActivity={onEditActivity}
+              onOpenDeleteModal={onOpenDeleteModal}
+              disabled={mode !== "read"}
             />
           </div>
 
           {/* Afficher l'éditeur TipTap si le type de l'activité est "text" */}
-          {editingActivity?.type === "text" ? (
+          {selectedActivity?.type === "text" ? (
             <div className="mt-4">
               <TiptapActivity
                 mode="read"

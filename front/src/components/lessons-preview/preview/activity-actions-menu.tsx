@@ -5,17 +5,15 @@ import { useState } from "react";
 
 type ActivityActionsMenuProps = {
   activity: Activity;
-  setOpenMenuId: (id: number | null) => void;
-  openMenuId: number | null;
-  handleEditActivity: (activity: Activity) => void;
-  handleOpenDeleteModal: (activity: Activity) => void;
+  onEditActivity: (activity: Activity) => void;
+  onOpenDeleteModal: (activity: Activity) => void;
   disabled?: boolean;
 };
 
 const ActivityActionsMenu = ({
   activity,
-  handleEditActivity,
-  handleOpenDeleteModal,
+  onEditActivity,
+  onOpenDeleteModal,
   disabled = false,
 }: ActivityActionsMenuProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -48,7 +46,7 @@ const ActivityActionsMenu = ({
                   e.stopPropagation();
                   console.log("Edit clicked!");
                   setIsOpen(false);
-                  handleEditActivity(activity);
+                  onEditActivity(activity);
                 }}
                 className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 w-full text-left"
               >
@@ -62,7 +60,7 @@ const ActivityActionsMenu = ({
                   e.stopPropagation();
                   console.log("Delete clicked!");
                   setIsOpen(false);
-                  handleOpenDeleteModal(activity);
+                  onOpenDeleteModal(activity);
                 }}
                 className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-red-100 text-red-600 w-full text-left"
               >

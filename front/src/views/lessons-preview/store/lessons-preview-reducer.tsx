@@ -47,13 +47,15 @@ type LessonsPreviewAction =
   | { type: "set_course_visibility"; isVisible: boolean; course: Course }
   // Lesson
   | { type: "select_lesson"; lesson?: Lesson }
+  | { type: "select_lesson_by_id"; id: number }
+  | { type: "go_to_next_lesson" }
   | { type: "set_lesson_rating"; rating: LessonRating }
   | { type: "mark_lesson_as_read"; lesson: Lesson; lessonRead: LessonRead }
-  | { type: "mark_lesson_as_completed" }
   // Activity
   | { type: "select_activity"; activity?: Activity }
   | { type: "create_activity"; activity?: Activity }
   | { type: "delete_selected_activity" }
+  | { type: "update_activity_content"; content: string }
   // Miscellaneous
   | { type: "select_mode"; mode: "read" | "edit" | "write" }
   | { type: "toggle_panel_visibility" }
@@ -104,6 +106,35 @@ export function lessonsPreviewReducer(
         selectedLesson: action.lesson,
         selectedActivity,
       };
+    }
+
+    case "select_lesson_by_id": {
+      // Selectionne la leçon par son id
+      const { module } = state;
+
+      if (!module) return state;
+      const selectedLesson = module.courses
+        .flatMap((course) => course.lessons)
+        .find((lesson) => lesson.id === action.id);
+
+      return {
+        ...state,
+        selectedLesson,
+      };
+    }
+
+    case "go_to_next_lesson": {
+      const { selectedLesson, module } = state;
+
+      if (!(selectedLesson && selectedLesson.id && module)) return state;
+
+      const allLessons = module.courses.flatMap((course) => course.lessons);
+      const currentLessonIndex = allLessons.findIndex(
+        (lesson) => lesson.id === selectedLesson.id
+      );
+      const nextLesson = allLessons[currentLessonIndex + 1];
+
+      return { ...state, selectedLesson: nextLesson };
     }
 
     case "set_lesson_rating":
