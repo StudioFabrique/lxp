@@ -5,24 +5,21 @@ import { useDispatch } from "react-redux";
 import FadeWrapper from "../../../components/UI/fade-wrapper/fade-wrapper";
 import Stepper from "../../../components/UI/stepper.-component/stepper.-component";
 import CourseInfos from "../../../components/edit-course/informations/course-infos";
-import CourseObjectives from "../../../components/edit-course/objectives/course-objectives";
 import { stepsCourse } from "../../../config/steps/steps-course";
 import useSteps from "../../../hooks/use-steps";
-import CourseSkills from "../../../components/edit-course/skills/course-skills";
 import CourseScenario from "../../../components/edit-course/scenario/course-scenario";
 import { courseInfosAction } from "../../../store/redux-toolkit/course/course-infos";
-import { courseObjectivesActions } from "../../../store/redux-toolkit/course/course-objectives";
 import { courseScenarioActions } from "../../../store/redux-toolkit/course/course-scenario";
-import { courseSkillsActions } from "../../../store/redux-toolkit/course/course-skills";
 import CourseCalendar from "../../../components/edit-course/calendar/course-calendar";
 import CoursePreview from "../../../components/edit-course/preview/course-preview";
 import { courseDatesActions } from "../../../store/redux-toolkit/course/course-dates";
+import Step from "../../../utils/interfaces/step";
 
 const EditCourseHome = () => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const { actualStep, finalStep, stepsList, updateStep, validateStep } =
-    useSteps(stepsCourse);
+    useSteps(stepsCourse as Step[]);
   const [step, setStep] = useState<string | null>(searchParams.get("step"));
 
   /**
@@ -44,7 +41,7 @@ const EditCourseHome = () => {
   };
 
   useEffect(() => {
-    if (step && +step >= 1 && +step <= 6) {
+    if (step && +step >= 1 && +step <= 4) {
       updateStep(+step);
       setStep("0");
     }
@@ -56,9 +53,7 @@ const EditCourseHome = () => {
   useEffect(() => {
     return () => {
       dispatch(courseInfosAction.resetCourse());
-      dispatch(courseObjectivesActions.resetCourseObjectives());
       dispatch(courseScenarioActions.resetCourseScenario());
-      dispatch(courseSkillsActions.resetCourseSkills());
       dispatch(courseDatesActions.resetDates());
     };
   }, [dispatch]);
@@ -77,11 +72,9 @@ const EditCourseHome = () => {
       {/* Composant principal affiché dans la vue */}
       <div className="w-full 2xl:w-4/6 mt-16">
         {actualStep.id === 1 ? <CourseInfos /> : null}
-        {actualStep.id === 2 ? <CourseObjectives /> : null}
-        {actualStep.id === 3 ? <CourseSkills /> : null}
-        {actualStep.id === 4 ? <CourseScenario /> : null}
-        {actualStep.id === 5 ? <CourseCalendar /> : null}
-        {actualStep.id === 6 ? <CoursePreview onEdit={updateStep} /> : null}
+        {actualStep.id === 2 ? <CourseScenario /> : null}
+        {actualStep.id === 3 ? <CourseCalendar /> : null}
+        {actualStep.id === 4 ? <CoursePreview onEdit={updateStep} /> : null}
       </div>
 
       <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">

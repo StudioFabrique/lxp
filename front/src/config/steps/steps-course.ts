@@ -8,22 +8,14 @@ type Step = {
  * étapes à suivre pour la création d'un cours
  */
 const steps = [
+  { id: 1, label: "Informations" },
+  { id: 2, label: "Contenu" },
   {
-    label: "Informations",
-  },
-  {
-    label: "Objectifs",
-  },
-  {
-    label: "Compétences",
-  },
-  {
-    label: "Contenu",
-  },
-  {
+    id: 3,
     label: "Calendrier",
   },
   {
+    id: 4,
     label: "Aperçu",
   },
 ];
