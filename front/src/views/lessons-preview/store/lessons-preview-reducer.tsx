@@ -3,6 +3,7 @@ import Module from "../../../utils/interfaces/module";
 import Course from "../../../utils/interfaces/course";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
+import LessonRating from "../../../utils/interfaces/lesson-rating";
 
 // Identifiant de clé pour stocker la valeur permettant de savoir si le panneau latéral a été fermé par l'utilisateur
 const STORAGE_KEY = "lessons-preview-panel-closed";
@@ -28,25 +29,35 @@ type ConditionnalStateProperties =
   | {
       mode: "edit";
       // rajouter les propriétés supplémentaires pour le mode "edit"
+      titleError?: string;
     }
   | {
       mode: "write";
       // rajouter les propriétés supplémentaires pour le mode "write"
+      titleError?: string;
     };
 
 // Le type du state du reducer
 type LessonsPreviewState = StaticStateProperties & ConditionnalStateProperties;
 
 type LessonsPreviewAction =
+  // Module
+  | { type: "update_module_data"; module: Module & { parcours: string } }
+  // Course
+  | { type: "set_course_visibility"; isVisible: boolean; course: Course }
+  // Lesson
+  | { type: "select_lesson"; lesson?: Lesson }
+  | { type: "set_lesson_rating"; rating: LessonRating }
+  | { type: "mark_lesson_as_read"; lesson: Lesson; lessonRead: LessonRead }
+  | { type: "mark_lesson_as_completed" }
+  // Activity
+  | { type: "select_activity"; activity?: Activity }
+  | { type: "create_activity"; activity?: Activity }
+  | { type: "delete_selected_activity" }
+  // Miscellaneous
   | { type: "select_mode"; mode: "read" | "edit" | "write" }
   | { type: "toggle_panel_visibility" }
-  | { type: "set_modal_visibility"; modalVisibility: ModalVisibility }
-  | { type: "update_module_data"; module: Module & { parcours: string } }
-  | { type: "select_lesson"; lesson?: Lesson }
-  | { type: "select_activity"; activity?: Activity }
-  | { type: "delete_selected_activity" }
-  | { type: "set_course_visibility"; isVisible: boolean; course: Course }
-  | { type: "mark_lesson_as_read"; lesson: Lesson; lessonRead: LessonRead };
+  | { type: "set_modal_visibility"; modalVisibility: ModalVisibility };
 
 export const initialLessonsPreviewState: LessonsPreviewState = {
   mode: "read",
@@ -59,8 +70,103 @@ export function lessonsPreviewReducer(
   action: LessonsPreviewAction
 ): LessonsPreviewState {
   switch (action.type) {
+    // Module
+    case "update_module_data":
+      return { ...state, module: action.module };
+
+    // Course
+    case "set_course_visibility": {
+      // Pour le cours selectionné, définir la visibilité
+      if (!state.module) return state;
+      const courses = state.module.courses.map((course) =>
+        course.id === action.course.id
+          ? { ...course, visibility: action.isVisible }
+          : course
+      );
+
+      return {
+        ...state,
+        module: {
+          ...state.module,
+          courses,
+        },
+      };
+    }
+
+    // Lesson
+    case "select_lesson": {
+      // Selectionne la leçon dont les détails ont été chargés, et selectionne la première activité de la leçon (si existante)
+      const selectedActivity =
+        action.lesson?.activities?.[0] && action.lesson?.activities[0];
+
+      return {
+        ...state,
+        selectedLesson: action.lesson,
+        selectedActivity,
+      };
+    }
+
+    case "set_lesson_rating":
+      if (!state.selectedLesson) return state;
+      return {
+        ...state,
+        selectedLesson: {
+          ...state.selectedLesson,
+          lessonRating: action.rating,
+        },
+      };
+
+    case "mark_lesson_as_read": {
+      if (!state.module || state.mode === "read") return state;
+      const courses = state.module.courses.map((course) => ({
+        ...course,
+        lessons: course.lessons.map((lesson) => {
+          if (lesson.id === action.lesson.id) {
+            return {
+              ...lesson,
+              lessonsRead: [...(lesson.lessonsRead || []), action.lessonRead],
+            };
+          }
+          return lesson;
+        }),
+      }));
+
+      return {
+        ...state,
+        module: {
+          ...state.module,
+          courses,
+        },
+      };
+    }
+
+    // Activity
+    case "select_activity":
+      return { ...state, selectedActivity: action.activity };
+
+    case "delete_selected_activity": {
+      if (!state.selectedActivity?.id || !state.selectedLesson) return state;
+      const activities = state.selectedLesson?.activities?.filter(
+        (activity) => state.selectedActivity?.id !== activity.id
+      );
+      const selectedActivity =
+        state.selectedLesson?.activities?.[0] &&
+        state.selectedLesson?.activities[0];
+
+      return {
+        ...state,
+        selectedLesson: {
+          ...state.selectedLesson,
+          activities,
+        },
+        selectedActivity,
+      };
+    }
+
+    // Miscellaneous
     case "select_mode":
       return { ...state, mode: action.mode };
+
     case "toggle_panel_visibility":
       localStorage.setItem(STORAGE_KEY, JSON.stringify(!state.isPanelClosed));
       return { ...state, isPanelClosed: !state.isPanelClosed };
@@ -68,66 +174,6 @@ export function lessonsPreviewReducer(
     case "set_modal_visibility":
       return { ...state, modalVisibility: action.modalVisibility };
 
-    case "update_module_data":
-      return { ...state, module: action.module };
-
-    case "select_lesson":
-      return { ...state, selectedLesson: action.lesson };
-
-    case "select_activity":
-      return { ...state, selectedActivity: action.activity };
-
-    case "delete_selected_activity":
-      if (!state.selectedActivity?.id || !state.selectedLesson) return state;
-      return {
-        ...state,
-        selectedLesson: {
-          ...state.selectedLesson,
-          activities: state.selectedLesson?.activities?.filter(
-            (activity) => state.selectedActivity?.id !== activity.id
-          ),
-        },
-        selectedActivity: undefined,
-      };
-
-    case "set_course_visibility":
-      // Pour le cours selectionné, définir la visibilité
-      if (!state.module) return state;
-      return {
-        ...state,
-        module: {
-          ...state.module,
-          courses: state.module.courses.map((course) =>
-            course.id === action.course.id
-              ? { ...course, visibility: action.isVisible }
-              : course
-          ),
-        },
-      };
-
-    case "mark_lesson_as_read":
-      if (!state.module || state.mode === "read") return state;
-      return {
-        ...state,
-        module: {
-          ...state.module,
-          courses: state.module.courses.map((course) => ({
-            ...course,
-            lessons: course.lessons.map((lesson) => {
-              if (lesson.id === action.lesson.id) {
-                return {
-                  ...lesson,
-                  lessonsRead: [
-                    ...(lesson.lessonsRead || []),
-                    action.lessonRead,
-                  ],
-                };
-              }
-              return lesson;
-            }),
-          })),
-        },
-      };
     default:
       return state;
   }
