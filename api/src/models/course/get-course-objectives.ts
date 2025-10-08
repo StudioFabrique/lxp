@@ -1,7 +1,7 @@
 import { prisma } from "../../utils/db";
 
 async function getCourseObjectives(courseId: number) {
-  const objectives = await prisma.course.findFirst({
+  /*  const objectives = await prisma.course.findFirst({
     where: { id: courseId },
     select: {
       objectives: {
@@ -21,9 +21,9 @@ async function getCourseObjectives(courseId: number) {
     },
   });
 
-  if (!objectives) throw { message: "Le cours n'existe pas.", statusCode: 404 };
+  if (!objectives) throw { message: "Le cours n'existe pas.", statusCode: 404 };*/
 
-  return objectives;
+  return [];
 }
 
 export default getCourseObjectives;

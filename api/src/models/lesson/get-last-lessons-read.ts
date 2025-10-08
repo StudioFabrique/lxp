@@ -52,10 +52,12 @@ export default async function getLastLessonsRead(
                   id: true,
                   module: { select: { title: true } },
                   parcours: { select: { id: true } },
+                  bonusSkills: {
+                    select: {
+                      bonusSkill: { select: { id: true, badge: true } },
+                    },
+                  },
                 },
-              },
-              bonusSkills: {
-                select: { bonusSkill: { select: { id: true, badge: true } } },
               },
               lessons: {
                 select: {
@@ -137,7 +139,7 @@ export default async function getLastLessonsRead(
   const lessonsReformatedWithSkillBadge = lessons?.map((lessonRead) => {
     const { course } = lessonRead.lesson;
 
-    const bonusSkills = course.bonusSkills.map((bonusSkill) => {
+    const bonusSkills = course.module.bonusSkills.map((bonusSkill) => {
       return bonusSkill.bonusSkill;
     });
 

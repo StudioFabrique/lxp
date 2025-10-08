@@ -133,15 +133,7 @@ export default async function postDuplicateParcours(
                 },
               },
               // Course relationships
-              bonusSkills: {
-                select: {
-                  bonusSkill: {
-                    select: {
-                      id: true,
-                    },
-                  },
-                },
-              },
+
               contacts: {
                 select: {
                   contact: {
@@ -151,15 +143,7 @@ export default async function postDuplicateParcours(
                   },
                 },
               },
-              objectives: {
-                select: {
-                  objective: {
-                    select: {
-                      id: true,
-                    },
-                  },
-                },
-              },
+
               tags: {
                 select: {
                   tag: {
@@ -349,20 +333,7 @@ export default async function postDuplicateParcours(
                   },
                 })),
               },
-              objectives: {
-                create: course.objectives.map((objective) => ({
-                  objective: {
-                    connect: { id: objective.objective.id },
-                  },
-                })),
-              },
-              bonusSkills: {
-                create: course.bonusSkills.map((skill) => ({
-                  bonusSkill: {
-                    connect: { id: skill.bonusSkill.id },
-                  },
-                })),
-              },
+
               author: course.author,
               admin: {
                 connect: {

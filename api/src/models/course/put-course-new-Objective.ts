@@ -2,7 +2,7 @@ import { Objective } from "@prisma/client";
 import { prisma } from "../../utils/db";
 
 async function putCourseNewObjective(courseId: number, objective: Objective) {
-  const existingCourse = await prisma.course.findFirst({
+  /*const existingCourse = await prisma.course.findFirst({
     where: { id: courseId },
     select: {
       id: true,
@@ -45,9 +45,9 @@ async function putCourseNewObjective(courseId: number, objective: Objective) {
       },
     });
     return newObjective;
-  });
+  });*/
 
-  return transaction;
+  return [];
 }
 
 export default putCourseNewObjective;
