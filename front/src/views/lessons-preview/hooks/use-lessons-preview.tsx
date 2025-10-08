@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
 import { useCallback, useEffect, useReducer } from "react";
 import Module from "../../../utils/interfaces/module";
@@ -6,11 +6,11 @@ import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
 import LessonRating from "../../../utils/interfaces/lesson-rating";
 import toast from "react-hot-toast";
-import { Activity } from "../../../utils/interfaces/activity";
 import {
   initialLessonsPreviewState,
   lessonsPreviewReducer,
 } from "../store/lessons-preview-reducer";
+import { ACTIVITIES } from "../../../config/urls";
 
 // Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
 const useLessonsPreview = () => {
@@ -19,18 +19,36 @@ const useLessonsPreview = () => {
   const { moduleId } = useParams();
   const { state: stateFromUrl } = useLocation();
   // ------------
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+  const { sendRequest, isLoading } = useHttp(true);
 
   const [state, dispatch] = useReducer(
     lessonsPreviewReducer,
     initialLessonsPreviewState
   );
 
-  const { sendRequest, isLoading } = useHttp(true);
+  const isLessonCompleted = Boolean(
+    state.selectedLesson?.lessonsRead?.some(
+      (lessonRead) => lessonRead.finishedAt
+    )
+  );
+
+  const fetchModuleData = useCallback(() => {
+    const applyData = ({ data }: { data: Module & { parcours: string } }) => {
+      dispatch({ type: "update_module_data", module: data });
+
+      // selectionner la leçon selectionnée depuis le state de l'url
+      if (stateFromUrl?.lessonId) {
+        dispatch({ type: "select_lesson_by_id", id: stateFromUrl.lessonId });
+      }
+    };
+
+    sendRequest({ path: `/modules/detail/limited/${moduleId}` }, applyData);
+  }, [moduleId, sendRequest, stateFromUrl?.lessonId]);
 
   const initiateLesson = useCallback(
-    (lessonId: number) => {
-      sendRequest({
+    async (lessonId: number) => {
+      await sendRequest({
         path: `/lesson/read/${lessonId}`,
         method: "post",
       });
@@ -57,54 +75,48 @@ const useLessonsPreview = () => {
       );
   };
 
-  // Effet pour récupérer le contenu de l'activité en cours d'édition
-  useEffect(() => {
-    /*if (editingActivity?.type === "text" && editingActivity.url) {
-      fetch(`${ACTIVITIES}${editingActivity.url}`)
-        .then((response) => response.text())
-        .then((content: string) => {
-          setActivityContent(content);
-        });
-    } */
-  }, []);
+  const handleDeleteActivity = useCallback(() => {
+    const applyData = () => {
+      dispatch({ type: "delete_selected_activity" });
+    };
 
-  const handleDeleteActivity = useCallback((activity: Activity) => {
-    /* sendRequest(
+    if (!state.selectedActivity) return;
+    sendRequest(
       {
-        path: `/activity/${activity.type}/${activityId}/lesson`,
+        path: `/activity/${state.selectedActivity.type}/${state.selectedActivity.id}/lesson`,
         method: "delete",
       },
       applyData
-    ); */
-  }, []);
+    );
+  }, [sendRequest, state.selectedActivity]);
 
   // Évaluer le cours en tant que apprenant
-  const handleRateContent = (rating: number) => {
-    const applyData = (data: { data: LessonRating }) => {
-      setLessonRating(data.data);
+  const handleRateContent = (mode: "create" | "edit", rating: number) => {
+    const applyData = ({ data }: { data: LessonRating }) => {
+      dispatch({ type: "set_lesson_rating", rating: data });
     };
 
-    // Create
-    if (selectedLesson?.id)
+    if (mode === "create") {
+      // Create rate
       sendRequest(
         {
           method: "post",
-          path: `/lesson/rate/${selectedLesson?.id}`,
+          path: `/lesson/rate/${state.selectedLesson?.id}`,
           body: { rate: rating },
         },
         applyData
       );
-
-    // Edit
-    if (selectedLesson?.id)
+    } else {
+      // Edit existing rate
       sendRequest(
         {
           method: "put",
-          path: `/lesson/rate/${selectedLesson?.id}`,
+          path: `/lesson/rate/${state.selectedLesson?.id}`,
           body: { rate: rating },
         },
         applyData
       );
+    }
   };
 
   const handleEnableCourse = async (courseId: number, visibility: boolean) => {
@@ -137,45 +149,48 @@ const useLessonsPreview = () => {
     );
   };
 
-  const fetchModuleData = useCallback(() => {
-    const applyData = ({ data }: { data: Module & { parcours: string } }) => {
-      dispatch({ type: "update_module_data", module: data });
-
-      // selectionner la leçon selectionnée depuis le state de l'url
-      if (stateFromUrl?.lessonId) {
-        const lessonToSelect = data.courses
-          .flatMap((course) => course.lessons)
-          .find((lesson) => lesson.id === stateFromUrl?.lessonId);
-        if (lessonToSelect) {
-          dispatch({ type: "select_lesson", lesson: lessonToSelect });
-        }
-      }
-    };
-
-    sendRequest({ path: `/modules/detail/limited/${moduleId}` }, applyData);
-  }, [moduleId, sendRequest, stateFromUrl?.lessonId]);
-
-  // useEffect pour charger les détails d'une leçon sélectionnée
-  useEffect(() => {
+  const fetchLessonData = useCallback(async () => {
     const applyData = (lesson: Lesson) => {
       // Mettre à jour selectedLesson avec les données complètes
       dispatch({ type: "select_lesson", lesson });
     };
 
     if (!state.selectedLesson?.id) return;
-    sendRequest({ path: `/lesson/${state.selectedLesson.id}` }, applyData);
-  }, [state.selectedLesson?.id, sendRequest]);
+    await sendRequest(
+      { path: `/lesson/${state.selectedLesson.id}` },
+      applyData
+    );
+    await initiateLesson(state.selectedLesson.id);
+  }, [state.selectedLesson?.id, sendRequest, initiateLesson]);
 
-  // useEffect pour charger les données initiales du module
   useEffect(() => {
+    // useEffect pour charger les données initiales du module
     fetchModuleData();
   }, [fetchModuleData]);
+
+  useEffect(() => {
+    // useEffect pour charger les données et activités
+    // d'une nouvelle leçon selectionnée
+    fetchLessonData();
+  }, [fetchLessonData]);
+
+  useEffect(() => {
+    // useEffect pour récupérer le contenu de l'activité selectionnée
+    if (state.selectedActivity?.type === "text" && state.selectedActivity.url) {
+      fetch(`${ACTIVITIES}${state.selectedActivity.url}`)
+        .then((response) => response.text())
+        .then((content: string) => {
+          dispatch({ type: "update_activity_content", content });
+        });
+    }
+  }, [state.selectedActivity?.type, state.selectedActivity?.url]);
 
   // Retourne les données et fonctions nécessaires
   return {
     state,
-    dispatch,
+    isLessonCompleted,
     isLoading,
+    dispatch,
     fetchModuleData,
     onCompleteLesson: handleCompleteLesson,
     onRateContent: handleRateContent,

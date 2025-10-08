@@ -5,14 +5,16 @@ import PortalConfetti from "../UI/portal/portal-confetti";
 import FeedbacksButton from "../UI/feedbacks/feedbacks-button";
 
 type LessonCompletionModal = {
-  onRateContent: (rating: number) => void;
-  onClickModalRightButton?: () => void;
-  onClickMinimizeButton?: () => void;
+  isLessonCompleted: boolean;
+  onRateContent: (mode: "create" | "edit", rating: number) => void;
+  onClickNextLesson: () => void;
+  onClickMinimizeButton: () => void;
 };
 
 const LessonCompletionModal = ({
+  isLessonCompleted,
   onRateContent,
-  onClickModalRightButton,
+  onClickNextLesson,
   onClickMinimizeButton,
 }: LessonCompletionModal) => {
   const [selectedStars, setSelectedStars] = useState<number>(3);
@@ -22,7 +24,7 @@ const LessonCompletionModal = ({
   };
 
   const handleRateContent = () => {
-    onRateContent(selectedStars);
+    onRateContent("create", selectedStars);
   };
 
   return (
@@ -31,7 +33,7 @@ const LessonCompletionModal = ({
       <Modal
         title="Leçon terminée !"
         rightLabel="Leçon suivante"
-        onRightClick={onClickModalRightButton}
+        onRightClick={onClickNextLesson}
         onMinimizeClick={onClickMinimizeButton}
       >
         <div className="flex flex-col items-center gap-20 p-20 overflow-hidden">
@@ -44,11 +46,10 @@ const LessonCompletionModal = ({
             className="btn btn-primary text-base-100 btn-sm text-nowrap"
             feedbackType="stars"
             elementCount={selectedStars}
-            enableAnimationOnClick
             onClick={handleRateContent}
-          >
-            Évaluer ce contenu
-          </FeedbacksButton>
+            isLessonCompleted={isLessonCompleted}
+            customLabel="Évaluer ce contenu"
+          />
         </div>
       </Modal>
     </>
