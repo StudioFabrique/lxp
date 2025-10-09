@@ -5,7 +5,10 @@ async function getModulesFromParcours(parcoursId: number) {
     where: { id: +parcoursId },
     select: {
       modules: {
-        select: { id: true, module: { select: { title: true, thumb: true } } },
+        select: {
+          id: true,
+          module: { select: { title: true, thumb: true } },
+        },
       },
     },
   });

@@ -37,13 +37,10 @@ export default function ModuleComponent() {
           Modules associés au Parcours
         </h1>
         <span className="flex gap-x-2 items-center">
-          <Link
-            to={`/admin/module/add${id ? `/${id}` : ""}?step=4`}
-            className="btn btn-primary"
-          >
+          <button className="btn btn-primary">
             <PlusCircle />
             Créer un nouveau module
-          </Link>
+          </button>
           <button className="btn btn-primary">
             <Copy />
             Ajouter un module
@@ -52,7 +49,7 @@ export default function ModuleComponent() {
       </div>
 
       {fromParcours.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {fromParcours.map((module) => (
             <ModulesList {...module} key={module.id} />
           ))}
