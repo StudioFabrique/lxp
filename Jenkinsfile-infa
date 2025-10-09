@@ -82,6 +82,9 @@ pipeline {
                     sh '''
                         echo "🔧 Setting environment variables from $ENV_FILE..."
                         
+                        echo "ls -la"
+                        ls -la ./api/dist || true
+
                         # Inject .env in workspace
                         cp $ENV_FILE ./api/dist/.env
 
