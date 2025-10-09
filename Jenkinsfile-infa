@@ -81,10 +81,14 @@ pipeline {
                 ]) {
                     sh '''
                         echo "🔧 Setting environment variables from $ENV_FILE..."
-                        
+    
+                        # Créer le répertoire dist s'il n'existe pas et ajuster les permissions
+                        mkdir -p ./api/dist
+                        chmod 755 ./api/dist
+    
                         # Inject .env in workspace
                         cp $ENV_FILE ./api/dist/.env
-
+    
                         echo "📡 Deploying to INFA..."
                         echo "🔎 Pinging $HOST..."
 
