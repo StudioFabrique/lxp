@@ -20,7 +20,15 @@ pipeline {
         }
 
         stage("Build App") {
+            // pour cette phase je dois inclure un fichier .env 
+
             steps {
+                withCredentials([file(credentialsId: 'INFA_FRONT_ENV', variable: 'FRONT_ENV_FILE')]) {
+                    sh '''
+                    ls -la ./front || true
+                    cat ./front/.env || true
+                    '''
+                }
                 script {
                     echo "Building application..."
                     sh 'npm run install'
