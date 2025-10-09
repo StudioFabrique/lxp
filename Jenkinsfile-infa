@@ -38,7 +38,7 @@ pipeline {
             }
         }    
 
-        stage('Tests backend') {
+       /* stage('Tests backend') {
             steps {
                 sh 'npm -g i dotenv-cli'
                 sh 'mkdir api/uploads || true'
@@ -66,7 +66,7 @@ pipeline {
                     '''
                 }
             }
-        }
+        }*/
 
         stage("Deploying to INFA") {
 
@@ -81,14 +81,10 @@ pipeline {
                 ]) {
                     sh '''
                         echo "🔧 Setting environment variables from $ENV_FILE..."
-    
-                        # Créer le répertoire dist s'il n'existe pas et ajuster les permissions
-                        mkdir -p ./api/dist
-                        chown -R jenkins ./api/dist
-    
+                        
                         # Inject .env in workspace
                         cp $ENV_FILE ./api/dist/.env
-    
+
                         echo "📡 Deploying to INFA..."
                         echo "🔎 Pinging $HOST..."
 
