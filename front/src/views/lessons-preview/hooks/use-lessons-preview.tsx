@@ -229,6 +229,7 @@ const useLessonsPreview = () => {
             state.mode === "write"
               ? state.newActivityTitle?.trim()
               : state.selectedActivity?.title,
+          parent: "lesson",
         },
       },
       applyData
