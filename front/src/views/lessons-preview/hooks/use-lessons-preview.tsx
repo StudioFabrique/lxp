@@ -1,6 +1,6 @@
 import { useLocation, useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
-import { useCallback, useEffect, useReducer } from "react";
+import { useCallback, useEffect, useMemo, useReducer } from "react";
 import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
@@ -27,10 +27,14 @@ const useLessonsPreview = () => {
     initialLessonsPreviewState
   );
 
-  const isLessonCompleted = Boolean(
-    state.selectedLesson?.lessonsRead?.some(
-      (lessonRead) => lessonRead.finishedAt
-    )
+  const isLessonCompleted = useMemo(
+    () =>
+      Boolean(
+        state.selectedLesson?.lessonsRead?.some(
+          (lessonRead) => lessonRead.finishedAt
+        )
+      ),
+    [state.selectedLesson?.lessonsRead]
   );
 
   const fetchModuleData = useCallback(() => {
@@ -57,7 +61,7 @@ const useLessonsPreview = () => {
   );
 
   // Handler pour marquer une leçon comme terminée
-  const handleCompleteLesson = () => {
+  const completeLesson = useCallback(() => {
     // Fonction de mise à jour des données du module
     const applyData = ({ data: lessonRead }: { data: LessonRead }) => {
       if (state.selectedLesson)
@@ -73,9 +77,9 @@ const useLessonsPreview = () => {
         { path: `/lesson/read/${state.selectedLesson.id}`, method: "put" },
         applyData
       );
-  };
+  }, [sendRequest, state.selectedLesson]);
 
-  const handleDeleteActivity = useCallback(() => {
+  const deleteActivity = useCallback(() => {
     const applyData = () => {
       dispatch({ type: "delete_selected_activity" });
     };
@@ -91,65 +95,75 @@ const useLessonsPreview = () => {
   }, [sendRequest, state.selectedActivity]);
 
   // Évaluer le cours en tant que apprenant
-  const handleRateContent = (mode: "create" | "edit", rating: number) => {
-    const applyData = ({ data }: { data: LessonRating }) => {
-      dispatch({ type: "set_lesson_rating", rating: data });
-    };
+  const rateContent = useCallback(
+    (mode: "create" | "edit", rating: number) => {
+      const applyData = ({ data }: { data: LessonRating }) => {
+        dispatch({ type: "set_lesson_rating", rating: data });
+      };
 
-    if (mode === "create") {
-      // Create rate
-      sendRequest(
+      if (mode === "create") {
+        // Create rate
+        sendRequest(
+          {
+            method: "post",
+            path: `/lesson/rate/${state.selectedLesson?.id}`,
+            body: { rate: rating },
+          },
+          applyData
+        );
+      } else {
+        // Edit existing rate
+        sendRequest(
+          {
+            method: "put",
+            path: `/lesson/rate/${state.selectedLesson?.id}`,
+            body: { rate: rating },
+          },
+          applyData
+        );
+      }
+    },
+    [sendRequest, state.selectedLesson?.id]
+  );
+
+  const enableCourse = useCallback(
+    async (courseId: number, visibility: boolean) => {
+      const applyData = (data: { success: boolean; message: string }) => {
+        if (data.success) {
+          toast.success(data.message);
+          fetchModuleData();
+        }
+      };
+
+      await sendRequest(
         {
-          method: "post",
-          path: `/lesson/rate/${state.selectedLesson?.id}`,
-          body: { rate: rating },
-        },
-        applyData
-      );
-    } else {
-      // Edit existing rate
-      sendRequest(
-        {
+          path: `/course/enable-course/${courseId}?visibility=${visibility}`,
           method: "put",
-          path: `/lesson/rate/${state.selectedLesson?.id}`,
-          body: { rate: rating },
         },
         applyData
       );
-    }
-  };
+    },
+    [fetchModuleData, sendRequest]
+  );
 
-  const handleEnableCourse = async (courseId: number, visibility: boolean) => {
-    const applyData = (data: { success: boolean; message: string }) => {
-      if (data.success) {
-        toast.success(data.message);
-        fetchModuleData();
-      }
-    };
+  const deleteCourse = useCallback(
+    async (courseId: number) => {
+      const applyData = (data: { success: boolean; message: string }) => {
+        if (data.success) {
+          toast.success(data.message);
+        }
+      };
 
-    await sendRequest(
-      {
-        path: `/course/enable-course/${courseId}?visibility=${visibility}`,
-        method: "put",
-      },
-      applyData
-    );
-  };
-
-  const handleDeleteCourse = async (courseId: number) => {
-    const applyData = (data: { success: boolean; message: string }) => {
-      if (data.success) {
-        toast.success(data.message);
-      }
-    };
-
-    await sendRequest(
-      { path: `/course/delete-course/${courseId}`, method: "delete" },
-      applyData
-    );
-  };
+      await sendRequest(
+        { path: `/course/delete-course/${courseId}`, method: "delete" },
+        applyData
+      );
+    },
+    [sendRequest]
+  );
 
   const fetchLessonData = useCallback(async () => {
+    if (state.mode !== "read") return;
     const applyData = (lesson: Lesson) => {
       // Mettre à jour selectedLesson avec les données complètes
       dispatch({ type: "select_lesson", lesson });
@@ -161,7 +175,21 @@ const useLessonsPreview = () => {
       applyData
     );
     await initiateLesson(state.selectedLesson.id);
-  }, [state.selectedLesson?.id, sendRequest, initiateLesson]);
+  }, [state.selectedLesson?.id, state.mode, sendRequest, initiateLesson]);
+
+  const fetchActivityTextContent = useCallback(() => {
+    if (
+      state.selectedActivity?.type === "text" &&
+      state.selectedActivity.url &&
+      state.mode === "read"
+    ) {
+      fetch(`${ACTIVITIES}${state.selectedActivity.url}`)
+        .then((response) => response.text())
+        .then((content: string) => {
+          dispatch({ type: "update_activity_content", content });
+        });
+    }
+  }, [state.mode, state.selectedActivity?.type, state.selectedActivity?.url]);
 
   useEffect(() => {
     // useEffect pour charger les données initiales du module
@@ -176,14 +204,8 @@ const useLessonsPreview = () => {
 
   useEffect(() => {
     // useEffect pour récupérer le contenu de l'activité selectionnée
-    if (state.selectedActivity?.type === "text" && state.selectedActivity.url) {
-      fetch(`${ACTIVITIES}${state.selectedActivity.url}`)
-        .then((response) => response.text())
-        .then((content: string) => {
-          dispatch({ type: "update_activity_content", content });
-        });
-    }
-  }, [state.selectedActivity?.type, state.selectedActivity?.url]);
+    fetchActivityTextContent();
+  }, [fetchActivityTextContent]);
 
   // Retourne les données et fonctions nécessaires
   return {
@@ -192,11 +214,11 @@ const useLessonsPreview = () => {
     isLoading,
     dispatch,
     fetchModuleData,
-    onCompleteLesson: handleCompleteLesson,
-    onRateContent: handleRateContent,
-    onEnableCourse: handleEnableCourse,
-    onDeleteCourse: handleDeleteCourse,
-    onDeleteActivity: handleDeleteActivity,
+    onCompleteLesson: completeLesson,
+    onRateContent: rateContent,
+    onEnableCourse: enableCourse,
+    onDeleteCourse: deleteCourse,
+    onDeleteActivity: deleteActivity,
   };
 };
 

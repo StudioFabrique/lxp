@@ -55,6 +55,7 @@ type LessonsPreviewAction =
   | { type: "select_activity"; activity?: Activity }
   | { type: "create_activity"; activity?: Activity }
   | { type: "delete_selected_activity" }
+  | { type: "update_activity_title"; title: string }
   | { type: "update_activity_content"; content: string }
   // Miscellaneous
   | { type: "select_mode"; mode: "read" | "edit" | "write" }
@@ -175,7 +176,7 @@ export function lessonsPreviewReducer(
 
     // Activity
     case "select_activity":
-      return { ...state, selectedActivity: action.activity };
+      return { ...state, mode: "read", selectedActivity: action.activity };
 
     case "delete_selected_activity": {
       if (!state.selectedActivity?.id || !state.selectedLesson) return state;
@@ -196,19 +197,31 @@ export function lessonsPreviewReducer(
       };
     }
 
+    case "update_activity_title":
+      if (!state.selectedActivity) return state;
+      return {
+        ...state,
+        selectedActivity: { ...state.selectedActivity, title: action.title },
+      };
+
     case "update_activity_content":
       return { ...state, textActivityContent: action.content };
 
     // Miscellaneous
     case "select_mode": {
       // Selectionner un mode pour l'editeur de texte. Si le mode
-      // est "write", alors déselectionner l'activité actuelle.
+      // est "write", alors déselectionner l'activité actuelle et
+      // nettoyer le contenu de l'editeur de texte.
       const selectedActivity =
         action.mode === "write" ? undefined : state.selectedActivity;
+      const textActivityContent =
+        action.mode === "write" ? undefined : state.textActivityContent;
+
       return {
         ...state,
         mode: action.mode,
         selectedActivity,
+        textActivityContent,
       };
     }
 
