@@ -132,13 +132,6 @@ export default function useAutosave({
     }
   };
 
-  // Fonction de sauvegarde avec debounce
-  const debouncedSave = useRef(
-    debounce((data: AutosaveData) => {
-      saveToStorage(data);
-    }, 2000)
-  ).current;
-
   // Restaure les données au chargement initial
   const restoreAutosavedContent = useCallback(() => {
     // Nettoie les anciennes sauvegardes au chargement
@@ -160,6 +153,13 @@ export default function useAutosave({
       wasRestored: false, // Pas de restauration
     };
   }, [getFromStorage]);
+
+  // Fonction de sauvegarde avec debounce
+  const debouncedSave = useRef(
+    debounce((data: AutosaveData) => {
+      saveToStorage(data);
+    }, 2000)
+  ).current;
 
   // Effet pour restaurer le contenu autosauvegardé au chargement
   useEffect(() => {

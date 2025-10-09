@@ -183,9 +183,7 @@ export function lessonsPreviewReducer(
       const activities = state.selectedLesson?.activities?.filter(
         (activity) => state.selectedActivity?.id !== activity.id
       );
-      const selectedActivity =
-        state.selectedLesson?.activities?.[0] &&
-        state.selectedLesson?.activities[0];
+      const selectedActivity = activities?.[0];
 
       return {
         ...state,
