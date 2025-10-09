@@ -80,8 +80,12 @@ const LessonReader = ({
         <div className="bg-base-100 border border-secondary/20 rounded-box p-4 mb-4">
           {selectedActivity && (
             <div className="font-semibold text-primary capitalize flex justify-between items-center gap-3">
-              {activityIconType(selectedActivity.type)}
-              <span>{textActivityTitle}</span>
+              <span className="w-5">
+                {activityIconType(selectedActivity.type)}
+              </span>
+              <span className="truncate text-ellipsis px-2">
+                {textActivityTitle}
+              </span>
               <ActivityActionsMenu
                 activity={selectedActivity}
                 onEditActivity={onEditActivity}
