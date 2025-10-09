@@ -24,8 +24,8 @@ const ActivityActionsMenu = ({
   };
 
   return (
-    <Can action="update" object="lesson">
-      <div>
+    <div>
+      <Can action="update" object="lesson">
         <button
           type="button"
           className="btn btn-ghost btn-sm hover:bg-base-200"
@@ -39,20 +39,21 @@ const ActivityActionsMenu = ({
           <>
             <div className="fixed inset-0" onClick={handleClick} />
             <div className="absolute mt-1 bg-white border border-gray-300 rounded-lg shadow-lg min-w-[12rem] py-1">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  console.log("Edit clicked!");
-                  setIsOpen(false);
-                  onEditActivity(activity);
-                }}
-                className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 w-full text-left"
-              >
-                <Edit className="w-4 h-4" />
-                <span>Modifier</span>
-              </button>
+              {activity.type === "text" && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsOpen(false);
+                    onEditActivity(activity);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 w-full text-left"
+                >
+                  <Edit className="w-4 h-4" />
+                  <span>Modifier</span>
+                </button>
+              )}
               <button
                 type="button"
                 onClick={(e) => {
@@ -70,8 +71,8 @@ const ActivityActionsMenu = ({
             </div>
           </>
         )}
-      </div>
-    </Can>
+      </Can>
+    </div>
   );
 };
 

@@ -165,7 +165,6 @@ const useLessonsPreview = () => {
   );
 
   const fetchLessonData = useCallback(async () => {
-    if (state.mode !== "read") return;
     const applyData = (lesson: Lesson) => {
       // Mettre à jour selectedLesson avec les données complètes
       dispatch({ type: "select_lesson", lesson });
@@ -177,7 +176,7 @@ const useLessonsPreview = () => {
       applyData
     );
     await initiateLesson(state.selectedLesson.id);
-  }, [state.selectedLesson?.id, state.mode, sendRequest, initiateLesson]);
+  }, [state.selectedLesson?.id, sendRequest, initiateLesson]);
 
   const fetchActivityTextContent = useCallback(() => {
     if (
@@ -192,6 +191,58 @@ const useLessonsPreview = () => {
         });
     }
   }, [state.mode, state.selectedActivity?.type, state.selectedActivity?.url]);
+
+  const saveActivity = async (): Promise<boolean> => {
+    if (state.mode === "read" || !state.textActivityContent) return false;
+
+    const applyData = () => {
+      toast.success(
+        `Activité ${state.mode === "write" ? "créée" : "modifiée"} avec succès`
+      );
+      return true;
+    };
+
+    const textContent = state.textActivityContent
+      .replace(
+        // Supprimer les paragraphes vides au début
+        /^(<p><\/p>|<p>\s*<\/p>|<p><br><\/p>)+/,
+        ""
+      )
+      .replace(
+        // Supprimer les paragraphes vides à la fin
+        /(<p><\/p>|<p>\s*<\/p>|<p><br><\/p>)+$/,
+        ""
+      );
+
+    const response: Promise<boolean> = sendRequest(
+      {
+        path: `/activity/text/${
+          state.mode === "write"
+            ? state.selectedLesson?.id
+            : state.selectedActivity?.id
+        }`,
+        method: state.mode === "write" ? "post" : "put",
+        body: {
+          description: "description",
+          value: textContent,
+          title:
+            state.mode === "write"
+              ? state.newActivityTitle?.trim()
+              : state.selectedActivity?.title,
+        },
+      },
+      applyData
+    );
+
+    // Ajout d'un délai de 1 seconde pour éviter les clignotements
+    await new Promise((resolve) =>
+      setTimeout(() => {
+        return resolve;
+      }, 1000)
+    );
+
+    return await response;
+  };
 
   useEffect(() => {
     // useEffect pour charger les données initiales du module
@@ -216,6 +267,7 @@ const useLessonsPreview = () => {
     isLoading,
     dispatch,
     fetchModuleData,
+    onSaveActivity: saveActivity,
     onCompleteLesson: completeLesson,
     onRateContent: rateContent,
     onEnableCourse: enableCourse,

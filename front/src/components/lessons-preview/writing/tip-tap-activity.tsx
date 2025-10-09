@@ -1,5 +1,5 @@
 import useAutosave from "./hooks/use-autosave";
-import { type ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import toast from "react-hot-toast";
 import AutosaveIndicator from "./autosave-indicator";
 import TiptapEditor from "../../UI/tiptap-editor/tiptapEditor";
@@ -39,6 +39,8 @@ const TiptapActivity = ({
   onSave,
   onClose,
 }: Props) => {
+  const [pending, setPending] = useState<boolean>(false);
+
   // Hook d'autosave
   const { lastAutosaveTime, showAutosaveIndicator, clearStorage } = useAutosave(
     {
@@ -55,16 +57,6 @@ const TiptapActivity = ({
     onEditTitle(e.currentTarget.value);
   };
 
-  // Fonction pour mettre à jour le contenu de l'éditeur
-  const handleUpdateEditorContent = (content: string) => {
-    onEditContent(content);
-  };
-
-  // Fonction pour fermer l'éditeur
-  const handleCloseEditor = () => {
-    onClose?.();
-  };
-
   const handleSave = async () => {
     // Si le titre est manquant, avertir l'utilisateur via un toast
     if (!title || !(title?.length > 0)) {
@@ -77,10 +69,15 @@ const TiptapActivity = ({
       return;
     }
 
+    setPending(true);
+
     // Sauvegarder l'activité, et si la sauvegarde réussi, effacer la sauvegarde locale pour l'autosave et fermer l'éditeur
     if (await onSave(id, title, content)) {
       clearStorage();
+      setPending(false);
       onClose?.();
+    } else {
+      setPending(false);
     }
   };
 
@@ -100,7 +97,7 @@ const TiptapActivity = ({
           </label>
           <input
             id="activity-title"
-            value={title}
+            value={title || ""}
             onChange={handleChangeTitle}
             type="text"
             className="input input-sm input-bordered flex-1"
@@ -114,14 +111,15 @@ const TiptapActivity = ({
         <TiptapEditor
           mode={mode}
           initialValue={content}
+          pending={pending}
           onSave={handleSave}
-          onContentChange={handleUpdateEditorContent}
+          onContentChange={onEditContent}
         />
       </div>
-      {mode !== "read" && (
+      {mode !== "read" && onClose && (
         <button
           className="btn btn-sm btn-error text-base-100 self-end"
-          onClick={handleCloseEditor}
+          onClick={onClose}
         >
           Annuler
         </button>

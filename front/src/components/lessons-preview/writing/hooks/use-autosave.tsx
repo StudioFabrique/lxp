@@ -172,7 +172,9 @@ export default function useAutosave({
     if (autosavedData.wasRestored) {
       onEditTitle(autosavedData.title || "");
       onEditContent(autosavedData.content || "");
-      autoSavedContentLength > 0 && setShowAutosaveIndicator(true);
+      (autoSavedContentLength > 0 ||
+        (autosavedData.title && autosavedData.title.length > 0)) &&
+        setShowAutosaveIndicator(true);
     }
   }, [restoreAutosavedContent, onEditTitle, onEditContent, isWriting]);
 
