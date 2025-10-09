@@ -30,7 +30,7 @@ type Props = {
  * @param onClose Fonction qui se déclenche lorsque l'utilisateur ferme ce composant
  */
 const TiptapActivity = ({
-  mode = "read",
+  mode,
   id,
   title,
   content,
@@ -42,6 +42,7 @@ const TiptapActivity = ({
   // Hook d'autosave
   const { lastAutosaveTime, showAutosaveIndicator, clearStorage } = useAutosave(
     {
+      isWriting: mode === "write",
       title,
       content,
       activityId: id,
@@ -87,7 +88,7 @@ const TiptapActivity = ({
     <div className="flex flex-col gap-2">
       {/* Indicateur d'autosave */}
       <AutosaveIndicator
-        isVisible={mode === "write" && showAutosaveIndicator}
+        isVisible={showAutosaveIndicator}
         lastSaveTime={lastAutosaveTime}
       />
 

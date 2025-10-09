@@ -16,6 +16,7 @@ import NoActivityPlaceholder from "../../components/lessons-preview/preview/no-a
 import Header from "../../components/UI/header";
 import { Link } from "react-router-dom";
 import { PenBox } from "lucide-react";
+import { useCallback } from "react";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
@@ -44,6 +45,20 @@ const LessonsPreview = () => {
     onDeleteCourse,
     onDeleteActivity,
   } = useLessonsPreview();
+
+  const editTitle = useCallback(
+    (title: string) => {
+      dispatch({ type: "update_activity_title", title });
+    },
+    [dispatch]
+  );
+
+  const editContent = useCallback(
+    (content: string) => {
+      dispatch({ type: "update_activity_content", content });
+    },
+    [dispatch]
+  );
 
   return (
     <ViewWrapper className="flex flex-col gap-6">
@@ -159,6 +174,8 @@ const LessonsPreview = () => {
                   dispatch({ type: "select_mode", mode: "edit" })
                 }
                 textActivityContent={textActivityContent}
+                onEditTitle={editTitle}
+                onEditContent={editContent}
                 onRateActivity={onRateContent}
                 onDeleteActivity={onDeleteActivity}
                 onCloseTextEditor={() =>

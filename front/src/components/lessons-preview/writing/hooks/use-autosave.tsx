@@ -8,6 +8,7 @@ type AutosaveData = {
 };
 
 type Props = {
+  isWriting: boolean;
   title?: string;
   content?: string;
   activityId?: number;
@@ -35,6 +36,7 @@ function debounce<T extends (...args: AutosaveData[]) => void>(
 }
 
 export default function useAutosave({
+  isWriting,
   title,
   content,
   activityId,
@@ -161,6 +163,8 @@ export default function useAutosave({
 
   // Effet pour restaurer le contenu autosauvegardé au chargement
   useEffect(() => {
+    if (!isWriting) return;
+
     const autosavedData = restoreAutosavedContent();
     const autoSavedContentLength =
       autosavedData?.content?.replace(/<[^>]+>/g, "").length || 0;
@@ -170,20 +174,24 @@ export default function useAutosave({
       onEditContent(autosavedData.content || "");
       autoSavedContentLength > 0 && setShowAutosaveIndicator(true);
     }
-  }, [restoreAutosavedContent, onEditTitle, onEditContent]);
+  }, [restoreAutosavedContent, onEditTitle, onEditContent, isWriting]);
 
   // Effet pour cacher l'indicateur d'autosave après un délai
   useEffect(() => {
+    if (!isWriting) return;
+
     if (showAutosaveIndicator) {
       const timer = setTimeout(() => {
         setShowAutosaveIndicator(false);
       }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [showAutosaveIndicator]);
+  }, [showAutosaveIndicator, isWriting]);
 
   // Effet pour sauvegarder automatiquement lors des changements
   useEffect(() => {
+    if (!isWriting) return;
+
     // Ne pas sauvegarder lors du chargement initial
     if (initialLoadRef.current) {
       initialLoadRef.current = false;
@@ -201,14 +209,16 @@ export default function useAutosave({
 
       debouncedSave(autosaveData);
     }
-  }, [title, content, activityId, debouncedSave]);
+  }, [title, content, activityId, debouncedSave, isWriting]);
 
   // Nettoie le debounce lors du démontage du composant
   useEffect(() => {
+    if (!isWriting) return;
+
     return () => {
       debouncedSave.cancel();
     };
-  }, [debouncedSave]);
+  }, [debouncedSave, isWriting]);
 
   return {
     hasAutosavedContent,
