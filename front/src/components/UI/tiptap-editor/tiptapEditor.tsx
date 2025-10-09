@@ -12,9 +12,10 @@ import { TableBubbleMenu } from "./components/TableBubbleMenu";
 import useTiptapEditor from "./useTiptapEditor";
 import { useRef } from "react";
 
-type TiptapSimpleEditorProps = {
+type TiptapEditorProps = {
   mode: "read" | "write" | "edit";
   initialValue?: string;
+  pending?: boolean;
   onSave?: () => void;
   onContentChange?: (content: string) => void;
 };
@@ -22,9 +23,10 @@ type TiptapSimpleEditorProps = {
 export default function TiptapEditor({
   mode = "read",
   initialValue,
+  pending,
   onSave,
   onContentChange,
-}: TiptapSimpleEditorProps) {
+}: TiptapEditorProps) {
   const editorRef = useRef<Editor | null>(null);
 
   const { editor, menuContainerRef, isMenuBarSticky } = useTiptapEditor(
@@ -57,7 +59,7 @@ export default function TiptapEditor({
           mode !== "read" &&
           editorRef.current &&
           editorRef.current.getText()?.length > 0 && (
-            <SaveButton onSave={onSave} />
+            <SaveButton pending={pending} onSave={onSave} />
           )}
       </div>
       {editor && <LinkMenu editor={editor} appendTo={menuContainerRef} />}

@@ -7,11 +7,13 @@ import ActivityActionsMenu from "./activity-actions-menu";
 import activityIconType from "../../../utils/activity-icon-type";
 import TiptapActivity from "../writing/tip-tap-activity";
 import Lesson from "../../../utils/interfaces/lesson";
+import ActivityDeleteModal from "./activity-delete-modal";
 
 type PreviewLessonProps = {
   mode: "read" | "edit" | "write";
   selectedLesson: Lesson;
   selectedActivity?: Activity;
+  textActivityTitle?: string;
   textActivityContent?: string;
   showDeleteModal: boolean;
   onEditTitle: (title: string) => void;
@@ -22,6 +24,11 @@ type PreviewLessonProps = {
   onCloseDeleteModal: () => void;
   onDeleteActivity: () => void;
   onCloseTextEditor: () => void;
+  onSaveActivity: (
+    id: number | undefined,
+    title: string,
+    content: string
+  ) => Promise<boolean>;
 };
 
 // Composant pour prévisualiser une leçon avec ses activités
@@ -29,6 +36,7 @@ const LessonReader = ({
   mode,
   selectedLesson,
   selectedActivity,
+  textActivityTitle,
   textActivityContent,
   showDeleteModal,
   onEditContent,
@@ -39,6 +47,7 @@ const LessonReader = ({
   onCloseDeleteModal,
   onDeleteActivity,
   onCloseTextEditor,
+  onSaveActivity,
   children,
 }: PropsWithChildren<PreviewLessonProps>) => {
   const handleConfirmDelete = useCallback(() => {
@@ -48,35 +57,12 @@ const LessonReader = ({
   return (
     <>
       {showDeleteModal && selectedActivity && (
-        <Modal
-          title="Supprimer l'activité"
-          leftLabel="Annuler"
-          onMinimizeClick={() => {
-            onCloseDeleteModal();
-          }}
-        >
-          <div className="flex flex-col gap-4 items-center pt-10 px-5">
-            <p className="text-center">
-              Êtes-vous sûr de vouloir supprimer l'activité "
-              {selectedActivity.title}" ? Cette action est irréversible.
-            </p>
-            <div className="flex gap-4">
-              <button
-                className="btn btn-sm btn-ghost"
-                onClick={() => {
-                  onCloseDeleteModal();
-                }}
-              >
-                Annuler
-              </button>
-              <button
-                className="btn btn-sm btn-error text-base-100"
-                onClick={handleConfirmDelete}
-              >
-                Supprimer
-              </button>
-            </div>
-          </div>
+        <Modal title="Supprimer l'activité" leftLabel="Annuler">
+          <ActivityDeleteModal
+            onCloseDeleteModal={onCloseDeleteModal}
+            onConfirmDelete={handleConfirmDelete}
+            textActivityTitle={textActivityContent}
+          />
         </Modal>
       )}
 
@@ -95,7 +81,7 @@ const LessonReader = ({
           {selectedActivity && (
             <div className="font-semibold text-primary capitalize flex justify-between items-center gap-3">
               {activityIconType(selectedActivity.type)}
-              {selectedActivity.title}
+              <span>{textActivityTitle}</span>
               <ActivityActionsMenu
                 activity={selectedActivity}
                 onEditActivity={onEditActivity}
@@ -109,17 +95,15 @@ const LessonReader = ({
           {selectedActivity?.type === "text" || mode === "write" ? (
             <div className="mt-4">
               <TiptapActivity
+                key={`tiptap-${mode}-${selectedActivity?.id ?? "new"}`}
                 mode={mode}
                 id={selectedActivity?.id}
-                title={selectedActivity?.title}
+                title={textActivityTitle}
                 content={textActivityContent}
                 onEditTitle={onEditTitle}
                 onEditContent={onEditContent}
                 onClose={onCloseTextEditor}
-                onSave={async () => {
-                  // test
-                  return false;
-                }}
+                onSave={onSaveActivity}
               />
             </div>
           ) : (

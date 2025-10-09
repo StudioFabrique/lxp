@@ -7,6 +7,7 @@ import Can from "../../UI/can/can.component";
 type ActivityListProps = {
   activities?: Activity[];
   selectedActivity?: Activity | null;
+  newActivityButtonDisabled?: boolean;
   onSelectActivity: (activity: Activity) => void;
   onClickCreateActivity?: () => void;
 };
@@ -14,6 +15,7 @@ type ActivityListProps = {
 export default function ActivityList({
   activities,
   selectedActivity,
+  newActivityButtonDisabled,
   onSelectActivity,
   onClickCreateActivity,
 }: ActivityListProps) {
@@ -41,6 +43,7 @@ export default function ActivityList({
             <span className="px-4 w-full">
               <button
                 className="btn btn-outline btn-secondary hover:text-base-100 btn-sm h-fit text-[10px] mt-2 w-full"
+                disabled={newActivityButtonDisabled}
                 onClick={onClickCreateActivity}
               >
                 <Plus className="w-4 h-6" />

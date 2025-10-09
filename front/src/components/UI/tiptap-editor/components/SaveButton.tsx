@@ -1,18 +1,28 @@
+import { Save } from "lucide-react";
+import Loader from "../../loader";
+
 type SaveButtonProps = {
+  pending?: boolean;
   onSave: () => void;
 };
 
-const SaveButton = ({ onSave }: SaveButtonProps) => {
+const SaveButton = ({ pending, onSave }: SaveButtonProps) => {
   return (
-    <div className="flex justify-center mt-4 pb-4">
-      <button
-        className="btn btn-primary text-base-100"
-        type="button"
-        onClick={onSave}
-      >
-        Sauvegarder l'activité
-      </button>
-    </div>
+    <button
+      className="self-center btn btn-sm btn-primary text-base-100"
+      type="button"
+      onClick={onSave}
+      disabled={pending}
+    >
+      {pending ? (
+        <span>
+          <Loader />
+        </span>
+      ) : (
+        <Save />
+      )}
+      Sauvegarder l'activité
+    </button>
   );
 };
 

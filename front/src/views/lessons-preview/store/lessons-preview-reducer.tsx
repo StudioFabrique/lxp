@@ -34,6 +34,7 @@ type ConditionnalStateProperties =
   | {
       mode: "write";
       // rajouter les propriétés supplémentaires pour le mode "write"
+      newActivityTitle?: string;
       titleError?: string;
     };
 
@@ -178,6 +179,21 @@ export function lessonsPreviewReducer(
     case "select_activity":
       return { ...state, mode: "read", selectedActivity: action.activity };
 
+    case "create_activity": {
+      if (!(action.activity && state.selectedLesson)) return state;
+
+      const activities = [
+        ...(state.selectedLesson.activities || []),
+        action.activity,
+      ];
+
+      return {
+        ...state,
+        selectedActivity: action.activity,
+        selectedLesson: { ...state.selectedLesson, activities },
+      };
+    }
+
     case "delete_selected_activity": {
       if (!state.selectedActivity?.id || !state.selectedLesson) return state;
       const activities = state.selectedLesson?.activities?.filter(
@@ -196,11 +212,15 @@ export function lessonsPreviewReducer(
     }
 
     case "update_activity_title":
-      if (!state.selectedActivity) return state;
-      return {
-        ...state,
-        selectedActivity: { ...state.selectedActivity, title: action.title },
-      };
+      if (state.mode === "write") {
+        return { ...state, newActivityTitle: action.title };
+      } else {
+        if (!state.selectedActivity) return state;
+        return {
+          ...state,
+          selectedActivity: { ...state.selectedActivity, title: action.title },
+        };
+      }
 
     case "update_activity_content":
       return { ...state, textActivityContent: action.content };

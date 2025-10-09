@@ -45,12 +45,8 @@ export default function useTiptapEditor(
 
   // Effet pour mettre à jour le contenu de l'éditeur lorsque initialValue change
   useEffect(() => {
-    if (
-      editor &&
-      initialValue !== undefined &&
-      editor.getHTML() !== initialValue
-    ) {
-      editor.commands.setContent(initialValue);
+    if (editor && editor.getHTML() !== initialValue) {
+      editor.commands.setContent(initialValue || "");
     }
   }, [editor, initialValue]);
 

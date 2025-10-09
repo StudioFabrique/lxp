@@ -30,20 +30,20 @@ const LessonsPreview = () => {
     state: {
       isPanelClosed,
       modalVisibility,
-      mode,
       textActivityContent,
       module,
       selectedActivity,
       selectedLesson,
+      ...state
     },
     isLessonCompleted,
-    // fetchModuleData,
     dispatch,
     onCompleteLesson,
     onRateContent,
     onEnableCourse,
     onDeleteCourse,
     onDeleteActivity,
+    onSaveActivity,
   } = useLessonsPreview();
 
   const editTitle = useCallback(
@@ -137,6 +137,7 @@ const LessonsPreview = () => {
                   onSelectActivity={(activity) =>
                     dispatch({ type: "select_activity", activity })
                   }
+                  newActivityButtonDisabled={state.mode === "write"}
                   onClickCreateActivity={() =>
                     dispatch({
                       type: "select_mode",
@@ -154,7 +155,13 @@ const LessonsPreview = () => {
             selectedLesson ? (
               <LessonReader
                 key="lesson-reader"
-                mode={mode}
+                mode={state.mode}
+                textActivityContent={textActivityContent}
+                textActivityTitle={
+                  state.mode === "write"
+                    ? state.newActivityTitle
+                    : selectedActivity?.title
+                }
                 selectedActivity={selectedActivity}
                 selectedLesson={selectedLesson}
                 showDeleteModal={modalVisibility === "deletionModal"}
@@ -173,7 +180,6 @@ const LessonsPreview = () => {
                 onEditActivity={() =>
                   dispatch({ type: "select_mode", mode: "edit" })
                 }
-                textActivityContent={textActivityContent}
                 onEditTitle={editTitle}
                 onEditContent={editContent}
                 onRateActivity={onRateContent}
@@ -181,6 +187,7 @@ const LessonsPreview = () => {
                 onCloseTextEditor={() =>
                   dispatch({ type: "select_lesson", lesson: selectedLesson })
                 }
+                onSaveActivity={onSaveActivity}
               >
                 {/* Bouton pour terminer la leçon afin d'afficher une modal */}
                 <Can action="component" object="progression">
