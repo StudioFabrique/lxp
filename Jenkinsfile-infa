@@ -20,13 +20,17 @@ pipeline {
         }
 
         stage("Build App") {
-            // pour cette phase je dois inclure un fichier .env 
-
             steps {
                 withCredentials([file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE')]) {
                     sh '''
-                    ls -la ./front || true
-                    cat ./front/.env || true
+                    echo "🔧 Setting frontend environment variables from $FRONT_ENV_FILE..."
+                    
+                    # Copier le fichier .env du frontend dans le bon répertoire
+                    cp $FRONT_ENV_FILE ./front/.env
+                    
+                    # Vérifier que le fichier a bien été copié
+                    echo "✅ Frontend .env file copied:"
+                    cat ./front/.env
                     '''
                 }
                 script {
