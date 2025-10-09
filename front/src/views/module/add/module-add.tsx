@@ -11,7 +11,7 @@ export default function ModuleAdd() {
   const ref = useRef(null);
 
   return (
-    <main className="w-full xl:w-9/12 min-h-screen flex flex-col items-center px-4 py-8 gap-8">
+    <main className="w-full p-2 min-h-screen flex flex-col items-center gap-8">
       {/* En-tête de la page */}
       <section className="w-full">
         <Header
