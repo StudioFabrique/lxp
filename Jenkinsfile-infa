@@ -85,6 +85,8 @@ pipeline {
                         echo "ls -la"
                         ls -la ./api/dist || true
 
+                        chmod -R 777 ./api/ || true
+
                         # Inject .env in workspace
                         cp $ENV_FILE ./api/dist/.env
 
