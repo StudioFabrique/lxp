@@ -9,8 +9,6 @@ export default function useTiptapEditor(
   initialValue?: string,
   onContentChange?: (content: string) => void
 ) {
-  const [isMenuBarSticky, setIsMenuBarSticky] = useState(false);
-
   const editor = useEditor({
     extensions: tiptapExtensions,
     content: initialValue,
@@ -27,6 +25,8 @@ export default function useTiptapEditor(
       }
     },
   });
+
+  const [isMenuBarSticky, setIsMenuBarSticky] = useState(false);
 
   const menuContainerRef = useRef<HTMLDivElement>(null);
 

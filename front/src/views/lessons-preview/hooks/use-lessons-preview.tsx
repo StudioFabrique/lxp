@@ -82,6 +82,8 @@ const useLessonsPreview = () => {
   const deleteActivity = useCallback(() => {
     const applyData = () => {
       dispatch({ type: "delete_selected_activity" });
+      toast.success("L'acitivité a été supprimé");
+      dispatch({ type: "set_modal_visibility", modalVisibility: "none" });
     };
 
     if (!state.selectedActivity) return;
