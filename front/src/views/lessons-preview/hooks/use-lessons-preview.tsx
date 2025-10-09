@@ -60,7 +60,7 @@ const useLessonsPreview = () => {
     [sendRequest]
   );
 
-  // Handler pour marquer une leçon comme terminée
+  // Marquer une leçon comme terminée
   const completeLesson = useCallback(() => {
     // Fonction de mise à jour des données du module
     const applyData = ({ data: lessonRead }: { data: LessonRead }) => {
