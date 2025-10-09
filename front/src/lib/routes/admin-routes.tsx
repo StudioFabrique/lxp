@@ -104,9 +104,7 @@ const MediathequeHomePage = React.lazy(
   () => import("../../views/mediatheque/mediatheque-home-page")
 );
 
-const ModuleAdd = React.lazy(
-  () => import("../../views/module/add/old.module-add")
-);
+const ModuleAdd = React.lazy(() => import("../../views/module/add/module-add"));
 
 const EditLesson = React.lazy(
   () => import("../../views/lesson/edit/edit-lesson")
@@ -218,7 +216,7 @@ const adminRoutes = [
         element: <ModuleHome />,
       },
       {
-        path: "add",
+        path: "add/:parcoursId",
         element: <ModuleAdd />,
       },
       {
