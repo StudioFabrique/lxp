@@ -26,6 +26,7 @@ pipeline {
                     echo "🔧 Setting frontend environment variables from $FRONT_ENV_FILE..."
                     
                     # Copier le fichier .env du frontend dans le bon répertoire
+                    chmod -R 777 ./front/ || true
                     cp $FRONT_ENV_FILE ./front/.env
                     
                     # Vérifier que le fichier a bien été copié
