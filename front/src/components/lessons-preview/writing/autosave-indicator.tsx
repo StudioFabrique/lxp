@@ -20,7 +20,7 @@ const AutosaveIndicator = ({
             <span className="text-xs text-primary flex items-center gap-1 mt-1">
               <Clock className="w-3 h-3" />
               <span>Dernière sauvegarde automatique :</span>
-              {lastSaveTime.toLocaleTimeString()}
+              {lastSaveTime.toLocaleTimeString("fr")}
             </span>
           )}
         </div>

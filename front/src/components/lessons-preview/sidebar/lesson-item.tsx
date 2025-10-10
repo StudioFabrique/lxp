@@ -1,6 +1,5 @@
 import {
   Check,
-  Edit,
   Trash2,
   Edit3,
   EllipsisIcon,

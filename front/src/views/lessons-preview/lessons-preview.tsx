@@ -152,7 +152,7 @@ const LessonsPreview = () => {
               <ProgressBar courses={module.courses} />
             </Can>,
             // * La prévisualisation de la leçon
-            selectedLesson ? (
+            selectedLesson?.activities?.length || state.mode !== "read" ? (
               <LessonReader
                 key="lesson-reader"
                 mode={state.mode}

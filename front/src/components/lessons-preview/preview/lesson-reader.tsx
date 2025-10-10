@@ -11,7 +11,7 @@ import ActivityDeleteModal from "./activity-delete-modal";
 
 type PreviewLessonProps = {
   mode: "read" | "edit" | "write";
-  selectedLesson: Lesson;
+  selectedLesson?: Lesson;
   selectedActivity?: Activity;
   textActivityTitle?: string;
   textActivityContent?: string;
@@ -61,14 +61,14 @@ const LessonReader = ({
           <ActivityDeleteModal
             onCloseDeleteModal={onCloseDeleteModal}
             onConfirmDelete={handleConfirmDelete}
-            textActivityTitle={textActivityContent}
+            textActivityTitle={textActivityTitle}
           />
         </Modal>
       )}
 
       <div className="flex flex-col gap-5">
         <div className="w-full flex justify-end items-center">
-          {selectedLesson.lessonRating ? (
+          {selectedLesson?.lessonRating ? (
             <RatingPanelButton
               note={selectedLesson.lessonRating.rating}
               onRateContent={onRateActivity}
