@@ -1,4 +1,11 @@
-import { Check, Edit, Trash2, Edit3, EllipsisIcon } from "lucide-react";
+import {
+  Check,
+  Edit,
+  Trash2,
+  Edit3,
+  EllipsisIcon,
+  MoveUpRightIcon,
+} from "lucide-react";
 import Lesson from "../../../utils/interfaces/lesson";
 import { Link } from "react-router-dom";
 import Can from "../../UI/can/can.component";
@@ -96,20 +103,20 @@ const LessonItem = ({
                       onClick={() => setIsMenuOpen(false)}
                     />
                     <div className="absolute right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg min-w-[10rem] py-1 z-20">
-                      <button
+                      {/* <button
                         type="button"
                         onClick={() => handleMenuOption("duplicate")}
                         className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 w-full text-left text-gray-700"
                       >
                         <Edit className="w-4 h-4" />
                         <span>Dupliquer</span>
-                      </button>
+                      </button> */}
                       <button
                         type="button"
                         onClick={() => handleMenuOption("move")}
                         className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 w-full text-left text-gray-700"
                       >
-                        <Edit className="w-4 h-4" />
+                        <MoveUpRightIcon className="w-4 h-4" />
                         <span>Déplacer</span>
                       </button>
                       <Can action="update" object="lesson">
