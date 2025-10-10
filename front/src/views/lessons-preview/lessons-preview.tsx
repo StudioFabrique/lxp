@@ -185,7 +185,15 @@ const LessonsPreview = () => {
                 onRateActivity={onRateContent}
                 onDeleteActivity={onDeleteActivity}
                 onCloseTextEditor={() =>
-                  dispatch({ type: "select_lesson", lesson: selectedLesson })
+                  state.mode === "write"
+                    ? dispatch({
+                        type: "select_lesson",
+                        lesson: selectedLesson,
+                      })
+                    : dispatch({
+                        type: "select_activity",
+                        activity: selectedActivity,
+                      })
                 }
                 onSaveActivity={onSaveActivity}
               >
