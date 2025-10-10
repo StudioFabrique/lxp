@@ -86,7 +86,9 @@ export default function ResourceEdit() {
                 <TiptapActivity
                   // Très important de garder la props key dynamique !
                   // Afin que le composant editeur puisse se démonter et remonter sans effets de bords cheloux
-                  key={`resource_${resource.id}`}
+                  key={`tiptap-${"mode" /*à remplacer par le state mode*/}-${
+                    resource.id
+                  }`}
                   // id tout court au lieu de parentId, au moins c'est clair
                   id={resource.id}
                   // props title à passer (dynamique, ne pas reproduire le description: "description" avec title: "title" loool)
