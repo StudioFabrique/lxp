@@ -156,6 +156,7 @@ const LessonsPreview = () => {
               // Le lecteur de leçons
               <LessonReader
                 key="lesson-reader"
+                isLessonCompleted={isLessonCompleted}
                 mode={state.mode}
                 textActivityContent={textActivityContent}
                 textActivityTitle={

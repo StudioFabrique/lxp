@@ -50,7 +50,7 @@ type LessonsPreviewAction =
   | { type: "select_lesson"; lesson?: Lesson }
   | { type: "select_lesson_by_id"; id: number }
   | { type: "go_to_next_lesson" }
-  | { type: "set_lesson_rating"; rating: LessonRating }
+  | { type: "set_lesson_rating"; rating: LessonRating[] }
   | { type: "mark_lesson_as_read"; lesson: Lesson; lessonRead: LessonRead }
   // Activity
   | { type: "select_activity"; activity?: Activity }

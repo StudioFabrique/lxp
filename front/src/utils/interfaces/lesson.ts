@@ -19,5 +19,5 @@ export default interface Lesson {
   activities?: Activity[];
   order?: number;
   lessonsRead?: LessonRead[];
-  lessonRating: LessonRating;
+  lessonRating: LessonRating[];
 }
