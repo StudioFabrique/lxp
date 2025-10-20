@@ -61,24 +61,37 @@ const useLessonsPreview = () => {
     [sendRequest]
   );
 
-  // Marquer une leçon comme terminée
-  const completeLesson = useCallback(() => {
-    // Fonction de mise à jour des données du module
-    const applyData = ({ data: lessonRead }: { data: LessonRead }) => {
-      if (state.selectedLesson)
-        dispatch({
-          type: "mark_lesson_as_read",
-          lesson: state.selectedLesson,
-          lessonRead,
-        });
-    };
+  // Marquer une leçon comme terminée et attribuer une note
+  const completeLesson = useCallback(
+    (rating: number) => {
+      // Fonction de mise à jour des données du module
+      const applyData = ({
+        lessonRead,
+        rating,
+      }: {
+        lessonRead: LessonRead;
+        rating: LessonRating;
+      }) => {
+        if (state.selectedLesson)
+          dispatch({
+            type: "mark_lesson_as_read",
+            lesson: state.selectedLesson,
+            lessonRead,
+          });
+        dispatch({ type: "set_lesson_rating", rating });
+      };
 
-    if (state.selectedLesson)
-      sendRequest(
-        { path: `/lesson/read/${state.selectedLesson.id}`, method: "put" },
-        applyData
-      );
-  }, [sendRequest, state.selectedLesson]);
+      if (state.selectedLesson)
+        sendRequest(
+          {
+            path: `/lesson/read/${state.selectedLesson.id}?rate=${rating}`,
+            method: "put",
+          },
+          applyData
+        );
+    },
+    [sendRequest, state.selectedLesson]
+  );
 
   const deleteActivity = useCallback(() => {
     const applyData = () => {
@@ -99,32 +112,20 @@ const useLessonsPreview = () => {
 
   // Évaluer le cours en tant que apprenant
   const rateContent = useCallback(
-    (mode: "create" | "edit", rating: number) => {
+    (rating: number) => {
       const applyData = ({ data }: { data: LessonRating }) => {
         dispatch({ type: "set_lesson_rating", rating: data });
       };
 
-      if (mode === "create") {
-        // Create rate
-        sendRequest(
-          {
-            method: "post",
-            path: `/lesson/rate/${state.selectedLesson?.id}`,
-            body: { rate: rating },
-          },
-          applyData
-        );
-      } else {
-        // Edit existing rate
-        sendRequest(
-          {
-            method: "put",
-            path: `/lesson/rate/${state.selectedLesson?.id}`,
-            body: { rate: rating },
-          },
-          applyData
-        );
-      }
+      // Edit existing rate
+      sendRequest(
+        {
+          method: "put",
+          path: `/lesson/rate/${state.selectedLesson?.id}`,
+          body: { rate: rating },
+        },
+        applyData
+      );
     },
     [sendRequest, state.selectedLesson?.id]
   );
@@ -167,6 +168,7 @@ const useLessonsPreview = () => {
 
   const fetchLessonData = useCallback(async () => {
     const applyData = (lesson: Lesson) => {
+      console.log({ lesson });
       // Mettre à jour selectedLesson avec les données complètes
       dispatch({ type: "select_lesson", lesson });
     };

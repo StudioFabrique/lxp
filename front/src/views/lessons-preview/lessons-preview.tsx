@@ -6,7 +6,6 @@ import LessonsPreviewHeader from "../../components/lessons-preview/lessons-previ
 import ModuleData from "../../components/lessons-preview/module-data/module-data";
 import LessonsPreviewWrapper from "../../components/lessons-preview/lessons-preview-wrapper";
 import LessonsPreviewSkeleton from "./lessons-preview-skeleton";
-import FeedbacksButton from "../../components/UI/feedbacks/feedbacks-button";
 import LessonCompletionModal from "../../components/lessons-preview/lesson-completion-modal";
 import Can from "../../components/UI/can/can.component";
 import CreateCourseItem from "../../components/lessons-preview/sidebar/create-course-item";
@@ -17,6 +16,7 @@ import Header from "../../components/UI/header";
 import { Link } from "react-router-dom";
 import { PenBox } from "lucide-react";
 import { useCallback } from "react";
+import ActivityBottomNavigation from "../../components/lessons-preview/preview/activity-bottom-navigation";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
@@ -66,7 +66,7 @@ const LessonsPreview = () => {
       {modalVisibility === "lessonCompletionModal" && (
         <LessonCompletionModal
           isLessonCompleted={isLessonCompleted}
-          onRateContent={onRateContent}
+          onRateAndComplete={onCompleteLesson}
           onClickNextLesson={() => dispatch({ type: "go_to_next_lesson" })}
           onClickMinimizeButton={() =>
             dispatch({
@@ -147,12 +147,13 @@ const LessonsPreview = () => {
                 />,
               ]}
             />,
-            // * La barre de progression du cours
+            // La barre de progression du cours
             <Can key="top-progress-bar" action="component" object="progression">
               <ProgressBar courses={module.courses} />
             </Can>,
-            // * La prévisualisation de la leçon
+            // La prévisualisation de la leçon
             selectedLesson?.activities?.length || state.mode !== "read" ? (
+              // Le lecteur de leçons
               <LessonReader
                 key="lesson-reader"
                 mode={state.mode}
@@ -196,18 +197,22 @@ const LessonsPreview = () => {
                 }
                 onSaveActivity={onSaveActivity}
               >
-                {/* Bouton pour terminer la leçon afin d'afficher une modal */}
-                <Can action="component" object="progression">
-                  <FeedbacksButton
-                    className="btn btn-primary text-nowrap text-base-100"
-                    feedbackType="thumbUp"
-                    isLessonCompleted={isLessonCompleted}
-                    disabled={modalVisibility !== "none"}
-                    onClick={onCompleteLesson}
-                  />
-                </Can>
-
-                {/* Le lecteur de leçons */}
+                <ActivityBottomNavigation
+                  isLessonCompleted={isLessonCompleted}
+                  modalVisibility={modalVisibility}
+                  isFirstActivity
+                  isLastActivity
+                  onPrevious={() => {}}
+                  onNext={() => {}}
+                  onCompleteLesson={() =>
+                    isLessonCompleted
+                      ? dispatch({ type: "go_to_next_lesson" })
+                      : dispatch({
+                          type: "set_modal_visibility",
+                          modalVisibility: "lessonCompletionModal",
+                        })
+                  }
+                />
               </LessonReader>
             ) : (
               <NoActivityPlaceholder key="no-activity-placeholder" />

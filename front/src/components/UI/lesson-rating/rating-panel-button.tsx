@@ -3,7 +3,7 @@ import RatingPanel from "./rating-panel";
 
 type EvaluateContentButtonProps = {
   note?: number;
-  onRateContent: (mode: "edit" | "create", rating: number) => void;
+  onRateContent: (rating: number) => void;
 };
 
 /**
@@ -32,7 +32,7 @@ const RatingPanelButton = ({
 
   // Envoie l'évaluation
   const handleRatingContent = () => {
-    onRateContent("edit", selectedStars);
+    onRateContent(selectedStars);
     setTimeout(() => {
       handleClosePanel();
     }, 1000);

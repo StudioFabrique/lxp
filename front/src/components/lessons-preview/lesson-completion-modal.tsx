@@ -6,14 +6,14 @@ import FeedbacksButton from "../UI/feedbacks/feedbacks-button";
 
 type LessonCompletionModal = {
   isLessonCompleted: boolean;
-  onRateContent: (mode: "create" | "edit", rating: number) => void;
+  onRateAndComplete: (rating: number) => void;
   onClickNextLesson: () => void;
   onClickMinimizeButton: () => void;
 };
 
 const LessonCompletionModal = ({
   isLessonCompleted,
-  onRateContent,
+  onRateAndComplete,
   onClickNextLesson,
   onClickMinimizeButton,
 }: LessonCompletionModal) => {
@@ -24,7 +24,7 @@ const LessonCompletionModal = ({
   };
 
   const handleRateContent = () => {
-    onRateContent("create", selectedStars);
+    onRateAndComplete(selectedStars);
   };
 
   return (
@@ -47,9 +47,10 @@ const LessonCompletionModal = ({
             feedbackType="stars"
             elementCount={selectedStars}
             onClick={handleRateContent}
-            isLessonCompleted={isLessonCompleted}
-            customLabel="Évaluer ce contenu"
-          />
+            showFeedback={!isLessonCompleted}
+          >
+            Évaluer ce contenu
+          </FeedbacksButton>
         </div>
       </Modal>
     </>

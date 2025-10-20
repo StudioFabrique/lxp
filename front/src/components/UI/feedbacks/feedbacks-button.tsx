@@ -1,4 +1,4 @@
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, PropsWithChildren } from "react";
 import { useReward } from "react-rewards";
 
 const thumbsRewardProperties = {
@@ -67,10 +67,9 @@ const getRewardProperties = (rewardType: RewardType, elementCount?: number) => {
 
 type FeedbackButtonProps<TFunc extends () => void> = {
   className?: HTMLAttributes<HTMLButtonElement>["className"];
-  customLabel?: string;
   feedbackType: RewardType;
   elementCount?: number; // Seulement lorsque feedbackType === ""
-  isLessonCompleted: boolean;
+  showFeedback: boolean;
   disabled?: boolean;
   onClick: TFunc;
 };
@@ -78,13 +77,13 @@ type FeedbackButtonProps<TFunc extends () => void> = {
 // Bouton avec un trigger onClick et une animation de feedback au click
 const FeedbacksButton = <TFunc extends () => void>({
   className,
-  customLabel,
   feedbackType,
   elementCount,
-  isLessonCompleted,
+  showFeedback,
   disabled,
   onClick,
-}: FeedbackButtonProps<TFunc>) => {
+  children,
+}: PropsWithChildren<FeedbackButtonProps<TFunc>>) => {
   const rewardProperties = getRewardProperties(feedbackType, elementCount);
 
   const { reward, isAnimating } = useReward(
@@ -94,7 +93,7 @@ const FeedbacksButton = <TFunc extends () => void>({
   );
 
   const handleClick = () => {
-    !isLessonCompleted && reward();
+    showFeedback && reward();
     onClick();
   };
 
@@ -109,11 +108,7 @@ const FeedbacksButton = <TFunc extends () => void>({
         disabled={isAnimating || disabled}
         onClick={handleClick}
       >
-        {customLabel
-          ? customLabel
-          : isLessonCompleted
-          ? "Leçon Suivante"
-          : "Marquer comme terminé"}
+        {children}
       </button>
     </div>
   );
