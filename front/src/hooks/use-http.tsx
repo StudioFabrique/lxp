@@ -132,7 +132,7 @@ const useHttp = (invokeErrorToast?: boolean) => {
         }
 
         if (applyData) {
-          applyData(response.data);
+          return applyData(response.data);
         } else {
           return response.data;
         }

@@ -84,11 +84,8 @@ export default function ResourceEdit() {
               {resource && showTipTapEditor ? (
                 // Maintenant, tous les états de l'éditeur de texte sont à gérer depuis l'extérieur, tkt c'est simple
                 <TiptapActivity
-                  // Très important de garder la props key dynamique !
-                  // Afin que le composant editeur puisse se démonter et remonter sans effets de bords cheloux
-                  key={`tiptap-${"mode" /*à remplacer par le state mode*/}-${
-                    resource.id
-                  }`}
+                  // Il peut être utile d'utiliser key dans certaines situation dans lesquelles le composant ne se remonte pas correctement
+                  // key={`tiptap_${mode}`}
                   // id tout court au lieu de parentId, au moins c'est clair
                   id={resource.id}
                   // props title à passer (dynamique, ne pas reproduire le description: "description" avec title: "title" loool)
