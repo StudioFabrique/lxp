@@ -19,7 +19,7 @@ type PreviewLessonProps = {
   showDeleteModal: boolean;
   onEditTitle: (title: string) => void;
   onEditContent: (content: string) => void;
-  onRateActivity: (mode: "create" | "edit", rating: number) => void;
+  onRateActivity: (rating: number) => void;
   onEditActivity: () => void;
   onOpenDeleteModal: () => void;
   onCloseDeleteModal: () => void;
@@ -69,14 +69,14 @@ const LessonReader = ({
       )}
 
       <div className="flex flex-col gap-5">
-        <div className="w-full flex justify-end items-center">
-          {selectedLesson?.lessonRating ? (
+        {selectedLesson?.lessonRating ? (
+          <div className="w-full flex justify-end items-center">
             <RatingPanelButton
               note={selectedLesson.lessonRating.rating}
               onRateContent={onRateActivity}
             />
-          ) : null}
-        </div>
+          </div>
+        ) : null}
 
         {/* Rendu de l'activité */}
         <div className="bg-base-100 border border-secondary/20 rounded-box p-4 mb-4">
@@ -120,7 +120,7 @@ const LessonReader = ({
         </div>
 
         {/* Boutons de navigation */}
-        <div className="flex justify-end items-center my-5">{children}</div>
+        <div className="flex justify-end items-center">{children}</div>
       </div>
     </>
   );

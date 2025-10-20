@@ -112,7 +112,10 @@ export function lessonsPreviewReducer(
       return {
         ...state,
         mode: "read",
-        selectedLesson: action.lesson,
+        selectedLesson:
+          action.lesson && state.selectedLesson
+            ? { ...state.selectedLesson, ...action.lesson }
+            : action.lesson,
         selectedActivity,
       };
     }
@@ -143,7 +146,12 @@ export function lessonsPreviewReducer(
       );
       const nextLesson = allLessons[currentLessonIndex + 1];
 
-      return { ...state, selectedLesson: nextLesson };
+      return {
+        ...state,
+        selectedLesson: nextLesson,
+        mode: "read",
+        modalVisibility: "none",
+      };
     }
 
     case "set_lesson_rating":

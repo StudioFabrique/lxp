@@ -22,22 +22,28 @@ export default function ActivityList({
   return (
     <FadeWrapper>
       <div className="pt-2 flex flex-col items-center gap-1 w-full">
-        {activities?.map((activity) => (
-          <button
-            key={activity.id}
-            onClick={() => onSelectActivity(activity)}
-            className="btn btn-ghost justify-start text-start btn-sm w-full h-6"
-          >
-            {activityIconType(activity.type, 4)}
-            <span
-              className={`truncate max-w-[90%] ${
-                selectedActivity?.id === activity.id && "underline"
-              }`}
+        {activities?.length ? (
+          activities?.map((activity) => (
+            <button
+              key={activity.id}
+              onClick={() => onSelectActivity(activity)}
+              className="btn btn-ghost justify-start text-start btn-sm w-full h-6"
             >
-              {activity.title}
-            </span>
-          </button>
-        ))}
+              {activityIconType(activity.type, 4)}
+              <span
+                className={`truncate max-w-[90%] ${
+                  selectedActivity?.id === activity.id && "underline"
+                }`}
+              >
+                {activity.title}
+              </span>
+            </button>
+          ))
+        ) : (
+          <Can action="component" object="progression">
+            <p className="text-primary text-sm">Aucune activité</p>
+          </Can>
+        )}
         {onClickCreateActivity && (
           <Can action="update" object="lesson">
             <span className="px-4 w-full">
