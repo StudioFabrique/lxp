@@ -58,8 +58,6 @@ const LessonReader = ({
     onDeleteActivity();
   }, [onDeleteActivity]);
 
-  console.log(selectedLesson?.lessonRating);
-
   return (
     <>
       {showDeleteModal && selectedActivity && (
@@ -73,10 +71,10 @@ const LessonReader = ({
       )}
 
       <div className="flex flex-col gap-5">
-        {isLessonCompleted && (
+        {isLessonCompleted && selectedLesson?.lessonRating[0]?.rating && (
           <div className="w-full flex justify-end items-center">
             <RatingPanelButton
-              note={selectedLesson?.lessonRating[0].rating}
+              note={selectedLesson.lessonRating[0].rating}
               onRateContent={onRateActivity}
             />
           </div>
