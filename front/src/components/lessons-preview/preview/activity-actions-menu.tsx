@@ -59,7 +59,6 @@ const ActivityActionsMenu = ({
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  console.log("Delete clicked!");
                   setIsOpen(false);
                   onOpenDeleteModal(activity);
                 }}

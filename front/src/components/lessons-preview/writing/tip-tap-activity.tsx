@@ -1,6 +1,5 @@
 import useAutosave from "./hooks/use-autosave";
 import { useState, type ChangeEvent } from "react";
-import toast from "react-hot-toast";
 import AutosaveIndicator from "./autosave-indicator";
 import TiptapEditor from "../../UI/tiptap-editor/tiptapEditor";
 
@@ -8,14 +7,11 @@ type Props = {
   mode: "read" | "write" | "edit";
   id?: number;
   title?: string;
+  titleError?: string;
   content?: string;
   onEditTitle: (title: string) => void;
   onEditContent: (content: string) => void;
-  onSave: (
-    id: number | undefined,
-    title: string,
-    content: string
-  ) => Promise<boolean>;
+  onSave: (id?: number, title?: string, content?: string) => Promise<boolean>;
   onClose?: () => void;
 };
 
@@ -33,6 +29,7 @@ const TiptapActivity = ({
   mode,
   id,
   title,
+  titleError,
   content,
   onEditTitle,
   onEditContent,
@@ -58,17 +55,6 @@ const TiptapActivity = ({
   };
 
   const handleSave = async () => {
-    // Si le titre est manquant, avertir l'utilisateur via un toast
-    if (!title || !(title?.length > 0)) {
-      toast.error("Le titre est obligatoire");
-      return;
-    }
-
-    if (!content || !(content?.length > 0)) {
-      toast.error("Le contenu est obligatoire");
-      return;
-    }
-
     setPending(true);
 
     // Sauvegarder l'activité, et si la sauvegarde réussi, effacer la sauvegarde locale pour l'autosave et fermer l'éditeur
@@ -100,7 +86,9 @@ const TiptapActivity = ({
             value={title || ""}
             onChange={handleChangeTitle}
             type="text"
-            className="input input-sm input-bordered flex-1"
+            className={`input input-sm input-bordered flex-1 ${
+              titleError && "input-error text-error"
+            }`}
             placeholder="Saisissez le titre de l'activité"
             autoFocus
           />

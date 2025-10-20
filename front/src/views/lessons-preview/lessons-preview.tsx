@@ -162,6 +162,9 @@ const LessonsPreview = () => {
                     ? state.newActivityTitle
                     : selectedActivity?.title
                 }
+                textActivityTitleError={
+                  state.mode !== "read" ? state.titleError : undefined
+                }
                 selectedActivity={selectedActivity}
                 selectedLesson={selectedLesson}
                 showDeleteModal={modalVisibility === "deletionModal"}
@@ -187,13 +190,9 @@ const LessonsPreview = () => {
                 onCloseTextEditor={() =>
                   state.mode === "write"
                     ? dispatch({
-                        type: "select_lesson",
-                        lesson: selectedLesson,
+                        type: "select_last_activity_from_current_lesson",
                       })
-                    : dispatch({
-                        type: "select_activity",
-                        activity: selectedActivity,
-                      })
+                    : dispatch({ type: "select_mode", mode: "read" })
                 }
                 onSaveActivity={onSaveActivity}
               >

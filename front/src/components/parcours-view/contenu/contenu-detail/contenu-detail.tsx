@@ -5,7 +5,7 @@ import useHttp from "../../../../hooks/use-http";
 import { FC, useEffect, useState } from "react";
 import Course from "../../../../utils/interfaces/course";
 import EditIcon from "../../../UI/svg/edit-icon";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
   parcoursId,
@@ -13,9 +13,18 @@ const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
 }) => {
   const { sendRequest, isLoading } = useHttp(true);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const currentRoute = pathname.split("/").slice(1) ?? [];
 
   const [courses, setCourses] = useState<Course[]>([]);
+
+  const handleNavigate = (course: Course) => {
+    navigate(`/${currentRoute[0]}/parcours/module/${moduleId}`, {
+      state: {
+        lessonId: course.lessons.length > 0 ? course.lessons[0].id : null,
+      },
+    });
+  };
 
   /**
    * récupère la liste des cours depuis la bdd
@@ -36,11 +45,8 @@ const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
   const contentsList =
     !isLoading && courses.length > 0 ? (
       courses.map((course, i) => (
-        <Link
-          to={`/${currentRoute[0]}/parcours/module/${moduleId}`}
-          state={{
-            lessonId: course.lessons.length > 0 ? course.lessons[0].id : null,
-          }}
+        <div
+          onClick={() => handleNavigate(course)}
           key={course?.id}
           className="flex justify-between items-center bg-primary hover:bg-primary/80 text-base-100 p-4 rounded-lg"
         >
@@ -59,7 +65,7 @@ const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
               <EditIcon />
             </Link>
           </Can>
-        </Link>
+        </div>
       ))
     ) : (
       <p className="ml-4">Aucun cours publié</p>

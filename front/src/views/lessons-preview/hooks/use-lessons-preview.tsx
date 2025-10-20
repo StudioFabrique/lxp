@@ -11,6 +11,7 @@ import {
   lessonsPreviewReducer,
 } from "../store/lessons-preview-reducer";
 import { ACTIVITIES } from "../../../config/urls";
+import { Activity } from "../../../utils/interfaces/activity";
 
 // Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
 const useLessonsPreview = () => {
@@ -82,7 +83,7 @@ const useLessonsPreview = () => {
   const deleteActivity = useCallback(() => {
     const applyData = () => {
       dispatch({ type: "delete_selected_activity" });
-      toast.success("L'acitivité a été supprimé");
+      toast.success("L'activité a été supprimé");
       dispatch({ type: "set_modal_visibility", modalVisibility: "none" });
     };
 
@@ -181,26 +182,43 @@ const useLessonsPreview = () => {
   const fetchActivityTextContent = useCallback(() => {
     if (
       state.selectedActivity?.type === "text" &&
-      state.selectedActivity.url &&
+      state.selectedActivity?.url &&
       state.mode === "read"
     ) {
       fetch(`${ACTIVITIES}${state.selectedActivity.url}`)
         .then((response) => response.text())
         .then((content: string) => {
+          console.log({ content });
           dispatch({ type: "update_activity_content", content });
         });
     }
   }, [state.mode, state.selectedActivity?.type, state.selectedActivity?.url]);
 
   const saveActivity = async (): Promise<boolean> => {
-    if (state.mode === "read" || !state.textActivityContent) return false;
+    if (state.mode === "read") return false;
 
-    const applyData = () => {
-      toast.success(
-        `Activité ${state.mode === "write" ? "créée" : "modifiée"} avec succès`
-      );
-      return true;
-    };
+    const title =
+      state.mode === "write"
+        ? state.newActivityTitle?.trim()
+        : state.selectedActivity?.title;
+
+    // Si le titre est manquant, avertir l'utilisateur via un toast
+    if (!title || !(title?.length > 0)) {
+      const error = "Le titre est obligatoire";
+      toast.error(error);
+      dispatch({ type: "set_activity_title_error", error });
+      return false;
+    }
+
+    if (
+      !state.textActivityContent ||
+      !(state.textActivityContent?.length > 0)
+    ) {
+      toast.error("Le contenu est obligatoire");
+      return false;
+    }
+
+    if (!state.textActivityContent) return false;
 
     const textContent = state.textActivityContent
       .replace(
@@ -214,7 +232,19 @@ const useLessonsPreview = () => {
         ""
       );
 
-    const response: Promise<boolean> = sendRequest(
+    const applyDataPost = (activity: Activity) => {
+      dispatch({ type: "create_activity", activity });
+
+      return true;
+    };
+
+    const applyDataPut = ({ response: activity }: { response: Activity }) => {
+      dispatch({ type: "edit_activity", activity });
+
+      return true;
+    };
+
+    const response: Promise<boolean> = await sendRequest(
       {
         path: `/activity/text/${
           state.mode === "write"
@@ -224,25 +254,18 @@ const useLessonsPreview = () => {
         method: state.mode === "write" ? "post" : "put",
         body: {
           description: "description",
+          title,
           value: textContent,
-          title:
-            state.mode === "write"
-              ? state.newActivityTitle?.trim()
-              : state.selectedActivity?.title,
           parent: "lesson",
         },
       },
-      applyData
+      state.mode === "write" ? applyDataPost : applyDataPut
     );
 
     // Ajout d'un délai de 1 seconde pour éviter les clignotements
-    await new Promise((resolve) =>
-      setTimeout(() => {
-        return resolve;
-      }, 1000)
-    );
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    return await response;
+    return response;
   };
 
   useEffect(() => {

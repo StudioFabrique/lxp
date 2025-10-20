@@ -54,18 +54,23 @@ type LessonsPreviewAction =
   | { type: "mark_lesson_as_read"; lesson: Lesson; lessonRead: LessonRead }
   // Activity
   | { type: "select_activity"; activity?: Activity }
+  | { type: "select_last_activity_from_current_lesson" }
   | { type: "create_activity"; activity?: Activity }
+  | { type: "edit_activity"; activity?: Activity }
   | { type: "delete_selected_activity" }
   | { type: "update_activity_title"; title: string }
+  | { type: "set_activity_title_error"; error?: string }
   | { type: "update_activity_content"; content: string }
   // Miscellaneous
   | { type: "select_mode"; mode: "read" | "edit" | "write" }
   | { type: "toggle_panel_visibility" }
   | { type: "set_modal_visibility"; modalVisibility: ModalVisibility };
 
+const stored = localStorage.getItem(STORAGE_KEY);
+
 export const initialLessonsPreviewState: LessonsPreviewState = {
   mode: "read",
-  isPanelClosed: JSON.parse(localStorage.getItem(STORAGE_KEY) || ""),
+  isPanelClosed: stored ? JSON.parse(stored) : false,
   modalVisibility: "none",
 };
 
@@ -74,11 +79,11 @@ export function lessonsPreviewReducer(
   action: LessonsPreviewAction
 ): LessonsPreviewState {
   switch (action.type) {
-    // Module
+    // --- Module ---
     case "update_module_data":
       return { ...state, module: action.module };
 
-    // Course
+    // --- Course ---
     case "set_course_visibility": {
       // Pour le cours selectionné, définir la visibilité
       if (!state.module) return state;
@@ -97,7 +102,7 @@ export function lessonsPreviewReducer(
       };
     }
 
-    // Lesson
+    // --- Lesson ---
     case "select_lesson": {
       // Selectionne la leçon dont les détails ont été chargés, et selectionne la première activité de la leçon (si existante).
       // Le mode est basculé sur "read" automatiquement.
@@ -152,7 +157,7 @@ export function lessonsPreviewReducer(
       };
 
     case "mark_lesson_as_read": {
-      if (!state.module || state.mode === "read") return state;
+      if (!state.module) return state;
       const courses = state.module.courses.map((course) => ({
         ...course,
         lessons: course.lessons.map((lesson) => {
@@ -175,9 +180,16 @@ export function lessonsPreviewReducer(
       };
     }
 
-    // Activity
+    // --- Activity ---
     case "select_activity":
       return { ...state, mode: "read", selectedActivity: action.activity };
+
+    case "select_last_activity_from_current_lesson": {
+      const currentActivities = state.selectedLesson?.activities;
+      if (!currentActivities) return state;
+      const lastActivity = currentActivities[currentActivities.length - 1];
+      return { ...state, mode: "read", selectedActivity: lastActivity };
+    }
 
     case "create_activity": {
       if (!(action.activity && state.selectedLesson)) return state;
@@ -189,8 +201,29 @@ export function lessonsPreviewReducer(
 
       return {
         ...state,
-        selectedActivity: action.activity,
         selectedLesson: { ...state.selectedLesson, activities },
+        selectedActivity: action.activity,
+      };
+    }
+
+    case "edit_activity": {
+      if (!(action.activity && state.selectedLesson && state.selectedActivity))
+        return state;
+
+      const activities = state.selectedLesson.activities?.map((activity) => {
+        if (activity.id === action.activity?.id) {
+          console.log({
+            activityToReplace: activity,
+            editedActivity: action.activity,
+          });
+        }
+        return activity.id === action.activity?.id ? action.activity : activity;
+      });
+
+      return {
+        ...state,
+        selectedLesson: { ...state.selectedLesson, activities },
+        selectedActivity: action.activity,
       };
     }
 
@@ -212,20 +245,33 @@ export function lessonsPreviewReducer(
     }
 
     case "update_activity_title":
+      if (state.mode === "read") return state;
       if (state.mode === "write") {
-        return { ...state, newActivityTitle: action.title };
+        return {
+          ...state,
+          newActivityTitle: action.title,
+          titleError: undefined,
+        };
       } else {
         if (!state.selectedActivity) return state;
         return {
           ...state,
-          selectedActivity: { ...state.selectedActivity, title: action.title },
+          selectedActivity: {
+            ...state.selectedActivity,
+            title: action.title,
+          },
+          titleError: undefined,
         };
       }
+
+    case "set_activity_title_error":
+      if (state.mode === "read") return state;
+      return { ...state, titleError: action.error };
 
     case "update_activity_content":
       return { ...state, textActivityContent: action.content };
 
-    // Miscellaneous
+    // --- Miscellaneous ---
     case "select_mode": {
       // Selectionner un mode pour l'editeur de texte. Si le mode
       // est "write", alors déselectionner l'activité actuelle et

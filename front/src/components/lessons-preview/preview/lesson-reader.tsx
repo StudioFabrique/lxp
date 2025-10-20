@@ -14,6 +14,7 @@ type PreviewLessonProps = {
   selectedLesson?: Lesson;
   selectedActivity?: Activity;
   textActivityTitle?: string;
+  textActivityTitleError?: string;
   textActivityContent?: string;
   showDeleteModal: boolean;
   onEditTitle: (title: string) => void;
@@ -25,9 +26,9 @@ type PreviewLessonProps = {
   onDeleteActivity: () => void;
   onCloseTextEditor: () => void;
   onSaveActivity: (
-    id: number | undefined,
-    title: string,
-    content: string
+    id?: number,
+    title?: string,
+    content?: string
   ) => Promise<boolean>;
 };
 
@@ -37,6 +38,7 @@ const LessonReader = ({
   selectedLesson,
   selectedActivity,
   textActivityTitle,
+  textActivityTitleError,
   textActivityContent,
   showDeleteModal,
   onEditContent,
@@ -99,10 +101,11 @@ const LessonReader = ({
           {selectedActivity?.type === "text" || mode === "write" ? (
             <div className="mt-4">
               <TiptapActivity
-                key={`tiptap-${mode}-${selectedActivity?.id ?? "new"}`}
+                key={`tiptap-${mode}`}
                 mode={mode}
                 id={selectedActivity?.id}
                 title={textActivityTitle}
+                titleError={textActivityTitleError}
                 content={textActivityContent}
                 onEditTitle={onEditTitle}
                 onEditContent={onEditContent}
