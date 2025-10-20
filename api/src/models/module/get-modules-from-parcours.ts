@@ -10,6 +10,19 @@ async function getModulesFromParcours(parcoursId: number) {
           module: { select: { title: true, thumb: true } },
         },
       },
+      formation: { select: { id: true } },
+      contacts: {
+        select: {
+          contact: {
+            select: {
+              id: true,
+              name: true,
+              role: true,
+            },
+          },
+        },
+      },
+      bonusSkills: true,
     },
   });
 
@@ -23,7 +36,13 @@ async function getModulesFromParcours(parcoursId: number) {
       thumb: mod.module.thumb?.toString("base64") ?? null,
     })) ?? [];
 
-  return modules;
+  const parcoursData = {
+    formationId: existingParcours.formation.id,
+    contacts: existingParcours.contacts.map((c) => c.contact),
+    bonusdSkills: existingParcours.bonusSkills,
+  };
+
+  return { modules, parcoursData };
 }
 
 export default getModulesFromParcours;

@@ -31,39 +31,43 @@ function ModuleMetadatas({ data, onSetFile }: Props) {
   };
 
   return (
-    <article className="flex flex-col gap-y-4">
-      {/* titre */}
+    <div className="grid grid-cols-1 lg:grid-cols-2">
+      <article className="flex flex-col gap-y-4">
+        {/* titre */}
 
-      <div>
-        <Field
-          label="Titre du module *"
-          name="title"
-          placeholder="Ex : Javascript"
+        <div>
+          <Field
+            label="Titre du module *"
+            name="title"
+            placeholder="Ex : Javascript"
+            data={data}
+          />
+        </div>
+
+        {/* description */}
+
+        <FieldArea label="Description" name="description" data={data} />
+
+        {/* duration */}
+
+        <FieldNumber
+          label="Durée du module en heures *"
+          name="duration"
+          placeholder="Ex : 12"
+          min={0}
           data={data}
         />
-      </div>
 
-      {/* description */}
+        {/* image du module */}
 
-      <FieldArea label="Description" name="description" data={data} />
-
-      {/* duration */}
-
-      <FieldNumber
-        label="Durée du module en heures *"
-        name="duration"
-        placeholder="Ex : 12"
-        min={0}
-        data={data}
-      />
-
-      {/* image du module */}
-
-      <div className="w-full h-full flex gap-x-4 items-center">
-        <FormUploadImage onSetFile={handleFileChange} />
-        <span style={classImage} />
-      </div>
-    </article>
+        <div className="w-full h-full flex gap-x-4 items-center">
+          <FormUploadImage onSetFile={handleFileChange} />
+          <span style={classImage} />
+        </div>
+      </article>
+      toto
+      <article />
+    </div>
   );
 }
 

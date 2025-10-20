@@ -27,7 +27,12 @@ const ButtonAdd: FC<Props> = ({
   };
 
   return (
-    <button className={setStyle()} disabled={isDisabled} onClick={onClickEvent}>
+    <button
+      className={setStyle()}
+      disabled={isDisabled}
+      onClick={onClickEvent}
+      type="button"
+    >
       {loading ? <div className="loading loading-spinner loading-sm" /> : null}
       {label}
     </button>
