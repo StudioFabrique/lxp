@@ -114,7 +114,7 @@ const useLessonsPreview = () => {
   const rateContent = useCallback(
     (rating: number) => {
       const applyData = ({ data }: { data: LessonRating }) => {
-        dispatch({ type: "set_lesson_rating", rating: data });
+        dispatch({ type: "set_lesson_rating", rating: [data] });
       };
 
       // Edit existing rate

@@ -11,6 +11,7 @@ import ActivityDeleteModal from "./activity-delete-modal";
 
 type PreviewLessonProps = {
   mode: "read" | "edit" | "write";
+  isLessonCompleted: boolean;
   selectedLesson?: Lesson;
   selectedActivity?: Activity;
   textActivityTitle?: string;
@@ -35,6 +36,7 @@ type PreviewLessonProps = {
 // Composant pour prévisualiser une leçon avec ses activités
 const LessonReader = ({
   mode,
+  isLessonCompleted,
   selectedLesson,
   selectedActivity,
   textActivityTitle,
@@ -56,6 +58,8 @@ const LessonReader = ({
     onDeleteActivity();
   }, [onDeleteActivity]);
 
+  console.log(selectedLesson?.lessonRating);
+
   return (
     <>
       {showDeleteModal && selectedActivity && (
@@ -69,14 +73,14 @@ const LessonReader = ({
       )}
 
       <div className="flex flex-col gap-5">
-        {selectedLesson?.lessonRating ? (
+        {isLessonCompleted && (
           <div className="w-full flex justify-end items-center">
             <RatingPanelButton
-              note={selectedLesson.lessonRating.rating}
+              note={selectedLesson?.lessonRating[0].rating}
               onRateContent={onRateActivity}
             />
           </div>
-        ) : null}
+        )}
 
         {/* Rendu de l'activité */}
         <div className="bg-base-100 border border-secondary/20 rounded-box p-4 mb-4">
