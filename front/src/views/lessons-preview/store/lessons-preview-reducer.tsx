@@ -192,7 +192,8 @@ export function lessonsPreviewReducer(
     }
 
     case "create_activity": {
-      if (!(action.activity && state.selectedLesson)) return state;
+      if (!(action.activity && state.selectedLesson && state.mode === "write"))
+        return state;
 
       const activities = [
         ...(state.selectedLesson.activities || []),
@@ -210,15 +211,9 @@ export function lessonsPreviewReducer(
       if (!(action.activity && state.selectedLesson && state.selectedActivity))
         return state;
 
-      const activities = state.selectedLesson.activities?.map((activity) => {
-        if (activity.id === action.activity?.id) {
-          console.log({
-            activityToReplace: activity,
-            editedActivity: action.activity,
-          });
-        }
-        return activity.id === action.activity?.id ? action.activity : activity;
-      });
+      const activities = state.selectedLesson.activities?.map((activity) =>
+        activity.id === action.activity?.id ? action.activity : activity
+      );
 
       return {
         ...state,
@@ -286,6 +281,7 @@ export function lessonsPreviewReducer(
         mode: action.mode,
         selectedActivity,
         textActivityContent,
+        newActivityTitle: undefined,
       };
     }
 
