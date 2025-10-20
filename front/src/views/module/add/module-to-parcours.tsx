@@ -37,14 +37,6 @@ export default function ModuleToParcours({
   isLoading,
   skills,
 }: Props) {
-  /**
-   * Fonction qui réinitialise les contacts et les compétences selectionnés
-   */
-  const handleReset = () => {
-    setCurrentContacts([]);
-    setCurrentSkills([]);
-  };
-
   return (
     <>
       {/* Composant qui permet de selectionner des contacts */}
@@ -80,16 +72,6 @@ export default function ModuleToParcours({
         {/* Composant qui affiche les compétences qui ne sont pas selectionnées */}
         <NotSelectedSkills />
       </InheritedItems>
-      {/* Bouton qui permet de réinitialiser les contacts et les compétences selectionnés */}
-      <div className="flex justify-end">
-        <button
-          className="btn btn-secondary"
-          disabled={currentContacts.length === 0 && currentSkills.length === 0}
-          onClick={handleReset}
-        >
-          Réinitialiser
-        </button>
-      </div>
     </>
   );
 }
