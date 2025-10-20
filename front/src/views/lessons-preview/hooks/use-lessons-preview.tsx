@@ -188,7 +188,6 @@ const useLessonsPreview = () => {
       fetch(`${ACTIVITIES}${state.selectedActivity.url}`)
         .then((response) => response.text())
         .then((content: string) => {
-          console.log({ content });
           dispatch({ type: "update_activity_content", content });
         });
     }
