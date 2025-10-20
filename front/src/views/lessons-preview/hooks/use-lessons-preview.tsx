@@ -78,7 +78,7 @@ const useLessonsPreview = () => {
             lesson: state.selectedLesson,
             lessonRead,
           });
-        dispatch({ type: "set_lesson_rating", rating });
+        dispatch({ type: "set_lesson_rating", rating: [rating] });
       };
 
       if (state.selectedLesson)
@@ -168,7 +168,6 @@ const useLessonsPreview = () => {
 
   const fetchLessonData = useCallback(async () => {
     const applyData = (lesson: Lesson) => {
-      console.log({ lesson });
       // Mettre à jour selectedLesson avec les données complètes
       dispatch({ type: "select_lesson", lesson });
     };
