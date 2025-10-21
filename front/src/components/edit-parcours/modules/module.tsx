@@ -112,7 +112,7 @@ export default function ModuleComponent() {
                 />
               </div>
               {/* Form action buttons */}
-              <div className="flex justify-end mt-4">
+              <div className="flex gap-x-2 justify-end mt-4">
                 {/* Cancel button - closes form without saving */}
                 <button
                   type="button"
