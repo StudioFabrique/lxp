@@ -9,11 +9,15 @@ import User from "../../utils/interfaces/db/user";
  * in a single transaction, ensuring data consistency. It also handles
  * associations with contacts and bonus skills through junction tables.
  *
- * @param moduleToAdd - Module data including title, description, duration, etc.
- * @param thumb - Thumbnail image buffer
- * @param image - Full-size image buffer
+ * The function processes the module creation in two steps:
+ * 1. Creates the base Module entity with images and metadata
+ * 2. Creates ModuleMetadata with duration, associations to parcours, and many-to-many relationships
+ *
+ * @param moduleToAdd - Module data including title, description, duration, contacts, and skills
+ * @param thumb - Thumbnail image as base64 string (processed from uploaded file)
+ * @param image - Full-size image as base64 string (processed from uploaded file)
  * @param userId - MongoDB ID of the user creating the module
- * @returns Promise<ModuleMetadata> - The created module metadata
+ * @returns Promise<Object> - Object containing module ID, title, and base64 thumbnail
  * @throws Error with statusCode 404 if formation, user, or admin doesn't exist
  */
 async function postModule(
@@ -22,7 +26,9 @@ async function postModule(
   image: any,
   userId: string
 ) {
-  // Verify that the formation (parcours) exists
+  console.log({ moduleToAdd });
+
+  // Verify that the formation (parcours) exists before creating the module
   const existingParcours = await prisma.formation.findFirst({
     where: { id: moduleToAdd.formationId },
   });
@@ -33,7 +39,8 @@ async function postModule(
       statusCode: 404,
     };
 
-  // Fetch user details from MongoDB for author name
+  // Fetch user details from MongoDB to construct the author name
+  // This bridges the MongoDB user system with PostgreSQL module storage
   const existingUser = await User.findById(userId, {
     firstname: 1,
     lastname: 1,
@@ -42,7 +49,8 @@ async function postModule(
   if (!existingUser)
     throw { message: "L'utilisateur n'existe pas.", statusCode: 404 };
 
-  // Find corresponding admin in PostgreSQL
+  // Find corresponding admin record in PostgreSQL
+  // The admin table links MongoDB users to PostgreSQL entities
   const existingAdmin = await prisma.admin.findFirst({
     where: { idMdb: userId },
   });
@@ -50,20 +58,23 @@ async function postModule(
   if (!existingAdmin)
     throw { message: "L'administrateur n'existe pas.", statusCode: 404 };
 
+  // Construct full author name for display purposes
   const author = `${existingUser?.firstname} ${existingUser?.lastname}`;
 
+  // Declare variables for TypeScript type safety (will be assigned in transaction)
   let newMetadataModule: ModuleMetadata | null = null;
   let newModule: Module | null = null;
 
-  // Use transaction to ensure both Module and ModuleMetadata are created together
+  // Use transaction to ensure both Module and ModuleMetadata are created atomically
+  // This prevents orphaned records if one creation fails
   const result = await prisma.$transaction(async (tx) => {
-    // Step 1: Create the base Module
+    // Step 1: Create the base Module entity with content and images
     const newModule = await tx.module.create({
       data: {
         title: moduleToAdd.title,
         description: moduleToAdd.description,
-        image,
-        thumb,
+        image, // Full-size image as base64 string
+        thumb, // Thumbnail as base64 string (400x400px)
         author,
         adminId: existingAdmin!.id,
       },
@@ -80,18 +91,25 @@ async function postModule(
       },
     });
 
-    // Step 2: Create ModuleMetadata
+    // Step 2: Create ModuleMetadata with associations and many-to-many relationships
     const newMetadataModule = await tx.moduleMetadata.create({
       data: {
-        duration: moduleToAdd.duration,
+        duration: moduleToAdd.duration, // Learning duration in hours
+        // Link to the newly created module
         module: { connect: { id: newModule.id } },
+        // Link to the target parcours (learning path)
         parcours: { connect: { id: existingParcours!.id } },
+        // Link to the creating admin
         admin: { connect: { id: existingAdmin!.id } },
+        // Create many-to-many relationships with contacts (instructors)
+        // This creates records in the junction table ContactsOnModuleMetadata
         contacts: {
           create: moduleToAdd.contacts.map((contactId: number) => ({
             contact: { connect: { id: contactId } },
           })),
         },
+        // Create many-to-many relationships with bonus skills
+        // This creates records in the junction table BonusSkillsOnModuleMetadata
         bonusSkills: {
           create: moduleToAdd.skills.map((skillId: number) => ({
             bonusSkill: { connect: { id: skillId } },
@@ -114,7 +132,8 @@ async function postModule(
       },
     });
 
-    // ✅ Retourner directement le résultat
+    // Return a simplified object for frontend consumption
+    // This flattens the complex database structure for easier use
     return {
       id: newMetadataModule.id,
       title: newModule.title,
