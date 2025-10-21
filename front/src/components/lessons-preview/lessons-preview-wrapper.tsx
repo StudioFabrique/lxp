@@ -39,7 +39,7 @@ const LessonsPreviewWrapper = ({
 
       <div className="flex items-center gap-5 mt-5">
         <div
-          data-tip={isPanelClosed ? "Ouvrir le panneau" : "Fermer le panneau"}
+          data-tip={isPanelClosed ? "Ouvrir le panneau" : "Réduire le panneau"}
           className="tooltip tooltip-right"
         >
           <button

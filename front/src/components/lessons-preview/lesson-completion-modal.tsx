@@ -3,16 +3,23 @@ import RatingWithStars from "../UI/lesson-rating/rating-with-stars";
 import Modal from "../UI/modal/modal";
 import PortalConfetti from "../UI/portal/portal-confetti";
 import FeedbacksButton from "../UI/feedbacks/feedbacks-button";
+import Lesson from "../../utils/interfaces/lesson";
 
 type LessonCompletionModal = {
+  lesson: Lesson;
   isLessonCompleted: boolean;
+  isLastLessonSelected: boolean;
+  isLastActivitySelected: boolean;
   onRateAndComplete: (rating: number) => void;
   onClickNextLesson: () => void;
   onClickMinimizeButton: () => void;
 };
 
 const LessonCompletionModal = ({
+  lesson,
   isLessonCompleted,
+  isLastActivitySelected,
+  isLastLessonSelected,
   onRateAndComplete,
   onClickNextLesson,
   onClickMinimizeButton,
@@ -31,9 +38,13 @@ const LessonCompletionModal = ({
     <>
       <PortalConfetti />
       <Modal
-        title="Leçon terminée !"
+        title={`La leçon "${lesson.title}" a été terminée !`}
         rightLabel="Leçon suivante"
-        onRightClick={isLessonCompleted ? onClickNextLesson : undefined}
+        onRightClick={
+          isLessonCompleted && !(isLastActivitySelected && isLastLessonSelected)
+            ? onClickNextLesson
+            : undefined
+        }
         onMinimizeClick={onClickMinimizeButton}
       >
         <div className="flex flex-col items-center gap-20 p-20 overflow-hidden">
@@ -42,17 +53,17 @@ const LessonCompletionModal = ({
             selectedStars={selectedStars}
             onSelectStarRate={handleSelectStarRate}
           />
-          {!isLessonCompleted && (
-            <FeedbacksButton
-              className="btn btn-primary text-base-100 btn-sm text-nowrap"
-              feedbackType="stars"
-              elementCount={selectedStars}
-              onClick={handleRateContent}
-              showFeedback={!isLessonCompleted}
-            >
-              Évaluer ce contenu
-            </FeedbacksButton>
-          )}
+
+          <FeedbacksButton
+            className="btn btn-primary text-base-100 btn-sm text-nowrap"
+            feedbackType="stars"
+            elementCount={selectedStars}
+            onClick={handleRateContent}
+            showFeedback={!isLessonCompleted}
+            disabled={isLessonCompleted}
+          >
+            Évaluer ce contenu
+          </FeedbacksButton>
         </div>
       </Modal>
     </>

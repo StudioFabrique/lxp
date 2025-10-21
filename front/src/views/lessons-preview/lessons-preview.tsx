@@ -39,6 +39,7 @@ const LessonsPreview = () => {
     isLessonCompleted,
     isFirstActivitySelected,
     isLastActivitySelected,
+    isLastLessonSelected,
     dispatch,
     onCompleteLesson,
     onRateContent,
@@ -65,9 +66,12 @@ const LessonsPreview = () => {
   return (
     <ViewWrapper className="flex flex-col gap-6">
       {/* Modal to include here */}
-      {modalVisibility === "lessonCompletionModal" && (
+      {modalVisibility === "lessonCompletionModal" && selectedLesson && (
         <LessonCompletionModal
+          lesson={selectedLesson}
           isLessonCompleted={isLessonCompleted}
+          isLastLessonSelected={isLastLessonSelected}
+          isLastActivitySelected={isLastActivitySelected}
           onRateAndComplete={onCompleteLesson}
           onClickNextLesson={() => dispatch({ type: "go_to_next_lesson" })}
           onClickMinimizeButton={() =>
@@ -200,24 +204,27 @@ const LessonsPreview = () => {
                 }
                 onSaveActivity={onSaveActivity}
               >
-                <ActivityBottomNavigation
-                  isLessonCompleted={isLessonCompleted}
-                  modalVisibility={modalVisibility}
-                  isFirstActivitySelected={isFirstActivitySelected}
-                  isLastActivitySelected={isLastActivitySelected}
-                  onPrevious={() =>
-                    dispatch({ type: "go_to_previous_activity" })
-                  }
-                  onNext={() => dispatch({ type: "go_to_next_activity" })}
-                  onCompleteLesson={() =>
-                    isLessonCompleted
-                      ? dispatch({ type: "go_to_next_lesson" })
-                      : dispatch({
-                          type: "set_modal_visibility",
-                          modalVisibility: "lessonCompletionModal",
-                        })
-                  }
-                />
+                {state.mode === "read" && (
+                  <ActivityBottomNavigation
+                    modalVisibility={modalVisibility}
+                    isLessonCompleted={isLessonCompleted}
+                    isFirstActivitySelected={isFirstActivitySelected}
+                    isLastActivitySelected={isLastActivitySelected}
+                    isLastLessonSelected={isLastLessonSelected}
+                    onPrevious={() =>
+                      dispatch({ type: "go_to_previous_activity" })
+                    }
+                    onNext={() => dispatch({ type: "go_to_next_activity" })}
+                    onCompleteLesson={() =>
+                      isLessonCompleted
+                        ? dispatch({ type: "go_to_next_lesson" })
+                        : dispatch({
+                            type: "set_modal_visibility",
+                            modalVisibility: "lessonCompletionModal",
+                          })
+                    }
+                  />
+                )}
               </LessonReader>
             ) : (
               <NoActivityPlaceholder key="no-activity-placeholder" />
