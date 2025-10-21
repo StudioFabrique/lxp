@@ -18,7 +18,8 @@ const useLessonsPreview = () => {
   // Params et states de la route active
   // ------------
   const { moduleId } = useParams();
-  const { state: stateFromUrl } = useLocation();
+  const { state: stateFromUrl }: { state: { lessonId?: number } } =
+    useLocation();
   // ------------
   // const navigate = useNavigate();
   const { sendRequest, isLoading } = useHttp(true);
@@ -72,8 +73,6 @@ const useLessonsPreview = () => {
       ),
     [state.module?.courses, state.selectedLesson]
   );
-
-  console.log({ isLastLessonSelected });
 
   const fetchModuleData = useCallback(() => {
     const applyData = ({ data }: { data: Module & { parcours: string } }) => {
@@ -193,6 +192,7 @@ const useLessonsPreview = () => {
       const applyData = (data: { success: boolean; message: string }) => {
         if (data.success) {
           toast.success(data.message);
+          dispatch({ type: "delete_course", id: courseId });
         }
       };
 

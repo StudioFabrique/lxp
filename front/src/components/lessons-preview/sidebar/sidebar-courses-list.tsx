@@ -11,7 +11,7 @@ type SidebarCoursesListProps = {
   parcoursId: number;
   moduleId: number;
   selectedLesson: Lesson | undefined;
-  setSelectedLesson: (lesson: Lesson | undefined) => void;
+  onSelectLesson: (lesson: Lesson | undefined) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
   children: React.ReactNode[];
@@ -22,7 +22,7 @@ const SidebarCoursesList = ({
   parcoursId,
   moduleId,
   selectedLesson,
-  setSelectedLesson,
+  onSelectLesson,
   onDeleteCourse,
   onEnableCourse,
   children,
@@ -101,7 +101,7 @@ const SidebarCoursesList = ({
               parcoursId={parcoursId}
               moduleId={moduleId}
               selectedLesson={selectedLesson}
-              setSelectedLesson={setSelectedLesson}
+              setSelectedLesson={onSelectLesson}
               onDeleteCourse={onDeleteCourse}
               onEnableCourse={onEnableCourse}
               children={children[1]}
