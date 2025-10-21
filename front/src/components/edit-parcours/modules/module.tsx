@@ -35,7 +35,7 @@ export default function ModuleComponent() {
   const [currentContacts, setCurrentContacts] = useState<Contact[]>([]);
   const [currentSkills, setCurrentSkills] = useState<Skill[]>([]);
   const [file, setFile] = useState<File | null>(null);
-  const refModule = useRef<HTMLFormElement | null>(null);
+  const refForm = useRef<HTMLFormElement | null>(null);
 
   const { values, onChangeValue, onResetForm, errors, onValidateForm } =
     useForm({}, moduleCreateSchema);
@@ -110,15 +110,17 @@ export default function ModuleComponent() {
 
   useEffect(() => {
     if (showForm) {
-      if (refModule && refModule.current) {
-        refModule.current.scrollIntoView({ behavior: "smooth" });
+      if (refForm && refForm.current) {
+        refForm.current.scrollIntoView({ behavior: "smooth" });
       }
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [showForm]);
 
   return (
     <div className="flex flex-col gap-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold text-primary">
           Modules associés au Parcours
         </h1>
@@ -139,21 +141,19 @@ export default function ModuleComponent() {
       </div>
 
       {modules.length > 0 ? (
-        <Wrapper>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {modules.map((module) => (
-              <ModulesList {...module} key={module.id} />
-            ))}
-          </div>
-        </Wrapper>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {modules.map((module) => (
+            <ModulesList {...module} key={module.id} />
+          ))}
+        </div>
       ) : (
         <ElementNotFound message="Aucun module trouvé" />
       )}
       {showForm ? (
         <>
-          <div className="divider">Création de module</div>
+          <div className="divider text-primary text-xs">Création de module</div>
           <Wrapper>
-            <form onSubmit={handleSubmit} ref={refModule}>
+            <form onSubmit={handleSubmit} ref={refForm}>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <ModuleMetadatas data={data} onSetFile={setFile} />
                 <ModuleToParcours
