@@ -5,6 +5,7 @@ import useHttp from "../../../hooks/use-http";
 import { moduleCreateSchema } from "../../../lib/validation/parcours-edit/module-create-schema";
 import { useParams } from "react-router-dom";
 import useForm from "../../UI/forms/hooks/use-form";
+import { scrollToTop } from "../../../helpers/scrollToTop";
 
 // Type definition for module data structure
 type ModuleData = {
@@ -147,6 +148,8 @@ const useNewModule = () => {
       setFile(null);
       // Add the new module to the existing list
       setModules((prevModules) => [...prevModules, data.data as ModuleData]);
+      // Scroll to top when form is hidden
+      scrollToTop();
     };
 
     // Send POST request to create the module
@@ -170,6 +173,8 @@ const useNewModule = () => {
     setCurrentContacts([]);
     setCurrentSkills([]);
     setFile(null);
+    // Scroll to top when form is hidden
+    scrollToTop();
   };
 
   // Return all state and handlers for use in components

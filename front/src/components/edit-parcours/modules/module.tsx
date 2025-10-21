@@ -46,9 +46,6 @@ export default function ModuleComponent() {
       if (refForm && refForm.current) {
         refForm.current.scrollIntoView({ behavior: "smooth" });
       }
-    } else {
-      // Scroll to top when form is hidden
-      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [showForm, refForm]);
 
