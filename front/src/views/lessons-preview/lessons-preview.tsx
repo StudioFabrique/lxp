@@ -37,6 +37,8 @@ const LessonsPreview = () => {
       ...state
     },
     isLessonCompleted,
+    isFirstActivitySelected,
+    isLastActivitySelected,
     dispatch,
     onCompleteLesson,
     onRateContent,
@@ -201,10 +203,12 @@ const LessonsPreview = () => {
                 <ActivityBottomNavigation
                   isLessonCompleted={isLessonCompleted}
                   modalVisibility={modalVisibility}
-                  isFirstActivity
-                  isLastActivity
-                  onPrevious={() => {}}
-                  onNext={() => {}}
+                  isFirstActivitySelected={isFirstActivitySelected}
+                  isLastActivitySelected={isLastActivitySelected}
+                  onPrevious={() =>
+                    dispatch({ type: "go_to_previous_activity" })
+                  }
+                  onNext={() => dispatch({ type: "go_to_next_activity" })}
                   onCompleteLesson={() =>
                     isLessonCompleted
                       ? dispatch({ type: "go_to_next_lesson" })

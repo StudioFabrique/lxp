@@ -86,7 +86,7 @@ export default function ResourceEdit() {
                 <TiptapActivity
                   // Il peut être utile d'utiliser key dans certaines situation dans lesquelles le composant ne se remonte pas correctement
                   // key={`tiptap_${mode}`}
-                  // id tout court au lieu de parentId, au moins c'est clair
+                  // id tout court au lieu de parentId, au moins c'est clair et tout autant générique
                   id={resource.id}
                   // props title à passer (dynamique, ne pas reproduire le description: "description" avec title: "title" loool)
                   title=""
@@ -95,10 +95,7 @@ export default function ResourceEdit() {
                   // passer le mode d'edition "read", "edit" ou "write", peut être un state dynamique passé en props
                   mode="edit"
                   // Appelé, quand on appuie sur fermer/annuler
-                  onClose={() => {
-                    // je conseille de passer le mode "edit" à "read"
-                    // setMode("read")
-                  }}
+                  onClose={handleCloseTipTapEditor}
                   onEditTitle={(title) => {}} // Appelé dès lors que le titre est modifié
                   onEditContent={(content) => {}} // Appelé dès lors que le contenu est modifié
                   onSave={async (id, title, content) => {

@@ -38,6 +38,27 @@ const useLessonsPreview = () => {
     [state.selectedLesson?.lessonsRead]
   );
 
+  const isFirstActivitySelected = useMemo(
+    () =>
+      Boolean(
+        state.selectedActivity &&
+          state.selectedLesson?.activities?.indexOf(state.selectedActivity) ===
+            0
+      ),
+    [state.selectedActivity, state.selectedLesson?.activities]
+  );
+
+  const isLastActivitySelected = useMemo(
+    () =>
+      Boolean(
+        state.selectedActivity &&
+          state.selectedLesson?.activities?.length &&
+          state.selectedLesson.activities.indexOf(state.selectedActivity) ===
+            state.selectedLesson.activities.length - 1
+      ),
+    [state.selectedActivity, state.selectedLesson?.activities]
+  );
+
   const fetchModuleData = useCallback(() => {
     const applyData = ({ data }: { data: Module & { parcours: string } }) => {
       dispatch({ type: "update_module_data", module: data });
@@ -288,6 +309,8 @@ const useLessonsPreview = () => {
   return {
     state,
     isLessonCompleted,
+    isFirstActivitySelected,
+    isLastActivitySelected,
     isLoading,
     dispatch,
     fetchModuleData,

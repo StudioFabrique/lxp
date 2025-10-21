@@ -49,9 +49,9 @@ type LessonsPreviewAction =
   // Lesson
   | { type: "select_lesson"; lesson?: Lesson }
   | { type: "select_lesson_by_id"; id: number }
-  | { type: "go_to_next_lesson" }
   | { type: "set_lesson_rating"; rating: LessonRating[] }
   | { type: "mark_lesson_as_read"; lesson: Lesson; lessonRead: LessonRead }
+  | { type: "go_to_next_lesson" }
   // Activity
   | { type: "select_activity"; activity?: Activity }
   | { type: "select_last_activity_from_current_lesson" }
@@ -61,6 +61,8 @@ type LessonsPreviewAction =
   | { type: "update_activity_title"; title: string }
   | { type: "set_activity_title_error"; error?: string }
   | { type: "update_activity_content"; content: string }
+  | { type: "go_to_previous_activity" }
+  | { type: "go_to_next_activity" }
   // Miscellaneous
   | { type: "select_mode"; mode: "read" | "edit" | "write" }
   | { type: "toggle_panel_visibility" }
@@ -135,25 +137,6 @@ export function lessonsPreviewReducer(
       };
     }
 
-    case "go_to_next_lesson": {
-      const { selectedLesson, module } = state;
-
-      if (!(selectedLesson && selectedLesson.id && module)) return state;
-
-      const allLessons = module.courses.flatMap((course) => course.lessons);
-      const currentLessonIndex = allLessons.findIndex(
-        (lesson) => lesson.id === selectedLesson.id
-      );
-      const nextLesson = allLessons[currentLessonIndex + 1];
-
-      return {
-        ...state,
-        selectedLesson: nextLesson,
-        mode: "read",
-        modalVisibility: "none",
-      };
-    }
-
     case "set_lesson_rating":
       if (!state.selectedLesson) return state;
       return {
@@ -185,6 +168,25 @@ export function lessonsPreviewReducer(
           ...state.module,
           courses,
         },
+      };
+    }
+
+    case "go_to_next_lesson": {
+      const { selectedLesson, module } = state;
+
+      if (!(selectedLesson && selectedLesson.id && module)) return state;
+
+      const allLessons = module.courses.flatMap((course) => course.lessons);
+      const currentLessonIndex = allLessons.findIndex(
+        (lesson) => lesson.id === selectedLesson.id
+      );
+      const nextLesson = allLessons[currentLessonIndex + 1];
+
+      return {
+        ...state,
+        selectedLesson: nextLesson,
+        mode: "read",
+        modalVisibility: "none",
       };
     }
 
@@ -273,6 +275,26 @@ export function lessonsPreviewReducer(
 
     case "update_activity_content":
       return { ...state, textActivityContent: action.content };
+
+    case "go_to_previous_activity": {
+      if (!(state.selectedLesson?.activities && state.selectedActivity))
+        return state;
+      const previousActivity =
+        state.selectedLesson.activities[
+          state.selectedLesson.activities.indexOf(state.selectedActivity) - 1
+        ];
+      return { ...state, selectedActivity: previousActivity };
+    }
+
+    case "go_to_next_activity": {
+      if (!(state.selectedLesson?.activities && state.selectedActivity))
+        return state;
+      const nextActivity =
+        state.selectedLesson.activities[
+          state.selectedLesson.activities.indexOf(state.selectedActivity) + 1
+        ];
+      return { ...state, selectedActivity: nextActivity };
+    }
 
     // --- Miscellaneous ---
     case "select_mode": {
