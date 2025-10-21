@@ -30,7 +30,7 @@ const ModalSuppression = (props: ModalSuppressionProps) => {
               Annuler
             </button>
           </form>
-          <button className="btn btn-sm btn-error" onClick={props.onConfirm}>
+          <button className="btn btn-sm btn-warning" onClick={props.onConfirm}>
             {props.rightLabel}
           </button>
         </div>

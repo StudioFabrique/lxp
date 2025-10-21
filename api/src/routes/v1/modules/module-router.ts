@@ -102,7 +102,7 @@ modules.get(
       }),
     checkValidatorResult,
   ],
-  httpGetModulesTimeline,
+  httpGetModulesTimeline
 );
 
 modules.put(
@@ -110,13 +110,13 @@ modules.put(
   checkPermissions("module"),
   moduleIdValidator,
   parcoursIdValidator,
-  httpPutAddModule,
+  httpPutAddModule
 );
 modules.get(
   "/formation/:formationId",
   checkPermissions("module"),
   getModuleFormationValidator,
-  httpGetModuleFormation,
+  httpGetModuleFormation
 );
 
 modules.put(
@@ -124,26 +124,26 @@ modules.put(
   checkPermissions("module"),
   moduleIdFromBodyValidator,
   updateDatesModulesValidator,
-  httpUpdateDatesModule,
+  httpUpdateDatesModule
 );
 modules.put(
   "/calendar/duration",
   checkPermissions("module"),
   updateDurationValidator,
-  httpUpdateDurationModule,
+  httpUpdateDurationModule
 );
 modules.put(
   "/:parcoursId",
   checkPermissions("module"),
   parcoursIdValidator,
   idsArrayValidator,
-  httpParcoursModules,
+  httpParcoursModules
 );
 modules.delete(
   "/:moduleId",
   checkPermissions("module"),
   moduleIdValidator,
-  httpDeleteModule,
+  httpDeleteModule
 );
 modules.put(
   "/new-module",
@@ -151,7 +151,7 @@ modules.put(
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
   putModuleParcoursValidator,
-  httpPutModuleParcours,
+  httpPutModuleParcours
 );
 modules.put(
   "/new-module/update",
@@ -159,14 +159,14 @@ modules.put(
   createFileUploadMiddleware(headerImageMaxSize),
   jsonParser,
   putModuleValidator,
-  httpPutModule,
+  httpPutModule
 );
 // retourne la liste des modules assocués à un parcours
 modules.get(
   "/:parcoursId",
   checkPermissions("module"),
   getModulesFromParcoursValidator,
-  httpGetModulesFromParcours,
+  httpGetModulesFromParcours
 );
 
 // supprime définitvement un module attaché à une formation
@@ -174,7 +174,7 @@ modules.delete(
   "/formation/:moduleId",
   checkPermissions("module"),
   moduleIdValidator,
-  httpDeleteFormationModule,
+  httpDeleteFormationModule
 );
 
 // retourne les détails d'un module pour les afficher dans l'interface de gestion des modules
@@ -182,21 +182,21 @@ modules.get(
   "/detail/:moduleId",
   checkPermissions("module"),
   moduleIdValidator,
-  httpGetModuleDetail,
+  httpGetModuleDetail
 );
 
 modules.get(
   "/detail/limited/:moduleId",
   checkPermissions("module"),
   moduleIdValidator,
-  httpGetLimitedModuleDetail,
+  httpGetLimitedModuleDetail
 );
 
 modules.get(
   "/image/:moduleId",
   checkPermissions("module"),
   moduleIdValidator,
-  httpGetModuleImage,
+  httpGetModuleImage
 );
 
 modules.post(
@@ -205,7 +205,14 @@ modules.post(
   upload.single("image"),
   jsonParser,
   postModuleFromScratchValidator,
-  httpPostModuleFromScratch,
+  httpPostModuleFromScratch
+);
+
+modules.delete(
+  "/parcours/:moduleId",
+  checkPermissions("module"),
+  moduleIdValidator,
+  httpDeleteModule
 );
 
 export default modules;
