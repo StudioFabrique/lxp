@@ -38,7 +38,7 @@ export default function ModuleToParcours({
   skills,
 }: Props) {
   return (
-    <>
+    <div className="flex flex-col gap-y-8">
       {/* Composant qui permet de selectionner des contacts */}
       <InheritedItems
         drawerId="add-contacts"
@@ -72,6 +72,6 @@ export default function ModuleToParcours({
         {/* Composant qui affiche les compétences qui ne sont pas selectionnées */}
         <NotSelectedSkills />
       </InheritedItems>
-    </>
+    </div>
   );
 }

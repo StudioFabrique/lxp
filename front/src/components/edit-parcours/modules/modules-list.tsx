@@ -9,7 +9,7 @@ type Props = {
 
 export default function ModulesList(props: Props) {
   return (
-    <div className="card bg-base-100 h-38 image-full w-76 shadow-sm">
+    <div className="card bg-base-100 h-38 image-full w-70 shadow-sm">
       <figure>
         <img
           className="object-cover w-full"

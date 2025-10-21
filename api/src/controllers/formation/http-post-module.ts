@@ -14,7 +14,7 @@ async function httpPostModule(req: CustomRequest, res: Response) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     await deleteTempUploadedFile(req);
-    //console.log("Validation errors:", errors.array());
+    console.log("Validation errors:", errors.array());
 
     return res.status(400).json({ errors: errors.array() });
   }
@@ -28,12 +28,16 @@ async function httpPostModule(req: CustomRequest, res: Response) {
       const thumb = resizedPic.toBuffer();
       const thumb64 = (await thumb).toString("base64");
       const response = await postModule(module, thumb64, image, userId);
+      console.log({ response });
+
       await deleteTempUploadedFile(req);
       return res
         .status(201)
         .json({ message: "Mise à jour réussie", data: response });
     } else {
       const response = await postModule(module, null, null, userId!);
+      console.log({ response });
+
       return res
         .status(201)
         .json({ message: "Mise à jour réussie", data: response });
@@ -41,6 +45,7 @@ async function httpPostModule(req: CustomRequest, res: Response) {
   } catch (error: any) {
     if (uploadedFile) await deleteTempUploadedFile(req);
     //console.log("error upload", error.message);
+    console.log({ error });
 
     return res
       .status(error.statusCode ?? 500)
