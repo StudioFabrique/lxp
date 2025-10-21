@@ -39,7 +39,7 @@ async function getModulesFromParcours(parcoursId: number) {
   const parcoursData = {
     formationId: existingParcours.formation.id,
     contacts: existingParcours.contacts.map((c) => c.contact),
-    bonusdSkills: existingParcours.bonusSkills,
+    bonusSkills: existingParcours.bonusSkills,
   };
 
   return { modules, parcoursData };

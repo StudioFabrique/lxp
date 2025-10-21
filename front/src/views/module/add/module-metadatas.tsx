@@ -17,7 +17,6 @@ type Props = {
 
 function ModuleMetadatas({ data, onSetFile }: Props) {
   const { image, handleFileChange } = useImageUpload(5000000, onSetFile);
-
   // affiche un aperçu de l'image choisie pour le module ou une image en background de div de manière dynamique
   const classImage: React.CSSProperties = {
     backgroundImage: `url(${image ? image : "https://picsum.photos/200/300"})`,
@@ -31,7 +30,7 @@ function ModuleMetadatas({ data, onSetFile }: Props) {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2">
+    <div>
       <article className="flex flex-col gap-y-4">
         {/* titre */}
 
@@ -65,8 +64,6 @@ function ModuleMetadatas({ data, onSetFile }: Props) {
           <span style={classImage} />
         </div>
       </article>
-      toto
-      <article />
     </div>
   );
 }

@@ -56,6 +56,22 @@ export const validationModule = [
       "La description du module contient des caractères non autorisés."
     )
     .optional(),
+  body("module.duration")
+    .isInt({ min: 1 })
+    .withMessage("La durée doit être un nombre entier positif."),
+  body("module.contacts")
+    .isArray()
+    .withMessage("Les contacts doivent être un tableau."),
+  body("module.contacts.*")
+    .isInt()
+    .withMessage("Chaque identifiant de contact doit être un nombre entier."),
+  body("module.skills")
+    .isArray()
+    .withMessage("Les compétences doivent être un tableau."),
+  body("module.skills.*")
+    .isInt()
+    .withMessage("Chaque identifiant de compétence doit être un nombre entier.")
+    .optional(),
 ];
 
 formationRouter.get("/", checkPermissions("formation"), httpGetFormation);
