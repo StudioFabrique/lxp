@@ -19,6 +19,7 @@ interface InheritedItemsProps {
   isDisabled?: boolean;
   property: string; // propriété utilisée pour trier les listes
   onSubmit: (items: any[]) => void;
+  titleSize?: "small" | "medium" | "large";
 }
 
 const InheritedItems = (props: InheritedItemsProps) => {
@@ -35,6 +36,18 @@ const InheritedItems = (props: InheritedItemsProps) => {
   const isDisabled = useMemo(() => {
     return props.isDisabled !== undefined ? props.isDisabled : false;
   }, [props.isDisabled]);
+
+  const sizeClass = useMemo(() => {
+    switch (props.titleSize) {
+      case "small":
+        return "text-sm";
+      case "medium":
+        return "text-lg";
+      case "large":
+      default:
+        return "text-xl";
+    }
+  }, [props.titleSize]);
 
   /**
    * ajoute des éléments à la liste des éléments sélectionnés
@@ -90,7 +103,13 @@ const InheritedItems = (props: InheritedItemsProps) => {
     <section className="w-full flex flex-col">
       <div className="flex items-center justify-between">
         {props.title ? (
-          <h2 className="text-xl font-bold p-2">{props.title}</h2>
+          <h2
+            className={`${
+              props.titleSize !== "large" ? sizeClass : sizeClass + " font-bold"
+            } p-2`}
+          >
+            {props.title}
+          </h2>
         ) : null}
         <ButtonAdd
           label={props.buttonLabel ?? "Sélectionner"}
