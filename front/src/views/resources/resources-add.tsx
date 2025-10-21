@@ -22,8 +22,6 @@ export default function ResourceAdd() {
     setTagError,
     showTipTapEditor,
     resource,
-    isAnyActivityBeingEdited,
-    setIsAnyActivityBeingEdited,
     handleClickShowTipTapEditor,
     handleCloseTipTapEditor,
     handleSubmitForm,
@@ -85,7 +83,7 @@ export default function ResourceAdd() {
                 <TiptapActivity
                   // Il peut être utile d'utiliser key dans certaines situation dans lesquelles le composant ne se remonte pas correctement
                   // key={`tiptap_${mode}`}
-                  // id tout court au lieu de parentId, au moins c'est clair
+                  // id tout court au lieu de parentId, au moins c'est clair et tout autant générique
                   id={resource.id}
                   // props title à passer (dynamique, ne pas reproduire le description: "description" avec title: "title" loool)
                   title=""
@@ -94,18 +92,17 @@ export default function ResourceAdd() {
                   // passer le mode d'edition "read", "edit" ou "write", peut être un state dynamique passé en props
                   mode="write"
                   // Appelé, quand on appuie sur fermer/annuler
-                  onClose={() => {
-                    // je conseille de passer le mode "write" à "read"
-                    // setMode("read")
-                  }}
+                  onClose={handleCloseTipTapEditor}
                   onEditTitle={(title) => {}} // Appelé dès lors que le titre est modifié
                   onEditContent={(content) => {}} // Appelé dès lors que le contenu est modifié
                   onSave={async (id, title, content) => {
                     // retourner un boolean de façon asynchrone
                     const requeteReussi = true; // ou false si requête échoue ou autre type d'erreur
                     // exemple utilisation
-                    // juste simuler un délai de façon asynchrone
-
+                    // simulation d'un délai de façon asynchrone de 1s
+                    new Promise((resolve) => {
+                      setTimeout(() => resolve, 1000);
+                    });
                     return requeteReussi;
                   }}
                 />
@@ -114,7 +111,6 @@ export default function ResourceAdd() {
                   <ActivityCreationOptionsButtons
                     selectedLesson={resource}
                     onClickShowTipTapEditor={handleClickShowTipTapEditor}
-                    isDisabled={isAnyActivityBeingEdited}
                   />
                   {previewActivity ? (
                     <>

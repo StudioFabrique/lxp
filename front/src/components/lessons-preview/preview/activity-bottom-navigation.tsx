@@ -4,8 +4,8 @@ import FeedbacksButton from "../../UI/feedbacks/feedbacks-button";
 
 type Props = {
   modalVisibility: "deletionModal" | "lessonCompletionModal" | "none";
-  isFirstActivity: boolean;
-  isLastActivity: boolean;
+  isFirstActivitySelected: boolean;
+  isLastActivitySelected: boolean;
   isLessonCompleted: boolean;
   onPrevious: () => void;
   onNext: () => void;
@@ -14,21 +14,21 @@ type Props = {
 
 const ActivityBottomNavigation = ({
   modalVisibility,
-  isFirstActivity,
-  isLastActivity,
+  isFirstActivitySelected,
+  isLastActivitySelected,
   isLessonCompleted,
   onPrevious,
   onNext,
   onCompleteLesson,
 }: Props) => (
   <div className="flex gap-2">
-    {!isFirstActivity && (
+    {!isFirstActivitySelected && (
       <button onClick={onPrevious} className="btn btn-primary text-base-100">
         <ArrowLeft />
         Activité précédente
       </button>
     )}
-    {isLastActivity ? (
+    {isLastActivitySelected ? (
       // Bouton pour terminer la leçon afin d'afficher une modal
       <Can action="component" object="progression">
         <FeedbacksButton

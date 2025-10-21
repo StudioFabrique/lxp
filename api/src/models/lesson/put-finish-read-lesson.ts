@@ -4,7 +4,7 @@ import User from "../../utils/interfaces/db/user";
 
 export default async function putFinishReadLesson(
   lessonId: number,
-  userIdMdb: string,
+  userIdMdb: string
 ) {
   const student = await prisma.student.findFirst({
     where: { idMdb: userIdMdb },

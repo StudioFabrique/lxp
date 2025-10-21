@@ -1,6 +1,9 @@
 import { prisma } from "../../utils/db";
 
-export default async function getLessonDetail(lessonId: number) {
+export default async function getLessonDetail(
+  lessonId: number,
+  userIdMdb?: string
+) {
   let existingLesson = (await prisma.lesson.findFirst({
     where: { id: lessonId },
     select: {
@@ -27,6 +30,7 @@ export default async function getLessonDetail(lessonId: number) {
         },
         orderBy: { order: "asc" },
       },
+      lessonRating: { where: { student: { idMdb: userIdMdb } } },
     },
   })) as any;
 

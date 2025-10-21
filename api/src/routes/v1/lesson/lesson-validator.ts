@@ -1,9 +1,15 @@
-import { body, param } from "express-validator";
+import { body, param, query } from "express-validator";
 import { stringValidateGeneric } from "../../../helpers/custom-validators";
 import { checkValidatorResult } from "../../../middleware/validators";
 
 export const lessonIdValidator = [
   param("lessonId")
+    .notEmpty()
+    .withMessage("L'idientifiant de la leçon est requis.")
+    .isNumeric()
+    .isInt()
+    .withMessage("L'identifiant de la leçon doit être un nombre entier."),
+  query("rate")
     .notEmpty()
     .withMessage("L'idientifiant de la leçon est requis.")
     .isNumeric()
