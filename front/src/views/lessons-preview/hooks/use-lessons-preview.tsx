@@ -93,6 +93,7 @@ const useLessonsPreview = () => {
         lessonRead: LessonRead;
         rating: LessonRating;
       }) => {
+        console.log({ lessonRead });
         if (state.selectedLesson)
           dispatch({
             type: "mark_lesson_as_read",

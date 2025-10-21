@@ -33,7 +33,7 @@ const LessonCompletionModal = ({
       <Modal
         title="Leçon terminée !"
         rightLabel="Leçon suivante"
-        onRightClick={onClickNextLesson}
+        onRightClick={isLessonCompleted ? onClickNextLesson : undefined}
         onMinimizeClick={onClickMinimizeButton}
       >
         <div className="flex flex-col items-center gap-20 p-20 overflow-hidden">
@@ -42,15 +42,17 @@ const LessonCompletionModal = ({
             selectedStars={selectedStars}
             onSelectStarRate={handleSelectStarRate}
           />
-          <FeedbacksButton
-            className="btn btn-primary text-base-100 btn-sm text-nowrap"
-            feedbackType="stars"
-            elementCount={selectedStars}
-            onClick={handleRateContent}
-            showFeedback={!isLessonCompleted}
-          >
-            Évaluer ce contenu
-          </FeedbacksButton>
+          {!isLessonCompleted && (
+            <FeedbacksButton
+              className="btn btn-primary text-base-100 btn-sm text-nowrap"
+              feedbackType="stars"
+              elementCount={selectedStars}
+              onClick={handleRateContent}
+              showFeedback={!isLessonCompleted}
+            >
+              Évaluer ce contenu
+            </FeedbacksButton>
+          )}
         </div>
       </Modal>
     </>

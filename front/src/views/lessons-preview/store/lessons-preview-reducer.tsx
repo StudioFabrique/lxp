@@ -168,6 +168,13 @@ export function lessonsPreviewReducer(
           ...state.module,
           courses,
         },
+        selectedLesson: state.selectedLesson && {
+          ...state.selectedLesson,
+          lessonsRead: [
+            ...(state.selectedLesson.lessonsRead || []),
+            action.lessonRead,
+          ],
+        },
       };
     }
 
