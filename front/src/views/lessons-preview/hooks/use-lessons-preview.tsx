@@ -59,6 +59,22 @@ const useLessonsPreview = () => {
     [state.selectedActivity, state.selectedLesson?.activities]
   );
 
+  const isLastLessonSelected = useMemo(
+    () =>
+      Boolean(
+        ((state.selectedLesson &&
+          state.module?.courses.flatMap((course) => course.lessons).length) ||
+          0) -
+          1 ===
+          state.module?.courses
+            .flatMap((course) => course.lessons)
+            .findIndex((lesson) => lesson.id === state.selectedLesson?.id)
+      ),
+    [state.module?.courses, state.selectedLesson]
+  );
+
+  console.log({ isLastLessonSelected });
+
   const fetchModuleData = useCallback(() => {
     const applyData = ({ data }: { data: Module & { parcours: string } }) => {
       dispatch({ type: "update_module_data", module: data });
@@ -312,6 +328,7 @@ const useLessonsPreview = () => {
     isLessonCompleted,
     isFirstActivitySelected,
     isLastActivitySelected,
+    isLastLessonSelected,
     isLoading,
     dispatch,
     fetchModuleData,

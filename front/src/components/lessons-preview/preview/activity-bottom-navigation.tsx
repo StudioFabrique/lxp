@@ -6,6 +6,7 @@ type Props = {
   modalVisibility: "deletionModal" | "lessonCompletionModal" | "none";
   isFirstActivitySelected: boolean;
   isLastActivitySelected: boolean;
+  isLastLessonSelected: boolean;
   isLessonCompleted: boolean;
   onPrevious: () => void;
   onNext: () => void;
@@ -16,6 +17,7 @@ const ActivityBottomNavigation = ({
   modalVisibility,
   isFirstActivitySelected,
   isLastActivitySelected,
+  isLastLessonSelected,
   isLessonCompleted,
   onPrevious,
   onNext,
@@ -29,28 +31,30 @@ const ActivityBottomNavigation = ({
       </button>
     )}
     {isLastActivitySelected ? (
-      // Bouton pour terminer la leçon afin d'afficher une modal
-      <Can action="component" object="progression">
-        <FeedbacksButton
-          className="btn btn-primary text-nowrap text-base-100"
-          feedbackType="thumbUp"
-          showFeedback={!isLessonCompleted}
-          disabled={modalVisibility !== "none"}
-          onClick={onCompleteLesson}
-        >
-          {isLessonCompleted ? (
-            <>
-              Leçon Suivante
-              <ArrowRight />
-            </>
-          ) : (
-            <>
-              <Check />
-              Marquer comme terminé
-            </>
-          )}
-        </FeedbacksButton>
-      </Can>
+      (!isLastLessonSelected || !isLessonCompleted) && (
+        // Bouton pour terminer la leçon afin d'afficher une modal
+        <Can action="component" object="progression">
+          <FeedbacksButton
+            className="btn btn-primary text-nowrap text-base-100"
+            feedbackType="thumbUp"
+            showFeedback={!isLessonCompleted}
+            disabled={modalVisibility !== "none"}
+            onClick={onCompleteLesson}
+          >
+            {isLessonCompleted ? (
+              <>
+                Leçon Suivante
+                <ArrowRight />
+              </>
+            ) : (
+              <>
+                <Check />
+                Marquer comme terminé
+              </>
+            )}
+          </FeedbacksButton>
+        </Can>
+      )
     ) : (
       <button onClick={onNext} className="btn btn-primary text-base-100">
         Activité suivante
