@@ -46,6 +46,7 @@ type LessonsPreviewAction =
   | { type: "update_module_data"; module: Module & { parcours: string } }
   // Course
   | { type: "set_course_visibility"; isVisible: boolean; course: Course }
+  | { type: "delete_course"; id: number }
   // Lesson
   | { type: "select_lesson"; lesson?: Lesson }
   | { type: "select_lesson_by_id"; id: number }
@@ -103,6 +104,19 @@ export function lessonsPreviewReducer(
         },
       };
     }
+
+    case "delete_course":
+      return {
+        ...state,
+        module: state.module && {
+          ...state.module,
+          courses:
+            state.module?.courses.filter((course) => course.id !== action.id) ||
+            [],
+        },
+        selectedActivity: undefined,
+        selectedLesson: undefined,
+      };
 
     // --- Lesson ---
     case "select_lesson": {

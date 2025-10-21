@@ -13,15 +13,17 @@ import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 import ActivityList from "../../components/lessons-preview/sidebar/activity-list";
 import NoActivityPlaceholder from "../../components/lessons-preview/preview/no-activity-placeholder";
 import Header from "../../components/UI/header";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PenBox } from "lucide-react";
 import { useCallback } from "react";
 import ActivityBottomNavigation from "../../components/lessons-preview/preview/activity-bottom-navigation";
+import Lesson from "../../utils/interfaces/lesson";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
  */
 const LessonsPreview = () => {
+  const navigate = useNavigate();
   // récupération de la premiere valeur de l'url pour déterminer le role de l'utilisateur connecté
   const firstPathSegment = window.location.pathname.split("/")[1];
 
@@ -62,6 +64,15 @@ const LessonsPreview = () => {
     },
     [dispatch]
   );
+
+  const handleSelectLesson = (lesson: Lesson | undefined) => {
+    navigate(
+      {},
+      {
+        state: { lessonId: lesson?.id },
+      }
+    );
+  };
 
   return (
     <ViewWrapper className="flex flex-col gap-6">
@@ -108,9 +119,7 @@ const LessonsPreview = () => {
           selectedLesson={selectedLesson}
           isPanelClosed={isPanelClosed}
           onTogglePanel={() => dispatch({ type: "toggle_panel_visibility" })}
-          setSelectedLesson={(lesson) =>
-            dispatch({ type: "select_lesson", lesson })
-          }
+          onSelectLesson={handleSelectLesson}
         >
           {[
             // * Header
@@ -122,9 +131,7 @@ const LessonsPreview = () => {
               parcoursId={module.parcoursId}
               moduleId={module.id}
               selectedLesson={selectedLesson}
-              setSelectedLesson={(lesson) =>
-                dispatch({ type: "select_lesson", lesson })
-              }
+              onSelectLesson={handleSelectLesson}
               onDeleteCourse={onDeleteCourse}
               onEnableCourse={onEnableCourse}
               children={[
