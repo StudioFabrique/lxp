@@ -19,7 +19,7 @@ export default function ModulesList(props: Props) {
           alt="Shoes"
         />
       </figure>
-      <div className="card-body">
+      <div className="card-body border border-primary/50 rounded-xl">
         <h2 className="card-title">{props.title}</h2>
         <div className="flex-1" />
         <div className="card-actions justify-around gap-x-2">
