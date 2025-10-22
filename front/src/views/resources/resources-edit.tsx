@@ -99,8 +99,8 @@ export default function ResourceEdit() {
                   onSave={async (id, title, content) => {
                     // retourner un boolean de façon asynchrone
                     const requeteReussi = true; // ou false si requête échoue ou autre type d'erreur
-                    // exemple utilisation
-                    // juste simuler un délai de façon asynchrone
+
+                    // await machinTrucToto()
 
                     return requeteReussi;
                   }}

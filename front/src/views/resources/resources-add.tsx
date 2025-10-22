@@ -98,11 +98,9 @@ export default function ResourceAdd() {
                   onSave={async (id, title, content) => {
                     // retourner un boolean de façon asynchrone
                     const requeteReussi = true; // ou false si requête échoue ou autre type d'erreur
-                    // exemple utilisation
-                    // simulation d'un délai de façon asynchrone de 1s
-                    new Promise((resolve) => {
-                      setTimeout(() => resolve, 1000);
-                    });
+
+                    // await machinTrucToto()
+
                     return requeteReussi;
                   }}
                 />
