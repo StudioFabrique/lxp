@@ -16,6 +16,7 @@ type LessonItemProps = {
   lessonsOrders: number[];
   selectedLesson: Lesson | undefined;
   onSelectLesson: (lesson: Lesson) => void;
+  onOpenModal: (lesson: Lesson) => void;
 };
 
 // Composant représentant un élément de leçon individuel
@@ -25,6 +26,7 @@ const LessonItem = ({
   lessonsOrders,
   selectedLesson,
   onSelectLesson,
+  onOpenModal,
   children,
 }: PropsWithChildren<LessonItemProps>) => {
   // Vérifie si cette leçon est actuellement sélectionnée
@@ -50,7 +52,7 @@ const LessonItem = ({
   const handleMenuOption = (action: string) => {
     console.log(`Action ${action} sur la leçon: ${lesson.title}`);
     setIsMenuOpen(false);
-    // TODO: Implémenter les actions réelles
+    onOpenModal(lesson);
   };
 
   useEffect(() => {

@@ -16,7 +16,10 @@ type CourseItemProps = {
   onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
+  onDeleteLesson: (lessonId: number) => Promise<void>;
 };
+
+type ModalType = "visibility" | "deleteCourse" | "deleteLesson";
 
 const CourseItem = ({
   course,
@@ -26,13 +29,15 @@ const CourseItem = ({
   onSelectLesson,
   onDeleteCourse,
   onEnableCourse,
+  onDeleteLesson,
   children,
 }: PropsWithChildren<CourseItemProps>) => {
   const [isCourseOpen, setCourseOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<"visibility" | "delete">(
-    "visibility"
-  );
+  const [modalType, setModalType] = useState<ModalType>("visibility");
+  const [selectedLessonToDelete, setSelectedLessonToDelete] = useState<
+    Lesson | undefined
+  >(undefined);
   const [isModalLoading, setIsModalLoading] = useState(false);
 
   const courseProgress = (
@@ -53,13 +58,15 @@ const CourseItem = ({
     e.stopPropagation();
   };
 
-  const handleOpenModal = (
-    e: React.MouseEvent,
-    modalType: "visibility" | "delete"
-  ) => {
-    e.stopPropagation();
+  const handleOpenModal = (modalType: ModalType, e?: React.MouseEvent) => {
+    e?.stopPropagation();
     setModalType(modalType);
     setShowModal(true);
+  };
+
+  const handleOpenLessonDeletionModal = (lesson: Lesson) => {
+    setSelectedLessonToDelete(lesson);
+    handleOpenModal("deleteLesson");
   };
 
   const handleCloseModal = () => {
@@ -70,8 +77,14 @@ const CourseItem = ({
   const handleConfirmAction = async () => {
     setIsModalLoading(true);
     switch (modalType) {
-      case "delete":
+      case "deleteCourse":
         await onDeleteCourse(course.id);
+        break;
+      case "deleteLesson":
+        if (selectedLessonToDelete?.id) {
+          await onDeleteLesson(selectedLessonToDelete.id);
+          setSelectedLessonToDelete(undefined);
+        }
         break;
       case "visibility":
         await onEnableCourse(course.id, !course.visibility);
@@ -94,17 +107,26 @@ const CourseItem = ({
   return (
     <>
       <CourseActionsModal
-        title={modalType === "visibility" ? "Visibilité" : "Supprimer le cours"}
+        title={
+          modalType === "visibility"
+            ? "Visibilité"
+            : modalType === "deleteLesson"
+            ? "Supprimer la leçon"
+            : "Supprimer le cours"
+        }
         description={
           modalType === "visibility"
             ? `Êtes-vous sûr de vouloir  ${
                 course.visibility ? "cacher" : "rendre visible"
               } ce cours ?`
-            : "Êtes-vous sûr de vouloir supprimer ce cours ainsi que les leçons associés ?"
+            : modalType === "deleteLesson"
+            ? "Êtes-vous sûr de vouloir supprimer cette leçon ainsi que les activités associées ?"
+            : "Êtes-vous sûr de vouloir supprimer ce cours ainsi que les leçons associées ?"
         }
         showModal={showModal}
         isModalLoading={isModalLoading}
         course={course}
+        lesson={selectedLessonToDelete}
         onCancel={handleCloseModal}
         onConfirm={handleConfirmAction}
       />
@@ -194,6 +216,7 @@ const CourseItem = ({
                   moduleId={moduleId}
                   selectedLesson={selectedLesson}
                   onSelectLesson={onSelectLesson}
+                  onOpenModal={handleOpenLessonDeletionModal}
                   children={children}
                 />
               ))
