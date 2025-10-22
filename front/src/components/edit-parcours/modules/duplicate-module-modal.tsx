@@ -1,5 +1,5 @@
 type Props = {
-  onContinue?: () => void; // Optional callback when user chooses to proceed with creation
+  onContinue: () => void; // Optional callback when user chooses to proceed with creation
   onClose: () => void; // Required callback when user closes the modal
 };
 
@@ -46,7 +46,9 @@ export default function DuplicateModuleModal(props: Props) {
           </button>
 
           {/* Continue button - proceeds with creation despite duplicate */}
-          <button className="btn btn-primary">Continuer</button>
+          <button className="btn btn-primary" onClick={props.onContinue}>
+            Continuer
+          </button>
         </div>
       </div>
     </dialog>

@@ -70,6 +70,8 @@ const useNewModule = () => {
 
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
 
+  const [metadataList, setMetadataList] = useState<any>(null);
+
   // Reference to the form element for scrolling behavior
   const refForm = useRef<HTMLFormElement | null>(null);
 
@@ -171,6 +173,8 @@ const useNewModule = () => {
     );
   };
 
+  console.log({ metadataList });
+
   /**
    * Handles form cancellation
    * Resets all form state and hides the form without saving
@@ -210,6 +214,25 @@ const useNewModule = () => {
 
   const handleCloseDuplicateModal = () => {
     setShowDuplicateModal(false);
+  };
+
+  const handleDuplicateModule = () => {
+    getMetadataList();
+    setShowDuplicateModal(false);
+  };
+
+  const getMetadataList = () => {
+    const applyData = (data: any) => {
+      setMetadataList(data);
+      const drawer = document.getElementById("duplicate_module_drawer");
+      (drawer as HTMLDialogElement).click();
+    };
+    sendRequest(
+      {
+        path: `/modules/formation/${parcours!.formationId}/true`,
+      },
+      applyData
+    );
   };
 
   useEffect(() => {
@@ -268,6 +291,8 @@ const useNewModule = () => {
     handleDeleteModule,
     handleCancelDeletion,
     handleCloseDuplicateModal,
+    handleDuplicateModule,
+    metadataList,
   };
 };
 

@@ -7,6 +7,7 @@ import ModuleToParcours from "../../../views/module/add/module-to-parcours";
 import useNewModule from "./useNewModule";
 import TwoButtonsModal from "../../UI/modal/two-buttons-modal";
 import DuplicateModuleModal from "./duplicate-module-modal";
+import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
 
 /**
  * Module Component - Displays and manages modules associated with a learning path (parcours)
@@ -42,7 +43,10 @@ export default function ModuleComponent() {
     handleDeleteModule,
     handleCancelDeletion,
     handleCloseDuplicateModal,
+    handleDuplicateModule,
+    metadataList,
   } = useNewModule();
+  console.log({ metadataList });
 
   return (
     <>
@@ -140,7 +144,162 @@ export default function ModuleComponent() {
           <p>Cette action est irréversible...</p>
         </>
       </TwoButtonsModal>
-      <DuplicateModuleModal onClose={handleCloseDuplicateModal} />
+      <DuplicateModuleModal
+        onContinue={handleDuplicateModule}
+        onClose={handleCloseDuplicateModal}
+      />
+
+      <RightSideDrawer
+        title="Modules associés à la formation"
+        id="duplicate_module_drawer"
+        visible={false}
+      >
+        {metadataList && metadataList.length > 0 ? (
+          <ul className="list w-full bg-blue-500">
+            {metadataList.map((metadata: any) => {
+              // Calculate total courses across all metadatas
+              const totalCourses =
+                metadata.metadatas?.reduce(
+                  (acc: number, meta: any) => acc + (meta.courses?.length ?? 0),
+                  0
+                ) ?? 0;
+
+              return (
+                <>
+                  <li className="list-row w-full bg-orange-500">
+                    <div>
+                      <img
+                        className="size-10 rounded-box"
+                        src="https://img.daisyui.com/images/profile/demo/1@94.webp"
+                      />
+                    </div>
+                    <div>
+                      <div>Dio Lupa</div>
+                      <div className="text-xs uppercase font-semibold opacity-60">
+                        Remaining Reason
+                      </div>
+                    </div>
+                    <p className="list-col-wrap text-xs">
+                      "Remaining Reason" became an instant hit, praised for its
+                      haunting sound and emotional depth. A viral performance
+                      brought it widespread recognition, making it one of Dio
+                      Lupa’s most iconic tracks.
+                    </p>
+                    <button className="btn btn-square btn-ghost">
+                      <svg
+                        className="size-[1.2em]"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                      >
+                        <g
+                          strokeLinejoin="round"
+                          strokeLinecap="round"
+                          strokeWidth="2"
+                          fill="none"
+                          stroke="currentColor"
+                        >
+                          <path d="M6 3L20 12 6 21 6 3z"></path>
+                        </g>
+                      </svg>
+                    </button>
+                    <button className="btn btn-square btn-ghost">
+                      <svg
+                        className="size-[1.2em]"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                      >
+                        <g
+                          strokeLinejoin="round"
+                          strokeLinecap="round"
+                          strokeWidth="2"
+                          fill="none"
+                          stroke="currentColor"
+                        >
+                          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                        </g>
+                      </svg>
+                    </button>
+                  </li>{" "}
+                  <li className="list-row">
+                    <div>
+                      <img
+                        className="size-10 rounded-box"
+                        src="https://img.daisyui.com/images/profile/demo/1@94.webp"
+                      />
+                    </div>
+                    <div>
+                      <div>Dio Lupa</div>
+                      <div className="text-xs uppercase font-semibold opacity-60">
+                        Remaining Reason
+                      </div>
+                    </div>
+                    <p className="list-col-wrap text-xs">
+                      "Remaining Reason" became an instant hit, praised for its
+                      haunting sound and emotional depth. A viral performance
+                      brought it widespread recognition, making it one of Dio
+                      Lupa’s most iconic tracks.
+                    </p>
+                    <button className="btn btn-square btn-ghost">
+                      <svg
+                        className="size-[1.2em]"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                      >
+                        <g
+                          strokeLinejoin="round"
+                          strokeLinecap="round"
+                          strokeWidth="2"
+                          fill="none"
+                          stroke="currentColor"
+                        >
+                          <path d="M6 3L20 12 6 21 6 3z"></path>
+                        </g>
+                      </svg>
+                    </button>
+                    <button className="btn btn-square btn-ghost">
+                      <svg
+                        className="size-[1.2em]"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                      >
+                        <g
+                          strokeLinejoin="round"
+                          strokeLinecap="round"
+                          strokeWidth="2"
+                          fill="none"
+                          stroke="currentColor"
+                        >
+                          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                        </g>
+                      </svg>
+                    </button>
+                  </li>
+                </>
+              );
+            })}
+          </ul>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-64">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-16 h-16 text-base-content/30 mb-4"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"
+              />
+            </svg>
+            <p className="text-base-content/70 text-center">
+              Aucun module disponible pour cette formation
+            </p>
+          </div>
+        )}
+      </RightSideDrawer>
     </>
   );
 }

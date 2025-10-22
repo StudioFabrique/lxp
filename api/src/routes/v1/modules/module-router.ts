@@ -113,7 +113,7 @@ modules.put(
   httpPutAddModule
 );
 modules.get(
-  "/formation/:formationId",
+  "/formation/:formationId/:duplicate",
   checkPermissions("module"),
   getModuleFormationValidator,
   httpGetModuleFormation
