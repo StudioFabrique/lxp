@@ -199,6 +199,22 @@ const useLessonsPreview = () => {
     [sendRequest]
   );
 
+  const deleteLesson = useCallback(
+    async (lessonId: number) => {
+      const applyData = (data: { success: boolean; message: string }) => {
+        if (data.success) {
+          toast.success(data.message);
+          dispatch({ type: "delete_lesson", id: lessonId });
+        }
+      };
+      await sendRequest(
+        { path: `/lesson/${lessonId}`, method: "delete" },
+        applyData
+      );
+    },
+    [sendRequest]
+  );
+
   const fetchLessonData = useCallback(async () => {
     const applyData = (lesson: Lesson) => {
       // Mettre à jour selectedLesson avec les données complètes
@@ -339,6 +355,7 @@ const useLessonsPreview = () => {
     onRateContent: rateContent,
     onEnableCourse: enableCourse,
     onDeleteCourse: deleteCourse,
+    onDeleteLesson: deleteLesson,
     onDeleteActivity: deleteActivity,
   };
 };
