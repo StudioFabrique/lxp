@@ -64,7 +64,7 @@ const StudentLayout = () => {
           {/* Animation de confettis conditionnelle */}
           {showConfetti && <PortalConfetti />}
           <FadeWrapper>
-            <div className="w-full flex flex-col pl-20">
+            <div className="w-full flex flex-col">
               <Outlet />
             </div>
           </FadeWrapper>

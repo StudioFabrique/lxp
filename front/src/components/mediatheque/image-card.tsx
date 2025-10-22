@@ -1,4 +1,5 @@
 import { ACTIVITIES } from "../../config/urls";
+import bgImageGradient from "../../utils/bg-image-gradient";
 import Media from "../../utils/interfaces/media";
 
 type Props = {
@@ -7,7 +8,7 @@ type Props = {
 
 function ImageCard({ media }: Props) {
   const classImage: React.CSSProperties = {
-    backgroundImage: `url(${ACTIVITIES + "images/" + media.url})`,
+    backgroundImage: bgImageGradient(ACTIVITIES + "images/" + media.url),
 
     width: "100%",
     height: "8rem",

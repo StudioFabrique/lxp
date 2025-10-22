@@ -7,7 +7,7 @@ const Home = ({ currentRoute }: { currentRoute: string[] }) => {
   return (
     <li>
       <Link to={`/${currentRoute[0]}`}>
-        <div className="tooltip tooltip-right w-6 h-6" data-tip="Accueil LXP">
+        <div className="tooltip w-6 h-6" data-tip="Accueil LXP">
           <div className="flex hover justify-center items-center">
             <HomeIcon className="z-10 pointer-events-none" />
             <span

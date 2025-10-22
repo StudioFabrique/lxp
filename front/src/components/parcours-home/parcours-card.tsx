@@ -8,6 +8,7 @@ import Can from "../UI/can/can.component";
 import { useEffect, useState } from "react";
 import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
 import { truncateText } from "../../helpers/truncate-text";
+import bgImageGradient from "../../utils/bg-image-gradient";
 
 // Interface définissant les props du composant
 interface ParcoursCardProps {
@@ -38,7 +39,7 @@ const ParcoursCard = (props: ParcoursCardProps) => {
 
   // Style pour l'image de fond
   const classImage: React.CSSProperties = {
-    backgroundImage: `url('${image}')`,
+    backgroundImage: image ? bgImageGradient(image) : "none",
     width: "100%",
     height: "9rem",
     backgroundSize: "cover",

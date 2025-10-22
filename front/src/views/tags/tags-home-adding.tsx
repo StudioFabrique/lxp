@@ -18,13 +18,7 @@ const TagsHomeAdding = forwardRef<
   const { currentTags, tag, handleOnChange, handleTagSubmit, handleRemoveTag } =
     useTags(initialTags);
 
-  // here manage the tagError state while validate input regex
   const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-    // if (regexIncorrect) {
-    //   setTagError(true);
-    //   return;
-    // }
-
     setTagError(false);
 
     handleOnChange(e);
@@ -39,7 +33,7 @@ const TagsHomeAdding = forwardRef<
   };
 
   return (
-    <div className="flex flex-col gap-4 py-5 px-1">
+    <>
       <AddTag
         error={tagError}
         tag={tag}
@@ -51,7 +45,7 @@ const TagsHomeAdding = forwardRef<
       <button ref={ref} className="hidden" onClick={handleSubmitAllTags} />
 
       <TagsList tagsList={currentTags} onRemove={handleRemoveTag} />
-    </div>
+    </>
   );
 });
 

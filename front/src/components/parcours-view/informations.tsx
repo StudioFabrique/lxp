@@ -9,7 +9,7 @@ const Informations = () => {
   return (
     <Wrapper>
       <h2 className="text-xl font-bold text-primary">Informations</h2>
-      <div className="flex flex-col gap-y-5">
+      <div className="flex flex-col gap-y-2">
         <span className="flex gap-x-5">
           <p className="font-bold">Diplôme</p>
           <p>{diplome?.title ?? ""}</p>

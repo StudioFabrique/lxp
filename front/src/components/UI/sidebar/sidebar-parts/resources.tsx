@@ -14,10 +14,7 @@ const Resources = ({ currentRoute }: { currentRoute: string[] }) => {
         aria-label="Ressources supplémentaires"
       >
         {/* Tooltip qui apparaît au survol */}
-        <div
-          className="tooltip tooltip-right w-6 h-6"
-          data-tip="Ressources supplémentaires"
-        >
+        <div className="tooltip w-6 h-6" data-tip="Ressources supplémentaires">
           {/* Container pour l'icône et l'effet de survol */}
           <div className="flex hover justify-center items-center">
             {/* Icône de la médiathèque */}

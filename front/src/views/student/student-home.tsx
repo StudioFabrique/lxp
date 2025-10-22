@@ -10,6 +10,9 @@ import FeelingFeedback from "../../components/student-home/right-side/feeling-fe
 import StudentAccomplishments from "../../components/student-home/right-side/feedback-apprenant/student-accomplishments";
 import MostReadCourses from "../../components/student-home/right-side/most-read-courses";
 import { Context } from "../../store/context.store";
+import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
+import Header from "../../components/UI/header";
+import { Bell, Search } from "lucide-react";
 
 const StudentHome = () => {
   const { sendRequest } = useHttp();
@@ -26,18 +29,23 @@ const StudentHome = () => {
   }, [sendRequest]);
 
   return (
-    <div className="m-6 flex flex-col gap-6">
-      <div className="flex w-full flex-col-reverse justify-between lg:flex-row">
-        <span className="mt-5">
-          <h1 className="text-3xl font-bold capitalize ">{`Bonjour, ${user?.firstname} ${user?.lastname} !`}</h1>
-          <p>
-            Bienvenue dans votre espace. Commencez votre apprentissage ou
-            reprenez là où vous vous êtes arrêté.
-          </p>
-        </span>
-        <UserTopBar />
-      </div>
-      <div className="grid gap-10 xl:grid-cols-3 xl:gap-0">
+    <ViewWrapper className="flex flex-col gap-6">
+      <Header
+        title={`Bonjour, ${user?.firstname} ${user?.lastname} !`}
+        description="Bienvenue dans votre espace. Commencez votre apprentissage ou
+            reprenez là où vous vous êtes arrêté."
+      >
+        <div className="flex gap-4 w-full">
+          <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
+            <Search />
+          </button>
+          <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
+            <Bell />
+          </button>
+        </div>
+      </Header>
+
+      <div className="grid gap-10 xl:grid-cols-3">
         <div className="flex flex-col gap-5 xl:col-span-2">
           {/* <Notifications /> */}
           {lastLessons && lastLessons?.length > 0 ? (
@@ -50,14 +58,15 @@ const StudentHome = () => {
           )}
           <Timeline title="Mon emploi du temps" viewType="day" />
         </div>
-        <div className="flex flex-col xl:px-10 gap-5">
+        <div className="flex flex-col gap-5">
+          <UserTopBar />
           <FeelingFeedback />
           <StudentAccomplishments />
           <MostReadCourses />
           {/* <Chat /> */}
         </div>
       </div>
-    </div>
+    </ViewWrapper>
   );
 };
 

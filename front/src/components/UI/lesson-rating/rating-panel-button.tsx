@@ -3,7 +3,7 @@ import RatingPanel from "./rating-panel";
 
 type EvaluateContentButtonProps = {
   note?: number;
-  onRateContent: (note: number) => void;
+  onRateContent: (rating: number) => void;
 };
 
 /**

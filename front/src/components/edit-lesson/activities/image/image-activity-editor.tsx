@@ -9,6 +9,7 @@ import type { Activity } from "../../../../utils/interfaces/activity";
 import { ACTIVITIES } from "../../../../config/urls";
 import DialogImages from "../../../mediatheque/dialog-images";
 import useEditImageActivity from "./use-edit-image-activity";
+import bgImageGradient from "../../../../utils/bg-image-gradient";
 
 /**
  * Props for the ImageActivityEditor component
@@ -42,15 +43,15 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
    * Handles both uploaded images and existing activity images
    */
   const classImage: React.CSSProperties = {
-    backgroundImage: `url('${
+    backgroundImage: bgImageGradient(
       selectedImage
         ? `${ACTIVITIES}images/${selectedImage}`
         : image
-          ? image
-          : activity?.url
-            ? `${ACTIVITIES}images/${activity.url}`
-            : defaultImage
-    }')`,
+        ? image
+        : activity?.url
+        ? `${ACTIVITIES}images/${activity.url}`
+        : defaultImage
+    ),
     width: "100%",
     height: "100%",
     minHeight: "25rem",

@@ -2,33 +2,47 @@ import { Response } from "express";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import { badQuery, serverIssue } from "../../utils/constantes";
 import putFinishReadLesson from "../../models/lesson/put-finish-read-lesson";
+import postRateLesson from "../../models/lesson/post-rate-lesson";
 
 export default async function httpPutFinishReadLesson(
   req: CustomRequest,
-  res: Response,
+  res: Response
 ) {
   const userId = req.auth?.userId;
+  const { lessonId } = req.params;
+  const { rate } = req.query;
 
   if (!userId) {
     return res.status(404).json({ message: badQuery });
   }
 
+  if (!rate)
+    return res.status(400).json({
+      message: badQuery + ", la note est manquante",
+    });
+
   try {
-    const { lessonId } = req.params;
+    const lessonReadResponse = await putFinishReadLesson(+lessonId, userId);
 
-    const response = await putFinishReadLesson(+lessonId, userId);
+    if (!lessonReadResponse) {
+      return res.status(404).json({
+        message: "Problème lors de la requête de confirmation de lecture",
+      });
+    }
 
-    if (!response) {
-      return res
-        .status(404)
-        .json({
-          message: "Problème lors de la requête de confirmation de lecture",
-        });
+    const ratingResponse = await postRateLesson(+lessonId, userId, +rate);
+
+    if (!ratingResponse) {
+      return res.status(404).json({
+        message: "Problème lors de la requête de notation de la leçon",
+      });
     }
 
     return res.status(201).json({
-      message: "La leçon a bien été marqué comme lu",
-      data: response,
+      message:
+        "La leçon a bien été marqué comme lu et la notation a bien été prise en compte",
+      lessonRead: lessonReadResponse,
+      rating: ratingResponse,
     });
   } catch (error: any) {
     return res

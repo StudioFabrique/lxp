@@ -69,31 +69,31 @@ type FeedbackButtonProps<TFunc extends () => void> = {
   className?: HTMLAttributes<HTMLButtonElement>["className"];
   feedbackType: RewardType;
   elementCount?: number; // Seulement lorsque feedbackType === ""
-  enableAnimationOnClick: boolean;
+  showFeedback: boolean;
   disabled?: boolean;
   onClick: TFunc;
 };
 
 // Bouton avec un trigger onClick et une animation de feedback au click
 const FeedbacksButton = <TFunc extends () => void>({
-  children,
   className,
   feedbackType,
   elementCount,
-  enableAnimationOnClick,
+  showFeedback,
   disabled,
   onClick,
+  children,
 }: PropsWithChildren<FeedbackButtonProps<TFunc>>) => {
   const rewardProperties = getRewardProperties(feedbackType, elementCount);
 
   const { reward, isAnimating } = useReward(
     rewardProperties.id,
     rewardProperties.type as "emoji" | "confetti" | "balloons",
-    rewardProperties.config,
+    rewardProperties.config
   );
 
   const handleClick = () => {
-    enableAnimationOnClick && reward();
+    showFeedback && reward();
     onClick();
   };
 

@@ -98,7 +98,7 @@ const RatingPanel = ({
             className="btn btn-primary btn-sm text-base-100 text-nowrap"
             feedbackType="stars"
             elementCount={selectedStars}
-            enableAnimationOnClick
+            showFeedback
             onClick={onRateContent}
           >
             Évaluer ce contenu

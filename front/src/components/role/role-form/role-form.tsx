@@ -115,7 +115,7 @@ const RoleForm = ({ role, onRefreshData }: RoleFormProps) => {
 
   return (
     <div className="flex flex-col gap-5">
-      <span className="flex flex-col gap-y-1">
+      <span className="flex flex-col gap-y-1 ml-2">
         <h2 className="font-bold text-xl">
           {role ? "Détails du rôle" : "Création de rôles"}
         </h2>

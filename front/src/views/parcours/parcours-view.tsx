@@ -17,8 +17,10 @@ import ProgressModulesStats from "../../components/parcours-view/progress-stats"
 import HeaderMenu from "../../components/UI/header-menu";
 import ImageHeader from "../../components/image-header";
 import Can from "../../components/UI/can/can.component";
-import { BookMarkedIcon, RocketIcon } from "lucide-react";
+import { Bell, BookMarkedIcon, RocketIcon, Search } from "lucide-react";
 import useParcoursView from "./hooks/use-parcours-view";
+import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
+import Header from "../../components/UI/header";
 
 const ParcoursView = () => {
   const {
@@ -40,16 +42,30 @@ const ParcoursView = () => {
         module.courses?.some((course) =>
           course.lessons?.some(
             (lesson) =>
-              !lesson.lessonsRead?.length || !lesson.lessonsRead[0]?.finishedAt,
-          ),
-        ),
+              !lesson.lessonsRead?.length || !lesson.lessonsRead[0]?.finishedAt
+          )
+        )
       )?.id || modules[0].id;
 
     navigate(`/${currentRoute[0]}/parcours/module/${resumeModuleId}`);
   };
 
   return (
-    <div className="px-8 p-4">
+    <ViewWrapper className="flex flex-col gap-6">
+      <Header
+        title={`Aperçu du parcours`}
+        description="Bienvenue dans votre espace. Commencez votre apprentissage ou
+            reprenez là où vous vous êtes arrêté."
+      >
+        <div className="flex gap-4 w-full">
+          <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
+            <Search />
+          </button>
+          <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
+            <Bell />
+          </button>
+        </div>
+      </Header>
       {isLoading ? (
         <Loader />
       ) : error.length === 0 ? (
@@ -107,7 +123,7 @@ const ParcoursView = () => {
       ) : (
         <Error404 />
       )}
-    </div>
+    </ViewWrapper>
   );
 };
 

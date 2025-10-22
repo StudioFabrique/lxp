@@ -15,6 +15,7 @@ export default interface Module {
   thumb?: string;
   minDate?: string;
   maxDate?: string;
+  parcoursId?: number;
   parcours: Parcours;
   courses: Array<Course>;
   tags: Array<Tag>;

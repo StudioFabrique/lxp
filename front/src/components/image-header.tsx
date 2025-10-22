@@ -1,6 +1,7 @@
 import { CornerDownRight } from "lucide-react";
 import { ReactNode } from "react";
 import { Link } from "react-router-dom";
+import bgImageGradient from "../utils/bg-image-gradient";
 
 interface ImageHeaderProps {
   imageUrl: string;
@@ -16,7 +17,7 @@ interface ImageHeaderProps {
 
 const ImageHeader = (props: ImageHeaderProps) => {
   const classImage: React.CSSProperties = {
-    backgroundImage: `url(${props.imageUrl})`,
+    backgroundImage: bgImageGradient(props.imageUrl),
     width: "100%",
     height: "20rem",
     backgroundSize: "cover",
