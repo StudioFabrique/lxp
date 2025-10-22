@@ -6,6 +6,8 @@ import { moduleCreateSchema } from "../../../lib/validation/parcours-edit/module
 import { useParams } from "react-router-dom";
 import useForm from "../../UI/forms/hooks/use-form";
 import { scrollToTop } from "../../../helpers/scrollToTop";
+import toast from "react-hot-toast";
+import SuccessWithMessage from "../../../utils/interfaces/success-with-message";
 
 // Type definition for module data structure
 type ModuleData = {
@@ -62,6 +64,11 @@ const useNewModule = () => {
 
   // Uploaded file for module thumbnail
   const [file, setFile] = useState<File | null>(null);
+
+  // Module selected for deletion
+  const [moduleToDelete, setModuleToDelete] = useState<ModuleData | null>(null);
+
+  const [showDuplicateModal, setShowDuplicateModal] = useState(false);
 
   // Reference to the form element for scrolling behavior
   const refForm = useRef<HTMLFormElement | null>(null);
@@ -122,6 +129,7 @@ const useNewModule = () => {
     const module = {
       ...data.values,
       formationId: parcours?.formationId,
+      parcoursId: +id!,
       // Ensure duration is at least 1 (fallback for invalid values)
       duration:
         +data.values.duration === 0 || isNaN(+data.values.duration)
@@ -177,6 +185,66 @@ const useNewModule = () => {
     scrollToTop();
   };
 
+  const showDeleteModal = (id: number) => {
+    const item = modules.find((module) => module.id === id);
+    setModuleToDelete(item ?? null);
+  };
+
+  const handleDeleteModule = () => {
+    const applyData = (data: SuccessWithMessage) => {
+      setModuleToDelete(null);
+      toast.success(data.message);
+    };
+    sendRequest(
+      {
+        path: `/modules/${moduleToDelete!.id}`,
+        method: "delete",
+      },
+      applyData
+    );
+  };
+
+  const handleCancelDeletion = () => {
+    setModuleToDelete(null);
+  };
+
+  const handleCloseDuplicateModal = () => {
+    setShowDuplicateModal(false);
+  };
+
+  useEffect(() => {
+    const modal = document.getElementById("two_buttons_modal");
+
+    if (moduleToDelete) {
+      (modal as HTMLDialogElement).showModal();
+    } else if (!moduleToDelete) (modal as HTMLDialogElement).close();
+  }, [moduleToDelete]);
+
+  // Handle smooth scrolling behavior when form visibility changes
+  useEffect(() => {
+    if (showForm) {
+      // Scroll to form when it appears
+      if (refForm && refForm.current) {
+        refForm.current.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [showForm, refForm]);
+
+  useEffect(() => {
+    if (error && error.length > 0)
+      error == "MODULE_ALREADY_EXISTS"
+        ? setShowDuplicateModal(true)
+        : toast.error(error);
+  }, [error]);
+
+  useEffect(() => {
+    const modal = document.getElementById("duplicate_module_modal");
+
+    if (showDuplicateModal) {
+      (modal as HTMLDialogElement).showModal();
+    } else if (!showDuplicateModal) (modal as HTMLDialogElement).close();
+  }, [showDuplicateModal]);
+
   // Return all state and handlers for use in components
   return {
     showForm,
@@ -194,6 +262,12 @@ const useNewModule = () => {
     parcours,
     setFile,
     error,
+    moduleToDelete,
+    setModuleToDelete,
+    showDeleteModal,
+    handleDeleteModule,
+    handleCancelDeletion,
+    handleCloseDuplicateModal,
   };
 };
 

@@ -29,15 +29,51 @@ async function postModule(
   console.log({ moduleToAdd });
 
   // Verify that the formation (parcours) exists before creating the module
-  const existingParcours = await prisma.formation.findFirst({
+  const existingFormation = await prisma.formation.findFirst({
     where: { id: moduleToAdd.formationId },
+    select: {
+      modules: {
+        select: {
+          module: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
+        },
+      },
+    },
   });
 
-  if (!existingParcours)
+  if (!existingFormation)
     throw {
-      message: "Le parcours de formation n'existe pas.",
+      message: "La formation n'existe pas.",
       statusCode: 404,
     };
+
+  // ✅ Accéder au titre via la relation module
+  const formationModules = existingFormation.modules.map((mod) => ({
+    ...mod,
+    title: mod.module.title, // Accès via la relation
+  }));
+
+  formationModules.forEach((mod) => {
+    console.log(mod.title.trim().toLowerCase());
+  });
+
+  // Maintenant la vérification fonctionne
+  if (
+    formationModules.some(
+      (mod) =>
+        mod.title.trim().toLowerCase() ===
+        moduleToAdd.title.trim().toLowerCase()
+    )
+  ) {
+    throw {
+      statusCode: 406,
+      message: "MODULE_ALREADY_EXISTS",
+    };
+  }
 
   // Fetch user details from MongoDB to construct the author name
   // This bridges the MongoDB user system with PostgreSQL module storage
@@ -69,7 +105,7 @@ async function postModule(
   // This prevents orphaned records if one creation fails
   const result = await prisma.$transaction(async (tx) => {
     // Step 1: Create the base Module entity with content and images
-    const newModule = await tx.module.create({
+    newModule = await tx.module.create({
       data: {
         title: moduleToAdd.title,
         description: moduleToAdd.description,
@@ -77,6 +113,7 @@ async function postModule(
         thumb, // Thumbnail as base64 string (400x400px)
         author,
         adminId: existingAdmin!.id,
+        formations: { create: { formationId: moduleToAdd.formationId } },
       },
       select: {
         id: true,
@@ -92,13 +129,13 @@ async function postModule(
     });
 
     // Step 2: Create ModuleMetadata with associations and many-to-many relationships
-    const newMetadataModule = await tx.moduleMetadata.create({
+    newMetadataModule = await tx.moduleMetadata.create({
       data: {
         duration: moduleToAdd.duration, // Learning duration in hours
         // Link to the newly created module
         module: { connect: { id: newModule.id } },
         // Link to the target parcours (learning path)
-        parcours: { connect: { id: existingParcours!.id } },
+        parcours: { connect: { id: moduleToAdd.parcoursId } },
         // Link to the creating admin
         admin: { connect: { id: existingAdmin!.id } },
         // Create many-to-many relationships with contacts (instructors)
