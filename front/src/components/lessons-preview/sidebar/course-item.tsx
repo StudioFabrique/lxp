@@ -13,7 +13,7 @@ type CourseItemProps = {
   parcoursId: number;
   moduleId: number;
   selectedLesson: Lesson | undefined;
-  setSelectedLesson: (lesson: Lesson | undefined) => void;
+  onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
 };
@@ -23,7 +23,7 @@ const CourseItem = ({
   parcoursId,
   moduleId,
   selectedLesson,
-  setSelectedLesson,
+  onSelectLesson,
   onDeleteCourse,
   onEnableCourse,
   children,
@@ -193,7 +193,7 @@ const CourseItem = ({
                   )}
                   moduleId={moduleId}
                   selectedLesson={selectedLesson}
-                  setSelectedLesson={setSelectedLesson}
+                  onSelectLesson={onSelectLesson}
                   children={children}
                 />
               ))

@@ -77,15 +77,10 @@ const useLessonsPreview = () => {
   const fetchModuleData = useCallback(() => {
     const applyData = ({ data }: { data: Module & { parcours: string } }) => {
       dispatch({ type: "update_module_data", module: data });
-
-      // selectionner la leçon selectionnée depuis le state de l'url
-      if (stateFromUrl?.lessonId) {
-        dispatch({ type: "select_lesson_by_id", id: stateFromUrl.lessonId });
-      }
     };
 
     sendRequest({ path: `/modules/detail/limited/${moduleId}` }, applyData);
-  }, [moduleId, sendRequest, stateFromUrl?.lessonId]);
+  }, [moduleId, sendRequest]);
 
   const initiateLesson = useCallback(
     async (lessonId: number) => {
@@ -321,6 +316,13 @@ const useLessonsPreview = () => {
     // useEffect pour récupérer le contenu de l'activité selectionnée
     fetchActivityTextContent();
   }, [fetchActivityTextContent]);
+
+  useEffect(() => {
+    // selectionner la leçon selectionnée depuis le state de l'url
+    if (stateFromUrl?.lessonId && state.module) {
+      dispatch({ type: "select_lesson_by_id", id: stateFromUrl.lessonId });
+    }
+  }, [state.module, stateFromUrl?.lessonId]);
 
   // Retourne les données et fonctions nécessaires
   return {
