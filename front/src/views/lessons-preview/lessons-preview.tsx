@@ -47,6 +47,7 @@ const LessonsPreview = () => {
     onRateContent,
     onEnableCourse,
     onDeleteCourse,
+    onDeleteLesson,
     onDeleteActivity,
     onSaveActivity,
   } = useLessonsPreview();
@@ -138,6 +139,7 @@ const LessonsPreview = () => {
               onSelectLesson={handleSelectLesson}
               onDeleteCourse={onDeleteCourse}
               onEnableCourse={onEnableCourse}
+              onDeleteLesson={onDeleteLesson}
               children={[
                 // Bouton pour créer un nouveau cours
                 <Can key="create-course" action="write" object="course">

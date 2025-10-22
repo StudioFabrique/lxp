@@ -8,8 +8,8 @@ type CourseActionsProps = {
   parcoursId: number;
   moduleId: number;
   onOpenModal: (
-    e: React.MouseEvent,
-    modalType: "visibility" | "delete",
+    modalType: "visibility" | "deleteCourse" | "deleteLesson",
+    e: React.MouseEvent
   ) => void;
   onClickMenu: (e: React.MouseEvent) => void;
 };
@@ -22,11 +22,11 @@ const CourseActions = ({
   onClickMenu,
 }: CourseActionsProps) => {
   const handleClickEnable = (e: React.MouseEvent) => {
-    onOpenModal(e, "visibility");
+    onOpenModal("visibility", e);
   };
 
   const handleClickDelete = (e: React.MouseEvent) => {
-    onOpenModal(e, "delete");
+    onOpenModal("deleteCourse", e);
   };
 
   return (

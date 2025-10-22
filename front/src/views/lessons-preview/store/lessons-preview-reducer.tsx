@@ -53,6 +53,7 @@ type LessonsPreviewAction =
   | { type: "set_lesson_rating"; rating: LessonRating[] }
   | { type: "mark_lesson_as_read"; lesson: Lesson; lessonRead: LessonRead }
   | { type: "go_to_next_lesson" }
+  | { type: "delete_lesson"; id: number }
   // Activity
   | { type: "select_activity"; activity?: Activity }
   | { type: "select_last_activity_from_current_lesson" }
@@ -210,6 +211,23 @@ export function lessonsPreviewReducer(
         modalVisibility: "none",
       };
     }
+
+    case "delete_lesson":
+      return {
+        ...state,
+        selectedActivity: undefined,
+        selectedLesson: undefined,
+        module: state.module && {
+          ...state.module,
+          courses:
+            state.module?.courses.map((course) => ({
+              ...course,
+              lessons: course.lessons.filter(
+                (lesson) => lesson.id !== action.id
+              ),
+            })) || [],
+        },
+      };
 
     // --- Activity ---
     case "select_activity":
