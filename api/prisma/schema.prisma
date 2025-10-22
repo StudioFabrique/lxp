@@ -85,7 +85,7 @@ model BonusSkillsOnModuleMetadata {
   bonusSkillId Int
   moduleId     Int
   bonusSkill   BonusSkill     @relation(fields: [bonusSkillId], references: [id])
-  module       ModuleMetadata @relation(fields: [moduleId], references: [id])
+  module       ModuleMetadata @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 
   @@id([bonusSkillId, moduleId])
 }
@@ -117,7 +117,7 @@ model ContactsOnModuleMetadata {
   contactId Int
   moduleId  Int
   contact   Contact        @relation(fields: [contactId], references: [id])
-  module    ModuleMetadata @relation(fields: [moduleId], references: [id])
+  module    ModuleMetadata @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 
   @@id([contactId, moduleId])
 }
@@ -278,8 +278,8 @@ model ModuleMetadata {
 model ModulesOnFormation {
   moduleId    Int
   formationId Int
-  formation   Formation @relation(fields: [formationId], references: [id])
-  module      Module    @relation(fields: [moduleId], references: [id])
+  formation   Formation @relation(fields: [formationId], references: [id], onDelete: Cascade)
+  module      Module    @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 
   @@id([moduleId, formationId])
 }

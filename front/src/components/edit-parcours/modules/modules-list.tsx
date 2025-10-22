@@ -5,6 +5,7 @@ type Props = {
   id: number;
   title: string;
   thumb?: string;
+  onDelete: (id: number) => void;
 };
 
 export default function ModulesList(props: Props) {
@@ -33,8 +34,10 @@ export default function ModulesList(props: Props) {
           </button>
           <button
             className="btn btn-sm tooltip tooltip-bottom"
+            type="button"
             data-tip="Supprimer le module"
             aria-label="Supprimer le module"
+            onClick={() => props.onDelete(props.id)}
           >
             <Trash2 className="w-4 h-4 text-error" />
             Supprimer

@@ -1,9 +1,15 @@
+import { ModuleMetadata } from "@prisma/client";
 import { prisma } from "../../utils/db";
+import { IRole } from "../../utils/interfaces/db/role";
 
-async function deleteModule(moduleId: number) {
+async function deleteModule(moduleId: number, userId: string, role: IRole) {
   const existingModule = await prisma.moduleMetadata.findFirst({
     where: { id: moduleId },
-    select: { courses: true },
+    select: {
+      courses: true,
+      module: { select: { id: true, metadatas: true } },
+      admin: true,
+    },
   });
 
   if (!existingModule) {
@@ -19,20 +25,33 @@ async function deleteModule(moduleId: number) {
     throw error;
   }
 
-  let deletedModule = {};
+  const existingAdmin = await prisma.admin.findFirst({
+    where: { idMdb: userId },
+  });
+
+  if (
+    !existingAdmin ||
+    (role.role !== "admin" && existingModule.admin.id !== existingAdmin.id)
+  ) {
+    throw { message: "Unauthorized", statusCode: 403 };
+  }
+
+  let deletedModule: ModuleMetadata | null = null;
 
   const transaction = await prisma.$transaction(async (tx) => {
-    await tx.contactsOnModuleMetadata.deleteMany({
-      where: { moduleId },
-    });
-    await tx.bonusSkillsOnModuleMetadata.deleteMany({
-      where: { moduleId },
-    });
     deletedModule = await tx.moduleMetadata.delete({
       where: { id: moduleId },
     });
   });
-  return deletedModule;
+
+  console.log(existingModule.module.metadatas.length);
+
+  if (existingModule.module.metadatas.length < 2) {
+    await prisma.module.delete({
+      where: { id: existingModule.module.id },
+    });
+  }
+  return transaction;
 }
 
 export default deleteModule;
