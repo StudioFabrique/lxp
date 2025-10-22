@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import Parcours from "../../utils/interfaces/parcours";
 
 import defaultImage from "../../assets/images/books.jpeg";
-import { Eye, Users } from "lucide-react";
+import { Eye } from "lucide-react";
+import bgImageGradient from "../../utils/bg-image-gradient";
 
 interface ParcoursItemProps {
   parcours: Parcours;
@@ -26,7 +27,7 @@ export default function ParcoursItem({ parcours }: ParcoursItemProps) {
   }, [parcours.thumb]);
 
   const classImage: React.CSSProperties = {
-    backgroundImage: `url('${bgImage}')`,
+    backgroundImage: bgImageGradient(bgImage),
     width: "100%",
     height: "12rem",
     backgroundSize: "cover",

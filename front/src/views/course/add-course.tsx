@@ -9,6 +9,7 @@ import Selecter from "../../components/UI/selecter/selecter.component";
 import NewCourseForm from "../../components/edit-course/new-course-form";
 import bgImage from "../../assets/images/new-parcours-default.jpg";
 import { useLocation, useNavigate } from "react-router-dom";
+import bgImageGradient from "../../utils/bg-image-gradient";
 
 // type de données pour les listes
 type Item = {
@@ -23,18 +24,18 @@ const AddCourse = () => {
   const location = useLocation();
   const [parcoursList, setParcoursList] = useState<Item[]>([]);
   const [parcoursId, setParcoursId] = useState<number | null>(
-    location.state?.parcoursId,
+    location.state?.parcoursId
   );
   const [modulesList, setModulesList] = useState<Item[]>([]);
   const [moduleId, setModuleId] = useState<number | null>(
-    location.state?.moduleId,
+    location.state?.moduleId
   );
   const [isLoading, setIsLoading] = useState(false);
   const nav = useNavigate();
 
   // Image affichée sur la vue sous forme de background-image
   const classImage: React.CSSProperties = {
-    backgroundImage: `url('${bgImage}')`,
+    backgroundImage: bgImageGradient(bgImage),
     width: "100%",
     minHeight: "20rem",
     maxHeight: "100%",
@@ -80,11 +81,11 @@ const AddCourse = () => {
             method: "post",
             body: { title, moduleId },
           },
-          applyData,
+          applyData
         );
       }
     },
-    [moduleId, nav, sendRequest],
+    [moduleId, nav, sendRequest]
   );
 
   /**
@@ -98,7 +99,7 @@ const AddCourse = () => {
       {
         path: "/parcours/select",
       },
-      applyData,
+      applyData
     );
   }, [sendRequest]);
 
@@ -117,7 +118,7 @@ const AddCourse = () => {
         {
           path: `/modules/${parcoursId}`,
         },
-        applyData,
+        applyData
       );
     }
   }, [parcoursId, sendRequest]);

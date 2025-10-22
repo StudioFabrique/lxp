@@ -5,6 +5,7 @@ import FieldNumber from "../../../components/UI/forms/field-number";
 import useImageUpload from "../../../hooks/use-image-upload";
 import CustomError from "../../../utils/interfaces/custom-error";
 import FormUploadImage from "../../../components/UI/form-upload-image";
+import bgImageGradient from "../../../utils/bg-image-gradient";
 
 type Props = {
   data: {
@@ -20,7 +21,9 @@ function ModuleMetadatas({ data, onSetFile }: Props) {
 
   // affiche un aperçu de l'image choisie pour le module ou une image en background de div de manière dynamique
   const classImage: React.CSSProperties = {
-    backgroundImage: `url(${image ? image : "https://picsum.photos/200/300"})`,
+    backgroundImage: bgImageGradient(
+      image ? image : "https://picsum.photos/200/300"
+    ),
     width: "100px",
     height: "75px",
     backgroundSize: "cover",

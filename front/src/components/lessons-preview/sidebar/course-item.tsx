@@ -1,6 +1,6 @@
 import { ArrowDown, ArrowRight, EyeOff } from "lucide-react";
 import Course from "../../../utils/interfaces/course";
-import { useEffect, useState } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import LessonItem from "./lesson-item";
 import Lesson from "../../../utils/interfaces/lesson";
@@ -13,7 +13,7 @@ type CourseItemProps = {
   parcoursId: number;
   moduleId: number;
   selectedLesson: Lesson | undefined;
-  setSelectedLesson: (lesson: Lesson | undefined) => void;
+  onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
 };
@@ -23,14 +23,15 @@ const CourseItem = ({
   parcoursId,
   moduleId,
   selectedLesson,
-  setSelectedLesson,
+  onSelectLesson,
   onDeleteCourse,
   onEnableCourse,
-}: CourseItemProps) => {
+  children,
+}: PropsWithChildren<CourseItemProps>) => {
   const [isCourseOpen, setCourseOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<"visibility" | "delete">(
-    "visibility",
+    "visibility"
   );
   const [isModalLoading, setIsModalLoading] = useState(false);
 
@@ -40,7 +41,7 @@ const CourseItem = ({
         sum +
         (lesson?.lessonsRead?.filter((lesson) => lesson.finishedAt).length ||
           0),
-      0,
+      0
     ) / course.lessons.length
   ).toString();
 
@@ -54,7 +55,7 @@ const CourseItem = ({
 
   const handleOpenModal = (
     e: React.MouseEvent,
-    modalType: "visibility" | "delete",
+    modalType: "visibility" | "delete"
   ) => {
     e.stopPropagation();
     setModalType(modalType);
@@ -96,7 +97,9 @@ const CourseItem = ({
         title={modalType === "visibility" ? "Visibilité" : "Supprimer le cours"}
         description={
           modalType === "visibility"
-            ? `Êtes-vous sûr de vouloir  ${course.visibility ? "cacher" : "rendre visible"} ce cours ?`
+            ? `Êtes-vous sûr de vouloir  ${
+                course.visibility ? "cacher" : "rendre visible"
+              } ce cours ?`
             : "Êtes-vous sûr de vouloir supprimer ce cours ainsi que les leçons associés ?"
         }
         showModal={showModal}
@@ -109,7 +112,9 @@ const CourseItem = ({
         {!course.isPublished || !course.visibility ? (
           <div
             className="badge badge-info absolute -top-3 -left-3 tooltip tooltip-right tooltip-info z-[11]"
-            data-tip={`Le cours est ${!course.visibility ? "invisible" : ""} ${!course.visibility && !course.isPublished ? "et" : ""} ${!course.isPublished ? "non publié" : ""}`}
+            data-tip={`Le cours est ${!course.visibility ? "invisible" : ""} ${
+              !course.visibility && !course.isPublished ? "et" : ""
+            } ${!course.isPublished ? "non publié" : ""}`}
           >
             <EyeOff className="w-4 h-4 stroke-base-100" />
           </div>
@@ -174,7 +179,7 @@ const CourseItem = ({
             visibility: isCourseOpen ? "visible" : "hidden",
           }}
           animate={{
-            maxHeight: isCourseOpen ? 280 : 0,
+            maxHeight: isCourseOpen ? 500 : 0,
           }}
         >
           <div className="p-4 flex flex-col gap-4 items-center">
@@ -184,11 +189,12 @@ const CourseItem = ({
                   key={lesson.id}
                   lesson={lesson}
                   lessonsOrders={course.lessons.map(
-                    (lesson) => lesson.order ?? 0,
+                    (lesson) => lesson.order ?? 0
                   )}
                   moduleId={moduleId}
                   selectedLesson={selectedLesson}
-                  setSelectedLesson={setSelectedLesson}
+                  onSelectLesson={onSelectLesson}
+                  children={children}
                 />
               ))
             ) : (

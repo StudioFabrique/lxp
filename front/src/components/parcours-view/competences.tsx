@@ -5,7 +5,7 @@ import Skill from "../../utils/interfaces/skill";
 
 const Competences = () => {
   const skills = useSelector(
-    (state: any) => state.parcoursSkills.skills,
+    (state: any) => state.parcoursSkills.skills
   ) as Skill[];
 
   const skillList =
@@ -13,11 +13,9 @@ const Competences = () => {
       skills.map((skill) => (
         <div
           key={skill.id}
-          className="bg-secondary p-4 rounded-lg text-secondary-content"
+          className="bg-secondary p-4 rounded-lg text-base-100"
         >
-          <p className="font-bold first-letter:uppercase">
-            {skill.description}
-          </p>
+          <p className="first-letter:uppercase">{skill.description}</p>
         </div>
       ))
     ) : (
@@ -27,7 +25,7 @@ const Competences = () => {
   return (
     <Wrapper>
       <h2 className="text-xl font-bold text-primary">Compétences</h2>
-      <div className="flex flex-col gap-y-5 overflow-y-auto h-[60vh]">
+      <div className="flex flex-col gap-y-2 overflow-y-auto h-[60vh]">
         {skillList}
       </div>
     </Wrapper>

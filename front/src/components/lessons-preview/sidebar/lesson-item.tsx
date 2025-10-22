@@ -1,16 +1,21 @@
-import { ArrowUpRight, Check, Edit3 } from "lucide-react";
+import {
+  Check,
+  Trash2,
+  Edit3,
+  EllipsisIcon,
+  MoveUpRightIcon,
+} from "lucide-react";
 import Lesson from "../../../utils/interfaces/lesson";
 import { Link } from "react-router-dom";
 import Can from "../../UI/can/can.component";
-import { motion } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { PropsWithChildren, useEffect, useRef, useState } from "react";
 
 type LessonItemProps = {
   lesson: Lesson;
   moduleId: number;
   lessonsOrders: number[];
   selectedLesson: Lesson | undefined;
-  setSelectedLesson: (lesson: Lesson | undefined) => void;
+  onSelectLesson: (lesson: Lesson) => void;
 };
 
 // Composant représentant un élément de leçon individuel
@@ -19,20 +24,33 @@ const LessonItem = ({
   moduleId,
   lessonsOrders,
   selectedLesson,
-  setSelectedLesson,
-}: LessonItemProps) => {
+  onSelectLesson,
+  children,
+}: PropsWithChildren<LessonItemProps>) => {
   // Vérifie si cette leçon est actuellement sélectionnée
   const isLessonSelected = selectedLesson?.id === lesson.id;
   const lessonRef = useRef<HTMLDivElement>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
   // Vérifie si cette leçon a déjà été lue entièrement et finie
   const isLessonRead = lesson.lessonsRead?.some(
-    (lessonRead) => lessonRead.finishedAt,
+    (lessonRead) => lessonRead.finishedAt
   );
 
   // Gestionnaire pour commencer/arrêter la lecture d'une leçon
   const handleBeginReadLesson = () => {
-    if (!isLessonSelected) setSelectedLesson(lesson);
+    if (!isLessonSelected) onSelectLesson(lesson);
+  };
+
+  const handleMenuClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleMenuOption = (action: string) => {
+    console.log(`Action ${action} sur la leçon: ${lesson.title}`);
+    setIsMenuOpen(false);
+    // TODO: Implémenter les actions réelles
   };
 
   useEffect(() => {
@@ -51,52 +69,94 @@ const LessonItem = ({
 
   return (
     // Conteneur principal avec style conditionnel basé sur la sélection
-    <div
-      ref={lessonRef}
-      onClick={handleBeginReadLesson}
-      onKeyDown={handleBeginReadLesson}
-      className={`flex items-center justify-between gap-1 rounded-xl px-4 h-14 w-full cursor-pointer group ${
-        isLessonSelected
-          ? "bg-accent text-accent-content hover:bg-accent/80"
-          : "bg-primary text-primary-content hover:bg-primary/80"
-      }`}
-    >
-      <motion.span
-        className="flex gap-1 items-center min-w-0"
-        animate={{
-          x: isLessonSelected && !isLessonRead ? 10 : 0,
-        }}
-        transition={{ duration: 0.3 }}
+    <div className="w-full">
+      <div
+        ref={lessonRef}
+        onClick={handleBeginReadLesson}
+        onKeyDown={handleBeginReadLesson}
+        className={`flex items-center justify-between gap-1 rounded-xl px-4 h-10 w-full cursor-pointer group ${
+          isLessonSelected
+            ? "bg-accent text-accent-content hover:bg-accent/80"
+            : "bg-primary text-base-100 hover:bg-primary/80"
+        }`}
       >
-        <p className="max-h-14 truncate" data-tip={lesson.title}>
-          {lesson.title}
-        </p>
-        <Can action="update" object="lesson">
-          <Link
-            to={`/admin/lesson/edit-lesson/${lesson.id}`}
-            state={{ moduleId: moduleId }}
-            className="btn btn-sm px-2 btn-ghost w-fit hover:bg-transparent hover:text-base-100"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Edit3 className="w-4 h-4" />
-          </Link>
-        </Can>
-      </motion.span>
+        <span className="flex gap-1 justify-between items-center min-w-0 w-full">
+          <p className="max-h-14 truncate text-sm" data-tip={lesson.title}>
+            {lesson.title}
+          </p>
+          <div className="flex items-center gap-1">
+            <Can action="update" object="lesson">
+              <div className="relative">
+                <button
+                  type="button"
+                  className="btn btn-sm px-2 btn-ghost w-fit hover:bg-transparent hover:text-base-100"
+                  onClick={handleMenuClick}
+                >
+                  <EllipsisIcon className="w-4 h-4" />
+                </button>
 
-      <div className="flex h-full items-center py-3">
+                {isMenuOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setIsMenuOpen(false)}
+                    />
+                    <div className="absolute right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg min-w-[10rem] py-1 z-20">
+                      {/* <button
+                        type="button"
+                        onClick={() => handleMenuOption("duplicate")}
+                        className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 w-full text-left text-gray-700"
+                      >
+                        <Edit className="w-4 h-4" />
+                        <span>Dupliquer</span>
+                      </button> */}
+                      <button
+                        type="button"
+                        onClick={() => handleMenuOption("move")}
+                        className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 w-full text-left text-gray-700"
+                      >
+                        <MoveUpRightIcon className="w-4 h-4" />
+                        <span>Déplacer</span>
+                      </button>
+                      <Can action="update" object="lesson">
+                        <Link
+                          to={`/admin/lesson/edit-lesson/${lesson.id}`}
+                          state={{ moduleId: moduleId }}
+                          className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 w-full text-left text-gray-700"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Edit3 className="w-4 h-4" />
+                          <span>Éditer les détails</span>
+                        </Link>
+                      </Can>
+                      <button
+                        type="button"
+                        onClick={() => handleMenuOption("delete")}
+                        className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-red-100 text-red-600 w-full text-left"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        <span>Supprimer</span>
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </Can>
+          </div>
+        </span>
+
         {/* Affiche une coche si la leçon est lue, ou une flèche sinon */}
-        {isLessonRead ? (
+        {isLessonRead && (
           <Check
-            className={`w-5 h-5 p-1 rounded-full stroke-3 ${isLessonSelected ? "bg-secondary stroke-secondary-content" : "bg-success stroke-success-content"}`}
+            className={`w-5 h-5 p-1 rounded-full stroke-3 ${
+              isLessonSelected
+                ? "bg-secondary stroke-secondary-content"
+                : "bg-success stroke-success-content"
+            }`}
           />
-        ) : (
-          !isLessonSelected && (
-            <div className="self-start opacity-0 group-hover:opacity-100 group-hover:animate-pulse">
-              <ArrowUpRight className="w-4 h-4" />
-            </div>
-          )
         )}
       </div>
+      {isLessonSelected && children}
     </div>
   );
 };

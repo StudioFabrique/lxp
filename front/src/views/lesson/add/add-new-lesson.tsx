@@ -11,6 +11,7 @@ import useAddLesson from "./use-add-lesson";
 import LessonForm from "../../../components/edit-course/scenario/lesson-form";
 import CourseSelecters from "../../../components/add-lesson/course-selecters";
 import NewLessonActions from "../../../components/add-lesson/new-lesson-actions";
+import bgImageGradient from "../../../utils/bg-image-gradient";
 
 /**
  * Composant principal pour l'ajout d'une nouvelle leçon
@@ -47,7 +48,7 @@ function AddNewLesson() {
 
   // Configuration du style pour l'image de fond
   const classImage: React.CSSProperties = {
-    backgroundImage: `url('${bgImage}')`,
+    backgroundImage: bgImageGradient(bgImage),
     width: "100%",
     minHeight: "30rem",
     maxHeight: "30rem",

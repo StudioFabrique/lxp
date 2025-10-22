@@ -29,7 +29,7 @@ const SidebarWrapper = ({
   }, []);
 
   return (
-    <nav className="w-24 h-screen fixed p-4 z-100 flex flex-col gap-2">
+    <nav className="w-24 h-screen fixed p-4 pt-2 z-100 flex flex-col gap-2">
       {companyLogo ? (
         <div className="w-full bg-slate-100 rounded-lg">
           <img

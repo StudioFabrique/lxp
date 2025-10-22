@@ -9,7 +9,7 @@ const ProgressBar = ({ courses }: ProgressBarProps) => {
   if (!(courses.length > 0)) return null;
 
   return (
-    <div className="flex items-center gap-4 h-full w-full py-1">
+    <div className="flex items-center gap-4 h-full w-full py-2">
       <span>
         <PlaneTakeoffIcon className="w-6 h-6 stroke-1" />
       </span>

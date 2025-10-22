@@ -7,7 +7,7 @@ import { ComponentIcon, RocketIcon } from "lucide-react";
 import defaultImage from "../../assets/images/module-default.jpg";
 
 type LessonsPreviewHeaderProps = {
-  moduleData: Module & { parcours: string; parcoursId: number };
+  moduleData: Module & { parcours: string };
 };
 
 const LessonsPreviewHeader = ({ moduleData }: LessonsPreviewHeaderProps) => {

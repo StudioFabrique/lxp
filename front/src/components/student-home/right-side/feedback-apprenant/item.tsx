@@ -31,7 +31,7 @@ const Item = ({ accomplishment }: { accomplishment: Accomplishment }) => {
       <FeedbacksButton
         className="btn btn-primary btn-sm text-nowrap"
         feedbackType="confetti"
-        enableAnimationOnClick
+        showFeedback
         onClick={handleClick}
       >
         <PartyPopperIcon />
