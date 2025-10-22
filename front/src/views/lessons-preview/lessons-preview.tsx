@@ -65,13 +65,17 @@ const LessonsPreview = () => {
     [dispatch]
   );
 
-  const handleSelectLesson = (lesson: Lesson | undefined) => {
-    navigate(
-      {},
-      {
-        state: { lessonId: lesson?.id },
-      }
-    );
+  const handleSelectLesson = (lesson: Lesson) => {
+    navigate(".", {
+      state: { lessonId: lesson?.id },
+    });
+  };
+
+  const handleCloseAll = () => {
+    dispatch({ type: "select_lesson", lesson: undefined });
+    navigate(".", {
+      replace: true,
+    });
   };
 
   return (
@@ -119,7 +123,7 @@ const LessonsPreview = () => {
           selectedLesson={selectedLesson}
           isPanelClosed={isPanelClosed}
           onTogglePanel={() => dispatch({ type: "toggle_panel_visibility" })}
-          onSelectLesson={handleSelectLesson}
+          onCloseAll={handleCloseAll}
         >
           {[
             // * Header

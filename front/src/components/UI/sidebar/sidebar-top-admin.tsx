@@ -25,7 +25,7 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
   useEffect(() => {
     const checkScreenHeight = () => {
       const screenHeight = window.innerHeight;
-      setShowAll(screenHeight > 850);
+      setShowAll(screenHeight > 900);
     };
 
     checkScreenHeight();

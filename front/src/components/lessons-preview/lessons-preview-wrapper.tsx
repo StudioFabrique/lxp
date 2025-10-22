@@ -15,7 +15,7 @@ type LessonsPreviewWrapperProps = {
   selectedLesson?: Lesson;
   isPanelClosed?: boolean;
   onTogglePanel: () => void;
-  onSelectLesson: (lesson: Lesson | undefined) => void;
+  onCloseAll: () => void;
 };
 
 /**
@@ -27,7 +27,7 @@ const LessonsPreviewWrapper = ({
   selectedLesson,
   isPanelClosed = false,
   onTogglePanel,
-  onSelectLesson,
+  onCloseAll,
   children,
 }: PropsWithChildren<LessonsPreviewWrapperProps>) => {
   const [header, progessionSide, topProgressBar, previewLesson, moduleData] =
@@ -70,9 +70,9 @@ const LessonsPreviewWrapper = ({
           <button
             type="button"
             className="btn hover:bg-primary hover:text-base-100 tooltip tooltip-left border-secondary/20"
-            aria-label="Fermer"
+            aria-label="Tout réduire"
             data-tip="Tout réduire"
-            onClick={() => onSelectLesson(undefined)}
+            onClick={onCloseAll}
           >
             <ListChevronsUpDown className="w-5 h-5" />
           </button>

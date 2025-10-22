@@ -15,7 +15,7 @@ type LessonItemProps = {
   moduleId: number;
   lessonsOrders: number[];
   selectedLesson: Lesson | undefined;
-  setSelectedLesson: (lesson: Lesson | undefined) => void;
+  onSelectLesson: (lesson: Lesson) => void;
 };
 
 // Composant représentant un élément de leçon individuel
@@ -24,7 +24,7 @@ const LessonItem = ({
   moduleId,
   lessonsOrders,
   selectedLesson,
-  setSelectedLesson,
+  onSelectLesson,
   children,
 }: PropsWithChildren<LessonItemProps>) => {
   // Vérifie si cette leçon est actuellement sélectionnée
@@ -39,7 +39,7 @@ const LessonItem = ({
 
   // Gestionnaire pour commencer/arrêter la lecture d'une leçon
   const handleBeginReadLesson = () => {
-    if (!isLessonSelected) setSelectedLesson(lesson);
+    if (!isLessonSelected) onSelectLesson(lesson);
   };
 
   const handleMenuClick = (e: React.MouseEvent) => {

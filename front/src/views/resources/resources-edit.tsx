@@ -22,8 +22,6 @@ export default function ResourceEdit() {
     setTagError,
     showTipTapEditor,
     resource,
-    isAnyActivityBeingEdited,
-    setIsAnyActivityBeingEdited,
     handleClickShowTipTapEditor,
     handleCloseTipTapEditor,
     handleSubmitForm,
@@ -112,7 +110,6 @@ export default function ResourceEdit() {
                   <ActivityCreationOptionsButtons
                     selectedLesson={resource}
                     onClickShowTipTapEditor={handleClickShowTipTapEditor}
-                    isDisabled={isAnyActivityBeingEdited}
                   />
                   {previewActivity ? (
                     <>
