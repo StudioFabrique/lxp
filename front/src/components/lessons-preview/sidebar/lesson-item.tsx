@@ -1,10 +1,4 @@
-import {
-  Check,
-  Trash2,
-  Edit3,
-  EllipsisIcon,
-  MoveUpRightIcon,
-} from "lucide-react";
+import { Check, Trash2, Edit3, EllipsisIcon } from "lucide-react";
 import Lesson from "../../../utils/interfaces/lesson";
 import { Link } from "react-router-dom";
 import Can from "../../UI/can/can.component";
@@ -49,8 +43,7 @@ const LessonItem = ({
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const handleMenuOption = (action: string) => {
-    console.log(`Action ${action} sur la leçon: ${lesson.title}`);
+  const handleMenuOption = () => {
     setIsMenuOpen(false);
     onOpenModal(lesson);
   };
@@ -104,22 +97,6 @@ const LessonItem = ({
                       onClick={() => setIsMenuOpen(false)}
                     />
                     <div className="absolute right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg min-w-[10rem] py-1 z-20">
-                      {/* <button
-                        type="button"
-                        onClick={() => handleMenuOption("duplicate")}
-                        className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 w-full text-left text-gray-700"
-                      >
-                        <Edit className="w-4 h-4" />
-                        <span>Dupliquer</span>
-                      </button> */}
-                      <button
-                        type="button"
-                        onClick={() => handleMenuOption("move")}
-                        className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 w-full text-left text-gray-700"
-                      >
-                        <MoveUpRightIcon className="w-4 h-4" />
-                        <span>Déplacer</span>
-                      </button>
                       <Can action="update" object="lesson">
                         <Link
                           to={`/admin/lesson/edit-lesson/${lesson.id}`}
@@ -133,7 +110,7 @@ const LessonItem = ({
                       </Can>
                       <button
                         type="button"
-                        onClick={() => handleMenuOption("delete")}
+                        onClick={() => handleMenuOption()}
                         className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-red-100 text-red-600 w-full text-left"
                       >
                         <Trash2 className="w-4 h-4" />
