@@ -34,10 +34,32 @@ async function httpGetModuleFormation(req: Request, res: Response) {
             metadatas: {
               select: {
                 id: true,
+                parcours: { select: { id: true, title: true } },
                 courses: {
                   select: {
                     id: true,
-                    lessons: { select: { id: true, title: true } },
+                    title: true,
+                  },
+                },
+                contacts: {
+                  select: {
+                    contact: {
+                      select: {
+                        id: true,
+                        name: true,
+                        role: true,
+                      },
+                    },
+                  },
+                },
+                bonusSkills: {
+                  select: {
+                    bonusSkill: {
+                      select: {
+                        id: true,
+                        description: true,
+                      },
+                    },
                   },
                 },
               },
@@ -46,6 +68,50 @@ async function httpGetModuleFormation(req: Request, res: Response) {
         },
       },
     });
+
+    /*
+    const modules = await prisma.module.findMany({
+      where: { title: moduleTitle as string },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        thumb: true,
+        metadatas: {
+          select: {
+            id: true,
+            courses: {
+              select: {
+                id: true,
+                title: true,
+              },
+            },
+            contacts: {
+              select: {
+                contact: {
+                  select: {
+                    id: true,
+                    name: true,
+                    role: true,
+                  },
+                },
+              },
+            },
+            bonusSkills: {
+              select: {
+                bonusSkill: {
+                  select: {
+                    id: true,
+                    description: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    */
 
     let result: Result[] | ResultWithMetadatas[] | null = null;
 

@@ -25,6 +25,7 @@ import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
  */
 export default function ModuleComponent() {
   const {
+    id,
     showForm,
     setShowForm,
     modules,
@@ -42,9 +43,10 @@ export default function ModuleComponent() {
     showDeleteModal,
     handleDeleteModule,
     handleCancelDeletion,
-    handleCloseDuplicateModal,
     handleDuplicateModule,
     metadataList,
+    handleCopyModule,
+    handleCloseDuplicateModal,
   } = useNewModule();
   console.log({ metadataList });
 
@@ -67,7 +69,7 @@ export default function ModuleComponent() {
               Créer un nouveau module
             </button>
             {/* Button to add an existing module to the parcours */}
-            <button className="btn btn-primary">
+            <button className="btn btn-primary" onClick={handleDuplicateModule}>
               <Copy />
               Ajouter un module
             </button>
@@ -155,128 +157,60 @@ export default function ModuleComponent() {
         visible={false}
       >
         {metadataList && metadataList.length > 0 ? (
-          <ul className="list w-full bg-blue-500">
-            {metadataList.map((metadata: any) => {
-              // Calculate total courses across all metadatas
-              const totalCourses =
-                metadata.metadatas?.reduce(
-                  (acc: number, meta: any) => acc + (meta.courses?.length ?? 0),
-                  0
-                ) ?? 0;
-
-              return (
-                <>
-                  <li className="list-row w-full bg-orange-500">
-                    <div>
-                      <img
-                        className="size-10 rounded-box"
-                        src="https://img.daisyui.com/images/profile/demo/1@94.webp"
-                      />
+          <ul className="list w-[40rem] gap-y-2">
+            {metadataList.map((m: any) => (
+              // ✅ Parenthèses = retour implicite
+              <>
+                {m.metadatas.parcours.id !== id ? (
+                  <div
+                    key={m.id}
+                    className="collapse bg-base-100 border border-base-300"
+                  >
+                    <input type="radio" name="my-accordion-1" />
+                    <div className="collapse-title font-semibold flex flex-col gap-y-1">
+                      <span>{m.title}</span>{" "}
+                      <span className="font-bold text-xs text-base-content/60">
+                        Utilisé dans {m.metadatas.length} parcours.
+                      </span>
                     </div>
-                    <div>
-                      <div>Dio Lupa</div>
-                      <div className="text-xs uppercase font-semibold opacity-60">
-                        Remaining Reason
-                      </div>
+                    <div className="collapse-content text-sm">
+                      {m.metadatas.map((meta: any) => (
+                        <div
+                          className="grid grid-cols-[1fr_auto] gap-4 items-start" // ✅ Grid avec colonnes auto
+                          key={meta.id}
+                        >
+                          <div>
+                            <p className="font-semibold">
+                              Parcours : {meta.parcours.title}
+                            </p>
+                            <div className="text-xs text-base-content/70">
+                              {meta.courses.length} cours sont associés au
+                              module :
+                              {meta.courses.map((course: any) => (
+                                <span
+                                  key={course.id}
+                                  className="badge badge-secondary mx-1 mb-1 font-normal text-xs"
+                                >
+                                  {course.title}
+                                </span>
+                              ))}
+                              {meta.courses.length > 0 ? (
+                                <div className="divider" />
+                              ) : null}
+                            </div>
+                          </div>
+                          {/* L'icône reste centrée verticalement automatiquement */}
+                          <Copy
+                            className="cursor-pointer w-6 h-6 text-primary hover:brightness-125 flex-shrink-0"
+                            onClick={() => handleCopyModule(m)}
+                          />
+                        </div>
+                      ))}
                     </div>
-                    <p className="list-col-wrap text-xs">
-                      "Remaining Reason" became an instant hit, praised for its
-                      haunting sound and emotional depth. A viral performance
-                      brought it widespread recognition, making it one of Dio
-                      Lupa’s most iconic tracks.
-                    </p>
-                    <button className="btn btn-square btn-ghost">
-                      <svg
-                        className="size-[1.2em]"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                      >
-                        <g
-                          strokeLinejoin="round"
-                          strokeLinecap="round"
-                          strokeWidth="2"
-                          fill="none"
-                          stroke="currentColor"
-                        >
-                          <path d="M6 3L20 12 6 21 6 3z"></path>
-                        </g>
-                      </svg>
-                    </button>
-                    <button className="btn btn-square btn-ghost">
-                      <svg
-                        className="size-[1.2em]"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                      >
-                        <g
-                          strokeLinejoin="round"
-                          strokeLinecap="round"
-                          strokeWidth="2"
-                          fill="none"
-                          stroke="currentColor"
-                        >
-                          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                        </g>
-                      </svg>
-                    </button>
-                  </li>{" "}
-                  <li className="list-row">
-                    <div>
-                      <img
-                        className="size-10 rounded-box"
-                        src="https://img.daisyui.com/images/profile/demo/1@94.webp"
-                      />
-                    </div>
-                    <div>
-                      <div>Dio Lupa</div>
-                      <div className="text-xs uppercase font-semibold opacity-60">
-                        Remaining Reason
-                      </div>
-                    </div>
-                    <p className="list-col-wrap text-xs">
-                      "Remaining Reason" became an instant hit, praised for its
-                      haunting sound and emotional depth. A viral performance
-                      brought it widespread recognition, making it one of Dio
-                      Lupa’s most iconic tracks.
-                    </p>
-                    <button className="btn btn-square btn-ghost">
-                      <svg
-                        className="size-[1.2em]"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                      >
-                        <g
-                          strokeLinejoin="round"
-                          strokeLinecap="round"
-                          strokeWidth="2"
-                          fill="none"
-                          stroke="currentColor"
-                        >
-                          <path d="M6 3L20 12 6 21 6 3z"></path>
-                        </g>
-                      </svg>
-                    </button>
-                    <button className="btn btn-square btn-ghost">
-                      <svg
-                        className="size-[1.2em]"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                      >
-                        <g
-                          strokeLinejoin="round"
-                          strokeLinecap="round"
-                          strokeWidth="2"
-                          fill="none"
-                          stroke="currentColor"
-                        >
-                          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                        </g>
-                      </svg>
-                    </button>
-                  </li>
-                </>
-              );
-            })}
+                  </div>
+                ) : null}
+              </>
+            ))}
           </ul>
         ) : (
           <div className="flex flex-col items-center justify-center h-64">
