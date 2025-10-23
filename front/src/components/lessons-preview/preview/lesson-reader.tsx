@@ -87,7 +87,7 @@ const LessonReader = ({
               <span className="w-5">
                 {activityIconType(selectedActivity.type)}
               </span>
-              <span className="truncate text-ellipsis px-2">
+              <span className="truncate text-ellipsis text-2xl px-2">
                 {textActivityTitle}
               </span>
               <ActivityActionsMenu

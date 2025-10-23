@@ -48,7 +48,7 @@ const SidebarWrapper = ({
         {children}
         <SidebarBottom interfaceType={interfaceType} />
       </div>
-      <img src={newLogo} />
+      <img src={newLogo} className="" />
     </nav>
   );
 };

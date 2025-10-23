@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import type { Activity, Resource } from "../../../utils/interfaces/activity";
 import { ACTIVITIES, ACTIVITIES_VIDEOS } from "../../../config/urls";
 import BaseReactPlayer from "react-player";
-import { File } from "lucide-react";
+import { ExternalLink, File } from "lucide-react";
 
 type ActivityProps = {
   activity?: Activity;
@@ -59,7 +59,7 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
         );
       case "resource":
         return (
-          <div className="flex flex-wrap justify-center gap-2">
+          <div className="flex flex-col justify-center gap-4">
             {pdfUrls
               .sort((a, b) => a.order - b.order)
               .map((pdf) => (
@@ -68,10 +68,13 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
                   href={`${ACTIVITIES}files/${pdf.url}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn btn-outline btn-sm"
+                  className="btn btn-outline btn-sm w-full justify-between py-5"
                 >
-                  <File />
-                  <span>{pdf.label}</span>
+                  <span className="flex items-center gap-2">
+                    <File />
+                    <span>{pdf.label}</span>
+                  </span>
+                  <ExternalLink className="w-5" />
                 </a>
               ))}
           </div>

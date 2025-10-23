@@ -32,6 +32,7 @@ const ParcoursView = () => {
     modules,
     studentCount,
   } = useParcoursView();
+
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const currentRoute = pathname.split("/").slice(1) ?? [];

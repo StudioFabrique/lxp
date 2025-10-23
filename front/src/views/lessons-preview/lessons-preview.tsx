@@ -50,6 +50,7 @@ const LessonsPreview = () => {
     onDeleteLesson,
     onDeleteActivity,
     onSaveActivity,
+    onActivityOrderChange,
   } = useLessonsPreview();
 
   const editTitle = useCallback(
@@ -153,6 +154,7 @@ const LessonsPreview = () => {
                   key="activity-list"
                   activities={selectedLesson?.activities}
                   selectedActivity={selectedActivity}
+                  onActivityOrderChange={onActivityOrderChange}
                   onSelectActivity={(activity) =>
                     dispatch({ type: "select_activity", activity })
                   }
