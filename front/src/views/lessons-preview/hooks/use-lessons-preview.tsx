@@ -12,6 +12,7 @@ import {
 } from "../store/lessons-preview-reducer";
 import { ACTIVITIES } from "../../../config/urls";
 import { Activity } from "../../../utils/interfaces/activity";
+import { OnDragEndResponder } from "react-beautiful-dnd";
 
 // Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
 const useLessonsPreview = () => {
@@ -103,7 +104,6 @@ const useLessonsPreview = () => {
         lessonRead: LessonRead;
         rating: LessonRating;
       }) => {
-        console.log({ lessonRead });
         if (state.selectedLesson)
           dispatch({
             type: "mark_lesson_as_read",
@@ -317,6 +317,14 @@ const useLessonsPreview = () => {
     return response;
   };
 
+  const activityOrderChange: OnDragEndResponder = (result) => {
+    console.log({ result });
+    const from = result.source.index;
+    const to = result.destination?.index;
+
+    // dispatch({});
+  };
+
   useEffect(() => {
     // useEffect pour charger les données initiales du module
     fetchModuleData();
@@ -357,6 +365,7 @@ const useLessonsPreview = () => {
     onDeleteCourse: deleteCourse,
     onDeleteLesson: deleteLesson,
     onDeleteActivity: deleteActivity,
+    onActivityOrderChange: activityOrderChange,
   };
 };
 

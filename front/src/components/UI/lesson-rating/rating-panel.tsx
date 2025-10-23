@@ -71,7 +71,7 @@ const RatingPanel = ({
   return (
     <div
       ref={panelRef}
-      className="absolute right-0 -bottom-4 transform translate-y-full card w-64 bg-base-100 border-[1px] border-primary shadow-2xl z-50 rounded-lg"
+      className="absolute right-0 -bottom-4 transform translate-y-full card w-80 bg-base-100 border-[1px] border-primary shadow-2xl z-50 rounded-lg"
     >
       <div className="card-body p-6">
         <h3 className="text-lg font-semibold mb-2">Votre évaluation</h3>
