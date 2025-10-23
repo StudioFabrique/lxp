@@ -325,10 +325,14 @@ const useLessonsPreview = () => {
   };
 
   const activityOrderChange: OnDragEndResponder = (result) => {
+    if (hasOrderChanged.activity) {
+      toast("Veuillez patienter");
+      return;
+    }
     const fromId = result.source.index;
     const toId = result.destination?.index;
 
-    if (!(fromId && toId)) return;
+    if (toId === undefined) return;
 
     dispatch({ type: "reorder_activity", fromId, toId });
     setOrderChanged((prev) => ({ ...prev, activity: true }));
@@ -347,10 +351,6 @@ const useLessonsPreview = () => {
       state.selectedLesson &&
       state.selectedLesson.activities
     ) {
-      console.log(
-        state.selectedLesson.activities.map((activity) => activity.id)
-      );
-
       const applyData = () => {
         setOrderChanged((prev) => ({ ...prev, activity: false }));
       };
