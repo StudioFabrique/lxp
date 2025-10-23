@@ -9,8 +9,6 @@ import { ZodError } from "zod";
  * @returns Un objet contenant les valeurs, erreurs et fonctions de gestion du formulaire
  */
 const useForm = (data = {}, schema?: any) => {
-  console.log({ schema });
-
   // État pour stocker les valeurs des champs du formulaire
   const [values, setValues] = useState<Record<string, string>>(data);
   // État pour stocker les erreurs de validation
@@ -22,7 +20,6 @@ const useForm = (data = {}, schema?: any) => {
    */
   const onChangeValue = useCallback(
     (field: string, value: string) => {
-      console.log("toutes les erreurs ", errors);
       if (errors.length > 0)
         setErrors((prevErrors) => [
           ...prevErrors.filter((e: CustomError) => e.type !== field),

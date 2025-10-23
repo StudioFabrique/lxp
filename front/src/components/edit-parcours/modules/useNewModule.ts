@@ -72,12 +72,20 @@ const useNewModule = () => {
 
   const [metadataList, setMetadataList] = useState<any>(null);
 
+  const [moduleToDuplicate, setModuleToDuplicate] = useState<any | null>(null);
+
   // Reference to the form element for scrolling behavior
   const refForm = useRef<HTMLFormElement | null>(null);
 
   // Form management hook with validation schema
-  const { values, onChangeValue, onResetForm, errors, onValidateForm } =
-    useForm({}, moduleCreateSchema);
+  const {
+    values,
+    onChangeValue,
+    onResetForm,
+    errors,
+    onValidateForm,
+    initValues,
+  } = useForm({}, moduleCreateSchema);
 
   // Combined form data object for components
   const data = { values, onChangeValue, errors };
@@ -156,6 +164,7 @@ const useNewModule = () => {
       setCurrentContacts([]);
       setCurrentSkills([]);
       setFile(null);
+      setMetadataList(null);
       // Add the new module to the existing list
       setModules((prevModules) => [...prevModules, data.data as ModuleData]);
       // Scroll to top when form is hidden
@@ -196,8 +205,12 @@ const useNewModule = () => {
 
   const handleDeleteModule = () => {
     const applyData = (data: SuccessWithMessage) => {
+      setModules((prevModules) =>
+        prevModules.filter((m) => m.id !== moduleToDelete!.id)
+      );
       setModuleToDelete(null);
       toast.success(data.message);
+      setMetadataList(null);
     };
     sendRequest(
       {
@@ -212,18 +225,19 @@ const useNewModule = () => {
     setModuleToDelete(null);
   };
 
-  const handleCloseDuplicateModal = () => {
-    setShowDuplicateModal(false);
-  };
-
   const handleDuplicateModule = () => {
-    getMetadataList();
-    setShowDuplicateModal(false);
+    if (!metadataList) getMetadataList();
+    else {
+      setShowDuplicateModal(false);
+      const drawer = document.getElementById("duplicate_module_drawer");
+      (drawer as HTMLDialogElement).click();
+    }
   };
 
   const getMetadataList = () => {
     const applyData = (data: any) => {
       setMetadataList(data);
+      setShowDuplicateModal(false);
       const drawer = document.getElementById("duplicate_module_drawer");
       (drawer as HTMLDialogElement).click();
     };
@@ -233,6 +247,20 @@ const useNewModule = () => {
       },
       applyData
     );
+  };
+
+  const handleCloseDuplicateModal = () => {
+    setShowDuplicateModal(false);
+  };
+
+  const handleCopyModule = (module: any) => {
+    setShowForm(true);
+    initValues({
+      title: module.title,
+      description: module.description,
+    });
+    const drawer = document.getElementById("duplicate_module_drawer");
+    (drawer as HTMLDialogElement).click();
   };
 
   useEffect(() => {
@@ -262,7 +290,6 @@ const useNewModule = () => {
 
   useEffect(() => {
     const modal = document.getElementById("duplicate_module_modal");
-
     if (showDuplicateModal) {
       (modal as HTMLDialogElement).showModal();
     } else if (!showDuplicateModal) (modal as HTMLDialogElement).close();
@@ -270,6 +297,7 @@ const useNewModule = () => {
 
   // Return all state and handlers for use in components
   return {
+    id,
     showForm,
     setShowForm,
     modules,
@@ -290,9 +318,10 @@ const useNewModule = () => {
     showDeleteModal,
     handleDeleteModule,
     handleCancelDeletion,
-    handleCloseDuplicateModal,
     handleDuplicateModule,
     metadataList,
+    handleCopyModule,
+    handleCloseDuplicateModal,
   };
 };
 
