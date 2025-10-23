@@ -34,7 +34,7 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
                             ? course.lessons.reduce(
                                 (sum, lesson) =>
                                   sum +
-                                  (lesson?.lessonsRead?.length &&
+                                  (lesson?.lessonsRead &&
                                   lesson.lessonsRead[0].finishedAt
                                     ? 1
                                     : 0),

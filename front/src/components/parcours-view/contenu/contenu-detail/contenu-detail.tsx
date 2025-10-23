@@ -48,7 +48,7 @@ const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
         <div
           onClick={() => handleNavigate(course)}
           key={course?.id}
-          className="flex justify-between items-center bg-primary hover:bg-primary/80 text-base-100 p-4 rounded-lg"
+          className="flex justify-between items-center bg-primary hover:bg-primary/80 text-base-100 p-4 rounded-lg cursor-pointer"
         >
           <span className="w-12 h-12 flex-shrink-0">
             <BookIcon />

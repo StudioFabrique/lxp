@@ -7,6 +7,7 @@ import httpPutLesson from "../../../controllers/lesson/http-put-lesson";
 import {
   getLessonsByTagValidator,
   lessonIdValidator,
+  lessonIdWithRateValidator,
   lessonRateValidator,
   putLessonValidator,
   putReorderLessonsValidator,
@@ -101,6 +102,7 @@ lessonRouter.get(
 lessonRouter.put(
   "/rate/:lessonId",
   checkPermissions("lesson", "read"),
+  lessonIdValidator,
   httpPutRateLesson
 );
 
@@ -116,7 +118,7 @@ lessonRouter.post(
 lessonRouter.put(
   "/read/:lessonId",
   checkPermissions("lesson", "read"),
-  lessonIdValidator,
+  lessonIdWithRateValidator,
   httpPutFinishReadLesson
 );
 
