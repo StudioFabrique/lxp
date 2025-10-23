@@ -1,6 +1,6 @@
 import { useLocation, useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
-import { useCallback, useEffect, useMemo, useReducer } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
@@ -12,6 +12,7 @@ import {
 } from "../store/lessons-preview-reducer";
 import { ACTIVITIES } from "../../../config/urls";
 import { Activity } from "../../../utils/interfaces/activity";
+import { OnDragEndResponder } from "react-beautiful-dnd";
 
 // Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
 const useLessonsPreview = () => {
@@ -28,6 +29,12 @@ const useLessonsPreview = () => {
     lessonsPreviewReducer,
     initialLessonsPreviewState
   );
+
+  const [hasOrderChanged, setOrderChanged] = useState({
+    course: false,
+    lesson: false,
+    activity: false,
+  });
 
   const isLessonCompleted = useMemo(
     () =>
@@ -53,7 +60,7 @@ const useLessonsPreview = () => {
     () =>
       Boolean(
         state.selectedActivity &&
-          state.selectedLesson?.activities?.length &&
+          state.selectedLesson?.activities &&
           state.selectedLesson.activities.indexOf(state.selectedActivity) ===
             state.selectedLesson.activities.length - 1
       ),
@@ -103,14 +110,14 @@ const useLessonsPreview = () => {
         lessonRead: LessonRead;
         rating: LessonRating;
       }) => {
-        console.log({ lessonRead });
-        if (state.selectedLesson)
+        if (state.selectedLesson) {
           dispatch({
             type: "mark_lesson_as_read",
             lesson: state.selectedLesson,
             lessonRead,
           });
-        dispatch({ type: "set_lesson_rating", rating: [rating] });
+          dispatch({ type: "set_lesson_rating", rating: [rating] });
+        }
       };
 
       if (state.selectedLesson)
@@ -317,6 +324,48 @@ const useLessonsPreview = () => {
     return response;
   };
 
+  const activityOrderChange: OnDragEndResponder = (result) => {
+    const fromId = result.source.index;
+    const toId = result.destination?.index;
+
+    if (!(fromId && toId)) return;
+
+    dispatch({ type: "reorder_activity", fromId, toId });
+    setOrderChanged((prev) => ({ ...prev, activity: true }));
+  };
+
+  useEffect(() => {
+    // selectionner la leçon selectionnée depuis le state de l'url
+    if (stateFromUrl?.lessonId && state.module) {
+      dispatch({ type: "select_lesson_by_id", id: stateFromUrl.lessonId });
+    }
+  }, [state.module, stateFromUrl?.lessonId]);
+
+  useEffect(() => {
+    if (
+      hasOrderChanged.activity &&
+      state.selectedLesson &&
+      state.selectedLesson.activities
+    ) {
+      console.log(
+        state.selectedLesson.activities.map((activity) => activity.id)
+      );
+
+      const applyData = () => {
+        setOrderChanged((prev) => ({ ...prev, activity: false }));
+      };
+
+      sendRequest(
+        {
+          path: `/activity/reorder/${state.selectedLesson.id}`,
+          method: "put",
+          body: state.selectedLesson.activities.map((activity) => activity.id),
+        },
+        applyData
+      );
+    }
+  }, [sendRequest, hasOrderChanged, state.selectedLesson]);
+
   useEffect(() => {
     // useEffect pour charger les données initiales du module
     fetchModuleData();
@@ -332,13 +381,6 @@ const useLessonsPreview = () => {
     // useEffect pour récupérer le contenu de l'activité selectionnée
     fetchActivityTextContent();
   }, [fetchActivityTextContent]);
-
-  useEffect(() => {
-    // selectionner la leçon selectionnée depuis le state de l'url
-    if (stateFromUrl?.lessonId && state.module) {
-      dispatch({ type: "select_lesson_by_id", id: stateFromUrl.lessonId });
-    }
-  }, [state.module, stateFromUrl?.lessonId]);
 
   // Retourne les données et fonctions nécessaires
   return {
@@ -357,6 +399,7 @@ const useLessonsPreview = () => {
     onDeleteCourse: deleteCourse,
     onDeleteLesson: deleteLesson,
     onDeleteActivity: deleteActivity,
+    onActivityOrderChange: activityOrderChange,
   };
 };
 
