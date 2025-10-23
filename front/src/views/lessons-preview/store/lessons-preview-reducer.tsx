@@ -65,7 +65,7 @@ type LessonsPreviewAction =
   | { type: "update_activity_content"; content: string }
   | { type: "go_to_previous_activity" }
   | { type: "go_to_next_activity" }
-  | { type: "reorder_activity"; fromId: number; ToId: number }
+  | { type: "reorder_activity"; fromId: number; toId: number }
   // Miscellaneous
   | { type: "select_mode"; mode: "read" | "edit" | "write" }
   | { type: "toggle_panel_visibility" }
@@ -338,17 +338,18 @@ export function lessonsPreviewReducer(
 
     case "reorder_activity": {
       if (!state.selectedLesson?.activities) return state;
-      const from = state.selectedLesson.activities.find(
-        (activity) => activity.id === action.fromId
-      );
 
-      const to = state.selectedLesson.activities.find(
-        (activity) => activity.id === action.ToId
-      );
+      const activities = Array.from(state.selectedLesson.activities);
+      const [removed] = activities.splice(action.fromId, 1);
+      activities.splice(action.toId, 0, removed);
 
-      if (!(from && to)) return state;
-
-      return { ...state };
+      return {
+        ...state,
+        selectedLesson: {
+          ...state.selectedLesson,
+          activities,
+        },
+      };
     }
 
     // --- Miscellaneous ---

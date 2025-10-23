@@ -9,6 +9,9 @@ import {
   Droppable,
   OnDragEndResponder,
 } from "react-beautiful-dnd";
+import hasPermission from "../../../utils/hasPermission";
+import { useContext } from "react";
+import { Context } from "../../../store/context.store";
 
 type ActivityListProps = {
   activities?: Activity[];
@@ -27,10 +30,17 @@ export default function ActivityList({
   onSelectActivity,
   onClickCreateActivity,
 }: ActivityListProps) {
+  const { user } = useContext(Context);
+
   return (
     <FadeWrapper>
       <DragDropContext onDragEnd={onActivityOrderChange}>
-        <Droppable droppableId="droppable">
+        <Droppable
+          droppableId="droppable"
+          isDropDisabled={
+            !hasPermission(user?.permissions || [], "update", "lesson")
+          }
+        >
           {(provided, droppableState) => (
             <div
               ref={provided.innerRef}
@@ -40,12 +50,19 @@ export default function ActivityList({
               {...provided.droppableProps}
             >
               {provided.placeholder}
-              {activities?.length ? (
+              {activities ? (
                 activities?.map((activity, index) => (
                   <Draggable
                     key={activity.id}
                     draggableId={activity.id.toString()}
                     index={index}
+                    isDragDisabled={
+                      !hasPermission(
+                        user?.permissions || [],
+                        "update",
+                        "lesson"
+                      )
+                    }
                   >
                     {(provided) => (
                       <button
@@ -66,7 +83,9 @@ export default function ActivityList({
                         >
                           {activity.title}
                         </span>
-                        <ArrowDownUp className="w-4 hover:text-primary" />
+                        <Can action="update" object="lesson">
+                          <ArrowDownUp className="w-4 hover:text-primary" />
+                        </Can>
                       </button>
                     )}
                   </Draggable>
