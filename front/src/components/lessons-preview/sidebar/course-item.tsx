@@ -1,12 +1,15 @@
 import { ArrowDown, ArrowRight, EyeOff } from "lucide-react";
 import Course from "../../../utils/interfaces/course";
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useContext, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import LessonItem from "./lesson-item";
 import Lesson from "../../../utils/interfaces/lesson";
 import Can from "../../UI/can/can.component";
 import CourseActionsModal from "./course-actions-modal";
 import CourseActions from "./course-actions";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import hasPermission from "../../../utils/hasPermission";
+import { Context } from "../../../store/context.store";
 
 type CourseItemProps = {
   course: Course;
@@ -32,6 +35,7 @@ const CourseItem = ({
   onDeleteLesson,
   children,
 }: PropsWithChildren<CourseItemProps>) => {
+  const { user } = useContext(Context);
   const [isCourseOpen, setCourseOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<ModalType>("visibility");
@@ -204,26 +208,67 @@ const CourseItem = ({
             maxHeight: isCourseOpen ? 500 : 0,
           }}
         >
-          <div className="p-4 flex flex-col gap-4 items-center">
-            {course.lessons.length > 0 ? (
-              course.lessons.map((lesson) => (
-                <LessonItem
-                  key={lesson.id}
-                  lesson={lesson}
-                  lessonsOrders={course.lessons.map(
-                    (lesson) => lesson.order ?? 0
+          <DragDropContext onDragEnd={() => {}}>
+            <Droppable
+              isDropDisabled={
+                !hasPermission(user?.permissions || [], "update", "lesson")
+              }
+              droppableId="droppable"
+            >
+              {(provided, droppableState) => (
+                <div
+                  ref={provided.innerRef}
+                  className="p-4 flex flex-col gap-4 items-center"
+                  {...provided.droppableProps}
+                >
+                  {provided.placeholder}
+                  {course.lessons.length > 0 ? (
+                    course.lessons.map(
+                      (lesson, index) =>
+                        lesson.id && (
+                          <Draggable
+                            key={lesson.id}
+                            draggableId={lesson.id.toString()}
+                            index={index}
+                            isDragDisabled={
+                              !hasPermission(
+                                user?.permissions || [],
+                                "update",
+                                "lesson"
+                              )
+                            }
+                          >
+                            {(provided) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className="w-full"
+                              >
+                                <LessonItem
+                                  key={lesson.id}
+                                  lesson={lesson}
+                                  lessonsOrders={course.lessons.map(
+                                    (lesson) => lesson.order ?? 0
+                                  )}
+                                  moduleId={moduleId}
+                                  selectedLesson={selectedLesson}
+                                  onSelectLesson={onSelectLesson}
+                                  onOpenModal={handleOpenLessonDeletionModal}
+                                  children={children}
+                                />
+                              </div>
+                            )}
+                          </Draggable>
+                        )
+                    )
+                  ) : (
+                    <p>Aucune leçon</p>
                   )}
-                  moduleId={moduleId}
-                  selectedLesson={selectedLesson}
-                  onSelectLesson={onSelectLesson}
-                  onOpenModal={handleOpenLessonDeletionModal}
-                  children={children}
-                />
-              ))
-            ) : (
-              <p>Aucune leçon</p>
-            )}
-          </div>
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
         </motion.div>
       </div>
     </>
