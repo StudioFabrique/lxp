@@ -1,6 +1,6 @@
 import { useLocation, useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
-import { useCallback, useEffect, useMemo, useReducer } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import Module from "../../../utils/interfaces/module";
 import Lesson from "../../../utils/interfaces/lesson";
 import LessonRead from "../../../utils/interfaces/lesson-read";
@@ -30,6 +30,12 @@ const useLessonsPreview = () => {
     initialLessonsPreviewState
   );
 
+  const [hasOrderChanged, setOrderChanged] = useState({
+    course: false,
+    lesson: false,
+    activity: false,
+  });
+
   const isLessonCompleted = useMemo(
     () =>
       Boolean(
@@ -54,7 +60,7 @@ const useLessonsPreview = () => {
     () =>
       Boolean(
         state.selectedActivity &&
-          state.selectedLesson?.activities?.length &&
+          state.selectedLesson?.activities &&
           state.selectedLesson.activities.indexOf(state.selectedActivity) ===
             state.selectedLesson.activities.length - 1
       ),
@@ -104,13 +110,14 @@ const useLessonsPreview = () => {
         lessonRead: LessonRead;
         rating: LessonRating;
       }) => {
-        if (state.selectedLesson)
+        if (state.selectedLesson) {
           dispatch({
             type: "mark_lesson_as_read",
             lesson: state.selectedLesson,
             lessonRead,
           });
-        dispatch({ type: "set_lesson_rating", rating: [rating] });
+          dispatch({ type: "set_lesson_rating", rating: [rating] });
+        }
       };
 
       if (state.selectedLesson)
@@ -318,12 +325,46 @@ const useLessonsPreview = () => {
   };
 
   const activityOrderChange: OnDragEndResponder = (result) => {
-    console.log({ result });
-    const from = result.source.index;
-    const to = result.destination?.index;
+    const fromId = result.source.index;
+    const toId = result.destination?.index;
 
-    // dispatch({});
+    if (!(fromId && toId)) return;
+
+    dispatch({ type: "reorder_activity", fromId, toId });
+    setOrderChanged((prev) => ({ ...prev, activity: true }));
   };
+
+  useEffect(() => {
+    // selectionner la leçon selectionnée depuis le state de l'url
+    if (stateFromUrl?.lessonId && state.module) {
+      dispatch({ type: "select_lesson_by_id", id: stateFromUrl.lessonId });
+    }
+  }, [state.module, stateFromUrl?.lessonId]);
+
+  useEffect(() => {
+    if (
+      hasOrderChanged.activity &&
+      state.selectedLesson &&
+      state.selectedLesson.activities
+    ) {
+      console.log(
+        state.selectedLesson.activities.map((activity) => activity.id)
+      );
+
+      const applyData = () => {
+        setOrderChanged((prev) => ({ ...prev, activity: false }));
+      };
+
+      sendRequest(
+        {
+          path: `/activity/reorder/${state.selectedLesson.id}`,
+          method: "put",
+          body: state.selectedLesson.activities.map((activity) => activity.id),
+        },
+        applyData
+      );
+    }
+  }, [sendRequest, hasOrderChanged, state.selectedLesson]);
 
   useEffect(() => {
     // useEffect pour charger les données initiales du module
@@ -340,13 +381,6 @@ const useLessonsPreview = () => {
     // useEffect pour récupérer le contenu de l'activité selectionnée
     fetchActivityTextContent();
   }, [fetchActivityTextContent]);
-
-  useEffect(() => {
-    // selectionner la leçon selectionnée depuis le state de l'url
-    if (stateFromUrl?.lessonId && state.module) {
-      dispatch({ type: "select_lesson_by_id", id: stateFromUrl.lessonId });
-    }
-  }, [state.module, stateFromUrl?.lessonId]);
 
   // Retourne les données et fonctions nécessaires
   return {

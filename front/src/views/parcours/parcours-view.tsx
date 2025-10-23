@@ -43,7 +43,7 @@ const ParcoursView = () => {
         module.courses?.some((course) =>
           course.lessons?.some(
             (lesson) =>
-              !lesson.lessonsRead?.length || !lesson.lessonsRead[0]?.finishedAt
+              !lesson.lessonsRead || !lesson.lessonsRead[0]?.finishedAt
           )
         )
       )?.id || modules[0].id;
