@@ -195,6 +195,7 @@ const useNewModule = () => {
       // Add the new module to the existing list
       setModules((prevModules) => [...prevModules, data.data as ModuleData]);
       if (moduleToDuplicate) setModuleToDuplicate(null);
+      if (mode === "edit") setMode("create");
       // Scroll to top when form is hidden
       scrollToTop();
     };
@@ -224,6 +225,8 @@ const useNewModule = () => {
     setCurrentContacts([]);
     setCurrentSkills([]);
     setFile(null);
+    if (moduleToDuplicate) setModuleToDuplicate(null);
+    if (mode === "edit") setMode("create");
     // Scroll to top when form is hidden
     scrollToTop();
   };
@@ -284,9 +287,8 @@ const useNewModule = () => {
   };
 
   const handleCopyModule = (module: DuplicatedModule) => {
-    console.log({ module });
-
     setShowForm(true);
+    setMode("edit");
     initValues({
       title: module.title,
       description: module.description,
@@ -355,6 +357,7 @@ const useNewModule = () => {
     metadataList,
     handleCopyModule,
     handleCloseDuplicateModal,
+    mode,
   };
 };
 

@@ -44,6 +44,7 @@ export default function ModuleComponent() {
     metadataList,
     handleCopyModule,
     handleCloseDuplicateModal,
+    mode,
   } = useNewModule();
 
   return (
@@ -63,6 +64,7 @@ export default function ModuleComponent() {
         {/* Module creation form (conditional) */}
         {showForm && (
           <ModuleForm
+            mode={mode}
             refForm={refForm}
             data={data}
             isLoading={isLoading}
