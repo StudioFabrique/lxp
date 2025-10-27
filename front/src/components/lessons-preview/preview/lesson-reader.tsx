@@ -10,7 +10,7 @@ import Lesson from "../../../utils/interfaces/lesson";
 import ActivityDeleteModal from "./activity-delete-modal";
 
 type PreviewLessonProps = {
-  mode: "read" | "edit" | "write";
+  mode: "read" | "edit" | "write" | "activity_type_selection";
   isLessonCompleted: boolean;
   selectedLesson?: Lesson;
   selectedActivity?: Activity;
