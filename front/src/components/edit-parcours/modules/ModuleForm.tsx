@@ -47,7 +47,9 @@ export default function ModuleForm({
 }: ModuleFormProps) {
   return (
     <>
-      <div className="divider text-primary text-xs">Création de module</div>
+      <div className="divider text-primary text-xs">
+        {mode === "create" ? "Création" : "Édition"} de module
+      </div>
       <Wrapper>
         <form onSubmit={onSubmit} ref={refForm}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

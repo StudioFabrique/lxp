@@ -67,7 +67,10 @@ function ModuleMetadatas({ data, mode, onSetFile }: Props) {
         {/* image du module */}
 
         <div className="w-full h-full flex gap-x-4 items-center">
-          <FormUploadImage onSetFile={handleFileChange} />
+          <FormUploadImage
+            onSetFile={handleFileChange}
+            isDisabled={mode === "edit"}
+          />
           <span style={classImage} />
         </div>
       </article>
