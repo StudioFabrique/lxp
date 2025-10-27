@@ -324,7 +324,7 @@ const useLessonsPreview = () => {
     return response;
   };
 
-  const activityOrderChange: OnDragEndResponder = (result) => {
+  const activityReorder: OnDragEndResponder = (result) => {
     if (hasOrderChanged.activity) {
       toast("Veuillez patienter");
       return;
@@ -336,6 +336,20 @@ const useLessonsPreview = () => {
 
     dispatch({ type: "reorder_activity", fromId, toId });
     setOrderChanged((prev) => ({ ...prev, activity: true }));
+  };
+
+  const lessonReorder: OnDragEndResponder = (result) => {
+    if (hasOrderChanged.activity) {
+      toast("Veuillez patienter");
+      return;
+    }
+    const fromId = result.source.index;
+    const toId = result.destination?.index;
+
+    if (toId === undefined) return;
+
+    dispatch({ type: "reorder_lesson", fromId, toId });
+    setOrderChanged((prev) => ({ ...prev, lesson: true }));
   };
 
   useEffect(() => {
@@ -364,7 +378,23 @@ const useLessonsPreview = () => {
         applyData
       );
     }
-  }, [sendRequest, hasOrderChanged, state.selectedLesson]);
+    if (hasOrderChanged.lesson && state.module) {
+      const applyData = () => {
+        setOrderChanged((prev) => ({ ...prev, lesson: false }));
+      };
+
+      sendRequest(
+        {
+          path: `/lesson/reorder/${state.selectedLesson?.course.id}`,
+          method: "put",
+          body: state.module.courses
+            .find((course) => state.selectedLesson?.course.id === course.id)
+            ?.lessons.map((lesson) => lesson.id),
+        },
+        applyData
+      );
+    }
+  }, [sendRequest, hasOrderChanged, state.selectedLesson, state.module]);
 
   useEffect(() => {
     // useEffect pour charger les données initiales du module
@@ -399,7 +429,8 @@ const useLessonsPreview = () => {
     onDeleteCourse: deleteCourse,
     onDeleteLesson: deleteLesson,
     onDeleteActivity: deleteActivity,
-    onActivityOrderChange: activityOrderChange,
+    onActivityReorder: activityReorder,
+    onLessonReorder: lessonReorder,
   };
 };
 

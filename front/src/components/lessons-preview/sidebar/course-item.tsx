@@ -7,7 +7,12 @@ import Lesson from "../../../utils/interfaces/lesson";
 import Can from "../../UI/can/can.component";
 import CourseActionsModal from "./course-actions-modal";
 import CourseActions from "./course-actions";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  OnDragEndResponder,
+} from "react-beautiful-dnd";
 import hasPermission from "../../../utils/hasPermission";
 import { Context } from "../../../store/context.store";
 
@@ -18,6 +23,7 @@ type CourseItemProps = {
   selectedLesson: Lesson | undefined;
   onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
+  onLessonReorder: OnDragEndResponder;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
   onDeleteLesson: (lessonId: number) => Promise<void>;
 };
@@ -31,6 +37,7 @@ const CourseItem = ({
   selectedLesson,
   onSelectLesson,
   onDeleteCourse,
+  onLessonReorder,
   onEnableCourse,
   onDeleteLesson,
   children,
@@ -216,7 +223,7 @@ const CourseItem = ({
             maxHeight: isCourseOpen ? 500 : 0,
           }}
         >
-          <DragDropContext onDragEnd={() => {}}>
+          <DragDropContext onDragEnd={onLessonReorder}>
             <Droppable
               isDropDisabled={
                 !isDragAndDropEnabled ||
