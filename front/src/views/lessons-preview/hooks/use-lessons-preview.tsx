@@ -1,4 +1,4 @@
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useHttp from "../../../hooks/use-http";
 import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import Module from "../../../utils/interfaces/module";
@@ -21,8 +21,9 @@ const useLessonsPreview = () => {
   const { moduleId } = useParams();
   const { state: stateFromUrl }: { state: { lessonId?: number } } =
     useLocation();
+  const [stateFromUrlCalled, setStateFromUrlCalled] = useState(false);
   // ------------
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const { sendRequest, isLoading } = useHttp(true);
 
   const [state, dispatch] = useReducer(
@@ -112,7 +113,7 @@ const useLessonsPreview = () => {
       }) => {
         if (state.selectedLesson) {
           dispatch({
-            type: "mark_lesson_as_read",
+            type: "mark_lesson_as_complete",
             lesson: state.selectedLesson,
             lessonRead,
           });
@@ -229,12 +230,15 @@ const useLessonsPreview = () => {
     };
 
     if (!state.selectedLesson?.id) return;
+    navigate(".", {
+      state: { lessonId: state.selectedLesson.id },
+    });
     await sendRequest(
       { path: `/lesson/${state.selectedLesson.id}` },
       applyData
     );
     await initiateLesson(state.selectedLesson.id);
-  }, [state.selectedLesson?.id, sendRequest, initiateLesson]);
+  }, [state.selectedLesson?.id, sendRequest, initiateLesson, navigate]);
 
   const fetchActivityTextContent = useCallback(() => {
     if (
@@ -352,12 +356,17 @@ const useLessonsPreview = () => {
     setOrderChanged((prev) => ({ ...prev, lesson: true }));
   };
 
+  const nextLesson = () => {
+    dispatch({ type: "go_to_next_lesson" });
+  };
+
   useEffect(() => {
-    // selectionner la leçon selectionnée depuis le state de l'url
-    if (stateFromUrl?.lessonId && state.module) {
+    // selectionner la leçon selectionnée depuis le state de l'url dès que les données, une seule fois
+    if (stateFromUrl?.lessonId && state.module && !stateFromUrlCalled) {
       dispatch({ type: "select_lesson_by_id", id: stateFromUrl.lessonId });
+      setStateFromUrlCalled(true);
     }
-  }, [state.module, stateFromUrl?.lessonId]);
+  }, [state.module, stateFromUrl?.lessonId, stateFromUrlCalled]);
 
   useEffect(() => {
     if (
@@ -431,6 +440,7 @@ const useLessonsPreview = () => {
     onDeleteActivity: deleteActivity,
     onActivityReorder: activityReorder,
     onLessonReorder: lessonReorder,
+    onNextLesson: nextLesson,
   };
 };
 

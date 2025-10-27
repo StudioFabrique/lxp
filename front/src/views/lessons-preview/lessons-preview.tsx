@@ -52,6 +52,7 @@ const LessonsPreview = () => {
     onSaveActivity,
     onActivityReorder,
     onLessonReorder,
+    onNextLesson,
   } = useLessonsPreview();
 
   const editTitle = useCallback(
@@ -69,9 +70,7 @@ const LessonsPreview = () => {
   );
 
   const handleSelectLesson = (lesson: Lesson) => {
-    navigate(".", {
-      state: { lessonId: lesson?.id },
-    });
+    if (lesson.id) dispatch({ type: "select_lesson_by_id", id: lesson.id });
   };
 
   const handleCloseAll = () => {
@@ -91,7 +90,7 @@ const LessonsPreview = () => {
           isLastLessonSelected={isLastLessonSelected}
           isLastActivitySelected={isLastActivitySelected}
           onRateAndComplete={onCompleteLesson}
-          onClickNextLesson={() => dispatch({ type: "go_to_next_lesson" })}
+          onClickNextLesson={onNextLesson}
           onClickMinimizeButton={() =>
             dispatch({
               type: "set_modal_visibility",
@@ -175,7 +174,8 @@ const LessonsPreview = () => {
               <ProgressBar courses={module.courses} />
             </Can>,
             // La prévisualisation de la leçon
-            selectedLesson?.activities || state.mode !== "read" ? (
+            (selectedLesson?.activities?.length || 0) > 0 ||
+            state.mode !== "read" ? (
               // Le lecteur de leçons
               <LessonReader
                 key="lesson-reader"
@@ -234,7 +234,7 @@ const LessonsPreview = () => {
                     onNext={() => dispatch({ type: "go_to_next_activity" })}
                     onCompleteLesson={() =>
                       isLessonCompleted
-                        ? dispatch({ type: "go_to_next_lesson" })
+                        ? onNextLesson()
                         : dispatch({
                             type: "set_modal_visibility",
                             modalVisibility: "lessonCompletionModal",

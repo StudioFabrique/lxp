@@ -51,7 +51,7 @@ type LessonsPreviewAction =
   | { type: "select_lesson"; lesson?: Lesson }
   | { type: "select_lesson_by_id"; id: number }
   | { type: "set_lesson_rating"; rating: LessonRating[] }
-  | { type: "mark_lesson_as_read"; lesson: Lesson; lessonRead: LessonRead }
+  | { type: "mark_lesson_as_complete"; lesson: Lesson; lessonRead: LessonRead }
   | { type: "go_to_next_lesson" }
   | { type: "delete_lesson"; id: number }
   | { type: "reorder_lesson"; fromId: number; toId: number }
@@ -164,8 +164,9 @@ export function lessonsPreviewReducer(
         },
       };
 
-    case "mark_lesson_as_read": {
+    case "mark_lesson_as_complete": {
       if (!state.module) return state;
+
       const courses = state.module.courses.map((course) => ({
         ...course,
         lessons: course.lessons.map((lesson) => {
@@ -179,19 +180,28 @@ export function lessonsPreviewReducer(
         }),
       }));
 
+      const updatedLesson =
+        state.selectedLesson && state.selectedLesson.id === action.lesson.id
+          ? {
+              ...state.selectedLesson,
+              lessonsRead: [
+                ...(state.selectedLesson.lessonsRead || []),
+                action.lessonRead,
+              ],
+              activities:
+                state.selectedLesson.activities ??
+                action.lesson.activities ??
+                [],
+            }
+          : state.selectedLesson;
+
       return {
         ...state,
         module: {
           ...state.module,
           courses,
         },
-        selectedLesson: state.selectedLesson && {
-          ...state.selectedLesson,
-          lessonsRead: [
-            ...(state.selectedLesson.lessonsRead || []),
-            action.lessonRead,
-          ],
-        },
+        selectedLesson: updatedLesson,
       };
     }
 
