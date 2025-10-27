@@ -1,110 +1,35 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useReducer, useRef } from "react";
+import { useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import useHttp from "../../../hooks/use-http";
+import useForm from "../../UI/forms/hooks/use-form";
+import { moduleCreateSchema } from "../../../lib/validation/parcours-edit/module-create-schema";
+import { scrollToTop } from "../../../helpers/scrollToTop";
+import { moduleReducer, initialState } from "./useNewModuleReducer";
+import SuccessWithMessage from "../../../utils/interfaces/success-with-message";
+import {
+  DuplicatedModule,
+  MetadataList,
+  ModuleData,
+  Parcours,
+} from "../../../utils/interfaces/new-module";
 import Contact from "../../../utils/interfaces/contact";
 import Skill from "../../../utils/interfaces/skill";
-import useHttp from "../../../hooks/use-http";
-import { moduleCreateSchema } from "../../../lib/validation/parcours-edit/module-create-schema";
-import { useParams } from "react-router-dom";
-import useForm from "../../UI/forms/hooks/use-form";
-import { scrollToTop } from "../../../helpers/scrollToTop";
-import toast from "react-hot-toast";
-import SuccessWithMessage from "../../../utils/interfaces/success-with-message";
-
-// Type definition for module data structure
-type ModuleData = {
-  id: number;
-  title: string;
-  thumb: string | null; // Optional base64 encoded thumbnail
-};
-
-// Type definition for parcours (learning path) with associated resources
-type Parcours = {
-  id: number;
-  formationId: number;
-  contacts: Contact[]; // Available instructors/contacts for the parcours
-  bonusSkills: Skill[]; // Available bonus skills that can be earned
-};
-
-export type Metadatas = {
-  id: number;
-  bonusSkills: Skill[];
-  contacts: Contact[];
-  courses: { id: number; title: string }[];
-  parcours: { id: number; title: string };
-};
-
-export type MetadataList = {
-  id: number;
-  title: string;
-  description: string;
-  thumb: string | null;
-  metadatas: Metadatas[];
-};
-
-export type DuplicatedModule = {
-  id: number;
-  description: string;
-  thumb: string | null;
-  title: string;
-  metadatas: Metadatas[];
-};
 
 /**
  * Custom hook for managing module creation and display within a parcours
  *
- * This hook handles:
- * - Fetching and displaying modules associated with a parcours
- * - Managing form state for creating new modules
- * - Handling form validation and submission
- * - Managing selected contacts and skills for new modules
- * - File upload for module thumbnails
- * - Form reset and cancellation logic
- *
- * The hook integrates with the parcours edit workflow, allowing users to
- * create modules with metadata, associate instructors, and assign bonus skills.
- *
- * @returns Object containing state, handlers, and data for module management
+ * Refactored to use useReducer for better state management and reduced complexity
  */
 const useNewModule = () => {
-  // Get parcours ID from URL parameters
   const { id } = useParams();
-
-  // HTTP hook for API communication
   const { sendRequest, isLoading, error } = useHttp();
-
-  // Form visibility state
-  const [showForm, setShowForm] = useState(false);
-
-  // Modules data for the current parcours
-  const [modules, setModules] = useState<ModuleData[]>([]);
-
-  // Parcours data with available contacts and skills
-  const [parcours, setParcours] = useState<Parcours | null>(null);
-
-  // Selected contacts for the new module being created
-  const [currentContacts, setCurrentContacts] = useState<Contact[]>([]);
-
-  // Selected skills for the new module being created
-  const [currentSkills, setCurrentSkills] = useState<Skill[]>([]);
-
-  // Uploaded file for module thumbnail
-  const [file, setFile] = useState<File | null>(null);
-
-  const [mode, setMode] = useState<"create" | "edit">("create");
-
-  // Module selected for deletion
-  const [moduleToDelete, setModuleToDelete] = useState<ModuleData | null>(null);
-
-  const [showDuplicateModal, setShowDuplicateModal] = useState(false);
-
-  const [metadataList, setMetadataList] = useState<MetadataList[] | null>(null);
-
-  const [moduleToDuplicate, setModuleToDuplicate] =
-    useState<DuplicatedModule | null>(null);
-
-  // Reference to the form element for scrolling behavior
   const refForm = useRef<HTMLFormElement | null>(null);
 
-  // Form management hook with validation schema
+  // ✅ Single useReducer replaces 11 useState hooks
+  const [state, dispatch] = useReducer(moduleReducer, initialState);
+
+  // Form management remains separate (UI-specific logic)
   const {
     values,
     onChangeValue,
@@ -114,97 +39,61 @@ const useNewModule = () => {
     initValues,
   } = useForm({}, moduleCreateSchema);
 
-  // Combined form data object for components
   const data = { values, onChangeValue, errors };
 
   /**
    * Fetches modules and parcours data from the API
-   * Retrieves both the list of modules associated with the parcours
-   * and the parcours metadata (contacts, skills) for form options
    */
   const getParcoursModules = useCallback(() => {
     const applyData = (data: {
       modules: ModuleData[];
       parcoursData: Parcours;
     }) => {
-      setModules(data.modules);
-      setParcours(data.parcoursData);
+      dispatch({ type: "SET_MODULES", payload: data.modules });
+      dispatch({ type: "SET_PARCOURS", payload: data.parcoursData });
     };
     sendRequest({ path: `/modules/${id}` }, applyData);
   }, [id, sendRequest]);
 
-  // Fetch data when component mounts or ID changes
   useEffect(() => {
     getParcoursModules();
   }, [getParcoursModules]);
 
   /**
    * Handles form submission for creating a new module
-   *
-   * Process:
-   * 1. Prevents default form submission
-   * 2. Validates form data using the schema
-   * 3. Constructs module object with form values and associations
-   * 4. Creates FormData for multipart upload (includes image file)
-   * 5. Sends POST request to create the module
-   * 6. Updates local state and resets form on success
    */
   const handleSubmitNewModule = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate the form before submission
-    const isValid = onValidateForm();
-    if (!isValid) {
-      return;
-    }
+    if (!onValidateForm()) return;
 
-    // Prepare form data for multipart upload
     const formData = new FormData();
-    console.log(data.values);
-
-    // Construct module object with all required data
     const module = {
       ...data.values,
-      formationId: parcours?.formationId,
+      formationId: state.parcours?.formationId,
       parcoursId: +id!,
-      // Ensure duration is at least 1 (fallback for invalid values)
       duration:
         +data.values.duration === 0 || isNaN(+data.values.duration)
           ? 1
           : +data.values.duration,
-      // Extract IDs from selected contacts and skills
-      contacts: currentContacts.map((item) => item.id),
-      skills: currentSkills.map((item) => item.id),
+      contacts: state.currentContacts.map((item) => item.id),
+      skills: state.currentSkills.map((item) => item.id),
     };
 
-    // Append module data as JSON string
     formData.append("module", JSON.stringify(module));
+    if (state.file) formData.append("image", state.file);
 
-    // Append image file if selected
-    if (file) formData.append("image", file);
-
-    // Success handler - updates UI and resets form state
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const applyData = (data: { data: ModuleData; message: string }) => {
       onResetForm();
-      setShowForm(false);
-      setCurrentContacts([]);
-      setCurrentSkills([]);
-      setFile(null);
-      setMetadataList(null);
-      // Add the new module to the existing list
-      setModules((prevModules) => [...prevModules, data.data as ModuleData]);
-      if (moduleToDuplicate) setModuleToDuplicate(null);
-      if (mode === "edit") setMode("create");
-      // Scroll to top when form is hidden
+      // ✅ Single action handles multiple state updates
+      dispatch({ type: "MODULE_CREATED", payload: data.data });
       scrollToTop();
     };
 
-    // Send POST request to create the module
     sendRequest(
       {
         path: `/formation/new-module${
-          moduleToDuplicate ? "/" + moduleToDuplicate.id : ""
+          state.moduleToDuplicate ? "/" + state.moduleToDuplicate.id : ""
         }`,
         method: "post",
         body: formData,
@@ -213,151 +102,165 @@ const useNewModule = () => {
     );
   };
 
-  console.log({ metadataList });
-
   /**
    * Handles form cancellation
-   * Resets all form state and hides the form without saving
    */
   const handleCancelForm = () => {
-    setShowForm(false);
     onResetForm();
-    setCurrentContacts([]);
-    setCurrentSkills([]);
-    setFile(null);
-    if (moduleToDuplicate) setModuleToDuplicate(null);
-    if (mode === "edit") setMode("create");
-    // Scroll to top when form is hidden
+    // ✅ Single action handles multiple state updates
+    dispatch({ type: "CANCEL_FORM" });
     scrollToTop();
   };
 
+  /**
+   * Shows delete confirmation modal
+   */
   const showDeleteModal = (id: number) => {
-    const item = modules.find((module) => module.id === id);
-    setModuleToDelete(item ?? null);
+    const item = state.modules.find((module) => module.id === id);
+    dispatch({ type: "SET_MODULE_TO_DELETE", payload: item ?? null });
   };
 
+  /**
+   * Deletes the selected module
+   */
   const handleDeleteModule = () => {
     const applyData = (data: SuccessWithMessage) => {
-      setModules((prevModules) =>
-        prevModules.filter((m) => m.id !== moduleToDelete!.id)
-      );
-      setModuleToDelete(null);
+      dispatch({ type: "REMOVE_MODULE", payload: state.moduleToDelete!.id });
+      dispatch({ type: "CLOSE_DELETE_MODAL" });
       toast.success(data.message);
-      setMetadataList(null);
     };
+
     sendRequest(
       {
-        path: `/modules/${moduleToDelete!.id}`,
+        path: `/modules/${state.moduleToDelete!.id}`,
         method: "delete",
       },
       applyData
     );
   };
 
+  /**
+   * Cancels module deletion
+   */
   const handleCancelDeletion = () => {
-    setModuleToDelete(null);
+    dispatch({ type: "SET_MODULE_TO_DELETE", payload: null });
   };
 
+  /**
+   * Handles module duplication flow
+   */
   const handleDuplicateModule = () => {
-    if (!metadataList) getMetadataList();
-    else {
-      setShowDuplicateModal(false);
+    if (!state.metadataList) {
+      getMetadataList();
+    } else {
+      dispatch({ type: "SET_SHOW_DUPLICATE_MODAL", payload: false });
       const drawer = document.getElementById("duplicate_module_drawer");
       (drawer as HTMLDialogElement).click();
     }
   };
 
+  /**
+   * Fetches list of modules with metadata for duplication
+   */
   const getMetadataList = () => {
     const applyData = (data: MetadataList[]) => {
-      setMetadataList(data);
-      setShowDuplicateModal(false);
+      dispatch({ type: "SET_METADATA_LIST", payload: data });
+      dispatch({ type: "SET_SHOW_DUPLICATE_MODAL", payload: false });
       const drawer = document.getElementById("duplicate_module_drawer");
       (drawer as HTMLDialogElement).click();
     };
+
     sendRequest(
       {
-        path: `/modules/formation/${parcours!.formationId}/true`,
+        path: `/modules/formation/${state.parcours!.formationId}/true`,
       },
       applyData
     );
   };
 
+  /**
+   * Closes the duplicate warning modal
+   */
   const handleCloseDuplicateModal = () => {
-    setShowDuplicateModal(false);
+    dispatch({ type: "SET_SHOW_DUPLICATE_MODAL", payload: false });
   };
 
+  /**
+   * Prepares form for duplicating an existing module
+   */
   const handleCopyModule = (module: DuplicatedModule) => {
-    setShowForm(true);
-    setMode("edit");
+    // ✅ Single action handles complex state transition
+    dispatch({ type: "PREPARE_DUPLICATE", payload: module });
     initValues({
       title: module.title,
       description: module.description,
     });
-    setModuleToDuplicate(module);
     const drawer = document.getElementById("duplicate_module_drawer");
     (drawer as HTMLDialogElement).click();
   };
 
+  // Effect for delete modal
   useEffect(() => {
     const modal = document.getElementById("two_buttons_modal");
-
-    if (moduleToDelete) {
+    if (state.moduleToDelete) {
       (modal as HTMLDialogElement).showModal();
-    } else if (!moduleToDelete) (modal as HTMLDialogElement).close();
-  }, [moduleToDelete]);
+    } else {
+      (modal as HTMLDialogElement).close();
+    }
+  }, [state.moduleToDelete]);
 
-  // Handle smooth scrolling behavior when form visibility changes
+  // Effect for form scrolling
   useEffect(() => {
-    if (showForm) {
-      // Scroll to form when it appears
-      if (refForm && refForm.current) {
-        refForm.current.scrollIntoView({ behavior: "smooth" });
+    if (state.showForm && refForm.current) {
+      refForm.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [state.showForm]);
+
+  // Effect for error handling
+  useEffect(() => {
+    if (error && error.length > 0) {
+      if (error === "MODULE_ALREADY_EXISTS") {
+        dispatch({ type: "SET_SHOW_DUPLICATE_MODAL", payload: true });
+      } else {
+        toast.error(error);
       }
     }
-  }, [showForm, refForm]);
-
-  useEffect(() => {
-    if (error && error.length > 0)
-      error == "MODULE_ALREADY_EXISTS"
-        ? setShowDuplicateModal(true)
-        : toast.error(error);
   }, [error]);
 
+  // Effect for duplicate modal
   useEffect(() => {
     const modal = document.getElementById("duplicate_module_modal");
-    if (showDuplicateModal) {
+    if (state.showDuplicateModal) {
       (modal as HTMLDialogElement).showModal();
-    } else if (!showDuplicateModal) (modal as HTMLDialogElement).close();
-  }, [showDuplicateModal]);
+    } else {
+      (modal as HTMLDialogElement).close();
+    }
+  }, [state.showDuplicateModal]);
 
-  // Return all state and handlers for use in components
+  // Return state and handlers
   return {
     id,
-    showForm,
-    setShowForm,
-    modules,
+    ...state, // ✅ Spread all state properties
     data,
     isLoading,
     refForm,
     handleSubmit: handleSubmitNewModule,
     handleCancelForm,
-    currentContacts,
-    setCurrentContacts,
-    currentSkills,
-    setCurrentSkills,
-    parcours,
-    setFile,
-    error,
-    moduleToDelete,
-    setModuleToDelete,
+    setCurrentContacts: (contacts: Contact[]) =>
+      dispatch({ type: "SET_CURRENT_CONTACTS", payload: contacts }),
+    setCurrentSkills: (skills: Skill[]) =>
+      dispatch({ type: "SET_CURRENT_SKILLS", payload: skills }),
+    setFile: (file: File | null) =>
+      dispatch({ type: "SET_FILE", payload: file }),
+    setShowForm: (show: boolean) =>
+      dispatch({ type: "SET_SHOW_FORM", payload: show }),
     showDeleteModal,
     handleDeleteModule,
     handleCancelDeletion,
     handleDuplicateModule,
-    metadataList,
     handleCopyModule,
     handleCloseDuplicateModal,
-    mode,
+    error,
   };
 };
 
