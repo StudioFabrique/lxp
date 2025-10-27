@@ -1,0 +1,167 @@
+import Contact from "../../../utils/interfaces/contact";
+import {
+  DuplicatedModule,
+  MetadataList,
+  ModuleData,
+  Parcours,
+} from "../../../utils/interfaces/new-module";
+import Skill from "../../../utils/interfaces/skill";
+
+// Centralized state type
+type ModuleState = {
+  showForm: boolean;
+  mode: "create" | "edit";
+  modules: ModuleData[];
+  parcours: Parcours | null;
+  currentContacts: Contact[];
+  currentSkills: Skill[];
+  file: File | null;
+  moduleToDelete: ModuleData | null;
+  showDuplicateModal: boolean;
+  metadataList: MetadataList[] | null;
+  moduleToDuplicate: DuplicatedModule | null;
+};
+
+// Action types
+type ModuleAction =
+  | { type: "SET_SHOW_FORM"; payload: boolean }
+  | { type: "SET_MODE"; payload: "create" | "edit" }
+  | { type: "SET_MODULES"; payload: ModuleData[] }
+  | { type: "ADD_MODULE"; payload: ModuleData }
+  | { type: "REMOVE_MODULE"; payload: number }
+  | { type: "SET_PARCOURS"; payload: Parcours }
+  | { type: "SET_CURRENT_CONTACTS"; payload: Contact[] }
+  | { type: "SET_CURRENT_SKILLS"; payload: Skill[] }
+  | { type: "SET_FILE"; payload: File | null }
+  | { type: "SET_MODULE_TO_DELETE"; payload: ModuleData | null }
+  | { type: "SET_SHOW_DUPLICATE_MODAL"; payload: boolean }
+  | { type: "SET_METADATA_LIST"; payload: MetadataList[] | null }
+  | { type: "SET_MODULE_TO_DUPLICATE"; payload: DuplicatedModule | null }
+  | { type: "RESET_FORM" }
+  | { type: "CANCEL_FORM" }
+  | { type: "MODULE_CREATED"; payload: ModuleData }
+  | { type: "PREPARE_DUPLICATE"; payload: DuplicatedModule }
+  | { type: "CLOSE_DELETE_MODAL" };
+
+// Initial state
+const initialState: ModuleState = {
+  showForm: false,
+  mode: "create",
+  modules: [],
+  parcours: null,
+  currentContacts: [],
+  currentSkills: [],
+  file: null,
+  moduleToDelete: null,
+  showDuplicateModal: false,
+  metadataList: null,
+  moduleToDuplicate: null,
+};
+
+// Reducer function with all state transitions
+function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
+  switch (action.type) {
+    case "SET_SHOW_FORM":
+      return { ...state, showForm: action.payload };
+
+    case "SET_MODE":
+      return { ...state, mode: action.payload };
+
+    case "SET_MODULES":
+      return { ...state, modules: action.payload };
+
+    case "ADD_MODULE":
+      return { ...state, modules: [...state.modules, action.payload] };
+
+    case "REMOVE_MODULE":
+      return {
+        ...state,
+        modules: state.modules.filter((m) => m.id !== action.payload),
+      };
+
+    case "SET_PARCOURS":
+      return { ...state, parcours: action.payload };
+
+    case "SET_CURRENT_CONTACTS":
+      return { ...state, currentContacts: action.payload };
+
+    case "SET_CURRENT_SKILLS":
+      return { ...state, currentSkills: action.payload };
+
+    case "SET_FILE":
+      return { ...state, file: action.payload };
+
+    case "SET_MODULE_TO_DELETE":
+      return { ...state, moduleToDelete: action.payload };
+
+    case "SET_SHOW_DUPLICATE_MODAL":
+      return { ...state, showDuplicateModal: action.payload };
+
+    case "SET_METADATA_LIST":
+      return { ...state, metadataList: action.payload };
+
+    case "SET_MODULE_TO_DUPLICATE":
+      return { ...state, moduleToDuplicate: action.payload };
+
+    // Complex action: Reset form completely
+    case "RESET_FORM":
+      return {
+        ...state,
+        showForm: false,
+        mode: "create",
+        currentContacts: [],
+        currentSkills: [],
+        file: null,
+        moduleToDuplicate: null,
+      };
+
+    // Complex action: Cancel form editing
+    case "CANCEL_FORM":
+      return {
+        ...state,
+        showForm: false,
+        mode: "create",
+        currentContacts: [],
+        currentSkills: [],
+        file: null,
+        moduleToDuplicate: null,
+      };
+
+    // Complex action: Module successfully created
+    case "MODULE_CREATED":
+      return {
+        ...state,
+        showForm: false,
+        mode: "create",
+        modules: [...state.modules, action.payload],
+        currentContacts: [],
+        currentSkills: [],
+        file: null,
+        moduleToDuplicate: null,
+        metadataList: null,
+      };
+
+    // Complex action: Prepare to duplicate a module
+    case "PREPARE_DUPLICATE":
+      return {
+        ...state,
+        showForm: true,
+        mode: "edit",
+        moduleToDuplicate: action.payload,
+      };
+
+    // Complex action: Close delete modal and reset
+    case "CLOSE_DELETE_MODAL":
+      return {
+        ...state,
+        moduleToDelete: null,
+        metadataList: null,
+      };
+
+    default:
+      return state;
+  }
+}
+
+export { moduleReducer, initialState };
+export type { ModuleState, ModuleAction };
