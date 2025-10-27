@@ -72,7 +72,7 @@ const CourseActions = ({
           Ajouter une leçon
         </Link>
 
-        <Can action="update" object="course">
+        {/* <Can action="update" object="course">
           <button
             onClick={onClickChangeCourseOrder}
             className="cursor-default flex items-center px-4 py-3 text-sm hover:bg-primary/20 transition-all"
@@ -89,7 +89,7 @@ const CourseActions = ({
               </>
             )}
           </button>
-        </Can>
+        </Can> */}
 
         <Can action="update" object="course">
           <button

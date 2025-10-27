@@ -50,7 +50,8 @@ const LessonsPreview = () => {
     onDeleteLesson,
     onDeleteActivity,
     onSaveActivity,
-    onActivityOrderChange,
+    onActivityReorder,
+    onLessonReorder,
   } = useLessonsPreview();
 
   const editTitle = useCallback(
@@ -141,6 +142,7 @@ const LessonsPreview = () => {
               onDeleteCourse={onDeleteCourse}
               onEnableCourse={onEnableCourse}
               onDeleteLesson={onDeleteLesson}
+              onLessonReorder={onLessonReorder}
               children={[
                 // Bouton pour créer un nouveau cours
                 <Can key="create-course" action="write" object="course">
@@ -154,7 +156,7 @@ const LessonsPreview = () => {
                   key="activity-list"
                   activities={selectedLesson?.activities}
                   selectedActivity={selectedActivity}
-                  onActivityOrderChange={onActivityOrderChange}
+                  onActivityReorder={onActivityReorder}
                   onSelectActivity={(activity) =>
                     dispatch({ type: "select_activity", activity })
                   }
