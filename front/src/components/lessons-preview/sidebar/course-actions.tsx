@@ -1,4 +1,13 @@
-import { Edit, Eye, EyeOff, ListPlus, MoreVertical, Trash } from "lucide-react";
+import {
+  ArrowDownUpIcon,
+  Edit,
+  Eye,
+  EyeOff,
+  ListPlus,
+  MoreVertical,
+  OctagonX,
+  Trash,
+} from "lucide-react";
 import Can from "../../UI/can/can.component";
 import { Link } from "react-router-dom";
 import Course from "../../../utils/interfaces/course";
@@ -7,6 +16,8 @@ type CourseActionsProps = {
   course: Course;
   parcoursId: number;
   moduleId: number;
+  isDragAndDropEnabled: boolean;
+  onClickChangeCourseOrder: () => void;
   onOpenModal: (
     modalType: "visibility" | "deleteCourse" | "deleteLesson",
     e: React.MouseEvent
@@ -18,6 +29,8 @@ const CourseActions = ({
   course,
   parcoursId,
   moduleId,
+  isDragAndDropEnabled,
+  onClickChangeCourseOrder,
   onOpenModal,
   onClickMenu,
 }: CourseActionsProps) => {
@@ -59,10 +72,29 @@ const CourseActions = ({
           Ajouter une leçon
         </Link>
 
+        {/* <Can action="update" object="course">
+          <button
+            onClick={onClickChangeCourseOrder}
+            className="cursor-default flex items-center px-4 py-3 text-sm hover:bg-primary/20 transition-all"
+          >
+            {isDragAndDropEnabled ? (
+              <>
+                <OctagonX />
+                Arrêter le changement d'ordre
+              </>
+            ) : (
+              <>
+                <ArrowDownUpIcon className="w-4 h-4 mr-3" />
+                Changer l'ordre
+              </>
+            )}
+          </button>
+        </Can> */}
+
         <Can action="update" object="course">
           <button
             onClick={handleClickEnable}
-            className="cursor-default flex items-center w-full px-4 py-3 text-sm hover:bg-error/10 transition-all last:rounded-b-lg"
+            className="cursor-default flex items-center w-full px-4 py-3 text-sm hover:bg-primary/20 transition-all last:rounded-b-lg"
           >
             {course.visibility ? (
               <>

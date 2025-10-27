@@ -1,12 +1,20 @@
 import { ArrowDown, ArrowRight, EyeOff } from "lucide-react";
 import Course from "../../../utils/interfaces/course";
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useContext, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import LessonItem from "./lesson-item";
 import Lesson from "../../../utils/interfaces/lesson";
 import Can from "../../UI/can/can.component";
 import CourseActionsModal from "./course-actions-modal";
 import CourseActions from "./course-actions";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  OnDragEndResponder,
+} from "react-beautiful-dnd";
+import hasPermission from "../../../utils/hasPermission";
+import { Context } from "../../../store/context.store";
 
 type CourseItemProps = {
   course: Course;
@@ -15,6 +23,7 @@ type CourseItemProps = {
   selectedLesson: Lesson | undefined;
   onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
+  onLessonReorder: OnDragEndResponder;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
   onDeleteLesson: (lessonId: number) => Promise<void>;
 };
@@ -28,11 +37,15 @@ const CourseItem = ({
   selectedLesson,
   onSelectLesson,
   onDeleteCourse,
+  onLessonReorder,
   onEnableCourse,
   onDeleteLesson,
   children,
 }: PropsWithChildren<CourseItemProps>) => {
+  const { user } = useContext(Context);
   const [isCourseOpen, setCourseOpen] = useState(false);
+  const [isDragAndDropEnabled, setDragAndDropEnabled] =
+    useState<boolean>(false);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<ModalType>("visibility");
   const [selectedLessonToDelete, setSelectedLessonToDelete] = useState<
@@ -91,6 +104,10 @@ const CourseItem = ({
         break;
     }
     handleCloseModal();
+  };
+
+  const handleClickChangeCourseOrder = () => {
+    setDragAndDropEnabled((prev) => !prev);
   };
 
   useEffect(() => {
@@ -162,8 +179,10 @@ const CourseItem = ({
                   course={course}
                   parcoursId={parcoursId}
                   moduleId={moduleId}
+                  isDragAndDropEnabled={isDragAndDropEnabled}
                   onOpenModal={handleOpenModal}
                   onClickMenu={handleClickMenu}
+                  onClickChangeCourseOrder={handleClickChangeCourseOrder}
                 />
               </Can>
             </div>
@@ -204,26 +223,72 @@ const CourseItem = ({
             maxHeight: isCourseOpen ? 500 : 0,
           }}
         >
-          <div className="p-4 flex flex-col gap-4 items-center">
-            {course.lessons.length > 0 ? (
-              course.lessons.map((lesson) => (
-                <LessonItem
-                  key={lesson.id}
-                  lesson={lesson}
-                  lessonsOrders={course.lessons.map(
-                    (lesson) => lesson.order ?? 0
+          <DragDropContext onDragEnd={onLessonReorder}>
+            <Droppable
+              isDropDisabled={
+                !isDragAndDropEnabled ||
+                !hasPermission(user?.permissions || [], "update", "lesson")
+              }
+              droppableId="droppable"
+            >
+              {(provided, droppableState) => (
+                <div
+                  ref={provided.innerRef}
+                  className={`p-4 flex flex-col gap-4 items-center ${
+                    droppableState.isDraggingOver && "-mt-10"
+                  }`}
+                  {...provided.droppableProps}
+                >
+                  {provided.placeholder}
+                  {course.lessons.length > 0 ? (
+                    course.lessons.map(
+                      (lesson, index) =>
+                        lesson.id && (
+                          <Draggable
+                            key={lesson.id}
+                            draggableId={lesson.id.toString()}
+                            index={index}
+                            isDragDisabled={
+                              !isDragAndDropEnabled ||
+                              !hasPermission(
+                                user?.permissions || [],
+                                "update",
+                                "lesson"
+                              )
+                            }
+                          >
+                            {(provided) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className={`w-full`}
+                              >
+                                <LessonItem
+                                  key={lesson.id}
+                                  lesson={lesson}
+                                  lessonsOrders={course.lessons.map(
+                                    (lesson) => lesson.order ?? 0
+                                  )}
+                                  moduleId={moduleId}
+                                  selectedLesson={selectedLesson}
+                                  onSelectLesson={onSelectLesson}
+                                  onOpenModal={handleOpenLessonDeletionModal}
+                                >
+                                  {!isDragAndDropEnabled && children}
+                                </LessonItem>
+                              </div>
+                            )}
+                          </Draggable>
+                        )
+                    )
+                  ) : (
+                    <p>Aucune leçon</p>
                   )}
-                  moduleId={moduleId}
-                  selectedLesson={selectedLesson}
-                  onSelectLesson={onSelectLesson}
-                  onOpenModal={handleOpenLessonDeletionModal}
-                  children={children}
-                />
-              ))
-            ) : (
-              <p>Aucune leçon</p>
-            )}
-          </div>
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
         </motion.div>
       </div>
     </>

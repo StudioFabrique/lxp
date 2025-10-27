@@ -17,7 +17,7 @@ type ActivityListProps = {
   activities?: Activity[];
   selectedActivity?: Activity | null;
   newActivityButtonDisabled?: boolean;
-  onActivityOrderChange: OnDragEndResponder;
+  onActivityReorder: OnDragEndResponder;
   onSelectActivity: (activity: Activity) => void;
   onClickCreateActivity?: () => void;
 };
@@ -26,7 +26,7 @@ export default function ActivityList({
   activities,
   selectedActivity,
   newActivityButtonDisabled,
-  onActivityOrderChange,
+  onActivityReorder,
   onSelectActivity,
   onClickCreateActivity,
 }: ActivityListProps) {
@@ -34,7 +34,7 @@ export default function ActivityList({
 
   return (
     <FadeWrapper>
-      <DragDropContext onDragEnd={onActivityOrderChange}>
+      <DragDropContext onDragEnd={onActivityReorder}>
         <Droppable
           droppableId="droppable"
           isDropDisabled={
