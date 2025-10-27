@@ -8,9 +8,12 @@ import { validationResult } from "express-validator";
 import { serverIssue } from "../../utils/constantes";
 
 /**
- * HTTP Controller for creating a new module with image upload
+ * HTTP Controller for creating a new module or duplicating an existing one with image upload
  *
- * This endpoint handles the creation of a new module within a formation/parcours.
+ * This endpoint handles two scenarios:
+ * 1. Creating a brand new module within a formation/parcours
+ * 2. Duplicating an existing module to the current parcours (when moduleId is provided)
+ *
  * It processes both the module metadata (title, description, duration, contacts, skills)
  * and an optional image file that gets processed into two formats:
  * - Full-size image (base64 encoded)
@@ -19,13 +22,15 @@ import { serverIssue } from "../../utils/constantes";
  * The controller validates input data, processes uploaded images using Sharp,
  * creates the module with associated metadata, and handles cleanup of temporary files.
  *
- * @param req - Custom request object containing auth info, form data, and uploaded file
+ * @param req - Custom request object containing auth info, form data, uploaded file, and optional moduleId
  * @param res - Express response object
  * @returns JSON response with created module data or error information
  */
 async function httpPostModule(req: CustomRequest, res: Response) {
   // Extract module data from request body (JSON string parsed by middleware)
   const module = req.body.module;
+
+  // Extract moduleId from route params (used for duplication of existing modules)
   const moduleId = req.params.moduleId;
 
   // Get uploaded file information from multer middleware
@@ -36,7 +41,6 @@ async function httpPostModule(req: CustomRequest, res: Response) {
   if (!errors.isEmpty()) {
     // Clean up uploaded file if validation failed
     await deleteTempUploadedFile(req);
-    console.log("Validation errors:", errors.array());
 
     return res.status(400).json({ errors: errors.array() });
   }
@@ -45,7 +49,7 @@ async function httpPostModule(req: CustomRequest, res: Response) {
     // Extract authenticated user ID from JWT token
     const userId = req.auth?.userId;
 
-    // Handle module creation with image processing
+    // Handle module creation/duplication with image processing
     if (uploadedFile && userId) {
       // Read the uploaded file as binary data
       const data = await fs.promises.readFile(uploadedFile.path);
@@ -60,7 +64,8 @@ async function httpPostModule(req: CustomRequest, res: Response) {
       // Convert thumbnail to base64 for storage
       const thumb64 = (await thumb).toString("base64");
 
-      // Create module with both full image and thumbnail
+      // Create or duplicate module with both full image and thumbnail
+      // If moduleId is provided (not NaN), it duplicates the existing module
       const response = await postModule(
         module,
         thumb64,
@@ -75,17 +80,14 @@ async function httpPostModule(req: CustomRequest, res: Response) {
         .status(201)
         .json({ message: "Mise à jour réussie", data: response });
     } else {
-      // Handle module creation without image upload
+      // Handle module creation/duplication without image upload
+      // If moduleId is provided, duplicates the existing module's images
       const response = await postModule(module, null, null, userId!, +moduleId);
-      console.log({ response });
-
       return res
         .status(201)
         .json({ message: "Mise à jour réussie", data: response });
     }
   } catch (error: any) {
-    console.log({ error });
-
     // Ensure cleanup of uploaded file even if an error occurs
     if (uploadedFile) await deleteTempUploadedFile(req);
 

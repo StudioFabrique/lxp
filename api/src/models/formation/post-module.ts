@@ -3,22 +3,34 @@ import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
 
 /**
- * Creates a new module with its metadata and associations
+ * Creates a new module or duplicates an existing module with its metadata and associations
  *
- * This function creates both a Module and its corresponding ModuleMetadata
- * in a single transaction, ensuring data consistency. It also handles
- * associations with contacts and bonus skills through junction tables.
+ * This function handles two scenarios:
+ * 1. Creating a brand new module (when moduleId is null/NaN)
+ * 2. Duplicating an existing module to another parcours (when moduleId is provided)
  *
- * The function processes the module creation in two steps:
- * 1. Creates the base Module entity with images and metadata
- * 2. Creates ModuleMetadata with duration, associations to parcours, and many-to-many relationships
+ * For both scenarios, it creates ModuleMetadata in a single transaction, ensuring data consistency.
+ * It also handles associations with contacts and bonus skills through junction tables.
  *
- * @param moduleToAdd - Module data including title, description, duration, contacts, and skills
- * @param thumb - Thumbnail image as base64 string (processed from uploaded file)
- * @param image - Full-size image as base64 string (processed from uploaded file)
- * @param userId - MongoDB ID of the user creating the module
- * @returns Promise<Object> - Object containing module ID, title, and base64 thumbnail
- * @throws Error with statusCode 404 if formation, user, or admin doesn't exist
+ * Creation process:
+ * 1. Validates that the formation exists
+ * 2. Checks for duplicate module titles (only for new modules)
+ * 3. Creates the base Module entity with images and metadata (only for new modules)
+ * 4. Creates ModuleMetadata with duration, associations to parcours, and many-to-many relationships
+ *
+ * Duplication process:
+ * 1. Validates that the formation and source module exist
+ * 2. Reuses the existing module's data (title, images, etc.)
+ * 3. Creates new ModuleMetadata linked to the existing module but for a different parcours
+ *
+ * @param moduleToAdd - Module data including title, description, duration, contacts, skills, formationId, and parcoursId
+ * @param thumb - Thumbnail image as base64 string (processed from uploaded file) or null
+ * @param image - Full-size image as base64 string (processed from uploaded file) or null
+ * @param userId - MongoDB ID of the user creating/duplicating the module
+ * @param moduleId - Optional ID of an existing module to duplicate (null or NaN for new modules)
+ * @returns Promise<Object> - Object containing module metadata ID, title, and base64 thumbnail
+ * @throws Error with statusCode 404 if formation, module (for duplication), user, or admin doesn't exist
+ * @throws Error with statusCode 406 if a module with the same title already exists in the formation
  */
 async function postModule(
   moduleToAdd: any,
@@ -27,9 +39,7 @@ async function postModule(
   userId: string,
   moduleId: number | null = null
 ) {
-  console.log("MODULE ID", moduleId);
-
-  // Verify that the formation (parcours) exists before creating the module
+  // Verify that the formation (parcours) exists before creating/duplicating the module
   const existingFormation = await prisma.formation.findFirst({
     where: { id: moduleToAdd.formationId },
     select: {
@@ -52,16 +62,20 @@ async function postModule(
       statusCode: 404,
     };
 
+  // Variable to store existing module data when duplicating
   let existingModule: Module | null = null;
 
+  // Branch logic based on whether we're creating a new module or duplicating an existing one
   if (!moduleId) {
-    // ✅ Accéder au titre via la relation module
+    // NEW MODULE CREATION PATH
+    // Extract module titles from the formation's modules via the relation
     const formationModules = existingFormation.modules.map((mod) => ({
       ...mod,
-      title: mod.module.title, // Accès via la relation
+      title: mod.module.title, // Access title through the module relation
     }));
 
-    // Maintenant la vérification fonctionne
+    // Check if a module with the same title already exists in this formation
+    // Case-insensitive comparison with trimmed strings
     if (
       formationModules.some(
         (mod) =>
@@ -75,6 +89,8 @@ async function postModule(
       };
     }
   } else {
+    // MODULE DUPLICATION PATH
+    // Fetch the existing module to duplicate
     existingModule = await prisma.module.findFirst({
       where: { id: moduleId! },
     });
@@ -115,7 +131,7 @@ async function postModule(
   // Use transaction to ensure both Module and ModuleMetadata are created atomically
   // This prevents orphaned records if one creation fails
   const result = await prisma.$transaction(async (tx) => {
-    // Step 1: Create the base Module entity with content and images
+    // Step 1: Create the base Module entity (only for new modules, not duplicates)
     if (!moduleId)
       newModule = await tx.module.create({
         data: {
@@ -125,6 +141,7 @@ async function postModule(
           thumb, // Thumbnail as base64 string (400x400px)
           author,
           adminId: existingAdmin!.id,
+          // Create the many-to-many relationship with formations
           formations: { create: { formationId: moduleToAdd.formationId } },
         },
         select: {
@@ -141,10 +158,12 @@ async function postModule(
       });
 
     // Step 2: Create ModuleMetadata with associations and many-to-many relationships
+    // For duplication, this links the existing module to a new parcours
+    // For new modules, this links the newly created module to the target parcours
     newMetadataModule = await tx.moduleMetadata.create({
       data: {
         duration: moduleToAdd.duration, // Learning duration in hours
-        // Link to the newly created module
+        // Link to either the newly created module or the existing module being duplicated
         module: {
           connect: { id: !moduleId ? newModule!.id : moduleId },
         },
@@ -185,6 +204,7 @@ async function postModule(
 
     // Return a simplified object for frontend consumption
     // This flattens the complex database structure for easier use
+    // Uses data from either the new module or the existing module being duplicated
     return {
       id: newMetadataModule.id,
       title: moduleId ? existingModule!.title : newModule!.title,

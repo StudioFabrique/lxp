@@ -4,7 +4,7 @@ import placeholder from "../../../assets/images/cat.webp";
 type Props = {
   id: number;
   title: string;
-  thumb?: string;
+  thumb: string | null;
   onDelete: (id: number) => void;
 };
 

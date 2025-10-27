@@ -13,7 +13,7 @@ import SuccessWithMessage from "../../../utils/interfaces/success-with-message";
 type ModuleData = {
   id: number;
   title: string;
-  thumb?: string; // Optional base64 encoded thumbnail
+  thumb: string | null; // Optional base64 encoded thumbnail
 };
 
 // Type definition for parcours (learning path) with associated resources
@@ -88,6 +88,8 @@ const useNewModule = () => {
 
   // Uploaded file for module thumbnail
   const [file, setFile] = useState<File | null>(null);
+
+  const [mode, setMode] = useState<"create" | "edit">("create");
 
   // Module selected for deletion
   const [moduleToDelete, setModuleToDelete] = useState<ModuleData | null>(null);
