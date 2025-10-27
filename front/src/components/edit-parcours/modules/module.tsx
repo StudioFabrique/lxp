@@ -4,7 +4,7 @@ import { Copy, PlusCircle } from "lucide-react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import ModuleMetadatas from "../../../views/module/add/module-metadatas";
 import ModuleToParcours from "../../../views/module/add/module-to-parcours";
-import useNewModule from "./useNewModule";
+import useNewModule, { MetadataList, Metadatas } from "./useNewModule";
 import TwoButtonsModal from "../../UI/modal/two-buttons-modal";
 import DuplicateModuleModal from "./duplicate-module-modal";
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
@@ -49,6 +49,28 @@ export default function ModuleComponent() {
     handleCloseDuplicateModal,
   } = useNewModule();
   console.log({ metadataList });
+
+  const placeholder = (
+    <div className="flex flex-col items-center justify-center h-64">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        stroke="currentColor"
+        className="w-16 h-16 text-base-content/30 mb-4"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"
+        />
+      </svg>
+      <p className="text-base-content/70 text-center">
+        Aucun module disponible pour cette formation
+      </p>
+    </div>
+  );
 
   return (
     <>
@@ -158,80 +180,75 @@ export default function ModuleComponent() {
       >
         {metadataList && metadataList.length > 0 ? (
           <ul className="list w-[40rem] gap-y-2">
-            {metadataList.map((m: any) => (
-              // ✅ Parenthèses = retour implicite
-              <>
-                {m.metadatas.parcours.id !== id ? (
-                  <div
-                    key={m.id}
-                    className="collapse bg-base-100 border border-base-300"
-                  >
-                    <input type="radio" name="my-accordion-1" />
-                    <div className="collapse-title font-semibold flex flex-col gap-y-1">
-                      <span>{m.title}</span>{" "}
-                      <span className="font-bold text-xs text-base-content/60">
-                        Utilisé dans {m.metadatas.length} parcours.
-                      </span>
-                    </div>
-                    <div className="collapse-content text-sm">
-                      {m.metadatas.map((meta: any) => (
-                        <div
-                          className="grid grid-cols-[1fr_auto] gap-4 items-start" // ✅ Grid avec colonnes auto
-                          key={meta.id}
-                        >
-                          <div>
-                            <p className="font-semibold">
-                              Parcours : {meta.parcours.title}
-                            </p>
-                            <div className="text-xs text-base-content/70">
-                              {meta.courses.length} cours sont associés au
-                              module :
-                              {meta.courses.map((course: any) => (
+            {metadataList.map((m: MetadataList) => {
+              // ✅ Filtrer les metadatas pour ne garder que ceux des autres parcours
+              const otherParcoursMetadatas = m.metadatas?.filter(
+                (meta: Metadatas) => meta.parcours?.id !== +id!
+              );
+
+              // Si le module n'existe que dans le parcours actuel, ne pas l'afficher
+              if (
+                !otherParcoursMetadatas ||
+                otherParcoursMetadatas.length === 0
+              ) {
+                return null;
+              }
+
+              return (
+                <div
+                  key={m.id}
+                  className="collapse bg-base-100 border border-base-300"
+                >
+                  <input type="radio" name="my-accordion-1" />
+                  <div className="collapse-title font-semibold flex flex-col gap-y-1">
+                    <span>{m.title}</span>
+                    <span className="font-bold text-xs text-base-content/60">
+                      Utilisé dans {otherParcoursMetadatas.length} autre(s)
+                      parcours.
+                    </span>
+                  </div>
+                  <div className="collapse-content text-sm">
+                    {/* ✅ Afficher uniquement les metadatas des autres parcours */}
+                    {otherParcoursMetadatas.map((meta: Metadatas) => (
+                      <div
+                        className="grid grid-cols-[1fr_auto] gap-4 items-start"
+                        key={meta.id}
+                      >
+                        <div>
+                          <p className="font-semibold">
+                            Parcours : {meta.parcours?.title ?? "Sans titre"}
+                          </p>
+                          <div className="text-xs text-base-content/70">
+                            {meta.courses?.length ?? 0} cours sont associés au
+                            module :
+                            {meta.courses?.map(
+                              (course: { id: number; title: string }) => (
                                 <span
                                   key={course.id}
                                   className="badge badge-secondary mx-1 mb-1 font-normal text-xs"
                                 >
                                   {course.title}
                                 </span>
-                              ))}
-                              {meta.courses.length > 0 ? (
-                                <div className="divider" />
-                              ) : null}
-                            </div>
+                              )
+                            )}
+                            {meta.courses?.length > 0 ? (
+                              <div className="divider" />
+                            ) : null}
                           </div>
-                          {/* L'icône reste centrée verticalement automatiquement */}
-                          <Copy
-                            className="cursor-pointer w-6 h-6 text-primary hover:brightness-125 flex-shrink-0"
-                            onClick={() => handleCopyModule(m)}
-                          />
                         </div>
-                      ))}
-                    </div>
+                        <Copy
+                          className="cursor-pointer w-6 h-6 text-primary hover:brightness-125 flex-shrink-0"
+                          onClick={() => handleCopyModule(m)}
+                        />
+                      </div>
+                    ))}
                   </div>
-                ) : null}
-              </>
-            ))}
+                </div>
+              );
+            })}
           </ul>
         ) : (
-          <div className="flex flex-col items-center justify-center h-64">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-16 h-16 text-base-content/30 mb-4"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"
-              />
-            </svg>
-            <p className="text-base-content/70 text-center">
-              Aucun module disponible pour cette formation
-            </p>
-          </div>
+          <>{placeholder}</>
         )}
       </RightSideDrawer>
     </>

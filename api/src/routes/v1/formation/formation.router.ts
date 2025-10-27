@@ -1,7 +1,7 @@
 import express from "express";
 import httpGetFormation from "../../../controllers/formation/http-get-formation";
 import httpPutFormationTags from "../../../controllers/formation/htttp-put-formation-tags";
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import multer from "multer";
 import path from "path";
 import httpPostModule from "../../../controllers/formation/http-post-module";
@@ -72,6 +72,10 @@ export const validationModule = [
     .isInt()
     .withMessage("Chaque identifiant de compétence doit être un nombre entier.")
     .optional(),
+  param("moduleId")
+    .isInt()
+    .withMessage("L'identifiant du module doit être un nombre entier.")
+    .optional(),
 ];
 
 formationRouter.get("/", checkPermissions("formation"), httpGetFormation);
@@ -90,7 +94,7 @@ formationRouter.put(
 );
 
 formationRouter.post(
-  "/new-module",
+  "/new-module/:moduleId?",
   checkPermissions("formation"),
   upload.single("image"),
   jsonParser,
