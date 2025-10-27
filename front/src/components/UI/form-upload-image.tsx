@@ -1,6 +1,7 @@
 import { ChangeEvent } from "react";
 
 type Props = {
+  isDisabled?: boolean;
   onSetFile: (event: ChangeEvent<HTMLInputElement>) => void;
 };
 
@@ -11,7 +12,10 @@ type Props = {
  * @prop {function} onSetFile - fonction à appeler lorsque l'utilisateur a choisi un fichier
  */
 
-export default function FormUploadImage({ onSetFile }: Props) {
+export default function FormUploadImage({
+  isDisabled = false,
+  onSetFile,
+}: Props) {
   return (
     <input
       type="file"
@@ -21,6 +25,7 @@ export default function FormUploadImage({ onSetFile }: Props) {
       name="file"
       aria-label="téléverser une image"
       id="file"
+      disabled={isDisabled}
     />
   );
 }

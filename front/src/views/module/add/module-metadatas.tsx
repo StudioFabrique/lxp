@@ -7,6 +7,7 @@ import CustomError from "../../../utils/interfaces/custom-error";
 import FormUploadImage from "../../../components/UI/form-upload-image";
 
 type Props = {
+  mode: "create" | "edit";
   data: {
     values: Record<string, string>;
     onChangeValue: (field: string, value: string) => void;
@@ -15,7 +16,7 @@ type Props = {
   onSetFile: Dispatch<SetStateAction<File | null>>;
 };
 
-function ModuleMetadatas({ data, onSetFile }: Props) {
+function ModuleMetadatas({ data, mode, onSetFile }: Props) {
   const { image, handleFileChange } = useImageUpload(5000000, onSetFile);
   // affiche un aperçu de l'image choisie pour le module ou une image en background de div de manière dynamique
   const classImage: React.CSSProperties = {
@@ -40,12 +41,18 @@ function ModuleMetadatas({ data, onSetFile }: Props) {
             name="title"
             placeholder="Ex : Javascript"
             data={data}
+            isDisabled={mode === "edit"}
           />
         </div>
 
         {/* description */}
 
-        <FieldArea label="Description" name="description" data={data} />
+        <FieldArea
+          label="Description"
+          name="description"
+          data={data}
+          isDisabled={mode === "edit"}
+        />
 
         {/* duration */}
 
