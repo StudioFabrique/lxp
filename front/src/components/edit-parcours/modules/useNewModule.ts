@@ -24,6 +24,30 @@ type Parcours = {
   bonusSkills: Skill[]; // Available bonus skills that can be earned
 };
 
+export type Metadatas = {
+  id: number;
+  bonusSkills: Skill[];
+  contacts: Contact[];
+  courses: { id: number; title: string }[];
+  parcours: { id: number; title: string };
+};
+
+export type MetadataList = {
+  id: number;
+  title: string;
+  description: string;
+  thumb: string | null;
+  metadatas: Metadatas[];
+};
+
+export type DuplicatedModule = {
+  id: number;
+  description: string;
+  thumb: string | null;
+  title: string;
+  metadatas: Metadatas[];
+};
+
 /**
  * Custom hook for managing module creation and display within a parcours
  *
@@ -70,9 +94,10 @@ const useNewModule = () => {
 
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
 
-  const [metadataList, setMetadataList] = useState<any>(null);
+  const [metadataList, setMetadataList] = useState<MetadataList[] | null>(null);
 
-  const [moduleToDuplicate, setModuleToDuplicate] = useState<any | null>(null);
+  const [moduleToDuplicate, setModuleToDuplicate] =
+    useState<DuplicatedModule | null>(null);
 
   // Reference to the form element for scrolling behavior
   const refForm = useRef<HTMLFormElement | null>(null);
@@ -100,7 +125,6 @@ const useNewModule = () => {
       modules: ModuleData[];
       parcoursData: Parcours;
     }) => {
-      console.log(data);
       setModules(data.modules);
       setParcours(data.parcoursData);
     };
@@ -134,6 +158,7 @@ const useNewModule = () => {
 
     // Prepare form data for multipart upload
     const formData = new FormData();
+    console.log(data.values);
 
     // Construct module object with all required data
     const module = {
@@ -167,6 +192,7 @@ const useNewModule = () => {
       setMetadataList(null);
       // Add the new module to the existing list
       setModules((prevModules) => [...prevModules, data.data as ModuleData]);
+      if (moduleToDuplicate) setModuleToDuplicate(null);
       // Scroll to top when form is hidden
       scrollToTop();
     };
@@ -174,7 +200,9 @@ const useNewModule = () => {
     // Send POST request to create the module
     sendRequest(
       {
-        path: "/formation/new-module",
+        path: `/formation/new-module${
+          moduleToDuplicate ? "/" + moduleToDuplicate.id : ""
+        }`,
         method: "post",
         body: formData,
       },
@@ -235,7 +263,7 @@ const useNewModule = () => {
   };
 
   const getMetadataList = () => {
-    const applyData = (data: any) => {
+    const applyData = (data: MetadataList[]) => {
       setMetadataList(data);
       setShowDuplicateModal(false);
       const drawer = document.getElementById("duplicate_module_drawer");
@@ -253,12 +281,15 @@ const useNewModule = () => {
     setShowDuplicateModal(false);
   };
 
-  const handleCopyModule = (module: any) => {
+  const handleCopyModule = (module: DuplicatedModule) => {
+    console.log({ module });
+
     setShowForm(true);
     initValues({
       title: module.title,
       description: module.description,
     });
+    setModuleToDuplicate(module);
     const drawer = document.getElementById("duplicate_module_drawer");
     (drawer as HTMLDialogElement).click();
   };

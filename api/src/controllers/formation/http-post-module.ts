@@ -26,6 +26,7 @@ import { serverIssue } from "../../utils/constantes";
 async function httpPostModule(req: CustomRequest, res: Response) {
   // Extract module data from request body (JSON string parsed by middleware)
   const module = req.body.module;
+  const moduleId = req.params.moduleId;
 
   // Get uploaded file information from multer middleware
   const uploadedFile = req.file;
@@ -60,7 +61,13 @@ async function httpPostModule(req: CustomRequest, res: Response) {
       const thumb64 = (await thumb).toString("base64");
 
       // Create module with both full image and thumbnail
-      const response = await postModule(module, thumb64, image, userId);
+      const response = await postModule(
+        module,
+        thumb64,
+        image,
+        userId,
+        +moduleId
+      );
 
       // Clean up temporary uploaded file after processing
       await deleteTempUploadedFile(req);
@@ -69,7 +76,7 @@ async function httpPostModule(req: CustomRequest, res: Response) {
         .json({ message: "Mise à jour réussie", data: response });
     } else {
       // Handle module creation without image upload
-      const response = await postModule(module, null, null, userId!);
+      const response = await postModule(module, null, null, userId!, +moduleId);
       console.log({ response });
 
       return res
@@ -77,6 +84,8 @@ async function httpPostModule(req: CustomRequest, res: Response) {
         .json({ message: "Mise à jour réussie", data: response });
     }
   } catch (error: any) {
+    console.log({ error });
+
     // Ensure cleanup of uploaded file even if an error occurs
     if (uploadedFile) await deleteTempUploadedFile(req);
 

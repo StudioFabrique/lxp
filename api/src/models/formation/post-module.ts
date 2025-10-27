@@ -24,9 +24,10 @@ async function postModule(
   moduleToAdd: any,
   thumb: any,
   image: any,
-  userId: string
+  userId: string,
+  moduleId: number | null = null
 ) {
-  console.log({ moduleToAdd });
+  console.log("MODULE ID", moduleId);
 
   // Verify that the formation (parcours) exists before creating the module
   const existingFormation = await prisma.formation.findFirst({
@@ -51,28 +52,38 @@ async function postModule(
       statusCode: 404,
     };
 
-  // ✅ Accéder au titre via la relation module
-  const formationModules = existingFormation.modules.map((mod) => ({
-    ...mod,
-    title: mod.module.title, // Accès via la relation
-  }));
+  let existingModule: Module | null = null;
 
-  formationModules.forEach((mod) => {
-    console.log(mod.title.trim().toLowerCase());
-  });
+  if (!moduleId) {
+    // ✅ Accéder au titre via la relation module
+    const formationModules = existingFormation.modules.map((mod) => ({
+      ...mod,
+      title: mod.module.title, // Accès via la relation
+    }));
 
-  // Maintenant la vérification fonctionne
-  if (
-    formationModules.some(
-      (mod) =>
-        mod.title.trim().toLowerCase() ===
-        moduleToAdd.title.trim().toLowerCase()
-    )
-  ) {
-    throw {
-      statusCode: 406,
-      message: "MODULE_ALREADY_EXISTS",
-    };
+    // Maintenant la vérification fonctionne
+    if (
+      formationModules.some(
+        (mod) =>
+          mod.title.trim().toLowerCase() ===
+          moduleToAdd.title.trim().toLowerCase()
+      )
+    ) {
+      throw {
+        statusCode: 406,
+        message: "MODULE_ALREADY_EXISTS",
+      };
+    }
+  } else {
+    existingModule = await prisma.module.findFirst({
+      where: { id: moduleId! },
+    });
+
+    if (!existingModule)
+      throw {
+        statusCode: 404,
+        message: "MODULE_NOT_FOUND",
+      };
   }
 
   // Fetch user details from MongoDB to construct the author name
@@ -105,35 +116,38 @@ async function postModule(
   // This prevents orphaned records if one creation fails
   const result = await prisma.$transaction(async (tx) => {
     // Step 1: Create the base Module entity with content and images
-    newModule = await tx.module.create({
-      data: {
-        title: moduleToAdd.title,
-        description: moduleToAdd.description,
-        image, // Full-size image as base64 string
-        thumb, // Thumbnail as base64 string (400x400px)
-        author,
-        adminId: existingAdmin!.id,
-        formations: { create: { formationId: moduleToAdd.formationId } },
-      },
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        image: true,
-        thumb: true,
-        createdAt: true,
-        updatedAt: true,
-        author: true,
-        adminId: true,
-      },
-    });
+    if (!moduleId)
+      newModule = await tx.module.create({
+        data: {
+          title: moduleToAdd.title,
+          description: moduleToAdd.description,
+          image, // Full-size image as base64 string
+          thumb, // Thumbnail as base64 string (400x400px)
+          author,
+          adminId: existingAdmin!.id,
+          formations: { create: { formationId: moduleToAdd.formationId } },
+        },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          image: true,
+          thumb: true,
+          createdAt: true,
+          updatedAt: true,
+          author: true,
+          adminId: true,
+        },
+      });
 
     // Step 2: Create ModuleMetadata with associations and many-to-many relationships
     newMetadataModule = await tx.moduleMetadata.create({
       data: {
         duration: moduleToAdd.duration, // Learning duration in hours
         // Link to the newly created module
-        module: { connect: { id: newModule.id } },
+        module: {
+          connect: { id: !moduleId ? newModule!.id : moduleId },
+        },
         // Link to the target parcours (learning path)
         parcours: { connect: { id: moduleToAdd.parcoursId } },
         // Link to the creating admin
@@ -173,8 +187,10 @@ async function postModule(
     // This flattens the complex database structure for easier use
     return {
       id: newMetadataModule.id,
-      title: newModule.title,
-      thumb: newModule.thumb?.toString("base64") ?? null,
+      title: moduleId ? existingModule!.title : newModule!.title,
+      thumb: moduleId
+        ? existingModule!.thumb?.toString("base64") ?? null
+        : newModule!.thumb?.toString("base64") ?? null,
     };
   });
 
