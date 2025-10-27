@@ -37,6 +37,8 @@ const CourseItem = ({
 }: PropsWithChildren<CourseItemProps>) => {
   const { user } = useContext(Context);
   const [isCourseOpen, setCourseOpen] = useState(false);
+  const [isDragAndDropEnabled, setDragAndDropEnabled] =
+    useState<boolean>(false);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<ModalType>("visibility");
   const [selectedLessonToDelete, setSelectedLessonToDelete] = useState<
@@ -95,6 +97,10 @@ const CourseItem = ({
         break;
     }
     handleCloseModal();
+  };
+
+  const handleClickChangeCourseOrder = () => {
+    setDragAndDropEnabled((prev) => !prev);
   };
 
   useEffect(() => {
@@ -166,8 +172,10 @@ const CourseItem = ({
                   course={course}
                   parcoursId={parcoursId}
                   moduleId={moduleId}
+                  isDragAndDropEnabled={isDragAndDropEnabled}
                   onOpenModal={handleOpenModal}
                   onClickMenu={handleClickMenu}
+                  onClickChangeCourseOrder={handleClickChangeCourseOrder}
                 />
               </Can>
             </div>
@@ -211,6 +219,7 @@ const CourseItem = ({
           <DragDropContext onDragEnd={() => {}}>
             <Droppable
               isDropDisabled={
+                !isDragAndDropEnabled ||
                 !hasPermission(user?.permissions || [], "update", "lesson")
               }
               droppableId="droppable"
@@ -218,7 +227,9 @@ const CourseItem = ({
               {(provided, droppableState) => (
                 <div
                   ref={provided.innerRef}
-                  className="p-4 flex flex-col gap-4 items-center"
+                  className={`p-4 flex flex-col gap-4 items-center ${
+                    droppableState.isDraggingOver && "-mt-10"
+                  }`}
                   {...provided.droppableProps}
                 >
                   {provided.placeholder}
@@ -231,6 +242,7 @@ const CourseItem = ({
                             draggableId={lesson.id.toString()}
                             index={index}
                             isDragDisabled={
+                              !isDragAndDropEnabled ||
                               !hasPermission(
                                 user?.permissions || [],
                                 "update",
@@ -243,7 +255,7 @@ const CourseItem = ({
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
-                                className="w-full"
+                                className={`w-full`}
                               >
                                 <LessonItem
                                   key={lesson.id}
@@ -255,8 +267,9 @@ const CourseItem = ({
                                   selectedLesson={selectedLesson}
                                   onSelectLesson={onSelectLesson}
                                   onOpenModal={handleOpenLessonDeletionModal}
-                                  children={children}
-                                />
+                                >
+                                  {!isDragAndDropEnabled && children}
+                                </LessonItem>
                               </div>
                             )}
                           </Draggable>
