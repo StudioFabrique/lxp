@@ -18,6 +18,7 @@ import { PenBox } from "lucide-react";
 import { useCallback } from "react";
 import ActivityBottomNavigation from "../../components/lessons-preview/preview/activity-bottom-navigation";
 import Lesson from "../../utils/interfaces/lesson";
+import ActivityTypeSelection from "../../components/lessons-preview/preview/activity-type-selection";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
@@ -53,6 +54,7 @@ const LessonsPreview = () => {
     onActivityReorder,
     onLessonReorder,
     onNextLesson,
+    onSelectActivityType,
   } = useLessonsPreview();
 
   const editTitle = useCallback(
@@ -163,7 +165,7 @@ const LessonsPreview = () => {
                   onClickCreateActivity={() =>
                     dispatch({
                       type: "select_mode",
-                      mode: "write",
+                      mode: "activity_type_selection",
                     })
                   }
                 />,
@@ -174,75 +176,78 @@ const LessonsPreview = () => {
               <ProgressBar courses={module.courses} />
             </Can>,
             // La prévisualisation de la leçon
-            (selectedLesson?.activities?.length || 0) > 0 ||
-            state.mode !== "read" ? (
-              // Le lecteur de leçons
-              <LessonReader
-                key="lesson-reader"
-                isLessonCompleted={isLessonCompleted}
-                mode={state.mode}
-                textActivityContent={textActivityContent}
-                textActivityTitle={
-                  state.mode === "write"
-                    ? state.newActivityTitle
-                    : selectedActivity?.title
-                }
-                textActivityTitleError={
-                  state.mode !== "read" ? state.titleError : undefined
-                }
-                selectedActivity={selectedActivity}
-                selectedLesson={selectedLesson}
-                showDeleteModal={modalVisibility === "deletionModal"}
-                onOpenDeleteModal={() =>
-                  dispatch({
-                    type: "set_modal_visibility",
-                    modalVisibility: "deletionModal",
-                  })
-                }
-                onCloseDeleteModal={() =>
-                  dispatch({
-                    type: "set_modal_visibility",
-                    modalVisibility: "none",
-                  })
-                }
-                onEditActivity={() =>
-                  dispatch({ type: "select_mode", mode: "edit" })
-                }
-                onEditTitle={editTitle}
-                onEditContent={editContent}
-                onRateActivity={onRateContent}
-                onDeleteActivity={onDeleteActivity}
-                onCloseTextEditor={() =>
-                  state.mode === "write"
-                    ? dispatch({
-                        type: "select_last_activity_from_current_lesson",
-                      })
-                    : dispatch({ type: "select_mode", mode: "read" })
-                }
-                onSaveActivity={onSaveActivity}
-              >
-                {state.mode === "read" && (
-                  <ActivityBottomNavigation
-                    modalVisibility={modalVisibility}
-                    isLessonCompleted={isLessonCompleted}
-                    isFirstActivitySelected={isFirstActivitySelected}
-                    isLastActivitySelected={isLastActivitySelected}
-                    isLastLessonSelected={isLastLessonSelected}
-                    onPrevious={() =>
-                      dispatch({ type: "go_to_previous_activity" })
-                    }
-                    onNext={() => dispatch({ type: "go_to_next_activity" })}
-                    onCompleteLesson={() =>
-                      isLessonCompleted
-                        ? onNextLesson()
-                        : dispatch({
-                            type: "set_modal_visibility",
-                            modalVisibility: "lessonCompletionModal",
-                          })
-                    }
-                  />
-                )}
-              </LessonReader>
+            selectedLesson?.activities?.length ? (
+              state.mode === "activity_type_selection" ? (
+                <ActivityTypeSelection onSelectType={onSelectActivityType} />
+              ) : (
+                // Le lecteur de leçons
+                <LessonReader
+                  key="lesson-reader"
+                  isLessonCompleted={isLessonCompleted}
+                  mode={state.mode}
+                  textActivityContent={textActivityContent}
+                  textActivityTitle={
+                    state.mode === "write"
+                      ? state.newActivityTitle
+                      : selectedActivity?.title
+                  }
+                  textActivityTitleError={
+                    state.mode !== "read" ? state.titleError : undefined
+                  }
+                  selectedActivity={selectedActivity}
+                  selectedLesson={selectedLesson}
+                  showDeleteModal={modalVisibility === "deletionModal"}
+                  onOpenDeleteModal={() =>
+                    dispatch({
+                      type: "set_modal_visibility",
+                      modalVisibility: "deletionModal",
+                    })
+                  }
+                  onCloseDeleteModal={() =>
+                    dispatch({
+                      type: "set_modal_visibility",
+                      modalVisibility: "none",
+                    })
+                  }
+                  onEditActivity={() =>
+                    dispatch({ type: "select_mode", mode: "edit" })
+                  }
+                  onEditTitle={editTitle}
+                  onEditContent={editContent}
+                  onRateActivity={onRateContent}
+                  onDeleteActivity={onDeleteActivity}
+                  onCloseTextEditor={() =>
+                    state.mode === "write"
+                      ? dispatch({
+                          type: "select_last_activity_from_current_lesson",
+                        })
+                      : dispatch({ type: "select_mode", mode: "read" })
+                  }
+                  onSaveActivity={onSaveActivity}
+                >
+                  {state.mode === "read" && (
+                    <ActivityBottomNavigation
+                      modalVisibility={modalVisibility}
+                      isLessonCompleted={isLessonCompleted}
+                      isFirstActivitySelected={isFirstActivitySelected}
+                      isLastActivitySelected={isLastActivitySelected}
+                      isLastLessonSelected={isLastLessonSelected}
+                      onPrevious={() =>
+                        dispatch({ type: "go_to_previous_activity" })
+                      }
+                      onNext={() => dispatch({ type: "go_to_next_activity" })}
+                      onCompleteLesson={() =>
+                        isLessonCompleted
+                          ? onNextLesson()
+                          : dispatch({
+                              type: "set_modal_visibility",
+                              modalVisibility: "lessonCompletionModal",
+                            })
+                      }
+                    />
+                  )}
+                </LessonReader>
+              )
             ) : (
               <NoActivityPlaceholder key="no-activity-placeholder" />
             ),

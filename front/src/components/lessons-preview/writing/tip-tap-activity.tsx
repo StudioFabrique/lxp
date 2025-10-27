@@ -4,7 +4,7 @@ import AutosaveIndicator from "./autosave-indicator";
 import TiptapEditor from "../../UI/tiptap-editor/tiptapEditor";
 
 type Props = {
-  mode: "read" | "write" | "edit";
+  mode: "read" | "write" | "edit" | "activity_type_selection";
   id?: number;
   title?: string;
   titleError?: string;

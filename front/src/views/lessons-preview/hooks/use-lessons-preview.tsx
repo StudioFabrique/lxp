@@ -7,6 +7,7 @@ import LessonRead from "../../../utils/interfaces/lesson-read";
 import LessonRating from "../../../utils/interfaces/lesson-rating";
 import toast from "react-hot-toast";
 import {
+  ActivityType,
   initialLessonsPreviewState,
   lessonsPreviewReducer,
 } from "../store/lessons-preview-reducer";
@@ -360,6 +361,24 @@ const useLessonsPreview = () => {
     dispatch({ type: "go_to_next_lesson" });
   };
 
+  const selectActivityType = (activityType: ActivityType) => {
+    switch (activityType) {
+      case "text":
+      case "iframe":
+        return dispatch({
+          type: "select_mode",
+          mode: "write",
+          activityType,
+        });
+      case "video":
+        return navigate("");
+      case "image":
+        return navigate("");
+      case "resources":
+        return navigate("");
+    }
+  };
+
   useEffect(() => {
     // selectionner la leçon selectionnée depuis le state de l'url dès que les données, une seule fois
     if (stateFromUrl?.lessonId && state.module && !stateFromUrlCalled) {
@@ -441,6 +460,7 @@ const useLessonsPreview = () => {
     onActivityReorder: activityReorder,
     onLessonReorder: lessonReorder,
     onNextLesson: nextLesson,
+    onSelectActivityType: selectActivityType,
   };
 };
 
