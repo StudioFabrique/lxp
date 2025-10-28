@@ -26,7 +26,7 @@ const useNewModule = () => {
   const { sendRequest, isLoading, error } = useHttp();
   const refForm = useRef<HTMLFormElement | null>(null);
 
-  // ✅ Single useReducer replaces 11 useState hooks
+  // Single useReducer replaces 11 useState hooks
   const [state, dispatch] = useReducer(moduleReducer, initialState);
 
   // Form management remains separate (UI-specific logic)
@@ -64,10 +64,10 @@ const useNewModule = () => {
    */
   const handleSubmitNewModule = (e: React.FormEvent) => {
     e.preventDefault();
-
+    console.log(state.moduleToDuplicate?.id ?? "oops");
     if (!onValidateForm()) return;
 
-    if (state.mode === "edit") {
+    if (state.mode === "edit" && !state.moduleToDuplicate) {
       handleSubmitUpdateModule();
       return;
     }
@@ -90,7 +90,7 @@ const useNewModule = () => {
 
     const applyData = (data: { data: ModuleData; message: string }) => {
       onResetForm();
-      // ✅ Single action handles multiple state updates
+      // Single action handles multiple state updates
       dispatch({ type: "MODULE_CREATED", payload: data.data });
       scrollToTop();
     };
@@ -193,7 +193,9 @@ const useNewModule = () => {
   /**
    * Prepares form for duplicating an existing modules
    */
-  const handleCopyModule = (module: DuplicatedModule) => {
+  const handleCopyModule = (module: DuplicatedModule, metaId: number) => {
+    console.log("TEST", metaId);
+
     // ✅ Single action handles complex state transition
     dispatch({ type: "PREPARE_DUPLICATE", payload: module });
     initValues({

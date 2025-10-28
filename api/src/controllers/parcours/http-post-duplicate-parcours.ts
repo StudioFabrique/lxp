@@ -15,7 +15,7 @@ import postDuplicateParcours from "../../models/parcours/post-duplicate-parcours
  */
 export default async function httpPostDuplicateParcours(
   req: CustomRequest,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) {
   try {

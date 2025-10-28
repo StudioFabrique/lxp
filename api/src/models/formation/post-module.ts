@@ -56,6 +56,130 @@ async function postModule(
     },
   });
 
+  let moduleToCopy: any | null = null;
+
+  console.log("MODULE ID", moduleId);
+
+  if (moduleId)
+    moduleToCopy = await prisma.moduleMetadata.findFirst({
+      where: { id: moduleId },
+      select: {
+        // Module basic information
+
+        duration: true,
+        rating: true,
+        admin: {
+          select: {
+            id: true,
+          },
+        },
+        // Module relationships
+        bonusSkills: {
+          select: {
+            bonusSkill: {
+              select: {
+                id: true,
+              },
+            },
+          },
+        },
+        contacts: {
+          select: {
+            contact: {
+              select: {
+                id: true,
+              },
+            },
+          },
+        },
+        module: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            image: true,
+            thumb: true,
+          },
+        },
+        // Courses within modules
+        courses: {
+          select: {
+            // Course basic information
+            title: true,
+            description: true,
+            image: true,
+            virtualClass: true,
+            scenario: true,
+            order: true,
+            author: true,
+            admin: {
+              select: {
+                id: true,
+              },
+            },
+            // Course relationships
+
+            contacts: {
+              select: {
+                contact: {
+                  select: {
+                    id: true,
+                  },
+                },
+              },
+            },
+
+            tags: {
+              select: {
+                tag: {
+                  select: {
+                    id: true,
+                  },
+                },
+              },
+            },
+            // Lessons within courses
+            lessons: {
+              select: {
+                // Lesson basic information
+                title: true,
+                description: true,
+                modalite: true,
+                author: true,
+                admin: {
+                  select: {
+                    id: true,
+                  },
+                },
+                tag: {
+                  select: {
+                    id: true,
+                  },
+                },
+                order: true,
+                // Activities within lessons
+                activities: {
+                  select: {
+                    title: true,
+                    description: true,
+                    order: true,
+                    type: true,
+                    url: true,
+                    author: {
+                      select: {
+                        id: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+  console.log({ moduleToCopy });
+
   if (!existingFormation)
     throw {
       message: "La formation n'existe pas.",
@@ -160,8 +284,12 @@ async function postModule(
     // Step 2: Create ModuleMetadata with associations and many-to-many relationships
     // For duplication, this links the existing module to a new parcours
     // For new modules, this links the newly created module to the target parcours
+
+    console.log(moduleToCopy);
+
     newMetadataModule = await tx.moduleMetadata.create({
       data: {
+        ...moduleToCopy,
         duration: moduleToAdd.duration, // Learning duration in hours
         // Link to either the newly created module or the existing module being duplicated
         module: {
