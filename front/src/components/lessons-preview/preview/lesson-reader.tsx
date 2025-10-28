@@ -1,6 +1,5 @@
-import { Activity } from "../../../utils/interfaces/activity";
+import { Activity, ActivityType } from "../../../utils/interfaces/activity";
 import RatingPanelButton from "../../UI/lesson-rating/rating-panel-button";
-import ActivityPreview from "./activity-preview";
 import { type PropsWithChildren, useCallback } from "react";
 import Modal from "../../UI/modal/modal";
 import ActivityActionsMenu from "./activity-actions-menu";
@@ -8,12 +7,16 @@ import activityIconType from "../../../utils/activity-icon-type";
 import TiptapActivity from "../writing/tip-tap-activity";
 import Lesson from "../../../utils/interfaces/lesson";
 import ActivityDeleteModal from "./activity-delete-modal";
+import { ActivitySelectMode } from "../../../views/lessons-preview/store/lessons-preview-reducer";
+import ActivityPreview from "./activity-preview";
+import IframeActivity from "./iframe-activity";
 
-type PreviewLessonProps = {
-  mode: "read" | "edit" | "write" | "activity_type_selection";
+type Props = {
+  mode: ActivitySelectMode;
   isLessonCompleted: boolean;
   selectedLesson?: Lesson;
   selectedActivity?: Activity;
+  activityType: ActivityType;
   textActivityTitle?: string;
   textActivityTitleError?: string;
   textActivityContent?: string;
@@ -33,12 +36,13 @@ type PreviewLessonProps = {
   ) => Promise<boolean>;
 };
 
-// Composant pour prévisualiser une leçon avec ses activités
-const LessonReader = ({
+// Composant pour prévisualiser et editer une leçon avec son activité selectionné
+const LessonReaderAndEditor = ({
   mode,
   isLessonCompleted,
   selectedLesson,
   selectedActivity,
+  activityType,
   textActivityTitle,
   textActivityTitleError,
   textActivityContent,
@@ -53,10 +57,12 @@ const LessonReader = ({
   onCloseTextEditor,
   onSaveActivity,
   children,
-}: PropsWithChildren<PreviewLessonProps>) => {
+}: PropsWithChildren<Props>) => {
   const handleConfirmDelete = useCallback(() => {
     onDeleteActivity();
   }, [onDeleteActivity]);
+
+  console.log({ activityType });
 
   return (
     <>
@@ -82,25 +88,27 @@ const LessonReader = ({
 
         {/* Rendu de l'activité */}
         <div className="bg-base-100 border border-secondary/20 rounded-box p-4 mb-4">
-          {selectedActivity && (
-            <div className="font-semibold text-primary capitalize flex justify-between items-center gap-3">
-              <span className="w-5">
-                {activityIconType(selectedActivity.type)}
-              </span>
-              <span className="truncate text-ellipsis text-2xl px-2">
-                {textActivityTitle}
-              </span>
+          {/* Header de l'activité : titre et menu contextuel */}
+
+          <div className="font-semibold text-primary capitalize flex justify-between items-center gap-3">
+            <span className="w-5">{activityIconType(activityType)}</span>
+            <span className="flex-1" />
+            <span className="truncate text-ellipsis text-2xl px-2">
+              {textActivityTitle}
+            </span>
+            <span className="flex-1" />
+            {selectedActivity && (
               <ActivityActionsMenu
                 activity={selectedActivity}
                 onEditActivity={onEditActivity}
                 onOpenDeleteModal={onOpenDeleteModal}
                 disabled={mode !== "read"}
               />
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Afficher l'éditeur TipTap si le type de l'activité est "text" */}
-          {selectedActivity?.type === "text" || mode === "write" ? (
+          {activityType === "text" ? (
             <div className="mt-4">
               <TiptapActivity
                 key={`tiptap-${mode}`}
@@ -115,6 +123,14 @@ const LessonReader = ({
                 onSave={onSaveActivity}
               />
             </div>
+          ) : activityType === "iframe" ? (
+            /* Si "iframe", afficher l'éditeur iframe */
+            <IframeActivity
+              mode={mode}
+              title={textActivityTitle}
+              onEditTitle={onEditTitle}
+              onChangeSrc={() => {}}
+            />
           ) : (
             /* Sinon afficher l'activité d'un autre type "video", "image" ou "resources" */
             <ActivityPreview activity={selectedActivity} />
@@ -128,4 +144,4 @@ const LessonReader = ({
   );
 };
 
-export default LessonReader;
+export default LessonReaderAndEditor;

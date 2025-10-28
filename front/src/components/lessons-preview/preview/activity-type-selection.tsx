@@ -6,7 +6,7 @@ import {
   Text,
   Video,
 } from "lucide-react";
-import { ActivityType } from "../../../views/lessons-preview/store/lessons-preview-reducer";
+import { ActivityType } from "../../../utils/interfaces/activity";
 
 type Props = {
   onSelectType: (activityType: ActivityType) => void;

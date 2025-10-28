@@ -180,7 +180,7 @@ const LessonsPreview = () => {
               state.mode === "activity_type_selection" ? (
                 <ActivityTypeSelection onSelectType={onSelectActivityType} />
               ) : (
-                // Le lecteur de leçons
+                // Le lecteur et editeur de leçons
                 <LessonReader
                   key="lesson-reader"
                   isLessonCompleted={isLessonCompleted}
@@ -195,6 +195,11 @@ const LessonsPreview = () => {
                     state.mode !== "read" ? state.titleError : undefined
                   }
                   selectedActivity={selectedActivity}
+                  activityType={
+                    selectedActivity?.type ||
+                    (state.mode === "write" && state.activityType) ||
+                    "text"
+                  }
                   selectedLesson={selectedLesson}
                   showDeleteModal={modalVisibility === "deletionModal"}
                   onOpenDeleteModal={() =>
