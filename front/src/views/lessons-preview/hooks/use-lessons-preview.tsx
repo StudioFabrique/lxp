@@ -7,6 +7,7 @@ import LessonRead from "../../../utils/interfaces/lesson-read";
 import LessonRating from "../../../utils/interfaces/lesson-rating";
 import toast from "react-hot-toast";
 import {
+  ActivityType,
   initialLessonsPreviewState,
   lessonsPreviewReducer,
 } from "../store/lessons-preview-reducer";
@@ -360,10 +361,36 @@ const useLessonsPreview = () => {
     dispatch({ type: "go_to_next_lesson" });
   };
 
+  const selectActivityType = (activityType: ActivityType) => {
+    switch (activityType) {
+      case "text":
+      case "iframe":
+        return dispatch({
+          type: "select_mode",
+          mode: "write",
+          activityType,
+        });
+      case "video":
+        return navigate(
+          `/admin/lesson/edit/${state.selectedLesson?.id}?type=video`
+        );
+      case "image":
+        return navigate(
+          `/admin/lesson/edit/${state.selectedLesson?.id}?type=image`
+        );
+      case "resource":
+        return navigate(
+          `/admin/lesson/edit/${state.selectedLesson?.id}?type=resource`
+        );
+    }
+  };
+
   useEffect(() => {
-    // selectionner la leçon selectionnée depuis le state de l'url dès que les données, une seule fois
-    if (stateFromUrl?.lessonId && state.module && !stateFromUrlCalled) {
-      dispatch({ type: "select_lesson_by_id", id: stateFromUrl.lessonId });
+    // selectionner la leçon selectionnée depuis le state de l'url dès que les données du module sont fetch,
+    // une seule fois
+    if (state.module && !stateFromUrlCalled) {
+      if (stateFromUrl?.lessonId)
+        dispatch({ type: "select_lesson_by_id", id: stateFromUrl.lessonId });
       setStateFromUrlCalled(true);
     }
   }, [state.module, stateFromUrl?.lessonId, stateFromUrlCalled]);
@@ -441,6 +468,7 @@ const useLessonsPreview = () => {
     onActivityReorder: activityReorder,
     onLessonReorder: lessonReorder,
     onNextLesson: nextLesson,
+    onSelectActivityType: selectActivityType,
   };
 };
 

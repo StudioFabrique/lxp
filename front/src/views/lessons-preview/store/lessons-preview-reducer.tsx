@@ -10,6 +10,10 @@ const STORAGE_KEY = "lessons-preview-panel-closed";
 
 type ModalVisibility = "deletionModal" | "lessonCompletionModal" | "none";
 
+type SelectMode = "read" | "edit" | "write" | "activity_type_selection";
+
+export type ActivityType = "text" | "image" | "video" | "iframe" | "resource";
+
 // Propriétés qui sont disponibles à la modification et à la lecture sans conditions préalables
 type StaticStateProperties = {
   isPanelClosed: boolean;
@@ -27,6 +31,10 @@ type ConditionnalStateProperties =
       // rajouter les propriétés supplémentaires pour le mode "read"
     }
   | {
+      mode: "activity_type_selection";
+      // rajouter les propriétés supplémentaires pour le mode "type_selection"
+    }
+  | {
       mode: "edit";
       // rajouter les propriétés supplémentaires pour le mode "edit"
       titleError?: string;
@@ -36,6 +44,7 @@ type ConditionnalStateProperties =
       // rajouter les propriétés supplémentaires pour le mode "write"
       newActivityTitle?: string;
       titleError?: string;
+      activityType?: ActivityType;
     };
 
 // Le type du state du reducer
@@ -68,7 +77,8 @@ type LessonsPreviewAction =
   | { type: "go_to_next_activity" }
   | { type: "reorder_activity"; fromId: number; toId: number }
   // Miscellaneous
-  | { type: "select_mode"; mode: "read" | "edit" | "write" }
+  // Note concernant "select_mode" : type_selection fait référence au moment durant lequel l'utilisateur selectionne son type d'activité
+  | { type: "select_mode"; mode: SelectMode; activityType?: ActivityType }
   | { type: "toggle_panel_visibility" }
   | { type: "set_modal_visibility"; modalVisibility: ModalVisibility };
 
@@ -123,18 +133,12 @@ export function lessonsPreviewReducer(
 
     // --- Lesson ---
     case "select_lesson": {
-      // Selectionne la leçon dont les détails ont été chargés, et selectionne la première activité de la leçon (si existante).
-      // Le mode est basculé sur "read" automatiquement.
-      const selectedActivity =
-        action.lesson?.activities?.[0] && action.lesson?.activities[0];
+      const selectedActivity = action.lesson?.activities?.[0];
 
       return {
         ...state,
         mode: "read",
-        selectedLesson:
-          action.lesson && state.selectedLesson
-            ? { ...state.selectedLesson, ...action.lesson }
-            : action.lesson,
+        selectedLesson: action.lesson,
         selectedActivity,
       };
     }
@@ -360,7 +364,8 @@ export function lessonsPreviewReducer(
     }
 
     case "update_activity_title":
-      if (state.mode === "read") return state;
+      if (state.mode === "read" || state.mode === "activity_type_selection")
+        return state;
       if (state.mode === "write") {
         return {
           ...state,
@@ -380,7 +385,8 @@ export function lessonsPreviewReducer(
       }
 
     case "set_activity_title_error":
-      if (state.mode === "read") return state;
+      if (state.mode === "read" || state.mode === "activity_type_selection")
+        return state;
       return { ...state, titleError: action.error };
 
     case "update_activity_content":
@@ -432,11 +438,15 @@ export function lessonsPreviewReducer(
       const textActivityContent =
         action.mode === "write" ? undefined : state.textActivityContent;
 
+      const activityType =
+        action.mode === "write" ? action.activityType : undefined;
+
       return {
         ...state,
         mode: action.mode,
         selectedActivity,
         textActivityContent,
+        activityType,
         newActivityTitle: undefined,
       };
     }

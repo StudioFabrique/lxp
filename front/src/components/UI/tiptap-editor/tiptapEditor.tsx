@@ -13,7 +13,7 @@ import useTiptapEditor from "./useTiptapEditor";
 import { useRef } from "react";
 
 type TiptapEditorProps = {
-  mode: "read" | "write" | "edit";
+  mode: "read" | "write" | "edit" | "activity_type_selection";
   initialValue?: string;
   pending?: boolean;
   onSave?: () => void;
