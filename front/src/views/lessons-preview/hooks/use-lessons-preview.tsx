@@ -7,12 +7,11 @@ import LessonRead from "../../../utils/interfaces/lesson-read";
 import LessonRating from "../../../utils/interfaces/lesson-rating";
 import toast from "react-hot-toast";
 import {
-  ActivityType,
   initialLessonsPreviewState,
   lessonsPreviewReducer,
 } from "../store/lessons-preview-reducer";
 import { ACTIVITIES } from "../../../config/urls";
-import { Activity } from "../../../utils/interfaces/activity";
+import { Activity, ActivityType } from "../../../utils/interfaces/activity";
 import { OnDragEndResponder } from "react-beautiful-dnd";
 
 // Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
@@ -362,6 +361,7 @@ const useLessonsPreview = () => {
   };
 
   const selectActivityType = (activityType: ActivityType) => {
+    console.log({ activityType });
     switch (activityType) {
       case "text":
       case "iframe":

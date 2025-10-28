@@ -1,4 +1,4 @@
-import { Activity } from "../../../utils/interfaces/activity";
+import { Activity, ActivityType } from "../../../utils/interfaces/activity";
 import Module from "../../../utils/interfaces/module";
 import Course from "../../../utils/interfaces/course";
 import Lesson from "../../../utils/interfaces/lesson";
@@ -10,9 +10,11 @@ const STORAGE_KEY = "lessons-preview-panel-closed";
 
 type ModalVisibility = "deletionModal" | "lessonCompletionModal" | "none";
 
-type SelectMode = "read" | "edit" | "write" | "activity_type_selection";
-
-export type ActivityType = "text" | "image" | "video" | "iframe" | "resource";
+export type ActivitySelectMode =
+  | "read"
+  | "edit"
+  | "write"
+  | "activity_type_selection";
 
 // Propriétés qui sont disponibles à la modification et à la lecture sans conditions préalables
 type StaticStateProperties = {
@@ -78,7 +80,11 @@ type LessonsPreviewAction =
   | { type: "reorder_activity"; fromId: number; toId: number }
   // Miscellaneous
   // Note concernant "select_mode" : type_selection fait référence au moment durant lequel l'utilisateur selectionne son type d'activité
-  | { type: "select_mode"; mode: SelectMode; activityType?: ActivityType }
+  | {
+      type: "select_mode";
+      mode: ActivitySelectMode;
+      activityType?: ActivityType;
+    }
   | { type: "toggle_panel_visibility" }
   | { type: "set_modal_visibility"; modalVisibility: ModalVisibility };
 
