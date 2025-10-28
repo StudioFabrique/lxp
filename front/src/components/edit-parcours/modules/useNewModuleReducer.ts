@@ -7,6 +7,13 @@ import {
 } from "../../../utils/interfaces/new-module";
 import Skill from "../../../utils/interfaces/skill";
 
+type ModuleUpdate = {
+  id: number;
+  duration: number;
+  contacts: Contact[];
+  skills: Skill[];
+};
+
 // Centralized state type
 type ModuleState = {
   showForm: boolean;
@@ -20,6 +27,7 @@ type ModuleState = {
   showDuplicateModal: boolean;
   metadataList: MetadataList[] | null;
   moduleToDuplicate: DuplicatedModule | null;
+  moduleToUpdate: number | null;
 };
 
 // Action types
@@ -41,7 +49,17 @@ type ModuleAction =
   | { type: "CANCEL_FORM" }
   | { type: "MODULE_CREATED"; payload: ModuleData }
   | { type: "PREPARE_DUPLICATE"; payload: DuplicatedModule }
-  | { type: "CLOSE_DELETE_MODAL" };
+  | { type: "CLOSE_DELETE_MODAL" }
+  | { type: "UPDATE_MODULE"; payload: ModuleUpdate }
+  | {
+      type: "SUCCESSFUL_MODULE_UPDATE";
+      payload: {
+        id: number;
+        contacts: Contact[];
+        skills: Skill[];
+        duration: number;
+      };
+    };
 
 // Initial state
 const initialState: ModuleState = {
@@ -56,6 +74,7 @@ const initialState: ModuleState = {
   showDuplicateModal: false,
   metadataList: null,
   moduleToDuplicate: null,
+  moduleToUpdate: null,
 };
 
 // Reducer function with all state transitions
@@ -156,6 +175,38 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
         ...state,
         moduleToDelete: null,
         metadataList: null,
+      };
+
+    case "UPDATE_MODULE":
+      return {
+        ...state,
+        moduleToUpdate: action.payload.id,
+        showForm: true,
+        mode: "edit",
+        currentContacts: action.payload.contacts,
+        currentSkills: action.payload.skills,
+        file: null,
+      };
+
+    case "SUCCESSFUL_MODULE_UPDATE":
+      return {
+        ...state,
+        showForm: false,
+        mode: "create",
+        modules: state.modules.map((module: ModuleData) =>
+          module.id === action.payload.id
+            ? {
+                ...module,
+                contacts: action.payload.contacts,
+                bonusSkills: action.payload.skills,
+                duration: action.payload.duration,
+              }
+            : module
+        ),
+        currentContacts: [],
+        currentSkills: [],
+        file: null,
+        moduleToUpdate: null,
       };
 
     default:

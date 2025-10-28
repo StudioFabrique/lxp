@@ -1,8 +1,10 @@
 import { BonusSkill, Contact } from "@prisma/client";
 import { prisma } from "../../utils/db";
 
-async function putModule(module: any, thumb: any, image: any) {
-  const existingModule = await prisma.module.findFirst({
+async function putModule(module: any) {
+  console.log({ module });
+
+  const existingModule = await prisma.moduleMetadata.findFirst({
     where: { id: module.id },
   });
 
@@ -47,11 +49,12 @@ async function putModule(module: any, thumb: any, image: any) {
       },
       select: {
         id: true,
-        minDate: true,
-        maxDate: true,
+        duration: true,
         contacts: {
           select: {
-            contact: true,
+            contact: {
+              select: { id: true, name: true, role: true },
+            },
           },
         },
         bonusSkills: {
@@ -69,8 +72,14 @@ async function putModule(module: any, thumb: any, image: any) {
   });
 
   const result = {
-    ...updatedModule,
-    thumb: updatedModule.thumb?.toString("base64") ?? null,
+    id: updatedModule.id,
+    duration: updatedModule.duration ? updatedModule.duration : 1,
+    contacts: updatedModule.contacts.map(
+      (c: { contact: { id: number; name: string; role: string } }) => c.contact
+    ),
+    bonusSkills: updatedModule.bonusSkills.map(
+      (bs: { bonusSkill: { id: number; description: string } }) => bs.bonusSkill
+    ),
   };
 
   return result;

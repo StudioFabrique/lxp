@@ -44,6 +44,7 @@ export default function ModuleComponent() {
     metadataList,
     handleCopyModule,
     handleCloseDuplicateModal,
+    handleUpdateModule,
     mode,
   } = useNewModule();
 
@@ -59,7 +60,11 @@ export default function ModuleComponent() {
         />
 
         {/* Module grid display */}
-        <ModuleGrid modules={modules} onDelete={showDeleteModal} />
+        <ModuleGrid
+          modules={modules}
+          onUpdate={handleUpdateModule}
+          onDelete={showDeleteModal}
+        />
 
         {/* Module creation form (conditional) */}
         {showForm && (

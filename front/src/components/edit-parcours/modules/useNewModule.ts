@@ -67,6 +67,11 @@ const useNewModule = () => {
 
     if (!onValidateForm()) return;
 
+    if (state.mode === "edit") {
+      handleSubmitUpdateModule();
+      return;
+    }
+
     const formData = new FormData();
     const module = {
       ...data.values,
@@ -186,7 +191,7 @@ const useNewModule = () => {
   };
 
   /**
-   * Prepares form for duplicating an existing module
+   * Prepares form for duplicating an existing modules
    */
   const handleCopyModule = (module: DuplicatedModule) => {
     // ✅ Single action handles complex state transition
@@ -197,6 +202,64 @@ const useNewModule = () => {
     });
     const drawer = document.getElementById("duplicate_module_drawer");
     (drawer as HTMLDialogElement).click();
+  };
+
+  const handleUpdateModule = (moduleToUpddate: ModuleData) => {
+    console.log("SKILLS", moduleToUpddate.skills);
+
+    dispatch({
+      type: "UPDATE_MODULE",
+      payload: {
+        id: moduleToUpddate.id,
+        contacts: moduleToUpddate.contacts,
+        skills: moduleToUpddate.skills,
+        duration: moduleToUpddate.duration ? +moduleToUpddate.duration : 1,
+      },
+    });
+    initValues({
+      title: moduleToUpddate.title,
+      description: moduleToUpddate.description,
+      duration: moduleToUpddate.duration,
+    });
+  };
+
+  const handleSubmitUpdateModule = () => {
+    if (!onValidateForm()) return;
+    const applyData = (data: {
+      success: boolean;
+      message: string;
+      response: ModuleData;
+    }) => {
+      if (data.success) {
+        dispatch({
+          type: "SUCCESSFUL_MODULE_UPDATE",
+          payload: {
+            id: data.response.id,
+            contacts: data.response.contacts,
+            skills: data.response.skills,
+            duration: data.response.duration ? +data.response.duration : 0,
+          },
+        });
+        toast.success(data.message);
+        onResetForm();
+        scrollToTop();
+      }
+    };
+    sendRequest(
+      {
+        path: `/modules/new-module/update/`,
+        method: "put",
+        body: {
+          module: {
+            id: state.moduleToUpdate,
+            ...data.values,
+            contactsIds: state.currentContacts.map((item) => item.id),
+            bonusSkillsIds: state.currentSkills.map((item) => item.id),
+          },
+        },
+      },
+      applyData
+    );
   };
 
   // Effect for delete modal
@@ -261,6 +324,8 @@ const useNewModule = () => {
     handleCopyModule,
     handleCloseDuplicateModal,
     error,
+    handleUpdateModule,
+    handleSubmitUpdateModule,
   };
 };
 

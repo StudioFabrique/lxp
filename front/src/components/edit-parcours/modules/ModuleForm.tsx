@@ -1,4 +1,4 @@
-import { Dispatch, RefObject } from "react";
+import { RefObject } from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 import ModuleMetadatas from "../../../views/module/add/module-metadatas";
 import ModuleToParcours from "../../../views/module/add/module-to-parcours";
@@ -21,7 +21,7 @@ type ModuleFormProps = {
   skills: Skill[];
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
-  onSetFile: Dispatch<React.SetStateAction<File | null>>;
+  onSetFile: (file: File | null) => void;
   setCurrentContacts: (contacts: Contact[]) => void;
   setCurrentSkills: (skills: Skill[]) => void;
 };
@@ -48,7 +48,7 @@ export default function ModuleForm({
   return (
     <>
       <div className="divider text-primary text-xs">
-        {mode === "create" ? "Création" : "Édition"} de module
+        {mode === "create" ? "Création d'un" : "Édition du"} module
       </div>
       <Wrapper>
         <form onSubmit={onSubmit} ref={refForm}>
