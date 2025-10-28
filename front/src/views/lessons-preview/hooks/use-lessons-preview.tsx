@@ -371,11 +371,17 @@ const useLessonsPreview = () => {
           activityType,
         });
       case "video":
-        return navigate("");
+        return navigate(
+          `/admin/lesson/edit/${state.selectedLesson?.id}?type=video`
+        );
       case "image":
-        return navigate("");
-      case "resources":
-        return navigate("");
+        return navigate(
+          `/admin/lesson/edit/${state.selectedLesson?.id}?type=image`
+        );
+      case "resource":
+        return navigate(
+          `/admin/lesson/edit/${state.selectedLesson?.id}?type=resource`
+        );
     }
   };
 
