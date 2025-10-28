@@ -62,8 +62,6 @@ const LessonReaderAndEditor = ({
     onDeleteActivity();
   }, [onDeleteActivity]);
 
-  console.log({ activityType });
-
   return (
     <>
       {showDeleteModal && selectedActivity && (
