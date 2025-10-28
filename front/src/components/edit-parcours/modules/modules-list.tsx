@@ -8,7 +8,7 @@ type Props = {
   id: number;
   title: string;
   thumb: string | null;
-  duration: string;
+  duration?: number;
   description: string;
   contacts: Contact[];
   skills: Skill[];

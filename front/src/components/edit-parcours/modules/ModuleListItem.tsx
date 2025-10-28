@@ -1,4 +1,4 @@
-import { MetadataList, Metadatas } from "./useNewModule";
+import { MetadataList, Metadatas } from "../../../utils/interfaces/new-module";
 import ModuleMetadataItem from "./ModuleMetadataItem";
 
 type ModuleListItemProps = {
@@ -20,6 +20,8 @@ export default function ModuleListItem({
   const otherParcoursMetadatas = module.metadatas?.filter(
     (meta: Metadatas) => meta.parcours?.id !== currentParcoursId
   );
+
+  console.log({ module });
 
   // Don't render if module only exists in current parcours
   if (!otherParcoursMetadatas || otherParcoursMetadatas.length === 0) {
