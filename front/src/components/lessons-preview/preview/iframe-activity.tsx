@@ -18,6 +18,7 @@ const IframeActivity = ({
   onChangeSrc,
 }: Props) => {
   const [iframeUrl, setIframeUrl] = useState(src);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
@@ -25,6 +26,7 @@ const IframeActivity = ({
   };
 
   const handleChangeUrl = (e: ChangeEvent<HTMLInputElement>) => {
+    setIsLoading(true);
     const newUrl = e.target.value;
     setIframeUrl(newUrl);
     onChangeSrc(newUrl);
@@ -32,7 +34,7 @@ const IframeActivity = ({
 
   return (
     <div className="w-full flex flex-col gap-4 mt-5">
-      {/* Mode édition : champ d'URL */}
+      {/* Mode édition : titre + URL */}
       {mode === "write" && (
         <div className="form-control">
           <label className="label">
@@ -42,11 +44,12 @@ const IframeActivity = ({
           </label>
           <input
             type="text"
-            placeholder="..."
+            placeholder="Titre de la ressource"
             className="input input-bordered w-full"
             value={title}
             onChange={handleChangeTitle}
           />
+
           <label className="label mt-5">
             <span className="label-text font-semibold text-primary">
               URL de la ressource iframe
@@ -65,11 +68,26 @@ const IframeActivity = ({
       {/* Conteneur de l’iframe */}
       {iframeUrl ? (
         <div className="relative w-full overflow-hidden rounded-lg border border-base-300">
+          {/* Skeleton pendant le chargement */}
+          {isLoading && (
+            <div className="w-full h-[500px] bg-base-200 flex flex-col justify-center items-center gap-3 animate-pulse">
+              <div className="skeleton w-3/4 h-6 rounded"></div>
+              <div className="skeleton w-5/6 h-6 rounded"></div>
+              <div className="skeleton w-2/3 h-6 rounded"></div>
+              <p className="text-sm text-base-content/60 mt-4">
+                Chargement de la ressource...
+              </p>
+            </div>
+          )}
+
+          {/* L’iframe une fois chargée */}
           <iframe
             src={iframeUrl}
             title="Iframe Activity"
             className="w-full h-[500px] rounded-lg"
             allowFullScreen
+            onLoad={() => setIsLoading(false)}
+            hidden={isLoading}
           />
         </div>
       ) : (

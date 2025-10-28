@@ -361,7 +361,6 @@ const useLessonsPreview = () => {
   };
 
   const selectActivityType = (activityType: ActivityType) => {
-    console.log({ activityType });
     switch (activityType) {
       case "text":
       case "iframe":
