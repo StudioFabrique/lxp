@@ -133,18 +133,12 @@ export function lessonsPreviewReducer(
 
     // --- Lesson ---
     case "select_lesson": {
-      // Selectionne la leçon dont les détails ont été chargés, et selectionne la première activité de la leçon (si existante).
-      // Le mode est basculé sur "read" automatiquement.
-      const selectedActivity =
-        action.lesson?.activities?.[0] && action.lesson?.activities[0];
+      const selectedActivity = action.lesson?.activities?.[0];
 
       return {
         ...state,
         mode: "read",
-        selectedLesson:
-          action.lesson && state.selectedLesson
-            ? { ...state.selectedLesson, ...action.lesson }
-            : action.lesson,
+        selectedLesson: action.lesson,
         selectedActivity,
       };
     }

@@ -380,9 +380,11 @@ const useLessonsPreview = () => {
   };
 
   useEffect(() => {
-    // selectionner la leçon selectionnée depuis le state de l'url dès que les données, une seule fois
-    if (stateFromUrl?.lessonId && state.module && !stateFromUrlCalled) {
-      dispatch({ type: "select_lesson_by_id", id: stateFromUrl.lessonId });
+    // selectionner la leçon selectionnée depuis le state de l'url dès que les données du module sont fetch,
+    // une seule fois
+    if (state.module && !stateFromUrlCalled) {
+      if (stateFromUrl?.lessonId)
+        dispatch({ type: "select_lesson_by_id", id: stateFromUrl.lessonId });
       setStateFromUrlCalled(true);
     }
   }, [state.module, stateFromUrl?.lessonId, stateFromUrlCalled]);
