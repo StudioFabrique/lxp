@@ -23,7 +23,7 @@ const activityTypes: {
   { type: "image", label: "image", icon: Image },
   { type: "video", label: "vidéo", icon: Video },
   { type: "iframe", label: "contenu interactif", icon: MonitorPlay },
-  { type: "resources", label: "ressources", icon: File },
+  { type: "resource", label: "ressources", icon: File },
 ];
 
 const ActivityTypeSelection = ({ onSelectType }: Props) => {

@@ -12,7 +12,7 @@ type ModalVisibility = "deletionModal" | "lessonCompletionModal" | "none";
 
 type SelectMode = "read" | "edit" | "write" | "activity_type_selection";
 
-export type ActivityType = "text" | "image" | "video" | "iframe" | "resources";
+export type ActivityType = "text" | "image" | "video" | "iframe" | "resource";
 
 // Propriétés qui sont disponibles à la modification et à la lecture sans conditions préalables
 type StaticStateProperties = {
