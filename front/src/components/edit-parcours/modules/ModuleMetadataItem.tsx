@@ -1,5 +1,5 @@
 import { Copy } from "lucide-react";
-import { Metadatas } from "./useNewModule";
+import { Metadatas } from "../../../utils/interfaces/new-module";
 
 type ModuleMetadataItemProps = {
   metadata: Metadatas;
@@ -15,14 +15,14 @@ export default function ModuleMetadataItem({
   onCopy,
 }: ModuleMetadataItemProps) {
   return (
-    <div className="grid grid-cols-[1fr_auto] gap-4 items-start">
+    <div className="flex items-center justify-between hover:brightness-125">
       <div>
         <p className="font-semibold">
           Parcours : {metadata.parcours?.title ?? "Sans titre"}
         </p>
-        <div className="text-xs text-base-content/70">
+        <div className="text-xs text-base-content/70 mb-2">
           {metadata.courses?.length ?? 0} cours sont associés au module :
-          {metadata.courses?.map((course) => (
+          {metadata.courses?.map((course: { id: number; title: string }) => (
             <span
               key={course.id}
               className="badge badge-secondary mx-1 mb-1 font-normal text-xs"
@@ -30,13 +30,18 @@ export default function ModuleMetadataItem({
               {course.title}
             </span>
           ))}
-          {metadata.courses?.length > 0 && <div className="divider" />}
         </div>
       </div>
-      <Copy
-        className="cursor-pointer w-6 h-6 text-primary hover:brightness-125 flex-shrink-0"
-        onClick={onCopy}
-      />
+      <div
+        className="tooltip tooltip-left"
+        data-tip="Associer ce module et son contenu au parcours actuel."
+      >
+        <Copy
+          className="cursor-pointer w-6 h-6 text-primary hover:brightness-125 flex-shrink-0"
+          aria-label="Copier les métadonnées"
+          onClick={onCopy}
+        />
+      </div>
     </div>
   );
 }

@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from "react";
 import Field from "../../../components/UI/forms/field";
 import FieldArea from "../../../components/UI/forms/field-area";
 import FieldNumber from "../../../components/UI/forms/field-number";
@@ -13,7 +12,7 @@ type Props = {
     onChangeValue: (field: string, value: string) => void;
     errors: CustomError[];
   };
-  onSetFile: Dispatch<SetStateAction<File | null>>;
+  onSetFile: (file: File | null) => void;
 };
 
 function ModuleMetadatas({ data, mode, onSetFile }: Props) {

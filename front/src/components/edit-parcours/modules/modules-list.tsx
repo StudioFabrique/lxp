@@ -1,14 +1,35 @@
 import { Edit2Icon, Trash2 } from "lucide-react";
 import placeholder from "../../../assets/images/cat.webp";
+import { ModuleData } from "../../../utils/interfaces/new-module";
+import Contact from "../../../utils/interfaces/contact";
+import Skill from "../../../utils/interfaces/skill";
 
 type Props = {
   id: number;
   title: string;
   thumb: string | null;
+  duration: string;
+  description: string;
+  contacts: Contact[];
+  skills: Skill[];
+  onUpdate: (module: ModuleData) => void;
   onDelete: (id: number) => void;
 };
 
 export default function ModulesList(props: Props) {
+  const handleUpdate = () => {
+    const moduleToUpdate: ModuleData = {
+      id: props.id,
+      title: props.title,
+      thumb: props.thumb,
+      duration: props.duration,
+      description: props.description,
+      contacts: props.contacts,
+      skills: props.skills,
+    };
+    props.onUpdate(moduleToUpdate);
+  };
+
   return (
     <div className="card bg-base-100 h-38 image-full w-74 shadow-sm">
       <figure>
@@ -28,6 +49,7 @@ export default function ModulesList(props: Props) {
             className="btn btn-sm tooltip tooltip-bottom"
             data-tip="Modifier le module"
             aria-label="Modifier le module"
+            onClick={handleUpdate}
           >
             <Edit2Icon className="w-4 h-4" />
             Modifier

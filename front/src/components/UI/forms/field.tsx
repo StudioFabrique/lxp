@@ -21,7 +21,7 @@ const Field = (props: FieldProps) => {
   const type = props.type ?? "text";
 
   const baseStyle =
-    "w-full input input-bordered focus:outline-none disabled:cursor-default disabled:text-base-content";
+    "w-full input input-bordered focus:outline-none disabled:cursor-not-allowed disabled:text-base-content/60";
 
   const style = props.data.errors.find((item) => item.type === name)
     ? baseStyle + " input-error"

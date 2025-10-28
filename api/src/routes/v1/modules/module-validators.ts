@@ -181,7 +181,6 @@ export const putModuleValidator = [
     .withMessage(
       "Chaque identifiant de bonusSkillsIds doit être un entier positif."
     ),
-  checkValidatorResult,
 ];
 
 export const putModuleParcoursValidator = [

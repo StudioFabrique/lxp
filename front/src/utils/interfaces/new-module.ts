@@ -6,6 +6,10 @@ export type ModuleData = {
   id: number;
   title: string;
   thumb: string | null; // Optional base64 encoded thumbnail
+  duration?: number; // Duration in minutes
+  description: string;
+  contacts: Contact[]; // Associated contacts/instructors
+  skills: Skill[]; // Associated bonus skills
 };
 
 // Type definition for parcours (learning path) with associated resources

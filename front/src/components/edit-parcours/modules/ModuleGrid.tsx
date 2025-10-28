@@ -1,14 +1,10 @@
+import { ModuleData } from "../../../utils/interfaces/new-module";
 import ElementNotFound from "../../UI/element-not-found";
 import ModulesList from "./modules-list";
 
-type Module = {
-  id: number;
-  title: string;
-  thumb: string | null;
-};
-
 type ModuleGridProps = {
-  modules: Module[];
+  modules: ModuleData[];
+  onUpdate: (module: ModuleData) => void;
   onDelete: (id: number) => void;
 };
 
@@ -16,7 +12,11 @@ type ModuleGridProps = {
  * Grid display of modules in a responsive layout
  * Shows a message when no modules are available
  */
-export default function ModuleGrid({ modules, onDelete }: ModuleGridProps) {
+export default function ModuleGrid({
+  modules,
+  onUpdate,
+  onDelete,
+}: ModuleGridProps) {
   if (modules.length === 0) {
     return <ElementNotFound message="Aucun module trouvé" />;
   }
@@ -24,7 +24,12 @@ export default function ModuleGrid({ modules, onDelete }: ModuleGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {modules.map((module) => (
-        <ModulesList {...module} key={module.id} onDelete={onDelete} />
+        <ModulesList
+          {...module}
+          key={module.id}
+          onUpdate={onUpdate}
+          onDelete={onDelete}
+        />
       ))}
     </div>
   );

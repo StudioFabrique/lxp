@@ -5,7 +5,7 @@ async function httpDeleteCourseDates(req: Request, res: Response) {
   const { courseId, datesId } = req.params;
 
   try {
-    const response = await deleteCourseDates(+courseId, +datesId);
+    await deleteCourseDates(+courseId, +datesId);
     return res
       .status(201)
       .json({ success: true, message: "Dates effacées avec succès" });
