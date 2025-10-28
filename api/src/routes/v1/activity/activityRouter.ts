@@ -89,6 +89,15 @@ activityRouter.post(
   httpPostActivityText
 );
 
+// Route pour créer une activité de type iframe et l'associer à une leçon
+activityRouter.post(
+  "/iframe/:lessonId",
+  checkPermissions("lesson"),
+  parentIdValidator,
+  updateActivityValidator,
+  httpPostActivityText
+);
+
 // Route pour mettre à jour une activité de type texte existante
 activityRouter.put(
   "/text/:id",
