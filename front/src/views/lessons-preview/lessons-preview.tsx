@@ -64,6 +64,13 @@ const LessonsPreview = () => {
     [dispatch]
   );
 
+  const editIframeSrc = useCallback(
+    (src: string) => {
+      dispatch({ type: "update_activity_iframe_src", src });
+    },
+    [dispatch]
+  );
+
   const editContent = useCallback(
     (content: string) => {
       dispatch({ type: "update_activity_content", content });
@@ -208,6 +215,11 @@ const LessonsPreview = () => {
                     (state.mode === "write" && state.activityType) ||
                     "text"
                   }
+                  iframeActivitySrc={
+                    state.mode === "write"
+                      ? state.newActivitySrc
+                      : selectedActivity?.url
+                  }
                   selectedLesson={selectedLesson}
                   showDeleteModal={modalVisibility === "deletionModal"}
                   onOpenDeleteModal={() =>
@@ -227,15 +239,21 @@ const LessonsPreview = () => {
                   }
                   onEditTitle={editTitle}
                   onEditContent={editContent}
+                  onEditIframeSrc={editIframeSrc}
                   onRateActivity={onRateContent}
                   onDeleteActivity={onDeleteActivity}
                   onClose={() =>
                     state.mode === "write"
                       ? dispatch({
-                          type: "select_mode",
-                          mode: "activity_type_selection",
+                          type: "select_last_activity_from_current_lesson",
                         })
                       : dispatch({ type: "select_mode", mode: "read" })
+                  }
+                  onBack={() =>
+                    dispatch({
+                      type: "select_mode",
+                      mode: "activity_type_selection",
+                    })
                   }
                   onSaveActivity={onSaveActivity}
                 >

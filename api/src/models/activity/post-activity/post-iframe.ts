@@ -1,9 +1,4 @@
-import { Activity, BonusActivity, Lesson, Resource } from "@prisma/client";
 import { prisma } from "../../../utils/db";
-
-import fs from "fs";
-import path from "path";
-import { v4 as uuidv4 } from "uuid";
 
 export default async function postIframe(
   lessonId: number,
@@ -31,11 +26,11 @@ export default async function postIframe(
       title,
       description,
       order: existingLesson.activities.length,
-      type: "text",
+      type: "iframe",
       lesson: {
         connect: { id: existingLesson!.id },
       },
-      url: fileName,
+      url,
       author: {
         connect: {
           id: existingAuthor.id,

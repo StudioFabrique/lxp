@@ -254,21 +254,8 @@ const useLessonsPreview = () => {
     }
   }, [state.mode, state.selectedActivity?.type, state.selectedActivity?.url]);
 
-  const saveActivity = async (): Promise<boolean> => {
-    if (state.mode === "read") return false;
-
-    const title =
-      state.mode === "write"
-        ? state.newActivityTitle?.trim()
-        : state.selectedActivity?.title;
-
+  const saveTextActivity = async (title: string): Promise<boolean> => {
     // Si le titre est manquant, avertir l'utilisateur via un toast
-    if (!title || !(title?.length > 0)) {
-      const error = "Le titre est obligatoire";
-      toast.error(error);
-      dispatch({ type: "set_activity_title_error", error });
-      return false;
-    }
 
     if (
       !state.textActivityContent ||
@@ -326,6 +313,72 @@ const useLessonsPreview = () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     return response;
+  };
+
+  const saveIframeActivity = async (title: string): Promise<boolean> => {
+    const applyDataPost = (activity: Activity) => {
+      dispatch({ type: "create_activity", activity });
+
+      return true;
+    };
+
+    const applyDataPut = ({ response: activity }: { response: Activity }) => {
+      dispatch({ type: "edit_activity", activity });
+
+      return true;
+    };
+
+    const response: Promise<boolean> = await sendRequest(
+      {
+        path: `/activity/iframe/${
+          state.mode === "write"
+            ? state.selectedLesson?.id
+            : state.selectedActivity?.id
+        }`,
+        method: state.mode === "write" ? "post" : "put",
+        body: {
+          description: "description",
+          title,
+          url:
+            state.mode === "write"
+              ? state.newActivitySrc
+              : state.selectedActivity?.url,
+        },
+      },
+      state.mode === "write" ? applyDataPost : applyDataPut
+    );
+
+    // Ajout d'un délai de 1 seconde pour éviter les clignotements
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    return response;
+  };
+
+  const saveActivity = async (): Promise<boolean> => {
+    if (state.mode === "read") return false;
+
+    const title =
+      state.mode === "write"
+        ? state.newActivityTitle?.trim()
+        : state.selectedActivity?.title;
+
+    if (!title || !(title?.length > 0)) {
+      const error = "Le titre est obligatoire";
+      toast.error(error);
+      dispatch({ type: "set_activity_title_error", error });
+      return false;
+    }
+
+    switch (
+      state.mode === "write" ? state.activityType : state.selectedActivity?.type
+    ) {
+      case "text":
+        return await saveTextActivity(title);
+      case "iframe":
+        return await saveIframeActivity(title);
+      default:
+        return false;
+    }
   };
 
   const activityReorder: OnDragEndResponder = (result) => {
