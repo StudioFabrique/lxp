@@ -1,6 +1,5 @@
 import SidebarCoursesList from "../../components/lessons-preview/sidebar/sidebar-courses-list";
 import ProgressBar from "../../components/lessons-preview/progress-bar";
-import LessonReader from "../../components/lessons-preview/preview/lesson-reader-and-editor";
 import useLessonsPreview from "./hooks/use-lessons-preview";
 import LessonsPreviewHeader from "../../components/lessons-preview/lessons-preview-header";
 import ModuleData from "../../components/lessons-preview/module-data/module-data";
@@ -19,6 +18,7 @@ import { useCallback } from "react";
 import ActivityBottomNavigation from "../../components/lessons-preview/preview/activity-bottom-navigation";
 import Lesson from "../../utils/interfaces/lesson";
 import ActivityTypeSelection from "../../components/lessons-preview/preview/activity-type-selection";
+import LessonReaderAndEditor from "../../components/lessons-preview/preview/lesson-reader-and-editor";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
@@ -183,7 +183,8 @@ const LessonsPreview = () => {
               <ProgressBar courses={module.courses} />
             </Can>,
             // La prévisualisation de la leçon
-            selectedLesson?.activities?.length ? (
+            selectedLesson?.activities?.length ||
+            ["activity_type_selection", "write"].includes(state.mode) ? (
               state.mode === "activity_type_selection" ? (
                 <ActivityTypeSelection
                   key="activity-type-selection"
@@ -196,7 +197,7 @@ const LessonsPreview = () => {
                 />
               ) : (
                 // Le lecteur et editeur de leçons
-                <LessonReader
+                <LessonReaderAndEditor
                   key="lesson-reader"
                   isLessonCompleted={isLessonCompleted}
                   mode={state.mode}
@@ -278,7 +279,7 @@ const LessonsPreview = () => {
                       }
                     />
                   )}
-                </LessonReader>
+                </LessonReaderAndEditor>
               )
             ) : (
               <NoActivityPlaceholder key="no-activity-placeholder" />

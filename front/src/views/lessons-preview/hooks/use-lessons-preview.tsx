@@ -225,7 +225,6 @@ const useLessonsPreview = () => {
 
   const fetchLessonData = useCallback(async () => {
     const applyData = (lesson: Lesson) => {
-      console.log({ lesson });
       // Mettre à jour selectedLesson avec les données complètes
       dispatch({ type: "select_lesson", lesson });
     };
@@ -323,7 +322,7 @@ const useLessonsPreview = () => {
       return true;
     };
 
-    const applyDataPut = ({ response: activity }: { response: Activity }) => {
+    const applyDataPut = (activity: Activity) => {
       dispatch({ type: "edit_activity", activity });
 
       return true;

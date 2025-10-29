@@ -12,6 +12,7 @@ import {
 import hasPermission from "../../../utils/hasPermission";
 import { useContext } from "react";
 import { Context } from "../../../store/context.store";
+import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 
 type ActivityListProps = {
   activities?: Activity[];
@@ -81,7 +82,7 @@ export default function ActivityList({
                             selectedActivity?.id === activity.id && "underline"
                           }`}
                         >
-                          {activity.title}
+                          {toUpperFirstLetter(activity.title)}
                         </span>
                         <Can action="update" object="lesson">
                           <ArrowDownUp className="w-4 hover:text-primary" />
