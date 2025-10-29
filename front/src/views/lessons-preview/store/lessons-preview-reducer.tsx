@@ -46,6 +46,7 @@ type ConditionnalStateProperties =
       // rajouter les propriétés supplémentaires pour le mode "write"
       newActivityTitle?: string;
       titleError?: string;
+      newActivitySrc?: string;
       activityType?: ActivityType;
     };
 
@@ -75,6 +76,7 @@ type LessonsPreviewAction =
   | { type: "update_activity_title"; title: string }
   | { type: "set_activity_title_error"; error?: string }
   | { type: "update_activity_content"; content: string }
+  | { type: "update_activity_iframe_src"; src: string }
   | { type: "go_to_previous_activity" }
   | { type: "go_to_next_activity" }
   | { type: "reorder_activity"; fromId: number; toId: number }
@@ -397,6 +399,27 @@ export function lessonsPreviewReducer(
 
     case "update_activity_content":
       return { ...state, textActivityContent: action.content };
+
+    case "update_activity_iframe_src":
+      if (state.mode === "read" || state.mode === "activity_type_selection")
+        return state;
+      if (state.mode === "write") {
+        return {
+          ...state,
+          newActivitySrc: action.src,
+          titleError: undefined,
+        };
+      } else {
+        if (!state.selectedActivity) return state;
+        return {
+          ...state,
+          selectedActivity: {
+            ...state.selectedActivity,
+            url: action.src,
+          },
+          titleError: undefined,
+        };
+      }
 
     case "go_to_previous_activity": {
       if (!(state.selectedLesson?.activities && state.selectedActivity))

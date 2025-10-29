@@ -1,13 +1,16 @@
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { ActivitySelectMode } from "../../../views/lessons-preview/store/lessons-preview-reducer";
 import cleanIframeLink from "../../../utils/clean-iframe-link";
+import SaveButton from "../../UI/tiptap-editor/components/SaveButton";
 
 type Props = {
   mode: ActivitySelectMode;
   title?: string;
   src?: string;
   onEditTitle: (title: string) => void;
-  onChangeSrc: (url: string) => void;
+  onChangeSrc: (src: string) => void;
+  onSave: () => Promise<boolean>;
+  onFinishSaving: () => void;
 };
 
 const IframeActivity = ({
@@ -16,9 +19,12 @@ const IframeActivity = ({
   src = "",
   onEditTitle,
   onChangeSrc,
+  onSave,
+  onFinishSaving,
 }: Props) => {
   const [iframeUrl, setIframeUrl] = useState<string>(src);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   const [urlError, setUrlError] = useState<string | null>(null);
 
   // Nettoyage du lien iframe
@@ -40,6 +46,16 @@ const IframeActivity = ({
     setIframeUrl(e.target.value);
   };
 
+  const handleSave = async () => {
+    setIsUploading(true);
+    if (await onSave()) {
+      onFinishSaving();
+      setIsUploading(false);
+    } else {
+      setIsUploading(false);
+    }
+  };
+
   useEffect(() => {
     setIsLoading(true);
     onChangeSrc(cleanedUrl);
@@ -47,11 +63,11 @@ const IframeActivity = ({
 
   return (
     <div className="w-full flex flex-col gap-4 mt-5">
-      {mode === "write" && (
+      {["write", "edit"].includes(mode) && (
         <div className="form-control">
           <label className="label">
             <span className="label-text font-semibold text-primary">
-              Titre de la ressource iframe
+              Titre de la ressource interactive
             </span>
           </label>
           <input
@@ -64,7 +80,7 @@ const IframeActivity = ({
 
           <label className="label mt-5">
             <span className="label-text font-semibold text-primary">
-              URL de la ressource iframe
+              URL iframe de la ressource
             </span>
           </label>
           <input
@@ -81,7 +97,7 @@ const IframeActivity = ({
       )}
 
       {cleanedUrl ? (
-        <div className="relative w-full overflow-hidden rounded-lg border border-base-300">
+        <div className="relative w-full overflow-hidden rounded-lg">
           {isLoading && (
             <div className="w-full h-[500px] bg-base-200 flex flex-col justify-center items-center gap-3 animate-pulse">
               <div className="skeleton w-3/4 h-6 rounded"></div>
@@ -110,6 +126,10 @@ const IframeActivity = ({
               : "Aucune ressource iframe disponible."}
           </p>
         </div>
+      )}
+
+      {mode !== "read" && iframeUrl && (
+        <SaveButton onSave={handleSave} pending={isUploading} />
       )}
     </div>
   );

@@ -11,11 +11,16 @@ export default async function httpPostActivityIframe(
   try {
     const { lessonId } = req.params;
     const userId = req.auth?.userId;
-    const { title, description, value, url } = req.body;
+    const { title, description, url } = req.body;
 
-    let response: any = {};
+    const response = await postIframe(
+      +lessonId,
+      userId!,
+      title,
+      description,
+      url
+    );
 
-    response = await postIframe(+lessonId, userId!, title, description, value);
     return res.status(201).json(response);
   } catch (error: any) {
     console.log({ error });

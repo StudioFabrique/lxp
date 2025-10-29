@@ -20,20 +20,19 @@ type Props = {
   textActivityTitle?: string;
   textActivityTitleError?: string;
   textActivityContent?: string;
+  iframeActivitySrc?: string;
   showDeleteModal: boolean;
   onEditTitle: (title: string) => void;
   onEditContent: (content: string) => void;
+  onEditIframeSrc: (src: string) => void;
   onRateActivity: (rating: number) => void;
   onEditActivity: () => void;
   onOpenDeleteModal: () => void;
   onDeleteActivity: () => void;
   onCloseDeleteModal: () => void;
   onClose: () => void;
-  onSaveActivity: (
-    id?: number,
-    title?: string,
-    content?: string
-  ) => Promise<boolean>;
+  onBack: () => void;
+  onSaveActivity: () => Promise<boolean>;
 };
 
 // Composant pour prévisualiser et editer une leçon avec son activité selectionné
@@ -45,16 +44,19 @@ const LessonReaderAndEditor = ({
   activityType,
   textActivityTitle,
   textActivityTitleError,
+  iframeActivitySrc,
   textActivityContent,
   showDeleteModal,
   onEditContent,
   onEditTitle,
+  onEditIframeSrc,
   onRateActivity,
   onEditActivity,
   onOpenDeleteModal,
   onCloseDeleteModal,
   onDeleteActivity,
   onClose,
+  onBack,
   onSaveActivity,
   children,
 }: PropsWithChildren<Props>) => {
@@ -126,10 +128,11 @@ const LessonReaderAndEditor = ({
             <IframeActivity
               mode={mode}
               title={textActivityTitle}
+              src={iframeActivitySrc}
               onEditTitle={onEditTitle}
-              onChangeSrc={() => {
-                // useCallback ici
-              }}
+              onChangeSrc={onEditIframeSrc}
+              onSave={onSaveActivity}
+              onFinishSaving={onClose}
             />
           ) : (
             /* Sinon afficher l'activité d'un autre type "video", "image" ou "resources" */
@@ -140,7 +143,7 @@ const LessonReaderAndEditor = ({
         {(mode === "write" || mode === "edit") && (
           <button
             className="btn btn-error self-end text-base-100"
-            onClick={onClose}
+            onClick={mode === "write" ? onBack : onClose}
           >
             Annuler
           </button>

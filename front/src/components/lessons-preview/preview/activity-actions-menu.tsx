@@ -38,8 +38,8 @@ const ActivityActionsMenu = ({
         {isOpen && (
           <>
             <div className="fixed inset-0" onClick={handleClick} />
-            <div className="absolute mt-1 bg-white border border-gray-300 rounded-lg shadow-lg min-w-[12rem] py-1">
-              {activity.type === "text" && (
+            <div className="absolute mt-1 bg-white border border-gray-300 rounded-lg shadow-lg min-w-[12rem] py-1 z-50">
+              {["text", "iframe"].includes(activity.type) && (
                 <button
                   type="button"
                   onClick={(e) => {
