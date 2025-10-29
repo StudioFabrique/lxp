@@ -340,8 +340,15 @@ export function lessonsPreviewReducer(
     }
 
     case "edit_activity": {
+      console.log(
+        action.activity,
+        state.selectedLesson,
+        state.selectedActivity
+      );
       if (!(action.activity && state.selectedLesson && state.selectedActivity))
         return state;
+
+      console.log("2");
 
       const activities = state.selectedLesson.activities?.map((activity) =>
         activity.id === action.activity?.id ? action.activity : activity
