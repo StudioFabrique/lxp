@@ -79,49 +79,51 @@ const LessonItem = ({
           <p className="max-h-14 truncate text-sm" data-tip={lesson.title}>
             {lesson.title}
           </p>
-          <div className="flex items-center gap-1">
-            <Can action="update" object="lesson">
-              <div className="relative">
-                <button
-                  type="button"
-                  className="btn btn-sm px-2 btn-ghost w-fit hover:bg-transparent hover:text-base-100"
-                  onClick={handleMenuClick}
-                >
-                  <EllipsisIcon className="w-4 h-4" />
-                </button>
+          {selectedLesson?.id === lesson.id && (
+            <div className="flex items-center gap-1">
+              <Can action="update" object="lesson">
+                <div className="relative">
+                  <button
+                    type="button"
+                    className="btn btn-sm px-2 btn-ghost w-fit hover:bg-transparent hover:text-base-100"
+                    onClick={handleMenuClick}
+                  >
+                    <EllipsisIcon className="w-4 h-4" />
+                  </button>
 
-                {isMenuOpen && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-10"
-                      onClick={() => setIsMenuOpen(false)}
-                    />
-                    <div className="absolute right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg min-w-[10rem] py-1 z-20">
-                      <Can action="update" object="lesson">
-                        <Link
-                          to={`/admin/lesson/edit-lesson/${lesson.id}`}
-                          state={{ moduleId: moduleId }}
-                          className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 w-full text-left text-gray-700"
-                          onClick={(e) => e.stopPropagation()}
+                  {isMenuOpen && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-10"
+                        onClick={() => setIsMenuOpen(false)}
+                      />
+                      <div className="absolute right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg min-w-[10rem] py-1 z-20">
+                        <Can action="update" object="lesson">
+                          <Link
+                            to={`/admin/lesson/edit-lesson/${lesson.id}`}
+                            state={{ moduleId: moduleId }}
+                            className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 w-full text-left text-gray-700"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Edit3 className="w-4 h-4" />
+                            <span>Éditer les détails</span>
+                          </Link>
+                        </Can>
+                        <button
+                          type="button"
+                          onClick={() => handleMenuOption()}
+                          className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-red-100 text-red-600 w-full text-left"
                         >
-                          <Edit3 className="w-4 h-4" />
-                          <span>Éditer les détails</span>
-                        </Link>
-                      </Can>
-                      <button
-                        type="button"
-                        onClick={() => handleMenuOption()}
-                        className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-red-100 text-red-600 w-full text-left"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        <span>Supprimer</span>
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
-            </Can>
-          </div>
+                          <Trash2 className="w-4 h-4" />
+                          <span>Supprimer</span>
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </Can>
+            </div>
+          )}
         </span>
 
         {/* Affiche une coche si la leçon est lue, ou une flèche sinon */}
