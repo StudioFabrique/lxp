@@ -26,9 +26,9 @@ type Props = {
   onRateActivity: (rating: number) => void;
   onEditActivity: () => void;
   onOpenDeleteModal: () => void;
-  onCloseDeleteModal: () => void;
   onDeleteActivity: () => void;
-  onCloseTextEditor: () => void;
+  onCloseDeleteModal: () => void;
+  onClose: () => void;
   onSaveActivity: (
     id?: number,
     title?: string,
@@ -54,7 +54,7 @@ const LessonReaderAndEditor = ({
   onOpenDeleteModal,
   onCloseDeleteModal,
   onDeleteActivity,
-  onCloseTextEditor,
+  onClose,
   onSaveActivity,
   children,
 }: PropsWithChildren<Props>) => {
@@ -117,8 +117,8 @@ const LessonReaderAndEditor = ({
                 content={textActivityContent}
                 onEditTitle={onEditTitle}
                 onEditContent={onEditContent}
-                onClose={onCloseTextEditor}
                 onSave={onSaveActivity}
+                onFinishSaving={onClose}
               />
             </div>
           ) : activityType === "iframe" ? (
@@ -127,13 +127,24 @@ const LessonReaderAndEditor = ({
               mode={mode}
               title={textActivityTitle}
               onEditTitle={onEditTitle}
-              onChangeSrc={() => {}}
+              onChangeSrc={() => {
+                // useCallback ici
+              }}
             />
           ) : (
             /* Sinon afficher l'activité d'un autre type "video", "image" ou "resources" */
             <ActivityPreview activity={selectedActivity} />
           )}
         </div>
+
+        {(mode === "write" || mode === "edit") && (
+          <button
+            className="btn btn-error self-end text-base-100"
+            onClick={onClose}
+          >
+            Annuler
+          </button>
+        )}
 
         {/* Boutons de navigation */}
         <div className="flex justify-end items-center">{children}</div>

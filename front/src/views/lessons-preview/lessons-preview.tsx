@@ -1,6 +1,6 @@
 import SidebarCoursesList from "../../components/lessons-preview/sidebar/sidebar-courses-list";
 import ProgressBar from "../../components/lessons-preview/progress-bar";
-import LessonReader from "../../components/lessons-preview/preview/lesson-reader";
+import LessonReader from "../../components/lessons-preview/preview/lesson-reader-and-editor";
 import useLessonsPreview from "./hooks/use-lessons-preview";
 import LessonsPreviewHeader from "../../components/lessons-preview/lessons-preview-header";
 import ModuleData from "../../components/lessons-preview/module-data/module-data";
@@ -178,7 +178,15 @@ const LessonsPreview = () => {
             // La prévisualisation de la leçon
             selectedLesson?.activities?.length ? (
               state.mode === "activity_type_selection" ? (
-                <ActivityTypeSelection onSelectType={onSelectActivityType} />
+                <ActivityTypeSelection
+                  key="activity-type-selection"
+                  onSelectType={onSelectActivityType}
+                  onCancel={() =>
+                    dispatch({
+                      type: "select_last_activity_from_current_lesson",
+                    })
+                  }
+                />
               ) : (
                 // Le lecteur et editeur de leçons
                 <LessonReader
@@ -221,10 +229,11 @@ const LessonsPreview = () => {
                   onEditContent={editContent}
                   onRateActivity={onRateContent}
                   onDeleteActivity={onDeleteActivity}
-                  onCloseTextEditor={() =>
+                  onClose={() =>
                     state.mode === "write"
                       ? dispatch({
-                          type: "select_last_activity_from_current_lesson",
+                          type: "select_mode",
+                          mode: "activity_type_selection",
                         })
                       : dispatch({ type: "select_mode", mode: "read" })
                   }

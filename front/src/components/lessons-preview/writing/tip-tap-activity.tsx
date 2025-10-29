@@ -12,6 +12,7 @@ type Props = {
   onEditTitle: (title: string) => void;
   onEditContent: (content: string) => void;
   onSave: (id?: number, title?: string, content?: string) => Promise<boolean>;
+  onFinishSaving?: () => void;
   onClose?: () => void;
 };
 
@@ -34,6 +35,7 @@ const TiptapActivity = ({
   onEditTitle,
   onEditContent,
   onSave,
+  onFinishSaving,
   onClose,
 }: Props) => {
   const [pending, setPending] = useState<boolean>(false);
@@ -61,6 +63,7 @@ const TiptapActivity = ({
     if (await onSave(id, title, content)) {
       clearStorage();
       setPending(false);
+      onFinishSaving?.();
       onClose?.();
     } else {
       setPending(false);
