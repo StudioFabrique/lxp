@@ -8,10 +8,6 @@ import {
 } from "lucide-react";
 import { ActivityType } from "../../../utils/interfaces/activity";
 
-type Props = {
-  onSelectType: (activityType: ActivityType) => void;
-};
-
 const activityTypes: {
   type: ActivityType;
   label: string;
@@ -26,15 +22,21 @@ const activityTypes: {
   { type: "resource", label: "ressources", icon: File },
 ];
 
-const ActivityTypeSelection = ({ onSelectType }: Props) => {
+type Props = {
+  onSelectType: (activityType: ActivityType) => void;
+  onCancel: () => void;
+};
+
+const ActivityTypeSelection = ({ onSelectType, onCancel }: Props) => {
   return (
     <div className="flex flex-col items-center gap-10 mt-20 h-full">
       <span className="text-xl text-primary">
         Sélectionner un type d'activité
       </span>
-      <div className="flex gap-5 items-center justify-center">
+      <div className="flex flex-wrap gap-5 items-center justify-center">
         {activityTypes.map((type) => (
           <button
+            key={type.type}
             className="btn btn-primary flex flex-col items-center h-28 w-28 text-base-100 justify-center rounded-lg capitalize"
             onClick={() => onSelectType(type.type)}
           >
@@ -42,6 +44,9 @@ const ActivityTypeSelection = ({ onSelectType }: Props) => {
           </button>
         ))}
       </div>
+      <button className="btn btn-error text-base-100" onClick={onCancel}>
+        Annuler
+      </button>
     </div>
   );
 };

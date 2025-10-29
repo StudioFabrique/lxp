@@ -1,5 +1,6 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { ActivitySelectMode } from "../../../views/lessons-preview/store/lessons-preview-reducer";
+import cleanIframeLink from "../../../utils/clean-iframe-link";
 
 type Props = {
   mode: ActivitySelectMode;
@@ -9,32 +10,43 @@ type Props = {
   onChangeSrc: (url: string) => void;
 };
 
-// Composant pour afficher ou éditer une ressource iframe
 const IframeActivity = ({
   mode,
-  title,
+  title = "",
   src = "",
   onEditTitle,
   onChangeSrc,
 }: Props) => {
-  const [iframeUrl, setIframeUrl] = useState(src);
-  const [isLoading, setIsLoading] = useState(true);
+  const [iframeUrl, setIframeUrl] = useState<string>(src);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [urlError, setUrlError] = useState<string | null>(null);
+
+  // Nettoyage du lien iframe
+  const cleanedUrl = useMemo(() => {
+    try {
+      return iframeUrl.length > 0 ? cleanIframeLink(iframeUrl) : "";
+    } catch (error) {
+      setUrlError((error as Error).message);
+      return "";
+    }
+  }, [iframeUrl]);
 
   const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
-    const newTitle = e.target.value;
-    onEditTitle(newTitle);
+    onEditTitle(e.target.value);
   };
 
   const handleChangeUrl = (e: ChangeEvent<HTMLInputElement>) => {
-    setIsLoading(true);
-    const newUrl = e.target.value;
-    setIframeUrl(newUrl);
-    onChangeSrc(newUrl);
+    setUrlError(null);
+    setIframeUrl(e.target.value);
   };
+
+  useEffect(() => {
+    setIsLoading(true);
+    onChangeSrc(cleanedUrl);
+  }, [cleanedUrl, onChangeSrc]);
 
   return (
     <div className="w-full flex flex-col gap-4 mt-5">
-      {/* Mode édition : titre + URL */}
       {mode === "write" && (
         <div className="form-control">
           <label className="label">
@@ -57,18 +69,19 @@ const IframeActivity = ({
           </label>
           <input
             type="text"
-            placeholder="https://example.com"
-            className="input input-bordered w-full"
+            placeholder='https://example.com ou <iframe src="" /> '
+            className={`input input-bordered w-full ${
+              urlError ? "input-error" : ""
+            }`}
             value={iframeUrl}
             onChange={handleChangeUrl}
           />
+          <span className="text-error">{urlError}</span>
         </div>
       )}
 
-      {/* Conteneur de l’iframe */}
-      {iframeUrl ? (
+      {cleanedUrl ? (
         <div className="relative w-full overflow-hidden rounded-lg border border-base-300">
-          {/* Skeleton pendant le chargement */}
           {isLoading && (
             <div className="w-full h-[500px] bg-base-200 flex flex-col justify-center items-center gap-3 animate-pulse">
               <div className="skeleton w-3/4 h-6 rounded"></div>
@@ -80,9 +93,8 @@ const IframeActivity = ({
             </div>
           )}
 
-          {/* L’iframe une fois chargée */}
           <iframe
-            src={iframeUrl}
+            src={cleanedUrl}
             title="Iframe Activity"
             className="w-full h-[500px] rounded-lg"
             allowFullScreen
@@ -94,7 +106,7 @@ const IframeActivity = ({
         <div className="p-6 bg-base-200 text-center rounded-lg text-base-content/70">
           <p>
             {mode === "write"
-              ? "Saisis une URL ci-dessus pour prévisualiser le contenu."
+              ? "Saisir une URL ci-dessus pour prévisualiser le contenu."
               : "Aucune ressource iframe disponible."}
           </p>
         </div>
