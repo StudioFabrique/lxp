@@ -16,6 +16,7 @@ import {
 import {
   activityIdValidator,
   idValidator,
+  postIframeValidator,
   postVideoValidator,
   putReorderActivitiesValidator,
   putResourceValidator,
@@ -45,6 +46,7 @@ import httpDeleteResource from "../../../controllers/activity/http-delete-resour
 import httpPutResource from "../../../controllers/activity/http-put-resource";
 import mediatheque from "../../../middleware/mediatheque";
 import httpDeleteActivity from "../../../controllers/activity/http-delete-activity";
+import httpPostActivityIframe from "../../../controllers/activity/http-post-activity-iframe";
 
 const activityRouter = express.Router();
 
@@ -87,6 +89,15 @@ activityRouter.post(
   parentIdValidator,
   updateActivityValidator,
   httpPostActivityText
+);
+
+// Route pour créer une activité de type iframe et l'associer à une leçon
+activityRouter.post(
+  "/iframe/:lessonId",
+  checkPermissions("lesson"),
+  lessonIdValidator,
+  postIframeValidator,
+  httpPostActivityIframe
 );
 
 // Route pour mettre à jour une activité de type texte existante

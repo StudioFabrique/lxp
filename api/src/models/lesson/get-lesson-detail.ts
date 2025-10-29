@@ -31,6 +31,7 @@ export default async function getLessonDetail(
         orderBy: { order: "asc" },
       },
       lessonRating: { where: { student: { idMdb: userIdMdb } } },
+      lessonsRead: { where: { student: { idMdb: userIdMdb } } },
     },
   })) as any;
 

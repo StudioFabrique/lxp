@@ -1,4 +1,4 @@
-import { FileSpreadsheet, Image, Text, Video } from "lucide-react";
+import { FileSpreadsheet, Image, MonitorPlay, Text, Video } from "lucide-react";
 import { Activity } from "./interfaces/activity";
 
 const activityIconType = (type: Activity["type"], size?: number) => {
@@ -12,6 +12,8 @@ const activityIconType = (type: Activity["type"], size?: number) => {
       return <Video className={iconSize} />;
     case "image":
       return <Image className={iconSize} />;
+    case "iframe":
+      return <MonitorPlay className={iconSize} />;
     case "resource":
       return <FileSpreadsheet className={iconSize} />;
     default:
