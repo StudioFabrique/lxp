@@ -10,6 +10,7 @@ import ActivityDeleteModal from "./activity-delete-modal";
 import { ActivitySelectMode } from "../../../views/lessons-preview/store/lessons-preview-reducer";
 import ActivityPreview from "./activity-preview";
 import IframeActivity from "./iframe-activity";
+import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 
 type Props = {
   mode: ActivitySelectMode;
@@ -90,11 +91,11 @@ const LessonReaderAndEditor = ({
         <div className="bg-base-100 border border-secondary/20 rounded-box p-4 mb-4">
           {/* Header de l'activité : titre et menu contextuel */}
 
-          <div className="font-semibold text-primary capitalize flex justify-between items-center gap-3">
+          <div className="font-semibold text-primary flex justify-between items-center gap-3">
             <span className="w-5">{activityIconType(activityType)}</span>
             <span className="flex-1" />
             <span className="truncate text-ellipsis text-2xl px-2">
-              {textActivityTitle}
+              {toUpperFirstLetter(textActivityTitle)}
             </span>
             <span className="flex-1" />
             {selectedActivity && (

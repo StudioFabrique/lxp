@@ -22,6 +22,7 @@ import {
   putResourceValidator,
   resourceIdValidator,
   updateActivityValidator,
+  updateIframeValidator,
   updateVideoValidator,
 } from "./activityValidator";
 // Middleware pour parser le JSON
@@ -47,6 +48,7 @@ import httpPutResource from "../../../controllers/activity/http-put-resource";
 import mediatheque from "../../../middleware/mediatheque";
 import httpDeleteActivity from "../../../controllers/activity/http-delete-activity";
 import httpPostActivityIframe from "../../../controllers/activity/http-post-activity-iframe";
+import httpPutActivityIframe from "../../../controllers/activity/http-put-activity-iframe";
 
 const activityRouter = express.Router();
 
@@ -98,6 +100,15 @@ activityRouter.post(
   lessonIdValidator,
   postIframeValidator,
   httpPostActivityIframe
+);
+
+// Route pour créer une activité de type iframe et l'associer à une leçon
+activityRouter.put(
+  "/iframe/:activityId",
+  checkPermissions("lesson"),
+  activityIdValidator,
+  updateIframeValidator,
+  httpPutActivityIframe
 );
 
 // Route pour mettre à jour une activité de type texte existante
