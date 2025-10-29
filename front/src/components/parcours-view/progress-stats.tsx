@@ -35,7 +35,7 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
                                 (sum, lesson) =>
                                   sum +
                                   (lesson?.lessonsRead &&
-                                  lesson.lessonsRead[0].finishedAt
+                                  lesson.lessonsRead[0]?.finishedAt
                                     ? 1
                                     : 0),
                                 0
