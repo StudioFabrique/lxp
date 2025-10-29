@@ -48,7 +48,9 @@ const LessonCompletionModal = ({
         onMinimizeClick={onClickMinimizeButton}
       >
         <div className="flex flex-col items-center gap-20 p-20 overflow-hidden">
-          <h3 className="text-lg font-semibold mb-2">Votre évaluation</h3>
+          <h3 className="text-lg font-semibold mb-2">
+            Votre évaluation sur la leçon
+          </h3>
           <RatingWithStars
             selectedStars={selectedStars}
             onSelectStarRate={handleSelectStarRate}

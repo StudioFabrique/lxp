@@ -1,6 +1,6 @@
 import SidebarCoursesList from "../../components/lessons-preview/sidebar/sidebar-courses-list";
 import ProgressBar from "../../components/lessons-preview/progress-bar";
-import LessonReader from "../../components/lessons-preview/preview/lesson-reader";
+import LessonReader from "../../components/lessons-preview/preview/lesson-reader-and-editor";
 import useLessonsPreview from "./hooks/use-lessons-preview";
 import LessonsPreviewHeader from "../../components/lessons-preview/lessons-preview-header";
 import ModuleData from "../../components/lessons-preview/module-data/module-data";
@@ -60,6 +60,13 @@ const LessonsPreview = () => {
   const editTitle = useCallback(
     (title: string) => {
       dispatch({ type: "update_activity_title", title });
+    },
+    [dispatch]
+  );
+
+  const editIframeSrc = useCallback(
+    (src: string) => {
+      dispatch({ type: "update_activity_iframe_src", src });
     },
     [dispatch]
   );
@@ -178,9 +185,17 @@ const LessonsPreview = () => {
             // La prévisualisation de la leçon
             selectedLesson?.activities?.length ? (
               state.mode === "activity_type_selection" ? (
-                <ActivityTypeSelection onSelectType={onSelectActivityType} />
+                <ActivityTypeSelection
+                  key="activity-type-selection"
+                  onSelectType={onSelectActivityType}
+                  onCancel={() =>
+                    dispatch({
+                      type: "select_last_activity_from_current_lesson",
+                    })
+                  }
+                />
               ) : (
-                // Le lecteur de leçons
+                // Le lecteur et editeur de leçons
                 <LessonReader
                   key="lesson-reader"
                   isLessonCompleted={isLessonCompleted}
@@ -195,6 +210,16 @@ const LessonsPreview = () => {
                     state.mode !== "read" ? state.titleError : undefined
                   }
                   selectedActivity={selectedActivity}
+                  activityType={
+                    selectedActivity?.type ||
+                    (state.mode === "write" && state.activityType) ||
+                    "text"
+                  }
+                  iframeActivitySrc={
+                    state.mode === "write"
+                      ? state.newActivitySrc
+                      : selectedActivity?.url
+                  }
                   selectedLesson={selectedLesson}
                   showDeleteModal={modalVisibility === "deletionModal"}
                   onOpenDeleteModal={() =>
@@ -214,14 +239,21 @@ const LessonsPreview = () => {
                   }
                   onEditTitle={editTitle}
                   onEditContent={editContent}
+                  onEditIframeSrc={editIframeSrc}
                   onRateActivity={onRateContent}
                   onDeleteActivity={onDeleteActivity}
-                  onCloseTextEditor={() =>
+                  onClose={() =>
                     state.mode === "write"
                       ? dispatch({
                           type: "select_last_activity_from_current_lesson",
                         })
                       : dispatch({ type: "select_mode", mode: "read" })
+                  }
+                  onBack={() =>
+                    dispatch({
+                      type: "select_mode",
+                      mode: "activity_type_selection",
+                    })
                   }
                   onSaveActivity={onSaveActivity}
                 >

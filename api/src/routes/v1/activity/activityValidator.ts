@@ -100,6 +100,33 @@ export const postVideoValidator = [
   checkValidatorResult,
 ];
 
+export const postIframeValidator = [
+  body("title")
+    .notEmpty()
+    .withMessage("Le titre de l'activité est obligatoire.")
+    .isString()
+    .withMessage("Le titre de l'activité doit être une chaîne de caractères.")
+    .custom(stringValidateGeneric)
+    .withMessage(
+      "Le titre de l'activité contient des caractères non autorisés."
+    ),
+  body("description")
+    .isString()
+    .withMessage(
+      "La description de l'activité doit être une chaîne de caractères."
+    )
+    .custom(stringValidateOptional)
+    .withMessage(
+      "La description de l'activité contient des caractères non autorisés."
+    ),
+  body("url")
+    .isString()
+    .withMessage("L'url fournie n'est pas une chaîne de caractères valide.")
+    .isURL()
+    .withMessage("L'url de l'activité contient des caractères non autorisés."),
+  checkValidatorResult,
+];
+
 export const putReorderActivitiesValidator = [
   body()
     .isArray()

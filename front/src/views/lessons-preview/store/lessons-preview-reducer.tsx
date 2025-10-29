@@ -1,4 +1,4 @@
-import { Activity } from "../../../utils/interfaces/activity";
+import { Activity, ActivityType } from "../../../utils/interfaces/activity";
 import Module from "../../../utils/interfaces/module";
 import Course from "../../../utils/interfaces/course";
 import Lesson from "../../../utils/interfaces/lesson";
@@ -10,9 +10,11 @@ const STORAGE_KEY = "lessons-preview-panel-closed";
 
 type ModalVisibility = "deletionModal" | "lessonCompletionModal" | "none";
 
-type SelectMode = "read" | "edit" | "write" | "activity_type_selection";
-
-export type ActivityType = "text" | "image" | "video" | "iframe" | "resource";
+export type ActivitySelectMode =
+  | "read"
+  | "edit"
+  | "write"
+  | "activity_type_selection";
 
 // Propriétés qui sont disponibles à la modification et à la lecture sans conditions préalables
 type StaticStateProperties = {
@@ -44,6 +46,7 @@ type ConditionnalStateProperties =
       // rajouter les propriétés supplémentaires pour le mode "write"
       newActivityTitle?: string;
       titleError?: string;
+      newActivitySrc?: string;
       activityType?: ActivityType;
     };
 
@@ -73,12 +76,17 @@ type LessonsPreviewAction =
   | { type: "update_activity_title"; title: string }
   | { type: "set_activity_title_error"; error?: string }
   | { type: "update_activity_content"; content: string }
+  | { type: "update_activity_iframe_src"; src: string }
   | { type: "go_to_previous_activity" }
   | { type: "go_to_next_activity" }
   | { type: "reorder_activity"; fromId: number; toId: number }
   // Miscellaneous
   // Note concernant "select_mode" : type_selection fait référence au moment durant lequel l'utilisateur selectionne son type d'activité
-  | { type: "select_mode"; mode: SelectMode; activityType?: ActivityType }
+  | {
+      type: "select_mode";
+      mode: ActivitySelectMode;
+      activityType?: ActivityType;
+    }
   | { type: "toggle_panel_visibility" }
   | { type: "set_modal_visibility"; modalVisibility: ModalVisibility };
 
@@ -391,6 +399,27 @@ export function lessonsPreviewReducer(
 
     case "update_activity_content":
       return { ...state, textActivityContent: action.content };
+
+    case "update_activity_iframe_src":
+      if (state.mode === "read" || state.mode === "activity_type_selection")
+        return state;
+      if (state.mode === "write") {
+        return {
+          ...state,
+          newActivitySrc: action.src,
+          titleError: undefined,
+        };
+      } else {
+        if (!state.selectedActivity) return state;
+        return {
+          ...state,
+          selectedActivity: {
+            ...state.selectedActivity,
+            url: action.src,
+          },
+          titleError: undefined,
+        };
+      }
 
     case "go_to_previous_activity": {
       if (!(state.selectedLesson?.activities && state.selectedActivity))
