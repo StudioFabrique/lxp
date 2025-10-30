@@ -3,6 +3,7 @@ import Contact from "./contact";
 import CourseDates from "./course-dates";
 import Lesson from "./lesson";
 import Module from "./module";
+import Objective from "./objective";
 import Skill from "./skill";
 import Tag from "./tag";
 
@@ -23,6 +24,7 @@ export default interface Course {
   lessons: Lesson[];
   dates: CourseDates[];
   isPublished: boolean;
+  objectives?: Objective[];
   bonusSkills: Skill[];
   accomplishments?: Accomplishment[];
   order?: number;
