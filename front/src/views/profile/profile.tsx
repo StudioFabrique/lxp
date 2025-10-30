@@ -5,14 +5,14 @@ import Account from "../../components/user-profile/account/account";
 import Can from "../../components/UI/can/can.component";
 import { useLocation } from "react-router-dom";
 import Calendrier from "../../components/user-profile/calendrier";
-import ParcoursAccomplishment from "../../components/user-profile/parcours-accomplishment/parcours-accomplishment";
 import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 import Header from "../../components/UI/header";
+import Journal from "../../components/user-profile/journal/journal";
 
 enum Tab {
   Info,
   Calendar,
-  Evals,
+  Journal,
   Awards,
   Account,
 }
@@ -46,8 +46,8 @@ const Profile = () => {
         );
       case Tab.Calendar:
         return <Calendrier />;
-      case Tab.Evals:
-        return <ParcoursAccomplishment />;
+      case Tab.Journal:
+        return <Journal />;
       case Tab.Awards:
         return <Awards />;
       case Tab.Account:
@@ -93,12 +93,12 @@ const Profile = () => {
               <a
                 role="tab"
                 className={`tab ${
-                  currentTab === Tab.Evals ? "tab-active" : ""
+                  currentTab === Tab.Journal ? "tab-active" : ""
                 }`}
-                data-value="Evals"
+                data-value="Journal"
                 onClick={handleChangeTab}
               >
-                Parcours
+                Journal
               </a>
             </Can>
 
