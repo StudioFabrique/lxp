@@ -19,7 +19,7 @@ const Account: FC<{
 
   const handleSubmitForm: FormEventHandler = (e: FormEvent) => {
     const applyData = () => {
-      toast.success("Formulaire envoyé avec succès !");
+      toast.success("Informations du compte sauvegardé avec succès !");
     };
 
     e.preventDefault();

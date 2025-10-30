@@ -2,7 +2,7 @@ import { prisma } from "../../utils/db";
 
 export default async function getLimitedModuleDetail(
   moduleId: number,
-  userMongoId: string,
+  userMongoId: string
 ) {
   // First check if user is admin/teacher
   const isTeacher = await prisma.admin.findFirst({
@@ -36,6 +36,7 @@ export default async function getLimitedModuleDetail(
           description: true,
           visibility: true,
           isPublished: true,
+          objectives: { include: { objective: true } },
           lessons: {
             // where: isTeacher
             //   ? undefined
@@ -64,6 +65,9 @@ export default async function getLimitedModuleDetail(
     throw error;
   }
 
+  // Remove duplicates from objectives
+  const objectiveIds = new Set();
+
   const result = {
     id: existingModule.id,
     title: existingModule.title,
@@ -76,7 +80,12 @@ export default async function getLimitedModuleDetail(
     parcoursId: existingModule.parcours[0].parcoursId,
     bonusSkills: existingModule.bonusSkills.map((item) => item.bonusSkill),
     contacts: existingModule.contacts.map((item) => item.contact),
-    courses: existingModule.courses,
+    courses: existingModule.courses.map((course) => ({
+      ...course,
+      objectives: course.objectives
+        .flatMap((obj) => obj.objective)
+        .filter(({ id }) => !objectiveIds.has(id) && objectiveIds.add(id)),
+    })),
   };
 
   return result;
