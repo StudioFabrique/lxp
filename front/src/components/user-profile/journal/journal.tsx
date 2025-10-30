@@ -3,9 +3,9 @@ import Wrapper from "../../UI/wrapper/wrapper.component";
 import useHttp from "../../../hooks/use-http";
 import Loader from "../../UI/loader";
 import Parcours from "../../../utils/interfaces/parcours";
-import ParcoursAccomplishmentItem from "./parcours-accomplishment-item";
+import JournalTree from "./journal-tree";
 
-const ParcoursAccomplishment = () => {
+const Journal = () => {
   const { sendRequest, isLoading } = useHttp();
 
   const [parcours, setParcours] = useState<Parcours[]>([]);
@@ -20,23 +20,18 @@ const ParcoursAccomplishment = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h3 className="text-xl font-bold">Mon parcours</h3>
+      <h3 className="text-xl font-bold">Mes historique d'accomplissements</h3>
       <Wrapper>
         {isLoading ? (
           <Loader />
         ) : parcours.length > 0 ? (
-          parcours.map((parcoursItem) => (
-            <ParcoursAccomplishmentItem
-              key={parcoursItem.id}
-              parcours={parcoursItem}
-            />
-          ))
+          <JournalTree parcoursList={parcours} />
         ) : (
-          <p className="p-4">Aucun feedback</p>
+          <p className="p-4">Aucune entrée</p>
         )}
       </Wrapper>
     </div>
   );
 };
 
-export default ParcoursAccomplishment;
+export default Journal;
