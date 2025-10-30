@@ -34,7 +34,7 @@ type PayloadType = {
 
 const reducer: Reducer<Hobby[], { type: ActionType; payload: PayloadType }> = (
   hobbies,
-  { type, payload },
+  { type, payload }
 ) => {
   switch (type) {
     case ActionType.add: {
@@ -72,7 +72,7 @@ const Hobbies: FC<{ initHobbies: Hobby[] }> = ({ initHobbies }) => {
   };
 
   const handleAddHobby: FormEventHandler<HTMLFormElement> = (
-    e: FormEvent<HTMLFormElement>,
+    e: FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
 
@@ -97,7 +97,7 @@ const Hobbies: FC<{ initHobbies: Hobby[] }> = ({ initHobbies }) => {
         body: { title: value, id: user?._id },
         method: "post",
       },
-      applyData,
+      applyData
     );
   };
 
@@ -174,7 +174,7 @@ const Hobbies: FC<{ initHobbies: Hobby[] }> = ({ initHobbies }) => {
                   </div>
                 </SubWrapper>
               ))
-            : "Aucunes passions"}
+            : "Aucune passion renseignée"}
         </div>
       </Wrapper>
     </div>
