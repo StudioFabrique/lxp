@@ -10,7 +10,7 @@ const Skills: FC<{ skillData: Skill[] }> = ({ skillData }) => {
         ))}
       </div>
     ) : (
-      <p>Liste vide</p>
+      <p>Aucune compétence obtenue</p>
     );
 
   return (
