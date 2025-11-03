@@ -32,7 +32,6 @@ import { parcoursSkillsAction } from "../../../store/redux-toolkit/parcours/parc
 import { tagsAction } from "../../../store/redux-toolkit/tags";
 import Module from "../../../utils/interfaces/module";
 import useParcoursService from "./hooks/use-parcours-services";
-import ModulesSection from "../../../components/edit-parcours/modules-section/modules.component";
 import ModuleComponent from "../../../components/edit-parcours/modules/module";
 
 let initialState = true;
@@ -221,7 +220,7 @@ const EditParcours = () => {
                 )}
                 {actualStep.id !== stepsList.length ? (
                   <button
-                    className="btn btn-primary z-20"
+                    className="btn btn-primary z-1"
                     onClick={() => handleUpdateStep(actualStep.id)}
                   >
                     Etape suivante

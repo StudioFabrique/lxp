@@ -1,7 +1,8 @@
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
-import { MetadataList } from "./useNewModule";
+
 import ModuleListItem from "./ModuleListItem";
 import EmptyModulePlaceholder from "./EmptyModulePlaceholder";
+import { MetadataList } from "../../../utils/interfaces/new-module";
 
 type ModuleDrawerProps = {
   metadataList: MetadataList[] | null;
@@ -27,7 +28,7 @@ export default function ModuleDrawer({
       visible={false}
     >
       {hasModules ? (
-        <ul className="list w-[40rem] gap-y-2">
+        <ul className="flex flex-col gap-y-2">
           {metadataList.map((module) => (
             <ModuleListItem
               key={module.id}

@@ -138,7 +138,7 @@ export default async function postDuplicateModule(
         create: metadatas.contactsIds.map((id) => ({ id })),
       },
       bonusSkills: {
-        create: existingParcours.bonusSkills.map((bonusSkill) => {
+        create: existingModuleMetadata.bonusSkills.map((bonusSkill) => {
           return {
             description: bonusSkill.description,
             badge: bonusSkill.badge ? bonusSkill.badge : null,
@@ -148,6 +148,7 @@ export default async function postDuplicateModule(
       module: {
         create: {
           ...existingModuleMetadata.module,
+
           id: undefined,
         },
       },
