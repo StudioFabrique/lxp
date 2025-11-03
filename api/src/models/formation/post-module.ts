@@ -36,8 +36,7 @@ async function postModule(
   moduleToAdd: any,
   thumb: any,
   image: any,
-  userId: string,
-  moduleId: number | null = null
+  userId: string
 ) {
   // Verify that the formation (parcours) exists before creating/duplicating the module
   const existingFormation = await prisma.formation.findFirst({
@@ -56,130 +55,6 @@ async function postModule(
     },
   });
 
-  let moduleToCopy: any | null = null;
-
-  console.log("MODULE ID", moduleId);
-
-  if (moduleId)
-    moduleToCopy = await prisma.moduleMetadata.findFirst({
-      where: { id: moduleId },
-      select: {
-        // Module basic information
-
-        duration: true,
-        rating: true,
-        admin: {
-          select: {
-            id: true,
-          },
-        },
-        // Module relationships
-        bonusSkills: {
-          select: {
-            bonusSkill: {
-              select: {
-                id: true,
-              },
-            },
-          },
-        },
-        contacts: {
-          select: {
-            contact: {
-              select: {
-                id: true,
-              },
-            },
-          },
-        },
-        module: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-            image: true,
-            thumb: true,
-          },
-        },
-        // Courses within modules
-        courses: {
-          select: {
-            // Course basic information
-            title: true,
-            description: true,
-            image: true,
-            virtualClass: true,
-            scenario: true,
-            order: true,
-            author: true,
-            admin: {
-              select: {
-                id: true,
-              },
-            },
-            // Course relationships
-
-            contacts: {
-              select: {
-                contact: {
-                  select: {
-                    id: true,
-                  },
-                },
-              },
-            },
-
-            tags: {
-              select: {
-                tag: {
-                  select: {
-                    id: true,
-                  },
-                },
-              },
-            },
-            // Lessons within courses
-            lessons: {
-              select: {
-                // Lesson basic information
-                title: true,
-                description: true,
-                modalite: true,
-                author: true,
-                admin: {
-                  select: {
-                    id: true,
-                  },
-                },
-                tag: {
-                  select: {
-                    id: true,
-                  },
-                },
-                order: true,
-                // Activities within lessons
-                activities: {
-                  select: {
-                    title: true,
-                    description: true,
-                    order: true,
-                    type: true,
-                    url: true,
-                    author: {
-                      select: {
-                        id: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-  console.log({ moduleToCopy });
-
   if (!existingFormation)
     throw {
       message: "La formation n'existe pas.",
@@ -189,41 +64,26 @@ async function postModule(
   // Variable to store existing module data when duplicating
   let existingModule: Module | null = null;
 
-  // Branch logic based on whether we're creating a new module or duplicating an existing one
-  if (!moduleId) {
-    // NEW MODULE CREATION PATH
-    // Extract module titles from the formation's modules via the relation
-    const formationModules = existingFormation.modules.map((mod) => ({
-      ...mod,
-      title: mod.module.title, // Access title through the module relation
-    }));
+  // NEW MODULE CREATION PATH
+  // Extract module titles from the formation's modules via the relation
+  const formationModules = existingFormation.modules.map((mod) => ({
+    ...mod,
+    title: mod.module.title, // Access title through the module relation
+  }));
 
-    // Check if a module with the same title already exists in this formation
-    // Case-insensitive comparison with trimmed strings
-    if (
-      formationModules.some(
-        (mod) =>
-          mod.title.trim().toLowerCase() ===
-          moduleToAdd.title.trim().toLowerCase()
-      )
-    ) {
-      throw {
-        statusCode: 406,
-        message: "MODULE_ALREADY_EXISTS",
-      };
-    }
-  } else {
-    // MODULE DUPLICATION PATH
-    // Fetch the existing module to duplicate
-    existingModule = await prisma.module.findFirst({
-      where: { id: moduleId! },
-    });
-
-    if (!existingModule)
-      throw {
-        statusCode: 404,
-        message: "MODULE_NOT_FOUND",
-      };
+  // Check if a module with the same title already exists in this formation
+  // Case-insensitive comparison with trimmed strings
+  if (
+    formationModules.some(
+      (mod) =>
+        mod.title.trim().toLowerCase() ===
+        moduleToAdd.title.trim().toLowerCase()
+    )
+  ) {
+    throw {
+      statusCode: 406,
+      message: "MODULE_ALREADY_EXISTS",
+    };
   }
 
   // Fetch user details from MongoDB to construct the author name
@@ -256,44 +116,41 @@ async function postModule(
   // This prevents orphaned records if one creation fails
   const result = await prisma.$transaction(async (tx) => {
     // Step 1: Create the base Module entity (only for new modules, not duplicates)
-    if (!moduleId)
-      newModule = await tx.module.create({
-        data: {
-          title: moduleToAdd.title,
-          description: moduleToAdd.description,
-          image, // Full-size image as base64 string
-          thumb, // Thumbnail as base64 string (400x400px)
-          author,
-          adminId: existingAdmin!.id,
-          // Create the many-to-many relationship with formations
-          formations: { create: { formationId: moduleToAdd.formationId } },
-        },
-        select: {
-          id: true,
-          title: true,
-          description: true,
-          image: true,
-          thumb: true,
-          createdAt: true,
-          updatedAt: true,
-          author: true,
-          adminId: true,
-        },
-      });
+
+    newModule = await tx.module.create({
+      data: {
+        title: moduleToAdd.title,
+        description: moduleToAdd.description,
+        image, // Full-size image as base64 string
+        thumb, // Thumbnail as base64 string (400x400px)
+        author,
+        adminId: existingAdmin!.id,
+        // Create the many-to-many relationship with formations
+        formations: { create: { formationId: moduleToAdd.formationId } },
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        image: true,
+        thumb: true,
+        createdAt: true,
+        updatedAt: true,
+        author: true,
+        adminId: true,
+      },
+    });
 
     // Step 2: Create ModuleMetadata with associations and many-to-many relationships
     // For duplication, this links the existing module to a new parcours
     // For new modules, this links the newly created module to the target parcours
 
-    console.log(moduleToCopy);
-
     newMetadataModule = await tx.moduleMetadata.create({
       data: {
-        ...moduleToCopy,
-        duration: moduleToAdd.duration, // Learning duration in hours
+        duration: moduleToAdd.duration ?? 0,
         // Link to either the newly created module or the existing module being duplicated
         module: {
-          connect: { id: !moduleId ? newModule!.id : moduleId },
+          connect: { id: newModule!.id },
         },
         // Link to the target parcours (learning path)
         parcours: { connect: { id: moduleToAdd.parcoursId } },
@@ -335,10 +192,8 @@ async function postModule(
     // Uses data from either the new module or the existing module being duplicated
     return {
       id: newMetadataModule.id,
-      title: moduleId ? existingModule!.title : newModule!.title,
-      thumb: moduleId
-        ? existingModule!.thumb?.toString("base64") ?? null
-        : newModule!.thumb?.toString("base64") ?? null,
+      title: newModule!.title,
+      thumb: newModule!.thumb?.toString("base64") ?? null,
     };
   });
 

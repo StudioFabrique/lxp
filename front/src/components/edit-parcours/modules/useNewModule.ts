@@ -8,8 +8,8 @@ import { scrollToTop } from "../../../helpers/scrollToTop";
 import { moduleReducer, initialState } from "./useNewModuleReducer";
 import SuccessWithMessage from "../../../utils/interfaces/success-with-message";
 import {
-  DuplicatedModule,
   MetadataList,
+  Metadatas,
   ModuleData,
   Parcours,
 } from "../../../utils/interfaces/new-module";
@@ -55,22 +55,12 @@ const useNewModule = () => {
     sendRequest({ path: `/modules/${id}` }, applyData);
   }, [id, sendRequest]);
 
-  useEffect(() => {
-    getParcoursModules();
-  }, [getParcoursModules]);
-
   /**
    * Handles form submission for creating a new module
    */
   const handleSubmitNewModule = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(state.moduleToDuplicate?.id ?? "oops");
     if (!onValidateForm()) return;
-
-    if (state.mode === "edit" && !state.moduleToDuplicate) {
-      handleSubmitUpdateModule();
-      return;
-    }
 
     const formData = new FormData();
     const module = {
@@ -97,9 +87,7 @@ const useNewModule = () => {
 
     sendRequest(
       {
-        path: `/formation/new-module${
-          state.moduleToDuplicate ? "/" + state.moduleToDuplicate.id : ""
-        }`,
+        path: "/formation/new-module",
         method: "post",
         body: formData,
       },
@@ -193,11 +181,9 @@ const useNewModule = () => {
   /**
    * Prepares form for duplicating an existing modules
    */
-  const handleCopyModule = (module: DuplicatedModule, metaId: number) => {
-    console.log("TEST", metaId);
-
+  const handleCopyModule = (module: MetadataList, metadatas: Metadatas) => {
     // ✅ Single action handles complex state transition
-    dispatch({ type: "PREPARE_DUPLICATE", payload: module });
+    dispatch({ type: "PREPARE_DUPLICATE", payload: metadatas });
     initValues({
       title: module.title,
       description: module.description,
@@ -223,6 +209,35 @@ const useNewModule = () => {
       description: moduleToUpddate.description,
       duration: moduleToUpddate.duration,
     });
+  };
+
+  const handleSubmitDuplicateModule = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!onValidateForm()) return;
+    const applyData = (data: {
+      success: boolean;
+      message: string;
+      response: ModuleData;
+    }) => {
+      onResetForm();
+      dispatch({ type: "MODULE_CREATED", payload: data.response });
+      toast.success(data.message);
+      scrollToTop();
+    };
+    sendRequest(
+      {
+        path: `/modules/duplicate/${state.moduleToDuplicate!.id}`,
+        method: "post",
+        body: {
+          duration: +data.values.duration,
+          contactsIds: state.currentContacts.map((item) => item.id),
+          skillsIds: state.currentSkills.map((item) => item.id),
+          parcoursId: +id!,
+        },
+      },
+      applyData
+    );
   };
 
   const handleSubmitUpdateModule = () => {
@@ -263,6 +278,10 @@ const useNewModule = () => {
       applyData
     );
   };
+
+  useEffect(() => {
+    getParcoursModules();
+  }, [getParcoursModules]);
 
   // Effect for delete modal
   useEffect(() => {
@@ -328,6 +347,7 @@ const useNewModule = () => {
     error,
     handleUpdateModule,
     handleSubmitUpdateModule,
+    handleSubmitDuplicateModule,
   };
 };
 
