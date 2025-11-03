@@ -69,6 +69,8 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
   const handleAddLink = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
+    if (!value) return;
+
     const applyData = (data: any) => {
       const link = data.data;
       dispatch({
@@ -117,6 +119,13 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
     <div data-testid="social-networks" className="flex flex-col gap-2">
       <dialog ref={modalRef} className="modal">
         <div className="modal-box flex flex-col gap-5">
+          <button
+            type="button"
+            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            onClick={() => modalRef.current?.close()}
+          >
+            ✕
+          </button>
           <p>Url du réseau social :</p>
           <div className="flex justify-between items-center">
             <input

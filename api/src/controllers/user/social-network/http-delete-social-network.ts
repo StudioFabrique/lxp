@@ -2,7 +2,10 @@ import { Request, Response } from "express";
 import { serverIssue } from "../../../utils/constantes";
 import DeleteHobby from "../../../models/user/hobby/delete-hobby";
 
-export default async function httpDeleteHobby(req: Request, res: Response) {
+export default async function httpDeleteSocialNetwork(
+  req: Request,
+  res: Response
+) {
   try {
     const id: string = req.params.id;
 

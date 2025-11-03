@@ -1,10 +1,10 @@
 import { ObjectId } from "mongoose";
-import Hobby, { IHobby } from "../../utils/interfaces/db/hobby";
-import User from "../../utils/interfaces/db/user";
+import Hobby, { IHobby } from "../../../utils/interfaces/db/hobby";
+import User from "../../../utils/interfaces/db/user";
 
 export default async function editManyHobbies(
   userId: ObjectId,
-  hobbies: IHobby[],
+  hobbies: IHobby[]
 ) {
   try {
     const user = await User.findById(userId);
@@ -18,7 +18,7 @@ export default async function editManyHobbies(
           const updatedHobby = await Hobby.findByIdAndUpdate(
             item._id,
             { ...item },
-            { new: true, upsert: true },
+            { new: true, upsert: true }
           );
           return updatedHobby;
         } else {
@@ -29,13 +29,13 @@ export default async function editManyHobbies(
           });
           return await newHobby.save();
         }
-      }),
+      })
     );
 
     const updatedUser = await User.findByIdAndUpdate(
       user,
       { hobbies: hobbyDocs.map((item) => item._id) },
-      { new: true },
+      { new: true }
     );
 
     return updatedUser;

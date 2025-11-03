@@ -7,7 +7,7 @@ import { ILink } from "../../utils/interfaces/db/link";
 import editUser from "../../models/user/edit-user";
 import editManyGraduations from "../../models/graduation/edit-many-graduations";
 import editManyLinks from "../../models/links/edit-many-links";
-import editManyHobbies from "../../models/hobby/edit-many-hobbies";
+import editManyHobbies from "../../models/user/hobby/edit-many-hobbies";
 
 /**
  * HTTP handler for updating user information including their profile, graduations, links, and hobbies

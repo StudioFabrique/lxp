@@ -38,7 +38,6 @@ import {
   manyUsersValidator,
   userValidator,
 } from "../../../middleware/validators";
-import hobbyRouter from "./hobby/hobby.router";
 import postTeacherRouter from "./post-teacher";
 import userProfileRouter from "./profile/user-profile.router";
 import {
@@ -54,6 +53,8 @@ import httpPostCheckEmail from "../../../controllers/user/http-post-check-email"
 import httpGetConnectedStudentParcoursWithAccomplishements from "../../../controllers/user/accomplishment/http-get-connected-student-parcours-with-accomplishments";
 import httpPostManyInvitations from "../../../controllers/user/http-post-many-invitations";
 import checkValidation from "../../../middleware/check-validation";
+import httpPostHobby from "../../../controllers/user/hobby/http-post-hobby";
+import httpDeleteHobby from "../../../controllers/user/hobby/http-delete-hobby";
 
 const userRouter = express.Router();
 
@@ -202,7 +203,9 @@ userRouter.post("/group", checkPermissions("user"), httpGetUsersByGroup);
 
 userRouter.use("/profile", checkPermissions("cursus"), userProfileRouter);
 
-userRouter.use("/hobby", checkPermissions("cursus"), hobbyRouter);
+// Centres d'intérêts d'un étudiant (création, suppression)
+userRouter.post("/hobby", checkPermissions("cursus"), httpPostHobby);
+userRouter.delete("/hobby/:id", checkPermissions("cursus"), httpDeleteHobby);
 
 // retourne les deux derniers parcours auquel l'utilisateur participe en tant que contact
 userRouter.get(

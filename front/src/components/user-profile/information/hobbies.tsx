@@ -118,6 +118,13 @@ const Hobbies: FC<{ initHobbies: Hobby[] }> = ({ initHobbies }) => {
     <div data-testid="hobbies" className="flex flex-col gap-2">
       <dialog ref={modalRef} className="modal">
         <div className="modal-box flex flex-col gap-5">
+          <button
+            type="button"
+            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            onClick={() => modalRef.current?.close()}
+          >
+            ✕
+          </button>
           <p>Nom du centre d'intérêt :</p>
           <div className="flex justify-between items-center">
             <input
