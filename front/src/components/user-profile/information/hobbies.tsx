@@ -2,8 +2,7 @@
 import {
   ChangeEvent,
   FC,
-  FormEvent,
-  FormEventHandler,
+  MouseEvent,
   Reducer,
   Ref,
   useContext,
@@ -11,14 +10,13 @@ import {
   useRef,
   useState,
 } from "react";
-import Wrapper from "../../UI/wrapper/wrapper.component";
 import Hobby from "../../../utils/interfaces/hobby";
 import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
 import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
 import Loader from "../../UI/loader";
 import Can from "../../UI/can/can.component";
-import { Delete, Edit, PlusCircle } from "lucide-react";
+import { Edit, PlusCircle, Trash2 } from "lucide-react";
 import { Context } from "../../../store/context.store";
 
 enum ActionType {
@@ -71,10 +69,9 @@ const Hobbies: FC<{ initHobbies: Hobby[] }> = ({ initHobbies }) => {
     setValue(e.currentTarget.value);
   };
 
-  const handleAddHobby: FormEventHandler<HTMLFormElement> = (
-    e: FormEvent<HTMLFormElement>
-  ) => {
+  const handleAddHobby = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (!value) return;
 
     const applyData = (data: any) => {
       const hobby = data.data;
@@ -89,6 +86,8 @@ const Hobbies: FC<{ initHobbies: Hobby[] }> = ({ initHobbies }) => {
         },
       });
       toast.success("Centre d'intérêt ajouté avec succès");
+      modalRef.current?.close();
+      setValue("");
     };
 
     sendRequest(
@@ -118,65 +117,61 @@ const Hobbies: FC<{ initHobbies: Hobby[] }> = ({ initHobbies }) => {
   return (
     <div data-testid="hobbies" className="flex flex-col gap-2">
       <dialog ref={modalRef} className="modal">
-        <div className="modal-box flex flex-col gap-10">
-          <form
-            onSubmit={handleAddHobby}
-            className="flex justify-between items-center"
-          >
+        <div className="modal-box flex flex-col gap-5">
+          <p>Nom du centre d'intérêt :</p>
+          <div className="flex justify-between items-center">
             <input
               type="text"
               className="input input-secondary"
               value={value}
               onChange={handleChangeValue}
             />
-            <button type="submit" className="btn">
+            <button type="submit" className="btn" onClick={handleAddHobby}>
               Ajouter
             </button>
-          </form>
+          </div>
         </div>
       </dialog>
       <div className="flex gap-5">
         <h3 className="text-lg font-semibold">Mes centres d'intérêts</h3>
-        <Can action="component" object="hobbie">
+        <Can action="write" object="cursus">
           <button
             type="button"
-            className="btn btn-sm btn-primary"
+            className="btn btn-sm btn-primary text-base-100"
             onClick={handleShowModal}
           >
             Ajouter <PlusCircle className="h-5" />
           </button>
         </Can>
       </div>
-      <Wrapper>
-        <div className="flex flex-wrap gap-5">
-          {hobbies.length > 0
-            ? hobbies.map((hobby) => (
-                <SubWrapper key={hobby._id}>
-                  <div className="flex gap-2">
-                    <p>{hobby.title}</p>
-                    {isLoading ? (
-                      <span className="h-5 w-5">
-                        <Loader />
-                      </span>
-                    ) : (
-                      <span className="flex items-center">
-                        <Can action="edit" object="hobbie">
-                          <Edit className="h-5 cursor-pointer" />
-                        </Can>
-                        <Can action="delete" object="hobbie">
-                          <Delete
-                            className="h-5 cursor-pointer"
-                            onClick={() => handleDeleteHobby(hobby._id!)}
-                          />
-                        </Can>
-                      </span>
-                    )}
-                  </div>
-                </SubWrapper>
-              ))
-            : "Aucune passion renseignée"}
-        </div>
-      </Wrapper>
+      <div className="p-5 flex flex-wrap gap-5">
+        {hobbies.length > 0
+          ? hobbies.map((hobby) => (
+              <SubWrapper key={hobby._id}>
+                <div className="flex gap-2">
+                  <p>{hobby.title}</p>
+                  {isLoading ? (
+                    <span className="h-5 w-5">
+                      <Loader />
+                    </span>
+                  ) : (
+                    <span className="flex items-center">
+                      <Can action="edit" object="cursus">
+                        <Edit className="h-5 cursor-pointer" />
+                      </Can>
+                      <Can action="delete" object="cursus">
+                        <Trash2
+                          className="h-5 cursor-pointer"
+                          onClick={() => handleDeleteHobby(hobby._id!)}
+                        />
+                      </Can>
+                    </span>
+                  )}
+                </div>
+              </SubWrapper>
+            ))
+          : "Aucune passion renseignée"}
+      </div>
     </div>
   );
 };
