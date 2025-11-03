@@ -16,7 +16,7 @@ const Presentation: FC<{ formProps: FormProps }> = ({ formProps }) => {
       <h3 className="text-lg font-semibold">Presentation</h3>
       <Wrapper>
         <p>Qui je suis ?</p>
-        <FieldArea name="description" data={formProps} />
+        <FieldArea name="description" data={formProps} rows={7} />
       </Wrapper>
     </div>
   );

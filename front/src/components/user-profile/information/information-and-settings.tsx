@@ -1,14 +1,5 @@
-import {
-  FC,
-  FormEventHandler,
-  Ref,
-  useEffect,
-  useRef,
-  useState,
-  useContext,
-} from "react";
+import { FC, FormEventHandler, Ref, useEffect, useRef, useState } from "react";
 import Info from "./info";
-import Contact from "./contact";
 import Presentation from "./presentation";
 import Hobbies from "./hobbies";
 import SocialNetworks from "./social-networks";
@@ -21,12 +12,7 @@ import Loader from "../../UI/loader";
 import Hobby from "../../../utils/interfaces/hobby";
 import { Link } from "../../../utils/interfaces/link";
 
-import { darkThemes, lightThemes } from "../../../config/themes";
-import { Context } from "../../../store/context.store";
-import Wrapper from "../../UI/wrapper/wrapper.component";
-import Can from "../../UI/can/can.component";
-import CompanyPictureUpload from "../../profile-home/company-picture-upload";
-import ThemeSelect from "../../profile-home/theme-select";
+import ThemeSelectSettings from "./theme-select-settings";
 
 type UserInformation = {
   _id: string;
@@ -48,7 +34,7 @@ const InformationAndSettings: FC<{
   style?: { showStudentElements?: boolean };
 }> = ({ formRef, style }) => {
   const { sendRequest, isLoading } = useHttp(true);
-  const { chooseTheme } = useContext(Context);
+
   const { initValues, onValidationErrors, ...formProps } = useForm();
 
   const [userData, setUserData] = useState<UserInformation>();
@@ -94,65 +80,39 @@ const InformationAndSettings: FC<{
     if (userData) initValues(userData);
   }, [userData, initValues]);
 
-  const handleThemeChange = (newTheme: string, mode: string) => {
-    chooseTheme(newTheme, mode);
-  };
-
   if (isLoading) return <Loader />;
 
   return (
     <form
       ref={formRef}
       onSubmit={handleSubmitForm}
-      className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+      className="flex flex-col gap-5"
     >
       {/* Colonne gauche — Infos du profil */}
       <div className="flex flex-col gap-6">
-        <div className="flex gap-2">
-          <Info
-            formProps={formProps}
-            firstInputRef={firstInputRef}
-            temporaryAvatar={temporaryAvatar}
-            setTemporaryAvatar={setTemporaryAvatar}
-          />
-          <Contact formProps={formProps} />
-        </div>
-        {style?.showStudentElements && (
-          <>
+        <div className="grid grid-cols-2 gap-10">
+          <div className="flex flex-col">
+            <Info
+              formProps={formProps}
+              firstInputRef={firstInputRef}
+              temporaryAvatar={temporaryAvatar}
+              setTemporaryAvatar={setTemporaryAvatar}
+            />
+          </div>
+          <div className="flex flex-col gap-5">
             <Presentation formProps={formProps} />
-            <Hobbies initHobbies={userData?.hobbies ?? []} />
-            <SocialNetworks initLinks={userData?.links ?? []} />
-          </>
-        )}
+            {style?.showStudentElements && (
+              <>
+                <Hobbies initHobbies={userData?.hobbies ?? []} />
+                <SocialNetworks initLinks={userData?.links ?? []} />
+              </>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Colonne droite — Thèmes & préférences */}
-      <div className="flex flex-col gap-6">
-        <section className="card bg-base-200 shadow-md hover:shadow-lg transition-all duration-300">
-          <div className="card-body flex flex-col gap-4 p-6 rounded-lg">
-            <h2 className="text-lg font-semibold">Préférences</h2>
-
-            <Wrapper>
-              <ThemeSelect
-                label="Thème clair"
-                themesList={lightThemes}
-                onThemeChange={handleThemeChange}
-              />
-            </Wrapper>
-            <Wrapper>
-              <ThemeSelect
-                label="Thème sombre"
-                themesList={darkThemes}
-                onThemeChange={handleThemeChange}
-              />
-            </Wrapper>
-
-            <Can action="component" object="company-picture-upload">
-              <CompanyPictureUpload />
-            </Can>
-          </div>
-        </section>
-      </div>
+      <ThemeSelectSettings />
     </form>
   );
 };
