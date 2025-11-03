@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, HTMLAttributes, ReactNode, useEffect, useRef } from "react";
 
 type Props = {
@@ -44,8 +44,7 @@ const RightSideDrawer: FC<Props> = ({
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleToggle = (_event: any) => {
+  const handleToggle = (_event: React.ChangeEvent<HTMLInputElement>) => {
     if (onCloseDrawer && checkboxRef.current?.checked === false) {
       onCloseDrawer(id);
     }
@@ -58,7 +57,7 @@ const RightSideDrawer: FC<Props> = ({
   }, [isOpen]);
 
   return (
-    <div className="h-full drawer drawer-end">
+    <div className="drawer drawer-end relative">
       <input
         id={id}
         type="checkbox"
@@ -66,8 +65,7 @@ const RightSideDrawer: FC<Props> = ({
         ref={checkboxRef}
         onChange={handleToggle}
       />
-      <div className="drawer-content">
-        {/* Page content here */}
+      <div className="drawer-content sticky top-0 z-40">
         {visible ? (
           <label htmlFor={id} className={btnStyle}>
             {buttonTitle ? (
@@ -105,44 +103,43 @@ const RightSideDrawer: FC<Props> = ({
           </label>
         ) : null}
       </div>
-      <div className="drawer-side" style={{ zIndex }}>
+      {/* ✅ Appliquer le z-index ici ET créer un nouveau stacking context */}
+      <div className="drawer-side h-screen overflow-hidden" style={{ zIndex }}>
+        {/* ✅ Overlay avec z-index relatif au drawer-side */}
         <label
           htmlFor={!isOpen ? id : undefined}
-          className="drawer-overlay fixed top-0 left-0 w-screen min-h-screen"
-          style={{ zIndex: zIndex - 1 }}
+          className="drawer-overlay fixed top-0 left-0 w-screen h-screen"
         />
-        <ul
-          className="min-w-[35rem] block menu py-4 pl-4 top-0 min-h-screen bg-base-200 text-base-content rounded-l-2xl overflow-auto"
-          style={{
-            zIndex,
-            scrollbarWidth: "none", // Firefox
-            msOverflowStyle: "none", // IE/Edge
-            scrollbarGutter: "stable", // Force une stabilité de mise en page
-            right: 0, // Assure un positionnement correct contre le bord droit
-            marginRight: 0, // Élimine toute marge à droite
-          }}
-        >
-          {/* Sidebar content here */}
-          <div className="flex items-center gap-x-4">
-            <div className="text-primary" onClick={handleCloseDrawer}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="w-6 h-6 cursor-pointer"
+        {/* ✅ Contenu du drawer - supprimer le z-[1000] et utiliser relative */}
+        <div className="min-w-[35rem] flex flex-col bg-base-200 text-base-content rounded-l-2xl h-screen relative">
+          {/* Header fixe */}
+          <div className="flex-shrink-0 py-4 pl-4">
+            <div className="flex items-center gap-x-4">
+              <div
+                className="text-primary cursor-pointer"
+                onClick={handleCloseDrawer}
               >
-                <path
-                  fillRule="evenodd"
-                  d="M11.03 3.97a.75.75 0 010 1.06l-6.22 6.22H21a.75.75 0 010 1.5H4.81l6.22 6.22a.75.75 0 11-1.06 1.06l-7.5-7.5a.75.75 0 010-1.06l7.5-7.5a.75.75 0 011.06 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M11.03 3.97a.75.75 0 010 1.06l-6.22 6.22H21a.75.75 0 010 1.5H4.81l6.22 6.22a.75.75 0 11-1.06 1.06l-7.5-7.5a.75.75 0 010-1.06l7.5-7.5a.75.75 0 011.06 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-primary">{title}</h2>
             </div>
-            <h2 className="text-xl font-bold text-primary">{title}</h2>
+            <div className="divider" />
           </div>
-          <div className="divider" />
-          {children}
-        </ul>
+
+          {/* Contenu scrollable */}
+          <div className="flex-1 overflow-y-auto px-4 pb-4">{children}</div>
+        </div>
       </div>
     </div>
   );
