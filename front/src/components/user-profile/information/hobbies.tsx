@@ -16,7 +16,7 @@ import useHttp from "../../../hooks/use-http";
 import toast from "react-hot-toast";
 import Loader from "../../UI/loader";
 import Can from "../../UI/can/can.component";
-import { Edit, PlusCircle, Trash2 } from "lucide-react";
+import { PlusCircle, Trash2 } from "lucide-react";
 import { Context } from "../../../store/context.store";
 
 enum ActionType {
@@ -163,9 +163,6 @@ const Hobbies: FC<{ initHobbies: Hobby[] }> = ({ initHobbies }) => {
                     </span>
                   ) : (
                     <span className="flex items-center">
-                      <Can action="edit" object="cursus">
-                        <Edit className="h-5 cursor-pointer" />
-                      </Can>
                       <Can action="delete" object="cursus">
                         <Trash2
                           className="h-5 cursor-pointer"

@@ -18,7 +18,7 @@ export interface ILink extends Document {
 
 const linkSchema = new Schema({
   url: { type: String, required: true },
-  type: { type: String, required: true },
+  type: { type: String, required: false },
   alias: { type: String, required: false },
   user: { type: mongoose.Types.ObjectId, ref: "User", required: true },
 });

@@ -10,7 +10,7 @@ export default async function httpDeleteHobby(req: Request, res: Response) {
 
     return res
       .status(200)
-      .json({ message: "suppression effectué avec succès" });
+      .json({ message: "Suppression effectuée avec succès" });
   } catch (error) {
     console.log(error);
 
