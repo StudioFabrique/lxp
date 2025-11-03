@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import createHobby from "../../../models/user/hobby/create-hobby";
 
-export default async function httpPostHobby(req: Request, res: Response) {
+export default async function httpPostSocialNetwork(
+  req: Request,
+  res: Response
+) {
   const { id, title } = req.body;
 
   try {
