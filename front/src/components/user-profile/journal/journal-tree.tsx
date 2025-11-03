@@ -18,39 +18,37 @@ const JournalTree = ({ parcoursList }: Props) => {
         {parcoursList.map((parcours) => (
           <li key={parcours.id}>
             <details open>
-              <summary>
+              <summary className="font-bold text-sm mb-4">
                 <Rocket className="h-4 w-4" />
                 {parcours.title}
               </summary>
               <ul>
                 {parcours.modules?.map((module) => (
-                  <>
-                    <li key={module.id}>
-                      <details open>
-                        <summary>
-                          <Component className="h-4 w-4" />
-                          {module.title}
-                        </summary>
-                        <ul>
-                          {module.courses?.map((course) => (
-                            <li key={course.id}>
-                              <a
-                                className={`flex items-center gap-2 ${
-                                  selectedCourse?.id === course.id
-                                    ? "text-primary font-semibold underline"
-                                    : ""
-                                }`}
-                                onClick={() => setSelectedCourse(course)}
-                              >
-                                <BookOpen className="h-4 w-4" />
-                                {course.title}
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      </details>
-                    </li>
-                  </>
+                  <li key={module.id}>
+                    <details open>
+                      <summary>
+                        <Component className="h-4 w-4" />
+                        {module.title}
+                      </summary>
+                      <ul>
+                        {module.courses?.map((course) => (
+                          <li key={course.id}>
+                            <a
+                              className={`flex items-center gap-2 ${
+                                selectedCourse?.id === course.id
+                                  ? "text-primary font-semibold underline"
+                                  : ""
+                              }`}
+                              onClick={() => setSelectedCourse(course)}
+                            >
+                              <BookOpen className="h-4 w-4" />
+                              {course.title}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+                  </li>
                 ))}
               </ul>
             </details>

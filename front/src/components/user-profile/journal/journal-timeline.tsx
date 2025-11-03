@@ -15,11 +15,11 @@ const JournalTimeline = ({ course }: Props) => {
         <h3 className="text-xl font-bold text-primary mb-6">{course.title}</h3>
       </span>
 
-      {accomplishments.length > 0 ? (
-        <ul className="timeline timeline-vertical">
-          {accomplishments.map((acc, index) => (
-            <>
-              <li key={acc.id} className="self-start">
+      <div className="grid xl:grid-cols-2 grid-cols-1">
+        {accomplishments.length > 0 ? (
+          <ul className="timeline timeline-vertical">
+            {accomplishments.map((acc, index) => (
+              <li key={acc.id}>
                 {index > 0 && <hr />}
                 <div className="timeline-start text-sm text-base-content/70">
                   {acc.accomplishedAt &&
@@ -33,28 +33,14 @@ const JournalTimeline = ({ course }: Props) => {
                 </div>
                 <hr />
               </li>
-              <li key={acc.id} className="self-start">
-                {index > 0 && <hr />}
-                <div className="timeline-start text-sm text-base-content/70">
-                  {acc.accomplishedAt &&
-                    new Date(acc.accomplishedAt).toLocaleString("fr")}
-                </div>
-                <div className="timeline-middle">
-                  <CircleCheck className="h-5 w-5 text-success" />
-                </div>
-                <div className="timeline-end timeline-box text-base-content">
-                  {acc.description}
-                </div>
-                <hr />
-              </li>
-            </>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-base-content/60">
-          Aucun accomplissement enregistré pour ce cours.
-        </p>
-      )}
+            ))}
+          </ul>
+        ) : (
+          <p className="text-base-content/60">
+            Aucun accomplissement enregistré pour ce cours.
+          </p>
+        )}
+      </div>
     </div>
   );
 };

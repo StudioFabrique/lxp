@@ -2,8 +2,7 @@
 import {
   ChangeEvent,
   FC,
-  FormEvent,
-  FormEventHandler,
+  MouseEvent,
   Reducer,
   Ref,
   useContext,
@@ -12,7 +11,6 @@ import {
   useState,
 } from "react";
 import { Link } from "../../../utils/interfaces/link";
-import Wrapper from "../../UI/wrapper/wrapper.component";
 import DeleteIcon from "../../UI/svg/delete-icon.component";
 import Can from "../../UI/can/can.component";
 import useHttp from "../../../hooks/use-http";
@@ -68,11 +66,8 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
     setValue(e.currentTarget.value);
   };
 
-  const handleAddLink: FormEventHandler<HTMLFormElement> = (
-    e: FormEvent<HTMLFormElement>
-  ) => {
+  const handleAddLink = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log("test");
 
     const applyData = (data: any) => {
       const link = data.data;
@@ -121,29 +116,27 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
   return (
     <div data-testid="social-networks" className="flex flex-col gap-2">
       <dialog ref={modalRef} className="modal">
-        <div className="modal-box flex flex-col gap-10">
-          <form
-            onSubmit={handleAddLink}
-            className="flex justify-between items-center"
-          >
+        <div className="modal-box flex flex-col gap-5">
+          <p>Url du réseau social :</p>
+          <div className="flex justify-between items-center">
             <input
               type="text"
               className="input input-secondary"
               value={value}
               onChange={handleChangeValue}
             />
-            <button type="button" className="btn">
+            <button type="button" className="btn" onClick={handleAddLink}>
               Ajouter
             </button>
-          </form>
+          </div>
         </div>
       </dialog>
       <div className="flex gap-5">
         <h3 className="text-lg font-semibold">Mes réseaux sociaux</h3>
-        <Can action="component" object="social-network">
+        <Can action="write" object="cursus">
           <button
             type="button"
-            className="btn btn-sm btn-primary"
+            className="btn btn-sm btn-primary text-base-100"
             onClick={handleShowModal}
           >
             Ajouter <PlusCircle className="h-5" />
@@ -151,47 +144,45 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
         </Can>
       </div>
 
-      <Wrapper>
-        <div
-          className={`flex flex-wrap ${
-            editMode ? "flex-col" : "cursor-pointer"
-          }  gap-10 `}
-        >
-          {links.length
-            ? links.map((link) => (
-                <div
-                  data-tip={link.url}
-                  key={link._id}
-                  onClick={() => handleOpenLinkNewTab(link.url)}
-                  className={`flex items-center justify-between p-2 rounded-lg  ${
-                    editMode
-                      ? "bg-secondary/10 p-5 gap-20"
-                      : "tooltip hover:bg-secondary/50"
-                  }`}
-                >
-                  <p>{link.type ?? link.url}</p>
-                  {editMode && (
-                    <>
-                      <input
-                        type="text"
-                        className="input input-sm w-full"
-                        value={link.url}
-                      />
-                      <Can action="update" object="social-network">
-                        <EditIcon className="w-6 h-6 cursor-pointer" />
-                      </Can>
-                      <Can action="delete" object="social-network">
-                        <span className="w-6 h-6 cursor-pointer">
-                          <DeleteIcon />
-                        </span>
-                      </Can>
-                    </>
-                  )}
-                </div>
-              ))
-            : "Aucuns réseau social renseigné"}
-        </div>
-      </Wrapper>
+      <div
+        className={`p-5 flex flex-wrap ${
+          editMode ? "flex-col" : "cursor-pointer"
+        }  gap-10 `}
+      >
+        {links.length
+          ? links.map((link) => (
+              <div
+                data-tip={link.url}
+                key={link._id}
+                onClick={() => handleOpenLinkNewTab(link.url)}
+                className={`flex items-center justify-between p-2 rounded-lg  ${
+                  editMode
+                    ? "bg-secondary/10 p-5 gap-20"
+                    : "tooltip hover:bg-secondary/50"
+                }`}
+              >
+                <p>{link.type ?? link.url}</p>
+                {editMode && (
+                  <>
+                    <input
+                      type="text"
+                      className="input input-sm w-full"
+                      value={link.url}
+                    />
+                    <Can action="update" object="social-network">
+                      <EditIcon className="w-6 h-6 cursor-pointer" />
+                    </Can>
+                    <Can action="delete" object="social-network">
+                      <span className="w-6 h-6 cursor-pointer">
+                        <DeleteIcon />
+                      </span>
+                    </Can>
+                  </>
+                )}
+              </div>
+            ))
+          : "Aucuns réseau social renseigné"}
+      </div>
     </div>
   );
 };

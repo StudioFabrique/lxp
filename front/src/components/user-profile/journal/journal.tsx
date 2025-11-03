@@ -19,7 +19,7 @@ const Journal = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h3 className="text-xl font-bold">Mes historique d'accomplissements</h3>
+      <h3 className="text-xl font-bold">Mon historique d'accomplissements</h3>
 
       {isLoading ? (
         <Loader />
