@@ -2,12 +2,12 @@ import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
 
 import ModuleListItem from "./ModuleListItem";
 import EmptyModulePlaceholder from "./EmptyModulePlaceholder";
-import { MetadataList } from "../../../utils/interfaces/new-module";
+import { MetadataList, Metadatas } from "../../../utils/interfaces/new-module";
 
 type ModuleDrawerProps = {
   metadataList: MetadataList[] | null;
   currentParcoursId: number;
-  onCopyModule: (module: MetadataList) => void;
+  onCopyModule: (module: MetadataList, metadatas: Metadatas) => void;
 };
 
 /**

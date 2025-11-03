@@ -1,7 +1,7 @@
 import Contact from "../../../utils/interfaces/contact";
 import {
-  DuplicatedModule,
   MetadataList,
+  Metadatas,
   ModuleData,
   Parcours,
 } from "../../../utils/interfaces/new-module";
@@ -26,7 +26,7 @@ type ModuleState = {
   moduleToDelete: ModuleData | null;
   showDuplicateModal: boolean;
   metadataList: MetadataList[] | null;
-  moduleToDuplicate: DuplicatedModule | null;
+  moduleToDuplicate: Metadatas | null;
   moduleToUpdate: number | null;
 };
 
@@ -44,11 +44,11 @@ type ModuleAction =
   | { type: "SET_MODULE_TO_DELETE"; payload: ModuleData | null }
   | { type: "SET_SHOW_DUPLICATE_MODAL"; payload: boolean }
   | { type: "SET_METADATA_LIST"; payload: MetadataList[] | null }
-  | { type: "SET_MODULE_TO_DUPLICATE"; payload: DuplicatedModule | null }
+  | { type: "SET_MODULE_TO_DUPLICATE"; payload: Metadatas | null }
   | { type: "RESET_FORM" }
   | { type: "CANCEL_FORM" }
   | { type: "MODULE_CREATED"; payload: ModuleData }
-  | { type: "PREPARE_DUPLICATE"; payload: DuplicatedModule }
+  | { type: "PREPARE_DUPLICATE"; payload: Metadatas }
   | { type: "CLOSE_DELETE_MODAL" }
   | { type: "UPDATE_MODULE"; payload: ModuleUpdate }
   | {

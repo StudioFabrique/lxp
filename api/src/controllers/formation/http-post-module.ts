@@ -30,9 +30,6 @@ async function httpPostModule(req: CustomRequest, res: Response) {
   // Extract module data from request body (JSON string parsed by middleware)
   const module = req.body.module;
 
-  // Extract moduleId from route params (used for duplication of existing modules)
-  const moduleId = req.params.moduleId;
-
   // Get uploaded file information from multer middleware
   const uploadedFile = req.file;
 
@@ -66,13 +63,7 @@ async function httpPostModule(req: CustomRequest, res: Response) {
 
       // Create or duplicate module with both full image and thumbnail
       // If moduleId is provided (not NaN), it duplicates the existing module
-      const response = await postModule(
-        module,
-        thumb64,
-        image,
-        userId,
-        +moduleId
-      );
+      const response = await postModule(module, thumb64, image, userId);
 
       // Clean up temporary uploaded file after processing
       await deleteTempUploadedFile(req);
@@ -82,7 +73,7 @@ async function httpPostModule(req: CustomRequest, res: Response) {
     } else {
       // Handle module creation/duplication without image upload
       // If moduleId is provided, duplicates the existing module's images
-      const response = await postModule(module, null, null, userId!, +moduleId);
+      const response = await postModule(module, null, null, userId!);
       return res
         .status(201)
         .json({ message: "Mise à jour réussie", data: response });
@@ -90,6 +81,7 @@ async function httpPostModule(req: CustomRequest, res: Response) {
   } catch (error: any) {
     // Ensure cleanup of uploaded file even if an error occurs
     if (uploadedFile) await deleteTempUploadedFile(req);
+    console.log({ error });
 
     // Return appropriate error response with status code and message
     return res

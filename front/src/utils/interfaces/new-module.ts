@@ -35,11 +35,3 @@ export type MetadataList = {
   thumb: string | null;
   metadatas: Metadatas[];
 };
-
-export type DuplicatedModule = {
-  id: number;
-  description: string;
-  thumb: string | null;
-  title: string;
-  metadatas: Metadatas[];
-};

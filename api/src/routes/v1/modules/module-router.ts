@@ -37,6 +37,7 @@ import jsonParser from "../../../middleware/json-parser";
 import multer from "multer";
 import httpPostModuleFromScratch from "../../../controllers/module/http-post-module-from-scratch";
 import httpGetLimitedModuleDetail from "../../../controllers/module/http-get-limited-module-detail";
+import httpPostDuplicateModule from "../../../controllers/module/http-post-duplicate-module";
 
 const modules = Router();
 
@@ -118,7 +119,11 @@ modules.get(
   getModuleFormationValidator,
   httpGetModuleFormation
 );
-
+modules.post(
+  "/duplicate/:moduleId",
+  checkPermissions("module"),
+  httpPostDuplicateModule
+);
 modules.put(
   "/calendar/dates",
   checkPermissions("module"),

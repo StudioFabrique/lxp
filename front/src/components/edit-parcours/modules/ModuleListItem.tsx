@@ -4,7 +4,7 @@ import ModuleMetadataItem from "./ModuleMetadataItem";
 type ModuleListItemProps = {
   module: MetadataList;
   currentParcoursId: number;
-  onCopyModule: (module: MetadataList) => void;
+  onCopyModule: (module: MetadataList, metadatas: Metadatas) => void;
 };
 
 /**
@@ -28,6 +28,10 @@ export default function ModuleListItem({
     return null;
   }
 
+  const handleCopy = (meta: Metadatas) => {
+    onCopyModule(module, meta);
+  };
+
   return (
     <div className="collapse bg-base-100 border border-base-300">
       <input type="radio" name="my-accordion-1" />
@@ -42,7 +46,7 @@ export default function ModuleListItem({
           <ModuleMetadataItem
             key={meta.id}
             metadata={meta}
-            onCopy={() => onCopyModule(module)}
+            onCopy={() => handleCopy(meta)}
           />
         ))}
       </div>

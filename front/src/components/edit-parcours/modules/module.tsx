@@ -5,6 +5,7 @@ import ModuleHeader from "./ModuleHeader";
 import ModuleGrid from "./ModuleGrid";
 import ModuleForm from "./ModuleForm";
 import ModuleDrawer from "./ModuleDrawer";
+import { useMemo } from "react";
 
 /**
  * Module Component - Main container for module management in a parcours
@@ -46,7 +47,17 @@ export default function ModuleComponent() {
     handleCloseDuplicateModal,
     handleUpdateModule,
     mode,
+    handleSubmitDuplicateModule,
   } = useNewModule();
+
+  const submitFunction = useMemo(() => {
+    if (mode === "create") {
+      return handleSubmit;
+    } else if (mode === "edit") {
+      return handleSubmitDuplicateModule;
+    }
+    return handleSubmit;
+  }, [mode, handleSubmit, handleSubmitDuplicateModule]);
 
   return (
     <>
@@ -77,7 +88,7 @@ export default function ModuleComponent() {
             currentSkills={currentSkills ?? []}
             contacts={parcours?.contacts ?? []}
             skills={parcours?.bonusSkills ?? []}
-            onSubmit={handleSubmit}
+            onSubmit={submitFunction}
             onCancel={handleCancelForm}
             onSetFile={setFile}
             setCurrentContacts={setCurrentContacts}
