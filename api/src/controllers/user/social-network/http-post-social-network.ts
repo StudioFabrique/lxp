@@ -1,18 +1,19 @@
 import { Request, Response } from "express";
-import createHobby from "../../../models/user/hobby/create-hobby";
+import createSocialNetwork from "../../../models/user/social-network/create-social-network";
 
 export default async function httpPostSocialNetwork(
   req: Request,
   res: Response
 ) {
-  const { id, title } = req.body;
+  const { id, url } = req.body;
 
   try {
-    const hobby = await createHobby(id, title);
+    const hobby = await createSocialNetwork(id, url);
     return res
       .status(201)
-      .json({ message: "Hobby créé avec succès", data: hobby });
+      .json({ message: "Réseau social créé avec succès", data: hobby });
   } catch (error) {
-    return res.status(500).json({ message: "erreur serveur" });
+    console.log({ error });
+    return res.status(500).json({ message: error });
   }
 }

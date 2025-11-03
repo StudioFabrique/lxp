@@ -55,6 +55,8 @@ import httpPostManyInvitations from "../../../controllers/user/http-post-many-in
 import checkValidation from "../../../middleware/check-validation";
 import httpPostHobby from "../../../controllers/user/hobby/http-post-hobby";
 import httpDeleteHobby from "../../../controllers/user/hobby/http-delete-hobby";
+import httpPostSocialNetwork from "../../../controllers/user/social-network/http-post-social-network";
+import httpDeleteSocialNetwork from "../../../controllers/user/social-network/http-delete-social-network";
 
 const userRouter = express.Router();
 
@@ -206,6 +208,18 @@ userRouter.use("/profile", checkPermissions("cursus"), userProfileRouter);
 // Centres d'intérêts d'un étudiant (création, suppression)
 userRouter.post("/hobby", checkPermissions("cursus"), httpPostHobby);
 userRouter.delete("/hobby/:id", checkPermissions("cursus"), httpDeleteHobby);
+
+// Réseaux sociaux d'un étudiant (création, suppression)
+userRouter.post(
+  "/social-network",
+  checkPermissions("cursus"),
+  httpPostSocialNetwork
+);
+userRouter.delete(
+  "/social-network/:id",
+  checkPermissions("cursus"),
+  httpDeleteSocialNetwork
+);
 
 // retourne les deux derniers parcours auquel l'utilisateur participe en tant que contact
 userRouter.get(

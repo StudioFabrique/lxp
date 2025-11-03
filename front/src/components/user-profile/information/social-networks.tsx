@@ -11,12 +11,12 @@ import {
   useState,
 } from "react";
 import { Link } from "../../../utils/interfaces/link";
-import DeleteIcon from "../../UI/svg/delete-icon.component";
 import Can from "../../UI/can/can.component";
 import useHttp from "../../../hooks/use-http";
-import { EditIcon, PlusCircle } from "lucide-react";
+import { PlusCircle, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { Context } from "../../../store/context.store";
+import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
 
 enum ActionType {
   add,
@@ -89,22 +89,22 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
 
     sendRequest(
       {
-        path: `/user/link`,
-        body: { title: value, id: user?._id },
+        path: `/user/social-network`,
+        body: { url: value, id: user?._id },
         method: "post",
       },
       applyData
     );
   };
 
-  /* const handleDeleteLink = (id: string) => {
+  const handleDeleteLink = (id: string) => {
     const applyData = () => {
       dispatch({ type: ActionType.delete, payload: { id: id } });
       toast.success("Centre d'intérêt supprimé avec succès");
     };
 
     sendRequest({ path: `/user/hobby/${id}`, method: "delete" }, applyData);
-  }; */
+  };
 
   const handleOpenLinkNewTab = (link: string) => {
     if (editMode) return;
@@ -160,35 +160,40 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
       >
         {links.length
           ? links.map((link) => (
-              <div
-                data-tip={link.url}
-                key={link._id}
-                onClick={() => handleOpenLinkNewTab(link.url)}
-                className={`flex items-center justify-between p-2 rounded-lg  ${
-                  editMode
-                    ? "bg-secondary/10 p-5 gap-20"
-                    : "tooltip hover:bg-secondary/50"
-                }`}
-              >
-                <p>{link.type ?? link.url}</p>
-                {editMode && (
-                  <>
-                    <input
-                      type="text"
-                      className="input input-sm w-full"
-                      value={link.url}
-                    />
-                    <Can action="update" object="social-network">
-                      <EditIcon className="w-6 h-6 cursor-pointer" />
+              <SubWrapper key={link._id}>
+                <button className="flex gap-2">
+                  <p onClick={() => handleOpenLinkNewTab(link.url)}>
+                    {link.type ?? link.url}
+                  </p>
+
+                  <span className="flex items-center">
+                    <Can action="delete" object="cursus">
+                      <Trash2
+                        className="h-5 cursor-pointer"
+                        onClick={() => handleDeleteLink(link._id!)}
+                      />
                     </Can>
-                    <Can action="delete" object="social-network">
-                      <span className="w-6 h-6 cursor-pointer">
-                        <DeleteIcon />
-                      </span>
-                    </Can>
-                  </>
-                )}
-              </div>
+                  </span>
+                </button>
+              </SubWrapper>
+              // <div
+              //   data-tip={link.url}
+              //   key={link._id}
+              //   onClick={() => handleOpenLinkNewTab(link.url)}
+              //   className={`flex items-center justify-between p-2 rounded-lg  ${
+              //     editMode
+              //       ? "bg-secondary/10 p-5 gap-20"
+              //       : "tooltip hover:bg-secondary/50"
+              //   }`}
+              // >
+              //   <p>{link.type ?? link.url}</p>
+
+              //   <Can action="delete" object="cursus">
+              //     <span className="w-6 h-6 cursor-pointer">
+              //       <DeleteIcon />
+              //     </span>
+              //   </Can>
+              // </div>
             ))
           : "Aucuns réseau social renseigné"}
       </div>
