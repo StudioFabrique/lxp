@@ -25,9 +25,9 @@ const Info: FC<{
 
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="text-lg font-semibold">Information</h3>
+      <h3 className="text-lg font-semibold">Informations</h3>
       <Wrapper>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
           <Field
             fieldRef={firstInputRef}
             name="firstname"
@@ -48,6 +48,12 @@ const Info: FC<{
               />
             </div>
           </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <Field name="address" label="Adresse" data={formProps} />
+          <Field name="city" label="Ville" data={formProps} />
+          <Field name="postCode" label="Code Postal" data={formProps} />
+          <Field name="phoneNumber" label="Telephone" data={formProps} />
         </div>
       </Wrapper>
     </div>
