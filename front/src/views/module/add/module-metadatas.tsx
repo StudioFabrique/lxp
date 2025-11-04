@@ -7,6 +7,7 @@ import FormUploadImage from "../../../components/UI/form-upload-image";
 
 type Props = {
   mode: "create" | "edit";
+  thumb: string | null;
   data: {
     values: Record<string, string>;
     onChangeValue: (field: string, value: string) => void;
@@ -15,11 +16,19 @@ type Props = {
   onSetFile: (file: File | null) => void;
 };
 
-function ModuleMetadatas({ data, mode, onSetFile }: Props) {
+function ModuleMetadatas({ data, mode, thumb, onSetFile }: Props) {
+  console.log({ thumb });
+
   const { image, handleFileChange } = useImageUpload(5000000, onSetFile);
   // affiche un aperçu de l'image choisie pour le module ou une image en background de div de manière dynamique
   const classImage: React.CSSProperties = {
-    backgroundImage: `url(${image ? image : "https://picsum.photos/200/300"})`,
+    backgroundImage: `url(${
+      image
+        ? image
+        : thumb
+        ? `data:image/jpeg;base64,${thumb}`
+        : "https://picsum.photos/200/300"
+    })`,
     width: "100px",
     height: "75px",
     backgroundSize: "cover",

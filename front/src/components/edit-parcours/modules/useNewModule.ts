@@ -183,7 +183,10 @@ const useNewModule = () => {
    */
   const handleCopyModule = (module: MetadataList, metadatas: Metadatas) => {
     // ✅ Single action handles complex state transition
-    dispatch({ type: "PREPARE_DUPLICATE", payload: metadatas });
+    dispatch({
+      type: "PREPARE_DUPLICATE",
+      payload: { metas: metadatas, image: module.thumb },
+    });
     initValues({
       title: module.title,
       description: module.description,
