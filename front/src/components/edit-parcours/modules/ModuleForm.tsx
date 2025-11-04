@@ -14,6 +14,7 @@ type ModuleFormProps = {
     onChangeValue: (field: string, value: string) => void;
     errors: CustomError[];
   };
+  image: string | null;
   isLoading: boolean;
   currentContacts: Contact[];
   currentSkills: Skill[];
@@ -54,7 +55,12 @@ export default function ModuleForm({
         <form onSubmit={onSubmit} ref={refForm}>
           <div className="grid grid-cols-1 lg:grid-cols-11 gap-2">
             <span className="col-span-5">
-              <ModuleMetadatas data={data} onSetFile={onSetFile} mode={mode} />
+              <ModuleMetadatas
+                data={data}
+                image={}
+                onSetFile={onSetFile}
+                mode={mode}
+              />
             </span>
 
             <div className="col-span-1 lg:col-span-0 divider sm:my-auto lg:hidden" />
