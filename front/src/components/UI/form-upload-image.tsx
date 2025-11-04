@@ -19,7 +19,7 @@ export default function FormUploadImage({
   return (
     <input
       type="file"
-      className="file-input file-input-bordered file-input-info w-full"
+      className="file-input file-input-primary w-full"
       accept=".jpg, ;jpeg, .png, .webp, .gif"
       onChange={onSetFile}
       name="file"
