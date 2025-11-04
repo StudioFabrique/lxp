@@ -19,7 +19,7 @@ model Accomplishment {
   studentId            Int
   showToOtherStudent   Boolean  @default(false)
   courseId             Int?
-  course               Course?  @relation(fields: [courseId], references: [id])
+  course               Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
   student              Student  @relation(fields: [studentId], references: [id])
 }
 
@@ -150,7 +150,7 @@ model Course {
   contacts        ContactsOnCourse[]
   admin           Admin              @relation(fields: [adminId], references: [id], onDelete: SetDefault)
   moduleId        Int
-  module          ModuleMetadata     @relation(fields: [moduleId], references: [id])
+  module          ModuleMetadata     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   lessons         Lesson[]
   tags            TagsOnCourse[]
 }
@@ -212,7 +212,7 @@ model LessonRating {
   rating    Int
   lessonId  Int
   studentId Int
-  lesson    Lesson  @relation(fields: [lessonId], references: [id])
+  lesson    Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   student   Student @relation(fields: [studentId], references: [id])
 }
 
@@ -223,7 +223,7 @@ model LessonRead {
   finishedAt   DateTime?
   lessonId     Int
   studentId    Int
-  lesson       Lesson    @relation(fields: [lessonId], references: [id])
+  lesson       Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   student      Student   @relation(fields: [studentId], references: [id])
 }
 
