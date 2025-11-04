@@ -16,6 +16,7 @@ type ModuleUpdate = {
 
 // Centralized state type
 type ModuleState = {
+  image: string | null;
   showForm: boolean;
   mode: "create" | "edit";
   modules: ModuleData[];
@@ -48,7 +49,10 @@ type ModuleAction =
   | { type: "RESET_FORM" }
   | { type: "CANCEL_FORM" }
   | { type: "MODULE_CREATED"; payload: ModuleData }
-  | { type: "PREPARE_DUPLICATE"; payload: Metadatas }
+  | {
+      type: "PREPARE_DUPLICATE";
+      payload: { metas: Metadatas; image: string | null };
+    }
   | { type: "CLOSE_DELETE_MODAL" }
   | { type: "UPDATE_MODULE"; payload: ModuleUpdate }
   | {
@@ -63,6 +67,7 @@ type ModuleAction =
 
 // Initial state
 const initialState: ModuleState = {
+  image: null,
   showForm: false,
   mode: "create",
   modules: [],
@@ -132,6 +137,7 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
         currentSkills: [],
         file: null,
         moduleToDuplicate: null,
+        image: null,
       };
 
     // Complex action: Cancel form editing
@@ -143,6 +149,7 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
         currentContacts: [],
         currentSkills: [],
         file: null,
+        image: null,
         moduleToDuplicate: null,
       };
 
@@ -166,7 +173,8 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
         ...state,
         showForm: true,
         mode: "edit",
-        moduleToDuplicate: action.payload,
+        moduleToDuplicate: action.payload.metas,
+        image: action.payload.image,
       };
 
     // Complex action: Close delete modal and reset
@@ -186,6 +194,8 @@ function moduleReducer(state: ModuleState, action: ModuleAction): ModuleState {
         currentContacts: action.payload.contacts,
         currentSkills: action.payload.skills,
         file: null,
+        image:
+          state.modules.find((m) => m.id === action.payload.id)?.thumb ?? null,
       };
 
     case "SUCCESSFUL_MODULE_UPDATE":

@@ -33,6 +33,7 @@ type ModuleFormProps = {
  */
 export default function ModuleForm({
   mode,
+  image,
   refForm,
   data,
   isLoading,
@@ -57,7 +58,7 @@ export default function ModuleForm({
             <span className="col-span-5">
               <ModuleMetadatas
                 data={data}
-                image={}
+                thumb={image}
                 onSetFile={onSetFile}
                 mode={mode}
               />

@@ -50,6 +50,7 @@ export default function ModuleComponent() {
     handleSubmitDuplicateModule,
     moduleToDuplicate,
     handleSubmitUpdateModule,
+    image,
   } = useNewModule();
 
   const submitFunction = useMemo(() => {
@@ -88,6 +89,7 @@ export default function ModuleComponent() {
         {/* Module creation form (conditional) */}
         {showForm && (
           <ModuleForm
+            image={image}
             mode={mode}
             refForm={refForm}
             data={data}
