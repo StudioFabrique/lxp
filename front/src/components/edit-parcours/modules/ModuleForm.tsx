@@ -52,17 +52,25 @@ export default function ModuleForm({
       </div>
       <Wrapper>
         <form onSubmit={onSubmit} ref={refForm}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <ModuleMetadatas data={data} onSetFile={onSetFile} mode={mode} />
-            <ModuleToParcours
-              currentContacts={currentContacts}
-              currentSkills={currentSkills}
-              contacts={contacts}
-              skills={skills}
-              isLoading={isLoading}
-              setCurrentContacts={setCurrentContacts}
-              setCurrentSkills={setCurrentSkills}
-            />
+          <div className="grid grid-cols-1 lg:grid-cols-11 gap-2">
+            <span className="col-span-5">
+              <ModuleMetadatas data={data} onSetFile={onSetFile} mode={mode} />
+            </span>
+
+            <div className="col-span-1 lg:col-span-0 divider sm:my-auto lg:hidden" />
+            <div className="col-span-1 divider divider-horizontal lg:mx-auto hidden lg:divider " />
+
+            <span className="col-span-5">
+              <ModuleToParcours
+                currentContacts={currentContacts}
+                currentSkills={currentSkills}
+                contacts={contacts}
+                skills={skills}
+                isLoading={isLoading}
+                setCurrentContacts={setCurrentContacts}
+                setCurrentSkills={setCurrentSkills}
+              />
+            </span>
           </div>
           <div className="flex gap-x-2 justify-end mt-4">
             <button

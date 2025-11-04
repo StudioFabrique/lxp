@@ -48,16 +48,24 @@ export default function ModuleComponent() {
     handleUpdateModule,
     mode,
     handleSubmitDuplicateModule,
+    moduleToDuplicate,
+    handleSubmitUpdateModule,
   } = useNewModule();
 
   const submitFunction = useMemo(() => {
     if (mode === "create") {
       return handleSubmit;
-    } else if (mode === "edit") {
+    } else if (mode === "edit" && moduleToDuplicate) {
       return handleSubmitDuplicateModule;
     }
-    return handleSubmit;
-  }, [mode, handleSubmit, handleSubmitDuplicateModule]);
+    return handleSubmitUpdateModule;
+  }, [
+    mode,
+    moduleToDuplicate,
+    handleSubmitUpdateModule,
+    handleSubmit,
+    handleSubmitDuplicateModule,
+  ]);
 
   return (
     <>

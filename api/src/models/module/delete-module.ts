@@ -17,6 +17,7 @@ async function deleteModule(moduleId: number, userId: string, role: IRole) {
     throw error;
   }
 
+  /*
   if (existingModule.courses && existingModule.courses.length > 0) {
     const error = {
       message: "Suppression impossible, des cours sont rattachés à ce module",
@@ -24,6 +25,7 @@ async function deleteModule(moduleId: number, userId: string, role: IRole) {
     };
     throw error;
   }
+  */
 
   const existingAdmin = await prisma.admin.findFirst({
     where: { idMdb: userId },

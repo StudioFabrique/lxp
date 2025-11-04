@@ -240,7 +240,9 @@ const useNewModule = () => {
     );
   };
 
-  const handleSubmitUpdateModule = () => {
+  const handleSubmitUpdateModule = (e: React.FormEvent) => {
+    e.preventDefault();
+
     if (!onValidateForm()) return;
     const applyData = (data: {
       success: boolean;

@@ -77,7 +77,7 @@ async function putModule(module: any) {
     contacts: updatedModule.contacts.map(
       (c: { contact: { id: number; name: string; role: string } }) => c.contact
     ),
-    bonusSkills: updatedModule.bonusSkills.map(
+    skills: updatedModule.bonusSkills.map(
       (bs: { bonusSkill: { id: number; description: string } }) => bs.bonusSkill
     ),
   };
