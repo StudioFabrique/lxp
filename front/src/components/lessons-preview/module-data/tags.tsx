@@ -13,7 +13,7 @@ const Tags = ({ tags }: TagsProps) => {
         {tags.length > 0 ? (
           <ul className="list-disc pl-5">
             {tags.map((tag) => (
-              <li>{tag.name}</li>
+              <li key={tag.id}>{tag.name}</li>
             ))}
           </ul>
         ) : (

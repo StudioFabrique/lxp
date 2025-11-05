@@ -5,9 +5,9 @@ networks:
     driver: bridge
 
 volumes:
-  pg:
+  pg2:
     driver: local
-  mongo:
+  mongo2:
     driver: local
 
 # The containers that compose the project
@@ -17,7 +17,7 @@ services:
     restart: always
     container_name: lxp-prisma
     volumes:
-      - pg:/var/lib/postgresql/data
+      - pg2:/var/lib/postgresql/data
     networks:
       - lxp_network
     ports:
@@ -32,7 +32,7 @@ services:
     restart: always
     container_name: lxp-mongo
     volumes:
-      - mongo:/data/db
+      - mongo2:/data/db
     networks:
       - lxp_network
     ports:

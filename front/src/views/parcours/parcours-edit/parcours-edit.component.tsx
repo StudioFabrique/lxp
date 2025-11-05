@@ -9,7 +9,6 @@ import Stepper from "../../../components/UI/stepper.-component/stepper.-componen
 import HeaderIcon from "../../../components/UI/svg/header-icon";
 import Calendrier from "../../../components/edit-parcours/calendrier/calendrier";
 import ParcoursInformations from "../../../components/edit-parcours/informations/parcours-informations";
-import ModulesSection from "../../../components/edit-parcours/modules-section/modules.component";
 import ImportObjectives from "../../../components/edit-parcours/objectives/import-objectives";
 import ObjectivesList from "../../../components/edit-parcours/objectives/objectives-list";
 import ParcoursSection from "../../../components/edit-parcours/parcours-section";
@@ -33,6 +32,7 @@ import { parcoursSkillsAction } from "../../../store/redux-toolkit/parcours/parc
 import { tagsAction } from "../../../store/redux-toolkit/tags";
 import Module from "../../../utils/interfaces/module";
 import useParcoursService from "./hooks/use-parcours-services";
+import ModuleComponent from "../../../components/edit-parcours/modules/module";
 
 let initialState = true;
 
@@ -138,9 +138,6 @@ const EditParcours = () => {
 
   const handleResetImportedObjectives = () => {};
 
-  console.log({ actualStep });
-  console.log(stepsList.length);
-
   return (
     <div className="w-full h-full flex flex-col justify-start items-center px-8 py-2">
       {isLoading ? (
@@ -196,7 +193,7 @@ const EditParcours = () => {
                 <ImportSkills onCloseDrawer={() => {}} />
               </ParcoursSection>
             ) : null}
-            {actualStep.id === 4 && id ? <ModulesSection /> : null}
+            {actualStep.id === 4 && id ? <ModuleComponent /> : null}
             {actualStep.id === 5 ? <Calendrier /> : null}
             {actualStep.id === 6 ? <ParcoursStudents /> : null}
             {actualStep.id === 7 ? (
@@ -223,7 +220,7 @@ const EditParcours = () => {
                 )}
                 {actualStep.id !== stepsList.length ? (
                   <button
-                    className="btn btn-primary z-20"
+                    className="btn btn-primary z-1"
                     onClick={() => handleUpdateStep(actualStep.id)}
                   >
                     Etape suivante

@@ -106,7 +106,11 @@ export default function NotSelectedSkills(props: Props) {
         <>
           {table}
           <div className="w-full flex justify-end mt-4">
-            <button className="btn btn-primary" onClick={handleAddSkills}>
+            <button
+              className="btn btn-primary"
+              type="button"
+              onClick={handleAddSkills}
+            >
               Ajouter
             </button>
           </div>

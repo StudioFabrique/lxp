@@ -2,7 +2,7 @@ import { Objective } from "@prisma/client";
 import { prisma } from "../../utils/db";
 
 async function putCourseNewObjective(courseId: number, objective: Objective) {
-  const existingCourse = await prisma.course.findFirst({
+  /*const existingCourse = await prisma.course.findFirst({
     where: { id: courseId },
     select: {
       id: true,
@@ -10,11 +10,7 @@ async function putCourseNewObjective(courseId: number, objective: Objective) {
         select: {
           parcours: {
             select: {
-              parcours: {
-                select: {
-                  id: true,
-                },
-              },
+              id: true,
             },
           },
         },
@@ -31,7 +27,7 @@ async function putCourseNewObjective(courseId: number, objective: Objective) {
   let newObjective: Objective;
 
   const transaction = await prisma.$transaction(async (tx) => {
-    const parcoursId = existingCourse.module.parcours[0].parcours.id;
+    const parcoursId = existingCourse.module.parcours.id;
     newObjective = await tx.objective.create({
       data: { ...objective, parcoursId },
     });
@@ -49,9 +45,9 @@ async function putCourseNewObjective(courseId: number, objective: Objective) {
       },
     });
     return newObjective;
-  });
+  });*/
 
-  return transaction;
+  return [];
 }
 
 export default putCourseNewObjective;

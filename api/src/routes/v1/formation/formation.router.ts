@@ -1,7 +1,7 @@
 import express from "express";
 import httpGetFormation from "../../../controllers/formation/http-get-formation";
 import httpPutFormationTags from "../../../controllers/formation/htttp-put-formation-tags";
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import multer from "multer";
 import path from "path";
 import httpPostModule from "../../../controllers/formation/http-post-module";
@@ -56,6 +56,26 @@ export const validationModule = [
       "La description du module contient des caractères non autorisés."
     )
     .optional(),
+  body("module.duration")
+    .isInt({ min: 1 })
+    .withMessage("La durée doit être un nombre entier positif."),
+  body("module.contacts")
+    .isArray()
+    .withMessage("Les contacts doivent être un tableau."),
+  body("module.contacts.*")
+    .isInt()
+    .withMessage("Chaque identifiant de contact doit être un nombre entier."),
+  body("module.skills")
+    .isArray()
+    .withMessage("Les compétences doivent être un tableau."),
+  body("module.skills.*")
+    .isInt()
+    .withMessage("Chaque identifiant de compétence doit être un nombre entier.")
+    .optional(),
+  param("moduleId")
+    .isInt()
+    .withMessage("L'identifiant du module doit être un nombre entier.")
+    .optional(),
 ];
 
 formationRouter.get("/", checkPermissions("formation"), httpGetFormation);
@@ -74,7 +94,7 @@ formationRouter.put(
 );
 
 formationRouter.post(
-  "/new-module",
+  "/new-module/:moduleId?",
   checkPermissions("formation"),
   upload.single("image"),
   jsonParser,

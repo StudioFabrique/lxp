@@ -19,7 +19,7 @@ const FieldArea = (props: FieldProps) => {
   const rows = props.rows !== undefined ? props.rows : 3;
 
   const baseStyle =
-    "w-full textarea focus:outline-none disabled:cursor-default disabled:text-base-content";
+    "w-full textarea focus:outline-none disabled:cursor-not-allowed  disabled:text-base-content/60";
 
   const style = props.data.errors.find((item) => item.type === name)
     ? baseStyle + " textarea-error"
