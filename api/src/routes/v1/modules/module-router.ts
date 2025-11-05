@@ -58,6 +58,13 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 
+modules.get(
+  "/parcours-modules/:parcoursId",
+  checkPermissions("module"),
+  parcoursIdValidator,
+  httpGetModulesFromParcours
+);
+
 // retourne la liste de tous les modules
 modules.get("/", checkPermissions("module"), httpGetAllModules);
 
