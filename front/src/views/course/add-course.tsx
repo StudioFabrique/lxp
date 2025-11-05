@@ -116,7 +116,7 @@ const AddCourse = () => {
 
       sendRequest(
         {
-          path: `/modules/${parcoursId}`,
+          path: `/modules/parcours-modules/${parcoursId}`,
         },
         applyData
       );
