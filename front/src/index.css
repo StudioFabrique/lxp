@@ -5,23 +5,3 @@
     "wireframe", "business", "coffee", "dracula", "forest", "night", "synthwave";
 }
 @plugin '@tailwindcss/typography';
-
-/* Masquer la scrollbar sur webkit (Chrome, Safari, Edge moderne) */
-.drawer-side > ul::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  background: transparent;
-}
-
-/* Désactiver la réservation d'espace pour la scrollbar */
-.drawer-side > ul {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  scrollbar-gutter: stable;
-}
-
-/* Pour éviter les problèmes de positionnement */
-.drawer-side {
-  scrollbar-gutter: auto !important;
-  overflow: visible;
-}

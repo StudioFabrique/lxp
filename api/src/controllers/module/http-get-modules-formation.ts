@@ -1,34 +1,130 @@
 import { Request, Response } from "express";
 import { prisma } from "../../utils/db";
 
+type Result = {
+  id: number;
+  title: string;
+  description: string | null;
+  thumb: string | null;
+};
+
+type ResultWithMetadatas = Result & {
+  metadatas: {
+    id: number;
+    courses: {
+      id: number;
+      lessons: { id: number; title: string }[];
+    }[];
+  }[];
+};
+
 async function httpGetModuleFormation(req: Request, res: Response) {
   try {
-    const { formationId } = req.params;
+    const { formationId, duplicate = false } = req.params;
 
-    const modulesIdList = await prisma.modulesOnFormation.findMany({
+    const modules = await prisma.modulesOnFormation.findMany({
       where: { formationId: +formationId },
-    });
-    const modules = await prisma.module.findMany({
-      where: {
-        id: { in: modulesIdList.map((item: any) => item.moduleId) },
+      include: {
+        module: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            thumb: true,
+            metadatas: {
+              select: {
+                id: true,
+                parcours: { select: { id: true, title: true } },
+                courses: {
+                  select: {
+                    id: true,
+                    title: true,
+                  },
+                },
+                contacts: {
+                  select: {
+                    contact: {
+                      select: {
+                        id: true,
+                        name: true,
+                        role: true,
+                      },
+                    },
+                  },
+                },
+                bonusSkills: {
+                  select: {
+                    bonusSkill: {
+                      select: {
+                        id: true,
+                        description: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
+    });
+
+    /*
+    const modules = await prisma.module.findMany({
+      where: { title: moduleTitle as string },
       select: {
         id: true,
         title: true,
         description: true,
-        duration: true,
         thumb: true,
-        contacts: true,
-        bonusSkills: true,
+        metadatas: {
+          select: {
+            id: true,
+            courses: {
+              select: {
+                id: true,
+                title: true,
+              },
+            },
+            contacts: {
+              select: {
+                contact: {
+                  select: {
+                    id: true,
+                    name: true,
+                    role: true,
+                  },
+                },
+              },
+            },
+            bonusSkills: {
+              select: {
+                bonusSkill: {
+                  select: {
+                    id: true,
+                    description: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
+    */
 
-    //console.log({ modules });
+    let result: Result[] | ResultWithMetadatas[] | null = null;
 
-    const result = modules.map((module) => ({
-      ...module,
-      thumb: module.thumb?.toString("base64") ?? null,
-    }));
+    result = !duplicate
+      ? modules.map((item) => ({
+          ...item.module,
+          thumb: item.module.thumb?.toString("base64") ?? null,
+        }))
+      : modules.map((item) => ({
+          ...item.module,
+          thumb: item.module.thumb?.toString("base64") ?? null,
+          metadatas: item.module.metadatas,
+        }));
 
     return res.status(200).json(result);
   } catch (error: any) {

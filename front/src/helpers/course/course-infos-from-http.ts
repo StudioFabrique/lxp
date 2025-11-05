@@ -14,17 +14,17 @@ export default function courseInfosFromHttp(course: any) {
     ...course,
     virtualClass: course.virtualClass
       ? course.virtualClass
-      : course.module.parcours[0].parcours.virtualClass ?? "",
+      : course.module.parcours.virtualClass ?? "",
     module: {
       ...course.module,
       contacts: course.module.contacts.map((item: any) => item.contact),
       parcours: {
-        ...course.module.parcours[0].parcours,
+        ...course.module.parcours,
         tags: sortArray(
-          course.module.parcours[0].parcours.tags.map((item: any) => item.tag),
+          course.module.parcours.tags.map((item: any) => item.tag),
           "name"
         ),
-        formation: course.module.parcours[0].parcours.formation,
+        formation: course.module.parcours.formation,
       },
     },
   };
@@ -41,9 +41,7 @@ export default function courseInfosFromHttp(course: any) {
 
   if (updatedData.module.parcours.tags.length === 0) {
     const tmp = sortArray(
-      course.module.parcours[0].parcours.formation.tags.map(
-        (item: any) => item.tag
-      ),
+      course.module.parcours.formation.tags.map((item: any) => item.tag),
       "name"
     );
     updatedData = {
@@ -58,7 +56,7 @@ export default function courseInfosFromHttp(course: any) {
     };
   } else {
     const tmp = sortArray(
-      course.module.parcours[0].parcours.tags.map((item: any) => item.tag),
+      course.module.parcours.tags.map((item: any) => item.tag),
       "name"
     );
     updatedData = {

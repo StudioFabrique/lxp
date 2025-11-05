@@ -1,3 +1,4 @@
+import { Tag } from "@prisma/client";
 import { prisma } from "../../utils/db";
 
 export default async function getLimitedModuleDetail(
@@ -9,18 +10,18 @@ export default async function getLimitedModuleDetail(
     where: { idMdb: userMongoId },
   });
 
-  const existingModule = await prisma.module.findFirst({
+  const existingModule = await prisma.moduleMetadata.findFirst({
     where: { id: moduleId },
     select: {
       id: true,
-      title: true,
-      description: true,
-      image: true,
       duration: true,
       minDate: true,
       maxDate: true,
+      module: {
+        select: { title: true, description: true, image: true, id: true },
+      },
       parcours: {
-        select: { parcours: { select: { title: true } }, parcoursId: true },
+        select: { title: true, id: true },
       },
       bonusSkills: { select: { bonusSkill: true } },
       contacts: { select: { contact: true } },
@@ -52,6 +53,7 @@ export default async function getLimitedModuleDetail(
               order: "asc",
             },
           },
+          tags: { select: { tag: true } },
         },
         orderBy: {
           order: "asc",
@@ -65,21 +67,33 @@ export default async function getLimitedModuleDetail(
     throw error;
   }
 
+
+  const allCourseTags = existingModule.courses.map((c) => c.tags[0].tag);
+
+  let tags: Tag[] = [];
+
+  for (const tag of allCourseTags) {
+    const t = tags.filter((ta) => ta.id === tag.id);
+    if (t.length === 0) tags = [...tags, tag];
+  }
+
   // Remove duplicates from objectives
   const objectiveIds = new Set();
 
+
   const result = {
     id: existingModule.id,
-    title: existingModule.title,
-    description: existingModule.description,
-    image: existingModule.image?.toString("base64") ?? null,
+    title: existingModule.module.title,
+    description: existingModule.module.description,
+    image: existingModule.module.image?.toString("base64") ?? null,
     duration: existingModule.duration,
     minDate: existingModule.minDate,
     maxDate: existingModule.maxDate,
-    parcours: existingModule.parcours[0].parcours.title,
-    parcoursId: existingModule.parcours[0].parcoursId,
+    parcours: existingModule.parcours.title,
+    parcoursId: existingModule.parcours.id,
     bonusSkills: existingModule.bonusSkills.map((item) => item.bonusSkill),
     contacts: existingModule.contacts.map((item) => item.contact),
+    tags,
     courses: existingModule.courses.map((course) => ({
       ...course,
       objectives: course.objectives

@@ -69,7 +69,6 @@ export default async function postModuleFromScratch(
       data: {
         title,
         description,
-        duration,
         image,
         thumb,
         author: existingUser.firstname + " " + existingUser.lastname,
@@ -91,20 +90,17 @@ export default async function postModuleFromScratch(
           },
         },
       },
+      select: { id: true },
     });
 
     // Si un parcours est spécifié, crée une copie du module avec des paramètres supplémentaires
-    if (parcoursId) {
-      const newModule = await tx.module.create({
+    if (parcoursId && module) {
+      const newModule = await tx.moduleMetadata.create({
         data: {
-          title,
-          description,
           duration,
-          image,
-          thumb,
-          author: existingUser.firstname + " " + existingUser.lastname,
           adminId: existingAdmin.id,
-
+          moduleId: module.id,
+          parcoursId: existingParcours!.id,
           // Associe les contacts au module
           contacts: {
             create: contactsIds.map((id) => ({ contact: { connect: { id } } })),
@@ -118,22 +114,6 @@ export default async function postModuleFromScratch(
           // Définit les dates limites basées sur le parcours
           minDate: new Date(existingParcours!.startDate!),
           maxDate: new Date(existingParcours!.endDate!),
-        },
-      });
-
-      // Associe le nouveau module au parcours
-      await tx.parcours.update({
-        where: { id: parcoursId },
-        data: {
-          modules: {
-            create: {
-              module: {
-                connect: {
-                  id: newModule.id,
-                },
-              },
-            },
-          },
         },
       });
     }

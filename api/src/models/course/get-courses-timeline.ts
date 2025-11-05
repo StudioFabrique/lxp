@@ -9,7 +9,7 @@ export default async function getCoursesTimeline(
    * allCourses - Si l'utilisateur est un admin, lui laisser le choix d'afficher tous les cours
    * ou ceux pour lesquels il est affecté en tant que formateur s'il est formateur.
    */
-  showAllCourses?: boolean,
+  showAllCourses?: boolean
 ) {
   // Recherche des groupes contenant les étudiants
   const groupsWhereStudentIs = await Group.find({ users: userIdMdb });
@@ -49,20 +49,16 @@ export default async function getCoursesTimeline(
       module: {
         select: {
           id: true,
-          title: true,
           // select parcours only if showAllCourses
           parcours: showAllCourses
             ? {
                 select: {
-                  parcours: {
-                    select: {
-                      title: true,
-                      formation: { select: { title: true } },
-                    },
-                  },
+                  title: true,
+                  formation: { select: { title: true } },
                 },
               }
             : false,
+          module: { select: { title: true } },
         },
       },
       lessons: {
@@ -107,17 +103,11 @@ export default async function getCoursesTimeline(
                     },
                   },
                   parcours: {
-                    some: {
-                      parcours: {
-                        isPublished: true,
-                        contacts: {
-                          some: {
-                            contactId: {
-                              in: formateurContacts.map(
-                                (contact) => contact.id,
-                              ),
-                            },
-                          },
+                    isPublished: true,
+                    contacts: {
+                      some: {
+                        contactId: {
+                          in: formateurContacts.map((contact) => contact.id),
                         },
                       },
                     },
@@ -127,14 +117,10 @@ export default async function getCoursesTimeline(
               {
                 module: {
                   parcours: {
-                    every: {
-                      parcours: {
-                        isPublished: true,
-                        groups: {
-                          some: {
-                            group: { idMdb: { in: groupsIds } },
-                          },
-                        },
+                    isPublished: true,
+                    groups: {
+                      some: {
+                        group: { idMdb: { in: groupsIds } },
                       },
                     },
                   },
@@ -174,7 +160,7 @@ export default async function getCoursesTimeline(
         acc.push({
           id: course.id,
           moduleId: course.module.id,
-          moduleTitle: course.module.title,
+          moduleTitle: course.module.module.title,
           title: course.title,
           minDate: date.minDate,
           maxDate: date.maxDate,

@@ -4,7 +4,7 @@ export default async function updateDurationModule(
   id: number,
   duration: number
 ) {
-  const updatedModule = prisma.module.update({
+  const updatedModule = prisma.moduleMetadata.update({
     where: { id: +id },
     data: { duration },
   });

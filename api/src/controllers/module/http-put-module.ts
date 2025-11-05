@@ -1,9 +1,11 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import fs from "fs";
 import sharp from "sharp";
 
 import putModule from "../../models/module/putModule";
 import { deleteTempUploadedFile } from "../../middleware/fileUpload";
+import { serverIssue } from "../../utils/constantes";
+import { validationResult } from "express-validator";
 
 /**
  * Gère la mise à jour d'un module existant
@@ -12,48 +14,41 @@ import { deleteTempUploadedFile } from "../../middleware/fileUpload";
  * @param res Réponse Express
  * @returns Réponse avec le module mis à jour ou message d'erreur
  */
-async function httpPutModule(req: Request, res: Response) {
-  // Récupération des données du module et du fichier uploadé
-
-  const module = req.body.module;
-  const uploadedFile: any = req.file;
-
-  // Variables pour stocker l'image originale et la miniature en base64
-  let thumb64: any;
-  let image: any;
-
+export default async function httpPutModule(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
-    if (uploadedFile) {
-      // Si une image est fournie, on la traite
-      const data = await fs.promises.readFile(uploadedFile.path);
-      image = data.toString("base64");
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      console.log(result.array());
 
-      // Création d'une miniature redimensionnée à 400x400
-      const resizedPic = sharp(uploadedFile.path).resize(400, 400);
-      const thumb = resizedPic.toBuffer();
-      thumb64 = (await thumb).toString("base64");
-
-      // Mise à jour du module avec la nouvelle image
-      const response = await putModule(module, thumb64, image);
-
-      // Nettoyage du fichier temporaire
-      await deleteTempUploadedFile(req);
-
-      return res
-        .status(201)
-        .json({ message: "Mise à jour réussie", data: response });
-    } else {
-      // Si pas d'image, mise à jour simple du module
-      const response = await putModule(module, null, null);
-      return res
-        .status(201)
-        .json({ message: "Mise à jour réussie", data: response });
+      return next({
+        statusCode: 400,
+        message: "Données de validation invalides",
+        errors: result.array(),
+      });
     }
+    // Récupération des données du module et du fichier uploadé
+    const module = req.body.module;
+
+    // Mise à jour du module en base de données
+    const response = await putModule(module);
+    next({
+      statusCode: 200,
+      data: {
+        success: true,
+        message: "Module mis à jour avec succès",
+        response,
+      },
+    });
   } catch (error: any) {
-    // En cas d'erreur, on nettoie le fichier temporaire si existant
-    if (uploadedFile) await deleteTempUploadedFile(req);
-    return res.status(error.statusCode ?? 500).json({ message: error.message });
+    console.log({ error });
+
+    next({
+      statusCode: error.statusCode ?? 500,
+      message: error.message ?? serverIssue,
+    });
   }
 }
-
-export default httpPutModule;

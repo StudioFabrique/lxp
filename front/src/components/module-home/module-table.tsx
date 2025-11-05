@@ -58,14 +58,7 @@ const ModuleTable = ({
                   {truncateText(item.formation, 20)}
                 </span>
               </td>
-              <td className="bg-transparent max-w-[150px]">
-                <span
-                  className="tooltip tooltip-bottom"
-                  data-tip={item.parcours}
-                >
-                  {truncateText(item.parcours, 20)}
-                </span>
-              </td>
+
               <td className="bg-transparent">{localeDate(item.createdAt!)}</td>
               <td className="bg-transparent">{localeDate(item.updatedAt!)}</td>
               <td className="bg-transparent flex items-center justify-around gap-x-2 rounded-r-lg">
@@ -193,21 +186,7 @@ const ModuleTable = ({
                   />
                 </div>
               </th>
-              <th
-                className="cursor-pointer"
-                onClick={() => {
-                  onSorting("parcours");
-                }}
-              >
-                <div className="flex items-center gap-x-2">
-                  <p>Parcours</p>
-                  <SortColumnIcon
-                    fieldSort={fieldSort}
-                    column="parcours"
-                    direction={direction}
-                  />
-                </div>
-              </th>
+
               <th
                 className="cursor-pointer"
                 onClick={() => {

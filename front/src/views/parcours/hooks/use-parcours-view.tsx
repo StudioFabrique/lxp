@@ -102,13 +102,15 @@ export default function useParcoursView() {
       if (data.modules.length > 0) {
         dispatch(
           parcoursModulesSliceActions.setModules(
-            data.modules
-              .map((module: any) => module.module)
-              ?.sort(
-                (a, b) =>
-                  new Date(a.minDate || 0).getTime() -
-                  new Date(b.minDate || 0).getTime()
-              )
+            data.modules.map((module: any) => {
+              return {
+                ...module,
+                title: module.module.title,
+                description: module.module.description,
+                thumb: module.module.thumb,
+              };
+            })
+
           )
         );
       }

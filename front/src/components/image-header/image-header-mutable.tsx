@@ -36,8 +36,6 @@ const ImageHeaderMutable: FC<Props> = ({
   const [file, setFile] = useState<File | null>(null);
   const isInitialRender = useRef(true);
 
-  console.log(image);
-
   // en l'absence de props affiche une image par défaut
   useEffect(() => {
     if (isInitialRender.current) {
@@ -50,8 +48,6 @@ const ImageHeaderMutable: FC<Props> = ({
       isInitialRender.current = false;
     }
   }, [defaultImage, image]);
-
-  console.log(image);
 
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(bgImage),

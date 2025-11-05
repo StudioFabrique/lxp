@@ -2,7 +2,7 @@ import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
 
 async function postCourse(userId: string, course: any) {
-  const existingModule = await prisma.module.findFirst({
+  const existingModule = await prisma.moduleMetadata.findFirst({
     where: { id: course.moduleId },
     select: { courses: true },
   });
@@ -19,7 +19,7 @@ async function postCourse(userId: string, course: any) {
 
   if (!existingAdmin) {
     const error: any = {
-      message: "L'utilisateur n'existe pas.",
+      message: "l'admin n'existe pas.",
       statusCode: 400,
     };
     throw error;
@@ -29,7 +29,7 @@ async function postCourse(userId: string, course: any) {
 
   if (!adminName) {
     const error: any = {
-      message: "L'utilisateur n'existe pas.",
+      message: "L'utilisateur n'a pas de nom.",
       statusCode: 400,
     };
     throw error;

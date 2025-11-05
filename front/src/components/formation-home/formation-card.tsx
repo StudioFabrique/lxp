@@ -17,7 +17,7 @@ export default function FormationCard(props: FormationCardProp) {
   return (
     <div className="group flex flex-col gap-y-2 p-5 rounded-lg bg-secondary/20 h-full hover:bg-primary hover:text-white">
       <span className="flex justify-between items-center">
-        <h2 className="font-bold group-hover:text-white text-primary">
+        <h2 className="font-bold group-hover:text-white text-primary capitalize">
           {title}
         </h2>
         <Edit

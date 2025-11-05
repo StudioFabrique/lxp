@@ -28,7 +28,6 @@ export default async function getUserData(userId: string) {
   )
     .populate("connectionInfos") // Include connection history data
     .populate("group", { image: 0 }) // Include group data but exclude images
-    .populate("roles") // Include user roles
     .lean()) as IUser;
 
   // Validate user existence
@@ -87,7 +86,7 @@ export default async function getUserData(userId: string) {
       select: {
         parcours: {
           select: {
-            parcours: true,
+            parcours: { select: { id: true, title: true } },
           },
           orderBy: {
             parcoursId: "desc", // Get the most recent parcours
@@ -112,14 +111,10 @@ export default async function getUserData(userId: string) {
         select: {
           modules: {
             select: {
-              module: {
+              courses: {
                 select: {
-                  courses: {
-                    select: {
-                      lessons: {
-                        select: { id: true }, // Only need lesson IDs
-                      },
-                    },
+                  lessons: {
+                    select: { id: true }, // Only need lesson IDs
                   },
                 },
               },
