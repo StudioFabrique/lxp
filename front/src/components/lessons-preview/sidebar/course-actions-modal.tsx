@@ -1,4 +1,5 @@
 import Course from "../../../utils/interfaces/course";
+import Lesson from "../../../utils/interfaces/lesson";
 import TableActionsModal from "../../table/table-buttons/table-actions-modal";
 
 type CourseActionsModalProps = {
@@ -7,6 +8,7 @@ type CourseActionsModalProps = {
   showModal: boolean;
   isModalLoading: boolean;
   course: Course;
+  lesson?: Lesson;
   onCancel: () => void;
   onConfirm: () => void;
 };
@@ -17,6 +19,7 @@ const CourseActionsModal = ({
   showModal,
   isModalLoading,
   course,
+  lesson,
   onCancel,
   onConfirm,
 }: CourseActionsModalProps) => {
@@ -26,10 +29,12 @@ const CourseActionsModal = ({
       onCancel={onCancel}
       title={title}
       description={description}
-      descList={[course.title]}
+      descList={lesson ? [lesson.title] : [course.title]}
     >
       <button
-        className={`btn btn-error btn-md text-warning ${isModalLoading && "loading"}`}
+        className={`btn btn-error btn-md text-warning ${
+          isModalLoading && "loading"
+        }`}
         onClick={onConfirm}
       >
         Confirmer

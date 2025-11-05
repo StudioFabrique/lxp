@@ -10,6 +10,7 @@ import defaultModuleThumb from "../../../assets/images/module-default-thumb.png"
 import DuplicateIcon from "../../UI/svg/duplicate-icon";
 import ToolTipWarning from "../../UI/tooltip-warning/tooltip-warning";
 import { notValidModuleTooltip } from "../../../lib/not-valid-module";
+import bgImageGradient from "../../../utils/bg-image-gradient";
 interface ModuleItemProps {
   module: Module;
   fromSource: boolean;
@@ -34,11 +35,11 @@ const ModuleItem: FC<ModuleItemProps> = ({
   ) as boolean;
 
   const classImage: React.CSSProperties = {
-    backgroundImage: `url('${
+    backgroundImage: bgImageGradient(
       module.thumb
         ? `data:image/jpeg;base64,${module.thumb}`
         : defaultModuleThumb
-    }')`,
+    ),
     width: "50px",
     height: "50px",
     backgroundSize: "cover",

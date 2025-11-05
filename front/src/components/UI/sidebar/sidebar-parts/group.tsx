@@ -26,7 +26,7 @@ const Group = ({
             <Can action="read" object="user">
               <Link
                 to={`/${currentRoute[0]}/group`}
-                className="tooltip tooltip-top w-6 h-6 z-10"
+                className="tooltip w-6 h-6 z-10"
                 data-tip="Groupes"
               >
                 <div className="flex hover justify-center items-center">
@@ -44,7 +44,7 @@ const Group = ({
               <Can action="write" object="group">
                 <Link to={`/${currentRoute[0]}/group/add`}>
                   <div
-                    className="tooltip tooltip-top w-6 h-6"
+                    className="tooltip w-6 h-6"
                     data-tip="Création d'un nouveau groupe"
                   >
                     <AddIcon />

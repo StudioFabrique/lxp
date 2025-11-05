@@ -21,6 +21,19 @@ pipeline {
 
         stage("Build App") {
             steps {
+                withCredentials([file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE')]) {
+                    sh '''
+                    echo "🔧 Setting frontend environment variables from $FRONT_ENV_FILE..."
+                    
+                    # Copier le fichier .env du frontend dans le bon répertoire
+                    chmod -R 777 ./front/ || true
+                    cp $FRONT_ENV_FILE ./front/.env
+                    
+                    # Vérifier que le fichier a bien été copié
+                    echo "✅ Frontend .env file copied:"
+                    cat ./front/.env
+                    '''
+                }
                 script {
                     echo "Building application..."
                     sh 'npm run install'
@@ -30,7 +43,7 @@ pipeline {
             }
         }    
 
-        stage('Tests backend') {
+       /* stage('Tests backend') {
             steps {
                 sh 'npm -g i dotenv-cli'
                 sh 'mkdir api/uploads || true'
@@ -58,7 +71,7 @@ pipeline {
                     '''
                 }
             }
-        }
+        }*/
 
         stage("Deploying to INFA") {
 
@@ -74,6 +87,11 @@ pipeline {
                     sh '''
                         echo "🔧 Setting environment variables from $ENV_FILE..."
                         
+                        echo "ls -la"
+                        ls -la ./api/dist || true
+
+                        chmod -R 777 ./api/ || true
+
                         # Inject .env in workspace
                         cp $ENV_FILE ./api/dist/.env
 

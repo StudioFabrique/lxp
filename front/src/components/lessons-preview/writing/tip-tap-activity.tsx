@@ -1,273 +1,122 @@
-import {
-  type ChangeEvent,
-  type FormEvent,
-  useRef,
-  useState,
-  useEffect,
-} from "react";
-import type { Editor } from "@tiptap/react";
-import toast from "react-hot-toast";
-import useHttp from "../../../hooks/use-http";
-import { useAutosave } from "../../../hooks/use-autosave";
-import Modal from "../../UI/modal/modal";
-import TiptapEditor from "./tiptap-simple-editor/tiptap-editor";
+import useAutosave from "./hooks/use-autosave";
+import { useState, type ChangeEvent } from "react";
 import AutosaveIndicator from "./autosave-indicator";
-import { Activity } from "../../../utils/interfaces/activity";
+import TiptapEditor from "../../UI/tiptap-editor/tiptapEditor";
 
-type ActivityWithContent = Activity & { content: string };
-
-type TipTapActivityProps = {
-  parent?: "resource" | "lesson";
-  parentId: number;
-  activity?: ActivityWithContent;
-  isNewActivity?: boolean;
-  onCloseTipTapEditor?: () => void;
-  onRefreshAllData?: () => void;
-  onActivityEditChange?: (isEditing: boolean) => void;
-  shouldStartEdit?: boolean;
-  forceStopEdit?: boolean;
+type Props = {
+  mode: "read" | "write" | "edit" | "activity_type_selection";
+  id?: number;
+  title?: string;
+  titleError?: string;
+  content?: string;
+  onEditTitle: (title: string) => void;
+  onEditContent: (content: string) => void;
+  onSave: (id?: number, title?: string, content?: string) => Promise<boolean>;
+  onFinishSaving?: () => void;
+  onClose?: () => void;
 };
 
-const TipTapActivity = ({
-  parent = "lesson",
-  parentId,
-  activity,
-  isNewActivity = false,
-  onCloseTipTapEditor,
-  onRefreshAllData,
-  onActivityEditChange,
-  shouldStartEdit = false,
-  forceStopEdit = false,
-}: TipTapActivityProps) => {
-  const { sendRequest } = useHttp(true);
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [showAutosaveIndicator, setShowAutosaveIndicator] =
-    useState<boolean>(false);
-
-  const [isEditingActivity, setEditingActivity] =
-    useState<boolean>(isNewActivity);
-
-  const [title, setTitle] = useState<string>(activity?.title || "");
-  const [editorContent, setEditorContent] = useState<string>(
-    activity?.content || ""
-  );
-
-  const editorRef = useRef<Editor | null>(null);
-  const titleInputRef = useRef<HTMLInputElement>(null);
+/**
+ * Composant contenant l'éditeur de texte Tiptap ainsi que la logique de création/modification/lecture d'une activité
+ * @param mode Le mode actuel de l'activité selectionnée ("read", "create" ou "edit")
+ * @param id L'id (number, optionnel)
+ * @param title Le titre (si déjà existant) qui est affiché dans la zone de texte au dessus de l'éditeur de texte (string, optionnel)
+ * @param content Le contenu (si déjà existant) à passer à l’éditeur de texte (string, optionnel)
+ * @param onSave Fonction qui se déclenche lorsque l'utilisateur sauvegarde l'activité. Une promesse avec un retour de type boolean est attendue,
+ *               si la requête se passe bien alors la prommesse doit retourner "true", sinon "false".
+ * @param onClose Fonction qui se déclenche lorsque l'utilisateur ferme ce composant
+ */
+const TiptapActivity = ({
+  mode,
+  id,
+  title,
+  titleError,
+  content,
+  onEditTitle,
+  onEditContent,
+  onSave,
+  onFinishSaving,
+  onClose,
+}: Props) => {
+  const [pending, setPending] = useState<boolean>(false);
 
   // Hook d'autosave
-  const { lastAutosaveTime, restoreAutosavedContent, clearStorage } =
-    useAutosave({
+  const { lastAutosaveTime, showAutosaveIndicator, clearStorage } = useAutosave(
+    {
+      isWriting: mode === "write",
       title,
-      content: editorContent,
-      parentId,
-      activityId: activity?.id,
-      isNewActivity,
-    });
-
-  const titleHasError = !(title && title.length > 0);
-
-  // Effet pour gérer l'édition depuis l'extérieur
-  useEffect(() => {
-    if (shouldStartEdit && !isEditingActivity) {
-      setEditingActivity(true);
-    } else if (forceStopEdit && isEditingActivity && !shouldStartEdit) {
-      setEditingActivity(false);
+      content,
+      activityId: id,
+      onEditTitle,
+      onEditContent,
     }
-  }, [shouldStartEdit, forceStopEdit, isEditingActivity]);
+  );
 
-  const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.currentTarget.value);
+  const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
+    onEditTitle(e.currentTarget.value);
   };
 
-  // Fonction pour mettre à jour le contenu de l'éditeur
-  const updateEditorContent = (content: string) => {
-    setEditorContent(content);
-  };
+  const handleSave = async () => {
+    setPending(true);
 
-  // Effet pour restaurer le contenu autosauvegardé au chargement
-  useEffect(() => {
-    if (isNewActivity && !activity) {
-      const autosavedData = restoreAutosavedContent();
-      if (autosavedData.wasRestored) {
-        setTitle(autosavedData.title);
-        setEditorContent(autosavedData.content);
-        setShowAutosaveIndicator(true);
-        toast("Contenu restauré depuis la sauvegarde automatique", {
-          duration: 3000,
-        });
-      }
-    }
-  }, [isNewActivity, activity, restoreAutosavedContent]);
-
-  // Effet pour cacher l'indicateur d'autosave après un délai
-  useEffect(() => {
-    if (showAutosaveIndicator) {
-      const timer = setTimeout(() => {
-        setShowAutosaveIndicator(false);
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [showAutosaveIndicator]);
-
-  // Fonction pour fermer l'éditeur avec nettoyage optionnel de l'autosave
-  const handleCloseEditor = () => {
-    if (isNewActivity && (title.trim() || editorContent.trim())) {
-      // Pour une nouvelle activité, garder l'autosave si il y a du contenu
-      // L'utilisateur peut vouloir revenir à son travail plus tard
+    // Sauvegarder l'activité, et si la sauvegarde réussi, effacer la sauvegarde locale pour l'autosave et fermer l'éditeur
+    if (await onSave(id, title, content)) {
+      clearStorage();
+      setPending(false);
+      onFinishSaving?.();
+      onClose?.();
     } else {
-      // Pour les activités existantes, nettoyer l'autosave à la fermeture
-      clearStorage();
+      setPending(false);
     }
-    onCloseTipTapEditor?.();
-    setEditingActivity(false);
-  };
-
-  useEffect(() => {
-    // Add a small delay to ensure DOM is fully rendered before focusing
-    if (showModal) {
-      setTimeout(() => {
-        if (titleInputRef.current) {
-          titleInputRef.current.focus();
-        }
-      }, 100);
-    }
-  }, [showModal]);
-
-  useEffect(() => {
-    onActivityEditChange?.(isEditingActivity);
-  }, [isEditingActivity, onActivityEditChange]);
-
-  // wait 200ms, then scroll to bottom if activity is created
-  useEffect(() => {
-    if (isNewActivity && isEditingActivity) {
-      console.log("scrolling");
-      setTimeout(() => {
-        window.scrollTo({
-          top: document.body.scrollHeight,
-          behavior: "smooth",
-        });
-      }, 200);
-    }
-  }, [isNewActivity, isEditingActivity]);
-
-  const handleSubmitSave = (e: FormEvent) => {
-    e.preventDefault();
-    // save as file
-    const applyData = () => {
-      toast.success(
-        `Activité ${isNewActivity ? "créée" : "modifiée"} avec succès`
-      );
-      // Nettoie l'autosave après sauvegarde réussie
-      clearStorage();
-      setShowModal(false);
-
-      // Pour les nouvelles activités, fermer l'éditeur et rafraîchir
-      if (isNewActivity) {
-        onCloseTipTapEditor?.();
-        onRefreshAllData?.();
-      } else {
-        // Pour les activités existantes, juste sortir du mode édition
-        setEditingActivity(false);
-        // Rafraîchir les données après un petit délai pour éviter les conflits d'état
-        setTimeout(() => {
-          onRefreshAllData?.();
-        }, 100);
-      }
-    };
-
-    // Supprimer les espaces/paragraphes vides au début et à la fin tout en préservant la mise en forme
-    let htmlContent = editorRef.current?.getHTML() || "";
-
-    // Supprimer les paragraphes vides au début
-    htmlContent = htmlContent.replace(
-      /^(<p><\/p>|<p>\s*<\/p>|<p><br><\/p>)+/,
-      ""
-    );
-
-    // Supprimer les paragraphes vides à la fin
-    htmlContent = htmlContent.replace(
-      /(<p><\/p>|<p>\s*<\/p>|<p><br><\/p>)+$/,
-      ""
-    );
-
-    // Mettre à jour le contenu de l'éditeur avec le HTML nettoyé
-    if (htmlContent !== editorRef.current?.getHTML()) {
-      editorRef.current?.commands.setContent(htmlContent);
-    }
-
-    const value = editorRef.current?.getHTML();
-    console.log({ isNewActivity, parent, parentId });
-
-    sendRequest(
-      {
-        path: `/activity/text/${isNewActivity ? parentId : activity?.id}`,
-        method: isNewActivity ? "post" : "put",
-        body: {
-          description: "description",
-          value,
-          title: title.trim(),
-          parent,
-        },
-      },
-      applyData
-    );
   };
 
   return (
-    <>
-      {showModal ? (
-        <Modal
-          title="Sauvegarder l'activité"
-          leftLabel="Annuler"
-          onMinimizeClick={() => setShowModal(false)}
-        >
-          <form
-            onSubmit={handleSubmitSave}
-            className="flex gap-4 items-center pt-10 px-5"
-          >
-            <label className="label" htmlFor="activity-title">
-              Titre de l'activité
-            </label>
-            <input
-              id="activity-title"
-              ref={titleInputRef}
-              value={title}
-              onChange={onChangeTitle}
-              type="text"
-              className="input input-sm input-bordered"
-              placeholder="obligatoire"
-            />
-            <button
-              type="submit"
-              className="btn btn-sm btn-success"
-              disabled={titleHasError}
-            >
-              {isNewActivity ? "Créer" : "Modifier"}
-            </button>
-          </form>
-        </Modal>
-      ) : null}
-
+    <div className="flex flex-col gap-2">
       {/* Indicateur d'autosave */}
       <AutosaveIndicator
         isVisible={showAutosaveIndicator}
         lastSaveTime={lastAutosaveTime}
       />
 
-      <div className="mt-4 w-[100%] bg-base-200 rounded-lg p-4">
+      {mode !== "read" && (
+        <div className="py-4 flex gap-4 items-center">
+          {/* Input titre */}
+          <label className="label min-w-fit" htmlFor="activity-title">
+            Titre de l'activité :
+          </label>
+          <input
+            id="activity-title"
+            value={title || ""}
+            onChange={handleChangeTitle}
+            type="text"
+            className={`input input-sm input-bordered flex-1 ${
+              titleError && "input-error text-error"
+            }`}
+            placeholder="Saisissez le titre de l'activité"
+            autoFocus
+          />
+        </div>
+      )}
+
+      <div className="w-[100%] bg-base-200 rounded-lg p-4">
         <TiptapEditor
-          editorRef={editorRef}
-          initialValue={editorContent || activity?.content}
-          isEditingActivity={isEditingActivity}
-          onCloseEditor={handleCloseEditor}
-          setEditingActivity={setEditingActivity}
-          onSave={() => setShowModal(true)}
-          onContentChange={updateEditorContent}
+          mode={mode}
+          initialValue={content}
+          pending={pending}
+          onSave={handleSave}
+          onContentChange={onEditContent}
         />
       </div>
-    </>
+      {mode !== "read" && onClose && (
+        <button
+          className="btn btn-sm btn-error text-base-100 self-end"
+          onClick={onClose}
+        >
+          Annuler
+        </button>
+      )}
+    </div>
   );
 };
 
-export default TipTapActivity;
+export default TiptapActivity;

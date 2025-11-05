@@ -1,10 +1,10 @@
 import type { CSSProperties, PropsWithChildren } from "react";
 import type Course from "../../../utils/interfaces/course";
-import Wrapper from "../../UI/wrapper/wrapper.component";
 import CourseItem from "./course-item";
 import type Lesson from "../../../utils/interfaces/lesson";
 import Can from "../../UI/can/can.component";
 import FadeWrapper from "../../UI/fade-wrapper/fade-wrapper";
+import { OnDragEndResponder } from "react-beautiful-dnd";
 
 // Type definition pour les props du composant
 type SidebarCoursesListProps = {
@@ -12,9 +12,12 @@ type SidebarCoursesListProps = {
   parcoursId: number;
   moduleId: number;
   selectedLesson: Lesson | undefined;
-  setSelectedLesson: (lesson: Lesson | undefined) => void;
+  onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
+  onLessonReorder: OnDragEndResponder;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
+  onDeleteLesson: (lessonId: number) => Promise<void>;
+  children: React.ReactNode[];
 };
 
 const SidebarCoursesList = ({
@@ -22,14 +25,16 @@ const SidebarCoursesList = ({
   parcoursId,
   moduleId,
   selectedLesson,
-  setSelectedLesson,
+  onSelectLesson,
   onDeleteCourse,
+  onLessonReorder,
   onEnableCourse,
+  onDeleteLesson,
   children,
 }: PropsWithChildren<SidebarCoursesListProps>) => {
   // Filtre les cours qui ont des leçons
   const coursesWithLessons = courses.filter(
-    (course) => course.lessons.length > 0,
+    (course) => course.lessons.length > 0
   );
 
   // Calcule le pourcentage global de progression du module
@@ -43,11 +48,11 @@ const SidebarCoursesList = ({
               sum +
               (lesson?.lessonsRead?.filter((lesson) => lesson.finishedAt)
                 .length || 0),
-            0,
+            0
           ) / course.lessons.length,
-          1,
+          1
         ),
-      0,
+      0
     ) / coursesWithLessons.length;
 
   // Fonction utilitaire pour générer le style du cercle de progression
@@ -58,7 +63,7 @@ const SidebarCoursesList = ({
   };
 
   return (
-    <Wrapper>
+    <div className="border-1 rounded-lg p-5 border-secondary/20">
       {/* En-tête avec le titre et l'indicateur de progression */}
       <Can action="component" object="progression">
         <div className="flex justify-between">
@@ -72,7 +77,7 @@ const SidebarCoursesList = ({
                 <span
                   className="radial-progress text-secondary self-end"
                   style={radialStyle(
-                    !Number.isNaN(moduleProgress) ? moduleProgress : 0,
+                    !Number.isNaN(moduleProgress) ? moduleProgress : 0
                   )}
                 >
                   <p>
@@ -92,7 +97,7 @@ const SidebarCoursesList = ({
         </div>
       </Can>
       {/* Liste des cours */}
-      <div className="flex flex-col items-center gap-5">
+      <div className="flex flex-col items-center gap-5 mt-5">
         {courses.length > 0 ? (
           courses.map((course) => (
             <CourseItem
@@ -101,9 +106,12 @@ const SidebarCoursesList = ({
               parcoursId={parcoursId}
               moduleId={moduleId}
               selectedLesson={selectedLesson}
-              setSelectedLesson={setSelectedLesson}
+              onSelectLesson={onSelectLesson}
               onDeleteCourse={onDeleteCourse}
+              onLessonReorder={onLessonReorder}
               onEnableCourse={onEnableCourse}
+              onDeleteLesson={onDeleteLesson}
+              children={children[1]}
             />
           ))
         ) : (
@@ -113,9 +121,9 @@ const SidebarCoursesList = ({
             </p>
           </Can>
         )}
-        {children}
+        {children[0]}
       </div>
-    </Wrapper>
+    </div>
   );
 };
 

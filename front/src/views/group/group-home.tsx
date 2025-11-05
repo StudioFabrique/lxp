@@ -87,7 +87,7 @@ const GroupHome = () => {
           data,
           isLoading,
           Boolean(searchValue),
-          actionsConfig(onRefreshData),
+          actionsConfig(onRefreshData)
         )}
         checkboxConfig={checkboxConfig}
         sortConfig={{ sortProperty, isAscDirection, onSortProperty }}
@@ -103,7 +103,11 @@ const GroupHome = () => {
             actions={[
               {
                 title: "Supprimer les groupes selectionnés",
-                description: `${idsList.length} ${idsList.length > 1 ? "groupes vont être supprimés" : "groupe va être supprimé"}`,
+                description: `${idsList.length} ${
+                  idsList.length > 1
+                    ? "groupes vont être supprimés"
+                    : "groupe va être supprimé"
+                }`,
                 rightButtonTitle: "Supprimer",
                 onConfirm: onDeleteSelectedGroups,
               },

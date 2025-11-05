@@ -33,7 +33,7 @@ type PayloadType = {
 
 const reducer: Reducer<Link[], { type: ActionType; payload: PayloadType }> = (
   links,
-  { type, payload },
+  { type, payload }
 ) => {
   switch (type) {
     case ActionType.add: {
@@ -69,7 +69,7 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
   };
 
   const handleAddLink: FormEventHandler<HTMLFormElement> = (
-    e: FormEvent<HTMLFormElement>,
+    e: FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
     console.log("test");
@@ -96,7 +96,7 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
         body: { title: value, id: user?._id },
         method: "post",
       },
-      applyData,
+      applyData
     );
   };
 
@@ -189,7 +189,7 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
                   )}
                 </div>
               ))
-            : "Aucuns réseaux sociaux"}
+            : "Aucuns réseau social renseigné"}
         </div>
       </Wrapper>
     </div>

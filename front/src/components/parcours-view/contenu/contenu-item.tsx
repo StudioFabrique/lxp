@@ -13,40 +13,38 @@ const ContenuItem: FC<{
   const minDate: { day: number; month: string } = useMemo(
     () => ({
       day: new Date(module.minDate!).getDate(),
-      month: getMonth(new Date(module.minDate!).getMonth()).substring(0, 4),
+      month: getMonth(new Date(module.minDate!).getMonth()).substring(0, 3),
     }),
-    [module.minDate],
+    [module.minDate]
   );
 
   const navigate = useNavigate();
 
   return (
     <div
-      className="flex gap-x-4 items-center"
+      className="flex gap-x-2 items-center text-base-100"
       onClick={() => setSelectedModule(module)}
       onDoubleClick={() => navigate(`../module/${module.id}`)}
     >
-      <div className="flex flex-col items-center justify-center bg-secondary text-secondary-content p-4 w-24 h-full rounded-lg">
-        <p className="font-bold text-2xl">{minDate.day}</p>
-        <p className="font-bold uppercase">{minDate.month}</p>
+      <div className="flex flex-col items-center justify-center bg-secondary p-4 w-24 rounded-lg h-20">
+        <p className="font-bold text-xl">{minDate.day}</p>
+        <p className="font-bold uppercase text-sm">{minDate.month}</p>
       </div>
       <div
-        className={`flex flex-col items-center p-4 rounded-lg w-full h-full ${
-          selectedModuleId === module.id
-            ? "bg-primary text-primary-content"
-            : "bg-secondary text-secondary-content"
-        } hover:bg-primary/90 hover:cursor-pointer select-none hover:text-primary-content `}
+        className={`flex h-20 items-center p-4 justify-between rounded-lg w-full ${
+          selectedModuleId === module.id ? "bg-primary " : "bg-secondary"
+        } hover:bg-primary/90 hover:cursor-pointer select-none `}
       >
-        <p className="self-start">{`Module ${iterationCount}`}</p>
-        <div className="flex justify-between w-full">
-          <p className="self-start text-xl font-semibold">{module.title}</p>
-          <Link
-            className="btn btn-sm btn-ghost self-end"
-            to={`../module/${module.id}`}
-          >
-            <ArrowRightCircle />
-          </Link>
+        <div>
+          <p className="self-start">{`Module ${iterationCount}`}</p>
+          <p className="self-start text-sm font-semibold">{module.title}</p>
         </div>
+        <Link
+          className="btn btn-sm btn-ghost self-end"
+          to={`../module/${module.id}`}
+        >
+          <ArrowRightCircle />
+        </Link>
       </div>
     </div>
   );

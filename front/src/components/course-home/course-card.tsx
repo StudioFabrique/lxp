@@ -8,6 +8,7 @@ import PublishedIcon from "../UI/svg/published-icon";
 import DraftIcon from "../UI/svg/draft-icon";
 import { localeDate } from "../../helpers/locale-date";
 import defaultThumb from "../../assets/images/module-default-thumb.png";
+import bgImageGradient from "../../utils/bg-image-gradient";
 
 interface CourseCardProps {
   course: CustomCourse;
@@ -19,7 +20,9 @@ export default function CourseCard({
   onDeleteCourse,
 }: CourseCardProps) {
   const classImage: React.CSSProperties = {
-    backgroundImage: `url(${course.thumb ? "data:image/jpeg;base64," + course.thumb : defaultThumb})`,
+    backgroundImage: bgImageGradient(
+      course.thumb ? "data:image/jpeg;base64," + course.thumb : defaultThumb
+    ),
     width: "100%",
     height: "9rem",
     backgroundSize: "cover",
