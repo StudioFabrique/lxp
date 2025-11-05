@@ -1,19 +1,11 @@
-import { Bell, Search } from "lucide-react";
-
 const UserTopBar = () => {
   return (
-    <div className="self-end h-20 mx-10 flex gap-3 justify-end">
+    <div className="flex flex-col gap-4 bg-base-100 text-base border-1 border-base-300 p-5 rounded-lg">
       <input
         placeholder="Que voulez-vous apprendre ?"
         className="input input-secondary bg-secondary/20"
         disabled
       />
-      <button disabled className="btn btn-primary text-base-100">
-        <Search />
-      </button>
-      <button disabled className="btn btn-primary text-base-100">
-        <Bell />
-      </button>
     </div>
   );
 };

@@ -1,37 +1,56 @@
 import { ArrowDown, ArrowRight, EyeOff } from "lucide-react";
 import Course from "../../../utils/interfaces/course";
-import { useEffect, useState } from "react";
+import { PropsWithChildren, useContext, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import LessonItem from "./lesson-item";
 import Lesson from "../../../utils/interfaces/lesson";
 import Can from "../../UI/can/can.component";
 import CourseActionsModal from "./course-actions-modal";
 import CourseActions from "./course-actions";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  OnDragEndResponder,
+} from "react-beautiful-dnd";
+import hasPermission from "../../../utils/hasPermission";
+import { Context } from "../../../store/context.store";
 
 type CourseItemProps = {
   course: Course;
   parcoursId: number;
   moduleId: number;
   selectedLesson: Lesson | undefined;
-  setSelectedLesson: (lesson: Lesson | undefined) => void;
+  onSelectLesson: (lesson: Lesson) => void;
   onDeleteCourse: (courseId: number) => Promise<void>;
+  onLessonReorder: OnDragEndResponder;
   onEnableCourse: (courseId: number, visibility: boolean) => Promise<void>;
+  onDeleteLesson: (lessonId: number) => Promise<void>;
 };
+
+type ModalType = "visibility" | "deleteCourse" | "deleteLesson";
 
 const CourseItem = ({
   course,
   parcoursId,
   moduleId,
   selectedLesson,
-  setSelectedLesson,
+  onSelectLesson,
   onDeleteCourse,
+  onLessonReorder,
   onEnableCourse,
-}: CourseItemProps) => {
+  onDeleteLesson,
+  children,
+}: PropsWithChildren<CourseItemProps>) => {
+  const { user } = useContext(Context);
   const [isCourseOpen, setCourseOpen] = useState(false);
+  const [isDragAndDropEnabled, setDragAndDropEnabled] =
+    useState<boolean>(false);
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<"visibility" | "delete">(
-    "visibility",
-  );
+  const [modalType, setModalType] = useState<ModalType>("visibility");
+  const [selectedLessonToDelete, setSelectedLessonToDelete] = useState<
+    Lesson | undefined
+  >(undefined);
   const [isModalLoading, setIsModalLoading] = useState(false);
 
   const courseProgress = (
@@ -40,7 +59,7 @@ const CourseItem = ({
         sum +
         (lesson?.lessonsRead?.filter((lesson) => lesson.finishedAt).length ||
           0),
-      0,
+      0
     ) / course.lessons.length
   ).toString();
 
@@ -52,13 +71,15 @@ const CourseItem = ({
     e.stopPropagation();
   };
 
-  const handleOpenModal = (
-    e: React.MouseEvent,
-    modalType: "visibility" | "delete",
-  ) => {
-    e.stopPropagation();
+  const handleOpenModal = (modalType: ModalType, e?: React.MouseEvent) => {
+    e?.stopPropagation();
     setModalType(modalType);
     setShowModal(true);
+  };
+
+  const handleOpenLessonDeletionModal = (lesson: Lesson) => {
+    setSelectedLessonToDelete(lesson);
+    handleOpenModal("deleteLesson");
   };
 
   const handleCloseModal = () => {
@@ -69,14 +90,24 @@ const CourseItem = ({
   const handleConfirmAction = async () => {
     setIsModalLoading(true);
     switch (modalType) {
-      case "delete":
+      case "deleteCourse":
         await onDeleteCourse(course.id);
+        break;
+      case "deleteLesson":
+        if (selectedLessonToDelete?.id) {
+          await onDeleteLesson(selectedLessonToDelete.id);
+          setSelectedLessonToDelete(undefined);
+        }
         break;
       case "visibility":
         await onEnableCourse(course.id, !course.visibility);
         break;
     }
     handleCloseModal();
+  };
+
+  const handleClickChangeCourseOrder = () => {
+    setDragAndDropEnabled((prev) => !prev);
   };
 
   useEffect(() => {
@@ -93,15 +124,26 @@ const CourseItem = ({
   return (
     <>
       <CourseActionsModal
-        title={modalType === "visibility" ? "Visibilité" : "Supprimer le cours"}
+        title={
+          modalType === "visibility"
+            ? "Visibilité"
+            : modalType === "deleteLesson"
+            ? "Supprimer la leçon"
+            : "Supprimer le cours"
+        }
         description={
           modalType === "visibility"
-            ? `Êtes-vous sûr de vouloir  ${course.visibility ? "cacher" : "rendre visible"} ce cours ?`
-            : "Êtes-vous sûr de vouloir supprimer ce cours ainsi que les leçons associés ?"
+            ? `Êtes-vous sûr de vouloir  ${
+                course.visibility ? "cacher" : "rendre visible"
+              } ce cours ?`
+            : modalType === "deleteLesson"
+            ? "Êtes-vous sûr de vouloir supprimer cette leçon ainsi que les activités associées ?"
+            : "Êtes-vous sûr de vouloir supprimer ce cours ainsi que les leçons associées ?"
         }
         showModal={showModal}
         isModalLoading={isModalLoading}
         course={course}
+        lesson={selectedLessonToDelete}
         onCancel={handleCloseModal}
         onConfirm={handleConfirmAction}
       />
@@ -109,7 +151,9 @@ const CourseItem = ({
         {!course.isPublished || !course.visibility ? (
           <div
             className="badge badge-info absolute -top-3 -left-3 tooltip tooltip-right tooltip-info z-[11]"
-            data-tip={`Le cours est ${!course.visibility ? "invisible" : ""} ${!course.visibility && !course.isPublished ? "et" : ""} ${!course.isPublished ? "non publié" : ""}`}
+            data-tip={`Le cours est ${!course.visibility ? "invisible" : ""} ${
+              !course.visibility && !course.isPublished ? "et" : ""
+            } ${!course.isPublished ? "non publié" : ""}`}
           >
             <EyeOff className="w-4 h-4 stroke-base-100" />
           </div>
@@ -135,8 +179,10 @@ const CourseItem = ({
                   course={course}
                   parcoursId={parcoursId}
                   moduleId={moduleId}
+                  isDragAndDropEnabled={isDragAndDropEnabled}
                   onOpenModal={handleOpenModal}
                   onClickMenu={handleClickMenu}
+                  onClickChangeCourseOrder={handleClickChangeCourseOrder}
                 />
               </Can>
             </div>
@@ -174,27 +220,75 @@ const CourseItem = ({
             visibility: isCourseOpen ? "visible" : "hidden",
           }}
           animate={{
-            maxHeight: isCourseOpen ? 280 : 0,
+            maxHeight: isCourseOpen ? 500 : 0,
           }}
         >
-          <div className="p-4 flex flex-col gap-4 items-center">
-            {course.lessons.length > 0 ? (
-              course.lessons.map((lesson) => (
-                <LessonItem
-                  key={lesson.id}
-                  lesson={lesson}
-                  lessonsOrders={course.lessons.map(
-                    (lesson) => lesson.order ?? 0,
+          <DragDropContext onDragEnd={onLessonReorder}>
+            <Droppable
+              isDropDisabled={
+                !isDragAndDropEnabled ||
+                !hasPermission(user?.permissions || [], "update", "lesson")
+              }
+              droppableId="droppable"
+            >
+              {(provided, droppableState) => (
+                <div
+                  ref={provided.innerRef}
+                  className={`p-4 flex flex-col gap-4 items-center ${
+                    droppableState.isDraggingOver && "-mt-10"
+                  }`}
+                  {...provided.droppableProps}
+                >
+                  {provided.placeholder}
+                  {course.lessons.length > 0 ? (
+                    course.lessons.map(
+                      (lesson, index) =>
+                        lesson.id && (
+                          <Draggable
+                            key={lesson.id}
+                            draggableId={lesson.id.toString()}
+                            index={index}
+                            isDragDisabled={
+                              !isDragAndDropEnabled ||
+                              !hasPermission(
+                                user?.permissions || [],
+                                "update",
+                                "lesson"
+                              )
+                            }
+                          >
+                            {(provided) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className={`w-full`}
+                              >
+                                <LessonItem
+                                  key={lesson.id}
+                                  lesson={lesson}
+                                  lessonsOrders={course.lessons.map(
+                                    (lesson) => lesson.order ?? 0
+                                  )}
+                                  moduleId={moduleId}
+                                  selectedLesson={selectedLesson}
+                                  onSelectLesson={onSelectLesson}
+                                  onOpenModal={handleOpenLessonDeletionModal}
+                                >
+                                  {!isDragAndDropEnabled && children}
+                                </LessonItem>
+                              </div>
+                            )}
+                          </Draggable>
+                        )
+                    )
+                  ) : (
+                    <p>Aucune leçon</p>
                   )}
-                  moduleId={moduleId}
-                  selectedLesson={selectedLesson}
-                  setSelectedLesson={setSelectedLesson}
-                />
-              ))
-            ) : (
-              <p>Aucune leçon</p>
-            )}
-          </div>
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
         </motion.div>
       </div>
     </>

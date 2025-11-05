@@ -13,13 +13,7 @@ const TagsHomeEditing = forwardRef<
   const [tagName, setTagName] = useState<string>(props.tag.name);
   const [tagError, setTagError] = useState<boolean>(false);
 
-  // here manage the tagError state while validate input regex
   const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-    // if (regexIncorrect) {
-    //   setTagError(true);
-    //   return;
-    // }
-
     setTagError(false);
 
     setTagName(e.currentTarget.value);

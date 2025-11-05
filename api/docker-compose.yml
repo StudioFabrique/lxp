@@ -13,7 +13,7 @@ volumes:
 # The containers that compose the project
 services:
   db-pg:
-    image: postgres:latest
+    image: postgres:17
     restart: always
     container_name: lxp-prisma
     volumes:

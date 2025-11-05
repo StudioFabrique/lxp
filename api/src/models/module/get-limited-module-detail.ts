@@ -37,6 +37,7 @@ export default async function getLimitedModuleDetail(
           description: true,
           visibility: true,
           isPublished: true,
+          objectives: { include: { objective: true } },
           lessons: {
             // where: isTeacher
             //   ? undefined
@@ -66,6 +67,7 @@ export default async function getLimitedModuleDetail(
     throw error;
   }
 
+
   const allCourseTags = existingModule.courses.map((c) => c.tags[0].tag);
 
   let tags: Tag[] = [];
@@ -74,6 +76,10 @@ export default async function getLimitedModuleDetail(
     const t = tags.filter((ta) => ta.id === tag.id);
     if (t.length === 0) tags = [...tags, tag];
   }
+
+  // Remove duplicates from objectives
+  const objectiveIds = new Set();
+
 
   const result = {
     id: existingModule.id,
@@ -87,8 +93,13 @@ export default async function getLimitedModuleDetail(
     parcoursId: existingModule.parcours.id,
     bonusSkills: existingModule.bonusSkills.map((item) => item.bonusSkill),
     contacts: existingModule.contacts.map((item) => item.contact),
-    courses: existingModule.courses,
     tags,
+    courses: existingModule.courses.map((course) => ({
+      ...course,
+      objectives: course.objectives
+        .flatMap((obj) => obj.objective)
+        .filter(({ id }) => !objectiveIds.has(id) && objectiveIds.add(id)),
+    })),
   };
 
   return result;

@@ -110,6 +110,7 @@ export default function useParcoursView() {
                 thumb: module.module.thumb,
               };
             })
+
           )
         );
       }

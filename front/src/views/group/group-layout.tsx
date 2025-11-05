@@ -1,10 +1,11 @@
 import { Outlet } from "react-router-dom";
+import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 
 const GroupLayout = () => {
   return (
-    <div className="flex flex-col p-10 gap-10">
+    <ViewWrapper className="flex flex-col gap-6">
       <Outlet />
-    </div>
+    </ViewWrapper>
   );
 };
 

@@ -9,7 +9,7 @@ import { Context } from "../../store/context.store";
 const Contacts = () => {
   const { user } = useContext(Context);
   const contacts = useSelector(
-    (state: any) => state.parcoursContacts.currentContacts,
+    (state: any) => state.parcoursContacts.currentContacts
   ) as ContactWithMail[];
 
   const contactsList =
@@ -17,7 +17,7 @@ const Contacts = () => {
       contacts.map((contact) => (
         <div
           key={contact.id}
-          className="flex flex-col bg-secondary p-4 rounded-lg text-secondary-content"
+          className="flex flex-col bg-secondary p-4 rounded-lg text-base-100"
         >
           <span className="flex justify-between items-center">
             <p className="capitalize font-bold">{contact.name}</p>
@@ -45,7 +45,7 @@ const Contacts = () => {
       <h2 className="text-xl font-bold text-primary">
         Ressources pédagogiques
       </h2>
-      <div className="flex flex-col gap-y-5 overflow-y-auto h-[60vh]">
+      <div className="flex flex-col gap-y-2 overflow-y-auto h-[60vh]">
         {contactsList}
       </div>
     </Wrapper>

@@ -9,7 +9,7 @@ type Props = {
 export default function Module({ currentRoute }: Props) {
   const isCurrentPathActive = useMemo(
     () => currentRoute[1] === "module",
-    [currentRoute],
+    [currentRoute]
   );
 
   return (
@@ -17,7 +17,7 @@ export default function Module({ currentRoute }: Props) {
       <div className="flex items-center">
         <Link
           to={`/${currentRoute[0]}/module`}
-          className="tooltip tooltip-top w-6 h-6 z-10"
+          className="tooltip w-6 h-6 z-10"
           data-tip="Modules"
         >
           <div className="flex hover justify-center items-center">

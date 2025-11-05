@@ -9,10 +9,7 @@ const Profile = (props: { interfaceType: string }) => (
         to={`/${props.interfaceType}/profil`}
         state={{ tab: "Info", refreshId: Math.floor(Math.random() * 1000) }}
       >
-        <div
-          className="tooltip tooltip-right w-6 h-6"
-          data-tip="Accueil Profile"
-        >
+        <div className="tooltip w-6 h-6" data-tip="Accueil Profile">
           <UserIcon />
         </div>
       </Link>
@@ -26,10 +23,7 @@ const Profile = (props: { interfaceType: string }) => (
             refreshId: Math.floor(Math.random() * 1000),
           }}
         >
-          <div
-            className="tooltip tooltip-right w-6 h-6"
-            data-tip="Modifier mon profil"
-          >
+          <div className="tooltip w-6 h-6" data-tip="Modifier mon profil">
             <EditIcon />
           </div>
         </Link>

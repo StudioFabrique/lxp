@@ -5,7 +5,7 @@ import Objective from "../../utils/interfaces/objective";
 
 const Objectifs = () => {
   const objectives = useSelector(
-    (state: any) => state.parcoursObjectives.objectives,
+    (state: any) => state.parcoursObjectives.objectives
   ) as Objective[];
 
   const objectivesList =
@@ -13,11 +13,9 @@ const Objectifs = () => {
       objectives.map((objective) => (
         <div
           key={objective.id}
-          className="bg-secondary p-4 rounded-lg text-secondary-content"
+          className="bg-secondary p-4 rounded-lg text-base-100"
         >
-          <p className="font-bold first-letter:uppercase">
-            {objective.description}
-          </p>
+          <p className="first-letter:uppercase">{objective.description}</p>
         </div>
       ))
     ) : (
@@ -27,7 +25,7 @@ const Objectifs = () => {
   return (
     <Wrapper>
       <h2 className="text-xl font-bold text-primary">Objectifs</h2>
-      <div className="flex flex-col gap-y-5 overflow-y-auto h-[60vh]">
+      <div className="flex flex-col gap-y-2 overflow-y-auto h-[60vh]">
         {objectivesList}
       </div>
     </Wrapper>

@@ -24,7 +24,7 @@ const User = ({
         <Can action="read" object="user">
           <Link
             to={`/${currentRoute[0]}/user`}
-            className="tooltip tooltip-top w-6 h-6 z-10"
+            className="tooltip w-6 h-6 z-10"
             data-tip="Utilisateurs"
           >
             <div className="flex hover justify-center items-center">
@@ -42,7 +42,7 @@ const User = ({
           <Can action="write" object="user">
             <Link to={`/${currentRoute[0]}/user/add`}>
               <div
-                className="tooltip tooltip-top w-6 h-6"
+                className="tooltip w-6 h-6"
                 data-tip="Création d'un nouvel utilisateur"
               >
                 <AddIcon />

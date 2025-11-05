@@ -56,9 +56,7 @@ const FeelingFeedback = () => {
   return (
     <div className="flex flex-col gap-4 bg-base-100 text-base border-1 border-base-300 p-5 rounded-lg">
       <span className="flex justify-between items-center">
-        <p className="font-bold w-[70%]">
-          Comment vous sentez-vous aujourd'hui ?
-        </p>
+        <p className="font-bold">Comment vous sentez-vous aujourd'hui ?</p>
         <FeelingLevel value={currentProgressValue} />
       </span>
       {isLoading ? (
@@ -68,7 +66,7 @@ const FeelingFeedback = () => {
           <>
             <input
               type="range"
-              className="range range-xs range-primary my-2 bg-secondary-focus"
+              className="range range-xs range-primary my-2 bg-secondary-focus w-full"
               value={currentProgressValue}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setCurrentProgressValue(e.currentTarget.valueAsNumber)
@@ -81,7 +79,7 @@ const FeelingFeedback = () => {
             <textarea
               onChange={(e) => setCommentValue(e.currentTarget.value)}
               value={commentValue}
-              className="textarea text-base-content resize-none"
+              className="textarea text-base-content resize-none w-full"
             />
             <button
               type="button"

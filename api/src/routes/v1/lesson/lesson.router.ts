@@ -7,6 +7,7 @@ import httpPutLesson from "../../../controllers/lesson/http-put-lesson";
 import {
   getLessonsByTagValidator,
   lessonIdValidator,
+  lessonIdWithRateValidator,
   lessonRateValidator,
   putLessonValidator,
   putReorderLessonsValidator,
@@ -36,7 +37,7 @@ lessonRouter.put(
   "/update",
   checkPermissions("lesson"),
   putLessonValidator,
-  httpPutLesson,
+  httpPutLesson
 );
 
 // Route pour obtenir toutes les leçons associées à un tag spécifique
@@ -44,7 +45,7 @@ lessonRouter.get(
   "/tag/:tagId",
   checkPermissions("lesson"),
   getLessonsByTagValidator,
-  httpGetLessonsByTag,
+  httpGetLessonsByTag
 );
 
 // Route pour obtenir la liste complète des leçons
@@ -54,7 +55,7 @@ lessonRouter.get("/", checkPermissions("lesson"), httpGetLessonsList);
 lessonRouter.get(
   "/last-read",
   checkPermissions("lesson"),
-  httpGetLastLessonsRead,
+  httpGetLastLessonsRead
 );
 
 // Route pour obtenir les détails d'une leçon spécifique
@@ -62,7 +63,7 @@ lessonRouter.get(
   "/:lessonId",
   checkPermissions("lesson"),
   lessonIdValidator,
-  httpGetLessonDetail,
+  httpGetLessonDetail
 );
 
 lessonRouter.get("/lesson/:lessonId", checkToken, httpGetLessonDetail);
@@ -72,7 +73,7 @@ lessonRouter.delete(
   "/:lessonId",
   checkPermissions("lesson"),
   lessonIdValidator,
-  httpDeleteLesson,
+  httpDeleteLesson
 );
 
 // Route pour réorganiser l'ordre des leçons dans un cours
@@ -80,7 +81,7 @@ lessonRouter.put(
   "/reorder/:courseId",
   checkPermissions("lesson"),
   putReorderLessonsValidator,
-  httpPutReorderLessons,
+  httpPutReorderLessons
 );
 
 // Route pour marquer le début de lecture d'une leçon
@@ -88,20 +89,21 @@ lessonRouter.post(
   "/read/:lessonId",
   checkPermissions("lesson", "read"),
   lessonIdValidator,
-  httpPostBeginReadLesson,
+  httpPostBeginReadLesson
 );
 
 lessonRouter.get(
   "/rate/:lessonId",
   checkPermissions("lesson", "read"),
   lessonIdValidator,
-  httpGetLessonRating,
+  httpGetLessonRating
 );
 
 lessonRouter.put(
   "/rate/:lessonId",
   checkPermissions("lesson", "read"),
-  httpPutRateLesson,
+  lessonIdValidator,
+  httpPutRateLesson
 );
 
 // Route pour attribuer un avis sous forme de note pour une leçon
@@ -109,15 +111,15 @@ lessonRouter.post(
   "/rate/:lessonId",
   checkPermissions("lesson", "read"),
   [...lessonIdValidator, ...lessonRateValidator],
-  httpPostRateLesson,
+  httpPostRateLesson
 );
 
-// Route pour marquer une leçon comme terminée
+// Route pour marquer une leçon comme terminée (et noter pour la première fois la leçon)
 lessonRouter.put(
   "/read/:lessonId",
   checkPermissions("lesson", "read"),
-  lessonIdValidator,
-  httpPutFinishReadLesson,
+  lessonIdWithRateValidator,
+  httpPutFinishReadLesson
 );
 
 lessonRouter.get(

@@ -6,6 +6,7 @@ import StudentCard from "../../components/teacher/student-data/student-card";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
 import useTeacher from "./hooks/useTeacher";
 import UserConnection from "../../components/stats/user-connection";
+import bgImageGradient from "../../utils/bg-image-gradient";
 export default function UserData() {
   const { studentId } = useParams();
   const {
@@ -21,7 +22,7 @@ export default function UserData() {
   }, [getTotalConnectionTime]);
 
   const classImage: React.CSSProperties = {
-    backgroundImage: `url(${imageUrl})`,
+    backgroundImage: bgImageGradient(imageUrl),
     width: "100%",
     height: "20rem",
     backgroundSize: "cover",

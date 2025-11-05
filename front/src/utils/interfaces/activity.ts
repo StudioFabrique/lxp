@@ -1,7 +1,7 @@
 export interface Activity {
   id: number;
   url: string;
-  type: "text" | "video" | "image" | "resource";
+  type: ActivityType;
   order: number;
   title?: string;
   description?: string;
@@ -9,6 +9,8 @@ export interface Activity {
   updatedAt: string;
   resourceActivities?: Resource[];
 }
+
+export type ActivityType = "text" | "image" | "video" | "iframe" | "resource";
 
 export interface Resource {
   id: number;
