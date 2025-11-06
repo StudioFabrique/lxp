@@ -8,17 +8,22 @@ import {
 } from "../../../utils/constantes";
 import Certifications from "./certifications/certifications";
 import Graduation from "../../../utils/interfaces/graduation";
-import Links from "../../UI/links/links";
-import { Link } from "../../../utils/interfaces/link";
+import { Link as LinkI } from "../../../utils/interfaces/link";
 import Hobby from "../../../utils/interfaces/hobby";
 import Informations from "./informations.component";
 import Contact from "./contact.component";
 import TypeUtilisateur from "./type-utilisateur.component";
-import CentreInterets from "./centre-interets.component";
 import Presentation from "./presentation.component";
 import toast from "react-hot-toast";
-import UserFormHeader from "./user-form-header";
 import User from "../../../utils/interfaces/user";
+import ItemsAdder from "../../UI/items-adder";
+import Header from "../../UI/header";
+import { Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  transformLink,
+  urlIsValid,
+} from "../../../utils/link-transform-service";
 
 const UserAddForm: FC<{
   user?: User | null;
@@ -36,7 +41,7 @@ const UserAddForm: FC<{
 
   const [file, setFile] = useState<File | null>(null);
 
-  const [links, setLinks] = useState<Array<Link>>([]);
+  const [links, setLinks] = useState<Array<LinkI>>([]);
 
   const [roleId, setRoleId] = useState<string | null>(null);
 
@@ -144,12 +149,31 @@ const UserAddForm: FC<{
 
   return (
     <form className="flex flex-col gap-y-8" autoComplete="off">
-      <UserFormHeader
-        title={props.editMode ? "Modifier un utilisateur" : undefined}
-        onSubmit={handleSubmit}
-        disabled={props.fieldsDisabled}
-        isLoading={props.isLoading}
-      />
+      <Header
+        title={
+          props.editMode ? "Modifier un utilisateur" : "Créer un utilisateur"
+        }
+        description="Modifier les informations d'un utilisateur."
+      >
+        <Link to=".." className="btn btn-outline md:w-32 normal-case mr-4">
+          Annuler
+        </Link>
+        <button
+          onClick={handleSubmit}
+          type="button"
+          className="btn btn-primary text-base-100 normal-case"
+          disabled={props.fieldsDisabled || props.isLoading}
+        >
+          {props.isLoading ? (
+            <span className="flex items-center gap-x-2">
+              <Loader2 className="animate-spin mr-2 h-4 w-4" />
+              <p>Sauvegarde en cours...</p>
+            </span>
+          ) : (
+            "Sauvegarder"
+          )}
+        </button>
+      </Header>
       <div className="flex flex-col gap-y-5">
         <div className={`grid gap-x-5 ${styleEditMode}`}>
           <Informations
@@ -158,7 +182,7 @@ const UserAddForm: FC<{
             email={email}
             nickname={nickname}
             onSetFile={setFile}
-            disabled={props.fieldsDisabled}
+            disabled={props.fieldsDisabled || props.isLoading}
           />
           <Contact
             address={address}
@@ -167,7 +191,7 @@ const UserAddForm: FC<{
             onChangeDate={setBirthDate}
             phone={phoneNumber}
             postCode={postCode}
-            disabled={props.fieldsDisabled}
+            disabled={props.fieldsDisabled || props.isLoading}
           />
           <div className="grid grid-rows-1 gap-y-5">
             {props.editMode ? null : (
@@ -182,15 +206,36 @@ const UserAddForm: FC<{
           </div>
         </div>
         <div className="grid grid-cols-3 gap-x-5">
-          <CentreInterets
-            hobbies={hobbies}
-            setHobbies={setHobbies}
-            disabled={props.fieldsDisabled}
+          <ItemsAdder
+            styleOptions={{
+              label: "Centre d'intérêts",
+              placeholder: "Ajouter un nouveau centre d'intérêt",
+              itemsHasColor: true,
+            }}
+            items={hobbies}
+            disabled={props.fieldsDisabled || props.isLoading}
+            getValue={(item) => item.title}
+            onValidate={(value) => {
+              if (!(value.length > 0))
+                throw new Error("Le centre d'intérêt est vide");
+              if (hobbies.some((hobby) => hobby.title === value))
+                throw new Error(`Le centre d'intérêt '${value}' existe déjà`);
+            }}
+            onAddItem={async (value) => {
+              setHobbies((hobbies) => [...hobbies, { title: value }]);
+              return true;
+            }}
+            onDelete={async (item) => {
+              setHobbies((hobbies) =>
+                hobbies.filter((hobby) => hobby.title !== item.title)
+              );
+              return true;
+            }}
           />
           <div className="col-span-2">
             <Presentation
               description={description}
-              disabled={props.fieldsDisabled}
+              disabled={props.fieldsDisabled || props.isLoading}
             />
           </div>
         </div>
@@ -199,13 +244,35 @@ const UserAddForm: FC<{
             <Certifications
               graduations={graduations}
               setGraduations={setGraduations}
-              disabled={props.fieldsDisabled}
+              disabled={props.fieldsDisabled || props.isLoading}
             />
           </div>
-          <Links
-            links={links}
-            onSetLinks={setLinks}
-            disabled={props.fieldsDisabled}
+          <ItemsAdder
+            styleOptions={{
+              label: "Liens",
+              placeholder:
+                "Ajouter de nouveaux liens vers les réseaux sociaux, sites web...",
+              itemsHasColor: true,
+            }}
+            items={links}
+            disabled={props.fieldsDisabled || props.isLoading}
+            getValue={(item) => item.url}
+            onValidate={(value) => {
+              if (!(value.length > 0)) throw new Error("L'url est vide");
+              if (links.some((hobby) => hobby.url === value))
+                throw new Error(`L'url '${value}' existe déjà`);
+              if (!urlIsValid(value)) throw new Error("L'url est incorrecte");
+            }}
+            onAddItem={async (value) => {
+              setLinks((links) => [...links, { ...transformLink(value) }]);
+              return true;
+            }}
+            onDelete={async (item) => {
+              setLinks((hobbies) =>
+                hobbies.filter((hobby) => hobby.url !== item.url)
+              );
+              return true;
+            }}
           />
         </div>
       </div>

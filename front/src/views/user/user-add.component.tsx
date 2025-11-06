@@ -5,6 +5,7 @@ import UserAddForm from "../../components/forms/user-form/user-add-form.componen
 
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 
 const UserAdd = () => {
   const { error, isLoading, sendRequest } = useHttp();
@@ -35,13 +36,13 @@ const UserAdd = () => {
   }, [error]);
 
   return (
-    <main className="w-9/12">
+    <ViewWrapper>
       <UserAddForm
         onSubmitForm={handleSubmit}
         error={error}
         isLoading={isLoading}
       />
-    </main>
+    </ViewWrapper>
   );
 };
 
