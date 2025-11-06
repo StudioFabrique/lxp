@@ -175,7 +175,7 @@ const Certifications: FC<{
           {editMode.isActive ? (
             <button
               type="button"
-              className="mt-2 normal-case self-start btn btn-primary"
+              className="mt-2 normal-case self-start btn btn-primary text-base-100"
               onClick={handleEditGraduation}
               disabled={disabled}
             >
@@ -184,7 +184,7 @@ const Certifications: FC<{
           ) : (
             <button
               type="button"
-              className="mt-2 normal-case self-start btn btn-primary"
+              className="mt-2 normal-case self-start btn btn-primary text-base-100"
               onClick={handleAddGraduation}
               disabled={disabled}
             >

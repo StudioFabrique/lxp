@@ -207,18 +207,12 @@ userRouter.use("/profile", checkPermissions("cursus"), userProfileRouter);
 
 // Centres d'intérêts d'un étudiant (création, suppression)
 userRouter.post("/hobby", checkPermissions("cursus"), httpPostHobby);
-userRouter.delete("/hobby/:id", checkPermissions("cursus"), httpDeleteHobby);
 
 // Réseaux sociaux d'un étudiant (création, suppression)
 userRouter.post(
   "/social-network",
   checkPermissions("cursus"),
   httpPostSocialNetwork
-);
-userRouter.delete(
-  "/social-network/:id",
-  checkPermissions("cursus"),
-  httpDeleteSocialNetwork
 );
 
 // retourne les deux derniers parcours auquel l'utilisateur participe en tant que contact
@@ -302,6 +296,14 @@ userRouter.post(
   "/invitations",
   checkPermissions("user"),
   httpPostManyInvitations
+);
+
+userRouter.delete("/hobby/:id", checkPermissions("cursus"), httpDeleteHobby);
+
+userRouter.delete(
+  "/social-network/:id",
+  checkPermissions("cursus"),
+  httpDeleteSocialNetwork
 );
 
 export default userRouter;
