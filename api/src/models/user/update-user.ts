@@ -19,24 +19,33 @@ export default async function updateUser(_id: string, user: IUser) {
     for (const link of userDataSecure.links) {
       if (!link) continue;
 
-      // Existing ObjectId or string
       if (typeof link === "string" || link instanceof mongoose.Types.ObjectId) {
         linkIds.push(new mongoose.Types.ObjectId(link));
-      }
-      // Object with URL
-      else if (link.url) {
-        // check if this link already exists for this user (avoid duplicate creation)
-        const existing = await Link.findOne({ url: link.url, user: _id });
+      } else if (link.url) {
+        const cleanedUrl = link.url
+          .replace(/&#x2F;/g, "/")
+          .replace(/&amp;/g, "&")
+          .replace(/&lt;/g, "<")
+          .replace(/&gt;/g, ">")
+          .replace(/&quot;/g, '"')
+          .replace(/&#39;/g, "'");
+        const existing = await Link.findOne({ url: cleanedUrl, user: _id });
         if (existing) {
           linkIds.push(existing._id);
         } else {
-          // 👇 exclude _id if passed
-          const { _id: _ignored, ...linkData } = link;
-          const newLink = await Link.create({ ...linkData, user: _id });
+          delete link._id;
+          const newLink = await Link.create({
+            ...link,
+            url: cleanedUrl,
+            user: _id,
+          });
           linkIds.push(newLink._id);
         }
       }
     }
+  } else {
+    // if links is not provided at all, keep existing
+    linkIds = existingUser.links || [];
   }
 
   // Handle Hobbies
@@ -55,18 +64,21 @@ export default async function updateUser(_id: string, user: IUser) {
         if (existing) {
           hobbyIds.push(existing._id);
         } else {
-          const { _id: _ignored, ...hobbyData } = hobby;
-          const newHobby = await Hobby.create({ ...hobbyData, user: _id });
+          delete hobby._id;
+          const newHobby = await Hobby.create({ ...hobby, user: _id });
           hobbyIds.push(newHobby._id);
         }
       }
     }
+  } else {
+    // if hobbies is not provided at all, keep existing
+    hobbyIds = existingUser.hobbies || [];
   }
 
   const userUpdatePayload: Partial<IUser> = {
     ...userDataSecure,
-    links: linkIds.length > 0 ? linkIds : existingUser.links,
-    hobbies: hobbyIds.length > 0 ? hobbyIds : existingUser.hobbies,
+    links: linkIds,
+    hobbies: hobbyIds,
   };
 
   const userUpdated = await User.findOneAndUpdate({ _id }, userUpdatePayload, {
