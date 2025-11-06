@@ -2,10 +2,10 @@ import { useCallback, useMemo } from "react";
 
 import useEagerLoadingList from "../../../hooks/use-eager-loading-list";
 import SortColumnIcon from "../../UI/sort-column-icon.component/sort-column-icon.component";
-import Lesson from "../../../utils/interfaces/lesson";
+import { LessonWithActivitiesCount } from "../../../utils/interfaces/lesson";
 
 interface LessonsTableProps {
-  list?: Lesson[];
+  list?: LessonWithActivitiesCount[];
   onAddItems?: (ids: number[]) => void;
   onCloseDrawer?: (id: string) => void;
 }
@@ -19,7 +19,7 @@ const LessonsTable = (props: LessonsTableProps) => {
     setAllChecked,
     handleRowCheck,
     sortData,
-  } = useEagerLoadingList(props.list!, "description");
+  } = useEagerLoadingList(props.list!, "activitiesCount");
 
   /**
    * gère le coche / décochage de toutes les checkboxes
@@ -59,14 +59,14 @@ const LessonsTable = (props: LessonsTableProps) => {
             <th
               className="cursor-pointer"
               onClick={() => {
-                sortData("description");
+                sortData("activitiesCount");
               }}
             >
               <div className="flex items-center gap-x-2">
-                <p>Description</p>
+                <p>Nombre d'activités</p>
                 <SortColumnIcon
                   fieldSort={fieldSort}
-                  column="description"
+                  column="activitiesCount"
                   direction={direction}
                 />
               </div>
@@ -75,7 +75,7 @@ const LessonsTable = (props: LessonsTableProps) => {
         </thead>
         <tbody>
           {list &&
-            list.map((item: Lesson) => (
+            list.map((item: LessonWithActivitiesCount) => (
               <tr
                 className="bg-secondary/10 hover:bg-secondary/20 hover:text-base-content"
                 key={item.id}
@@ -91,7 +91,7 @@ const LessonsTable = (props: LessonsTableProps) => {
                   />
                 </td>
                 <td>{item.title}</td>
-                <td>{item.description}</td>
+                <td className="text-center">{item.activitiesCount}</td>
               </tr>
             ))}
         </tbody>

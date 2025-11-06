@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 
 import RightSideDrawer from "../../UI/right-side-drawer/right-side-drawer";
@@ -10,9 +9,8 @@ import useHttp from "../../../hooks/use-http";
 import Tag from "../../../utils/interfaces/tag";
 import SearchDropdown from "../../UI/search-dropdown/search-dropdown";
 import TagItem from "../../UI/tag-item/tag-item";
-import Lesson from "../../../utils/interfaces/lesson";
+import { LessonWithActivitiesCount } from "../../../utils/interfaces/lesson";
 import LessonsTable from "./lessons-table";
-import { courseScenarioActions } from "../../../store/redux-toolkit/course/course-scenario";
 
 interface LessonsInDrawerProps {
   onAddNewLessons: (lessonsIds: number[]) => void;
@@ -20,13 +18,14 @@ interface LessonsInDrawerProps {
 
 const LessonsInDrawer = (props: LessonsInDrawerProps) => {
   const { sendRequest, error } = useHttp();
-  const dispatch = useDispatch();
   const tags = useSelector(
     (state: any) => state.courseInfos.course.tags
   ) as Tag[];
   const [filteredTags, setFilteredTags] = useState<Tag[]>([]);
   const [tag, setTag] = useState<Tag | null>(null);
-  const [lessonsList, setLessonsList] = useState<Lesson[] | null>(null);
+  const [lessonsList, setLessonsList] = useState<
+    LessonWithActivitiesCount[] | null
+  >(null);
 
   /**
    * gère l'ouverture et la fermeture du drawer
@@ -73,22 +72,19 @@ const LessonsInDrawer = (props: LessonsInDrawerProps) => {
   };
 
   /**
-   * ajoputes les leçons sélectionnées ) la liste des leçons du cours
+   * ajoute les leçons sélectionnées à la liste des leçons du cours
    * @param lessonsIds number[]
    */
   const handleAddLessons = (lessonsIds: number[]) => {
-    let updatedLessons = Array<Lesson>();
-    lessonsIds.forEach((id) => {
-      const lesson = lessonsList!.find((elem) => elem.id === id);
-      if (lesson) {
-        updatedLessons = [...updatedLessons, lesson];
-      }
-    });
+    // Filtrer directement les leçons qui correspondent aux IDs
+    const updatedLessons = lessonsList!.filter((lesson) =>
+      lessonsIds.includes(lesson.id)
+    );
 
     if (updatedLessons.length > 0) {
       props.onAddNewLessons(updatedLessons.map((item) => item.id!));
     }
-    dispatch(courseScenarioActions.addManyLessons(updatedLessons));
+
     handleCloseDrawer("add-lessons");
     setTag(null);
     setLessonsList(null);
@@ -98,7 +94,7 @@ const LessonsInDrawer = (props: LessonsInDrawerProps) => {
    * retourne la liste des leçons associées au tag choisi par l'utilisateur
    */
   useEffect(() => {
-    const applyData = (data: { total: number; data: Lesson[] }) => {
+    const applyData = (data: { data: LessonWithActivitiesCount[] }) => {
       setLessonsList(data.data);
     };
     if (tag) {
