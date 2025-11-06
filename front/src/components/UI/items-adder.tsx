@@ -91,7 +91,7 @@ const ItemsAdder = <Item extends { id?: number; _id?: string }>({
           <button
             key={getValue(item)}
             type="button"
-            className={`btn group text-secondary-content pl-6 pr-1 rounded-xl cursor-pointer ${
+            className={`btn group text-base-content pl-6 pr-1 rounded-xl cursor-pointer ${
               styleOptions.itemsHasColor && getColor(getValue(item))
             }`}
             onClick={() => handleClickDelete(item)}
