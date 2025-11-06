@@ -24,7 +24,7 @@ const ContenuDetailHeader: FC<{
   return (
     <div>
       <div className="flex flex-col justify-end p-5" style={classImage}>
-        <p className="text-base-100 text-xl font-bold">{title}</p>
+        <p className="text-white text-xl font-bold">{title}</p>
       </div>
     </div>
   );
