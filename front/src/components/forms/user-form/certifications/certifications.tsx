@@ -132,7 +132,7 @@ const Certifications: FC<{
       <div className="grid grid-cols-2 gap-x-10">
         <div className="flex flex-col justify-between">
           <div className="flex flex-col justify-between gap-y-3">
-            <h2 className="font-bold text-xl">Certification(s)</h2>
+            <h2 className="font-bold text-xl">Certifications</h2>
             <span className="flex flex-col gap-y-2">
               <label>Titre du diplôme</label>
               <input

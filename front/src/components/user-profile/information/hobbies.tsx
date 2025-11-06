@@ -18,6 +18,7 @@ import Loader from "../../UI/loader";
 import Can from "../../UI/can/can.component";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { Context } from "../../../store/context.store";
+import ItemsAdder from "../../UI/items-adder";
 
 enum ActionType {
   add,
@@ -116,66 +117,31 @@ const Hobbies: FC<{ initHobbies: Hobby[] }> = ({ initHobbies }) => {
 
   return (
     <div data-testid="hobbies" className="flex flex-col gap-2">
-      <dialog ref={modalRef} className="modal">
-        <div className="modal-box flex flex-col gap-5">
-          <button
-            type="button"
-            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-            onClick={() => modalRef.current?.close()}
-          >
-            ✕
-          </button>
-          <p>Nom du centre d'intérêt :</p>
-          <div className="flex justify-between items-center">
-            <input
-              type="text"
-              className="input input-secondary"
-              value={value}
-              onChange={handleChangeValue}
-            />
-            <button type="submit" className="btn" onClick={handleAddHobby}>
-              Ajouter
-            </button>
-          </div>
-        </div>
-      </dialog>
-      <div className="flex gap-5">
-        <h3 className="text-lg font-semibold">Mes centres d'intérêts</h3>
-        <Can action="write" object="cursus">
-          <button
-            type="button"
-            className="btn btn-sm btn-primary text-base-100"
-            onClick={handleShowModal}
-          >
-            Ajouter <PlusCircle className="h-5" />
-          </button>
-        </Can>
-      </div>
-      <div className="p-5 flex flex-wrap gap-5">
-        {hobbies.length > 0
-          ? hobbies.map((hobby) => (
-              <SubWrapper key={hobby._id}>
-                <div className="flex gap-2">
-                  <p>{hobby.title}</p>
-                  {isLoading ? (
-                    <span className="h-5 w-5">
-                      <Loader />
-                    </span>
-                  ) : (
-                    <span className="flex items-center">
-                      <Can action="delete" object="cursus">
-                        <Trash2
-                          className="h-5 cursor-pointer"
-                          onClick={() => handleDeleteHobby(hobby._id!)}
-                        />
-                      </Can>
-                    </span>
-                  )}
-                </div>
-              </SubWrapper>
-            ))
-          : "Aucune passion renseignée"}
-      </div>
+      <ItemsAdder
+        styleOptions={{
+          label: "Centre d'intérêts",
+          placeholder: "Ajouter un nouveau centre d'intérêt",
+          itemsHasColor: true,
+        }}
+        items={hobbies}
+        getValue={(item) => item.title}
+        onValidate={(value) => {
+          if (!(value.length > 0))
+            throw new Error("Le centre d'intérêt est vide");
+          if (hobbies.some((hobby) => hobby.title === value))
+            throw new Error(`Le centre d'intérêt '${value}' existe déjà`);
+        }}
+        onAddItem={async (value) => {
+          dispatch({ type: ActionType.add, payload: {} });
+          return true;
+        }}
+        onDelete={async (item) => {
+          setHobbies((hobbies) =>
+            hobbies.filter((hobby) => hobby.title !== item.title)
+          );
+          return true;
+        }}
+      />
     </div>
   );
 };

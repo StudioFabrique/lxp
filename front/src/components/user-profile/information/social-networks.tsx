@@ -17,6 +17,7 @@ import { PlusCircle, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { Context } from "../../../store/context.store";
 import SubWrapper from "../../UI/sub-wrapper/sub-wrapper.component";
+import Wrapper from "../../UI/wrapper/wrapper.component";
 
 enum ActionType {
   add,
@@ -60,7 +61,6 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
 
   const [value, setValue] = useState<string>("");
   const [links, dispatch] = useReducer(reducer, initLinks);
-  const [editMode /* setEditMode */] = useState(false);
 
   const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.currentTarget.value);
@@ -103,11 +103,13 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
       toast.success("Centre d'intérêt supprimé avec succès");
     };
 
-    sendRequest({ path: `/user/hobby/${id}`, method: "delete" }, applyData);
+    sendRequest(
+      { path: `/user/social-network/${id}`, method: "delete" },
+      applyData
+    );
   };
 
   const handleOpenLinkNewTab = (link: string) => {
-    if (editMode) return;
     window.open(link);
   };
 
@@ -153,49 +155,29 @@ const SocialNetworks: FC<{ initLinks: Link[] }> = ({ initLinks }) => {
         </Can>
       </div>
 
-      <div
-        className={`p-5 flex flex-wrap ${
-          editMode ? "flex-col" : "cursor-pointer"
-        }  gap-10 `}
-      >
-        {links.length
-          ? links.map((link) => (
-              <SubWrapper key={link._id}>
-                <button className="flex gap-2">
-                  <p onClick={() => handleOpenLinkNewTab(link.url)}>
-                    {link.type ?? link.url}
-                  </p>
+      <div className="p-5 flex flex-wrap cursor-pointer gap-10">
+        <Wrapper>
+          {links.length
+            ? links.map((link) => (
+                <SubWrapper key={link._id}>
+                  <button className="flex gap-2">
+                    <p onClick={() => handleOpenLinkNewTab(link.url)}>
+                      {link.type ?? link.url}
+                    </p>
 
-                  <span className="flex items-center">
-                    <Can action="delete" object="cursus">
-                      <Trash2
-                        className="h-5 cursor-pointer"
-                        onClick={() => handleDeleteLink(link._id!)}
-                      />
-                    </Can>
-                  </span>
-                </button>
-              </SubWrapper>
-              // <div
-              //   data-tip={link.url}
-              //   key={link._id}
-              //   onClick={() => handleOpenLinkNewTab(link.url)}
-              //   className={`flex items-center justify-between p-2 rounded-lg  ${
-              //     editMode
-              //       ? "bg-secondary/10 p-5 gap-20"
-              //       : "tooltip hover:bg-secondary/50"
-              //   }`}
-              // >
-              //   <p>{link.type ?? link.url}</p>
-
-              //   <Can action="delete" object="cursus">
-              //     <span className="w-6 h-6 cursor-pointer">
-              //       <DeleteIcon />
-              //     </span>
-              //   </Can>
-              // </div>
-            ))
-          : "Aucuns réseau social renseigné"}
+                    <span className="flex items-center">
+                      <Can action="delete" object="cursus">
+                        <Trash2
+                          className="h-5 cursor-pointer"
+                          onClick={() => handleDeleteLink(link._id!)}
+                        />
+                      </Can>
+                    </span>
+                  </button>
+                </SubWrapper>
+              ))
+            : "Aucuns réseau social renseigné"}
+        </Wrapper>
       </div>
     </div>
   );
