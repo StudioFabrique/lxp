@@ -1,4 +1,3 @@
-import { Tag } from "@prisma/client";
 import { prisma } from "../../utils/db";
 
 export default async function getLimitedModuleDetail(
@@ -56,7 +55,6 @@ export default async function getLimitedModuleDetail(
               order: "asc",
             },
           },
-          tags: { select: { tag: true } },
         },
         orderBy: {
           order: "asc",
@@ -68,15 +66,6 @@ export default async function getLimitedModuleDetail(
   if (!existingModule) {
     const error: any = { message: "Le module n'existe pas.", statusCode: 404 };
     throw error;
-  }
-
-  const allCourseTags = existingModule.courses.map((c) => c.tags[0].tag);
-
-  let tags: Tag[] = [];
-
-  for (const tag of allCourseTags) {
-    const t = tags.filter((ta) => ta.id === tag.id);
-    if (t.length === 0) tags = [...tags, tag];
   }
 
   const result = {
@@ -91,7 +80,6 @@ export default async function getLimitedModuleDetail(
     parcoursId: existingModule.parcours.id,
     bonusSkills: existingModule.bonusSkills.map((item) => item.bonusSkill),
     contacts: existingModule.contacts.map((item) => item.contact),
-    tags,
     courses: existingModule.courses,
   };
   return result;
