@@ -11,6 +11,24 @@ export const lessonIdValidator = [
     .withMessage("L'identifiant de la leçon doit être un nombre entier."),
 ];
 
+export const duplicateLessonValidator = [
+  param("courseId")
+    .notEmpty()
+    .withMessage("L'idientifiant du cours est requis.")
+    .isNumeric()
+    .isInt()
+    .withMessage("L'identifiant du cours doit être un nombre entier."),
+  /*
+  body("lessonId")
+    .notEmpty()
+    .withMessage("L'idientifiant de la leçon est requis.")
+    .isNumeric()
+    .isInt()
+    .withMessage("L'identifiant de la leçon doit être un nombre entier."),
+    */
+  checkValidatorResult,
+];
+
 export const lessonIdWithRateValidator = [
   param("lessonId")
     .notEmpty()
