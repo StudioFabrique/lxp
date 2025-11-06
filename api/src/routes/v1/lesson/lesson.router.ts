@@ -5,6 +5,7 @@ import checkToken from "../../../middleware/check-token";
 import httpPutLesson from "../../../controllers/lesson/http-put-lesson";
 // Validateurs pour les différentes routes
 import {
+  duplicateLessonValidator,
   getLessonsByTagValidator,
   lessonIdValidator,
   lessonIdWithRateValidator,
@@ -28,6 +29,7 @@ import httpGetOneLesson from "../../../controllers/lesson/http-get-one-lesson";
 import httpGetLessonRating from "../../../controllers/lesson/http-get-lesson-rating";
 import httpPostRateLesson from "../../../controllers/lesson/http-post-rate-lesson";
 import httpPutRateLesson from "../../../controllers/lesson/http-put-rate-lesson";
+import httpPostDuplicateLesson from "../../../controllers/lesson/http-post-duplicate-lesson";
 
 // Création du routeur Express pour les leçons
 const lessonRouter = express.Router();
@@ -127,6 +129,13 @@ lessonRouter.get(
   checkPermissions("lesson"),
   lessonIdValidator,
   httpGetOneLesson
+);
+
+lessonRouter.post(
+  "/duplicate/:courseId",
+  checkPermissions("lesson"),
+  duplicateLessonValidator,
+  httpPostDuplicateLesson
 );
 
 export default lessonRouter;

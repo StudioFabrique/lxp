@@ -7,8 +7,6 @@ async function putCourseLesson(
   lessonData: any,
   adminId: string
 ) {
-  console.log({ lessonData });
-
   const existingCourse = await prisma.course.findFirst({
     where: { id: courseId },
     select: { lessons: true },

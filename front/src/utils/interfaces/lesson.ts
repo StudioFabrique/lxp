@@ -21,3 +21,10 @@ export default interface Lesson {
   lessonsRead?: LessonRead[];
   lessonRating: LessonRating[];
 }
+
+export interface LessonWithActivitiesCount {
+  id: number;
+  title: string;
+  activitiesCount: number;
+  isSelected?: boolean;
+}

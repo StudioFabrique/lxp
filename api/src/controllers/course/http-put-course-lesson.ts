@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import putCourseLesson from "../../models/course/put-course-lesson";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 

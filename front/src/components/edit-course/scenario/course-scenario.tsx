@@ -41,17 +41,22 @@ const CourseScenario = () => {
       if (!lessons.find((item) => item.id === id))
         newLessons = [...newLessons, id];
     });
-    const applyData = (data: { success: boolean; message: string }) => {
+    const applyData = (data: {
+      success: boolean;
+      message: string;
+      response: { id: number; title: string };
+    }) => {
       setLoading(false);
       if (data.success) {
         toast.success(data.message);
+        dispatch(courseScenarioActions.addManyLessons(data.response));
       }
     };
     setLoading(true);
     sendRequest(
       {
-        path: `/course/lessons/${courseId}`,
-        method: "put",
+        path: `/lesson/duplicate/${courseId}`,
+        method: "post",
         body: newLessons,
       },
       applyData
