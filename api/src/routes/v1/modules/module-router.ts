@@ -38,6 +38,7 @@ import multer from "multer";
 import httpPostModuleFromScratch from "../../../controllers/module/http-post-module-from-scratch";
 import httpGetLimitedModuleDetail from "../../../controllers/module/http-get-limited-module-detail";
 import httpPostDuplicateModule from "../../../controllers/module/http-post-duplicate-module";
+import httpGetParcoursModules from "../../../controllers/module/http-get-parcours-modules";
 
 const modules = Router();
 
@@ -57,6 +58,13 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
+
+modules.get(
+  "/parcours-modules/:parcoursId",
+  checkPermissions("module"),
+  parcoursIdValidator,
+  httpGetParcoursModules
+);
 
 // retourne la liste de tous les modules
 modules.get("/", checkPermissions("module"), httpGetAllModules);

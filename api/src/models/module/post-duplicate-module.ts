@@ -217,6 +217,16 @@ export default async function postDuplicateModule(
           admin: { connect: { id: existingAdmin.id } }, // Use current admin
           order: course.order,
           author: course.author,
+          contacts: {
+            create: course.contacts.map((contact) => ({
+              contact: { connect: { id: contact.contact.id } },
+            })),
+          },
+          tags: {
+            create: course.tags.map((tag) => ({
+              tag: { connect: { id: tag.tag.id } },
+            })),
+          },
           // Deep copy all lessons within the course
           lessons: {
             create: course.lessons.map((lesson) => ({
