@@ -220,6 +220,8 @@ const UserAddForm: FC<{
                 throw new Error("Le centre d'intérêt est vide");
               if (hobbies.some((hobby) => hobby.title === value))
                 throw new Error(`Le centre d'intérêt '${value}' existe déjà`);
+              if (!regexGeneric.test(value))
+                throw new Error("La valeur est incorrecte");
             }}
             onAddItem={async (value) => {
               setHobbies((hobbies) => [...hobbies, { title: value }]);

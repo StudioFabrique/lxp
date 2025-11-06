@@ -13,6 +13,7 @@ import Hobby from "../../../utils/interfaces/hobby";
 import { Link } from "../../../utils/interfaces/link";
 
 import ThemeSelectSettings from "./theme-select-settings";
+import ItemsAdder from "../../UI/items-adder";
 
 type UserInformation = {
   _id: string;
@@ -103,8 +104,65 @@ const InformationAndSettings: FC<{
             <Presentation formProps={formProps} />
             {style?.showStudentElements && (
               <>
-                <Hobbies initHobbies={userData?.hobbies ?? []} />
-                <SocialNetworks initLinks={userData?.links ?? []} />
+                <ItemsAdder
+                  styleOptions={{
+                    label: "Centre d'intérêts",
+                    placeholder: "Ajouter un nouveau centre d'intérêt",
+                    itemsHasColor: true,
+                  }}
+                  items={userData?.hobbies ?? []}
+                  getValue={(item) => item.title}
+                  onValidate={(value) => {
+                    if (!(value.length > 0))
+                      throw new Error("Le centre d'intérêt est vide");
+                    if (hobbies.some((hobby) => hobby.title === value))
+                      throw new Error(
+                        `Le centre d'intérêt '${value}' existe déjà`
+                      );
+                    if (!regexGeneric.test(value))
+                      throw new Error("La valeur est incorrecte");
+                  }}
+                  onAddItem={async (value) => {
+                    setHobbies((hobbies) => [...hobbies, { title: value }]);
+                    return true;
+                  }}
+                  onDelete={async (item) => {
+                    setHobbies((hobbies) =>
+                      hobbies.filter((hobby) => hobby.title !== item.title)
+                    );
+                    return true;
+                  }}
+                />
+                <ItemsAdder
+                  styleOptions={{
+                    label: "Liens",
+                    placeholder:
+                      "Ajouter de nouveaux liens vers les réseaux sociaux, sites web...",
+                    itemsHasColor: true,
+                  }}
+                  items={userData?.links || []}
+                  getValue={(item) => item.url}
+                  onValidate={(value) => {
+                    if (!(value.length > 0)) throw new Error("L'url est vide");
+                    if (links.some((hobby) => hobby.url === value))
+                      throw new Error(`L'url '${value}' existe déjà`);
+                    if (!urlIsValid(value))
+                      throw new Error("L'url est incorrecte");
+                  }}
+                  onAddItem={async (value) => {
+                    setLinks((links) => [
+                      ...links,
+                      { ...transformLink(value) },
+                    ]);
+                    return true;
+                  }}
+                  onDelete={async (item) => {
+                    setLinks((hobbies) =>
+                      hobbies.filter((hobby) => hobby.url !== item.url)
+                    );
+                    return true;
+                  }}
+                />
               </>
             )}
           </div>
