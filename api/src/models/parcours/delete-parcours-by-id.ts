@@ -32,6 +32,7 @@ async function deleteParcoursById(parcoursId: number, userId: string) {
 
       title = parcours.title;
 
+      /*
       if (parcours.modules && parcours.modules.length > 0) {
         throw {
           message:
@@ -39,6 +40,7 @@ async function deleteParcoursById(parcoursId: number, userId: string) {
           statusCode: 400,
         };
       }
+      */
 
       // Supprimer les enregistrements dans la table TagsOnParcours liés au parcours
       await tx.tagsOnParcours.deleteMany({
