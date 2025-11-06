@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import { serverIssue } from "../../utils/constantes";
 import getModulesFromParcours from "../../models/module/get-modules-from-parcours";
+import { log } from "winston";
 
 async function httpGetModulesFromParcours(req: Request, res: Response) {
   const { parcoursId } = req.params;
+  console.log("dans le cul lulu");
 
   try {
     const response = await getModulesFromParcours(+parcoursId);

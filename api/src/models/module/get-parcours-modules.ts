@@ -36,7 +36,9 @@ export default async function getParcoursModules(parcoursId: number) {
     },
   });
 
+  const result = modules.map((m) => ({ id: m.id, title: m.module.title }));
+
   // Transform data into a flat structure for frontend consumption
   // Maps module metadata to simple objects with ID and title
-  return { message: "toto" };
+  return result;
 }

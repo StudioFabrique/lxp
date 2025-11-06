@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { regexGeneric } from "../utils/constantes";
 import Contact from "../utils/interfaces/contact";
-import CourseDates from "../utils/interfaces/course-dates";
+//import CourseDates from "../utils/interfaces/course-dates";
 import Lesson from "../utils/interfaces/lesson";
-import Objective from "../utils/interfaces/objective";
-import Skill from "../utils/interfaces/skill";
+//import Objective from "../utils/interfaces/objective";
+//import Skill from "../utils/interfaces/skill";
 import Tag from "../utils/interfaces/tag";
 
 const testTitle = (title: string) => {
@@ -22,22 +22,23 @@ const testTags = (tags: Array<Tag>) => {
 const testContacts = (contacts: Array<Contact>) => {
   return contacts && contacts.length > 0;
 };
-
+/*
 const testObjectives = (objectives: Array<Objective>) => {
   return objectives && objectives.length > 0;
 };
 
 const testSkills = (skills: Array<Skill>) => {
   return skills && skills.length > 0;
-};
+};*/
 
 const testLessons = (lessons: Lesson[]) => {
   return lessons && lessons.length > 0;
 };
-
+/*
 const testDates = (dates: CourseDates[]) => {
   return dates && dates.length > 0;
 };
+*/
 
 export function testStep(data: any) {
   const validationErrors = Array<any>();
@@ -66,7 +67,7 @@ export function testStep(data: any) {
     });
     return validationErrors;
   }
-
+  /*
   if (!testObjectives(data.objectives as Objective[])) {
     validationErrors.push({
       objectives: "Le cours doit avoir au moins un objectif",
@@ -79,17 +80,20 @@ export function testStep(data: any) {
     });
     return validationErrors;
   }
+  */
   if (!testLessons(data.lessons as Lesson[])) {
     validationErrors.push({
       lessons: "Le cours doit avoir au moins une leçon",
     });
   }
+  /*
   if (!testDates(data.dates as CourseDates[])) {
     validationErrors.push({
       dates: "Le cours doit avoir au moins une plage de dates",
     });
   }
-  console.log({ validationErrors });
+  */
+  //console.log({ validationErrors });
 
   return validationErrors;
 }

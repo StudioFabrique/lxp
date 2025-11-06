@@ -134,7 +134,7 @@ const RightSideDrawer: FC<Props> = ({
               </div>
               <h2 className="text-xl font-bold text-primary">{title}</h2>
             </div>
-            <div className="divider" />
+            <div className="divider divider-vertical"></div>
           </div>
 
           {/* Contenu scrollable */}

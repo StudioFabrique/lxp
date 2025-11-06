@@ -38,6 +38,7 @@ import multer from "multer";
 import httpPostModuleFromScratch from "../../../controllers/module/http-post-module-from-scratch";
 import httpGetLimitedModuleDetail from "../../../controllers/module/http-get-limited-module-detail";
 import httpPostDuplicateModule from "../../../controllers/module/http-post-duplicate-module";
+import httpGetParcoursModules from "../../../controllers/module/http-get-parcours-modules";
 
 const modules = Router();
 
@@ -62,7 +63,7 @@ modules.get(
   "/parcours-modules/:parcoursId",
   checkPermissions("module"),
   parcoursIdValidator,
-  httpGetModulesFromParcours
+  httpGetParcoursModules
 );
 
 // retourne la liste de tous les modules
