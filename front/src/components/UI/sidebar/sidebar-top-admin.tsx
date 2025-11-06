@@ -63,7 +63,7 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
             onMouseLeave={() => setIsHover(false)}
           >
             <div className="flex items-center">
-              <Plus />
+              <Plus className="z-10" />
 
               <MotionSidebarWrapper isHover={isHover}>
                 <div className="flex gap-5">{moreItems(true)}</div>

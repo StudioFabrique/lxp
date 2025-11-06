@@ -11,7 +11,10 @@ import Wrapper from "../wrapper/wrapper.component";
 import SocialNetworksIconSwitcher from "../svg/social-networks/social-networks-icon-switcher";
 import { Link } from "../../../utils/interfaces/link";
 import DeleteIcon from "../svg/delete-icon.component";
-import { urlIsValid, transformLink } from "./link-transform-service";
+import {
+  transformLink,
+  urlIsValid,
+} from "../../../utils/link-transform-service";
 
 const Links: FC<{
   links: Array<Link>;
@@ -21,7 +24,7 @@ const Links: FC<{
   const [currentLink, setCurrentLink] = useState<string>("");
 
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (
-    event: ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement>
   ) => {
     setCurrentLink(event.currentTarget.value);
   };
@@ -33,13 +36,7 @@ const Links: FC<{
       urlIsValid(currentLink)
     ) {
       const linkProperties = transformLink(currentLink);
-      onSetLinks((links) => [
-        ...links,
-        {
-          url: currentLink,
-          ...linkProperties,
-        },
-      ]);
+      onSetLinks((links) => [...links, linkProperties]);
       setCurrentLink("");
     }
   };

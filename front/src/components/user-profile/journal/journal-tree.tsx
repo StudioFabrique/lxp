@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BookOpen, FileText, Rocket } from "lucide-react";
+import { BookOpen, Component, Rocket } from "lucide-react";
 import Parcours from "../../../utils/interfaces/parcours";
 import Course from "../../../utils/interfaces/course";
 import JournalTimeline from "./journal-timeline";
@@ -12,13 +12,13 @@ const JournalTree = ({ parcoursList }: Props) => {
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
 
   return (
-    <div className="flex flex-col md:flex-row gap-8">
+    <div className="flex flex-row gap-8 max-h-[70vh]">
       {/* ===== File Tree ===== */}
-      <ul className="menu menu-sm bg-base-200 rounded-box max-w-xs w-full">
+      <ul className="menu menu-sm bg-base-200 rounded-box max-w-xs w-[35%] overflow-y-scroll">
         {parcoursList.map((parcours) => (
           <li key={parcours.id}>
             <details open>
-              <summary>
+              <summary className="font-bold text-sm mb-4">
                 <Rocket className="h-4 w-4" />
                 {parcours.title}
               </summary>
@@ -27,7 +27,7 @@ const JournalTree = ({ parcoursList }: Props) => {
                   <li key={module.id}>
                     <details open>
                       <summary>
-                        <BookOpen className="h-4 w-4" />
+                        <Component className="h-4 w-4" />
                         {module.title}
                       </summary>
                       <ul>
@@ -36,12 +36,12 @@ const JournalTree = ({ parcoursList }: Props) => {
                             <a
                               className={`flex items-center gap-2 ${
                                 selectedCourse?.id === course.id
-                                  ? "text-primary font-semibold"
+                                  ? "text-primary font-semibold underline"
                                   : ""
                               }`}
                               onClick={() => setSelectedCourse(course)}
                             >
-                              <FileText className="h-4 w-4" />
+                              <BookOpen className="h-4 w-4" />
                               {course.title}
                             </a>
                           </li>
@@ -57,7 +57,7 @@ const JournalTree = ({ parcoursList }: Props) => {
       </ul>
 
       {/* ===== Timeline ===== */}
-      <div className="flex-1">
+      <div className="overflow-y-scroll border-base-300 border-[1px] rounded-lg w-full">
         {selectedCourse ? (
           <JournalTimeline course={selectedCourse} />
         ) : (

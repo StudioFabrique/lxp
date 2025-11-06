@@ -29,7 +29,9 @@ const Field = (props: FieldProps) => {
 
   return (
     <div className="flex flex-col gap-y-2 w-full">
-      <label htmlFor={name}>{label}</label>
+      <label htmlFor={name} className="text-sm font-bold">
+        {label}
+      </label>
       <input
         ref={fieldRef}
         className={style}

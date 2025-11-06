@@ -2,16 +2,13 @@ import {
   FC,
   FormEventHandler,
   Ref,
+  useCallback,
   useEffect,
   useRef,
   useState,
-  useContext,
 } from "react";
 import Info from "./info";
-import Contact from "./contact";
 import Presentation from "./presentation";
-import Hobbies from "./hobbies";
-import SocialNetworks from "./social-networks";
 import useForm from "../../UI/forms/hooks/use-form";
 import { validationErrors } from "../../../helpers/validate";
 import toast from "react-hot-toast";
@@ -21,12 +18,13 @@ import Loader from "../../UI/loader";
 import Hobby from "../../../utils/interfaces/hobby";
 import { Link } from "../../../utils/interfaces/link";
 
-import { darkThemes, lightThemes } from "../../../config/themes";
-import { Context } from "../../../store/context.store";
-import Wrapper from "../../UI/wrapper/wrapper.component";
-import Can from "../../UI/can/can.component";
-import CompanyPictureUpload from "../../profile-home/company-picture-upload";
-import ThemeSelect from "../../profile-home/theme-select";
+import ThemeSelectSettings from "./theme-select-settings";
+import ItemsAdder from "../../UI/items-adder";
+import { regexGeneric } from "../../../utils/constantes";
+import {
+  transformLink,
+  urlIsValid,
+} from "../../../utils/link-transform-service";
 
 type UserInformation = {
   _id: string;
@@ -48,10 +46,13 @@ const InformationAndSettings: FC<{
   style?: { showStudentElements?: boolean };
 }> = ({ formRef, style }) => {
   const { sendRequest, isLoading } = useHttp(true);
-  const { chooseTheme } = useContext(Context);
+
   const { initValues, onValidationErrors, ...formProps } = useForm();
 
   const [userData, setUserData] = useState<UserInformation>();
+  const [hobbies, setHobbies] = useState<Hobby[]>([]);
+  const [links, setLinks] = useState<Link[]>([]);
+
   const [temporaryAvatar, setTemporaryAvatar] = useState<{
     file: File | null;
     url: string | null;
@@ -61,18 +62,44 @@ const InformationAndSettings: FC<{
   });
   const firstInputRef = useRef<HTMLInputElement>(null);
 
+  const addHobby = useCallback(async (value: string) => {
+    setHobbies((prev) => [...prev, { title: value }]);
+    return true;
+  }, []);
+
+  const deleteHobby = useCallback(async (item: Hobby) => {
+    setHobbies((prev) => prev.filter((h) => h.title !== item.title));
+    return true;
+  }, []);
+
+  const addLink = useCallback(async (value: string) => {
+    setLinks((links) => [...links, { ...transformLink(value) }]);
+    return true;
+  }, []);
+
+  const deleteLink = useCallback(async (item: Link) => {
+    setLinks((prev) => prev.filter((link) => link.url !== item.url));
+    return true;
+  }, []);
+
   const handleSubmitForm: FormEventHandler = (e) => {
     e.preventDefault();
+
+    const completeData = {
+      ...formProps.values,
+      hobbies,
+      links,
+    };
+
     const formData = new FormData();
     if (temporaryAvatar.file) formData.append("image", temporaryAvatar.file);
-    formData.append("data", JSON.stringify({ user: formProps.values }));
+    formData.append("data", JSON.stringify({ user: completeData }));
 
     try {
-      informationSchema.parse(formProps.values);
+      informationSchema.parse(completeData);
       sendRequest(
         { path: "/user/profile/information", method: "put", body: formData },
-        (data: { data: UserInformation }) => {
-          setUserData(data.data);
+        () => {
           toast.success("Profil sauvegardé avec succès !");
         }
       );
@@ -91,12 +118,12 @@ const InformationAndSettings: FC<{
   }, [sendRequest]);
 
   useEffect(() => {
-    if (userData) initValues(userData);
+    if (userData) {
+      initValues(userData);
+      setHobbies(userData.hobbies ?? []);
+      setLinks(userData.links ?? []);
+    }
   }, [userData, initValues]);
-
-  const handleThemeChange = (newTheme: string, mode: string) => {
-    chooseTheme(newTheme, mode);
-  };
 
   if (isLoading) return <Loader />;
 
@@ -104,55 +131,71 @@ const InformationAndSettings: FC<{
     <form
       ref={formRef}
       onSubmit={handleSubmitForm}
-      className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+      className="flex flex-col gap-5"
     >
       {/* Colonne gauche — Infos du profil */}
       <div className="flex flex-col gap-6">
-        <div className="flex gap-2">
-          <Info
-            formProps={formProps}
-            firstInputRef={firstInputRef}
-            temporaryAvatar={temporaryAvatar}
-            setTemporaryAvatar={setTemporaryAvatar}
-          />
-          <Contact formProps={formProps} />
-        </div>
-        {style?.showStudentElements && (
-          <>
+        <div className="grid grid-cols-2 gap-10">
+          <div className="flex flex-col">
+            <Info
+              formProps={formProps}
+              firstInputRef={firstInputRef}
+              temporaryAvatar={temporaryAvatar}
+              setTemporaryAvatar={setTemporaryAvatar}
+            />
+          </div>
+          <div className="flex flex-col gap-5">
             <Presentation formProps={formProps} />
-            <Hobbies initHobbies={userData?.hobbies ?? []} />
-            <SocialNetworks initLinks={userData?.links ?? []} />
-          </>
-        )}
+            {style?.showStudentElements && (
+              <>
+                <ItemsAdder
+                  styleOptions={{
+                    label: "Centre d'intérêts",
+                    placeholder: "Ajouter un nouveau centre d'intérêt",
+                    itemsHasColor: true,
+                  }}
+                  items={hobbies ?? []}
+                  getValue={(item) => item.title}
+                  onValidate={(value) => {
+                    if (!(value.length > 0))
+                      throw new Error("Le centre d'intérêt est vide");
+                    if (hobbies.some((hobby) => hobby.title === value))
+                      throw new Error(
+                        `Le centre d'intérêt '${value}' existe déjà`
+                      );
+                    if (!regexGeneric.test(value))
+                      throw new Error("La valeur est incorrecte");
+                  }}
+                  onAddItem={addHobby}
+                  onDelete={deleteHobby}
+                />
+                <ItemsAdder
+                  styleOptions={{
+                    label: "Liens",
+                    placeholder:
+                      "Ajouter de nouveaux liens vers les réseaux sociaux, sites web...",
+                    itemsHasColor: true,
+                  }}
+                  items={links || []}
+                  getValue={(item) => item.url}
+                  onValidate={(value) => {
+                    if (!(value.length > 0)) throw new Error("L'url est vide");
+                    if (links.some((link) => link.url === value))
+                      throw new Error(`L'url '${value}' existe déjà`);
+                    if (!urlIsValid(value))
+                      throw new Error("L'url est incorrecte");
+                  }}
+                  onAddItem={addLink}
+                  onDelete={deleteLink}
+                />
+              </>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Colonne droite — Thèmes & préférences */}
-      <div className="flex flex-col gap-6">
-        <section className="card bg-base-200 shadow-md hover:shadow-lg transition-all duration-300">
-          <div className="card-body flex flex-col gap-4 p-6 rounded-lg">
-            <h2 className="text-lg font-semibold">Préférences</h2>
-
-            <Wrapper>
-              <ThemeSelect
-                label="Thème clair"
-                themesList={lightThemes}
-                onThemeChange={handleThemeChange}
-              />
-            </Wrapper>
-            <Wrapper>
-              <ThemeSelect
-                label="Thème sombre"
-                themesList={darkThemes}
-                onThemeChange={handleThemeChange}
-              />
-            </Wrapper>
-
-            <Can action="component" object="company-picture-upload">
-              <CompanyPictureUpload />
-            </Can>
-          </div>
-        </section>
-      </div>
+      <ThemeSelectSettings />
     </form>
   );
 };

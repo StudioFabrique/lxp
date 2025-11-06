@@ -73,7 +73,7 @@ const Profile = () => {
           data-value="Info"
           onClick={handleChangeTab}
         >
-          Information
+          Informations
         </a>
 
         <Can action="component" object="calendar">

@@ -132,7 +132,7 @@ const Certifications: FC<{
       <div className="grid grid-cols-2 gap-x-10">
         <div className="flex flex-col justify-between">
           <div className="flex flex-col justify-between gap-y-3">
-            <h2 className="font-bold text-xl">Certification(s)</h2>
+            <h2 className="font-bold text-xl">Certifications</h2>
             <span className="flex flex-col gap-y-2">
               <label>Titre du diplôme</label>
               <input
@@ -175,7 +175,7 @@ const Certifications: FC<{
           {editMode.isActive ? (
             <button
               type="button"
-              className="mt-2 normal-case self-start btn btn-primary"
+              className="mt-2 normal-case self-start btn btn-primary text-base-100"
               onClick={handleEditGraduation}
               disabled={disabled}
             >
@@ -184,7 +184,7 @@ const Certifications: FC<{
           ) : (
             <button
               type="button"
-              className="mt-2 normal-case self-start btn btn-primary"
+              className="mt-2 normal-case self-start btn btn-primary text-base-100"
               onClick={handleAddGraduation}
               disabled={disabled}
             >

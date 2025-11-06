@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Wrapper from "../../UI/wrapper/wrapper.component";
 import useHttp from "../../../hooks/use-http";
 import Loader from "../../UI/loader";
 import Parcours from "../../../utils/interfaces/parcours";
@@ -20,16 +19,15 @@ const Journal = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h3 className="text-xl font-bold">Mes historique d'accomplissements</h3>
-      <Wrapper>
-        {isLoading ? (
-          <Loader />
-        ) : parcours.length > 0 ? (
-          <JournalTree parcoursList={parcours} />
-        ) : (
-          <p className="p-4">Aucune entrée</p>
-        )}
-      </Wrapper>
+      <h3 className="text-xl font-bold">Mon historique d'accomplissements</h3>
+
+      {isLoading ? (
+        <Loader />
+      ) : parcours.length > 0 ? (
+        <JournalTree parcoursList={parcours} />
+      ) : (
+        <p className="p-4">Aucune entrée</p>
+      )}
     </div>
   );
 };

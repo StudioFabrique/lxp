@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import fs from "fs";
 import createManyGraduations from "../../models/graduation/create-many-graduations";
-import createManyHobbies from "../../models/hobby/create-many-hobbies";
 import createManyLinks from "../../models/links/create-many-links";
 import createUser from "../../models/user/create-user";
 import { badQuery } from "../../utils/constantes";
 import { IGraduation } from "../../utils/interfaces/db/graduation";
 import { IHobby } from "../../utils/interfaces/db/hobby";
 import { ILink } from "../../utils/interfaces/db/link";
+import createManyHobbies from "../../models/user/hobby/create-many-hobbies";
 
 export default async function httpCreateUser(req: Request, res: Response) {
   let userDataRequest = req.body.data.user;
@@ -32,7 +32,7 @@ export default async function httpCreateUser(req: Request, res: Response) {
 
     await createManyGraduations(
       userResponse!.createdUser._id,
-      graduationsDataRequest,
+      graduationsDataRequest
     ); // insert graduations in mongodb with user ref _id
 
     await createManyLinks(userResponse!.createdUser._id, linksDataRequest); // insert links in mongodb with user ref _id
