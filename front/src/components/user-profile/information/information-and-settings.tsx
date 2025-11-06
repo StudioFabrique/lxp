@@ -1,8 +1,6 @@
 import { FC, FormEventHandler, Ref, useEffect, useRef, useState } from "react";
 import Info from "./info";
 import Presentation from "./presentation";
-import Hobbies from "./hobbies";
-import SocialNetworks from "./social-networks";
 import useForm from "../../UI/forms/hooks/use-form";
 import { validationErrors } from "../../../helpers/validate";
 import toast from "react-hot-toast";
@@ -14,6 +12,11 @@ import { Link } from "../../../utils/interfaces/link";
 
 import ThemeSelectSettings from "./theme-select-settings";
 import ItemsAdder from "../../UI/items-adder";
+import { regexGeneric } from "../../../utils/constantes";
+import {
+  transformLink,
+  urlIsValid,
+} from "../../../utils/link-transform-service";
 
 type UserInformation = {
   _id: string;
@@ -39,6 +42,9 @@ const InformationAndSettings: FC<{
   const { initValues, onValidationErrors, ...formProps } = useForm();
 
   const [userData, setUserData] = useState<UserInformation>();
+  const [hobbies, setHobbies] = useState<Hobby[]>([]);
+  const [links, setLinks] = useState<Link[]>([]);
+
   const [temporaryAvatar, setTemporaryAvatar] = useState<{
     file: File | null;
     url: string | null;
@@ -50,16 +56,22 @@ const InformationAndSettings: FC<{
 
   const handleSubmitForm: FormEventHandler = (e) => {
     e.preventDefault();
+
+    const completeData = {
+      ...formProps.values,
+      hobbies,
+      links,
+    };
+
     const formData = new FormData();
     if (temporaryAvatar.file) formData.append("image", temporaryAvatar.file);
-    formData.append("data", JSON.stringify({ user: formProps.values }));
+    formData.append("data", JSON.stringify({ user: completeData }));
 
     try {
-      informationSchema.parse(formProps.values);
+      informationSchema.parse(completeData);
       sendRequest(
         { path: "/user/profile/information", method: "put", body: formData },
-        (data: { data: UserInformation }) => {
-          setUserData(data.data);
+        () => {
           toast.success("Profil sauvegardé avec succès !");
         }
       );
@@ -78,7 +90,11 @@ const InformationAndSettings: FC<{
   }, [sendRequest]);
 
   useEffect(() => {
-    if (userData) initValues(userData);
+    if (userData) {
+      initValues(userData);
+      setHobbies(userData.hobbies ?? []);
+      setLinks(userData.links ?? []);
+    }
   }, [userData, initValues]);
 
   if (isLoading) return <Loader />;
@@ -110,7 +126,7 @@ const InformationAndSettings: FC<{
                     placeholder: "Ajouter un nouveau centre d'intérêt",
                     itemsHasColor: true,
                   }}
-                  items={userData?.hobbies ?? []}
+                  items={hobbies ?? []}
                   getValue={(item) => item.title}
                   onValidate={(value) => {
                     if (!(value.length > 0))
@@ -140,11 +156,11 @@ const InformationAndSettings: FC<{
                       "Ajouter de nouveaux liens vers les réseaux sociaux, sites web...",
                     itemsHasColor: true,
                   }}
-                  items={userData?.links || []}
+                  items={links || []}
                   getValue={(item) => item.url}
                   onValidate={(value) => {
                     if (!(value.length > 0)) throw new Error("L'url est vide");
-                    if (links.some((hobby) => hobby.url === value))
+                    if (links.some((link) => link.url === value))
                       throw new Error(`L'url '${value}' existe déjà`);
                     if (!urlIsValid(value))
                       throw new Error("L'url est incorrecte");
@@ -157,8 +173,8 @@ const InformationAndSettings: FC<{
                     return true;
                   }}
                   onDelete={async (item) => {
-                    setLinks((hobbies) =>
-                      hobbies.filter((hobby) => hobby.url !== item.url)
+                    setLinks((prev) =>
+                      prev.filter((link) => link.url !== item.url)
                     );
                     return true;
                   }}
