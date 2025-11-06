@@ -1,4 +1,12 @@
-import { FC, FormEventHandler, Ref, useEffect, useRef, useState } from "react";
+import {
+  FC,
+  FormEventHandler,
+  Ref,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Info from "./info";
 import Presentation from "./presentation";
 import useForm from "../../UI/forms/hooks/use-form";
@@ -53,6 +61,26 @@ const InformationAndSettings: FC<{
     url: null,
   });
   const firstInputRef = useRef<HTMLInputElement>(null);
+
+  const addHobby = useCallback(async (value: string) => {
+    setHobbies((prev) => [...prev, { title: value }]);
+    return true;
+  }, []);
+
+  const deleteHobby = useCallback(async (item: Hobby) => {
+    setHobbies((prev) => prev.filter((h) => h.title !== item.title));
+    return true;
+  }, []);
+
+  const addLink = useCallback(async (value: string) => {
+    setLinks((links) => [...links, { ...transformLink(value) }]);
+    return true;
+  }, []);
+
+  const deleteLink = useCallback(async (item: Link) => {
+    setLinks((prev) => prev.filter((link) => link.url !== item.url));
+    return true;
+  }, []);
 
   const handleSubmitForm: FormEventHandler = (e) => {
     e.preventDefault();
@@ -138,16 +166,8 @@ const InformationAndSettings: FC<{
                     if (!regexGeneric.test(value))
                       throw new Error("La valeur est incorrecte");
                   }}
-                  onAddItem={async (value) => {
-                    setHobbies((hobbies) => [...hobbies, { title: value }]);
-                    return true;
-                  }}
-                  onDelete={async (item) => {
-                    setHobbies((hobbies) =>
-                      hobbies.filter((hobby) => hobby.title !== item.title)
-                    );
-                    return true;
-                  }}
+                  onAddItem={addHobby}
+                  onDelete={deleteHobby}
                 />
                 <ItemsAdder
                   styleOptions={{
@@ -165,19 +185,8 @@ const InformationAndSettings: FC<{
                     if (!urlIsValid(value))
                       throw new Error("L'url est incorrecte");
                   }}
-                  onAddItem={async (value) => {
-                    setLinks((links) => [
-                      ...links,
-                      { ...transformLink(value) },
-                    ]);
-                    return true;
-                  }}
-                  onDelete={async (item) => {
-                    setLinks((prev) =>
-                      prev.filter((link) => link.url !== item.url)
-                    );
-                    return true;
-                  }}
+                  onAddItem={addLink}
+                  onDelete={deleteLink}
                 />
               </>
             )}
