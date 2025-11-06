@@ -13,7 +13,7 @@ const Competences = () => {
       skills.map((skill) => (
         <div
           key={skill.id}
-          className="bg-secondary p-4 rounded-lg text-base-100"
+          className="bg-secondary p-4 rounded-lg text-base-content"
         >
           <p className="first-letter:uppercase">{skill.description}</p>
         </div>

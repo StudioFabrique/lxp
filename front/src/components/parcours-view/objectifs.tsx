@@ -13,7 +13,7 @@ const Objectifs = () => {
       objectives.map((objective) => (
         <div
           key={objective.id}
-          className="bg-secondary p-4 rounded-lg text-base-100"
+          className="bg-secondary p-4 rounded-lg text-base-content"
         >
           <p className="first-letter:uppercase">{objective.description}</p>
         </div>
