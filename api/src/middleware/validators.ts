@@ -198,6 +198,7 @@ export const userProfileValidator = (isFormData: boolean = false) => {
       .isString()
       .trim()
       .escape()
+      .optional()
       .withMessage("links.*.alias"),
     body(validatorSubject + ".hobbies.*.title")
       .isString()

@@ -41,6 +41,7 @@ export default async function httpUpdateUserProfile(
       .status(201)
       .json({ message: "utilisateur mis à jour avec succès", data: response });
   } catch (error) {
+    console.log({ error });
     return res.status(500).json({ message: "erreur serveur" });
   }
 }

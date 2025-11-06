@@ -22,12 +22,13 @@ export default async function getUserData(userId: string) {
       isActive: 0,
       studentFeedbacks: 0,
       graduations: 0,
-      links: 0,
-      hobbies: 0,
     }
   )
     .populate("connectionInfos") // Include connection history data
     .populate("group", { image: 0 }) // Include group data but exclude images
+    .populate("roles") // Include user roles
+    .populate("hobbies")
+    .populate("links")
     .lean()) as IUser;
 
   // Validate user existence
