@@ -79,31 +79,61 @@ export default async function postDuplicateParcours(
       // Select all modules and their nested relationships
       modules: {
         select: {
+          // Module basic information
+
+          duration: true,
+          rating: true,
+          admin: {
+            select: {
+              id: true,
+            },
+          },
+          // Module relationships
+          bonusSkills: {
+            select: {
+              bonusSkill: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+          contacts: {
+            select: {
+              contact: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
           module: {
             select: {
-              // Module basic information
+              id: true,
               title: true,
               description: true,
               image: true,
               thumb: true,
-              duration: true,
-              rating: true,
+            },
+          },
+          // Courses within modules
+          courses: {
+            select: {
+              // Course basic information
+              title: true,
+              description: true,
+              image: true,
+              virtualClass: true,
+              scenario: true,
+              order: true,
               author: true,
               admin: {
                 select: {
                   id: true,
                 },
               },
-              // Module relationships
-              bonusSkills: {
-                select: {
-                  bonusSkill: {
-                    select: {
-                      id: true,
-                    },
-                  },
-                },
-              },
+              // Course relationships
+
               contacts: {
                 select: {
                   contact: {
@@ -113,96 +143,46 @@ export default async function postDuplicateParcours(
                   },
                 },
               },
-              // Courses within modules
-              courses: {
+
+              tags: {
                 select: {
-                  // Course basic information
+                  tag: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+              // Lessons within courses
+              lessons: {
+                select: {
+                  // Lesson basic information
                   title: true,
                   description: true,
-                  image: true,
-                  virtualClass: true,
-                  scenario: true,
-                  order: true,
+                  modalite: true,
                   author: true,
                   admin: {
                     select: {
                       id: true,
                     },
                   },
-                  // Course relationships
-                  bonusSkills: {
-                    select: {
-                      bonusSkill: {
-                        select: {
-                          id: true,
-                        },
-                      },
-                    },
-                  },
-                  contacts: {
-                    select: {
-                      contact: {
-                        select: {
-                          id: true,
-                        },
-                      },
-                    },
-                  },
-                  module: {
+                  tag: {
                     select: {
                       id: true,
                     },
                   },
-                  objectives: {
+                  order: true,
+                  // Activities within lessons
+                  activities: {
                     select: {
-                      objective: {
-                        select: {
-                          id: true,
-                        },
-                      },
-                    },
-                  },
-                  tags: {
-                    select: {
-                      tag: {
-                        select: {
-                          id: true,
-                        },
-                      },
-                    },
-                  },
-                  // Lessons within courses
-                  lessons: {
-                    select: {
-                      // Lesson basic information
                       title: true,
                       description: true,
-                      modalite: true,
-                      author: true,
-                      admin: {
-                        select: {
-                          id: true,
-                        },
-                      },
-                      tag: {
-                        select: {
-                          id: true,
-                        },
-                      },
                       order: true,
-                      // Activities within lessons
-                      activities: {
+                      type: true,
+                      url: true,
+                      author: {
                         select: {
-                          title: true,
-                          description: true,
-                          order: true,
-                          type: true,
-                          url: true,
-                          author: {
-                            select: {
-                              id: true,
-                            },
-                          },
+                          id: true,
                         },
                       },
                     },
@@ -311,111 +291,91 @@ export default async function postDuplicateParcours(
       // Create modules with all their nested relationships
       modules: {
         create: existingParcours.modules.map((module) => ({
+          duration: module.duration,
+          rating: module.rating,
+          admin: {
+            connect: {
+              id: module.admin.id,
+            },
+          },
           module: {
-            create: {
-              // Module basic information
-              title: module.module.title,
-              description: module.module.description,
-              image: module.module.image ?? undefined,
-              thumb: module.module.thumb ?? undefined,
-              duration: module.module.duration,
-              rating: module.module.rating,
-              author: module.module.author,
-              admin: {
-                connect: {
-                  id: module.module.admin.id,
-                },
+            connect: { id: module.module.id },
+          },
+          // Module relationships
+          bonusSkills: {
+            create: module.bonusSkills.map((skill) => ({
+              bonusSkill: {
+                connect: { id: skill.bonusSkill.id },
               },
-              // Module relationships
-              bonusSkills: {
-                create: module.module.bonusSkills.map((skill) => ({
-                  bonusSkill: {
-                    connect: { id: skill.bonusSkill.id },
-                  },
-                })),
+            })),
+          },
+          contacts: {
+            create: module.contacts.map((contact) => ({
+              contact: {
+                connect: { id: contact.contact.id },
               },
+            })),
+          },
+          // Create courses within modules
+          courses: {
+            create: module.courses.map((course) => ({
+              title: course.title,
+              description: course.description,
+              image: course.image ?? undefined,
+              virtualClass: course.virtualClass,
+              scenario: course.scenario,
+              order: course.order,
+              // Course relationships
               contacts: {
-                create: module.module.contacts.map((contact) => ({
+                create: course.contacts.map((contact) => ({
                   contact: {
                     connect: { id: contact.contact.id },
                   },
                 })),
               },
-              // Create courses within modules
-              courses: {
-                create: module.module.courses.map((course) => ({
-                  title: course.title,
-                  description: course.description,
-                  image: course.image ?? undefined,
-                  virtualClass: course.virtualClass,
-                  scenario: course.scenario,
-                  order: course.order,
-                  // Course relationships
-                  contacts: {
-                    create: course.contacts.map((contact) => ({
-                      contact: {
-                        connect: { id: contact.contact.id },
-                      },
-                    })),
-                  },
-                  objectives: {
-                    create: course.objectives.map((objective) => ({
-                      objective: {
-                        connect: { id: objective.objective.id },
-                      },
-                    })),
-                  },
-                  bonusSkills: {
-                    create: course.bonusSkills.map((skill) => ({
-                      bonusSkill: {
-                        connect: { id: skill.bonusSkill.id },
-                      },
-                    })),
-                  },
-                  author: course.author,
+
+              author: course.author,
+              admin: {
+                connect: {
+                  id: course.admin.id,
+                },
+              },
+              // Create lessons within courses
+              lessons: {
+                create: course.lessons.map((lesson) => ({
+                  title: lesson.title,
+                  description: lesson.description,
+                  modalite: lesson.modalite,
+                  author: lesson.author,
                   admin: {
                     connect: {
-                      id: course.admin.id,
+                      id: lesson.admin.id,
                     },
                   },
-                  // Create lessons within courses
-                  lessons: {
-                    create: course.lessons.map((lesson) => ({
-                      title: lesson.title,
-                      description: lesson.description,
-                      modalite: lesson.modalite,
-                      author: lesson.author,
-                      admin: {
+                  tag: {
+                    connect: {
+                      id: lesson.tag.id,
+                    },
+                  },
+                  order: lesson.order,
+                  // Create activities within lessons
+                  activities: {
+                    create: lesson.activities.map((activity) => ({
+                      title: activity.title,
+                      description: activity.description,
+                      order: activity.order,
+                      type: activity.type,
+                      url: activity.url,
+                      author: {
                         connect: {
-                          id: lesson.admin.id,
+                          id: activity.author.id,
                         },
-                      },
-                      tag: {
-                        connect: {
-                          id: lesson.tag.id,
-                        },
-                      },
-                      order: lesson.order,
-                      // Create activities within lessons
-                      activities: {
-                        create: lesson.activities.map((activity) => ({
-                          title: activity.title,
-                          description: activity.description,
-                          order: activity.order,
-                          type: activity.type,
-                          url: activity.url,
-                          author: {
-                            connect: {
-                              id: activity.author.id,
-                            },
-                          },
-                        })),
                       },
                     })),
                   },
                 })),
               },
-            },
+            })),
           },
         })),
       },

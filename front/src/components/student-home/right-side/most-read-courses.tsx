@@ -18,6 +18,7 @@ const MostReadCourses = () => {
 
     sendRequest({ path: "/course/most-read" }, applyData);
   }, [sendRequest]);
+  console.log({ courses });
 
   return (
     <div

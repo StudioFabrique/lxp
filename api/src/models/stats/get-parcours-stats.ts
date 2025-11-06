@@ -13,16 +13,12 @@ export default async function getParcoursStats(parcoursId: number) {
       formation: { select: { level: true } },
       modules: {
         select: {
-          module: {
+          duration: true,
+          courses: {
             select: {
-              duration: true,
-              courses: {
+              lessons: {
                 select: {
-                  lessons: {
-                    select: {
-                      modalite: true,
-                    },
-                  },
+                  modalite: true,
                 },
               },
             },
@@ -37,14 +33,13 @@ export default async function getParcoursStats(parcoursId: number) {
 
   // Calculate total weeks
   const totalWeeks = Math.ceil(
-    parcours.modules.reduce((acc, mod) => acc + (mod.module.duration || 0), 0) /
-      5,
+    parcours.modules.reduce((acc, mod) => acc + (mod.duration || 0), 0) / 5
   );
 
   // Calculate total hours
   const totalHours = parcours.modules.reduce(
-    (acc, mod) => acc + (mod.module.duration || 0),
-    0,
+    (acc, mod) => acc + (mod.duration || 0),
+    0
   );
 
   // Calculate number of modules

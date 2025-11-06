@@ -1,9 +1,15 @@
+import { ModuleMetadata } from "@prisma/client";
 import { prisma } from "../../utils/db";
+import { IRole } from "../../utils/interfaces/db/role";
 
-async function deleteModule(moduleId: number) {
-  const existingModule = await prisma.module.findFirst({
+async function deleteModule(moduleId: number, userId: string, role: IRole) {
+  const existingModule = await prisma.moduleMetadata.findFirst({
     where: { id: moduleId },
-    select: { courses: true },
+    select: {
+      courses: true,
+      module: { select: { id: true, metadatas: true } },
+      admin: true,
+    },
   });
 
   if (!existingModule) {
@@ -11,6 +17,7 @@ async function deleteModule(moduleId: number) {
     throw error;
   }
 
+  /*
   if (existingModule.courses && existingModule.courses.length > 0) {
     const error = {
       message: "Suppression impossible, des cours sont rattachés à ce module",
@@ -18,25 +25,35 @@ async function deleteModule(moduleId: number) {
     };
     throw error;
   }
+  */
 
-  let deletedModule = {};
+  const existingAdmin = await prisma.admin.findFirst({
+    where: { idMdb: userId },
+  });
+
+  if (
+    !existingAdmin ||
+    (role.role !== "admin" && existingModule.admin.id !== existingAdmin.id)
+  ) {
+    throw { message: "Unauthorized", statusCode: 403 };
+  }
+
+  let deletedModule: ModuleMetadata | null = null;
 
   const transaction = await prisma.$transaction(async (tx) => {
-    await tx.contactsOnModule.deleteMany({
-      where: { moduleId },
-    });
-    await tx.bonusSkillsOnModule.deleteMany({
-      where: { moduleId },
-    });
-    await tx.modulesOnParcours.deleteMany({
-      where: { moduleId },
-    });
-
-    deletedModule = await tx.module.delete({
+    deletedModule = await tx.moduleMetadata.delete({
       where: { id: moduleId },
     });
   });
-  return deletedModule;
+
+  console.log(existingModule.module.metadatas.length);
+
+  if (existingModule.module.metadatas.length < 2) {
+    await prisma.module.delete({
+      where: { id: existingModule.module.id },
+    });
+  }
+  return transaction;
 }
 
 export default deleteModule;

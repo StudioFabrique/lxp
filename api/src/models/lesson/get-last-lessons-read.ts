@@ -10,7 +10,7 @@ import Group from "../../utils/interfaces/db/group";
  */
 export default async function getLastLessonsRead(
   userIdMdb: string,
-  max?: number,
+  max?: number
 ) {
   const groupsWhereStudentIs = await Group.find({ users: userIdMdb });
 
@@ -29,12 +29,8 @@ export default async function getLastLessonsRead(
           visibility: true,
           module: {
             parcours: {
-              every: {
-                parcours: {
-                  isPublished: true,
-                  groups: { some: { group: { idMdb: { in: groupIds } } } },
-                },
-              },
+              isPublished: true,
+              groups: { some: { group: { idMdb: { in: groupIds } } } },
             },
           },
         },
@@ -54,12 +50,14 @@ export default async function getLastLessonsRead(
               module: {
                 select: {
                   id: true,
-                  title: true,
-                  parcours: { select: { parcoursId: true } },
+                  module: { select: { title: true } },
+                  parcours: { select: { id: true } },
+                  bonusSkills: {
+                    select: {
+                      bonusSkill: { select: { id: true, badge: true } },
+                    },
+                  },
                 },
-              },
-              bonusSkills: {
-                select: { bonusSkill: { select: { id: true, badge: true } } },
               },
               lessons: {
                 select: {
@@ -91,12 +89,8 @@ export default async function getLastLessonsRead(
           visibility: true,
           module: {
             parcours: {
-              every: {
-                parcours: {
-                  isPublished: true,
-                  groups: { some: { group: { idMdb: { in: groupIds } } } },
-                },
-              },
+              isPublished: true,
+              groups: { some: { group: { idMdb: { in: groupIds } } } },
             },
           },
         },
@@ -108,8 +102,8 @@ export default async function getLastLessonsRead(
             module: {
               select: {
                 id: true,
-                title: true,
-                parcours: { select: { parcoursId: true } },
+                module: { select: { title: true } },
+                parcours: { select: { id: true } },
               },
             },
           },
@@ -126,18 +120,26 @@ export default async function getLastLessonsRead(
       lesson: {
         id: lesson?.id,
         title: lesson?.title,
-        course: lesson?.course,
-        parcoursId: lesson.course.module.parcours[0].parcoursId,
+        course: {
+          ...lesson?.course,
+          module: {
+            ...lesson.course.module,
+            title: lesson.course.module.module.title,
+          },
+        },
+        parcoursId: lesson.course.module.parcours.id,
       },
     };
 
     return [lessonReformated];
   }
 
+  // ne s'exécute pas tous le temps, à vérifier plus tard si ça sert vraiment
+  // permet d'ajouter le badge des compétences bonus
   const lessonsReformatedWithSkillBadge = lessons?.map((lessonRead) => {
     const { course } = lessonRead.lesson;
 
-    const bonusSkills = course.bonusSkills.map((bonusSkill) => {
+    const bonusSkills = course.module.bonusSkills.map((bonusSkill) => {
       return bonusSkill.bonusSkill;
     });
 
@@ -145,9 +147,13 @@ export default async function getLastLessonsRead(
       ...lessonRead,
       lesson: {
         ...lessonRead.lesson,
-        course: { ...course, bonusSkills },
+        course: {
+          ...course,
+          module: { ...course.module, title: course.module.module.title },
+          bonusSkills,
+        },
       },
-      parcoursId: lessonRead.lesson.course.module.parcours[0].parcoursId,
+      parcoursId: lessonRead.lesson.course.module.parcours.id,
     };
   });
 

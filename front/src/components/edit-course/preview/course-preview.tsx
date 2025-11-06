@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
-
 import CoursePreviewInfos from "./course-preview-infos";
-import Objective from "../../../utils/interfaces/objective";
-import PreviewObjectives from "../../preview/preview-objectives";
-import Skill from "../../../utils/interfaces/skill";
-import PreviewSkills from "../../preview/preview-skills";
 import Lesson from "../../../utils/interfaces/lesson";
 import PreviewLessons from "../../preview/preview-lessons";
 import CourseDates from "../../../utils/interfaces/course-dates";
@@ -24,17 +19,12 @@ const CoursePreview = (props: CoursePreviewProps) => {
   const { courseId } = useParams();
   const moduleId = useSelector((state: any) => state.courseInfos).course.module
     .id;
-  const objectives = useSelector(
-    (state: any) => state.courseObjectives.courseObjectives,
-  ) as Objective[];
-  const skills = useSelector(
-    (state: any) => state.courseSkills.courseSkills,
-  ) as Skill[];
+
   const lessons = useSelector(
-    (state: any) => state.courseScenario.courseLessons,
+    (state: any) => state.courseScenario.courseLessons
   ) as Lesson[];
   const dates = useSelector(
-    (state: any) => state.courseDates.courseDates,
+    (state: any) => state.courseDates.courseDates
   ) as CourseDates[];
   const { sendRequest, error } = useHttp();
   const nav = useNavigate();
@@ -65,7 +55,7 @@ const CoursePreview = (props: CoursePreviewProps) => {
           path: `/course/publish/${courseId}`,
           method: "put",
         },
-        applyData,
+        applyData
       );
     }
   };
@@ -82,13 +72,6 @@ const CoursePreview = (props: CoursePreviewProps) => {
       </section>
       <section>
         <CoursePreviewInfos onEdit={props.onEdit} />
-      </section>
-
-      <section>
-        <PreviewObjectives objectives={objectives} onEdit={props.onEdit} />
-      </section>
-      <section>
-        <PreviewSkills skills={skills} onEdit={props.onEdit} />
       </section>
       <section>
         <PreviewLessons lessons={lessons} onEdit={props.onEdit} />

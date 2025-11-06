@@ -123,7 +123,11 @@ const NotSelectedContacts = (props: NotSelectedContactsProps) => {
         <>
           {table}
           <div className="w-full flex justify-end mt-4">
-            <button className="btn btn-primary" onClick={handleAddContacts}>
+            <button
+              className="btn btn-primary"
+              type="button"
+              onClick={handleAddContacts}
+            >
               Ajouter
             </button>
           </div>

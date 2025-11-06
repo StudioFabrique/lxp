@@ -38,24 +38,21 @@ async function putAddModule(
     throw error;
   }
 
-  const author = `${existingUser?.firstname} ${existingUser?.lastname}`;
-
   let newModule: any = {};
 
   const transaction = await prisma.$transaction(async (tx) => {
-    newModule = await tx.module.create({
+    newModule = await tx.moduleMetadata.create({
       data: {
-        title: existingModule.title,
-        description: existingModule.description,
-        image: existingModule.image,
-        thumb: existingModule.thumb,
-        duration: existingModule.duration,
+        duration: 0,
         minDate: new Date(existingParcours.startDate!),
         maxDate: new Date(existingParcours.endDate!),
-        author,
         adminId: existingAdmin.id,
+        moduleId: existingModule.id,
+        parcoursId: existingParcours.id,
       },
+      include: { module: { select: { title: true, thumb: true } } },
     });
+    /*
     const updatedParcours = await tx.parcours.update({
       where: { id: parcoursId },
       data: {
@@ -68,11 +65,10 @@ async function putAddModule(
         },
       },
     });
-
-    console.log({ newModule });
+*/
   });
 
-  return newModule;
+  return { ...newModule, title: (newModule.module as Module).title };
 }
 
 export default putAddModule;

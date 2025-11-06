@@ -4,6 +4,7 @@ import Media from "../../utils/interfaces/media";
 import { ReactNode } from "react";
 import ListVideos from "./list-videos";
 import ListResources from "./list-resources";
+import ElementNotFound from "../UI/element-not-found";
 
 // Props du composant TabsMedia
 type Props = {
@@ -27,7 +28,7 @@ const extendedOptions = [
 
 function TabsMedia({ children, list, type, setType, setSort }: Props) {
   // Message affiché quand aucun fichier n'est trouvé
-  const empty = <p>Aucun fichier de ce type n'a été trouvé.</p>;
+  const empty = <ElementNotFound message="Aucun fichier trouvé" />;
 
   // Configuration des différents types de médias avec leurs propriétés
   const medias = [

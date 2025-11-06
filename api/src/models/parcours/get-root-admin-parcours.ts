@@ -13,12 +13,8 @@ export default async function getRootAdminParcours() {
       },
       modules: {
         select: {
-          module: {
-            select: {
-              courses: { select: { id: true } },
-              duration: true,
-            },
-          },
+          courses: { select: { id: true } },
+          duration: true,
         },
       },
       groups: {
@@ -37,9 +33,9 @@ export default async function getRootAdminParcours() {
   for (const item of parcours) {
     const groups = item.groups.map((group) => group.group);
     let students = 0;
-    const courses = item.modules.map((module) => module.module.courses);
+    const courses = item.modules.map((module) => module.courses);
     let duration = 0;
-    const modules = item.modules.map((module) => module.module);
+    const modules = item.modules.map((module) => module);
 
     for (const module of modules) {
       duration += module.duration!;
