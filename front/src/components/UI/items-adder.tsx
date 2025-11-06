@@ -91,14 +91,14 @@ const ItemsAdder = <Item extends { id?: number; _id?: string }>({
           <button
             key={getValue(item)}
             type="button"
-            className={`flex group gap-2 text-secondary-content p-2 rounded-xl h-10 cursor-pointer ${
+            className={`btn group text-secondary-content pl-6 pr-1 rounded-xl cursor-pointer ${
               styleOptions.itemsHasColor && getColor(getValue(item))
             }`}
             onClick={() => handleClickDelete(item)}
             disabled={disabled || isLoading}
           >
             <p className="truncate max-w-56">{getValue(item)}</p>
-            <Trash2 className="transition-all duration-200 ease-out opacity-0 group-hover:opacity-100 -ml-5 -mr-2 backdrop-blur-xs" />
+            <Trash2 className="transition-all duration-300 ease-out opacity-0 group-hover:opacity-100 w-5" />
           </button>
         ))}
       </div>
