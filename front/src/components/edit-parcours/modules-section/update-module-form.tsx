@@ -16,6 +16,7 @@ import Contact from "../../../utils/interfaces/contact";
 import Skill from "../../../utils/interfaces/skill";
 import { moduleUpdateSchema } from "../../../lib/validation/parcours-edit/module-update-schema";
 import FieldNumber from "../../UI/forms/field-number";
+import placeholder from "../../../assets/images/cat.webp";
 import bgImageGradient from "../../../utils/bg-image-gradient";
 
 interface UpdateModuleFormProps {
@@ -26,7 +27,7 @@ interface UpdateModuleFormProps {
     onValidationErrors: (data: CustomError[]) => void;
   };
   isLoading: boolean;
-  currentModule: any;
+  currentModule?: any;
   onSubmit: (formData: FormData) => void;
   onCancel: () => void;
 }
@@ -43,7 +44,7 @@ const UpdateModuleForm = React.forwardRef<
 
   const [image, setImage] = useState<File | null>(null);
 
-  const currentModule = props.currentModule;
+  const currentModule = props.currentModule ?? null;
 
   const listeContacts = useSelector(
     (state: any) => state.parcoursContacts.currentContacts
@@ -67,9 +68,10 @@ const UpdateModuleForm = React.forwardRef<
 
   // affiche une image en background d'une div de manière dynamique
   const classImage: React.CSSProperties = {
+
     backgroundImage: props.currentModule.thumb
       ? bgImageGradient(`data:image/jpeg;base64,${props.currentModule.thumb}`)
-      : "none",
+      : `url(${placeholder})`,
     width: "100px",
     height: "100%",
     backgroundSize: "cover",

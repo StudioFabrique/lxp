@@ -4,7 +4,7 @@ async function putCourseBonusSkills(
   courseId: number,
   bonusSkillsIds: number[]
 ) {
-  const existingCourse = await prisma.course.findFirst({
+  /*  const existingCourse = await prisma.course.findFirst({
     where: { id: courseId },
   });
 
@@ -33,8 +33,8 @@ async function putCourseBonusSkills(
         },
       },
     });
-  });
-  return transaction;
+  });*/
+  return [];
 }
 
 export default putCourseBonusSkills;

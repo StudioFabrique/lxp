@@ -31,11 +31,7 @@ export default async function getLessonsList() {
             select: {
               parcours: {
                 select: {
-                  parcours: {
-                    select: {
-                      title: true,
-                    },
-                  },
+                  title: true,
                 },
               },
             },
@@ -55,7 +51,7 @@ export default async function getLessonsList() {
           id: lesson.course.moduleId,
           parcours: {
             // On prend le titre du premier parcours associé
-            title: lesson.course.module.parcours[0].parcours.title,
+            title: lesson.course.module.parcours.title,
           },
         },
       },

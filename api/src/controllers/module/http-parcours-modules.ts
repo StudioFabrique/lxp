@@ -6,34 +6,22 @@ async function httpParcoursModules(req: Request, res: Response) {
     const parcoursId = +req.params.parcoursId;
     const modulesId = req.body;
 
-    let result;
-
-    const transaction = await prisma.$transaction(async (tx) => {
-      await tx.modulesOnParcours.deleteMany({
-        where: { parcoursId },
-      });
-
-      result = await tx.parcours.update({
-        where: { id: parcoursId },
-        data: {
-          modules: {
-            create: modulesId.map((mId: number) => {
-              return {
-                module: {
-                  connect: { id: mId },
-                },
-              };
-            }),
-          },
+    const result = await prisma.parcours.update({
+      where: { id: parcoursId },
+      data: {
+        modules: {
+          connect: modulesId.map((mId: number) => {
+            return {
+              module: {
+                connect: { id: mId },
+              },
+            };
+          }),
         },
-        select: {
-          modules: {
-            select: {
-              module: { select: { id: true } },
-            },
-          },
-        },
-      });
+      },
+      select: {
+        modules: { select: { id: true } },
+      },
     });
 
     return res.status(201).json(result);

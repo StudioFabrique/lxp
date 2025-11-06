@@ -110,13 +110,15 @@ const AddCourse = () => {
     // quand un parcours est séléctionné on envoie une requête pour
     // récupérer les modules associés au parcours
     if (parcoursId) {
+      console.log("IT'S ALL GOOD MAN!");
+
       const applyData = (data: any[]) => {
         setModulesList(data);
       };
 
       sendRequest(
         {
-          path: `/modules/${parcoursId}`,
+          path: `/modules/parcours-modules/${parcoursId}`,
         },
         applyData
       );

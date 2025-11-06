@@ -20,7 +20,6 @@ const useForm = (data = {}, schema?: any) => {
    */
   const onChangeValue = useCallback(
     (field: string, value: string) => {
-      console.log("toutes les erreurs ", errors);
       if (errors.length > 0)
         setErrors((prevErrors) => [
           ...prevErrors.filter((e: CustomError) => e.type !== field),
@@ -80,7 +79,7 @@ const useForm = (data = {}, schema?: any) => {
         return true;
       } catch (error) {
         if (error instanceof ZodError) {
-          console.log({ error });
+          console.error({ error });
           const errors = validationErrors(error);
           onValidationErrors(errors);
           return false;

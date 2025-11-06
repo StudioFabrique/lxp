@@ -70,7 +70,7 @@ export const userValidator = (isFormData: boolean = false) => {
     body(validatorSubject + ".email")
       .isEmail()
       .trim()
-      .withMessage("firstname ou lastname non conforme"),
+      .withMessage("Email non conforme"),
     body([validatorSubject + ".firstname", validatorSubject + ".lastname"])
       .trim()
       .custom(stringValidateGeneric)
@@ -137,13 +137,6 @@ export const userValidator = (isFormData: boolean = false) => {
     ])
       .isArray()
       .withMessage("hobbies, graduations ou links non conforme"),
-    body(validatorSubject + ".roleId")
-      .exists()
-      .notEmpty()
-      .isString()
-      .trim()
-      .escape()
-      .withMessage("roleId non conforme"),
     checkValidatorResult,
   ];
 

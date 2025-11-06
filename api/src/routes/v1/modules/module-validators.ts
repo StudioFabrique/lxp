@@ -45,6 +45,10 @@ export const getModuleFormationValidator = [
     .isNumeric()
     .withMessage("L'identifiant de la formation doit être un nombre entier")
     .escape(),
+  param("duplicate")
+    .isBoolean()
+    .withMessage("Le paramètre 'duplicate' doit être un booléen")
+    .optional(),
   checkValidatorResult,
 ];
 
@@ -177,7 +181,6 @@ export const putModuleValidator = [
     .withMessage(
       "Chaque identifiant de bonusSkillsIds doit être un entier positif."
     ),
-  checkValidatorResult,
 ];
 
 export const putModuleParcoursValidator = [

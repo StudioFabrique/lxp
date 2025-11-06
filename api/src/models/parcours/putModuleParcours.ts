@@ -1,12 +1,13 @@
-import { BonusSkill, Contact, Module, Parcours } from "@prisma/client";
+import { BonusSkill, Contact, ModuleMetadata, Parcours } from "@prisma/client";
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
+import { Metadata } from "sharp";
 
 async function putModuleParcours(
   module: any,
   thumb: any,
   image: any,
-  userId: string,
+  userId: string
 ) {
   const newModule = JSON.parse(module);
 
@@ -38,19 +39,20 @@ async function putModuleParcours(
     throw error;
   }
 
-  const author = `${existingUser?.firstname} ${existingUser?.lastname}`;
-
-  let parcoursModule: Module | null = null;
+  let parcoursModule: ModuleMetadata | null = null;
   let updatedParcours: Parcours | null = null;
 
+  const author = `${existingUser?.firstname} ${existingUser?.lastname}`;
+
   const transaction = await prisma.$transaction(async (tx) => {
-    /*     const addModule = await tx.module.create({
+    const addModule = await tx.module.create({
       data: {
         title: newModule.title,
         description: newModule.description,
-        duration: +newModule.duration,
         image,
         thumb,
+        author,
+        adminId: existingAdmin.id,
         formations: {
           create: newModule.formations.map((item: any) => {
             return {
@@ -61,24 +63,21 @@ async function putModuleParcours(
           }),
         },
       },
-    }); */
+    });
 
-    parcoursModule = await tx.module.create({
+    parcoursModule = await tx.moduleMetadata.create({
       data: {
-        title: newModule.title,
-        description: newModule.description,
-        image,
-        thumb,
         duration: +newModule.duration,
         minDate: new Date(newModule.minDate),
         maxDate: new Date(newModule.maxDate),
-        author,
         adminId: existingAdmin.id,
+        moduleId: addModule.id,
+        parcoursId: +newModule.parcoursId,
         contacts: {
           create: newModule.contacts.map((item: Contact) => {
             return {
               contact: {
-                connect: { id: item.id },
+                connect: { idMdb: item.idMdb },
               },
             };
           }),
@@ -93,14 +92,6 @@ async function putModuleParcours(
           }),
         },
       },
-      include: {
-        contacts: { select: { contact: true } },
-        bonusSkills: {
-          select: {
-            bonusSkill: { select: { id: true, description: true } },
-          },
-        },
-      },
     });
 
     updatedParcours = await tx.parcours.update({
@@ -109,17 +100,25 @@ async function putModuleParcours(
       },
       data: {
         modules: {
-          create: {
-            module: {
-              connect: { id: parcoursModule.id },
-            },
+          connect: {
+            id: parcoursModule.id,
           },
         },
       },
     });
+
+    return updatedParcours;
   });
 
-  return updatedParcours ? parcoursModule : false;
+  if (!transaction || !parcoursModule) {
+    const error = {
+      message: "Erreur lors de la création du module",
+      statusCode: 500,
+    };
+    throw error;
+  }
+
+  return { updatedParcours: transaction, newModule: parcoursModule };
 }
 
 export default putModuleParcours;

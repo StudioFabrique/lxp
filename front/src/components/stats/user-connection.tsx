@@ -19,6 +19,8 @@ export default function UserConnection({
     "--thickness": "8px",
   } as React.CSSProperties;
 
+  console.log({ parcoursCompletion });
+
   return (
     <article className="flex-1">
       <div className="flex flex-col gap-y-4">

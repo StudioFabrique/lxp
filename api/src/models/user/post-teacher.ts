@@ -1,3 +1,4 @@
+import { Contact } from "@prisma/client";
 import { prisma } from "../../utils/db";
 import Role from "../../utils/interfaces/db/role";
 import User, { IUser } from "../../utils/interfaces/db/user";
@@ -24,7 +25,6 @@ async function postTeacher(teacher: IUser) {
   const newTeacher = await User.create({
     ...teacher,
     password,
-    // test in progress
     isActive: teacher.isActive ?? false,
     roles: [new Object(fetchedRole!._id)],
   });
@@ -36,16 +36,27 @@ async function postTeacher(teacher: IUser) {
       { _id: newTeacher._id },
       { _id: 1, firstname: 1, lastname: 1, phoneNumber: 1, email: 1 }
     ).populate("roles", { label: 1 });
+
     if (updatedTeacher) {
-      const contact = await prisma.contact.create({
-        data: {
-          idMdb: updatedTeacher._id,
-          name: `${updatedTeacher.lastname} ${updatedTeacher.firstname}`,
-          role: updatedTeacher.roles[0].label,
-          phone: updatedTeacher.phoneNumber,
-          email: updatedTeacher.email,
-        },
+      let contact: Contact | null = null;
+      const transaction = await prisma.$transaction(async (tx) => {
+        contact = await tx.contact.create({
+          data: {
+            idMdb: updatedTeacher._id,
+            name: `${updatedTeacher.lastname} ${updatedTeacher.firstname}`,
+            role: updatedTeacher.roles[0].label,
+            phone: updatedTeacher.phoneNumber,
+            email: updatedTeacher.email,
+          },
+        });
+
+        await tx.admin.create({
+          data: {
+            idMdb: updatedTeacher._id,
+          },
+        });
       });
+
       return contact;
     }
   } else {

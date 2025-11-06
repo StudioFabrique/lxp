@@ -1,7 +1,7 @@
 import { prisma } from "../../utils/db";
 
 async function getCourseSkills(courseId: number) {
-  const skills = await prisma.course.findFirst({
+  /*const skills = await prisma.course.findFirst({
     where: { id: courseId },
     select: {
       bonusSkills: {
@@ -25,9 +25,9 @@ async function getCourseSkills(courseId: number) {
     const error = new Error("Le cours n'existe pas");
     (error as any).statusCode = 404;
     throw error;
-  }
+  }*/
 
-  return skills;
+  return [];
 }
 
 export default getCourseSkills;

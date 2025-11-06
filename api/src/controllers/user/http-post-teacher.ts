@@ -21,6 +21,8 @@ async function httpPostTeacher(req: Request, res: Response) {
       contact: response,
     });
   } catch (error: any) {
+    console.log({ error });
+
     return res.status(error.statusCode ?? 500).json({
       message: error.statusCode !== 500 ? error.message : serverIssue,
     });

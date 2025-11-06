@@ -216,7 +216,7 @@ const adminRoutes = [
         element: <ModuleHome />,
       },
       {
-        path: "add",
+        path: "add/:parcoursId",
         element: <ModuleAdd />,
       },
       {

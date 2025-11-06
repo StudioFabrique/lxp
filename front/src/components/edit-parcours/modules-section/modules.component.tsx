@@ -70,6 +70,8 @@ const ModulesSection = () => {
    */
   const getFormationModules = useCallback(() => {
     const applyData = (data: Module[]) => {
+      console.log({ data });
+
       setFormationModules(sortArray(data, "id", false));
     };
     sendRequest(

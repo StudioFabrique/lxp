@@ -17,11 +17,11 @@ const useTeacher = (studentId: string) => {
     const applyData = (data: {
       user: User;
       parcours: Parcours;
-      parcoursCoompletion: number;
+      parcoursCompletion: number;
     }) => {
       setStudent(data.user);
       setParcours(data.parcours ?? null);
-      setParcoursCompletion(data.parcoursCoompletion ?? 0);
+      setParcoursCompletion(data.parcoursCompletion ?? 0);
     };
     sendRequest(
       {

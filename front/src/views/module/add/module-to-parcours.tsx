@@ -4,6 +4,7 @@ import Skill from "../../../utils/interfaces/skill";
 import InheritedTextList from "../../../components/inherited-items/inherited-text-list";
 import NotSelectedContacts from "../../../components/inherited-items/not-selected-contacts";
 import NotSelectedSkills from "./not-selected-skills";
+import { CircleQuestionMark } from "lucide-react";
 
 type Props = {
   contacts: Contact[];
@@ -37,26 +38,21 @@ export default function ModuleToParcours({
   isLoading,
   skills,
 }: Props) {
-  /**
-   * Fonction qui réinitialise les contacts et les compétences selectionnés
-   */
-  const handleReset = () => {
-    setCurrentContacts([]);
-    setCurrentSkills([]);
-  };
+  console.log(currentSkills);
 
   return (
-    <>
+    <div className="flex flex-col gap-y-8">
       {/* Composant qui permet de selectionner des contacts */}
       <InheritedItems
         drawerId="add-contacts"
-        drawerTitle="Ajouter des Contacts"
+        drawerTitle="Ajouter des Ressources Pédagogiques"
         title="Ressources Pédagogiques"
         loading={isLoading}
         initialList={contacts}
         selectedItems={currentContacts}
         property="name"
         onSubmit={setCurrentContacts}
+        titleSize="medium"
       >
         {/* Composant qui affiche les contacts selectionnés */}
         <InheritedTextList additionalProperty="role" />
@@ -74,22 +70,18 @@ export default function ModuleToParcours({
         selectedItems={currentSkills}
         property="description"
         onSubmit={setCurrentSkills}
+        titleSize="medium"
       >
         {/* Composant qui affiche les compétences selectionnées */}
         <InheritedTextList />
         {/* Composant qui affiche les compétences qui ne sont pas selectionnées */}
         <NotSelectedSkills />
       </InheritedItems>
-      {/* Bouton qui permet de réinitialiser les contacts et les compétences selectionnés */}
-      <div className="flex justify-end">
-        <button
-          className="btn btn-secondary"
-          disabled={currentContacts.length === 0 && currentSkills.length === 0}
-          onClick={handleReset}
-        >
-          Réinitialiser
-        </button>
+      <div className="flex items-start gap-x-2 text-xs text-primary justify-between">
+        <CircleQuestionMark className="text-primary" />
+        Vous pourrez toujours ajouter ou modifier les ressources pédagogiques et
+        les compétences plus tard.
       </div>
-    </>
+    </div>
   );
 }
