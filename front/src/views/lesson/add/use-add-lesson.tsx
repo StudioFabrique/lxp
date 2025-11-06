@@ -227,11 +227,14 @@ const useAddLesson = () => {
   // Effet pour mettre à jour la liste des modules quand un parcours est sélectionné
   useEffect(() => {
     if (state.parcoursId) {
-      sendRequest({ path: `/modules/${state.parcoursId}` }, (data: Item[]) => {
-        console.log({ data });
+      sendRequest(
+        { path: `/modules/parcours-modules/${state.parcoursId}` },
+        (data: Item[]) => {
+          console.log({ data });
 
-        dispatch({ type: "SET_MODULES_LIST", payload: data });
-      });
+          dispatch({ type: "SET_MODULES_LIST", payload: data });
+        }
+      );
     }
   }, [state.parcoursId, sendRequest]);
 
