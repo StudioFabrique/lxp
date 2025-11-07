@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
+import { badQuery } from "../utils/constantes";
 
 const checkValidation = (validator: any) => {
   return (req: Request, _res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      throw { statusCode: 400, message: "Bad Request", errors: errors.array() };
+      throw { statusCode: 400, message: badQuery, errors: errors.array() };
     }
     next();
   };
