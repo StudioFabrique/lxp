@@ -4,7 +4,7 @@ import sharp from "sharp";
 
 import putModule from "../../models/module/putModule";
 import { deleteTempUploadedFile } from "../../middleware/fileUpload";
-import { serverIssue } from "../../utils/constantes";
+import { badQuery, serverIssue } from "../../utils/constantes";
 import { validationResult } from "express-validator";
 
 /**
@@ -26,7 +26,7 @@ export default async function httpPutModule(
 
       return next({
         statusCode: 400,
-        message: "Données de validation invalides",
+        message: badQuery,
         errors: result.array(),
       });
     }

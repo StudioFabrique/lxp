@@ -13,7 +13,7 @@ export default async function httpUpdateUserProfile(
   const avatarFile: any = req.file;
 
   if (!id) {
-    return res.status(404).json({ message: "non trouvé" });
+    return res.status(400).json({ message: "non trouvé" });
   }
 
   const { user }: { user: IUser } = req.body.data;
