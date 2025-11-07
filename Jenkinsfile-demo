@@ -21,7 +21,7 @@ pipeline {
 
         stage("Build App") {
             steps {
-                withCredentials([file(credentialsId: 'INFA_FRONT_ENV', variable: 'FRONT_ENV_FILE')]) {
+                withCredentials([file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE')]) {
                     sh '''
                     echo "🔧 Setting frontend environment variables from $FRONT_ENV_FILE..."
                     
@@ -29,6 +29,9 @@ pipeline {
                     chmod -R 777 ./front/ || true
                     cp $FRONT_ENV_FILE ./front/.env
                     
+                    # Vérifier que le fichier a bien été copié
+                    echo "✅ Frontend .env file copied:"
+                    cat ./front/.env
                     '''
                 }
                 script {
