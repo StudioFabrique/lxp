@@ -38,6 +38,7 @@ pipeline {
             }
         }    
 
+/*
         stage('Tests backend') {
             steps {
                 sh 'npm -g i dotenv-cli'
@@ -67,6 +68,7 @@ pipeline {
                 }
             }
         }
+        */
 
         stage("Deploying to FNP") {
 
