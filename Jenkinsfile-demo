@@ -29,9 +29,6 @@ pipeline {
                     chmod -R 777 ./front/ || true
                     cp $FRONT_ENV_FILE ./front/.env
                     
-                    # Vérifier que le fichier a bien été copié
-                    echo "✅ Frontend .env file copied:"
-                    cat ./front/.env
                     '''
                 }
                 script {

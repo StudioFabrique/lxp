@@ -19,3 +19,4 @@ node_modules
 /api/tmp
 /front/tmp
 certs/
+fixtures-test.ts
