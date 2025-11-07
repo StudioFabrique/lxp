@@ -91,10 +91,15 @@ pipeline {
                     sh '''
                         echo "🔧 Setting environment variables from $ENV_FILE..."
                         
+                        echo "ls -la"
+                        ls -la ./api/dist || true
+
+                        chmod -R 777 ./api/ || true
+
                         # Inject .env in workspace
                         cp $ENV_FILE ./api/dist/.env
 
-                        echo "📡 Deploying to FNP..."
+                        echo "📡 Deploying to INFA..."
                         echo "🔎 Pinging $HOST..."
 
                         ping -c 4 $HOST
