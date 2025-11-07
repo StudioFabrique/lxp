@@ -99,7 +99,7 @@ pipeline {
                         # Inject .env in workspace
                         cp $ENV_FILE ./api/dist/.env
 
-                        echo "📡 Deploying to INFA..."
+                        echo "📡 Deploying to FNP..."
                         echo "🔎 Pinging $HOST..."
 
                         ping -c 4 $HOST
