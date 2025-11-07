@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import elasticSearchClient from "../../elastic-search/elastic-search";
+//import elasticSearchClient from "../../elastic-search/elastic-search";
 import { elasticSearchTerms } from "../../config/elasticSearchTerms";
 
 export default async function httpSearchParcours(req: Request, res: Response) {
   const { searchValue, parcoursId } = req.params;
-
+  /*
   try {
     const searchResultWith = await elasticSearchClient.search({
       query: {
@@ -97,5 +97,5 @@ export default async function httpSearchParcours(req: Request, res: Response) {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "erreur serveur" });
-  }
+  }*/
 }

@@ -349,11 +349,7 @@ async function createParcours() {
         admin: {
           connect: { id: 1 },
         },
-        modules: {
-          create: modules.map((m: any) => ({
-            module: { connect: { id: m.id } },
-          })),
-        },
+
         contacts: {
           create: [
             {

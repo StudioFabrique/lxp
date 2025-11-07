@@ -8,6 +8,7 @@ front.old/nodeModules
 node_modules
 
 .env.local
+.env.demo
 .env
 .env-lxp
 .env-infa
@@ -18,3 +19,4 @@ node_modules
 /api/tmp
 /front/tmp
 certs/
+fixtures-test.ts

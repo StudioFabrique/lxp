@@ -1,6 +1,6 @@
 import { prisma } from "../../utils/db";
 import { Request, Response } from "express";
-import elasticSearchClient from "../../elastic-search/elastic-search";
+//import elasticSearchClient from "../../elastic-search/elastic-search";
 import { elasticSearchTerms } from "../../config/elasticSearchTerms";
 import Group from "../../utils/interfaces/db/group";
 
@@ -10,7 +10,7 @@ export default async function httpRestrictedSearchParcours(
 ) {
   const { searchValue, parcoursId, userId } = req.params;
 
-  try {
+  /*try {
     const groups = await Group.find({ users: { _id: userId } });
 
     const parcoursIdFromGroup = (
@@ -136,5 +136,5 @@ export default async function httpRestrictedSearchParcours(
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "erreur serveur" });
-  }
+  }*/
 }
