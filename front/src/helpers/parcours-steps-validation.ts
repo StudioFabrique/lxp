@@ -11,9 +11,9 @@ const testTitle = (title: string) => {
   return regexGeneric.test(title);
 };
 
-const testDescription = (description: string) => {
+/*const testDescription = (description: string) => {
   return description && regexGeneric.test(description);
-};
+};*/
 
 const testDates = (startDate: string, endDate: string) => {
   const sDate = new Date(startDate).getTime();
@@ -102,12 +102,12 @@ export function testStep(data: any) {
     });
     return validationErrors;
   }
-  if (!testDescription(data.infos.description)) {
+  /*if (!testDescription(data.infos.description)) {
     validationErrors.push({
       description: "Description du parcours non valide",
     });
     return validationErrors;
-  }
+  }*/
   if (!testDates(data.infos.startDate, data.infos.endDate)) {
     validationErrors.push({
       dates: "Dates du parcours non valides",

@@ -78,6 +78,8 @@ const useForm = (data = {}, schema?: any) => {
         setErrors([]);
         return true;
       } catch (error) {
+        console.log("toto error ", error);
+
         if (error instanceof ZodError) {
           console.error({ error });
           const errors = validationErrors(error);

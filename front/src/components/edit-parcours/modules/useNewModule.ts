@@ -196,8 +196,6 @@ const useNewModule = () => {
   };
 
   const handleUpdateModule = (moduleToUpddate: ModuleData) => {
-    console.log("SKILLS", moduleToUpddate.skills);
-
     dispatch({
       type: "UPDATE_MODULE",
       payload: {

@@ -3,8 +3,6 @@ import { Response } from "express";
 import updateParcoursInfos from "../../models/parcours/update-parcours-infos";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import { noAccess, serverIssue } from "../../utils/constantes";
-import { logger } from "../../utils/logs/logger";
-import { customEscape } from "../../helpers/custom-escape";
 
 async function httpUpdateParcoursInfos(req: CustomRequest, res: Response) {
   try {
@@ -14,13 +12,7 @@ async function httpUpdateParcoursInfos(req: CustomRequest, res: Response) {
     }
     let { parcoursId, title, description, formation } = req.body;
 
-    await updateParcoursInfos(
-      +parcoursId,
-      title,
-      description,
-      +formation,
-      userId
-    );
+    await updateParcoursInfos(+parcoursId, title, description, +formation);
 
     return res
       .status(200)
