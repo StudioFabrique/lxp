@@ -152,43 +152,42 @@ export const userProfileValidator = (isFormData: boolean = false) => {
       .notEmpty()
       .isString()
       .trim()
-      .escape()
+      .custom(stringValidateGeneric)
       .withMessage("firstname ou lastname non conforme"),
     body(validatorSubject + ".nickname")
       .optional()
       .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage("nickname"),
     body(validatorSubject + ".description")
       .optional()
       .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage("description"),
     body(validatorSubject + ".address")
       .optional()
       .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage("address"),
     body(validatorSubject + ".city")
       .optional()
       .isString()
       .trim()
-      .escape()
+      .custom(stringValidateOptional)
       .withMessage("city"),
     body(validatorSubject + ".postCode")
       .optional()
       .custom(customPostalCodeValidation)
-      .trim()
-      .escape()
-      .withMessage("postCode non conforme"),
+      .withMessage("postCode non conforme")
+      .trim(),
     body(validatorSubject + ".phoneNumber", "Numéro de téléphone incorrect")
       .optional()
       .isString()
       .trim()
-      .escape(),
+      .withMessage("postCode non conforme"),
     body(validatorSubject + ".links.*.url")
       .isString()
       .trim()

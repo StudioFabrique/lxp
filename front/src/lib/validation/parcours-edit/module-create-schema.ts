@@ -12,5 +12,6 @@ export const moduleCreateSchema = z.object({
     .regex(regexOptionalGeneric, {
       message: "La description du module contient des caractères invalides",
     })
-    .optional(),
+    .nullish()
+    .transform((val) => val ?? ""),
 });

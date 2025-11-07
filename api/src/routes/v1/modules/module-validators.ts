@@ -155,9 +155,8 @@ export const putModuleValidator = [
     .custom(stringValidateGeneric),
   body("module.description")
     .optional() // Optionnel
-    .isString()
-    .withMessage("La description doit être une chaîne de caractères.")
-    .custom(stringValidateOptional),
+    .custom(stringValidateOptional)
+    .withMessage("La description du module contient des caractères invalides."),
   body("module.duration")
     .isInt({ gt: 0 })
     .withMessage("La durée doit être un nombre entier positif."),
