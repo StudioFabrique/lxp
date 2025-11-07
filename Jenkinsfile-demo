@@ -54,7 +54,7 @@ pipeline {
                     sh 'docker volume prune --all --force || true'
                 }
             }
-        }
+        }*/
 
         stage("Sonar Qube") {
             steps {
@@ -71,7 +71,7 @@ pipeline {
                     '''
                 }
             }
-        }*/
+        }
 
         stage("Deploying to INFA") {
 
