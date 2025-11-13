@@ -159,7 +159,8 @@ export const putModuleValidator = [
     .withMessage("La description du module contient des caractères invalides."),
   body("module.duration")
     .isInt({ gt: 0 })
-    .withMessage("La durée doit être un nombre entier positif."),
+    .withMessage("La durée doit être un nombre entier positif.")
+    .optional(),
   body("module.contactsIds")
     .isArray()
     .withMessage("contactsIds doit être un tableau.")
