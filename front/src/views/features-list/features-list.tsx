@@ -1,9 +1,10 @@
+import { useEffect } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import features from "../../lib/features/features-to-be-implemented.json";
 import announcements from "../../lib/features/announcements.json";
-import { useEffect } from "react";
-import UserTopBar from "../../components/UI/user-top-bar/user-top-bar";
+import video from "./ya-video.mp4";
+import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 
 /**
  * Composant parent de la route /features
@@ -12,14 +13,16 @@ import UserTopBar from "../../components/UI/user-top-bar/user-top-bar";
  * de toutes les fonctionnalités à venir
  */
 const FeaturesList = () => {
+  const { pathname } = useLocation();
+  const isStudent = pathname.split("/")[1] === "student";
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   return (
-    <div className="flex flex-col mt-10">
-      <UserTopBar />
-      <div className="grid grid-rows-5 gap-5 p-20">
+    <ViewWrapper>
+      <div className="grid grid-rows-5 gap-5">
         <div className="flex flex-col row-span-2 items-center gap-y-5 justify-center h-full bg-secondary text-secondary-content p-20 rounded-lg">
           <p className="font-bold text-6xl">Disponible bientôt</p>
           <p className="font-semibold w-[60%] text-center">
@@ -36,14 +39,24 @@ const FeaturesList = () => {
               ))}
             </ul>
           </div>
-          <div className="bg-primary text-primary-content rounded-lg col-span-2 px-14 py-5">
-            <p className="font-semibold">Annonces</p>
-            <ul className="mt-5 list-disc">
-              {announcements.map((announcement) => (
-                <li key={announcement}>{announcement}</li>
-              ))}
-            </ul>
-          </div>
+          {isStudent ? (
+            <video
+              className="h-full w-full rounded-lg object-cover col-span-2"
+              src={video}
+              autoPlay
+              muted
+              loop
+            />
+          ) : (
+            <div className="bg-primary text-primary-content rounded-lg col-span-2 px-14 py-5">
+              <p className="font-semibold">Annonces</p>
+              <ul className="mt-5 list-disc">
+                {announcements.map((announcement) => (
+                  <li key={announcement}>{announcement}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
         <div className="flex justify-between items-center bg-primary row-span-1 rounded-lg px-16 h-[80%]">
           <p className="text-white prose">
@@ -59,7 +72,7 @@ const FeaturesList = () => {
           </div>
         </div>
       </div>
-    </div>
+    </ViewWrapper>
   );
 };
 export default FeaturesList;
