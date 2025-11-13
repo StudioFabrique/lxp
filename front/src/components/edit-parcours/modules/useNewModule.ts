@@ -273,8 +273,12 @@ const useNewModule = () => {
           module: {
             id: state.moduleToUpdate,
             ...data.values,
-            contactsIds: state.currentContacts.map((item) => item.id),
-            bonusSkillsIds: state.currentSkills.map((item) => item.id),
+            contactsIds: state.currentContacts
+              ? state.currentContacts.map((item) => item.id)
+              : [],
+            bonusSkillsIds: state.currentSkills
+              ? state.currentSkills.map((item) => item.id)
+              : [],
           },
         },
       },

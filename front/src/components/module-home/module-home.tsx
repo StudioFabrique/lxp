@@ -56,7 +56,7 @@ const ModuleHomeList = ({
           <ToggleList showList={showList} onToggle={setShowList} />
         </article>
         {list ? (
-          <>
+          <div className="w-full">
             {showList ? (
               <Wrapper>
                 <ModuleTable
@@ -75,7 +75,7 @@ const ModuleHomeList = ({
                 onDelete={handleConfirmDeleteModule}
               />
             )}
-          </>
+          </div>
         ) : null}
       </section>
       <section className="w-full">

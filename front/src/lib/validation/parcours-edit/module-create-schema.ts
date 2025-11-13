@@ -14,4 +14,8 @@ export const moduleCreateSchema = z.object({
     })
     .nullish()
     .transform((val) => val ?? ""),
+  duration: z
+    .number()
+    .nullish()
+    .transform((val) => val ?? 0),
 });
