@@ -65,7 +65,7 @@ const RightSideDrawer: FC<Props> = ({
         ref={checkboxRef}
         onChange={handleToggle}
       />
-      <div className="drawer-content sticky top-0 z-40">
+      <div className="drawer-content sticky top-0 z-0">
         {visible ? (
           <label htmlFor={id} className={btnStyle}>
             {buttonTitle ? (

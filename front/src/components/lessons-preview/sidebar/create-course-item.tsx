@@ -85,7 +85,7 @@ const CreateCourseItem = ({ moduleId, parcoursId }: CreateCourseItemProps) => {
                     <Check className="stroke-base-100 w-5 h-5" />
                   </button>
                 </span>
-                <span className="text-sm font-light italic text-success-content">
+                <span className="text-sm font-light italic text-base-100">
                   Vous allez être redirigé vers la page de création de cours
                 </span>
               </div>
