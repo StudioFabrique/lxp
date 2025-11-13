@@ -17,7 +17,7 @@ const Contacts = () => {
       contacts.map((contact) => (
         <div
           key={contact.id}
-          className="flex flex-col bg-secondary p-4 rounded-lg text-base-100"
+          className="flex flex-col bg-secondary p-4 rounded-lg text-base-content"
         >
           <span className="flex justify-between items-center">
             <p className="capitalize font-bold">{contact.name}</p>

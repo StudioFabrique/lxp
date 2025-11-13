@@ -26,7 +26,7 @@ const ContenuItem: FC<{
       onClick={() => setSelectedModule(module)}
       onDoubleClick={() => navigate(`../module/${module.id}`)}
     >
-      <div className="flex flex-col items-center justify-center bg-secondary p-4 w-24 rounded-lg h-20">
+      <div className="flex flex-col items-center text-base-content justify-center bg-secondary p-4 w-24 rounded-lg h-20">
         <p className="font-bold text-xl">{minDate.day}</p>
         <p className="font-bold uppercase text-sm">{minDate.month}</p>
       </div>
