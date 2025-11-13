@@ -65,7 +65,7 @@ const ActivityPreview = ({ activity }: ActivityProps) => {
               .map((pdf) => (
                 <a
                   key={pdf.url}
-                  href={`${ACTIVITIES}files/${pdf.url}`}
+                  href={pdf.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-outline btn-sm w-full justify-between py-5"
