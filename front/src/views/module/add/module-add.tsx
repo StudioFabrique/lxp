@@ -3,12 +3,17 @@ import Header from "../../../components/UI/header";
 import Wrapper from "../../../components/UI/wrapper/wrapper.component";
 import ModuleMetadatas from "./module-metadatas";
 import useForm from "../../../components/UI/forms/hooks/use-form";
+import { useState } from "react";
+import Selecter from "../../../components/UI/selecter/selecter.component";
 
 export default function ModuleAdd() {
   //const ref = useRef(null);
   const { errors, onChangeValue, values } = useForm();
 
   const data = { values, onChangeValue, errors };
+
+  const [showMetadataForm, setShowMetadataForm] = useState(false);
+  const [isModuleCreated, setIsModuleCreated] = useState(false);
 
   return (
     <main className="p-2 flex flex-col items-center gap-y-8">
@@ -21,6 +26,13 @@ export default function ModuleAdd() {
       </section>
       <section className="flex justify-start w-full">
         <Wrapper>
+          <Selecter
+            defaultItem={{ id: parcoursId ?? 0, title: "" }}
+            list={parcoursList}
+            title="Choisissez un parcours"
+            onSelectItem={handleParcours}
+          />
+
           <form
             onSubmit={(e: React.FormEvent) => e.preventDefault()}
             ref={null}
@@ -33,6 +45,11 @@ export default function ModuleAdd() {
                   onSetFile={() => {}}
                   mode="create"
                 />
+              </span>
+              <span className="col-span-6 m-auto">
+                <button className="btn btn-info" disabled={!isModuleCreated}>
+                  Attacher à un module
+                </button>
               </span>
             </div>
           </form>
