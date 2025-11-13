@@ -88,7 +88,9 @@ export const ContentTypePicker = ({
                     name={option.icon}
                     className="w-4 h-4 mr-1 text-base-content"
                   />
-                  <span className="text-base-content">{option.label}</span>
+                  <span className="text-base-content select-none">
+                    {option.label}
+                  </span>
                 </DropdownButton>
               );
             } else if (isCategory(option)) {
