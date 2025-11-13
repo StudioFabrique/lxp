@@ -1,32 +1,41 @@
-import { Link, useParams, useSearchParams } from "react-router-dom";
-import ModuleForm from "../../../components/edit-parcours/modules-section/module-form.component";
-import { useRef } from "react";
+//import { useRef } from "react";
 import Header from "../../../components/UI/header";
 import Wrapper from "../../../components/UI/wrapper/wrapper.component";
+import ModuleMetadatas from "./module-metadatas";
+import useForm from "../../../components/UI/forms/hooks/use-form";
 
 export default function ModuleAdd() {
-  const [searchParams] = useSearchParams();
-  const step = searchParams.get("step");
-  const { parcoursId } = useParams();
-  const ref = useRef(null);
+  //const ref = useRef(null);
+  const { errors, onChangeValue, values } = useForm();
+
+  const data = { values, onChangeValue, errors };
 
   return (
-    <main className="w-full p-2 min-h-screen flex flex-col items-center gap-8">
+    <main className="p-2 flex flex-col items-center gap-y-8">
       {/* En-tête de la page */}
-      <section className="w-full">
+      <section className="flex justify-center w-full">
         <Header
           title="Créer un nouveau module"
           description="Créer un nouveau module pour une formation ou un parcours"
         />
       </section>
-      <section>
+      <section className="flex justify-start w-full">
         <Wrapper>
-          <ModuleForm
-            ref={ref}
-            isLoading={false}
-            onCancel={() => {}}
-            onSubmitModule={() => {}}
-          />
+          <form
+            onSubmit={(e: React.FormEvent) => e.preventDefault()}
+            ref={null}
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-11 gap-2">
+              <span className="col-span-5">
+                <ModuleMetadatas
+                  data={data}
+                  thumb={null}
+                  onSetFile={() => {}}
+                  mode="create"
+                />
+              </span>
+            </div>
+          </form>
         </Wrapper>
       </section>
     </main>

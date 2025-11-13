@@ -23,8 +23,16 @@ export default function ModuleListItem({
 
   console.log({ module });
 
+  // ✅ Vérifier si le module a des metadatas
+  const hasMetadatas = module.metadatas && module.metadatas.length > 0;
+  const hasOtherParcoursMetadatas =
+    otherParcoursMetadatas && otherParcoursMetadatas.length > 0;
+
+  // ✅ Afficher si : pas de metadatas du tout OU metadatas dans d'autres parcours
+  const shouldDisplay = !hasMetadatas || hasOtherParcoursMetadatas;
+
   // Don't render if module only exists in current parcours
-  if (!otherParcoursMetadatas || otherParcoursMetadatas.length === 0) {
+  if (!shouldDisplay) {
     return null;
   }
 
@@ -32,23 +40,44 @@ export default function ModuleListItem({
     onCopyModule(module, meta);
   };
 
+  // ✅ Affichage conditionnel selon le cas
   return (
     <div className="collapse bg-base-100 border border-base-300">
       <input type="radio" name="my-accordion-1" />
       <div className="collapse-title font-semibold flex flex-col gap-y-1">
         <span>{module.title}</span>
-        <span className="font-bold text-xs text-base-content/60">
-          Utilisé dans {otherParcoursMetadatas.length} autre(s) parcours.
-        </span>
+        {!hasMetadatas ? (
+          <span className="font-bold text-xs text-base-content/60">
+            Module non utilisé dans un parcours
+          </span>
+        ) : (
+          <span className="font-bold text-xs text-base-content/60">
+            Utilisé dans {otherParcoursMetadatas.length} autre(s) parcours.
+          </span>
+        )}
       </div>
       <div className="collapse-content text-sm">
-        {otherParcoursMetadatas.map((meta: Metadatas) => (
-          <ModuleMetadataItem
-            key={meta.id}
-            metadata={meta}
-            onCopy={() => handleCopy(meta)}
-          />
-        ))}
+        {!hasMetadatas ? (
+          <div className="py-2">
+            <p className="text-base-content/70 mb-3">
+              Ce module n'est rattaché à aucun parcours.
+            </p>
+            <button
+              onClick={() => handleCopy({} as Metadatas)} // Metadata vide pour module orphelin
+              className="btn btn-sm btn-primary"
+            >
+              Utiliser ce module
+            </button>
+          </div>
+        ) : (
+          otherParcoursMetadatas.map((meta: Metadatas) => (
+            <ModuleMetadataItem
+              key={meta.id}
+              metadata={meta}
+              onCopy={() => handleCopy(meta)}
+            />
+          ))
+        )}
       </div>
     </div>
   );
