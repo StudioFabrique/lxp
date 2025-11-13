@@ -21,7 +21,7 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
           Votre avancement dans le parcours
         </h2>
         <div className="flex gap-10 items-center">
-          <div className="grid grid-cols-4 gap-5">
+          <div className="grid grid-cols-4 gap-5 w-full">
             {modules
               ?.filter((_x, i) => i < 4)
               .map((module) => {
