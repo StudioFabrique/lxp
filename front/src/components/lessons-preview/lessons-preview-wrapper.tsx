@@ -91,7 +91,7 @@ const LessonsPreviewWrapper = ({
           </motion.div>
         )}
         <div
-          className={`flex flex-col gap-5 ${
+          className={`flex flex-col gap-2 ${
             isPanelClosed ? "lg:col-span-3" : "lg:col-span-2"
           }`}
         >
