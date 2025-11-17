@@ -1,32 +1,31 @@
 import Field from "../../../components/UI/forms/field";
 import FieldArea from "../../../components/UI/forms/field-area";
-import FieldNumber from "../../../components/UI/forms/field-number";
 import useImageUpload from "../../../hooks/use-image-upload";
 import CustomError from "../../../utils/interfaces/custom-error";
 import FormUploadImage from "../../../components/UI/form-upload-image";
 import defaultImage from "../../../assets/images/cat.webp";
 import bgImageGradient from "../../../utils/bg-image-gradient";
 
-
 type Props = {
+  children?: React.ReactNode;
   mode: "create" | "edit";
   thumb: string | null;
   data: {
-    values: Record<string, string>;
-    onChangeValue: (field: string, value: string) => void;
+    values: Record<string, unknown>;
+    onChangeValue: (field: string, value: unknown) => void;
     errors: CustomError[];
   };
   onSetFile: (file: File | null) => void;
 };
 
-function ModuleMetadatas({ data, mode, thumb, onSetFile }: Props) {
-  console.log({ thumb });
-
+function ModuleMetadatas({ data, mode, thumb, onSetFile, children }: Props) {
   const { image, handleFileChange } = useImageUpload(5000000, onSetFile);
+  console.log({ image });
+
   // affiche un aperçu de l'image choisie pour le module ou une image en background de div de manière dynamique
   const classImage: React.CSSProperties = {
     backgroundImage: bgImageGradient(
-      image ? image : defaultImage
+      image ? image : thumb ? `data:image/jpeg;base64,${thumb}` : defaultImage
     ),
     width: "100px",
     height: "75px",
@@ -63,13 +62,7 @@ function ModuleMetadatas({ data, mode, thumb, onSetFile }: Props) {
 
         {/* duration */}
 
-        <FieldNumber
-          label="Durée du module en heures *"
-          name="duration"
-          placeholder="Ex : 12"
-          min={0}
-          data={data}
-        />
+        {children ? children : null}
 
         {/* image du module */}
 

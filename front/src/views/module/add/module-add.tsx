@@ -2,54 +2,77 @@
 import Header from "../../../components/UI/header";
 import Wrapper from "../../../components/UI/wrapper/wrapper.component";
 import ModuleMetadatas from "./module-metadatas";
-import useForm from "../../../components/UI/forms/hooks/use-form";
-import { useState } from "react";
 import Selecter from "../../../components/UI/selecter/selecter.component";
+import useNewModule from "./use-new-module";
 
 export default function ModuleAdd() {
-  //const ref = useRef(null);
-  const { errors, onChangeValue, values } = useForm();
-
-  const data = { values, onChangeValue, errors };
-
-  const [showMetadataForm, setShowMetadataForm] = useState(false);
-  const [isModuleCreated, setIsModuleCreated] = useState(false);
+  const {
+    data,
+    formationId,
+    formationList,
+    handlePickFormation,
+    newModuleData,
+    showMetadataForm,
+    handleSubmit,
+    handleSetFile,
+    handleResetForm,
+    toggleShowMetadataForm,
+  } = useNewModule();
 
   return (
-    <main className="p-2 flex flex-col items-center gap-y-8">
+    <main className="p-2 flex flex-col items-center gap-y-8 w-full">
       {/* En-tête de la page */}
-      <section className="flex justify-center w-full">
+      <section className="flex justify-center xl:w-9/12 w-full">
         <Header
           title="Créer un nouveau module"
-          description="Créer un nouveau module pour une formation ou un parcours"
+          description="Créer un nouveau module pour une formation existante"
         />
       </section>
-      <section className="flex justify-start w-full">
+      <section className="flex justify-center">
         <Wrapper>
-          <Selecter
-            defaultItem={{ id: parcoursId ?? 0, title: "" }}
-            list={parcoursList}
-            title="Choisissez un parcours"
-            onSelectItem={handleParcours}
-          />
-
-          <form
-            onSubmit={(e: React.FormEvent) => e.preventDefault()}
-            ref={null}
-          >
+          <div className="xl:w-2/6">
+            <Selecter
+              defaultItem={{ id: formationId ?? 0, title: "" }}
+              list={formationList}
+              title="Choisissez une formation"
+              onSelectItem={handlePickFormation}
+            />
+          </div>
+          <form className="w-full" onSubmit={handleSubmit} ref={null}>
             <div className="grid grid-cols-1 lg:grid-cols-11 gap-2">
               <span className="col-span-5">
                 <ModuleMetadatas
                   data={data}
                   thumb={null}
-                  onSetFile={() => {}}
+                  onSetFile={handleSetFile}
                   mode="create"
                 />
+                <div className="flex justify-end mt-4">
+                  <span className="flex items-center gap-x-4">
+                    <button
+                      className="btn btn-outline btn-secondary"
+                      type="button"
+                      onClick={handleResetForm}
+                    >
+                      Annuler
+                    </button>
+                    <button className="btn btn-primary">Enregistrer</button>
+                  </span>
+                </div>
               </span>
               <span className="col-span-6 m-auto">
-                <button className="btn btn-info" disabled={!isModuleCreated}>
-                  Attacher à un module
-                </button>
+                {showMetadataForm && newModuleData ? (
+                  <div></div>
+                ) : (
+                  <button
+                    className="btn btn-info"
+                    disabled={!newModuleData}
+                    type="button"
+                    onClick={toggleShowMetadataForm}
+                  >
+                    Attacher à un parcours
+                  </button>
+                )}
               </span>
             </div>
           </form>

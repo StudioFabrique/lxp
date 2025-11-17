@@ -7,8 +7,8 @@ interface FieldNumberProps {
   min: number;
   data: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    values: Record<string, string>;
-    onChangeValue: (fieldNumber: string, value: string) => void;
+    values: Record<string, any>;
+    onChangeValue: (fieldNumber: string, value: number) => void;
     errors: CustomError[];
   };
 }
@@ -37,7 +37,7 @@ const FieldNumber = (props: FieldNumberProps) => {
         }
         placeholder={placeholder}
         onChange={(event) =>
-          props.data.onChangeValue(name, event.currentTarget.value)
+          props.data.onChangeValue(name, +event.currentTarget.value)
         }
       />
       {props.data.errors.find((item) => item.type === name) ? (

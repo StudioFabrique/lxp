@@ -34,13 +34,21 @@ const useImageUpload = (maxSize: number, onSetFile: (file: File) => void) => {
         };
         reader.readAsDataURL(selectedFile);
       }
-    }
+    } else resetFile();
   };
 
   const handleSetFile = () => {
     if (fileRef && fileRef.current) {
       fileRef.current.value = "";
       fileRef.current?.click();
+    }
+  };
+
+  const resetFile = () => {
+    if (fileRef && fileRef.current) {
+      fileRef.current.value = "";
+      fileRef.current?.click();
+      setImage(null);
     }
   };
   return {

@@ -10,7 +10,7 @@ import { ZodError } from "zod";
  */
 const useForm = (data = {}, schema?: any) => {
   // État pour stocker les valeurs des champs du formulaire
-  const [values, setValues] = useState<Record<string, string>>(data);
+  const [values, setValues] = useState<Record<string, unknown>>(data);
   // État pour stocker les erreurs de validation
   const [errors, setErrors] = useState<CustomError[]>([]);
 
@@ -19,7 +19,7 @@ const useForm = (data = {}, schema?: any) => {
    * Supprime l'erreur associée au champ si elle existe
    */
   const onChangeValue = useCallback(
-    (field: string, value: string) => {
+    (field: string, value: unknown) => {
       if (errors.length > 0)
         setErrors((prevErrors) => [
           ...prevErrors.filter((e: CustomError) => e.type !== field),
@@ -29,19 +29,14 @@ const useForm = (data = {}, schema?: any) => {
         [field]: value,
       }));
       if (schema) {
-        console.log("schéma trouvé");
-
         try {
           schema.shape[field].parse(value);
         } catch (error) {
           if (error instanceof ZodError) {
-            console.log("bla bla bvla");
-
             setErrors((prevErrors) => [
               ...prevErrors,
               { type: field, message: error.errors[0].message },
             ]);
-            console.log({ errors });
           }
         }
       }

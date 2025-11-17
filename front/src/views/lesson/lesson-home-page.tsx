@@ -83,38 +83,40 @@ export default function LessonHomePage() {
 
   return (
     <main className="min-h-screen w-full flex justify-center">
-      <ListHeader>
-        {/* En-tête de la page */}
-        <LessonHeader />
+      <div>
+        <ListHeader>
+          {/* En-tête de la page */}
+          <LessonHeader />
 
-        {/* Liste des leçons */}
-        <section className="w-full">
-          {lessonsList && lessonsList.length > 0 ? (
-            <Wrapper>
-              <LessonHome lessonsList={lessonsList} onDelete={setDeletion} />
-            </Wrapper>
-          ) : (
-            <ElementNotFound message={"Aucune leçon trouvée."} />
-          )}
-        </section>
+          {/* Liste des leçons */}
+          <section>
+            {lessonsList && lessonsList.length > 0 ? (
+              <Wrapper>
+                <LessonHome lessonsList={lessonsList} onDelete={setDeletion} />
+              </Wrapper>
+            ) : (
+              <ElementNotFound message={"Aucune leçon trouvée."} />
+            )}
+          </section>
 
-        {/* Modal de confirmation de suppression */}
-        <section>
-          {lessonToDelete ? (
-            <Modal
-              onLeftClick={() => setLessonToDelete(null)}
-              onRightClick={handleDeleteLesson}
-              title="Supprimer une leçon"
-              isSubmitting={isLoading}
-              leftLabel="Annuler"
-              rightLabel="Confirmer"
-            >
-              Attention la leçon et les ressources qui lui sont associées seront
-              définitivement supprimées.
-            </Modal>
-          ) : null}
-        </section>
-      </ListHeader>
+          {/* Modal de confirmation de suppression */}
+          <section>
+            {lessonToDelete ? (
+              <Modal
+                onLeftClick={() => setLessonToDelete(null)}
+                onRightClick={handleDeleteLesson}
+                title="Supprimer une leçon"
+                isSubmitting={isLoading}
+                leftLabel="Annuler"
+                rightLabel="Confirmer"
+              >
+                Attention la leçon et les ressources qui lui sont associées
+                seront définitivement supprimées.
+              </Modal>
+            ) : null}
+          </section>
+        </ListHeader>
+      </div>
     </main>
   );
 }
