@@ -13,6 +13,7 @@ import {
   moduleIdFromBodyValidator,
   moduleIdValidator,
   postModuleFromScratchValidator,
+  postModuleMetadataValidator,
   putModuleParcoursValidator,
   putModuleValidator,
   updateDatesModulesValidator,
@@ -32,13 +33,15 @@ import httpGetModuleDetail from "../../../controllers/module/http-get-module-det
 import httpGetModulesTimeline from "../../../controllers/module/http-get-modules-timeline";
 import httpGetModuleImage from "../../../controllers/module/http-get-module-image";
 import { checkValidatorResult } from "../../../middleware/validators";
-import { query } from "express-validator";
+import { check, query } from "express-validator";
 import jsonParser from "../../../middleware/json-parser";
 import multer from "multer";
 import httpPostModuleFromScratch from "../../../controllers/module/http-post-module-from-scratch";
 import httpGetLimitedModuleDetail from "../../../controllers/module/http-get-limited-module-detail";
 import httpPostDuplicateModule from "../../../controllers/module/http-post-duplicate-module";
 import httpGetParcoursModules from "../../../controllers/module/http-get-parcours-modules";
+import httpPostModuleMetadata from "../../../controllers/module/http-post-module-metadata";
+import postModuleMetadata from "../../../models/module/post-module-metadata";
 
 const modules = Router();
 
@@ -58,6 +61,13 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
+
+modules.post(
+  "/metadata",
+  checkPermissions("module"),
+  postModuleMetadataValidator,
+  httpPostModuleMetadata
+);
 
 modules.get(
   "/parcours-modules/:parcoursId",

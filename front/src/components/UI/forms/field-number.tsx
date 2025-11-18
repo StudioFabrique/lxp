@@ -17,7 +17,7 @@ const FieldNumber = (props: FieldNumberProps) => {
   const { label, placeholder, name, min } = props;
 
   const baseStyle =
-    "input focus:outline-none disabled:cursor-default disabled:text-primary-content disabled:text-base-content";
+    "input input-bordered focus:outline-none disabled:cursor-default disabled:text-primary-content disabled:text-base-content";
 
   const style = props.data.errors.find((item) => item.type === name)
     ? baseStyle + " input-error"

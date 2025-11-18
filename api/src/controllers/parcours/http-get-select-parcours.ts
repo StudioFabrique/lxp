@@ -3,11 +3,12 @@ import getSelectParcours from "../../models/parcours/get-select-parcours";
 
 export default async function httpGetSelectParcours(
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) {
   try {
-    const response = await getSelectParcours();
+    const { formationId } = req.params ?? null;
+    const response = await getSelectParcours(formationId ? +formationId : null);
     const result = {
       statusCode: 200,
       data: response,
