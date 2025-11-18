@@ -9,13 +9,10 @@ import { useMenuTextTypes } from "./hooks/useMenuTextTypes.js";
 import { items } from "./MenuBarItems.js";
 import { useMenuContentTypes } from "./hooks/useMenuContentTypes.js";
 import { useMenuAlignTextTypes } from "./hooks/useMenuAlignTextTypes.js";
-import { ColorPicker } from "./Colorpicker/Colorpicker.js";
+// import { ColorPicker } from "./Colorpicker/Colorpicker.js";
 import { useTextmenuStates } from "./hooks/useTextmenuStates.js";
 import { useTextmenuCommands } from "./hooks/useTextmenuCommands.js";
-import * as Popover from "@radix-ui/react-popover";
 import { Toolbar } from "./ui/Toolbar.js";
-import { Icon } from "./ui/Icon.js";
-import { Surface } from "./ui/Surface.js";
 import { FontFamilyPicker } from "./FontFamilyPicker.js";
 import { EditLinkPopover } from "./EditLinkPopover.js";
 import { EditYoutubeLinkPopover } from "./EditYoutubeLinkPopover.js";
@@ -28,9 +25,9 @@ type MenuBarProps = {
   isSticky?: boolean;
 };
 
-const MemoButton = memo(Toolbar.Button);
+// const MemoButton = memo(Toolbar.Button);
 const MemoContentTypePicker = memo(ContentTypePicker);
-const MemoColorPicker = memo(ColorPicker);
+// const MemoColorPicker = memo(ColorPicker);
 const MemoFontFamilyPicker = memo(FontFamilyPicker);
 // const MemoFontSizePicker = memo(FontSizePicker);
 
@@ -92,7 +89,7 @@ export default function MenuBar({
       />
 
       {/* Color Picker for Text Color */}
-      <Popover.Root>
+      {/* <Popover.Root>
         <Popover.Trigger asChild>
           <MemoButton active={!!states.currentColor} tooltip="Couleur du texte">
             <Icon name="Palette" className="text-base-content" />
@@ -107,10 +104,10 @@ export default function MenuBar({
             />
           </Surface>
         </Popover.Content>
-      </Popover.Root>
+      </Popover.Root> */}
 
       {/* Color Picker for Highlight Color */}
-      <Popover.Root>
+      {/* <Popover.Root>
         <Popover.Trigger asChild>
           <MemoButton
             active={!!states.currentHighlight}
@@ -128,7 +125,7 @@ export default function MenuBar({
             />
           </Surface>
         </Popover.Content>
-      </Popover.Root>
+      </Popover.Root> */}
 
       {items(editor).map((item) => (
         <MenuItem key={item.title} {...item} />
