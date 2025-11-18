@@ -63,14 +63,17 @@ const useNewModule = () => {
     if (!onValidateForm()) return;
 
     const formData = new FormData();
+    console.log(values);
+
     const module = {
       ...data.values,
       formationId: state.parcours?.formationId,
       parcoursId: +id!,
       duration:
-        +data.values.duration === 0 || isNaN(+data.values.duration)
+        (data.values.duration as number) === 0 ||
+        isNaN(data.values.duration as number)
           ? 1
-          : +data.values.duration,
+          : (data.values.duration as number),
       contacts: state.currentContacts.map((item) => item.id),
       skills: state.currentSkills.map((item) => item.id),
     };
@@ -231,7 +234,7 @@ const useNewModule = () => {
         path: `/modules/duplicate/${state.moduleToDuplicate!.id}`,
         method: "post",
         body: {
-          duration: +data.values.duration,
+          duration: data.values.duration as number,
           contactsIds: state.currentContacts.map((item) => item.id),
           skillsIds: state.currentSkills.map((item) => item.id),
           parcoursId: +id!,
@@ -273,8 +276,12 @@ const useNewModule = () => {
           module: {
             id: state.moduleToUpdate,
             ...data.values,
-            contactsIds: state.currentContacts.map((item) => item.id),
-            bonusSkillsIds: state.currentSkills.map((item) => item.id),
+            contactsIds: state.currentContacts
+              ? state.currentContacts.map((item) => item.id)
+              : [],
+            bonusSkillsIds: state.currentSkills
+              ? state.currentSkills.map((item) => item.id)
+              : [],
           },
         },
       },

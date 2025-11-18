@@ -8,7 +8,7 @@ import User from "../utils/interfaces/db/user";
 import ConnectionInfos from "../utils/interfaces/db/connection-infos";
 import IConnectionInfos from "../utils/interfaces/db/connection-infos";
 
-function refreshTokens(req: CustomRequest, res: Response, next: NextFunction) {
+function refreshTokens(req: CustomRequest, res: Response, _next: NextFunction) {
   const authCookie = req.cookies.refreshToken;
 
   jwt.verify(authCookie, process.env.SECRET!, async (err: any, data: any) => {

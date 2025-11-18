@@ -12,6 +12,7 @@ import httpPutReorderObjectives from "../../../controllers/parcours/http-put-reo
 import {
   formationIdValidator,
   getParcoursByFormationValidator,
+  getParcoursSelectValidator,
   parcoursByIdValidator,
   parcoursIdValidator,
   postParcoursValidator,
@@ -49,8 +50,9 @@ parcoursRouter.get("/", checkPermissions("parcours"), httpGetParcours);
 
 // Route GET pour récupérer une liste simplifiée des parcours
 parcoursRouter.get(
-  "/select",
+  "/select/:formationId?",
   checkPermissions("parcours"),
+  getParcoursSelectValidator,
   httpGetSelectParcours
 );
 

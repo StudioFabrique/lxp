@@ -91,7 +91,7 @@ const useModuleAdd = () => {
     const values = {
       ...data.values,
       // conversion de la chaîne de caractères "duration" en nombre pour respecter le schéma de validation
-      duration: +data.values.duration,
+      duration: data.values.duration as number,
     } as ModuleForm;
     if (!handleValidateModule(values)) return;
     const formData = new FormData();
@@ -99,9 +99,9 @@ const useModuleAdd = () => {
       ...data.values,
       formationId: formation,
       duration:
-        +data.values.duration === 0 || isNaN(+data.values.duration)
+        data.values.duration === 0 || isNaN(data.values.duration as number)
           ? 1
-          : +data.values.duration,
+          : (data.values.duration as number),
     };
     console.log({ module });
 

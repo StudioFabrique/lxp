@@ -42,6 +42,16 @@ export const getParcoursByFormationValidator = [
   checkValidatorResult,
 ];
 
+export const getParcoursSelectValidator = [
+  param("formationId")
+    .isNumeric()
+    .withMessage("Identifiant de formation invalide")
+    .notEmpty()
+    .withMessage("Identifiant de formation absent")
+    .optional(),
+  checkValidatorResult,
+];
+
 export const updateInfosValidator = [
   body("parcoursId")
     .isNumeric()

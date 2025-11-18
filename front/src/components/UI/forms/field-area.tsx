@@ -8,7 +8,7 @@ interface FieldProps {
   rows?: number;
   data: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    values: Record<string, string>;
+    values: Record<string, unknown>;
     onChangeValue: (field: string, value: string) => void;
     errors: CustomError[];
   };
@@ -36,7 +36,7 @@ const FieldArea = (props: FieldProps) => {
         value={
           props.data.values[name] !== undefined &&
           props.data.values[name] !== null
-            ? props.data.values[name]
+            ? (props.data.values[name] as string)
             : ""
         }
         placeholder={placeholder}

@@ -39,14 +39,14 @@ const CourseHome = () => {
           <Loader />
         </div>
       ) : (
-        <>
+        <div className="xl:w-9/12">
           {coursesList ? (
             <CourseList
               coursesList={coursesList}
               onRefreshCourses={getCourses}
             />
           ) : null}
-        </>
+        </div>
       )}
     </main>
   );
