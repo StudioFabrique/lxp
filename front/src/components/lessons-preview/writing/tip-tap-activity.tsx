@@ -98,7 +98,7 @@ const TiptapActivity = ({
         </div>
       )}
 
-      <div className="w-[100%] bg-base-200 rounded-lg p-4">
+      <div className={`w-[100%] rounded-lg p-4 bg-base-200`}>
         <TiptapEditor
           mode={mode}
           initialValue={content}
