@@ -52,7 +52,7 @@ const ProgressModulesStats = ({ modules }: ProgressModulesStatsProps) => {
                     key={module.id}
                   >
                     <div className="flex items-center justify-between">
-                      <p className="w-[60%]">{module.title}</p>
+                      <p className="text-base-content">{module.title}</p>
                       <p className="text-3xl text-primary">{`${Math.round(
                         moduleProgress
                       )} %`}</p>

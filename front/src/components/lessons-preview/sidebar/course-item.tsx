@@ -187,21 +187,17 @@ const CourseItem = ({
               </Can>
             </div>
 
-            <div className="flex justify-between items-center gap-5 p-1 min-w-0">
+            <div className="flex justify-between items-center gap-5 p-1 min-w-0 text-secondary-content">
               <span
                 data-tip={`Description : ${course.description}`}
                 className="tooltip tooltip-right flex-1 min-w-0"
               >
-                <p className="text-secondary-content font-semibold text-sm w-[80%] max-h-10 break-words overflow-y-clip min-w-0">
+                <p className=" font-semibold text-sm w-[80%] max-h-10 break-words overflow-y-clip min-w-0">
                   {course.description}
                 </p>
               </span>
               <div className="flex-shrink-0 ">
-                {isCourseOpen ? (
-                  <ArrowDown className="stroke-primary-content" />
-                ) : (
-                  <ArrowRight className="stroke-primary-content" />
-                )}
+                {isCourseOpen ? <ArrowDown /> : <ArrowRight />}
               </div>
             </div>
           </div>

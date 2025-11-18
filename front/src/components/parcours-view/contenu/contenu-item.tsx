@@ -22,7 +22,9 @@ const ContenuItem: FC<{
 
   return (
     <div
-      className="flex gap-x-2 items-center text-base-100"
+      className={`flex gap-x-2 items-center ${
+        selectedModuleId === module.id ? "text-base-100" : "text-base-content"
+      }`}
       onClick={() => setSelectedModule(module)}
       onDoubleClick={() => navigate(`../module/${module.id}`)}
     >
