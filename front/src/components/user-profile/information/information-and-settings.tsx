@@ -25,6 +25,10 @@ import {
   transformLink,
   urlIsValid,
 } from "../../../utils/link-transform-service";
+import {
+  TEST_ID_HOBBIES,
+  TEST_ID_LINKS,
+} from "../../../config/tests-config/tests-ids";
 
 type UserInformation = {
   _id: string;
@@ -148,7 +152,9 @@ const InformationAndSettings: FC<{
             <Presentation formProps={formProps} />
             {style?.showStudentElements && (
               <>
+                {/* Hobbies */}
                 <ItemsAdder
+                  testId={TEST_ID_HOBBIES}
                   styleOptions={{
                     label: "Centre d'intérêts",
                     placeholder: "Ajouter un nouveau centre d'intérêt",
@@ -169,7 +175,9 @@ const InformationAndSettings: FC<{
                   onAddItem={addHobby}
                   onDelete={deleteHobby}
                 />
+                {/* Links */}
                 <ItemsAdder
+                  testId={TEST_ID_LINKS}
                   styleOptions={{
                     label: "Liens",
                     placeholder:
