@@ -14,6 +14,7 @@ type Props = {
   currentSkills: Skill[];
   setCurrentContacts: (contacts: Contact[]) => void;
   setCurrentSkills: (skills: Skill[]) => void;
+  isDisabled?: boolean;
 };
 
 /**
@@ -37,6 +38,7 @@ export default function ModuleToParcours({
   contacts,
   isLoading,
   skills,
+  isDisabled = false,
 }: Props) {
   console.log(currentSkills);
 
@@ -53,6 +55,7 @@ export default function ModuleToParcours({
         property="name"
         onSubmit={setCurrentContacts}
         titleSize="medium"
+        isDisabled={isDisabled}
       >
         {/* Composant qui affiche les contacts selectionnés */}
         <InheritedTextList additionalProperty="role" />
@@ -71,6 +74,7 @@ export default function ModuleToParcours({
         property="description"
         onSubmit={setCurrentSkills}
         titleSize="medium"
+        isDisabled={isDisabled}
       >
         {/* Composant qui affiche les compétences selectionnées */}
         <InheritedTextList />

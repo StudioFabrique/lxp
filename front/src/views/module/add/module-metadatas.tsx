@@ -5,6 +5,7 @@ import CustomError from "../../../utils/interfaces/custom-error";
 import FormUploadImage from "../../../components/UI/form-upload-image";
 import defaultImage from "../../../assets/images/cat.webp";
 import bgImageGradient from "../../../utils/bg-image-gradient";
+import { useEffect } from "react";
 
 type Props = {
   children?: React.ReactNode;
@@ -16,11 +17,18 @@ type Props = {
     errors: CustomError[];
   };
   onSetFile: (file: File | null) => void;
+  onSetImageBase64?: (base64: string | null) => void;
 };
 
-function ModuleMetadatas({ data, mode, thumb, onSetFile, children }: Props) {
+function ModuleMetadatas({
+  data,
+  mode,
+  thumb,
+  onSetFile,
+  children,
+  onSetImageBase64,
+}: Props) {
   const { image, handleFileChange } = useImageUpload(5000000, onSetFile);
-  console.log({ image });
 
   // affiche un aperçu de l'image choisie pour le module ou une image en background de div de manière dynamique
   const classImage: React.CSSProperties = {
@@ -35,6 +43,10 @@ function ModuleMetadatas({ data, mode, thumb, onSetFile, children }: Props) {
     borderRadius: "5px",
     marginRight: "10px",
   };
+
+  useEffect(() => {
+    if (onSetImageBase64) onSetImageBase64(image);
+  }, [image, onSetImageBase64]);
 
   return (
     <div>
