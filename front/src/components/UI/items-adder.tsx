@@ -11,6 +11,7 @@ type Props<Item extends { id?: number; _id?: string }> = {
     itemsHasColor?: boolean;
   };
   disabled?: boolean;
+  testId?: string;
   getValue: (item: Item) => string;
   onValidate: (value: string) => void;
   onAddItem: (value: string) => Promise<boolean>;
@@ -21,6 +22,7 @@ const ItemsAdder = <Item extends { id?: number; _id?: string }>({
   items,
   styleOptions,
   disabled,
+  testId,
   getValue,
   onValidate,
   onAddItem,
@@ -67,7 +69,7 @@ const ItemsAdder = <Item extends { id?: number; _id?: string }>({
 
   return (
     <Wrapper>
-      <div className="flex flex-col gap-y-2">
+      <div data-testid={testId} className="flex flex-col gap-y-2">
         <label
           htmlFor="hobby"
           className="text-xl font-bold flex flex-col gap-y-2"

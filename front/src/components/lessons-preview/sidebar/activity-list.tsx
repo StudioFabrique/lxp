@@ -100,7 +100,7 @@ export default function ActivityList({
                 <Can action="update" object="lesson">
                   <span className="px-4 w-full">
                     <button
-                      className="btn btn-outline btn-secondary hover:text-base-100 btn-sm h-fit text-[10px] mt-2 w-full"
+                      className="btn btn-outline btn-primary text-base-content hover:text-base-100 btn-sm h-fit text-[10px] mt-2 w-full"
                       disabled={newActivityButtonDisabled}
                       onClick={onClickCreateActivity}
                     >

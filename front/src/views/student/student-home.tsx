@@ -45,7 +45,7 @@ const StudentHome = () => {
         </div>
       </Header>
 
-      <div className="grid gap-10 xl:grid-cols-3">
+      <div className="grid gap-16 xl:grid-cols-3">
         <div className="flex flex-col gap-5 xl:col-span-2">
           {/* <Notifications /> */}
           {lastLessons && lastLessons?.length > 0 ? (
