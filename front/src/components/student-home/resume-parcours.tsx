@@ -7,6 +7,7 @@ import Parcours from "../../utils/interfaces/parcours";
 import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques";
 import defaultImage from "../../assets/images/module-default.jpg";
 import FadeWrapper from "../UI/fade-wrapper/fade-wrapper";
+import toUpperFirstLetter from "../../utils/toUpperFirstLetter";
 
 /* type ResumeParcoursProps = {
   parcours?: Parcours;
@@ -40,10 +41,12 @@ const ResumeParcours = (/* { parcours }: ResumeParcoursProps */) => {
             ? `data:image/jpeg;base64,${parcours?.thumb}`
             : defaultImage
         }
-        title={parcours ? `${parcours.title}` : ""}
-        titleIcon={<RocketIcon className="stroke-white" />}
-        subTitle={parcours ? `${parcours.formation.title}` : ""}
-        subTitleIcon={<BookMarkedIcon className="stroke-white" />}
+        title={parcours ? `${toUpperFirstLetter(parcours.title)}` : ""}
+        titleIcon={<RocketIcon className="stroke-white w-5" />}
+        subTitle={
+          parcours ? `${toUpperFirstLetter(parcours.formation.title)}` : ""
+        }
+        subTitleIcon={<BookMarkedIcon className="stroke-white w-5" />}
         hidePublished
         children={[
           <div

@@ -1,7 +1,7 @@
 import Module from "../../../utils/interfaces/module";
 import Competences from "./competences";
 import Contacts from "./contacts";
-import Objectifs from "./objectifs";
+// import Objectifs from "./objectifs";
 
 // Type pour les props du composant ModuleData
 type ModuleDataProps = { moduleData: Module };
@@ -13,11 +13,11 @@ const ModuleData = ({ moduleData }: ModuleDataProps) => (
       <Competences skills={moduleData.bonusSkills} />
       {/* Affichage des objectifs/compétences bonus */}
 
-      <Objectifs
+      {/* <Objectifs
         objectives={moduleData.courses.flatMap((course) =>
           (course.objectives || []).map((obj) => obj)
         )}
-      />
+      /> */}
     </div>
 
     <Contacts contacts={moduleData.contacts} />
