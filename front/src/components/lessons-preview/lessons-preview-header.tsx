@@ -23,9 +23,9 @@ const LessonsPreviewHeader = ({ moduleData }: LessonsPreviewHeaderProps) => {
           : defaultImage
       }
       title={toUpperFirstLetter(moduleData.title) as string}
-      titleIcon={<ComponentIcon className="stroke-white" />}
+      titleIcon={<ComponentIcon className="stroke-white w-5" />}
       subTitle={toUpperFirstLetter(moduleData.parcours) as string}
-      subTitleIcon={<RocketIcon className="stroke-white" />}
+      subTitleIcon={<RocketIcon className="stroke-white w-5" />}
       subTitleLinkTo={`/${baseRoute}/parcours/view/${moduleData.parcoursId}`}
       children={[<Fragment key="fragment" />, <HeaderMenu key="header" />]}
       hidePublished
