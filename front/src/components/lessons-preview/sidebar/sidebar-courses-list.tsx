@@ -70,7 +70,7 @@ const SidebarCoursesList = ({
           {courses.length > 0 ? (
             <>
               <h2 className="text-xl font-bold w-28 text-primary">
-                Progression du module
+                Progression
               </h2>
 
               <FadeWrapper>

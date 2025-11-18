@@ -1,3 +1,4 @@
+import { ContactIcon } from "lucide-react";
 import Contact from "../../../utils/interfaces/contact";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 
@@ -7,12 +8,17 @@ type ContactsProps = {
 
 const Contacts = ({ contacts }: ContactsProps) => {
   return (
-    <Wrapper>
+    <Wrapper additionalClassname="w-full">
       <div className="flex flex-col gap-2 p-2">
-        <h3 className="text-xl font-bold">Ressources pédagogiques</h3>
+        <div className="flex gap-2">
+          <ContactIcon />
+          <h3 className="text-xl font-bold">Ressources pédagogiques</h3>
+        </div>
         <ul className="list-disc pl-5">
           {contacts.map((contact) => (
-            <li key={contact.id}>{contact.name}</li>
+            <li key={contact.id} className="capitalize">
+              {contact.name}
+            </li>
           ))}
         </ul>
       </div>

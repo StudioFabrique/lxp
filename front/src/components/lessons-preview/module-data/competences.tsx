@@ -1,4 +1,6 @@
+import { CableCar } from "lucide-react";
 import Skill from "../../../utils/interfaces/skill";
+import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 import Wrapper from "../../UI/wrapper/wrapper.component";
 
 type Props = {
@@ -7,12 +9,15 @@ type Props = {
 
 const Competences = ({ skills }: Props) => {
   return (
-    <Wrapper>
+    <Wrapper additionalClassname="w-full">
       <div className="flex flex-col gap-2 p-2">
-        <h3 className="text-xl font-bold">Competences du module</h3>
+        <div className="flex gap-2">
+          <CableCar />
+          <h3 className="text-xl font-bold">Compétences du module</h3>
+        </div>
         <ul className="list-disc pl-5">
           {skills.map((skill) => (
-            <li key={skill.id}>{skill.description}</li>
+            <li key={skill.id}>{toUpperFirstLetter(skill.description)}</li>
           ))}
         </ul>
       </div>
