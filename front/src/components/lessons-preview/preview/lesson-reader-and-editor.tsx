@@ -93,7 +93,6 @@ const LessonReaderAndEditor = ({
 
           <div className="font-semibold text-primary flex justify-between items-center gap-3">
             <span className="w-5">{activityIconType(activityType)}</span>
-            <span className="flex-1" />
             <span className="truncate text-ellipsis text-2xl px-2">
               {toUpperFirstLetter(textActivityTitle)}
             </span>

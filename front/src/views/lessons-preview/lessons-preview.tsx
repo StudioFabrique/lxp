@@ -130,7 +130,7 @@ const LessonsPreview = () => {
 
       {module && module.parcoursId && module.id ? (
         <LessonsPreviewWrapper
-          parcoursId={module.parcoursId}
+          // parcoursId={module.parcoursId}
           selectedLesson={selectedLesson}
           isPanelClosed={isPanelClosed}
           onTogglePanel={() => dispatch({ type: "toggle_panel_visibility" })}
