@@ -36,7 +36,7 @@ const ImageHeader = (props: ImageHeaderProps) => {
             <div>{props.children ? props.children[0] : null}</div>
             <div className="flex flex-col gap-1">
               {props.subTitle ? (
-                <div className="flex gap-2">
+                <div className="flex items-center gap-2">
                   {props.subTitleIcon}
                   {props.subTitleLinkTo ? (
                     <Link
@@ -54,7 +54,7 @@ const ImageHeader = (props: ImageHeaderProps) => {
               ) : null}
 
               {props.title ? (
-                <div className="flex gap-2">
+                <div className="pl-5 flex items-center gap-2">
                   <CornerDownRight className="stroke-white" />
                   {props.titleIcon}
                   <h1 className="text-xl text-white truncate max-w-[550px]">

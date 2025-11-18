@@ -21,6 +21,7 @@ import { Bell, BookMarkedIcon, RocketIcon, Search } from "lucide-react";
 import useParcoursView from "./hooks/use-parcours-view";
 import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 import Header from "../../components/UI/header";
+import toUpperFirstLetter from "../../utils/toUpperFirstLetter";
 
 const ParcoursView = () => {
   const {
@@ -74,10 +75,10 @@ const ParcoursView = () => {
           <div className="w-full">
             <ImageHeader
               imageUrl={image ?? "/images/parcours-default.webp"}
-              title={parcoursInfos.title}
-              titleIcon={<RocketIcon className="stroke-white" />}
-              subTitle={parcours.formation?.title}
-              subTitleIcon={<BookMarkedIcon className="stroke-white" />}
+              title={toUpperFirstLetter(parcoursInfos.title) as string}
+              titleIcon={<RocketIcon className="stroke-white w-5" />}
+              subTitle={toUpperFirstLetter(parcours.formation?.title) as string}
+              subTitleIcon={<BookMarkedIcon className="stroke-white w-5" />}
               children={[
                 <Fragment key="fragment" />,
                 <Can key="header" object="cursus" action="read">

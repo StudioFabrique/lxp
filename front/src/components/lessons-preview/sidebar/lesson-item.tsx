@@ -71,14 +71,12 @@ const LessonItem = ({
         onKeyDown={handleBeginReadLesson}
         className={`flex items-center justify-between gap-1 rounded-xl px-4 h-10 w-full cursor-pointer group ${
           isLessonSelected
-            ? "bg-accent text-accent-content hover:bg-accent/80"
-            : "bg-primary text-base-100 hover:bg-primary/80"
+            ? "bg-primary text-base-100"
+            : "bg-primary/50 text-base-100 hover:bg-primary/80"
         }`}
       >
         <span className="flex gap-1 justify-between items-center min-w-0 w-full">
-          <p className="max-h-14 truncate text-sm" data-tip={lesson.title}>
-            {lesson.title}
-          </p>
+          <p className="max-h-14 truncate text-sm">{lesson.title}</p>
           {selectedLesson?.id === lesson.id && (
             <div className="flex items-center gap-1">
               <Can action="update" object="lesson">
@@ -129,11 +127,7 @@ const LessonItem = ({
         {/* Affiche une coche si la leçon est lue, ou une flèche sinon */}
         {isLessonRead && (
           <Check
-            className={`w-5 h-5 p-1 rounded-full stroke-3 ${
-              isLessonSelected
-                ? "bg-secondary stroke-secondary-content"
-                : "bg-success stroke-success-content"
-            }`}
+            className={`w-5 h-5 p-1 rounded-full stroke-3 ${"bg-success stroke-success-content"}`}
           />
         )}
       </div>

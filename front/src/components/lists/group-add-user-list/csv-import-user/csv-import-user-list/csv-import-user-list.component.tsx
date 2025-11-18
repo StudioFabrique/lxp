@@ -14,7 +14,7 @@ const CsvImportUserList: FC<{
 }> = ({ onAddUsers, usersAddedInTable }) => {
   const [usersToImport, setUsersToImport] = useState<User[]>([]);
   const [selectedUsersToUpload, setSelectedUsersToUpload] = useState<User[]>(
-    [],
+    []
   );
   const [isDrawerOpen, setDrawerOpenState] = useState<boolean>(false);
 
@@ -30,7 +30,7 @@ const CsvImportUserList: FC<{
       ].map((email) => data.find((item) => item.email === email)!);
 
       const filteredData = dataWithoutDuplicate.filter(
-        (item) => Object.keys(item).length > 0,
+        (item) => Object.keys(item).length > 0
       );
       setUsersToImport(filteredData);
       setDrawerOpenState(true);
@@ -48,7 +48,7 @@ const CsvImportUserList: FC<{
     selectedUsersToUpload.map((user) => {
       if (user.birthDate) {
         const [day, month, year] = (user.birthDate as unknown as string).split(
-          "/",
+          "/"
         );
         const date = `${year}-${month}-${day}`;
         user.birthDate = new Date(date);
@@ -68,7 +68,7 @@ const CsvImportUserList: FC<{
         body: selectedUsersToUpload,
         method: "post",
       },
-      applyData,
+      applyData
     );
   };
 
@@ -79,11 +79,19 @@ const CsvImportUserList: FC<{
     ]);
   };
 
+  const handleAddAllUsers = () => {
+    setSelectedUsersToUpload(usersToImport);
+  };
+
+  const handleClearAllUsers = () => {
+    setSelectedUsersToUpload([]);
+  };
+
   const handleDeleteSelectedUser = useCallback((user: User) => {
     setSelectedUsersToUpload((selectedUsersToUpload) =>
       selectedUsersToUpload.filter(
-        (currentUser) => currentUser.email !== user.email,
-      ),
+        (currentUser) => currentUser.email !== user.email
+      )
     );
   }, []);
 
@@ -114,6 +122,8 @@ const CsvImportUserList: FC<{
           isLoading={isLoading}
           onAddSelectedUser={handleAddSelectedUser}
           onDeleteSelectedUser={handleDeleteSelectedUser}
+          onSelectAllUsers={handleAddAllUsers}
+          onDeselectAllUsers={handleClearAllUsers}
         />
       </RightSideDrawer>
     </div>

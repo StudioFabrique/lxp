@@ -22,6 +22,7 @@ export const checkValidatorResult = (
   const checkValues = validationResult(req);
 
   if (!checkValues.isEmpty()) {
+    console.log(checkValues.array());
     const error = {
       message: checkValues.array()[0].msg ?? badQuery,
       from: req.socket.remoteAddress,
@@ -232,15 +233,21 @@ export const userProfileValidator = (isFormData: boolean = false) => {
 export const manyUsersValidator = [
   body().isArray(),
   body("*.email").isEmail().trim().escape(),
-  body(["*.firstname", "*.lastname", "*.nickname", "*.address", "*.city"])
+  body([
+    "*.firstname",
+    "*.lastname",
+    "*.nickname",
+    "*.address",
+    "*.city",
+    "*.postCode",
+    "*.phoneNumber",
+    "*.birthDate",
+  ])
     .isString()
     .toLowerCase()
     .trim()
     .custom(stringValidateOptional)
     .withMessage("description non conforme"),
-  body("*.postCode").isPostalCode("FR").trim().escape(),
-  body("*.phoneNumber").isString(),
-  /* body("*.birthDate").isDate({ format: "dd/mm/yyyy" }).toDate(), */
   checkValidatorResult,
 ];
 

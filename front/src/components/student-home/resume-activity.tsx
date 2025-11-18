@@ -8,6 +8,7 @@ import ParcoursStatistiques from "./parcours-statistiques/parcours-statistiques"
 import Can from "../UI/can/can.component";
 import CourseIcon from "../UI/svg/course-icon";
 import defaultImage from "../../assets/images/module-default.jpg";
+import toUpperFirstLetter from "../../utils/toUpperFirstLetter";
 
 type ResumeActivityProps = {
   lastLesson: LessonRead;
@@ -41,15 +42,15 @@ const ResumeActivity = ({ lastLesson }: ResumeActivityProps) => {
     <div className="flex gap-2">
       <ImageHeader
         imageUrl={isLoading ? "" : image ?? ""}
-        title={`Leçon ${(lastLesson.lesson.order ?? 0) + 1}: ${
-          lastLesson.lesson.title
-        }`}
-        titleIcon={<FileEditIcon className="stroke-white" />}
-        subTitle={`Cours ${(lastLesson.lesson.course.order ?? 0) + 1}: ${
-          lastLesson.lesson.course.title
-        }`}
+        title={`Leçon ${
+          (lastLesson.lesson.order ?? 0) + 1
+        }: ${toUpperFirstLetter(lastLesson.lesson.title)}`}
+        titleIcon={<FileEditIcon className="stroke-white w-5" />}
+        subTitle={`Cours ${
+          (lastLesson.lesson.course.order ?? 0) + 1
+        }: ${toUpperFirstLetter(lastLesson.lesson.course.title)}`}
         subTitleIcon={
-          <div className="text-white w-6">
+          <div className="text-white w-5">
             <CourseIcon />
           </div>
         }
