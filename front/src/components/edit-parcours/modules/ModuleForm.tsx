@@ -5,13 +5,14 @@ import ModuleToParcours from "../../../views/module/add/module-to-parcours";
 import Contact from "../../../utils/interfaces/contact";
 import Skill from "../../../utils/interfaces/skill";
 import CustomError from "../../../utils/interfaces/custom-error";
+import FieldNumber from "../../UI/forms/field-number";
 
 type ModuleFormProps = {
   mode: "create" | "edit";
   refForm: RefObject<HTMLFormElement>;
   data: {
-    values: Record<string, string>;
-    onChangeValue: (field: string, value: string) => void;
+    values: Record<string, unknown>;
+    onChangeValue: (field: string, value: unknown) => void;
     errors: CustomError[];
   };
   image: string | null;
@@ -61,7 +62,15 @@ export default function ModuleForm({
                 thumb={image}
                 onSetFile={onSetFile}
                 mode={mode}
-              />
+              >
+                <FieldNumber
+                  label="Durée du module en heures *"
+                  name="duration"
+                  placeholder="Ex : 12"
+                  min={0}
+                  data={data}
+                />
+              </ModuleMetadatas>
             </span>
 
             <div className="col-span-1 lg:col-span-0 divider sm:my-auto lg:hidden" />

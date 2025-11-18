@@ -38,6 +38,8 @@ async function postModule(
   image: any,
   userId: string
 ) {
+  console.log("toto champion", moduleToAdd);
+
   // Verify that the formation (parcours) exists before creating/duplicating the module
   const existingFormation = await prisma.formation.findFirst({
     where: { id: moduleToAdd.formationId },
@@ -145,54 +147,66 @@ async function postModule(
     // For duplication, this links the existing module to a new parcours
     // For new modules, this links the newly created module to the target parcours
 
-    newMetadataModule = await tx.moduleMetadata.create({
-      data: {
-        duration: moduleToAdd.duration ?? 0,
-        // Link to either the newly created module or the existing module being duplicated
-        module: {
-          connect: { id: newModule!.id },
+    if (moduleToAdd.parcoursId) {
+      newMetadataModule = await tx.moduleMetadata.create({
+        data: {
+          duration: moduleToAdd.duration ?? 0,
+          module: {
+            connect: { id: newModule!.id },
+          },
+          parcours: { connect: { id: moduleToAdd.parcoursId } },
+          admin: { connect: { id: existingAdmin!.id } },
+          // ✅ Gérer les cas où les tableaux sont undefined
+          contacts: {
+            create: (moduleToAdd.contacts ?? []).map((contactId: number) => ({
+              contact: { connect: { id: contactId } },
+            })),
+          },
+          bonusSkills: {
+            create: (moduleToAdd.skills ?? []).map((skillId: number) => ({
+              bonusSkill: { connect: { id: skillId } },
+            })),
+          },
         },
-        // Link to the target parcours (learning path)
-        parcours: { connect: { id: moduleToAdd.parcoursId } },
-        // Link to the creating admin
-        admin: { connect: { id: existingAdmin!.id } },
-        // Create many-to-many relationships with contacts (instructors)
-        // This creates records in the junction table ContactsOnModuleMetadata
-        contacts: {
-          create: moduleToAdd.contacts.map((contactId: number) => ({
-            contact: { connect: { id: contactId } },
-          })),
-        },
-        // Create many-to-many relationships with bonus skills
-        // This creates records in the junction table BonusSkillsOnModuleMetadata
-        bonusSkills: {
-          create: moduleToAdd.skills.map((skillId: number) => ({
-            bonusSkill: { connect: { id: skillId } },
-          })),
-        },
-      },
-      select: {
-        id: true,
-        duration: true,
-        rating: true,
-        minDate: true,
-        maxDate: true,
-        moduleId: true,
-        createdAt: true,
-        updatedAt: true,
-        adminId: true,
-        parcoursId: true,
-        contacts: true,
-        bonusSkills: true,
-      },
-    });
+      });
 
-    // Return a simplified object for frontend consumption
-    // This flattens the complex database structure for easier use
-    // Uses data from either the new module or the existing module being duplicated
+      const moduleMetadata = await tx.moduleMetadata.findFirst({
+        where: { id: newMetadataModule.id },
+        include: {
+          contacts: {
+            include: { contact: true },
+          },
+          bonusSkills: {
+            include: { bonusSkill: true },
+          },
+        },
+      });
+      if (!moduleMetadata)
+        throw {
+          message: "Erreur lors de la création des métadonnées.",
+          statusCode: 500,
+        };
+
+      // Return a simplified object for frontend consumption
+      // This flattens the complex database structure for easier use
+      // Uses data from either the new module or the existing module being duplicated
+      return {
+        id: newMetadataModule.id,
+        title: newModule!.title,
+        description: newModule!.description,
+        thumb: newModule!.thumb?.toString("base64") ?? null,
+        duration: newMetadataModule.duration,
+        contacts: moduleMetadata.contacts.map((c) => c.contact),
+        skills: moduleMetadata.bonusSkills.map((b) => b.bonusSkill),
+      };
+    }
+
+    console.log(newModule.thumb);
+    // Fallback return (should reach here if no parcoursId provided, meaning the user did not want yet to link to a parcours)
     return {
-      id: newMetadataModule.id,
+      id: newModule!.id,
       title: newModule!.title,
+      description: newModule!.description,
       thumb: newModule!.thumb?.toString("base64") ?? null,
     };
   });

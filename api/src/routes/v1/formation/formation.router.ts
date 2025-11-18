@@ -58,16 +58,19 @@ export const validationModule = [
     .optional(),
   body("module.duration")
     .isInt({ min: 1 })
-    .withMessage("La durée doit être un nombre entier positif."),
+    .withMessage("La durée doit être un nombre entier positif.")
+    .optional(),
   body("module.contacts")
     .isArray()
-    .withMessage("Les contacts doivent être un tableau."),
+    .withMessage("Les contacts doivent être un tableau.")
+    .optional(),
   body("module.contacts.*")
     .isInt()
     .withMessage("Chaque identifiant de contact doit être un nombre entier."),
   body("module.skills")
     .isArray()
-    .withMessage("Les compétences doivent être un tableau."),
+    .withMessage("Les compétences doivent être un tableau.")
+    .optional(),
   body("module.skills.*")
     .isInt()
     .withMessage("Chaque identifiant de compétence doit être un nombre entier.")
