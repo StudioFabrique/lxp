@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowRight, EyeOff } from "lucide-react";
+import { ChevronDown, ChevronRight, EyeOff } from "lucide-react";
 import Course from "../../../utils/interfaces/course";
 import { PropsWithChildren, useContext, useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -15,6 +15,7 @@ import {
 } from "react-beautiful-dnd";
 import hasPermission from "../../../utils/hasPermission";
 import { Context } from "../../../store/context.store";
+import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 
 type CourseItemProps = {
   course: Course;
@@ -52,6 +53,7 @@ const CourseItem = ({
     Lesson | undefined
   >(undefined);
   const [isModalLoading, setIsModalLoading] = useState(false);
+  const [isDescriptionExpanded, setDescriptionExpanded] = useState(false);
 
   const courseProgress = (
     course.lessons.reduce(
@@ -110,6 +112,10 @@ const CourseItem = ({
     setDragAndDropEnabled((prev) => !prev);
   };
 
+  const handleClickToggleExpandDescription = () => {
+    setDescriptionExpanded((prev) => !prev);
+  };
+
   useEffect(() => {
     if (
       selectedLesson &&
@@ -166,38 +172,30 @@ const CourseItem = ({
         >
           <div className="flex flex-col gap-1 p-4">
             <div className="flex justify-between items-center gap-1">
-              <span
-                data-tip={`Titre : ${course.title}`}
-                className="flex items-center tooltip tooltip-right capitalize min-w-0"
-              >
-                <h3 className="text-secondary-content/80 capitalize truncate">
-                  {course.title}
+              <span className="flex gap-1 items-center min-w-0">
+                <div className="text-secondary-content">
+                  {isCourseOpen ? (
+                    <ChevronDown className="w-5" />
+                  ) : (
+                    <ChevronRight className="w-5" />
+                  )}
+                </div>
+                <h3 className="font-semibold text-secondary-content/80 truncate">
+                  {toUpperFirstLetter(course.title)}
                 </h3>
               </span>
-              <Can action="write" object="course">
-                <CourseActions
-                  course={course}
-                  parcoursId={parcoursId}
-                  moduleId={moduleId}
-                  isDragAndDropEnabled={isDragAndDropEnabled}
-                  onOpenModal={handleOpenModal}
-                  onClickMenu={handleClickMenu}
-                  onClickChangeCourseOrder={handleClickChangeCourseOrder}
-                />
-              </Can>
-            </div>
-
-            <div className="flex justify-between items-center gap-5 p-1 min-w-0 text-secondary-content">
-              <span
-                data-tip={`Description : ${course.description}`}
-                className="tooltip tooltip-right flex-1 min-w-0"
-              >
-                <p className=" font-semibold text-sm w-[80%] max-h-10 break-words overflow-y-clip min-w-0">
-                  {course.description}
-                </p>
-              </span>
-              <div className="flex-shrink-0 ">
-                {isCourseOpen ? <ArrowDown /> : <ArrowRight />}
+              <div className="flex items-center">
+                <Can action="write" object="course">
+                  <CourseActions
+                    course={course}
+                    parcoursId={parcoursId}
+                    moduleId={moduleId}
+                    isDragAndDropEnabled={isDragAndDropEnabled}
+                    onOpenModal={handleOpenModal}
+                    onClickMenu={handleClickMenu}
+                    onClickChangeCourseOrder={handleClickChangeCourseOrder}
+                  />
+                </Can>
               </div>
             </div>
           </div>
@@ -236,6 +234,21 @@ const CourseItem = ({
                   {...provided.droppableProps}
                 >
                   {provided.placeholder}
+                  <span className="flex-1 min-w-0">
+                    <p
+                      className={`text-sm break-words overflow-y-clip min-w-0 ${
+                        !isDescriptionExpanded && "max-h-5"
+                      }`}
+                    >
+                      {toUpperFirstLetter(course.description)}
+                    </p>
+                    <p
+                      className="text-xs link"
+                      onClick={handleClickToggleExpandDescription}
+                    >
+                      {`Voir ${isDescriptionExpanded ? "moins" : "plus"}`}
+                    </p>
+                  </span>
                   {course.lessons.length > 0 ? (
                     course.lessons.map(
                       (lesson, index) =>
