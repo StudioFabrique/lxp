@@ -34,4 +34,5 @@ export type MetadataList = {
   description: string;
   thumb: string | null;
   metadatas: Metadatas[];
+  moduleId: number | null;
 };
