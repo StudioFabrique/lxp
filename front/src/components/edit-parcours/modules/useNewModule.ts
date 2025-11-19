@@ -323,11 +323,17 @@ const useNewModule = () => {
 
   // Effect for duplicate modal
   useEffect(() => {
-    const modal = document.getElementById("duplicate_module_modal");
+    const modal = document.getElementById(
+      "duplicate_module_modal"
+    ) as HTMLDialogElement | null;
+
+    if (!modal) return;
+
+    // Control modal visibility using DaisyUI API
     if (state.showDuplicateModal) {
-      (modal as HTMLDialogElement).showModal();
+      modal.close();
     } else {
-      (modal as HTMLDialogElement).close();
+      modal.showModal();
     }
   }, [state.showDuplicateModal]);
 
