@@ -111,6 +111,8 @@ export default function ModuleComponent() {
       <TwoButtonsModal
         id="delete_module_modal"
         title="Suppression du module"
+        leftLabel="Annuler"
+        rightLabel="Supprimer"
         onRightButtonClick={handleDeleteModule}
         onLeftButtonClick={handleCancelDeletion}
       >

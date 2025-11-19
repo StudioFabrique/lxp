@@ -200,6 +200,8 @@ export default function ModuleAdd() {
       <TwoButtonsModal
         id="back_to_module_list_modal"
         title="Retour à la liste des modules"
+        leftLabel="Fermer"
+        rightLabel="Continuer"
         onRightButtonClick={handleBackToModuleList}
         onLeftButtonClick={toggleModal}
       >
