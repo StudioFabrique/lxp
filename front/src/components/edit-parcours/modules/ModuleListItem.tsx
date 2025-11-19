@@ -21,8 +21,6 @@ export default function ModuleListItem({
     (meta: Metadatas) => meta.parcours?.id !== currentParcoursId
   );
 
-  console.log({ module });
-
   // ✅ Vérifier si le module a des metadatas
   const hasMetadatas = module.metadatas && module.metadatas.length > 0;
   const hasOtherParcoursMetadatas =

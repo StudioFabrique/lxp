@@ -13,7 +13,7 @@ export default async function httpPostModuleMetadata(
   const userId = req.auth?.userId;
 
   try {
-    await postModuleMetadata(
+    const response = await postModuleMetadata(
       moduleId,
       parcoursId,
       contactIds,
@@ -22,7 +22,11 @@ export default async function httpPostModuleMetadata(
     );
     next({
       statusCode: 201,
-      data: { success: true, message: "Module metadata created successfully" },
+      data: {
+        success: true,
+        message: "Module metadata created successfully",
+        response,
+      },
     });
   } catch (error: any) {
     console.log({ error });
