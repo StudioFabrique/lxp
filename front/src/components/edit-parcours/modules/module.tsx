@@ -109,9 +109,10 @@ export default function ModuleComponent() {
 
       {/* Deletion confirmation modal */}
       <TwoButtonsModal
+        id="delete_module_modal"
         title="Suppression du module"
-        onConfirm={handleDeleteModule}
-        onCancel={handleCancelDeletion}
+        onRightButtonClick={handleDeleteModule}
+        onLeftButtonClick={handleCancelDeletion}
       >
         <>
           <p>Êtes-vous sûr de vouloir supprimer ce module ?</p>

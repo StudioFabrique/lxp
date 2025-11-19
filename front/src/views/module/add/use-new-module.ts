@@ -40,6 +40,7 @@ type State = {
   contacts: Contact[] | null;
   skills: Skill[] | null;
   image: string | undefined;
+  showModal: boolean;
 };
 
 type Action =
@@ -50,7 +51,6 @@ type Action =
   | { type: "SET_MODE"; payload: "create" | "edit" }
   | { type: "SET_NEW_MODULE_DATA"; payload: NewMddule | null }
   | { type: "SET_SHOW_METADATA_FORM" }
-  | { type: "RESET_FORM" }
   | { type: "SET_FILE"; payload: File | null }
   | {
       type: "SET_SKILLS_AND_CONTACTS";
@@ -58,8 +58,8 @@ type Action =
     }
   | { type: "SET_CURRENT_CONTACTS"; payload: Contact[] }
   | { type: "SET_CURRENT_SKILLS"; payload: Skill[] }
-  | { type: "RESET_METADATA_FORM" }
-  | { type: "SET_IMAGE_BASE64"; payload: string | undefined };
+  | { type: "SET_IMAGE_BASE64"; payload: string | undefined }
+  | { type: "TOGGLE_MODAL" };
 
 const initialState: State = {
   parcoursId: null,
@@ -75,6 +75,7 @@ const initialState: State = {
   contacts: null,
   skills: null,
   image: undefined,
+  showModal: false,
 };
 
 const newModuleReducer = (state: State, action: Action): State => {
@@ -96,13 +97,6 @@ const newModuleReducer = (state: State, action: Action): State => {
       };
     case "SET_FILE":
       return { ...state, file: action.payload };
-    case "RESET_FORM":
-      return {
-        ...state,
-        parcoursId: null,
-        file: null,
-        image: undefined,
-      };
     case "SET_SHOW_METADATA_FORM":
       return { ...state, showMetadataForm: !state.showMetadataForm };
     case "SET_SKILLS_AND_CONTACTS":
@@ -122,18 +116,15 @@ const newModuleReducer = (state: State, action: Action): State => {
         ...state,
         currentSkills: action.payload,
       };
-    case "RESET_METADATA_FORM":
-      return {
-        ...state,
-        parcoursId: null,
-        currentContacts: [],
-        currentSkills: [],
-        showMetadataForm: false,
-      };
     case "SET_IMAGE_BASE64":
       return {
         ...state,
         image: action.payload,
+      };
+    case "TOGGLE_MODAL":
+      return {
+        ...state,
+        showModal: !state.showModal,
       };
     default:
       return state;
@@ -144,8 +135,10 @@ const useNewModule = () => {
   const nav = useNavigate();
   const [state, dispatch] = useReducer(newModuleReducer, initialState);
   const { sendRequest, error, isLoading } = useHttp();
-  const { errors, onChangeValue, onValidateForm, values, onResetForm } =
-    useForm({}, moduleCreateSchema);
+  const { errors, onChangeValue, onValidateForm, values } = useForm(
+    {},
+    moduleCreateSchema
+  );
   const data = { values, onChangeValue, errors };
 
   const handleGetFormation = useCallback(() => {
@@ -206,11 +199,6 @@ const useNewModule = () => {
     dispatch({ type: "SET_FILE", payload: file });
   };
 
-  const handleResetForm = () => {
-    dispatch({ type: "RESET_FORM" });
-    onResetForm();
-  };
-
   const getParcoursList = useCallback(
     (formationId?: number) => {
       const fid = formationId ?? state.formationId;
@@ -237,12 +225,9 @@ const useNewModule = () => {
   );
 
   const toggleShowMetadataForm = () => {
-    console.log("triggered");
-
     // Use the current state value or pass explicit id to ensure correct value
     const fid = state.formationId;
     if (fid) {
-      console.log("hello world!");
       // pass the id explicitly to avoid stale closures
       getParcoursList(fid);
     }
@@ -310,19 +295,22 @@ const useNewModule = () => {
     dispatch({ type: "SET_CURRENT_SKILLS", payload: skills });
   };
 
-  const resetMetadata = () => {
-    dispatch({ type: "RESET_METADATA_FORM" });
-    onResetForm();
-    nav("/admin/module");
-  };
-
   const handleBackToModuleList = () => {
-    dispatch({ type: "RESET_FORM" });
     nav("/admin/module");
   };
 
   const setImageBase64 = (base64: string | null) => {
     dispatch({ type: "SET_IMAGE_BASE64", payload: base64 ?? undefined });
+  };
+
+  const toggleModal = () => {
+    dispatch({ type: "TOGGLE_MODAL" });
+    const modal = document.getElementById("back_to_module_list_modal");
+    if (!state.showModal) {
+      (modal as HTMLDialogElement).showModal();
+    } else {
+      (modal as HTMLDialogElement).close();
+    }
   };
 
   useEffect(() => {
@@ -344,15 +332,14 @@ const useNewModule = () => {
     handleSubmit,
     handlePickFormation,
     handleSetFile,
-    handleResetForm,
     toggleShowMetadataForm,
     handlePickParcours,
     setCurrentContacts,
     setCurrentSkills,
     handleMetadataSubmit,
-    resetMetadata,
     handleBackToModuleList,
     setImageBase64,
+    toggleModal,
   };
 };
 
