@@ -1,7 +1,6 @@
 import { ReactNode, useContext, useState, useEffect } from "react";
 import { Context } from "../../../store/context.store";
 import { COMPANY_LOGO } from "../../../config/urls";
-import newLogo from "../../../assets/images/new-logo.svg";
 import SidebarBottom from "./sidebar-bottom";
 
 const SidebarWrapper = ({
@@ -39,7 +38,7 @@ const SidebarWrapper = ({
         </div>
       ) : null}
       <div
-        className={`flex flex-col justify-between gap-y-4 p-4 pt-6 rounded-lg h-full relative ${
+        className={`flex flex-col justify-between gap-y-4 px-2 pb-4 pt-6 rounded-lg h-full relative ${
           theme === "dark"
             ? "text-white bg-slate-500"
             : "text-white bg-slate-800"
@@ -48,7 +47,6 @@ const SidebarWrapper = ({
         {children}
         <SidebarBottom interfaceType={interfaceType} />
       </div>
-      <img src={newLogo} className="" />
     </nav>
   );
 };
