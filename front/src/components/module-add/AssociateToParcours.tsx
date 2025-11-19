@@ -1,10 +1,10 @@
 import Contact from "../../utils/interfaces/contact";
 import CustomError from "../../utils/interfaces/custom-error";
 import Skill from "../../utils/interfaces/skill";
-import ModuleToParcours from "../../views/module/add/module-to-parcours";
-import { Item } from "../../views/module/add/useAddModule";
 import FieldNumber from "../UI/forms/field-number";
 import Selecter from "../UI/selecter/selecter.component";
+import ModuleToParcours from "./module-to-parcours";
+import { Item } from "./useAddModule";
 
 type Props = {
   parcoursId: number | null;
