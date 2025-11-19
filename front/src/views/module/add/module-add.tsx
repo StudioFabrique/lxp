@@ -9,34 +9,35 @@ import { useMemo } from "react";
 import FieldNumber from "../../../components/UI/forms/field-number";
 import defaultImage from "../../../assets/images/module-default.jpg";
 import bgImageGradient from "../../../utils/bg-image-gradient";
+import TwoButtonsModal from "../../../components/UI/modal/two-buttons-modal";
 
 export default function ModuleAdd() {
   const {
+    contacts,
+    currentContacts,
+    currentSkills,
     data,
     formationId,
     formationList,
-    contacts,
-    skills,
-    currentContacts,
-    currentSkills,
-    isLoading,
-    setCurrentContacts,
-    setCurrentSkills,
+    handleBackToModuleList,
+    handleMetadataSubmit,
     handlePickFormation,
-    newModuleData,
-    showMetadataForm,
-    handleSubmit,
-    handleSetFile,
-    handleResetForm,
-    toggleShowMetadataForm,
     handlePickParcours,
+    handleSetFile,
+    handleSubmit,
+    image,
+    isLoading,
+    newModuleData,
     parcoursId,
     parcoursList,
-    handleMetadataSubmit,
-    resetMetadata,
-    handleBackToModuleList,
+    setCurrentContacts,
+    setCurrentSkills,
     setImageBase64,
-    image,
+    showMetadataForm,
+    showModal,
+    skills,
+    toggleModal,
+    toggleShowMetadataForm,
   } = useNewModule();
 
   const classImage: React.CSSProperties = {
@@ -48,10 +49,6 @@ export default function ModuleAdd() {
     backgroundPosition: "center",
     borderRadius: "0.75rem",
   };
-
-  console.log(
-    typeof data.values.duration === "number" && data.values.duration >= 0
-  );
 
   const cantSubmit = useMemo(() => {
     if (typeof data.values.duration === "number" && data.values.duration > 0)
@@ -73,10 +70,9 @@ export default function ModuleAdd() {
     data.values.duration,
   ]);
 
-  console.log(cantSubmit);
-
   return (
     <main className="p-2 flex flex-col items-center gap-y-8 w-full">
+      <pre>{showModal ? "Le modal est ouvert" : "Le modal est fermé"}</pre>
       {/* En-tête de la page */}
       <section className="flex justify-center xl:w-9/12 w-full">
         <Header
@@ -112,7 +108,7 @@ export default function ModuleAdd() {
                     <button
                       className="btn btn-outline btn-secondary"
                       type="button"
-                      onClick={handleResetForm}
+                      onClick={toggleModal}
                       disabled={!!newModuleData}
                     >
                       Annuler
@@ -164,7 +160,7 @@ export default function ModuleAdd() {
                   <div className="flex justify-end gap-x-4">
                     <button
                       className="btn btn-outline btn-secondary"
-                      onClick={resetMetadata}
+                      onClick={toggleModal}
                     >
                       Annuler
                     </button>
@@ -183,7 +179,7 @@ export default function ModuleAdd() {
                   <button
                     className="btn btn-secondary"
                     type="button"
-                    onClick={handleBackToModuleList}
+                    onClick={toggleModal}
                   >
                     Retour à la liste des modules
                   </button>
@@ -201,6 +197,17 @@ export default function ModuleAdd() {
           </div>
         </Wrapper>
       </section>
+      <TwoButtonsModal
+        id="back_to_module_list_modal"
+        title="Retour à la liste des modules"
+        onRightButtonClick={handleBackToModuleList}
+        onLeftButtonClick={toggleModal}
+      >
+        <p>
+          Êtes-vous sûr de vouloir revenir à la liste des modules ? Les
+          modifications non enregistrées seront perdues.
+        </p>
+      </TwoButtonsModal>
     </main>
   );
 }
