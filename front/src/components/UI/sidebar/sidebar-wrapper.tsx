@@ -48,7 +48,11 @@ const SidebarWrapper = ({
         {children}
         <SidebarBottom interfaceType={interfaceType} />
       </div>
-      <img src={newLogo} className="" />
+      <img
+        className="object-contain rounded-lg bg-slate-700 border-2 p-1"
+        src={newLogo}
+        alt="logo de l'application"
+      />
     </nav>
   );
 };
