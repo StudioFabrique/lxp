@@ -1,11 +1,11 @@
 import { RefObject } from "react";
 import Wrapper from "../../UI/wrapper/wrapper.component";
-import ModuleMetadatas from "../../../views/module/add/module-metadatas";
-import ModuleToParcours from "../../../views/module/add/module-to-parcours";
 import Contact from "../../../utils/interfaces/contact";
 import Skill from "../../../utils/interfaces/skill";
 import CustomError from "../../../utils/interfaces/custom-error";
 import FieldNumber from "../../UI/forms/field-number";
+import ModuleMetadatas from "../../module-add/module-metadatas";
+import ModuleToParcours from "../../module-add/module-to-parcours";
 
 type ModuleFormProps = {
   mode: "create" | "edit";

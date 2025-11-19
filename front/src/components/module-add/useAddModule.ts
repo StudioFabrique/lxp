@@ -345,6 +345,7 @@ const useNewModule = () => {
 
       const applyData = (result: SuccessWithMessage) => {
         toast.success(result.message);
+        nav("/admin/module");
       };
 
       sendRequest(
@@ -368,11 +369,12 @@ const useNewModule = () => {
     }
   }, [
     values.duration,
+    sendRequest,
     state.parcoursId,
-    state.newModuleData,
+    state.newModuleData?.id,
     state.currentContacts,
     state.currentSkills,
-    sendRequest,
+    nav,
   ]);
 
   /**

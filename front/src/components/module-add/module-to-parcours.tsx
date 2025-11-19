@@ -1,8 +1,8 @@
-import InheritedItems from "../../../components/inherited-items/inherited-items";
-import Contact from "../../../utils/interfaces/contact";
-import Skill from "../../../utils/interfaces/skill";
-import InheritedTextList from "../../../components/inherited-items/inherited-text-list";
-import NotSelectedContacts from "../../../components/inherited-items/not-selected-contacts";
+import Contact from "../../utils/interfaces/contact";
+import Skill from "../../utils/interfaces/skill";
+import InheritedItems from "../inherited-items/inherited-items";
+import InheritedTextList from "../inherited-items/inherited-text-list";
+import NotSelectedContacts from "../inherited-items/not-selected-contacts";
 import NotSelectedSkills from "./not-selected-skills";
 import { CircleQuestionMark } from "lucide-react";
 

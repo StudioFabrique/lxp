@@ -1,7 +1,7 @@
 import CustomError from "../../utils/interfaces/custom-error";
-import ModuleMetadatas from "../../views/module/add/module-metadatas";
-import { Item } from "../../views/module/add/useAddModule";
 import Selecter from "../UI/selecter/selecter.component";
+import ModuleMetadatas from "./module-metadatas";
+import { Item } from "./useAddModule";
 
 type Props = {
   formationId: number | null;

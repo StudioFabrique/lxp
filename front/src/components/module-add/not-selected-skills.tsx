@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
-import useEagerLoadingList from "../../../hooks/use-eager-loading-list";
-import SortColumnIcon from "../../../components/UI/sort-column-icon.component/sort-column-icon.component";
-import Skill from "../../../utils/interfaces/skill";
+import useEagerLoadingList from "../../hooks/use-eager-loading-list";
+import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
+import Skill from "../../utils/interfaces/skill";
 
 type Props = {
   list?: Skill[];

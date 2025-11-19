@@ -190,7 +190,9 @@ const useNewModule = () => {
       type: "PREPARE_DUPLICATE",
       payload: { metas: metadatas, image: module.thumb },
     });
+
     initValues({
+      moduleId: module.id,
       title: module.title,
       description: module.description,
     });
@@ -219,29 +221,61 @@ const useNewModule = () => {
     e.preventDefault();
 
     if (!onValidateForm()) return;
-    const applyData = (data: {
-      success: boolean;
-      message: string;
-      response: ModuleData;
-    }) => {
-      onResetForm();
-      dispatch({ type: "MODULE_CREATED", payload: data.response });
-      toast.success(data.message);
-      scrollToTop();
-    };
-    sendRequest(
-      {
-        path: `/modules/duplicate/${state.moduleToDuplicate!.id}`,
-        method: "post",
-        body: {
-          duration: data.values.duration as number,
-          contactsIds: state.currentContacts.map((item) => item.id),
-          skillsIds: state.currentSkills.map((item) => item.id),
-          parcoursId: +id!,
+
+    const isEmptyObject = (obj: unknown) =>
+      obj == null ||
+      (typeof obj === "object" &&
+        !Array.isArray(obj) &&
+        Object.keys(obj).length === 0);
+
+    if (isEmptyObject(state.moduleToDuplicate)) {
+      const applyData = (
+        data: SuccessWithMessage & { response: ModuleData }
+      ) => {
+        onResetForm();
+        dispatch({ type: "MODULE_CREATED", payload: data.response });
+        toast.success(data.message);
+        scrollToTop();
+      };
+      sendRequest(
+        {
+          path: "/modules/metadata",
+          method: "post",
+          body: {
+            parcoursId: +id!,
+            moduleId: data.values.moduleId,
+            contactIds: state.currentContacts.map((item) => item.id ?? []),
+            skillIds: state.currentSkills.map((item) => item.id ?? []),
+            duration: data.values.duration as number,
+          },
         },
-      },
-      applyData
-    );
+        applyData
+      );
+    } else {
+      const applyData = (data: {
+        success: boolean;
+        message: string;
+        response: ModuleData;
+      }) => {
+        onResetForm();
+        dispatch({ type: "MODULE_CREATED", payload: data.response });
+        toast.success(data.message);
+        scrollToTop();
+      };
+      sendRequest(
+        {
+          path: `/modules/duplicate/${state.moduleToDuplicate!.id}`,
+          method: "post",
+          body: {
+            duration: data.values.duration as number,
+            contactsIds: state.currentContacts.map((item) => item.id),
+            skillsIds: state.currentSkills.map((item) => item.id),
+            parcoursId: +id!,
+          },
+        },
+        applyData
+      );
+    }
   };
 
   const handleSubmitUpdateModule = (e: React.FormEvent) => {
@@ -295,7 +329,7 @@ const useNewModule = () => {
 
   // Effect for delete modal
   useEffect(() => {
-    const modal = document.getElementById("two_buttons_modal");
+    const modal = document.getElementById("delete_module_modal");
     if (state.moduleToDelete) {
       (modal as HTMLDialogElement).showModal();
     } else {
@@ -323,17 +357,11 @@ const useNewModule = () => {
 
   // Effect for duplicate modal
   useEffect(() => {
-    const modal = document.getElementById(
-      "duplicate_module_modal"
-    ) as HTMLDialogElement | null;
-
-    if (!modal) return;
-
-    // Control modal visibility using DaisyUI API
+    const modal = document.getElementById("duplicate_module_modal");
     if (state.showDuplicateModal) {
-      modal.close();
+      (modal as HTMLDialogElement).showModal();
     } else {
-      modal.showModal();
+      (modal as HTMLDialogElement).close();
     }
   }, [state.showDuplicateModal]);
 
