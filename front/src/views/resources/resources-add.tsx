@@ -10,6 +10,7 @@ import ActivityPreview from "../../components/lessons-preview/preview/activity-p
 import useResource from "./hooks/useResource";
 import ActivityCreationOptionsButtons from "../../components/lessons-preview/writing/activity-creation-options-buttons";
 import TiptapActivity from "../../components/lessons-preview/writing/tip-tap-activity";
+import useTextActivity from "./hooks/useTextActivity";
 
 export default function ResourceAdd() {
   const {
@@ -31,6 +32,10 @@ export default function ResourceAdd() {
     previewActivity,
     setPreviewActivity,
   } = useResource();
+  console.log("hello");
+
+  const { content, title, createActivity, setTitle, editActivityContent } =
+    useTextActivity();
 
   return (
     <main className="min-h-screen w-full flex flex-col items-center">
@@ -79,30 +84,15 @@ export default function ResourceAdd() {
           <section className="flex-1 flex flex-col gap-4">
             <Can action="write" object="lesson">
               {resource && showTipTapEditor ? (
-                // Maintenant, tous les états de l'éditeur de texte sont à gérer depuis l'extérieur, tkt c'est simple
                 <TiptapActivity
-                  // Il peut être utile d'utiliser key dans certaines situation dans lesquelles le composant ne se remonte pas correctement
-                  // key={`tiptap_${mode}`}
-                  // id tout court au lieu de parentId, au moins c'est clair et tout autant générique
                   id={resource.id}
-                  // props title à passer (dynamique, ne pas reproduire le description: "description" avec title: "title" loool)
-                  title=""
-                  // props content à passer (dynamique, représente le contenu entier de l'editeur de texte sous forme de html)
-                  content=""
-                  // passer le mode d'edition "read", "edit" ou "write", peut être un state dynamique passé en props
+                  title={title}
+                  content={content}
                   mode="write"
-                  // Appelé, quand on appuie sur fermer/annuler
                   onClose={handleCloseTipTapEditor}
-                  onEditTitle={(title) => {}} // Appelé dès lors que le titre est modifié
-                  onEditContent={(content) => {}} // Appelé dès lors que le contenu est modifié
-                  onSave={async (id, title, content) => {
-                    // retourner un boolean de façon asynchrone
-                    const requeteReussi = true; // ou false si requête échoue ou autre type d'erreur
-
-                    // await machinTrucToto()
-
-                    return requeteReussi;
-                  }}
+                  onEditTitle={setTitle}
+                  onEditContent={editActivityContent}
+                  onSave={() => createActivity(0, title, content)}
                 />
               ) : resource ? (
                 <>

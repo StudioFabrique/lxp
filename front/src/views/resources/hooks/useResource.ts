@@ -8,6 +8,8 @@ import z from "zod";
 import { Activity } from "../../../utils/interfaces/activity";
 import Resource from "../../../utils/interfaces/resource";
 import { useParams } from "react-router-dom";
+import { ACTIVITIES } from "../../../config/urls";
+import useTextActivity from "./useTextActivity";
 
 const schema = z.object({
   title: z
@@ -23,6 +25,8 @@ const schema = z.object({
 });
 
 export default function useResource() {
+  const { content, title, createActivity, setTitle, editActivityContent } =
+    useTextActivity();
   const { resourceId } = useParams();
   const [file, setFile] = useState<File | null>(null);
   const { errors, values, onChangeValue, onValidateForm, initValues } = useForm(
@@ -43,10 +47,11 @@ export default function useResource() {
   );
   const [previewActivity, setPreviewActivity] = useState<Activity | null>(null);
 
+  console.log({ previewActivity });
+
   const handleClickShowTipTapEditor = () => setShowTipTapEditor(true);
   const handleCloseTipTapEditor = () => {
     setShowTipTapEditor(false);
-    setIsAnyActivityBeingEdited(false);
   };
 
   const handleSubmitForm = (e: React.FormEvent) => {
@@ -129,7 +134,6 @@ export default function useResource() {
       success: boolean;
       resourceDetails: Resource;
     }) => {
-      console.log("data", data);
       setResource(data.resourceDetails);
       setTags(data.resourceDetails.tags || []);
       initValues(data.resourceDetails);
@@ -138,16 +142,32 @@ export default function useResource() {
   }, [sendRequest, resourceId, initValues]);
 
   useEffect(() => {
-    console.log("useeffect triggered");
-
     getDetails();
   }, [getDetails]);
+
+  useEffect(() => {
+    if (previewActivity && previewActivity.type === "text") {
+      fetch(`${ACTIVITIES}${previewActivity.url}`).then((response) =>
+        response.text().then((content) => {
+          console.log(content);
+          editActivityContent(content);
+        })
+      );
+    }
+  }, [editActivityContent, previewActivity]);
 
   useEffect(() => {
     if (error.length > 0) toast.error(error);
   }, [error]);
 
+  console.log({ showTipTapEditor });
+
   return {
+    setTitle,
+    createActivity,
+    editActivityContent,
+    content,
+    title,
     file,
     setFile,
     errors,
