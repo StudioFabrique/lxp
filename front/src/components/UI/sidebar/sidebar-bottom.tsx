@@ -90,7 +90,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       </li>
       <li className="mb-2">
         <img
-          className="w-full object-contain rounded-lg"
+          className="w-full object-contain"
           src={newLogo}
           alt="logo de l'application"
         />
