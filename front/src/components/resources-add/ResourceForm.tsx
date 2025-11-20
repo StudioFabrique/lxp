@@ -11,7 +11,7 @@ import useImageUpload from "../../hooks/use-image-upload";
 type Props = {
   mode?: "add" | "edit";
   data: {
-    values: Record<string, string>;
+    values: Record<string, unknown>;
     errors: CustomError[];
     onChangeValue: (field: string, value: string) => void;
   };
