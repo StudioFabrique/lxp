@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { BonusActivity } from "../../utils/interfaces/resource";
+import BonusActivity from "../../utils/interfaces/resource";
 import { EditIcon, TextInitial, Trash2, Video } from "lucide-react";
 
 type Props = {
