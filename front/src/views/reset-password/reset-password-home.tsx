@@ -7,7 +7,7 @@
 
 import { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
-import image from "../../assets/images/new-logo.svg";
+import image from "../../assets/images/new-logo-2.svg";
 import Field from "../../components/UI/forms/field";
 import SubmitButton from "../../components/UI/submit-button";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";

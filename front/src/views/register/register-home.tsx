@@ -3,7 +3,7 @@
  *   nouvellement créé.
  */
 
-import image from "../../assets/images/new-logo.svg";
+import image from "../../assets/images/new-logo-2.svg";
 import PasswordUpdateHome from "../../components/password-update/password-update-home";
 
 export default function RegisterHome() {
