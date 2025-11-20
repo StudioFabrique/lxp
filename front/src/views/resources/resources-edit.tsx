@@ -7,7 +7,7 @@ import BonusActivityItem from "../../components/resources-add/BonusActivityItem"
 import Modal from "../../components/UI/modal/modal";
 import ElementNotFound from "../../components/UI/element-not-found";
 import ActivityPreview from "../../components/lessons-preview/preview/activity-preview";
-import useResource from "./hooks/useResource";
+import useResource from "./hooks/useResource.ts.old";
 import TiptapActivity from "../../components/lessons-preview/writing/tip-tap-activity";
 import ActivityCreationOptionsButtons from "../../components/lessons-preview/writing/activity-creation-options-buttons";
 
