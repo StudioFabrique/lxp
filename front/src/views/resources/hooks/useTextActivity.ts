@@ -29,18 +29,12 @@ const useTextActivity = () => {
     title?: string,
     content?: string
   ): Promise<boolean> => {
-    console.log({ title, content });
-
     // Implementation for creating an activity
-    const isActivityValid = regexGeneric.test(title!);
-    console.log({ isActivityValid });
-
-    if (!isActivityValid) {
-      toast.error(
-        "Le titre ou le contenu contient des caractères non autorisés."
-      );
+    if (!regexGeneric.test(title!)) {
+      toast.error("Le titre contient des caractères non autorisés.");
       return false;
     }
+
     const applyData = (data: any) => {
       console.log({ data });
       return true;

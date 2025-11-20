@@ -1,17 +1,18 @@
 import { useCallback, useEffect, useReducer } from "react";
-import useHttp from "../../../hooks/use-http";
-import toast from "react-hot-toast";
-import useForm from "../../../components/UI/forms/hooks/use-form";
+
+import { ZodError } from "zod";
+import { useNavigate } from "react-router-dom";
+import Contact from "../../utils/interfaces/contact";
+import Skill from "../../utils/interfaces/skill";
 import {
   moduleCreateSchema,
   moduleMetadataCreateSchema,
-} from "../../../lib/validation/parcours-edit/module-create-schema";
-import { ModuleData } from "../../../utils/interfaces/new-module";
-import Contact from "../../../utils/interfaces/contact";
-import Skill from "../../../utils/interfaces/skill";
-import SuccessWithMessage from "../../../utils/interfaces/success-with-message";
-import { ZodError } from "zod";
-import { useNavigate } from "react-router-dom";
+} from "../../lib/validation/parcours-edit/module-create-schema";
+import useHttp from "../../hooks/use-http";
+import useForm from "../UI/forms/hooks/use-form";
+import toast from "react-hot-toast";
+import SuccessWithMessage from "../../utils/interfaces/success-with-message";
+import { ModuleData } from "../../utils/interfaces/new-module";
 
 /**
  * Represents a selectable item (formation or parcours)
