@@ -7,6 +7,7 @@ import { ReactNode } from "react";
 interface HeaderProps {
   title: string;
   description?: string;
+  classname?: string;
   children?: ReactNode;
 }
 
@@ -14,7 +15,9 @@ const Header = (props: HeaderProps) => {
   return (
     <div className="w-full flex-1 flex items-center justify-between p-4 rounded-lg bg-secondary/20">
       <div>
-        <h2 className="flex-1 text-xl text-base-content font-extrabold">
+        <h2
+          className={`flex-1 text-xl text-base-content font-extrabold ${props.classname}`}
+        >
           {props.title}
         </h2>
         <p className="text-xs">{props.description}</p>

@@ -34,6 +34,7 @@ const StudentHome = () => {
         title={`Bonjour, ${user?.firstname} ${user?.lastname} !`}
         description="Bienvenue dans votre espace. Commencez votre apprentissage ou
             reprenez là où vous vous êtes arrêté."
+        classname="capitalize"
       >
         <div className="flex gap-4 w-full">
           <button className="btn btn-outline btn-primary hover:text-base-100 text-primary">
