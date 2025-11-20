@@ -3,7 +3,7 @@ import { useContext } from "react";
 import LoginForm from "./login-form.component";
 import bgSide from "../../assets/images/BG-side.png";
 // import logo from "../../assets/images/andria-2.png";
-import newLogo from "../../assets/images/new-logo.svg";
+import newLogo from "../../assets/images/new-logo-1.svg";
 import { Context } from "../../store/context.store";
 
 const Login = () => {
