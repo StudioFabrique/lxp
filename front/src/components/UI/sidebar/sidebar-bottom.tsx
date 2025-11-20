@@ -5,8 +5,8 @@ import { useContext } from "react";
 import imageProfileReplacement from "../../../config/image-profile-replacement";
 import { Context } from "../../../store/context.store";
 import Questionnaire from "./questionnaire";
-import yannickYannick from "./yannick-glitch.mp4";
-import newLogo from "../../../assets/images/new-logo.svg";
+import yannickYannick from "../../../assets/yannick-glitch.mp4";
+import newLogo from "../../../assets/images/new-logo-2.svg";
 
 type SharedSideBarProps = {
   interfaceType: string;
