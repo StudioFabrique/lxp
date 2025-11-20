@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { localeDate } from "../../helpers/locale-date";
 import { truncateText } from "../../helpers/truncate-text";
-import { ResourceListItem } from "../../views/resources/hooks/useResources";
 import TableRowWrapper from "../UI/table-row-wrapper";
 import { EditIcon, Trash2Icon } from "lucide-react";
 import ArrowTopRightIcon from "../UI/svg/arrow-top-right-icon";
@@ -9,6 +8,7 @@ import Wrapper from "../UI/wrapper/wrapper.component";
 import ElementNotFound from "../UI/element-not-found";
 import SortColumnIcon from "../UI/sort-column-icon.component/sort-column-icon.component";
 import TableWrapper from "../UI/table-wrapper";
+import { ResourceListItem } from "../../views/resources/resources-home";
 
 type Props = {
   resourcesList: ResourceListItem[];
@@ -57,7 +57,7 @@ Props) {
                   >
                     <Link
                       className="text-primary"
-                      to={`edit/${item.id}`}
+                      to={`add/${item.id}`}
                       aria-label="modifier la ressource"
                     >
                       <EditIcon className="w-4 h-4" />

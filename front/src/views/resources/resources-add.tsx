@@ -7,10 +7,11 @@ import BonusActivityItem from "../../components/resources-add/BonusActivityItem"
 import Modal from "../../components/UI/modal/modal";
 import ElementNotFound from "../../components/UI/element-not-found";
 import ActivityPreview from "../../components/lessons-preview/preview/activity-preview";
-import useResource from "./hooks/useResource.ts.old";
 import ActivityCreationOptionsButtons from "../../components/lessons-preview/writing/activity-creation-options-buttons";
 import TiptapActivity from "../../components/lessons-preview/writing/tip-tap-activity";
 import useTextActivity from "./hooks/useTextActivity";
+import useResource from "./hooks/useResource";
+import { Activity } from "../../utils/interfaces/activity";
 
 export default function ResourceAdd() {
   const {
@@ -23,8 +24,7 @@ export default function ResourceAdd() {
     setTagError,
     showTipTapEditor,
     resource,
-    handleClickShowTipTapEditor,
-    handleCloseTipTapEditor,
+    toggleTipTapEditor,
     handleSubmitForm,
     handleDeleteActivity,
     activityToDelete,
@@ -32,7 +32,6 @@ export default function ResourceAdd() {
     previewActivity,
     setPreviewActivity,
   } = useResource();
-  console.log("hello");
 
   const { content, title, createActivity, setTitle, editActivityContent } =
     useTextActivity();
@@ -63,7 +62,7 @@ export default function ResourceAdd() {
                 resource.activities &&
                 resource.activities.length > 0 ? (
                   <ul>
-                    {resource.activities.map((activity) => (
+                    {resource.activities.map((activity: Activity) => (
                       <li key={activity.id} className="mb-2 w-full">
                         <BonusActivityItem
                           activity={activity}
@@ -89,7 +88,7 @@ export default function ResourceAdd() {
                   title={title}
                   content={content}
                   mode="write"
-                  onClose={handleCloseTipTapEditor}
+                  onClose={toggleTipTapEditor}
                   onEditTitle={setTitle}
                   onEditContent={editActivityContent}
                   onSave={() => createActivity(0, title, content)}
@@ -98,7 +97,7 @@ export default function ResourceAdd() {
                 <>
                   <ActivityCreationOptionsButtons
                     selectedLesson={resource}
-                    onClickShowTipTapEditor={handleClickShowTipTapEditor}
+                    onClickShowTipTapEditor={toggleTipTapEditor}
                   />
                   {previewActivity ? (
                     <>

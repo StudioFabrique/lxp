@@ -303,8 +303,8 @@ const adminRoutes = [
     element: <ResourcesLayout />,
     children: [
       { index: true, element: <ResourcesHome /> },
-      { path: "add", element: <ResourcesAdd /> },
-      { path: "edit/:resourceId", element: <ResourcesEdit /> },
+      { path: "add/:resourceId?", element: <ResourcesAdd /> },
+      //{ path: "edit/:resourceId", element: <ResourcesEdit /> },
     ],
   },
   { path: "*", element: <FeaturesList /> },
