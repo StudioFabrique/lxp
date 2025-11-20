@@ -2,12 +2,11 @@ import { Check, Trash2, Edit3, EllipsisIcon } from "lucide-react";
 import Lesson from "../../../utils/interfaces/lesson";
 import { Link } from "react-router-dom";
 import Can from "../../UI/can/can.component";
-import { PropsWithChildren, useEffect, useRef, useState } from "react";
+import { PropsWithChildren, useRef, useState } from "react";
 
 type LessonItemProps = {
   lesson: Lesson;
   moduleId: number;
-  lessonsOrders: number[];
   selectedLesson: Lesson | undefined;
   onSelectLesson: (lesson: Lesson) => void;
   onOpenModal: (lesson: Lesson) => void;
@@ -17,7 +16,6 @@ type LessonItemProps = {
 const LessonItem = ({
   lesson,
   moduleId,
-  lessonsOrders,
   selectedLesson,
   onSelectLesson,
   onOpenModal,
@@ -48,27 +46,12 @@ const LessonItem = ({
     onOpenModal(lesson);
   };
 
-  useEffect(() => {
-    if (isLessonSelected) {
-      if (
-        lessonRef.current &&
-        selectedLesson?.order !== Math.min(...lessonsOrders)
-      ) {
-        lessonRef.current.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-        });
-      }
-    }
-  }, [isLessonSelected, lessonsOrders, selectedLesson]);
-
   return (
     // Conteneur principal avec style conditionnel basé sur la sélection
     <div className="w-full">
       <div
         ref={lessonRef}
         onClick={handleBeginReadLesson}
-        onKeyDown={handleBeginReadLesson}
         className={`flex items-center justify-between gap-1 rounded-xl px-4 h-10 w-full cursor-pointer group ${
           isLessonSelected
             ? "bg-primary text-base-100"
