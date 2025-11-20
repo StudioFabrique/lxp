@@ -88,10 +88,9 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
           <LogOutIcon />
         </div>
       </li>
-      <li className="divider divider-neutral" />
       <li className="mb-2">
         <img
-          className="w-full object-contain rounded-lg bg-slate-700"
+          className="w-full object-contain rounded-lg"
           src={newLogo}
           alt="logo de l'application"
         />
