@@ -276,9 +276,6 @@ const CourseItem = ({
                                 <LessonItem
                                   key={lesson.id}
                                   lesson={lesson}
-                                  lessonsOrders={course.lessons.map(
-                                    (lesson) => lesson.order ?? 0
-                                  )}
                                   moduleId={moduleId}
                                   selectedLesson={selectedLesson}
                                   onSelectLesson={onSelectLesson}
