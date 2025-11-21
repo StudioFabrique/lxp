@@ -1,23 +1,37 @@
 .codeBlock {
-    position: relative;
-    background: #282c34;
-    color: #fff;
-    padding: 10px;
-    border-radius: 5px;
+  position: relative;
+  background: #282c34; /* Dark background for code block */
+  color: #ffffff; /* Base text color */
+  padding: 10px;
+  border-radius: 5px;
+  font-family: "JetBrainsMono", monospace;
+  font-size: 0.85rem;
+  overflow-x: auto;
 }
 
+/* Copy button styling stays the same */
 .copyButton {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: #444;
-    color: white;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 3px;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #444;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 3px;
+}
+.copyButton:hover {
+  background: #666;
 }
 
-.copyButton:hover {
-    background: #666;
+/* pre styling */
+pre {
+  background: none;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  white-space: pre-wrap; /* Wrap lines */
 }

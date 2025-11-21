@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
 import { Check, Copy } from "lucide-react"; // Icons for UI
 import classes from "./code-block-with-copy.module.css"; // CSS file for styling
+import "highlight.js/styles/github-dark.css";
 
 function CodeBlockWithCopy({ node, getPos, editor }) {
   const [copied, setCopied] = useState(false);

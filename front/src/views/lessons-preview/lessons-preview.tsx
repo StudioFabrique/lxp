@@ -11,7 +11,6 @@ import CreateCourseItem from "../../components/lessons-preview/sidebar/create-co
 import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 import ActivityList from "../../components/lessons-preview/sidebar/activity-list";
 import NoActivityPlaceholder from "../../components/lessons-preview/preview/no-activity-placeholder";
-import Header from "../../components/UI/header";
 import { Link, useNavigate } from "react-router-dom";
 import { PenBox } from "lucide-react";
 import { useCallback } from "react";
@@ -19,6 +18,7 @@ import ActivityBottomNavigation from "../../components/lessons-preview/preview/a
 import Lesson from "../../utils/interfaces/lesson";
 import ActivityTypeSelection from "../../components/lessons-preview/preview/activity-type-selection";
 import LessonReaderAndEditor from "../../components/lessons-preview/preview/lesson-reader-and-editor";
+import Header from "../../components/UI/header";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
