@@ -10,7 +10,7 @@ import useImageUpload from "../../hooks/use-image-upload";
 import Tag from "../../utils/interfaces/tag";
 
 type Props = {
-  mode?: "add" | "edit";
+  mode: "create" | "update";
   data: {
     values: Record<string, unknown>;
     errors: CustomError[];
@@ -29,7 +29,7 @@ type Props = {
 let i = 0;
 
 export default function ResourceForm({
-  mode = "add",
+  mode = "create",
   data,
   onSubmit,
   isLoading,
@@ -140,10 +140,10 @@ export default function ResourceForm({
                 <Loader className="animate-spin" />
                 <p>Envoi...</p>
               </>
-            ) : mode === "add" ? (
+            ) : mode === "create" ? (
               "Ajouter la ressource"
             ) : (
-              "Enregistrer les modifications"
+              "Mettre à jour la ressource"
             )}
           </button>
         </div>

@@ -6,15 +6,16 @@ import Can from "../../components/UI/can/can.component";
 import BonusActivityItem from "../../components/resources-add/BonusActivityItem";
 import Modal from "../../components/UI/modal/modal";
 import ElementNotFound from "../../components/UI/element-not-found";
-import ActivityPreview from "../../components/lessons-preview/preview/activity-preview";
 import ActivityCreationOptionsButtons from "../../components/lessons-preview/writing/activity-creation-options-buttons";
 import TiptapActivity from "../../components/lessons-preview/writing/tip-tap-activity";
-import useTextActivity from "./hooks/useTextActivity";
 import useResource from "./hooks/useResource";
 import { Activity } from "../../utils/interfaces/activity";
 
 export default function ResourceAdd() {
   const {
+    newActivity,
+    activityState,
+    mode,
     setFile,
     data,
     isLoading,
@@ -24,17 +25,20 @@ export default function ResourceAdd() {
     setTagError,
     showTipTapEditor,
     resource,
-    toggleTipTapEditor,
     handleSubmitForm,
     handleDeleteActivity,
     activityToDelete,
     setActivityToDelete,
     previewActivity,
     setPreviewActivity,
+    activitiesActionsDisabled,
+    handleCloseTextEditor,
+    title,
+    content,
+    setTitle,
+    editActivityContent,
+    updateActivities,
   } = useResource();
-
-  const { content, title, createActivity, setTitle, editActivityContent } =
-    useTextActivity();
 
   return (
     <main className="min-h-screen w-full flex flex-col items-center">
@@ -45,6 +49,7 @@ export default function ResourceAdd() {
             <article className="flex-1">
               <Wrapper>
                 <ResourceForm
+                  mode={mode}
                   data={data}
                   onSubmit={handleSubmitForm}
                   isLoading={isLoading}
@@ -65,6 +70,7 @@ export default function ResourceAdd() {
                     {resource.activities.map((activity: Activity) => (
                       <li key={activity.id} className="mb-2 w-full">
                         <BonusActivityItem
+                          disabled={activitiesActionsDisabled}
                           activity={activity}
                           onDelete={setActivityToDelete}
                           onEdit={setPreviewActivity}
@@ -82,34 +88,44 @@ export default function ResourceAdd() {
           </section>
           <section className="flex-1 flex flex-col gap-4">
             <Can action="write" object="lesson">
-              {resource && showTipTapEditor ? (
+              {(resource && showTipTapEditor) || previewActivity ? (
                 <TiptapActivity
-                  id={resource.id}
+                  id={previewActivity?.id ?? resource?.activities.length ?? 0}
                   title={title}
                   content={content}
-                  mode="write"
-                  onClose={toggleTipTapEditor}
+                  mode={activityState}
+                  onClose={handleCloseTextEditor}
                   onEditTitle={setTitle}
                   onEditContent={editActivityContent}
-                  onSave={() => createActivity(0, title, content)}
+                  onSave={() =>
+                    updateActivities(
+                      previewActivity ? previewActivity.id : resource?.id ?? 0,
+                      title,
+                      content,
+                      activityState
+                    )
+                  }
                 />
               ) : resource ? (
-                <>
+                <div className="w-full border border-primary/20 rounded-lg p-8">
+                  <div className="m-auto xl:w-6/12">
+                    <h2 className="text-center text-primary text-lg font-bold mb-8">
+                      Gérez les activités liées aux ressources supplémentaires
+                    </h2>
+                    <p className="text-sm text-center text-secondary">
+                      Ajoutez des activités bonus à cette ressource pour
+                      enrichir l'expérience d'apprentissage des apprenants. Vous
+                      pouvez créer des activités de type texte, vidéo, image ou
+                      documents de différents formats.
+                    </p>
+                  </div>
                   <ActivityCreationOptionsButtons
                     selectedLesson={resource}
-                    onClickShowTipTapEditor={toggleTipTapEditor}
+                    onClickShowTipTapEditor={newActivity}
                   />
-                  {previewActivity ? (
-                    <>
-                      <div className="flex justify-center text-primary capitalize">
-                        {previewActivity.title}
-                      </div>
-                      <ActivityPreview activity={previewActivity} />
-                    </>
-                  ) : null}
-                </>
+                </div>
               ) : (
-                <ElementNotFound message="Enregistrez la ressource pour ajouter des activités bonus." />
+                <ElementNotFound message="Créez une ressource pour ajouter des activités bonus." />
               )}
             </Can>
           </section>

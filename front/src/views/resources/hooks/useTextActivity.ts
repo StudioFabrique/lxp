@@ -1,33 +1,19 @@
-import { useCallback, useState } from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
-import { useParams } from "react-router-dom";
 import { regexGeneric } from "../../../utils/constantes";
 import toast from "react-hot-toast";
 
 const useTextActivity = () => {
-  const params = useParams();
-  const [resourceId, setResourceId] = useState<number | null>(
-    +params.resourceId! || null
-  );
-  const [title, setTitle] = useState<string>("toto");
+  const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
-  const [mode, setModeState] = useState<"create" | "edit">("create");
-  const { error, isLoading, sendRequest } = useHttp();
-
-  const setMode = (mode: "create" | "edit") => {
-    setModeState(mode);
-  };
-
-  const getActivityDatas = () => {
-    // Implementation for getting activity data
-    if (!resourceId) return;
-    const applyData = (data: any) => {};
-  };
+  const { error, sendRequest } = useHttp();
 
   const createActivity = async (
     id?: number,
     title?: string,
-    content?: string
+    content?: string,
+    mode: "read" | "write" | "edit" = "write"
   ): Promise<boolean> => {
     // Implementation for creating an activity
     if (!regexGeneric.test(title!)) {
@@ -35,14 +21,13 @@ const useTextActivity = () => {
       return false;
     }
 
-    const applyData = (data: any) => {
-      console.log({ data });
+    const applyData = (_data: unknown) => {
       return true;
     };
-    sendRequest(
+    const response: Promise<boolean> = await sendRequest(
       {
-        path: `/activity/text/${resourceId}`,
-        method: "post",
+        path: `/activity/text/${id}`,
+        method: mode === "edit" ? "put" : "post",
         body: {
           title,
           description: "déception",
@@ -52,7 +37,13 @@ const useTextActivity = () => {
       },
       applyData
     );
-    return false;
+
+    return response;
+  };
+
+  const resetActivityDatas = () => {
+    setTitle("");
+    setContent("");
   };
 
   const setActivityTitle = (newTitle: string) => {
@@ -61,9 +52,6 @@ const useTextActivity = () => {
   };
 
   const editActivityContent = useCallback((newContent: string) => {
-    console.log({ newContent });
-
-    // Implementation for editing activity content
     setContent(newContent);
   }, []);
 
@@ -71,11 +59,35 @@ const useTextActivity = () => {
     // Implementation for deleting an activity
   };
 
-  const updateActivity = () => {
-    // Implementation for updating an activity
+  const updateActivity = () => {};
+
+  const resetStorage = (id: number) => {
+    console.log("ID", id);
+
+    console.log("RESETTING STORAGE");
+
+    // Ensure we have a valid id and that localStorage is available (avoid SSR issues)
+    if (id === null || id === undefined) {
+      console.warn("resetStorage called without a valid id:", id);
+      return;
+    }
+    if (typeof window === "undefined" || !window.localStorage) {
+      console.warn("localStorage is not available in this environment.");
+      return;
+    }
+
+    const key = `autosave_new_activity_${id}`;
+    console.log("Removing localStorage key:", key);
+    try {
+      localStorage.removeItem(key);
+    } catch (err) {
+      console.warn("Failed to remove localStorage key:", key, err);
+    }
   };
 
-  console.log({ title });
+  useEffect(() => {
+    if (error.length > 0) toast.error(error);
+  }, [error]);
 
   return {
     setTitle,
@@ -84,10 +96,10 @@ const useTextActivity = () => {
     createActivity,
     deleteActivity,
     editActivityContent,
-    getActivityDatas,
     setActivityTitle,
-    setMode,
     updateActivity,
+    resetActivityDatas,
+    resetStorage,
   };
 };
 
