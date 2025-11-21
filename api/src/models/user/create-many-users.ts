@@ -3,7 +3,7 @@ import User, { IUser } from "../../utils/interfaces/db/user";
 
 export default async function createManyUsers(
   users: IUser[],
-  roleRank: number,
+  roleRank: number
 ): Promise<IUser[] | null> {
   const emails = users.map((user) => user.email);
   const existingUsers = await User.find({ email: emails });
@@ -12,7 +12,7 @@ export default async function createManyUsers(
   const roles = await Role.find({ rank: roleRank });
 
   const usersToInsert = users.filter((user) => {
-    user.isActive = true;
+    user.isActive = false;
     user.roles = roles;
     return !emailsExist.includes(user.email);
   });
