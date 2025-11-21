@@ -10,8 +10,9 @@ import {
 import useHttp from "../../hooks/use-http";
 import useForm from "../UI/forms/hooks/use-form";
 import toast from "react-hot-toast";
-import { ModuleData } from "../../utils/interfaces/new-module";
+
 import SuccessWithMessage from "../../utils/interfaces/success-with-message";
+import { ModuleData } from "../../utils/interfaces/new-module";
 
 /**
  * Represents a selectable item (formation or parcours)

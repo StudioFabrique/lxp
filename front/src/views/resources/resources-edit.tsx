@@ -7,7 +7,7 @@ import BonusActivityItem from "../../components/resources-add/BonusActivityItem"
 import Modal from "../../components/UI/modal/modal";
 import ElementNotFound from "../../components/UI/element-not-found";
 import ActivityPreview from "../../components/lessons-preview/preview/activity-preview";
-import useResource from "./hooks/useResource";
+import useResource from "./hooks/useResource.old.ts";
 import TiptapActivity from "../../components/lessons-preview/writing/tip-tap-activity";
 import ActivityCreationOptionsButtons from "../../components/lessons-preview/writing/activity-creation-options-buttons";
 
@@ -30,7 +30,13 @@ export default function ResourceEdit() {
     setActivityToDelete,
     previewActivity,
     setPreviewActivity,
+    setTitle,
+    createActivity,
+    editActivityContent,
+    content,
+    title,
   } = useResource();
+  console.log({ showTipTapEditor });
 
   return (
     <main className="min-h-screen w-full flex flex-col items-center">
@@ -79,7 +85,10 @@ export default function ResourceEdit() {
           </section>
           <section className="flex-1 flex flex-col gap-4">
             <Can action="write" object="lesson">
-              {resource && showTipTapEditor ? (
+              {resource &&
+              previewActivity &&
+              previewActivity.type === "text" &&
+              showTipTapEditor ? (
                 // Maintenant, tous les états de l'éditeur de texte sont à gérer depuis l'extérieur, tkt c'est simple
                 <TiptapActivity
                   // Il peut être utile d'utiliser key dans certaines situation dans lesquelles le composant ne se remonte pas correctement
@@ -87,31 +96,22 @@ export default function ResourceEdit() {
                   // id tout court au lieu de parentId, au moins c'est clair et tout autant générique
                   id={resource.id}
                   // props title à passer (dynamique, ne pas reproduire le description: "description" avec title: "title" loool)
-                  title=""
+                  title={title}
                   // props content à passer (dynamique, représente le contenu entier de l'editeur de texte sous forme de html)
-                  content=""
-                  // passer le mode d'edition "read", "edit" ou "write", peut être un state dynamique passé en props
+                  content={content}
                   mode="edit"
-                  // Appelé, quand on appuie sur fermer/annuler
                   onClose={handleCloseTipTapEditor}
-                  onEditTitle={(title) => {}} // Appelé dès lors que le titre est modifié
-                  onEditContent={(content) => {}} // Appelé dès lors que le contenu est modifié
-                  onSave={async (id, title, content) => {
-                    // retourner un boolean de façon asynchrone
-                    const requeteReussi = true; // ou false si requête échoue ou autre type d'erreur
-
-                    // await machinTrucToto()
-
-                    return requeteReussi;
-                  }}
+                  onEditTitle={setTitle} // Appelé dès lors que le titre est modifié
+                  onEditContent={editActivityContent} // Appelé dès lors que le contenu est modifié
+                  onSave={() => createActivity(0, title, content)}
                 />
-              ) : resource ? (
+              ) : resource && previewActivity ? (
                 <>
                   <ActivityCreationOptionsButtons
                     selectedLesson={resource}
                     onClickShowTipTapEditor={handleClickShowTipTapEditor}
                   />
-                  {previewActivity ? (
+                  {previewActivity && previewActivity.type !== "text" ? (
                     <>
                       <div className="flex justify-center text-primary capitalize">
                         {previewActivity.title}

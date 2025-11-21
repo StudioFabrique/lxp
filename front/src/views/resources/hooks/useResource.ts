@@ -1,15 +1,17 @@
-import { useCallback, useEffect, useState } from "react";
-import useForm from "../../../components/UI/forms/hooks/use-form";
-import useHttp from "../../../hooks/use-http";
-import toast from "react-hot-toast";
-import Tag from "../../../utils/interfaces/tag";
-import { regexGeneric } from "../../../utils/constantes";
-import z from "zod";
+import { useCallback, useEffect, useReducer } from "react";
 import { Activity } from "../../../utils/interfaces/activity";
 import Resource from "../../../utils/interfaces/resource";
+import Tag from "../../../utils/interfaces/tag";
+import useHttp from "../../../hooks/use-http";
+import useForm from "../../../components/UI/forms/hooks/use-form";
+import z from "zod";
+import { regexGeneric } from "../../../utils/constantes";
 import { useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import useTextActivity from "./useTextActivity";
+import { ACTIVITIES } from "../../../config/urls";
 
-const schema = z.object({
+const resourceSchema = z.object({
   title: z
     .string({ required_error: "Le titre est requis." })
     .regex(regexGeneric, {
@@ -22,32 +24,104 @@ const schema = z.object({
     }),
 });
 
-export default function useResource() {
+type State = {
+  activityState: "read" | "write" | "edit";
+  mode: "create" | "update";
+  resourceId: number | null;
+  file: File | null;
+  tags: Tag[];
+  tagError: boolean;
+  showTipTapEditor: boolean;
+  resource: Resource | null;
+  activityToDelete: Activity | null;
+  previewActivity: Activity | null;
+  activitiesActionsDisabled: boolean;
+};
+
+type Action =
+  | { type: "CLOSE_TEXT_EDITOR" }
+  | { type: "SET_ACTIVITY_STATE"; payload: "read" | "write" | "edit" }
+  | { type: "SET_MODE"; payload: "create" | "update" }
+  | { type: "SET_FILE"; payload: File | null }
+  | { type: "SET_TAGS"; payload: Tag[] }
+  | { type: "SET_TAG_ERROR"; payload: boolean }
+  | { type: "TOGGLE_TIPTAP_EDITOR" }
+  | { type: "SET_RESOURCE"; payload: Resource | null }
+  | { type: "SET_ACTIVITY_TO_DELETE"; payload: Activity | null }
+  | { type: "SET_PREVIEW_ACTIVITY"; payload: Activity | null };
+
+const initialState: State = {
+  activityState: "read",
+  mode: "create",
+  resourceId: null,
+  file: null,
+  tags: [],
+  tagError: false,
+  showTipTapEditor: false,
+  resource: null,
+  activityToDelete: null,
+  previewActivity: null,
+  activitiesActionsDisabled: false,
+};
+
+const useResourceReducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case "CLOSE_TEXT_EDITOR":
+      return {
+        ...state,
+        showTipTapEditor: false,
+        previewActivity: null,
+        activitiesActionsDisabled: false,
+        activityState: "read",
+      };
+    case "SET_MODE":
+      return { ...state, mode: action.payload };
+    case "SET_FILE":
+      return { ...state, file: action.payload };
+    case "SET_TAGS":
+      return { ...state, tags: action.payload };
+    case "SET_TAG_ERROR":
+      return { ...state, tagError: action.payload };
+    case "TOGGLE_TIPTAP_EDITOR":
+      return { ...state, showTipTapEditor: !state.showTipTapEditor };
+    case "SET_RESOURCE":
+      return { ...state, resource: action.payload };
+    case "SET_ACTIVITY_TO_DELETE":
+      return { ...state, activityToDelete: action.payload };
+    case "SET_PREVIEW_ACTIVITY":
+      return {
+        ...state,
+        previewActivity: action.payload,
+        activitiesActionsDisabled: !!action.payload,
+      };
+    case "SET_ACTIVITY_STATE":
+      return { ...state, activityState: action.payload };
+    default:
+      return state;
+  }
+};
+
+const useResource = () => {
   const { resourceId } = useParams();
-  const [file, setFile] = useState<File | null>(null);
-  const { errors, values, onChangeValue, onValidateForm, initValues } = useForm(
+  const [state, dispatch] = useReducer(useResourceReducer, initialState);
+  const { error, isLoading, sendRequest } = useHttp();
+  const { errors, onChangeValue, onValidateForm, values, initValues } = useForm(
     {},
-    schema
+    resourceSchema
   );
-  const data = { values, errors, onChangeValue };
-  const { sendRequest, isLoading, error } = useHttp();
 
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [tagError, setTagError] = useState(false);
-  const [showTipTapEditor, setShowTipTapEditor] = useState<boolean>(false);
-  const [resource, setResource] = useState<Resource | null>(null);
-  const [isAnyActivityBeingEdited, setIsAnyActivityBeingEdited] =
-    useState<boolean>(false);
-  const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
-    null
-  );
-  const [previewActivity, setPreviewActivity] = useState<Activity | null>(null);
+  const {
+    createActivity,
+    editActivityContent,
+    content,
+    title,
+    setTitle,
+    resetActivityDatas,
+    //resetStorage,
+  } = useTextActivity();
 
-  const handleClickShowTipTapEditor = () => setShowTipTapEditor(true);
-  const handleCloseTipTapEditor = () => {
-    setShowTipTapEditor(false);
-    setIsAnyActivityBeingEdited(false);
-  };
+  // Form data object combining values, change handler, and errors
+  const data = { values, onChangeValue, errors };
 
   const handleSubmitForm = (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,10 +129,10 @@ export default function useResource() {
     const formData = new FormData();
     const resourceData = {
       ...data.values,
-      tags: tags.map((tag) => tag.name),
+      tags: state.tags.map((tag) => tag.name),
     };
     formData.append("data", JSON.stringify(resourceData));
-    if (file) formData.append("image", file);
+    if (state.file) formData.append("image", state.file);
 
     const applyData = (data: {
       success: boolean;
@@ -67,56 +141,45 @@ export default function useResource() {
     }) => {
       if (data.success) {
         toast.success(data.message);
-        setResource({ ...data.resource, activities: [] });
+        dispatch({
+          type: "SET_RESOURCE",
+          payload: { ...data.resource, activities: [] },
+        });
       }
-      setTagError(false);
+      dispatch({ type: "SET_TAG_ERROR", payload: false });
     };
     sendRequest(
       {
         path: `/resources${resourceId ? `/${resourceId}` : ""}`,
-        method: resourceId ? "put" : "post",
+        method: state.mode === "update" ? "put" : "post",
         body: formData,
       },
       applyData
     );
   };
 
-  const handleActivityCreated = (newActivity: Activity) => {
-    setResource((prevResource) => {
-      if (!prevResource) return prevResource;
-      return {
-        ...prevResource,
-        activities: [...prevResource.activities, newActivity],
-      };
-    });
-    setPreviewActivity(newActivity);
-  };
-
   const handleDeleteActivity = () => {
+    if (!state.activityToDelete) return;
     const applyData = (data: { success: boolean; message: string }) => {
       if (data.success) {
         toast.success(data.message);
-        if (resource) {
-          setResource((prevResource) => {
-            if (!prevResource) return prevResource;
-            return {
-              ...prevResource,
-              bonusActivities: prevResource.activities.filter(
-                (a) => a.id !== activityToDelete!.id
-              ),
-            };
+        // Remove the deleted activity from the resource state
+        if (state.resource) {
+          const updatedActivities = state.resource.activities.filter(
+            (activity) => activity.id !== state.activityToDelete!.id
+          );
+          dispatch({
+            type: "SET_RESOURCE",
+            payload: { ...state.resource, activities: updatedActivities },
           });
         }
-        setActivityToDelete(null);
+        dispatch({ type: "SET_ACTIVITY_TO_DELETE", payload: null });
       }
-      setPreviewActivity(
-        resource!.activities[resource!.activities.length - 1] ?? null
-      );
     };
     sendRequest(
       {
-        path: `/activity/${activityToDelete!.type}/${
-          activityToDelete!.id
+        path: `/activity/${state.activityToDelete!.type}/${
+          state.activityToDelete!.id
         }/resource`,
         method: "delete",
       },
@@ -124,56 +187,140 @@ export default function useResource() {
     );
   };
 
-  const getDetails = useCallback(() => {
+  const setFile = (file: File | null) => {
+    dispatch({ type: "SET_FILE", payload: file });
+  };
+
+  const setTags = (tags: Tag[]) => {
+    dispatch({ type: "SET_TAGS", payload: tags });
+  };
+
+  const setTagError = (error: boolean) => {
+    dispatch({ type: "SET_TAG_ERROR", payload: error });
+  };
+
+  const toggleTipTapEditor = () => {
+    dispatch({ type: "TOGGLE_TIPTAP_EDITOR" });
+  };
+
+  const setResource = (resource: Resource | null) => {
+    dispatch({ type: "SET_RESOURCE", payload: resource });
+  };
+
+  const setActivityToDelete = (activity: Activity | null) => {
+    dispatch({ type: "SET_ACTIVITY_TO_DELETE", payload: activity });
+  };
+
+  const setPreviewActivity = (activity: Activity | null) => {
+    dispatch({ type: "SET_PREVIEW_ACTIVITY", payload: activity });
+    if (activity && activity.type === "text") {
+      dispatch({ type: "TOGGLE_TIPTAP_EDITOR" });
+    }
+    if (!activity && state.showTipTapEditor)
+      dispatch({ type: "TOGGLE_TIPTAP_EDITOR" });
+  };
+
+  const getResourceDetails = useCallback(() => {
     const applyData = (data: {
       success: boolean;
       resourceDetails: Resource;
     }) => {
-      console.log("data", data);
-      setResource(data.resourceDetails);
-      setTags(data.resourceDetails.tags || []);
+      dispatch({ type: "SET_RESOURCE", payload: data.resourceDetails });
+      dispatch({ type: "SET_TAGS", payload: data.resourceDetails.tags ?? [] });
       initValues(data.resourceDetails);
     };
     sendRequest({ path: `/resources/${resourceId}`, method: "get" }, applyData);
   }, [sendRequest, resourceId, initValues]);
 
-  useEffect(() => {
-    console.log("useeffect triggered");
+  /*
+  const setActivityState = (state: "read" | "write") => {
+    dispatch({ type: "SET_ACTIVITY_STATE", payload: state });
+  };
+  */
 
-    getDetails();
-  }, [getDetails]);
+  const getActivityContent = useCallback(() => {
+    fetch(`${ACTIVITIES}${state.previewActivity!.url}`).then((response) =>
+      response.text().then((content) => {
+        editActivityContent(content);
+        setTitle(state.previewActivity!.title!);
+      })
+    );
+  }, [editActivityContent, setTitle, state.previewActivity]);
+
+  const handleCloseTextEditor = () => {
+    dispatch({ type: "CLOSE_TEXT_EDITOR" });
+    resetActivityDatas();
+
+    //resetStorage(resourceId ? parseInt(resourceId) : 0);
+  };
+
+  const updateActivities = async (
+    id: number,
+    title: string,
+    content: string,
+    isEditing: "read" | "write" | "edit"
+  ) => {
+    const result = await createActivity(
+      isEditing === "write" ? +resourceId! : id,
+      title,
+      content,
+      isEditing
+    );
+    if (!result)
+      toast.error(
+        "Une erreur est survenue lors de la mise à jour de l'activité."
+      );
+    else toast.success("L'activité a été mise à jour avec succès.");
+    getResourceDetails();
+    return result;
+  };
+
+  const newActivity = () => {
+    dispatch({ type: "SET_PREVIEW_ACTIVITY", payload: null });
+    dispatch({ type: "SET_ACTIVITY_STATE", payload: "write" });
+    dispatch({ type: "TOGGLE_TIPTAP_EDITOR" });
+    resetActivityDatas();
+    getResourceDetails();
+  };
 
   useEffect(() => {
-    if (error.length > 0) toast.error(error);
-  }, [error]);
+    if (state.previewActivity) {
+      dispatch({ type: "SET_ACTIVITY_STATE", payload: "edit" });
+      getActivityContent();
+    }
+  }, [getActivityContent, state.previewActivity]);
+
+  useEffect(() => {
+    if (resourceId) {
+      dispatch({ type: "SET_MODE", payload: "update" });
+      getResourceDetails();
+    } else dispatch({ type: "SET_MODE", payload: "create" });
+  }, [getResourceDetails, resourceId]);
 
   return {
-    file,
-    setFile,
-    errors,
-    values,
-    onChangeValue,
-    onValidateForm,
+    ...state,
+    content,
+    createActivity,
     data,
-    isLoading,
-    tags,
-    setTags,
-    tagError,
-    setTagError,
-    showTipTapEditor,
-    setShowTipTapEditor,
-    resource,
-    setResource,
-    isAnyActivityBeingEdited,
-    setIsAnyActivityBeingEdited,
-    handleClickShowTipTapEditor,
-    handleCloseTipTapEditor,
-    handleSubmitForm,
-    handleActivityCreated,
+    editActivityContent,
+    error,
+    handleCloseTextEditor,
     handleDeleteActivity,
-    activityToDelete,
+    handleSubmitForm,
+    isLoading,
+    newActivity,
+    resourceId,
     setActivityToDelete,
-    previewActivity,
+    setFile,
     setPreviewActivity,
+    setResource,
+    setTagError,
+    setTags,
+    setTitle,
+    title,
+    toggleTipTapEditor,
+    updateActivities,
   };
-}
+};
+
+export default useResource;

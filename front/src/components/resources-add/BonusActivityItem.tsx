@@ -1,14 +1,16 @@
 import { Dispatch, SetStateAction } from "react";
-import { BonusActivity } from "../../utils/interfaces/resource";
+import BonusActivity from "../../utils/interfaces/resource";
 import { EditIcon, TextInitial, Trash2, Video } from "lucide-react";
 
 type Props = {
+  disabled?: boolean;
   activity: BonusActivity;
   onDelete: Dispatch<SetStateAction<BonusActivity | null>>;
   onEdit: Dispatch<SetStateAction<BonusActivity | null>>;
 };
 
 export default function BonusActivityItem({
+  disabled = false,
   activity,
   onEdit,
   onDelete,
@@ -45,6 +47,7 @@ export default function BonusActivityItem({
       <div className={style + " flex items-center gap-2"}>
         <button
           className="cursor-pointer"
+          disabled={disabled}
           title="Éditer l'activité"
           onClick={() => onEdit(activity)}
           aria-label="Éditer l'activité"
@@ -53,6 +56,7 @@ export default function BonusActivityItem({
         </button>
         <button
           className="cursor-pointer"
+          disabled={disabled}
           onClick={() => onDelete(activity)}
           title="Supprimer l'activité"
           aria-label="Supprimer l'activité"

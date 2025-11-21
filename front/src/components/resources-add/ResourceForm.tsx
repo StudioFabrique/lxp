@@ -1,4 +1,4 @@
-import { ChangeEvent, Dispatch, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import Field from "../UI/forms/field";
 import QuestionMarkTooltip from "../UI/question-mark-tooltip/question-mark-tooltip";
 import { HelpCircle, Loader } from "lucide-react";
@@ -7,29 +7,29 @@ import TagsList from "../formation-home/tags-list";
 import FieldArea from "../UI/forms/field-area";
 import FormUploadImage from "../UI/form-upload-image";
 import useImageUpload from "../../hooks/use-image-upload";
+import Tag from "../../utils/interfaces/tag";
 
 type Props = {
-  mode?: "add" | "edit";
+  mode: "create" | "update";
   data: {
-    values: Record<string, string>;
+    values: Record<string, unknown>;
     errors: CustomError[];
     onChangeValue: (field: string, value: string) => void;
   };
   onSubmit: (e: React.FormEvent) => void;
   isLoading: boolean;
   tags: { id: number; name: string; color: string }[];
-  setTags: Dispatch<
-    React.SetStateAction<{ id: number; name: string; color: string }[]>
-  >;
+  setTags: (tags: Tag[]) => void;
+
   tagError: boolean;
-  onTagError: Dispatch<React.SetStateAction<boolean>>;
-  onSetFile: Dispatch<React.SetStateAction<File | null>>;
+  onTagError: (tagError: boolean) => void;
+  onSetFile: (file: File | null) => void;
 };
 
 let i = 0;
 
 export default function ResourceForm({
-  mode = "add",
+  mode = "create",
   data,
   onSubmit,
   isLoading,
@@ -66,7 +66,7 @@ export default function ResourceForm({
       id: i++,
     };
 
-    setTags((prev) => [...prev, result]);
+    setTags([...tags, result]);
     onTagError(false);
   };
 
@@ -84,7 +84,7 @@ export default function ResourceForm({
   };
 
   const removeTag = (id: number) => {
-    setTags((prev) => prev.filter((tag) => tag.id !== id));
+    setTags(tags.filter((tag) => tag.id !== id));
   };
 
   return (
@@ -140,10 +140,10 @@ export default function ResourceForm({
                 <Loader className="animate-spin" />
                 <p>Envoi...</p>
               </>
-            ) : mode === "add" ? (
+            ) : mode === "create" ? (
               "Ajouter la ressource"
             ) : (
-              "Enregistrer les modifications"
+              "Mettre à jour la ressource"
             )}
           </button>
         </div>

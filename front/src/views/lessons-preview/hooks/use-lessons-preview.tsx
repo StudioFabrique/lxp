@@ -13,6 +13,7 @@ import {
 import { ACTIVITIES } from "../../../config/urls";
 import { Activity, ActivityType } from "../../../utils/interfaces/activity";
 import { OnDragEndResponder } from "react-beautiful-dnd";
+import { replaceActivityTextContent } from "../../../helpers/replaceActivityTextContent";
 
 // Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
 const useLessonsPreview = () => {
@@ -267,17 +268,8 @@ const useLessonsPreview = () => {
 
     if (!state.textActivityContent) return false;
 
-    const textContent = state.textActivityContent
-      .replace(
-        // Supprimer les paragraphes vides au début
-        /^(<p><\/p>|<p>\s*<\/p>|<p><br><\/p>)+/,
-        ""
-      )
-      .replace(
-        // Supprimer les paragraphes vides à la fin
-        /(<p><\/p>|<p>\s*<\/p>|<p><br><\/p>)+$/,
-        ""
-      );
+    // clean empty div at the content beginning and the end
+    const textContent = replaceActivityTextContent(state.textActivityContent);
 
     const applyDataPost = (activity: Activity) => {
       dispatch({ type: "create_activity", activity });
@@ -308,7 +300,6 @@ const useLessonsPreview = () => {
       },
       state.mode === "write" ? applyDataPost : applyDataPut
     );
-
     // Ajout d'un délai de 1 seconde pour éviter les clignotements
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
