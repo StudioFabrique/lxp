@@ -9,6 +9,7 @@ import { regexGeneric } from "../../../utils/constantes";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import useTextActivity from "./useTextActivity";
+import { ACTIVITIES } from "../../../config/urls";
 
 const resourceSchema = z.object({
   title: z
@@ -24,7 +25,8 @@ const resourceSchema = z.object({
 });
 
 type State = {
-  mode: "create" | "update" | null;
+  activityState: "read" | "write" | "edit";
+  mode: "create" | "update";
   resourceId: number | null;
   file: File | null;
   tags: Tag[];
@@ -33,9 +35,12 @@ type State = {
   resource: Resource | null;
   activityToDelete: Activity | null;
   previewActivity: Activity | null;
+  activitiesActionsDisabled: boolean;
 };
 
 type Action =
+  | { type: "CLOSE_TEXT_EDITOR" }
+  | { type: "SET_ACTIVITY_STATE"; payload: "read" | "write" | "edit" }
   | { type: "SET_MODE"; payload: "create" | "update" }
   | { type: "SET_FILE"; payload: File | null }
   | { type: "SET_TAGS"; payload: Tag[] }
@@ -46,7 +51,8 @@ type Action =
   | { type: "SET_PREVIEW_ACTIVITY"; payload: Activity | null };
 
 const initialState: State = {
-  mode: null,
+  activityState: "read",
+  mode: "create",
   resourceId: null,
   file: null,
   tags: [],
@@ -55,10 +61,19 @@ const initialState: State = {
   resource: null,
   activityToDelete: null,
   previewActivity: null,
+  activitiesActionsDisabled: false,
 };
 
 const useResourceReducer = (state: State, action: Action): State => {
   switch (action.type) {
+    case "CLOSE_TEXT_EDITOR":
+      return {
+        ...state,
+        showTipTapEditor: false,
+        previewActivity: null,
+        activitiesActionsDisabled: false,
+        activityState: "read",
+      };
     case "SET_MODE":
       return { ...state, mode: action.payload };
     case "SET_FILE":
@@ -74,7 +89,13 @@ const useResourceReducer = (state: State, action: Action): State => {
     case "SET_ACTIVITY_TO_DELETE":
       return { ...state, activityToDelete: action.payload };
     case "SET_PREVIEW_ACTIVITY":
-      return { ...state, previewActivity: action.payload };
+      return {
+        ...state,
+        previewActivity: action.payload,
+        activitiesActionsDisabled: !!action.payload,
+      };
+    case "SET_ACTIVITY_STATE":
+      return { ...state, activityState: action.payload };
     default:
       return state;
   }
@@ -89,8 +110,15 @@ const useResource = () => {
     resourceSchema
   );
 
-  const { createActivity, editActivityContent, content, title, setTitle } =
-    useTextActivity();
+  const {
+    createActivity,
+    editActivityContent,
+    content,
+    title,
+    setTitle,
+    resetActivityDatas,
+    //resetStorage,
+  } = useTextActivity();
 
   // Form data object combining values, change handler, and errors
   const data = { values, onChangeValue, errors };
@@ -185,6 +213,11 @@ const useResource = () => {
 
   const setPreviewActivity = (activity: Activity | null) => {
     dispatch({ type: "SET_PREVIEW_ACTIVITY", payload: activity });
+    if (activity && activity.type === "text") {
+      dispatch({ type: "TOGGLE_TIPTAP_EDITOR" });
+    }
+    if (!activity && state.showTipTapEditor)
+      dispatch({ type: "TOGGLE_TIPTAP_EDITOR" });
   };
 
   const getResourceDetails = useCallback(() => {
@@ -199,6 +232,64 @@ const useResource = () => {
     sendRequest({ path: `/resources/${resourceId}`, method: "get" }, applyData);
   }, [sendRequest, resourceId, initValues]);
 
+  /*
+  const setActivityState = (state: "read" | "write") => {
+    dispatch({ type: "SET_ACTIVITY_STATE", payload: state });
+  };
+  */
+
+  const getActivityContent = useCallback(() => {
+    fetch(`${ACTIVITIES}${state.previewActivity!.url}`).then((response) =>
+      response.text().then((content) => {
+        editActivityContent(content);
+        setTitle(state.previewActivity!.title!);
+      })
+    );
+  }, [editActivityContent, setTitle, state.previewActivity]);
+
+  const handleCloseTextEditor = () => {
+    dispatch({ type: "CLOSE_TEXT_EDITOR" });
+    resetActivityDatas();
+
+    //resetStorage(resourceId ? parseInt(resourceId) : 0);
+  };
+
+  const updateActivities = async (
+    id: number,
+    title: string,
+    content: string,
+    isEditing: "read" | "write" | "edit"
+  ) => {
+    const result = await createActivity(
+      isEditing === "write" ? +resourceId! : id,
+      title,
+      content,
+      isEditing
+    );
+    if (!result)
+      toast.error(
+        "Une erreur est survenue lors de la mise à jour de l'activité."
+      );
+    else toast.success("L'activité a été mise à jour avec succès.");
+    getResourceDetails();
+    return result;
+  };
+
+  const newActivity = () => {
+    dispatch({ type: "SET_PREVIEW_ACTIVITY", payload: null });
+    dispatch({ type: "SET_ACTIVITY_STATE", payload: "write" });
+    dispatch({ type: "TOGGLE_TIPTAP_EDITOR" });
+    resetActivityDatas();
+    getResourceDetails();
+  };
+
+  useEffect(() => {
+    if (state.previewActivity) {
+      dispatch({ type: "SET_ACTIVITY_STATE", payload: "edit" });
+      getActivityContent();
+    }
+  }, [getActivityContent, state.previewActivity]);
+
   useEffect(() => {
     if (resourceId) {
       dispatch({ type: "SET_MODE", payload: "update" });
@@ -208,23 +299,27 @@ const useResource = () => {
 
   return {
     ...state,
-    title,
-    setTitle,
-    editActivityContent,
     content,
     createActivity,
     data,
-    isLoading,
+    editActivityContent,
     error,
-    handleSubmitForm,
+    handleCloseTextEditor,
     handleDeleteActivity,
-    setFile,
-    setTags,
-    setTagError,
-    toggleTipTapEditor,
-    setResource,
+    handleSubmitForm,
+    isLoading,
+    newActivity,
+    resourceId,
     setActivityToDelete,
+    setFile,
     setPreviewActivity,
+    setResource,
+    setTagError,
+    setTags,
+    setTitle,
+    title,
+    toggleTipTapEditor,
+    updateActivities,
   };
 };
 
