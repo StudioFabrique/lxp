@@ -12,8 +12,6 @@ export default async function httpGetUserData(req: Request, res: Response) {
 
     const { userId } = req.params;
 
-    console.log({ userId });
-
     const response = await getUserData(userId);
     return res.status(200).json(response);
   } catch (error: any) {

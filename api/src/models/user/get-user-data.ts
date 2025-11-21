@@ -37,28 +37,39 @@ export default async function getUserData(userId: string) {
   }
 
   // Process connection information for the last 15 days
-  let tmp = user.connectionInfos;
+  // Guard against missing connectionInfos
+  let tmp: IConnectionInfos[] = (user.connectionInfos ??
+    []) as IConnectionInfos[];
 
   // Calculate timestamp for 15 days ago
-  const now = new Date().getTime();
+  const now = Date.now();
 
   // Filter connection infos to only include last 15 days
-  tmp = tmp.filter(
-    (item: IConnectionInfos) =>
-      new Date(item.lastConnection).getTime() >= now - 15 * 24 * 3600 * 1000
-  );
+  tmp = tmp.filter((item: IConnectionInfos) => {
+    const last = item?.lastConnection
+      ? new Date(item.lastConnection).getTime()
+      : 0;
+    return last >= now - 15 * 24 * 3600 * 1000;
+  });
 
   // Create array to store missing connection days
-  let newInfos = Array<any>();
+  let newInfos: Array<any> = [];
 
   // Fill in missing days with zero duration for complete 14-day history
   for (let delay = 14; delay > 0; delay--) {
     const date = new Date(now - delay * 24 * 3600 * 1000);
 
     // Check if connection info exists for this specific day
-    const info = tmp.find(
-      (elem: any) => elem.lastConnection.getDate() === date.getDate()
-    );
+    const info = tmp.find((elem: any) => {
+      const elemDate = elem?.lastConnection
+        ? new Date(elem.lastConnection)
+        : null;
+      return elemDate
+        ? elemDate.getDate() === date.getDate() &&
+            elemDate.getMonth() === date.getMonth() &&
+            elemDate.getFullYear() === date.getFullYear()
+        : false;
+    });
 
     // If no connection info found for this day, add entry with zero duration
     if (!info) {
@@ -82,12 +93,12 @@ export default async function getUserData(userId: string) {
   // Process parcours information if user belongs to a group
   if (user.group && user.group.length > 0) {
     // Fetch the most recent parcours for the user's group from PostgreSQL
-    let response = await prisma.group.findFirst({
+    const response = await prisma.group.findFirst({
       where: { idMdb: user.group[0]._id },
       select: {
         parcours: {
           select: {
-            parcours: { select: { id: true, title: true } },
+            parcours: { select: { id: true, title: true, image: true } },
           },
           orderBy: {
             parcoursId: "desc", // Get the most recent parcours
@@ -97,17 +108,16 @@ export default async function getUserData(userId: string) {
       },
     });
 
-    // Array to store all lesson IDs in the parcours
-    let lessonsIds: Array<any> = [];
+    // Default total lessons count
+    let totalLessonsCount = 0;
 
     // Process parcours data if found
-    if (response && response.parcours.length > 0) {
+    if (response && response.parcours && response.parcours.length > 0) {
       // Extract parcours object from the response
       parcours = response.parcours.map((item: any) => item.parcours)[0];
 
-      // Fetch all lesson IDs within this parcours by traversing the hierarchy:
-      // parcours -> modules -> courses -> lessons
-      lessonsIds = await prisma.parcours.findMany({
+      // Fetch modules -> courses -> lessons structure for this parcours
+      const parcoursStructure = await prisma.parcours.findMany({
         where: { id: parcours.id },
         select: {
           modules: {
@@ -123,6 +133,20 @@ export default async function getUserData(userId: string) {
           },
         },
       });
+
+      // Flatten the nested arrays to compute the total number of lessons
+      totalLessonsCount = parcoursStructure.reduce((accP, p) => {
+        const modules = p.modules ?? [];
+        const modulesCount = modules.reduce((accM, m) => {
+          const courses = m.courses ?? [];
+          const coursesCount = courses.reduce((accC, c) => {
+            const lessons = c.lessons ?? [];
+            return accC + lessons.length;
+          }, 0);
+          return accM + coursesCount;
+        }, 0);
+        return accP + modulesCount;
+      }, 0);
     }
 
     // Find the student record in PostgreSQL using MongoDB user ID
@@ -130,21 +154,38 @@ export default async function getUserData(userId: string) {
       where: { idMdb: userId },
     });
 
-    // Get count of lessons that the student has finished reading
-    const finishedLessons = await prisma.student.findMany({
-      where: { id: student!.id },
-      select: { lessonsRead: { select: { id: true } } },
-    });
+    // If student exists, fetch their finished lessons count safely
+    let finishedLessonsCount = 0;
+    if (student) {
+      const studentWithLessons = await prisma.student.findUnique({
+        where: { id: student.id },
+        select: { lessonsRead: { select: { id: true } } },
+      });
+      finishedLessonsCount = studentWithLessons?.lessonsRead?.length ?? 0;
+    }
 
     // Calculate completion percentage based on finished vs total lessons
-    parcoursCompletion = (finishedLessons.length / lessonsIds.length) * 100;
+    parcoursCompletion =
+      totalLessonsCount > 0
+        ? (finishedLessonsCount / totalLessonsCount) * 100
+        : 0;
 
     // Convert parcours image from Buffer to base64 string if it exists
     if (parcours && parcours.image) {
-      parcours = {
-        ...parcours,
-        image: parcours.image.toString("base64"),
-      };
+      try {
+        // protect against non-buffer values
+        parcours = {
+          ...parcours,
+          image:
+            parcours.image &&
+            typeof parcours.image === "object" &&
+            "toString" in parcours.image
+              ? (parcours.image as any).toString("base64")
+              : parcours.image,
+        };
+      } catch {
+        // ignore image conversion errors and leave image as-is
+      }
     }
   }
 

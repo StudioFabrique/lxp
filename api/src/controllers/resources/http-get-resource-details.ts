@@ -9,7 +9,6 @@ export default async function httpGetResourceDetails(
 ) {
   try {
     const resourceId = parseInt(req.params.resourceId);
-    console.log({ resourceId });
 
     const resourceDetails = await getResourceDetails(resourceId);
     next({
@@ -18,8 +17,6 @@ export default async function httpGetResourceDetails(
       data: { resourceDetails },
     });
   } catch (error: any) {
-    console.log({ error });
-
     next({
       statusCode: error.statusCode ?? 500,
       message: error.message ?? serverIssue,

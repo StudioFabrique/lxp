@@ -4,7 +4,9 @@ export default async function getResourceDetails(resourceId: number) {
   const existingResource = await prisma.resource.findFirst({
     where: { id: resourceId },
     include: {
-      bonusActivities: true,
+      bonusActivities: {
+        orderBy: { order: "asc" },
+      },
       tags: {
         select: { tag: { select: { id: true, name: true, color: true } } },
       },
