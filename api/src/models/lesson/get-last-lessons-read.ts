@@ -1,11 +1,11 @@
 import { prisma } from "../../utils/db";
-
 import Group from "../../utils/interfaces/db/group";
 
 /**
- * Récupère la liste des dernières leçons lues par un étudiant et n'étant pas terminé.
- * @param userIdMdb L'id de l'étudiant
- * @param max Le nombre de leçons maximum à récupérer
+ * Get the list of last read lessons by a student and not finished.
+ * If none started, return the first lesson of the first course in parcours.
+ * @param userIdMdb Student ID
+ * @param max Max number of lessons to retrieve
  * @returns
  */
 export default async function getLastLessonsRead(
@@ -13,17 +13,15 @@ export default async function getLastLessonsRead(
   max?: number
 ) {
   const groupsWhereStudentIs = await Group.find({ users: userIdMdb });
+  const groupIds = groupsWhereStudentIs.map((group) => group.id);
 
-  const groupIds: string[] = groupsWhereStudentIs.map((group) => group.id);
+  if (groupIds.length === 0) return null;
 
-  if (!(groupIds.length > 0)) return null;
-
+  // Fetch last opened, unfinished lessons
   const lessons = await prisma.lessonRead.findMany({
     where: {
       student: { idMdb: userIdMdb },
       lesson: {
-        // isPublished: true,
-        // visibility: true,
         course: {
           isPublished: true,
           visibility: true,
@@ -42,11 +40,12 @@ export default async function getLastLessonsRead(
         select: {
           id: true,
           title: true,
+          order: true, // lesson order important for sorting
           course: {
             select: {
               id: true,
               title: true,
-              order: true,
+              order: true, // course order for sorting
               module: {
                 select: {
                   id: true,
@@ -70,7 +69,6 @@ export default async function getLastLessonsRead(
               },
             },
           },
-          order: true,
         },
       },
     },
@@ -78,12 +76,11 @@ export default async function getLastLessonsRead(
     take: max,
   });
 
-  if (lessons && !(lessons?.length > 0)) {
-    const lesson = await prisma.lesson.findFirst({
+  // If no lessons started, find the first lesson of the first course in parcours
+  if (!lessons.length) {
+    const firstLesson = await prisma.lesson.findFirst({
       where: {
-        // isPublished: true,
-        // visibility: true,
-        lessonsRead: { every: { NOT: { student: { idMdb: userIdMdb } } } },
+        lessonsRead: { none: { student: { idMdb: userIdMdb } } },
         course: {
           isPublished: true,
           visibility: true,
@@ -98,6 +95,8 @@ export default async function getLastLessonsRead(
       include: {
         course: {
           select: {
+            id: true,
+            order: true, // course order
             title: true,
             module: {
               select: {
@@ -109,53 +108,58 @@ export default async function getLastLessonsRead(
           },
         },
       },
-      orderBy: {
-        order: "asc",
-      },
+      orderBy: [
+        { course: { order: "asc" } },
+        { order: "asc" }, // lesson order
+      ],
     });
 
-    if (!lesson) return null;
+    if (!firstLesson) return null;
 
-    const lessonReformated = {
+    const lessonReformatted = {
       lesson: {
-        id: lesson?.id,
-        title: lesson?.title,
+        id: firstLesson.id,
+        title: firstLesson.title,
+        order: firstLesson.order,
         course: {
-          ...lesson?.course,
+          ...firstLesson.course,
           module: {
-            ...lesson.course.module,
-            title: lesson.course.module.module.title,
+            ...firstLesson.course.module,
+            title: firstLesson.course.module.module.title,
           },
         },
-        parcoursId: lesson.course.module.parcours.id,
+        parcoursId: firstLesson.course.module.parcours.id,
       },
     };
 
-    return [lessonReformated];
+    return [lessonReformatted];
   }
 
-  // ne s'exécute pas tous le temps, à vérifier plus tard si ça sert vraiment
-  // permet d'ajouter le badge des compétences bonus
-  const lessonsReformatedWithSkillBadge = lessons?.map((lessonRead) => {
-    const { course } = lessonRead.lesson;
+  // Student has started lessons, return sorted list by course order then lesson order
+  const lessonsReformattedWithSkillBadge = lessons
+    .map((lessonRead) => {
+      const { course } = lessonRead.lesson;
+      const bonusSkills = course.module.bonusSkills.map((b) => b.bonusSkill);
 
-    const bonusSkills = course.module.bonusSkills.map((bonusSkill) => {
-      return bonusSkill.bonusSkill;
+      return {
+        ...lessonRead,
+        lesson: {
+          ...lessonRead.lesson,
+          course: {
+            ...course,
+            module: { ...course.module, title: course.module.module.title },
+            bonusSkills,
+          },
+        },
+        parcoursId: lessonRead.lesson.course.module.parcours.id,
+      };
+    })
+    .sort((a, b) => {
+      if (a.lesson.course.order === b.lesson.course.order) {
+        return a.lesson.order - b.lesson.order;
+      }
+      return a.lesson.course.order - b.lesson.course.order;
     });
 
-    return {
-      ...lessonRead,
-      lesson: {
-        ...lessonRead.lesson,
-        course: {
-          ...course,
-          module: { ...course.module, title: course.module.module.title },
-          bonusSkills,
-        },
-      },
-      parcoursId: lessonRead.lesson.course.module.parcours.id,
-    };
-  });
-
-  return lessonsReformatedWithSkillBadge;
+  return lessonsReformattedWithSkillBadge;
 }

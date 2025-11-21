@@ -1,7 +1,6 @@
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import CharacterCount from "@tiptap/extension-character-count";
-import Highlight from "@tiptap/extension-highlight";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import Table from "@tiptap/extension-table";
@@ -11,7 +10,6 @@ import TableRow from "@tiptap/extension-table-row";
 import TextAlign from "@tiptap/extension-text-align";
 import TextStyle from "@tiptap/extension-text-style";
 import { FontFamily } from "@tiptap/extension-font-family";
-import { Color } from "@tiptap/extension-color";
 import Link from "@tiptap/extension-link";
 import Youtube from "@tiptap/extension-youtube";
 import { TableKeyboardShortcuts } from "./extensions/TableKeyboardShortcuts";
@@ -27,7 +25,6 @@ const tiptapExtensions = [
   TextAlign.configure({
     types: ["heading", "paragraph"],
   }),
-  Highlight.configure({ multicolor: true }),
   TaskList,
   TaskItem,
   CharacterCount.configure({
@@ -50,7 +47,6 @@ const tiptapExtensions = [
   TableCell,
   ResizableImage,
   TextStyle,
-  Color,
   FontFamily,
   Link,
   Youtube,

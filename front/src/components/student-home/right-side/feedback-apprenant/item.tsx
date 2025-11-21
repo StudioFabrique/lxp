@@ -1,13 +1,15 @@
 import { PartyPopperIcon } from "lucide-react";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Accomplishment } from "../../../../utils/interfaces/accomplishment";
 import FeedbacksButton from "../../../UI/feedbacks/feedbacks-button";
 import { Context } from "../../../../store/context.store";
 
 const Item = ({ accomplishment }: { accomplishment: Accomplishment }) => {
   const { socket, user } = useContext(Context);
+  const [buttonClicked, setButtonClicked] = useState(false);
 
   const handleClick = () => {
+    setButtonClicked(true);
     if (!socket) return;
     const idMdbUserFrom = user?._id;
 
@@ -33,6 +35,7 @@ const Item = ({ accomplishment }: { accomplishment: Accomplishment }) => {
         feedbackType="confetti"
         showFeedback
         onClick={handleClick}
+        disabled={buttonClicked}
       >
         <PartyPopperIcon />
       </FeedbacksButton>
