@@ -9,8 +9,10 @@ export default async function httpPostActivityVideo(
   try {
     const uploadedFile = req.file;
     const userId = req.auth?.userId;
-    const { lessonId } = req.params;
+    let { lessonId, parentType } = req.params;
     const data = req.body.data;
+
+    if (!parentType) parentType = "lesson";
 
     const url =
       uploadedFile !== null && uploadedFile !== undefined
@@ -22,7 +24,8 @@ export default async function httpPostActivityVideo(
       userId!,
       data.title,
       data.description,
-      url
+      url,
+      data.parentType
     );
 
     return res.status(201).json({
