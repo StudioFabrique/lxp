@@ -228,7 +228,7 @@ const CourseItem = ({
               {(provided, droppableState) => (
                 <div
                   ref={provided.innerRef}
-                  className={`p-4 flex flex-col gap-4 items-center ${
+                  className={`p-4 flex flex-col gap-4 ${
                     droppableState.isDraggingOver && "-mt-10"
                   }`}
                   {...provided.droppableProps}
@@ -243,14 +243,13 @@ const CourseItem = ({
                       >
                         {toUpperFirstLetter(course.description)}
                       </p>
-                      (
+
                       <p
                         className="text-xs link"
                         onClick={handleClickToggleExpandDescription}
                       >
                         {`Voir ${isDescriptionExpanded ? "moins" : "plus"}`}
                       </p>
-                      )
                     </span>
                   )}
                   {course.lessons.length > 0 ? (
