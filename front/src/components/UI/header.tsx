@@ -13,7 +13,7 @@ interface HeaderProps {
 
 const Header = (props: HeaderProps) => {
   return (
-    <div className="w-full flex-1 flex items-center justify-between p-4 rounded-lg bg-secondary/20">
+    <div className="w-full flex items-center justify-between p-4 rounded-lg bg-secondary/20">
       <div>
         <h2
           className={`flex-1 text-xl text-base-content font-extrabold ${props.classname}`}
