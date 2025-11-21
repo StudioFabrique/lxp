@@ -234,21 +234,25 @@ const CourseItem = ({
                   {...provided.droppableProps}
                 >
                   {provided.placeholder}
-                  <span className="flex-1 min-w-0">
-                    <p
-                      className={`text-sm break-words overflow-y-clip min-w-0 ${
-                        !isDescriptionExpanded && "max-h-5"
-                      }`}
-                    >
-                      {toUpperFirstLetter(course.description)}
-                    </p>
-                    <p
-                      className="text-xs link"
-                      onClick={handleClickToggleExpandDescription}
-                    >
-                      {`Voir ${isDescriptionExpanded ? "moins" : "plus"}`}
-                    </p>
-                  </span>
+                  {course.description && (
+                    <span className="flex-1 min-w-0">
+                      <p
+                        className={`text-sm break-words overflow-y-clip min-w-0 ${
+                          !isDescriptionExpanded && "max-h-5"
+                        }`}
+                      >
+                        {toUpperFirstLetter(course.description)}
+                      </p>
+                      (
+                      <p
+                        className="text-xs link"
+                        onClick={handleClickToggleExpandDescription}
+                      >
+                        {`Voir ${isDescriptionExpanded ? "moins" : "plus"}`}
+                      </p>
+                      )
+                    </span>
+                  )}
                   {course.lessons.length > 0 ? (
                     course.lessons.map(
                       (lesson, index) =>
