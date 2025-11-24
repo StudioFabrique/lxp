@@ -8,6 +8,7 @@ interface AddActivityButtonProps {
   selectedLesson: Lesson | Resource;
   onClickShowTipTapEditor: () => void;
   isDisabled?: boolean;
+  parent?: "lesson" | "resource";
 }
 
 const ActivityCreationOptionsButtons = ({
@@ -15,6 +16,7 @@ const ActivityCreationOptionsButtons = ({
   selectedLesson,
   onClickShowTipTapEditor,
   isDisabled = false,
+  parent = "lesson",
 }: AddActivityButtonProps) => {
   const [showButtons, setShowButtons] = useState<boolean>(false);
 
@@ -67,7 +69,7 @@ const ActivityCreationOptionsButtons = ({
                 Texte
               </button>
               <Link
-                to={`/admin/lesson/edit/${selectedLesson.id}?type=video`}
+                to={`/admin/lesson/edit/${selectedLesson.id}?type=video&parent=${parent}`}
                 className={`btn ${
                   isDisabled ? "btn-disabled" : "btn-primary text-base-100"
                 }`}

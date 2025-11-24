@@ -7,6 +7,7 @@ type Props = {
   activity: BonusActivity;
   onDelete: Dispatch<SetStateAction<BonusActivity | null>>;
   onEdit: Dispatch<SetStateAction<BonusActivity | null>>;
+  onPreview: (state: "read" | "edit" | "write") => void;
 };
 
 export default function BonusActivityItem({
@@ -14,6 +15,7 @@ export default function BonusActivityItem({
   activity,
   onEdit,
   onDelete,
+  onPreview,
 }: Props) {
   let icon: JSX.Element;
 
@@ -36,15 +38,24 @@ export default function BonusActivityItem({
       icon = <span>❓</span>;
   }
 
-  const style = "flex p-2 rounded-sm bg-secondary/10";
+  const style = "hover:cursor-pointer flex p-2 rounded-sm bg-secondary/10";
 
   return (
     <div className={"flex items-center gap-2 w-full"}>
       <div className={style}>{icon}</div>
-      <h3 className={"text-xs text-primary flex-1 " + style}>
+      <button
+        className={
+          "text-xs text-primary flex-1 hover:cursor-pointer flex p-2 rounded-sm bg-secondary/10"
+        }
+        onClick={() => onPreview("read")}
+      >
         {activity.title}
-      </h3>
-      <div className={style + " flex items-center gap-2"}>
+      </button>
+      <div
+        className={
+          "hover:cursor-pointer p-2 rounded-sm bg-secondary/10 flex items-center gap-2"
+        }
+      >
         <button
           className="cursor-pointer"
           disabled={disabled}

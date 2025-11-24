@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { localeDate } from "../../helpers/locale-date";
 import { truncateText } from "../../helpers/truncate-text";
 import TableRowWrapper from "../UI/table-row-wrapper";
 import { EditIcon, Trash2Icon } from "lucide-react";
@@ -39,9 +38,7 @@ Props) {
                 </p>
               </td>
 
-              <td className="bg-transparent truncate">
-                {localeDate(item.createdAt!)}
-              </td>
+              <td className="bg-transparent truncate">{item.createdAt!}</td>
 
               <td className="bg-transparent capitalize">
                 <p className="tooltip tooltip-bottom" data-tip={item.author}>
