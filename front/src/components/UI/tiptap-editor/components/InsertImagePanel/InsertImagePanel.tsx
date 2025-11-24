@@ -77,6 +77,9 @@ export const InsertImagePanel = ({
             placeholder="URL de l'image"
             value={state.url}
             onChange={state.onChange}
+            // onClick={(event) => {
+            //   event.currentTarget?.value = null;
+            // }}
           />
         </label>
 

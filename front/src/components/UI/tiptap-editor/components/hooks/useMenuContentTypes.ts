@@ -16,6 +16,8 @@ export const useMenuContentTypes = (
   );
 
   const handleImageUpload = useCallback(async () => {
+    console.log(imageFile);
+
     if (imageFile) {
       setIsLoading(true);
       const formData = new FormData();
