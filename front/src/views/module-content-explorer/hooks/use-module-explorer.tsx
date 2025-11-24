@@ -20,8 +20,9 @@ const useModuleExplorerContent = () => {
   // Params et states de la route active
   // ------------
   const { moduleId } = useParams();
-  const { state: stateFromUrl }: { state: { lessonId?: number } } =
-    useLocation();
+  const {
+    state: stateFromUrl,
+  }: { state: { lessonId?: number; activityId?: number } } = useLocation();
   const [stateFromUrlCalled, setStateFromUrlCalled] = useState(false);
   // ------------
   const navigate = useNavigate();
