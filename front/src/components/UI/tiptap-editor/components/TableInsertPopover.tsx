@@ -3,6 +3,7 @@ import { Editor } from "@tiptap/react";
 import * as Popover from "@radix-ui/react-popover";
 import { Icon } from "./ui/Icon";
 import { Surface } from "./ui/Surface";
+import { Toolbar } from "./ui/Toolbar";
 
 interface TableInsertPopoverProps {
   editor: Editor;
@@ -85,13 +86,10 @@ export const TableInsertPopover = ({
   return (
     <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
       <Popover.Trigger asChild>
-        <button
-          type="button"
-          className="flex items-center gap-3.5 p-1.5 text-sm font-medium text-left bg-transparent w-full max-w-max rounded"
-        >
-          <Icon name="Table" className="w-4 h-4 text-base-content" />
-          <span className="text-base-content">{title}</span>
-        </button>
+        <Toolbar.Button className="flex items-center gap-3.5 p-1.5 text-sm font-medium text-left bg-transparent w-full max-w-max rounded select-none">
+          <Icon name="Table" className="text-base-content w-8" />
+          <span className="text-base-content w-full">{title}</span>
+        </Toolbar.Button>
       </Popover.Trigger>
       <Popover.Content
         className="absolute left-[4.6rem] -top-10"

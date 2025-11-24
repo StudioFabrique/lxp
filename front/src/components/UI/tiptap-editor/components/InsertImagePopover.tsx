@@ -36,9 +36,9 @@ export const InsertImagePopover = ({
   return (
     <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
       <Popover.Trigger asChild>
-        <Toolbar.Button className="flex items-center gap-3.5 p-1.5 text-sm font-medium text-left bg-transparent w-full max-w-max rounded">
-          <Icon className="text-base-content" name="PictureInPicture" />
-          <span className="text-base-content">{title}</span>
+        <Toolbar.Button className="flex items-center gap-3.5 p-1.5 text-sm font-medium text-left bg-transparent w-full max-w-max rounded select-none">
+          <Icon className="text-base-content w-8" name="PictureInPicture" />
+          <span className="text-base-content w-full">{title}</span>
         </Toolbar.Button>
       </Popover.Trigger>
       <Popover.Content className="absolute left-[4.6rem] -top-10">

@@ -2,6 +2,7 @@ import { type Editor, useEditorState } from "@tiptap/react";
 import type { ContentPickerOptions } from "../dropdowns/ContentTypePicker";
 import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../../../../hooks/use-http";
+import { BASE_URL } from "../../../../../config/urls";
 
 export const useMenuContentTypes = (
   editor: Editor,
@@ -27,10 +28,7 @@ export const useMenuContentTypes = (
         body: formData,
       });
 
-      const imageUrl =
-        process.env.NODE_ENV === "development"
-          ? `http://localhost:5001${response.response}`
-          : response.response;
+      const imageUrl = `${BASE_URL}${response.response}`;
 
       setIsLoading(false);
       editor.commands.insertContent({

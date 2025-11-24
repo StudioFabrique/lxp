@@ -1,29 +1,29 @@
-import SidebarCoursesList from "../../components/lessons-preview/sidebar/sidebar-courses-list";
-import ProgressBar from "../../components/lessons-preview/progress-bar";
-import useLessonsPreview from "./hooks/use-lessons-preview";
-import LessonsPreviewHeader from "../../components/lessons-preview/lessons-preview-header";
-import ModuleData from "../../components/lessons-preview/module-data/module-data";
-import LessonsPreviewWrapper from "../../components/lessons-preview/lessons-preview-wrapper";
-import LessonsPreviewSkeleton from "./lessons-preview-skeleton";
-import LessonCompletionModal from "../../components/lessons-preview/lesson-completion-modal";
+import SidebarCoursesList from "../../components/module-content-explorer/sidebar/sidebar-courses-list";
+import ProgressBar from "../../components/module-content-explorer/progress-bar";
+import useModuleExplorerContent from "./hooks/use-module-explorer";
+import ModuleExplorerContentHeader from "../../components/module-content-explorer/module-content-explorer-header";
+import ModuleData from "../../components/module-content-explorer/module-data/module-data";
+import ModuleExplorerContentWrapper from "../../components/module-content-explorer/module-content-explorer-wrapper";
+import ModuleExplorerContentSkeleton from "./module-content-explorer-skeleton";
+import LessonCompletionModal from "../../components/module-content-explorer/lesson-completion-modal";
 import Can from "../../components/UI/can/can.component";
-import CreateCourseItem from "../../components/lessons-preview/sidebar/create-course-item";
+import CreateCourseItem from "../../components/module-content-explorer/sidebar/create-course-item";
 import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
-import ActivityList from "../../components/lessons-preview/sidebar/activity-list";
-import NoActivityPlaceholder from "../../components/lessons-preview/preview/no-activity-placeholder";
+import ActivityList from "../../components/module-content-explorer/sidebar/activity-list";
+import NoActivityPlaceholder from "../../components/module-content-explorer/preview/no-activity-placeholder";
 import { Link, useNavigate } from "react-router-dom";
 import { PenBox } from "lucide-react";
 import { useCallback } from "react";
-import ActivityBottomNavigation from "../../components/lessons-preview/preview/activity-bottom-navigation";
+import ActivityBottomNavigation from "../../components/module-content-explorer/preview/activity-bottom-navigation";
 import Lesson from "../../utils/interfaces/lesson";
-import ActivityTypeSelection from "../../components/lessons-preview/preview/activity-type-selection";
-import LessonReaderAndEditor from "../../components/lessons-preview/preview/lesson-reader-and-editor";
+import ActivityTypeSelection from "../../components/module-content-explorer/preview/activity-type-selection";
+import LessonReaderAndEditor from "../../components/module-content-explorer/preview/lesson-reader-and-editor";
 import Header from "../../components/UI/header";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
  */
-const LessonsPreview = () => {
+const ModuleExplorerContent = () => {
   const navigate = useNavigate();
   // récupération de la premiere valeur de l'url pour déterminer le role de l'utilisateur connecté
   const firstPathSegment = window.location.pathname.split("/")[1];
@@ -55,7 +55,7 @@ const LessonsPreview = () => {
     onLessonReorder,
     onNextLesson,
     onSelectActivityType,
-  } = useLessonsPreview();
+  } = useModuleExplorerContent();
 
   const editTitle = useCallback(
     (title: string) => {
@@ -129,7 +129,7 @@ const LessonsPreview = () => {
       </Header>
 
       {module && module.parcoursId && module.id ? (
-        <LessonsPreviewWrapper
+        <ModuleExplorerContentWrapper
           // parcoursId={module.parcoursId}
           selectedLesson={selectedLesson}
           isPanelClosed={isPanelClosed}
@@ -138,7 +138,7 @@ const LessonsPreview = () => {
         >
           {[
             // * Header
-            <LessonsPreviewHeader key="header" moduleData={module} />,
+            <ModuleExplorerContentHeader key="header" moduleData={module} />,
             // * Le composant affichant la liste des cours avec la progression des cours
             <SidebarCoursesList
               key="progession-side"
@@ -289,12 +289,12 @@ const LessonsPreview = () => {
               les informations complémentaires du cours sont affichés */
             <ModuleData key="module-data" moduleData={module} />,
           ]}
-        </LessonsPreviewWrapper>
+        </ModuleExplorerContentWrapper>
       ) : (
-        <LessonsPreviewSkeleton />
+        <ModuleExplorerContentSkeleton />
       )}
     </ViewWrapper>
   );
 };
 
-export default LessonsPreview;
+export default ModuleExplorerContent;
