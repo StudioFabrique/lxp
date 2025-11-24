@@ -91,11 +91,16 @@ const LessonReaderAndEditor = ({
         <div className="bg-base-100 border border-secondary/20 rounded-box p-4 mb-4">
           {/* Header de l'activité : titre et menu contextuel */}
 
-          <div className="font-semibold text-primary flex justify-between items-center gap-3">
-            <span className="w-5">{activityIconType(activityType)}</span>
-            <span className="truncate text-ellipsis text-2xl px-2">
-              {toUpperFirstLetter(textActivityTitle)}
-            </span>
+          <div className="font-semibold text-primary flex justify-between items-center">
+            <div
+              className="flex gap-1 tooltip items-center w-[92%]"
+              data-tip={toUpperFirstLetter(textActivityTitle)}
+            >
+              <span className="w-5">{activityIconType(activityType)}</span>
+              <span className="text-2xl px-2 w-fit">
+                {toUpperFirstLetter(textActivityTitle)}
+              </span>
+            </div>
             <span className="flex-1" />
             {selectedActivity && (
               <ActivityActionsMenu
