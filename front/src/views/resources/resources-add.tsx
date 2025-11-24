@@ -6,14 +6,19 @@ import Can from "../../components/UI/can/can.component";
 import BonusActivityItem from "../../components/resources-add/BonusActivityItem";
 import Modal from "../../components/UI/modal/modal";
 import ElementNotFound from "../../components/UI/element-not-found";
-import ActivityCreationOptionsButtons from "../../components/lessons-preview/writing/activity-creation-options-buttons";
 import TiptapActivity from "../../components/lessons-preview/writing/tip-tap-activity";
 import useResource from "./hooks/useResource";
 import { Activity } from "../../utils/interfaces/activity";
+import ActivityFloatingActionButton from "../../components/UI/ActivityFloatingActionButton";
+import Video from "../../components/edit-lesson/activities/video";
+import PreviewResourceActivity from "../../components/resources-add/PreviewResourceActivity";
+import { useMemo } from "react";
+import CreateResourceActivity from "../../components/resources-add/CreateResourceActivity";
 
 export default function ResourceAdd() {
   const {
-    newActivity,
+    activityType,
+    //newActivity,
     activityState,
     mode,
     setFile,
@@ -24,6 +29,7 @@ export default function ResourceAdd() {
     tagError,
     setTagError,
     showTipTapEditor,
+    setActivityState,
     resource,
     handleSubmitForm,
     handleDeleteActivity,
@@ -38,7 +44,50 @@ export default function ResourceAdd() {
     setTitle,
     editActivityContent,
     updateActivities,
+    createNewActivity,
   } = useResource();
+
+  const content = useMemo(() => {
+    if (activityState === "write" && activityType) {
+      return <CreateResourceActivity activityType={activityType} />;
+    }
+    if (activityState === "read" && previewActivity) {
+      return (
+        <PreviewResourceActivity
+          activity={previewActivity}
+          onClose={() => {
+            setPreviewActivity(null);
+            setActivityState("read");
+          }}
+        />
+      );
+    }
+    if (activityState === "edit" && previewActivity) {
+      return (
+        <Video
+          activity={previewActivity}
+          mode={activityState}
+          onClose={handleCloseTextEditor}
+          onEditContent={editActivityContent}
+          onSave={() =>
+            updateActivities(
+              previewActivity ? previewActivity.id : resource?.id ?? 0,
+              title,
+              content,
+              activityState
+            )
+          }
+        />
+      );
+    }
+    return null;
+  }, [
+    activityState,
+    activityType,
+    previewActivity,
+    setActivityState,
+    setPreviewActivity,
+  ]);
 
   return (
     <main className="min-h-screen w-full flex flex-col items-center">
@@ -74,6 +123,7 @@ export default function ResourceAdd() {
                           activity={activity}
                           onDelete={setActivityToDelete}
                           onEdit={setPreviewActivity}
+                          onPreview={setActivityState}
                         />
                       </li>
                     ))}
@@ -88,26 +138,8 @@ export default function ResourceAdd() {
           </section>
           <section className="flex-1 flex flex-col gap-4">
             <Can action="write" object="lesson">
-              {(resource && showTipTapEditor) || previewActivity ? (
-                <TiptapActivity
-                  id={previewActivity?.id ?? resource?.activities.length ?? 0}
-                  title={title}
-                  content={content}
-                  mode={activityState}
-                  onClose={handleCloseTextEditor}
-                  onEditTitle={setTitle}
-                  onEditContent={editActivityContent}
-                  onSave={() =>
-                    updateActivities(
-                      previewActivity ? previewActivity.id : resource?.id ?? 0,
-                      title,
-                      content,
-                      activityState
-                    )
-                  }
-                />
-              ) : resource ? (
-                <div className="w-full border border-primary/20 rounded-lg p-8">
+              {activityState !== "write" && !previewActivity && resource ? (
+                <div className="w-full border border-primary/20 rounded-lg p-8 h-[50vh] relative">
                   <div className="m-auto xl:w-6/12">
                     <h2 className="text-center text-primary text-lg font-bold mb-8">
                       Gérez les activités liées aux ressources supplémentaires
@@ -119,14 +151,19 @@ export default function ResourceAdd() {
                       documents de différents formats.
                     </p>
                   </div>
-                  <ActivityCreationOptionsButtons
-                    selectedLesson={resource}
-                    onClickShowTipTapEditor={newActivity}
+                  <ActivityFloatingActionButton
+                    onTypeSelection={createNewActivity}
                   />
                 </div>
-              ) : (
-                <ElementNotFound message="Créez une ressource pour ajouter des activités bonus." />
-              )}
+              ) : activityState === "read" && previewActivity ? (
+                <PreviewResourceActivity
+                  activity={previewActivity}
+                  onClose={() => {
+                    setPreviewActivity(null);
+                    setActivityState("read");
+                  }}
+                />
+              ) : null}
             </Can>
           </section>
         </div>
@@ -146,3 +183,26 @@ export default function ResourceAdd() {
     </main>
   );
 }
+
+/**
+ * 
+ * <TiptapActivity
+                  id={previewActivity?.id ?? resource?.activities.length ?? 0}
+                  title={title}
+                  content={content}
+                  mode={activityState}
+                  onClose={handleCloseTextEditor}
+                  onEditTitle={setTitle}
+                  onEditContent={editActivityContent}
+                  onSave={() =>
+                    updateActivities(
+                      previewActivity ? previewActivity.id : resource?.id ?? 0,
+                      title,
+                      content,
+                      activityState
+                    )
+                  }
+                />
+ * 
+ * 
+ */

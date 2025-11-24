@@ -25,6 +25,7 @@ const resourceSchema = z.object({
 });
 
 type State = {
+  activityType: "text" | "video" | "image" | "file" | null;
   activityState: "read" | "write" | "edit";
   mode: "create" | "update";
   resourceId: number | null;
@@ -39,6 +40,7 @@ type State = {
 };
 
 type Action =
+  | { type: "SET_ACTIVITY_TYPE"; payload: "text" | "video" | "image" | "file" }
   | { type: "CLOSE_TEXT_EDITOR" }
   | { type: "SET_ACTIVITY_STATE"; payload: "read" | "write" | "edit" }
   | { type: "SET_MODE"; payload: "create" | "update" }
@@ -51,6 +53,7 @@ type Action =
   | { type: "SET_PREVIEW_ACTIVITY"; payload: Activity | null };
 
 const initialState: State = {
+  activityType: null,
   activityState: "read",
   mode: "create",
   resourceId: null,
@@ -96,6 +99,8 @@ const useResourceReducer = (state: State, action: Action): State => {
       };
     case "SET_ACTIVITY_STATE":
       return { ...state, activityState: action.payload };
+    case "SET_ACTIVITY_TYPE":
+      return { ...state, activityType: action.payload };
     default:
       return state;
   }
@@ -122,6 +127,11 @@ const useResource = () => {
 
   // Form data object combining values, change handler, and errors
   const data = { values, onChangeValue, errors };
+
+  const createNewActivity = (type: "text" | "video" | "image" | "file") => {
+    dispatch({ type: "SET_ACTIVITY_TYPE", payload: type });
+    dispatch({ type: "SET_ACTIVITY_STATE", payload: "write" });
+  };
 
   const handleSubmitForm = (e: React.FormEvent) => {
     e.preventDefault();
@@ -212,12 +222,18 @@ const useResource = () => {
   };
 
   const setPreviewActivity = (activity: Activity | null) => {
+    console.log({ activity });
+
     dispatch({ type: "SET_PREVIEW_ACTIVITY", payload: activity });
     if (activity && activity.type === "text") {
       dispatch({ type: "TOGGLE_TIPTAP_EDITOR" });
     }
     if (!activity && state.showTipTapEditor)
       dispatch({ type: "TOGGLE_TIPTAP_EDITOR" });
+
+    if (activity && activity.type !== "text") {
+      console.log("yes");
+    }
   };
 
   const getResourceDetails = useCallback(() => {
@@ -283,8 +299,12 @@ const useResource = () => {
     getResourceDetails();
   };
 
+  const setActivityState = (state: "read" | "write" | "edit") => {
+    dispatch({ type: "SET_ACTIVITY_STATE", payload: state });
+  };
+
   useEffect(() => {
-    if (state.previewActivity) {
+    if (state.previewActivity && state.previewActivity.type === "text") {
       dispatch({ type: "SET_ACTIVITY_STATE", payload: "edit" });
       getActivityContent();
     }
@@ -301,6 +321,7 @@ const useResource = () => {
     ...state,
     content,
     createActivity,
+    createNewActivity,
     data,
     editActivityContent,
     error,
@@ -320,6 +341,7 @@ const useResource = () => {
     title,
     toggleTipTapEditor,
     updateActivities,
+    setActivityState,
   };
 };
 
