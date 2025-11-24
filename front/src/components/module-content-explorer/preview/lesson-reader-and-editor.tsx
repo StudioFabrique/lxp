@@ -93,7 +93,7 @@ const LessonReaderAndEditor = ({
 
           <div className="font-semibold text-primary flex justify-between items-center">
             <div
-              className="flex gap-1 tooltip items-center w-[92%]"
+              className="flex gap-1 items-center w-[92%]"
               data-tip={toUpperFirstLetter(textActivityTitle)}
             >
               <span className="w-5">{activityIconType(activityType)}</span>
