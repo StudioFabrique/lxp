@@ -7,7 +7,7 @@ import activityIconType from "../../../utils/activity-icon-type";
 import TiptapActivity from "../writing/tip-tap-activity";
 import Lesson from "../../../utils/interfaces/lesson";
 import ActivityDeleteModal from "./activity-delete-modal";
-import { ActivitySelectMode } from "../../../views/lessons-preview/store/lessons-preview-reducer";
+import { ActivitySelectMode } from "../../../views/module-content-explorer/store/module-explorer-reducer";
 import ActivityPreview from "./activity-preview";
 import IframeActivity from "./iframe-activity";
 import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";

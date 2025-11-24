@@ -5,7 +5,7 @@ import axios from "axios";
 import { PropsWithChildren, useCallback, useEffect, useState } from "react";
 
 import { themes } from "../config/themes";
-import { BASE_URL, SOCKET_URL } from "../config/urls";
+import { BASE_API_URL, SOCKET_URL } from "../config/urls";
 import useHttp from "../hooks/use-http";
 import User from "../utils/interfaces/user";
 import Role from "../utils/interfaces/role";
@@ -28,12 +28,12 @@ const ContextProvider = (props: PropsWithChildren) => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        `${BASE_URL}/auth/login/`,
+        `${BASE_API_URL}/auth/login/`,
         {
           email,
           password,
         },
-        { withCredentials: true },
+        { withCredentials: true }
       );
       setUser(response.data);
     } catch (err: any) {
@@ -49,9 +49,12 @@ const ContextProvider = (props: PropsWithChildren) => {
 
   const handshake = async () => {
     try {
-      const response = await axiosInstance.get(`${BASE_URL}/auth/handshake`, {
-        withCredentials: true,
-      });
+      const response = await axiosInstance.get(
+        `${BASE_API_URL}/auth/handshake`,
+        {
+          withCredentials: true,
+        }
+      );
       setUser(response.data);
     } catch (err) {
       logout();
@@ -60,7 +63,7 @@ const ContextProvider = (props: PropsWithChildren) => {
 
   const logout = async () => {
     try {
-      await axiosInstance.get(`${BASE_URL}/auth/logout`, {
+      await axiosInstance.get(`${BASE_API_URL}/auth/logout`, {
         withCredentials: true,
       });
       setIsLoggedIn(false);
@@ -118,7 +121,7 @@ const ContextProvider = (props: PropsWithChildren) => {
         document.querySelector("html")!.setAttribute("data-theme", themes.dark);
       }
     },
-    [theme],
+    [theme]
   );
 
   const toggleTheme = () => {
@@ -150,10 +153,10 @@ const ContextProvider = (props: PropsWithChildren) => {
         {
           path: "/auth/roles",
         },
-        applyData,
+        applyData
       );
     },
-    [sendRequest],
+    [sendRequest]
   );
 
   useEffect(() => {
@@ -161,7 +164,7 @@ const ContextProvider = (props: PropsWithChildren) => {
       .querySelector("html")!
       .setAttribute(
         "data-theme",
-        theme === "light" ? themes.light : themes.dark,
+        theme === "light" ? themes.light : themes.dark
       );
   }, [theme]);
 
@@ -177,7 +180,7 @@ const ContextProvider = (props: PropsWithChildren) => {
               userId: user._id,
             },
             withCredentials: true,
-          }),
+          })
         );
       }
     }
