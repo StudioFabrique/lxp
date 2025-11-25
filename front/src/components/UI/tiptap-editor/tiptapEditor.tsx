@@ -16,7 +16,7 @@ type TiptapEditorProps = {
   mode: "read" | "write" | "edit" | "activity_type_selection";
   initialValue?: string;
   pending?: boolean;
-  onSave?: () => void;
+  onSave?: () => Promise<void>;
   onContentChange?: (content: string) => void;
 };
 
@@ -39,12 +39,20 @@ export default function TiptapEditor({
 
   const uploadAllImagesRef = useRef<(() => Promise<void>) | null>(null);
 
+  // In TiptapEditor component
   const handleSave = async () => {
-    // Upload all queued images before saving
+    console.log("=== SAVE TRIGGERED ===");
+
     if (uploadAllImagesRef.current) {
+      console.log("Calling uploadAllImages...");
       await uploadAllImagesRef.current();
+      console.log("Upload complete!");
     }
-    onSave?.();
+
+    // Force a final state sync
+    editor?.view.updateState(editor.state);
+
+    await onSave?.();
   };
 
   return (
