@@ -33,7 +33,11 @@ type Props = {
   onCloseDeleteModal: () => void;
   onClose: () => void;
   onBack: () => void;
-  onSaveActivity: () => Promise<boolean>;
+  onSaveActivity: (
+    id?: number,
+    title?: string,
+    content?: string
+  ) => Promise<boolean>;
 };
 
 // Composant pour prévisualiser et editer une leçon avec son activité selectionné

@@ -56,11 +56,12 @@ const TiptapActivity = ({
     onEditTitle(e.currentTarget.value);
   };
 
-  const handleSave = async () => {
+  const handleSave = async (finalContent: string) => {
     setPending(true);
 
-    // Sauvegarder l'activité, et si la sauvegarde réussi, effacer la sauvegarde locale pour l'autosave et fermer l'éditeur
-    if (await onSave(id, title, content)) {
+    onEditContent(finalContent);
+
+    if (await onSave(id, title, finalContent)) {
       clearStorage();
       setPending(false);
       onFinishSaving?.();

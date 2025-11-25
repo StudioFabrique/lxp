@@ -43,7 +43,6 @@ export default function MenuBar({
   const inputFileRef = useRef<HTMLInputElement>(null);
   const {
     menuContentOptions,
-    isImageUploadPending,
     onSetImageSize,
     onImageUploadFromURL,
     uploadAllImages,
@@ -66,7 +65,9 @@ export default function MenuBar({
       ref={toolbarRef}
       hidden={shouldHide}
       className={`self-center min-h-14 max-h-max justify-between px-2 transition-all duration-300 ease-in-out border-none shadow-none rounded-none flex-wrap ${
-        isSticky ? "fixed top-4 transform shadow-lg rounded-lg border" : ""
+        isSticky
+          ? "fixed top-4 transform shadow-lg rounded-lg border h-fit"
+          : ""
       }`}
     >
       <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus">
@@ -84,10 +85,7 @@ export default function MenuBar({
         <TableInsertPopover editor={editor} title="Tableau" />
       </MemoContentTypePicker>
 
-      <MemoContentTypePicker
-        options={menuTextOptions}
-        isLoading={isImageUploadPending}
-      />
+      <MemoContentTypePicker options={menuTextOptions} />
       <MemoContentTypePicker
         options={menuAlignTextOptions}
         fixedIcon="TextAlignCenter"

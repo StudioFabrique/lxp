@@ -10,13 +10,13 @@ import { LinkMenu } from "./components/LinkMenu";
 import SaveButton from "./components/SaveButton";
 import { TableBubbleMenu } from "./components/TableBubbleMenu";
 import useTiptapEditor from "./useTiptapEditor";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 type TiptapEditorProps = {
   mode: "read" | "write" | "edit" | "activity_type_selection";
   initialValue?: string;
   pending?: boolean;
-  onSave?: () => void;
+  onSave?: (finalContent: string) => Promise<void>;
   onContentChange?: (content: string) => void;
 };
 
@@ -28,6 +28,8 @@ export default function TiptapEditor({
   onContentChange,
 }: TiptapEditorProps) {
   const editorRef = useRef<Editor | null>(null);
+  const uploadAllImagesRef = useRef<(() => Promise<void>) | null>(null);
+  const [isImageUploadPending, setImageUploadPending] = useState(false);
 
   const { editor, menuContainerRef, isMenuBarSticky } = useTiptapEditor(
     "prose min-h-[12vh] m-1 w-[70%] py-5 focus:outline-none transition-all duration-200",
@@ -37,14 +39,17 @@ export default function TiptapEditor({
     onContentChange
   );
 
-  const uploadAllImagesRef = useRef<(() => Promise<void>) | null>(null);
-
   const handleSave = async () => {
-    // Upload all queued images before saving
     if (uploadAllImagesRef.current) {
+      setImageUploadPending(true);
       await uploadAllImagesRef.current();
+      setImageUploadPending(false);
     }
-    onSave?.();
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const finalContent = editor?.getHTML() || "";
+    await onSave?.(finalContent);
   };
 
   return (
@@ -70,7 +75,10 @@ export default function TiptapEditor({
           mode !== "read" &&
           editorRef.current &&
           editorRef.current.getText()?.length > 0 && (
-            <SaveButton pending={pending} onSave={handleSave} />
+            <SaveButton
+              pending={pending || isImageUploadPending}
+              onSave={handleSave}
+            />
           )}
       </div>
       {editor && <LinkMenu editor={editor} appendTo={menuContainerRef} />}

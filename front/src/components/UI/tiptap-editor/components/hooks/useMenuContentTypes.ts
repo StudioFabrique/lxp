@@ -4,12 +4,11 @@ import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../../../../hooks/use-http";
 import { BASE_URL } from "../../../../../config/urls";
 
-// Add this interface
 interface QueuedImage {
-  file: File | null;
-  url: string | null;
+  file: File;
+  blobUrl: string; // This needs to match what's in the document
   size: "small" | "medium" | "large";
-  tempId: string; // temporary placeholder ID
+  tempId: string;
 }
 
 export const useMenuContentTypes = (
@@ -18,34 +17,35 @@ export const useMenuContentTypes = (
 ) => {
   const { sendRequest } = useHttp();
   const [imageQueue, setImageQueue] = useState<QueuedImage[]>([]);
-  const [isImageUploadPending, setIsLoading] = useState<boolean>(false);
   const [imageSize, setImageSize] = useState<"small" | "medium" | "large">(
     "small"
   );
 
-  // Insert image with temporary placeholder
   const handleImageSelect = useCallback(
     (file: File) => {
       const tempId = `temp-${Date.now()}-${Math.random()}`;
-      const tempUrl = URL.createObjectURL(file);
+      const blobUrl = URL.createObjectURL(file);
 
-      // Add to queue
-      setImageQueue((prev) => [
-        ...prev,
-        {
-          file,
-          url: null,
-          size: imageSize,
-          tempId,
-        },
-      ]);
+      // Store in queue BEFORE inserting
+      setImageQueue((prev) => {
+        const newQueue = [
+          ...prev,
+          {
+            file,
+            blobUrl, // Make sure this is the actual blob URL string
+            size: imageSize,
+            tempId,
+          },
+        ];
+        return newQueue;
+      });
 
-      // Insert with temporary URL
+      // Insert into editor
       editor.commands.insertContent({
         type: "image",
         attrs: {
-          src: tempUrl,
-          "data-temp-id": tempId, // identifier for later replacement
+          src: blobUrl, // Use the same blob URL
+          dataTempId: tempId,
           width:
             imageSize === "small"
               ? "25%"
@@ -62,23 +62,11 @@ export const useMenuContentTypes = (
 
   const handleImageUploadFromURL = useCallback(
     (url: string) => {
-      const tempId = `temp-url-${Date.now()}`;
-
-      setImageQueue((prev) => [
-        ...prev,
-        {
-          file: null,
-          url,
-          size: imageSize,
-          tempId,
-        },
-      ]);
-
+      // For direct URLs, no need to queue - just insert
       editor.commands.insertContent({
         type: "image",
         attrs: {
           src: url,
-          "data-temp-id": tempId,
           width:
             imageSize === "small"
               ? "25%"
@@ -93,22 +81,17 @@ export const useMenuContentTypes = (
     [editor, imageSize]
   );
 
-  // Upload all queued images asynchronously
   const uploadAllImages = useCallback(async () => {
-    if (imageQueue.length === 0) return;
-
-    setIsLoading(true);
+    if (imageQueue.length === 0) {
+      console.log("No new images to upload");
+      return;
+    }
 
     try {
-      // Upload all images in parallel
-      const uploadPromises = imageQueue.map(async (queuedImage) => {
-        // Skip if already uploaded (URL provided)
-        if (queuedImage.url) {
-          return { tempId: queuedImage.tempId, url: queuedImage.url };
-        }
+      const urlMap = new Map<string, string>();
 
-        if (!queuedImage.file) return null;
-
+      // Upload all images
+      for (const queuedImage of imageQueue) {
         const formData = new FormData();
         formData.append("image", queuedImage.file, queuedImage.file.name);
 
@@ -119,39 +102,68 @@ export const useMenuContentTypes = (
         });
 
         const imageUrl = `${BASE_URL}${response.response}`;
-        return { tempId: queuedImage.tempId, url: imageUrl };
+        urlMap.set(queuedImage.blobUrl, imageUrl);
+      }
+
+      // Create promise that resolves when editor updates
+      await new Promise<void>((resolve) => {
+        const handler = () => {
+          editor.off("update", handler);
+          resolve();
+        };
+        editor.on("update", handler);
+
+        // Fallback timeout
+        setTimeout(() => {
+          editor.off("update", handler);
+          resolve();
+        }, 1000);
       });
 
-      const results = await Promise.all(uploadPromises);
+      // Update all images
+      let updatedCount = 0;
+      const { tr, doc } = editor.state;
+      let transaction = tr;
 
-      // Replace temporary URLs with real URLs in editor content
-      results.forEach((result) => {
-        if (!result) return;
+      doc.descendants((node, pos) => {
+        if (node.type.name === "image") {
+          const currentSrc = node.attrs.src;
 
-        const { state, view } = editor;
-        const { doc } = state;
-
-        doc.descendants((node, pos) => {
-          if (
-            node.type.name === "image" &&
-            node.attrs["data-temp-id"] === result.tempId
-          ) {
-            const transaction = state.tr.setNodeMarkup(pos, undefined, {
-              ...node.attrs,
-              src: result.url,
-              "data-temp-id": undefined, // remove temp ID
-            });
-            view.dispatch(transaction);
+          if (currentSrc && currentSrc.startsWith("blob:")) {
+            const newUrl = urlMap.get(currentSrc);
+            if (newUrl) {
+              console.log(`Replacing ${currentSrc} with ${newUrl}`);
+              transaction = transaction.setNodeMarkup(pos, null, {
+                ...node.attrs,
+                src: newUrl,
+                dataTempId: null,
+              });
+              updatedCount++;
+            }
           }
-        });
+        }
       });
 
-      // Clear the queue
+      if (updatedCount > 0) {
+        console.log(
+          `Dispatching transaction with ${updatedCount} images updates`
+        );
+        editor.view.dispatch(transaction);
+
+        // Wait for browser to render
+        await new Promise((resolve) => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              resolve(undefined);
+            });
+          });
+        });
+      }
+
       setImageQueue([]);
     } catch (error) {
       console.error("Error uploading images:", error);
-    } finally {
-      setIsLoading(false);
+      throw error;
     }
   }, [imageQueue, editor, sendRequest]);
 
@@ -173,9 +185,8 @@ export const useMenuContentTypes = (
       editor,
       selector: (): ContentPickerOptions => [],
     }),
-    isImageUploadPending,
     onImageUploadFromURL: handleImageUploadFromURL,
     onSetImageSize: setImageSize,
-    uploadAllImages, // Export this function
+    uploadAllImages,
   };
 };
