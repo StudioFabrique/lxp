@@ -51,9 +51,10 @@ type ConditionnalStateProperties =
     };
 
 // Le type du state du reducer
-type LessonsPreviewState = StaticStateProperties & ConditionnalStateProperties;
+type ModuleExplorerContentState = StaticStateProperties &
+  ConditionnalStateProperties;
 
-type LessonsPreviewAction =
+type ModuleExplorerContentAction =
   // Module
   | { type: "update_module_data"; module: Module & { parcours: string } }
   // Course
@@ -92,16 +93,16 @@ type LessonsPreviewAction =
 
 const stored = localStorage.getItem(STORAGE_KEY);
 
-export const initialLessonsPreviewState: LessonsPreviewState = {
+export const initialModuleExplorerContentState: ModuleExplorerContentState = {
   mode: "read",
   isPanelClosed: stored ? JSON.parse(stored) : false,
   modalVisibility: "none",
 };
 
-export function lessonsPreviewReducer(
-  state: LessonsPreviewState,
-  action: LessonsPreviewAction
-): LessonsPreviewState {
+export function moduleExplorerContentReducer(
+  state: ModuleExplorerContentState,
+  action: ModuleExplorerContentAction
+): ModuleExplorerContentState {
   switch (action.type) {
     // --- Module ---
     case "update_module_data":
@@ -340,15 +341,8 @@ export function lessonsPreviewReducer(
     }
 
     case "edit_activity": {
-      console.log(
-        action.activity,
-        state.selectedLesson,
-        state.selectedActivity
-      );
       if (!(action.activity && state.selectedLesson && state.selectedActivity))
         return state;
-
-      console.log("2");
 
       const activities = state.selectedLesson.activities?.map((activity) =>
         activity.id === action.activity?.id ? action.activity : activity

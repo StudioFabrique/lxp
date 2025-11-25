@@ -28,7 +28,7 @@ export default function ActivityListItem({
   // Mémoisation de la date formatée pour éviter des re-rendus inutiles
   const date = useMemo(
     () => displayDate(activity.createdAt, activity.updatedAt),
-    [activity.createdAt, activity.updatedAt],
+    [activity.createdAt, activity.updatedAt]
   );
 
   // Gestion de la navigation vers la page de prévisualisation de l'activité
@@ -51,13 +51,11 @@ export default function ActivityListItem({
             {activity.type === "text"
               ? "blog"
               : activity.type === "resource"
-                ? "ressource(s)"
-                : activity.type}
+              ? "ressource(s)"
+              : activity.type}
           </p>
           <span className="flex gap-x-2">
             <p className="font-bold">{activity.title}</p>
-            <p>-</p>
-            <p>{activity.description}</p>
           </span>
         </span>
       </div>

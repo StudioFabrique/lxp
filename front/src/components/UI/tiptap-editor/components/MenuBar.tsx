@@ -1,7 +1,7 @@
 import "./MenuBar.scss";
 import type { Editor } from "@tiptap/react";
 
-import { memo, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 
 import MenuItem from "./MenuItem.js";
 import { ContentTypePicker } from "./dropdowns/ContentTypePicker.js";
@@ -23,6 +23,7 @@ type MenuBarProps = {
   editor: Editor;
   shouldHide?: boolean;
   isSticky?: boolean;
+  onUploadAllImagesRef?: React.MutableRefObject<(() => Promise<void>) | null>;
 };
 
 // const MemoButton = memo(Toolbar.Button);
@@ -35,6 +36,7 @@ export default function MenuBar({
   editor,
   shouldHide = false,
   isSticky = false,
+  onUploadAllImagesRef,
 }: MenuBarProps) {
   const toolbarRef = useRef<HTMLDivElement>(null);
 
@@ -44,6 +46,7 @@ export default function MenuBar({
     isImageUploadPending,
     onSetImageSize,
     onImageUploadFromURL,
+    uploadAllImages,
   } = useMenuContentTypes(editor, inputFileRef);
 
   const menuTextOptions = useMenuTextTypes(editor);
@@ -51,6 +54,12 @@ export default function MenuBar({
   const menuAlignTextOptions = useMenuAlignTextTypes(editor);
   const commands = useTextmenuCommands(editor);
   const states = useTextmenuStates(editor);
+
+  useEffect(() => {
+    if (onUploadAllImagesRef) {
+      onUploadAllImagesRef.current = uploadAllImages;
+    }
+  }, [uploadAllImages, onUploadAllImagesRef]);
 
   return (
     <Toolbar.Wrapper
@@ -64,7 +73,7 @@ export default function MenuBar({
         <InsertImagePopover
           title="Image"
           onSetLink={onImageUploadFromURL}
-          onClickButton={() => inputFileRef.current?.click()}
+          onClickUpload={() => inputFileRef.current?.click()}
           onSetImageSize={onSetImageSize}
         />
         <EditLinkPopover title="Lien" onSetLink={commands.onLink} />
@@ -133,6 +142,9 @@ export default function MenuBar({
 
       <input
         ref={inputFileRef}
+        onClick={(event) => {
+          event.currentTarget.value = "";
+        }}
         className="hidden"
         type="file"
         accept="image/*"

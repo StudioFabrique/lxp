@@ -11,7 +11,7 @@ import { useEffect } from "react";
 const useCreateBlog = (
   lessonId: string,
   activity: Activity | null,
-  onCancel: () => void,
+  onCancel: () => void
 ) => {
   // Hook de formulaire personnalisé pour la gestion des champs
   const { errors, values, onChangeValue, onValidationErrors, initValues } =
@@ -33,12 +33,12 @@ const useCreateBlog = (
           path: `/activity/text/${activity?.id ?? lessonId}`,
           method: activity?.title ? "put" : "post",
           body: {
-            description: values.description,
+            description: "description",
             value,
             title: values.title,
           },
         },
-        applyData,
+        applyData
       );
     } catch (error) {
       if (error instanceof ZodError) {

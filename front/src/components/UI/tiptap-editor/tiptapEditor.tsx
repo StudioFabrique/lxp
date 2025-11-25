@@ -37,6 +37,16 @@ export default function TiptapEditor({
     onContentChange
   );
 
+  const uploadAllImagesRef = useRef<(() => Promise<void>) | null>(null);
+
+  const handleSave = async () => {
+    // Upload all queued images before saving
+    if (uploadAllImagesRef.current) {
+      await uploadAllImagesRef.current();
+    }
+    onSave?.();
+  };
+
   return (
     <>
       <div className={`editor relative`} ref={menuContainerRef}>
@@ -45,6 +55,7 @@ export default function TiptapEditor({
             shouldHide={mode === "read"}
             editor={editor}
             isSticky={isMenuBarSticky}
+            onUploadAllImagesRef={uploadAllImagesRef} // Pass ref
           />
         ) : null}
         <EditorContent
@@ -59,7 +70,7 @@ export default function TiptapEditor({
           mode !== "read" &&
           editorRef.current &&
           editorRef.current.getText()?.length > 0 && (
-            <SaveButton pending={pending} onSave={onSave} />
+            <SaveButton pending={pending} onSave={handleSave} />
           )}
       </div>
       {editor && <LinkMenu editor={editor} appendTo={menuContainerRef} />}

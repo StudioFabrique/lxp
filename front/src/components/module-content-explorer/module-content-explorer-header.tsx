@@ -7,11 +7,13 @@ import { ComponentIcon, RocketIcon } from "lucide-react";
 import defaultImage from "../../assets/images/module-default.jpg";
 import toUpperFirstLetter from "../../utils/toUpperFirstLetter";
 
-type LessonsPreviewHeaderProps = {
+type ModuleContentExplorerHeaderProps = {
   moduleData: Module & { parcours: string };
 };
 
-const LessonsPreviewHeader = ({ moduleData }: LessonsPreviewHeaderProps) => {
+const ModuleContentExplorerHeader = ({
+  moduleData,
+}: ModuleContentExplorerHeaderProps) => {
   const { pathname } = useLocation();
   const baseRoute = pathname.split("/")[1];
 
@@ -33,4 +35,4 @@ const LessonsPreviewHeader = ({ moduleData }: LessonsPreviewHeaderProps) => {
   );
 };
 
-export default LessonsPreviewHeader;
+export default ModuleContentExplorerHeader;

@@ -7,7 +7,7 @@ import activityIconType from "../../../utils/activity-icon-type";
 import TiptapActivity from "../writing/tip-tap-activity";
 import Lesson from "../../../utils/interfaces/lesson";
 import ActivityDeleteModal from "./activity-delete-modal";
-import { ActivitySelectMode } from "../../../views/lessons-preview/store/lessons-preview-reducer";
+import { ActivitySelectMode } from "../../../views/module-content-explorer/store/module-explorer-reducer";
 import ActivityPreview from "./activity-preview";
 import IframeActivity from "./iframe-activity";
 import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
@@ -91,11 +91,16 @@ const LessonReaderAndEditor = ({
         <div className="bg-base-100 border border-secondary/20 rounded-box p-4 mb-4">
           {/* Header de l'activité : titre et menu contextuel */}
 
-          <div className="font-semibold text-primary flex justify-between items-center gap-3">
-            <span className="w-5">{activityIconType(activityType)}</span>
-            <span className="truncate text-ellipsis text-2xl px-2">
-              {toUpperFirstLetter(textActivityTitle)}
-            </span>
+          <div className="font-semibold text-primary flex justify-between items-center">
+            <div
+              className="flex gap-1 items-center w-[92%]"
+              data-tip={toUpperFirstLetter(textActivityTitle)}
+            >
+              <span className="w-5">{activityIconType(activityType)}</span>
+              <span className="text-2xl px-2 w-fit">
+                {toUpperFirstLetter(textActivityTitle)}
+              </span>
+            </div>
             <span className="flex-1" />
             {selectedActivity && (
               <ActivityActionsMenu

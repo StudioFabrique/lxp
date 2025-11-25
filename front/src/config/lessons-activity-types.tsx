@@ -12,14 +12,15 @@ import PictureIcon from "../components/UI/svg/picture-icon";
 import UploadIcon from "../components/UI/svg/upload-icon.component";
 //import AddFolder from "../components/UI/svg/add-folder-icon";
 import type ActivityType from "../utils/interfaces/activity-type";
+import DocumentIcon from "../components/UI/svg/document-icon";
 
 const activityTypes: ActivityType[] = [
-  // {
-  //   icon: <DocumentIcon />,
-  //   label: "Texte",
-  //   tooltip: "Insérez un document écrit",
-  //   type: "text",
-  // },
+  {
+    icon: <DocumentIcon />,
+    label: "Texte",
+    tooltip: "Insérez un document écrit",
+    type: "text",
+  },
   /*{
     icon: <QuestionCircleIcon />,
     label: "Questions",
