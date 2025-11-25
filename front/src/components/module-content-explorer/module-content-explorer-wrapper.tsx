@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-type LessonsPreviewWrapperProps = {
+type ModuleContentExplorerWrapperProps = {
   // parcoursId: number;
   selectedLesson?: Lesson;
   isPanelClosed?: boolean;
@@ -16,17 +16,17 @@ type LessonsPreviewWrapperProps = {
 };
 
 /**
- * Ce composant sert de conteneur (wrapper) structurel pour le composant LessonsPreview.
+ * Ce composant sert de conteneur (wrapper) structurel pour le composant ModuleContentExplorer.
  * Il encapsule la logique de présentation et la mise en page des aperçus de leçons.
  */
-const LessonsPreviewWrapper = ({
+const ModuleContentExplorerWrapper = ({
   // parcoursId,
   selectedLesson,
   isPanelClosed = false,
   onTogglePanel,
   onCloseAll,
   children,
-}: PropsWithChildren<LessonsPreviewWrapperProps>) => {
+}: PropsWithChildren<ModuleContentExplorerWrapperProps>) => {
   const [header, progessionSide, topProgressBar, previewLesson, moduleData] =
     children as React.ReactNode[];
 
@@ -99,4 +99,4 @@ const LessonsPreviewWrapper = ({
   );
 };
 
-export default LessonsPreviewWrapper;
+export default ModuleContentExplorerWrapper;

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import { BASE_URL } from "../config/urls";
+import { BASE_API_URL } from "../config/urls";
 import toast from "react-hot-toast";
 import { Context } from "../store/context.store";
 
@@ -35,7 +35,7 @@ const useHttp = (invokeErrorToast?: boolean) => {
 
         if (
           error.response?.status === 403 &&
-          originalRequest.url === `${BASE_URL}/auth/refresh`
+          originalRequest.url === `${BASE_API_URL}/auth/refresh`
         ) {
           logout();
           return Promise.reject(error);
@@ -44,7 +44,7 @@ const useHttp = (invokeErrorToast?: boolean) => {
         if (error.response?.status === 403 && !originalRequest._retry) {
           originalRequest._retry = true;
 
-          const res = await axiosInstance.get(`${BASE_URL}/auth/refresh`);
+          const res = await axiosInstance.get(`${BASE_API_URL}/auth/refresh`);
           if (res.status === 200) {
             return axiosInstance(originalRequest);
           }
@@ -105,27 +105,27 @@ const useHttp = (invokeErrorToast?: boolean) => {
         switch (req.method) {
           case "post":
             response = await axiosInstance.post(
-              `${BASE_URL}${req.path}`,
+              `${BASE_API_URL}${req.path}`,
               req.body,
               config
             );
             break;
           case "put":
             response = await axiosInstance.put(
-              `${BASE_URL}${req.path}`,
+              `${BASE_API_URL}${req.path}`,
               req.body,
               config
             );
             break;
           case "delete":
             response = await axiosInstance.delete(
-              `${BASE_URL}${req.path}`,
+              `${BASE_API_URL}${req.path}`,
               config
             );
             break;
           default:
             response = await axiosInstance.get(
-              `${BASE_URL}${req.path}`,
+              `${BASE_API_URL}${req.path}`,
               config
             );
             break;

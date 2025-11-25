@@ -7,16 +7,16 @@ import LessonRead from "../../../utils/interfaces/lesson-read";
 import LessonRating from "../../../utils/interfaces/lesson-rating";
 import toast from "react-hot-toast";
 import {
-  initialLessonsPreviewState,
-  lessonsPreviewReducer,
-} from "../store/lessons-preview-reducer";
+  initialModuleExplorerContentState,
+  moduleExplorerContentReducer,
+} from "../store/module-explorer-reducer";
 import { ACTIVITIES } from "../../../config/urls";
 import { Activity, ActivityType } from "../../../utils/interfaces/activity";
 import { OnDragEndResponder } from "react-beautiful-dnd";
 import { replaceActivityTextContent } from "../../../helpers/replaceActivityTextContent";
 
 // Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
-const useLessonsPreview = () => {
+const useModuleExplorerContent = () => {
   // Params et states de la route active
   // ------------
   const { moduleId } = useParams();
@@ -28,8 +28,8 @@ const useLessonsPreview = () => {
   const { sendRequest, isLoading } = useHttp(true);
 
   const [state, dispatch] = useReducer(
-    lessonsPreviewReducer,
-    initialLessonsPreviewState
+    moduleExplorerContentReducer,
+    initialModuleExplorerContentState
   );
 
   const [hasOrderChanged, setOrderChanged] = useState({
@@ -515,4 +515,4 @@ const useLessonsPreview = () => {
   };
 };
 
-export default useLessonsPreview;
+export default useModuleExplorerContent;

@@ -72,7 +72,7 @@ const EditModuleHome = React.lazy(
   () => import("../../views/module/edit/edit-module-home")
 );
 const LessonsPreview = React.lazy(
-  () => import("../../views/lessons-preview/lessons-preview")
+  () => import("../../views/module-content-explorer/module-content-explorer")
 );
 const FeaturesList = React.lazy(
   () => import("../../views/features-list/features-list")
