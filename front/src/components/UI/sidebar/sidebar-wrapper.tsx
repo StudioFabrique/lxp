@@ -38,7 +38,7 @@ const SidebarWrapper = ({
         </div>
       ) : null}
       <div
-        className={`flex flex-col justify-between gap-y-4 px-2 pb-4 pt-6 rounded-lg h-full relative ${
+        className={`flex flex-col justify-between gap-y-4 px-2 pb-2 pt-6 rounded-lg h-full relative ${
           theme === "dark"
             ? "text-white bg-slate-500"
             : "text-white bg-slate-800"
