@@ -66,7 +66,9 @@ export default function MenuBar({
       ref={toolbarRef}
       hidden={shouldHide}
       className={`self-center min-h-14 max-h-max justify-between px-2 transition-all duration-300 ease-in-out border-none shadow-none rounded-none flex-wrap ${
-        isSticky ? "fixed top-4 transform shadow-lg rounded-lg border" : ""
+        isSticky
+          ? "fixed top-4 transform shadow-lg rounded-lg border h-fit"
+          : ""
       }`}
     >
       <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus">

@@ -255,21 +255,19 @@ const useModuleExplorerContent = () => {
     }
   }, [state.mode, state.selectedActivity?.type, state.selectedActivity?.url]);
 
-  const saveTextActivity = async (title: string): Promise<boolean> => {
+  const saveTextActivity = async (
+    title: string,
+    content: string | undefined
+  ): Promise<boolean> => {
     // Si le titre est manquant, avertir l'utilisateur via un toast
 
-    if (
-      !state.textActivityContent ||
-      !(state.textActivityContent?.length > 0)
-    ) {
+    if (!content || !(content.length > 0)) {
       toast.error("Le contenu est obligatoire");
       return false;
     }
 
-    if (!state.textActivityContent) return false;
-
     // clean empty div at the content beginning and the end
-    const textContent = replaceActivityTextContent(state.textActivityContent);
+    const textContent = replaceActivityTextContent(content);
 
     const applyDataPost = (activity: Activity) => {
       dispatch({ type: "create_activity", activity });
@@ -345,7 +343,11 @@ const useModuleExplorerContent = () => {
     return response;
   };
 
-  const saveActivity = async (): Promise<boolean> => {
+  const saveActivity = async (
+    _id?: number | undefined,
+    _title?: string | undefined,
+    content?: string | undefined
+  ): Promise<boolean> => {
     if (state.mode === "read") return false;
 
     const title =
@@ -364,7 +366,7 @@ const useModuleExplorerContent = () => {
       state.mode === "write" ? state.activityType : state.selectedActivity?.type
     ) {
       case "text":
-        return await saveTextActivity(title);
+        return await saveTextActivity(title, content);
       case "iframe":
         return await saveIframeActivity(title);
       default:
