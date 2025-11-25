@@ -43,7 +43,6 @@ export default function MenuBar({
   const inputFileRef = useRef<HTMLInputElement>(null);
   const {
     menuContentOptions,
-    isImageUploadPending,
     onSetImageSize,
     onImageUploadFromURL,
     uploadAllImages,
@@ -86,10 +85,7 @@ export default function MenuBar({
         <TableInsertPopover editor={editor} title="Tableau" />
       </MemoContentTypePicker>
 
-      <MemoContentTypePicker
-        options={menuTextOptions}
-        isLoading={isImageUploadPending}
-      />
+      <MemoContentTypePicker options={menuTextOptions} />
       <MemoContentTypePicker
         options={menuAlignTextOptions}
         fixedIcon="TextAlignCenter"

@@ -17,7 +17,6 @@ export const useMenuContentTypes = (
 ) => {
   const { sendRequest } = useHttp();
   const [imageQueue, setImageQueue] = useState<QueuedImage[]>([]);
-  const [isImageUploadPending, setIsLoading] = useState<boolean>(false);
   const [imageSize, setImageSize] = useState<"small" | "medium" | "large">(
     "small"
   );
@@ -87,8 +86,6 @@ export const useMenuContentTypes = (
       console.log("No new images to upload");
       return;
     }
-
-    setIsLoading(true);
 
     try {
       const urlMap = new Map<string, string>();
@@ -167,8 +164,6 @@ export const useMenuContentTypes = (
     } catch (error) {
       console.error("Error uploading images:", error);
       throw error;
-    } finally {
-      setIsLoading(false);
     }
   }, [imageQueue, editor, sendRequest]);
 
@@ -190,7 +185,6 @@ export const useMenuContentTypes = (
       editor,
       selector: (): ContentPickerOptions => [],
     }),
-    isImageUploadPending,
     onImageUploadFromURL: handleImageUploadFromURL,
     onSetImageSize: setImageSize,
     uploadAllImages,
