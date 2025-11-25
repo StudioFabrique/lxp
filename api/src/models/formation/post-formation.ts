@@ -1,4 +1,4 @@
-import { Tag } from "@prisma/client";
+import { Tag } from "../../../generated/prisma/client";
 import { prisma } from "../../utils/db";
 
 export default async function postFormation(

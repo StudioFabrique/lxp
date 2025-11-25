@@ -78,8 +78,10 @@ async function getModulesFromParcours(parcoursId: number) {
     existingParcours?.modules.map((mod) => ({
       id: mod.id, // ModuleMetadata ID (unique per parcours)
       title: mod.module.title, // Module title from base Module entity
-      // Convert Buffer thumbnail to base64 string for display
-      thumb: mod.module.thumb?.toString("base64") ?? null,
+      // Convert Buffer/Uint8Array to base64 in a TS-safe way
+      thumb: mod.module.thumb
+        ? Buffer.from(mod.module.thumb as any).toString("base64")
+        : null,
       description: mod.module.description,
       duration: mod.duration, // Duration specific to this parcours instance
       // Flatten contacts from many-to-many relationship

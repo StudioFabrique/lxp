@@ -1,4 +1,9 @@
-import { BonusSkill, Contact, ModuleMetadata, Parcours } from "@prisma/client";
+import {
+  BonusSkill,
+  Contact,
+  ModuleMetadata,
+  Parcours,
+} from "../../../generated/prisma/client";
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
 import { Metadata } from "sharp";

@@ -1,4 +1,4 @@
-import { Contact } from "@prisma/client";
+import { Contact } from "../../../generated/prisma/client";
 
 import { prisma } from "../../utils/db";
 import { getAdmin } from "../../helpers/get-admin";

@@ -8,6 +8,8 @@ import User from "../../utils/interfaces/db/user";
  * @returns Les détails du parcours avec les relations associées
  */
 async function getParcoursById(parcoursId: number, userId: string) {
+  console.log("HELLO WORLD!");
+
   // Récupère le parcours avec toutes ses relations (formation, tags, contacts, etc.)
   const parcours = await prisma.parcours.findFirst({
     where: { id: parcoursId /* , adminId: admin.id */ },
@@ -108,17 +110,20 @@ async function getParcoursById(parcoursId: number, userId: string) {
   let result: any = parcours;
   if (parcours) {
     // Convertit l'image en base64 si elle existe
-    if (parcours.image instanceof Buffer) {
-      const base64Image = parcours.image.toString("base64");
-      result = { ...result, image: base64Image };
-    }
+
+    result = {
+      ...result,
+      image: Buffer.from(parcours.image as any).toString("base64") ?? null,
+    };
+
     // Convertit les miniatures des modules en base64 si elles existent
     if (parcours.modules) {
       const updatedModules = parcours.modules.map((item: any) => ({
         ...item,
         module: {
           ...item.module,
-          thumb: item.module.thumb?.toString("base64") ?? null,
+          thumb:
+            Buffer.from(item.module.thumb as any).toString("base64") ?? null,
         },
       }));
       result = { ...result, modules: updatedModules };
