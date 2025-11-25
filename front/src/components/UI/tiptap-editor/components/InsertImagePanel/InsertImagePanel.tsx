@@ -13,7 +13,7 @@ import { Icon } from "../ui/Icon";
 export type InsertImagePanelProps = {
   initialUrl?: string;
   onSetLink: (url: string, size?: "small" | "medium" | "large") => void;
-  onClickButton?: () => void;
+  onClickUpload?: () => void;
   onSetImageSize?: Dispatch<SetStateAction<"small" | "medium" | "large">>;
 };
 
@@ -54,7 +54,7 @@ export const useInsertImageState = ({
 export const InsertImagePanel = ({
   onSetLink,
   initialUrl,
-  onClickButton,
+  onClickUpload,
   onSetImageSize,
 }: InsertImagePanelProps) => {
   const state = useInsertImageState({
@@ -77,9 +77,6 @@ export const InsertImagePanel = ({
             placeholder="URL de l'image"
             value={state.url}
             onChange={state.onChange}
-            // onClick={(event) => {
-            //   event.currentTarget?.value = null;
-            // }}
           />
         </label>
 
@@ -99,7 +96,7 @@ export const InsertImagePanel = ({
       </div>
 
       <Button
-        onClick={onClickButton}
+        onClick={onClickUpload}
         variant="primary"
         buttonSize="small"
         type="button"
