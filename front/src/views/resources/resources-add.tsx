@@ -10,11 +10,9 @@ import TiptapActivity from "../../components/lessons-preview/writing/tip-tap-act
 import useResource from "./hooks/useResource";
 import { Activity } from "../../utils/interfaces/activity";
 import ActivityFloatingActionButton from "../../components/UI/ActivityFloatingActionButton";
-import Video from "../../components/edit-lesson/activities/video";
 import PreviewResourceActivity from "../../components/resources-add/PreviewResourceActivity";
 import { useMemo } from "react";
-import CreateResourceActivity from "../../components/resources-add/CreateResourceActivity";
-import CreateUpdateResourceActivity from "../../components/resources-add/CreateResourceActivity";
+import CreateResourceActivity from "../../components/resources-add/TextActivityResource";
 
 export default function ResourceAdd() {
   const {
@@ -49,7 +47,7 @@ export default function ResourceAdd() {
     resourceId,
   } = useResource();
 
-  const toto = useMemo(() => {
+  const component = useMemo(() => {
     if (activityState === "write" && activityType && resourceId) {
       return (
         <CreateResourceActivity
@@ -95,16 +93,18 @@ export default function ResourceAdd() {
   }, [
     activityState,
     activityType,
+    resourceId,
     previewActivity,
-    setActivityState,
-    setPreviewActivity,
+    resource?.activities.length,
+    resource?.id,
     title,
     content,
     handleCloseTextEditor,
+    setTitle,
     editActivityContent,
     updateActivities,
-    resource,
-    resourceId,
+    setPreviewActivity,
+    setActivityState,
   ]);
 
   return (
@@ -156,8 +156,32 @@ export default function ResourceAdd() {
           </section>
           <section className="flex-1 flex flex-col gap-4">
             <Can action="write" object="lesson">
-              {resource && (activityState === "write" || previewActivity) ? (
-                <>{toto}</>
+              {activityState === "read" ? (
+                <>
+                  {previewActivity && previewActivity.type === "text" ? (
+                    <TiptapActivity
+                      id={
+                        previewActivity?.id ?? resource?.activities.length ?? 0
+                      }
+                      title={title}
+                      content={content}
+                      mode={activityState}
+                      onClose={handleCloseTextEditor}
+                      onEditTitle={setTitle}
+                      onEditContent={editActivityContent}
+                      onSave={() =>
+                        updateActivities(
+                          previewActivity
+                            ? previewActivity.id
+                            : resource?.id ?? 0,
+                          title,
+                          content,
+                          activityState
+                        )
+                      }
+                    />
+                  ) : null}
+                </>
               ) : (
                 <div className="w-full border border-primary/20 rounded-lg p-8 h-[50vh] relative">
                   <div className="m-auto xl:w-6/12">
@@ -195,26 +219,3 @@ export default function ResourceAdd() {
     </main>
   );
 }
-
-/**
- * 
- * <TiptapActivity
-                  id={previewActivity?.id ?? resource?.activities.length ?? 0}
-                  title={title}
-                  content={content}
-                  mode={activityState}
-                  onClose={handleCloseTextEditor}
-                  onEditTitle={setTitle}
-                  onEditContent={editActivityContent}
-                  onSave={() =>
-                    updateActivities(
-                      previewActivity ? previewActivity.id : resource?.id ?? 0,
-                      title,
-                      content,
-                      activityState
-                    )
-                  }
-                />
- * 
- * 
- */

@@ -40,7 +40,10 @@ type State = {
 };
 
 type Action =
-  | { type: "SET_ACTIVITY_TYPE"; payload: "text" | "video" | "image" | "file" }
+  | {
+      type: "SET_ACTIVITY_TYPE";
+      payload: "text" | "video" | "image" | "resource";
+    }
   | { type: "CLOSE_TEXT_EDITOR" }
   | { type: "SET_ACTIVITY_STATE"; payload: "read" | "write" | "edit" }
   | { type: "SET_MODE"; payload: "create" | "update" }
@@ -128,7 +131,7 @@ const useResource = () => {
   // Form data object combining values, change handler, and errors
   const data = { values, onChangeValue, errors };
 
-  const createNewActivity = (type: "text" | "video" | "image" | "file") => {
+  const createNewActivity = (type: "text" | "video" | "image" | "resource") => {
     dispatch({ type: "SET_ACTIVITY_TYPE", payload: type });
     dispatch({ type: "SET_ACTIVITY_STATE", payload: "write" });
   };
