@@ -90,9 +90,9 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
       </li>
       <li className="mb-2">
         <img
-          className="w-full object-contain"
+          className="w-10 object-contain"
           src={newLogo}
-          alt="logo de l'application"
+          alt="logo ANDRIA en blanc et bleu"
         />
       </li>
     </ul>

@@ -4,118 +4,178 @@ import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../../../../hooks/use-http";
 import { BASE_URL } from "../../../../../config/urls";
 
+// Add this interface
+interface QueuedImage {
+  file: File | null;
+  url: string | null;
+  size: "small" | "medium" | "large";
+  tempId: string; // temporary placeholder ID
+}
+
 export const useMenuContentTypes = (
   editor: Editor,
   imageInputRef: React.RefObject<HTMLInputElement>
 ) => {
   const { sendRequest } = useHttp();
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageQueue, setImageQueue] = useState<QueuedImage[]>([]);
   const [isImageUploadPending, setIsLoading] = useState<boolean>(false);
   const [imageSize, setImageSize] = useState<"small" | "medium" | "large">(
     "small"
   );
 
-  const handleImageUpload = useCallback(async () => {
-    console.log(imageFile);
+  // Insert image with temporary placeholder
+  const handleImageSelect = useCallback(
+    (file: File) => {
+      const tempId = `temp-${Date.now()}-${Math.random()}`;
+      const tempUrl = URL.createObjectURL(file);
 
-    if (imageFile) {
-      setIsLoading(true);
-      const formData = new FormData();
-      formData.append("image", imageFile, imageFile.name);
-      setImageFile(null);
+      // Add to queue
+      setImageQueue((prev) => [
+        ...prev,
+        {
+          file,
+          url: null,
+          size: imageSize,
+          tempId,
+        },
+      ]);
 
-      const response = await sendRequest({
-        path: "/activity/blog-image",
-        method: "post",
-        body: formData,
-      });
-
-      const imageUrl = `${BASE_URL}${response.response}`;
-
-      setIsLoading(false);
+      // Insert with temporary URL
       editor.commands.insertContent({
         type: "image",
         attrs: {
-          src: imageUrl,
+          src: tempUrl,
+          "data-temp-id": tempId, // identifier for later replacement
           width:
-            imageSize === "small" ? 100 : imageSize === "medium" ? 200 : 300,
-          height:
-            imageSize === "small" ? 100 : imageSize === "medium" ? 200 : 300,
+            imageSize === "small"
+              ? "25%"
+              : imageSize === "medium"
+              ? "50%"
+              : "100%",
         },
       });
 
-      // add a line below the image
-      editor.commands.enter();
-    }
-  }, [editor, imageFile, imageSize, sendRequest]);
-
-  const handleImageUploadFromURL = useCallback(
-    async (url: string) => {
-      setIsLoading(true);
-
-      setIsLoading(false);
-      // insert the image
-      editor.commands.insertContent({
-        type: "image",
-        attrs: {
-          src: url,
-          width:
-            imageSize === "small" ? 100 : imageSize === "medium" ? 200 : 300,
-          height:
-            imageSize === "small" ? 100 : imageSize === "medium" ? 200 : 300,
-        },
-      });
-
-      // add a line below the image
       editor.commands.enter();
     },
     [editor, imageSize]
   );
 
-  useEffect(() => {
-    handleImageUpload();
-  }, [handleImageUpload]);
+  const handleImageUploadFromURL = useCallback(
+    (url: string) => {
+      const tempId = `temp-url-${Date.now()}`;
+
+      setImageQueue((prev) => [
+        ...prev,
+        {
+          file: null,
+          url,
+          size: imageSize,
+          tempId,
+        },
+      ]);
+
+      editor.commands.insertContent({
+        type: "image",
+        attrs: {
+          src: url,
+          "data-temp-id": tempId,
+          width:
+            imageSize === "small"
+              ? "25%"
+              : imageSize === "medium"
+              ? "50%"
+              : "100%",
+        },
+      });
+
+      editor.commands.enter();
+    },
+    [editor, imageSize]
+  );
+
+  // Upload all queued images asynchronously
+  const uploadAllImages = useCallback(async () => {
+    if (imageQueue.length === 0) return;
+
+    setIsLoading(true);
+
+    try {
+      // Upload all images in parallel
+      const uploadPromises = imageQueue.map(async (queuedImage) => {
+        // Skip if already uploaded (URL provided)
+        if (queuedImage.url) {
+          return { tempId: queuedImage.tempId, url: queuedImage.url };
+        }
+
+        if (!queuedImage.file) return null;
+
+        const formData = new FormData();
+        formData.append("image", queuedImage.file, queuedImage.file.name);
+
+        const response = await sendRequest({
+          path: "/activity/blog-image",
+          method: "post",
+          body: formData,
+        });
+
+        const imageUrl = `${BASE_URL}${response.response}`;
+        return { tempId: queuedImage.tempId, url: imageUrl };
+      });
+
+      const results = await Promise.all(uploadPromises);
+
+      // Replace temporary URLs with real URLs in editor content
+      results.forEach((result) => {
+        if (!result) return;
+
+        const { state, view } = editor;
+        const { doc } = state;
+
+        doc.descendants((node, pos) => {
+          if (
+            node.type.name === "image" &&
+            node.attrs["data-temp-id"] === result.tempId
+          ) {
+            const transaction = state.tr.setNodeMarkup(pos, undefined, {
+              ...node.attrs,
+              src: result.url,
+              "data-temp-id": undefined, // remove temp ID
+            });
+            view.dispatch(transaction);
+          }
+        });
+      });
+
+      // Clear the queue
+      setImageQueue([]);
+    } catch (error) {
+      console.error("Error uploading images:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [imageQueue, editor, sendRequest]);
 
   useEffect(() => {
     const current = imageInputRef.current;
     const handleChange = () => {
       if (!current?.files) return;
-      setImageFile(current.files[0]);
+      handleImageSelect(current.files[0]);
     };
 
     current?.addEventListener("change", handleChange);
     return () => {
       current?.removeEventListener("change", handleChange);
     };
-  }, [imageInputRef]);
+  }, [imageInputRef, handleImageSelect]);
 
   return {
     menuContentOptions: useEditorState({
       editor,
-      selector: (/*ctx*/): ContentPickerOptions => [
-        // {
-        //   type: "category",
-        //   label: "Insertion",
-        //   id: "insert",
-        // },
-        // {
-        //   icon: "Table",
-        //   onClick: () =>
-        //     ctx.editor.commands.insertTable({
-        //       rows: 3,
-        //       cols: 3,
-        //       withHeaderRow: true,
-        //     }),
-        //   id: "table",
-        //   disabled: () => false,
-        //   isActive: () => editor.isActive("table"),
-        //   label: "Tableau",
-        //   type: "option",
-        // },
-      ],
+      selector: (): ContentPickerOptions => [],
     }),
     isImageUploadPending,
     onImageUploadFromURL: handleImageUploadFromURL,
     onSetImageSize: setImageSize,
+    uploadAllImages, // Export this function
   };
 };
