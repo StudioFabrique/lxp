@@ -64,7 +64,7 @@ export default function MenuBar({
         <InsertImagePopover
           title="Image"
           onSetLink={onImageUploadFromURL}
-          onClickButton={() => inputFileRef.current?.click()}
+          onClickUpload={() => inputFileRef.current?.click()}
           onSetImageSize={onSetImageSize}
         />
         <EditLinkPopover title="Lien" onSetLink={commands.onLink} />
@@ -133,6 +133,9 @@ export default function MenuBar({
 
       <input
         ref={inputFileRef}
+        onClick={(event) => {
+          event.currentTarget.value = "";
+        }}
         className="hidden"
         type="file"
         accept="image/*"

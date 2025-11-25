@@ -9,14 +9,14 @@ export type InsertImagePopoverProps = {
   title?: string;
   onSetLink: (url: string) => void;
   onSetImageSize?: Dispatch<SetStateAction<"small" | "medium" | "large">>;
-  onClickButton?: () => void;
+  onClickUpload?: () => void;
 };
 
 export const InsertImagePopover = ({
   title,
   onSetLink,
   onSetImageSize,
-  onClickButton,
+  onClickUpload,
 }: InsertImagePopoverProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -28,10 +28,10 @@ export const InsertImagePopover = ({
     [onSetLink]
   );
 
-  const handleClickButton = useCallback(() => {
-    onClickButton?.();
+  const handleClickUpload = useCallback(() => {
+    onClickUpload?.();
     setIsOpen(false); // Fermer le popup après clic sur le bouton de téléversement
-  }, [onClickButton]);
+  }, [onClickUpload]);
 
   return (
     <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
@@ -45,7 +45,7 @@ export const InsertImagePopover = ({
         <InsertImagePanel
           onSetLink={handleSetLink}
           onSetImageSize={onSetImageSize}
-          onClickButton={handleClickButton}
+          onClickUpload={handleClickUpload}
         />
       </Popover.Content>
     </Popover.Root>
