@@ -10,7 +10,7 @@ import { LinkMenu } from "./components/LinkMenu";
 import SaveButton from "./components/SaveButton";
 import { TableBubbleMenu } from "./components/TableBubbleMenu";
 import useTiptapEditor from "./useTiptapEditor";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 type TiptapEditorProps = {
   mode: "read" | "write" | "edit" | "activity_type_selection";
@@ -29,6 +29,7 @@ export default function TiptapEditor({
 }: TiptapEditorProps) {
   const editorRef = useRef<Editor | null>(null);
   const uploadAllImagesRef = useRef<(() => Promise<void>) | null>(null);
+  const [isImageUploadPending, setImageUploadPending] = useState(false);
 
   const { editor, menuContainerRef, isMenuBarSticky } = useTiptapEditor(
     "prose min-h-[12vh] m-1 w-[70%] py-5 focus:outline-none transition-all duration-200",
@@ -40,7 +41,9 @@ export default function TiptapEditor({
 
   const handleSave = async () => {
     if (uploadAllImagesRef.current) {
+      setImageUploadPending(true);
       await uploadAllImagesRef.current();
+      setImageUploadPending(false);
     }
 
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -72,7 +75,10 @@ export default function TiptapEditor({
           mode !== "read" &&
           editorRef.current &&
           editorRef.current.getText()?.length > 0 && (
-            <SaveButton pending={pending} onSave={handleSave} />
+            <SaveButton
+              pending={pending || isImageUploadPending}
+              onSave={handleSave}
+            />
           )}
       </div>
       {editor && <LinkMenu editor={editor} appendTo={menuContainerRef} />}
