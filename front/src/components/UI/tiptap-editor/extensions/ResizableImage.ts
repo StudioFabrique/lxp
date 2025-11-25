@@ -10,12 +10,12 @@ export const ResizableImage = Image.extend({
       height: {
         default: undefined,
       },
-      "data-temp-id": {
+      dataTempId: {
         default: undefined,
         parseHTML: (element) => element.getAttribute("data-temp-id"),
         renderHTML: (attributes) => {
-          if (!attributes["data-temp-id"]) return {};
-          return { "data-temp-id": attributes["data-temp-id"] };
+          if (!attributes.dataTempId) return {};
+          return { "data-temp-id": attributes.dataTempId };
         },
       },
     };
