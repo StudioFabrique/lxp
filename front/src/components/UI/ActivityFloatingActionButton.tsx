@@ -1,7 +1,7 @@
 import { FileStack, Image, TextInitial, Video } from "lucide-react";
 
 type Props = {
-  onTypeSelection: (type: "video" | "text" | "image" | "file") => void;
+  onTypeSelection: (type: "video" | "text" | "image" | "resource") => void;
 };
 
 export default function ActivityFloatingActionButton(props: Props) {
@@ -76,7 +76,7 @@ export default function ActivityFloatingActionButton(props: Props) {
           data-tip={activity.tooltip}
           onClick={() =>
             props.onTypeSelection(
-              activity.type as "video" | "text" | "image" | "file"
+              activity.type as "video" | "text" | "image" | "resource"
             )
           }
           aria-label={`Ajouter une activité de type ${activity.type}`}

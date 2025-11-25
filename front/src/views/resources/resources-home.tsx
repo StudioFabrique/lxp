@@ -6,6 +6,7 @@ import ElementNotFound from "../../components/UI/element-not-found";
 import ResourcesListTable from "../../components/resources-home/ResourcesListTable";
 import Pagination from "../../components/pagination";
 import usePagination from "../../hooks/use-pagination";
+import { useState } from "react";
 
 export type ResourceListItem = {
   id: string;
