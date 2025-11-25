@@ -95,7 +95,9 @@ export default async function postModuleMetadata(
   return {
     id: newModuleMetadata.id,
     title: newModuleMetadata.module.title,
-    thumb: newModuleMetadata.module.thumb?.toString("base64") ?? null,
+    thumb:
+      Buffer.from(newModuleMetadata.module.thumb as any).toString("base64") ??
+      null,
     description: newModuleMetadata.module.description,
     contacts: newModuleMetadata.contacts.map((c) => ({
       id: c.contact.id,

@@ -1,4 +1,4 @@
-import { Objective } from "@prisma/client";
+import { Objective } from "../../../generated/prisma/client";
 import { prisma } from "../../utils/db";
 
 async function putObjective(objective: Objective) {

@@ -7,7 +7,7 @@ import {
   BonusActivity,
   ResourceActivity,
   ResourceBonusActivity,
-} from "@prisma/client";
+} from "../../../../generated/prisma/client";
 
 export default async function deleteActivity(
   activityId: number,

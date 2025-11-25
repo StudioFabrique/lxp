@@ -3,7 +3,7 @@ import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 
 import { prisma } from "../../../utils/db";
-import { Activity, BonusActivity } from "@prisma/client";
+import { Activity, BonusActivity } from "../../../../generated/prisma/client";
 
 /**
  * Updates an activity's text content, title, and description.

@@ -25,7 +25,7 @@ const resourceSchema = z.object({
 });
 
 type State = {
-  activityType: "text" | "video" | "image" | "file" | null;
+  activityType: "text" | "video" | "image" | "resource" | null;
   activityState: "read" | "write" | "edit";
   mode: "create" | "update";
   resourceId: number | null;

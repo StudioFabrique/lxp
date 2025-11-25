@@ -1,4 +1,4 @@
-import { Activity, BonusActivity } from "@prisma/client";
+import { Activity, BonusActivity } from "../../../../generated/prisma/client";
 import { prisma } from "../../../utils/db";
 
 export default async function postActivityVideo(

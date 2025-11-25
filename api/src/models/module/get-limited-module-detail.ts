@@ -72,7 +72,10 @@ export default async function getLimitedModuleDetail(
     id: existingModule.id,
     title: existingModule.module.title,
     description: existingModule.module.description,
-    image: existingModule.module.image?.toString("base64") ?? null,
+    // TS-safe conversion to base64 for Buffer / Uint8Array / binary-like values
+    image: existingModule.module.image
+      ? Buffer.from(existingModule.module.image as any).toString("base64")
+      : null,
     duration: existingModule.duration,
     minDate: existingModule.minDate,
     maxDate: existingModule.maxDate,

@@ -14,6 +14,7 @@ import Video from "../../components/edit-lesson/activities/video";
 import PreviewResourceActivity from "../../components/resources-add/PreviewResourceActivity";
 import { useMemo } from "react";
 import CreateResourceActivity from "../../components/resources-add/CreateResourceActivity";
+import CreateUpdateResourceActivity from "../../components/resources-add/CreateResourceActivity";
 
 export default function ResourceAdd() {
   const {
@@ -45,29 +46,28 @@ export default function ResourceAdd() {
     editActivityContent,
     updateActivities,
     createNewActivity,
+    resourceId,
   } = useResource();
 
-  const content = useMemo(() => {
-    if (activityState === "write" && activityType) {
-      return <CreateResourceActivity activityType={activityType} />;
-    }
-    if (activityState === "read" && previewActivity) {
+  const toto = useMemo(() => {
+    if (activityState === "write" && activityType && resourceId) {
       return (
-        <PreviewResourceActivity
-          activity={previewActivity}
-          onClose={() => {
-            setPreviewActivity(null);
-            setActivityState("read");
-          }}
+        <CreateResourceActivity
+          parentId={+resourceId}
+          mode={activityState}
+          activityType={activityType}
         />
       );
     }
     if (activityState === "edit" && previewActivity) {
       return (
-        <Video
-          activity={previewActivity}
+        <TiptapActivity
+          id={previewActivity?.id ?? resource?.activities.length ?? 0}
+          title={title}
+          content={content}
           mode={activityState}
           onClose={handleCloseTextEditor}
+          onEditTitle={setTitle}
           onEditContent={editActivityContent}
           onSave={() =>
             updateActivities(
@@ -80,6 +80,17 @@ export default function ResourceAdd() {
         />
       );
     }
+    if (activityState === "read" && previewActivity) {
+      return (
+        <PreviewResourceActivity
+          activity={previewActivity}
+          onClose={() => {
+            setPreviewActivity(null);
+            setActivityState("read");
+          }}
+        />
+      );
+    }
     return null;
   }, [
     activityState,
@@ -87,6 +98,13 @@ export default function ResourceAdd() {
     previewActivity,
     setActivityState,
     setPreviewActivity,
+    title,
+    content,
+    handleCloseTextEditor,
+    editActivityContent,
+    updateActivities,
+    resource,
+    resourceId,
   ]);
 
   return (
@@ -138,7 +156,9 @@ export default function ResourceAdd() {
           </section>
           <section className="flex-1 flex flex-col gap-4">
             <Can action="write" object="lesson">
-              {activityState !== "write" && !previewActivity && resource ? (
+              {resource && (activityState === "write" || previewActivity) ? (
+                <>{toto}</>
+              ) : (
                 <div className="w-full border border-primary/20 rounded-lg p-8 h-[50vh] relative">
                   <div className="m-auto xl:w-6/12">
                     <h2 className="text-center text-primary text-lg font-bold mb-8">
@@ -155,15 +175,7 @@ export default function ResourceAdd() {
                     onTypeSelection={createNewActivity}
                   />
                 </div>
-              ) : activityState === "read" && previewActivity ? (
-                <PreviewResourceActivity
-                  activity={previewActivity}
-                  onClose={() => {
-                    setPreviewActivity(null);
-                    setActivityState("read");
-                  }}
-                />
-              ) : null}
+              )}
             </Can>
           </section>
         </div>

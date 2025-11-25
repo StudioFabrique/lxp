@@ -20,3 +20,4 @@ uploads/company/*
 !uploads/company/.gitkeep
 
 certs/
+/generated/prisma

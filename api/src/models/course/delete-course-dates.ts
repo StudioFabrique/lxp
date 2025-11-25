@@ -1,5 +1,5 @@
 import { prisma } from "../../utils/db";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../../generated/prisma/client";
 
 async function deleteCourseDates(courseId: number, datesId: number) {
   const existingCourse = await prisma.course.findFirst({
