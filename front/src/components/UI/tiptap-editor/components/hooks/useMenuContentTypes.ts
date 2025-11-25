@@ -27,8 +27,6 @@ export const useMenuContentTypes = (
       const tempId = `temp-${Date.now()}-${Math.random()}`;
       const blobUrl = URL.createObjectURL(file);
 
-      console.log("Created blob URL:", blobUrl); // Debug
-
       // Store in queue BEFORE inserting
       setImageQueue((prev) => {
         const newQueue = [
@@ -40,7 +38,6 @@ export const useMenuContentTypes = (
             tempId,
           },
         ];
-        console.log("Queue after adding:", newQueue); // Debug
         return newQueue;
       });
 
@@ -86,10 +83,8 @@ export const useMenuContentTypes = (
   );
 
   const uploadAllImages = useCallback(async () => {
-    console.log("=== UPLOAD ALL IMAGES START ===");
-
     if (imageQueue.length === 0) {
-      console.log("No images to upload");
+      console.log("No new images to upload");
       return;
     }
 
@@ -153,7 +148,9 @@ export const useMenuContentTypes = (
       });
 
       if (updatedCount > 0) {
-        console.log(`Dispatching transaction with ${updatedCount} updates`);
+        console.log(
+          `Dispatching transaction with ${updatedCount} images updates`
+        );
         editor.view.dispatch(transaction);
 
         // Wait for browser to render
@@ -164,13 +161,9 @@ export const useMenuContentTypes = (
             });
           });
         });
-
-        console.log("View should be updated now");
-        console.log("Actual HTML:", editor.view.dom.innerHTML);
       }
 
       setImageQueue([]);
-      console.log("=== UPLOAD ALL IMAGES COMPLETE ===");
     } catch (error) {
       console.error("Error uploading images:", error);
       throw error;
