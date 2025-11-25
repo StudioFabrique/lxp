@@ -1,9 +1,8 @@
-import { useState } from "react";
 import ResourcesHeader from "../../components/resources-home/ResourcesHeader";
 import ResourcesListCard from "../../components/resources-home/ResourcesListCard";
 import ListHeader from "../../components/UI/list-header";
 import ToggleList from "../../components/UI/toggle-list";
-
+import ElementNotFound from "../../components/UI/element-not-found";
 import ResourcesListTable from "../../components/resources-home/ResourcesListTable";
 import Pagination from "../../components/pagination";
 import usePagination from "../../hooks/use-pagination";
@@ -17,6 +16,10 @@ export type ResourceListItem = {
 
 export default function ResourcesHome() {
   const [showList, setShowList] = useState(true);
+
+  const notFoundMessage = (
+    <ElementNotFound message="Aucune ressource disponible pour le moment." />
+  );
 
   const {
     page,
@@ -51,9 +54,13 @@ export default function ResourcesHome() {
               onSorting={sortData}
               onDeleteResource={() => {}}
               loading={false}
-            />
+            >
+              {notFoundMessage}
+            </ResourcesListTable>
           ) : (
-            <ResourcesListCard resourcesList={dataList} />
+            <ResourcesListCard resourcesList={dataList}>
+              {notFoundMessage}
+            </ResourcesListCard>
           )}
         </section>
         <section className="w-full flex justify-end mt-4">
