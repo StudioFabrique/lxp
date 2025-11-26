@@ -215,6 +215,7 @@ const ModuleExplorerContent = () => {
                 <LessonReaderAndEditor
                   key="lesson-reader"
                   isLessonCompleted={isLessonCompleted}
+                  canEdit={canEditSelectedLesson}
                   mode={state.mode}
                   textActivityContent={textActivityContent}
                   textActivityTitle={
