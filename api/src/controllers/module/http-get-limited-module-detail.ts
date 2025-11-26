@@ -8,8 +8,9 @@ export default async function httpGetLimitedModuleDetail(
   res: Response
 ) {
   const userId = req.auth?.userId;
+  const roles = req.auth?.userRoles;
 
-  if (!userId) {
+  if (!(userId && roles)) {
     return res.status(404).json({ message: badQuery });
   }
 

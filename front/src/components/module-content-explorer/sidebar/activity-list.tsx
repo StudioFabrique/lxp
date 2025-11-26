@@ -18,6 +18,7 @@ type ActivityListProps = {
   activities?: Activity[];
   selectedActivity?: Activity | null;
   newActivityButtonDisabled?: boolean;
+  canEdit?: boolean;
   onActivityReorder: OnDragEndResponder;
   onSelectActivity: (activity: Activity) => void;
   onClickCreateActivity?: () => void;
@@ -27,6 +28,7 @@ export default function ActivityList({
   activities,
   selectedActivity,
   newActivityButtonDisabled,
+  canEdit,
   onActivityReorder,
   onSelectActivity,
   onClickCreateActivity,
@@ -58,10 +60,13 @@ export default function ActivityList({
                     draggableId={activity.id.toString()}
                     index={index}
                     isDragDisabled={
-                      !hasPermission(
-                        user?.permissions || [],
-                        "update",
-                        "lesson"
+                      !(
+                        canEdit &&
+                        hasPermission(
+                          user?.permissions || [],
+                          "update",
+                          "lesson"
+                        )
                       )
                     }
                   >
@@ -84,9 +89,11 @@ export default function ActivityList({
                         >
                           {toUpperFirstLetter(activity.title)}
                         </span>
-                        <Can action="update" object="lesson">
-                          <ArrowDownUp className="w-4 hover:text-primary" />
-                        </Can>
+                        {canEdit && (
+                          <Can action="update" object="lesson">
+                            <ArrowDownUp className="w-4 hover:text-primary" />
+                          </Can>
+                        )}
                       </button>
                     )}
                   </Draggable>
@@ -96,20 +103,22 @@ export default function ActivityList({
                   <p className="text-primary text-sm">Aucune activité</p>
                 </Can>
               )}
-              {onClickCreateActivity && !droppableState.isDraggingOver && (
-                <Can action="update" object="lesson">
-                  <span className="px-4 w-full">
-                    <button
-                      className="btn btn-outline btn-primary text-base-content hover:text-base-100 btn-sm h-fit text-[10px] w-full"
-                      disabled={newActivityButtonDisabled}
-                      onClick={onClickCreateActivity}
-                    >
-                      <Plus className="w-4 h-6" />
-                      Ajouter une activité
-                    </button>
-                  </span>
-                </Can>
-              )}
+              {onClickCreateActivity &&
+                canEdit &&
+                !droppableState.isDraggingOver && (
+                  <Can action="update" object="lesson">
+                    <span className="px-4 w-full">
+                      <button
+                        className="btn btn-outline btn-primary text-base-content hover:text-base-100 btn-sm h-fit text-[10px] w-full"
+                        disabled={newActivityButtonDisabled}
+                        onClick={onClickCreateActivity}
+                      >
+                        <Plus className="w-4 h-6" />
+                        Ajouter une activité
+                      </button>
+                    </span>
+                  </Can>
+                )}
             </div>
           )}
         </Droppable>
