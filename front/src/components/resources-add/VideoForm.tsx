@@ -20,7 +20,14 @@ export default function VideoForm(props: Props) {
   const [origin, setOrigin] = useState<"web" | "file">("web"); // Source de la vidéo (web/fichier)
 
   const handleOnChangeOrigin = (event: ChangeEvent<HTMLSelectElement>) => {
-    setOrigin(event.currentTarget.value as "web" | "file");
+    const newOrigin = event.currentTarget.value as "web" | "file";
+    setOrigin(newOrigin);
+    props.data.onChangeValue("videoSource", newOrigin);
+    if (newOrigin !== "web") {
+      props.onSetFile({
+        target: { files: null },
+      } as unknown as ChangeEvent<HTMLInputElement>);
+    }
   };
 
   return (
