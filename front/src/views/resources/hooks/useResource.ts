@@ -25,7 +25,7 @@ const resourceSchema = z.object({
 });
 
 type State = {
-  activityType: "text" | "video" | "image" | "resource" | null;
+  activityType: "text" | "video" | "image" | "resource" | "iframe" | null;
   activityState: "read" | "write" | "edit";
   mode: "create" | "update";
   resourceId: number | null;
@@ -53,7 +53,8 @@ type Action =
   | { type: "TOGGLE_TIPTAP_EDITOR" }
   | { type: "SET_RESOURCE"; payload: Resource | null }
   | { type: "SET_ACTIVITY_TO_DELETE"; payload: Activity | null }
-  | { type: "SET_PREVIEW_ACTIVITY"; payload: Activity | null };
+  | { type: "SET_PREVIEW_ACTIVITY"; payload: Activity | null }
+  | { type: "SET_EDIT_ACTIVITY"; payload: Activity | null };
 
 const initialState: State = {
   activityType: null,
@@ -99,6 +100,8 @@ const useResourceReducer = (state: State, action: Action): State => {
         ...state,
         previewActivity: action.payload,
         activitiesActionsDisabled: !!action.payload,
+        activityType: action.payload ? action.payload.type : null,
+        activityState: "read",
       };
     case "SET_ACTIVITY_STATE":
       return { ...state, activityState: action.payload };
@@ -117,6 +120,8 @@ const useResource = () => {
     {},
     resourceSchema
   );
+
+  console.log("STATE", state.activityState);
 
   const {
     createActivity,
@@ -225,18 +230,9 @@ const useResource = () => {
   };
 
   const setPreviewActivity = (activity: Activity | null) => {
-    console.log({ activity });
+    console.log("hello", activity);
 
     dispatch({ type: "SET_PREVIEW_ACTIVITY", payload: activity });
-    if (activity && activity.type === "text") {
-      dispatch({ type: "TOGGLE_TIPTAP_EDITOR" });
-    }
-    if (!activity && state.showTipTapEditor)
-      dispatch({ type: "TOGGLE_TIPTAP_EDITOR" });
-
-    if (activity && activity.type !== "text") {
-      console.log("yes");
-    }
   };
 
   const getResourceDetails = useCallback(() => {
@@ -306,12 +302,14 @@ const useResource = () => {
     dispatch({ type: "SET_ACTIVITY_STATE", payload: state });
   };
 
+  /*
   useEffect(() => {
     if (state.previewActivity && state.previewActivity.type === "text") {
       dispatch({ type: "SET_ACTIVITY_STATE", payload: "edit" });
       getActivityContent();
     }
   }, [getActivityContent, state.previewActivity]);
+  */
 
   useEffect(() => {
     if (resourceId) {

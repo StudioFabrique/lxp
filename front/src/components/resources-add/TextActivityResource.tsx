@@ -8,12 +8,21 @@ type Props = {
   parentId: number;
   mode: "read" | "write" | "edit";
   activity?: Activity;
+  activityType: "text" | "video" | "image" | "resource";
   onClose: () => void;
+  onSubmit: (message: string) => void;
 };
 
-export default function TextActivityResource(props: Props) {
+export default function TextActivityResource({
+  parentId,
+  mode,
+  activity,
+  //activityType,
+  onClose,
+  onSubmit,
+}: Props) {
   const { createActivity, editActivityContent, content, title, setTitle } =
-    useTextActivity();
+    useTextActivity(activity);
 
   const updateActivities = useCallback(
     async (
@@ -27,26 +36,32 @@ export default function TextActivityResource(props: Props) {
         toast.error(
           "Une erreur est survenue lors de la mise à jour de l'activité."
         );
+      if (result)
+        onSubmit(
+          `Activité ${mode === "edit" ? "mise à jour" : "créée"} avec succès.`
+        );
       return result;
     },
-    [createActivity]
+    [createActivity, mode, onSubmit]
   );
+
+  console.log("MODE", mode);
 
   return (
     <TiptapActivity
-      id={props.activity?.id ?? 0}
+      id={activity?.id ?? 0}
       title={title}
       content={content}
-      mode={props.mode}
-      onClose={props.onClose}
+      mode={mode}
+      onClose={onClose}
       onEditTitle={setTitle}
       onEditContent={editActivityContent}
       onSave={() =>
         updateActivities(
-          props.activity ? props.activity.id : props.parentId,
+          activity ? activity.id : parentId,
           title,
           content,
-          props.mode
+          mode
         )
       }
     />

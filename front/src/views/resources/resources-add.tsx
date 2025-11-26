@@ -13,6 +13,10 @@ import ActivityFloatingActionButton from "../../components/UI/ActivityFloatingAc
 import PreviewResourceActivity from "../../components/resources-add/PreviewResourceActivity";
 import { useMemo } from "react";
 import CreateResourceActivity from "../../components/resources-add/TextActivityResource";
+import TextActivityResource from "../../components/resources-add/TextActivityResource";
+import toast from "react-hot-toast";
+import { set } from "zod";
+import ActivityWrapper from "../../components/resources-add/ActivityWrapper";
 
 export default function ResourceAdd() {
   const {
@@ -47,65 +51,22 @@ export default function ResourceAdd() {
     resourceId,
   } = useResource();
 
-  const component = useMemo(() => {
-    if (activityState === "write" && activityType && resourceId) {
-      return (
-        <CreateResourceActivity
-          parentId={+resourceId}
-          mode={activityState}
-          activityType={activityType}
-        />
-      );
-    }
-    if (activityState === "edit" && previewActivity) {
-      return (
-        <TiptapActivity
-          id={previewActivity?.id ?? resource?.activities.length ?? 0}
-          title={title}
-          content={content}
-          mode={activityState}
-          onClose={handleCloseTextEditor}
-          onEditTitle={setTitle}
-          onEditContent={editActivityContent}
-          onSave={() =>
-            updateActivities(
-              previewActivity ? previewActivity.id : resource?.id ?? 0,
-              title,
-              content,
-              activityState
-            )
-          }
-        />
-      );
-    }
-    if (activityState === "read" && previewActivity) {
-      return (
-        <PreviewResourceActivity
-          activity={previewActivity}
-          onClose={() => {
-            setPreviewActivity(null);
-            setActivityState("read");
-          }}
-        />
-      );
-    }
-    return null;
-  }, [
-    activityState,
-    activityType,
-    resourceId,
-    previewActivity,
-    resource?.activities.length,
-    resource?.id,
-    title,
-    content,
-    handleCloseTextEditor,
-    setTitle,
-    editActivityContent,
-    updateActivities,
-    setPreviewActivity,
-    setActivityState,
-  ]);
+  const placeholder = (
+    <div className="w-full border border-primary/20 rounded-lg p-8 h-[50vh] relative">
+      <div className="m-auto xl:w-6/12">
+        <h2 className="text-center text-primary text-lg font-bold mb-8">
+          Gérez les activités liées aux ressources supplémentaires
+        </h2>
+        <p className="text-sm text-center text-secondary">
+          Ajoutez des activités bonus à cette ressource pour enrichir
+          l'expérience d'apprentissage des apprenants. Vous pouvez créer des
+          activités de type texte, vidéo, image ou documents de différents
+          formats.
+        </p>
+      </div>
+      <ActivityFloatingActionButton onTypeSelection={createNewActivity} />
+    </div>
+  );
 
   return (
     <main className="min-h-screen w-full flex flex-col items-center">
@@ -141,7 +102,7 @@ export default function ResourceAdd() {
                           activity={activity}
                           onDelete={setActivityToDelete}
                           onEdit={setPreviewActivity}
-                          onPreview={setActivityState}
+                          onPreview={setPreviewActivity}
                         />
                       </li>
                     ))}
@@ -154,10 +115,66 @@ export default function ResourceAdd() {
               </Wrapper>
             </article>
           </section>
+
           <section className="flex-1 flex flex-col gap-4">
             <Can action="write" object="lesson">
-              {activityState === "read" ? (
+              {previewActivity ? (
+                <ActivityWrapper
+                  activity={previewActivity}
+                  mode={activityState}
+                  onSwitchMode={setActivityState}
+                >
+                  {activityType === "text" ? (
+                    <TextActivityResource
+                      parentId={+resourceId!}
+                      activity={previewActivity ? previewActivity : undefined}
+                      activityType={activityType}
+                      onClose={() => {}}
+                      mode={activityState}
+                      onSubmit={(result) => toast.success(result)}
+                    />
+                  ) : null}
+                </ActivityWrapper>
+              ) : (
                 <>
+                  {" "}
+                  {activityType === "text" ? (
+                    <TextActivityResource
+                      parentId={+resourceId!}
+                      activity={previewActivity ? previewActivity : undefined}
+                      activityType={activityType}
+                      onClose={() => {}}
+                      mode={activityState}
+                      onSubmit={(result) =>
+                        toast.success("TOTO " + result.message)
+                      }
+                    />
+                  ) : null}
+                </>
+              )}
+
+              {placeholder}
+            </Can>
+          </section>
+        </div>
+        {activityToDelete ? (
+          <Modal
+            onLeftClick={() => setActivityToDelete(null)}
+            onRightClick={handleDeleteActivity}
+            title="Supprimer une activité"
+            isSubmitting={isLoading}
+            leftLabel="Annuler"
+            rightLabel="Confirmer"
+          >
+            Attention l'activité sera supprimée définitivement.
+          </Modal>
+        ) : null}
+      </ListHeader>
+    </main>
+  );
+}
+
+/* <>
                   {previewActivity && previewActivity.type === "text" ? (
                     <TiptapActivity
                       id={
@@ -181,41 +198,4 @@ export default function ResourceAdd() {
                       }
                     />
                   ) : null}
-                </>
-              ) : (
-                <div className="w-full border border-primary/20 rounded-lg p-8 h-[50vh] relative">
-                  <div className="m-auto xl:w-6/12">
-                    <h2 className="text-center text-primary text-lg font-bold mb-8">
-                      Gérez les activités liées aux ressources supplémentaires
-                    </h2>
-                    <p className="text-sm text-center text-secondary">
-                      Ajoutez des activités bonus à cette ressource pour
-                      enrichir l'expérience d'apprentissage des apprenants. Vous
-                      pouvez créer des activités de type texte, vidéo, image ou
-                      documents de différents formats.
-                    </p>
-                  </div>
-                  <ActivityFloatingActionButton
-                    onTypeSelection={createNewActivity}
-                  />
-                </div>
-              )}
-            </Can>
-          </section>
-        </div>
-        {activityToDelete ? (
-          <Modal
-            onLeftClick={() => setActivityToDelete(null)}
-            onRightClick={handleDeleteActivity}
-            title="Supprimer une activité"
-            isSubmitting={isLoading}
-            leftLabel="Annuler"
-            rightLabel="Confirmer"
-          >
-            Attention l'activité sera supprimée définitivement.
-          </Modal>
-        ) : null}
-      </ListHeader>
-    </main>
-  );
-}
+                </> */
