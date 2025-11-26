@@ -13,6 +13,7 @@ import { maxSizeError } from "../../helpers/max-size-error";
 import { activityVideoSize } from "../../config/images-sizes";
 
 type Props = {
+  parent: "lesson" | "resource";
   activity: Activity | null;
   mode: "read" | "edit" | "write";
   values: Record<string, unknown>;
@@ -72,6 +73,7 @@ export default function VideoActivityResource(props: Props) {
         title: values.title,
         description: values.description,
         url: values.file ? "" : values.url,
+        parent: props.parent,
       })
     );
     if (file) fd.append("video", file);

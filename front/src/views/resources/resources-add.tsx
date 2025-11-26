@@ -126,6 +126,7 @@ export default function ResourceAdd() {
                       values={data.values}
                       onClose={() => {}}
                       onSubmit={uploadVideo}
+                      parent="resource"
                     />
                   ) : null}
                 </ActivityWrapper>
