@@ -6,6 +6,7 @@ import { FC, useEffect, useState } from "react";
 import Course from "../../../../utils/interfaces/course";
 import EditIcon from "../../../UI/svg/edit-icon";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { EyeOff } from "lucide-react";
 
 const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
   parcoursId,
@@ -48,7 +49,7 @@ const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
         <div
           onClick={() => handleNavigate(course)}
           key={course?.id}
-          className="flex justify-between items-center bg-primary hover:bg-primary/80 text-base-100 p-4 rounded-lg cursor-pointer"
+          className="relative flex justify-between items-center bg-primary hover:bg-primary/80 text-base-100 p-4 rounded-lg cursor-pointer"
         >
           <span className="w-12 h-12 flex-shrink-0">
             <BookIcon />
@@ -65,6 +66,18 @@ const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
               <EditIcon />
             </Link>
           </Can>
+          {!course.isPublished || !course.visibility ? (
+            <div
+              className="badge badge-info absolute -top-3 -left-3 tooltip tooltip-right tooltip-info z-[11]"
+              data-tip={`Le cours est ${
+                !course.visibility ? "invisible" : ""
+              } ${!course.visibility && !course.isPublished ? "et" : ""} ${
+                !course.isPublished ? "non publié" : ""
+              }`}
+            >
+              <EyeOff className="w-4 h-4 stroke-base-100" />
+            </div>
+          ) : null}
         </div>
       ))
     ) : (
@@ -85,7 +98,7 @@ const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
           </Link>
         </Can>
       </span>
-      <div className="flex flex-col gap-y-2">{contentsList}</div>
+      <div className="flex flex-col gap-y-4">{contentsList}</div>
     </div>
   );
 };
