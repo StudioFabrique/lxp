@@ -164,7 +164,11 @@ const CourseItem = ({
         ) : null}
 
         <div
-          className="flex flex-col w-full cursor-pointer bg-secondary z-10 rounded-lg"
+          className={`flex flex-col w-full cursor-pointer ${
+            isCourseOpen
+              ? "bg-secondary"
+              : "bg-secondary/80 hover:bg-secondary/90"
+          } z-10 rounded-lg`}
           onClick={handleToggleCourseTab}
           onKeyDown={handleToggleCourseTab}
         >
