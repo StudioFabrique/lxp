@@ -1,11 +1,15 @@
 import { prisma } from "../../utils/db";
 
-async function getCoursesByModule(moduleId: number) {
+async function getCoursesByModule(moduleId: number, userMdbId: string) {
+  const teacherOrAdmin = await prisma.admin.findFirst({
+    where: { idMdb: userMdbId },
+  });
+
   const courses = await prisma.course.findMany({
     where: {
       moduleId,
-      isPublished: true,
-      visibility: true,
+      isPublished: teacherOrAdmin ? undefined : true,
+      visibility: teacherOrAdmin ? undefined : true,
     },
 
     select: {
