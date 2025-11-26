@@ -1,4 +1,3 @@
-import "./MenuBar.scss";
 import type { Editor } from "@tiptap/react";
 
 import { memo, useEffect, useRef } from "react";
