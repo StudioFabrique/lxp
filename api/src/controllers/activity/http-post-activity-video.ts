@@ -1,6 +1,7 @@
 import { Response } from "express";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import postActivityVideo from "../../models/activity/post-activity/post-activity-video";
+import { validationResult } from "express-validator";
 
 export default async function httpPostActivityVideo(
   req: CustomRequest,
@@ -11,6 +12,13 @@ export default async function httpPostActivityVideo(
     const userId = req.auth?.userId;
     let { lessonId, parentType } = req.params;
     const data = req.body.data;
+
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      console.log(result.array());
+
+      throw { statusCode: 400, message: "Données invalides" };
+    }
 
     if (!parentType) parentType = "lesson";
 
