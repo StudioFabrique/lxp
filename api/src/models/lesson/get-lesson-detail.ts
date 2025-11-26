@@ -1,3 +1,4 @@
+import { Contact } from "@prisma/client";
 import { prisma } from "../../utils/db";
 
 export default async function getLessonDetail(
@@ -14,6 +15,7 @@ export default async function getLessonDetail(
           id: true,
           title: true,
           image: true,
+          contacts: { select: { contact: { select: { idMdb: true } } } },
         },
       },
       activities: {
@@ -55,8 +57,18 @@ export default async function getLessonDetail(
   }
 
   if (!existingLesson.activities || existingLesson.activities === undefined) {
-    existingLesson = { ...existingLesson, activities: [] };
+    existingLesson = {
+      ...existingLesson,
+      activities: [],
+    };
   }
 
-  return existingLesson;
+  return {
+    ...existingLesson,
+    course: {
+      contacts: existingLesson.course.contacts.map(
+        (contact: { contact: Contact }) => contact.contact
+      ),
+    },
+  };
 }

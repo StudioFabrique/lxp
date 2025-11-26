@@ -13,17 +13,21 @@ import ActivityList from "../../components/module-content-explorer/sidebar/activ
 import NoActivityPlaceholder from "../../components/module-content-explorer/preview/no-activity-placeholder";
 import { Link, useNavigate } from "react-router-dom";
 import { PenBox } from "lucide-react";
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
 import ActivityBottomNavigation from "../../components/module-content-explorer/preview/activity-bottom-navigation";
 import Lesson from "../../utils/interfaces/lesson";
 import ActivityTypeSelection from "../../components/module-content-explorer/preview/activity-type-selection";
 import LessonReaderAndEditor from "../../components/module-content-explorer/preview/lesson-reader-and-editor";
 import Header from "../../components/UI/header";
+import { Context } from "../../store/context.store";
+import userBelongsToContacts from "../../utils/userBelongsToContacts";
 
 /**
  * Aperçu de tous les cours et leçons d'un module destiné à l'apprenant
  */
 const ModuleExplorerContent = () => {
+  const { user } = useContext(Context);
+
   const navigate = useNavigate();
   // récupération de la premiere valeur de l'url pour déterminer le role de l'utilisateur connecté
   const firstPathSegment = window.location.pathname.split("/")[1];
@@ -56,6 +60,14 @@ const ModuleExplorerContent = () => {
     onNextLesson,
     onSelectActivityType,
   } = useModuleExplorerContent();
+
+  const canEditModule = userBelongsToContacts(user, module?.contacts);
+  const canEditSelectedLesson = userBelongsToContacts(
+    user,
+    selectedLesson?.course?.contacts
+  );
+
+  console.log(selectedLesson?.course?.contacts);
 
   const editTitle = useCallback(
     (title: string) => {
@@ -153,15 +165,18 @@ const ModuleExplorerContent = () => {
               onLessonReorder={onLessonReorder}
               children={[
                 // Bouton pour créer un nouveau cours
-                <Can key="create-course" action="write" object="course">
-                  <CreateCourseItem
-                    parcoursId={module.parcoursId}
-                    moduleId={module.id || 0}
-                  />
-                </Can>,
+                canEditModule && (
+                  <Can key="create-course" action="write" object="course">
+                    <CreateCourseItem
+                      parcoursId={module.parcoursId}
+                      moduleId={module.id || 0}
+                    />
+                  </Can>
+                ),
                 // Liste des activités
                 <ActivityList
                   key="activity-list"
+                  canEdit={canEditSelectedLesson}
                   activities={selectedLesson?.activities}
                   selectedActivity={selectedActivity}
                   onActivityReorder={onActivityReorder}
