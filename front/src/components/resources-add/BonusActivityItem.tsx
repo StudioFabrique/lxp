@@ -4,10 +4,10 @@ import { EditIcon, TextInitial, Trash2, Video } from "lucide-react";
 
 type Props = {
   disabled?: boolean;
-  activity: BonusActivity;
+  activity: any;
   onDelete: Dispatch<SetStateAction<BonusActivity | null>>;
   onEdit: Dispatch<SetStateAction<BonusActivity | null>>;
-  onPreview: (state: "read" | "edit" | "write") => void;
+  onPreview: (activity: any | null) => void;
 };
 
 export default function BonusActivityItem({
@@ -47,7 +47,7 @@ export default function BonusActivityItem({
         className={
           "text-xs text-primary flex-1 hover:cursor-pointer flex p-2 rounded-sm bg-secondary/10"
         }
-        onClick={() => onPreview("read")}
+        onClick={() => onPreview(activity)}
       >
         {activity.title}
       </button>

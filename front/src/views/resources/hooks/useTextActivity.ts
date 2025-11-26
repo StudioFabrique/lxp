@@ -3,8 +3,10 @@ import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 import { regexGeneric } from "../../../utils/constantes";
 import toast from "react-hot-toast";
+import { ACTIVITIES } from "../../../config/urls";
+import { Activity } from "../../../utils/interfaces/activity";
 
-const useTextActivity = () => {
+const useTextActivity = (activity?: Activity) => {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const { error, sendRequest } = useHttp();
@@ -84,6 +86,19 @@ const useTextActivity = () => {
       console.warn("Failed to remove localStorage key:", key, err);
     }
   };
+
+  const getActivityContent = useCallback(() => {
+    fetch(`${ACTIVITIES}${activity!.url}`).then((response) =>
+      response.text().then((content) => {
+        editActivityContent(content);
+        setTitle(activity!.title!);
+      })
+    );
+  }, [activity, editActivityContent]);
+
+  useEffect(() => {
+    if (activity) getActivityContent();
+  }, [activity, getActivityContent]);
 
   useEffect(() => {
     if (error.length > 0) toast.error(error);
