@@ -6,22 +6,16 @@ import Can from "../../components/UI/can/can.component";
 import BonusActivityItem from "../../components/resources-add/BonusActivityItem";
 import Modal from "../../components/UI/modal/modal";
 import ElementNotFound from "../../components/UI/element-not-found";
-import TiptapActivity from "../../components/lessons-preview/writing/tip-tap-activity";
 import useResource from "./hooks/useResource";
 import { Activity } from "../../utils/interfaces/activity";
 import ActivityFloatingActionButton from "../../components/UI/ActivityFloatingActionButton";
-import PreviewResourceActivity from "../../components/resources-add/PreviewResourceActivity";
-import { useMemo } from "react";
-import CreateResourceActivity from "../../components/resources-add/TextActivityResource";
 import TextActivityResource from "../../components/resources-add/TextActivityResource";
-import toast from "react-hot-toast";
-import { set } from "zod";
 import ActivityWrapper from "../../components/resources-add/ActivityWrapper";
+import VideoActivityResource from "../../components/resources-add/VideoActivityResource";
 
 export default function ResourceAdd() {
   const {
     activityType,
-    //newActivity,
     activityState,
     mode,
     setFile,
@@ -31,7 +25,6 @@ export default function ResourceAdd() {
     setTags,
     tagError,
     setTagError,
-    showTipTapEditor,
     setActivityState,
     resource,
     handleSubmitForm,
@@ -42,14 +35,15 @@ export default function ResourceAdd() {
     setPreviewActivity,
     activitiesActionsDisabled,
     handleCloseTextEditor,
-    title,
-    content,
-    setTitle,
-    editActivityContent,
-    updateActivities,
     createNewActivity,
     resourceId,
+    setEditActivity,
+    refreshActivityList,
+    uploadVideo,
   } = useResource();
+
+  console.log("STATE", activityState);
+  console.log("TYPE", activityType);
 
   const placeholder = (
     <div className="w-full border border-primary/20 rounded-lg p-8 h-[50vh] relative">
@@ -101,7 +95,7 @@ export default function ResourceAdd() {
                           disabled={activitiesActionsDisabled}
                           activity={activity}
                           onDelete={setActivityToDelete}
-                          onEdit={setPreviewActivity}
+                          onEdit={setEditActivity}
                           onPreview={setPreviewActivity}
                         />
                       </li>
@@ -118,42 +112,64 @@ export default function ResourceAdd() {
 
           <section className="flex-1 flex flex-col gap-4">
             <Can action="write" object="lesson">
-              {previewActivity ? (
+              {activityType && activityType !== "text" ? (
                 <ActivityWrapper
                   activity={previewActivity}
                   mode={activityState}
                   onSwitchMode={setActivityState}
+                  onClose={() => setPreviewActivity(null)}
                 >
-                  {activityType === "text" ? (
-                    <TextActivityResource
-                      parentId={+resourceId!}
-                      activity={previewActivity ? previewActivity : undefined}
-                      activityType={activityType}
-                      onClose={() => {}}
+                  {activityType === "video" ? (
+                    <VideoActivityResource
+                      activity={previewActivity ? previewActivity : null}
                       mode={activityState}
-                      onSubmit={(result) => toast.success(result)}
+                      values={data.values}
+                      onClose={() => {}}
+                      onSubmit={uploadVideo}
                     />
                   ) : null}
                 </ActivityWrapper>
               ) : (
                 <>
-                  {" "}
                   {activityType === "text" ? (
-                    <TextActivityResource
-                      parentId={+resourceId!}
-                      activity={previewActivity ? previewActivity : undefined}
-                      activityType={activityType}
-                      onClose={() => {}}
-                      mode={activityState}
-                      onSubmit={(result) =>
-                        toast.success("TOTO " + result.message)
-                      }
-                    />
-                  ) : null}
+                    <>
+                      {activityState !== "read" ? (
+                        <TextActivityResource
+                          parentId={+resourceId!}
+                          activity={
+                            previewActivity ? previewActivity : undefined
+                          }
+                          activityType={activityType}
+                          onClose={handleCloseTextEditor}
+                          mode={activityState}
+                          onSubmit={refreshActivityList}
+                        />
+                      ) : null}
+                      {activityState === "read" ? (
+                        <ActivityWrapper
+                          activity={previewActivity}
+                          mode={activityState}
+                          onSwitchMode={setActivityState}
+                          onClose={() => setPreviewActivity(null)}
+                        >
+                          <TextActivityResource
+                            parentId={+resourceId!}
+                            activity={
+                              previewActivity ? previewActivity : undefined
+                            }
+                            activityType={activityType}
+                            onClose={handleCloseTextEditor}
+                            mode={activityState}
+                            onSubmit={refreshActivityList}
+                          />
+                        </ActivityWrapper>
+                      ) : null}
+                    </>
+                  ) : (
+                    placeholder
+                  )}
                 </>
               )}
-
-              {placeholder}
             </Can>
           </section>
         </div>

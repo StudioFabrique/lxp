@@ -90,14 +90,14 @@ export const postVideoValidator = [
     .custom(stringValidateOptional)
     .withMessage(
       "La description de la video contient des caractères non autorisés."
-    ),
+    )
+    .optional({ nullable: true }),
   body("data.url")
     .optional({ nullable: true })
     .isString()
     .withMessage("L'url fournie n'est pas une chaîne de caractères valide.")
     .custom(videoUrlValidate)
     .withMessage("L'url de la video contient des caractères non autorisés."),
-  checkValidatorResult,
 ];
 
 export const postIframeValidator = [
