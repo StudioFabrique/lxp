@@ -106,14 +106,22 @@ const LessonReaderAndEditor = ({
               </span>
             </div>
             <span className="flex-1" />
-            {selectedActivity && (
-              <ActivityActionsMenu
-                activity={selectedActivity}
-                onEditActivity={onEditActivity}
-                onOpenDeleteModal={onOpenDeleteModal}
-                disabled={mode !== "read"}
-              />
-            )}
+            {selectedActivity &&
+              (mode === "write" || mode === "edit" ? (
+                <button
+                  className="btn btn-sm btn-error self-end text-base-100"
+                  onClick={mode === "write" ? onBack : onClose}
+                >
+                  Annuler
+                </button>
+              ) : (
+                <ActivityActionsMenu
+                  activity={selectedActivity}
+                  onEditActivity={onEditActivity}
+                  onOpenDeleteModal={onOpenDeleteModal}
+                  disabled={mode !== "read"}
+                />
+              ))}
           </div>
 
           {/* Afficher l'éditeur TipTap si le type de l'activité est "text" */}
@@ -148,15 +156,6 @@ const LessonReaderAndEditor = ({
             <ActivityPreview activity={selectedActivity} />
           )}
         </div>
-
-        {(mode === "write" || mode === "edit") && (
-          <button
-            className="btn btn-error self-end text-base-100"
-            onClick={mode === "write" ? onBack : onClose}
-          >
-            Annuler
-          </button>
-        )}
 
         {/* Boutons de navigation */}
         <div className="flex justify-end items-center">{children}</div>
