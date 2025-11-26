@@ -106,22 +106,23 @@ const LessonReaderAndEditor = ({
               </span>
             </div>
             <span className="flex-1" />
-            {selectedActivity &&
-              (mode === "write" || mode === "edit" ? (
-                <button
-                  className="btn btn-sm btn-error self-end text-base-100"
-                  onClick={mode === "write" ? onBack : onClose}
-                >
-                  Annuler
-                </button>
-              ) : (
+            {mode === "write" || mode === "edit" ? (
+              <button
+                className="btn btn-sm btn-error self-end text-base-100"
+                onClick={mode === "write" ? onBack : onClose}
+              >
+                Annuler
+              </button>
+            ) : (
+              selectedActivity && (
                 <ActivityActionsMenu
                   activity={selectedActivity}
                   onEditActivity={onEditActivity}
                   onOpenDeleteModal={onOpenDeleteModal}
                   disabled={mode !== "read"}
                 />
-              ))}
+              )
+            )}
           </div>
 
           {/* Afficher l'éditeur TipTap si le type de l'activité est "text" */}
