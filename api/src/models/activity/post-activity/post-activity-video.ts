@@ -51,7 +51,6 @@ export default async function postActivityVideo(
         order: (existingParent as { id: number; activities: Activity[] })
           .activities.length,
         title,
-        description,
         url,
         lesson: {
           connect: {
@@ -73,7 +72,6 @@ export default async function postActivityVideo(
           existingParent as { id: number; bonusActivities: BonusActivity[] }
         ).bonusActivities.length,
         title,
-        description,
         url,
         resource: {
           connect: {

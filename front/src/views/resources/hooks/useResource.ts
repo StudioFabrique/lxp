@@ -37,6 +37,7 @@ type State = {
 };
 
 type Action =
+  | { type: "CLOSE_PREVIEW_ACTIVITY" }
   | {
       type: "SET_ACTIVITY_TYPE";
       payload: "text" | "video" | "image" | "resource";
@@ -68,12 +69,21 @@ const initialState: State = {
 
 const useResourceReducer = (state: State, action: Action): State => {
   switch (action.type) {
+    case "CLOSE_PREVIEW_ACTIVITY":
+      return {
+        ...state,
+        previewActivity: null,
+        activitiesActionsDisabled: false,
+        activityState: "read",
+        activityType: null,
+      };
     case "CLOSE_TEXT_EDITOR":
       return {
         ...state,
         previewActivity: null,
         activitiesActionsDisabled: false,
         activityState: "read",
+        activityType: null,
       };
     case "SET_MODE":
       return { ...state, mode: action.payload };
@@ -118,7 +128,7 @@ const useResource = () => {
   const { error, isLoading, sendRequest } = useHttp();
   const { errors, onChangeValue, onValidateForm, values, initValues } = useForm(
     {},
-    resourceSchema
+    resourceSchema,
   );
 
   console.log("STATE", state.activityState);
@@ -162,7 +172,7 @@ const useResource = () => {
         method: state.mode === "update" ? "put" : "post",
         body: formData,
       },
-      applyData
+      applyData,
     );
   };
 
@@ -174,7 +184,7 @@ const useResource = () => {
         // Remove the deleted activity from the resource state
         if (state.resource) {
           const updatedActivities = state.resource.activities.filter(
-            (activity) => activity.id !== state.activityToDelete!.id
+            (activity) => activity.id !== state.activityToDelete!.id,
           );
           dispatch({
             type: "SET_RESOURCE",
@@ -191,7 +201,7 @@ const useResource = () => {
         }/resource`,
         method: "delete",
       },
-      applyData
+      applyData,
     );
   };
 
@@ -269,8 +279,12 @@ const useResource = () => {
         method: state.previewActivity ? "put" : "post", // PUT si modification, POST si création
         body: fd,
       },
-      applyData
+      applyData,
     );
+  };
+
+  const closePreviewActivity = () => {
+    dispatch({ type: "CLOSE_PREVIEW_ACTIVITY" });
   };
 
   useEffect(() => {
@@ -282,6 +296,7 @@ const useResource = () => {
 
   return {
     ...state,
+    closePreviewActivity,
     createNewActivity,
     data,
     error,

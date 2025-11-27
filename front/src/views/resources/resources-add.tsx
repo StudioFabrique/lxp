@@ -33,20 +33,22 @@ export default function ResourceAdd() {
     setActivityToDelete,
     previewActivity,
     setPreviewActivity,
-    activitiesActionsDisabled,
+    //activitiesActionsDisabled,
     handleCloseTextEditor,
-    createNewActivity,
+    //createNewActivity,
     resourceId,
     setEditActivity,
     refreshActivityList,
     uploadVideo,
+    closePreviewActivity,
+    createNewActivity,
   } = useResource();
 
   console.log("STATE", activityState);
   console.log("TYPE", activityType);
 
   const placeholder = (
-    <div className="w-full border border-primary/20 rounded-lg p-8 h-[50vh] relative">
+    <div className="border border-primary/20 rounded-lg p-8 h-[50vh] relative">
       <div className="m-auto xl:w-6/12">
         <h2 className="text-center text-primary text-lg font-bold mb-8">
           Gérez les activités liées aux ressources supplémentaires
@@ -92,7 +94,7 @@ export default function ResourceAdd() {
                     {resource.activities.map((activity: Activity) => (
                       <li key={activity.id} className="mb-2 w-full">
                         <BonusActivityItem
-                          disabled={activitiesActionsDisabled}
+                          disabled={false}
                           activity={activity}
                           onDelete={setActivityToDelete}
                           onEdit={setEditActivity}
@@ -117,14 +119,14 @@ export default function ResourceAdd() {
                   activity={previewActivity}
                   mode={activityState}
                   onSwitchMode={setActivityState}
-                  onClose={() => setPreviewActivity(null)}
+                  onClose={closePreviewActivity}
                 >
                   {activityType === "video" ? (
                     <VideoActivityResource
                       activity={previewActivity ? previewActivity : null}
                       mode={activityState}
                       values={data.values}
-                      onClose={() => {}}
+                      onClose={closePreviewActivity}
                       onSubmit={uploadVideo}
                       parent="resource"
                     />

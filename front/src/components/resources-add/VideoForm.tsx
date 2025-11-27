@@ -1,8 +1,8 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent } from "react";
 import Field from "../UI/forms/field";
-import FieldArea from "../UI/forms/field-area";
 import Wrapper from "../UI/wrapper/wrapper.component";
 import CustomError from "../../utils/interfaces/custom-error";
+import VideoPlayer from "../UI/VideoPlayer";
 
 type Props = {
   mode: "read" | "edit" | "write";
@@ -17,9 +17,9 @@ type Props = {
 };
 
 export default function VideoForm(props: Props) {
-  const [origin, setOrigin] = useState<"web" | "file">("web"); // Source de la vidéo (web/fichier)
+  //const [origin, setOrigin] = useState<"web" | "file">("web"); // Source de la vidéo (web/fichier)
 
-  const handleOnChangeOrigin = (event: ChangeEvent<HTMLSelectElement>) => {
+  /*   const handleOnChangeOrigin = (event: ChangeEvent<HTMLSelectElement>) => {
     const newOrigin = event.currentTarget.value as "web" | "file";
     setOrigin(newOrigin);
     props.data.onChangeValue("videoSource", newOrigin);
@@ -29,23 +29,20 @@ export default function VideoForm(props: Props) {
       } as unknown as ChangeEvent<HTMLInputElement>);
     }
   };
+  */
 
   return (
     <form className="flex flex-col gap-y-2">
       <Wrapper>
         <Field
           label="Titre *"
-          placeholder="Titre de la video"
+          placeholder="Titre de l'activité"
           name="title"
           data={props.data}
         />
       </Wrapper>
 
-      <Wrapper>
-        <FieldArea label="Description" name="description" data={props.data} />
-      </Wrapper>
-
-      <Wrapper>
+      {/*      <Wrapper>
         <span className="flex justify-between items-center">
           <label className="label">Source de la vidéo *</label>{" "}
           <select
@@ -58,30 +55,43 @@ export default function VideoForm(props: Props) {
             <option value="file">Fichier vidéo</option>
           </select>
         </span>
-      </Wrapper>
+      </Wrapper>*/}
 
-      {origin === "web" ? (
-        <Wrapper>
+      <Wrapper>
+        <span className="flex justify-between items-start gap-x-8">
           <Field
             label="URL de la vidéo *"
             placeholder="https://www.youtube.com/..."
             name="url"
             data={props.data}
           />
-        </Wrapper>
-      ) : (
-        <input
-          className="w-full file-input file-input-bordered file-input-sm file-input-primary"
-          type="file"
-          name="fileUpload"
-          id="fileUpload"
-          onChange={props.onSetFile}
-        />
-      )}
-      <div>
+          <VideoPlayer url={props.data.values.url as string} />
+        </span>
+      </Wrapper>
+
+      {/*        <Wrapper>
+          <div className="flex justify-end">
+            <input
+              className="file-input file-input-bordered file-input-sm file-input-primary"
+              type="file"
+              name="fileUpload"
+              id="fileUpload"
+              onChange={props.onSetFile}
+            />
+          </div>
+        </Wrapper>*/}
+
+      <div className="flex justify-end gap-x-4 items-center mt-4">
+        <button
+          className="btn btn-secondary btn-outline"
+          type="button"
+          onClick={props.onClose}
+        >
+          Annuler
+        </button>
         <button
           type="submit"
-          className="btn btn-primary mt-4"
+          className="btn btn-primary"
           onClick={props.onSubmit}
         >
           Enregistrer

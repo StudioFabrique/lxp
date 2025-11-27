@@ -70,7 +70,6 @@ export default async function postActivityResource(req: CustomRequest) {
     const newActivity = await tx.activity.create({
       data: {
         title: "Ressources",
-        description: `Ressources pour la leçon ${existingLesson.title}`,
         lessonId: +lessonId,
         type: "resource",
         order: existingLesson.activities.length,

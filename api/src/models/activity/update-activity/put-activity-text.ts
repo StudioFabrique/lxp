@@ -77,7 +77,6 @@ export default async function putActivityText(
           ...existingActivity,
           url: fileName,
           title,
-          description,
         },
       });
     else
@@ -87,7 +86,6 @@ export default async function putActivityText(
           ...existingBonusActivity,
           url: fileName,
           title,
-          description,
         },
       });
 

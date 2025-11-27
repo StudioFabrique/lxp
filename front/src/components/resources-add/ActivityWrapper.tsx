@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { Activity } from "../../utils/interfaces/activity";
-import { EditIcon, Eye, Trash2 } from "lucide-react";
+import { getActivityIcon } from "../../helpers/getActivityIcon";
+import { localeDate } from "../../helpers/locale-date";
 
 type Props = {
   children: ReactNode;
@@ -13,44 +14,17 @@ type Props = {
 export default function ActivityWrapper(props: Props) {
   return (
     <>
-      <div className="flex justify-between items-center">
-        <h2 className="p-1 pl-2 border border-primary/20 flex-1 mr-4 rounded-lg">
-          {props.activity?.title ?? "Nouvelle activité"}
-        </h2>
-        <span className="flex gap-x-4">
-          <button
-            className="btn btn-circle btn-sm btn-primary tooltip tooltip-left"
-            data-tip={
-              props.mode === "read"
-                ? "Passer en mode édition"
-                : "Passer en mode lecture"
-            }
-            aria-label={
-              props.mode === "read"
-                ? "Passer en mode édition"
-                : "Passer en mode lecture"
-            }
-            onClick={() =>
-              props.onSwitchMode(props.mode === "read" ? "edit" : "read")
-            }
-          >
-            {props.mode === "read" ? (
-              <EditIcon className="w-4 h-4" />
-            ) : (
-              <Eye className="w-4 h-4" />
-            )}
-          </button>
-          <button
-            className="btn btn-warning btn-circle btn-sm tooltip tooltip-left"
-            data-tip="Supprimer l'activité"
-            aria-label="Suppression de l'activité"
-            disabled={!props.activity}
-            onClick={() => {}}
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </span>
-      </div>
+      {props.mode === "read" && props.activity ? (
+        <div className="border border-primary/50 p-2 rounded-lg flex items-center gap-x-4 justify-start">
+          {getActivityIcon(props.activity.type, 6)}
+          <span className="flex justify-between w-full">
+            <h2>{props.activity?.title}</h2>
+            <p className="italic text-base-content/50">
+              &nbsp;ajouté le {localeDate(props.activity.createdAt)}
+            </p>
+          </span>
+        </div>
+      ) : null}
       {props.children}
       <>
         {props.mode === "read" ? (

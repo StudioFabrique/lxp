@@ -17,7 +17,6 @@ export default async function putIframe(
     where: { id: activityId },
     data: {
       title,
-      description,
       type: "iframe",
       url,
       author: {

@@ -47,7 +47,6 @@ export default async function putActivityVideo(
       data: {
         ...existingParent,
         title,
-        description,
         url,
       },
     });
@@ -57,7 +56,6 @@ export default async function putActivityVideo(
       data: {
         ...existingParent,
         title,
-        description,
         url,
       },
     });
