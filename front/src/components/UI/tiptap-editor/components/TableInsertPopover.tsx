@@ -4,6 +4,7 @@ import * as Popover from "@radix-ui/react-popover";
 import { Icon } from "./ui/Icon";
 import { Surface } from "./ui/Surface";
 import { Toolbar } from "./ui/Toolbar";
+import { TIPTAP_MENU_BAR_COLORS } from "./Menubar/MenuBarConfig";
 
 interface TableInsertPopoverProps {
   editor: Editor;
@@ -80,15 +81,17 @@ export const TableInsertPopover = ({
 
   const getSelectionText = () => {
     if (!hoveredCell) return "Sélectionner la taille du tableau";
-    return `${hoveredCell.row + 1} × ${hoveredCell.col + 1}`;
+    return `${hoveredCell.row + 1} x ${hoveredCell.col + 1}`;
   };
 
   return (
     <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
       <Popover.Trigger asChild>
         <Toolbar.Button className="flex items-center gap-3.5 p-1.5 text-sm font-medium text-left bg-transparent w-full max-w-max rounded select-none">
-          <Icon name="Table" className="text-base-content w-8" />
-          <span className="text-base-content w-full">{title}</span>
+          <Icon name="Table" className={`${TIPTAP_MENU_BAR_COLORS.text} w-8`} />
+          <span className={`${TIPTAP_MENU_BAR_COLORS.text} w-full`}>
+            {title}
+          </span>
         </Toolbar.Button>
       </Popover.Trigger>
       <Popover.Content
@@ -98,7 +101,9 @@ export const TableInsertPopover = ({
       >
         <Surface className="p-4 w-80">
           <div className="space-y-4">
-            <div className="text-sm font-medium text-base-content">
+            <div
+              className={`text-sm font-medium ${TIPTAP_MENU_BAR_COLORS.text}`}
+            >
               {getSelectionText()}
             </div>
 
@@ -122,7 +127,9 @@ export const TableInsertPopover = ({
             </div>
 
             <div className="space-y-2">
-              <div className="text-xs font-medium text-base-content uppercase tracking-wide">
+              <div
+                className={`text-xs font-medium ${TIPTAP_MENU_BAR_COLORS.text} uppercase tracking-wide`}
+              >
                 Tableaux prédéfinis
               </div>
               <div className="flex flex-wrap gap-2">

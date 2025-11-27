@@ -3,20 +3,20 @@ import type { Editor } from "@tiptap/react";
 import { memo, useEffect, useRef } from "react";
 
 import MenuItem from "./MenuItem.js";
-import { ContentTypePicker } from "./dropdowns/ContentTypePicker.js";
-import { useMenuTextTypes } from "./hooks/useMenuTextTypes.js";
-import { items } from "./MenuBarItems.js";
-import { useMenuContentTypes } from "./hooks/useMenuContentTypes.js";
-import { useMenuAlignTextTypes } from "./hooks/useMenuAlignTextTypes.js";
+import { ContentTypePicker } from "../dropdowns/ContentTypePicker.js";
+import { useMenuTextTypes } from "../hooks/useMenuTextTypes.js";
+import { useMenuContentTypes } from "../hooks/useMenuContentTypes.js";
+import { useMenuAlignTextTypes } from "../hooks/useMenuAlignTextTypes.js";
 // import { ColorPicker } from "./Colorpicker/Colorpicker.js";
-import { useTextmenuStates } from "./hooks/useTextmenuStates.js";
-import { useTextmenuCommands } from "./hooks/useTextmenuCommands.js";
-import { Toolbar } from "./ui/Toolbar.js";
-import { FontFamilyPicker } from "./FontFamilyPicker.js";
-import { EditLinkPopover } from "./EditLinkPopover.js";
-import { EditYoutubeLinkPopover } from "./EditYoutubeLinkPopover.js";
-import { InsertImagePopover } from "./InsertImagePopover.js";
-import { TableInsertPopover } from "./TableInsertPopover.js";
+import { useTextmenuStates } from "../hooks/useTextmenuStates.js";
+import { useTextmenuCommands } from "../hooks/useTextmenuCommands.js";
+import { Toolbar } from "../ui/Toolbar.js";
+import { FontFamilyPicker } from "../FontFamilyPicker.js";
+import { EditLinkPopover } from "../EditLinkPopover.js";
+import { EditYoutubeLinkPopover } from "../EditYoutubeLinkPopover.js";
+import { InsertImagePopover } from "../InsertImagePopover.js";
+import { TableInsertPopover } from "../TableInsertPopover.js";
+import { items } from "./MenuBarItems.js";
 
 type MenuBarProps = {
   editor: Editor;
