@@ -1,3 +1,4 @@
+import { Contact, Module } from "@prisma/client";
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
 
@@ -135,9 +136,23 @@ async function getParcoursById(parcoursId: number, userId: string) {
         result = { ...result, studentCount: usersCount };
         console.log({ usersCount });
       }
-      return result;
+      return {
+        ...result,
+        contacts: result.contacts.map(
+          (contact: { contact: Contact }) => contact.contact
+        ),
+        modules: result.modules.map(
+          (module: { contacts: { contact: Contact }[] }) => ({
+            ...module,
+            contacts: module.contacts.map((contact) => contact.contact),
+          })
+        ),
+      };
     }
-    return parcours;
+    return {
+      ...parcours,
+      contacts: parcours.contacts.map((contact) => contact.contact),
+    };
   }
 }
 

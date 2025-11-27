@@ -54,11 +54,7 @@ const useParcoursService = () => {
           );
         }
         if (data.contacts.length > 0) {
-          dispatch(
-            parcoursContactsAction.setCurrentContacts(
-              data.contacts.map((item: any) => item.contact)
-            )
-          );
+          dispatch(parcoursContactsAction.setCurrentContacts(data.contacts));
         }
         if (data.skills.length > 0) {
           dispatch(

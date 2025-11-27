@@ -2,7 +2,7 @@ import { Response, NextFunction } from "express";
 
 import deleteModule from "../../models/module/delete-module";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
-import { serverIssue } from "../../utils/constantes";
+import { badQuery, serverIssue } from "../../utils/constantes";
 
 async function httpDeleteModule(
   req: CustomRequest,
@@ -11,10 +11,11 @@ async function httpDeleteModule(
 ) {
   const { moduleId } = req.params;
   const userId = req.auth?.userId;
-  const role = req.auth?.userRoles[0];
+
+  if (!userId) return res.status(400).json({ message: badQuery });
 
   try {
-    await deleteModule(+moduleId, userId!, role!);
+    await deleteModule(+moduleId, userId);
     next({
       statusCode: 200,
       data: { success: true, message: "Module supprimé avec succès" },

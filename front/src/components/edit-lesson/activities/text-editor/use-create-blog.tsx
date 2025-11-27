@@ -33,7 +33,6 @@ const useCreateBlog = (
           path: `/activity/text/${activity?.id ?? lessonId}`,
           method: activity?.title ? "put" : "post",
           body: {
-            description: "description",
             value,
             title: values.title,
           },
