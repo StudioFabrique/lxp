@@ -290,7 +290,6 @@ const useModuleExplorerContent = () => {
         }`,
         method: state.mode === "write" ? "post" : "put",
         body: {
-          description: "description",
           title,
           value: textContent,
           parent: "lesson",
@@ -326,7 +325,6 @@ const useModuleExplorerContent = () => {
         }`,
         method: state.mode === "write" ? "post" : "put",
         body: {
-          description: "description",
           title,
           url:
             state.mode === "write"

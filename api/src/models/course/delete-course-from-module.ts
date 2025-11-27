@@ -1,14 +1,18 @@
 import { prisma } from "../../utils/db";
+import userBelongsToContacts from "../../utils/userBelongsToContacts";
 
-export default async function deleteCourse(
-  courseId: number,
-  userId: string,
-  userRoles: any,
-) {
+export default async function deleteCourse(courseId: number, userId: string) {
   //  récupération du cours à supprimer dans la bdd pour vérifier qu'il existe
   const existingCourse = await prisma.course.findFirst({
     where: {
       id: courseId,
+    },
+    include: {
+      module: {
+        include: {
+          contacts: { select: { contact: { select: { idMdb: true } } } },
+        },
+      },
     },
   });
 
@@ -16,19 +20,12 @@ export default async function deleteCourse(
   if (!existingCourse)
     throw { statusCode: 404, message: "Le cours n'existe pas" };
 
-  if (userRoles[0].rank > 1) {
-    const existingAuthor = await prisma.admin.findFirst({
-      where: {
-        id: existingCourse.adminId,
-      },
-    });
-    // retourne une erreur si l'utilisateur n'est pas l'auteur du cours
-    if (existingAuthor?.idMdb !== userId)
-      throw {
-        statusCode: 406,
-        message: "Vous n'êtes pas autorisé à supprimer ce cours.",
-      };
-  }
+  // throw an error when the current user not belonging to contacts in module or is not admin
+  await userBelongsToContacts(
+    userId,
+    existingCourse.module.contacts.map((contact) => contact.contact),
+    "Vous n'êtes pas autorisé à supprimer ce cours."
+  );
 
   // supression des évaluations des notations de leçons, des leçons lues, des leçons
   // et du cours dans la base de données

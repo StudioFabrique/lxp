@@ -1,13 +1,12 @@
 import { Response, NextFunction } from "express";
 
-import deleteCourse from "../../models/course/delete-course-from-module";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
 import enableCourse from "../../models/course/enable-course";
 
 export async function httpEnableCourse(
   req: CustomRequest,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     //  récupération de l'identifiant du cours à supprimer dans les paramètres d'url

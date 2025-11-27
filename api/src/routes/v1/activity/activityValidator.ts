@@ -2,7 +2,6 @@ import { body, param } from "express-validator";
 import { checkValidatorResult } from "../../../middleware/validators";
 import {
   stringValidateGeneric,
-  stringValidateOptional,
   videoUrlValidate,
 } from "../../../helpers/custom-validators";
 
@@ -40,11 +39,6 @@ export const updateActivityValidator = [
   body("title")
     .custom(stringValidateGeneric)
     .withMessage("Le titre de la video contient des caractères non autorisés."),
-  body("description")
-    .custom(stringValidateGeneric)
-    .withMessage(
-      "La description de la video contient des caractères non autorisés."
-    ),
   checkValidatorResult,
 ];
 
@@ -62,15 +56,6 @@ export const updateVideoValidator = [
     .withMessage("Le titre de la video doit être une chaîne de caractères.")
     .custom(stringValidateGeneric)
     .withMessage("Le titre de la video contient des caractères non autorisés."),
-  body("data.description")
-    .isString()
-    .withMessage(
-      "La description de la video doit être une chaîne de caractères."
-    )
-    .custom(stringValidateOptional)
-    .withMessage(
-      "La description de la video contient des caractères non autorisés."
-    ),
   checkValidatorResult,
 ];
 
@@ -82,15 +67,6 @@ export const postVideoValidator = [
     .withMessage("Le titre de la video doit être une chaîne de caractères.")
     .custom(stringValidateGeneric)
     .withMessage("Le titre de la video contient des caractères non autorisés."),
-  body("data.description")
-    .isString()
-    .withMessage(
-      "La description de la video doit être une chaîne de caractères."
-    )
-    .custom(stringValidateOptional)
-    .withMessage(
-      "La description de la video contient des caractères non autorisés."
-    ),
   body("data.url")
     .optional({ nullable: true })
     .isString()
@@ -110,15 +86,6 @@ export const postIframeValidator = [
     .withMessage(
       "Le titre de l'activité contient des caractères non autorisés."
     ),
-  body("description")
-    .isString()
-    .withMessage(
-      "La description de l'activité doit être une chaîne de caractères."
-    )
-    .custom(stringValidateOptional)
-    .withMessage(
-      "La description de l'activité contient des caractères non autorisés."
-    ),
   body("url")
     .isString()
     .withMessage("L'url fournie n'est pas une chaîne de caractères valide.")
@@ -136,15 +103,6 @@ export const updateIframeValidator = [
     .custom(stringValidateGeneric)
     .withMessage(
       "Le titre de l'activité contient des caractères non autorisés."
-    ),
-  body("description")
-    .isString()
-    .withMessage(
-      "La description de l'activité doit être une chaîne de caractères."
-    )
-    .custom(stringValidateOptional)
-    .withMessage(
-      "La description de l'activité contient des caractères non autorisés."
     ),
   body("url")
     .isString()
