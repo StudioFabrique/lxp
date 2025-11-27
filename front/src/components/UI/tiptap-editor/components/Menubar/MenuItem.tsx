@@ -25,8 +25,8 @@ export default function MenuItem({
         isActive?.()
           ? `is-active ${TIPTAP_MENU_BAR_COLORS.textActive} ${TIPTAP_MENU_BAR_COLORS.backgroundActive}`
           : TIPTAP_MENU_BAR_COLORS.text
-      } ${color === "info" ? "fill-info" : "fill-base-content"}  hover:${
-        TIPTAP_MENU_BAR_COLORS.backgroundActive
+      } ${
+        color === "info" ? "fill-info" : "fill-base-content"
       } tooltip disabled:opacity-50`}
       data-tip={title}
       onClick={action}
