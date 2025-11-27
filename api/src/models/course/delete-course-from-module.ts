@@ -9,7 +9,7 @@ export default async function deleteCourse(courseId: number, userId: string) {
     },
     include: {
       module: {
-        include: {
+        select: {
           contacts: { select: { contact: { select: { idMdb: true } } } },
         },
       },

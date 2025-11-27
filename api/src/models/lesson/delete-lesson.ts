@@ -1,20 +1,17 @@
 import { prisma } from "../../utils/db";
+import userBelongsToContacts from "../../utils/userBelongsToContacts";
 
 export default async function deleteLesson(userId: string, lessonId: number) {
   const existingLesson = await prisma.lesson.findFirst({
     where: { id: lessonId },
+    include: {
+      course: {
+        select: {
+          contacts: { select: { contact: { select: { idMdb: true } } } },
+        },
+      },
+    },
   });
-  const existingAdmin = await prisma.admin.findFirst({
-    where: { idMdb: userId },
-  });
-
-  if (!existingAdmin) {
-    const error: any = {
-      message: "L'utilisateur n'existe pas.",
-      statusCode: 401,
-    };
-    throw error;
-  }
 
   if (!existingLesson) {
     const error = new Error("La leçon n'existe pas");
@@ -22,14 +19,12 @@ export default async function deleteLesson(userId: string, lessonId: number) {
     throw error;
   }
 
-  if (existingLesson.adminId !== existingAdmin.id) {
-    const error: any = {
-      message:
-        "Vous n'êtes pas le propriétaire de cette ressource, rapprochez-vous d'un admin.",
-      statusCode: 400,
-    };
-    throw error;
-  }
+  // throw an error when the current user not belonging to contacts in course or is not admin
+  await userBelongsToContacts(
+    userId,
+    existingLesson.course.contacts.map((contact) => contact.contact),
+    "Vous n'êtes pas autorisé à supprimer cette leçon."
+  );
 
   const deleteResources = await prisma.$transaction([
     prisma.lessonRead.deleteMany({
