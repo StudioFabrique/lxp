@@ -97,7 +97,7 @@ const SidebarCoursesList = ({
         </div>
       </Can>
       {/* Liste des cours */}
-      <div className="flex flex-col items-center gap-5 mt-5">
+      <div className="flex flex-col items-center gap-5">
         {courses.length > 0 ? (
           courses.map((course) => (
             <CourseItem
