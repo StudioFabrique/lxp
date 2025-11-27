@@ -129,15 +129,17 @@ const ModuleExplorerContent = () => {
             : "Créer, modifier et supprimer des leçons et des activités"
         }
       >
-        <Can object="lesson" action="update">
-          <Link
-            className="btn btn-primary text-base-100 gap-2"
-            to={`/admin/parcours/edit/${module?.parcoursId}?step=4`}
-          >
-            <PenBox />
-            Modifier le module
-          </Link>
-        </Can>
+        {canEditModule && (
+          <Can object="lesson" action="update">
+            <Link
+              className="btn btn-primary text-base-100 gap-2"
+              to={`/admin/parcours/edit/${module?.parcoursId}?step=4`}
+            >
+              <PenBox />
+              Modifier le module
+            </Link>
+          </Can>
+        )}
       </Header>
 
       {module && module.parcoursId && module.id ? (
