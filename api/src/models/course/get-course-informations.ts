@@ -84,18 +84,15 @@ async function getCourseInformations(courseId: number) {
 
   const { module: moduleNested, ...courseWithoutModule } = course.module;
 
-  let image: any = moduleNested.image;
+  let image = moduleNested.image;
 
-  if (image instanceof Buffer) {
-    image = image.toString("base64");
-  }
   return {
     ...course,
     module: {
       ...courseWithoutModule,
       title: moduleNested.title,
       description: moduleNested.description,
-      image: image,
+      image: Buffer.from(image as any).toString("base64") ?? null,
     },
   };
 }

@@ -1,4 +1,4 @@
-import { Module } from "@prisma/client";
+import { Module } from "../../../generated/prisma/client";
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
 

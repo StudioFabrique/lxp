@@ -1,0 +1,448 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  // The `url` datasource property is no longer supported in Prisma schema files (Prisma 7+).
+  // Move connection URLs for Migrate to `prisma.config.ts` and pass either `adapter`
+  // for a direct database connection or `accelerateUrl` for Accelerate to the
+  // PrismaClient constructor. See:
+  // https://pris.ly/d/config-datasource
+  // https://pris.ly/d/prisma7-client-config
+}
+
+// MODELS ALPHABETICALLY SORTED
+
+model Accomplishment {
+  id                   Int      @id @default(autoincrement())
+  name                 String
+  description          String
+  accomplishedAt       DateTime @default(now())
+  hasBeenCongratulated Boolean  @default(false)
+  studentId            Int
+  showToOtherStudent   Boolean  @default(false)
+  courseId             Int?
+  course               Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student              Student  @relation(fields: [studentId], references: [id])
+}
+
+model Activity {
+  id                 Int                @id @default(autoincrement())
+  title              String?
+  description        String?
+  type               String
+  order              Int
+  url                String
+  lessonId           Int
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  authorId           Int
+  author             Admin              @relation(fields: [authorId], references: [id], onDelete: SetDefault)
+  lesson             Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  resourceActivities ResourceActivity[]
+}
+
+model Admin {
+  id              Int              @id @default(autoincrement())
+  idMdb           String
+  activities      Activity[]
+  courses         Course[]
+  formation       Formation[]
+  lessons         Lesson[]
+  medias          Mediatheque[]
+  modules         Module[]
+  parcours        Parcours[]
+  bonusActivities BonusActivity[]
+  resources       Resource[]
+  moduleMetadatas ModuleMetadata[]
+}
+
+model BonusActivity {
+  id                      Int                     @id @default(autoincrement())
+  title                   String?
+  description             String?
+  type                    String
+  order                   Int
+  url                     String
+  createdAt               DateTime                @default(now())
+  updatedAt               DateTime                @updatedAt
+  admin                   Admin                   @relation(fields: [adminId], references: [id], onDelete: SetDefault)
+  adminId                 Int
+  resource                Resource                @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  resourceId              Int
+  resourceBonusActivities ResourceBonusActivity[]
+}
+
+model BonusSkill {
+  id          Int                           @id @default(autoincrement())
+  description String
+  createdAt   DateTime                      @default(now())
+  updatedAt   DateTime                      @updatedAt
+  badge       String?
+  parcoursId  Int
+  parcours    Parcours                      @relation(fields: [parcoursId], references: [id])
+  modules     BonusSkillsOnModuleMetadata[]
+}
+
+model BonusSkillsOnModuleMetadata {
+  bonusSkillId Int
+  moduleId     Int
+  bonusSkill   BonusSkill     @relation(fields: [bonusSkillId], references: [id])
+  module       ModuleMetadata @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@id([bonusSkillId, moduleId])
+}
+
+model Contact {
+  id        Int                        @id @default(autoincrement())
+  idMdb     String                     @unique
+  name      String
+  role      String
+  email     String?
+  phone     String?                    @default("Non renseigné")
+  createdAt DateTime                   @default(now())
+  updatedAt DateTime                   @updatedAt
+  courses   ContactsOnCourse[]
+  modules   ContactsOnModuleMetadata[]
+  parcours  ContactsOnParcours[]
+}
+
+model ContactsOnCourse {
+  contactId Int
+  courseId  Int
+  contact   Contact @relation(fields: [contactId], references: [id])
+  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@id([contactId, courseId])
+}
+
+model ContactsOnModuleMetadata {
+  contactId Int
+  moduleId  Int
+  contact   Contact        @relation(fields: [contactId], references: [id])
+  module    ModuleMetadata @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@id([contactId, moduleId])
+}
+
+model ContactsOnParcours {
+  parcoursId Int
+  contactId  Int
+  contact    Contact  @relation(fields: [contactId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  parcours   Parcours @relation(fields: [parcoursId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@id([parcoursId, contactId])
+}
+
+model Course {
+  id              Int                @id @default(autoincrement())
+  title           String
+  description     String?
+  image           Bytes?
+  virtualClass    String?
+  visibility      Boolean?
+  scenario        Boolean            @default(true)
+  dates           Json[]
+  order           Int
+  isPublished     Boolean            @default(false)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  author          String
+  adminId         Int
+  accomplishments Accomplishment[]
+  contacts        ContactsOnCourse[]
+  admin           Admin              @relation(fields: [adminId], references: [id], onDelete: SetDefault)
+  moduleId        Int
+  module          ModuleMetadata     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  lessons         Lesson[]
+  tags            TagsOnCourse[]
+}
+
+model Formation {
+  id          Int                  @id @default(autoincrement())
+  title       String               @unique
+  description String?
+  code        String?
+  level       String
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  adminId     Int
+  admin       Admin                @relation(fields: [adminId], references: [id])
+  modules     ModulesOnFormation[]
+  parcours    Parcours[]
+  tags        TagsOnFormation[]
+}
+
+model Group {
+  id       Int                @id @default(autoincrement())
+  idMdb    String
+  parcours GroupsOnParcours[]
+}
+
+model GroupsOnParcours {
+  groupId    Int
+  parcoursId Int
+  group      Group    @relation(fields: [groupId], references: [id])
+  parcours   Parcours @relation(fields: [parcoursId], references: [id])
+
+  @@id([groupId, parcoursId])
+}
+
+model Lesson {
+  id           Int            @id @default(autoincrement())
+  title        String
+  description  String
+  modalite     String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  author       String
+  adminId      Int
+  courseId     Int
+  tagId        Int
+  order        Int
+  isPublished  Boolean        @default(false)
+  visibility   Boolean        @default(false)
+  activities   Activity[]
+  admin        Admin          @relation(fields: [adminId], references: [id], onDelete: SetDefault)
+  course       Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  tag          Tag            @relation(fields: [tagId], references: [id])
+  lessonRating LessonRating[]
+  lessonsRead  LessonRead[]
+}
+
+model LessonRating {
+  id        Int     @id @default(autoincrement())
+  rating    Int
+  lessonId  Int
+  studentId Int
+  lesson    Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  student   Student @relation(fields: [studentId], references: [id])
+}
+
+model LessonRead {
+  id           Int       @id @default(autoincrement())
+  beganAt      DateTime  @default(now())
+  lastOpenedAt DateTime  @default(now())
+  finishedAt   DateTime?
+  lessonId     Int
+  studentId    Int
+  lesson       Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  student      Student   @relation(fields: [studentId], references: [id])
+}
+
+model Mediatheque {
+  id        Int      @id @default(autoincrement())
+  type      String
+  url       String
+  name      String
+  authorId  Int
+  size      Int
+  used      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    Admin    @relation(fields: [authorId], references: [id], onDelete: SetDefault)
+}
+
+model Module {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String?
+  image       Bytes?
+  thumb       Bytes?
+
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+  author     String
+  adminId    Int
+  admin      Admin                @relation(fields: [adminId], references: [id], onDelete: SetDefault)
+  formations ModulesOnFormation[]
+  metadatas  ModuleMetadata[]
+}
+
+model ModuleMetadata {
+  id          Int                           @id @default(autoincrement())
+  duration    Int?
+  rating      Float?
+  minDate     DateTime?
+  maxDate     DateTime?
+  moduleId    Int
+  module      Module                        @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  createdAt   DateTime                      @default(now())
+  updatedAt   DateTime                      @updatedAt
+  adminId     Int
+  parcoursId  Int
+  parcours    Parcours                      @relation(fields: [parcoursId], references: [id], onDelete: Cascade)
+  contacts    ContactsOnModuleMetadata[]
+  admin       Admin                         @relation(fields: [adminId], references: [id], onDelete: SetDefault)
+  courses     Course[]
+  bonusSkills BonusSkillsOnModuleMetadata[]
+}
+
+model ModulesOnFormation {
+  moduleId    Int
+  formationId Int
+  formation   Formation @relation(fields: [formationId], references: [id], onDelete: Cascade)
+  module      Module    @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@id([moduleId, formationId])
+}
+
+model Objective {
+  id          Int      @id @default(autoincrement())
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  parcoursId  Int
+  parcours    Parcours @relation(fields: [parcoursId], references: [id])
+}
+
+model OpenBadge {
+  id        Int      @id @default(autoincrement())
+  creator   String
+  image     Bytes
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Parcours {
+  id           Int                  @id @default(autoincrement())
+  title        String               @unique
+  description  String?
+  startDate    DateTime?            @default(dbgenerated("date_trunc('day'::text, (now() + '1 day'::interval))"))
+  endDate      DateTime?            @default(dbgenerated("date_trunc('day'::text, (now() + '2 mons'::interval))"))
+  degree       String?
+  image        Bytes?
+  thumb        Bytes?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  author       String
+  visibility   Boolean              @default(false)
+  adminId      Int
+  formationId  Int
+  virtualClass String?
+  isPublished  Boolean              @default(false)
+  bonusSkills  BonusSkill[]
+  contacts     ContactsOnParcours[]
+  groups       GroupsOnParcours[]
+  objectives   Objective[]
+  admin        Admin                @relation(fields: [adminId], references: [id], onDelete: SetDefault)
+  formation    Formation            @relation(fields: [formationId], references: [id])
+  skills       SkillsOnParcours[]
+  tags         TagsOnParcours[]
+  modules      ModuleMetadata[]
+}
+
+model Resource {
+  id              Int               @id @default(autoincrement())
+  title           String
+  description     String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  author          String
+  adminId         Int
+  imageUrl        String?
+  admin           Admin             @relation(fields: [adminId], references: [id], onDelete: SetDefault)
+  tags            TagsOnResources[]
+  bonusActivities BonusActivity[]
+}
+
+model ResourceActivity {
+  id         Int      @id @default(autoincrement())
+  label      String
+  order      Int
+  url        String
+  activityId Int
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+}
+
+model ResourceBonusActivity {
+  id              Int           @id @default(autoincrement())
+  label           String
+  order           Int
+  url             String
+  bonusActivityId Int
+  bonusActivity   BonusActivity @relation(fields: [bonusActivityId], references: [id], onDelete: Cascade)
+}
+
+model Skill {
+  id          Int                @id @default(autoincrement())
+  description String             @unique
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  badge       String?
+  parcours    SkillsOnParcours[]
+}
+
+model SkillsOnParcours {
+  skillId    Int
+  parcoursId Int
+  parcours   Parcours @relation(fields: [parcoursId], references: [id])
+  skill      Skill    @relation(fields: [skillId], references: [id])
+
+  @@id([skillId, parcoursId])
+}
+
+model Student {
+  id              Int              @id @default(autoincrement())
+  idMdb           String
+  accomplishments Accomplishment[]
+  lessonRating    LessonRating[]
+  lessonsRead     LessonRead[]
+}
+
+model Tag {
+  id         Int               @id @default(autoincrement())
+  name       String            @unique
+  color      String
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  lessons    Lesson[]
+  courses    TagsOnCourse[]
+  formations TagsOnFormation[]
+  parcours   TagsOnParcours[]
+  resources  TagsOnResources[]
+}
+
+model TagsOnCourse {
+  tagId    Int
+  courseId Int
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  tag      Tag    @relation(fields: [tagId], references: [id])
+
+  @@id([tagId, courseId])
+}
+
+model TagsOnFormation {
+  tagId       Int
+  formationId Int
+  formation   Formation @relation(fields: [formationId], references: [id])
+  tag         Tag       @relation(fields: [tagId], references: [id])
+
+  @@id([tagId, formationId])
+}
+
+model TagsOnParcours {
+  tagId      Int
+  parcoursId Int
+  parcours   Parcours @relation(fields: [parcoursId], references: [id])
+  tag        Tag      @relation(fields: [tagId], references: [id])
+
+  @@id([tagId, parcoursId])
+}
+
+model TagsOnResources {
+  tagId      Int
+  resourceId Int
+  resource   Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  tag        Tag      @relation(fields: [tagId], references: [id])
+
+  @@id([tagId, resourceId])
+}
+
+model Teacher {
+  id    Int    @id @default(autoincrement())
+  idMdb String
+}

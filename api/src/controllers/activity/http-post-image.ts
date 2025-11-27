@@ -37,7 +37,6 @@ export default async function httpPostImage(
       +lessonId, // Conversion en nombre
       userId!, // L'utilisateur doit exister à ce stade
       data.title, // Titre de l'activité
-      data.description, // Description de l'activité
       filename ?? null, // Nom du fichier uploadé ou null
       data.url ?? null // URL de l'image si sélectionnée depuis la médiathèque
     );

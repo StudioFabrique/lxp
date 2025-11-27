@@ -176,7 +176,6 @@ export default async function postDuplicateParcours(
                   activities: {
                     select: {
                       title: true,
-                      description: true,
                       order: true,
                       type: true,
                       url: true,
@@ -362,7 +361,6 @@ export default async function postDuplicateParcours(
                   activities: {
                     create: lesson.activities.map((activity) => ({
                       title: activity.title,
-                      description: activity.description,
                       order: activity.order,
                       type: activity.type,
                       url: activity.url,

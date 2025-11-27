@@ -73,8 +73,7 @@ export default function ModuleForm({
               </ModuleMetadatas>
             </span>
 
-            <div className="col-span-1 lg:col-span-0 divider sm:my-auto lg:hidden" />
-            <div className="col-span-1 divider divider-horizontal lg:mx-auto hidden lg:divider " />
+            <div className="mx-auto divider divider-vertical lg:divider-horizontal" />
 
             <span className="col-span-5">
               <ModuleToParcours

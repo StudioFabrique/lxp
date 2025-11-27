@@ -1,4 +1,4 @@
-import { BonusSkill, Contact } from "@prisma/client";
+import { BonusSkill, Contact } from "../../../generated/prisma/client";
 import { prisma } from "../../utils/db";
 
 async function putModule(module: any) {

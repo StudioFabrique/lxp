@@ -1,4 +1,4 @@
-import { Course } from "@prisma/client";
+import { Course } from "../../../generated/prisma/client";
 import { prisma } from "../../utils/db";
 
 async function putCourseInformations(course: Course) {

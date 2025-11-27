@@ -1,4 +1,4 @@
-import { Lesson } from "@prisma/client";
+import { Lesson } from "../../../generated/prisma/client";
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
 
@@ -68,7 +68,6 @@ export default async function postDuplicateLesson(
         activities: {
           select: {
             title: true,
-            description: true,
             type: true,
             order: true,
             url: true,
@@ -124,7 +123,6 @@ export default async function postDuplicateLesson(
             activities: {
               create: lessonData.activities.map((a) => ({
                 title: a.title,
-                description: a.description,
                 type: a.type,
                 order: a.order,
                 url: a.url,

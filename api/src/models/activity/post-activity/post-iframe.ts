@@ -24,7 +24,6 @@ export default async function postIframe(
   const createdActivity = await prisma.activity.create({
     data: {
       title,
-      description,
       order: existingLesson.activities.length,
       type: "iframe",
       lesson: {

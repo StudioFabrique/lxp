@@ -6,14 +6,16 @@ import Can from "../../components/UI/can/can.component";
 import BonusActivityItem from "../../components/resources-add/BonusActivityItem";
 import Modal from "../../components/UI/modal/modal";
 import ElementNotFound from "../../components/UI/element-not-found";
-import ActivityCreationOptionsButtons from "../../components/module-content-explorer/writing/activity-creation-options-buttons";
-import TiptapActivity from "../../components/module-content-explorer/writing/tip-tap-activity";
 import useResource from "./hooks/useResource";
 import { Activity } from "../../utils/interfaces/activity";
+import ActivityFloatingActionButton from "../../components/UI/ActivityFloatingActionButton";
+import TextActivityResource from "../../components/resources-add/TextActivityResource";
+import ActivityWrapper from "../../components/resources-add/ActivityWrapper";
+import VideoActivityResource from "../../components/resources-add/VideoActivityResource";
 
 export default function ResourceAdd() {
   const {
-    newActivity,
+    activityType,
     activityState,
     mode,
     setFile,
@@ -23,7 +25,7 @@ export default function ResourceAdd() {
     setTags,
     tagError,
     setTagError,
-    showTipTapEditor,
+    setActivityState,
     resource,
     handleSubmitForm,
     handleDeleteActivity,
@@ -31,14 +33,36 @@ export default function ResourceAdd() {
     setActivityToDelete,
     previewActivity,
     setPreviewActivity,
-    activitiesActionsDisabled,
+    //activitiesActionsDisabled,
     handleCloseTextEditor,
-    title,
-    content,
-    setTitle,
-    editActivityContent,
-    updateActivities,
+    //createNewActivity,
+    resourceId,
+    setEditActivity,
+    refreshActivityList,
+    uploadVideo,
+    closePreviewActivity,
+    createNewActivity,
   } = useResource();
+
+  console.log("STATE", activityState);
+  console.log("TYPE", activityType);
+
+  const placeholder = (
+    <div className="border border-primary/20 rounded-lg p-8 h-[50vh] relative">
+      <div className="m-auto xl:w-6/12">
+        <h2 className="text-center text-primary text-lg font-bold mb-8">
+          Gérez les activités liées aux ressources supplémentaires
+        </h2>
+        <p className="text-sm text-center text-secondary">
+          Ajoutez des activités bonus à cette ressource pour enrichir
+          l'expérience d'apprentissage des apprenants. Vous pouvez créer des
+          activités de type texte, vidéo, image ou documents de différents
+          formats.
+        </p>
+      </div>
+      <ActivityFloatingActionButton onTypeSelection={createNewActivity} />
+    </div>
+  );
 
   return (
     <main className="min-h-screen w-full flex flex-col items-center">
@@ -70,10 +94,11 @@ export default function ResourceAdd() {
                     {resource.activities.map((activity: Activity) => (
                       <li key={activity.id} className="mb-2 w-full">
                         <BonusActivityItem
-                          disabled={activitiesActionsDisabled}
+                          disabled={false}
                           activity={activity}
                           onDelete={setActivityToDelete}
-                          onEdit={setPreviewActivity}
+                          onEdit={setEditActivity}
+                          onPreview={setPreviewActivity}
                         />
                       </li>
                     ))}
@@ -86,46 +111,67 @@ export default function ResourceAdd() {
               </Wrapper>
             </article>
           </section>
+
           <section className="flex-1 flex flex-col gap-4">
             <Can action="write" object="lesson">
-              {(resource && showTipTapEditor) || previewActivity ? (
-                <TiptapActivity
-                  id={previewActivity?.id ?? resource?.activities.length ?? 0}
-                  title={title}
-                  content={content}
+              {activityType && activityType !== "text" ? (
+                <ActivityWrapper
+                  activity={previewActivity}
                   mode={activityState}
-                  onClose={handleCloseTextEditor}
-                  onEditTitle={setTitle}
-                  onEditContent={editActivityContent}
-                  onSave={() =>
-                    updateActivities(
-                      previewActivity ? previewActivity.id : resource?.id ?? 0,
-                      title,
-                      content,
-                      activityState
-                    )
-                  }
-                />
-              ) : resource ? (
-                <div className="w-full border border-primary/20 rounded-lg p-8">
-                  <div className="m-auto xl:w-6/12">
-                    <h2 className="text-center text-primary text-lg font-bold mb-8">
-                      Gérez les activités liées aux ressources supplémentaires
-                    </h2>
-                    <p className="text-sm text-center text-secondary">
-                      Ajoutez des activités bonus à cette ressource pour
-                      enrichir l'expérience d'apprentissage des apprenants. Vous
-                      pouvez créer des activités de type texte, vidéo, image ou
-                      documents de différents formats.
-                    </p>
-                  </div>
-                  <ActivityCreationOptionsButtons
-                    selectedLesson={resource}
-                    onClickShowTipTapEditor={newActivity}
-                  />
-                </div>
+                  onSwitchMode={setActivityState}
+                  onClose={closePreviewActivity}
+                >
+                  {activityType === "video" ? (
+                    <VideoActivityResource
+                      activity={previewActivity ? previewActivity : null}
+                      mode={activityState}
+                      values={data.values}
+                      onClose={closePreviewActivity}
+                      onSubmit={uploadVideo}
+                      parent="resource"
+                    />
+                  ) : null}
+                </ActivityWrapper>
               ) : (
-                <ElementNotFound message="Créez une ressource pour ajouter des activités bonus." />
+                <>
+                  {activityType === "text" ? (
+                    <>
+                      {activityState !== "read" ? (
+                        <TextActivityResource
+                          parentId={+resourceId!}
+                          activity={
+                            previewActivity ? previewActivity : undefined
+                          }
+                          activityType={activityType}
+                          onClose={handleCloseTextEditor}
+                          mode={activityState}
+                          onSubmit={refreshActivityList}
+                        />
+                      ) : null}
+                      {activityState === "read" ? (
+                        <ActivityWrapper
+                          activity={previewActivity}
+                          mode={activityState}
+                          onSwitchMode={setActivityState}
+                          onClose={() => setPreviewActivity(null)}
+                        >
+                          <TextActivityResource
+                            parentId={+resourceId!}
+                            activity={
+                              previewActivity ? previewActivity : undefined
+                            }
+                            activityType={activityType}
+                            onClose={handleCloseTextEditor}
+                            mode={activityState}
+                            onSubmit={refreshActivityList}
+                          />
+                        </ActivityWrapper>
+                      ) : null}
+                    </>
+                  ) : (
+                    placeholder
+                  )}
+                </>
               )}
             </Can>
           </section>
@@ -146,3 +192,29 @@ export default function ResourceAdd() {
     </main>
   );
 }
+
+/* <>
+                  {previewActivity && previewActivity.type === "text" ? (
+                    <TiptapActivity
+                      id={
+                        previewActivity?.id ?? resource?.activities.length ?? 0
+                      }
+                      title={title}
+                      content={content}
+                      mode={activityState}
+                      onClose={handleCloseTextEditor}
+                      onEditTitle={setTitle}
+                      onEditContent={editActivityContent}
+                      onSave={() =>
+                        updateActivities(
+                          previewActivity
+                            ? previewActivity.id
+                            : resource?.id ?? 0,
+                          title,
+                          content,
+                          activityState
+                        )
+                      }
+                    />
+                  ) : null}
+                </> */

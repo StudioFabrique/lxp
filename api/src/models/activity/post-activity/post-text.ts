@@ -1,4 +1,9 @@
-import { Activity, BonusActivity, Lesson, Resource } from "@prisma/client";
+import {
+  Activity,
+  BonusActivity,
+  Lesson,
+  Resource,
+} from "../../../../generated/prisma/client";
 import { prisma } from "../../../utils/db";
 
 import fs from "fs";
@@ -70,7 +75,6 @@ export default async function postActivityText(
     createdActivity = await prisma.activity.create({
       data: {
         title,
-        description,
         order: existingLesson.activities.length,
         type: "text",
         lesson: {
@@ -88,7 +92,6 @@ export default async function postActivityText(
     createdActivity = await prisma.bonusActivity.create({
       data: {
         title,
-        description,
         order: existingResource.bonusActivities.length,
         type: "text",
         resource: {

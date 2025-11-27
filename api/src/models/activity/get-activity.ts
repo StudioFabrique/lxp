@@ -10,7 +10,6 @@ export default async function getActivity(activityId: number) {
       lessonId: true,
       url: true,
       title: true,
-      description: true,
       createdAt: true,
       updatedAt: true,
     },
