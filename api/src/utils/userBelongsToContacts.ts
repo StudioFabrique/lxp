@@ -8,18 +8,12 @@ export default async function userBelongsToContacts(
 ) {
   const user = await User.findById(userMdbid).populate("roles");
 
-  console.log("userBelongsToContacts ?");
-
-  console.log({ user });
-
   if (!user) {
     throw {
       statusCode: 406,
       message: errorMessage,
     };
   }
-
-  console.log(user.roles);
 
   const isBelonging =
     contacts.some((contact) => contact.idMdb === user.id) ||
