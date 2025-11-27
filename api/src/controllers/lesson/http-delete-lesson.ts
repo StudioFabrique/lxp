@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 
 import deleteLesson from "../../models/lesson/delete-lesson";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { badQuery } from "../../utils/constantes";
 
 export default async function httpDeleteLesson(
   req: CustomRequest,
@@ -10,8 +11,10 @@ export default async function httpDeleteLesson(
   const { lessonId } = req.params;
   const userId = req.auth?.userId;
 
+  if (!userId) return res.status(400).json({ message: badQuery });
+
   try {
-    await deleteLesson(userId!, +lessonId);
+    await deleteLesson(userId, +lessonId);
     return res.status(200).json({
       success: true,
       message: "La leçon a été supprimée avec succès",
