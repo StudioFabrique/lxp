@@ -13,10 +13,9 @@ export async function httpDeleteCourse(
     const { courseId } = req.params;
     //  récupération de l'identifiant et du rôle de l'utisateur
     const userId = req.auth?.userId;
-    const userRoles = req.auth?.userRoles;
     //  appel de la fonction qui supprime le cours et ses ressources associés
     //  l'identifiant du cours est converti en type number
-    await deleteCourse(+courseId, userId!, userRoles);
+    await deleteCourse(+courseId, userId!);
     //  retourne une réponse positive
     const result = {
       statusCode: 200,
