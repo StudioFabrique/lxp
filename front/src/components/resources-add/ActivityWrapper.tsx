@@ -15,10 +15,15 @@ export default function ActivityWrapper(props: Props) {
   return (
     <>
       {props.mode === "read" && props.activity ? (
-        <div className="border border-primary/50 p-2 rounded-lg flex items-center gap-x-4 justify-start">
-          {getActivityIcon(props.activity.type, 6)}
-          <span className="flex justify-between w-full">
-            <h2>{props.activity?.title}</h2>
+        <div className="flex items-center gap-x-4 justify-start">
+          <p className="whitespace-nowrap text-base-content/50">
+            Titre de l'activité :&nbsp;
+          </p>
+          <span className="border border-primary/50 flex justify-between p-2 rounded-lg w-full">
+            <div className="flex gap-x-4 items-center">
+              {getActivityIcon(props.activity.type, 6)}
+              <h2>{props.activity?.title}</h2>
+            </div>
             <p className="italic text-base-content/50">
               &nbsp;ajouté le {localeDate(props.activity.createdAt)}
             </p>
