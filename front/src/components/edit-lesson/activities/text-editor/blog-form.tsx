@@ -1,6 +1,5 @@
 import CustomError from "../../../../utils/interfaces/custom-error";
 import Field from "../../../UI/forms/field";
-import FieldArea from "../../../UI/forms/field-area";
 
 type Props = {
   values: Record<string, string>;
@@ -16,11 +15,6 @@ function BlogForm({ values, onChangeValue, errors }: Props) {
         <Field
           name="title"
           label="Titre *"
-          data={{ values, errors, onChangeValue }}
-        />
-        <FieldArea
-          name="description"
-          label="Description *"
           data={{ values, errors, onChangeValue }}
         />
       </form>

@@ -1,4 +1,4 @@
-const LessonsPreviewSkeleton = () => {
+const ModuleContentExplorerSkeleton = () => {
   return (
     <div className="px-8 p-4">
       {/* Header Skeleton */}
@@ -75,4 +75,4 @@ export const ActivitySkeleton = () => {
   );
 };
 
-export default LessonsPreviewSkeleton;
+export default ModuleContentExplorerSkeleton;

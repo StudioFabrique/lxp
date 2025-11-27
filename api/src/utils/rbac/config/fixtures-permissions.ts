@@ -21,6 +21,7 @@ export const permDefsActions = {
       "permission",
       "user",
       "group",
+      "objective",
       "formation",
       "parcours",
       "module",
@@ -39,6 +40,7 @@ export const permDefsActions = {
       "permission",
       "user",
       "group",
+      "objective",
       "formation",
       "parcours",
       "module",
@@ -110,6 +112,7 @@ export const permDefsActions = {
     ],
     write: [
       "tag",
+      "objective",
       "user",
       "group",
       "formation",
@@ -125,6 +128,7 @@ export const permDefsActions = {
     ],
     update: [
       "tag",
+      "objective",
       "user",
       "group",
       "formation",
@@ -140,6 +144,7 @@ export const permDefsActions = {
     ],
     delete: [
       "tag",
+      "objective",
       "user",
       "group",
       "formation",

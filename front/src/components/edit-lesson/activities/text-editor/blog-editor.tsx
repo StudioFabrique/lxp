@@ -2,8 +2,8 @@
 import { useSelector } from "react-redux";
 import type { Activity } from "../../../../utils/interfaces/activity";
 import Wrapper from "../../../UI/wrapper/wrapper.component";
-import BlogForm from "./blog-form";
 import useCreateBlog from "./use-create-blog";
+import TiptapActivity from "../../../module-content-explorer/writing/tip-tap-activity";
 
 type EditorProps = {
   activity?: Activity; // L'activité à éditer (optionnel)
@@ -21,29 +21,33 @@ function BlogEditor({ activity, content, onCancel }: EditorProps) {
     onCancel
   );
 
-  const handleSubmitForm = () => {
-    handleSubmit(content || "");
+  const handleSubmitForm = async (
+    _id?: number | undefined,
+    title?: string | undefined,
+    content?: string | undefined
+  ) => {
+    await handleSubmit(content || "");
+    return true;
   };
+
+  const handleChangeTitle = (title: string) => {
+    onChangeValue("title", title);
+  };
+
+  const handleChangeContent = (content: string) => {};
 
   return (
     <div className="my-8 flex flex-col gap-y-4">
       <Wrapper>
-        <BlogForm
-          values={values}
-          errors={errors}
-          onChangeValue={onChangeValue}
+        <TiptapActivity
+          mode={activity ? "edit" : "write"}
+          content={content}
+          title={activity?.title}
+          onEditContent={handleChangeContent}
+          onEditTitle={handleChangeTitle}
+          onSave={handleSubmitForm}
         />
       </Wrapper>
-      {/* <Wrapper>
-        <Editor
-          onSubmit={handleSubmit}
-          content={content ?? ""}
-          onCancel={onCancel}
-        />
-      </Wrapper> */}
-      <button className="btn btn-primary" onClick={handleSubmitForm}>
-        Modifier
-      </button>
     </div>
   );
 }

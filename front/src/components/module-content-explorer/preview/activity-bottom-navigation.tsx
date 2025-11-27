@@ -35,7 +35,7 @@ const ActivityBottomNavigation = ({
         // Bouton pour terminer la leçon afin d'afficher une modal
         <Can action="component" object="progression">
           <FeedbacksButton
-            className="btn btn-primary text-nowrap text-base-100"
+            className="btn btn-success text-nowrap text-success-content"
             feedbackType="thumbUp"
             showFeedback={!isLessonCompleted}
             disabled={modalVisibility !== "none"}
