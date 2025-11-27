@@ -7,15 +7,10 @@ import Lesson from "../../../utils/interfaces/lesson";
 import Can from "../../UI/can/can.component";
 import CourseActionsModal from "./course-actions-modal";
 import CourseActions from "./course-actions";
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  OnDragEndResponder,
-} from "react-beautiful-dnd";
-import hasPermission from "../../../utils/hasPermission";
+import { DragDropContext, OnDragEndResponder } from "react-beautiful-dnd";
 import { Context } from "../../../store/context.store";
 import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
+import userBelongsToContacts from "../../../utils/userBelongsToContacts";
 
 type CourseItemProps = {
   course: Course;
@@ -44,6 +39,9 @@ const CourseItem = ({
   children,
 }: PropsWithChildren<CourseItemProps>) => {
   const { user } = useContext(Context);
+
+  const canEditCourse = userBelongsToContacts(user, course.contacts);
+
   const [isCourseOpen, setCourseOpen] = useState(false);
   const [isDragAndDropEnabled, setDragAndDropEnabled] =
     useState<boolean>(false);
@@ -166,7 +164,11 @@ const CourseItem = ({
         ) : null}
 
         <div
-          className="flex flex-col w-full cursor-pointer bg-secondary z-10 rounded-lg"
+          className={`flex flex-col w-full cursor-pointer ${
+            isCourseOpen
+              ? "bg-secondary"
+              : "bg-secondary/80 hover:bg-secondary/90"
+          } z-10 rounded-lg`}
           onClick={handleToggleCourseTab}
           onKeyDown={handleToggleCourseTab}
         >
@@ -184,7 +186,7 @@ const CourseItem = ({
                   {toUpperFirstLetter(course.title)}
                 </h3>
               </span>
-              <div className="flex items-center">
+              {canEditCourse && (
                 <Can action="write" object="course">
                   <CourseActions
                     course={course}
@@ -196,7 +198,7 @@ const CourseItem = ({
                     onClickChangeCourseOrder={handleClickChangeCourseOrder}
                   />
                 </Can>
-              </div>
+              )}
             </div>
           </div>
           <Can action="component" object="progression">
@@ -218,85 +220,48 @@ const CourseItem = ({
           }}
         >
           <DragDropContext onDragEnd={onLessonReorder}>
-            <Droppable
-              isDropDisabled={
-                !isDragAndDropEnabled ||
-                !hasPermission(user?.permissions || [], "update", "lesson")
-              }
-              droppableId="droppable"
-            >
-              {(provided, droppableState) => (
-                <div
-                  ref={provided.innerRef}
-                  className={`p-4 flex flex-col gap-4 ${
-                    droppableState.isDraggingOver && "-mt-10"
-                  }`}
-                  {...provided.droppableProps}
-                >
-                  {provided.placeholder}
-                  {course.description && (
-                    <span className="flex-1 min-w-0">
-                      <p
-                        className={`text-sm break-words overflow-y-clip min-w-0 ${
-                          !isDescriptionExpanded && "max-h-5"
-                        }`}
-                      >
-                        {toUpperFirstLetter(course.description)}
-                      </p>
+            <div className="p-4 flex flex-col gap-4">
+              {course.description && (
+                <span className="flex-1 min-w-0">
+                  <p
+                    className={`text-sm break-words overflow-y-clip min-w-0 ${
+                      !isDescriptionExpanded && "max-h-5"
+                    }`}
+                  >
+                    {toUpperFirstLetter(course.description)}
+                  </p>
 
-                      <p
-                        className="text-xs link"
-                        onClick={handleClickToggleExpandDescription}
-                      >
-                        {`Voir ${isDescriptionExpanded ? "moins" : "plus"}`}
-                      </p>
-                    </span>
-                  )}
-                  {course.lessons.length > 0 ? (
-                    course.lessons.map(
-                      (lesson, index) =>
-                        lesson.id && (
-                          <Draggable
-                            key={lesson.id}
-                            draggableId={lesson.id.toString()}
-                            index={index}
-                            isDragDisabled={
-                              !isDragAndDropEnabled ||
-                              !hasPermission(
-                                user?.permissions || [],
-                                "update",
-                                "lesson"
-                              )
-                            }
-                          >
-                            {(provided) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                className={`w-full`}
-                              >
-                                <LessonItem
-                                  key={lesson.id}
-                                  lesson={lesson}
-                                  moduleId={moduleId}
-                                  selectedLesson={selectedLesson}
-                                  onSelectLesson={onSelectLesson}
-                                  onOpenModal={handleOpenLessonDeletionModal}
-                                >
-                                  {!isDragAndDropEnabled && children}
-                                </LessonItem>
-                              </div>
-                            )}
-                          </Draggable>
-                        )
-                    )
-                  ) : (
-                    <p>Aucune leçon</p>
-                  )}
-                </div>
+                  <p
+                    className="text-xs link"
+                    onClick={handleClickToggleExpandDescription}
+                  >
+                    {`Voir ${isDescriptionExpanded ? "moins" : "plus"}`}
+                  </p>
+                </span>
               )}
-            </Droppable>
+              {course.lessons.length > 0 ? (
+                course.lessons.map(
+                  (lesson) =>
+                    lesson.id && (
+                      <div className={`w-full`}>
+                        <LessonItem
+                          key={lesson.id}
+                          lesson={lesson}
+                          moduleId={moduleId}
+                          selectedLesson={selectedLesson}
+                          canEditLesson={canEditCourse}
+                          onSelectLesson={onSelectLesson}
+                          onOpenModal={handleOpenLessonDeletionModal}
+                        >
+                          {!isDragAndDropEnabled && children}
+                        </LessonItem>
+                      </div>
+                    )
+                )
+              ) : (
+                <p>Aucune leçon</p>
+              )}
+            </div>
           </DragDropContext>
         </motion.div>
       </div>

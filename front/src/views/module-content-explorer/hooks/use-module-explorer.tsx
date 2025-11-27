@@ -7,16 +7,16 @@ import LessonRead from "../../../utils/interfaces/lesson-read";
 import LessonRating from "../../../utils/interfaces/lesson-rating";
 import toast from "react-hot-toast";
 import {
-  initialLessonsPreviewState,
-  lessonsPreviewReducer,
-} from "../store/lessons-preview-reducer";
+  initialModuleExplorerContentState,
+  moduleExplorerContentReducer,
+} from "../store/module-explorer-reducer";
 import { ACTIVITIES } from "../../../config/urls";
 import { Activity, ActivityType } from "../../../utils/interfaces/activity";
 import { OnDragEndResponder } from "react-beautiful-dnd";
 import { replaceActivityTextContent } from "../../../helpers/replaceActivityTextContent";
 
 // Hook personnalisé pour la gestion de l'aperçu des leçons destinés à l'apprenant
-const useLessonsPreview = () => {
+const useModuleExplorerContent = () => {
   // Params et states de la route active
   // ------------
   const { moduleId } = useParams();
@@ -28,8 +28,8 @@ const useLessonsPreview = () => {
   const { sendRequest, isLoading } = useHttp(true);
 
   const [state, dispatch] = useReducer(
-    lessonsPreviewReducer,
-    initialLessonsPreviewState
+    moduleExplorerContentReducer,
+    initialModuleExplorerContentState
   );
 
   const [hasOrderChanged, setOrderChanged] = useState({
@@ -255,21 +255,19 @@ const useLessonsPreview = () => {
     }
   }, [state.mode, state.selectedActivity?.type, state.selectedActivity?.url]);
 
-  const saveTextActivity = async (title: string): Promise<boolean> => {
+  const saveTextActivity = async (
+    title: string,
+    content: string | undefined
+  ): Promise<boolean> => {
     // Si le titre est manquant, avertir l'utilisateur via un toast
 
-    if (
-      !state.textActivityContent ||
-      !(state.textActivityContent?.length > 0)
-    ) {
+    if (!content || !(content.length > 0)) {
       toast.error("Le contenu est obligatoire");
       return false;
     }
 
-    if (!state.textActivityContent) return false;
-
     // clean empty div at the content beginning and the end
-    const textContent = replaceActivityTextContent(state.textActivityContent);
+    const textContent = replaceActivityTextContent(content);
 
     const applyDataPost = (activity: Activity) => {
       dispatch({ type: "create_activity", activity });
@@ -345,7 +343,11 @@ const useLessonsPreview = () => {
     return response;
   };
 
-  const saveActivity = async (): Promise<boolean> => {
+  const saveActivity = async (
+    _id?: number | undefined,
+    _title?: string | undefined,
+    content?: string | undefined
+  ): Promise<boolean> => {
     if (state.mode === "read") return false;
 
     const title =
@@ -364,7 +366,7 @@ const useLessonsPreview = () => {
       state.mode === "write" ? state.activityType : state.selectedActivity?.type
     ) {
       case "text":
-        return await saveTextActivity(title);
+        return await saveTextActivity(title, content);
       case "iframe":
         return await saveIframeActivity(title);
       default:
@@ -515,4 +517,4 @@ const useLessonsPreview = () => {
   };
 };
 
-export default useLessonsPreview;
+export default useModuleExplorerContent;

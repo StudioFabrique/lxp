@@ -27,7 +27,9 @@ export default async function getLimitedModuleDetail(
         },
       },
       bonusSkills: { select: { bonusSkill: true } },
-      contacts: { select: { contact: true } },
+      contacts: {
+        select: { contact: { select: { id: true, idMdb: true, name: true } } },
+      },
       courses: {
         where: isTeacher
           ? undefined
@@ -40,6 +42,7 @@ export default async function getLimitedModuleDetail(
           description: true,
           visibility: true,
           isPublished: true,
+          contacts: { select: { contact: { select: { idMdb: true } } } },
           lessons: {
             // where: isTeacher
             //   ? undefined
@@ -83,7 +86,10 @@ export default async function getLimitedModuleDetail(
     parcoursId: existingModule.parcours.id,
     bonusSkills: existingModule.bonusSkills.map((item) => item.bonusSkill),
     contacts: existingModule.contacts.map((item) => item.contact),
-    courses: existingModule.courses,
+    courses: existingModule.courses.map((course) => ({
+      ...course,
+      contacts: course.contacts.map((contact) => contact.contact),
+    })),
   };
   return result;
 }

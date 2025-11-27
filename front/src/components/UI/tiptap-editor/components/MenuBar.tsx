@@ -1,7 +1,7 @@
 import "./MenuBar.scss";
 import type { Editor } from "@tiptap/react";
 
-import { memo, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 
 import MenuItem from "./MenuItem.js";
 import { ContentTypePicker } from "./dropdowns/ContentTypePicker.js";
@@ -23,6 +23,7 @@ type MenuBarProps = {
   editor: Editor;
   shouldHide?: boolean;
   isSticky?: boolean;
+  onUploadAllImagesRef?: React.MutableRefObject<(() => Promise<void>) | null>;
 };
 
 // const MemoButton = memo(Toolbar.Button);
@@ -35,15 +36,16 @@ export default function MenuBar({
   editor,
   shouldHide = false,
   isSticky = false,
+  onUploadAllImagesRef,
 }: MenuBarProps) {
   const toolbarRef = useRef<HTMLDivElement>(null);
 
   const inputFileRef = useRef<HTMLInputElement>(null);
   const {
     menuContentOptions,
-    isImageUploadPending,
     onSetImageSize,
     onImageUploadFromURL,
+    uploadAllImages,
   } = useMenuContentTypes(editor, inputFileRef);
 
   const menuTextOptions = useMenuTextTypes(editor);
@@ -52,19 +54,27 @@ export default function MenuBar({
   const commands = useTextmenuCommands(editor);
   const states = useTextmenuStates(editor);
 
+  useEffect(() => {
+    if (onUploadAllImagesRef) {
+      onUploadAllImagesRef.current = uploadAllImages;
+    }
+  }, [uploadAllImages, onUploadAllImagesRef]);
+
   return (
     <Toolbar.Wrapper
       ref={toolbarRef}
       hidden={shouldHide}
       className={`self-center min-h-14 max-h-max justify-between px-2 transition-all duration-300 ease-in-out border-none shadow-none rounded-none flex-wrap ${
-        isSticky ? "fixed top-4 transform shadow-lg rounded-lg border" : ""
+        isSticky
+          ? "fixed top-4 transform shadow-lg rounded-lg border h-fit"
+          : ""
       }`}
     >
       <MemoContentTypePicker options={menuContentOptions} fixedIcon="Plus">
         <InsertImagePopover
           title="Image"
           onSetLink={onImageUploadFromURL}
-          onClickButton={() => inputFileRef.current?.click()}
+          onClickUpload={() => inputFileRef.current?.click()}
           onSetImageSize={onSetImageSize}
         />
         <EditLinkPopover title="Lien" onSetLink={commands.onLink} />
@@ -75,10 +85,7 @@ export default function MenuBar({
         <TableInsertPopover editor={editor} title="Tableau" />
       </MemoContentTypePicker>
 
-      <MemoContentTypePicker
-        options={menuTextOptions}
-        isLoading={isImageUploadPending}
-      />
+      <MemoContentTypePicker options={menuTextOptions} />
       <MemoContentTypePicker
         options={menuAlignTextOptions}
         fixedIcon="TextAlignCenter"
@@ -133,6 +140,9 @@ export default function MenuBar({
 
       <input
         ref={inputFileRef}
+        onClick={(event) => {
+          event.currentTarget.value = "";
+        }}
         className="hidden"
         type="file"
         accept="image/*"

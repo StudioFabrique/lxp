@@ -67,21 +67,19 @@ export default function LessonHome({ lessonsList, onDelete }: LessonHomeProps) {
 
               <td className="bg-transparent rounded-r-lg p-2 align-middle">
                 <div className="flex items-center gap-x-4 justify-center">
-                  <div className="" aria-label="aperçu de la leçon">
-                    <Can action="read" object="lesson">
-                      <div
-                        className="tooltip tooltip-bottom flex-items-center"
-                        data-tip="Aperçu de la leçon"
+                  <Can action="read" object="lesson">
+                    <div
+                      className="tooltip tooltip-bottom flex-items-center"
+                      data-tip="Aperçu de la leçon"
+                    >
+                      <Link
+                        to={`/admin/parcours/module/${item.course.module.id}`}
+                        state={{ lessonId: item.id }}
                       >
-                        <Link
-                          to={`/admin/parcours/module/${item.course.module.id}`}
-                          state={{ lessonId: item.id }}
-                        >
-                          <Eye />
-                        </Link>
-                      </div>
-                    </Can>
-                  </div>
+                        <Eye />
+                      </Link>
+                    </div>
+                  </Can>
                   <div className="w-6 h-6">
                     <Can action="write" object="lesson">
                       <div

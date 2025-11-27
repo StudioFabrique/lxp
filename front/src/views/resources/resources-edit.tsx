@@ -6,10 +6,10 @@ import Can from "../../components/UI/can/can.component";
 import BonusActivityItem from "../../components/resources-add/BonusActivityItem";
 import Modal from "../../components/UI/modal/modal";
 import ElementNotFound from "../../components/UI/element-not-found";
-import ActivityPreview from "../../components/lessons-preview/preview/activity-preview";
+import ActivityPreview from "../../components/module-content-explorer/preview/activity-preview.tsx";
 import useResource from "./hooks/useResource.old.ts";
-import TiptapActivity from "../../components/lessons-preview/writing/tip-tap-activity";
-import ActivityCreationOptionsButtons from "../../components/lessons-preview/writing/activity-creation-options-buttons";
+import TiptapActivity from "../../components/module-content-explorer/writing/tip-tap-activity.tsx";
+import ActivityCreationOptionsButtons from "../../components/module-content-explorer/writing/activity-creation-options-buttons.tsx";
 
 export default function ResourceEdit() {
   const {

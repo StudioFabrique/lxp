@@ -1,60 +1,20 @@
-import {
-  useState,
-  useCallback,
-  useMemo,
-  useEffect,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { Surface } from "../ui/Surface";
 import { Button } from "../ui/Button";
 import { Icon } from "../ui/Icon";
+import { useInsertImageState } from "./useInsertImageState";
 
 export type InsertImagePanelProps = {
   initialUrl?: string;
   onSetLink: (url: string, size?: "small" | "medium" | "large") => void;
-  onClickButton?: () => void;
+  onClickUpload?: () => void;
   onSetImageSize?: Dispatch<SetStateAction<"small" | "medium" | "large">>;
-};
-
-export const useInsertImageState = ({
-  initialUrl,
-  onSetLink,
-}: InsertImagePanelProps) => {
-  const [url, setUrl] = useState(initialUrl || "");
-  const [size, setSize] = useState<"small" | "medium" | "large">("small");
-
-  const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setUrl(event.target.value);
-  }, []);
-
-  const isValidUrl = useMemo(() => /^(\S+):(\/\/)?\S+$/.test(url), [url]);
-
-  const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-      if (isValidUrl) {
-        onSetLink(url, size);
-      }
-    },
-    [url, isValidUrl, onSetLink, size]
-  );
-
-  return {
-    url,
-    setUrl,
-    size,
-    setSize,
-    onChange,
-    handleSubmit,
-    isValidUrl,
-  };
 };
 
 export const InsertImagePanel = ({
   onSetLink,
   initialUrl,
-  onClickButton,
+  onClickUpload,
   onSetImageSize,
 }: InsertImagePanelProps) => {
   const state = useInsertImageState({
@@ -96,7 +56,7 @@ export const InsertImagePanel = ({
       </div>
 
       <Button
-        onClick={onClickButton}
+        onClick={onClickUpload}
         variant="primary"
         buttonSize="small"
         type="button"

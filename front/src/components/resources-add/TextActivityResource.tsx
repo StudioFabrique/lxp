@@ -1,8 +1,8 @@
 import { useCallback, useEffect } from "react";
-import TiptapActivity from "../lessons-preview/writing/tip-tap-activity";
 import useTextActivity from "../../views/resources/hooks/useTextActivity";
 import toast from "react-hot-toast";
 import { Activity } from "../../utils/interfaces/activity";
+import TiptapActivity from "../module-content-explorer/writing/tip-tap-activity";
 
 /**
  * Props for the TextActivityResource component
