@@ -24,7 +24,7 @@ export default function MenuItem({
       className={`menu-item ${
         isActive?.()
           ? `is-active ${TIPTAP_MENU_BAR_COLORS.textActive} ${TIPTAP_MENU_BAR_COLORS.backgroundActive}`
-          : TIPTAP_MENU_BAR_COLORS.text
+          : TIPTAP_MENU_BAR_COLORS.fill
       } ${
         color === "info" ? "fill-info" : "fill-base-content"
       } tooltip disabled:opacity-50`}
