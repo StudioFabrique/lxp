@@ -1,14 +1,19 @@
 import { ModuleMetadata } from "@prisma/client";
 import { prisma } from "../../utils/db";
-import { IRole } from "../../utils/interfaces/db/role";
+import userBelongsToContacts from "../../utils/userBelongsToContacts";
 
-async function deleteModule(moduleId: number, userId: string, role: IRole) {
+async function deleteModule(moduleId: number, userId: string) {
   const existingModule = await prisma.moduleMetadata.findFirst({
     where: { id: moduleId },
     select: {
       courses: true,
       module: { select: { id: true, metadatas: true } },
       admin: true,
+      parcours: {
+        select: {
+          contacts: { select: { contact: { select: { idMdb: true } } } },
+        },
+      },
     },
   });
 
@@ -17,26 +22,12 @@ async function deleteModule(moduleId: number, userId: string, role: IRole) {
     throw error;
   }
 
-  /*
-  if (existingModule.courses && existingModule.courses.length > 0) {
-    const error = {
-      message: "Suppression impossible, des cours sont rattachés à ce module",
-      statusCode: 405,
-    };
-    throw error;
-  }
-  */
-
-  const existingAdmin = await prisma.admin.findFirst({
-    where: { idMdb: userId },
-  });
-
-  if (
-    !existingAdmin ||
-    (role.role !== "admin" && existingModule.admin.id !== existingAdmin.id)
-  ) {
-    throw { message: "Unauthorized", statusCode: 403 };
-  }
+  // throw an error when the current user not belonging to contacts in parcours or is not admin
+  await userBelongsToContacts(
+    userId,
+    existingModule.parcours.contacts.map((contact) => contact.contact),
+    "Vous n'êtes pas autorisé à supprimer ce module."
+  );
 
   let deletedModule: ModuleMetadata | null = null;
 

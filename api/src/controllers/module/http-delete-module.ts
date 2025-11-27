@@ -11,10 +11,9 @@ async function httpDeleteModule(
 ) {
   const { moduleId } = req.params;
   const userId = req.auth?.userId;
-  const role = req.auth?.userRoles[0];
 
   try {
-    await deleteModule(+moduleId, userId!, role!);
+    await deleteModule(+moduleId, userId!);
     next({
       statusCode: 200,
       data: { success: true, message: "Module supprimé avec succès" },
