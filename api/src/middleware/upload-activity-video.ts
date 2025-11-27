@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import multer from "multer";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
-import { serverIssue } from "../utils/constantes";
 import { displaySize } from "../helpers/size-unit-converter";
 
 export const uploadActivityVideo = () => {
@@ -17,7 +16,7 @@ export const uploadActivityVideo = () => {
       if (file.mimetype.startsWith("video")) {
         const uniqueID: string = uuidv4();
         const fileName: string = uniqueID + new Date().getTime();
-        cb(null, file.fieldname + "-" + fileName + file.originalname);
+        cb(null, fileName + path.extname(file.originalname));
       } else {
         console.log("oops");
       }
@@ -25,13 +24,15 @@ export const uploadActivityVideo = () => {
   });
 
   return (req: Request, res: Response, next: NextFunction) => {
-    console.log("from middleware with love");
+    //console.log("from middleware with love");
     const upload = multer({
       storage: storage,
       limits: { fileSize: 50 * 1024 * 1024 }, // 100MB limit
     }).single("video");
 
     upload(req, res, function (err: any) {
+      console.log("ERROR ", err);
+
       if (err instanceof multer.MulterError) {
         if (err.code === "LIMIT_FILE_SIZE") {
           return res.status(400).json({
@@ -40,9 +41,9 @@ export const uploadActivityVideo = () => {
             )}.`,
           });
         }
+
         return res.status(400).json({
-          message:
-            "Une erreur est survenue lors du téléchargement de la vidéo.",
+          message: "Une erreur est survenue lors du téléversement de la vidéo.",
         });
       } else if (err) {
         // An unknown error occurred.

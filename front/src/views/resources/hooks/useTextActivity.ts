@@ -3,6 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 import useHttp from "../../../hooks/use-http";
 import { regexGeneric } from "../../../utils/constantes";
 import toast from "react-hot-toast";
+import { ACTIVITIES } from "../../../config/urls";
+import { Activity } from "../../../utils/interfaces/activity";
 
 const useTextActivity = () => {
   const [title, setTitle] = useState<string>("");
@@ -85,6 +87,18 @@ const useTextActivity = () => {
     }
   };
 
+  const getActivityContent = useCallback(
+    (activity: Activity) => {
+      fetch(`${ACTIVITIES}${activity!.url}`).then((response) =>
+        response.text().then((content) => {
+          editActivityContent(content);
+          setTitle(activity!.title!);
+        })
+      );
+    },
+    [editActivityContent]
+  );
+
   useEffect(() => {
     if (error.length > 0) toast.error(error);
   }, [error]);
@@ -100,6 +114,7 @@ const useTextActivity = () => {
     updateActivity,
     resetActivityDatas,
     resetStorage,
+    getActivityContent,
   };
 };
 

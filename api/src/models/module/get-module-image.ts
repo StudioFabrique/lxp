@@ -6,5 +6,10 @@ export default async function getModuleImage(moduleId: number) {
     select: { image: true },
   });
 
-  return { image: module?.image?.toString("base64") ?? null };
+  return {
+    image:
+      module && module.image
+        ? Buffer.from(module.image as any).toString("base64")
+        : null,
+  };
 }

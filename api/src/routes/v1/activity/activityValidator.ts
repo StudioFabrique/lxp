@@ -62,15 +62,6 @@ export const updateVideoValidator = [
     .withMessage("Le titre de la video doit être une chaîne de caractères.")
     .custom(stringValidateGeneric)
     .withMessage("Le titre de la video contient des caractères non autorisés."),
-  body("data.description")
-    .isString()
-    .withMessage(
-      "La description de la video doit être une chaîne de caractères."
-    )
-    .custom(stringValidateOptional)
-    .withMessage(
-      "La description de la video contient des caractères non autorisés."
-    ),
   checkValidatorResult,
 ];
 
@@ -82,22 +73,12 @@ export const postVideoValidator = [
     .withMessage("Le titre de la video doit être une chaîne de caractères.")
     .custom(stringValidateGeneric)
     .withMessage("Le titre de la video contient des caractères non autorisés."),
-  body("data.description")
-    .isString()
-    .withMessage(
-      "La description de la video doit être une chaîne de caractères."
-    )
-    .custom(stringValidateOptional)
-    .withMessage(
-      "La description de la video contient des caractères non autorisés."
-    ),
   body("data.url")
     .optional({ nullable: true })
     .isString()
     .withMessage("L'url fournie n'est pas une chaîne de caractères valide.")
     .custom(videoUrlValidate)
     .withMessage("L'url de la video contient des caractères non autorisés."),
-  checkValidatorResult,
 ];
 
 export const postIframeValidator = [

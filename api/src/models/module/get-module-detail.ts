@@ -80,7 +80,9 @@ export default async function getModuleDetail(
     title: existingModule.module.title,
     description: existingModule.module.description,
     // Convert image buffer to base64 string for frontend consumption
-    image: existingModule.module.image?.toString("base64") ?? null,
+    image: existingModule.module.image
+      ? Buffer.from(existingModule.module.image as any).toString("base64")
+      : null,
 
     // Module timing and scheduling information
     duration: existingModule.duration,

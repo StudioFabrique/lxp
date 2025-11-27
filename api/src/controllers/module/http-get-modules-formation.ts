@@ -118,11 +118,14 @@ async function httpGetModuleFormation(req: Request, res: Response) {
     result = !duplicate
       ? modules.map((item) => ({
           ...item.module,
-          thumb: item.module.thumb?.toString("base64") ?? null,
+          thumb:
+            Buffer.from(item.module!.thumb as any).toString("base64") ?? null,
         }))
       : modules.map((item) => ({
           ...item.module,
-          thumb: item.module.thumb?.toString("base64") ?? null,
+
+          thumb:
+            Buffer.from(item.module!.thumb as any).toString("base64") ?? null,
           metadatas: item.module.metadatas,
         }));
 

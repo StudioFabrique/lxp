@@ -1,4 +1,4 @@
-import { Module, ModuleMetadata } from "@prisma/client";
+import { Module, ModuleMetadata } from "../../../generated/prisma/client";
 import { prisma } from "../../utils/db";
 import User from "../../utils/interfaces/db/user";
 
@@ -194,7 +194,9 @@ async function postModule(
         id: newMetadataModule.id,
         title: newModule!.title,
         description: newModule!.description,
-        thumb: newModule!.thumb?.toString("base64") ?? null,
+        thumb: newModule!.thumb
+          ? Buffer.from(newModule!.thumb as any).toString("base64")
+          : null,
         duration: newMetadataModule.duration,
         contacts: moduleMetadata.contacts.map((c) => c.contact),
         skills: moduleMetadata.bonusSkills.map((b) => b.bonusSkill),
@@ -207,7 +209,9 @@ async function postModule(
       id: newModule!.id,
       title: newModule!.title,
       description: newModule!.description,
-      thumb: newModule!.thumb?.toString("base64") ?? null,
+      thumb: newModule!.thumb
+        ? Buffer.from(newModule!.thumb as any).toString("base64")
+        : null,
     };
   });
 
