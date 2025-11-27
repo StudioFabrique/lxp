@@ -2,10 +2,11 @@ import { Response, NextFunction } from "express";
 
 import deleteCourse from "../../models/course/delete-course-from-module";
 import CustomRequest from "../../utils/interfaces/express/custom-request";
+import { badQuery } from "../../utils/constantes";
 
 export async function httpDeleteCourse(
   req: CustomRequest,
-  _res: Response,
+  res: Response,
   next: NextFunction
 ) {
   try {
@@ -13,9 +14,12 @@ export async function httpDeleteCourse(
     const { courseId } = req.params;
     //  récupération de l'identifiant et du rôle de l'utisateur
     const userId = req.auth?.userId;
+
+    if (!userId) return res.status(400).json({ message: badQuery });
+
     //  appel de la fonction qui supprime le cours et ses ressources associés
     //  l'identifiant du cours est converti en type number
-    await deleteCourse(+courseId, userId!);
+    await deleteCourse(+courseId, userId);
     //  retourne une réponse positive
     const result = {
       statusCode: 200,
