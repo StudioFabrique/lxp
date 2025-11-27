@@ -7,6 +7,7 @@ import Modal from "../../../../UI/modal/modal";
 import useUpdateResources from "./use-update-resources";
 import ResourceUpdate from "./resource-update";
 import CreateResource from "../CreateResource";
+import ElementNotFound from "../../../../UI/element-not-found";
 
 // Props du composant
 type Props = {
@@ -105,9 +106,7 @@ function ResourcePreview({ activity, onCancel }: Props) {
             )}
           />
         ) : (
-          <div className="text-center mt-4 text-info">
-            <p>Aucune ressource</p>
-          </div>
+          <ElementNotFound message="Aucune ressource." />
         )}
       </ul>
 

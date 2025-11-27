@@ -114,7 +114,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       // Vérification du format du nom
-      let error = !regexGeneric.test(values.name);
+      let error = !regexGeneric.test(values.name as string);
 
       if (allowedMimeTypes.includes(event.target.files[0].type)) {
         // Vérifie les doublons dans la liste d'upload
@@ -147,7 +147,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
             hasError: error,
           },
         ];
-        setUploadList(resource);
+        setUploadList(resource as Resource[]);
 
         // Réinitialise le formulaire
         event.target.value = "";
@@ -261,7 +261,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
         );
       };
       sendRequest(
-        { path: `/activity/resource/${isDeleting}`, method: "delete" },
+        { path: `/activity/activity-resource/${isDeleting}`, method: "delete" },
         applyData,
       );
     }
@@ -285,8 +285,8 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
 
   // Charge les ressources au montage du composant
   useEffect(() => {
-    getResources();
-  }, [getResources]);
+    if (activity) setResources(activity.resourceBonusActivities);
+  }, [activity]);
 
   // Gère la réorganisation des ressources quand submit change
   useEffect(() => {

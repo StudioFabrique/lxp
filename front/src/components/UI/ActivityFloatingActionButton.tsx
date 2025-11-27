@@ -25,7 +25,7 @@ export default function ActivityFloatingActionButton(props: Props) {
       tooltip: "Ajouter une activité de type image",
     },
     {
-      type: "file",
+      type: "resource",
       icon: <FileStack className={style} />,
       tooltip: "Ajouter une activité de type fichier",
     },
@@ -76,7 +76,7 @@ export default function ActivityFloatingActionButton(props: Props) {
           data-tip={activity.tooltip}
           onClick={() =>
             props.onTypeSelection(
-              activity.type as "video" | "text" | "image" | "resource"
+              activity.type as "video" | "text" | "image" | "resource",
             )
           }
           aria-label={`Ajouter une activité de type ${activity.type}`}
