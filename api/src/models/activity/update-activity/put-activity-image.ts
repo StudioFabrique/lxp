@@ -60,7 +60,6 @@ export default async function putActivityImage(
       where: { id: activityId },
       data: {
         title,
-        description,
         url: filename ?? url ?? existingActivity.url,
       },
     });

@@ -1,16 +1,16 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { activiteMetaDataSchema } from "../../lib/validation/lesson/activite-video";
-import { Activity } from "../../utils/interfaces/activity";
-import VideoPlayer from "./video-player";
-import VideoForm from "./VideoForm";
-import useForm from "../UI/forms/hooks/use-form";
-import ElementNotFound from "../UI/element-not-found";
-import { isValidUrl } from "../../helpers/isValidUrl";
 import toast from "react-hot-toast";
 import { ZodError } from "zod";
-import { validationErrors } from "../../helpers/validate";
-import { maxSizeError } from "../../helpers/max-size-error";
 import { activityVideoSize } from "../../config/images-sizes";
+import { isValidUrl } from "../../helpers/isValidUrl";
+import { maxSizeError } from "../../helpers/max-size-error";
+import { validationErrors } from "../../helpers/validate";
+import { activiteMetaDataSchema } from "../../lib/validation/lesson/activite-video";
+import { Activity } from "../../utils/interfaces/activity";
+import ElementNotFound from "../UI/element-not-found";
+import useForm from "../UI/forms/hooks/use-form";
+import VideoPlayer from "../UI/VideoPlayer";
+import VideoForm from "./VideoForm";
 
 type Props = {
   parent: "lesson" | "resource";
@@ -74,7 +74,7 @@ export default function VideoActivityResource(props: Props) {
         description: values.description,
         url: values.file ? "" : values.url,
         parent: props.parent,
-      })
+      }),
     );
     if (file) fd.append("video", file);
     props.onSubmit(fd);
@@ -84,7 +84,6 @@ export default function VideoActivityResource(props: Props) {
     if (props.activity) {
       initValues({
         title: props.activity.title,
-        description: props.activity.description,
         url: props.activity.url,
       });
     }
@@ -93,16 +92,13 @@ export default function VideoActivityResource(props: Props) {
   return (
     <div>
       {props.mode === "read" ? (
-        <>
+        <div className="flex justify-center">
           {values.url ? (
-            <VideoPlayer
-              source={values?.url as string}
-              description={(values?.description as string) ?? ""}
-            />
+            <VideoPlayer url={values?.url as string} size="large" />
           ) : (
             <ElementNotFound message="Aucun aperçu disponible, choisissez une vidéo." />
           )}
-        </>
+        </div>
       ) : null}
       {props.mode !== "read" ? (
         <VideoForm

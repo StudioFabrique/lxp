@@ -23,7 +23,6 @@ export default async function getLessonDetail(
           order: true,
           url: true,
           title: true,
-          description: true,
           createdAt: true,
           updatedAt: true,
           resourceActivities: true,

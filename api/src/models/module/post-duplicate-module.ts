@@ -149,7 +149,6 @@ export default async function postDuplicateModule(
               activities: {
                 select: {
                   title: true,
-                  description: true,
                   order: true, // Display order within lesson
                   type: true, // Activity type (video, quiz, reading, etc.)
                   url: true, // Link to activity content
@@ -246,7 +245,6 @@ export default async function postDuplicateModule(
                 create: lesson.activities.map((activity) => ({
                   // Copy activity properties
                   title: activity.title,
-                  description: activity.description,
                   order: activity.order,
                   type: activity.type,
                   url: activity.url,

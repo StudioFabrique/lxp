@@ -1,8 +1,10 @@
 import { EditIcon, TextInitial, Trash2, Video } from "lucide-react";
+import { Activity } from "../../utils/interfaces/activity";
+import { getActivityIcon } from "../../helpers/getActivityIcon";
 
 type Props = {
   disabled?: boolean;
-  activity: any;
+  activity: Activity;
   onDelete: (activity: any) => void;
   onEdit: (activity: any) => void;
   onPreview: (activity: any | null) => void;
@@ -15,36 +17,16 @@ export default function BonusActivityItem({
   onDelete,
   onPreview,
 }: Props) {
-  let icon: JSX.Element;
-
-  const iconStyle = "w-4 h-4 text-primary";
-
-  switch (activity.type) {
-    case "text":
-      icon = <TextInitial className={iconStyle} />;
-      break;
-    case "video":
-      icon = <Video className={iconStyle} />;
-      break;
-    case "fichier":
-      icon = <span className={iconStyle}>📁</span>;
-      break;
-    case "image":
-      icon = <span className={iconStyle}>🖼️</span>;
-      break;
-    default:
-      icon = <span>❓</span>;
-  }
-
   const style = "hover:cursor-pointer flex p-2 rounded-sm bg-secondary/10";
 
   return (
     <div className={"flex items-center gap-2 w-full"}>
-      <div className={style}>{icon}</div>
+      <div className={style}>{getActivityIcon(activity.type)}</div>
       <button
         className={
-          "text-xs text-primary flex-1 hover:cursor-pointer flex p-2 rounded-sm bg-secondary/10"
+          "text-xs text-primary flex-1 hover:cursor-pointer flex p-2 rounded-sm bg-secondary/10 tooltip tooltip-bottom"
         }
+        data-tip="Cliquez pour prévisualiser l'activité."
         onClick={() => onPreview(activity)}
       >
         {activity.title}

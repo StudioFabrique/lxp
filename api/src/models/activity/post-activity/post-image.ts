@@ -14,7 +14,6 @@ export default async function postImage(
   lessonId: number,
   userId: string,
   title: string,
-  description: string,
   filename: string | null,
   url: string | null
 ) {
@@ -46,7 +45,6 @@ export default async function postImage(
     const newActivity = await tx.activity.create({
       data: {
         title,
-        description,
         lessonId,
         type: "image",
         url: filename ?? url ?? "", // Utilise le nom du fichier ou l'URL
