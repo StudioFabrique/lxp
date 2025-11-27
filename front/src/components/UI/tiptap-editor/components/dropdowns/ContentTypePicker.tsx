@@ -5,6 +5,7 @@ import { Toolbar } from "../ui/Toolbar";
 import { Icon } from "../ui/Icon";
 import { Surface } from "../ui/Surface";
 import { DropdownButton, DropdownCategoryTitle } from "../ui/Dropdown";
+import { TIPTAP_MENU_BAR_COLORS } from "../Menubar/MenuBarConfig";
 
 export type ContentTypePickerOption = {
   label: string;
@@ -62,20 +63,25 @@ export const ContentTypePicker = ({
           ) : (
             <>
               <Icon
-                className="text-base-content"
+                className={TIPTAP_MENU_BAR_COLORS.text}
                 name={
                   (activeItem?.type === "option" && activeItem.icon) ||
                   fixedIcon ||
                   "Pilcrow"
                 }
               />
-              <Icon name="ChevronDown" className="w-2 h-2 text-base-content" />
+              <Icon
+                name="ChevronDown"
+                className={`w-2 h-2 ${TIPTAP_MENU_BAR_COLORS.text}`}
+              />
             </>
           )}
         </Toolbar.Button>
       </Dropdown.Trigger>
       <Dropdown.Content asChild>
-        <Surface className="flex flex-col gap-1 px-2 py-4 my-5 bg-slate-200">
+        <Surface
+          className={`flex flex-col gap-1 px-2 py-4 my-5 ${TIPTAP_MENU_BAR_COLORS.background}`}
+        >
           {options.map((option) => {
             if (isOption(option)) {
               return (
@@ -86,9 +92,11 @@ export const ContentTypePicker = ({
                 >
                   <Icon
                     name={option.icon}
-                    className="w-4 h-4 mr-1 text-base-content"
+                    className={`w-4 h-4 mr-1 ${TIPTAP_MENU_BAR_COLORS.text}`}
                   />
-                  <span className="text-base-content select-none">
+                  <span
+                    className={`${TIPTAP_MENU_BAR_COLORS.text} select-none`}
+                  >
                     {option.label}
                   </span>
                 </DropdownButton>
