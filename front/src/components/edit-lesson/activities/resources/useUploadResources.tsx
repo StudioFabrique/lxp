@@ -45,7 +45,7 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
   // Mémoisation du nombre de fichiers pour éviter des re-renders inutiles
   const filesNumber = useMemo(
     () => filesList?.length ?? 0,
-    [filesList?.length]
+    [filesList?.length],
   );
 
   // Ajout d'un état pour le contrôleur d'annulation
@@ -59,8 +59,7 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       // Vérification du type de fichier
-      let error = !regexGeneric.test(values.name);
-      console.log("hello");
+      let error = !regexGeneric.test(values.name as string);
 
       if (allowedMimeTypes.includes(event.target.files[0].type)) {
         filesList?.forEach((file) => {
@@ -77,13 +76,13 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
             hasError: error,
           },
         ];
-        setFilesList(resource);
+        setFilesList(resource as Resource[]);
         // Réinitialisation du champ de fichier
         event.target.value = "";
         onChangeValue("name", "");
       } else {
         toast.error(
-          "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX"
+          "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX",
         );
         return;
       }
@@ -154,7 +153,7 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
         body: formData,
         signal: controller.signal, // Ajout du signal pour l'annulation
       },
-      applyData
+      applyData,
     );
   };
 
@@ -166,7 +165,7 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
       name: string;
       file: File;
       hasError: boolean;
-    }[]
+    }[],
   ) => {
     setFilesList(newList);
   };

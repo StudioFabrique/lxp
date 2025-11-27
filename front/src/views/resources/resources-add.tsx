@@ -12,6 +12,8 @@ import ActivityFloatingActionButton from "../../components/UI/ActivityFloatingAc
 import TextActivityResource from "../../components/resources-add/TextActivityResource";
 import ActivityWrapper from "../../components/resources-add/ActivityWrapper";
 import VideoActivityResource from "../../components/resources-add/VideoActivityResource";
+import ResourceUpload from "../../components/edit-lesson/activities/resources/resource-upload";
+import ResourcePreview from "../../components/edit-lesson/activities/resources/preview/resource-preview";
 
 export default function ResourceAdd() {
   const {
@@ -129,6 +131,13 @@ export default function ResourceAdd() {
                       onClose={closePreviewActivity}
                       onSubmit={uploadVideo}
                       parent="resource"
+                    />
+                  ) : null}
+
+                  {activityType === "resource" ? (
+                    <ResourcePreview
+                      activity={previewActivity!}
+                      onCancel={closePreviewActivity}
                     />
                   ) : null}
                 </ActivityWrapper>

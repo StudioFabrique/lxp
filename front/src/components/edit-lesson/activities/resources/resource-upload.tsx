@@ -4,54 +4,75 @@ import useUploadResources from "./useUploadResources";
 import ResourceForm from "./resource-form";
 import ResourcesAction from "./resource-actions";
 import ResourcesList from "./resources-list";
+import ElementNotFound from "../../../UI/element-not-found";
 
 type Props = {
-  onCancel: (value: boolean) => void; // Fonction pour annuler l'upload
-  onResetForm?: () => void; // Rendre optionnel avec ?
+  /** Function called to cancel the upload process */
+  onCancel: (value: boolean) => void;
+  /** Optional function to reset the form */
+  onResetForm?: () => void;
 };
 
 /**
- * Composant pour gérer l'upload de ressources
- * @param onCancel - Fonction appelée pour annuler l'upload
+ * ResourceUpload Component
+ *
+ * Manages the upload process for resources including file selection,
+ * validation, progress tracking, and submission.
+ *
+ * Features:
+ * - File selection and preview
+ * - Drag and drop reordering
+ * - Upload progress tracking
+ * - Form validation
+ * - Prevents accidental page navigation during upload
+ *
+ * @param onCancel - Function called to cancel the upload
+ * @param onResetForm - Optional function to reset the form state
  */
 export default function ResourceUpload({ onCancel }: Props) {
-  // Récupération des fonctions et données du hook personnalisé
+  // Retrieve functions and data from custom hook
   const {
-    data, // Données du formulaire (valeurs, erreurs, fonction de modification)
-    filesList, // Liste des fichiers à uploader
-    filesNumber, // Nombre de fichiers dans la liste
-    handleFileChange, // Gestion du changement de fichier
-    handleRemoveResource, // Suppression d'un fichier de la liste
-    handleReorder, // Mise à jour de l'ordre des fichiers
-    handleSubmit, // Soumission du formulaire
-    isLoading, // État de chargement
-    resetFilesList, // Réinitialisation de la liste des fichiers
-    uploadProgress, // Progression de l'upload
-    cancelUpload, // Nouvelle fonction
-    hasError,
+    data, // Form data (values, errors, update function)
+    filesList, // List of files to upload
+    filesNumber, // Number of files in the list
+    handleFileChange, // Handle file selection change
+    handleRemoveResource, // Remove a file from the list
+    handleReorder, // Update file order
+    handleSubmit, // Submit the form
+    isLoading, // Loading state
+    resetFilesList, // Reset the files list
+    uploadProgress, // Upload progress tracking
+    cancelUpload, // Cancel upload function
+    hasError, // Error state
   } = useUploadResources(onCancel);
 
+  /**
+   * Prevent user from accidentally leaving the page during upload
+   * Shows a browser confirmation dialog when the user tries to navigate away
+   */
   useEffect(() => {
-    // Fonction qui sera appelée avant que l'utilisateur ne quitte la page
+    // Function called before the user leaves the page
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      // Annule la fermeture par défaut et affiche un message
+      // Prevent default behavior and show confirmation message
       event.preventDefault();
-      event.returnValue = "Êtes-vous sûr de vouloir quitter ?";
+      // Modern browsers ignore custom messages and show their own
+      // Return value triggers the browser's confirmation dialog
+      return "Êtes-vous sûr de vouloir quitter ?";
     };
 
-    // Ajoute l'écouteur d'événement
+    // Add event listener
     window.addEventListener("beforeunload", handleBeforeUnload);
 
-    // Nettoie l'écouteur quand le composant est démonté
+    // Cleanup listener when component unmounts
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
 
   return (
-    // Layout principal en grille avec 2 colonnes sur xl
+    // Main grid layout with 2 columns on xl screens
     <section className="grid xl:grid-cols-2 gap-4">
-      {/* Colonne de gauche : formulaire et actions */}
+      {/* Left column: form and actions */}
       <article className="flex flex-col gap-y-4">
         <ResourceForm
           data={{
@@ -70,7 +91,7 @@ export default function ResourceUpload({ onCancel }: Props) {
           hasError={hasError}
         />
       </article>
-      {/* Colonne de droite : liste des fichiers */}
+      {/* Right column: files list */}
       <article>
         {filesList && filesList.length !== 0 ? (
           <ResourcesList
@@ -82,7 +103,7 @@ export default function ResourceUpload({ onCancel }: Props) {
           />
         ) : (
           <div className="flex justify-center items-center h-full">
-            <p>Aucune ressource en attente de téléversement</p>
+            <ElementNotFound message="Aucune ressource en attente de téléversement." />
           </div>
         )}
       </article>
