@@ -11,6 +11,7 @@ import {
   postRoleValidator,
   putRoleValidator,
   removePermissionValidator,
+  roleIdValidator,
 } from "./permission-validators";
 import httpPutRole from "../../../controllers/permission/http-put-role";
 import httpGetSearchRoles from "../../../controllers/permission/http-get-search-roles";
@@ -83,6 +84,7 @@ permissionRouter.put(
 permissionRouter.put(
   "/role/:id/reset",
   checkPermissions("role"),
+  roleIdValidator,
   httpPutResetRole
 );
 

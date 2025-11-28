@@ -98,3 +98,19 @@ export const removePermissionValidator = [
 
   checkValidatorResult,
 ];
+
+// Validateur pour vérifier que l'ID du role est un ID MongoDB valide
+export const roleIdValidator = [
+  param("id")
+    .isMongoId()
+    .withMessage("L'identifiant de l'utilisateur est invalide."),
+];
+
+export const searchRoleValidator = [
+  param("searchValue")
+    .isString()
+    .withMessage("Valeur invalide")
+    .notEmpty()
+    .withMessage("Valeur absente")
+    .escape(),
+];
