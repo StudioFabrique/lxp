@@ -92,7 +92,7 @@ async function getCourseInformations(courseId: number) {
       ...courseWithoutModule,
       title: moduleNested.title,
       description: moduleNested.description,
-      image: Buffer.from(image as any).toString("base64") ?? null,
+      image: image ? Buffer.from(image as any).toString("base64") : null,
     },
   };
 }

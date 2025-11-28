@@ -125,8 +125,9 @@ async function getParcoursById(parcoursId: number, userId: string) {
         ...item,
         module: {
           ...item.module,
-          thumb:
-            Buffer.from(item.module.thumb as any).toString("base64") ?? null,
+          thumb: item.module.thumb
+            ? Buffer.from(item.module.thumb as any).toString("base64")
+            : null,
         },
       }));
       result = { ...result, modules: updatedModules };

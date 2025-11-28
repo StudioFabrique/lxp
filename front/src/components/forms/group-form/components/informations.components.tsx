@@ -43,6 +43,7 @@ const Informations: FC<{
           maxSize={headerImageMaxSize}
           onSetFile={onSetFile}
           label="Téléverser une image de groupe"
+          variant="minimized"
         />
       </span>
     </Wrapper>
