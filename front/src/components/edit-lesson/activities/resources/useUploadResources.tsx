@@ -29,23 +29,31 @@ export const allowedMimeTypes = [
  * @param onCancel - Fonction appelée pour annuler l'upload
  * @returns Objet contenant les fonctions et données nécessaires pour gérer l'upload
  */
-const useUploadResources = (onCancel: (value: boolean) => void) => {
+const useUploadResources = (
+  onCancel: (value: boolean) => void,
+  onSubmit?: () => void,
+) => {
   // État pour stocker la liste des fichiers
   const [filesList, setFilesList] = useState<Resource[] | null>(null);
 
+  const { resourceId } = useParams();
+  const { lessonId } = useParams();
+
+  let id: number | null = null;
+  if (resourceId) id = parseInt(resourceId);
+  else if (lessonId) id = parseInt(lessonId);
   // Hook pour gérer le formulaire (validation, valeurs, etc.)
   const { errors, values, onChangeValue } = useForm();
   const data = { values, errors, onChangeValue };
 
   // Hook pour les requêtes HTTP et récupération de l'ID de la leçon
   const { isLoading, sendRequest, uploadProgress } = useHttp();
-  const { lessonId } = useParams();
   const [hasError, setHasError] = useState(false);
 
   // Mémoisation du nombre de fichiers pour éviter des re-renders inutiles
   const filesNumber = useMemo(
     () => filesList?.length ?? 0,
-    [filesList?.length]
+    [filesList?.length],
   );
 
   // Ajout d'un état pour le contrôleur d'annulation
@@ -59,8 +67,7 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       // Vérification du type de fichier
-      let error = !regexGeneric.test(values.name);
-      console.log("hello");
+      let error = !regexGeneric.test(values.name as string);
 
       if (allowedMimeTypes.includes(event.target.files[0].type)) {
         filesList?.forEach((file) => {
@@ -77,13 +84,13 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
             hasError: error,
           },
         ];
-        setFilesList(resource);
+        setFilesList(resource as Resource[]);
         // Réinitialisation du champ de fichier
         event.target.value = "";
         onChangeValue("name", "");
       } else {
         toast.error(
-          "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX"
+          "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX",
         );
         return;
       }
@@ -129,6 +136,7 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
     const applyData = (data: { success: boolean; message: string }) => {
       if (data.success) toast.success(data.message);
       onCancel(false);
+      onSubmit?.();
     };
 
     // Préparation des métadonnées des ressources
@@ -141,12 +149,15 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
     }
 
     // Ajout des métadonnées au FormData
-    formData.append("data", JSON.stringify(resources));
+    formData.append(
+      "data",
+      JSON.stringify({ resources, parent: lessonId ? "lesson" : "resource" }),
+    );
 
     // Envoi de la requête POST au serveur
     sendRequest(
       {
-        path: `/activity/resource/${lessonId}`,
+        path: `/activity/resource/${id}`,
         method: "post",
         headers: {
           "Content-Type": "multipart/form-data",
@@ -154,7 +165,7 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
         body: formData,
         signal: controller.signal, // Ajout du signal pour l'annulation
       },
-      applyData
+      applyData,
     );
   };
 
@@ -166,7 +177,7 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
       name: string;
       file: File;
       hasError: boolean;
-    }[]
+    }[],
   ) => {
     setFilesList(newList);
   };

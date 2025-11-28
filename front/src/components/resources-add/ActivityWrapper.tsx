@@ -14,7 +14,10 @@ type Props = {
 export default function ActivityWrapper(props: Props) {
   return (
     <>
-      {props.mode === "read" && props.activity ? (
+      {(props.mode === "read" && props.activity) ||
+      (props.mode === "edit" &&
+        props.activity &&
+        props.activity.type === "resource") ? (
         <div className="flex items-center gap-x-4 justify-start">
           <p className="whitespace-nowrap text-base-content/50">
             Titre de l'activité :&nbsp;
