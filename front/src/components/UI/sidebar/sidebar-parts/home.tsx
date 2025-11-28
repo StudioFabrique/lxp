@@ -7,14 +7,16 @@ const Home = ({ currentRoute }: { currentRoute: string[] }) => {
   return (
     <li>
       <Link to={`/${currentRoute[0]}`}>
-        <div className="tooltip w-6 h-6" data-tip="Accueil LXP">
-          <div className="flex hover justify-center items-center">
-            <HomeIcon className="z-10 pointer-events-none" />
+        <div data-tip="Accueil LXP">
+          <div className="flex gap-2 py-1 items-center">
             <span
-              className={`absolute p-5 rounded-lg hover:bg-primary/50 ${
+              className={`p-2 rounded-lg hover:bg-primary/50 ${
                 isCurrentPathActive && "bg-primary/50"
               }`}
-            />
+            >
+              <HomeIcon className="w-5 h-5" />
+            </span>
+            <span>Accueil</span>
           </div>
         </div>
       </Link>

@@ -1,7 +1,7 @@
+import CourseIcon from "../svg/course-icon";
 import Course from "./sidebar-parts/course";
 import Formation from "./sidebar-parts/formation";
 import Group from "./sidebar-parts/group";
-import Home from "./sidebar-parts/home";
 import Lesson from "./sidebar-parts/lesson";
 import Mediatheque from "./sidebar-parts/mediatheque";
 import Module from "./sidebar-parts/module";
@@ -9,9 +9,10 @@ import MotionSidebarWrapper from "./sidebar-parts/motion-sidebar-wrapper";
 import Parcours from "./sidebar-parts/parcours";
 import Resources from "./sidebar-parts/resources";
 import Roles from "./sidebar-parts/roles";
+import SidebarItem from "./sidebar-parts/sidebar-item";
 import Tags from "./sidebar-parts/tags";
 import User from "./sidebar-parts/user";
-import { Plus } from "lucide-react";
+import { BookMarked, Component, Home, Plus, Rocket } from "lucide-react";
 import { useState, useEffect } from "react";
 
 type SharedSideBarProps = {
@@ -34,10 +35,46 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
   }, []);
 
   const initialItems = [
-    <Formation key="formation" currentRoute={currentRoute} />,
-    <Parcours key="parcours" currentRoute={currentRoute} />,
-    <Module key="module" currentRoute={currentRoute} />,
-    <Course key="course" currentRoute={currentRoute} />,
+    <SidebarItem
+      key={"formation"}
+      currentRoute={currentRoute}
+      itemPath={"formation"}
+      icon={<BookMarked />}
+      linkTo={`/${currentRoute[0]}/formation`}
+    >
+      Formations
+    </SidebarItem>,
+    <SidebarItem
+      key={"parcours"}
+      currentRoute={currentRoute}
+      itemPath={"parcours"}
+      icon={<Rocket />}
+      linkTo={`/${currentRoute[0]}/parcours`}
+    >
+      Parcours
+    </SidebarItem>,
+    <SidebarItem
+      key={"module"}
+      currentRoute={currentRoute}
+      itemPath={"module"}
+      icon={<Component />}
+      linkTo={`/${currentRoute[0]}/module`}
+    >
+      Modules
+    </SidebarItem>,
+    <SidebarItem
+      key={"course"}
+      currentRoute={currentRoute}
+      itemPath={"course"}
+      icon={
+        <span className="w-6 h-6">
+          <CourseIcon />
+        </span>
+      }
+      linkTo={`/${currentRoute[0]}/course`}
+    >
+      Cours
+    </SidebarItem>,
     <Lesson key="lesson" currentRoute={currentRoute} />,
   ];
 
@@ -51,8 +88,15 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
   ];
 
   return (
-    <ul className={`flex flex-col gap-6 items-center`}>
-      <Home key="home" currentRoute={currentRoute} />
+    <ul className={`flex flex-col gap-6 pl-4`}>
+      <SidebarItem
+        itemPath={undefined}
+        currentRoute={currentRoute}
+        icon={<Home />}
+        linkTo={`/${currentRoute[0]}`}
+      >
+        Accueil
+      </SidebarItem>
       {showAll ? (
         [...initialItems, ...moreItems(false)]
       ) : (

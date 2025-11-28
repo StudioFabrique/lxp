@@ -28,11 +28,11 @@ const SidebarWrapper = ({
   }, []);
 
   return (
-    <nav className="w-24 h-screen fixed p-4 pt-2 z-100 flex flex-col gap-2">
+    <nav className="w-3xs h-screen fixed p-4 pt-2 z-100 flex flex-col gap-2">
       {companyLogo ? (
-        <div className="w-full bg-slate-100 rounded-lg">
+        <div className="w-24 bg-slate-100 rounded-lg">
           <img
-            className="h-full w-full object-contain rounded-lg border-slate-700 border-2 p-1"
+            className="object-contain rounded-lg border-slate-700 border-2 p-0.5"
             src={companyLogo}
           />
         </div>
