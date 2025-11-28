@@ -69,6 +69,23 @@ export const resourcesRbac = [
     description:
       "Espace personnel de suivi permettant de visualiser sa progression, gérer son profil et personnaliser son expérience d'apprentissage",
   },
+  {
+    name: "admin",
+    description: "Permission temporaire - Afficher les admins",
+  },
+  {
+    name: "student",
+    description: "Permission temporaire - Afficher les étudiants",
+  },
+  {
+    name: "teacher",
+    description: "Permission temporaire - Afficher les formateurs",
+  },
+  {
+    name: "everything",
+    description:
+      "Permission temporaire - Afficher tous les utilisateurs de tous roles confondus",
+  },
 ];
 
 // Permissions pour les rôles d'interface
@@ -95,7 +112,10 @@ export const componentPermissionsList = [
 // Pour les actions write, update et delete pour teacher rank 2
 // enlever certaines ressources du tableau
 const teacherResourcesRbac = resourcesRbac.filter(
-  (resource) => !["user", "permission", "role"].includes(resource.name)
+  (resource) =>
+    !["permission", "role", "admin", "teacher", "everything"].includes(
+      resource.name
+    )
 );
 
 // Ressources (toutes permissions crud) sur les différents rôles template
