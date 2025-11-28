@@ -39,7 +39,7 @@ function useManagePermissions(id: string) {
           .filter((res) => !permissions[type].find((p) => p.name === res.name))
           .map((r) => ({ ...r, fullName: `${type}:${r.name}` })),
       }),
-      {} as Permissions,
+      {} as Permissions
     );
   }, [permissions, resources]);
 
@@ -83,7 +83,7 @@ function useManagePermissions(id: string) {
               };
             }),
         }),
-        {} as Permissions,
+        {} as Permissions
       );
 
       setPermissions(permissions);
@@ -129,7 +129,7 @@ function useManagePermissions(id: string) {
         path: `/permission/role/${id}/permission/${name}`,
         method: "post",
       },
-      applyData,
+      applyData
     );
   };
 
@@ -143,7 +143,21 @@ function useManagePermissions(id: string) {
         path: `/permission/role/${id}/permission/${name}`,
         method: "delete",
       },
-      applyData,
+      applyData
+    );
+  };
+
+  const handleResetPermissions = () => {
+    const applyData = () => {
+      handleGetPermissionsRequest();
+    };
+
+    sendRequest(
+      {
+        path: `/permission/role/${id}/reset`,
+        method: "put",
+      },
+      applyData
     );
   };
 
@@ -163,6 +177,7 @@ function useManagePermissions(id: string) {
     role,
     onAddPermission: handleAddPermission,
     onDeletePermission: handleDeletePermission,
+    onResetPermissions: handleResetPermissions,
   };
 }
 

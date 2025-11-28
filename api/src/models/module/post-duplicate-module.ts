@@ -281,10 +281,11 @@ export default async function postDuplicateModule(
   return {
     id: duplicatedModuleMetadata.id,
     title: existingModuleMetadata.module.title,
-    thumb:
-      Buffer.from(existingModuleMetadata.module.image as any).toString(
-        "base64"
-      ) ?? null,
+    thumb: existingModuleMetadata.module.image
+      ? Buffer.from(existingModuleMetadata.module.image as any).toString(
+          "base64"
+        )
+      : null,
     description: existingModuleMetadata.module.description,
     contacts: duplicatedModuleMetadata.contacts.map((c) => ({
       id: c.contact.id,

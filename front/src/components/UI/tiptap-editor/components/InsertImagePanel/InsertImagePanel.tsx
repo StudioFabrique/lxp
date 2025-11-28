@@ -3,6 +3,7 @@ import { Surface } from "../ui/Surface";
 import { Button } from "../ui/Button";
 import { Icon } from "../ui/Icon";
 import { useInsertImageState } from "./useInsertImageState";
+import { TIPTAP_MENU_BAR_COLORS } from "../Menubar/MenuBarConfig";
 
 export type InsertImagePanelProps = {
   initialUrl?: string;
@@ -27,13 +28,15 @@ export const InsertImagePanel = ({
   }, [state.size, onSetImageSize]);
 
   return (
-    <Surface className="flex flex-col p-2">
+    <Surface
+      className={`flex flex-col p-2 ${TIPTAP_MENU_BAR_COLORS.background} ${TIPTAP_MENU_BAR_COLORS.text}`}
+    >
       <form onSubmit={state.handleSubmit} className="flex items-center gap-2">
-        <label className="flex items-center gap-2 p-2 rounded-lg bg-neutral-100/20 cursor-text">
-          <Icon name="Image" className="flex-none text-black dark:text-white" />
+        <label className="flex items-center gap-2 p-2 rounded-lg bg-neutral-100/80 cursor-text">
+          <Icon name="Image" className="flex-none" />
           <input
             type="url"
-            className="flex-1 bg-transparent outline-none min-w-[12rem] text-black text-sm dark:text-white"
+            className="flex-1 bg-transparent outline-none min-w-[12rem] text-sm"
             placeholder="URL de l'image"
             value={state.url}
             onChange={state.onChange}

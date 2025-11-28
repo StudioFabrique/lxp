@@ -3,6 +3,7 @@ import { Surface } from "../ui/Surface";
 import { Icon } from "../ui/Icon";
 import { Button } from "../ui/Button";
 import { Toggle } from "../ui/Toggle";
+import { TIPTAP_MENU_BAR_COLORS } from "../Menubar/MenuBarConfig";
 
 export type LinkEditorPanelProps = {
   initialUrl?: string;
@@ -59,13 +60,15 @@ export const LinkEditorPanel = ({
   });
 
   return (
-    <Surface className="p-2">
+    <Surface
+      className={`flex flex-col p-2 ${TIPTAP_MENU_BAR_COLORS.background} ${TIPTAP_MENU_BAR_COLORS.text}`}
+    >
       <form onSubmit={state.handleSubmit} className="flex items-center gap-2">
-        <label className="flex items-center gap-2 p-2 rounded-lg bg-neutral-100/20 cursor-text">
-          <Icon name="Link" className="flex-none text-black dark:text-white" />
+        <label className="flex items-center gap-2 p-2 rounded-lg bg-neutral-100/80 cursor-text">
+          <Icon name="Link" className="flex-none" />
           <input
             type="url"
-            className="flex-1 bg-transparent outline-none min-w-[12rem] text-black text-sm dark:text-white"
+            className="flex-1 bg-transparent outline-none min-w-[12rem]"
             placeholder="URL du lien"
             value={state.url}
             onChange={state.onChange}
