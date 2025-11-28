@@ -95,11 +95,11 @@ export const TableInsertPopover = ({
         </Toolbar.Button>
       </Popover.Trigger>
       <Popover.Content
-        className="absolute left-[4.6rem] -top-10"
+        className="absolute left-[4.6rem] bottom-0"
         sideOffset={10}
         asChild
       >
-        <Surface className="p-4 w-80">
+        <Surface className={`p-4 w-80 ${TIPTAP_MENU_BAR_COLORS.background}`}>
           <div className="space-y-4">
             <div
               className={`text-sm font-medium ${TIPTAP_MENU_BAR_COLORS.text}`}

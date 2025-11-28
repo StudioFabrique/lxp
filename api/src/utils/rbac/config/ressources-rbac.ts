@@ -95,7 +95,7 @@ export const componentPermissionsList = [
 // Pour les actions write, update et delete pour teacher rank 2
 // enlever certaines ressources du tableau
 const teacherResourcesRbac = resourcesRbac.filter(
-  (resource) => !["user", "permission", "role"].includes(resource.name),
+  (resource) => !["user", "permission", "role"].includes(resource.name)
 );
 
 // Ressources (toutes permissions crud) sur les différents rôles template
@@ -144,7 +144,7 @@ export const resourcesRbacByRank = {
 };
 
 export async function getPermissionsByRank(
-  rank: number,
+  rank: number
 ): Promise<
   { resource: string; actions: ("read" | "write" | "update" | "delete")[] }[]
 > {
