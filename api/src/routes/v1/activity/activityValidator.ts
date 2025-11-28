@@ -43,7 +43,7 @@ export const updateActivityValidator = [
   body("description")
     .custom(stringValidateGeneric)
     .withMessage(
-      "La description de la video contient des caractères non autorisés."
+      "La description de la video contient des caractères non autorisés.",
     ),
   checkValidatorResult,
 ];
@@ -89,16 +89,16 @@ export const postIframeValidator = [
     .withMessage("Le titre de l'activité doit être une chaîne de caractères.")
     .custom(stringValidateGeneric)
     .withMessage(
-      "Le titre de l'activité contient des caractères non autorisés."
+      "Le titre de l'activité contient des caractères non autorisés.",
     ),
   body("description")
     .isString()
     .withMessage(
-      "La description de l'activité doit être une chaîne de caractères."
+      "La description de l'activité doit être une chaîne de caractères.",
     )
     .custom(stringValidateOptional)
     .withMessage(
-      "La description de l'activité contient des caractères non autorisés."
+      "La description de l'activité contient des caractères non autorisés.",
     ),
   body("url")
     .isString()
@@ -116,16 +116,16 @@ export const updateIframeValidator = [
     .withMessage("Le titre de l'activité doit être une chaîne de caractères.")
     .custom(stringValidateGeneric)
     .withMessage(
-      "Le titre de l'activité contient des caractères non autorisés."
+      "Le titre de l'activité contient des caractères non autorisés.",
     ),
   body("description")
     .isString()
     .withMessage(
-      "La description de l'activité doit être une chaîne de caractères."
+      "La description de l'activité doit être une chaîne de caractères.",
     )
     .custom(stringValidateOptional)
     .withMessage(
-      "La description de l'activité contient des caractères non autorisés."
+      "La description de l'activité contient des caractères non autorisés.",
     ),
   body("url")
     .isString()
@@ -136,20 +136,24 @@ export const updateIframeValidator = [
 ];
 
 export const putReorderActivitiesValidator = [
-  body()
+  body("activitiesIds")
     .isArray()
     .notEmpty()
     .withMessage("La leçon requiert un tableau d'identifiants.")
     .notEmpty(),
-  body("*")
+  body("activitiesIds.*")
     .notEmpty()
     .withMessage(
-      "Le tableau d'identifiants doit contenir une ou plusieurs valeurs."
+      "Le tableau d'identifiants doit contenir une ou plusieurs valeurs.",
     )
     .isNumeric()
     .withMessage(
-      "Le tableau d'identifiants doit contenir des nombres entiers uniquement."
+      "Le tableau d'identifiants doit contenir des nombres entiers uniquement.",
     ),
+  body("parent")
+    .optional()
+    .isIn(["lesson", "resource"])
+    .withMessage('Le champ "parent" doit être soit "lesson" soit "resource".'),
   checkValidatorResult,
 ];
 
@@ -157,7 +161,7 @@ export const putResourceValidator = [
   body("data.label")
     .custom(stringValidateGeneric)
     .withMessage(
-      "Le label de la ressource contient des caractères non autorisés."
+      "Le label de la ressource contient des caractères non autorisés.",
     ),
   checkValidatorResult,
 ];

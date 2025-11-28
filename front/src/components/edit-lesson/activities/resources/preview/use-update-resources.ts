@@ -20,7 +20,11 @@ let timer: NodeJS.Timeout | null = null;
  * @param activity - L'activité dont les ressources sont à gérer
  * @param onCancel - Fonction de callback appelée lors de l'annulation
  */
-const useUpdateResources = (activity: Activity, onCancel: () => void) => {
+const useUpdateResources = (
+  activity: Activity,
+  onCancel: () => void,
+  parent: "lesson" | "resource" = "lesson",
+) => {
   // États pour gérer les ressources et leur manipulation
   const [resources, setResources] = useState<ActivityResource[]>([]); // Liste des ressources existantes
   const [isAdding, setIsAdding] = useState(false); // État indiquant si on est en train d'ajouter une ressource
@@ -86,12 +90,15 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
         {
           path: `/activity/reorder-resource/${activity.id}`,
           method: "put",
-          body: resources.map((resource) => resource.id),
+          body: {
+            activitiesIds: resources.map((resource) => resource.id),
+            parent,
+          },
         },
         applyData,
       );
     }, 1000);
-  }, [sendRequest, resources, activity.id]);
+  }, [sendRequest, resources, activity.id, parent]);
 
   /**
    * Récupère les ressources de l'activité depuis le serveur
@@ -285,7 +292,9 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
 
   // Charge les ressources au montage du composant
   useEffect(() => {
-    if (activity) setResources(activity.resourceBonusActivities);
+    if (activity && activity.resourceBonusActivities)
+      setResources(activity.resourceBonusActivities);
+    else setResources([]);
   }, [activity]);
 
   // Gère la réorganisation des ressources quand submit change

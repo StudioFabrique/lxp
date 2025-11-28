@@ -33,13 +33,18 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
   // État pour stocker la liste des fichiers
   const [filesList, setFilesList] = useState<Resource[] | null>(null);
 
+  const { resourceId } = useParams();
+  const { lessonId } = useParams();
+
+  let id: number | null = null;
+  if (resourceId) id = parseInt(resourceId);
+  else if (lessonId) id = parseInt(lessonId);
   // Hook pour gérer le formulaire (validation, valeurs, etc.)
   const { errors, values, onChangeValue } = useForm();
   const data = { values, errors, onChangeValue };
 
   // Hook pour les requêtes HTTP et récupération de l'ID de la leçon
   const { isLoading, sendRequest, uploadProgress } = useHttp();
-  const { lessonId } = useParams();
   const [hasError, setHasError] = useState(false);
 
   // Mémoisation du nombre de fichiers pour éviter des re-renders inutiles
@@ -140,12 +145,15 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
     }
 
     // Ajout des métadonnées au FormData
-    formData.append("data", JSON.stringify(resources));
+    formData.append(
+      "data",
+      JSON.stringify({ resources, parent: lessonId ? "lesson" : "resource" }),
+    );
 
     // Envoi de la requête POST au serveur
     sendRequest(
       {
-        path: `/activity/resource/${lessonId}`,
+        path: `/activity/resource/${id}`,
         method: "post",
         headers: {
           "Content-Type": "multipart/form-data",

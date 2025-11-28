@@ -11,8 +11,8 @@ import fs from "fs";
  */
 export default async function httpPostActivityResource(
   req: CustomRequest,
-  res: Response,
-  next: NextFunction
+  _res: Response,
+  next: NextFunction,
 ) {
   try {
     // Appel au service pour sauvegarder les ressources
