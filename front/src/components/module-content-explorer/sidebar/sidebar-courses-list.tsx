@@ -75,7 +75,7 @@ const SidebarCoursesList = ({
 
               <FadeWrapper>
                 <span
-                  className="radial-progress self-end"
+                  className="radial-progress self-end mb-5"
                   style={radialStyle(
                     !Number.isNaN(moduleProgress) ? moduleProgress : 0
                   )}

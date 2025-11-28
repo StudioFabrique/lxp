@@ -67,8 +67,6 @@ const ModuleExplorerContent = () => {
     selectedLesson?.course?.contacts
   );
 
-  console.log(selectedLesson?.course?.contacts);
-
   const editTitle = useCallback(
     (title: string) => {
       dispatch({ type: "update_activity_title", title });
