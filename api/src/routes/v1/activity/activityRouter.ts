@@ -139,7 +139,7 @@ activityRouter.put(
 
 // Route pour créer une nouvelle activité de type image
 activityRouter.post(
-  "/image/:lessonId",
+  "/image/:lessonId/:parent",
   checkPermissions("lesson"),
   uploadActivityImage(),
   mediatheque("image"),

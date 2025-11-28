@@ -19,6 +19,7 @@ import bgImageGradient from "../../../../utils/bg-image-gradient";
 type Props = {
   activity?: Activity;
   onCancel: (value: boolean) => void;
+  parent?: "lesson" | "resource";
 };
 
 /**
@@ -26,7 +27,11 @@ type Props = {
  * Allows creating or modifying an activity with an image, title and description
  * Uses a custom hook useEditImageActivity to handle form state and image upload
  */
-export default function ImageActivityEditor({ activity, onCancel }: Props) {
+export default function ImageActivityEditor({
+  activity,
+  onCancel,
+  parent = "lesson",
+}: Props) {
   const {
     data,
     handleSubmit,
@@ -36,7 +41,7 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
     showDialog,
     setShowDialog,
     selectedImage,
-  } = useEditImageActivity(activity, onCancel);
+  } = useEditImageActivity(activity, onCancel, parent);
 
   /**
    * Styles for the image preview display
@@ -47,10 +52,10 @@ export default function ImageActivityEditor({ activity, onCancel }: Props) {
       selectedImage
         ? `${ACTIVITIES}images/${selectedImage}`
         : image
-        ? image
-        : activity?.url
-        ? `${ACTIVITIES}images/${activity.url}`
-        : defaultImage
+          ? image
+          : activity?.url
+            ? `${ACTIVITIES}images/${activity.url}`
+            : defaultImage,
     ),
     width: "100%",
     height: "100%",
