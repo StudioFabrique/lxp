@@ -1,57 +1,88 @@
+import {
+  Activity,
+  BonusActivity,
+  Lesson,
+  Resource,
+} from "../../../../generated/prisma/client";
 import { prisma } from "../../../utils/db";
 
 /**
- * Crée une nouvelle activité de type image dans une leçon
- * @param lessonId - ID de la leçon parent
- * @param userId - ID MongoDB de l'utilisateur créateur
- * @param title - Titre de l'activité
- * @param description - Description de l'activité
- * @param filename - Nom du fichier uploadé (optionnel)
- * @param url - URL de l'image depuis la médiathèque (optionnel)
- * @returns La nouvelle activité créée
+ * Creates a new image activity in a lesson or resource
+ * @param lessonId - ID of the parent lesson or resource
+ * @param userId - MongoDB ID of the user creating the activity
+ * @param title - Title of the activity
+ * @param filename - Name of the uploaded file (optional)
+ * @param url - URL of the image from the media library (optional)
+ * @param parent - Type of parent entity ("lesson" or "resource")
+ * @returns The newly created activity
  */
 export default async function postImage(
   lessonId: number,
   userId: string,
   title: string,
   filename: string | null,
-  url: string | null
+  url: string | null,
+  parent: "lesson" | "resource",
 ) {
-  // Vérifie que l'utilisateur existe
+  // Check if the user exists
   const existingUser = await prisma.admin.findFirst({
     where: { idMdb: userId },
   });
-  if (!existingUser)
-    throw { statusCode: 404, message: "L'utilisateur n'existe pas." };
+  if (!existingUser) throw { statusCode: 404, message: "User does not exist." };
 
-  // Vérifie que la leçon existe et récupère ses activités
-  const existingLesson = await prisma.lesson.findFirst({
-    where: { id: lessonId },
-    select: { activities: true },
-  });
-  if (!existingLesson)
-    throw { statusCode: 404, message: "La leçon n'existe pas" };
+  let existingParent: Lesson | Resource | null = null;
 
-  // Vérifie qu'une source d'image est fournie (fichier ou URL)
+  if (parent === "lesson")
+    existingParent = await prisma.lesson.findFirst({
+      where: { id: lessonId },
+      include: { activities: true },
+    });
+  else if (parent === "resource")
+    existingParent = await prisma.resource.findFirst({
+      where: { id: lessonId },
+      include: { bonusActivities: true },
+    });
+
+  if (!existingParent)
+    throw { statusCode: 404, message: "Lesson or resource does not exist" };
+
+  // Check that an image source is provided (file or URL)
   if (!filename && !url)
     throw {
       statusCode: 400,
-      message: "Aucune source d'image n'a été fournie.",
+      message: "No image source was provided.",
     };
 
   const transaction = await prisma.$transaction(async (tx) => {
-    // Crée la nouvelle activité
+    // Create the new activity
 
-    const newActivity = await tx.activity.create({
-      data: {
-        title,
-        lessonId,
-        type: "image",
-        url: filename ?? url ?? "", // Utilise le nom du fichier ou l'URL
-        order: existingLesson.activities.length, // Place l'activité à la fin
-        authorId: existingUser.id,
-      },
-    });
+    let newActivity: Activity | BonusActivity | null = null;
+
+    if (parent === "lesson")
+      newActivity = await tx.activity.create({
+        data: {
+          title,
+          lessonId,
+          type: "image",
+          url: filename ?? url ?? "", // Use the filename or URL
+          order: (existingParent as Lesson & { activities: Activity[] })
+            .activities.length, // Place the activity at the end
+          authorId: existingUser.id,
+        },
+      });
+    else if (parent === "resource")
+      newActivity = await tx.bonusActivity.create({
+        data: {
+          title,
+          resourceId: lessonId,
+          type: "image",
+          url: filename ?? url ?? "", // Use the filename or URL
+          order: (
+            existingParent as Resource & { bonusActivities: BonusActivity[] }
+          ).bonusActivities.length, // Place the activity at the end
+          adminId: existingUser.id,
+        },
+      });
     if (url) {
       const media = await tx.mediatheque.findFirst({
         where: { url },
