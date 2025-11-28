@@ -11,6 +11,7 @@ import { DragDropContext, OnDragEndResponder } from "react-beautiful-dnd";
 import { Context } from "../../../store/context.store";
 import toUpperFirstLetter from "../../../utils/toUpperFirstLetter";
 import userBelongsToContacts from "../../../utils/userBelongsToContacts";
+import { Link } from "react-router-dom";
 
 type CourseItemProps = {
   course: Course;
@@ -43,8 +44,6 @@ const CourseItem = ({
   const canEditCourse = userBelongsToContacts(user, course.contacts);
 
   const [isCourseOpen, setCourseOpen] = useState(false);
-  const [isDragAndDropEnabled, setDragAndDropEnabled] =
-    useState<boolean>(false);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<ModalType>("visibility");
   const [selectedLessonToDelete, setSelectedLessonToDelete] = useState<
@@ -53,15 +52,14 @@ const CourseItem = ({
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [isDescriptionExpanded, setDescriptionExpanded] = useState(false);
 
-  const courseProgress = (
+  const courseProgress =
     course.lessons.reduce(
       (sum, lesson) =>
         sum +
         (lesson?.lessonsRead?.filter((lesson) => lesson.finishedAt).length ||
           0),
       0
-    ) / course.lessons.length
-  ).toString();
+    ) / course.lessons.length;
 
   const handleToggleCourseTab = () => {
     setCourseOpen(!isCourseOpen);
@@ -106,9 +104,9 @@ const CourseItem = ({
     handleCloseModal();
   };
 
-  const handleClickChangeCourseOrder = () => {
-    setDragAndDropEnabled((prev) => !prev);
-  };
+  // const handleClickChangeCourseOrder = () => {
+  //   setDragAndDropEnabled((prev) => !prev);
+  // };
 
   const handleClickToggleExpandDescription = () => {
     setDescriptionExpanded((prev) => !prev);
@@ -192,10 +190,8 @@ const CourseItem = ({
                     course={course}
                     parcoursId={parcoursId}
                     moduleId={moduleId}
-                    isDragAndDropEnabled={isDragAndDropEnabled}
                     onOpenModal={handleOpenModal}
                     onClickMenu={handleClickMenu}
-                    onClickChangeCourseOrder={handleClickChangeCourseOrder}
                   />
                 </Can>
               )}
@@ -204,7 +200,7 @@ const CourseItem = ({
           <Can action="component" object="progression">
             <progress
               className="w-full progress progress-primary bg-secondary rounded-b-full -mt-[8px]"
-              value={courseProgress}
+              value={isNaN(courseProgress) ? 0 : courseProgress}
             />
           </Can>
         </div>
@@ -253,13 +249,30 @@ const CourseItem = ({
                           onSelectLesson={onSelectLesson}
                           onOpenModal={handleOpenLessonDeletionModal}
                         >
-                          {!isDragAndDropEnabled && children}
+                          {children}
                         </LessonItem>
                       </div>
                     )
                 )
               ) : (
-                <p>Aucune leçon</p>
+                <div className="text-center">
+                  <p className="text-base-content/60 text-sm">
+                    Aucune leçon disponible pour ce cours
+                  </p>
+                  <Can action="write" object="course">
+                    <Link
+                      to="/admin/lesson/add"
+                      state={{
+                        parcoursId,
+                        moduleId,
+                        courseId: course.id,
+                      }}
+                      className="text-xs link link-hover text-primary"
+                    >
+                      Créer la première leçon
+                    </Link>
+                  </Can>
+                </div>
               )}
             </div>
           </DragDropContext>

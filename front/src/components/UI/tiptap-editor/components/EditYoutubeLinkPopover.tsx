@@ -21,7 +21,9 @@ export const EditYoutubeLinkPopover = ({
             className={`${TIPTAP_MENU_BAR_COLORS.text} w-8`}
             name="Youtube"
           />
-          <span className=" w-full">{title}</span>
+          <span className={`${TIPTAP_MENU_BAR_COLORS.text} w-full`}>
+            {title}
+          </span>
         </Toolbar.Button>
       </Popover.Trigger>
       <Popover.Content className="absolute left-[4.2rem] -top-10">

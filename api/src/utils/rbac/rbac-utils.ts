@@ -181,7 +181,7 @@ export async function removeRoleFromUser(userId: string, role: string) {
 export async function getAllActionsPermissionsForRole(
   role:
     | { identifier: "_id"; _id: string }
-    | { identifier: "role"; role: string },
+    | { identifier: "role"; role: string }
 ): Promise<string[]> {
   const roleDoc = await (role.identifier === "_id"
     ? Role.findById(role._id)
@@ -204,7 +204,7 @@ export async function getAllActionsPermissionsForRole(
  * @returns La liste des permissions de l'utilisateur
  */
 export async function getAllPermissionsForUser(
-  userId: string,
+  userId: string
 ): Promise<string[]> {
   const user = await User.findById(userId).populate("roles");
   if (!user) {
@@ -213,7 +213,7 @@ export async function getAllPermissionsForUser(
 
   const roleIds = user.roles.map((role: IRole) => role._id);
   const permissions = await Permission.find({ roles: { $in: roleIds } }).select(
-    "name -_id",
+    "name -_id"
   );
   const permissionList = Array.from(new Set(permissions.map((p) => p.name)));
 
@@ -227,7 +227,7 @@ export async function getAllPermissionsForUser(
  */
 export async function removePermissionFromRole(
   roleId: string,
-  permissionName: string,
+  permissionName: string
 ): Promise<void> {
   try {
     const role = await Role.findById(roleId);
@@ -256,7 +256,7 @@ export async function removePermissionFromRole(
   } catch (error) {
     console.error(
       `Error removing permission ${permissionName} from role ${roleId}:`,
-      error,
+      error
     );
     throw error;
   }
@@ -269,7 +269,7 @@ export async function removePermissionFromRole(
  */
 export async function addPermissionToRole(
   roleId: string,
-  permissionName: string,
+  permissionName: string
 ): Promise<void> {
   try {
     const role = await Role.findById(roleId);
@@ -299,7 +299,7 @@ export async function addPermissionToRole(
   } catch (error) {
     console.error(
       `Error adding permission ${permissionName} to role ${roleId}:`,
-      error,
+      error
     );
     throw error;
   }
@@ -320,12 +320,13 @@ export async function createOrUpdateRoleWithPermissions(
     resource: string;
     actions: Array<"read" | "write" | "update" | "delete">;
   }[],
+  forceUpdatePermissions?: boolean
 ) {
   let formattedPermissions: string[] = [];
 
   if (resourcesRbac.flatMap((res) => res.name).includes(roleName)) {
     const error = new Error(
-      "Le nom du rôle est déjà utilisé par une permission",
+      "Le nom du rôle est déjà utilisé par une permission"
     ) as any;
     error.statusCode = 409;
     throw error;
@@ -342,7 +343,7 @@ export async function createOrUpdateRoleWithPermissions(
   if (permissions !== undefined) {
     if (
       !permissions.every((permission) =>
-        resourcesRbac.map((r) => r.name).includes(permission.resource),
+        resourcesRbac.map((r) => r.name).includes(permission.resource)
       )
     ) {
       const error = new Error("Ressource invalide dans les permissions") as any;
@@ -351,7 +352,7 @@ export async function createOrUpdateRoleWithPermissions(
     }
 
     formattedPermissions = permissions.flatMap((permission) =>
-      permission.actions.map((action) => `${action}:${permission.resource}`),
+      permission.actions.map((action) => `${action}:${permission.resource}`)
     );
   }
 
@@ -365,7 +366,7 @@ export async function createOrUpdateRoleWithPermissions(
         foundRole = await Role.findByIdAndUpdate(
           _id,
           { role: roleName, label, rank },
-          { new: true },
+          { new: true }
         );
       }
     }
@@ -377,11 +378,14 @@ export async function createOrUpdateRoleWithPermissions(
   }
 
   // Only update permissions if they were provided and role is not protected
-  if (permissions !== undefined && foundRole.protection !== 2) {
+  if (
+    (permissions !== undefined && foundRole.protection !== 2) ||
+    forceUpdatePermissions
+  ) {
     // Remove existing role references from all permissions
     await Permission.updateMany(
       { roles: foundRole._id },
-      { $pull: { roles: foundRole._id } },
+      { $pull: { roles: foundRole._id } }
     );
 
     const permissionIds = [];
@@ -389,7 +393,7 @@ export async function createOrUpdateRoleWithPermissions(
       const permission = await Permission.findOneAndUpdate(
         { name: permissionName },
         { $addToSet: { roles: foundRole._id } },
-        { upsert: true, new: true },
+        { upsert: true, new: true }
       );
       permissionIds.push(permission._id);
     }
@@ -397,7 +401,7 @@ export async function createOrUpdateRoleWithPermissions(
     const updatedRole = await Role.findOneAndUpdate(
       { _id: foundRole._id },
       { $set: { permissions: permissionIds } },
-      { new: true },
+      { new: true }
     );
 
     return updatedRole;
@@ -417,14 +421,14 @@ export async function createOrUpdateRoleWithPermissions(
 export async function createOrUpdateInterfaceRoleWithPermissions(
   roleName: string,
   layouts?: string[],
-  components?: string[],
+  components?: string[]
 ): Promise<void> {
   try {
     if (
       !(
         layouts?.every((layout) => layoutPermissionsList.includes(layout)) &&
         components?.every((component) =>
-          componentPermissionsList.includes(component),
+          componentPermissionsList.includes(component)
         )
       )
     ) {
@@ -435,7 +439,7 @@ export async function createOrUpdateInterfaceRoleWithPermissions(
 
     const layoutPermissions = layouts?.map((layout) => `layout:${layout}`);
     const componentsPermissions = components?.map(
-      (component) => `component:${component}`,
+      (component) => `component:${component}`
     );
     const allPermissions = [
       ...(layoutPermissions || []),
@@ -452,7 +456,7 @@ export async function createOrUpdateInterfaceRoleWithPermissions(
       await Permission.findOneAndUpdate(
         { name: permissionName },
         { $addToSet: { roles: role._id } },
-        { upsert: true },
+        { upsert: true }
       );
     }
   } catch (error) {

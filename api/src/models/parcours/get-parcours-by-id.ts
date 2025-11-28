@@ -114,7 +114,9 @@ async function getParcoursById(parcoursId: number, userId: string) {
 
     result = {
       ...result,
-      image: Buffer.from(parcours.image as any).toString("base64") ?? null,
+      image: parcours.image
+        ? Buffer.from(parcours.image as any).toString("base64")
+        : null,
     };
 
     // Convertit les miniatures des modules en base64 si elles existent
@@ -123,8 +125,9 @@ async function getParcoursById(parcoursId: number, userId: string) {
         ...item,
         module: {
           ...item.module,
-          thumb:
-            Buffer.from(item.module.thumb as any).toString("base64") ?? null,
+          thumb: item.module.thumb
+            ? Buffer.from(item.module.thumb as any).toString("base64")
+            : null,
         },
       }));
       result = { ...result, modules: updatedModules };

@@ -38,8 +38,9 @@ async function getCourses() {
     updatedAt: item.updatedAt,
     isPublished: item.isPublished,
     visibility: item.visibility,
-    thumb:
-      Buffer.from(item.module.module.thumb as any).toString("base64") ?? null,
+    thumb: item.module.module.thumb
+      ? Buffer.from(item.module.module.thumb as any).toString("base64")
+      : null,
   }));
 
   return result;

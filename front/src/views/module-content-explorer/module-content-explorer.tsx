@@ -67,8 +67,6 @@ const ModuleExplorerContent = () => {
     selectedLesson?.course?.contacts
   );
 
-  console.log(selectedLesson?.course?.contacts);
-
   const editTitle = useCallback(
     (title: string) => {
       dispatch({ type: "update_activity_title", title });
@@ -102,7 +100,7 @@ const ModuleExplorerContent = () => {
   };
 
   return (
-    <ViewWrapper className="flex flex-col gap-6">
+    <ViewWrapper className="flex flex-col gap-6 min-h-[120vh]">
       {/* Modal to include here */}
       {modalVisibility === "lessonCompletionModal" && selectedLesson && (
         <LessonCompletionModal
