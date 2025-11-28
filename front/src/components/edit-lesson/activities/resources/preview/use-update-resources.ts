@@ -113,8 +113,11 @@ const useUpdateResources = (
     }) => {
       if (data.success) setResources(data.resources);
     };
-    sendRequest({ path: `/activity/resources/${activity.id}` }, applyData);
-  }, [activity.id, sendRequest]);
+    sendRequest(
+      { path: `/activity/resources/${activity.id}/${parent}` },
+      applyData,
+    );
+  }, [activity.id, sendRequest, parent]);
 
   /**
    * Gère l'ajout d'un nouveau fichier à la liste d'upload
@@ -195,6 +198,7 @@ const useUpdateResources = (
       toast.success(data.message);
       handleCancel();
       getResources();
+      onSubmit?.();
     };
 
     // Prépare les métadonnées des ressources
@@ -212,7 +216,7 @@ const useUpdateResources = (
     // Envoie la requête d'upload
     sendRequest(
       {
-        path: `/activity/add-resource/${activity.id}`,
+        path: `/activity/add-resource/${activity.id}/${parent}`,
         method: "put",
         headers: {
           "Content-Type": "multipart/form-data",
@@ -295,10 +299,8 @@ const useUpdateResources = (
 
   // Charge les ressources au montage du composant
   useEffect(() => {
-    if (activity && activity.resourceBonusActivities)
-      setResources(activity.resourceBonusActivities);
-    else setResources([]);
-  }, [activity]);
+    getResources();
+  }, [getResources]);
 
   // Gère la réorganisation des ressources quand submit change
   useEffect(() => {
