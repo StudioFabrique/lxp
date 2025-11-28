@@ -8,6 +8,7 @@ import RoleForm from "../../components/role/role-form/role-form";
 import { useEffect } from "react";
 import { ListRestartIcon } from "lucide-react";
 import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
+import QuestionMarkTooltip from "../../components/UI/question-mark-tooltip/question-mark-tooltip";
 
 const RoleEdit = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const RoleEdit = () => {
     role,
     onAddPermission,
     onDeletePermission,
+    onResetPermissions,
   } = useManagePermissions(id || "");
 
   const onClickPreviousPage = () => {
@@ -103,10 +105,20 @@ const RoleEdit = () => {
         />
       </div>
       <span className="flex justify-between w-full">
-        <button className="btn btn-primary w-fit btn-sm" disabled>
-          <ListRestartIcon />
-          Réinitialiser toutes les permissions pour ce rôle
-        </button>
+        <div className="flex gap-2 items-center">
+          {role.protection >= 1 && (
+            <>
+              <button
+                className="btn btn-sm btn-accent text-base-content w-fit"
+                onClick={onResetPermissions}
+              >
+                <ListRestartIcon />
+                Mettre à jour toutes les permissions pour ce rôle
+              </button>
+              <QuestionMarkTooltip tooltipValue="Lorsque de nouvelles permissions ont été ajoutées ou que des permissions sont manquantes pour ce rôle système, ce bouton permet d'ajouter ces permissions manquantes." />
+            </>
+          )}
+        </div>
         <button
           type="button"
           className="btn btn-primary text-base-100"
