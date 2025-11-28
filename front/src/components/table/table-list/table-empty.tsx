@@ -11,7 +11,7 @@ const TableEmpty = (props: TableEmptyProps) => (
     {props.message ? <p className="text-secondary">{props.message}</p> : null}
     {props.linkTo && props.linkableMessage ? (
       <Link
-        className="text-secondary underline hover:text-primary"
+        className="text-base-content underline hover:text-primary"
         to={props.linkTo}
       >
         {props.linkableMessage}
