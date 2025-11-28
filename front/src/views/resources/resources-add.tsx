@@ -44,6 +44,7 @@ export default function ResourceAdd() {
     uploadVideo,
     closePreviewActivity,
     createNewActivity,
+    resourceActivityiesSubmitted,
   } = useResource();
 
   console.log("STATE", activityState);
@@ -134,17 +135,18 @@ export default function ResourceAdd() {
                     />
                   ) : null}
 
-                  {(activityType === "resource" && activityState === "write") ||
-                  activityState === "edit" ? (
+                  {activityType === "resource" && activityState !== "read" ? (
                     <ResourceUpload
                       onCancel={closePreviewActivity}
                       onResetForm={() => {}}
+                      onSubmit={resourceActivityiesSubmitted}
                     />
                   ) : activityType === "resource" &&
                     activityState === "read" ? (
                     <ResourcePreview
                       activity={previewActivity!}
                       onCancel={closePreviewActivity}
+                      parent="resource"
                     />
                   ) : null}
                 </ActivityWrapper>

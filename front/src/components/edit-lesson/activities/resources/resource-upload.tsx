@@ -11,6 +11,7 @@ type Props = {
   onCancel: (value: boolean) => void;
   /** Optional function to reset the form */
   onResetForm?: () => void;
+  onSubmit?: () => void;
 };
 
 /**
@@ -29,7 +30,7 @@ type Props = {
  * @param onCancel - Function called to cancel the upload
  * @param onResetForm - Optional function to reset the form state
  */
-export default function ResourceUpload({ onCancel }: Props) {
+export default function ResourceUpload({ onCancel, onSubmit }: Props) {
   // Retrieve functions and data from custom hook
   const {
     data, // Form data (values, errors, update function)
@@ -44,7 +45,7 @@ export default function ResourceUpload({ onCancel }: Props) {
     uploadProgress, // Upload progress tracking
     cancelUpload, // Cancel upload function
     hasError, // Error state
-  } = useUploadResources(onCancel);
+  } = useUploadResources(onCancel, onSubmit);
 
   /**
    * Prevent user from accidentally leaving the page during upload
