@@ -7,8 +7,8 @@ import { Request, Response, NextFunction } from "express";
  */
 export default async function jsonParser(
   req: Request,
-  res: Response,
-  next: NextFunction
+  _res: Response,
+  next: NextFunction,
 ) {
   if (req.body.module && req.body.module !== undefined) {
     const module = JSON.parse(req.body.module);
@@ -16,6 +16,7 @@ export default async function jsonParser(
   }
   if (req.body.data && req.body.data !== undefined) {
     const data = JSON.parse(req.body.data);
+    console.log("Parsed data:", data);
     req.body.data = data;
   }
   next();

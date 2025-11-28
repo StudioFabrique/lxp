@@ -134,7 +134,14 @@ export default function ResourceAdd() {
                     />
                   ) : null}
 
-                  {activityType === "resource" ? (
+                  {(activityType === "resource" && activityState === "write") ||
+                  activityState === "edit" ? (
+                    <ResourceUpload
+                      onCancel={closePreviewActivity}
+                      onResetForm={() => {}}
+                    />
+                  ) : activityType === "resource" &&
+                    activityState === "read" ? (
                     <ResourcePreview
                       activity={previewActivity!}
                       onCancel={closePreviewActivity}
