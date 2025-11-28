@@ -93,6 +93,7 @@ async function getCourseInformations(courseId: number) {
       title: moduleNested.title,
       description: moduleNested.description,
       image: image ? Buffer.from(image as any).toString("base64") : null,
+
     },
   };
 }

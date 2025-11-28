@@ -287,6 +287,10 @@ const useResource = () => {
     dispatch({ type: "CLOSE_PREVIEW_ACTIVITY" });
   };
 
+  const resourceActivityiesSubmitted = () => {
+    getResourceDetails();
+  };
+
   useEffect(() => {
     if (resourceId) {
       dispatch({ type: "SET_MODE", payload: "update" });
@@ -316,6 +320,7 @@ const useResource = () => {
     setEditActivity,
     refreshActivityList,
     uploadVideo,
+    resourceActivityiesSubmitted,
   };
 };
 
