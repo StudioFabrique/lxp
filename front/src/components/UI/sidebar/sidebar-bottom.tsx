@@ -25,7 +25,7 @@ const SidebarBottom = ({ interfaceType }: SharedSideBarProps) => {
   };
 
   return (
-    <ul className="flex flex-col gap-4 items-center">
+    <ul className="flex flex-col gap-4 pl-4">
       <li>
         <Link
           to={`/${interfaceType}/profil`}
