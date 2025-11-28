@@ -47,10 +47,12 @@ export default async function httpPutReorderActivities(
     // Extract activity IDs array and parent type from request body
     let { activitiesIds, parent } = req.body;
 
-    console.log({ activitiesIds, parent });
-
     // Default to "lesson" if parent type is not specified
     if (!parent) parent = "lesson";
+
+    // Type check for prop parent
+    if (parent !== "lesson" && parent !== "resource")
+      throw { statusCode: 400, message: "Parent invalide." };
 
     // Call the service function to update activity order
     const response = await updateReorderActrivities(

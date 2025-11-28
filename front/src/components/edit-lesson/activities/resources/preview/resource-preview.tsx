@@ -13,6 +13,7 @@ import ElementNotFound from "../../../../UI/element-not-found";
 type Props = {
   activity: Activity;
   onCancel: () => void;
+  parent: "lesson" | "resource";
 };
 
 /**
@@ -20,7 +21,7 @@ type Props = {
  * @param activity - L'activité dont on veut gérer les ressources
  * @param onCancel - Fonction appelée lors de l'annulation
  */
-function ResourcePreview({ activity, onCancel }: Props) {
+function ResourcePreview({ activity, onCancel, parent }: Props) {
   // Récupération des fonctions et états depuis le hook personnalisé
   const {
     data,
@@ -44,7 +45,7 @@ function ResourcePreview({ activity, onCancel }: Props) {
     setUploadList,
     uploadList,
     uploadProgress,
-  } = useUpdateResources(activity, onCancel);
+  } = useUpdateResources(activity, onCancel, parent);
 
   return (
     <div className="flex flex-col gap-y-4">

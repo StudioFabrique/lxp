@@ -24,6 +24,7 @@ const useUpdateResources = (
   activity: Activity,
   onCancel: () => void,
   parent: "lesson" | "resource" = "lesson",
+  onSubmit?: () => void,
 ) => {
   // États pour gérer les ressources et leur manipulation
   const [resources, setResources] = useState<ActivityResource[]>([]); // Liste des ressources existantes
@@ -61,6 +62,7 @@ const useUpdateResources = (
         );
       }
       setIsUpdating(null);
+      onSubmit?.();
     };
 
     // Envoie la requête de mise à jour
@@ -82,6 +84,7 @@ const useUpdateResources = (
     const applyData = (data: { success: boolean; message: string }) => {
       if (data.success) toast.success(data.message);
       if (timer) clearTimeout(timer);
+      onSubmit?.();
     };
 
     // Utilise un timer pour le debounce
@@ -98,7 +101,7 @@ const useUpdateResources = (
         applyData,
       );
     }, 1000);
-  }, [sendRequest, resources, activity.id, parent]);
+  }, [sendRequest, resources, activity.id, onSubmit, parent]);
 
   /**
    * Récupère les ressources de l'activité depuis le serveur

@@ -29,7 +29,10 @@ export const allowedMimeTypes = [
  * @param onCancel - Fonction appelée pour annuler l'upload
  * @returns Objet contenant les fonctions et données nécessaires pour gérer l'upload
  */
-const useUploadResources = (onCancel: (value: boolean) => void) => {
+const useUploadResources = (
+  onCancel: (value: boolean) => void,
+  onSubmit?: () => void,
+) => {
   // État pour stocker la liste des fichiers
   const [filesList, setFilesList] = useState<Resource[] | null>(null);
 
@@ -133,6 +136,7 @@ const useUploadResources = (onCancel: (value: boolean) => void) => {
     const applyData = (data: { success: boolean; message: string }) => {
       if (data.success) toast.success(data.message);
       onCancel(false);
+      onSubmit?.();
     };
 
     // Préparation des métadonnées des ressources
