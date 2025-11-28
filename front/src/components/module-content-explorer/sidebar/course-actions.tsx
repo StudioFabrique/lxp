@@ -1,13 +1,4 @@
-import {
-  ArrowDownUpIcon,
-  Edit,
-  Eye,
-  EyeOff,
-  ListPlus,
-  MoreVertical,
-  OctagonX,
-  Trash,
-} from "lucide-react";
+import { Edit, Eye, EyeOff, ListPlus, MoreVertical, Trash } from "lucide-react";
 import Can from "../../UI/can/can.component";
 import { Link } from "react-router-dom";
 import Course from "../../../utils/interfaces/course";
@@ -16,8 +7,6 @@ type CourseActionsProps = {
   course: Course;
   parcoursId: number;
   moduleId: number;
-  isDragAndDropEnabled: boolean;
-  onClickChangeCourseOrder: () => void;
   onOpenModal: (
     modalType: "visibility" | "deleteCourse" | "deleteLesson",
     e: React.MouseEvent
@@ -29,8 +18,6 @@ const CourseActions = ({
   course,
   parcoursId,
   moduleId,
-  isDragAndDropEnabled,
-  onClickChangeCourseOrder,
   onOpenModal,
   onClickMenu,
 }: CourseActionsProps) => {
@@ -69,7 +56,7 @@ const CourseActions = ({
           className="cursor-default flex items-center px-4 py-3 text-sm hover:bg-primary/20 transition-all"
         >
           <ListPlus className="w-4 h-4 mr-3" />
-          Ajouter une leçon
+          Créer une leçon
         </Link>
 
         {/* <Can action="update" object="course">
