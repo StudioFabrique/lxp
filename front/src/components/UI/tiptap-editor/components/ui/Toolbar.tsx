@@ -3,6 +3,7 @@ import { cn } from "../../utils";
 import { Surface } from "./Surface";
 import Tooltip from "./Tooltip";
 import { Button, ButtonProps } from "./Button";
+import { TIPTAP_MENU_BAR_COLORS } from "../Menubar/MenuBarConfig";
 
 export type ToolbarWrapperProps = {
   shouldShowContent?: boolean;
@@ -22,6 +23,7 @@ const ToolbarWrapper = forwardRef<HTMLDivElement, ToolbarWrapperProps>(
   ) => {
     const toolbarClassName = cn(
       "text-black inline-flex h-full leading-none gap-0.5",
+      TIPTAP_MENU_BAR_COLORS.background,
       isVertical ? "flex-col p-2" : "flex-row p-1 items-center",
       className
     );

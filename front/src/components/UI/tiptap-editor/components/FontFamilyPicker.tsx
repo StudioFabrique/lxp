@@ -4,6 +4,7 @@ import { Toolbar } from "./ui/Toolbar";
 import { Icon } from "./ui/Icon";
 import { Surface } from "./ui/Surface";
 import { DropdownButton, DropdownCategoryTitle } from "./ui/Dropdown";
+import { TIPTAP_MENU_BAR_COLORS } from "./Menubar/MenuBarConfig";
 
 const FONT_FAMILY_GROUPS = [
   {
@@ -56,14 +57,19 @@ export const FontFamilyPicker = ({
     <Dropdown.Root>
       <Dropdown.Trigger asChild>
         <Toolbar.Button active={!!currentValue?.value}>
-          <span className="text-base-content select-none">
+          <span className={`${TIPTAP_MENU_BAR_COLORS.text} select-none`}>
             {currentFontLabel}
           </span>
-          <Icon name="ChevronDown" className="w-2 h-2 text-base-content" />
+          <Icon
+            name="ChevronDown"
+            className={`w-2 h-2 ${TIPTAP_MENU_BAR_COLORS.text}`}
+          />
         </Toolbar.Button>
       </Dropdown.Trigger>
       <Dropdown.Content asChild>
-        <Surface className="mt-5 flex flex-col gap-1 px-2 py-4">
+        <Surface
+          className={`mt-5 flex flex-col gap-1 px-2 py-4 ${TIPTAP_MENU_BAR_COLORS.background}`}
+        >
           {FONT_FAMILY_GROUPS.map((group) => (
             <div
               className="mt-2.5 first:mt-0 gap-0.5 flex flex-col"

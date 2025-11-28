@@ -54,15 +54,6 @@ const ModuleContentExplorerWrapper = ({
         <span className="w-full bg-secondary/20 rounded-lg h-10 px-2 border-1 border-secondary/20 flex items-center">
           {topProgressBar}
         </span>
-        {/* <Can action="update" object="module">
-          <Link
-            to={`/admin/parcours/edit/${parcoursId}?step=4`}
-            className="btn w-fit hover:bg-primary hover:text-base-100"
-          >
-            <Edit className="w-5 h-5" />
-            Modifier le module
-          </Link>
-        </Can> */}
         {selectedLesson ? (
           <button
             type="button"

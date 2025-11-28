@@ -8,10 +8,11 @@ import EditIcon from "../../../UI/svg/edit-icon";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { EyeOff } from "lucide-react";
 
-const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
-  parcoursId,
-  moduleId,
-}) => {
+const ContenuDetail: FC<{
+  canEdit?: boolean;
+  parcoursId: number;
+  moduleId: number;
+}> = ({ canEdit, parcoursId, moduleId }) => {
   const { sendRequest, isLoading } = useHttp(true);
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -88,15 +89,17 @@ const ContenuDetail: FC<{ parcoursId: number; moduleId: number }> = ({
     <div className="flex flex-col gap-y-4 mt-5">
       <span className="flex justify-between">
         <h2 className="text-xl font-bold text-primary">Contenu du module</h2>
-        <Can action="write" object="course">
-          <Link
-            to="/admin/course/add"
-            state={{ parcoursId, moduleId }}
-            className="btn btn-primary btn-sm text-base-100"
-          >
-            Ajouter un cours
-          </Link>
-        </Can>
+        {canEdit && (
+          <Can action="write" object="course">
+            <Link
+              to="/admin/course/add"
+              state={{ parcoursId, moduleId }}
+              className="btn btn-primary btn-sm text-base-100"
+            >
+              Ajouter un cours
+            </Link>
+          </Can>
+        )}
       </span>
       <div className="flex flex-col gap-y-4">{contentsList}</div>
     </div>

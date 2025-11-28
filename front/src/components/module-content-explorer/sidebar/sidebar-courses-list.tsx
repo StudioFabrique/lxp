@@ -75,7 +75,7 @@ const SidebarCoursesList = ({
 
               <FadeWrapper>
                 <span
-                  className="radial-progress self-end"
+                  className="radial-progress self-end mb-5"
                   style={radialStyle(
                     !Number.isNaN(moduleProgress) ? moduleProgress : 0
                   )}
@@ -97,7 +97,7 @@ const SidebarCoursesList = ({
         </div>
       </Can>
       {/* Liste des cours */}
-      <div className="flex flex-col items-center gap-5 mt-5">
+      <div className="flex flex-col items-center gap-5">
         {courses.length > 0 ? (
           courses.map((course) => (
             <CourseItem

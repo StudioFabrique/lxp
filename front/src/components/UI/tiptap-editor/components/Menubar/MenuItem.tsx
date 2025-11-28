@@ -1,3 +1,4 @@
+import { TIPTAP_MENU_BAR_COLORS } from "./MenuBarConfig";
 import "./MenuItem.scss";
 
 import remixiconUrl from "remixicon/fonts/remixicon.symbol.svg";
@@ -21,10 +22,12 @@ export default function MenuItem({
     <button
       type="button"
       className={`menu-item ${
-        isActive?.() ? "is-active bg-secondary fill-secondary-content" : ""
+        isActive?.()
+          ? `is-active ${TIPTAP_MENU_BAR_COLORS.textActive} ${TIPTAP_MENU_BAR_COLORS.backgroundActive}`
+          : TIPTAP_MENU_BAR_COLORS.fill
       } ${
         color === "info" ? "fill-info" : "fill-base-content"
-      }  hover:bg-base-300 tooltip disabled:opacity-50`}
+      } tooltip disabled:opacity-50`}
       data-tip={title}
       onClick={action}
       title={title}

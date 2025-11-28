@@ -3,7 +3,7 @@ import { type Editor, EditorContent } from "@tiptap/react";
 import "./index.scss";
 import "highlight.js/styles/github.css";
 
-import MenuBar from "./components/MenuBar";
+import MenuBar from "./components/Menubar/MenuBar";
 
 import { LinkMenu } from "./components/LinkMenu";
 
