@@ -153,18 +153,6 @@ stage("Build App") {
                     sh '''
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker compose down || true && docker compose up -d"
                     '''
-
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "
-                            set -eu
-                            cd /home/$USER/$TARGET/dist
-
-                            docker compose run --rm \
-                                -e DATABASE_URL=\"$MIGRATOR_PG_URL\" \
-                                db-pg \
-                                npx prisma migrate deploy
-                            "
-                    '''
                 }
             }
         }
