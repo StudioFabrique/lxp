@@ -78,81 +78,96 @@ stage("Build App") {
 
         */
 
-stage("Deploying to DEMO") {
-    steps {
-        withCredentials([
-            file(credentialsId: 'INFA_ENV', variable: 'ENV_FILE'),
-            string(credentialsId: 'INFA_HOST', variable: 'HOST'),
-            string(credentialsId: 'INFA_USER', variable: 'USER'),
-            string(credentialsId: 'INFA_PORT', variable: 'PORT'),
-            string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
-            sshUserPrivateKey(credentialsId: 'INFA_SSH', keyFileVariable: 'SSH_CRED')
-        ]) {
-            // 1) Préparer les fichiers côté Jenkins
-            sh '''
-                echo "🔧 Preparing backend build artefacts..."
+        stage("Deploying to INFA") {
 
-                # On s'assure que dist existe (build déjà fait avant ce stage)
-                ls -la ./api/dist || (echo "❌ ./api/dist not found" && exit 1)
+            steps {
+                withCredentials([
+                    file(credentialsId: 'INFA_ENV', variable: 'ENV_FILE'),
+                    string(credentialsId: 'INFA_HOST', variable: 'HOST'),
+                    string(credentialsId: 'INFA_USER', variable: 'USER'),
+                    string(credentialsId: 'INFA_PORT', variable: 'PORT'),
+                    string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
+                    sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
+                ]) {
+                    sh '''
+                        echo "🔧 Setting environment variables from $ENV_FILE..."
+                        echo INFA_HOST=$HOST
+                        echo INFA_USER=$USER
+                        echo INFA_PORT=$PORT
+                        echo INFA_TARGET=$TARGET
 
-                # On copie le .env backend dans dist (si tu en as besoin pour le runtime)
-                chmod -R 777 ./api/ || true
-                cp $ENV_FILE ./api/dist/.env
+                        echo "ls -la"
+                        ls -la ./api/dist || true
 
-                echo "✅ Backend .env file copied to ./api/dist/.env"
-            '''
+                        chmod -R 777 ./api/ || true
 
-            // 2) Copier les artefacts sur le serveur
-            sh '''
-                echo "📡 Copying artefacts to remote host $HOST..."
+                        # Inject .env in workspace
+                        cp $ENV_FILE ./api/dist/.env
 
-                # Code compilé dans dist
-                scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/dist \
-                    $USER@$HOST:/home/$USER/$TARGET/
+                        echo "📡 Deploying to INFA..."
+                        echo "🔎 Pinging $HOST..."
 
-                # Dossier prisma (schema + migrations) à la racine du projet déployé
-                scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/prisma \
-                    $USER@$HOST:/home/$USER/$TARGET/
+                        ping -c 4 $HOST
+                    '''
 
-                # prisma.config.ts à la racine du projet déployé
-                scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT ./api/prisma.config.ts \
-                    $USER@$HOST:/home/$USER/$TARGET/
+                    sh '''
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/dist $USER@$HOST:/home/$USER/$TARGET/
+                    '''
 
-                # docker-compose pour Postgres/Mongo dans dist (comme avant)
-                scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT docker-compose.yml \
-                    $USER@$HOST:/home/$USER/$TARGET/dist/
+                    sh '''
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/prisma $USER@$HOST:/home/$USER/$TARGET/
+                    '''
 
-                # package.json + package-lock.json à la racine (pour npm ci)
-                scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT ./api/package.json \
-                    $USER@$HOST:/home/$USER/$TARGET/
-                scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT ./api/package-lock.json \
-                    $USER@$HOST:/home/$USER/$TARGET/
-            '''
+                    sh '''
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/prisma.config.ts $USER@$HOST:/home/$USER/$TARGET/
+                    '''
 
-            // 3) Installer les dépendances et démarrer les conteneurs DB
-            sh '''
-                echo "🚀 Running npm ci and starting DB containers on remote..."
+                    sh '''
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/package.json $USER@$HOST:/home/$USER/$TARGET/
+                    '''
 
-                ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "
-                    set -eu
-                    cd /home/$USER/$TARGET
+                    sh '''
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/package-lock.json $USER@$HOST:/home/$USER/$TARGET/
+                    '''
 
-                    echo '📦 Running npm ci (with devDependencies)...'
-                    npm ci
+                    sh '''
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT docker-compose.yml $USER@$HOST:/home/$USER/$TARGET/dist/
+                    '''
 
-                    cd /home/$USER/$TARGET/dist
+                    sh '''
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT ./api/package.json $USER@$HOST:/home/$USER/$TARGET/
+                    '''
 
-                    echo '🌐 Creating Docker network if not exists...'
-                    docker network create lxp_network || true
+                    sh '''
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT ./api/package-lock.json $USER@$HOST:/home/$USER/$TARGET/
+                    '''
 
-                    echo '🐳 Restarting docker compose stack...'
-                    docker compose down || true
-                    docker compose up -d
-                "
-            '''
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/ && npm ci"
+                    '''
+
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker network create lxp_network || true"
+                    '''
+
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker compose down || true && docker compose up -d"
+                    '''
+
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "
+                            set -eu
+                            cd /home/$USER/$TARGET/dist
+
+                            docker compose run --rm \
+                                -e DATABASE_URL=\"$MIGRATOR_PG_URL\" \
+                                db-pg \
+                                npx prisma migrate deploy
+                            "
+                    '''
+                }
+            }
         }
-    }
-}
 
         stage('Run Prisma migrations (DDL)') {
             steps {
@@ -162,28 +177,23 @@ stage("Deploying to DEMO") {
                     string(credentialsId: 'INFA_USER', variable: 'USER'),
                     string(credentialsId: 'INFA_PORT', variable: 'PORT'),
                     string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
-                    sshUserPrivateKey(credentialsId: 'INFA_SSH', keyFileVariable: 'SSH_CRED')
-                ]) {
+                    sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
+                    ]) {
 
                 sh '''
-                    echo "🧬 Running Prisma migrations with DDL user..."
-
                     ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "
-                        set -eu
-                        cd /home/$USER/$TARGET
+                    set -eu
+                    cd /home/$USER/$TARGET/
+                    # Optionnel: attendre que Postgres soit prêt
+                    # until pg_isready -h 127.0.0.1 -p 5432 -U postgres >/dev/null 2>&1; do sleep 2; done
 
-                        # On vérifie vite fait que prisma.config.ts et prisma/ sont bien là
-                        echo '📂 Remote project layout:'
-                        ls -la
-                        ls -la prisma || (echo '❌ prisma/ directory missing' && exit 1)
-
-                        echo '🏃 Running prisma migrate deploy with MIGRATOR_PG_URL...'
-                        DATABASE_URL=\\"$MIGRATOR_PG_URL\\" npx prisma migrate deploy
+                    # Migration avec user DDL (least privilege respecté)
+                    DATABASE_URL=\\"$MIGRATOR_PG_URL\\" npx prisma migrate deploy
                     "
-            '''
+                '''
+                }
+            }
         }
-    }
-}
 
         stage("Starting app") {
             steps {
