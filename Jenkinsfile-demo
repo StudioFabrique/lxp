@@ -205,7 +205,7 @@ stage("Build App") {
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "pm2 restart /home/$USER/$TARGET/dist/src/server.js"
                     '''
 
-                    echo "✅ Deployment to INFA completed successfully!"
+                    echo "✅ Deployment to DEMO completed successfully!"
                 }
             }
         }
