@@ -135,15 +135,15 @@ stage("Build App") {
                     '''
 
                     sh '''
-                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT ./api/package.json $USER@$HOST:/home/$USER/$TARGET/dist/
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT ./api/package.json $USER@$HOST:/home/$USER/$TARGET/
                     '''
 
                     sh '''
-                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT ./api/package-lock.json $USER@$HOST:/home/$USER/$TARGET/dist/
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT ./api/package-lock.json $USER@$HOST:/home/$USER/$TARGET/
                     '''
 
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist && npm ci"
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/ && npm ci"
                     '''
 
                     sh '''
