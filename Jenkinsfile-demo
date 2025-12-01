@@ -161,7 +161,7 @@ stage("Build App") {
 
                             docker compose run --rm \
                                 -e DATABASE_URL=\"$MIGRATOR_PG_URL\" \
-                                prisma \
+                                lxp-prisma \
                                 npx prisma migrate deploy
                             "
                     '''
