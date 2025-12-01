@@ -22,7 +22,7 @@ const SidebarItem = ({
       <Link to={linkTo}>
         <div data-tip="Accueil LXP">
           <div
-            className={`${textSize} flex gap-5 p-1 px-2 rounded-lg hover:bg-primary/50 ${
+            className={`${textSize} flex gap-5 p-1 px-2 rounded-lg hover:bg-primary/50 items-center select-none ${
               currentRoute[1] === itemPath && "bg-primary/50"
             }`}
           >

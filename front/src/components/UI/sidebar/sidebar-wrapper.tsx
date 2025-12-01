@@ -1,6 +1,5 @@
-import { ReactNode, useContext, useState, useEffect } from "react";
+import { ReactNode, useContext } from "react";
 import { Context } from "../../../store/context.store";
-import { COMPANY_LOGO } from "../../../config/urls";
 import SidebarBottom from "./sidebar-bottom";
 
 const SidebarWrapper = ({
@@ -11,32 +10,9 @@ const SidebarWrapper = ({
   interfaceType: string;
 }) => {
   const { theme } = useContext(Context);
-  const [companyLogo, setCompanyLogo] = useState<string | null>(COMPANY_LOGO);
-
-  useEffect(() => {
-    // Check if image exists
-    const img = new Image();
-    img.src = COMPANY_LOGO;
-
-    img.onload = () => {
-      setCompanyLogo(COMPANY_LOGO);
-    };
-
-    img.onerror = () => {
-      setCompanyLogo(null);
-    };
-  }, []);
 
   return (
-    <nav className="w-[19rem] h-screen fixed p-4 pt-2 z-100 flex flex-col gap-2">
-      {companyLogo ? (
-        <div className="w-24 bg-slate-100 rounded-lg">
-          <img
-            className="object-contain rounded-lg border-slate-700 border-2 p-0.5"
-            src={companyLogo}
-          />
-        </div>
-      ) : null}
+    <nav className="w-[18rem] h-screen pt-2 flex flex-col gap-2">
       <div
         className={`flex flex-col justify-between gap-y-4 px-2 py-4 rounded-xl h-full relative ${
           theme === "dark"
