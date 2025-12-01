@@ -1,4 +1,8 @@
-const CourseIcon = () => {
+const CourseIcon = ({
+  className = "w-full h-full",
+}: {
+  className?: string;
+}) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -6,7 +10,7 @@ const CourseIcon = () => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="w-full h-full"
+      className={className}
     >
       <path
         strokeLinecap="round"

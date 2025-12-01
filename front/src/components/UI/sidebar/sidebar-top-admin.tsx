@@ -1,121 +1,137 @@
 import CourseIcon from "../svg/course-icon";
-import Course from "./sidebar-parts/course";
-import Formation from "./sidebar-parts/formation";
-import Group from "./sidebar-parts/group";
-import Lesson from "./sidebar-parts/lesson";
-import Mediatheque from "./sidebar-parts/mediatheque";
-import Module from "./sidebar-parts/module";
-import MotionSidebarWrapper from "./sidebar-parts/motion-sidebar-wrapper";
-import Parcours from "./sidebar-parts/parcours";
-import Resources from "./sidebar-parts/resources";
-import Roles from "./sidebar-parts/roles";
+import GroupIcon from "../svg/group-icon";
 import SidebarItem from "./sidebar-parts/sidebar-item";
-import Tags from "./sidebar-parts/tags";
-import User from "./sidebar-parts/user";
-import { BookMarked, Component, Home, Plus, Rocket } from "lucide-react";
-import { useState, useEffect } from "react";
+import {
+  BookMarked,
+  Component,
+  FileEdit,
+  Home,
+  Library,
+  Rocket,
+  Shield,
+  Tag,
+  User,
+} from "lucide-react";
 
 type SharedSideBarProps = {
   currentRoute: string[];
 };
 
 const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
-  const [isHover, setIsHover] = useState(false);
-  const [showAll, setShowAll] = useState(false);
-
-  useEffect(() => {
-    const checkScreenHeight = () => {
-      const screenHeight = window.innerHeight;
-      setShowAll(screenHeight > 900);
-    };
-
-    checkScreenHeight();
-    window.addEventListener("resize", checkScreenHeight);
-    return () => window.removeEventListener("resize", checkScreenHeight);
-  }, []);
-
-  const initialItems = [
+  const sidebarItems = [
     <SidebarItem
-      key={"formation"}
+      key="formation"
       currentRoute={currentRoute}
       itemPath={"formation"}
-      icon={<BookMarked />}
+      icon={<BookMarked className="w-4" />}
       linkTo={`/${currentRoute[0]}/formation`}
     >
       Formations
     </SidebarItem>,
     <SidebarItem
-      key={"parcours"}
+      key="parcours"
       currentRoute={currentRoute}
       itemPath={"parcours"}
-      icon={<Rocket />}
+      icon={<Rocket className="w-4" />}
       linkTo={`/${currentRoute[0]}/parcours`}
     >
       Parcours
     </SidebarItem>,
     <SidebarItem
-      key={"module"}
+      key="module"
       currentRoute={currentRoute}
       itemPath={"module"}
-      icon={<Component />}
+      icon={<Component className="w-4" />}
       linkTo={`/${currentRoute[0]}/module`}
     >
       Modules
     </SidebarItem>,
     <SidebarItem
-      key={"course"}
+      key="course"
       currentRoute={currentRoute}
       itemPath={"course"}
-      icon={
-        <span className="w-6 h-6">
-          <CourseIcon />
-        </span>
-      }
+      icon={<CourseIcon className="w-4" />}
       linkTo={`/${currentRoute[0]}/course`}
     >
       Cours
     </SidebarItem>,
-    <Lesson key="lesson" currentRoute={currentRoute} />,
-  ];
-
-  const moreItems = (showAll?: boolean) => [
-    <User preventHovering={showAll} key="user" currentRoute={currentRoute} />,
-    <Group preventHovering={showAll} key="group" currentRoute={currentRoute} />,
-    <Roles key="roles" currentRoute={currentRoute} />,
-    <Tags key="tags" currentRoute={currentRoute} />,
-    <Mediatheque key="mediatheque" currentRoute={currentRoute} />,
-    <Resources key="resources" currentRoute={currentRoute} />,
+    <SidebarItem
+      key="lesson"
+      currentRoute={currentRoute}
+      itemPath={"lesson"}
+      icon={<FileEdit className="w-4" />}
+      linkTo={`/${currentRoute[0]}/lesson`}
+    >
+      Leçon
+    </SidebarItem>,
+    <SidebarItem
+      key="user"
+      currentRoute={currentRoute}
+      itemPath={"user"}
+      icon={<User className="w-4" />}
+      linkTo={`/${currentRoute[0]}/user`}
+    >
+      Utilisateurs
+    </SidebarItem>,
+    <SidebarItem
+      key="group"
+      currentRoute={currentRoute}
+      itemPath={"group"}
+      icon={<GroupIcon className="w-4" />}
+      linkTo={`/${currentRoute[0]}/group`}
+    >
+      Groupes
+    </SidebarItem>,
+    <SidebarItem
+      key="role"
+      currentRoute={currentRoute}
+      itemPath={"roles"}
+      icon={<Shield className="w-4" />}
+      linkTo={`/${currentRoute[0]}/roles`}
+    >
+      Roles
+    </SidebarItem>,
+    <SidebarItem
+      key="tag"
+      currentRoute={currentRoute}
+      itemPath={"tags"}
+      icon={<Tag className="w-4" />}
+      linkTo={`/${currentRoute[0]}/tags`}
+    >
+      Tags
+    </SidebarItem>,
+    <SidebarItem
+      key="mediatheque"
+      currentRoute={currentRoute}
+      itemPath={"mediatheque"}
+      icon={<Library className="w-4" />}
+      linkTo={`/${currentRoute[0]}/mediatheque`}
+    >
+      Médiathèque
+    </SidebarItem>,
+    <SidebarItem
+      key="resource"
+      currentRoute={currentRoute}
+      itemPath={"resources"}
+      icon={<FileEdit className="w-4" />}
+      linkTo={`/${currentRoute[0]}/resources`}
+    >
+      Ressources supplémentaires
+    </SidebarItem>,
   ];
 
   return (
-    <ul className={`flex flex-col gap-6 pl-4`}>
+    <ul className={`flex flex-col px-2 gap-1`}>
       <SidebarItem
         itemPath={undefined}
         currentRoute={currentRoute}
-        icon={<Home />}
+        icon={<Home className="w-4" />}
         linkTo={`/${currentRoute[0]}`}
       >
         Accueil
       </SidebarItem>
-      {showAll ? (
-        [...initialItems, ...moreItems(false)]
-      ) : (
-        <>
-          {initialItems}
-          <li
-            onMouseOver={() => setIsHover(true)}
-            onMouseLeave={() => setIsHover(false)}
-          >
-            <div className="flex items-center">
-              <Plus className="z-10" />
 
-              <MotionSidebarWrapper isHover={isHover}>
-                <div className="flex gap-5">{moreItems(true)}</div>
-              </MotionSidebarWrapper>
-            </div>
-          </li>
-        </>
-      )}
+      {sidebarItems}
     </ul>
   );
 };

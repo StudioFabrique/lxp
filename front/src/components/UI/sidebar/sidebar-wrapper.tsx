@@ -28,7 +28,7 @@ const SidebarWrapper = ({
   }, []);
 
   return (
-    <nav className="w-3xs h-screen fixed p-4 pt-2 z-100 flex flex-col gap-2">
+    <nav className="w-[19rem] h-screen fixed p-4 pt-2 z-100 flex flex-col gap-2">
       {companyLogo ? (
         <div className="w-24 bg-slate-100 rounded-lg">
           <img
@@ -38,7 +38,7 @@ const SidebarWrapper = ({
         </div>
       ) : null}
       <div
-        className={`flex flex-col justify-between gap-y-4 px-2 pb-2 pt-6 rounded-lg h-full relative ${
+        className={`flex flex-col justify-between gap-y-4 px-2 py-4 rounded-xl h-full relative ${
           theme === "dark"
             ? "text-white bg-slate-500"
             : "text-white bg-slate-800"
