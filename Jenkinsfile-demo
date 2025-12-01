@@ -119,6 +119,18 @@ stage("Build App") {
                     '''
 
                     sh '''
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/prisma.config.ts $USER@$HOST:/home/$USER/$TARGET/
+                    '''
+
+                    sh '''
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/package.json $USER@$HOST:/home/$USER/$TARGET/
+                    '''
+
+                    sh '''
+                        scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/package-lock.json $USER@$HOST:/home/$USER/$TARGET/
+                    '''
+
+                    sh '''
                         scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT docker-compose.yml $USER@$HOST:/home/$USER/$TARGET/dist/
                     '''
 
@@ -131,7 +143,7 @@ stage("Build App") {
                     '''
 
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist && npm ci --omit=dev"
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist && npm ci"
                     '''
 
                     sh '''
@@ -140,6 +152,10 @@ stage("Build App") {
 
                     sh '''
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker compose down || true && docker compose up -d"
+                    '''
+
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker compose exec api npx prisma migrate deploy"
                     '''
                 }
             }
