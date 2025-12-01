@@ -20,7 +20,12 @@ let timer: NodeJS.Timeout | null = null;
  * @param activity - L'activité dont les ressources sont à gérer
  * @param onCancel - Fonction de callback appelée lors de l'annulation
  */
-const useUpdateResources = (activity: Activity, onCancel: () => void) => {
+const useUpdateResources = (
+  activity: Activity,
+  onCancel: () => void,
+  parent: "lesson" | "resource" = "lesson",
+  onSubmit?: () => void,
+) => {
   // États pour gérer les ressources et leur manipulation
   const [resources, setResources] = useState<ActivityResource[]>([]); // Liste des ressources existantes
   const [isAdding, setIsAdding] = useState(false); // État indiquant si on est en train d'ajouter une ressource
@@ -57,6 +62,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
         );
       }
       setIsUpdating(null);
+      onSubmit?.();
     };
 
     // Envoie la requête de mise à jour
@@ -78,6 +84,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
     const applyData = (data: { success: boolean; message: string }) => {
       if (data.success) toast.success(data.message);
       if (timer) clearTimeout(timer);
+      onSubmit?.();
     };
 
     // Utilise un timer pour le debounce
@@ -86,12 +93,15 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
         {
           path: `/activity/reorder-resource/${activity.id}`,
           method: "put",
-          body: resources.map((resource) => resource.id),
+          body: {
+            activitiesIds: resources.map((resource) => resource.id),
+            parent,
+          },
         },
         applyData,
       );
     }, 1000);
-  }, [sendRequest, resources, activity.id]);
+  }, [sendRequest, resources, activity.id, onSubmit, parent]);
 
   /**
    * Récupère les ressources de l'activité depuis le serveur
@@ -103,8 +113,11 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
     }) => {
       if (data.success) setResources(data.resources);
     };
-    sendRequest({ path: `/activity/resources/${activity.id}` }, applyData);
-  }, [activity.id, sendRequest]);
+    sendRequest(
+      { path: `/activity/resources/${activity.id}/${parent}` },
+      applyData,
+    );
+  }, [activity.id, sendRequest, parent]);
 
   /**
    * Gère l'ajout d'un nouveau fichier à la liste d'upload
@@ -114,7 +127,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       // Vérification du format du nom
-      let error = !regexGeneric.test(values.name);
+      let error = !regexGeneric.test(values.name as string);
 
       if (allowedMimeTypes.includes(event.target.files[0].type)) {
         // Vérifie les doublons dans la liste d'upload
@@ -147,7 +160,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
             hasError: error,
           },
         ];
-        setUploadList(resource);
+        setUploadList(resource as Resource[]);
 
         // Réinitialise le formulaire
         event.target.value = "";
@@ -185,6 +198,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
       toast.success(data.message);
       handleCancel();
       getResources();
+      onSubmit?.();
     };
 
     // Prépare les métadonnées des ressources
@@ -202,7 +216,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
     // Envoie la requête d'upload
     sendRequest(
       {
-        path: `/activity/add-resource/${activity.id}`,
+        path: `/activity/add-resource/${activity.id}/${parent}`,
         method: "put",
         headers: {
           "Content-Type": "multipart/form-data",
@@ -261,7 +275,7 @@ const useUpdateResources = (activity: Activity, onCancel: () => void) => {
         );
       };
       sendRequest(
-        { path: `/activity/resource/${isDeleting}`, method: "delete" },
+        { path: `/activity/activity-resource/${isDeleting}`, method: "delete" },
         applyData,
       );
     }

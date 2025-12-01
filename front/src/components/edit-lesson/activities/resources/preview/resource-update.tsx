@@ -61,7 +61,7 @@ function ResourceUpdate({ resource, onSubmit, onCancel }: Props) {
       }
     }
     // Si la validation est réussie, on appelle onSubmit avec les nouvelles valeurs
-    onSubmit(values.label, resource.id);
+    onSubmit(values.label as string, resource.id);
   };
 
   return (

@@ -8,6 +8,7 @@ export interface Activity {
   createdAt: string;
   updatedAt: string;
   resourceActivities?: Resource[];
+  resourceBonusActivities?: Resource[];
 }
 
 export type ActivityType = "text" | "image" | "video" | "iframe" | "resource";
