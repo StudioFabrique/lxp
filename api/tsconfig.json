@@ -1,15 +1,16 @@
 {
   "compilerOptions": {
-    "module": "CommonJS",
-    "sourceMap": true,
-    "outDir": "dist",
+    "target": "ES2022",
+    "module": "node16",
+    "moduleResolution": "node16",
+    "lib": ["ES2022"],
     "strict": true,
-    "lib": ["es6"],
     "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "target": "es6",
-    "moduleResolution": "Node",
-    "resolveJsonModule": true
-  }
+
+    "skipLibCheck": true,
+    "types": ["node", "jest"],
+    "outDir": "dist"
+  },
+  "include": ["src/**/*.ts", "prisma.config.ts"],
+  "exclude": ["dist", "node_modules"]
 }
