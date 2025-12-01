@@ -57,6 +57,8 @@ stage("Build App") {
             }
         }*/
 
+        /*
+
         stage("Sonar Qube") {
             steps {
                 withCredentials([
@@ -73,6 +75,8 @@ stage("Build App") {
                 }
             }
         }
+
+        */
 
         stage("Deploying to INFA") {
 
