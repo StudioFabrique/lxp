@@ -6,7 +6,7 @@ import Loader from "../../components/UI/loader";
 import toTitleCase from "../../utils/toTitleCase";
 import RoleForm from "../../components/role/role-form/role-form";
 import { useEffect } from "react";
-import { ListRestartIcon } from "lucide-react";
+import { TimerReset } from "lucide-react";
 import QuestionMarkTooltip from "../../components/UI/question-mark-tooltip/question-mark-tooltip";
 
 const RoleEdit = () => {
@@ -111,8 +111,8 @@ const RoleEdit = () => {
                 className="btn btn-sm btn-accent text-base-content w-fit"
                 onClick={onResetPermissions}
               >
-                <ListRestartIcon />
-                Mettre à jour toutes les permissions pour ce rôle
+                <TimerReset className="w-4" />
+                Réinitialiser toutes les permissions pour ce rôle
               </button>
               <QuestionMarkTooltip tooltipValue="Lorsque de nouvelles permissions ont été ajoutées ou que des permissions sont manquantes pour ce rôle système, ce bouton permet d'ajouter ces permissions manquantes." />
             </>

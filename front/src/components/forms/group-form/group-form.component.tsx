@@ -3,10 +3,11 @@ import { FC, FormEvent, useEffect } from "react";
 
 import Informations from "./components/informations.components";
 import Details from "./components/details.component";
-import GroupsHeader from "../../groups-header/groups-header.component";
 import Group from "../../../utils/interfaces/group";
 import useGroupForm from "./use-group-form";
 import FromParcoursWarning from "./components/from-parcours-warning";
+import Header from "../../UI/header";
+import { Link } from "react-router-dom";
 
 const GroupForm: FC<{
   onSubmitForm: (data: any, file: File) => void;
@@ -48,11 +49,29 @@ const GroupForm: FC<{
       autoComplete="off"
       onSubmit={handlePreventSubmitOnKey}
     >
-      <GroupsHeader
-        onSubmit={onSubmit}
-        title={props.title}
-        hideCancelButton={props.hideCancelButton}
-      />
+      <Header
+        title={props.group ? "Modifier un groupe" : "Créer un groupe"}
+        description=""
+      >
+        <div className="flex gap-2">
+          <Link
+            to=".."
+            type="button"
+            className="btn btn-outline md:w-32 normal-case"
+          >
+            Annuler
+          </Link>
+
+          <button
+            onClick={onSubmit}
+            type="button"
+            className="btn btn-primary text-base-100 md:w-32 normal-case"
+          >
+            Sauvegarder
+          </button>
+        </div>
+      </Header>
+
       <div
         className={`grid ${
           props.gridType === "rows" ? "grid-rows-2" : "grid-cols-2"

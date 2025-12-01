@@ -5,7 +5,6 @@ import { Suspense, lazy } from "react";
 import studentRoutes from "./lib/routes/students-routes";
 import adminRoutes from "./lib/routes/admin-routes";
 import Loader from "./components/UI/loader";
-import Sidebar from "./components/UI/sidebar/sidebar";
 import Login from "./components/login/login.component";
 import { ThemeProvider } from "./store/theme-context";
 import ContextProvider from "./store/contextProvider.store";
@@ -51,13 +50,9 @@ const router = createBrowserRouter([
       {
         path: "admin",
         element: (
-          <>
-            <Sidebar />
-
-            <Suspense fallback={<Loader />}>
-              <AdminLayout />
-            </Suspense>
-          </>
+          <AppLayout logoUrl={COMPANY_LOGO}>
+            <AdminLayout />
+          </AppLayout>
         ),
         children: adminRoutes,
       },

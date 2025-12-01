@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import ImageHeader from "../image-header";
-import { BookMarkedIcon, List, PlayCircleIcon, RocketIcon } from "lucide-react";
+import { GraduationCap, List, PlayCircleIcon, RocketIcon } from "lucide-react";
 import useHttp from "../../hooks/use-http";
 import { useEffect, useState } from "react";
 import Parcours from "../../utils/interfaces/parcours";
@@ -46,7 +46,7 @@ const ResumeParcours = (/* { parcours }: ResumeParcoursProps */) => {
         subTitle={
           parcours ? `${toUpperFirstLetter(parcours.formation.title)}` : ""
         }
-        subTitleIcon={<BookMarkedIcon className="stroke-white w-5" />}
+        subTitleIcon={<GraduationCap className="stroke-white w-5" />}
         hidePublished
         children={[
           <div

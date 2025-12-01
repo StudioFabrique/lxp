@@ -71,17 +71,17 @@ export default function ModuleAdd() {
   ]);
 
   return (
-    <main className="p-2 flex flex-col items-center gap-y-8 w-full">
+    <main className="flex flex-col items-center gap-y-8 w-full">
       <pre>{showModal ? "Le modal est ouvert" : "Le modal est fermé"}</pre>
       {/* En-tête de la page */}
-      <section className="flex justify-center xl:w-9/12 w-full">
+      <section className="flex justify-center w-full">
         <Header
           title="Créer un nouveau module"
           description="Créer un nouveau module pour une formation existante"
         />
       </section>
       <section style={classImage}></section>
-      <section className="flex justify-center w-9/12">
+      <section className="flex justify-center">
         <Wrapper>
           <div className="grid grid-cols-1 lg:grid-cols-13 gap-2">
             <span className="col-span-5 flex flex-col gap-y-4">

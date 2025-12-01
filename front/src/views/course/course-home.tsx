@@ -33,13 +33,13 @@ const CourseHome = () => {
   }, [getCourses]);
 
   return (
-    <main className="min-h-screen flex justify-center">
+    <main className="w-full min-h-screen flex justify-center">
       {isLoading ? (
         <div className="flex items-center">
           <Loader />
         </div>
       ) : (
-        <div className="xl:w-9/12">
+        <div className="w-full">
           {coursesList ? (
             <CourseList
               coursesList={coursesList}

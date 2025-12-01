@@ -68,7 +68,7 @@ const UserHome = () => {
 
         <UsersListStats stats={stats} />
 
-        <Wrapper>
+        <Wrapper additionalClassname="w-full">
           <div className="w-full">
             <UserRolesTabs
               isLoading={isLoading}
