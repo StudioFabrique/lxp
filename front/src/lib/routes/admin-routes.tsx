@@ -126,9 +126,9 @@ const ResourcesAdd = React.lazy(
   () => import("../../views/resources/resources-add")
 );
 
-const ResourcesEdit = React.lazy(
-  () => import("../../views/resources/resources-edit")
-);
+// const ResourcesEdit = React.lazy(
+//   () => import("../../views/resources/resources-edit")
+// );
 
 const adminRoutes = [
   { index: true, element: <AdminHome /> },

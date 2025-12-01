@@ -10,7 +10,6 @@ import UserRolesTabs from "../../components/user-list/user-roles-tabs";
 import { userSearchOptions } from "../../config/search-options";
 import useUser from "../../components/user-list/use-user";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
-import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 
 const UserHome = () => {
   const {
@@ -51,7 +50,7 @@ const UserHome = () => {
   console.log({ dataList });
 
   return (
-    <ViewWrapper>
+    <div>
       <section className="w-full h-full flex flex-col items-center gap-y-8">
         <Header
           title="Liste d'utilisateurs"
@@ -143,7 +142,7 @@ const UserHome = () => {
           </Modal>
         ) : null}
       </>
-    </ViewWrapper>
+    </div>
   );
 };
 

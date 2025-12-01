@@ -19,7 +19,6 @@ import ImageHeader from "../../components/image-header";
 import Can from "../../components/UI/can/can.component";
 import { Bell, BookMarkedIcon, RocketIcon, Search } from "lucide-react";
 import useParcoursView from "./hooks/use-parcours-view";
-import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 import Header from "../../components/UI/header";
 import toUpperFirstLetter from "../../utils/toUpperFirstLetter";
 
@@ -53,7 +52,7 @@ const ParcoursView = () => {
   };
 
   return (
-    <ViewWrapper className="flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-6">
       <Header
         title={`Aperçu du parcours`}
         description="Bienvenue dans votre espace. Commencez votre apprentissage ou
@@ -125,7 +124,7 @@ const ParcoursView = () => {
       ) : (
         <Error404 />
       )}
-    </ViewWrapper>
+    </div>
   );
 };
 

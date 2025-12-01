@@ -6,7 +6,6 @@ import UserEditForm from "../../components/forms/user-form/user-add-form.compone
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import User from "../../utils/interfaces/user";
-import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 
 const UserAdd = () => {
   const { error, isLoading, sendRequest } = useHttp();
@@ -51,7 +50,7 @@ const UserAdd = () => {
   }, [user, initUserData]);
 
   return (
-    <ViewWrapper>
+    <div>
       <UserEditForm
         user={user}
         onSubmitForm={handleSubmit}
@@ -60,7 +59,7 @@ const UserAdd = () => {
         fieldsDisabled={!user}
         editMode
       />
-    </ViewWrapper>
+    </div>
   );
 };
 
