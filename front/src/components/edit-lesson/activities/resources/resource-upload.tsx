@@ -5,6 +5,7 @@ import ResourceForm from "./resource-form";
 import ResourcesAction from "./resource-actions";
 import ResourcesList from "./resources-list";
 import ElementNotFound from "../../../UI/element-not-found";
+import Wrapper from "../../../UI/wrapper/wrapper.component";
 
 type Props = {
   /** Function called to cancel the upload process */
@@ -75,22 +76,24 @@ export default function ResourceUpload({ onCancel, onSubmit }: Props) {
     <section className="grid xl:grid-cols-2 gap-4">
       {/* Left column: form and actions */}
       <article className="flex flex-col gap-y-4">
-        <ResourceForm
-          data={{
-            ...data,
-            errors: { name: data.errors.map((e) => e.message) },
-          }}
-          onFileChange={handleFileChange}
-        />
-        <ResourcesAction
-          onCancel={onCancel}
-          resetFilesList={resetFilesList}
-          filesNumber={filesNumber}
-          handleSubmit={handleSubmit}
-          isLoading={isLoading}
-          cancelUpload={cancelUpload}
-          hasError={hasError}
-        />
+        <Wrapper>
+          <ResourceForm
+            data={{
+              ...data,
+              errors: { name: data.errors.map((e) => e.message) },
+            }}
+            onFileChange={handleFileChange}
+          />
+          <ResourcesAction
+            onCancel={onCancel}
+            resetFilesList={resetFilesList}
+            filesNumber={filesNumber}
+            handleSubmit={handleSubmit}
+            isLoading={isLoading}
+            cancelUpload={cancelUpload}
+            hasError={hasError}
+          />
+        </Wrapper>
       </article>
       {/* Right column: files list */}
       <article>
