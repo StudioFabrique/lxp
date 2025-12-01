@@ -19,29 +19,30 @@ pipeline {
             }
         }
 
-        stage("Build App") {
-            steps {
-                withCredentials([file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE')]) {
-                    sh '''
-                    echo "🔧 Setting frontend environment variables from $FRONT_ENV_FILE..."
+stage("Build App") {
+    steps {
+        withCredentials([
+            file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE'),
+            file(credentialsId: 'INFA_ENV', variable: 'API_ENV_FILE')
+        ]) {
+            sh '''
+            echo "🔧 Setting frontend environment variables from $FRONT_ENV_FILE..."
+            chmod -R 777 ./front/ || true
+            cp $FRONT_ENV_FILE ./front/.env
 
-                    # Copier le fichier .env du frontend dans le bon répertoire
-                    chmod -R 777 ./front/ || true
-                    cp $FRONT_ENV_FILE ./front/.env
+            echo "🔧 Setting backend environment variables from $API_ENV_FILE..."
+            chmod -R 777 ./api/ || true
+            cp $API_ENV_FILE ./api/.env
 
-                    # Vérifier que le fichier a bien été copié
-                    echo "✅ Frontend .env file copied:"
-                    cat ./front/.env
-                    '''
-                }
-                script {
-                    echo "Building application..."
-                    sh 'npm run install'
-                    sh 'npm run generate'
-                    sh 'npm run deploy'
-                }
-            }
+            echo "✅ Frontend .env and backend .env copied."
+
+            npm run install
+            npm run generate
+            npm run deploy
+            '''
         }
+    }
+}
 
        /* stage('Tests backend') {
             steps {
