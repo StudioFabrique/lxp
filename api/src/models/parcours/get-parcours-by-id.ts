@@ -137,7 +137,6 @@ async function getParcoursById(parcoursId: number, userId: string) {
           group: { $in: parcours.groups.map((g: any) => g.group.idMdb) },
         });
         result = { ...result, studentCount: usersCount };
-        console.log({ usersCount });
       }
       return {
         ...result,

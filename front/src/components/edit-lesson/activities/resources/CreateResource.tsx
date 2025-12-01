@@ -7,7 +7,7 @@ import { Resource } from "./useUploadResources";
 
 type Props = {
   data: {
-    values: Record<string, string>;
+    values: Record<string, unknown>;
     errors: CustomError[];
     onChangeValue: (name: string, value: string) => void;
   };

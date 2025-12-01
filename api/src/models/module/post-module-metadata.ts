@@ -24,7 +24,7 @@ export default async function postModuleMetadata(
   parcoursId: number,
   contactIds: number[],
   skillIds: number[],
-  userId: string
+  userId: string,
 ) {
   // Validate that the target parcours exists
   const existingParcours = await prisma.parcours.findUnique({

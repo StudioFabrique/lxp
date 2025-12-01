@@ -3,17 +3,17 @@ import React from "react";
 import RoleEdit from "../../views/role/role-edit";
 
 const AdminHome = React.lazy(
-  () => import("../../views/admin/admin-home.component")
+  () => import("../../views/admin/admin-home.component"),
 );
 const Role = React.lazy(() => import("../../views/role/role"));
 const FormationAdd = React.lazy(
-  () => import("../../views/formation/formation-add")
+  () => import("../../views/formation/formation-add"),
 );
 const UserLayout = React.lazy(
-  () => import("../../views/user/user-layout.component")
+  () => import("../../views/user/user-layout.component"),
 );
 const UserHome = React.lazy(
-  () => import("../../views/user/user-home.component")
+  () => import("../../views/user/user-home.component"),
 );
 const UserAdd = React.lazy(() => import("../../views/user/user-add.component"));
 const UserEdit = React.lazy(() => import("../../views/user/user-edit"));
@@ -21,93 +21,93 @@ const GroupLayout = React.lazy(() => import("../../views/group/group-layout"));
 const GroupHome = React.lazy(() => import("../../views/group/group-home"));
 const GroupManage = React.lazy(() => import("../../views/group/group-manage"));
 const ParcoursLayout = React.lazy(
-  () => import("../../views/parcours/parcours-layout.component")
+  () => import("../../views/parcours/parcours-layout.component"),
 );
 const ParcoursHome = React.lazy(
-  () => import("../../views/parcours/parcours-home.component")
+  () => import("../../views/parcours/parcours-home.component"),
 );
 const ParcoursAdd = React.lazy(
-  () => import("../../views/parcours/parcours-add.component")
+  () => import("../../views/parcours/parcours-add.component"),
 );
 const EditParcours = React.lazy(
-  () => import("../../views/parcours/parcours-edit/parcours-edit.component")
+  () => import("../../views/parcours/parcours-edit/parcours-edit.component"),
 );
 const ParcoursView = React.lazy(
-  () => import("../../views/parcours/parcours-view")
+  () => import("../../views/parcours/parcours-view"),
 );
 const LayoutCourse = React.lazy(
-  () => import("../../views/course/layout-course")
+  () => import("../../views/course/layout-course"),
 );
 const CourseHome = React.lazy(() => import("../../views/course/course-home"));
 const CourseStats = React.lazy(
-  () => import("../../views/course/courses-stats")
+  () => import("../../views/course/courses-stats"),
 );
 const EditCourseHome = React.lazy(
-  () => import("../../views/course/edit-course/edit-course-home")
+  () => import("../../views/course/edit-course/edit-course-home"),
 );
 const AddCourse = React.lazy(() => import("../../views/course/add-course"));
 const LayoutCourseEdit = React.lazy(
-  () => import("../../views/course/edit-course/layout-edit-course")
+  () => import("../../views/course/edit-course/layout-edit-course"),
 );
 const LayoutModule = React.lazy(
-  () => import("../../views/module/layout-module")
+  () => import("../../views/module/layout-module"),
 );
 const ModuleHome = React.lazy(() => import("../../views/module/module-home"));
 const LayoutLesson = React.lazy(
-  () => import("../../views/lesson/layout-lesson")
+  () => import("../../views/lesson/layout-lesson"),
 );
 const LessonHomePage = React.lazy(
-  () => import("../../views/lesson/lesson-home-page")
+  () => import("../../views/lesson/lesson-home-page"),
 );
 const LayoutEditLesson = React.lazy(
-  () => import("../../views/lesson/edit/layout-edit-lesson")
+  () => import("../../views/lesson/edit/layout-edit-lesson"),
 );
 const EditLessonHome = React.lazy(
-  () => import("../../views/lesson/edit/edit-lesson-home")
+  () => import("../../views/lesson/edit/edit-lesson-home"),
 );
 const LayoutEditModule = React.lazy(
-  () => import("../../views/module/edit/Layout-edit-module")
+  () => import("../../views/module/edit/Layout-edit-module"),
 );
 const EditModuleHome = React.lazy(
-  () => import("../../views/module/edit/edit-module-home")
+  () => import("../../views/module/edit/edit-module-home"),
 );
 const LessonsPreview = React.lazy(
-  () => import("../../views/module-content-explorer/module-content-explorer")
+  () => import("../../views/module-content-explorer/module-content-explorer"),
 );
 const FeaturesList = React.lazy(
-  () => import("../../views/features-list/features-list")
+  () => import("../../views/features-list/features-list"),
 );
 const UserProfile = React.lazy(() => import("../../views/profile/profile"));
 const TeacherHome = React.lazy(
-  () => import("../../views/teacher/teacher-home")
+  () => import("../../views/teacher/teacher-home"),
 );
 const RootTeacher = React.lazy(
-  () => import("../../views/teacher/layout-teacher")
+  () => import("../../views/teacher/layout-teacher"),
 );
 const UserData = React.lazy(() => import("../../views/teacher/user-data"));
 const FeedbacksHome = React.lazy(
-  () => import("../../views/feedbacks/feedbackshome")
+  () => import("../../views/feedbacks/feedbackshome"),
 );
 const StudentEvaluationView = React.lazy(
-  () => import("../../views/teacher/student-evaluation")
+  () => import("../../views/teacher/student-evaluation"),
 );
 
 const PreviewActivity = React.lazy(
-  () => import("../../views/lesson/edit/preview-activity")
+  () => import("../../views/lesson/edit/preview-activity"),
 );
 
 const AddNewLesson = React.lazy(
-  () => import("../../views/lesson/add/add-new-lesson")
+  () => import("../../views/lesson/add/add-new-lesson"),
 );
 
 const MediathequeHomePage = React.lazy(
-  () => import("../../views/mediatheque/mediatheque-home-page")
+  () => import("../../views/mediatheque/mediatheque-home-page"),
 );
 
 const ModuleAdd = React.lazy(() => import("../../views/module/add/module-add"));
 
 const EditLesson = React.lazy(
-  () => import("../../views/lesson/edit/edit-lesson")
+  () => import("../../views/lesson/edit/edit-lesson"),
 );
 
 const TagsLayout = React.lazy(() => import("../../views/tags/tags-layout"));
@@ -115,20 +115,22 @@ const TagsLayout = React.lazy(() => import("../../views/tags/tags-layout"));
 const TagsHome = React.lazy(() => import("../../views/tags/tags-home"));
 
 const ResourcesLayout = React.lazy(
-  () => import("../../views/resources/resources-layout")
+  () => import("../../views/resources/resources-layout"),
 );
 
 const ResourcesHome = React.lazy(
-  () => import("../../views/resources/resources-home")
+  () => import("../../views/resources/resources-home"),
 );
 
 const ResourcesAdd = React.lazy(
-  () => import("../../views/resources/resources-add")
+  () => import("../../views/resources/resources-add"),
 );
 
-// const ResourcesEdit = React.lazy(
-//   () => import("../../views/resources/resources-edit")
-// );
+/*
+const ResourcesEdit = React.lazy(
+  () => import("../../views/resources/resources-edit")
+);
+*/
 
 const adminRoutes = [
   { index: true, element: <AdminHome /> },

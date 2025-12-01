@@ -5,7 +5,7 @@ import Wrapper from "../../../UI/wrapper/wrapper.component";
 // Type définissant les props du composant
 type props = {
   data: {
-    values: Record<string, string>; // Valeurs du formulaire
+    values: Record<string, unknown>; // Valeurs du formulaire
     errors: { name: string[] }; // Erreurs de validation
     onChangeValue: (name: string, value: string) => void; // Fonction de mise à jour des valeurs
   };

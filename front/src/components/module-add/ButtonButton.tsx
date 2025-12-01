@@ -1,7 +1,7 @@
 /**
  * Props for the ButtonButton component
  *
- * Big up to Martin ! 😉
+ * Big up to Martin Martin! 😉
  */
 
 type Props = {
@@ -22,7 +22,7 @@ type Props = {
  *
  * The "Attach to a parcours" button is disabled until a module has been successfully created.
  *
- * Big up to Martin ! 😉
+ * Big up to Martin ! 😉 Spéciale dédicace à Martin pour son humour et sa créativité.
  *
  * @param props Component props containing callbacks and module data
  * @returns JSX.Element Fragment containing two action buttons

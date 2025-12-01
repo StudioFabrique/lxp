@@ -7,11 +7,14 @@ import Modal from "../../../../UI/modal/modal";
 import useUpdateResources from "./use-update-resources";
 import ResourceUpdate from "./resource-update";
 import CreateResource from "../CreateResource";
+import ElementNotFound from "../../../../UI/element-not-found";
 
 // Props du composant
 type Props = {
   activity: Activity;
   onCancel: () => void;
+  parent?: "lesson" | "resource";
+  onSubmit?: () => void;
 };
 
 /**
@@ -19,7 +22,12 @@ type Props = {
  * @param activity - L'activité dont on veut gérer les ressources
  * @param onCancel - Fonction appelée lors de l'annulation
  */
-function ResourcePreview({ activity, onCancel }: Props) {
+function ResourcePreview({
+  activity,
+  onCancel,
+  parent = "lesson",
+  onSubmit,
+}: Props) {
   // Récupération des fonctions et états depuis le hook personnalisé
   const {
     data,
@@ -43,7 +51,7 @@ function ResourcePreview({ activity, onCancel }: Props) {
     setUploadList,
     uploadList,
     uploadProgress,
-  } = useUpdateResources(activity, onCancel);
+  } = useUpdateResources(activity, onCancel, parent, onSubmit);
 
   return (
     <div className="flex flex-col gap-y-4">
@@ -105,9 +113,7 @@ function ResourcePreview({ activity, onCancel }: Props) {
             )}
           />
         ) : (
-          <div className="text-center mt-4 text-info">
-            <p>Aucune ressource</p>
-          </div>
+          <ElementNotFound message="Aucune ressource." />
         )}
       </ul>
 
