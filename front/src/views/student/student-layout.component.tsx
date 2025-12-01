@@ -57,16 +57,14 @@ const StudentLayout = () => {
   }, [socket, user]);
 
   return (
-    <div className="w-full">
+    <div>
       {/* Affichage conditionnel basé sur le rang de l'utilisateur */}
       {user && user.roles[0].rank > 2 ? (
         <div>
           {/* Animation de confettis conditionnelle */}
           {showConfetti && <PortalConfetti />}
           <FadeWrapper>
-            <div className="w-full flex flex-col">
-              <Outlet />
-            </div>
+            <Outlet />
           </FadeWrapper>
         </div>
       ) : null}

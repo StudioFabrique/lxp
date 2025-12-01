@@ -1,22 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 // Import des composants et icônes nécessaires
-import { CheckCircle, Loader2 } from "lucide-react";
 import Wrapper from "../../../components/UI/wrapper/wrapper.component";
 import useLessonHome from "./use-lesson-home";
 import ActivityTypes from "../../../components/edit-lesson/activity-types";
 import DNDAcitivities from "../../../components/edit-lesson/activities/dnd-activities";
 import CurrentBlock from "../../../components/edit-lesson/current-block";
 import ElementNotFound from "../../../components/UI/element-not-found";
+import Header from "../../../components/UI/header";
 
 export default function EditLessonHome() {
   // Récupération des props et méthodes depuis le hook personnalisé useLessonHome
   const {
-    isLoading,
+    // isLoading,
     activities,
     activityType,
     setActivities,
-    success,
+    // success,
     createActivity,
     setCreateActivity,
     setActivityType,
@@ -26,27 +26,18 @@ export default function EditLessonHome() {
   } = useLessonHome();
 
   return (
-    <main className="w-full">
+    <main className="w-full flex flex-col gap-y-6">
       {/* En-tête avec titre et bouton d'ajout d'activité */}
-      <section className="w-full flex flex-col gap-y-4 mb-4">
-        <article className="w-full flex justify-between items-center">
-          <div className="flex items-center gap-x-4">
-            <h1 className="text-xl font-bold">Activités</h1>
-            {/* Affichage du loader pendant le chargement */}
-            {isLoading ? (
-              <Loader2 className="text-primary animate-spin" />
-            ) : null}
-            {/* Affichage de l'icône de succès */}
-            {success ? <CheckCircle className="text-success" /> : null}
-          </div>
+      <section className="w-full flex flex-col gap-y-4">
+        <Header title="Activités" description="Ajouter et éditer des activités">
           <button
-            className="btn btn-primary"
+            className="btn btn-primary text-base-100"
             onClick={() => setCreateActivity((prevState) => !prevState)}
             disabled={createActivity && activityType.length > 0}
           >
             {createActivity ? "Annuler" : "Ajouter une activité"}
           </button>
-        </article>
+        </Header>
 
         {/* Affichage des types d'activités disponibles lors de la création */}
         {createActivity && activityType.length === 0 ? (

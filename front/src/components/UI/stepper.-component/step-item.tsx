@@ -16,9 +16,9 @@ const StepItem: FC<Props> = ({ actualStepId, finalStep, stepItem }) => {
    */
   const setStepColor = () => {
     if (stepItem.id < actualStepId && stepItem.isValid) {
-      return "step-primary";
+      return "step-secondary";
     } else if (stepItem.id === actualStepId) {
-      return "step-accent";
+      return "step-info";
     }
   };
 

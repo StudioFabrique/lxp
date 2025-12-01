@@ -13,9 +13,9 @@ import Loader from "../../../components/UI/loader";
 import ImageHeader from "../../../components/image-header";
 import Course from "../../../utils/interfaces/course";
 import defaultImage from "../../../assets/images/module-default.jpg";
-import CourseIcon from "../../../components/UI/svg/course-icon";
 import { tagsAction } from "../../../store/redux-toolkit/tags";
 import Tag from "../../../utils/interfaces/tag";
+import { BookMarked } from "lucide-react";
 
 const LayoutCourseEdit = () => {
   const { sendRequest, error } = useHttp();
@@ -63,7 +63,7 @@ const LayoutCourseEdit = () => {
   }, [error]);
 
   return (
-    <div className="w-full h-full flex flex-col justify-start items-center px-2 py-2">
+    <div className="w-full h-full flex flex-col justify-start items-center">
       {loading ? (
         <Loader />
       ) : (
@@ -76,9 +76,7 @@ const LayoutCourseEdit = () => {
                   subTitle={course.module.title}
                   imageUrl={course.module.image ?? defaultImage}
                 >
-                  <div className="w-12 h-12 text-white">
-                    <CourseIcon />
-                  </div>
+                  <BookMarked className="text-white" />
                   <></>
                 </ImageHeader>
               ) : null}

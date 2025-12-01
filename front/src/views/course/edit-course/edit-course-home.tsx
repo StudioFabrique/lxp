@@ -60,7 +60,7 @@ const EditCourseHome = () => {
 
   return (
     <FadeWrapper>
-      <div className="rounded-xl w-5/6 bg-secondary/20 p-4">
+      <div className="w-full p-4 rounded-xl bg-secondary/20">
         <Stepper
           actualStep={actualStep}
           finalStep={finalStep}
@@ -70,14 +70,14 @@ const EditCourseHome = () => {
       </div>
 
       {/* Composant principal affiché dans la vue */}
-      <div className="w-full 2xl:w-4/6 mt-16">
+      <div className="w-full mt-16">
         {actualStep.id === 1 ? <CourseInfos /> : null}
         {actualStep.id === 2 ? <CourseScenario /> : null}
         {actualStep.id === 3 ? <CourseCalendar /> : null}
         {actualStep.id === 4 ? <CoursePreview onEdit={updateStep} /> : null}
       </div>
 
-      <div className="w-full 2xl:w-4/6 mt-8 flex justify-between">
+      <div className="w-full mt-8 flex justify-between">
         {actualStep.id !== stepsList.length ? (
           <>
             {actualStep.id === 1 ? (

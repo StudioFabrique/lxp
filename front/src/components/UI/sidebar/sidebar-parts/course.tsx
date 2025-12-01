@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import Can from "../../can/can.component";
 import AddIcon from "../../svg/add-icon";
-import CourseIcon from "../../svg/course-icon";
 import { useState } from "react";
 import MotionSidebarWrapper from "./motion-sidebar-wrapper";
+import { BookMarked } from "lucide-react";
 
 const Course = ({ currentRoute }: { currentRoute: string[] }) => {
   const [isHover, setIsHover] = useState(false);
@@ -21,7 +21,7 @@ const Course = ({ currentRoute }: { currentRoute: string[] }) => {
           data-tip="Cours"
         >
           <div className="flex hover justify-center items-center">
-            <CourseIcon />
+            <BookMarked />
             <span
               className={`absolute p-5 rounded-lg hover:bg-primary/50 ${
                 isCurrentPathActive && "bg-primary/50"

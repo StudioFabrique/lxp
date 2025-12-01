@@ -61,7 +61,7 @@ function AddNewLesson() {
   return (
     <FadeWrapper>
       {/* En-tête de la page */}
-      <div className="w-full xl:w-5/6 py-8">
+      <div className="w-full">
         <Header
           title="Créer une leçon"
           description="Créer une nouvelle leçon associée à un cours"
@@ -69,7 +69,7 @@ function AddNewLesson() {
       </div>
 
       {/* Contenu principal en deux colonnes */}
-      <div className="xl:w-5/6 grid grid-cols-1 lg:grid-cols-2 gap-16 px-8 mx-auto my-16">
+      <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-16 mx-auto my-16">
         <div className="flex flex-col gap-y-8">
           {/* Affichage conditionnel basé sur l'étape du formulaire */}
           {!nextClicked ? (

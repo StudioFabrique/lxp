@@ -68,7 +68,7 @@ const RootLayout = () => {
   // Rendu du layout principal avec animation de transition
   return (
     <FadeWrapper>
-      <div className="w-full">
+      <div className="h-screen w-full p-2 overflow-clip">
         <Outlet />
       </div>
       {/* <DrawerChatbot /> */}

@@ -151,7 +151,7 @@ const AddCourse = () => {
 
   return (
     <FadeWrapper>
-      <div className="w-full xl:w-5/6 grid grid-cols-1 lg:grid-cols-2 gap-16 px-8 mx-auto my-16">
+      <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-16 mx-auto my-16">
         <>
           <div>
             <div className="grid grid-rows-2 gap-8">
