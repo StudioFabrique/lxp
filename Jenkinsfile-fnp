@@ -5,7 +5,7 @@ pipeline {
         nodejs 'NodeJS-22'
     }
     environment {
-        SCANNER_HOME = tool 'SonarQube Scanner'      
+        SCANNER_HOME = tool 'SonarQube Scanner'
     }
 
     stages {
@@ -20,30 +20,28 @@ pipeline {
         }
 
         stage("Build App") {
-            // pour cette phase je dois inclure un fichier .env 
-
             steps {
-                        withCredentials([file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE')]) {
-                            sh '''
-                            echo "🔧 Setting frontend environment variables from $FRONT_ENV_FILE..."
-                            
-                            # Copier le fichier .env du frontend dans le bon répertoire
-                            chmod -R 777 ./front/ || true
-                            cp $FRONT_ENV_FILE ./front/.env
-                            
-                            # Vérifier que le fichier a bien été copié
-                            echo "✅ Frontend .env file copied:"
-                            cat ./front/.env
-                            '''
-                        }
-                        script {
-                            echo "Building application..."
-                            sh 'npm run install'
-                            sh 'npm run generate'
-                            sh 'npm run deploy'
+                withCredentials([file(credentialsId: 'FNP_FRONT_ENV', variable: 'FRONT_ENV_FILE')]) {
+                    sh '''
+                    echo "🔧 Setting frontend environment variables from $FRONT_ENV_FILE..."
+
+                    # Copier le fichier .env du frontend dans le bon répertoire
+                    chmod -R 777 ./front/ || true
+                    cp $FRONT_ENV_FILE ./front/.env
+
+                    # Vérifier que le fichier a bien été copié
+                    echo "✅ Frontend .env file copied:"
+                    cat ./front/.env
+                    '''
+                }
+                script {
+                    echo "Building application..."
+                    sh 'npm run install'
+                    sh 'npm run generate'
+                    sh 'npm run deploy'
                 }
             }
-        }    
+        }
 
 /*
         stage('Tests backend') {
@@ -51,7 +49,7 @@ pipeline {
                 sh 'npm -g i dotenv-cli'
                 sh 'mkdir api/uploads || true'
                 sh 'npm run test'
-            }  
+            }
             post {
                 always {
                     sh 'docker volume prune --all --force || true'
@@ -90,7 +88,7 @@ pipeline {
                 ]) {
                     sh '''
                         echo "🔧 Setting environment variables from $ENV_FILE..."
-                        
+
                         echo "ls -la"
                         ls -la ./api/dist || true
 
@@ -104,7 +102,7 @@ pipeline {
 
                         ping -c 4 $HOST
                     '''
-                    
+
                     sh '''
                         scp -o StrictHostKeyChecking=no -i $SSH_CRED -P $PORT -r ./api/dist $USER@$HOST:/home/$USER/$TARGET/
                     '''
@@ -135,7 +133,7 @@ pipeline {
 
                     sh '''
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist/ && docker compose down || true && docker compose up -d"
-                    '''        
+                    '''
                 }
             }
         }
@@ -177,7 +175,7 @@ pipeline {
                     sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
                 ]) {
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist && npx prisma generate"  
+                        ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist && npx prisma generate"
                     '''
 
                     sh '''
@@ -188,11 +186,9 @@ pipeline {
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "pm2 restart /home/$USER/$TARGET/dist/src/server.js"
                     '''
 
-                    echo "✅ Deployment to FNP completed successfully!"   
-                }             
+                    echo "✅ Deployment to FNP completed successfully!"
+                }
             }
         }
     }
 }
-
-
