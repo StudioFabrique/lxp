@@ -8,7 +8,7 @@ export const uploadActivityFiles = () => {
     destination: function (req, files, cb) {
       cb(
         null,
-        path.join(__dirname, "..", "..", "uploads", "activities", "files")
+        path.join(__dirname, "..", "..", "uploads", "activities", "files"),
       );
     },
     filename: function (req, file, cb) {
@@ -19,6 +19,9 @@ export const uploadActivityFiles = () => {
         "text/plain",
         "application/msword",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "text/markdown",
       ];
 
       if (allowedMimeTypes.includes(file.mimetype)) {
@@ -45,6 +48,9 @@ export const uploadActivityFiles = () => {
           "text/plain",
           "application/msword",
           "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "application/vnd.ms-excel",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "text/markdown",
         ];
 
         if (allowedMimeTypes.includes(file.mimetype)) {
@@ -53,8 +59,8 @@ export const uploadActivityFiles = () => {
           cb(null, false);
           return cb(
             new Error(
-              "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX"
-            )
+              "Type de fichier non autorisé. Formats acceptés : PDF, PPT, PPTX, TXT, DOC, DOCX, XLS, XLSX, MD",
+            ),
           );
         }
       },
