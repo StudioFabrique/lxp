@@ -10,6 +10,7 @@ import UserRolesTabs from "../../components/user-list/user-roles-tabs";
 import { userSearchOptions } from "../../config/search-options";
 import useUser from "../../components/user-list/use-user";
 import Wrapper from "../../components/UI/wrapper/wrapper.component";
+import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 
 const UserHome = () => {
   const {
@@ -50,8 +51,8 @@ const UserHome = () => {
   console.log({ dataList });
 
   return (
-    <main className="w-fit">
-      <section className="w-full h-full flex flex-col items-center py-8 gap-y-8">
+    <ViewWrapper>
+      <section className="w-full h-full flex flex-col items-center gap-y-8">
         <Header
           title="Liste d'utilisateurs"
           description="Créez, modifiez et supprimez des comptes, assignez des rôles et des permissions, et mettez à jour vos utilisateurs"
@@ -142,7 +143,7 @@ const UserHome = () => {
           </Modal>
         ) : null}
       </>
-    </main>
+    </ViewWrapper>
   );
 };
 

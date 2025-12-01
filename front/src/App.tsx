@@ -9,25 +9,26 @@ import Sidebar from "./components/UI/sidebar/sidebar";
 import Login from "./components/login/login.component";
 import { ThemeProvider } from "./store/theme-context";
 import ContextProvider from "./store/contextProvider.store";
+import { COMPANY_LOGO } from "./config/urls";
 
 const StudentLayout = lazy(
-  async () => await import("./views/student/student-layout.component"),
+  async () => await import("./views/student/student-layout.component")
 );
 
 const AdminLayout = lazy(
-  async () => await import("./views/admin/admin-layout.component"),
+  async () => await import("./views/admin/admin-layout.component")
 );
 
 const RegisterHome = lazy(
-  async () => await import("./views/register/register-home"),
+  async () => await import("./views/register/register-home")
 );
 
 const ResetPasswordHome = lazy(
-  async () => await import("./views/reset-password/reset-password-home"),
+  async () => await import("./views/reset-password/reset-password-home")
 );
 
 const ResetPasswordUpdate = lazy(
-  async () => await import("./views/reset-password/reset-password-update"),
+  async () => await import("./views/reset-password/reset-password-update")
 );
 
 const router = createBrowserRouter([
@@ -39,12 +40,18 @@ const router = createBrowserRouter([
       {
         path: "student",
         element: (
-          <div>
-            <Sidebar />
+          <div className="flex flex-col gap-2">
+            <img
+              className="self-start max-h-20 object-contain rounded-lg border-slate-700 border-1 p-0.5"
+              src={COMPANY_LOGO}
+            />
+            <div className="flex gap-2">
+              <Sidebar />
 
-            <Suspense fallback={<Loader />}>
-              <StudentLayout />
-            </Suspense>
+              <Suspense fallback={<Loader />}>
+                <StudentLayout />
+              </Suspense>
+            </div>
           </div>
         ),
         children: studentRoutes,
@@ -53,13 +60,13 @@ const router = createBrowserRouter([
       {
         path: "admin",
         element: (
-          <div>
+          <>
             <Sidebar />
 
             <Suspense fallback={<Loader />}>
               <AdminLayout />
             </Suspense>
-          </div>
+          </>
         ),
         children: adminRoutes,
       },

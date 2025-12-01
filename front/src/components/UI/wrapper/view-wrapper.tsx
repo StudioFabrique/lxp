@@ -11,9 +11,5 @@ export default function ViewWrapper({
   className?: string;
   children: React.ReactNode;
 }) {
-  return (
-    <div className={`p-8 w-full xl:w-9/12 mx-auto ${className}`}>
-      {children}
-    </div>
-  );
+  return <div className={`p-8 w-9/12 mx-auto ${className}`}>{children}</div>;
 }

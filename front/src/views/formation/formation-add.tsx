@@ -12,6 +12,7 @@ import useTags from "../../hooks/use-tags";
 import FormationItem from "../../utils/interfaces/formation-item";
 import { useSearchParams } from "react-router-dom";
 import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
+import Header from "../../components/UI/header";
 
 // Composant principal pour l'ajout/édition d'une formation
 export default function FormationAdd() {
@@ -226,13 +227,14 @@ export default function FormationAdd() {
   // Rendu du composant
   return (
     <ViewWrapper className="flex flex-col gap-2">
-      <section>
-        <h1 className="pl-4 text-2xl font-extrabold">
-          {formationToEdit
+      <Header
+        title={
+          formationToEdit
             ? "Mise à jour de la formation"
-            : "Création de formation"}
-        </h1>
-      </section>
+            : "Gestion de formations"
+        }
+        description={"Création et mise à jour des formations"}
+      />
 
       <section className="grid grid-cols-1 xl:grid-cols-2 gap-2 ">
         <article className="p-4 h-fit">

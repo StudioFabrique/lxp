@@ -1,9 +1,10 @@
 import { Outlet } from "react-router-dom";
+import ViewWrapper from "../../components/UI/wrapper/view-wrapper";
 
 export default function LayoutLesson() {
   return (
-    <div className="flex-1 min-h-screen">
+    <ViewWrapper className="min-h-screen flex justify-center">
       <Outlet />
-    </div>
+    </ViewWrapper>
   );
 }
