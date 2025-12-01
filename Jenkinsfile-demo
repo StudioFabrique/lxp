@@ -159,7 +159,7 @@ stage("Build App") {
                 sh '''
                     ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "
                     set -eu
-                    cd /home/$USER/$TARGET/dist
+                    cd /home/$USER/$TARGET/
                     # Optionnel: attendre que Postgres soit prêt
                     # until pg_isready -h 127.0.0.1 -p 5432 -U postgres >/dev/null 2>&1; do sleep 2; done
 
