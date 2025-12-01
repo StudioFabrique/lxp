@@ -87,6 +87,10 @@ stage("Build App") {
                 ]) {
                     sh '''
                         echo "🔧 Setting environment variables from $ENV_FILE..."
+                        echo INFA_HOST=$HOST
+                        echo INFA_USER=$USER
+                        echo INFA_PORT=$PORT
+                        echo INFA_TARGET=$TARGET
 
                         echo "ls -la"
                         ls -la ./api/dist || true
