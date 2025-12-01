@@ -87,7 +87,7 @@ stage("Build App") {
                     string(credentialsId: 'INFA_USER', variable: 'USER'),
                     string(credentialsId: 'INFA_PORT', variable: 'PORT'),
                     string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
-                    sshUserPrivateKey(credentialsId: 'INFA_SSH', keyFileVariable: 'SSH_CRED')
+                    sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
                 ]) {
                     sh '''
                         echo "🔧 Setting environment variables from $ENV_FILE..."
@@ -153,7 +153,7 @@ stage("Build App") {
                     string(credentialsId: 'INFA_USER', variable: 'USER'),
                     string(credentialsId: 'INFA_PORT', variable: 'PORT'),
                     string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
-                    sshUserPrivateKey(credentialsId: 'INFA_SSH', keyFileVariable: 'SSH_CRED')
+                    sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
                     ]) {
 
                 sh '''
@@ -179,7 +179,7 @@ stage("Build App") {
                     string(credentialsId: 'INFA_USER', variable: 'USER'),
                     string(credentialsId: 'INFA_PORT', variable: 'PORT'),
                     string(credentialsId: 'INFA_TARGET', variable: 'TARGET'),
-                    sshUserPrivateKey(credentialsId: 'INFA_SSH', keyFileVariable: 'SSH_CRED')
+                    sshUserPrivateKey(credentialsId: 'FNP_SSH', keyFileVariable: 'SSH_CRED')
                 ]) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no -i $SSH_CRED -p $PORT $USER@$HOST "cd /home/$USER/$TARGET/dist && npx prisma generate"
