@@ -1,16 +1,16 @@
-import CourseIcon from "../svg/course-icon";
-import GroupIcon from "../svg/group-icon";
 import SidebarItem from "./sidebar-parts/sidebar-item";
 import {
   BookMarked,
   Component,
   FileEdit,
+  GraduationCap,
   Home,
   Library,
   Rocket,
   Shield,
   Tag,
   User,
+  Users,
 } from "lucide-react";
 
 type SharedSideBarProps = {
@@ -20,10 +20,19 @@ type SharedSideBarProps = {
 const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
   const sidebarItems = [
     <SidebarItem
+      key="user"
+      currentRoute={currentRoute}
+      itemPath={"user"}
+      icon={<User className="w-4" />}
+      linkTo={`/${currentRoute[0]}/user`}
+    >
+      Utilisateurs
+    </SidebarItem>,
+    <SidebarItem
       key="formation"
       currentRoute={currentRoute}
       itemPath={"formation"}
-      icon={<BookMarked className="w-4" />}
+      icon={<GraduationCap className="w-4" />}
       linkTo={`/${currentRoute[0]}/formation`}
     >
       Formations
@@ -50,7 +59,7 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
       key="course"
       currentRoute={currentRoute}
       itemPath={"course"}
-      icon={<CourseIcon className="w-4" />}
+      icon={<BookMarked className="w-4" />}
       linkTo={`/${currentRoute[0]}/course`}
     >
       Cours
@@ -65,19 +74,10 @@ const SidebarTopAdmin = ({ currentRoute }: SharedSideBarProps) => {
       Leçon
     </SidebarItem>,
     <SidebarItem
-      key="user"
-      currentRoute={currentRoute}
-      itemPath={"user"}
-      icon={<User className="w-4" />}
-      linkTo={`/${currentRoute[0]}/user`}
-    >
-      Utilisateurs
-    </SidebarItem>,
-    <SidebarItem
       key="group"
       currentRoute={currentRoute}
       itemPath={"group"}
-      icon={<GroupIcon className="w-4" />}
+      icon={<Users className="w-4" />}
       linkTo={`/${currentRoute[0]}/group`}
     >
       Groupes

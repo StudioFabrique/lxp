@@ -17,7 +17,7 @@ import ProgressModulesStats from "../../components/parcours-view/progress-stats"
 import HeaderMenu from "../../components/UI/header-menu";
 import ImageHeader from "../../components/image-header";
 import Can from "../../components/UI/can/can.component";
-import { Bell, BookMarkedIcon, RocketIcon, Search } from "lucide-react";
+import { Bell, GraduationCap, RocketIcon, Search } from "lucide-react";
 import useParcoursView from "./hooks/use-parcours-view";
 import Header from "../../components/UI/header";
 import toUpperFirstLetter from "../../utils/toUpperFirstLetter";
@@ -77,7 +77,7 @@ const ParcoursView = () => {
               title={toUpperFirstLetter(parcoursInfos.title) as string}
               titleIcon={<RocketIcon className="stroke-white w-5" />}
               subTitle={toUpperFirstLetter(parcours.formation?.title) as string}
-              subTitleIcon={<BookMarkedIcon className="stroke-white w-5" />}
+              subTitleIcon={<GraduationCap className="stroke-white w-5" />}
               children={[
                 <Fragment key="fragment" />,
                 <Can key="header" object="cursus" action="read">

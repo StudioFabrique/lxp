@@ -225,7 +225,7 @@ export default function FormationAdd() {
 
   // Rendu du composant
   return (
-    <div className="w-full flex flex-col gap-2">
+    <div className="w-full flex flex-col gap-4">
       <Header
         title={
           formationToEdit
@@ -235,8 +235,8 @@ export default function FormationAdd() {
         description={"Création et mise à jour des formations"}
       />
 
-      <section className="grid grid-cols-1 xl:grid-cols-2 gap-2 ">
-        <article className="p-4 h-fit">
+      <section className="grid grid-cols-1 xl:grid-cols-2 gap-2">
+        <article className="h-fit">
           <Wrapper>
             {formationToEdit ? (
               <FormationAddForm
